@@ -403,8 +403,8 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
       queryClient.invalidateQueries({ queryKey: ["entitlements", "editions"] });
       discard();
       success({
-        title: t("entitlements.pricing.saveSuccess") || "Pricing Saved",
-        description: t("entitlements.editions.updatedDesc") || "Edition pricing has been updated.",
+        title: t("entitlements.pricing.saveSuccess"),
+        description: t("entitlements.editions.updatedDesc"),
       });
     },
     onError: (err: Error) => {
@@ -461,10 +461,8 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
       });
       discard();
       success({
-        title: t("entitlements.editions.versions.created") || "Version Created",
-        description:
-          t("entitlements.editions.versions.createdDesc") ||
-          "Pricing changes saved as a new version.",
+        title: t("entitlements.editions.versions.created"),
+        description: t("entitlements.editions.versions.createdDesc"),
       });
     },
     onError: (err: Error) => {

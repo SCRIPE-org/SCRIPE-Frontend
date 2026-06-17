@@ -99,7 +99,9 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
               className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
             />
             {errors.headlineAr && (
-              <p className="mt-1 text-xs text-red-400" dir="rtl">{errors.headlineAr.message}</p>
+              <p className="mt-1 text-xs text-red-400" dir="rtl">
+                {errors.headlineAr.message}
+              </p>
             )}
           </div>
         </div>
@@ -132,7 +134,9 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
               className="min-h-[80px] border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
             />
             {errors.subcopyAr && (
-              <p className="mt-1 text-xs text-red-400" dir="rtl">{errors.subcopyAr.message}</p>
+              <p className="mt-1 text-xs text-red-400" dir="rtl">
+                {errors.subcopyAr.message}
+              </p>
             )}
           </div>
         </div>
@@ -165,7 +169,9 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
               className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
             />
             {errors.ctaLabelAr && (
-              <p className="mt-1 text-xs text-red-400" dir="rtl">{errors.ctaLabelAr.message}</p>
+              <p className="mt-1 text-xs text-red-400" dir="rtl">
+                {errors.ctaLabelAr.message}
+              </p>
             )}
           </div>
         </div>
@@ -209,7 +215,9 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
               className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
             />
             {errors.trustedByLabelAr && (
-              <p className="mt-1 text-xs text-red-400" dir="rtl">{errors.trustedByLabelAr.message}</p>
+              <p className="mt-1 text-xs text-red-400" dir="rtl">
+                {errors.trustedByLabelAr.message}
+              </p>
             )}
           </div>
         </div>

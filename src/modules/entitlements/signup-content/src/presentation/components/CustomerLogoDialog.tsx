@@ -88,33 +88,18 @@ function CustomerLogoDialogForm({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-2">
       <div className="space-y-1">
         <Label className="text-xs text-zinc-400">{t("signupContent.customerLogos.key")}</Label>
-        <Input
-          {...register("key")}
-          className="border-zinc-700 bg-zinc-900 text-white"
-        />
-        {errors.key && (
-          <p className="text-xs text-red-400">{errors.key.message}</p>
-        )}
+        <Input {...register("key")} className="border-zinc-700 bg-zinc-900 text-white" />
+        {errors.key && <p className="text-xs text-red-400">{errors.key.message}</p>}
       </div>
       <div className="space-y-1">
         <Label className="text-xs text-zinc-400">{t("signupContent.customerLogos.name")}</Label>
-        <Input
-          {...register("name")}
-          className="border-zinc-700 bg-zinc-900 text-white"
-        />
-        {errors.name && (
-          <p className="text-xs text-red-400">{errors.name.message}</p>
-        )}
+        <Input {...register("name")} className="border-zinc-700 bg-zinc-900 text-white" />
+        {errors.name && <p className="text-xs text-red-400">{errors.name.message}</p>}
       </div>
       <div className="space-y-1">
         <Label className="text-xs text-zinc-400">{t("signupContent.customerLogos.assetUrl")}</Label>
-        <Input
-          {...register("assetUrl")}
-          className="border-zinc-700 bg-zinc-900 text-white"
-        />
-        {errors.assetUrl && (
-          <p className="text-xs text-red-400">{errors.assetUrl.message}</p>
-        )}
+        <Input {...register("assetUrl")} className="border-zinc-700 bg-zinc-900 text-white" />
+        {errors.assetUrl && <p className="text-xs text-red-400">{errors.assetUrl.message}</p>}
       </div>
       <div className="space-y-1">
         <Label className="text-xs text-zinc-400">{t("signupContent.trustMarks.sortOrder")}</Label>
@@ -123,9 +108,7 @@ function CustomerLogoDialogForm({
           {...register("sortOrder", { valueAsNumber: true })}
           className="border-zinc-700 bg-zinc-900 text-white"
         />
-        {errors.sortOrder && (
-          <p className="text-xs text-red-400">{errors.sortOrder.message}</p>
-        )}
+        {errors.sortOrder && <p className="text-xs text-red-400">{errors.sortOrder.message}</p>}
       </div>
       <div className="flex items-center justify-between">
         <Label className="text-xs text-zinc-400">

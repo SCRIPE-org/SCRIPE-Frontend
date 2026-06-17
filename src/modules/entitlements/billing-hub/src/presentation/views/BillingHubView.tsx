@@ -35,29 +35,43 @@ export function BillingHubView() {
               {t("entitlements.hub.title") || "Billing & Plans Hub"}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              {t("entitlements.hub.desc") || "Manage revenue dashboard, subscriptions, stripe connect, plans and gateways."}
+              {t("entitlements.hub.desc") ||
+                "Manage revenue dashboard, subscriptions, stripe connect, plans and gateways."}
             </p>
           </div>
           <TabsList className="grid w-full grid-cols-5 bg-muted/40 p-1 sm:w-auto">
             <TabsTrigger value="overview" className="gap-1.5 text-xs font-bold transition-all">
               <LayoutDashboard className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">{t("entitlements.hub.tabs.overview") || "Overview"}</span>
+              <span className="hidden md:inline">
+                {t("entitlements.hub.tabs.overview") || "Overview"}
+              </span>
             </TabsTrigger>
             <TabsTrigger value="subscriptions" className="gap-1.5 text-xs font-bold transition-all">
               <CreditCard className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">{t("entitlements.hub.tabs.subscriptions") || "Subscriptions"}</span>
+              <span className="hidden md:inline">
+                {t("entitlements.hub.tabs.subscriptions") || "Subscriptions"}
+              </span>
             </TabsTrigger>
-            <TabsTrigger value="stripe-connect" className="gap-1.5 text-xs font-bold transition-all">
+            <TabsTrigger
+              value="stripe-connect"
+              className="gap-1.5 text-xs font-bold transition-all"
+            >
               <Banknote className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">{t("entitlements.hub.tabs.stripeConnect") || "Stripe Connect"}</span>
+              <span className="hidden md:inline">
+                {t("entitlements.hub.tabs.stripeConnect") || "Stripe Connect"}
+              </span>
             </TabsTrigger>
             <TabsTrigger value="plans" className="gap-1.5 text-xs font-bold transition-all">
               <BadgeDollarSign className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">{t("entitlements.hub.tabs.plans") || "Plans"}</span>
+              <span className="hidden md:inline">
+                {t("entitlements.hub.tabs.plans") || "Plans"}
+              </span>
             </TabsTrigger>
             <TabsTrigger value="gateways" className="gap-1.5 text-xs font-bold transition-all">
               <ShieldAlert className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">{t("entitlements.hub.tabs.gateways") || "Gateways"}</span>
+              <span className="hidden md:inline">
+                {t("entitlements.hub.tabs.gateways") || "Gateways"}
+              </span>
             </TabsTrigger>
           </TabsList>
         </div>

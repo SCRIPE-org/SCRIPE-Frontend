@@ -10,6 +10,8 @@ interface BulkActionBarProps {
   onDelete: () => void;
   onClear: () => void;
   isLoading: boolean;
+  canClose?: boolean;
+  canDelete?: boolean;
 }
 
 export function BulkActionBar({
@@ -18,6 +20,8 @@ export function BulkActionBar({
   onDelete,
   onClear,
   isLoading,
+  canClose = true,
+  canDelete = true,
 }: BulkActionBarProps) {
   const { t } = useI18n();
 
@@ -37,30 +41,32 @@ export function BulkActionBar({
 
       <div className="h-4 w-px bg-border" />
 
-      {/* Close selected */}
-      <Button
-        id="leads-bulk-close-btn"
-        size="sm"
-        disabled={isLoading}
-        onClick={onClose}
-        className="h-8 bg-amber-600 px-3 text-xs font-medium text-white hover:bg-amber-500"
-      >
-        {isLoading
-          ? t("leads.bulk.closing")
-          : t("leads.bulk.closeSelected", { count: String(count) })}
-      </Button>
+      {canClose && (
+        <Button
+          id="leads-bulk-close-btn"
+          size="sm"
+          disabled={isLoading}
+          onClick={onClose}
+          className="h-8 bg-amber-600 px-3 text-xs font-medium text-white hover:bg-amber-500"
+        >
+          {isLoading
+            ? t("leads.bulk.closing")
+            : t("leads.bulk.closeSelected", { count: String(count) })}
+        </Button>
+      )}
 
-      {/* Delete selected */}
-      <Button
-        id="leads-bulk-delete-btn"
-        size="sm"
-        variant="destructive"
-        disabled={isLoading}
-        onClick={onDelete}
-        className="h-8 bg-destructive px-3 text-xs font-medium text-destructive-foreground hover:bg-destructive/90"
-      >
-        {t("leads.bulk.deleteSelected", { count: String(count) })}
-      </Button>
+      {canDelete && (
+        <Button
+          id="leads-bulk-delete-btn"
+          size="sm"
+          variant="destructive"
+          disabled={isLoading}
+          onClick={onDelete}
+          className="h-8 bg-destructive px-3 text-xs font-medium text-destructive-foreground hover:bg-destructive/90"
+        >
+          {t("leads.bulk.deleteSelected", { count: String(count) })}
+        </Button>
+      )}
 
       <div className="h-4 w-px bg-border" />
 

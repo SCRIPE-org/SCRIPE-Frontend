@@ -183,6 +183,18 @@ export function RouteGuard({ children }: RouteGuardProps) {
 
       // ── Case 1: Token + authenticated → RBAC check ─────────────────────
       if (hasToken && isAuthenticated) {
+        const subscriptionStatus = useAppStore.getState().subscriptionStatus;
+        if (subscriptionStatus === "PendingPayment") {
+          if (pathname !== "/activate-workspace") {
+            appLogger.debug("[RouteGuard] Pending payment status → /activate-workspace");
+            hasRedirected.current = true;
+            router.replace("/activate-workspace");
+            return;
+          }
+          setIsChecking(false);
+          return;
+        }
+
         const mcp = useAppStore.getState().mustChangePassword;
         if (mcp && pathname !== "/change-password") {
           appLogger.debug("[RouteGuard] Must change password → /change-password");

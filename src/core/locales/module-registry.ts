@@ -88,6 +88,10 @@ import {
   en as signupContentEn,
   ar as signupContentAr,
 } from "@modules/entitlements/signup-content/locales";
+import {
+  en as activateWorkspaceEn,
+  ar as activateWorkspaceAr,
+} from "@modules/entitlements/activate-workspace/locales";
 
 // ─── Messaging ─────────────────────────────────────────
 import { en as messagingEn, ar as messagingAr } from "@modules/messaging/core/locales";
@@ -206,6 +210,7 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   revenueAnalyticsEn,
   leadsEn,
   signupContentEn,
+  activateWorkspaceEn,
   // Messaging
   messagingEn,
   webhooksEn,
@@ -278,6 +283,7 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   revenueAnalyticsAr,
   leadsAr,
   signupContentAr,
+  activateWorkspaceAr,
   // Messaging
   messagingAr,
   webhooksAr,

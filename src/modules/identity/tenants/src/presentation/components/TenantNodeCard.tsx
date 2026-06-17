@@ -17,12 +17,7 @@ import { usePermissions } from "@core/hooks/use-permissions";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { cn } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
-import {
-  Building2,
-  Pause,
-  Ban,
-  XCircle,
-} from "lucide-react";
+import { Building2, Pause, Ban, XCircle } from "lucide-react";
 import { systemContainer } from "@modules/identity/di";
 import type { TenantTreeNode } from "../../domain/entities/Tenant";
 

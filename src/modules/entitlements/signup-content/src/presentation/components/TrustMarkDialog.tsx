@@ -90,63 +90,33 @@ function TrustMarkDialogForm({ onClose, onSave, isSaving, editing }: TrustMarkDi
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
           <Label className="text-xs text-zinc-400">{t("signupContent.trustMarks.key")}</Label>
-          <Input
-            {...register("key")}
-            className="border-zinc-700 bg-zinc-900 text-white"
-          />
-          {errors.key && (
-            <p className="text-xs text-red-400">{errors.key.message}</p>
-          )}
+          <Input {...register("key")} className="border-zinc-700 bg-zinc-900 text-white" />
+          {errors.key && <p className="text-xs text-red-400">{errors.key.message}</p>}
         </div>
         <div className="space-y-1">
           <Label className="text-xs text-zinc-400">{t("signupContent.trustMarks.kind")}</Label>
-          <Input
-            {...register("kind")}
-            className="border-zinc-700 bg-zinc-900 text-white"
-          />
-          {errors.kind && (
-            <p className="text-xs text-red-400">{errors.kind.message}</p>
-          )}
+          <Input {...register("kind")} className="border-zinc-700 bg-zinc-900 text-white" />
+          {errors.kind && <p className="text-xs text-red-400">{errors.kind.message}</p>}
         </div>
         <div className="space-y-1">
           <Label className="text-xs text-zinc-400">{t("signupContent.trustMarks.labelEn")}</Label>
-          <Input
-            {...register("labelEn")}
-            className="border-zinc-700 bg-zinc-900 text-white"
-          />
-          {errors.labelEn && (
-            <p className="text-xs text-red-400">{errors.labelEn.message}</p>
-          )}
+          <Input {...register("labelEn")} className="border-zinc-700 bg-zinc-900 text-white" />
+          {errors.labelEn && <p className="text-xs text-red-400">{errors.labelEn.message}</p>}
         </div>
         <div className="space-y-1">
           <Label className="text-xs text-zinc-400">{t("signupContent.trustMarks.labelAr")}</Label>
-          <Input
-            {...register("labelAr")}
-            className="border-zinc-700 bg-zinc-900 text-white"
-          />
-          {errors.labelAr && (
-            <p className="text-xs text-red-400">{errors.labelAr.message}</p>
-          )}
+          <Input {...register("labelAr")} className="border-zinc-700 bg-zinc-900 text-white" />
+          {errors.labelAr && <p className="text-xs text-red-400">{errors.labelAr.message}</p>}
         </div>
         <div className="space-y-1">
           <Label className="text-xs text-zinc-400">{t("signupContent.trustMarks.iconKey")}</Label>
-          <Input
-            {...register("iconKey")}
-            className="border-zinc-700 bg-zinc-900 text-white"
-          />
-          {errors.iconKey && (
-            <p className="text-xs text-red-400">{errors.iconKey.message}</p>
-          )}
+          <Input {...register("iconKey")} className="border-zinc-700 bg-zinc-900 text-white" />
+          {errors.iconKey && <p className="text-xs text-red-400">{errors.iconKey.message}</p>}
         </div>
         <div className="space-y-1">
           <Label className="text-xs text-zinc-400">{t("signupContent.trustMarks.assetUrl")}</Label>
-          <Input
-            {...register("assetUrl")}
-            className="border-zinc-700 bg-zinc-900 text-white"
-          />
-          {errors.assetUrl && (
-            <p className="text-xs text-red-400">{errors.assetUrl.message}</p>
-          )}
+          <Input {...register("assetUrl")} className="border-zinc-700 bg-zinc-900 text-white" />
+          {errors.assetUrl && <p className="text-xs text-red-400">{errors.assetUrl.message}</p>}
         </div>
         <div className="space-y-1">
           <Label className="text-xs text-zinc-400">{t("signupContent.trustMarks.sortOrder")}</Label>
@@ -155,9 +125,7 @@ function TrustMarkDialogForm({ onClose, onSave, isSaving, editing }: TrustMarkDi
             {...register("sortOrder", { valueAsNumber: true })}
             className="border-zinc-700 bg-zinc-900 text-white"
           />
-          {errors.sortOrder && (
-            <p className="text-xs text-red-400">{errors.sortOrder.message}</p>
-          )}
+          {errors.sortOrder && <p className="text-xs text-red-400">{errors.sortOrder.message}</p>}
         </div>
       </div>
       <div className="flex items-center justify-between">

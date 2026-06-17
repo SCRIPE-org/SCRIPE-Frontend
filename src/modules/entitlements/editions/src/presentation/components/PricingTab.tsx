@@ -1,10 +1,10 @@
-/**
- * Pricing Tab — Redesigned with Hybrid Pricing Model
+﻿/**
+ * Pricing Tab â€” Redesigned with Hybrid Pricing Model
  *
  * 3-Section Layout:
- * 1. Base Pricing (USD) — Always visible, anchor currency
- * 2. Currency Overrides — Optional, with auto-suggest from exchange rates
- * 3. Live Preview — Shows what tenants would actually pay
+ * 1. Base Pricing (USD) â€” Always visible, anchor currency
+ * 2. Currency Overrides â€” Optional, with auto-suggest from exchange rates
+ * 3. Live Preview â€” Shows what tenants would actually pay
  */
 "use client";
 
@@ -81,7 +81,7 @@ export const PricingTab = memo(function PricingTab({
     }
   };
 
-  // ── Loading ──
+  // â”€â”€ Loading â”€â”€
   if (vm.isLoading) {
     return (
       <div className="space-y-4">
@@ -105,7 +105,7 @@ export const PricingTab = memo(function PricingTab({
     );
   }
 
-  // ── Error ──
+  // â”€â”€ Error â”€â”€
   if (vm.error) {
     return (
       <Card className="border-destructive/50">
@@ -122,9 +122,9 @@ export const PricingTab = memo(function PricingTab({
   return (
     <>
       <div className="space-y-4">
-        {/* ═══════════════════════════════════════════════════ */}
+        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
         {/* SECTION 1: BASE PRICING (USD)                     */}
-        {/* ═══════════════════════════════════════════════════ */}
+        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
         <Card className="overflow-hidden">
           <CardHeader className="py-3">
             <div className="flex items-center gap-2">
@@ -132,10 +132,10 @@ export const PricingTab = memo(function PricingTab({
                 <DollarSign className="h-4 w-4 text-emerald-500" />
               </div>
               <CardTitle className="text-sm font-medium">
-                {t("entitlements.pricing.basePricing") || "Base Pricing (USD)"}
+                {t("entitlements.pricing.basePricing")}
               </CardTitle>
               <Badge variant="secondary" className="text-[10px]">
-                {t("entitlements.pricing.required") || "Required"}
+                {t("entitlements.pricing.required")}
               </Badge>
             </div>
           </CardHeader>
@@ -145,7 +145,7 @@ export const PricingTab = memo(function PricingTab({
               className={`flex items-center gap-3 ${!allowMonthly ? "pointer-events-none opacity-40" : ""}`}
             >
               <span className="w-20 shrink-0 text-sm text-muted-foreground">
-                {t("entitlements.pricing.monthly") || "Monthly"}
+                {t("entitlements.pricing.monthly")}
               </span>
               <div className="relative max-w-xs flex-1">
                 <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground">
@@ -168,7 +168,7 @@ export const PricingTab = memo(function PricingTab({
                   variant="outline"
                   className="h-5 border-muted px-1.5 py-0 text-[10px] text-muted-foreground"
                 >
-                  {t("common.disabled") || "Disabled"}
+                  {t("common.disabled")}
                 </Badge>
               )}
             </div>
@@ -178,7 +178,7 @@ export const PricingTab = memo(function PricingTab({
               className={`flex items-center gap-3 ${!allowYearly ? "pointer-events-none opacity-40" : ""}`}
             >
               <span className="w-20 shrink-0 text-sm text-muted-foreground">
-                {t("entitlements.pricing.yearly") || "Yearly"}
+                {t("entitlements.pricing.yearly")}
               </span>
               <div className="relative max-w-xs flex-1">
                 <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground">
@@ -202,7 +202,7 @@ export const PricingTab = memo(function PricingTab({
                     variant="outline"
                     className="h-5 border-muted px-1.5 py-0 text-[10px] text-muted-foreground"
                   >
-                    {t("common.disabled") || "Disabled"}
+                    {t("common.disabled")}
                   </Badge>
                 ) : (
                   usdSavings > 0 && (
@@ -211,7 +211,7 @@ export const PricingTab = memo(function PricingTab({
                       className="h-5 border-emerald-500/30 bg-emerald-500/5 px-1.5 py-0 text-[10px] text-emerald-600 dark:text-emerald-400"
                     >
                       <TrendingDown className="me-0.5 h-2.5 w-2.5" />
-                      {t("entitlements.pricing.save") || "Save"} {usdSavings}%
+                      {t("entitlements.pricing.save")} {usdSavings}%
                     </Badge>
                   )
                 )}
@@ -261,8 +261,7 @@ export const PricingTab = memo(function PricingTab({
             <div className="mt-2 flex items-start gap-2 rounded-lg border border-blue-500/10 bg-blue-500/5 p-2.5">
               <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-500" />
               <p className="text-[11px] leading-relaxed text-blue-600 dark:text-blue-400">
-                {t("entitlements.pricing.autoConvertInfo") ||
-                  "Currencies without explicit overrides will auto-convert from USD at live exchange rates."}
+                {t("entitlements.pricing.autoConvertInfo")}
               </p>
             </div>
 
@@ -293,7 +292,7 @@ export const PricingTab = memo(function PricingTab({
                   variant="outline"
                   className="h-5 border-muted px-1.5 py-0 text-[10px] text-muted-foreground"
                 >
-                  {t("common.disabled") || "Disabled"}
+                  {t("common.disabled")}
                 </Badge>
               ) : (
                 <Badge
@@ -307,9 +306,9 @@ export const PricingTab = memo(function PricingTab({
           </CardContent>
         </Card>
 
-        {/* ═══════════════════════════════════════════════════ */}
+        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
         {/* SECTION 2: CURRENCY OVERRIDES                     */}
-        {/* ═══════════════════════════════════════════════════ */}
+        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
         <Card className="overflow-hidden">
           <CardHeader className="py-3">
             <div className="flex items-center justify-between">
@@ -318,7 +317,7 @@ export const PricingTab = memo(function PricingTab({
                   <Globe className="h-4 w-4 text-violet-500" />
                 </div>
                 <CardTitle className="text-sm font-medium">
-                  {t("entitlements.pricing.currencyOverrides") || "Currency Overrides"}
+                  {t("entitlements.pricing.currencyOverrides")}
                 </CardTitle>
                 {vm.overrides.length > 0 && (
                   <Badge variant="outline" className="text-[10px]">
@@ -326,7 +325,7 @@ export const PricingTab = memo(function PricingTab({
                   </Badge>
                 )}
                 <Badge variant="secondary" className="text-[10px]">
-                  {t("entitlements.pricing.optional") || "Optional"}
+                  {t("entitlements.pricing.optional")}
                 </Badge>
               </div>
               <Button
@@ -337,7 +336,7 @@ export const PricingTab = memo(function PricingTab({
                 className="gap-1.5"
               >
                 <Plus className="h-3.5 w-3.5" />
-                {t("entitlements.pricing.addOverride") || "Add Override"}
+                {t("entitlements.pricing.addOverride")}
               </Button>
             </div>
           </CardHeader>
@@ -349,17 +348,16 @@ export const PricingTab = memo(function PricingTab({
                   <Globe className="h-6 w-6 text-muted-foreground/50" />
                 </div>
                 <p className="max-w-xs text-xs text-muted-foreground">
-                  {t("entitlements.pricing.noOverridesDesc") ||
-                    "All currencies will auto-convert from USD. Add overrides for specific markets where you want fixed pricing."}
+                  {t("entitlements.pricing.noOverridesDesc")}
                 </p>
               </div>
             ) : (
               <div className="overflow-hidden rounded-lg border">
                 {/* Table Header */}
                 <div className="grid grid-cols-[140px_1fr_1fr_60px] gap-3 border-b bg-muted/30 px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  <span>{t("entitlements.pricing.currency") || "Currency"}</span>
-                  <span>{t("entitlements.pricing.monthly") || "Monthly"}</span>
-                  <span>{t("entitlements.pricing.yearly") || "Yearly"}</span>
+                  <span>{t("entitlements.pricing.currency")}</span>
+                  <span>{t("entitlements.pricing.monthly")}</span>
+                  <span>{t("entitlements.pricing.yearly")}</span>
                   <span />
                 </div>
 
@@ -376,7 +374,7 @@ export const PricingTab = memo(function PricingTab({
                       >
                         {/* Currency Label */}
                         <div className="flex items-center gap-2">
-                          <span className="text-lg leading-none">{info?.flag || "💱"}</span>
+                          <span className="text-lg leading-none">{info?.flag || "FX"}</span>
                           <div>
                             <span className="text-sm font-semibold">{row.currency}</span>
                             <p className="text-[10px] leading-tight text-muted-foreground">
@@ -460,9 +458,9 @@ export const PricingTab = memo(function PricingTab({
           </CardContent>
         </Card>
 
-        {/* ═══════════════════════════════════════════════════ */}
+        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
         {/* SECTION 3: LIVE PREVIEW (Collapsible)              */}
-        {/* ═══════════════════════════════════════════════════ */}
+        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
         {vm.usdMonthly > 0 && (
           <Card className="overflow-hidden">
             <CardHeader
@@ -475,10 +473,10 @@ export const PricingTab = memo(function PricingTab({
                     <Coins className="h-4 w-4 text-amber-500" />
                   </div>
                   <CardTitle className="text-sm font-medium">
-                    {t("entitlements.pricing.livePreview") || "Live Preview"}
+                    {t("entitlements.pricing.livePreview")}
                   </CardTitle>
                   <Badge variant="outline" className="text-[10px]">
-                    {vm.preview.length} {t("entitlements.pricing.currencies") || "currencies"}
+                    {vm.preview.length} {t("entitlements.pricing.currencies")}
                   </Badge>
                   {vm.ratesLoading && (
                     <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
@@ -493,15 +491,14 @@ export const PricingTab = memo(function PricingTab({
             {showPreview && (
               <CardContent className="pt-0">
                 <p className="mb-3 text-[11px] text-muted-foreground">
-                  {t("entitlements.pricing.previewDesc") ||
-                    "What tenants will actually pay in each currency."}
+                  {t("entitlements.pricing.previewDesc")}
                 </p>
                 <div className="overflow-hidden rounded-lg border">
                   <div className="grid grid-cols-[110px_1fr_1fr_80px] gap-3 border-b bg-muted/30 px-4 py-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                    <span>{t("entitlements.pricing.currency") || "Currency"}</span>
-                    <span>{t("entitlements.pricing.monthly") || "Monthly"}</span>
-                    <span>{t("entitlements.pricing.yearly") || "Yearly"}</span>
-                    <span>{t("entitlements.pricing.source") || "Source"}</span>
+                    <span>{t("entitlements.pricing.currency")}</span>
+                    <span>{t("entitlements.pricing.monthly")}</span>
+                    <span>{t("entitlements.pricing.yearly")}</span>
+                    <span>{t("entitlements.pricing.source")}</span>
                   </div>
                   <div className="max-h-[300px] divide-y overflow-y-auto">
                     {vm.preview.map((row) => {
@@ -512,7 +509,7 @@ export const PricingTab = memo(function PricingTab({
                           className="grid grid-cols-[110px_1fr_1fr_80px] items-center gap-3 px-4 py-2.5 text-sm"
                         >
                           <div className="flex items-center gap-1.5">
-                            <span className="text-base">{info?.flag || "💱"}</span>
+                            <span className="text-base">{info?.flag || "FX"}</span>
                             <span className="text-xs font-medium">{row.currency}</span>
                           </div>
                           <span className="text-xs tabular-nums">
@@ -530,8 +527,8 @@ export const PricingTab = memo(function PricingTab({
                             }`}
                           >
                             {row.source === "explicit"
-                              ? t("entitlements.pricing.explicit") || "Fixed"
-                              : t("entitlements.pricing.autoConverted") || "Auto"}
+                              ? t("entitlements.pricing.explicit")
+                              : t("entitlements.pricing.autoConverted")}
                           </Badge>
                         </div>
                       );
@@ -544,7 +541,7 @@ export const PricingTab = memo(function PricingTab({
         )}
       </div>
 
-      {/* ═══════ STICKY SAVE BAR ═══════ */}
+      {/* â•â•â•â•â•â•â• STICKY SAVE BAR â•â•â•â•â•â•â• */}
       {vm.isDirty && (
         <div className="fixed inset-x-0 bottom-0 z-50">
           <div className="border-t bg-background/95 shadow-[0_-4px_20px_rgba(0,0,0,0.15)] backdrop-blur-md">
@@ -554,11 +551,10 @@ export const PricingTab = memo(function PricingTab({
                   <div className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-amber-500" />
                   <div className="min-w-0">
                     <p className="text-sm font-medium">
-                      {t("entitlements.pricing.unsavedChanges") || "Unsaved pricing changes"}
+                      {t("entitlements.pricing.unsavedChanges")}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {t("entitlements.pricing.versionHint") ||
-                        "Save as version to grandfather existing subscribers, or apply now to update immediately."}
+                      {t("entitlements.pricing.versionHint")}
                     </p>
                   </div>
                 </div>
@@ -566,7 +562,7 @@ export const PricingTab = memo(function PricingTab({
                   {/* Discard */}
                   <Button variant="ghost" size="sm" onClick={vm.discard} disabled={isBusy}>
                     <Undo2 className="me-1 h-4 w-4" />
-                    {t("common.discard") || "Discard"}
+                    {t("common.discard")}
                   </Button>
 
                   {/* Apply Now (secondary) */}
@@ -578,7 +574,7 @@ export const PricingTab = memo(function PricingTab({
                     loading={vm.isSaving}
                   >
                     {!vm.isSaving && <Bolt className="me-1 h-4 w-4" />}
-                    {t("entitlements.editions.directApply") || "Apply Now"}
+                    {t("entitlements.editions.directApply")}
                   </Button>
 
                   {/* Save as Version (primary) */}
@@ -590,7 +586,7 @@ export const PricingTab = memo(function PricingTab({
                     className="gradient-primary"
                   >
                     {!vm.isCreatingVersion && <GitBranch className="me-1 h-4 w-4" />}
-                    {t("entitlements.editions.saveAsVersion") || "Save as Version"}
+                    {t("entitlements.editions.saveAsVersion")}
                   </Button>
                 </div>
               </div>
@@ -599,18 +595,15 @@ export const PricingTab = memo(function PricingTab({
         </div>
       )}
 
-      {/* ═══════ ADD CURRENCY OVERRIDE DIALOG ═══════ */}
+      {/* â•â•â•â•â•â•â• ADD CURRENCY OVERRIDE DIALOG â•â•â•â•â•â•â• */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Plus className="h-5 w-5 text-primary" />
-              {t("entitlements.pricing.addOverride") || "Add Currency Override"}
+              {t("entitlements.pricing.addOverride")}
             </DialogTitle>
-            <DialogDescription>
-              {t("entitlements.pricing.addOverrideDesc") ||
-                "Select a currency to set fixed pricing for. Prices will be auto-suggested from the current exchange rate."}
-            </DialogDescription>
+            <DialogDescription>{t("entitlements.pricing.addOverrideDesc")}</DialogDescription>
           </DialogHeader>
 
           <div className="py-3">
@@ -618,20 +611,20 @@ export const PricingTab = memo(function PricingTab({
               type="searchable"
               options={vm.availableCurrencies.map((c) => ({
                 value: c.code,
-                label: `${c.flag} ${c.code} — ${c.name}`,
+                label: `${c.flag} ${c.code} â€” ${c.name}`,
               }))}
               value={selectedCurrency}
               onValueChange={(value: string | string[]) =>
                 setSelectedCurrency(typeof value === "string" ? value : value[0] || "")
               }
-              placeholder={t("entitlements.pricing.selectCurrency") || "Search currency..."}
-              searchPlaceholder={t("entitlements.pricing.searchCurrency") || "Search..."}
+              placeholder={t("entitlements.pricing.selectCurrency")}
+              searchPlaceholder={t("entitlements.pricing.searchCurrency")}
             />
           </div>
 
           <DialogFooter>
             <Button variant="ghost" onClick={() => setShowAddDialog(false)}>
-              {t("common.cancel") || "Cancel"}
+              {t("common.cancel")}
             </Button>
             <Button
               onClick={handleAddCurrency}
@@ -639,35 +632,29 @@ export const PricingTab = memo(function PricingTab({
               className="gradient-primary"
             >
               <Plus className="me-1 h-4 w-4" />
-              {t("common.add") || "Add"}
+              {t("common.add")}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* ═══════ SAVE AS VERSION DIALOG ═══════ */}
+      {/* â•â•â•â•â•â•â• SAVE AS VERSION DIALOG â•â•â•â•â•â•â• */}
       <Dialog open={showVersionDialog} onOpenChange={setShowVersionDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <GitBranch className="h-5 w-5 text-primary" />
-              {t("entitlements.editions.saveAsVersion") || "Save as Version"}
+              {t("entitlements.editions.saveAsVersion")}
             </DialogTitle>
-            <DialogDescription>
-              {t("entitlements.pricing.saveAsVersionDesc") ||
-                "Save pricing changes as a new version. Existing subscribers will keep their current pricing until renewal."}
-            </DialogDescription>
+            <DialogDescription>{t("entitlements.pricing.saveAsVersionDesc")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-3 py-2">
             <div className="space-y-1.5">
               <Label className="text-sm font-medium">
-                {t("entitlements.editions.versionNotesLabel") || "Version Notes"}
+                {t("entitlements.editions.versionNotesLabel")}
               </Label>
               <Textarea
-                placeholder={
-                  t("entitlements.editions.versions.changeNotesPlaceholder") ||
-                  "Describe pricing changes..."
-                }
+                placeholder={t("entitlements.editions.versions.changeNotesPlaceholder")}
                 value={versionNotes}
                 onChange={(e) => setVersionNotes(e.target.value)}
                 className="min-h-[80px] resize-none"
@@ -675,15 +662,12 @@ export const PricingTab = memo(function PricingTab({
             </div>
             <div className="flex items-center gap-2 rounded-md bg-muted/50 p-2.5 text-xs text-muted-foreground">
               <DollarSign className="h-3.5 w-3.5 shrink-0" />
-              <span>
-                {t("entitlements.pricing.versionChangesIncluded") ||
-                  "Pricing changes will be included in this version."}
-              </span>
+              <span>{t("entitlements.pricing.versionChangesIncluded")}</span>
             </div>
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setShowVersionDialog(false)}>
-              {t("common.cancel") || "Cancel"}
+              {t("common.cancel")}
             </Button>
             <Button
               onClick={() => {
@@ -696,35 +680,29 @@ export const PricingTab = memo(function PricingTab({
               className="gradient-primary"
             >
               {!vm.isCreatingVersion && <GitBranch className="me-1 h-4 w-4" />}
-              {t("entitlements.editions.createAndPublish") || "Create Version"}
+              {t("entitlements.editions.createAndPublish")}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* ═══════ APPLY NOW CONFIRMATION DIALOG ═══════ */}
+      {/* â•â•â•â•â•â•â• APPLY NOW CONFIRMATION DIALOG â•â•â•â•â•â•â• */}
       <Dialog open={showApplyDialog} onOpenChange={setShowApplyDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
               <Bolt className="h-5 w-5" />
-              {t("entitlements.pricing.applyNowTitle") || "Apply Pricing Immediately?"}
+              {t("entitlements.pricing.applyNowTitle")}
             </DialogTitle>
-            <DialogDescription>
-              {t("entitlements.pricing.applyNowDesc") ||
-                "This will update pricing for all new subscriptions immediately. Existing subscribers are not affected until their next renewal."}
-            </DialogDescription>
+            <DialogDescription>{t("entitlements.pricing.applyNowDesc")}</DialogDescription>
           </DialogHeader>
           <div className="flex items-center gap-2 rounded-md border border-amber-500/20 bg-amber-500/5 p-2.5 text-xs text-muted-foreground">
             <Bolt className="h-3.5 w-3.5 shrink-0 text-amber-500" />
-            <span>
-              {t("entitlements.pricing.applyWarning") ||
-                "New pricing will take effect immediately for all new subscriptions."}
-            </span>
+            <span>{t("entitlements.pricing.applyWarning")}</span>
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setShowApplyDialog(false)}>
-              {t("common.cancel") || "Cancel"}
+              {t("common.cancel")}
             </Button>
             <Button
               variant="destructive"
@@ -736,7 +714,7 @@ export const PricingTab = memo(function PricingTab({
               loading={vm.isSaving}
             >
               {!vm.isSaving && <Bolt className="me-1 h-4 w-4" />}
-              {t("entitlements.editions.applyNow") || "Apply Now"}
+              {t("entitlements.editions.applyNow")}
             </Button>
           </DialogFooter>
         </DialogContent>

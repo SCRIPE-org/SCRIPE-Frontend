@@ -24,6 +24,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@core/ui/alert-dialog";
+import { usePermissions } from "@core/hooks/use-permission";
 import { useI18n } from "@core/providers/i18n-provider";
 import { type PlatformLeadListItem, type LeadStatus } from "../../domain/entities/PlatformLead";
 
@@ -55,6 +56,7 @@ const VIEW_MODE_STORAGE_KEY = "scripe.leads.viewMode";
 export function LeadsView() {
   const vm = useLeadsViewModel();
   const { t } = useI18n();
+  const { has } = usePermissions();
   const [viewMode, setViewModeState] = useState<ViewMode>(() => {
     if (typeof window === "undefined") return "table";
     const stored = window.localStorage.getItem(VIEW_MODE_STORAGE_KEY);
@@ -68,6 +70,11 @@ export function LeadsView() {
 
   const leads = vm.leads;
   const isAnyBulkPending = vm.isBulkClosing || vm.isBulkDeleting;
+  const canCreateLead = has("leads.create");
+  const canUpdateLead = has("leads.update");
+  const canAssignLead = has("leads.assign");
+  const canConvertLead = has("leads.convert");
+  const canDeleteLead = has("leads.delete");
 
   const columns: Column<PlatformLeadListItem>[] = [
     {
@@ -146,17 +153,20 @@ export function LeadsView() {
     {
       label: t("leads.actions.assign"),
       onClick: (lead: PlatformLeadListItem) => vm.handleOpenAssignDialog(lead.id),
-      show: (lead: PlatformLeadListItem) => lead.status !== "Converted" && lead.status !== "Closed",
+      show: (lead: PlatformLeadListItem) =>
+        canAssignLead && lead.status !== "Converted" && lead.status !== "Closed",
     },
     {
       label: t("leads.actions.convert"),
       onClick: (lead: PlatformLeadListItem) => vm.handleOpenConvertDialog(lead.id),
-      show: (lead: PlatformLeadListItem) => lead.status !== "Converted" && lead.status !== "Closed",
+      show: (lead: PlatformLeadListItem) =>
+        canConvertLead && lead.status !== "Converted" && lead.status !== "Closed",
     },
     {
       label: t("leads.actions.delete"),
       onClick: (lead: PlatformLeadListItem) => vm.handleDeleteLead(lead.id),
       variant: "destructive" as const,
+      show: () => canDeleteLead,
     },
   ];
 
@@ -210,14 +220,16 @@ export function LeadsView() {
             </Button>
           </div>
 
-          <Button
-            id="leads-create-btn"
-            onClick={vm.handleOpenCreateDialog}
-            size="sm"
-            className="ms-2 h-8 bg-indigo-600 px-3 text-xs text-white hover:bg-indigo-500"
-          >
-            {t("leads.createButton")}
-          </Button>
+          {canCreateLead && (
+            <Button
+              id="leads-create-btn"
+              onClick={vm.handleOpenCreateDialog}
+              size="sm"
+              className="ms-2 h-8 bg-indigo-600 px-3 text-xs text-white hover:bg-indigo-500"
+            >
+              {t("leads.createButton")}
+            </Button>
+          )}
         </div>
       </div>
 
@@ -257,14 +269,50 @@ export function LeadsView() {
       </div>
 
       {/* ── Table / Kanban ── */}
-      {viewMode === "kanban" ? (
-        <LeadsKanbanView
-          leads={leads}
-          isLoading={vm.isLoading}
-          onOpenDrawer={vm.handleOpenDrawer}
-          onMoveLead={vm.handleUpdateStatus}
-          isMoving={vm.isUpdatingStatus}
-        />
+      {vm.isError ? (
+        <div className="rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+          {t("leads.loadError")}
+        </div>
+      ) : viewMode === "kanban" ? (
+        <div className="space-y-3">
+          <LeadsKanbanView
+            leads={leads}
+            isLoading={vm.isLoading}
+            onOpenDrawer={vm.handleOpenDrawer}
+            onMoveLead={vm.handleUpdateStatus}
+            isMoving={vm.isUpdatingStatus || !canUpdateLead}
+          />
+          {vm.totalPages > 1 && (
+            <div className="flex items-center justify-end gap-2">
+              <span className="text-xs text-zinc-500">
+                {t("leads.pagination.page", {
+                  page: String(vm.page),
+                  total: String(vm.totalPages),
+                })}
+              </span>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={vm.page <= 1 || vm.isLoading}
+                onClick={() => vm.handlePageChange(vm.page - 1)}
+                className="h-8 border-zinc-700 bg-zinc-900 text-xs text-zinc-300 hover:bg-zinc-800"
+              >
+                {t("leads.pagination.previous")}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={vm.page >= vm.totalPages || vm.isLoading}
+                onClick={() => vm.handlePageChange(vm.page + 1)}
+                className="h-8 border-zinc-700 bg-zinc-900 text-xs text-zinc-300 hover:bg-zinc-800"
+              >
+                {t("leads.pagination.next")}
+              </Button>
+            </div>
+          )}
+        </div>
       ) : (
         <GenericTable
           data={leads}
@@ -293,9 +341,9 @@ export function LeadsView() {
         isLoading={vm.isLoadingDetail}
         onUpdateStatus={vm.handleUpdateStatus}
         isUpdatingStatus={vm.isUpdatingStatus}
-        onConvert={vm.handleOpenConvertDialog}
-        onAssign={vm.handleOpenAssignDialog}
-        onDelete={vm.handleDeleteLead}
+        onConvert={canConvertLead ? vm.handleOpenConvertDialog : undefined}
+        onAssign={canAssignLead ? vm.handleOpenAssignDialog : undefined}
+        onDelete={canDeleteLead ? vm.handleDeleteLead : undefined}
         isDeletingLead={vm.isDeletingLead}
         activity={vm.activity}
         isLoadingActivity={vm.isLoadingActivity}
@@ -383,6 +431,8 @@ export function LeadsView() {
         onDelete={vm.handleOpenBulkDelete}
         onClear={vm.handleClearSelection}
         isLoading={isAnyBulkPending}
+        canClose={canUpdateLead}
+        canDelete={canDeleteLead}
       />
     </div>
   );

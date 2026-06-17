@@ -29,6 +29,11 @@ export const en = {
       trustedByCount: "Trusted By",
       trustedByLabelEn: "Trusted By Label",
       trustedByLabelAr: "Trusted By Label (AR)",
+      placeholderEn: "English",
+      placeholderAr: "Arabic",
+      countPlaceholder: "Count",
+      trustedByLabelEnPlaceholder: "Label EN",
+      trustedByLabelArPlaceholder: "Label AR",
     },
 
     trustMarks: {
