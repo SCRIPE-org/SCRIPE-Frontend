@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Textarea } from "@core/ui/textarea";
@@ -8,6 +10,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Globe } from "lucide-react";
 import type { WelcomeContent } from "../../domain/entities/SignupContent";
 import type { UpdateWelcomeParams } from "../../domain/interfaces/ISignupContentRepository";
+import { WelcomeContentFormSchema } from "../schemas/signup-content.schema";
 
 interface WelcomeContentFormProps {
   welcome: WelcomeContent | null;
@@ -15,7 +18,9 @@ interface WelcomeContentFormProps {
   isSaving: boolean;
 }
 
-const EMPTY: UpdateWelcomeParams = {
+type FormValues = UpdateWelcomeParams;
+
+const EMPTY: FormValues = {
   headlineEn: "",
   headlineAr: "",
   subcopyEn: "",
@@ -27,7 +32,7 @@ const EMPTY: UpdateWelcomeParams = {
   trustedByLabelAr: "",
 };
 
-function toWelcomeForm(welcome: WelcomeContent | null): UpdateWelcomeParams {
+function toWelcomeForm(welcome: WelcomeContent | null): FormValues {
   if (!welcome) return EMPTY;
 
   return {
@@ -45,18 +50,28 @@ function toWelcomeForm(welcome: WelcomeContent | null): UpdateWelcomeParams {
 
 export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContentFormProps) {
   const { t } = useI18n();
-  const [form, setForm] = useState<UpdateWelcomeParams>(() => toWelcomeForm(welcome));
 
-  const set = (field: keyof UpdateWelcomeParams, value: unknown) =>
-    setForm((prev) => ({ ...prev, [field]: value }));
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: zodResolver(WelcomeContentFormSchema),
+    defaultValues: toWelcomeForm(welcome),
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(form);
+  // Sync state when welcome object shifts or is loaded
+  useEffect(() => {
+    reset(toWelcomeForm(welcome));
+  }, [welcome, reset]);
+
+  const onSubmit = (data: FormValues) => {
+    onSave(data);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       {/* Headline */}
       <div>
         <div className="mb-2 flex items-center gap-1.5">
@@ -66,19 +81,27 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
           </span>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <Input
-            placeholder="EN"
-            value={form.headlineEn}
-            onChange={(e) => set("headlineEn", e.target.value)}
-            className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
-          />
-          <Input
-            placeholder="AR"
-            dir="rtl"
-            value={form.headlineAr}
-            onChange={(e) => set("headlineAr", e.target.value)}
-            className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
-          />
+          <div>
+            <Input
+              placeholder={t("signupContent.welcome.placeholderEn")}
+              {...register("headlineEn")}
+              className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+            />
+            {errors.headlineEn && (
+              <p className="mt-1 text-xs text-red-400">{errors.headlineEn.message}</p>
+            )}
+          </div>
+          <div>
+            <Input
+              placeholder={t("signupContent.welcome.placeholderAr")}
+              dir="rtl"
+              {...register("headlineAr")}
+              className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+            />
+            {errors.headlineAr && (
+              <p className="mt-1 text-xs text-red-400" dir="rtl">{errors.headlineAr.message}</p>
+            )}
+          </div>
         </div>
       </div>
 
@@ -91,19 +114,27 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
           </span>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <Textarea
-            placeholder="EN"
-            value={form.subcopyEn}
-            onChange={(e) => set("subcopyEn", e.target.value)}
-            className="min-h-[80px] border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
-          />
-          <Textarea
-            placeholder="AR"
-            dir="rtl"
-            value={form.subcopyAr}
-            onChange={(e) => set("subcopyAr", e.target.value)}
-            className="min-h-[80px] border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
-          />
+          <div>
+            <Textarea
+              placeholder={t("signupContent.welcome.placeholderEn")}
+              {...register("subcopyEn")}
+              className="min-h-[80px] border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+            />
+            {errors.subcopyEn && (
+              <p className="mt-1 text-xs text-red-400">{errors.subcopyEn.message}</p>
+            )}
+          </div>
+          <div>
+            <Textarea
+              placeholder={t("signupContent.welcome.placeholderAr")}
+              dir="rtl"
+              {...register("subcopyAr")}
+              className="min-h-[80px] border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+            />
+            {errors.subcopyAr && (
+              <p className="mt-1 text-xs text-red-400" dir="rtl">{errors.subcopyAr.message}</p>
+            )}
+          </div>
         </div>
       </div>
 
@@ -116,19 +147,27 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
           </span>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <Input
-            placeholder="EN"
-            value={form.ctaLabelEn}
-            onChange={(e) => set("ctaLabelEn", e.target.value)}
-            className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
-          />
-          <Input
-            placeholder="AR"
-            dir="rtl"
-            value={form.ctaLabelAr}
-            onChange={(e) => set("ctaLabelAr", e.target.value)}
-            className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
-          />
+          <div>
+            <Input
+              placeholder={t("signupContent.welcome.placeholderEn")}
+              {...register("ctaLabelEn")}
+              className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+            />
+            {errors.ctaLabelEn && (
+              <p className="mt-1 text-xs text-red-400">{errors.ctaLabelEn.message}</p>
+            )}
+          </div>
+          <div>
+            <Input
+              placeholder={t("signupContent.welcome.placeholderAr")}
+              dir="rtl"
+              {...register("ctaLabelAr")}
+              className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+            />
+            {errors.ctaLabelAr && (
+              <p className="mt-1 text-xs text-red-400" dir="rtl">{errors.ctaLabelAr.message}</p>
+            )}
+          </div>
         </div>
       </div>
 
@@ -141,26 +180,38 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
           </span>
         </div>
         <div className="grid grid-cols-3 gap-3">
-          <Input
-            type="number"
-            placeholder="Count"
-            value={form.trustedByCount}
-            onChange={(e) => set("trustedByCount", Number(e.target.value))}
-            className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
-          />
-          <Input
-            placeholder="Label EN"
-            value={form.trustedByLabelEn}
-            onChange={(e) => set("trustedByLabelEn", e.target.value)}
-            className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
-          />
-          <Input
-            placeholder="Label AR"
-            dir="rtl"
-            value={form.trustedByLabelAr}
-            onChange={(e) => set("trustedByLabelAr", e.target.value)}
-            className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
-          />
+          <div>
+            <Input
+              type="number"
+              placeholder={t("signupContent.welcome.countPlaceholder")}
+              {...register("trustedByCount", { valueAsNumber: true })}
+              className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+            />
+            {errors.trustedByCount && (
+              <p className="mt-1 text-xs text-red-400">{errors.trustedByCount.message}</p>
+            )}
+          </div>
+          <div>
+            <Input
+              placeholder={t("signupContent.welcome.trustedByLabelEnPlaceholder")}
+              {...register("trustedByLabelEn")}
+              className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+            />
+            {errors.trustedByLabelEn && (
+              <p className="mt-1 text-xs text-red-400">{errors.trustedByLabelEn.message}</p>
+            )}
+          </div>
+          <div>
+            <Input
+              placeholder={t("signupContent.welcome.trustedByLabelArPlaceholder")}
+              dir="rtl"
+              {...register("trustedByLabelAr")}
+              className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+            />
+            {errors.trustedByLabelAr && (
+              <p className="mt-1 text-xs text-red-400" dir="rtl">{errors.trustedByLabelAr.message}</p>
+            )}
+          </div>
         </div>
       </div>
 

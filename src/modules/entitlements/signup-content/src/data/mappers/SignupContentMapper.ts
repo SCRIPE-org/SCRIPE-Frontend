@@ -7,54 +7,17 @@ import {
   CustomerLogo,
 } from "../../domain/entities/SignupContent";
 import type { ContentMode } from "../../domain/entities/SignupContent";
-import { CONTENT_MODES } from "../../domain/entities/SignupContent";
 
-const WelcomeContentSchema = z.object({
-  id: z.string(),
-  headlineEn: z.string().default(""),
-  headlineAr: z.string().default(""),
-  subcopyEn: z.string().default(""),
-  subcopyAr: z.string().default(""),
-  ctaLabelEn: z.string().default(""),
-  ctaLabelAr: z.string().default(""),
-  trustedByCount: z.number().default(0),
-  trustedByLabelEn: z.string().default(""),
-  trustedByLabelAr: z.string().default(""),
-});
-
-const TrustMarkSchema = z.object({
-  id: z.string(),
-  key: z.string().default(""),
-  kind: z.string().default(""),
-  labelEn: z.string().default(""),
-  labelAr: z.string().default(""),
-  iconKey: z.string().nullable().optional(),
-  assetUrl: z.string().nullable().optional(),
-  isRealData: z.boolean().default(false),
-  sortOrder: z.number().default(0),
-  isActive: z.boolean().default(true),
-});
-
-const CustomerLogoSchema = z.object({
-  id: z.string(),
-  key: z.string().default(""),
-  name: z.string().default(""),
-  assetUrl: z.string().default(""),
-  isRealData: z.boolean().default(false),
-  sortOrder: z.number().default(0),
-  isActive: z.boolean().default(true),
-});
-
-const AdminSignupContentSchema = z.object({
-  contentMode: z.enum(CONTENT_MODES).default("Seeded"),
-  welcomeContent: WelcomeContentSchema.nullable().optional(),
-  trustMarks: z.array(TrustMarkSchema).optional().default([]),
-  customerLogos: z.array(CustomerLogoSchema).optional().default([]),
-});
+import {
+  AdminSignupContentDtoSchema,
+  WelcomeContentDtoSchema,
+  TrustMarkDtoSchema,
+  CustomerLogoDtoSchema,
+} from "../../presentation/schemas/signup-content.schema";
 
 export class SignupContentMapper {
   static toEntity(model: unknown): AdminSignupContent {
-    const parsed = safeParseApiResponse(AdminSignupContentSchema, model, "AdminSignupContent");
+    const parsed = safeParseApiResponse(AdminSignupContentDtoSchema, model, "AdminSignupContent");
 
     return new AdminSignupContent({
       contentMode: parsed.contentMode as ContentMode,
@@ -64,7 +27,7 @@ export class SignupContentMapper {
     });
   }
 
-  private static toWelcomeContent(model: z.infer<typeof WelcomeContentSchema>): WelcomeContent {
+  private static toWelcomeContent(model: z.infer<typeof WelcomeContentDtoSchema>): WelcomeContent {
     return new WelcomeContent({
       id: model.id,
       headlineEn: model.headlineEn,
@@ -79,7 +42,7 @@ export class SignupContentMapper {
     });
   }
 
-  private static toTrustMark(model: z.infer<typeof TrustMarkSchema>): TrustMark {
+  private static toTrustMark(model: z.infer<typeof TrustMarkDtoSchema>): TrustMark {
     return new TrustMark({
       id: model.id,
       key: model.key,
@@ -94,7 +57,7 @@ export class SignupContentMapper {
     });
   }
 
-  private static toCustomerLogo(model: z.infer<typeof CustomerLogoSchema>): CustomerLogo {
+  private static toCustomerLogo(model: z.infer<typeof CustomerLogoDtoSchema>): CustomerLogo {
     return new CustomerLogo({
       id: model.id,
       key: model.key,

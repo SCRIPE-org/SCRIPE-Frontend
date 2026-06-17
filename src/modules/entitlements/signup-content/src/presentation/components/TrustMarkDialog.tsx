@@ -1,13 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
+import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { TrustMark } from "../../domain/entities/SignupContent";
 import type { CreateTrustMarkParams } from "../../domain/interfaces/ISignupContentRepository";
+import { TrustMarkFormSchema } from "../schemas/signup-content.schema";
 
 interface TrustMarkDialogProps {
   open: boolean;
@@ -54,84 +58,114 @@ interface TrustMarkDialogFormProps {
 
 function TrustMarkDialogForm({ onClose, onSave, isSaving, editing }: TrustMarkDialogFormProps) {
   const { t } = useI18n();
-  const [form, setForm] = useState<CreateTrustMarkParams>(() => toTrustMarkForm(editing));
 
-  const set = (field: keyof CreateTrustMarkParams, value: unknown) =>
-    setForm((prev) => ({ ...prev, [field]: value }));
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<CreateTrustMarkParams>({
+    resolver: zodResolver(TrustMarkFormSchema),
+    defaultValues: toTrustMarkForm(editing),
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(form);
+  const isRealData = useWatch({
+    control,
+    name: "isRealData",
+    defaultValue: false,
+  });
+
+  useEffect(() => {
+    reset(toTrustMarkForm(editing));
+  }, [editing, reset]);
+
+  const onSubmit = (data: CreateTrustMarkParams) => {
+    onSave(data);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 py-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-2">
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
-          <label className="text-xs text-zinc-400">{t("signupContent.trustMarks.key")}</label>
+          <Label className="text-xs text-zinc-400">{t("signupContent.trustMarks.key")}</Label>
           <Input
-            value={form.key}
-            onChange={(e) => set("key", e.target.value)}
-            className="border-zinc-700 bg-zinc-900 text-white"
-            required
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="text-xs text-zinc-400">{t("signupContent.trustMarks.kind")}</label>
-          <Input
-            value={form.kind}
-            onChange={(e) => set("kind", e.target.value)}
-            className="border-zinc-700 bg-zinc-900 text-white"
-            required
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="text-xs text-zinc-400">{t("signupContent.trustMarks.labelEn")}</label>
-          <Input
-            value={form.labelEn}
-            onChange={(e) => set("labelEn", e.target.value)}
-            className="border-zinc-700 bg-zinc-900 text-white"
-            required
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="text-xs text-zinc-400">{t("signupContent.trustMarks.labelAr")}</label>
-          <Input
-            value={form.labelAr}
-            onChange={(e) => set("labelAr", e.target.value)}
-            className="border-zinc-700 bg-zinc-900 text-white"
-            required
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="text-xs text-zinc-400">{t("signupContent.trustMarks.iconKey")}</label>
-          <Input
-            value={form.iconKey ?? ""}
-            onChange={(e) => set("iconKey", e.target.value)}
+            {...register("key")}
             className="border-zinc-700 bg-zinc-900 text-white"
           />
+          {errors.key && (
+            <p className="text-xs text-red-400">{errors.key.message}</p>
+          )}
         </div>
         <div className="space-y-1">
-          <label className="text-xs text-zinc-400">{t("signupContent.trustMarks.assetUrl")}</label>
+          <Label className="text-xs text-zinc-400">{t("signupContent.trustMarks.kind")}</Label>
           <Input
-            value={form.assetUrl ?? ""}
-            onChange={(e) => set("assetUrl", e.target.value)}
+            {...register("kind")}
             className="border-zinc-700 bg-zinc-900 text-white"
           />
+          {errors.kind && (
+            <p className="text-xs text-red-400">{errors.kind.message}</p>
+          )}
         </div>
         <div className="space-y-1">
-          <label className="text-xs text-zinc-400">{t("signupContent.trustMarks.sortOrder")}</label>
+          <Label className="text-xs text-zinc-400">{t("signupContent.trustMarks.labelEn")}</Label>
+          <Input
+            {...register("labelEn")}
+            className="border-zinc-700 bg-zinc-900 text-white"
+          />
+          {errors.labelEn && (
+            <p className="text-xs text-red-400">{errors.labelEn.message}</p>
+          )}
+        </div>
+        <div className="space-y-1">
+          <Label className="text-xs text-zinc-400">{t("signupContent.trustMarks.labelAr")}</Label>
+          <Input
+            {...register("labelAr")}
+            className="border-zinc-700 bg-zinc-900 text-white"
+          />
+          {errors.labelAr && (
+            <p className="text-xs text-red-400">{errors.labelAr.message}</p>
+          )}
+        </div>
+        <div className="space-y-1">
+          <Label className="text-xs text-zinc-400">{t("signupContent.trustMarks.iconKey")}</Label>
+          <Input
+            {...register("iconKey")}
+            className="border-zinc-700 bg-zinc-900 text-white"
+          />
+          {errors.iconKey && (
+            <p className="text-xs text-red-400">{errors.iconKey.message}</p>
+          )}
+        </div>
+        <div className="space-y-1">
+          <Label className="text-xs text-zinc-400">{t("signupContent.trustMarks.assetUrl")}</Label>
+          <Input
+            {...register("assetUrl")}
+            className="border-zinc-700 bg-zinc-900 text-white"
+          />
+          {errors.assetUrl && (
+            <p className="text-xs text-red-400">{errors.assetUrl.message}</p>
+          )}
+        </div>
+        <div className="space-y-1">
+          <Label className="text-xs text-zinc-400">{t("signupContent.trustMarks.sortOrder")}</Label>
           <Input
             type="number"
-            value={form.sortOrder}
-            onChange={(e) => set("sortOrder", Number(e.target.value))}
+            {...register("sortOrder", { valueAsNumber: true })}
             className="border-zinc-700 bg-zinc-900 text-white"
           />
+          {errors.sortOrder && (
+            <p className="text-xs text-red-400">{errors.sortOrder.message}</p>
+          )}
         </div>
       </div>
       <div className="flex items-center justify-between">
-        <label className="text-xs text-zinc-400">{t("signupContent.trustMarks.isRealData")}</label>
-        <Switch checked={form.isRealData} onCheckedChange={(v) => set("isRealData", v)} />
+        <Label className="text-xs text-zinc-400">{t("signupContent.trustMarks.isRealData")}</Label>
+        <Switch
+          checked={isRealData}
+          onCheckedChange={(v) => setValue("isRealData", v, { shouldValidate: true })}
+        />
       </div>
       <DialogFooter>
         <Button
