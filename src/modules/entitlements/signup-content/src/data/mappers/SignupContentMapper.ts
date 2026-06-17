@@ -1,12 +1,12 @@
 import { z } from "zod";
 import { safeParseApiResponse } from "@core/common/zod-utils";
-import type {
+import {
   AdminSignupContent,
-  ContentMode,
-  CustomerLogo,
-  TrustMark,
   WelcomeContent,
+  TrustMark,
+  CustomerLogo,
 } from "../../domain/entities/SignupContent";
+import type { ContentMode } from "../../domain/entities/SignupContent";
 import { CONTENT_MODES } from "../../domain/entities/SignupContent";
 import type { AdminSignupContentModel } from "../models/SignupContentModels";
 
@@ -57,16 +57,16 @@ export class SignupContentMapper {
   static toEntity(model: AdminSignupContentModel): AdminSignupContent {
     const parsed = safeParseApiResponse(AdminSignupContentSchema, model, "AdminSignupContent");
 
-    return {
+    return new AdminSignupContent({
       contentMode: parsed.contentMode as ContentMode,
       welcomeContent: parsed.welcomeContent ? this.toWelcomeContent(parsed.welcomeContent) : null,
       trustMarks: parsed.trustMarks.map(this.toTrustMark),
       customerLogos: parsed.customerLogos.map(this.toCustomerLogo),
-    };
+    });
   }
 
   private static toWelcomeContent(model: z.infer<typeof WelcomeContentSchema>): WelcomeContent {
-    return {
+    return new WelcomeContent({
       id: model.id,
       headlineEn: model.headlineEn,
       headlineAr: model.headlineAr,
@@ -77,11 +77,11 @@ export class SignupContentMapper {
       trustedByCount: model.trustedByCount,
       trustedByLabelEn: model.trustedByLabelEn,
       trustedByLabelAr: model.trustedByLabelAr,
-    };
+    });
   }
 
   private static toTrustMark(model: z.infer<typeof TrustMarkSchema>): TrustMark {
-    return {
+    return new TrustMark({
       id: model.id,
       key: model.key,
       kind: model.kind,
@@ -92,11 +92,11 @@ export class SignupContentMapper {
       isRealData: model.isRealData,
       sortOrder: model.sortOrder,
       isActive: model.isActive,
-    };
+    });
   }
 
   private static toCustomerLogo(model: z.infer<typeof CustomerLogoSchema>): CustomerLogo {
-    return {
+    return new CustomerLogo({
       id: model.id,
       key: model.key,
       name: model.name,
@@ -104,6 +104,6 @@ export class SignupContentMapper {
       isRealData: model.isRealData,
       sortOrder: model.sortOrder,
       isActive: model.isActive,
-    };
+    });
   }
 }
