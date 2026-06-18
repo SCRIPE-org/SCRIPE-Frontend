@@ -1,11 +1,14 @@
 /**
  * Identity Provider Detail View
  *
- * Full-page detail/edit/create view for a single Identity Provider.
- * Uses sectioned form layout with all configuration options.
+ * Premium detailed edit / creation workspace for a single Identity Provider.
+ * Dual layout modes:
+ * 1. Create Mode: A gorgeous 3-step configuration Wizard (Templates -> Settings -> Appearance/Claims).
+ * 2. Edit Mode: A professional 4-tab settings dashboard (Config, Claims, Branding, Security & Access).
  */
 "use client";
 
+import { useState } from "react";
 import { useIdentityProviderDetailViewModel } from "../viewmodels/useIdentityProviderDetailViewModel";
 import {
   GeneralSection,
@@ -15,13 +18,29 @@ import {
   ExplicitEndpointsSection,
   AppearanceSection,
   AccessControlSection,
-  ClaimMappingsSection,
 } from "../components/IdentityProviderFormSections";
 import { WellKnownProviderGallery } from "../components/WellKnownProviderGallery";
+import { ClaimMappingEditor } from "../components/ClaimMappingEditor";
+import { SSOButtonPreview } from "../components/SSOButtonPreview";
+import { CallbackUrlCard } from "../components/CallbackUrlCard";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import { ArrowLeft, Save, Loader2, Zap, Trash2, Fingerprint, Clock } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
+import {
+  ArrowLeft,
+  Save,
+  Loader2,
+  Zap,
+  Trash2,
+  Fingerprint,
+  Clock,
+  Compass,
+  Palette,
+  ShieldAlert,
+  FileJson,
+  AlertCircle,
+} from "lucide-react";
 import { format } from "date-fns";
 import {
   AlertDialog,
@@ -34,6 +53,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@core/ui/alert-dialog";
+import { Card, CardContent } from "@core/ui/card";
 
 interface Props {
   providerId?: string;
@@ -43,13 +63,22 @@ export function IdentityProviderDetailView({ providerId }: Props) {
   const vm = useIdentityProviderDetailViewModel(providerId);
   const { t } = useI18n();
 
+  // Wizard step state for Create Mode
+  const [createStep, setCreateStep] = useState(1);
+
+  // Connection testing state status
+  const [testResult, setTestResult] = useState<{ isSuccess: boolean; message: string } | null>(null);
+  const [isTestingConnection, setIsTestingConnection] = useState(false);
+
   // ─── Loading state ──────────────────────────
   if (!vm.isCreateMode && vm.isLoading) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
+      <div className="flex min-h-[450px] items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">{t("common.loading") || "Loading..."}</p>
+          <div className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-purple-500/10 border border-purple-500/20 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
+            <Loader2 className="h-6 w-6 animate-spin text-purple-500" />
+          </div>
+          <p className="text-xs text-muted-foreground">{t("common.loading") || "Loading details..."}</p>
         </div>
       </div>
     );
@@ -59,10 +88,13 @@ export function IdentityProviderDetailView({ providerId }: Props) {
   if (vm.fetchError) {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center gap-4">
-        <p className="text-sm text-red-500">
+        <div className="rounded-full bg-red-500/10 p-3 text-red-500 border border-red-500/20">
+          <AlertCircle className="h-8 w-8" />
+        </div>
+        <p className="text-sm font-medium text-red-600">
           {t("common.error") || "Error"}: {(vm.fetchError as Error).message}
         </p>
-        <Button variant="outline" onClick={vm.goBack}>
+        <Button variant="outline" size="sm" onClick={vm.goBack}>
           <ArrowLeft className="me-2 h-4 w-4" />
           {t("common.goBack") || "Go Back"}
         </Button>
@@ -77,195 +109,438 @@ export function IdentityProviderDetailView({ providerId }: Props) {
     isCreateMode: vm.isCreateMode,
   };
 
+  const handleTestConnection = async () => {
+    try {
+      setIsTestingConnection(true);
+      setTestResult(null);
+      // Wait for repository connection test execution
+      const result = await vm.testConnection();
+      // ViewModel returns result or mutation triggers success
+    } catch (err) {
+      // Ignore
+    } finally {
+      setIsTestingConnection(false);
+    }
+  };
+
+  // ─── CREATE MODE: 3-Step Wizard ───────────────────────────────────
+  if (vm.isCreateMode) {
+    return (
+      <div className="space-y-6 pb-12 animate-in fade-in duration-300">
+        {/* Header */}
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="icon" onClick={vm.goBack} className="shrink-0">
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div>
+            <h1 className="text-xl font-bold tracking-tight text-foreground">
+              {t("identityProviders.createTitle") || "Create Identity Provider"}
+            </h1>
+            <p className="text-xs text-muted-foreground">
+              Configure external authentication federation credentials step by step.
+            </p>
+          </div>
+        </div>
+
+        {/* Step Indicator Bar */}
+        <div className="relative overflow-hidden rounded-xl border border-border/80 bg-card/45 p-4 backdrop-blur-md">
+          <div className="flex items-center justify-between max-w-xl mx-auto">
+            {/* Step 1 */}
+            <div className="flex flex-col items-center gap-1.5 z-10">
+              <span
+                className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${
+                  createStep >= 1
+                    ? "bg-purple-600 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]"
+                    : "bg-muted text-muted-foreground border border-border"
+                }`}
+              >
+                1
+              </span>
+              <span className={`text-[10px] font-bold uppercase tracking-wider ${createStep === 1 ? "text-purple-600 dark:text-purple-400" : "text-muted-foreground"}`}>
+                Select Template
+              </span>
+            </div>
+
+            {/* Line 1 */}
+            <div className="flex-1 h-0.5 bg-border mx-4 relative">
+              <div
+                className="absolute left-0 top-0 h-full bg-purple-500 transition-all duration-500"
+                style={{ width: createStep > 1 ? "100%" : "0%" }}
+              />
+            </div>
+
+            {/* Step 2 */}
+            <div className="flex flex-col items-center gap-1.5 z-10">
+              <span
+                className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${
+                  createStep >= 2
+                    ? "bg-purple-600 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]"
+                    : "bg-muted text-muted-foreground border border-border"
+                }`}
+              >
+                2
+              </span>
+              <span className={`text-[10px] font-bold uppercase tracking-wider ${createStep === 2 ? "text-purple-600 dark:text-purple-400" : "text-muted-foreground"}`}>
+                Connection settings
+              </span>
+            </div>
+
+            {/* Line 2 */}
+            <div className="flex-1 h-0.5 bg-border mx-4 relative">
+              <div
+                className="absolute left-0 top-0 h-full bg-purple-500 transition-all duration-500"
+                style={{ width: createStep > 2 ? "100%" : "0%" }}
+              />
+            </div>
+
+            {/* Step 3 */}
+            <div className="flex flex-col items-center gap-1.5 z-10">
+              <span
+                className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${
+                  createStep >= 3
+                    ? "bg-purple-600 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]"
+                    : "bg-muted text-muted-foreground border border-border"
+                }`}
+              >
+                3
+              </span>
+              <span className={`text-[10px] font-bold uppercase tracking-wider ${createStep === 3 ? "text-purple-600 dark:text-purple-400" : "text-muted-foreground"}`}>
+                Appearance & Claims
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Wizard Step Content */}
+        <div className="space-y-6">
+          {/* Step 1: Select Template */}
+          {createStep === 1 && (
+            <div className="space-y-6 animate-in fade-in duration-300">
+              <Card>
+                <CardContent className="p-6">
+                  <WellKnownProviderGallery
+                    selectedId={vm.selectedTemplateId}
+                    onSelect={(preset) => {
+                      const id = (preset as Record<string, unknown>)["slug"] as string | undefined;
+                      vm.applyTemplate(id ?? "custom", preset);
+                    }}
+                  />
+                </CardContent>
+              </Card>
+
+              <div className="flex justify-end gap-3">
+                <Button
+                  onClick={() => setCreateStep(2)}
+                  disabled={!vm.selectedTemplateId}
+                  className="font-semibold text-white shadow bg-gradient-to-r from-[#A855F7] to-[#7C3AED] hover:opacity-95"
+                >
+                  Configure Connection Settings
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 2: Connection settings */}
+          {createStep === 2 && (
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 animate-in fade-in duration-300">
+              <div className="space-y-6 lg:col-span-2">
+                <GeneralSection {...sectionProps} />
+
+                {vm.form.protocol === "oidc" && <OidcConfigSection {...sectionProps} />}
+                {vm.form.protocol === "oauth2" && <Oauth2ConfigSection {...sectionProps} />}
+                {vm.form.protocol === "saml" && <SamlConfigSection {...sectionProps} />}
+
+                {vm.form.protocol !== "saml" && <ExplicitEndpointsSection {...sectionProps} />}
+              </div>
+
+              <div className="space-y-6 lg:col-span-1">
+                <CallbackUrlCard protocol={vm.form.protocol} />
+              </div>
+
+              {/* Step Navigation controls */}
+              <div className="lg:col-span-3 flex justify-between gap-3 border-t pt-4">
+                <Button variant="outline" onClick={() => setCreateStep(1)}>
+                  Back to Templates
+                </Button>
+                <Button
+                  onClick={() => setCreateStep(3)}
+                  disabled={!vm.form.name || !vm.form.slug}
+                  className="font-semibold text-white shadow bg-gradient-to-r from-[#A855F7] to-[#7C3AED] hover:opacity-95"
+                >
+                  Next: Customize Look & Claim mapping
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Appearance & Claims */}
+          {createStep === 3 && (
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 animate-in fade-in duration-300">
+              <div className="space-y-6">
+                <AppearanceSection {...sectionProps} />
+                <AccessControlSection {...sectionProps} />
+              </div>
+
+              <div className="space-y-6">
+                <Card className="p-5">
+                  <ClaimMappingEditor
+                    value={vm.form.claimMappingJson}
+                    onChange={(val) => vm.updateField("claimMappingJson", val)}
+                  />
+                </Card>
+
+                <Card className="p-5">
+                  <SSOButtonPreview
+                    name={vm.form.name}
+                    iconUrl={vm.form.iconUrl}
+                    buttonColor={vm.form.buttonColor}
+                    buttonLabel={vm.form.buttonLabel}
+                  />
+                </Card>
+              </div>
+
+              {/* Step Navigation controls */}
+              <div className="lg:col-span-2 flex justify-between gap-3 border-t pt-4">
+                <Button variant="outline" onClick={() => setCreateStep(2)}>
+                  Back to Config
+                </Button>
+                <Button
+                  onClick={vm.save}
+                  loading={vm.isSaving}
+                  disabled={!vm.form.name || !vm.form.slug}
+                  className="font-semibold text-white shadow-lg bg-gradient-to-r from-[#A855F7] via-[#7C3AED] to-[#4F46E5] hover:opacity-95 hover:scale-[1.01]"
+                >
+                  Create & Enable SSO Provider
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ─── EDIT MODE: Tabbed Configuration Workspace ────────────────────
   return (
-    <div className="space-y-6 pb-10">
-      {/* ─── Header ────────────────────────────────── */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="space-y-6 pb-12 animate-in fade-in duration-300">
+      {/* Header Row */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b pb-4">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={vm.goBack} className="shrink-0">
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-3">
-            {vm.form.iconUrl ? (
-              <img
-                src={vm.form.iconUrl}
-                alt={vm.form.name}
-                className="h-9 w-9 rounded-lg border object-contain p-1"
-              />
-            ) : (
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg border bg-muted/50">
-                <Fingerprint className="h-5 w-5 text-muted-foreground" />
-              </div>
-            )}
-            <div>
-              <h1 className="text-xl font-semibold tracking-tight">
-                {vm.isCreateMode
-                  ? t("identityProviders.createTitle") || "New Identity Provider"
-                  : vm.form.name || t("identityProviders.editTitle") || "Edit Provider"}
-              </h1>
-              {!vm.isCreateMode && vm.form.slug && (
-                <p className="font-mono text-sm text-muted-foreground">{vm.form.slug}</p>
+            <div
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl p-1.5"
+              style={{
+                backgroundColor: `${vm.form.buttonColor || "#4F46E5"}12`,
+                border: `1px solid ${vm.form.buttonColor || "#4F46E5"}25`,
+              }}
+            >
+              {vm.form.iconUrl ? (
+                <img
+                  src={vm.form.iconUrl}
+                  alt={vm.form.name}
+                  className="h-6 w-6 rounded object-contain"
+                />
+              ) : (
+                <Fingerprint className="h-6 w-6" style={{ color: vm.form.buttonColor || "#4F46E5" }} />
               )}
+            </div>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight text-foreground">
+                {vm.form.name || "Edit Provider"}
+              </h1>
+              <p className="font-mono text-xs text-muted-foreground mt-0.5">{vm.form.slug}</p>
             </div>
           </div>
         </div>
 
-        <div className="ms-12 flex items-center gap-2 sm:ms-0">
+        {/* Global Action controls */}
+        <div className="flex items-center gap-2 self-end sm:self-center">
           {/* Test Connection */}
-          {!vm.isCreateMode && (
-            <Button variant="outline" size="sm" onClick={vm.testConnection} loading={vm.isTesting}>
-              {!vm.isTesting && <Zap className="me-1.5 h-4 w-4" />}
-              {t("identityProviders.testConnection") || "Test Connection"}
-            </Button>
-          )}
+          <Button variant="outline" size="sm" onClick={handleTestConnection} loading={isTestingConnection}>
+            {!isTestingConnection && <Zap className="me-1.5 h-4 w-4 text-amber-500" />}
+            {t("identityProviders.testConnection") || "Test Connection"}
+          </Button>
 
           {/* Save */}
           <Button
             onClick={vm.save}
-            disabled={!vm.isCreateMode && !vm.isDirty}
+            disabled={!vm.isDirty}
             loading={vm.isSaving}
             size="sm"
+            className="font-semibold text-white shadow bg-gradient-to-r from-[#A855F7] to-[#7C3AED] hover:opacity-95"
           >
             {!vm.isSaving && <Save className="me-1.5 h-4 w-4" />}
-            {vm.isCreateMode
-              ? t("identityProviders.createButton") || "Create Provider"
-              : t("common.save") || "Save Changes"}
+            {t("common.save") || "Save Changes"}
           </Button>
         </div>
       </div>
 
-      {/* Dirty indicator */}
-      {vm.isDirty && !vm.isCreateMode && (
-        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-600 dark:border-amber-800 dark:bg-amber-950/20 dark:text-amber-400">
+      {/* Dirty indicator warning */}
+      {vm.isDirty && (
+        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-600 dark:border-amber-800 dark:bg-amber-950/20 dark:text-amber-400 animate-in fade-in duration-200">
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />
-          {t("common.unsavedChanges") || "You have unsaved changes"}
+          {t("common.unsavedChanges") || "You have unsaved changes in your workspace. Remember to save."}
         </div>
       )}
 
-      {/* ─── Well-Known Provider Gallery (create mode only) ─────────────── */}
-      {vm.isCreateMode && (
-        <WellKnownProviderGallery
-          selectedId={vm.selectedTemplateId}
-          onSelect={(preset) => {
-            // Figure out which template was selected by matching the slug
-            const id = (preset as Record<string, unknown>)["slug"] as string | undefined;
-            vm.applyTemplate(id ?? "custom", preset);
-          }}
-        />
-      )}
+      {/* ─── Tabbed Workspace Layout ───────────────────────────── */}
+      <Tabs defaultValue="connection" className="w-full space-y-6">
+        <TabsList className="grid w-full grid-cols-2 md:w-auto md:inline-flex md:grid-cols-none border bg-muted/40 p-1">
+          <TabsTrigger value="connection" className="text-xs font-semibold gap-1.5">
+            <Compass className="h-3.5 w-3.5" />
+            Connection settings
+          </TabsTrigger>
+          <TabsTrigger value="claims" className="text-xs font-semibold gap-1.5">
+            <FileJson className="h-3.5 w-3.5" />
+            Claim Mappings
+          </TabsTrigger>
+          <TabsTrigger value="branding" className="text-xs font-semibold gap-1.5">
+            <Palette className="h-3.5 w-3.5" />
+            Look & Feel
+          </TabsTrigger>
+          <TabsTrigger value="access" className="text-xs font-semibold gap-1.5">
+            <ShieldAlert className="h-3.5 w-3.5" />
+            Security & Controls
+          </TabsTrigger>
+        </TabsList>
 
-      {/* ─── Form Sections ─────────────────────────── */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="space-y-6">
-          <GeneralSection {...sectionProps} />
+        {/* Tab 1: Connection configurations */}
+        <TabsContent value="connection" className="space-y-6 outline-none">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <div className="space-y-6 lg:col-span-2">
+              <GeneralSection {...sectionProps} />
 
-          {vm.form.protocol === "oidc" && <OidcConfigSection {...sectionProps} />}
-          {vm.form.protocol === "oauth2" && <Oauth2ConfigSection {...sectionProps} />}
-          {vm.form.protocol === "saml" && <SamlConfigSection {...sectionProps} />}
+              {vm.form.protocol === "oidc" && <OidcConfigSection {...sectionProps} />}
+              {vm.form.protocol === "oauth2" && <Oauth2ConfigSection {...sectionProps} />}
+              {vm.form.protocol === "saml" && <SamlConfigSection {...sectionProps} />}
 
-          {vm.form.protocol !== "saml" && <ExplicitEndpointsSection {...sectionProps} />}
-          {vm.form.protocol !== "saml" && <ClaimMappingsSection {...sectionProps} />}
-        </div>
-        <div className="space-y-6">
-          <AppearanceSection {...sectionProps} />
-          <AccessControlSection {...sectionProps} />
+              {vm.form.protocol !== "saml" && <ExplicitEndpointsSection {...sectionProps} />}
+            </div>
 
-          {/* ─── Metadata Card ─────────────────── */}
-          {!vm.isCreateMode && vm.provider && (
-            <div className="space-y-3 rounded-lg border bg-muted/30 p-4">
-              <h3 className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                <Clock className="h-4 w-4" />
-                {t("identityProviders.metadata") || "Information"}
-              </h3>
-              <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="space-y-6 lg:col-span-1">
+              <CallbackUrlCard protocol={vm.form.protocol} />
+
+              {/* Status information card */}
+              <Card className="p-4 space-y-3 bg-muted/20">
+                <h3 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  <Clock className="h-4 w-4" />
+                  Audit & Metadata
+                </h3>
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between border-b pb-1">
+                    <span className="text-muted-foreground">Created:</span>
+                    <span className="font-medium">
+                      {vm.provider?.createdAt
+                        ? format(new Date(vm.provider.createdAt), "MMM d, yyyy HH:mm")
+                        : "—"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between border-b pb-1">
+                    <span className="text-muted-foreground">Last modified:</span>
+                    <span className="font-medium">
+                      {vm.provider?.modifiedAt
+                        ? format(new Date(vm.provider.modifiedAt), "MMM d, yyyy HH:mm")
+                        : "—"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between border-b pb-1">
+                    <span className="text-muted-foreground">Scope audience:</span>
+                    <span className="font-medium">{vm.provider?.scopeLabel}</span>
+                  </div>
+                  {vm.provider?.tenantId && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Tenant context ID:</span>
+                      <Badge variant="outline" className="text-[10px]">
+                        {vm.provider.tenantId}
+                      </Badge>
+                    </div>
+                  )}
+                </div>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Tab 2: Claim mappings */}
+        <TabsContent value="claims" className="outline-none">
+          <Card className="p-6 max-w-3xl">
+            <ClaimMappingEditor
+              value={vm.form.claimMappingJson}
+              onChange={(val) => vm.updateField("claimMappingJson", val)}
+            />
+          </Card>
+        </TabsContent>
+
+        {/* Tab 3: Branding / Appearance & Previews */}
+        <TabsContent value="branding" className="outline-none">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <AppearanceSection {...sectionProps} />
+
+            <Card className="p-6">
+              <SSOButtonPreview
+                name={vm.form.name}
+                iconUrl={vm.form.iconUrl}
+                buttonColor={vm.form.buttonColor}
+                buttonLabel={vm.form.buttonLabel}
+              />
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Tab 4: Security & Access Control + Danger Zone */}
+        <TabsContent value="access" className="outline-none">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <AccessControlSection {...sectionProps} />
+
+            {/* Danger Zone */}
+            <Card className="border border-red-200 bg-red-50/50 p-6 dark:border-red-900/50 dark:bg-red-950/10">
+              <div className="space-y-4">
                 <div>
-                  <span className="text-muted-foreground">
-                    {t("common.createdAt") || "Created"}:
-                  </span>
-                  <p className="font-medium">
-                    {vm.provider.createdAt
-                      ? format(new Date(vm.provider.createdAt), "MMM d, yyyy HH:mm")
-                      : "—"}
+                  <h3 className="text-sm font-semibold text-red-700 dark:text-red-400">
+                    {t("common.dangerZone") || "Danger Zone"}
+                  </h3>
+                  <p className="text-xs text-red-600/80 dark:text-red-400/70 mt-1">
+                    {t("identityProviders.deleteWarning") ||
+                      "Deleting this provider will permanently remove it. Users who signed in via this provider will lose SSO access and authentication credentials."}
                   </p>
                 </div>
-                <div>
-                  <span className="text-muted-foreground">
-                    {t("common.modifiedAt") || "Last modified"}:
-                  </span>
-                  <p className="font-medium">
-                    {vm.provider.modifiedAt
-                      ? format(new Date(vm.provider.modifiedAt), "MMM d, yyyy HH:mm")
-                      : "—"}
-                  </p>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">
-                    {t("identityProviders.protocol") || "Protocol"}:
-                  </span>
-                  <p className="font-medium">{vm.provider.protocolLabel}</p>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">
-                    {t("identityProviders.scope") || "Scope"}:
-                  </span>
-                  <p className="font-medium">{vm.provider.scopeLabel}</p>
-                </div>
+
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" size="sm" loading={vm.isDeleting}>
+                      {!vm.isDeleting && <Trash2 className="me-1.5 h-4 w-4" />}
+                      {t("identityProviders.deleteButton") || "Delete Provider"}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        {t("identityProviders.deleteConfirmTitle") || "Delete Identity Provider"}
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        {t("identityProviders.deleteConfirmDesc") ||
+                          "This will permanently remove this identity provider. Users linked via this provider will lose SSO access. This action cannot be undone."}
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>{t("common.cancel") || "Cancel"}</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={vm.deleteProvider}
+                        className="bg-red-600 hover:bg-red-700 text-white"
+                      >
+                        {t("common.delete") || "Delete"}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
-              {vm.provider.tenantId && (
-                <div>
-                  <span className="text-xs text-muted-foreground">
-                    {t("identityProviders.tenantScoped") || "Tenant-scoped"}:
-                  </span>
-                  <Badge variant="outline" className="ms-2 text-xs">
-                    {vm.provider.tenantId}
-                  </Badge>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ─── Danger Zone ─────────────────── */}
-          {!vm.isCreateMode && (
-            <div className="space-y-3 rounded-lg border border-red-200 bg-red-50/50 p-4 dark:border-red-900/50 dark:bg-red-950/10">
-              <h3 className="text-sm font-medium text-red-700 dark:text-red-400">
-                {t("common.dangerZone") || "Danger Zone"}
-              </h3>
-              <p className="text-xs text-red-600/80 dark:text-red-400/70">
-                {t("identityProviders.deleteWarning") ||
-                  "Deleting this provider will permanently remove it. Users who signed in via this provider will lose SSO access."}
-              </p>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="destructive" size="sm" loading={vm.isDeleting}>
-                    {!vm.isDeleting && <Trash2 className="me-1.5 h-4 w-4" />}
-                    {t("identityProviders.deleteButton") || "Delete Provider"}
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      {t("identityProviders.deleteConfirmTitle") || "Delete Identity Provider"}
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      {t("identityProviders.deleteConfirmDesc") ||
-                        "This will permanently remove this identity provider. Users linked via this provider will lose SSO access. This action cannot be undone."}
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>{t("common.cancel") || "Cancel"}</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={vm.deleteProvider}
-                      className="bg-red-600 hover:bg-red-700"
-                    >
-                      {t("common.delete") || "Delete"}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-          )}
-        </div>
-      </div>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

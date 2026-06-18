@@ -15,6 +15,8 @@ import { Textarea } from "@core/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { ImageUploadField } from "@core/ui/image-upload-field";
+import { Button } from "@core/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
 import GenericSelect from "@core/crud/components/generic-select";
 import { Settings2, Globe, Palette, Shield, FileJson, Fingerprint, Link2 } from "lucide-react";
 
@@ -504,13 +506,60 @@ export function AppearanceSection({ form, updateField }: FormSectionProps) {
               {t("identityProviders.buttonColor") || "Button Color"}
             </Label>
             <div className="flex items-center gap-2">
-              <input
-                type="color"
-                id="idp-color"
-                value={form.buttonColor || "#4285F4"}
-                onChange={(e) => updateField("buttonColor", e.target.value)}
-                className="h-9 w-12 cursor-pointer rounded border"
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-9 w-12 p-0 border rounded-lg overflow-hidden shrink-0 cursor-pointer shadow-sm hover:scale-105 active:scale-95 transition-all"
+                    style={{ backgroundColor: form.buttonColor || "#4285F4" }}
+                  >
+                    <span className="sr-only">Choose Color</span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="start" className="w-64 p-3 space-y-3">
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Preset Colors
+                  </div>
+                  <div className="grid grid-cols-5 gap-2">
+                    {[
+                      "#4285F4", // Google
+                      "#0078D4", // Microsoft
+                      "#24292E", // GitHub
+                      "#007DC1", // Okta
+                      "#EB5424", // Auth0
+                      "#4D4D4D", // Keycloak
+                      "#E91E63", // Ping
+                      "#FF9900", // Cognito
+                      "#E41F35", // OneLogin
+                      "#009DDC", // Salesforce
+                      "#A855F7", // Scripe Purple
+                      "#7C3AED", // Scripe Dark Purple
+                      "#4F46E5", // Scripe Indigo
+                      "#3B82F6", // Scripe Blue
+                      "#10B981", // Emerald
+                    ].map((c) => (
+                      <Button
+                        key={c}
+                        type="button"
+                        variant="ghost"
+                        onClick={() => updateField("buttonColor", c)}
+                        className="h-8 w-8 p-0 rounded-md border border-border/40 hover:scale-110 active:scale-95 transition-all"
+                        style={{ backgroundColor: c }}
+                      />
+                    ))}
+                  </div>
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Custom Color (Hex)
+                  </div>
+                  <Input
+                    value={form.buttonColor}
+                    onChange={(e) => updateField("buttonColor", e.target.value)}
+                    placeholder="#4285F4"
+                    className="h-8 font-mono text-xs"
+                  />
+                </PopoverContent>
+              </Popover>
               <Input
                 value={form.buttonColor}
                 onChange={(e) => updateField("buttonColor", e.target.value)}
@@ -540,9 +589,10 @@ export function AppearanceSection({ form, updateField }: FormSectionProps) {
             {t("identityProviders.buttonPreview") || "Login Button Preview"}
           </Label>
           <div className="flex items-center justify-center rounded-lg border border-dashed bg-muted/30 p-4">
-            <button
+            <Button
               type="button"
-              className="inline-flex cursor-default items-center gap-2.5 rounded-lg px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:opacity-90 hover:shadow-md"
+              disabled
+              className="inline-flex cursor-default items-center gap-2.5 rounded-lg px-5 py-2.5 text-sm font-medium text-white shadow-sm border-0"
               style={{ backgroundColor: form.buttonColor || "#4285F4" }}
             >
               {form.iconUrl ? (
@@ -558,7 +608,7 @@ export function AppearanceSection({ form, updateField }: FormSectionProps) {
                 <Fingerprint className="h-4 w-4" />
               )}
               {form.buttonLabel || `Sign in with ${form.name || "Provider"}`}
-            </button>
+            </Button>
           </div>
         </div>
       </CardContent>

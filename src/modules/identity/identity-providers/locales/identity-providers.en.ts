@@ -57,7 +57,7 @@ export const en = {
     accessSectionDesc: "Control who can use this provider to sign in",
     claimMappingsSection: "Claim Mappings",
     claimMappingsSectionDesc:
-      "Map external claims to SCRIPE user attributes (JSON key †’ value pairs)",
+      "Map external claims to SCRIPE user attributes (JSON key → value pairs)",
     claimMappingsHelp:
       "Maps external IdP claims to internal SCRIPE attributes. Keys are SCRIPE fields, values are the IdP claim URIs.",
     invalidJson: "Invalid JSON format",
@@ -92,6 +92,28 @@ MIIDdDCCAlygAwIBAgIGAX...
 -----END CERTIFICATE-----`,
     galleryTitle: "Identity Provider Gallery",
     gallerySubtitle: "Select a pre-configured provider to add to your workspace",
-    galleryOrCustomize: "Or customize your own integration",
+    galleryOrCustomize: "Or configure manually below",
+
+    // New keys added in refactor
+    addMapping: "Add Claim Mapping",
+    callbackCopiedDesc: "Redirect URL copied successfully.",
+    callbackUrlDesc: "Register these endpoints in your Identity Provider (IdP) dashboard to allow secure auth flows.",
+    callbackUrlHelp: "Most identity providers require this URL to exactly match. Make sure the protocol (http/https) matches your deployment environment.",
+    callbackUrlTitle: "Redirect Settings",
+    claimMappings: "Claim Mappings",
+    emptyDesc: "Configure Single Sign-On (SSO) using OpenID Connect (OIDC), OAuth 2.0, or SAML 2.0 to let users log in with external credentials.",
+    emptyTitle: "No Identity Providers",
+    externalClaimKey: "External Claim Key",
+    internalAttribute: "Internal Attribute",
+    jsonEditor: "JSON",
+    noMappings: "No claim mappings configured yet.",
+    samlAcsUrl: "SAML Assertion Consumer Service (ACS) URL",
+    searchPlaceholder: "Search identity providers...",
+    standardRedirectUri: "OAuth2 / OIDC Redirect URI",
+    statsActive: "Active Status",
+    statsAudience: "Scope Audience",
+    statsProtocols: "Protocols",
+    statsTotal: "Total Providers",
+    visualEditor: "Visual",
   },
 };
