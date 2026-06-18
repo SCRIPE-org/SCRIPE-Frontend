@@ -12,6 +12,7 @@
 
 import { useI18n } from "@core/providers/i18n-provider";
 import { Label } from "@core/ui/label";
+import { Button } from "@core/ui/button";
 import { Fingerprint, Monitor } from "lucide-react";
 
 interface Props {
@@ -25,7 +26,7 @@ export function SSOButtonPreview({ name, iconUrl, buttonColor, buttonLabel }: Pr
   const { t } = useI18n();
 
   const color = buttonColor || "#4F46E5";
-  const label = buttonLabel || `Sign in with ${name || "SSO"}`;
+  const label = buttonLabel || t("identityProviders.signInWith", { name: name || "SSO" });
 
   const renderButton = (variant: "filled" | "outlined" | "glass", isDark: boolean) => {
     const icon = iconUrl ? (
@@ -43,30 +44,28 @@ export function SSOButtonPreview({ name, iconUrl, buttonColor, buttonLabel }: Pr
 
     if (variant === "filled") {
       return (
-        <button
+        <Button
           type="button"
-          disabled
-          className="inline-flex w-full items-center justify-center gap-2.5 rounded-lg px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition-all cursor-default select-none border-0"
+          className="inline-flex w-full items-center justify-center gap-2.5 rounded-lg px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition-all cursor-default select-none border-0 pointer-events-none"
           style={{ backgroundColor: color }}
         >
           {icon}
           <span className="truncate">{label}</span>
-        </button>
+        </Button>
       );
     }
 
     if (variant === "outlined") {
       const textColor = isDark ? "text-slate-200" : "text-slate-800";
       return (
-        <button
+        <Button
           type="button"
-          disabled
-          className={`inline-flex w-full items-center justify-center gap-2.5 rounded-lg px-4 py-2.5 text-xs font-semibold border bg-transparent transition-all cursor-default select-none ${textColor}`}
+          className={`inline-flex w-full items-center justify-center gap-2.5 rounded-lg px-4 py-2.5 text-xs font-semibold border bg-transparent transition-all cursor-default select-none pointer-events-none ${textColor}`}
           style={{ borderColor: `${color}60` }}
         >
           {icon}
           <span className="truncate">{label}</span>
-        </button>
+        </Button>
       );
     }
 
@@ -75,14 +74,13 @@ export function SSOButtonPreview({ name, iconUrl, buttonColor, buttonLabel }: Pr
       const bg = isDark ? "bg-white/5 border-white/10" : "bg-black/5 border-black/10";
       const text = isDark ? "text-slate-100" : "text-slate-900";
       return (
-        <button
+        <Button
           type="button"
-          disabled
-          className={`inline-flex w-full items-center justify-center gap-2.5 rounded-lg px-4 py-2.5 text-xs font-semibold border backdrop-blur-md transition-all cursor-default select-none ${bg} ${text} hover:border-purple-500/30`}
+          className={`inline-flex w-full items-center justify-center gap-2.5 rounded-lg px-4 py-2.5 text-xs font-semibold border backdrop-blur-md transition-all cursor-default select-none pointer-events-none ${bg} ${text} hover:border-purple-500/30`}
         >
           {icon}
           <span className="truncate">{label}</span>
-        </button>
+        </Button>
       );
     }
 
@@ -100,19 +98,25 @@ export function SSOButtonPreview({ name, iconUrl, buttonColor, buttonLabel }: Pr
         {/* Light Mode Frame */}
         <div className="rounded-xl border border-border bg-slate-50 p-5 shadow-inner">
           <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest block mb-4 text-center">
-            Light Mode Theme
+            {t("identityProviders.lightModeTheme")}
           </span>
           <div className="space-y-3 max-w-[280px] mx-auto">
             <div className="space-y-1">
-              <span className="text-[9px] text-slate-400 font-semibold uppercase block">Brand Solid</span>
+              <span className="text-[9px] text-slate-400 font-semibold uppercase block">
+                {t("identityProviders.brandSolid")}
+              </span>
               {renderButton("filled", false)}
             </div>
             <div className="space-y-1">
-              <span className="text-[9px] text-slate-400 font-semibold uppercase block">Brand Outlined</span>
+              <span className="text-[9px] text-slate-400 font-semibold uppercase block">
+                {t("identityProviders.brandOutlined")}
+              </span>
               {renderButton("outlined", false)}
             </div>
             <div className="space-y-1">
-              <span className="text-[9px] text-slate-400 font-semibold uppercase block">Glassmorphic</span>
+              <span className="text-[9px] text-slate-400 font-semibold uppercase block">
+                {t("identityProviders.glassmorphic")}
+              </span>
               {renderButton("glass", false)}
             </div>
           </div>
@@ -121,19 +125,25 @@ export function SSOButtonPreview({ name, iconUrl, buttonColor, buttonLabel }: Pr
         {/* Dark Mode Frame */}
         <div className="rounded-xl border border-slate-800 bg-[#0F172A] p-5 shadow-2xl">
           <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest block mb-4 text-center">
-            Dark Mode Theme
+            {t("identityProviders.darkModeTheme")}
           </span>
           <div className="space-y-3 max-w-[280px] mx-auto">
             <div className="space-y-1">
-              <span className="text-[9px] text-slate-500 font-semibold uppercase block">Brand Solid</span>
+              <span className="text-[9px] text-slate-500 font-semibold uppercase block">
+                {t("identityProviders.brandSolid")}
+              </span>
               {renderButton("filled", true)}
             </div>
             <div className="space-y-1">
-              <span className="text-[9px] text-slate-500 font-semibold uppercase block">Brand Outlined</span>
+              <span className="text-[9px] text-slate-500 font-semibold uppercase block">
+                {t("identityProviders.brandOutlined")}
+              </span>
               {renderButton("outlined", true)}
             </div>
             <div className="space-y-1">
-              <span className="text-[9px] text-slate-500 font-semibold uppercase block">Glassmorphic</span>
+              <span className="text-[9px] text-slate-500 font-semibold uppercase block">
+                {t("identityProviders.glassmorphic")}
+              </span>
               {renderButton("glass", true)}
             </div>
           </div>

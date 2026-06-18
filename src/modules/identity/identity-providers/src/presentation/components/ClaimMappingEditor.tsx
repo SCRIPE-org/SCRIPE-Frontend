@@ -55,6 +55,16 @@ const INTERNAL_KEYS = [
 
 export function ClaimMappingEditor({ value, onChange }: Props) {
   const { t } = useI18n();
+  const claimLabels: Record<string, string> = {
+    email: t("identityProviders.claimEmail"),
+    firstName: t("identityProviders.claimFirstName"),
+    lastName: t("identityProviders.claimLastName"),
+    name: t("identityProviders.claimFullName"),
+    picture: t("identityProviders.claimPicture"),
+    userId: t("identityProviders.claimUserId"),
+    roles: t("identityProviders.claimRoles"),
+    groups: t("identityProviders.claimGroups"),
+  };
   const [mode, setMode] = useState<"visual" | "json">("visual");
   const [jsonText, setJsonText] = useState(value || "{}");
   const [visualMappings, setVisualMappings] = useState<VisualMapping[]>([]);
@@ -75,14 +85,14 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
         setVisualMappings(mappings);
         setJsonError(null);
       } else {
-        throw new Error("JSON must be a flat key-value object");
+        throw new Error(t("identityProviders.jsonFlatObject"));
       }
     } catch (err) {
       setJsonError((err as Error).message);
       // Force JSON mode if parse fails
       setMode("json");
     }
-  }, [value]);
+  }, [value, t]);
 
   // Handle visual mapper updates
   const handleVisualChange = (mappings: VisualMapping[]) => {
@@ -136,10 +146,10 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
         setVisualMappings(mappings);
         onChange(val);
       } else {
-        setJsonError("JSON must be a flat key-value object");
+        setJsonError(t("identityProviders.jsonFlatObject"));
       }
     } catch (err) {
-      setJsonError("Invalid JSON format");
+      setJsonError(t("identityProviders.invalidJson"));
     }
   };
 
@@ -246,7 +256,7 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
                                 }
                                 className="text-xs"
                               >
-                                {opt.label}
+                                {claimLabels[opt.value] || opt.label}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -256,7 +266,7 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
                         <Input
                           value={row.externalClaim}
                           onChange={(e) => updateMappingRow(idx, "externalClaim", e.target.value)}
-                          placeholder="e.g. given_name or http://..."
+                          placeholder={t("identityProviders.claimPlaceholder") || "e.g. given_name or http://..."}
                           className="h-9 font-mono text-xs"
                         />
                       </TableCell>

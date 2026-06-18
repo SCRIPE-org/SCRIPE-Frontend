@@ -514,12 +514,12 @@ export function AppearanceSection({ form, updateField }: FormSectionProps) {
                     className="h-9 w-12 p-0 border rounded-lg overflow-hidden shrink-0 cursor-pointer shadow-sm hover:scale-105 active:scale-95 transition-all"
                     style={{ backgroundColor: form.buttonColor || "#4285F4" }}
                   >
-                    <span className="sr-only">Choose Color</span>
+                    <span className="sr-only">{t("identityProviders.chooseColor")}</span>
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent align="start" className="w-64 p-3 space-y-3">
                   <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Preset Colors
+                    {t("identityProviders.presetColors")}
                   </div>
                   <div className="grid grid-cols-5 gap-2">
                     {[
@@ -550,7 +550,7 @@ export function AppearanceSection({ form, updateField }: FormSectionProps) {
                     ))}
                   </div>
                   <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    Custom Color (Hex)
+                    {t("identityProviders.customColorHex")}
                   </div>
                   <Input
                     value={form.buttonColor}
@@ -607,7 +607,7 @@ export function AppearanceSection({ form, updateField }: FormSectionProps) {
               ) : (
                 <Fingerprint className="h-4 w-4" />
               )}
-              {form.buttonLabel || `Sign in with ${form.name || "Provider"}`}
+              {form.buttonLabel || t("identityProviders.signInWith", { name: form.name || "Provider" })}
             </Button>
           </div>
         </div>
@@ -677,7 +677,7 @@ export function AccessControlSection({ form, updateField }: FormSectionProps) {
               variant="outline"
               className="bg-violet-50 text-xs text-violet-700 dark:bg-violet-900/20 dark:text-violet-400"
             >
-              Admin
+              {t("identityProviders.badgeAdmin")}
             </Badge>
           )}
           {form.enabledForUsers && (
@@ -685,12 +685,12 @@ export function AccessControlSection({ form, updateField }: FormSectionProps) {
               variant="outline"
               className="bg-sky-50 text-xs text-sky-700 dark:bg-sky-900/20 dark:text-sky-400"
             >
-              User
+              {t("identityProviders.badgeUser")}
             </Badge>
           )}
           {!form.enabledForAdmins && !form.enabledForUsers && (
             <Badge variant="outline" className="text-xs text-muted-foreground">
-              None
+              {t("identityProviders.scopeNone")}
             </Badge>
           )}
         </div>

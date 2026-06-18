@@ -105,9 +105,9 @@ export function IdentityProvidersView() {
         {/* Tab Filters */}
         <div className="flex flex-wrap items-center gap-1.5 rounded-lg bg-muted/40 p-1 border">
           {[
-            { id: "all", label: "All" },
-            { id: "active", label: "Active" },
-            { id: "inactive", label: "Inactive" },
+            { id: "all", label: t("common.all") || "All" },
+            { id: "active", label: t("common.active") || "Active" },
+            { id: "inactive", label: t("common.inactive") || "Inactive" },
             { id: "oidc", label: "OIDC" },
             { id: "oauth2", label: "OAuth 2.0" },
             { id: "saml", label: "SAML 2.0" },

@@ -42,7 +42,9 @@ export function IdentityProviderStatsBar({ items }: Props) {
           </p>
           <div className="mt-1 flex items-baseline gap-2">
             <span className="text-2xl font-bold tracking-tight">{total}</span>
-            <span className="text-xs text-muted-foreground">configured</span>
+            <span className="text-xs text-muted-foreground">
+              {t("identityProviders.statsConfigured")}
+            </span>
           </div>
         </CardContent>
       </Card>
@@ -61,7 +63,7 @@ export function IdentityProviderStatsBar({ items }: Props) {
               {active}
             </span>
             <span className="text-xs text-muted-foreground">
-              active / {inactive} inactive
+              {t("identityProviders.statsActiveInactive", { active, inactive })}
             </span>
           </div>
         </CardContent>
@@ -109,11 +111,13 @@ export function IdentityProviderStatsBar({ items }: Props) {
           <div className="mt-1.5 flex gap-2">
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               <Shield className="h-3 w-3 text-violet-500" />
-              Admins: <strong className="font-semibold text-foreground">{adminCount}</strong>
+              {t("identityProviders.statsAdmins")}{" "}
+              <strong className="font-semibold text-foreground">{adminCount}</strong>
             </span>
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               <Users className="h-3 w-3 text-sky-500" />
-              Users: <strong className="font-semibold text-foreground">{userCount}</strong>
+              {t("identityProviders.statsUsers")}{" "}
+              <strong className="font-semibold text-foreground">{userCount}</strong>
             </span>
           </div>
         </CardContent>

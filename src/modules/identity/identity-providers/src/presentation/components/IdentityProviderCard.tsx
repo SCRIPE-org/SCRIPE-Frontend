@@ -187,7 +187,7 @@ export function IdentityProviderCard({
               className="h-5 gap-1 border-violet-200 bg-violet-50 dark:border-violet-800/30 dark:bg-violet-900/10 text-[10px] text-violet-700 dark:text-violet-400 font-medium"
             >
               <Shield className="h-3 w-3" />
-              Admin
+              {t("identityProviders.badgeAdmin")}
             </Badge>
           )}
 
@@ -198,7 +198,7 @@ export function IdentityProviderCard({
               className="h-5 gap-1 border-sky-200 bg-sky-50 dark:border-sky-800/30 dark:bg-sky-900/10 text-[10px] text-sky-700 dark:text-sky-400 font-medium"
             >
               <Users className="h-3 w-3" />
-              User
+              {t("identityProviders.badgeUser")}
             </Badge>
           )}
         </div>

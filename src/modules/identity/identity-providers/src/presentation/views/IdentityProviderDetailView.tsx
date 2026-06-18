@@ -137,7 +137,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
               {t("identityProviders.createTitle") || "Create Identity Provider"}
             </h1>
             <p className="text-xs text-muted-foreground">
-              Configure external authentication federation credentials step by step.
+              {t("identityProviders.createSubtitle")}
             </p>
           </div>
         </div>
@@ -157,7 +157,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                 1
               </span>
               <span className={`text-[10px] font-bold uppercase tracking-wider ${createStep === 1 ? "text-purple-600 dark:text-purple-400" : "text-muted-foreground"}`}>
-                Select Template
+                {t("identityProviders.stepSelectTemplate")}
               </span>
             </div>
 
@@ -181,7 +181,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                 2
               </span>
               <span className={`text-[10px] font-bold uppercase tracking-wider ${createStep === 2 ? "text-purple-600 dark:text-purple-400" : "text-muted-foreground"}`}>
-                Connection settings
+                {t("identityProviders.stepConnectionSettings")}
               </span>
             </div>
 
@@ -205,7 +205,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                 3
               </span>
               <span className={`text-[10px] font-bold uppercase tracking-wider ${createStep === 3 ? "text-purple-600 dark:text-purple-400" : "text-muted-foreground"}`}>
-                Appearance & Claims
+                {t("identityProviders.stepAppearanceClaims")}
               </span>
             </div>
           </div>
@@ -234,7 +234,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                   disabled={!vm.selectedTemplateId}
                   className="font-semibold text-white shadow bg-gradient-to-r from-[#A855F7] to-[#7C3AED] hover:opacity-95"
                 >
-                  Configure Connection Settings
+                  {t("identityProviders.btnConfigureConnection")}
                 </Button>
               </div>
             </div>
@@ -260,14 +260,14 @@ export function IdentityProviderDetailView({ providerId }: Props) {
               {/* Step Navigation controls */}
               <div className="lg:col-span-3 flex justify-between gap-3 border-t pt-4">
                 <Button variant="outline" onClick={() => setCreateStep(1)}>
-                  Back to Templates
+                  {t("identityProviders.btnBackToTemplates")}
                 </Button>
                 <Button
                   onClick={() => setCreateStep(3)}
                   disabled={!vm.form.name || !vm.form.slug}
                   className="font-semibold text-white shadow bg-gradient-to-r from-[#A855F7] to-[#7C3AED] hover:opacity-95"
                 >
-                  Next: Customize Look & Claim mapping
+                  {t("identityProviders.btnNextCustomize")}
                 </Button>
               </div>
             </div>
@@ -302,7 +302,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
               {/* Step Navigation controls */}
               <div className="lg:col-span-2 flex justify-between gap-3 border-t pt-4">
                 <Button variant="outline" onClick={() => setCreateStep(2)}>
-                  Back to Config
+                  {t("identityProviders.btnBackToConfig")}
                 </Button>
                 <Button
                   onClick={vm.save}
@@ -310,7 +310,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                   disabled={!vm.form.name || !vm.form.slug}
                   className="font-semibold text-white shadow-lg bg-gradient-to-r from-[#A855F7] via-[#7C3AED] to-[#4F46E5] hover:opacity-95 hover:scale-[1.01]"
                 >
-                  Create & Enable SSO Provider
+                  {t("identityProviders.btnCreateAndEnable")}
                 </Button>
               </div>
             </div>
@@ -349,7 +349,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight text-foreground">
-                {vm.form.name || "Edit Provider"}
+                {vm.form.name || t("identityProviders.editTitle")}
               </h1>
               <p className="font-mono text-xs text-muted-foreground mt-0.5">{vm.form.slug}</p>
             </div>
@@ -391,19 +391,19 @@ export function IdentityProviderDetailView({ providerId }: Props) {
         <TabsList className="grid w-full grid-cols-2 md:w-auto md:inline-flex md:grid-cols-none border bg-muted/40 p-1">
           <TabsTrigger value="connection" className="text-xs font-semibold gap-1.5">
             <Compass className="h-3.5 w-3.5" />
-            Connection settings
+            {t("identityProviders.tabConnection")}
           </TabsTrigger>
           <TabsTrigger value="claims" className="text-xs font-semibold gap-1.5">
             <FileJson className="h-3.5 w-3.5" />
-            Claim Mappings
+            {t("identityProviders.tabClaims")}
           </TabsTrigger>
           <TabsTrigger value="branding" className="text-xs font-semibold gap-1.5">
             <Palette className="h-3.5 w-3.5" />
-            Look & Feel
+            {t("identityProviders.tabBranding")}
           </TabsTrigger>
           <TabsTrigger value="access" className="text-xs font-semibold gap-1.5">
             <ShieldAlert className="h-3.5 w-3.5" />
-            Security & Controls
+            {t("identityProviders.tabSecurity")}
           </TabsTrigger>
         </TabsList>
 
@@ -427,11 +427,11 @@ export function IdentityProviderDetailView({ providerId }: Props) {
               <Card className="p-4 space-y-3 bg-muted/20">
                 <h3 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   <Clock className="h-4 w-4" />
-                  Audit & Metadata
+                  {t("identityProviders.auditMetadata")}
                 </h3>
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between border-b pb-1">
-                    <span className="text-muted-foreground">Created:</span>
+                    <span className="text-muted-foreground">{t("common.created") || "Created"}:</span>
                     <span className="font-medium">
                       {vm.provider?.createdAt
                         ? format(new Date(vm.provider.createdAt), "MMM d, yyyy HH:mm")
@@ -439,7 +439,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                     </span>
                   </div>
                   <div className="flex justify-between border-b pb-1">
-                    <span className="text-muted-foreground">Last modified:</span>
+                    <span className="text-muted-foreground">{t("identityProviders.lastModified")}</span>
                     <span className="font-medium">
                       {vm.provider?.modifiedAt
                         ? format(new Date(vm.provider.modifiedAt), "MMM d, yyyy HH:mm")
@@ -447,12 +447,12 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                     </span>
                   </div>
                   <div className="flex justify-between border-b pb-1">
-                    <span className="text-muted-foreground">Scope audience:</span>
+                    <span className="text-muted-foreground">{t("identityProviders.scopeAudience")}</span>
                     <span className="font-medium">{vm.provider?.scopeLabel}</span>
                   </div>
                   {vm.provider?.tenantId && (
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Tenant context ID:</span>
+                      <span className="text-muted-foreground">{t("identityProviders.tenantContextId")}</span>
                       <Badge variant="outline" className="text-[10px]">
                         {vm.provider.tenantId}
                       </Badge>

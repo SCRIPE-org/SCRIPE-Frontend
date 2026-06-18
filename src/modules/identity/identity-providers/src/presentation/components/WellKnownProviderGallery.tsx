@@ -634,7 +634,7 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
           <CardContent className="p-4 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-400 flex items-center gap-1.5">
               <HelpCircle className="h-4 w-4" />
-              {activeTemplate.name} Setup Guide
+              {t("identityProviders.setupGuide", { name: activeTemplate.name })}
             </h4>
             <ul className="space-y-2 text-xs">
               {activeTemplate.setupSteps.map((step, idx) => (
