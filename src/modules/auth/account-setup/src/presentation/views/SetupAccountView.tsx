@@ -124,25 +124,31 @@ export function SetupAccountView() {
           {vm.password.length > 0 && (
             <div className="grid grid-cols-2 gap-1.5 text-xs">
               <PasswordCheck
-                label={t("auth.accountSetup.passwordMinLengthShort")}
+                label={t("auth.accountSetup.passwordMinLengthShort", { min: vm.tokenData?.passwordMinLength ?? 8 })}
                 ok={vm.passwordChecks.minLength}
               />
-              <PasswordCheck
-                label={t("auth.accountSetup.passwordUpperShort")}
-                ok={vm.passwordChecks.hasUpper}
-              />
+              {vm.tokenData?.passwordRequireUppercase !== false && (
+                <PasswordCheck
+                  label={t("auth.accountSetup.passwordUpperShort")}
+                  ok={vm.passwordChecks.hasUpper}
+                />
+              )}
               <PasswordCheck
                 label={t("auth.accountSetup.passwordLowerShort")}
                 ok={vm.passwordChecks.hasLower}
               />
-              <PasswordCheck
-                label={t("auth.accountSetup.passwordNumberShort")}
-                ok={vm.passwordChecks.hasNumber}
-              />
-              <PasswordCheck
-                label={t("auth.accountSetup.passwordSpecialShort")}
-                ok={vm.passwordChecks.hasSpecial}
-              />
+              {vm.tokenData?.passwordRequireNumber !== false && (
+                <PasswordCheck
+                  label={t("auth.accountSetup.passwordNumberShort")}
+                  ok={vm.passwordChecks.hasNumber}
+                />
+              )}
+              {vm.tokenData?.passwordRequireSpecial === true && (
+                <PasswordCheck
+                  label={t("auth.accountSetup.passwordSpecialShort")}
+                  ok={vm.passwordChecks.hasSpecial}
+                />
+              )}
             </div>
           )}
 

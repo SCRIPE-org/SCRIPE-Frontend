@@ -252,7 +252,14 @@ export function useFinalizeViewModel() {
   }, [router]);
 
   const goToLogin = useCallback(() => {
-    router.push("/login");
+    const { isAuthenticated, defaultRedirectPath } = useAppStore.getState();
+    const hasToken = secureTokenService.hasToken();
+
+    if (hasToken && isAuthenticated) {
+      router.replace(defaultRedirectPath || "/");
+    } else {
+      router.push("/login");
+    }
   }, [router]);
 
   const changePlan = useCallback(() => {

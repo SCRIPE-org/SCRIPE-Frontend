@@ -42,14 +42,14 @@ export function useAccountSetupViewModel(params: {
 
   const passwordChecks = useMemo(
     () => ({
-      minLength: password.length >= 8,
-      hasUpper: /[A-Z]/.test(password),
+      minLength: password.length >= (tokenData?.passwordMinLength ?? 8),
+      hasUpper: tokenData?.passwordRequireUppercase !== false ? /[A-Z]/.test(password) : true,
       hasLower: /[a-z]/.test(password),
-      hasNumber: /\d/.test(password),
-      hasSpecial: /[^A-Za-z0-9]/.test(password),
+      hasNumber: tokenData?.passwordRequireNumber !== false ? /\d/.test(password) : true,
+      hasSpecial: tokenData?.passwordRequireSpecial === true ? /[^A-Za-z0-9]/.test(password) : true,
       matches: password === confirmPassword && confirmPassword.length > 0,
     }),
-    [confirmPassword, password]
+    [confirmPassword, password, tokenData]
   );
 
   const isPasswordValid = Object.values(passwordChecks).every(Boolean);
@@ -69,13 +69,13 @@ export function useAccountSetupViewModel(params: {
           setPageState("valid");
         } else {
           setPageState("invalid");
-          setErrorMessage(result.error || invalidTokenMessage);
+          setErrorMessage(result.error || result.errorMessage || invalidTokenMessage);
         }
       } catch (err: unknown) {
         if (cancelled) return;
-        const details = (err as { details?: { error?: string; message?: string } })?.details;
+        const details = (err as { details?: { error?: string; message?: string; errorMessage?: string } })?.details;
         setPageState("invalid");
-        setErrorMessage(details?.error || details?.message || validationFailedMessage);
+        setErrorMessage(details?.error || details?.errorMessage || details?.message || validationFailedMessage);
       }
     }
 
@@ -90,7 +90,10 @@ export function useAccountSetupViewModel(params: {
 
     if (!isPasswordValid) {
       const errors: string[] = [];
-      if (!passwordChecks.minLength) errors.push(passwordValidationMessages.minLength);
+      const minLengthVal = tokenData?.passwordMinLength ?? 8;
+      if (!passwordChecks.minLength) {
+        errors.push(passwordValidationMessages.minLength.replace("{{min}}", String(minLengthVal)));
+      }
       if (!passwordChecks.hasUpper) errors.push(passwordValidationMessages.hasUpper);
       if (!passwordChecks.hasLower) errors.push(passwordValidationMessages.hasLower);
       if (!passwordChecks.hasNumber) errors.push(passwordValidationMessages.hasNumber);
@@ -112,12 +115,12 @@ export function useAccountSetupViewModel(params: {
         setPageState("success");
       } else {
         setPageState("error");
-        setErrorMessage(result.error || activationFailedMessage);
+        setErrorMessage(result.error || result.errorMessage || activationFailedMessage);
       }
     } catch (err: unknown) {
-      const details = (err as { details?: { error?: string; message?: string } })?.details;
+      const details = (err as { details?: { error?: string; message?: string; errorMessage?: string } })?.details;
       setPageState("error");
-      setErrorMessage(details?.error || details?.message || activationUnexpectedMessage);
+      setErrorMessage(details?.error || details?.errorMessage || details?.message || activationUnexpectedMessage);
     }
   }, [
     activationFailedMessage,
@@ -128,6 +131,7 @@ export function useAccountSetupViewModel(params: {
     passwordChecks,
     passwordValidationMessages,
     token,
+    tokenData,
   ]);
 
   return {

@@ -49,6 +49,7 @@ export const ar = {
     notes: "ملاحظات",
     notesPlaceholder: "أدخل ملاحظات",
     useDefaultPassword: "استخدام كلمة المرور الافتراضية",
+    writePassword: "اكتب كلمة المرور",
     resetPasswordDescription: "إعادة تعيين كلمة المرور لـ",
     isActive: "نشط",
     inActive: "غير نشط",

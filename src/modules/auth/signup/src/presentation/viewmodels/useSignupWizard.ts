@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useAppStore } from "@core/store/useAppStore";
+import { secureTokenService } from "@core/common/secure-token-service";
 import { authContainer } from "@modules/auth/di";
 import type { ContactSalesPayload } from "../../domain/interfaces/ISignupRepository";
 import type {
@@ -437,9 +439,19 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
 
   const dismissCheckoutCanceled = useCallback(() => setCheckoutCanceled(false), []);
 
-  // Primary CTA on the Complete screen — go to the workspace/login.
+  // Primary CTA on the Complete screen — go to the workspace (if already
+  // authenticated from a free signup) or fall back to /login (paid path).
   const goToLogin = useCallback(() => {
-    router.push("/login");
+    const { isAuthenticated, defaultRedirectPath } = useAppStore.getState();
+    const hasToken = secureTokenService.hasToken();
+
+    if (hasToken && isAuthenticated) {
+      // Free signup: user is already logged in — go straight to the dashboard
+      router.replace(defaultRedirectPath || "/");
+    } else {
+      // Checkout/paid path: user needs to log in manually
+      router.push("/login");
+    }
   }, [router]);
 
   // Change-email affordance on the verification phase: clear the code + token and

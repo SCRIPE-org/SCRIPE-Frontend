@@ -6,6 +6,11 @@ export interface ValidateTokenResponse {
   tenantCode?: string;
   expiresAt?: string;
   error?: string;
+  errorMessage?: string;
+  passwordMinLength?: number;
+  passwordRequireUppercase?: boolean;
+  passwordRequireNumber?: boolean;
+  passwordRequireSpecial?: boolean;
 }
 
 export interface ActivateAccountRequest {
@@ -18,6 +23,7 @@ export interface ActivateAccountResponse {
   success: boolean;
   message?: string;
   error?: string;
+  errorMessage?: string;
 }
 
 export interface AccountSetupToken {

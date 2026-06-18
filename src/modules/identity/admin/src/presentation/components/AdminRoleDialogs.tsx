@@ -12,6 +12,7 @@ import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { Badge } from "@core/ui/badge";
+import { PasswordInput } from "@core/ui/password-input";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { Loader2, Shield, Trash2, Building2 } from "lucide-react";
@@ -310,15 +311,14 @@ export function ResetPasswordDialog({
 
         {!useDefault && (
           <div className="space-y-2">
-            <Label htmlFor="password">{t("admin.newPassword") || "New Password"} *</Label>
-            <input
+            <Label htmlFor="password">{t("admin.writePassword") || "Write Password"} *</Label>
+            <PasswordInput
               id="password"
-              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               minLength={6}
-              placeholder="Minimum 6 characters"
+              placeholder={t("admin.writePassword") || "Write Password"}
+              showStrengthIndicator={true}
             />
           </div>
         )}

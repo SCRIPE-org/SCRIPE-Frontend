@@ -83,6 +83,7 @@ export const en = {
     protectionTransfered: "Protection Transfered",
     impersonating: "Impersonating",
     useDefaultPassword: "Use Default Password",
+    writePassword: "Write Password",
     resetPasswordDescription: "Reset Password Description",
     isActive: "Is Active",
     inActive: "In Active",

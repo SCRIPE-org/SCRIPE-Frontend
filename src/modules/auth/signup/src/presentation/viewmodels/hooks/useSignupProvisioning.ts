@@ -168,7 +168,11 @@ export function useSignupProvisioning({
       if (result.tenantCode) setTenantCode(result.tenantCode);
       setSubscriptionInfo(null, null, null);
       setDefaultRedirectPath(result.redirectUrl || "/");
-      queryClient.invalidateQueries();
+      // Clear stale query cache — do NOT use invalidateQueries() here because
+      // it triggers immediate refetches before the refresh-token cookie is
+      // fully established, causing 401 → logout race conditions. clear()
+      // simply wipes old data; fresh queries will fire when the dashboard mounts.
+      queryClient.clear();
 
       setProvisioningStep(4);
       await new Promise((resolve) => setTimeout(resolve, 500));
