@@ -1,10 +1,7 @@
 "use client";
 
-import { Button } from "@core/ui/button";
-import { BookOpen } from "lucide-react";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
-import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 
 interface LoginTopActionsProps {
@@ -37,7 +34,7 @@ export function LoginTopActions({ skipLinkEnabled, ariaLandmarks }: LoginTopActi
           : {})}
       >
         {/* Docs link (desktop only) */}
-        <Button
+        {/* <Button
           variant="ghost"
           size="sm"
           className="hidden gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground lg:flex"
@@ -47,13 +44,13 @@ export function LoginTopActions({ skipLinkEnabled, ariaLandmarks }: LoginTopActi
             <BookOpen className="h-4 w-4" />
             {t("auth.branding.docs")}
           </Link>
-        </Button>
+        </Button> */}
 
         <div className="hidden h-4 w-px bg-border lg:block" />
 
         <div className="flex w-full items-center justify-between gap-1 lg:w-auto lg:justify-start">
           {/* Docs link (mobile) */}
-          <Button
+          {/* <Button
             variant="ghost"
             size="sm"
             className="flex gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground lg:hidden"
@@ -63,7 +60,7 @@ export function LoginTopActions({ skipLinkEnabled, ariaLandmarks }: LoginTopActi
               <BookOpen className="h-4 w-4" />
               {t("auth.branding.docs")}
             </Link>
-          </Button>
+          </Button> */}
 
           <div className="flex gap-1">
             <LanguageSwitcher />

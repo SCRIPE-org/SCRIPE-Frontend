@@ -41,7 +41,7 @@ export function ProgressDots({ total, current, label }: ProgressDotsProps) {
   return (
     <div
       className="flex items-center gap-2"
-      role="group"
+      role="progressbar"
       aria-label={label}
       aria-valuenow={current + 1}
       aria-valuemin={1}

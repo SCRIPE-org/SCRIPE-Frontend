@@ -14,6 +14,7 @@ export const ar = {
       confirmDowngradeCta: "نعم، التحويل",
       cancel: "إلغاء",
       processing: "جاري العمل...",
+      createFailed: "فشل إنشاء جلسة الدفع",
     },
   },
 };

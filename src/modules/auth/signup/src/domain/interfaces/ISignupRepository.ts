@@ -88,7 +88,7 @@ export interface ISignupRepository {
   getPersistedSignupRef(): string | null;
   persistWizardState(state: PersistedWizardState): void;
   clearPersistedWizardState(): void;
-  readPersistedWizardState(): any;
+  readPersistedWizardState(): PersistedWizardState | null;
 
   /** Validate a signupRef and return plan snapshot for the resume modal. Null = unknown/terminal ref. */
   resume(signupRef: string): Promise<ResumeSessionResult | null>;

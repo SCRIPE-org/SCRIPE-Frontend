@@ -15,6 +15,9 @@ import type {
   OnboardingAnswerOption,
 } from "../../domain/entities/OnboardingEntities";
 
+const EMPTY_ARRAY: string[] = [];
+const EMPTY_OPTIONS: OnboardingAnswerOption[] = [];
+
 // ═══════════════════════════════════════════════════════════════════════════
 // useDiscovery — the in-phase interaction viewmodel for the adaptive Discovery
 // phase (the centerpiece of the Elevate redesign).
@@ -139,11 +142,11 @@ export function useDiscovery(): DiscoveryViewModel {
   const currentQuestion = visibleQuestions[clampedIndex];
 
   const currentVisibleOptions = useMemo(
-    () => (currentQuestion ? getVisibleOptions(currentQuestion, answers) : []),
+    () => (currentQuestion ? getVisibleOptions(currentQuestion, answers) : EMPTY_OPTIONS),
     [currentQuestion, answers]
   );
 
-  const currentSelection = currentQuestion ? (answers[currentQuestion.key] ?? []) : [];
+  const currentSelection = currentQuestion ? (answers[currentQuestion.key] ?? EMPTY_ARRAY) : EMPTY_ARRAY;
 
   const isSingleSelect = currentQuestion?.questionType === "single_select";
   const isMaxReached =

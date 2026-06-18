@@ -14,6 +14,7 @@ export const en = {
       confirmDowngradeCta: "Yes, Downgrade",
       cancel: "Cancel",
       processing: "Processing...",
+      createFailed: "Payment Session Failed",
     },
   },
 };

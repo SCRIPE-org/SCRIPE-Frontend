@@ -9,7 +9,7 @@
 
 import type { IPublicApiService } from "@core/interfaces/public-api.interface";
 import { AUTH_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
-import type { ISignupService } from "../../domain/interfaces/ISignupService";
+import type { ISignupService } from "../interfaces/ISignupService";
 import type {
   PublicEditionDto,
   PublicCategoryDto,
