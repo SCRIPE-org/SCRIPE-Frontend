@@ -613,17 +613,18 @@ export function LeadDetailDrawer({
           </div>
         )}
 
-        {/* ── Send Email Dialog ── */}
-        {onSendEmail && lead && (
-          <SendLeadEmailDialog
-            open={emailDialogOpen}
-            lead={lead}
-            isSending={isSendingEmail ?? false}
-            onClose={() => setEmailDialogOpen(false)}
-            onSend={onSendEmail}
-          />
-        )}
       </SheetContent>
+
+      {/* ── Send Email Dialog ── */}
+      {onSendEmail && lead && (
+        <SendLeadEmailDialog
+          open={emailDialogOpen}
+          lead={lead}
+          isSending={isSendingEmail ?? false}
+          onClose={() => setEmailDialogOpen(false)}
+          onSend={onSendEmail}
+        />
+      )}
     </Sheet>
   );
 }
