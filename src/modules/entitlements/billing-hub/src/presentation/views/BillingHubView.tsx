@@ -9,6 +9,8 @@ import { TenantPlanComparisonView } from "@modules/entitlements/tenant-plans";
 import { TenantPaymentGatewaysView } from "@modules/entitlements/tenant-gateways";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { LayoutDashboard, CreditCard, Banknote, ShieldAlert, BadgeDollarSign } from "lucide-react";
+import { cn } from "@core/common/utils";
+import { useBillingHubViewModel } from "../viewmodels/useBillingHubViewModel";
 
 export function BillingHubView() {
   const { t } = useI18n();
@@ -16,9 +18,7 @@ export function BillingHubView() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const tabParam = searchParams.get("tab");
-  const allowedTabs = ["overview", "subscriptions", "stripe-connect", "plans", "gateways"];
-  const activeTab = tabParam && allowedTabs.includes(tabParam) ? tabParam : "overview";
+  const { isPlatformContext, activeTab } = useBillingHubViewModel();
 
   const handleTabChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -36,10 +36,15 @@ export function BillingHubView() {
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
               {t("entitlements.hub.desc") ||
-                "Manage revenue dashboard, subscriptions, stripe connect, plans and gateways."}
+                "Manage revenue dashboard, subscriptions, stripe connect, plans, and gateways."}
             </p>
           </div>
-          <TabsList className="grid w-full grid-cols-5 bg-muted/40 p-1 sm:w-auto">
+          <TabsList
+            className={cn(
+              "grid w-full bg-muted/40 p-1 sm:w-auto",
+              isPlatformContext ? "grid-cols-3" : "grid-cols-5"
+            )}
+          >
             <TabsTrigger value="overview" className="gap-1.5 text-xs font-bold transition-all">
               <LayoutDashboard className="h-3.5 w-3.5" />
               <span className="hidden md:inline">
@@ -61,18 +66,22 @@ export function BillingHubView() {
                 {t("entitlements.hub.tabs.stripeConnect") || "Stripe Connect"}
               </span>
             </TabsTrigger>
-            <TabsTrigger value="plans" className="gap-1.5 text-xs font-bold transition-all">
-              <BadgeDollarSign className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">
-                {t("entitlements.hub.tabs.plans") || "Plans"}
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="gateways" className="gap-1.5 text-xs font-bold transition-all">
-              <ShieldAlert className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">
-                {t("entitlements.hub.tabs.gateways") || "Gateways"}
-              </span>
-            </TabsTrigger>
+            {!isPlatformContext && (
+              <>
+                <TabsTrigger value="plans" className="gap-1.5 text-xs font-bold transition-all">
+                  <BadgeDollarSign className="h-3.5 w-3.5" />
+                  <span className="hidden md:inline">
+                    {t("entitlements.hub.tabs.plans") || "Plans"}
+                  </span>
+                </TabsTrigger>
+                <TabsTrigger value="gateways" className="gap-1.5 text-xs font-bold transition-all">
+                  <ShieldAlert className="h-3.5 w-3.5" />
+                  <span className="hidden md:inline">
+                    {t("entitlements.hub.tabs.gateways") || "Gateways"}
+                  </span>
+                </TabsTrigger>
+              </>
+            )}
           </TabsList>
         </div>
 
@@ -88,13 +97,17 @@ export function BillingHubView() {
           <ConnectOnboardingView />
         </TabsContent>
 
-        <TabsContent value="plans" className="outline-none">
-          <TenantPlanComparisonView />
-        </TabsContent>
+        {!isPlatformContext && (
+          <>
+            <TabsContent value="plans" className="outline-none">
+              <TenantPlanComparisonView />
+            </TabsContent>
 
-        <TabsContent value="gateways" className="outline-none">
-          <TenantPaymentGatewaysView />
-        </TabsContent>
+            <TabsContent value="gateways" className="outline-none">
+              <TenantPaymentGatewaysView />
+            </TabsContent>
+          </>
+        )}
       </Tabs>
     </div>
   );

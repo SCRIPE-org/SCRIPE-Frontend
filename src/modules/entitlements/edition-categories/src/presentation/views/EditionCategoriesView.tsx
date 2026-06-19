@@ -4,8 +4,9 @@ import { useMemo } from "react";
 import { useEditionCategoriesViewModel } from "../viewmodels/useEditionCategoriesViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import type { EditionCategory } from "../../domain/entities/EditionCategory";
+import { Pencil, Trash2 } from "lucide-react";
 
 export function EditionCategoriesView() {
   const { t, language } = useI18n();
@@ -74,36 +75,58 @@ export function EditionCategoriesView() {
           name: "name",
           label: t("common.name") || "Name",
           type: "text" as const,
-          defaultValue: item.name,
+          defaultValue: item?.name ?? "",
           required: true,
         },
         {
           name: "displayNameEn",
           label: t("common.displayNameEn") || "Display Name (English)",
           type: "text" as const,
-          defaultValue: item.displayNameEn ?? "",
+          defaultValue: item?.displayNameEn ?? "",
         },
         {
           name: "displayNameAr",
           label: t("common.displayNameAr") || "Display Name (Arabic)",
           type: "text" as const,
-          defaultValue: item.displayNameAr ?? "",
+          defaultValue: item?.displayNameAr ?? "",
         },
         {
           name: "description",
           label: t("common.description") || "Description",
           type: "textarea" as const,
-          defaultValue: item.description ?? "",
+          defaultValue: item?.description ?? "",
         },
         {
           name: "sortOrder",
           label: t("entitlements.editions.categories.sortOrder") || "Sort Order",
           type: "number" as const,
-          defaultValue: item.sortOrder,
+          defaultValue: item?.sortOrder ?? 0,
+        },
+      ],
+      resource: "editions",
+      getItemDisplayName: (cat: EditionCategory) => cat.getDisplayName(language),
+      deleteService: (id: string) => vm.deleteItem(id),
+      getActions: (
+        _vmInstance,
+        tFn,
+        handleDeleteFn
+      ): CrudAction<EditionCategory>[] => [
+        {
+          label: tFn("common.edit") || "Edit",
+          onClick: (item: EditionCategory) => vm.openEditModal(item),
+          variant: "ghost" as const,
+          icon: <Pencil className="h-4 w-4" />,
+        },
+        {
+          label: tFn("common.delete") || "Delete",
+          onClick: (item: EditionCategory) => handleDeleteFn?.(item),
+          variant: "ghost" as const,
+          className: "text-red-600 hover:text-red-700",
+          icon: <Trash2 className="h-4 w-4" />,
         },
       ],
     }),
-    [t, language]
+    [t, vm, language]
   );
 
   return <GenericCrudView<EditionCategory> viewModel={vm} config={config} />;

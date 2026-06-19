@@ -206,7 +206,7 @@ export function UserSubscriptionsView() {
           label: t("entitlements.userSubscriptions.plan") || "New Plan",
           type: "select" as const,
           required: true,
-          defaultValue: sub.tenantPlanId,
+          defaultValue: sub?.tenantPlanId,
           placeholder: t("entitlements.userSubscriptions.planPlaceholder") || "Select a plan…",
           options: vm.availablePlans,
         },
@@ -215,7 +215,7 @@ export function UserSubscriptionsView() {
           label: t("entitlements.userSubscriptions.billingCycle") || "Billing Cycle",
           type: "select" as const,
           required: true,
-          defaultValue: sub.billingCycle ?? "Monthly",
+          defaultValue: sub?.billingCycle ?? "Monthly",
           options: [
             {
               value: "Monthly",
