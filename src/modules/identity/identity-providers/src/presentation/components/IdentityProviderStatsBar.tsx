@@ -32,12 +32,12 @@ export function IdentityProviderStatsBar({ items }: Props) {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
       {/* Total Configured */}
-      <Card className="relative overflow-hidden border-border/80 bg-card/65 backdrop-blur-md transition-all hover:shadow-md hover:border-primary/20">
-        <div className="absolute top-0 right-0 p-3 opacity-10">
+      <Card className="relative overflow-hidden border-border/80 bg-card/65 backdrop-blur-md transition-all hover:border-primary/20 hover:shadow-md">
+        <div className="absolute right-0 top-0 p-3 opacity-10">
           <Fingerprint className="h-12 w-12 text-primary" />
         </div>
         <CardContent className="p-4">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             {t("identityProviders.statsTotal") || "Total Providers"}
           </p>
           <div className="mt-1 flex items-baseline gap-2">
@@ -50,16 +50,16 @@ export function IdentityProviderStatsBar({ items }: Props) {
       </Card>
 
       {/* Active vs Inactive */}
-      <Card className="relative overflow-hidden border-border/80 bg-card/65 backdrop-blur-md transition-all hover:shadow-md hover:border-emerald-500/20">
-        <div className="absolute top-0 right-0 p-3 opacity-10">
+      <Card className="relative overflow-hidden border-border/80 bg-card/65 backdrop-blur-md transition-all hover:border-emerald-500/20 hover:shadow-md">
+        <div className="absolute right-0 top-0 p-3 opacity-10">
           <Activity className="h-12 w-12 text-emerald-500" />
         </div>
         <CardContent className="p-4">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             {t("identityProviders.statsActive") || "Active Status"}
           </p>
           <div className="mt-1 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight">
+            <span className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
               {active}
             </span>
             <span className="text-xs text-muted-foreground">
@@ -70,12 +70,12 @@ export function IdentityProviderStatsBar({ items }: Props) {
       </Card>
 
       {/* Protocols */}
-      <Card className="relative overflow-hidden border-border/80 bg-card/65 backdrop-blur-md transition-all hover:shadow-md hover:border-indigo-500/20">
-        <div className="absolute top-0 right-0 p-3 opacity-10">
+      <Card className="relative overflow-hidden border-border/80 bg-card/65 backdrop-blur-md transition-all hover:border-indigo-500/20 hover:shadow-md">
+        <div className="absolute right-0 top-0 p-3 opacity-10">
           <Radio className="h-12 w-12 text-indigo-500" />
         </div>
         <CardContent className="p-4">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             {t("identityProviders.statsProtocols") || "Protocols"}
           </p>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
@@ -100,12 +100,12 @@ export function IdentityProviderStatsBar({ items }: Props) {
       </Card>
 
       {/* Scopes */}
-      <Card className="relative overflow-hidden border-border/80 bg-card/65 backdrop-blur-md transition-all hover:shadow-md hover:border-violet-500/20">
-        <div className="absolute top-0 right-0 p-3 opacity-10">
+      <Card className="relative overflow-hidden border-border/80 bg-card/65 backdrop-blur-md transition-all hover:border-violet-500/20 hover:shadow-md">
+        <div className="absolute right-0 top-0 p-3 opacity-10">
           <Shield className="h-12 w-12 text-violet-500" />
         </div>
         <CardContent className="p-4">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             {t("identityProviders.statsAudience") || "Scope Audience"}
           </p>
           <div className="mt-1.5 flex gap-2">

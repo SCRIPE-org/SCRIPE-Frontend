@@ -103,6 +103,15 @@ export function ProfileInfoForm({
           />
         </div>
 
+        {/* Email Address (read-only) */}
+        <div className="space-y-2">
+          <Label htmlFor="email">{t("profile.fields.email") || "Email Address"}</Label>
+          <div className="relative">
+            <Input id="email" value={profile.email} disabled className="bg-muted/50 pe-10" />
+            <Lock className="absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          </div>
+        </div>
+
         {/* Username (read-only) */}
         <div className="space-y-2">
           <Label htmlFor="username">{t("profile.fields.username")}</Label>

@@ -92,6 +92,7 @@ export function useFinalizeViewModel() {
         try {
           sessionStorage.removeItem(STORAGE_KEYS.SIGNUP_REF);
           sessionStorage.removeItem(STORAGE_KEYS.SIGNUP_WIZARD);
+          signupRepository.clearPersistedSignupCheckoutSessionId();
         } catch {
           // storage unavailable — nothing to clean
         }
@@ -220,10 +221,16 @@ export function useFinalizeViewModel() {
       refRef.current = signupRef;
       sessionIdRef.current = null;
     } else {
-      const sessionId = searchParams?.get("session_id") ?? null;
+      const sessionIdFromQuery = searchParams?.get("session_id")?.trim() || null;
+      const sessionId =
+        sessionIdFromQuery ?? signupRepository.getPersistedSignupCheckoutSessionId();
       if (sessionId) {
         refRef.current = null;
         sessionIdRef.current = sessionId;
+        signupRepository.persistSignupCheckoutSessionId(sessionId);
+        if (sessionIdFromQuery && typeof window !== "undefined") {
+          window.history.replaceState(window.history.state, "", window.location.pathname);
+        }
       } else {
         setPhase("expired");
         return;
@@ -245,11 +252,12 @@ export function useFinalizeViewModel() {
     try {
       sessionStorage.removeItem(STORAGE_KEYS.SIGNUP_REF);
       sessionStorage.removeItem(STORAGE_KEYS.SIGNUP_WIZARD);
+      signupRepository.clearPersistedSignupCheckoutSessionId();
     } catch {
       // nothing to clean
     }
     router.push("/signup");
-  }, [router]);
+  }, [router, signupRepository]);
 
   const goToLogin = useCallback(() => {
     const { isAuthenticated, defaultRedirectPath } = useAppStore.getState();

@@ -20,7 +20,7 @@ export function IdentityProviderEmptyState({ onCreateClick }: Props) {
   return (
     <div className="flex min-h-[400px] flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-card/30 p-8 text-center backdrop-blur-sm">
       {/* Icon frame with purple outer glow */}
-      <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/5 border border-primary/10 shadow-[0_0_25px_rgba(168,85,247,0.15)]">
+      <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/10 bg-primary/5 shadow-[0_0_25px_rgba(168,85,247,0.15)]">
         <Fingerprint className="h-8 w-8 text-primary" />
         <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white shadow">
           <Plus className="h-3 w-3" strokeWidth={3} />
@@ -38,7 +38,7 @@ export function IdentityProviderEmptyState({ onCreateClick }: Props) {
       {/* Primary button using Scripe Auth brand gradient */}
       <Button
         onClick={onCreateClick}
-        className="mt-6 px-5 py-2.5 font-medium text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl active:scale-[0.98] border-0 bg-gradient-to-r from-[#A855F7] via-[#7C3AED] to-[#4F46E5] hover:opacity-95"
+        className="mt-6 border-0 bg-gradient-to-r from-[#A855F7] via-[#7C3AED] to-[#4F46E5] px-5 py-2.5 font-medium text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:opacity-95 hover:shadow-xl active:scale-[0.98]"
       >
         <Plus className="me-1.5 h-4 w-4" strokeWidth={2.5} />
         {t("identityProviders.createButton") || "Add Identity Provider"}

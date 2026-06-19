@@ -57,20 +57,20 @@ export function IdentityProvidersView() {
   };
 
   return (
-    <div className="space-y-6 pb-12 animate-in fade-in duration-300">
+    <div className="space-y-6 pb-12 duration-300 animate-in fade-in">
       {/* ─── Premium Header Card ────────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-xl border border-border/80 bg-card/45 p-6 backdrop-blur-md shadow-sm">
+      <div className="relative overflow-hidden rounded-xl border border-border/80 bg-card/45 p-6 shadow-sm backdrop-blur-md">
         {/* Glow backdrop decoration */}
-        <div className="absolute -top-20 -right-20 h-48 w-48 rounded-full bg-purple-500/10 blur-[80px]" />
+        <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-purple-500/10 blur-[80px]" />
         <div className="absolute -bottom-20 -left-20 h-48 w-48 rounded-full bg-indigo-500/10 blur-[80px]" />
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+            <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground">
               <ShieldCheck className="h-7 w-7 text-purple-600 dark:text-purple-400" />
               {t("identityProviders.title") || "SSO Identity Providers"}
             </h1>
-            <p className="text-xs text-muted-foreground max-w-xl">
+            <p className="max-w-xl text-xs text-muted-foreground">
               {t("identityProviders.description") ||
                 "Configure external Identity Providers (IdPs) to enable secure Single Sign-On (SSO) login capabilities for users and admins."}
             </p>
@@ -78,7 +78,7 @@ export function IdentityProvidersView() {
 
           <Button
             onClick={handleCreateClick}
-            className="self-start sm:self-center font-semibold text-white shadow-md border-0 bg-gradient-to-r from-[#A855F7] to-[#7C3AED] hover:opacity-95 hover:shadow-lg active:scale-95 transition-all duration-200"
+            className="self-start border-0 bg-gradient-to-r from-[#A855F7] to-[#7C3AED] font-semibold text-white shadow-md transition-all duration-200 hover:opacity-95 hover:shadow-lg active:scale-95 sm:self-center"
           >
             <Plus className="me-1.5 h-4 w-4" strokeWidth={2.5} />
             {t("identityProviders.createButton") || "Add Provider"}
@@ -90,7 +90,7 @@ export function IdentityProvidersView() {
       <IdentityProviderStatsBar items={vm.items} />
 
       {/* ─── Controls & Search Section ───────────────────────────── */}
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between border-b pb-4">
+      <div className="flex flex-col gap-3 border-b pb-4 md:flex-row md:items-center md:justify-between">
         {/* Search */}
         <div className="relative w-full md:max-w-xs">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -98,12 +98,12 @@ export function IdentityProvidersView() {
             value={vm.searchValue}
             onChange={(e) => vm.handleSearchChange(e.target.value)}
             placeholder={t("identityProviders.searchPlaceholder") || "Search identity providers..."}
-            className="pl-9 h-9"
+            className="h-9 pl-9"
           />
         </div>
 
         {/* Tab Filters */}
-        <div className="flex flex-wrap items-center gap-1.5 rounded-lg bg-muted/40 p-1 border">
+        <div className="flex flex-wrap items-center gap-1.5 rounded-lg border bg-muted/40 p-1">
           {[
             { id: "all", label: t("common.all") || "All" },
             { id: "active", label: t("common.active") || "Active" },
@@ -118,7 +118,7 @@ export function IdentityProvidersView() {
               variant="ghost"
               size="sm"
               onClick={() => setFilterType(tab.id)}
-              className={`h-7 px-3 text-xs font-semibold rounded-md transition-all duration-150 ${
+              className={`h-7 rounded-md px-3 text-xs font-semibold transition-all duration-150 ${
                 filterType === tab.id
                   ? "bg-background text-foreground shadow-sm hover:bg-background"
                   : "text-muted-foreground hover:text-foreground"
@@ -133,16 +133,18 @@ export function IdentityProvidersView() {
       {/* ─── Loading State ─────────────────────────────────────── */}
       {vm.loading ? (
         <div className="flex min-h-[300px] flex-col items-center justify-center gap-3">
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 border border-purple-500/20 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
+          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-purple-500/20 bg-purple-500/10 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
             <Loader2 className="h-6 w-6 animate-spin text-purple-500" />
           </div>
-          <p className="text-xs text-muted-foreground">{t("common.loading") || "Loading SSO settings..."}</p>
+          <p className="text-xs text-muted-foreground">
+            {t("common.loading") || "Loading SSO settings..."}
+          </p>
         </div>
       ) : (
         <>
           {/* Grid Layout */}
           {filteredItems.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {filteredItems.map((item) => (
                 <IdentityProviderCard
                   key={item.id}

@@ -183,9 +183,25 @@ export class AuthService implements IAuthService {
     signature: string;
     userHandle: string | null;
   }): Promise<{ accessToken: string; refreshToken: string }> {
+    const toBase64 = (base64url: string) => {
+      const base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
+      const pad = (4 - (base64.length % 4)) % 4;
+      return base64 + "=".repeat(pad);
+    };
+
+    const backendRequest = {
+      credentialIdBase64: toBase64(data.rawId),
+      authenticatorDataBase64: toBase64(data.authenticatorData),
+      clientDataJsonBase64: toBase64(data.clientDataJSON),
+      signatureBase64: toBase64(data.signature),
+      userHandleBase64: data.userHandle ? toBase64(data.userHandle) : null,
+      tenantId: null,
+      deviceInfo: typeof window !== "undefined" ? window.navigator.userAgent : null,
+    };
+
     return this.api.postPublic<{ accessToken: string; refreshToken: string }>(
       API_ENDPOINTS.AUTH.PASSKEY.AUTH_VERIFY,
-      data
+      backendRequest
     );
   }
 

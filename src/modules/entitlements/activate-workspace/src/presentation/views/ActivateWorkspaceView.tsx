@@ -37,7 +37,7 @@ export default function ActivateWorkspaceView() {
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
           <LoadingSpinner showText={false} />
-          <p className="text-muted-foreground mt-4">{t("common.loading")}</p>
+          <p className="mt-4 text-muted-foreground">{t("common.loading")}</p>
         </div>
       </div>
     );
@@ -47,24 +47,27 @@ export default function ActivateWorkspaceView() {
     <SignupShell>
       <div className="flex flex-1 items-center justify-center p-6 md:p-12">
         <div className="w-full max-w-xl">
-          <Card className="border-border/60 bg-background/80 backdrop-blur-xl shadow-2xl relative overflow-hidden transition-all duration-300">
+          <Card className="relative overflow-hidden border-border/60 bg-background/80 shadow-2xl backdrop-blur-xl transition-all duration-300">
             {/* Top glowing ambient effect */}
             <div
-              className="absolute top-0 inset-x-0 h-1"
+              className="absolute inset-x-0 top-0 h-1"
               style={{
                 background: `linear-gradient(90deg, ${tokens.accent}, ${tokens.cyan})`,
               }}
             />
 
             <CardHeader className="space-y-4 text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 text-destructive animate-pulse">
+              <div className="mx-auto flex h-14 w-14 animate-pulse items-center justify-center rounded-full bg-destructive/10 text-destructive">
                 <ShieldAlert className="h-8 w-8" />
               </div>
               <div className="space-y-2">
-                <CardTitle className="text-2xl font-bold tracking-tight" style={{ color: tokens.ink }}>
+                <CardTitle
+                  className="text-2xl font-bold tracking-tight"
+                  style={{ color: tokens.ink }}
+                >
                   {t("entitlements.activateWorkspace.title")}
                 </CardTitle>
-                <CardDescription className="text-sm text-muted-foreground leading-relaxed">
+                <CardDescription className="text-sm leading-relaxed text-muted-foreground">
                   {t("entitlements.activateWorkspace.subtitle")}
                 </CardDescription>
               </div>
@@ -79,7 +82,7 @@ export default function ActivateWorkspaceView() {
                 <Button
                   onClick={handleRetryPayment}
                   loading={isRetrying}
-                  className="w-full h-11 text-base font-semibold shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="h-11 w-full text-base font-semibold shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
                   style={{
                     background: `linear-gradient(135deg, ${tokens.accent}, ${tokens.cyan})`,
                     color: "#ffffff",
@@ -109,7 +112,7 @@ export default function ActivateWorkspaceView() {
 
                 <div className="relative my-3 flex items-center justify-center">
                   <div className="absolute inset-x-0 h-px bg-border/40" />
-                  <span className="relative bg-background px-3 text-xs text-muted-foreground uppercase tracking-wider">
+                  <span className="relative bg-background px-3 text-xs uppercase tracking-wider text-muted-foreground">
                     {t("entitlements.activateWorkspace.or")}
                   </span>
                 </div>
@@ -117,7 +120,7 @@ export default function ActivateWorkspaceView() {
                 <Button
                   onClick={handleSignOut}
                   variant="ghost"
-                  className="w-full text-muted-foreground hover:bg-destructive/5 hover:text-destructive text-sm"
+                  className="w-full text-sm text-muted-foreground hover:bg-destructive/5 hover:text-destructive"
                 >
                   <LogOut className={`h-4 w-4 ${isRtl ? "ml-2" : "mr-2"}`} />
                   {t("entitlements.activateWorkspace.signOut")}
@@ -125,7 +128,7 @@ export default function ActivateWorkspaceView() {
               </div>
 
               {/* Quiet Footer Note */}
-              <p className="text-[11px] text-center text-muted-foreground leading-normal max-w-sm mx-auto">
+              <p className="mx-auto max-w-sm text-center text-[11px] leading-normal text-muted-foreground">
                 {t("entitlements.activateWorkspace.contactSupport")}
               </p>
             </CardContent>

@@ -1,5 +1,13 @@
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@core/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+} from "@core/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Button } from "@core/ui/button";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
@@ -43,7 +51,7 @@ export function ChangePlanDialog({
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="w-full h-11 text-base border-border hover:bg-accent/10 hover:text-accent font-medium"
+          className="h-11 w-full border-border text-base font-medium hover:bg-accent/10 hover:text-accent"
         >
           {t("entitlements.activateWorkspace.changePlan")}
         </Button>
@@ -87,7 +95,8 @@ export function ChangePlanDialog({
                     .filter((e) => e.isSelfServiceEnabled && !e.isRetired)
                     .map((edition) => (
                       <SelectItem key={edition.id} value={edition.id}>
-                        {edition.getDisplayName(language)} {edition.isFree ? `(${isRtl ? "مجانية" : "Free"})` : ""}
+                        {edition.getDisplayName(language)}{" "}
+                        {edition.isFree ? `(${isRtl ? "مجانية" : "Free"})` : ""}
                       </SelectItem>
                     ))}
                 </SelectContent>
@@ -115,11 +124,13 @@ export function ChangePlanDialog({
             )}
 
             {isConfirmingFree && (
-              <div className="rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm text-warning flex items-start gap-2">
-                <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
+              <div className="border-warning/30 bg-warning/5 text-warning flex items-start gap-2 rounded-lg border p-3 text-sm">
+                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
                 <div>
-                  <p className="font-semibold">{t("entitlements.activateWorkspace.confirmDowngradeTitle")}</p>
-                  <p className="text-muted-foreground text-xs mt-1">
+                  <p className="font-semibold">
+                    {t("entitlements.activateWorkspace.confirmDowngradeTitle")}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
                     {t("entitlements.activateWorkspace.confirmDowngradeText")}
                   </p>
                 </div>
@@ -141,8 +152,8 @@ export function ChangePlanDialog({
             {isConfirmingFree
               ? t("entitlements.activateWorkspace.confirmDowngradeCta")
               : isRtl
-              ? "متابعة للدفع"
-              : "Continue to checkout"}
+                ? "متابعة للدفع"
+                : "Continue to checkout"}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -69,8 +69,8 @@ export const AUTH_ENDPOINTS = {
       ONBOARDING_ANSWER: `${V1}/onboarding/answer`,
       /**
        * Direct Stripe checkout session creation (no prior registration required).
-       * POST → { editionId, billingCycle, currency, contactEmail, companyName?, successUrl, cancelUrl }
-       * Returns { checkoutUrl: string }
+       * POST → { editionId, billingCycle, currency, contactEmail, companyName? }
+       * Returns { checkoutUrl: string, checkoutSessionId: string }
        * Backend: SignupCheckoutController → CreateSignupCheckoutSessionCommand
        */
       CHECKOUT: `${V1}/auth/signup/checkout`,

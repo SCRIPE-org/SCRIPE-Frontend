@@ -8,7 +8,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useServices } from "@core/providers/service-provider";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { appLogger } from "@core/common/logger";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface OAuthConsentViewModelResult {
   // State
@@ -49,6 +49,7 @@ export function useOAuthConsentViewModel(): OAuthConsentViewModelResult {
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);
   const setAuth = useAppStore((state) => state.setAuth);
   const logout = useAppStore((state) => state.logout);
+  const queryClient = useQueryClient();
   const user = useAppStore((state) => state.user);
   const hasHydrated = useAppStore((state) => state._hasHydrated);
 
@@ -94,6 +95,7 @@ export function useOAuthConsentViewModel(): OAuthConsentViewModelResult {
       const redirectPath = encodeURIComponent(`/authorize?${currentParams}`);
       secureTokenService.clearTokens();
       logout();
+      queryClient.clear();
       router.replace(`/login?redirect=${redirectPath}`);
     },
   });
@@ -118,6 +120,7 @@ export function useOAuthConsentViewModel(): OAuthConsentViewModelResult {
       const redirectPath = encodeURIComponent(`/authorize?${currentParams}`);
       secureTokenService.clearTokens();
       logout();
+      queryClient.clear();
       router.replace(`/login?redirect=${redirectPath}`);
     }
   }, [hasHydrated, isAuthenticated]);
@@ -171,6 +174,7 @@ export function useOAuthConsentViewModel(): OAuthConsentViewModelResult {
     const redirectPath = encodeURIComponent(`/authorize?${currentParams}`);
     secureTokenService.clearTokens();
     logout();
+    queryClient.clear();
     router.replace(`/login?redirect=${redirectPath}`);
   };
 

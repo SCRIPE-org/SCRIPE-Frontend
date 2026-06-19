@@ -33,7 +33,16 @@ export class PasskeyService implements IPasskeyService {
   async completeRegistration(
     request: PasskeyCompleteRegistrationRequestDto
   ): Promise<PasskeyResponseDto> {
-    return this.api.post<PasskeyResponseDto>(AUTH_ENDPOINTS.AUTH.PASSKEY.REGISTER_VERIFY, request);
+    const backendBody = {
+      attestationObjectBase64: request.attestationResponse.response.attestationObject,
+      clientDataJsonBase64: request.attestationResponse.response.clientDataJSON,
+      deviceName: request.deviceName,
+      transports: null,
+    };
+    return this.api.post<PasskeyResponseDto>(
+      AUTH_ENDPOINTS.AUTH.PASSKEY.REGISTER_VERIFY,
+      backendBody as any
+    );
   }
 
   async rename(id: string, request: PasskeyRenameRequestDto): Promise<void> {

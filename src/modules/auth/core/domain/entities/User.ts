@@ -13,6 +13,7 @@ export interface UserData {
   lastName: string;
   phoneNumber: string;
   adminTypeName: string;
+  email?: string | null;
   profileImageUrl?: string | null;
   role?: string;
   permissions?: string[];
@@ -28,6 +29,7 @@ export class User {
   public readonly lastName: string;
   public readonly phoneNumber: string;
   public readonly adminTypeName: string;
+  public readonly email?: string | null;
   public readonly profileImageUrl?: string | null;
   public readonly role?: string;
   public readonly permissions?: string[];
@@ -42,6 +44,7 @@ export class User {
     this.lastName = data.lastName;
     this.phoneNumber = data.phoneNumber;
     this.adminTypeName = data.adminTypeName;
+    this.email = data.email ?? null;
     this.profileImageUrl = data.profileImageUrl ?? null;
     this.role = data.role;
     this.permissions = data.permissions;
@@ -82,6 +85,7 @@ export class User {
       lastName: this.lastName,
       phoneNumber: this.phoneNumber,
       adminTypeName: this.adminTypeName,
+      email: this.email,
       profileImageUrl: this.profileImageUrl,
       role: this.role,
       permissions: this.permissions,

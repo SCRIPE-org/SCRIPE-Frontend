@@ -142,8 +142,9 @@ export function ForceChangePasswordView() {
 
   const handleLogout = useCallback(() => {
     logout();
+    queryClient.clear();
     router.replace("/login");
-  }, [logout, router]);
+  }, [logout, router, queryClient]);
 
   return (
     <div

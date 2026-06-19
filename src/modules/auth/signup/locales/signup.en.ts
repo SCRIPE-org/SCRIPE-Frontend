@@ -562,7 +562,8 @@ export const en = {
       contactSupport: "If you believe this is an error, please contact support.",
       downgradeFree: "Downgrade to Free plan to activate instantly",
       confirmDowngradeTitle: "Downgrade to Free",
-      confirmDowngradeText: "Are you sure you want to switch to the Free plan? You will lose access to premium features, but your workspace will be activated instantly.",
+      confirmDowngradeText:
+        "Are you sure you want to switch to the Free plan? You will lose access to premium features, but your workspace will be activated instantly.",
       confirmDowngradeCta: "Yes, Downgrade",
       cancel: "Cancel",
       processing: "Processing...",

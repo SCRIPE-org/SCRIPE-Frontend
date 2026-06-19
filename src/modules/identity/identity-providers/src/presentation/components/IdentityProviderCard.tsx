@@ -65,7 +65,10 @@ export function IdentityProviderCard({
   const brandColor = item.buttonColor || "#4F46E5";
 
   // Protocol configuration styling
-  const protocolStyles: Record<string, { label: string; bg: string; text: string; border: string }> = {
+  const protocolStyles: Record<
+    string,
+    { label: string; bg: string; text: string; border: string }
+  > = {
     oidc: {
       label: "OIDC",
       bg: "bg-blue-500/10 dark:bg-blue-500/15",
@@ -104,13 +107,7 @@ export function IdentityProviderCard({
 
   return (
     <>
-      <div className="relative flex flex-col justify-between rounded-xl border border-border/80 bg-card/65 p-5 shadow-sm backdrop-blur-md transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:border-primary/20 dark:hover:border-primary/30 group">
-        {/* Brand Top Highlight Stripe */}
-        <div
-          className="absolute top-0 left-0 right-0 h-1.5 rounded-t-xl opacity-80"
-          style={{ backgroundColor: brandColor }}
-        />
-
+      <div className="group relative flex flex-col justify-between rounded-xl border border-border/80 bg-card/65 p-5 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/20 hover:shadow-lg dark:hover:border-primary/30">
         {/* Top Header Row */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
@@ -123,18 +120,20 @@ export function IdentityProviderCard({
               }}
             >
               {item.iconUrl ? (
-                <img src={item.iconUrl} alt={item.name} className="h-6 w-6 rounded object-contain" />
+                <img
+                  src={item.iconUrl}
+                  alt={item.name}
+                  className="h-6 w-6 rounded object-contain"
+                />
               ) : (
                 <Fingerprint className="h-6 w-6" style={{ color: brandColor }} />
               )}
             </div>
             <div>
-              <h4 className="font-semibold tracking-tight text-sm text-foreground line-clamp-1">
+              <h4 className="line-clamp-1 text-sm font-semibold tracking-tight text-foreground">
                 {item.name}
               </h4>
-              <p className="font-mono text-[11px] text-muted-foreground mt-0.5">
-                {item.slug}
-              </p>
+              <p className="mt-0.5 font-mono text-[11px] text-muted-foreground">{item.slug}</p>
             </div>
           </div>
 
@@ -161,7 +160,7 @@ export function IdentityProviderCard({
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => setShowDeleteDialog(true)}
-                className="cursor-pointer gap-2 text-red-600 hover:text-red-700 dark:text-red-400 focus:text-red-600"
+                className="cursor-pointer gap-2 text-red-600 hover:text-red-700 focus:text-red-600 dark:text-red-400"
               >
                 <Trash2 className="h-4 w-4" />
                 {t("common.delete") || "Delete"}
@@ -171,11 +170,11 @@ export function IdentityProviderCard({
         </div>
 
         {/* Badges/Details Row */}
-        <div className="my-4 flex flex-wrap gap-1.5 items-center">
+        <div className="my-4 flex flex-wrap items-center gap-1.5">
           {/* Protocol Badge */}
           <Badge
             variant="outline"
-            className={`h-5 text-[10px] uppercase font-semibold border ${style.bg} ${style.text} ${style.border}`}
+            className={`h-5 border text-[10px] font-semibold uppercase ${style.bg} ${style.text} ${style.border}`}
           >
             {style.label}
           </Badge>
@@ -184,7 +183,7 @@ export function IdentityProviderCard({
           {item.enabledForAdmins && (
             <Badge
               variant="outline"
-              className="h-5 gap-1 border-violet-200 bg-violet-50 dark:border-violet-800/30 dark:bg-violet-900/10 text-[10px] text-violet-700 dark:text-violet-400 font-medium"
+              className="h-5 gap-1 border-violet-200 bg-violet-50 text-[10px] font-medium text-violet-700 dark:border-violet-800/30 dark:bg-violet-900/10 dark:text-violet-400"
             >
               <Shield className="h-3 w-3" />
               {t("identityProviders.badgeAdmin")}
@@ -195,7 +194,7 @@ export function IdentityProviderCard({
           {item.enabledForUsers && (
             <Badge
               variant="outline"
-              className="h-5 gap-1 border-sky-200 bg-sky-50 dark:border-sky-800/30 dark:bg-sky-900/10 text-[10px] text-sky-700 dark:text-sky-400 font-medium"
+              className="h-5 gap-1 border-sky-200 bg-sky-50 text-[10px] font-medium text-sky-700 dark:border-sky-800/30 dark:bg-sky-900/10 dark:text-sky-400"
             >
               <Users className="h-3 w-3" />
               {t("identityProviders.badgeUser")}
@@ -204,7 +203,7 @@ export function IdentityProviderCard({
         </div>
 
         {/* Divider */}
-        <div className="h-px bg-border/60 w-full mb-4" />
+        <div className="mb-4 h-px w-full bg-border/60" />
 
         {/* Card Footer Controls */}
         <div className="flex items-center justify-between">
@@ -214,7 +213,7 @@ export function IdentityProviderCard({
             size="sm"
             onClick={() => onTestConnection(item.id)}
             disabled={isTesting}
-            className="h-8 px-2.5 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 gap-1.5"
+            className="h-8 gap-1.5 px-2.5 text-xs text-muted-foreground hover:bg-muted/50 hover:text-foreground"
           >
             {isTesting ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -258,7 +257,7 @@ export function IdentityProviderCard({
                 onDelete(item);
                 setShowDeleteDialog(false);
               }}
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="bg-red-600 text-white hover:bg-red-700"
             >
               {t("common.delete") || "Delete"}
             </AlertDialogAction>

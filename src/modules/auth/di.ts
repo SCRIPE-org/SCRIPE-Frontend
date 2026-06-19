@@ -7,6 +7,7 @@
 import { getBaseApiService, getModuleApiService } from "@core/services/api-factory";
 import { useAppStore } from "@core/store/useAppStore";
 import { authBroadcast } from "@core/common/broadcast-auth";
+import { queryClient } from "@core/query-client";
 
 import { AuthService } from "./core/data/services/AuthService";
 import { PublicApiService } from "@core/services";
@@ -78,10 +79,12 @@ function createContainer(): AuthContainer {
 
   baseApi.setLogoutHandler(() => {
     useAppStore.getState().logout();
+    queryClient.clear();
   });
 
   authBroadcast.onLogout(() => {
     useAppStore.getState().logout();
+    queryClient.clear();
   });
 
   return {

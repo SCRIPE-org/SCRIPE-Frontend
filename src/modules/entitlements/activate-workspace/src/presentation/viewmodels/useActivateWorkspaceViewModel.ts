@@ -16,7 +16,7 @@ export function useActivateWorkspaceViewModel() {
   const { t, language } = useI18n();
   const { tokens } = useSignupTheme();
   const { toast } = useEnhancedToast();
-  
+
   const user = useAppStore((state) => state.user);
   const logoutStore = useAppStore((state) => state.logout);
   const tenantId = user?.tenantId;
@@ -59,28 +59,36 @@ export function useActivateWorkspaceViewModel() {
     if (!tenantId || !subscription) return;
     setIsRetrying(true);
     try {
-      const response = await entitlementsContainer.billingRepository.createCheckoutSession(tenantId, {
-        editionId: subscription.editionId,
-        subscriptionType: subscription.type || "Monthly",
-        currency: subscription.currency || "USD",
-        successUrl: `${window.location.origin}/dashboard`,
-        cancelUrl: `${window.location.origin}/activate-workspace`,
-      });
+      const response = await entitlementsContainer.billingRepository.createCheckoutSession(
+        tenantId,
+        {
+          editionId: subscription.editionId,
+          subscriptionType: subscription.type || "Monthly",
+          currency: subscription.currency || "USD",
+          successUrl: `${window.location.origin}/dashboard`,
+          cancelUrl: `${window.location.origin}/activate-workspace`,
+        }
+      );
 
       if (response && response.url) {
         window.location.href = response.url;
       } else {
         toast({
           variant: "destructive",
-          title: t("entitlements.activateWorkspace.createFailed") || (isRtl ? "فشل إنشاء جلسة الدفع" : "Payment Session Failed"),
-          description: isRtl ? "تعذر إنشاء جلسة الدفع، يرجى المحاولة لاحقاً." : "Could not create checkout session. Please try again later.",
+          title:
+            t("entitlements.activateWorkspace.createFailed") ||
+            (isRtl ? "فشل إنشاء جلسة الدفع" : "Payment Session Failed"),
+          description: isRtl
+            ? "تعذر إنشاء جلسة الدفع، يرجى المحاولة لاحقاً."
+            : "Could not create checkout session. Please try again later.",
         });
       }
     } catch (err: any) {
       toast({
         variant: "destructive",
         title: isRtl ? "خطأ في الاتصال" : "Connection Error",
-        description: err?.message || (isRtl ? "حدث خطأ غير متوقع." : "An unexpected error occurred."),
+        description:
+          err?.message || (isRtl ? "حدث خطأ غير متوقع." : "An unexpected error occurred."),
       });
     } finally {
       setIsRetrying(false);
@@ -90,8 +98,8 @@ export function useActivateWorkspaceViewModel() {
   // Action: Change Plan (either Free downgrade or change to another paid plan)
   const handleChangePlanSubmit = async () => {
     if (!tenantId || !selectedPlanId) return;
-    
-    const targetEdition = editions.find(e => e.id === selectedPlanId);
+
+    const targetEdition = editions.find((e) => e.id === selectedPlanId);
     if (!targetEdition) return;
 
     setIsChangingPlan(true);
@@ -106,7 +114,9 @@ export function useActivateWorkspaceViewModel() {
         toast({
           variant: "success",
           title: isRtl ? "تم تفعيل مساحة العمل" : "Workspace Activated",
-          description: isRtl ? "تم تحويل مساحة عملك للخطة المجانية وتفعيلها بنجاح." : "Your workspace was successfully switched to the Free plan and activated.",
+          description: isRtl
+            ? "تم تحويل مساحة عملك للخطة المجانية وتفعيلها بنجاح."
+            : "Your workspace was successfully switched to the Free plan and activated.",
         });
 
         // Trigger session update and page reload
@@ -115,13 +125,16 @@ export function useActivateWorkspaceViewModel() {
         }, 1500);
       } else {
         // Paid plan - create new checkout session
-        const response = await entitlementsContainer.billingRepository.createCheckoutSession(tenantId, {
-          editionId: selectedPlanId,
-          subscriptionType: selectedCycle,
-          currency: subscription?.currency || "USD",
-          successUrl: `${window.location.origin}/dashboard`,
-          cancelUrl: `${window.location.origin}/activate-workspace`,
-        });
+        const response = await entitlementsContainer.billingRepository.createCheckoutSession(
+          tenantId,
+          {
+            editionId: selectedPlanId,
+            subscriptionType: selectedCycle,
+            currency: subscription?.currency || "USD",
+            successUrl: `${window.location.origin}/dashboard`,
+            cancelUrl: `${window.location.origin}/activate-workspace`,
+          }
+        );
 
         if (response && response.url) {
           window.location.href = response.url;
@@ -129,7 +142,9 @@ export function useActivateWorkspaceViewModel() {
           toast({
             variant: "destructive",
             title: isRtl ? "فشل إنشاء جلسة الدفع" : "Payment Session Failed",
-            description: isRtl ? "تعذر إنشاء جلسة الدفع، يرجى المحاولة لاحقاً." : "Could not create checkout session. Please try again later.",
+            description: isRtl
+              ? "تعذر إنشاء جلسة الدفع، يرجى المحاولة لاحقاً."
+              : "Could not create checkout session. Please try again later.",
           });
         }
       }
@@ -137,7 +152,8 @@ export function useActivateWorkspaceViewModel() {
       toast({
         variant: "destructive",
         title: isRtl ? "خطأ في تحويل الخطة" : "Plan Switch Failed",
-        description: err?.message || (isRtl ? "حدث خطأ غير متوقع." : "An unexpected error occurred."),
+        description:
+          err?.message || (isRtl ? "حدث خطأ غير متوقع." : "An unexpected error occurred."),
       });
     } finally {
       setIsChangingPlan(false);

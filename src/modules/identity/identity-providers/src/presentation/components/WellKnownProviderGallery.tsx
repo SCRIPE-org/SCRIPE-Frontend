@@ -67,7 +67,7 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
       "Create a project, then navigate to 'APIs & Services' > 'OAuth consent screen'. Set user type to External or Internal as needed.",
       "Go to the 'Credentials' tab, click '+ Create Credentials' and select 'OAuth client ID'. Select application type 'Web application'.",
       "Add your SCRIPE authorization callback URL to the 'Authorized redirect URIs' section.",
-      "Copy the generated 'Client ID' and 'Client Secret' and paste them into the configuration form below."
+      "Copy the generated 'Client ID' and 'Client Secret' and paste them into the configuration form below.",
     ],
   },
   {
@@ -102,7 +102,7 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
       "Navigate to 'App registrations' in the sidebar and click '+ New registration'.",
       "Enter a name, choose supported account types, select redirect platform 'Web', and enter your SCRIPE callback URL.",
       "Under 'Certificates & secrets', click '+ New client secret', configure expiry, and copy the secret 'Value' immediately.",
-      "Replace the '{tenant-id}' placeholder in the Authority URL with your Active Directory Tenant ID or use 'common' for multi-tenant."
+      "Replace the '{tenant-id}' placeholder in the Authority URL with your Active Directory Tenant ID or use 'common' for multi-tenant.",
     ],
   },
   {
@@ -132,7 +132,7 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
       "Go to your GitHub Settings > 'Developer settings' > 'OAuth Apps'.",
       "Click 'Register a new application' and provide a name and homepage URL.",
       "Enter the SCRIPE callback URL in the 'Authorization callback URL' field.",
-      "Click 'Register application' then copy the 'Client ID' and click 'Generate a new client secret' to paste them below."
+      "Click 'Register application' then copy the 'Client ID' and click 'Generate a new client secret' to paste them below.",
     ],
   },
   {
@@ -165,7 +165,7 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
       "Go to 'Applications' > 'Applications' and click 'Create App Integration'.",
       "Choose 'OIDC - OpenID Connect' as the Sign-in method, and 'Web Application' as the Application type.",
       "Configure your Sign-in redirect URIs with the SCRIPE callback URL.",
-      "Copy the Client ID, Client Secret, and your Okta Domain (to replace `{your-domain}` in the Authority URL)."
+      "Copy the Client ID, Client Secret, and your Okta Domain (to replace `{your-domain}` in the Authority URL).",
     ],
   },
   {
@@ -197,7 +197,7 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
       "Log in to your Auth0 Dashboard and navigate to 'Applications' > 'Applications'.",
       "Click '+ Create Application', give it a name, and select 'Regular Web Applications'.",
       "In the 'Settings' tab, add your SCRIPE callback URL to the 'Allowed Callback URLs' field.",
-      "Copy the Domain, Client ID, and Client Secret. Pre-fill the Domain in the Authority URL field below."
+      "Copy the Domain, Client ID, and Client Secret. Pre-fill the Domain in the Authority URL field below.",
     ],
   },
   {
@@ -223,7 +223,7 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
       "Access Azure portal and open your Azure AD B2C tenant directory.",
       "Create a new 'App registration', enabling access to redirect uri 'Web' with the SCRIPE callback URL.",
       "Generate a client secret in 'Certificates & secrets' and save its value.",
-      "Replace `{tenant}` with your B2C tenant name and `{policy}` with your User Flow policy name (e.g. `B2C_1_signupsignin`)."
+      "Replace `{tenant}` with your B2C tenant name and `{policy}` with your User Flow policy name (e.g. `B2C_1_signupsignin`).",
     ],
   },
   {
@@ -256,7 +256,7 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
       "Select your target Realm and go to the 'Clients' page.",
       "Click 'Create client', set Client ID, protocol 'openid-connect', and click Next.",
       "Enable 'Client authentication' (Client Secret) and add your SCRIPE callback URL under 'Valid redirect URIs'.",
-      "Copy the Client Secret from the 'Credentials' tab and paste it along with Client ID below."
+      "Copy the Client Secret from the 'Credentials' tab and paste it along with Client ID below.",
     ],
   },
   {
@@ -283,7 +283,7 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
       "Log in to the PingOne Admin Console.",
       "Navigate to 'Connections' > 'Applications' and click '+ Add Application'.",
       "Select 'Web App' > 'OIDC', configure a redirect URI mapping to SCRIPE callback, and save.",
-      "Copy the Application Client ID and Client Secret, and configure the Environment ID in the Authority URL."
+      "Copy the Application Client ID and Client Secret, and configure the Environment ID in the Authority URL.",
     ],
   },
   {
@@ -315,7 +315,7 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
       "Open AWS Console and go to 'Amazon Cognito'. Select your User Pool.",
       "Go to 'App integration' and select or create an App Client.",
       "Enable 'Cognito User Pool' as an Identity Provider, check Authorization code grant, and add SCRIPE callback URL.",
-      "Paste your User Pool region and ID in place of `{region}` and `{userPoolId}` in the Authority URL."
+      "Paste your User Pool region and ID in place of `{region}` and `{userPoolId}` in the Authority URL.",
     ],
   },
   {
@@ -348,7 +348,7 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
       "Go to 'Applications' > 'Applications' and click 'Add App'.",
       "Search for 'OIDC' or 'OpenID Connect' and select 'OpenID Connect (OIDC)'.",
       "In the app configurations, enter the SCRIPE callback URL in the 'Redirect URI' field.",
-      "Under 'SSO', copy Client ID and Client Secret, and update your subdomain in the Authority URL."
+      "Under 'SSO', copy Client ID and Client Secret, and update your subdomain in the Authority URL.",
     ],
   },
   {
@@ -380,7 +380,7 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
       "Open your JumpCloud Admin Portal.",
       "Go to 'SSO' > 'Applications' and click '+ Add New Application'.",
       "Select 'Custom OIDC App', configure redirect URIs with SCRIPE callback, and save.",
-      "Retrieve your Client ID and Client Secret from the app parameters tab."
+      "Retrieve your Client ID and Client Secret from the app parameters tab.",
     ],
   },
   {
@@ -411,7 +411,7 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
       "Log in to the Duo Admin Panel.",
       "Go to 'Applications' and click 'Protect an Application'.",
       "Search for 'OpenID Connect' and click 'Protect'.",
-      "Configure your App integration redirect URL, and fetch Integration Key (Client ID) and Secret Key."
+      "Configure your App integration redirect URL, and fetch Integration Key (Client ID) and Secret Key.",
     ],
   },
   {
@@ -441,7 +441,7 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
       "Log in to the Cloudflare Zero Trust Dashboard.",
       "Go to 'Settings' > 'Authentication' and add a new identity provider.",
       "Select 'OIDC', paste the redirect URI, and configure the application.",
-      "Provide Domain, Client ID, and Client Secret. Copy them into the form below."
+      "Provide Domain, Client ID, and Client Secret. Copy them into the form below.",
     ],
   },
   {
@@ -472,7 +472,7 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
       "Log in to Salesforce, open Setup and search for 'App Manager'.",
       "Click 'New Connected App', check 'Enable OAuth Settings'.",
       "Add SCRIPE callback URL to 'Callback URL', check 'Access unique user identifiers (openid)' and 'Access basic profile', and save.",
-      "Copy Customer Key (Client ID) and Customer Secret (Client Secret) from the app management page."
+      "Copy Customer Key (Client ID) and Customer Secret (Client Secret) from the app management page.",
     ],
   },
   {
@@ -499,7 +499,7 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
       "Verify that your identity provider supports OpenID Connect 1.0.",
       "Register a client application with your provider and copy Client ID and Secret.",
       "Configure your provider's client redirect URI to point to the SCRIPE callback URL.",
-      "Locate the Issuer/Authority URL (which hosts the OIDC discovery document `.well-known/openid-configuration`) and enter it below."
+      "Locate the Issuer/Authority URL (which hosts the OIDC discovery document `.well-known/openid-configuration`) and enter it below.",
     ],
   },
   {
@@ -522,7 +522,7 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
       "Ensure your SAML identity provider (IdP) is active and supports SAML 2.0 Web Browser SSO profile.",
       "Register SCRIPE as a Service Provider (SP) in your IdP console.",
       "Retrieve the IdP Entity ID, SSO URL, and public Certificate from your provider.",
-      "Enter these values below to enable SAML federation."
+      "Enter these values below to enable SAML federation.",
     ],
   },
 ];
@@ -568,15 +568,24 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
             <button
               key={tpl.id}
               type="button"
-              onClick={() => onSelect({ ...tpl.preset, name: tpl.name, slug: tpl.id })}
-              className="group relative flex flex-col items-center gap-2.5 rounded-xl border p-4.5 text-center transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 active:scale-[0.97] hover:shadow-md cursor-pointer"
+              onClick={() => {
+                const localizedButtonLabel =
+                  t(`identityProviders.gallery.${tpl.id}.buttonLabel`) || tpl.preset.buttonLabel;
+                onSelect({
+                  ...tpl.preset,
+                  name: tpl.name,
+                  slug: tpl.id,
+                  buttonLabel: localizedButtonLabel,
+                });
+              }}
+              className="p-4.5 group relative flex cursor-pointer flex-col items-center gap-2.5 rounded-xl border text-center transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:shadow-md active:scale-[0.97]"
               style={{
                 borderColor: isSelected ? `${tpl.color}75` : "hsl(var(--border))",
                 background: isSelected ? `${tpl.color}12` : undefined,
                 boxShadow: isSelected ? `0 0 15px ${tpl.color}20` : undefined,
               }}
               aria-pressed={isSelected}
-              title={tpl.description}
+              title={t(`identityProviders.gallery.${tpl.id}.description`) || tpl.description}
             >
               {/* Logo */}
               <div
@@ -589,16 +598,14 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
               />
 
               {/* Name */}
-              <span
-                className="line-clamp-2 text-[11px] font-semibold leading-tight text-foreground"
-              >
+              <span className="line-clamp-2 text-[11px] font-semibold leading-tight text-foreground">
                 {tpl.name}
               </span>
 
               {/* Protocol badge */}
               <Badge
                 variant={protocolBadgeVariant(tpl.protocol)}
-                className="h-4.5 px-1.5 text-[8.5px] uppercase tracking-wider font-semibold"
+                className="h-4.5 px-1.5 text-[8.5px] font-semibold uppercase tracking-wider"
               >
                 {tpl.protocol}
               </Badge>
@@ -606,7 +613,7 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
               {/* Selected checkmark with brand background */}
               {isSelected && (
                 <div
-                  className="absolute right-2 top-2 flex h-4.5 w-4.5 items-center justify-center rounded-full shadow"
+                  className="h-4.5 w-4.5 absolute right-2 top-2 flex items-center justify-center rounded-full shadow"
                   style={{ background: tpl.color }}
                 >
                   <svg
@@ -630,21 +637,28 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
 
       {/* Inline Setup Guide for selected template */}
       {activeTemplate && activeTemplate.setupSteps && (
-        <Card className="border border-purple-500/20 bg-purple-500/5 dark:bg-purple-950/10 shadow-sm animate-in fade-in slide-in-from-top-1 duration-200">
-          <CardContent className="p-4 space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-400 flex items-center gap-1.5">
+        <Card className="border border-purple-500/20 bg-purple-500/5 shadow-sm duration-200 animate-in fade-in slide-in-from-top-1 dark:bg-purple-950/10">
+          <CardContent className="space-y-3 p-4">
+            <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-400">
               <HelpCircle className="h-4 w-4" />
               {t("identityProviders.setupGuide", { name: activeTemplate.name })}
             </h4>
             <ul className="space-y-2 text-xs">
-              {activeTemplate.setupSteps.map((step, idx) => (
-                <li key={idx} className="flex items-start gap-2.5 text-muted-foreground leading-relaxed">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/10 text-[10px] font-bold text-purple-700 dark:text-purple-400">
-                    {idx + 1}
-                  </span>
-                  <p className="mt-0.5">{step}</p>
-                </li>
-              ))}
+              {activeTemplate.setupSteps.map((step, idx) => {
+                const localizedStep =
+                  t(`identityProviders.gallery.${activeTemplate.id}.step${idx + 1}`) || step;
+                return (
+                  <li
+                    key={idx}
+                    className="flex items-start gap-2.5 leading-relaxed text-muted-foreground"
+                  >
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/10 text-[10px] font-bold text-purple-700 dark:text-purple-400">
+                      {idx + 1}
+                    </span>
+                    <p className="mt-0.5">{localizedStep}</p>
+                  </li>
+                );
+              })}
             </ul>
           </CardContent>
         </Card>

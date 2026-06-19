@@ -45,7 +45,10 @@ import {
   persistWizardState,
   persistSignupRef,
   clearPersistedWizardState,
+  clearPersistedSignupCheckoutSessionId,
+  getPersistedSignupCheckoutSessionId,
   getPersistedSignupRef,
+  persistSignupCheckoutSessionId,
   readPersistedWizardState,
 } from "../helpers/wizardStorage";
 
@@ -122,12 +125,25 @@ export class SignupRepository implements ISignupRepository {
     return getPersistedSignupRef();
   }
 
+  persistSignupCheckoutSessionId(sessionId: string): void {
+    persistSignupCheckoutSessionId(sessionId);
+  }
+
+  getPersistedSignupCheckoutSessionId(): string | null {
+    return getPersistedSignupCheckoutSessionId();
+  }
+
+  clearPersistedSignupCheckoutSessionId(): void {
+    clearPersistedSignupCheckoutSessionId();
+  }
+
   persistWizardState(state: PersistedWizardState): void {
     persistWizardState(state);
   }
 
   clearPersistedWizardState(): void {
     clearPersistedWizardState();
+    clearPersistedSignupCheckoutSessionId();
   }
 
   readPersistedWizardState(): PersistedWizardState | null {

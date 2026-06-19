@@ -190,7 +190,6 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/roles": [SYSTEM_PERMISSIONS.ROLES_VIEW],
   "/roles/[id]": [SYSTEM_PERMISSIONS.ROLES_VIEW],
   "/settings/permissions": [SYSTEM_PERMISSIONS.PERMISSIONS_VIEW],
-  "/settings/passkeys": [SYSTEM_PERMISSIONS.PASSKEYS_VIEW],
   "/tenants": [SYSTEM_PERMISSIONS.TENANTS_VIEW],
   "/tenants/create": [SYSTEM_PERMISSIONS.TENANTS_CREATE],
   "/tenants/[id]": [SYSTEM_PERMISSIONS.TENANTS_VIEW],

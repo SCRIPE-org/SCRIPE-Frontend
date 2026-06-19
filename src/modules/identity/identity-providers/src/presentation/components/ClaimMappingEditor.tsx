@@ -15,21 +15,8 @@ import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
 import { Textarea } from "@core/ui/textarea";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@core/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { FileJson, List, Plus, Trash2, AlertCircle, Sparkles } from "lucide-react";
 
 interface Props {
@@ -157,13 +144,13 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
     <div className="space-y-4">
       {/* Selector Header Bar */}
       <div className="flex items-center justify-between border-b pb-2">
-        <Label className="text-sm font-semibold tracking-tight flex items-center gap-1.5">
+        <Label className="flex items-center gap-1.5 text-sm font-semibold tracking-tight">
           <Sparkles className="h-4 w-4 text-purple-500" />
           {t("identityProviders.claimMappings") || "Claim Mappings"}
         </Label>
 
         {/* Toggle between Visual and Raw JSON */}
-        <div className="flex items-center gap-1 rounded-md bg-muted/40 p-0.5 border">
+        <div className="flex items-center gap-1 rounded-md border bg-muted/40 p-0.5">
           <Button
             type="button"
             variant="ghost"
@@ -173,7 +160,7 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
               setMode("visual");
             }}
             disabled={!!jsonError}
-            className={`h-7 px-2.5 text-xs gap-1.5 ${
+            className={`h-7 gap-1.5 px-2.5 text-xs ${
               mode === "visual"
                 ? "bg-background text-foreground shadow-sm hover:bg-background"
                 : "text-muted-foreground hover:text-foreground"
@@ -187,7 +174,7 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
             variant="ghost"
             size="sm"
             onClick={() => setMode("json")}
-            className={`h-7 px-2.5 text-xs gap-1.5 ${
+            className={`h-7 gap-1.5 px-2.5 text-xs ${
               mode === "json"
                 ? "bg-background text-foreground shadow-sm hover:bg-background"
                 : "text-muted-foreground hover:text-foreground"
@@ -203,8 +190,8 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
       {mode === "visual" && (
         <div className="space-y-3">
           {visualMappings.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-8 px-4 text-center bg-muted/10">
-              <List className="h-8 w-8 text-muted-foreground/60 mb-2" />
+            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed bg-muted/10 px-4 py-8 text-center">
+              <List className="mb-2 h-8 w-8 text-muted-foreground/60" />
               <p className="text-xs text-muted-foreground">
                 {t("identityProviders.noMappings") || "No claim mappings configured yet."}
               </p>
@@ -220,17 +207,17 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
               </Button>
             </div>
           ) : (
-            <div className="rounded-lg border overflow-hidden">
+            <div className="overflow-hidden rounded-lg border">
               <Table>
                 <TableHeader className="bg-muted/30">
                   <TableRow>
-                    <TableHead className="w-[45%] text-xs font-semibold py-2">
+                    <TableHead className="w-[45%] py-2 text-xs font-semibold">
                       {t("identityProviders.internalAttribute") || "Internal Attribute"}
                     </TableHead>
-                    <TableHead className="w-[45%] text-xs font-semibold py-2">
+                    <TableHead className="w-[45%] py-2 text-xs font-semibold">
                       {t("identityProviders.externalClaimKey") || "External Claim Key"}
                     </TableHead>
-                    <TableHead className="w-[10%] text-right py-2"></TableHead>
+                    <TableHead className="w-[10%] py-2 text-right"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -249,11 +236,9 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
                               <SelectItem
                                 key={opt.value}
                                 value={opt.value}
-                                disabled={
-                                  visualMappings.some(
-                                    (m, i) => m.internalKey === opt.value && i !== idx
-                                  )
-                                }
+                                disabled={visualMappings.some(
+                                  (m, i) => m.internalKey === opt.value && i !== idx
+                                )}
                                 className="text-xs"
                               >
                                 {claimLabels[opt.value] || opt.label}
@@ -266,7 +251,10 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
                         <Input
                           value={row.externalClaim}
                           onChange={(e) => updateMappingRow(idx, "externalClaim", e.target.value)}
-                          placeholder={t("identityProviders.claimPlaceholder") || "e.g. given_name or http://..."}
+                          placeholder={
+                            t("identityProviders.claimPlaceholder") ||
+                            "e.g. given_name or http://..."
+                          }
                           className="h-9 font-mono text-xs"
                         />
                       </TableCell>
@@ -294,7 +282,7 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
               variant="outline"
               size="sm"
               onClick={addMappingRow}
-              className="gap-1.5 text-xs w-full justify-center"
+              className="w-full justify-center gap-1.5 text-xs"
             >
               <Plus className="h-3.5 w-3.5" />
               {t("identityProviders.addMapping") || "Add Claim Mapping"}
@@ -310,7 +298,7 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
             value={jsonText}
             onChange={(e) => handleJsonChange(e.target.value)}
             placeholder='{ "email": "email", "firstName": "given_name" }'
-            className="min-h-[180px] font-mono text-xs resize-y border bg-[#1e1e1e] text-emerald-400 dark:text-emerald-300 leading-relaxed p-3 focus-visible:ring-purple-500/50"
+            className="min-h-[180px] resize-y border bg-[#1e1e1e] p-3 font-mono text-xs leading-relaxed text-emerald-400 focus-visible:ring-purple-500/50 dark:text-emerald-300"
           />
 
           {jsonError && (

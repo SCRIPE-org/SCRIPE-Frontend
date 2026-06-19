@@ -97,11 +97,14 @@ MIIDdDCCAlygAwIBAgIGAX...
     // New keys added in refactor
     addMapping: "Add Claim Mapping",
     callbackCopiedDesc: "Redirect URL copied successfully.",
-    callbackUrlDesc: "Register these endpoints in your Identity Provider (IdP) dashboard to allow secure auth flows.",
-    callbackUrlHelp: "Most identity providers require this URL to exactly match. Make sure the protocol (http/https) matches your deployment environment.",
+    callbackUrlDesc:
+      "Register these endpoints in your Identity Provider (IdP) dashboard to allow secure auth flows.",
+    callbackUrlHelp:
+      "Most identity providers require this URL to exactly match. Make sure the protocol (http/https) matches your deployment environment.",
     callbackUrlTitle: "Redirect Settings",
     claimMappings: "Claim Mappings",
-    emptyDesc: "Configure Single Sign-On (SSO) using OpenID Connect (OIDC), OAuth 2.0, or SAML 2.0 to let users log in with external credentials.",
+    emptyDesc:
+      "Configure Single Sign-On (SSO) using OpenID Connect (OIDC), OAuth 2.0, or SAML 2.0 to let users log in with external credentials.",
     emptyTitle: "No Identity Providers",
     externalClaimKey: "External Claim Key",
     internalAttribute: "Internal Attribute",
@@ -161,5 +164,171 @@ MIIDdDCCAlygAwIBAgIGAX...
     claimPlaceholder: "e.g. given_name or http://...",
     statsAdmins: "Admins:",
     statsUsers: "Users:",
+    normal: "Normal",
+    hover: "Hover",
+    gallery: {
+      google: {
+        description: "Sign in with Google / Google Workspace accounts",
+        buttonLabel: "Continue with Google",
+        step1: "Go to the Google Cloud Console (https://console.cloud.google.com).",
+        step2:
+          "Create a project, then navigate to 'APIs & Services' > 'OAuth consent screen'. Set user type to External or Internal as needed.",
+        step3:
+          "Go to the 'Credentials' tab, click '+ Create Credentials' and select 'OAuth client ID'. Select application type 'Web application'.",
+        step4:
+          "Add your SCRIPE authorization callback URL to the 'Authorized redirect URIs' section.",
+        step5:
+          "Copy the generated 'Client ID' and 'Client Secret' and paste them into the configuration form below.",
+      },
+      microsoft: {
+        description: "Azure Active Directory / Microsoft 365 accounts",
+        buttonLabel: "Continue with Microsoft",
+        step1:
+          "Log in to the Azure Portal (https://portal.azure.com) and search for 'Microsoft Entra ID' (Azure Active Directory).",
+        step2: "Navigate to 'App registrations' in the sidebar and click '+ New registration'.",
+        step3:
+          "Enter a name, choose supported account types, select redirect platform 'Web', and enter your SCRIPE callback URL.",
+        step4:
+          "Under 'Certificates & secrets', click '+ New client secret', configure expiry, and copy the secret 'Value' immediately.",
+        step5:
+          "Replace the '{tenant-id}' placeholder in the Authority URL with your Active Directory Tenant ID or use 'common' for multi-tenant.",
+      },
+      github: {
+        description: "Sign in with GitHub developer accounts",
+        buttonLabel: "Continue with GitHub",
+        step1: "Go to your GitHub Settings > 'Developer settings' > 'OAuth Apps'.",
+        step2: "Click 'Register a new application' and provide a name and homepage URL.",
+        step3: "Enter the SCRIPE callback URL in the 'Authorization callback URL' field.",
+        step4:
+          "Click 'Register application' then copy the 'Client ID' and click 'Generate a new client secret' to paste them below.",
+      },
+      okta: {
+        description: "Enterprise identity with Okta Workforce Identity",
+        buttonLabel: "Continue with Okta",
+        step1: "Sign in to your Okta Admin Console.",
+        step2: "Go to 'Applications' > 'Applications' and click 'Create App Integration'.",
+        step3:
+          "Choose 'OIDC - OpenID Connect' as the Sign-in method, and 'Web Application' as the Application type.",
+        step4: "Configure your Sign-in redirect URIs with the SCRIPE callback URL.",
+        step5:
+          "Copy the Client ID, Client Secret, and your Okta Domain (to replace `{your-domain}` in the Authority URL).",
+      },
+      auth0: {
+        description: "Universal identity platform for any app",
+        buttonLabel: "Continue with Auth0",
+        step1: "Log in to your Auth0 Dashboard and navigate to 'Applications' > 'Applications'.",
+        step2:
+          "Click '+ Create Application', give it a name, and select 'Regular Web Applications'.",
+        step3:
+          "In the 'Settings' tab, add your SCRIPE callback URL to the 'Allowed Callback URLs' field.",
+        step4:
+          "Copy the Domain, Client ID, and Client Secret. Pre-fill the Domain in the Authority URL field below.",
+      },
+      "azure-ad-b2c": {
+        description: "Microsoft customer identity & access management",
+        buttonLabel: "Sign in with AD B2C",
+        step1: "Access Azure portal and open your Azure AD B2C tenant directory.",
+        step2:
+          "Create a new 'App registration', enabling access to redirect uri 'Web' with the SCRIPE callback URL.",
+        step3: "Generate a client secret in 'Certificates & secrets' and save its value.",
+        step4:
+          "Replace `{tenant}` with your B2C tenant name and `{policy}` with your User Flow policy name (e.g. `B2C_1_signupsignin`).",
+      },
+      keycloak: {
+        description: "Open source identity and access management",
+        buttonLabel: "Continue with Keycloak",
+        step1: "Open your Keycloak Administration Console.",
+        step2: "Select your target Realm and go to the 'Clients' page.",
+        step3: "Click 'Create client', set Client ID, protocol 'openid-connect', and click Next.",
+        step4:
+          "Enable 'Client authentication' (Client Secret) and add your SCRIPE callback URL under 'Valid redirect URIs'.",
+        step5:
+          "Copy the Client Secret from the 'Credentials' tab and paste it along with Client ID below.",
+      },
+      ping: {
+        description: "Enterprise-grade identity security platform",
+        buttonLabel: "Continue with Ping",
+        step1: "Log in to the PingOne Admin Console.",
+        step2: "Navigate to 'Connections' > 'Applications' and click '+ Add Application'.",
+        step3:
+          "Select 'Web App' > 'OIDC', configure a redirect URI mapping to SCRIPE callback, and save.",
+        step4:
+          "Copy the Application Client ID and Client Secret, and configure the Environment ID in the Authority URL.",
+      },
+      "aws-cognito": {
+        description: "Secure customer identity pool management on AWS",
+        buttonLabel: "Continue with AWS Cognito",
+        step1: "Open AWS Console and go to 'Amazon Cognito'. Select your User Pool.",
+        step2: "Go to 'App integration' and select or create an App Client.",
+        step3:
+          "Enable 'Cognito User Pool' as an Identity Provider, check Authorization code grant, and add SCRIPE callback URL.",
+        step4:
+          "Paste your User Pool region and ID in place of `{region}` and `{userPoolId}` in the Authority URL.",
+      },
+      onelogin: {
+        description: "Enterprise SSO and access management with OneLogin",
+        buttonLabel: "Continue with OneLogin",
+        step1: "Log in to OneLogin Admin Panel.",
+        step2: "Go to 'Applications' > 'Applications' and click 'Add App'.",
+        step3: "Search for 'OIDC' or 'OpenID Connect' and select 'OpenID Connect (OIDC)'.",
+        step4:
+          "In the app configurations, enter the SCRIPE callback URL in the 'Redirect URI' field.",
+        step5:
+          "Under 'SSO', copy Client ID and Client Secret, and update your subdomain in the Authority URL.",
+      },
+      jumpcloud: {
+        description: "Cloud directory services and single sign-on",
+        buttonLabel: "Continue with JumpCloud",
+        step1: "Open your JumpCloud Admin Portal.",
+        step2: "Go to 'SSO' > 'Applications' and click '+ Add New Application'.",
+        step3: "Select 'Custom OIDC App', configure redirect URIs with SCRIPE callback, and save.",
+        step4: "Retrieve your Client ID and Client Secret from the app parameters tab.",
+      },
+      duo: {
+        description: "Multi-factor authentication and access security",
+        buttonLabel: "Continue with Duo",
+        step1: "Log in to the Duo Admin Panel.",
+        step2: "Go to 'Applications' and click 'Protect an Application'.",
+        step3: "Search for 'OpenID Connect' and click 'Protect'.",
+        step4:
+          "Configure your App integration redirect URL, and fetch Integration Key (Client ID) and Secret Key.",
+      },
+      cloudflare: {
+        description: "Zero Trust access control with Cloudflare Access",
+        buttonLabel: "Continue with Cloudflare",
+        step1: "Log in to the Cloudflare Zero Trust Dashboard.",
+        step2: "Go to 'Settings' > 'Authentication' and add a new identity provider.",
+        step3: "Select 'OIDC', paste the redirect URI, and configure the application.",
+        step4: "Provide Domain, Client ID, and Client Secret. Copy them into the form below.",
+      },
+      salesforce: {
+        description: "SSO and authentication using Salesforce CRM identity",
+        buttonLabel: "Continue with Salesforce",
+        step1: "Log in to Salesforce, open Setup and search for 'App Manager'.",
+        step2: "Click 'New Connected App', check 'Enable OAuth Settings'.",
+        step3:
+          "Add SCRIPE callback URL to 'Callback URL', check 'Access unique user identifiers (openid)' and 'Access basic profile', and save.",
+        step4:
+          "Copy Customer Key (Client ID) and Customer Secret (Client Secret) from the app management page.",
+      },
+      "generic-oidc": {
+        description: "Any OpenID Connect 1.0 compliant identity provider",
+        buttonLabel: "Sign in with OIDC",
+        step1: "Verify that your identity provider supports OpenID Connect 1.0.",
+        step2: "Register a client application with your provider and copy Client ID and Secret.",
+        step3: "Configure your provider's client redirect URI to point to the SCRIPE callback URL.",
+        step4:
+          "Locate the Issuer/Authority URL (which hosts the OIDC discovery document `.well-known/openid-configuration`) and enter it below.",
+      },
+      "generic-saml": {
+        description: "Any SAML 2.0 compatible identity provider",
+        buttonLabel: "Sign in with SAML",
+        step1:
+          "Ensure your SAML identity provider (IdP) is active and supports SAML 2.0 Web Browser SSO profile.",
+        step2: "Register SCRIPE as a Service Provider (SP) in your IdP console.",
+        step3: "Retrieve the IdP Entity ID, SSO URL, and public Certificate from your provider.",
+        step4: "Enter these values below to enable SAML federation.",
+      },
+    },
   },
 };

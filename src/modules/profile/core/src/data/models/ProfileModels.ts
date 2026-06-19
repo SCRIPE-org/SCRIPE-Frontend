@@ -13,6 +13,7 @@ export interface AdminProfileDto {
   firstName: string;
   lastName: string;
   phoneNumber: string;
+  email: string;
   adminTypeName: string;
   profileImageUrl: string | null;
   roles?: Array<{ roleCode?: string; roleName?: string }>;

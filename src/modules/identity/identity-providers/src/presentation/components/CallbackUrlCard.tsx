@@ -48,7 +48,7 @@ export function CallbackUrlCard({ protocol }: Props) {
   const isSaml = protocol === "saml";
 
   return (
-    <Card className="border border-indigo-500/20 bg-indigo-500/5 dark:bg-indigo-950/10 shadow-sm">
+    <Card className="border border-indigo-500/20 bg-indigo-500/5 shadow-sm dark:bg-indigo-950/10">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-1.5 text-sm font-semibold tracking-tight text-indigo-700 dark:text-indigo-400">
           <Link2 className="h-4.5 w-4.5" />
@@ -63,7 +63,7 @@ export function CallbackUrlCard({ protocol }: Props) {
         {/* OIDC/OAuth2 Redirect URL */}
         {!isSaml && (
           <div className="space-y-1.5">
-            <Label className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+            <Label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               {t("identityProviders.standardRedirectUri") || "OAuth2 / OIDC Redirect URI"}
             </Label>
             <div className="flex items-center gap-2">
@@ -71,7 +71,7 @@ export function CallbackUrlCard({ protocol }: Props) {
                 type="text"
                 readOnly
                 value={standardCallback}
-                className="flex-1 font-mono text-xs select-all bg-muted/40"
+                className="flex-1 select-all bg-muted/40 font-mono text-xs"
               />
               <Button
                 type="button"
@@ -93,7 +93,7 @@ export function CallbackUrlCard({ protocol }: Props) {
         {/* SAML ACS URL */}
         {isSaml && (
           <div className="space-y-1.5">
-            <Label className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+            <Label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               {t("identityProviders.samlAcsUrl") || "SAML Assertion Consumer Service (ACS) URL"}
             </Label>
             <div className="flex items-center gap-2">
@@ -101,7 +101,7 @@ export function CallbackUrlCard({ protocol }: Props) {
                 type="text"
                 readOnly
                 value={samlCallback}
-                className="flex-1 font-mono text-xs select-all bg-muted/40"
+                className="flex-1 select-all bg-muted/40 font-mono text-xs"
               />
               <Button
                 type="button"
@@ -121,7 +121,7 @@ export function CallbackUrlCard({ protocol }: Props) {
         )}
 
         <div className="flex items-start gap-1.5 text-[10px] text-muted-foreground">
-          <Info className="h-3.5 w-3.5 shrink-0 text-indigo-500 mt-0.5" />
+          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-indigo-500" />
           <p className="leading-relaxed">
             {t("identityProviders.callbackUrlHelp") ||
               "Most identity providers require this URL to exactly match. Make sure the protocol (http/https) matches your deployment environment."}

@@ -13,6 +13,14 @@
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import type { PersistedWizardState } from "../../domain/entities";
 
+const CHECKOUT_SESSION_STORAGE_TTL_MS = 48 * 60 * 60 * 1000;
+const CHECKOUT_SESSION_STORAGE_FUTURE_SKEW_MS = 5 * 60 * 1000;
+
+interface PersistedCheckoutSessionReference {
+  sessionId: string;
+  savedAt: number;
+}
+
 /**
  * Persist wizard snapshot to sessionStorage.
  * Safe to call in private mode — failure is silently swallowed.
@@ -48,6 +56,80 @@ export function clearPersistedWizardState(): void {
   try {
     sessionStorage.removeItem(STORAGE_KEYS.SIGNUP_WIZARD);
     sessionStorage.removeItem(STORAGE_KEYS.SIGNUP_REF);
+  } catch {
+    // Storage unavailable — nothing to clean.
+  }
+}
+
+/**
+ * Persist direct Checkout Session ID so /signup/complete can recover after
+ * query cleanup, refresh, or browser restart. This is not payment proof.
+ */
+export function persistSignupCheckoutSessionId(sessionId: string): void {
+  const normalized = sessionId.trim();
+  if (!normalized) return;
+
+  try {
+    const payload: PersistedCheckoutSessionReference = {
+      sessionId: normalized,
+      savedAt: Date.now(),
+    };
+
+    localStorage.setItem(STORAGE_KEYS.SIGNUP_CHECKOUT_SESSION, JSON.stringify(payload));
+  } catch {
+    // Storage unavailable — finalize still works with the Stripe ?session_id param.
+  }
+}
+
+/**
+ * Read the direct Checkout Session ID used for public-safe status polling.
+ * Expire the browser hint so stale visits cannot keep polling old checkout
+ * sessions forever. Legacy bare string values are migrated once.
+ */
+export function getPersistedSignupCheckoutSessionId(): string | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.SIGNUP_CHECKOUT_SESSION);
+    if (!raw) return null;
+
+    const stored = raw.trim();
+    if (!stored) {
+      clearPersistedSignupCheckoutSessionId();
+      return null;
+    }
+
+    if (!stored.startsWith("{")) {
+      persistSignupCheckoutSessionId(stored);
+      return stored;
+    }
+
+    const parsed = JSON.parse(stored) as Partial<PersistedCheckoutSessionReference>;
+    const sessionId = typeof parsed.sessionId === "string" ? parsed.sessionId.trim() : "";
+    const savedAt = typeof parsed.savedAt === "number" ? parsed.savedAt : 0;
+    const now = Date.now();
+
+    if (
+      !sessionId ||
+      savedAt <= 0 ||
+      savedAt > now + CHECKOUT_SESSION_STORAGE_FUTURE_SKEW_MS ||
+      now - savedAt > CHECKOUT_SESSION_STORAGE_TTL_MS
+    ) {
+      clearPersistedSignupCheckoutSessionId();
+      return null;
+    }
+
+    return sessionId;
+  } catch {
+    clearPersistedSignupCheckoutSessionId();
+    return null;
+  }
+}
+
+/**
+ * Clear the direct Checkout Session ID when the user starts a fresh signup.
+ */
+export function clearPersistedSignupCheckoutSessionId(): void {
+  try {
+    localStorage.removeItem(STORAGE_KEYS.SIGNUP_CHECKOUT_SESSION);
   } catch {
     // Storage unavailable — nothing to clean.
   }

@@ -46,7 +46,7 @@ export function LoginTopActions({ skipLinkEnabled, ariaLandmarks }: LoginTopActi
           </Link>
         </Button> */}
 
-        <div className="hidden h-4 w-px bg-border lg:block" />
+        {/* <div className="hidden h-4 w-px bg-border lg:block" /> */}
 
         <div className="flex w-full items-center justify-between gap-1 lg:w-auto lg:justify-start">
           {/* Docs link (mobile) */}

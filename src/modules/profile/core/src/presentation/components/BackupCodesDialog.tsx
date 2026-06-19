@@ -92,7 +92,7 @@ export function BackupCodesDialog({
               <Input
                 value={twoFactorCode}
                 onChange={(e) => setTwoFactorCode(e.target.value)}
-                placeholder="Enter 6-digit code"
+                placeholder={t("profile.security.twoFactorCodePlaceholder") || "Enter 6-digit code"}
                 maxLength={6}
                 className="font-mono tracking-widest"
               />

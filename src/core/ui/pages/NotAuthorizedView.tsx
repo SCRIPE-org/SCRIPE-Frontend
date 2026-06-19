@@ -23,11 +23,15 @@ import {
 import { Button } from "@core/ui/button";
 import { appLogger } from "@core/common/logger";
 import { useAppStore } from "@/core/store/useAppStore";
+import { useServices } from "@core/providers/service-provider";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function NotAuthorizedView() {
   const router = useRouter();
   const { t, language } = useI18n();
-  const logout = useAppStore((state) => state.logout);
+  const logoutStore = useAppStore((state) => state.logout);
+  const { authRepository } = useServices();
+  const queryClient = useQueryClient();
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background/95 to-muted/20 p-4">
@@ -110,9 +114,17 @@ export default function NotAuthorizedView() {
               </Button>
 
               <Button
-                onClick={() => {
+                onClick={async () => {
                   appLogger.ui("Sign out button clicked");
-                  logout();
+                  try {
+                    await authRepository.logout();
+                  } catch {
+                    // ignore
+                  } finally {
+                    logoutStore();
+                    queryClient.clear();
+                    router.push("/login");
+                  }
                 }}
                 variant="secondary"
                 size="lg"

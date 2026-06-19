@@ -157,6 +157,7 @@ export const useAppStore = create<AppState>()(
         gracePhase: state.gracePhase,
         editionName: state.editionName,
         mustChangePassword: state.mustChangePassword,
+        defaultRedirectPath: state.defaultRedirectPath,
       }),
       onRehydrateStorage: () => (state) => {
         // With in-memory tokens, the access token is ALWAYS null after page reload.

@@ -41,19 +41,8 @@ const NotificationSignalRProvider = dynamic(
   { ssr: false }
 );
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-// Create a client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      // P0.2: Prevent refetching on every navigation — data stays fresh for 2 min
-      staleTime: 2 * 60 * 1000, // 2 minutes
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
-  },
-});
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@core/query-client";
 
 /**
  * Combined App Provider - Optimized provider composition
