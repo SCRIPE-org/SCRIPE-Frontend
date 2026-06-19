@@ -21,6 +21,7 @@ export interface OAuthAppFormState {
   description: string;
   clientType: string;
   isActive: boolean;
+  protocol: string; // Add protocol choice
 
   // Endpoints
   redirectUris: string[];
@@ -52,6 +53,7 @@ const DEFAULT_STATE: OAuthAppFormState = {
   description: "",
   clientType: "confidential",
   isActive: true,
+  protocol: "oidc",
   redirectUris: [""],
   postLogoutRedirectUris: [],
   allowedScopes: "openid profile email roles",
@@ -107,6 +109,7 @@ export function useOAuthAppDetailViewModel(appId?: string) {
       description: app.description ?? "",
       clientType: app.clientType,
       isActive: app.isActive,
+      protocol: app.protocol || "oidc",
       redirectUris: app.redirectUris.length > 0 ? app.redirectUris : [""],
       postLogoutRedirectUris: app.postLogoutRedirectUris,
       allowedScopes: app.allowedScopes,
@@ -190,6 +193,7 @@ export function useOAuthAppDetailViewModel(appId?: string) {
         const result = await oauthAppRepository.create({
           displayName: form.displayName,
           clientType: form.clientType,
+          protocol: form.protocol,
           redirectUris: cleanUris,
           postLogoutRedirectUris: cleanPostLogoutUris.length > 0 ? cleanPostLogoutUris : undefined,
           allowedScopes: form.allowedScopes || undefined,
@@ -208,6 +212,7 @@ export function useOAuthAppDetailViewModel(appId?: string) {
       } else {
         await oauthAppRepository.update(appId!, {
           displayName: form.displayName,
+          protocol: form.protocol,
           redirectUris: cleanUris,
           postLogoutRedirectUris: cleanPostLogoutUris,
           allowedScopes: form.allowedScopes || undefined,

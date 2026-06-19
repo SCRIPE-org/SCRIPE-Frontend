@@ -250,6 +250,7 @@ export interface CreateOAuthAppRequest {
   displayName: string;
   clientType: string;
   redirectUris: string[];
+  protocol?: string;
   postLogoutRedirectUris?: string[];
   allowedScopes?: string;
   allowedGrantTypes?: string;
@@ -266,6 +267,7 @@ export interface CreateOAuthAppRequest {
 
 export interface UpdateOAuthAppRequest {
   displayName?: string;
+  protocol?: string;
   redirectUris?: string[];
   postLogoutRedirectUris?: string[];
   allowedScopes?: string;

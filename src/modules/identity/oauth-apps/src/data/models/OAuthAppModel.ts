@@ -69,6 +69,7 @@ export interface CreateOAuthAppJson {
   displayName: string;
   clientType: string;
   redirectUrisJson: string;
+  protocol?: string;
   postLogoutRedirectUrisJson?: string;
   allowedScopes?: string;
   allowedGrantTypes?: string;
@@ -85,6 +86,7 @@ export interface CreateOAuthAppJson {
 
 export interface UpdateOAuthAppJson {
   displayName?: string;
+  protocol?: string;
   redirectUrisJson?: string;
   postLogoutRedirectUrisJson?: string;
   allowedScopes?: string;

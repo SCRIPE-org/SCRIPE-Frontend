@@ -8,36 +8,22 @@
 
 import { useState } from "react";
 import { useOAuthAppDetailViewModel } from "../viewmodels/useOAuthAppDetailViewModel";
-import {
-  GeneralSection,
-  EndpointsSection,
-  ScopesGrantsSection,
-  SecuritySection,
-  TokenConfigSection,
-  BrandingSection,
-  SamlSection,
-} from "../components/OAuthAppFormSections";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import {
   ArrowLeft,
   Save,
   Loader2,
-  KeyRound,
-  Link2,
-  Tag,
-  Palette,
   AppWindow,
   AlertCircle,
 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import Image from "next/image";
-import { ClientCredentialsCard } from "../components/ClientCredentialsCard";
-import { OAuthAppMetadataCard } from "../components/OAuthAppMetadataCard";
-import { DangerZoneCard } from "../components/DangerZoneCard";
 import { GeneratedSecretAlert } from "../components/GeneratedSecretAlert";
+import { OAuthAppWizard } from "../components/OAuthAppWizard";
+import { SamlEditTabs } from "../components/SamlEditTabs";
+import { OidcEditTabs } from "../components/OidcEditTabs";
 
 interface Props {
   appId?: string;
@@ -89,21 +75,6 @@ export function OAuthAppDetailView({ appId }: Props) {
     );
   }
 
-  const sectionProps = {
-    form: vm.form,
-    updateField: vm.updateField,
-    clientTypeOptions: vm.clientTypeOptions,
-    isCreateMode: vm.isCreateMode,
-    standardScopes: vm.standardScopes,
-    standardGrantTypes: vm.standardGrantTypes,
-    addRedirectUri: vm.addRedirectUri,
-    removeRedirectUri: vm.removeRedirectUri,
-    updateRedirectUri: vm.updateRedirectUri,
-    addPostLogoutUri: vm.addPostLogoutUri,
-    removePostLogoutUri: vm.removePostLogoutUri,
-    updatePostLogoutUri: vm.updatePostLogoutUri,
-  };
-
   return (
     <div className="space-y-6 pb-12 duration-300 animate-in fade-in">
       {/* ─── Header ────────────────────────────────── */}
@@ -130,11 +101,14 @@ export function OAuthAppDetailView({ appId }: Props) {
             <div>
               <h1 className="text-xl font-bold tracking-tight text-foreground">
                 {vm.isCreateMode
-                  ? t("oauthApps.createTitle") || "New OAuth Application"
+                  ? t("oauthApps.createTitle") || "New Application Integration"
                   : vm.form.displayName || t("oauthApps.editTitle") || "Edit Application"}
               </h1>
               {!vm.isCreateMode && vm.app && (
                 <div className="flex items-center gap-2 mt-0.5">
+                  <Badge variant="outline" className="font-mono text-[10px] px-1.5 py-0 border-border/80 uppercase">
+                    {vm.form.protocol}
+                  </Badge>
                   <Badge variant="outline" className="font-mono text-[10px] px-1.5 py-0 border-border/80">
                     {vm.form.clientType === "confidential" ? "Confidential" : "Public"}
                   </Badge>
@@ -149,20 +123,20 @@ export function OAuthAppDetailView({ appId }: Props) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 self-end sm:self-center">
-          <Button
-            onClick={vm.save}
-            disabled={!vm.isCreateMode && !vm.isDirty}
-            loading={vm.isSaving}
-            size="sm"
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold shadow hover:opacity-95"
-          >
-            {!vm.isSaving && <Save className="me-1.5 h-4 w-4" />}
-            {vm.isCreateMode
-              ? t("oauthApps.createButton") || "Create Application"
-              : t("common.save") || "Save Changes"}
-          </Button>
-        </div>
+        {!vm.isCreateMode && (
+          <div className="flex items-center gap-2 self-end sm:self-center">
+            <Button
+              onClick={vm.save}
+              disabled={!vm.isDirty}
+              loading={vm.isSaving}
+              size="sm"
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold shadow hover:opacity-95"
+            >
+              {!vm.isSaving && <Save className="me-1.5 h-4 w-4" />}
+              {t("common.save") || "Save Changes"}
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Dirty indicator */}
@@ -184,94 +158,18 @@ export function OAuthAppDetailView({ appId }: Props) {
         />
       )}
 
-      {/* ─── Tabbed Workspace Layout ───────────────────────────── */}
-      <Tabs defaultValue="credentials" className="w-full space-y-6">
-        <TabsList className="grid w-full grid-cols-2 border bg-muted/40 p-1 md:inline-flex md:w-auto md:grid-cols-none">
-          <TabsTrigger value="credentials" className="gap-1.5 text-xs font-semibold">
-            <KeyRound className="h-3.5 w-3.5" />
-            {t("oauthApps.credentialsSection") || "Credentials"}
-          </TabsTrigger>
-          <TabsTrigger value="redirects" className="gap-1.5 text-xs font-semibold">
-            <Link2 className="h-3.5 w-3.5" />
-            {t("oauthApps.endpointsSection") || "Redirects & Security"}
-          </TabsTrigger>
-          <TabsTrigger value="scopes" className="gap-1.5 text-xs font-semibold">
-            <Tag className="h-3.5 w-3.5" />
-            {t("oauthApps.scopesGrantsSection") || "Scopes & Grants"}
-          </TabsTrigger>
-          <TabsTrigger value="branding" className="gap-1.5 text-xs font-semibold">
-            <Palette className="h-3.5 w-3.5" />
-            {t("oauthApps.brandingSection") || "Branding & SAML"}
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Tab 1: Connection & Credentials */}
-        <TabsContent value="credentials" className="space-y-6 outline-none">
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="space-y-6 lg:col-span-2">
-              <GeneralSection {...sectionProps} />
-              <TokenConfigSection {...sectionProps} />
-            </div>
-
-            <div className="space-y-6 lg:col-span-1">
-              {!vm.isCreateMode && vm.app && (
-                <>
-                  <ClientCredentialsCard
-                    clientId={vm.app.clientId}
-                    clientType={vm.app.clientType}
-                    copiedField={copiedField}
-                    copyToClipboard={copyToClipboard}
-                    isRegenerating={vm.isRegenerating}
-                    onRegenerate={vm.regenerateSecret}
-                  />
-
-                  <OAuthAppMetadataCard
-                    createdAt={vm.app.createdAt}
-                    modifiedAt={vm.app.modifiedAt}
-                    tenantId={vm.app.tenantId}
-                  />
-                </>
-              )}
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* Tab 2: Redirects & Security */}
-        <TabsContent value="redirects" className="space-y-6 outline-none">
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="space-y-6 lg:col-span-2">
-              <EndpointsSection {...sectionProps} />
-            </div>
-            <div className="space-y-6 lg:col-span-1">
-              <SecuritySection {...sectionProps} />
-
-              {!vm.isCreateMode && (
-                <DangerZoneCard
-                  isDeleting={vm.isDeleting}
-                  onDelete={vm.deleteApp}
-                />
-              )}
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* Tab 3: Scopes & Grant Types */}
-        <TabsContent value="scopes" className="outline-none max-w-3xl">
-          <ScopesGrantsSection {...sectionProps} />
-        </TabsContent>
-
-        {/* Tab 4: Branding & SAML */}
-        <TabsContent value="branding" className="space-y-6 outline-none">
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="space-y-6 lg:col-span-2">
-              <SamlSection {...sectionProps} />
-            </div>
-            <div className="space-y-6 lg:col-span-1">
-              <BrandingSection {...sectionProps} />
-            </div>
-          </div>
-        </TabsContent>
-      </Tabs>
+      {/* ─── Guided Wizard / Edit Layouts ──────────────────── */}
+      {vm.isCreateMode ? (
+        <OAuthAppWizard vm={vm} />
+      ) : vm.form.protocol === "saml" ? (
+        <SamlEditTabs vm={vm} />
+      ) : (
+        <OidcEditTabs
+          vm={vm}
+          copiedField={copiedField}
+          copyToClipboard={copyToClipboard}
+        />
+      )}
     </div>
   );
 }

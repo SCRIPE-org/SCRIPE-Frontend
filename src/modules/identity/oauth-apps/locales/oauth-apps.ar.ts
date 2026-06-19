@@ -100,6 +100,28 @@ export const ar = {
     deleteConfirmDesc: "سيتم حذف هذا التطبيق نهائياً. سيتم إبطال جميع جلسات المصادقة.",
     samlSection: "SAML إعدادات",
     samlSectionDesc: "SAML 2.0 إعدادات الاتصال",
+
+    // Protocol & Wizard steps
+    stepProtocol: "البروتوكول",
+    stepBasicInfo: "المعلومات الأساسية",
+    stepEndpoints: "نقاط النهاية والنطاقات",
+    stepSecurity: "الأمان والرموز",
+    stepBranding: "العلامة التجارية",
+    stepSamlConfig: "إعدادات SAML",
+    selectProtocolTitle: "اختر بروتوكول المصادقة",
+    selectProtocolDesc: "اختر المعيار الذي يناسب تكاملك. لا يمكن تغيير هذا بعد الإنشاء.",
+    oidcChoiceDesc: "معيار هوية حديث يستخدم رموز JWT. موصى به لتطبيقات الويب، تطبيقات الصفحة الواحدة (SPA)، وتطبيقات الجوال.",
+    samlChoiceDesc: "بروتوكول اتحاد مؤسسي يستخدم XML. الأفضل لتكاملات تسجيل الدخول الموحد (SSO) للشركات مع Salesforce أو Zendesk أو Okta.",
+
+    // IdP Metadata
+    idpMetadataTitle: "البيانات الوصفية لموفر الهوية (IdP)",
+    idpMetadataDesc: "استخدم هذه التفاصيل لتكوين الثقة في تطبيق موفر الخدمة (SP) الخاص بك.",
+    idpEntityId: "معرف كيان موفر الهوية (المصدر)",
+    idpSsoUrl: "رابط تسجيل الدخول الموحد (SSO)",
+    idpXmlMetadataUrl: "رابط ملف XML للبيانات الوصفية لـ IdP",
+    idpXmlHelp: "تسمح معظم تطبيقات المؤسسات بتكوين تسجيل الدخول الموحد بمجرد لصق رابط البيانات الوصفية XML هذا.",
+    samlConfigSection: "تكوين SAML",
+    idpMetadataSection: "البيانات الوصفية لـ IdP",
   },
   oauth: {
     consentTitle: "تفويض التطبيق",
