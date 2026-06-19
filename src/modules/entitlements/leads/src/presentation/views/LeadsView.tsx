@@ -75,6 +75,7 @@ export function LeadsView() {
   const canAssignLead = has("leads.assign");
   const canConvertLead = has("leads.convert");
   const canDeleteLead = has("leads.delete");
+  const canSendEmail = has("leads.send_email");
 
   const columns: Column<PlatformLeadListItem>[] = [
     {
@@ -349,6 +350,10 @@ export function LeadsView() {
         isLoadingActivity={vm.isLoadingActivity}
         onAddNote={vm.handleAddNote}
         isAddingNote={vm.isAddingNote}
+        onSendEmail={canSendEmail ? async (params) => { await vm.sendLeadEmail(params); } : undefined}
+        isSendingEmail={vm.isSendingEmail}
+        communicationLogs={vm.communicationLogs}
+        isLoadingComms={vm.isLoadingComms}
       />
 
       {/* ── Create Lead Dialog ── */}

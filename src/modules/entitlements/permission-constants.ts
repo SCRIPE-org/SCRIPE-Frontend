@@ -95,6 +95,7 @@ export const ENTITLEMENTS_PERMISSIONS = {
   LEADS_DELETE: "leads.delete",
   LEADS_ASSIGN: "leads.assign",
   LEADS_CONVERT: "leads.convert",
+  LEADS_SEND_EMAIL: "leads.send_email",
 
   // ── Onboarding Engine ──────────────────────────────────
   ONBOARDING_QUESTIONS_VIEW: "onboarding_questions.view",
