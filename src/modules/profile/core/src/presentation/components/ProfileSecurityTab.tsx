@@ -482,8 +482,8 @@ export function ProfileSecurityTab({
               className="bg-violet-600 text-white hover:bg-violet-500"
               disabled={!newPasskeyName.trim() || passkeyVm.isRegistering}
               onClick={async () => {
-                await passkeyVm.registerPasskey(newPasskeyName.trim());
-                if (!passkeyVm.registrationError) {
+                const success = await passkeyVm.registerPasskey(newPasskeyName.trim());
+                if (success) {
                   setShowPasskeyRegister(false);
                   setNewPasskeyName("");
                 }

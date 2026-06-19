@@ -22,9 +22,17 @@ type ActiveTab = "general" | "security" | "sessions" | "activity";
 export function ProfileSettingsView() {
   const { t } = useI18n();
   const [activeTab, setActiveTab] = useState<ActiveTab>("general");
+  const [imageError, setImageError] = useState(false);
 
   // ViewModels
   const profileVm = useProfilePageViewModel();
+
+  const imageUrl = profileVm.profile?.profileImageUrl;
+  const [prevImageUrl, setPrevImageUrl] = useState(imageUrl);
+  if (imageUrl !== prevImageUrl) {
+    setPrevImageUrl(imageUrl);
+    setImageError(false);
+  }
   const avatarVm = useAvatarViewModel();
   const securityVm = useSecurityViewModel();
   const sessionsVm = useSessionsViewModel();
@@ -90,12 +98,13 @@ export function ProfileSettingsView() {
                 <div className="h-full w-full rounded-full bg-slate-950" />
               </div>
               <div className="relative z-10 flex h-[70px] w-[70px] items-center justify-center overflow-hidden rounded-full border border-white/5 bg-gradient-to-br from-violet-500/20 to-pink-500/20 text-2xl font-bold text-white">
-                {profile.profileImageUrl ? (
+                {profile.profileImageUrl && !imageError ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={`${process.env.NEXT_PUBLIC_File_URL || ""}${profile.profileImageUrl}`}
                     alt="Profile"
                     className="h-full w-full object-cover"
+                    onError={() => setImageError(true)}
                   />
                 ) : (
                   initials

@@ -313,6 +313,9 @@ export const en = {
       noteMax: "Note must be 1000 characters or fewer.",
       emailVerificationExpired: "Email verification expired. Please go back and verify again.",
       signupFailed: "Signup failed. Please try again.",
+      domainRestrictionTitle: "Signup Restricted",
+      domainRestrictionDescription: "Signup is only available on the main platform. Please visit the platform domain to register.",
+      domainRestrictionLinkText: "Go to platform signup",
     },
 
     // Copyright

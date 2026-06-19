@@ -312,6 +312,9 @@ export const ar = {
       noteMax: "يجب ألا تتجاوز الملاحظة 1000 حرف.",
       emailVerificationExpired: "انتهت صلاحية التحقق من البريد. يرجى العودة والتحقق مرة أخرى.",
       signupFailed: "فشل التسجيل. يرجى المحاولة مرة أخرى.",
+      domainRestrictionTitle: "التسجيل مقيد",
+      domainRestrictionDescription: "التسجيل متاح فقط على المنصة الرئيسية. يرجى زيارة نطاق المنصة للتسجيل.",
+      domainRestrictionLinkText: "الذهاب إلى صفحة التسجيل الرئيسية",
     },
 
     // حقوق النشر
