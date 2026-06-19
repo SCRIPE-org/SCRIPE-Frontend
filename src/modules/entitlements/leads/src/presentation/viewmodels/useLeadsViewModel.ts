@@ -5,6 +5,7 @@ import { useState, useCallback } from "react";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type {
   LeadActivity,
+  LeadCommunicationLog,
   LeadStatus,
   PlatformLead,
   PlatformLeadListItem,
@@ -103,6 +104,17 @@ export function useLeadsViewModel() {
     queryFn: () => leadsRepository.getActivity(selectedLeadId!),
     enabled: !!selectedLeadId,
     staleTime: 60 * 1000,
+  });
+
+  // ── Communication Logs Query ──────────────────────────────────────────────
+  const { data: communicationLogs = [], isLoading: isLoadingComms } = useQuery({
+    queryKey: ["lead-communications", selectedLeadId],
+    queryFn: () =>
+      selectedLeadId
+        ? leadsRepository.getCommunicationLogs(selectedLeadId)
+        : Promise.resolve([] as LeadCommunicationLog[]),
+    enabled: !!selectedLeadId,
+    staleTime: 30_000,
   });
 
   // ── Computed stats from list data ─────────────────────────────────────────
@@ -248,6 +260,33 @@ export function useLeadsViewModel() {
         queryClient.setQueryData(QUERY_KEYS.activity(context.id), context.previousActivity);
       }
       toast({ title: t("leads.note.error"), variant: "destructive" });
+    },
+  });
+
+  // ── Send Email Mutation ───────────────────────────────────────────────────
+  const sendLeadEmailMutation = useMutation({
+    mutationFn: ({
+      leadId,
+      subject,
+      bodyHtml,
+      templateKey,
+    }: {
+      leadId: string;
+      subject: string;
+      bodyHtml: string;
+      templateKey?: string;
+    }) => leadsRepository.sendEmail(leadId, subject, bodyHtml, templateKey),
+    onSuccess: (_data, variables) => {
+      toast({ title: t("leads.email.sentSuccess") });
+      void queryClient.invalidateQueries({
+        queryKey: ["lead-communications", variables.leadId],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["lead-activity", variables.leadId],
+      });
+    },
+    onError: () => {
+      toast({ title: t("leads.email.sendError"), variant: "destructive" });
     },
   });
 
@@ -455,6 +494,10 @@ export function useLeadsViewModel() {
     activity: activityQuery.data ?? [],
     isLoadingActivity: activityQuery.isLoading,
 
+    // Communication logs
+    communicationLogs,
+    isLoadingComms,
+
     // Mutation state
     isUpdatingStatus: updateStatusMutation.isPending,
     isCreatingLead: createLeadMutation.isPending,
@@ -464,6 +507,7 @@ export function useLeadsViewModel() {
     isDeletingLead: deleteLeadMutation.isPending,
     isBulkClosing: bulkCloseMutation.isPending,
     isBulkDeleting: bulkDeleteMutation.isPending,
+    isSendingEmail: sendLeadEmailMutation.isPending,
 
     // Dialog state
     isCreateDialogOpen,
@@ -484,6 +528,8 @@ export function useLeadsViewModel() {
     handlePageChange,
     handleOpenDrawer,
     handleCloseDrawer,
+    setSelectedLeadId,
+    sendLeadEmail: sendLeadEmailMutation.mutateAsync,
     handleUpdateStatus,
     handleOpenCreateDialog,
     handleCloseCreateDialog,
