@@ -134,6 +134,7 @@ export function LoginFormRouter({
           }}
           onBack={vm.goBackToCredentials}
           isRTL={isRTL}
+          tenantId={tenantId}
         />
       ) : vm.loginStep === "qr-login" ? (
         <QrSignInView

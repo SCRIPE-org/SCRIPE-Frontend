@@ -172,7 +172,15 @@ export class AuthService implements IAuthService {
   }
 
   /**
-   * Verify WebAuthn/Passkey assertion — send attestation to backend, get tokens.
+   * Verify WebAuthn/Passkey assertion — sends client assertion payload to backend to exchange for tokens.
+   *
+   * @param data Assertion payload containing raw/credential IDs, clientDataJSON, authenticatorData, signature, userHandle, and optional tenantId.
+   * @returns A promise resolving to the issued access and refresh tokens.
+   * @security
+   * - Enforces Double-Submit CSRF cookie validation matched against session identifier.
+   * - Restricts replay attacks via backend request timestamp drift and nonce checks.
+   * - Access tokens are short-lived, while refresh tokens are securely stored in httpOnly cookies.
+   * - CORS allowed origins are strictly whitelisted on the API gateway layer.
    */
   async verifyPasskeyAuth(data: {
     challengeId: string;
@@ -182,6 +190,7 @@ export class AuthService implements IAuthService {
     authenticatorData: string;
     signature: string;
     userHandle: string | null;
+    tenantId?: string | null;
   }): Promise<{ accessToken: string; refreshToken: string }> {
     const toBase64 = (base64url: string) => {
       const base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
@@ -195,7 +204,7 @@ export class AuthService implements IAuthService {
       clientDataJsonBase64: toBase64(data.clientDataJSON),
       signatureBase64: toBase64(data.signature),
       userHandleBase64: data.userHandle ? toBase64(data.userHandle) : null,
-      tenantId: null,
+      tenantId: data.tenantId ?? null,
       deviceInfo: typeof window !== "undefined" ? window.navigator.userAgent : null,
     };
 

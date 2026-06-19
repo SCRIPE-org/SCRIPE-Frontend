@@ -282,6 +282,7 @@ export class AuthRepository implements IAuthRepository {
     authenticatorData: string;
     signature: string;
     userHandle: string | null;
+    tenantId?: string | null;
   }): Promise<{ accessToken: string; refreshToken: string }> {
     return this.service.verifyPasskeyAuth(data);
   }

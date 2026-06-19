@@ -10,6 +10,7 @@ interface PasskeyPromptProps {
   onSuccess: (result: { accessToken: string; refreshToken: string }) => void;
   onBack: () => void;
   isRTL: boolean;
+  tenantId?: string | null;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -22,9 +23,9 @@ interface PasskeyPromptProps {
  *
  * Design: Vault aesthetic, fingerprint icon, pulse animation
  */
-export function PasskeyPrompt({ onSuccess, onBack, isRTL }: PasskeyPromptProps) {
+export function PasskeyPrompt({ onSuccess, onBack, isRTL, tenantId }: PasskeyPromptProps) {
   const { t } = useI18n();
-  const vm = usePasskeyLoginViewModel(onSuccess);
+  const vm = usePasskeyLoginViewModel(onSuccess, tenantId);
 
   // ── Not supported state ──
   if (!vm.isSupported) {
