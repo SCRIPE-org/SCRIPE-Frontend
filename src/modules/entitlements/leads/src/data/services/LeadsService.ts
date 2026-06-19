@@ -7,6 +7,8 @@ import type {
   PlatformLeadResponseModel,
   LeadActivityResponseModel,
   PagedAssignableAdminsModel,
+  SendLeadEmailRequest,
+  LeadCommunicationLogDto,
 } from "../models/leads.models";
 import type {
   LeadsListParams,
@@ -107,5 +109,21 @@ export class LeadsService implements ILeadsService {
 
   async addNote(id: string, note: string): Promise<void> {
     await this.api.post(API_ENDPOINTS.ENTITLEMENTS.LEADS.ADD_NOTE(id), { note });
+  }
+
+  async sendEmail(
+    leadId: string,
+    data: SendLeadEmailRequest
+  ): Promise<{ logId: string }> {
+    return this.api.post<{ logId: string }>(
+      `${API_ENDPOINTS.ENTITLEMENTS.LEADS.LIST}/${leadId}/send-email`,
+      data
+    );
+  }
+
+  async getCommunicationLogs(leadId: string): Promise<LeadCommunicationLogDto[]> {
+    return this.api.get<LeadCommunicationLogDto[]>(
+      `${API_ENDPOINTS.ENTITLEMENTS.LEADS.LIST}/${leadId}/communications`
+    );
   }
 }

@@ -4,6 +4,7 @@ import type {
   PlatformLead,
   PlatformLeadListItem,
   LeadActivity,
+  LeadCommunicationLog,
 } from "../../domain/entities/PlatformLead";
 import type {
   ILeadsRepository,
@@ -81,5 +82,20 @@ export class LeadsRepository implements ILeadsRepository {
 
   async addNote(id: string, note: string): Promise<void> {
     await this.service.addNote(id, note);
+  }
+
+  async sendEmail(
+    leadId: string,
+    subject: string,
+    bodyHtml: string,
+    templateKey?: string
+  ): Promise<string> {
+    const result = await this.service.sendEmail(leadId, { subject, bodyHtml, templateKey });
+    return result.logId;
+  }
+
+  async getCommunicationLogs(leadId: string): Promise<LeadCommunicationLog[]> {
+    const dtos = await this.service.getCommunicationLogs(leadId);
+    return dtos.map((dto) => LeadsMapper.toCommunicationLog(dto));
   }
 }
