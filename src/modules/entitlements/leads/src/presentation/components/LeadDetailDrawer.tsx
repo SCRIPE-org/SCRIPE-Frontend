@@ -23,9 +23,11 @@ import {
   Trash2,
   UserPlus,
   Activity,
+  Send,
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { PlatformLead, LeadStatus, LeadActivity } from "../../domain/entities/PlatformLead";
+import type { PlatformLead, LeadStatus, LeadActivity, LeadCommunicationLog } from "../../domain/entities/PlatformLead";
+import { SendLeadEmailDialog } from "./SendLeadEmailDialog";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -144,6 +146,17 @@ interface LeadDetailDrawerProps {
   /** Standalone note — appended to activity timeline without a status change */
   onAddNote?: (id: string, note: string) => Promise<void>;
   isAddingNote?: boolean;
+  /** Sends a branded email to the lead. Undefined = permission denied (hides button). */
+  onSendEmail?: (params: {
+    leadId: string;
+    subject: string;
+    bodyHtml: string;
+    templateKey?: string;
+  }) => Promise<void>;
+  isSendingEmail?: boolean;
+  /** Sent email communication log entries. */
+  communicationLogs?: LeadCommunicationLog[];
+  isLoadingComms?: boolean;
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
@@ -163,6 +176,10 @@ export function LeadDetailDrawer({
   isLoadingActivity,
   onAddNote,
   isAddingNote,
+  onSendEmail,
+  isSendingEmail,
+  communicationLogs,
+  isLoadingComms,
 }: LeadDetailDrawerProps) {
   const { t } = useI18n();
 
@@ -171,6 +188,7 @@ export function LeadDetailDrawer({
   const [noteSaved, setNoteSaved] = useState(false);
   const [quickNote, setQuickNote] = useState("");
   const [quickNoteSaved, setQuickNoteSaved] = useState(false);
+  const [emailDialogOpen, setEmailDialogOpen] = useState(false);
 
   const pendingOrCurrent = pendingStatus ?? lead?.status ?? "New";
   const currentStatus = pendingOrCurrent;
@@ -466,6 +484,43 @@ export function LeadDetailDrawer({
               </Section>
             )}
 
+            {/* ── Sent Emails ── */}
+            {communicationLogs !== undefined && (
+              <Section title={t("leads.email.communicationsTitle")} icon={Mail}>
+                {isLoadingComms ? (
+                  <p className="text-xs text-zinc-500">{t("leads.loading")}</p>
+                ) : communicationLogs.length === 0 ? (
+                  <p className="text-xs text-zinc-500">{t("leads.email.noEmailsSent")}</p>
+                ) : (
+                  <ol className="relative space-y-3 border-s border-violet-800/40 ps-4">
+                    {communicationLogs.map((log) => (
+                      <li key={log.id} className="group">
+                        <div className="absolute -start-1 mt-1 h-2 w-2 rounded-full bg-violet-500 ring-2 ring-zinc-950" />
+                        <p className="truncate text-xs font-medium text-zinc-300">
+                          {log.subject}
+                        </p>
+                        <p className="mt-0.5 text-[10px] text-zinc-500">
+                          {t("leads.email.sentBy")} {log.sentByAdminName} ·{" "}
+                          {log.sentAt.toLocaleDateString("en-GB", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </p>
+                        {log.isFailed && (
+                          <span className="mt-1 inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-[10px] font-medium text-red-400">
+                            {t("leads.email.failed")}
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ol>
+                )}
+              </Section>
+            )}
+
             {/* ── Activity Timeline ── */}
             <Section title={t("leads.activity.title")} icon={Activity}>
               {isLoadingActivity ? (
@@ -528,6 +583,18 @@ export function LeadDetailDrawer({
                     {t("leads.actions.assign")}
                   </Button>
                 )}
+                {onSendEmail && (
+                  <Button
+                    id="drawer-send-email-btn"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setEmailDialogOpen(true)}
+                    className="w-full gap-2 border-violet-700 text-violet-400 hover:bg-violet-900/20"
+                  >
+                    <Send className="h-4 w-4" />
+                    {t("leads.email.send")}
+                  </Button>
+                )}
                 {onDelete && (
                   <Button
                     id="drawer-delete-btn"
@@ -544,6 +611,17 @@ export function LeadDetailDrawer({
               </div>
             )}
           </div>
+        )}
+
+        {/* ── Send Email Dialog ── */}
+        {onSendEmail && lead && (
+          <SendLeadEmailDialog
+            open={emailDialogOpen}
+            lead={lead}
+            isSending={isSendingEmail ?? false}
+            onClose={() => setEmailDialogOpen(false)}
+            onSend={onSendEmail}
+          />
         )}
       </SheetContent>
     </Sheet>
