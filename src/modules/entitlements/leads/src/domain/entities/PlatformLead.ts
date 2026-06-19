@@ -269,3 +269,32 @@ export interface LeadActivity {
   actorName?: string;
   occurredAt: string;
 }
+
+// ── LeadCommunicationLog (email sent to a lead) ───────────────────────────────
+
+interface LeadCommunicationLogData {
+  id: string;
+  subject: string;
+  bodyHtml: string;
+  bodyText: string;
+  sentByAdminName: string;
+  sentAt: string;
+  status: 'Pending' | 'Sent' | 'Failed';
+  templateKey?: string;
+  recipientEmail: string;
+  recipientName: string;
+}
+
+export class LeadCommunicationLog {
+  constructor(private readonly data: LeadCommunicationLogData) {}
+
+  get id()              { return this.data.id; }
+  get subject()         { return this.data.subject; }
+  get bodyHtml()        { return this.data.bodyHtml; }
+  get sentByAdminName() { return this.data.sentByAdminName; }
+  get sentAt()          { return new Date(this.data.sentAt); }
+  get status()          { return this.data.status; }
+  get templateKey()     { return this.data.templateKey; }
+  get recipientEmail()  { return this.data.recipientEmail; }
+  get isFailed()        { return this.data.status === 'Failed'; }
+}

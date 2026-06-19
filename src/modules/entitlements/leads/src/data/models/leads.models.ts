@@ -85,3 +85,22 @@ export interface LeadActivityResponseModel {
   actorName?: string;
   occurredAt: string;
 }
+
+export interface SendLeadEmailRequest {
+  subject: string;
+  bodyHtml: string;
+  templateKey?: string;
+}
+
+export interface LeadCommunicationLogDto {
+  id: string;
+  subject: string;
+  bodyHtml: string;
+  bodyText: string;
+  sentByAdminName: string;
+  sentAt: string;
+  status: string;
+  templateKey?: string;
+  recipientEmail: string;
+  recipientName: string;
+}

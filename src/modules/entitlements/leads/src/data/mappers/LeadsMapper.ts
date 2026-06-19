@@ -3,6 +3,7 @@
 import {
   PlatformLead,
   PlatformLeadListItem,
+  LeadCommunicationLog,
   type PlatformLeadData,
   type PlatformLeadListItemData,
   type LeadStatus,
@@ -15,6 +16,7 @@ import type {
   PlatformLeadListResponseModel,
   LeadActivityResponseModel,
   AssignableAdminResponseModel,
+  LeadCommunicationLogDto,
 } from "../models/leads.models";
 import type { AssignableAdmin } from "../../domain/interfaces/ILeadsRepository";
 
@@ -85,5 +87,20 @@ export class LeadsMapper {
       tenantName: dto.tenantName,
       isPlatformAdmin: Boolean(dto.isSuperAdmin || !dto.tenantId),
     };
+  }
+
+  static toCommunicationLog(dto: LeadCommunicationLogDto): LeadCommunicationLog {
+    return new LeadCommunicationLog({
+      id:              dto.id,
+      subject:         dto.subject,
+      bodyHtml:        dto.bodyHtml,
+      bodyText:        dto.bodyText ?? '',
+      sentByAdminName: dto.sentByAdminName ?? '',
+      sentAt:          dto.sentAt,
+      status:          (dto.status as 'Pending' | 'Sent' | 'Failed') ?? 'Sent',
+      templateKey:     dto.templateKey,
+      recipientEmail:  dto.recipientEmail ?? '',
+      recipientName:   dto.recipientName ?? '',
+    });
   }
 }

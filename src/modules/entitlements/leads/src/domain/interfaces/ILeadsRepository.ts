@@ -5,6 +5,7 @@ import type {
   PlatformLeadListItem,
   LeadStatus,
   LeadActivity,
+  LeadCommunicationLog,
 } from "../entities/PlatformLead";
 import type { PagedResult } from "@modules/identity/core/domain/types";
 
@@ -107,4 +108,13 @@ export interface ILeadsRepository {
   ): Promise<BulkLeadStatusResult>;
   /** Append a standalone CRM note to the lead's activity timeline. */
   addNote(id: string, note: string): Promise<void>;
+  /** Send a one-off or template-based email to the lead. Returns the log entry ID. */
+  sendEmail(
+    leadId: string,
+    subject: string,
+    bodyHtml: string,
+    templateKey?: string
+  ): Promise<string>;
+  /** Retrieve all sent-email communication logs for a lead. */
+  getCommunicationLogs(leadId: string): Promise<LeadCommunicationLog[]>;
 }
