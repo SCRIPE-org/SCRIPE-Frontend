@@ -17,23 +17,32 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
 interface Props {
   protocol: "oidc" | "oauth2" | "saml" | string;
+  providerId?: string;
 }
 
-export function CallbackUrlCard({ protocol }: Props) {
+export function CallbackUrlCard({ protocol, providerId }: Props) {
   const { t } = useI18n();
   const { success } = useEnhancedToast();
   const [origin, setOrigin] = useState("https://app.scripe.com");
+  const [apiOrigin, setApiOrigin] = useState("https://api.scripe.com/api");
   const [copiedType, setCopiedType] = useState<"standard" | "saml" | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setOrigin(window.location.origin);
+
+      let apiVal = process.env.NEXT_PUBLIC_API_URL || "/api";
+      if (apiVal.startsWith("/")) {
+        apiVal = `${window.location.origin}${apiVal}`;
+      }
+      setApiOrigin(apiVal);
     }
   }, []);
 
   const standardCallback = `${origin}/sso/callback`;
-  const samlCallback = `${origin}/sso/saml/callback`;
+  const providerToken = providerId || "{providerId}";
+  const samlCallback = `${apiOrigin}/v1/auth/saml/acs/${providerToken}`;
 
   const handleCopy = (text: string, type: "standard" | "saml") => {
     navigator.clipboard.writeText(text);

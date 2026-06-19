@@ -66,11 +66,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
   // Wizard step state for Create Mode
   const [createStep, setCreateStep] = useState(1);
 
-  // Connection testing state status
-  const [testResult, setTestResult] = useState<{ isSuccess: boolean; message: string } | null>(
-    null
-  );
-  const [isTestingConnection, setIsTestingConnection] = useState(false);
+
 
   // ─── Loading state ──────────────────────────
   if (!vm.isCreateMode && vm.isLoading) {
@@ -113,19 +109,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
     isCreateMode: vm.isCreateMode,
   };
 
-  const handleTestConnection = async () => {
-    try {
-      setIsTestingConnection(true);
-      setTestResult(null);
-      // Wait for repository connection test execution
-      const result = await vm.testConnection();
-      // ViewModel returns result or mutation triggers success
-    } catch (err) {
-      // Ignore
-    } finally {
-      setIsTestingConnection(false);
-    }
-  };
+
 
   // ─── CREATE MODE: 3-Step Wizard ───────────────────────────────────
   if (vm.isCreateMode) {
@@ -262,7 +246,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
               </div>
 
               <div className="space-y-6 lg:col-span-1">
-                <CallbackUrlCard protocol={vm.form.protocol} />
+                <CallbackUrlCard protocol={vm.form.protocol} providerId={providerId} />
               </div>
 
               {/* Step Navigation controls */}
@@ -373,10 +357,10 @@ export function IdentityProviderDetailView({ providerId }: Props) {
           <Button
             variant="outline"
             size="sm"
-            onClick={handleTestConnection}
-            loading={isTestingConnection}
+            onClick={vm.testConnection}
+            loading={vm.isTesting}
           >
-            {!isTestingConnection && <Zap className="me-1.5 h-4 w-4 text-amber-500" />}
+            {!vm.isTesting && <Zap className="me-1.5 h-4 w-4 text-amber-500" />}
             {t("identityProviders.testConnection") || "Test Connection"}
           </Button>
 
@@ -438,7 +422,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
             </div>
 
             <div className="space-y-6 lg:col-span-1">
-              <CallbackUrlCard protocol={vm.form.protocol} />
+              <CallbackUrlCard protocol={vm.form.protocol} providerId={providerId} />
 
               {/* Status information card */}
               <Card className="space-y-3 bg-muted/20 p-4">

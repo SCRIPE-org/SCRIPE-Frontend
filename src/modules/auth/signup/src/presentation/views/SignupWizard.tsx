@@ -109,8 +109,10 @@ export function SignupWizard({ initialCountry, initialCurrency }: SignupWizardPr
         try {
           const platformHost = new URL(appUrl).hostname;
           if (hostname !== platformHost) {
-            setIsInvalidDomain(true);
-            setPlatformSignupUrl(`${appUrl.replace(/\/$/, "")}/signup`);
+            setTimeout(() => {
+              setIsInvalidDomain(true);
+              setPlatformSignupUrl(`${appUrl.replace(/\/$/, "")}/signup`);
+            }, 0);
           }
         } catch {
           // Invalid NEXT_PUBLIC_APP_URL — allow render (safe fallback)
