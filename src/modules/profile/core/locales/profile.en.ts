@@ -37,6 +37,9 @@ export const en = {
       securityStrength: "Security Strength",
       securePercent: "{{score}}%",
     },
+    errors: {
+      phoneInvalid: "Please enter a valid phone number.",
+    },
     security: {
       title: "Security",
       description: "Manage your password and two-factor authentication settings.",

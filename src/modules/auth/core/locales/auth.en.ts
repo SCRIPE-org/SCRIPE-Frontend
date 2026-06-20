@@ -306,6 +306,7 @@ export const en = {
       verify: "Verify & Sign In",
       verifyFailed: "Invalid or expired code.",
       changeNumber: "Use a different number",
+      phoneInvalid: "Please enter a valid phone number.",
     },
     // ── QR Cross-Device Login ────────────────────────────────
     qr: {

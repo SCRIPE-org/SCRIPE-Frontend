@@ -311,6 +311,7 @@ export const en = {
       timezoneRequired: "Please select a timezone.",
       companyMax: "Company name must be 200 characters or fewer.",
       noteMax: "Note must be 1000 characters or fewer.",
+      phoneInvalid: "Please enter a valid phone number.",
       emailVerificationExpired: "Email verification expired. Please go back and verify again.",
       signupFailed: "Signup failed. Please try again.",
       domainRestrictionTitle: "Signup Restricted",

@@ -37,6 +37,9 @@ export const ar = {
       securityStrength: "قوة الأمان",
       securePercent: "{{score}}%",
     },
+    errors: {
+      phoneInvalid: "يرجى إدخال رقم هاتف صالح.",
+    },
     security: {
       title: "الأمان",
       description: "إدارة كلمة المرور وإعدادات المصادقة الثنائية.",

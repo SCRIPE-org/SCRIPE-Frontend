@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
 import { Input } from "@core/ui/input";
+import { PhoneInput, isValidPhoneNumber, type Country } from "@core/ui/phone-input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import type { SignupWizardViewModel } from "../../viewmodels/useSignupWizard";
@@ -42,7 +43,7 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
   const [note, setNote] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<
-    Partial<Record<"fullName" | "email" | "company", string>>
+    Partial<Record<"fullName" | "email" | "company" | "phone", string>>
   >({});
 
   const inputStyle = {
@@ -53,12 +54,15 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
   const errorTextStyle = { color: tokens.error } as const;
 
   const validate = (): boolean => {
-    const next: Partial<Record<"fullName" | "email" | "company", string>> = {};
+    const next: Partial<Record<"fullName" | "email" | "company" | "phone", string>> = {};
     if (!fullName.trim()) next.fullName = t("signup.errors.fullNameRequired");
     if (!email.trim()) next.email = t("signup.errors.emailRequired");
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
       next.email = t("signup.errors.emailInvalid");
     if (!company.trim()) next.company = t("signup.contactSales.companyRequired");
+    if (phone.trim() && !isValidPhoneNumber(phone)) {
+      next.phone = t("signup.errors.phoneInvalid");
+    }
     setFieldErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -126,7 +130,7 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
           ))}
         </div>
 
-        <button
+        {/* <button
           type="button"
           onClick={wizard.editPlan}
           className="mx-auto mt-6 inline-flex items-center gap-1.5 text-[0.8125rem] font-medium transition-opacity duration-200 hover:opacity-80"
@@ -134,7 +138,7 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
         >
           <ArrowLeft className="h-3.5 w-3.5 rtl:scale-x-[-1]" aria-hidden="true" />
           {t("signup.contactSales.backToPlans")}
-        </button>
+        </button> */}
       </div>
     );
   }
@@ -183,6 +187,7 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
             }}
             placeholder={t("signup.account.fullNamePlaceholder")}
             aria-invalid={!!fieldErrors.fullName}
+            maxLength={100}
             className="h-11"
             style={inputStyle}
           />
@@ -243,6 +248,7 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
             }}
             placeholder={t("signup.contactSales.companyPlaceholder")}
             aria-invalid={!!fieldErrors.company}
+            maxLength={200}
             className="h-11"
             style={inputStyle}
           />
@@ -267,18 +273,20 @@ export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
               {t("signup.common.optional")}
             </span>
           </div>
-          <Input
+          <PhoneInput
             id="cs-phone"
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder={t("signup.contactSales.phonePlaceholder")}
+            onChange={setPhone}
             className="h-11"
             style={inputStyle}
-            dir="ltr"
+            error={fieldErrors.phone}
+            defaultCountry={(wizardData.region as Country) || undefined}
           />
+          {fieldErrors.phone && (
+            <p role="alert" className="text-[0.75rem] font-medium" style={errorTextStyle}>
+              {fieldErrors.phone}
+            </p>
+          )}
         </div>
 
         {/* ── Note (optional) ── */}

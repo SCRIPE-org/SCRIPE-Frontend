@@ -310,6 +310,7 @@ export const ar = {
       timezoneRequired: "يرجى اختيار المنطقة الزمنية.",
       companyMax: "يجب ألا يتجاوز اسم الشركة 200 حرف.",
       noteMax: "يجب ألا تتجاوز الملاحظة 1000 حرف.",
+      phoneInvalid: "يرجى إدخال رقم هاتف صالح.",
       emailVerificationExpired: "انتهت صلاحية التحقق من البريد. يرجى العودة والتحقق مرة أخرى.",
       signupFailed: "فشل التسجيل. يرجى المحاولة مرة أخرى.",
       domainRestrictionTitle: "التسجيل مقيد",

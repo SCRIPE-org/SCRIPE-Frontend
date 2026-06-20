@@ -139,6 +139,7 @@ export const ar = {
         companyRequired: "اسم الشركة مطلوب.",
         contactRequired: "اسم جهة الاتصال مطلوب.",
         emailInvalid: "يرجى إدخال عنوان بريد إلكتروني صالح.",
+        phoneInvalid: "يرجى إدخال رقم هاتف صالح.",
       },
     },
 

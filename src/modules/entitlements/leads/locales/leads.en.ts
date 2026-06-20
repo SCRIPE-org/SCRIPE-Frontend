@@ -139,6 +139,7 @@ export const en = {
         companyRequired: "Company name is required.",
         contactRequired: "Contact name is required.",
         emailInvalid: "Please enter a valid email address.",
+        phoneInvalid: "Please enter a valid phone number.",
       },
     },
 

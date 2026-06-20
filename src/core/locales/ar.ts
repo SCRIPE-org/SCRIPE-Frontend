@@ -1461,6 +1461,13 @@ export const ar = {
     goToPage: "الذهاب للصفحة",
   },
   components: {
+    phoneInput: {
+      placeholder: "أدخل رقم الهاتف",
+      digits: "أرقام",
+      enterNational: "أدخل الرقم الوطني",
+      searchPlaceholder: "البحث عن بلد...",
+      emptyState: "لم يتم العثور على أي بلد.",
+    },
     select: {
       placeholder: "اختر......",
     },
