@@ -212,10 +212,12 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // Customization
   "/customization/branding": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
   "/customizer": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
+  /*
   "/customization/themes": [SYSTEM_PERMISSIONS.THEMES_VIEW],
   "/customization/gallery": [SYSTEM_PERMISSIONS.THEMES_VIEW],
   "/customization/menus": [SYSTEM_PERMISSIONS.MENUS_VIEW],
   "/customization/menus/customize": [SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE],
+  */
 
   // Entitlements
   "/entitlements/editions": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
@@ -292,6 +294,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/compliance/reports": [SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_VIEW],
   "/compliance/reports/[id]": [SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_VIEW],
 
+  /*
   // Plugins Module
   "/plugins": [SYSTEM_PERMISSIONS.PLUGINS_CATALOG_VIEW],
   "/plugins/catalog": [SYSTEM_PERMISSIONS.PLUGINS_CATALOG_VIEW],
@@ -319,4 +322,5 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/marketplace/my-profile": [SYSTEM_PERMISSIONS.DEVELOPER_PROFILES_VIEW],
   "/marketplace/my-submissions": [SYSTEM_PERMISSIONS.APP_SUBMISSIONS_VIEW],
   "/marketplace/my-earnings": [SYSTEM_PERMISSIONS.APP_PURCHASES_VIEW],
+  */
 };

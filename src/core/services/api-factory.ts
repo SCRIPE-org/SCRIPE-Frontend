@@ -34,8 +34,7 @@ const ENV_MAP: Record<string, string | undefined> = {
   COMPLIANCE: process.env.NEXT_PUBLIC_COMPLIANCE_API_URL,
   ENTITLEMENTS: process.env.NEXT_PUBLIC_ENTITLEMENTS_API_URL,
   PLUGINS: process.env.NEXT_PUBLIC_PLUGINS_API_URL,
-  // PRODUCTS: process.env.NEXT_PUBLIC_PRODUCTS_API_URL,
-  // INVENTORY: process.env.NEXT_PUBLIC_INVENTORY_API_URL,
+  // ── Add new modules below this line ──
 };
 
 /** Cache: moduleKey → ApiService instance */

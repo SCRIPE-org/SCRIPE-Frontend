@@ -86,7 +86,6 @@ export type SignupPhase =
  */
 const PHASE_ORDER: readonly SignupPhase[] = [
   "welcome",
-  "discovery",
   "plan",
   "account",
   "verification",
@@ -543,7 +542,7 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
     }
     signupRepository.clearPersistedWizardState();
     setNavigationDirection(1);
-    setPhase("discovery");
+    setPhase("plan");
   }, [signupRepository]);
 
   // ── Navigation helpers ─────────────────────────────────────────────────────
@@ -577,7 +576,7 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
 
   const goToDiscovery = useCallback(() => {
     setNavigationDirection(1);
-    setPhase("discovery");
+    setPhase("plan");
   }, []);
 
   // ── Select plan → snapshot + advance (self-service vs contact-sales) ─────────
