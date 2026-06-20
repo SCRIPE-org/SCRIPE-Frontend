@@ -139,8 +139,29 @@ export function useLeadsViewModel() {
 
   // ── Update Status Mutation ────────────────────────────────────────────────
   const updateStatusMutation = useMutation({
-    mutationFn: ({ id, status, notes }: { id: string; status: LeadStatus; notes?: string }) =>
-      leadsRepository.updateStatus({ id, status, notes }),
+    mutationFn: ({
+      id,
+      status,
+      notes,
+      sendNotification,
+      emailSubjectOverride,
+      emailBodyOverride,
+    }: {
+      id: string;
+      status: LeadStatus;
+      notes?: string;
+      sendNotification?: boolean;
+      emailSubjectOverride?: string;
+      emailBodyOverride?: string;
+    }) =>
+      leadsRepository.updateStatus({
+        id,
+        status,
+        notes,
+        sendNotification,
+        emailSubjectOverride,
+        emailBodyOverride,
+      }),
     onMutate: async ({ id, status }) => {
       await queryClient.cancelQueries({ queryKey: ["leads", "list"] });
       await queryClient.cancelQueries({ queryKey: QUERY_KEYS.detail(id) });
@@ -383,10 +404,31 @@ export function useLeadsViewModel() {
   }, []);
 
   const handleUpdateStatus = useCallback(
-    async (id: string, status: LeadStatus, notes?: string) => {
-      await updateStatusMutation.mutateAsync({ id, status, notes });
+    async (
+      id: string,
+      status: LeadStatus,
+      notes?: string,
+      sendNotification?: boolean,
+      emailSubjectOverride?: string,
+      emailBodyOverride?: string
+    ) => {
+      await updateStatusMutation.mutateAsync({
+        id,
+        status,
+        notes,
+        sendNotification,
+        emailSubjectOverride,
+        emailBodyOverride,
+      });
     },
     [updateStatusMutation]
+  );
+
+  const handleGetEmailPreview = useCallback(
+    async (leadId: string, targetStatus: string) => {
+      return leadsRepository.getStatusEmailPreview(leadId, targetStatus);
+    },
+    [leadsRepository]
   );
 
   const handleOpenCreateDialog = useCallback(() => setIsCreateDialogOpen(true), []);
@@ -551,6 +593,7 @@ export function useLeadsViewModel() {
     setSelectedLeadId,
     sendLeadEmail: sendLeadEmailMutation.mutateAsync,
     handleUpdateStatus,
+    handleGetEmailPreview,
     handleOpenCreateDialog,
     handleCloseCreateDialog,
     handleCreateLead,

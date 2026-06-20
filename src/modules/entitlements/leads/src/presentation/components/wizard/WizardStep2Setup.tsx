@@ -102,17 +102,27 @@ export function WizardStep2Setup({ lead, edition, state, onChange, amountError, 
             <BadgeDollarSign className="h-4 w-4 shrink-0 text-amber-500" />
             <div>
               <p className="text-sm font-medium leading-none">Custom Deal Price</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">Override standard pricing with a negotiated amount</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {edition?.isContactSalesOnly
+                  ? "Negotiated amount is required for custom sales deals"
+                  : "Override standard pricing with a negotiated amount"}
+              </p>
             </div>
           </div>
-          <Switch
-            id="wiz-custom-price"
-            checked={state.useCustomPrice}
-            onCheckedChange={(v) => {
-              set("useCustomPrice", v);
-              if (!v) onChange({ ...state, useCustomPrice: false, negotiatedAmount: "" });
-            }}
-          />
+          {edition?.isContactSalesOnly ? (
+            <span className="text-[10px] font-semibold bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded border border-amber-500/20 uppercase tracking-wider">
+              Required
+            </span>
+          ) : (
+            <Switch
+              id="wiz-custom-price"
+              checked={state.useCustomPrice}
+              onCheckedChange={(v) => {
+                set("useCustomPrice", v);
+                if (!v) onChange({ ...state, useCustomPrice: false, negotiatedAmount: "" });
+              }}
+            />
+          )}
         </div>
         {state.useCustomPrice && (
           <div className="grid grid-cols-2 gap-3 pt-1">

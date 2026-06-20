@@ -50,6 +50,11 @@ export const en = {
         "11-50": "11\u201350",
         "51-200": "51\u2013200",
         "200+": "200+",
+        clinic: "Single clinic",
+        beds_lt_50: "Under 50 beds",
+        beds_50_200: "50\u2013200 beds",
+        beds_200_plus: "200+ beds",
+        network: "Multi-site network",
       },
     },
 
@@ -333,6 +338,9 @@ export const en = {
     },
 
     email: {
+      sendNotificationToggle: "Send status notification email to lead",
+      sendNotificationToggleDesc: "Send a status update email automatically to the lead's email address.",
+      draftPreviewHeader:     "Notification Draft Preview",
       send:                   "Send Email",
       dialogTitle:            "Send Email to Lead",
       dialogSubtitle:         "Compose a branded email to {email}",
@@ -344,8 +352,8 @@ export const en = {
       subject:                "Subject",
       subjectPlaceholder:     "Enter email subject...",
       body:                   "Message Body",
-      bodyPlaceholder:        "Write your message here. HTML is supported.",
-      bodyHint:               "HTML formatting supported. Email will be rendered with SCRIPE branding.",
+      bodyPlaceholder:        "Write your message here. Paragraphs are created on new lines.",
+      bodyHint:               "The email will be formatted as paragraphs and wrapped in the branded SCRIPE template automatically.",
       sending:                "Sending...",
       cancel:                 "Cancel",
       sentSuccess:            "Email sent successfully",

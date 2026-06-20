@@ -27,17 +27,33 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 export function WizardStep1Edition({ lead, editions = [], isLoading, selected, onSelect }: WizardStep1Props) {
   const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+
+  // Get unique categories present in the editions list
+  const categories = useMemo(() => {
+    const keys = new Set<string>();
+    editions.forEach((e) => {
+      if (e.categoryKey) {
+        keys.add(e.categoryKey.toLowerCase());
+      }
+    });
+    return Array.from(keys);
+  }, [editions]);
 
   // Filter and group editions
   const groupedEditions = useMemo(() => {
     const filtered = editions.filter((e) => {
       const term = search.toLowerCase();
-      return (
+      const matchesSearch = (
         e.displayNameEn.toLowerCase().includes(term) ||
         (e.displayNameAr && e.displayNameAr.toLowerCase().includes(term)) ||
-        e.name.toLowerCase().includes(term) ||
-        (e.categoryKey && e.categoryKey.toLowerCase().includes(term))
+        e.name.toLowerCase().includes(term)
       );
+
+      const cat = e.categoryKey?.toLowerCase() || "general";
+      const matchesCategory = selectedCategory === "all" || cat === selectedCategory;
+
+      return matchesSearch && matchesCategory;
     });
 
     // Group by categoryKey
@@ -51,7 +67,7 @@ export function WizardStep1Edition({ lead, editions = [], isLoading, selected, o
     });
 
     return groups;
-  }, [editions, search]);
+  }, [editions, search, selectedCategory]);
 
   return (
     <div className="space-y-4">
@@ -77,17 +93,56 @@ export function WizardStep1Edition({ lead, editions = [], isLoading, selected, o
         </p>
       </div>
 
-      {/* Search Input */}
+      {/* Search & Categories */}
       {!isLoading && editions.length > 0 && (
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-          <Input
-            type="text"
-            placeholder="Search plans by name or category..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 h-9 border-zinc-800 bg-zinc-950 text-sm text-white placeholder:text-zinc-500 focus-visible:ring-indigo-500"
-          />
+        <div className="space-y-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+            <Input
+              type="text"
+              placeholder="Search plans by name or category..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9 h-9 border-zinc-800 bg-zinc-950 text-sm text-white placeholder:text-zinc-500 focus-visible:ring-indigo-500"
+            />
+          </div>
+
+          {/* Category Selector Tabs */}
+          {categories.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 border-b border-zinc-800/40 pb-2">
+              <button
+                type="button"
+                onClick={() => setSelectedCategory("all")}
+                className={[
+                  "rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-150",
+                  selectedCategory === "all"
+                    ? "bg-indigo-600 text-white shadow-sm shadow-indigo-600/20"
+                    : "bg-zinc-900/40 text-zinc-400 border border-zinc-800/80 hover:bg-zinc-800/40 hover:text-zinc-200"
+                ].join(" ")}
+              >
+                All Plans
+              </button>
+              {categories.map((cat) => {
+                const label = CATEGORY_LABELS[cat] ?? cat.replace(/\b\w/g, (c) => c.toUpperCase());
+                const isSelected = selectedCategory === cat;
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setSelectedCategory(cat)}
+                    className={[
+                      "rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-150",
+                      isSelected
+                        ? "bg-indigo-600 text-white shadow-sm shadow-indigo-600/20"
+                        : "bg-zinc-900/40 text-zinc-400 border border-zinc-800/80 hover:bg-zinc-800/40 hover:text-zinc-200"
+                    ].join(" ")}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
 

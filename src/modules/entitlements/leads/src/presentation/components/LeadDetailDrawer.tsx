@@ -28,6 +28,40 @@ import { DrawerTabComms } from "./drawer/DrawerTabComms";
 import { DrawerActionBar } from "./drawer/DrawerActionBar";
 import { SkeletonPanel, STATUS_STYLES } from "./drawer/DrawerShared";
 
+import type { StatusEmailPreview } from "../../domain/interfaces";
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function htmlToPlainText(html: string): string {
+  if (!html) return "";
+  let text = html;
+  text = text.replace(/<br\s*\/?>/gi, "\n");
+  text = text.replace(/<\/p>\s*<p[^>]*>/gi, "\n\n");
+  text = text.replace(/<p[^>]*>/gi, "");
+  text = text.replace(/<\/p>/gi, "");
+  text = text.replace(/<[^>]+>/g, "");
+  text = text
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&nbsp;/g, " ");
+  return text.trim();
+}
+
+function plainTextToHtml(text: string): string {
+  if (!text) return "";
+  const paragraphs = text.split(/\r?\n\r?\n/);
+  return paragraphs
+    .map((para) => {
+      const cleanPara = para.trim().replace(/\r?\n/g, "<br/>");
+      if (!cleanPara) return "";
+      return `<p style="margin:0 0 16px 0;">${cleanPara}</p>`;
+    })
+    .filter(Boolean)
+    .join("");
+}
+
 // ── Props ─────────────────────────────────────────────────────────────────────
 
 interface LeadDetailDrawerProps {
@@ -35,8 +69,16 @@ interface LeadDetailDrawerProps {
   onClose: () => void;
   lead: PlatformLead | null | undefined;
   isLoading: boolean;
-  onUpdateStatus: (id: string, status: LeadStatus, notes?: string) => Promise<void>;
+  onUpdateStatus: (
+    id: string,
+    status: LeadStatus,
+    notes?: string,
+    sendNotification?: boolean,
+    emailSubjectOverride?: string,
+    emailBodyOverride?: string
+  ) => Promise<void>;
   isUpdatingStatus: boolean;
+  onGetEmailPreview?: (leadId: string, status: string) => Promise<StatusEmailPreview>;
   onConvert?: (id: string) => void;
   onAssign?: (id: string) => void;
   onDelete?: (id: string) => Promise<void>;
@@ -60,6 +102,7 @@ export function LeadDetailDrawer({
   isLoading,
   onUpdateStatus,
   isUpdatingStatus,
+  onGetEmailPreview,
   onConvert,
   onAssign,
   onDelete,
@@ -85,21 +128,69 @@ export function LeadDetailDrawer({
   const [closeConfirmOpen, setCloseConfirmOpen] = useState(false);
   const [showStatusNote, setShowStatusNote]   = useState(false);
 
+  // Email Notification States
+  const [sendEmailToggle, setSendEmailToggle] = useState(false);
+  const [emailSubject, setEmailSubject]       = useState("");
+  const [emailBody, setEmailBody]             = useState("");
+  const [isFetchingPreview, setIsFetchingPreview] = useState(false);
+  const [previewStatus, setPreviewStatus]     = useState<LeadStatus | null>(null);
+
   const currentStatus = pendingStatus ?? lead?.status ?? "New";
 
   const resolvedEditionName = lead?.editionKey
     ? lead.editionKey.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
     : null;
 
+  const fetchEmailPreview = useCallback(async (targetStatus: LeadStatus) => {
+    if (!lead || !onGetEmailPreview) return;
+    setIsFetchingPreview(true);
+    try {
+      const preview = await onGetEmailPreview(lead.id, targetStatus);
+      setEmailSubject(preview.subject);
+      setEmailBody(htmlToPlainText(preview.bodyHtml));
+      setPreviewStatus(targetStatus);
+    } catch (err) {
+      console.error("Failed to fetch email preview:", err);
+    } finally {
+      setIsFetchingPreview(false);
+    }
+  }, [lead, onGetEmailPreview]);
+
+  const handleSendEmailToggleChange = useCallback(async (checked: boolean) => {
+    setSendEmailToggle(checked);
+    if (checked && pendingStatus && pendingStatus !== previewStatus) {
+      await fetchEmailPreview(pendingStatus);
+    }
+  }, [pendingStatus, previewStatus, fetchEmailPreview]);
+
   const handleSaveStatus = useCallback(async () => {
     if (!lead) return;
-    await onUpdateStatus(lead.id, currentStatus, statusNote.trim() || undefined);
+    await onUpdateStatus(
+      lead.id,
+      currentStatus,
+      statusNote.trim() || undefined,
+      sendEmailToggle,
+      sendEmailToggle ? emailSubject : undefined,
+      sendEmailToggle ? plainTextToHtml(emailBody) : undefined
+    );
     setStatusNote("");
     setStatusNoteSaved(true);
     setPendingStatus(null);
+    setSendEmailToggle(false);
+    setEmailSubject("");
+    setEmailBody("");
+    setPreviewStatus(null);
     setShowStatusNote(false);
     setTimeout(() => setStatusNoteSaved(false), 2500);
-  }, [lead, currentStatus, statusNote, onUpdateStatus]);
+  }, [
+    lead,
+    currentStatus,
+    statusNote,
+    sendEmailToggle,
+    emailSubject,
+    emailBody,
+    onUpdateStatus,
+  ]);
 
   const handleQuickNote = useCallback(async () => {
     if (!lead || !quickNote.trim() || !onAddNote) return;
@@ -113,20 +204,29 @@ export function LeadDetailDrawer({
     setPendingStatus(null);
     setStatusNote("");
     setShowStatusNote(false);
+    setSendEmailToggle(false);
+    setEmailSubject("");
+    setEmailBody("");
+    setPreviewStatus(null);
     onClose();
   }, [onClose]);
 
-  const handleStatusClick = useCallback((s: LeadStatus) => {
-    setPendingStatus(s === lead?.status && !pendingStatus ? null : s);
+  const handleStatusClick = useCallback(async (s: LeadStatus) => {
+    const nextStatus = s === lead?.status && !pendingStatus ? null : s;
+    setPendingStatus(nextStatus);
     setShowStatusNote(true);
-  }, [lead?.status, pendingStatus]);
+
+    if (sendEmailToggle && nextStatus && nextStatus !== previewStatus) {
+      await fetchEmailPreview(nextStatus);
+    }
+  }, [lead?.status, pendingStatus, sendEmailToggle, previewStatus, fetchEmailPreview]);
 
   return (
     <>
       <Sheet open={open} onOpenChange={(v) => { if (!v) handleClose(); }}>
         <SheetContent
           side="right"
-          className="flex w-full max-w-[650px] flex-col overflow-hidden border-s border-zinc-800 bg-zinc-950 p-0"
+          className="flex w-full max-w-[700px] flex-col overflow-hidden border-s border-zinc-800 bg-zinc-950 p-0"
         >
           {/* ── Sticky header ── */}
           <div className="shrink-0 border-b border-zinc-800/60 bg-zinc-950/95 px-6 py-5 backdrop-blur-sm">
@@ -194,7 +294,7 @@ export function LeadDetailDrawer({
                 </TabsTrigger>
               </TabsList>
 
-              <div className="flex-1 overflow-y-auto">
+              <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar">
                 <TabsContent value="info" className="mt-0 h-full">
                   <DrawerTabInfo
                     lead={lead}
@@ -207,6 +307,13 @@ export function LeadDetailDrawer({
                     onStatusClick={handleStatusClick}
                     onStatusNoteChange={setStatusNote}
                     onSaveStatus={handleSaveStatus}
+                    sendEmailToggle={sendEmailToggle}
+                    onSendEmailToggleChange={handleSendEmailToggleChange}
+                    emailSubject={emailSubject}
+                    onEmailSubjectChange={setEmailSubject}
+                    emailBody={emailBody}
+                    onEmailBodyChange={setEmailBody}
+                    isFetchingPreview={isFetchingPreview}
                   />
                 </TabsContent>
                 <TabsContent value="activity" className="mt-0 h-full">

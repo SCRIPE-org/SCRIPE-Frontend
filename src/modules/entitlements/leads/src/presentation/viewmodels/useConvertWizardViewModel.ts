@@ -142,6 +142,9 @@ export function useConvertWizardViewModel(
     if (step === 1) {
       if (!selectedEdition) return;
       setStep(2);
+      if (selectedEdition.isContactSalesOnly) {
+        setS2((prev) => ({ ...prev, useCustomPrice: true }));
+      }
     } else if (step === 2) {
       if (s2.useCustomPrice && !validateAmount(s2.negotiatedAmount)) return;
       setStep(3);

@@ -348,6 +348,7 @@ export function LeadsView() {
         isLoading={vm.isLoadingDetail}
         onUpdateStatus={vm.handleUpdateStatus}
         isUpdatingStatus={vm.isUpdatingStatus}
+        onGetEmailPreview={vm.handleGetEmailPreview}
         onConvert={canConvertLead ? vm.handleOpenConvertDialog : undefined}
         onAssign={canAssignLead ? vm.handleOpenAssignDialog : undefined}
         onDelete={canDeleteLead ? vm.handleCloseLead : undefined}
