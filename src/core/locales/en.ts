@@ -634,6 +634,13 @@ export const en = {
     goToPage: "Go to page",
   },
   components: {
+    phoneInput: {
+      placeholder: "Enter phone number",
+      digits: "digits",
+      enterNational: "Enter national number",
+      searchPlaceholder: "Search country...",
+      emptyState: "No country found.",
+    },
     searchableSelect: {
       placeholder: "Select......",
     },

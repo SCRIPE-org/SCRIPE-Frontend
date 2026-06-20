@@ -23,6 +23,7 @@ export const ProfileMapper = {
       firstName: dto.firstName ?? "",
       lastName: dto.lastName ?? "",
       phoneNumber: dto.phoneNumber ?? "",
+      email: dto.email ?? "",
       adminTypeName: dto.adminTypeName ?? "",
       profileImageUrl: dto.profileImageUrl,
       roles: dto.roles ?? [],

@@ -7,6 +7,11 @@ import type {
   PlatformLeadResponseModel,
   LeadActivityResponseModel,
   PagedAssignableAdminsModel,
+  SendLeadEmailRequest,
+  LeadCommunicationLogDto,
+  EditionForConversionDto,
+  EditionFeatureGroupDto,
+  StatusEmailPreviewDto,
 } from "../models/leads.models";
 import type {
   LeadsListParams,
@@ -36,10 +41,20 @@ export class LeadsService implements ILeadsService {
     return this.api.get<PlatformLeadResponseModel>(API_ENDPOINTS.ENTITLEMENTS.LEADS.BY_ID(id));
   }
 
-  async updateStatus(id: string, status: LeadStatus, notes?: string): Promise<void> {
+  async updateStatus(
+    id: string,
+    status: LeadStatus,
+    notes?: string,
+    sendNotification?: boolean,
+    emailSubjectOverride?: string,
+    emailBodyOverride?: string
+  ): Promise<void> {
     await this.api.put(API_ENDPOINTS.ENTITLEMENTS.LEADS.UPDATE_STATUS(id), {
       status,
       notes,
+      sendNotification: sendNotification ?? false,
+      emailSubjectOverride,
+      emailBodyOverride,
     });
   }
 
@@ -63,6 +78,7 @@ export class LeadsService implements ILeadsService {
         conversionNote: params.conversionNote,
         negotiatedAmount: params.negotiatedAmount,
         negotiatedCurrency: params.negotiatedCurrency,
+        featureOverrides: params.featureOverrides,
       }
     );
   }
@@ -81,7 +97,6 @@ export class LeadsService implements ILeadsService {
       search: search.trim() || undefined,
       isActive: true,
     });
-
     return this.api.get<PagedAssignableAdminsModel>(url);
   }
 
@@ -90,7 +105,9 @@ export class LeadsService implements ILeadsService {
   }
 
   async getActivity(id: string): Promise<LeadActivityResponseModel[]> {
-    return this.api.get<LeadActivityResponseModel[]>(API_ENDPOINTS.ENTITLEMENTS.LEADS.ACTIVITY(id));
+    return this.api.get<LeadActivityResponseModel[]>(
+      API_ENDPOINTS.ENTITLEMENTS.LEADS.ACTIVITY(id)
+    );
   }
 
   async bulkUpdateStatus(
@@ -107,5 +124,43 @@ export class LeadsService implements ILeadsService {
 
   async addNote(id: string, note: string): Promise<void> {
     await this.api.post(API_ENDPOINTS.ENTITLEMENTS.LEADS.ADD_NOTE(id), { note });
+  }
+
+  async sendEmail(leadId: string, data: SendLeadEmailRequest): Promise<{ logId: string }> {
+    return this.api.post<{ logId: string }>(
+      `${API_ENDPOINTS.ENTITLEMENTS.LEADS.LIST}/${leadId}/send-email`,
+      data
+    );
+  }
+
+  async getCommunicationLogs(leadId: string): Promise<LeadCommunicationLogDto[]> {
+    return this.api.get<LeadCommunicationLogDto[]>(
+      `${API_ENDPOINTS.ENTITLEMENTS.LEADS.LIST}/${leadId}/communications`
+    );
+  }
+
+  // ── Conversion Wizard Methods ───────────────────────────────────────────────
+
+  async closeLead(id: string, reason?: string): Promise<void> {
+    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.LEADS.CLOSE(id), { reason });
+  }
+
+  async getEditionsForConversion(): Promise<EditionForConversionDto[]> {
+    return this.api.get<EditionForConversionDto[]>(
+      API_ENDPOINTS.ENTITLEMENTS.LEADS.EDITIONS_FOR_CONVERSION
+    );
+  }
+
+  async getEditionFeaturesForConversion(editionId: string): Promise<EditionFeatureGroupDto[]> {
+    return this.api.get<EditionFeatureGroupDto[]>(
+      API_ENDPOINTS.ENTITLEMENTS.LEADS.EDITION_FEATURES(editionId)
+    );
+  }
+
+  async getStatusEmailPreview(leadId: string, targetStatus: string): Promise<StatusEmailPreviewDto> {
+    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.LEADS.STATUS_EMAIL_PREVIEW(leadId), {
+      targetStatus,
+    });
+    return this.api.get<StatusEmailPreviewDto>(url);
   }
 }

@@ -25,6 +25,7 @@ import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { appLogger } from "@core/common/logger";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface RouteGuardProps {
   children: React.ReactNode;
@@ -100,6 +101,7 @@ function forceLogout() {
 export function RouteGuard({ children }: RouteGuardProps) {
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);
   const logout = useAppStore((state) => state.logout);
+  const queryClient = useQueryClient();
   const hasHydrated = useAppStore((state) => state._hasHydrated);
   const setAuth = useAppStore((state) => state.setAuth);
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
@@ -281,10 +283,12 @@ export function RouteGuard({ children }: RouteGuardProps) {
           hasRedirected.current = true;
           forceLogout();
           logout();
+          queryClient.clear();
           router.push("/login");
         } else if (isAuthPage) {
           forceLogout();
           logout();
+          queryClient.clear();
           setIsChecking(false);
         }
         return;

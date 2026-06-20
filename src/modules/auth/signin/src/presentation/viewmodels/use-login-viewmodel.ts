@@ -167,9 +167,11 @@ export function useLoginViewModel() {
         if (!hasTriggeredRedirect.current) {
           hasTriggeredRedirect.current = true;
           const mustChange = useAppStore.getState().mustChangePassword;
-          setTimeout(() => {
+          // Use requestAnimationFrame to ensure Zustand store persistence flush completes
+          // before navigation, preventing RouteGuard from seeing stale state.
+          requestAnimationFrame(() => {
             handleRedirect(mustChange ? "/change-password" : redirectPath);
-          }, 100);
+          });
         }
       } catch (err: unknown) {
         // instanceof + name fallback: some bundlers break Error prototype chains

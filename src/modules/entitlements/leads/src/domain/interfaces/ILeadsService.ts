@@ -5,6 +5,11 @@ import type {
   PlatformLeadResponseModel,
   LeadActivityResponseModel,
   PagedAssignableAdminsModel,
+  SendLeadEmailRequest,
+  LeadCommunicationLogDto,
+  EditionForConversionDto,
+  EditionFeatureGroupDto,
+  StatusEmailPreviewDto,
 } from "../../data/models/leads.models";
 import type {
   LeadsListParams,
@@ -26,7 +31,14 @@ import type { LeadStatus } from "../entities/PlatformLead";
 export interface ILeadsService {
   getAll(params: LeadsListParams): Promise<PagedLeadsModel>;
   getById(id: string): Promise<PlatformLeadResponseModel>;
-  updateStatus(id: string, status: LeadStatus, notes?: string): Promise<void>;
+  updateStatus(
+    id: string,
+    status: LeadStatus,
+    notes?: string,
+    sendNotification?: boolean,
+    emailSubjectOverride?: string,
+    emailBodyOverride?: string
+  ): Promise<void>;
   createLead(params: CreateLeadParams): Promise<string>;
   convertToTenant(id: string, params: ConvertLeadParams): Promise<ConvertLeadResult>;
   assignLead(id: string, params: AssignLeadParams): Promise<void>;
@@ -41,4 +53,19 @@ export interface ILeadsService {
   ): Promise<BulkLeadStatusResult>;
   /** Append a standalone CRM note to the lead's activity timeline. */
   addNote(id: string, note: string): Promise<void>;
+  /** Send an email to a lead and log the communication. */
+  sendEmail(
+    leadId: string,
+    data: SendLeadEmailRequest
+  ): Promise<{ logId: string }>;
+  /** Retrieve all communication logs for a lead. */
+  getCommunicationLogs(leadId: string): Promise<LeadCommunicationLogDto[]>;
+  /** Close a lead (CRM soft-close — sets status to Closed). */
+  closeLead(id: string, reason?: string): Promise<void>;
+  /** Get all editions available for the conversion wizard step 1. */
+  getEditionsForConversion(): Promise<EditionForConversionDto[]>;
+  /** Get all configurable features for a specific edition (wizard step 3). */
+  getEditionFeaturesForConversion(editionId: string): Promise<EditionFeatureGroupDto[]>;
+  /** Get a pre-populated branded email preview for a status transition. */
+  getStatusEmailPreview(leadId: string, targetStatus: string): Promise<StatusEmailPreviewDto>;
 }

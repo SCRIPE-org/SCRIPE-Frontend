@@ -59,7 +59,7 @@ export function usePasskeyManagementViewModel() {
 
   // ── Register new passkey via WebAuthn ────────────────────
   const registerPasskey = useCallback(
-    async (deviceName: string) => {
+    async (deviceName: string): Promise<boolean> => {
       setIsRegistering(true);
       setRegistrationError(null);
 
@@ -100,6 +100,7 @@ export function usePasskeyManagementViewModel() {
 
         // 5. Refresh passkey list
         queryClient.invalidateQueries({ queryKey: ["passkeys"] });
+        return true;
       } catch (err) {
         const message = err instanceof Error ? err.message : "Passkey registration failed.";
 
@@ -115,6 +116,7 @@ export function usePasskeyManagementViewModel() {
         } else {
           setRegistrationError(message);
         }
+        return false;
       } finally {
         setIsRegistering(false);
       }

@@ -1,5 +1,8 @@
 export const en = {
   profile: {
+    title: "Profile Settings",
+    subtitle:
+      "Unified user account controls featuring WebAuthn, active session revocation, and security audit logs.",
     nav: {
       general: "General",
       security: "Security",
@@ -20,6 +23,7 @@ export const en = {
       firstName: "First Name",
       lastName: "Last Name",
       phoneNumber: "Phone Number",
+      email: "Email Address",
       username: "Username",
       usernameHint: "Username cannot be changed",
       role: "Role",
@@ -30,6 +34,11 @@ export const en = {
       profilePicture: "Profile Picture",
       personalInfo: "Personal Information",
       saved: "Profile updated successfully!",
+      securityStrength: "Security Strength",
+      securePercent: "{{score}}%",
+    },
+    errors: {
+      phoneInvalid: "Please enter a valid phone number.",
     },
     security: {
       title: "Security",
@@ -46,6 +55,7 @@ export const en = {
       lastChanged: "Last changed",
       twoFactorCode: "Two-Factor Code",
       twoFactorCodeHint: "Enter the code from your authenticator app",
+      twoFactorCodePlaceholder: "Enter 6-digit code",
       strength: {
         minLength: "8+ characters",
         uppercase: "Uppercase letter",
@@ -93,18 +103,78 @@ export const en = {
         saveWarning: "Save these codes somewhere safe. They will not be shown again.",
         regenerate: "Regenerate",
       },
+      passkeys: {
+        sectionTitle: "Passkeys & Security Keys",
+        sectionDesc:
+          "Register passwordless WebAuthn credentials using biometric scans (Face ID, Windows Hello) or physical hardware keys.",
+        add: "Add Passkey",
+        recommended: "RECOMMENDED",
+        biometricNotSupported: "Biometric Auth Not Supported:",
+        notSupportedDesc:
+          "Your browser does not support WebAuthn or passkey registrations. Please use a modern browser to configure security keys.",
+        noKeys: "No passkeys registered yet. Add a passkey to secure your account.",
+        removeTitle: "Remove Passkey?",
+        removeDesc:
+          "This passkey will be permanently removed. You won't be able to use it to log in anymore.",
+        removeConfirm: "Remove",
+        registerTitle: "Register New Passkey",
+        registerDesc:
+          "Give your passkey a name to identify this device, then follow the browser biometric prompt.",
+        deviceName: "Device Name",
+        deviceNamePlaceholder: "e.g. MacBook Pro, YubiKey Key",
+      },
+      totp: {
+        title: "Authenticator App (2FA / TOTP)",
+        desc: "Get instant authentication codes via tools like Google Authenticator or 1Password when logging in.",
+        enabled: "ENABLED",
+        disabled: "DISABLED",
+        enable: "Enable 2FA",
+        disable: "Disable 2FA",
+        helpText: "Active authentication code shifts periodically.",
+        backupHint: "Recovery keys available.",
+        regenerateBackup: "Regenerate Backup Codes",
+      },
+      qr: {
+        title: "Cross-Device QR Login",
+        desc: "Link a mobile app session to sign in instantly on desktop screens by scanning a QR code.",
+        paired: "PAIRED",
+        link: "Link New Device",
+        unlink: "Unlink",
+        pairedMobileDesc:
+          "No active mobile app sessions. Log in on the SCRIPE mobile app to link your device.",
+        modalTitle: "Pair Mobile App",
+        modalDesc:
+          "Follow these simple steps to link your mobile app and enable QR Code authentication.",
+        step1:
+          "Download and install the **SCRIPE Mobile Administrator** application on your device.",
+        step2:
+          "Launch the application and authenticate with your user credentials once to initialize the pairing handoff.",
+        step3:
+          "Your device will automatically pair with your admin session. You can now scan the QR code on the desktop login screen to bypass manual passwords instantly.",
+        modalCta: "Got it",
+      },
+      password: {
+        title: "Change Account Password",
+        desc: "Regularly updating your account security password lowers risks of compromise.",
+        update: "Update Password",
+        modalTitle: "Change Account Password",
+        modalDesc: "Update your administrator security password. Requires your current password.",
+      },
     },
     sessions: {
       title: "Active Sessions",
       description: "Manage your active login sessions across devices.",
+      sectionTitle: "Active Device Connections",
+      sectionDesc: "Monitor and manage active logins to your SCRIPE administrator account.",
       current: "Current",
       currentSession: "Current Session",
       otherSessions: "Other Sessions",
       signedIn: "Signed in",
       expires: "Expires",
       revoke: "Revoke",
-      revokeAll: "Revoke All",
+      revokeAll: "Revoke All Other Sessions",
       noOther: "No other active sessions",
+      noEntries: "No active sessions found.",
       securityTip:
         "If you notice any suspicious sessions, revoke them immediately and change your password.",
       revoked: "Session revoked",
@@ -113,6 +183,8 @@ export const en = {
     activity: {
       title: "Activity Log",
       description: "Review your recent security-related activity.",
+      sectionTitle: "Security Event Ledger",
+      sectionDesc: "Audit trail logs showing security changes and access actions on this account.",
       noEntries: "No activity recorded yet.",
     },
     notifications: {

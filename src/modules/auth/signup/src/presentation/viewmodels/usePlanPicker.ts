@@ -120,7 +120,6 @@ export function usePlanPicker({
   // late-arriving discovery answer flows in WITHOUT a setState-in-effect — and
   // an explicit switch always wins. Pure derivation; no effect needed.
   const [industryOverride, setIndustryOverride] = useState<string | null>(null);
-  const activeIndustry = industryOverride ?? businessType ?? deriveBusinessType(discoveryAnswers);
 
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("annual");
 
@@ -166,6 +165,13 @@ export function usePlanPicker({
         .map((c) => ({ slug: c.key, label: c.displayName })),
     [categories]
   );
+
+  const activeIndustry = useMemo(() => {
+    if (industryOverride) return industryOverride;
+    const derived = businessType ?? deriveBusinessType(discoveryAnswers);
+    if (derived) return derived;
+    return industries[0]?.slug ?? null;
+  }, [industryOverride, businessType, discoveryAnswers, industries]);
 
   // ── Catalog — fetch the ACTIVE vertical's editions (currency + lang aware). ──
   const {

@@ -150,9 +150,19 @@ export function useSignupWizardState({ language }: UseSignupWizardStateOptions) 
   const completeDiscovery = useCallback((answers: Record<string, string[]>) => {
     setDiscoveryAnswersRaw(answers);
     const businessType = answers["business_type"]?.[0] ?? null;
-    const teamSize = answers["team_size"]?.[0] ?? null;
-    const primaryPriority =
-      (answers["primary_priority"] ?? []).length > 0 ? answers["primary_priority"].join(",") : null;
+    const teamSize =
+      answers["scale_general"]?.[0] ??
+      answers["scale_erp"]?.[0] ??
+      answers["scale_healthcare"]?.[0] ??
+      answers["team_size"]?.[0] ??
+      null;
+    const rawPriorities =
+      answers["priorities_general"] ??
+      answers["priorities_erp"] ??
+      answers["priorities_healthcare"] ??
+      answers["primary_priority"] ??
+      [];
+    const primaryPriority = rawPriorities.length > 0 ? rawPriorities.join(",") : null;
     setWizardData((prev) => ({
       ...prev,
       businessType,

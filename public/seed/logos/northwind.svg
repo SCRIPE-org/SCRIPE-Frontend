@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32" fill="none" role="img" aria-label="Northwind Logistics">
-  <g fill="currentColor">
-    <path d="M8 8h2.8l6 9.6V8H19.5v16h-2.8l-6-9.6V24H8V8Z"/>
-  </g>
-  <text x="24" y="21" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" letter-spacing="0.2" fill="currentColor">northwind</text>
-</svg>

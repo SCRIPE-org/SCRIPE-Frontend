@@ -64,6 +64,7 @@ export interface IAuthRepository {
     authenticatorData: string;
     signature: string;
     userHandle: string | null;
+    tenantId?: string | null;
   }): Promise<{ accessToken: string; refreshToken: string }>;
   /** Request phone OTP for sign-in */
   requestPhoneOtp(phoneNumber: string): Promise<{ sent: boolean; retryAfterSeconds: number }>;

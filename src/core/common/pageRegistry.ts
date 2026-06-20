@@ -105,6 +105,7 @@ export const PAGE_REGISTRY: PageDefinition[] = [
   },
 
   // ── Settings ───────────────────────────────────────────────────
+  /*
   {
     href: "/customization/menus",
     labelEn: "Menu Settings",
@@ -113,6 +114,7 @@ export const PAGE_REGISTRY: PageDefinition[] = [
     resource: "menus",
     category: "settings",
   },
+  */
   {
     href: "/settings/permissions",
     labelEn: "Permission Settings",
@@ -142,7 +144,7 @@ export const PAGE_REGISTRY: PageDefinition[] = [
 /**
  * Get all pages grouped by category
  */
-export function getPagesByCategory(language: string = "en"): Record<string, PageDefinition[]> {
+export function getPagesByCategory(_language: string = "en"): Record<string, PageDefinition[]> {
   const groups: Record<string, PageDefinition[]> = {};
   for (const page of PAGE_REGISTRY) {
     if (!groups[page.category]) groups[page.category] = [];

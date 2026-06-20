@@ -45,6 +45,13 @@ export function AvatarUpload({
   const resolvedImageUrl = currentImageUrl ? `${fileUrl}${currentImageUrl}` : null;
   const displayUrl = previewUrl || resolvedImageUrl;
 
+  const [prevDisplayUrl, setPrevDisplayUrl] = useState(displayUrl);
+  const [imageError, setImageError] = useState(false);
+  if (displayUrl !== prevDisplayUrl) {
+    setPrevDisplayUrl(displayUrl);
+    setImageError(false);
+  }
+
   const handleFile = useCallback(
     (file: File) => {
       try {
@@ -97,7 +104,9 @@ export function AvatarUpload({
       >
         <div className="group relative cursor-pointer" onClick={() => inputRef.current?.click()}>
           <Avatar className="h-24 w-24 border-2 border-primary/20 shadow-lg transition-transform group-hover:scale-105">
-            {displayUrl && <AvatarImage src={displayUrl} alt="Profile" />}
+            {displayUrl && !imageError && (
+              <AvatarImage src={displayUrl} alt="Profile" onError={() => setImageError(true)} />
+            )}
             <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-2xl font-semibold text-white">
               {initials}
             </AvatarFallback>

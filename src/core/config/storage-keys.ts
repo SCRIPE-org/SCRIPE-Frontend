@@ -81,6 +81,11 @@ export const STORAGE_KEYS = {
    * Written alongside the Stripe redirect. Falls back to the emailed link in private mode.
    */
   SIGNUP_REF: "scr_signup_ref",
+  /**
+   * Stripe Checkout Session ID for direct signup checkout status polling.
+   * Public-safe reference only; server webhook state remains payment source of truth.
+   */
+  SIGNUP_CHECKOUT_SESSION: "scr_signup_checkout_session",
 } as const;
 
 /**

@@ -73,9 +73,13 @@ export function useAccountSetupViewModel(params: {
         }
       } catch (err: unknown) {
         if (cancelled) return;
-        const details = (err as { details?: { error?: string; message?: string; errorMessage?: string } })?.details;
+        const details = (
+          err as { details?: { error?: string; message?: string; errorMessage?: string } }
+        )?.details;
         setPageState("invalid");
-        setErrorMessage(details?.error || details?.errorMessage || details?.message || validationFailedMessage);
+        setErrorMessage(
+          details?.error || details?.errorMessage || details?.message || validationFailedMessage
+        );
       }
     }
 
@@ -118,9 +122,13 @@ export function useAccountSetupViewModel(params: {
         setErrorMessage(result.error || result.errorMessage || activationFailedMessage);
       }
     } catch (err: unknown) {
-      const details = (err as { details?: { error?: string; message?: string; errorMessage?: string } })?.details;
+      const details = (
+        err as { details?: { error?: string; message?: string; errorMessage?: string } }
+      )?.details;
       setPageState("error");
-      setErrorMessage(details?.error || details?.errorMessage || details?.message || activationUnexpectedMessage);
+      setErrorMessage(
+        details?.error || details?.errorMessage || details?.message || activationUnexpectedMessage
+      );
     }
   }, [
     activationFailedMessage,

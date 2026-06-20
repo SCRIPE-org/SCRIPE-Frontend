@@ -310,8 +310,12 @@ export const ar = {
       timezoneRequired: "يرجى اختيار المنطقة الزمنية.",
       companyMax: "يجب ألا يتجاوز اسم الشركة 200 حرف.",
       noteMax: "يجب ألا تتجاوز الملاحظة 1000 حرف.",
+      phoneInvalid: "يرجى إدخال رقم هاتف صالح.",
       emailVerificationExpired: "انتهت صلاحية التحقق من البريد. يرجى العودة والتحقق مرة أخرى.",
       signupFailed: "فشل التسجيل. يرجى المحاولة مرة أخرى.",
+      domainRestrictionTitle: "التسجيل مقيد",
+      domainRestrictionDescription: "التسجيل متاح فقط على المنصة الرئيسية. يرجى زيارة نطاق المنصة للتسجيل.",
+      domainRestrictionLinkText: "الذهاب إلى صفحة التسجيل الرئيسية",
     },
 
     // حقوق النشر
@@ -554,7 +558,8 @@ export const ar = {
       contactSupport: "إذا كنت تعتقد أن هذا خطأ، يرجى التواصل مع الدعم.",
       downgradeFree: "خفض الخطة إلى مجانية للتفعيل الفوري",
       confirmDowngradeTitle: "التحويل للخطة المجانية",
-      confirmDowngradeText: "هل أنت متأكد من التحويل للخطة المجانية؟ ستفقد الوصول إلى الميزات المتقدمة، ولكن سيتم تفعيل مساحة عملك فوراً.",
+      confirmDowngradeText:
+        "هل أنت متأكد من التحويل للخطة المجانية؟ ستفقد الوصول إلى الميزات المتقدمة، ولكن سيتم تفعيل مساحة عملك فوراً.",
       confirmDowngradeCta: "نعم، التحويل",
       cancel: "إلغاء",
       processing: "جاري العمل...",

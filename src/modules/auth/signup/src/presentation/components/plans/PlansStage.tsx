@@ -41,6 +41,8 @@ export function PlansStage({ wizard }: PlansStageProps) {
     initialCountry: wizard.initialCountry,
   });
 
+  const hasAnswers = Object.keys(wizard.discoveryAnswers).length > 0;
+
   // Reasons line shown on the recommended card — empty while the rec is in flight.
   const reasons = wizard.recommendation?.reasons ?? [];
 
@@ -75,6 +77,7 @@ export function PlansStage({ wizard }: PlansStageProps) {
           value={vm.activeIndustry}
           options={vm.industries}
           onChange={vm.setIndustry}
+          hasAnswers={hasAnswers}
         />
         {vm.hasPaidEditions && (
           <BillingCycleToggle

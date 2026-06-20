@@ -146,7 +146,9 @@ export function useDiscovery(): DiscoveryViewModel {
     [currentQuestion, answers]
   );
 
-  const currentSelection = currentQuestion ? (answers[currentQuestion.key] ?? EMPTY_ARRAY) : EMPTY_ARRAY;
+  const currentSelection = currentQuestion
+    ? (answers[currentQuestion.key] ?? EMPTY_ARRAY)
+    : EMPTY_ARRAY;
 
   const isSingleSelect = currentQuestion?.questionType === "single_select";
   const isMaxReached =

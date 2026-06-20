@@ -9,4 +9,9 @@ export type {
   AssignLeadParams,
   AssignableAdmin,
   BulkLeadStatusResult,
+  EditionForConversion,
+  EditionFeatureGroup,
+  EditionFeatureItem,
+  FeatureOverride,
+  StatusEmailPreview,
 } from "./ILeadsRepository";

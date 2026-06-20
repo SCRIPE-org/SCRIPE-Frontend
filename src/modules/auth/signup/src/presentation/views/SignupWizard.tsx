@@ -1,8 +1,10 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { AlertTriangle } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useI18n } from "@core/providers/i18n-provider";
-import { SignupThemeProvider } from "@core/providers/signup-theme";
+import { SignupThemeProvider, useSignupTheme } from "@core/providers/signup-theme";
 import { useSignupWizard, type SignupPhase } from "../viewmodels/useSignupWizard";
 import { SignupShell } from "../components/common/SignupShell";
 import { SignupProgressBar } from "../components/common/SignupProgressBar";
@@ -93,10 +95,103 @@ export interface SignupWizardProps {
 }
 
 export function SignupWizard({ initialCountry, initialCurrency }: SignupWizardProps) {
+  const [isInvalidDomain, setIsInvalidDomain] = useState(false);
+  const [platformSignupUrl, setPlatformSignupUrl] = useState("");
+
+  useEffect(() => {
+    const hostname = window.location.hostname;
+    // Dev domains (localhost, 127.0.0.1) are always treated as platform.
+    const DEV_DOMAINS = ["localhost", "127.0.0.1", "0.0.0.0", "[::1]"];
+    const isDev = DEV_DOMAINS.includes(hostname) || hostname.endsWith(".localhost");
+    if (!isDev) {
+      const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "").trim();
+      if (appUrl) {
+        try {
+          const platformHost = new URL(appUrl).hostname;
+          if (hostname !== platformHost) {
+            setTimeout(() => {
+              setIsInvalidDomain(true);
+              setPlatformSignupUrl(`${appUrl.replace(/\/$/, "")}/signup`);
+            }, 0);
+          }
+        } catch {
+          // Invalid NEXT_PUBLIC_APP_URL — allow render (safe fallback)
+        }
+      }
+    }
+  }, []);
+
+  if (isInvalidDomain) {
+    return (
+      <SignupThemeProvider>
+        <SignupDomainRestrictionView platformSignupUrl={platformSignupUrl} />
+      </SignupThemeProvider>
+    );
+  }
+
   return (
     <SignupThemeProvider>
       <SignupWizardContent initialCountry={initialCountry} initialCurrency={initialCurrency} />
     </SignupThemeProvider>
+  );
+}
+
+function SignupDomainRestrictionView({ platformSignupUrl }: { platformSignupUrl: string }) {
+  const { tokens } = useSignupTheme();
+  const { t, direction } = useI18n();
+
+  return (
+    <SignupShell>
+      <div className="flex flex-1 flex-col items-center justify-center px-4 py-12">
+        <div
+          className="w-full max-w-md rounded-2xl p-8 text-center shadow-xl border backdrop-blur-md"
+          style={{
+            background: tokens.surface,
+            borderColor: tokens.borderCard,
+            boxShadow: tokens.shadowCard,
+          }}
+        >
+          <div
+            className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full"
+            style={{ background: `${tokens.accent}14` }}
+          >
+            <AlertTriangle className="h-8 w-8" style={{ color: tokens.accent }} />
+          </div>
+
+          <h1
+            className="mb-3 text-2xl font-bold tracking-tight"
+            style={{ color: tokens.ink }}
+          >
+            {t("signup.errors.domainRestrictionTitle")}
+          </h1>
+
+          <p
+            className="mb-8 text-sm leading-relaxed"
+            style={{ color: tokens.inkMuted }}
+          >
+            {t("signup.errors.domainRestrictionDescription")}
+          </p>
+
+          <a
+            href={platformSignupUrl}
+            className="inline-flex h-11 items-center justify-center rounded-lg px-6 text-sm font-semibold transition-all hover:opacity-90"
+            style={{
+              background: tokens.accent,
+              color: tokens.accentContrast || "#ffffff",
+              boxShadow: `0 4px 12px ${tokens.accent}33`,
+            }}
+          >
+            {t("signup.errors.domainRestrictionLinkText")}{" "}
+            <span
+              className="ml-2 font-mono"
+              style={{ transform: direction === "rtl" ? "scaleX(-1)" : "none" }}
+            >
+              →
+            </span>
+          </a>
+        </div>
+      </div>
+    </SignupShell>
   );
 }
 
@@ -123,7 +218,7 @@ function SignupWizardContent({ initialCountry, initialCurrency }: SignupWizardPr
         phases (the shell's min-h-[100dvh] + flex-1 keep the footer pinned), and
         the consistent enter/exit transition prevents any inter-phase jump.
       */}
-      <div className={`flex min-h-full flex-1 flex-col ${isCentered ? "justify-center" : ""}`}>
+      <div className={`flex flex-1 flex-col signup-stage-container ${isCentered ? "justify-center" : ""}`}>
         <AnimatePresence mode="wait" custom={slideDir} initial={false}>
           <motion.div
             key={wizard.phase}

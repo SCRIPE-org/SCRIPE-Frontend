@@ -86,6 +86,9 @@ export interface ISignupRepository {
 
   persistSignupRef(ref: string): void;
   getPersistedSignupRef(): string | null;
+  persistSignupCheckoutSessionId(sessionId: string): void;
+  getPersistedSignupCheckoutSessionId(): string | null;
+  clearPersistedSignupCheckoutSessionId(): void;
   persistWizardState(state: PersistedWizardState): void;
   clearPersistedWizardState(): void;
   readPersistedWizardState(): PersistedWizardState | null;

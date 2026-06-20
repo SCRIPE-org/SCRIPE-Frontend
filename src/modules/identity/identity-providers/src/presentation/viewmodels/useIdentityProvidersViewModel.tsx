@@ -257,9 +257,9 @@ export function useIdentityProvidersViewModel() {
         await identityProviderRepository.remove(id);
       },
       permissions: {
-        canCreate: "identity_providers:create",
-        canUpdate: "identity_providers:update",
-        canDelete: "identity_providers:delete",
+        canCreate: "identity_providers.create",
+        canUpdate: "identity_providers.update",
+        canDelete: "identity_providers.delete",
       },
     }),
     [t, identityProviderRepository]

@@ -3465,3 +3465,215 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   cursor: not-allowed !important;
   transform: none !important;
 }
+
+/* ========================================
+   HEIGHT-ADAPTIVE RESPONSIVENESS OVERRIDES
+   Avoid scrolling on all login layouts and signup steps on shorter viewports.
+   ======================================== */
+@media (max-height: 800px) {
+  .login-page {
+    --login-element-gap: 12px !important;
+    --login-gap: 12px !important;
+    --login-card-padding: 24px !important;
+    --login-logo-margin: 24px !important;
+    --login-logo-size: 72px !important;
+    --login-container-py: 20px !important;
+    --login-heading-margin: 16px !important;
+    --login-footer-margin: 16px !important;
+    --login-input-height: 44px !important;
+    --login-size-headline: 1.5rem !important;
+  }
+  
+  /* Compress tailwind vertical margins and paddings in login layouts */
+  .login-page .mb-10 { margin-bottom: 1.25rem !important; }
+  .login-page .mb-8 { margin-bottom: 1rem !important; }
+  .login-page .mb-12 { margin-bottom: 1.5rem !important; }
+  .login-page .mt-12 { margin-top: 1.5rem !important; }
+  .login-page .mt-16 { margin-top: 1.75rem !important; }
+  .login-page .py-12 { padding-top: 1.25rem !important; padding-bottom: 1.25rem !important; }
+  .login-page .py-14 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+  .login-page .py-16 { padding-top: 1.75rem !important; padding-bottom: 1.75rem !important; }
+  .login-page .py-24 { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+  .login-page .pt-20 { padding-top: 2rem !important; }
+  .login-page .pb-24 { padding-bottom: 2rem !important; }
+  .login-page .mb-16 { margin-bottom: 1.75rem !important; }
+  .login-page .gap-10 { gap: 1.25rem !important; }
+  .login-page .gap-8 { gap: 1rem !important; }
+  .login-page .py-8 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+  .login-page .mt-6 { margin-top: 1rem !important; }
+  
+  /* Signup height adaptation */
+  .signup-shell header {
+    height: 3rem !important;
+  }
+  .signup-shell .sticky.top-14 {
+    top: 3rem !important;
+  }
+  .signup-shell main [class*="py-"] {
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.25rem !important;
+  }
+  .signup-shell main [class*="sm:py-"] {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+  .signup-shell .mb-7 { margin-bottom: 1.25rem !important; }
+  .signup-shell .mb-8 { margin-bottom: 1.25rem !important; }
+  .signup-shell .mt-8 { margin-top: 1.25rem !important; }
+  .signup-shell .gap-5 { gap: 1rem !important; }
+}
+
+@media (max-height: 680px) {
+  .login-page {
+    --login-element-gap: 8px !important;
+    --login-gap: 8px !important;
+    --login-card-padding: 16px !important;
+    --login-logo-margin: 12px !important;
+    --login-logo-size: 56px !important;
+    --login-container-py: 12px !important;
+    --login-heading-margin: 12px !important;
+    --login-footer-margin: 12px !important;
+    --login-input-height: 38px !important;
+    --login-size-headline: 1.25rem !important;
+  }
+  
+  .login-page .mb-10 { margin-bottom: 0.75rem !important; }
+  .login-page .mb-8 { margin-bottom: 0.5rem !important; }
+  .login-page .mb-12 { margin-bottom: 0.75rem !important; }
+  .login-page .mt-12 { margin-top: 1rem !important; }
+  .login-page .mt-16 { margin-top: 1.25rem !important; }
+  .login-page .py-12 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+  .login-page .py-14 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+  .login-page .py-16 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+  .login-page .py-24 { padding-top: 1.25rem !important; padding-bottom: 1.25rem !important; }
+  .login-page .pt-20 { padding-top: 1.25rem !important; }
+  .login-page .pb-24 { padding-bottom: 1.25rem !important; }
+  .login-page .mb-16 { margin-bottom: 1rem !important; }
+  .login-page .gap-10 { gap: 0.75rem !important; }
+  .login-page .gap-8 { gap: 0.75rem !important; }
+  .login-page .py-8 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+  .login-page .mt-6 { margin-top: 0.75rem !important; }
+  
+  /* Headings & copy scaling */
+  .login-page h1, .login-page .login-heading {
+    font-size: 1.375rem !important;
+    line-height: 1.2 !important;
+  }
+  .login-page h2 {
+    font-size: 1.25rem !important;
+  }
+  .login-page p, .login-page .login-subtitle {
+    font-size: 0.8125rem !important;
+    line-height: 1.35 !important;
+  }
+  /* Floating / Vault layout float height adjustments */
+  .login-page div[style*="sxFloat"] {
+    transform: scale(0.7) !important;
+    margin-top: -20px !important;
+    margin-bottom: -20px !important;
+  }
+
+  /* Signup stage overrides for landscape / short viewports */
+  .signup-shell header {
+    height: 2.75rem !important;
+  }
+  .signup-shell .sticky.top-14 {
+    top: 2.75rem !important;
+  }
+  .signup-shell main [class*="py-"] {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+  .signup-shell main [class*="sm:py-"] {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+  .signup-shell .mb-7 { margin-bottom: 0.75rem !important; }
+  .signup-shell .mb-8 { margin-bottom: 0.75rem !important; }
+  .signup-shell .mt-8 { margin-top: 0.75rem !important; }
+  .signup-shell .gap-5 { gap: 0.75rem !important; }
+  
+  .signup-shell h1 {
+    font-size: 1.35rem !important;
+    line-height: 1.2 !important;
+  }
+  .signup-shell p {
+    font-size: 0.8125rem !important;
+    line-height: 1.35 !important;
+  }
+  
+  /* Scale inputs, buttons, and selects */
+  .signup-shell input,
+  .signup-shell button[type="submit"],
+  .signup-shell select {
+    height: 38px !important;
+    font-size: 0.875rem !important;
+  }
+  .signup-shell label {
+    font-size: 0.75rem !important;
+  }
+  .signup-shell .h-8.w-8 {
+    height: 1.75rem !important;
+    width: 1.75rem !important;
+  }
+}
+
+/* Ultra-short viewports (e.g. mobile landscape or keyboard active) */
+@media (max-height: 520px) {
+  .login-page {
+    --login-element-gap: 6px !important;
+    --login-gap: 6px !important;
+    --login-card-padding: 12px !important;
+    --login-container-py: 8px !important;
+    --login-input-height: 34px !important;
+  }
+  
+  .login-page .mb-10,
+  .login-page .mb-8,
+  .login-page .mb-12,
+  .login-page .mt-12,
+  .login-page .mt-16,
+  .login-page .mt-6 {
+    margin-top: 0.25rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  /* Hide branding, logos, and illustrative float elements to optimize vertical space */
+  .login-page .login-logo,
+  .login-page [class*="MobileLogo"],
+  .login-page div[style*="sxFloat"],
+  .login-page .flex.h-20.w-20,
+  .login-page .flex.h-16.w-16,
+  .login-page .mb-10.flex.flex-col.items-center {
+    display: none !important;
+  }
+  
+  /* Signup shell overrides */
+  .signup-shell header {
+    display: none !important;
+  }
+  .signup-shell .sticky.top-14 {
+    display: none !important;
+  }
+  .signup-shell main [class*="py-"],
+  .signup-shell main [class*="sm:py-"] {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+  .signup-shell .mb-7,
+  .signup-shell .mb-8,
+  .signup-shell .mt-8 {
+    display: none !important; /* Hide headings in wizard steps */
+  }
+  
+  .signup-shell input,
+  .signup-shell button[type="submit"],
+  .signup-shell select {
+    height: 34px !important;
+    font-size: 0.8125rem !important;
+  }
+  .signup-shell label {
+    font-size: 0.6875rem !important;
+  }
+}
+

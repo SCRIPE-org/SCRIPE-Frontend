@@ -60,6 +60,7 @@ export interface IAuthService {
     authenticatorData: string;
     signature: string;
     userHandle: string | null;
+    tenantId?: string | null;
   }): Promise<{ accessToken: string; refreshToken: string }>;
 
   /** Request a phone OTP for sign-in (enumeration-safe, always resolves). */

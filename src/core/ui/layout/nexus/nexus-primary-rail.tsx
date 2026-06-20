@@ -49,7 +49,6 @@ import {
   BackButton,
   Divider,
   RootItemButton,
-  TogglePanelButton,
   PrimaryRailLogo,
   ActiveIndicator,
 } from "./_parts/primary-rail-parts";
@@ -58,6 +57,19 @@ interface NexusPrimaryRailProps {
   onTogglePanel?: () => void;
   isPanelCollapsed?: boolean;
   onOpenAppLauncher?: () => void;
+}
+
+// ── Helper to find the first leaf route with a valid href ─────────────────────
+function findFirstLeafRoute(item: MenuItem): string | null {
+  if (item.href) return item.href;
+  if (item.children && item.children.length > 0) {
+    const sorted = [...item.children].sort((a, b) => a.order - b.order);
+    for (const child of sorted) {
+      const route = findFirstLeafRoute(child);
+      if (route) return route;
+    }
+  }
+  return null;
 }
 
 // ── Primary Rail ──────────────────────────────────────────────────────────────
@@ -92,8 +104,13 @@ export function NexusPrimaryRail({
       if (isPanelCollapsed && onTogglePanel) {
         onTogglePanel();
       }
+      // Auto nav to first page of that menu item
+      const firstRoute = findFirstLeafRoute(item);
+      if (firstRoute) {
+        router.push(firstRoute);
+      }
     },
-    [setActiveRootItemId, isPanelCollapsed, onTogglePanel]
+    [setActiveRootItemId, isPanelCollapsed, onTogglePanel, router]
   );
 
   // ── Handle module workspace click → full workspace transition ────────────
@@ -316,7 +333,7 @@ export function NexusPrimaryRail({
 
       {/* ── Bottom actions ─────────────────────────────────────── */}
       <div className="relative flex shrink-0 flex-col items-center gap-2 pb-2 pt-4">
-        {onTogglePanel && (
+        {/* {onTogglePanel && (
           <TogglePanelButton
             isRTL={isRTL}
             isDark={isDark}
@@ -324,7 +341,7 @@ export function NexusPrimaryRail({
             label={language === "ar" ? "تبديل اللوحة" : "Toggle Panel"}
             onClick={onTogglePanel}
           />
-        )}
+        )} */}
 
         {/* App Launcher (⊞) — opens searchable workspace grid overlay */}
         {onOpenAppLauncher && (

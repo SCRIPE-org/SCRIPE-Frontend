@@ -33,8 +33,8 @@ export function KanbanCard({ lead, onClick, onDragStart, onDragEnd }: KanbanCard
           {lead.companyName}
         </p>
         {lead.editionKey && (
-          <span className="shrink-0 rounded border border-zinc-700 px-1.5 py-0.5 font-mono text-[10px] text-zinc-500">
-            {lead.editionKey}
+          <span className="shrink-0 rounded border border-indigo-500/30 bg-indigo-500/10 px-1.5 py-0.5 text-[10px] font-medium text-indigo-400">
+            {lead.editionKey.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
           </span>
         )}
       </div>

@@ -60,7 +60,8 @@ function bufferToBase64url(buffer: ArrayBuffer): string {
  * - Handles AbortError, NotAllowedError, SecurityError gracefully
  */
 export function usePasskeyLoginViewModel(
-  onSuccess: (result: { accessToken: string; refreshToken: string }) => void
+  onSuccess: (result: { accessToken: string; refreshToken: string }) => void,
+  tenantId?: string | null
 ): UsePasskeyLoginViewModelReturn {
   const { t } = useI18n();
   const { authRepository } = authContainer;
@@ -125,6 +126,7 @@ export function usePasskeyLoginViewModel(
         authenticatorData: bufferToBase64url(response.authenticatorData),
         signature: bufferToBase64url(response.signature),
         userHandle: response.userHandle ? bufferToBase64url(response.userHandle) : null,
+        tenantId,
       });
 
       onSuccess(verifyResult);
@@ -152,7 +154,7 @@ export function usePasskeyLoginViewModel(
     } finally {
       setIsLoading(false);
     }
-  }, [isSupported, onSuccess, t, authRepository]);
+  }, [isSupported, onSuccess, t, authRepository, tenantId]);
 
   return {
     isLoading,

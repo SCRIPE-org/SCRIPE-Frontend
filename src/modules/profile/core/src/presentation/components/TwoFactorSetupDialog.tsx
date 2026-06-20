@@ -31,7 +31,7 @@ interface TwoFactorSetupDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   setupData: Enable2FAResult | null;
-  onConfirm: (code: string) => Promise<void>;
+  onConfirm: (code: string) => Promise<unknown>;
   isConfirming: boolean;
   confirmError: string | null;
 }

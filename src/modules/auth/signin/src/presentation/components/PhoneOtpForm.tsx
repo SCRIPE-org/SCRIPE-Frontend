@@ -3,6 +3,7 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
+import { PhoneInput } from "@core/ui/phone-input";
 import { Label } from "@core/ui/label";
 import { usePhoneOtpViewModel } from "../viewmodels/usePhoneOtpViewModel";
 
@@ -70,19 +71,17 @@ export function PhoneOtpForm({ onSuccess, onBack, isRTL }: PhoneOtpFormProps) {
           >
             {t("auth.phoneOtp.phoneLabel") || "Phone number"}
           </Label>
-          <Input
+          <PhoneInput
             id="phone-number"
-            type="tel"
-            placeholder="+1 (555) 000-0000"
             value={vm.phone}
-            onChange={(e) => vm.setPhone(e.target.value)}
-            autoComplete="tel"
-            className="h-11 rounded-lg"
+            onChange={vm.setPhone}
+            className="h-11"
             style={{
               background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.1)",
+              borderColor: vm.error ? undefined : "rgba(255,255,255,0.1)",
               color: "var(--sx-text)",
             }}
+            error={vm.error}
           />
           <p className="text-[11px]" style={{ color: "var(--sx-text-faint)" }}>
             {t("auth.phoneOtp.e164Hint") || "Include country code (e.g., +1 for US)"}

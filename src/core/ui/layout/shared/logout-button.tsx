@@ -7,6 +7,8 @@ import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { cn } from "@core/common/utils";
+import { useServices } from "@core/providers/service-provider";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface LogoutButtonProps {
   /** Show only icon (no text) */
@@ -24,20 +26,25 @@ interface LogoutButtonProps {
  */
 export function LogoutButton({ iconOnly = false, className, textClassName }: LogoutButtonProps) {
   const { t } = useI18n();
-  const logout = useAppStore((state) => state.logout);
+  const logoutStore = useAppStore((state) => state.logout);
   const router = useRouter();
-
-  const handleLogout = useCallback(() => {
+  const { authRepository } = useServices();
+  const queryClient = useQueryClient();
+ 
+  const handleLogout = useCallback(async () => {
     // Capture tenant code BEFORE logout clears it
     const tenantCode = useAppStore.getState().tenantCode;
-    logout();
-    // Redirect to tenant-aware login page
-    if (tenantCode) {
-      router.push(`/login?_tenant=${tenantCode}`);
-    } else {
-      router.push("/login");
+    const redirectUrl = tenantCode ? `/login?_tenant=${tenantCode}` : "/login";
+    try {
+      await authRepository.logout();
+    } catch {
+      // ignore
+    } finally {
+      logoutStore();
+      queryClient.clear();
+      router.push(redirectUrl);
     }
-  }, [logout, router]);
+  }, [authRepository, logoutStore, queryClient, router]);
 
   return (
     <Button

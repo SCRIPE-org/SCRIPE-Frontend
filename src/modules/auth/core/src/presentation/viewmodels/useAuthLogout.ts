@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServices } from "@core/providers/service-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
@@ -13,6 +13,7 @@ import { useCallback, useRef } from "react";
 export function useAuthLogout() {
   const { authRepository } = useServices();
   const logoutStore = useAppStore((state) => state.logout);
+  const queryClient = useQueryClient();
   const { operationError } = useEnhancedToast();
   const router = useRouter();
 
@@ -37,12 +38,14 @@ export function useAuthLogout() {
     onSuccess: () => {
       const redirectUrl = getLogoutRedirectUrl();
       logoutStore();
+      queryClient.clear();
       router.push(redirectUrl);
     },
     onError: (error: Error) => {
       const redirectUrl = getLogoutRedirectUrl();
       // Even if API fails, we should clear local state
       logoutStore();
+      queryClient.clear();
       router.push(redirectUrl);
       operationError(error.message || "Logout failed");
     },

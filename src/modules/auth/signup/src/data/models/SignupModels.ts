@@ -166,7 +166,7 @@ export interface ContactSalesRequestDto {
   contactName: string;
   email: string;
   companyName: string;
-  phone: null;
+  phone: string | null;
   editionKey: string | null | undefined;
   message: string | null | undefined;
   businessType: string | null | undefined;

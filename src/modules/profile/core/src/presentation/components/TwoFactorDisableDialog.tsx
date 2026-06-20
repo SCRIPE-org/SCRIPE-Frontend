@@ -29,7 +29,7 @@ type DisableStep = "password" | "verify";
 interface TwoFactorDisableDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onDisable: (password: string, twoFactorCode: string) => Promise<void>;
+  onDisable: (password: string, twoFactorCode: string) => Promise<unknown>;
   isDisabling: boolean;
   disableError: string | null;
 }

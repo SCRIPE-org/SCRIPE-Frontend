@@ -17,3 +17,4 @@ export { ForgotPasswordView, ResetPasswordView } from "./password-reset";
 export { SetupAccountView } from "./account-setup";
 export { SignupWizard } from "./signup/src/presentation/views/SignupWizard";
 export { PasskeyManagementView } from "./core/src/presentation/views/PasskeyManagementView";
+export { usePasskeyManagementViewModel } from "./core/src/presentation/viewmodels/usePasskeyManagementViewModel";

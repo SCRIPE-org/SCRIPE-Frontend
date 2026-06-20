@@ -5,6 +5,8 @@ export const en = {
     samlSpCertificate: "SP Certificate",
     title: "OAuth Applications",
     description: "Manage third-party applications that authenticate via SCRIPE (OIDC Server)",
+    emptyTitle: "No OAuth applications found",
+    emptyDesc: "Get started by registering a new application to enable secure third-party login via SCRIPE identity services.",
     // Detail page titles
     createTitle: "New OAuth Application",
     editTitle: "Edit Application",
@@ -104,6 +106,28 @@ export const en = {
     samlSectionDesc: "Optional: Configure SAML 2.0 properties if this is a SAML Service Provider.",
     samlAcsUrl: "Assertion Consumer Service (ACS) URL",
     samlSpEntityId: "SP Entity ID",
+
+    // Protocol & Wizard steps
+    stepProtocol: "Protocol",
+    stepBasicInfo: "Basic Info",
+    stepEndpoints: "Endpoints & Scopes",
+    stepSecurity: "Security & Tokens",
+    stepBranding: "Branding",
+    stepSamlConfig: "SAML Config",
+    selectProtocolTitle: "Select Authentication Protocol",
+    selectProtocolDesc: "Choose the standard that fits your integration. This cannot be changed once created.",
+    oidcChoiceDesc: "Modern identity standard using JWT tokens. Recommended for web applications, Single Page Apps (SPA), and mobile apps.",
+    samlChoiceDesc: "Enterprise federation protocol using XML. Best for corporate SSO integrations with Salesforce, Zendesk, or Okta.",
+
+    // IdP Metadata
+    idpMetadataTitle: "Identity Provider (IdP) Metadata",
+    idpMetadataDesc: "Use these details to configure trust on your Service Provider (SP) application.",
+    idpEntityId: "IdP Entity ID (Issuer)",
+    idpSsoUrl: "Single Sign-On (SSO) URL",
+    idpXmlMetadataUrl: "IdP Metadata XML URL",
+    idpXmlHelp: "Most enterprise apps allow configuring SSO by simply pasting this XML metadata URL.",
+    samlConfigSection: "SAML Configuration",
+    idpMetadataSection: "IdP Metadata",
   },
   oauth: {
     consentTitle: "Authorize App",

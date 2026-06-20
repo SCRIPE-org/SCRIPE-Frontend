@@ -2,6 +2,8 @@
 
 import { useAppStore } from "@core/store/useAppStore";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useServices } from "@core/providers/service-provider";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -25,8 +27,10 @@ export function PaymentWallDialog() {
   const router = useRouter();
   const subscriptionStatus = useAppStore((s) => s.subscriptionStatus);
   const editionName = useAppStore((s) => s.editionName);
-  const logout = useAppStore((s) => s.logout);
+  const logoutStore = useAppStore((s) => s.logout);
   const user = useAppStore((s) => s.user);
+  const { authRepository } = useServices();
+  const queryClient = useQueryClient();
 
   // System admins (tenantId=null) don't have subscriptions — never block
   if (!user?.tenantId) return null;
@@ -34,9 +38,16 @@ export function PaymentWallDialog() {
   // Only show for PendingPayment status
   if (subscriptionStatus !== "PendingPayment") return null;
 
-  const handleLogout = () => {
-    logout();
-    router.replace("/login");
+  const handleLogout = async () => {
+    try {
+      await authRepository.logout();
+    } catch {
+      // ignore
+    } finally {
+      logoutStore();
+      queryClient.clear();
+      router.replace("/login");
+    }
   };
 
   return (

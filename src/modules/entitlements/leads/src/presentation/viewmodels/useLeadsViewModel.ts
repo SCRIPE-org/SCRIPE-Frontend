@@ -5,6 +5,7 @@ import { useState, useCallback } from "react";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type {
   LeadActivity,
+  LeadCommunicationLog,
   LeadStatus,
   PlatformLead,
   PlatformLeadListItem,
@@ -105,6 +106,28 @@ export function useLeadsViewModel() {
     staleTime: 60 * 1000,
   });
 
+  // ── Communication Logs Query ──────────────────────────────────────────────
+  const { data: communicationLogs = [], isLoading: isLoadingComms } = useQuery({
+    queryKey: ["lead-communications", selectedLeadId],
+    queryFn: () =>
+      selectedLeadId
+        ? leadsRepository.getCommunicationLogs(selectedLeadId)
+        : Promise.resolve([] as LeadCommunicationLog[]),
+    enabled: !!selectedLeadId,
+    staleTime: 30_000,
+  });
+
+  // ── Editions Query (for CreateLeadDialog and wizard) ─────────────────────
+  const editionsQuery = useQuery({
+    queryKey: ["leads", "editions-for-conversion"],
+    queryFn: () => leadsRepository.getEditionsForConversion(),
+    staleTime: 5 * 60 * 1000, // 5 min — editions change rarely
+  });
+  const availableEditions = (editionsQuery.data ?? []).map((e) => ({
+    key: e.id,
+    displayName: e.name,
+  }));
+
   // ── Computed stats from list data ─────────────────────────────────────────
   const allLeads = listQuery.data?.items ?? [];
   const stats = {
@@ -116,8 +139,29 @@ export function useLeadsViewModel() {
 
   // ── Update Status Mutation ────────────────────────────────────────────────
   const updateStatusMutation = useMutation({
-    mutationFn: ({ id, status, notes }: { id: string; status: LeadStatus; notes?: string }) =>
-      leadsRepository.updateStatus({ id, status, notes }),
+    mutationFn: ({
+      id,
+      status,
+      notes,
+      sendNotification,
+      emailSubjectOverride,
+      emailBodyOverride,
+    }: {
+      id: string;
+      status: LeadStatus;
+      notes?: string;
+      sendNotification?: boolean;
+      emailSubjectOverride?: string;
+      emailBodyOverride?: string;
+    }) =>
+      leadsRepository.updateStatus({
+        id,
+        status,
+        notes,
+        sendNotification,
+        emailSubjectOverride,
+        emailBodyOverride,
+      }),
     onMutate: async ({ id, status }) => {
       await queryClient.cancelQueries({ queryKey: ["leads", "list"] });
       await queryClient.cancelQueries({ queryKey: QUERY_KEYS.detail(id) });
@@ -251,6 +295,33 @@ export function useLeadsViewModel() {
     },
   });
 
+  // ── Send Email Mutation ───────────────────────────────────────────────────
+  const sendLeadEmailMutation = useMutation({
+    mutationFn: ({
+      leadId,
+      subject,
+      bodyHtml,
+      templateKey,
+    }: {
+      leadId: string;
+      subject: string;
+      bodyHtml: string;
+      templateKey?: string;
+    }) => leadsRepository.sendEmail(leadId, subject, bodyHtml, templateKey),
+    onSuccess: (_data, variables) => {
+      toast({ title: t("leads.email.sentSuccess") });
+      void queryClient.invalidateQueries({
+        queryKey: ["lead-communications", variables.leadId],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["lead-activity", variables.leadId],
+      });
+    },
+    onError: () => {
+      toast({ title: t("leads.email.sendError"), variant: "destructive" });
+    },
+  });
+
   // ── Delete Lead Mutation ──────────────────────────────────────────────────
   const deleteLeadMutation = useMutation({
     mutationFn: (id: string) => leadsRepository.deleteLead(id),
@@ -333,10 +404,31 @@ export function useLeadsViewModel() {
   }, []);
 
   const handleUpdateStatus = useCallback(
-    async (id: string, status: LeadStatus, notes?: string) => {
-      await updateStatusMutation.mutateAsync({ id, status, notes });
+    async (
+      id: string,
+      status: LeadStatus,
+      notes?: string,
+      sendNotification?: boolean,
+      emailSubjectOverride?: string,
+      emailBodyOverride?: string
+    ) => {
+      await updateStatusMutation.mutateAsync({
+        id,
+        status,
+        notes,
+        sendNotification,
+        emailSubjectOverride,
+        emailBodyOverride,
+      });
     },
     [updateStatusMutation]
+  );
+
+  const handleGetEmailPreview = useCallback(
+    async (leadId: string, targetStatus: string) => {
+      return leadsRepository.getStatusEmailPreview(leadId, targetStatus);
+    },
+    [leadsRepository]
   );
 
   const handleOpenCreateDialog = useCallback(() => setIsCreateDialogOpen(true), []);
@@ -383,6 +475,14 @@ export function useLeadsViewModel() {
   );
 
   const handleDeleteLead = useCallback(
+    async (id: string) => {
+      await deleteLeadMutation.mutateAsync(id);
+    },
+    [deleteLeadMutation]
+  );
+
+  /** Alias for the drawer "Close Lead" action — same mutation as deleteLead (soft-close). */
+  const handleCloseLead = useCallback(
     async (id: string) => {
       await deleteLeadMutation.mutateAsync(id);
     },
@@ -436,6 +536,7 @@ export function useLeadsViewModel() {
     pageSize,
     totalPages: Math.ceil((listQuery.data?.totalCount ?? 0) / pageSize),
     stats,
+    availableEditions,
 
     // Filters
     statusFilter,
@@ -455,6 +556,10 @@ export function useLeadsViewModel() {
     activity: activityQuery.data ?? [],
     isLoadingActivity: activityQuery.isLoading,
 
+    // Communication logs
+    communicationLogs,
+    isLoadingComms,
+
     // Mutation state
     isUpdatingStatus: updateStatusMutation.isPending,
     isCreatingLead: createLeadMutation.isPending,
@@ -464,6 +569,7 @@ export function useLeadsViewModel() {
     isDeletingLead: deleteLeadMutation.isPending,
     isBulkClosing: bulkCloseMutation.isPending,
     isBulkDeleting: bulkDeleteMutation.isPending,
+    isSendingEmail: sendLeadEmailMutation.isPending,
 
     // Dialog state
     isCreateDialogOpen,
@@ -484,7 +590,10 @@ export function useLeadsViewModel() {
     handlePageChange,
     handleOpenDrawer,
     handleCloseDrawer,
+    setSelectedLeadId,
+    sendLeadEmail: sendLeadEmailMutation.mutateAsync,
     handleUpdateStatus,
+    handleGetEmailPreview,
     handleOpenCreateDialog,
     handleCloseCreateDialog,
     handleCreateLead,
@@ -497,6 +606,7 @@ export function useLeadsViewModel() {
     searchAssignableAdmins,
     handleAddNote,
     handleDeleteLead,
+    handleCloseLead,
     // Bulk
     handleToggleSelect,
     handleSelectAll,

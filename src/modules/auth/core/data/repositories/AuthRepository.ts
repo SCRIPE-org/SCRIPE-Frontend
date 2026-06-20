@@ -68,26 +68,7 @@ export class AuthRepository implements IAuthRepository {
       credentials.isPlatformAdmin
     );
 
-    // ──── DEBUG: trace exact request being sent ────
-    console.log("[AUTH-DEBUG] Login request:", {
-      identifier: credentials.identifier,
-      tenantId: credentials.tenantId,
-      isPlatformAdmin: credentials.isPlatformAdmin,
-      tenantIdType: typeof credentials.tenantId,
-      tenantIdLength: credentials.tenantId?.length,
-    });
-
     const responseModel = await this.service.login(requestModel);
-
-    // ──── DEBUG: trace exact response received ────
-    console.log("[AUTH-DEBUG] Login response:", {
-      requires2FA: responseModel.requires2FA,
-      requiresWorkspaceSelection: responseModel.requiresWorkspaceSelection,
-      availableWorkspaces: responseModel.availableWorkspaces,
-      workspaceCount: responseModel.availableWorkspaces?.length ?? 0,
-      hasAccessToken: !!responseModel.accessToken,
-      accessTokenLength: responseModel.accessToken?.length ?? 0,
-    });
 
     appLogger.auth("Login response received");
 
@@ -97,11 +78,6 @@ export class AuthRepository implements IAuthRepository {
     }
 
     if (responseModel.requiresWorkspaceSelection && responseModel.availableWorkspaces) {
-      console.log(
-        "[AUTH-DEBUG] ✅ WORKSPACE SELECTION TRIGGERED! Throwing WorkspaceSelectionRequiredError with",
-        responseModel.availableWorkspaces.length,
-        "workspaces"
-      );
       appLogger.auth(
         `Workspace selection required — ${responseModel.availableWorkspaces.length} workspaces`
       );
@@ -119,13 +95,6 @@ export class AuthRepository implements IAuthRepository {
           isLocked: w.isLocked ?? false,
           lockedUntil: w.lockedUntil ?? null,
         }))
-      );
-    } else {
-      console.log(
-        "[AUTH-DEBUG] ❌ Workspace selection NOT triggered. requiresWorkspaceSelection =",
-        responseModel.requiresWorkspaceSelection,
-        "availableWorkspaces =",
-        responseModel.availableWorkspaces
       );
     }
 
@@ -305,6 +274,15 @@ export class AuthRepository implements IAuthRepository {
     return this.service.beginPasskeyAuth();
   }
 
+  /**
+   * Verify WebAuthn assertion — delegates attestation payload to AuthService to get JWT tokens.
+   *
+   * @param data Assertion payload containing raw/credential IDs, clientDataJSON, authenticatorData, signature, userHandle, and optional tenantId.
+   * @returns A promise resolving to the access and refresh tokens.
+   * @security
+   * - Communicates via secure public endpoint, with CORS whitelisting on API gateway.
+   * - Bound session parameters are protected by backend replay checks and CSRF double-submit cookies.
+   */
   async verifyPasskeyAuth(data: {
     challengeId: string;
     credentialId: string;
@@ -313,6 +291,7 @@ export class AuthRepository implements IAuthRepository {
     authenticatorData: string;
     signature: string;
     userHandle: string | null;
+    tenantId?: string | null;
   }): Promise<{ accessToken: string; refreshToken: string }> {
     return this.service.verifyPasskeyAuth(data);
   }

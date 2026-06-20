@@ -311,8 +311,12 @@ export const en = {
       timezoneRequired: "Please select a timezone.",
       companyMax: "Company name must be 200 characters or fewer.",
       noteMax: "Note must be 1000 characters or fewer.",
+      phoneInvalid: "Please enter a valid phone number.",
       emailVerificationExpired: "Email verification expired. Please go back and verify again.",
       signupFailed: "Signup failed. Please try again.",
+      domainRestrictionTitle: "Signup Restricted",
+      domainRestrictionDescription: "Signup is only available on the main platform. Please visit the platform domain to register.",
+      domainRestrictionLinkText: "Go to platform signup",
     },
 
     // Copyright
@@ -562,7 +566,8 @@ export const en = {
       contactSupport: "If you believe this is an error, please contact support.",
       downgradeFree: "Downgrade to Free plan to activate instantly",
       confirmDowngradeTitle: "Downgrade to Free",
-      confirmDowngradeText: "Are you sure you want to switch to the Free plan? You will lose access to premium features, but your workspace will be activated instantly.",
+      confirmDowngradeText:
+        "Are you sure you want to switch to the Free plan? You will lose access to premium features, but your workspace will be activated instantly.",
       confirmDowngradeCta: "Yes, Downgrade",
       cancel: "Cancel",
       processing: "Processing...",

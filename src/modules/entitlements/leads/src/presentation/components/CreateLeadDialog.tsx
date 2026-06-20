@@ -11,6 +11,7 @@ import {
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
+import { PhoneInput, isValidPhoneNumber } from "@core/ui/phone-input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
@@ -73,6 +74,9 @@ export function CreateLeadDialog({
     if (!form.contactName.trim()) next.contactName = t("leads.createDialog.errors.contactRequired");
     if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
       next.email = t("leads.createDialog.errors.emailInvalid");
+    }
+    if (form.phone?.trim() && !isValidPhoneNumber(form.phone)) {
+      next.phone = t("leads.createDialog.errors.phoneInvalid");
     }
 
     setErrors(next);
@@ -179,14 +183,16 @@ export function CreateLeadDialog({
 
             <div className="space-y-1.5">
               <Label htmlFor="cl-phone">{t("leads.createDialog.phone")}</Label>
-              <Input
+              <PhoneInput
                 id="cl-phone"
-                type="tel"
                 value={form.phone}
-                onChange={(e) => set("phone", e.target.value)}
-                placeholder="+1 555 000 0000"
+                onChange={(val) => set("phone", val)}
                 disabled={isSubmitting}
+                error={errors.phone}
               />
+              {errors.phone && (
+                <p className="text-xs text-destructive">{errors.phone}</p>
+              )}
             </div>
           </div>
 

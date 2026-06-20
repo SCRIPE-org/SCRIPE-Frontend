@@ -101,7 +101,7 @@ export class SignupService implements ISignupService {
       contactName: data.fullName,
       email: data.email,
       companyName: data.company ?? data.email.split("@")[1] ?? "Unknown",
-      phone: null,
+      phone: data.phone ?? null,
       editionKey: data.editionId,
       message: data.note,
       businessType: data.businessType,

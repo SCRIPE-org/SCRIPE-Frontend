@@ -152,8 +152,8 @@ export const en = {
     resetSuccessTitle: "Password updated!",
     resetSuccessSubtitle:
       "Your password has been reset. You can now sign in with your new credentials.",
-    signInHeading: "Welcome back!",
-    signInSubheading: "Please sign in to continue",
+    signInHeading: "Sign In",
+    signInSubheading: "Welcome Back! Please sign in to continue",
     signingIn: "Signing in…",
     staySignedIn: "Stay signed in",
     show: "show",
@@ -306,6 +306,7 @@ export const en = {
       verify: "Verify & Sign In",
       verifyFailed: "Invalid or expired code.",
       changeNumber: "Use a different number",
+      phoneInvalid: "Please enter a valid phone number.",
     },
     // ── QR Cross-Device Login ────────────────────────────────
     qr: {

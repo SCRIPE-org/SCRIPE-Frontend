@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { authContainer } from "@modules/auth/di";
+import { isValidPhoneNumber } from "@core/ui/phone-input";
 import type { LoginResponseModel } from "@modules/auth/core/domain/types/AuthTypes";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -101,6 +102,10 @@ export function usePhoneOtpViewModel(
   const requestOtp = useCallback(async () => {
     if (!phone.trim()) {
       setErrorWithShake(t("auth.phoneOtp.phoneRequired") || "Please enter your phone number.");
+      return;
+    }
+    if (!isValidPhoneNumber(phone)) {
+      setErrorWithShake(t("auth.phoneOtp.phoneInvalid") || "Please enter a valid phone number.");
       return;
     }
 

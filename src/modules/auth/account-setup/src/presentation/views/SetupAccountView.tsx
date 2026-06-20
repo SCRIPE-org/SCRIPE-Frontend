@@ -124,7 +124,9 @@ export function SetupAccountView() {
           {vm.password.length > 0 && (
             <div className="grid grid-cols-2 gap-1.5 text-xs">
               <PasswordCheck
-                label={t("auth.accountSetup.passwordMinLengthShort", { min: vm.tokenData?.passwordMinLength ?? 8 })}
+                label={t("auth.accountSetup.passwordMinLengthShort", {
+                  min: vm.tokenData?.passwordMinLength ?? 8,
+                })}
                 ok={vm.passwordChecks.minLength}
               />
               {vm.tokenData?.passwordRequireUppercase !== false && (

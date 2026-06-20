@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { Check, Minus, ChevronDown } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
@@ -65,38 +65,51 @@ export function FeatureComparison({
   const { t, language } = useI18n();
   const { tokens, theme } = useSignupTheme();
   const [open, setOpen] = useState(false);
-  const [activeCategoryLabel, setActiveCategoryLabel] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open) return;
 
-    const observerOptions = {
-      root: null,
-      rootMargin: "-60px 0px -80% 0px", // triggers when row crosses below the sticky header bar
-      threshold: 0,
-    };
+    const handleScroll = () => {
+      if (!containerRef.current) return;
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const label = entry.target.getAttribute("data-category-label");
+      const thead = containerRef.current.querySelector("thead");
+      if (!thead) return;
+
+      const theadRect = thead.getBoundingClientRect();
+      const threshold = theadRect.bottom;
+
+      const categoryRows = containerRef.current.querySelectorAll(".category-header-row");
+
+      let currentCategory: string | null = null;
+
+      categoryRows.forEach((row) => {
+        const rect = row.getBoundingClientRect();
+        // Check if the bottom of the category header row has crossed or met the bottom of the sticky header.
+        // We add a tiny buffer (like 2px) to avoid rounding issues.
+        if (rect.bottom <= threshold + 2) {
+          const label = row.getAttribute("data-category-label");
           if (label) {
-            setActiveCategoryLabel(label);
+            currentCategory = label;
           }
         }
       });
-    }, observerOptions);
 
-    const timer = setTimeout(() => {
-      const rows = document.querySelectorAll(".category-header-row");
-      rows.forEach((row) => observer.observe(row));
-    }, 150);
+      setActiveCategory((prev) => (prev !== currentCategory ? currentCategory : prev));
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+    // Run once on the next frame to avoid synchronous reads/writes inside the effect execution
+    const rId = requestAnimationFrame(handleScroll);
 
     return () => {
-      clearTimeout(timer);
-      observer.disconnect();
+      cancelAnimationFrame(rId);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
     };
-  }, [open]);
+  }, [categories, open]);
 
   const highlightedCategories = useMemo(() => {
     const set = new Set<string>();
@@ -124,7 +137,13 @@ export function FeatureComparison({
       <div className="flex justify-center">
         <button
           type="button"
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => {
+            setOpen((v) => {
+              const next = !v;
+              if (!next) setActiveCategory(null);
+              return next;
+            });
+          }}
           aria-expanded={open}
           className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[0.875rem] font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2"
           style={{
@@ -147,6 +166,7 @@ export function FeatureComparison({
 
       {open && (
         <div
+          ref={containerRef}
           className="mt-6 overflow-hidden rounded-2xl lg:overflow-visible"
           style={{ background: tokens.surfaceCard, border: tokens.borderCard }}
         >
@@ -155,14 +175,14 @@ export function FeatureComparison({
               <thead className="sticky top-14 z-20">
                 <tr style={{ background: tokens.surfaceRaised }}>
                   <th
-                    className="sticky start-0 top-14 z-30 py-4 pe-4 ps-4 text-start text-[0.6875rem] font-semibold uppercase tracking-wider sm:ps-6"
+                    className="sticky start-0 top-14 z-30 py-4 pe-4 ps-4 text-start text-[0.6875rem] font-semibold uppercase tracking-wider sm:ps-6 transition-colors duration-200"
                     style={{
-                      color: tokens.inkFaint,
+                      color: activeCategory ? tokens.accent : tokens.inkFaint,
                       background: tokens.surfaceRaised,
                       minWidth: 180,
                     }}
                   >
-                    {activeCategoryLabel || t("signup.plans.compare.featuresColumn")}
+                    {activeCategory ?? t("signup.plans.compare.featuresColumn")}
                   </th>
                   {editions.map((edition) => (
                     <th

@@ -4,9 +4,8 @@ import { useState } from "react";
 import { useLeadsViewModel } from "../viewmodels/useLeadsViewModel";
 import { LeadDetailDrawer } from "../components/LeadDetailDrawer";
 import { CreateLeadDialog } from "../components/CreateLeadDialog";
-import { ConvertToTenantDialog } from "../components/ConvertToTenantDialog";
+import { ConvertToTenantWizard } from "../components/ConvertToTenantDialog";
 import { AssignLeadDialog } from "../components/AssignLeadDialog";
-import { StatPill } from "../components/StatPill";
 import { BulkActionBar } from "../components/BulkActionBar";
 import { LeadsKanbanView } from "../components/LeadsKanbanView";
 import { Button } from "@core/ui/button";
@@ -48,6 +47,11 @@ const STATUS_DOTS: Record<LeadStatus, string> = {
   Closed: "bg-zinc-500",
 };
 
+/** Converts 'enterprise-pro' → 'Enterprise Pro' */
+function humanizeEditionKey(key: string): string {
+  return key.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 // ── Main view ─────────────────────────────────────────────────────────────────
 
 type ViewMode = "table" | "kanban";
@@ -75,6 +79,7 @@ export function LeadsView() {
   const canAssignLead = has("leads.assign");
   const canConvertLead = has("leads.convert");
   const canDeleteLead = has("leads.delete");
+  const canSendEmail = has("leads.send_email");
 
   const columns: Column<PlatformLeadListItem>[] = [
     {
@@ -116,7 +121,9 @@ export function LeadsView() {
       render: (_, lead) => (
         <div className="h-full w-full cursor-pointer" onClick={() => vm.handleOpenDrawer(lead.id)}>
           {lead.editionKey ? (
-            <span className="font-mono text-xs text-zinc-400">{lead.editionKey}</span>
+            <span className="text-xs font-medium text-zinc-300 bg-zinc-700/60 px-1.5 py-0.5 rounded-sm">
+              {humanizeEditionKey(lead.editionKey)}
+            </span>
           ) : (
             <span className="text-zinc-600">—</span>
           )}
@@ -183,7 +190,7 @@ export function LeadsView() {
 
         {/* Stats bar + Create button */}
         <div className="flex flex-wrap items-center gap-2">
-          <StatPill
+          {/* <StatPill
             label={t("leads.statsBar.new")}
             value={vm.stats.new}
             accent="border-blue-500/30 text-blue-400"
@@ -197,7 +204,7 @@ export function LeadsView() {
             label={t("leads.statsBar.converted")}
             value={vm.stats.converted}
             accent="border-emerald-500/30 text-emerald-400"
-          />
+          /> */}
           {/* View toggle */}
           <div className="flex items-center rounded-md border border-zinc-700 bg-zinc-900 p-0.5">
             <Button
@@ -341,14 +348,19 @@ export function LeadsView() {
         isLoading={vm.isLoadingDetail}
         onUpdateStatus={vm.handleUpdateStatus}
         isUpdatingStatus={vm.isUpdatingStatus}
+        onGetEmailPreview={vm.handleGetEmailPreview}
         onConvert={canConvertLead ? vm.handleOpenConvertDialog : undefined}
         onAssign={canAssignLead ? vm.handleOpenAssignDialog : undefined}
-        onDelete={canDeleteLead ? vm.handleDeleteLead : undefined}
+        onDelete={canDeleteLead ? vm.handleCloseLead : undefined}
         isDeletingLead={vm.isDeletingLead}
         activity={vm.activity}
         isLoadingActivity={vm.isLoadingActivity}
         onAddNote={vm.handleAddNote}
         isAddingNote={vm.isAddingNote}
+        onSendEmail={canSendEmail ? async (params) => { await vm.sendLeadEmail(params); } : undefined}
+        isSendingEmail={vm.isSendingEmail}
+        communicationLogs={vm.communicationLogs}
+        isLoadingComms={vm.isLoadingComms}
       />
 
       {/* ── Create Lead Dialog ── */}
@@ -357,11 +369,11 @@ export function LeadsView() {
         onClose={vm.handleCloseCreateDialog}
         onSubmit={vm.handleCreateLead}
         isSubmitting={vm.isCreatingLead}
-        availableEditions={[]}
+        availableEditions={vm.availableEditions}
       />
 
-      {/* ── Convert to Tenant Dialog ── */}
-      <ConvertToTenantDialog
+      {/* ── Convert to Tenant Wizard ── */}
+      <ConvertToTenantWizard
         open={vm.isConvertDialogOpen}
         lead={vm.convertLead}
         isConverting={vm.isConvertingLead}

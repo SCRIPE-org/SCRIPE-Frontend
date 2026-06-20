@@ -87,6 +87,21 @@ async function completeAdminLogin(
   setTimeout(() => setters.redirectTo("/"), 300);
 }
 
+async function completeUserLogin(
+  accessToken: string,
+  deps: SsoCallbackDeps,
+  setters: SsoCallbackSetters
+) {
+  secureTokenService.setAccessToken(accessToken);
+  const user = await deps.authRepository.getMe();
+  deps.setAuth(user, (user.permissions || []) as PermissionCode[], [], true);
+  deps.operationSuccess(deps.t("auth.welcomeBack"));
+
+  deps.invalidateQueries();
+  setters.setState("success");
+  setTimeout(() => setters.redirectTo("/dashboard"), 300);
+}
+
 async function tryLinkExternalLogin(
   params: LinkExternalLoginParams,
   deps: SsoCallbackDeps,
@@ -109,7 +124,7 @@ async function tryLinkExternalLogin(
     displayName: params.displayName ?? undefined,
   });
   deps.operationSuccess(deps.t("sso.accountLinkedSuccess"));
-  setters.redirectTo("/profile/security");
+  setters.redirectTo("/profile");
   return true;
 }
 
@@ -146,6 +161,11 @@ export async function handleOidcCallback(
         deps,
         setters
       );
+      return;
+    }
+
+    if (result.type === "user" && result.accessToken) {
+      await completeUserLogin(result.accessToken, deps, setters);
       return;
     }
 
@@ -243,7 +263,7 @@ export async function handleSamlCallback(
     return;
   }
 
-  if (type !== "admin") {
+  if (type !== "admin" && type !== "user") {
     setters.setState("error");
     setters.setErrorInfo({
       title: deps.t("auth.sso.callbackError"),
@@ -253,16 +273,20 @@ export async function handleSamlCallback(
   }
 
   try {
-    await completeAdminLogin(
-      accessToken,
-      {
-        status: searchParams.get("subscription_status"),
-        gracePhase: searchParams.get("grace_phase"),
-        editionName: searchParams.get("edition_name"),
-      },
-      deps,
-      setters
-    );
+    if (type === "admin") {
+      await completeAdminLogin(
+        accessToken,
+        {
+          status: searchParams.get("subscription_status"),
+          gracePhase: searchParams.get("grace_phase"),
+          editionName: searchParams.get("edition_name"),
+        },
+        deps,
+        setters
+      );
+    } else {
+      await completeUserLogin(accessToken, deps, setters);
+    }
   } catch (error) {
     setters.setState("error");
     setters.setErrorInfo({

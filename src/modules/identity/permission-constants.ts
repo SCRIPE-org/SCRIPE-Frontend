@@ -76,11 +76,6 @@ export const IDENTITY_PERMISSIONS = {
   OAUTH_APPS_UPDATE: "oauth_apps.update",
   OAUTH_APPS_DELETE: "oauth_apps.delete",
 
-  // ── Passkey Management ──────────────────────────────────
-  PASSKEYS_VIEW: "passkeys.view",
-  PASSKEYS_CREATE: "passkeys.create",
-  PASSKEYS_DELETE: "passkeys.delete",
-
   // ── System ──────────────────────────────────────────────
   SYSTEM_IMPERSONATE: "system.impersonate",
   SYSTEM_MANAGE_SETTINGS: "system.manage_settings",

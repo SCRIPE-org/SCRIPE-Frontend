@@ -8,6 +8,7 @@
  */
 import { useState } from "react";
 import { Input } from "@core/ui/input";
+import { PhoneInput, isValidPhoneNumber } from "@core/ui/phone-input";
 import { Label } from "@core/ui/label";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -34,6 +35,7 @@ export function ProfileInfoForm({
   const [firstName, setFirstName] = useState(profile.firstName);
   const [lastName, setLastName] = useState(profile.lastName);
   const [phoneNumber, setPhoneNumber] = useState(profile.phoneNumber);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
 
   // Reset form when profile data changes (render-time state sync)
   const [prevProfile, setPrevProfile] = useState({
@@ -54,6 +56,7 @@ export function ProfileInfoForm({
     setFirstName(profile.firstName);
     setLastName(profile.lastName);
     setPhoneNumber(profile.phoneNumber);
+    setPhoneError(null);
   }
 
   const isDirty =
@@ -63,7 +66,14 @@ export function ProfileInfoForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setPhoneError(null);
     if (!isDirty) return;
+
+    if (phoneNumber.trim() && !isValidPhoneNumber(phoneNumber)) {
+      setPhoneError(t("profile.errors.phoneInvalid") || "Please enter a valid phone number.");
+      return;
+    }
+
     onSubmit({ firstName, lastName, phoneNumber });
   };
 
@@ -95,12 +105,24 @@ export function ProfileInfoForm({
         {/* Phone Number */}
         <div className="space-y-2">
           <Label htmlFor="phoneNumber">{t("profile.fields.phoneNumber")}</Label>
-          <Input
+          <PhoneInput
             id="phoneNumber"
             value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            placeholder={t("profile.fields.phoneNumber")}
+            onChange={setPhoneNumber}
+            error={phoneError || undefined}
           />
+          {phoneError && (
+            <p className="text-xs text-destructive">{phoneError}</p>
+          )}
+        </div>
+
+        {/* Email Address (read-only) */}
+        <div className="space-y-2">
+          <Label htmlFor="email">{t("profile.fields.email") || "Email Address"}</Label>
+          <div className="relative">
+            <Input id="email" value={profile.email} disabled className="bg-muted/50 pe-10" />
+            <Lock className="absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          </div>
         </div>
 
         {/* Username (read-only) */}
@@ -140,6 +162,7 @@ export function ProfileInfoForm({
             setFirstName(profile.firstName);
             setLastName(profile.lastName);
             setPhoneNumber(profile.phoneNumber);
+            setPhoneError(null);
           }}
         >
           {t("common.cancel")}

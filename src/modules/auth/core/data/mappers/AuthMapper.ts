@@ -125,6 +125,7 @@ export class AuthMapper {
       lastName: data.lastName || "",
       phoneNumber: data.phoneNumber || "",
       adminTypeName: "",
+      email: data.email || "",
       profileImageUrl: data.profileImageUrl ?? null,
       role: data.roles?.[0]?.roleCode || data.roles?.[0]?.roleNameEn || undefined,
       permissions: data.permissions || [],
