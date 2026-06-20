@@ -4,6 +4,8 @@ export const ar = {
     samlSpCertificateHelp: "الشهادة العامة لموفر الخدمة (Base64/PEM)",
     title: "تطبيقات OAuth",
     description: "إدارة التطبيقات الخارجية التي تعتمد على SCRIPE للمصادقة (خادم OIDC)",
+    emptyTitle: "لم يتم العثور على تطبيقات OAuth",
+    emptyDesc: "ابدأ بتسجيل تطبيق جديد لتمكين تسجيل الدخول الآمن للجهات الخارجية عبر خدمات هوية SCRIPE.",
     // عناوين الصفحة التفصيلية
     createTitle: "تطبيق OAuth جديد",
     samlAcsUrl: "رابط خدمة المصادقة (ACS)",

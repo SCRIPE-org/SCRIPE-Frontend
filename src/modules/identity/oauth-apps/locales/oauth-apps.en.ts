@@ -5,6 +5,8 @@ export const en = {
     samlSpCertificate: "SP Certificate",
     title: "OAuth Applications",
     description: "Manage third-party applications that authenticate via SCRIPE (OIDC Server)",
+    emptyTitle: "No OAuth applications found",
+    emptyDesc: "Get started by registering a new application to enable secure third-party login via SCRIPE identity services.",
     // Detail page titles
     createTitle: "New OAuth Application",
     editTitle: "Edit Application",
