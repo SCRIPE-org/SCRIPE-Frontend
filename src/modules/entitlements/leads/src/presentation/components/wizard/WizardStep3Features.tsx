@@ -5,6 +5,7 @@ import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
 import { Switch } from "@core/ui/switch";
 import { Settings2, Info, ChevronDown, ChevronUp, ToggleLeft } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { EditionForConversion, EditionFeatureGroup } from "../../../domain/interfaces/ILeadsRepository";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
@@ -30,16 +31,21 @@ export function WizardStep3Features({
   onToggleCategory,
   onOverrideChange,
 }: WizardStep3Props) {
+  const { t } = useI18n();
+
   return (
     <div className="space-y-4">
       <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 dark:border-blue-900 dark:bg-blue-950/30">
         <div className="flex items-start gap-2.5">
           <Info className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
           <div>
-            <p className="text-sm font-medium text-blue-800 dark:text-blue-300">Edition defaults are pre-loaded</p>
+            <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
+              {t("leads.convertWizard.defaultsPreloaded")}
+            </p>
             <p className="mt-0.5 text-xs text-blue-600 dark:text-blue-400">
-              Values for <strong>{edition?.displayNameEn}</strong>. Override individual features for this customer only.
-              Unchanged values stay as edition default.
+              {t("leads.convertWizard.defaultsPreloadedDesc", {
+                edition: (t("language") === "ar" && edition?.displayNameAr ? edition.displayNameAr : edition?.displayNameEn) || ""
+              })}
             </p>
           </div>
         </div>
@@ -54,8 +60,8 @@ export function WizardStep3Features({
       {!isLoading && groups.length === 0 && (
         <div className="flex flex-col items-center gap-2 py-8 text-center">
           <Settings2 className="h-8 w-8 text-muted-foreground/40" />
-          <p className="text-sm text-muted-foreground">No configurable features for this edition.</p>
-          <p className="text-xs text-muted-foreground">Click Next to continue.</p>
+          <p className="text-sm text-muted-foreground">{t("leads.convertWizard.noFeatureGroups")}</p>
+          <p className="text-xs text-muted-foreground">{t("leads.convertWizard.clickNextToContinue")}</p>
         </div>
       )}
 
@@ -69,7 +75,9 @@ export function WizardStep3Features({
               className="flex w-full items-center justify-between bg-muted/40 px-4 py-3 text-left hover:bg-muted/60 transition-colors"
             >
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-foreground">{group.category}</span>
+                <span className="text-sm font-semibold text-foreground">
+                  {t(`leads.convertWizard.categories.${group.category.toLowerCase()}`, { defaultValue: group.category })}
+                </span>
                 <Badge variant="outline" className="h-4 px-1.5 text-[10px]">{group.features.length}</Badge>
               </div>
               {isExpanded
@@ -87,16 +95,21 @@ export function WizardStep3Features({
                     <div key={feature.featureId} className="flex items-center gap-3 py-3">
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-foreground">{feature.displayNameEn}</span>
+                          <span className="text-sm font-medium text-foreground">
+                            {t("language") === "ar" && feature.displayNameAr ? feature.displayNameAr : feature.displayNameEn}
+                          </span>
                           {isChanged && (
-                            <Badge variant="secondary" className="h-4 px-1.5 text-[10px] text-amber-600">Override</Badge>
+                            <Badge variant="secondary" className="h-4 px-1.5 text-[10px] text-amber-600">
+                              {t("leads.convertWizard.override")}
+                            </Badge>
                           )}
                         </div>
                         {feature.description && (
                           <p className="mt-0.5 text-xs text-muted-foreground">{feature.description}</p>
                         )}
                         <p className="mt-0.5 text-[10px] text-muted-foreground">
-                          Edition default: <span className="font-mono font-medium">{feature.editionValue}</span>
+                          {t("leads.convertWizard.confirmStep.noOverrides", { defaultValue: "Edition default" })}:{" "}
+                          <span className="font-mono font-medium">{feature.editionValue}</span>
                         </p>
                       </div>
                       <div className="w-36 shrink-0">
@@ -115,7 +128,7 @@ export function WizardStep3Features({
                             onChange={(e) => onOverrideChange(feature.featureId, e.target.value)}
                             className="h-8 text-right text-sm"
                             min="-1"
-                            placeholder="-1 = unlimited"
+                            placeholder={t("leads.convertWizard.unlimitedHint")}
                           />
                         ) : (
                           <Input

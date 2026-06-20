@@ -14,6 +14,7 @@ import {
   Loader2, ArrowRight, ArrowLeft, Building2, Package, Settings2,
   CheckCircle2, Check,
 } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { ConvertLeadParams } from "../../domain/interfaces/ILeadsRepository";
 import type { PlatformLead } from "../../domain/entities/PlatformLead";
 import { useConvertWizardViewModel } from "../viewmodels/useConvertWizardViewModel";
@@ -50,11 +51,12 @@ export function ConvertToTenantWizard({
   onClose,
   onConvert,
 }: ConvertToTenantWizardProps) {
+  const { t } = useI18n();
   const vm = useConvertWizardViewModel(open, lead, onConvert, onClose, isConverting);
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen && !isConverting) vm.handleClose(); }}>
-      <DialogContent className="max-h-[90vh] w-full max-w-2xl overflow-hidden p-0">
+      <DialogContent className="max-h-[90vh] w-full max-w-2xl overflow-hidden p-0 flex flex-col">
 
         {/* ── Header ── */}
         <DialogHeader className="border-b border-border px-6 pb-4 pt-6">
@@ -63,9 +65,11 @@ export function ConvertToTenantWizard({
               <Building2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
-              <DialogTitle className="text-base font-semibold">Convert to Customer</DialogTitle>
+              <DialogTitle className="text-base font-semibold">
+                {t("leads.convertDialog.title")}
+              </DialogTitle>
               <DialogDescription className="mt-0.5 text-xs text-muted-foreground">
-                {lead ? `${lead.companyName} · ${lead.contactName}` : "Loading…"}
+                {lead ? `${lead.companyName} · ${lead.contactName}` : t("leads.drawer.loadingDetail")}
               </DialogDescription>
             </div>
           </div>
@@ -90,7 +94,7 @@ export function ConvertToTenantWizard({
                       {isDone ? <Check className="h-4 w-4" /> : <Icon className="h-3.5 w-3.5" />}
                     </div>
                     <span className={`text-[10px] font-medium ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
-                      {s.label}
+                      {t(`leads.convertWizard.steps.${s.label.toLowerCase()}`)}
                     </span>
                   </div>
                   {idx < STEPS.length - 1 && (
@@ -107,13 +111,13 @@ export function ConvertToTenantWizard({
           {/* Override count badge (Step 3) */}
           {vm.step === 3 && vm.overrideCount > 0 && (
             <Badge variant="secondary" className="mt-2 w-fit text-amber-600">
-              {vm.overrideCount} override{vm.overrideCount !== 1 ? "s" : ""} applied
+              {t("leads.convertWizard.overrideCount", { count: vm.overrideCount })}
             </Badge>
           )}
         </DialogHeader>
 
         {/* ── Body ── */}
-        <ScrollArea className="max-h-[68vh] px-6 py-4">
+        <ScrollArea className="flex-1 min-h-0 px-6 py-4">
           {vm.step === 1 && (
             <WizardStep1Edition
               lead={lead}
@@ -163,7 +167,7 @@ export function ConvertToTenantWizard({
             disabled={isConverting}
             className="gap-2"
           >
-            {vm.step === 1 ? "Cancel" : <><ArrowLeft className="h-4 w-4" />Back</>}
+            {vm.step === 1 ? t("leads.convertDialog.cancel") : <><ArrowLeft className="h-4 w-4" />{t("leads.convertWizard.back")}</>}
           </Button>
 
           <div className="flex items-center gap-2">
@@ -174,7 +178,7 @@ export function ConvertToTenantWizard({
                 disabled={vm.step === 1 && !vm.selectedEdition}
                 className="gap-2"
               >
-                Next <ArrowRight className="h-4 w-4" />
+                {t("leads.convertWizard.next")} <ArrowRight className="h-4 w-4" />
               </Button>
             )}
             {vm.step === 4 && (
@@ -185,8 +189,8 @@ export function ConvertToTenantWizard({
                 className="gap-2 bg-emerald-600 text-white hover:bg-emerald-700"
               >
                 {isConverting
-                  ? <><Loader2 className="h-4 w-4 animate-spin" />Converting…</>
-                  : <><Check className="h-4 w-4" />Convert to Customer</>}
+                  ? <><Loader2 className="h-4 w-4 animate-spin" />{t("leads.convertWizard.converting")}</>
+                  : <><Check className="h-4 w-4" />{t("leads.convertWizard.convertNow")}</>}
               </Button>
             )}
           </div>

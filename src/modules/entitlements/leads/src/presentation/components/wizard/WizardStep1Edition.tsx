@@ -5,6 +5,7 @@ import { Skeleton } from "@core/ui/skeleton";
 import { Badge } from "@core/ui/badge";
 import { Input } from "@core/ui/input";
 import { AlertCircle, Star, Search, FolderOpen } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { EditionForConversion } from "../../../domain/interfaces/ILeadsRepository";
 import type { PlatformLead } from "../../../domain/entities/PlatformLead";
 
@@ -26,6 +27,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 export function WizardStep1Edition({ lead, editions = [], isLoading, selected, onSelect }: WizardStep1Props) {
+  const { t } = useI18n();
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
@@ -77,7 +79,7 @@ export function WizardStep1Edition({ lead, editions = [], isLoading, selected, o
           <p className="text-xs text-zinc-400">{lead.contactName} · {lead.email}</p>
           {lead.editionKey && (
             <div className="mt-2 flex items-center gap-1.5 text-xs text-zinc-400">
-              <span>Requested plan:</span>
+              <span>{t("leads.convertWizard.requestedPlan", { defaultValue: "Requested plan:" })}</span>
               <Badge variant="secondary" className="px-2 py-0.5 text-xs bg-indigo-500/10 text-indigo-300 border-indigo-500/20">
                 {lead.editionKey}
               </Badge>
@@ -87,9 +89,9 @@ export function WizardStep1Edition({ lead, editions = [], isLoading, selected, o
       )}
 
       <div className="flex flex-col gap-1">
-        <p className="text-sm font-medium text-foreground">Select Customer Plan</p>
+        <p className="text-sm font-medium text-foreground">{t("leads.convertWizard.selectPlan")}</p>
         <p className="text-xs text-muted-foreground">
-          Choose the catalog or custom sales plan for onboarding. Features can be tailored next.
+          {t("leads.convertWizard.selectPlanDesc")}
         </p>
       </div>
 
@@ -100,7 +102,7 @@ export function WizardStep1Edition({ lead, editions = [], isLoading, selected, o
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
             <Input
               type="text"
-              placeholder="Search plans by name or category..."
+              placeholder={t("leads.convertWizard.searchEditionsPlaceholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9 h-9 border-zinc-800 bg-zinc-950 text-sm text-white placeholder:text-zinc-500 focus-visible:ring-indigo-500"
@@ -120,10 +122,12 @@ export function WizardStep1Edition({ lead, editions = [], isLoading, selected, o
                     : "bg-zinc-900/40 text-zinc-400 border border-zinc-800/80 hover:bg-zinc-800/40 hover:text-zinc-200"
                 ].join(" ")}
               >
-                All Plans
+                {t("leads.convertWizard.allPlans")}
               </button>
               {categories.map((cat) => {
-                const label = CATEGORY_LABELS[cat] ?? cat.replace(/\b\w/g, (c) => c.toUpperCase());
+                const label = t(`leads.convertWizard.categories.${cat}`, {
+                  defaultValue: CATEGORY_LABELS[cat] ?? cat.replace(/\b\w/g, (c) => c.toUpperCase())
+                });
                 const isSelected = selectedCategory === cat;
                 return (
                   <button
@@ -155,21 +159,23 @@ export function WizardStep1Edition({ lead, editions = [], isLoading, selected, o
       {!isLoading && editions.length === 0 && (
         <div className="flex flex-col items-center gap-2 py-8 text-center">
           <AlertCircle className="h-8 w-8 text-muted-foreground/50" />
-          <p className="text-sm text-muted-foreground">No editions available.</p>
+          <p className="text-sm text-muted-foreground">{t("leads.convertWizard.noEditions")}</p>
         </div>
       )}
 
       {!isLoading && editions.length > 0 && Object.keys(groupedEditions).length === 0 && (
         <div className="flex flex-col items-center gap-2 py-8 text-center">
           <AlertCircle className="h-8 w-8 text-muted-foreground/50" />
-          <p className="text-sm text-muted-foreground">No plans match your search.</p>
+          <p className="text-sm text-muted-foreground">{t("leads.convertWizard.noSearchMatches")}</p>
         </div>
       )}
 
       {!isLoading && editions.length > 0 && (
         <div className="space-y-6">
           {Object.entries(groupedEditions).map(([catKey, items]) => {
-            const groupTitle = CATEGORY_LABELS[catKey] ?? catKey.replace(/\b\w/g, (c) => c.toUpperCase());
+            const groupTitle = t(`leads.convertWizard.categories.${catKey}`, {
+              defaultValue: CATEGORY_LABELS[catKey] ?? catKey.replace(/\b\w/g, (c) => c.toUpperCase())
+            });
             return (
               <div key={catKey} className="space-y-2.5">
                 <div className="flex items-center gap-2 border-b border-zinc-800/40 pb-1.5">
@@ -197,28 +203,28 @@ export function WizardStep1Edition({ lead, editions = [], isLoading, selected, o
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="text-sm font-semibold text-white group-hover:text-indigo-400 transition-colors">
-                                {edition.displayNameEn}
+                                {t("language") === "ar" && edition.displayNameAr ? edition.displayNameAr : edition.displayNameEn}
                               </span>
                               {edition.isFeatured && (
                                 <Badge variant="secondary" className="h-4 gap-0.5 px-1.5 text-[9px] bg-amber-500/10 text-amber-400 border-amber-500/20">
-                                  <Star className="h-2 w-2 fill-amber-400 text-amber-400" />Featured
+                                  <Star className="h-2 w-2 fill-amber-400 text-amber-400" />{t("leads.convertWizard.featuredBadge")}
                                 </Badge>
                               )}
                               {edition.isContactSalesOnly && (
                                 <Badge variant="outline" className="h-4 px-1.5 text-[9px] border-amber-500/30 text-amber-400 bg-amber-500/5 font-semibold">
-                                  Contact Sales
+                                  {t("leads.convertWizard.contactSalesBadge")}
                                 </Badge>
                               )}
                             </div>
                             <div className="mt-1 flex items-center gap-3 text-[11px] text-zinc-400">
-                              <span>{edition.featureCount} features</span>
+                              <span>{t("leads.convertWizard.featureCount", { count: edition.featureCount })}</span>
                             </div>
                           </div>
                           <div className="shrink-0 text-right">
                             {edition.isContactSalesOnly ? (
                               <div className="flex flex-col items-end">
-                                <span className="text-xs font-semibold text-amber-400">Custom Deal</span>
-                                <span className="text-[10px] text-zinc-500">Negotiation required</span>
+                                <span className="text-xs font-semibold text-amber-400">{t("leads.convertWizard.customDeal")}</span>
+                                <span className="text-[10px] text-zinc-500">{t("leads.convertWizard.negotiationRequired")}</span>
                               </div>
                             ) : (
                               <div className="flex flex-col items-end">
