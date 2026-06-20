@@ -13,7 +13,7 @@
  * - Search palette trigger
  */
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useSettings } from "@core/providers/settings-provider";
@@ -215,9 +215,9 @@ export function NexusTopbar({
           />
         )}
 
-        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <ThemeSwitcher buttonClassName="h-[33px] w-[33px] text-muted-foreground hover:text-foreground hover:bg-secondary rounded-[9px] transition-all" />
-          <LanguageSwitcher buttonClassName="h-[33px] w-[33px] text-muted-foreground hover:text-foreground hover:bg-secondary rounded-[9px] transition-all" />
+          <LanguageSwitcher buttonClassName="h-[33px] w-[46px] text-muted-foreground hover:text-foreground hover:bg-secondary rounded-[9px] transition-all" />
         </div>
 
         <TopbarMobileControls />
