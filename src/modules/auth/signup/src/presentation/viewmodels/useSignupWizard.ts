@@ -86,6 +86,7 @@ export type SignupPhase =
  */
 const PHASE_ORDER: readonly SignupPhase[] = [
   "welcome",
+  "discovery",
   "plan",
   "account",
   "verification",
@@ -576,7 +577,7 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
 
   const goToDiscovery = useCallback(() => {
     setNavigationDirection(1);
-    setPhase("plan");
+    setPhase("discovery");
   }, []);
 
   // ── Select plan → snapshot + advance (self-service vs contact-sales) ─────────
