@@ -49,7 +49,6 @@ import {
   BackButton,
   Divider,
   RootItemButton,
-  TogglePanelButton,
   PrimaryRailLogo,
   ActiveIndicator,
 } from "./_parts/primary-rail-parts";
@@ -316,7 +315,7 @@ export function NexusPrimaryRail({
 
       {/* ── Bottom actions ─────────────────────────────────────── */}
       <div className="relative flex shrink-0 flex-col items-center gap-2 pb-2 pt-4">
-        {onTogglePanel && (
+        {/* {onTogglePanel && (
           <TogglePanelButton
             isRTL={isRTL}
             isDark={isDark}
@@ -324,7 +323,7 @@ export function NexusPrimaryRail({
             label={language === "ar" ? "تبديل اللوحة" : "Toggle Panel"}
             onClick={onTogglePanel}
           />
-        )}
+        )} */}
 
         {/* App Launcher (⊞) — opens searchable workspace grid overlay */}
         {onOpenAppLauncher && (
