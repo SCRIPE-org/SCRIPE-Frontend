@@ -102,7 +102,6 @@ export function useWorkspaceTransition() {
 
     return () => clearSettle();
     // pathname included so navigation completing also triggers the dismiss
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isWorkspaceLoading, activeWorkspace?.workspaceKey, pathname, loaderState.show]);
 
   // Safety net: if the loader is still visible after 8 seconds, dismiss it.

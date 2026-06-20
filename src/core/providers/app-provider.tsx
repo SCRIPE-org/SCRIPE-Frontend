@@ -15,6 +15,7 @@ import { AuthRefreshProvider } from "@core/providers/auth-refresh-provider";
 import { EnhancedToaster } from "@core/ui/enhanced-toaster";
 import { QueryAwareErrorBoundary } from "@core/ui/error-boundary";
 import { TooltipProvider } from "@core/ui/tooltip";
+import { RoutingProgressBar } from "@core/ui/routing-progress-bar";
 
 // Lazy-load React Query DevTools — dev only, zero production bundle cost
 const ReactQueryDevtools =
@@ -74,6 +75,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider attribute="class" disableTransitionOnChange={false}>
           <TooltipProvider>
+            <RoutingProgressBar />
             <ServiceProvider>
               <SettingsProvider>
                 <I18nProvider>

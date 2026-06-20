@@ -19,18 +19,15 @@ export function useWorkspaceActions() {
     async (workspaceKey: string, navigateTo = false) => {
       appLogger.debug(`[WorkspaceActions] Switching to workspace: ${workspaceKey}`);
 
-      // Defer store update until menu is fetched (JIT) so sidebar does not render blank/default menu.
+      // Start the workspace menu fetch in the background if not cached.
+      // This is non-blocking to prevent UI lag on click.
       if (!useNavigationStore.getState().hasWorkspaceData(workspaceKey)) {
-        try {
-          await fetchWorkspaceMenu(workspaceKey);
-        } catch (err) {
-          // Log and continue — landing on an empty workspace is better than
-          // being stuck on the loader overlay forever.
-          appLogger.error(`[WorkspaceActions] JIT fetch failed for "${workspaceKey}":`, err);
-        }
+        fetchWorkspaceMenu(workspaceKey).catch((err) => {
+          appLogger.error(`[WorkspaceActions] Background JIT fetch failed for "${workspaceKey}":`, err);
+        });
       }
 
-      // Update store key after menu data is successfully loaded or failed.
+      // Update store key immediately. This switches activeWorkspaceKey so layout/accent etc. can transition.
       useNavigationStore.getState().setActiveWorkspace(workspaceKey);
       useNavigationStore.getState().setActiveRootItem(null);
 

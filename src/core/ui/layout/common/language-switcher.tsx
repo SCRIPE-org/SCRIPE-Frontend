@@ -73,6 +73,7 @@ export function LanguageSwitcher({ buttonClassName, contentClassName }: Language
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
+          type="button"
           variant="ghost"
           size="sm"
           className={cn(
