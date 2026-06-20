@@ -3,6 +3,7 @@
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
+import { Eye, EyeOff } from "lucide-react";
 
 interface CredentialsPasswordInputProps {
   value: string;
@@ -60,23 +61,22 @@ export function CredentialsPasswordInput({
         <Button
           type="button"
           variant="ghost"
-          className="absolute top-0 flex items-center justify-center px-2.5 transition-colors hover:bg-transparent"
+          className="absolute top-0 flex items-center justify-center px-3 transition-colors hover:bg-transparent"
           style={{
             right: "4px",
             left: "auto",
             height: "var(--login-input-height,48px)",
-            fontSize: 11,
-            fontFamily: "var(--font-mono, ui-monospace, monospace)",
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
-            color: "var(--sx-accent-text, hsl(var(--primary)))",
           }}
           onClick={onToggleShowPassword}
           disabled={disabled}
           tabIndex={-1}
           aria-label={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
         >
-          {showPassword ? t("auth.hide") || "HIDE" : t("auth.show") || "SHOW"}
+          {showPassword ? (
+            <EyeOff className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+          ) : (
+            <Eye className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+          )}
         </Button>
       </div>
     </div>
