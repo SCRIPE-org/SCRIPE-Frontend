@@ -7,8 +7,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@core/ui/dialog";
-import { Button } from "@core/ui/button";
 import { ScrollArea } from "@core/ui/scroll-area";
+import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import {
   Loader2, ArrowRight, ArrowLeft, Building2, Package, Settings2,
@@ -56,10 +56,10 @@ export function ConvertToTenantWizard({
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen && !isConverting) vm.handleClose(); }}>
-      <DialogContent className="max-h-[90vh] w-full max-w-2xl overflow-hidden p-0 flex flex-col">
+      <DialogContent className="max-h-[90vh] w-full max-w-2xl overflow-hidden p-0 flex flex-col gap-0">
 
         {/* ── Header ── */}
-        <DialogHeader className="border-b border-border px-6 pb-4 pt-6">
+        <DialogHeader className="border-b border-border px-6 pb-4 pt-6 shrink-0">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-950">
               <Building2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
@@ -117,49 +117,51 @@ export function ConvertToTenantWizard({
         </DialogHeader>
 
         {/* ── Body ── */}
-        <ScrollArea className="flex-1 min-h-0 px-6 py-4">
-          {vm.step === 1 && (
-            <WizardStep1Edition
-              lead={lead}
-              editions={vm.editions}
-              isLoading={vm.isLoadingEditions}
-              selected={vm.selectedEdition}
-              onSelect={vm.setSelectedEdition}
-            />
-          )}
-          {vm.step === 2 && (
-            <WizardStep2Setup
-              lead={lead}
-              edition={vm.selectedEdition}
-              state={vm.s2}
-              onChange={vm.setS2}
-              amountError={vm.amountError}
-              onAmountChange={vm.handleAmountChange}
-            />
-          )}
-          {vm.step === 3 && (
-            <WizardStep3Features
-              edition={vm.selectedEdition}
-              groups={vm.featureGroups}
-              isLoading={vm.isLoadingFeatures}
-              overrides={vm.overrides}
-              expandedCategories={vm.expandedCategories}
-              onToggleCategory={vm.toggleCategory}
-              onOverrideChange={vm.handleOverrideChange}
-            />
-          )}
-          {vm.step === 4 && (
-            <WizardStep4Confirm
-              lead={lead}
-              edition={vm.selectedEdition}
-              setup={vm.s2}
-              overrideCount={vm.overrideCount}
-            />
-          )}
+        <ScrollArea className="flex-1 min-h-0">
+          <div className="px-6 py-4">
+            {vm.step === 1 && (
+              <WizardStep1Edition
+                lead={lead}
+                editions={vm.editions}
+                isLoading={vm.isLoadingEditions}
+                selected={vm.selectedEdition}
+                onSelect={vm.setSelectedEdition}
+              />
+            )}
+            {vm.step === 2 && (
+              <WizardStep2Setup
+                lead={lead}
+                edition={vm.selectedEdition}
+                state={vm.s2}
+                onChange={vm.setS2}
+                amountError={vm.amountError}
+                onAmountChange={vm.handleAmountChange}
+              />
+            )}
+            {vm.step === 3 && (
+              <WizardStep3Features
+                edition={vm.selectedEdition}
+                groups={vm.featureGroups}
+                isLoading={vm.isLoadingFeatures}
+                overrides={vm.overrides}
+                expandedCategories={vm.expandedCategories}
+                onToggleCategory={vm.toggleCategory}
+                onOverrideChange={vm.handleOverrideChange}
+              />
+            )}
+            {vm.step === 4 && (
+              <WizardStep4Confirm
+                lead={lead}
+                edition={vm.selectedEdition}
+                setup={vm.s2}
+                overrideCount={vm.overrideCount}
+              />
+            )}
+          </div>
         </ScrollArea>
 
         {/* ── Footer ── */}
-        <div className="flex items-center justify-between border-t border-border px-6 py-4">
+        <div className="flex items-center justify-between border-t border-border px-6 py-4 shrink-0">
           <Button
             type="button"
             variant="ghost"
