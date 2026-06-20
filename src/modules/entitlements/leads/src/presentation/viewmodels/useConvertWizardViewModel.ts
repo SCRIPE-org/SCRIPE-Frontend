@@ -41,6 +41,7 @@ const STEP2_DEFAULTS: Step2State = {
 
 export function useConvertWizardViewModel(
   open: boolean,
+  lead: PlatformLead | null,
   onConvert: (params: ConvertLeadParams) => Promise<void>,
   onClose: () => void,
   isConverting: boolean,
@@ -51,7 +52,7 @@ export function useConvertWizardViewModel(
   const [step, setStep] = useState<WizardStep>(1);
 
   // ── Step 1 state ───────────────────────────────────────────────────────────
-  const [selectedEdition, setSelectedEdition] = useState<EditionForConversion | null>(null);
+  const [selectedEditionOverride, setSelectedEditionOverride] = useState<EditionForConversion | null>(null);
 
   // ── Step 2 state ───────────────────────────────────────────────────────────
   const [s2, setS2] = useState<Step2State>(STEP2_DEFAULTS);
@@ -68,6 +69,17 @@ export function useConvertWizardViewModel(
     enabled: open,
     staleTime: 5 * 60 * 1000,
   });
+
+  // Auto-select requested edition from lead
+  const selectedEdition = useMemo(() => {
+    if (selectedEditionOverride) return selectedEditionOverride;
+    if (lead && editionsQuery.data) {
+      return editionsQuery.data.find(
+        (e) => e.name.toLowerCase() === lead.editionKey?.toLowerCase()
+      ) ?? null;
+    }
+    return null;
+  }, [selectedEditionOverride, lead, editionsQuery.data]);
 
   const featuresQuery = useQuery({
     queryKey: ["conversion-edition-features", selectedEdition?.id],
@@ -113,7 +125,7 @@ export function useConvertWizardViewModel(
 
   const resetWizard = useCallback(() => {
     setStep(1);
-    setSelectedEdition(null);
+    setSelectedEditionOverride(null);
     setS2(STEP2_DEFAULTS);
     setAmountError("");
     setOverrides({});
@@ -179,7 +191,7 @@ export function useConvertWizardViewModel(
   return {
     step,
     selectedEdition,
-    setSelectedEdition,
+    setSelectedEdition: setSelectedEditionOverride,
     s2,
     setS2,
     amountError,

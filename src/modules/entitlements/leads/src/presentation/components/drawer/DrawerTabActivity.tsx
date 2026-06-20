@@ -86,10 +86,10 @@ export function DrawerTabActivity({
         ) : (
           <ol className="relative space-y-5 border-s border-zinc-800 ps-4">
             {activity.map((entry) => (
-              <li key={entry.id}>
+              <li key={entry.id} className="relative">
                 <div className="absolute -start-[5px] mt-[5px] h-2.5 w-2.5 rounded-full bg-indigo-500 ring-2 ring-zinc-950" />
                 <p className="text-xs font-semibold text-zinc-300">
-                  {t(`leads.activity.types.${entry.type}`)}
+                  {entry.summary || t(`leads.activity.types.${entry.type}`)}
                 </p>
                 {entry.note && (
                   <p className="mt-0.5 text-xs italic text-zinc-500 leading-relaxed">{entry.note}</p>
@@ -100,7 +100,7 @@ export function DrawerTabActivity({
                     hour: "2-digit", minute: "2-digit",
                   })}
                   {entry.actorName
-                    ? ` · ${t("leads.activity.by").replace("{actor}", entry.actorName)}`
+                    ? ` · ${t("leads.activity.by", { actor: entry.actorName })}`
                     : ` · ${t("leads.activity.system")}`}
                 </p>
               </li>

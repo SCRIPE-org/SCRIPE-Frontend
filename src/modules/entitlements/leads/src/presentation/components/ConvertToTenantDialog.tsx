@@ -50,7 +50,7 @@ export function ConvertToTenantWizard({
   onClose,
   onConvert,
 }: ConvertToTenantWizardProps) {
-  const vm = useConvertWizardViewModel(open, onConvert, onClose, isConverting);
+  const vm = useConvertWizardViewModel(open, lead, onConvert, onClose, isConverting);
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen && !isConverting) vm.handleClose(); }}>
