@@ -54,6 +54,48 @@ interface PermissionProviderProps {
 }
 
 /**
+ * Helper to match resolved pathnames with Next.js dynamic page templates in PAGE_PERMISSIONS.
+ * Example: matches "/roles/123" with "/roles/[id]"
+ */
+function matchesRoutePattern(pathname: string, pattern: string): boolean {
+  const pathSegs = pathname.split("/").filter(Boolean);
+  const patternSegs = pattern.split("/").filter(Boolean);
+
+  if (pathSegs.length !== patternSegs.length) return false;
+
+  for (let i = 0; i < patternSegs.length; i++) {
+    const patternSeg = patternSegs[i];
+    const pathSeg = pathSegs[i];
+
+    if (patternSeg.startsWith("[") && patternSeg.endsWith("]")) {
+      continue;
+    }
+
+    if (patternSeg !== pathSeg) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function getRequiredPermissionsForPath(pathname: string): PermissionCode[] | undefined {
+  // Try exact match first
+  if (PAGE_PERMISSIONS[pathname]) {
+    return PAGE_PERMISSIONS[pathname];
+  }
+
+  // Try matching dynamic route patterns
+  for (const pattern of Object.keys(PAGE_PERMISSIONS)) {
+    if (pattern.includes("[") && matchesRoutePattern(pathname, pattern)) {
+      return PAGE_PERMISSIONS[pattern];
+    }
+  }
+
+  return undefined;
+}
+
+/**
  * PermissionProvider
  *
  * Provides permission checking utilities throughout the app.
@@ -96,7 +138,7 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
 
   const canAccessPage = useCallback(
     (path: string): boolean => {
-      const requiredPermissions = PAGE_PERMISSIONS[path];
+      const requiredPermissions = getRequiredPermissionsForPath(path);
 
       // If no permissions defined for page, allow access (authenticated only)
       if (!requiredPermissions || requiredPermissions.length === 0) {

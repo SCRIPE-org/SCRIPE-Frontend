@@ -27,7 +27,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 export function WizardStep1Edition({ lead, editions = [], isLoading, selected, onSelect }: WizardStep1Props) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
@@ -203,7 +203,7 @@ export function WizardStep1Edition({ lead, editions = [], isLoading, selected, o
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="text-sm font-semibold text-white group-hover:text-indigo-400 transition-colors">
-                                {t("language") === "ar" && edition.displayNameAr ? edition.displayNameAr : edition.displayNameEn}
+                                {language === "ar" && edition.displayNameAr ? edition.displayNameAr : edition.displayNameEn}
                               </span>
                               {edition.isFeatured && (
                                 <Badge variant="secondary" className="h-4 gap-0.5 px-1.5 text-[9px] bg-amber-500/10 text-amber-400 border-amber-500/20">

@@ -27,7 +27,7 @@ interface WizardStep2Props {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function WizardStep2Setup({ lead, edition, state, onChange, amountError, onAmountChange }: WizardStep2Props) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const set = (field: keyof Step2State, value: string | boolean) =>
     onChange({ ...state, [field]: value });
 
@@ -39,7 +39,7 @@ export function WizardStep2Setup({ lead, edition, state, onChange, amountError, 
           <Package className="h-4 w-4 shrink-0 text-muted-foreground" />
           <div>
             <span className="text-sm font-medium">
-              {t("language") === "ar" && edition.displayNameAr ? edition.displayNameAr : edition.displayNameEn}
+              {language === "ar" && edition.displayNameAr ? edition.displayNameAr : edition.displayNameEn}
             </span>
             {edition.isContactSalesOnly && (
               <span className="ml-2 text-xs text-amber-600 dark:text-amber-500">

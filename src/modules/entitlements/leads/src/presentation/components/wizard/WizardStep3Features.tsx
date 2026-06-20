@@ -31,7 +31,7 @@ export function WizardStep3Features({
   onToggleCategory,
   onOverrideChange,
 }: WizardStep3Props) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
 
   return (
     <div className="space-y-4">
@@ -44,7 +44,7 @@ export function WizardStep3Features({
             </p>
             <p className="mt-0.5 text-xs text-blue-600 dark:text-blue-400">
               {t("leads.convertWizard.defaultsPreloadedDesc", {
-                edition: (t("language") === "ar" && edition?.displayNameAr ? edition.displayNameAr : edition?.displayNameEn) || ""
+                edition: (language === "ar" && edition?.displayNameAr ? edition.displayNameAr : edition?.displayNameEn) || ""
               })}
             </p>
           </div>
@@ -96,7 +96,7 @@ export function WizardStep3Features({
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-medium text-foreground">
-                            {t("language") === "ar" && feature.displayNameAr ? feature.displayNameAr : feature.displayNameEn}
+                            {language === "ar" && feature.displayNameAr ? feature.displayNameAr : feature.displayNameEn}
                           </span>
                           {isChanged && (
                             <Badge variant="secondary" className="h-4 px-1.5 text-[10px] text-amber-600">
