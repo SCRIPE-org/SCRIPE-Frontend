@@ -218,7 +218,7 @@ function SignupWizardContent({ initialCountry, initialCurrency }: SignupWizardPr
         phases (the shell's min-h-[100dvh] + flex-1 keep the footer pinned), and
         the consistent enter/exit transition prevents any inter-phase jump.
       */}
-      <div className={`flex min-h-full flex-1 flex-col ${isCentered ? "justify-center" : ""}`}>
+      <div className={`flex flex-1 flex-col signup-stage-container ${isCentered ? "justify-center" : ""}`}>
         <AnimatePresence mode="wait" custom={slideDir} initial={false}>
           <motion.div
             key={wizard.phase}

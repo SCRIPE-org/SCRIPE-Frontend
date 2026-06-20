@@ -26,48 +26,6 @@ export function LoginTopActions({ skipLinkEnabled, ariaLandmarks }: LoginTopActi
           {t("auth.a11y.skipToContent")}
         </a>
       )}
-
-      <div
-        className="absolute left-8 right-8 top-8 z-20 flex items-center justify-between gap-5 lg:justify-end"
-        {...(ariaLandmarks
-          ? { role: "navigation", "aria-label": t("auth.a11y.topActionsLabel") }
-          : {})}
-      >
-        {/* Docs link (desktop only) */}
-        {/* <Button
-          variant="ghost"
-          size="sm"
-          className="hidden gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground lg:flex"
-          asChild
-        >
-          <Link href="/docs">
-            <BookOpen className="h-4 w-4" />
-            {t("auth.branding.docs")}
-          </Link>
-        </Button> */}
-
-        {/* <div className="hidden h-4 w-px bg-border lg:block" /> */}
-
-        <div className="flex w-full items-center justify-between gap-1 lg:w-auto lg:justify-start">
-          {/* Docs link (mobile) */}
-          {/* <Button
-            variant="ghost"
-            size="sm"
-            className="flex gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground lg:hidden"
-            asChild
-          >
-            <Link href="/docs">
-              <BookOpen className="h-4 w-4" />
-              {t("auth.branding.docs")}
-            </Link>
-          </Button> */}
-
-          <div className="flex gap-1">
-            <LanguageSwitcher />
-            <ThemeSwitcher />
-          </div>
-        </div>
-      </div>
     </>
   );
 }

@@ -78,7 +78,7 @@ export function SignupShell({ children, progressSlot, phaseLabel }: SignupShellP
 
   return (
     <div
-      className="relative flex min-h-[100dvh] flex-col"
+      className="relative flex min-h-[100dvh] flex-col signup-shell"
       dir={direction}
       style={{ background: tokens.gradientPage }}
     >

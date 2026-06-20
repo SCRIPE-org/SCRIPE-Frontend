@@ -123,7 +123,6 @@ export function VaultLayout({
       style={{ background: "var(--sx-bg-grad)", color: "var(--sx-text)" }}
     >
       <VaultBackground />
-      {topActions}
 
       <div className="relative z-[1] grid min-h-screen grid-cols-1 lg:grid-cols-[minmax(0,1fr)_min(500px,48%)]">
         {/* ── Hero (desktop) ───────────────────────────────────────── */}
@@ -227,12 +226,13 @@ export function VaultLayout({
 
         {/* ── Form column ──────────────────────────────────────────── */}
         <div
-          className="flex items-center justify-center px-5 lg:py-14 lg:pe-10 lg:ps-0"
+          className="relative flex flex-col items-center justify-center px-5 lg:py-14 lg:pe-10 lg:ps-0"
           style={{
             paddingTop: "var(--login-container-py, 48px)",
             paddingBottom: "var(--login-container-py, 48px)",
           }}
         >
+          {topActions}
           <div
             key={loginStep}
             className="sx-screen vault-cta relative flex w-full max-w-[430px] flex-col rounded-[20px]"

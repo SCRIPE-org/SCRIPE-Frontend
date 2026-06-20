@@ -151,7 +151,7 @@ export const ar = {
     magicLinkSentSubtitle: "أرسلنا رابط الاستعادة إلى {{email}}. انقر عليه لتعيين كلمة مرور جديدة.",
     resetSuccessTitle: "تم تحديث كلمة المرور!",
     resetSuccessSubtitle: "تم إعادة تعيين كلمة مرورك. يمكنك الآن تسجيل الدخول ببياناتك الجديدة.",
-    signInHeading: "أهلاً بعودتك!",
+    signInHeading: "تسجيل الدخول",
     signInSubheading: "يرجى تسجيل الدخول للمتابعة",
     signingIn: "جارٍ تسجيل الدخول…",
     staySignedIn: "ابقَ مسجلًا",
