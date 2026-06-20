@@ -139,6 +139,7 @@ export interface PlatformLeadData {
   convertedAt?: string;
   convertedToTenantId?: string;
   assignedToAdminId?: string;
+  assignedAdminName?: string;
   notes?: string;
   businessType?: string;
   teamSize?: string;
@@ -189,6 +190,9 @@ export class PlatformLead {
   }
   get assignedToAdminId(): string | undefined {
     return this.data.assignedToAdminId;
+  }
+  get assignedAdminName(): string | undefined {
+    return this.data.assignedAdminName;
   }
   get notes(): string | undefined {
     return this.data.notes;

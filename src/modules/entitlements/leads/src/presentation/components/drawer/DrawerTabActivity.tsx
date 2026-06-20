@@ -1,0 +1,113 @@
+"use client";
+
+import { Button } from "@core/ui/button";
+import { Textarea } from "@core/ui/textarea";
+import { StickyNote, Activity, Loader2, CheckCheck } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
+import type { LeadActivity } from "../../../domain/entities/PlatformLead";
+
+// ── Props ─────────────────────────────────────────────────────────────────────
+
+interface DrawerTabActivityProps {
+  activity?: LeadActivity[];
+  isLoadingActivity?: boolean;
+  onAddNote?: () => void;
+  quickNote: string;
+  onQuickNoteChange: (v: string) => void;
+  isAddingNote?: boolean;
+  quickNoteSaved: boolean;
+}
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
+export function DrawerTabActivity({
+  activity,
+  isLoadingActivity,
+  onAddNote,
+  quickNote,
+  onQuickNoteChange,
+  isAddingNote,
+  quickNoteSaved,
+}: DrawerTabActivityProps) {
+  const { t } = useI18n();
+
+  return (
+    <div className="p-4 space-y-4">
+      {/* Quick note */}
+      {onAddNote && (
+        <div className="rounded-xl border border-zinc-800/50 bg-zinc-900/40 p-4 space-y-2">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500 flex items-center gap-1.5">
+            <StickyNote className="h-3.5 w-3.5" />
+            {t("leads.note.sectionTitle")}
+          </p>
+          <Textarea
+            value={quickNote}
+            onChange={(e) => onQuickNoteChange(e.target.value)}
+            placeholder={t("leads.note.placeholder")}
+            rows={3}
+            className="resize-none border-zinc-700 bg-zinc-950 text-sm text-white placeholder:text-zinc-600"
+            disabled={isAddingNote}
+          />
+          <Button
+            onClick={onAddNote}
+            disabled={!quickNote.trim() || isAddingNote}
+            size="sm"
+            className="h-8 w-full bg-amber-600/90 text-xs font-semibold text-white hover:bg-amber-500 disabled:opacity-40"
+          >
+            {isAddingNote
+              ? <><Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />{t("leads.note.saving")}</>
+              : quickNoteSaved
+              ? <><CheckCheck className="mr-1.5 h-3.5 w-3.5 text-emerald-400" />{t("leads.note.saved")}</>
+              : t("leads.note.save")}
+          </Button>
+        </div>
+      )}
+
+      {/* Activity timeline */}
+      <div className="rounded-xl border border-zinc-800/50 bg-zinc-900/40 p-4">
+        <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-500 flex items-center gap-1.5">
+          <Activity className="h-3.5 w-3.5" />
+          {t("leads.activity.title")}
+        </p>
+        {isLoadingActivity ? (
+          <div className="space-y-3 animate-pulse">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="flex gap-3">
+                <div className="mt-1 h-2 w-2 rounded-full bg-zinc-800 shrink-0" />
+                <div className="space-y-1 flex-1">
+                  <div className="h-3 w-32 rounded bg-zinc-800" />
+                  <div className="h-2.5 w-20 rounded bg-zinc-800" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : !activity || activity.length === 0 ? (
+          <p className="text-xs text-zinc-500">{t("leads.activity.empty")}</p>
+        ) : (
+          <ol className="relative space-y-5 border-s border-zinc-800 ps-4">
+            {activity.map((entry) => (
+              <li key={entry.id}>
+                <div className="absolute -start-[5px] mt-[5px] h-2.5 w-2.5 rounded-full bg-indigo-500 ring-2 ring-zinc-950" />
+                <p className="text-xs font-semibold text-zinc-300">
+                  {t(`leads.activity.types.${entry.type}`)}
+                </p>
+                {entry.note && (
+                  <p className="mt-0.5 text-xs italic text-zinc-500 leading-relaxed">{entry.note}</p>
+                )}
+                <p className="mt-1 text-[10px] text-zinc-600">
+                  {new Date(entry.occurredAt).toLocaleDateString("en-GB", {
+                    day: "2-digit", month: "short", year: "numeric",
+                    hour: "2-digit", minute: "2-digit",
+                  })}
+                  {entry.actorName
+                    ? ` · ${t("leads.activity.by").replace("{actor}", entry.actorName)}`
+                    : ` · ${t("leads.activity.system")}`}
+                </p>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+    </div>
+  );
+}

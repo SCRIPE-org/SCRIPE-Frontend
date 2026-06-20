@@ -1,7 +1,5 @@
 "use client";
 
-import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
-import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { useI18n } from "@core/providers/i18n-provider";
 
 interface LoginTopActionsProps {
@@ -15,7 +13,7 @@ interface LoginTopActionsProps {
  * Extracted from LoginView to keep that view under 200 lines.
  * Also renders the optional skip-to-content link for WCAG AA compliance (§27).
  */
-export function LoginTopActions({ skipLinkEnabled, ariaLandmarks }: LoginTopActionsProps) {
+export function LoginTopActions({ skipLinkEnabled }: LoginTopActionsProps) {
   const { t } = useI18n();
 
   return (

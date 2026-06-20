@@ -17,6 +17,9 @@ import type {
   AssignLeadParams,
   AssignableAdmin,
   BulkLeadStatusResult,
+  EditionForConversion,
+  EditionFeatureGroup,
+  StatusEmailPreview,
 } from "../../domain/interfaces";
 import type { PagedResult } from "@modules/identity/core/domain/types";
 import { LeadsMapper } from "../mappers/LeadsMapper";
@@ -43,7 +46,14 @@ export class LeadsRepository implements ILeadsRepository {
   }
 
   async updateStatus(params: UpdateLeadStatusParams): Promise<void> {
-    await this.service.updateStatus(params.id, params.status, params.notes);
+    await this.service.updateStatus(
+      params.id,
+      params.status,
+      params.notes,
+      params.sendNotification,
+      params.emailSubjectOverride,
+      params.emailBodyOverride
+    );
   }
 
   async createLead(params: CreateLeadParams): Promise<string> {
@@ -97,5 +107,27 @@ export class LeadsRepository implements ILeadsRepository {
   async getCommunicationLogs(leadId: string): Promise<LeadCommunicationLog[]> {
     const dtos = await this.service.getCommunicationLogs(leadId);
     return dtos.map((dto) => LeadsMapper.toCommunicationLog(dto));
+  }
+
+  // ── Conversion Wizard ─────────────────────────────────────────────────────
+
+  async closeLead(id: string, reason?: string): Promise<void> {
+    await this.service.closeLead(id, reason);
+  }
+
+  async getEditionsForConversion(): Promise<EditionForConversion[]> {
+    const dtos = await this.service.getEditionsForConversion();
+    // Passthrough — DTOs and domain types are identical for wizard data
+    return dtos as unknown as EditionForConversion[];
+  }
+
+  async getEditionFeaturesForConversion(editionId: string): Promise<EditionFeatureGroup[]> {
+    const dtos = await this.service.getEditionFeaturesForConversion(editionId);
+    return dtos as unknown as EditionFeatureGroup[];
+  }
+
+  async getStatusEmailPreview(leadId: string, targetStatus: string): Promise<StatusEmailPreview> {
+    const dto = await this.service.getStatusEmailPreview(leadId, targetStatus);
+    return dto as unknown as StatusEmailPreview;
   }
 }

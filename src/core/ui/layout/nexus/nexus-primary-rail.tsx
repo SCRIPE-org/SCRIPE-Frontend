@@ -59,6 +59,19 @@ interface NexusPrimaryRailProps {
   onOpenAppLauncher?: () => void;
 }
 
+// ── Helper to find the first leaf route with a valid href ─────────────────────
+function findFirstLeafRoute(item: MenuItem): string | null {
+  if (item.href) return item.href;
+  if (item.children && item.children.length > 0) {
+    const sorted = [...item.children].sort((a, b) => a.order - b.order);
+    for (const child of sorted) {
+      const route = findFirstLeafRoute(child);
+      if (route) return route;
+    }
+  }
+  return null;
+}
+
 // ── Primary Rail ──────────────────────────────────────────────────────────────
 export function NexusPrimaryRail({
   onTogglePanel,
@@ -91,8 +104,13 @@ export function NexusPrimaryRail({
       if (isPanelCollapsed && onTogglePanel) {
         onTogglePanel();
       }
+      // Auto nav to first page of that menu item
+      const firstRoute = findFirstLeafRoute(item);
+      if (firstRoute) {
+        router.push(firstRoute);
+      }
     },
-    [setActiveRootItemId, isPanelCollapsed, onTogglePanel]
+    [setActiveRootItemId, isPanelCollapsed, onTogglePanel, router]
   );
 
   // ── Handle module workspace click → full workspace transition ────────────

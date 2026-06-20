@@ -1,28 +1,39 @@
 "use client";
 
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
-import { Label } from "@core/ui/label";
-import { Textarea } from "@core/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { Switch } from "@core/ui/switch";
-import { useI18n } from "@core/providers/i18n-provider";
+import { ScrollArea } from "@core/ui/scroll-area";
+import { Badge } from "@core/ui/badge";
+import {
+  Loader2, ArrowRight, ArrowLeft, Building2, Package, Settings2,
+  CheckCircle2, Check,
+} from "lucide-react";
 import type { ConvertLeadParams } from "../../domain/interfaces/ILeadsRepository";
 import type { PlatformLead } from "../../domain/entities/PlatformLead";
-import { Loader2, ArrowRight, Building2, BadgeDollarSign } from "lucide-react";
+import { useConvertWizardViewModel } from "../viewmodels/useConvertWizardViewModel";
+import { WizardStep1Edition } from "./wizard/WizardStep1Edition";
+import { WizardStep2Setup } from "./wizard/WizardStep2Setup";
+import { WizardStep3Features } from "./wizard/WizardStep3Features";
+import { WizardStep4Confirm } from "./wizard/WizardStep4Confirm";
+
+// ── Step indicator config ─────────────────────────────────────────────────────
+
+const STEPS = [
+  { id: 1, label: "Edition",  icon: Package      },
+  { id: 2, label: "Setup",    icon: Building2    },
+  { id: 3, label: "Features", icon: Settings2    },
+  { id: 4, label: "Confirm",  icon: CheckCircle2 },
+] as const;
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 
-interface ConvertToTenantDialogProps {
+interface ConvertToTenantWizardProps {
   open: boolean;
   lead: PlatformLead | null;
   isConverting: boolean;
@@ -32,312 +43,158 @@ interface ConvertToTenantDialogProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function ConvertToTenantDialog({
+export function ConvertToTenantWizard({
   open,
   lead,
   isConverting,
   onClose,
   onConvert,
-}: ConvertToTenantDialogProps) {
-  const { t } = useI18n();
-
-  // ── Standard fields ───────────────────────────────────────────────────────
-  const [tenantCode, setTenantCode] = useState("");
-  const [adminEmail, setAdminEmail] = useState("");
-  const [subscriptionType, setSubscriptionType] = useState<string>("");
-  const [currency, setCurrency] = useState("USD");
-  const [conversionNote, setConversionNote] = useState("");
-
-  // ── Custom deal price (G7) ────────────────────────────────────────────────
-  const [useCustomPrice, setUseCustomPrice] = useState(false);
-  const [negotiatedAmountRaw, setNegotiatedAmountRaw] = useState("");
-  const [negotiatedCurrency, setNegotiatedCurrency] = useState("USD");
-
-  // ── Validation ────────────────────────────────────────────────────────────
-  const [amountError, setAmountError] = useState("");
-
-  const validateAmount = (val: string): boolean => {
-    if (!val.trim()) {
-      setAmountError(t("leads.convertDialog.negotiatedPrice.amountRequired"));
-      return false;
-    }
-    const n = parseFloat(val);
-    if (isNaN(n) || n <= 0) {
-      setAmountError(t("leads.convertDialog.negotiatedPrice.amountInvalid"));
-      return false;
-    }
-    setAmountError("");
-    return true;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (useCustomPrice && !validateAmount(negotiatedAmountRaw)) return;
-
-    const negotiatedAmount =
-      useCustomPrice && negotiatedAmountRaw.trim() ? parseFloat(negotiatedAmountRaw) : undefined;
-
-    await onConvert({
-      tenantCode: tenantCode.trim() || undefined,
-      adminEmail: adminEmail.trim() || undefined,
-      subscriptionType: subscriptionType || undefined,
-      currency: currency || undefined,
-      conversionNote: conversionNote.trim() || undefined,
-      negotiatedAmount,
-      negotiatedCurrency: useCustomPrice ? negotiatedCurrency : undefined,
-    });
-  };
-
-  const handleOpenChange = (isOpen: boolean) => {
-    if (!isOpen && !isConverting) onClose();
-  };
-
-  const handleClose = () => {
-    if (isConverting) return;
-    // Reset all state
-    setTenantCode("");
-    setAdminEmail("");
-    setSubscriptionType("");
-    setCurrency("USD");
-    setConversionNote("");
-    setUseCustomPrice(false);
-    setNegotiatedAmountRaw("");
-    setNegotiatedCurrency("USD");
-    setAmountError("");
-    onClose();
-  };
+}: ConvertToTenantWizardProps) {
+  const vm = useConvertWizardViewModel(open, onConvert, onClose, isConverting);
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[540px]">
-        <DialogHeader>
-          <div className="mb-1 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/30">
+    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen && !isConverting) vm.handleClose(); }}>
+      <DialogContent className="max-h-[90vh] w-full max-w-2xl overflow-hidden p-0">
+
+        {/* ── Header ── */}
+        <DialogHeader className="border-b border-border px-6 pb-4 pt-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-950">
               <Building2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
-              <DialogTitle>{t("leads.convertDialog.title")}</DialogTitle>
-              <DialogDescription className="mt-0.5">
-                {t("leads.convertDialog.subtitle")}
+              <DialogTitle className="text-base font-semibold">Convert to Customer</DialogTitle>
+              <DialogDescription className="mt-0.5 text-xs text-muted-foreground">
+                {lead ? `${lead.companyName} · ${lead.contactName}` : "Loading…"}
               </DialogDescription>
             </div>
           </div>
-          {lead && (
-            <div className="mt-2 rounded-lg border border-border bg-muted/50 px-4 py-3">
-              <p className="text-sm font-medium">{lead.companyName}</p>
-              <p className="text-xs text-muted-foreground">
-                {lead.contactName} · {lead.email}
-              </p>
-              {lead.editionKey && (
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  {t("leads.drawer.editionLabel").replace("{edition}", lead.editionKey)}
-                </p>
-              )}
-            </div>
+
+          {/* Step progress */}
+          <div className="mt-4 flex items-center gap-0">
+            {STEPS.map((s, idx) => {
+              const Icon = s.icon;
+              const isActive = vm.step === s.id;
+              const isDone = vm.step > s.id;
+              return (
+                <div key={s.id} className="flex items-center">
+                  <div className="flex flex-col items-center gap-1">
+                    <div
+                      className={[
+                        "flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-semibold transition-all duration-200",
+                        isDone   ? "border-emerald-500 bg-emerald-500 text-white"
+                        : isActive ? "border-primary bg-primary text-primary-foreground"
+                        :            "border-border bg-background text-muted-foreground",
+                      ].join(" ")}
+                    >
+                      {isDone ? <Check className="h-4 w-4" /> : <Icon className="h-3.5 w-3.5" />}
+                    </div>
+                    <span className={`text-[10px] font-medium ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
+                      {s.label}
+                    </span>
+                  </div>
+                  {idx < STEPS.length - 1 && (
+                    <div className={[
+                      "mx-1 mb-4 h-0.5 w-12 flex-1 transition-all duration-300",
+                      vm.step > s.id ? "bg-emerald-500" : "bg-border",
+                    ].join(" ")} />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Override count badge (Step 3) */}
+          {vm.step === 3 && vm.overrideCount > 0 && (
+            <Badge variant="secondary" className="mt-2 w-fit text-amber-600">
+              {vm.overrideCount} override{vm.overrideCount !== 1 ? "s" : ""} applied
+            </Badge>
           )}
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 py-2">
-          {/* Tenant Slug */}
-          <div className="space-y-1.5">
-            <Label htmlFor="convert-tenant-code">{t("leads.convertDialog.tenantCode")}</Label>
-            <Input
-              id="convert-tenant-code"
-              value={tenantCode}
-              onChange={(e) => setTenantCode(e.target.value)}
-              placeholder={t("leads.convertDialog.tenantCodePlaceholder")}
-              disabled={isConverting}
-              autoComplete="off"
+        {/* ── Body ── */}
+        <ScrollArea className="max-h-[52vh] px-6 py-4">
+          {vm.step === 1 && (
+            <WizardStep1Edition
+              lead={lead}
+              editions={vm.editions}
+              isLoading={vm.isLoadingEditions}
+              selected={vm.selectedEdition}
+              onSelect={vm.setSelectedEdition}
             />
-            <p className="text-xs text-muted-foreground">
-              {t("leads.convertDialog.tenantCodeHint")}
-            </p>
-          </div>
-
-          {/* Admin Email */}
-          <div className="space-y-1.5">
-            <Label htmlFor="convert-admin-email">{t("leads.convertDialog.adminEmail")}</Label>
-            <Input
-              id="convert-admin-email"
-              type="email"
-              value={adminEmail}
-              onChange={(e) => setAdminEmail(e.target.value)}
-              placeholder={lead?.email ?? t("leads.convertDialog.adminEmailPlaceholder")}
-              disabled={isConverting}
-              autoComplete="off"
+          )}
+          {vm.step === 2 && (
+            <WizardStep2Setup
+              lead={lead}
+              edition={vm.selectedEdition}
+              state={vm.s2}
+              onChange={vm.setS2}
+              amountError={vm.amountError}
+              onAmountChange={vm.handleAmountChange}
             />
-            <p className="text-xs text-muted-foreground">
-              {t("leads.convertDialog.adminEmailHint")}
-            </p>
-          </div>
+          )}
+          {vm.step === 3 && (
+            <WizardStep3Features
+              edition={vm.selectedEdition}
+              groups={vm.featureGroups}
+              isLoading={vm.isLoadingFeatures}
+              overrides={vm.overrides}
+              expandedCategories={vm.expandedCategories}
+              onToggleCategory={vm.toggleCategory}
+              onOverrideChange={vm.handleOverrideChange}
+            />
+          )}
+          {vm.step === 4 && (
+            <WizardStep4Confirm
+              lead={lead}
+              edition={vm.selectedEdition}
+              setup={vm.s2}
+              overrideCount={vm.overrideCount}
+            />
+          )}
+        </ScrollArea>
 
-          {/* Subscription Type + Currency row */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="convert-sub-type">{t("leads.convertDialog.subscriptionType")}</Label>
-              <Select
-                value={subscriptionType}
-                onValueChange={setSubscriptionType}
-                disabled={isConverting}
+        {/* ── Footer ── */}
+        <div className="flex items-center justify-between border-t border-border px-6 py-4">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={vm.step === 1 ? vm.handleClose : vm.handleBack}
+            disabled={isConverting}
+            className="gap-2"
+          >
+            {vm.step === 1 ? "Cancel" : <><ArrowLeft className="h-4 w-4" />Back</>}
+          </Button>
+
+          <div className="flex items-center gap-2">
+            {vm.step < 4 && (
+              <Button
+                type="button"
+                onClick={vm.handleNext}
+                disabled={vm.step === 1 && !vm.selectedEdition}
+                className="gap-2"
               >
-                <SelectTrigger id="convert-sub-type">
-                  <SelectValue placeholder="—" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Monthly">
-                    {t("leads.convertDialog.subscriptionMonthly")}
-                  </SelectItem>
-                  <SelectItem value="Yearly">
-                    {t("leads.convertDialog.subscriptionYearly")}
-                  </SelectItem>
-                  <SelectItem value="Lifetime">
-                    {t("leads.convertDialog.subscriptionLifetime")}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="convert-currency">{t("leads.convertDialog.currency")}</Label>
-              <Select value={currency} onValueChange={setCurrency} disabled={isConverting}>
-                <SelectTrigger id="convert-currency">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="USD">USD</SelectItem>
-                  <SelectItem value="EUR">EUR</SelectItem>
-                  <SelectItem value="GBP">GBP</SelectItem>
-                  <SelectItem value="SAR">SAR</SelectItem>
-                  <SelectItem value="AED">AED</SelectItem>
-                  <SelectItem value="EGP">EGP</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* ── Custom Deal Price (G7) ─────────────────────────────────── */}
-          <div className="space-y-3 rounded-lg border border-border bg-muted/30 px-4 py-3">
-            {/* Toggle row */}
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <BadgeDollarSign className="h-4 w-4 shrink-0 text-amber-500" />
-                <div>
-                  <p className="text-sm font-medium leading-none">
-                    {t("leads.convertDialog.negotiatedPrice.toggle")}
-                  </p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    {t("leads.convertDialog.negotiatedPrice.toggleHint")}
-                  </p>
-                </div>
-              </div>
-              <Switch
-                id="convert-custom-price"
-                checked={useCustomPrice}
-                onCheckedChange={(v) => {
-                  setUseCustomPrice(v);
-                  if (!v) {
-                    setNegotiatedAmountRaw("");
-                    setAmountError("");
-                  }
-                }}
+                Next <ArrowRight className="h-4 w-4" />
+              </Button>
+            )}
+            {vm.step === 4 && (
+              <Button
+                type="button"
+                onClick={vm.handleSubmit}
                 disabled={isConverting}
-              />
-            </div>
-
-            {/* Amount + currency — shown only when toggled on */}
-            {useCustomPrice && (
-              <div className="grid grid-cols-2 gap-3 pt-1">
-                <div className="space-y-1.5">
-                  <Label htmlFor="convert-negotiated-amount">
-                    {t("leads.convertDialog.negotiatedPrice.amount")}
-                  </Label>
-                  <Input
-                    id="convert-negotiated-amount"
-                    type="number"
-                    min="0.01"
-                    step="0.01"
-                    value={negotiatedAmountRaw}
-                    onChange={(e) => {
-                      setNegotiatedAmountRaw(e.target.value);
-                      if (amountError) validateAmount(e.target.value);
-                    }}
-                    placeholder="0.00"
-                    disabled={isConverting}
-                    autoComplete="off"
-                    className={amountError ? "border-destructive" : ""}
-                  />
-                  {amountError && <p className="text-xs text-destructive">{amountError}</p>}
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="convert-negotiated-currency">
-                    {t("leads.convertDialog.negotiatedPrice.currency")}
-                  </Label>
-                  <Select
-                    value={negotiatedCurrency}
-                    onValueChange={setNegotiatedCurrency}
-                    disabled={isConverting}
-                  >
-                    <SelectTrigger id="convert-negotiated-currency">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="USD">USD</SelectItem>
-                      <SelectItem value="EUR">EUR</SelectItem>
-                      <SelectItem value="GBP">GBP</SelectItem>
-                      <SelectItem value="SAR">SAR</SelectItem>
-                      <SelectItem value="AED">AED</SelectItem>
-                      <SelectItem value="EGP">EGP</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <p className="col-span-2 text-xs text-amber-600 dark:text-amber-400">
-                  {t("leads.convertDialog.negotiatedPrice.warning")}
-                </p>
-              </div>
+                className="gap-2 bg-emerald-600 text-white hover:bg-emerald-700"
+              >
+                {isConverting
+                  ? <><Loader2 className="h-4 w-4 animate-spin" />Converting…</>
+                  : <><Check className="h-4 w-4" />Convert to Customer</>}
+              </Button>
             )}
           </div>
-
-          {/* Conversion Note */}
-          <div className="space-y-1.5">
-            <Label htmlFor="convert-note">{t("leads.convertDialog.conversionNote")}</Label>
-            <Textarea
-              id="convert-note"
-              value={conversionNote}
-              onChange={(e) => setConversionNote(e.target.value)}
-              placeholder={t("leads.convertDialog.conversionNotePlaceholder")}
-              disabled={isConverting}
-              rows={3}
-              className="resize-none"
-            />
-          </div>
-
-          <DialogFooter className="gap-2">
-            <Button type="button" variant="outline" onClick={handleClose} disabled={isConverting}>
-              {t("leads.convertDialog.cancel")}
-            </Button>
-            <Button
-              type="submit"
-              disabled={isConverting}
-              className="gap-2 bg-emerald-600 text-white hover:bg-emerald-700"
-            >
-              {isConverting ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  {t("leads.convertDialog.converting")}
-                </>
-              ) : (
-                <>
-                  <ArrowRight className="h-4 w-4" />
-                  {t("leads.convertDialog.convert")}
-                </>
-              )}
-            </Button>
-          </DialogFooter>
-        </form>
+        </div>
       </DialogContent>
     </Dialog>
   );
 }
+
+// ── Re-export alias for backwards compatibility ───────────────────────────────
+export { ConvertToTenantWizard as ConvertToTenantDialog };

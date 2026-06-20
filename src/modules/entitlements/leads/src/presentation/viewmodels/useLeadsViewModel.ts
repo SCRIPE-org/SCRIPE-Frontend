@@ -117,6 +117,17 @@ export function useLeadsViewModel() {
     staleTime: 30_000,
   });
 
+  // ── Editions Query (for CreateLeadDialog and wizard) ─────────────────────
+  const editionsQuery = useQuery({
+    queryKey: ["leads", "editions-for-conversion"],
+    queryFn: () => leadsRepository.getEditionsForConversion(),
+    staleTime: 5 * 60 * 1000, // 5 min — editions change rarely
+  });
+  const availableEditions = (editionsQuery.data ?? []).map((e) => ({
+    key: e.id,
+    displayName: e.name,
+  }));
+
   // ── Computed stats from list data ─────────────────────────────────────────
   const allLeads = listQuery.data?.items ?? [];
   const stats = {
@@ -428,6 +439,14 @@ export function useLeadsViewModel() {
     [deleteLeadMutation]
   );
 
+  /** Alias for the drawer "Close Lead" action — same mutation as deleteLead (soft-close). */
+  const handleCloseLead = useCallback(
+    async (id: string) => {
+      await deleteLeadMutation.mutateAsync(id);
+    },
+    [deleteLeadMutation]
+  );
+
   // ── Bulk selection handlers ──────────────────────────────────────────────────────────────────────────
 
   const handleToggleSelect = useCallback((id: string) => {
@@ -475,6 +494,7 @@ export function useLeadsViewModel() {
     pageSize,
     totalPages: Math.ceil((listQuery.data?.totalCount ?? 0) / pageSize),
     stats,
+    availableEditions,
 
     // Filters
     statusFilter,
@@ -543,6 +563,7 @@ export function useLeadsViewModel() {
     searchAssignableAdmins,
     handleAddNote,
     handleDeleteLead,
+    handleCloseLead,
     // Bulk
     handleToggleSelect,
     handleSelectAll,

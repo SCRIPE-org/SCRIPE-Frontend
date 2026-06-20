@@ -9,6 +9,53 @@ import type {
 } from "../entities/PlatformLead";
 import type { PagedResult } from "@modules/identity/core/domain/types";
 
+// ── Wizard Types (domain-level) ────────────────────────────────────────────────
+
+export interface EditionForConversion {
+  id: string;
+  name: string;
+  displayNameEn: string;
+  displayNameAr?: string;
+  categoryKey?: string;
+  isContactSalesOnly: boolean;
+  monthlyPrice?: number;
+  yearlyPrice?: number;
+  defaultCurrency: string;
+  featureCount: number;
+  isFeatured: boolean;
+}
+
+export interface EditionFeatureGroup {
+  category: string;
+  features: EditionFeatureItem[];
+}
+
+export interface EditionFeatureItem {
+  featureId: string;
+  featureName: string;
+  displayNameEn: string;
+  displayNameAr?: string;
+  valueType: "Boolean" | "Numeric" | "String";
+  editionValue: string;
+  featureDefaultValue: string;
+  description?: string;
+  sortOrder: number;
+}
+
+export interface FeatureOverride {
+  featureId: string;
+  value: string;
+}
+
+export interface StatusEmailPreview {
+  subject: string;
+  bodyHtml: string;
+  bodyText: string;
+  templateKey: string;
+  recipientEmail: string;
+  recipientName: string;
+}
+
 export interface LeadsListParams {
   page?: number;
   pageSize?: number;
@@ -20,6 +67,12 @@ export interface UpdateLeadStatusParams {
   id: string;
   status: LeadStatus;
   notes?: string;
+  /** When true, sends a notification email to the lead. Default: false. */
+  sendNotification?: boolean;
+  /** Optional override for the notification email subject. */
+  emailSubjectOverride?: string;
+  /** Optional HTML body override for the notification email. */
+  emailBodyOverride?: string;
 }
 
 export interface CreateLeadParams {
@@ -56,7 +109,13 @@ export interface ConvertLeadParams {
    * Null = falls back to `currency` field.
    */
   negotiatedCurrency?: string;
+  /**
+   * Per-feature quota overrides set during the conversion wizard step 3.
+   * Each entry overrides a specific feature value for this tenant only.
+   */
+  featureOverrides?: FeatureOverride[];
 }
+
 
 export interface ConvertLeadResult {
   tenantId: string;
@@ -117,4 +176,12 @@ export interface ILeadsRepository {
   ): Promise<string>;
   /** Retrieve all sent-email communication logs for a lead. */
   getCommunicationLogs(leadId: string): Promise<LeadCommunicationLog[]>;
+  /** Close a lead (CRM action). */
+  closeLead(id: string, reason?: string): Promise<void>;
+  /** Get editions available for the conversion wizard. */
+  getEditionsForConversion(): Promise<EditionForConversion[]>;
+  /** Get configurable feature groups for a specific edition. */
+  getEditionFeaturesForConversion(editionId: string): Promise<EditionFeatureGroup[]>;
+  /** Get a pre-built email template for a status transition. */
+  getStatusEmailPreview(leadId: string, targetStatus: string): Promise<StatusEmailPreview>;
 }

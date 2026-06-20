@@ -37,6 +37,7 @@ export class LeadsMapper {
       convertedAt: dto.convertedAt,
       convertedToTenantId: dto.convertedToTenantId,
       assignedToAdminId: dto.assignedToAdminId,
+      assignedAdminName: dto.assignedAdminName,
       notes: dto.notes,
       businessType: dto.businessType,
       teamSize: dto.teamSize,

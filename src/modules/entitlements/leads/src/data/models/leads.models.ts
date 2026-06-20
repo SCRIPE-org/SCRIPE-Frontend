@@ -34,6 +34,7 @@ export interface PlatformLeadResponseModel {
   convertedAt?: string;
   convertedToTenantId?: string;
   assignedToAdminId?: string;
+  assignedAdminName?: string;
   notes?: string;
   // Discovery intelligence
   businessType?: string;
@@ -104,3 +105,52 @@ export interface LeadCommunicationLogDto {
   recipientEmail: string;
   recipientName: string;
 }
+
+// ── Conversion Wizard DTOs ─────────────────────────────────────────────────────
+
+/** An edition available for selection in the conversion wizard step 1. */
+export interface EditionForConversionDto {
+  id: string;
+  name: string;
+  displayNameEn: string;
+  displayNameAr?: string;
+  categoryKey?: string;
+  isContactSalesOnly: boolean;
+  /** Standard monthly price in USD. Null for contact-sales editions. */
+  monthlyPrice?: number;
+  /** Standard yearly price in USD. Null for contact-sales editions. */
+  yearlyPrice?: number;
+  defaultCurrency: string;
+  featureCount: number;
+  isFeatured: boolean;
+}
+
+/** A group of configurable features for wizard step 3. */
+export interface EditionFeatureGroupDto {
+  category: string;
+  features: EditionFeatureItemDto[];
+}
+
+/** A single configurable feature with its edition-configured value. */
+export interface EditionFeatureItemDto {
+  featureId: string;
+  featureName: string;
+  displayNameEn: string;
+  displayNameAr?: string;
+  valueType: "Boolean" | "Numeric" | "String";
+  editionValue: string;
+  featureDefaultValue: string;
+  description?: string;
+  sortOrder: number;
+}
+
+/** Status-change email preview returned by the backend. */
+export interface StatusEmailPreviewDto {
+  subject: string;
+  bodyHtml: string;
+  bodyText: string;
+  templateKey: string;
+  recipientEmail: string;
+  recipientName: string;
+}
+

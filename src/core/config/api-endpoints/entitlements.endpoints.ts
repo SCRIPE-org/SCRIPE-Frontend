@@ -246,8 +246,14 @@ export const ENTITLEMENTS_ENDPOINTS = {
       CONVERT_TO_TENANT: (id: string) => `${V1}/leads/${id}/convert-to-tenant`,
       ACTIVITY: (id: string) => `${V1}/leads/${id}/activity`,
       DELETE: (id: string) => `${V1}/leads/${id}`,
+      CLOSE: (id: string) => `${V1}/leads/${id}/close`,
       BULK_STATUS: `${V1}/leads/bulk-status`,
       ADD_NOTE: (id: string) => `${V1}/leads/${id}/notes`,
+      STATUS_EMAIL_PREVIEW: (id: string) => `${V1}/leads/${id}/status-email-preview`,
+      COMMUNICATIONS: (id: string) => `${V1}/leads/${id}/communications`,
+      // Conversion wizard helpers
+      EDITIONS_FOR_CONVERSION: `${V1}/leads/conversion/editions`,
+      EDITION_FEATURES: (editionId: string) => `${V1}/leads/conversion/editions/${editionId}/features`,
     },
     // ===== ADMIN ONBOARDING ENGINE =====
     ONBOARDING_QUESTIONS: {
