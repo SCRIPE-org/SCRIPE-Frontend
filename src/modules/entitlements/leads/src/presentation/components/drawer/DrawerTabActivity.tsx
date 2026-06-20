@@ -84,10 +84,10 @@ export function DrawerTabActivity({
         ) : !activity || activity.length === 0 ? (
           <p className="text-xs text-zinc-500">{t("leads.activity.empty")}</p>
         ) : (
-          <ol className="relative space-y-5 border-s border-zinc-800 ps-4">
+          <ol className="relative space-y-5 border-s border-zinc-800">
             {activity.map((entry) => (
-              <li key={entry.id} className="relative">
-                <div className="absolute -start-[5px] mt-[5px] h-2.5 w-2.5 rounded-full bg-indigo-500 ring-2 ring-zinc-950" />
+              <li key={entry.id} className="relative ps-6">
+                <div className="absolute left-0 top-1 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-indigo-500 ring-4 ring-zinc-950" />
                 <p className="text-xs font-semibold text-zinc-300">
                   {entry.summary || t(`leads.activity.types.${entry.type}`)}
                 </p>

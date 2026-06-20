@@ -86,7 +86,7 @@ export function WizardStep2Setup({ lead, edition, state, onChange, amountError, 
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="wiz-currency">Currency</Label>
-          <Select value={state.currency} onValueChange={(v) => set("currency", v)}>
+          <Select value={state.currency} onValueChange={(v) => onChange({ ...state, currency: v, negotiatedCurrency: v })}>
             <SelectTrigger id="wiz-currency"><SelectValue /></SelectTrigger>
             <SelectContent>
               {CURRENCIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
@@ -125,31 +125,27 @@ export function WizardStep2Setup({ lead, edition, state, onChange, amountError, 
           )}
         </div>
         {state.useCustomPrice && (
-          <div className="grid grid-cols-2 gap-3 pt-1">
+          <div className="space-y-3 pt-1">
             <div className="space-y-1.5">
-              <Label htmlFor="wiz-neg-amount">Negotiated Amount</Label>
-              <Input
-                id="wiz-neg-amount"
-                type="number"
-                min="0.01"
-                step="0.01"
-                value={state.negotiatedAmount}
-                onChange={(e) => onAmountChange(e.target.value)}
-                placeholder="0.00"
-                className={amountError ? "border-destructive" : ""}
-              />
+              <Label htmlFor="wiz-neg-amount">Negotiated Amount ({state.currency})</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-2.5 text-xs font-semibold text-muted-foreground">
+                  {state.currency}
+                </span>
+                <Input
+                  id="wiz-neg-amount"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  value={state.negotiatedAmount}
+                  onChange={(e) => onAmountChange(e.target.value)}
+                  placeholder="0.00"
+                  className={`pl-12 ${amountError ? "border-destructive" : ""}`}
+                />
+              </div>
               {amountError && <p className="text-xs text-destructive">{amountError}</p>}
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="wiz-neg-currency">Currency</Label>
-              <Select value={state.negotiatedCurrency} onValueChange={(v) => set("negotiatedCurrency", v)}>
-                <SelectTrigger id="wiz-neg-currency"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {CURRENCIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <p className="col-span-2 flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400">
+            <p className="flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400">
               <AlertCircle className="h-3.5 w-3.5 shrink-0" />
               This overrides the standard catalog price for this customer.
             </p>

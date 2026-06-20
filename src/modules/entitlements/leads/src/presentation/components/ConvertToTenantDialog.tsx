@@ -113,7 +113,7 @@ export function ConvertToTenantWizard({
         </DialogHeader>
 
         {/* ── Body ── */}
-        <ScrollArea className="max-h-[52vh] px-6 py-4">
+        <ScrollArea className="max-h-[68vh] px-6 py-4">
           {vm.step === 1 && (
             <WizardStep1Edition
               lead={lead}
