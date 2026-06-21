@@ -10,7 +10,7 @@
 
 import { useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { systemContainer } from "@modules/identity/di";
+import { identityContainer } from "@modules/identity/di";
 import { useDebounce } from "@core/hooks/use-validation";
 import { useAppStore } from "@core/store/useAppStore";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
@@ -24,7 +24,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 export function usePermissionsViewModel() {
   const queryClient = useQueryClient();
   const { success, error: toastError } = useEnhancedToast();
-  const { permissionRepository } = systemContainer;
+  const { permissionRepository } = identityContainer;
 
   // ── Context detection (same pattern as features/editions) ──
   const userTenantId = useAppStore((s) => s.user?.tenantId);

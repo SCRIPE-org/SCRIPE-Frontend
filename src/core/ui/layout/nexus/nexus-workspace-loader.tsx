@@ -28,9 +28,9 @@ interface NexusWorkspaceLoaderProps {
 
 type Phase = "idle" | "entering" | "visible" | "exiting";
 
-const ENTER_MS = 280;
-const MIN_VISIBLE_MS = 600; // minimum time to show the loader (UX feel)
-const EXIT_MS = 320;
+const ENTER_MS = 180;
+const MIN_VISIBLE_MS = 250; // minimum time to show the loader (UX feel)
+const EXIT_MS = 200;
 
 export function NexusWorkspaceLoader({
   show,

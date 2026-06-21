@@ -14,6 +14,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import * as LucideIcons from "lucide-react";
 import { MenuItem } from "@core/navigation";
+import { startRoutingProgress } from "@core/ui/routing-progress-bar";
 
 interface NexusSearchPaletteProps {
   open: boolean;
@@ -117,6 +118,7 @@ export function NexusSearchPalette({ open, onOpenChange }: NexusSearchPalettePro
     // 2. Switch to the correct root item so the panel shows its children
     setActiveRootItemId(item.rootItemId);
     // 3. Navigate
+    startRoutingProgress();
     router.push(item.href);
     // 4. Close palette
     onOpenChange(false);

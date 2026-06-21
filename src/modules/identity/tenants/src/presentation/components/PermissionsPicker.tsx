@@ -12,9 +12,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useI18n } from "@core/providers/i18n-provider";
-import { systemContainer } from "@modules/identity/di";
+import { usePermissionsPickerViewModel } from "../viewmodels/usePermissionsPickerViewModel";
 import { Checkbox } from "@core/ui/checkbox";
 import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
@@ -43,17 +41,9 @@ export function PermissionsPicker({
   className,
   compact = false,
 }: PermissionsPickerProps) {
-  const { t, language } = useI18n();
-  const { permissionRepository } = systemContainer;
+  const { t, language, permissions, isLoading } = usePermissionsPickerViewModel();
   const [search, setSearch] = useState("");
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
-
-  // Fetch creator's permissions via Repository (Clean Architecture)
-  const { data: permissions, isLoading } = useQuery({
-    queryKey: ["permissions", "my"],
-    queryFn: () => permissionRepository.getMyPermissions(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
 
   // Group permissions by category
   const groupedPermissions = useMemo(() => {

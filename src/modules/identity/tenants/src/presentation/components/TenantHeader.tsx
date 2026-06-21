@@ -9,10 +9,7 @@
  */
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { useI18n } from "@core/providers/i18n-provider";
-import { usePermissions } from "@core/hooks/use-permissions";
-import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import React, { useMemo } from "react";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import {
@@ -40,56 +37,18 @@ import {
   Clock,
   Play,
 } from "lucide-react";
-import { systemContainer } from "@modules/identity/di";
 import type { Tenant } from "../../domain/entities/Tenant";
 import { TenantDeleteDialog } from "./TenantDeleteDialog";
 import { cn } from "@core/common/utils";
-import { appLogger } from "@/core/common/logger";
+import { useTenantHeaderViewModel, TenantStatus } from "../viewmodels/useTenantHeaderViewModel";
 
 // ============================================
 // Helpers
 // ============================================
 
-type TenantStatus = "active" | "suspended" | "canceled" | "expired" | "inactive";
+type LocalTenantStatus = TenantStatus;
 
-function getTenantDetailStatus(tenant: Tenant): TenantStatus {
-  // Suspension fields exist at runtime (from API) but TenantProps type doesn't declare them.
-  // Safe access via any cast — these come from the same backend DTO.
-  const raw = tenant as any;
-  if (raw.isSuspended && raw.suspensionType === "Canceled") return "canceled";
-  if (raw.isSuspended) return "suspended";
-  if (!tenant.isActive) return "inactive";
-  if (tenant.editionEndDate) {
-    const endDate = new Date(tenant.editionEndDate);
-    if (endDate < new Date()) return "expired";
-  }
-  return "active";
-}
-
-function getDaysRemaining(endDate?: string): number | null {
-  if (!endDate) return null;
-  const end = new Date(endDate);
-  const now = new Date();
-  return Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-}
-
-function getProgressPercentage(endDate?: string): number {
-  if (!endDate) return 100;
-  const days = getDaysRemaining(endDate);
-  if (days === null || days <= 0) return 0;
-  if (days >= 365) return 100;
-  return Math.min(100, Math.round((days / 365) * 100));
-}
-
-function getProgressColor(days: number | null): string {
-  if (days === null) return "bg-primary";
-  if (days <= 0) return "bg-destructive";
-  if (days <= 7) return "bg-red-500";
-  if (days <= 30) return "bg-amber-500";
-  return "bg-emerald-500";
-}
-
-const statusBorderGradient: Record<TenantStatus, string> = {
+const statusBorderGradient: Record<LocalTenantStatus, string> = {
   active: "from-emerald-500 via-primary to-emerald-500",
   suspended: "from-amber-500 via-amber-400 to-amber-500",
   canceled: "from-red-500 via-red-400 to-red-500",
@@ -97,7 +56,7 @@ const statusBorderGradient: Record<TenantStatus, string> = {
   inactive: "from-muted-foreground/40 via-muted-foreground/20 to-muted-foreground/40",
 };
 
-const statusIconBg: Record<TenantStatus, string> = {
+const statusIconBg: Record<LocalTenantStatus, string> = {
   active: "from-primary/20 to-emerald-500/10 border-primary/20",
   suspended: "from-amber-500/20 to-amber-500/5 border-amber-500/20",
   canceled: "from-red-500/20 to-red-500/5 border-red-500/20",
@@ -116,78 +75,37 @@ interface TenantHeaderProps {
 }
 
 export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
-  const { t, direction } = useI18n();
-  const { hasPermission } = usePermissions();
-  const isRtl = direction === "rtl";
-
-  const status = getTenantDetailStatus(tenant);
-  const daysLeft = getDaysRemaining(tenant.editionEndDate);
-  const progress = getProgressPercentage(tenant.editionEndDate);
-  const progressColor = getProgressColor(daysLeft);
-
-  // Permissions
-  const canUpdate = hasPermission(SYSTEM_PERMISSIONS.TENANTS_UPDATE);
-  const canDelete = hasPermission(SYSTEM_PERMISSIONS.TENANTS_DELETE);
-  const canDrillDown = hasPermission(SYSTEM_PERMISSIONS.TENANTS_DRILL_DOWN);
-
-  // Dialog states
-  const [editOpen, setEditOpen] = useState(false);
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [statusConfirmOpen, setStatusConfirmOpen] = useState(false);
-
-  // Edit form
-  const [editForm, setEditForm] = useState({
-    name: tenant.name,
-    description: tenant.description || "",
-    isActive: tenant.isActive,
-  });
-
-  // Handlers
-  const handleEditSubmit = async () => {
-    try {
-      setIsUpdating(true);
-      await systemContainer.tenantRepository.update(tenant.id, {
-        name: editForm.name,
-        description: editForm.description || undefined,
-        isActive: editForm.isActive,
-      });
-      setEditOpen(false);
-      onUpdate?.();
-    } catch (error) {
-      appLogger.error("Failed to update tenant:", error);
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
-  const handleToggleStatus = async () => {
-    try {
-      setIsUpdating(true);
-      await systemContainer.tenantService.toggleStatus(tenant.id, !tenant.isActive);
-      onUpdate?.();
-    } catch (error) {
-      appLogger.error("Failed to toggle tenant status:", error);
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
-  const handleDelete = async (cascadeChildren: boolean) => {
-    try {
-      setIsDeleting(true);
-      await systemContainer.tenantRepository.delete(tenant.id, { cascadeChildren });
-      window.location.href = "/tenants";
-    } catch (error) {
-      appLogger.error("Failed to delete tenant:", error);
-      setIsDeleting(false);
-    }
-  };
+  const {
+    t,
+    direction,
+    isRtl,
+    status,
+    daysLeft,
+    progress,
+    progressColor,
+    canUpdate,
+    canDelete,
+    canDrillDown,
+    editOpen,
+    deleteOpen,
+    isUpdating,
+    isDeleting,
+    statusConfirmOpen,
+    setStatusConfirmOpen,
+    setDeleteOpen,
+    editForm,
+    handleEditSubmit,
+    handleToggleStatus,
+    handleDelete,
+    handleEditOpenChange,
+    handleSetFormName,
+    handleSetFormDescription,
+    handleSetFormActive,
+  } = useTenantHeaderViewModel({ tenant, onUpdate });
 
   // Status badge
   const statusBadge = useMemo(() => {
-    const labels: Record<TenantStatus, string> = {
+    const labels: Record<LocalTenantStatus, string> = {
       active: t("tenant.active") || "Active",
       suspended: t("tenant.suspended") || "Suspended",
       canceled: t("tenant.canceled") || "Canceled",
@@ -195,7 +113,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
       inactive: t("tenant.inactive") || "Inactive",
     };
 
-    const variants: Record<TenantStatus, "success" | "destructive" | "outline" | "secondary"> = {
+    const variants: Record<LocalTenantStatus, "success" | "destructive" | "outline" | "secondary"> = {
       active: "success",
       suspended: "outline",
       canceled: "destructive",
@@ -203,7 +121,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
       inactive: "secondary",
     };
 
-    const icons: Record<TenantStatus, typeof Pause | null> = {
+    const icons: Record<LocalTenantStatus, typeof Pause | null> = {
       active: null,
       suspended: Pause,
       canceled: Ban,
@@ -394,14 +312,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    setEditForm({
-                      name: tenant.name,
-                      description: tenant.description || "",
-                      isActive: tenant.isActive,
-                    });
-                    setEditOpen(true);
-                  }}
+                  onClick={() => handleEditOpenChange(true)}
                 >
                   <Pencil className="me-1.5 h-4 w-4" />
                   {t("common.edit")}
@@ -469,7 +380,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
       </div>
 
       {/* Edit Dialog */}
-      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+      <Dialog open={editOpen} onOpenChange={handleEditOpenChange}>
         <DialogContent dir={direction}>
           <DialogHeader>
             <DialogTitle>{t("tenant.editTenant")}</DialogTitle>
@@ -481,7 +392,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
               <Input
                 id="name"
                 value={editForm.name}
-                onChange={(e) => setEditForm((prev) => ({ ...prev, name: e.target.value }))}
+                onChange={(e) => handleSetFormName(e.target.value)}
               />
             </div>
             <div className="space-y-2">
@@ -489,12 +400,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
               <Textarea
                 id="description"
                 value={editForm.description}
-                onChange={(e) =>
-                  setEditForm((prev) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }))
-                }
+                onChange={(e) => handleSetFormDescription(e.target.value)}
                 rows={3}
               />
             </div>
@@ -503,14 +409,12 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
               <Switch
                 id="isActive"
                 checked={editForm.isActive}
-                onCheckedChange={(checked) =>
-                  setEditForm((prev) => ({ ...prev, isActive: checked }))
-                }
+                onCheckedChange={handleSetFormActive}
               />
             </div>
           </div>
           <DialogFooter className={cn(isRtl && "flex-row-reverse sm:flex-row-reverse")}>
-            <Button variant="outline" onClick={() => setEditOpen(false)}>
+            <Button variant="outline" onClick={() => handleEditOpenChange(false)}>
               {t("common.cancel")}
             </Button>
             <Button onClick={handleEditSubmit} loading={isUpdating}>

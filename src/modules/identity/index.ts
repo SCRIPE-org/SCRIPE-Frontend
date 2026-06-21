@@ -12,4 +12,4 @@ export * from "./permissions";
 export * from "./tenants";
 
 // Re-export DI container
-export { identityContainer, systemContainer } from "./di";
+export { identityContainer } from "./di";

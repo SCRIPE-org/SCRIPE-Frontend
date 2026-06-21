@@ -22,9 +22,9 @@ import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { appLogger } from "@core/common/logger";
 
 /** How long to wait AFTER the JIT fetch + pathname settle before hiding the loader */
-const SETTLE_MS = 350;
+const SETTLE_MS = 100;
 /** Minimum time the loader is shown (so very fast cache-hits still feel intentional) */
-const MIN_VISIBLE_MS = 600;
+const MIN_VISIBLE_MS = 250;
 
 export interface WorkspaceLoaderState {
   show: boolean;

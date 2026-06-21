@@ -11,12 +11,11 @@ import {
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
-import { useI18n } from "@core/providers/i18n-provider";
 import type { Admin } from "../../domain/entities/Admin";
 import { GenericSelect } from "@core/crud/components/generic-select";
-import { systemContainer } from "@modules/identity/di";
 import { appLogger } from "@/core/common/logger";
 import { SYSTEM_TENANT_ID } from "@modules/identity/tenants/src/domain/entities/Tenant";
+import { useAdminTransferViewModel } from "../viewmodels/useAdminTransferViewModel";
 
 // Special value to represent "System" tenant (null ID = Super Admin)
 const SYSTEM_TENANT_VALUE = SYSTEM_TENANT_ID;
@@ -39,7 +38,8 @@ export function AdminTransferDialog({
   onTransfer,
   isTransferring,
 }: AdminTransferDialogProps) {
-  const { t, language } = useI18n();
+  const vm = useAdminTransferViewModel();
+  const { t, handleTenantSearch, handleRoleSearch } = vm;
 
   // targetTenantId can be:
   // - "" (no selection)
@@ -87,62 +87,15 @@ export function AdminTransferDialog({
     onOpenChange(false);
   };
 
-  const handleTenantSearch = useCallback(async (query: string) => {
-    try {
-      // Get tenants from backend - includes "System" pseudo-tenant for Super Admins
-      const result = await systemContainer.tenantRepository.getMyTenantAndChildren(query);
+  const handleTenantSearchLocal = useCallback(async (query: string) => {
+    return await handleTenantSearch(query);
+  }, [handleTenantSearch]);
 
-      return result.map((tenant) => ({
-        // Use special value for null ID (System tenant)
-        value: tenant.id ?? SYSTEM_TENANT_VALUE,
-        label: `${tenant.name} (${tenant.code})`,
-      }));
-    } catch (e) {
-      appLogger.error("[AdminTransferDialog] Tenant search failed:", e);
-      return [];
-    }
-  }, []);
-
-  const handleRoleSearch = useCallback(
+  const handleRoleSearchLocal = useCallback(
     async (query: string) => {
-      try {
-        // For System tenant, search roles with no tenantId (system-level roles)
-        // For regular tenant, search roles for that specific tenant
-        const searchTenantId = isSystemTenantSelected ? undefined : targetTenantId;
-
-        // Don't search if we haven't selected a tenant yet
-        if (!hasTenantSelected) return [];
-
-        appLogger.info("[AdminTransferDialog] Searching roles:", {
-          searchTenantId,
-          isSystemTenant: isSystemTenantSelected,
-          query,
-        });
-
-        const result = searchTenantId
-          ? await systemContainer.roleRepository.getAll({
-              search: query,
-              page: 1,
-              pageSize: 20,
-              tenantId: searchTenantId,
-              strict: true,
-            })
-          : await systemContainer.roleRepository.getMyTenantRoles({
-              search: query,
-              page: 1,
-              pageSize: 20,
-            });
-
-        return result.items.map((role) => ({
-          value: role.id,
-          label: language === "ar" ? role.nameAr : role.nameEn,
-        }));
-      } catch (e) {
-        appLogger.error("[AdminTransferDialog] Role search failed:", e);
-        return [];
-      }
+      return await handleRoleSearch(query, targetTenantId, isSystemTenantSelected, hasTenantSelected);
     },
-    [targetTenantId, isSystemTenantSelected, hasTenantSelected, language]
+    [handleRoleSearch, targetTenantId, isSystemTenantSelected, hasTenantSelected]
   );
 
   if (!admin) return null;
@@ -168,7 +121,7 @@ export function AdminTransferDialog({
               searchType="server"
               placeholder={t("admin.selectTenant") || "Select target tenant..."}
               searchPlaceholder={t("common.search") || "Search..."}
-              onServerSearch={handleTenantSearch}
+              onServerSearch={handleTenantSearchLocal}
               onValueChange={(val: string | string[]) => {
                 appLogger.info("[AdminTransferDialog] Tenant selected:", val);
                 setTargetTenantId(val as string);
@@ -188,7 +141,7 @@ export function AdminTransferDialog({
               searchType="server"
               placeholder={t("admin.selectRole") || "Select role..."}
               searchPlaceholder={t("common.search") || "Search roles..."}
-              onServerSearch={handleRoleSearch}
+              onServerSearch={handleRoleSearchLocal}
               onValueChange={(val: string | string[]) => setTargetRoleId(val as string)}
               value={targetRoleId}
               disabled={isTransferring || !hasTenantSelected}

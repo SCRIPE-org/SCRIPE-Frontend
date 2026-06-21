@@ -31,6 +31,8 @@ import {
   TopbarPanelToggle,
   TopbarSearchButton,
 } from "./_parts/topbar-parts";
+import { useNavigationStore } from "@/core/navigation/store/useNavigationStore";
+import { startRoutingProgress } from "@core/ui/routing-progress-bar";
 
 interface NexusTopbarProps {
   onMobileMenuOpen: () => void;
@@ -64,8 +66,10 @@ export function NexusTopbar({
   );
 
   // ── Breadcrumb segments ───────────────────────────────────────────────────
+  const breadcrumbOverride = useNavigationStore((s) => s.breadcrumbOverride);
   const segments = pathname.split("/").filter(Boolean);
   const pageName = segments[segments.length - 1] ?? "";
+  const parentName = segments[segments.length - 2] ?? "";
   const formattedPage = pageName.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
   const workspaceName = activeWorkspace?.getLocalizedName(language) ?? BRAND?.name ?? "Platform";
@@ -75,8 +79,29 @@ export function NexusTopbar({
       : activeRootItem.nameEn || activeRootItem.nameAr
     : null;
 
+  const isIdString = (str: string): boolean => {
+    if (!str) return false;
+    const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(str);
+    if (isGuid) return true;
+    const isEncrypted = str.length >= 20 && /^[a-zA-Z0-9_\-+ /=]+$/.test(str);
+    return isEncrypted;
+  };
+
+  const formatParentSegmentAsTitle = (parentSegment: string): string => {
+    if (!parentSegment) return "Details";
+    let word = parentSegment.replace(/[-_]/g, " ");
+    if (word.toLowerCase().endsWith("s") && word.length > 1) {
+      word = word.slice(0, -1);
+    }
+    return word.replace(/\b\w/g, (c) => c.toUpperCase()) + " Details";
+  };
+
   let displayPageName = formattedPage;
-  if (activeRootItem && activeRootItem.children) {
+  if (breadcrumbOverride) {
+    displayPageName = breadcrumbOverride;
+  } else if (isIdString(pageName)) {
+    displayPageName = formatParentSegmentAsTitle(parentName);
+  } else if (activeRootItem && activeRootItem.children) {
     let bestMatch: any = null;
     let maxLen = 0;
     const search = (nodes: any[]) => {
@@ -211,7 +236,10 @@ export function NexusTopbar({
           <TopbarHomeButton
             isDark={isDark}
             ariaLabel={language === "ar" ? "الصفحة الرئيسية" : "Go to Home"}
-            onClick={() => router.push(workspaceHomeRoute)}
+            onClick={() => {
+              startRoutingProgress();
+              router.push(workspaceHomeRoute);
+            }}
           />
         )}
 

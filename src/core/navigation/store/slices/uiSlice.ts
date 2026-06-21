@@ -9,6 +9,8 @@ export const createUiSlice: StateCreator<NavigationStoreState, [], [], UiSlice> 
   isInitialLoading: true,
   isWorkspaceSwitching: false,
   transitionTargetRoute: null,
+  breadcrumbOverride: null,
+  setBreadcrumbOverride: (title) => set({ breadcrumbOverride: title }),
 
   setActiveWorkspace: (key) =>
     set((state) => {
@@ -51,6 +53,7 @@ export const createUiSlice: StateCreator<NavigationStoreState, [], [], UiSlice> 
       isInitialLoading: true,
       isWorkspaceSwitching: false,
       transitionTargetRoute: null,
+      breadcrumbOverride: null,
       contextKey: "",
     }),
 });

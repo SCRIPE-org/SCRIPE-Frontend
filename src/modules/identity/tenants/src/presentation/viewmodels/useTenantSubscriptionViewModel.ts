@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
-import { systemContainer } from "@modules/identity/di";
+import { identityContainer } from "@modules/identity/di";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type {
   SubscriptionModel,
@@ -105,12 +105,18 @@ export interface UseTenantSubscriptionViewModelResult {
   // Receipt
   downloadReceipt: () => void;
   isDownloadingReceipt: boolean;
+
+  // Change Plan Promotions
+  changePlanPromotionsRaw: any[];
+  isLoadingChangePlanPromos: boolean;
 }
 
 // ── ViewModel ──
 
 export function useTenantSubscriptionViewModel(
-  tenantId: string
+  tenantId: string,
+  selectedEditionId?: string,
+  changePlanOpen?: boolean
 ): UseTenantSubscriptionViewModelResult {
   const { t } = useI18n();
   const { success, error: enhancedErrorToast } = useEnhancedToast();
@@ -126,7 +132,7 @@ export function useTenantSubscriptionViewModel(
     error,
   } = useQuery({
     queryKey,
-    queryFn: () => systemContainer.tenantRepository.getTenantSubscriptions(tenantId),
+    queryFn: () => identityContainer.tenantRepository.getTenantSubscriptions(tenantId),
     enabled: !!tenantId,
   });
 
@@ -139,7 +145,13 @@ export function useTenantSubscriptionViewModel(
 
   const { data: availableEditionsData, isLoading: isEditionsLoading } = useQuery({
     queryKey: ["editions", "available"],
-    queryFn: () => systemContainer.tenantRepository.getAvailableEditions(),
+    queryFn: () => identityContainer.tenantRepository.getAvailableEditions(),
+  });
+
+  const { data: changePlanPromotionsRaw = [], isLoading: isLoadingChangePlanPromos } = useQuery({
+    queryKey: ["entitlements", "editions", selectedEditionId, "promotions", "changePlan"],
+    queryFn: () => identityContainer.tenantRepository.getEditionPromotions(selectedEditionId!),
+    enabled: !!selectedEditionId && !!changePlanOpen,
   });
 
   // ── Computed ──
@@ -223,7 +235,7 @@ export function useTenantSubscriptionViewModel(
       promoCode?: string;
       promotionId?: string;
     }) => {
-      await systemContainer.tenantRepository.assignEdition(
+      await identityContainer.tenantRepository.assignEdition(
         tenantId,
         editionId,
         type,
@@ -254,7 +266,7 @@ export function useTenantSubscriptionViewModel(
       promoCode?: string;
       promotionId?: string;
     }) => {
-      await systemContainer.tenantRepository.changeEdition(
+      await identityContainer.tenantRepository.changeEdition(
         tenantId,
         editionId,
         type,
@@ -272,7 +284,7 @@ export function useTenantSubscriptionViewModel(
 
   const renewMutation = useMutation({
     mutationFn: async (type: string) => {
-      return await systemContainer.tenantRepository.renewSubscription(tenantId, type);
+      return await identityContainer.tenantRepository.renewSubscription(tenantId, type);
     },
     onSuccess: (msg) => {
       appLogger.debug("renewMutation.onSuccess fired! msg:", msg);
@@ -284,7 +296,7 @@ export function useTenantSubscriptionViewModel(
 
   const convertMutation = useMutation({
     mutationFn: async (type: string) => {
-      return await systemContainer.tenantRepository.convertTrial(tenantId, type);
+      return await identityContainer.tenantRepository.convertTrial(tenantId, type);
     },
     onSuccess: (msg) => {
       successToast(msg || t("tenant.trialConverted") || "Trial converted to paid plan");
@@ -305,7 +317,7 @@ export function useTenantSubscriptionViewModel(
       refundType?: string;
       customRefundAmount?: number;
     }) => {
-      return await systemContainer.tenantRepository.suspendSubscription(
+      return await identityContainer.tenantRepository.suspendSubscription(
         tenantId,
         reason,
         useFallback,
@@ -322,7 +334,7 @@ export function useTenantSubscriptionViewModel(
 
   const resumeMutation = useMutation({
     mutationFn: async (type?: string) => {
-      return await systemContainer.tenantRepository.resumeSubscription(tenantId, type);
+      return await identityContainer.tenantRepository.resumeSubscription(tenantId, type);
     },
     onSuccess: (msg) => {
       successToast(msg || t("tenant.subscriptionResumed") || "Subscription resumed");
@@ -343,7 +355,7 @@ export function useTenantSubscriptionViewModel(
       refundType?: string;
       customRefundAmount?: number;
     }) => {
-      return await systemContainer.tenantRepository.cancelSubscription(
+      return await identityContainer.tenantRepository.cancelSubscription(
         tenantId,
         reason,
         useFallback,
@@ -360,7 +372,7 @@ export function useTenantSubscriptionViewModel(
 
   const resyncMutation = useMutation({
     mutationFn: async () => {
-      await systemContainer.tenantRepository.resyncPermissions(tenantId);
+      await identityContainer.tenantRepository.resyncPermissions(tenantId);
     },
     onSuccess: () => {
       successToast(t("tenant.permissionsResynced") || "Permissions re-synced from edition");
@@ -371,7 +383,7 @@ export function useTenantSubscriptionViewModel(
 
   const changeCurrencyMutation = useMutation({
     mutationFn: async (currency: string) => {
-      return await systemContainer.tenantRepository.changeCurrency(tenantId, currency);
+      return await identityContainer.tenantRepository.changeCurrency(tenantId, currency);
     },
     onSuccess: (msg) => {
       successToast(msg || t("tenant.currencyChanged") || "Billing currency changed");
@@ -482,11 +494,14 @@ export function useTenantSubscriptionViewModel(
     isChangingCurrency: changeCurrencyMutation.isPending,
 
     getDowngradeImpact: (targetEditionId: string) =>
-      systemContainer.tenantRepository.getDowngradeImpact(tenantId, targetEditionId),
+      identityContainer.tenantRepository.getDowngradeImpact(tenantId, targetEditionId),
     previewPrice: (editionId: string, currency: string, type: string) =>
-      systemContainer.tenantRepository.previewPrice(editionId, currency, type),
+      identityContainer.tenantRepository.previewPrice(editionId, currency, type),
 
     downloadReceipt: () => receiptMutation.mutate(),
     isDownloadingReceipt: receiptMutation.isPending,
+
+    changePlanPromotionsRaw,
+    isLoadingChangePlanPromos,
   };
 }

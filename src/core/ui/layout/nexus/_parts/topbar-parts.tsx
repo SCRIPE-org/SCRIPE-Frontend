@@ -1,9 +1,11 @@
 "use client";
 
 import React from "react";
-import { Search, Home } from "lucide-react";
+import { Search, Home, ChevronDown } from "lucide-react";
+import { startRoutingProgress } from "@core/ui/routing-progress-bar";
 import { NotificationBell } from "@core/ui/notification";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
+import { useAppStore } from "@core/store/useAppStore";
 import {
   PanelMenuIcon,
   PanelMenuIconRTL,
@@ -11,6 +13,20 @@ import {
   PanelCollapseIconRTL,
 } from "@core/ui/layout/navigation/nav-icons";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
+import { useRouter } from "next/navigation";
+import { useI18n } from "@core/providers/i18n-provider";
+import { useWorkspace } from "@core/providers/workspace-provider";
+import { useWorkspaceTransitionContext } from "../nexus-layout";
+import { cn } from "@core/common/utils";
+import type { MenuItem } from "@core/navigation";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@core/ui/dropdown-menu";
 
 // ── Breadcrumbs ──────────────────────────────────────────────────────────────
 export function BreadcrumbSep({ isRTL, isDark }: { isRTL: boolean; isDark: boolean }) {
@@ -45,6 +61,18 @@ export interface TopbarBreadcrumbsProps {
   displayPageName: string;
 }
 
+function findFirstLeafRoute(item: MenuItem): string | null {
+  if (item.href) return item.href;
+  if (item.children && item.children.length > 0) {
+    const sorted = [...item.children].sort((a, b) => a.order - b.order);
+    for (const child of sorted) {
+      const route = findFirstLeafRoute(child);
+      if (route) return route;
+    }
+  }
+  return null;
+}
+
 export function TopbarBreadcrumbs({
   isRTL,
   isDark,
@@ -52,6 +80,20 @@ export function TopbarBreadcrumbs({
   activeRootName,
   displayPageName,
 }: TopbarBreadcrumbsProps) {
+  const { workspaceGroups, rootMenuItems, setActiveRootItemId, activeWorkspace, activeRootItem } = useWorkspace();
+  const { switchWorkspace } = useWorkspaceTransitionContext();
+  const { language } = useI18n();
+  const router = useRouter();
+  const tenantCode = useAppStore((s) => s.tenantCode);
+
+  const sortedWorkspaces = React.useMemo(() => {
+    return [...workspaceGroups].sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder);
+  }, [workspaceGroups]);
+
+  const activeGroupSiblings = React.useMemo(() => {
+    return rootMenuItems.filter((item) => item.slug !== "modules-group");
+  }, [rootMenuItems]);
+
   return (
     <div
       style={{
@@ -64,40 +106,173 @@ export function TopbarBreadcrumbs({
         minWidth: 0,
       }}
     >
-      <span
-        style={{
-          color: isDark ? "#64748B" : "#94A3B8",
-          fontWeight: 500,
-          flexShrink: 0,
-          whiteSpace: "nowrap",
-        }}
-      >
-        {workspaceName}
-      </span>
+      {/* ── Level 1: Workspace ── */}
+      <div className="flex items-center gap-0.5 shrink-0">
+        <button
+          type="button"
+          onClick={() => {
+            const isPlatformContext = tenantCode === null;
+            const homeRoute = activeWorkspace
+              ? (isPlatformContext
+                ? (activeWorkspace.platformHomeRoute ?? activeWorkspace.homeRoute ?? "/")
+                : (activeWorkspace.homeRoute ?? "/"))
+              : "/";
+            startRoutingProgress();
+            router.push(homeRoute);
+          }}
+          className="rounded-md px-1.5 py-0.5 font-medium transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none cursor-pointer"
+          style={{
+            color: isDark ? "#A0AEC0" : "#718096",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {workspaceName}
+        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className="flex h-5 w-5 items-center justify-center rounded-md transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none cursor-pointer"
+              style={{
+                color: isDark ? "#A0AEC0" : "#718096",
+              }}
+            >
+              <ChevronDown size={12} className="opacity-60" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-56 border-border/40 bg-popover/95 backdrop-blur-md">
+            <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              {language === "ar" ? "مساحات العمل" : "Workspaces"}
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {sortedWorkspaces.map((ws) => {
+              const isActive = activeWorkspace?.workspaceKey === ws.workspaceKey;
+              const wsLabel = language === "ar"
+                ? ws.workspaceNameAr || ws.workspaceNameEn
+                : ws.workspaceNameEn || ws.workspaceNameAr;
+              const wsAccent = ws.accentColor || (isDark ? "#9B8FE0" : "#6258c4");
 
-      {activeRootName && (
+              return (
+                <DropdownMenuItem
+                  key={ws.workspaceKey}
+                  onClick={() => {
+                    if (!isActive && !ws.isLocked) {
+                      switchWorkspace(ws.workspaceKey);
+                    }
+                  }}
+                  disabled={ws.isLocked}
+                  className={cn(
+                    "flex items-center gap-2.5 px-3 py-2 cursor-pointer rounded-md text-sm transition-colors",
+                    isActive && "bg-accent/40 font-semibold text-accent-foreground"
+                  )}
+                >
+                  <div
+                    style={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: 6,
+                      background: `${wsAccent}22`,
+                      border: `1px solid ${wsAccent}40`,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 10,
+                      fontWeight: 700,
+                      color: wsAccent,
+                    }}
+                  >
+                    {ws.abbreviation ?? ws.workspaceKey.slice(0, 2).toUpperCase()}
+                  </div>
+                  <span className="flex-1 truncate">{wsLabel}</span>
+                  {ws.isLocked && <span className="text-[10px] text-yellow-600">🔒</span>}
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      {/* ── Level 2: Root Active Group ── */}
+      {activeRootName && activeRootItem && (
         <>
           <BreadcrumbSep isRTL={isRTL} isDark={isDark} />
-          <span
-            style={{
-              color: isDark ? "#94A3B8" : "#64748B",
-              fontWeight: 500,
-              flexShrink: 0,
-              whiteSpace: "nowrap",
-            }}
-          >
-            {activeRootName}
-          </span>
+          <div className="flex items-center gap-0.5 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                const route = findFirstLeafRoute(activeRootItem);
+                if (route) {
+                  startRoutingProgress();
+                  router.push(route);
+                }
+              }}
+              className="rounded-md px-1.5 py-0.5 font-medium transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none cursor-pointer"
+              style={{
+                color: isDark ? "#CBD5E1" : "#475569",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {activeRootName}
+            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="flex h-5 w-5 items-center justify-center rounded-md transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none cursor-pointer"
+                  style={{
+                    color: isDark ? "#CBD5E1" : "#475569",
+                  }}
+                >
+                  <ChevronDown size={12} className="opacity-60" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-52 border-border/40 bg-popover/95 backdrop-blur-md">
+                <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  {language === "ar" ? "الأقسام" : "Sections"}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {activeGroupSiblings.map((item) => {
+                  const isActive = activeRootItem?.id === item.id;
+                  const label = language === "ar"
+                    ? item.nameAr || item.nameEn
+                    : item.nameEn || item.nameAr;
+
+                  return (
+                    <DropdownMenuItem
+                      key={item.id}
+                      onClick={() => {
+                        if (!isActive) {
+                          setActiveRootItemId(item.id);
+                        }
+                        const route = findFirstLeafRoute(item);
+                        if (route) {
+                          startRoutingProgress();
+                          router.push(route);
+                        }
+                      }}
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-1.5 cursor-pointer rounded-md text-sm transition-colors",
+                        isActive && "bg-accent/40 font-semibold text-accent-foreground"
+                      )}
+                    >
+                      <span className="flex-1 truncate">{label}</span>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </>
       )}
 
+      {/* ── Level 3: Active Page / Entity Name ── */}
       {displayPageName && (
         <>
           <BreadcrumbSep isRTL={isRTL} isDark={isDark} />
           <span
+            className="px-1.5 py-0.5 font-semibold animate-in fade-in slide-in-from-bottom-1 duration-200"
             style={{
               color: isDark ? "#F8FAFC" : "#0F172A",
-              fontWeight: 600,
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",

@@ -11,7 +11,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@core/hooks/use-toast";
 import { useI18n } from "@core/providers/i18n-provider";
-import { systemContainer } from "@modules/identity/di";
+import { identityContainer } from "@modules/identity/di";
 import type {
   TenantSettingsModel,
   UpdateTenantSettingsRequest,
@@ -52,7 +52,7 @@ export function useTenantSettingsViewModel(tenantId: string): UseTenantSettingsV
   } = useQuery({
     queryKey: ["tenant-settings", tenantId],
     queryFn: async () => {
-      return systemContainer.tenantService.getSettings(tenantId);
+      return identityContainer.tenantService.getSettings(tenantId);
     },
     enabled: !!tenantId,
   });
@@ -60,7 +60,7 @@ export function useTenantSettingsViewModel(tenantId: string): UseTenantSettingsV
   // Update Settings
   const updateMutation = useMutation({
     mutationFn: async (data: UpdateTenantSettingsRequest) => {
-      await systemContainer.tenantService.updateSettings(tenantId, data);
+      await identityContainer.tenantService.updateSettings(tenantId, data);
     },
     onSuccess: () => {
       toast({
@@ -95,7 +95,7 @@ export function useTenantSettingsViewModel(tenantId: string): UseTenantSettingsV
     // Logo Upload
     uploadLogo: async (file: File) => {
       try {
-        const result = await systemContainer.tenantService.uploadLogo(tenantId, file);
+        const result = await identityContainer.tenantService.uploadLogo(tenantId, file);
         toast({
           title: t("common.success") || "Success",
           description: t("tenant.settingsSaved") || "Settings updated successfully",

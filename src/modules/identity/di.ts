@@ -106,7 +106,7 @@ export function getIdentityContainer(): IdentityContainer {
 /**
  * Identity container accessor (for use in components)
  *
- * MIGRATION NOTE: This was previously exported as `systemContainer`.
+ * MIGRATION NOTE: This was previously exported as `identityContainer`.
  * For backward compatibility during migration, both names are exported.
  */
 export const identityContainer = {
@@ -149,9 +149,3 @@ export const identityContainer = {
     return getIdentityContainer().usersRepository;
   },
 };
-
-/**
- * @deprecated Use `identityContainer` instead.
- * Backward-compatible alias — will be removed after full migration.
- */
-export const systemContainer = identityContainer;

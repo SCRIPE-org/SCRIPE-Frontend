@@ -14,12 +14,8 @@ import { Switch } from "@core/ui/switch";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 import { Loader2, Shield } from "lucide-react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { systemContainer } from "@modules/identity/di";
-import { useI18n } from "@core/providers/i18n-provider";
-import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type { Admin } from "../../domain/entities/Admin";
-import type { SyncRoleAssignment } from "../../domain/interfaces/IAdminRepository";
+import { useManageRolesViewModel } from "../viewmodels/useManageRolesViewModel";
 
 interface ManageRolesDialogProps {
   open: boolean;
@@ -29,48 +25,15 @@ interface ManageRolesDialogProps {
 }
 
 export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: ManageRolesDialogProps) {
-  const { t, language } = useI18n();
-  const toast = useEnhancedToast();
-  const queryClient = useQueryClient();
-  const { roleRepository, adminRepository } = systemContainer;
+  // Strict Scope Calculation
+  const scopeTenantId = tenantId || admin?.tenantId || "";
+
+  const vm = useManageRolesViewModel({ adminId: admin?.id, scopeTenantId, open });
+  const { t, language, rolesData, currentRoles, isLoading, isSubmitting } = vm;
 
   // Form state
   const [selectedRoleIds, setSelectedRoleIds] = useState<string[]>([]);
   const [inheritToChildren, setInheritToChildren] = useState(false);
-
-  // Strict Scope Calculation
-  // If tenantId is passed (Drill-Down), use it.
-  // Else if admin has a tenantId (Tenant Admin), use it.
-  // Else (Global Admin in Global Context), use empty string (Global Scope).
-  const scopeTenantId = tenantId || admin?.tenantId || "";
-
-  // Fetch available roles for the VALID scope
-  const { data: rolesData, isLoading: isLoadingRoles } = useQuery({
-    queryKey: ["roles-for-manage", scopeTenantId],
-    queryFn: () =>
-      scopeTenantId
-        ? roleRepository.getAll({
-            page: 1,
-            pageSize: 100,
-            tenantId: scopeTenantId,
-            strict: true,
-          })
-        : roleRepository.getMyTenantRoles({
-            page: 1,
-            pageSize: 100,
-          }),
-    enabled: open && !!admin,
-  });
-
-  // Fetch current roles
-  const { data: currentRoles, isLoading: isLoadingCurrentRoles } = useQuery({
-    queryKey: ["admin-roles", admin?.id],
-    queryFn: async () => {
-      if (!admin?.id) return [];
-      return adminRepository.getRoles(admin.id);
-    },
-    enabled: open && !!admin?.id,
-  });
 
   // Transform available roles to options
   const roleOptions: GenericSelectOption[] = useMemo(
@@ -120,37 +83,9 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
     }
   }
 
-  // Sync roles mutation
-  const syncMutation = useMutation({
-    mutationFn: async () => {
-      if (!admin?.id) throw new Error("No admin selected");
-
-      // We only send assignments for the CURRENT SCOPE.
-      // The backend "RemoveRolesByScopeAsync" handles preserving other scopes.
-      const assignments: SyncRoleAssignment[] = selectedRoleIds.map((roleId) => ({
-        roleId,
-        tenantId: scopeTenantId || undefined,
-        inheritToChildren: scopeTenantId ? inheritToChildren : undefined,
-      }));
-
-      await adminRepository.syncRoles(admin.id, assignments, scopeTenantId || undefined);
-    },
-    onSuccess: () => {
-      toast.success({ title: t("admin.role.syncSuccess") || "Roles updated successfully" });
-      queryClient.invalidateQueries({ queryKey: ["admin-roles", admin?.id] });
-      queryClient.invalidateQueries({ queryKey: ["admins"] });
-      onOpenChange(false);
-    },
-    onError: (error: Error) => {
-      toast.error({ title: error?.message || t("common.error") || "Failed to update roles" });
-    },
-  });
-
   const handleSave = () => {
-    syncMutation.mutate();
+    vm.syncRoles(selectedRoleIds, inheritToChildren, onOpenChange);
   };
-
-  const isLoading = isLoadingRoles || isLoadingCurrentRoles;
 
   return (
     <GenericModal
@@ -224,11 +159,11 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            disabled={syncMutation.isPending}
+            disabled={isSubmitting}
           >
             {t("common.cancel") || "Cancel"}
           </Button>
-          <Button onClick={handleSave} loading={syncMutation.isPending} disabled={isLoading}>
+          <Button onClick={handleSave} loading={isSubmitting} disabled={isLoading}>
             {t("admin.role.saveRoles") || "Save Roles"}
           </Button>
         </div>

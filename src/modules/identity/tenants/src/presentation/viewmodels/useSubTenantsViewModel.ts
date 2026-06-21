@@ -17,7 +17,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { systemContainer } from "@modules/identity/di";
+import { identityContainer } from "@modules/identity/di";
 import { appLogger } from "@core/common/logger";
 import type { TenantTreeNode, Tenant } from "../../domain/entities/Tenant";
 import { type EditFormState, initialEditForm } from "../components/TenantDialogs";
@@ -38,7 +38,7 @@ export function useSubTenantsViewModel({
   const { t } = useI18n();
   const { hasPermission } = usePermissions();
   const { success: toastSuccess, error: toastError } = useEnhancedToast();
-  const { tenantRepository } = systemContainer;
+  const { tenantRepository } = identityContainer;
 
   // ── Permissions ──
   const canCreate = hasPermission(SYSTEM_PERMISSIONS.TENANTS_CREATE);

@@ -8,7 +8,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
@@ -16,8 +15,7 @@ import { Badge } from "@core/ui/badge";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { Lock, Plus, X, Trash2 } from "lucide-react";
-import { useI18n } from "@core/providers/i18n-provider";
-import { systemContainer } from "@modules/identity/di";
+import { useSetRestrictionsViewModel } from "../viewmodels/useSetRestrictionsViewModel";
 
 interface Restriction {
   permissionCode: string;
@@ -41,29 +39,11 @@ export function SetRestrictionsDialog({
   isSubmitting,
   tenantId,
 }: SetRestrictionsDialogProps) {
-  const { t } = useI18n();
+  const { t, availablePermissions, isLoadingPermissions } = useSetRestrictionsViewModel({ tenantId, open });
   const [restrictions, setRestrictions] = useState<Restriction[]>([]);
   const [newPermissionCode, setNewPermissionCode] = useState("");
   const [newField, setNewField] = useState("");
   const [activeRestrictionIndex, setActiveRestrictionIndex] = useState<number | null>(null);
-
-  // Fetch available permissions to distinct their resources
-  const { data: availablePermissions = [], isLoading: isLoadingPermissions } = useQuery({
-    queryKey: ["restrictions-available-permissions", tenantId],
-    queryFn: async () => {
-      try {
-        if (tenantId) {
-          return await systemContainer.tenantService.getTenantPermissions(tenantId);
-        } else {
-          return await systemContainer.tenantService.getCreationPermissions();
-        }
-      } catch (e) {
-        return [];
-      }
-    },
-    enabled: open,
-    staleTime: 5 * 60 * 1000,
-  });
 
   // Distinct resource options mapped with localized label
   const resourceOptions = useMemo(() => {

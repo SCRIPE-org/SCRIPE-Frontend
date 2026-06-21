@@ -45,6 +45,7 @@ import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useWorkspaceTransitionContext } from "./nexus-layout";
 import { useNexusPalette } from "./_parts/nexus-theme-utils";
 import { toast } from "@core/ui/use-toast";
+import { startRoutingProgress } from "@core/ui/routing-progress-bar";
 import {
   BackButton,
   Divider,
@@ -107,6 +108,7 @@ export function NexusPrimaryRail({
       // Auto nav to first page of that menu item
       const firstRoute = findFirstLeafRoute(item);
       if (firstRoute) {
+        startRoutingProgress();
         router.push(firstRoute);
       }
     },
@@ -247,6 +249,7 @@ export function NexusPrimaryRail({
           // Clear workspace key so Hub page shows clean state
           // (secondary rail collapses, back button hides, admin items clear)
           useNavigationStore.getState().setActiveWorkspace(null);
+          startRoutingProgress();
           router.push("/");
         }}
       />

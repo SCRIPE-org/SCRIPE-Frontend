@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { systemContainer } from "@modules/identity/di";
+import { identityContainer } from "@modules/identity/di";
 import { appLogger } from "@core/common/logger";
 import type { CreateTenantResult } from "../../domain/entities/TenantRequests";
 import type { EditionThinModel } from "../../domain/types/SubscriptionTypes";
@@ -85,7 +85,7 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
   const queryClient = useQueryClient();
   const { t } = useI18n();
   const { success: toastSuccess, error: toastError } = useEnhancedToast();
-  const { tenantRepository } = systemContainer;
+  const { tenantRepository } = identityContainer;
 
   // ── Step management ──
   const [currentStep, setCurrentStep] = useState<StepId>(1);

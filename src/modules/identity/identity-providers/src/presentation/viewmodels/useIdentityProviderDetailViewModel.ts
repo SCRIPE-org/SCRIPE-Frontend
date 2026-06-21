@@ -8,7 +8,7 @@
 
 import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { systemContainer } from "@modules/identity/di";
+import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
@@ -80,7 +80,7 @@ const DEFAULT_STATE: IdentityProviderFormState = {
 
 // ─── Hook ─────────────────────────────────────────────────────────
 export function useIdentityProviderDetailViewModel(providerId?: string) {
-  const { identityProviderRepository } = systemContainer;
+  const { identityProviderRepository } = identityContainer;
   const { t } = useI18n();
   const router = useRouter();
   const queryClient = useQueryClient();

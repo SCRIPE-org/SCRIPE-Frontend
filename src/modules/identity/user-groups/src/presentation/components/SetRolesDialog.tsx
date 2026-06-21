@@ -13,9 +13,7 @@ import { Label } from "@core/ui/label";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 import { Loader2, Shield } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { systemContainer } from "@modules/identity/di";
-import { useI18n } from "@core/providers/i18n-provider";
+import { useSetRolesViewModel } from "../viewmodels/useSetRolesViewModel";
 
 interface SetRolesDialogProps {
   open: boolean;
@@ -34,26 +32,8 @@ export function SetRolesDialog({
   isSubmitting,
   tenantId,
 }: SetRolesDialogProps) {
-  const { t, language } = useI18n();
+  const { t, language, rolesData, isLoading } = useSetRolesViewModel({ tenantId, open });
   const [selectedRoleIds, setSelectedRoleIds] = useState<string[]>([]);
-
-  // Fetch all available roles
-  const { data: rolesData, isLoading } = useQuery({
-    queryKey: ["roles-for-group-assign", tenantId],
-    queryFn: () =>
-      tenantId
-        ? systemContainer.roleRepository.getAll({
-            page: 1,
-            pageSize: 100,
-            tenantId,
-            strict: true,
-          })
-        : systemContainer.roleRepository.getMyTenantRoles({
-            page: 1,
-            pageSize: 100,
-          }),
-    enabled: open,
-  });
 
   // Transform to options
   const roleOptions: GenericSelectOption[] = useMemo(

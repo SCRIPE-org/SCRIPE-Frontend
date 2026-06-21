@@ -51,6 +51,8 @@ export interface UiSlice {
   isWorkspaceSwitching: boolean;
   transitionTargetRoute: string | null; // Track target route during JIT workspace transitions
 
+  breadcrumbOverride: string | null;
+  setBreadcrumbOverride: (title: string | null) => void;
   setActiveWorkspace: (key: string | null) => void;
   setActiveRootItem: (id: string | null) => void;
   setPreviousWorkspace: (key: string | null) => void;
