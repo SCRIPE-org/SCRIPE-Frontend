@@ -20,7 +20,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@core/hooks/use-toast";
 import { useI18n } from "@core/providers/i18n-provider";
-import { systemContainer } from "@modules/identity/di";
+import { identityContainer } from "@modules/identity/di";
 import type { Role } from "../../domain/entities/Role";
 import type { Permission, PermissionModuleGroup } from "@modules/identity/permissions";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
@@ -130,7 +130,7 @@ export function useRolePermissionsDialog({
   // Zero client-side groupBy needed — backend does all grouping.
   const { data: tenantPermissionGroups = [], isLoading: loadingTenant } = useQuery({
     queryKey: ["tenant-permissions-grouped", tenantId],
-    queryFn: () => systemContainer.roleRepository.getTenantAvailablePermissionsGrouped(tenantId),
+    queryFn: () => identityContainer.roleRepository.getTenantAvailablePermissionsGrouped(tenantId),
     enabled: open && !!tenantId,
   });
 
@@ -144,7 +144,7 @@ export function useRolePermissionsDialog({
     queryKey: ["role-permissions", role?.id],
     queryFn: async () => {
       if (!role) return [];
-      return systemContainer.roleRepository.getRolePermissions(role.id);
+      return identityContainer.roleRepository.getRolePermissions(role.id);
     },
     enabled: open && !!role?.id,
   });
@@ -227,7 +227,7 @@ export function useRolePermissionsDialog({
         restrictedFields: a.restrictedFields ?? [],
       }));
 
-      await systemContainer.roleRepository.assignPermissions(role.id, {
+      await identityContainer.roleRepository.assignPermissions(role.id, {
         permissions: permissions,
       });
     },

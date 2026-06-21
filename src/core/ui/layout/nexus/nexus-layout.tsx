@@ -17,7 +17,7 @@
  * └──────┴─────────┴────────────────────────────────────────────┘
  */
 
-import React, { useState, useCallback, createContext, useContext } from "react";
+import React, { useState, useCallback, createContext, useContext, useEffect } from "react";
 import { NexusPrimaryRail } from "./nexus-primary-rail";
 import { NexusSecondaryRail } from "./nexus-secondary-rail";
 import { NexusTopbar } from "./nexus-topbar";
@@ -86,6 +86,21 @@ export function NexusLayout({ children }: NexusLayoutProps) {
 
   // Workspace transition (loader + navigation)
   const { loaderState, switchWorkspace, goBackWorkspace } = useWorkspaceTransition();
+
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  useEffect(() => {
+    const handleStart = () => setIsNavigating(true);
+    const handleStop = () => setIsNavigating(false);
+
+    window.addEventListener("routing-progress-start", handleStart);
+    window.addEventListener("routing-progress-stop", handleStop);
+
+    return () => {
+      window.removeEventListener("routing-progress-start", handleStart);
+      window.removeEventListener("routing-progress-stop", handleStop);
+    };
+  }, []);
 
   return (
     <WorkspaceTransitionContext.Provider value={{ switchWorkspace, goBackWorkspace }}>
@@ -236,6 +251,9 @@ export function NexusLayout({ children }: NexusLayoutProps) {
                   background: "hsl(var(--background))",
                   scrollbarWidth: "thin",
                   scrollbarColor: "hsl(var(--border)) transparent",
+                  opacity: isNavigating ? 0.35 : 1,
+                  filter: isNavigating ? "blur(1px)" : "none",
+                  transition: "opacity 150ms ease-out, filter 150ms ease-out",
                 }}
               >
                 <div className="duration-500 animate-in fade-in">{children}</div>

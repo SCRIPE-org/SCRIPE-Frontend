@@ -18,7 +18,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { appLogger } from "@core/common/logger";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { systemContainer } from "@modules/identity/di";
+import { identityContainer } from "@modules/identity/di";
 import type {
   Permission,
   PermissionModuleGroup,
@@ -70,7 +70,7 @@ export function useRoleDetailViewModel() {
   const roleId = params.id as string;
   const queryClient = useQueryClient();
   const { success, error: toastError } = useEnhancedToast();
-  const { roleRepository } = systemContainer;
+  const { roleRepository } = identityContainer;
 
   // === STATE ===
   const [assignments, setAssignments] = useState<Map<string, PermissionAssignmentJson>>(new Map());

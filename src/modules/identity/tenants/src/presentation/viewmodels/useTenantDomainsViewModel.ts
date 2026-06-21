@@ -9,7 +9,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { systemContainer } from "@modules/identity/di";
+import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { toast } from "sonner";
 import type { TenantDomainJson } from "../../domain/interfaces/ITenantService";
@@ -21,7 +21,7 @@ export interface UseTenantDomainsViewModelParams {
 
 export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewModelParams) {
   const { t } = useI18n();
-  const { tenantRepository } = systemContainer;
+  const { tenantRepository } = identityContainer;
 
   const [domains, setDomains] = useState<TenantDomainJson[]>([]);
   const [cnameTarget, setCnameTarget] = useState("");

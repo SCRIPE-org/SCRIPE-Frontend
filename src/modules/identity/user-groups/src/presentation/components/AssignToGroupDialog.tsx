@@ -18,14 +18,9 @@ import { Label } from "@core/ui/label";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 import { Users } from "lucide-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { systemContainer } from "@modules/identity/di";
-import { useI18n } from "@core/providers/i18n-provider";
-import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { userGroupKeys } from "../viewmodels/useUserGroupsViewModel";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
-import { usePermissions } from "@core/providers/permission-provider";
 import { appLogger } from "@/core/common/logger";
+import { useAssignToGroupViewModel } from "../viewmodels/useAssignToGroupViewModel";
 
 interface AssignToGroupDialogProps {
   open: boolean;
@@ -59,10 +54,8 @@ export function AssignToGroupDialog({
   tenantId,
   useMyTenant,
 }: AssignToGroupDialogProps) {
-  const { t, language } = useI18n();
-  const { operationSuccess, operationError } = useEnhancedToast();
-  const queryClient = useQueryClient();
-  const { isSuperAdmin } = usePermissions();
+  const vm = useAssignToGroupViewModel({ tenantId, useMyTenant, onOpenChange });
+  const { t, language, fetchGroups, isPending } = vm;
 
   // Multi-select state
   const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>([]);
@@ -72,48 +65,12 @@ export function AssignToGroupDialog({
   // Tenant context
   const currentUserTenantId = useCurrentTenantId();
 
-  /**
-   * Smart endpoint selection:
-   * 1. If explicit tenantId is passed → use getAll({ tenantId }) (e.g., from Tenant Detail page)
-   * 2. If useMyTenant AND user has a tenant → use getMyTenantGroups()
-   * 3. If useMyTenant AND user has NO tenant (Super Admin) → use getAll() (system-level groups)
-   * 4. Otherwise → use getAll() with no filter
-   */
-  const fetchGroups = async (term: string): Promise<GenericSelectOption[]> => {
+  const handleSearchGroups = async (term: string) => {
     setIsSearching(true);
     try {
-      let result;
-      const baseParams = {
-        page: 1,
-        pageSize: 50,
-        search: term,
-        isActive: true,
-      };
-
-      if (tenantId) {
-        // Explicit tenant scope (e.g., from Tenant Detail drill-down)
-        result = await systemContainer.userGroupRepository.getAll({
-          ...baseParams,
-          tenantId,
-        });
-      } else if (useMyTenant) {
-        // Tenant Admin (or Super Admin targeting system groups)
-        result = await systemContainer.userGroupRepository.getMyTenantGroups(baseParams);
-      } else {
-        // Super Admin (no tenant) or no scoping: get all system-level groups
-        result = await systemContainer.userGroupRepository.getAll(baseParams);
-      }
-
-      const options = result.items.map((g) => ({
-        value: g.id,
-        label: language === "ar" ? g.nameAr : g.nameEn,
-        description: g.code,
-      }));
+      const options = await fetchGroups(term);
       setSearchOptions(options);
       return options;
-    } catch (err) {
-      appLogger.error("Failed to search groups", err);
-      return [];
     } finally {
       setIsSearching(false);
     }
@@ -122,90 +79,21 @@ export function AssignToGroupDialog({
   // Initial load when dialog opens + reset on close
   useEffect(() => {
     if (open) {
-      fetchGroups("");
+      handleSearchGroups("");
     } else {
       setSearchOptions([]);
       setSelectedGroupIds([]);
     }
   }, [open, tenantId, useMyTenant, currentUserTenantId]);
 
-  // Admin → addMembers on each selected group
-  const addMemberMutation = useMutation({
-    mutationFn: async () => {
-      const targetAdminIds = adminIds ?? (adminId ? [adminId] : []);
-      if (targetAdminIds.length === 0 || selectedGroupIds.length === 0)
-        throw new Error("Missing data");
-
-      // Add admins to each selected group
-      for (const groupId of selectedGroupIds) {
-        await systemContainer.userGroupRepository.addMembers(groupId, {
-          adminIds: targetAdminIds,
-        });
-      }
-    },
-    onSuccess: () => {
-      const adminCount = adminIds ? adminIds.length : 1;
-      operationSuccess(
-        t("userGroups.assignAction") || "Assigned",
-        t("userGroups.multiAssignSuccess")
-          ?.replace("{admins}", String(adminCount))
-          ?.replace("{groups}", String(selectedGroupIds.length)) ||
-          `${adminCount} admin(s) assigned to ${selectedGroupIds.length} group(s)`
-      );
-      queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
-      queryClient.invalidateQueries({ queryKey: ["admins"] });
-      onOpenChange(false);
-      setSelectedGroupIds([]);
-    },
-    onError: (err: Error) =>
-      operationError(t("userGroups.assignToGroups") || "Assign to Groups", undefined, err.message),
-  });
-
-  // Role → setRoles on each selected group (appends by fetching current + adding)
-  const addRoleMutation = useMutation({
-    mutationFn: async () => {
-      const targetRoleIds = roleIds ?? (roleId ? [roleId] : []);
-      if (targetRoleIds.length === 0 || selectedGroupIds.length === 0)
-        throw new Error("Missing data");
-
-      for (const groupId of selectedGroupIds) {
-        // Fetch current group detail to get existing roles
-        const group = await systemContainer.userGroupRepository.getById(groupId);
-        const currentRoleIds = group.roles.map((r: any) => r.roleId);
-
-        // Merge new roles (dedup)
-        for (const tId of targetRoleIds) {
-          if (!currentRoleIds.includes(tId)) {
-            currentRoleIds.push(tId);
-          }
-        }
-
-        await systemContainer.userGroupRepository.setRoles(groupId, { roleIds: currentRoleIds });
-      }
-    },
-    onSuccess: () => {
-      const roleCount = roleIds ? roleIds.length : 1;
-      operationSuccess(
-        t("userGroups.assignAction") || "Assigned",
-        t("userGroups.multiAssignSuccess")
-          ?.replace("{admins}", String(roleCount))
-          ?.replace("{groups}", String(selectedGroupIds.length)) ||
-          `${roleCount} role(s) assigned to ${selectedGroupIds.length} group(s)`
-      );
-      queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
-      queryClient.invalidateQueries({ queryKey: ["roles"] });
-      onOpenChange(false);
-      setSelectedGroupIds([]);
-    },
-    onError: (err: Error) =>
-      operationError(t("userGroups.assignToGroups") || "Assign to Groups", undefined, err.message),
-  });
-
-  const isPending = addMemberMutation.isPending || addRoleMutation.isPending;
-
   const handleSave = () => {
-    if (mode === "admin") addMemberMutation.mutate();
-    else addRoleMutation.mutate();
+    if (mode === "admin") {
+      const targetAdminIds = adminIds ?? (adminId ? [adminId] : []);
+      vm.addMembers(targetAdminIds, selectedGroupIds);
+    } else {
+      const targetRoleIds = roleIds ?? (roleId ? [roleId] : []);
+      vm.addRoles(targetRoleIds, selectedGroupIds);
+    }
   };
 
   const handleClose = (v: boolean) => {
@@ -244,7 +132,7 @@ export function AssignToGroupDialog({
             placeholder={t("userGroups.selectGroupsPlaceholder") || "Choose user groups..."}
             type="multi"
             searchType="server"
-            onServerSearch={fetchGroups}
+            onServerSearch={handleSearchGroups}
             loading={isSearching}
           />
           {selectedGroupIds.length > 0 && (

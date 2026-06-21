@@ -12,9 +12,7 @@ import { Label } from "@core/ui/label";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 import { Loader2, Users } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { systemContainer } from "@modules/identity/di";
-import { useI18n } from "@core/providers/i18n-provider";
+import { useAddMembersViewModel } from "../viewmodels/useAddMembersViewModel";
 
 interface AddMembersDialogProps {
   open: boolean;
@@ -35,26 +33,8 @@ export function AddMembersDialog({
   isSubmitting,
   tenantId,
 }: AddMembersDialogProps) {
-  const { t, language } = useI18n();
+  const { t, language, adminsData, isLoading } = useAddMembersViewModel({ groupId, tenantId, open });
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-
-  // Fetch all admins (scoped to tenant if specified)
-  const { data: adminsData, isLoading } = useQuery({
-    queryKey: ["admins-for-group", groupId, tenantId],
-    queryFn: () =>
-      tenantId
-        ? systemContainer.adminRepository.getByTenantId(tenantId, {
-            page: 1,
-            pageSize: 100,
-            isActive: true,
-          })
-        : systemContainer.adminRepository.getAll({
-            page: 1,
-            pageSize: 100,
-            isActive: true,
-          }),
-    enabled: open,
-  });
 
   // Filter out existing members
   const adminOptions: GenericSelectOption[] = useMemo(() => {

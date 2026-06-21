@@ -18,7 +18,7 @@ import { useAppStore } from "@core/store/useAppStore";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { systemContainer } from "@modules/identity/di";
+import { identityContainer } from "@modules/identity/di";
 import { appLogger } from "@core/common/logger";
 import type { TenantTreeNode, Tenant } from "../../domain/entities/Tenant";
 import { type EditFormState, initialEditForm } from "../components/TenantDialogs";
@@ -59,7 +59,7 @@ export function useTenantsViewModel() {
   const { hasPermission } = usePermissions();
   const { success: toastSuccess, error: toastError } = useEnhancedToast();
   const user = useAppStore((state) => state.user);
-  const { tenantRepository } = systemContainer;
+  const { tenantRepository } = identityContainer;
 
   // ── Permissions ──
   const canCreate = hasPermission(SYSTEM_PERMISSIONS.TENANTS_CREATE);

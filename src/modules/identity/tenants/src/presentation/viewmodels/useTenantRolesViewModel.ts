@@ -12,6 +12,8 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
 
@@ -20,7 +22,7 @@ import { Role } from "@modules/identity/roles/src/domain/entities/Role";
 import { useRolesViewModel } from "@modules/identity/roles/src/presentation/viewmodels/useRolesViewModel";
 
 // DI Container
-import { systemContainer } from "@modules/identity/di";
+import { identityContainer } from "@modules/identity/di";
 
 interface UseTenantRolesViewModelParams {
   tenantId: string;
@@ -56,6 +58,10 @@ export interface TenantRolesViewModelResult {
     sortable?: boolean;
     render?: (value: any, item?: Role) => React.ReactNode;
   }>;
+
+  // Resync permissions
+  resyncPermissions: () => void;
+  isResyncing: boolean;
 
   // Labels & Metadata
   title: string;
@@ -96,7 +102,7 @@ export function useTenantRolesViewModel({
       async (query: string): Promise<FieldOption[]> => {
         try {
           // Use tenantService to get tenant's available permissions
-          const permissions = await systemContainer.tenantService.getTenantPermissions(tenantId);
+          const permissions = await identityContainer.tenantService.getTenantPermissions(tenantId);
 
           // Client-side filter if there's a search query
           let filtered = permissions;
@@ -301,6 +307,25 @@ export function useTenantRolesViewModel({
     t("tenant.rolesDescription")?.replace("{tenant}", tenantName) ||
     `Manage roles for ${tenantName}`;
 
+  // ─────────────────────────────────────────────────────────────────
+  // Resync permissions mutation
+  // ─────────────────────────────────────────────────────────────────
+  const queryClient = useQueryClient();
+  const { success: toastSuccess, error: toastError } = useEnhancedToast();
+  const resyncMutation = useMutation({
+    mutationFn: () => identityContainer.tenantService.resyncPermissions(tenantId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tenant-permissions-raw", tenantId] });
+      queryClient.invalidateQueries({ queryKey: ["tenant-current-permissions-service", tenantId] });
+      toastSuccess({
+        title: t("tenant.permissionsResynced") || "Permissions resynced from edition",
+      });
+    },
+    onError: (err: Error) => {
+      toastError({ title: t("common.error"), description: err.message });
+    },
+  });
+
   return {
     // Core ViewModel
     rolesVm,
@@ -319,6 +344,10 @@ export function useTenantRolesViewModel({
 
     // Table Configuration
     columns,
+
+    // Resync
+    resyncPermissions: () => resyncMutation.mutate(),
+    isResyncing: resyncMutation.isPending,
 
     // Metadata
     title,

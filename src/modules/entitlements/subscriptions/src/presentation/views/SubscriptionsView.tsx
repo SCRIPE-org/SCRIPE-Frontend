@@ -16,6 +16,7 @@ import { useSubscriptionsViewModel } from "../viewmodels/useSubscriptionsViewMod
 import { useEditionsViewModel } from "@modules/entitlements/editions/src/presentation/viewmodels/useEditionsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { useBreadcrumbOverride } from "@core/hooks/use-breadcrumb-override";
 import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
 import { ArrowLeft } from "lucide-react";
@@ -63,6 +64,12 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
       vm.items[0]
     );
   }, [vm.items]);
+
+  useBreadcrumbOverride(
+    currentSub
+      ? currentSub.editionName
+      : t("entSubscriptions.title") || "Subscription Details"
+  );
 
   // ── Loading Skeleton ──
   if (vm.isLoading) {

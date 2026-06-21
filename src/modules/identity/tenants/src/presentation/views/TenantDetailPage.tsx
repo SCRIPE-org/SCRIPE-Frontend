@@ -10,16 +10,12 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useTenantContext } from "@core/providers/tenant-context-provider";
-import { useI18n } from "@core/providers/i18n-provider";
-import { systemContainer } from "@modules/identity/di";
 import { PageBreadcrumbs } from "@core/ui/page-breadcrumbs";
 import { Skeleton } from "@core/ui/skeleton";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { CurrencyDisplayToggle } from "@core/ui/currency-display-toggle";
+import { useTenantDetailViewModel } from "../viewmodels/useTenantDetailViewModel";
 
 // Lazy-load heavy sub-sections
 const TenantHeader = dynamic(
@@ -40,35 +36,16 @@ interface TenantDetailPageProps {
 }
 
 export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
-  const router = useRouter();
-  const { t, direction } = useI18n();
-  const { enterTenantWorld } = useTenantContext();
-  const queryClient = useQueryClient();
-
   const {
-    data: tenant,
-    isLoading: loading,
-    error: queryError,
-  } = useQuery({
-    queryKey: ["tenant", tenantId],
-    queryFn: () => systemContainer.tenantRepository.getById(tenantId),
-    enabled: !!tenantId,
-  });
-
-  const error = queryError
-    ? (queryError as Error).message
-    : !loading && !tenant
-      ? t("tenant.notFound") || "Tenant not found"
-      : null;
-
-  const handleBack = () => {
-    router.push("/tenants");
-  };
-
-  const breadcrumbSegments = [
-    { label: t("nav.tenants") || "Tenants", href: "/tenants" },
-    ...(tenant ? [{ label: tenant.name }] : []),
-  ];
+    tenant,
+    loading,
+    error,
+    direction,
+    handleBack,
+    handleUpdate,
+    handleEnter,
+    breadcrumbSegments,
+  } = useTenantDetailViewModel({ tenantId });
 
   // ── Loading Skeleton ──
   if (loading) {
@@ -114,10 +91,9 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
         <div className="rounded-2xl bg-destructive/10 p-6">
           <AlertTriangle className="h-12 w-12 text-destructive" />
         </div>
-        <h2 className="text-xl font-semibold">{error || t("tenant.notFound")}</h2>
-        <p className="text-muted-foreground">{t("tenant.errorLoadingDetails")}</p>
+        <h2 className="text-xl font-semibold">{error}</h2>
         <Button onClick={handleBack} variant="outline" className="rounded-xl">
-          {t("tenant.backToList")}
+          Back to List
         </Button>
       </div>
     );
@@ -134,17 +110,8 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
       {/* Hero Header: tenant info, status banners, actions, subscription bar */}
       <TenantHeader
         tenant={tenant}
-        onUpdate={() => {
-          queryClient.invalidateQueries({ queryKey: ["tenant", tenantId] });
-        }}
-        onEnter={() => {
-          enterTenantWorld({
-            id: tenant.id,
-            name: tenant.name,
-            parentId: tenant.parentId,
-          });
-          router.push("/");
-        }}
+        onUpdate={handleUpdate}
+        onEnter={handleEnter}
       />
 
       {/* Animated Stat Cards */}

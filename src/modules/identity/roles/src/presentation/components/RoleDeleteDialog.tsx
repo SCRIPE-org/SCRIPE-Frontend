@@ -6,13 +6,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useI18n } from "@core/providers/i18n-provider";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { Loader2, Users } from "lucide-react";
 import GenericSelect, { type GenericSelectOption } from "@core/crud/components/generic-select";
-import { systemContainer } from "@modules/identity/di";
 import type { Role } from "../../domain/entities/Role";
+import { useRoleDeleteViewModel } from "../viewmodels/useRoleDeleteViewModel";
 
 interface RoleDeleteDialogProps {
   open: boolean;
@@ -31,7 +29,8 @@ export function RoleDeleteDialog({
   onConfirm,
   isDeleting,
 }: RoleDeleteDialogProps) {
-  const { t, language } = useI18n();
+  const vm = useRoleDeleteViewModel({ roleId: role?.id, tenantId, open });
+  const { t, language, adminCount, availableRoles, isLoading } = vm;
   const [fallbackRoleId, setFallbackRoleId] = useState<string>("");
 
   // Reset fallback selection when dialog opens
@@ -43,31 +42,6 @@ export function RoleDeleteDialog({
     }
   }
 
-  // Fetch admin count for this role
-  const { data: adminCount = 0, isLoading: isLoadingCount } = useQuery({
-    queryKey: ["role-admin-count", role?.id],
-    queryFn: async () => {
-      if (!role?.id) return 0;
-      return systemContainer.roleRepository.getAdminCount(role.id);
-    },
-    enabled: open && !!role?.id,
-  });
-
-  // Fetch other roles in the same tenant for fallback selection
-  const { data: availableRoles = [], isLoading: isLoadingRoles } = useQuery({
-    queryKey: ["roles-for-fallback", tenantId, role?.id],
-    queryFn: async () => {
-      const result = await systemContainer.roleRepository.getAll({
-        page: 1,
-        pageSize: 100,
-        tenantId: tenantId,
-      });
-      // Filter out the current role being deleted
-      return result.items.filter((r) => r.id !== role?.id);
-    },
-    enabled: open && !!role?.id && adminCount > 0,
-  });
-
   // Convert roles to GenericSelect options
   const roleOptions: GenericSelectOption[] = useMemo(() => {
     return availableRoles.map((r) => ({
@@ -77,7 +51,6 @@ export function RoleDeleteDialog({
   }, [availableRoles, language]);
 
   const hasAdmins = adminCount > 0;
-  const isLoading = isLoadingCount || (hasAdmins && isLoadingRoles);
 
   const handleConfirm = async () => {
     await onConfirm(hasAdmins ? fallbackRoleId : undefined);

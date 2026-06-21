@@ -8,7 +8,7 @@
 "use client";
 
 import { useCallback } from "react";
-import { systemContainer } from "@modules/identity/di";
+import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
@@ -29,7 +29,7 @@ export const identityProviderKeys = {
 };
 
 export function useIdentityProvidersViewModel() {
-  const { identityProviderRepository } = systemContainer;
+  const { identityProviderRepository } = identityContainer;
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const { success, error: toastError } = useEnhancedToast();

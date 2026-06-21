@@ -8,7 +8,7 @@
 
 import { useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { systemContainer } from "@modules/identity/di";
+import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
@@ -70,7 +70,7 @@ const DEFAULT_STATE: OAuthAppFormState = {
 
 // ─── Hook ─────────────────────────────────────────────────────────
 export function useOAuthAppDetailViewModel(appId?: string) {
-  const { oauthAppRepository } = systemContainer;
+  const { oauthAppRepository } = identityContainer;
   const { t } = useI18n();
   const router = useRouter();
   const queryClient = useQueryClient();

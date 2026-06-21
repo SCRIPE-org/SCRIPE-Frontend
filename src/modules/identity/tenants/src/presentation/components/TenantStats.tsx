@@ -10,11 +10,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useI18n } from "@core/providers/i18n-provider";
 import { Users, Shield, Building2, Key, Loader2 } from "lucide-react";
 import { cn } from "@core/common/utils";
-import { systemContainer } from "@modules/identity/di";
+import { useTenantStatsViewModel } from "../viewmodels/useTenantStatsViewModel";
 
 interface TenantStatsProps {
   tenantId: string;
@@ -22,22 +20,7 @@ interface TenantStatsProps {
 }
 
 export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
-  const { t, direction } = useI18n();
-  const isRtl = direction === "rtl";
-
-  const { data: stats, isLoading: loading } = useQuery({
-    queryKey: ["tenant-stats", tenantId],
-    queryFn: async () => {
-      const data = await systemContainer.tenantRepository.getStats(tenantId);
-      return {
-        adminsCount: data.adminsCount,
-        rolesCount: data.rolesCount,
-        subTenantsCount: data.subTenantsCount,
-        permissionsCount: data.permissionsCount,
-      };
-    },
-    enabled: !!tenantId,
-  });
+  const { t, direction, isRtl, stats, loading } = useTenantStatsViewModel({ tenantId });
 
   const statCards = [
     {

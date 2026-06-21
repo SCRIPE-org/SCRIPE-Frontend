@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Button } from "@core/ui/button";
@@ -27,7 +26,6 @@ import {
   Gift,
 } from "lucide-react";
 import { useTenantSubscriptionViewModel } from "@modules/identity/tenants/src/presentation/viewmodels/useTenantSubscriptionViewModel";
-import { systemContainer } from "@modules/identity/di";
 import { SUPPORTED_CURRENCIES } from "@core/constants/currencies";
 import { useConvertedAmount } from "@core/hooks/useConvertedAmount";
 import {
@@ -168,11 +166,12 @@ function getConvertOptions(
 
 export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps) {
   const { t } = useI18n();
-  const vm = useTenantSubscriptionViewModel(tenantId);
+  const [selectedEditionId, setSelectedEditionId] = useState("");
+  const [changePlanOpen, setChangePlanOpen] = useState(false);
+  const vm = useTenantSubscriptionViewModel(tenantId, selectedEditionId, changePlanOpen);
   const { formatDisplay } = useConvertedAmount();
 
   // Dialog states
-  const [changePlanOpen, setChangePlanOpen] = useState(false);
   const [renewOpen, setRenewOpen] = useState(false);
   const [convertOpen, setConvertOpen] = useState(false);
   const [suspendOpen, setSuspendOpen] = useState(false);
@@ -181,7 +180,6 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
   const [changeCurrencyOpen, setChangeCurrencyOpen] = useState(false);
 
   // Form states for dialogs
-  const [selectedEditionId, setSelectedEditionId] = useState("");
   const [selectedType, setSelectedType] = useState<SubscriptionType>("Monthly");
   const [suspendReason, setSuspendReason] = useState("");
   const [cancelReason, setCancelReason] = useState("");
@@ -238,11 +236,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
   }, [vm.subscriptionHistory, vm.isDowngraded, vm.subscription?.startDate, vm.subscription?.id]);
 
   // ── Promotion picker data for Change Plan dialog ──
-  const { data: changePlanPromotionsRaw = [], isLoading: isLoadingChangePlanPromos } = useQuery({
-    queryKey: ["entitlements", "editions", selectedEditionId, "promotions", "changePlan"],
-    queryFn: () => systemContainer.tenantRepository.getEditionPromotions(selectedEditionId),
-    enabled: !!selectedEditionId && changePlanOpen,
-  });
+  const { changePlanPromotionsRaw, isLoadingChangePlanPromos } = vm;
 
   const changePlanPromotions = useMemo(() => {
     return (changePlanPromotionsRaw as any[])

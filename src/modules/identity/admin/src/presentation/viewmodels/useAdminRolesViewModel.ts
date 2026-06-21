@@ -8,7 +8,7 @@
 
 import { useState, useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { systemContainer } from "@modules/identity/di";
+import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { Admin, AdminRoleData } from "../../domain/entities/Admin";
 import type { AssignRoleRequest } from "../../domain/entities/AdminRequests";
@@ -21,7 +21,7 @@ export function useAdminRolesViewModel(
   forcedTenantId?: string
 ) {
   const { t, language } = useI18n();
-  const { roleRepository, tenantRepository, adminRepository } = systemContainer;
+  const { roleRepository, tenantRepository, adminRepository } = identityContainer;
 
   // Effective tenant context: explicit force > admin's own tenant
   const effectiveTenantId = forcedTenantId || admin?.tenantId;

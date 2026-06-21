@@ -10,7 +10,6 @@
 
 import React, { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { usePermissions } from "@core/hooks/use-permissions";
@@ -18,8 +17,8 @@ import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { cn } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
 import { Building2, Pause, Ban, XCircle } from "lucide-react";
-import { systemContainer } from "@modules/identity/di";
 import type { TenantTreeNode } from "../../domain/entities/Tenant";
+import { useTenantStatsViewModel } from "../viewmodels/useTenantStatsViewModel";
 
 import { TenantNodeCardHeader } from "./TenantNodeCard/TenantNodeCardHeader";
 import type { TenantStatus } from "./TenantNodeCard/TenantNodeCardHeader";
@@ -160,11 +159,9 @@ export function TenantNodeCard({
   const canCreate = hasPermission(SYSTEM_PERMISSIONS.TENANTS_CREATE);
 
   // Fetch stats on demand when expanded
-  const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ["tenant-stats", node.id],
-    queryFn: () => systemContainer.tenantRepository.getStats(node.id),
+  const { stats, loading: statsLoading } = useTenantStatsViewModel({
+    tenantId: node.id,
     enabled: isExpanded,
-    staleTime: 60_000,
   });
 
   const handleToggle = useCallback(() => {

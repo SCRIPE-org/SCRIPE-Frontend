@@ -7,7 +7,7 @@
 "use client";
 
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
-import { systemContainer } from "@modules/identity/di";
+import { identityContainer } from "@modules/identity/di";
 import type {
   CreateUserGroupRequest,
   UpdateUserGroupRequest,
@@ -39,7 +39,7 @@ export interface UserGroupListItem {
 }
 
 export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenantId?: string }) {
-  const repo = systemContainer.userGroupRepository;
+  const repo = identityContainer.userGroupRepository;
   const { useMyTenant, tenantId } = options || {};
   const queryClient = useQueryClient();
   const { success, error: toastError } = useEnhancedToast();
@@ -129,12 +129,12 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
   const handleRoleSearch = async (query: string) => {
     try {
       const result = useMyTenant
-        ? await systemContainer.roleRepository.getMyTenantRoles({
+        ? await identityContainer.roleRepository.getMyTenantRoles({
             search: query,
             page: 1,
             pageSize: 20,
           })
-        : await systemContainer.roleRepository.getAll({
+        : await identityContainer.roleRepository.getAll({
             search: query,
             page: 1,
             pageSize: 20,

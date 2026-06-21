@@ -6,16 +6,11 @@
  */
 "use client";
 
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useI18n } from "@core/providers/i18n-provider";
-import { usePermissions } from "@core/providers/permission-provider";
-import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { Checkbox } from "@core/ui/checkbox";
 import { Loader2, ShieldAlert } from "lucide-react";
-import { systemContainer } from "@modules/identity/di";
 import type { Tenant } from "../../domain/entities/Tenant";
+import { useTenantDeleteViewModel } from "../viewmodels/useTenantDeleteViewModel";
 
 interface TenantDeleteDialogProps {
   open: boolean;
@@ -32,40 +27,17 @@ export function TenantDeleteDialog({
   onConfirm,
   isDeleting,
 }: TenantDeleteDialogProps) {
-  const { t } = useI18n();
-  const { hasPermission } = usePermissions();
-  const [cascadeChildren, setCascadeChildren] = useState(false);
-
-  const canCascadeDelete = hasPermission(SYSTEM_PERMISSIONS.TENANTS_CASCADE_DELETE);
-
-  // Reset cascade checkbox when dialog opens
-  const [prevOpen, setPrevOpen] = useState(open);
-  if (open !== prevOpen) {
-    setPrevOpen(open);
-    if (open) {
-      setCascadeChildren(false);
-    }
-  }
-
-  // Fetch descendant count when dialog opens
-  const { data: descendantCount = 0, isLoading } = useQuery({
-    queryKey: ["tenant-descendant-count", tenant?.id],
-    queryFn: async () => {
-      if (!tenant?.id) return 0;
-      return systemContainer.tenantRepository.getDescendantCount(tenant.id);
-    },
-    enabled: open && !!tenant?.id,
-  });
-
-  const hasDescendants = descendantCount > 0;
-
-  // Disable confirm if has descendants and user hasn't checked cascade (or lacks permission)
-  const isConfirmDisabled = hasDescendants && (!canCascadeDelete || !cascadeChildren);
-
-  const handleConfirm = async () => {
-    await onConfirm(cascadeChildren);
-    onOpenChange(false);
-  };
+  const {
+    t,
+    cascadeChildren,
+    setCascadeChildren,
+    canCascadeDelete,
+    descendantCount,
+    isLoading,
+    hasDescendants,
+    isConfirmDisabled,
+    handleConfirm,
+  } = useTenantDeleteViewModel({ open, tenant, onConfirm, onOpenChange });
 
   return (
     <ConfirmationDialog

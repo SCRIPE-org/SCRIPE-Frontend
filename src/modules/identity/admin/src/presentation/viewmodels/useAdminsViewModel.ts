@@ -7,7 +7,7 @@
 "use client";
 
 import { useCallback } from "react";
-import { systemContainer } from "@modules/identity/di";
+import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useServices } from "@core/providers/service-provider";
 import { useAppStore } from "@core/store/useAppStore";
@@ -47,7 +47,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
   const rawTenantId = propTenantId ?? (useMyTenant ? undefined : contextTenantId);
   const tenantId = rawTenantId ?? undefined; // Normalize null to undefined
 
-  const { adminRepository, roleRepository } = systemContainer;
+  const { adminRepository, roleRepository } = identityContainer;
   const { t, language } = useI18n();
   const queryClient = useQueryClient();
   const { success, error: toastError } = useEnhancedToast();
@@ -407,12 +407,12 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
 
         const result =
           useMyTenant && !isExplicitTenant
-            ? await systemContainer.userGroupRepository.getMyTenantGroups({
+            ? await identityContainer.userGroupRepository.getMyTenantGroups({
                 search: query,
                 page: 1,
                 pageSize: 20,
               })
-            : await systemContainer.userGroupRepository.getAll({
+            : await identityContainer.userGroupRepository.getAll({
                 search: query,
                 page: 1,
                 pageSize: 20,

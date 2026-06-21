@@ -109,7 +109,7 @@ function RoutingProgressBarInner() {
           return;
         }
 
-        start();
+        startRoutingProgress();
       } catch (err) {
         // Safe fallback in case of parsing errors
       }
@@ -117,15 +117,15 @@ function RoutingProgressBarInner() {
 
     document.addEventListener("click", handleAnchorClick, { capture: true });
     return () => document.removeEventListener("click", handleAnchorClick, { capture: true });
-  }, [start]);
+  }, []);
 
   // 2. Clear progress once the Next.js router commits the page change
   useEffect(() => {
     const handle = requestAnimationFrame(() => {
-      done();
+      stopRoutingProgress();
     });
     return () => cancelAnimationFrame(handle);
-  }, [pathname, searchParams, done]);
+  }, [pathname, searchParams]);
 
   // 3. Listen to custom window events for manual programmatic triggering
   useEffect(() => {
