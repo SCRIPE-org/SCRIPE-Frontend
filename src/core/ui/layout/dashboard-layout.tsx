@@ -44,8 +44,7 @@ const API_URL = process.env.NEXT_PUBLIC_File_URL || "";
 
 function getAvatarUrl(profileImageUrl: string | null | undefined): string | undefined {
   if (!profileImageUrl) return undefined;
-  const base = `${API_URL}${profileImageUrl}`;
-  return `${base}?v=${Date.now()}`;
+  return `${API_URL}${profileImageUrl}`;
 }
 
 function LoginWelcomeLoader() {
@@ -120,6 +119,7 @@ function LoginWelcomeLoader() {
           <Avatar className="relative h-24 w-24 border-4 border-background shadow-xl">
             {avatarUrl && <AvatarImage src={avatarUrl} alt={getDisplayName()} />}
             <AvatarFallback
+              delayMs={600}
               style={{ background: avatarGradient }}
               className="text-3xl font-bold text-white duration-300 animate-in fade-in"
             >

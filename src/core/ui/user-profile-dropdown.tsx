@@ -30,10 +30,7 @@ const API_URL = process.env.NEXT_PUBLIC_File_URL || "";
  */
 function getAvatarUrl(profileImageUrl: string | null | undefined): string | undefined {
   if (!profileImageUrl) return undefined;
-  // Strip any query string
-  const base = `${API_URL}${profileImageUrl}`;
-  // Append cache-buster to force reload after avatar change
-  return `${base}?v=${Date.now()}`;
+  return `${API_URL}${profileImageUrl}`;
 }
 
 interface UserProfileDropdownProps {
@@ -147,6 +144,7 @@ export function UserProfileDropdown({
           <Avatar className={cn(getAvatarSize(), "border-2 border-white/20 shadow-md")}>
             {avatarUrl && <AvatarImage src={avatarUrl} alt={getDisplayName()} />}
             <AvatarFallback
+              delayMs={600}
               style={{ background: avatarGradient }}
               className="text-sm font-semibold text-white"
             >
@@ -202,6 +200,7 @@ export function UserProfileDropdown({
           <Avatar className="h-10 w-10 border-2 border-white/20 shadow-md">
             {avatarUrl && <AvatarImage src={avatarUrl} alt={getDisplayName()} />}
             <AvatarFallback
+              delayMs={600}
               style={{ background: avatarGradient }}
               className="font-semibold text-white"
             >
