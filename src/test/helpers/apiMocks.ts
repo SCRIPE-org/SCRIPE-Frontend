@@ -36,7 +36,7 @@ export const handlers = [
   }),
 
   // Auth - Me
-  http.get("*/api/v1/auth/admin/me", () => {
+  http.get("*/api/v1/admins/me", () => {
     return HttpResponse.json(createMockAdmin());
   }),
 
