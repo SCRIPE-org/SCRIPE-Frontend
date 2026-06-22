@@ -1,9 +1,9 @@
-import type { TenantBranding } from "../entities/TenantBranding";
+import type { TenantBrandingModel } from "../models/TenantBrandingModel";
 
 export interface ITenantResolutionService {
   resolveTenant(params: {
     code?: string | null;
     domain?: string | null;
     page?: string | null;
-  }): Promise<TenantBranding | null>;
+  }): Promise<TenantBrandingModel | null>;
 }

@@ -30,6 +30,7 @@ export const AUTH_ENDPOINTS = {
       CHALLENGE: `${V1}/auth/oidc/challenge`,
       CALLBACK: `${V1}/auth/oidc/callback`,
       AUTHORIZE: `/connect/authorize`,
+      COMPLETE_WORKSPACE_SELECTION: `${V1}/auth/oidc/complete-workspace-selection`,
     },
     SAML: {
       LOGIN: `${V1}/auth/saml/login`,

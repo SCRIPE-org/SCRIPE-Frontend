@@ -50,6 +50,17 @@ export class SsoProvider {
   }
 }
 
+export interface SsoWorkspaceListItem {
+  tenantId: string;
+  tenantCode: string;
+  tenantName: string;
+  logoUrl?: string | null;
+  isPlatformAdmin: boolean;
+  isActivated: boolean;
+  isDisabled: boolean;
+  isPasswordVerified: boolean;
+}
+
 export interface SsoCallbackResult {
   type: "admin" | "user";
   accessToken?: string;
@@ -60,6 +71,11 @@ export interface SsoCallbackResult {
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
+  requiresWorkspaceSelection?: boolean;
+  availableWorkspaces?: SsoWorkspaceListItem[];
+  token?: string;
+  providerKey?: string;
+  identityProviderId?: string;
 }
 
 export interface SsoNoLinkedAccountError {

@@ -1,6 +1,7 @@
 import type { SsoCallbackResult, SsoProvider } from "../../domain/entities/SsoProvider";
 import type { ISsoRepository } from "../../domain/interfaces/ISsoRepository";
-import type { ISsoService } from "../../domain/interfaces/ISsoService";
+import type { ISsoService } from "../interfaces/ISsoService";
+import { SsoMapper } from "../mappers/SsoMapper";
 
 const SSO_KEYS = {
   CODE_VERIFIER: "sso_code_verifier",
@@ -16,7 +17,9 @@ export class SsoRepository implements ISsoRepository {
     mode?: string | null;
   }): Promise<SsoProvider[]> {
     const providers = await this.service.getProviders(params);
-    return providers.sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+    return providers
+      .map(SsoMapper.providerToDomain)
+      .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
   }
 
   async initiateLogin(providerId: string, protocol?: string): Promise<void> {
@@ -60,12 +63,18 @@ export class SsoRepository implements ISsoRepository {
     const redirectUri =
       typeof window !== "undefined" ? `${window.location.origin}/sso/callback` : undefined;
 
-    return this.service.completeOidcCallback({
+    const result = await this.service.completeOidcCallback({
       providerId,
       code,
       codeVerifier,
       state,
       redirectUri,
     });
+    return SsoMapper.callbackResultToDomain(result);
+  }
+
+  async completeWorkspaceSelection(token: string, tenantId: string): Promise<SsoCallbackResult> {
+    const result = await this.service.completeWorkspaceSelection({ token, tenantId });
+    return SsoMapper.callbackResultToDomain(result);
   }
 }

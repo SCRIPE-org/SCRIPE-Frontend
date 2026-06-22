@@ -6,13 +6,30 @@ import { Button } from "@core/ui/button";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { SsoCallbackError, SsoCallbackState } from "../viewmodels/useSsoCallbackHandler";
+import { PostCredentialWorkspaceSelector } from "./PostCredentialWorkspaceSelector";
+import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 
 interface SsoCallbackContentProps {
   state: SsoCallbackState;
   errorInfo: SsoCallbackError | null;
+  workspaceData?: { workspaces: WorkspaceChoice[]; token: string } | null;
+  workspaceEmail?: string;
+  isSelectingWorkspace?: boolean;
+  selectionError?: string;
+  handleSelectWorkspace?: (workspace: WorkspaceChoice) => Promise<void> | void;
+  handleBack?: () => void;
 }
 
-export function SsoCallbackContent({ state, errorInfo }: SsoCallbackContentProps) {
+export function SsoCallbackContent({
+  state,
+  errorInfo,
+  workspaceData,
+  workspaceEmail,
+  isSelectingWorkspace,
+  selectionError,
+  handleSelectWorkspace,
+  handleBack,
+}: SsoCallbackContentProps) {
   const { t, direction } = useI18n();
 
   return (
@@ -89,6 +106,17 @@ export function SsoCallbackContent({ state, errorInfo }: SsoCallbackContentProps
               </Link>
             </Button>
           </div>
+        )}
+        {state === "workspace_selection" && workspaceData && (
+          <PostCredentialWorkspaceSelector
+            email={workspaceEmail || ""}
+            workspaces={workspaceData.workspaces}
+            onSelect={handleSelectWorkspace || (() => {})}
+            onUnlock={async () => {}}
+            onBack={handleBack || (() => {})}
+            isLoading={isSelectingWorkspace}
+            error={selectionError}
+          />
         )}
       </div>
     </div>

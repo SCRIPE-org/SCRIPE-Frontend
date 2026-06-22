@@ -1,6 +1,6 @@
-import type { SsoProvider } from "../../domain/entities/SsoProvider";
+import type { SsoCallbackResult, SsoProvider } from "../../domain/entities/SsoProvider";
 import { SsoProvider as SsoProviderEntity } from "../../domain/entities/SsoProvider";
-import type { SsoProviderDto } from "../models/SsoModels";
+import type { SsoCallbackResultDto, SsoProviderDto } from "../models/SsoModels";
 
 export class SsoMapper {
   static providerToDomain(model: SsoProviderDto): SsoProvider {
@@ -14,5 +14,24 @@ export class SsoMapper {
       buttonLabel: model.buttonLabel ?? null,
       displayOrder: model.displayOrder ?? 0,
     });
+  }
+
+  static callbackResultToDomain(dto: SsoCallbackResultDto): SsoCallbackResult {
+    return {
+      type: dto.type,
+      accessToken: dto.accessToken,
+      refreshToken: dto.refreshToken,
+      expiresAt: dto.expiresAt,
+      providerName: dto.providerName,
+      email: dto.email,
+      subscriptionStatus: dto.subscriptionStatus,
+      gracePhase: dto.gracePhase,
+      editionName: dto.editionName,
+      requiresWorkspaceSelection: dto.requiresWorkspaceSelection,
+      availableWorkspaces: dto.availableWorkspaces,
+      token: dto.token,
+      providerKey: dto.providerKey,
+      identityProviderId: dto.identityProviderId,
+    };
   }
 }

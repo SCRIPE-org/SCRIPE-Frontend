@@ -9,6 +9,7 @@
 import type { IdentityProviderFormState } from "../viewmodels/useIdentityProviderDetailViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Input } from "@core/ui/input";
+import { PasswordInput } from "@core/ui/password-input";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { Textarea } from "@core/ui/textarea";
@@ -199,11 +200,11 @@ export function OidcConfigSection({ form, updateField }: FormSectionProps) {
             <Label htmlFor="idp-clientSecret">
               {t("identityProviders.clientSecret") || "Client Secret"}
             </Label>
-            <Input
+            <PasswordInput
               id="idp-clientSecret"
-              type="password"
               value={form.clientSecret}
               onChange={(e) => updateField("clientSecret", e.target.value)}
+              autoComplete="new-password"
               placeholder={
                 t("identityProviders.clientSecretPlaceholder") || "Leave blank to keep existing"
               }
@@ -302,11 +303,11 @@ export function Oauth2ConfigSection({ form, updateField }: FormSectionProps) {
             <Label htmlFor="oauth2-clientSecret">
               {t("identityProviders.clientSecret") || "Client Secret"}
             </Label>
-            <Input
+            <PasswordInput
               id="oauth2-clientSecret"
-              type="password"
               value={form.clientSecret}
               onChange={(e) => updateField("clientSecret", e.target.value)}
+              autoComplete="new-password"
               placeholder={
                 t("identityProviders.clientSecretPlaceholder") || "Leave blank to keep existing"
               }
