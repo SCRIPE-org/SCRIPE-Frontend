@@ -12,6 +12,7 @@
 :root {
   --font-inter: "Inter", sans-serif;
   --font-cairo: "Cairo", sans-serif;
+  --font-sans: var(--font-inter);
   --font-size-base: 16px;
   --spacing-unit: 1rem;
 
@@ -2202,11 +2203,18 @@ html[data-bg-mode="custom"] body > div > div > div.min-h-screen {
    UTILITY CLASSES - FONTS
    ======================================== */
 .font-arabic {
+  --font-sans: var(--font-cairo);
   font-family: var(--font-cairo), sans-serif;
 }
 
 .font-english {
+  --font-sans: var(--font-inter);
   font-family: var(--font-inter), sans-serif;
+}
+
+html[lang="ar"],
+[lang="ar"] {
+  --font-sans: var(--font-cairo) !important;
 }
 
 /* ========================================

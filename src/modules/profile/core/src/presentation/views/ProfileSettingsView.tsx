@@ -14,7 +14,7 @@ import { ProfileSecurityTab } from "../components/ProfileSecurityTab";
 import { ProfileSessionsTab } from "../components/ProfileSessionsTab";
 import { ProfileActivityTab } from "../components/ProfileActivityTab";
 
-import { cn } from "@core/common/utils";
+import { cn, resolveFileUrl } from "@core/common/utils";
 import { User, Shield, Monitor, ListTodo } from "lucide-react";
 
 type ActiveTab = "general" | "security" | "sessions" | "activity";
@@ -101,7 +101,7 @@ export function ProfileSettingsView() {
                 {profile.profileImageUrl && !imageError ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={`${process.env.NEXT_PUBLIC_File_URL || ""}${profile.profileImageUrl}`}
+                    src={resolveFileUrl(profile.profileImageUrl)}
                     alt="Profile"
                     className="h-full w-full object-cover"
                     onError={() => setImageError(true)}
