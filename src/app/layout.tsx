@@ -60,7 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           crossOrigin="anonymous"
         />
       </head>
-      <body className="font-cairo antialiased" suppressHydrationWarning>
+      <body className="font-sans antialiased" suppressHydrationWarning>
         <AppProvider>{children}</AppProvider>
         {/* P5.1: Service Worker — deferred to afterInteractive (no longer render-blocking) */}
         <Script

@@ -29,7 +29,7 @@ import {
 import { useTenantSettingsViewModel } from "@modules/identity/tenants/src/presentation/viewmodels/useTenantSettingsViewModel";
 import { TenantSettingsEditDialog } from "../TenantSettingsEditDialog";
 import { Skeleton } from "@core/ui/skeleton";
-import { cn } from "@core/common/utils";
+import { cn, resolveFileUrl } from "@core/common/utils";
 
 interface TenantSettingsTabProps {
   tenantId: string;
@@ -189,11 +189,7 @@ export function TenantSettingsTab({
             {/* Logo */}
             {settings.logoUrl ? (
               <img
-                src={
-                  settings.logoUrl.startsWith("http")
-                    ? settings.logoUrl
-                    : `${process.env.NEXT_PUBLIC_File_URL || ""}${settings.logoUrl}`
-                }
+                src={resolveFileUrl(settings.logoUrl)}
                 alt={t("tenant.logoPreview")}
                 className="h-16 w-16 rounded-xl border border-border/50 bg-muted/20 object-contain p-1.5"
               />
@@ -242,11 +238,7 @@ export function TenantSettingsTab({
                 <p className="text-xs text-muted-foreground">{t("tenant.favicon") || "Favicon"}</p>
                 <div className="mt-1">
                   <img
-                    src={
-                      settings.faviconUrl.startsWith("http")
-                        ? settings.faviconUrl
-                        : `${process.env.NEXT_PUBLIC_File_URL || ""}${settings.faviconUrl}`
-                    }
+                    src={resolveFileUrl(settings.faviconUrl)}
                     alt="Favicon"
                     className="h-8 w-8 object-contain"
                     onError={(e) => {

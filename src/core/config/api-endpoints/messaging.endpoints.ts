@@ -20,7 +20,7 @@ export const MESSAGING_ENDPOINTS = {
     CANCEL: (id: string) => `${V1}/emails/${id}`,
     RESEND: (id: string) => `${V1}/emails/${id}/resend`,
     TEMPLATES_LIST: `${V1}/emails/templates`,
-    UPLOAD_ATTACHMENT: `${V1}/email/upload-attachment`,
+    UPLOAD_ATTACHMENT: `${V1}/emails/upload-attachment`,
   },
 
   NOTIFICATIONS: {

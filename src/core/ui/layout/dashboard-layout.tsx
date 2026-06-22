@@ -18,12 +18,13 @@ import { useTheme } from "next-themes";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
-import { useIsFetching } from "@tanstack/react-query";
+import { resolveFileUrl } from "@core/common/utils";
 
 // Default layout — statically imported (always needed, no lazy-load delay)
 // Nexus is the default layoutTemplate (defaults.ts), so it must be statically
 // imported to avoid a flash of empty content while dynamic() downloads the chunk.
 import { NexusLayout } from "@core/ui/layout/nexus/nexus-layout";
+import { useIsFetching } from "@tanstack/react-query";
 
 // ── Layout chunk loading shimmer ────────────────────────────────────────────
 // Shown while a lazy-loaded layout chunk downloads. Prevents the brief blank
@@ -40,14 +41,6 @@ function LayoutLoadingShimmer() {
   );
 }
 
-const API_URL = process.env.NEXT_PUBLIC_File_URL || "";
-
-function getAvatarUrl(profileImageUrl: string | null | undefined): string | undefined {
-  if (!profileImageUrl) return undefined;
-  const base = `${API_URL}${profileImageUrl}`;
-  return `${base}?v=${Date.now()}`;
-}
-
 function LoginWelcomeLoader() {
   const user = useAppStore((state) => state.user);
   const { t } = useI18n();
@@ -56,7 +49,7 @@ function LoginWelcomeLoader() {
   const isDark = resolvedTheme === "dark";
   const accent = accentColor ?? (isDark ? "#7C6FD4" : "#6258c4");
 
-  const avatarUrl = user ? getAvatarUrl(user.profileImageUrl) : undefined;
+  const avatarUrl = user ? (resolveFileUrl(user.profileImageUrl) || undefined) : undefined;
   const avatarGradient = `linear-gradient(135deg, ${accent}CC 0%, ${isDark ? "#3B2FA3" : "#2D2580"} 100%)`;
 
   const getInitials = () => {
@@ -120,6 +113,7 @@ function LoginWelcomeLoader() {
           <Avatar className="relative h-24 w-24 border-4 border-background shadow-xl">
             {avatarUrl && <AvatarImage src={avatarUrl} alt={getDisplayName()} />}
             <AvatarFallback
+              delayMs={600}
               style={{ background: avatarGradient }}
               className="text-3xl font-bold text-white duration-300 animate-in fade-in"
             >

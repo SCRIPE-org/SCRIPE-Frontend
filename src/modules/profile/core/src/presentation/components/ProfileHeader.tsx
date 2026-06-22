@@ -8,6 +8,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { Badge } from "@core/ui/badge";
 import type { AdminProfile } from "../../../src/domain/entities/AdminProfile";
+import { resolveFileUrl } from "@core/common/utils";
 
 interface ProfileHeaderProps {
   profile: AdminProfile | undefined;
@@ -30,8 +31,7 @@ export function ProfileHeader({ profile, isLoading }: ProfileHeaderProps) {
     "U";
   const fullName = `${profile.firstName} ${profile.lastName}`.trim() || profile.username;
 
-  const fileUrl = process.env.NEXT_PUBLIC_File_URL || "";
-  const avatarSrc = profile.profileImageUrl ? `${fileUrl}${profile.profileImageUrl}` : null;
+  const avatarSrc = resolveFileUrl(profile.profileImageUrl) || null;
 
   return (
     <div className="flex flex-col items-center gap-3 p-4">

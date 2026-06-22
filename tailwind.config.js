@@ -18,8 +18,8 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
-        arabic: ["Cairo", "system-ui", "sans-serif"],
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        arabic: ["var(--font-cairo)", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

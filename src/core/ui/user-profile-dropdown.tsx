@@ -15,26 +15,11 @@ import { ChevronDown, Settings, User, LogOut } from "lucide-react";
 import { useAppStore } from "@core/store/useAppStore";
 import { useAuthLogout } from "@modules/auth/core/src/presentation/viewmodels/useAuthLogout";
 import { useI18n } from "@core/providers/i18n-provider";
-import { cn } from "@core/common/utils";
+import { cn, resolveFileUrl } from "@core/common/utils";
 import { useSettings } from "@core/providers/settings-provider";
 import { appLogger } from "@core/common/logger";
 import { useTheme } from "next-themes";
 import { useWorkspace } from "@core/providers/workspace-provider";
-
-const API_URL = process.env.NEXT_PUBLIC_File_URL || "";
-
-/**
- * Build the full avatar URL by prepending the API base URL
- * if the path is relative (starts with /).
- * Also strips any existing ?v= cache-buster and appends a fresh one.
- */
-function getAvatarUrl(profileImageUrl: string | null | undefined): string | undefined {
-  if (!profileImageUrl) return undefined;
-  // Strip any query string
-  const base = `${API_URL}${profileImageUrl}`;
-  // Append cache-buster to force reload after avatar change
-  return `${base}?v=${Date.now()}`;
-}
 
 interface UserProfileDropdownProps {
   variant?: "default" | "compact" | "minimal" | "elegant" | "floating" | "navigation";
@@ -64,7 +49,7 @@ export function UserProfileDropdown({
 
   if (!user || !settings.showUserAvatar) return null;
 
-  const avatarUrl = getAvatarUrl(user.profileImageUrl);
+  const avatarUrl = resolveFileUrl(user.profileImageUrl) || undefined;
 
   // Avatar gradient that matches the Nexus accent colour
   const avatarGradient = `linear-gradient(135deg, ${accent}CC 0%, ${isDark ? "#3B2FA3" : "#2D2580"} 100%)`;
@@ -147,6 +132,7 @@ export function UserProfileDropdown({
           <Avatar className={cn(getAvatarSize(), "border-2 border-white/20 shadow-md")}>
             {avatarUrl && <AvatarImage src={avatarUrl} alt={getDisplayName()} />}
             <AvatarFallback
+              delayMs={600}
               style={{ background: avatarGradient }}
               className="text-sm font-semibold text-white"
             >
@@ -202,6 +188,7 @@ export function UserProfileDropdown({
           <Avatar className="h-10 w-10 border-2 border-white/20 shadow-md">
             {avatarUrl && <AvatarImage src={avatarUrl} alt={getDisplayName()} />}
             <AvatarFallback
+              delayMs={600}
               style={{ background: avatarGradient }}
               className="font-semibold text-white"
             >
