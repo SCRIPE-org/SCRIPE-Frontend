@@ -8,6 +8,7 @@
  */
 "use client";
 
+import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import type { SsoProvider } from "@modules/auth/core/domain/entities/SsoProvider";
@@ -161,6 +162,81 @@ const BrandIcon = ({ slug, name, protocol }: { slug: string; name: string; proto
   return <ProtocolIcon protocol={protocol} />;
 };
 
+const SsoButton = ({
+  provider,
+  onProviderClick,
+}: {
+  provider: SsoProvider;
+  onProviderClick: (providerId: string, protocol?: string) => void;
+}) => {
+  const [hover, setHover] = useState(false);
+  
+  const label = (() => {
+    const lowerName = provider.name.toLowerCase();
+    const lowerSlug = provider.slug.toLowerCase();
+    
+    if (lowerName.includes("google") || lowerSlug.includes("google")) {
+      return "Google";
+    }
+    if (
+      lowerName.includes("microsoft") ||
+      lowerName.includes("entra") ||
+      lowerName.includes("azure") ||
+      lowerSlug.includes("microsoft") ||
+      lowerSlug.includes("entra") ||
+      lowerSlug.includes("azure")
+    ) {
+      return "Microsoft";
+    }
+    if (lowerName.includes("apple") || lowerSlug.includes("apple")) {
+      return "Apple";
+    }
+    if (lowerName.includes("github") || lowerSlug.includes("github")) {
+      return "GitHub";
+    }
+    return provider.name;
+  })();
+
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      className="group flex flex-1 items-center justify-center gap-2 rounded-[10px] border text-[13px] font-medium shadow-none transition-all duration-150 hover:scale-[1.02] active:scale-[0.98]"
+      style={{
+        height: 44,
+        padding: "11px 12px",
+        background: hover
+          ? "var(--sx-field-bg-focus, rgba(124,58,237,0.06))"
+          : "var(--sx-chip-bg, rgba(255,255,255,.03))",
+        borderColor: hover
+          ? "var(--sx-field-border-focus, rgba(168,85,247,0.55))"
+          : "var(--sx-chip-border, rgba(255,255,255,.08))",
+        color: "var(--sx-text, hsl(var(--foreground)))",
+        cursor: "pointer",
+      }}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      onClick={() => onProviderClick(provider.id, provider.protocol)}
+    >
+      {provider.iconUrl ? (
+        <Image
+          src={resolveFileUrl(provider.iconUrl)}
+          alt=""
+          width={18}
+          height={18}
+          className="object-contain"
+          onError={(e) => {
+            e.currentTarget.style.display = "none";
+          }}
+        />
+      ) : (
+        <BrandIcon slug={provider.slug} name={provider.name} protocol={provider.protocol} />
+      )}
+      <span>{label}</span>
+    </Button>
+  );
+};
+
 export function SsoProviderButtons({
   providers,
   isLoading,
@@ -225,47 +301,13 @@ export function SsoProviderButtons({
       {/* ── Provider buttons — horizontal equal-width row ─ */}
       {!isLoading && providers.length > 0 && (
         <div className="mt-3 flex gap-2">
-          {providers.map((provider) => {
-            const label = provider.buttonLabel || provider.name;
-            const customBg = provider.buttonColor || "var(--sx-chip-bg, rgba(255,255,255,.03))";
-            const hasCustomColor = !!provider.buttonColor;
-
-            return (
-              <Button
-                key={provider.id}
-                type="button"
-                variant="outline"
-                className="group flex flex-1 items-center justify-center gap-2 rounded-[10px] border text-[13px] font-medium shadow-none transition-all duration-150 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]"
-                style={{
-                  height: 44,
-                  padding: "11px 14px",
-                  background: customBg,
-                  borderColor: hasCustomColor ? "transparent" : "var(--sx-chip-border, rgba(255,255,255,.08))",
-                  color: hasCustomColor ? "#FFFFFF" : "var(--sx-text, hsl(var(--foreground)))",
-                }}
-                onClick={() => onProviderClick(provider.id, provider.protocol)}
-              >
-                {/* Icon */}
-                {provider.iconUrl ? (
-                  <Image
-                    src={resolveFileUrl(provider.iconUrl)}
-                    alt=""
-                    width={18}
-                    height={18}
-                    className="object-contain"
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                    }}
-                  />
-                ) : (
-                  <BrandIcon slug={provider.slug} name={provider.name} protocol={provider.protocol} />
-                )}
-
-                {/* Label */}
-                <span>{label}</span>
-              </Button>
-            );
-          })}
+          {providers.map((provider) => (
+            <SsoButton
+              key={provider.id}
+              provider={provider}
+              onProviderClick={onProviderClick}
+            />
+          ))}
         </div>
       )}
     </div>
