@@ -7,6 +7,7 @@ import type { AccessibilityConfig } from "@modules/auth/core/src/presentation/vi
 import type { useLoginViewModel } from "../viewmodels/use-login-viewmodel";
 import type { useSsoProviders } from "../viewmodels/useSsoProviders";
 import { CredentialsForm } from "./CredentialsForm";
+import { CredentialsFormFooter } from "./CredentialsFormFooter";
 import { MagicLinkRequestForm } from "./MagicLinkRequestForm";
 import { MagicLinkSentScreen } from "./MagicLinkSentScreen";
 import { PostCredentialWorkspaceSelector } from "./PostCredentialWorkspaceSelector";
@@ -117,6 +118,11 @@ export function LoginFormRouter({
             isLoading={sso.isLoading}
             error={sso.error}
             onProviderClick={sso.initiateSsoLogin}
+          />
+          <CredentialsFormFooter
+            isPlatformMode={isPlatformMode}
+            arrow={isRTL ? "←" : "→"}
+            t={t}
           />
         </>
       ) : vm.loginStep === "phone-otp" ? (

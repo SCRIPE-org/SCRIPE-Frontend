@@ -7,7 +7,6 @@ import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Mail, Fingerprint, Smartphone, QrCode } from "lucide-react";
 import type { LoginFormData } from "../viewmodels/use-login-viewmodel";
 import { CredentialsFormHeader } from "./CredentialsFormHeader";
-import { CredentialsFormFooter } from "./CredentialsFormFooter";
 import { MethodChipsSection } from "./MethodChipsSection";
 import { IdentifierInput } from "./IdentifierInput";
 import { CredentialsPasswordInput } from "./CredentialsPasswordInput";
@@ -191,8 +190,6 @@ export function CredentialsForm({
       {/* ── Method chips (pills, directly below CTA) ──── */}
       <MethodChipsSection methodChips={methodChips} isLoading={isLoading} t={t} />
 
-      {/* ── Card footer: Create workspace + Systems operational ── */}
-      <CredentialsFormFooter isPlatformMode={isPlatformMode} arrow={arrow} t={t} />
     </form>
   );
 }
