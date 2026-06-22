@@ -41,6 +41,7 @@ export interface SsoCallbackSetters {
   setState: (s: SsoCallbackState) => void;
   setErrorInfo: (e: SsoCallbackError | null) => void;
   redirectTo: (path: string) => void;
+  setWorkspaceSelectionData?: (data: { workspaces: any[]; token: string; email?: string }) => void;
 }
 
 export type SsoSearchParams = {
@@ -65,7 +66,7 @@ export function isNoLinkedAccountError(error: unknown): boolean {
   );
 }
 
-async function completeAdminLogin(
+export async function completeAdminLogin(
   accessToken: string,
   subscription: { status?: string | null; gracePhase?: string | null; editionName?: string | null },
   deps: SsoCallbackDeps,
@@ -149,6 +150,18 @@ export async function handleOidcCallback(
 
   try {
     const result = await deps.ssoRepository.completeCallback(code, stateParam);
+
+    if (result.requiresWorkspaceSelection && result.availableWorkspaces && result.token) {
+      if (setters.setWorkspaceSelectionData) {
+        setters.setWorkspaceSelectionData({
+          workspaces: result.availableWorkspaces,
+          token: result.token,
+          email: result.email,
+        });
+        setters.setState("workspace_selection");
+        return;
+      }
+    }
 
     if (result.type === "admin" && result.accessToken) {
       await completeAdminLogin(

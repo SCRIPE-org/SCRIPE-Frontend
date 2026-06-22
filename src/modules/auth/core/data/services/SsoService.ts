@@ -1,8 +1,6 @@
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
-import type { ISsoService } from "../../domain/interfaces/ISsoService";
-import type { SsoCallbackResult, SsoProvider } from "../../domain/entities/SsoProvider";
+import type { ISsoService } from "../interfaces/ISsoService";
 import type { IPublicApiService } from "@core/interfaces/public-api.interface";
-import { SsoMapper } from "../mappers/SsoMapper";
 import type { SsoCallbackResultDto, SsoChallengeDto, SsoProviderDto } from "../models/SsoModels";
 
 export class SsoService implements ISsoService {
@@ -11,13 +9,13 @@ export class SsoService implements ISsoService {
   async getProviders(params: {
     tenantId?: string | null;
     mode?: string | null;
-  }): Promise<SsoProvider[]> {
+  }): Promise<SsoProviderDto[]> {
     const url = buildUrl(API_ENDPOINTS.AUTH.OIDC.ADMIN_PROVIDERS, {
       tenantId: params.tenantId ?? undefined,
       mode: params.tenantId ? (params.mode ?? undefined) : undefined,
     });
     const providers = await this.api.get<SsoProviderDto[]>(url);
-    return (providers ?? []).map(SsoMapper.providerToDomain);
+    return providers ?? [];
   }
 
   initiateOidcChallenge(params: {
@@ -33,8 +31,15 @@ export class SsoService implements ISsoService {
     codeVerifier: string;
     state: string;
     redirectUri?: string;
-  }): Promise<SsoCallbackResult> {
+  }): Promise<SsoCallbackResultDto> {
     return this.api.post<SsoCallbackResultDto>(API_ENDPOINTS.AUTH.OIDC.CALLBACK, params);
+  }
+
+  completeWorkspaceSelection(params: { token: string; tenantId: string }): Promise<SsoCallbackResultDto> {
+    return this.api.post<SsoCallbackResultDto>(
+      API_ENDPOINTS.AUTH.OIDC.COMPLETE_WORKSPACE_SELECTION,
+      params
+    );
   }
 
   buildSamlLoginUrl(params: { providerId: string; redirectUri?: string }): string {

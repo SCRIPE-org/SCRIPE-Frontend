@@ -1,7 +1,7 @@
-import type { SsoCallbackResult, SsoProvider } from "../entities/SsoProvider";
+import type { SsoCallbackResultDto, SsoProviderDto } from "../models/SsoModels";
 
 export interface ISsoService {
-  getProviders(params: { tenantId?: string | null; mode?: string | null }): Promise<SsoProvider[]>;
+  getProviders(params: { tenantId?: string | null; mode?: string | null }): Promise<SsoProviderDto[]>;
   initiateOidcChallenge(params: {
     providerId: string;
     redirectUri?: string;
@@ -12,6 +12,7 @@ export interface ISsoService {
     codeVerifier: string;
     state: string;
     redirectUri?: string;
-  }): Promise<SsoCallbackResult>;
+  }): Promise<SsoCallbackResultDto>;
+  completeWorkspaceSelection(params: { token: string; tenantId: string }): Promise<SsoCallbackResultDto>;
   buildSamlLoginUrl(params: { providerId: string; redirectUri?: string }): string;
 }

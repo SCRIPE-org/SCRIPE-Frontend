@@ -576,6 +576,7 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
                   name: tpl.name,
                   slug: tpl.id,
                   buttonLabel: localizedButtonLabel,
+                  buttonColor: tpl.color,
                 });
               }}
               className="p-4.5 group relative flex cursor-pointer flex-col items-center gap-2.5 rounded-xl border text-center transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:shadow-md active:scale-[0.97]"
