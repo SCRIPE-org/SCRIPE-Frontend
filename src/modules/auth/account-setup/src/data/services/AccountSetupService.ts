@@ -14,8 +14,16 @@ import type {
 } from "../../../../core/domain/interfaces/IAccountSetupService";
 import type { IPublicApiService } from "@core/interfaces/public-api.interface";
 
+/**
+ * Re-exports type definitions representing account setup request and response contracts
+ * to expose them cleanly as part of the module interface boundaries.
+ */
 export type { ActivateAccountRequest, ActivateAccountResponse, ValidateTokenResponse };
 
+/**
+ * AccountSetupService provides the concrete implementation of the IAccountSetupService.
+ * Coordinates with the backend public API to validate initialization tokens and register the root tenant administrator.
+ */
 export class AccountSetupService implements IAccountSetupService {
   constructor(private readonly api: IPublicApiService) {}
 

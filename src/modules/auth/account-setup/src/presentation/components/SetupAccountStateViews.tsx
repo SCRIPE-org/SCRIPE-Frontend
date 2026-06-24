@@ -32,6 +32,12 @@ export function SetupLoadingView() {
   );
 }
 
+/**
+ * SetupInvalidView renders a card view indicating that the setup token is invalid, expired, or used.
+ * Provides details about the error message and an action button to redirect the user to the login page.
+ *
+ * @param props.errorMessage The validation error message to display.
+ */
 export function SetupInvalidView({ errorMessage }: StateViewProps) {
   const { t } = useI18n();
   const router = useRouter();
@@ -53,6 +59,12 @@ export function SetupInvalidView({ errorMessage }: StateViewProps) {
   );
 }
 
+/**
+ * SetupSuccessView renders a card view indicating that the administrator account has been successfully set up.
+ * Displays the verified username and provides an action button to navigate the user to the login screen.
+ *
+ * @param props.tokenData The validated token payload containing workspace/administrator information.
+ */
 export function SetupSuccessView({ tokenData }: StateViewProps) {
   const { t } = useI18n();
   const router = useRouter();
@@ -79,6 +91,13 @@ export function SetupSuccessView({ tokenData }: StateViewProps) {
   );
 }
 
+/**
+ * SetupErrorView renders a card view indicating that an error occurred during account activation.
+ * Offers the specific activation error message and a retry button to trigger the activation process again.
+ *
+ * @param props.errorMessage The activation error message.
+ * @param props.onRetry Callback function to retry the account setup activation submission.
+ */
 export function SetupErrorView({ errorMessage, onRetry }: StateViewProps) {
   const { t } = useI18n();
   return (
@@ -99,6 +118,13 @@ export function SetupErrorView({ errorMessage, onRetry }: StateViewProps) {
   );
 }
 
+/**
+ * PasswordCheck displays a validation constraint checklist item for a password input field.
+ * Uses a green checkmark icon when the rule is met, and an empty circle indicator otherwise.
+ *
+ * @param props.label The user-friendly rule description (e.g. "At least 8 characters").
+ * @param props.ok Boolean indicating whether the constraint is successfully satisfied.
+ */
 export function PasswordCheck({ label, ok }: { label: string; ok: boolean }) {
   return (
     <div
