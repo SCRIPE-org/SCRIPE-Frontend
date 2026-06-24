@@ -53,7 +53,8 @@ interface ProfilePreviewProps {
 }
 
 /**
- * React presentation component representing the profile preview UI element.
+ * Presentation UI component rendering the profile preview.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ProfilePreview({ questions, answers, variant = "sidebar" }: ProfilePreviewProps) {
   const { tokens } = useSignupTheme();

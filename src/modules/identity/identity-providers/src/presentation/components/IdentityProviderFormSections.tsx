@@ -35,7 +35,8 @@ interface FormSectionProps {
 
 // ─── General Section ────────────────────────────────────────────
 /**
- * React presentation component representing the general section UI element.
+ * Presentation UI component rendering the general section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function GeneralSection({
   form,
@@ -154,7 +155,8 @@ export function GeneralSection({
 
 // ─── OIDC Configuration Section ─────────────────────────────────
 /**
- * React presentation component representing the oidc config section UI element.
+ * Presentation UI component rendering the oidc config section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function OidcConfigSection({ form, updateField }: FormSectionProps) {
   const { t } = useI18n();
@@ -258,7 +260,8 @@ export function OidcConfigSection({ form, updateField }: FormSectionProps) {
 
 // ─── OAuth 2.0 Configuration Section ────────────────────────────
 /**
- * React presentation component representing the oauth2 config section UI element.
+ * Presentation UI component rendering the oauth2 config section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function Oauth2ConfigSection({ form, updateField }: FormSectionProps) {
   const { t } = useI18n();
@@ -364,7 +367,8 @@ export function Oauth2ConfigSection({ form, updateField }: FormSectionProps) {
 
 // ─── Explicit Endpoints Section (Optional) ──────────────────────
 /**
- * React presentation component representing the explicit endpoints section UI element.
+ * Presentation UI component rendering the explicit endpoints section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function ExplicitEndpointsSection({ form, updateField }: FormSectionProps) {
   const { t } = useI18n();
@@ -425,7 +429,8 @@ export function ExplicitEndpointsSection({ form, updateField }: FormSectionProps
 
 // ─── SAML Configuration Section ─────────────────────────────────
 /**
- * React presentation component representing the saml config section UI element.
+ * Presentation UI component rendering the saml config section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function SamlConfigSection({ form, updateField }: FormSectionProps) {
   const { t } = useI18n();
@@ -488,7 +493,8 @@ export function SamlConfigSection({ form, updateField }: FormSectionProps) {
 
 // ─── Appearance Section ─────────────────────────────────────────
 /**
- * React presentation component representing the appearance section UI element.
+ * Presentation UI component rendering the appearance section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function AppearanceSection({ form, updateField }: FormSectionProps) {
   const { t } = useI18n();
@@ -733,7 +739,8 @@ export function AppearanceSection({ form, updateField }: FormSectionProps) {
 
 // ─── Access Control Section ─────────────────────────────────────
 /**
- * React presentation component representing the access control section UI element.
+ * Presentation UI component rendering the access control section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function AccessControlSection({ form, updateField }: FormSectionProps) {
   const { t } = useI18n();
@@ -819,7 +826,8 @@ export function AccessControlSection({ form, updateField }: FormSectionProps) {
 
 // ─── Claim Mappings Section ─────────────────────────────────────
 /**
- * React presentation component representing the claim mappings section UI element.
+ * Presentation UI component rendering the claim mappings section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function ClaimMappingsSection({ form, updateField }: FormSectionProps) {
   const { t } = useI18n();

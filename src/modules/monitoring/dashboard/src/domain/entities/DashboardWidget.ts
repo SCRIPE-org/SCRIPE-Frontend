@@ -23,13 +23,15 @@ export type DashboardWidgetType =
 
 // ── Grid Alignment ────────────────────────────────────────
 /**
- * Type declaration definition describing the schema of widget alignment.
+ * Domain model representing a Widget Alignment structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type WidgetAlignment = "start" | "center" | "end" | "stretch";
 
 // ── Dashboard Widget ──────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Dashboard Widget.
+ * Domain model representing a Dashboard Widget structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface DashboardWidget {
   /** Unique identifier */
@@ -52,7 +54,8 @@ export interface DashboardWidget {
 
 // ── Builder Canvas Config ─────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Dashboard Builder Canvas.
+ * Domain model representing a Dashboard Builder Canvas structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface DashboardBuilderCanvas {
   enabled: boolean;
@@ -62,7 +65,8 @@ export interface DashboardBuilderCanvas {
 
 // ── Widget Catalog Entry ──────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Widget Catalog Entry.
+ * Domain model representing a Widget Catalog Entry structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface WidgetCatalogEntry {
   type: DashboardWidgetType;
@@ -80,7 +84,8 @@ export interface WidgetCatalogEntry {
 
 // ── Widget Catalog ────────────────────────────────────────
 /**
- * Constant definition representing w i d g e t_ c a t a l o g.
+ * Domain model representing a W I D G E T_ C A T A L O G structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const WIDGET_CATALOG: WidgetCatalogEntry[] = [
   {
@@ -223,7 +228,8 @@ export const WIDGET_CATALOG: WidgetCatalogEntry[] = [
 
 // ── Default Builder Canvas ────────────────────────────────
 /**
- * Constant definition representing d e f a u l t_ d a s h b o a r d_ w i d g e t s.
+ * Domain model representing a D E F A U L T_ D A S H B O A R D_ W I D G E T S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const DEFAULT_DASHBOARD_WIDGETS: DashboardWidget[] = [
   {
@@ -307,12 +313,14 @@ export const DEFAULT_DASHBOARD_WIDGETS: DashboardWidget[] = [
 ];
 
 /**
- * Constant definition representing d e f a u l t_ b u i l d e r_ g r i d_ r o w s.
+ * Domain model representing a D E F A U L T_ B U I L D E R_ G R I D_ R O W S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const DEFAULT_BUILDER_GRID_ROWS = 6;
 
 /**
- * Constant definition representing d e f a u l t_ b u i l d e r_ c a n v a s.
+ * Domain model representing a D E F A U L T_ B U I L D E R_ C A N V A S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const DEFAULT_BUILDER_CANVAS: DashboardBuilderCanvas = {
   enabled: false,
@@ -323,14 +331,16 @@ export const DEFAULT_BUILDER_CANVAS: DashboardBuilderCanvas = {
 // ── Helpers ───────────────────────────────────────────────
 
 /**
- * Utility function executing operational rules for generate widget id.
+ * Domain model representing a generate Widget Id structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export function generateWidgetId(): string {
   return `wgt_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 }
 
 /**
- * Utility function executing operational rules for find next available row.
+ * Domain model representing a find Next Available Row structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export function findNextAvailableRow(widgets: DashboardWidget[]): number {
   if (widgets.length === 0) return 1;
@@ -345,14 +355,16 @@ export function findNextAvailableRow(widgets: DashboardWidget[]): number {
 }
 
 /**
- * Utility function executing operational rules for has singleton widget.
+ * Domain model representing a has Singleton Widget structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export function hasSingletonWidget(widgets: DashboardWidget[], type: DashboardWidgetType): boolean {
   return widgets.some((w) => w.type === type);
 }
 
 /**
- * Utility function executing operational rules for get widget catalog entry.
+ * Domain model representing a get Widget Catalog Entry structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export function getWidgetCatalogEntry(type: DashboardWidgetType): WidgetCatalogEntry | undefined {
   return WIDGET_CATALOG.find((c) => c.type === type);

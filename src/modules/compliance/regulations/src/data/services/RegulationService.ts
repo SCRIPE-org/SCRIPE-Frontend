@@ -10,7 +10,8 @@ import type {
 } from "../models/RegulationModels";
 
 /**
- * API service for executing HTTP calls related to Regulation endpoints.
+ * Http API network service for regulation.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class RegulationService implements IRegulationService {
   constructor(private readonly api: IApiService) {}

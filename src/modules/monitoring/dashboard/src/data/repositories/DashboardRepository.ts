@@ -14,7 +14,8 @@ import type {
 import type { DashboardService } from "../services/DashboardService";
 
 /**
- * Repository implementation for managing database operations on Dashboard resources.
+ * Repository layer implementing client request queries for dashboard.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class DashboardRepository implements IDashboardRepository {
   constructor(private readonly service: DashboardService) {}

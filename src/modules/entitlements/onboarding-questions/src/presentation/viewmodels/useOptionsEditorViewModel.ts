@@ -7,7 +7,8 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useToast } from "@core/ui/use-toast";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for options editor view model.
+ * React hook/ViewModel orchestrating state and data flows for options editor view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useOptionsEditorViewModel(questionId: string | null) {
   const qc = useQueryClient();

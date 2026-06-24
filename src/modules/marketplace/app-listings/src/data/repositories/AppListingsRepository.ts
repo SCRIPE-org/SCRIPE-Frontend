@@ -18,7 +18,8 @@ import type { AppListing } from "../../domain/entities/AppListing";
 import { AppListingMapper } from "../mappers/AppListingMapper";
 
 /**
- * Repository implementation for managing database operations on AppListings resources.
+ * Repository layer implementing client request queries for app listings.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class AppListingsRepository implements IAppListingsRepository {
   constructor(private readonly service: IAppListingsService) {}

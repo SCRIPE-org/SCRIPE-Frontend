@@ -10,7 +10,8 @@
 // ─── Email Recipient ───────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Email Recipient Data.
+ * Domain model representing a Email Recipient Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface EmailRecipientData {
   id: string;
@@ -54,12 +55,14 @@ export class EmailRecipient {
 // ─── Sent Email ────────────────────────────────────────────────
 
 /**
- * Type declaration definition describing the schema of sent email status.
+ * Domain model representing a Sent Email Status structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type SentEmailStatus = "Sent" | "Failed" | "Pending" | "Cancelled";
 
 /**
- * Interface structure detailing the properties and attributes of Sent Email Data.
+ * Domain model representing a Sent Email Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface SentEmailData {
   id: string;
@@ -198,7 +201,8 @@ export class SentEmail {
 // ─── Email Template ────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Email Template Data.
+ * Domain model representing a Email Template Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface EmailTemplateData {
   id: string;
@@ -270,7 +274,8 @@ export class EmailTemplate {
 // ─── List Response ─────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Email Template List Response.
+ * Domain model representing a Email Template List Response structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface EmailTemplateListResponse {
   items: EmailTemplate[];

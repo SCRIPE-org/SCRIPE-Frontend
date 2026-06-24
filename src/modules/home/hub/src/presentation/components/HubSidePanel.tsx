@@ -16,7 +16,7 @@ import { DynamicIcon } from "@core/ui/layout/nexus/_parts/primary-rail-parts";
 // ── Props ─────────────────────────────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Hub Side Panel Props.
+ * Interface defining property specifications, keys types, and structural contract rules for hub side panel props.
  */
 export interface HubSidePanelProps {
   todayCount: number;
@@ -35,7 +35,8 @@ export interface HubSidePanelProps {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 /**
- * React presentation component representing the hub side panel UI element.
+ * Presentation UI component rendering the hub side panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function HubSidePanel({
   todayCount,

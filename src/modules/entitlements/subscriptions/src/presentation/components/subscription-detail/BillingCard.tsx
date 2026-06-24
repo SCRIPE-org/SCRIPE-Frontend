@@ -16,7 +16,8 @@ interface BillingCardProps {
 }
 
 /**
- * React presentation component representing the billing card UI element.
+ * Presentation UI component rendering the billing card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function BillingCard({ sub, t }: BillingCardProps) {
   const formattedTotal =

@@ -14,7 +14,8 @@ import type {
 import type { SendNotificationPayload } from "../../domain/entities/NotificationRequests";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for notification sender view model.
+ * React hook/ViewModel orchestrating state and data flows for notification sender view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useNotificationSenderViewModel() {
   const { t } = useI18n();

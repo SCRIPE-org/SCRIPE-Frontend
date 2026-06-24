@@ -28,7 +28,8 @@ interface DashboardThemeState {
 }
 
 /**
- * Constant definition representing use dashboard theme store.
+ * React hook/ViewModel orchestrating state and data flows for dashboard theme store.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export const useDashboardThemeStore = create<DashboardThemeState>((set, get) => ({
   isStudioOpen: false,

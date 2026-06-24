@@ -27,7 +27,7 @@ interface Props {
 }
 
 /**
- * Constant definition representing recent activity feed.
+ * Exported constant defining parameters and fields for recent activity feed configurations.
  */
 export const RecentActivityFeed = memo(function RecentActivityFeed({
   data,

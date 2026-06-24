@@ -9,7 +9,8 @@ import { toast } from "@core/ui/use-toast";
 import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for dsr detail view model.
+ * React hook/ViewModel orchestrating state and data flows for dsr detail view model.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
  */
 export function useDsrDetailViewModel(id: string) {
   const { t } = useI18n();

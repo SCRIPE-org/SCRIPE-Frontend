@@ -25,7 +25,8 @@ interface UseSignupOtpOptions {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for signup otp.
+ * React hook/ViewModel orchestrating state and data flows for signup otp.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useSignupOtp({
   repository,

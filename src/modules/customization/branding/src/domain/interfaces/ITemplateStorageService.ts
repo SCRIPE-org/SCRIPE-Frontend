@@ -1,7 +1,8 @@
 import type { SavedTemplate } from "../entities/SavedTemplate";
 
 /**
- * Interface defining operations for the TemplateStorage network service.
+ * Http API network service for i template storage.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface ITemplateStorageService {
   load(): SavedTemplate[];

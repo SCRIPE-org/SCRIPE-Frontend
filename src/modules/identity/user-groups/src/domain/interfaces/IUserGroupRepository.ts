@@ -9,7 +9,7 @@ import type {
 } from "../entities/UserGroupRequests";
 
 /**
- * Interface structure detailing the properties and attributes of User Group List Params.
+ * Interface defining property specifications, keys types, and structural contract rules for user group list params.
  */
 export interface UserGroupListParams {
   page: number;
@@ -20,7 +20,8 @@ export interface UserGroupListParams {
 }
 
 /**
- * Interface defining repository methods for managing UserGroup data access.
+ * Repository layer implementing client request queries for i user group.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IUserGroupRepository {
   getAll(params: UserGroupListParams): Promise<PagedResult<UserGroup>>;

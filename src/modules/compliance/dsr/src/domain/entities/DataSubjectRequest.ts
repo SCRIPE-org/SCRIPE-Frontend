@@ -15,12 +15,14 @@ export type DsrStatus =
   | "Rejected"
   | "Cancelled";
 /**
- * Type declaration definition describing the schema of subject type.
+ * Domain model representing a Subject Type structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type SubjectType = "Admin" | "User";
 
 /**
- * Interface structure detailing the properties and attributes of Dsr Status History.
+ * Domain model representing a Dsr Status History structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface DsrStatusHistory {
   fromStatus: string;
@@ -31,7 +33,8 @@ export interface DsrStatusHistory {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Dsr Module Execution.
+ * Domain model representing a Dsr Module Execution structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface DsrModuleExecution {
   moduleName: string;
@@ -43,7 +46,8 @@ export interface DsrModuleExecution {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Data Subject Request Data.
+ * Domain model representing a Data Subject Request Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface DataSubjectRequestData {
   id: string;
@@ -64,7 +68,8 @@ export interface DataSubjectRequestData {
 }
 
 /**
- * Domain entity class representing a Data Subject Request.
+ * Domain model representing a Data Subject Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class DataSubjectRequest {
   constructor(private readonly data: DataSubjectRequestData) {}

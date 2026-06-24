@@ -7,7 +7,8 @@ import type {
 } from "../entities/InventoryItem";
 
 /**
- * Interface defining repository methods for managing Inventory data access.
+ * Repository layer implementing client request queries for i inventory.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IInventoryRepository {
   getAll(params: InventoryParams): Promise<PagedResult<InventoryItem>>;

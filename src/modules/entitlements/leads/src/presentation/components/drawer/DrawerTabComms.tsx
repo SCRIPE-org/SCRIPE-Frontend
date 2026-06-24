@@ -17,7 +17,8 @@ interface DrawerTabCommsProps {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 /**
- * React presentation component representing the drawer tab comms UI element.
+ * Presentation UI component rendering the drawer tab comms.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function DrawerTabComms({
   communicationLogs,

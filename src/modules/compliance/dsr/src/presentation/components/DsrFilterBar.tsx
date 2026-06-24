@@ -96,7 +96,8 @@ interface DsrFilterBarProps {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 /**
- * React presentation component representing the dsr filter bar UI element.
+ * Presentation UI component rendering the dsr filter bar.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DsrFilterBar({
   statusFilter,

@@ -55,7 +55,8 @@ interface ContentBlockRendererProps {
 }
 
 /**
- * React presentation component representing the content block renderer UI element.
+ * Presentation UI component rendering the content block renderer.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ContentBlockRenderer({ block }: ContentBlockRendererProps) {
   if (!block || !block.type) return null;

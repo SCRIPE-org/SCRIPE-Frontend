@@ -31,7 +31,8 @@ const TABS: { id: AnalyticsTab; icon: React.ElementType; labelKey: string }[] = 
 ];
 
 /**
- * React presentation component representing the analytics view UI element.
+ * Presentation UI component rendering the analytics view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function AnalyticsView() {
   useModuleLocales(() => import("../../../locales"), "analytics");

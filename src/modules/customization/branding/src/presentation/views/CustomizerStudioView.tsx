@@ -39,7 +39,8 @@ import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { SaveAsThemeModal } from "../components/SaveAsThemeModal";
 
 /**
- * React presentation component representing the customizer studio view UI element.
+ * Presentation UI component rendering the customizer studio view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function CustomizerStudioView() {
   useModuleLocales(() => import("@modules/customization/studio/locales"), "customization-studio");

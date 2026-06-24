@@ -23,7 +23,8 @@ interface PriceRowProps {
 }
 
 /**
- * React presentation component representing the price row UI element.
+ * Presentation UI component rendering the price row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function PriceRow({ price, currency, onUpdate, onRemove, t }: PriceRowProps) {
   return (

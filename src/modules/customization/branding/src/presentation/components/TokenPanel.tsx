@@ -52,7 +52,8 @@ const TOKEN_GROUPS: TokenGroup[] = [
 ];
 
 /**
- * React presentation component representing the token panel UI element.
+ * Presentation UI component rendering the token panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function TokenPanel({ tokens, updateToken }: TokenPanelProps) {
   const { t } = useI18n();

@@ -88,7 +88,8 @@ function pushHistory(state: DashboardBuilderState): Partial<DashboardBuilderStat
 
 // ── Store ────────────────────────────────────────────────
 /**
- * Constant definition representing use dashboard builder store.
+ * React hook/ViewModel orchestrating state and data flows for dashboard builder store.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export const useDashboardBuilderStore = create<DashboardBuilderState>((set, get) => ({
   widgets: DEFAULT_DASHBOARD_WIDGETS,

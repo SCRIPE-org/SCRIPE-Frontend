@@ -15,7 +15,8 @@ interface OtpStepProps {
 }
 
 /**
- * React presentation component representing the otp step UI element.
+ * Presentation UI component rendering the otp step.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function OtpStep({ vm, totalSteps }: OtpStepProps) {
   const { t } = useI18n();

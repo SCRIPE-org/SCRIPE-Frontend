@@ -17,7 +17,8 @@ const DIRECTION = {
 };
 
 /**
- * React presentation component representing the gradient text block view UI element.
+ * Presentation UI component rendering the gradient text block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function GradientTextBlockView({ block }: { block: GradientTextBlock }) {
   const props = block.props;

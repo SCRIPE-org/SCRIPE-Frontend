@@ -345,7 +345,8 @@ function PresetDots({
 }
 
 /**
- * React presentation component representing the style panel UI element.
+ * Presentation UI component rendering the style panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function StylePanel({
   activeSection,

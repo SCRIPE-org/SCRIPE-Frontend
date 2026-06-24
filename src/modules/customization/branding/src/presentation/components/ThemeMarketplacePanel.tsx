@@ -54,7 +54,8 @@ interface ThemeMarketplacePanelProps {
 }
 
 /**
- * React presentation component representing the theme marketplace panel UI element.
+ * Presentation UI component rendering the theme marketplace panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ThemeMarketplacePanel({
   onApplySuccess,

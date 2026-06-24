@@ -12,7 +12,7 @@ import { ColorPickerField } from "@core/ui/rich-text-editor/ColorPickerField";
 
 // ─── Types ──────────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Design Variables.
+ * Interface defining property specifications, keys types, and structural contract rules for design variables.
  */
 export interface DesignVariables {
   primaryColor: string;
@@ -28,7 +28,7 @@ export interface DesignVariables {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Design Variables Panel Props.
+ * Interface defining property specifications, keys types, and structural contract rules for design variables panel props.
  */
 export interface DesignVariablesPanelProps {
   value: DesignVariables;
@@ -37,7 +37,7 @@ export interface DesignVariablesPanelProps {
 
 // ─── Defaults ───────────────────────────────────────────────
 /**
- * Constant definition representing d e f a u l t_ d e s i g n.
+ * Exported constant defining parameters and fields for d e f a u l t_ d e s i g n configurations.
  */
 export const DEFAULT_DESIGN: DesignVariables = {
   primaryColor: "#3b82f6",
@@ -73,7 +73,8 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 
 // ─── Main ───────────────────────────────────────────────────
 /**
- * React presentation component representing the design variables panel UI element.
+ * Presentation UI component rendering the design variables panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelProps) {
   const { t } = useI18n();

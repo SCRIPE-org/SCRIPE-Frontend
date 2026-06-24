@@ -2,7 +2,8 @@ import type { PluginDefinitionModel } from "@modules/plugins/core";
 import type { CreateDefinitionRequest, UpdateDefinitionRequest } from "./IDefinitionsRepository";
 
 /**
- * Interface defining operations for the Definitions network service.
+ * Http API network service for i definitions.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IDefinitionsService {
   getAll(): Promise<PluginDefinitionModel[]>;

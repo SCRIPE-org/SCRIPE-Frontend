@@ -35,7 +35,8 @@ const ReportExportDialog = dynamic(
 );
 
 /**
- * React presentation component representing the tenant analytics view UI element.
+ * Presentation UI component rendering the tenant analytics view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function TenantAnalyticsView() {
   useModuleLocales(() => import("../../../locales"), "analytics");

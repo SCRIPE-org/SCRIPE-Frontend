@@ -22,7 +22,7 @@ export interface FeatureModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Tenant Effective Feature Model.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant effective feature model.
  */
 export interface TenantEffectiveFeatureModel {
   featureId: string;

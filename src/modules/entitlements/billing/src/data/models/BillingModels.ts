@@ -27,7 +27,7 @@ export interface InvoiceResponseModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Invoice List Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for invoice list response model.
  */
 export interface InvoiceListResponseModel {
   id: string;
@@ -44,7 +44,7 @@ export interface InvoiceListResponseModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Invoice Line Item Model.
+ * Interface defining property specifications, keys types, and structural contract rules for invoice line item model.
  */
 export interface InvoiceLineItemModel {
   id: string;
@@ -55,7 +55,7 @@ export interface InvoiceLineItemModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Payment Transaction Model.
+ * Interface defining property specifications, keys types, and structural contract rules for payment transaction model.
  */
 export interface PaymentTransactionModel {
   id: string;
@@ -74,7 +74,7 @@ export interface PaymentTransactionModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Checkout Session Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for checkout session response model.
  */
 export interface CheckoutSessionResponseModel {
   sessionId: string;
@@ -84,14 +84,14 @@ export interface CheckoutSessionResponseModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Billing Portal Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for billing portal response model.
  */
 export interface BillingPortalResponseModel {
   url: string;
 }
 
 /**
- * Interface structure detailing the properties and attributes of Paged Result Model.
+ * Interface defining property specifications, keys types, and structural contract rules for paged result model.
  */
 export interface PagedResultModel<T> {
   items: T[];
@@ -101,7 +101,7 @@ export interface PagedResultModel<T> {
 // ── Dashboard Models ──
 
 /**
- * Interface structure detailing the properties and attributes of Billing Dashboard Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for billing dashboard response model.
  */
 export interface BillingDashboardResponseModel {
   mrr: number;
@@ -117,7 +117,7 @@ export interface BillingDashboardResponseModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Monthly Revenue Point Model.
+ * Interface defining property specifications, keys types, and structural contract rules for monthly revenue point model.
  */
 export interface MonthlyRevenuePointModel {
   month: string;
@@ -126,7 +126,7 @@ export interface MonthlyRevenuePointModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Edition Breakdown Item Model.
+ * Interface defining property specifications, keys types, and structural contract rules for edition breakdown item model.
  */
 export interface EditionBreakdownItemModel {
   editionId: string;
@@ -138,7 +138,7 @@ export interface EditionBreakdownItemModel {
 // ── Payment Link Models ──
 
 /**
- * Interface structure detailing the properties and attributes of Payment Link Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for payment link response model.
  */
 export interface PaymentLinkResponseModel {
   url: string;
@@ -146,7 +146,7 @@ export interface PaymentLinkResponseModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Create Payment Link Request Model.
+ * Interface defining property specifications, keys types, and structural contract rules for create payment link request model.
  */
 export interface CreatePaymentLinkRequestModel {
   editionId: string;

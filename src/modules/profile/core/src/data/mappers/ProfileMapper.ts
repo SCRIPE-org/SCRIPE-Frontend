@@ -16,7 +16,7 @@ import type {
 } from "../models/ProfileModels";
 
 /**
- * Constant definition representing profile mapper.
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
  */
 export const ProfileMapper = {
   toAdminProfile(dto: AdminProfileDto): AdminProfile {

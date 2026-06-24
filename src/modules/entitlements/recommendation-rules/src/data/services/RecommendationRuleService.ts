@@ -18,7 +18,8 @@ import type {
 } from "../../domain/entities/RecommendationRuleRequests";
 
 /**
- * API service for executing HTTP calls related to RecommendationRule endpoints.
+ * Http API network service for recommendation rule.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class RecommendationRuleService implements IRecommendationRuleService {
   constructor(private readonly api: IApiService) {}

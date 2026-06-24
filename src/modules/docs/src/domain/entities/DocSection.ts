@@ -15,7 +15,8 @@ export interface FlowNode {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Flow Connection.
+ * Domain model representing a Flow Connection structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface FlowConnection {
   from: string;
@@ -27,7 +28,8 @@ export interface FlowConnection {
 
 // ─── API Table Types ───────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Api Endpoint.
+ * Domain model representing a Api Endpoint structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ApiEndpoint {
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
@@ -39,7 +41,8 @@ export interface ApiEndpoint {
 
 // ─── Tab Types ─────────────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Code Tab.
+ * Domain model representing a Code Tab structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CodeTab {
   label: string;
@@ -50,7 +53,8 @@ export interface CodeTab {
 
 // ─── Step Guide Types ──────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Step Item.
+ * Domain model representing a Step Item structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface StepItem {
   titleKey: string;
@@ -62,7 +66,8 @@ export interface StepItem {
 
 // ─── Comparison Types ──────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Comparison Column.
+ * Domain model representing a Comparison Column structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ComparisonColumn {
   titleKey: string;
@@ -72,7 +77,8 @@ export interface ComparisonColumn {
 
 // ─── Feature Grid Types ────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Feature Grid Item.
+ * Domain model representing a Feature Grid Item structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface FeatureGridItem {
   icon: string;
@@ -82,7 +88,8 @@ export interface FeatureGridItem {
 
 // ─── Section Types ─────────────────────────────────────────────────
 /**
- * Type declaration definition describing the schema of doc section type.
+ * Domain model representing a Doc Section Type structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type DocSectionType =
   | "heading"
@@ -100,7 +107,8 @@ export type DocSectionType =
   | "feature-grid";
 
 /**
- * Interface structure detailing the properties and attributes of Doc Section Base.
+ * Domain model representing a Doc Section Base structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface DocSectionBase {
   type: DocSectionType;
@@ -108,7 +116,8 @@ export interface DocSectionBase {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Heading Section.
+ * Domain model representing a Heading Section structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface HeadingSection extends DocSectionBase {
   type: "heading";
@@ -117,7 +126,8 @@ export interface HeadingSection extends DocSectionBase {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Paragraph Section.
+ * Domain model representing a Paragraph Section structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ParagraphSection extends DocSectionBase {
   type: "paragraph";
@@ -125,7 +135,8 @@ export interface ParagraphSection extends DocSectionBase {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Code Section.
+ * Domain model representing a Code Section structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CodeSection extends DocSectionBase {
   type: "code";
@@ -136,7 +147,8 @@ export interface CodeSection extends DocSectionBase {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Tabs Section.
+ * Domain model representing a Tabs Section structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface TabsSection extends DocSectionBase {
   type: "tabs";
@@ -144,7 +156,8 @@ export interface TabsSection extends DocSectionBase {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Flowchart Section.
+ * Domain model representing a Flowchart Section structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface FlowchartSection extends DocSectionBase {
   type: "flowchart";
@@ -156,7 +169,8 @@ export interface FlowchartSection extends DocSectionBase {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Api Table Section.
+ * Domain model representing a Api Table Section structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ApiTableSection extends DocSectionBase {
   type: "api-table";
@@ -164,7 +178,8 @@ export interface ApiTableSection extends DocSectionBase {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Info Section.
+ * Domain model representing a Info Section structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface InfoSection extends DocSectionBase {
   type: "info";
@@ -174,7 +189,8 @@ export interface InfoSection extends DocSectionBase {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Step Guide Section.
+ * Domain model representing a Step Guide Section structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface StepGuideSection extends DocSectionBase {
   type: "step-guide";
@@ -182,7 +198,8 @@ export interface StepGuideSection extends DocSectionBase {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Table Section.
+ * Domain model representing a Table Section structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface TableSection extends DocSectionBase {
   type: "table";
@@ -191,7 +208,8 @@ export interface TableSection extends DocSectionBase {
 }
 
 /**
- * Interface structure detailing the properties and attributes of List Section.
+ * Domain model representing a List Section structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ListSection extends DocSectionBase {
   type: "list";
@@ -200,7 +218,8 @@ export interface ListSection extends DocSectionBase {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Image Section.
+ * Domain model representing a Image Section structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ImageSection extends DocSectionBase {
   type: "image";
@@ -210,7 +229,8 @@ export interface ImageSection extends DocSectionBase {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Comparison Section.
+ * Domain model representing a Comparison Section structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ComparisonSection extends DocSectionBase {
   type: "comparison";
@@ -218,7 +238,8 @@ export interface ComparisonSection extends DocSectionBase {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Feature Grid Section.
+ * Domain model representing a Feature Grid Section structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface FeatureGridSection extends DocSectionBase {
   type: "feature-grid";
@@ -227,7 +248,8 @@ export interface FeatureGridSection extends DocSectionBase {
 }
 
 /**
- * Type declaration definition describing the schema of doc section.
+ * Domain model representing a Doc Section structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type DocSection =
   | HeadingSection

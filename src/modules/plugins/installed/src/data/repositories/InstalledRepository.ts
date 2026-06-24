@@ -4,7 +4,8 @@ import type { PluginInstallation } from "../../domain/entities/PluginInstallatio
 import { InstalledMapper } from "../mappers/InstalledMapper";
 
 /**
- * Repository implementation for managing database operations on Installed resources.
+ * Repository layer implementing client request queries for installed.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class InstalledRepository implements IInstalledRepository {
   constructor(private readonly service: IInstalledService) {}

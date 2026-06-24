@@ -54,7 +54,8 @@ interface OverridesViewProps {
 }
 
 /**
- * React presentation component representing the overrides view UI element.
+ * Presentation UI component rendering the overrides view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function OverridesView({ tenantId }: OverridesViewProps) {
   useModuleLocales(() => import("../../../../core/locales"), "entitlements-shared");

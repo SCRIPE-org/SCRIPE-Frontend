@@ -19,7 +19,8 @@ export interface TenantGatewayData {
 }
 
 /**
- * Domain entity class representing a Tenant Gateway.
+ * Domain model representing a Tenant Gateway structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class TenantGateway {
   constructor(private readonly data: TenantGatewayData) {}

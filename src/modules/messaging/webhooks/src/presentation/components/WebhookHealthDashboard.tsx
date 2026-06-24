@@ -19,7 +19,8 @@ interface WebhookHealthDashboardProps {
 }
 
 /**
- * React presentation component representing the webhook health dashboard UI element.
+ * Presentation UI component rendering the webhook health dashboard.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function WebhookHealthDashboard({ summary, isLoading }: WebhookHealthDashboardProps) {
   const { t } = useI18n();

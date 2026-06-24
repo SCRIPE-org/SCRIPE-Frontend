@@ -53,7 +53,7 @@ export interface PlanPickerEdition extends PlanEdition {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Plan Picker View Model.
+ * Interface defining property specifications, keys types, and structural contract rules for plan picker view model.
  */
 export interface PlanPickerViewModel {
   // ── Load state ─────────────────────────────────────────────────────────────
@@ -98,7 +98,7 @@ export interface PlanPickerViewModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Use Plan Picker Args.
+ * Interface defining property specifications, keys types, and structural contract rules for use plan picker args.
  */
 export interface UsePlanPickerArgs {
   /** The chosen vertical from discovery (wizard.businessType). Defaults the industry. */
@@ -112,7 +112,8 @@ export interface UsePlanPickerArgs {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for plan picker.
+ * React hook/ViewModel orchestrating state and data flows for plan picker.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function usePlanPicker({
   businessType,

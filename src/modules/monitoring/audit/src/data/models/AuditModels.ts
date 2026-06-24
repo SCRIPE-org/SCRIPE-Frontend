@@ -22,7 +22,7 @@ export interface AuditLogEntryDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Audit Log Detail Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for audit log detail dto.
  */
 export interface AuditLogDetailDto {
   id: string;
@@ -50,7 +50,7 @@ export interface AuditLogDetailDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Audit Log Page Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for audit log page dto.
  */
 export interface AuditLogPageDto {
   items: AuditLogEntryDto[];
@@ -63,7 +63,7 @@ export interface AuditLogPageDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Audit Analytics Summary Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for audit analytics summary dto.
  */
 export interface AuditAnalyticsSummaryDto {
   totalEvents: number;
@@ -74,7 +74,7 @@ export interface AuditAnalyticsSummaryDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Top Audit User Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for top audit user dto.
  */
 export interface TopAuditUserDto {
   username: string;
@@ -84,7 +84,7 @@ export interface TopAuditUserDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Compliance Report Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for compliance report dto.
  */
 export interface ComplianceReportDto {
   framework: string;

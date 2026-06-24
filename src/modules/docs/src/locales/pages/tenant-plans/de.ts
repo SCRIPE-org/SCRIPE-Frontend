@@ -1,5 +1,5 @@
 /**
- * Constant definition representing de.
+ * Exported constant defining parameters and fields for de configurations.
  */
 export const de = {
   modules: {

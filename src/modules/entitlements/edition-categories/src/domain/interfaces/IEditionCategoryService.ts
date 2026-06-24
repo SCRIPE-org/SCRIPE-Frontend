@@ -6,7 +6,8 @@ import type {
 } from "../entities/EditionCategoryRequests";
 
 /**
- * Interface defining operations for the EditionCategory network service.
+ * Http API network service for i edition category.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IEditionCategoryService {
   getAll(params: PaginationParams): Promise<PagedResult<EditionCategoryModel>>;

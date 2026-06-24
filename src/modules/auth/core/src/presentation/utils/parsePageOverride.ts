@@ -13,7 +13,7 @@ export interface PageOverride {
 }
 
 /**
- * Utility function executing operational rules for parse page override.
+ * Exported function defining parameters and fields for parse page override configurations.
  */
 export function parsePageOverride(
   loginBrandingJson: string | null | undefined,

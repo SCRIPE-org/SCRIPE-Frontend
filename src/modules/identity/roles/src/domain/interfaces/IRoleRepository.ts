@@ -26,7 +26,7 @@ export interface RoleListParams {
 }
 
 /**
- * Interface structure detailing the properties and attributes of My Tenant Role List Params.
+ * Interface defining property specifications, keys types, and structural contract rules for my tenant role list params.
  */
 export interface MyTenantRoleListParams {
   page: number;

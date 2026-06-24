@@ -35,7 +35,7 @@ import type { PermissionAssignmentJson } from "../../domain/types/PermissionType
 export type { PermissionModuleGroup, PermissionCategoryGroup };
 
 /**
- * Interface structure detailing the properties and attributes of Role Detail Header Props.
+ * Interface defining property specifications, keys types, and structural contract rules for role detail header props.
  */
 export interface RoleDetailHeaderProps {
   role: Role | undefined;
@@ -45,7 +45,7 @@ export interface RoleDetailHeaderProps {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Role Info Card Props.
+ * Interface defining property specifications, keys types, and structural contract rules for role info card props.
  */
 export interface RoleInfoCardProps {
   role: Role | undefined;
@@ -55,7 +55,7 @@ export interface RoleInfoCardProps {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Permission Tree Props.
+ * Interface defining property specifications, keys types, and structural contract rules for permission tree props.
  */
 export interface PermissionTreeProps {
   moduleGroups: PermissionModuleGroup[];
@@ -78,7 +78,8 @@ export interface PermissionTreeProps {
 
 // === ViewModel ===
 /**
- * React hook/ViewModel managing logic, state, and repository queries for role detail view model.
+ * React hook/ViewModel orchestrating state and data flows for role detail view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useRoleDetailViewModel() {
   const { t } = useI18n();

@@ -10,7 +10,8 @@ import type { PagedResult } from "@core/interfaces/common.interface";
 import type { GenerateReportRequest } from "../../domain/entities/ComplianceReport";
 
 /**
- * API service for executing HTTP calls related to Report endpoints.
+ * Http API network service for report.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class ReportService implements IReportService {
   constructor(private readonly api: IApiService) {}

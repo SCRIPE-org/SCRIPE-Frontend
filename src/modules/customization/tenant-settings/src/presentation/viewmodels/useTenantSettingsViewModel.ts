@@ -10,7 +10,7 @@ import { DEFAULT_TENANT_SETTINGS } from "../../domain/entities/TenantSettings";
 
 // Query keys factory
 /**
- * Constant definition representing tenant settings keys.
+ * Exported constant defining parameters and fields for tenant settings keys configurations.
  */
 export const tenantSettingsKeys = {
   all: ["tenantSettings"] as const,

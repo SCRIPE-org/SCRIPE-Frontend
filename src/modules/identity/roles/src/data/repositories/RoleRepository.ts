@@ -25,7 +25,8 @@ import { RoleMapper } from "../mappers/RoleMapper";
 import { Permission, PermissionModuleGroup, PermissionMapper } from "@modules/identity/core";
 
 /**
- * Repository implementation for managing database operations on Role resources.
+ * Repository layer implementing client request queries for role.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class RoleRepository implements IRoleRepository {
   constructor(private readonly service: IRoleService) {}

@@ -37,7 +37,8 @@ const RANK_COLORS = [
 ];
 
 /**
- * React presentation component representing the ltv tab UI element.
+ * Presentation UI component rendering the ltv tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function LtvTab({ ltvData }: LtvTabProps) {
   const { t } = useI18n();

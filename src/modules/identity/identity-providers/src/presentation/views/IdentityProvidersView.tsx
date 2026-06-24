@@ -20,7 +20,8 @@ import { Plus, Search, Loader2, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 /**
- * React presentation component representing the identity providers view UI element.
+ * Presentation UI component rendering the identity providers view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function IdentityProvidersView() {
   useModuleLocales(() => import("../../../locales"), "identity-providers");

@@ -16,7 +16,8 @@ import type { ISubmissionsRepository } from "../../domain/interfaces/ISubmission
 import type { SubmissionDto } from "../../domain/interfaces/ISubmissionsService";
 
 /**
- * Repository implementation for managing database operations on Submissions resources.
+ * Repository layer implementing client request queries for submissions.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class SubmissionsRepository implements ISubmissionsRepository {
   constructor(private readonly service: ISubmissionsService) {}

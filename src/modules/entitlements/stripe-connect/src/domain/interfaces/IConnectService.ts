@@ -15,7 +15,8 @@ import type {
 } from "../../data/models/ConnectModels";
 
 /**
- * Interface defining operations for the Connect network service.
+ * Http API network service for i connect.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IConnectService {
   // ── Account Lifecycle ──

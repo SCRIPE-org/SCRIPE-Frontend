@@ -17,7 +17,8 @@ interface AccountStatusCardProps {
 }
 
 /**
- * React presentation component representing the account status card UI element.
+ * Presentation UI component rendering the account status card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function AccountStatusCard({
   account,

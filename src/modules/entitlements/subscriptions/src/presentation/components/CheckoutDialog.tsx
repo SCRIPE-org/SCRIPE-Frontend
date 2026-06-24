@@ -61,7 +61,8 @@ function formatPad(n: number) {
 }
 
 /**
- * React presentation component representing the checkout dialog UI element.
+ * Presentation UI component rendering the checkout dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function CheckoutDialog({ vm }: SubscriptionDialogProps) {
   const { t } = useI18n();

@@ -17,7 +17,8 @@ import type {
 } from "../../domain/entities/AuditEntities";
 
 /**
- * API service for executing HTTP calls related to Audit endpoints.
+ * Http API network service for audit.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class AuditService implements IAuditService {
   constructor(private readonly api: IApiService) {}

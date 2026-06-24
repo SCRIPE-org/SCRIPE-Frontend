@@ -1,5 +1,6 @@
 /**
- * Interface structure detailing the properties and attributes of Developer Profile Data.
+ * Domain model representing a Developer Profile Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface DeveloperProfileData {
   id: string;
@@ -17,7 +18,8 @@ export interface DeveloperProfileData {
 }
 
 /**
- * Domain entity class representing a Developer Profile.
+ * Domain model representing a Developer Profile structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class DeveloperProfile {
   constructor(private readonly data: DeveloperProfileData) {}

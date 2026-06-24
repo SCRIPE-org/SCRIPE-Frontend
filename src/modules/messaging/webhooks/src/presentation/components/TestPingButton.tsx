@@ -20,7 +20,8 @@ interface TestPingButtonProps {
 }
 
 /**
- * React presentation component representing the test ping button UI element.
+ * Presentation UI component rendering the test ping button.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function TestPingButton({ onTest, isTesting, testResult, onDismiss }: TestPingButtonProps) {
   const { t } = useI18n();

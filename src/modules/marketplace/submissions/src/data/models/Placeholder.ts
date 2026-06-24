@@ -1,4 +1,4 @@
 /**
- * Type declaration definition describing the schema of submission model placeholder.
+ * Exported type defining parameters and fields for submission model placeholder configurations.
  */
 export type SubmissionModelPlaceholder = { id: string };

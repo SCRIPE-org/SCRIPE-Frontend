@@ -14,7 +14,8 @@ import type {
 } from "../entities/AuditEntities";
 
 /**
- * Interface defining operations for the Audit network service.
+ * Http API network service for i audit.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IAuditService {
   getLogs(params?: AuditFilterParams): Promise<AuditLogPage>;

@@ -18,7 +18,8 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 const QUERY_KEY = ["entitlements", "signup-content"] as const;
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for signup content view model.
+ * React hook/ViewModel orchestrating state and data flows for signup content view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useSignupContentViewModel() {
   const { signupContentRepository } = entitlementsContainer;

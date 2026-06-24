@@ -41,7 +41,8 @@ interface AssignToGroupDialogProps {
 }
 
 /**
- * React presentation component representing the assign to group dialog UI element.
+ * Presentation UI component rendering the assign to group dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function AssignToGroupDialog({
   open,

@@ -12,7 +12,8 @@ import type {
 } from "../entities/SecurityEntities";
 
 /**
- * Interface defining repository methods for managing Security data access.
+ * Repository layer implementing client request queries for i security.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface ISecurityRepository {
   getSecurityEvents(days?: number): Promise<SecurityEvent[]>;

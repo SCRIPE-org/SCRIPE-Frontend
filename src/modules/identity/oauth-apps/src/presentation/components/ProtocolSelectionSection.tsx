@@ -9,7 +9,8 @@ interface ProtocolSelectionSectionProps {
 }
 
 /**
- * React presentation component representing the protocol selection section UI element.
+ * Presentation UI component rendering the protocol selection section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ProtocolSelectionSection({ protocol, onChange }: ProtocolSelectionSectionProps) {
   const { t } = useI18n();

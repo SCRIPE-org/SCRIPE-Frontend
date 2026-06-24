@@ -1,10 +1,12 @@
 /**
- * Type declaration definition describing the schema of payout status.
+ * Domain model representing a Payout Status structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type PayoutStatus = "Pending" | "Processing" | "Paid" | "Failed";
 
 /**
- * Interface structure detailing the properties and attributes of App Purchase Data.
+ * Domain model representing a App Purchase Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface AppPurchaseData {
   id: string;
@@ -19,7 +21,8 @@ export interface AppPurchaseData {
 }
 
 /**
- * Domain entity class representing a App Purchase.
+ * Domain model representing a App Purchase structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class AppPurchase {
   constructor(private readonly data: AppPurchaseData) {}
@@ -67,7 +70,8 @@ export class AppPurchase {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Developer Payout Data.
+ * Domain model representing a Developer Payout Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface DeveloperPayoutData {
   id: string;
@@ -83,7 +87,8 @@ export interface DeveloperPayoutData {
 }
 
 /**
- * Domain entity class representing a Developer Payout.
+ * Domain model representing a Developer Payout structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class DeveloperPayout {
   constructor(private readonly data: DeveloperPayoutData) {}

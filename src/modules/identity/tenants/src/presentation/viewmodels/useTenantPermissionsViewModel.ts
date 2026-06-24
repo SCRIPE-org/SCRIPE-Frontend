@@ -23,7 +23,7 @@ import { identityContainer } from "@modules/identity/di";
 import type { Permission, PermissionModuleGroup } from "@modules/identity/core";
 
 /**
- * Interface structure detailing the properties and attributes of Use Tenant Permissions Dialog Props.
+ * Interface defining property specifications, keys types, and structural contract rules for use tenant permissions dialog props.
  */
 export interface UseTenantPermissionsDialogProps {
   open: boolean;
@@ -34,7 +34,7 @@ export interface UseTenantPermissionsDialogProps {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Use Tenant Permissions Dialog Result.
+ * Interface defining property specifications, keys types, and structural contract rules for use tenant permissions dialog result.
  */
 export interface UseTenantPermissionsDialogResult {
   // State
@@ -76,7 +76,8 @@ export interface UseTenantPermissionsDialogResult {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for tenant permissions dialog.
+ * React hook/ViewModel orchestrating state and data flows for tenant permissions dialog.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useTenantPermissionsDialog({
   open,

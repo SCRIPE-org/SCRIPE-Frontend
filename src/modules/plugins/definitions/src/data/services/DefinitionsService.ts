@@ -8,7 +8,8 @@ import type {
 } from "../../domain/interfaces/IDefinitionsRepository";
 
 /**
- * API service for executing HTTP calls related to Definitions endpoints.
+ * Http API network service for definitions.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class DefinitionsService implements IDefinitionsService {
   constructor(private readonly api: IApiService) {}

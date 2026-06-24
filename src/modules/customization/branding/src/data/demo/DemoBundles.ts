@@ -99,7 +99,7 @@ function makeLoginTheme(config: {
 }
 
 /**
- * Constant definition representing d e m o_ b u n d l e s.
+ * Exported constant defining parameters and fields for d e m o_ b u n d l e s configurations.
  */
 export const DEMO_BUNDLES: ThemeBundleData[] = [
   // ── 1. Corporate Elite ─────────────────────────────────

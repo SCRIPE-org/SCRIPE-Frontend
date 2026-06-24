@@ -5,7 +5,8 @@
 export type ExportFormat = "csv" | "excel" | "pdf";
 
 /**
- * Interface structure detailing the properties and attributes of Export Params.
+ * Domain model representing a Export Params structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ExportParams {
   format: ExportFormat;
@@ -19,7 +20,8 @@ export interface ExportParams {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Export File Result.
+ * Domain model representing a Export File Result structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ExportFileResult {
   blob: Blob;

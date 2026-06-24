@@ -11,7 +11,7 @@ export interface PagedResultModel<T> {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Connect Account Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for connect account response model.
  */
 export interface ConnectAccountResponseModel {
   id: string;
@@ -36,7 +36,7 @@ export interface ConnectAccountResponseModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Connect Account List Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for connect account list response model.
  */
 export interface ConnectAccountListResponseModel {
   id: string;
@@ -53,7 +53,7 @@ export interface ConnectAccountListResponseModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Connect Account Result Model.
+ * Interface defining property specifications, keys types, and structural contract rules for connect account result model.
  */
 export interface ConnectAccountResultModel {
   accountId: string;
@@ -62,7 +62,7 @@ export interface ConnectAccountResultModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Commission Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for commission response model.
  */
 export interface CommissionResponseModel {
   id: string;
@@ -82,7 +82,7 @@ export interface CommissionResponseModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Commission Dashboard Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for commission dashboard response model.
  */
 export interface CommissionDashboardResponseModel {
   totalCommission: number;
@@ -95,7 +95,7 @@ export interface CommissionDashboardResponseModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Commission Trend Point Model.
+ * Interface defining property specifications, keys types, and structural contract rules for commission trend point model.
  */
 export interface CommissionTrendPointModel {
   date: string;
@@ -104,7 +104,7 @@ export interface CommissionTrendPointModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Top Tenant Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for top tenant response model.
  */
 export interface TopTenantResponseModel {
   tenantId: string;
@@ -122,7 +122,7 @@ export interface EligibleTenantItemModel {
 // ── Tenant Self-Service Transaction Models ──
 
 /**
- * Interface structure detailing the properties and attributes of Tenant Transactions Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant transactions response model.
  */
 export interface TenantTransactionsResponseModel {
   summary: TenantFinancialSummaryModel;
@@ -130,7 +130,7 @@ export interface TenantTransactionsResponseModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Tenant Financial Summary Model.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant financial summary model.
  */
 export interface TenantFinancialSummaryModel {
   totalGrossRevenue: number;
@@ -143,7 +143,7 @@ export interface TenantFinancialSummaryModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Tenant Transaction Item Model.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant transaction item model.
  */
 export interface TenantTransactionItemModel {
   id: string;

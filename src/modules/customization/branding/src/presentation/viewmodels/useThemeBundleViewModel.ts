@@ -34,7 +34,7 @@ const BUNDLE_KEYS = {
 // ═══════════════════════════════════════════════════════════════
 
 /**
- * Type declaration definition describing the schema of bundle sort option.
+ * Exported type defining parameters and fields for bundle sort option configurations.
  */
 export type BundleSortOption = "popular" | "newest" | "name";
 
@@ -59,7 +59,8 @@ const DEFAULT_FILTERS: BundleFilters = {
 // ═══════════════════════════════════════════════════════════════
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for theme bundle view model.
+ * React hook/ViewModel orchestrating state and data flows for theme bundle view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useThemeBundleViewModel() {
   const { t } = useI18n();
@@ -229,6 +230,6 @@ export function useThemeBundleViewModel() {
 }
 
 /**
- * Type declaration definition describing the schema of theme bundle view model.
+ * Exported type defining parameters and fields for theme bundle view model configurations.
  */
 export type ThemeBundleViewModel = ReturnType<typeof useThemeBundleViewModel>;

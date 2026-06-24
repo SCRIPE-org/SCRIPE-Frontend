@@ -13,7 +13,7 @@ export interface PlatformStripeDashboardModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Platform Account Model.
+ * Interface defining property specifications, keys types, and structural contract rules for platform account model.
  */
 export interface PlatformAccountModel {
   accountId: string;
@@ -32,7 +32,7 @@ export interface PlatformAccountModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Platform Balance Model.
+ * Interface defining property specifications, keys types, and structural contract rules for platform balance model.
  */
 export interface PlatformBalanceModel {
   available: BalanceAmountModel[];
@@ -41,7 +41,7 @@ export interface PlatformBalanceModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Balance Amount Model.
+ * Interface defining property specifications, keys types, and structural contract rules for balance amount model.
  */
 export interface BalanceAmountModel {
   currency: string;
@@ -49,7 +49,7 @@ export interface BalanceAmountModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Platform Transaction Model.
+ * Interface defining property specifications, keys types, and structural contract rules for platform transaction model.
  */
 export interface PlatformTransactionModel {
   id: string;
@@ -65,7 +65,7 @@ export interface PlatformTransactionModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Platform Payout Model.
+ * Interface defining property specifications, keys types, and structural contract rules for platform payout model.
  */
 export interface PlatformPayoutModel {
   id: string;
@@ -80,7 +80,7 @@ export interface PlatformPayoutModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Platform Connect Summary Model.
+ * Interface defining property specifications, keys types, and structural contract rules for platform connect summary model.
  */
 export interface PlatformConnectSummaryModel {
   totalAccounts: number;
@@ -92,7 +92,7 @@ export interface PlatformConnectSummaryModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Platform Stripe Links Model.
+ * Interface defining property specifications, keys types, and structural contract rules for platform stripe links model.
  */
 export interface PlatformStripeLinksModel {
   dashboard: string;

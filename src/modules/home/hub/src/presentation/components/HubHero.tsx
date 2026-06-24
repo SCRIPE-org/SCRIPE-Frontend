@@ -16,7 +16,8 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 
 /**
- * React presentation component representing the hub hero UI element.
+ * Presentation UI component rendering the hub hero.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function HubHero() {
   const { t } = useI18n();

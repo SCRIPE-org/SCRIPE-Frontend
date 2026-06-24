@@ -39,7 +39,7 @@ const COLORS = [
 ];
 
 /**
- * Constant definition representing event distribution chart.
+ * Exported constant defining parameters and fields for event distribution chart configurations.
  */
 export const EventDistributionChart = memo(function EventDistributionChart({
   data,

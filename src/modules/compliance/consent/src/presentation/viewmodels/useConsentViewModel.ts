@@ -7,7 +7,8 @@ import { useI18n } from "@core/providers/i18n-provider";
 import type { RecordConsentRequest } from "../../domain/entities/ConsentStatus";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for consent view model.
+ * React hook/ViewModel orchestrating state and data flows for consent view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useConsentViewModel() {
   const { consentRepository } = complianceContainer;

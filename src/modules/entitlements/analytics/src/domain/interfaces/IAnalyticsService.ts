@@ -14,7 +14,8 @@ import type {
 } from "../../data/models/AnalyticsModels";
 
 /**
- * Interface defining operations for the Analytics network service.
+ * Http API network service for i analytics.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IAnalyticsService {
   getOverview(months?: number): Promise<AnalyticsOverviewModel>;

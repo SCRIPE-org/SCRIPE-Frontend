@@ -10,13 +10,14 @@ import { CheckCircle2, XCircle } from "lucide-react";
 
 // ── Types ──
 /**
- * Type declaration definition describing the schema of t fn.
+ * Exported type defining parameters and fields for t fn configurations.
  */
 export type TFn = (key: string) => string;
 
 // ── Stat Card ──
 /**
- * React presentation component representing the stat card UI element.
+ * Presentation UI component rendering the stat card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function StatCard({
   icon,
@@ -42,7 +43,8 @@ export function StatCard({
 
 // ── Info Row (label: value) ──
 /**
- * React presentation component representing the info row UI element.
+ * Presentation UI component rendering the info row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function InfoRow({ label, value }: { label: string; value: string }) {
   return (
@@ -55,7 +57,8 @@ export function InfoRow({ label, value }: { label: string; value: string }) {
 
 // ── Flag Row (label: ✓ / ✗) ──
 /**
- * React presentation component representing the flag row UI element.
+ * Presentation UI component rendering the flag row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function FlagRow({
   icon,
@@ -83,7 +86,8 @@ export function FlagRow({
 
 // ── Currency Formatter ──
 /**
- * Utility function executing operational rules for format amount.
+ * Presentation UI component rendering the format amount.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function formatAmount(amount: number, currency: string): string {
   return new Intl.NumberFormat("en-US", {

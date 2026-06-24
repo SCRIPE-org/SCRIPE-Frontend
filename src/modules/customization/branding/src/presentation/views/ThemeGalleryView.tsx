@@ -59,7 +59,8 @@ import type { ThemeCard } from "../../domain/entities/ThemeCard";
 const G = "studio.gallery";
 
 /**
- * React presentation component representing the theme gallery view UI element.
+ * Presentation UI component rendering the theme gallery view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function ThemeGalleryView() {
   const { t } = useI18n();

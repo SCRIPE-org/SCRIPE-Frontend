@@ -18,7 +18,8 @@ import { ExternalLink, RefreshCw, Pencil, Eye } from "lucide-react";
 const QUERY_KEY = ["entitlements", "stripe-connect", "accounts"];
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for connect view model.
+ * React hook/ViewModel orchestrating state and data flows for connect view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useConnectViewModel() {
   const { connectRepository } = entitlementsContainer;

@@ -1,5 +1,5 @@
 /**
- * Interface structure detailing the properties and attributes of Paged Result Model.
+ * Interface defining property specifications, keys types, and structural contract rules for paged result model.
  */
 export interface PagedResultModel<T> {
   items: T[];
@@ -7,7 +7,7 @@ export interface PagedResultModel<T> {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Commission Ledger Entry Model.
+ * Interface defining property specifications, keys types, and structural contract rules for commission ledger entry model.
  */
 export interface CommissionLedgerEntryModel {
   id: string;
@@ -31,7 +31,7 @@ export interface CommissionLedgerEntryModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Commission Invoice Model.
+ * Interface defining property specifications, keys types, and structural contract rules for commission invoice model.
  */
 export interface CommissionInvoiceModel {
   id: string;

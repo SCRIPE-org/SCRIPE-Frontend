@@ -7,7 +7,8 @@ import type { DocCategory } from "../entities/DocCategory";
 import type { SearchResult } from "./IDocsRepository";
 
 /**
- * Interface defining operations for the Docs network service.
+ * Http API network service for i docs.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IDocsService {
   getPage(slug: string): DocPage | undefined;

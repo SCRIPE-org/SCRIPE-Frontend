@@ -13,7 +13,8 @@ export interface RegulationCoverageData {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Dashboard Data.
+ * Domain model representing a Dashboard Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface DashboardData {
   openDsrCount: number;
@@ -26,7 +27,8 @@ export interface DashboardData {
 }
 
 /**
- * Domain entity class representing a Compliance Dashboard.
+ * Domain model representing a Compliance Dashboard structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class ComplianceDashboard {
   constructor(private readonly data: DashboardData) {}

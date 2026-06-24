@@ -109,7 +109,7 @@ const ADMIN_EMAIL = __ENV.ADMIN_EMAIL || 'superadmin@scripe.com';
 const ADMIN_PASSWORD = __ENV.ADMIN_PASSWORD || 'Admin@123';
 
 /**
- * Constant definition representing options.
+ * Exported constant defining parameters and fields for options configurations.
  */
 export const options = {
   stages: [

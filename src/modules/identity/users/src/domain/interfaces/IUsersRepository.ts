@@ -8,7 +8,7 @@
 import type { UsersEntity } from "../entities/UsersEntity";
 
 /**
- * Interface structure detailing the properties and attributes of Update User Request.
+ * Interface defining property specifications, keys types, and structural contract rules for update user request.
  */
 export interface UpdateUserRequest {
   firstName?: string | null;
@@ -23,7 +23,8 @@ export interface UpdateUserRequest {
 }
 
 /**
- * Interface defining repository methods for managing Users data access.
+ * Repository layer implementing client request queries for i users.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IUsersRepository {
   /** Get paginated list of users */

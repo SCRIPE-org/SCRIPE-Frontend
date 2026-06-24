@@ -17,7 +17,7 @@ export interface InventoryItemModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Create Data Inventory Request.
+ * Interface defining property specifications, keys types, and structural contract rules for create data inventory request.
  */
 export interface CreateDataInventoryRequest {
   moduleName: string;
@@ -30,6 +30,6 @@ export interface CreateDataInventoryRequest {
 }
 
 /**
- * Type declaration definition describing the schema of update data inventory request.
+ * Exported type defining parameters and fields for update data inventory request configurations.
  */
 export type UpdateDataInventoryRequest = CreateDataInventoryRequest;

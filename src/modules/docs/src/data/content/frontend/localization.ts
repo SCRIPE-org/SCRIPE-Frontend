@@ -157,7 +157,8 @@ const sections: DocSection[] = [
     code: `import { Language } from '@core/providers/LanguageProvider';
 
 /**
- * React presentation component representing the admin form UI element.
+ * Presentation UI component rendering the admin form.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function AdminForm() {
   const { t, language, direction } = Language();

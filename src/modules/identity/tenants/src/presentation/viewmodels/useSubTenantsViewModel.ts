@@ -29,7 +29,8 @@ interface UseSubTenantsViewModelParams {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for sub tenants view model.
+ * React hook/ViewModel orchestrating state and data flows for sub tenants view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useSubTenantsViewModel({
   parentId,

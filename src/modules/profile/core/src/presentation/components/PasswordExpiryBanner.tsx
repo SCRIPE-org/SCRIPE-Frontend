@@ -14,7 +14,8 @@ interface PasswordExpiryBannerProps {
 }
 
 /**
- * React presentation component representing the password expiry banner UI element.
+ * Presentation UI component rendering the password expiry banner.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function PasswordExpiryBanner({
   isExpired,

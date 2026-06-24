@@ -26,7 +26,8 @@ interface HubTopBarProps {
 }
 
 /**
- * React presentation component representing the hub top bar UI element.
+ * Presentation UI component rendering the hub top bar.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function HubTopBar({ onSearchClick, onAppLauncherClick }: HubTopBarProps) {
   const { t } = useI18n();

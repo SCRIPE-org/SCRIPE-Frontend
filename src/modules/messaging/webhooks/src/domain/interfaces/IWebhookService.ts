@@ -50,7 +50,8 @@ export interface ServiceDeadLetterParams {
 }
 
 /**
- * Interface defining operations for the Webhook network service.
+ * Http API network service for i webhook.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IWebhookService {
   // ─── CRUD ─────────────────────────────────────────

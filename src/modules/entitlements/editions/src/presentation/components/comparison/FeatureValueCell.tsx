@@ -14,7 +14,8 @@ interface FeatureValueCellProps {
 }
 
 /**
- * React presentation component representing the feature value cell UI element.
+ * Presentation UI component rendering the feature value cell.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function FeatureValueCell({ feature }: FeatureValueCellProps) {
   if (!feature) return <X className="h-4 w-4 text-muted-foreground/40" />;

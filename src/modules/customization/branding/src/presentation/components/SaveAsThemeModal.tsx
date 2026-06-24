@@ -59,7 +59,8 @@ function slugify(str: string): string {
 }
 
 /**
- * React presentation component representing the save as theme modal UI element.
+ * Presentation UI component rendering the save as theme modal.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function SaveAsThemeModal({
   isOpen,

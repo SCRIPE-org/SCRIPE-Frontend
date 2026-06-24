@@ -92,7 +92,8 @@ const DefaultProtocolIcon = () => (
 );
 
 /**
- * React presentation component representing the s s o button preview UI element.
+ * Presentation UI component rendering the s s o button preview.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function SSOButtonPreview({ name, iconUrl, buttonColor, buttonLabel }: Props) {
   const { t } = useI18n();

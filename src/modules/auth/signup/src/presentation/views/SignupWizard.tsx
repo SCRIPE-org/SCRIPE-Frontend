@@ -90,7 +90,7 @@ const PHASE_VARIANTS: Record<string, any> = {
 };
 
 /**
- * Interface structure detailing the properties and attributes of Signup Wizard Props.
+ * Interface defining property specifications, keys types, and structural contract rules for signup wizard props.
  */
 export interface SignupWizardProps {
   initialCountry?: string | null;
@@ -98,7 +98,8 @@ export interface SignupWizardProps {
 }
 
 /**
- * Utility function executing operational rules for signup wizard.
+ * Presentation UI component rendering the signup wizard.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function SignupWizard({ initialCountry, initialCurrency }: SignupWizardProps) {
   const [isInvalidDomain, setIsInvalidDomain] = useState(false);

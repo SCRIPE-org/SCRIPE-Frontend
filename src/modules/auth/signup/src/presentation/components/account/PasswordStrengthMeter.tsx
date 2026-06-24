@@ -23,7 +23,8 @@ interface PasswordStrengthMeterProps {
 }
 
 /**
- * React presentation component representing the password strength meter UI element.
+ * Presentation UI component rendering the password strength meter.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function PasswordStrengthMeter({ score, id }: PasswordStrengthMeterProps) {
   const { t } = useI18n();

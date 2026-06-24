@@ -11,7 +11,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import type { Role } from "../../domain/entities/Role";
 
 /**
- * Interface structure detailing the properties and attributes of Role Detail Header Props.
+ * Interface defining property specifications, keys types, and structural contract rules for role detail header props.
  */
 export interface RoleDetailHeaderProps {
   role: Role | undefined;
@@ -21,7 +21,8 @@ export interface RoleDetailHeaderProps {
 }
 
 /**
- * React presentation component representing the role detail header UI element.
+ * Presentation UI component rendering the role detail header.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function RoleDetailHeader({ role, isLoading, isSaving, onSave }: RoleDetailHeaderProps) {
   const { t, language } = useI18n();

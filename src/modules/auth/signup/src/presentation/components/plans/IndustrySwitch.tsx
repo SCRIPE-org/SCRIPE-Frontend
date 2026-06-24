@@ -22,7 +22,8 @@ interface IndustrySwitchProps {
 }
 
 /**
- * React presentation component representing the industry switch UI element.
+ * Presentation UI component rendering the industry switch.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function IndustrySwitch({
   value,

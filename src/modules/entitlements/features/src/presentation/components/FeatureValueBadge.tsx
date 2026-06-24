@@ -15,7 +15,8 @@ interface FeatureValueBadgeProps {
 }
 
 /**
- * React presentation component representing the feature value badge UI element.
+ * Presentation UI component rendering the feature value badge.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function FeatureValueBadge({
   value,

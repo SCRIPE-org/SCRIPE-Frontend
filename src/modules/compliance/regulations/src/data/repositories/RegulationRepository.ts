@@ -4,7 +4,8 @@ import type { Regulation } from "../../domain/entities/Regulation";
 import { RegulationMapper } from "../mappers/RegulationMapper";
 
 /**
- * Repository implementation for managing database operations on Regulation resources.
+ * Repository layer implementing client request queries for regulation.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class RegulationRepository implements IRegulationRepository {
   constructor(private readonly service: IRegulationService) {}

@@ -16,7 +16,7 @@ import { PermissionConfigDialog } from "./PermissionConfigDialog";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
 
 /**
- * Interface structure detailing the properties and attributes of Permission Category Row Props.
+ * Interface defining property specifications, keys types, and structural contract rules for permission category row props.
  */
 export interface PermissionCategoryRowProps {
   category: string;
@@ -32,7 +32,8 @@ export interface PermissionCategoryRowProps {
 }
 
 /**
- * React presentation component representing the permission category row UI element.
+ * Presentation UI component rendering the permission category row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function PermissionCategoryRow({
   category,

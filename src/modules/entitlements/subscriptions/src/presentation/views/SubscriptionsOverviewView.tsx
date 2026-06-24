@@ -24,7 +24,8 @@ import { UpcomingRenewalsTimeline } from "../components/UpcomingRenewalsTimeline
 import { SubscriptionsDataTable } from "../components/SubscriptionsDataTable";
 
 /**
- * React presentation component representing the subscriptions overview view UI element.
+ * Presentation UI component rendering the subscriptions overview view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function SubscriptionsOverviewView() {
   useModuleLocales(() => import("../../../../core/locales"), "entitlements-shared");

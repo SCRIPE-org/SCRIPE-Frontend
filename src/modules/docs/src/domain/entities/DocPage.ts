@@ -6,7 +6,8 @@
 import type { DocSection } from "./DocSection";
 
 /**
- * Interface structure detailing the properties and attributes of Doc Page Data.
+ * Domain model representing a Doc Page Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface DocPageData {
   /** URL slug, e.g. 'features/authentication' */
@@ -28,7 +29,8 @@ export interface DocPageData {
 }
 
 /**
- * Domain entity class representing a Doc Page.
+ * Domain model representing a Doc Page structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class DocPage {
   constructor(public readonly data: DocPageData) {}

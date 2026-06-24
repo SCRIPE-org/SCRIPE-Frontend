@@ -13,7 +13,7 @@ import type { SystemSettingsJson as SystemSettingsResponse } from "@core/domain/
 
 // Query keys
 /**
- * Constant definition representing customization keys.
+ * Exported constant defining parameters and fields for customization keys configurations.
  */
 export const customizationKeys = {
   all: ["customization"] as const,

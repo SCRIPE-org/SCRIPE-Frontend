@@ -33,7 +33,8 @@ interface SetRestrictionsDialogProps {
 }
 
 /**
- * React presentation component representing the set restrictions dialog UI element.
+ * Presentation UI component rendering the set restrictions dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function SetRestrictionsDialog({
   open,

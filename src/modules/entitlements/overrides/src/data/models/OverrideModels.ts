@@ -18,7 +18,7 @@ export interface FeatureOverrideModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Resolved Feature Model.
+ * Interface defining property specifications, keys types, and structural contract rules for resolved feature model.
  */
 export interface ResolvedFeatureModel {
   featureId: string;

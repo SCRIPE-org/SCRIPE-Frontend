@@ -25,7 +25,8 @@ import type { ILeadsService } from "../../domain/interfaces/ILeadsService";
 import type { LeadStatus } from "../../domain/entities/PlatformLead";
 
 /**
- * API service for executing HTTP calls related to Leads endpoints.
+ * Http API network service for leads.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class LeadsService implements ILeadsService {
   constructor(private readonly api: IApiService) {}

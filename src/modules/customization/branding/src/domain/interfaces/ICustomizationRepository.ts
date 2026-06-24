@@ -12,7 +12,8 @@ import type { AuditLogEntry } from "../entities/AuditLogEntry";
 import type { PagedResult } from "@core/interfaces/common.interface";
 
 /**
- * Interface defining repository methods for managing Customization data access.
+ * Repository layer implementing client request queries for i customization.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface ICustomizationRepository {
   // ── Tenant Branding (My Tenant) ──

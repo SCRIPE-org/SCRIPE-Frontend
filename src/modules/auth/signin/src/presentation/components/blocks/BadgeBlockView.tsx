@@ -11,7 +11,8 @@ const VARIANT_CLASS = {
 };
 
 /**
- * React presentation component representing the badge block view UI element.
+ * Presentation UI component rendering the badge block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function BadgeBlockView({ block }: { block: BadgeBlock }) {
   const props = block.props;

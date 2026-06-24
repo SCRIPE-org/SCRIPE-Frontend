@@ -21,7 +21,7 @@ import type { AppCategory } from "../../domain/entities/AppCategory";
 // ── Types ────────────────────────────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Category Form Data.
+ * Interface defining property specifications, keys types, and structural contract rules for category form data.
  */
 export interface CategoryFormData {
   nameEn: string;
@@ -63,7 +63,8 @@ function slugify(text: string): string {
 // ── Component ────────────────────────────────────────────────────────────────
 
 /**
- * React presentation component representing the category form dialog UI element.
+ * Presentation UI component rendering the category form dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function CategoryFormDialog({
   open,

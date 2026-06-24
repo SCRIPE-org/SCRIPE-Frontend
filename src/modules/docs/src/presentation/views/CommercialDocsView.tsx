@@ -26,7 +26,8 @@ interface CommercialDocsViewProps {
 
 // ─── View ─────────────────────────────────────────────────────────
 /**
- * React presentation component representing the commercial docs view UI element.
+ * Presentation UI component rendering the commercial docs view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
   const { direction, loadSection } = useDocsI18n();

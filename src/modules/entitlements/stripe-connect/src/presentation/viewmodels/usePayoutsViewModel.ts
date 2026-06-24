@@ -25,7 +25,7 @@ const ACCOUNT_KEY = ["entitlements", "stripe-connect", "tenant", "status"];
 const COMMISSIONS_KEY = ["entitlements", "stripe-connect", "tenant", "commissions"];
 
 /**
- * Type declaration definition describing the schema of payouts filter.
+ * Exported type defining parameters and fields for payouts filter configurations.
  */
 export type PayoutsFilter = {
   status?: string;
@@ -34,7 +34,8 @@ export type PayoutsFilter = {
 };
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for payouts view model.
+ * React hook/ViewModel orchestrating state and data flows for payouts view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function usePayoutsViewModel() {
   const { connectRepository } = entitlementsContainer;

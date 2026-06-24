@@ -9,7 +9,8 @@ import type { SavedTemplate } from "../../domain/entities/SavedTemplate";
 import type { IApiService } from "@core/interfaces/api.interface";
 
 /**
- * API service for executing HTTP calls related to TemplateStorage endpoints.
+ * Http API network service for template storage.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class TemplateStorageService {
   constructor(private readonly api?: IApiService) {}

@@ -32,7 +32,7 @@ export interface AppListingDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of App Listing List Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for app listing list dto.
  */
 export interface AppListingListDto {
   items: AppListingDto[];

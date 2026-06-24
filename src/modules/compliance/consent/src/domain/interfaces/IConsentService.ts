@@ -2,7 +2,8 @@ import type { ConsentStatusModel, ConsentAnalyticsModel } from "../../data/model
 import type { RecordConsentRequest } from "../entities/ConsentStatus";
 
 /**
- * Interface defining operations for the Consent network service.
+ * Http API network service for i consent.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IConsentService {
   getMyConsent(): Promise<ConsentStatusModel[]>;

@@ -6,7 +6,8 @@ import { Button } from "@core/ui/button";
 import { safeItems } from "./block-style-utils";
 
 /**
- * React presentation component representing the accordion block view UI element.
+ * Presentation UI component rendering the accordion block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function AccordionBlockView({ block }: { block: AccordionBlock }) {
   const props = block.props;

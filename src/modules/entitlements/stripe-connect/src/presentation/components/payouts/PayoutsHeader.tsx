@@ -28,7 +28,8 @@ interface PayoutsHeaderProps {
 }
 
 /**
- * React presentation component representing the payouts header UI element.
+ * Presentation UI component rendering the payouts header.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function PayoutsHeader({ account }: PayoutsHeaderProps) {
   const { t } = useI18n();

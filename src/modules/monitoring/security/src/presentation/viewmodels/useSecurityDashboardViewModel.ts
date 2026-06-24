@@ -14,7 +14,7 @@ import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
 // ─── Query key factory ───────────────────────────────────────────────
 /**
- * Constant definition representing security keys.
+ * Exported constant defining parameters and fields for security keys configurations.
  */
 export const securityKeys = {
   all: (tenantId: string | null) => ["security", tenantId ?? "system"] as const,
@@ -30,7 +30,8 @@ export const securityKeys = {
 
 // ─── Threat Summary ViewModel ────────────────────────────────────────
 /**
- * React hook/ViewModel managing logic, state, and repository queries for threat summary view model.
+ * React hook/ViewModel orchestrating state and data flows for threat summary view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useThreatSummaryViewModel(tenantId: string | null) {
   const repo = monitoringContainer.securityRepository;
@@ -61,7 +62,8 @@ export function useThreatSummaryViewModel(tenantId: string | null) {
 
 // ─── Failed Logins Heatmap ViewModel ─────────────────────────────────
 /**
- * React hook/ViewModel managing logic, state, and repository queries for failed logins view model.
+ * React hook/ViewModel orchestrating state and data flows for failed logins view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useFailedLoginsViewModel(days: number = 30, tenantId: string | null = null) {
   const repo = monitoringContainer.securityRepository;
@@ -93,7 +95,8 @@ export function useFailedLoginsViewModel(days: number = 30, tenantId: string | n
 
 // ─── Blocked IPs ViewModel ───────────────────────────────────────────
 /**
- * React hook/ViewModel managing logic, state, and repository queries for blocked i ps view model.
+ * React hook/ViewModel orchestrating state and data flows for blocked i ps view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useBlockedIPsViewModel(
   days: number = 30,
@@ -113,7 +116,8 @@ export function useBlockedIPsViewModel(
 
 // ─── Security Timeline ViewModel ─────────────────────────────────────
 /**
- * React hook/ViewModel managing logic, state, and repository queries for security timeline view model.
+ * React hook/ViewModel orchestrating state and data flows for security timeline view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useSecurityTimelineViewModel(limit: number = 20, tenantId: string | null = null) {
   const repo = monitoringContainer.securityRepository;
@@ -129,7 +133,8 @@ export function useSecurityTimelineViewModel(limit: number = 20, tenantId: strin
 
 // ─── Orchestrator ────────────────────────────────────────────────────
 /**
- * React hook/ViewModel managing logic, state, and repository queries for security dashboard view model.
+ * React hook/ViewModel orchestrating state and data flows for security dashboard view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useSecurityDashboardViewModel() {
   const tenantId = useCurrentTenantId();

@@ -16,7 +16,8 @@ import { useBuilderStore } from "../viewmodels/useBuilderStore";
 import type { CanvasComponentType } from "../../domain/entities/CanvasComponent";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for builder dnd.
+ * React hook/ViewModel orchestrating state and data flows for builder dnd.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useBuilderDnd() {
   const store = useBuilderStore();

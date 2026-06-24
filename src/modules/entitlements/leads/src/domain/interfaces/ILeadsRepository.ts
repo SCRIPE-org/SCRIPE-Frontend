@@ -12,7 +12,7 @@ import type { PagedResult } from "@core/interfaces/common.interface";
 // ── Wizard Types (domain-level) ────────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Edition For Conversion.
+ * Interface defining property specifications, keys types, and structural contract rules for edition for conversion.
  */
 export interface EditionForConversion {
   id: string;
@@ -29,7 +29,7 @@ export interface EditionForConversion {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Edition Feature Group.
+ * Interface defining property specifications, keys types, and structural contract rules for edition feature group.
  */
 export interface EditionFeatureGroup {
   category: string;
@@ -37,7 +37,7 @@ export interface EditionFeatureGroup {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Edition Feature Item.
+ * Interface defining property specifications, keys types, and structural contract rules for edition feature item.
  */
 export interface EditionFeatureItem {
   featureId: string;
@@ -52,7 +52,7 @@ export interface EditionFeatureItem {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Feature Override.
+ * Interface defining property specifications, keys types, and structural contract rules for feature override.
  */
 export interface FeatureOverride {
   featureId: string;
@@ -60,7 +60,7 @@ export interface FeatureOverride {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Status Email Preview.
+ * Interface defining property specifications, keys types, and structural contract rules for status email preview.
  */
 export interface StatusEmailPreview {
   subject: string;
@@ -72,7 +72,7 @@ export interface StatusEmailPreview {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Leads List Params.
+ * Interface defining property specifications, keys types, and structural contract rules for leads list params.
  */
 export interface LeadsListParams {
   page?: number;
@@ -82,7 +82,7 @@ export interface LeadsListParams {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update Lead Status Params.
+ * Interface defining property specifications, keys types, and structural contract rules for update lead status params.
  */
 export interface UpdateLeadStatusParams {
   id: string;
@@ -97,7 +97,7 @@ export interface UpdateLeadStatusParams {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Create Lead Params.
+ * Interface defining property specifications, keys types, and structural contract rules for create lead params.
  */
 export interface CreateLeadParams {
   companyName: string;
@@ -110,7 +110,7 @@ export interface CreateLeadParams {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Convert Lead Params.
+ * Interface defining property specifications, keys types, and structural contract rules for convert lead params.
  */
 export interface ConvertLeadParams {
   /** Encrypted edition ID. Null = resolve from lead's EditionKey. */
@@ -144,7 +144,7 @@ export interface ConvertLeadParams {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Convert Lead Result.
+ * Interface defining property specifications, keys types, and structural contract rules for convert lead result.
  */
 export interface ConvertLeadResult {
   tenantId: string;
@@ -157,7 +157,7 @@ export interface ConvertLeadResult {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Assign Lead Params.
+ * Interface defining property specifications, keys types, and structural contract rules for assign lead params.
  */
 export interface AssignLeadParams {
   /** Encrypted admin ID. Null = unassign. */
@@ -166,7 +166,7 @@ export interface AssignLeadParams {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Assignable Admin.
+ * Interface defining property specifications, keys types, and structural contract rules for assignable admin.
  */
 export interface AssignableAdmin {
   id: string;
@@ -178,7 +178,7 @@ export interface AssignableAdmin {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Bulk Lead Status Result.
+ * Interface defining property specifications, keys types, and structural contract rules for bulk lead status result.
  */
 export interface BulkLeadStatusResult {
   updated: number;
@@ -188,7 +188,8 @@ export interface BulkLeadStatusResult {
 }
 
 /**
- * Interface defining repository methods for managing Leads data access.
+ * Repository layer implementing client request queries for i leads.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface ILeadsRepository {
   getAll(params: LeadsListParams): Promise<PagedResult<PlatformLeadListItem>>;

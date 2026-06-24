@@ -11,11 +11,11 @@
 // ── Enums / Unions ───────────────────────────────────────
 
 /**
- * Type declaration definition describing the schema of subscription type.
+ * Exported type defining parameters and fields for subscription type configurations.
  */
 export type SubscriptionType = "Lifetime" | "Monthly" | "Yearly" | "Trial" | "AddOn" | "Free";
 /**
- * Type declaration definition describing the schema of subscription status.
+ * Exported type defining parameters and fields for subscription status configurations.
  */
 export type SubscriptionStatus =
   | "Active"
@@ -25,18 +25,18 @@ export type SubscriptionStatus =
   | "Canceled"
   | "Expired";
 /**
- * Type declaration definition describing the schema of expiry behavior.
+ * Exported type defining parameters and fields for expiry behavior configurations.
  */
 export type ExpiryBehavior = "Fallback" | "Suspend";
 /**
- * Type declaration definition describing the schema of refund type.
+ * Exported type defining parameters and fields for refund type configurations.
  */
 export type RefundType = "None" | "Full" | "ProRata";
 
 // ── Edition ──────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Edition Thin Model.
+ * Interface defining property specifications, keys types, and structural contract rules for edition thin model.
  */
 export interface EditionThinModel {
   id: string;
@@ -56,7 +56,7 @@ export interface EditionThinModel {
 // ── Subscription ─────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Subscription Model.
+ * Interface defining property specifications, keys types, and structural contract rules for subscription model.
  */
 export interface SubscriptionModel {
   id: string;
@@ -93,7 +93,7 @@ export interface SubscriptionModel {
 // ── Paged Result ─────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Paged Edition Result.
+ * Interface defining property specifications, keys types, and structural contract rules for paged edition result.
  */
 export interface PagedEditionResult {
   items: EditionThinModel[];
@@ -108,7 +108,7 @@ export interface PagedEditionResult {
 // ── Downgrade Impact ─────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Resource Overflow.
+ * Interface defining property specifications, keys types, and structural contract rules for resource overflow.
  */
 export interface ResourceOverflow {
   resourceType: string;
@@ -119,7 +119,7 @@ export interface ResourceOverflow {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Downgrade Impact Report.
+ * Interface defining property specifications, keys types, and structural contract rules for downgrade impact report.
  */
 export interface DowngradeImpactReport {
   hasOverflow: boolean;

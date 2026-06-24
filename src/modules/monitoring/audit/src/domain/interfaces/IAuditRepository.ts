@@ -14,7 +14,8 @@ import type {
 } from "../entities/AuditEntities";
 
 /**
- * Interface defining repository methods for managing Audit data access.
+ * Repository layer implementing client request queries for i audit.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IAuditRepository {
   getLogs(params?: AuditFilterParams): Promise<AuditLogPage>;

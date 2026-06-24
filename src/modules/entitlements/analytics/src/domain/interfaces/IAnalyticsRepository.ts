@@ -18,7 +18,8 @@ import type {
 } from "../entities/AnalyticsEntities";
 
 /**
- * Interface defining repository methods for managing Analytics data access.
+ * Repository layer implementing client request queries for i analytics.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IAnalyticsRepository {
   getOverview(months?: number): Promise<AnalyticsOverview>;

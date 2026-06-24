@@ -20,7 +20,8 @@ export interface ThemeDetailData extends ThemeCardData {
 }
 
 /**
- * Domain entity class representing a Theme Detail.
+ * Domain model representing a Theme Detail structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class ThemeDetail extends ThemeCard {
   private readonly detailData: ThemeDetailData;

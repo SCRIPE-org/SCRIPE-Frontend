@@ -31,7 +31,8 @@ export interface PaginatedReviewsResponse {
 }
 
 /**
- * Interface defining operations for the Reviews network service.
+ * Http API network service for i reviews.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IReviewsService {
   /** Fetch paginated list of reviews. */

@@ -1,5 +1,6 @@
 /**
- * Interface structure detailing the properties and attributes of Pricing Snapshot Item.
+ * Domain model representing a Pricing Snapshot Item structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PricingSnapshotItem {
   currency: string;
@@ -8,7 +9,8 @@ export interface PricingSnapshotItem {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Edition Version Model.
+ * Domain model representing a Edition Version Model structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface EditionVersionModel {
   id: string;
@@ -24,7 +26,8 @@ export interface EditionVersionModel {
 }
 
 /**
- * Domain entity class representing a Edition Version.
+ * Domain model representing a Edition Version structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class EditionVersion {
   constructor(public readonly data: EditionVersionModel) {}

@@ -6,7 +6,8 @@ import { LogoImg, OverlayDiv } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
 /**
- * React presentation component representing the branded full layout UI element.
+ * Presentation UI component rendering the branded full layout.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function BrandedFullLayout({
   slotConfig,

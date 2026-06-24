@@ -16,7 +16,8 @@ import { usePermissions } from "@core/hooks/use-permissions";
 import { useAppStore } from "@core/store/useAppStore";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for inventory view model.
+ * React hook/ViewModel orchestrating state and data flows for inventory view model.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useInventoryViewModel() {
   const { inventoryRepository } = complianceContainer;

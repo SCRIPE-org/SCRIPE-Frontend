@@ -12,7 +12,7 @@ import type { ThemeFilterState } from "../types/ThemeTypes";
 import type { UpsertThemePayload } from "./IThemeMarketplaceService";
 
 /**
- * Interface structure detailing the properties and attributes of Theme List Result.
+ * Interface defining property specifications, keys types, and structural contract rules for theme list result.
  */
 export interface ThemeListResult {
   items: ThemeCard[];
@@ -20,7 +20,8 @@ export interface ThemeListResult {
 }
 
 /**
- * Interface defining repository methods for managing ThemeMarketplace data access.
+ * Repository layer implementing client request queries for i theme marketplace.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IThemeMarketplaceRepository {
   /** Get paginated themes with filters */

@@ -9,7 +9,8 @@ import type {
 } from "../../domain/entities/EditionCategoryRequests";
 
 /**
- * Repository implementation for managing database operations on EditionCategory resources.
+ * Repository layer implementing client request queries for edition category.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class EditionCategoryRepository implements IEditionCategoryRepository {
   constructor(private readonly service: IEditionCategoryService) {}

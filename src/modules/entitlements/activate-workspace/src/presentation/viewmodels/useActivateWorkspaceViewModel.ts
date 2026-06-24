@@ -12,7 +12,8 @@ import { secureTokenService } from "@core/common/secure-token-service";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for activate workspace view model.
+ * React hook/ViewModel orchestrating state and data flows for activate workspace view model.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
  */
 export function useActivateWorkspaceViewModel() {
   const router = useRouter();

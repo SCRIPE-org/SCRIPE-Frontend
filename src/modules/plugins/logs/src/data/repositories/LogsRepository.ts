@@ -5,7 +5,8 @@ import type { PagedResult } from "../models/LogsModels";
 import { LogsMapper } from "../mappers/LogsMapper";
 
 /**
- * Repository implementation for managing database operations on Logs resources.
+ * Repository layer implementing client request queries for logs.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class LogsRepository implements ILogsRepository {
   constructor(private readonly service: ILogsService) {}

@@ -8,7 +8,8 @@ interface StrengthBarProps {
 }
 
 /**
- * React presentation component representing the strength bar UI element.
+ * Presentation UI component rendering the strength bar.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function StrengthBar({ strength, labels }: StrengthBarProps) {
   const colors = ["rgb(239,68,68)", "rgb(249,115,22)", "rgb(234,179,8)", "rgb(34,197,94)"];

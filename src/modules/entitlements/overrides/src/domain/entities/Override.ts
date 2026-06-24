@@ -7,7 +7,8 @@
 // ── Feature Override ──
 
 /**
- * Interface structure detailing the properties and attributes of Feature Override Data.
+ * Domain model representing a Feature Override Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface FeatureOverrideData {
   id: string;
@@ -24,7 +25,8 @@ export interface FeatureOverrideData {
 }
 
 /**
- * Domain entity class representing a Feature Override.
+ * Domain model representing a Feature Override structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class FeatureOverride {
   constructor(public readonly data: FeatureOverrideData) {}
@@ -82,7 +84,8 @@ export class FeatureOverride {
 // ── Resolved Feature ──
 
 /**
- * Interface structure detailing the properties and attributes of Resolved Feature Data.
+ * Domain model representing a Resolved Feature Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ResolvedFeatureData {
   featureId: string;
@@ -95,7 +98,8 @@ export interface ResolvedFeatureData {
 }
 
 /**
- * Domain entity class representing a Resolved Feature.
+ * Domain model representing a Resolved Feature structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class ResolvedFeature {
   constructor(public readonly data: ResolvedFeatureData) {}

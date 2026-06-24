@@ -13,7 +13,8 @@ import type {
 import type { GatewayListResponseModel } from "./IBillingService";
 
 /**
- * Interface defining repository methods for managing Billing data access.
+ * Repository layer implementing client request queries for i billing.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IBillingRepository {
   // Queries

@@ -72,7 +72,7 @@ function resolveVariables(
 
 // ─── Props ──────────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Email Preview Dialog Props.
+ * Interface defining property specifications, keys types, and structural contract rules for email preview dialog props.
  */
 export interface EmailPreviewDialogProps {
   open: boolean;
@@ -95,7 +95,8 @@ export interface EmailPreviewDialogProps {
 }
 
 /**
- * React presentation component representing the email preview dialog UI element.
+ * Presentation UI component rendering the email preview dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function EmailPreviewDialog({
   open,

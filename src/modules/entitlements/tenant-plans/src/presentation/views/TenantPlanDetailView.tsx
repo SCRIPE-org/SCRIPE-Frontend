@@ -45,7 +45,8 @@ interface TenantPlanDetailViewProps {
 }
 
 /**
- * React presentation component representing the tenant plan detail view UI element.
+ * Presentation UI component rendering the tenant plan detail view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
   useModuleLocales(() => import("../../../locales"), "tenant-plans");

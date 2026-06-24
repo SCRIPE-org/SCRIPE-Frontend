@@ -48,7 +48,8 @@ interface SubscriptionsViewProps {
 }
 
 /**
- * React presentation component representing the subscriptions view UI element.
+ * Presentation UI component rendering the subscriptions view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
   useModuleLocales(() => import("../../../../core/locales"), "entitlements-shared");

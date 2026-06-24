@@ -15,7 +15,8 @@ interface DocsSearchProps {
 }
 
 /**
- * React presentation component representing the docs search UI element.
+ * Presentation UI component rendering the docs search.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function DocsSearch({ isOpen, onClose, onSearch, basePath = "/docs" }: DocsSearchProps) {
   const { t } = useDocsI18n();

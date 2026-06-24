@@ -22,7 +22,8 @@ import type { SubscriptionDialogProps } from "../types";
 import { CurrencySelect } from "./CurrencySelect";
 
 /**
- * React presentation component representing the change currency dialog UI element.
+ * Presentation UI component rendering the change currency dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ChangeCurrencyDialog({ vm }: SubscriptionDialogProps) {
   const { t } = useI18n();

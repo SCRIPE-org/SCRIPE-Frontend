@@ -32,7 +32,8 @@ interface AdminTransferDialogProps {
 }
 
 /**
- * React presentation component representing the admin transfer dialog UI element.
+ * Presentation UI component rendering the admin transfer dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function AdminTransferDialog({
   open,

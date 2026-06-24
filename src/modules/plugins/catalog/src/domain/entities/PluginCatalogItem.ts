@@ -1,7 +1,8 @@
 import type { PluginCatalogItemModel } from "../../data/models/CatalogModels";
 
 /**
- * Domain entity class representing a Plugin Catalog Item.
+ * Domain model representing a Plugin Catalog Item structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class PluginCatalogItem {
   constructor(private readonly data: PluginCatalogItemModel) {}

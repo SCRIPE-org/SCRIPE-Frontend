@@ -20,7 +20,8 @@ export interface TenantEffectiveFeatureData {
 }
 
 /**
- * Domain entity class representing a Tenant Effective Feature.
+ * Domain model representing a Tenant Effective Feature structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class TenantEffectiveFeature {
   constructor(public readonly data: TenantEffectiveFeatureData) {}

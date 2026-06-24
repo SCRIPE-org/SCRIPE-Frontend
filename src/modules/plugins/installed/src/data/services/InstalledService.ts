@@ -4,7 +4,8 @@ import type { IInstalledService } from "../../domain/interfaces/IInstalledServic
 import type { PluginInstallationModel } from "../models/InstalledModels";
 
 /**
- * API service for executing HTTP calls related to Installed endpoints.
+ * Http API network service for installed.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class InstalledService implements IInstalledService {
   constructor(private readonly api: IApiService) {}

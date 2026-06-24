@@ -1,12 +1,14 @@
 import type { BaseEntity } from "@core/interfaces/common.interface";
 
 /**
- * Type declaration definition describing the schema of question type.
+ * Domain model representing a Question Type structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type QuestionType = "SingleSelect" | "MultiSelect";
 
 /**
- * Interface structure detailing the properties and attributes of Answer Option Data.
+ * Domain model representing a Answer Option Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface AnswerOptionData {
   id: string;
@@ -22,7 +24,8 @@ export interface AnswerOptionData {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Onboarding Question Data.
+ * Domain model representing a Onboarding Question Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface OnboardingQuestionData extends BaseEntity {
   key: string;
@@ -45,7 +48,8 @@ export interface OnboardingQuestionData extends BaseEntity {
 }
 
 /**
- * Domain entity class representing a Onboarding Question.
+ * Domain model representing a Onboarding Question structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class OnboardingQuestion {
   constructor(public readonly data: OnboardingQuestionData) {}

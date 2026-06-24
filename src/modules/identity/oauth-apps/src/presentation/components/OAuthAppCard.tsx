@@ -29,7 +29,7 @@ import {
 } from "@core/ui/alert-dialog";
 
 /**
- * Interface structure detailing the properties and attributes of O Auth App Item.
+ * Interface defining property specifications, keys types, and structural contract rules for o auth app item.
  */
 export interface OAuthAppItem {
   id: string;
@@ -53,7 +53,8 @@ interface OAuthAppCardProps {
 }
 
 /**
- * React presentation component representing the o auth app card UI element.
+ * Presentation UI component rendering the o auth app card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function OAuthAppCard({
   item,

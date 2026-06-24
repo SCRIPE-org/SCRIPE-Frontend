@@ -6,7 +6,8 @@ import type {
 } from "../entities/DashboardEntities";
 
 /**
- * Interface defining operations for the Dashboard network service.
+ * Http API network service for i dashboard.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IDashboardService {
   getSummary(): Promise<DashboardSummary>;

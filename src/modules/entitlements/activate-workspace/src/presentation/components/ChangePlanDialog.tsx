@@ -31,7 +31,8 @@ interface ChangePlanDialogProps {
 }
 
 /**
- * React presentation component representing the change plan dialog UI element.
+ * Presentation UI component rendering the change plan dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ChangePlanDialog({
   editions,

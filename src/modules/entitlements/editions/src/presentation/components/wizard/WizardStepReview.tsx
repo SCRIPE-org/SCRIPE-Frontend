@@ -48,7 +48,8 @@ function BoolBadge({
 }
 
 /**
- * React presentation component representing the wizard step review UI element.
+ * Presentation UI component rendering the wizard step review.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function WizardStepReview({ form, prices }: WizardStepReviewProps) {
   const { t } = useI18n();

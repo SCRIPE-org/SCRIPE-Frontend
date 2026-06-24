@@ -16,7 +16,7 @@ import { entitlementsContainer } from "@modules/entitlements/di";
 import type { GlobalSubscriptionItem } from "../../domain/entities/Subscription";
 
 /**
- * Interface structure detailing the properties and attributes of Status Dist Item.
+ * Interface defining property specifications, keys types, and structural contract rules for status dist item.
  */
 export interface StatusDistItem {
   status: string;
@@ -26,7 +26,7 @@ export interface StatusDistItem {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Type Dist Item.
+ * Interface defining property specifications, keys types, and structural contract rules for type dist item.
  */
 export interface TypeDistItem {
   type: string;
@@ -36,7 +36,7 @@ export interface TypeDistItem {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Edition Revenue Item.
+ * Interface defining property specifications, keys types, and structural contract rules for edition revenue item.
  */
 export interface EditionRevenueItem {
   edition: string;
@@ -77,7 +77,8 @@ const EDITION_CHART_COLORS = [
 ];
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for subscriptions overview view model.
+ * React hook/ViewModel orchestrating state and data flows for subscriptions overview view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useSubscriptionsOverviewViewModel() {
   const { t } = useI18n();

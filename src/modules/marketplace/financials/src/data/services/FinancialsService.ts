@@ -16,7 +16,8 @@ import type {
 } from "../../domain/interfaces/IFinancialsService";
 
 /**
- * API service for executing HTTP calls related to Financials endpoints.
+ * Http API network service for financials.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class FinancialsService implements IFinancialsService {
   constructor(private readonly api: IApiService) {}

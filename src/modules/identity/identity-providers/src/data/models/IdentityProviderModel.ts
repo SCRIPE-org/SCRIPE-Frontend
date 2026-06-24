@@ -10,7 +10,7 @@
 // ===== JSON Shapes (API contracts) =====
 
 /**
- * Interface structure detailing the properties and attributes of Identity Provider Json.
+ * Interface defining property specifications, keys types, and structural contract rules for identity provider json.
  */
 export interface IdentityProviderJson {
   id: string;
@@ -42,7 +42,7 @@ export interface IdentityProviderJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Identity Provider List Item Json.
+ * Interface defining property specifications, keys types, and structural contract rules for identity provider list item json.
  */
 export interface IdentityProviderListItemJson {
   id: string;
@@ -59,7 +59,7 @@ export interface IdentityProviderListItemJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Identity Provider List Response Json.
+ * Interface defining property specifications, keys types, and structural contract rules for identity provider list response json.
  */
 export interface IdentityProviderListResponseJson {
   items: IdentityProviderListItemJson[];
@@ -67,7 +67,7 @@ export interface IdentityProviderListResponseJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Test Connection Result Json.
+ * Interface defining property specifications, keys types, and structural contract rules for test connection result json.
  */
 export interface TestConnectionResultJson {
   isSuccess: boolean;
@@ -77,7 +77,7 @@ export interface TestConnectionResultJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Create Identity Provider Json.
+ * Interface defining property specifications, keys types, and structural contract rules for create identity provider json.
  */
 export interface CreateIdentityProviderJson {
   name: string;
@@ -104,7 +104,7 @@ export interface CreateIdentityProviderJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update Identity Provider Json.
+ * Interface defining property specifications, keys types, and structural contract rules for update identity provider json.
  */
 export interface UpdateIdentityProviderJson {
   name?: string;
@@ -133,7 +133,7 @@ export interface UpdateIdentityProviderJson {
 // ===== Model Classes =====
 
 /**
- * Domain entity class representing a Identity Provider Model.
+ * Exported class defining parameters and fields for identity provider model configurations.
  */
 export class IdentityProviderModel {
   constructor(
@@ -198,7 +198,7 @@ export class IdentityProviderModel {
 }
 
 /**
- * Domain entity class representing a Identity Provider List Item Model.
+ * Exported class defining parameters and fields for identity provider list item model configurations.
  */
 export class IdentityProviderListItemModel {
   constructor(

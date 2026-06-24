@@ -1,5 +1,5 @@
 /**
- * Interface structure detailing the properties and attributes of Consent Purpose Model.
+ * Interface defining property specifications, keys types, and structural contract rules for consent purpose model.
  */
 export interface ConsentPurposeModel {
   id: string;
@@ -13,7 +13,7 @@ export interface ConsentPurposeModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Regulation Profile Model.
+ * Interface defining property specifications, keys types, and structural contract rules for regulation profile model.
  */
 export interface RegulationProfileModel {
   id: string;
@@ -27,7 +27,7 @@ export interface RegulationProfileModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Create Regulation Request.
+ * Interface defining property specifications, keys types, and structural contract rules for create regulation request.
  */
 export interface CreateRegulationRequest {
   code: string;
@@ -40,12 +40,12 @@ export interface CreateRegulationRequest {
 }
 
 /**
- * Type declaration definition describing the schema of update regulation request.
+ * Exported type defining parameters and fields for update regulation request configurations.
  */
 export type UpdateRegulationRequest = CreateRegulationRequest;
 
 /**
- * Interface structure detailing the properties and attributes of Add Consent Purpose Request.
+ * Interface defining property specifications, keys types, and structural contract rules for add consent purpose request.
  */
 export interface AddConsentPurposeRequest {
   key: string;
@@ -57,6 +57,6 @@ export interface AddConsentPurposeRequest {
 }
 
 /**
- * Type declaration definition describing the schema of update consent purpose request.
+ * Exported type defining parameters and fields for update consent purpose request configurations.
  */
 export type UpdateConsentPurposeRequest = AddConsentPurposeRequest;

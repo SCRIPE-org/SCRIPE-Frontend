@@ -5,7 +5,8 @@ import type {
 import type { UpdateRetentionPolicyRequest } from "../entities/RetentionPolicy";
 
 /**
- * Interface defining operations for the Retention network service.
+ * Http API network service for i retention.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IRetentionService {
   getAll(): Promise<RetentionPolicyModel[]>;

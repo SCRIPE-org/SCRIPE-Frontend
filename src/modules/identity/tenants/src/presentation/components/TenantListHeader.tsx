@@ -57,7 +57,8 @@ function countTreeStats(
 }
 
 /**
- * React presentation component representing the tenant list header UI element.
+ * Presentation UI component rendering the tenant list header.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function TenantListHeader({
   tree,

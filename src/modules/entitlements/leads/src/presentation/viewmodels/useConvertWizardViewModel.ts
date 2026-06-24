@@ -14,12 +14,12 @@ import type { PlatformLead } from "../../domain/entities/PlatformLead";
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 /**
- * Type declaration definition describing the schema of wizard step.
+ * Exported type defining parameters and fields for wizard step configurations.
  */
 export type WizardStep = 1 | 2 | 3 | 4;
 
 /**
- * Interface structure detailing the properties and attributes of Step2 State.
+ * Interface defining property specifications, keys types, and structural contract rules for step2 state.
  */
 export interface Step2State {
   tenantCode: string;
@@ -46,7 +46,8 @@ const STEP2_DEFAULTS: Step2State = {
 // ── Hook ──────────────────────────────────────────────────────────────────────
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for convert wizard view model.
+ * React hook/ViewModel orchestrating state and data flows for convert wizard view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useConvertWizardViewModel(
   open: boolean,

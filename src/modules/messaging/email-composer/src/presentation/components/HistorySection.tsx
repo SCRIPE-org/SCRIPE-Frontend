@@ -31,7 +31,7 @@ import type { SentEmail } from "../../domain/entities/Email";
 
 // ─── Props ──────────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of History Section Props.
+ * Interface defining property specifications, keys types, and structural contract rules for history section props.
  */
 export interface HistorySectionProps {
   history: SentEmail[];
@@ -217,7 +217,8 @@ function ExpandedEmailRow({
 
 // ─── Main Component ─────────────────────────────────────────
 /**
- * React presentation component representing the history section UI element.
+ * Presentation UI component rendering the history section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function HistorySection(vm: HistorySectionProps) {
   const { t } = useI18n();

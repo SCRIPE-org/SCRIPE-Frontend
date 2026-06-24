@@ -30,19 +30,22 @@ export type CanvasComponentType =
 
 // ── Grid Alignment ───────────────────────────────────────
 /**
- * Type declaration definition describing the schema of grid alignment.
+ * Domain model representing a Grid Alignment structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type GridAlignment = "start" | "center" | "end";
 
 // ── Position Mode ────────────────────────────────────────
 /**
- * Type declaration definition describing the schema of position mode.
+ * Domain model representing a Position Mode structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type PositionMode = "absolute" | "grid";
 
 // ── Canvas Component ─────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Canvas Component.
+ * Domain model representing a Canvas Component structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CanvasComponent {
   /** Unique identifier (uuid) */
@@ -82,13 +85,15 @@ export interface CanvasComponent {
 
 // ── Canvas Mode ──────────────────────────────────────────
 /**
- * Type declaration definition describing the schema of canvas mode.
+ * Domain model representing a Canvas Mode structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type CanvasMode = "layout" | "builder";
 
 // ── Canvas Background ────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Canvas Background.
+ * Domain model representing a Canvas Background structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CanvasBackground {
   type: "inherit" | "solid" | "gradient" | "image";
@@ -97,7 +102,8 @@ export interface CanvasBackground {
 
 // ── Component Catalog Entry ──────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Component Catalog Entry.
+ * Domain model representing a Component Catalog Entry structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ComponentCatalogEntry {
   type: CanvasComponentType;
@@ -126,7 +132,8 @@ export interface ComponentCatalogEntry {
 
 // ── Component Catalog ────────────────────────────────────
 /**
- * Constant definition representing c o m p o n e n t_ c a t a l o g.
+ * Domain model representing a C O M P O N E N T_ C A T A L O G structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const COMPONENT_CATALOG: ComponentCatalogEntry[] = [
   {
@@ -393,13 +400,15 @@ export const COMPONENT_CATALOG: ComponentCatalogEntry[] = [
 
 // ── Default Position Mode for NEW canvases ───────────────
 /**
- * Constant definition representing d e f a u l t_ p o s i t i o n_ m o d e.
+ * Domain model representing a D E F A U L T_ P O S I T I O N_ M O D E structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const DEFAULT_POSITION_MODE: PositionMode = "absolute";
 
 // ── Default Canvas State ─────────────────────────────────
 /**
- * Constant definition representing d e f a u l t_ c a n v a s_ c o m p o n e n t s.
+ * Domain model representing a D E F A U L T_ C A N V A S_ C O M P O N E N T S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const DEFAULT_CANVAS_COMPONENTS: CanvasComponent[] = [
   {
@@ -469,39 +478,47 @@ export const DEFAULT_CANVAS_COMPONENTS: CanvasComponent[] = [
 ];
 
 /**
- * Constant definition representing d e f a u l t_ c a n v a s_ g r i d_ r o w s.
+ * Domain model representing a D E F A U L T_ C A N V A S_ G R I D_ R O W S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const DEFAULT_CANVAS_GRID_ROWS = 8;
 /**
- * Constant definition representing d e f a u l t_ c a n v a s_ b a c k g r o u n d.
+ * Domain model representing a D E F A U L T_ C A N V A S_ B A C K G R O U N D structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const DEFAULT_CANVAS_BACKGROUND: CanvasBackground = { type: "inherit", value: "" };
 /**
- * Constant definition representing c a n v a s_ g r i d_ c o l u m n s.
+ * Domain model representing a C A N V A S_ G R I D_ C O L U M N S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const CANVAS_GRID_COLUMNS = 12;
 /**
- * Constant definition representing s n a p_ g r i d_ s i z e.
+ * Domain model representing a S N A P_ G R I D_ S I Z E structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const SNAP_GRID_SIZE = 8; // 8px snap grid for free-form mode
 /**
- * Constant definition representing c a n v a s_ w i d t h.
+ * Domain model representing a C A N V A S_ W I D T H structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const CANVAS_WIDTH = 800; // Default canvas width in absolute mode
 /**
- * Constant definition representing c a n v a s_ h e i g h t.
+ * Domain model representing a C A N V A S_ H E I G H T structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const CANVAS_HEIGHT = 900; // Default canvas height in absolute mode
 
 // ── Auth Page IDs ────────────────────────────────────────
 /**
- * Type declaration definition describing the schema of auth page id.
+ * Domain model representing a Auth Page Id structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type AuthPageId = "login" | "forgotPassword" | "resetPassword";
 
 // ── Default Components per Auth Page ─────────────────────
 /**
- * Constant definition representing d e f a u l t_ f o r g o t_ c o m p o n e n t s.
+ * Domain model representing a D E F A U L T_ F O R G O T_ C O M P O N E N T S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const DEFAULT_FORGOT_COMPONENTS: CanvasComponent[] = [
   {
@@ -591,7 +608,8 @@ export const DEFAULT_FORGOT_COMPONENTS: CanvasComponent[] = [
 ];
 
 /**
- * Constant definition representing d e f a u l t_ r e s e t_ c o m p o n e n t s.
+ * Domain model representing a D E F A U L T_ R E S E T_ C O M P O N E N T S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const DEFAULT_RESET_COMPONENTS: CanvasComponent[] = [
   {

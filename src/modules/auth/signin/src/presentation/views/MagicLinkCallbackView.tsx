@@ -19,7 +19,8 @@ import { useMagicLinkCallbackViewModel } from "../viewmodels/useMagicLinkCallbac
 import { VaultBackground } from "../components/layouts/VaultBackground";
 
 /**
- * React presentation component representing the magic link callback view UI element.
+ * Presentation UI component rendering the magic link callback view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function MagicLinkCallbackView() {
   const { t } = useI18n();

@@ -25,7 +25,8 @@ interface PluginInstallDialogProps {
 }
 
 /**
- * React presentation component representing the plugin install dialog UI element.
+ * Presentation UI component rendering the plugin install dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function PluginInstallDialog({
   plugin,

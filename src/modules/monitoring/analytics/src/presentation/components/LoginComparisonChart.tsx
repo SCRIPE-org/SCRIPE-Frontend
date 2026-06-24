@@ -30,7 +30,7 @@ interface Props {
 }
 
 /**
- * Constant definition representing login comparison chart.
+ * Exported constant defining parameters and fields for login comparison chart configurations.
  */
 export const LoginComparisonChart = memo(function LoginComparisonChart({
   data,

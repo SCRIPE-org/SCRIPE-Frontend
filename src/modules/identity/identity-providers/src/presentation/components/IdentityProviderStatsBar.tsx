@@ -16,7 +16,8 @@ interface Props {
 }
 
 /**
- * React presentation component representing the identity provider stats bar UI element.
+ * Presentation UI component rendering the identity provider stats bar.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function IdentityProviderStatsBar({ items }: Props) {
   const { t } = useI18n();

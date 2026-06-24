@@ -13,7 +13,8 @@ import type {
 } from "../../domain/interfaces/IReviewsService";
 
 /**
- * API service for executing HTTP calls related to Reviews endpoints.
+ * Http API network service for reviews.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class ReviewsService implements IReviewsService {
   constructor(private readonly api: IApiService) {}

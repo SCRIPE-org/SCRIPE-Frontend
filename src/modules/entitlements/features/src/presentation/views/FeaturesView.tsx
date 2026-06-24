@@ -14,7 +14,8 @@ import { CatalogView } from "../components/CatalogView";
 import { EffectiveFeaturesView } from "../components/EffectiveFeaturesView";
 
 /**
- * React presentation component representing the features view UI element.
+ * Presentation UI component rendering the features view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function FeaturesView() {
   useModuleLocales(() => import("../../../locales"), "features");

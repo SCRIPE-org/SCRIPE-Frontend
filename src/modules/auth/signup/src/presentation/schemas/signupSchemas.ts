@@ -20,7 +20,7 @@ import {
 // ─── Account step schema ──────────────────────────────────────────────────────
 
 /**
- * Constant definition representing account schema.
+ * Exported constant defining parameters and fields for account schema configurations.
  */
 export const accountSchema = z.object({
   fullName: z.string().min(2, "signup.errors.fullNameMin").max(100, "signup.errors.fullNameMax"),
@@ -38,14 +38,14 @@ export const accountSchema = z.object({
 });
 
 /**
- * Type declaration definition describing the schema of account form values.
+ * Exported type defining parameters and fields for account form values configurations.
  */
 export type AccountFormValues = z.infer<typeof accountSchema>;
 
 // ─── Workspace step schema ────────────────────────────────────────────────────
 
 /**
- * Constant definition representing workspace schema.
+ * Exported constant defining parameters and fields for workspace schema configurations.
  */
 export const workspaceSchema = z.object({
   workspaceName: z
@@ -63,14 +63,14 @@ export const workspaceSchema = z.object({
 });
 
 /**
- * Type declaration definition describing the schema of workspace form values.
+ * Exported type defining parameters and fields for workspace form values configurations.
  */
 export type WorkspaceFormValues = z.infer<typeof workspaceSchema>;
 
 // ─── Contact Sales step schema ────────────────────────────────────────────────
 
 /**
- * Constant definition representing contact sales schema.
+ * Exported constant defining parameters and fields for contact sales schema configurations.
  */
 export const contactSalesSchema = z.object({
   fullName: z.string().min(2, "signup.errors.fullNameMin").max(100, "signup.errors.fullNameMax"),
@@ -81,14 +81,14 @@ export const contactSalesSchema = z.object({
 });
 
 /**
- * Type declaration definition describing the schema of contact sales form values.
+ * Exported type defining parameters and fields for contact sales form values configurations.
  */
 export type ContactSalesFormValues = z.infer<typeof contactSalesSchema>;
 
 // ─── OTP step schema ──────────────────────────────────────────────────────────
 
 /**
- * Constant definition representing otp schema.
+ * Exported constant defining parameters and fields for otp schema configurations.
  */
 export const otpSchema = z.object({
   code: z
@@ -98,6 +98,6 @@ export const otpSchema = z.object({
 });
 
 /**
- * Type declaration definition describing the schema of otp form values.
+ * Exported type defining parameters and fields for otp form values configurations.
  */
 export type OtpFormValues = z.infer<typeof otpSchema>;

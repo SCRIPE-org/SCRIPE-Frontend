@@ -57,7 +57,7 @@ interface PricingTabProps {
 }
 
 /**
- * Constant definition representing pricing tab.
+ * Exported constant defining parameters and fields for pricing tab configurations.
  */
 export const PricingTab = memo(function PricingTab({
   editionId,

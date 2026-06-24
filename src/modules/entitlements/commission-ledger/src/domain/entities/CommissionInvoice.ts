@@ -1,5 +1,6 @@
 /**
- * Interface structure detailing the properties and attributes of Commission Invoice Data.
+ * Domain model representing a Commission Invoice Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CommissionInvoiceData {
   id: string;
@@ -17,7 +18,8 @@ export interface CommissionInvoiceData {
 }
 
 /**
- * Domain entity class representing a Commission Invoice.
+ * Domain model representing a Commission Invoice structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class CommissionInvoice {
   constructor(private readonly data: CommissionInvoiceData) {}

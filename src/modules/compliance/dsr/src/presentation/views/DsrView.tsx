@@ -10,7 +10,8 @@ import { ReviewDsrModal } from "../components/ReviewDsrModal";
 import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
 
 /**
- * React presentation component representing the dsr view UI element.
+ * Presentation UI component rendering the dsr view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DsrView() {
   useModuleLocales(() => import("../../../locales"), "compliance-dsr");

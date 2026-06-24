@@ -14,7 +14,8 @@ import type {
 } from "../../domain/entities/DashboardEntities";
 
 /**
- * API service for executing HTTP calls related to Dashboard endpoints.
+ * Http API network service for dashboard.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class DashboardService {
   constructor(private readonly api: IApiService) {}

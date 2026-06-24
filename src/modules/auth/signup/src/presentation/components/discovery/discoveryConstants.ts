@@ -51,7 +51,7 @@ import type { Variants } from "framer-motion";
 // Keys are the iconKey values returned by the Onboarding Intelligence Engine.
 // Components that render engine options look up the icon here at render time.
 /**
- * Constant definition representing l u c i d e_ m a p.
+ * Exported constant defining parameters and fields for l u c i d e_ m a p configurations.
  */
 export const LUCIDE_MAP: Record<string, React.ElementType> = {
   "building-2": Building2,
@@ -90,7 +90,7 @@ export const LUCIDE_MAP: Record<string, React.ElementType> = {
 // ─── Framer Motion variants ───────────────────────────────────────────────────
 
 /**
- * Constant definition representing slide variants.
+ * Exported constant defining parameters and fields for slide variants configurations.
  */
 export const slideVariants: Variants = {
   enter: (dir: number) => ({
@@ -113,7 +113,7 @@ export const slideVariants: Variants = {
 };
 
 /**
- * Constant definition representing dot variants.
+ * Exported constant defining parameters and fields for dot variants configurations.
  */
 export const dotVariants: Variants = {
   active: { scale: 1.2, opacity: 1 },

@@ -34,7 +34,8 @@ interface AssignRoleDialogProps {
 }
 
 /**
- * React presentation component representing the assign role dialog UI element.
+ * Presentation UI component rendering the assign role dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function AssignRoleDialog({
   open,
@@ -147,7 +148,8 @@ interface ViewRolesDialogProps {
 }
 
 /**
- * React presentation component representing the view roles dialog UI element.
+ * Presentation UI component rendering the view roles dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function ViewRolesDialog({
   open,
@@ -261,7 +263,8 @@ interface ResetPasswordDialogProps {
 }
 
 /**
- * React presentation component representing the reset password dialog UI element.
+ * Presentation UI component rendering the reset password dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function ResetPasswordDialog({
   open,

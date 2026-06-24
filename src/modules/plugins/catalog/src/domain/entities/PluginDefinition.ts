@@ -42,7 +42,8 @@ export interface PluginDefinitionModel {
 }
 
 /**
- * Domain entity class representing a Plugin Definition.
+ * Domain model representing a Plugin Definition structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class PluginDefinition {
   constructor(private readonly data: PluginDefinitionModel) {}

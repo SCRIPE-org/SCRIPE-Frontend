@@ -13,7 +13,8 @@ import type {
 } from "../models/InventoryModels";
 
 /**
- * Repository implementation for managing database operations on Inventory resources.
+ * Repository layer implementing client request queries for inventory.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class InventoryRepository implements IInventoryRepository {
   constructor(private readonly service: IInventoryService) {}

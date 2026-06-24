@@ -8,7 +8,8 @@ import type { PlatformStripeDashboard } from "../../domain/entities/PlatformStri
 import { PlatformStripeMapper } from "../mappers/PlatformStripeMapper";
 
 /**
- * Repository implementation for managing database operations on PlatformStripe resources.
+ * Repository layer implementing client request queries for platform stripe.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class PlatformStripeRepository implements IPlatformStripeRepository {
   constructor(private readonly service: IPlatformStripeService) {}

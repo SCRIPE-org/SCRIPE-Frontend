@@ -18,7 +18,8 @@ export interface CreateFeatureRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update Feature Request.
+ * Domain model representing a Update Feature Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface UpdateFeatureRequest {
   name?: string;

@@ -16,7 +16,8 @@ import type {
 } from "../../domain/interfaces/IThemeBundleService";
 
 /**
- * API service for executing HTTP calls related to ThemeBundle endpoints.
+ * Http API network service for theme bundle.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class ThemeBundleService implements IThemeBundleService {
   constructor(private readonly api: IApiService) {}

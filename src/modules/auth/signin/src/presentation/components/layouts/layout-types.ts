@@ -3,7 +3,7 @@ import type { TenantBranding } from "@modules/auth/core/domain/entities/TenantBr
 import type { SlotConfig } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 
 /**
- * Interface structure detailing the properties and attributes of Login Layout Props.
+ * Interface defining property specifications, keys types, and structural contract rules for login layout props.
  */
 export interface LoginLayoutProps {
   branding: TenantBranding | null;

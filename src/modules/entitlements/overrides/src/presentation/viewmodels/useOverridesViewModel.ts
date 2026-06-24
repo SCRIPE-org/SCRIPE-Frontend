@@ -18,7 +18,8 @@ import { parseLocalizedNumber } from "@core/utils/number-parser";
 const ITEMS_PER_PAGE = 10;
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for overrides view model.
+ * React hook/ViewModel orchestrating state and data flows for overrides view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useOverridesViewModel(tenantId: string) {
   const { overrideRepository } = entitlementsContainer;

@@ -28,7 +28,8 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 /**
- * React presentation component representing the wizard step1 edition UI element.
+ * Presentation UI component rendering the wizard step1 edition.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function WizardStep1Edition({
   lead,

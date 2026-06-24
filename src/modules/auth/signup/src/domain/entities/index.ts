@@ -111,7 +111,8 @@ export interface ComparisonCategory {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Signup Wizard Data.
+ * Domain model representing a Signup Wizard Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface SignupWizardData {
   // Step 0/1 — Category + Plan
@@ -163,7 +164,8 @@ export interface SignupWizardData {
 // ─── Rich feature value for a specific edition ─────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Public Feature.
+ * Domain model representing a Public Feature structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PublicFeature {
   /** Display name in English */
@@ -202,7 +204,8 @@ export interface PublicFeature {
 // ─── Public edition from the API ───────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Public Edition.
+ * Domain model representing a Public Edition structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PublicEdition {
   id: string;
@@ -254,7 +257,8 @@ export interface PublicCategory {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Subdomain Check Result.
+ * Domain model representing a Subdomain Check Result structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface SubdomainCheckResult {
   available: boolean;
@@ -263,7 +267,8 @@ export interface SubdomainCheckResult {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Signup Otp Result.
+ * Domain model representing a Signup Otp Result structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface SignupOtpResult {
   sent: boolean;
@@ -271,7 +276,8 @@ export interface SignupOtpResult {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Signup Verification Result.
+ * Domain model representing a Signup Verification Result structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface SignupVerificationResult {
   isValid: boolean;
@@ -280,7 +286,8 @@ export interface SignupVerificationResult {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Signup Result.
+ * Domain model representing a Signup Result structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface SignupResult {
   /**
@@ -325,7 +332,8 @@ export interface SignupStatusResult {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Signup Checkout Status Result.
+ * Domain model representing a Signup Checkout Status Result structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface SignupCheckoutStatusResult {
   status: "pending" | "processing" | "completed" | "failed" | "expired" | "unknown";
@@ -368,7 +376,8 @@ export interface ChangePlanResult {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Change Plan Payload.
+ * Domain model representing a Change Plan Payload structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ChangePlanPayload {
   signupRef: string;

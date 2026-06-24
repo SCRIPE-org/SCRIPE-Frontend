@@ -86,7 +86,8 @@ function JsonDiff({ label, value }: { label: string; value: string | null }) {
 }
 
 /**
- * React presentation component representing the audit detail dialog UI element.
+ * Presentation UI component rendering the audit detail dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function AuditDetailDialog({ open, onClose, data, isLoading }: Props) {
   const { t, direction } = useI18n();

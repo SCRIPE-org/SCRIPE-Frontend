@@ -24,7 +24,8 @@ interface FeatureRowProps {
 }
 
 /**
- * React presentation component representing the feature row UI element.
+ * Presentation UI component rendering the feature row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function FeatureRow({
   definition,

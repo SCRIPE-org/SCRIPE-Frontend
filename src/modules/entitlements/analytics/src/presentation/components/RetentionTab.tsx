@@ -28,7 +28,8 @@ function getHeatmapStyle(rate: number): { bg: string; text: string } {
 }
 
 /**
- * React presentation component representing the retention tab UI element.
+ * Presentation UI component rendering the retention tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function RetentionTab({ cohortData }: RetentionTabProps) {
   const { t } = useI18n();

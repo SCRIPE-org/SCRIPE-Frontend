@@ -30,7 +30,8 @@ export interface SaveBundlePayload {
 }
 
 /**
- * Interface defining operations for the ThemeBundle network service.
+ * Http API network service for i theme bundle.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IThemeBundleService {
   getBundles(params: BundleListParams): Promise<ThemeBundlePagedResult>;

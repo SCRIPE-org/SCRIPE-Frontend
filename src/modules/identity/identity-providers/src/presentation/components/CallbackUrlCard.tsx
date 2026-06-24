@@ -21,7 +21,8 @@ interface Props {
 }
 
 /**
- * React presentation component representing the callback url card UI element.
+ * Presentation UI component rendering the callback url card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function CallbackUrlCard({ protocol, providerId }: Props) {
   const { t } = useI18n();

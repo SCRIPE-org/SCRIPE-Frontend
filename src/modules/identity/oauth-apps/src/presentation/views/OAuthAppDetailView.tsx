@@ -24,7 +24,8 @@ interface Props {
 }
 
 /**
- * React presentation component representing the o auth app detail view UI element.
+ * Presentation UI component rendering the o auth app detail view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function OAuthAppDetailView({ appId }: Props) {
   useModuleLocales(() => import("../../../locales"), "oauth-apps");

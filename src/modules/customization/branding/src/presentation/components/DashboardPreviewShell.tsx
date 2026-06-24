@@ -347,7 +347,8 @@ const VALID_SETTINGS_KEYS = new Set([
 ]);
 
 /**
- * React presentation component representing the dashboard preview shell UI element.
+ * Presentation UI component rendering the dashboard preview shell.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function DashboardPreviewShell() {
   // Gap #1/#11/#12 fix: Preview settings are maintained ENTIRELY in-memory.

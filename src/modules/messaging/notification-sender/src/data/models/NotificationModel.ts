@@ -13,7 +13,7 @@ export interface NotificationTargetJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Send Notification Json.
+ * Interface defining property specifications, keys types, and structural contract rules for send notification json.
  */
 export interface SendNotificationJson {
   title: string;

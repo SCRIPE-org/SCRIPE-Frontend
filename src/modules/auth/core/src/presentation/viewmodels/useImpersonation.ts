@@ -42,7 +42,8 @@ function getImpersonationState(): boolean {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for impersonation.
+ * React hook/ViewModel orchestrating state and data flows for impersonation.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useImpersonation() {
   const { success, error: toastError } = useEnhancedToast();

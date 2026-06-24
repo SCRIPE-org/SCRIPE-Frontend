@@ -21,7 +21,7 @@ import {
 } from "../../domain/types/PermissionTypes";
 
 /**
- * Interface structure detailing the properties and attributes of Permission Config Dialog Props.
+ * Interface defining property specifications, keys types, and structural contract rules for permission config dialog props.
  */
 export interface PermissionConfigDialogProps {
   open: boolean;
@@ -36,7 +36,8 @@ export interface PermissionConfigDialogProps {
 }
 
 /**
- * React presentation component representing the permission config dialog UI element.
+ * Presentation UI component rendering the permission config dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function PermissionConfigDialog({
   open,

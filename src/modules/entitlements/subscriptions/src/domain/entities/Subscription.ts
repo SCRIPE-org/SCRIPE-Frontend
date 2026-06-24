@@ -8,7 +8,8 @@
 // ── Downgrade Impact ──
 
 /**
- * Interface structure detailing the properties and attributes of Resource Overflow.
+ * Domain model representing a Resource Overflow structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ResourceOverflow {
   resourceType: string;
@@ -19,7 +20,8 @@ export interface ResourceOverflow {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Downgrade Impact Report.
+ * Domain model representing a Downgrade Impact Report structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface DowngradeImpactReport {
   hasOverflow: boolean;
@@ -29,7 +31,8 @@ export interface DowngradeImpactReport {
 // ── Subscription (Full Detail) ──
 
 /**
- * Interface structure detailing the properties and attributes of Subscription Data.
+ * Domain model representing a Subscription Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface SubscriptionData {
   id: string;
@@ -72,7 +75,8 @@ export interface SubscriptionData {
 }
 
 /**
- * Domain entity class representing a Subscription.
+ * Domain model representing a Subscription structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class Subscription {
   constructor(public readonly data: SubscriptionData) {}
@@ -215,7 +219,8 @@ export class Subscription {
 // ── Subscription List Item ──
 
 /**
- * Interface structure detailing the properties and attributes of Subscription List Item Data.
+ * Domain model representing a Subscription List Item Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface SubscriptionListItemData {
   id: string;
@@ -254,7 +259,8 @@ export interface SubscriptionListItemData {
 }
 
 /**
- * Domain entity class representing a Subscription List Item.
+ * Domain model representing a Subscription List Item structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class SubscriptionListItem {
   constructor(public readonly data: SubscriptionListItemData) {}
@@ -366,7 +372,8 @@ export class SubscriptionListItem {
 // ── Global Subscription Item ──
 
 /**
- * Interface structure detailing the properties and attributes of Global Subscription Item Data.
+ * Domain model representing a Global Subscription Item Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface GlobalSubscriptionItemData {
   id: string;
@@ -398,7 +405,8 @@ export interface GlobalSubscriptionItemData {
 }
 
 /**
- * Domain entity class representing a Global Subscription Item.
+ * Domain model representing a Global Subscription Item structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class GlobalSubscriptionItem {
   constructor(public readonly data: GlobalSubscriptionItemData) {}

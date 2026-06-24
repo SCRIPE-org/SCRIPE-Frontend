@@ -15,7 +15,8 @@ import type { AssignRoleRequest } from "../../domain/entities/AdminRequests";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for admin roles view model.
+ * React hook/ViewModel orchestrating state and data flows for admin roles view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useAdminRolesViewModel(
   admin: Admin | null,

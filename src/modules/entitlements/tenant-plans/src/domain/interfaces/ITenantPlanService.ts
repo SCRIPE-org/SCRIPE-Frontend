@@ -24,7 +24,8 @@ import type {
 import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
 /**
- * Interface defining operations for the TenantPlan network service.
+ * Http API network service for i tenant plan.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface ITenantPlanService {
   // Plans

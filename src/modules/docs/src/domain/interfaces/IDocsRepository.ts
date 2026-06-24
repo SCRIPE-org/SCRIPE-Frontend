@@ -7,7 +7,7 @@ import type { DocPage } from "../entities/DocPage";
 import type { DocCategory } from "../entities/DocCategory";
 
 /**
- * Interface structure detailing the properties and attributes of Search Result.
+ * Interface defining property specifications, keys types, and structural contract rules for search result.
  */
 export interface SearchResult {
   slug: string;
@@ -22,7 +22,8 @@ export interface SearchResult {
 }
 
 /**
- * Interface defining repository methods for managing Docs data access.
+ * Repository layer implementing client request queries for i docs.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IDocsRepository {
   /** Get a single page by its slug */

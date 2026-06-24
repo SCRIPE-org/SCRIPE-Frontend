@@ -5,7 +5,8 @@
 export type ReportStatus = "Pending" | "Generating" | "Ready" | "Failed";
 
 /**
- * Interface structure detailing the properties and attributes of Compliance Report Data.
+ * Domain model representing a Compliance Report Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ComplianceReportData {
   id: string;
@@ -20,7 +21,8 @@ export interface ComplianceReportData {
 }
 
 /**
- * Domain entity class representing a Compliance Report.
+ * Domain model representing a Compliance Report structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class ComplianceReport {
   constructor(private readonly data: ComplianceReportData) {}
@@ -65,7 +67,8 @@ export class ComplianceReport {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Generate Report Request.
+ * Domain model representing a Generate Report Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface GenerateReportRequest {
   reportType: string;

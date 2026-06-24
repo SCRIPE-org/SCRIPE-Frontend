@@ -32,7 +32,8 @@ function relativeTime(isoDate: string): string {
 // ── PlatformLeadListItem (lightweight, for table rows) ────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Platform Lead List Item Data.
+ * Domain model representing a Platform Lead List Item Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PlatformLeadListItemData {
   id: string;
@@ -50,7 +51,8 @@ export interface PlatformLeadListItemData {
 }
 
 /**
- * Domain entity class representing a Platform Lead List Item.
+ * Domain model representing a Platform Lead List Item structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class PlatformLeadListItem {
   constructor(public readonly data: PlatformLeadListItemData) {}
@@ -132,7 +134,8 @@ export class PlatformLeadListItem {
 // ── PlatformLead (full detail, for drawer) ────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Platform Lead Data.
+ * Domain model representing a Platform Lead Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PlatformLeadData {
   id: string;
@@ -157,7 +160,8 @@ export interface PlatformLeadData {
 }
 
 /**
- * Domain entity class representing a Platform Lead.
+ * Domain model representing a Platform Lead structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class PlatformLead {
   constructor(public readonly data: PlatformLeadData) {}
@@ -267,7 +271,8 @@ export class PlatformLead {
 // ── LeadActivity (activity timeline entry) ────────────────────────────────────
 
 /**
- * Type declaration definition describing the schema of lead activity type.
+ * Domain model representing a Lead Activity Type structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type LeadActivityType =
   | "Submitted"
@@ -278,7 +283,8 @@ export type LeadActivityType =
   | "Closed";
 
 /**
- * Interface structure detailing the properties and attributes of Lead Activity.
+ * Domain model representing a Lead Activity structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface LeadActivity {
   id: string;
@@ -309,7 +315,8 @@ interface LeadCommunicationLogData {
 }
 
 /**
- * Domain entity class representing a Lead Communication Log.
+ * Domain model representing a Lead Communication Log structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class LeadCommunicationLog {
   constructor(private readonly data: LeadCommunicationLogData) {}

@@ -17,7 +17,8 @@ export interface CreateWebhookRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update Webhook Request.
+ * Domain model representing a Update Webhook Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface UpdateWebhookRequest {
   url?: string;

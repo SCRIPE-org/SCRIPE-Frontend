@@ -10,7 +10,8 @@ import type {
 import type { ExportParams, ExportFileResult } from "../entities/SubscriptionExport";
 
 /**
- * Interface defining repository methods for managing Subscription data access.
+ * Repository layer implementing client request queries for i subscription.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface ISubscriptionRepository {
   // Queries

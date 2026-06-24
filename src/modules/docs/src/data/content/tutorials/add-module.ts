@@ -124,7 +124,7 @@ const sections: DocSection[] = [
     code: `import { z } from 'zod';
 
 /**
- * Constant definition representing product schema.
+ * Exported constant defining parameters and fields for product schema configurations.
  */
 export const ProductSchema = z.object({
   id: z.string().uuid(),
@@ -140,12 +140,12 @@ export const ProductSchema = z.object({
 });
 
 /**
- * Type declaration definition describing the schema of product.
+ * Exported type defining parameters and fields for product configurations.
  */
 export type Product = z.infer<typeof ProductSchema>;
 
 /**
- * Constant definition representing create product schema.
+ * Exported constant defining parameters and fields for create product schema configurations.
  */
 export const CreateProductSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -156,7 +156,7 @@ export const CreateProductSchema = z.object({
 });
 
 /**
- * Type declaration definition describing the schema of create product input.
+ * Exported type defining parameters and fields for create product input configurations.
  */
 export type CreateProductInput = z.infer<typeof CreateProductSchema>;`,
   },
@@ -178,7 +178,8 @@ export type CreateProductInput = z.infer<typeof CreateProductSchema>;`,
         code: `import { Result } from '@core/common/Result';
 
 /**
- * Interface defining repository methods for managing Product data access.
+ * Repository layer implementing client request queries for i product.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IProductRepository {
   getAll(params: PaginationParams): Promise<Result<PaginatedResult<Product>>>;
@@ -196,7 +197,8 @@ export interface IProductRepository {
 import { ProductMapper } from '../mappers/ProductMapper';
 
 /**
- * Repository implementation for managing database operations on Product resources.
+ * Repository layer implementing client request queries for product.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class ProductRepository implements IProductRepository {
   constructor(private api: IApiService) {}
@@ -239,7 +241,7 @@ export class ProductRepository implements IProductRepository {
 import { ProductRepository } from './src/data/repositories/ProductRepository';
 
 /**
- * Constant definition representing container.
+ * Exported constant defining parameters and fields for container configurations.
  */
 export const container = {
   productRepository: new ProductRepository(coreContainer.apiService),
@@ -262,7 +264,8 @@ import { useCrudViewModel } from '@core/crud';
 import { container } from '../../../di';
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for product list view model.
+ * React hook/ViewModel orchestrating state and data flows for product list view model.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useProductListViewModel() {
   const repo = container.productRepository;
@@ -304,7 +307,8 @@ import { GenericCrudView } from '@core/crud';
 import { useProductListViewModel } from '../viewmodels/useProductListViewModel';
 
 /**
- * React presentation component representing the product list view UI element.
+ * Presentation UI component rendering the product list view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function ProductListView() {
   const { table, columns } = useProductListViewModel();

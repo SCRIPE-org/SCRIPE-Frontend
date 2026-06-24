@@ -13,7 +13,8 @@ interface UseManageRolesViewModelProps {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for manage roles view model.
+ * React hook/ViewModel orchestrating state and data flows for manage roles view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useManageRolesViewModel({
   adminId,

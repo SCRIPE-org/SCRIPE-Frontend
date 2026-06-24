@@ -33,7 +33,8 @@ const CURRENCY_OPTIONS: GenericSelectOption[] = [
 ];
 
 /**
- * React presentation component representing the add price form UI element.
+ * Presentation UI component rendering the add price form.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function AddPriceForm({ plan, onAdd, onCancel, t }: AddPriceFormProps) {
   const [currency, setCurrency] = useState("USD");

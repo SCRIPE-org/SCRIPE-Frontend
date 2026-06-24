@@ -50,7 +50,8 @@ import { cn } from "@core/common/utils";
 import { useBillingHubViewModel } from "../viewmodels/useBillingHubViewModel";
 
 /**
- * React presentation component representing the billing hub view UI element.
+ * Presentation UI component rendering the billing hub view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function BillingHubView() {
   const { t } = useI18n();

@@ -17,12 +17,14 @@ export type TemplateCategory =
   | "custom";
 
 /**
- * Type declaration definition describing the schema of placeholder type.
+ * Domain model representing a Placeholder Type structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type PlaceholderType = "text" | "number" | "date" | "boolean" | "list" | "object";
 
 /**
- * Interface structure detailing the properties and attributes of Placeholder Definition.
+ * Domain model representing a Placeholder Definition structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PlaceholderDefinition {
   key: string;
@@ -32,14 +34,16 @@ export interface PlaceholderDefinition {
 }
 
 /**
- * Type declaration definition describing the schema of message channel.
+ * Domain model representing a Message Channel structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type MessageChannel = "Email" | "SMS" | "Push";
 
 // ─── Entity Data ────────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Message Template Data.
+ * Domain model representing a Message Template Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface MessageTemplateData {
   id: string;
@@ -155,7 +159,8 @@ export class MessageTemplate {
 // ─── Exported Template (for import/export) ─────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Exported Template.
+ * Domain model representing a Exported Template structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ExportedTemplate {
   key: string;

@@ -11,7 +11,8 @@ interface LogsPaginationProps {
 }
 
 /**
- * React presentation component representing the logs pagination UI element.
+ * Presentation UI component rendering the logs pagination.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function LogsPagination({ page, totalPages, onPageChange }: LogsPaginationProps) {
   const { t } = useI18n();

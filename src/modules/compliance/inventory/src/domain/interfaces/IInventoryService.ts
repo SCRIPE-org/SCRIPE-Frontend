@@ -6,7 +6,7 @@ import type {
 import type { PagedResult } from "@core/interfaces/common.interface";
 
 /**
- * Interface structure detailing the properties and attributes of Inventory Params.
+ * Interface defining property specifications, keys types, and structural contract rules for inventory params.
  */
 export interface InventoryParams {
   page?: number;
@@ -15,7 +15,8 @@ export interface InventoryParams {
 }
 
 /**
- * Interface defining operations for the Inventory network service.
+ * Http API network service for i inventory.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IInventoryService {
   getAll(params: InventoryParams): Promise<PagedResult<InventoryItemModel>>;

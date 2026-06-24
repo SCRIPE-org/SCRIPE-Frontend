@@ -11,7 +11,8 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 
 /**
- * React presentation component representing the hub footer UI element.
+ * Presentation UI component rendering the hub footer.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function HubFooter() {
   const { t } = useI18n();

@@ -48,7 +48,8 @@ interface ActivityTimelineProps {
 }
 
 /**
- * React presentation component representing the activity timeline UI element.
+ * Presentation UI component rendering the activity timeline.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ActivityTimeline({ groupedEntries }: ActivityTimelineProps) {
   const { t } = useI18n();

@@ -130,7 +130,8 @@ function FeatureBadges({ theme }: { theme: ThemeCard }) {
 }
 
 /**
- * React presentation component representing the theme management view UI element.
+ * Presentation UI component rendering the theme management view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ThemeManagementView() {
   useModuleLocales(() => import("@modules/customization/studio/locales"), "customization-studio");

@@ -21,7 +21,8 @@ import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { qk } from "@core/common/query-keys";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for users view model.
+ * React hook/ViewModel orchestrating state and data flows for users view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useUsersViewModel() {
   const { usersRepository } = identityContainer;

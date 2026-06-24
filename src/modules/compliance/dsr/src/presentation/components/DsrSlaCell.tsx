@@ -15,7 +15,8 @@ interface DsrSlaCellProps {
 }
 
 /**
- * React presentation component representing the dsr sla cell UI element.
+ * Presentation UI component rendering the dsr sla cell.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DsrSlaCell({ percent, color }: DsrSlaCellProps) {
   return (

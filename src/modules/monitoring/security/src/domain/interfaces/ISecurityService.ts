@@ -11,7 +11,8 @@ import type {
 } from "../entities/SecurityEntities";
 
 /**
- * Interface defining operations for the Security network service.
+ * Http API network service for i security.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface ISecurityService {
   getSecurityEvents(days?: number): Promise<SecurityEvent[]>;

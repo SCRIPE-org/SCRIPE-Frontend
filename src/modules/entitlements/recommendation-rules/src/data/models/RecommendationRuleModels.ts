@@ -1,5 +1,5 @@
 /**
- * Interface structure detailing the properties and attributes of Recommendation Rule List Model.
+ * Interface defining property specifications, keys types, and structural contract rules for recommendation rule list model.
  */
 export interface RecommendationRuleListModel {
   id: string;
@@ -14,7 +14,7 @@ export interface RecommendationRuleListModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Recommendation Rule Detail Model.
+ * Interface defining property specifications, keys types, and structural contract rules for recommendation rule detail model.
  */
 export interface RecommendationRuleDetailModel extends RecommendationRuleListModel {
   conditionJson: string;
@@ -24,7 +24,7 @@ export interface RecommendationRuleDetailModel extends RecommendationRuleListMod
 }
 
 /**
- * Interface structure detailing the properties and attributes of Paged Recommendation Rules Model.
+ * Interface defining property specifications, keys types, and structural contract rules for paged recommendation rules model.
  */
 export interface PagedRecommendationRulesModel {
   items: RecommendationRuleListModel[];

@@ -25,7 +25,8 @@ import type { ITenantPlanService } from "../../domain/interfaces/ITenantPlanServ
 import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
 /**
- * Repository implementation for managing database operations on TenantPlan resources.
+ * Repository layer implementing client request queries for tenant plan.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class TenantPlanRepository implements ITenantPlanRepository {
   constructor(private readonly service: ITenantPlanService) {}

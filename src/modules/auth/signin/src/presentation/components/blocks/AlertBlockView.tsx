@@ -12,7 +12,8 @@ const VARIANT_CLASS = {
 const ICON = { info: "i", warning: "!", success: "ok", error: "!" };
 
 /**
- * React presentation component representing the alert block view UI element.
+ * Presentation UI component rendering the alert block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function AlertBlockView({ block }: { block: AlertBlock }) {
   const props = block.props;

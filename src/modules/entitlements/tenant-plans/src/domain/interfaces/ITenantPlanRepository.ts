@@ -18,7 +18,8 @@ import type {
 import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
 /**
- * Interface defining repository methods for managing TenantPlan data access.
+ * Repository layer implementing client request queries for i tenant plan.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface ITenantPlanRepository {
   // Plans

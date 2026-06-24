@@ -44,7 +44,8 @@ interface WebhookSecretPanelProps {
 }
 
 /**
- * React presentation component representing the webhook secret panel UI element.
+ * Presentation UI component rendering the webhook secret panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function WebhookSecretPanel({
   secret,

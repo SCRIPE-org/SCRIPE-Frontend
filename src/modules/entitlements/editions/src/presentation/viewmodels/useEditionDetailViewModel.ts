@@ -26,7 +26,7 @@ function getDisabledDefault(valueType: string): string {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Edition Detail View Model Result.
+ * Interface defining property specifications, keys types, and structural contract rules for edition detail view model result.
  */
 export interface EditionDetailViewModelResult {
   edition: Edition | undefined;
@@ -87,7 +87,8 @@ export interface EditionDetailViewModelResult {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for edition detail view model.
+ * React hook/ViewModel orchestrating state and data flows for edition detail view model.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
  */
 export function useEditionDetailViewModel(editionId: string): EditionDetailViewModelResult {
   const { success, error: toastError } = useEnhancedToast();

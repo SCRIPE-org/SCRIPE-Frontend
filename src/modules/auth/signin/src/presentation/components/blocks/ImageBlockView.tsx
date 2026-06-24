@@ -8,7 +8,8 @@ import {
 import { ASPECT_MAP, HOVER_MAP, SHADOW_MAP } from "./block-constants";
 
 /**
- * React presentation component representing the image block view UI element.
+ * Presentation UI component rendering the image block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ImageBlockView({ block }: { block: ImageBlock }) {
   const props = block.props;

@@ -11,7 +11,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import type { Role } from "../../domain/entities/Role";
 
 /**
- * Interface structure detailing the properties and attributes of Role Info Card Props.
+ * Interface defining property specifications, keys types, and structural contract rules for role info card props.
  */
 export interface RoleInfoCardProps {
   role: Role | undefined;
@@ -21,7 +21,8 @@ export interface RoleInfoCardProps {
 }
 
 /**
- * React presentation component representing the role info card UI element.
+ * Presentation UI component rendering the role info card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function RoleInfoCard({ role, isLoading, selectedCount, totalCount }: RoleInfoCardProps) {
   const { t, language } = useI18n();

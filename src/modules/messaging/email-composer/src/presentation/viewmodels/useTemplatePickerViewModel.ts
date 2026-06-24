@@ -2,14 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import type { IEmailRepository } from "../../domain/interfaces/IEmailRepository";
 
 /**
- * Interface structure detailing the properties and attributes of Use Template Picker View Model Params.
+ * Interface defining property specifications, keys types, and structural contract rules for use template picker view model params.
  */
 export interface UseTemplatePickerViewModelParams {
   repository: IEmailRepository;
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for template picker view model.
+ * React hook/ViewModel orchestrating state and data flows for template picker view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useTemplatePickerViewModel({ repository }: UseTemplatePickerViewModelParams) {
   const { data, isLoading } = useQuery({

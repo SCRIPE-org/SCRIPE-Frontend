@@ -10,7 +10,8 @@ import type { DocPage } from "../../domain/entities/DocPage";
 import type { DocCategory } from "../../domain/entities/DocCategory";
 
 /**
- * API service for executing HTTP calls related to Docs endpoints.
+ * Http API network service for docs.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class DocsService implements IDocsService {
   constructor(

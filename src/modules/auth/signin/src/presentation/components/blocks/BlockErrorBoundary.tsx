@@ -3,7 +3,7 @@
 import { Component, type ReactNode } from "react";
 
 /**
- * Domain entity class representing a Block Error Boundary.
+ * Exported class defining parameters and fields for block error boundary configurations.
  */
 export class BlockErrorBoundary extends Component<
   { children: ReactNode; fallback?: ReactNode },

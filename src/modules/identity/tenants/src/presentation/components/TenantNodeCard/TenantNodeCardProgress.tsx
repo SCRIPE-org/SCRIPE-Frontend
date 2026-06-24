@@ -15,7 +15,8 @@ interface TenantNodeCardProgressProps {
 }
 
 /**
- * React presentation component representing the tenant node card progress UI element.
+ * Presentation UI component rendering the tenant node card progress.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function TenantNodeCardProgress({
   node,

@@ -17,7 +17,8 @@ export interface UserGroupMember {
 }
 
 /**
- * Interface structure detailing the properties and attributes of User Group Role.
+ * Domain model representing a User Group Role structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface UserGroupRole {
   roleId: string;
@@ -28,7 +29,8 @@ export interface UserGroupRole {
 }
 
 /**
- * Interface structure detailing the properties and attributes of User Group Restriction.
+ * Domain model representing a User Group Restriction structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface UserGroupRestriction {
   permissionCode: string;
@@ -36,7 +38,8 @@ export interface UserGroupRestriction {
 }
 
 /**
- * Interface structure detailing the properties and attributes of User Group Props.
+ * Domain model representing a User Group Props structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface UserGroupProps {
   id: string;
@@ -58,7 +61,8 @@ export interface UserGroupProps {
 }
 
 /**
- * Domain entity class representing a User Group.
+ * Domain model representing a User Group structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class UserGroup {
   private readonly props: UserGroupProps;

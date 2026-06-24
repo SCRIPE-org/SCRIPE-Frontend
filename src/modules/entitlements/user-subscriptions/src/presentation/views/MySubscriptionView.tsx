@@ -103,7 +103,8 @@ function formatCurrency(amount?: number, currency?: string): string {
 }
 
 /**
- * React presentation component representing the my subscription view UI element.
+ * Presentation UI component rendering the my subscription view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function MySubscriptionView() {
   useModuleLocales(() => import("../../../locales"), "user-subscriptions");

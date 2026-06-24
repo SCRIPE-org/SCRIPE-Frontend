@@ -43,7 +43,7 @@ const PermissionModelSchema = z.object({
 });
 
 /**
- * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
  */
 export class PermissionMapper {
   /**

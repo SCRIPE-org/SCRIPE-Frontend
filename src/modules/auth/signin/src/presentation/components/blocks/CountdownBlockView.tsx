@@ -15,7 +15,8 @@ function getParts(targetDate: string) {
 }
 
 /**
- * React presentation component representing the countdown block view UI element.
+ * Presentation UI component rendering the countdown block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function CountdownBlockView({ block }: { block: CountdownBlock }) {
   const props = block.props;

@@ -1,4 +1,4 @@
 /**
- * Type declaration definition describing the schema of developer model placeholder.
+ * Exported type defining parameters and fields for developer model placeholder configurations.
  */
 export type DeveloperModelPlaceholder = { id: string };

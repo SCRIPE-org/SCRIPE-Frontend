@@ -15,7 +15,8 @@ interface MagicLinkSentScreenProps {
 const RESEND_COOLDOWN_SECONDS = 60;
 
 /**
- * React presentation component representing the magic link sent screen UI element.
+ * Presentation UI component rendering the magic link sent screen.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function MagicLinkSentScreen({ email, onBack, onResend, isRTL }: MagicLinkSentScreenProps) {
   const { t } = useI18n();

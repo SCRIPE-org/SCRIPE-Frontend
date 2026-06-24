@@ -11,7 +11,8 @@ interface NoSubscriptionCardProps {
 }
 
 /**
- * React presentation component representing the no subscription card UI element.
+ * Presentation UI component rendering the no subscription card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function NoSubscriptionCard({ t }: NoSubscriptionCardProps) {
   return (

@@ -17,7 +17,8 @@ interface EmptyStateProps {
 }
 
 /**
- * React presentation component representing the empty state UI element.
+ * Presentation UI component rendering the empty state.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function EmptyState({ vm, t }: EmptyStateProps) {
   return (

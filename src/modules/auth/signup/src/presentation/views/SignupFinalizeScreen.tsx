@@ -42,7 +42,8 @@ function StatusIcon({ tone, children }: { tone: string; children: React.ReactNod
 }
 
 /**
- * Utility function executing operational rules for signup finalize screen.
+ * Presentation UI component rendering the signup finalize screen.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function SignupFinalizeScreen() {
   const vm = useFinalizeViewModel();

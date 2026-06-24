@@ -8,7 +8,7 @@ import type {
 } from "../types/OAuthAppTypes";
 
 /**
- * Interface structure detailing the properties and attributes of Service O Auth App List Params.
+ * Interface defining property specifications, keys types, and structural contract rules for service o auth app list params.
  */
 export interface ServiceOAuthAppListParams {
   page?: number;
@@ -17,7 +17,8 @@ export interface ServiceOAuthAppListParams {
 }
 
 /**
- * Interface defining operations for the OAuthApp network service.
+ * Http API network service for i o auth app.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IOAuthAppService {
   getAll(params: ServiceOAuthAppListParams): Promise<OAuthAppListResponseJson>;

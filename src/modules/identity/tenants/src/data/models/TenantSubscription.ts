@@ -31,7 +31,7 @@ export type {
 // ── Request DTOs (data-layer only) ───────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Change Edition Payload.
+ * Interface defining property specifications, keys types, and structural contract rules for change edition payload.
  */
 export interface ChangeEditionPayload {
   editionId: string;
@@ -43,21 +43,21 @@ export interface ChangeEditionPayload {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Renew Payload.
+ * Interface defining property specifications, keys types, and structural contract rules for renew payload.
  */
 export interface RenewPayload {
   type: SubscriptionType;
 }
 
 /**
- * Interface structure detailing the properties and attributes of Convert Trial Payload.
+ * Interface defining property specifications, keys types, and structural contract rules for convert trial payload.
  */
 export interface ConvertTrialPayload {
   type: SubscriptionType;
 }
 
 /**
- * Interface structure detailing the properties and attributes of Suspend Payload.
+ * Interface defining property specifications, keys types, and structural contract rules for suspend payload.
  */
 export interface SuspendPayload {
   reason: string;
@@ -67,7 +67,7 @@ export interface SuspendPayload {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Cancel Payload.
+ * Interface defining property specifications, keys types, and structural contract rules for cancel payload.
  */
 export interface CancelPayload {
   reason?: string;
@@ -77,14 +77,14 @@ export interface CancelPayload {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Resume Payload.
+ * Interface defining property specifications, keys types, and structural contract rules for resume payload.
  */
 export interface ResumePayload {
   type?: SubscriptionType;
 }
 
 /**
- * Interface structure detailing the properties and attributes of Change Currency Payload.
+ * Interface defining property specifications, keys types, and structural contract rules for change currency payload.
  */
 export interface ChangeCurrencyPayload {
   currency: string;
@@ -93,7 +93,7 @@ export interface ChangeCurrencyPayload {
 // ── Price Preview ────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Price Preview Result.
+ * Interface defining property specifications, keys types, and structural contract rules for price preview result.
  */
 export interface PricePreviewResult {
   amount: number;

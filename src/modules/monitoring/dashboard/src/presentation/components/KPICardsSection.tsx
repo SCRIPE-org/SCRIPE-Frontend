@@ -119,7 +119,7 @@ const kpiConfig: KpiItem[] = [
 ];
 
 /**
- * Constant definition representing k p i cards section.
+ * Exported constant defining parameters and fields for k p i cards section configurations.
  */
 export const KPICardsSection = memo(function KPICardsSection({
   data,

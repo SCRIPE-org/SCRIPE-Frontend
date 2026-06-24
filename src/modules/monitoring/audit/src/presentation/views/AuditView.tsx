@@ -43,7 +43,8 @@ const connectionColors = {
 } as const;
 
 /**
- * React presentation component representing the audit view UI element.
+ * Presentation UI component rendering the audit view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function AuditView() {
   useModuleLocales(() => import("../../../locales"), "audit");

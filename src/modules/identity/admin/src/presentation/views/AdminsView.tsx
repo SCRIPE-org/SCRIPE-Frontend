@@ -46,7 +46,8 @@ interface AdminsViewProps {
 }
 
 /**
- * React presentation component representing the admins view UI element.
+ * Presentation UI component rendering the admins view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function AdminsView({ tenantId }: AdminsViewProps = {}) {
   useModuleLocales(() => import("../../../locales"), "admin");

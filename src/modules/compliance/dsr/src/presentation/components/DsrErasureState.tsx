@@ -10,7 +10,8 @@ interface DsrErasureStateProps {
 }
 
 /**
- * React presentation component representing the dsr erasure state UI element.
+ * Presentation UI component rendering the dsr erasure state.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DsrErasureState({ dsr, t }: DsrErasureStateProps) {
   if (dsr.requestType !== "Erasure" || dsr.status !== "Completed") return null;

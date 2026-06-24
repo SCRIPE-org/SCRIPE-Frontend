@@ -20,7 +20,8 @@ interface CascadeStatusDialogProps {
 }
 
 /**
- * React presentation component representing the cascade status dialog UI element.
+ * Presentation UI component rendering the cascade status dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function CascadeStatusDialog({
   open,

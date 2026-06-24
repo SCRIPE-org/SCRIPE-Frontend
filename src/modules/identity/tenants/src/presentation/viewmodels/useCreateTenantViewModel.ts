@@ -28,7 +28,7 @@ import type { Permission } from "@modules/identity/core";
 // ─────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Stepper Form State.
+ * Interface defining property specifications, keys types, and structural contract rules for stepper form state.
  */
 export interface StepperFormState {
   // Step 1: Organization
@@ -51,7 +51,7 @@ export interface StepperFormState {
 }
 
 /**
- * Constant definition representing i n i t i a l_ s t e p p e r_ f o r m.
+ * Exported constant defining parameters and fields for i n i t i a l_ s t e p p e r_ f o r m configurations.
  */
 export const INITIAL_STEPPER_FORM: StepperFormState = {
   name: "",
@@ -71,7 +71,7 @@ export const INITIAL_STEPPER_FORM: StepperFormState = {
 };
 
 /**
- * Constant definition representing s t e p s.
+ * Exported constant defining parameters and fields for s t e p s configurations.
  */
 export const STEPS = [
   { id: 1, key: "organization" },
@@ -80,7 +80,7 @@ export const STEPS = [
 ] as const;
 
 /**
- * Type declaration definition describing the schema of step id.
+ * Exported type defining parameters and fields for step id configurations.
  */
 export type StepId = (typeof STEPS)[number]["id"];
 
@@ -94,7 +94,8 @@ interface UseCreateTenantViewModelParams {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for create tenant view model.
+ * React hook/ViewModel orchestrating state and data flows for create tenant view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams = {}) {
   const router = useRouter();

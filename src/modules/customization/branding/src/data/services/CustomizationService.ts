@@ -15,7 +15,8 @@ import type { BrandingResponseJson, AuditLogPagedResultJson } from "../models/Br
 import type { SystemSettingsJson, UpdateSystemSettingsJson } from "../models/SystemSettingsModel";
 
 /**
- * API service for executing HTTP calls related to Customization endpoints.
+ * Http API network service for customization.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class CustomizationService implements ICustomizationService {
   constructor(private readonly apiService: IApiService) {}

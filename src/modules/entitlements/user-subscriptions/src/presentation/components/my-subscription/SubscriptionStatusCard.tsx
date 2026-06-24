@@ -15,7 +15,8 @@ interface SubscriptionStatusCardProps {
 }
 
 /**
- * React presentation component representing the subscription status card UI element.
+ * Presentation UI component rendering the subscription status card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function SubscriptionStatusCard({ subscription, t, language }: SubscriptionStatusCardProps) {
   const statusLabels: Record<string, string> = {

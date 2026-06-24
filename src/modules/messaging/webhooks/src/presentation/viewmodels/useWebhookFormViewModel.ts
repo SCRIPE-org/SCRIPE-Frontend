@@ -25,7 +25,8 @@ interface UseWebhookFormViewModelOptions {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for webhook form view model.
+ * React hook/ViewModel orchestrating state and data flows for webhook form view model.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
  */
 export function useWebhookFormViewModel({
   mode,
@@ -235,6 +236,6 @@ export function useWebhookFormViewModel({
 }
 
 /**
- * Type declaration definition describing the schema of webhook form view model.
+ * Exported type defining parameters and fields for webhook form view model configurations.
  */
 export type WebhookFormViewModel = ReturnType<typeof useWebhookFormViewModel>;

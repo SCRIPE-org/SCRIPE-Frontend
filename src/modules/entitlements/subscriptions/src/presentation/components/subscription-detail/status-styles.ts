@@ -16,7 +16,7 @@ import {
 import { createElement } from "react";
 
 /**
- * Interface structure detailing the properties and attributes of Status Style.
+ * Interface defining property specifications, keys types, and structural contract rules for status style.
  */
 export interface StatusStyle {
   gradient: string;
@@ -26,7 +26,7 @@ export interface StatusStyle {
 }
 
 /**
- * Constant definition representing s t a t u s_ s t y l e s.
+ * Exported constant defining parameters and fields for s t a t u s_ s t y l e s configurations.
  */
 export const STATUS_STYLES: Record<string, StatusStyle> = {
   Active: {
@@ -74,6 +74,6 @@ export const STATUS_STYLES: Record<string, StatusStyle> = {
 };
 
 /**
- * Constant definition representing d e f a u l t_ s t a t u s_ s t y l e.
+ * Exported constant defining parameters and fields for d e f a u l t_ s t a t u s_ s t y l e configurations.
  */
 export const DEFAULT_STATUS_STYLE = STATUS_STYLES.Active;

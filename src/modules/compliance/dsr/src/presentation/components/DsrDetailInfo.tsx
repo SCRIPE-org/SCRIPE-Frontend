@@ -10,7 +10,8 @@ interface DsrDetailInfoProps {
 }
 
 /**
- * React presentation component representing the dsr detail info UI element.
+ * Presentation UI component rendering the dsr detail info.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DsrDetailInfo({ dsr, t }: DsrDetailInfoProps) {
   return (

@@ -172,7 +172,8 @@ function WithdrawConfirmDialog({
 // ── Main View ─────────────────────────────────────────────────────────────────
 
 /**
- * React presentation component representing the consent view UI element.
+ * Presentation UI component rendering the consent view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ConsentView() {
   useModuleLocales(() => import("../../../locales"), "compliance-consent");

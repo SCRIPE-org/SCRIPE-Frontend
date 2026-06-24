@@ -57,7 +57,7 @@ const THREAT_ICONS: Record<
 };
 
 /**
- * Constant definition representing threat summary cards.
+ * Exported constant defining parameters and fields for threat summary cards configurations.
  */
 export const ThreatSummaryCards = memo(function ThreatSummaryCards({
   data,

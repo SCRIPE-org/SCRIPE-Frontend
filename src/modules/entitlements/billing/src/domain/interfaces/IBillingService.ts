@@ -17,7 +17,8 @@ import type {
 } from "../../data/models/BillingModels";
 
 /**
- * Interface defining operations for the Billing network service.
+ * Http API network service for i billing.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IBillingService {
   // ── Invoice Queries ──
@@ -77,7 +78,7 @@ export interface IBillingService {
 
 // ── Gateway Models ──
 /**
- * Interface structure detailing the properties and attributes of Gateway Status Model.
+ * Interface defining property specifications, keys types, and structural contract rules for gateway status model.
  */
 export interface GatewayStatusModel {
   gateway: string;
@@ -89,7 +90,7 @@ export interface GatewayStatusModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Gateway List Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for gateway list response model.
  */
 export interface GatewayListResponseModel {
   defaultGateway: string;

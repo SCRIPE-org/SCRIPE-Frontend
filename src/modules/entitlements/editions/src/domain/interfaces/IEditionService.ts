@@ -15,7 +15,8 @@ import type {
 import type { CreateEditionRequest, UpdateEditionRequest } from "../entities/EditionRequests";
 
 /**
- * Interface defining operations for the Edition network service.
+ * Http API network service for i edition.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IEditionService {
   getAll(

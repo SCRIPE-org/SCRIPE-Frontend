@@ -1,5 +1,5 @@
 /**
- * Interface structure detailing the properties and attributes of Edition Category Model.
+ * Interface defining property specifications, keys types, and structural contract rules for edition category model.
  */
 export interface EditionCategoryModel {
   id: string;

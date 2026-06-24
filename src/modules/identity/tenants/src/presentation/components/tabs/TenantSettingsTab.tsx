@@ -39,7 +39,8 @@ interface TenantSettingsTabProps {
 }
 
 /**
- * React presentation component representing the tenant settings tab UI element.
+ * Presentation UI component rendering the tenant settings tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function TenantSettingsTab({
   tenantId,

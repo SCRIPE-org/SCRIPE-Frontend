@@ -21,7 +21,7 @@ export type { PermissionAssignmentJson, PermissionScopeType };
 export { PermissionScopes };
 
 /**
- * Interface structure detailing the properties and attributes of Role Permission Json.
+ * Interface defining property specifications, keys types, and structural contract rules for role permission json.
  */
 export interface RolePermissionJson {
   permissionId: string;
@@ -30,7 +30,7 @@ export interface RolePermissionJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Role Json.
+ * Interface defining property specifications, keys types, and structural contract rules for role json.
  */
 export interface RoleJson {
   id: string;
@@ -52,7 +52,7 @@ export interface RoleJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Role List Response Json.
+ * Interface defining property specifications, keys types, and structural contract rules for role list response json.
  */
 export interface RoleListResponseJson {
   items: RoleJson[];
@@ -65,7 +65,7 @@ export interface RoleListResponseJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Create Role Json.
+ * Interface defining property specifications, keys types, and structural contract rules for create role json.
  */
 export interface CreateRoleJson {
   nameEn: string;
@@ -79,7 +79,7 @@ export interface CreateRoleJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update Role Json.
+ * Interface defining property specifications, keys types, and structural contract rules for update role json.
  */
 export interface UpdateRoleJson {
   nameEn: string;
@@ -93,14 +93,14 @@ export interface UpdateRoleJson {
 // PermissionAssignmentJson re-exported from domain/types/PermissionTypes.ts
 
 /**
- * Interface structure detailing the properties and attributes of Assign Permissions Json.
+ * Interface defining property specifications, keys types, and structural contract rules for assign permissions json.
  */
 export interface AssignPermissionsJson {
   permissions: PermissionAssignmentJson[];
 }
 
 /**
- * Domain entity class representing a Role Model.
+ * Exported class defining parameters and fields for role model configurations.
  */
 export class RoleModel {
   constructor(
@@ -165,7 +165,7 @@ export class RoleModel {
 }
 
 /**
- * Domain entity class representing a Role Permission Model.
+ * Exported class defining parameters and fields for role permission model configurations.
  */
 export class RolePermissionModel {
   constructor(
@@ -188,7 +188,7 @@ export class RolePermissionModel {
 }
 
 /**
- * Domain entity class representing a Create Role Model.
+ * Exported class defining parameters and fields for create role model configurations.
  */
 export class CreateRoleModel {
   constructor(
@@ -217,7 +217,7 @@ export class CreateRoleModel {
 }
 
 /**
- * Domain entity class representing a Update Role Model.
+ * Exported class defining parameters and fields for update role model configurations.
  */
 export class UpdateRoleModel {
   constructor(
@@ -242,7 +242,7 @@ export class UpdateRoleModel {
 }
 
 /**
- * Domain entity class representing a Assign Permissions Model.
+ * Exported class defining parameters and fields for assign permissions model configurations.
  */
 export class AssignPermissionsModel {
   constructor(public readonly permissions: PermissionAssignmentJson[]) {}

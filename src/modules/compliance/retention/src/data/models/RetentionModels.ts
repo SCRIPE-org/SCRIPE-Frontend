@@ -19,7 +19,7 @@ export interface RetentionPolicyModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Create Retention Policy Request.
+ * Interface defining property specifications, keys types, and structural contract rules for create retention policy request.
  */
 export interface CreateRetentionPolicyRequest {
   category: string;

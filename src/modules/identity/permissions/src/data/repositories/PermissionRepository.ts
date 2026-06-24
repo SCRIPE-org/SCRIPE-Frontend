@@ -25,7 +25,8 @@ import type { IPermissionService } from "../../domain/interfaces/IPermissionServ
 import { PermissionMapper } from "../mappers/PermissionMapper";
 
 /**
- * Repository implementation for managing database operations on Permission resources.
+ * Repository layer implementing client request queries for permission.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class PermissionRepository implements IPermissionRepository {
   constructor(private readonly service: IPermissionService) {}

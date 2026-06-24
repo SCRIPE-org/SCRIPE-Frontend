@@ -14,7 +14,8 @@ interface DowngradeNoticeProps {
 }
 
 /**
- * React presentation component representing the downgrade notice UI element.
+ * Presentation UI component rendering the downgrade notice.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DowngradeNotice({ sub, t }: DowngradeNoticeProps) {
   if (!sub.isDowngraded) return null;

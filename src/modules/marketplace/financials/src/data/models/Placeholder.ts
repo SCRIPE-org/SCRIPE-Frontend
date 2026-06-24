@@ -1,4 +1,4 @@
 /**
- * Type declaration definition describing the schema of financials model placeholder.
+ * Exported type defining parameters and fields for financials model placeholder configurations.
  */
 export type FinancialsModelPlaceholder = { id: string };

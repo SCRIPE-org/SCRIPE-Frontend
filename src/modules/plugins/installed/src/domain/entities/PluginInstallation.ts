@@ -1,7 +1,8 @@
 import type { PluginInstallationModel } from "../../data/models/InstalledModels";
 
 /**
- * Domain entity class representing a Plugin Installation.
+ * Domain model representing a Plugin Installation structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class PluginInstallation {
   constructor(private readonly data: PluginInstallationModel) {}

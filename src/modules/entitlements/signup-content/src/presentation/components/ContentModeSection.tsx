@@ -14,7 +14,8 @@ interface ContentModeSectionProps {
 }
 
 /**
- * React presentation component representing the content mode section UI element.
+ * Presentation UI component rendering the content mode section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ContentModeSection({ vm }: ContentModeSectionProps) {
   const { t } = useI18n();

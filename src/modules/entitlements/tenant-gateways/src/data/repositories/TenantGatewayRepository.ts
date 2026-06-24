@@ -7,7 +7,8 @@ import type { TenantGateway } from "../../domain/entities/TenantGateway";
 import { TenantGatewayMapper } from "../mappers/TenantGatewayMapper";
 
 /**
- * Repository implementation for managing database operations on TenantGateway resources.
+ * Repository layer implementing client request queries for tenant gateway.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class TenantGatewayRepository implements ITenantGatewayRepository {
   constructor(private readonly service: ITenantGatewayService) {}

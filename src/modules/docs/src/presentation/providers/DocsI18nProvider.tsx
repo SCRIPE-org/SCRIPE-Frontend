@@ -28,20 +28,20 @@ import {
 
 // ─── Types ─────────────────────────────────────────────────────
 /**
- * Type declaration definition describing the schema of doc language.
+ * Exported type defining parameters and fields for doc language configurations.
  */
 export type DocLanguage = "en" | "ar" | "fr" | "ru" | "zh" | "es" | "de";
 /**
- * Type declaration definition describing the schema of doc direction.
+ * Exported type defining parameters and fields for doc direction configurations.
  */
 export type DocDirection = "ltr" | "rtl";
 /**
- * Type declaration definition describing the schema of doc scope.
+ * Exported type defining parameters and fields for doc scope configurations.
  */
 export type DocScope = "technical" | "commercial";
 
 /**
- * Interface structure detailing the properties and attributes of Doc Language Info.
+ * Interface defining property specifications, keys types, and structural contract rules for doc language info.
  */
 export interface DocLanguageInfo {
   code: DocLanguage;
@@ -51,7 +51,7 @@ export interface DocLanguageInfo {
 }
 
 /**
- * Constant definition representing d o c_ l a n g u a g e s.
+ * Exported constant defining parameters and fields for d o c_ l a n g u a g e s configurations.
  */
 export const DOC_LANGUAGES: DocLanguageInfo[] = [
   { code: "en", label: "English", nativeLabel: "English", direction: "ltr" },
@@ -92,7 +92,8 @@ const DocsI18nContext = createContext<DocsI18nContextType | undefined>(undefined
 
 // ─── Provider ──────────────────────────────────────────────────
 /**
- * Utility function executing operational rules for docs i18n provider.
+ * Presentation UI component rendering the docs i18n provider.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DocsI18nProvider({
   children,
@@ -197,7 +198,8 @@ export function DocsI18nProvider({
 
 // ─── Hook ──────────────────────────────────────────────────────
 /**
- * React hook/ViewModel managing logic, state, and repository queries for docs i18n.
+ * React hook/ViewModel orchestrating state and data flows for docs i18n.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useDocsI18n(): DocsI18nContextType {
   const context = useContext(DocsI18nContext);

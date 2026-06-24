@@ -56,7 +56,7 @@ function formatTimeAgo(
 }
 
 /**
- * Constant definition representing recent changes section.
+ * Exported constant defining parameters and fields for recent changes section configurations.
  */
 export const RecentChangesSection = memo(function RecentChangesSection({
   data,

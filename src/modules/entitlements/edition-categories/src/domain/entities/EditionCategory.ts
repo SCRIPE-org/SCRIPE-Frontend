@@ -1,7 +1,8 @@
 import type { BaseEntity } from "@core/interfaces/common.interface";
 
 /**
- * Interface structure detailing the properties and attributes of Edition Category Data.
+ * Domain model representing a Edition Category Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface EditionCategoryData extends BaseEntity {
   name: string;
@@ -12,7 +13,8 @@ export interface EditionCategoryData extends BaseEntity {
 }
 
 /**
- * Domain entity class representing a Edition Category.
+ * Domain model representing a Edition Category structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class EditionCategory {
   constructor(public readonly data: EditionCategoryData) {}

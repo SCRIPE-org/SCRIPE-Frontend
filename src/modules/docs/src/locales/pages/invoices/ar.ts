@@ -1,5 +1,5 @@
 /**
- * Constant definition representing ar.
+ * Exported constant defining parameters and fields for ar configurations.
  */
 export const ar = {
   modules: {

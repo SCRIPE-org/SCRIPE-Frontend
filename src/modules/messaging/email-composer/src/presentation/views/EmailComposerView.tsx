@@ -11,7 +11,8 @@ import { HistorySection } from "../components/HistorySection";
 import { EmailPreviewDialog } from "../components/EmailPreviewDialog";
 
 /**
- * React presentation component representing the email composer view UI element.
+ * Presentation UI component rendering the email composer view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function EmailComposerView() {
   const vm = useEmailComposerViewModel();

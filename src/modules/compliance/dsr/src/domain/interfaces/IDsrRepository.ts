@@ -3,7 +3,8 @@ import type { PagedResult } from "@core/interfaces/common.interface";
 import type { DsrListParams, SubmitDsrRequest, ReviewDsrRequest } from "../entities/DsrRequests";
 
 /**
- * Interface defining repository methods for managing Dsr data access.
+ * Repository layer implementing client request queries for i dsr.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IDsrRepository {
   getAll(params: DsrListParams): Promise<PagedResult<DataSubjectRequest>>;

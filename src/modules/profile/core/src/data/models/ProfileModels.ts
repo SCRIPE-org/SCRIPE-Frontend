@@ -8,7 +8,7 @@
 // ===== Response DTOs =====
 
 /**
- * Interface structure detailing the properties and attributes of Admin Profile Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for admin profile dto.
  */
 export interface AdminProfileDto {
   id: string;
@@ -29,7 +29,7 @@ export interface AdminProfileDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Active Session Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for active session dto.
  */
 export interface ActiveSessionDto {
   tokenId: string;
@@ -41,7 +41,7 @@ export interface ActiveSessionDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Security Log Entry Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for security log entry dto.
  */
 export interface SecurityLogEntryDto {
   id: string;
@@ -54,7 +54,7 @@ export interface SecurityLogEntryDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of External Login Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for external login dto.
  */
 export interface ExternalLoginDto {
   id: string;
@@ -69,7 +69,7 @@ export interface ExternalLoginDto {
 // ===== Request DTOs =====
 
 /**
- * Interface structure detailing the properties and attributes of Update Profile Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for update profile dto.
  */
 export interface UpdateProfileDto {
   firstName: string;
@@ -78,7 +78,7 @@ export interface UpdateProfileDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Change Password Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for change password dto.
  */
 export interface ChangePasswordDto {
   currentPassword: string;
@@ -87,7 +87,7 @@ export interface ChangePasswordDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Regenerate Backup Codes Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for regenerate backup codes dto.
  */
 export interface RegenerateBackupCodesDto {
   twoFactorCode: string;
@@ -96,7 +96,7 @@ export interface RegenerateBackupCodesDto {
 // ===== 2FA Setup DTOs =====
 
 /**
- * Interface structure detailing the properties and attributes of Enable2 F A Result Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for enable2 f a result dto.
  */
 export interface Enable2FAResultDto {
   qrCodeDataUri: string;
@@ -105,21 +105,21 @@ export interface Enable2FAResultDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Confirm2 F A Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for confirm2 f a dto.
  */
 export interface Confirm2FADto {
   code: string;
 }
 
 /**
- * Interface structure detailing the properties and attributes of Disable2 F A Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for disable2 f a dto.
  */
 export interface Disable2FADto {
   password: string;
 }
 
 /**
- * Interface structure detailing the properties and attributes of Link External Login Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for link external login dto.
  */
 export interface LinkExternalLoginDto {
   identityProviderId: string;

@@ -35,7 +35,8 @@ interface OAuthAppWizardProps {
 }
 
 /**
- * React presentation component representing the o auth app wizard UI element.
+ * Presentation UI component rendering the o auth app wizard.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
   const { t } = useI18n();

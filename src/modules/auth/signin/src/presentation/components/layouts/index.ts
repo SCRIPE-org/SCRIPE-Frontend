@@ -33,7 +33,7 @@ export type { LoginLayoutProps };
 export { SplitRightLayout };
 
 /**
- * Constant definition representing l a y o u t_ r e g i s t r y.
+ * Exported constant defining parameters and fields for l a y o u t_ r e g i s t r y configurations.
  */
 export const LAYOUT_REGISTRY: Record<LoginLayout, ComponentType<LoginLayoutProps>> = {
   vault: VaultLayout,

@@ -7,7 +7,8 @@ import { Button } from "@core/ui/button";
 import type { CommissionInvoice } from "../../domain/entities/CommissionInvoice";
 
 /**
- * React presentation component representing the commission invoices view UI element.
+ * Presentation UI component rendering the commission invoices view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function CommissionInvoicesView() {
   const { t } = useI18n();

@@ -12,7 +12,8 @@ interface DsrDetailMetadataProps {
 }
 
 /**
- * React presentation component representing the dsr detail metadata UI element.
+ * Presentation UI component rendering the dsr detail metadata.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DsrDetailMetadata({ dsr, t, statusMeta, typeMeta }: DsrDetailMetadataProps) {
   return (

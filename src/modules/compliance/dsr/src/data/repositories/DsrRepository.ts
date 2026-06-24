@@ -14,7 +14,8 @@ import type {
 import { DsrMapper } from "../mappers/DsrMapper";
 
 /**
- * Repository implementation for managing database operations on Dsr resources.
+ * Repository layer implementing client request queries for dsr.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class DsrRepository implements IDsrRepository {
   constructor(private readonly service: IDsrService) {}

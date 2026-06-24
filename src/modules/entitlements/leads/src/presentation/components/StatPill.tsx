@@ -7,7 +7,8 @@ interface StatPillProps {
 }
 
 /**
- * React presentation component representing the stat pill UI element.
+ * Presentation UI component rendering the stat pill.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function StatPill({ label, value, accent }: StatPillProps) {
   return (

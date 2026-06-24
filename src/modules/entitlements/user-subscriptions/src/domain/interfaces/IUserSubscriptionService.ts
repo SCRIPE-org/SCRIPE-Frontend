@@ -21,7 +21,8 @@ export interface UserSearchDto {
 }
 
 /**
- * Interface defining operations for the UserSubscription network service.
+ * Http API network service for i user subscription.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IUserSubscriptionService {
   getAll(

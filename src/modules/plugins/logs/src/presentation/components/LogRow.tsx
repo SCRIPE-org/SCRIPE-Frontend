@@ -9,7 +9,8 @@ interface LogRowProps {
 }
 
 /**
- * React presentation component representing the log row UI element.
+ * Presentation UI component rendering the log row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function LogRow({ log }: LogRowProps) {
   const { t } = useI18n();

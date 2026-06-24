@@ -33,7 +33,8 @@ interface QuestionPanelProps {
 }
 
 /**
- * React presentation component representing the question panel UI element.
+ * Presentation UI component rendering the question panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function QuestionPanel({
   question,

@@ -477,7 +477,8 @@ interface WellKnownProviderGalleryProps {
 }
 
 /**
- * React presentation component representing the well known provider gallery UI element.
+ * Presentation UI component rendering the well known provider gallery.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProviderGalleryProps) {
   const { t } = useI18n();

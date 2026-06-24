@@ -48,7 +48,8 @@ interface FeatureDefinitionFormViewProps {
 }
 
 /**
- * React presentation component representing the feature definition form view UI element.
+ * Presentation UI component rendering the feature definition form view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function FeatureDefinitionFormView({
   featureId,

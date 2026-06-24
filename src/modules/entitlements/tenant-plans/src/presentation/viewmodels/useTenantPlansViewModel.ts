@@ -17,7 +17,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for tenant plans view model.
+ * React hook/ViewModel orchestrating state and data flows for tenant plans view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useTenantPlansViewModel() {
   const { success, error: showError } = useEnhancedToast();

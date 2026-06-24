@@ -35,7 +35,7 @@ const CATEGORY_META: Record<string, { labelKey: string; icon: React.ReactNode; c
 };
 
 /**
- * Interface structure detailing the properties and attributes of Policy Card Props.
+ * Interface defining property specifications, keys types, and structural contract rules for policy card props.
  */
 export interface PolicyCardProps {
   policy: RetentionPolicy;
@@ -43,7 +43,8 @@ export interface PolicyCardProps {
 }
 
 /**
- * React presentation component representing the policy card UI element.
+ * Presentation UI component rendering the policy card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function PolicyCard({ policy, onEdit }: PolicyCardProps) {
   const { t } = useI18n();

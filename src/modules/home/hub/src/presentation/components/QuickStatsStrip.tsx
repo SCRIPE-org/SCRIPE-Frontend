@@ -33,7 +33,7 @@ interface StatCardData {
 }
 
 /**
- * Constant definition representing quick stats strip.
+ * Exported constant defining parameters and fields for quick stats strip configurations.
  */
 export const QuickStatsStrip = memo(function QuickStatsStrip({
   data,

@@ -10,7 +10,8 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Star } from "lucide-react";
 
 /**
- * React presentation component representing the signup content view UI element.
+ * Presentation UI component rendering the signup content view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function SignupContentView() {
   const vm = useSignupContentViewModel();

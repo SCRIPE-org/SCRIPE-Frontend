@@ -37,7 +37,8 @@ interface UseExportSubscriptionsResult {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for export subscriptions.
+ * React hook/ViewModel orchestrating state and data flows for export subscriptions.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useExportSubscriptions(): UseExportSubscriptionsResult {
   const [isExporting, setIsExporting] = useState(false);

@@ -11,7 +11,7 @@ export interface HubRecentItemModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Hub Activity Summary Model.
+ * Interface defining property specifications, keys types, and structural contract rules for hub activity summary model.
  */
 export interface HubActivitySummaryModel {
   todayActionCount: number;

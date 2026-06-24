@@ -22,7 +22,8 @@ interface CreateTenantStep1Props {
 }
 
 /**
- * React presentation component representing the create tenant step1 UI element.
+ * Presentation UI component rendering the create tenant step1.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
   const touched = vm.stepTouched[1];

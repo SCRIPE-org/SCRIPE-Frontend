@@ -35,7 +35,8 @@ const SPLIT_LAYOUTS = [
 ];
 
 /**
- * React presentation component representing the branding panel UI element.
+ * Presentation UI component rendering the branding panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function BrandingPanel({ draft, updateDraft }: BrandingPanelProps) {
   const { t } = useI18n();

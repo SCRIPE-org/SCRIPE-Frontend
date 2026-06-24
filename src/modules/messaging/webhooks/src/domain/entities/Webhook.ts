@@ -11,14 +11,16 @@
 // ─── Delivery Status Type ──────────────────────────────────────
 
 /**
- * Type declaration definition describing the schema of delivery status.
+ * Domain model representing a Delivery Status structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type DeliveryStatus = "Pending" | "Delivered" | "Retrying" | "DeadLettered";
 
 // ─── Subscription Data ─────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Webhook Subscription Data.
+ * Domain model representing a Webhook Subscription Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface WebhookSubscriptionData {
   id: string;
@@ -167,7 +169,8 @@ export class WebhookSubscription {
 // ─── Subscription List Item ─────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Webhook Subscription List Item Data.
+ * Domain model representing a Webhook Subscription List Item Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface WebhookSubscriptionListItemData {
   id: string;
@@ -261,7 +264,8 @@ export class WebhookSubscriptionListItem {
 // ─── Delivery Log ──────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Webhook Delivery Log Data.
+ * Domain model representing a Webhook Delivery Log Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface WebhookDeliveryLogData {
   id: string;
@@ -387,7 +391,8 @@ export class WebhookDeliveryStats {
 // ─── Analytics ─────────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Daily Delivery Stats.
+ * Domain model representing a Daily Delivery Stats structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface DailyDeliveryStats {
   date: string;
@@ -398,7 +403,8 @@ export interface DailyDeliveryStats {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Webhook Analytics Data.
+ * Domain model representing a Webhook Analytics Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface WebhookAnalyticsData {
   successRate: number;
@@ -450,7 +456,8 @@ export class WebhookAnalytics {
 // ─── Health Summary ────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Webhook Health Summary Data.
+ * Domain model representing a Webhook Health Summary Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface WebhookHealthSummaryData {
   activeEndpoints: number;
@@ -544,7 +551,8 @@ export class WebhookTestResult {
 // ─── List Response ─────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Webhook List Response.
+ * Domain model representing a Webhook List Response structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface WebhookListResponse {
   items: WebhookSubscriptionListItem[];

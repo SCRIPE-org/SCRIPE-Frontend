@@ -16,7 +16,7 @@ import type {
 } from "../types/EmailTypes";
 
 /**
- * Interface structure detailing the properties and attributes of Service Sent History Params.
+ * Interface defining property specifications, keys types, and structural contract rules for service sent history params.
  */
 export interface ServiceSentHistoryParams {
   page: number;
@@ -26,7 +26,7 @@ export interface ServiceSentHistoryParams {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Service Email Template List Params.
+ * Interface defining property specifications, keys types, and structural contract rules for service email template list params.
  */
 export interface ServiceEmailTemplateListParams {
   page: number;
@@ -35,7 +35,8 @@ export interface ServiceEmailTemplateListParams {
 }
 
 /**
- * Interface defining operations for the Email network service.
+ * Http API network service for i email.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IEmailService {
   searchRecipients(query: string): Promise<EmailRecipientJson[]>;

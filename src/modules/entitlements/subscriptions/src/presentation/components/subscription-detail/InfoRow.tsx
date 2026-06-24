@@ -13,7 +13,8 @@ interface InfoRowProps {
 }
 
 /**
- * React presentation component representing the info row UI element.
+ * Presentation UI component rendering the info row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function InfoRow({ icon, label, value, muted = false }: InfoRowProps) {
   return (

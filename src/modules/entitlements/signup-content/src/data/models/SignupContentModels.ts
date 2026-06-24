@@ -1,7 +1,7 @@
 import type { ContentMode } from "../../domain/entities/SignupContent";
 
 /**
- * Interface structure detailing the properties and attributes of Welcome Content Model.
+ * Interface defining property specifications, keys types, and structural contract rules for welcome content model.
  */
 export interface WelcomeContentModel {
   id: string;
@@ -17,7 +17,7 @@ export interface WelcomeContentModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Trust Mark Model.
+ * Interface defining property specifications, keys types, and structural contract rules for trust mark model.
  */
 export interface TrustMarkModel {
   id: string;
@@ -33,7 +33,7 @@ export interface TrustMarkModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Customer Logo Model.
+ * Interface defining property specifications, keys types, and structural contract rules for customer logo model.
  */
 export interface CustomerLogoModel {
   id: string;
@@ -46,7 +46,7 @@ export interface CustomerLogoModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Admin Signup Content Model.
+ * Interface defining property specifications, keys types, and structural contract rules for admin signup content model.
  */
 export interface AdminSignupContentModel {
   contentMode: ContentMode;

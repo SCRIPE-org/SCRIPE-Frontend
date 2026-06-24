@@ -37,7 +37,7 @@ export interface PermissionModuleGroupJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Create Permission Json.
+ * Interface defining property specifications, keys types, and structural contract rules for create permission json.
  */
 export interface CreatePermissionJson {
   resource: string;
@@ -52,7 +52,7 @@ export interface CreatePermissionJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update Permission Json.
+ * Interface defining property specifications, keys types, and structural contract rules for update permission json.
  */
 export interface UpdatePermissionJson {
   descriptionEn?: string;

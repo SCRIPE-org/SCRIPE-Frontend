@@ -4,7 +4,8 @@ import type { DividerBlock } from "@modules/auth/core/domain/entities/LoginBrand
 import { blockColor, clamp } from "./block-style-utils";
 
 /**
- * React presentation component representing the divider block view UI element.
+ * Presentation UI component rendering the divider block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DividerBlockView({ block }: { block: DividerBlock }) {
   const props = block.props;

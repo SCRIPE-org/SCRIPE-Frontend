@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 
 /**
- * Constant definition representing a n i m a t i o n_ s t y l e s.
+ * Exported constant defining parameters and fields for a n i m a t i o n_ s t y l e s configurations.
  */
 export const ANIMATION_STYLES: Record<string, CSSProperties> = {
   none: {},
@@ -14,16 +14,16 @@ export const ANIMATION_STYLES: Record<string, CSSProperties> = {
 };
 
 /**
- * Constant definition representing p a d d i n g_ p x.
+ * Exported constant defining parameters and fields for p a d d i n g_ p x configurations.
  */
 export const PADDING_PX: Record<string, string> = { none: "0", sm: "6px", md: "12px", lg: "20px" };
 /**
- * Constant definition representing m a r g i n_ p x.
+ * Exported constant defining parameters and fields for m a r g i n_ p x configurations.
  */
 export const MARGIN_PX: Record<string, string> = { none: "0", sm: "8px", md: "16px", lg: "28px" };
 
 /**
- * Constant definition representing f o n t_ s i z e_ m a p.
+ * Exported constant defining parameters and fields for f o n t_ s i z e_ m a p configurations.
  */
 export const FONT_SIZE_MAP: Record<string, string> = {
   sm: "text-sm",
@@ -34,7 +34,7 @@ export const FONT_SIZE_MAP: Record<string, string> = {
 };
 
 /**
- * Constant definition representing f o n t_ w e i g h t_ m a p.
+ * Exported constant defining parameters and fields for f o n t_ w e i g h t_ m a p configurations.
  */
 export const FONT_WEIGHT_MAP: Record<string, string> = {
   normal: "font-normal",
@@ -45,7 +45,7 @@ export const FONT_WEIGHT_MAP: Record<string, string> = {
 };
 
 /**
- * Constant definition representing s h a d o w_ m a p.
+ * Exported constant defining parameters and fields for s h a d o w_ m a p configurations.
  */
 export const SHADOW_MAP: Record<string, string> = {
   none: "",
@@ -56,7 +56,7 @@ export const SHADOW_MAP: Record<string, string> = {
 };
 
 /**
- * Constant definition representing a l i g n_ m a p.
+ * Exported constant defining parameters and fields for a l i g n_ m a p configurations.
  */
 export const ALIGN_MAP: Record<string, string> = {
   left: "text-start",
@@ -65,7 +65,7 @@ export const ALIGN_MAP: Record<string, string> = {
 };
 
 /**
- * Constant definition representing h o v e r_ m a p.
+ * Exported constant defining parameters and fields for h o v e r_ m a p configurations.
  */
 export const HOVER_MAP: Record<string, string> = {
   none: "",
@@ -75,7 +75,7 @@ export const HOVER_MAP: Record<string, string> = {
 };
 
 /**
- * Constant definition representing a s p e c t_ m a p.
+ * Exported constant defining parameters and fields for a s p e c t_ m a p configurations.
  */
 export const ASPECT_MAP: Record<string, string> = {
   auto: "",
@@ -85,7 +85,7 @@ export const ASPECT_MAP: Record<string, string> = {
 };
 
 /**
- * Constant definition representing s o c i a l_ i c o n s.
+ * Exported constant defining parameters and fields for s o c i a l_ i c o n s configurations.
  */
 export const SOCIAL_ICONS: Record<string, string> = {
   twitter: "X",

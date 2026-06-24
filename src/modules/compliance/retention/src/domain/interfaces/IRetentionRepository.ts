@@ -5,7 +5,8 @@ import type {
 } from "../entities/RetentionPolicy";
 
 /**
- * Interface defining repository methods for managing Retention data access.
+ * Repository layer implementing client request queries for i retention.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IRetentionRepository {
   getAll(): Promise<RetentionPolicy[]>;

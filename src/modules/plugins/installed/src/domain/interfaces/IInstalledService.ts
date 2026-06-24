@@ -1,7 +1,8 @@
 import type { PluginInstallationModel } from "../../data/models/InstalledModels";
 
 /**
- * Interface defining operations for the Installed network service.
+ * Http API network service for i installed.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IInstalledService {
   getInstalled(tenantId: string): Promise<PluginInstallationModel[]>;

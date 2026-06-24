@@ -31,7 +31,8 @@ import {
 } from "../components/create-tenant";
 
 /**
- * React presentation component representing the create tenant view UI element.
+ * Presentation UI component rendering the create tenant view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function CreateTenantView() {
   useModuleLocales(() => import("../../../locales"), "tenants");

@@ -10,7 +10,8 @@ import { useRoleDetailViewModel } from "../viewmodels/useRoleDetailViewModel";
 import { RoleInfoCard, RoleDetailHeader, PermissionTreeCard } from "../components";
 
 /**
- * React presentation component representing the role detail view UI element.
+ * Presentation UI component rendering the role detail view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export default function RoleDetailView() {
   const vm = useRoleDetailViewModel();

@@ -22,7 +22,8 @@ interface DangerZoneCardProps {
 }
 
 /**
- * React presentation component representing the danger zone card UI element.
+ * Presentation UI component rendering the danger zone card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DangerZoneCard({ isDeleting, onDelete }: DangerZoneCardProps) {
   const { t } = useI18n();

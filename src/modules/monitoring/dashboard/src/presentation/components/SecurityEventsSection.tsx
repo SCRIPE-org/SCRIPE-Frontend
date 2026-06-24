@@ -35,7 +35,7 @@ const eventConfig: Record<string, { icon: typeof AlertTriangle; color: string; b
   };
 
 /**
- * Constant definition representing security events section.
+ * Exported constant defining parameters and fields for security events section configurations.
  */
 export const SecurityEventsSection = memo(function SecurityEventsSection({
   data,

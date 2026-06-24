@@ -14,7 +14,8 @@ export interface RolePermission {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Role Props.
+ * Domain model representing a Role Props structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface RoleProps {
   id: string;
@@ -195,10 +196,12 @@ export class Role {
 
 // Keep backward compatibility alias
 /**
- * Type declaration definition describing the schema of role data.
+ * Domain model representing a Role Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type RoleData = RoleProps;
 /**
- * Type declaration definition describing the schema of role permission data.
+ * Domain model representing a Role Permission Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type RolePermissionData = RolePermission;

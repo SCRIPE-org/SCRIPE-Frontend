@@ -11,7 +11,7 @@
 // ===== JSON Shapes (API contracts) =====
 
 /**
- * Interface structure detailing the properties and attributes of Webhook Subscription Json.
+ * Interface defining property specifications, keys types, and structural contract rules for webhook subscription json.
  */
 export interface WebhookSubscriptionJson {
   id: string;
@@ -39,7 +39,7 @@ export interface WebhookSubscriptionJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Webhook List Item Json.
+ * Interface defining property specifications, keys types, and structural contract rules for webhook list item json.
  */
 export interface WebhookListItemJson {
   id: string;
@@ -58,7 +58,7 @@ export interface WebhookListItemJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Webhook List Response Json.
+ * Interface defining property specifications, keys types, and structural contract rules for webhook list response json.
  */
 export interface WebhookListResponseJson {
   items: WebhookListItemJson[];
@@ -66,7 +66,7 @@ export interface WebhookListResponseJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Webhook Delivery Log Json.
+ * Interface defining property specifications, keys types, and structural contract rules for webhook delivery log json.
  */
 export interface WebhookDeliveryLogJson {
   id: string;
@@ -88,7 +88,7 @@ export interface WebhookDeliveryLogJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Webhook Delivery Log List Response Json.
+ * Interface defining property specifications, keys types, and structural contract rules for webhook delivery log list response json.
  */
 export interface WebhookDeliveryLogListResponseJson {
   items: WebhookDeliveryLogJson[];
@@ -96,7 +96,7 @@ export interface WebhookDeliveryLogListResponseJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Webhook Delivery Stats Json.
+ * Interface defining property specifications, keys types, and structural contract rules for webhook delivery stats json.
  */
 export interface WebhookDeliveryStatsJson {
   totalDeliveries: number;
@@ -107,7 +107,7 @@ export interface WebhookDeliveryStatsJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Webhook Event Type Json.
+ * Interface defining property specifications, keys types, and structural contract rules for webhook event type json.
  */
 export interface WebhookEventTypeJson {
   key: string;
@@ -116,7 +116,7 @@ export interface WebhookEventTypeJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Webhook Test Result Json.
+ * Interface defining property specifications, keys types, and structural contract rules for webhook test result json.
  */
 export interface WebhookTestResultJson {
   isSuccess: boolean;
@@ -129,7 +129,7 @@ export interface WebhookTestResultJson {
 // ===== Analytics & Health JSON Shapes =====
 
 /**
- * Interface structure detailing the properties and attributes of Daily Delivery Stats Json.
+ * Interface defining property specifications, keys types, and structural contract rules for daily delivery stats json.
  */
 export interface DailyDeliveryStatsJson {
   date: string;
@@ -140,7 +140,7 @@ export interface DailyDeliveryStatsJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Webhook Analytics Json.
+ * Interface defining property specifications, keys types, and structural contract rules for webhook analytics json.
  */
 export interface WebhookAnalyticsJson {
   successRate: number;
@@ -155,7 +155,7 @@ export interface WebhookAnalyticsJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Webhook Health Summary Json.
+ * Interface defining property specifications, keys types, and structural contract rules for webhook health summary json.
  */
 export interface WebhookHealthSummaryJson {
   activeEndpoints: number;
@@ -171,7 +171,7 @@ export interface WebhookHealthSummaryJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Create Webhook Json.
+ * Interface defining property specifications, keys types, and structural contract rules for create webhook json.
  */
 export interface CreateWebhookJson {
   url: string;
@@ -183,7 +183,7 @@ export interface CreateWebhookJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update Webhook Json.
+ * Interface defining property specifications, keys types, and structural contract rules for update webhook json.
  */
 export interface UpdateWebhookJson {
   url?: string;

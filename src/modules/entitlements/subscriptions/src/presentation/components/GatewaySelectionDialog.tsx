@@ -11,7 +11,8 @@ interface GatewaySelectionDialogProps {
 }
 
 /**
- * React presentation component representing the gateway selection dialog UI element.
+ * Presentation UI component rendering the gateway selection dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function GatewaySelectionDialog({
   open,

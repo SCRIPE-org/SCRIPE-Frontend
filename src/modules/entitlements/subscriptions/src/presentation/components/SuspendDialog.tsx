@@ -23,7 +23,8 @@ import type { SubscriptionDialogProps } from "../types";
 import { RefundOptions } from "./RefundOptions";
 
 /**
- * React presentation component representing the suspend dialog UI element.
+ * Presentation UI component rendering the suspend dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function SuspendDialog({ vm }: SubscriptionDialogProps) {
   const { t } = useI18n();

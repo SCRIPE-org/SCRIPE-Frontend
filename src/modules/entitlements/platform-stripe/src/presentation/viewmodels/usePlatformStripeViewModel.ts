@@ -11,7 +11,8 @@ import type { PlatformStripeDashboard } from "../../domain/entities/PlatformStri
 import { entitlementsContainer } from "@modules/entitlements/di";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for platform stripe view model.
+ * React hook/ViewModel orchestrating state and data flows for platform stripe view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function usePlatformStripeViewModel() {
   const { platformStripeRepository } = entitlementsContainer;

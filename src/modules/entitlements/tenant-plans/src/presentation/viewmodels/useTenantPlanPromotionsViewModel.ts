@@ -18,7 +18,8 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for tenant plan promotions view model.
+ * React hook/ViewModel orchestrating state and data flows for tenant plan promotions view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useTenantPlanPromotionsViewModel(planId: string) {
   const { success, error: showError } = useEnhancedToast();

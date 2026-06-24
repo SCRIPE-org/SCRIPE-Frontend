@@ -11,7 +11,8 @@ import type { CategoryFormData } from "../components/CategoryFormDialog";
 const QUERY_KEY = ["marketplace", "categories"];
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for categories view model.
+ * React hook/ViewModel orchestrating state and data flows for categories view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useCategoriesViewModel() {
   const queryClient = useQueryClient();

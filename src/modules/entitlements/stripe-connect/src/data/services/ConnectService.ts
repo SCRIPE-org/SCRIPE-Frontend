@@ -18,7 +18,8 @@ import type {
 } from "../models/ConnectModels";
 
 /**
- * API service for executing HTTP calls related to Connect endpoints.
+ * Http API network service for connect.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class ConnectService implements IConnectService {
   constructor(private readonly api: IApiService) {}

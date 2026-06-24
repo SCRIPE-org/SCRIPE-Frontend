@@ -20,7 +20,8 @@ interface TwoFactorFormProps {
 }
 
 /**
- * React presentation component representing the two factor form UI element.
+ * Presentation UI component rendering the two factor form.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function TwoFactorForm({
   twoFactorCode,

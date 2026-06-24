@@ -35,7 +35,8 @@ export interface EditionPriceData {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Edition Data.
+ * Domain model representing a Edition Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface EditionData extends BaseEntity {
   name: string;
@@ -85,7 +86,8 @@ export interface EditionData extends BaseEntity {
 }
 
 /**
- * Domain entity class representing a Edition.
+ * Domain model representing a Edition structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class Edition {
   constructor(private readonly data: EditionData) {}

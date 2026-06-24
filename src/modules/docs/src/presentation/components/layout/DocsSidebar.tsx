@@ -476,7 +476,8 @@ interface DocsSidebarProps {
 }
 
 /**
- * React presentation component representing the docs sidebar UI element.
+ * Presentation UI component rendering the docs sidebar.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DocsSidebar({ categories, activeSlug }: DocsSidebarProps) {
   const { t } = useDocsI18n();

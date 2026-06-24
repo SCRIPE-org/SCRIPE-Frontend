@@ -36,7 +36,8 @@ interface TenantDetailPageProps {
 }
 
 /**
- * Utility function executing operational rules for tenant detail page.
+ * Presentation UI component rendering the tenant detail page.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
   const {

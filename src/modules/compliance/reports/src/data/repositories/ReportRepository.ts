@@ -10,7 +10,8 @@ import type { PagedResult } from "@core/interfaces/common.interface";
 import { ReportMapper } from "../mappers/ReportMapper";
 
 /**
- * Repository implementation for managing database operations on Report resources.
+ * Repository layer implementing client request queries for report.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class ReportRepository implements IReportRepository {
   constructor(private readonly service: IReportService) {}

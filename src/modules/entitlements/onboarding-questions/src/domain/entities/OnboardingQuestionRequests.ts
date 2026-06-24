@@ -1,5 +1,6 @@
 /**
- * Interface structure detailing the properties and attributes of Answer Option Request.
+ * Domain model representing a Answer Option Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface AnswerOptionRequest {
   value: string;
@@ -13,7 +14,8 @@ export interface AnswerOptionRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Create Onboarding Question Request.
+ * Domain model representing a Create Onboarding Question Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CreateOnboardingQuestionRequest {
   key: string;
@@ -34,6 +36,7 @@ export interface CreateOnboardingQuestionRequest {
 }
 
 /**
- * Type declaration definition describing the schema of update onboarding question request.
+ * Domain model representing a Update Onboarding Question Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type UpdateOnboardingQuestionRequest = CreateOnboardingQuestionRequest;

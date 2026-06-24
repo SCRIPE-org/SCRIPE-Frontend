@@ -54,7 +54,8 @@ interface SendLeadEmailDialogProps {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 /**
- * React presentation component representing the send lead email dialog UI element.
+ * Presentation UI component rendering the send lead email dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function SendLeadEmailDialog({
   open,

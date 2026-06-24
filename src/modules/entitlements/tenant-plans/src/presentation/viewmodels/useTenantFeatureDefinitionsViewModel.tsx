@@ -20,7 +20,8 @@ import type { CrudColumn } from "@core/crud/components/generic-crud-view";
 import { Badge } from "@core/ui/badge";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for tenant feature definitions view model.
+ * React hook/ViewModel orchestrating state and data flows for tenant feature definitions view model.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useTenantFeatureDefinitionsViewModel() {
   const { tenantPlanRepository } = entitlementsContainer;

@@ -65,7 +65,8 @@ interface DiscoveryStageProps {
 }
 
 /**
- * React presentation component representing the discovery stage UI element.
+ * Presentation UI component rendering the discovery stage.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function DiscoveryStage({ onComplete }: DiscoveryStageProps) {
   const { t, direction } = useI18n();

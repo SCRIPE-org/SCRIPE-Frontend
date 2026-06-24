@@ -62,7 +62,7 @@ const sections: DocSection[] = [
 
 // Domain entity schema (in domain/entities/)
 /**
- * Constant definition representing admin schema.
+ * Exported constant defining parameters and fields for admin schema configurations.
  */
 export const AdminSchema = z.object({
   id: z.string().uuid(),
@@ -81,13 +81,13 @@ export const AdminSchema = z.object({
 });
 
 /**
- * Type declaration definition describing the schema of admin.
+ * Exported type defining parameters and fields for admin configurations.
  */
 export type Admin = z.infer<typeof AdminSchema>;
 
 // Form-specific schemas (in presentation/viewmodels/)
 /**
- * Constant definition representing create admin schema.
+ * Exported constant defining parameters and fields for create admin schema configurations.
  */
 export const CreateAdminSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -107,7 +107,7 @@ export const CreateAdminSchema = z.object({
 });
 
 /**
- * Type declaration definition describing the schema of create admin input.
+ * Exported type defining parameters and fields for create admin input configurations.
  */
 export type CreateAdminInput = z.infer<typeof CreateAdminSchema>;`,
   },
@@ -127,7 +127,8 @@ export type CreateAdminInput = z.infer<typeof CreateAdminSchema>;`,
 import { zodResolver } from '@hookform/resolvers/zod';
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for create admin view model.
+ * React hook/ViewModel orchestrating state and data flows for create admin view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useCreateAdminViewModel() {
   const form = useForm<CreateAdminInput>({

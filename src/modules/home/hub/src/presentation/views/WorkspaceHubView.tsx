@@ -41,7 +41,8 @@ import { HubFooter } from "../components/HubFooter";
 import { useHubActivity } from "../hooks/useHubActivity";
 
 /**
- * React presentation component representing the workspace hub view UI element.
+ * Presentation UI component rendering the workspace hub view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function WorkspaceHubView() {
   const { workspaceGroups, isLoading, togglePin } = useWorkspace();

@@ -22,7 +22,8 @@ interface ReviewDsrModalProps {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 /**
- * React presentation component representing the review dsr modal UI element.
+ * Presentation UI component rendering the review dsr modal.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ReviewDsrModal({
   dsr,

@@ -12,7 +12,8 @@ import type { INotificationSenderService } from "../../domain/interfaces/INotifi
 import type { NotificationTargetJson, SendNotificationJson } from "../models/NotificationModel";
 
 /**
- * API service for executing HTTP calls related to NotificationSender endpoints.
+ * Http API network service for notification sender.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class NotificationSenderService implements INotificationSenderService {
   constructor(private readonly api: IApiService) {}

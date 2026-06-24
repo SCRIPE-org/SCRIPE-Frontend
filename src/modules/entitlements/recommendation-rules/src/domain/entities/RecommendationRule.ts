@@ -20,7 +20,8 @@ export interface RecommendationRuleData extends BaseEntity {
 }
 
 /**
- * Domain entity class representing a Recommendation Rule.
+ * Domain model representing a Recommendation Rule structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class RecommendationRule {
   constructor(public readonly data: RecommendationRuleData) {}

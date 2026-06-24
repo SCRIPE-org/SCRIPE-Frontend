@@ -18,7 +18,7 @@ import { useMagicLinkHandler } from "./useMagicLinkHandler";
 import { getAuthContainer } from "@modules/auth/di";
 
 /**
- * Interface structure detailing the properties and attributes of Login Form Data.
+ * Interface defining property specifications, keys types, and structural contract rules for login form data.
  */
 export interface LoginFormData {
   identifier: string;
@@ -26,7 +26,7 @@ export interface LoginFormData {
 }
 
 /**
- * Type declaration definition describing the schema of login step.
+ * Exported type defining parameters and fields for login step configurations.
  */
 export type LoginStep =
   | "credentials"
@@ -39,7 +39,8 @@ export type LoginStep =
   | "qr-login";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for login view model.
+ * React hook/ViewModel orchestrating state and data flows for login view model.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useLoginViewModel() {
   const [formData, setFormData] = useState<LoginFormData>({ identifier: "", password: "" });

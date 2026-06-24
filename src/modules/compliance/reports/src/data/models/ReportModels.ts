@@ -18,7 +18,7 @@ export interface ReportModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Report List Response.
+ * Interface defining property specifications, keys types, and structural contract rules for report list response.
  */
 export interface ReportListResponse {
   items: ReportModel[];

@@ -14,7 +14,8 @@ interface SamlSectionProps {
 }
 
 /**
- * React presentation component representing the saml section UI element.
+ * Presentation UI component rendering the saml section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function SamlSection({ form, updateField }: SamlSectionProps) {
   const { t } = useI18n();

@@ -238,7 +238,8 @@ function FeatureCategoryBlock({
 
 // ─── Main View ──────────────────────────────────────────────────────────────
 /**
- * React presentation component representing the edition comparison view UI element.
+ * Presentation UI component rendering the edition comparison view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function EditionComparisonView() {
   useModuleLocales(() => import("../../../locales"), "editions");

@@ -22,7 +22,8 @@ interface RoleDeleteDialogProps {
 }
 
 /**
- * React presentation component representing the role delete dialog UI element.
+ * Presentation UI component rendering the role delete dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function RoleDeleteDialog({
   open,

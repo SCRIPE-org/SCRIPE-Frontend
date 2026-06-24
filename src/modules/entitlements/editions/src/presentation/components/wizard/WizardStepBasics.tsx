@@ -13,7 +13,7 @@ import type {
 } from "../../../domain/entities/EditionRequests";
 
 /**
- * Interface structure detailing the properties and attributes of Edition Option.
+ * Interface defining property specifications, keys types, and structural contract rules for edition option.
  */
 export interface EditionOption {
   id: string;
@@ -51,7 +51,8 @@ function SectionHeader({
 }
 
 /**
- * React presentation component representing the wizard step basics UI element.
+ * Presentation UI component rendering the wizard step basics.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function WizardStepBasics({
   form,

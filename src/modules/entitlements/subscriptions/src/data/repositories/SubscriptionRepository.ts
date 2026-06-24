@@ -16,7 +16,8 @@ import type { ISubscriptionService } from "../../domain/interfaces/ISubscription
 import { SubscriptionMapper } from "../mappers/SubscriptionMapper";
 
 /**
- * Repository implementation for managing database operations on Subscription resources.
+ * Repository layer implementing client request queries for subscription.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class SubscriptionRepository implements ISubscriptionRepository {
   constructor(private readonly service: ISubscriptionService) {}

@@ -55,7 +55,7 @@ export interface TenantSettingsModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update Tenant Settings Request.
+ * Interface defining property specifications, keys types, and structural contract rules for update tenant settings request.
  */
 export interface UpdateTenantSettingsRequest {
   maxAdmins?: number;

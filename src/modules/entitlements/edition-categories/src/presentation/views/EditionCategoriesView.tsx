@@ -9,7 +9,8 @@ import type { EditionCategory } from "../../domain/entities/EditionCategory";
 import { Pencil, Trash2 } from "lucide-react";
 
 /**
- * React presentation component representing the edition categories view UI element.
+ * Presentation UI component rendering the edition categories view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function EditionCategoriesView() {
   const { t, language } = useI18n();

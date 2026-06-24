@@ -14,7 +14,8 @@ import type {
 } from "../../domain/entities/DsrRequests";
 
 /**
- * API service for executing HTTP calls related to Dsr endpoints.
+ * Http API network service for dsr.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class DsrService implements IDsrService {
   constructor(private readonly api: IApiService) {}

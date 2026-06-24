@@ -42,7 +42,8 @@ const DEVICE_DIMS: Record<DeviceSize, { w: string; label: string }> = {
 };
 
 /**
- * React presentation component representing the dashboard layout preview UI element.
+ * Presentation UI component rendering the dashboard layout preview.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DashboardLayoutPreview({ settings }: Props) {
   const { direction } = useI18n();

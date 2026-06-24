@@ -6,7 +6,7 @@ import { CreditCard, Wallet } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 
 /**
- * Interface structure detailing the properties and attributes of Gateway Option.
+ * Interface defining property specifications, keys types, and structural contract rules for gateway option.
  */
 export interface GatewayOption {
   gateway: string;
@@ -18,7 +18,8 @@ interface GatewaySelectionStepProps {
 }
 
 /**
- * React presentation component representing the gateway selection step UI element.
+ * Presentation UI component rendering the gateway selection step.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function GatewaySelectionStep({ gateways, onSelect }: GatewaySelectionStepProps) {
   const { t } = useI18n();

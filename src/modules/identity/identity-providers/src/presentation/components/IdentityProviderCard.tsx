@@ -50,7 +50,8 @@ interface Props {
 }
 
 /**
- * React presentation component representing the identity provider card UI element.
+ * Presentation UI component rendering the identity provider card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function IdentityProviderCard({
   item,

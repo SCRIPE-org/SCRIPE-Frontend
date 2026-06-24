@@ -19,7 +19,7 @@ import type {
 import { useState } from "react";
 
 /**
- * Interface structure detailing the properties and attributes of Use Tenant Settings View Model Result.
+ * Interface defining property specifications, keys types, and structural contract rules for use tenant settings view model result.
  */
 export interface UseTenantSettingsViewModelResult {
   settings: TenantSettingsModel | undefined;
@@ -41,7 +41,8 @@ export interface UseTenantSettingsViewModelResult {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for tenant settings view model.
+ * React hook/ViewModel orchestrating state and data flows for tenant settings view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useTenantSettingsViewModel(tenantId: string): UseTenantSettingsViewModelResult {
   const { t } = useI18n();

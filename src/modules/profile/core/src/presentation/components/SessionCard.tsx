@@ -97,7 +97,8 @@ function parseDeviceDetails(deviceInfo: string) {
 }
 
 /**
- * React presentation component representing the session card UI element.
+ * Presentation UI component rendering the session card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function SessionCard({ session, onRevoke, isRevoking }: SessionCardProps) {
   const { t } = useI18n();

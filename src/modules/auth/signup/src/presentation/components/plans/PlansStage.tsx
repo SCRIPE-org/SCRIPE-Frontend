@@ -31,7 +31,8 @@ interface PlansStageProps {
 }
 
 /**
- * React presentation component representing the plans stage UI element.
+ * Presentation UI component rendering the plans stage.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function PlansStage({ wizard }: PlansStageProps) {
   const { t } = useI18n();

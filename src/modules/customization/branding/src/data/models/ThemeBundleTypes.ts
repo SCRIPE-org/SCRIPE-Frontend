@@ -16,7 +16,7 @@ export interface ThemeBundleContentsDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Theme Bundle Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for theme bundle dto.
  */
 export interface ThemeBundleDto {
   id: string;
@@ -46,7 +46,7 @@ export interface ThemeBundleDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Theme Bundle Paged Result.
+ * Interface defining property specifications, keys types, and structural contract rules for theme bundle paged result.
  */
 export interface ThemeBundlePagedResult {
   items: ThemeBundleDto[];

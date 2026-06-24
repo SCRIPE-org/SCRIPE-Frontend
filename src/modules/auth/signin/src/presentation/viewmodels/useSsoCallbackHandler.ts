@@ -16,11 +16,11 @@ import {
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 
 /**
- * Type declaration definition describing the schema of sso callback kind.
+ * Exported type defining parameters and fields for sso callback kind configurations.
  */
 export type SsoCallbackKind = "oidc" | "saml";
 /**
- * Type declaration definition describing the schema of sso callback state.
+ * Exported type defining parameters and fields for sso callback state configurations.
  */
 export type SsoCallbackState =
   | "processing"
@@ -30,7 +30,7 @@ export type SsoCallbackState =
   | "workspace_selection";
 
 /**
- * Interface structure detailing the properties and attributes of Sso Callback Error.
+ * Interface defining property specifications, keys types, and structural contract rules for sso callback error.
  */
 export interface SsoCallbackError {
   title: string;
@@ -38,7 +38,8 @@ export interface SsoCallbackError {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for sso callback handler.
+ * React hook/ViewModel orchestrating state and data flows for sso callback handler.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
  */
 export function useSsoCallbackHandler(kind: SsoCallbackKind) {
   const router = useRouter();

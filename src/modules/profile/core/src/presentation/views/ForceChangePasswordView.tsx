@@ -19,7 +19,8 @@ import { cn } from "@core/common/utils";
 import { Eye, EyeOff, ShieldAlert, LogOut } from "lucide-react";
 
 /**
- * React presentation component representing the force change password view UI element.
+ * Presentation UI component rendering the force change password view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function ForceChangePasswordView() {
   const {

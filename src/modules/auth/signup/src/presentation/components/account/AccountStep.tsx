@@ -34,7 +34,8 @@ interface AccountStepProps {
 }
 
 /**
- * React presentation component representing the account step UI element.
+ * Presentation UI component rendering the account step.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function AccountStep({ wizard }: AccountStepProps) {
   const { t, direction } = useI18n();

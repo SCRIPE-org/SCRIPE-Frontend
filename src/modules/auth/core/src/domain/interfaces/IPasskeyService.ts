@@ -23,7 +23,7 @@ export interface IPasskeyService {
 // ── DTOs ──────────────────────────────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Passkey Response Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for passkey response dto.
  */
 export interface PasskeyResponseDto {
   id: string;
@@ -36,14 +36,14 @@ export interface PasskeyResponseDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Passkey List Response Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for passkey list response dto.
  */
 export interface PasskeyListResponseDto {
   items: PasskeyResponseDto[];
 }
 
 /**
- * Interface structure detailing the properties and attributes of Passkey Registration Options Response Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for passkey registration options response dto.
  */
 export interface PasskeyRegistrationOptionsResponseDto {
   challenge: string;
@@ -62,7 +62,7 @@ export interface PasskeyRegistrationOptionsResponseDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Passkey Complete Registration Request Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for passkey complete registration request dto.
  */
 export interface PasskeyCompleteRegistrationRequestDto {
   deviceName: string;
@@ -78,7 +78,7 @@ export interface PasskeyCompleteRegistrationRequestDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Passkey Rename Request Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for passkey rename request dto.
  */
 export interface PasskeyRenameRequestDto {
   name: string;

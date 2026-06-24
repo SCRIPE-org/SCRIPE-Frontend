@@ -68,7 +68,8 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 /**
- * React presentation component representing the subscriptions data table UI element.
+ * Presentation UI component rendering the subscriptions data table.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function SubscriptionsDataTable({
   subscriptions,

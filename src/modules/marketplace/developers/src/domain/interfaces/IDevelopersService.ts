@@ -50,7 +50,8 @@ export interface UpdateDeveloperPayload {
 }
 
 /**
- * Interface defining operations for the Developers network service.
+ * Http API network service for i developers.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IDevelopersService {
   /** Fetch paginated list of developer profiles. */

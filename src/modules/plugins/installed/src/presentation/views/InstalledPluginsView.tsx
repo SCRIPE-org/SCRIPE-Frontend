@@ -9,7 +9,8 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { InstalledPluginRow } from "../components/InstalledPluginRow";
 
 /**
- * React presentation component representing the installed plugins view UI element.
+ * Presentation UI component rendering the installed plugins view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function InstalledPluginsView() {
   const { user } = useAppStore();

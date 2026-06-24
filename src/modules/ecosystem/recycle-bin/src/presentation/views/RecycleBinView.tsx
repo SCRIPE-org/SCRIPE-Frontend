@@ -26,7 +26,8 @@ import { CascadeRestoreDialog } from "../components/CascadeRestoreDialog";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 /**
- * React presentation component representing the recycle bin view UI element.
+ * Presentation UI component rendering the recycle bin view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function RecycleBinView() {
   useModuleLocales(() => import("../../../locales"), "recycle-bin");

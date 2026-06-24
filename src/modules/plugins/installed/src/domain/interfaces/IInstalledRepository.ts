@@ -1,7 +1,8 @@
 import type { PluginInstallation } from "../entities/PluginInstallation";
 
 /**
- * Interface defining repository methods for managing Installed data access.
+ * Repository layer implementing client request queries for i installed.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IInstalledRepository {
   getInstalled(tenantId: string): Promise<PluginInstallation[]>;

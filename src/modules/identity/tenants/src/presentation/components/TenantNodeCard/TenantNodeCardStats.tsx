@@ -19,7 +19,8 @@ interface TenantNodeCardStatsProps {
 }
 
 /**
- * React presentation component representing the tenant node card stats UI element.
+ * Presentation UI component rendering the tenant node card stats.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function TenantNodeCardStats({ stats, statsLoading, t }: TenantNodeCardStatsProps) {
   const statItems = [

@@ -22,7 +22,7 @@ import { entitlementsContainer } from "@modules/entitlements/di";
 import type { TenantPlan, TenantPlanFeatureData } from "../../domain/entities/TenantPlan";
 
 /**
- * Interface structure detailing the properties and attributes of Feature Row.
+ * Interface defining property specifications, keys types, and structural contract rules for feature row.
  */
 export interface FeatureRow {
   featureKey: string;
@@ -35,7 +35,7 @@ export interface FeatureRow {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Pricing Highlight.
+ * Interface defining property specifications, keys types, and structural contract rules for pricing highlight.
  */
 export interface PricingHighlight {
   label: string;
@@ -43,7 +43,8 @@ export interface PricingHighlight {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for tenant plan comparison view model.
+ * React hook/ViewModel orchestrating state and data flows for tenant plan comparison view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useTenantPlanComparisonViewModel() {
   const { tenantPlanRepository } = entitlementsContainer;

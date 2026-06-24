@@ -23,7 +23,8 @@ import { UserGroupService } from "../services/UserGroupService";
 import { UserGroupMapper } from "../mappers/UserGroupMapper";
 
 /**
- * Repository implementation for managing database operations on UserGroup resources.
+ * Repository layer implementing client request queries for user group.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class UserGroupRepository implements IUserGroupRepository {
   constructor(private readonly service: UserGroupService) {}

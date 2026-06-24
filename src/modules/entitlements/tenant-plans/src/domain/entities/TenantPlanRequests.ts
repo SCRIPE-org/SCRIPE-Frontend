@@ -14,7 +14,8 @@ export interface UpsertTenantPlanFeatureRequest {
 
 // ── Pricing Matrix ──
 /**
- * Interface structure detailing the properties and attributes of Upsert Tenant Plan Price Request.
+ * Domain model representing a Upsert Tenant Plan Price Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface UpsertTenantPlanPriceRequest {
   currency: string;
@@ -26,7 +27,8 @@ export interface UpsertTenantPlanPriceRequest {
 
 // ── Create Plan ──
 /**
- * Interface structure detailing the properties and attributes of Create Tenant Plan Request.
+ * Domain model representing a Create Tenant Plan Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CreateTenantPlanRequest {
   name: string;
@@ -57,7 +59,8 @@ export interface CreateTenantPlanRequest {
 
 // ── Update Plan ──
 /**
- * Interface structure detailing the properties and attributes of Update Tenant Plan Request.
+ * Domain model representing a Update Tenant Plan Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface UpdateTenantPlanRequest {
   name: string;
@@ -89,7 +92,8 @@ export interface UpdateTenantPlanRequest {
 
 // ── Feature Definition Requests ──
 /**
- * Interface structure detailing the properties and attributes of Create Feature Definition Request.
+ * Domain model representing a Create Feature Definition Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CreateFeatureDefinitionRequest {
   key: string;
@@ -104,7 +108,8 @@ export interface CreateFeatureDefinitionRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update Feature Definition Request.
+ * Domain model representing a Update Feature Definition Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface UpdateFeatureDefinitionRequest {
   key: string;
@@ -120,7 +125,8 @@ export interface UpdateFeatureDefinitionRequest {
 
 // ── Promotion Requests ──
 /**
- * Interface structure detailing the properties and attributes of Create Promotion Request.
+ * Domain model representing a Create Promotion Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CreatePromotionRequest {
   tenantPlanId?: string;
@@ -139,7 +145,8 @@ export interface CreatePromotionRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update Promotion Request.
+ * Domain model representing a Update Promotion Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface UpdatePromotionRequest {
   tenantPlanId?: string;

@@ -21,7 +21,8 @@ const QUERY_KEY = ["entitlements", "tenant-stripe-connect", "status"];
 const TXN_QUERY_KEY = ["entitlements", "tenant-stripe-connect", "transactions"];
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for tenant connect view model.
+ * React hook/ViewModel orchestrating state and data flows for tenant connect view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useTenantConnectViewModel() {
   const { connectRepository } = entitlementsContainer;

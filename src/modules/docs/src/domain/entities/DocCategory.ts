@@ -19,7 +19,8 @@ export interface DocNavItem {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Doc Category Data.
+ * Domain model representing a Doc Category Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface DocCategoryData {
   /** Unique category ID, e.g. 'get-started', 'features' */
@@ -35,7 +36,8 @@ export interface DocCategoryData {
 }
 
 /**
- * Domain entity class representing a Doc Category.
+ * Domain model representing a Doc Category structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class DocCategory {
   constructor(public readonly data: DocCategoryData) {}

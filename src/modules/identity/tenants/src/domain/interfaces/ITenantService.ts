@@ -44,7 +44,7 @@ export interface TenantDomainsResponse {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Service Tenant List Params.
+ * Interface defining property specifications, keys types, and structural contract rules for service tenant list params.
  */
 export interface ServiceTenantListParams {
   page?: number;
@@ -54,7 +54,7 @@ export interface ServiceTenantListParams {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Tenant List Result.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant list result.
  */
 export interface TenantListResult {
   items: TenantModel[];
@@ -67,7 +67,7 @@ export interface TenantListResult {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Tenant Tree List Result.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant tree list result.
  */
 export interface TenantTreeListResult {
   items: TenantTreeNodeModel[];
@@ -80,7 +80,8 @@ export interface TenantTreeListResult {
 }
 
 /**
- * Interface defining operations for the Tenant network service.
+ * Http API network service for i tenant.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface ITenantService {
   getAll(params: ServiceTenantListParams): Promise<TenantListResult>;

@@ -28,7 +28,8 @@ const RecentActivityFeed = dynamic(
 );
 
 /**
- * React presentation component representing the home view UI element.
+ * Presentation UI component rendering the home view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function HomeView() {
   const hasDashboardPerm = usePermission(SYSTEM_PERMISSIONS.DASHBOARD_VIEW);

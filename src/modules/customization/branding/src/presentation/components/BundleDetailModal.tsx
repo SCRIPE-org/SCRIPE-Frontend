@@ -61,7 +61,8 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 /**
- * React presentation component representing the bundle detail modal UI element.
+ * Presentation UI component rendering the bundle detail modal.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function BundleDetailModal({
   bundle,

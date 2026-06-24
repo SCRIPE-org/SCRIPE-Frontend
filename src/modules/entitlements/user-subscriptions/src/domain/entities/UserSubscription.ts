@@ -13,7 +13,8 @@ export interface UserSubscriptionFeatureData {
 }
 
 /**
- * Interface structure detailing the properties and attributes of User Subscription Data.
+ * Domain model representing a User Subscription Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface UserSubscriptionData extends BaseEntity {
   userId: string;
@@ -55,7 +56,8 @@ export interface UserSubscriptionData extends BaseEntity {
 }
 
 /**
- * Domain entity class representing a User Subscription.
+ * Domain model representing a User Subscription structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class UserSubscription {
   constructor(private readonly data: UserSubscriptionData) {}

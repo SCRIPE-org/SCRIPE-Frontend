@@ -219,7 +219,7 @@ public class MyPluginStartup : IPluginStartup
         label: "modules.plugins.sdk.tab1Frontend",
         code: `// Expose your component via Module Federation
 /**
- * Utility function executing operational rules for my plugin.
+ * Exported function defining parameters and fields for my plugin configurations.
  */
 export default function MyPlugin({ installationId }: { installationId: string }) {
   return <div>Tier 1 Plugin — {installationId}</div>;

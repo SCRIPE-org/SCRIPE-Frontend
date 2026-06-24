@@ -1,5 +1,6 @@
 /**
- * Interface structure detailing the properties and attributes of Create Recommendation Rule Request.
+ * Domain model representing a Create Recommendation Rule Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CreateRecommendationRuleRequest {
   name: string;
@@ -13,6 +14,7 @@ export interface CreateRecommendationRuleRequest {
 }
 
 /**
- * Type declaration definition describing the schema of update recommendation rule request.
+ * Domain model representing a Update Recommendation Rule Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type UpdateRecommendationRuleRequest = CreateRecommendationRuleRequest;

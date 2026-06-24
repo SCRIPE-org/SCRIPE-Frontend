@@ -13,7 +13,7 @@ import { monitoringContainer } from "@modules/monitoring/di";
 import type { AuditFilterState } from "./useAuditViewModel";
 
 /**
- * Type declaration definition describing the schema of export format.
+ * Exported type defining parameters and fields for export format configurations.
  */
 export type ExportFormat = "csv" | "excel" | "pdf";
 
@@ -29,7 +29,8 @@ interface UseExportAuditResult {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for export audit.
+ * React hook/ViewModel orchestrating state and data flows for export audit.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useExportAudit(): UseExportAuditResult {
   const [isExporting, setIsExporting] = useState(false);

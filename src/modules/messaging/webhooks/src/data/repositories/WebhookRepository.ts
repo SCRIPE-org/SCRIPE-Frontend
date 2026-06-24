@@ -30,7 +30,8 @@ import type {
 import { WebhookMapper } from "../mappers/WebhookMapper";
 
 /**
- * Repository implementation for managing database operations on Webhook resources.
+ * Repository layer implementing client request queries for webhook.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class WebhookRepository implements IWebhookRepository {
   constructor(private readonly service: IWebhookService) {}

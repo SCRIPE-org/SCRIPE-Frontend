@@ -24,7 +24,8 @@ export interface EditionPromotionData {
 }
 
 /**
- * Domain entity class representing a Edition Promotion.
+ * Domain model representing a Edition Promotion structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class EditionPromotion {
   constructor(public readonly data: EditionPromotionData) {}
@@ -108,7 +109,8 @@ export class EditionPromotion {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Create Promotion Request.
+ * Domain model representing a Create Promotion Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CreatePromotionRequest {
   name: string;
@@ -127,7 +129,8 @@ export interface CreatePromotionRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update Promotion Request.
+ * Domain model representing a Update Promotion Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface UpdatePromotionRequest {
   name?: string;
@@ -138,7 +141,8 @@ export interface UpdatePromotionRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Promo Code Validation Result.
+ * Domain model representing a Promo Code Validation Result structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PromoCodeValidationResult {
   isValid: boolean;

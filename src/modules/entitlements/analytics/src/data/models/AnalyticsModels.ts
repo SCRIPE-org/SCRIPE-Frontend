@@ -12,7 +12,7 @@ export interface MonthlyMrrPointModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Analytics Overview Model.
+ * Interface defining property specifications, keys types, and structural contract rules for analytics overview model.
  */
 export interface AnalyticsOverviewModel {
   // Current KPIs
@@ -38,7 +38,7 @@ export interface AnalyticsOverviewModel {
 
 // ── MRR Movement ──
 /**
- * Interface structure detailing the properties and attributes of Mrr Movement Point Model.
+ * Interface defining property specifications, keys types, and structural contract rules for mrr movement point model.
  */
 export interface MrrMovementPointModel {
   month: string;
@@ -53,7 +53,7 @@ export interface MrrMovementPointModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Mrr Movement Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for mrr movement response model.
  */
 export interface MrrMovementResponseModel {
   movements: MrrMovementPointModel[];
@@ -68,7 +68,7 @@ export interface MrrMovementResponseModel {
 
 // ── Cohort Analysis ──
 /**
- * Interface structure detailing the properties and attributes of Cohort Cell Model.
+ * Interface defining property specifications, keys types, and structural contract rules for cohort cell model.
  */
 export interface CohortCellModel {
   monthIndex: number;
@@ -77,7 +77,7 @@ export interface CohortCellModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Cohort Row Model.
+ * Interface defining property specifications, keys types, and structural contract rules for cohort row model.
  */
 export interface CohortRowModel {
   cohortMonth: string;
@@ -86,7 +86,7 @@ export interface CohortRowModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Cohort Analysis Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for cohort analysis response model.
  */
 export interface CohortAnalysisResponseModel {
   cohorts: CohortRowModel[];
@@ -95,7 +95,7 @@ export interface CohortAnalysisResponseModel {
 
 // ── LTV by Edition ──
 /**
- * Interface structure detailing the properties and attributes of Edition Ltv Model.
+ * Interface defining property specifications, keys types, and structural contract rules for edition ltv model.
  */
 export interface EditionLtvModel {
   editionId: string;
@@ -108,7 +108,7 @@ export interface EditionLtvModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Ltv Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for ltv response model.
  */
 export interface LtvResponseModel {
   editions: EditionLtvModel[];
@@ -116,7 +116,7 @@ export interface LtvResponseModel {
 
 // ── Revenue Forecast ──
 /**
- * Interface structure detailing the properties and attributes of Forecast Point Model.
+ * Interface defining property specifications, keys types, and structural contract rules for forecast point model.
  */
 export interface ForecastPointModel {
   month: string;
@@ -126,7 +126,7 @@ export interface ForecastPointModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Revenue Forecast Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for revenue forecast response model.
  */
 export interface RevenueForecastResponseModel {
   historical: ForecastPointModel[];
@@ -140,7 +140,7 @@ export interface RevenueForecastResponseModel {
 
 // ── Tenant Health Score ──
 /**
- * Interface structure detailing the properties and attributes of Tenant Health Score Model.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant health score model.
  */
 export interface TenantHealthScoreModel {
   tenantId: string;
@@ -162,7 +162,7 @@ export interface TenantHealthScoreModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Tenant Health Scores Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant health scores response model.
  */
 export interface TenantHealthScoresResponseModel {
   items: TenantHealthScoreModel[];
@@ -175,7 +175,7 @@ export interface TenantHealthScoresResponseModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Tenant Health Detail Model.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant health detail model.
  */
 export interface TenantHealthDetailModel extends TenantHealthScoreModel {
   mrrStart: number;
@@ -197,7 +197,7 @@ export interface TenantHealthDetailModel extends TenantHealthScoreModel {
 
 // ── Report Preferences ──
 /**
- * Interface structure detailing the properties and attributes of Report Preference Model.
+ * Interface defining property specifications, keys types, and structural contract rules for report preference model.
  */
 export interface ReportPreferenceModel {
   cadence: string;
@@ -211,7 +211,7 @@ export interface ReportPreferenceModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update Report Preference Request Model.
+ * Interface defining property specifications, keys types, and structural contract rules for update report preference request model.
  */
 export interface UpdateReportPreferenceRequestModel {
   cadence: string;

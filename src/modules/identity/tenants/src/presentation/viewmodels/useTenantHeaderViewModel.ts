@@ -9,7 +9,7 @@ import type { Tenant } from "../../domain/entities/Tenant";
 import { appLogger } from "@/core/common/logger";
 
 /**
- * Type declaration definition describing the schema of tenant status.
+ * Exported type defining parameters and fields for tenant status configurations.
  */
 export type TenantStatus = "active" | "suspended" | "canceled" | "expired" | "inactive";
 
@@ -19,7 +19,8 @@ interface UseTenantHeaderViewModelProps {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for tenant header view model.
+ * React hook/ViewModel orchestrating state and data flows for tenant header view model.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useTenantHeaderViewModel({ tenant, onUpdate }: UseTenantHeaderViewModelProps) {
   const { t, direction } = useI18n();

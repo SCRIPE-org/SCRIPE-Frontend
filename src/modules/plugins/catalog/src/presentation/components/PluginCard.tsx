@@ -13,7 +13,8 @@ interface PluginCardProps {
 }
 
 /**
- * React presentation component representing the plugin card UI element.
+ * Presentation UI component rendering the plugin card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function PluginCard({ plugin, onInstall, isInstalling }: PluginCardProps) {
   const { t, language } = useI18n();

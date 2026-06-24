@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Utility function executing operational rules for block color.
+ * Exported function defining parameters and fields for block color configurations.
  */
 export function blockColor(
   color: string | undefined,
@@ -17,7 +17,7 @@ export function blockColor(
 }
 
 /**
- * Utility function executing operational rules for clamp.
+ * Exported function defining parameters and fields for clamp configurations.
  */
 export function clamp(value: number | undefined, min: number, max: number, fallback: number) {
   if (typeof value !== "number" || Number.isNaN(value)) return fallback;
@@ -25,7 +25,7 @@ export function clamp(value: number | undefined, min: number, max: number, fallb
 }
 
 /**
- * Utility function executing operational rules for safe items.
+ * Exported function defining parameters and fields for safe items configurations.
  */
 export function safeItems<T>(items: T[] | undefined, limit: number): T[] {
   return Array.isArray(items) ? items.slice(0, limit) : [];

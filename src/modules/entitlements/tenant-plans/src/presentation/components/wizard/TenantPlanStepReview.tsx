@@ -12,7 +12,8 @@ interface TenantPlanStepReviewProps {
 }
 
 /**
- * React presentation component representing the tenant plan step review UI element.
+ * Presentation UI component rendering the tenant plan step review.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function TenantPlanStepReview({ form, t }: TenantPlanStepReviewProps) {
   const missingRequired = !form.name;

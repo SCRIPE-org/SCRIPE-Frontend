@@ -19,7 +19,8 @@ import { Unlock, UserCheck, UserX } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 /**
- * React presentation component representing the users view UI element.
+ * Presentation UI component rendering the users view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function UsersView() {
   useModuleLocales(() => import("../../../locales"), "users");

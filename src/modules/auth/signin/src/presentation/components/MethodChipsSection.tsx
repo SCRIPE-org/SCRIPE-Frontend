@@ -17,7 +17,8 @@ interface MethodChipsSectionProps {
 }
 
 /**
- * React presentation component representing the method chips section UI element.
+ * Presentation UI component rendering the method chips section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function MethodChipsSection({ methodChips, isLoading, t }: MethodChipsSectionProps) {
   if (methodChips.length === 0) return null;

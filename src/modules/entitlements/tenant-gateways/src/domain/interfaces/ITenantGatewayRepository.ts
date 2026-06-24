@@ -1,7 +1,7 @@
 import type { TenantGateway } from "../entities/TenantGateway";
 
 /**
- * Interface structure detailing the properties and attributes of Configure Gateway Request.
+ * Interface defining property specifications, keys types, and structural contract rules for configure gateway request.
  */
 export interface ConfigureGatewayRequest {
   gatewayType: string;
@@ -14,7 +14,8 @@ export interface ConfigureGatewayRequest {
 }
 
 /**
- * Interface defining repository methods for managing TenantGateway data access.
+ * Repository layer implementing client request queries for i tenant gateway.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface ITenantGatewayRepository {
   getMyGateways(): Promise<TenantGateway[]>;

@@ -16,7 +16,8 @@ import type { LoginLayout } from "@core/domain/entities/LoginBrandingTypes";
 
 // ── Template Structure ───────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Layout Template.
+ * Domain model representing a Layout Template structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface LayoutTemplate {
   layout: LoginLayout;

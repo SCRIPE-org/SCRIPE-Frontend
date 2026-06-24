@@ -19,7 +19,8 @@ interface WizardStep4Props {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 /**
- * React presentation component representing the wizard step4 confirm UI element.
+ * Presentation UI component rendering the wizard step4 confirm.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function WizardStep4Confirm({ lead, edition, setup, overrideCount }: WizardStep4Props) {
   const { t, language } = useI18n();

@@ -12,7 +12,8 @@ import type {
 import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
 /**
- * Interface defining repository methods for managing RecommendationRule data access.
+ * Repository layer implementing client request queries for i recommendation rule.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IRecommendationRuleRepository {
   getAll(params: PaginationParams): Promise<PagedResult<RecommendationRule>>;

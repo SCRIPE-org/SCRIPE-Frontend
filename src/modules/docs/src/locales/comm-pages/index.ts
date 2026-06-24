@@ -92,7 +92,7 @@ export { de as customizationDe } from "./customization/de";
 
 // Lazy loader map for dynamic imports
 /**
- * Constant definition representing page loaders.
+ * Exported constant defining parameters and fields for page loaders configurations.
  */
 export const pageLoaders: Record<string, () => Promise<any>> = {
   "why-uis": () => import("./why-uis/en"),

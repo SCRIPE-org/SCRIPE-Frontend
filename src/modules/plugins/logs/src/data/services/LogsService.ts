@@ -4,7 +4,8 @@ import type { ILogsService } from "../../domain/interfaces/ILogsService";
 import type { PluginExecutionLogModel, PagedResult } from "../models/LogsModels";
 
 /**
- * API service for executing HTTP calls related to Logs endpoints.
+ * Http API network service for logs.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class LogsService implements ILogsService {
   constructor(private readonly api: IApiService) {}

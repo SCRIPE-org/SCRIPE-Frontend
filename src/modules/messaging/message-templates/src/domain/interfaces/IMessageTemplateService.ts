@@ -16,7 +16,7 @@ import type {
 } from "../types/MessageTemplateTypes";
 
 /**
- * Interface structure detailing the properties and attributes of Service Template List Params.
+ * Interface defining property specifications, keys types, and structural contract rules for service template list params.
  */
 export interface ServiceTemplateListParams {
   page: number;
@@ -25,7 +25,8 @@ export interface ServiceTemplateListParams {
 }
 
 /**
- * Interface defining operations for the MessageTemplate network service.
+ * Http API network service for i message template.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IMessageTemplateService {
   getAll(params: ServiceTemplateListParams): Promise<MessageTemplateListResponse>;

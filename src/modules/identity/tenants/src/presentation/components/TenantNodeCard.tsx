@@ -131,7 +131,8 @@ const statusConfig: Record<
 // ============================================
 
 /**
- * React presentation component representing the tenant node card UI element.
+ * Presentation UI component rendering the tenant node card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function TenantNodeCard({
   node,

@@ -8,7 +8,8 @@ import type {
 } from "../entities/MessageTemplateRequests";
 
 /**
- * Interface defining repository methods for managing MessageTemplate data access.
+ * Repository layer implementing client request queries for i message template.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IMessageTemplateRepository {
   getAll(params: {

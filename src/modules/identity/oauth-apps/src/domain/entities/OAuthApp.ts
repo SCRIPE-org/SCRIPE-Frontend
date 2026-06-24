@@ -5,11 +5,10 @@
  *
  * @module oauth-apps/domain
  */
-
 // ─── OAuth Application Data ────────────────────────────────────
-
 /**
- * Interface structure detailing the properties and attributes of O Auth App Data.
+ * Domain model representing a O Auth App Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface OAuthAppData {
   id: string;
@@ -36,13 +35,11 @@ export interface OAuthAppData {
   createdAt: string;
   modifiedAt: string | null;
 }
-
 /**
  * OAuth Application Entity
  */
 export class OAuthApp {
   constructor(private readonly data: OAuthAppData) {}
-
   get id(): string {
     return this.data.id;
   }
@@ -112,7 +109,6 @@ export class OAuthApp {
   get modifiedAt(): string | null {
     return this.data.modifiedAt;
   }
-
   // ===== Domain Logic =====
 
   get isConfidential(): boolean {
@@ -121,7 +117,6 @@ export class OAuthApp {
   get isPublic(): boolean {
     return this.clientType === "public";
   }
-
   get redirectUris(): string[] {
     try {
       return JSON.parse(this.redirectUrisJson);
@@ -129,7 +124,6 @@ export class OAuthApp {
       return [];
     }
   }
-
   get postLogoutRedirectUris(): string[] {
     try {
       return JSON.parse(this.postLogoutRedirectUrisJson);
@@ -137,18 +131,15 @@ export class OAuthApp {
       return [];
     }
   }
-
   get scopeList(): string[] {
     return this.allowedScopes.split(" ").filter(Boolean);
   }
   get grantTypeList(): string[] {
     return this.allowedGrantTypes.split(" ").filter(Boolean);
   }
-
   get clientTypeLabel(): string {
     return this.isConfidential ? "Confidential" : "Public";
   }
-
   copyWith(updates: Partial<OAuthAppData>): OAuthApp {
     return new OAuthApp({
       ...this.data,
@@ -156,10 +147,10 @@ export class OAuthApp {
     } as OAuthAppData);
   }
 }
-
 // ─── OAuth App List Item ────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of O Auth App List Item Data.
+ * Domain model representing a O Auth App List Item Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface OAuthAppListItemData {
   id: string;
@@ -228,7 +219,8 @@ export class OAuthAppListItem {
   }
 }
 /**
- * Domain entity class representing a Regenerate Secret Result.
+ * Domain model representing a Regenerate Secret Result structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class RegenerateSecretResult {
   constructor(
@@ -238,7 +230,8 @@ export class RegenerateSecretResult {
 }
 // ─── Create Response ────────────────────────────────────────────
 /**
- * Domain entity class representing a Create O Auth App Response.
+ * Domain model representing a Create O Auth App Response structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class CreateOAuthAppResponse {
   constructor(
@@ -249,7 +242,8 @@ export class CreateOAuthAppResponse {
 }
 // ─── List Response ──────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of O Auth App List Response.
+ * Domain model representing a O Auth App List Response structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface OAuthAppListResponse {
   items: OAuthAppListItem[];
@@ -257,7 +251,8 @@ export interface OAuthAppListResponse {
 }
 // ─── Request Types ──────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Create O Auth App Request.
+ * Domain model representing a Create O Auth App Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CreateOAuthAppRequest {
   displayName: string;
@@ -278,7 +273,8 @@ export interface CreateOAuthAppRequest {
   refreshTokenLifetimeDays?: number;
 }
 /**
- * Interface structure detailing the properties and attributes of Update O Auth App Request.
+ * Domain model representing a Update O Auth App Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface UpdateOAuthAppRequest {
   displayName?: string;

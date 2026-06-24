@@ -9,7 +9,7 @@ import { cn } from "@core/common/utils";
 import type { TenantTreeNode } from "../../../domain/entities/Tenant";
 
 /**
- * Type declaration definition describing the schema of tenant status.
+ * Exported type defining parameters and fields for tenant status configurations.
  */
 export type TenantStatus = "active" | "suspended" | "canceled" | "expired" | "inactive";
 
@@ -31,7 +31,8 @@ interface TenantNodeCardHeaderProps {
 }
 
 /**
- * React presentation component representing the tenant node card header UI element.
+ * Presentation UI component rendering the tenant node card header.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function TenantNodeCardHeader({
   node,

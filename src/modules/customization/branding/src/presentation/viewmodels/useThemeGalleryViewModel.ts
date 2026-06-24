@@ -37,7 +37,7 @@ type GallerySortKey = "popular" | "newest" | "trending" | "nameAsc" | "nameDesc"
 type GalleryTab = "browse" | "featured" | "favorites" | "bundles";
 
 /**
- * Interface structure detailing the properties and attributes of Gallery Filters.
+ * Interface defining property specifications, keys types, and structural contract rules for gallery filters.
  */
 export interface GalleryFilters {
   search: string;
@@ -56,7 +56,7 @@ const DEFAULT_FILTERS: GalleryFilters = {
 };
 
 /**
- * Constant definition representing gallery keys.
+ * Exported constant defining parameters and fields for gallery keys configurations.
  */
 export const galleryKeys = {
   all: ["theme-gallery"] as const,
@@ -67,7 +67,8 @@ export const galleryKeys = {
 };
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for theme gallery view model.
+ * React hook/ViewModel orchestrating state and data flows for theme gallery view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useThemeGalleryViewModel() {
   const { themeMarketplaceRepository } = customizationContainer;

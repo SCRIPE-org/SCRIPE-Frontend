@@ -1,7 +1,8 @@
 import type { HubActivitySummaryModel } from "../../data/models/HubActivityModels";
 
 /**
- * Interface defining operations for the HubActivity network service.
+ * Http API network service for i hub activity.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IHubActivityService {
   getHubSummary(): Promise<HubActivitySummaryModel>;

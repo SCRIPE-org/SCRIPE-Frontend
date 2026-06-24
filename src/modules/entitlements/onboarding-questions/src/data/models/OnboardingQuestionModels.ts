@@ -1,5 +1,5 @@
 /**
- * Interface structure detailing the properties and attributes of Answer Option Model.
+ * Interface defining property specifications, keys types, and structural contract rules for answer option model.
  */
 export interface AnswerOptionModel {
   id: string;
@@ -15,7 +15,7 @@ export interface AnswerOptionModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Onboarding Question List Model.
+ * Interface defining property specifications, keys types, and structural contract rules for onboarding question list model.
  */
 export interface OnboardingQuestionListModel {
   id: string;
@@ -32,7 +32,7 @@ export interface OnboardingQuestionListModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Onboarding Question Detail Model.
+ * Interface defining property specifications, keys types, and structural contract rules for onboarding question detail model.
  */
 export interface OnboardingQuestionDetailModel extends OnboardingQuestionListModel {
   minSelections: number;
@@ -47,7 +47,7 @@ export interface OnboardingQuestionDetailModel extends OnboardingQuestionListMod
 }
 
 /**
- * Interface structure detailing the properties and attributes of Paged Onboarding Questions Model.
+ * Interface defining property specifications, keys types, and structural contract rules for paged onboarding questions model.
  */
 export interface PagedOnboardingQuestionsModel {
   items: OnboardingQuestionListModel[];

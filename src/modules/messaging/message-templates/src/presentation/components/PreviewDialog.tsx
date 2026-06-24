@@ -27,7 +27,8 @@ interface PreviewDialogProps {
 }
 
 /**
- * React presentation component representing the preview dialog UI element.
+ * Presentation UI component rendering the preview dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function PreviewDialog({ open, onOpenChange, result, isLoading }: PreviewDialogProps) {
   const { t } = useI18n();

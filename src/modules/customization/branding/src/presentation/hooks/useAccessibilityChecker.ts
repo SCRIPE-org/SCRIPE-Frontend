@@ -21,16 +21,16 @@ import type { StudioDraftProps as StudioDraft } from "../../domain/entities/Stud
 
 // ── Types ─────────────────────────────────────────────
 /**
- * Type declaration definition describing the schema of check severity.
+ * Exported type defining parameters and fields for check severity configurations.
  */
 export type CheckSeverity = "pass" | "warn" | "fail" | "info";
 /**
- * Type declaration definition describing the schema of check category.
+ * Exported type defining parameters and fields for check category configurations.
  */
 export type CheckCategory = "contrast" | "target" | "overlay" | "motion";
 
 /**
- * Interface structure detailing the properties and attributes of Accessibility Check.
+ * Interface defining property specifications, keys types, and structural contract rules for accessibility check.
  */
 export interface AccessibilityCheck {
   id: string;
@@ -48,7 +48,7 @@ export interface AccessibilityCheck {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Accessibility Summary.
+ * Interface defining property specifications, keys types, and structural contract rules for accessibility summary.
  */
 export interface AccessibilitySummary {
   pass: number;
@@ -59,7 +59,7 @@ export interface AccessibilitySummary {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Accessibility Result.
+ * Interface defining property specifications, keys types, and structural contract rules for accessibility result.
  */
 export interface AccessibilityResult {
   checks: AccessibilityCheck[];
@@ -224,7 +224,8 @@ function contrastCheck(
 // ── Main Hook ─────────────────────────────────────────
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for accessibility checker.
+ * React hook/ViewModel orchestrating state and data flows for accessibility checker.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult {
   return useMemo(() => {

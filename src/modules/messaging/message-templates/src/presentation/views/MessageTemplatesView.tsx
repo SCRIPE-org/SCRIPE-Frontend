@@ -31,7 +31,8 @@ const CATEGORY_COLORS: Record<TemplateCategory, { bg: string; text: string }> = 
 };
 
 /**
- * React presentation component representing the message templates view UI element.
+ * Presentation UI component rendering the message templates view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function MessageTemplatesView() {
   const router = useRouter();

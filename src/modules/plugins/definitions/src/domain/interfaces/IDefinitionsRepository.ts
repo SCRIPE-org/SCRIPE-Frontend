@@ -25,14 +25,15 @@ export interface CreateDefinitionRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update Definition Request.
+ * Interface defining property specifications, keys types, and structural contract rules for update definition request.
  */
 export interface UpdateDefinitionRequest extends Partial<CreateDefinitionRequest> {
   id: string;
 }
 
 /**
- * Interface defining repository methods for managing Definitions data access.
+ * Repository layer implementing client request queries for i definitions.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IDefinitionsRepository {
   getAll(): Promise<PluginDefinition[]>;

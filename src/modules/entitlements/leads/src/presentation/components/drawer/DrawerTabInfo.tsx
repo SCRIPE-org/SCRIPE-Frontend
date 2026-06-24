@@ -43,7 +43,8 @@ interface TabInfoProps {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 /**
- * React presentation component representing the drawer tab info UI element.
+ * Presentation UI component rendering the drawer tab info.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function DrawerTabInfo({
   lead,

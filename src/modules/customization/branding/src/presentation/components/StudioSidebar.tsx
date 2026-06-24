@@ -93,7 +93,8 @@ const TABS: { id: StudioPanel; icon: typeof Layout; labelKey: string; section?: 
 ];
 
 /**
- * React presentation component representing the studio sidebar UI element.
+ * Presentation UI component rendering the studio sidebar.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function StudioSidebar(props: StudioSidebarProps) {
   const { t } = useI18n();

@@ -10,7 +10,8 @@ interface TabGroupProps {
 }
 
 /**
- * React presentation component representing the tab group UI element.
+ * Presentation UI component rendering the tab group.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function TabGroup({ tabs }: TabGroupProps) {
   const [activeTab, setActiveTab] = useState(0);

@@ -5,7 +5,8 @@
 export type ConsentAction = "Granted" | "Withdrawn";
 
 /**
- * Interface structure detailing the properties and attributes of Consent Status Data.
+ * Domain model representing a Consent Status Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ConsentStatusData {
   purposeId: string;
@@ -18,7 +19,8 @@ export interface ConsentStatusData {
 }
 
 /**
- * Domain entity class representing a Consent Status.
+ * Domain model representing a Consent Status structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class ConsentStatus {
   constructor(private readonly data: ConsentStatusData) {}
@@ -54,7 +56,8 @@ export class ConsentStatus {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Record Consent Request.
+ * Domain model representing a Record Consent Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface RecordConsentRequest {
   purposeId: string;
@@ -64,7 +67,8 @@ export interface RecordConsentRequest {
 }
 
 /**
- * Domain entity class representing a Consent Analytics.
+ * Domain model representing a Consent Analytics structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class ConsentAnalytics {
   constructor(private readonly data: any) {}

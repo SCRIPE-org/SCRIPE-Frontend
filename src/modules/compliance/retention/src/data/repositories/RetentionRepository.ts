@@ -10,7 +10,8 @@ import type { CreateRetentionPolicyRequest } from "../../data/models/RetentionMo
 import { RetentionMapper } from "../mappers/RetentionMapper";
 
 /**
- * Repository implementation for managing database operations on Retention resources.
+ * Repository layer implementing client request queries for retention.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class RetentionRepository implements IRetentionRepository {
   constructor(private readonly service: IRetentionService) {}

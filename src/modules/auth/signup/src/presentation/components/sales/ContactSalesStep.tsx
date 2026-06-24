@@ -33,7 +33,8 @@ interface ContactSalesStepProps {
 }
 
 /**
- * React presentation component representing the contact sales step UI element.
+ * Presentation UI component rendering the contact sales step.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
   const { t, direction } = useI18n();

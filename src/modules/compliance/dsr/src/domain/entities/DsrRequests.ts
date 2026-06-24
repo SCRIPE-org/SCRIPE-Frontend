@@ -13,7 +13,8 @@ export interface SubmitDsrRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Review Dsr Request.
+ * Domain model representing a Review Dsr Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ReviewDsrRequest {
   isApproved: boolean;
@@ -21,7 +22,8 @@ export interface ReviewDsrRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Dsr List Params.
+ * Domain model representing a Dsr List Params structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface DsrListParams {
   page?: number;

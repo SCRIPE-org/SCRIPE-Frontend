@@ -20,7 +20,8 @@ import { OAuthAppCard, OAuthAppItem } from "../components/OAuthAppCard";
 import { NewSecretDialog } from "../components/NewSecretDialog";
 
 /**
- * React presentation component representing the o auth apps view UI element.
+ * Presentation UI component rendering the o auth apps view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function OAuthAppsView() {
   useModuleLocales(() => import("../../../locales"), "oauth-apps");

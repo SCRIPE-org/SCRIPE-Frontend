@@ -20,7 +20,8 @@ import { z } from "zod";
 // Mirrors OnboardingAnswerOptionConditionDto. Evaluated entirely client-side so
 // changing an earlier answer instantly reshapes which options are visible.
 /**
- * Constant definition representing onboarding answer option condition schema.
+ * Domain model representing a Onboarding Answer Option Condition Schema structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const OnboardingAnswerOptionConditionSchema = z.object({
   dependsOnQuestionKey: z.string(),
@@ -30,7 +31,8 @@ export const OnboardingAnswerOptionConditionSchema = z.object({
 });
 
 /**
- * Constant definition representing onboarding answer option schema.
+ * Domain model representing a Onboarding Answer Option Schema structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const OnboardingAnswerOptionSchema = z.object({
   value: z.string(),
@@ -48,7 +50,8 @@ export const OnboardingAnswerOptionSchema = z.object({
 });
 
 /**
- * Constant definition representing onboarding question schema.
+ * Domain model representing a Onboarding Question Schema structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const OnboardingQuestionSchema = z.object({
   key: z.string(),
@@ -70,7 +73,8 @@ export const OnboardingQuestionSchema = z.object({
 });
 
 /**
- * Constant definition representing onboarding flow schema.
+ * Domain model representing a Onboarding Flow Schema structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const OnboardingFlowSchema = z.object({
   questions: z.array(OnboardingQuestionSchema),
@@ -80,7 +84,8 @@ export const OnboardingFlowSchema = z.object({
 // Mirrors OnboardingRecommendationDto (data-driven engine). The two diagnostic
 // fields (tierKey, isSelfService) are additive and optional for resilience.
 /**
- * Constant definition representing onboarding recommendation schema.
+ * Domain model representing a Onboarding Recommendation Schema structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const OnboardingRecommendationSchema = z.object({
   recommendedEditionId: z.string(),
@@ -96,7 +101,8 @@ export const OnboardingRecommendationSchema = z.object({
 // Mirrors GetOnboardingRecommendationQuery { CategoryId?, Answers[], Lang } where
 // each AnswerInput is { QuestionKey, SelectedValues[] }.
 /**
- * Constant definition representing onboarding answer input schema.
+ * Domain model representing a Onboarding Answer Input Schema structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const OnboardingAnswerInputSchema = z.object({
   questionKey: z.string(),
@@ -104,7 +110,8 @@ export const OnboardingAnswerInputSchema = z.object({
 });
 
 /**
- * Constant definition representing signup recommendation request schema.
+ * Domain model representing a Signup Recommendation Request Schema structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const SignupRecommendationRequestSchema = z.object({
   categoryId: z.string().nullable().optional(),
@@ -115,7 +122,8 @@ export const SignupRecommendationRequestSchema = z.object({
 // ─── Welcome + trust content ───────────────────────────────────────────────────
 // Mirrors SignupWelcomeContentDto + SignupTrustMarkDto + SignupCustomerLogoDto.
 /**
- * Constant definition representing welcome trust mark schema.
+ * Domain model representing a Welcome Trust Mark Schema structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const WelcomeTrustMarkSchema = z.object({
   key: z.string(),
@@ -126,7 +134,8 @@ export const WelcomeTrustMarkSchema = z.object({
 });
 
 /**
- * Constant definition representing welcome customer logo schema.
+ * Domain model representing a Welcome Customer Logo Schema structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const WelcomeCustomerLogoSchema = z.object({
   key: z.string(),
@@ -135,7 +144,8 @@ export const WelcomeCustomerLogoSchema = z.object({
 });
 
 /**
- * Constant definition representing welcome content schema.
+ * Domain model representing a Welcome Content Schema structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const WelcomeContentSchema = z.object({
   headline: z.string(),
@@ -149,42 +159,52 @@ export const WelcomeContentSchema = z.object({
 
 // ─── Inferred types ────────────────────────────────────────────────────────────
 /**
- * Type declaration definition describing the schema of onboarding answer option condition.
+ * Domain model representing a Onboarding Answer Option Condition structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type OnboardingAnswerOptionCondition = z.infer<typeof OnboardingAnswerOptionConditionSchema>;
 /**
- * Type declaration definition describing the schema of onboarding answer option.
+ * Domain model representing a Onboarding Answer Option structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type OnboardingAnswerOption = z.infer<typeof OnboardingAnswerOptionSchema>;
 /**
- * Type declaration definition describing the schema of onboarding question.
+ * Domain model representing a Onboarding Question structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type OnboardingQuestion = z.infer<typeof OnboardingQuestionSchema>;
 /**
- * Type declaration definition describing the schema of onboarding flow.
+ * Domain model representing a Onboarding Flow structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type OnboardingFlow = z.infer<typeof OnboardingFlowSchema>;
 /**
- * Type declaration definition describing the schema of onboarding recommendation.
+ * Domain model representing a Onboarding Recommendation structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type OnboardingRecommendation = z.infer<typeof OnboardingRecommendationSchema>;
 /**
- * Type declaration definition describing the schema of onboarding answer input.
+ * Domain model representing a Onboarding Answer Input structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type OnboardingAnswerInput = z.infer<typeof OnboardingAnswerInputSchema>;
 /**
- * Type declaration definition describing the schema of signup recommendation request.
+ * Domain model representing a Signup Recommendation Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type SignupRecommendationRequest = z.infer<typeof SignupRecommendationRequestSchema>;
 /**
- * Type declaration definition describing the schema of welcome trust mark.
+ * Domain model representing a Welcome Trust Mark structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type WelcomeTrustMark = z.infer<typeof WelcomeTrustMarkSchema>;
 /**
- * Type declaration definition describing the schema of welcome customer logo.
+ * Domain model representing a Welcome Customer Logo structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type WelcomeCustomerLogo = z.infer<typeof WelcomeCustomerLogoSchema>;
 /**
- * Type declaration definition describing the schema of welcome content.
+ * Domain model representing a Welcome Content structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type WelcomeContent = z.infer<typeof WelcomeContentSchema>;

@@ -19,7 +19,7 @@ import {
 
 // ─── Types ──────────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Attachment File.
+ * Interface defining property specifications, keys types, and structural contract rules for attachment file.
  */
 export interface AttachmentFile {
   id: string;
@@ -35,7 +35,7 @@ export interface AttachmentFile {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Attachment Uploader Props.
+ * Interface defining property specifications, keys types, and structural contract rules for attachment uploader props.
  */
 export interface AttachmentUploaderProps {
   attachments: AttachmentFile[];
@@ -67,7 +67,8 @@ function formatFileSize(bytes: number): string {
 
 // ─── Main ───────────────────────────────────────────────────
 /**
- * React presentation component representing the attachment uploader UI element.
+ * Presentation UI component rendering the attachment uploader.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function AttachmentUploader({
   attachments,

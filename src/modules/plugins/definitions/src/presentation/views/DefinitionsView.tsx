@@ -84,7 +84,8 @@ function StatCard({ label, value, icon, color }: StatCardProps) {
 // ── Main View ─────────────────────────────────────────────────────────────────
 
 /**
- * React presentation component representing the definitions view UI element.
+ * Presentation UI component rendering the definitions view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DefinitionsView() {
   useModuleLocales(() => import("../../../locales"), "plugins-definitions");

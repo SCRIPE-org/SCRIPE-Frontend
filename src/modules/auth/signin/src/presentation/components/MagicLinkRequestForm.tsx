@@ -16,7 +16,8 @@ interface MagicLinkRequestFormProps {
 }
 
 /**
- * React presentation component representing the magic link request form UI element.
+ * Presentation UI component rendering the magic link request form.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function MagicLinkRequestForm({
   isLoading,

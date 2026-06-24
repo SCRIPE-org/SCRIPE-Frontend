@@ -21,7 +21,8 @@ interface TenantSuspendedViewProps {
 }
 
 /**
- * React presentation component representing the tenant suspended view UI element.
+ * Presentation UI component rendering the tenant suspended view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function TenantSuspendedView({ branding }: TenantSuspendedViewProps) {
   useModuleLocales(() => import("../../../locales"), "signin");
@@ -96,7 +97,8 @@ export function TenantSuspendedView({ branding }: TenantSuspendedViewProps) {
 // ─── Not Found View ───────────────────────────────────────
 
 /**
- * React presentation component representing the tenant not found view UI element.
+ * Presentation UI component rendering the tenant not found view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function TenantNotFoundView() {
   useModuleLocales(() => import("../../../locales"), "signin");

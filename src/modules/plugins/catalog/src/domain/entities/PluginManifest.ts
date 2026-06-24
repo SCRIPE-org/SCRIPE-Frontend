@@ -1,5 +1,6 @@
 /**
- * Interface structure detailing the properties and attributes of Plugin Manifest Entry Point.
+ * Domain model representing a Plugin Manifest Entry Point structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PluginManifestEntryPoint {
   main?: string;
@@ -8,7 +9,8 @@ export interface PluginManifestEntryPoint {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Plugin Manifest Menu Item.
+ * Domain model representing a Plugin Manifest Menu Item structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PluginManifestMenuItem {
   slug: string;
@@ -20,7 +22,8 @@ export interface PluginManifestMenuItem {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Plugin Manifest Webhooks.
+ * Domain model representing a Plugin Manifest Webhooks structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PluginManifestWebhooks {
   install?: string;
@@ -29,7 +32,8 @@ export interface PluginManifestWebhooks {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Plugin Manifest Pricing.
+ * Domain model representing a Plugin Manifest Pricing structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PluginManifestPricing {
   model: "free" | "paid" | "freemium";
@@ -39,7 +43,8 @@ export interface PluginManifestPricing {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Plugin Manifest.
+ * Domain model representing a Plugin Manifest structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PluginManifest {
   key: string;
@@ -61,7 +66,8 @@ export interface PluginManifest {
 }
 
 /**
- * Utility function executing operational rules for parse plugin manifest.
+ * Domain model representing a parse Plugin Manifest structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export function parsePluginManifest(json: string): PluginManifest | null {
   try {

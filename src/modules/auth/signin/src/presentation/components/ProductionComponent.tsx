@@ -16,7 +16,7 @@ import { Button } from "@core/ui/button";
 import Link from "next/link";
 
 /**
- * Interface structure detailing the properties and attributes of Production Component Props.
+ * Interface defining property specifications, keys types, and structural contract rules for production component props.
  */
 export interface ProductionComponentProps {
   type: string;
@@ -30,7 +30,8 @@ export interface ProductionComponentProps {
 }
 
 /**
- * React presentation component representing the production component UI element.
+ * Presentation UI component rendering the production component.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function ProductionComponent({
   type,

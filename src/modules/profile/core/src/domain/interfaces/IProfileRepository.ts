@@ -11,7 +11,7 @@ import type { ExternalLogin } from "../entities/ExternalLogin";
 import type { LinkExternalLoginDto } from "../types/ProfileTypes";
 
 /**
- * Interface structure detailing the properties and attributes of Update Profile Request.
+ * Interface defining property specifications, keys types, and structural contract rules for update profile request.
  */
 export interface UpdateProfileRequest {
   firstName: string;
@@ -20,7 +20,7 @@ export interface UpdateProfileRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Change Password Request.
+ * Interface defining property specifications, keys types, and structural contract rules for change password request.
  */
 export interface ChangePasswordRequest {
   currentPassword: string;
@@ -29,7 +29,7 @@ export interface ChangePasswordRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Enable2 F A Result.
+ * Interface defining property specifications, keys types, and structural contract rules for enable2 f a result.
  */
 export interface Enable2FAResult {
   qrCodeDataUri: string;
@@ -38,7 +38,8 @@ export interface Enable2FAResult {
 }
 
 /**
- * Interface defining repository methods for managing Profile data access.
+ * Repository layer implementing client request queries for i profile.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IProfileRepository {
   // Profile

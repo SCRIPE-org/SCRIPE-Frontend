@@ -270,7 +270,7 @@ export interface SignupWizardViewModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Use Signup Wizard Args.
+ * Interface defining property specifications, keys types, and structural contract rules for use signup wizard args.
  */
 export interface UseSignupWizardArgs {
   initialCountry?: string | null;
@@ -278,7 +278,8 @@ export interface UseSignupWizardArgs {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for signup wizard.
+ * React hook/ViewModel orchestrating state and data flows for signup wizard.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
  */
 export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewModel {
   const { initialCountry, initialCurrency } = args || {};

@@ -21,7 +21,8 @@ interface BillingCycleToggleProps {
 }
 
 /**
- * React presentation component representing the billing cycle toggle UI element.
+ * Presentation UI component rendering the billing cycle toggle.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function BillingCycleToggle({ value, onChange, savingsPercent }: BillingCycleToggleProps) {
   const { t } = useI18n();

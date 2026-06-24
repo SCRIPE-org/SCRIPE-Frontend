@@ -19,7 +19,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Loader2, PlusCircle } from "lucide-react";
 
 /**
- * Interface structure detailing the properties and attributes of Create Lead Form Data.
+ * Interface defining property specifications, keys types, and structural contract rules for create lead form data.
  */
 export interface CreateLeadFormData {
   companyName: string;
@@ -50,7 +50,8 @@ const emptyForm: CreateLeadFormData = {
 };
 
 /**
- * React presentation component representing the create lead dialog UI element.
+ * Presentation UI component rendering the create lead dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function CreateLeadDialog({
   open,

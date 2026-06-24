@@ -10,7 +10,8 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 /**
- * React presentation component representing the categories view UI element.
+ * Presentation UI component rendering the categories view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function CategoriesView() {
   useModuleLocales(() => import("../../../locales"), "marketplace-categories");

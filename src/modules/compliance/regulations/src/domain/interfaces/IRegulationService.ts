@@ -7,7 +7,8 @@ import type {
 } from "../entities/Regulation";
 
 /**
- * Interface defining operations for the Regulation network service.
+ * Http API network service for i regulation.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IRegulationService {
   getAll(): Promise<RegulationProfileModel[]>;

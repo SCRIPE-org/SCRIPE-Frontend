@@ -22,7 +22,8 @@ interface OnboardingQuestionsCatalogViewProps {
 }
 
 /**
- * React presentation component representing the onboarding questions catalog view UI element.
+ * Presentation UI component rendering the onboarding questions catalog view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function OnboardingQuestionsCatalogView({
   vm,

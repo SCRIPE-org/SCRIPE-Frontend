@@ -12,7 +12,8 @@ import type { SendNotificationPayload } from "../../domain/entities/Notification
 import { NotificationMapper } from "../mappers/NotificationMapper";
 
 /**
- * Repository implementation for managing database operations on NotificationSender resources.
+ * Repository layer implementing client request queries for notification sender.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class NotificationSenderRepository implements INotificationSenderRepository {
   constructor(private readonly service: INotificationSenderService) {}

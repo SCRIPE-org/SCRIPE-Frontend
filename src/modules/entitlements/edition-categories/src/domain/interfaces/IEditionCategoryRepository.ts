@@ -6,7 +6,8 @@ import type {
 } from "../entities/EditionCategoryRequests";
 
 /**
- * Interface defining repository methods for managing EditionCategory data access.
+ * Repository layer implementing client request queries for i edition category.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IEditionCategoryRepository {
   getAll(params: PaginationParams): Promise<PagedResult<EditionCategory>>;

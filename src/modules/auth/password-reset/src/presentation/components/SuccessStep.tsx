@@ -13,7 +13,8 @@ interface SuccessStepProps {
 }
 
 /**
- * React presentation component representing the success step UI element.
+ * Presentation UI component rendering the success step.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function SuccessStep({ vm }: SuccessStepProps) {
   const { t } = useI18n();

@@ -18,7 +18,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@core/ui/button";
 
 /**
- * React presentation component representing the connect onboarding view UI element.
+ * Presentation UI component rendering the connect onboarding view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ConnectOnboardingView() {
   useModuleLocales(() => import("../../../locales"), "stripe-connect");

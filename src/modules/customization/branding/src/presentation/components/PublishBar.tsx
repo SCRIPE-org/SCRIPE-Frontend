@@ -59,7 +59,8 @@ const DEVICES: { id: DeviceSize; icon: typeof Monitor; labelKey: string }[] = [
 ];
 
 /**
- * React presentation component representing the publish bar UI element.
+ * Presentation UI component rendering the publish bar.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function PublishBar({
   isDirty,

@@ -1,5 +1,6 @@
 /**
- * Interface structure detailing the properties and attributes of Create Edition Category Request.
+ * Domain model representing a Create Edition Category Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CreateEditionCategoryRequest {
   name: string;
@@ -10,7 +11,8 @@ export interface CreateEditionCategoryRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update Edition Category Request.
+ * Domain model representing a Update Edition Category Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface UpdateEditionCategoryRequest {
   name?: string;

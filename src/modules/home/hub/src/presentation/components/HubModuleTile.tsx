@@ -53,7 +53,7 @@ const ADMIN_GRADIENTS: Record<string, { grad: string; glow: string }> = {
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Hub Module Tile Props.
+ * Interface defining property specifications, keys types, and structural contract rules for hub module tile props.
  */
 export interface HubModuleTileProps {
   name: string;
@@ -99,7 +99,8 @@ const DIMS = {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 /**
- * React presentation component representing the hub module tile UI element.
+ * Presentation UI component rendering the hub module tile.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function HubModuleTile({
   name,

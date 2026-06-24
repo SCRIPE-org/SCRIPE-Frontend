@@ -36,7 +36,7 @@ import { en as pageRevenueAnalytics } from "../pages/revenue-analytics/en";
 import { mergeAll } from "./utils";
 
 /**
- * Constant definition representing all docs en.
+ * Exported constant defining parameters and fields for all docs en configurations.
  */
 export const allDocsEn: Record<string, any> = mergeAll(
   common,

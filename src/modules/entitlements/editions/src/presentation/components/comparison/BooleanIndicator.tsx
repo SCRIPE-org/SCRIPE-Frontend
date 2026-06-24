@@ -10,7 +10,8 @@ interface BooleanIndicatorProps {
 }
 
 /**
- * React presentation component representing the boolean indicator UI element.
+ * Presentation UI component rendering the boolean indicator.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function BooleanIndicator({ value }: BooleanIndicatorProps) {
   return value ? (

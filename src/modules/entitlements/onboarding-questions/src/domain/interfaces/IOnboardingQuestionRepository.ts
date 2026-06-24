@@ -7,7 +7,7 @@ import type {
 import type { PagedResult } from "@core/interfaces/common.interface";
 
 /**
- * Interface structure detailing the properties and attributes of Onboarding Questions List Params.
+ * Interface defining property specifications, keys types, and structural contract rules for onboarding questions list params.
  */
 export interface OnboardingQuestionsListParams {
   page?: number;
@@ -18,7 +18,8 @@ export interface OnboardingQuestionsListParams {
 }
 
 /**
- * Interface defining repository methods for managing OnboardingQuestion data access.
+ * Repository layer implementing client request queries for i onboarding question.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IOnboardingQuestionRepository {
   getAll(params: OnboardingQuestionsListParams): Promise<PagedResult<OnboardingQuestion>>;

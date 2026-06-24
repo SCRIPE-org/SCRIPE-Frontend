@@ -8,7 +8,7 @@ import { toast } from "@core/ui/use-toast";
 import type { ComplianceReport } from "../../domain/entities/ComplianceReport";
 
 /**
- * Type declaration definition describing the schema of export format.
+ * Exported type defining parameters and fields for export format configurations.
  */
 export type ExportFormat = "csv" | "json" | "xlsx" | "pdf";
 
@@ -20,7 +20,8 @@ const FORMAT_EXTENSIONS: Record<ExportFormat, string> = {
 };
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for report detail view model.
+ * React hook/ViewModel orchestrating state and data flows for report detail view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useReportDetailViewModel(id: string) {
   const { t } = useI18n();

@@ -10,7 +10,7 @@
 // ===== JSON Shapes (API contracts) =====
 
 /**
- * Interface structure detailing the properties and attributes of Email Recipient Json.
+ * Interface defining property specifications, keys types, and structural contract rules for email recipient json.
  */
 export interface EmailRecipientJson {
   id: string;
@@ -20,7 +20,7 @@ export interface EmailRecipientJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Sent Email Json.
+ * Interface defining property specifications, keys types, and structural contract rules for sent email json.
  */
 export interface SentEmailJson {
   id: string;
@@ -43,7 +43,7 @@ export interface SentEmailJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Sent Email List Response Json.
+ * Interface defining property specifications, keys types, and structural contract rules for sent email list response json.
  */
 export interface SentEmailListResponseJson {
   items: SentEmailJson[];
@@ -51,7 +51,7 @@ export interface SentEmailListResponseJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Email Template Json.
+ * Interface defining property specifications, keys types, and structural contract rules for email template json.
  */
 export interface EmailTemplateJson {
   id: string;
@@ -71,7 +71,7 @@ export interface EmailTemplateJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Email Template List Response Json.
+ * Interface defining property specifications, keys types, and structural contract rules for email template list response json.
  */
 export interface EmailTemplateListResponseJson {
   items: EmailTemplateJson[];
@@ -79,7 +79,7 @@ export interface EmailTemplateListResponseJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Send Manual Email Json.
+ * Interface defining property specifications, keys types, and structural contract rules for send manual email json.
  */
 export interface SendManualEmailJson {
   recipientType: string;
@@ -98,7 +98,7 @@ export interface SendManualEmailJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Attachment Upload Result Json.
+ * Interface defining property specifications, keys types, and structural contract rules for attachment upload result json.
  */
 export interface AttachmentUploadResultJson {
   fileName: string;

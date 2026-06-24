@@ -66,7 +66,8 @@ const DEFAULT_FILTERS: ThemeFilterState = {
 };
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for theme marketplace.
+ * React hook/ViewModel orchestrating state and data flows for theme marketplace.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useThemeMarketplace(): UseThemeMarketplaceReturn {
   const { themeMarketplaceRepository } = customizationContainer;

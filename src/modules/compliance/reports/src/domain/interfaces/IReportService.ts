@@ -3,7 +3,7 @@ import type { PagedResult } from "@core/interfaces/common.interface";
 import type { GenerateReportRequest } from "../entities/ComplianceReport";
 
 /**
- * Interface structure detailing the properties and attributes of Report Params.
+ * Interface defining property specifications, keys types, and structural contract rules for report params.
  */
 export interface ReportParams {
   page?: number;
@@ -11,7 +11,8 @@ export interface ReportParams {
 }
 
 /**
- * Interface defining operations for the Report network service.
+ * Http API network service for i report.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IReportService {
   getAll(params: ReportParams): Promise<PagedResult<ReportModel>>;

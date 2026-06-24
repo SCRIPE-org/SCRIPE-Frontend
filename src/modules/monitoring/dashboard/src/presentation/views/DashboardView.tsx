@@ -83,7 +83,8 @@ const connectionColors = {
 } as const;
 
 /**
- * React presentation component representing the dashboard view UI element.
+ * Presentation UI component rendering the dashboard view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DashboardView() {
   useModuleLocales(() => import("../../../locales"), "dashboard");

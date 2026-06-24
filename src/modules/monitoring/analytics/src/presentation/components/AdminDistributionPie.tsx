@@ -35,7 +35,7 @@ interface Props {
 }
 
 /**
- * Constant definition representing admin distribution pie.
+ * Exported constant defining parameters and fields for admin distribution pie configurations.
  */
 export const AdminDistributionPie = memo(function AdminDistributionPie({
   data,

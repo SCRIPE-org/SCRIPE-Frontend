@@ -10,7 +10,7 @@
 // ===== JSON Shapes (API contracts) =====
 
 /**
- * Interface structure detailing the properties and attributes of Tenant Json.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant json.
  */
 export interface TenantJson {
   id: string;
@@ -41,7 +41,7 @@ export interface TenantJson {
   adminEmail?: string;
 }
 /**
- * Interface structure detailing the properties and attributes of Tenant Tree Node Json.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant tree node json.
  */
 export interface TenantTreeNodeJson {
   id: string | null; // null for "System" pseudo-tenant (Super Admin)
@@ -60,7 +60,7 @@ export interface TenantTreeNodeJson {
   children: TenantTreeNodeJson[];
 }
 /**
- * Interface structure detailing the properties and attributes of Tenant List Response Json.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant list response json.
  */
 export interface TenantListResponseJson {
   items: TenantJson[];
@@ -72,7 +72,7 @@ export interface TenantListResponseJson {
   hasPreviousPage: boolean;
 }
 /**
- * Interface structure detailing the properties and attributes of Create Tenant Json.
+ * Interface defining property specifications, keys types, and structural contract rules for create tenant json.
  */
 export interface CreateTenantJson {
   name: string;
@@ -101,7 +101,7 @@ export interface CreateTenantResultJson {
   subscriptionId?: string;
 }
 /**
- * Interface structure detailing the properties and attributes of Update Tenant Json.
+ * Interface defining property specifications, keys types, and structural contract rules for update tenant json.
  */
 export interface UpdateTenantJson {
   name?: string;
@@ -111,7 +111,7 @@ export interface UpdateTenantJson {
 }
 // ===== Model Classes =====
 /**
- * Domain entity class representing a Tenant Model.
+ * Exported class defining parameters and fields for tenant model configurations.
  */
 export class TenantModel {
   constructor(
@@ -185,7 +185,7 @@ export class TenantModel {
   }
 }
 /**
- * Domain entity class representing a Tenant Tree Node Model.
+ * Exported class defining parameters and fields for tenant tree node model configurations.
  */
 export class TenantTreeNodeModel {
   constructor(
@@ -242,7 +242,7 @@ export class TenantTreeNodeModel {
   }
 }
 /**
- * Domain entity class representing a Create Tenant Model.
+ * Exported class defining parameters and fields for create tenant model configurations.
  */
 export class CreateTenantModel {
   constructor(
@@ -279,7 +279,7 @@ export class CreateTenantModel {
   }
 }
 /**
- * Domain entity class representing a Update Tenant Model.
+ * Exported class defining parameters and fields for update tenant model configurations.
  */
 export class UpdateTenantModel {
   constructor(

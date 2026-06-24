@@ -1,4 +1,4 @@
 /**
- * Type declaration definition describing the schema of plugin definition model placeholder.
+ * Exported type defining parameters and fields for plugin definition model placeholder configurations.
  */
 export type PluginDefinitionModelPlaceholder = { id: string };

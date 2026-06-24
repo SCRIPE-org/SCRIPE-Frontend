@@ -19,7 +19,8 @@ interface GeneratedSecretAlertProps {
 }
 
 /**
- * React presentation component representing the generated secret alert UI element.
+ * Presentation UI component rendering the generated secret alert.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function GeneratedSecretAlert({
   generatedSecret,

@@ -16,7 +16,8 @@ interface BulkActionBarProps {
 }
 
 /**
- * React presentation component representing the bulk action bar UI element.
+ * Presentation UI component rendering the bulk action bar.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function BulkActionBar({
   count,

@@ -48,7 +48,7 @@ const BAND_VARIANTS: Record<string, any> = {
 };
 
 /**
- * Interface structure detailing the properties and attributes of Signup Shell Props.
+ * Interface defining property specifications, keys types, and structural contract rules for signup shell props.
  */
 export interface SignupShellProps {
   /** Main stage content (the current phase). */
@@ -67,7 +67,8 @@ export interface SignupShellProps {
 }
 
 /**
- * React presentation component representing the signup shell UI element.
+ * Presentation UI component rendering the signup shell.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function SignupShell({ children, progressSlot, phaseLabel }: SignupShellProps) {
   const { tokens, theme, toggleTheme } = useSignupTheme();

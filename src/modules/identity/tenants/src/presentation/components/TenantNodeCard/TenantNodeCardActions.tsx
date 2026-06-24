@@ -22,7 +22,8 @@ interface TenantNodeCardActionsProps {
 }
 
 /**
- * React presentation component representing the tenant node card actions UI element.
+ * Presentation UI component rendering the tenant node card actions.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function TenantNodeCardActions({
   node,

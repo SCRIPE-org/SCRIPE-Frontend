@@ -19,7 +19,8 @@ const navItems = [
 ];
 
 /**
- * React presentation component representing the profile nav UI element.
+ * Presentation UI component rendering the profile nav.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ProfileNav() {
   const pathname = usePathname();

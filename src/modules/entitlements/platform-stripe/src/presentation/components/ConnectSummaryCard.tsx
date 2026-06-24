@@ -14,7 +14,8 @@ interface ConnectSummaryCardProps {
 }
 
 /**
- * React presentation component representing the connect summary card UI element.
+ * Presentation UI component rendering the connect summary card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function ConnectSummaryCard({ connectSummary }: ConnectSummaryCardProps) {
   const { t } = useI18n();

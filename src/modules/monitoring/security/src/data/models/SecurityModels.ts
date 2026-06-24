@@ -12,7 +12,7 @@ export interface SecurityEventDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Blocked I P Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for blocked i p dto.
  */
 export interface BlockedIPDto {
   ipAddress: string;
@@ -22,7 +22,7 @@ export interface BlockedIPDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Login Activity Point Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for login activity point dto.
  */
 export interface LoginActivityPointDto {
   date: string;
@@ -31,7 +31,7 @@ export interface LoginActivityPointDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Security Change Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for security change dto.
  */
 export interface SecurityChangeDto {
   id: string;

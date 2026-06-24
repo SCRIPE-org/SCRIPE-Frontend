@@ -9,7 +9,8 @@ import type { FeatureOverrideModel, ResolvedFeatureModel } from "../models/Overr
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 
 /**
- * API service for executing HTTP calls related to Override endpoints.
+ * Http API network service for override.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class OverrideService implements IOverrideService {
   constructor(private readonly api: IApiService) {}

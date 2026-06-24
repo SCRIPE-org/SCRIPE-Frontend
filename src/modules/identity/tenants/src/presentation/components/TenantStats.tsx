@@ -21,7 +21,8 @@ interface TenantStatsProps {
 }
 
 /**
- * React presentation component representing the tenant stats UI element.
+ * Presentation UI component rendering the tenant stats.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
   const { t, direction, isRtl, stats, loading } = useTenantStatsViewModel({ tenantId });

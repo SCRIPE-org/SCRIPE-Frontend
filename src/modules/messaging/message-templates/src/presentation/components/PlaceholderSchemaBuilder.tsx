@@ -32,7 +32,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 
 // ─── Types ──────────────────────────────────────────────────
 /**
- * Type declaration definition describing the schema of placeholder type.
+ * Exported type defining parameters and fields for placeholder type configurations.
  */
 export type PlaceholderType =
   | "text"
@@ -47,7 +47,7 @@ export type PlaceholderType =
   | "color";
 
 /**
- * Interface structure detailing the properties and attributes of Placeholder Field.
+ * Interface defining property specifications, keys types, and structural contract rules for placeholder field.
  */
 export interface PlaceholderField {
   id: string;
@@ -61,7 +61,7 @@ export interface PlaceholderField {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Placeholder Schema Builder Props.
+ * Interface defining property specifications, keys types, and structural contract rules for placeholder schema builder props.
  */
 export interface PlaceholderSchemaBuilderProps {
   fields: PlaceholderField[];
@@ -103,7 +103,8 @@ function extractVariableKeys(text: string): Set<string> {
 
 // ─── Main Component ─────────────────────────────────────────
 /**
- * React presentation component representing the placeholder schema builder UI element.
+ * Presentation UI component rendering the placeholder schema builder.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function PlaceholderSchemaBuilder({
   fields,

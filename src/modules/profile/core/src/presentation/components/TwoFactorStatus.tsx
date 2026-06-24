@@ -20,7 +20,8 @@ interface TwoFactorStatusProps {
 }
 
 /**
- * React presentation component representing the two factor status UI element.
+ * Presentation UI component rendering the two factor status.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function TwoFactorStatus({
   isEnabled,

@@ -284,7 +284,8 @@ function GatewayCardSkeleton() {
 
 // ── Main View ──
 /**
- * React presentation component representing the payment gateway settings view UI element.
+ * Presentation UI component rendering the payment gateway settings view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function PaymentGatewaySettingsView() {
   const { t } = useI18n();

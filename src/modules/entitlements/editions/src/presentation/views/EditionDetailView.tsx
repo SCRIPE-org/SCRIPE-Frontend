@@ -32,7 +32,8 @@ interface EditionDetailViewProps {
 }
 
 /**
- * React presentation component representing the edition detail view UI element.
+ * Presentation UI component rendering the edition detail view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function EditionDetailView({ editionId }: EditionDetailViewProps) {
   useModuleLocales(() => import("../../../locales"), "editions");

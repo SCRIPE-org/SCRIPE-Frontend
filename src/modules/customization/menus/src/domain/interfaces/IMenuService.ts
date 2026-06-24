@@ -16,7 +16,8 @@ import type {
 } from "../entities/MenuItemRequests";
 
 /**
- * Interface defining operations for the Menu network service.
+ * Http API network service for i menu.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IMenuService {
   getAll(): Promise<MenuTreeNode[]>;

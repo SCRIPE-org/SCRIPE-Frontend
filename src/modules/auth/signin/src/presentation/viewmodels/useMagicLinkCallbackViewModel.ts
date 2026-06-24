@@ -28,12 +28,12 @@ import { authContainer } from "@modules/auth/di";
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 /**
- * Type declaration definition describing the schema of magic link verify state.
+ * Exported type defining parameters and fields for magic link verify state configurations.
  */
 export type MagicLinkVerifyState = "verifying" | "success" | "workspace-selection" | "error";
 
 /**
- * Interface structure detailing the properties and attributes of Use Magic Link Callback View Model Return.
+ * Interface defining property specifications, keys types, and structural contract rules for use magic link callback view model return.
  */
 export interface UseMagicLinkCallbackViewModelReturn {
   state: MagicLinkVerifyState;
@@ -43,7 +43,8 @@ export interface UseMagicLinkCallbackViewModelReturn {
 // ─── ViewModel ────────────────────────────────────────────────────────────────
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for magic link callback view model.
+ * React hook/ViewModel orchestrating state and data flows for magic link callback view model.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelReturn {
   const { direction } = useI18n();

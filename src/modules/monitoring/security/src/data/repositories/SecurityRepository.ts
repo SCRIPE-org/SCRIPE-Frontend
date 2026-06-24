@@ -15,7 +15,8 @@ import type {
 import { SecurityMapper } from "../mappers/SecurityMapper";
 
 /**
- * Repository implementation for managing database operations on Security resources.
+ * Repository layer implementing client request queries for security.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class SecurityRepository implements ISecurityRepository {
   constructor(private readonly service: ISecurityService) {}

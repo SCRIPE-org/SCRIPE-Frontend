@@ -4,7 +4,8 @@ import { Card, CardContent } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 
 /**
- * React presentation component representing the payouts loading skeleton UI element.
+ * Presentation UI component rendering the payouts loading skeleton.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function PayoutsLoadingSkeleton() {
   return (

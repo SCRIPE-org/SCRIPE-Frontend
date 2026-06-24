@@ -16,7 +16,8 @@ interface FloatingCompareButtonProps {
 }
 
 /**
- * React presentation component representing the floating compare button UI element.
+ * Presentation UI component rendering the floating compare button.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function FloatingCompareButton({ label, targetRef }: FloatingCompareButtonProps) {
   const [visible, setVisible] = useState(true);

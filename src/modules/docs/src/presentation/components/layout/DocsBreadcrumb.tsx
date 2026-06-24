@@ -10,7 +10,8 @@ interface DocsBreadcrumbProps {
 }
 
 /**
- * React presentation component representing the docs breadcrumb UI element.
+ * Presentation UI component rendering the docs breadcrumb.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DocsBreadcrumb({ slug, categoryTitleKey, pageTitleKey }: DocsBreadcrumbProps) {
   const { t } = useDocsI18n();

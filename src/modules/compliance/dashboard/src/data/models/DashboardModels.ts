@@ -11,7 +11,7 @@ export interface RegulationCoverageModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Dashboard Model.
+ * Interface defining property specifications, keys types, and structural contract rules for dashboard model.
  */
 export interface DashboardModel {
   openDsrCount: number;

@@ -28,7 +28,8 @@ const FORMAT_LABELS: Record<string, string> = {
 };
 
 /**
- * React presentation component representing the export button UI element.
+ * Presentation UI component rendering the export button.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function ExportButton({ onExport, disabled }: ExportButtonProps) {
   const { t } = useI18n();

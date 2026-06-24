@@ -21,7 +21,8 @@ interface CreateTenantSuccessProps {
 }
 
 /**
- * React presentation component representing the create tenant success UI element.
+ * Presentation UI component rendering the create tenant success.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function CreateTenantSuccess({ vm, t, direction }: CreateTenantSuccessProps) {
   const result = vm.result!;

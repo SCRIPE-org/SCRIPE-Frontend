@@ -11,14 +11,16 @@ export interface CreateUserSubscriptionRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Cancel User Subscription Request.
+ * Domain model representing a Cancel User Subscription Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CancelUserSubscriptionRequest {
   reason?: string;
 }
 
 /**
- * Interface structure detailing the properties and attributes of Change Plan Request.
+ * Domain model representing a Change Plan Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ChangePlanRequest {
   newTenantPlanId: string;

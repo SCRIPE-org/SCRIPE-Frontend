@@ -3,7 +3,8 @@ import type { PagedResult } from "@core/interfaces/common.interface";
 import type { DsrListParams, SubmitDsrRequest, ReviewDsrRequest } from "../entities/DsrRequests";
 
 /**
- * Interface defining operations for the Dsr network service.
+ * Http API network service for i dsr.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IDsrService {
   getAll(params: DsrListParams): Promise<PagedResult<DsrModel>>;

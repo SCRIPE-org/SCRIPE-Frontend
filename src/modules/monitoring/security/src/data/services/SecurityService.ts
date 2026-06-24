@@ -15,7 +15,8 @@ import type {
 } from "../../domain/entities/SecurityEntities";
 
 /**
- * API service for executing HTTP calls related to Security endpoints.
+ * Http API network service for security.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class SecurityService implements ISecurityService {
   constructor(private readonly api: IApiService) {}

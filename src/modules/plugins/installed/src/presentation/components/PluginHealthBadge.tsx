@@ -11,7 +11,8 @@ interface PluginHealthBadgeProps {
 }
 
 /**
- * React presentation component representing the plugin health badge UI element.
+ * Presentation UI component rendering the plugin health badge.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function PluginHealthBadge({ passing, lastCheckedAt, className }: PluginHealthBadgeProps) {
   const { t } = useI18n();

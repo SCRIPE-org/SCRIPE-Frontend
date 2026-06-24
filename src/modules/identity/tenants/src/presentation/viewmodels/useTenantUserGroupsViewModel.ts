@@ -76,7 +76,8 @@ export interface TenantUserGroupsViewModelResult {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for tenant user groups view model.
+ * React hook/ViewModel orchestrating state and data flows for tenant user groups view model.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useTenantUserGroupsViewModel({
   tenantId,

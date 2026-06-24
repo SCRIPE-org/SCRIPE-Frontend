@@ -14,12 +14,12 @@ export type { LeadStatus };
 // ── Status config ─────────────────────────────────────────────────────────────
 
 /**
- * Constant definition representing a l l_ s t a t u s e s.
+ * Exported constant defining parameters and fields for a l l_ s t a t u s e s configurations.
  */
 export const ALL_STATUSES: LeadStatus[] = ["New", "Contacted", "Qualified", "Converted", "Closed"];
 
 /**
- * Constant definition representing s t a t u s_ s t y l e s.
+ * Exported constant defining parameters and fields for s t a t u s_ s t y l e s configurations.
  */
 export const STATUS_STYLES: Record<LeadStatus, { badge: string; dot: string; ring: string }> = {
   New: {
@@ -52,7 +52,8 @@ export const STATUS_STYLES: Record<LeadStatus, { badge: string; dot: string; rin
 // ── CopyButton ────────────────────────────────────────────────────────────────
 
 /**
- * React presentation component representing the copy button UI element.
+ * Presentation UI component rendering the copy button.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function CopyButton({ value }: { value: string }) {
   const [copied, setCopied] = useState(false);
@@ -76,7 +77,8 @@ export function CopyButton({ value }: { value: string }) {
 // ── InfoRow ───────────────────────────────────────────────────────────────────
 
 /**
- * React presentation component representing the info row UI element.
+ * Presentation UI component rendering the info row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function InfoRow({
   icon: Icon,
@@ -112,7 +114,8 @@ export function InfoRow({
 // ── SectionCard ───────────────────────────────────────────────────────────────
 
 /**
- * React presentation component representing the section card UI element.
+ * Presentation UI component rendering the section card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function SectionCard({
   title,
@@ -141,7 +144,8 @@ export function SectionCard({
 // ── SkeletonPanel ─────────────────────────────────────────────────────────────
 
 /**
- * React presentation component representing the skeleton panel UI element.
+ * Presentation UI component rendering the skeleton panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function SkeletonPanel() {
   return (

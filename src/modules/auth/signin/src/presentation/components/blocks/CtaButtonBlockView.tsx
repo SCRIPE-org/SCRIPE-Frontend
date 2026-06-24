@@ -15,7 +15,8 @@ const SIZE_CLASS = {
 };
 
 /**
- * React presentation component representing the cta button block view UI element.
+ * Presentation UI component rendering the cta button block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function CtaButtonBlockView({ block }: { block: CtaButtonBlock }) {
   const props = block.props;

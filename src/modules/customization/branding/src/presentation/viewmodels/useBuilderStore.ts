@@ -194,7 +194,8 @@ function pushHistory(state: BuilderState): Partial<BuilderState> {
 
 // ── Store ────────────────────────────────────────────────
 /**
- * Constant definition representing use builder store.
+ * React hook/ViewModel orchestrating state and data flows for builder store.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export const useBuilderStore = create<BuilderState>((set, get) => ({
   // Initial state

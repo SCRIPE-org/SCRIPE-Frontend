@@ -23,7 +23,8 @@ interface ProvisioningStepProps {
 }
 
 /**
- * React presentation component representing the provisioning step UI element.
+ * Presentation UI component rendering the provisioning step.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ProvisioningStep({ wizard }: ProvisioningStepProps) {
   const { t, direction } = useI18n();

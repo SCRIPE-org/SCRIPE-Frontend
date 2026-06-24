@@ -21,7 +21,8 @@ interface BackupCodesDialogProps {
 }
 
 /**
- * React presentation component representing the backup codes dialog UI element.
+ * Presentation UI component rendering the backup codes dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function BackupCodesDialog({
   isOpen,

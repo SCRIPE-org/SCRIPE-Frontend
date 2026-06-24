@@ -15,7 +15,8 @@ interface SubscriptionFeaturesCardProps {
 }
 
 /**
- * React presentation component representing the subscription features card UI element.
+ * Presentation UI component rendering the subscription features card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function SubscriptionFeaturesCard({
   subscription,

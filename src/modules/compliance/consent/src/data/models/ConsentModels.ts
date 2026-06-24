@@ -14,7 +14,7 @@ export interface ConsentStatusModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Consent Analytics Model.
+ * Interface defining property specifications, keys types, and structural contract rules for consent analytics model.
  */
 export interface ConsentAnalyticsModel {
   optInRates: Record<string, number>;

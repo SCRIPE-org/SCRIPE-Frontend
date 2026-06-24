@@ -39,7 +39,8 @@ interface SubscriptionsDistributionChartsProps {
 }
 
 /**
- * React presentation component representing the subscriptions distribution charts UI element.
+ * Presentation UI component rendering the subscriptions distribution charts.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function SubscriptionsDistributionCharts({
   statusDistribution,

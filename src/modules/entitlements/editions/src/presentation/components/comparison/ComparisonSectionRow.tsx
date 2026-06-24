@@ -11,7 +11,8 @@ interface ComparisonSectionRowProps {
 }
 
 /**
- * React presentation component representing the comparison section row UI element.
+ * Presentation UI component rendering the comparison section row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ComparisonSectionRow({ label, colSpan }: ComparisonSectionRowProps) {
   return (

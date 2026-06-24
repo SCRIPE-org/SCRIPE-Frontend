@@ -1,5 +1,5 @@
 /**
- * Constant definition representing zh.
+ * Exported constant defining parameters and fields for zh configurations.
  */
 export const zh = {
   modules: {

@@ -9,7 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core
 import { Info, Copy, Check } from "lucide-react";
 
 /**
- * React presentation component representing the idp metadata section UI element.
+ * Presentation UI component rendering the idp metadata section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function IdpMetadataSection() {
   const { t } = useI18n();

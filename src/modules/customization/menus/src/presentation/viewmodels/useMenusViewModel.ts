@@ -31,7 +31,7 @@ import { customizationContainer } from "@modules/customization/di";
 export type DropPosition = "before" | "inside" | "after";
 
 /**
- * Interface structure detailing the properties and attributes of Drop Target.
+ * Interface defining property specifications, keys types, and structural contract rules for drop target.
  */
 export interface DropTarget {
   nodeId: string;

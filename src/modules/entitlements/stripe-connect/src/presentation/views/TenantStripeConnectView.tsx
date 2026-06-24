@@ -29,7 +29,8 @@ import { StripeAccountKpis } from "../components/StripeAccountKpis";
 import { StripeTransactionsLog } from "../components/StripeTransactionsLog";
 
 /**
- * React presentation component representing the tenant stripe connect view UI element.
+ * Presentation UI component rendering the tenant stripe connect view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function TenantStripeConnectView() {
   useModuleLocales(() => import("../../../locales"), "stripe-connect");

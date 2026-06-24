@@ -9,7 +9,8 @@ import type { ICommissionLedgerService } from "../../domain/interfaces/ICommissi
 import type { CommissionListParams } from "../../domain/interfaces/ICommissionLedgerRepository";
 
 /**
- * API service for executing HTTP calls related to CommissionLedger endpoints.
+ * Http API network service for commission ledger.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class CommissionLedgerService implements ICommissionLedgerService {
   constructor(private readonly api: IApiService) {}

@@ -10,7 +10,8 @@ interface FormOptionsProps {
 }
 
 /**
- * React presentation component representing the form options UI element.
+ * Presentation UI component rendering the form options.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function FormOptions({ staySignedIn, onStaySignedInChange, disabled, t }: FormOptionsProps) {
   return (

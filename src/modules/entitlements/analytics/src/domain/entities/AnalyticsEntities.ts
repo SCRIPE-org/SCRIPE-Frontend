@@ -27,7 +27,8 @@ export interface AnalyticsOverviewData {
 }
 
 /**
- * Domain entity class representing a Analytics Overview.
+ * Domain model representing a Analytics Overview structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class AnalyticsOverview {
   constructor(private readonly data: AnalyticsOverviewData) {}
@@ -103,7 +104,8 @@ export class AnalyticsOverview {
 
 // ── MRR Movement ──
 /**
- * Interface structure detailing the properties and attributes of Mrr Movement Data.
+ * Domain model representing a Mrr Movement Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface MrrMovementData {
   month: string;
@@ -118,7 +120,8 @@ export interface MrrMovementData {
 }
 
 /**
- * Domain entity class representing a Mrr Movement.
+ * Domain model representing a Mrr Movement structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class MrrMovement {
   constructor(private readonly data: MrrMovementData) {}
@@ -170,7 +173,8 @@ export class MrrMovement {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Mrr Movement Response.
+ * Domain model representing a Mrr Movement Response structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface MrrMovementResponse {
   movements: MrrMovement[];
@@ -181,7 +185,8 @@ export interface MrrMovementResponse {
 
 // ── Cohort Analysis ──
 /**
- * Interface structure detailing the properties and attributes of Cohort Bucket Data.
+ * Domain model representing a Cohort Bucket Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CohortBucketData {
   monthOffset: number;
@@ -191,7 +196,8 @@ export interface CohortBucketData {
 }
 
 /**
- * Domain entity class representing a Cohort Bucket.
+ * Domain model representing a Cohort Bucket structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class CohortBucket {
   constructor(private readonly data: CohortBucketData) {}
@@ -220,7 +226,8 @@ export class CohortBucket {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Cohort Row Data.
+ * Domain model representing a Cohort Row Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CohortRowData {
   cohortMonth: string;
@@ -229,7 +236,8 @@ export interface CohortRowData {
 }
 
 /**
- * Domain entity class representing a Cohort Row.
+ * Domain model representing a Cohort Row structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class CohortRow {
   constructor(private readonly data: CohortRowData) {}
@@ -257,7 +265,8 @@ export class CohortRow {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Cohort Analysis Response.
+ * Domain model representing a Cohort Analysis Response structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CohortAnalysisResponse {
   cohorts: CohortRow[];
@@ -267,7 +276,8 @@ export interface CohortAnalysisResponse {
 
 // ── LTV by Edition ──
 /**
- * Interface structure detailing the properties and attributes of Edition Ltv Data.
+ * Domain model representing a Edition Ltv Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface EditionLtvData {
   editionId: string;
@@ -281,7 +291,8 @@ export interface EditionLtvData {
 }
 
 /**
- * Domain entity class representing a Edition Ltv.
+ * Domain model representing a Edition Ltv structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class EditionLtv {
   constructor(private readonly data: EditionLtvData) {}
@@ -322,7 +333,8 @@ export class EditionLtv {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Ltv Response.
+ * Domain model representing a Ltv Response structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface LtvResponse {
   editions: EditionLtv[];
@@ -332,7 +344,8 @@ export interface LtvResponse {
 
 // ── Revenue Forecast ──
 /**
- * Interface structure detailing the properties and attributes of Forecast Point Data.
+ * Domain model representing a Forecast Point Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ForecastPointData {
   month: string;
@@ -343,7 +356,8 @@ export interface ForecastPointData {
 }
 
 /**
- * Domain entity class representing a Forecast Point.
+ * Domain model representing a Forecast Point structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class ForecastPoint {
   constructor(private readonly data: ForecastPointData) {}
@@ -375,7 +389,8 @@ export class ForecastPoint {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Revenue Forecast Response.
+ * Domain model representing a Revenue Forecast Response structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface RevenueForecastResponse {
   forecasts: ForecastPoint[];
@@ -387,7 +402,8 @@ export interface RevenueForecastResponse {
 
 // ── Tenant Health Score ──
 /**
- * Interface structure detailing the properties and attributes of Tenant Health Score Data.
+ * Domain model representing a Tenant Health Score Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface TenantHealthScoreData {
   tenantId: string;
@@ -405,7 +421,8 @@ export interface TenantHealthScoreData {
 }
 
 /**
- * Domain entity class representing a Tenant Health Score.
+ * Domain model representing a Tenant Health Score structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class TenantHealthScore {
   constructor(private readonly data: TenantHealthScoreData) {}
@@ -474,7 +491,8 @@ export class TenantHealthScore {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Tenant Health Scores Response.
+ * Domain model representing a Tenant Health Scores Response structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface TenantHealthScoresResponse {
   items: TenantHealthScore[];
@@ -485,7 +503,8 @@ export interface TenantHealthScoresResponse {
 
 // ── Report Preference ──
 /**
- * Interface structure detailing the properties and attributes of Report Preference Data.
+ * Domain model representing a Report Preference Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ReportPreferenceData {
   id: string;
@@ -508,7 +527,8 @@ export interface ReportPreferenceData {
 }
 
 /**
- * Domain entity class representing a Report Preference.
+ * Domain model representing a Report Preference structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class ReportPreference {
   constructor(private readonly data: ReportPreferenceData) {}
@@ -584,7 +604,8 @@ export class ReportPreference {
 
 // ── Update Report Preference Request (domain-level) ──
 /**
- * Interface structure detailing the properties and attributes of Update Report Preference Request.
+ * Domain model representing a Update Report Preference Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface UpdateReportPreferenceRequest {
   cadence: string;

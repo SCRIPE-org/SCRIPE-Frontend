@@ -8,7 +8,7 @@ import type {
 } from "../entities/UserGroupRequests";
 
 /**
- * Interface structure detailing the properties and attributes of User Group Service List Params.
+ * Interface defining property specifications, keys types, and structural contract rules for user group service list params.
  */
 export interface UserGroupServiceListParams {
   page: number;
@@ -19,7 +19,7 @@ export interface UserGroupServiceListParams {
 }
 
 /**
- * Interface structure detailing the properties and attributes of User Group List Result.
+ * Interface defining property specifications, keys types, and structural contract rules for user group list result.
  */
 export interface UserGroupListResult {
   items: UserGroupModel[];
@@ -32,7 +32,8 @@ export interface UserGroupListResult {
 }
 
 /**
- * Interface defining operations for the UserGroup network service.
+ * Http API network service for i user group.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IUserGroupService {
   getAll(params: UserGroupServiceListParams): Promise<UserGroupListResult>;

@@ -123,7 +123,8 @@ const sections: DocSection[] = [
     filename: "SOLID View/ViewModel Pattern",
     code: `// View — Pure UI (~60 lines, zero logic)
 /**
- * React presentation component representing the employee list view UI element.
+ * Presentation UI component rendering the employee list view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function EmployeeListView() {
   const vm = useEmployeeListViewModel();
@@ -138,7 +139,8 @@ export function EmployeeListView() {
 
 // ViewModel — All Logic (composing section ViewModels)
 /**
- * React hook/ViewModel managing logic, state, and repository queries for employee list view model.
+ * React hook/ViewModel orchestrating state and data flows for employee list view model.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useEmployeeListViewModel() {
   const filters = useFilterViewModel();

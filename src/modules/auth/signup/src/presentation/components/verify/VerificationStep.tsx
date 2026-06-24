@@ -30,7 +30,8 @@ interface VerificationStepProps {
 }
 
 /**
- * React presentation component representing the verification step UI element.
+ * Presentation UI component rendering the verification step.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function VerificationStep({ wizard }: VerificationStepProps) {
   const { t, direction } = useI18n();

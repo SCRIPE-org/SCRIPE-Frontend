@@ -8,7 +8,8 @@ import type {
 } from "../entities/OAuthApp";
 
 /**
- * Interface defining repository methods for managing OAuthApp data access.
+ * Repository layer implementing client request queries for i o auth app.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IOAuthAppRepository {
   getAll(params: {

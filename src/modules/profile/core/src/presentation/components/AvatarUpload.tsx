@@ -26,7 +26,8 @@ interface AvatarUploadProps {
 }
 
 /**
- * React presentation component representing the avatar upload UI element.
+ * Presentation UI component rendering the avatar upload.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function AvatarUpload({
   currentImageUrl,

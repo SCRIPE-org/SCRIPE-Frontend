@@ -50,7 +50,8 @@ export interface CreatePurchasePayload {
 }
 
 /**
- * Interface defining operations for the Financials network service.
+ * Http API network service for i financials.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IFinancialsService {
   /** Fetch paginated purchase transactions. */

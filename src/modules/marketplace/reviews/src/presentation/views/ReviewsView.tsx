@@ -7,7 +7,8 @@ import { Card, CardHeader } from "@core/ui/card";
 import { Star, Trash2 } from "lucide-react";
 
 /**
- * React presentation component representing the reviews view UI element.
+ * Presentation UI component rendering the reviews view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ReviewsView() {
   const vm = useReviewsViewModel();

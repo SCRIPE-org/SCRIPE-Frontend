@@ -25,7 +25,8 @@ interface AddMembersDialogProps {
 }
 
 /**
- * React presentation component representing the add members dialog UI element.
+ * Presentation UI component rendering the add members dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function AddMembersDialog({
   open,

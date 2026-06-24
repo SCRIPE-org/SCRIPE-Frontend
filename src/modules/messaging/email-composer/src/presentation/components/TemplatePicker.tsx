@@ -12,7 +12,7 @@ import type { IEmailRepository } from "../../domain/interfaces/IEmailRepository"
 
 // ─── Props ──────────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Template Picker Props.
+ * Interface defining property specifications, keys types, and structural contract rules for template picker props.
  */
 export interface TemplatePickerProps {
   repository: IEmailRepository;

@@ -30,7 +30,7 @@ import { PermissionScopes } from "../../domain/types/PermissionTypes";
 // ── Props & Result interfaces ──
 
 /**
- * Interface structure detailing the properties and attributes of Use Role Permissions Dialog Props.
+ * Interface defining property specifications, keys types, and structural contract rules for use role permissions dialog props.
  */
 export interface UseRolePermissionsDialogProps {
   open: boolean;
@@ -40,7 +40,7 @@ export interface UseRolePermissionsDialogProps {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Use Role Permissions Dialog Result.
+ * Interface defining property specifications, keys types, and structural contract rules for use role permissions dialog result.
  */
 export interface UseRolePermissionsDialogResult {
   // State
@@ -87,7 +87,8 @@ export interface UseRolePermissionsDialogResult {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for role permissions dialog.
+ * React hook/ViewModel orchestrating state and data flows for role permissions dialog.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useRolePermissionsDialog({
   open,

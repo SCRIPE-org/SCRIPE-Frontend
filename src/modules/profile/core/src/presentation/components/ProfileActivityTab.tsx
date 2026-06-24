@@ -10,7 +10,8 @@ interface ProfileActivityTabProps {
 }
 
 /**
- * React presentation component representing the profile activity tab UI element.
+ * Presentation UI component rendering the profile activity tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ProfileActivityTab({ activityVm }: ProfileActivityTabProps) {
   const { t } = useI18n();

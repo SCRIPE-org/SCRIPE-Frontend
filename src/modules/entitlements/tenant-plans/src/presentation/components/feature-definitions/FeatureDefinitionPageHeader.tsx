@@ -11,7 +11,8 @@ interface FeatureDefinitionPageHeaderProps {
 }
 
 /**
- * React presentation component representing the feature definition page header UI element.
+ * Presentation UI component rendering the feature definition page header.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function FeatureDefinitionPageHeader({ t }: FeatureDefinitionPageHeaderProps) {
   return (

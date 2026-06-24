@@ -90,7 +90,8 @@ function TopActionsBar() {
 }
 
 /**
- * React presentation component representing the production canvas renderer UI element.
+ * Presentation UI component rendering the production canvas renderer.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function ProductionCanvasRenderer({
   components,

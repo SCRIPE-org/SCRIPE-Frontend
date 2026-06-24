@@ -1,5 +1,6 @@
 /**
- * Interface structure detailing the properties and attributes of Commission Ledger Entry Data.
+ * Domain model representing a Commission Ledger Entry Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CommissionLedgerEntryData {
   id: string;
@@ -23,7 +24,8 @@ export interface CommissionLedgerEntryData {
 }
 
 /**
- * Domain entity class representing a Commission Ledger Entry.
+ * Domain model representing a Commission Ledger Entry structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class CommissionLedgerEntry {
   constructor(private readonly data: CommissionLedgerEntryData) {}

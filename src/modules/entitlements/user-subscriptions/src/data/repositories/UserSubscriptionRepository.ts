@@ -17,7 +17,8 @@ import type { IUserSubscriptionService } from "../../domain/interfaces/IUserSubs
 import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
 /**
- * Repository implementation for managing database operations on UserSubscription resources.
+ * Repository layer implementing client request queries for user subscription.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class UserSubscriptionRepository implements IUserSubscriptionRepository {
   constructor(private readonly service: IUserSubscriptionService) {}

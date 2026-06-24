@@ -9,12 +9,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useServices } from "@core/providers/service-provider";
 
 /**
- * Type declaration definition describing the schema of login step.
+ * Exported type defining parameters and fields for login step configurations.
  */
 export type LoginStep = "credentials" | "two-factor" | "workspace-selection";
 
 /**
- * Interface structure detailing the properties and attributes of Use2 F A Handler Options.
+ * Interface defining property specifications, keys types, and structural contract rules for use2 f a handler options.
  */
 export interface Use2FAHandlerOptions {
   redirectPath: string;

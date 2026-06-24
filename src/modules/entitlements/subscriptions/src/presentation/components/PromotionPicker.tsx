@@ -29,7 +29,8 @@ interface PromotionPickerProps {
 const NONE_VALUE = "__none__";
 
 /**
- * React presentation component representing the promotion picker UI element.
+ * Presentation UI component rendering the promotion picker.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function PromotionPicker({
   isLoading,

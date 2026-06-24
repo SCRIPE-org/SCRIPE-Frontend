@@ -24,7 +24,8 @@ interface EffectiveFeaturesViewProps {
 }
 
 /**
- * React presentation component representing the effective features view UI element.
+ * Presentation UI component rendering the effective features view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function EffectiveFeaturesView({
   features,

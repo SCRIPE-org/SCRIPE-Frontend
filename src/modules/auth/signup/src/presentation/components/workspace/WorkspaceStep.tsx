@@ -35,7 +35,8 @@ interface WorkspaceStepProps {
 }
 
 /**
- * React presentation component representing the workspace step UI element.
+ * Presentation UI component rendering the workspace step.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function WorkspaceStep({ wizard }: WorkspaceStepProps) {
   const { t, direction } = useI18n();

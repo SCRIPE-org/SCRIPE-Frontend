@@ -14,7 +14,8 @@ import type {
 import type { CreateFeatureRequest, UpdateFeatureRequest } from "../entities/FeatureRequests";
 
 /**
- * Interface defining operations for the Feature network service.
+ * Http API network service for i feature.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IFeatureService {
   getAll(params: PaginationParams): Promise<PagedResult<FeatureModel>>;

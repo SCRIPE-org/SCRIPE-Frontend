@@ -9,7 +9,8 @@ import { CommissionLedgerEntry } from "../../domain/entities/CommissionLedgerEnt
 import { CommissionInvoice } from "../../domain/entities/CommissionInvoice";
 
 /**
- * Repository implementation for managing database operations on CommissionLedger resources.
+ * Repository layer implementing client request queries for commission ledger.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class CommissionLedgerRepository implements ICommissionLedgerRepository {
   constructor(private readonly service: ICommissionLedgerService) {}

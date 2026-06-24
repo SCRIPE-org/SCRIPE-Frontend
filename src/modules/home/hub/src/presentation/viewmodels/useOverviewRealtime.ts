@@ -14,7 +14,8 @@ import { useSignalR } from "@core/hooks/useSignalR";
 import { HUB_EVENTS, HUB_METHODS } from "@core/common/constants/signalr";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for overview realtime.
+ * React hook/ViewModel orchestrating state and data flows for overview realtime.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useOverviewRealtime() {
   const queryClient = useQueryClient();

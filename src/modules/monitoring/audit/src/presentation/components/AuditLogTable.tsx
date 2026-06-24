@@ -25,7 +25,7 @@ interface Props {
 }
 
 /**
- * Constant definition representing audit log table.
+ * Exported constant defining parameters and fields for audit log table configurations.
  */
 export const AuditLogTable = memo(function AuditLogTable({
   data,

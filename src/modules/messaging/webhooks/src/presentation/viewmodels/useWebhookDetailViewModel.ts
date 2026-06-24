@@ -19,7 +19,8 @@ import type { WebhookTestResult } from "../../domain/entities/Webhook";
 import type { UpdateWebhookRequest } from "../../domain/entities/WebhookRequests";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for webhook detail view model.
+ * React hook/ViewModel orchestrating state and data flows for webhook detail view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useWebhookDetailViewModel(webhookId: string) {
   const { webhookRepository } = messagingContainer;

@@ -18,7 +18,7 @@ import { appLogger } from "@/core/common/logger";
 // ── Result Interface ──
 
 /**
- * Interface structure detailing the properties and attributes of Use Tenant Subscription View Model Result.
+ * Interface defining property specifications, keys types, and structural contract rules for use tenant subscription view model result.
  */
 export interface UseTenantSubscriptionViewModelResult {
   // Data
@@ -118,7 +118,8 @@ export interface UseTenantSubscriptionViewModelResult {
 // ── ViewModel ──
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for tenant subscription view model.
+ * React hook/ViewModel orchestrating state and data flows for tenant subscription view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useTenantSubscriptionViewModel(
   tenantId: string,

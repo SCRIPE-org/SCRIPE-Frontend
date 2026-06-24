@@ -13,7 +13,8 @@ export interface BalanceAmountData {
 }
 
 /**
- * Domain entity class representing a Balance Amount.
+ * Domain model representing a Balance Amount structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class BalanceAmount {
   constructor(private readonly data: BalanceAmountData) {}
@@ -36,7 +37,8 @@ export class BalanceAmount {
 
 // ── Platform Account ──
 /**
- * Interface structure detailing the properties and attributes of Platform Account Data.
+ * Domain model representing a Platform Account Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PlatformAccountData {
   accountId: string;
@@ -55,7 +57,8 @@ export interface PlatformAccountData {
 }
 
 /**
- * Domain entity class representing a Platform Account.
+ * Domain model representing a Platform Account structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class PlatformAccount {
   constructor(private readonly data: PlatformAccountData) {}
@@ -122,7 +125,8 @@ export class PlatformAccount {
 
 // ── Platform Balance ──
 /**
- * Interface structure detailing the properties and attributes of Platform Balance Data.
+ * Domain model representing a Platform Balance Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PlatformBalanceData {
   available: BalanceAmount[];
@@ -131,7 +135,8 @@ export interface PlatformBalanceData {
 }
 
 /**
- * Domain entity class representing a Platform Balance.
+ * Domain model representing a Platform Balance structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class PlatformBalance {
   constructor(private readonly data: PlatformBalanceData) {}
@@ -153,7 +158,8 @@ export class PlatformBalance {
 
 // ── Platform Transaction ──
 /**
- * Interface structure detailing the properties and attributes of Platform Transaction Data.
+ * Domain model representing a Platform Transaction Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PlatformTransactionData {
   id: string;
@@ -169,7 +175,8 @@ export interface PlatformTransactionData {
 }
 
 /**
- * Domain entity class representing a Platform Transaction.
+ * Domain model representing a Platform Transaction structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class PlatformTransaction {
   constructor(private readonly data: PlatformTransactionData) {}
@@ -222,7 +229,8 @@ export class PlatformTransaction {
 
 // ── Platform Payout ──
 /**
- * Interface structure detailing the properties and attributes of Platform Payout Data.
+ * Domain model representing a Platform Payout Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PlatformPayoutData {
   id: string;
@@ -237,7 +245,8 @@ export interface PlatformPayoutData {
 }
 
 /**
- * Domain entity class representing a Platform Payout.
+ * Domain model representing a Platform Payout structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class PlatformPayout {
   constructor(private readonly data: PlatformPayoutData) {}
@@ -282,7 +291,8 @@ export class PlatformPayout {
 
 // ── Connect Summary ──
 /**
- * Interface structure detailing the properties and attributes of Platform Connect Summary Data.
+ * Domain model representing a Platform Connect Summary Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PlatformConnectSummaryData {
   totalAccounts: number;
@@ -294,7 +304,8 @@ export interface PlatformConnectSummaryData {
 }
 
 /**
- * Domain entity class representing a Platform Connect Summary.
+ * Domain model representing a Platform Connect Summary structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class PlatformConnectSummary {
   constructor(private readonly data: PlatformConnectSummaryData) {}
@@ -330,7 +341,8 @@ export class PlatformConnectSummary {
 
 // ── Stripe Links ──
 /**
- * Interface structure detailing the properties and attributes of Platform Stripe Links Data.
+ * Domain model representing a Platform Stripe Links Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PlatformStripeLinksData {
   dashboard: string;
@@ -344,7 +356,8 @@ export interface PlatformStripeLinksData {
 }
 
 /**
- * Domain entity class representing a Platform Stripe Links.
+ * Domain model representing a Platform Stripe Links structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class PlatformStripeLinks {
   constructor(private readonly data: PlatformStripeLinksData) {}
@@ -381,7 +394,8 @@ export class PlatformStripeLinks {
 
 // ── Root Dashboard Entity ──
 /**
- * Interface structure detailing the properties and attributes of Platform Stripe Dashboard Data.
+ * Domain model representing a Platform Stripe Dashboard Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface PlatformStripeDashboardData {
   account: PlatformAccount;
@@ -393,7 +407,8 @@ export interface PlatformStripeDashboardData {
 }
 
 /**
- * Domain entity class representing a Platform Stripe Dashboard.
+ * Domain model representing a Platform Stripe Dashboard structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class PlatformStripeDashboard {
   constructor(private readonly data: PlatformStripeDashboardData) {}

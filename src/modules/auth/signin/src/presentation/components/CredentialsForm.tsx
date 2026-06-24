@@ -36,7 +36,8 @@ interface CredentialsFormProps {
 }
 
 /**
- * React presentation component representing the credentials form UI element.
+ * Presentation UI component rendering the credentials form.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function CredentialsForm({
   formData,

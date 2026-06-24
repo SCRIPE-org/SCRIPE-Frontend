@@ -51,7 +51,8 @@ export interface TenantSettings {
 }
 
 /**
- * Constant definition representing d e f a u l t_ t e n a n t_ s e t t i n g s.
+ * Domain model representing a D E F A U L T_ T E N A N T_ S E T T I N G S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const DEFAULT_TENANT_SETTINGS: TenantSettings = {
   maxAdmins: -1,

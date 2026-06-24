@@ -61,7 +61,8 @@ interface Props {
 }
 
 /**
- * React presentation component representing the identity provider detail view UI element.
+ * Presentation UI component rendering the identity provider detail view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function IdentityProviderDetailView({ providerId }: Props) {
   const vm = useIdentityProviderDetailViewModel(providerId);

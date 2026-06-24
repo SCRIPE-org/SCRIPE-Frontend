@@ -32,7 +32,8 @@ import type {
 } from "../models/TenantSubscription";
 
 /**
- * Repository implementation for managing database operations on Tenant resources.
+ * Repository layer implementing client request queries for tenant.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class TenantRepository implements ITenantRepository {
   constructor(private readonly service: ITenantService) {}

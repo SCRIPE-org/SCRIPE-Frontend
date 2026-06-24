@@ -19,7 +19,8 @@ import type { IRecycleBinService } from "../../domain/interfaces/IRecycleBinServ
 import { DeletedItemMapper } from "../mappers/DeletedItemMapper";
 
 /**
- * Repository implementation for managing database operations on RecycleBin resources.
+ * Repository layer implementing client request queries for recycle bin.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class RecycleBinRepository implements IRecycleBinRepository {
   constructor(private readonly service: IRecycleBinService) {}

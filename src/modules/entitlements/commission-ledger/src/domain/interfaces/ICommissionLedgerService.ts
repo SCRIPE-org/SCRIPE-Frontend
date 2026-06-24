@@ -6,7 +6,8 @@ import type {
 import type { CommissionListParams } from "./ICommissionLedgerRepository";
 
 /**
- * Interface defining operations for the CommissionLedger network service.
+ * Http API network service for i commission ledger.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface ICommissionLedgerService {
   getLedgers(params: CommissionListParams): Promise<PagedResultModel<CommissionLedgerEntryModel>>;

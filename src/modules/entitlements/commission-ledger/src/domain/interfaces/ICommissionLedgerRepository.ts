@@ -1,5 +1,5 @@
 /**
- * Interface structure detailing the properties and attributes of Paged Result.
+ * Interface defining property specifications, keys types, and structural contract rules for paged result.
  */
 export interface PagedResult<T> {
   items: T[];
@@ -7,7 +7,7 @@ export interface PagedResult<T> {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Commission List Params.
+ * Interface defining property specifications, keys types, and structural contract rules for commission list params.
  */
 export interface CommissionListParams {
   page: number;
@@ -19,7 +19,8 @@ import { CommissionLedgerEntry } from "../entities/CommissionLedgerEntry";
 import { CommissionInvoice } from "../entities/CommissionInvoice";
 
 /**
- * Interface defining repository methods for managing CommissionLedger data access.
+ * Repository layer implementing client request queries for i commission ledger.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface ICommissionLedgerRepository {
   getLedgers(params: CommissionListParams): Promise<PagedResult<CommissionLedgerEntry>>;

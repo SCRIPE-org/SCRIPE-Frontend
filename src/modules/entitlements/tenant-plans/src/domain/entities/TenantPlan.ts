@@ -12,7 +12,8 @@ import type { BaseEntity } from "@core/interfaces/common.interface";
 
 // ── Sub-entities ──
 /**
- * Interface structure detailing the properties and attributes of Tenant Plan Feature Data.
+ * Domain model representing a Tenant Plan Feature Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface TenantPlanFeatureData {
   featureDefinitionId: string;
@@ -25,7 +26,8 @@ export interface TenantPlanFeatureData {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Tenant Plan Price Data.
+ * Domain model representing a Tenant Plan Price Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface TenantPlanPriceData {
   id: string;
@@ -37,7 +39,8 @@ export interface TenantPlanPriceData {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Tenant Plan Version Data.
+ * Domain model representing a Tenant Plan Version Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface TenantPlanVersionData {
   id: string;
@@ -53,7 +56,8 @@ export interface TenantPlanVersionData {
 
 // ── Main entity data ──
 /**
- * Interface structure detailing the properties and attributes of Tenant Plan Data.
+ * Domain model representing a Tenant Plan Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface TenantPlanData extends BaseEntity {
   tenantId: string;
@@ -90,7 +94,8 @@ export interface TenantPlanData extends BaseEntity {
 }
 
 /**
- * Domain entity class representing a Tenant Plan.
+ * Domain model representing a Tenant Plan structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class TenantPlan {
   constructor(private readonly data: TenantPlanData) {}
@@ -285,7 +290,8 @@ export class TenantPlan {
 
 // ── Feature Definition Entity ──
 /**
- * Interface structure detailing the properties and attributes of Tenant Feature Definition Data.
+ * Domain model representing a Tenant Feature Definition Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface TenantFeatureDefinitionData {
   id: string;
@@ -305,7 +311,8 @@ export interface TenantFeatureDefinitionData {
 }
 
 /**
- * Domain entity class representing a Tenant Feature Definition.
+ * Domain model representing a Tenant Feature Definition structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class TenantFeatureDefinition {
   constructor(private readonly data: TenantFeatureDefinitionData) {}
@@ -383,7 +390,8 @@ export interface TenantFeatureDefinitionCategoryGroup {
 
 // ── Promotion Entity ──
 /**
- * Interface structure detailing the properties and attributes of Tenant Plan Promotion Data.
+ * Domain model representing a Tenant Plan Promotion Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface TenantPlanPromotionData {
   id: string;
@@ -409,7 +417,8 @@ export interface TenantPlanPromotionData {
 }
 
 /**
- * Domain entity class representing a Tenant Plan Promotion.
+ * Domain model representing a Tenant Plan Promotion structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class TenantPlanPromotion {
   constructor(private readonly data: TenantPlanPromotionData) {}

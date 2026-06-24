@@ -11,7 +11,8 @@ interface DsrDetailTimelineProps {
 }
 
 /**
- * React presentation component representing the dsr detail timeline UI element.
+ * Presentation UI component rendering the dsr detail timeline.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DsrDetailTimeline({ dsr, t, statusMetaMap }: DsrDetailTimelineProps) {
   return (

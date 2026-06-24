@@ -3,7 +3,7 @@
 import type { AdminSignupContent, ContentMode } from "../entities/SignupContent";
 
 /**
- * Interface structure detailing the properties and attributes of Update Welcome Params.
+ * Interface defining property specifications, keys types, and structural contract rules for update welcome params.
  */
 export interface UpdateWelcomeParams {
   headlineEn: string;
@@ -18,7 +18,7 @@ export interface UpdateWelcomeParams {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Create Trust Mark Params.
+ * Interface defining property specifications, keys types, and structural contract rules for create trust mark params.
  */
 export interface CreateTrustMarkParams {
   key: string;
@@ -33,7 +33,7 @@ export interface CreateTrustMarkParams {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update Trust Mark Params.
+ * Interface defining property specifications, keys types, and structural contract rules for update trust mark params.
  */
 export interface UpdateTrustMarkParams {
   key?: string;
@@ -48,7 +48,7 @@ export interface UpdateTrustMarkParams {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Create Customer Logo Params.
+ * Interface defining property specifications, keys types, and structural contract rules for create customer logo params.
  */
 export interface CreateCustomerLogoParams {
   key: string;
@@ -60,7 +60,7 @@ export interface CreateCustomerLogoParams {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update Customer Logo Params.
+ * Interface defining property specifications, keys types, and structural contract rules for update customer logo params.
  */
 export interface UpdateCustomerLogoParams {
   key?: string;
@@ -72,7 +72,8 @@ export interface UpdateCustomerLogoParams {
 }
 
 /**
- * Interface defining repository methods for managing SignupContent data access.
+ * Repository layer implementing client request queries for i signup content.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface ISignupContentRepository {
   getAdminContent(): Promise<AdminSignupContent>;

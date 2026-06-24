@@ -40,7 +40,8 @@ interface UseSignupProvisioningOptions {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for signup provisioning.
+ * React hook/ViewModel orchestrating state and data flows for signup provisioning.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
  */
 export function useSignupProvisioning({
   repository,

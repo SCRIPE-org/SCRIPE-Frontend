@@ -30,7 +30,7 @@ import { useAppStore } from "@core/store/useAppStore";
 import { hasPermission, SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 
 /**
- * Interface structure detailing the properties and attributes of Override Dialog State.
+ * Interface defining property specifications, keys types, and structural contract rules for override dialog state.
  */
 export interface OverrideDialogState {
   open: boolean;
@@ -48,7 +48,7 @@ export interface OverrideFormData {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Use Menu Override View Model Result.
+ * Interface defining property specifications, keys types, and structural contract rules for use menu override view model result.
  */
 export interface UseMenuOverrideViewModelResult {
   // Dialog state
@@ -82,7 +82,8 @@ export interface UseMenuOverrideViewModelResult {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for menu override view model.
+ * React hook/ViewModel orchestrating state and data flows for menu override view model.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
  */
 export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
   const queryClient = useQueryClient();

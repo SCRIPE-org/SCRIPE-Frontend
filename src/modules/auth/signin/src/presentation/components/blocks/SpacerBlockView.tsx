@@ -5,7 +5,8 @@ import type { SpacerBlock } from "@modules/auth/core/domain/entities/LoginBrandi
 import { clamp } from "./block-style-utils";
 
 /**
- * React presentation component representing the spacer block view UI element.
+ * Presentation UI component rendering the spacer block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function SpacerBlockView({ block }: { block: SpacerBlock }) {
   return (

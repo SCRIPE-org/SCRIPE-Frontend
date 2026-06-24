@@ -25,7 +25,8 @@ import type { PagedResult, PaginationParams } from "@core/interfaces/common.inte
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 
 /**
- * API service for executing HTTP calls related to TenantPlan endpoints.
+ * Http API network service for tenant plan.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class TenantPlanService implements ITenantPlanService {
   constructor(private readonly api: IApiService) {}

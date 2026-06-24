@@ -21,7 +21,7 @@ export interface AnalyticsSummaryDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Distribution Data Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for distribution data dto.
  */
 export interface DistributionDataDto {
   eventType: string;
@@ -29,7 +29,7 @@ export interface DistributionDataDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Comparison Data Point Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for comparison data point dto.
  */
 export interface ComparisonDataPointDto {
   date: string;

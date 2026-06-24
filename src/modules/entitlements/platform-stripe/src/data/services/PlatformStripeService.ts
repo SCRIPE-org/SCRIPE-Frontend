@@ -8,7 +8,8 @@ import type { IPlatformStripeService } from "../../domain/interfaces/IPlatformSt
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 
 /**
- * API service for executing HTTP calls related to PlatformStripe endpoints.
+ * Http API network service for platform stripe.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class PlatformStripeService implements IPlatformStripeService {
   constructor(private readonly api: IApiService) {}

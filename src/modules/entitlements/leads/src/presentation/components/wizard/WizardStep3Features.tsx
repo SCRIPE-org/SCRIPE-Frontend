@@ -27,7 +27,8 @@ interface WizardStep3Props {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 /**
- * React presentation component representing the wizard step3 features UI element.
+ * Presentation UI component rendering the wizard step3 features.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function WizardStep3Features({
   edition,

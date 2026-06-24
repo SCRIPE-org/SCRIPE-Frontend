@@ -7,7 +7,8 @@ import type {
 } from "../entities/Regulation";
 
 /**
- * Interface defining repository methods for managing Regulation data access.
+ * Repository layer implementing client request queries for i regulation.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IRegulationRepository {
   getAll(): Promise<Regulation[]>;

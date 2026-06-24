@@ -58,7 +58,8 @@ export interface UpsertThemePayload {
 }
 
 /**
- * Interface defining operations for the ThemeMarketplace network service.
+ * Http API network service for i theme marketplace.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IThemeMarketplaceService {
   /** Get paginated themes with filters */

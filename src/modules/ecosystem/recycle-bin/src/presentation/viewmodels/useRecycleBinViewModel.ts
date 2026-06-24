@@ -21,7 +21,7 @@ import type { DeletedItem } from "../../domain/entities/DeletedItem";
 import type { DeletedItemsGrouped } from "../../domain/interfaces/IRecycleBinRepository";
 
 /**
- * Type declaration definition describing the schema of tab type.
+ * Exported type defining parameters and fields for tab type configurations.
  */
 export type TabType = "tenants" | "admins" | "users" | "roles" | "userGroups";
 
@@ -29,7 +29,8 @@ const RECYCLE_BIN_QUERY_KEY = ["recycle-bin"] as const;
 const DEFAULT_PAGE_SIZE = 10;
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for recycle bin view model.
+ * React hook/ViewModel orchestrating state and data flows for recycle bin view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useRecycleBinViewModel() {
   const { recycleBinRepository } = ecosystemContainer;

@@ -5,7 +5,8 @@ import type { AvatarStackBlock } from "@modules/auth/core/domain/entities/LoginB
 const SIZE_CLASS = { sm: "h-7 w-7", md: "h-9 w-9", lg: "h-12 w-12" };
 
 /**
- * React presentation component representing the avatar stack block view UI element.
+ * Presentation UI component rendering the avatar stack block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function AvatarStackBlockView({ block }: { block: AvatarStackBlock }) {
   const props = block.props;

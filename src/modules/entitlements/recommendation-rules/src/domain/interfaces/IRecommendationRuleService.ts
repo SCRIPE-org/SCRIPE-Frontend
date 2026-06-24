@@ -15,7 +15,8 @@ import type {
 import type { PaginationParams } from "@core/interfaces/common.interface";
 
 /**
- * Interface defining operations for the RecommendationRule network service.
+ * Http API network service for i recommendation rule.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IRecommendationRuleService {
   getAll(params: PaginationParams): Promise<PagedRecommendationRulesModel>;

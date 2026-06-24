@@ -29,7 +29,7 @@ interface Props {
 }
 
 /**
- * Constant definition representing login activity chart.
+ * Exported constant defining parameters and fields for login activity chart configurations.
  */
 export const LoginActivityChart = memo(function LoginActivityChart({
   data,

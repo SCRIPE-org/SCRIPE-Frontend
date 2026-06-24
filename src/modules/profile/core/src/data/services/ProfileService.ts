@@ -12,7 +12,8 @@ import type {
 } from "../../domain/interfaces/IProfileRepository";
 
 /**
- * API service for executing HTTP calls related to Profile endpoints.
+ * Http API network service for profile.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class ProfileService implements IProfileService {
   constructor(private readonly api: IApiService) {}

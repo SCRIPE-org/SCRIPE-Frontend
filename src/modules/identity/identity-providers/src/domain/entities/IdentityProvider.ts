@@ -10,7 +10,8 @@
 // ─── Identity Provider Data ─────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Identity Provider Data.
+ * Domain model representing a Identity Provider Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface IdentityProviderData {
   id: string;
@@ -166,7 +167,8 @@ export class IdentityProvider {
 // ─── Identity Provider List Item ────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Identity Provider List Item Data.
+ * Domain model representing a Identity Provider List Item Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface IdentityProviderListItemData {
   id: string;
@@ -248,7 +250,8 @@ export class IdentityProviderListItem {
 // ─── Test Connection Result ─────────────────────────────────────
 
 /**
- * Domain entity class representing a Test Connection Result.
+ * Domain model representing a Test Connection Result structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class TestConnectionResult {
   constructor(
@@ -262,7 +265,8 @@ export class TestConnectionResult {
 // ─── List Response ──────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Identity Provider List Response.
+ * Domain model representing a Identity Provider List Response structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface IdentityProviderListResponse {
   items: IdentityProviderListItem[];
@@ -272,7 +276,8 @@ export interface IdentityProviderListResponse {
 // ─── Request Types ──────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Create Identity Provider Request.
+ * Domain model representing a Create Identity Provider Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CreateIdentityProviderRequest {
   name: string;
@@ -299,7 +304,8 @@ export interface CreateIdentityProviderRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update Identity Provider Request.
+ * Domain model representing a Update Identity Provider Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface UpdateIdentityProviderRequest {
   name?: string;

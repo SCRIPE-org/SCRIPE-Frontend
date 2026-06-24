@@ -12,7 +12,7 @@ import { container } from "@modules/profile/di";
 import type { UpdateProfileRequest } from "../../domain/interfaces/IProfileRepository";
 
 /**
- * Constant definition representing profile keys.
+ * Exported constant defining parameters and fields for profile keys configurations.
  */
 export const profileKeys = {
   all: ["profile"] as const,
@@ -22,7 +22,8 @@ export const profileKeys = {
 };
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for profile page view model.
+ * React hook/ViewModel orchestrating state and data flows for profile page view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useProfilePageViewModel() {
   const repo = container.profileRepository;

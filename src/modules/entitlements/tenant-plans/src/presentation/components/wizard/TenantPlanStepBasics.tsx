@@ -13,7 +13,8 @@ interface TenantPlanStepBasicsProps {
 }
 
 /**
- * React presentation component representing the tenant plan step basics UI element.
+ * Presentation UI component rendering the tenant plan step basics.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function TenantPlanStepBasics({ form, updateForm, t }: TenantPlanStepBasicsProps) {
   return (

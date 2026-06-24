@@ -10,7 +10,8 @@ import type { IOverrideService } from "../../domain/interfaces/IOverrideService"
 import { OverrideMapper } from "../mappers/OverrideMapper";
 
 /**
- * Repository implementation for managing database operations on Override resources.
+ * Repository layer implementing client request queries for override.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class OverrideRepository implements IOverrideRepository {
   constructor(private readonly service: IOverrideService) {}

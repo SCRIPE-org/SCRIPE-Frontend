@@ -229,7 +229,8 @@ public async Task LogAsync(AuditEntry entry)
         filename: "useAuditStream.ts — Frontend Hook",
         code: `// Frontend hook for real-time audit log streaming
 /**
- * React hook/ViewModel managing logic, state, and repository queries for audit stream.
+ * React hook/ViewModel orchestrating state and data flows for audit stream.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useAuditStream() {
   const [logs, setLogs] = useState<AuditLogDto[]>([]);

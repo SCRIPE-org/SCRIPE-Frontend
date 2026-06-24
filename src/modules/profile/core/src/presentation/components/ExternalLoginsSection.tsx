@@ -13,7 +13,8 @@ import {
 } from "@core/ui/dropdown-menu";
 
 /**
- * React presentation component representing the external logins section UI element.
+ * Presentation UI component rendering the external logins section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ExternalLoginsSection() {
   const { t } = useI18n();

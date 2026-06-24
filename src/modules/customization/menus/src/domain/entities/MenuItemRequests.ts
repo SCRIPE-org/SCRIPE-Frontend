@@ -49,7 +49,8 @@ export interface ReorderMenuItemsRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Reorder Item Dto.
+ * Domain model representing a Reorder Item Dto structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ReorderItemDto {
   id: string;

@@ -16,7 +16,8 @@ import type {
 } from "../../domain/interfaces/IProfileRepository";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for security view model.
+ * React hook/ViewModel orchestrating state and data flows for security view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useSecurityViewModel() {
   const repo = container.profileRepository;

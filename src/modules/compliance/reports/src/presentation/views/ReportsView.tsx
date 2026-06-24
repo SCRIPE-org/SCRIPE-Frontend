@@ -280,7 +280,8 @@ function ReportCard({ report }: { report: ComplianceReport }) {
 // ── Main View ─────────────────────────────────────────────────────────────────
 
 /**
- * React presentation component representing the reports view UI element.
+ * Presentation UI component rendering the reports view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function ReportsView() {
   useModuleLocales(() => import("../../../locales"), "compliance-reports");

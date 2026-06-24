@@ -173,7 +173,7 @@ function RecipientSearchInput({
 
 // ─── Props ──────────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Compose Section Props.
+ * Interface defining property specifications, keys types, and structural contract rules for compose section props.
  */
 export interface ComposeSectionProps {
   recipientSearch: string;
@@ -230,7 +230,8 @@ export interface ComposeSectionProps {
 }
 
 /**
- * React presentation component representing the compose section UI element.
+ * Presentation UI component rendering the compose section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function ComposeSection(vm: ComposeSectionProps) {
   const { t } = useI18n();

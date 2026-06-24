@@ -17,7 +17,8 @@ import { parseLocalizedNumber } from "@core/utils/number-parser";
 import type { EditionPromotionData } from "@modules/entitlements/core";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for subscriptions view model.
+ * React hook/ViewModel orchestrating state and data flows for subscriptions view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useSubscriptionsViewModel(tenantId: string) {
   const { subscriptionRepository, editionRepository, billingRepository } = entitlementsContainer;

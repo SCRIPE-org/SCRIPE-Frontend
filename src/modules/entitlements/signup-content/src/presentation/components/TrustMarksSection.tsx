@@ -15,7 +15,8 @@ interface TrustMarksSectionProps {
 }
 
 /**
- * React presentation component representing the trust marks section UI element.
+ * Presentation UI component rendering the trust marks section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function TrustMarksSection({ vm }: TrustMarksSectionProps) {
   const { t } = useI18n();

@@ -20,7 +20,8 @@ import {
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 /**
- * React presentation component representing the permissions view UI element.
+ * Presentation UI component rendering the permissions view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function PermissionsView() {
   useModuleLocales(() => import("../../../locales"), "permissions");

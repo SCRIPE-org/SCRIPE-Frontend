@@ -21,7 +21,8 @@ import { Pencil, Trash2, Eye } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 
 /**
- * React presentation component representing the tenant feature definitions view UI element.
+ * Presentation UI component rendering the tenant feature definitions view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function TenantFeatureDefinitionsView() {
   useModuleLocales(() => import("../../../locales"), "tenant-plans");

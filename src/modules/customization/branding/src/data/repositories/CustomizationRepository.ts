@@ -17,7 +17,8 @@ import { BrandingModel, AuditLogEntryModel } from "../models/BrandingModel";
 import { SystemSettingsModel } from "../models/SystemSettingsModel";
 
 /**
- * Repository implementation for managing database operations on Customization resources.
+ * Repository layer implementing client request queries for customization.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class CustomizationRepository implements ICustomizationRepository {
   constructor(private readonly service: ICustomizationService) {}

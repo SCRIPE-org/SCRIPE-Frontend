@@ -61,7 +61,8 @@ const FORMAT_OPTIONS: FormatOption[] = [
 ];
 
 /**
- * React presentation component representing the audit export dialog UI element.
+ * Presentation UI component rendering the audit export dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogProps) {
   const { t } = useI18n();

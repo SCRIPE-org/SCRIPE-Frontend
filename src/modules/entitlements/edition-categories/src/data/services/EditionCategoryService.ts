@@ -9,7 +9,8 @@ import type {
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 
 /**
- * API service for executing HTTP calls related to EditionCategory endpoints.
+ * Http API network service for edition category.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class EditionCategoryService implements IEditionCategoryService {
   constructor(private readonly api: IApiService) {}

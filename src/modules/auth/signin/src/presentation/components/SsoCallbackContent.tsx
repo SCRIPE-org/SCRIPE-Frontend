@@ -21,7 +21,8 @@ interface SsoCallbackContentProps {
 }
 
 /**
- * React presentation component representing the sso callback content UI element.
+ * Presentation UI component rendering the sso callback content.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function SsoCallbackContent({
   state,

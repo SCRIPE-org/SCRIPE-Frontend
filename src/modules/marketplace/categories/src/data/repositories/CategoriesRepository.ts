@@ -16,7 +16,8 @@ import type { ICategoriesRepository } from "../../domain/interfaces/ICategoriesR
 import type { CategoryDto } from "../../domain/interfaces/ICategoriesService";
 
 /**
- * Repository implementation for managing database operations on Categories resources.
+ * Repository layer implementing client request queries for categories.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class CategoriesRepository implements ICategoriesRepository {
   constructor(private readonly service: ICategoriesService) {}

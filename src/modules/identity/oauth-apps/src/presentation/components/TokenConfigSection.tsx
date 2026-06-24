@@ -13,7 +13,8 @@ interface TokenConfigSectionProps {
 }
 
 /**
- * React presentation component representing the token config section UI element.
+ * Presentation UI component rendering the token config section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function TokenConfigSection({ form, updateField }: TokenConfigSectionProps) {
   const { t } = useI18n();

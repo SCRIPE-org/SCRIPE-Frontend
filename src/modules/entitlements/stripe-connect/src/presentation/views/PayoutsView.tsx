@@ -17,7 +17,8 @@ import { PayoutsKpiRow } from "../components/payouts/PayoutsKpiRow";
 import { PayoutsEmptyState } from "../components/payouts/PayoutsEmptyState";
 
 /**
- * React presentation component representing the payouts view UI element.
+ * Presentation UI component rendering the payouts view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function PayoutsView() {
   useModuleLocales(() => import("../../../locales"), "stripe-connect");

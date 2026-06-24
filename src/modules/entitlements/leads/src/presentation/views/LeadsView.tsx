@@ -59,7 +59,8 @@ type ViewMode = "table" | "kanban";
 const VIEW_MODE_STORAGE_KEY = "scripe.leads.viewMode";
 
 /**
- * React presentation component representing the leads view UI element.
+ * Presentation UI component rendering the leads view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function LeadsView() {
   const vm = useLeadsViewModel();

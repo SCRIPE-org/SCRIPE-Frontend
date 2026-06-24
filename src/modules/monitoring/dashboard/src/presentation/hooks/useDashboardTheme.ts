@@ -60,7 +60,8 @@ const columnsClassMap: Record<number, string> = {
 };
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for dashboard theme.
+ * React hook/ViewModel orchestrating state and data flows for dashboard theme.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
  */
 export function useDashboardTheme() {
   const { t } = useI18n();

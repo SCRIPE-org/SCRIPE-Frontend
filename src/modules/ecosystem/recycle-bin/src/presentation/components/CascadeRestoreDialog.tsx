@@ -8,7 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Info } from "lucide-react";
 
 /**
- * Interface structure detailing the properties and attributes of Cascade Restore Dialog Props.
+ * Interface defining property specifications, keys types, and structural contract rules for cascade restore dialog props.
  */
 export interface CascadeRestoreDialogProps {
   open: boolean;
@@ -19,7 +19,8 @@ export interface CascadeRestoreDialogProps {
 }
 
 /**
- * React presentation component representing the cascade restore dialog UI element.
+ * Presentation UI component rendering the cascade restore dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function CascadeRestoreDialog({
   open,

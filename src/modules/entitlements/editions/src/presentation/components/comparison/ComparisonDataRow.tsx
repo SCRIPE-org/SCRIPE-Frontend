@@ -17,7 +17,8 @@ interface ComparisonDataRowProps {
 }
 
 /**
- * React presentation component representing the comparison data row UI element.
+ * Presentation UI component rendering the comparison data row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ComparisonDataRow({
   label,

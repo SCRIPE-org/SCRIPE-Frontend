@@ -17,7 +17,7 @@ import type { PermissionModel, PermissionModuleGroupJson } from "@modules/identi
 import type { MyTenantRoleListParams } from "./IRoleRepository";
 
 /**
- * Interface structure detailing the properties and attributes of Service Role List Params.
+ * Interface defining property specifications, keys types, and structural contract rules for service role list params.
  */
 export interface ServiceRoleListParams {
   page?: number;
@@ -34,7 +34,7 @@ export interface ServiceRoleListParams {
 export type { MyTenantRoleListParams };
 
 /**
- * Interface structure detailing the properties and attributes of Role List Result.
+ * Interface defining property specifications, keys types, and structural contract rules for role list result.
  */
 export interface RoleListResult {
   items: RoleModel[];
@@ -47,7 +47,8 @@ export interface RoleListResult {
 }
 
 /**
- * Interface defining operations for the Role network service.
+ * Http API network service for i role.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IRoleService {
   getAll(params: ServiceRoleListParams): Promise<RoleListResult>;

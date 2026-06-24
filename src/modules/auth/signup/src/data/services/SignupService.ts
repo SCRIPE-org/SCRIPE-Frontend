@@ -35,7 +35,8 @@ import type {
 import type { SignupRecommendationRequest } from "../../domain/entities/OnboardingEntities";
 
 /**
- * API service for executing HTTP calls related to Signup endpoints.
+ * Http API network service for signup.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class SignupService implements ISignupService {
   constructor(

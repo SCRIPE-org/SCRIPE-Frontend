@@ -18,7 +18,7 @@ import { DynamicIcon } from "@core/ui/layout/nexus/_parts/primary-rail-parts";
 import { useI18n } from "@core/providers/i18n-provider";
 
 /**
- * Interface structure detailing the properties and attributes of Workspace Hub Card Props.
+ * Interface defining property specifications, keys types, and structural contract rules for workspace hub card props.
  */
 export interface WorkspaceHubCardProps {
   workspaceKey: string;
@@ -35,7 +35,8 @@ export interface WorkspaceHubCardProps {
 }
 
 /**
- * React presentation component representing the workspace hub card UI element.
+ * Presentation UI component rendering the workspace hub card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function WorkspaceHubCard({
   nameEn,

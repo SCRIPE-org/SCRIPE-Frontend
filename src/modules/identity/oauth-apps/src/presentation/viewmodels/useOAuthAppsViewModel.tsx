@@ -23,7 +23,7 @@ import { format } from "date-fns";
 import type { CrudAction } from "@core/crud/components/generic-crud-view";
 
 /**
- * Constant definition representing oauth app keys.
+ * Exported constant defining parameters and fields for oauth app keys configurations.
  */
 export const oauthAppKeys = {
   all: ["oauth-apps"] as const,
@@ -32,7 +32,8 @@ export const oauthAppKeys = {
 };
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for o auth apps view model.
+ * React hook/ViewModel orchestrating state and data flows for o auth apps view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useOAuthAppsViewModel() {
   const { oauthAppRepository } = identityContainer;

@@ -4,7 +4,8 @@ import type { TestimonialBlock } from "@modules/auth/core/domain/entities/LoginB
 import { clamp } from "./block-style-utils";
 
 /**
- * React presentation component representing the testimonial block view UI element.
+ * Presentation UI component rendering the testimonial block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function TestimonialBlockView({ block }: { block: TestimonialBlock }) {
   const props = block.props;

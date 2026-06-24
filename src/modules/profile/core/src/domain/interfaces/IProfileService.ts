@@ -10,7 +10,8 @@ import type {
 } from "./IProfileRepository";
 
 /**
- * Interface defining operations for the Profile network service.
+ * Http API network service for i profile.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IProfileService {
   getProfile(): Promise<AdminProfile>;

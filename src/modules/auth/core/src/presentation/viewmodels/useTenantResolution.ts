@@ -11,7 +11,7 @@ import type { TenantBranding } from "../../../domain/entities/TenantBranding";
 export type { TenantBranding };
 
 /**
- * Interface structure detailing the properties and attributes of Tenant Resolution Result.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant resolution result.
  */
 export interface TenantResolutionResult {
   tenantId: string | null;
@@ -80,7 +80,8 @@ function persistDashboardPreferences(branding: TenantBranding): void {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for tenant resolution.
+ * React hook/ViewModel orchestrating state and data flows for tenant resolution.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useTenantResolution(page?: string): TenantResolutionResult {
   const [tenantId, setTenantId] = useState<string | null>(null);

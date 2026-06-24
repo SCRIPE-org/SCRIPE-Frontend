@@ -43,7 +43,8 @@ interface UserGroupListItem {
 }
 
 /**
- * React presentation component representing the user groups view UI element.
+ * Presentation UI component rendering the user groups view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function UserGroupsView() {
   useModuleLocales(() => import("../../../locales"), "user-groups");

@@ -4,7 +4,8 @@ import type { GenerateReportRequest } from "../entities/ComplianceReport";
 import type { ReportParams } from "./IReportService";
 
 /**
- * Interface defining repository methods for managing Report data access.
+ * Repository layer implementing client request queries for i report.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IReportRepository {
   getAll(params: ReportParams): Promise<PagedResult<ComplianceReport>>;

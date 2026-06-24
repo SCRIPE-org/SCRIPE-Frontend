@@ -1,5 +1,5 @@
 /**
- * Interface structure detailing the properties and attributes of Plugin Execution Log Model.
+ * Interface defining property specifications, keys types, and structural contract rules for plugin execution log model.
  */
 export interface PluginExecutionLogModel {
   id: string;
@@ -14,7 +14,7 @@ export interface PluginExecutionLogModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Paged Result.
+ * Interface defining property specifications, keys types, and structural contract rules for paged result.
  */
 export interface PagedResult<T> {
   items: T[];

@@ -1,5 +1,5 @@
 /**
- * Constant definition representing fr.
+ * Exported constant defining parameters and fields for fr configurations.
  */
 export const fr = {
   features: {

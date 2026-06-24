@@ -1,5 +1,6 @@
 /**
- * Interface structure detailing the properties and attributes of Consent Purpose Data.
+ * Domain model representing a Consent Purpose Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ConsentPurposeData {
   id: string;
@@ -13,7 +14,8 @@ export interface ConsentPurposeData {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Regulation Data.
+ * Domain model representing a Regulation Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface RegulationData {
   id: string;
@@ -27,7 +29,8 @@ export interface RegulationData {
 }
 
 /**
- * Domain entity class representing a Regulation.
+ * Domain model representing a Regulation structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class Regulation {
   constructor(private readonly data: RegulationData) {}
@@ -63,7 +66,8 @@ export class Regulation {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Create Regulation Request.
+ * Domain model representing a Create Regulation Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CreateRegulationRequest {
   code: string;
@@ -76,12 +80,14 @@ export interface CreateRegulationRequest {
 }
 
 /**
- * Type declaration definition describing the schema of update regulation request.
+ * Domain model representing a Update Regulation Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type UpdateRegulationRequest = CreateRegulationRequest;
 
 /**
- * Interface structure detailing the properties and attributes of Add Consent Purpose Request.
+ * Domain model representing a Add Consent Purpose Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface AddConsentPurposeRequest {
   key: string;
@@ -93,6 +99,7 @@ export interface AddConsentPurposeRequest {
 }
 
 /**
- * Type declaration definition describing the schema of update consent purpose request.
+ * Domain model representing a Update Consent Purpose Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type UpdateConsentPurposeRequest = AddConsentPurposeRequest;

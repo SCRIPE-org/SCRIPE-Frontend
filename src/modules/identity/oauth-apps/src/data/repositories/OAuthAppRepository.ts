@@ -19,7 +19,8 @@ import type {
 import { OAuthAppMapper } from "../mappers/OAuthAppMapper";
 
 /**
- * Repository implementation for managing database operations on OAuthApp resources.
+ * Repository layer implementing client request queries for o auth app.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class OAuthAppRepository implements IOAuthAppRepository {
   constructor(private readonly service: IOAuthAppService) {}

@@ -1,5 +1,6 @@
 /**
- * Interface structure detailing the properties and attributes of App Review Data.
+ * Domain model representing a App Review Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface AppReviewData {
   id: string;
@@ -15,7 +16,8 @@ export interface AppReviewData {
 }
 
 /**
- * Domain entity class representing a App Review.
+ * Domain model representing a App Review structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class AppReview {
   constructor(private readonly data: AppReviewData) {}

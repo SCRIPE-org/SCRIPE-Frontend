@@ -1,11 +1,11 @@
 import type { PluginTierValue } from "../../domain/entities/PluginDefinition";
 /**
- * Type declaration definition describing the schema of plugin tier.
+ * Exported type defining parameters and fields for plugin tier configurations.
  */
 export type PluginTier = PluginTierValue;
 
 /**
- * Interface structure detailing the properties and attributes of Plugin Catalog Item Model.
+ * Interface defining property specifications, keys types, and structural contract rules for plugin catalog item model.
  */
 export interface PluginCatalogItemModel {
   id: string;
@@ -23,7 +23,7 @@ export interface PluginCatalogItemModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Install Plugin Request.
+ * Interface defining property specifications, keys types, and structural contract rules for install plugin request.
  */
 export interface InstallPluginRequest {
   pluginDefinitionId: string;

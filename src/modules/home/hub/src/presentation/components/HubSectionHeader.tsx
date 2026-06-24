@@ -15,7 +15,8 @@ interface HubSectionHeaderProps {
 }
 
 /**
- * React presentation component representing the hub section header UI element.
+ * Presentation UI component rendering the hub section header.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function HubSectionHeader({ icon, title, subtitle, action }: HubSectionHeaderProps) {
   return (

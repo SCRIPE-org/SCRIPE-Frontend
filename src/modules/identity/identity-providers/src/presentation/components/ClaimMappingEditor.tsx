@@ -42,7 +42,8 @@ const INTERNAL_KEYS = [
 ];
 
 /**
- * React presentation component representing the claim mapping editor UI element.
+ * Presentation UI component rendering the claim mapping editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function ClaimMappingEditor({ value, onChange }: Props) {
   const { t } = useI18n();

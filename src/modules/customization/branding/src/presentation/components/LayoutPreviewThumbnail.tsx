@@ -110,7 +110,8 @@ function getLayoutStructure(layout: string): {
 }
 
 /**
- * React presentation component representing the layout preview thumbnail UI element.
+ * Presentation UI component rendering the layout preview thumbnail.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function LayoutPreviewThumbnail({
   layout,

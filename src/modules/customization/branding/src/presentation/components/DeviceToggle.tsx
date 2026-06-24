@@ -25,7 +25,8 @@ const devices: { size: DeviceSize; icon: typeof Monitor; label: string }[] = [
 ];
 
 /**
- * React presentation component representing the device toggle UI element.
+ * Presentation UI component rendering the device toggle.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DeviceToggle({ deviceSize, setDeviceSize }: DeviceToggleProps) {
   return (

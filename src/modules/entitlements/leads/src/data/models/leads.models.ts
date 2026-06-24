@@ -20,7 +20,7 @@ export interface PlatformLeadListResponseModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Platform Lead Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for platform lead response model.
  */
 export interface PlatformLeadResponseModel {
   id: string;
@@ -46,7 +46,7 @@ export interface PlatformLeadResponseModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Paged Leads Model.
+ * Interface defining property specifications, keys types, and structural contract rules for paged leads model.
  */
 export interface PagedLeadsModel {
   items: PlatformLeadListResponseModel[];
@@ -59,7 +59,7 @@ export interface PagedLeadsModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Assignable Admin Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for assignable admin response model.
  */
 export interface AssignableAdminResponseModel {
   id: string;
@@ -74,7 +74,7 @@ export interface AssignableAdminResponseModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Paged Assignable Admins Model.
+ * Interface defining property specifications, keys types, and structural contract rules for paged assignable admins model.
  */
 export interface PagedAssignableAdminsModel {
   items: AssignableAdminResponseModel[];
@@ -87,7 +87,7 @@ export interface PagedAssignableAdminsModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Lead Activity Response Model.
+ * Interface defining property specifications, keys types, and structural contract rules for lead activity response model.
  */
 export interface LeadActivityResponseModel {
   id: string;
@@ -103,7 +103,7 @@ export interface LeadActivityResponseModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Send Lead Email Request.
+ * Interface defining property specifications, keys types, and structural contract rules for send lead email request.
  */
 export interface SendLeadEmailRequest {
   subject: string;
@@ -112,7 +112,7 @@ export interface SendLeadEmailRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Lead Communication Log Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for lead communication log dto.
  */
 export interface LeadCommunicationLogDto {
   id: string;

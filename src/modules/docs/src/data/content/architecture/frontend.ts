@@ -74,7 +74,8 @@ const sections: DocSection[] = [
     code: `'use client';
 
 /**
- * React presentation component representing the user management view UI element.
+ * Presentation UI component rendering the user management view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function UserManagementView() {
   const vm = useUserManagementViewModel();
@@ -191,7 +192,8 @@ export function UserManagementView() {
 'use client';
 
 /**
- * React presentation component representing the user management view UI element.
+ * Presentation UI component rendering the user management view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function UserManagementView() {
   const vm = useUserManagementViewModel();

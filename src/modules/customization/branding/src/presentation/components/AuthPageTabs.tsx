@@ -30,7 +30,8 @@ interface AuthPageTabsProps {
 }
 
 /**
- * React presentation component representing the auth page tabs UI element.
+ * Presentation UI component rendering the auth page tabs.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function AuthPageTabs({ activePageId, onPageChange }: AuthPageTabsProps) {
   const { t } = useI18n();

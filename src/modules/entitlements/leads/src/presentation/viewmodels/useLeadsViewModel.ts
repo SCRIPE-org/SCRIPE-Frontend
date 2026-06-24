@@ -32,7 +32,8 @@ const QUERY_KEYS = {
 // ── ViewModel ─────────────────────────────────────────────────────────────────
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for leads view model.
+ * React hook/ViewModel orchestrating state and data flows for leads view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useLeadsViewModel() {
   const { leadsRepository } = entitlementsContainer;

@@ -90,7 +90,7 @@ const ENTITY_TYPES = [
 ] as const;
 
 /**
- * Constant definition representing audit filter panel.
+ * Exported constant defining parameters and fields for audit filter panel configurations.
  */
 export const AuditFilterPanel = memo(function AuditFilterPanel({
   filters,

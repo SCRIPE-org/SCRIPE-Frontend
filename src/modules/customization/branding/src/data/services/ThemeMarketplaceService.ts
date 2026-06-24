@@ -20,7 +20,8 @@ import type {
 } from "../../domain/interfaces/IThemeMarketplaceService";
 
 /**
- * API service for executing HTTP calls related to ThemeMarketplace endpoints.
+ * Http API network service for theme marketplace.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class ThemeMarketplaceService implements IThemeMarketplaceService {
   constructor(private readonly api: IApiService) {}

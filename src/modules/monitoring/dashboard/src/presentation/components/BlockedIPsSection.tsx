@@ -22,7 +22,7 @@ interface Props {
 }
 
 /**
- * Constant definition representing blocked i ps section.
+ * Exported constant defining parameters and fields for blocked i ps section configurations.
  */
 export const BlockedIPsSection = memo(function BlockedIPsSection({
   data,

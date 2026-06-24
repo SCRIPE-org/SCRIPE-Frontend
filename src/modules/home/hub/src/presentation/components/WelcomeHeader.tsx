@@ -13,7 +13,7 @@ interface Props {
 }
 
 /**
- * Constant definition representing welcome header.
+ * Exported constant defining parameters and fields for welcome header configurations.
  */
 export const WelcomeHeader = memo(function WelcomeHeader({ greeting, displayName }: Props) {
   return (

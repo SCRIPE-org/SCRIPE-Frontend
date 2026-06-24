@@ -16,7 +16,8 @@ interface ProfileSessionsTabProps {
 }
 
 /**
- * React presentation component representing the profile sessions tab UI element.
+ * Presentation UI component rendering the profile sessions tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ProfileSessionsTab({ sessionsVm }: ProfileSessionsTabProps) {
   const { t } = useI18n();

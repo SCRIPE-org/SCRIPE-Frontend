@@ -9,7 +9,8 @@ import { useI18n } from "@core/providers/i18n-provider";
 import type { CommissionInvoice } from "../../domain/entities/CommissionInvoice";
 
 /**
- * React presentation component representing the commission ledger view UI element.
+ * Presentation UI component rendering the commission ledger view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function CommissionLedgerView() {
   const { t } = useI18n();

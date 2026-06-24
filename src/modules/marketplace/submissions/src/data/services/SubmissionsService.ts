@@ -15,7 +15,8 @@ import type {
 } from "../../domain/interfaces/ISubmissionsService";
 
 /**
- * API service for executing HTTP calls related to Submissions endpoints.
+ * Http API network service for submissions.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class SubmissionsService implements ISubmissionsService {
   constructor(private readonly api: IApiService) {}

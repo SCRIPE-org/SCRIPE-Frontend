@@ -1,5 +1,5 @@
 /**
- * Constant definition representing en.
+ * Exported constant defining parameters and fields for en configurations.
  */
 export const en = {
   modules: {

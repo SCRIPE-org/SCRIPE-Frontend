@@ -29,7 +29,8 @@ interface TechnicalDocsViewProps {
 
 // ─── View ─────────────────────────────────────────────────────────
 /**
- * React presentation component representing the technical docs view UI element.
+ * Presentation UI component rendering the technical docs view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
   const { t, direction, loadSection } = useDocsI18n();

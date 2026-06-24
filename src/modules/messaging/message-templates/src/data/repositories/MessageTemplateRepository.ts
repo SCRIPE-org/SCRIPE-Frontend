@@ -20,7 +20,8 @@ import type { IMessageTemplateService } from "../../domain/interfaces/IMessageTe
 import { MessageTemplateMapper } from "../mappers/MessageTemplateMapper";
 
 /**
- * Repository implementation for managing database operations on MessageTemplate resources.
+ * Repository layer implementing client request queries for message template.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class MessageTemplateRepository implements IMessageTemplateRepository {
   constructor(private readonly service: IMessageTemplateService) {}

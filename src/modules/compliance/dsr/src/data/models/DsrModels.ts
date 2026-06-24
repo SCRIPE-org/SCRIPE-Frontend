@@ -22,7 +22,7 @@ export interface DsrModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Dsr Status History Model.
+ * Interface defining property specifications, keys types, and structural contract rules for dsr status history model.
  */
 export interface DsrStatusHistoryModel {
   fromStatus: string;
@@ -33,7 +33,7 @@ export interface DsrStatusHistoryModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Dsr Module Execution Model.
+ * Interface defining property specifications, keys types, and structural contract rules for dsr module execution model.
  */
 export interface DsrModuleExecutionModel {
   moduleName: string;
@@ -45,7 +45,7 @@ export interface DsrModuleExecutionModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Dsr Detail Model.
+ * Interface defining property specifications, keys types, and structural contract rules for dsr detail model.
  */
 export interface DsrDetailModel extends DsrModel {
   dsrDeadlineDays: number;

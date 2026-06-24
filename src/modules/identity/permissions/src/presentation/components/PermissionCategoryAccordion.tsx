@@ -21,7 +21,8 @@ interface PermissionCategoryAccordionProps {
 }
 
 /**
- * React presentation component representing the permission category accordion UI element.
+ * Presentation UI component rendering the permission category accordion.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function PermissionCategoryAccordion({ groups }: PermissionCategoryAccordionProps) {
   const { t, language } = useI18n();

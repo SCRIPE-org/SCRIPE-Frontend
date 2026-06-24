@@ -17,7 +17,7 @@ import { identityProviderKeys } from "./useIdentityProvidersViewModel";
 
 // ─── Form State ──────────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Identity Provider Form State.
+ * Interface defining property specifications, keys types, and structural contract rules for identity provider form state.
  */
 export interface IdentityProviderFormState {
   // General
@@ -84,7 +84,8 @@ const DEFAULT_STATE: IdentityProviderFormState = {
 
 // ─── Hook ─────────────────────────────────────────────────────────
 /**
- * React hook/ViewModel managing logic, state, and repository queries for identity provider detail view model.
+ * React hook/ViewModel orchestrating state and data flows for identity provider detail view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useIdentityProviderDetailViewModel(providerId?: string) {
   const { identityProviderRepository } = identityContainer;

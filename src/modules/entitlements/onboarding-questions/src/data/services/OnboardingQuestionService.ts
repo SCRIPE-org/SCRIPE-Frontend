@@ -14,7 +14,8 @@ import type {
 } from "../../domain/entities/OnboardingQuestionRequests";
 
 /**
- * API service for executing HTTP calls related to OnboardingQuestion endpoints.
+ * Http API network service for onboarding question.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class OnboardingQuestionService implements IOnboardingQuestionService {
   constructor(private readonly api: IApiService) {}

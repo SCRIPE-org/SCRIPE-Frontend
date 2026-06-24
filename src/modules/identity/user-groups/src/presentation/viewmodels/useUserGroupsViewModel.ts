@@ -18,7 +18,8 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useCallback, useState } from "react";
 
 /**
- * Constant definition representing user group keys.
+ * React hook/ViewModel orchestrating state and data flows for group keys.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export const userGroupKeys = {
   all: ["user-groups"] as const,
@@ -28,7 +29,7 @@ export const userGroupKeys = {
 
 // Flat list-item shape expected by GenericCrudView (must have { id: string })
 /**
- * Interface structure detailing the properties and attributes of User Group List Item.
+ * Interface defining property specifications, keys types, and structural contract rules for user group list item.
  */
 export interface UserGroupListItem {
   id: string;
@@ -46,7 +47,8 @@ export interface UserGroupListItem {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for user groups view model.
+ * React hook/ViewModel orchestrating state and data flows for user groups view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenantId?: string }) {
   const repo = identityContainer.userGroupRepository;

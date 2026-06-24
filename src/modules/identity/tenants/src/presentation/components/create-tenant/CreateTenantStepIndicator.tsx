@@ -29,7 +29,8 @@ interface CreateTenantStepIndicatorProps {
 }
 
 /**
- * React presentation component representing the create tenant step indicator UI element.
+ * Presentation UI component rendering the create tenant step indicator.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function CreateTenantStepIndicator({
   currentStep,

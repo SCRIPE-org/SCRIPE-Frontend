@@ -1,16 +1,19 @@
 "use client";
 
 /**
- * Constant definition representing c o n t e n t_ m o d e s.
+ * Domain model representing a C O N T E N T_ M O D E S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export const CONTENT_MODES = ["Seeded", "Live"] as const;
 /**
- * Type declaration definition describing the schema of content mode.
+ * Domain model representing a Content Mode structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type ContentMode = (typeof CONTENT_MODES)[number];
 
 /**
- * Interface structure detailing the properties and attributes of Welcome Content Data.
+ * Domain model representing a Welcome Content Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface WelcomeContentData {
   id: string;
@@ -26,7 +29,8 @@ export interface WelcomeContentData {
 }
 
 /**
- * Domain entity class representing a Welcome Content.
+ * Domain model representing a Welcome Content structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class WelcomeContent {
   constructor(private readonly data: WelcomeContentData) {}
@@ -68,7 +72,8 @@ export class WelcomeContent {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Trust Mark Data.
+ * Domain model representing a Trust Mark Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface TrustMarkData {
   id: string;
@@ -84,7 +89,8 @@ export interface TrustMarkData {
 }
 
 /**
- * Domain entity class representing a Trust Mark.
+ * Domain model representing a Trust Mark structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class TrustMark {
   constructor(private readonly data: TrustMarkData) {}
@@ -126,7 +132,8 @@ export class TrustMark {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Customer Logo Data.
+ * Domain model representing a Customer Logo Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CustomerLogoData {
   id: string;
@@ -139,7 +146,8 @@ export interface CustomerLogoData {
 }
 
 /**
- * Domain entity class representing a Customer Logo.
+ * Domain model representing a Customer Logo structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class CustomerLogo {
   constructor(private readonly data: CustomerLogoData) {}
@@ -172,7 +180,8 @@ export class CustomerLogo {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Admin Signup Content Data.
+ * Domain model representing a Admin Signup Content Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface AdminSignupContentData {
   contentMode: ContentMode;
@@ -182,7 +191,8 @@ export interface AdminSignupContentData {
 }
 
 /**
- * Domain entity class representing a Admin Signup Content.
+ * Domain model representing a Admin Signup Content structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class AdminSignupContent {
   constructor(private readonly data: AdminSignupContentData) {}

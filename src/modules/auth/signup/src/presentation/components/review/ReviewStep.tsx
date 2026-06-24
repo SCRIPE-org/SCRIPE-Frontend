@@ -41,7 +41,8 @@ interface ReviewStepProps {
 }
 
 /**
- * React presentation component representing the review step UI element.
+ * Presentation UI component rendering the review step.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function ReviewStep({ wizard }: ReviewStepProps) {
   const { t, language, direction } = useI18n();

@@ -21,7 +21,7 @@ const QUERY_KEYS = {
 };
 
 /**
- * Type declaration definition describing the schema of analytics tab.
+ * Exported type defining parameters and fields for analytics tab configurations.
  */
 export type AnalyticsTab =
   | "overview"
@@ -33,7 +33,8 @@ export type AnalyticsTab =
   | "reports";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for analytics view model.
+ * React hook/ViewModel orchestrating state and data flows for analytics view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useAnalyticsViewModel() {
   const { analyticsRepository } = entitlementsContainer;

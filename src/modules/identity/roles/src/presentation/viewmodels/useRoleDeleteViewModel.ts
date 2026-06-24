@@ -11,7 +11,8 @@ interface UseRoleDeleteViewModelProps {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for role delete view model.
+ * React hook/ViewModel orchestrating state and data flows for role delete view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useRoleDeleteViewModel({ roleId, tenantId, open }: UseRoleDeleteViewModelProps) {
   const { t, language } = useI18n();

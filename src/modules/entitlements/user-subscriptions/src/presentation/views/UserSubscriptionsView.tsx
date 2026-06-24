@@ -23,7 +23,8 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { SubscriptionDetailModal } from "../components/SubscriptionDetailModal";
 
 /**
- * React presentation component representing the user subscriptions view UI element.
+ * Presentation UI component rendering the user subscriptions view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function UserSubscriptionsView() {
   useModuleLocales(() => import("../../../locales"), "user-subscriptions");

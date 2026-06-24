@@ -10,7 +10,8 @@ import type { CreateFeatureRequest, UpdateFeatureRequest } from "../entities/Fea
 import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
 /**
- * Interface defining repository methods for managing Feature data access.
+ * Repository layer implementing client request queries for i feature.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IFeatureRepository {
   getAll(params: PaginationParams): Promise<PagedResult<Feature>>;

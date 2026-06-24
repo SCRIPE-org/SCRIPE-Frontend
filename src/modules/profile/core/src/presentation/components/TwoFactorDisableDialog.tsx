@@ -36,7 +36,8 @@ interface TwoFactorDisableDialogProps {
 }
 
 /**
- * React presentation component representing the two factor disable dialog UI element.
+ * Presentation UI component rendering the two factor disable dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function TwoFactorDisableDialog({
   open,

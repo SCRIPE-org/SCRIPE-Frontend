@@ -7,7 +7,7 @@ import { authContainer } from "@modules/auth/di";
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Use Passkey Login View Model Return.
+ * Interface defining property specifications, keys types, and structural contract rules for use passkey login view model return.
  */
 export interface UsePasskeyLoginViewModelReturn {
   // State

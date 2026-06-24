@@ -9,7 +9,8 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Badge } from "@core/ui/badge";
 
 /**
- * React presentation component representing the inventory view UI element.
+ * Presentation UI component rendering the inventory view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function InventoryView() {
   useModuleLocales(() => import("../../../locales"), "compliance");

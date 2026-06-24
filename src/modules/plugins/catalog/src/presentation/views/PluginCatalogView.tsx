@@ -12,7 +12,8 @@ import { PluginInstallDialog } from "../components/PluginInstallDialog";
 import type { PluginCatalogItem } from "../../domain/entities/PluginCatalogItem";
 
 /**
- * React presentation component representing the plugin catalog view UI element.
+ * Presentation UI component rendering the plugin catalog view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function PluginCatalogView() {
   const { user } = useAppStore();

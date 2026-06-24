@@ -15,7 +15,8 @@ import type { IFinancialsRepository } from "../../domain/interfaces/IFinancialsR
 import type { PurchaseDto, PayoutDto } from "../../domain/interfaces/IFinancialsService";
 
 /**
- * Repository implementation for managing database operations on Financials resources.
+ * Repository layer implementing client request queries for financials.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class FinancialsRepository implements IFinancialsRepository {
   constructor(private readonly service: IFinancialsService) {}

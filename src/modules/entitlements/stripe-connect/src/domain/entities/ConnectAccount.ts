@@ -6,7 +6,8 @@
 // ── Connect Account (Full Detail) ──
 
 /**
- * Interface structure detailing the properties and attributes of Connect Account Data.
+ * Domain model representing a Connect Account Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ConnectAccountData {
   id: string;
@@ -31,7 +32,8 @@ export interface ConnectAccountData {
 }
 
 /**
- * Domain entity class representing a Connect Account.
+ * Domain model representing a Connect Account structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class ConnectAccount {
   constructor(public readonly data: ConnectAccountData) {}
@@ -135,7 +137,8 @@ export class ConnectAccount {
 // ── Connect Account List Item ──
 
 /**
- * Interface structure detailing the properties and attributes of Connect Account List Data.
+ * Domain model representing a Connect Account List Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface ConnectAccountListData {
   id: string;
@@ -152,7 +155,8 @@ export interface ConnectAccountListData {
 }
 
 /**
- * Domain entity class representing a Connect Account List Item.
+ * Domain model representing a Connect Account List Item structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class ConnectAccountListItem {
   constructor(public readonly data: ConnectAccountListData) {}
@@ -204,7 +208,8 @@ export class ConnectAccountListItem {
 // ── Commission ──
 
 /**
- * Interface structure detailing the properties and attributes of Commission Data.
+ * Domain model representing a Commission Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CommissionData {
   id: string;
@@ -224,7 +229,8 @@ export interface CommissionData {
 }
 
 /**
- * Domain entity class representing a Commission.
+ * Domain model representing a Commission structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class Commission {
   constructor(public readonly data: CommissionData) {}
@@ -286,7 +292,8 @@ export class Commission {
 // ── Dashboard ──
 
 /**
- * Interface structure detailing the properties and attributes of Commission Dashboard Data.
+ * Domain model representing a Commission Dashboard Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CommissionDashboardData {
   totalCommission: number;
@@ -299,7 +306,8 @@ export interface CommissionDashboardData {
 }
 
 /**
- * Domain entity class representing a Commission Dashboard.
+ * Domain model representing a Commission Dashboard structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class CommissionDashboard {
   constructor(public readonly data: CommissionDashboardData) {}
@@ -337,7 +345,8 @@ export class CommissionDashboard {
 // ── Simple Value Types ──
 
 /**
- * Interface structure detailing the properties and attributes of Commission Trend Point.
+ * Domain model representing a Commission Trend Point structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CommissionTrendPoint {
   date: string;
@@ -346,7 +355,8 @@ export interface CommissionTrendPoint {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Top Tenant Data.
+ * Domain model representing a Top Tenant Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface TopTenantData {
   tenantId: string;
@@ -357,7 +367,8 @@ export interface TopTenantData {
 // ── Tenant Self-Service Transactions ──
 
 /**
- * Interface structure detailing the properties and attributes of Tenant Financial Summary Data.
+ * Domain model representing a Tenant Financial Summary Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface TenantFinancialSummaryData {
   totalGrossRevenue: number;
@@ -370,7 +381,8 @@ export interface TenantFinancialSummaryData {
 }
 
 /**
- * Domain entity class representing a Tenant Financial Summary.
+ * Domain model representing a Tenant Financial Summary structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class TenantFinancialSummary {
   constructor(public readonly data: TenantFinancialSummaryData) {}
@@ -399,7 +411,8 @@ export class TenantFinancialSummary {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Tenant Transaction Item Data.
+ * Domain model representing a Tenant Transaction Item Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface TenantTransactionItemData {
   id: string;
@@ -417,7 +430,8 @@ export interface TenantTransactionItemData {
 }
 
 /**
- * Domain entity class representing a Tenant Transaction Item.
+ * Domain model representing a Tenant Transaction Item structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class TenantTransactionItem {
   constructor(public readonly data: TenantTransactionItemData) {}
@@ -475,7 +489,8 @@ export class TenantTransactionItem {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Tenant Transactions Result.
+ * Domain model representing a Tenant Transactions Result structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface TenantTransactionsResult {
   summary: TenantFinancialSummary;

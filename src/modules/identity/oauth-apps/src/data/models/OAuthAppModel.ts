@@ -9,7 +9,7 @@
 // ===== JSON Shapes (API contracts) =====
 
 /**
- * Interface structure detailing the properties and attributes of O Auth App Json.
+ * Interface defining property specifications, keys types, and structural contract rules for o auth app json.
  */
 export interface OAuthAppJson {
   id: string;
@@ -38,7 +38,7 @@ export interface OAuthAppJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of O Auth App List Item Json.
+ * Interface defining property specifications, keys types, and structural contract rules for o auth app list item json.
  */
 export interface OAuthAppListItemJson {
   id: string;
@@ -56,7 +56,7 @@ export interface OAuthAppListItemJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of O Auth App List Response Json.
+ * Interface defining property specifications, keys types, and structural contract rules for o auth app list response json.
  */
 export interface OAuthAppListResponseJson {
   items: OAuthAppListItemJson[];
@@ -64,7 +64,7 @@ export interface OAuthAppListResponseJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Regenerate Secret Result Json.
+ * Interface defining property specifications, keys types, and structural contract rules for regenerate secret result json.
  */
 export interface RegenerateSecretResultJson {
   clientId: string;
@@ -72,7 +72,7 @@ export interface RegenerateSecretResultJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Create O Auth App Response Json.
+ * Interface defining property specifications, keys types, and structural contract rules for create o auth app response json.
  */
 export interface CreateOAuthAppResponseJson {
   id: string;
@@ -81,7 +81,7 @@ export interface CreateOAuthAppResponseJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Create O Auth App Json.
+ * Interface defining property specifications, keys types, and structural contract rules for create o auth app json.
  */
 export interface CreateOAuthAppJson {
   displayName: string;
@@ -103,7 +103,7 @@ export interface CreateOAuthAppJson {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update O Auth App Json.
+ * Interface defining property specifications, keys types, and structural contract rules for update o auth app json.
  */
 export interface UpdateOAuthAppJson {
   displayName?: string;
@@ -126,7 +126,7 @@ export interface UpdateOAuthAppJson {
 // ===== Model Classes =====
 
 /**
- * Domain entity class representing a O Auth App Model.
+ * Exported class defining parameters and fields for o auth app model configurations.
  */
 export class OAuthAppModel {
   constructor(
@@ -185,7 +185,7 @@ export class OAuthAppModel {
 }
 
 /**
- * Domain entity class representing a O Auth App List Item Model.
+ * Exported class defining parameters and fields for o auth app list item model configurations.
  */
 export class OAuthAppListItemModel {
   constructor(

@@ -23,7 +23,7 @@ import { Pencil, Trash2, Zap, Shield, Users, Fingerprint } from "lucide-react";
 import { format } from "date-fns";
 
 /**
- * Constant definition representing identity provider keys.
+ * Exported constant defining parameters and fields for identity provider keys configurations.
  */
 export const identityProviderKeys = {
   all: ["identity-providers"] as const,
@@ -33,7 +33,8 @@ export const identityProviderKeys = {
 };
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for identity providers view model.
+ * React hook/ViewModel orchestrating state and data flows for identity providers view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useIdentityProvidersViewModel() {
   const { identityProviderRepository } = identityContainer;

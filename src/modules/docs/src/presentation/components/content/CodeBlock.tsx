@@ -342,7 +342,8 @@ function tokenize(code: string, language: string): { text: string; className: st
 }
 
 /**
- * React presentation component representing the code block UI element.
+ * Presentation UI component rendering the code block.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function CodeBlock({ code, language, filename, highlightLines }: CodeBlockProps) {
   const { t } = useDocsI18n();

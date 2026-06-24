@@ -10,22 +10,26 @@
 // ─── Shared Types ──────────────────────────────────────────────
 
 /**
- * Type declaration definition describing the schema of notification type.
+ * Domain model representing a Notification Type structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type NotificationType = "Info" | "Success" | "Warning" | "Error";
 /**
- * Type declaration definition describing the schema of notification category.
+ * Domain model representing a Notification Category structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type NotificationCategory = "General" | "Security" | "System" | "Activity";
 /**
- * Type declaration definition describing the schema of notification target type.
+ * Domain model representing a Notification Target Type structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type NotificationTargetType = "User" | "Role" | "Tenant" | "Broadcast";
 
 // ─── Notification Target Entity ────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Notification Target Data.
+ * Domain model representing a Notification Target Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface NotificationTargetData {
   id: string;

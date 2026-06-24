@@ -44,7 +44,7 @@ export interface SubscriptionModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Subscription List Model.
+ * Interface defining property specifications, keys types, and structural contract rules for subscription list model.
  */
 export interface SubscriptionListModel {
   id: string;
@@ -84,7 +84,7 @@ export interface SubscriptionListModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Global Subscription Model.
+ * Interface defining property specifications, keys types, and structural contract rules for global subscription model.
  */
 export interface GlobalSubscriptionModel {
   id: string;

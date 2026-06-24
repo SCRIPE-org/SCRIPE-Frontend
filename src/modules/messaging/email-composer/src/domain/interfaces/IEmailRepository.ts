@@ -2,7 +2,8 @@ import type { EmailRecipient, SentEmail, EmailTemplateListResponse } from "../en
 import type { SendManualEmailPayload } from "../entities/EmailRequests";
 
 /**
- * Interface defining repository methods for managing Email data access.
+ * Repository layer implementing client request queries for i email.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IEmailRepository {
   searchRecipients(query: string): Promise<EmailRecipient[]>;

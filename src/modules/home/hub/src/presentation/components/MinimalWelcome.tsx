@@ -14,7 +14,8 @@ import { ShieldCheck, User, Settings } from "lucide-react";
 import Link from "next/link";
 
 /**
- * React presentation component representing the minimal welcome UI element.
+ * Presentation UI component rendering the minimal welcome.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function MinimalWelcome() {
   const { t } = useI18n();

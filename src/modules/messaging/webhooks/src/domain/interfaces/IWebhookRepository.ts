@@ -11,7 +11,8 @@ import type {
 import type { CreateWebhookRequest, UpdateWebhookRequest } from "../entities/WebhookRequests";
 
 /**
- * Interface defining repository methods for managing Webhook data access.
+ * Repository layer implementing client request queries for i webhook.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IWebhookRepository {
   // ─── Subscriptions ─────────────────────────────────────────

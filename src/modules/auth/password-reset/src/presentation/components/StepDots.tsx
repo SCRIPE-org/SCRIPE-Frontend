@@ -8,7 +8,8 @@ interface StepDotsProps {
 }
 
 /**
- * React presentation component representing the step dots UI element.
+ * Presentation UI component rendering the step dots.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function StepDots({ current, total }: StepDotsProps) {
   return (

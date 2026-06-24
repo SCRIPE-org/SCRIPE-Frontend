@@ -10,7 +10,7 @@
 // ── Permission Assignment ────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Permission Assignment Json.
+ * Interface defining property specifications, keys types, and structural contract rules for permission assignment json.
  */
 export interface PermissionAssignmentJson {
   permissionId: string;
@@ -21,7 +21,7 @@ export interface PermissionAssignmentJson {
 // ── Permission Scopes ────────────────────────────────────
 
 /**
- * Constant definition representing permission scopes.
+ * Exported constant defining parameters and fields for permission scopes configurations.
  */
 export const PermissionScopes = {
   /** No override - uses permission's default scope */
@@ -37,6 +37,6 @@ export const PermissionScopes = {
 } as const;
 
 /**
- * Type declaration definition describing the schema of permission scope type.
+ * Exported type defining parameters and fields for permission scope type configurations.
  */
 export type PermissionScopeType = (typeof PermissionScopes)[keyof typeof PermissionScopes];

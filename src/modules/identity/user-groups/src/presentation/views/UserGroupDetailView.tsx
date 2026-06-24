@@ -27,7 +27,8 @@ interface Props {
 }
 
 /**
- * React presentation component representing the user group detail view UI element.
+ * Presentation UI component rendering the user group detail view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function UserGroupDetailView({ groupId }: Props) {
   const { t, language } = useI18n();

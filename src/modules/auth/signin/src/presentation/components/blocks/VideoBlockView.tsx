@@ -6,7 +6,8 @@ import {
 } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 
 /**
- * React presentation component representing the video block view UI element.
+ * Presentation UI component rendering the video block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function VideoBlockView({ block }: { block: VideoBlock }) {
   const props = block.props;

@@ -86,7 +86,8 @@ interface OptionGridProps {
 }
 
 /**
- * React presentation component representing the option grid UI element.
+ * Presentation UI component rendering the option grid.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function OptionGrid({
   options,

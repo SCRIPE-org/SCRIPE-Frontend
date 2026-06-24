@@ -12,7 +12,8 @@ import type { PermissionListParams } from "./IPermissionRepository";
 import type { PermissionModuleGroupJson } from "../../data/models/PermissionModel";
 
 /**
- * Interface defining operations for the Permission network service.
+ * Http API network service for i permission.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IPermissionService {
   getAll(params?: PermissionListParams): Promise<PermissionModel[]>;

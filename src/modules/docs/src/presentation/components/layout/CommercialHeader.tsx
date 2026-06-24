@@ -9,7 +9,8 @@ import { BRAND } from "@core/config/branding";
 
 // ─── Component ───────────────────────────────────────────────────
 /**
- * React presentation component representing the commercial header UI element.
+ * Presentation UI component rendering the commercial header.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function CommercialHeader({
   onSearchOpen,

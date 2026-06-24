@@ -29,7 +29,8 @@ interface ProfileGeneralTabProps {
 }
 
 /**
- * React presentation component representing the profile general tab UI element.
+ * Presentation UI component rendering the profile general tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ProfileGeneralTab({
   profile,

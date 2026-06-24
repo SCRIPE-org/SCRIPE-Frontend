@@ -23,12 +23,12 @@ import { entitlementsContainer } from "@modules/entitlements/di";
 import type { Edition, EditionFeatureDto } from "../../domain/entities/Edition";
 
 /**
- * Type declaration definition describing the schema of billing cycle.
+ * Exported type defining parameters and fields for billing cycle configurations.
  */
 export type BillingCycle = "Monthly" | "Yearly" | "Lifetime";
 
 /**
- * Interface structure detailing the properties and attributes of Feature Row.
+ * Interface defining property specifications, keys types, and structural contract rules for feature row.
  */
 export interface FeatureRow {
   featureName: string;
@@ -43,7 +43,7 @@ export interface FeatureRow {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Pricing Highlight.
+ * Interface defining property specifications, keys types, and structural contract rules for pricing highlight.
  */
 export interface PricingHighlight {
   label: string;
@@ -110,7 +110,8 @@ function resolveAvailableCycles(editions: Edition[]): BillingCycle[] {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for edition comparison view model.
+ * React hook/ViewModel orchestrating state and data flows for edition comparison view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useEditionComparisonViewModel() {
   const { editionRepository } = entitlementsContainer;

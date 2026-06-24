@@ -17,7 +17,7 @@ import { oauthAppKeys } from "./useOAuthAppsViewModel";
 
 // ─── Form State ──────────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of O Auth App Form State.
+ * Interface defining property specifications, keys types, and structural contract rules for o auth app form state.
  */
 export interface OAuthAppFormState {
   // General
@@ -74,7 +74,8 @@ const DEFAULT_STATE: OAuthAppFormState = {
 
 // ─── Hook ─────────────────────────────────────────────────────────
 /**
- * React hook/ViewModel managing logic, state, and repository queries for o auth app detail view model.
+ * React hook/ViewModel orchestrating state and data flows for o auth app detail view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useOAuthAppDetailViewModel(appId?: string) {
   const { oauthAppRepository } = identityContainer;

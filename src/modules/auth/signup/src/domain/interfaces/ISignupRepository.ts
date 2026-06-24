@@ -51,7 +51,7 @@ export interface RegisterPayload {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Contact Sales Payload.
+ * Interface defining property specifications, keys types, and structural contract rules for contact sales payload.
  */
 export interface ContactSalesPayload {
   fullName: string;
@@ -68,7 +68,8 @@ export interface ContactSalesPayload {
 }
 
 /**
- * Interface defining repository methods for managing Signup data access.
+ * Repository layer implementing client request queries for i signup.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface ISignupRepository {
   /** Detect visitor country and return recommended currency + all FX rates. */

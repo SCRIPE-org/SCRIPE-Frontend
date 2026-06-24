@@ -26,7 +26,8 @@ interface UseSignupSubdomainOptions {
 }
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for signup subdomain.
+ * React hook/ViewModel orchestrating state and data flows for signup subdomain.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useSignupSubdomain({
   repository,

@@ -12,7 +12,8 @@ interface IdentifierInputProps {
 }
 
 /**
- * React presentation component representing the identifier input UI element.
+ * Presentation UI component rendering the identifier input.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function IdentifierInput({ value, onChange, disabled, hasError, t }: IdentifierInputProps) {
   return (

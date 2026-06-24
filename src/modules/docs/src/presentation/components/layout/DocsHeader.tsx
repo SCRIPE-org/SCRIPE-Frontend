@@ -44,7 +44,8 @@ const MenuIcon = () => (
 );
 
 /**
- * React presentation component representing the docs header UI element.
+ * Presentation UI component rendering the docs header.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DocsHeader({ onSearchOpen, onMobileMenuOpen }: DocsHeaderProps) {
   const { t } = useDocsI18n();

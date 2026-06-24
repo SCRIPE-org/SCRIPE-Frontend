@@ -16,7 +16,8 @@ export interface InventoryItemData {
 }
 
 /**
- * Domain entity class representing a Inventory Item.
+ * Domain model representing a Inventory Item structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export class InventoryItem {
   constructor(private readonly data: InventoryItemData) {}
@@ -61,7 +62,8 @@ export class InventoryItem {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Create Data Inventory Request.
+ * Domain model representing a Create Data Inventory Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface CreateDataInventoryRequest {
   moduleName: string;
@@ -74,6 +76,7 @@ export interface CreateDataInventoryRequest {
 }
 
 /**
- * Type declaration definition describing the schema of update data inventory request.
+ * Domain model representing a Update Data Inventory Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export type UpdateDataInventoryRequest = CreateDataInventoryRequest;

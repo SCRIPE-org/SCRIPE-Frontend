@@ -15,7 +15,7 @@ import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 // ─── Query keys ──────────────────────────────────────────────────────
 // Include tenantId so TanStack Query caches per-tenant
 /**
- * Constant definition representing audit keys.
+ * Exported constant defining parameters and fields for audit keys configurations.
  */
 export const auditKeys = {
   all: (tenantId: string | null) => ["audit", tenantId ?? "system"] as const,
@@ -29,7 +29,7 @@ export const auditKeys = {
 
 // ─── Filter ViewModel ────────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Audit Filter State.
+ * Interface defining property specifications, keys types, and structural contract rules for audit filter state.
  */
 export interface AuditFilterState {
   page: number;
@@ -58,7 +58,8 @@ const defaultFilters: AuditFilterState = {
 };
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for audit filter view model.
+ * React hook/ViewModel orchestrating state and data flows for audit filter view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useAuditFilterViewModel() {
   const [filters, setFilters] = useState<AuditFilterState>(defaultFilters);
@@ -138,7 +139,8 @@ export function useAuditFilterViewModel() {
 
 // ─── Detail ViewModel ────────────────────────────────────────────────
 /**
- * React hook/ViewModel managing logic, state, and repository queries for audit detail view model.
+ * React hook/ViewModel orchestrating state and data flows for audit detail view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useAuditDetailViewModel(id: string | null, tenantId: string | null) {
   const repo = monitoringContainer.auditRepository;
@@ -154,7 +156,8 @@ export function useAuditDetailViewModel(id: string | null, tenantId: string | nu
 
 // ─── Orchestrator ────────────────────────────────────────────────────
 /**
- * React hook/ViewModel managing logic, state, and repository queries for audit view model.
+ * React hook/ViewModel orchestrating state and data flows for audit view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useAuditViewModel() {
   const tenantId = useCurrentTenantId();

@@ -4,7 +4,8 @@ import type { IHubActivityService } from "../../domain/interfaces/IHubActivitySe
 import type { HubActivitySummaryModel } from "../models/HubActivityModels";
 
 /**
- * API service for executing HTTP calls related to HubActivity endpoints.
+ * Http API network service for hub activity.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class HubActivityService implements IHubActivityService {
   constructor(private readonly api: IApiService) {}

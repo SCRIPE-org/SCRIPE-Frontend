@@ -7,14 +7,15 @@ import { getComponent } from "@core/common/component-registry";
 import { useToast } from "@core/hooks/use-toast";
 
 /**
- * Constant definition representing external login keys.
+ * Exported constant defining parameters and fields for external login keys configurations.
  */
 export const externalLoginKeys = {
   all: ["profile", "external-logins"] as const,
 };
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for external logins view model.
+ * React hook/ViewModel orchestrating state and data flows for external logins view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useExternalLoginsViewModel() {
   const repo = container.profileRepository;

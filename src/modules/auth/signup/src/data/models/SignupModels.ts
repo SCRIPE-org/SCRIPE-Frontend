@@ -9,7 +9,7 @@
 // ─── Public feature DTO ───────────────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Public Feature Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for public feature dto.
  */
 export interface PublicFeatureDto {
   name: string;
@@ -27,7 +27,7 @@ export interface PublicFeatureDto {
 // ─── Edition DTO ──────────────────────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Public Edition Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for public edition dto.
  */
 export interface PublicEditionDto {
   id: string;
@@ -51,7 +51,7 @@ export interface PublicEditionDto {
 // ─── Category DTO ─────────────────────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Public Category Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for public category dto.
  */
 export interface PublicCategoryDto {
   id: string;
@@ -68,7 +68,7 @@ export interface PublicCategoryDto {
 // ─── OTP DTOs ────────────────────────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Send Otp Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for send otp dto.
  */
 export interface SendOtpDto {
   sent: boolean;
@@ -76,7 +76,7 @@ export interface SendOtpDto {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Verify Otp Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for verify otp dto.
  */
 export interface VerifyOtpDto {
   isValid: boolean;
@@ -87,7 +87,7 @@ export interface VerifyOtpDto {
 // ─── Subdomain check DTO ──────────────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Subdomain Check Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for subdomain check dto.
  */
 export interface SubdomainCheckDto {
   available: boolean;
@@ -98,7 +98,7 @@ export interface SubdomainCheckDto {
 // ─── Register DTOs ────────────────────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Register Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for register dto.
  */
 export interface RegisterDto {
   mode: "active" | "checkout";
@@ -116,7 +116,7 @@ export interface RegisterDto {
 // ─── Status / finalize DTOs ───────────────────────────────────────────────────
 
 /**
- * Interface structure detailing the properties and attributes of Signup Status Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for signup status dto.
  */
 export interface SignupStatusDto {
   status:
@@ -131,7 +131,7 @@ export interface SignupStatusDto {
   expiresAt: string | null;
 }
 /**
- * Interface structure detailing the properties and attributes of Signup Checkout Status Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for signup checkout status dto.
  */
 export interface SignupCheckoutStatusDto {
   status: "pending" | "processing" | "completed" | "failed" | "expired" | "unknown";
@@ -139,7 +139,7 @@ export interface SignupCheckoutStatusDto {
   message: string;
 }
 /**
- * Interface structure detailing the properties and attributes of Complete Session Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for complete session dto.
  */
 export interface CompleteSessionDto {
   accessToken: string;
@@ -152,7 +152,7 @@ export interface CompleteSessionDto {
 }
 // ─── Pricing context DTOs ─────────────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Supported Currency Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for supported currency dto.
  */
 export interface SupportedCurrencyDto {
   code: string;
@@ -162,7 +162,7 @@ export interface SupportedCurrencyDto {
   rateFromUsd: number;
 }
 /**
- * Interface structure detailing the properties and attributes of Pricing Context Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for pricing context dto.
  */
 export interface PricingContextDto {
   detectedCountry: string | null;
@@ -171,7 +171,7 @@ export interface PricingContextDto {
 }
 // ─── Resume / Change-plan DTOs ───────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Resume Session Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for resume session dto.
  */
 export interface ResumeSessionDto {
   status:
@@ -188,14 +188,14 @@ export interface ResumeSessionDto {
   expiresAt: string | null;
 }
 /**
- * Interface structure detailing the properties and attributes of Change Plan Result Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for change plan result dto.
  */
 export interface ChangePlanResultDto {
   checkoutUrl: string;
 }
 // ─── Contact sales DTO ────────────────────────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Contact Sales Request Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for contact sales request dto.
  */
 export interface ContactSalesRequestDto {
   contactName: string;
@@ -224,7 +224,7 @@ export interface RecommendationDto {
 }
 // ─── Onboarding Intelligence Engine DTOs ─────────────────────────────────────
 /**
- * Interface structure detailing the properties and attributes of Onboarding Answer Option Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for onboarding answer option dto.
  */
 export interface OnboardingAnswerOptionDto {
   value: string;
@@ -235,7 +235,7 @@ export interface OnboardingAnswerOptionDto {
   signalWeight: number;
 }
 /**
- * Interface structure detailing the properties and attributes of Onboarding Question Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for onboarding question dto.
  */
 export interface OnboardingQuestionDto {
   key: string;
@@ -252,13 +252,13 @@ export interface OnboardingQuestionDto {
   options: OnboardingAnswerOptionDto[];
 }
 /**
- * Interface structure detailing the properties and attributes of Onboarding Flow Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for onboarding flow dto.
  */
 export interface OnboardingFlowDto {
   questions: OnboardingQuestionDto[];
 }
 /**
- * Interface structure detailing the properties and attributes of Onboarding Recommendation Dto.
+ * Interface defining property specifications, keys types, and structural contract rules for onboarding recommendation dto.
  */
 export interface OnboardingRecommendationDto {
   recommendedEditionId: string;

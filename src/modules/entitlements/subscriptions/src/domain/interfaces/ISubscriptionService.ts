@@ -11,7 +11,8 @@ import type {
 } from "../../data/models/SubscriptionModels";
 
 /**
- * Interface defining operations for the Subscription network service.
+ * Http API network service for i subscription.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface ISubscriptionService {
   // ── Queries ──

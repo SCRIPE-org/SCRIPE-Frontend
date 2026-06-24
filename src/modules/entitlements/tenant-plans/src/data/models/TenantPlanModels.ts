@@ -22,7 +22,7 @@ export interface TenantPlanFeatureModel {
 
 // ── Pricing Matrix ──
 /**
- * Interface structure detailing the properties and attributes of Tenant Plan Price Model.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant plan price model.
  */
 export interface TenantPlanPriceModel {
   id: string;
@@ -35,7 +35,7 @@ export interface TenantPlanPriceModel {
 
 // ── Plan Version (immutable snapshot) ──
 /**
- * Interface structure detailing the properties and attributes of Tenant Plan Version Model.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant plan version model.
  */
 export interface TenantPlanVersionModel {
   id: string;
@@ -115,7 +115,7 @@ export interface TenantPlanListModel {
 
 // ── Feature Definition (Catalog) ──
 /**
- * Interface structure detailing the properties and attributes of Tenant Feature Definition Model.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant feature definition model.
  */
 export interface TenantFeatureDefinitionModel {
   id: string;
@@ -135,7 +135,7 @@ export interface TenantFeatureDefinitionModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Tenant Feature Definition List Model.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant feature definition list model.
  */
 export interface TenantFeatureDefinitionListModel {
   id: string;
@@ -159,7 +159,7 @@ export interface TenantFeatureDefinitionCategoryGroupModel {
 
 // ── Promotion ──
 /**
- * Interface structure detailing the properties and attributes of Tenant Plan Promotion Model.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant plan promotion model.
  */
 export interface TenantPlanPromotionModel {
   id: string;
@@ -185,7 +185,7 @@ export interface TenantPlanPromotionModel {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Tenant Plan Promotion List Model.
+ * Interface defining property specifications, keys types, and structural contract rules for tenant plan promotion list model.
  */
 export interface TenantPlanPromotionListModel {
   id: string;

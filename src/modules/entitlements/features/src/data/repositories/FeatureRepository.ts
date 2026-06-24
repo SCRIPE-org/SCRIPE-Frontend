@@ -20,7 +20,8 @@ import type {
 import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
 /**
- * Repository implementation for managing database operations on Feature resources.
+ * Repository layer implementing client request queries for feature.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class FeatureRepository implements IFeatureRepository {
   constructor(private readonly service: IFeatureService) {}

@@ -31,7 +31,8 @@ export interface CreateEditionRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Update Edition Request.
+ * Domain model representing a Update Edition Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface UpdateEditionRequest {
   name?: string;
@@ -60,7 +61,8 @@ export interface UpdateEditionRequest {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Set Edition Feature Request.
+ * Domain model representing a Set Edition Feature Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface SetEditionFeatureRequest {
   value: string;

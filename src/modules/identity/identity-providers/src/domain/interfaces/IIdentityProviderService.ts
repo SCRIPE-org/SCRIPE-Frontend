@@ -7,7 +7,7 @@ import type {
 } from "../types/IdentityProviderTypes";
 
 /**
- * Interface structure detailing the properties and attributes of Service Identity Provider List Params.
+ * Interface defining property specifications, keys types, and structural contract rules for service identity provider list params.
  */
 export interface ServiceIdentityProviderListParams {
   page?: number;
@@ -16,7 +16,8 @@ export interface ServiceIdentityProviderListParams {
 }
 
 /**
- * Interface defining operations for the IdentityProvider network service.
+ * Http API network service for i identity provider.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface IIdentityProviderService {
   getAll(params: ServiceIdentityProviderListParams): Promise<IdentityProviderListResponseJson>;

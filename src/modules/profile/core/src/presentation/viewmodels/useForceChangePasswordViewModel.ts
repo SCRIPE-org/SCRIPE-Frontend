@@ -8,7 +8,8 @@ import { container } from "@modules/profile/di";
 import { useServices } from "@core/providers/service-provider";
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for force change password view model.
+ * React hook/ViewModel orchestrating state and data flows for force change password view model.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
  */
 export function useForceChangePasswordViewModel() {
   const { t, direction } = useI18n();

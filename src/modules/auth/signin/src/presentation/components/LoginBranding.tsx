@@ -12,7 +12,7 @@ interface BrandingCopyright {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Login Branding Props.
+ * Interface defining property specifications, keys types, and structural contract rules for login branding props.
  */
 export interface LoginBrandingProps {
   branding?: TenantBranding | null;

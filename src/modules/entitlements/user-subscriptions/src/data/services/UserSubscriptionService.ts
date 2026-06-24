@@ -18,7 +18,8 @@ import type { PagedResult, PaginationParams } from "@core/interfaces/common.inte
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 
 /**
- * API service for executing HTTP calls related to UserSubscription endpoints.
+ * Http API network service for user subscription.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class UserSubscriptionService implements IUserSubscriptionService {
   constructor(private readonly api: IApiService) {}

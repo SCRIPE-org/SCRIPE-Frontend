@@ -13,7 +13,8 @@ interface DsrDeadlineCellProps {
 }
 
 /**
- * React presentation component representing the dsr deadline cell UI element.
+ * Presentation UI component rendering the dsr deadline cell.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DsrDeadlineCell({
   dsr,
