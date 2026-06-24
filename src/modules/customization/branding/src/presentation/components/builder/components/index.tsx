@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * Builder Components Index — All 14 canvas component renderers
  *

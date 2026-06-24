@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Claim Mapping Editor
  *

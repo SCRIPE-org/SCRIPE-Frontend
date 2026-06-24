@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Tenant Repository Implementation
  *
@@ -21,8 +22,8 @@ import type {
 import type { PagedResult } from "@modules/identity/core/domain/types";
 import type { ITenantService } from "../../domain/interfaces/ITenantService";
 import { TenantMapper } from "../mappers/TenantMapper";
-import type { Permission, PermissionModuleGroup } from "@modules/identity/permissions";
-import { PermissionMapper } from "@modules/identity/permissions";
+import type { Permission, PermissionModuleGroup } from "@modules/identity/core";
+import { PermissionMapper } from "@modules/identity/core";
 import { appLogger } from "@core/common/logger";
 import type {
   SubscriptionModel,

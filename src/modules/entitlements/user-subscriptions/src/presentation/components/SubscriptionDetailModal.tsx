@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * SubscriptionDetailModal — Comprehensive read-only detail view for a UserSubscription.
  *

@@ -8,6 +8,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import type { IPublicApiService } from "@core/interfaces/public-api.interface";
+import type { IApiService } from "@core/interfaces/api.interface";
 import { AUTH_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import type { ISignupService } from "../interfaces/ISignupService";
 import type {
@@ -34,7 +35,10 @@ import type {
 import type { SignupRecommendationRequest } from "../../domain/entities/OnboardingEntities";
 
 export class SignupService implements ISignupService {
-  constructor(private readonly api: IPublicApiService) {}
+  constructor(
+    private readonly api: IPublicApiService,
+    private readonly _apiService?: IApiService
+  ) {}
 
   /**
    * Detects the visitor's country (via Cloudflare/proxy headers on the backend)

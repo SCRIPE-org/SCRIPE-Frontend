@@ -8,8 +8,8 @@ import { useTheme } from "next-themes";
 import { useAppStore } from "@core/store/useAppStore";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { customizationContainer } from "@modules/customization/di";
-import type { AuditLogPagedResultJson as AuditLogPagedResult } from "@modules/customization/branding/src/domain/types/CustomizationServiceTypes";
-import type { SystemSettingsJson as SystemSettingsResponse } from "@modules/customization/branding/src/domain/types/CustomizationServiceTypes";
+import type { AuditLogPagedResultJson as AuditLogPagedResult } from "@core/domain/entities";
+import type { SystemSettingsJson as SystemSettingsResponse } from "@core/domain/entities";
 
 // Query keys
 export const customizationKeys = {

@@ -26,7 +26,14 @@ interface WizardStep2Props {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function WizardStep2Setup({ lead, edition, state, onChange, amountError, onAmountChange }: WizardStep2Props) {
+export function WizardStep2Setup({
+  lead,
+  edition,
+  state,
+  onChange,
+  amountError,
+  onAmountChange,
+}: WizardStep2Props) {
   const { t, language } = useI18n();
   const set = (field: keyof Step2State, value: string | boolean) =>
     onChange({ ...state, [field]: value });
@@ -39,7 +46,9 @@ export function WizardStep2Setup({ lead, edition, state, onChange, amountError, 
           <Package className="h-4 w-4 shrink-0 text-muted-foreground" />
           <div>
             <span className="text-sm font-medium">
-              {language === "ar" && edition.displayNameAr ? edition.displayNameAr : edition.displayNameEn}
+              {language === "ar" && edition.displayNameAr
+                ? edition.displayNameAr
+                : edition.displayNameEn}
             </span>
             {edition.isContactSalesOnly && (
               <span className="ml-2 text-xs text-amber-600 dark:text-amber-500">
@@ -60,7 +69,9 @@ export function WizardStep2Setup({ lead, edition, state, onChange, amountError, 
           placeholder={`e.g. ${lead?.companyName?.toLowerCase().replace(/\s+/g, "-") ?? "acme"}`}
           autoComplete="off"
         />
-        <p className="text-xs text-muted-foreground">{t("leads.convertWizard.workspaceSlugHint")}</p>
+        <p className="text-xs text-muted-foreground">
+          {t("leads.convertWizard.workspaceSlugHint")}
+        </p>
       </div>
 
       {/* Admin Email */}
@@ -86,18 +97,31 @@ export function WizardStep2Setup({ lead, edition, state, onChange, amountError, 
               <SelectValue placeholder={t("leads.convertWizard.editionDefault")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Monthly">{t("leads.convertDialog.subscriptionMonthly")}</SelectItem>
+              <SelectItem value="Monthly">
+                {t("leads.convertDialog.subscriptionMonthly")}
+              </SelectItem>
               <SelectItem value="Yearly">{t("leads.convertDialog.subscriptionYearly")}</SelectItem>
-              <SelectItem value="Lifetime">{t("leads.convertDialog.subscriptionLifetime")}</SelectItem>
+              <SelectItem value="Lifetime">
+                {t("leads.convertDialog.subscriptionLifetime")}
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="wiz-currency">{t("leads.convertDialog.currency")}</Label>
-          <Select value={state.currency} onValueChange={(v) => onChange({ ...state, currency: v, negotiatedCurrency: v })}>
-            <SelectTrigger id="wiz-currency"><SelectValue /></SelectTrigger>
+          <Select
+            value={state.currency}
+            onValueChange={(v) => onChange({ ...state, currency: v, negotiatedCurrency: v })}
+          >
+            <SelectTrigger id="wiz-currency">
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
-              {CURRENCIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+              {CURRENCIES.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {c}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -109,7 +133,9 @@ export function WizardStep2Setup({ lead, edition, state, onChange, amountError, 
           <div className="flex items-center gap-2">
             <BadgeDollarSign className="h-4 w-4 shrink-0 text-amber-500" />
             <div>
-              <p className="text-sm font-medium leading-none">{t("leads.convertDialog.negotiatedPrice.toggle")}</p>
+              <p className="text-sm font-medium leading-none">
+                {t("leads.convertDialog.negotiatedPrice.toggle")}
+              </p>
               <p className="mt-0.5 text-xs text-muted-foreground">
                 {edition?.isContactSalesOnly
                   ? t("leads.convertWizard.customPricingRequiredDesc")
@@ -118,7 +144,7 @@ export function WizardStep2Setup({ lead, edition, state, onChange, amountError, 
             </div>
           </div>
           {edition?.isContactSalesOnly ? (
-            <span className="text-[10px] font-semibold bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded border border-amber-500/20 uppercase tracking-wider">
+            <span className="rounded border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-amber-400">
               {t("leads.convertWizard.required")}
             </span>
           ) : (
@@ -135,7 +161,9 @@ export function WizardStep2Setup({ lead, edition, state, onChange, amountError, 
         {state.useCustomPrice && (
           <div className="space-y-3 pt-1">
             <div className="space-y-1.5">
-              <Label htmlFor="wiz-neg-amount">{t("leads.convertWizard.negotiatedAmount")} ({state.currency})</Label>
+              <Label htmlFor="wiz-neg-amount">
+                {t("leads.convertWizard.negotiatedAmount")} ({state.currency})
+              </Label>
               <div className="relative">
                 <span className="absolute left-3 top-2.5 text-xs font-semibold text-muted-foreground">
                   {state.currency}

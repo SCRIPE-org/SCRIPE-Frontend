@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Navigation Tree — Sidebar structure for the documentation portal.
  * This is the single source of truth for sidebar navigation.

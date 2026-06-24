@@ -1,4 +1,4 @@
-import type { PluginDefinitionModel } from "@modules/plugins/catalog";
+import type { PluginDefinitionModel } from "@modules/plugins/core";
 import type { CreateDefinitionRequest, UpdateDefinitionRequest } from "./IDefinitionsRepository";
 
 export interface IDefinitionsService {

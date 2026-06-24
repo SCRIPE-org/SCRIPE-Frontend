@@ -4,7 +4,7 @@
  * Defines the contract for edition API operations.
  * Implemented by EditionService in the data layer.
  */
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 import type { EditionModel, EditionVersionModel } from "../../data/models/EditionModels";
 import type {
   EditionPromotionData,

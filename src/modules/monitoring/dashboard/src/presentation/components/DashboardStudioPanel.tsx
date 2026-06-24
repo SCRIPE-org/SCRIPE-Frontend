@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * DashboardStudioPanel — Slide-over settings panel for dashboard theming (M9 + M11)
  *

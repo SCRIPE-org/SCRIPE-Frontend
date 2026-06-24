@@ -33,7 +33,11 @@ export function AddMembersDialog({
   isSubmitting,
   tenantId,
 }: AddMembersDialogProps) {
-  const { t, language, adminsData, isLoading } = useAddMembersViewModel({ groupId, tenantId, open });
+  const { t, language, adminsData, isLoading } = useAddMembersViewModel({
+    groupId,
+    tenantId,
+    open,
+  });
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   // Filter out existing members

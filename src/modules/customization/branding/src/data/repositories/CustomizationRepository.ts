@@ -11,7 +11,7 @@ import type { ICustomizationService } from "../../domain/interfaces/ICustomizati
 import type { BrandingConfig } from "../../domain/entities/BrandingConfig";
 import type { SystemDefaults } from "../../domain/entities/SystemDefaults";
 import type { AuditLogEntry } from "../../domain/entities/AuditLogEntry";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import { BrandingMapper } from "../mappers/BrandingMapper";
 import { BrandingModel, AuditLogEntryModel } from "../models/BrandingModel";
 import { SystemSettingsModel } from "../models/SystemSettingsModel";

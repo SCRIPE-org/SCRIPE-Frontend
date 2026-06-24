@@ -54,6 +54,22 @@ export interface MarketplaceContainer {
 let _container: MarketplaceContainer | null = null;
 
 export function getMarketplaceContainer(): MarketplaceContainer {
+  if (typeof window === "undefined") {
+    const dummyProxy = new Proxy({} as any, {
+      get() {
+        return () => Promise.resolve({});
+      },
+    });
+    return {
+      appListingsRepository: dummyProxy,
+      categoriesRepository: dummyProxy,
+      submissionsRepository: dummyProxy,
+      developersRepository: dummyProxy,
+      reviewsRepository: dummyProxy,
+      financialsRepository: dummyProxy,
+    };
+  }
+
   if (!_container) {
     // Single IApiService instance shared across all sub-module services
     const apiService = getModuleApiService("MARKETPLACE");

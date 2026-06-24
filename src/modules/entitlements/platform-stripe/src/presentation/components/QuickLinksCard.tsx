@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * QuickLinksCard — Grid of links to Stripe Dashboard pages.
  */

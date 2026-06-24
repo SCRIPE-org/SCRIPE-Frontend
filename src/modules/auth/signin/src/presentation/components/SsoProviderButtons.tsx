@@ -31,35 +31,37 @@ const SsoButton = ({
   onProviderClick: (providerId: string, protocol?: string) => void;
 }) => {
   const [hover, setHover] = useState(false);
-  
-  const label = provider.buttonLabel || (() => {
-    const lowerName = provider.name.toLowerCase();
-    const lowerSlug = provider.slug.toLowerCase();
-    
-    if (lowerName.includes("google") || lowerSlug.includes("google")) {
-      return "Google";
-    }
-    if (
-      lowerName.includes("microsoft") ||
-      lowerName.includes("entra") ||
-      lowerName.includes("azure") ||
-      lowerSlug.includes("microsoft") ||
-      lowerSlug.includes("entra") ||
-      lowerSlug.includes("azure")
-    ) {
-      return "Microsoft";
-    }
-    if (lowerName.includes("apple") || lowerSlug.includes("apple")) {
-      return "Apple";
-    }
-    if (lowerName.includes("github") || lowerSlug.includes("github")) {
-      return "GitHub";
-    }
-    if (lowerName.includes("facebook") || lowerSlug.includes("facebook")) {
-      return "Facebook";
-    }
-    return provider.name;
-  })();
+
+  const label =
+    provider.buttonLabel ||
+    (() => {
+      const lowerName = provider.name.toLowerCase();
+      const lowerSlug = provider.slug.toLowerCase();
+
+      if (lowerName.includes("google") || lowerSlug.includes("google")) {
+        return "Google";
+      }
+      if (
+        lowerName.includes("microsoft") ||
+        lowerName.includes("entra") ||
+        lowerName.includes("azure") ||
+        lowerSlug.includes("microsoft") ||
+        lowerSlug.includes("entra") ||
+        lowerSlug.includes("azure")
+      ) {
+        return "Microsoft";
+      }
+      if (lowerName.includes("apple") || lowerSlug.includes("apple")) {
+        return "Apple";
+      }
+      if (lowerName.includes("github") || lowerSlug.includes("github")) {
+        return "GitHub";
+      }
+      if (lowerName.includes("facebook") || lowerSlug.includes("facebook")) {
+        return "Facebook";
+      }
+      return provider.name;
+    })();
 
   return (
     <Button
@@ -169,22 +171,21 @@ export function SsoProviderButtons({
           className="mt-3"
           style={{
             display: "grid",
-            gridTemplateColumns: providers.length > 3 ? "repeat(2, 1fr)" : `repeat(${providers.length}, 1fr)`,
+            gridTemplateColumns:
+              providers.length > 3 ? "repeat(2, 1fr)" : `repeat(${providers.length}, 1fr)`,
             gap: "8px",
           }}
         >
           {providers.map((provider, index) => {
-            const isLastOdd = providers.length > 3 && providers.length % 2 !== 0 && index === providers.length - 1;
+            const isLastOdd =
+              providers.length > 3 && providers.length % 2 !== 0 && index === providers.length - 1;
             return (
               <div
                 key={provider.id}
                 style={isLastOdd ? { gridColumn: "span 2" } : undefined}
                 className="flex"
               >
-                <SsoButton
-                  provider={provider}
-                  onProviderClick={onProviderClick}
-                />
+                <SsoButton provider={provider} onProviderClick={onProviderClick} />
               </div>
             );
           })}

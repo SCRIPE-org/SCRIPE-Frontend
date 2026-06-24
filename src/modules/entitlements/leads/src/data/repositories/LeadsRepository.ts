@@ -21,7 +21,7 @@ import type {
   EditionFeatureGroup,
   StatusEmailPreview,
 } from "../../domain/interfaces";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import { LeadsMapper } from "../mappers/LeadsMapper";
 
 export class LeadsRepository implements ILeadsRepository {

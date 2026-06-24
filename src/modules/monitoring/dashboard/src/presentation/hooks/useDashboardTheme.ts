@@ -14,7 +14,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
-import { customizationContainer } from "@modules/customization/di";
+import { getComponent } from "@core/common/component-registry";
 import { useDashboardThemeStore } from "./useDashboardThemeStore";
 import {
   type DashboardThemeConfig,
@@ -63,7 +63,7 @@ export function useDashboardTheme() {
   const { t } = useI18n();
   const { success: toastSuccess, error: toastError } = useEnhancedToast();
   const queryClient = useQueryClient();
-  const customizationService = customizationContainer.customizationService;
+  const customizationService = getComponent("customizationService");
 
   const {
     isStudioOpen,

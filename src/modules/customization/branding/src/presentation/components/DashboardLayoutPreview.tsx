@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * DashboardLayoutPreview — Iframe-based preview using the REAL layout components.
  *

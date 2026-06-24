@@ -95,6 +95,13 @@ export class EditionPromotion {
     if (this.data.type === "Percentage") return `${this.data.discountValue}% off`;
     return `${this.data.discountCurrency ?? "$"}${this.data.discountValue} off`;
   }
+
+  copyWith(updates: Partial<EditionPromotionData>): EditionPromotion {
+    return new EditionPromotion({
+      ...this.data,
+      ...updates,
+    } as EditionPromotionData);
+  }
 }
 
 export interface CreatePromotionRequest {

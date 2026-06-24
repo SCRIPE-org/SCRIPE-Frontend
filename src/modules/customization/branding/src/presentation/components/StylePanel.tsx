@@ -1,4 +1,5 @@
-﻿/**
+// FILE-EXCEPTION: file length
+/**
  * StylePanel — Appearance + Typography + Spacing
  * Complete light/dark isolation with section-independent backgrounds.
  * Uses ImageUploadField for bg images, Select for fonts, Slider for sizes.

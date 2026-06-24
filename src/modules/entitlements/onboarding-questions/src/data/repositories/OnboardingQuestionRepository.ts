@@ -13,7 +13,7 @@ import type {
   OnboardingQuestion,
   AnswerOptionData,
 } from "../../domain/entities/OnboardingQuestion";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 
 export class OnboardingQuestionRepository implements IOnboardingQuestionRepository {
   constructor(private readonly service: IOnboardingQuestionService) {}

@@ -39,6 +39,13 @@ export class EmailRecipient {
   get displayLabel(): string {
     return this.name ? `${this.name} <${this.email}>` : this.email;
   }
+
+  copyWith(updates: Partial<EmailRecipientData>): EmailRecipient {
+    return new EmailRecipient({
+      ...this.data,
+      ...updates,
+    } as EmailRecipientData);
+  }
 }
 
 // ─── Sent Email ────────────────────────────────────────────────

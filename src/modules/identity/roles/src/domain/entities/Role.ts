@@ -181,6 +181,13 @@ export class Role {
     }
     return this.props.groupNamesEn ?? [];
   }
+
+  copyWith(updates: Partial<RoleProps>): Role {
+    return new Role({
+      ...this.props,
+      ...updates,
+    } as RoleProps);
+  }
 }
 
 // Keep backward compatibility alias

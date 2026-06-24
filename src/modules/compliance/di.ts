@@ -65,6 +65,23 @@ let _container: ComplianceContainer | null = null;
  * Get the compliance container (lazy initialization)
  */
 export function getComplianceContainer(): ComplianceContainer {
+  if (typeof window === "undefined") {
+    const dummyProxy = new Proxy({} as any, {
+      get() {
+        return () => Promise.resolve({});
+      },
+    });
+    return {
+      dashboardRepository: dummyProxy,
+      dsrRepository: dummyProxy,
+      consentRepository: dummyProxy,
+      retentionRepository: dummyProxy,
+      inventoryRepository: dummyProxy,
+      reportRepository: dummyProxy,
+      regulationRepository: dummyProxy,
+    };
+  }
+
   if (!_container) {
     const apiService = getModuleApiService("COMPLIANCE");
 

@@ -1,7 +1,7 @@
 /**
  * UserSubscription Entity — Rich domain model for user-level subscriptions.
  */
-import type { BaseEntity } from "@modules/identity/core/domain/types";
+import type { BaseEntity } from "@core/interfaces/common.interface";
 
 /** Resolved feature from the user's active subscription plan. */
 export interface UserSubscriptionFeatureData {

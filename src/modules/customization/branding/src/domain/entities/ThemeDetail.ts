@@ -59,4 +59,11 @@ export class ThemeDetail extends ThemeCard {
   get hasReplacement() {
     return !!this.detailData.replacedBySlug;
   }
+
+  copyWith(updates: Partial<ThemeDetailData>): ThemeDetail {
+    return new ThemeDetail({
+      ...this.detailData,
+      ...updates,
+    } as ThemeDetailData);
+  }
 }

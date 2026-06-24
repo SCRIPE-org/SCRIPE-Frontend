@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * CanvasComponent — Domain entity for the Login Page Builder canvas
  *

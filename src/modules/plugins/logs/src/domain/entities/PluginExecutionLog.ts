@@ -34,4 +34,11 @@ export class PluginExecutionLog {
   toModel() {
     return this.data;
   }
+
+  copyWith(updates: Partial<PluginExecutionLogModel>): PluginExecutionLog {
+    return new PluginExecutionLog({
+      ...this.data,
+      ...updates,
+    } as PluginExecutionLogModel);
+  }
 }

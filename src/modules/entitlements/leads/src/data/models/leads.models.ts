@@ -153,4 +153,3 @@ export interface StatusEmailPreviewDto {
   recipientEmail: string;
   recipientName: string;
 }
-

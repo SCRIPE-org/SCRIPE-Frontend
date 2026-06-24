@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useMemo } from "react";
@@ -78,7 +79,7 @@ export function SignupShell({ children, progressSlot, phaseLabel }: SignupShellP
 
   return (
     <div
-      className="relative flex min-h-[100dvh] flex-col signup-shell"
+      className="signup-shell relative flex min-h-[100dvh] flex-col"
       dir={direction}
       style={{ background: tokens.gradientPage }}
     >

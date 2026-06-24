@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Stripe Connect Domain Entities — Rich domain models with computed properties.
  */

@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * sso-callback-handlers.ts — Pure async SSO callback processors.
  *

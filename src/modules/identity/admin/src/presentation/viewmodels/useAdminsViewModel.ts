@@ -1,42 +1,44 @@
 /**
- * Admins ViewModel
- *
- * Handles all state management for the Admins view using the generic CRUD pattern.
- * Uses useCrudViewModel for standard CRUD and additional custom operations for role management.
+ * @file useAdminsViewModel.ts
+ * @description State management and CRUD orchestration for the Administrator view.
+ * Utilizes useCrudViewModel for standard operations, and delegates forms and mutations
+ * to useAdminFieldsConfig and useAdminOperations respectively to keep code clean and modular.
  */
+
 "use client";
 
 import { useCallback } from "react";
 import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useServices } from "@core/providers/service-provider";
-import { useAppStore } from "@core/store/useAppStore";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import type { Admin } from "../../domain/entities/Admin";
-import type {
-  CreateAdminRequest,
-  UpdateAdminRequest,
-  AssignRoleRequest,
-} from "../../domain/entities/AdminRequests";
+import type { CreateAdminRequest, UpdateAdminRequest } from "../../domain/entities/AdminRequests";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
-import type { FieldOption } from "@core/ui/forms/generic-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
-import { useImpersonation } from "@modules/auth/core/src/presentation/viewmodels/useImpersonation";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { qk } from "@core/common/query-keys";
+import { useAdminFieldsConfig } from "./useAdminFieldsConfig";
+import { useAdminOperations } from "./useAdminOperations";
 
 /**
- * useAdminsViewModel hook options
+ * Hook options for the Admins ViewModel.
  */
 interface AdminsViewModelOptions {
-  /** Optional tenant ID to filter admins for a specific tenant (uses /byTenantId endpoint) */
+  /** Optional tenant ID to filter admins for a specific tenant */
   tenantId?: string;
-  /** If true, uses /myTenantAdmins endpoint (for admins page) */
+  /** If true, uses /myTenantAdmins endpoint */
   useMyTenant?: boolean;
 }
 
+/**
+ * Custom React hook for the Admins ViewModel.
+ * Orchestrates querying, creation, updating, deletion, impersonation,
+ * and permission assignment for administrators in system and tenant-scoped contexts.
+ *
+ * @param options Configuration options specifying tenant filters or scope.
+ * @returns State properties, mutation handles, and dialog configurations.
+ */
 export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
   const { tenantId: propTenantId, useMyTenant } = options;
   const contextTenantId = useCurrentTenantId();
@@ -47,12 +49,9 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
   const rawTenantId = propTenantId ?? (useMyTenant ? undefined : contextTenantId);
   const tenantId = rawTenantId ?? undefined; // Normalize null to undefined
 
-  const { adminRepository, roleRepository } = identityContainer;
-  const { t, language } = useI18n();
-  const queryClient = useQueryClient();
-  const { success, error: toastError } = useEnhancedToast();
-  const { authRepository } = useServices();
-  const setAuth = useAppStore((state) => state.setAuth);
+  const { adminRepository } = identityContainer;
+  const { t } = useI18n();
+  const { success } = useEnhancedToast();
 
   // Build query key using the factory — consistent with invalidation
   const queryKey: string[] = tenantId
@@ -62,27 +61,22 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
       : [...qk.admins.all];
 
   // ============ Core CRUD ViewModel (React Query Engine) ============
-  // Using 'any' for Create/Update types as repository returns string/void but useCrudViewModel expects entities
   const vm = useCrudViewModel<Admin, CreateAdminRequest, UpdateAdminRequest>(queryKey, {
     getAll: async (params) => {
-      // Choose appropriate endpoint based on options
       let res;
       if (tenantId) {
-        // Specific tenant - use /byTenantId/{tenantId}
         res = await adminRepository.getByTenantId(tenantId, {
           page: params.page,
           pageSize: params.pageSize,
           search: params.search,
         });
       } else if (useMyTenant) {
-        // Current user's tenant - use /myTenantAdmins
         res = await adminRepository.getMyTenantAdmins({
           page: params.page,
           pageSize: params.pageSize,
           search: params.search,
         });
       } else {
-        // Default - use main /Admins endpoint (data scope)
         res = await adminRepository.getAll({
           page: params.page,
           pageSize: params.pageSize,
@@ -100,10 +94,6 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
       };
     },
     create: async (data) => {
-      // Choose endpoint based on context:
-      // Priority 1: explicit tenantId (from tenant detail page props) — always wins
-      // Priority 2: useMyTenant: createForMyTenant (tenantId from JWT token)
-      // Priority 3: neither — create regular system admin
       if (tenantId) {
         await adminRepository.create({ ...data, tenantId });
       } else if (useMyTenant) {
@@ -115,7 +105,6 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         title: t("admin.created") || "Admin Created",
         description: t("admin.createdDesc") || "Administrator created successfully.",
       });
-      // Return empty admin to satisfy type - will refresh from server
       return {} as Admin;
     },
     update: async (id, data) => {
@@ -124,7 +113,6 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         title: t("admin.updated") || "Admin Updated",
         description: t("admin.updatedDesc") || "Administrator updated successfully.",
       });
-      // Return empty admin to satisfy type - will refresh from server
       return {} as Admin;
     },
     delete: async (id) => {
@@ -136,453 +124,29 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     },
   });
 
-  // ============ Additional Admin-Specific Operations ============
-
-  // Toggle active status mutation — optimistic update
-  const toggleActiveMutation = useMutation({
-    mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
-      adminRepository.setActive(id, isActive),
-    onMutate: async ({ id, isActive }) => {
-      // Cancel any in-flight refetches to avoid overwriting optimistic state
-      await queryClient.cancelQueries({ queryKey: qk.admins.all });
-      const previous = queryClient.getQueryData(queryKey);
-      // Optimistically flip isActive on the matching admin in the list
-      queryClient.setQueryData(queryKey, (old: unknown) => {
-        if (!old || typeof old !== "object") return old;
-        const data = old as { items?: Array<{ id: string; isActive: boolean }> };
-        if (!data.items) return old;
-        return {
-          ...data,
-          items: data.items.map((item) => (item.id === id ? { ...item, isActive } : item)),
-        };
-      });
-      return { previous };
-    },
-    onError: (err: Error, __, context?: { previous: unknown }) => {
-      // Roll back optimistic update
-      if (context?.previous !== undefined) {
-        queryClient.setQueryData(queryKey, context.previous);
-      }
-      toastError({ title: t("common.error") || "Error", description: err.message });
-    },
-    onSuccess: (_, { isActive }) => {
-      success({
-        title: isActive
-          ? t("admin.activated") || "Admin Activated"
-          : t("admin.deactivated") || "Admin Deactivated",
-        description: `Administrator has been ${isActive ? "activated" : "deactivated"}.`,
-      });
-    },
-    onSettled: () => {
-      // Always re-sync with server after settle
-      queryClient.invalidateQueries({ queryKey: qk.admins.all });
-    },
+  // ============ Admin Operations & Custom Mutations ============
+  const operations = useAdminOperations({
+    tenantId,
+    contextTenantId: contextTenantId ?? undefined,
+    useMyTenant,
+    queryKey,
+    refreshItems: vm.refreshItems,
   });
 
-  // Assign role mutation
-  const assignRoleMutation = useMutation({
-    mutationFn: ({ adminId, request }: { adminId: string; request: AssignRoleRequest }) =>
-      adminRepository.assignRole(adminId, request),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: qk.admins.all });
-      success({
-        title: t("admin.role.assigned") || "Role Assigned",
-        description: t("admin.role.assignedDesc") || "Role assigned successfully.",
-      });
-    },
-    onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
-    },
-  });
-
-  // Remove role mutation
-  const removeRoleMutation = useMutation({
-    mutationFn: ({
-      adminId,
-      roleId,
-      tenantId,
-    }: {
-      adminId: string;
-      roleId: string;
-      tenantId?: string;
-    }) => adminRepository.removeRole(adminId, roleId, tenantId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: qk.admins.all });
-      success({
-        title: t("admin.role.removed") || "Role Removed",
-        description: t("admin.role.removedDesc") || "Role removed successfully.",
-      });
-    },
-    onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
-    },
-  });
-
-  // Reset password mutation
-  const resetPasswordMutation = useMutation({
-    mutationFn: ({ adminId, newPassword }: { adminId: string; newPassword: string }) =>
-      adminRepository.resetPassword(adminId, newPassword),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: qk.admins.all });
-      success({
-        title: t("admin.passwordReset") || "Password Reset",
-        description: t("admin.passwordResetDesc") || "Password has been reset successfully.",
-      });
-    },
-    onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
-    },
-  });
-
-  // Impersonation — the hook handles the API call and page reload
-  const { startImpersonation, isImpersonationLoading } = useImpersonation();
-  const handleImpersonate = useCallback(
-    (id: string) => {
-      startImpersonation(id);
-    },
-    [startImpersonation]
+  // ============ Config Fields & Values ============
+  const fieldsConfig = useAdminFieldsConfig(
+    t,
+    operations.handleRoleSearch,
+    operations.handleGroupSearch
   );
 
-  // Transfer mutation
-  const transferMutation = useMutation({
-    mutationFn: ({
-      id,
-      request,
-    }: {
-      id: string;
-      request: import("../../domain/entities/AdminRequests").TransferAdminRequest;
-    }) => adminRepository.transfer(id, request),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: qk.admins.all });
-      success({
-        title: t("admin.transferred") || "Admin Transferred",
-        description: t("admin.transferredDesc") || "Admin transferred successfully.",
-      });
-    },
-    onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
-    },
-  });
-
-  // Transfer Protection mutation
-  const transferProtectionMutation = useMutation({
-    mutationFn: ({ targetAdminId }: { targetAdminId: string }) =>
-      adminRepository.transferProtection({ targetAdminId }),
-    onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: qk.admins.all });
-      try {
-        const user = await authRepository.getMe();
-        if (user) {
-          setAuth(user, user.permissions || [], []);
-        }
-      } catch {
-        // Silently fail – user can re-login to refresh
-      }
-      success({
-        title: t("admin.protectionTransferred") || "Protection Transferred",
-        description:
-          t("admin.protectionTransferredDesc") || "Admin protection transferred successfully.",
-      });
-    },
-    onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
-    },
-  });
-
-  // Resend Setup Email mutation
-  const resendSetupEmailMutation = useMutation({
-    mutationFn: ({ adminId }: { adminId: string }) => adminRepository.resendSetupEmail(adminId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: qk.admins.all });
-      success({
-        title: t("admin.setupEmailResent") || "Setup Email Resent",
-        description:
-          t("admin.setupEmailResentDesc") || "Account setup email has been resent successfully.",
-      });
-    },
-    onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
-    },
-  });
-
-  // Bulk Activate
-  const bulkActivateMutation = useMutation({
-    mutationFn: (ids: string[]) => adminRepository.bulkActivate(ids),
-    onSuccess: (count) => {
-      queryClient.invalidateQueries({ queryKey: qk.admins.all });
-      success({ title: "Bulk Activated", description: `${count} admins activated.` });
-    },
-  });
-
-  // Bulk Deactivate
-  const bulkDeactivateMutation = useMutation({
-    mutationFn: (ids: string[]) => adminRepository.bulkDeactivate(ids),
-    onSuccess: (count) => {
-      queryClient.invalidateQueries({ queryKey: qk.admins.all });
-      success({ title: "Bulk Deactivated", description: `${count} admins deactivated.` });
-    },
-  });
-
-  // Bulk Delete
-  const bulkDeleteMutation = useMutation({
-    mutationFn: (ids: string[]) => adminRepository.bulkDelete(ids),
-    onSuccess: (count) => {
-      queryClient.invalidateQueries({ queryKey: qk.admins.all });
-      success({ title: "Bulk Deleted", description: `${count} admins deleted.` });
-    },
-  });
-
-  // ============ Handler Functions ============
-  const handleDelete = useCallback(
-    async (admin: Admin) => {
-      await adminRepository.delete(admin.id);
-      await vm.refreshItems();
-    },
-    [adminRepository, vm]
-  );
-
-  const handleToggleActive = useCallback(
-    (id: string, isActive: boolean) => toggleActiveMutation.mutateAsync({ id, isActive }),
-    [toggleActiveMutation]
-  );
-
-  const handleAssignRole = useCallback(
-    (adminId: string, request: AssignRoleRequest) =>
-      assignRoleMutation.mutateAsync({ adminId, request }),
-    [assignRoleMutation]
-  );
-
-  const handleRemoveRole = useCallback(
-    (adminId: string, roleId: string, tenantId?: string) =>
-      removeRoleMutation.mutateAsync({ adminId, roleId, tenantId }),
-    [removeRoleMutation]
-  );
-
-  const handleResetPassword = useCallback(
-    (adminId: string, newPassword: string) =>
-      resetPasswordMutation.mutateAsync({ adminId, newPassword }),
-    [resetPasswordMutation]
-  );
-
-  // ============ Role Search for Create Form ============
-  const handleRoleSearch = useCallback(
-    async (query: string): Promise<FieldOption[]> => {
-      try {
-        // For role search, always use the most specific tenant context:
-        // 1. Explicit propTenantId (from tenant detail page)
-        // 2. Context tenantId (from drill-down)
-        // 3. undefined (system-level roles)
-        const roleSearchTenantId = propTenantId ?? contextTenantId ?? undefined;
-        const isExplicitTenant = !!propTenantId;
-
-        const result =
-          useMyTenant && !isExplicitTenant
-            ? await roleRepository.getMyTenantRoles({ search: query, page: 1, pageSize: 20 })
-            : await roleRepository.getAll({
-                search: query,
-                page: 1,
-                pageSize: 20,
-                tenantId: roleSearchTenantId,
-                strict: true, // Force strict filtering
-              });
-
-        return (result.items || []).map((role) => ({
-          value: role.id,
-          label: language === "ar" ? role.nameAr : role.nameEn,
-        }));
-      } catch {
-        return [];
-      }
-    },
-    [roleRepository, propTenantId, contextTenantId, language, useMyTenant]
-  );
-
-  // ============ Group Search for Create Form ============
-  const handleGroupSearch = useCallback(
-    async (query: string): Promise<FieldOption[]> => {
-      try {
-        // For group search, use the most specific tenant context available
-        const groupSearchTenantId = propTenantId ?? contextTenantId ?? undefined;
-        const isExplicitTenant = !!propTenantId;
-
-        const result =
-          useMyTenant && !isExplicitTenant
-            ? await identityContainer.userGroupRepository.getMyTenantGroups({
-                search: query,
-                page: 1,
-                pageSize: 20,
-              })
-            : await identityContainer.userGroupRepository.getAll({
-                search: query,
-                page: 1,
-                pageSize: 20,
-                tenantId: groupSearchTenantId,
-              });
-
-        return (result.items || []).map((g) => ({
-          value: g.id,
-          label: language === "ar" ? g.nameAr : g.nameEn,
-        }));
-      } catch {
-        return [];
-      }
-    },
-    [useMyTenant, propTenantId, contextTenantId, language]
-  );
-
-  // ============ Config Base (Fields, Actions, Initial Values) ============
+  // ============ Config Base ============
   const getConfigBase = useCallback(
     (): Partial<CrudConfig<Admin>> => ({
-      createFields: [
-        {
-          name: "roleIds",
-          label: t("admin.roles") || "Roles",
-          type: "multi-select" as const,
-          placeholder: t("admin.role.selectRolesPlaceholder") || "Select roles...",
-          searchPlaceholder: t("admin.role.searchRoles") || "Search roles...",
-          required: false, // Optional - validated by backend (at least one role OR group)
-          onServerSearch: handleRoleSearch,
-          searchType: "server" as const,
-          noResultsText: t("roles.noRolesFound") || "No roles found",
-          requiredPermission: SYSTEM_PERMISSIONS.ADMINS_ASSIGN_ROLES,
-        },
-        {
-          name: "userGroupIds",
-          label: t("admin.groups") || "Groups",
-          type: "multi-select" as const,
-          placeholder: t("userGroups.selectPlaceholder") || "Select groups...",
-          searchPlaceholder: t("userGroups.search") || "Search groups...",
-          required: false, // Optional - validated by backend (at least one role OR group)
-          onServerSearch: handleGroupSearch,
-          searchType: "server" as const,
-          noResultsText: t("userGroups.emptyStateTitle") || "No groups found",
-          requiredPermission: SYSTEM_PERMISSIONS.USER_GROUPS_VIEW,
-        },
-        {
-          name: "username",
-          label: t("admin.username") || "Username",
-          type: "text" as const,
-          placeholder: t("admin.usernamePlaceholder") || "Enter username",
-          required: true,
-        },
-        {
-          name: "sendSetupEmail",
-          label: t("admin.sendSetupEmail") || "Send setup email to the admin",
-          type: "switch" as const,
-          description:
-            t("admin.sendSetupEmailDescription") ||
-            "When enabled, an email invitation will be sent to set up the account. When disabled, you can set the password manually.",
-        },
-        {
-          name: "password",
-          label: t("admin.password") || "Password",
-          type: "password" as const,
-          placeholder: t("admin.passwordPlaceholder") || "Enter password",
-          required: true,
-          isVisible: (values: Record<string, unknown>) => values.sendSetupEmail === false,
-        },
-        {
-          name: "mustChangePassword",
-          label: t("admin.mustChangePassword") || "Require password change on first login",
-          type: "switch" as const,
-          description:
-            t("admin.mustChangePasswordDescription") ||
-            "The admin will be forced to change their password after their first login.",
-          isVisible: (values: Record<string, unknown>) => values.sendSetupEmail === false,
-        },
-        {
-          name: "firstName",
-          label: t("admin.firstName") || "First Name",
-          type: "text" as const,
-          placeholder: t("admin.firstNamePlaceholder") || "Enter first name",
-        },
-        {
-          name: "lastName",
-          label: t("admin.lastName") || "Last Name",
-          type: "text" as const,
-          placeholder: t("admin.lastNamePlaceholder") || "Enter last name",
-        },
-        {
-          name: "phoneNumber",
-          label: t("admin.phoneNumber") || "Phone Number",
-          type: "text" as const,
-          placeholder: t("admin.phoneNumberPlaceholder") || "+1 234 567 8900",
-        },
-        {
-          name: "email",
-          label: t("admin.email") || "Email",
-          type: "text" as const,
-          placeholder: t("admin.emailPlaceholder") || "admin@example.com",
-        },
-        {
-          name: "notes",
-          label: t("admin.notes") || "Notes",
-          type: "textarea" as const,
-          placeholder: t("admin.notesPlaceholder") || "Optional notes...",
-        },
-      ],
-      editFields: [
-        {
-          name: "firstName",
-          label: t("admin.firstName") || "First Name",
-          type: "text" as const,
-          placeholder: t("admin.firstNamePlaceholder") || "Enter first name",
-        },
-        {
-          name: "lastName",
-          label: t("admin.lastName") || "Last Name",
-          type: "text" as const,
-          placeholder: t("admin.lastNamePlaceholder") || "Enter last name",
-        },
-        {
-          name: "phoneNumber",
-          label: t("admin.phoneNumber") || "Phone Number",
-          type: "text" as const,
-          placeholder: t("admin.phoneNumberPlaceholder") || "+1 234 567 8900",
-        },
-        {
-          name: "email",
-          label: t("admin.email") || "Email",
-          type: "text" as const,
-          placeholder: t("admin.emailPlaceholder") || "admin@example.com",
-        },
-        {
-          name: "notes",
-          label: t("admin.notes") || "Notes",
-          type: "textarea" as const,
-          placeholder: t("admin.notesPlaceholder") || "Optional notes...",
-        },
-        {
-          name: "isActive",
-          label: t("admin.isActive") || "Active",
-          type: "switch" as const,
-          requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
-        },
-        { name: "id", type: "hidden" as const, required: true },
-      ],
-      createInitialValues: {
-        roleIds: [] as string[], // At least one role OR group required
-        userGroupIds: [] as string[], // At least one role OR group required
-        username: "",
-        password: "",
-        firstName: "",
-        lastName: "",
-        phoneNumber: "",
-        email: "",
-        notes: "",
-        sendSetupEmail: true,
-        mustChangePassword: false,
-        // tenantId is added at create time from options
-      },
-      editInitialValues: (admin: Admin) => ({
-        id: admin.id,
-        firstName: admin.firstName || "",
-        lastName: admin.lastName || "",
-        phoneNumber: admin.phoneNumber || "",
-        email: admin.email || "",
-        notes: admin.notes || "",
-        isActive: admin.isActive,
-      }),
+      createFields: fieldsConfig.createFields,
+      editFields: fieldsConfig.editFields,
+      createInitialValues: fieldsConfig.createInitialValues,
+      editInitialValues: fieldsConfig.editInitialValues,
       getItemDisplayName: (admin: Admin) => admin.displayName || admin.username,
       enableBulkActions: false,
       deleteService: async (id: string) => {
@@ -594,38 +158,12 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         canDelete: SYSTEM_PERMISSIONS.ADMINS_DELETE,
       },
     }),
-    [t, adminRepository, handleRoleSearch, handleGroupSearch]
+    [fieldsConfig, adminRepository]
   );
 
   return {
     vm,
     getConfigBase,
-    handleDelete,
-    handleToggleActive,
-    handleAssignRole,
-    handleRemoveRole,
-    handleResetPassword,
-    handleImpersonate: (id: string) => startImpersonation(id),
-    handleTransfer: (
-      id: string,
-      request: import("../../domain/entities/AdminRequests").TransferAdminRequest
-    ) => transferMutation.mutate({ id, request }),
-    handleTransferProtection: (targetAdminId: string) =>
-      transferProtectionMutation.mutate({ targetAdminId }),
-    handleBulkActivate: (ids: string[]) => bulkActivateMutation.mutate(ids),
-    handleBulkDeactivate: (ids: string[]) => bulkDeactivateMutation.mutate(ids),
-    handleBulkDelete: (ids: string[]) => bulkDeleteMutation.mutate(ids),
-
-    handleResendSetupEmail: (adminId: string) => resendSetupEmailMutation.mutate({ adminId }),
-
-    isTogglingActive: toggleActiveMutation.isPending,
-    isAssigningRole: assignRoleMutation.isPending,
-    isRemovingRole: removeRoleMutation.isPending,
-    isResettingPassword: resetPasswordMutation.isPending,
-    isImpersonating: isImpersonationLoading,
-    isTransferring: transferMutation.isPending,
-    isTransferringProtection: transferProtectionMutation.isPending,
-    isResendingSetupEmail: resendSetupEmailMutation.isPending,
-    t,
+    ...operations,
   };
 }

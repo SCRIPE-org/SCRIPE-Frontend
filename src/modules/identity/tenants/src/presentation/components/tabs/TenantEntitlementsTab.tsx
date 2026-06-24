@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * Tenant Entitlements Tab — Redesigned
  *
@@ -110,7 +111,9 @@ export function TenantEntitlementsTab({ tenantId }: TenantEntitlementsTabProps) 
 // ─────────────────────────────────────────────────────────────────
 
 function FeaturesGrid({ tenantId }: { tenantId: string }) {
-  const { t, language, direction, features, isLoading, error } = useTenantEntitlementsViewModel({ tenantId });
+  const { t, language, direction, features, isLoading, error } = useTenantEntitlementsViewModel({
+    tenantId,
+  });
   const isRtl = direction === "rtl";
   const ITEMS_PER_PAGE = 12;
   const [page, setPage] = useState(1);

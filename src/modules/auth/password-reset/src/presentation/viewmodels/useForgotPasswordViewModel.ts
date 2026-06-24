@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * useForgotPasswordViewModel — 5-step password reset flow state machine.
  *

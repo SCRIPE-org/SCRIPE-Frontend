@@ -7,7 +7,7 @@
 import type { Feature, FeatureModuleGroup } from "../entities/Feature";
 import type { TenantEffectiveFeature } from "../entities/TenantEffectiveFeature";
 import type { CreateFeatureRequest, UpdateFeatureRequest } from "../entities/FeatureRequests";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
 export interface IFeatureRepository {
   getAll(params: PaginationParams): Promise<PagedResult<Feature>>;

@@ -52,4 +52,11 @@ export class CommissionInvoice {
   get notes() {
     return this.data.notes;
   }
+
+  copyWith(updates: Partial<CommissionInvoiceData>): CommissionInvoice {
+    return new CommissionInvoice({
+      ...this.data,
+      ...updates,
+    } as CommissionInvoiceData);
+  }
 }

@@ -48,6 +48,13 @@ export class AppPurchase {
       currency: this.data.currency || "USD",
     }).format(this.data.amount);
   }
+
+  copyWith(updates: Partial<AppPurchaseData>): AppPurchase {
+    return new AppPurchase({
+      ...this.data,
+      ...updates,
+    } as AppPurchaseData);
+  }
 }
 
 export interface DeveloperPayoutData {

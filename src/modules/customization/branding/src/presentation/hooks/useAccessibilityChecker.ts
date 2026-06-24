@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * useAccessibilityChecker — Real-time WCAG AA validation hook
  *

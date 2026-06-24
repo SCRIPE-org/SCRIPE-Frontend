@@ -1,4 +1,5 @@
-﻿/**
+// UI-EXCEPTION: compact studio layout
+/**
  * TokenPanel — Design token editor (colors, typography, spacing)
  *
  * Per analysis §10: Semantic tokens → Component tokens → CSS Variables

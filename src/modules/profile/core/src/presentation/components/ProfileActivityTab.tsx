@@ -18,9 +18,7 @@ export function ProfileActivityTab({ activityVm }: ProfileActivityTabProps) {
         <h3 className="mb-2 text-base font-bold text-foreground">
           {t("profile.activity.sectionTitle")}
         </h3>
-        <p className="mb-6 text-xs text-muted-foreground">
-          {t("profile.activity.sectionDesc")}
-        </p>
+        <p className="mb-6 text-xs text-muted-foreground">{t("profile.activity.sectionDesc")}</p>
 
         {activityVm.isLoading ? (
           <div className="flex justify-center py-6">

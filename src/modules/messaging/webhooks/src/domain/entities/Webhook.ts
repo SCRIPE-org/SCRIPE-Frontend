@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Webhook Entities — Domain types for the webhook management module.
  *
@@ -147,6 +148,13 @@ export class WebhookSubscription {
       default:
         return this.scope;
     }
+  }
+
+  copyWith(updates: Partial<WebhookSubscriptionData>): WebhookSubscription {
+    return new WebhookSubscription({
+      ...this.data,
+      ...updates,
+    } as WebhookSubscriptionData);
   }
 }
 

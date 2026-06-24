@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Docs page locale — ZH
  * Auto-generated from monolithic doc locale. Do not edit the generation source.

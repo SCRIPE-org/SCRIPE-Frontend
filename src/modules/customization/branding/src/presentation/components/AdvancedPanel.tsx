@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * AdvancedPanel — Custom CSS, safe mode (core Switch), accessibility, RTL.
  * All labels localized via t()

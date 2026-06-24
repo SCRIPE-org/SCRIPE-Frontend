@@ -12,7 +12,11 @@ interface UseManageRolesViewModelProps {
   open: boolean;
 }
 
-export function useManageRolesViewModel({ adminId, scopeTenantId, open }: UseManageRolesViewModelProps) {
+export function useManageRolesViewModel({
+  adminId,
+  scopeTenantId,
+  open,
+}: UseManageRolesViewModelProps) {
   const { t, language } = useI18n();
   const toast = useEnhancedToast();
   const queryClient = useQueryClient();
@@ -73,7 +77,11 @@ export function useManageRolesViewModel({ adminId, scopeTenantId, open }: UseMan
     rolesData,
     currentRoles,
     isLoading: isLoadingRoles || isLoadingCurrentRoles,
-    syncRoles: async (selectedRoleIds: string[], inheritToChildren: boolean, onOpenChange: (open: boolean) => void) => {
+    syncRoles: async (
+      selectedRoleIds: string[],
+      inheritToChildren: boolean,
+      onOpenChange: (open: boolean) => void
+    ) => {
       try {
         await syncMutation.mutateAsync({ selectedRoleIds, inheritToChildren });
         toast.success({ title: t("admin.role.syncSuccess") || "Roles updated successfully" });

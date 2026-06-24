@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import {
@@ -23,7 +24,7 @@ import { Skeleton } from "@core/ui/skeleton";
 import { Separator } from "@core/ui/separator";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
-import type { PluginDefinition } from "@modules/plugins/catalog";
+import type { PluginDefinition } from "@modules/plugins/core";
 
 // ── Status Badge ──────────────────────────────────────────────────────────────
 

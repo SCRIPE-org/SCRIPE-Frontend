@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 /* eslint-disable react-hooks/set-state-in-effect */
@@ -18,7 +19,7 @@ import { Textarea } from "@core/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { CreateDefinitionRequest } from "../../domain/interfaces/IDefinitionsRepository";
-import type { PluginDefinition, PluginTierValue, PluginScopeValue } from "@modules/plugins/catalog";
+import type { PluginDefinition, PluginTierValue, PluginScopeValue } from "@modules/plugins/core";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 

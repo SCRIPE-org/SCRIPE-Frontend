@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * Cookie-Based Impersonation Hook
  *
@@ -96,7 +98,7 @@ export function useImpersonation() {
         setIsImpersonationLoading(false);
       }
     },
-    [queryClient, success, toastError]
+    [success, toastError]
   );
 
   /**

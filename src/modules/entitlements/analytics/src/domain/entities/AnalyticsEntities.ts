@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Revenue Analytics — Rich Domain Entities
  *

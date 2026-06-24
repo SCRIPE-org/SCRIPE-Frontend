@@ -5,7 +5,7 @@
 import type { IDsrRepository } from "../../domain/interfaces/IDsrRepository";
 import type { IDsrService } from "../../domain/interfaces/IDsrService";
 import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import type {
   DsrListParams,
   SubmitDsrRequest,

@@ -30,7 +30,7 @@ export function LogoutButton({ iconOnly = false, className, textClassName }: Log
   const router = useRouter();
   const { authRepository } = useServices();
   const queryClient = useQueryClient();
- 
+
   const handleLogout = useCallback(async () => {
     // Capture tenant code BEFORE logout clears it
     const tenantCode = useAppStore.getState().tenantCode;

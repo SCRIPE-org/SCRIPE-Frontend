@@ -113,6 +113,12 @@ vi.mock("@core/common/logger", () => ({
   },
 }));
 
+vi.mock("@tanstack/react-query", () => ({
+  useQueryClient: () => ({
+    invalidateQueries: vi.fn(),
+  }),
+}));
+
 describe("RouteGuard - Locked Billing Wall Tests", () => {
   beforeEach(() => {
     vi.clearAllMocks();

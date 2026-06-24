@@ -6,8 +6,10 @@
  */
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import type { SavedTemplate } from "../../domain/entities/SavedTemplate";
+import type { IApiService } from "@core/interfaces/api.interface";
 
 export class TemplateStorageService {
+  constructor(private readonly api?: IApiService) {}
   static load(): SavedTemplate[] {
     try {
       const raw = localStorage.getItem(STORAGE_KEYS.BUILDER_TEMPLATES);

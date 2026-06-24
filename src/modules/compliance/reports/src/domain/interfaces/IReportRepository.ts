@@ -1,5 +1,5 @@
 import type { ComplianceReport } from "../entities/ComplianceReport";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import type { GenerateReportRequest } from "../entities/ComplianceReport";
 import type { ReportParams } from "./IReportService";
 

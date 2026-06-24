@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Docs features — ZH
  * Auto-filled 264 keys from EN.

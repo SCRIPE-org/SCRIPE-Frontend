@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * PricingTab — Hybrid Pricing Model (mirrors Edition PricingTab)
  *

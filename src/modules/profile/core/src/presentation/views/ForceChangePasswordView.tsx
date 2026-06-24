@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 /**
@@ -7,17 +8,10 @@
  * After a successful password change, clears the store flag and
  * redirects to the home page.
  *
- * Uses the same PasswordChangeForm component from profile to maintain
- * consistency, but wraps it in a standalone centered layout.
+ * Uses useForceChangePasswordViewModel to manage state and actions.
  */
-import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { useI18n } from "@core/providers/i18n-provider";
-import { useAppStore } from "@core/store/useAppStore";
-import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { useQueryClient } from "@tanstack/react-query";
-import { container } from "@modules/profile/di";
-import { useServices } from "@core/providers/service-provider";
+import React from "react";
+import { useForceChangePasswordViewModel } from "../viewmodels/useForceChangePasswordViewModel";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Button } from "@core/ui/button";
@@ -25,126 +19,27 @@ import { cn } from "@core/common/utils";
 import { Eye, EyeOff, ShieldAlert, LogOut } from "lucide-react";
 
 export function ForceChangePasswordView() {
-  const { t, direction } = useI18n();
-  const router = useRouter();
-  const setMustChangePassword = useAppStore((state) => state.setMustChangePassword);
-  const setAuth = useAppStore((state) => state.setAuth);
-  const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
-  const logout = useAppStore((state) => state.logout);
-  const { operationSuccess, operationError } = useEnhancedToast();
-  const queryClient = useQueryClient();
-  const { profileRepository } = container;
-  const { authRepository } = useServices();
-
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showCurrent, setShowCurrent] = useState(false);
-  const [showNew, setShowNew] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-
-  // Password strength
-  const hasMinLength = newPassword.length >= 8;
-  const hasUppercase = /[A-Z]/.test(newPassword);
-  const hasNumber = /[0-9]/.test(newPassword);
-  const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
-  const passwordsMatch = newPassword === confirmPassword && confirmPassword.length > 0;
-  const isValid =
-    hasMinLength &&
-    hasUppercase &&
-    hasNumber &&
-    hasSpecial &&
-    passwordsMatch &&
-    currentPassword.length > 0;
-
-  const strengthItems = [
-    { met: hasMinLength, label: t("profile.security.strength.minLength") },
-    { met: hasUppercase, label: t("profile.security.strength.uppercase") },
-    { met: hasNumber, label: t("profile.security.strength.number") },
-    { met: hasSpecial, label: t("profile.security.strength.special") },
-  ];
-
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!isValid) return;
-
-      setIsSubmitting(true);
-      setSubmitError(null);
-
-      try {
-        // Step 1: Change the password on the backend.
-        // This clears MustChangePassword=false in the DB, but the current JWT still has mcp=true.
-        await profileRepository.changePassword({
-          currentPassword,
-          newPassword,
-        });
-
-        // Step 2: Refresh the token to get a NEW JWT without the mcp=true claim.
-        // This is critical — using the old token would still be blocked by the MCP middleware.
-        const refreshResult = await authRepository.refreshToken();
-        if (refreshResult.kind === "ok") {
-          const refreshData = refreshResult.value;
-          // Update subscription info from fresh token
-          setSubscriptionInfo(
-            refreshData.subscriptionStatus ?? null,
-            refreshData.gracePhase ?? null,
-            refreshData.editionName ?? null
-          );
-
-          // Step 3: Fetch current user state with the new token
-          try {
-            const user = await authRepository.getMe();
-            if (user) {
-              setAuth(user, user.permissions || [], []);
-            }
-          } catch {
-            /* non-critical — store still updated */
-          }
-        }
-
-        // Step 4: NOW clear MCP in the store — after the new token is in memory.
-        // NavigationProvider will now fire /Menus/my with the clean token (no mcp claim).
-        setMustChangePassword(false);
-
-        operationSuccess(t("profile.security.passwordChanged"));
-
-        // v2: NavigationProvider auto-fetches when mustChangePassword becomes false
-        queryClient.invalidateQueries();
-
-        // Step 6: Redirect to home
-        router.replace("/");
-      } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : "Password change failed";
-        setSubmitError(msg);
-        operationError(msg);
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-    [
-      isValid,
-      currentPassword,
-      newPassword,
-      profileRepository,
-      authRepository,
-      setMustChangePassword,
-      setAuth,
-      setSubscriptionInfo,
-      operationSuccess,
-      operationError,
-      router,
-      t,
-      queryClient,
-    ]
-  );
-
-  const handleLogout = useCallback(() => {
-    logout();
-    queryClient.clear();
-    router.replace("/login");
-  }, [logout, router, queryClient]);
+  const {
+    t,
+    direction,
+    currentPassword,
+    setCurrentPassword,
+    newPassword,
+    setNewPassword,
+    confirmPassword,
+    setConfirmPassword,
+    showCurrent,
+    setShowCurrent,
+    showNew,
+    setShowNew,
+    isSubmitting,
+    submitError,
+    strengthItems,
+    passwordsMatch,
+    isValid,
+    handleSubmit,
+    handleLogout,
+  } = useForceChangePasswordViewModel();
 
   return (
     <div

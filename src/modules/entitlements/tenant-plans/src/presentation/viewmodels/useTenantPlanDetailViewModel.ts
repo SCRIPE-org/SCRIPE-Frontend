@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * TenantPlan Detail ViewModel — Elevated Tier 2
  *

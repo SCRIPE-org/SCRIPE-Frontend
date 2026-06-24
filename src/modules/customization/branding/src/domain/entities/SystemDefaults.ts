@@ -112,4 +112,11 @@ export class SystemDefaults {
   toProps(): SystemDefaultsProps {
     return { ...this.props };
   }
+
+  copyWith(updates: Partial<SystemDefaultsProps>): SystemDefaults {
+    return new SystemDefaults({
+      ...this.props,
+      ...updates,
+    } as SystemDefaultsProps);
+  }
 }

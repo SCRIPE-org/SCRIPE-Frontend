@@ -13,7 +13,7 @@
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useSubscriptionsViewModel } from "../viewmodels/useSubscriptionsViewModel";
-import { useEditionsViewModel } from "@modules/entitlements/editions/src/presentation/viewmodels/useEditionsViewModel";
+import { useEditionsViewModel } from "@modules/entitlements/core";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useBreadcrumbOverride } from "@core/hooks/use-breadcrumb-override";
@@ -66,9 +66,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
   }, [vm.items]);
 
   useBreadcrumbOverride(
-    currentSub
-      ? currentSub.editionName
-      : t("entSubscriptions.title") || "Subscription Details"
+    currentSub ? currentSub.editionName : t("entSubscriptions.title") || "Subscription Details"
   );
 
   // ── Loading Skeleton ──

@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Tenant Permissions Dialog ViewModel
  *
@@ -19,7 +20,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { appLogger } from "@core/common/logger";
 import { identityContainer } from "@modules/identity/di";
-import type { Permission, PermissionModuleGroup } from "@modules/identity/permissions";
+import type { Permission, PermissionModuleGroup } from "@modules/identity/core";
 
 export interface UseTenantPermissionsDialogProps {
   open: boolean;

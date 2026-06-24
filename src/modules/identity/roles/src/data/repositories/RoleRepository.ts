@@ -22,8 +22,7 @@ import type {
 import type { PagedResult } from "@modules/identity/core/domain/types";
 import type { IRoleService } from "../../domain/interfaces/IRoleService";
 import { RoleMapper } from "../mappers/RoleMapper";
-import { Permission, PermissionModuleGroup } from "@modules/identity/permissions";
-import { PermissionMapper } from "@modules/identity/permissions";
+import { Permission, PermissionModuleGroup, PermissionMapper } from "@modules/identity/core";
 
 export class RoleRepository implements IRoleRepository {
   constructor(private readonly service: IRoleService) {}

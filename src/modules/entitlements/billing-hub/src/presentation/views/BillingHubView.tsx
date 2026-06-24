@@ -1,12 +1,49 @@
+/**
+ * @file BillingHubView.tsx
+ * @description View component for the billing hub. Aggregates and navigates between billing dashboard,
+ * subscriptions, stripe connect, plan comparisons, and payment gateway tabs. Uses dynamic loading
+ * to isolate sub-module dependencies.
+ */
+
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { BillingDashboardView } from "@modules/entitlements/billing";
-import { SubscriptionsOverviewView } from "@modules/entitlements/subscriptions";
-import { ConnectOnboardingView } from "@modules/entitlements/stripe-connect";
-import { TenantPlanComparisonView } from "@modules/entitlements/tenant-plans";
-import { TenantPaymentGatewaysView } from "@modules/entitlements/tenant-gateways";
+import dynamic from "next/dynamic";
+
+const BillingDashboardView = dynamic(
+  () => import("@modules/entitlements/billing").then((m) => ({ default: m.BillingDashboardView })),
+  { ssr: false }
+);
+const SubscriptionsOverviewView = dynamic(
+  () =>
+    import("@modules/entitlements/subscriptions").then((m) => ({
+      default: m.SubscriptionsOverviewView,
+    })),
+  { ssr: false }
+);
+const ConnectOnboardingView = dynamic(
+  () =>
+    import("@modules/entitlements/stripe-connect").then((m) => ({
+      default: m.ConnectOnboardingView,
+    })),
+  { ssr: false }
+);
+const TenantPlanComparisonView = dynamic(
+  () =>
+    import("@modules/entitlements/tenant-plans").then((m) => ({
+      default: m.TenantPlanComparisonView,
+    })),
+  { ssr: false }
+);
+const TenantPaymentGatewaysView = dynamic(
+  () =>
+    import("@modules/entitlements/tenant-gateways").then((m) => ({
+      default: m.TenantPaymentGatewaysView,
+    })),
+  { ssr: false }
+);
+
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { LayoutDashboard, CreditCard, Banknote, ShieldAlert, BadgeDollarSign } from "lucide-react";
 import { cn } from "@core/common/utils";

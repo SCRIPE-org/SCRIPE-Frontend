@@ -1,10 +1,23 @@
 /**
- * Subscription Component Types
- *
- * Shared type definitions for subscription dialog components.
+ * @file types.ts
+ * @description Shared type definitions for subscription dialog components.
+ * Decouples static dependencies to other submodules by defining generic structural interfaces.
  */
 import type { useSubscriptionsViewModel } from "./viewmodels/useSubscriptionsViewModel";
-import type { useEditionsViewModel } from "@modules/entitlements/editions/src/presentation/viewmodels/useEditionsViewModel";
+
+/**
+ * Represents a lightweight edition entity shape for select inputs and UI matching.
+ */
+export interface EditionItem {
+  id: string;
+  name?: string;
+  displayName?: string;
+  allowLifetime?: boolean;
+  allowTrial?: boolean;
+  allowMonthly?: boolean;
+  allowYearly?: boolean;
+  [key: string]: any;
+}
 
 /** The raw subscriptions viewmodel return type */
 type RawSubscriptionsVM = ReturnType<typeof useSubscriptionsViewModel>;
@@ -17,8 +30,13 @@ export type SubscriptionsVM = Omit<RawSubscriptionsVM, "error"> & {
   error: string | Error | null;
 };
 
-/** The editions viewmodel return type */
-export type EditionsVM = ReturnType<typeof useEditionsViewModel>;
+/**
+ * Loose interface for Editions viewmodel to bypass static submodule imports.
+ */
+export interface EditionsVM {
+  items?: EditionItem[];
+  [key: string]: any;
+}
 
 /** Props for dialogs that only need the subscriptions VM */
 export interface SubscriptionDialogProps {

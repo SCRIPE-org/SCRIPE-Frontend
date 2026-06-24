@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 /**
  * ReportsTab — Premium scheduled report preferences + on-demand report generation.

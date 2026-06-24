@@ -1,7 +1,7 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { IEditionCategoryService } from "../../domain/interfaces/IEditionCategoryService";
 import type { EditionCategoryModel } from "../models/EditionCategoryModels";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 import type {
   CreateEditionCategoryRequest,
   UpdateEditionCategoryRequest,

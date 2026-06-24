@@ -13,7 +13,7 @@ import { GenericSelect } from "@core/crud/components/generic-select";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Loader2, Tag } from "lucide-react";
-import type { EditionPromotionData } from "@modules/entitlements/editions/src/domain/entities/EditionPromotion";
+import type { EditionPromotionData } from "@modules/entitlements/core";
 
 interface PromotionPickerProps {
   isLoading: boolean;

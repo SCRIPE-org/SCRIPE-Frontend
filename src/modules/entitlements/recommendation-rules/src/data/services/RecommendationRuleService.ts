@@ -10,7 +10,7 @@ import type {
   PagedRecommendationRulesModel,
   RecommendationRuleDetailModel,
 } from "../models/RecommendationRuleModels";
-import type { PaginationParams } from "@modules/identity/core/domain/types";
+import type { PaginationParams } from "@core/interfaces/common.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type {
   CreateRecommendationRuleRequest,

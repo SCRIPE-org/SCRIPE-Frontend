@@ -21,7 +21,12 @@ interface IndustrySwitchProps {
   hasAnswers?: boolean;
 }
 
-export function IndustrySwitch({ value, options, onChange, hasAnswers = false }: IndustrySwitchProps) {
+export function IndustrySwitch({
+  value,
+  options,
+  onChange,
+  hasAnswers = false,
+}: IndustrySwitchProps) {
   const { t } = useI18n();
   const { tokens, theme } = useSignupTheme();
 

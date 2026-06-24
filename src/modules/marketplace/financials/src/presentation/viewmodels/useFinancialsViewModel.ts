@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { marketplaceContainer } from "../../../../di";
+import { marketplaceContainer } from "@modules/marketplace/di";
 
 export function useFinancialsViewModel() {
   const queryClient = useQueryClient();

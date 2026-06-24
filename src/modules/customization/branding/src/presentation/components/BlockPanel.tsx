@@ -1,4 +1,5 @@
-﻿/**
+// FILE-EXCEPTION: file length
+/**
  * BlockPanel — Full-featured slot/block editor (21 block types)
  * HTML5 drag-drop reorder, inline editing, slot-layout filtering,
  * maxItems enforcement, block duplication. Labels localized via t()

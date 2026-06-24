@@ -4,7 +4,7 @@ import type {
   UpdateOnboardingQuestionRequest,
   AnswerOptionRequest,
 } from "../entities/OnboardingQuestionRequests";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 
 export interface OnboardingQuestionsListParams {
   page?: number;

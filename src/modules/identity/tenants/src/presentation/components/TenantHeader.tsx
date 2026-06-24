@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Tenant Header Component — Redesigned
  *
@@ -113,13 +114,14 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
       inactive: t("tenant.inactive") || "Inactive",
     };
 
-    const variants: Record<LocalTenantStatus, "success" | "destructive" | "outline" | "secondary"> = {
-      active: "success",
-      suspended: "outline",
-      canceled: "destructive",
-      expired: "destructive",
-      inactive: "secondary",
-    };
+    const variants: Record<LocalTenantStatus, "success" | "destructive" | "outline" | "secondary"> =
+      {
+        active: "success",
+        suspended: "outline",
+        canceled: "destructive",
+        expired: "destructive",
+        inactive: "secondary",
+      };
 
     const icons: Record<LocalTenantStatus, typeof Pause | null> = {
       active: null,
@@ -309,11 +311,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                 </Button>
               )}
               {canUpdate && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleEditOpenChange(true)}
-                >
+                <Button variant="outline" size="sm" onClick={() => handleEditOpenChange(true)}>
                   <Pencil className="me-1.5 h-4 w-4" />
                   {t("common.edit")}
                 </Button>

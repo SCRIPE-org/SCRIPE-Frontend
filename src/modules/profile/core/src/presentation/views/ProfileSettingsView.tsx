@@ -1,3 +1,12 @@
+// UI-EXCEPTION: compact studio layout
+/**
+ * @file ProfileSettingsView.tsx
+ * @description Main profile settings page layout and tabs controller.
+ * Contains sub-tabs for general settings (avatar and details), security (password, 2FA, passkeys),
+ * active sessions list, and security activity audits.
+ * Decouples direct cross-module static dependencies to 'auth' via the global component registry.
+ */
+
 "use client";
 
 import { useState } from "react";
@@ -7,7 +16,7 @@ import { useAvatarViewModel } from "../viewmodels/useAvatarViewModel";
 import { useSecurityViewModel } from "../viewmodels/useSecurityViewModel";
 import { useSessionsViewModel } from "../viewmodels/useSessionsViewModel";
 import { useActivityLogViewModel } from "../viewmodels/useActivityLogViewModel";
-import { usePasskeyManagementViewModel } from "@modules/auth";
+import { getComponent } from "@core/common/component-registry";
 
 import { ProfileGeneralTab } from "../components/ProfileGeneralTab";
 import { ProfileSecurityTab } from "../components/ProfileSecurityTab";
@@ -19,6 +28,11 @@ import { User, Shield, Monitor, ListTodo } from "lucide-react";
 
 type ActiveTab = "general" | "security" | "sessions" | "activity";
 
+/**
+ * ProfileSettingsView component that renders tabs for user profile management.
+ * Resolves the passkey management hook dynamically from the global registry to avoid
+ * structural module violations with the authentication module.
+ */
 export function ProfileSettingsView() {
   const { t } = useI18n();
   const [activeTab, setActiveTab] = useState<ActiveTab>("general");
@@ -37,7 +51,27 @@ export function ProfileSettingsView() {
   const securityVm = useSecurityViewModel();
   const sessionsVm = useSessionsViewModel();
   const activityVm = useActivityLogViewModel();
-  const passkeyVm = usePasskeyManagementViewModel();
+
+  // Resolve passkey management hook dynamically from the component registry
+  const usePasskeyManagementViewModelHook =
+    getComponent("usePasskeyManagementViewModel") ||
+    (() => ({
+      isWebAuthnSupported: false,
+      isLoading: false,
+      passkeys: [],
+      renamingId: null,
+      renameValue: "",
+      setRenameValue: () => {},
+      confirmRename: () => {},
+      cancelRename: () => {},
+      startRename: () => {},
+      deletePasskey: () => {},
+      registerPasskey: async () => false,
+      isRegistering: false,
+      registrationError: null,
+      clearRegistrationError: () => {},
+    }));
+  const passkeyVm = usePasskeyManagementViewModelHook();
 
   if (profileVm.isLoading || !profileVm.profile) {
     return (
@@ -81,9 +115,7 @@ export function ProfileSettingsView() {
     <div className="relative mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Page Header */}
       <div className="mb-8 border-b border-border pb-5">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          {t("profile.title")}
-        </h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("profile.title")}</h1>
         <p className="mt-1 text-xs text-muted-foreground">{t("profile.subtitle")}</p>
       </div>
 

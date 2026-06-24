@@ -1,4 +1,4 @@
-import type { IAccountSetupRepository } from "../../../../core/domain/interfaces/IAccountSetupRepository";
+import type { IAccountSetupRepository } from "@modules/auth/core/domain/interfaces/IAccountSetupRepository";
 import type {
   ActivateAccountRequest,
   ActivateAccountResponse,

@@ -71,19 +71,19 @@ export const ProtocolIcon = ({
 };
 
 /** Brand logo SVG renderer matching all fixed identities */
-export const BrandIcon = ({ slug, name = "", protocol = "", className = "h-[18px] w-[18px] shrink-0" }: IconProps) => {
+export const BrandIcon = ({
+  slug,
+  name = "",
+  protocol = "",
+  className = "h-[18px] w-[18px] shrink-0",
+}: IconProps) => {
   const lowerName = name.toLowerCase();
   const lowerSlug = slug.toLowerCase();
 
   // 1. Google
   if (lowerName.includes("google") || lowerSlug.includes("google")) {
     return (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        className={className}
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
         <path
           d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
           fill="#4285F4"
@@ -114,11 +114,7 @@ export const BrandIcon = ({ slug, name = "", protocol = "", className = "h-[18px
     lowerSlug.includes("azure")
   ) {
     return (
-      <svg
-        viewBox="0 0 24 24"
-        className={className}
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg viewBox="0 0 24 24" className={className} xmlns="http://www.w3.org/2000/svg">
         <path fill="#F25022" d="M1 1h10v10H1z" />
         <path fill="#7FBA00" d="M13 1h10v10H13z" />
         <path fill="#00A4EF" d="M1 13h10v10H1z" />
@@ -172,11 +168,7 @@ export const BrandIcon = ({ slug, name = "", protocol = "", className = "h-[18px
   // 6. Okta
   if (lowerName.includes("okta") || lowerSlug.includes("okta")) {
     return (
-      <svg
-        viewBox="0 0 24 24"
-        className={className}
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg viewBox="0 0 24 24" className={className} xmlns="http://www.w3.org/2000/svg">
         <path
           fill="#007DC1"
           d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 17.882a5.882 5.882 0 110-11.764 5.882 5.882 0 010 11.764z"
@@ -188,11 +180,7 @@ export const BrandIcon = ({ slug, name = "", protocol = "", className = "h-[18px
   // 7. Auth0
   if (lowerName.includes("auth0") || lowerSlug.includes("auth0")) {
     return (
-      <svg
-        viewBox="0 0 24 24"
-        className={className}
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg viewBox="0 0 24 24" className={className} xmlns="http://www.w3.org/2000/svg">
         <path
           fill="#EB5424"
           d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm4.8 15.75l-4.8 1.567-4.8-1.567 1.567-4.822L12 6.683l3.233 4.245L16.8 15.75z"
@@ -209,11 +197,7 @@ export const BrandIcon = ({ slug, name = "", protocol = "", className = "h-[18px
     lowerSlug.includes("b2c")
   ) {
     return (
-      <svg
-        viewBox="0 0 24 24"
-        className={className}
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg viewBox="0 0 24 24" className={className} xmlns="http://www.w3.org/2000/svg">
         <path
           fill="#0078D4"
           d="M12 2L2 7l2 12 8 3 8-3 2-12-10-5zm0 3.236L19.3 8.4l-1.6 9.6-5.7 2.138-5.7-2.138-1.6-9.6L12 5.236z"
@@ -225,11 +209,7 @@ export const BrandIcon = ({ slug, name = "", protocol = "", className = "h-[18px
   // 9. Keycloak
   if (lowerName.includes("keycloak") || lowerSlug.includes("keycloak")) {
     return (
-      <svg
-        viewBox="0 0 24 24"
-        className={className}
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg viewBox="0 0 24 24" className={className} xmlns="http://www.w3.org/2000/svg">
         <path
           fill="#4D4D4D"
           d="M11.987 0L0 6.955 3.76 9.1l8.227-4.698 8.228 4.698L24 6.955 11.987 0zM3.76 14.9l-3.76 2.145L11.987 24 24 17.045l-3.785-2.145-8.228 4.698L3.76 14.9zM0 9.6v4.8l3.76 2.145V11.77L0 9.6zm24 0l-3.785 2.17v4.775L24 14.4V9.6z"
@@ -241,11 +221,7 @@ export const BrandIcon = ({ slug, name = "", protocol = "", className = "h-[18px
   // 10. Ping Identity
   if (lowerName.includes("ping") || lowerSlug.includes("ping")) {
     return (
-      <svg
-        viewBox="0 0 24 24"
-        className={className}
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg viewBox="0 0 24 24" className={className} xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="10" fill="none" stroke="#E91E63" strokeWidth="2" />
         <circle cx="12" cy="12" r="5" fill="#E91E63" />
       </svg>
@@ -260,12 +236,7 @@ export const BrandIcon = ({ slug, name = "", protocol = "", className = "h-[18px
     lowerSlug.includes("aws")
   ) {
     return (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        className={className}
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
         <path d="M12 2L2 7l10 5 10-5-10-5z" fill="#FF9900" />
         <path
           d="M2 17l10 5 10-5M2 12l10 5 10-5"
@@ -281,12 +252,7 @@ export const BrandIcon = ({ slug, name = "", protocol = "", className = "h-[18px
   // 12. OneLogin
   if (lowerName.includes("onelogin") || lowerSlug.includes("onelogin")) {
     return (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        className={className}
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
         <rect x="3" y="3" width="18" height="18" rx="4" fill="#E41F35" />
         <path d="M8 7v10h3v-7h2v7h3V7H8z" fill="white" />
       </svg>
@@ -296,14 +262,14 @@ export const BrandIcon = ({ slug, name = "", protocol = "", className = "h-[18px
   // 13. JumpCloud
   if (lowerName.includes("jumpcloud") || lowerSlug.includes("jumpcloud")) {
     return (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        className={className}
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="10" stroke="#00A3E0" strokeWidth="2.5" />
-        <path d="M7 11l5-5 5 5m-10 2l5 5 5-5" stroke="#00A3E0" strokeWidth="2" strokeLinecap="round" />
+        <path
+          d="M7 11l5-5 5 5m-10 2l5 5 5-5"
+          stroke="#00A3E0"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
       </svg>
     );
   }
@@ -311,12 +277,7 @@ export const BrandIcon = ({ slug, name = "", protocol = "", className = "h-[18px
   // 14. Duo Security
   if (lowerName.includes("duo") || lowerSlug.includes("duo")) {
     return (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        className={className}
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="10" fill="#4AA23A" />
         <path d="M8 8h4a4 4 0 010 8H8V8zm3 3v2h1a1 1 0 000-2h-1z" fill="white" />
       </svg>
@@ -326,11 +287,7 @@ export const BrandIcon = ({ slug, name = "", protocol = "", className = "h-[18px
   // 15. Cloudflare Access
   if (lowerName.includes("cloudflare") || lowerSlug.includes("cloudflare")) {
     return (
-      <svg
-        viewBox="0 0 24 24"
-        className={className}
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg viewBox="0 0 24 24" className={className} xmlns="http://www.w3.org/2000/svg">
         <path
           d="M20.25 15.75a4.5 4.5 0 00-4.04-2.825A5.25 5.25 0 006 12.75a3 3 0 00-3 3 3 3 0 003 3h14.25a3 3 0 000-6z"
           fill="#F38020"
@@ -342,11 +299,7 @@ export const BrandIcon = ({ slug, name = "", protocol = "", className = "h-[18px
   // 16. Salesforce
   if (lowerName.includes("salesforce") || lowerSlug.includes("salesforce")) {
     return (
-      <svg
-        viewBox="0 0 24 24"
-        className={className}
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg viewBox="0 0 24 24" className={className} xmlns="http://www.w3.org/2000/svg">
         <path
           fill="#009DDC"
           d="M19.12 11.23a4 4 0 00-3.8-3.08 4 4 0 00-3.6 2.1 5.3 5.3 0 00-8.2 2.65 3.3 3.3 0 00.48 6.5h15.12a3.3 3.3 0 000-6.6l-.12-.57z"

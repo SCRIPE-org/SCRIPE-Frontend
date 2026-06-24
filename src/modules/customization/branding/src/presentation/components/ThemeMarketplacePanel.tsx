@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * ThemeMarketplacePanel — Studio sidebar panel for browsing and applying themes
  *

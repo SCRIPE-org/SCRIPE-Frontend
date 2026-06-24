@@ -77,4 +77,11 @@ export class DocCategory {
     };
     return search(this.data.items);
   }
+
+  copyWith(updates: Partial<DocCategoryData>): DocCategory {
+    return new DocCategory({
+      ...this.data,
+      ...updates,
+    } as DocCategoryData);
+  }
 }

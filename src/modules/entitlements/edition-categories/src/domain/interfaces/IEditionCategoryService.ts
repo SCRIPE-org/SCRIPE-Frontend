@@ -1,4 +1,4 @@
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 import type { EditionCategoryModel } from "../../data/models/EditionCategoryModels";
 import type {
   CreateEditionCategoryRequest,

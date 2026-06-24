@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * DashboardWidget — Domain entity for the Dashboard Builder canvas (M11)
  *

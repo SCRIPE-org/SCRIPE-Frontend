@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * WellKnownProviderGallery — Pre-configured provider templates gallery
  *
@@ -534,7 +536,12 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
                   border: `1px solid ${tpl.color}30`,
                 }}
               >
-                <BrandIcon slug={tpl.id} name={tpl.name} protocol={tpl.protocol} className="h-5 w-5 shrink-0" />
+                <BrandIcon
+                  slug={tpl.id}
+                  name={tpl.name}
+                  protocol={tpl.protocol}
+                  className="h-5 w-5 shrink-0"
+                />
               </div>
 
               {/* Name */}

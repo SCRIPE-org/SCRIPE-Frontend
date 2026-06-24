@@ -17,7 +17,7 @@ import type {
   UpdateTenantJson,
 } from "../types/TenantModelTypes";
 import type { TenantStats } from "./ITenantRepository";
-import type { PermissionModel, PermissionModuleGroupJson } from "@modules/identity/permissions";
+import type { PermissionModel, PermissionModuleGroupJson } from "@modules/identity/core";
 import type {
   SubscriptionModel,
   PagedEditionResult,

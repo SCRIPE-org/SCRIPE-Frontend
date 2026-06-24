@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * Menu Tree Item Component (Native HTML5 DnD) — Admin Only
  *

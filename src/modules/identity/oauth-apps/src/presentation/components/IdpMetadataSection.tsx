@@ -13,9 +13,11 @@ export function IdpMetadataSection() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   // Compute the absolute paths based on window location (client-side only)
-  const apiOrigin = typeof window !== "undefined"
-    ? (process.env.NEXT_PUBLIC_API_URL || `${window.location.protocol}//${window.location.hostname}:5001`)
-    : "https://api.example.com";
+  const apiOrigin =
+    typeof window !== "undefined"
+      ? process.env.NEXT_PUBLIC_API_URL ||
+        `${window.location.protocol}//${window.location.hostname}:5001`
+      : "https://api.example.com";
 
   const ssoUrl = `${apiOrigin}/api/v1/auth/saml/sso`;
   const metadataUrl = `${apiOrigin}/api/v1/auth/saml/metadata`;
@@ -49,7 +51,7 @@ export function IdpMetadataSection() {
             <Input
               readOnly
               value={idpEntityId}
-              className="font-mono text-xs bg-muted/40 cursor-default"
+              className="cursor-default bg-muted/40 font-mono text-xs"
             />
             <Button
               variant="outline"
@@ -75,7 +77,7 @@ export function IdpMetadataSection() {
             <Input
               readOnly
               value={ssoUrl}
-              className="font-mono text-xs bg-muted/40 cursor-default"
+              className="cursor-default bg-muted/40 font-mono text-xs"
             />
             <Button
               variant="outline"
@@ -101,7 +103,7 @@ export function IdpMetadataSection() {
             <Input
               readOnly
               value={metadataUrl}
-              className="font-mono text-xs bg-muted/40 cursor-default"
+              className="cursor-default bg-muted/40 font-mono text-xs"
             />
             <Button
               variant="outline"
@@ -116,7 +118,7 @@ export function IdpMetadataSection() {
               )}
             </Button>
           </div>
-          <p className="text-[10px] text-muted-foreground mt-1">
+          <p className="mt-1 text-[10px] text-muted-foreground">
             {t("oauthApps.idpXmlHelp") ||
               "Most enterprise apps allow configuring SSO by simply pasting this XML metadata URL."}
           </p>

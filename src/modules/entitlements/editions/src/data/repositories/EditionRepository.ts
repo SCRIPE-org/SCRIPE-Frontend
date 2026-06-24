@@ -14,7 +14,7 @@ import type {
   UpdateEditionRequest,
 } from "../../domain/entities/EditionRequests";
 import type { IEditionService } from "../../domain/interfaces/IEditionService";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
 export class EditionRepository implements IEditionRepository {
   constructor(private readonly service: IEditionService) {}

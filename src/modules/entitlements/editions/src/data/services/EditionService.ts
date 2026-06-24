@@ -6,7 +6,7 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { IEditionService } from "../../domain/interfaces/IEditionService";
 import type { EditionModel, EditionVersionModel } from "../models/EditionModels";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type {
   EditionPromotionData,

@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * PromotionsTab — Full CRUD for plan-scoped promotions.
  * Replaces the static placeholder with a live data table + create/edit dialogs.

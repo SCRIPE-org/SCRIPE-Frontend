@@ -1,9 +1,30 @@
+/**
+ * @file ActivateWorkspaceView.tsx
+ * @description View component for workspace activation. Displayed when a tenant has no active
+ * subscription or if the subscription has expired/failed. Decouples cross-module reference to auth
+ * by dynamically resolving the SignupShell layout wrapper.
+ */
+
 "use client";
 
 import { useActivateWorkspaceViewModel } from "../viewmodels/useActivateWorkspaceViewModel";
 import { SubscriptionStatusBox } from "../components/SubscriptionStatusBox";
 import { ChangePlanDialog } from "../components/ChangePlanDialog";
-import { SignupShell } from "@modules/auth/signup/src/presentation/components/common/SignupShell";
+import { getComponent } from "@core/common/component-registry";
+import { createElement } from "react";
+
+/**
+ * Dynamically resolves and renders the SignupShell component from the registry.
+ * Falls back to a clean background wrapper if the registry has not yet initialized.
+ */
+const SignupShell = (props: { children: React.ReactNode }) => {
+  const Comp = getComponent("SignupShell");
+  if (!Comp) {
+    return <div className="min-h-screen bg-background">{props.children}</div>;
+  }
+  return createElement(Comp, props);
+};
+
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { LoadingSpinner } from "@core/ui/loading-spinner";

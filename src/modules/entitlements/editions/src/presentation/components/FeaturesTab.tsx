@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * FeaturesTab — Feature assignment editor for an edition.
  *

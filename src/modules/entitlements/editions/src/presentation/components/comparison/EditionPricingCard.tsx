@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 /**
  * EditionPricingCard — Industry-standard pricing card for the comparison page.

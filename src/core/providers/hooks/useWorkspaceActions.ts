@@ -23,7 +23,10 @@ export function useWorkspaceActions() {
       // This is non-blocking to prevent UI lag on click.
       if (!useNavigationStore.getState().hasWorkspaceData(workspaceKey)) {
         fetchWorkspaceMenu(workspaceKey).catch((err) => {
-          appLogger.error(`[WorkspaceActions] Background JIT fetch failed for "${workspaceKey}":`, err);
+          appLogger.error(
+            `[WorkspaceActions] Background JIT fetch failed for "${workspaceKey}":`,
+            err
+          );
         });
       }
 

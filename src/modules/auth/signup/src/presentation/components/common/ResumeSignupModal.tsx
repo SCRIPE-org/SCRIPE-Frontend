@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";

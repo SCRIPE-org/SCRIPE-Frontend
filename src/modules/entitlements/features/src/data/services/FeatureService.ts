@@ -11,7 +11,7 @@ import type {
   TenantEffectiveFeatureModel,
   FeatureModuleGroupModel,
 } from "../models/FeatureModels";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type {
   CreateFeatureRequest,

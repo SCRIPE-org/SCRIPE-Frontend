@@ -156,11 +156,7 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
         )}
 
         <div className="mt-4 flex justify-end gap-2 border-t pt-4">
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={isSubmitting}
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
             {t("common.cancel") || "Cancel"}
           </Button>
           <Button onClick={handleSave} loading={isSubmitting} disabled={isLoading}>

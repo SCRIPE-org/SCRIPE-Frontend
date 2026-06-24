@@ -131,6 +131,13 @@ export class MessageTemplate {
   get displayName(): string {
     return `${this.key} (${this.language})`;
   }
+
+  copyWith(updates: Partial<MessageTemplateData>): MessageTemplate {
+    return new MessageTemplate({
+      ...this.data,
+      ...updates,
+    } as MessageTemplateData);
+  }
 }
 
 // ─── Exported Template (for import/export) ─────────────────────

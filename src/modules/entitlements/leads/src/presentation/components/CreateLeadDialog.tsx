@@ -190,9 +190,7 @@ export function CreateLeadDialog({
                 disabled={isSubmitting}
                 error={errors.phone}
               />
-              {errors.phone && (
-                <p className="text-xs text-destructive">{errors.phone}</p>
-              )}
+              {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
             </div>
           </div>
 

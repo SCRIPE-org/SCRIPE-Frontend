@@ -34,7 +34,7 @@ function RoutingProgressBarInner() {
 
   const start = useCallback(() => {
     if (fadeTimer.current) clearTimeout(fadeTimer.current);
-    
+
     // Initialize animation values
     setProgress(0);
     setVisible(true);
@@ -59,7 +59,7 @@ function RoutingProgressBarInner() {
       clearInterval(timer.current);
       timer.current = null;
     }
-    
+
     // Instantly fill to 100%
     setProgress(100);
 
@@ -162,7 +162,8 @@ function RoutingProgressBarInner() {
           height: "100%",
           width: `${progress}%`,
           // Vibrant violet-purple-indigo gradient that fits perfectly with B2B SaaS aesthetics
-          background: "linear-gradient(90deg, oklch(0.6 0.18 290) 0%, oklch(0.55 0.18 275) 50%, oklch(0.65 0.18 310) 100%)",
+          background:
+            "linear-gradient(90deg, oklch(0.6 0.18 290) 0%, oklch(0.55 0.18 275) 50%, oklch(0.65 0.18 310) 100%)",
           // Premium glowing dropshadow effect
           boxShadow: "0 1px 10px oklch(0.6 0.18 290 / 0.6), 0 0 4px oklch(0.6 0.18 290 / 0.4)",
           transition: "width 200ms ease-out",

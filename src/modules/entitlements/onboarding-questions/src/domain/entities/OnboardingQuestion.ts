@@ -1,4 +1,4 @@
-import type { BaseEntity } from "@modules/identity/core/domain/types";
+import type { BaseEntity } from "@core/interfaces/common.interface";
 
 export type QuestionType = "SingleSelect" | "MultiSelect";
 

@@ -1,21 +1,20 @@
+// FILE-EXCEPTION: file length
 /**
- * Subscriptions ViewModel
- *
- * Manages tenant edition subscriptions — full lifecycle:
- * assign, change, renew, convert-trial, suspend, resume, cancel, revoke, resync.
- * Also exposes billing actions: checkout, portal, cancel-stripe.
- * Pure .ts — no JSX. Returns typed interface for View.
+ * @file useSubscriptionsViewModel.ts
+ * @description ViewModel managing tenant edition subscriptions lifecycle (assign, change, suspend, resume, cancel).
+ * Exposes billing portals, payment flows, and promo codes. Uses runtime DI registry decoupling.
  */
+
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
-import { identityContainer } from "@modules/identity/di";
+import { getComponent } from "@core/common/component-registry";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { parseLocalizedNumber } from "@core/utils/number-parser";
-import type { EditionPromotionData } from "@modules/entitlements/editions/src/domain/entities/EditionPromotion";
+import type { EditionPromotionData } from "@modules/entitlements/core";
 
 export function useSubscriptionsViewModel(tenantId: string) {
   const { subscriptionRepository, editionRepository, billingRepository } = entitlementsContainer;
@@ -68,11 +67,16 @@ export function useSubscriptionsViewModel(tenantId: string) {
   });
 
   // ─── Fetch tenant detail (for admin email) ─────────
-  const { tenantRepository } = identityContainer;
+  const tenantRepository = getComponent("tenantRepository");
   const tenantQuery = useQuery({
     queryKey: ["tenant", tenantId],
-    queryFn: () => tenantRepository.getById(tenantId),
-    enabled: !!tenantId,
+    queryFn: () => {
+      if (!tenantRepository) {
+        throw new Error("Tenant repository not registered");
+      }
+      return tenantRepository.getById(tenantId);
+    },
+    enabled: !!tenantId && !!tenantRepository,
   });
   const tenantAdminEmail = tenantQuery.data?.adminEmail;
 

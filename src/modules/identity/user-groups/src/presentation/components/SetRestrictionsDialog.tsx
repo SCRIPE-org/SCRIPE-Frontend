@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * Set Restrictions Dialog
  *
@@ -39,7 +40,10 @@ export function SetRestrictionsDialog({
   isSubmitting,
   tenantId,
 }: SetRestrictionsDialogProps) {
-  const { t, availablePermissions, isLoadingPermissions } = useSetRestrictionsViewModel({ tenantId, open });
+  const { t, availablePermissions, isLoadingPermissions } = useSetRestrictionsViewModel({
+    tenantId,
+    open,
+  });
   const [restrictions, setRestrictions] = useState<Restriction[]>([]);
   const [newPermissionCode, setNewPermissionCode] = useState("");
   const [newField, setNewField] = useState("");

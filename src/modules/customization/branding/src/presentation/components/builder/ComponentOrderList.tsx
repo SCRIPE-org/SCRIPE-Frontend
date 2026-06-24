@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * ComponentOrderList — Sortable layer list for z-order management
  *

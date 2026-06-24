@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useDocsI18n } from "../../providers/DocsI18nProvider";

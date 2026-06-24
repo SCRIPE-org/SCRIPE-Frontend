@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 /**
  * EditionOverviewView — Premium read-only detail page.

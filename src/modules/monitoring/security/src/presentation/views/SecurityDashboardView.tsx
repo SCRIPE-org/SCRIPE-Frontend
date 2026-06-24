@@ -16,8 +16,7 @@ import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { Button } from "@core/ui/button";
 import { Shield, FileDown, Settings2 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
-import { useDashboardTheme } from "@modules/monitoring/dashboard/src/presentation/hooks/useDashboardTheme";
-import { DashboardStudioPanel } from "@modules/monitoring/dashboard/src/presentation/components/DashboardStudioPanel";
+import { useDashboardTheme, DashboardStudioPanel } from "@modules/monitoring/core";
 
 // Lazy-load heavy sections (below-the-fold)
 const FailedLoginsHeatmap = dynamic(

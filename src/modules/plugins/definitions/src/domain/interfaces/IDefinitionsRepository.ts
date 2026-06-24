@@ -5,7 +5,7 @@
  * (it is the primary sub-module that owns the cross-cutting definition entity).
  * This sub-module RE-USES it — no duplication.
  */
-import type { PluginDefinition, PluginTierValue, PluginScopeValue } from "@modules/plugins/catalog";
+import type { PluginDefinition, PluginTierValue, PluginScopeValue } from "@modules/plugins/core";
 
 export interface CreateDefinitionRequest {
   key: string;

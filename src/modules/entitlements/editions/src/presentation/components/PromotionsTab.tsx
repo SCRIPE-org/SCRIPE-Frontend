@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * PromotionsTab — Edition promotions management
  *

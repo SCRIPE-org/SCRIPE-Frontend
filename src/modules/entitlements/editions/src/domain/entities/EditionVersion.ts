@@ -59,4 +59,11 @@ export class EditionVersion {
   get hasPricingChanges(): boolean {
     return !!this.data.pricingSnapshotJson;
   }
+
+  copyWith(updates: Partial<EditionVersionModel>): EditionVersion {
+    return new EditionVersion({
+      ...this.data,
+      ...updates,
+    } as EditionVersionModel);
+  }
 }

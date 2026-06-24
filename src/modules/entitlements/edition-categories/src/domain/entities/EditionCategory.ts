@@ -1,4 +1,4 @@
-import type { BaseEntity } from "@modules/identity/core/domain/types";
+import type { BaseEntity } from "@core/interfaces/common.interface";
 
 export interface EditionCategoryData extends BaseEntity {
   name: string;
@@ -33,5 +33,12 @@ export class EditionCategory {
   getDisplayName(lang: string): string {
     if (lang === "ar") return this.data.displayNameAr || this.data.displayNameEn || this.data.name;
     return this.data.displayNameEn || this.data.name;
+  }
+
+  copyWith(updates: Partial<EditionCategoryData>): EditionCategory {
+    return new EditionCategory({
+      ...this.data,
+      ...updates,
+    } as EditionCategoryData);
   }
 }

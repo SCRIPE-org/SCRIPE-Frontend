@@ -28,6 +28,13 @@ export class HubRecentItem {
   get timestamp() {
     return this.data.timestamp;
   }
+
+  copyWith(updates: Partial<HubRecentItemData>): HubRecentItem {
+    return new HubRecentItem({
+      ...this.data,
+      ...updates,
+    } as HubRecentItemData);
+  }
 }
 
 export interface HubActivitySummaryData {

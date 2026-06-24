@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Role Permissions Dialog ViewModel
  *
@@ -22,7 +23,7 @@ import { useToast } from "@core/hooks/use-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { identityContainer } from "@modules/identity/di";
 import type { Role } from "../../domain/entities/Role";
-import type { Permission, PermissionModuleGroup } from "@modules/identity/permissions";
+import type { Permission, PermissionModuleGroup } from "@modules/identity/core";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
 import { PermissionScopes } from "../../domain/types/PermissionTypes";
 

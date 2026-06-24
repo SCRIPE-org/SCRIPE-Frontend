@@ -3,7 +3,7 @@ import type {
   CreateDataInventoryRequest,
   UpdateDataInventoryRequest,
 } from "../entities/InventoryItem";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 
 export interface InventoryParams {
   page?: number;

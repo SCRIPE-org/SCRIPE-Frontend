@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * useEditionComparisonViewModel — Data logic for the dual-view comparison page.
  *

@@ -108,11 +108,7 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
       </div>
 
       {/* Hero Header: tenant info, status banners, actions, subscription bar */}
-      <TenantHeader
-        tenant={tenant}
-        onUpdate={handleUpdate}
-        onEnter={handleEnter}
-      />
+      <TenantHeader tenant={tenant} onUpdate={handleUpdate} onEnter={handleEnter} />
 
       {/* Animated Stat Cards */}
       <TenantStats tenantId={tenantId} />

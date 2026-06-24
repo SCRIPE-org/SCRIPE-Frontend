@@ -18,7 +18,7 @@ export function CredentialsFormHeader({ t }: CredentialsFormHeaderProps) {
         }}
       >
         <span>{t("auth.stepLabel") || "STEP 01 · IDENTIFY"}</span>
-        <div className="flex items-center gap-1.5 normal-case tracking-normal shrink-0">
+        <div className="flex shrink-0 items-center gap-1.5 normal-case tracking-normal">
           <LanguageSwitcher />
           <ThemeSwitcher />
         </div>

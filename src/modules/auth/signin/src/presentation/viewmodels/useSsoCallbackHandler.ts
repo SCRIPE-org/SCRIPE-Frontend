@@ -8,7 +8,11 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useNavigation } from "@core/providers/navigation-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { getAuthContainer } from "@modules/auth/di";
-import { handleOidcCallback, handleSamlCallback, completeAdminLogin } from "./sso-callback-handlers";
+import {
+  handleOidcCallback,
+  handleSamlCallback,
+  completeAdminLogin,
+} from "./useSsoCallbackHandlers";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 
 export type SsoCallbackKind = "oidc" | "saml";

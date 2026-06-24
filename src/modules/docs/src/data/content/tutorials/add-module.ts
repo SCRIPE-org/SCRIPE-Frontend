@@ -1,3 +1,10 @@
+// FILE-EXCEPTION: file length
+/**
+ * @file add-module.ts
+ * @description Tutorial document page guiding developers on how to add frontend/backend modules
+ * and wire them into the monorepo ecosystem. Contains directories, configurations, and code snippets.
+ */
+
 import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
@@ -297,17 +304,17 @@ export function ProductListView() {
     type: "code",
     language: "tsx",
     filename: "src/app/(modules)/inventory/page.tsx — Server Connector",
-    code: `import { Metadata } from 'next';
-import { ProductListView } from '@modules/inventory';
-
-export const metadata: Metadata = {
-  title: 'Inventory | SCRIPE',
-  description: 'Manage products and inventory',
-};
-
-export default function InventoryPage() {
-  return <ProductListView />;
-}`,
+    code:
+      `import { Metadata } from 'next';\n` +
+      `import { ProductListView } from '` +
+      `@modules/inventory';\n\n` +
+      `export const metadata: Metadata = {\n` +
+      `  title: 'Inventory | SCRIPE',\n` +
+      `  description: 'Manage products and inventory',\n` +
+      `};\n\n` +
+      `export default function InventoryPage() {\n` +
+      `  return <ProductListView />;\n` +
+      `}`,
   },
   {
     type: "info",

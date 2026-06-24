@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getAuthContainer } from "@modules/auth/di";
-import type { ValidateTokenResponse } from "../../../../core/domain/interfaces/IAccountSetupService";
+import type { ValidateTokenResponse } from "@modules/auth/core/domain/interfaces/IAccountSetupService";
 
 export type PageState = "loading" | "valid" | "invalid" | "activating" | "success" | "error";
 

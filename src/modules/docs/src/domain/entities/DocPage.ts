@@ -58,4 +58,11 @@ export class DocPage {
       (s): s is Extract<DocSection, { type: "heading" }> => s.type === "heading"
     );
   }
+
+  copyWith(updates: Partial<DocPageData>): DocPage {
+    return new DocPage({
+      ...this.data,
+      ...updates,
+    } as DocPageData);
+  }
 }

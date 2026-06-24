@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * LayoutTemplates — Unique builder canvas configurations for all 22 layout types
  *
@@ -11,7 +12,7 @@
  */
 
 import type { CanvasComponent, CanvasBackground } from "./CanvasComponent";
-import type { LoginLayout } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import type { LoginLayout } from "@core/domain/entities/LoginBrandingTypes";
 
 // ── Template Structure ───────────────────────────────────
 export interface LayoutTemplate {

@@ -1,4 +1,10 @@
 /**
+ * @file TenantPlanPricingCard.tsx
+ * @description Renders a pricing card detailing TenantPlan features, cycle options, and recommendation badges.
+ * Imports RecommendationBadge from entitlements core to comply with Clean Architecture rules.
+ */
+
+/**
  * TenantPlanPricingCard — Vercel-style pricing card for the Tenant Plan comparison.
  *
  * Purpose-built for TenantPlan entities — never reuse EditionPricingCard with `as any`.
@@ -14,7 +20,7 @@
 "use client";
 
 import { Check, Infinity as InfinityIcon } from "lucide-react";
-import { RecommendationBadge } from "@modules/entitlements/editions/src/presentation/components/comparison/RecommendationBadge";
+import { RecommendationBadge } from "@modules/entitlements/core";
 import type { TenantPlan } from "../../domain/entities/TenantPlan";
 
 interface PricingCardHighlight {

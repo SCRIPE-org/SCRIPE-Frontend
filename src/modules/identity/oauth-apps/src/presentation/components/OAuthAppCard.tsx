@@ -64,8 +64,8 @@ export function OAuthAppCard({
       <CardContent className="p-5">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
           {/* Left Side: Brand Logo, Name & Description */}
-          <div className="flex items-start gap-4 flex-1">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border bg-muted/40 p-2 group-hover:border-purple-500/20 group-hover:bg-purple-500/5 transition-all">
+          <div className="flex flex-1 items-start gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border bg-muted/40 p-2 transition-all group-hover:border-purple-500/20 group-hover:bg-purple-500/5">
               {item.logoUri ? (
                 <Image
                   src={item.logoUri}
@@ -76,40 +76,46 @@ export function OAuthAppCard({
                   unoptimized // Bypasses Next.js domain restrictions for arbitrary external URLs
                 />
               ) : (
-                <AppWindow className="h-6 w-6 text-muted-foreground group-hover:text-purple-500 transition-colors" />
+                <AppWindow className="h-6 w-6 text-muted-foreground transition-colors group-hover:text-purple-500" />
               )}
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-semibold text-foreground tracking-tight">
+                <h3 className="text-base font-semibold tracking-tight text-foreground">
                   {item.displayName}
                 </h3>
-                <Badge variant="outline" className="font-mono text-[10px] px-1.5 py-0 border-border/80">
+                <Badge
+                  variant="outline"
+                  className="border-border/80 px-1.5 py-0 font-mono text-[10px]"
+                >
                   {item.clientType === "confidential" ? "Confidential" : "Public"}
                 </Badge>
                 {!item.isActive && (
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-red-100 text-red-800 dark:bg-red-950/30 dark:text-red-400">
+                  <Badge
+                    variant="secondary"
+                    className="bg-red-100 px-1.5 py-0 text-[10px] text-red-800 dark:bg-red-950/30 dark:text-red-400"
+                  >
                     Inactive
                   </Badge>
                 )}
               </div>
               {item.description ? (
-                <p className="text-xs text-muted-foreground max-w-md line-clamp-1">
+                <p className="line-clamp-1 max-w-md text-xs text-muted-foreground">
                   {item.description}
                 </p>
               ) : (
-                <p className="text-xs text-muted-foreground/60 italic">
-                  No description provided.
-                </p>
+                <p className="text-xs italic text-muted-foreground/60">No description provided.</p>
               )}
             </div>
           </div>
 
           {/* Middle: Client ID & PKCE Info */}
-          <div className="flex flex-col gap-2 border-t pt-4 md:border-t-0 md:pt-0 shrink-0">
+          <div className="flex shrink-0 flex-col gap-2 border-t pt-4 md:border-t-0 md:pt-0">
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Client ID:</span>
-              <code className="rounded bg-muted/70 px-2 py-0.5 font-mono text-xs max-w-[150px] truncate text-foreground/80">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Client ID:
+              </span>
+              <code className="max-w-[150px] truncate rounded bg-muted/70 px-2 py-0.5 font-mono text-xs text-foreground/80">
                 {item.clientId}
               </code>
               <Button
@@ -135,7 +141,7 @@ export function OAuthAppCard({
               </span>
               <Badge
                 variant="outline"
-                className={`text-[10px] px-1.5 py-0 ${
+                className={`px-1.5 py-0 text-[10px] ${
                   item.requirePkce
                     ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-600 dark:text-emerald-400"
                     : "border-gray-500/20 bg-gray-500/5 text-gray-500"
@@ -147,11 +153,11 @@ export function OAuthAppCard({
           </div>
 
           {/* Right Side: Quick Action Panel */}
-          <div className="flex items-center gap-1.5 self-end md:self-center shrink-0">
+          <div className="flex shrink-0 items-center gap-1.5 self-end md:self-center">
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted"
+              className="h-8 w-8 text-muted-foreground hover:bg-muted hover:text-foreground"
               onClick={() => onEdit(item.id)}
               title="Edit application"
             >
@@ -164,7 +170,7 @@ export function OAuthAppCard({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted"
+                    className="h-8 w-8 text-muted-foreground hover:bg-muted hover:text-foreground"
                     title="Regenerate secret"
                   >
                     <KeyRound className="h-4 w-4" />
@@ -198,7 +204,7 @@ export function OAuthAppCard({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20"
+                  className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/20"
                   title="Delete application"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -229,7 +235,7 @@ export function OAuthAppCard({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-muted-foreground hover:text-purple-600 hover:bg-purple-500/5"
+              className="h-8 w-8 text-muted-foreground hover:bg-purple-500/5 hover:text-purple-600"
               onClick={() => onEdit(item.id)}
             >
               <ChevronRight className="h-5 w-5" />

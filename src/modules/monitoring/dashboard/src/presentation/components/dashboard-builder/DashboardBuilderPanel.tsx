@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * DashboardBuilderPanel — Full drag-and-drop builder panel for dashboard (M11)
  *

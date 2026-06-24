@@ -4,7 +4,7 @@
  * Represents a menu item in the navigation system.
  * Supports bilingual names (English/Arabic) matching backend.
  */
-import type { BaseEntity } from "@modules/identity/core/domain/types";
+import type { BaseEntity } from "@core/interfaces/common.interface";
 
 /**
  * Menu item data from API (matches backend MenuItemResponse)
@@ -97,6 +97,13 @@ export class MenuItem {
    */
   get isParentOnly(): boolean {
     return !this.data.href;
+  }
+
+  copyWith(updates: Partial<MenuItemData>): MenuItem {
+    return new MenuItem({
+      ...this.data,
+      ...updates,
+    } as MenuItemData);
   }
 }
 

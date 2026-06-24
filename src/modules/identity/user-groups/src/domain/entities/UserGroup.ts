@@ -121,4 +121,11 @@ export class UserGroup {
   toProps(): UserGroupProps {
     return { ...this.props };
   }
+
+  copyWith(updates: Partial<UserGroupProps>): UserGroup {
+    return new UserGroup({
+      ...this.props,
+      ...updates,
+    } as UserGroupProps);
+  }
 }

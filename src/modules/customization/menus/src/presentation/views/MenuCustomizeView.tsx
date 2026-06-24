@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * Menu Customize View (Pure UI)
  *

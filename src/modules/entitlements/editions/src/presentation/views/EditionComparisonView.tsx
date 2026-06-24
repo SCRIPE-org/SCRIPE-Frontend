@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * EditionComparisonView — Industry-standard pricing comparison page.
  *

@@ -14,7 +14,7 @@ This is not just another boilerplate. It is a **strict architectural standard** 
 
 - **Modular Monolith**: Strict domain separation — Core shared kernel + isolated feature modules
 - **ERP Engine**: Generic CRUD system builds full-featured data management pages in minutes
-- **SOLID View/ViewModel**: Views are pure UI (~200 lines max), ViewModels handle all logic
+- **SOLID View/ViewModel**: Views are pure UI (~300 lines max), ViewModels handle all logic
 - **State Management**: Zustand (client state) + TanStack Query v5 (server state)
 - **Robust Auth**: JWT + refresh tokens, 2FA (TOTP), session management, permission guards
 - **Type Safety**: End-to-end TypeScript + Zod validation
@@ -87,7 +87,7 @@ module/
     │   └── repositories/     #   API implementations
     └── presentation/         # UI (SOLID Pattern)
         ├── viewmodels/       #   All logic lives here
-        ├── views/            #   Pure UI (~200 lines max)
+        ├── views/            #   Pure UI (~300 lines max)
         └── components/       #   Section components
 ```
 

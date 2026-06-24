@@ -80,10 +80,10 @@ const SYSTEM_PAGES = [
   "/settings",
   "/overview",
   "/entitlements/subscriptions", // Dynamic detail page (no menu)
-  "/entitlements/overrides",     // Dynamic overrides page (no menu)
+  "/entitlements/overrides", // Dynamic overrides page (no menu)
   "/entitlements/signup-content", // Signup content management (no menu)
-  "/plugins",                   // Dynamic plugin pages (no menu)
-  "/marketplace",               // Marketplace hub page (no menu)
+  "/plugins", // Dynamic plugin pages (no menu)
+  "/marketplace", // Marketplace hub page (no menu)
 ];
 
 function isSystemPage(pathname: string): boolean {

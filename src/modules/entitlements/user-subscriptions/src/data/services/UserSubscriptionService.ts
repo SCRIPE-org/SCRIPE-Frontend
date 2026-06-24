@@ -14,7 +14,7 @@ import type {
   UserSubscriptionListModel,
 } from "../models/UserSubscriptionModels";
 import type { CreateUserSubscriptionRequest } from "../../domain/entities/UserSubscriptionRequests";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 
 export class UserSubscriptionService implements IUserSubscriptionService {

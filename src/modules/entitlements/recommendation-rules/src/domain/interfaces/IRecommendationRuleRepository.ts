@@ -9,7 +9,7 @@ import type {
   CreateRecommendationRuleRequest,
   UpdateRecommendationRuleRequest,
 } from "../entities/RecommendationRuleRequests";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
 export interface IRecommendationRuleRepository {
   getAll(params: PaginationParams): Promise<PagedResult<RecommendationRule>>;

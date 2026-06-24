@@ -5,7 +5,7 @@
  * Repository orchestrates Service + Mapper and returns domain entities.
  */
 import type { IBillingRepository } from "../../domain/interfaces/IBillingRepository";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import type {
   Invoice,
   InvoiceListItem,

@@ -44,7 +44,7 @@ export function useConvertWizardViewModel(
   lead: PlatformLead | null,
   onConvert: (params: ConvertLeadParams) => Promise<void>,
   onClose: () => void,
-  isConverting: boolean,
+  isConverting: boolean
 ) {
   const { leadsRepository } = entitlementsContainer;
 
@@ -52,7 +52,8 @@ export function useConvertWizardViewModel(
   const [step, setStep] = useState<WizardStep>(1);
 
   // ── Step 1 state ───────────────────────────────────────────────────────────
-  const [selectedEditionOverride, setSelectedEditionOverride] = useState<EditionForConversion | null>(null);
+  const [selectedEditionOverride, setSelectedEditionOverride] =
+    useState<EditionForConversion | null>(null);
 
   // ── Step 2 state ───────────────────────────────────────────────────────────
   const [s2, setS2] = useState<Step2State>(STEP2_DEFAULTS);
@@ -74,9 +75,10 @@ export function useConvertWizardViewModel(
   const selectedEdition = useMemo(() => {
     if (selectedEditionOverride) return selectedEditionOverride;
     if (lead && editionsQuery.data) {
-      return editionsQuery.data.find(
-        (e) => e.name.toLowerCase() === lead.editionKey?.toLowerCase()
-      ) ?? null;
+      return (
+        editionsQuery.data.find((e) => e.name.toLowerCase() === lead.editionKey?.toLowerCase()) ??
+        null
+      );
     }
     return null;
   }, [selectedEditionOverride, lead, editionsQuery.data]);
@@ -101,16 +103,26 @@ export function useConvertWizardViewModel(
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   const validateAmount = useCallback((val: string): boolean => {
-    if (!val.trim()) { setAmountError("Amount is required."); return false; }
+    if (!val.trim()) {
+      setAmountError("Amount is required.");
+      return false;
+    }
     const n = parseFloat(val);
-    if (isNaN(n) || n <= 0) { setAmountError("Enter a valid positive amount."); return false; }
+    if (isNaN(n) || n <= 0) {
+      setAmountError("Enter a valid positive amount.");
+      return false;
+    }
     setAmountError("");
     return true;
   }, []);
 
   const initOverrides = useCallback((groups: EditionFeatureGroup[]) => {
     const initial: Record<string, string> = {};
-    groups.forEach((g) => g.features.forEach((f) => { initial[f.featureId] = f.editionValue; }));
+    groups.forEach((g) =>
+      g.features.forEach((f) => {
+        initial[f.featureId] = f.editionValue;
+      })
+    );
     setOverrides(initial);
     setExpandedCategories(new Set(groups.map((g) => g.category)));
   }, []);
@@ -186,10 +198,13 @@ export function useConvertWizardViewModel(
     setOverrides((p) => ({ ...p, [featureId]: value }));
   }, []);
 
-  const handleAmountChange = useCallback((val: string) => {
-    setS2((p) => ({ ...p, negotiatedAmount: val }));
-    if (amountError) validateAmount(val);
-  }, [amountError, validateAmount]);
+  const handleAmountChange = useCallback(
+    (val: string) => {
+      setS2((p) => ({ ...p, negotiatedAmount: val }));
+      if (amountError) validateAmount(val);
+    },
+    [amountError, validateAmount]
+  );
 
   return {
     step,

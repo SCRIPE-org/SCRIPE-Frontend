@@ -5,7 +5,7 @@ import type {
 } from "../../domain/interfaces/IDefinitionsRepository";
 import type { IDefinitionsService } from "../../domain/interfaces/IDefinitionsService";
 import { DefinitionsMapper } from "../mappers/DefinitionsMapper";
-import type { PluginDefinition } from "@modules/plugins/catalog";
+import type { PluginDefinition } from "@modules/plugins/core";
 
 export class DefinitionsRepository implements IDefinitionsRepository {
   constructor(private readonly service: IDefinitionsService) {}

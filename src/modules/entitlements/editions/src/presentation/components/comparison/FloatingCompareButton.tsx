@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * FloatingCompareButton — Sticky bottom-center button to open the full comparison table.
  *

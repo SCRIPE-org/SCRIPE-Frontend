@@ -21,7 +21,7 @@ import type {
   CreatePromotionRequest,
   UpdatePromotionRequest,
 } from "../entities/TenantPlanRequests";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
 export interface ITenantPlanService {
   // Plans

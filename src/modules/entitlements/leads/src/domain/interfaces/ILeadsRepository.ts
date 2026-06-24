@@ -7,7 +7,7 @@ import type {
   LeadActivity,
   LeadCommunicationLog,
 } from "../entities/PlatformLead";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 
 // ── Wizard Types (domain-level) ────────────────────────────────────────────────
 
@@ -115,7 +115,6 @@ export interface ConvertLeadParams {
    */
   featureOverrides?: FeatureOverride[];
 }
-
 
 export interface ConvertLeadResult {
   tenantId: string;

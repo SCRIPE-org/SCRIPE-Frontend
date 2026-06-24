@@ -151,6 +151,13 @@ export class Tenant {
   toProps(): TenantProps {
     return { ...this.props };
   }
+
+  copyWith(updates: Partial<TenantProps>): Tenant {
+    return new Tenant({
+      ...this.props,
+      ...updates,
+    } as TenantProps);
+  }
 }
 
 /**

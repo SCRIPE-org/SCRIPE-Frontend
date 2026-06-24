@@ -60,4 +60,11 @@ export class TenantEffectiveFeature {
     if (lang === "ar") return this.displayNameAr || this.displayNameEn || this.name;
     return this.displayNameEn || this.name;
   }
+
+  copyWith(updates: Partial<TenantEffectiveFeatureData>): TenantEffectiveFeature {
+    return new TenantEffectiveFeature({
+      ...this.data,
+      ...updates,
+    } as TenantEffectiveFeatureData);
+  }
 }

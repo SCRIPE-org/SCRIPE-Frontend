@@ -53,44 +53,45 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
     updatePostLogoutUri: vm.updatePostLogoutUri,
   };
 
-  const steps = vm.form.protocol === "saml"
-    ? [
-        { id: 1, label: t("oauthApps.stepProtocol") || "Protocol" },
-        { id: 2, label: t("oauthApps.stepBasicInfo") || "Basic Info" },
-        { id: 3, label: t("oauthApps.stepSamlConfig") || "SAML Config" },
-        { id: 4, label: t("oauthApps.stepBranding") || "Branding" }
-      ]
-    : [
-        { id: 1, label: t("oauthApps.stepProtocol") || "Protocol" },
-        { id: 2, label: t("oauthApps.stepBasicInfo") || "Basic Info" },
-        { id: 3, label: t("oauthApps.stepEndpoints") || "Endpoints & Scopes" },
-        { id: 4, label: t("oauthApps.stepSecurity") || "Security & Tokens" },
-        { id: 5, label: t("oauthApps.stepBranding") || "Branding" }
-      ];
+  const steps =
+    vm.form.protocol === "saml"
+      ? [
+          { id: 1, label: t("oauthApps.stepProtocol") || "Protocol" },
+          { id: 2, label: t("oauthApps.stepBasicInfo") || "Basic Info" },
+          { id: 3, label: t("oauthApps.stepSamlConfig") || "SAML Config" },
+          { id: 4, label: t("oauthApps.stepBranding") || "Branding" },
+        ]
+      : [
+          { id: 1, label: t("oauthApps.stepProtocol") || "Protocol" },
+          { id: 2, label: t("oauthApps.stepBasicInfo") || "Basic Info" },
+          { id: 3, label: t("oauthApps.stepEndpoints") || "Endpoints & Scopes" },
+          { id: 4, label: t("oauthApps.stepSecurity") || "Security & Tokens" },
+          { id: 5, label: t("oauthApps.stepBranding") || "Branding" },
+        ];
 
   const totalSteps = vm.form.protocol === "saml" ? 4 : 5;
 
   return (
-    <div className="max-w-4xl mx-auto bg-card border rounded-xl p-6 shadow-sm space-y-8 duration-300 animate-in fade-in">
+    <div className="mx-auto max-w-4xl space-y-8 rounded-xl border bg-card p-6 shadow-sm duration-300 animate-in fade-in">
       {/* Progress Indicators */}
-      <div className="flex justify-between items-center max-w-2xl mx-auto mb-4 text-xs font-semibold px-4">
+      <div className="mx-auto mb-4 flex max-w-2xl items-center justify-between px-4 text-xs font-semibold">
         {steps.map((s, i) => (
           <Fragment key={s.id}>
             {i > 0 && (
               <div
-                className={`flex-1 h-0.5 mx-2 ${
+                className={`mx-2 h-0.5 flex-1 ${
                   currentStep >= s.id ? "bg-purple-600 dark:bg-purple-500" : "bg-muted"
                 }`}
               />
             )}
-            <div className="flex flex-col items-center gap-1.5 cursor-default select-none shrink-0">
+            <div className="flex shrink-0 cursor-default select-none flex-col items-center gap-1.5">
               <div
-                className={`h-7 w-7 rounded-full flex items-center justify-center font-mono border transition-all duration-200 ${
+                className={`flex h-7 w-7 items-center justify-center rounded-full border font-mono transition-all duration-200 ${
                   currentStep === s.id
-                    ? "bg-purple-600 text-white border-purple-600 dark:bg-purple-500 dark:border-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.3)]"
+                    ? "border-purple-600 bg-purple-600 text-white shadow-[0_0_10px_rgba(168,85,247,0.3)] dark:border-purple-500 dark:bg-purple-500"
                     : currentStep > s.id
-                    ? "bg-purple-600/10 text-purple-600 border-purple-600/30 dark:bg-purple-500/10 dark:text-purple-400"
-                    : "bg-muted text-muted-foreground border-transparent"
+                      ? "border-purple-600/30 bg-purple-600/10 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400"
+                      : "border-transparent bg-muted text-muted-foreground"
                 }`}
               >
                 {currentStep > s.id ? "✓" : s.id}
@@ -98,8 +99,8 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
               <span
                 className={
                   currentStep === s.id
-                    ? "text-purple-600 dark:text-purple-400 font-bold"
-                    : "text-muted-foreground font-normal"
+                    ? "font-bold text-purple-600 dark:text-purple-400"
+                    : "font-normal text-muted-foreground"
                 }
               >
                 {s.label}
@@ -112,7 +113,7 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
       <div className="border-t pt-6">
         {/* Step 1: Select Protocol */}
         {currentStep === 1 && (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="duration-300 animate-in fade-in slide-in-from-bottom-4">
             <ProtocolSelectionSection
               protocol={vm.form.protocol}
               onChange={(p) => vm.updateField("protocol", p)}
@@ -122,14 +123,14 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
 
         {/* Step 2: Basic Info */}
         {currentStep === 2 && (
-          <div className="max-w-2xl mx-auto space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="mx-auto max-w-2xl space-y-4 duration-300 animate-in fade-in slide-in-from-bottom-4">
             <GeneralSection {...sectionProps} />
           </div>
         )}
 
         {/* Step 3: Endpoints & Scopes (OIDC) OR SAML Configuration (SAML) */}
         {currentStep === 3 && (
-          <div className="max-w-2xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="mx-auto max-w-2xl space-y-6 duration-300 animate-in fade-in slide-in-from-bottom-4">
             {vm.form.protocol === "saml" ? (
               <SamlSection {...sectionProps} />
             ) : (
@@ -143,7 +144,7 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
 
         {/* Step 4: Security & Tokens (OIDC) OR Branding (SAML) */}
         {currentStep === 4 && (
-          <div className="max-w-2xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="mx-auto max-w-2xl space-y-6 duration-300 animate-in fade-in slide-in-from-bottom-4">
             {vm.form.protocol === "saml" ? (
               <BrandingSection {...sectionProps} />
             ) : (
@@ -157,14 +158,14 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
 
         {/* Step 5: Branding (OIDC only) */}
         {currentStep === 5 && vm.form.protocol !== "saml" && (
-          <div className="max-w-2xl mx-auto space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="mx-auto max-w-2xl space-y-4 duration-300 animate-in fade-in slide-in-from-bottom-4">
             <BrandingSection {...sectionProps} />
           </div>
         )}
       </div>
 
       {/* Navigation Controls */}
-      <div className="flex justify-between items-center max-w-2xl mx-auto pt-6 border-t mt-8">
+      <div className="mx-auto mt-8 flex max-w-2xl items-center justify-between border-t pt-6">
         <Button
           variant="outline"
           onClick={() => setCurrentStep((prev) => prev - 1)}
@@ -179,7 +180,7 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
             onClick={() => setCurrentStep((prev) => prev + 1)}
             disabled={currentStep === 2 && !vm.form.displayName.trim()}
             size="sm"
-            className="bg-purple-600 hover:bg-purple-700 text-white dark:bg-purple-500 dark:hover:bg-purple-600"
+            className="bg-purple-600 text-white hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600"
           >
             {t("common.next") || "Next"}
             <ArrowRight className="ms-1.5 h-4 w-4" />
@@ -190,7 +191,7 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
             loading={vm.isSaving}
             disabled={!vm.form.displayName.trim()}
             size="sm"
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold shadow hover:opacity-95"
+            className="bg-gradient-to-r from-purple-600 to-indigo-600 font-semibold text-white shadow hover:opacity-95"
           >
             {!vm.isSaving && <Save className="me-1.5 h-4 w-4" />}
             {t("oauthApps.createButton") || "Create Application"}

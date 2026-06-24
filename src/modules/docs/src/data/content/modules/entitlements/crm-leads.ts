@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 import { registerPage } from "../../../repositories/DocsRepository";
 import type { DocSection } from "../../../../domain/entities/DocSection";
 

@@ -17,7 +17,6 @@ import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Palette, Sparkles } from "lucide-react";
-import { customizationContainer } from "@modules/customization/di";
 import { useToast } from "@core/ui/use-toast";
 
 interface SaveAsThemeModalProps {
@@ -25,6 +24,15 @@ interface SaveAsThemeModalProps {
   onClose: () => void;
   /** Returns the current draft branding JSON string */
   getDraftJson: () => string;
+  onSaveTheme: (themeInput: {
+    name: string;
+    slug: string;
+    description?: string;
+    authorName?: string;
+    category: string;
+    accentColor: string;
+    themeDataJson: string;
+  }) => Promise<void>;
 }
 
 const CATEGORIES = [
@@ -50,7 +58,12 @@ function slugify(str: string): string {
     .slice(0, 60);
 }
 
-export function SaveAsThemeModal({ isOpen, onClose, getDraftJson }: SaveAsThemeModalProps) {
+export function SaveAsThemeModal({
+  isOpen,
+  onClose,
+  getDraftJson,
+  onSaveTheme,
+}: SaveAsThemeModalProps) {
   const { t } = useI18n();
   const { toast } = useToast();
 
@@ -80,36 +93,14 @@ export function SaveAsThemeModal({ isOpen, onClose, getDraftJson }: SaveAsThemeM
 
     try {
       const draftJson = getDraftJson();
-      const { themeMarketplaceRepository } = customizationContainer;
-
-      await themeMarketplaceRepository.create({
+      await onSaveTheme({
         name: name.trim(),
         slug,
         description: description.trim() || undefined,
         authorName: authorName.trim() || undefined,
         category,
-        version: "1.0.0",
-        themeDataJson: draftJson,
-        themeSchemaVersion: 1,
-        isFree: true,
-        pricingType: "Free",
-        minTierLevel: 0,
-        isAlsoBuyable: false,
-        displayOrder: 999,
-        isFeatured: false,
-        isNew: true,
-        hasDarkMode: false,
-        hasAccessibilityPreset: false,
-        hasContentBlocks: false,
-        isSystem: false,
         accentColor,
-      });
-
-      toast({
-        title: t("studio.saveTheme.success") || "Theme saved!",
-        description:
-          t("studio.saveTheme.successDesc") ||
-          "Your custom theme is now available in the marketplace.",
+        themeDataJson: draftJson,
       });
 
       // Reset form and close
@@ -134,8 +125,8 @@ export function SaveAsThemeModal({ isOpen, onClose, getDraftJson }: SaveAsThemeM
     authorName,
     category,
     accentColor,
+    onSaveTheme,
     toast,
-    t,
     onClose,
   ]);
 

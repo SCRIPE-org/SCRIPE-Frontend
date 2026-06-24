@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * Tenant Tabs Component — Deep Redesign
  *

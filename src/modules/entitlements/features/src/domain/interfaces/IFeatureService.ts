@@ -5,7 +5,7 @@
  * Implemented by FeatureService in the data layer.
  * Returns raw DTOs (models) — never domain entities.
  */
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 import type {
   FeatureModel,
   TenantEffectiveFeatureModel,

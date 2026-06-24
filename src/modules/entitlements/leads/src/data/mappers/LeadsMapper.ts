@@ -92,16 +92,16 @@ export class LeadsMapper {
 
   static toCommunicationLog(dto: LeadCommunicationLogDto): LeadCommunicationLog {
     return new LeadCommunicationLog({
-      id:              dto.id,
-      subject:         dto.subject,
-      bodyHtml:        dto.bodyHtml,
-      bodyText:        dto.bodyText ?? '',
-      sentByAdminName: dto.sentByAdminName ?? '',
-      sentAt:          dto.sentAt,
-      status:          (dto.status as 'Pending' | 'Sent' | 'Failed') ?? 'Sent',
-      templateKey:     dto.templateKey,
-      recipientEmail:  dto.recipientEmail ?? '',
-      recipientName:   dto.recipientName ?? '',
+      id: dto.id,
+      subject: dto.subject,
+      bodyHtml: dto.bodyHtml,
+      bodyText: dto.bodyText ?? "",
+      sentByAdminName: dto.sentByAdminName ?? "",
+      sentAt: dto.sentAt,
+      status: (dto.status as "Pending" | "Sent" | "Failed") ?? "Sent",
+      templateKey: dto.templateKey,
+      recipientEmail: dto.recipientEmail ?? "",
+      recipientName: dto.recipientName ?? "",
     });
   }
 }

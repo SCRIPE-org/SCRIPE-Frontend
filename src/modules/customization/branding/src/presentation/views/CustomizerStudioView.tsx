@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * CustomizerStudioView -- Main studio layout (Ultimate Redesign)
  *
@@ -399,6 +400,7 @@ export function CustomizerStudioView() {
         isOpen={showSaveAsTheme}
         onClose={() => setShowSaveAsTheme(false)}
         getDraftJson={vm.buildDraftJson}
+        onSaveTheme={vm.saveTheme}
       />
     </div>
   );

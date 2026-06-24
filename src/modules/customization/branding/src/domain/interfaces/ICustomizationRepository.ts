@@ -9,7 +9,7 @@
 import type { BrandingConfig } from "../entities/BrandingConfig";
 import type { SystemDefaults } from "../entities/SystemDefaults";
 import type { AuditLogEntry } from "../entities/AuditLogEntry";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 
 export interface ICustomizationRepository {
   // ── Tenant Branding (My Tenant) ──

@@ -19,7 +19,6 @@ import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 import { Users } from "lucide-react";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
-import { appLogger } from "@/core/common/logger";
 import { useAssignToGroupViewModel } from "../viewmodels/useAssignToGroupViewModel";
 
 interface AssignToGroupDialogProps {

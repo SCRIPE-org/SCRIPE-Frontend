@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 // UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
 // compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
@@ -8,11 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@core/ui/switch";
 import { Plus, X, Eye, EyeOff } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { ContentBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
-import {
-  isValidCtaUrl,
-  isValidVideoUrl,
-} from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import type { ContentBlock } from "@core/domain/entities/LoginBrandingTypes";
+import { isValidCtaUrl, isValidVideoUrl } from "@core/domain/entities/LoginBrandingTypes";
 
 type CB = ContentBlock;
 type P = { block: CB; onChange: (b: CB) => void };

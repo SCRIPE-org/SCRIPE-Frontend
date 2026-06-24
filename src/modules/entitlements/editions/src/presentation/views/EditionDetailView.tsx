@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * Edition Detail View — Thin Orchestrator
  *

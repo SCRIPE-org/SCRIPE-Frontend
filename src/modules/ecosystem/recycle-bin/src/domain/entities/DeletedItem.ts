@@ -72,4 +72,11 @@ export class DeletedItem {
   get isCritical(): boolean {
     return this.data.daysUntilPermanent <= 1;
   }
+
+  copyWith(updates: Partial<DeletedItemData>): DeletedItem {
+    return new DeletedItem({
+      ...this.data,
+      ...updates,
+    } as DeletedItemData);
+  }
 }

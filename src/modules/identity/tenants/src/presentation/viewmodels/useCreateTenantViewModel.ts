@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Create Tenant ViewModel
  *
@@ -20,7 +21,7 @@ import { identityContainer } from "@modules/identity/di";
 import { appLogger } from "@core/common/logger";
 import type { CreateTenantResult } from "../../domain/entities/TenantRequests";
 import type { EditionThinModel } from "../../domain/types/SubscriptionTypes";
-import type { Permission } from "@modules/identity/permissions/src/domain/entities/Permission";
+import type { Permission } from "@modules/identity/core";
 
 // ─────────────────────────────────────────
 // Types

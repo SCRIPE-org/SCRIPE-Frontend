@@ -239,7 +239,7 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   compRetentionEn,
   compInventoryEn,
   compReportsEn,
-  compRegulationsEn,
+  compRegulationsEn
   /*
   // Marketplace (6 sub-modules, all merge into "marketplace" key)
   mktListingsEn,
@@ -316,7 +316,7 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   compRetentionAr,
   compInventoryAr,
   compReportsAr,
-  compRegulationsAr,
+  compRegulationsAr
   /*
   // Marketplace (6 sub-modules, all merge into "marketplace" key)
   mktListingsAr,

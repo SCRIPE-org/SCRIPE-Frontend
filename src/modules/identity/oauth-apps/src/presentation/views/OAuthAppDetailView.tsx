@@ -11,13 +11,7 @@ import { useOAuthAppDetailViewModel } from "../viewmodels/useOAuthAppDetailViewM
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import {
-  ArrowLeft,
-  Save,
-  Loader2,
-  AppWindow,
-  AlertCircle,
-} from "lucide-react";
+import { ArrowLeft, Save, Loader2, AppWindow, AlertCircle } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import Image from "next/image";
 import { GeneratedSecretAlert } from "../components/GeneratedSecretAlert";
@@ -80,7 +74,12 @@ export function OAuthAppDetailView({ appId }: Props) {
       {/* ─── Header ────────────────────────────────── */}
       <div className="flex flex-col gap-4 border-b pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={vm.goBack} className="shrink-0 hover:bg-muted">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={vm.goBack}
+            className="shrink-0 hover:bg-muted"
+          >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-3">
@@ -105,15 +104,24 @@ export function OAuthAppDetailView({ appId }: Props) {
                   : vm.form.displayName || t("oauthApps.editTitle") || "Edit Application"}
               </h1>
               {!vm.isCreateMode && vm.app && (
-                <div className="flex items-center gap-2 mt-0.5">
-                  <Badge variant="outline" className="font-mono text-[10px] px-1.5 py-0 border-border/80 uppercase">
+                <div className="mt-0.5 flex items-center gap-2">
+                  <Badge
+                    variant="outline"
+                    className="border-border/80 px-1.5 py-0 font-mono text-[10px] uppercase"
+                  >
                     {vm.form.protocol}
                   </Badge>
-                  <Badge variant="outline" className="font-mono text-[10px] px-1.5 py-0 border-border/80">
+                  <Badge
+                    variant="outline"
+                    className="border-border/80 px-1.5 py-0 font-mono text-[10px]"
+                  >
                     {vm.form.clientType === "confidential" ? "Confidential" : "Public"}
                   </Badge>
                   {!vm.form.isActive && (
-                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-red-100 text-red-800 dark:bg-red-950/30 dark:text-red-400">
+                    <Badge
+                      variant="secondary"
+                      className="bg-red-100 px-1.5 py-0 text-[10px] text-red-800 dark:bg-red-950/30 dark:text-red-400"
+                    >
                       Inactive
                     </Badge>
                   )}
@@ -130,7 +138,7 @@ export function OAuthAppDetailView({ appId }: Props) {
               disabled={!vm.isDirty}
               loading={vm.isSaving}
               size="sm"
-              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold shadow hover:opacity-95"
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 font-semibold text-white shadow hover:opacity-95"
             >
               {!vm.isSaving && <Save className="me-1.5 h-4 w-4" />}
               {t("common.save") || "Save Changes"}
@@ -141,9 +149,10 @@ export function OAuthAppDetailView({ appId }: Props) {
 
       {/* Dirty indicator */}
       {vm.isDirty && !vm.isCreateMode && (
-        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-600 dark:border-amber-800/80 dark:bg-amber-950/20 dark:text-amber-400 duration-200 animate-in fade-in">
+        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-600 duration-200 animate-in fade-in dark:border-amber-800/80 dark:bg-amber-950/20 dark:text-amber-400">
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />
-          {t("common.unsavedChanges") || "You have unsaved changes in your workspace. Remember to save."}
+          {t("common.unsavedChanges") ||
+            "You have unsaved changes in your workspace. Remember to save."}
         </div>
       )}
 
@@ -164,11 +173,7 @@ export function OAuthAppDetailView({ appId }: Props) {
       ) : vm.form.protocol === "saml" ? (
         <SamlEditTabs vm={vm} />
       ) : (
-        <OidcEditTabs
-          vm={vm}
-          copiedField={copiedField}
-          copyToClipboard={copyToClipboard}
-        />
+        <OidcEditTabs vm={vm} copiedField={copiedField} copyToClipboard={copyToClipboard} />
       )}
     </div>
   );

@@ -25,7 +25,7 @@ export function DrawerTabComms({
   const { t } = useI18n();
 
   return (
-    <div className="p-4 space-y-3">
+    <div className="space-y-3 p-4">
       {canSendEmail && (
         <Button
           onClick={onOpenEmailDialog}
@@ -37,13 +37,13 @@ export function DrawerTabComms({
       )}
 
       <div className="rounded-xl border border-zinc-800/50 bg-zinc-900/40 p-4">
-        <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-500 flex items-center gap-1.5">
+        <p className="mb-3 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
           <Mail className="h-3.5 w-3.5" />
           {t("leads.email.communicationsTitle")}
         </p>
         {isLoadingComms ? (
-          <div className="space-y-3 animate-pulse">
-            {[1, 2].map(i => (
+          <div className="animate-pulse space-y-3">
+            {[1, 2].map((i) => (
               <div key={i} className="space-y-1">
                 <div className="h-3 w-40 rounded bg-zinc-800" />
                 <div className="h-2.5 w-24 rounded bg-zinc-800" />
@@ -61,8 +61,11 @@ export function DrawerTabComms({
                 <p className="mt-0.5 text-[10px] text-zinc-500">
                   {t("leads.email.sentBy")} {log.sentByAdminName} ·{" "}
                   {log.sentAt.toLocaleDateString("en-GB", {
-                    day: "2-digit", month: "short", year: "numeric",
-                    hour: "2-digit", minute: "2-digit",
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
                   })}
                 </p>
                 {log.isFailed && (

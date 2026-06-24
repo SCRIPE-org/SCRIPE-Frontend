@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * FeatureCatalogPicker — Dialog for adding features from the catalog to a plan.
  *

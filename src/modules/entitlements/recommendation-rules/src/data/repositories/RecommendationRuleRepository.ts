@@ -12,7 +12,7 @@ import type {
   CreateRecommendationRuleRequest,
   UpdateRecommendationRuleRequest,
 } from "../../domain/entities/RecommendationRuleRequests";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
 export class RecommendationRuleRepository implements IRecommendationRuleRepository {
   constructor(private readonly service: IRecommendationRuleService) {}

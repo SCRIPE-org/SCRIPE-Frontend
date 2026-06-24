@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { container } from "@modules/profile/di";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useSsoProviders } from "@modules/auth/signin/src/presentation/viewmodels/useSsoProviders";
+import { getComponent } from "@core/common/component-registry";
 import { useToast } from "@core/hooks/use-toast";
 
 export const externalLoginKeys = {
@@ -16,8 +16,9 @@ export function useExternalLoginsViewModel() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  // Re-use the hook to get available providers and the link initiator
-  const { providers, initiateSsoLogin, isLoading: isLoadingProviders } = useSsoProviders();
+  // Re-use the hook dynamically from global registry to avoid cross-module references
+  const useSsoProvidersHook = getComponent("useSsoProviders")!;
+  const { providers, initiateSsoLogin, isLoading: isLoadingProviders } = useSsoProvidersHook();
 
   // 1. Fetch existing linked accounts
   const { data: externalLogins, isLoading: isLoadingLogins } = useQuery({

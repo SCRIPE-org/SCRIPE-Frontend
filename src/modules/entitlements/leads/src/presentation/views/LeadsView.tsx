@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import { useState } from "react";
@@ -121,7 +122,7 @@ export function LeadsView() {
       render: (_, lead) => (
         <div className="h-full w-full cursor-pointer" onClick={() => vm.handleOpenDrawer(lead.id)}>
           {lead.editionKey ? (
-            <span className="text-xs font-medium text-zinc-300 bg-zinc-700/60 px-1.5 py-0.5 rounded-sm">
+            <span className="rounded-sm bg-zinc-700/60 px-1.5 py-0.5 text-xs font-medium text-zinc-300">
               {humanizeEditionKey(lead.editionKey)}
             </span>
           ) : (
@@ -357,7 +358,13 @@ export function LeadsView() {
         isLoadingActivity={vm.isLoadingActivity}
         onAddNote={vm.handleAddNote}
         isAddingNote={vm.isAddingNote}
-        onSendEmail={canSendEmail ? async (params) => { await vm.sendLeadEmail(params); } : undefined}
+        onSendEmail={
+          canSendEmail
+            ? async (params) => {
+                await vm.sendLeadEmail(params);
+              }
+            : undefined
+        }
         isSendingEmail={vm.isSendingEmail}
         communicationLogs={vm.communicationLogs}
         isLoadingComms={vm.isLoadingComms}

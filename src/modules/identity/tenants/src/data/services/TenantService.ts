@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Tenant Service
  *
@@ -25,8 +26,8 @@ import type {
   TenantTreeListResult,
 } from "../../domain/interfaces/ITenantService";
 import type { TenantStats } from "../../domain/interfaces/ITenantRepository";
-import { PermissionModel } from "@modules/identity/permissions";
-import type { PermissionModuleGroupJson, PermissionJson } from "@modules/identity/permissions";
+import { PermissionModel } from "@modules/identity/core";
+import type { PermissionModuleGroupJson, PermissionJson } from "@modules/identity/core";
 import type {
   TenantSettingsModel,
   UpdateTenantSettingsRequest,

@@ -145,6 +145,13 @@ export class OAuthApp {
   get clientTypeLabel(): string {
     return this.isConfidential ? "Confidential" : "Public";
   }
+
+  copyWith(updates: Partial<OAuthAppData>): OAuthApp {
+    return new OAuthApp({
+      ...this.data,
+      ...updates,
+    } as OAuthAppData);
+  }
 }
 
 // ─── OAuth App List Item ────────────────────────────────────────

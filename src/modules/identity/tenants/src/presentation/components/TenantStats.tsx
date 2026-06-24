@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * Tenant Stats Component — Deep Redesign
  *

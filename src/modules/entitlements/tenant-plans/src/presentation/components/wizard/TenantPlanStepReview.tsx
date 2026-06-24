@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import type { CreateTenantPlanRequest } from "../../../domain/entities/TenantPlanRequests";
 import { CheckCircle2, AlertCircle } from "lucide-react";
-import { BooleanIndicator } from "@modules/entitlements/editions/src/presentation/components/comparison";
+import { BooleanIndicator } from "@modules/entitlements/core";
 
 interface TenantPlanStepReviewProps {
   form: Partial<CreateTenantPlanRequest>;

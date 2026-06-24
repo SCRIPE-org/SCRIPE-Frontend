@@ -5,7 +5,7 @@
 import type { IInventoryRepository } from "../../domain/interfaces/IInventoryRepository";
 import type { IInventoryService, InventoryParams } from "../../domain/interfaces/IInventoryService";
 import type { InventoryItem } from "../../domain/entities/InventoryItem";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import { InventoryMapper } from "../mappers/InventoryMapper";
 import type {
   CreateDataInventoryRequest,

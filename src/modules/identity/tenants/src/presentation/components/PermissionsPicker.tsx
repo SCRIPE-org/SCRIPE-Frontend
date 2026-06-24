@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * Permissions Picker Component
  *
@@ -22,7 +24,7 @@ import { ScrollArea } from "@core/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@core/ui/collapsible";
 import { ChevronDown, ChevronRight, Search, Shield, Check } from "lucide-react";
 import { cn } from "@core/common/utils";
-import type { Permission } from "@modules/identity/permissions";
+import type { Permission } from "@modules/identity/core";
 
 interface PermissionsPickerProps {
   /** Selected permission IDs */

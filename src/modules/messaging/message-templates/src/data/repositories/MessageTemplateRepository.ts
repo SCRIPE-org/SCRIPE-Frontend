@@ -15,7 +15,7 @@ import type {
   PreviewTemplateRequest,
   PreviewTemplateResponse,
 } from "../../domain/entities/MessageTemplateRequests";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import type { IMessageTemplateService } from "../../domain/interfaces/IMessageTemplateService";
 import { MessageTemplateMapper } from "../mappers/MessageTemplateMapper";
 

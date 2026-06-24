@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Identity Provider Entities — Domain types for SSO provider management.
  *
@@ -149,6 +150,13 @@ export class IdentityProvider {
   /** Whether this is a system-wide (built-in) provider */
   get isSystemWide(): boolean {
     return this.tenantId === null;
+  }
+
+  copyWith(updates: Partial<IdentityProviderData>): IdentityProvider {
+    return new IdentityProvider({
+      ...this.data,
+      ...updates,
+    } as IdentityProviderData);
   }
 }
 

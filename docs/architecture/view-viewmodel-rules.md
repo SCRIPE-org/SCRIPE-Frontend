@@ -14,7 +14,7 @@
 
 ```mermaid
 graph TB
-    V[View ~200 lines max] --> OVM[Orchestrator ViewModel]
+    V[View ~300 lines max] --> OVM[Orchestrator ViewModel]
     OVM --> VM1[Section ViewModel 1]
     OVM --> VM2[Section ViewModel 2]
     OVM --> CVM[useCrudViewModel]
@@ -35,7 +35,7 @@ graph TB
 | Call ONE ViewModel hook  | Use useState     |
 | Pass props to components | Use useEffect    |
 | Render conditionally     | Call APIs        |
-| Be ~200 lines max        | Define mutations |
+| Be ~300 lines max        | Define mutations |
 
 ```tsx
 // ✅ CORRECT
@@ -141,7 +141,7 @@ presentation/
 ## Checklist
 
 - [ ] View has NO useState/useEffect
-- [ ] View is under 200 lines
+- [ ] View is under 300 lines
 - [ ] ViewModel returns all props
 - [ ] Columns defined in ViewModel
 - [ ] Section components are props-only

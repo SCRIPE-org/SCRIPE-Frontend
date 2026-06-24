@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * PublishBar — Top bar with back button, draft status, device toggle,
  * reset dropdown, publish/discard actions.

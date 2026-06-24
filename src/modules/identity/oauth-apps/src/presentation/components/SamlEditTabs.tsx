@@ -68,7 +68,10 @@ export function SamlEditTabs({ vm }: SamlEditTabsProps) {
       </TabsList>
 
       {/* SAML Settings tab */}
-      <TabsContent value="saml_config" className="space-y-6 outline-none animate-in fade-in duration-200">
+      <TabsContent
+        value="saml_config"
+        className="space-y-6 outline-none duration-200 animate-in fade-in"
+      >
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2">
             <GeneralSection {...sectionProps} />
@@ -88,12 +91,18 @@ export function SamlEditTabs({ vm }: SamlEditTabsProps) {
       </TabsContent>
 
       {/* SAML metadata tab */}
-      <TabsContent value="idp_metadata" className="outline-none max-w-3xl animate-in fade-in duration-200">
+      <TabsContent
+        value="idp_metadata"
+        className="max-w-3xl outline-none duration-200 animate-in fade-in"
+      >
         <IdpMetadataSection />
       </TabsContent>
 
       {/* SAML branding tab */}
-      <TabsContent value="branding" className="space-y-6 outline-none max-w-2xl animate-in fade-in duration-200">
+      <TabsContent
+        value="branding"
+        className="max-w-2xl space-y-6 outline-none duration-200 animate-in fade-in"
+      >
         <BrandingSection {...sectionProps} />
       </TabsContent>
     </Tabs>

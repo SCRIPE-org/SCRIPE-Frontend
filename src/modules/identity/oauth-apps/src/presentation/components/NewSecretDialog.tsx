@@ -34,9 +34,9 @@ export function NewSecretDialog({
 
   return (
     <Dialog open={!!generatedSecret} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md border border-border bg-card/90 backdrop-blur-xl">
+      <DialogContent className="border border-border bg-card/90 backdrop-blur-xl sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-foreground font-bold">
+          <DialogTitle className="flex items-center gap-2 font-bold text-foreground">
             <KeyRound className="h-5 w-5 text-purple-500" />
             {t("oauthApps.newSecret") || "New Client Secret"}
           </DialogTitle>
@@ -58,7 +58,7 @@ export function NewSecretDialog({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="shrink-0 h-9 w-9 p-0 border-border/85"
+                  className="h-9 w-9 shrink-0 border-border/85 p-0"
                   onClick={() => copyToClipboard(generatedSecret.clientId, "dialog-clientId")}
                 >
                   {copiedField === "dialog-clientId" ? (
@@ -80,7 +80,7 @@ export function NewSecretDialog({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="shrink-0 h-9 w-9 p-0 border-border/85"
+                  className="h-9 w-9 shrink-0 border-border/85 p-0"
                   onClick={() => copyToClipboard(generatedSecret.secret, "dialog-secret")}
                 >
                   {copiedField === "dialog-secret" ? (

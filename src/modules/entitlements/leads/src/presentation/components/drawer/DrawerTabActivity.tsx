@@ -32,11 +32,11 @@ export function DrawerTabActivity({
   const { t } = useI18n();
 
   return (
-    <div className="p-4 space-y-4">
+    <div className="space-y-4 p-4">
       {/* Quick note */}
       {onAddNote && (
-        <div className="rounded-xl border border-zinc-800/50 bg-zinc-900/40 p-4 space-y-2">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500 flex items-center gap-1.5">
+        <div className="space-y-2 rounded-xl border border-zinc-800/50 bg-zinc-900/40 p-4">
+          <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
             <StickyNote className="h-3.5 w-3.5" />
             {t("leads.note.sectionTitle")}
           </p>
@@ -54,27 +54,35 @@ export function DrawerTabActivity({
             size="sm"
             className="h-8 w-full bg-amber-600/90 text-xs font-semibold text-white hover:bg-amber-500 disabled:opacity-40"
           >
-            {isAddingNote
-              ? <><Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />{t("leads.note.saving")}</>
-              : quickNoteSaved
-              ? <><CheckCheck className="mr-1.5 h-3.5 w-3.5 text-emerald-400" />{t("leads.note.saved")}</>
-              : t("leads.note.save")}
+            {isAddingNote ? (
+              <>
+                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                {t("leads.note.saving")}
+              </>
+            ) : quickNoteSaved ? (
+              <>
+                <CheckCheck className="mr-1.5 h-3.5 w-3.5 text-emerald-400" />
+                {t("leads.note.saved")}
+              </>
+            ) : (
+              t("leads.note.save")
+            )}
           </Button>
         </div>
       )}
 
       {/* Activity timeline */}
       <div className="rounded-xl border border-zinc-800/50 bg-zinc-900/40 p-4">
-        <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-500 flex items-center gap-1.5">
+        <p className="mb-3 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
           <Activity className="h-3.5 w-3.5" />
           {t("leads.activity.title")}
         </p>
         {isLoadingActivity ? (
-          <div className="space-y-3 animate-pulse">
-            {[1, 2, 3].map(i => (
+          <div className="animate-pulse space-y-3">
+            {[1, 2, 3].map((i) => (
               <div key={i} className="flex gap-3">
-                <div className="mt-1 h-2 w-2 rounded-full bg-zinc-800 shrink-0" />
-                <div className="space-y-1 flex-1">
+                <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-zinc-800" />
+                <div className="flex-1 space-y-1">
                   <div className="h-3 w-32 rounded bg-zinc-800" />
                   <div className="h-2.5 w-20 rounded bg-zinc-800" />
                 </div>
@@ -92,12 +100,17 @@ export function DrawerTabActivity({
                   {entry.summary || t(`leads.activity.types.${entry.type}`)}
                 </p>
                 {entry.note && (
-                  <p className="mt-0.5 text-xs italic text-zinc-500 leading-relaxed">{entry.note}</p>
+                  <p className="mt-0.5 text-xs italic leading-relaxed text-zinc-500">
+                    {entry.note}
+                  </p>
                 )}
                 <p className="mt-1 text-[10px] text-zinc-600">
                   {new Date(entry.occurredAt).toLocaleDateString("en-GB", {
-                    day: "2-digit", month: "short", year: "numeric",
-                    hour: "2-digit", minute: "2-digit",
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
                   })}
                   {entry.actorName
                     ? ` · ${t("leads.activity.by", { actor: entry.actorName })}`

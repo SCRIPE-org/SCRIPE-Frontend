@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Platform Stripe Dashboard — Rich Domain Entities
  *

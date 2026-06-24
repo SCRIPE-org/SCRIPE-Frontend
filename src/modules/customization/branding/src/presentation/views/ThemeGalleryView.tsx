@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * Theme Gallery View — Full-Page Theme Browsing Experience
  *

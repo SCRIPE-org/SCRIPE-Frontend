@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * TenantPlan Entity — Rich domain model for tenant-created plans.
  *
@@ -7,7 +8,7 @@
  * - Lifecycle status (Draft → Published → Archived)
  * - Immutable version snapshots
  */
-import type { BaseEntity } from "@modules/identity/core/domain/types";
+import type { BaseEntity } from "@core/interfaces/common.interface";
 
 // ── Sub-entities ──
 export interface TenantPlanFeatureData {

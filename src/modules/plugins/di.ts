@@ -45,6 +45,20 @@ export interface PluginsContainer {
 let _container: PluginsContainer | null = null;
 
 export function getPluginsContainer(): PluginsContainer {
+  if (typeof window === "undefined") {
+    const dummyProxy = new Proxy({} as any, {
+      get() {
+        return () => Promise.resolve({});
+      },
+    });
+    return {
+      catalogRepository: dummyProxy,
+      installedRepository: dummyProxy,
+      logsRepository: dummyProxy,
+      definitionsRepository: dummyProxy,
+    };
+  }
+
   if (!_container) {
     const apiService = getModuleApiService("PLUGINS");
 

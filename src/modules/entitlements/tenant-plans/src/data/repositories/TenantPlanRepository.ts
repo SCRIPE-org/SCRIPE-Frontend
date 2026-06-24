@@ -22,7 +22,7 @@ import type {
 } from "../../domain/entities/TenantPlanRequests";
 import { TenantPlanMapper } from "../mappers/TenantPlanMapper";
 import type { ITenantPlanService } from "../../domain/interfaces/ITenantPlanService";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
 export class TenantPlanRepository implements ITenantPlanRepository {
   constructor(private readonly service: ITenantPlanService) {}

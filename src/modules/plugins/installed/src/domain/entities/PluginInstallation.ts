@@ -56,4 +56,11 @@ export class PluginInstallation {
   toModel() {
     return this.data;
   }
+
+  copyWith(updates: Partial<PluginInstallationModel>): PluginInstallation {
+    return new PluginInstallation({
+      ...this.data,
+      ...updates,
+    } as PluginInstallationModel);
+  }
 }

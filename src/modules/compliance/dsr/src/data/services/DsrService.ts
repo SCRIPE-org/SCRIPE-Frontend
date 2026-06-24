@@ -6,7 +6,7 @@ import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import type { IDsrService } from "../../domain/interfaces/IDsrService";
 import type { DsrModel } from "../models/DsrModels";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import type {
   DsrListParams,
   SubmitDsrRequest,

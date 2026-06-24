@@ -125,6 +125,13 @@ export class Permission {
   toProps(): PermissionProps {
     return { ...this.props };
   }
+
+  copyWith(updates: Partial<PermissionProps>): Permission {
+    return new Permission({
+      ...this.props,
+      ...updates,
+    } as PermissionProps);
+  }
 }
 
 /**

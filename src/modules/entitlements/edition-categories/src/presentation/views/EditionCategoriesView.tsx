@@ -106,11 +106,7 @@ export function EditionCategoriesView() {
       resource: "editions",
       getItemDisplayName: (cat: EditionCategory) => cat.getDisplayName(language),
       deleteService: (id: string) => vm.deleteItem(id),
-      getActions: (
-        _vmInstance,
-        tFn,
-        handleDeleteFn
-      ): CrudAction<EditionCategory>[] => [
+      getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<EditionCategory>[] => [
         {
           label: tFn("common.edit") || "Edit",
           onClick: (item: EditionCategory) => vm.openEditModal(item),

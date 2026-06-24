@@ -46,4 +46,11 @@ export class PluginCatalogItem {
   toModel() {
     return this.data;
   }
+
+  copyWith(updates: Partial<PluginCatalogItemModel>): PluginCatalogItem {
+    return new PluginCatalogItem({
+      ...this.data,
+      ...updates,
+    } as PluginCatalogItemModel);
+  }
 }

@@ -114,6 +114,33 @@ let _container: EntitlementsContainer | null = null;
  * Get the entitlements container (lazy initialization)
  */
 export function getEntitlementsContainer(): EntitlementsContainer {
+  if (typeof window === "undefined") {
+    const dummyProxy = new Proxy({} as any, {
+      get() {
+        return () => Promise.resolve({});
+      },
+    });
+    return {
+      featureRepository: dummyProxy,
+      editionRepository: dummyProxy,
+      overrideRepository: dummyProxy,
+      subscriptionRepository: dummyProxy,
+      billingRepository: dummyProxy,
+      tenantPlanRepository: dummyProxy,
+      userSubscriptionRepository: dummyProxy,
+      connectRepository: dummyProxy,
+      platformStripeRepository: dummyProxy,
+      analyticsRepository: dummyProxy,
+      tenantGatewayRepository: dummyProxy,
+      commissionLedgerRepository: dummyProxy,
+      editionCategoryRepository: dummyProxy,
+      leadsRepository: dummyProxy,
+      onboardingQuestionRepository: dummyProxy,
+      recommendationRuleRepository: dummyProxy,
+      signupContentRepository: dummyProxy,
+    };
+  }
+
   if (!_container) {
     const apiService = getModuleApiService("ENTITLEMENTS");
 

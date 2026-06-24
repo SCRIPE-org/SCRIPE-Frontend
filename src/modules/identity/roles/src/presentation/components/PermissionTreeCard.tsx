@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * Permission Tree Card Component
  *

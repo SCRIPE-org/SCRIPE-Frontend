@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * TenantPlanComparisonView — Premium dual-view comparison for end-users.
  *

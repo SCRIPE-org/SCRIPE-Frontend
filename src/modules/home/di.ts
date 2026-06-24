@@ -12,6 +12,17 @@ let _container: HomeContainer | null = null;
 function getHomeContainer(): HomeContainer {
   if (_container) return _container;
 
+  if (typeof window === "undefined") {
+    const dummyProxy = new Proxy({} as any, {
+      get() {
+        return () => Promise.resolve({});
+      },
+    });
+    return {
+      hubActivityRepository: dummyProxy,
+    };
+  }
+
   const apiService = getModuleApiService("IDENTITY");
   const activityService = new HubActivityService(apiService);
 

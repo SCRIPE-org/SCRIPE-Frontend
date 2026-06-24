@@ -119,11 +119,7 @@ export function LoginFormRouter({
             error={sso.error}
             onProviderClick={sso.initiateSsoLogin}
           />
-          <CredentialsFormFooter
-            isPlatformMode={isPlatformMode}
-            arrow={isRTL ? "←" : "→"}
-            t={t}
-          />
+          <CredentialsFormFooter isPlatformMode={isPlatformMode} arrow={isRTL ? "←" : "→"} t={t} />
         </>
       ) : vm.loginStep === "phone-otp" ? (
         <PhoneOtpForm

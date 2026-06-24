@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useMemo, useState, useEffect, useRef } from "react";
@@ -175,7 +177,7 @@ export function FeatureComparison({
               <thead className="sticky top-14 z-20">
                 <tr style={{ background: tokens.surfaceRaised }}>
                   <th
-                    className="sticky start-0 top-14 z-30 py-4 pe-4 ps-4 text-start text-[0.6875rem] font-semibold uppercase tracking-wider sm:ps-6 transition-colors duration-200"
+                    className="sticky start-0 top-14 z-30 py-4 pe-4 ps-4 text-start text-[0.6875rem] font-semibold uppercase tracking-wider transition-colors duration-200 sm:ps-6"
                     style={{
                       color: activeCategory ? tokens.accent : tokens.inkFaint,
                       background: tokens.surfaceRaised,

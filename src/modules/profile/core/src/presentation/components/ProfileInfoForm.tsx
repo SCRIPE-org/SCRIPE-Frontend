@@ -111,9 +111,7 @@ export function ProfileInfoForm({
             onChange={setPhoneNumber}
             error={phoneError || undefined}
           />
-          {phoneError && (
-            <p className="text-xs text-destructive">{phoneError}</p>
-          )}
+          {phoneError && <p className="text-xs text-destructive">{phoneError}</p>}
         </div>
 
         {/* Email Address (read-only) */}

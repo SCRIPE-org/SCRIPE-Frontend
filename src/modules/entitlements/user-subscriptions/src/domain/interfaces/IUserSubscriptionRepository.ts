@@ -4,7 +4,7 @@
  */
 import type { UserSubscription } from "../entities/UserSubscription";
 import type { CreateUserSubscriptionRequest } from "../entities/UserSubscriptionRequests";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
 /** Lightweight user result for the searchable user combobox in the Create form. */
 export interface UserSearchResult {

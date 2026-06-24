@@ -19,6 +19,17 @@ export interface NotificationBellContainer {
 let _container: NotificationBellContainer | null = null;
 
 export function getNotificationBellContainer(): NotificationBellContainer {
+  if (typeof window === "undefined") {
+    const dummyProxy = new Proxy({} as any, {
+      get() {
+        return () => Promise.resolve({});
+      },
+    });
+    return {
+      notificationBellRepository: dummyProxy,
+    };
+  }
+
   if (!_container) {
     const apiService = getModuleApiService("IDENTITY");
     const service = new NotificationBellService(apiService);

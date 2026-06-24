@@ -6,7 +6,7 @@ import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import type { IReportService, ReportParams } from "../../domain/interfaces/IReportService";
 import type { ReportModel } from "../models/ReportModels";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import type { GenerateReportRequest } from "../../domain/entities/ComplianceReport";
 
 export class ReportService implements IReportService {

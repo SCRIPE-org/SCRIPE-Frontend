@@ -10,7 +10,7 @@ import type {
   CreateDataInventoryRequest,
   UpdateDataInventoryRequest,
 } from "../models/InventoryModels";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 
 export class InventoryService implements IInventoryService {
   constructor(private readonly api: IApiService) {}

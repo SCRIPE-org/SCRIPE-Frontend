@@ -19,8 +19,7 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { FileText, Radio, Download, Settings2 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
-import { useDashboardTheme } from "@modules/monitoring/dashboard/src/presentation/hooks/useDashboardTheme";
-import { DashboardStudioPanel } from "@modules/monitoring/dashboard/src/presentation/components/DashboardStudioPanel";
+import { useDashboardTheme, DashboardStudioPanel } from "@modules/monitoring/core";
 
 // Lazy-load table and dialog components
 const AuditLogTable = dynamic(

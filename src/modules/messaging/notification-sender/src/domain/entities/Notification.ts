@@ -42,4 +42,11 @@ export class NotificationTarget {
     const prefix = this.type.charAt(0).toUpperCase() + this.type.slice(1);
     return `${prefix}: ${this.name}`;
   }
+
+  copyWith(updates: Partial<NotificationTargetData>): NotificationTarget {
+    return new NotificationTarget({
+      ...this.data,
+      ...updates,
+    } as NotificationTargetData);
+  }
 }

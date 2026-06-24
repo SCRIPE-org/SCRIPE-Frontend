@@ -17,7 +17,11 @@ interface ProfileGeneralTabProps {
     uploadError: string | null;
   };
   profileVm: {
-    updateProfile: (data: { firstName: string; lastName: string; phoneNumber: string }) => Promise<unknown>;
+    updateProfile: (data: {
+      firstName: string;
+      lastName: string;
+      phoneNumber: string;
+    }) => Promise<unknown>;
     isUpdating: boolean;
     updateError: string | null;
     profileSuccess: boolean;

@@ -80,7 +80,10 @@ export function OidcEditTabs({ vm, copiedField, copyToClipboard }: OidcEditTabsP
       </TabsList>
 
       {/* Tab 1: Connection & Credentials */}
-      <TabsContent value="credentials" className="space-y-6 outline-none animate-in fade-in duration-200">
+      <TabsContent
+        value="credentials"
+        className="space-y-6 outline-none duration-200 animate-in fade-in"
+      >
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2">
             <GeneralSection {...sectionProps} />
@@ -111,7 +114,10 @@ export function OidcEditTabs({ vm, copiedField, copyToClipboard }: OidcEditTabsP
       </TabsContent>
 
       {/* Tab 2: Redirects & Security */}
-      <TabsContent value="redirects" className="space-y-6 outline-none animate-in fade-in duration-200">
+      <TabsContent
+        value="redirects"
+        className="space-y-6 outline-none duration-200 animate-in fade-in"
+      >
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2">
             <EndpointsSection {...sectionProps} />
@@ -124,12 +130,18 @@ export function OidcEditTabs({ vm, copiedField, copyToClipboard }: OidcEditTabsP
       </TabsContent>
 
       {/* Tab 3: Scopes & Grant Types */}
-      <TabsContent value="scopes" className="outline-none max-w-3xl animate-in fade-in duration-200">
+      <TabsContent
+        value="scopes"
+        className="max-w-3xl outline-none duration-200 animate-in fade-in"
+      >
         <ScopesGrantsSection {...sectionProps} />
       </TabsContent>
 
       {/* Tab 4: Branding */}
-      <TabsContent value="branding" className="space-y-6 outline-none max-w-2xl animate-in fade-in duration-200">
+      <TabsContent
+        value="branding"
+        className="max-w-2xl space-y-6 outline-none duration-200 animate-in fade-in"
+      >
         <BrandingSection {...sectionProps} />
       </TabsContent>
     </Tabs>

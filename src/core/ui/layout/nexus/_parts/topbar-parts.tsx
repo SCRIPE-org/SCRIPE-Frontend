@@ -80,7 +80,8 @@ export function TopbarBreadcrumbs({
   activeRootName,
   displayPageName,
 }: TopbarBreadcrumbsProps) {
-  const { workspaceGroups, rootMenuItems, setActiveRootItemId, activeWorkspace, activeRootItem } = useWorkspace();
+  const { workspaceGroups, rootMenuItems, setActiveRootItemId, activeWorkspace, activeRootItem } =
+    useWorkspace();
   const { switchWorkspace } = useWorkspaceTransitionContext();
   const { language } = useI18n();
   const router = useRouter();
@@ -107,20 +108,20 @@ export function TopbarBreadcrumbs({
       }}
     >
       {/* ── Level 1: Workspace ── */}
-      <div className="flex items-center gap-0.5 shrink-0">
+      <div className="flex shrink-0 items-center gap-0.5">
         <button
           type="button"
           onClick={() => {
             const isPlatformContext = tenantCode === null;
             const homeRoute = activeWorkspace
-              ? (isPlatformContext
+              ? isPlatformContext
                 ? (activeWorkspace.platformHomeRoute ?? activeWorkspace.homeRoute ?? "/")
-                : (activeWorkspace.homeRoute ?? "/"))
+                : (activeWorkspace.homeRoute ?? "/")
               : "/";
             startRoutingProgress();
             router.push(homeRoute);
           }}
-          className="rounded-md px-1.5 py-0.5 font-medium transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none cursor-pointer"
+          className="cursor-pointer rounded-md px-1.5 py-0.5 font-medium transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none"
           style={{
             color: isDark ? "#A0AEC0" : "#718096",
             whiteSpace: "nowrap",
@@ -132,7 +133,7 @@ export function TopbarBreadcrumbs({
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="flex h-5 w-5 items-center justify-center rounded-md transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none cursor-pointer"
+              className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-md transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none"
               style={{
                 color: isDark ? "#A0AEC0" : "#718096",
               }}
@@ -140,16 +141,20 @@ export function TopbarBreadcrumbs({
               <ChevronDown size={12} className="opacity-60" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-56 border-border/40 bg-popover/95 backdrop-blur-md">
+          <DropdownMenuContent
+            align="start"
+            className="w-56 border-border/40 bg-popover/95 backdrop-blur-md"
+          >
             <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
               {language === "ar" ? "مساحات العمل" : "Workspaces"}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             {sortedWorkspaces.map((ws) => {
               const isActive = activeWorkspace?.workspaceKey === ws.workspaceKey;
-              const wsLabel = language === "ar"
-                ? ws.workspaceNameAr || ws.workspaceNameEn
-                : ws.workspaceNameEn || ws.workspaceNameAr;
+              const wsLabel =
+                language === "ar"
+                  ? ws.workspaceNameAr || ws.workspaceNameEn
+                  : ws.workspaceNameEn || ws.workspaceNameAr;
               const wsAccent = ws.accentColor || (isDark ? "#9B8FE0" : "#6258c4");
 
               return (
@@ -162,7 +167,7 @@ export function TopbarBreadcrumbs({
                   }}
                   disabled={ws.isLocked}
                   className={cn(
-                    "flex items-center gap-2.5 px-3 py-2 cursor-pointer rounded-md text-sm transition-colors",
+                    "flex cursor-pointer items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors",
                     isActive && "bg-accent/40 font-semibold text-accent-foreground"
                   )}
                 >
@@ -196,7 +201,7 @@ export function TopbarBreadcrumbs({
       {activeRootName && activeRootItem && (
         <>
           <BreadcrumbSep isRTL={isRTL} isDark={isDark} />
-          <div className="flex items-center gap-0.5 shrink-0">
+          <div className="flex shrink-0 items-center gap-0.5">
             <button
               type="button"
               onClick={() => {
@@ -206,7 +211,7 @@ export function TopbarBreadcrumbs({
                   router.push(route);
                 }
               }}
-              className="rounded-md px-1.5 py-0.5 font-medium transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none cursor-pointer"
+              className="cursor-pointer rounded-md px-1.5 py-0.5 font-medium transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none"
               style={{
                 color: isDark ? "#CBD5E1" : "#475569",
                 whiteSpace: "nowrap",
@@ -218,7 +223,7 @@ export function TopbarBreadcrumbs({
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="flex h-5 w-5 items-center justify-center rounded-md transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none cursor-pointer"
+                  className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-md transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none"
                   style={{
                     color: isDark ? "#CBD5E1" : "#475569",
                   }}
@@ -226,16 +231,18 @@ export function TopbarBreadcrumbs({
                   <ChevronDown size={12} className="opacity-60" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-52 border-border/40 bg-popover/95 backdrop-blur-md">
+              <DropdownMenuContent
+                align="start"
+                className="w-52 border-border/40 bg-popover/95 backdrop-blur-md"
+              >
                 <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                   {language === "ar" ? "الأقسام" : "Sections"}
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {activeGroupSiblings.map((item) => {
                   const isActive = activeRootItem?.id === item.id;
-                  const label = language === "ar"
-                    ? item.nameAr || item.nameEn
-                    : item.nameEn || item.nameAr;
+                  const label =
+                    language === "ar" ? item.nameAr || item.nameEn : item.nameEn || item.nameAr;
 
                   return (
                     <DropdownMenuItem
@@ -251,7 +258,7 @@ export function TopbarBreadcrumbs({
                         }
                       }}
                       className={cn(
-                        "flex items-center gap-2 px-3 py-1.5 cursor-pointer rounded-md text-sm transition-colors",
+                        "flex cursor-pointer items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors",
                         isActive && "bg-accent/40 font-semibold text-accent-foreground"
                       )}
                     >
@@ -270,7 +277,7 @@ export function TopbarBreadcrumbs({
         <>
           <BreadcrumbSep isRTL={isRTL} isDark={isDark} />
           <span
-            className="px-1.5 py-0.5 font-semibold animate-in fade-in slide-in-from-bottom-1 duration-200"
+            className="px-1.5 py-0.5 font-semibold duration-200 animate-in fade-in slide-in-from-bottom-1"
             style={{
               color: isDark ? "#F8FAFC" : "#0F172A",
               overflow: "hidden",

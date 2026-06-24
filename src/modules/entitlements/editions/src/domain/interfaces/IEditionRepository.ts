@@ -11,7 +11,7 @@ import type {
   UpdatePromotionRequest,
   PromoCodeValidationResult,
 } from "../entities/EditionPromotion";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
 export interface IEditionRepository {
   getAll(params: PaginationParams & { includeRetired?: boolean }): Promise<PagedResult<Edition>>;

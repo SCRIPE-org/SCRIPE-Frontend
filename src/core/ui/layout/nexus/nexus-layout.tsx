@@ -35,7 +35,7 @@ import {
   NEXUS_TOPBAR_H,
 } from "./_parts/nexus-layout-constants";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
-import { HubTopBar } from "@modules/home/presentation/components/HubTopBar";
+import { HubTopBar } from "@modules/home";
 
 // ── Workspace transition context ─────────────────────────────────────────────
 interface WorkspaceTransitionContextType {

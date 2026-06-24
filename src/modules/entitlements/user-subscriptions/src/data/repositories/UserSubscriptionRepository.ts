@@ -14,7 +14,7 @@ import type { UserSubscription } from "../../domain/entities/UserSubscription";
 import type { CreateUserSubscriptionRequest } from "../../domain/entities/UserSubscriptionRequests";
 import { UserSubscriptionMapper } from "../mappers/UserSubscriptionMapper";
 import type { IUserSubscriptionService } from "../../domain/interfaces/IUserSubscriptionService";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
 export class UserSubscriptionRepository implements IUserSubscriptionRepository {
   constructor(private readonly service: IUserSubscriptionService) {}

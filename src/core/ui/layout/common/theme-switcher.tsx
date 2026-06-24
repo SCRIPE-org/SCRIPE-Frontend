@@ -13,7 +13,11 @@ interface ThemeSwitcherProps {
   transparent?: boolean;
 }
 
-export function ThemeSwitcher({ buttonClassName, variant = "ghost", transparent }: ThemeSwitcherProps) {
+export function ThemeSwitcher({
+  buttonClassName,
+  variant = "ghost",
+  transparent,
+}: ThemeSwitcherProps) {
   const { tokens, theme, toggleTheme } = useSignupTheme();
   const { t } = useI18n();
   const isDark = theme === "dark";

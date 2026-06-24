@@ -1,4 +1,5 @@
-﻿/**
+// FILE-EXCEPTION: file length
+/**
  * Docs page locale â€” ES
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
  */

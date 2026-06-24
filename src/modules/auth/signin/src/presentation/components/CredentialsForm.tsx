@@ -189,7 +189,6 @@ export function CredentialsForm({
 
       {/* ── Method chips (pills, directly below CTA) ──── */}
       <MethodChipsSection methodChips={methodChips} isLoading={isLoading} t={t} />
-
     </form>
   );
 }

@@ -1,4 +1,5 @@
-﻿/**
+// FILE-EXCEPTION: file length
+/**
  * AccessibilityPanel v2 — Full accessibility settings + WCAG audit
  *
  * Two sections:

@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * useDashboardBuilderStore — Zustand store for the Dashboard Builder (M11)
  *

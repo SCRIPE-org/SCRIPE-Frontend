@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 import { useState } from "react";
 import { X, Plus, Info } from "lucide-react";
 import {

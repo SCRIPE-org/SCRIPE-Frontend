@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { pluginsContainer } from "@modules/plugins/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { PluginDefinition } from "@modules/plugins/catalog";
+import type { PluginDefinition } from "@modules/plugins/core";
 import type {
   CreateDefinitionRequest,
   UpdateDefinitionRequest,

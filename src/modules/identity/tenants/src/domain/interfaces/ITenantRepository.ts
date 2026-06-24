@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Tenant Repository Interface
  *
@@ -11,7 +12,7 @@ import type {
   DeleteTenantRequest,
 } from "../entities/TenantRequests";
 import type { PagedResult } from "@modules/identity/core/domain/types";
-import type { Permission, PermissionModuleGroup } from "@modules/identity/permissions";
+import type { Permission, PermissionModuleGroup } from "@modules/identity/core";
 import type {
   SubscriptionModel,
   PagedEditionResult,

@@ -25,7 +25,7 @@ export function DangerZoneCard({ isDeleting, onDelete }: DangerZoneCardProps) {
   const { t } = useI18n();
 
   return (
-    <Card className="border border-red-200 bg-red-50/30 p-4 dark:border-red-900/50 dark:bg-red-950/10 space-y-3">
+    <Card className="space-y-3 border border-red-200 bg-red-50/30 p-4 dark:border-red-900/50 dark:bg-red-950/10">
       <div>
         <h3 className="text-sm font-semibold text-red-700 dark:text-red-400">
           {t("common.dangerZone") || "Danger Zone"}
@@ -56,7 +56,7 @@ export function DangerZoneCard({ isDeleting, onDelete }: DangerZoneCardProps) {
             <AlertDialogCancel>{t("common.cancel") || "Cancel"}</AlertDialogCancel>
             <AlertDialogAction
               onClick={onDelete}
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold"
+              className="bg-red-600 font-semibold text-white hover:bg-red-700"
             >
               {t("common.delete") || "Delete"}
             </AlertDialogAction>

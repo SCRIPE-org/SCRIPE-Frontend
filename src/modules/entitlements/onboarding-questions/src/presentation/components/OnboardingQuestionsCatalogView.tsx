@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * OnboardingQuestionsCatalogView — Admin CRUD table for onboarding questions.
  *

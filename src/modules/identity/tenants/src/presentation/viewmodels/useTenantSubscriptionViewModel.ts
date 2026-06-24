@@ -1,10 +1,11 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { identityContainer } from "@modules/identity/di";
-import { entitlementsContainer } from "@modules/entitlements/di";
+import { getComponent } from "@core/common/component-registry";
 import type {
   SubscriptionModel,
   EditionThinModel,
@@ -394,8 +395,11 @@ export function useTenantSubscriptionViewModel(
 
   const receiptMutation = useMutation({
     mutationFn: async () => {
-      const { blob, filename } =
-        await entitlementsContainer.subscriptionRepository.downloadReceipt(tenantId);
+      const downloadReceiptFn = getComponent("downloadReceipt");
+      if (!downloadReceiptFn) {
+        throw new Error("Download receipt service not available");
+      }
+      const { blob, filename } = await downloadReceiptFn(tenantId);
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;

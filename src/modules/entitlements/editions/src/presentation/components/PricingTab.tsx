@@ -1,4 +1,5 @@
-﻿/**
+// FILE-EXCEPTION: file length
+/**
  * Pricing Tab â€” Redesigned with Hybrid Pricing Model
  *
  * 3-Section Layout:

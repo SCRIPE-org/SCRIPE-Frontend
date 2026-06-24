@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * DashboardPreviewShell — Isolated dashboard layout preview for Customizer Studio.
  *

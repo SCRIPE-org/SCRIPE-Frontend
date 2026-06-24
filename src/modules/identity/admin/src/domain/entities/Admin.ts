@@ -263,4 +263,11 @@ export class Admin {
   get needsAccountSetup(): boolean {
     return !this.isAccountActivated;
   }
+
+  copyWith(updates: Partial<AdminData>): Admin {
+    return new Admin({
+      ...this.data,
+      ...updates,
+    } as AdminData);
+  }
 }

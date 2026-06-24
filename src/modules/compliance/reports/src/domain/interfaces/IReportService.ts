@@ -1,5 +1,5 @@
 import type { ReportModel } from "../../data/models/ReportModels";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import type { GenerateReportRequest } from "../entities/ComplianceReport";
 
 export interface ReportParams {

@@ -13,13 +13,7 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Loader2, Send, Mail } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { PlatformLead } from "../../domain/entities/PlatformLead";
@@ -127,10 +121,7 @@ export function SendLeadEmailDialog({
             <div>
               <DialogTitle>{t("leads.email.dialogTitle")}</DialogTitle>
               <DialogDescription>
-                {t("leads.email.dialogSubtitle").replace(
-                  "{email}",
-                  lead?.email ?? "",
-                )}
+                {t("leads.email.dialogSubtitle").replace("{email}", lead?.email ?? "")}
               </DialogDescription>
             </div>
           </div>
@@ -154,15 +145,11 @@ export function SendLeadEmailDialog({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="custom">
-                  {t("leads.email.templateCustom")}
-                </SelectItem>
+                <SelectItem value="custom">{t("leads.email.templateCustom")}</SelectItem>
                 <SelectItem value="initial-contact">
                   {t("leads.email.templateInitialContact")}
                 </SelectItem>
-                <SelectItem value="follow-up">
-                  {t("leads.email.templateFollowUp")}
-                </SelectItem>
+                <SelectItem value="follow-up">{t("leads.email.templateFollowUp")}</SelectItem>
                 <SelectItem value="demo-invitation">
                   {t("leads.email.templateDemoInvitation")}
                 </SelectItem>
@@ -172,9 +159,7 @@ export function SendLeadEmailDialog({
 
           {/* Subject */}
           <div className="space-y-1.5">
-            <Label htmlFor="lead-email-subject">
-              {t("leads.email.subject")}
-            </Label>
+            <Label htmlFor="lead-email-subject">{t("leads.email.subject")}</Label>
             <Input
               id="lead-email-subject"
               value={subject}
@@ -197,18 +182,11 @@ export function SendLeadEmailDialog({
               rows={9}
               className="resize-none font-mono text-xs"
             />
-            <p className="text-xs text-muted-foreground">
-              {t("leads.email.bodyHint")}
-            </p>
+            <p className="text-xs text-muted-foreground">{t("leads.email.bodyHint")}</p>
           </div>
 
           <DialogFooter className="gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              disabled={isSending}
-            >
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isSending}>
               {t("leads.email.cancel")}
             </Button>
             <Button
