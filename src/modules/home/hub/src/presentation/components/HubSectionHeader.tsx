@@ -14,6 +14,9 @@ interface HubSectionHeaderProps {
   action?: React.ReactNode;
 }
 
+/**
+ * React presentation component representing the hub section header UI element.
+ */
 export function HubSectionHeader({ icon, title, subtitle, action }: HubSectionHeaderProps) {
   return (
     <div

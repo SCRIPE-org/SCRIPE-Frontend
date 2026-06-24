@@ -64,6 +64,9 @@ interface DiscoveryStageProps {
   onComplete: (result: { answers: Record<string, string[]>; businessType: string | null }) => void;
 }
 
+/**
+ * React presentation component representing the discovery stage UI element.
+ */
 export function DiscoveryStage({ onComplete }: DiscoveryStageProps) {
   const { t, direction } = useI18n();
   const { tokens } = useSignupTheme();

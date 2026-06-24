@@ -15,6 +15,9 @@ interface DocsMobileNavProps {
   basePath?: string;
 }
 
+/**
+ * React presentation component representing the docs mobile nav UI element.
+ */
 export function DocsMobileNav({
   categories,
   activeSlug,

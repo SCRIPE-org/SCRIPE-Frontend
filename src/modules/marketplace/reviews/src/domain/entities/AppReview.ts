@@ -1,3 +1,6 @@
+/**
+ * Interface structure detailing the properties and attributes of App Review Data.
+ */
 export interface AppReviewData {
   id: string;
   appListingId: string;
@@ -11,6 +14,9 @@ export interface AppReviewData {
   isModerated: boolean;
 }
 
+/**
+ * Domain entity class representing a App Review.
+ */
 export class AppReview {
   constructor(private readonly data: AppReviewData) {}
   get id() {

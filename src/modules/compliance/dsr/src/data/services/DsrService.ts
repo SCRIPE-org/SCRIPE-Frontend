@@ -13,6 +13,9 @@ import type {
   ReviewDsrRequest,
 } from "../../domain/entities/DsrRequests";
 
+/**
+ * API service for executing HTTP calls related to Dsr endpoints.
+ */
 export class DsrService implements IDsrService {
   constructor(private readonly api: IApiService) {}
 

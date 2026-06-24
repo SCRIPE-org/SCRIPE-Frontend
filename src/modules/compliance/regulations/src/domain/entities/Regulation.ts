@@ -1,3 +1,6 @@
+/**
+ * Interface structure detailing the properties and attributes of Consent Purpose Data.
+ */
 export interface ConsentPurposeData {
   id: string;
   key: string;
@@ -9,6 +12,9 @@ export interface ConsentPurposeData {
   sortOrder: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Regulation Data.
+ */
 export interface RegulationData {
   id: string;
   code: string;
@@ -20,6 +26,9 @@ export interface RegulationData {
   purposes: ConsentPurposeData[];
 }
 
+/**
+ * Domain entity class representing a Regulation.
+ */
 export class Regulation {
   constructor(private readonly data: RegulationData) {}
 
@@ -53,6 +62,9 @@ export class Regulation {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Create Regulation Request.
+ */
 export interface CreateRegulationRequest {
   code: string;
   name: string;
@@ -63,8 +75,14 @@ export interface CreateRegulationRequest {
   isActive: boolean;
 }
 
+/**
+ * Type declaration definition describing the schema of update regulation request.
+ */
 export type UpdateRegulationRequest = CreateRegulationRequest;
 
+/**
+ * Interface structure detailing the properties and attributes of Add Consent Purpose Request.
+ */
 export interface AddConsentPurposeRequest {
   key: string;
   name: string;
@@ -74,4 +92,7 @@ export interface AddConsentPurposeRequest {
   sortOrder: number;
 }
 
+/**
+ * Type declaration definition describing the schema of update consent purpose request.
+ */
 export type UpdateConsentPurposeRequest = AddConsentPurposeRequest;

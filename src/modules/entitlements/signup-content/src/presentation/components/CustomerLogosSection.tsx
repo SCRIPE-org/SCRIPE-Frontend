@@ -14,6 +14,9 @@ interface CustomerLogosSectionProps {
   vm: SignupContentViewModel;
 }
 
+/**
+ * React presentation component representing the customer logos section UI element.
+ */
 export function CustomerLogosSection({ vm }: CustomerLogosSectionProps) {
   const { t } = useI18n();
   const logos = vm.content?.customerLogos ?? [];

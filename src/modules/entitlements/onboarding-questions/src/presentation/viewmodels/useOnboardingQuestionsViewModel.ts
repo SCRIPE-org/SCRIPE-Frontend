@@ -7,6 +7,9 @@ import type {
   UpdateOnboardingQuestionRequest,
 } from "../../domain/entities/OnboardingQuestionRequests";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for onboarding questions view model.
+ */
 export function useOnboardingQuestionsViewModel() {
   const { onboardingQuestionRepository } = entitlementsContainer;
 

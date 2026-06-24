@@ -20,6 +20,9 @@ interface SsoCallbackContentProps {
   handleBack?: () => void;
 }
 
+/**
+ * React presentation component representing the sso callback content UI element.
+ */
 export function SsoCallbackContent({
   state,
   errorInfo,

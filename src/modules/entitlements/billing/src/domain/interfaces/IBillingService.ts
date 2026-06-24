@@ -16,6 +16,9 @@ import type {
   PagedResultModel,
 } from "../../data/models/BillingModels";
 
+/**
+ * Interface defining operations for the Billing network service.
+ */
 export interface IBillingService {
   // ── Invoice Queries ──
   getInvoices(params: {
@@ -73,6 +76,9 @@ export interface IBillingService {
 }
 
 // ── Gateway Models ──
+/**
+ * Interface structure detailing the properties and attributes of Gateway Status Model.
+ */
 export interface GatewayStatusModel {
   gateway: string;
   enabled: boolean;
@@ -82,6 +88,9 @@ export interface GatewayStatusModel {
   supportedFeatures: string[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Gateway List Response Model.
+ */
 export interface GatewayListResponseModel {
   defaultGateway: string;
   gateways: GatewayStatusModel[];

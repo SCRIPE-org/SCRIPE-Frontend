@@ -15,6 +15,9 @@ interface Props {
   items: IdentityProviderListItem[];
 }
 
+/**
+ * React presentation component representing the identity provider stats bar UI element.
+ */
 export function IdentityProviderStatsBar({ items }: Props) {
   const { t } = useI18n();
 

@@ -21,6 +21,9 @@ interface RoleDeleteDialogProps {
   isDeleting?: boolean;
 }
 
+/**
+ * React presentation component representing the role delete dialog UI element.
+ */
 export function RoleDeleteDialog({
   open,
   onOpenChange,

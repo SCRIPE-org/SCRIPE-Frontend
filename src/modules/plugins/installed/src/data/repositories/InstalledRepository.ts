@@ -3,6 +3,9 @@ import type { IInstalledService } from "../../domain/interfaces/IInstalledServic
 import type { PluginInstallation } from "../../domain/entities/PluginInstallation";
 import { InstalledMapper } from "../mappers/InstalledMapper";
 
+/**
+ * Repository implementation for managing database operations on Installed resources.
+ */
 export class InstalledRepository implements IInstalledRepository {
   constructor(private readonly service: IInstalledService) {}
 

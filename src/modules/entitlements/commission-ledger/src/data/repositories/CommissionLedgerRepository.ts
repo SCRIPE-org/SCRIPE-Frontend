@@ -8,6 +8,9 @@ import { CommissionMapper } from "../mappers/CommissionMapper";
 import { CommissionLedgerEntry } from "../../domain/entities/CommissionLedgerEntry";
 import { CommissionInvoice } from "../../domain/entities/CommissionInvoice";
 
+/**
+ * Repository implementation for managing database operations on CommissionLedger resources.
+ */
 export class CommissionLedgerRepository implements ICommissionLedgerRepository {
   constructor(private readonly service: ICommissionLedgerService) {}
 

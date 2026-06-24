@@ -12,11 +12,17 @@ export interface SubmitDsrRequest {
   subjectType?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Review Dsr Request.
+ */
 export interface ReviewDsrRequest {
   isApproved: boolean;
   resolution?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Dsr List Params.
+ */
 export interface DsrListParams {
   page?: number;
   pageSize?: number;

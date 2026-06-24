@@ -17,6 +17,9 @@ import type {
 import type { IThemeBundleService } from "../../domain/interfaces/IThemeBundleService";
 import { ThemeBundleMapper } from "../mappers/ThemeBundleMapper";
 
+/**
+ * Repository implementation for managing database operations on ThemeBundle resources.
+ */
 export class ThemeBundleRepository implements IThemeBundleRepository {
   constructor(private readonly service: IThemeBundleService) {}
 

@@ -16,6 +16,9 @@ interface SliderInputProps {
   onChange: (value: number) => void;
 }
 
+/**
+ * React presentation component representing the slider input UI element.
+ */
 export function SliderInput({
   label,
   value,

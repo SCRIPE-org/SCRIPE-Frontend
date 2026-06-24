@@ -38,6 +38,9 @@ interface SubscriptionsDistributionChartsProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the subscriptions distribution charts UI element.
+ */
 export function SubscriptionsDistributionCharts({
   statusDistribution,
   typeDistribution,

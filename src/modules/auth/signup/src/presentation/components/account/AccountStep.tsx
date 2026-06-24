@@ -33,6 +33,9 @@ interface AccountStepProps {
   wizard: SignupWizardViewModel;
 }
 
+/**
+ * React presentation component representing the account step UI element.
+ */
 export function AccountStep({ wizard }: AccountStepProps) {
   const { t, direction } = useI18n();
   const { tokens } = useSignupTheme();

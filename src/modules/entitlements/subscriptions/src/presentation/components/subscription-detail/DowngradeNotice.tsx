@@ -13,6 +13,9 @@ interface DowngradeNoticeProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the downgrade notice UI element.
+ */
 export function DowngradeNotice({ sub, t }: DowngradeNoticeProps) {
   if (!sub.isDowngraded) return null;
 

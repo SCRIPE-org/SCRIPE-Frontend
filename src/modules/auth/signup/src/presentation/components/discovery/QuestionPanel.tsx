@@ -32,6 +32,9 @@ interface QuestionPanelProps {
   onToggle: (value: string) => void;
 }
 
+/**
+ * React presentation component representing the question panel UI element.
+ */
 export function QuestionPanel({
   question,
   options,

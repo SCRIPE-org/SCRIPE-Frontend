@@ -29,12 +29,21 @@ export type CanvasComponentType =
   | "videoBg";
 
 // ── Grid Alignment ───────────────────────────────────────
+/**
+ * Type declaration definition describing the schema of grid alignment.
+ */
 export type GridAlignment = "start" | "center" | "end";
 
 // ── Position Mode ────────────────────────────────────────
+/**
+ * Type declaration definition describing the schema of position mode.
+ */
 export type PositionMode = "absolute" | "grid";
 
 // ── Canvas Component ─────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Canvas Component.
+ */
 export interface CanvasComponent {
   /** Unique identifier (uuid) */
   id: string;
@@ -72,15 +81,24 @@ export interface CanvasComponent {
 }
 
 // ── Canvas Mode ──────────────────────────────────────────
+/**
+ * Type declaration definition describing the schema of canvas mode.
+ */
 export type CanvasMode = "layout" | "builder";
 
 // ── Canvas Background ────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Canvas Background.
+ */
 export interface CanvasBackground {
   type: "inherit" | "solid" | "gradient" | "image";
   value: string;
 }
 
 // ── Component Catalog Entry ──────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Component Catalog Entry.
+ */
 export interface ComponentCatalogEntry {
   type: CanvasComponentType;
   labelKey: string;
@@ -107,6 +125,9 @@ export interface ComponentCatalogEntry {
 }
 
 // ── Component Catalog ────────────────────────────────────
+/**
+ * Constant definition representing c o m p o n e n t_ c a t a l o g.
+ */
 export const COMPONENT_CATALOG: ComponentCatalogEntry[] = [
   {
     type: "logo",
@@ -371,9 +392,15 @@ export const COMPONENT_CATALOG: ComponentCatalogEntry[] = [
 ];
 
 // ── Default Position Mode for NEW canvases ───────────────
+/**
+ * Constant definition representing d e f a u l t_ p o s i t i o n_ m o d e.
+ */
 export const DEFAULT_POSITION_MODE: PositionMode = "absolute";
 
 // ── Default Canvas State ─────────────────────────────────
+/**
+ * Constant definition representing d e f a u l t_ c a n v a s_ c o m p o n e n t s.
+ */
 export const DEFAULT_CANVAS_COMPONENTS: CanvasComponent[] = [
   {
     id: "default-logo",
@@ -441,17 +468,41 @@ export const DEFAULT_CANVAS_COMPONENTS: CanvasComponent[] = [
   },
 ];
 
+/**
+ * Constant definition representing d e f a u l t_ c a n v a s_ g r i d_ r o w s.
+ */
 export const DEFAULT_CANVAS_GRID_ROWS = 8;
+/**
+ * Constant definition representing d e f a u l t_ c a n v a s_ b a c k g r o u n d.
+ */
 export const DEFAULT_CANVAS_BACKGROUND: CanvasBackground = { type: "inherit", value: "" };
+/**
+ * Constant definition representing c a n v a s_ g r i d_ c o l u m n s.
+ */
 export const CANVAS_GRID_COLUMNS = 12;
+/**
+ * Constant definition representing s n a p_ g r i d_ s i z e.
+ */
 export const SNAP_GRID_SIZE = 8; // 8px snap grid for free-form mode
+/**
+ * Constant definition representing c a n v a s_ w i d t h.
+ */
 export const CANVAS_WIDTH = 800; // Default canvas width in absolute mode
+/**
+ * Constant definition representing c a n v a s_ h e i g h t.
+ */
 export const CANVAS_HEIGHT = 900; // Default canvas height in absolute mode
 
 // ── Auth Page IDs ────────────────────────────────────────
+/**
+ * Type declaration definition describing the schema of auth page id.
+ */
 export type AuthPageId = "login" | "forgotPassword" | "resetPassword";
 
 // ── Default Components per Auth Page ─────────────────────
+/**
+ * Constant definition representing d e f a u l t_ f o r g o t_ c o m p o n e n t s.
+ */
 export const DEFAULT_FORGOT_COMPONENTS: CanvasComponent[] = [
   {
     id: "default-forgot-logo",
@@ -539,6 +590,9 @@ export const DEFAULT_FORGOT_COMPONENTS: CanvasComponent[] = [
   },
 ];
 
+/**
+ * Constant definition representing d e f a u l t_ r e s e t_ c o m p o n e n t s.
+ */
 export const DEFAULT_RESET_COMPONENTS: CanvasComponent[] = [
   {
     id: "default-reset-logo",

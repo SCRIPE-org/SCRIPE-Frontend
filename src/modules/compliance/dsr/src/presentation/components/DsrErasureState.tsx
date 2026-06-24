@@ -9,6 +9,9 @@ interface DsrErasureStateProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the dsr erasure state UI element.
+ */
 export function DsrErasureState({ dsr, t }: DsrErasureStateProps) {
   if (dsr.requestType !== "Erasure" || dsr.status !== "Completed") return null;
 

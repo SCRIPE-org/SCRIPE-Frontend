@@ -8,6 +8,9 @@ import type {
   UpdateEditionCategoryRequest,
 } from "../../domain/entities/EditionCategoryRequests";
 
+/**
+ * Repository implementation for managing database operations on EditionCategory resources.
+ */
 export class EditionCategoryRepository implements IEditionCategoryRepository {
   constructor(private readonly service: IEditionCategoryService) {}
 

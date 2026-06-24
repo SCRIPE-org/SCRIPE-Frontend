@@ -27,6 +27,9 @@ const RegulationProfileSchema = z.object({
   purposes: z.array(ConsentPurposeSchema).optional().default([]),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class RegulationMapper {
   static toEntity(model: RegulationProfileModel): Regulation {
     const validated = safeParseApiResponse(RegulationProfileSchema, model, "Regulation");

@@ -6,6 +6,9 @@ import type { DocPage } from "../entities/DocPage";
 import type { DocCategory } from "../entities/DocCategory";
 import type { SearchResult } from "./IDocsRepository";
 
+/**
+ * Interface defining operations for the Docs network service.
+ */
 export interface IDocsService {
   getPage(slug: string): DocPage | undefined;
   getNavigation(): DocCategory[];

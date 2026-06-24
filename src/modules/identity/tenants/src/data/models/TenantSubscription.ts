@@ -13,6 +13,9 @@ import type {
   RefundType,
 } from "../../domain/types/SubscriptionTypes";
 
+/**
+ * Exported type in the identity/tenants module.
+ */
 export type {
   SubscriptionType,
   SubscriptionStatus,
@@ -27,6 +30,9 @@ export type {
 
 // ── Request DTOs (data-layer only) ───────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Change Edition Payload.
+ */
 export interface ChangeEditionPayload {
   editionId: string;
   type: SubscriptionType;
@@ -36,14 +42,23 @@ export interface ChangeEditionPayload {
   promotionId?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Renew Payload.
+ */
 export interface RenewPayload {
   type: SubscriptionType;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Convert Trial Payload.
+ */
 export interface ConvertTrialPayload {
   type: SubscriptionType;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Suspend Payload.
+ */
 export interface SuspendPayload {
   reason: string;
   useFallback?: boolean;
@@ -51,6 +66,9 @@ export interface SuspendPayload {
   customRefundAmount?: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Cancel Payload.
+ */
 export interface CancelPayload {
   reason?: string;
   useFallback?: boolean;
@@ -58,16 +76,25 @@ export interface CancelPayload {
   customRefundAmount?: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Resume Payload.
+ */
 export interface ResumePayload {
   type?: SubscriptionType;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Change Currency Payload.
+ */
 export interface ChangeCurrencyPayload {
   currency: string;
 }
 
 // ── Price Preview ────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Price Preview Result.
+ */
 export interface PricePreviewResult {
   amount: number;
   currency: string;

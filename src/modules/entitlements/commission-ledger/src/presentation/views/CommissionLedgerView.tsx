@@ -8,6 +8,9 @@ import { RefreshCw, XCircle } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { CommissionInvoice } from "../../domain/entities/CommissionInvoice";
 
+/**
+ * React presentation component representing the commission ledger view UI element.
+ */
 export function CommissionLedgerView() {
   const { t } = useI18n();
   const vm = useCommissionLedgerViewModel();

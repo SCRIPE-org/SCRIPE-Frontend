@@ -18,6 +18,9 @@ const navItems = [
   { href: "/profile/activity", icon: Activity, labelKey: "profile.nav.activity" },
 ];
 
+/**
+ * React presentation component representing the profile nav UI element.
+ */
 export function ProfileNav() {
   const pathname = usePathname();
   const { t } = useI18n();

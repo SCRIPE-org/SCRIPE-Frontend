@@ -38,6 +38,9 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { SaveAsThemeModal } from "../components/SaveAsThemeModal";
 
+/**
+ * React presentation component representing the customizer studio view UI element.
+ */
 export function CustomizerStudioView() {
   useModuleLocales(() => import("@modules/customization/studio/locales"), "customization-studio");
   const { t } = useI18n();

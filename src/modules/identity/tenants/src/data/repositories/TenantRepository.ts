@@ -31,6 +31,9 @@ import type {
   DowngradeImpactReport,
 } from "../models/TenantSubscription";
 
+/**
+ * Repository implementation for managing database operations on Tenant resources.
+ */
 export class TenantRepository implements ITenantRepository {
   constructor(private readonly service: ITenantService) {}
 

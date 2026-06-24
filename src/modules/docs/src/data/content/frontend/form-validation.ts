@@ -61,6 +61,9 @@ const sections: DocSection[] = [
     code: `import { z } from 'zod';
 
 // Domain entity schema (in domain/entities/)
+/**
+ * Constant definition representing admin schema.
+ */
 export const AdminSchema = z.object({
   id: z.string().uuid(),
   email: z.string().email(),
@@ -77,9 +80,15 @@ export const AdminSchema = z.object({
   lastLoginAt: z.string().datetime().optional(),
 });
 
+/**
+ * Type declaration definition describing the schema of admin.
+ */
 export type Admin = z.infer<typeof AdminSchema>;
 
 // Form-specific schemas (in presentation/viewmodels/)
+/**
+ * Constant definition representing create admin schema.
+ */
 export const CreateAdminSchema = z.object({
   email: z.string().email("Invalid email address"),
   firstName: z.string().min(2, "Must be at least 2 characters"),
@@ -97,6 +106,9 @@ export const CreateAdminSchema = z.object({
   path: ["confirmPassword"],
 });
 
+/**
+ * Type declaration definition describing the schema of create admin input.
+ */
 export type CreateAdminInput = z.infer<typeof CreateAdminSchema>;`,
   },
 
@@ -114,6 +126,9 @@ export type CreateAdminInput = z.infer<typeof CreateAdminSchema>;`,
     code: `import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for create admin view model.
+ */
 export function useCreateAdminViewModel() {
   const form = useForm<CreateAdminInput>({
     resolver: zodResolver(CreateAdminSchema),

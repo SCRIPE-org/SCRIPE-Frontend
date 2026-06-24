@@ -14,6 +14,9 @@ interface UseAssignToGroupViewModelProps {
   onOpenChange: (open: boolean) => void;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for assign to group view model.
+ */
 export function useAssignToGroupViewModel({
   tenantId,
   useMyTenant,

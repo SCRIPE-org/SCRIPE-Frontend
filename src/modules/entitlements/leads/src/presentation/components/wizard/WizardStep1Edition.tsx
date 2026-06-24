@@ -27,6 +27,9 @@ const CATEGORY_LABELS: Record<string, string> = {
   compliance: "Compliance Tiers",
 };
 
+/**
+ * React presentation component representing the wizard step1 edition UI element.
+ */
 export function WizardStep1Edition({
   lead,
   editions = [],

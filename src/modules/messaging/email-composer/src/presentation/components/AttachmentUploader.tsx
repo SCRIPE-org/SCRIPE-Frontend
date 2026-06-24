@@ -18,6 +18,9 @@ import {
 } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Attachment File.
+ */
 export interface AttachmentFile {
   id: string;
   name: string;
@@ -31,6 +34,9 @@ export interface AttachmentFile {
   error?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Attachment Uploader Props.
+ */
 export interface AttachmentUploaderProps {
   attachments: AttachmentFile[];
   onAdd: (files: File[]) => void;
@@ -60,6 +66,9 @@ function formatFileSize(bytes: number): string {
 }
 
 // ─── Main ───────────────────────────────────────────────────
+/**
+ * React presentation component representing the attachment uploader UI element.
+ */
 export function AttachmentUploader({
   attachments,
   onAdd,

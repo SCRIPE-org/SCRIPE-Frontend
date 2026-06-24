@@ -475,6 +475,9 @@ interface DocsSidebarProps {
   activeSlug: string;
 }
 
+/**
+ * React presentation component representing the docs sidebar UI element.
+ */
 export function DocsSidebar({ categories, activeSlug }: DocsSidebarProps) {
   const { t } = useDocsI18n();
 

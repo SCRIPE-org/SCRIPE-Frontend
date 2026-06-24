@@ -15,6 +15,9 @@ interface NewPasswordStepProps {
   totalSteps: number;
 }
 
+/**
+ * React presentation component representing the new password step UI element.
+ */
 export function NewPasswordStep({ vm, totalSteps }: NewPasswordStepProps) {
   const { t } = useI18n();
 

@@ -51,6 +51,9 @@ interface PromotionsTabProps {
   allowLifetime?: boolean;
 }
 
+/**
+ * React presentation component representing the promotions tab UI element.
+ */
 export function PromotionsTab({
   editionId,
   allowMonthly = true,

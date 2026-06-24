@@ -40,6 +40,9 @@ const ResolvedFeatureModelSchema = z.object({
   source: z.string().optional().nullable(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class OverrideMapper {
   static toOverrideEntity(model: FeatureOverrideModel): FeatureOverride {
     const v = safeParseApiResponse(FeatureOverrideModelSchema, model, "FeatureOverride");

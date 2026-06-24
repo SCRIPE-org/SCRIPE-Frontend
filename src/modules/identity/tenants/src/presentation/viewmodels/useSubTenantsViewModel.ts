@@ -28,6 +28,9 @@ interface UseSubTenantsViewModelParams {
   parentCode: string;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for sub tenants view model.
+ */
 export function useSubTenantsViewModel({
   parentId,
   parentName,

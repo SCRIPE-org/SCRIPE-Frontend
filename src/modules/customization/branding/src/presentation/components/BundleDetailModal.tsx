@@ -60,6 +60,9 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   FileKey2,
 };
 
+/**
+ * React presentation component representing the bundle detail modal UI element.
+ */
 export function BundleDetailModal({
   bundle,
   isOpen,

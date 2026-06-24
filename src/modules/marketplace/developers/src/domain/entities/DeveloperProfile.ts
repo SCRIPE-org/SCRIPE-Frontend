@@ -1,3 +1,6 @@
+/**
+ * Interface structure detailing the properties and attributes of Developer Profile Data.
+ */
 export interface DeveloperProfileData {
   id: string;
   tenantId: string;
@@ -13,6 +16,9 @@ export interface DeveloperProfileData {
   createdAt: string;
 }
 
+/**
+ * Domain entity class representing a Developer Profile.
+ */
 export class DeveloperProfile {
   constructor(private readonly data: DeveloperProfileData) {}
   get id() {

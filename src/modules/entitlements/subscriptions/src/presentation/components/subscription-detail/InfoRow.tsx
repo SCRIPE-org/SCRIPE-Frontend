@@ -12,6 +12,9 @@ interface InfoRowProps {
   muted?: boolean;
 }
 
+/**
+ * React presentation component representing the info row UI element.
+ */
 export function InfoRow({ icon, label, value, muted = false }: InfoRowProps) {
   return (
     <div className="flex items-center justify-between py-2.5">

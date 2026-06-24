@@ -9,6 +9,9 @@
 
 // ─── Email Recipient ───────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Email Recipient Data.
+ */
 export interface EmailRecipientData {
   id: string;
   email: string;
@@ -50,8 +53,14 @@ export class EmailRecipient {
 
 // ─── Sent Email ────────────────────────────────────────────────
 
+/**
+ * Type declaration definition describing the schema of sent email status.
+ */
 export type SentEmailStatus = "Sent" | "Failed" | "Pending" | "Cancelled";
 
+/**
+ * Interface structure detailing the properties and attributes of Sent Email Data.
+ */
 export interface SentEmailData {
   id: string;
   to: string;
@@ -188,6 +197,9 @@ export class SentEmail {
 
 // ─── Email Template ────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Email Template Data.
+ */
 export interface EmailTemplateData {
   id: string;
   key: string;
@@ -257,6 +269,9 @@ export class EmailTemplate {
 
 // ─── List Response ─────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Email Template List Response.
+ */
 export interface EmailTemplateListResponse {
   items: EmailTemplate[];
   totalCount: number;

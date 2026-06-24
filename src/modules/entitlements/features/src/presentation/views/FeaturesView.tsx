@@ -13,6 +13,9 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { CatalogView } from "../components/CatalogView";
 import { EffectiveFeaturesView } from "../components/EffectiveFeaturesView";
 
+/**
+ * React presentation component representing the features view UI element.
+ */
 export function FeaturesView() {
   useModuleLocales(() => import("../../../locales"), "features");
   const { t, language } = useI18n();

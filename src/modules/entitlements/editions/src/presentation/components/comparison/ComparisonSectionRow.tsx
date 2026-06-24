@@ -10,6 +10,9 @@ interface ComparisonSectionRowProps {
   colSpan: number;
 }
 
+/**
+ * React presentation component representing the comparison section row UI element.
+ */
 export function ComparisonSectionRow({ label, colSpan }: ComparisonSectionRowProps) {
   return (
     <TableRow>

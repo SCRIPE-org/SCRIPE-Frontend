@@ -17,6 +17,9 @@ export interface FeatureOverrideModel {
   costReason?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Resolved Feature Model.
+ */
 export interface ResolvedFeatureModel {
   featureId: string;
   key: string;

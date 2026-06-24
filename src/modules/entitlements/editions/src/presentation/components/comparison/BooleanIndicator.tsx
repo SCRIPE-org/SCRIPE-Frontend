@@ -9,6 +9,9 @@ interface BooleanIndicatorProps {
   value: boolean;
 }
 
+/**
+ * React presentation component representing the boolean indicator UI element.
+ */
 export function BooleanIndicator({ value }: BooleanIndicatorProps) {
   return value ? (
     <Check className="h-4 w-4 text-emerald-500" />

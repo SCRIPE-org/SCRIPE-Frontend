@@ -11,6 +11,9 @@
 import type { BaseEntity } from "@core/interfaces/common.interface";
 
 // ── Sub-entities ──
+/**
+ * Interface structure detailing the properties and attributes of Tenant Plan Feature Data.
+ */
 export interface TenantPlanFeatureData {
   featureDefinitionId: string;
   featureKey: string;
@@ -21,6 +24,9 @@ export interface TenantPlanFeatureData {
   overrideLabel?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Tenant Plan Price Data.
+ */
 export interface TenantPlanPriceData {
   id: string;
   currency: string;
@@ -30,6 +36,9 @@ export interface TenantPlanPriceData {
   isPromotional: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Tenant Plan Version Data.
+ */
 export interface TenantPlanVersionData {
   id: string;
   versionNumber: number;
@@ -43,6 +52,9 @@ export interface TenantPlanVersionData {
 }
 
 // ── Main entity data ──
+/**
+ * Interface structure detailing the properties and attributes of Tenant Plan Data.
+ */
 export interface TenantPlanData extends BaseEntity {
   tenantId: string;
   name: string;
@@ -77,6 +89,9 @@ export interface TenantPlanData extends BaseEntity {
   updatedAt?: string;
 }
 
+/**
+ * Domain entity class representing a Tenant Plan.
+ */
 export class TenantPlan {
   constructor(private readonly data: TenantPlanData) {}
 
@@ -269,6 +284,9 @@ export class TenantPlan {
 }
 
 // ── Feature Definition Entity ──
+/**
+ * Interface structure detailing the properties and attributes of Tenant Feature Definition Data.
+ */
 export interface TenantFeatureDefinitionData {
   id: string;
   tenantId?: string;
@@ -286,6 +304,9 @@ export interface TenantFeatureDefinitionData {
   updatedAt?: string;
 }
 
+/**
+ * Domain entity class representing a Tenant Feature Definition.
+ */
 export class TenantFeatureDefinition {
   constructor(private readonly data: TenantFeatureDefinitionData) {}
 
@@ -361,6 +382,9 @@ export interface TenantFeatureDefinitionCategoryGroup {
 }
 
 // ── Promotion Entity ──
+/**
+ * Interface structure detailing the properties and attributes of Tenant Plan Promotion Data.
+ */
 export interface TenantPlanPromotionData {
   id: string;
   tenantId?: string;
@@ -384,6 +408,9 @@ export interface TenantPlanPromotionData {
   updatedAt?: string;
 }
 
+/**
+ * Domain entity class representing a Tenant Plan Promotion.
+ */
 export class TenantPlanPromotion {
   constructor(private readonly data: TenantPlanPromotionData) {}
 

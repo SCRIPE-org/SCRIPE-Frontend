@@ -24,6 +24,9 @@ import type { IRoleService } from "../../domain/interfaces/IRoleService";
 import { RoleMapper } from "../mappers/RoleMapper";
 import { Permission, PermissionModuleGroup, PermissionMapper } from "@modules/identity/core";
 
+/**
+ * Repository implementation for managing database operations on Role resources.
+ */
 export class RoleRepository implements IRoleRepository {
   constructor(private readonly service: IRoleService) {}
 

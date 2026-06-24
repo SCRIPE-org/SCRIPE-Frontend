@@ -1,3 +1,6 @@
+/**
+ * Domain entity class representing a Plugin Definition.
+ */
 export class PluginDefinition {
   constructor(public readonly id: string) {}
 

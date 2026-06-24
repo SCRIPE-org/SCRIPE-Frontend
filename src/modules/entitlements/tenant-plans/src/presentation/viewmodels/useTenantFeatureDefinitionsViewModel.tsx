@@ -19,6 +19,9 @@ import { useI18n } from "@core/providers/i18n-provider";
 import type { CrudColumn } from "@core/crud/components/generic-crud-view";
 import { Badge } from "@core/ui/badge";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for tenant feature definitions view model.
+ */
 export function useTenantFeatureDefinitionsViewModel() {
   const { tenantPlanRepository } = entitlementsContainer;
   const { t, language } = useI18n();

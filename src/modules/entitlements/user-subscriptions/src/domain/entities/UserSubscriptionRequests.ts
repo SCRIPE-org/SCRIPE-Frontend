@@ -10,10 +10,16 @@ export interface CreateUserSubscriptionRequest {
   promotionCode?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Cancel User Subscription Request.
+ */
 export interface CancelUserSubscriptionRequest {
   reason?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Change Plan Request.
+ */
 export interface ChangePlanRequest {
   newTenantPlanId: string;
   billingCycle: string;

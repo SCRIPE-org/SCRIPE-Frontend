@@ -9,6 +9,9 @@ interface UseTenantStatsViewModelProps {
   enabled?: boolean;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for tenant stats view model.
+ */
 export function useTenantStatsViewModel({ tenantId, enabled }: UseTenantStatsViewModelProps) {
   const { t, direction } = useI18n();
   const isRtl = direction === "rtl";

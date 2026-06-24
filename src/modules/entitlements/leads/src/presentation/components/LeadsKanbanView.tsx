@@ -23,6 +23,9 @@ const COLUMNS: { status: LeadStatus; accent: string; dot: string }[] = [
 
 const SKELETON_HEIGHTS = [72, 88, 64, 96, 80];
 
+/**
+ * React presentation component representing the leads kanban view UI element.
+ */
 export function LeadsKanbanView({
   leads,
   isLoading,

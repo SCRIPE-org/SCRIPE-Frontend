@@ -8,6 +8,9 @@ import { Button } from "@core/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Info, Copy, Check } from "lucide-react";
 
+/**
+ * React presentation component representing the idp metadata section UI element.
+ */
 export function IdpMetadataSection() {
   const { t } = useI18n();
   const [copiedField, setCopiedField] = useState<string | null>(null);

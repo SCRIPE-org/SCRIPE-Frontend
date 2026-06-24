@@ -13,6 +13,9 @@ import type {
 } from "../../domain/entities/DashboardEntities";
 import type { DashboardService } from "../services/DashboardService";
 
+/**
+ * Repository implementation for managing database operations on Dashboard resources.
+ */
 export class DashboardRepository implements IDashboardRepository {
   constructor(private readonly service: DashboardService) {}
 

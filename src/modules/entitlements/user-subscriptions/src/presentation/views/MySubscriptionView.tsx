@@ -102,6 +102,9 @@ function formatCurrency(amount?: number, currency?: string): string {
   }
 }
 
+/**
+ * React presentation component representing the my subscription view UI element.
+ */
 export function MySubscriptionView() {
   useModuleLocales(() => import("../../../locales"), "user-subscriptions");
   const vm = useMySubscriptionViewModel();

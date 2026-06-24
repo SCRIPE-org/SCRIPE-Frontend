@@ -15,6 +15,9 @@ import {
   CustomerLogoDtoSchema,
 } from "../../presentation/schemas/signup-content.schema";
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class SignupContentMapper {
   static toEntity(model: unknown): AdminSignupContent {
     const parsed = safeParseApiResponse(AdminSignupContentDtoSchema, model, "AdminSignupContent");

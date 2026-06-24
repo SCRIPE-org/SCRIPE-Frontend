@@ -27,6 +27,9 @@ const REGULATION_OPTIONS = [
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Submit Dsr Form Data.
+ */
 export interface SubmitDsrFormData {
   requestType: string;
   regulationCode: string;
@@ -43,6 +46,9 @@ interface SubmitDsrModalProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the submit dsr modal UI element.
+ */
 export function SubmitDsrModal({
   open,
   onOpenChange,

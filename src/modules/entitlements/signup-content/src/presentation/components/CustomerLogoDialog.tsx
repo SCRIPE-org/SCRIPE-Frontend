@@ -142,6 +142,9 @@ function CustomerLogoDialogForm({
   );
 }
 
+/**
+ * React presentation component representing the customer logo dialog UI element.
+ */
 export function CustomerLogoDialog({
   open,
   onClose,

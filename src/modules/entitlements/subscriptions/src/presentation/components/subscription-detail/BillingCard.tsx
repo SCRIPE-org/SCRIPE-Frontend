@@ -15,6 +15,9 @@ interface BillingCardProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the billing card UI element.
+ */
 export function BillingCard({ sub, t }: BillingCardProps) {
   const formattedTotal =
     sub.totalAmount != null && sub.currency

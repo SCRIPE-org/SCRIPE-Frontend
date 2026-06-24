@@ -14,15 +14,24 @@ import type {
   PermissionAssignmentJson,
   PermissionScopeType,
 } from "../../domain/types/PermissionTypes";
+/**
+ * Exported type in the identity/roles module.
+ */
 export type { PermissionAssignmentJson, PermissionScopeType };
 export { PermissionScopes };
 
+/**
+ * Interface structure detailing the properties and attributes of Role Permission Json.
+ */
 export interface RolePermissionJson {
   permissionId: string;
   permissionCode: string;
   scope?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Role Json.
+ */
 export interface RoleJson {
   id: string;
   nameEn: string;
@@ -42,6 +51,9 @@ export interface RoleJson {
   groupNamesAr?: string[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Role List Response Json.
+ */
 export interface RoleListResponseJson {
   items: RoleJson[];
   totalCount: number;
@@ -52,6 +64,9 @@ export interface RoleListResponseJson {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Create Role Json.
+ */
 export interface CreateRoleJson {
   nameEn: string;
   nameAr: string;
@@ -63,6 +78,9 @@ export interface CreateRoleJson {
   permissionIds?: string[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Role Json.
+ */
 export interface UpdateRoleJson {
   nameEn: string;
   nameAr: string;
@@ -74,10 +92,16 @@ export interface UpdateRoleJson {
 
 // PermissionAssignmentJson re-exported from domain/types/PermissionTypes.ts
 
+/**
+ * Interface structure detailing the properties and attributes of Assign Permissions Json.
+ */
 export interface AssignPermissionsJson {
   permissions: PermissionAssignmentJson[];
 }
 
+/**
+ * Domain entity class representing a Role Model.
+ */
 export class RoleModel {
   constructor(
     public readonly id: string,
@@ -140,6 +164,9 @@ export class RoleModel {
   }
 }
 
+/**
+ * Domain entity class representing a Role Permission Model.
+ */
 export class RolePermissionModel {
   constructor(
     public readonly permissionId: string,
@@ -160,6 +187,9 @@ export class RolePermissionModel {
   }
 }
 
+/**
+ * Domain entity class representing a Create Role Model.
+ */
 export class CreateRoleModel {
   constructor(
     public readonly nameEn: string,
@@ -186,6 +216,9 @@ export class CreateRoleModel {
   }
 }
 
+/**
+ * Domain entity class representing a Update Role Model.
+ */
 export class UpdateRoleModel {
   constructor(
     public readonly nameEn: string,
@@ -208,6 +241,9 @@ export class UpdateRoleModel {
   }
 }
 
+/**
+ * Domain entity class representing a Assign Permissions Model.
+ */
 export class AssignPermissionsModel {
   constructor(public readonly permissions: PermissionAssignmentJson[]) {}
 

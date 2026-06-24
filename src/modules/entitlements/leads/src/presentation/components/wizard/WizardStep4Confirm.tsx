@@ -18,6 +18,9 @@ interface WizardStep4Props {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the wizard step4 confirm UI element.
+ */
 export function WizardStep4Confirm({ lead, edition, setup, overrideCount }: WizardStep4Props) {
   const { t, language } = useI18n();
 

@@ -110,6 +110,9 @@ export interface ComparisonCategory {
   features: ComparisonFeatureRow[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Signup Wizard Data.
+ */
 export interface SignupWizardData {
   // Step 0/1 — Category + Plan
   categoryKey: string | null;
@@ -159,6 +162,9 @@ export interface SignupWizardData {
 
 // ─── Rich feature value for a specific edition ─────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Public Feature.
+ */
 export interface PublicFeature {
   /** Display name in English */
   name: string;
@@ -195,6 +201,9 @@ export interface PublicFeature {
 
 // ─── Public edition from the API ───────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Public Edition.
+ */
 export interface PublicEdition {
   id: string;
   name: string;
@@ -244,23 +253,35 @@ export interface PublicCategory {
   sortOrder: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Subdomain Check Result.
+ */
 export interface SubdomainCheckResult {
   available: boolean;
   suggestion: string | null;
   reason: "taken" | "reserved" | "invalid_format" | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Signup Otp Result.
+ */
 export interface SignupOtpResult {
   sent: boolean;
   retryAfterSeconds: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Signup Verification Result.
+ */
 export interface SignupVerificationResult {
   isValid: boolean;
   verificationToken: string | null;
   error: string | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Signup Result.
+ */
 export interface SignupResult {
   /**
    * Server-decided register outcome:
@@ -303,6 +324,9 @@ export interface SignupStatusResult {
   expiresAt: string | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Signup Checkout Status Result.
+ */
 export interface SignupCheckoutStatusResult {
   status: "pending" | "processing" | "completed" | "failed" | "expired" | "unknown";
   supportReference: string;
@@ -343,6 +367,9 @@ export interface ChangePlanResult {
   checkoutUrl: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Change Plan Payload.
+ */
 export interface ChangePlanPayload {
   signupRef: string;
   newEditionId: string;

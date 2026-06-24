@@ -41,6 +41,9 @@ const INTERNAL_KEYS = [
   { value: "groups", label: "Groups (groups)" },
 ];
 
+/**
+ * React presentation component representing the claim mapping editor UI element.
+ */
 export function ClaimMappingEditor({ value, onChange }: Props) {
   const { t } = useI18n();
   const claimLabels: Record<string, string> = {

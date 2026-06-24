@@ -30,6 +30,9 @@ const RetentionPolicyModelSchema = z.object({
   isActive: z.boolean().optional().default(false),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class RetentionMapper {
   static toEntity(model: RetentionPolicyModel): RetentionPolicy {
     const validated = safeParseApiResponse(RetentionPolicyModelSchema, model, "RetentionPolicy");

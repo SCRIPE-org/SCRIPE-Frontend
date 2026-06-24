@@ -38,6 +38,9 @@ interface StatusSectionProps {
   isFetchingPreview: boolean;
 }
 
+/**
+ * React presentation component representing the drawer status section UI element.
+ */
 export function DrawerStatusSection({
   lead,
   currentStatus,

@@ -8,6 +8,9 @@ import type { IConsentService } from "../../domain/interfaces/IConsentService";
 import type { ConsentStatusModel, ConsentAnalyticsModel } from "../models/ConsentModels";
 import type { RecordConsentRequest } from "../../domain/entities/ConsentStatus";
 
+/**
+ * API service for executing HTTP calls related to Consent endpoints.
+ */
 export class ConsentService implements IConsentService {
   constructor(private readonly api: IApiService) {}
 

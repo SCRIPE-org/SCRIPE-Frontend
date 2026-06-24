@@ -75,6 +75,9 @@ const sections: DocSection[] = [
     language: "typescript",
     filename: "Query Key Factory Pattern",
     code: `// Consistent query key structure for cache management
+/**
+ * Constant definition representing admin keys.
+ */
 export const adminKeys = {
   all:     ["admins"] as const,
   lists:   ()           => [...adminKeys.all, "list"] as const,

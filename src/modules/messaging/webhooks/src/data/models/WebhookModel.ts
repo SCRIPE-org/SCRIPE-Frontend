@@ -10,6 +10,9 @@
 
 // ===== JSON Shapes (API contracts) =====
 
+/**
+ * Interface structure detailing the properties and attributes of Webhook Subscription Json.
+ */
 export interface WebhookSubscriptionJson {
   id: string;
   scope: string;
@@ -35,6 +38,9 @@ export interface WebhookSubscriptionJson {
   modifiedAt: string | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Webhook List Item Json.
+ */
 export interface WebhookListItemJson {
   id: string;
   scope: string;
@@ -51,11 +57,17 @@ export interface WebhookListItemJson {
   failedDeliveries: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Webhook List Response Json.
+ */
 export interface WebhookListResponseJson {
   items: WebhookListItemJson[];
   totalCount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Webhook Delivery Log Json.
+ */
 export interface WebhookDeliveryLogJson {
   id: string;
   eventDeliveryId: string;
@@ -75,11 +87,17 @@ export interface WebhookDeliveryLogJson {
   createdAt: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Webhook Delivery Log List Response Json.
+ */
 export interface WebhookDeliveryLogListResponseJson {
   items: WebhookDeliveryLogJson[];
   totalCount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Webhook Delivery Stats Json.
+ */
 export interface WebhookDeliveryStatsJson {
   totalDeliveries: number;
   successfulDeliveries: number;
@@ -88,12 +106,18 @@ export interface WebhookDeliveryStatsJson {
   averageLatencyMs: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Webhook Event Type Json.
+ */
 export interface WebhookEventTypeJson {
   key: string;
   category: string;
   description: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Webhook Test Result Json.
+ */
 export interface WebhookTestResultJson {
   isSuccess: boolean;
   statusCode: number;
@@ -104,6 +128,9 @@ export interface WebhookTestResultJson {
 
 // ===== Analytics & Health JSON Shapes =====
 
+/**
+ * Interface structure detailing the properties and attributes of Daily Delivery Stats Json.
+ */
 export interface DailyDeliveryStatsJson {
   date: string;
   total: number;
@@ -112,6 +139,9 @@ export interface DailyDeliveryStatsJson {
   avgLatencyMs: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Webhook Analytics Json.
+ */
 export interface WebhookAnalyticsJson {
   successRate: number;
   avgLatencyMs: number;
@@ -124,6 +154,9 @@ export interface WebhookAnalyticsJson {
   dailyStats: DailyDeliveryStatsJson[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Webhook Health Summary Json.
+ */
 export interface WebhookHealthSummaryJson {
   activeEndpoints: number;
   disabledEndpoints: number;
@@ -137,6 +170,9 @@ export interface WebhookHealthSummaryJson {
   avgLatencyMs: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Create Webhook Json.
+ */
 export interface CreateWebhookJson {
   url: string;
   description?: string;
@@ -146,6 +182,9 @@ export interface CreateWebhookJson {
   maxConsecutiveFailures?: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Webhook Json.
+ */
 export interface UpdateWebhookJson {
   url?: string;
   description?: string;

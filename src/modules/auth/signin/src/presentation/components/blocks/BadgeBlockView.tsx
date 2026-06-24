@@ -10,6 +10,9 @@ const VARIANT_CLASS = {
   premium: "bg-primary/10 text-primary",
 };
 
+/**
+ * React presentation component representing the badge block view UI element.
+ */
 export function BadgeBlockView({ block }: { block: BadgeBlock }) {
   const props = block.props;
   return (

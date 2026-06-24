@@ -42,6 +42,9 @@ const connectionColors = {
   disconnected: "bg-red-500",
 } as const;
 
+/**
+ * React presentation component representing the audit view UI element.
+ */
 export function AuditView() {
   useModuleLocales(() => import("../../../locales"), "audit");
 

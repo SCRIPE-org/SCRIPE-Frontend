@@ -7,6 +7,9 @@
 
 // ── Downgrade Impact ──
 
+/**
+ * Interface structure detailing the properties and attributes of Resource Overflow.
+ */
 export interface ResourceOverflow {
   resourceType: string;
   featureName: string;
@@ -15,6 +18,9 @@ export interface ResourceOverflow {
   overflowCount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Downgrade Impact Report.
+ */
 export interface DowngradeImpactReport {
   hasOverflow: boolean;
   overflows: ResourceOverflow[];
@@ -22,6 +28,9 @@ export interface DowngradeImpactReport {
 
 // ── Subscription (Full Detail) ──
 
+/**
+ * Interface structure detailing the properties and attributes of Subscription Data.
+ */
 export interface SubscriptionData {
   id: string;
   tenantId: string;
@@ -62,6 +71,9 @@ export interface SubscriptionData {
   gatewaySubscriptionId?: string;
 }
 
+/**
+ * Domain entity class representing a Subscription.
+ */
 export class Subscription {
   constructor(public readonly data: SubscriptionData) {}
 
@@ -202,6 +214,9 @@ export class Subscription {
 
 // ── Subscription List Item ──
 
+/**
+ * Interface structure detailing the properties and attributes of Subscription List Item Data.
+ */
 export interface SubscriptionListItemData {
   id: string;
   tenantId: string;
@@ -238,6 +253,9 @@ export interface SubscriptionListItemData {
   gatewaySubscriptionId?: string;
 }
 
+/**
+ * Domain entity class representing a Subscription List Item.
+ */
 export class SubscriptionListItem {
   constructor(public readonly data: SubscriptionListItemData) {}
 
@@ -347,6 +365,9 @@ export class SubscriptionListItem {
 
 // ── Global Subscription Item ──
 
+/**
+ * Interface structure detailing the properties and attributes of Global Subscription Item Data.
+ */
 export interface GlobalSubscriptionItemData {
   id: string;
   tenantId: string;
@@ -376,6 +397,9 @@ export interface GlobalSubscriptionItemData {
   refundReason?: string;
 }
 
+/**
+ * Domain entity class representing a Global Subscription Item.
+ */
 export class GlobalSubscriptionItem {
   constructor(public readonly data: GlobalSubscriptionItemData) {}
 

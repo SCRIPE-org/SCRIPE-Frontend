@@ -20,12 +20,18 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type { ThemeCard } from "../../domain/entities/ThemeCard";
 
+/**
+ * Constant definition representing theme keys.
+ */
 export const themeKeys = {
   all: ["themes-management"] as const,
   list: (filters: Record<string, unknown>) => [...themeKeys.all, "list", filters] as const,
   detail: (slug: string) => [...themeKeys.all, "detail", slug] as const,
 };
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for theme management view model.
+ */
 export function useThemeManagementViewModel() {
   const { themeMarketplaceRepository } = customizationContainer;
   const { t } = useI18n();

@@ -10,10 +10,16 @@
 
 // ─── Delivery Status Type ──────────────────────────────────────
 
+/**
+ * Type declaration definition describing the schema of delivery status.
+ */
 export type DeliveryStatus = "Pending" | "Delivered" | "Retrying" | "DeadLettered";
 
 // ─── Subscription Data ─────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Webhook Subscription Data.
+ */
 export interface WebhookSubscriptionData {
   id: string;
   scope: string;
@@ -160,6 +166,9 @@ export class WebhookSubscription {
 
 // ─── Subscription List Item ─────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Webhook Subscription List Item Data.
+ */
 export interface WebhookSubscriptionListItemData {
   id: string;
   scope: string;
@@ -251,6 +260,9 @@ export class WebhookSubscriptionListItem {
 
 // ─── Delivery Log ──────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Webhook Delivery Log Data.
+ */
 export interface WebhookDeliveryLogData {
   id: string;
   eventDeliveryId: string;
@@ -374,6 +386,9 @@ export class WebhookDeliveryStats {
 
 // ─── Analytics ─────────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Daily Delivery Stats.
+ */
 export interface DailyDeliveryStats {
   date: string;
   total: number;
@@ -382,6 +397,9 @@ export interface DailyDeliveryStats {
   avgLatencyMs: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Webhook Analytics Data.
+ */
 export interface WebhookAnalyticsData {
   successRate: number;
   avgLatencyMs: number;
@@ -431,6 +449,9 @@ export class WebhookAnalytics {
 
 // ─── Health Summary ────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Webhook Health Summary Data.
+ */
 export interface WebhookHealthSummaryData {
   activeEndpoints: number;
   disabledEndpoints: number;
@@ -522,6 +543,9 @@ export class WebhookTestResult {
 
 // ─── List Response ─────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Webhook List Response.
+ */
 export interface WebhookListResponse {
   items: WebhookSubscriptionListItem[];
   totalCount: number;

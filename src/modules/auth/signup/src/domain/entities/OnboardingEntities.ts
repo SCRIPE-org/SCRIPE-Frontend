@@ -19,6 +19,9 @@ import { z } from "zod";
 // ─── Option-level visibility condition ─────────────────────────────────────────
 // Mirrors OnboardingAnswerOptionConditionDto. Evaluated entirely client-side so
 // changing an earlier answer instantly reshapes which options are visible.
+/**
+ * Constant definition representing onboarding answer option condition schema.
+ */
 export const OnboardingAnswerOptionConditionSchema = z.object({
   dependsOnQuestionKey: z.string(),
   matchValues: z.array(z.string()),
@@ -26,6 +29,9 @@ export const OnboardingAnswerOptionConditionSchema = z.object({
   matchMode: z.string().default("AnyOf"),
 });
 
+/**
+ * Constant definition representing onboarding answer option schema.
+ */
 export const OnboardingAnswerOptionSchema = z.object({
   value: z.string(),
   label: z.string(),
@@ -41,6 +47,9 @@ export const OnboardingAnswerOptionSchema = z.object({
   conditions: z.array(OnboardingAnswerOptionConditionSchema).default([]),
 });
 
+/**
+ * Constant definition representing onboarding question schema.
+ */
 export const OnboardingQuestionSchema = z.object({
   key: z.string(),
   questionType: z.enum(["single", "multi", "single_select", "multi_select"]).transform((val) => {
@@ -60,6 +69,9 @@ export const OnboardingQuestionSchema = z.object({
   options: z.array(OnboardingAnswerOptionSchema),
 });
 
+/**
+ * Constant definition representing onboarding flow schema.
+ */
 export const OnboardingFlowSchema = z.object({
   questions: z.array(OnboardingQuestionSchema),
 });
@@ -67,6 +79,9 @@ export const OnboardingFlowSchema = z.object({
 // ─── Recommendation (response) ─────────────────────────────────────────────────
 // Mirrors OnboardingRecommendationDto (data-driven engine). The two diagnostic
 // fields (tierKey, isSelfService) are additive and optional for resilience.
+/**
+ * Constant definition representing onboarding recommendation schema.
+ */
 export const OnboardingRecommendationSchema = z.object({
   recommendedEditionId: z.string(),
   recommendedEditionName: z.string(),
@@ -80,11 +95,17 @@ export const OnboardingRecommendationSchema = z.object({
 // ─── Recommendation (request) ──────────────────────────────────────────────────
 // Mirrors GetOnboardingRecommendationQuery { CategoryId?, Answers[], Lang } where
 // each AnswerInput is { QuestionKey, SelectedValues[] }.
+/**
+ * Constant definition representing onboarding answer input schema.
+ */
 export const OnboardingAnswerInputSchema = z.object({
   questionKey: z.string(),
   selectedValues: z.array(z.string()),
 });
 
+/**
+ * Constant definition representing signup recommendation request schema.
+ */
 export const SignupRecommendationRequestSchema = z.object({
   categoryId: z.string().nullable().optional(),
   answers: z.array(OnboardingAnswerInputSchema),
@@ -93,6 +114,9 @@ export const SignupRecommendationRequestSchema = z.object({
 
 // ─── Welcome + trust content ───────────────────────────────────────────────────
 // Mirrors SignupWelcomeContentDto + SignupTrustMarkDto + SignupCustomerLogoDto.
+/**
+ * Constant definition representing welcome trust mark schema.
+ */
 export const WelcomeTrustMarkSchema = z.object({
   key: z.string(),
   kind: z.string(),
@@ -101,12 +125,18 @@ export const WelcomeTrustMarkSchema = z.object({
   assetUrl: z.string().nullable(),
 });
 
+/**
+ * Constant definition representing welcome customer logo schema.
+ */
 export const WelcomeCustomerLogoSchema = z.object({
   key: z.string(),
   name: z.string(),
   assetUrl: z.string(),
 });
 
+/**
+ * Constant definition representing welcome content schema.
+ */
 export const WelcomeContentSchema = z.object({
   headline: z.string(),
   subcopy: z.string(),
@@ -118,13 +148,43 @@ export const WelcomeContentSchema = z.object({
 });
 
 // ─── Inferred types ────────────────────────────────────────────────────────────
+/**
+ * Type declaration definition describing the schema of onboarding answer option condition.
+ */
 export type OnboardingAnswerOptionCondition = z.infer<typeof OnboardingAnswerOptionConditionSchema>;
+/**
+ * Type declaration definition describing the schema of onboarding answer option.
+ */
 export type OnboardingAnswerOption = z.infer<typeof OnboardingAnswerOptionSchema>;
+/**
+ * Type declaration definition describing the schema of onboarding question.
+ */
 export type OnboardingQuestion = z.infer<typeof OnboardingQuestionSchema>;
+/**
+ * Type declaration definition describing the schema of onboarding flow.
+ */
 export type OnboardingFlow = z.infer<typeof OnboardingFlowSchema>;
+/**
+ * Type declaration definition describing the schema of onboarding recommendation.
+ */
 export type OnboardingRecommendation = z.infer<typeof OnboardingRecommendationSchema>;
+/**
+ * Type declaration definition describing the schema of onboarding answer input.
+ */
 export type OnboardingAnswerInput = z.infer<typeof OnboardingAnswerInputSchema>;
+/**
+ * Type declaration definition describing the schema of signup recommendation request.
+ */
 export type SignupRecommendationRequest = z.infer<typeof SignupRecommendationRequestSchema>;
+/**
+ * Type declaration definition describing the schema of welcome trust mark.
+ */
 export type WelcomeTrustMark = z.infer<typeof WelcomeTrustMarkSchema>;
+/**
+ * Type declaration definition describing the schema of welcome customer logo.
+ */
 export type WelcomeCustomerLogo = z.infer<typeof WelcomeCustomerLogoSchema>;
+/**
+ * Type declaration definition describing the schema of welcome content.
+ */
 export type WelcomeContent = z.infer<typeof WelcomeContentSchema>;

@@ -19,6 +19,9 @@ interface TestPingButtonProps {
   onDismiss: () => void;
 }
 
+/**
+ * React presentation component representing the test ping button UI element.
+ */
 export function TestPingButton({ onTest, isTesting, testResult, onDismiss }: TestPingButtonProps) {
   const { t } = useI18n();
 

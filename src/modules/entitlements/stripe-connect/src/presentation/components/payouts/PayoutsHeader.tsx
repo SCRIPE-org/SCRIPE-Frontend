@@ -27,6 +27,9 @@ interface PayoutsHeaderProps {
   account: ConnectAccount | null;
 }
 
+/**
+ * React presentation component representing the payouts header UI element.
+ */
 export function PayoutsHeader({ account }: PayoutsHeaderProps) {
   const { t } = useI18n();
 

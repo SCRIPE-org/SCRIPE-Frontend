@@ -9,6 +9,9 @@ interface UseSetRolesViewModelProps {
   open: boolean;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for set roles view model.
+ */
 export function useSetRolesViewModel({ tenantId, open }: UseSetRolesViewModelProps) {
   const { t, language } = useI18n();
 

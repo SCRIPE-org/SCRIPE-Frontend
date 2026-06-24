@@ -49,6 +49,9 @@ export interface ServiceDeadLetterParams {
   pageSize: number;
 }
 
+/**
+ * Interface defining operations for the Webhook network service.
+ */
 export interface IWebhookService {
   // ─── CRUD ─────────────────────────────────────────
   getAll(params: ServiceWebhookListParams): Promise<WebhookListResponseJson>;

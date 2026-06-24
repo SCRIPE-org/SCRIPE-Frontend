@@ -17,6 +17,9 @@ const PluginExecutionLogModelSchema = z.object({
   errorMessage: z.string().optional().nullable(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class LogsMapper {
   static toEntity(model: PluginExecutionLogModel): PluginExecutionLog {
     const validated = safeParseApiResponse(

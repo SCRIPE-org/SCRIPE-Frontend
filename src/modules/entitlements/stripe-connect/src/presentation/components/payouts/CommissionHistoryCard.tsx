@@ -13,6 +13,9 @@ import type { Commission } from "../../../domain/entities/ConnectAccount";
 // ─────────────────────────────────────────────────────────────────────────────
 // Shared types (re-exported for the view)
 // ─────────────────────────────────────────────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Payouts Filter.
+ */
 export interface PayoutsFilter {
   status?: string;
 }
@@ -57,6 +60,9 @@ interface CommissionHistoryCardProps {
 // ─────────────────────────────────────────────────────────────────────────────
 // Component
 // ─────────────────────────────────────────────────────────────────────────────
+/**
+ * React presentation component representing the commission history card UI element.
+ */
 export function CommissionHistoryCard({
   commissions,
   totalCount,

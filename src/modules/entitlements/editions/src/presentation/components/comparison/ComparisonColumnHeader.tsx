@@ -18,6 +18,9 @@ interface ComparisonColumnHeaderProps {
   recommendedLabel?: string;
 }
 
+/**
+ * React presentation component representing the comparison column header UI element.
+ */
 export function ComparisonColumnHeader({
   displayName,
   tierLevel,

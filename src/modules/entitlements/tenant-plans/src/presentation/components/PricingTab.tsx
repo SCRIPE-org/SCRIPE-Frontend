@@ -85,6 +85,9 @@ interface PricingTabProps {
   t: TFn;
 }
 
+/**
+ * Constant definition representing pricing tab.
+ */
 export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
   const {
     plan,

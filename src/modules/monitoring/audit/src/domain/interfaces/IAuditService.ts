@@ -13,6 +13,9 @@ import type {
   ComplianceReport,
 } from "../entities/AuditEntities";
 
+/**
+ * Interface defining operations for the Audit network service.
+ */
 export interface IAuditService {
   getLogs(params?: AuditFilterParams): Promise<AuditLogPage>;
   getLogDetail(id: string): Promise<AuditLogDetail>;

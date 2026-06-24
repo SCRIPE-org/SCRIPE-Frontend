@@ -50,6 +50,9 @@ function getAllOrderedSlugs(): string[] {
 }
 
 // ─── Repository Implementation ─────────────────────────────────
+/**
+ * Repository implementation for managing database operations on Docs resources.
+ */
 export class DocsRepository implements IDocsRepository {
   getPage(slug: string): DocPage | undefined {
     const data = pageRegistry.get(slug);

@@ -20,11 +20,17 @@ export interface AnalyticsSummaryDto {
   trialSubscriptions: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Distribution Data Dto.
+ */
 export interface DistributionDataDto {
   eventType: string;
   count: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Comparison Data Point Dto.
+ */
 export interface ComparisonDataPointDto {
   date: string;
   successCount: number;

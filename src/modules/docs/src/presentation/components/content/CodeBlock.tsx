@@ -341,6 +341,9 @@ function tokenize(code: string, language: string): { text: string; className: st
   });
 }
 
+/**
+ * React presentation component representing the code block UI element.
+ */
 export function CodeBlock({ code, language, filename, highlightLines }: CodeBlockProps) {
   const { t } = useDocsI18n();
   const [copied, setCopied] = useState(false);

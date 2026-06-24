@@ -7,12 +7,18 @@ import type {
   RegenerateSecretResultJson,
 } from "../types/OAuthAppTypes";
 
+/**
+ * Interface structure detailing the properties and attributes of Service O Auth App List Params.
+ */
 export interface ServiceOAuthAppListParams {
   page?: number;
   pageSize?: number;
   search?: string;
 }
 
+/**
+ * Interface defining operations for the OAuthApp network service.
+ */
 export interface IOAuthAppService {
   getAll(params: ServiceOAuthAppListParams): Promise<OAuthAppListResponseJson>;
   getById(id: string): Promise<OAuthAppJson>;

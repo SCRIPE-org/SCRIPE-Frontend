@@ -23,6 +23,9 @@ interface RegionLineProps {
   detectedCountry: string | null;
 }
 
+/**
+ * React presentation component representing the region line UI element.
+ */
 export function RegionLine({ currency, detectedCountry }: RegionLineProps) {
   const { t } = useI18n();
   const { tokens } = useSignupTheme();

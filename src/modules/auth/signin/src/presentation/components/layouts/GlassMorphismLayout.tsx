@@ -4,6 +4,9 @@ import { BG_STYLE, WRAPPER_STYLE } from "./layout-types";
 import { LogoImg } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
+/**
+ * React presentation component representing the glass morphism layout UI element.
+ */
 export function GlassMorphismLayout({
   formContent,
   topActions,

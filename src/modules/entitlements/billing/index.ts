@@ -3,16 +3,19 @@
  */
 export { InvoiceListView } from "./src/presentation/views/InvoiceListView";
 export { BillingDashboardView } from "./src/presentation/views/BillingDashboardView";
-export { Invoice, InvoiceListItem, BillingDashboard } from "./src/domain/entities/Invoice";
+export { Invoice, InvoiceListItem } from "./src/domain/entities/Invoice";
+export { BillingDashboard } from "./src/domain/entities/BillingDashboard";
 export type {
   InvoiceData,
   InvoiceListItemData,
   PaymentTransaction,
+  InvoiceLineItem,
+} from "./src/domain/entities/Invoice";
+export type {
   CheckoutSession,
   BillingPortal,
-  InvoiceLineItem,
   BillingDashboardData,
   PaymentLink,
-} from "./src/domain/entities/Invoice";
+} from "./src/domain/entities/BillingDashboard";
 export type { IBillingRepository } from "./src/domain/interfaces/IBillingRepository";
 export type { IBillingService } from "./src/domain/interfaces/IBillingService";

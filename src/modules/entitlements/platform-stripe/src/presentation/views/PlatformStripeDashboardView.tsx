@@ -18,6 +18,9 @@ import { TransactionsCard } from "../components/TransactionsCard";
 import { PayoutsCard } from "../components/PayoutsCard";
 import { QuickLinksCard } from "../components/QuickLinksCard";
 
+/**
+ * React presentation component representing the platform stripe dashboard view UI element.
+ */
 export function PlatformStripeDashboardView() {
   useModuleLocales(() => import("../../../locales"), "platform-stripe");
   const { t } = useI18n();

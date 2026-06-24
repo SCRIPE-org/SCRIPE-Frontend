@@ -17,6 +17,9 @@ import { Pencil, Trash2, Eye, Settings2, Columns } from "lucide-react";
 import { format } from "date-fns";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
+/**
+ * React presentation component representing the editions view UI element.
+ */
 export function EditionsView() {
   useModuleLocales(() => import("../../../locales"), "editions");
   const { t, language } = useI18n();

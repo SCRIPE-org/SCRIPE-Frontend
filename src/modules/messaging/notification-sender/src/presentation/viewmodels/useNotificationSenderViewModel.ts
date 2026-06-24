@@ -13,6 +13,9 @@ import type {
 } from "../../domain/entities/Notification";
 import type { SendNotificationPayload } from "../../domain/entities/NotificationRequests";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for notification sender view model.
+ */
 export function useNotificationSenderViewModel() {
   const { t } = useI18n();
   const { success, error: toastError } = useEnhancedToast();

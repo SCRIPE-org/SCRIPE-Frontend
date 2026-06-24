@@ -22,9 +22,15 @@ export type DashboardWidgetType =
   | "customWidget";
 
 // ── Grid Alignment ────────────────────────────────────────
+/**
+ * Type declaration definition describing the schema of widget alignment.
+ */
 export type WidgetAlignment = "start" | "center" | "end" | "stretch";
 
 // ── Dashboard Widget ──────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Dashboard Widget.
+ */
 export interface DashboardWidget {
   /** Unique identifier */
   id: string;
@@ -45,6 +51,9 @@ export interface DashboardWidget {
 }
 
 // ── Builder Canvas Config ─────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Dashboard Builder Canvas.
+ */
 export interface DashboardBuilderCanvas {
   enabled: boolean;
   widgets: DashboardWidget[];
@@ -52,6 +61,9 @@ export interface DashboardBuilderCanvas {
 }
 
 // ── Widget Catalog Entry ──────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Widget Catalog Entry.
+ */
 export interface WidgetCatalogEntry {
   type: DashboardWidgetType;
   labelKey: string;
@@ -67,6 +79,9 @@ export interface WidgetCatalogEntry {
 }
 
 // ── Widget Catalog ────────────────────────────────────────
+/**
+ * Constant definition representing w i d g e t_ c a t a l o g.
+ */
 export const WIDGET_CATALOG: WidgetCatalogEntry[] = [
   {
     type: "statsCard",
@@ -207,6 +222,9 @@ export const WIDGET_CATALOG: WidgetCatalogEntry[] = [
 ];
 
 // ── Default Builder Canvas ────────────────────────────────
+/**
+ * Constant definition representing d e f a u l t_ d a s h b o a r d_ w i d g e t s.
+ */
 export const DEFAULT_DASHBOARD_WIDGETS: DashboardWidget[] = [
   {
     id: "default-stats-1",
@@ -288,8 +306,14 @@ export const DEFAULT_DASHBOARD_WIDGETS: DashboardWidget[] = [
   },
 ];
 
+/**
+ * Constant definition representing d e f a u l t_ b u i l d e r_ g r i d_ r o w s.
+ */
 export const DEFAULT_BUILDER_GRID_ROWS = 6;
 
+/**
+ * Constant definition representing d e f a u l t_ b u i l d e r_ c a n v a s.
+ */
 export const DEFAULT_BUILDER_CANVAS: DashboardBuilderCanvas = {
   enabled: false,
   widgets: DEFAULT_DASHBOARD_WIDGETS,
@@ -298,10 +322,16 @@ export const DEFAULT_BUILDER_CANVAS: DashboardBuilderCanvas = {
 
 // ── Helpers ───────────────────────────────────────────────
 
+/**
+ * Utility function executing operational rules for generate widget id.
+ */
 export function generateWidgetId(): string {
   return `wgt_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 }
 
+/**
+ * Utility function executing operational rules for find next available row.
+ */
 export function findNextAvailableRow(widgets: DashboardWidget[]): number {
   if (widgets.length === 0) return 1;
   let maxRow = 1;
@@ -314,10 +344,16 @@ export function findNextAvailableRow(widgets: DashboardWidget[]): number {
   return maxRow;
 }
 
+/**
+ * Utility function executing operational rules for has singleton widget.
+ */
 export function hasSingletonWidget(widgets: DashboardWidget[], type: DashboardWidgetType): boolean {
   return widgets.some((w) => w.type === type);
 }
 
+/**
+ * Utility function executing operational rules for get widget catalog entry.
+ */
 export function getWidgetCatalogEntry(type: DashboardWidgetType): WidgetCatalogEntry | undefined {
   return WIDGET_CATALOG.find((c) => c.type === type);
 }

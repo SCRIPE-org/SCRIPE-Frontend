@@ -69,6 +69,9 @@ const UserSubscriptionListModelSchema = z.object({
   createdAt: z.string().optional().nullable(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class UserSubscriptionMapper {
   static toEntity(model: UserSubscriptionModel): UserSubscription {
     const validated = safeParseApiResponse(UserSubscriptionModelSchema, model, "UserSubscription");

@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 
+/**
+ * React presentation component representing the reading progress UI element.
+ */
 export function ReadingProgress() {
   const [progress, setProgress] = useState(0);
 

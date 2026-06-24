@@ -6,6 +6,9 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import type { CommissionInvoice } from "../../domain/entities/CommissionInvoice";
 
+/**
+ * React presentation component representing the commission invoices view UI element.
+ */
 export function CommissionInvoicesView() {
   const { t } = useI18n();
   const vm = useCommissionLedgerViewModel();

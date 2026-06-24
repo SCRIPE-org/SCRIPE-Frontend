@@ -26,6 +26,9 @@ interface Props {
   onRetry?: () => void;
 }
 
+/**
+ * Constant definition representing recent activity feed.
+ */
 export const RecentActivityFeed = memo(function RecentActivityFeed({
   data,
   isLoading,

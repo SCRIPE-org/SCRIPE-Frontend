@@ -1,5 +1,8 @@
 import type { PluginCatalogItemModel } from "../../data/models/CatalogModels";
 
+/**
+ * Domain entity class representing a Plugin Catalog Item.
+ */
 export class PluginCatalogItem {
   constructor(private readonly data: PluginCatalogItemModel) {}
 

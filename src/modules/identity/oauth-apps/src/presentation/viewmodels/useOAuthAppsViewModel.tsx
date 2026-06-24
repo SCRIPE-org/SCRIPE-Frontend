@@ -22,12 +22,18 @@ import { AppWindow, Loader2, KeyRound, Pencil, Trash2, Check, Copy } from "lucid
 import { format } from "date-fns";
 import type { CrudAction } from "@core/crud/components/generic-crud-view";
 
+/**
+ * Constant definition representing oauth app keys.
+ */
 export const oauthAppKeys = {
   all: ["oauth-apps"] as const,
   list: (filters: Record<string, unknown>) => [...oauthAppKeys.all, "list", filters] as const,
   detail: (id: string) => [...oauthAppKeys.all, "detail", id] as const,
 };
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for o auth apps view model.
+ */
 export function useOAuthAppsViewModel() {
   const { oauthAppRepository } = identityContainer;
   const { t } = useI18n();

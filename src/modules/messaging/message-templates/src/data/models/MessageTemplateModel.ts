@@ -25,6 +25,9 @@ export interface MessageTemplateJson {
   modifiedAt: string | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Message Template List Response.
+ */
 export interface MessageTemplateListResponse {
   items: MessageTemplateJson[];
   totalCount: number;
@@ -34,6 +37,9 @@ export interface MessageTemplateListResponse {
 
 // ===== Create/Update JSON DTOs =====
 
+/**
+ * Interface structure detailing the properties and attributes of Create Message Template Json.
+ */
 export interface CreateMessageTemplateJson {
   key: string;
   channel: string;
@@ -49,6 +55,9 @@ export interface CreateMessageTemplateJson {
   tags?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Message Template Json.
+ */
 export interface UpdateMessageTemplateJson {
   subject?: string;
   body: string;
@@ -60,12 +69,18 @@ export interface UpdateMessageTemplateJson {
   tags?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Preview Template Json.
+ */
 export interface PreviewTemplateJson {
   subject?: string;
   body: string;
   sampleData?: Record<string, unknown>;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Preview Template Response Json.
+ */
 export interface PreviewTemplateResponseJson {
   subject: string | null;
   body: string;

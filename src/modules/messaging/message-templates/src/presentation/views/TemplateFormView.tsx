@@ -39,6 +39,9 @@ const TemplateLivePreview = dynamic(
   { ssr: false }
 );
 
+/**
+ * React presentation component representing the template form view UI element.
+ */
 export function TemplateFormView({ templateId: _templateId }: { templateId?: string } = {}) {
   const vm = useTemplateFormViewModel();
 

@@ -3,6 +3,9 @@ import type { IRegulationService } from "../../domain/interfaces/IRegulationServ
 import type { Regulation } from "../../domain/entities/Regulation";
 import { RegulationMapper } from "../mappers/RegulationMapper";
 
+/**
+ * Repository implementation for managing database operations on Regulation resources.
+ */
 export class RegulationRepository implements IRegulationRepository {
   constructor(private readonly service: IRegulationService) {}
 

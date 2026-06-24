@@ -37,6 +37,9 @@ interface TwoFactorSetupDialogProps {
   confirmError: string | null;
 }
 
+/**
+ * React presentation component representing the two factor setup dialog UI element.
+ */
 export function TwoFactorSetupDialog({
   open,
   onOpenChange,

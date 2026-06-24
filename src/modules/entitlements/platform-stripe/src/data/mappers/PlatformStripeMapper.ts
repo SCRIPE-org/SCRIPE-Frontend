@@ -25,6 +25,9 @@ import {
   BalanceAmount,
 } from "../../domain/entities/PlatformStripeDashboard";
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class PlatformStripeMapper {
   static toDashboardEntity(dto: PlatformStripeDashboardModel): PlatformStripeDashboard {
     return new PlatformStripeDashboard({

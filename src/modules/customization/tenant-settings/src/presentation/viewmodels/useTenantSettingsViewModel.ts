@@ -9,6 +9,9 @@ import type { TenantSettings } from "../../domain/entities/TenantSettings";
 import { DEFAULT_TENANT_SETTINGS } from "../../domain/entities/TenantSettings";
 
 // Query keys factory
+/**
+ * Constant definition representing tenant settings keys.
+ */
 export const tenantSettingsKeys = {
   all: ["tenantSettings"] as const,
   my: () => [...tenantSettingsKeys.all, "my"] as const,

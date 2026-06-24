@@ -58,6 +58,9 @@ function slugify(str: string): string {
     .slice(0, 60);
 }
 
+/**
+ * React presentation component representing the save as theme modal UI element.
+ */
 export function SaveAsThemeModal({
   isOpen,
   onClose,

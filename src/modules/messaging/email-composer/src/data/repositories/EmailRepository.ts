@@ -15,6 +15,9 @@ import type {
 import type { SendManualEmailPayload } from "../../domain/entities/EmailRequests";
 import { EmailMapper } from "../mappers/EmailMapper";
 
+/**
+ * Repository implementation for managing database operations on Email resources.
+ */
 export class EmailRepository implements IEmailRepository {
   constructor(private readonly service: IEmailService) {}
 

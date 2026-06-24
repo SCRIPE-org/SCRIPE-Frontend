@@ -15,6 +15,9 @@ import React from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 
+/**
+ * React presentation component representing the hub hero UI element.
+ */
 export function HubHero() {
   const { t } = useI18n();
   const adminFirstName = useAppStore((s) => s.user?.firstName ?? s.user?.username ?? "");

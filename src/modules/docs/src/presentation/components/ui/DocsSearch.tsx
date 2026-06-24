@@ -14,6 +14,9 @@ interface DocsSearchProps {
   basePath?: string;
 }
 
+/**
+ * React presentation component representing the docs search UI element.
+ */
 export function DocsSearch({ isOpen, onClose, onSearch, basePath = "/docs" }: DocsSearchProps) {
   const { t } = useDocsI18n();
   const router = useRouter();

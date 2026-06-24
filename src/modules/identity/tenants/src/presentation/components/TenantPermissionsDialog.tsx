@@ -52,6 +52,9 @@ interface TenantPermissionsDialogProps {
   parentTenantId?: string | null;
 }
 
+/**
+ * React presentation component representing the tenant permissions dialog UI element.
+ */
 export function TenantPermissionsDialog(props: TenantPermissionsDialogProps) {
   const { open, onOpenChange, tenantName } = props;
   const { t } = useI18n();

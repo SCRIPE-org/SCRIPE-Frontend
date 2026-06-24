@@ -11,6 +11,9 @@ interface TenantPlanStepReviewProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the tenant plan step review UI element.
+ */
 export function TenantPlanStepReview({ form, t }: TenantPlanStepReviewProps) {
   const missingRequired = !form.name;
 

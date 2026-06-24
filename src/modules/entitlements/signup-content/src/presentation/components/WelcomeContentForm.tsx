@@ -48,6 +48,9 @@ function toWelcomeForm(welcome: WelcomeContent | null): FormValues {
   };
 }
 
+/**
+ * React presentation component representing the welcome content form UI element.
+ */
 export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContentFormProps) {
   const { t } = useI18n();
 

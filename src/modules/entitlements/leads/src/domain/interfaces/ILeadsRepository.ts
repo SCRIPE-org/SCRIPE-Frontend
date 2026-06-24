@@ -11,6 +11,9 @@ import type { PagedResult } from "@core/interfaces/common.interface";
 
 // ── Wizard Types (domain-level) ────────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Edition For Conversion.
+ */
 export interface EditionForConversion {
   id: string;
   name: string;
@@ -25,11 +28,17 @@ export interface EditionForConversion {
   isFeatured: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Edition Feature Group.
+ */
 export interface EditionFeatureGroup {
   category: string;
   features: EditionFeatureItem[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Edition Feature Item.
+ */
 export interface EditionFeatureItem {
   featureId: string;
   featureName: string;
@@ -42,11 +51,17 @@ export interface EditionFeatureItem {
   sortOrder: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Feature Override.
+ */
 export interface FeatureOverride {
   featureId: string;
   value: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Status Email Preview.
+ */
 export interface StatusEmailPreview {
   subject: string;
   bodyHtml: string;
@@ -56,6 +71,9 @@ export interface StatusEmailPreview {
   recipientName: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Leads List Params.
+ */
 export interface LeadsListParams {
   page?: number;
   pageSize?: number;
@@ -63,6 +81,9 @@ export interface LeadsListParams {
   search?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Lead Status Params.
+ */
 export interface UpdateLeadStatusParams {
   id: string;
   status: LeadStatus;
@@ -75,6 +96,9 @@ export interface UpdateLeadStatusParams {
   emailBodyOverride?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Create Lead Params.
+ */
 export interface CreateLeadParams {
   companyName: string;
   contactName: string;
@@ -85,6 +109,9 @@ export interface CreateLeadParams {
   notes?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Convert Lead Params.
+ */
 export interface ConvertLeadParams {
   /** Encrypted edition ID. Null = resolve from lead's EditionKey. */
   editionId?: string;
@@ -116,6 +143,9 @@ export interface ConvertLeadParams {
   featureOverrides?: FeatureOverride[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Convert Lead Result.
+ */
 export interface ConvertLeadResult {
   tenantId: string;
   adminId: string;
@@ -126,12 +156,18 @@ export interface ConvertLeadResult {
   editionAssignmentError?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Assign Lead Params.
+ */
 export interface AssignLeadParams {
   /** Encrypted admin ID. Null = unassign. */
   adminId?: string;
   note?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Assignable Admin.
+ */
 export interface AssignableAdmin {
   id: string;
   username: string;
@@ -141,6 +177,9 @@ export interface AssignableAdmin {
   isPlatformAdmin: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Bulk Lead Status Result.
+ */
 export interface BulkLeadStatusResult {
   updated: number;
   notFound: number;
@@ -148,6 +187,9 @@ export interface BulkLeadStatusResult {
   failedIds: string[];
 }
 
+/**
+ * Interface defining repository methods for managing Leads data access.
+ */
 export interface ILeadsRepository {
   getAll(params: LeadsListParams): Promise<PagedResult<PlatformLeadListItem>>;
   getById(id: string): Promise<PlatformLead>;

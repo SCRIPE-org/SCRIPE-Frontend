@@ -19,6 +19,9 @@ import type {
   UpsertThemePayload,
 } from "../../domain/interfaces/IThemeMarketplaceService";
 
+/**
+ * API service for executing HTTP calls related to ThemeMarketplace endpoints.
+ */
 export class ThemeMarketplaceService implements IThemeMarketplaceService {
   constructor(private readonly api: IApiService) {}
 

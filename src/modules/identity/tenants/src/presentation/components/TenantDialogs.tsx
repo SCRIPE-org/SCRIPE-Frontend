@@ -21,6 +21,9 @@ import type { EditionThinModel } from "../../domain/types/SubscriptionTypes";
 // Promotion type (local — avoids cross-module imports)
 // ==========================================
 
+/**
+ * Interface structure detailing the properties and attributes of Promotion Option.
+ */
 export interface PromotionOption {
   id: string;
   name: string;
@@ -33,6 +36,9 @@ export interface PromotionOption {
 // Form State Types
 // ==========================================
 
+/**
+ * Interface structure detailing the properties and attributes of Create Form State.
+ */
 export interface CreateFormState {
   name: string;
   code: string;
@@ -48,12 +54,18 @@ export interface CreateFormState {
   promoCode: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Edit Form State.
+ */
 export interface EditFormState {
   name: string;
   description: string;
   isActive: boolean;
 }
 
+/**
+ * Constant definition representing initial create form.
+ */
 export const initialCreateForm: CreateFormState = {
   name: "",
   code: "",
@@ -67,6 +79,9 @@ export const initialCreateForm: CreateFormState = {
   promoCode: "",
 };
 
+/**
+ * Constant definition representing initial edit form.
+ */
 export const initialEditForm: EditFormState = {
   name: "",
   description: "",
@@ -94,6 +109,9 @@ interface CreateTenantDialogProps {
   onSubscriptionTypeChange: (type: string) => void;
 }
 
+/**
+ * React presentation component representing the create tenant dialog UI element.
+ */
 export function CreateTenantDialog({
   open,
   onOpenChange,
@@ -401,6 +419,9 @@ interface EditTenantDialogProps {
   isLoading: boolean;
 }
 
+/**
+ * React presentation component representing the edit tenant dialog UI element.
+ */
 export function EditTenantDialog({
   open,
   onOpenChange,

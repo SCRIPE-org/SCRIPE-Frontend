@@ -11,6 +11,9 @@ interface WebhookFormOptionsSectionProps {
   vm: WebhookFormViewModel;
 }
 
+/**
+ * React presentation component representing the webhook form options section UI element.
+ */
 export function WebhookFormOptionsSection({ vm }: WebhookFormOptionsSectionProps) {
   const { t } = useI18n();
 

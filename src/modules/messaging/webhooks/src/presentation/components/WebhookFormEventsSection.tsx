@@ -14,6 +14,9 @@ interface WebhookFormEventsSectionProps {
   vm: WebhookFormViewModel;
 }
 
+/**
+ * React presentation component representing the webhook form events section UI element.
+ */
 export function WebhookFormEventsSection({ vm }: WebhookFormEventsSectionProps) {
   const { t } = useI18n();
 

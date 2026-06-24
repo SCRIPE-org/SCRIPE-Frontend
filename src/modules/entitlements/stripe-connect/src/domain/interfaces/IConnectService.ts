@@ -14,6 +14,9 @@ import type {
   TenantTransactionsResponseModel,
 } from "../../data/models/ConnectModels";
 
+/**
+ * Interface defining operations for the Connect network service.
+ */
 export interface IConnectService {
   // ── Account Lifecycle ──
   getAccount(tenantId: string): Promise<ConnectAccountResponseModel>;

@@ -12,6 +12,9 @@ import type {
 } from "../models/InventoryModels";
 import type { PagedResult } from "@core/interfaces/common.interface";
 
+/**
+ * API service for executing HTTP calls related to Inventory endpoints.
+ */
 export class InventoryService implements IInventoryService {
   constructor(private readonly api: IApiService) {}
 

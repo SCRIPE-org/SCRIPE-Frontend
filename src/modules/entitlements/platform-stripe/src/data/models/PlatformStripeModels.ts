@@ -12,6 +12,9 @@ export interface PlatformStripeDashboardModel {
   links: PlatformStripeLinksModel;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Platform Account Model.
+ */
 export interface PlatformAccountModel {
   accountId: string;
   businessName?: string;
@@ -28,17 +31,26 @@ export interface PlatformAccountModel {
   statementDescriptor?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Platform Balance Model.
+ */
 export interface PlatformBalanceModel {
   available: BalanceAmountModel[];
   pending: BalanceAmountModel[];
   connectReserved: BalanceAmountModel[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Balance Amount Model.
+ */
 export interface BalanceAmountModel {
   currency: string;
   amount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Platform Transaction Model.
+ */
 export interface PlatformTransactionModel {
   id: string;
   type: string;
@@ -52,6 +64,9 @@ export interface PlatformTransactionModel {
   status: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Platform Payout Model.
+ */
 export interface PlatformPayoutModel {
   id: string;
   amount: number;
@@ -64,6 +79,9 @@ export interface PlatformPayoutModel {
   created: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Platform Connect Summary Model.
+ */
 export interface PlatformConnectSummaryModel {
   totalAccounts: number;
   activeAccounts: number;
@@ -73,6 +91,9 @@ export interface PlatformConnectSummaryModel {
   totalCommissionsPending: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Platform Stripe Links Model.
+ */
 export interface PlatformStripeLinksModel {
   dashboard: string;
   payments: string;

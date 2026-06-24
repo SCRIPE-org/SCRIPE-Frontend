@@ -13,6 +13,9 @@ import type {
   ComplianceReport,
 } from "../entities/AuditEntities";
 
+/**
+ * Interface defining repository methods for managing Audit data access.
+ */
 export interface IAuditRepository {
   getLogs(params?: AuditFilterParams): Promise<AuditLogPage>;
   getLogDetail(id: string): Promise<AuditLogDetail>;

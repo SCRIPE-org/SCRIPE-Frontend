@@ -7,6 +7,9 @@ import type { PlatformStripeDashboardModel } from "../models/PlatformStripeModel
 import type { IPlatformStripeService } from "../../domain/interfaces/IPlatformStripeService";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 
+/**
+ * API service for executing HTTP calls related to PlatformStripe endpoints.
+ */
 export class PlatformStripeService implements IPlatformStripeService {
   constructor(private readonly api: IApiService) {}
 

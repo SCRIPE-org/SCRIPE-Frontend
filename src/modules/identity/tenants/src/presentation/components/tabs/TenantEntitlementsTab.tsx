@@ -35,6 +35,9 @@ interface TenantEntitlementsTabProps {
   tenantId: string;
 }
 
+/**
+ * React presentation component representing the tenant entitlements tab UI element.
+ */
 export function TenantEntitlementsTab({ tenantId }: TenantEntitlementsTabProps) {
   const { t, direction } = useI18n();
   const router = useRouter();

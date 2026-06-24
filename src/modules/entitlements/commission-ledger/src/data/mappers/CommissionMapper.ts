@@ -35,6 +35,9 @@ const CommissionLedgerEntrySchema = z.object({
   updatedAt: z.string().optional().nullable(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class CommissionMapper {
   static toLedgerEntity(model: CommissionLedgerEntryModel): CommissionLedgerEntry {
     const validated = safeParseApiResponse(

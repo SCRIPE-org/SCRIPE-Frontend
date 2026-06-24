@@ -68,6 +68,9 @@ function getDateRange(preset: DatePreset): { from?: string; to?: string } {
 
 // ── Component ────────────────────────────────────────────
 
+/**
+ * React presentation component representing the subscriptions export dialog UI element.
+ */
 export function SubscriptionsExportDialog({
   open,
   onClose,

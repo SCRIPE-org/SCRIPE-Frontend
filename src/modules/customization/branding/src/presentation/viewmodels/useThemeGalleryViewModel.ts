@@ -36,6 +36,9 @@ type GallerySortKey = "popular" | "newest" | "trending" | "nameAsc" | "nameDesc"
 
 type GalleryTab = "browse" | "featured" | "favorites" | "bundles";
 
+/**
+ * Interface structure detailing the properties and attributes of Gallery Filters.
+ */
 export interface GalleryFilters {
   search: string;
   category: GalleryCategory;
@@ -52,6 +55,9 @@ const DEFAULT_FILTERS: GalleryFilters = {
   sortBy: "popular",
 };
 
+/**
+ * Constant definition representing gallery keys.
+ */
 export const galleryKeys = {
   all: ["theme-gallery"] as const,
   browse: (filters: GalleryFilters, page: number) =>
@@ -60,6 +66,9 @@ export const galleryKeys = {
   favorites: (page: number) => [...galleryKeys.all, "favorites", page] as const,
 };
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for theme gallery view model.
+ */
 export function useThemeGalleryViewModel() {
   const { themeMarketplaceRepository } = customizationContainer;
   const { t } = useI18n();

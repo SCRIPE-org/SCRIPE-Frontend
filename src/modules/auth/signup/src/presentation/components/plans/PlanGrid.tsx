@@ -28,6 +28,9 @@ interface PlanGridProps {
   onSelect: (edition: PlanPickerEdition, billingCycle: "monthly" | "annual") => void;
 }
 
+/**
+ * React presentation component representing the plan grid UI element.
+ */
 export function PlanGrid({
   editions,
   billingCycle,

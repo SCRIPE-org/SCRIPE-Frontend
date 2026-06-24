@@ -1,5 +1,8 @@
 import type { PluginInstallation } from "../entities/PluginInstallation";
 
+/**
+ * Interface defining repository methods for managing Installed data access.
+ */
 export interface IInstalledRepository {
   getInstalled(tenantId: string): Promise<PluginInstallation[]>;
   uninstall(installationId: string, tenantId: string): Promise<void>;

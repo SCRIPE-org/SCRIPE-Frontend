@@ -120,6 +120,9 @@ function KpiCard({
   );
 }
 
+/**
+ * React presentation component representing the overview tab UI element.
+ */
 export function OverviewTab({ overview }: OverviewTabProps) {
   const { t } = useI18n();
 

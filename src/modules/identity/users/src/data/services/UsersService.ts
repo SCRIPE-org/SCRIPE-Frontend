@@ -11,6 +11,9 @@ import type { IUsersService } from "../../domain/interfaces/IUsersService";
 import type { UsersListModel, UsersDetailModel } from "../models/UsersModel";
 import type { UpdateUserRequest } from "../../domain/interfaces/IUsersRepository";
 
+/**
+ * API service for executing HTTP calls related to Users endpoints.
+ */
 export class UsersService implements IUsersService {
   constructor(private readonly api: IApiService) {}
 

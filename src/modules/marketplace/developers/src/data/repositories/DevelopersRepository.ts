@@ -14,6 +14,9 @@ import { DeveloperProfile } from "../../domain/entities/DeveloperProfile";
 import type { IDevelopersRepository } from "../../domain/interfaces/IDevelopersRepository";
 import type { DeveloperDto } from "../../domain/interfaces/IDevelopersService";
 
+/**
+ * Repository implementation for managing database operations on Developers resources.
+ */
 export class DevelopersRepository implements IDevelopersRepository {
   constructor(private readonly service: IDevelopersService) {}
 

@@ -27,6 +27,9 @@ const VALUE_TYPE_OPTIONS: GenericSelectOption[] = [
   { value: "String", label: "String" },
 ];
 
+/**
+ * React presentation component representing the feature definition form fields UI element.
+ */
 export function FeatureDefinitionFormFields({
   form,
   mode,

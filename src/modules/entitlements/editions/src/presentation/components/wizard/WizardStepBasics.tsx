@@ -12,6 +12,9 @@ import type {
   UpdateEditionRequest,
 } from "../../../domain/entities/EditionRequests";
 
+/**
+ * Interface structure detailing the properties and attributes of Edition Option.
+ */
 export interface EditionOption {
   id: string;
   name: string;
@@ -47,6 +50,9 @@ function SectionHeader({
   );
 }
 
+/**
+ * React presentation component representing the wizard step basics UI element.
+ */
 export function WizardStepBasics({
   form,
   onChange,

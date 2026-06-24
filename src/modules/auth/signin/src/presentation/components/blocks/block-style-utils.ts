@@ -1,5 +1,8 @@
 "use client";
 
+/**
+ * Utility function executing operational rules for block color.
+ */
 export function blockColor(
   color: string | undefined,
   fallback = "var(--login-text, hsl(var(--foreground)))"
@@ -13,11 +16,17 @@ export function blockColor(
   return color;
 }
 
+/**
+ * Utility function executing operational rules for clamp.
+ */
 export function clamp(value: number | undefined, min: number, max: number, fallback: number) {
   if (typeof value !== "number" || Number.isNaN(value)) return fallback;
   return Math.min(Math.max(value, min), max);
 }
 
+/**
+ * Utility function executing operational rules for safe items.
+ */
 export function safeItems<T>(items: T[] | undefined, limit: number): T[] {
   return Array.isArray(items) ? items.slice(0, limit) : [];
 }

@@ -8,6 +8,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@core/ui/tooltip";
 import { cn } from "@core/common/utils";
 import type { TenantTreeNode } from "../../../domain/entities/Tenant";
 
+/**
+ * Type declaration definition describing the schema of tenant status.
+ */
 export type TenantStatus = "active" | "suspended" | "canceled" | "expired" | "inactive";
 
 interface TenantNodeCardHeaderProps {
@@ -27,6 +30,9 @@ interface TenantNodeCardHeaderProps {
   onToggle: () => void;
 }
 
+/**
+ * React presentation component representing the tenant node card header UI element.
+ */
 export function TenantNodeCardHeader({
   node,
   isExpanded,

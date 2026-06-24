@@ -4,6 +4,9 @@ import { BG_STYLE, SPLIT_WRAPPER_STYLE } from "./layout-types";
 import { MobileLogo, DesktopHeading, LogoImg } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
+/**
+ * React presentation component representing the sidebar compact layout UI element.
+ */
 export function SidebarCompactLayout({
   formContent,
   topActions,

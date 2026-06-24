@@ -52,6 +52,9 @@ import {
   readPersistedWizardState,
 } from "../helpers/wizardStorage";
 
+/**
+ * Repository implementation for managing database operations on Signup resources.
+ */
 export class SignupRepository implements ISignupRepository {
   constructor(private readonly service: ISignupService) {}
 

@@ -18,6 +18,9 @@ import Link from "next/link";
 import { useMagicLinkCallbackViewModel } from "../viewmodels/useMagicLinkCallbackViewModel";
 import { VaultBackground } from "../components/layouts/VaultBackground";
 
+/**
+ * React presentation component representing the magic link callback view UI element.
+ */
 export function MagicLinkCallbackView() {
   const { t } = useI18n();
   const vm = useMagicLinkCallbackViewModel();

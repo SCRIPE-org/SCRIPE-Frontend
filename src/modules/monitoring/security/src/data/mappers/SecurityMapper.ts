@@ -16,6 +16,9 @@ import type {
   SecurityChange,
 } from "../../domain/entities/SecurityEntities";
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class SecurityMapper {
   static toSecurityEvent(dto: SecurityEventDto): SecurityEvent {
     return {

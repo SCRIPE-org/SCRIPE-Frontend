@@ -27,6 +27,11 @@ import { LoginLayoutRouter } from "../components/LoginLayoutRouter";
 import { LoginTopActions } from "../components/LoginTopActions";
 import { TenantSuspendedView, TenantNotFoundView } from "./TenantStatusView";
 
+/**
+ * LoginView renders the 5-layout customizable login screen.
+ * Resolves tenant domains, handles authentication preview states,
+ * and loads dynamic slot compositions and styles based on database config.
+ */
 export function LoginView() {
   const vm = useLoginViewModel();
   const { t, language, direction, setLanguage } = useI18n();

@@ -53,6 +53,9 @@ interface OverridesViewProps {
   tenantId: string;
 }
 
+/**
+ * React presentation component representing the overrides view UI element.
+ */
 export function OverridesView({ tenantId }: OverridesViewProps) {
   useModuleLocales(() => import("../../../../core/locales"), "entitlements-shared");
   const { t } = useI18n();

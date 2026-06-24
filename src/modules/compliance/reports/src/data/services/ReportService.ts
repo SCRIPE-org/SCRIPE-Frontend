@@ -9,6 +9,9 @@ import type { ReportModel } from "../models/ReportModels";
 import type { PagedResult } from "@core/interfaces/common.interface";
 import type { GenerateReportRequest } from "../../domain/entities/ComplianceReport";
 
+/**
+ * API service for executing HTTP calls related to Report endpoints.
+ */
 export class ReportService implements IReportService {
   constructor(private readonly api: IApiService) {}
 

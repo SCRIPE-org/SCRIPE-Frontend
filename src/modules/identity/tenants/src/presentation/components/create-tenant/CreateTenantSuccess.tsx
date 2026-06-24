@@ -20,6 +20,9 @@ interface CreateTenantSuccessProps {
   direction: string;
 }
 
+/**
+ * React presentation component representing the create tenant success UI element.
+ */
 export function CreateTenantSuccess({ vm, t, direction }: CreateTenantSuccessProps) {
   const result = vm.result!;
 

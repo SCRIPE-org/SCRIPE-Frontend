@@ -56,6 +56,9 @@ interface StripeTransactionsLogProps {
   setType: (t: string | undefined) => void;
 }
 
+/**
+ * React presentation component representing the stripe transactions log UI element.
+ */
 export function StripeTransactionsLog({
   transactions,
   isLoading,

@@ -18,6 +18,9 @@ import type {
 } from "../../domain/entities/OAuthApp";
 import { OAuthAppMapper } from "../mappers/OAuthAppMapper";
 
+/**
+ * Repository implementation for managing database operations on OAuthApp resources.
+ */
 export class OAuthAppRepository implements IOAuthAppRepository {
   constructor(private readonly service: IOAuthAppService) {}
 

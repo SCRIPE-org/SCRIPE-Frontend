@@ -41,6 +41,9 @@ const DEVICE_DIMS: Record<DeviceSize, { w: string; label: string }> = {
   mobile: { w: "375px", label: "Mobile" },
 };
 
+/**
+ * React presentation component representing the dashboard layout preview UI element.
+ */
 export function DashboardLayoutPreview({ settings }: Props) {
   const { direction } = useI18n();
   const isRTL = direction === "rtl";

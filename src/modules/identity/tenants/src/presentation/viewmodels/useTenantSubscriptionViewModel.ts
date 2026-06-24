@@ -17,6 +17,9 @@ import { appLogger } from "@/core/common/logger";
 
 // ── Result Interface ──
 
+/**
+ * Interface structure detailing the properties and attributes of Use Tenant Subscription View Model Result.
+ */
 export interface UseTenantSubscriptionViewModelResult {
   // Data
   subscription: SubscriptionModel | undefined;
@@ -114,6 +117,9 @@ export interface UseTenantSubscriptionViewModelResult {
 
 // ── ViewModel ──
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for tenant subscription view model.
+ */
 export function useTenantSubscriptionViewModel(
   tenantId: string,
   selectedEditionId?: string,

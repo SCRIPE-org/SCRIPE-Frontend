@@ -20,6 +20,9 @@ interface PermissionCategoryAccordionProps {
   groups: PermissionModuleGroup[];
 }
 
+/**
+ * React presentation component representing the permission category accordion UI element.
+ */
 export function PermissionCategoryAccordion({ groups }: PermissionCategoryAccordionProps) {
   const { t, language } = useI18n();
 

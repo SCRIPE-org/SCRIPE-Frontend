@@ -2,6 +2,9 @@
 
 import type { AdminSignupContent, ContentMode } from "../entities/SignupContent";
 
+/**
+ * Interface structure detailing the properties and attributes of Update Welcome Params.
+ */
 export interface UpdateWelcomeParams {
   headlineEn: string;
   headlineAr: string;
@@ -14,6 +17,9 @@ export interface UpdateWelcomeParams {
   trustedByLabelAr: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Create Trust Mark Params.
+ */
 export interface CreateTrustMarkParams {
   key: string;
   kind: string;
@@ -26,6 +32,9 @@ export interface CreateTrustMarkParams {
   isActive: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Trust Mark Params.
+ */
 export interface UpdateTrustMarkParams {
   key?: string;
   kind?: string;
@@ -38,6 +47,9 @@ export interface UpdateTrustMarkParams {
   isActive?: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Create Customer Logo Params.
+ */
 export interface CreateCustomerLogoParams {
   key: string;
   name: string;
@@ -47,6 +59,9 @@ export interface CreateCustomerLogoParams {
   isActive: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Customer Logo Params.
+ */
 export interface UpdateCustomerLogoParams {
   key?: string;
   name?: string;
@@ -56,6 +71,9 @@ export interface UpdateCustomerLogoParams {
   isActive?: boolean;
 }
 
+/**
+ * Interface defining repository methods for managing SignupContent data access.
+ */
 export interface ISignupContentRepository {
   getAdminContent(): Promise<AdminSignupContent>;
   setMode(mode: ContentMode): Promise<void>;

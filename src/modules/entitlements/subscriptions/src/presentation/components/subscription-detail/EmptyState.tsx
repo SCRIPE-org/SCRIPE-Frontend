@@ -16,6 +16,9 @@ interface EmptyStateProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the empty state UI element.
+ */
 export function EmptyState({ vm, t }: EmptyStateProps) {
   return (
     <Card className="border-2 border-dashed border-border/60">

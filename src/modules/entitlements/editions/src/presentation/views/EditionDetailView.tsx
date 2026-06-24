@@ -31,6 +31,9 @@ interface EditionDetailViewProps {
   editionId: string;
 }
 
+/**
+ * React presentation component representing the edition detail view UI element.
+ */
 export function EditionDetailView({ editionId }: EditionDetailViewProps) {
   useModuleLocales(() => import("../../../locales"), "editions");
   const { t, language } = useI18n();

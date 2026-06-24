@@ -3,6 +3,9 @@ import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type { IInstalledService } from "../../domain/interfaces/IInstalledService";
 import type { PluginInstallationModel } from "../models/InstalledModels";
 
+/**
+ * API service for executing HTTP calls related to Installed endpoints.
+ */
 export class InstalledService implements IInstalledService {
   constructor(private readonly api: IApiService) {}
 

@@ -14,6 +14,9 @@ import type {
 } from "../entities/EditionPromotion";
 import type { CreateEditionRequest, UpdateEditionRequest } from "../entities/EditionRequests";
 
+/**
+ * Interface defining operations for the Edition network service.
+ */
 export interface IEditionService {
   getAll(
     params: PaginationParams & { includeRetired?: boolean }

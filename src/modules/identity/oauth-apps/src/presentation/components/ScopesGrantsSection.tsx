@@ -15,6 +15,9 @@ interface ScopesGrantsSectionProps {
   standardGrantTypes: string[];
 }
 
+/**
+ * React presentation component representing the scopes grants section UI element.
+ */
 export function ScopesGrantsSection({
   form,
   updateField,

@@ -60,6 +60,9 @@ function formatPad(n: number) {
   return n.toString().padStart(2, "0");
 }
 
+/**
+ * React presentation component representing the checkout dialog UI element.
+ */
 export function CheckoutDialog({ vm }: SubscriptionDialogProps) {
   const { t } = useI18n();
   const countdown = useCountdown(vm.showCheckoutDialog);

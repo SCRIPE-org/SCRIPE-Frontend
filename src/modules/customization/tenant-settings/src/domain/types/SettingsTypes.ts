@@ -54,6 +54,9 @@ export interface TenantSettingsModel {
   isSafeMode: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Tenant Settings Request.
+ */
 export interface UpdateTenantSettingsRequest {
   maxAdmins?: number;
   maxRoles?: number;

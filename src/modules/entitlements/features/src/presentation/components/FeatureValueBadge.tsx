@@ -14,6 +14,9 @@ interface FeatureValueBadgeProps {
   isEffective?: boolean;
 }
 
+/**
+ * React presentation component representing the feature value badge UI element.
+ */
 export function FeatureValueBadge({
   value,
   valueType,

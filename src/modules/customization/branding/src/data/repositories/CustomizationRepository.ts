@@ -16,6 +16,9 @@ import { BrandingMapper } from "../mappers/BrandingMapper";
 import { BrandingModel, AuditLogEntryModel } from "../models/BrandingModel";
 import { SystemSettingsModel } from "../models/SystemSettingsModel";
 
+/**
+ * Repository implementation for managing database operations on Customization resources.
+ */
 export class CustomizationRepository implements ICustomizationRepository {
   constructor(private readonly service: ICustomizationService) {}
 

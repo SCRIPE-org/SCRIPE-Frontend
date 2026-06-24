@@ -57,6 +57,9 @@ export interface GetAppListingsParams {
   pricingModel?: "Free" | "OneTime" | "Subscription";
 }
 
+/**
+ * Interface defining operations for the AppListings network service.
+ */
 export interface IAppListingsService {
   /** Fetch paginated list of app listings. */
   getAll(params: GetAppListingsParams): Promise<AppListingListDto>;

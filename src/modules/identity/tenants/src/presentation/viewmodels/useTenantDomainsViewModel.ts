@@ -14,11 +14,17 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { toast } from "sonner";
 import type { TenantDomainJson } from "../../domain/interfaces/ITenantService";
 
+/**
+ * Interface structure detailing the properties and attributes of Use Tenant Domains View Model Params.
+ */
 export interface UseTenantDomainsViewModelParams {
   tenantId: string;
   tenantName: string;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for tenant domains view model.
+ */
 export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewModelParams) {
   const { t } = useI18n();
   const { tenantRepository } = identityContainer;

@@ -19,6 +19,9 @@ export interface PlatformLeadListResponseModel {
   primaryPriority?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Platform Lead Response Model.
+ */
 export interface PlatformLeadResponseModel {
   id: string;
   companyName: string;
@@ -42,6 +45,9 @@ export interface PlatformLeadResponseModel {
   primaryPriority?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Paged Leads Model.
+ */
 export interface PagedLeadsModel {
   items: PlatformLeadListResponseModel[];
   totalCount: number;
@@ -52,6 +58,9 @@ export interface PagedLeadsModel {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Assignable Admin Response Model.
+ */
 export interface AssignableAdminResponseModel {
   id: string;
   username: string;
@@ -64,6 +73,9 @@ export interface AssignableAdminResponseModel {
   isSuperAdmin?: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Paged Assignable Admins Model.
+ */
 export interface PagedAssignableAdminsModel {
   items: AssignableAdminResponseModel[];
   totalCount: number;
@@ -74,6 +86,9 @@ export interface PagedAssignableAdminsModel {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Lead Activity Response Model.
+ */
 export interface LeadActivityResponseModel {
   id: string;
   leadId: string;
@@ -87,12 +102,18 @@ export interface LeadActivityResponseModel {
   occurredAt: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Send Lead Email Request.
+ */
 export interface SendLeadEmailRequest {
   subject: string;
   bodyHtml: string;
   templateKey?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Lead Communication Log Dto.
+ */
 export interface LeadCommunicationLogDto {
   id: string;
   subject: string;

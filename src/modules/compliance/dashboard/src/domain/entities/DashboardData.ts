@@ -12,6 +12,9 @@ export interface RegulationCoverageData {
   tenantsUsingCount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Dashboard Data.
+ */
 export interface DashboardData {
   openDsrCount: number;
   pendingDsrCount: number;
@@ -22,6 +25,9 @@ export interface DashboardData {
   regulationCoverage: RegulationCoverageData[];
 }
 
+/**
+ * Domain entity class representing a Compliance Dashboard.
+ */
 export class ComplianceDashboard {
   constructor(private readonly data: DashboardData) {}
 

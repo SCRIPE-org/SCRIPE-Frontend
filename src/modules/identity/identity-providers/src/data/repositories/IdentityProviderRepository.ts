@@ -17,6 +17,9 @@ import type {
 } from "../../domain/entities/IdentityProvider";
 import { IdentityProviderMapper } from "../mappers/IdentityProviderMapper";
 
+/**
+ * Repository implementation for managing database operations on IdentityProvider resources.
+ */
 export class IdentityProviderRepository implements IIdentityProviderRepository {
   constructor(private readonly service: IIdentityProviderService) {}
 

@@ -193,6 +193,9 @@ function pushHistory(state: BuilderState): Partial<BuilderState> {
 }
 
 // ── Store ────────────────────────────────────────────────
+/**
+ * Constant definition representing use builder store.
+ */
 export const useBuilderStore = create<BuilderState>((set, get) => ({
   // Initial state
   components: DEFAULT_CANVAS_COMPONENTS,

@@ -1,5 +1,8 @@
 import type { PluginExecutionLogModel } from "../../data/models/LogsModels";
 
+/**
+ * Domain entity class representing a Plugin Execution Log.
+ */
 export class PluginExecutionLog {
   constructor(private readonly data: PluginExecutionLogModel) {}
 

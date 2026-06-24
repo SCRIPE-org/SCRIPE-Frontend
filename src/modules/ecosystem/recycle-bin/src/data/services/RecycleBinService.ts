@@ -14,6 +14,9 @@ import type {
   DeletedItemsListResult,
 } from "../../domain/interfaces/IRecycleBinService";
 
+/**
+ * API service for executing HTTP calls related to RecycleBin endpoints.
+ */
 export class RecycleBinService implements IRecycleBinService {
   constructor(private readonly api: IApiService) {}
 

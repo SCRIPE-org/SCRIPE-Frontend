@@ -279,6 +279,9 @@ function ReportCard({ report }: { report: ComplianceReport }) {
 
 // ── Main View ─────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the reports view UI element.
+ */
 export function ReportsView() {
   useModuleLocales(() => import("../../../locales"), "compliance-reports");
   const { t, direction } = useI18n();

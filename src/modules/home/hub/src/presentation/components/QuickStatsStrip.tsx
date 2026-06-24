@@ -32,6 +32,9 @@ interface StatCardData {
   bgColor: string;
 }
 
+/**
+ * Constant definition representing quick stats strip.
+ */
 export const QuickStatsStrip = memo(function QuickStatsStrip({
   data,
   isLoading,

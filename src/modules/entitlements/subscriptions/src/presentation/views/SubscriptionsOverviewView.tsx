@@ -23,6 +23,9 @@ import { SubscriptionsDistributionCharts } from "../components/SubscriptionsDist
 import { UpcomingRenewalsTimeline } from "../components/UpcomingRenewalsTimeline";
 import { SubscriptionsDataTable } from "../components/SubscriptionsDataTable";
 
+/**
+ * React presentation component representing the subscriptions overview view UI element.
+ */
 export function SubscriptionsOverviewView() {
   useModuleLocales(() => import("../../../../core/locales"), "entitlements-shared");
   const vm = useSubscriptionsOverviewViewModel();

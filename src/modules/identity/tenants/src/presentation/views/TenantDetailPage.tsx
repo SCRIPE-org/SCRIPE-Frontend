@@ -35,6 +35,9 @@ interface TenantDetailPageProps {
   tenantId: string;
 }
 
+/**
+ * Utility function executing operational rules for tenant detail page.
+ */
 export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
   const {
     tenant,

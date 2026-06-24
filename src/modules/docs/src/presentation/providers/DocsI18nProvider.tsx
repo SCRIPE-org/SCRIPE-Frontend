@@ -27,10 +27,22 @@ import {
 } from "../../locales/docs-registry";
 
 // ─── Types ─────────────────────────────────────────────────────
+/**
+ * Type declaration definition describing the schema of doc language.
+ */
 export type DocLanguage = "en" | "ar" | "fr" | "ru" | "zh" | "es" | "de";
+/**
+ * Type declaration definition describing the schema of doc direction.
+ */
 export type DocDirection = "ltr" | "rtl";
+/**
+ * Type declaration definition describing the schema of doc scope.
+ */
 export type DocScope = "technical" | "commercial";
 
+/**
+ * Interface structure detailing the properties and attributes of Doc Language Info.
+ */
 export interface DocLanguageInfo {
   code: DocLanguage;
   label: string;
@@ -38,6 +50,9 @@ export interface DocLanguageInfo {
   direction: DocDirection;
 }
 
+/**
+ * Constant definition representing d o c_ l a n g u a g e s.
+ */
 export const DOC_LANGUAGES: DocLanguageInfo[] = [
   { code: "en", label: "English", nativeLabel: "English", direction: "ltr" },
   { code: "ar", label: "Arabic", nativeLabel: "العربية", direction: "rtl" },
@@ -76,6 +91,9 @@ interface DocsI18nContextType {
 const DocsI18nContext = createContext<DocsI18nContextType | undefined>(undefined);
 
 // ─── Provider ──────────────────────────────────────────────────
+/**
+ * Utility function executing operational rules for docs i18n provider.
+ */
 export function DocsI18nProvider({
   children,
   scope = "technical",
@@ -178,6 +196,9 @@ export function DocsI18nProvider({
 }
 
 // ─── Hook ──────────────────────────────────────────────────────
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for docs i18n.
+ */
 export function useDocsI18n(): DocsI18nContextType {
   const context = useContext(DocsI18nContext);
   if (context === undefined) {

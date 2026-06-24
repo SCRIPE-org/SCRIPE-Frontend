@@ -65,6 +65,9 @@ const sections: DocSection[] = [
     language: "typescript",
     filename: "SignalRProvider — Connection Management",
     code: `// Manages SignalR connections with automatic reconnection
+/**
+ * Utility function executing operational rules for signal r provider.
+ */
 export function SignalRProvider({ children }: { children: ReactNode }) {
   const { token } = useAuthStore();
   const [auditConnection, setAuditConnection] = useState<HubConnection | null>(null);

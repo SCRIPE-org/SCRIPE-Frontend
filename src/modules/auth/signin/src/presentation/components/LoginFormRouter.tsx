@@ -34,6 +34,13 @@ interface LoginFormRouterProps {
   isPlatformMode?: boolean;
 }
 
+/**
+ * LoginFormRouter is a controller-router component that renders the appropriate form
+ * based on the active authentication step (credentials, two-factor code, magic link setup,
+ * workspace selector, phone OTP, passkey prompts, or QR sign-in views).
+ *
+ * @param props Props containing the ViewModels, tenant context, slots, and layout settings.
+ */
 export function LoginFormRouter({
   vm,
   sso,

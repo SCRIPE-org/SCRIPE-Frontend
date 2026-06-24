@@ -1,3 +1,6 @@
+/**
+ * Interface structure detailing the properties and attributes of External Login.
+ */
 export interface ExternalLogin {
   id: string;
   providerName: string;

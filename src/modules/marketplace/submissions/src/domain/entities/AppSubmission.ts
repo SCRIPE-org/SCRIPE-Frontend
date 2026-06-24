@@ -1,3 +1,6 @@
+/**
+ * Interface structure detailing the properties and attributes of App Submission Data.
+ */
 export interface AppSubmissionData {
   id: string;
   appListingId: string;
@@ -10,6 +13,9 @@ export interface AppSubmissionData {
   reviewedAt: string | null;
 }
 
+/**
+ * Domain entity class representing a App Submission.
+ */
 export class AppSubmission {
   constructor(private readonly data: AppSubmissionData) {}
   get id() {

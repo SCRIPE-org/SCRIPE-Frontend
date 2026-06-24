@@ -41,6 +41,9 @@ interface PriceRow {
   lifetimeAmount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Preview Row.
+ */
 export interface PreviewRow {
   currency: string;
   monthlyAmount: number;
@@ -50,6 +53,9 @@ export interface PreviewRow {
   rate?: number;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for tenant plan detail view model.
+ */
 export function useTenantPlanDetailViewModel(planId: string) {
   const { success, error: showError } = useEnhancedToast();
   const { tenantPlanRepository, editionRepository } = entitlementsContainer;

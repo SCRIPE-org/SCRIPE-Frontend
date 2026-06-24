@@ -24,6 +24,9 @@ import type { ThemeDetail } from "../../domain/entities/ThemeDetail";
 import type { ThemeFilterState } from "../models/ThemeMarketplaceTypes";
 import { ThemeMarketplaceMapper } from "../mappers/ThemeMarketplaceMapper";
 
+/**
+ * Repository implementation for managing database operations on ThemeMarketplace resources.
+ */
 export class ThemeMarketplaceRepository implements IThemeMarketplaceRepository {
   constructor(private readonly service: IThemeMarketplaceService) {}
 

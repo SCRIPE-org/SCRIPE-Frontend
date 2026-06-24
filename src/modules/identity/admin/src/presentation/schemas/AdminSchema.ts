@@ -115,7 +115,19 @@ export const assignRoleSchema = z.object({
   expiresAt: z.string().optional(),
 });
 
+/**
+ * Type declaration definition describing the schema of create admin form data.
+ */
 export type CreateAdminFormData = z.infer<typeof createAdminSchema>;
+/**
+ * Type declaration definition describing the schema of update admin form data.
+ */
 export type UpdateAdminFormData = z.infer<typeof updateAdminSchema>;
+/**
+ * Type declaration definition describing the schema of reset password form data.
+ */
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+/**
+ * Type declaration definition describing the schema of assign role form data.
+ */
 export type AssignRoleFormData = z.infer<typeof assignRoleSchema>;

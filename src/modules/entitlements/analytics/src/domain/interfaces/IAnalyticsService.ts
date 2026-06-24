@@ -13,6 +13,9 @@ import type {
   UpdateReportPreferenceRequestModel,
 } from "../../data/models/AnalyticsModels";
 
+/**
+ * Interface defining operations for the Analytics network service.
+ */
 export interface IAnalyticsService {
   getOverview(months?: number): Promise<AnalyticsOverviewModel>;
   getMrrMovement(months?: number): Promise<MrrMovementResponseModel>;

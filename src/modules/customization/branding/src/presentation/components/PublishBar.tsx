@@ -58,6 +58,9 @@ const DEVICES: { id: DeviceSize; icon: typeof Monitor; labelKey: string }[] = [
   { id: "mobile", icon: Smartphone, labelKey: "studio.device.mobile" },
 ];
 
+/**
+ * React presentation component representing the publish bar UI element.
+ */
 export function PublishBar({
   isDirty,
   isPublishing,

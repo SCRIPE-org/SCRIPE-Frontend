@@ -10,6 +10,9 @@ import { safeItems } from "./block-style-utils";
 const GAP_CLASS = { sm: "gap-2", md: "gap-4", lg: "gap-6" };
 const ICON_CLASS = { sm: "text-lg", md: "text-2xl", lg: "text-3xl" };
 
+/**
+ * React presentation component representing the icon row block view UI element.
+ */
 export function IconRowBlockView({ block }: { block: IconRowBlock }) {
   const props = block.props;
   return (

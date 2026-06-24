@@ -12,6 +12,9 @@ export interface BalanceAmountData {
   amount: number;
 }
 
+/**
+ * Domain entity class representing a Balance Amount.
+ */
 export class BalanceAmount {
   constructor(private readonly data: BalanceAmountData) {}
   get currency() {
@@ -32,6 +35,9 @@ export class BalanceAmount {
 }
 
 // ── Platform Account ──
+/**
+ * Interface structure detailing the properties and attributes of Platform Account Data.
+ */
 export interface PlatformAccountData {
   accountId: string;
   businessName: string;
@@ -48,6 +54,9 @@ export interface PlatformAccountData {
   statementDescriptor: string;
 }
 
+/**
+ * Domain entity class representing a Platform Account.
+ */
 export class PlatformAccount {
   constructor(private readonly data: PlatformAccountData) {}
 
@@ -112,12 +121,18 @@ export class PlatformAccount {
 }
 
 // ── Platform Balance ──
+/**
+ * Interface structure detailing the properties and attributes of Platform Balance Data.
+ */
 export interface PlatformBalanceData {
   available: BalanceAmount[];
   pending: BalanceAmount[];
   connectReserved: BalanceAmount[];
 }
 
+/**
+ * Domain entity class representing a Platform Balance.
+ */
 export class PlatformBalance {
   constructor(private readonly data: PlatformBalanceData) {}
 
@@ -137,6 +152,9 @@ export class PlatformBalance {
 }
 
 // ── Platform Transaction ──
+/**
+ * Interface structure detailing the properties and attributes of Platform Transaction Data.
+ */
 export interface PlatformTransactionData {
   id: string;
   type: string;
@@ -150,6 +168,9 @@ export interface PlatformTransactionData {
   status: string;
 }
 
+/**
+ * Domain entity class representing a Platform Transaction.
+ */
 export class PlatformTransaction {
   constructor(private readonly data: PlatformTransactionData) {}
 
@@ -200,6 +221,9 @@ export class PlatformTransaction {
 }
 
 // ── Platform Payout ──
+/**
+ * Interface structure detailing the properties and attributes of Platform Payout Data.
+ */
 export interface PlatformPayoutData {
   id: string;
   amount: number;
@@ -212,6 +236,9 @@ export interface PlatformPayoutData {
   created: string;
 }
 
+/**
+ * Domain entity class representing a Platform Payout.
+ */
 export class PlatformPayout {
   constructor(private readonly data: PlatformPayoutData) {}
 
@@ -254,6 +281,9 @@ export class PlatformPayout {
 }
 
 // ── Connect Summary ──
+/**
+ * Interface structure detailing the properties and attributes of Platform Connect Summary Data.
+ */
 export interface PlatformConnectSummaryData {
   totalAccounts: number;
   activeAccounts: number;
@@ -263,6 +293,9 @@ export interface PlatformConnectSummaryData {
   totalCommissionsPending: number;
 }
 
+/**
+ * Domain entity class representing a Platform Connect Summary.
+ */
 export class PlatformConnectSummary {
   constructor(private readonly data: PlatformConnectSummaryData) {}
 
@@ -296,6 +329,9 @@ export class PlatformConnectSummary {
 }
 
 // ── Stripe Links ──
+/**
+ * Interface structure detailing the properties and attributes of Platform Stripe Links Data.
+ */
 export interface PlatformStripeLinksData {
   dashboard: string;
   payments: string;
@@ -307,6 +343,9 @@ export interface PlatformStripeLinksData {
   customers: string;
 }
 
+/**
+ * Domain entity class representing a Platform Stripe Links.
+ */
 export class PlatformStripeLinks {
   constructor(private readonly data: PlatformStripeLinksData) {}
 
@@ -341,6 +380,9 @@ export class PlatformStripeLinks {
 }
 
 // ── Root Dashboard Entity ──
+/**
+ * Interface structure detailing the properties and attributes of Platform Stripe Dashboard Data.
+ */
 export interface PlatformStripeDashboardData {
   account: PlatformAccount;
   balance: PlatformBalance;
@@ -350,6 +392,9 @@ export interface PlatformStripeDashboardData {
   links: PlatformStripeLinks;
 }
 
+/**
+ * Domain entity class representing a Platform Stripe Dashboard.
+ */
 export class PlatformStripeDashboard {
   constructor(private readonly data: PlatformStripeDashboardData) {}
 

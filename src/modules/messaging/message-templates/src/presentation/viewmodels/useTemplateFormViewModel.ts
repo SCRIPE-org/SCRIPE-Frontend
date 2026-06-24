@@ -17,8 +17,14 @@ import { DEFAULT_DESIGN } from "../components/DesignVariablesPanel";
 
 const QUERY_KEY = ["message-templates"];
 
+/**
+ * Type declaration definition describing the schema of template form mode.
+ */
 export type TemplateFormMode = "create" | "edit";
 
+/**
+ * Interface structure detailing the properties and attributes of Template Form Values.
+ */
 export interface TemplateFormValues {
   key: string;
   channel: MessageChannel;
@@ -32,6 +38,9 @@ export interface TemplateFormValues {
   designVariables: DesignVariables;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for template form view model.
+ */
 export function useTemplateFormViewModel() {
   const params = useParams();
   const router = useRouter();

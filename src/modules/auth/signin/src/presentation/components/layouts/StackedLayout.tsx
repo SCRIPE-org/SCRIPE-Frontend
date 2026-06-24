@@ -5,6 +5,9 @@ import { BG_STYLE, WRAPPER_STYLE } from "./layout-types";
 import { LogoImg } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
+/**
+ * React presentation component representing the stacked layout UI element.
+ */
 export function StackedLayout({
   slotConfig,
   formContent,

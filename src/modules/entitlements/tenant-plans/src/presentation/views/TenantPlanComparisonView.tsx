@@ -103,6 +103,9 @@ function LoadingState() {
 }
 
 // ─── Main View ─────────────────────────────────────────────────────────────
+/**
+ * React presentation component representing the tenant plan comparison view UI element.
+ */
 export function TenantPlanComparisonView() {
   useModuleLocales(() => import("../../../locales"), "tenant-plans");
   const { t, language } = useI18n();

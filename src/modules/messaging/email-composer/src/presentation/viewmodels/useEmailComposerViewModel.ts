@@ -42,6 +42,9 @@ function resolveTemplateVariables(
   );
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for email composer view model.
+ */
 export function useEmailComposerViewModel() {
   const { t } = useI18n();
   const queryClient = useQueryClient();

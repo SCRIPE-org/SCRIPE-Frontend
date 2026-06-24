@@ -13,6 +13,9 @@ interface SamlSectionProps {
   updateField: <K extends keyof OAuthAppFormState>(field: K, value: OAuthAppFormState[K]) => void;
 }
 
+/**
+ * React presentation component representing the saml section UI element.
+ */
 export function SamlSection({ form, updateField }: SamlSectionProps) {
   const { t } = useI18n();
 

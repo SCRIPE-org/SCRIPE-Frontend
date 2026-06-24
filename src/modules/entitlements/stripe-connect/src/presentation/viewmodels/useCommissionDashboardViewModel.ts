@@ -8,8 +8,14 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 
+/**
+ * Type declaration definition describing the schema of trend period.
+ */
 export type TrendPeriod = 30 | 90 | 365;
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for commission dashboard view model.
+ */
 export function useCommissionDashboardViewModel() {
   const { connectRepository } = entitlementsContainer;
 

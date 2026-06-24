@@ -10,6 +10,9 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { UpdateTenantPlanRequest } from "../../domain/entities/TenantPlanRequests";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for tenant plan edit view model.
+ */
 export function useTenantPlanEditViewModel(planId: string) {
   const router = useRouter();
   const { tenantPlanRepository } = entitlementsContainer;

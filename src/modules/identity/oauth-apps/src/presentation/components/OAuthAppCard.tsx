@@ -28,6 +28,9 @@ import {
   AlertDialogTrigger,
 } from "@core/ui/alert-dialog";
 
+/**
+ * Interface structure detailing the properties and attributes of O Auth App Item.
+ */
 export interface OAuthAppItem {
   id: string;
   displayName: string;
@@ -49,6 +52,9 @@ interface OAuthAppCardProps {
   onDelete: (id: string) => void;
 }
 
+/**
+ * React presentation component representing the o auth app card UI element.
+ */
 export function OAuthAppCard({
   item,
   copiedField,

@@ -14,6 +14,9 @@ interface SubscriptionStatusCardProps {
   language: string;
 }
 
+/**
+ * React presentation component representing the subscription status card UI element.
+ */
 export function SubscriptionStatusCard({ subscription, t, language }: SubscriptionStatusCardProps) {
   const statusLabels: Record<string, string> = {
     Active: t("entitlements.subscription.status.Active") || "Active",

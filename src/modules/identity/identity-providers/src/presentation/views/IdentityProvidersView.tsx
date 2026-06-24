@@ -19,6 +19,9 @@ import { Button } from "@core/ui/button";
 import { Plus, Search, Loader2, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+/**
+ * React presentation component representing the identity providers view UI element.
+ */
 export function IdentityProvidersView() {
   useModuleLocales(() => import("../../../locales"), "identity-providers");
   const { t } = useI18n();

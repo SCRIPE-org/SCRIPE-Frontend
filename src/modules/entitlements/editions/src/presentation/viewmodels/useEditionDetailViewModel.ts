@@ -25,6 +25,9 @@ function getDisabledDefault(valueType: string): string {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Edition Detail View Model Result.
+ */
 export interface EditionDetailViewModelResult {
   edition: Edition | undefined;
   /**
@@ -83,6 +86,9 @@ export interface EditionDetailViewModelResult {
   tenantEffectiveCaps: Record<string, string>;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for edition detail view model.
+ */
 export function useEditionDetailViewModel(editionId: string): EditionDetailViewModelResult {
   const { success, error: toastError } = useEnhancedToast();
   const { t } = useI18n();

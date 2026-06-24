@@ -19,6 +19,9 @@ export interface ThemeDetailData extends ThemeCardData {
   displayOrder: number;
 }
 
+/**
+ * Domain entity class representing a Theme Detail.
+ */
 export class ThemeDetail extends ThemeCard {
   private readonly detailData: ThemeDetailData;
 

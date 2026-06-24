@@ -1,17 +1,20 @@
 /**
  * Billing Mapper — DTO → Entity conversion
  */
-import { Invoice, InvoiceListItem, BillingDashboard } from "../../domain/entities/Invoice";
+import { Invoice, InvoiceListItem } from "../../domain/entities/Invoice";
+import { BillingDashboard } from "../../domain/entities/BillingDashboard";
 import type {
   InvoiceData,
   InvoiceListItemData,
   InvoiceLineItem,
   PaymentTransaction,
+} from "../../domain/entities/Invoice";
+import type {
   CheckoutSession,
   BillingPortal,
   BillingDashboardData,
   PaymentLink,
-} from "../../domain/entities/Invoice";
+} from "../../domain/entities/BillingDashboard";
 import type {
   InvoiceResponseModel,
   InvoiceListResponseModel,
@@ -119,6 +122,9 @@ const BillingDashboardSchema = z.object({
   currency: z.string().optional().default("USD"),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class BillingMapper {
   static toInvoice(dto: InvoiceResponseModel): Invoice {
     const v = safeParseApiResponse(InvoiceResponseSchema, dto, "Invoice");

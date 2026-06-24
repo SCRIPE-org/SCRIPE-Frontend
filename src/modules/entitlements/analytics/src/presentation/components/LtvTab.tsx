@@ -36,6 +36,9 @@ const RANK_COLORS = [
   "from-orange-400 to-amber-600",
 ];
 
+/**
+ * React presentation component representing the ltv tab UI element.
+ */
 export function LtvTab({ ltvData }: LtvTabProps) {
   const { t } = useI18n();
   const maxLtv = Math.max(...ltvData.editions.map((e) => e.averageLtv), 1);

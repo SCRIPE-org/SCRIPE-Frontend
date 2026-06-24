@@ -15,6 +15,9 @@ import type {
   SaveBundlePayload,
 } from "../../domain/interfaces/IThemeBundleService";
 
+/**
+ * API service for executing HTTP calls related to ThemeBundle endpoints.
+ */
 export class ThemeBundleService implements IThemeBundleService {
   constructor(private readonly api: IApiService) {}
 

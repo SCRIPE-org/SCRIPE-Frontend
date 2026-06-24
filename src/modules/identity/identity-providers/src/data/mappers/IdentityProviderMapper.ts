@@ -70,6 +70,9 @@ const IdentityProviderListItemModelSchema = z.object({
   createdAt: z.string().optional().nullable(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class IdentityProviderMapper {
   static toEntity(model: IdentityProviderModel): IdentityProvider {
     const validated = safeParseApiResponse(IdentityProviderModelSchema, model, "IdentityProvider");

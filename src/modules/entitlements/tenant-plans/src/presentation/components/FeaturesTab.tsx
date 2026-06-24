@@ -68,6 +68,9 @@ interface FeaturesTabProps {
   language: string;
 }
 
+/**
+ * React presentation component representing the features tab UI element.
+ */
 export function FeaturesTab({
   plan,
   totalActiveFeatureCount,

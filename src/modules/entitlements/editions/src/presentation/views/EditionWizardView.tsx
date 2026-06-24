@@ -27,6 +27,9 @@ import { WizardStepBilling } from "../components/wizard/WizardStepBilling";
 import { WizardStepPricing } from "../components/wizard/WizardStepPricing";
 import { WizardStepReview } from "../components/wizard/WizardStepReview";
 
+/**
+ * React presentation component representing the edition wizard view UI element.
+ */
 export function EditionWizardView() {
   useModuleLocales(() => import("../../../locales"), "editions");
   const { t } = useI18n();

@@ -18,6 +18,9 @@ import type {
   SaveMenuOverrideRequest,
 } from "../../domain/entities/MenuItemRequests";
 
+/**
+ * API service for executing HTTP calls related to Menu endpoints.
+ */
 export class MenuService implements IMenuService {
   constructor(private readonly api: IApiService) {}
 

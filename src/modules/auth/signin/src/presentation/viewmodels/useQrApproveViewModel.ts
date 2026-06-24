@@ -4,6 +4,9 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getAuthContainer } from "@modules/auth/di";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for qr approve view model.
+ */
 export function useQrApproveViewModel() {
   const router = useRouter();
 

@@ -7,6 +7,9 @@ import type {
   PreviewTemplateResponse,
 } from "../entities/MessageTemplateRequests";
 
+/**
+ * Interface defining repository methods for managing MessageTemplate data access.
+ */
 export interface IMessageTemplateRepository {
   getAll(params: {
     page: number;

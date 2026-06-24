@@ -19,6 +19,9 @@ interface CascadeStatusDialogProps {
   itemName?: string;
 }
 
+/**
+ * React presentation component representing the cascade status dialog UI element.
+ */
 export function CascadeStatusDialog({
   open,
   onOpenChange,

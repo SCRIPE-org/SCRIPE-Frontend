@@ -32,6 +32,9 @@ import type {
 } from "../../domain/interfaces/ISignupRepository";
 import type { SignupRecommendationRequest } from "../../domain/entities/OnboardingEntities";
 
+/**
+ * Interface defining operations for the Signup network service.
+ */
 export interface ISignupService {
   /** Detect visitor country → recommended currency + live FX rates. */
   getPricingContext(): Promise<PricingContextDto>;

@@ -7,6 +7,9 @@ import {
 } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { ASPECT_MAP, HOVER_MAP, SHADOW_MAP } from "./block-constants";
 
+/**
+ * React presentation component representing the image block view UI element.
+ */
 export function ImageBlockView({ block }: { block: ImageBlock }) {
   const props = block.props;
   const image = (

@@ -9,6 +9,9 @@ import type { TenantEffectiveFeature } from "../entities/TenantEffectiveFeature"
 import type { CreateFeatureRequest, UpdateFeatureRequest } from "../entities/FeatureRequests";
 import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
+/**
+ * Interface defining repository methods for managing Feature data access.
+ */
 export interface IFeatureRepository {
   getAll(params: PaginationParams): Promise<PagedResult<Feature>>;
   getAllFeatures(): Promise<Feature[]>;

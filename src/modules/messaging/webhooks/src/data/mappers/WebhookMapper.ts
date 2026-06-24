@@ -89,6 +89,9 @@ const WebhookListItemModelSchema = z.object({
   failedDeliveries: z.number().int().optional().default(0),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class WebhookMapper {
   /**
    * Convert WebhookSubscriptionModel → WebhookSubscription Entity

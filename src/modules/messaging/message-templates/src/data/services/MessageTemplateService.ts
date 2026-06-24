@@ -21,6 +21,9 @@ import type {
   PreviewTemplateResponseJson,
 } from "../models/MessageTemplateModel";
 
+/**
+ * API service for executing HTTP calls related to MessageTemplate endpoints.
+ */
 export class MessageTemplateService implements IMessageTemplateService {
   constructor(private readonly api: IApiService) {}
 

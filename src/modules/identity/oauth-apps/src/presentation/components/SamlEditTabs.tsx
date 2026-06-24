@@ -32,6 +32,9 @@ interface SamlEditTabsProps {
   };
 }
 
+/**
+ * React presentation component representing the saml edit tabs UI element.
+ */
 export function SamlEditTabs({ vm }: SamlEditTabsProps) {
   const { t } = useI18n();
 

@@ -33,6 +33,9 @@ const DsrModelSchema = z.object({
   resolution: z.string().optional().nullable(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class DsrMapper {
   static toEntity(model: DsrModel): DataSubjectRequest {
     const validated = safeParseApiResponse(DsrModelSchema, model, "DataSubjectRequest");

@@ -37,6 +37,9 @@ interface SubscriptionsKpiGridProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the subscriptions kpi grid UI element.
+ */
 export function SubscriptionsKpiGrid({
   kpis,
   statusFilter,

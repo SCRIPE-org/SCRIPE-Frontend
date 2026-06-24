@@ -58,6 +58,9 @@ import type { ThemeCard } from "../../domain/entities/ThemeCard";
 
 const G = "studio.gallery";
 
+/**
+ * React presentation component representing the theme gallery view UI element.
+ */
 export function ThemeGalleryView() {
   const { t } = useI18n();
   const vm = useThemeGalleryViewModel();

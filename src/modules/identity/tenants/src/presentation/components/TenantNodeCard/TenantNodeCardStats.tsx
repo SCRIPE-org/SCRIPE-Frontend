@@ -18,6 +18,9 @@ interface TenantNodeCardStatsProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the tenant node card stats UI element.
+ */
 export function TenantNodeCardStats({ stats, statsLoading, t }: TenantNodeCardStatsProps) {
   const statItems = [
     {

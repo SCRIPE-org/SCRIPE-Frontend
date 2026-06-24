@@ -56,6 +56,9 @@ function countTreeStats(
   return acc;
 }
 
+/**
+ * React presentation component representing the tenant list header UI element.
+ */
 export function TenantListHeader({
   tree,
   search,

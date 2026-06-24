@@ -1,5 +1,8 @@
 import type { ContentMode } from "../../domain/entities/SignupContent";
 
+/**
+ * Interface structure detailing the properties and attributes of Welcome Content Model.
+ */
 export interface WelcomeContentModel {
   id: string;
   headlineEn: string;
@@ -13,6 +16,9 @@ export interface WelcomeContentModel {
   trustedByLabelAr: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Trust Mark Model.
+ */
 export interface TrustMarkModel {
   id: string;
   key: string;
@@ -26,6 +32,9 @@ export interface TrustMarkModel {
   isActive: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Customer Logo Model.
+ */
 export interface CustomerLogoModel {
   id: string;
   key: string;
@@ -36,6 +45,9 @@ export interface CustomerLogoModel {
   isActive: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Admin Signup Content Model.
+ */
 export interface AdminSignupContentModel {
   contentMode: ContentMode;
   welcomeContent: WelcomeContentModel | null;

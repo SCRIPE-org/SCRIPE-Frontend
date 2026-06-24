@@ -5,6 +5,9 @@ import { pluginsContainer } from "@modules/plugins/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for installed view model.
+ */
 export function useInstalledViewModel(tenantId: string) {
   const { installedRepository } = pluginsContainer;
   const queryClient = useQueryClient();

@@ -17,6 +17,9 @@ import { GenericSelect } from "@core/crud/components/generic-select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 
+/**
+ * React presentation component representing the connect onboarding view UI element.
+ */
 export function ConnectOnboardingView() {
   useModuleLocales(() => import("../../../locales"), "stripe-connect");
   const { t } = useI18n();

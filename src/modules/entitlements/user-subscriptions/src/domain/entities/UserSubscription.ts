@@ -12,6 +12,9 @@ export interface UserSubscriptionFeatureData {
   displayNameAr?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of User Subscription Data.
+ */
 export interface UserSubscriptionData extends BaseEntity {
   userId: string;
   userName?: string;
@@ -51,6 +54,9 @@ export interface UserSubscriptionData extends BaseEntity {
   features?: UserSubscriptionFeatureData[];
 }
 
+/**
+ * Domain entity class representing a User Subscription.
+ */
 export class UserSubscription {
   constructor(private readonly data: UserSubscriptionData) {}
 

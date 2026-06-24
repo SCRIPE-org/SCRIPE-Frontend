@@ -4,6 +4,9 @@ import type {
 } from "../../data/models/RetentionModels";
 import type { UpdateRetentionPolicyRequest } from "../entities/RetentionPolicy";
 
+/**
+ * Interface defining operations for the Retention network service.
+ */
 export interface IRetentionService {
   getAll(): Promise<RetentionPolicyModel[]>;
   create(data: CreateRetentionPolicyRequest): Promise<string>;

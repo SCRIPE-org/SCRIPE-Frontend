@@ -15,6 +15,9 @@ import type {
   AttachmentUploadResultJson,
 } from "../types/EmailTypes";
 
+/**
+ * Interface structure detailing the properties and attributes of Service Sent History Params.
+ */
 export interface ServiceSentHistoryParams {
   page: number;
   pageSize: number;
@@ -22,12 +25,18 @@ export interface ServiceSentHistoryParams {
   status?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Service Email Template List Params.
+ */
 export interface ServiceEmailTemplateListParams {
   page: number;
   pageSize: number;
   search?: string;
 }
 
+/**
+ * Interface defining operations for the Email network service.
+ */
 export interface IEmailService {
   searchRecipients(query: string): Promise<EmailRecipientJson[]>;
   send(data: SendManualEmailJson): Promise<void>;

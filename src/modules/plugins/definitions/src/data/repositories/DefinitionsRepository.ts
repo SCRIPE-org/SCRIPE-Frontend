@@ -7,6 +7,9 @@ import type { IDefinitionsService } from "../../domain/interfaces/IDefinitionsSe
 import { DefinitionsMapper } from "../mappers/DefinitionsMapper";
 import type { PluginDefinition } from "@modules/plugins/core";
 
+/**
+ * Repository implementation for managing database operations on Definitions resources.
+ */
 export class DefinitionsRepository implements IDefinitionsRepository {
   constructor(private readonly service: IDefinitionsService) {}
 

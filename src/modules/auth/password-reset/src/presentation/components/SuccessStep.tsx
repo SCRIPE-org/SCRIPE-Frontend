@@ -12,6 +12,9 @@ interface SuccessStepProps {
   vm: ReturnType<typeof useForgotPasswordViewModel>;
 }
 
+/**
+ * React presentation component representing the success step UI element.
+ */
 export function SuccessStep({ vm }: SuccessStepProps) {
   const { t } = useI18n();
 

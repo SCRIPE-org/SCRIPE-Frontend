@@ -15,6 +15,9 @@ import type {
   CreatePurchasePayload,
 } from "../../domain/interfaces/IFinancialsService";
 
+/**
+ * API service for executing HTTP calls related to Financials endpoints.
+ */
 export class FinancialsService implements IFinancialsService {
   constructor(private readonly api: IApiService) {}
 

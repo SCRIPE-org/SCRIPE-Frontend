@@ -26,6 +26,9 @@ export interface AnalyticsOverviewData {
   periodEnd: string;
 }
 
+/**
+ * Domain entity class representing a Analytics Overview.
+ */
 export class AnalyticsOverview {
   constructor(private readonly data: AnalyticsOverviewData) {}
 
@@ -99,6 +102,9 @@ export class AnalyticsOverview {
 }
 
 // ── MRR Movement ──
+/**
+ * Interface structure detailing the properties and attributes of Mrr Movement Data.
+ */
 export interface MrrMovementData {
   month: string;
   mrrStart: number;
@@ -111,6 +117,9 @@ export interface MrrMovementData {
   netChange: number;
 }
 
+/**
+ * Domain entity class representing a Mrr Movement.
+ */
 export class MrrMovement {
   constructor(private readonly data: MrrMovementData) {}
 
@@ -160,6 +169,9 @@ export class MrrMovement {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Mrr Movement Response.
+ */
 export interface MrrMovementResponse {
   movements: MrrMovement[];
   periodStart: string;
@@ -168,6 +180,9 @@ export interface MrrMovementResponse {
 }
 
 // ── Cohort Analysis ──
+/**
+ * Interface structure detailing the properties and attributes of Cohort Bucket Data.
+ */
 export interface CohortBucketData {
   monthOffset: number;
   retainedCount: number;
@@ -175,6 +190,9 @@ export interface CohortBucketData {
   revenue: number;
 }
 
+/**
+ * Domain entity class representing a Cohort Bucket.
+ */
 export class CohortBucket {
   constructor(private readonly data: CohortBucketData) {}
 
@@ -201,12 +219,18 @@ export class CohortBucket {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Cohort Row Data.
+ */
 export interface CohortRowData {
   cohortMonth: string;
   initialCount: number;
   buckets: CohortBucket[];
 }
 
+/**
+ * Domain entity class representing a Cohort Row.
+ */
 export class CohortRow {
   constructor(private readonly data: CohortRowData) {}
 
@@ -232,6 +256,9 @@ export class CohortRow {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Cohort Analysis Response.
+ */
 export interface CohortAnalysisResponse {
   cohorts: CohortRow[];
   periodStart: string;
@@ -239,6 +266,9 @@ export interface CohortAnalysisResponse {
 }
 
 // ── LTV by Edition ──
+/**
+ * Interface structure detailing the properties and attributes of Edition Ltv Data.
+ */
 export interface EditionLtvData {
   editionId: string;
   editionName: string;
@@ -250,6 +280,9 @@ export interface EditionLtvData {
   currency: string;
 }
 
+/**
+ * Domain entity class representing a Edition Ltv.
+ */
 export class EditionLtv {
   constructor(private readonly data: EditionLtvData) {}
 
@@ -288,6 +321,9 @@ export class EditionLtv {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Ltv Response.
+ */
 export interface LtvResponse {
   editions: EditionLtv[];
   platformAverageLtv: number;
@@ -295,6 +331,9 @@ export interface LtvResponse {
 }
 
 // ── Revenue Forecast ──
+/**
+ * Interface structure detailing the properties and attributes of Forecast Point Data.
+ */
 export interface ForecastPointData {
   month: string;
   projectedMrr: number;
@@ -303,6 +342,9 @@ export interface ForecastPointData {
   confidence: number;
 }
 
+/**
+ * Domain entity class representing a Forecast Point.
+ */
 export class ForecastPoint {
   constructor(private readonly data: ForecastPointData) {}
 
@@ -332,6 +374,9 @@ export class ForecastPoint {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Revenue Forecast Response.
+ */
 export interface RevenueForecastResponse {
   forecasts: ForecastPoint[];
   modelType: string;
@@ -341,6 +386,9 @@ export interface RevenueForecastResponse {
 }
 
 // ── Tenant Health Score ──
+/**
+ * Interface structure detailing the properties and attributes of Tenant Health Score Data.
+ */
 export interface TenantHealthScoreData {
   tenantId: string;
   tenantName: string;
@@ -356,6 +404,9 @@ export interface TenantHealthScoreData {
   lastSnapshotMonth: string;
 }
 
+/**
+ * Domain entity class representing a Tenant Health Score.
+ */
 export class TenantHealthScore {
   constructor(private readonly data: TenantHealthScoreData) {}
 
@@ -422,6 +473,9 @@ export class TenantHealthScore {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Tenant Health Scores Response.
+ */
 export interface TenantHealthScoresResponse {
   items: TenantHealthScore[];
   totalCount: number;
@@ -430,6 +484,9 @@ export interface TenantHealthScoresResponse {
 }
 
 // ── Report Preference ──
+/**
+ * Interface structure detailing the properties and attributes of Report Preference Data.
+ */
 export interface ReportPreferenceData {
   id: string;
   adminId: string;
@@ -450,6 +507,9 @@ export interface ReportPreferenceData {
   lastSentAt: string;
 }
 
+/**
+ * Domain entity class representing a Report Preference.
+ */
 export class ReportPreference {
   constructor(private readonly data: ReportPreferenceData) {}
 
@@ -523,6 +583,9 @@ export class ReportPreference {
 }
 
 // ── Update Report Preference Request (domain-level) ──
+/**
+ * Interface structure detailing the properties and attributes of Update Report Preference Request.
+ */
 export interface UpdateReportPreferenceRequest {
   cadence: string;
   email?: string;

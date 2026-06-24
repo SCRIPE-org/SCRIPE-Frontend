@@ -10,6 +10,9 @@ interface FeatureDefinitionPageHeaderProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the feature definition page header UI element.
+ */
 export function FeatureDefinitionPageHeader({ t }: FeatureDefinitionPageHeaderProps) {
   return (
     <div className="flex items-center gap-3">

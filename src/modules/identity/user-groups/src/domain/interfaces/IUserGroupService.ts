@@ -7,6 +7,9 @@ import type {
   SetGroupRestrictionsRequest,
 } from "../entities/UserGroupRequests";
 
+/**
+ * Interface structure detailing the properties and attributes of User Group Service List Params.
+ */
 export interface UserGroupServiceListParams {
   page: number;
   pageSize: number;
@@ -15,6 +18,9 @@ export interface UserGroupServiceListParams {
   isActive?: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of User Group List Result.
+ */
 export interface UserGroupListResult {
   items: UserGroupModel[];
   totalCount: number;
@@ -25,6 +31,9 @@ export interface UserGroupListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Interface defining operations for the UserGroup network service.
+ */
 export interface IUserGroupService {
   getAll(params: UserGroupServiceListParams): Promise<UserGroupListResult>;
   getMyTenantGroups(

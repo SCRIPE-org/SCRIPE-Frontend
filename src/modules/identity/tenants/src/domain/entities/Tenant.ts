@@ -9,6 +9,9 @@
 
 export const SYSTEM_TENANT_ID = "__SYSTEM__";
 
+/**
+ * Interface structure detailing the properties and attributes of Tenant Props.
+ */
 export interface TenantProps {
   id: string;
   name: string;
@@ -30,6 +33,9 @@ export interface TenantProps {
   children?: TenantProps[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Tenant Tree Node Props.
+ */
 export interface TenantTreeNodeProps {
   id: string; // "System" pseudo-tenant mapped to "__SYSTEM__" via Mapper
   name: string;
@@ -166,4 +172,7 @@ export class Tenant {
 export type TenantTreeNode = TenantTreeNodeProps;
 
 // Keep backward compatibility alias
+/**
+ * Type declaration definition describing the schema of tenant data.
+ */
 export type TenantData = TenantProps;

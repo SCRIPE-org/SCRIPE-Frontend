@@ -3,13 +3,18 @@ import type {
   Invoice,
   InvoiceListItem,
   PaymentTransaction,
+} from "../entities/Invoice";
+import type {
   CheckoutSession,
   BillingPortal,
+  BillingDashboard,
   PaymentLink,
-} from "../entities/Invoice";
-import type { BillingDashboard } from "../entities/Invoice";
+} from "../entities/BillingDashboard";
 import type { GatewayListResponseModel } from "./IBillingService";
 
+/**
+ * Interface defining repository methods for managing Billing data access.
+ */
 export interface IBillingRepository {
   // Queries
   getInvoices(params: {

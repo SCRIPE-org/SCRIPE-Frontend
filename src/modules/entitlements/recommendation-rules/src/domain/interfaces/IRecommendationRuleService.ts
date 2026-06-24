@@ -14,6 +14,9 @@ import type {
 } from "../entities/RecommendationRuleRequests";
 import type { PaginationParams } from "@core/interfaces/common.interface";
 
+/**
+ * Interface defining operations for the RecommendationRule network service.
+ */
 export interface IRecommendationRuleService {
   getAll(params: PaginationParams): Promise<PagedRecommendationRulesModel>;
   getById(id: string): Promise<RecommendationRuleDetailModel>;

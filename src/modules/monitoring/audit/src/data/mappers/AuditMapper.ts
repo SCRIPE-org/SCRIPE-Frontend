@@ -22,6 +22,9 @@ import type {
   ComplianceSection,
 } from "../../domain/entities/AuditEntities";
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class AuditMapper {
   static toLogEntry(dto: AuditLogEntryDto): AuditLogEntry {
     return {

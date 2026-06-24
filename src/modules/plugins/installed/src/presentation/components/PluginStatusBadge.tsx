@@ -8,6 +8,9 @@ interface PluginStatusBadgeProps {
   installation: PluginInstallation;
 }
 
+/**
+ * React presentation component representing the plugin status badge UI element.
+ */
 export function PluginStatusBadge({ installation }: PluginStatusBadgeProps) {
   const { t } = useI18n();
   if (installation.isActive) return <Badge variant="default">{t("plugins.statusActive")}</Badge>;

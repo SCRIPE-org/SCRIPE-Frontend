@@ -34,6 +34,9 @@ export interface EditionPriceData {
   amount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Edition Data.
+ */
 export interface EditionData extends BaseEntity {
   name: string;
   displayNameEn: string;
@@ -81,6 +84,9 @@ export interface EditionData extends BaseEntity {
   isFree: boolean;
 }
 
+/**
+ * Domain entity class representing a Edition.
+ */
 export class Edition {
   constructor(private readonly data: EditionData) {}
 

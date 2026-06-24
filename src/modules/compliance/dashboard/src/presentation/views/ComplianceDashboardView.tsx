@@ -87,6 +87,9 @@ function DashboardSkeleton() {
 
 // ── Main View ─────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the compliance dashboard view UI element.
+ */
 export function ComplianceDashboardView() {
   useModuleLocales(() => import("../../../locales"), "compliance-dashboard");
   const { t } = useI18n();

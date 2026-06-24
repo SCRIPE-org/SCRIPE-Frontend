@@ -38,6 +38,9 @@ interface TenantSettingsTabProps {
   parentTenantId?: string;
 }
 
+/**
+ * React presentation component representing the tenant settings tab UI element.
+ */
 export function TenantSettingsTab({
   tenantId,
   tenantName,

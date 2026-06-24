@@ -1,9 +1,15 @@
+/**
+ * Interface structure detailing the properties and attributes of Pricing Snapshot Item.
+ */
 export interface PricingSnapshotItem {
   currency: string;
   billingCycle: string;
   amount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Edition Version Model.
+ */
 export interface EditionVersionModel {
   id: string;
   versionNumber: number;
@@ -17,6 +23,9 @@ export interface EditionVersionModel {
   createdAt: string;
 }
 
+/**
+ * Domain entity class representing a Edition Version.
+ */
 export class EditionVersion {
   constructor(public readonly data: EditionVersionModel) {}
 

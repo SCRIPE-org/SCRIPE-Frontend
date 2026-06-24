@@ -53,6 +53,9 @@ export interface DiscoveryResult {
   topPriority: string | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Discovery View Model.
+ */
 export interface DiscoveryViewModel {
   // ── Load state ─────────────────────────────────────────────────────────────
   isLoading: boolean;
@@ -114,6 +117,9 @@ function deriveTopPriority(
   return answers[priorities.key]?.[0] ?? null;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for discovery.
+ */
 export function useDiscovery(): DiscoveryViewModel {
   const { language } = useI18n();
 

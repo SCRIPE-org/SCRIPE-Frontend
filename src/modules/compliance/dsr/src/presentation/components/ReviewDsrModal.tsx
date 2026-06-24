@@ -21,6 +21,9 @@ interface ReviewDsrModalProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the review dsr modal UI element.
+ */
 export function ReviewDsrModal({
   dsr,
   open,

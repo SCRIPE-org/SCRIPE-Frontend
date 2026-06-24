@@ -10,6 +10,9 @@ interface NoSubscriptionCardProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the no subscription card UI element.
+ */
 export function NoSubscriptionCard({ t }: NoSubscriptionCardProps) {
   return (
     <div className="mx-auto max-w-3xl space-y-6">

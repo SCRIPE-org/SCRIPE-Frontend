@@ -49,6 +49,9 @@ interface Props {
   isTesting: boolean;
 }
 
+/**
+ * React presentation component representing the identity provider card UI element.
+ */
 export function IdentityProviderCard({
   item,
   onEdit,

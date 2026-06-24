@@ -18,6 +18,9 @@ import type {
 } from "@modules/customization/tenant-settings/src/domain/types/SettingsTypes";
 import { useState } from "react";
 
+/**
+ * Interface structure detailing the properties and attributes of Use Tenant Settings View Model Result.
+ */
 export interface UseTenantSettingsViewModelResult {
   settings: TenantSettingsModel | undefined;
   isLoading: boolean;
@@ -37,6 +40,9 @@ export interface UseTenantSettingsViewModelResult {
   uploadLogo: (file: File) => Promise<string>;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for tenant settings view model.
+ */
 export function useTenantSettingsViewModel(tenantId: string): UseTenantSettingsViewModelResult {
   const { t } = useI18n();
   const { toast } = useToast();

@@ -75,6 +75,9 @@ interface TenantHeaderProps {
   onEnter?: () => void;
 }
 
+/**
+ * React presentation component representing the tenant header UI element.
+ */
 export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
   const {
     t,

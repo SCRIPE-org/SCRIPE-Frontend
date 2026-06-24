@@ -5,6 +5,9 @@
 
 // ── Connect Account (Full Detail) ──
 
+/**
+ * Interface structure detailing the properties and attributes of Connect Account Data.
+ */
 export interface ConnectAccountData {
   id: string;
   tenantId: string;
@@ -27,6 +30,9 @@ export interface ConnectAccountData {
   effectiveCommissionRate: number;
 }
 
+/**
+ * Domain entity class representing a Connect Account.
+ */
 export class ConnectAccount {
   constructor(public readonly data: ConnectAccountData) {}
 
@@ -128,6 +134,9 @@ export class ConnectAccount {
 
 // ── Connect Account List Item ──
 
+/**
+ * Interface structure detailing the properties and attributes of Connect Account List Data.
+ */
 export interface ConnectAccountListData {
   id: string;
   tenantId: string;
@@ -142,6 +151,9 @@ export interface ConnectAccountListData {
   createdAt: string;
 }
 
+/**
+ * Domain entity class representing a Connect Account List Item.
+ */
 export class ConnectAccountListItem {
   constructor(public readonly data: ConnectAccountListData) {}
 
@@ -191,6 +203,9 @@ export class ConnectAccountListItem {
 
 // ── Commission ──
 
+/**
+ * Interface structure detailing the properties and attributes of Commission Data.
+ */
 export interface CommissionData {
   id: string;
   tenantId: string;
@@ -208,6 +223,9 @@ export interface CommissionData {
   createdAt: string;
 }
 
+/**
+ * Domain entity class representing a Commission.
+ */
 export class Commission {
   constructor(public readonly data: CommissionData) {}
 
@@ -267,6 +285,9 @@ export class Commission {
 
 // ── Dashboard ──
 
+/**
+ * Interface structure detailing the properties and attributes of Commission Dashboard Data.
+ */
 export interface CommissionDashboardData {
   totalCommission: number;
   totalRefunded: number;
@@ -277,6 +298,9 @@ export interface CommissionDashboardData {
   recentTrends: CommissionTrendPoint[];
 }
 
+/**
+ * Domain entity class representing a Commission Dashboard.
+ */
 export class CommissionDashboard {
   constructor(public readonly data: CommissionDashboardData) {}
 
@@ -312,12 +336,18 @@ export class CommissionDashboard {
 
 // ── Simple Value Types ──
 
+/**
+ * Interface structure detailing the properties and attributes of Commission Trend Point.
+ */
 export interface CommissionTrendPoint {
   date: string;
   amount: number;
   count: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Top Tenant Data.
+ */
 export interface TopTenantData {
   tenantId: string;
   totalCommission: number;
@@ -326,6 +356,9 @@ export interface TopTenantData {
 
 // ── Tenant Self-Service Transactions ──
 
+/**
+ * Interface structure detailing the properties and attributes of Tenant Financial Summary Data.
+ */
 export interface TenantFinancialSummaryData {
   totalGrossRevenue: number;
   totalPlatformFees: number;
@@ -336,6 +369,9 @@ export interface TenantFinancialSummaryData {
   currency: string;
 }
 
+/**
+ * Domain entity class representing a Tenant Financial Summary.
+ */
 export class TenantFinancialSummary {
   constructor(public readonly data: TenantFinancialSummaryData) {}
 
@@ -362,6 +398,9 @@ export class TenantFinancialSummary {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Tenant Transaction Item Data.
+ */
 export interface TenantTransactionItemData {
   id: string;
   type: string;
@@ -377,6 +416,9 @@ export interface TenantTransactionItemData {
   transactionDate: string;
 }
 
+/**
+ * Domain entity class representing a Tenant Transaction Item.
+ */
 export class TenantTransactionItem {
   constructor(public readonly data: TenantTransactionItemData) {}
 
@@ -432,6 +474,9 @@ export class TenantTransactionItem {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Tenant Transactions Result.
+ */
 export interface TenantTransactionsResult {
   summary: TenantFinancialSummary;
   transactions: {

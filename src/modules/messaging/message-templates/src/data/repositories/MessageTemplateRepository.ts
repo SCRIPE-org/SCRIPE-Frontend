@@ -19,6 +19,9 @@ import type { PagedResult } from "@core/interfaces/common.interface";
 import type { IMessageTemplateService } from "../../domain/interfaces/IMessageTemplateService";
 import { MessageTemplateMapper } from "../mappers/MessageTemplateMapper";
 
+/**
+ * Repository implementation for managing database operations on MessageTemplate resources.
+ */
 export class MessageTemplateRepository implements IMessageTemplateRepository {
   constructor(private readonly service: IMessageTemplateService) {}
 

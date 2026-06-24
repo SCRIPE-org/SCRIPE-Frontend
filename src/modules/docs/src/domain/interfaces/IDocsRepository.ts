@@ -6,6 +6,9 @@
 import type { DocPage } from "../entities/DocPage";
 import type { DocCategory } from "../entities/DocCategory";
 
+/**
+ * Interface structure detailing the properties and attributes of Search Result.
+ */
 export interface SearchResult {
   slug: string;
   titleKey: string;
@@ -18,6 +21,9 @@ export interface SearchResult {
   snippet?: string;
 }
 
+/**
+ * Interface defining repository methods for managing Docs data access.
+ */
 export interface IDocsRepository {
   /** Get a single page by its slug */
   getPage(slug: string): DocPage | undefined;

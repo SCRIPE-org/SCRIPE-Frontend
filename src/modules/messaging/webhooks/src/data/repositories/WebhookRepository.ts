@@ -29,6 +29,9 @@ import type {
 } from "../../domain/entities/WebhookRequests";
 import { WebhookMapper } from "../mappers/WebhookMapper";
 
+/**
+ * Repository implementation for managing database operations on Webhook resources.
+ */
 export class WebhookRepository implements IWebhookRepository {
   constructor(private readonly service: IWebhookService) {}
 

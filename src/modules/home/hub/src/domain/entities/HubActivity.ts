@@ -10,6 +10,9 @@ export interface HubRecentItemData {
   timestamp: string;
 }
 
+/**
+ * Domain entity class representing a Hub Recent Item.
+ */
 export class HubRecentItem {
   constructor(public readonly data: HubRecentItemData) {}
 
@@ -37,6 +40,9 @@ export class HubRecentItem {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Hub Activity Summary Data.
+ */
 export interface HubActivitySummaryData {
   todayActionCount: number;
   todayModuleCount: number;
@@ -44,6 +50,9 @@ export interface HubActivitySummaryData {
   recentItems: HubRecentItemData[];
 }
 
+/**
+ * Domain entity class representing a Hub Activity Summary.
+ */
 export class HubActivitySummary {
   constructor(public readonly data: HubActivitySummaryData) {}
 

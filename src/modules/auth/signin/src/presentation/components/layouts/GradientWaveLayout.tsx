@@ -4,6 +4,9 @@ import { BG_STYLE, WRAPPER_STYLE } from "./layout-types";
 import { LogoImg } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
+/**
+ * React presentation component representing the gradient wave layout UI element.
+ */
 export function GradientWaveLayout({
   branding,
   formContent,

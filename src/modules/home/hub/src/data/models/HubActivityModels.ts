@@ -10,6 +10,9 @@ export interface HubRecentItemModel {
   timestamp: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Hub Activity Summary Model.
+ */
 export interface HubActivitySummaryModel {
   todayActionCount: number;
   todayModuleCount: number;

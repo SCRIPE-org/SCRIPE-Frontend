@@ -24,6 +24,9 @@ interface UseWebhookFormViewModelOptions {
   onSuccess?: () => void;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for webhook form view model.
+ */
 export function useWebhookFormViewModel({
   mode,
   webhook,
@@ -231,4 +234,7 @@ export function useWebhookFormViewModel({
   };
 }
 
+/**
+ * Type declaration definition describing the schema of webhook form view model.
+ */
 export type WebhookFormViewModel = ReturnType<typeof useWebhookFormViewModel>;

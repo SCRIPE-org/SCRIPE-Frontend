@@ -1,5 +1,8 @@
 import type { TenantGateway } from "../entities/TenantGateway";
 
+/**
+ * Interface structure detailing the properties and attributes of Configure Gateway Request.
+ */
 export interface ConfigureGatewayRequest {
   gatewayType: string;
   apiKey: string;
@@ -10,6 +13,9 @@ export interface ConfigureGatewayRequest {
   isTestMode?: boolean;
 }
 
+/**
+ * Interface defining repository methods for managing TenantGateway data access.
+ */
 export interface ITenantGatewayRepository {
   getMyGateways(): Promise<TenantGateway[]>;
   configureGateway(data: ConfigureGatewayRequest): Promise<{ id: string }>;

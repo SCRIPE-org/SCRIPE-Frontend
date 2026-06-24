@@ -10,6 +10,9 @@ import type { IUsersService } from "../../domain/interfaces/IUsersService";
 import { UsersMapper } from "../mappers/UsersMapper";
 import type { UsersEntity } from "../../domain/entities/UsersEntity";
 
+/**
+ * Repository implementation for managing database operations on Users resources.
+ */
 export class UsersRepository implements IUsersRepository {
   constructor(private readonly service: IUsersService) {}
 

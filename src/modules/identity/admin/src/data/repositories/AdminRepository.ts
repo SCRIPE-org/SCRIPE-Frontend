@@ -23,6 +23,9 @@ import type {
 } from "../../domain/entities/AdminRequests";
 import type { PagedResult } from "@modules/identity/core/domain/types";
 
+/**
+ * Repository implementation for managing database operations on Admin resources.
+ */
 export class AdminRepository implements IAdminRepository {
   constructor(private readonly service: IAdminService) {}
 

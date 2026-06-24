@@ -13,6 +13,9 @@ import type {
   EventTypeCount,
 } from "../../domain/entities/DashboardEntities";
 
+/**
+ * API service for executing HTTP calls related to Dashboard endpoints.
+ */
 export class DashboardService {
   constructor(private readonly api: IApiService) {}
 

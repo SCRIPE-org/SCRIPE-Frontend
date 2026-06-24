@@ -101,6 +101,9 @@ interface LeadDetailDrawerProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the lead detail drawer UI element.
+ */
 export function LeadDetailDrawer({
   open,
   onClose,

@@ -15,6 +15,9 @@ export interface PasskeyData {
   signCount: number;
 }
 
+/**
+ * Domain entity class representing a Passkey Entity.
+ */
 export class PasskeyEntity {
   constructor(private readonly data: PasskeyData) {}
 

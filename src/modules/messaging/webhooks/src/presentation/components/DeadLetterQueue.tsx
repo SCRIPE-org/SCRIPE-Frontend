@@ -51,6 +51,9 @@ interface DeadLetterQueueProps {
   isLoading: boolean;
 }
 
+/**
+ * React presentation component representing the dead letter queue UI element.
+ */
 export function DeadLetterQueue({
   logs,
   page,

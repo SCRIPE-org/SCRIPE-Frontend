@@ -104,6 +104,12 @@ const SsoButton = ({
   );
 };
 
+/**
+ * SsoProviderButtons renders a row of dynamic SSO login buttons matching the tenant identity provider rules.
+ * Automatically resolves brand names (Google, Microsoft, Apple, GitHub, etc.) to present consistent, accessible button actions.
+ *
+ * @param props Props containing the provider list, loading states, error handlers, and trigger clicks.
+ */
 export function SsoProviderButtons({
   providers,
   isLoading,

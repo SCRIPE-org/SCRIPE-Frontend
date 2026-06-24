@@ -93,6 +93,9 @@ const TenantPlanListModelSchema = z.object({
   createdAt: z.string().optional().nullable(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class TenantPlanMapper {
   static toEntity(model: TenantPlanModel): TenantPlan {
     const validated = safeParseApiResponse(TenantPlanModelSchema, model, "TenantPlan");

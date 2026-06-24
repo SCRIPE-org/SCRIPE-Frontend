@@ -47,6 +47,9 @@ function BoolBadge({
   );
 }
 
+/**
+ * React presentation component representing the wizard step review UI element.
+ */
 export function WizardStepReview({ form, prices }: WizardStepReviewProps) {
   const { t } = useI18n();
 

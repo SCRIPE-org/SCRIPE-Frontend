@@ -24,6 +24,9 @@ import type {
 import type { IPermissionService } from "../../domain/interfaces/IPermissionService";
 import { PermissionMapper } from "../mappers/PermissionMapper";
 
+/**
+ * Repository implementation for managing database operations on Permission resources.
+ */
 export class PermissionRepository implements IPermissionRepository {
   constructor(private readonly service: IPermissionService) {}
 

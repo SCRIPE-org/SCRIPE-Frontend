@@ -16,6 +16,9 @@ interface TenantAdminsTabProps {
   tenantName: string;
 }
 
+/**
+ * React presentation component representing the tenant admins tab UI element.
+ */
 export function TenantAdminsTab({ tenantId, tenantName }: TenantAdminsTabProps) {
   const { t } = useI18n();
 

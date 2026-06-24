@@ -30,6 +30,9 @@ const TABS: { id: AnalyticsTab; icon: React.ElementType; labelKey: string }[] = 
   { id: "reports", icon: FileText, labelKey: "entitlements.analytics.tabs.reports" },
 ];
 
+/**
+ * React presentation component representing the analytics view UI element.
+ */
 export function AnalyticsView() {
   useModuleLocales(() => import("../../../locales"), "analytics");
   const { t } = useI18n();

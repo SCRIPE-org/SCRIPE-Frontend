@@ -10,17 +10,22 @@ import type {
   Invoice,
   InvoiceListItem,
   PaymentTransaction,
+} from "../../domain/entities/Invoice";
+import { BillingDashboard } from "../../domain/entities/BillingDashboard";
+import type {
   CheckoutSession,
   BillingPortal,
   PaymentLink,
-} from "../../domain/entities/Invoice";
-import { BillingDashboard } from "../../domain/entities/Invoice";
+} from "../../domain/entities/BillingDashboard";
 import type {
   IBillingService,
   GatewayListResponseModel,
 } from "../../domain/interfaces/IBillingService";
 import { BillingMapper } from "../mappers/BillingMapper";
 
+/**
+ * Repository implementation for managing database operations on Billing resources.
+ */
 export class BillingRepository implements IBillingRepository {
   constructor(private readonly service: IBillingService) {}
 

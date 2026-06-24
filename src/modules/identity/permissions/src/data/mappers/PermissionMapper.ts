@@ -42,6 +42,9 @@ const PermissionModelSchema = z.object({
   nameAr: optionalString(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class PermissionMapper {
   /**
    * Map Model (DTO) to Domain Entity

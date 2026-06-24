@@ -8,6 +8,9 @@
 
 // ===== JSON Shapes (API contracts) =====
 
+/**
+ * Interface structure detailing the properties and attributes of O Auth App Json.
+ */
 export interface OAuthAppJson {
   id: string;
   displayName: string;
@@ -34,6 +37,9 @@ export interface OAuthAppJson {
   modifiedAt: string | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of O Auth App List Item Json.
+ */
 export interface OAuthAppListItemJson {
   id: string;
   displayName: string;
@@ -49,22 +55,34 @@ export interface OAuthAppListItemJson {
   createdAt: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of O Auth App List Response Json.
+ */
 export interface OAuthAppListResponseJson {
   items: OAuthAppListItemJson[];
   totalCount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Regenerate Secret Result Json.
+ */
 export interface RegenerateSecretResultJson {
   clientId: string;
   newClientSecret: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Create O Auth App Response Json.
+ */
 export interface CreateOAuthAppResponseJson {
   id: string;
   clientId: string;
   clientSecret: string | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Create O Auth App Json.
+ */
 export interface CreateOAuthAppJson {
   displayName: string;
   clientType: string;
@@ -84,6 +102,9 @@ export interface CreateOAuthAppJson {
   refreshTokenLifetimeDays?: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update O Auth App Json.
+ */
 export interface UpdateOAuthAppJson {
   displayName?: string;
   protocol?: string;
@@ -104,6 +125,9 @@ export interface UpdateOAuthAppJson {
 
 // ===== Model Classes =====
 
+/**
+ * Domain entity class representing a O Auth App Model.
+ */
 export class OAuthAppModel {
   constructor(
     public readonly id: string,
@@ -160,6 +184,9 @@ export class OAuthAppModel {
   }
 }
 
+/**
+ * Domain entity class representing a O Auth App List Item Model.
+ */
 export class OAuthAppListItemModel {
   constructor(
     public readonly id: string,

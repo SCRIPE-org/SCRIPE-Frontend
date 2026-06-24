@@ -24,10 +24,16 @@ export interface CreateDefinitionRequest {
   frontendUrl?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Definition Request.
+ */
 export interface UpdateDefinitionRequest extends Partial<CreateDefinitionRequest> {
   id: string;
 }
 
+/**
+ * Interface defining repository methods for managing Definitions data access.
+ */
 export interface IDefinitionsRepository {
   getAll(): Promise<PluginDefinition[]>;
   getById(id: string): Promise<PluginDefinition>;

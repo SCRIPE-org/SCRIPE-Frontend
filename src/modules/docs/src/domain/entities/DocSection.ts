@@ -14,6 +14,9 @@ export interface FlowNode {
   icon?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Flow Connection.
+ */
 export interface FlowConnection {
   from: string;
   to: string;
@@ -23,6 +26,9 @@ export interface FlowConnection {
 }
 
 // ─── API Table Types ───────────────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Api Endpoint.
+ */
 export interface ApiEndpoint {
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   path: string;
@@ -32,6 +38,9 @@ export interface ApiEndpoint {
 }
 
 // ─── Tab Types ─────────────────────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Code Tab.
+ */
 export interface CodeTab {
   label: string;
   language: string;
@@ -40,6 +49,9 @@ export interface CodeTab {
 }
 
 // ─── Step Guide Types ──────────────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Step Item.
+ */
 export interface StepItem {
   titleKey: string;
   contentKey: string;
@@ -49,6 +61,9 @@ export interface StepItem {
 }
 
 // ─── Comparison Types ──────────────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Comparison Column.
+ */
 export interface ComparisonColumn {
   titleKey: string;
   variant: "positive" | "negative" | "neutral";
@@ -56,6 +71,9 @@ export interface ComparisonColumn {
 }
 
 // ─── Feature Grid Types ────────────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Feature Grid Item.
+ */
 export interface FeatureGridItem {
   icon: string;
   titleKey: string;
@@ -63,6 +81,9 @@ export interface FeatureGridItem {
 }
 
 // ─── Section Types ─────────────────────────────────────────────────
+/**
+ * Type declaration definition describing the schema of doc section type.
+ */
 export type DocSectionType =
   | "heading"
   | "paragraph"
@@ -78,22 +99,34 @@ export type DocSectionType =
   | "comparison"
   | "feature-grid";
 
+/**
+ * Interface structure detailing the properties and attributes of Doc Section Base.
+ */
 export interface DocSectionBase {
   type: DocSectionType;
   id?: string; // For TOC anchor linking
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Heading Section.
+ */
 export interface HeadingSection extends DocSectionBase {
   type: "heading";
   level: 2 | 3 | 4;
   titleKey: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Paragraph Section.
+ */
 export interface ParagraphSection extends DocSectionBase {
   type: "paragraph";
   contentKey: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Code Section.
+ */
 export interface CodeSection extends DocSectionBase {
   type: "code";
   language: string;
@@ -102,11 +135,17 @@ export interface CodeSection extends DocSectionBase {
   highlightLines?: number[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Tabs Section.
+ */
 export interface TabsSection extends DocSectionBase {
   type: "tabs";
   tabs: CodeTab[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Flowchart Section.
+ */
 export interface FlowchartSection extends DocSectionBase {
   type: "flowchart";
   nodes: FlowNode[];
@@ -116,11 +155,17 @@ export interface FlowchartSection extends DocSectionBase {
   titleKey?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Api Table Section.
+ */
 export interface ApiTableSection extends DocSectionBase {
   type: "api-table";
   endpoints: ApiEndpoint[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Info Section.
+ */
 export interface InfoSection extends DocSectionBase {
   type: "info";
   variant: "note" | "tip" | "warning" | "danger";
@@ -128,23 +173,35 @@ export interface InfoSection extends DocSectionBase {
   titleKey?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Step Guide Section.
+ */
 export interface StepGuideSection extends DocSectionBase {
   type: "step-guide";
   steps: StepItem[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Table Section.
+ */
 export interface TableSection extends DocSectionBase {
   type: "table";
   headers: string[];
   rows: string[][];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of List Section.
+ */
 export interface ListSection extends DocSectionBase {
   type: "list";
   variant: "ordered" | "unordered";
   items: string[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Image Section.
+ */
 export interface ImageSection extends DocSectionBase {
   type: "image";
   src: string;
@@ -152,17 +209,26 @@ export interface ImageSection extends DocSectionBase {
   caption?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Comparison Section.
+ */
 export interface ComparisonSection extends DocSectionBase {
   type: "comparison";
   columns: ComparisonColumn[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Feature Grid Section.
+ */
 export interface FeatureGridSection extends DocSectionBase {
   type: "feature-grid";
   items: FeatureGridItem[];
   columns?: 2 | 3 | 4;
 }
 
+/**
+ * Type declaration definition describing the schema of doc section.
+ */
 export type DocSection =
   | HeadingSection
   | ParagraphSection

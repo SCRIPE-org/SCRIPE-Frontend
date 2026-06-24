@@ -35,6 +35,9 @@ function SectionHeader({
 
 const CURRENCY_SYMBOLS: Record<string, string> = { USD: "$", EUR: "€", SAR: "﷼", GBP: "£" };
 
+/**
+ * React presentation component representing the wizard step pricing UI element.
+ */
 export function WizardStepPricing({ form, prices, onPriceChange }: WizardStepPricingProps) {
   const { t } = useI18n();
 

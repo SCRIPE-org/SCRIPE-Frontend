@@ -45,6 +45,9 @@ interface AdminsViewProps {
   tenantId?: string;
 }
 
+/**
+ * React presentation component representing the admins view UI element.
+ */
 export function AdminsView({ tenantId }: AdminsViewProps = {}) {
   useModuleLocales(() => import("../../../locales"), "admin");
   const { t, language } = useI18n();

@@ -26,6 +26,9 @@ interface WizardStep3Props {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the wizard step3 features UI element.
+ */
 export function WizardStep3Features({
   edition,
   groups,

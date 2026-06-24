@@ -30,6 +30,9 @@ export interface CreateEditionRequest {
   isContactSalesOnly?: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Edition Request.
+ */
 export interface UpdateEditionRequest {
   name?: string;
   displayNameEn?: string;
@@ -56,6 +59,9 @@ export interface UpdateEditionRequest {
   isContactSalesOnly?: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Set Edition Feature Request.
+ */
 export interface SetEditionFeatureRequest {
   value: string;
 }

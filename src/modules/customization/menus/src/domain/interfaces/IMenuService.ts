@@ -15,6 +15,9 @@ import type {
   SaveMenuOverrideRequest,
 } from "../entities/MenuItemRequests";
 
+/**
+ * Interface defining operations for the Menu network service.
+ */
 export interface IMenuService {
   getAll(): Promise<MenuTreeNode[]>;
   create(request: CreateMenuItemRequest): Promise<{ id: string }>;

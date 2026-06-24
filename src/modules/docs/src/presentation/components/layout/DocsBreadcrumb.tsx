@@ -9,6 +9,9 @@ interface DocsBreadcrumbProps {
   pageTitleKey: string;
 }
 
+/**
+ * React presentation component representing the docs breadcrumb UI element.
+ */
 export function DocsBreadcrumb({ slug, categoryTitleKey, pageTitleKey }: DocsBreadcrumbProps) {
   const { t } = useDocsI18n();
 

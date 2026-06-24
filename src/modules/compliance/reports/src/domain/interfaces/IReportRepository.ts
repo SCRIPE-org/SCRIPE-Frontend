@@ -3,6 +3,9 @@ import type { PagedResult } from "@core/interfaces/common.interface";
 import type { GenerateReportRequest } from "../entities/ComplianceReport";
 import type { ReportParams } from "./IReportService";
 
+/**
+ * Interface defining repository methods for managing Report data access.
+ */
 export interface IReportRepository {
   getAll(params: ReportParams): Promise<PagedResult<ComplianceReport>>;
   generate(data: GenerateReportRequest): Promise<string>;

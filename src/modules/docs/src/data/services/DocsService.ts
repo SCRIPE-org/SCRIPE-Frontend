@@ -9,6 +9,9 @@ import type { IDocsRepository, SearchResult } from "../../domain/interfaces/IDoc
 import type { DocPage } from "../../domain/entities/DocPage";
 import type { DocCategory } from "../../domain/entities/DocCategory";
 
+/**
+ * API service for executing HTTP calls related to Docs endpoints.
+ */
 export class DocsService implements IDocsService {
   constructor(
     private readonly repository: IDocsRepository,

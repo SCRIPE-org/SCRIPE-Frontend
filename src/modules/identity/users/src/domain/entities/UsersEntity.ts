@@ -26,6 +26,9 @@ export interface UsersEntityData {
   createdAt: string;
 }
 
+/**
+ * Domain entity class representing a Users Entity.
+ */
 export class UsersEntity {
   constructor(private readonly data: UsersEntityData) {}
 

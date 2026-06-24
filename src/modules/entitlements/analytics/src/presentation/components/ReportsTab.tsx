@@ -28,6 +28,9 @@ interface ReportsTabProps {
   isGenerating?: boolean;
 }
 
+/**
+ * React presentation component representing the reports tab UI element.
+ */
 export function ReportsTab({
   preference,
   onSave,

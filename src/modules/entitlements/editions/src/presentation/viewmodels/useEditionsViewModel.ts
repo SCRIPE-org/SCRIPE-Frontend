@@ -15,6 +15,9 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for editions view model.
+ */
 export function useEditionsViewModel() {
   const { success } = useEnhancedToast();
   const { editionRepository } = entitlementsContainer;

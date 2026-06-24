@@ -1,5 +1,14 @@
+/**
+ * Exported member in the customization/branding module.
+ */
 export { BrandingConfig, type BrandingConfigProps } from "./BrandingConfig";
+/**
+ * Exported member in the customization/branding module.
+ */
 export { SystemDefaults, type SystemDefaultsProps } from "./SystemDefaults";
+/**
+ * Exported member in the customization/branding module.
+ */
 export { AuditLogEntry, type AuditLogEntryProps } from "./AuditLogEntry";
 export {
   type StudioDraftProps,
@@ -34,7 +43,19 @@ export {
   hasSingletonComponent,
   getCatalogEntry,
 } from "./CanvasComponent";
+/**
+ * Exported member in the customization/branding module.
+ */
 export { type LayoutTemplate, layoutToTemplate, getAllLayoutTemplates } from "./LayoutTemplates";
+/**
+ * Exported member in the customization/branding module.
+ */
 export { type SavedTemplate } from "./SavedTemplate";
+/**
+ * Exported member in the customization/branding module.
+ */
 export { ThemeCard, type ThemeCardData } from "./ThemeCard";
+/**
+ * Exported member in the customization/branding module.
+ */
 export { ThemeDetail, type ThemeDetailData } from "./ThemeDetail";

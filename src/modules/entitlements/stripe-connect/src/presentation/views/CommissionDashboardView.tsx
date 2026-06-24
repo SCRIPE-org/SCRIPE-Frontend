@@ -24,6 +24,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { BarChart3 } from "lucide-react";
 
+/**
+ * React presentation component representing the commission dashboard view UI element.
+ */
 export function CommissionDashboardView() {
   useModuleLocales(() => import("../../../locales"), "stripe-connect");
   const { t } = useI18n();

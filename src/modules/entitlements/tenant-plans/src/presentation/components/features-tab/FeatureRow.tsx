@@ -23,6 +23,9 @@ interface FeatureRowProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the feature row UI element.
+ */
 export function FeatureRow({
   definition,
   value,

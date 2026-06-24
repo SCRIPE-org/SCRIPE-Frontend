@@ -14,6 +14,9 @@ import { AppPurchase, DeveloperPayout } from "../../domain/entities/FinancialEnt
 import type { IFinancialsRepository } from "../../domain/interfaces/IFinancialsRepository";
 import type { PurchaseDto, PayoutDto } from "../../domain/interfaces/IFinancialsService";
 
+/**
+ * Repository implementation for managing database operations on Financials resources.
+ */
 export class FinancialsRepository implements IFinancialsRepository {
   constructor(private readonly service: IFinancialsService) {}
 

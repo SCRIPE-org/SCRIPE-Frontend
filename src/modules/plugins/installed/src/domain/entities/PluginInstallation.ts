@@ -1,5 +1,8 @@
 import type { PluginInstallationModel } from "../../data/models/InstalledModels";
 
+/**
+ * Domain entity class representing a Plugin Installation.
+ */
 export class PluginInstallation {
   constructor(private readonly data: PluginInstallationModel) {}
 

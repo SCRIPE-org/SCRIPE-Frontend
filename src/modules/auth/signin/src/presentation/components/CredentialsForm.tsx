@@ -35,6 +35,9 @@ interface CredentialsFormProps {
   errorAnnounce?: boolean;
 }
 
+/**
+ * React presentation component representing the credentials form UI element.
+ */
 export function CredentialsForm({
   formData,
   showPassword,

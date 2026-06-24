@@ -8,6 +8,9 @@ import { useAppStore } from "@/core/store/useAppStore";
 import { toast } from "@core/ui/use-toast";
 import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for dsr detail view model.
+ */
 export function useDsrDetailViewModel(id: string) {
   const { t } = useI18n();
   const queryClient = useQueryClient();

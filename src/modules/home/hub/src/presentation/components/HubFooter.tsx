@@ -10,6 +10,9 @@ import React from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 
+/**
+ * React presentation component representing the hub footer UI element.
+ */
 export function HubFooter() {
   const { t } = useI18n();
   const tenantName = useAppStore((s) => (s.user as any)?.tenantName ?? "SCRIPE");

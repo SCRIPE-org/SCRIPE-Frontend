@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
-import type { BillingDashboard } from "../../domain/entities/Invoice";
+import type { BillingDashboard } from "../../domain/entities/BillingDashboard";
 import { appLogger } from "@/core/common/logger";
 
 /**

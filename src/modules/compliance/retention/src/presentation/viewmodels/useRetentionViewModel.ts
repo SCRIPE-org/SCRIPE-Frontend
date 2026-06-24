@@ -11,6 +11,9 @@ import type {
   CreateRetentionPolicyRequest,
 } from "../../domain/entities/RetentionPolicy";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for retention view model.
+ */
 export function useRetentionViewModel() {
   const { retentionRepository } = complianceContainer;
   const queryClient = useQueryClient();

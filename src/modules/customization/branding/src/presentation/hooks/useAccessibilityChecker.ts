@@ -20,9 +20,18 @@ import { useMemo } from "react";
 import type { StudioDraftProps as StudioDraft } from "../../domain/entities/StudioDraft";
 
 // ── Types ─────────────────────────────────────────────
+/**
+ * Type declaration definition describing the schema of check severity.
+ */
 export type CheckSeverity = "pass" | "warn" | "fail" | "info";
+/**
+ * Type declaration definition describing the schema of check category.
+ */
 export type CheckCategory = "contrast" | "target" | "overlay" | "motion";
 
+/**
+ * Interface structure detailing the properties and attributes of Accessibility Check.
+ */
 export interface AccessibilityCheck {
   id: string;
   category: CheckCategory;
@@ -38,6 +47,9 @@ export interface AccessibilityCheck {
   autoFix?: Partial<StudioDraft>;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Accessibility Summary.
+ */
 export interface AccessibilitySummary {
   pass: number;
   warn: number;
@@ -46,6 +58,9 @@ export interface AccessibilitySummary {
   total: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Accessibility Result.
+ */
 export interface AccessibilityResult {
   checks: AccessibilityCheck[];
   summary: AccessibilitySummary;
@@ -208,6 +223,9 @@ function contrastCheck(
 
 // ── Main Hook ─────────────────────────────────────────
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for accessibility checker.
+ */
 export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult {
   return useMemo(() => {
     const checks: AccessibilityCheck[] = [];

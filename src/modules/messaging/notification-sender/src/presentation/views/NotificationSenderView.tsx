@@ -19,6 +19,9 @@ import type { NotificationType, NotificationCategory } from "../../domain/entiti
 const TITLE_MAX = 150;
 const MESSAGE_MAX = 2000;
 
+/**
+ * React presentation component representing the notification sender view UI element.
+ */
 export function NotificationSenderView() {
   const vm = useNotificationSenderViewModel();
   const { t } = useI18n();

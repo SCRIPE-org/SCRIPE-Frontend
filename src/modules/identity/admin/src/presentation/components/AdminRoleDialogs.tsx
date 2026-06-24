@@ -33,6 +33,9 @@ interface AssignRoleDialogProps {
   tenantId?: string; // Restored prop for explicit scoping
 }
 
+/**
+ * React presentation component representing the assign role dialog UI element.
+ */
 export function AssignRoleDialog({
   open,
   onOpenChange,
@@ -143,6 +146,9 @@ interface ViewRolesDialogProps {
   isRemoving: boolean;
 }
 
+/**
+ * React presentation component representing the view roles dialog UI element.
+ */
 export function ViewRolesDialog({
   open,
   onOpenChange,
@@ -254,6 +260,9 @@ interface ResetPasswordDialogProps {
   defaultPassword?: string;
 }
 
+/**
+ * React presentation component representing the reset password dialog UI element.
+ */
 export function ResetPasswordDialog({
   open,
   onOpenChange,

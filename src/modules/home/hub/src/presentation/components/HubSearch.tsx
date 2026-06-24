@@ -17,6 +17,9 @@ interface HubSearchProps {
   onChange: (value: string) => void;
 }
 
+/**
+ * React presentation component representing the hub search UI element.
+ */
 export function HubSearch({ value, onChange }: HubSearchProps) {
   const [focused, setFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);

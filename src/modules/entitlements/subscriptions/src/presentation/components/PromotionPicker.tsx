@@ -28,6 +28,9 @@ interface PromotionPickerProps {
 
 const NONE_VALUE = "__none__";
 
+/**
+ * React presentation component representing the promotion picker UI element.
+ */
 export function PromotionPicker({
   isLoading,
   promotions,

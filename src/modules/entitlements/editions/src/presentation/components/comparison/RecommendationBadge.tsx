@@ -20,6 +20,9 @@ interface RecommendationBadgeProps {
   size?: "sm" | "md";
 }
 
+/**
+ * React presentation component representing the recommendation badge UI element.
+ */
 export function RecommendationBadge({ label, size = "md" }: RecommendationBadgeProps) {
   const hue = labelToHue(label);
   const bg = `oklch(0.35 0.18 ${hue})`;

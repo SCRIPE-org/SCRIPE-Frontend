@@ -1,3 +1,6 @@
+/**
+ * Constant definition representing es.
+ */
 export const es = {
   modules: {
     tenantPlans: {

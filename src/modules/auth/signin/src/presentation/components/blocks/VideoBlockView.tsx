@@ -5,6 +5,9 @@ import {
   isValidVideoUrl,
 } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 
+/**
+ * React presentation component representing the video block view UI element.
+ */
 export function VideoBlockView({ block }: { block: VideoBlock }) {
   const props = block.props;
   if (!isValidVideoUrl(props.url)) return null;

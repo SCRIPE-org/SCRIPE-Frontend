@@ -107,6 +107,9 @@ function extractSurfaceColor(bundle: ThemeBundle): string {
   return "#ffffff";
 }
 
+/**
+ * React presentation component representing the bundle card UI element.
+ */
 export function BundleCard({
   bundle,
   onOpenDetail,

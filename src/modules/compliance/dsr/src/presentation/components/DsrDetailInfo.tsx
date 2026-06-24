@@ -9,6 +9,9 @@ interface DsrDetailInfoProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the dsr detail info UI element.
+ */
 export function DsrDetailInfo({ dsr, t }: DsrDetailInfoProps) {
   return (
     <Card>

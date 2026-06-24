@@ -52,6 +52,9 @@ interface ProfilePreviewProps {
   variant?: "sidebar" | "inline";
 }
 
+/**
+ * React presentation component representing the profile preview UI element.
+ */
 export function ProfilePreview({ questions, answers, variant = "sidebar" }: ProfilePreviewProps) {
   const { tokens } = useSignupTheme();
   const { t } = useI18n();

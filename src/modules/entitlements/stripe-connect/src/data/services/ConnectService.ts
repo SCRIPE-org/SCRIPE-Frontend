@@ -17,6 +17,9 @@ import type {
   TenantTransactionsResponseModel,
 } from "../models/ConnectModels";
 
+/**
+ * API service for executing HTTP calls related to Connect endpoints.
+ */
 export class ConnectService implements IConnectService {
   constructor(private readonly api: IApiService) {}
 

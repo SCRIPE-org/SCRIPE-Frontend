@@ -46,6 +46,9 @@ const OnboardingQuestionSchema = z.object({
   options: z.array(AnswerOptionSchema).optional().default([]),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class OnboardingQuestionMapper {
   static toEntity(
     model: OnboardingQuestionListModel | OnboardingQuestionDetailModel

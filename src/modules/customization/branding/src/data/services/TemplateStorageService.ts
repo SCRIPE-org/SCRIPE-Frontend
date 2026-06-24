@@ -8,6 +8,9 @@ import { STORAGE_KEYS } from "@core/config/storage-keys";
 import type { SavedTemplate } from "../../domain/entities/SavedTemplate";
 import type { IApiService } from "@core/interfaces/api.interface";
 
+/**
+ * API service for executing HTTP calls related to TemplateStorage endpoints.
+ */
 export class TemplateStorageService {
   constructor(private readonly api?: IApiService) {}
   static load(): SavedTemplate[] {

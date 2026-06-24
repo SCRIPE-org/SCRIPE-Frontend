@@ -8,6 +8,9 @@
 
 // ─── Public feature DTO ───────────────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Public Feature Dto.
+ */
 export interface PublicFeatureDto {
   name: string;
   nameAr: string | null;
@@ -23,6 +26,9 @@ export interface PublicFeatureDto {
 
 // ─── Edition DTO ──────────────────────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Public Edition Dto.
+ */
 export interface PublicEditionDto {
   id: string;
   name: string;
@@ -44,6 +50,9 @@ export interface PublicEditionDto {
 
 // ─── Category DTO ─────────────────────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Public Category Dto.
+ */
 export interface PublicCategoryDto {
   id: string;
   key: string;
@@ -58,11 +67,17 @@ export interface PublicCategoryDto {
 
 // ─── OTP DTOs ────────────────────────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Send Otp Dto.
+ */
 export interface SendOtpDto {
   sent: boolean;
   retryAfterSeconds: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Verify Otp Dto.
+ */
 export interface VerifyOtpDto {
   isValid: boolean;
   verificationToken: string | null;
@@ -71,6 +86,9 @@ export interface VerifyOtpDto {
 
 // ─── Subdomain check DTO ──────────────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Subdomain Check Dto.
+ */
 export interface SubdomainCheckDto {
   available: boolean;
   suggestion: string | null;
@@ -79,6 +97,9 @@ export interface SubdomainCheckDto {
 
 // ─── Register DTOs ────────────────────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Register Dto.
+ */
 export interface RegisterDto {
   mode: "active" | "checkout";
   accessToken: string | null;
@@ -94,6 +115,9 @@ export interface RegisterDto {
 
 // ─── Status / finalize DTOs ───────────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Signup Status Dto.
+ */
 export interface SignupStatusDto {
   status:
     | "pending"
@@ -106,13 +130,17 @@ export interface SignupStatusDto {
   statusMessage: string | null;
   expiresAt: string | null;
 }
-
+/**
+ * Interface structure detailing the properties and attributes of Signup Checkout Status Dto.
+ */
 export interface SignupCheckoutStatusDto {
   status: "pending" | "processing" | "completed" | "failed" | "expired" | "unknown";
   supportReference: string;
   message: string;
 }
-
+/**
+ * Interface structure detailing the properties and attributes of Complete Session Dto.
+ */
 export interface CompleteSessionDto {
   accessToken: string;
   expiresAt: string;
@@ -122,9 +150,10 @@ export interface CompleteSessionDto {
   redirectUrl: string;
   userProfile: Record<string, unknown> | null;
 }
-
 // ─── Pricing context DTOs ─────────────────────────────────────────────────────
-
+/**
+ * Interface structure detailing the properties and attributes of Supported Currency Dto.
+ */
 export interface SupportedCurrencyDto {
   code: string;
   symbol: string;
@@ -132,15 +161,18 @@ export interface SupportedCurrencyDto {
   nameAr: string;
   rateFromUsd: number;
 }
-
+/**
+ * Interface structure detailing the properties and attributes of Pricing Context Dto.
+ */
 export interface PricingContextDto {
   detectedCountry: string | null;
   recommendedCurrency: string;
   supportedCurrencies: SupportedCurrencyDto[];
 }
-
 // ─── Resume / Change-plan DTOs ───────────────────────────────────────────────
-
+/**
+ * Interface structure detailing the properties and attributes of Resume Session Dto.
+ */
 export interface ResumeSessionDto {
   status:
     | "pending"
@@ -155,13 +187,16 @@ export interface ResumeSessionDto {
   currency: string | null;
   expiresAt: string | null;
 }
-
+/**
+ * Interface structure detailing the properties and attributes of Change Plan Result Dto.
+ */
 export interface ChangePlanResultDto {
   checkoutUrl: string;
 }
-
 // ─── Contact sales DTO ────────────────────────────────────────────────────────
-
+/**
+ * Interface structure detailing the properties and attributes of Contact Sales Request Dto.
+ */
 export interface ContactSalesRequestDto {
   contactName: string;
   email: string;
@@ -173,9 +208,7 @@ export interface ContactSalesRequestDto {
   teamSize: string | null | undefined;
   primaryPriority: string | null | undefined;
 }
-
 // ─── Recommendation DTO ───────────────────────────────────────────────────────
-
 /** Shape returned by GET /auth/signup/recommendation */
 export interface RecommendationDto {
   /** "free" | "standard" | "enterprise" | "ultimate" */
@@ -189,9 +222,10 @@ export interface RecommendationDto {
   /** Translatable locale keys explaining the recommendation (e.g. "recommendation.reason.team.small"). */
   reasons: string[];
 }
-
 // ─── Onboarding Intelligence Engine DTOs ─────────────────────────────────────
-
+/**
+ * Interface structure detailing the properties and attributes of Onboarding Answer Option Dto.
+ */
 export interface OnboardingAnswerOptionDto {
   value: string;
   label: string;
@@ -200,7 +234,9 @@ export interface OnboardingAnswerOptionDto {
   sortOrder: number;
   signalWeight: number;
 }
-
+/**
+ * Interface structure detailing the properties and attributes of Onboarding Question Dto.
+ */
 export interface OnboardingQuestionDto {
   key: string;
   questionType: "single_select" | "multi_select";
@@ -215,11 +251,15 @@ export interface OnboardingQuestionDto {
   iconKey: string | null;
   options: OnboardingAnswerOptionDto[];
 }
-
+/**
+ * Interface structure detailing the properties and attributes of Onboarding Flow Dto.
+ */
 export interface OnboardingFlowDto {
   questions: OnboardingQuestionDto[];
 }
-
+/**
+ * Interface structure detailing the properties and attributes of Onboarding Recommendation Dto.
+ */
 export interface OnboardingRecommendationDto {
   recommendedEditionId: string;
   recommendedEditionName: string;
@@ -230,11 +270,9 @@ export interface OnboardingRecommendationDto {
   /** False when the best-fit edition is contact-sales / Enterprise. Additive/optional. */
   isSelfService?: boolean;
 }
-
 // ─── Welcome + Trust Content DTOs ────────────────────────────────────────────
 // Mirror SignupWelcomeContentDto + SignupTrustMarkDto + SignupCustomerLogoDto.
 // Wire shape from GET /onboarding/welcome-content?lang=
-
 /** A single localized compliance/trust badge. */
 export interface SignupTrustMarkDto {
   key: string;
@@ -243,14 +281,12 @@ export interface SignupTrustMarkDto {
   iconKey: string | null;
   assetUrl: string | null;
 }
-
 /** A single customer logo entry. */
 export interface SignupCustomerLogoDto {
   key: string;
   name: string;
   assetUrl: string;
 }
-
 /** Shape returned by GET /onboarding/welcome-content. */
 export interface SignupWelcomeContentDto {
   headline: string;

@@ -18,6 +18,9 @@ interface WebhookHealthDashboardProps {
   isLoading: boolean;
 }
 
+/**
+ * React presentation component representing the webhook health dashboard UI element.
+ */
 export function WebhookHealthDashboard({ summary, isLoading }: WebhookHealthDashboardProps) {
   const { t } = useI18n();
 

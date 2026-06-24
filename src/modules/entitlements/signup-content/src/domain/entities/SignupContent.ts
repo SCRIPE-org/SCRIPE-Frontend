@@ -1,8 +1,17 @@
 "use client";
 
+/**
+ * Constant definition representing c o n t e n t_ m o d e s.
+ */
 export const CONTENT_MODES = ["Seeded", "Live"] as const;
+/**
+ * Type declaration definition describing the schema of content mode.
+ */
 export type ContentMode = (typeof CONTENT_MODES)[number];
 
+/**
+ * Interface structure detailing the properties and attributes of Welcome Content Data.
+ */
 export interface WelcomeContentData {
   id: string;
   headlineEn: string;
@@ -16,6 +25,9 @@ export interface WelcomeContentData {
   trustedByLabelAr: string;
 }
 
+/**
+ * Domain entity class representing a Welcome Content.
+ */
 export class WelcomeContent {
   constructor(private readonly data: WelcomeContentData) {}
 
@@ -55,6 +67,9 @@ export class WelcomeContent {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Trust Mark Data.
+ */
 export interface TrustMarkData {
   id: string;
   key: string;
@@ -68,6 +83,9 @@ export interface TrustMarkData {
   isActive: boolean;
 }
 
+/**
+ * Domain entity class representing a Trust Mark.
+ */
 export class TrustMark {
   constructor(private readonly data: TrustMarkData) {}
 
@@ -107,6 +125,9 @@ export class TrustMark {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Customer Logo Data.
+ */
 export interface CustomerLogoData {
   id: string;
   key: string;
@@ -117,6 +138,9 @@ export interface CustomerLogoData {
   isActive: boolean;
 }
 
+/**
+ * Domain entity class representing a Customer Logo.
+ */
 export class CustomerLogo {
   constructor(private readonly data: CustomerLogoData) {}
 
@@ -147,6 +171,9 @@ export class CustomerLogo {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Admin Signup Content Data.
+ */
 export interface AdminSignupContentData {
   contentMode: ContentMode;
   welcomeContent: WelcomeContent | null;
@@ -154,6 +181,9 @@ export interface AdminSignupContentData {
   customerLogos: CustomerLogo[];
 }
 
+/**
+ * Domain entity class representing a Admin Signup Content.
+ */
 export class AdminSignupContent {
   constructor(private readonly data: AdminSignupContentData) {}
 

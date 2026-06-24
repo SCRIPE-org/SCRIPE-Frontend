@@ -20,6 +20,9 @@ import type {
   RegenerateSecretResultJson,
 } from "../models/OAuthAppModel";
 
+/**
+ * API service for executing HTTP calls related to OAuthApp endpoints.
+ */
 export class OAuthAppService implements IOAuthAppService {
   constructor(private readonly api: IApiService) {}
 

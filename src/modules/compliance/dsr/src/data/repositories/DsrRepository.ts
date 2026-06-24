@@ -13,6 +13,9 @@ import type {
 } from "../../domain/entities/DsrRequests";
 import { DsrMapper } from "../mappers/DsrMapper";
 
+/**
+ * Repository implementation for managing database operations on Dsr resources.
+ */
 export class DsrRepository implements IDsrRepository {
   constructor(private readonly service: IDsrService) {}
 

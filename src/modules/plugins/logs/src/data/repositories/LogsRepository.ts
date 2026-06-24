@@ -4,6 +4,9 @@ import type { PluginExecutionLog } from "../../domain/entities/PluginExecutionLo
 import type { PagedResult } from "../models/LogsModels";
 import { LogsMapper } from "../mappers/LogsMapper";
 
+/**
+ * Repository implementation for managing database operations on Logs resources.
+ */
 export class LogsRepository implements ILogsRepository {
   constructor(private readonly service: ILogsService) {}
 

@@ -21,6 +21,9 @@ import type {
   SetGroupRestrictionsRequest,
 } from "../../domain/entities/UserGroupRequests";
 
+/**
+ * Interface structure detailing the properties and attributes of User Group Service List Params.
+ */
 export interface UserGroupServiceListParams {
   page: number;
   pageSize: number;
@@ -29,6 +32,9 @@ export interface UserGroupServiceListParams {
   isActive?: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of User Group List Result.
+ */
 export interface UserGroupListResult {
   items: UserGroupModel[];
   totalCount: number;
@@ -39,6 +45,9 @@ export interface UserGroupListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * API service for executing HTTP calls related to UserGroup endpoints.
+ */
 export class UserGroupService {
   constructor(private readonly api: IApiService) {}
 

@@ -6,10 +6,16 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { getComponent } from "@core/common/component-registry";
 import { useToast } from "@core/hooks/use-toast";
 
+/**
+ * Constant definition representing external login keys.
+ */
 export const externalLoginKeys = {
   all: ["profile", "external-logins"] as const,
 };
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for external logins view model.
+ */
 export function useExternalLoginsViewModel() {
   const repo = container.profileRepository;
   const { t } = useI18n();

@@ -14,6 +14,9 @@ import type {
   SecurityChange,
 } from "../../domain/entities/SecurityEntities";
 
+/**
+ * API service for executing HTTP calls related to Security endpoints.
+ */
 export class SecurityService implements ISecurityService {
   constructor(private readonly api: IApiService) {}
 

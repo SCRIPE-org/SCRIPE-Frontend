@@ -27,6 +27,9 @@ interface SubTenantsTabProps {
   parentCode: string;
 }
 
+/**
+ * React presentation component representing the sub tenants tab UI element.
+ */
 export function SubTenantsTab({ parentId, parentName, parentCode }: SubTenantsTabProps) {
   const { t, direction } = useI18n();
   const vm = useSubTenantsViewModel({ parentId, parentName, parentCode });

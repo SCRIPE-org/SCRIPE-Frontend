@@ -5,6 +5,9 @@ import type { TextBlock } from "@modules/auth/core/domain/entities/LoginBranding
 import { ALIGN_MAP, FONT_SIZE_MAP, FONT_WEIGHT_MAP } from "./block-constants";
 import { blockColor, clamp } from "./block-style-utils";
 
+/**
+ * React presentation component representing the text block view UI element.
+ */
 export function TextBlockView({ block }: { block: TextBlock }) {
   const props = block.props;
   const style: CSSProperties = {

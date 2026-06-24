@@ -30,6 +30,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { CreditCard, LogOut, ShieldAlert } from "lucide-react";
 
+/**
+ * React presentation component representing the activate workspace view UI element.
+ */
 export default function ActivateWorkspaceView() {
   const {
     subscription,

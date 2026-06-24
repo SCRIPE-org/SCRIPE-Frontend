@@ -43,6 +43,9 @@ import {
 // NOTE: Domain types are imported directly from ../../domain/entities/StudioDraft by all components.
 
 // ── Hook ───────────────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Studio View Model Options.
+ */
 export interface StudioViewModelOptions {
   /** Encrypted tenant ID for drilldown mode (super admin customizing a specific tenant) */
   targetTenantId?: string;
@@ -50,6 +53,9 @@ export interface StudioViewModelOptions {
   targetTenantName?: string;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for studio view model.
+ */
 export function useStudioViewModel(options?: StudioViewModelOptions) {
   const { t } = useI18n();
   const { success: toastSuccess, error: toastError } = useEnhancedToast();

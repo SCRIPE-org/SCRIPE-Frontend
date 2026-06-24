@@ -12,6 +12,9 @@ interface UseManageRolesViewModelProps {
   open: boolean;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for manage roles view model.
+ */
 export function useManageRolesViewModel({
   adminId,
   scopeTenantId,

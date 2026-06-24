@@ -42,6 +42,9 @@ interface TenantDomainsTabProps {
 
 // ─── Component ────────────────────────────────────────────
 
+/**
+ * React presentation component representing the tenant domains tab UI element.
+ */
 export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps) {
   const { t, direction } = useI18n();
   const isRtl = direction === "rtl";

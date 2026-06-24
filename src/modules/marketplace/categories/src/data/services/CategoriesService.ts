@@ -14,6 +14,9 @@ import type {
   UpdateCategoryPayload,
 } from "../../domain/interfaces/ICategoriesService";
 
+/**
+ * API service for executing HTTP calls related to Categories endpoints.
+ */
 export class CategoriesService implements ICategoriesService {
   constructor(private readonly api: IApiService) {}
 

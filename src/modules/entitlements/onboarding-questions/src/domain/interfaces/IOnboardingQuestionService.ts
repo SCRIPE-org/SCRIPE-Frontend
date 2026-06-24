@@ -10,6 +10,9 @@ import type {
   AnswerOptionRequest,
 } from "../entities/OnboardingQuestionRequests";
 
+/**
+ * Interface defining operations for the OnboardingQuestion network service.
+ */
 export interface IOnboardingQuestionService {
   getAll(params: OnboardingQuestionsListParams): Promise<PagedOnboardingQuestionsModel>;
   getById(id: string): Promise<OnboardingQuestionDetailModel>;

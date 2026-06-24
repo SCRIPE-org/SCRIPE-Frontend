@@ -26,6 +26,9 @@ interface Props {
   groupId: string;
 }
 
+/**
+ * React presentation component representing the user group detail view UI element.
+ */
 export function UserGroupDetailView({ groupId }: Props) {
   const { t, language } = useI18n();
   const router = useRouter();

@@ -13,6 +13,9 @@ import type {
 } from "../entities/EditionPromotion";
 import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
+/**
+ * Interface defining repository methods for managing Edition data access.
+ */
 export interface IEditionRepository {
   getAll(params: PaginationParams & { includeRetired?: boolean }): Promise<PagedResult<Edition>>;
   getById(id: string): Promise<Edition>;

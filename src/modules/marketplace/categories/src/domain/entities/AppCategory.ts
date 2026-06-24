@@ -1,3 +1,6 @@
+/**
+ * Interface structure detailing the properties and attributes of App Category Data.
+ */
 export interface AppCategoryData {
   id: string;
   name: string;
@@ -12,6 +15,9 @@ export interface AppCategoryData {
   createdAt: string;
 }
 
+/**
+ * Domain entity class representing a App Category.
+ */
 export class AppCategory {
   constructor(private readonly data: AppCategoryData) {}
   get id() {

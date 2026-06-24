@@ -9,12 +9,24 @@
 
 // ─── Shared Types ──────────────────────────────────────────────
 
+/**
+ * Type declaration definition describing the schema of notification type.
+ */
 export type NotificationType = "Info" | "Success" | "Warning" | "Error";
+/**
+ * Type declaration definition describing the schema of notification category.
+ */
 export type NotificationCategory = "General" | "Security" | "System" | "Activity";
+/**
+ * Type declaration definition describing the schema of notification target type.
+ */
 export type NotificationTargetType = "User" | "Role" | "Tenant" | "Broadcast";
 
 // ─── Notification Target Entity ────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Notification Target Data.
+ */
 export interface NotificationTargetData {
   id: string;
   name: string;

@@ -55,6 +55,9 @@ interface RolePermissionsDialogProps {
   tenantId: string;
 }
 
+/**
+ * React presentation component representing the role permissions dialog UI element.
+ */
 export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
   const { open, onOpenChange, role } = props;
   const { t, language } = useI18n();

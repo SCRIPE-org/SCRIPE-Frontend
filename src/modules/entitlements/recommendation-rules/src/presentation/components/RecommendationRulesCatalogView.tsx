@@ -25,6 +25,9 @@ interface RecommendationRulesCatalogViewProps {
   language: string;
 }
 
+/**
+ * React presentation component representing the recommendation rules catalog view UI element.
+ */
 export function RecommendationRulesCatalogView({ vm, t }: RecommendationRulesCatalogViewProps) {
   const config: CrudConfig<RecommendationRule> = useMemo(
     () => ({

@@ -8,6 +8,9 @@ import type { GenericSelectOption } from "@core/crud/components/generic-select";
 
 const SYSTEM_TENANT_VALUE = SYSTEM_TENANT_ID;
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for admin transfer view model.
+ */
 export function useAdminTransferViewModel() {
   const { t, language } = useI18n();
 

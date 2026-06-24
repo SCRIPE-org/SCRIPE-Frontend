@@ -15,6 +15,9 @@ import type {
   UpdateSystemSettingsJson,
 } from "../types/CustomizationServiceTypes";
 
+/**
+ * Interface defining operations for the Customization network service.
+ */
 export interface ICustomizationService {
   // ── Tenant Branding (My Tenant) ──
   getMyBranding(): Promise<BrandingResponseJson>;

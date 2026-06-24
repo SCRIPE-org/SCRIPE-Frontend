@@ -26,6 +26,9 @@ function formatMonth(iso: string): string {
   return d.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
 }
 
+/**
+ * React presentation component representing the revenue tab UI element.
+ */
 export function RevenueTab({ mrrData, months, onMonthsChange }: RevenueTabProps) {
   const { t } = useI18n();
   const maxMrr = Math.max(...mrrData.movements.map((m) => m.mrrEnd), 1);

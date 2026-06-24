@@ -11,6 +11,9 @@ export interface EditionPriceModel {
   amount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Edition Model.
+ */
 export interface EditionModel {
   id: string;
   name: string;
@@ -64,6 +67,9 @@ export interface EditionModel {
   modifiedAt?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Edition Version Model.
+ */
 export interface EditionVersionModel {
   id: string;
   versionNumber: number;

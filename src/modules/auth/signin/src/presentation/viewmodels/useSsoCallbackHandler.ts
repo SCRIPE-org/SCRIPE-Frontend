@@ -15,7 +15,13 @@ import {
 } from "./useSsoCallbackHandlers";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 
+/**
+ * Type declaration definition describing the schema of sso callback kind.
+ */
 export type SsoCallbackKind = "oidc" | "saml";
+/**
+ * Type declaration definition describing the schema of sso callback state.
+ */
 export type SsoCallbackState =
   | "processing"
   | "success"
@@ -23,11 +29,17 @@ export type SsoCallbackState =
   | "no_linked_account"
   | "workspace_selection";
 
+/**
+ * Interface structure detailing the properties and attributes of Sso Callback Error.
+ */
 export interface SsoCallbackError {
   title: string;
   message: string;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for sso callback handler.
+ */
 export function useSsoCallbackHandler(kind: SsoCallbackKind) {
   const router = useRouter();
   const searchParams = useSearchParams();

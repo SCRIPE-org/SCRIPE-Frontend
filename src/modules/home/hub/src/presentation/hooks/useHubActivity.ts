@@ -109,6 +109,9 @@ function getEventLabel(item: HubRecentItem): string {
 
 // ── Hook ─────────────────────────────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Hub Activity Data.
+ */
 export interface HubActivityData {
   todayCount: number;
   moduleCount: number;
@@ -123,6 +126,9 @@ export interface HubActivityData {
   isLoading: boolean;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for hub activity.
+ */
 export function useHubActivity(): HubActivityData {
   const { hubActivityRepository } = homeContainer;
   const { data, isLoading } = useQuery({

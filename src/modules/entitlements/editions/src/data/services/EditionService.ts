@@ -19,6 +19,9 @@ import type {
   UpdateEditionRequest,
 } from "../../domain/entities/EditionRequests";
 
+/**
+ * API service for executing HTTP calls related to Edition endpoints.
+ */
 export class EditionService implements IEditionService {
   constructor(private readonly api: IApiService) {}
 

@@ -1,6 +1,9 @@
 import { HubActivitySummary, HubRecentItem } from "../../domain/entities/HubActivity";
 import type { HubActivitySummaryModel, HubRecentItemModel } from "../models/HubActivityModels";
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class HubActivityMapper {
   static toRecentItemEntity(model: HubRecentItemModel): HubRecentItem {
     return new HubRecentItem({

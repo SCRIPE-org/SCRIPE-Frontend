@@ -95,6 +95,9 @@ interface DsrFilterBarProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the dsr filter bar UI element.
+ */
 export function DsrFilterBar({
   statusFilter,
   typeFilter,

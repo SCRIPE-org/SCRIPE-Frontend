@@ -37,6 +37,9 @@ interface PermissionsPickerProps {
   compact?: boolean;
 }
 
+/**
+ * React presentation component representing the permissions picker UI element.
+ */
 export function PermissionsPicker({
   value,
   onChange,

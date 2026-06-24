@@ -5,6 +5,9 @@ import { BG_STYLE, WRAPPER_STYLE } from "./layout-types";
 import { MobileLogo, DesktopHeading } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
+/**
+ * React presentation component representing the magazine layout UI element.
+ */
 export function MagazineLayout({
   branding,
   slotConfig,

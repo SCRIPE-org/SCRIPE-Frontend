@@ -13,6 +13,9 @@ export interface RolePermission {
   scope?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Role Props.
+ */
 export interface RoleProps {
   id: string;
   nameEn: string;
@@ -191,5 +194,11 @@ export class Role {
 }
 
 // Keep backward compatibility alias
+/**
+ * Type declaration definition describing the schema of role data.
+ */
 export type RoleData = RoleProps;
+/**
+ * Type declaration definition describing the schema of role permission data.
+ */
 export type RolePermissionData = RolePermission;

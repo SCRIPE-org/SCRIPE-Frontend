@@ -28,6 +28,9 @@ interface ChangeActionBarProps {
   discardChanges: () => void;
 }
 
+/**
+ * React presentation component representing the change action bar UI element.
+ */
 export function ChangeActionBar({
   modifiedCount,
   isCreatingVersion,

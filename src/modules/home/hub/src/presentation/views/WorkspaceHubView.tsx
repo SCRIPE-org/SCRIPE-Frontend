@@ -40,6 +40,9 @@ import { HubSidePanel } from "../components/HubSidePanel";
 import { HubFooter } from "../components/HubFooter";
 import { useHubActivity } from "../hooks/useHubActivity";
 
+/**
+ * React presentation component representing the workspace hub view UI element.
+ */
 export function WorkspaceHubView() {
   const { workspaceGroups, isLoading, togglePin } = useWorkspace();
   const { switchWorkspace } = useWorkspaceTransition();

@@ -3,6 +3,9 @@ import type { IHubActivityService } from "../../domain/interfaces/IHubActivitySe
 import type { HubActivitySummary } from "../../domain/entities/HubActivity";
 import { HubActivityMapper } from "../mappers/HubActivityMapper";
 
+/**
+ * Repository implementation for managing database operations on HubActivity resources.
+ */
 export class HubActivityRepository implements IHubActivityRepository {
   constructor(private readonly service: IHubActivityService) {}
 

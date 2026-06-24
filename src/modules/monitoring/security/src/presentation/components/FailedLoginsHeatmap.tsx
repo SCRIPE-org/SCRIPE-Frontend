@@ -41,6 +41,9 @@ const chartConfig: ChartConfig = {
   },
 };
 
+/**
+ * Constant definition representing failed logins heatmap.
+ */
 export const FailedLoginsHeatmap = memo(function FailedLoginsHeatmap({
   data,
   isLoading,

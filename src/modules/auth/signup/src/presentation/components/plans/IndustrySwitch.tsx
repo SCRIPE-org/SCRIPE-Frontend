@@ -21,6 +21,9 @@ interface IndustrySwitchProps {
   hasAnswers?: boolean;
 }
 
+/**
+ * React presentation component representing the industry switch UI element.
+ */
 export function IndustrySwitch({
   value,
   options,

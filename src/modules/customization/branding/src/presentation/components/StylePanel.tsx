@@ -344,6 +344,9 @@ function PresetDots({
   );
 }
 
+/**
+ * React presentation component representing the style panel UI element.
+ */
 export function StylePanel({
   activeSection,
   draft,

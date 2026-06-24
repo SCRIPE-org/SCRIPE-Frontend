@@ -35,6 +35,9 @@ export interface CreateSubmissionPayload {
   pluginVersionId: string;
 }
 
+/**
+ * Interface defining operations for the Submissions network service.
+ */
 export interface ISubmissionsService {
   /** Fetch paginated list of submissions. */
   getAll(params: {

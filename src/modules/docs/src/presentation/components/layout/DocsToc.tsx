@@ -9,6 +9,9 @@ interface DocsTocProps {
   activeId: string | null;
 }
 
+/**
+ * React presentation component representing the docs toc UI element.
+ */
 export function DocsToc({ headings, activeId }: DocsTocProps) {
   const { t } = useDocsI18n();
 

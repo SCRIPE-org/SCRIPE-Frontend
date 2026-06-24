@@ -30,6 +30,9 @@ interface ChangePlanDialogProps {
   isRtl: boolean;
 }
 
+/**
+ * React presentation component representing the change plan dialog UI element.
+ */
 export function ChangePlanDialog({
   editions,
   isLoadingEditions,

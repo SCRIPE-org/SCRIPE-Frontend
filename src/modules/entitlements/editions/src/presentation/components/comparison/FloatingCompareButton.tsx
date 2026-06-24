@@ -15,6 +15,9 @@ interface FloatingCompareButtonProps {
   targetRef: React.RefObject<HTMLElement | null>;
 }
 
+/**
+ * React presentation component representing the floating compare button UI element.
+ */
 export function FloatingCompareButton({ label, targetRef }: FloatingCompareButtonProps) {
   const [visible, setVisible] = useState(true);
 

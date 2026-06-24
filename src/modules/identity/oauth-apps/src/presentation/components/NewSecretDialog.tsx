@@ -24,6 +24,9 @@ interface NewSecretDialogProps {
   onClose: () => void;
 }
 
+/**
+ * React presentation component representing the new secret dialog UI element.
+ */
 export function NewSecretDialog({
   generatedSecret,
   copiedField,

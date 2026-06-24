@@ -1,3 +1,6 @@
+/**
+ * Interface structure detailing the properties and attributes of Create Edition Category Request.
+ */
 export interface CreateEditionCategoryRequest {
   name: string;
   displayNameEn?: string;
@@ -6,6 +9,9 @@ export interface CreateEditionCategoryRequest {
   sortOrder?: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Edition Category Request.
+ */
 export interface UpdateEditionCategoryRequest {
   name?: string;
   displayNameEn?: string;

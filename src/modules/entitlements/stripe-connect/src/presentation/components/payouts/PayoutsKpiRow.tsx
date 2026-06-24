@@ -64,6 +64,9 @@ interface PayoutsKpiRowProps {
   isLoading?: boolean;
 }
 
+/**
+ * React presentation component representing the payouts kpi row UI element.
+ */
 export function PayoutsKpiRow({
   lifetimeGross,
   lifetimeFee,

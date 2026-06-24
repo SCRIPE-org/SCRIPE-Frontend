@@ -16,6 +16,9 @@ interface AccountStatusCardProps {
   onOpenDashboard: () => void;
 }
 
+/**
+ * React presentation component representing the account status card UI element.
+ */
 export function AccountStatusCard({
   account,
   isOnboarding,

@@ -15,6 +15,9 @@ import { DragEndEvent, DragStartEvent, useSensor, useSensors, PointerSensor } fr
 import { useBuilderStore } from "../viewmodels/useBuilderStore";
 import type { CanvasComponentType } from "../../domain/entities/CanvasComponent";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for builder dnd.
+ */
 export function useBuilderDnd() {
   const store = useBuilderStore();
   const [activeId, setActiveId] = useState<string | null>(null);

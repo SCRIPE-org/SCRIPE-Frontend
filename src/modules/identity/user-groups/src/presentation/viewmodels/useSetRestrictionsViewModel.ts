@@ -9,6 +9,9 @@ interface UseSetRestrictionsViewModelProps {
   open: boolean;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for set restrictions view model.
+ */
 export function useSetRestrictionsViewModel({ tenantId, open }: UseSetRestrictionsViewModelProps) {
   const { t } = useI18n();
 

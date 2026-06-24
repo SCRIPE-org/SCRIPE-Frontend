@@ -20,6 +20,9 @@ import {
   type PermissionAssignmentJson,
 } from "../../domain/types/PermissionTypes";
 
+/**
+ * Interface structure detailing the properties and attributes of Permission Config Dialog Props.
+ */
 export interface PermissionConfigDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -32,6 +35,9 @@ export interface PermissionConfigDialogProps {
   onSave: (assignment: PermissionAssignmentJson) => void;
 }
 
+/**
+ * React presentation component representing the permission config dialog UI element.
+ */
 export function PermissionConfigDialog({
   open,
   onOpenChange,

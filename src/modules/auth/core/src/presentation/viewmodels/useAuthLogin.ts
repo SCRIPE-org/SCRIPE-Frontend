@@ -17,6 +17,9 @@ import {
   WorkspaceSelectionRequiredError,
 } from "../../../domain/errors/AuthErrors";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for auth login.
+ */
 export function useAuthLogin() {
   const { authRepository } = useServices();
   const setAuth = useAppStore((state) => state.setAuth);

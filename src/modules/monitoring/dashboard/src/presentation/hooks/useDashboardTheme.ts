@@ -59,6 +59,9 @@ const columnsClassMap: Record<number, string> = {
   5: "xl:grid-cols-5",
 };
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for dashboard theme.
+ */
 export function useDashboardTheme() {
   const { t } = useI18n();
   const { success: toastSuccess, error: toastError } = useEnhancedToast();

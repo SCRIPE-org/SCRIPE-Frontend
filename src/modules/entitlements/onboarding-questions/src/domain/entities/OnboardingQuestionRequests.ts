@@ -1,3 +1,6 @@
+/**
+ * Interface structure detailing the properties and attributes of Answer Option Request.
+ */
 export interface AnswerOptionRequest {
   value: string;
   labelEn: string;
@@ -9,6 +12,9 @@ export interface AnswerOptionRequest {
   signalWeight?: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Create Onboarding Question Request.
+ */
 export interface CreateOnboardingQuestionRequest {
   key: string;
   editionCategoryId?: string;
@@ -27,4 +33,7 @@ export interface CreateOnboardingQuestionRequest {
   options: AnswerOptionRequest[];
 }
 
+/**
+ * Type declaration definition describing the schema of update onboarding question request.
+ */
 export type UpdateOnboardingQuestionRequest = CreateOnboardingQuestionRequest;

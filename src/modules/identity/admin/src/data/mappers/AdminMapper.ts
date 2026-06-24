@@ -57,6 +57,9 @@ const AdminModelSchema = z.object({
   isProtected: z.boolean().optional().default(false),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class AdminMapper {
   /**
    * Convert AdminModel to Admin Entity

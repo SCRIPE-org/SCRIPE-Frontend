@@ -20,6 +20,9 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { qk } from "@core/common/query-keys";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for users view model.
+ */
 export function useUsersViewModel() {
   const { usersRepository } = identityContainer;
   const { t } = useI18n();

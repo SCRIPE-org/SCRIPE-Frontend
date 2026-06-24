@@ -44,6 +44,9 @@ const fmt = (n: number) =>
 
 // Recharts Formatter has a complex overload intersection.
 
+/**
+ * React presentation component representing the commission chart UI element.
+ */
 export function CommissionChart({
   trends,
   isLoading,

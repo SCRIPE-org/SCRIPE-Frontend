@@ -21,6 +21,9 @@ interface OnboardingQuestionsCatalogViewProps {
   language: string;
 }
 
+/**
+ * React presentation component representing the onboarding questions catalog view UI element.
+ */
 export function OnboardingQuestionsCatalogView({
   vm,
   t,

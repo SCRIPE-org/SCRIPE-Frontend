@@ -16,6 +16,9 @@ import type {
 import type { IEditionService } from "../../domain/interfaces/IEditionService";
 import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
+/**
+ * Repository implementation for managing database operations on Edition resources.
+ */
 export class EditionRepository implements IEditionRepository {
   constructor(private readonly service: IEditionService) {}
 

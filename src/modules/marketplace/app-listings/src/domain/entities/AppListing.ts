@@ -32,6 +32,9 @@ export interface AppListingData {
   updatedAt: string | null;
 }
 
+/**
+ * Domain entity class representing a App Listing.
+ */
 export class AppListing {
   constructor(private readonly data: AppListingData) {}
 

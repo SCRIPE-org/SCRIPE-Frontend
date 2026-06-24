@@ -18,6 +18,9 @@ export interface RetentionPolicyModel {
   isActive: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Create Retention Policy Request.
+ */
 export interface CreateRetentionPolicyRequest {
   category: string;
   name: string;

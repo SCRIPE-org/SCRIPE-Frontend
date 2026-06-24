@@ -6,6 +6,9 @@ import type {
   UpdateConsentPurposeRequest,
 } from "../entities/Regulation";
 
+/**
+ * Interface defining operations for the Regulation network service.
+ */
 export interface IRegulationService {
   getAll(): Promise<RegulationProfileModel[]>;
   getById(id: string): Promise<RegulationProfileModel>;

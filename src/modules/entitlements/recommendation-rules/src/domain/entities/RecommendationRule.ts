@@ -19,6 +19,9 @@ export interface RecommendationRuleData extends BaseEntity {
   isActive: boolean;
 }
 
+/**
+ * Domain entity class representing a Recommendation Rule.
+ */
 export class RecommendationRule {
   constructor(public readonly data: RecommendationRuleData) {}
 

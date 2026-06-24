@@ -24,6 +24,9 @@ const devices: { size: DeviceSize; icon: typeof Monitor; label: string }[] = [
   { size: "mobile", icon: Smartphone, label: "Mobile" },
 ];
 
+/**
+ * React presentation component representing the device toggle UI element.
+ */
 export function DeviceToggle({ deviceSize, setDeviceSize }: DeviceToggleProps) {
   return (
     <div className="flex items-center gap-0.5 rounded-lg bg-muted/50 p-0.5">

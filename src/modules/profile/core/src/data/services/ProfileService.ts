@@ -11,6 +11,9 @@ import type {
   Enable2FAResult,
 } from "../../domain/interfaces/IProfileRepository";
 
+/**
+ * API service for executing HTTP calls related to Profile endpoints.
+ */
 export class ProfileService implements IProfileService {
   constructor(private readonly api: IApiService) {}
 

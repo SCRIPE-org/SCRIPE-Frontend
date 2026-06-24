@@ -26,9 +26,15 @@ import { VerticalSplitLayout } from "./VerticalSplitLayout";
 import { FullscreenFormLayout } from "./FullscreenFormLayout";
 import { MosaicLayout } from "./MosaicLayout";
 
+/**
+ * Exported type in the auth/signin module.
+ */
 export type { LoginLayoutProps };
 export { SplitRightLayout };
 
+/**
+ * Constant definition representing l a y o u t_ r e g i s t r y.
+ */
 export const LAYOUT_REGISTRY: Record<LoginLayout, ComponentType<LoginLayoutProps>> = {
   vault: VaultLayout,
   "split-right": SplitRightLayout,

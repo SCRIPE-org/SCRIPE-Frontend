@@ -14,6 +14,9 @@ interface OtpStepProps {
   totalSteps: number;
 }
 
+/**
+ * React presentation component representing the otp step UI element.
+ */
 export function OtpStep({ vm, totalSteps }: OtpStepProps) {
   const { t } = useI18n();
 

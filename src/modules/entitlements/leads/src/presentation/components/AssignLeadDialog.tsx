@@ -27,6 +27,9 @@ interface AssignLeadDialogProps {
   onSearchAdmins: (query: string) => Promise<AssignableAdmin[]>;
 }
 
+/**
+ * React presentation component representing the assign lead dialog UI element.
+ */
 export function AssignLeadDialog({
   open,
   lead,

@@ -11,6 +11,9 @@ import { useState } from "react";
 import { container } from "@modules/profile/di";
 import type { UpdateProfileRequest } from "../../domain/interfaces/IProfileRepository";
 
+/**
+ * Constant definition representing profile keys.
+ */
 export const profileKeys = {
   all: ["profile"] as const,
   me: () => [...profileKeys.all, "me"] as const,
@@ -18,6 +21,9 @@ export const profileKeys = {
   securityLog: (page: number) => [...profileKeys.all, "security-log", page] as const,
 };
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for profile page view model.
+ */
 export function useProfilePageViewModel() {
   const repo = container.profileRepository;
   const queryClient = useQueryClient();

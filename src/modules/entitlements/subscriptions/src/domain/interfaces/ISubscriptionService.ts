@@ -10,6 +10,9 @@ import type {
   GlobalSubscriptionModel,
 } from "../../data/models/SubscriptionModels";
 
+/**
+ * Interface defining operations for the Subscription network service.
+ */
 export interface ISubscriptionService {
   // ── Queries ──
   getAll(): Promise<GlobalSubscriptionModel[]>;

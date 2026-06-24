@@ -20,6 +20,9 @@ import type { TenantFeatureDefinition } from "../../domain/entities/TenantPlan";
 import { Pencil, Trash2, Eye } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 
+/**
+ * React presentation component representing the tenant feature definitions view UI element.
+ */
 export function TenantFeatureDefinitionsView() {
   useModuleLocales(() => import("../../../locales"), "tenant-plans");
   const { t } = useI18n();

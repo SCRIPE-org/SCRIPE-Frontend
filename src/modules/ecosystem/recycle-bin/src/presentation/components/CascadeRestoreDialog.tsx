@@ -7,6 +7,9 @@ import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Info } from "lucide-react";
 
+/**
+ * Interface structure detailing the properties and attributes of Cascade Restore Dialog Props.
+ */
 export interface CascadeRestoreDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -15,6 +18,9 @@ export interface CascadeRestoreDialogProps {
   itemName: string;
 }
 
+/**
+ * React presentation component representing the cascade restore dialog UI element.
+ */
 export function CascadeRestoreDialog({
   open,
   onOpenChange,

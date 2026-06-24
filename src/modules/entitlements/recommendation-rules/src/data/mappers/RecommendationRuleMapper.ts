@@ -35,6 +35,9 @@ const RecommendationRuleModelSchema = z.object({
   modifiedAt: optionalIsoDate(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class RecommendationRuleMapper {
   static toEntity(
     model: RecommendationRuleListModel | RecommendationRuleDetailModel

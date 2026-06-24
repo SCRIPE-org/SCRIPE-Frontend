@@ -65,6 +65,9 @@ const fmt = (n: number) =>
 
 const fmtInt = (n: number) => new Intl.NumberFormat("en-US").format(n);
 
+/**
+ * React presentation component representing the commission kpi cards UI element.
+ */
 export function CommissionKpiCards({ dashboard, isLoading, t }: CommissionKpiCardsProps) {
   if (isLoading || !dashboard) {
     return (

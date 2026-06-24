@@ -3,6 +3,9 @@
 import type { DividerBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { blockColor, clamp } from "./block-style-utils";
 
+/**
+ * React presentation component representing the divider block view UI element.
+ */
 export function DividerBlockView({ block }: { block: DividerBlock }) {
   const props = block.props;
   if (props.style === "space") return <div style={{ height: clamp(props.thickness, 8, 64, 24) }} />;

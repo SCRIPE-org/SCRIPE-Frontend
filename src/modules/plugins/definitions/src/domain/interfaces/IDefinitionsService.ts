@@ -1,6 +1,9 @@
 import type { PluginDefinitionModel } from "@modules/plugins/core";
 import type { CreateDefinitionRequest, UpdateDefinitionRequest } from "./IDefinitionsRepository";
 
+/**
+ * Interface defining operations for the Definitions network service.
+ */
 export interface IDefinitionsService {
   getAll(): Promise<PluginDefinitionModel[]>;
   getById(id: string): Promise<PluginDefinitionModel>;

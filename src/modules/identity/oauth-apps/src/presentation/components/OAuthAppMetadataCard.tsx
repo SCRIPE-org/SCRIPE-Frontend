@@ -12,6 +12,9 @@ interface OAuthAppMetadataCardProps {
   tenantId?: string | null;
 }
 
+/**
+ * React presentation component representing the o auth app metadata card UI element.
+ */
 export function OAuthAppMetadataCard({
   createdAt,
   modifiedAt,

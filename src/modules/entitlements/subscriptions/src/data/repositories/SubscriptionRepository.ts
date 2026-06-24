@@ -15,6 +15,9 @@ import type { ExportParams, ExportFileResult } from "../../domain/entities/Subsc
 import type { ISubscriptionService } from "../../domain/interfaces/ISubscriptionService";
 import { SubscriptionMapper } from "../mappers/SubscriptionMapper";
 
+/**
+ * Repository implementation for managing database operations on Subscription resources.
+ */
 export class SubscriptionRepository implements ISubscriptionRepository {
   constructor(private readonly service: ISubscriptionService) {}
 

@@ -9,6 +9,9 @@
 
 // ===== JSON Shapes (API contracts) =====
 
+/**
+ * Interface structure detailing the properties and attributes of Identity Provider Json.
+ */
 export interface IdentityProviderJson {
   id: string;
   name: string;
@@ -38,6 +41,9 @@ export interface IdentityProviderJson {
   modifiedAt: string | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Identity Provider List Item Json.
+ */
 export interface IdentityProviderListItemJson {
   id: string;
   name: string;
@@ -52,11 +58,17 @@ export interface IdentityProviderListItemJson {
   createdAt: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Identity Provider List Response Json.
+ */
 export interface IdentityProviderListResponseJson {
   items: IdentityProviderListItemJson[];
   totalCount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Test Connection Result Json.
+ */
 export interface TestConnectionResultJson {
   isSuccess: boolean;
   message: string;
@@ -64,6 +76,9 @@ export interface TestConnectionResultJson {
   discoveredEndpoints: string[] | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Create Identity Provider Json.
+ */
 export interface CreateIdentityProviderJson {
   name: string;
   slug: string;
@@ -88,6 +103,9 @@ export interface CreateIdentityProviderJson {
   displayOrder?: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Identity Provider Json.
+ */
 export interface UpdateIdentityProviderJson {
   name?: string;
   slug?: string;
@@ -114,6 +132,9 @@ export interface UpdateIdentityProviderJson {
 
 // ===== Model Classes =====
 
+/**
+ * Domain entity class representing a Identity Provider Model.
+ */
 export class IdentityProviderModel {
   constructor(
     public readonly id: string,
@@ -176,6 +197,9 @@ export class IdentityProviderModel {
   }
 }
 
+/**
+ * Domain entity class representing a Identity Provider List Item Model.
+ */
 export class IdentityProviderListItemModel {
   constructor(
     public readonly id: string,

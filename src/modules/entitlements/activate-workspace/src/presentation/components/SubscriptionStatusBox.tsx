@@ -6,6 +6,9 @@ interface SubscriptionStatusBoxProps {
   isRtl: boolean;
 }
 
+/**
+ * React presentation component representing the subscription status box UI element.
+ */
 export function SubscriptionStatusBox({ subscription, tokens, isRtl }: SubscriptionStatusBoxProps) {
   if (!subscription) return null;
 

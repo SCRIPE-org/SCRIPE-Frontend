@@ -24,6 +24,9 @@ import type {
   AdminListResult,
 } from "../../domain/interfaces/IAdminService";
 
+/**
+ * API service for executing HTTP calls related to Admin endpoints.
+ */
 export class AdminService implements IAdminService {
   constructor(private readonly api: IApiService) {}
 

@@ -24,6 +24,9 @@ interface ManageRolesDialogProps {
   tenantId?: string; // Explicit tenant context (e.g., from drill-down)
 }
 
+/**
+ * React presentation component representing the manage roles dialog UI element.
+ */
 export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: ManageRolesDialogProps) {
   // Strict Scope Calculation
   const scopeTenantId = tenantId || admin?.tenantId || "";

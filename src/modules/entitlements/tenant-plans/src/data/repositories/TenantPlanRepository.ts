@@ -24,6 +24,9 @@ import { TenantPlanMapper } from "../mappers/TenantPlanMapper";
 import type { ITenantPlanService } from "../../domain/interfaces/ITenantPlanService";
 import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
+/**
+ * Repository implementation for managing database operations on TenantPlan resources.
+ */
 export class TenantPlanRepository implements ITenantPlanRepository {
   constructor(private readonly service: ITenantPlanService) {}
 

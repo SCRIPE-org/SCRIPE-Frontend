@@ -12,6 +12,9 @@ import {
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
 
+/**
+ * React presentation component representing the external logins section UI element.
+ */
 export function ExternalLoginsSection() {
   const { t } = useI18n();
   const { externalLogins, providers, isLoading, isUnlinking, unlink, handleLink } =

@@ -16,6 +16,9 @@ interface DrawerTabCommsProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the drawer tab comms UI element.
+ */
 export function DrawerTabComms({
   communicationLogs,
   isLoadingComms,

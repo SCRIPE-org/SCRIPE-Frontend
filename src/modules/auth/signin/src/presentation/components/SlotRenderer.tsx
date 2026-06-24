@@ -32,6 +32,9 @@ interface SlotRendererProps {
   className?: string;
 }
 
+/**
+ * React presentation component representing the slot renderer UI element.
+ */
 export function SlotRenderer({ slotId, slotConfig, className = "" }: SlotRendererProps) {
   const blocks = slotConfig.slots[slotId];
 

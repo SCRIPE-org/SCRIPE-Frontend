@@ -30,6 +30,9 @@ const CATEGORY_COLORS: Record<TemplateCategory, { bg: string; text: string }> = 
   custom: { bg: "bg-gray-500/15", text: "text-gray-600 dark:text-gray-400" },
 };
 
+/**
+ * React presentation component representing the message templates view UI element.
+ */
 export function MessageTemplatesView() {
   const router = useRouter();
   const {

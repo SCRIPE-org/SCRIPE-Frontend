@@ -9,6 +9,9 @@ import type {
 } from "../entities/Subscription";
 import type { ExportParams, ExportFileResult } from "../entities/SubscriptionExport";
 
+/**
+ * Interface defining repository methods for managing Subscription data access.
+ */
 export interface ISubscriptionRepository {
   // Queries
   getAll(): Promise<GlobalSubscriptionItem[]>;

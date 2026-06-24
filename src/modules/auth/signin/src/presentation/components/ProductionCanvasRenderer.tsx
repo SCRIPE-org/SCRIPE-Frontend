@@ -89,6 +89,9 @@ function TopActionsBar() {
   );
 }
 
+/**
+ * React presentation component representing the production canvas renderer UI element.
+ */
 export function ProductionCanvasRenderer({
   components,
   gridRows,

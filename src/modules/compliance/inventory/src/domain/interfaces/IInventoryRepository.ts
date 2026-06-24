@@ -6,6 +6,9 @@ import type {
   UpdateDataInventoryRequest,
 } from "../entities/InventoryItem";
 
+/**
+ * Interface defining repository methods for managing Inventory data access.
+ */
 export interface IInventoryRepository {
   getAll(params: InventoryParams): Promise<PagedResult<InventoryItem>>;
   create(data: CreateDataInventoryRequest): Promise<string>;

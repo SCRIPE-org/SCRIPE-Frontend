@@ -9,6 +9,9 @@ interface FormOptionsProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the form options UI element.
+ */
 export function FormOptions({ staySignedIn, onStaySignedInChange, disabled, t }: FormOptionsProps) {
   return (
     <div

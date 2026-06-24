@@ -17,6 +17,9 @@ import { useI18n } from "@core/providers/i18n-provider";
 
 const isStripeTestMode = process.env.NEXT_PUBLIC_STRIPE_TEST_MODE === "true";
 
+/**
+ * React presentation component representing the stripe test mode banner UI element.
+ */
 export function StripeTestModeBanner() {
   const [dismissed, setDismissed] = useState(false);
   const { t } = useI18n();

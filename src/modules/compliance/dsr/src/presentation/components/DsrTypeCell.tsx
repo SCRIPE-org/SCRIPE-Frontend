@@ -24,6 +24,9 @@ interface DsrTypeCellProps {
   label: string;
 }
 
+/**
+ * React presentation component representing the dsr type cell UI element.
+ */
 export function DsrTypeCell({ requestType, label }: DsrTypeCellProps) {
   return (
     <span

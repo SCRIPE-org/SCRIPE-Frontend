@@ -18,6 +18,9 @@ import { Badge } from "@core/ui/badge";
 import { Unlock, UserCheck, UserX } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
+/**
+ * React presentation component representing the users view UI element.
+ */
 export function UsersView() {
   useModuleLocales(() => import("../../../locales"), "users");
   const { t } = useI18n();

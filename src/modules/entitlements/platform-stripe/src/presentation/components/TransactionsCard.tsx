@@ -16,6 +16,9 @@ interface TransactionsCardProps {
   paymentsLink: string;
 }
 
+/**
+ * React presentation component representing the transactions card UI element.
+ */
 export function TransactionsCard({ transactions, paymentsLink }: TransactionsCardProps) {
   const { t } = useI18n();
 

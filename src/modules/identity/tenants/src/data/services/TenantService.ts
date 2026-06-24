@@ -38,6 +38,9 @@ import type {
   DowngradeImpactReport,
 } from "../models/TenantSubscription";
 
+/**
+ * API service for executing HTTP calls related to Tenant endpoints.
+ */
 export class TenantService implements ITenantService {
   constructor(private readonly api: IApiService) {}
 

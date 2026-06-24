@@ -34,6 +34,9 @@ interface WorkspaceStepProps {
   wizard: SignupWizardViewModel;
 }
 
+/**
+ * React presentation component representing the workspace step UI element.
+ */
 export function WorkspaceStep({ wizard }: WorkspaceStepProps) {
   const { t, direction } = useI18n();
   const { tokens } = useSignupTheme();

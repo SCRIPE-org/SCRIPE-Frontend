@@ -17,6 +17,9 @@ import type {
   SaveMenuOverrideRequest,
 } from "../../domain/entities/MenuItemRequests";
 
+/**
+ * Repository implementation for managing database operations on Menu resources.
+ */
 export class MenuRepository implements IMenuRepository {
   constructor(private readonly service: IMenuService) {}
 

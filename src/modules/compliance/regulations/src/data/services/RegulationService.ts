@@ -9,6 +9,9 @@ import type {
   UpdateConsentPurposeRequest,
 } from "../models/RegulationModels";
 
+/**
+ * API service for executing HTTP calls related to Regulation endpoints.
+ */
 export class RegulationService implements IRegulationService {
   constructor(private readonly api: IApiService) {}
 

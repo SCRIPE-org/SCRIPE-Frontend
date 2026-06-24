@@ -18,6 +18,9 @@ interface GeneralSectionProps {
   isCreateMode: boolean;
 }
 
+/**
+ * React presentation component representing the general section UI element.
+ */
 export function GeneralSection({
   form,
   updateField,

@@ -228,6 +228,9 @@ public async Task LogAsync(AuditEntry entry)
         language: "typescript",
         filename: "useAuditStream.ts — Frontend Hook",
         code: `// Frontend hook for real-time audit log streaming
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for audit stream.
+ */
 export function useAuditStream() {
   const [logs, setLogs] = useState<AuditLogDto[]>([]);
   const connection = useSignalR(); // From SignalRProvider

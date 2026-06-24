@@ -8,6 +8,9 @@ export { ThemeBundleRepository } from "./repositories/ThemeBundleRepository";
 export { ThemeBundleMapper } from "./mappers/ThemeBundleMapper";
 export { BrandingMapper } from "./mappers/BrandingMapper";
 export { BrandingModel, AuditLogEntryModel } from "./models/BrandingModel";
+/**
+ * Exported type in the customization/branding module.
+ */
 export type {
   BrandingResponseJson,
   AuditLogEntryJson,
@@ -15,4 +18,7 @@ export type {
   PublishBrandingRequestJson,
 } from "./models/BrandingModel";
 export { SystemSettingsModel } from "./models/SystemSettingsModel";
+/**
+ * Exported type in the customization/branding module.
+ */
 export type { SystemSettingsJson, UpdateSystemSettingsJson } from "./models/SystemSettingsModel";

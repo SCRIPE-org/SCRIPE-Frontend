@@ -53,6 +53,9 @@ interface ThemeMarketplacePanelProps {
   onExitPreview?: () => void;
 }
 
+/**
+ * React presentation component representing the theme marketplace panel UI element.
+ */
 export function ThemeMarketplacePanel({
   onApplySuccess,
   onPreviewTheme,

@@ -27,6 +27,9 @@ interface CatalogViewProps {
   language: string;
 }
 
+/**
+ * React presentation component representing the catalog view UI element.
+ */
 export function CatalogView({ vm, t, language }: CatalogViewProps) {
   const config: CrudConfig<Feature> = useMemo(
     () => ({

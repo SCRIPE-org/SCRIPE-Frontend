@@ -1,6 +1,9 @@
 import { MenuItem } from "../../domain/entities/MenuItem";
 import type { MenuItemData } from "../../domain/entities/MenuItem";
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class MenuItemMapper {
   static toEntity(dto: MenuItemData): MenuItem {
     return new MenuItem({

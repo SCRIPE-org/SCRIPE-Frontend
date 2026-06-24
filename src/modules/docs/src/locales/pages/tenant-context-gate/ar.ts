@@ -1,3 +1,6 @@
+/**
+ * Constant definition representing ar.
+ */
 export const ar = {
   features: {
     tenantContextGate: {

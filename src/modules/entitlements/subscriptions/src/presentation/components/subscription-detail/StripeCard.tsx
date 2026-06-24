@@ -22,6 +22,9 @@ interface StripeCardProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the stripe card UI element.
+ */
 export function StripeCard({ sub, vm, t }: StripeCardProps) {
   const hasGatewayCustomer = !!sub.gatewayCustomerId;
 

@@ -9,6 +9,9 @@ import type { UpdateRetentionPolicyRequest } from "../../domain/entities/Retenti
 import type { CreateRetentionPolicyRequest } from "../../data/models/RetentionModels";
 import { RetentionMapper } from "../mappers/RetentionMapper";
 
+/**
+ * Repository implementation for managing database operations on Retention resources.
+ */
 export class RetentionRepository implements IRetentionRepository {
   constructor(private readonly service: IRetentionService) {}
 

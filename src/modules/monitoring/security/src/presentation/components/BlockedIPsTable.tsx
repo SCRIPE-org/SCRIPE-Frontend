@@ -23,6 +23,9 @@ interface Props {
   cardClasses?: string;
 }
 
+/**
+ * Constant definition representing blocked i ps table.
+ */
 export const BlockedIPsTable = memo(function BlockedIPsTable({
   data,
   isLoading,

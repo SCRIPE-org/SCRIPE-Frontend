@@ -24,6 +24,9 @@ const PAGE_LABELS: Record<string, string> = {
   "reset-password": "reset password",
 };
 
+/**
+ * React presentation component representing the studio preview UI element.
+ */
 export function StudioPreview({
   iframeRef,
   isPreviewReady,

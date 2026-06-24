@@ -10,6 +10,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for my subscription view model.
+ */
 export function useMySubscriptionViewModel() {
   const { subscriptionRepository } = entitlementsContainer;
 

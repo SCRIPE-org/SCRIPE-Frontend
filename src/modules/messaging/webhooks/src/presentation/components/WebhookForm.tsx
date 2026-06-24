@@ -33,6 +33,9 @@ interface WebhookFormProps {
   onSuccess: () => void;
 }
 
+/**
+ * React presentation component representing the webhook form UI element.
+ */
 export function WebhookForm({ mode, webhook, open, onOpenChange, onSuccess }: WebhookFormProps) {
   const { t } = useI18n();
   const vm = useWebhookFormViewModel({ mode, webhook, onSuccess });

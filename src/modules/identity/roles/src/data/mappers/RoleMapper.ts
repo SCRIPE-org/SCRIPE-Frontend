@@ -48,6 +48,9 @@ const RoleModelSchema = z.object({
   groupNamesAr: z.array(z.string()).optional(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class RoleMapper {
   /**
    * Map Model (DTO) to Domain Entity

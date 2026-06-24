@@ -10,7 +10,13 @@
 
 // ── Enums / Unions ───────────────────────────────────────
 
+/**
+ * Type declaration definition describing the schema of subscription type.
+ */
 export type SubscriptionType = "Lifetime" | "Monthly" | "Yearly" | "Trial" | "AddOn" | "Free";
+/**
+ * Type declaration definition describing the schema of subscription status.
+ */
 export type SubscriptionStatus =
   | "Active"
   | "Trialing"
@@ -18,11 +24,20 @@ export type SubscriptionStatus =
   | "Suspended"
   | "Canceled"
   | "Expired";
+/**
+ * Type declaration definition describing the schema of expiry behavior.
+ */
 export type ExpiryBehavior = "Fallback" | "Suspend";
+/**
+ * Type declaration definition describing the schema of refund type.
+ */
 export type RefundType = "None" | "Full" | "ProRata";
 
 // ── Edition ──────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Edition Thin Model.
+ */
 export interface EditionThinModel {
   id: string;
   name: string;
@@ -40,6 +55,9 @@ export interface EditionThinModel {
 
 // ── Subscription ─────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Subscription Model.
+ */
 export interface SubscriptionModel {
   id: string;
   tenantId: string;
@@ -74,6 +92,9 @@ export interface SubscriptionModel {
 
 // ── Paged Result ─────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Paged Edition Result.
+ */
 export interface PagedEditionResult {
   items: EditionThinModel[];
   totalCount: number;
@@ -86,6 +107,9 @@ export interface PagedEditionResult {
 
 // ── Downgrade Impact ─────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Resource Overflow.
+ */
 export interface ResourceOverflow {
   resourceType: string;
   featureName: string;
@@ -94,6 +118,9 @@ export interface ResourceOverflow {
   overflowCount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Downgrade Impact Report.
+ */
 export interface DowngradeImpactReport {
   hasOverflow: boolean;
   overflows: ResourceOverflow[];

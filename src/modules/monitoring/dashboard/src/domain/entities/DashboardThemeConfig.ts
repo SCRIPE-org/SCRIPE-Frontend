@@ -9,6 +9,9 @@
 import { type DashboardBuilderCanvas, DEFAULT_BUILDER_CANVAS } from "./DashboardWidget";
 
 // ── Greeting ──
+/**
+ * Interface structure detailing the properties and attributes of Dashboard Greeting.
+ */
 export interface DashboardGreeting {
   enabled: boolean;
   text?: string; // e.g. "Welcome back, {name}"
@@ -16,9 +19,18 @@ export interface DashboardGreeting {
 }
 
 // ── KPI Card Styles ──
+/**
+ * Type declaration definition describing the schema of card radius.
+ */
 export type CardRadius = "none" | "sm" | "md" | "lg" | "xl" | "2xl";
+/**
+ * Type declaration definition describing the schema of shadow level.
+ */
 export type ShadowLevel = "none" | "sm" | "md" | "lg";
 
+/**
+ * Interface structure detailing the properties and attributes of Dashboard K P I Config.
+ */
 export interface DashboardKPIConfig {
   borderRadius: CardRadius;
   showBorder: boolean;
@@ -27,8 +39,14 @@ export interface DashboardKPIConfig {
 }
 
 // ── Chart Styles ──
+/**
+ * Type declaration definition describing the schema of chart style.
+ */
 export type ChartStyle = "gradient" | "solid" | "outline";
 
+/**
+ * Interface structure detailing the properties and attributes of Dashboard Chart Config.
+ */
 export interface DashboardChartConfig {
   colorPalette: string[]; // 6-8 hex colors
   style: ChartStyle;
@@ -36,6 +54,9 @@ export interface DashboardChartConfig {
 }
 
 // ── Section Visibility ──
+/**
+ * Interface structure detailing the properties and attributes of Dashboard Sections.
+ */
 export interface DashboardSections {
   loginActivity: boolean;
   eventDistribution: boolean;
@@ -45,8 +66,14 @@ export interface DashboardSections {
 }
 
 // ── Layout ──
+/**
+ * Type declaration definition describing the schema of layout density.
+ */
 export type LayoutDensity = "compact" | "default" | "comfortable";
 
+/**
+ * Interface structure detailing the properties and attributes of Dashboard Layout.
+ */
 export interface DashboardLayout {
   density: LayoutDensity;
   columnsPerRow: 3 | 4 | 5;
@@ -56,6 +83,9 @@ export interface DashboardLayout {
 // Full Config
 // ═══════════════════════════════════════════════
 
+/**
+ * Interface structure detailing the properties and attributes of Dashboard Theme Config.
+ */
 export interface DashboardThemeConfig {
   // Existing prefs (backward-compat)
   theme?: string;
@@ -77,6 +107,9 @@ export interface DashboardThemeConfig {
 // Palettes (prebuilt chart color sets)
 // ═══════════════════════════════════════════════
 
+/**
+ * Interface structure detailing the properties and attributes of Dashboard Palette.
+ */
 export interface DashboardPalette {
   id: string;
   nameKey: string; // i18n key
@@ -84,6 +117,9 @@ export interface DashboardPalette {
   accent: string; // Primary accent for KPI icons
 }
 
+/**
+ * Constant definition representing d a s h b o a r d_ p a l e t t e s.
+ */
 export const DASHBOARD_PALETTES: DashboardPalette[] = [
   {
     id: "default",
@@ -166,6 +202,9 @@ export const DASHBOARD_PALETTES: DashboardPalette[] = [
 // Defaults
 // ═══════════════════════════════════════════════
 
+/**
+ * Constant definition representing d e f a u l t_ d a s h b o a r d_ t h e m e.
+ */
 export const DEFAULT_DASHBOARD_THEME: DashboardThemeConfig = {
   greeting: {
     enabled: true,
@@ -201,6 +240,9 @@ export const DEFAULT_DASHBOARD_THEME: DashboardThemeConfig = {
 // Parser (JSON → typed config)
 // ═══════════════════════════════════════════════
 
+/**
+ * Utility function executing operational rules for parse dashboard theme json.
+ */
 export function parseDashboardThemeJson(json: string | null | undefined): DashboardThemeConfig {
   if (!json) return { ...DEFAULT_DASHBOARD_THEME };
   try {

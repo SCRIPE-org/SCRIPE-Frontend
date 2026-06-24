@@ -15,6 +15,9 @@ interface UseTenantDeleteViewModelProps {
   onOpenChange: (open: boolean) => void;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for tenant delete view model.
+ */
 export function useTenantDeleteViewModel({
   open,
   tenant,

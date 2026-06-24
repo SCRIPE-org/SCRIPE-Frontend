@@ -53,6 +53,9 @@ interface SendLeadEmailDialogProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the send lead email dialog UI element.
+ */
 export function SendLeadEmailDialog({
   open,
   lead,

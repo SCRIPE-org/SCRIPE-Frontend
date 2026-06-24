@@ -26,6 +26,9 @@ const ReportModelSchema = z.object({
   fileUrl: z.string().optional().nullable(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class ReportMapper {
   static toEntity(model: ReportModel): ComplianceReport {
     const validated = safeParseApiResponse(ReportModelSchema, model, "ComplianceReport");

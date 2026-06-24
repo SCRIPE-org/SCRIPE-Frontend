@@ -39,6 +39,9 @@ interface OAuthConsentViewModelResult {
   handleSwitchAccount: () => void;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for o auth consent view model.
+ */
 export function useOAuthConsentViewModel(): OAuthConsentViewModelResult {
   const searchParams = useSearchParams();
   const router = useRouter();

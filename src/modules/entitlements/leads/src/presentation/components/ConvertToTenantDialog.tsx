@@ -50,6 +50,9 @@ interface ConvertToTenantWizardProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the convert to tenant wizard UI element.
+ */
 export function ConvertToTenantWizard({
   open,
   lead,

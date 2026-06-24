@@ -5,6 +5,9 @@ import { BG_STYLE, WRAPPER_STYLE } from "./layout-types";
 import { LogoImg, OverlayDiv } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
+/**
+ * React presentation component representing the branded full layout UI element.
+ */
 export function BrandedFullLayout({
   slotConfig,
   formContent,

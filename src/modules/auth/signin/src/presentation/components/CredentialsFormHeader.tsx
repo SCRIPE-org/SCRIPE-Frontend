@@ -7,6 +7,9 @@ interface CredentialsFormHeaderProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the credentials form header UI element.
+ */
 export function CredentialsFormHeader({ t }: CredentialsFormHeaderProps) {
   return (
     <div style={{ marginBottom: "var(--login-heading-margin, 24px)" }}>

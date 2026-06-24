@@ -89,6 +89,9 @@ const ENTITY_TYPES = [
   "AuditLog",
 ] as const;
 
+/**
+ * Constant definition representing audit filter panel.
+ */
 export const AuditFilterPanel = memo(function AuditFilterPanel({
   filters,
   updateFilter,

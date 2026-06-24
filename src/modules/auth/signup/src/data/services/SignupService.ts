@@ -34,6 +34,9 @@ import type {
 } from "../../domain/interfaces/ISignupRepository";
 import type { SignupRecommendationRequest } from "../../domain/entities/OnboardingEntities";
 
+/**
+ * API service for executing HTTP calls related to Signup endpoints.
+ */
 export class SignupService implements ISignupService {
   constructor(
     private readonly api: IPublicApiService,

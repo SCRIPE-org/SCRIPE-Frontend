@@ -24,6 +24,9 @@ interface ProfileInfoFormProps {
   success: boolean;
 }
 
+/**
+ * React presentation component representing the profile info form UI element.
+ */
 export function ProfileInfoForm({
   profile,
   onSubmit,

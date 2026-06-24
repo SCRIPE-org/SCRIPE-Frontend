@@ -23,6 +23,9 @@ import type { Role } from "../../domain/entities/Role";
 import { AssignToGroupDialog } from "@modules/identity/core";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
+/**
+ * React presentation component representing the roles view UI element.
+ */
 export function RolesView() {
   useModuleLocales(() => import("../../../locales"), "roles");
 

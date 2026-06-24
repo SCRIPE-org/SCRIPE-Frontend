@@ -13,6 +13,9 @@ interface FeatureValueCellProps {
   feature: EditionFeatureDto | undefined;
 }
 
+/**
+ * React presentation component representing the feature value cell UI element.
+ */
 export function FeatureValueCell({ feature }: FeatureValueCellProps) {
   if (!feature) return <X className="h-4 w-4 text-muted-foreground/40" />;
 

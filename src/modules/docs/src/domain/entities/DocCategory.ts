@@ -18,6 +18,9 @@ export interface DocNavItem {
   children?: DocNavItem[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Doc Category Data.
+ */
 export interface DocCategoryData {
   /** Unique category ID, e.g. 'get-started', 'features' */
   id: string;
@@ -31,6 +34,9 @@ export interface DocCategoryData {
   items: DocNavItem[];
 }
 
+/**
+ * Domain entity class representing a Doc Category.
+ */
 export class DocCategory {
   constructor(public readonly data: DocCategoryData) {}
 

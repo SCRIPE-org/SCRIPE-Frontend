@@ -17,6 +17,9 @@ import type {
   UpdateFeatureDefinitionRequest,
 } from "../../domain/entities/TenantPlanRequests";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for feature definition form view model.
+ */
 export function useFeatureDefinitionFormViewModel(featureId?: string) {
   const { t } = useI18n();
   const router = useRouter();

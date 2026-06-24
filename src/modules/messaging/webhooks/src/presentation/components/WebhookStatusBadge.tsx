@@ -15,6 +15,9 @@ interface WebhookStatusBadgeProps {
   isAutoDisabled?: boolean;
 }
 
+/**
+ * React presentation component representing the webhook status badge UI element.
+ */
 export function WebhookStatusBadge({ isActive, isAutoDisabled = false }: WebhookStatusBadgeProps) {
   const { t } = useI18n();
 

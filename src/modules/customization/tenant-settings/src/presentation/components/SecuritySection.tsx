@@ -19,6 +19,9 @@ interface SecuritySectionProps {
   updateField: <K extends keyof TenantSettings>(field: K, value: TenantSettings[K]) => void;
 }
 
+/**
+ * React presentation component representing the security section UI element.
+ */
 export function SecuritySection({ settings, updateField }: SecuritySectionProps) {
   const { t } = useI18n();
   return (

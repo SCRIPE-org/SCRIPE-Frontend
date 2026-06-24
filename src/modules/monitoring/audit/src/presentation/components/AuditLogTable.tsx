@@ -24,6 +24,9 @@ interface Props {
   onPageChange: (page: number) => void;
 }
 
+/**
+ * Constant definition representing audit log table.
+ */
 export const AuditLogTable = memo(function AuditLogTable({
   data,
   isLoading,

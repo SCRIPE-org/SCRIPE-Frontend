@@ -85,6 +85,9 @@ function JsonDiff({ label, value }: { label: string; value: string | null }) {
   );
 }
 
+/**
+ * React presentation component representing the audit detail dialog UI element.
+ */
 export function AuditDetailDialog({ open, onClose, data, isLoading }: Props) {
   const { t, direction } = useI18n();
 

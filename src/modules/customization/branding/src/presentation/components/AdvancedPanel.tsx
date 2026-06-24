@@ -19,6 +19,9 @@ interface AdvancedPanelProps {
   updateDraft: <K extends keyof StudioDraft>(field: K, value: StudioDraft[K]) => void;
 }
 
+/**
+ * React presentation component representing the advanced panel UI element.
+ */
 export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
   const { t } = useI18n();
   return (

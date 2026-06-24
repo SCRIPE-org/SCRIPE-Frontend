@@ -30,6 +30,9 @@ import {
   CreateTenantSuccess,
 } from "../components/create-tenant";
 
+/**
+ * React presentation component representing the create tenant view UI element.
+ */
 export function CreateTenantView() {
   useModuleLocales(() => import("../../../locales"), "tenants");
 

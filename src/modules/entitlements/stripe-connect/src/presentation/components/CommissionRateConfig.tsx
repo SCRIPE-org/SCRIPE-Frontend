@@ -25,6 +25,9 @@ interface CommissionRateConfigProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the commission rate config UI element.
+ */
 export function CommissionRateConfig({
   account,
   isOpen,

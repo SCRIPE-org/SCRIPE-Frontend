@@ -26,6 +26,9 @@ interface PermissionFilterBarProps {
   totalCount: number;
 }
 
+/**
+ * React presentation component representing the permission filter bar UI element.
+ */
 export function PermissionFilterBar({
   searchValue,
   onSearchChange,

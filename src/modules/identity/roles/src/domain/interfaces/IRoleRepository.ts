@@ -25,6 +25,9 @@ export interface RoleListParams {
   strict?: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of My Tenant Role List Params.
+ */
 export interface MyTenantRoleListParams {
   page: number;
   pageSize: number;

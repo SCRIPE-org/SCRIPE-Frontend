@@ -11,6 +11,9 @@ export interface MonthlyMrrPointModel {
   activeCount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Analytics Overview Model.
+ */
 export interface AnalyticsOverviewModel {
   // Current KPIs
   currentMrr: number;
@@ -34,6 +37,9 @@ export interface AnalyticsOverviewModel {
 }
 
 // ── MRR Movement ──
+/**
+ * Interface structure detailing the properties and attributes of Mrr Movement Point Model.
+ */
 export interface MrrMovementPointModel {
   month: string;
   mrrStart: number;
@@ -46,6 +52,9 @@ export interface MrrMovementPointModel {
   netChange: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Mrr Movement Response Model.
+ */
 export interface MrrMovementResponseModel {
   movements: MrrMovementPointModel[];
   totalNewMrr: number;
@@ -58,24 +67,36 @@ export interface MrrMovementResponseModel {
 }
 
 // ── Cohort Analysis ──
+/**
+ * Interface structure detailing the properties and attributes of Cohort Cell Model.
+ */
 export interface CohortCellModel {
   monthIndex: number;
   activeCount: number;
   retentionPercent: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Cohort Row Model.
+ */
 export interface CohortRowModel {
   cohortMonth: string;
   initialCount: number;
   retention: CohortCellModel[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Cohort Analysis Response Model.
+ */
 export interface CohortAnalysisResponseModel {
   cohorts: CohortRowModel[];
   maxMonthsTracked: number;
 }
 
 // ── LTV by Edition ──
+/**
+ * Interface structure detailing the properties and attributes of Edition Ltv Model.
+ */
 export interface EditionLtvModel {
   editionId: string;
   editionName: string;
@@ -86,11 +107,17 @@ export interface EditionLtvModel {
   insufficientData: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Ltv Response Model.
+ */
 export interface LtvResponseModel {
   editions: EditionLtvModel[];
 }
 
 // ── Revenue Forecast ──
+/**
+ * Interface structure detailing the properties and attributes of Forecast Point Model.
+ */
 export interface ForecastPointModel {
   month: string;
   mrr: number;
@@ -98,6 +125,9 @@ export interface ForecastPointModel {
   lowerBound?: number | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Revenue Forecast Response Model.
+ */
 export interface RevenueForecastResponseModel {
   historical: ForecastPointModel[];
   projected: ForecastPointModel[];
@@ -109,6 +139,9 @@ export interface RevenueForecastResponseModel {
 }
 
 // ── Tenant Health Score ──
+/**
+ * Interface structure detailing the properties and attributes of Tenant Health Score Model.
+ */
 export interface TenantHealthScoreModel {
   tenantId: string;
   tenantName: string;
@@ -128,6 +161,9 @@ export interface TenantHealthScoreModel {
   currency: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Tenant Health Scores Response Model.
+ */
 export interface TenantHealthScoresResponseModel {
   items: TenantHealthScoreModel[];
   totalCount: number;
@@ -138,6 +174,9 @@ export interface TenantHealthScoresResponseModel {
   healthyCount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Tenant Health Detail Model.
+ */
 export interface TenantHealthDetailModel extends TenantHealthScoreModel {
   mrrStart: number;
   mrrNew: number;
@@ -157,6 +196,9 @@ export interface TenantHealthDetailModel extends TenantHealthScoreModel {
 }
 
 // ── Report Preferences ──
+/**
+ * Interface structure detailing the properties and attributes of Report Preference Model.
+ */
 export interface ReportPreferenceModel {
   cadence: string;
   email: string;
@@ -168,6 +210,9 @@ export interface ReportPreferenceModel {
   lastSentAt?: string | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Report Preference Request Model.
+ */
 export interface UpdateReportPreferenceRequestModel {
   cadence: string;
   email?: string;

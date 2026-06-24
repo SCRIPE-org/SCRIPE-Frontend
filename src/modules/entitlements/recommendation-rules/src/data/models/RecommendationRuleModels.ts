@@ -1,3 +1,6 @@
+/**
+ * Interface structure detailing the properties and attributes of Recommendation Rule List Model.
+ */
 export interface RecommendationRuleListModel {
   id: string;
   name: string;
@@ -10,6 +13,9 @@ export interface RecommendationRuleListModel {
   createdAt: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Recommendation Rule Detail Model.
+ */
 export interface RecommendationRuleDetailModel extends RecommendationRuleListModel {
   conditionJson: string;
   reasonEn: string;
@@ -17,6 +23,9 @@ export interface RecommendationRuleDetailModel extends RecommendationRuleListMod
   modifiedAt?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Paged Recommendation Rules Model.
+ */
 export interface PagedRecommendationRulesModel {
   items: RecommendationRuleListModel[];
   totalCount: number;

@@ -9,6 +9,9 @@ import { safeItems } from "./block-style-utils";
 
 const SIZE_CLASS = { sm: "h-8", md: "h-10", lg: "h-14" };
 
+/**
+ * React presentation component representing the logo cloud block view UI element.
+ */
 export function LogoCloudBlockView({ block }: { block: LogoCloudBlock }) {
   const props = block.props;
   const columns =

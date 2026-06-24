@@ -48,6 +48,9 @@ import type {
   OnboardingRecommendation,
 } from "../../domain/entities/OnboardingEntities";
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class SignupMapper {
   // ─── Feature ────────────────────────────────────────────────────────────
 

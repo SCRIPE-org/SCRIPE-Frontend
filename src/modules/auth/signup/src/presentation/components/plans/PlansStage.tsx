@@ -30,6 +30,9 @@ interface PlansStageProps {
   wizard: SignupWizardViewModel;
 }
 
+/**
+ * React presentation component representing the plans stage UI element.
+ */
 export function PlansStage({ wizard }: PlansStageProps) {
   const { t } = useI18n();
   const { tokens } = useSignupTheme();

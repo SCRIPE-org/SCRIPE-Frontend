@@ -20,6 +20,9 @@ import type {
 } from "../models/leads.models";
 import type { AssignableAdmin } from "../../domain/interfaces/ILeadsRepository";
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class LeadsMapper {
   static toEntity(dto: PlatformLeadResponseModel): PlatformLead {
     return new PlatformLead({

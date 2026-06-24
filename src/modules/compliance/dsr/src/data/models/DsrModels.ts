@@ -21,6 +21,9 @@ export interface DsrModel {
   resolution?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Dsr Status History Model.
+ */
 export interface DsrStatusHistoryModel {
   fromStatus: string;
   toStatus: string;
@@ -29,6 +32,9 @@ export interface DsrStatusHistoryModel {
   occurredAt: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Dsr Module Execution Model.
+ */
 export interface DsrModuleExecutionModel {
   moduleName: string;
   isCompleted: boolean;
@@ -38,6 +44,9 @@ export interface DsrModuleExecutionModel {
   completedAt?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Dsr Detail Model.
+ */
 export interface DsrDetailModel extends DsrModel {
   dsrDeadlineDays: number;
   assignedToAdminId?: string;

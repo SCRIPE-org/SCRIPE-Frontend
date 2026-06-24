@@ -13,6 +13,9 @@ import { monitoringContainer } from "@modules/monitoring/di";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
 // ─── Query key factory ───────────────────────────────────────────────
+/**
+ * Constant definition representing security keys.
+ */
 export const securityKeys = {
   all: (tenantId: string | null) => ["security", tenantId ?? "system"] as const,
   securityEvents: (days: number, tenantId: string | null) =>
@@ -26,6 +29,9 @@ export const securityKeys = {
 };
 
 // ─── Threat Summary ViewModel ────────────────────────────────────────
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for threat summary view model.
+ */
 export function useThreatSummaryViewModel(tenantId: string | null) {
   const repo = monitoringContainer.securityRepository;
 
@@ -54,6 +60,9 @@ export function useThreatSummaryViewModel(tenantId: string | null) {
 }
 
 // ─── Failed Logins Heatmap ViewModel ─────────────────────────────────
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for failed logins view model.
+ */
 export function useFailedLoginsViewModel(days: number = 30, tenantId: string | null = null) {
   const repo = monitoringContainer.securityRepository;
 
@@ -83,6 +92,9 @@ export function useFailedLoginsViewModel(days: number = 30, tenantId: string | n
 }
 
 // ─── Blocked IPs ViewModel ───────────────────────────────────────────
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for blocked i ps view model.
+ */
 export function useBlockedIPsViewModel(
   days: number = 30,
   limit: number = 20,
@@ -100,6 +112,9 @@ export function useBlockedIPsViewModel(
 }
 
 // ─── Security Timeline ViewModel ─────────────────────────────────────
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for security timeline view model.
+ */
 export function useSecurityTimelineViewModel(limit: number = 20, tenantId: string | null = null) {
   const repo = monitoringContainer.securityRepository;
 
@@ -113,6 +128,9 @@ export function useSecurityTimelineViewModel(limit: number = 20, tenantId: strin
 }
 
 // ─── Orchestrator ────────────────────────────────────────────────────
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for security dashboard view model.
+ */
 export function useSecurityDashboardViewModel() {
   const tenantId = useCurrentTenantId();
   const threats = useThreatSummaryViewModel(tenantId);

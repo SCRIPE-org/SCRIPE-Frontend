@@ -282,6 +282,9 @@ function EditionBreakdownTable({ data, formatCurrency, labels }: EditionBreakdow
 // Main View
 // ─────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the billing dashboard view UI element.
+ */
 export function BillingDashboardView() {
   useModuleLocales(() => import("../../../../core/locales"), "billing");
   const { t } = useI18n();

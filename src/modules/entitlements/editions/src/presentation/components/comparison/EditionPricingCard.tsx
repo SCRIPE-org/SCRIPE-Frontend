@@ -68,6 +68,9 @@ function cycleSub(cycle: BillingCycle): string {
   }
 }
 
+/**
+ * React presentation component representing the edition pricing card UI element.
+ */
 export function EditionPricingCard({
   edition,
   selectedCycle,

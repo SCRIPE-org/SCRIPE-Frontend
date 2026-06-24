@@ -14,6 +14,9 @@ interface Props {
   onCreateClick: () => void;
 }
 
+/**
+ * React presentation component representing the identity provider empty state UI element.
+ */
 export function IdentityProviderEmptyState({ onCreateClick }: Props) {
   const { t } = useI18n();
 

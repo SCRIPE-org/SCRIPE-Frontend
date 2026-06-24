@@ -12,6 +12,9 @@ interface PriceCellProps {
   isRecommended: boolean;
 }
 
+/**
+ * React presentation component representing the price cell UI element.
+ */
 export function PriceCell({ price, freeLabel, isRecommended }: PriceCellProps) {
   const formatted =
     price == null || price === 0

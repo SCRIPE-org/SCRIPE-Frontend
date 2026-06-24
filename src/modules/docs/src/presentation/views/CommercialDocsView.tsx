@@ -25,6 +25,9 @@ interface CommercialDocsViewProps {
 }
 
 // ─── View ─────────────────────────────────────────────────────────
+/**
+ * React presentation component representing the commercial docs view UI element.
+ */
 export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
   const { direction, loadSection } = useDocsI18n();
   const vm = useDocsViewModel(slug, "commercial");

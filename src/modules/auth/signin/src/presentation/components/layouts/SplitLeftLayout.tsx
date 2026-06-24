@@ -5,6 +5,9 @@ import { BG_STYLE, SPLIT_WRAPPER_STYLE, FORM_SIDE_BG_STYLE } from "./layout-type
 import { MobileLogo, DesktopHeading } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
+/**
+ * React presentation component representing the split left layout UI element.
+ */
 export function SplitLeftLayout({
   branding,
   slotConfig,

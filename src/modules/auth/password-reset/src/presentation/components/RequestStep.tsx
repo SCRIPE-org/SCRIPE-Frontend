@@ -14,6 +14,9 @@ interface RequestStepProps {
   totalSteps: number;
 }
 
+/**
+ * React presentation component representing the request step UI element.
+ */
 export function RequestStep({ vm, totalSteps }: RequestStepProps) {
   const { t } = useI18n();
 

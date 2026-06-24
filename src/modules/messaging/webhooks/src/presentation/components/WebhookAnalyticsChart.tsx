@@ -37,6 +37,9 @@ const chartConfig: ChartConfig = {
   },
 };
 
+/**
+ * React presentation component representing the webhook analytics chart UI element.
+ */
 export function WebhookAnalyticsChart({ analytics, isLoading }: WebhookAnalyticsChartProps) {
   const { t } = useI18n();
 

@@ -122,6 +122,9 @@ const sections: DocSection[] = [
     language: "typescript",
     filename: "SOLID View/ViewModel Pattern",
     code: `// View — Pure UI (~60 lines, zero logic)
+/**
+ * React presentation component representing the employee list view UI element.
+ */
 export function EmployeeListView() {
   const vm = useEmployeeListViewModel();
   return (
@@ -134,6 +137,9 @@ export function EmployeeListView() {
 }
 
 // ViewModel — All Logic (composing section ViewModels)
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for employee list view model.
+ */
 export function useEmployeeListViewModel() {
   const filters = useFilterViewModel();
   const statistics = useStatisticsViewModel();

@@ -98,6 +98,9 @@ function makeLoginTheme(config: {
   });
 }
 
+/**
+ * Constant definition representing d e m o_ b u n d l e s.
+ */
 export const DEMO_BUNDLES: ThemeBundleData[] = [
   // ── 1. Corporate Elite ─────────────────────────────────
   {

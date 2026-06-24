@@ -2,6 +2,9 @@ import type { DataSubjectRequest } from "../entities/DataSubjectRequest";
 import type { PagedResult } from "@core/interfaces/common.interface";
 import type { DsrListParams, SubmitDsrRequest, ReviewDsrRequest } from "../entities/DsrRequests";
 
+/**
+ * Interface defining repository methods for managing Dsr data access.
+ */
 export interface IDsrRepository {
   getAll(params: DsrListParams): Promise<PagedResult<DataSubjectRequest>>;
   getById(id: string): Promise<DataSubjectRequest>;

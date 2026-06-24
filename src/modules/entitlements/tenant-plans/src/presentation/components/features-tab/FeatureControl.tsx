@@ -16,6 +16,9 @@ interface FeatureControlProps {
   onChange: (value: string) => void;
 }
 
+/**
+ * React presentation component representing the feature control UI element.
+ */
 export function FeatureControl({ valueType, value, onChange }: FeatureControlProps) {
   if (valueType === "Boolean") {
     return (

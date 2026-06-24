@@ -12,6 +12,9 @@ import type {
   UpdateDataInventoryRequest,
 } from "../models/InventoryModels";
 
+/**
+ * Repository implementation for managing database operations on Inventory resources.
+ */
 export class InventoryRepository implements IInventoryRepository {
   constructor(private readonly service: IInventoryService) {}
 

@@ -11,6 +11,9 @@ import type { CreatePermissionJson, UpdatePermissionJson } from "../types/Permis
 import type { PermissionListParams } from "./IPermissionRepository";
 import type { PermissionModuleGroupJson } from "../../data/models/PermissionModel";
 
+/**
+ * Interface defining operations for the Permission network service.
+ */
 export interface IPermissionService {
   getAll(params?: PermissionListParams): Promise<PermissionModel[]>;
   getMyPermissions(params?: PermissionListParams): Promise<PermissionModel[]>;

@@ -13,6 +13,9 @@ import { Button } from "@core/ui/button";
 import { ShieldCheck, User, Settings } from "lucide-react";
 import Link from "next/link";
 
+/**
+ * React presentation component representing the minimal welcome UI element.
+ */
 export function MinimalWelcome() {
   const { t } = useI18n();
 

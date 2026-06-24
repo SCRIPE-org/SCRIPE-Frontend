@@ -21,6 +21,9 @@ export interface FeatureModel {
   modifiedAt?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Tenant Effective Feature Model.
+ */
 export interface TenantEffectiveFeatureModel {
   featureId: string;
   name: string;

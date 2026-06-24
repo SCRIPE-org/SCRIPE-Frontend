@@ -27,6 +27,9 @@ interface SubscriptionActionsCardProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the subscription actions card UI element.
+ */
 export function SubscriptionActionsCard({
   subscription,
   onCancel,

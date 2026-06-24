@@ -21,6 +21,9 @@ export interface TenantPlanFeatureModel {
 }
 
 // ── Pricing Matrix ──
+/**
+ * Interface structure detailing the properties and attributes of Tenant Plan Price Model.
+ */
 export interface TenantPlanPriceModel {
   id: string;
   currency: string;
@@ -31,6 +34,9 @@ export interface TenantPlanPriceModel {
 }
 
 // ── Plan Version (immutable snapshot) ──
+/**
+ * Interface structure detailing the properties and attributes of Tenant Plan Version Model.
+ */
 export interface TenantPlanVersionModel {
   id: string;
   versionNumber: number;
@@ -108,6 +114,9 @@ export interface TenantPlanListModel {
 }
 
 // ── Feature Definition (Catalog) ──
+/**
+ * Interface structure detailing the properties and attributes of Tenant Feature Definition Model.
+ */
 export interface TenantFeatureDefinitionModel {
   id: string;
   tenantId: string;
@@ -125,6 +134,9 @@ export interface TenantFeatureDefinitionModel {
   updatedAt?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Tenant Feature Definition List Model.
+ */
 export interface TenantFeatureDefinitionListModel {
   id: string;
   key: string;
@@ -146,6 +158,9 @@ export interface TenantFeatureDefinitionCategoryGroupModel {
 }
 
 // ── Promotion ──
+/**
+ * Interface structure detailing the properties and attributes of Tenant Plan Promotion Model.
+ */
 export interface TenantPlanPromotionModel {
   id: string;
   tenantId: string;
@@ -169,6 +184,9 @@ export interface TenantPlanPromotionModel {
   updatedAt?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Tenant Plan Promotion List Model.
+ */
 export interface TenantPlanPromotionListModel {
   id: string;
   code: string;

@@ -7,8 +7,14 @@ import { authContainer } from "@modules/auth/di";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+/**
+ * Type declaration definition describing the schema of qr session status.
+ */
 export type QrSessionStatus = "pending" | "scanned" | "approved" | "rejected" | "expired";
 
+/**
+ * Interface structure detailing the properties and attributes of Qr Status Info.
+ */
 export interface QrStatusInfo {
   /** SVG icon element — no emojis */
   svgIcon: ReactNode;
@@ -16,6 +22,9 @@ export interface QrStatusInfo {
   color: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Use Qr Sign In View Model Return.
+ */
 export interface UseQrSignInViewModelReturn {
   // State
   sessionId: string;

@@ -50,6 +50,9 @@ const EMPTY_FORM: CreateDefinitionRequest = {
 
 // ── Component ────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the definition form dialog UI element.
+ */
 export function DefinitionFormDialog({
   open,
   onOpenChange,

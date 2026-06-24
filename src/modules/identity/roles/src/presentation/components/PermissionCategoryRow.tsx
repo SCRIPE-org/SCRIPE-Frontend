@@ -15,6 +15,9 @@ import type { Permission } from "@modules/identity/core";
 import { PermissionConfigDialog } from "./PermissionConfigDialog";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
 
+/**
+ * Interface structure detailing the properties and attributes of Permission Category Row Props.
+ */
 export interface PermissionCategoryRowProps {
   category: string;
   permissions: Permission[];
@@ -28,6 +31,9 @@ export interface PermissionCategoryRowProps {
   onUpdateConfig?: (code: string, assignment: PermissionAssignmentJson) => void;
 }
 
+/**
+ * React presentation component representing the permission category row UI element.
+ */
 export function PermissionCategoryRow({
   category,
   permissions,

@@ -66,6 +66,9 @@ function CycleToggle({
   );
 }
 
+/**
+ * React presentation component representing the wizard step billing UI element.
+ */
 export function WizardStepBilling({ form, onChange }: WizardStepBillingProps) {
   const { t } = useI18n();
 

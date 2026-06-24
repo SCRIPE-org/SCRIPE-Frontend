@@ -6,6 +6,9 @@ import { blockColor } from "./block-style-utils";
 
 const LEVEL_CLASS = { h2: "text-3xl", h3: "text-2xl", h4: "text-xl" };
 
+/**
+ * React presentation component representing the heading block view UI element.
+ */
 export function HeadingBlockView({ block }: { block: HeadingBlock }) {
   const props = block.props;
   const Tag = props.level || "h3";

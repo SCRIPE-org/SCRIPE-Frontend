@@ -10,24 +10,36 @@ import type { SecurityLogEntry } from "../entities/SecurityLogEntry";
 import type { ExternalLogin } from "../entities/ExternalLogin";
 import type { LinkExternalLoginDto } from "../types/ProfileTypes";
 
+/**
+ * Interface structure detailing the properties and attributes of Update Profile Request.
+ */
 export interface UpdateProfileRequest {
   firstName: string;
   lastName: string;
   phoneNumber: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Change Password Request.
+ */
 export interface ChangePasswordRequest {
   currentPassword: string;
   newPassword: string;
   twoFactorCode?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Enable2 F A Result.
+ */
 export interface Enable2FAResult {
   qrCodeDataUri: string;
   manualEntryKey: string;
   backupCodes: string[];
 }
 
+/**
+ * Interface defining repository methods for managing Profile data access.
+ */
 export interface IProfileRepository {
   // Profile
   getProfile(): Promise<AdminProfile>;

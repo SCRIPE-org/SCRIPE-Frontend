@@ -92,6 +92,9 @@ const TABS: { id: StudioPanel; icon: typeof Layout; labelKey: string; section?: 
   { id: "themes", icon: Store, labelKey: "studio.tab.themes", section: "system" },
 ];
 
+/**
+ * React presentation component representing the studio sidebar UI element.
+ */
 export function StudioSidebar(props: StudioSidebarProps) {
   const { t } = useI18n();
   const {

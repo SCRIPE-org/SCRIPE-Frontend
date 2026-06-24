@@ -20,6 +20,9 @@ interface HistorySectionProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the history section UI element.
+ */
 export function HistorySection({ items, currentId, t }: HistorySectionProps) {
   const pastItems = items.filter((s) => s.id !== currentId);
   if (pastItems.length === 0) return null;

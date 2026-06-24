@@ -9,9 +9,15 @@ import { Card, CardContent } from "@core/ui/card";
 import { CheckCircle2, XCircle } from "lucide-react";
 
 // ── Types ──
+/**
+ * Type declaration definition describing the schema of t fn.
+ */
 export type TFn = (key: string) => string;
 
 // ── Stat Card ──
+/**
+ * React presentation component representing the stat card UI element.
+ */
 export function StatCard({
   icon,
   label,
@@ -35,6 +41,9 @@ export function StatCard({
 }
 
 // ── Info Row (label: value) ──
+/**
+ * React presentation component representing the info row UI element.
+ */
 export function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-4 text-sm">
@@ -45,6 +54,9 @@ export function InfoRow({ label, value }: { label: string; value: string }) {
 }
 
 // ── Flag Row (label: ✓ / ✗) ──
+/**
+ * React presentation component representing the flag row UI element.
+ */
 export function FlagRow({
   icon,
   label,
@@ -70,6 +82,9 @@ export function FlagRow({
 }
 
 // ── Currency Formatter ──
+/**
+ * Utility function executing operational rules for format amount.
+ */
 export function formatAmount(amount: number, currency: string): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",

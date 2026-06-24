@@ -13,6 +13,9 @@ import type {
 
 const QUERY_KEY = ["plugins", "definitions"];
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for definitions view model.
+ */
 export function useDefinitionsViewModel() {
   const queryClient = useQueryClient();
   const { definitionsRepository } = pluginsContainer;

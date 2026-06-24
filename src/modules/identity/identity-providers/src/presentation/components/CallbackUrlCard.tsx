@@ -20,6 +20,9 @@ interface Props {
   providerId?: string;
 }
 
+/**
+ * React presentation component representing the callback url card UI element.
+ */
 export function CallbackUrlCard({ protocol, providerId }: Props) {
   const { t } = useI18n();
   const { success } = useEnhancedToast();

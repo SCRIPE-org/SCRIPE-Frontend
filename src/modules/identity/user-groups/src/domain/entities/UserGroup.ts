@@ -16,6 +16,9 @@ export interface UserGroupMember {
   isActive: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of User Group Role.
+ */
 export interface UserGroupRole {
   roleId: string;
   nameEn: string;
@@ -24,11 +27,17 @@ export interface UserGroupRole {
   permissionCount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of User Group Restriction.
+ */
 export interface UserGroupRestriction {
   permissionCode: string;
   restrictedFields: string[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of User Group Props.
+ */
 export interface UserGroupProps {
   id: string;
   nameEn: string;
@@ -48,6 +57,9 @@ export interface UserGroupProps {
   restrictions?: UserGroupRestriction[];
 }
 
+/**
+ * Domain entity class representing a User Group.
+ */
 export class UserGroup {
   private readonly props: UserGroupProps;
 

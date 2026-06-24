@@ -130,6 +130,9 @@ const statusConfig: Record<
 // Component
 // ============================================
 
+/**
+ * React presentation component representing the tenant node card UI element.
+ */
 export function TenantNodeCard({
   node,
   level,

@@ -32,6 +32,9 @@ interface ContactSalesStepProps {
   wizard: SignupWizardViewModel;
 }
 
+/**
+ * React presentation component representing the contact sales step UI element.
+ */
 export function ContactSalesStep({ wizard }: ContactSalesStepProps) {
   const { t, direction } = useI18n();
   const { tokens } = useSignupTheme();

@@ -7,6 +7,9 @@ import type { IDashboardService } from "../../domain/interfaces/IDashboardServic
 import type { ComplianceDashboard } from "../../domain/entities/DashboardData";
 import { DashboardMapper } from "../mappers/DashboardMapper";
 
+/**
+ * Repository implementation for managing database operations on Dashboard resources.
+ */
 export class DashboardRepository implements IDashboardRepository {
   constructor(private readonly service: IDashboardService) {}
 

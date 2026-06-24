@@ -17,6 +17,9 @@ import { Lock, ChevronRight } from "lucide-react";
 import { DynamicIcon } from "@core/ui/layout/nexus/_parts/primary-rail-parts";
 import { useI18n } from "@core/providers/i18n-provider";
 
+/**
+ * Interface structure detailing the properties and attributes of Workspace Hub Card Props.
+ */
 export interface WorkspaceHubCardProps {
   workspaceKey: string;
   nameEn: string;
@@ -31,6 +34,9 @@ export interface WorkspaceHubCardProps {
   onClick: () => void;
 }
 
+/**
+ * React presentation component representing the workspace hub card UI element.
+ */
 export function WorkspaceHubCard({
   nameEn,
   nameAr,

@@ -56,6 +56,9 @@ interface WebhookDetailViewProps {
   webhookId: string;
 }
 
+/**
+ * React presentation component representing the webhook detail view UI element.
+ */
 export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
   const { t } = useI18n();
   const router = useRouter();

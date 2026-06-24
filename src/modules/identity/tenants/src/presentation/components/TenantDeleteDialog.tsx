@@ -20,6 +20,9 @@ interface TenantDeleteDialogProps {
   isDeleting?: boolean;
 }
 
+/**
+ * React presentation component representing the tenant delete dialog UI element.
+ */
 export function TenantDeleteDialog({
   open,
   onOpenChange,

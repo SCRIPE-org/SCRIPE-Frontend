@@ -267,6 +267,9 @@ function SummaryBadge({
 
 // ── Main Panel ────────────────────────────────────────
 
+/**
+ * React presentation component representing the accessibility panel UI element.
+ */
 export function AccessibilityPanel({
   draft,
   updateDraft,

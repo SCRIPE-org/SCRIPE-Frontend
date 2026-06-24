@@ -16,6 +16,9 @@ const DIRECTION = {
   diagonal: "135deg",
 };
 
+/**
+ * React presentation component representing the gradient text block view UI element.
+ */
 export function GradientTextBlockView({ block }: { block: GradientTextBlock }) {
   const props = block.props;
   return (

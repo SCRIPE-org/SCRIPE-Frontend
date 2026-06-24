@@ -40,6 +40,9 @@ interface ReviewStepProps {
   wizard: SignupWizardViewModel;
 }
 
+/**
+ * React presentation component representing the review step UI element.
+ */
 export function ReviewStep({ wizard }: ReviewStepProps) {
   const { t, language, direction } = useI18n();
   const { tokens } = useSignupTheme();

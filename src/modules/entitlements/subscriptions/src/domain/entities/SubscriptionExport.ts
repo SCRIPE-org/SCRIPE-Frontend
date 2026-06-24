@@ -4,6 +4,9 @@
 
 export type ExportFormat = "csv" | "excel" | "pdf";
 
+/**
+ * Interface structure detailing the properties and attributes of Export Params.
+ */
 export interface ExportParams {
   format: ExportFormat;
   statusFilter?: string;
@@ -15,6 +18,9 @@ export interface ExportParams {
   editionFilter?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Export File Result.
+ */
 export interface ExportFileResult {
   blob: Blob;
   filename: string;

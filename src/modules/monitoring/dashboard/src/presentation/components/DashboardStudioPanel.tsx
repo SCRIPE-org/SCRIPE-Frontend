@@ -113,6 +113,9 @@ function StudioSection({
   );
 }
 
+/**
+ * React presentation component representing the dashboard studio panel UI element.
+ */
 export function DashboardStudioPanel({
   open,
   onClose,

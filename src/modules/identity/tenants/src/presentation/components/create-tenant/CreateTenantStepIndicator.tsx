@@ -28,6 +28,9 @@ interface CreateTenantStepIndicatorProps {
   isRtl: boolean;
 }
 
+/**
+ * React presentation component representing the create tenant step indicator UI element.
+ */
 export function CreateTenantStepIndicator({
   currentStep,
   isStepValid,

@@ -102,6 +102,9 @@ function formatDateTime(value?: string): string {
   }
 }
 
+/**
+ * React presentation component representing the subscription detail modal UI element.
+ */
 export function SubscriptionDetailModal({
   open,
   onOpenChange,

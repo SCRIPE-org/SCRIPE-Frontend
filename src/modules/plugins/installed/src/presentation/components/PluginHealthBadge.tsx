@@ -10,6 +10,9 @@ interface PluginHealthBadgeProps {
   className?: string;
 }
 
+/**
+ * React presentation component representing the plugin health badge UI element.
+ */
 export function PluginHealthBadge({ passing, lastCheckedAt, className }: PluginHealthBadgeProps) {
   const { t } = useI18n();
   const label = passing ? t("plugins.healthy") : t("plugins.unhealthy");

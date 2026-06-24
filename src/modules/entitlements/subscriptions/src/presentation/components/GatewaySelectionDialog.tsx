@@ -10,6 +10,9 @@ interface GatewaySelectionDialogProps {
   onSelect: (gateway: string) => void;
 }
 
+/**
+ * React presentation component representing the gateway selection dialog UI element.
+ */
 export function GatewaySelectionDialog({
   open,
   onOpenChange,

@@ -12,6 +12,9 @@ export interface NotificationTargetJson {
   type: "admin" | "role" | "tenant";
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Send Notification Json.
+ */
 export interface SendNotificationJson {
   title: string;
   body: string;

@@ -59,6 +59,9 @@ function formatCurrency(value: number): string {
   return `$${value.toFixed(0)}`;
 }
 
+/**
+ * React presentation component representing the health tab UI element.
+ */
 export function HealthTab({ healthData, page, pageSize, onPageChange }: HealthTabProps) {
   const { t } = useI18n();
   const totalPages = Math.ceil(healthData.totalCount / pageSize);

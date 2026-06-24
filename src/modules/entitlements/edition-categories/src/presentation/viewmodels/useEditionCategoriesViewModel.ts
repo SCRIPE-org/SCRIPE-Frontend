@@ -8,6 +8,9 @@ import type {
   UpdateEditionCategoryRequest,
 } from "../../domain/entities/EditionCategoryRequests";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for edition categories view model.
+ */
 export function useEditionCategoriesViewModel() {
   const { editionCategoryRepository } = entitlementsContainer;
 

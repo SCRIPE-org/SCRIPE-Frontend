@@ -25,6 +25,9 @@ import type {
   MyTenantRoleListParams,
 } from "../../domain/interfaces/IRoleService";
 
+/**
+ * API service for executing HTTP calls related to Role endpoints.
+ */
 export class RoleService implements IRoleService {
   constructor(private readonly api: IApiService) {}
 

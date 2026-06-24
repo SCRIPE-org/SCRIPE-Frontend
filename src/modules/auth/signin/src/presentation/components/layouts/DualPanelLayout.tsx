@@ -7,6 +7,9 @@ import { BG_STYLE, SPLIT_WRAPPER_STYLE } from "./layout-types";
 import { MobileLogo, LogoImg } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
+/**
+ * React presentation component representing the dual panel layout UI element.
+ */
 export function DualPanelLayout({
   branding,
   slotConfig,

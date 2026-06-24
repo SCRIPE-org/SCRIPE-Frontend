@@ -18,6 +18,9 @@ interface EndpointsSectionProps {
   updatePostLogoutUri: (index: number, value: string) => void;
 }
 
+/**
+ * React presentation component representing the endpoints section UI element.
+ */
 export function EndpointsSection({
   form,
   addRedirectUri,

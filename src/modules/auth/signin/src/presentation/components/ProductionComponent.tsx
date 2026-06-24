@@ -15,6 +15,9 @@ import { BookOpen } from "lucide-react";
 import { Button } from "@core/ui/button";
 import Link from "next/link";
 
+/**
+ * Interface structure detailing the properties and attributes of Production Component Props.
+ */
 export interface ProductionComponentProps {
   type: string;
   props: Record<string, unknown>;
@@ -26,6 +29,9 @@ export interface ProductionComponentProps {
   copyrightText?: string;
 }
 
+/**
+ * React presentation component representing the production component UI element.
+ */
 export function ProductionComponent({
   type,
   props,

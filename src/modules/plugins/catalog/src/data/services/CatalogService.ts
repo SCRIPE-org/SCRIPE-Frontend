@@ -3,6 +3,9 @@ import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type { ICatalogService } from "../../domain/interfaces/ICatalogService";
 import type { PluginCatalogItemModel, InstallPluginRequest } from "../models/CatalogModels";
 
+/**
+ * API service for executing HTTP calls related to Catalog endpoints.
+ */
 export class CatalogService implements ICatalogService {
   constructor(private readonly api: IApiService) {}
 

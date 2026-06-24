@@ -6,12 +6,18 @@ import type {
   TestConnectionResultJson,
 } from "../types/IdentityProviderTypes";
 
+/**
+ * Interface structure detailing the properties and attributes of Service Identity Provider List Params.
+ */
 export interface ServiceIdentityProviderListParams {
   page?: number;
   pageSize?: number;
   search?: string;
 }
 
+/**
+ * Interface defining operations for the IdentityProvider network service.
+ */
 export interface IIdentityProviderService {
   getAll(params: ServiceIdentityProviderListParams): Promise<IdentityProviderListResponseJson>;
   getById(id: string): Promise<IdentityProviderJson>;

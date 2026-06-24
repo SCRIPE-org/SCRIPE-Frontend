@@ -73,6 +73,9 @@ const sections: DocSection[] = [
     filename: "UserManagementView.tsx — Pure UI View",
     code: `'use client';
 
+/**
+ * React presentation component representing the user management view UI element.
+ */
 export function UserManagementView() {
   const vm = useUserManagementViewModel();
 
@@ -187,6 +190,9 @@ export function UserManagementView() {
         code: `// src/modules/admin/user-management/src/presentation/views/UserManagementView.tsx
 'use client';
 
+/**
+ * React presentation component representing the user management view UI element.
+ */
 export function UserManagementView() {
   const vm = useUserManagementViewModel();
   // ... pure JSX composition

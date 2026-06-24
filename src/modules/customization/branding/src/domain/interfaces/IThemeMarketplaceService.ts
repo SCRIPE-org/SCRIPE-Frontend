@@ -57,6 +57,9 @@ export interface UpsertThemePayload {
   isSystem?: boolean;
 }
 
+/**
+ * Interface defining operations for the ThemeMarketplace network service.
+ */
 export interface IThemeMarketplaceService {
   /** Get paginated themes with filters */
   getThemes(params: ThemeListParams): Promise<ThemePagedResult>;

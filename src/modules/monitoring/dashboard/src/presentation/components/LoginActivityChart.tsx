@@ -28,6 +28,9 @@ interface Props {
   chartPalette?: string[];
 }
 
+/**
+ * Constant definition representing login activity chart.
+ */
 export const LoginActivityChart = memo(function LoginActivityChart({
   data,
   isLoading,

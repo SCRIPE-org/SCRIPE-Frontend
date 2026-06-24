@@ -14,6 +14,9 @@ interface GeneralTabProps {
   t: TFn;
 }
 
+/**
+ * React presentation component representing the general tab UI element.
+ */
 export function GeneralTab({ plan, t }: GeneralTabProps) {
   return (
     <div className="grid gap-4 md:grid-cols-2">

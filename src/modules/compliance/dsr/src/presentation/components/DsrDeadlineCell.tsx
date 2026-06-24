@@ -12,6 +12,9 @@ interface DsrDeadlineCellProps {
   overdueLabel: string;
 }
 
+/**
+ * React presentation component representing the dsr deadline cell UI element.
+ */
 export function DsrDeadlineCell({
   dsr,
   remainingLabel,

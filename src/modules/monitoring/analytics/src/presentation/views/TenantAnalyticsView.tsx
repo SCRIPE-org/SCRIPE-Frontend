@@ -34,6 +34,9 @@ const ReportExportDialog = dynamic(
   { ssr: false }
 );
 
+/**
+ * React presentation component representing the tenant analytics view UI element.
+ */
 export function TenantAnalyticsView() {
   useModuleLocales(() => import("../../../locales"), "analytics");
 

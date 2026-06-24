@@ -8,6 +8,9 @@ import { useInventoryViewModel } from "../viewmodels/useInventoryViewModel";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Badge } from "@core/ui/badge";
 
+/**
+ * React presentation component representing the inventory view UI element.
+ */
 export function InventoryView() {
   useModuleLocales(() => import("../../../locales"), "compliance");
   const { vm, getConfigBase, t } = useInventoryViewModel();

@@ -39,6 +39,9 @@ interface UseSignupProvisioningOptions {
   setProvisioningStep: (n: number) => void;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for signup provisioning.
+ */
 export function useSignupProvisioning({
   repository,
   wizardData,

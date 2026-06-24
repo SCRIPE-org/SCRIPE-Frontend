@@ -18,6 +18,9 @@ import { webhookKeys } from "./useWebhooksViewModel";
 import type { WebhookTestResult } from "../../domain/entities/Webhook";
 import type { UpdateWebhookRequest } from "../../domain/entities/WebhookRequests";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for webhook detail view model.
+ */
 export function useWebhookDetailViewModel(webhookId: string) {
   const { webhookRepository } = messagingContainer;
   const { t } = useI18n();

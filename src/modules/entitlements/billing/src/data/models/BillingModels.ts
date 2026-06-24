@@ -26,6 +26,9 @@ export interface InvoiceResponseModel {
   transactions: PaymentTransactionModel[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Invoice List Response Model.
+ */
 export interface InvoiceListResponseModel {
   id: string;
   tenantId: string;
@@ -40,6 +43,9 @@ export interface InvoiceListResponseModel {
   createdAt: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Invoice Line Item Model.
+ */
 export interface InvoiceLineItemModel {
   id: string;
   description: string;
@@ -48,6 +54,9 @@ export interface InvoiceLineItemModel {
   total: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Payment Transaction Model.
+ */
 export interface PaymentTransactionModel {
   id: string;
   invoiceId: string;
@@ -64,6 +73,9 @@ export interface PaymentTransactionModel {
   createdAt: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Checkout Session Response Model.
+ */
 export interface CheckoutSessionResponseModel {
   sessionId: string;
   url: string;
@@ -71,10 +83,16 @@ export interface CheckoutSessionResponseModel {
   emailSent?: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Billing Portal Response Model.
+ */
 export interface BillingPortalResponseModel {
   url: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Paged Result Model.
+ */
 export interface PagedResultModel<T> {
   items: T[];
   totalCount: number;
@@ -82,6 +100,9 @@ export interface PagedResultModel<T> {
 
 // ── Dashboard Models ──
 
+/**
+ * Interface structure detailing the properties and attributes of Billing Dashboard Response Model.
+ */
 export interface BillingDashboardResponseModel {
   mrr: number;
   arr: number;
@@ -95,12 +116,18 @@ export interface BillingDashboardResponseModel {
   currency: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Monthly Revenue Point Model.
+ */
 export interface MonthlyRevenuePointModel {
   month: string;
   revenue: number;
   newSubscriptions: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Edition Breakdown Item Model.
+ */
 export interface EditionBreakdownItemModel {
   editionId: string;
   editionName: string;
@@ -110,11 +137,17 @@ export interface EditionBreakdownItemModel {
 
 // ── Payment Link Models ──
 
+/**
+ * Interface structure detailing the properties and attributes of Payment Link Response Model.
+ */
 export interface PaymentLinkResponseModel {
   url: string;
   linkId: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Create Payment Link Request Model.
+ */
 export interface CreatePaymentLinkRequestModel {
   editionId: string;
   subscriptionType: string;

@@ -87,6 +87,9 @@ function pushHistory(state: DashboardBuilderState): Partial<DashboardBuilderStat
 }
 
 // ── Store ────────────────────────────────────────────────
+/**
+ * Constant definition representing use dashboard builder store.
+ */
 export const useDashboardBuilderStore = create<DashboardBuilderState>((set, get) => ({
   widgets: DEFAULT_DASHBOARD_WIDGETS,
   selectedWidgetId: null,

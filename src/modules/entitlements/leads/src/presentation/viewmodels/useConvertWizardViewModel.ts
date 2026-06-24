@@ -13,8 +13,14 @@ import type { PlatformLead } from "../../domain/entities/PlatformLead";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
+/**
+ * Type declaration definition describing the schema of wizard step.
+ */
 export type WizardStep = 1 | 2 | 3 | 4;
 
+/**
+ * Interface structure detailing the properties and attributes of Step2 State.
+ */
 export interface Step2State {
   tenantCode: string;
   adminEmail: string;
@@ -39,6 +45,9 @@ const STEP2_DEFAULTS: Step2State = {
 
 // ── Hook ──────────────────────────────────────────────────────────────────────
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for convert wizard view model.
+ */
 export function useConvertWizardViewModel(
   open: boolean,
   lead: PlatformLead | null,

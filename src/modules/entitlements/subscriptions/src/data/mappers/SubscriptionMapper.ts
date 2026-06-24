@@ -91,6 +91,9 @@ const GlobalSubscriptionModelSchema = z.object({
   refundReason: z.string().optional().nullable(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class SubscriptionMapper {
   static toEntity(model: SubscriptionModel): Subscription {
     const v = safeParseApiResponse(SubscriptionModelSchema, model, "Subscription");

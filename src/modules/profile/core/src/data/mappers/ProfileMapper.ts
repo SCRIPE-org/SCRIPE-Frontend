@@ -15,6 +15,9 @@ import type {
   ExternalLoginDto,
 } from "../models/ProfileModels";
 
+/**
+ * Constant definition representing profile mapper.
+ */
 export const ProfileMapper = {
   toAdminProfile(dto: AdminProfileDto): AdminProfile {
     return {

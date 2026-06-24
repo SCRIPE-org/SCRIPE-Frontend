@@ -28,6 +28,9 @@ interface TechnicalDocsViewProps {
 }
 
 // ─── View ─────────────────────────────────────────────────────────
+/**
+ * React presentation component representing the technical docs view UI element.
+ */
 export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
   const { t, direction, loadSection } = useDocsI18n();
   const vm = useDocsViewModel(slug, "technical");

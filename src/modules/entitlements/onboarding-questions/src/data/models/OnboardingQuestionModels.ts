@@ -1,3 +1,6 @@
+/**
+ * Interface structure detailing the properties and attributes of Answer Option Model.
+ */
 export interface AnswerOptionModel {
   id: string;
   value: string;
@@ -11,6 +14,9 @@ export interface AnswerOptionModel {
   isActive: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Onboarding Question List Model.
+ */
 export interface OnboardingQuestionListModel {
   id: string;
   key: string;
@@ -25,6 +31,9 @@ export interface OnboardingQuestionListModel {
   createdAt: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Onboarding Question Detail Model.
+ */
 export interface OnboardingQuestionDetailModel extends OnboardingQuestionListModel {
   minSelections: number;
   maxSelections: number;
@@ -37,6 +46,9 @@ export interface OnboardingQuestionDetailModel extends OnboardingQuestionListMod
   options: AnswerOptionModel[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Paged Onboarding Questions Model.
+ */
 export interface PagedOnboardingQuestionsModel {
   items: OnboardingQuestionListModel[];
   totalCount: number;

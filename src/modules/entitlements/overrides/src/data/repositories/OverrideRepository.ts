@@ -9,6 +9,9 @@ import type { FeatureOverride, ResolvedFeature } from "../../domain/entities/Ove
 import type { IOverrideService } from "../../domain/interfaces/IOverrideService";
 import { OverrideMapper } from "../mappers/OverrideMapper";
 
+/**
+ * Repository implementation for managing database operations on Override resources.
+ */
 export class OverrideRepository implements IOverrideRepository {
   constructor(private readonly service: IOverrideService) {}
 

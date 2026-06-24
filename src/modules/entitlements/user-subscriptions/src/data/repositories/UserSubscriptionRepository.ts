@@ -16,6 +16,9 @@ import { UserSubscriptionMapper } from "../mappers/UserSubscriptionMapper";
 import type { IUserSubscriptionService } from "../../domain/interfaces/IUserSubscriptionService";
 import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
+/**
+ * Repository implementation for managing database operations on UserSubscription resources.
+ */
 export class UserSubscriptionRepository implements IUserSubscriptionRepository {
   constructor(private readonly service: IUserSubscriptionService) {}
 

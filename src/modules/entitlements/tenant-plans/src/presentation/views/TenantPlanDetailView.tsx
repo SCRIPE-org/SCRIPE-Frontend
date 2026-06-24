@@ -44,6 +44,9 @@ interface TenantPlanDetailViewProps {
   planId: string;
 }
 
+/**
+ * React presentation component representing the tenant plan detail view UI element.
+ */
 export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
   useModuleLocales(() => import("../../../locales"), "tenant-plans");
   const { t, language } = useI18n();

@@ -19,6 +19,9 @@ import {
 } from "../components";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
+/**
+ * React presentation component representing the permissions view UI element.
+ */
 export function PermissionsView() {
   useModuleLocales(() => import("../../../locales"), "permissions");
 

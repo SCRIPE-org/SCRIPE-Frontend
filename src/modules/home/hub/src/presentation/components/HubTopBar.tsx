@@ -25,6 +25,9 @@ interface HubTopBarProps {
   onAppLauncherClick?: () => void;
 }
 
+/**
+ * React presentation component representing the hub top bar UI element.
+ */
 export function HubTopBar({ onSearchClick, onAppLauncherClick }: HubTopBarProps) {
   const { t } = useI18n();
   const router = useRouter();

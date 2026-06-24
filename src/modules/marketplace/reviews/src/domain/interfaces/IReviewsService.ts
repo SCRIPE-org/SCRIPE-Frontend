@@ -30,6 +30,9 @@ export interface PaginatedReviewsResponse {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Interface defining operations for the Reviews network service.
+ */
 export interface IReviewsService {
   /** Fetch paginated list of reviews. */
   getAll(params: {

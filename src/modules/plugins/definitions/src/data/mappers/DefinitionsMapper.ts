@@ -31,6 +31,9 @@ const PluginDefinitionModelSchema = z.object({
   createdAt: z.string().optional().nullable(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class DefinitionsMapper {
   static toEntity(model: PluginDefinitionModel): PluginDefinition {
     const validated = safeParseApiResponse(PluginDefinitionModelSchema, model, "PluginDefinition");

@@ -10,6 +10,9 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { RecommendationRulesCatalogView } from "../components/RecommendationRulesCatalogView";
 
+/**
+ * React presentation component representing the recommendation rules view UI element.
+ */
 export function RecommendationRulesView() {
   useModuleLocales(() => import("../../../locales"), "recommendation-rules");
   const { t, language } = useI18n();

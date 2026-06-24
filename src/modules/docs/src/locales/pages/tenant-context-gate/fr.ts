@@ -1,3 +1,6 @@
+/**
+ * Constant definition representing fr.
+ */
 export const fr = {
   features: {
     tenantContextGate: {

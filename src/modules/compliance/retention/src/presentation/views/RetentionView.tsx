@@ -19,6 +19,9 @@ import { useAppStore } from "@/core/store/useAppStore";
 
 // ── Main View ─────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the retention view UI element.
+ */
 export function RetentionView() {
   useModuleLocales(() => import("../../../locales"), "compliance");
   const { t, direction } = useI18n();

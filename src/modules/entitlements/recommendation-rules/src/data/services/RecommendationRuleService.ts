@@ -17,6 +17,9 @@ import type {
   UpdateRecommendationRuleRequest,
 } from "../../domain/entities/RecommendationRuleRequests";
 
+/**
+ * API service for executing HTTP calls related to RecommendationRule endpoints.
+ */
 export class RecommendationRuleService implements IRecommendationRuleService {
   constructor(private readonly api: IApiService) {}
 

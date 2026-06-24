@@ -1,3 +1,6 @@
+/**
+ * Constant definition representing zh.
+ */
 export const zh = {
   modules: {
     invoices: {

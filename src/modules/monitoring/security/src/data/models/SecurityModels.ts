@@ -11,6 +11,9 @@ export interface SecurityEventDto {
   latestOccurrence: string | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Blocked I P Dto.
+ */
 export interface BlockedIPDto {
   ipAddress: string;
   failedCount: number;
@@ -18,12 +21,18 @@ export interface BlockedIPDto {
   lastUsername: string | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Login Activity Point Dto.
+ */
 export interface LoginActivityPointDto {
   date: string;
   successCount: number;
   failedCount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Security Change Dto.
+ */
 export interface SecurityChangeDto {
   id: string;
   eventType: string;

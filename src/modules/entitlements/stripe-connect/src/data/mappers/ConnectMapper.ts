@@ -21,6 +21,9 @@ import type {
   TenantTransactionItemModel,
 } from "../models/ConnectModels";
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class ConnectMapper {
   static toAccountEntity(dto: ConnectAccountResponseModel): ConnectAccount {
     return new ConnectAccount({

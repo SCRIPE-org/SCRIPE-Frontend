@@ -14,6 +14,9 @@ interface TenantNodeCardProgressProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the tenant node card progress UI element.
+ */
 export function TenantNodeCardProgress({
   node,
   status,

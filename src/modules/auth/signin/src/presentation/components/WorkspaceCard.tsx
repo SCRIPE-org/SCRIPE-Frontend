@@ -37,6 +37,9 @@ function formatLockoutTime(lockedUntil: string | null | undefined): string {
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
+/**
+ * Type declaration definition describing the schema of workspace card state.
+ */
 export type WorkspaceCardState =
   /** Unlocked — password verified or SSO/magic-link auth */
   | "unlocked"

@@ -28,6 +28,9 @@ const PluginInstallationModelSchema = z.object({
   lastHealthCheckAt: optionalIsoDate(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class InstalledMapper {
   static toEntity(model: PluginInstallationModel): PluginInstallation {
     safeParseApiResponse(PluginInstallationModelSchema, model, "PluginInstallation");

@@ -5,6 +5,9 @@
 import type { ThemeBundle } from "../entities/ThemeBundle";
 import type { BundleListParams, SaveBundlePayload } from "./IThemeBundleService";
 
+/**
+ * Interface structure detailing the properties and attributes of Bundle Paged Result.
+ */
 export interface BundlePagedResult {
   items: ThemeBundle[];
   totalCount: number;
@@ -12,6 +15,9 @@ export interface BundlePagedResult {
   pageSize: number;
 }
 
+/**
+ * Interface defining repository methods for managing ThemeBundle data access.
+ */
 export interface IThemeBundleRepository {
   getBundles(params: BundleListParams): Promise<BundlePagedResult>;
   getFeatured(): Promise<ThemeBundle[]>;

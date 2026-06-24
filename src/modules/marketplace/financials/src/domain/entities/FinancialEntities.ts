@@ -1,5 +1,11 @@
+/**
+ * Type declaration definition describing the schema of payout status.
+ */
 export type PayoutStatus = "Pending" | "Processing" | "Paid" | "Failed";
 
+/**
+ * Interface structure detailing the properties and attributes of App Purchase Data.
+ */
 export interface AppPurchaseData {
   id: string;
   appListingId: string;
@@ -12,6 +18,9 @@ export interface AppPurchaseData {
   purchasedAt: string;
 }
 
+/**
+ * Domain entity class representing a App Purchase.
+ */
 export class AppPurchase {
   constructor(private readonly data: AppPurchaseData) {}
   get id() {
@@ -57,6 +66,9 @@ export class AppPurchase {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Developer Payout Data.
+ */
 export interface DeveloperPayoutData {
   id: string;
   developerProfileId: string;
@@ -70,6 +82,9 @@ export interface DeveloperPayoutData {
   createdAt: string;
 }
 
+/**
+ * Domain entity class representing a Developer Payout.
+ */
 export class DeveloperPayout {
   constructor(private readonly data: DeveloperPayoutData) {}
   get id() {

@@ -10,6 +10,9 @@ interface LogsPaginationProps {
   onPageChange: (page: number) => void;
 }
 
+/**
+ * React presentation component representing the logs pagination UI element.
+ */
 export function LogsPagination({ page, totalPages, onPageChange }: LogsPaginationProps) {
   const { t } = useI18n();
   if (totalPages <= 1) return null;

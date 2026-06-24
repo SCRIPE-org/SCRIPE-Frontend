@@ -15,6 +15,9 @@ import type {
   UpdateDeveloperPayload,
 } from "../../domain/interfaces/IDevelopersService";
 
+/**
+ * API service for executing HTTP calls related to Developers endpoints.
+ */
 export class DevelopersService implements IDevelopersService {
   constructor(private readonly api: IApiService) {}
 

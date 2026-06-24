@@ -88,6 +88,9 @@ const TYPE_META: Record<string, { labelKey: string; color: string }> = {
   Restriction: { labelKey: "compliance.requestTypes.restriction", color: "text-indigo-500" },
 };
 
+/**
+ * React presentation component representing the dsr detail view UI element.
+ */
 export function DsrDetailView({ id }: { id: string }) {
   useModuleLocales(() => import("../../../locales"), "compliance-dsr");
   const { t, direction } = useI18n();

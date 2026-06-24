@@ -9,6 +9,9 @@
 
 import type { DocCategoryData } from "../domain/entities/DocCategory";
 
+/**
+ * Constant definition representing navigation data.
+ */
 export const navigationData: DocCategoryData[] = [
   // ═══════════════════════════════════════════════════════════
   //  TECHNICAL DOCUMENTATION

@@ -11,6 +11,9 @@ import type { EmailTemplate } from "../../domain/entities/Email";
 import type { IEmailRepository } from "../../domain/interfaces/IEmailRepository";
 
 // ─── Props ──────────────────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Template Picker Props.
+ */
 export interface TemplatePickerProps {
   repository: IEmailRepository;
   onSelect: (template: EmailTemplate) => void;

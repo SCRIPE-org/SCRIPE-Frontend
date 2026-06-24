@@ -1,8 +1,14 @@
+/**
+ * Interface structure detailing the properties and attributes of Paged Result Model.
+ */
 export interface PagedResultModel<T> {
   items: T[];
   totalCount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Commission Ledger Entry Model.
+ */
 export interface CommissionLedgerEntryModel {
   id: string;
   tenantId: string;
@@ -24,6 +30,9 @@ export interface CommissionLedgerEntryModel {
   updatedAt: string | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Commission Invoice Model.
+ */
 export interface CommissionInvoiceModel {
   id: string;
   tenantId: string;

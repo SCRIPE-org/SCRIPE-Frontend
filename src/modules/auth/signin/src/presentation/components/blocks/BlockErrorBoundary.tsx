@@ -2,6 +2,9 @@
 
 import { Component, type ReactNode } from "react";
 
+/**
+ * Domain entity class representing a Block Error Boundary.
+ */
 export class BlockErrorBoundary extends Component<
   { children: ReactNode; fallback?: ReactNode },
   { hasError: boolean }

@@ -6,6 +6,9 @@ import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type { ITenantGatewayService } from "../../domain/interfaces/ITenantGatewayService";
 import type { TenantGatewayModel, ConfigureGatewayModel } from "../models/TenantGatewayModels";
 
+/**
+ * API service for executing HTTP calls related to TenantGateway endpoints.
+ */
 export class TenantGatewayService implements ITenantGatewayService {
   constructor(private readonly api: IApiService) {}
 

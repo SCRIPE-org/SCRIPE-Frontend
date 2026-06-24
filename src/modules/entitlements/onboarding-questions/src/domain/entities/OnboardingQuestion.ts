@@ -1,7 +1,13 @@
 import type { BaseEntity } from "@core/interfaces/common.interface";
 
+/**
+ * Type declaration definition describing the schema of question type.
+ */
 export type QuestionType = "SingleSelect" | "MultiSelect";
 
+/**
+ * Interface structure detailing the properties and attributes of Answer Option Data.
+ */
 export interface AnswerOptionData {
   id: string;
   value: string;
@@ -15,6 +21,9 @@ export interface AnswerOptionData {
   isActive: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Onboarding Question Data.
+ */
 export interface OnboardingQuestionData extends BaseEntity {
   key: string;
   editionCategoryId?: string;
@@ -35,6 +44,9 @@ export interface OnboardingQuestionData extends BaseEntity {
   options?: AnswerOptionData[];
 }
 
+/**
+ * Domain entity class representing a Onboarding Question.
+ */
 export class OnboardingQuestion {
   constructor(public readonly data: OnboardingQuestionData) {}
 

@@ -14,6 +14,9 @@ interface WorkspacesStepProps {
   totalSteps: number;
 }
 
+/**
+ * React presentation component representing the workspaces step UI element.
+ */
 export function WorkspacesStep({ vm, totalSteps }: WorkspacesStepProps) {
   const { t } = useI18n();
 

@@ -29,8 +29,14 @@ import type { Role } from "../../domain/entities/Role";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
 
 // === Types ===
+/**
+ * Exported type in the identity/roles module.
+ */
 export type { PermissionModuleGroup, PermissionCategoryGroup };
 
+/**
+ * Interface structure detailing the properties and attributes of Role Detail Header Props.
+ */
 export interface RoleDetailHeaderProps {
   role: Role | undefined;
   isLoading: boolean;
@@ -38,6 +44,9 @@ export interface RoleDetailHeaderProps {
   onSave: () => void;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Role Info Card Props.
+ */
 export interface RoleInfoCardProps {
   role: Role | undefined;
   isLoading: boolean;
@@ -45,6 +54,9 @@ export interface RoleInfoCardProps {
   totalCount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Permission Tree Props.
+ */
 export interface PermissionTreeProps {
   moduleGroups: PermissionModuleGroup[];
   isLoading: boolean;
@@ -65,6 +77,9 @@ export interface PermissionTreeProps {
 }
 
 // === ViewModel ===
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for role detail view model.
+ */
 export function useRoleDetailViewModel() {
   const { t } = useI18n();
   const params = useParams();

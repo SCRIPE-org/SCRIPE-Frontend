@@ -8,8 +8,14 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServices } from "@core/providers/service-provider";
 
+/**
+ * Type declaration definition describing the schema of login step.
+ */
 export type LoginStep = "credentials" | "two-factor" | "workspace-selection";
 
+/**
+ * Interface structure detailing the properties and attributes of Use2 F A Handler Options.
+ */
 export interface Use2FAHandlerOptions {
   redirectPath: string;
   formIdentifier: string;

@@ -16,6 +16,9 @@ import {
 } from "../../domain/entities/Email";
 import type { EmailRecipientJson, SentEmailJson, EmailTemplateJson } from "../models/EmailModel";
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class EmailMapper {
   /**
    * Convert EmailRecipientJson → EmailRecipient Entity

@@ -43,6 +43,9 @@ const MenuIcon = () => (
   </svg>
 );
 
+/**
+ * React presentation component representing the docs header UI element.
+ */
 export function DocsHeader({ onSearchOpen, onMobileMenuOpen }: DocsHeaderProps) {
   const { t } = useDocsI18n();
 

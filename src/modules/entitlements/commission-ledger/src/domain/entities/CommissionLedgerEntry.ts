@@ -1,3 +1,6 @@
+/**
+ * Interface structure detailing the properties and attributes of Commission Ledger Entry Data.
+ */
 export interface CommissionLedgerEntryData {
   id: string;
   tenantId: string;
@@ -19,6 +22,9 @@ export interface CommissionLedgerEntryData {
   updatedAt: string | null;
 }
 
+/**
+ * Domain entity class representing a Commission Ledger Entry.
+ */
 export class CommissionLedgerEntry {
   constructor(private readonly data: CommissionLedgerEntryData) {}
 

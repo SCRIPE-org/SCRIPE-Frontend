@@ -13,6 +13,9 @@ import { monitoringContainer } from "@modules/monitoring/di";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
 // ─── Query keys ──────────────────────────────────────────────────────
+/**
+ * Constant definition representing analytics keys.
+ */
 export const analyticsKeys = {
   all: (tenantId: string | null) => ["analytics", tenantId ?? "system"] as const,
   summary: (tenantId: string | null) => [...analyticsKeys.all(tenantId), "summary"] as const,
@@ -23,6 +26,9 @@ export const analyticsKeys = {
 };
 
 // ─── KPI Metrics ─────────────────────────────────────────────────────
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for tenant metrics view model.
+ */
 export function useTenantMetricsViewModel(tenantId: string | null) {
   const repo = monitoringContainer.analyticsRepository;
 
@@ -54,6 +60,9 @@ export function useTenantMetricsViewModel(tenantId: string | null) {
 }
 
 // ─── Admin Distribution ──────────────────────────────────────────────
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for admin distribution view model.
+ */
 export function useAdminDistributionViewModel(tenantId: string | null) {
   const repo = monitoringContainer.analyticsRepository;
 
@@ -67,6 +76,9 @@ export function useAdminDistributionViewModel(tenantId: string | null) {
 }
 
 // ─── Login Comparison ────────────────────────────────────────────────
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for tenant comparison view model.
+ */
 export function useTenantComparisonViewModel(days: number = 30, tenantId: string | null = null) {
   const repo = monitoringContainer.analyticsRepository;
 
@@ -80,6 +92,9 @@ export function useTenantComparisonViewModel(days: number = 30, tenantId: string
 }
 
 // ─── Orchestrator ────────────────────────────────────────────────────
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for tenant analytics view model.
+ */
 export function useTenantAnalyticsViewModel() {
   const tenantId = useCurrentTenantId();
   const metrics = useTenantMetricsViewModel(tenantId);

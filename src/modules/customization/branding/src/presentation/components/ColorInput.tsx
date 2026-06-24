@@ -13,6 +13,9 @@ interface ColorInputProps {
   className?: string;
 }
 
+/**
+ * React presentation component representing the color input UI element.
+ */
 export function ColorInput({ label, value, onChange, className = "" }: ColorInputProps) {
   const handleColorChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

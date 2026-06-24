@@ -31,6 +31,9 @@ interface AdminTransferDialogProps {
   isTransferring: boolean;
 }
 
+/**
+ * React presentation component representing the admin transfer dialog UI element.
+ */
 export function AdminTransferDialog({
   open,
   onOpenChange,

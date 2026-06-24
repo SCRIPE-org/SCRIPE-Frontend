@@ -15,6 +15,9 @@ import type {
 } from "../../domain/entities/OnboardingQuestion";
 import type { PagedResult } from "@core/interfaces/common.interface";
 
+/**
+ * Repository implementation for managing database operations on OnboardingQuestion resources.
+ */
 export class OnboardingQuestionRepository implements IOnboardingQuestionRepository {
   constructor(private readonly service: IOnboardingQuestionService) {}
 

@@ -47,6 +47,9 @@ const STATUS_CONFIG = {
 
 type StatusKey = keyof typeof STATUS_CONFIG;
 
+/**
+ * React presentation component representing the onboarding status card UI element.
+ */
 export function OnboardingStatusCard({
   account,
   t,

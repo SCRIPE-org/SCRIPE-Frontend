@@ -8,6 +8,9 @@ import { AlertTriangle, PackageCheck, RefreshCw } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { InstalledPluginRow } from "../components/InstalledPluginRow";
 
+/**
+ * React presentation component representing the installed plugins view UI element.
+ */
 export function InstalledPluginsView() {
   const { user } = useAppStore();
   const { t } = useI18n();

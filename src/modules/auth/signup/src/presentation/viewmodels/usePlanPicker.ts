@@ -52,6 +52,9 @@ export interface PlanPickerEdition extends PlanEdition {
   isRecommended: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Plan Picker View Model.
+ */
 export interface PlanPickerViewModel {
   // ── Load state ─────────────────────────────────────────────────────────────
   isLoading: boolean;
@@ -94,6 +97,9 @@ export interface PlanPickerViewModel {
   priorityKeys: string[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Use Plan Picker Args.
+ */
 export interface UsePlanPickerArgs {
   /** The chosen vertical from discovery (wizard.businessType). Defaults the industry. */
   businessType: string | null;
@@ -105,6 +111,9 @@ export interface UsePlanPickerArgs {
   initialCountry?: string | null;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for plan picker.
+ */
 export function usePlanPicker({
   businessType,
   discoveryAnswers,
@@ -246,7 +255,6 @@ export function usePlanPicker({
 
   const setIndustry = useCallback((slug: string) => setIndustryOverride(slug), []);
   const retry = useCallback(() => void refetch(), [refetch]);
-
   return useMemo(
     () => ({
       isLoading: (!initialCurrency && !isPricingContextFetched) || isEditionsLoading,

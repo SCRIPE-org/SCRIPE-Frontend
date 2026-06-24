@@ -42,6 +42,9 @@ interface TabInfoProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the drawer tab info UI element.
+ */
 export function DrawerTabInfo({
   lead,
   currentStatus,

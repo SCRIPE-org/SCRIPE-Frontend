@@ -10,6 +10,9 @@ import type {
   SecurityChange,
 } from "../entities/SecurityEntities";
 
+/**
+ * Interface defining operations for the Security network service.
+ */
 export interface ISecurityService {
   getSecurityEvents(days?: number): Promise<SecurityEvent[]>;
   getTopBlockedIPs(days?: number, limit?: number): Promise<BlockedIP[]>;

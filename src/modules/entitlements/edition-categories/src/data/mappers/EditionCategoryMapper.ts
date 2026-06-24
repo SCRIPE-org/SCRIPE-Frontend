@@ -5,6 +5,9 @@ import type {
   UpdateEditionCategoryRequest,
 } from "../../domain/entities/EditionCategoryRequests";
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class EditionCategoryMapper {
   static toEntity(model: EditionCategoryModel): EditionCategory {
     return new EditionCategory({

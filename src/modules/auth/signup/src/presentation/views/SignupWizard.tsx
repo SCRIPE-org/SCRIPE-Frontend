@@ -89,11 +89,17 @@ const PHASE_VARIANTS: Record<string, any> = {
         },
 };
 
+/**
+ * Interface structure detailing the properties and attributes of Signup Wizard Props.
+ */
 export interface SignupWizardProps {
   initialCountry?: string | null;
   initialCurrency?: string;
 }
 
+/**
+ * Utility function executing operational rules for signup wizard.
+ */
 export function SignupWizard({ initialCountry, initialCurrency }: SignupWizardProps) {
   const [isInvalidDomain, setIsInvalidDomain] = useState(false);
   const [platformSignupUrl, setPlatformSignupUrl] = useState("");

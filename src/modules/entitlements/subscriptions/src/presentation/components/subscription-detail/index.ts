@@ -11,4 +11,7 @@ export { EmptyState } from "./EmptyState";
 export { DowngradeNotice } from "./DowngradeNotice";
 export { InfoRow } from "./InfoRow";
 export { STATUS_STYLES, DEFAULT_STATUS_STYLE } from "./status-styles";
+/**
+ * Exported type in the entitlements/subscriptions module.
+ */
 export type { StatusStyle } from "./status-styles";

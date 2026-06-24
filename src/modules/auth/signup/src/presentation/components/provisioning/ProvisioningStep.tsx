@@ -22,6 +22,9 @@ interface ProvisioningStepProps {
   wizard: SignupWizardViewModel;
 }
 
+/**
+ * React presentation component representing the provisioning step UI element.
+ */
 export function ProvisioningStep({ wizard }: ProvisioningStepProps) {
   const { t, direction } = useI18n();
   const { tokens } = useSignupTheme();

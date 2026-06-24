@@ -58,6 +58,9 @@ function humanizeEditionKey(key: string): string {
 type ViewMode = "table" | "kanban";
 const VIEW_MODE_STORAGE_KEY = "scripe.leads.viewMode";
 
+/**
+ * React presentation component representing the leads view UI element.
+ */
 export function LeadsView() {
   const vm = useLeadsViewModel();
   const { t } = useI18n();

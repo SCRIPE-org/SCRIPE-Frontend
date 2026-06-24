@@ -7,6 +7,9 @@ interface StepDotsProps {
   total: number;
 }
 
+/**
+ * React presentation component representing the step dots UI element.
+ */
 export function StepDots({ current, total }: StepDotsProps) {
   return (
     <div className="flex items-center justify-center gap-1.5" aria-hidden="true">

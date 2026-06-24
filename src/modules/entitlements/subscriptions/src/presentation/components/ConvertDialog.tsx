@@ -21,6 +21,9 @@ import type { SubscriptionEditionDialogProps } from "../types";
 import type { SubscriptionListItem } from "../../domain/entities/Subscription";
 import { SubscriptionTypeSelect } from "./SubscriptionTypeSelect";
 
+/**
+ * React presentation component representing the convert dialog UI element.
+ */
 export function ConvertDialog({ vm, editionsVm }: SubscriptionEditionDialogProps) {
   const { t } = useI18n();
 

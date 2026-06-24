@@ -13,6 +13,9 @@ import type { ContentMode } from "../../domain/entities/SignupContent";
 import type { ISignupContentService } from "../../domain/interfaces/ISignupContentService";
 import { SignupContentMapper } from "../mappers/SignupContentMapper";
 
+/**
+ * Repository implementation for managing database operations on SignupContent resources.
+ */
 export class SignupContentRepository implements ISignupContentRepository {
   constructor(private readonly service: ISignupContentService) {}
 

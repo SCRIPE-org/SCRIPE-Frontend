@@ -8,6 +8,9 @@ interface UseTenantEntitlementsViewModelProps {
   tenantId: string;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for tenant entitlements view model.
+ */
 export function useTenantEntitlementsViewModel({ tenantId }: UseTenantEntitlementsViewModelProps) {
   const { t, language, direction } = useI18n();
   const isRtl = direction === "rtl";

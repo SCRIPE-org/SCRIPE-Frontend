@@ -54,6 +54,9 @@ function Sel({
 }
 
 // ─── Base Props Editor (every block) ──────────────────
+/**
+ * React presentation component representing the base props editor UI element.
+ */
 export function BasePropsEditor({ block, onChange }: P) {
   const { t } = useI18n();
   const p = block.props;
@@ -120,6 +123,9 @@ export function BasePropsEditor({ block, onChange }: P) {
 }
 
 // ─── Text Editor ──────────────────────────────────────
+/**
+ * React presentation component representing the text editor UI element.
+ */
 export function TextEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "text") return null;
@@ -208,6 +214,9 @@ export function TextEditor({ block, onChange }: P) {
 }
 
 // ─── Image Editor ─────────────────────────────────────
+/**
+ * React presentation component representing the image editor UI element.
+ */
 export function ImageEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "image") return null;
@@ -327,6 +336,9 @@ export function ImageEditor({ block, onChange }: P) {
 }
 
 // ─── Feature List Editor ──────────────────────────────
+/**
+ * React presentation component representing the feature list editor UI element.
+ */
 export function FeatureListEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "featureList") return null;
@@ -434,6 +446,9 @@ export function FeatureListEditor({ block, onChange }: P) {
 }
 
 // ─── Testimonial Editor ───────────────────────────────
+/**
+ * React presentation component representing the testimonial editor UI element.
+ */
 export function TestimonialEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "testimonial") return null;
@@ -524,6 +539,9 @@ export function TestimonialEditor({ block, onChange }: P) {
 }
 
 // ─── CTA Button Editor ────────────────────────────────
+/**
+ * React presentation component representing the cta editor UI element.
+ */
 export function CtaEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "ctaButton") return null;
@@ -616,6 +634,9 @@ export function CtaEditor({ block, onChange }: P) {
 }
 
 // ─── Divider Editor ───────────────────────────────────
+/**
+ * React presentation component representing the divider editor UI element.
+ */
 export function DividerEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "divider") return null;
@@ -692,6 +713,9 @@ export function DividerEditor({ block, onChange }: P) {
 }
 
 // ─── Heading Editor ───────────────────────────────────
+/**
+ * React presentation component representing the heading editor UI element.
+ */
 export function HeadingEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "heading") return null;
@@ -755,6 +779,9 @@ export function HeadingEditor({ block, onChange }: P) {
 }
 
 // ─── Badge Editor ─────────────────────────────────────
+/**
+ * React presentation component representing the badge editor UI element.
+ */
 export function BadgeEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "badge") return null;
@@ -814,6 +841,9 @@ export function BadgeEditor({ block, onChange }: P) {
 }
 
 // ─── Spacer Editor ────────────────────────────────────
+/**
+ * React presentation component representing the spacer editor UI element.
+ */
 export function SpacerEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "spacer") return null;
@@ -847,6 +877,9 @@ export function SpacerEditor({ block, onChange }: P) {
 }
 
 // ─── Alert Editor ─────────────────────────────────────
+/**
+ * React presentation component representing the alert editor UI element.
+ */
 export function AlertEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "alert") return null;
@@ -897,6 +930,9 @@ export function AlertEditor({ block, onChange }: P) {
 }
 
 // ─── Stats Row Editor ─────────────────────────────────
+/**
+ * React presentation component representing the stats row editor UI element.
+ */
 export function StatsRowEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "statsRow") return null;
@@ -983,6 +1019,9 @@ export function StatsRowEditor({ block, onChange }: P) {
 }
 
 // ─── Social Links Editor ──────────────────────────────
+/**
+ * React presentation component representing the social links editor UI element.
+ */
 export function SocialLinksEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "socialLinks") return null;
@@ -1069,6 +1108,9 @@ export function SocialLinksEditor({ block, onChange }: P) {
 }
 
 // ─── Logo Cloud Editor ────────────────────────────────
+/**
+ * React presentation component representing the logo cloud editor UI element.
+ */
 export function LogoCloudEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "logoCloud") return null;
@@ -1139,6 +1181,9 @@ export function LogoCloudEditor({ block, onChange }: P) {
 }
 
 // ─── Rating Editor ────────────────────────────────────
+/**
+ * React presentation component representing the rating editor UI element.
+ */
 export function RatingEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "rating") return null;
@@ -1202,6 +1247,9 @@ export function RatingEditor({ block, onChange }: P) {
 }
 
 // ─── Icon Row Editor ──────────────────────────────────
+/**
+ * React presentation component representing the icon row editor UI element.
+ */
 export function IconRowEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "iconRow") return null;
@@ -1259,6 +1307,9 @@ export function IconRowEditor({ block, onChange }: P) {
 }
 
 // ─── Video Editor ─────────────────────────────────────
+/**
+ * React presentation component representing the video editor UI element.
+ */
 export function VideoEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "video") return null;
@@ -1319,6 +1370,9 @@ export function VideoEditor({ block, onChange }: P) {
 }
 
 // ─── Countdown Editor ─────────────────────────────────
+/**
+ * React presentation component representing the countdown editor UI element.
+ */
 export function CountdownEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "countdown") return null;
@@ -1371,6 +1425,9 @@ export function CountdownEditor({ block, onChange }: P) {
 }
 
 // ─── Accordion Editor ─────────────────────────────────
+/**
+ * React presentation component representing the accordion editor UI element.
+ */
 export function AccordionEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "accordion") return null;
@@ -1454,6 +1511,9 @@ export function AccordionEditor({ block, onChange }: P) {
 }
 
 // ─── Progress Steps Editor ────────────────────────────
+/**
+ * React presentation component representing the progress steps editor UI element.
+ */
 export function ProgressStepsEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "progressSteps") return null;
@@ -1520,6 +1580,9 @@ export function ProgressStepsEditor({ block, onChange }: P) {
 }
 
 // ─── Avatar Stack Editor ──────────────────────────────
+/**
+ * React presentation component representing the avatar stack editor UI element.
+ */
 export function AvatarStackEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "avatarStack") return null;
@@ -1592,6 +1655,9 @@ export function AvatarStackEditor({ block, onChange }: P) {
 }
 
 // ─── Gradient Text Editor ─────────────────────────────
+/**
+ * React presentation component representing the gradient text editor UI element.
+ */
 export function GradientTextEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "gradientText") return null;
@@ -1667,6 +1733,9 @@ export function GradientTextEditor({ block, onChange }: P) {
 }
 
 // ─── Master Switch ────────────────────────────────────
+/**
+ * React presentation component representing the inline editor UI element.
+ */
 export function InlineEditor(props: P) {
   const { block } = props;
   let editor: React.ReactNode = null;

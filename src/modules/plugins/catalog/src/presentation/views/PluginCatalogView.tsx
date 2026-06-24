@@ -11,6 +11,9 @@ import { PluginCard } from "../components/PluginCard";
 import { PluginInstallDialog } from "../components/PluginInstallDialog";
 import type { PluginCatalogItem } from "../../domain/entities/PluginCatalogItem";
 
+/**
+ * React presentation component representing the plugin catalog view UI element.
+ */
 export function PluginCatalogView() {
   const { user } = useAppStore();
   const { t } = useI18n();

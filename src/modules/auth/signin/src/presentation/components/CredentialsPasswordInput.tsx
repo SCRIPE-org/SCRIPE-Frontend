@@ -15,6 +15,9 @@ interface CredentialsPasswordInputProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the credentials password input UI element.
+ */
 export function CredentialsPasswordInput({
   value,
   onChange,

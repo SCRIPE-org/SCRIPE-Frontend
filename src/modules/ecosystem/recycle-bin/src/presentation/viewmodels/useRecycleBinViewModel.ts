@@ -20,11 +20,17 @@ import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import type { DeletedItem } from "../../domain/entities/DeletedItem";
 import type { DeletedItemsGrouped } from "../../domain/interfaces/IRecycleBinRepository";
 
+/**
+ * Type declaration definition describing the schema of tab type.
+ */
 export type TabType = "tenants" | "admins" | "users" | "roles" | "userGroups";
 
 const RECYCLE_BIN_QUERY_KEY = ["recycle-bin"] as const;
 const DEFAULT_PAGE_SIZE = 10;
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for recycle bin view model.
+ */
 export function useRecycleBinViewModel() {
   const { recycleBinRepository } = ecosystemContainer;
   const { t } = useI18n();

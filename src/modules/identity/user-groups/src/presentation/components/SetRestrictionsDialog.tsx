@@ -32,6 +32,9 @@ interface SetRestrictionsDialogProps {
   tenantId?: string;
 }
 
+/**
+ * React presentation component representing the set restrictions dialog UI element.
+ */
 export function SetRestrictionsDialog({
   open,
   onOpenChange,

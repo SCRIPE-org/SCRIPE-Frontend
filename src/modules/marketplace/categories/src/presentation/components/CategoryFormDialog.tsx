@@ -20,6 +20,9 @@ import type { AppCategory } from "../../domain/entities/AppCategory";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Category Form Data.
+ */
 export interface CategoryFormData {
   nameEn: string;
   nameAr: string;
@@ -59,6 +62,9 @@ function slugify(text: string): string {
 
 // ── Component ────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the category form dialog UI element.
+ */
 export function CategoryFormDialog({
   open,
   onOpenChange,

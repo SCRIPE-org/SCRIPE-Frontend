@@ -3,6 +3,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { complianceContainer } from "@modules/compliance/di";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for dashboard view model.
+ */
 export function useDashboardViewModel() {
   const { dashboardRepository } = complianceContainer;
 

@@ -24,6 +24,9 @@ interface AddMembersDialogProps {
   tenantId?: string;
 }
 
+/**
+ * React presentation component representing the add members dialog UI element.
+ */
 export function AddMembersDialog({
   open,
   onOpenChange,

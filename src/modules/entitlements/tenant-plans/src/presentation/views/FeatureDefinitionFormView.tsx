@@ -47,6 +47,9 @@ interface FeatureDefinitionFormViewProps {
   isViewMode?: boolean;
 }
 
+/**
+ * React presentation component representing the feature definition form view UI element.
+ */
 export function FeatureDefinitionFormView({
   featureId,
   isViewMode,

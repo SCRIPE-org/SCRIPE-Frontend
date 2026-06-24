@@ -12,8 +12,14 @@ import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 
 // ─── Types ──────────────────────────────────────────────────
+/**
+ * Type declaration definition describing the schema of schedule mode.
+ */
 export type ScheduleMode = "now" | "scheduled" | "recurring";
 
+/**
+ * Interface structure detailing the properties and attributes of Schedule Config.
+ */
 export interface ScheduleConfig {
   mode: ScheduleMode;
   scheduledDate?: string;
@@ -27,6 +33,9 @@ export interface ScheduleConfig {
   };
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Schedule Picker Props.
+ */
 export interface SchedulePickerProps {
   value: ScheduleConfig;
   onChange: (config: ScheduleConfig) => void;
@@ -82,6 +91,9 @@ const MODES: { id: ScheduleMode; label: string; desc: string; icon: React.ReactN
 ];
 
 // ─── Main Component ─────────────────────────────────────────
+/**
+ * React presentation component representing the schedule picker UI element.
+ */
 export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProps) {
   const { t } = useI18n();
   const update = (partial: Partial<ScheduleConfig>) => {

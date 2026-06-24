@@ -19,6 +19,9 @@ interface TwoFactorStatusProps {
   isEnabling?: boolean;
 }
 
+/**
+ * React presentation component representing the two factor status UI element.
+ */
 export function TwoFactorStatus({
   isEnabled,
   backupCodesRemaining,

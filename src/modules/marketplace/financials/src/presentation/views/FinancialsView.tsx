@@ -9,6 +9,9 @@ import { Card, CardContent } from "@core/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { DollarSign, Play } from "lucide-react";
 
+/**
+ * React presentation component representing the financials view UI element.
+ */
 export function FinancialsView() {
   const vm = useFinancialsViewModel();
 

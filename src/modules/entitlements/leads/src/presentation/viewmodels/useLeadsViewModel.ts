@@ -31,6 +31,9 @@ const QUERY_KEYS = {
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for leads view model.
+ */
 export function useLeadsViewModel() {
   const { leadsRepository } = entitlementsContainer;
   const queryClient = useQueryClient();

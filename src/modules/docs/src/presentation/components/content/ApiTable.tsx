@@ -7,6 +7,9 @@ interface ApiTableProps {
   endpoints: ApiEndpoint[];
 }
 
+/**
+ * React presentation component representing the api table UI element.
+ */
 export function ApiTable({ endpoints }: ApiTableProps) {
   const { t } = useDocsI18n();
 

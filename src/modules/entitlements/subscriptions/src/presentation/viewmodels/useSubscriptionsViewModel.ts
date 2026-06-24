@@ -16,6 +16,9 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 import { parseLocalizedNumber } from "@core/utils/number-parser";
 import type { EditionPromotionData } from "@modules/entitlements/core";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for subscriptions view model.
+ */
 export function useSubscriptionsViewModel(tenantId: string) {
   const { subscriptionRepository, editionRepository, billingRepository } = entitlementsContainer;
   const queryClient = useQueryClient();

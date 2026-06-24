@@ -6,6 +6,9 @@ import type {
   UpdateIdentityProviderRequest,
 } from "../entities/IdentityProvider";
 
+/**
+ * Interface defining repository methods for managing IdentityProvider data access.
+ */
 export interface IIdentityProviderRepository {
   getAll(params: {
     page: number;

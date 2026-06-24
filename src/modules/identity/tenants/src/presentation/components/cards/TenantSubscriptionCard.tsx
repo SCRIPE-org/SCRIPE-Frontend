@@ -165,6 +165,9 @@ function getConvertOptions(
 
 // ── Main Component ──
 
+/**
+ * React presentation component representing the tenant subscription card UI element.
+ */
 export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps) {
   const { t } = useI18n();
   const [selectedEditionId, setSelectedEditionId] = useState("");

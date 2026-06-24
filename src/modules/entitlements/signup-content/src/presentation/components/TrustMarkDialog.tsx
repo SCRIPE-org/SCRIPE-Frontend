@@ -156,6 +156,9 @@ function TrustMarkDialogForm({ onClose, onSave, isSaving, editing }: TrustMarkDi
   );
 }
 
+/**
+ * React presentation component representing the trust mark dialog UI element.
+ */
 export function TrustMarkDialog({
   open,
   onClose,

@@ -55,6 +55,9 @@ interface WelcomeScreenProps {
   onGetStarted: () => void;
 }
 
+/**
+ * React presentation component representing the welcome screen UI element.
+ */
 export function WelcomeScreen({
   content,
   isLoading,

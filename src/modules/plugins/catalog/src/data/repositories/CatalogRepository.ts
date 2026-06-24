@@ -4,6 +4,9 @@ import type { PluginCatalogItem } from "../../domain/entities/PluginCatalogItem"
 import { CatalogMapper } from "../mappers/CatalogMapper";
 import type { InstallPluginRequest } from "../models/CatalogModels";
 
+/**
+ * Repository implementation for managing database operations on Catalog resources.
+ */
 export class CatalogRepository implements ICatalogRepository {
   constructor(private readonly service: ICatalogService) {}
 

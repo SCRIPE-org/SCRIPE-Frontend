@@ -34,11 +34,17 @@ const CATEGORY_META: Record<string, { labelKey: string; icon: React.ReactNode; c
   },
 };
 
+/**
+ * Interface structure detailing the properties and attributes of Policy Card Props.
+ */
 export interface PolicyCardProps {
   policy: RetentionPolicy;
   onEdit: (policy: RetentionPolicy) => void;
 }
 
+/**
+ * React presentation component representing the policy card UI element.
+ */
 export function PolicyCard({ policy, onEdit }: PolicyCardProps) {
   const { t } = useI18n();
   const meta = CATEGORY_META[policy.category] ?? CATEGORY_META.PersonalData;

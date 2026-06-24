@@ -35,6 +35,9 @@ interface PayoutsCardProps {
   payoutsLink: string;
 }
 
+/**
+ * React presentation component representing the payouts card UI element.
+ */
 export function PayoutsCard({ payouts, payoutsLink }: PayoutsCardProps) {
   const { t } = useI18n();
 

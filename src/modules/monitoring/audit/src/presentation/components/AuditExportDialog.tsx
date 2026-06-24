@@ -60,6 +60,9 @@ const FORMAT_OPTIONS: FormatOption[] = [
   },
 ];
 
+/**
+ * React presentation component representing the audit export dialog UI element.
+ */
 export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogProps) {
   const { t } = useI18n();
   const { exportAudit, isExporting, error } = useExportAudit();

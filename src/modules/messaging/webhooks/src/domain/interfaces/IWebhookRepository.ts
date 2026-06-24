@@ -10,6 +10,9 @@ import type {
 } from "../entities/Webhook";
 import type { CreateWebhookRequest, UpdateWebhookRequest } from "../entities/WebhookRequests";
 
+/**
+ * Interface defining repository methods for managing Webhook data access.
+ */
 export interface IWebhookRepository {
   // ─── Subscriptions ─────────────────────────────────────────
   getAll(params: {

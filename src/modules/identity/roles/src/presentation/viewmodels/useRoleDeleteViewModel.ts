@@ -10,6 +10,9 @@ interface UseRoleDeleteViewModelProps {
   open: boolean;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for role delete view model.
+ */
 export function useRoleDeleteViewModel({ roleId, tenantId, open }: UseRoleDeleteViewModelProps) {
   const { t, language } = useI18n();
 

@@ -5,6 +5,9 @@ import { blockColor, clamp } from "./block-style-utils";
 
 const SIZE_CLASS = { sm: "text-sm", md: "text-lg", lg: "text-2xl" };
 
+/**
+ * React presentation component representing the rating block view UI element.
+ */
 export function RatingBlockView({ block }: { block: RatingBlock }) {
   const props = block.props;
   const value = clamp(props.value, 1, 5, 5);

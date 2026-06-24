@@ -3,6 +3,9 @@
 import type { ProgressStepsBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { safeItems } from "./block-style-utils";
 
+/**
+ * React presentation component representing the progress steps block view UI element.
+ */
 export function ProgressStepsBlockView({ block }: { block: ProgressStepsBlock }) {
   const props = block.props;
   const active = props.activeStep ?? 0;

@@ -12,6 +12,9 @@ export interface PageOverride {
   subtitle?: string;
 }
 
+/**
+ * Utility function executing operational rules for parse page override.
+ */
 export function parsePageOverride(
   loginBrandingJson: string | null | undefined,
   pageKey: string

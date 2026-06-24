@@ -11,11 +11,17 @@ import type { ThemeDetail } from "../entities/ThemeDetail";
 import type { ThemeFilterState } from "../types/ThemeTypes";
 import type { UpsertThemePayload } from "./IThemeMarketplaceService";
 
+/**
+ * Interface structure detailing the properties and attributes of Theme List Result.
+ */
 export interface ThemeListResult {
   items: ThemeCard[];
   totalCount: number;
 }
 
+/**
+ * Interface defining repository methods for managing ThemeMarketplace data access.
+ */
 export interface IThemeMarketplaceRepository {
   /** Get paginated themes with filters */
   getThemes(params: {

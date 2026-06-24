@@ -283,6 +283,9 @@ function GatewayCardSkeleton() {
 }
 
 // ── Main View ──
+/**
+ * React presentation component representing the payment gateway settings view UI element.
+ */
 export function PaymentGatewaySettingsView() {
   const { t } = useI18n();
   const vm = usePaymentGatewaysViewModel();

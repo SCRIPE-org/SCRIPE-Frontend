@@ -24,6 +24,9 @@ import type {
 import type { PagedResult } from "@core/interfaces/common.interface";
 import { LeadsMapper } from "../mappers/LeadsMapper";
 
+/**
+ * Repository implementation for managing database operations on Leads resources.
+ */
 export class LeadsRepository implements ILeadsRepository {
   constructor(private readonly service: ILeadsService) {}
 

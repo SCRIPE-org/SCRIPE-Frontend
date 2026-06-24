@@ -11,6 +11,9 @@ import { identityContainer } from "@modules/identity/di";
 import { userGroupKeys } from "./useUserGroupsViewModel";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for user group detail view model.
+ */
 export function useUserGroupDetailViewModel(groupId: string) {
   const repo = identityContainer.userGroupRepository;
   const queryClient = useQueryClient();

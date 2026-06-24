@@ -18,6 +18,9 @@ import type {
 import type { UpdateReportPreferenceRequestModel } from "../models/AnalyticsModels";
 import { AnalyticsMapper } from "../mappers/AnalyticsMapper";
 
+/**
+ * Repository implementation for managing database operations on Analytics resources.
+ */
 export class AnalyticsRepository implements IAnalyticsRepository {
   constructor(private readonly service: IAnalyticsService) {}
 

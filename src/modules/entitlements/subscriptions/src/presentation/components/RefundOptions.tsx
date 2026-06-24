@@ -21,6 +21,9 @@ interface RefundOptionsProps {
   idPrefix: string;
 }
 
+/**
+ * React presentation component representing the refund options UI element.
+ */
 export function RefundOptions({
   refundType,
   onRefundTypeChange,

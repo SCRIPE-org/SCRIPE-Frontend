@@ -84,6 +84,9 @@ interface ProfileSecurityTabProps {
   };
 }
 
+/**
+ * React presentation component representing the profile security tab UI element.
+ */
 export function ProfileSecurityTab({
   profile,
   linkedMobileDevices,

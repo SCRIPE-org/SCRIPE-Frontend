@@ -16,6 +16,9 @@ import type {
 } from "../../domain/entities/AuditEntities";
 import { AuditMapper } from "../mappers/AuditMapper";
 
+/**
+ * Repository implementation for managing database operations on Audit resources.
+ */
 export class AuditRepository implements IAuditRepository {
   constructor(private readonly service: IAuditService) {}
 

@@ -11,6 +11,9 @@ interface DsrDetailMetadataProps {
   typeMeta: { labelKey: string; color: string };
 }
 
+/**
+ * React presentation component representing the dsr detail metadata UI element.
+ */
 export function DsrDetailMetadata({ dsr, t, statusMeta, typeMeta }: DsrDetailMetadataProps) {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">

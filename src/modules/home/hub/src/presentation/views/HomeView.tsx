@@ -27,6 +27,9 @@ const RecentActivityFeed = dynamic(
   { ssr: false }
 );
 
+/**
+ * React presentation component representing the home view UI element.
+ */
 export function HomeView() {
   const hasDashboardPerm = usePermission(SYSTEM_PERMISSIONS.DASHBOARD_VIEW);
   const vm = useOverviewViewModel(hasDashboardPerm);

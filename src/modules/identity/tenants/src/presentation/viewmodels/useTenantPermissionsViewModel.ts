@@ -22,6 +22,9 @@ import { appLogger } from "@core/common/logger";
 import { identityContainer } from "@modules/identity/di";
 import type { Permission, PermissionModuleGroup } from "@modules/identity/core";
 
+/**
+ * Interface structure detailing the properties and attributes of Use Tenant Permissions Dialog Props.
+ */
 export interface UseTenantPermissionsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -30,6 +33,9 @@ export interface UseTenantPermissionsDialogProps {
   parentTenantId?: string | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Use Tenant Permissions Dialog Result.
+ */
 export interface UseTenantPermissionsDialogResult {
   // State
   search: string;
@@ -69,6 +75,9 @@ export interface UseTenantPermissionsDialogResult {
   };
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for tenant permissions dialog.
+ */
 export function useTenantPermissionsDialog({
   open,
   onOpenChange,

@@ -9,6 +9,9 @@ import type {
   ComparisonDataPoint,
 } from "../entities/AnalyticsEntities";
 
+/**
+ * Interface defining operations for the Analytics network service.
+ */
 export interface IAnalyticsService {
   getSummary(): Promise<AnalyticsSummary>;
   getEventDistribution(days?: number): Promise<DistributionData[]>;

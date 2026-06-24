@@ -7,6 +7,9 @@ import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type { IDashboardService } from "../../domain/interfaces/IDashboardService";
 import type { DashboardModel } from "../models/DashboardModels";
 
+/**
+ * API service for executing HTTP calls related to Dashboard endpoints.
+ */
 export class DashboardService implements IDashboardService {
   constructor(private readonly api: IApiService) {}
 

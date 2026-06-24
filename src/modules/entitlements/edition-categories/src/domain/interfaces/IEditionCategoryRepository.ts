@@ -5,6 +5,9 @@ import type {
   UpdateEditionCategoryRequest,
 } from "../entities/EditionCategoryRequests";
 
+/**
+ * Interface defining repository methods for managing EditionCategory data access.
+ */
 export interface IEditionCategoryRepository {
   getAll(params: PaginationParams): Promise<PagedResult<EditionCategory>>;
   getById(id: string): Promise<EditionCategory>;

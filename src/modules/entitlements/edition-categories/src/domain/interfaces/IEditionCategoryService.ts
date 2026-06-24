@@ -5,6 +5,9 @@ import type {
   UpdateEditionCategoryRequest,
 } from "../entities/EditionCategoryRequests";
 
+/**
+ * Interface defining operations for the EditionCategory network service.
+ */
 export interface IEditionCategoryService {
   getAll(params: PaginationParams): Promise<PagedResult<EditionCategoryModel>>;
   getById(id: string): Promise<EditionCategoryModel>;

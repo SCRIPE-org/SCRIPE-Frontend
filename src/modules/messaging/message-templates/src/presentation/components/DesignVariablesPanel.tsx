@@ -11,6 +11,9 @@ import { Paintbrush, RotateCcw } from "lucide-react";
 import { ColorPickerField } from "@core/ui/rich-text-editor/ColorPickerField";
 
 // ─── Types ──────────────────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Design Variables.
+ */
 export interface DesignVariables {
   primaryColor: string;
   secondaryColor: string;
@@ -24,12 +27,18 @@ export interface DesignVariables {
   footerText: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Design Variables Panel Props.
+ */
 export interface DesignVariablesPanelProps {
   value: DesignVariables;
   onChange: (v: DesignVariables) => void;
 }
 
 // ─── Defaults ───────────────────────────────────────────────
+/**
+ * Constant definition representing d e f a u l t_ d e s i g n.
+ */
 export const DEFAULT_DESIGN: DesignVariables = {
   primaryColor: "#3b82f6",
   secondaryColor: "#6366f1",
@@ -63,6 +72,9 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 }
 
 // ─── Main ───────────────────────────────────────────────────
+/**
+ * React presentation component representing the design variables panel UI element.
+ */
 export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelProps) {
   const { t } = useI18n();
 

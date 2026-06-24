@@ -42,6 +42,9 @@ interface UserGroupListItem {
   createdAt: string;
 }
 
+/**
+ * React presentation component representing the user groups view UI element.
+ */
 export function UserGroupsView() {
   useModuleLocales(() => import("../../../locales"), "user-groups");
 

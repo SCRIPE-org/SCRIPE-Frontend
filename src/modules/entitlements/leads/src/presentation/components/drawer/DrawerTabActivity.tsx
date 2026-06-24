@@ -20,6 +20,9 @@ interface DrawerTabActivityProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the drawer tab activity UI element.
+ */
 export function DrawerTabActivity({
   activity,
   isLoadingActivity,

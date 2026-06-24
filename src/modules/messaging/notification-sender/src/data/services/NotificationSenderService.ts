@@ -11,6 +11,9 @@ import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import type { INotificationSenderService } from "../../domain/interfaces/INotificationSenderService";
 import type { NotificationTargetJson, SendNotificationJson } from "../models/NotificationModel";
 
+/**
+ * API service for executing HTTP calls related to NotificationSender endpoints.
+ */
 export class NotificationSenderService implements INotificationSenderService {
   constructor(private readonly api: IApiService) {}
 

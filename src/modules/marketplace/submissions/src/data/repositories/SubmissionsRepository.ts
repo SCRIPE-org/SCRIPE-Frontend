@@ -15,6 +15,9 @@ import type { AppSubmissionData } from "../../domain/entities/AppSubmission";
 import type { ISubmissionsRepository } from "../../domain/interfaces/ISubmissionsRepository";
 import type { SubmissionDto } from "../../domain/interfaces/ISubmissionsService";
 
+/**
+ * Repository implementation for managing database operations on Submissions resources.
+ */
 export class SubmissionsRepository implements ISubmissionsRepository {
   constructor(private readonly service: ISubmissionsService) {}
 

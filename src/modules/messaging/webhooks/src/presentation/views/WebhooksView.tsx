@@ -21,6 +21,9 @@ import { WebhookForm } from "../components/WebhookForm";
 import { WebhookHealthDashboard } from "../components/WebhookHealthDashboard";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
+/**
+ * React presentation component representing the webhooks view UI element.
+ */
 export function WebhooksView() {
   useModuleLocales(() => import("../../../locales"), "webhooks");
 

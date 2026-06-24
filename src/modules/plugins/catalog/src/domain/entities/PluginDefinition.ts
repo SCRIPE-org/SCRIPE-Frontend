@@ -41,6 +41,9 @@ export interface PluginDefinitionModel {
   createdAt: string;
 }
 
+/**
+ * Domain entity class representing a Plugin Definition.
+ */
 export class PluginDefinition {
   constructor(private readonly data: PluginDefinitionModel) {}
 

@@ -18,6 +18,9 @@ export interface TenantGatewayData {
   modifiedAt: string | null;
 }
 
+/**
+ * Domain entity class representing a Tenant Gateway.
+ */
 export class TenantGateway {
   constructor(private readonly data: TenantGatewayData) {}
 

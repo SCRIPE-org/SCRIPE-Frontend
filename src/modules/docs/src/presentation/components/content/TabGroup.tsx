@@ -9,6 +9,9 @@ interface TabGroupProps {
   tabs: CodeTab[];
 }
 
+/**
+ * React presentation component representing the tab group UI element.
+ */
 export function TabGroup({ tabs }: TabGroupProps) {
   const [activeTab, setActiveTab] = useState(0);
 

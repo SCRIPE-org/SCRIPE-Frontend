@@ -18,6 +18,9 @@ import { RegulationCard } from "../components/RegulationCard";
 
 import type { Regulation } from "../../domain/entities/Regulation";
 
+/**
+ * React presentation component representing the regulation view UI element.
+ */
 export function RegulationView() {
   useModuleLocales(() => import("../../../locales"), "compliance-regulations");
   const { t, direction } = useI18n();

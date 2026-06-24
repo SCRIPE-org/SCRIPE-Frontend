@@ -7,6 +7,9 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { toast } from "@core/ui/use-toast";
 import type { ComplianceReport } from "../../domain/entities/ComplianceReport";
 
+/**
+ * Type declaration definition describing the schema of export format.
+ */
 export type ExportFormat = "csv" | "json" | "xlsx" | "pdf";
 
 const FORMAT_EXTENSIONS: Record<ExportFormat, string> = {
@@ -16,6 +19,9 @@ const FORMAT_EXTENSIONS: Record<ExportFormat, string> = {
   pdf: ".pdf",
 };
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for report detail view model.
+ */
 export function useReportDetailViewModel(id: string) {
   const { t } = useI18n();
   const { reportRepository } = complianceContainer;

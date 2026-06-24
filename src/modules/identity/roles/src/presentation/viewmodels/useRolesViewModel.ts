@@ -30,6 +30,9 @@ interface UseRolesViewModelParams {
   useMyTenant?: boolean;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for roles view model.
+ */
 export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
   const { tenantId: propTenantId, useMyTenant } = params;
   const contextTenantId = useCurrentTenantId();

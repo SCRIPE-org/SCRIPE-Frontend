@@ -23,6 +23,9 @@ interface EffectiveFeaturesViewProps {
   language: string;
 }
 
+/**
+ * React presentation component representing the effective features view UI element.
+ */
 export function EffectiveFeaturesView({
   features,
   isLoading,

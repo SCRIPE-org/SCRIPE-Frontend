@@ -23,6 +23,9 @@ const TenantGatewayModelSchema = z.object({
   modifiedAt: z.string().optional().nullable(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class TenantGatewayMapper {
   static toEntity(dto: TenantGatewayModel): TenantGateway {
     const validated = safeParseApiResponse(TenantGatewayModelSchema, dto, "TenantGateway");

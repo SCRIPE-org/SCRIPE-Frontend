@@ -149,6 +149,9 @@ function VersionCard({
   );
 }
 
+/**
+ * React presentation component representing the versions tab UI element.
+ */
 export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabProps) {
   const [isPublishOpen, setIsPublishOpen] = useState(false);
   const [changeNotes, setChangeNotes] = useState("");
@@ -258,7 +261,6 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
                 className="resize-none text-sm"
               />
             </div>
-
             <div className="space-y-1 rounded-md border bg-muted/50 p-3 text-xs text-muted-foreground">
               <div className="flex justify-between">
                 <span>{t("entitlements.tenantPlans.versionNumber") || "Current version"}</span>
@@ -278,7 +280,6 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
               </div>
             </div>
           </div>
-
           <DialogFooter>
             <Button variant="ghost" onClick={() => setIsPublishOpen(false)}>
               {t("common.cancel") || "Cancel"}

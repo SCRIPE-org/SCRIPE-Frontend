@@ -7,6 +7,9 @@
 
 import type { UsersEntity } from "../entities/UsersEntity";
 
+/**
+ * Interface structure detailing the properties and attributes of Update User Request.
+ */
 export interface UpdateUserRequest {
   firstName?: string | null;
   lastName?: string | null;
@@ -19,6 +22,9 @@ export interface UpdateUserRequest {
   notes?: string | null;
 }
 
+/**
+ * Interface defining repository methods for managing Users data access.
+ */
 export interface IUsersRepository {
   /** Get paginated list of users */
   getAll(params?: Record<string, unknown>): Promise<{ items: UsersEntity[]; totalCount: number }>;

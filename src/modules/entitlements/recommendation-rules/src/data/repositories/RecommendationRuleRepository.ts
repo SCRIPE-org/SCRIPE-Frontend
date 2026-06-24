@@ -14,6 +14,9 @@ import type {
 } from "../../domain/entities/RecommendationRuleRequests";
 import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
+/**
+ * Repository implementation for managing database operations on RecommendationRule resources.
+ */
 export class RecommendationRuleRepository implements IRecommendationRuleRepository {
   constructor(private readonly service: IRecommendationRuleService) {}
 

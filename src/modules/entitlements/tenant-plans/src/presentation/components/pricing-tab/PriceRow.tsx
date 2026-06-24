@@ -22,6 +22,9 @@ interface PriceRowProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the price row UI element.
+ */
 export function PriceRow({ price, currency, onUpdate, onRemove, t }: PriceRowProps) {
   return (
     <div className="flex items-center justify-between gap-4 py-3">

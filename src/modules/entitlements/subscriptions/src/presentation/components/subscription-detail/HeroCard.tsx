@@ -24,6 +24,9 @@ interface HeroCardProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the hero card UI element.
+ */
 export function HeroCard({ sub, vm, t }: HeroCardProps) {
   const style = STATUS_STYLES[sub.status] ?? DEFAULT_STATUS_STYLE;
 

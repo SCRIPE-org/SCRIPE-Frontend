@@ -39,6 +39,9 @@ export interface UpdateCategoryPayload {
   sortOrder: number;
 }
 
+/**
+ * Interface defining operations for the Categories network service.
+ */
 export interface ICategoriesService {
   /** Fetch all categories. */
   getAll(): Promise<CategoryDto[]>;

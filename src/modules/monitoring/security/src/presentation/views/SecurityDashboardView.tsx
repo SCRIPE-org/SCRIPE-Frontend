@@ -37,6 +37,9 @@ const ReportExportDialog = dynamic(
   { ssr: false }
 );
 
+/**
+ * React presentation component representing the security dashboard view UI element.
+ */
 export function SecurityDashboardView() {
   useModuleLocales(() => import("../../../locales"), "security");
 

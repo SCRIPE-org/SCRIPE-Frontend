@@ -112,6 +112,9 @@ const ALL_ACTIONS: QuickAction[] = [
   },
 ];
 
+/**
+ * Constant definition representing quick actions grid.
+ */
 export const QuickActionsGrid = memo(function QuickActionsGrid() {
   const { t } = useI18n();
   const { hasPermission } = usePermissions();

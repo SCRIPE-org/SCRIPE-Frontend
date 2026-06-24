@@ -13,6 +13,9 @@ interface ConnectSummaryCardProps {
   connectSummary: PlatformConnectSummary;
 }
 
+/**
+ * React presentation component representing the connect summary card UI element.
+ */
 export function ConnectSummaryCard({ connectSummary }: ConnectSummaryCardProps) {
   const { t } = useI18n();
 

@@ -50,6 +50,9 @@ export interface TenantSettings {
   isSafeMode: boolean;
 }
 
+/**
+ * Constant definition representing d e f a u l t_ t e n a n t_ s e t t i n g s.
+ */
 export const DEFAULT_TENANT_SETTINGS: TenantSettings = {
   maxAdmins: -1,
   maxRoles: -1,

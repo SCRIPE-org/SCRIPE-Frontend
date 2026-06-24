@@ -57,6 +57,9 @@ const EditionModelSchema = z.object({
   modifiedAt: isoDateString().optional().nullable(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class EditionMapper {
   static toEntity(model: EditionModel): Edition {
     // Validate API response shape — logs warnings on contract drift

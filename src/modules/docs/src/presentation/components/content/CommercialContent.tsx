@@ -13,6 +13,9 @@ interface CommercialContentProps {
 }
 
 // ─── Component ───────────────────────────────────────────────────
+/**
+ * React presentation component representing the commercial content UI element.
+ */
 export function CommercialContent({
   sections,
   titleKey,

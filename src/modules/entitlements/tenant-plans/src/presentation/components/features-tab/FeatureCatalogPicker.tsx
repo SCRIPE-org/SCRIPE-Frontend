@@ -33,6 +33,9 @@ interface FeatureCatalogPickerProps {
   language: string;
 }
 
+/**
+ * React presentation component representing the feature catalog picker UI element.
+ */
 export function FeatureCatalogPicker({
   availableGrouped,
   onSelect,

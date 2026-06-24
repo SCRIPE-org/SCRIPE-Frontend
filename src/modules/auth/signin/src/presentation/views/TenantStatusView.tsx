@@ -20,6 +20,9 @@ interface TenantSuspendedViewProps {
   branding: TenantBranding;
 }
 
+/**
+ * React presentation component representing the tenant suspended view UI element.
+ */
 export function TenantSuspendedView({ branding }: TenantSuspendedViewProps) {
   useModuleLocales(() => import("../../../locales"), "signin");
   const { t, direction } = useI18n();
@@ -92,6 +95,9 @@ export function TenantSuspendedView({ branding }: TenantSuspendedViewProps) {
 
 // ─── Not Found View ───────────────────────────────────────
 
+/**
+ * React presentation component representing the tenant not found view UI element.
+ */
 export function TenantNotFoundView() {
   useModuleLocales(() => import("../../../locales"), "signin");
   const { t, direction } = useI18n();

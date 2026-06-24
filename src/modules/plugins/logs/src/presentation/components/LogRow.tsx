@@ -8,6 +8,9 @@ interface LogRowProps {
   log: PluginExecutionLog;
 }
 
+/**
+ * React presentation component representing the log row UI element.
+ */
 export function LogRow({ log }: LogRowProps) {
   const { t } = useI18n();
   return (

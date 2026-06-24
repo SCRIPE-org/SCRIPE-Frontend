@@ -4,6 +4,9 @@ import type { ReactNode } from "react";
 import type { BaseBlockProps } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { ANIMATION_STYLES, MARGIN_PX, PADDING_PX } from "./block-constants";
 
+/**
+ * React presentation component representing the block wrapper UI element.
+ */
 export function BlockWrapper({ props, children }: { props: BaseBlockProps; children: ReactNode }) {
   if (props.visible === false) return null;
   const animStyle = ANIMATION_STYLES[props.animation || "none"] || {};

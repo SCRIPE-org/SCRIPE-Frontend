@@ -26,6 +26,9 @@ interface WizardStep2Props {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the wizard step2 setup UI element.
+ */
 export function WizardStep2Setup({
   lead,
   edition,

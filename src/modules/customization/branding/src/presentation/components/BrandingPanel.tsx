@@ -34,6 +34,9 @@ const SPLIT_LAYOUTS = [
   "carousel",
 ];
 
+/**
+ * React presentation component representing the branding panel UI element.
+ */
 export function BrandingPanel({ draft, updateDraft }: BrandingPanelProps) {
   const { t } = useI18n();
   const hasBrandingPanel = SPLIT_LAYOUTS.includes(draft.layout);

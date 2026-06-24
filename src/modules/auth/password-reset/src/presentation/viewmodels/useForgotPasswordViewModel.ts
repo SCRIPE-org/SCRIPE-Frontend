@@ -25,6 +25,9 @@ import { getAuthContainer } from "@modules/auth/di";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+/**
+ * Type declaration definition describing the schema of forgot password step.
+ */
 export type ForgotPasswordStep =
   | "request" // Step 1: enter email
   | "method" // Step 2: pick OTP or Magic Link
@@ -33,11 +36,20 @@ export type ForgotPasswordStep =
   | "newPassword" // Step 5: enter new password
   | "success"; // Step 6: done!
 
+/**
+ * Type declaration definition describing the schema of reset method.
+ */
 export type ResetMethod = "otp" | "magic-link";
 
 // Re-export the domain type under a convenient alias for the view
+/**
+ * Type declaration definition describing the schema of workspace option.
+ */
 export type WorkspaceOption = ResetWorkspaceOption;
 
+/**
+ * Interface structure detailing the properties and attributes of Use Forgot Password View Model Return.
+ */
 export interface UseForgotPasswordViewModelReturn {
   // State
   step: ForgotPasswordStep;
@@ -99,6 +111,9 @@ function calcStrength(pwd: string): number {
 
 // ─── ViewModel ────────────────────────────────────────────────────────────────
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for forgot password view model.
+ */
 export function useForgotPasswordViewModel(): UseForgotPasswordViewModelReturn {
   // ── State ──
   const [step, setStep] = useState<ForgotPasswordStep>("request");

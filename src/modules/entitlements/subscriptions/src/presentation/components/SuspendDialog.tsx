@@ -22,6 +22,9 @@ import { Textarea } from "@core/ui/textarea";
 import type { SubscriptionDialogProps } from "../types";
 import { RefundOptions } from "./RefundOptions";
 
+/**
+ * React presentation component representing the suspend dialog UI element.
+ */
 export function SuspendDialog({ vm }: SubscriptionDialogProps) {
   const { t } = useI18n();
 

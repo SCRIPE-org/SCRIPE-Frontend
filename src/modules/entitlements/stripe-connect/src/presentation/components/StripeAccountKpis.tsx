@@ -36,6 +36,9 @@ interface StripeAccountKpisProps {
   isSyncing: boolean;
 }
 
+/**
+ * React presentation component representing the stripe account kpis UI element.
+ */
 export function StripeAccountKpis({
   account,
   onOpenDashboard,

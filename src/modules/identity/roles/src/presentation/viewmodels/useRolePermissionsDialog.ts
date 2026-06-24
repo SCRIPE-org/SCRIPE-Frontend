@@ -29,6 +29,9 @@ import { PermissionScopes } from "../../domain/types/PermissionTypes";
 
 // ── Props & Result interfaces ──
 
+/**
+ * Interface structure detailing the properties and attributes of Use Role Permissions Dialog Props.
+ */
 export interface UseRolePermissionsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -36,6 +39,9 @@ export interface UseRolePermissionsDialogProps {
   tenantId: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Use Role Permissions Dialog Result.
+ */
 export interface UseRolePermissionsDialogResult {
   // State
   search: string;
@@ -80,6 +86,9 @@ export interface UseRolePermissionsDialogResult {
   };
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for role permissions dialog.
+ */
 export function useRolePermissionsDialog({
   open,
   onOpenChange,

@@ -20,6 +20,9 @@ import type {
   TestConnectionResultJson,
 } from "../models/IdentityProviderModel";
 
+/**
+ * API service for executing HTTP calls related to IdentityProvider endpoints.
+ */
 export class IdentityProviderService implements IIdentityProviderService {
   constructor(private readonly api: IApiService) {}
 

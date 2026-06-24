@@ -42,6 +42,9 @@ const UsersDetailModelSchema = z.object({
   createdAt: optionalString(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class UsersMapper {
   /** Map list-level DTO → domain entity (subset of fields) */
   static toEntity(dto: UsersListModel): UsersEntity {

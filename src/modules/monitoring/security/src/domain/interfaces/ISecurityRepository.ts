@@ -11,6 +11,9 @@ import type {
   SecurityChange,
 } from "../entities/SecurityEntities";
 
+/**
+ * Interface defining repository methods for managing Security data access.
+ */
 export interface ISecurityRepository {
   getSecurityEvents(days?: number): Promise<SecurityEvent[]>;
   getTopBlockedIPs(days?: number, limit?: number): Promise<BlockedIP[]>;

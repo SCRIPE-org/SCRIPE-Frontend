@@ -16,6 +16,9 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { oauthAppKeys } from "./useOAuthAppsViewModel";
 
 // ─── Form State ──────────────────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of O Auth App Form State.
+ */
 export interface OAuthAppFormState {
   // General
   displayName: string;
@@ -70,6 +73,9 @@ const DEFAULT_STATE: OAuthAppFormState = {
 };
 
 // ─── Hook ─────────────────────────────────────────────────────────
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for o auth app detail view model.
+ */
 export function useOAuthAppDetailViewModel(appId?: string) {
   const { oauthAppRepository } = identityContainer;
   const { t } = useI18n();

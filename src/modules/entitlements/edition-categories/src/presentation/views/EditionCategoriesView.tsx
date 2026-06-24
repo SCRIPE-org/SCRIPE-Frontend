@@ -8,6 +8,9 @@ import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-
 import type { EditionCategory } from "../../domain/entities/EditionCategory";
 import { Pencil, Trash2 } from "lucide-react";
 
+/**
+ * React presentation component representing the edition categories view UI element.
+ */
 export function EditionCategoriesView() {
   const { t, language } = useI18n();
   const vm = useEditionCategoriesViewModel();

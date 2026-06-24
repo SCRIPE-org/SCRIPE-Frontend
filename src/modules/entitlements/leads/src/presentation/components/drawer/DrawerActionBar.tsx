@@ -18,6 +18,9 @@ interface DrawerActionBarProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the drawer action bar UI element.
+ */
 export function DrawerActionBar({
   lead,
   onConvert,

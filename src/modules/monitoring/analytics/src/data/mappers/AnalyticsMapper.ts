@@ -14,6 +14,9 @@ import type {
   ComparisonDataPoint,
 } from "../../domain/entities/AnalyticsEntities";
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class AnalyticsMapper {
   static toSummary(dto: AnalyticsSummaryDto): AnalyticsSummary {
     return {

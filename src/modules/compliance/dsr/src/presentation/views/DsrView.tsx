@@ -9,6 +9,9 @@ import { SubmitDsrModal } from "../components/SubmitDsrModal";
 import { ReviewDsrModal } from "../components/ReviewDsrModal";
 import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
 
+/**
+ * React presentation component representing the dsr view UI element.
+ */
 export function DsrView() {
   useModuleLocales(() => import("../../../locales"), "compliance-dsr");
 

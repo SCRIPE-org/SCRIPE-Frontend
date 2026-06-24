@@ -35,6 +35,9 @@ interface TwoFactorDisableDialogProps {
   disableError: string | null;
 }
 
+/**
+ * React presentation component representing the two factor disable dialog UI element.
+ */
 export function TwoFactorDisableDialog({
   open,
   onOpenChange,

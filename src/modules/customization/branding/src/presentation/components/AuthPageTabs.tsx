@@ -29,6 +29,9 @@ interface AuthPageTabsProps {
   onPageChange: (pageId: AuthPageId) => void;
 }
 
+/**
+ * React presentation component representing the auth page tabs UI element.
+ */
 export function AuthPageTabs({ activePageId, onPageChange }: AuthPageTabsProps) {
   const { t } = useI18n();
   return (

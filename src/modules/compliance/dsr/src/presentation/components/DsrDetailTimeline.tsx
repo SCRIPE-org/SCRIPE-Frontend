@@ -10,6 +10,9 @@ interface DsrDetailTimelineProps {
   statusMetaMap: Record<string, { labelKey: string }>;
 }
 
+/**
+ * React presentation component representing the dsr detail timeline UI element.
+ */
 export function DsrDetailTimeline({ dsr, t, statusMetaMap }: DsrDetailTimelineProps) {
   return (
     <Card>

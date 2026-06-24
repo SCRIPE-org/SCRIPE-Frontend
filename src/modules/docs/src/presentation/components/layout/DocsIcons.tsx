@@ -3,10 +3,16 @@
 
 import type React from "react";
 
+/**
+ * Interface structure detailing the properties and attributes of Icon Props.
+ */
 export interface IconProps extends React.SVGProps<SVGSVGElement> {
   size?: number;
 }
 
+/**
+ * Constant definition representing rocket icon.
+ */
 export const RocketIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -36,6 +42,9 @@ export const RocketIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing book open icon.
+ */
 export const BookOpenIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -53,6 +62,9 @@ export const BookOpenIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing layout icon.
+ */
 export const LayoutIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -71,6 +83,9 @@ export const LayoutIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing star icon.
+ */
 export const StarIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -92,6 +107,9 @@ export const StarIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing monitor icon.
+ */
 export const MonitorIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -110,6 +128,9 @@ export const MonitorIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing shield icon.
+ */
 export const ShieldIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -133,6 +154,9 @@ export const ShieldIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing code icon.
+ */
 export const CodeIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -150,6 +174,9 @@ export const CodeIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing server icon.
+ */
 export const ServerIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -169,6 +196,9 @@ export const ServerIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing briefcase icon.
+ */
 export const BriefcaseIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -186,6 +216,9 @@ export const BriefcaseIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing layers icon.
+ */
 export const LayersIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -209,6 +242,9 @@ export const LayersIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing building icon.
+ */
 export const BuildingIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -232,6 +268,9 @@ export const BuildingIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing cpu icon.
+ */
 export const CpuIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -257,6 +296,9 @@ export const CpuIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing link icon.
+ */
 export const LinkIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -274,6 +316,9 @@ export const LinkIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing globe icon.
+ */
 export const GlobeIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -292,6 +337,9 @@ export const GlobeIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing zap icon.
+ */
 export const ZapIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -314,6 +362,9 @@ export const ZapIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing users icon.
+ */
 export const UsersIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -333,6 +384,9 @@ export const UsersIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing bar chart icon.
+ */
 export const BarChartIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -351,6 +405,9 @@ export const BarChartIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing book icon.
+ */
 export const BookIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -372,6 +429,9 @@ export const BookIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing database icon.
+ */
 export const DatabaseIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -390,6 +450,9 @@ export const DatabaseIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing boxes icon.
+ */
 export const BoxesIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -432,6 +495,9 @@ export const BoxesIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing hard drive icon.
+ */
 export const HardDriveIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -456,6 +522,9 @@ export const HardDriveIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing git branch icon.
+ */
 export const GitBranchIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -475,6 +544,9 @@ export const GitBranchIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing terminal icon.
+ */
 export const TerminalIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -492,6 +564,9 @@ export const TerminalIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing package icon.
+ */
 export const PackageIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -516,6 +591,9 @@ export const PackageIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing key icon.
+ */
 export const KeyIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -537,6 +615,9 @@ export const KeyIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing scale icon.
+ */
 export const ScaleIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -557,6 +638,9 @@ export const ScaleIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing chevron right icon.
+ */
 export const ChevronRightIcon = ({ size = 14, ...props }: IconProps) => (
   <svg
     width={size}
@@ -573,6 +657,9 @@ export const ChevronRightIcon = ({ size = 14, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Constant definition representing docs icons.
+ */
 export const docsIcons: Record<string, (props: IconProps) => React.ReactNode> = {
   rocket: (props) => <RocketIcon {...props} />,
   "book-open": (props) => <BookOpenIcon {...props} />,

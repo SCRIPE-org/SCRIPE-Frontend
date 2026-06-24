@@ -15,6 +15,9 @@ export interface InventoryItemData {
   notes?: string;
 }
 
+/**
+ * Domain entity class representing a Inventory Item.
+ */
 export class InventoryItem {
   constructor(private readonly data: InventoryItemData) {}
 
@@ -57,6 +60,9 @@ export class InventoryItem {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Create Data Inventory Request.
+ */
 export interface CreateDataInventoryRequest {
   moduleName: string;
   entityName: string;
@@ -67,4 +73,7 @@ export interface CreateDataInventoryRequest {
   legalBasis: string;
 }
 
+/**
+ * Type declaration definition describing the schema of update data inventory request.
+ */
 export type UpdateDataInventoryRequest = CreateDataInventoryRequest;

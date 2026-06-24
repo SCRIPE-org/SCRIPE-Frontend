@@ -269,11 +269,17 @@ export interface SignupWizardViewModel {
   goToPhase: (phase: SignupPhase) => void;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Use Signup Wizard Args.
+ */
 export interface UseSignupWizardArgs {
   initialCountry?: string | null;
   initialCurrency?: string;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for signup wizard.
+ */
 export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewModel {
   const { initialCountry, initialCurrency } = args || {};
   const { language } = useI18n();

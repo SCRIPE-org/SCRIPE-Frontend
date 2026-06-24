@@ -8,11 +8,17 @@ export interface EditionPriceItem {
   amount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Edition Price List Response.
+ */
 export interface EditionPriceListResponse {
   editionId: string;
   prices: EditionPriceItem[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Set Edition Prices Request.
+ */
 export interface SetEditionPricesRequest {
   prices: EditionPriceItem[];
 }

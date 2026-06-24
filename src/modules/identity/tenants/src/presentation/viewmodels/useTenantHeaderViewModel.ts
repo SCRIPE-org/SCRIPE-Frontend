@@ -8,6 +8,9 @@ import { identityContainer } from "@modules/identity/di";
 import type { Tenant } from "../../domain/entities/Tenant";
 import { appLogger } from "@/core/common/logger";
 
+/**
+ * Type declaration definition describing the schema of tenant status.
+ */
 export type TenantStatus = "active" | "suspended" | "canceled" | "expired" | "inactive";
 
 interface UseTenantHeaderViewModelProps {
@@ -15,6 +18,9 @@ interface UseTenantHeaderViewModelProps {
   onUpdate?: () => void;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for tenant header view model.
+ */
 export function useTenantHeaderViewModel({ tenant, onUpdate }: UseTenantHeaderViewModelProps) {
   const { t, direction } = useI18n();
   const { hasPermission } = usePermissions();

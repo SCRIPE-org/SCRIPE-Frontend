@@ -32,6 +32,9 @@ interface TenantTabsProps {
   parentTenantId?: string;
 }
 
+/**
+ * React presentation component representing the tenant tabs UI element.
+ */
 export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }: TenantTabsProps) {
   const { t, direction } = useI18n();
   const isRtl = direction === "rtl";

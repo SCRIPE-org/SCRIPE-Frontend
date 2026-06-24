@@ -41,6 +41,9 @@ interface HeroActionsProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the hero actions UI element.
+ */
 export function HeroActions({ sub, vm, t }: HeroActionsProps) {
   const isActive = sub.status === "Active" || sub.status === "Trialing";
   const isPending = sub.status === "PendingPayment";

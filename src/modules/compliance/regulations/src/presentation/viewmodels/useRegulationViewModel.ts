@@ -13,6 +13,9 @@ import type {
   UpdateConsentPurposeRequest,
 } from "../../domain/entities/Regulation";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for regulation view model.
+ */
 export function useRegulationViewModel() {
   const { regulationRepository } = complianceContainer;
   const queryClient = useQueryClient();

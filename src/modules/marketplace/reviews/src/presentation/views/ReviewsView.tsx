@@ -6,6 +6,9 @@ import { Button } from "@core/ui/button";
 import { Card, CardHeader } from "@core/ui/card";
 import { Star, Trash2 } from "lucide-react";
 
+/**
+ * React presentation component representing the reviews view UI element.
+ */
 export function ReviewsView() {
   const vm = useReviewsViewModel();
   return (

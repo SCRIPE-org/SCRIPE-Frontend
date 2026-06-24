@@ -75,6 +75,9 @@ export interface TenantUserGroupsViewModelResult {
   confirmStatus: (cascadeAdmins: boolean) => Promise<void>;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for tenant user groups view model.
+ */
 export function useTenantUserGroupsViewModel({
   tenantId,
   tenantName,

@@ -36,6 +36,9 @@ const UserGroupModelSchema = z.object({
   restrictions: z.array(z.unknown()).optional(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class UserGroupMapper {
   static toEntity(model: UserGroupModel): UserGroup {
     // Validate API response shape — logs warnings on contract drift

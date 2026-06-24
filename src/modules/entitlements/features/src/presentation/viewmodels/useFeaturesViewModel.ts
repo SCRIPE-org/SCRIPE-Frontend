@@ -22,6 +22,9 @@ import type {
   UpdateFeatureRequest,
 } from "../../domain/entities/FeatureRequests";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for features view model.
+ */
 export function useFeaturesViewModel() {
   const { featureRepository } = entitlementsContainer;
 

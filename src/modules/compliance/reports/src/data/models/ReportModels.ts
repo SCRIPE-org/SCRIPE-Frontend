@@ -17,6 +17,9 @@ export interface ReportModel {
   generatedAt: string | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Report List Response.
+ */
 export interface ReportListResponse {
   items: ReportModel[];
   totalCount: number;

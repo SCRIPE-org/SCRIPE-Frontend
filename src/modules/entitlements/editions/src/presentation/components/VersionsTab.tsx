@@ -47,6 +47,9 @@ const STATUS_ICONS: Record<string, React.ReactNode> = {
   Canceled: <XCircle className="h-3.5 w-3.5" />,
 };
 
+/**
+ * React presentation component representing the versions tab UI element.
+ */
 export function VersionsTab({ editionId }: VersionsTabProps) {
   useModuleLocales(() => import("../../../locales"), "editions");
   const { t } = useI18n();

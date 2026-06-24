@@ -20,6 +20,9 @@ interface BrandingSectionProps {
   updateField: <K extends keyof TenantSettings>(field: K, value: TenantSettings[K]) => void;
 }
 
+/**
+ * React presentation component representing the branding section UI element.
+ */
 export function BrandingSection({ settings, updateField }: BrandingSectionProps) {
   const { t } = useI18n();
   return (

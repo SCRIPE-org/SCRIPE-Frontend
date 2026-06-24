@@ -9,6 +9,9 @@ interface ProfileActivityTabProps {
   };
 }
 
+/**
+ * React presentation component representing the profile activity tab UI element.
+ */
 export function ProfileActivityTab({ activityVm }: ProfileActivityTabProps) {
   const { t } = useI18n();
 

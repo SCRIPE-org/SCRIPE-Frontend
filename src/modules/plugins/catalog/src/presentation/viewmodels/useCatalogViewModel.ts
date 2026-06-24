@@ -6,6 +6,9 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { InstallPluginRequest } from "../../domain/interfaces/ICatalogRepository";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for catalog view model.
+ */
 export function useCatalogViewModel(tenantId: string) {
   const { catalogRepository } = pluginsContainer;
   const queryClient = useQueryClient();

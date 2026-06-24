@@ -40,6 +40,9 @@ interface AssignToGroupDialogProps {
   useMyTenant?: boolean;
 }
 
+/**
+ * React presentation component representing the assign to group dialog UI element.
+ */
 export function AssignToGroupDialog({
   open,
   onOpenChange,

@@ -26,6 +26,9 @@ import type {
   UpdateWebhookJson,
 } from "../models/WebhookModel";
 
+/**
+ * API service for executing HTTP calls related to Webhook endpoints.
+ */
 export class WebhookService implements IWebhookService {
   constructor(private readonly api: IApiService) {}
 

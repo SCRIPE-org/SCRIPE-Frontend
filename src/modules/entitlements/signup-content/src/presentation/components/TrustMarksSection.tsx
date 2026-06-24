@@ -14,6 +14,9 @@ interface TrustMarksSectionProps {
   vm: SignupContentViewModel;
 }
 
+/**
+ * React presentation component representing the trust marks section UI element.
+ */
 export function TrustMarksSection({ vm }: TrustMarksSectionProps) {
   const { t } = useI18n();
   const marks = vm.content?.trustMarks ?? [];

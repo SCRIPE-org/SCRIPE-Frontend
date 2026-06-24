@@ -51,6 +51,9 @@ const TOKEN_GROUPS: TokenGroup[] = [
   },
 ];
 
+/**
+ * React presentation component representing the token panel UI element.
+ */
 export function TokenPanel({ tokens, updateToken }: TokenPanelProps) {
   const { t } = useI18n();
   return (

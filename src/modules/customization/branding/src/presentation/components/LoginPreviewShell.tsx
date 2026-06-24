@@ -66,6 +66,9 @@ const SlotRenderer = (props: any) => {
 
 import { useTheme } from "next-themes";
 
+/**
+ * React presentation component representing the login preview shell UI element.
+ */
 export function LoginPreviewShell() {
   const { t } = useI18n();
   const { direction } = useI18n();

@@ -7,6 +7,9 @@ import type {
   UpdateDefinitionRequest,
 } from "../../domain/interfaces/IDefinitionsRepository";
 
+/**
+ * API service for executing HTTP calls related to Definitions endpoints.
+ */
 export class DefinitionsService implements IDefinitionsService {
   constructor(private readonly api: IApiService) {}
 

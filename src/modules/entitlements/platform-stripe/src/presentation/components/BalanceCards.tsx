@@ -12,6 +12,9 @@ interface BalanceCardsProps {
   balance: PlatformBalance;
 }
 
+/**
+ * React presentation component representing the balance cards UI element.
+ */
 export function BalanceCards({ balance }: BalanceCardsProps) {
   const { t } = useI18n();
 

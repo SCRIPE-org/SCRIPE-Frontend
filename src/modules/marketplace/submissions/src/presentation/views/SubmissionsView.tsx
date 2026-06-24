@@ -6,6 +6,9 @@ import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader } from "@core/ui/card";
 import { CheckCircle, XCircle, RefreshCw } from "lucide-react";
 
+/**
+ * React presentation component representing the submissions view UI element.
+ */
 export function SubmissionsView() {
   const vm = useSubmissionsViewModel();
   return (

@@ -24,6 +24,9 @@ interface PluginInstallDialogProps {
   isInstalling: boolean;
 }
 
+/**
+ * React presentation component representing the plugin install dialog UI element.
+ */
 export function PluginInstallDialog({
   plugin,
   open,

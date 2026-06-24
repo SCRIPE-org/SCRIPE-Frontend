@@ -25,6 +25,9 @@ interface UseSignupSubdomainOptions {
   setError: (msg: string) => void;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for signup subdomain.
+ */
 export function useSignupSubdomain({
   repository,
   wizardData,

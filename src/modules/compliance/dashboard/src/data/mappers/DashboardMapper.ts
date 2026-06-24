@@ -27,6 +27,9 @@ const DashboardModelSchema = z.object({
   regulationCoverage: z.array(RegulationCoverageSchema).optional().default([]),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class DashboardMapper {
   static toEntity(model: DashboardModel): ComplianceDashboard {
     const validated = safeParseApiResponse(DashboardModelSchema, model, "ComplianceDashboard");

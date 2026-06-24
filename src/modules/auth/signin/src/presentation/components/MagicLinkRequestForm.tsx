@@ -15,6 +15,9 @@ interface MagicLinkRequestFormProps {
   isRTL: boolean;
 }
 
+/**
+ * React presentation component representing the magic link request form UI element.
+ */
 export function MagicLinkRequestForm({
   isLoading,
   error,

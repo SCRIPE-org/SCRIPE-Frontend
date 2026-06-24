@@ -33,6 +33,9 @@ const BUNDLE_KEYS = {
 //  FILTER STATE
 // ═══════════════════════════════════════════════════════════════
 
+/**
+ * Type declaration definition describing the schema of bundle sort option.
+ */
 export type BundleSortOption = "popular" | "newest" | "name";
 
 interface BundleFilters {
@@ -55,6 +58,9 @@ const DEFAULT_FILTERS: BundleFilters = {
 //  HOOK
 // ═══════════════════════════════════════════════════════════════
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for theme bundle view model.
+ */
 export function useThemeBundleViewModel() {
   const { t } = useI18n();
   const queryClient = useQueryClient();
@@ -222,4 +228,7 @@ export function useThemeBundleViewModel() {
   };
 }
 
+/**
+ * Type declaration definition describing the schema of theme bundle view model.
+ */
 export type ThemeBundleViewModel = ReturnType<typeof useThemeBundleViewModel>;

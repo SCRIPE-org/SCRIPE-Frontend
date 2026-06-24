@@ -82,6 +82,9 @@ const connectionColors = {
   disconnected: "bg-red-500",
 } as const;
 
+/**
+ * React presentation component representing the dashboard view UI element.
+ */
 export function DashboardView() {
   useModuleLocales(() => import("../../../locales"), "dashboard");
 

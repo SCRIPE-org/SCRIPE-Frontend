@@ -1,5 +1,8 @@
 import type { PluginInstallationModel } from "../../data/models/InstalledModels";
 
+/**
+ * Interface defining operations for the Installed network service.
+ */
 export interface IInstalledService {
   getInstalled(tenantId: string): Promise<PluginInstallationModel[]>;
   uninstall(installationId: string, tenantId: string): Promise<void>;

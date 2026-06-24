@@ -9,6 +9,9 @@
 
 // ─── Identity Provider Data ─────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Identity Provider Data.
+ */
 export interface IdentityProviderData {
   id: string;
   name: string;
@@ -162,6 +165,9 @@ export class IdentityProvider {
 
 // ─── Identity Provider List Item ────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Identity Provider List Item Data.
+ */
 export interface IdentityProviderListItemData {
   id: string;
   name: string;
@@ -241,6 +247,9 @@ export class IdentityProviderListItem {
 
 // ─── Test Connection Result ─────────────────────────────────────
 
+/**
+ * Domain entity class representing a Test Connection Result.
+ */
 export class TestConnectionResult {
   constructor(
     public readonly isSuccess: boolean,
@@ -252,6 +261,9 @@ export class TestConnectionResult {
 
 // ─── List Response ──────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Identity Provider List Response.
+ */
 export interface IdentityProviderListResponse {
   items: IdentityProviderListItem[];
   totalCount: number;
@@ -259,6 +271,9 @@ export interface IdentityProviderListResponse {
 
 // ─── Request Types ──────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Create Identity Provider Request.
+ */
 export interface CreateIdentityProviderRequest {
   name: string;
   slug: string;
@@ -283,6 +298,9 @@ export interface CreateIdentityProviderRequest {
   displayOrder?: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Identity Provider Request.
+ */
 export interface UpdateIdentityProviderRequest {
   name?: string;
   slug?: string;

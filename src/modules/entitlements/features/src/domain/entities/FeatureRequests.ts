@@ -17,6 +17,9 @@ export interface CreateFeatureRequest {
   isMarketingOnly?: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Feature Request.
+ */
 export interface UpdateFeatureRequest {
   name?: string;
   defaultValue?: string;

@@ -9,6 +9,9 @@ import { safeItems } from "./block-style-utils";
 
 const SIZE_CLASS = { sm: "h-8 min-w-8 text-xs", md: "h-10 min-w-10 text-sm", lg: "h-12 min-w-12" };
 
+/**
+ * React presentation component representing the social links block view UI element.
+ */
 export function SocialLinksBlockView({ block }: { block: SocialLinksBlock }) {
   const props = block.props;
   return (

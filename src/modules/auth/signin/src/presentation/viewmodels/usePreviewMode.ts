@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 
+/**
+ * Interface structure detailing the properties and attributes of Preview Overrides.
+ */
 export interface PreviewOverrides {
   loginBrandingJson?: string;
   slotConfigJson?: string;

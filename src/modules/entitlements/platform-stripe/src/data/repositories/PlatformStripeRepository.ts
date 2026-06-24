@@ -7,6 +7,9 @@ import type { IPlatformStripeService } from "../../domain/interfaces/IPlatformSt
 import type { PlatformStripeDashboard } from "../../domain/entities/PlatformStripeDashboard";
 import { PlatformStripeMapper } from "../mappers/PlatformStripeMapper";
 
+/**
+ * Repository implementation for managing database operations on PlatformStripe resources.
+ */
 export class PlatformStripeRepository implements IPlatformStripeRepository {
   constructor(private readonly service: IPlatformStripeService) {}
 

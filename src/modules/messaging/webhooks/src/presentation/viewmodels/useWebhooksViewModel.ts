@@ -22,6 +22,9 @@ import type {
 import { qk } from "@core/common/query-keys";
 
 // Backward-compatible local keys (delegates to qk factory)
+/**
+ * Constant definition representing webhook keys.
+ */
 export const webhookKeys = {
   all: qk.webhooks.all,
   list: (filters: Record<string, unknown>) => qk.webhooks.list(filters),
@@ -31,6 +34,9 @@ export const webhookKeys = {
   health: ["webhooks", "health"] as const,
 };
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for webhooks view model.
+ */
 export function useWebhooksViewModel() {
   const { webhookRepository } = messagingContainer;
   const { t } = useI18n();

@@ -20,6 +20,9 @@ const QUERY_KEYS = {
   reportPreferences: () => ["analytics", "report-preferences"],
 };
 
+/**
+ * Type declaration definition describing the schema of analytics tab.
+ */
 export type AnalyticsTab =
   | "overview"
   | "revenue"
@@ -29,6 +32,9 @@ export type AnalyticsTab =
   | "health"
   | "reports";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for analytics view model.
+ */
 export function useAnalyticsViewModel() {
   const { analyticsRepository } = entitlementsContainer;
   const queryClient = useQueryClient();

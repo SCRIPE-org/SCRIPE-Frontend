@@ -476,6 +476,9 @@ interface WellKnownProviderGalleryProps {
   selectedId?: string;
 }
 
+/**
+ * React presentation component representing the well known provider gallery UI element.
+ */
 export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProviderGalleryProps) {
   const { t } = useI18n();
 
@@ -625,4 +628,7 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
 
 // Export the template list for use in the parent
 export { PROVIDER_TEMPLATES };
+/**
+ * Exported type in the identity/identity-providers module.
+ */
 export type { ProviderTemplate };

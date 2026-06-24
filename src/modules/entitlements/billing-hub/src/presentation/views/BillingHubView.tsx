@@ -49,6 +49,9 @@ import { LayoutDashboard, CreditCard, Banknote, ShieldAlert, BadgeDollarSign } f
 import { cn } from "@core/common/utils";
 import { useBillingHubViewModel } from "../viewmodels/useBillingHubViewModel";
 
+/**
+ * React presentation component representing the billing hub view UI element.
+ */
 export function BillingHubView() {
   const { t } = useI18n();
   const searchParams = useSearchParams();

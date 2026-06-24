@@ -60,6 +60,9 @@ interface Props {
   providerId?: string;
 }
 
+/**
+ * React presentation component representing the identity provider detail view UI element.
+ */
 export function IdentityProviderDetailView({ providerId }: Props) {
   const vm = useIdentityProviderDetailViewModel(providerId);
   const { t } = useI18n();

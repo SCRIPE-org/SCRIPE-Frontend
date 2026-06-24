@@ -3,6 +3,9 @@ import type { DocPageData } from "../../domain/entities/DocPage";
 import { DocCategory } from "../../domain/entities/DocCategory";
 import type { DocCategoryData } from "../../domain/entities/DocCategory";
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class DocsMapper {
   static toPageEntity(dto: DocPageData): DocPage {
     return new DocPage({

@@ -1,3 +1,6 @@
+/**
+ * Constant definition representing ru.
+ */
 export const ru = {
   modules: {
     tenantPlans: {

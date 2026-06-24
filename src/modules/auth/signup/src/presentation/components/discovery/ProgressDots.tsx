@@ -29,6 +29,9 @@ interface ProgressDotsProps {
   label: string;
 }
 
+/**
+ * React presentation component representing the progress dots UI element.
+ */
 export function ProgressDots({ total, current, label }: ProgressDotsProps) {
   const { tokens } = useSignupTheme();
 

@@ -18,6 +18,9 @@ import type {
   TenantTransactionsResult,
 } from "../../domain/entities/ConnectAccount";
 
+/**
+ * Repository implementation for managing database operations on Connect resources.
+ */
 export class ConnectRepository implements IConnectRepository {
   constructor(private readonly service: IConnectService) {}
 

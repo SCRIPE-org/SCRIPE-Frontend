@@ -14,6 +14,9 @@ import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
 // ─── Query keys ──────────────────────────────────────────────────────
 // Include tenantId so TanStack Query caches per-tenant
+/**
+ * Constant definition representing audit keys.
+ */
 export const auditKeys = {
   all: (tenantId: string | null) => ["audit", tenantId ?? "system"] as const,
   logs: (params: AuditFilterParams, tenantId: string | null) =>
@@ -25,6 +28,9 @@ export const auditKeys = {
 };
 
 // ─── Filter ViewModel ────────────────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Audit Filter State.
+ */
 export interface AuditFilterState {
   page: number;
   pageSize: number;
@@ -51,6 +57,9 @@ const defaultFilters: AuditFilterState = {
   isSuccess: undefined,
 };
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for audit filter view model.
+ */
 export function useAuditFilterViewModel() {
   const [filters, setFilters] = useState<AuditFilterState>(defaultFilters);
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -128,6 +137,9 @@ export function useAuditFilterViewModel() {
 }
 
 // ─── Detail ViewModel ────────────────────────────────────────────────
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for audit detail view model.
+ */
 export function useAuditDetailViewModel(id: string | null, tenantId: string | null) {
   const repo = monitoringContainer.auditRepository;
 
@@ -141,6 +153,9 @@ export function useAuditDetailViewModel(id: string | null, tenantId: string | nu
 }
 
 // ─── Orchestrator ────────────────────────────────────────────────────
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for audit view model.
+ */
 export function useAuditViewModel() {
   const tenantId = useCurrentTenantId();
   const filterVM = useAuditFilterViewModel();

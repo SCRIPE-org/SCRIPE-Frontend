@@ -20,6 +20,9 @@ import type { ConnectAccount } from "../../domain/entities/ConnectAccount";
 const QUERY_KEY = ["entitlements", "tenant-stripe-connect", "status"];
 const TXN_QUERY_KEY = ["entitlements", "tenant-stripe-connect", "transactions"];
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for tenant connect view model.
+ */
 export function useTenantConnectViewModel() {
   const { connectRepository } = entitlementsContainer;
   const { success, error } = useEnhancedToast();

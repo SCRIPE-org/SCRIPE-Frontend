@@ -13,6 +13,9 @@ export interface UpsertTenantPlanFeatureRequest {
 }
 
 // ── Pricing Matrix ──
+/**
+ * Interface structure detailing the properties and attributes of Upsert Tenant Plan Price Request.
+ */
 export interface UpsertTenantPlanPriceRequest {
   currency: string;
   billingCycle: string;
@@ -22,6 +25,9 @@ export interface UpsertTenantPlanPriceRequest {
 }
 
 // ── Create Plan ──
+/**
+ * Interface structure detailing the properties and attributes of Create Tenant Plan Request.
+ */
 export interface CreateTenantPlanRequest {
   name: string;
   displayNameEn?: string;
@@ -50,6 +56,9 @@ export interface CreateTenantPlanRequest {
 }
 
 // ── Update Plan ──
+/**
+ * Interface structure detailing the properties and attributes of Update Tenant Plan Request.
+ */
 export interface UpdateTenantPlanRequest {
   name: string;
   displayNameEn?: string;
@@ -79,6 +88,9 @@ export interface UpdateTenantPlanRequest {
 }
 
 // ── Feature Definition Requests ──
+/**
+ * Interface structure detailing the properties and attributes of Create Feature Definition Request.
+ */
 export interface CreateFeatureDefinitionRequest {
   key: string;
   displayNameEn?: string;
@@ -91,6 +103,9 @@ export interface CreateFeatureDefinitionRequest {
   isActive?: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Feature Definition Request.
+ */
 export interface UpdateFeatureDefinitionRequest {
   key: string;
   displayNameEn?: string;
@@ -104,6 +119,9 @@ export interface UpdateFeatureDefinitionRequest {
 }
 
 // ── Promotion Requests ──
+/**
+ * Interface structure detailing the properties and attributes of Create Promotion Request.
+ */
 export interface CreatePromotionRequest {
   tenantPlanId?: string;
   code: string;
@@ -120,6 +138,9 @@ export interface CreatePromotionRequest {
   isStackable?: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Promotion Request.
+ */
 export interface UpdatePromotionRequest {
   tenantPlanId?: string;
   code: string;

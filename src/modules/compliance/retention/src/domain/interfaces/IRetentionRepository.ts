@@ -4,6 +4,9 @@ import type {
   CreateRetentionPolicyRequest,
 } from "../entities/RetentionPolicy";
 
+/**
+ * Interface defining repository methods for managing Retention data access.
+ */
 export interface IRetentionRepository {
   getAll(): Promise<RetentionPolicy[]>;
   create(data: CreateRetentionPolicyRequest): Promise<string>;

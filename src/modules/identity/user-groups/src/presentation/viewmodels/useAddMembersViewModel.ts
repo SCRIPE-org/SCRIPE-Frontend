@@ -10,6 +10,9 @@ interface UseAddMembersViewModelProps {
   open: boolean;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for add members view model.
+ */
 export function useAddMembersViewModel({ groupId, tenantId, open }: UseAddMembersViewModelProps) {
   const { t, language } = useI18n();
 

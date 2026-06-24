@@ -47,6 +47,9 @@ interface ActivityTimelineProps {
   groupedEntries: Record<string, SecurityLogEntry[]>;
 }
 
+/**
+ * React presentation component representing the activity timeline UI element.
+ */
 export function ActivityTimeline({ groupedEntries }: ActivityTimelineProps) {
   const { t } = useI18n();
   const groups = Object.entries(groupedEntries);

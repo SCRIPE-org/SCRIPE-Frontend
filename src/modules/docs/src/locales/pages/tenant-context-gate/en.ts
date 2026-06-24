@@ -1,3 +1,6 @@
+/**
+ * Constant definition representing en.
+ */
 export const en = {
   features: {
     tenantContextGate: {

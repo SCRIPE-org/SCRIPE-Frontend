@@ -35,6 +35,9 @@ interface PreviewRow {
   rate?: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Edition Pricing View Model Result.
+ */
 export interface EditionPricingViewModelResult {
   // ── USD Base ──
   usdMonthly: number;
@@ -75,6 +78,9 @@ export interface EditionPricingViewModelResult {
   createVersionWithPricing: (changeNotes?: string) => void;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for edition pricing view model.
+ */
 export function useEditionPricingViewModel(editionId: string): EditionPricingViewModelResult {
   const { editionRepository } = entitlementsContainer;
   const queryClient = useQueryClient();

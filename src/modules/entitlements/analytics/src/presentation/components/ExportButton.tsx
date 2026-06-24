@@ -27,6 +27,9 @@ const FORMAT_LABELS: Record<string, string> = {
   pdf: "PDF",
 };
 
+/**
+ * React presentation component representing the export button UI element.
+ */
 export function ExportButton({ onExport, disabled }: ExportButtonProps) {
   const { t } = useI18n();
   const { toast } = useToast();

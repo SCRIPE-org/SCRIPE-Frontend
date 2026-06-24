@@ -11,6 +11,9 @@ import type {
   EventTypeCount,
 } from "../entities/DashboardEntities";
 
+/**
+ * Interface defining repository methods for managing Dashboard data access.
+ */
 export interface IDashboardRepository {
   getSummary(): Promise<DashboardSummary>;
   getLoginActivity(days?: number): Promise<LoginActivityPoint[]>;

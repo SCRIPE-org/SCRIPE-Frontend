@@ -22,6 +22,9 @@ import { Button } from "@core/ui/button";
 import { Pencil, Trash2, Zap, Shield, Users, Fingerprint } from "lucide-react";
 import { format } from "date-fns";
 
+/**
+ * Constant definition representing identity provider keys.
+ */
 export const identityProviderKeys = {
   all: ["identity-providers"] as const,
   list: (filters: Record<string, unknown>) =>
@@ -29,6 +32,9 @@ export const identityProviderKeys = {
   detail: (id: string) => [...identityProviderKeys.all, "detail", id] as const,
 };
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for identity providers view model.
+ */
 export function useIdentityProvidersViewModel() {
   const { identityProviderRepository } = identityContainer;
   const { t } = useI18n();

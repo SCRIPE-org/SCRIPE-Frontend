@@ -54,6 +54,9 @@ interface ContentBlockRendererProps {
   block: ContentBlock;
 }
 
+/**
+ * React presentation component representing the content block renderer UI element.
+ */
 export function ContentBlockRenderer({ block }: ContentBlockRendererProps) {
   if (!block || !block.type) return null;
   const props = block.props;

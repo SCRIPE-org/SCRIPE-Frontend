@@ -83,6 +83,9 @@ function detectBundleType(layers: Record<BundleLayer, boolean>): BundleType {
   return "full-bundle";
 }
 
+/**
+ * React presentation component representing the save bundle dialog UI element.
+ */
 export function SaveBundleDialog({ isOpen, onClose, onSave, isSaving }: SaveBundleDialogProps) {
   const { t } = useI18n();
 

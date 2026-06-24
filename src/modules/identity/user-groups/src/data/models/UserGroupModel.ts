@@ -15,6 +15,9 @@ export interface UserGroupMemberJson {
   isActive: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of User Group Role Json.
+ */
 export interface UserGroupRoleJson {
   roleId: string;
   nameEn: string;
@@ -23,11 +26,17 @@ export interface UserGroupRoleJson {
   permissionCount: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of User Group Restriction Json.
+ */
 export interface UserGroupRestrictionJson {
   permissionCode: string;
   restrictedFields: string[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of User Group Json.
+ */
 export interface UserGroupJson {
   id: string;
   nameEn: string;
@@ -47,6 +56,9 @@ export interface UserGroupJson {
   restrictions?: UserGroupRestrictionJson[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of User Group List Response Json.
+ */
 export interface UserGroupListResponseJson {
   items: UserGroupJson[];
   totalCount: number;
@@ -57,6 +69,9 @@ export interface UserGroupListResponseJson {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Domain entity class representing a User Group Model.
+ */
 export class UserGroupModel {
   constructor(private readonly json: UserGroupJson) {}
 

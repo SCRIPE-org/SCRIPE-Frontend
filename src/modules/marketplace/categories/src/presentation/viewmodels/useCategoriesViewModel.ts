@@ -10,6 +10,9 @@ import type { CategoryFormData } from "../components/CategoryFormDialog";
 
 const QUERY_KEY = ["marketplace", "categories"];
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for categories view model.
+ */
 export function useCategoriesViewModel() {
   const queryClient = useQueryClient();
   const { categoriesRepository } = marketplaceContainer;

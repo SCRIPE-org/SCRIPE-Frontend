@@ -45,6 +45,9 @@ interface SignupProgressBarProps {
   phase: SignupPhase;
 }
 
+/**
+ * React presentation component representing the signup progress bar UI element.
+ */
 export function SignupProgressBar({ phase }: SignupProgressBarProps) {
   const { t, direction } = useI18n();
   const { tokens } = useSignupTheme();

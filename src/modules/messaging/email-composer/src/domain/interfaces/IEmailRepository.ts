@@ -1,6 +1,9 @@
 import type { EmailRecipient, SentEmail, EmailTemplateListResponse } from "../entities/Email";
 import type { SendManualEmailPayload } from "../entities/EmailRequests";
 
+/**
+ * Interface defining repository methods for managing Email data access.
+ */
 export interface IEmailRepository {
   searchRecipients(query: string): Promise<EmailRecipient[]>;
   send(data: SendManualEmailPayload): Promise<void>;

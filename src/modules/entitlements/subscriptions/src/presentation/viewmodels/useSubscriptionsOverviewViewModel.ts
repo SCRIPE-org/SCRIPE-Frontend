@@ -15,6 +15,9 @@ import { useConvertedAmount } from "@core/hooks/useConvertedAmount";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { GlobalSubscriptionItem } from "../../domain/entities/Subscription";
 
+/**
+ * Interface structure detailing the properties and attributes of Status Dist Item.
+ */
 export interface StatusDistItem {
   status: string;
   count: number;
@@ -22,6 +25,9 @@ export interface StatusDistItem {
   color: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Type Dist Item.
+ */
 export interface TypeDistItem {
   type: string;
   count: number;
@@ -29,6 +35,9 @@ export interface TypeDistItem {
   color: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Edition Revenue Item.
+ */
 export interface EditionRevenueItem {
   edition: string;
   revenue: number;
@@ -67,6 +76,9 @@ const EDITION_CHART_COLORS = [
   "#3b82f6",
 ];
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for subscriptions overview view model.
+ */
 export function useSubscriptionsOverviewViewModel() {
   const { t } = useI18n();
   const { formatDisplay, isConverting, displayCurrency } = useConvertedAmount();

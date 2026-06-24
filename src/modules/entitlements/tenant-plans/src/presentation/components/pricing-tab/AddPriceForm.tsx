@@ -32,6 +32,9 @@ const CURRENCY_OPTIONS: GenericSelectOption[] = [
   { value: "EGP", label: "EGP — Egyptian Pound" },
 ];
 
+/**
+ * React presentation component representing the add price form UI element.
+ */
 export function AddPriceForm({ plan, onAdd, onCancel, t }: AddPriceFormProps) {
   const [currency, setCurrency] = useState("USD");
   const [billingCycle, setBillingCycle] = useState("Monthly");

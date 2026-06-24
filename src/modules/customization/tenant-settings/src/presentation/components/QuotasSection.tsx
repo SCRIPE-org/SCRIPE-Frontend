@@ -18,6 +18,9 @@ interface QuotasSectionProps {
   updateField: <K extends keyof TenantSettings>(field: K, value: TenantSettings[K]) => void;
 }
 
+/**
+ * React presentation component representing the quotas section UI element.
+ */
 export function QuotasSection({ settings, updateField }: QuotasSectionProps) {
   const { t } = useI18n();
   return (

@@ -49,6 +49,9 @@ export interface UpdateDeveloperPayload {
   bio: string;
 }
 
+/**
+ * Interface defining operations for the Developers network service.
+ */
 export interface IDevelopersService {
   /** Fetch paginated list of developer profiles. */
   getAll(params: {

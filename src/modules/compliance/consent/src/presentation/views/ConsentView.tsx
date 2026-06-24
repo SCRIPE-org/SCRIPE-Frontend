@@ -171,6 +171,9 @@ function WithdrawConfirmDialog({
 
 // ── Main View ─────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the consent view UI element.
+ */
 export function ConsentView() {
   useModuleLocales(() => import("../../../locales"), "compliance-consent");
   const { t, direction } = useI18n();

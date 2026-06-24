@@ -12,6 +12,9 @@ interface MethodStepProps {
   totalSteps: number;
 }
 
+/**
+ * React presentation component representing the method step UI element.
+ */
 export function MethodStep({ vm, totalSteps }: MethodStepProps) {
   const { t } = useI18n();
 

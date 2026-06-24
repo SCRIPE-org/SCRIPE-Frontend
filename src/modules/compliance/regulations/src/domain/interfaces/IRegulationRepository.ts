@@ -6,6 +6,9 @@ import type {
   UpdateConsentPurposeRequest,
 } from "../entities/Regulation";
 
+/**
+ * Interface defining repository methods for managing Regulation data access.
+ */
 export interface IRegulationRepository {
   getAll(): Promise<Regulation[]>;
   getById(id: string): Promise<Regulation>;

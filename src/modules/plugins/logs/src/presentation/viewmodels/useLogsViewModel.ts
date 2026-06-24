@@ -6,6 +6,9 @@ import { pluginsContainer } from "@modules/plugins/di";
 
 const PAGE_SIZE = 20;
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for logs view model.
+ */
 export function useLogsViewModel(installationId: string) {
   const { logsRepository } = pluginsContainer;
   const [page, setPage] = useState(1);

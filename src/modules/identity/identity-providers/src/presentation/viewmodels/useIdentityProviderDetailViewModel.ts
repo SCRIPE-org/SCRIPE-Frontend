@@ -16,6 +16,9 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { identityProviderKeys } from "./useIdentityProvidersViewModel";
 
 // ─── Form State ──────────────────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Identity Provider Form State.
+ */
 export interface IdentityProviderFormState {
   // General
   name: string;
@@ -80,6 +83,9 @@ const DEFAULT_STATE: IdentityProviderFormState = {
 };
 
 // ─── Hook ─────────────────────────────────────────────────────────
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for identity provider detail view model.
+ */
 export function useIdentityProviderDetailViewModel(providerId?: string) {
   const { identityProviderRepository } = identityContainer;
   const { t } = useI18n();

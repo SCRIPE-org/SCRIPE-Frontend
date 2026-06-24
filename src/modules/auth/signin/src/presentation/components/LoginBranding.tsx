@@ -11,6 +11,9 @@ interface BrandingCopyright {
   copyrightText?: string | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Login Branding Props.
+ */
 export interface LoginBrandingProps {
   branding?: TenantBranding | null;
   slotConfig?: SlotConfig;

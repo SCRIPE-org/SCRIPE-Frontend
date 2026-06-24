@@ -13,6 +13,9 @@ interface PasswordExpiryBannerProps {
   passwordLastChanged: Date | null;
 }
 
+/**
+ * React presentation component representing the password expiry banner UI element.
+ */
 export function PasswordExpiryBanner({
   isExpired,
   daysRemaining,

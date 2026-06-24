@@ -3,6 +3,9 @@
 import { Card, CardContent } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 
+/**
+ * React presentation component representing the payouts loading skeleton UI element.
+ */
 export function PayoutsLoadingSkeleton() {
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-6">

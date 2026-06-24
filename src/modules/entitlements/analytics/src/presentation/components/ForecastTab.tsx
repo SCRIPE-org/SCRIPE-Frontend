@@ -26,6 +26,9 @@ function formatMonth(iso: string): string {
   return d.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
 }
 
+/**
+ * React presentation component representing the forecast tab UI element.
+ */
 export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTabProps) {
   const { t } = useI18n();
 

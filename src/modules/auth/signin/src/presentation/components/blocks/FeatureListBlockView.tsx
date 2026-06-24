@@ -5,6 +5,9 @@ import { blockColor, safeItems } from "./block-style-utils";
 
 const ICON_SIZE = { sm: "text-lg", md: "text-2xl", lg: "text-3xl" };
 
+/**
+ * React presentation component representing the feature list block view UI element.
+ */
 export function FeatureListBlockView({ block }: { block: FeatureListBlock }) {
   const props = block.props;
   const columns = props.columns || 1;

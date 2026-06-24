@@ -55,6 +55,9 @@ function formatTimeAgo(
   return t("common.timeAgo.daysAgo", { count: days });
 }
 
+/**
+ * Constant definition representing recent changes section.
+ */
 export const RecentChangesSection = memo(function RecentChangesSection({
   data,
   isLoading,

@@ -24,6 +24,9 @@ const DeletedItemModelSchema = z.object({
   deletedByName: z.string().optional().nullable(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class DeletedItemMapper {
   /**
    * Convert DeletedItemModel to DeletedItem Entity

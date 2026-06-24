@@ -14,6 +14,9 @@ const SIZE_CLASS = {
   xl: "h-14 px-6 text-lg",
 };
 
+/**
+ * React presentation component representing the cta button block view UI element.
+ */
 export function CtaButtonBlockView({ block }: { block: CtaButtonBlock }) {
   const props = block.props;
   if (!isValidCtaUrl(props.url)) return null;

@@ -12,6 +12,9 @@ interface TenantPlanStepBasicsProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the tenant plan step basics UI element.
+ */
 export function TenantPlanStepBasics({ form, updateForm, t }: TenantPlanStepBasicsProps) {
   return (
     <div className="space-y-6">

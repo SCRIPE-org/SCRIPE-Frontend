@@ -21,6 +21,9 @@ interface AccountHeroCardProps {
   account: PlatformAccount;
 }
 
+/**
+ * React presentation component representing the account hero card UI element.
+ */
 export function AccountHeroCard({ account }: AccountHeroCardProps) {
   const { t } = useI18n();
 

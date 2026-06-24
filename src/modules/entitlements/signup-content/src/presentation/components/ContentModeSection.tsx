@@ -13,6 +13,9 @@ interface ContentModeSectionProps {
   vm: SignupContentViewModel;
 }
 
+/**
+ * React presentation component representing the content mode section UI element.
+ */
 export function ContentModeSection({ vm }: ContentModeSectionProps) {
   const { t } = useI18n();
   const mode = vm.content?.contentMode ?? "Seeded";

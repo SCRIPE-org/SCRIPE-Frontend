@@ -20,6 +20,9 @@ interface LogoMarqueeProps {
   caption?: string;
 }
 
+/**
+ * React presentation component representing the logo marquee UI element.
+ */
 export function LogoMarquee({ logos, caption }: LogoMarqueeProps) {
   const { tokens, theme } = useSignupTheme();
 

@@ -27,6 +27,9 @@ interface DashboardThemeState {
   resetToDefault: () => void;
 }
 
+/**
+ * Constant definition representing use dashboard theme store.
+ */
 export const useDashboardThemeStore = create<DashboardThemeState>((set, get) => ({
   isStudioOpen: false,
   setIsStudioOpen: (open) => set({ isStudioOpen: open }),

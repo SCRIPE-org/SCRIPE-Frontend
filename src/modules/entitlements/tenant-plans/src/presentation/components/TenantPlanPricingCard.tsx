@@ -42,6 +42,9 @@ interface TenantPlanPricingCardProps {
   previewLabel: string;
 }
 
+/**
+ * React presentation component representing the tenant plan pricing card UI element.
+ */
 export function TenantPlanPricingCard({
   plan,
   language,

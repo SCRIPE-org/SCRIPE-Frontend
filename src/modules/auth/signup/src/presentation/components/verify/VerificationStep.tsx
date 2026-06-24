@@ -29,6 +29,9 @@ interface VerificationStepProps {
   wizard: SignupWizardViewModel;
 }
 
+/**
+ * React presentation component representing the verification step UI element.
+ */
 export function VerificationStep({ wizard }: VerificationStepProps) {
   const { t, direction } = useI18n();
   const { tokens } = useSignupTheme();

@@ -8,6 +8,9 @@ import type { IRetentionService } from "../../domain/interfaces/IRetentionServic
 import type { RetentionPolicyModel, CreateRetentionPolicyRequest } from "../models/RetentionModels";
 import type { UpdateRetentionPolicyRequest } from "../../domain/entities/RetentionPolicy";
 
+/**
+ * API service for executing HTTP calls related to Retention endpoints.
+ */
 export class RetentionService implements IRetentionService {
   constructor(private readonly api: IApiService) {}
 

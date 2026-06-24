@@ -7,6 +7,9 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { container } from "@modules/profile/di";
 import { useServices } from "@core/providers/service-provider";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for force change password view model.
+ */
 export function useForceChangePasswordViewModel() {
   const { t, direction } = useI18n();
   const router = useRouter();

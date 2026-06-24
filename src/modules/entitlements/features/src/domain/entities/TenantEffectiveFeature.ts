@@ -19,6 +19,9 @@ export interface TenantEffectiveFeatureData {
   hasOverride: boolean;
 }
 
+/**
+ * Domain entity class representing a Tenant Effective Feature.
+ */
 export class TenantEffectiveFeature {
   constructor(public readonly data: TenantEffectiveFeatureData) {}
 

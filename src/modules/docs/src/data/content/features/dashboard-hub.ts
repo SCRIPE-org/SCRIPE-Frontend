@@ -205,6 +205,9 @@ function getSystemContainer(): SystemContainer {
 }
 
 // Lazy getters
+/**
+ * Constant definition representing system container.
+ */
 export const systemContainer = {
   get auditRepository() { return getSystemContainer().auditRepository; },
   get securityRepository() { return getSystemContainer().securityRepository; },

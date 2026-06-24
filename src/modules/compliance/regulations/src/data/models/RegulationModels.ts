@@ -1,3 +1,6 @@
+/**
+ * Interface structure detailing the properties and attributes of Consent Purpose Model.
+ */
 export interface ConsentPurposeModel {
   id: string;
   key: string;
@@ -9,6 +12,9 @@ export interface ConsentPurposeModel {
   sortOrder: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Regulation Profile Model.
+ */
 export interface RegulationProfileModel {
   id: string;
   code: string;
@@ -20,6 +26,9 @@ export interface RegulationProfileModel {
   purposes: ConsentPurposeModel[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Create Regulation Request.
+ */
 export interface CreateRegulationRequest {
   code: string;
   name: string;
@@ -30,8 +39,14 @@ export interface CreateRegulationRequest {
   isActive: boolean;
 }
 
+/**
+ * Type declaration definition describing the schema of update regulation request.
+ */
 export type UpdateRegulationRequest = CreateRegulationRequest;
 
+/**
+ * Interface structure detailing the properties and attributes of Add Consent Purpose Request.
+ */
 export interface AddConsentPurposeRequest {
   key: string;
   name: string;
@@ -41,4 +56,7 @@ export interface AddConsentPurposeRequest {
   sortOrder: number;
 }
 
+/**
+ * Type declaration definition describing the schema of update consent purpose request.
+ */
 export type UpdateConsentPurposeRequest = AddConsentPurposeRequest;

@@ -14,6 +14,9 @@ interface WebhookStatsCardsProps {
   webhook: WebhookSubscription;
 }
 
+/**
+ * React presentation component representing the webhook stats cards UI element.
+ */
 export function WebhookStatsCards({ webhook }: WebhookStatsCardsProps) {
   const { t } = useI18n();
 

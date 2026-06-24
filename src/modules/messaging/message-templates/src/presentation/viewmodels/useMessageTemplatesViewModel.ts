@@ -17,6 +17,9 @@ import type {
 
 const QUERY_KEY = ["message-templates"];
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for message templates view model.
+ */
 export function useMessageTemplatesViewModel() {
   const { t } = useI18n();
   const queryClient = useQueryClient();

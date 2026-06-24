@@ -26,6 +26,9 @@ import { SubscriptionTypeSelect } from "./SubscriptionTypeSelect";
 import { PromotionPicker } from "./PromotionPicker";
 import { CurrencySelect } from "./CurrencySelect";
 
+/**
+ * React presentation component representing the assign dialog UI element.
+ */
 export function AssignDialog({ vm, editionsVm }: SubscriptionEditionDialogProps) {
   const { t } = useI18n();
 

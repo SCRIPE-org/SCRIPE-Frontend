@@ -29,6 +29,9 @@ export interface SaveBundlePayload {
   };
 }
 
+/**
+ * Interface defining operations for the ThemeBundle network service.
+ */
 export interface IThemeBundleService {
   getBundles(params: BundleListParams): Promise<ThemeBundlePagedResult>;
   getFeatured(): Promise<ThemeBundleDto[]>;

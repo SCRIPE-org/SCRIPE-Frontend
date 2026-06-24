@@ -23,6 +23,9 @@ import type {
 } from "../entities/TenantPlanRequests";
 import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
+/**
+ * Interface defining operations for the TenantPlan network service.
+ */
 export interface ITenantPlanService {
   // Plans
   getAll(params: PaginationParams): Promise<PagedResult<TenantPlanListModel>>;

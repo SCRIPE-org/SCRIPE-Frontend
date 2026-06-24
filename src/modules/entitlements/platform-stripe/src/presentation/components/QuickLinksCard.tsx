@@ -23,6 +23,9 @@ interface QuickLinksCardProps {
   links: PlatformStripeLinks;
 }
 
+/**
+ * React presentation component representing the quick links card UI element.
+ */
 export function QuickLinksCard({ links }: QuickLinksCardProps) {
   const { t } = useI18n();
 

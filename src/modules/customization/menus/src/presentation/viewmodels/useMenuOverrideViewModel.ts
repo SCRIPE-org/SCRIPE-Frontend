@@ -29,6 +29,9 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { hasPermission, SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 
+/**
+ * Interface structure detailing the properties and attributes of Override Dialog State.
+ */
 export interface OverrideDialogState {
   open: boolean;
   node: MenuTreeNode | null;
@@ -44,6 +47,9 @@ export interface OverrideFormData {
   isHidden: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Use Menu Override View Model Result.
+ */
 export interface UseMenuOverrideViewModelResult {
   // Dialog state
   overrideDialog: OverrideDialogState;
@@ -75,6 +81,9 @@ export interface UseMenuOverrideViewModelResult {
   saveRename: (nameEn: string, nameAr: string) => void;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for menu override view model.
+ */
 export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
   const queryClient = useQueryClient();
   const { success, error: toastError } = useEnhancedToast();
@@ -284,7 +293,6 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
     canRemoveOverride,
     isSaving: saveMutation.isPending,
     isDeleting: deleteMutation.isPending,
-
     flatMenuItems,
     setMenuTree,
   };

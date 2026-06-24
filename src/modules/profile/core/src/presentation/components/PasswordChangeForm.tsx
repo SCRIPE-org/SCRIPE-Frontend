@@ -21,6 +21,9 @@ interface PasswordChangeFormProps {
   success: boolean;
 }
 
+/**
+ * React presentation component representing the password change form UI element.
+ */
 export function PasswordChangeForm({
   isTwoFactorEnabled,
   onSubmit,

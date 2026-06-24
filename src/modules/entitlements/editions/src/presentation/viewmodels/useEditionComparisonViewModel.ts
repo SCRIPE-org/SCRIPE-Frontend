@@ -22,8 +22,14 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { Edition, EditionFeatureDto } from "../../domain/entities/Edition";
 
+/**
+ * Type declaration definition describing the schema of billing cycle.
+ */
 export type BillingCycle = "Monthly" | "Yearly" | "Lifetime";
 
+/**
+ * Interface structure detailing the properties and attributes of Feature Row.
+ */
 export interface FeatureRow {
   featureName: string;
   displayNameEn: string;
@@ -36,6 +42,9 @@ export interface FeatureRow {
   displayLabels: Record<string, { en?: string; ar?: string }>;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Pricing Highlight.
+ */
 export interface PricingHighlight {
   label: string;
   isUnlimited?: boolean;
@@ -100,6 +109,9 @@ function resolveAvailableCycles(editions: Edition[]): BillingCycle[] {
   return ordered;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for edition comparison view model.
+ */
 export function useEditionComparisonViewModel() {
   const { editionRepository } = entitlementsContainer;
   const { language } = useI18n();

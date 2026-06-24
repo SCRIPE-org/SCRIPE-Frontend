@@ -55,6 +55,9 @@ const TenantEffectiveFeatureModelSchema = z.object({
   hasOverride: z.boolean().optional().default(false),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class FeatureMapper {
   static toEntity(model: FeatureModel): Feature {
     const validated = safeParseApiResponse(FeatureModelSchema, model, "Feature");

@@ -8,6 +8,9 @@ import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import { BRAND } from "@core/config/branding";
 
 // ─── Component ───────────────────────────────────────────────────
+/**
+ * React presentation component representing the commercial header UI element.
+ */
 export function CommercialHeader({
   onSearchOpen,
   onMobileMenuOpen,

@@ -8,6 +8,9 @@ interface StepGuideProps {
   steps: StepItem[];
 }
 
+/**
+ * React presentation component representing the step guide UI element.
+ */
 export function StepGuide({ steps }: StepGuideProps) {
   const { t } = useDocsI18n();
 

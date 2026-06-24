@@ -1,3 +1,6 @@
+/**
+ * Interface structure detailing the properties and attributes of Edition Category Model.
+ */
 export interface EditionCategoryModel {
   id: string;
   name: string;

@@ -14,6 +14,9 @@ import type {
 } from "../../domain/entities/SecurityEntities";
 import { SecurityMapper } from "../mappers/SecurityMapper";
 
+/**
+ * Repository implementation for managing database operations on Security resources.
+ */
 export class SecurityRepository implements ISecurityRepository {
   constructor(private readonly service: ISecurityService) {}
 

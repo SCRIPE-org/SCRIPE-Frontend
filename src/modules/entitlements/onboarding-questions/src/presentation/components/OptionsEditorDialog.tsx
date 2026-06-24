@@ -40,6 +40,9 @@ const emptyForm = (): AnswerOptionRequest => ({
   signalWeight: 1,
 });
 
+/**
+ * React presentation component representing the options editor dialog UI element.
+ */
 export function OptionsEditorDialog({
   open,
   onClose,

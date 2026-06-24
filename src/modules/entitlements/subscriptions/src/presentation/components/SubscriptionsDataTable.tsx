@@ -67,6 +67,9 @@ const TYPE_COLORS: Record<string, string> = {
     "bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-400 border-sky-200 dark:border-sky-800",
 };
 
+/**
+ * React presentation component representing the subscriptions data table UI element.
+ */
 export function SubscriptionsDataTable({
   subscriptions,
   search,

@@ -14,6 +14,9 @@ function getParts(targetDate: string) {
   };
 }
 
+/**
+ * React presentation component representing the countdown block view UI element.
+ */
 export function CountdownBlockView({ block }: { block: CountdownBlock }) {
   const props = block.props;
   const [parts, setParts] = useState(() => getParts(props.targetDate));

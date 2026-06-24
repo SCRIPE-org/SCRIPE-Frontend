@@ -7,6 +7,9 @@ import { Card, CardContent, CardHeader } from "@core/ui/card";
 import { Input } from "@core/ui/input";
 import { ShieldCheck, Search } from "lucide-react";
 
+/**
+ * React presentation component representing the developers view UI element.
+ */
 export function DevelopersView() {
   const vm = useDevelopersViewModel();
   return (

@@ -10,12 +10,18 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // ── Message Types ──────────────────────────────────────
+/**
+ * Constant definition representing s t u d i o_ m s g.
+ */
 export const STUDIO_MSG = {
   DRAFT_UPDATE: "SCRIPE_STUDIO_DRAFT_UPDATE",
   RESET: "SCRIPE_STUDIO_RESET",
   PREVIEW_READY: "SCRIPE_PREVIEW_READY",
 } as const;
 
+/**
+ * Interface structure detailing the properties and attributes of Studio Draft Payload.
+ */
 export interface StudioDraftPayload {
   loginBrandingJson?: string;
   slotConfigJson?: string;
@@ -23,6 +29,9 @@ export interface StudioDraftPayload {
 }
 
 // ── Hook ───────────────────────────────────────────────
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for studio bridge.
+ */
 export function useStudioBridge() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isPreviewReady, setIsPreviewReady] = useState(false);

@@ -13,6 +13,9 @@ import type {
 } from "../../data/models/FeatureModels";
 import type { CreateFeatureRequest, UpdateFeatureRequest } from "../entities/FeatureRequests";
 
+/**
+ * Interface defining operations for the Feature network service.
+ */
 export interface IFeatureService {
   getAll(params: PaginationParams): Promise<PagedResult<FeatureModel>>;
   getById(id: string): Promise<FeatureModel>;

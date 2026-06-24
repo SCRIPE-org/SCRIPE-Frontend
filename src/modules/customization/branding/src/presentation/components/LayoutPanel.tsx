@@ -297,6 +297,9 @@ const LAYOUT_THUMBNAILS: Record<LoginLayout, React.ReactNode> = {
   ),
 };
 
+/**
+ * React presentation component representing the layout panel UI element.
+ */
 export function LayoutPanel({
   selectedLayout,
   onSelectLayout,

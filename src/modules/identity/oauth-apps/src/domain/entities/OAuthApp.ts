@@ -8,6 +8,9 @@
 
 // ─── OAuth Application Data ────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of O Auth App Data.
+ */
 export interface OAuthAppData {
   id: string;
   displayName: string;
@@ -155,7 +158,9 @@ export class OAuthApp {
 }
 
 // ─── OAuth App List Item ────────────────────────────────────────
-
+/**
+ * Interface structure detailing the properties and attributes of O Auth App List Item Data.
+ */
 export interface OAuthAppListItemData {
   id: string;
   displayName: string;
@@ -170,13 +175,11 @@ export interface OAuthAppListItemData {
   description: string | null;
   createdAt: string;
 }
-
 /**
  * OAuth App List Item Entity
  */
 export class OAuthAppListItem {
   constructor(private readonly data: OAuthAppListItemData) {}
-
   get id(): string {
     return this.data.id;
   }
@@ -213,9 +216,7 @@ export class OAuthAppListItem {
   get createdAt(): string {
     return this.data.createdAt;
   }
-
   // ===== Domain Logic =====
-
   get isConfidential(): boolean {
     return this.clientType === "confidential";
   }
@@ -226,16 +227,19 @@ export class OAuthAppListItem {
     return this.allowedScopes.split(" ").filter(Boolean).length;
   }
 }
-
+/**
+ * Domain entity class representing a Regenerate Secret Result.
+ */
 export class RegenerateSecretResult {
   constructor(
     public readonly clientId: string,
     public readonly newClientSecret: string
   ) {}
 }
-
 // ─── Create Response ────────────────────────────────────────────
-
+/**
+ * Domain entity class representing a Create O Auth App Response.
+ */
 export class CreateOAuthAppResponse {
   constructor(
     public readonly id: string,
@@ -243,16 +247,18 @@ export class CreateOAuthAppResponse {
     public readonly clientSecret: string | null
   ) {}
 }
-
 // ─── List Response ──────────────────────────────────────────────
-
+/**
+ * Interface structure detailing the properties and attributes of O Auth App List Response.
+ */
 export interface OAuthAppListResponse {
   items: OAuthAppListItem[];
   totalCount: number;
 }
-
 // ─── Request Types ──────────────────────────────────────────────
-
+/**
+ * Interface structure detailing the properties and attributes of Create O Auth App Request.
+ */
 export interface CreateOAuthAppRequest {
   displayName: string;
   clientType: string;
@@ -271,7 +277,9 @@ export interface CreateOAuthAppRequest {
   accessTokenLifetimeMinutes?: number;
   refreshTokenLifetimeDays?: number;
 }
-
+/**
+ * Interface structure detailing the properties and attributes of Update O Auth App Request.
+ */
 export interface UpdateOAuthAppRequest {
   displayName?: string;
   protocol?: string;

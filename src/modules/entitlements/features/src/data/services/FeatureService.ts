@@ -18,6 +18,9 @@ import type {
   UpdateFeatureRequest,
 } from "../../domain/entities/FeatureRequests";
 
+/**
+ * API service for executing HTTP calls related to Feature endpoints.
+ */
 export class FeatureService implements IFeatureService {
   constructor(private readonly api: IApiService) {}
 

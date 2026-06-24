@@ -5,6 +5,9 @@ import { safeItems } from "./block-style-utils";
 
 const VALUE_CLASS = { sm: "text-lg", md: "text-2xl", lg: "text-3xl" };
 
+/**
+ * React presentation component representing the stats row block view UI element.
+ */
 export function StatsRowBlockView({ block }: { block: StatsRowBlock }) {
   const props = block.props;
   return (

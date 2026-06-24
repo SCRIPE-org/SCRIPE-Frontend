@@ -8,6 +8,9 @@ import type {
 } from "../../domain/entities/EditionCategoryRequests";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 
+/**
+ * API service for executing HTTP calls related to EditionCategory endpoints.
+ */
 export class EditionCategoryService implements IEditionCategoryService {
   constructor(private readonly api: IApiService) {}
 

@@ -38,6 +38,9 @@ import { cn } from "@core/common/utils";
 import Link from "next/link";
 import { MenuOverrideScope } from "../../domain/entities/MenuItemRequests";
 
+/**
+ * React presentation component representing the menu customize view UI element.
+ */
 export function MenuCustomizeView() {
   const { t } = useI18n();
   const vm = useMenuCustomizeViewModel();

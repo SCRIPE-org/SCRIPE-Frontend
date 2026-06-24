@@ -25,6 +25,9 @@ interface AvatarUploadProps {
   error: string | null;
 }
 
+/**
+ * React presentation component representing the avatar upload UI element.
+ */
 export function AvatarUpload({
   currentImageUrl,
   initials,

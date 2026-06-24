@@ -18,6 +18,9 @@ import type {
 import type { IRecycleBinService } from "../../domain/interfaces/IRecycleBinService";
 import { DeletedItemMapper } from "../mappers/DeletedItemMapper";
 
+/**
+ * Repository implementation for managing database operations on RecycleBin resources.
+ */
 export class RecycleBinRepository implements IRecycleBinRepository {
   constructor(private readonly service: IRecycleBinService) {}
 

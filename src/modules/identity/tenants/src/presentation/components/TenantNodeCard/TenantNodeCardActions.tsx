@@ -21,6 +21,9 @@ interface TenantNodeCardActionsProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the tenant node card actions UI element.
+ */
 export function TenantNodeCardActions({
   node,
   status,

@@ -55,6 +55,9 @@ interface FeatureComparisonProps {
   priorityKeys: string[];
 }
 
+/**
+ * React presentation component representing the feature comparison UI element.
+ */
 export function FeatureComparison({
   categories,
   editions,

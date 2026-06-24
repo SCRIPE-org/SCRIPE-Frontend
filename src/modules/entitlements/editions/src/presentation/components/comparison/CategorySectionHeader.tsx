@@ -21,6 +21,9 @@ interface CategorySectionHeaderProps {
   colSpan: number;
 }
 
+/**
+ * React presentation component representing the category section header UI element.
+ */
 export function CategorySectionHeader({ label, colSpan }: CategorySectionHeaderProps) {
   const icon = CATEGORY_ICONS[label] ?? <Settings className="h-3.5 w-3.5" />;
 

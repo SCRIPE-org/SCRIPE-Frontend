@@ -14,8 +14,14 @@ export type DsrStatus =
   | "Completed"
   | "Rejected"
   | "Cancelled";
+/**
+ * Type declaration definition describing the schema of subject type.
+ */
 export type SubjectType = "Admin" | "User";
 
+/**
+ * Interface structure detailing the properties and attributes of Dsr Status History.
+ */
 export interface DsrStatusHistory {
   fromStatus: string;
   toStatus: string;
@@ -24,6 +30,9 @@ export interface DsrStatusHistory {
   occurredAt: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Dsr Module Execution.
+ */
 export interface DsrModuleExecution {
   moduleName: string;
   isCompleted: boolean;
@@ -33,6 +42,9 @@ export interface DsrModuleExecution {
   completedAt?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Data Subject Request Data.
+ */
 export interface DataSubjectRequestData {
   id: string;
   subjectEmail: string;
@@ -51,6 +63,9 @@ export interface DataSubjectRequestData {
   resolution?: string;
 }
 
+/**
+ * Domain entity class representing a Data Subject Request.
+ */
 export class DataSubjectRequest {
   constructor(private readonly data: DataSubjectRequestData) {}
 

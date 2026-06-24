@@ -10,6 +10,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
+/**
+ * Interface structure detailing the properties and attributes of Gateway Info.
+ */
 export interface GatewayInfo {
   gateway: string;
   enabled: boolean;
@@ -66,6 +69,9 @@ const GATEWAY_META: Record<
   },
 };
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for payment gateways view model.
+ */
 export function usePaymentGatewaysViewModel() {
   const { billingRepository } = entitlementsContainer;
   const queryClient = useQueryClient();

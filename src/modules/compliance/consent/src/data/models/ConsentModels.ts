@@ -13,6 +13,9 @@ export interface ConsentStatusModel {
   consentVersion?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Consent Analytics Model.
+ */
 export interface ConsentAnalyticsModel {
   optInRates: Record<string, number>;
   totalSubjects: number;

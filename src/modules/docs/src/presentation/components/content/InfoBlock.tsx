@@ -72,6 +72,9 @@ const variantIcons: Record<string, React.ReactNode> = {
   ),
 };
 
+/**
+ * React presentation component representing the info block UI element.
+ */
 export function InfoBlock({ variant, contentKey, titleKey }: InfoBlockProps) {
   const { t } = useDocsI18n();
 

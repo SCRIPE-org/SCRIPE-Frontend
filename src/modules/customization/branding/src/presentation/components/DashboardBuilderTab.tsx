@@ -905,6 +905,9 @@ interface DashboardBuilderTabProps {
   onUpdate: (updates: Partial<DashboardThemeSettings>) => void;
 }
 
+/**
+ * React presentation component representing the dashboard builder tab UI element.
+ */
 export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabProps) {
   const { t } = useI18n();
 

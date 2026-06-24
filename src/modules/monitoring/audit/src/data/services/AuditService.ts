@@ -16,6 +16,9 @@ import type {
   ComplianceReport,
 } from "../../domain/entities/AuditEntities";
 
+/**
+ * API service for executing HTTP calls related to Audit endpoints.
+ */
 export class AuditService implements IAuditService {
   constructor(private readonly api: IApiService) {}
 

@@ -4,6 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { identityContainer } from "@modules/identity/di";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for permissions picker view model.
+ */
 export function usePermissionsPickerViewModel() {
   const { t, language } = useI18n();
   const { permissionRepository } = identityContainer;

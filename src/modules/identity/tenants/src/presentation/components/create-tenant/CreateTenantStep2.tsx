@@ -20,6 +20,9 @@ interface CreateTenantStep2Props {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the create tenant step2 UI element.
+ */
 export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
   const touched = vm.stepTouched[2];
   const errors = vm.stepErrors[2];

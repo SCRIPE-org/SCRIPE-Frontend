@@ -15,6 +15,9 @@ import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { useAppStore } from "@core/store/useAppStore";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for inventory view model.
+ */
 export function useInventoryViewModel() {
   const { inventoryRepository } = complianceContainer;
   const { t } = useI18n();

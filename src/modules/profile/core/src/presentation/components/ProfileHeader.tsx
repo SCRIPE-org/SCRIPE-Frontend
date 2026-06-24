@@ -15,6 +15,9 @@ interface ProfileHeaderProps {
   isLoading: boolean;
 }
 
+/**
+ * React presentation component representing the profile header UI element.
+ */
 export function ProfileHeader({ profile, isLoading }: ProfileHeaderProps) {
   if (isLoading || !profile) {
     return (

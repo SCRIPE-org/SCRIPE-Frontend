@@ -47,6 +47,9 @@ const BAND_VARIANTS: Record<string, any> = {
   },
 };
 
+/**
+ * Interface structure detailing the properties and attributes of Signup Shell Props.
+ */
 export interface SignupShellProps {
   /** Main stage content (the current phase). */
   children: React.ReactNode;
@@ -63,6 +66,9 @@ export interface SignupShellProps {
   phaseLabel?: string;
 }
 
+/**
+ * React presentation component representing the signup shell UI element.
+ */
 export function SignupShell({ children, progressSlot, phaseLabel }: SignupShellProps) {
   const { tokens, theme, toggleTheme } = useSignupTheme();
   const { t, direction } = useI18n();

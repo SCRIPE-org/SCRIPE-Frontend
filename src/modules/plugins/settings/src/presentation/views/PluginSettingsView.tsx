@@ -11,6 +11,9 @@ interface PluginSettingsViewProps {
   installationId: string;
 }
 
+/**
+ * React presentation component representing the plugin settings view UI element.
+ */
 export function PluginSettingsView({ installationId }: PluginSettingsViewProps) {
   const { user } = useAppStore();
   const { t } = useI18n();

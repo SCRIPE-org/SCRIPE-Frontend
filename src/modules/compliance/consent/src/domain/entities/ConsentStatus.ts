@@ -4,6 +4,9 @@
 
 export type ConsentAction = "Granted" | "Withdrawn";
 
+/**
+ * Interface structure detailing the properties and attributes of Consent Status Data.
+ */
 export interface ConsentStatusData {
   purposeId: string;
   purposeKey: string;
@@ -14,6 +17,9 @@ export interface ConsentStatusData {
   consentVersion?: string;
 }
 
+/**
+ * Domain entity class representing a Consent Status.
+ */
 export class ConsentStatus {
   constructor(private readonly data: ConsentStatusData) {}
 
@@ -47,6 +53,9 @@ export class ConsentStatus {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Record Consent Request.
+ */
 export interface RecordConsentRequest {
   purposeId: string;
   action: ConsentAction;
@@ -54,6 +63,9 @@ export interface RecordConsentRequest {
   collectionMethod?: string;
 }
 
+/**
+ * Domain entity class representing a Consent Analytics.
+ */
 export class ConsentAnalytics {
   constructor(private readonly data: any) {}
 

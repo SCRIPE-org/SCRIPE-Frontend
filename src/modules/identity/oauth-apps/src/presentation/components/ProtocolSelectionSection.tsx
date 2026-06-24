@@ -8,6 +8,9 @@ interface ProtocolSelectionSectionProps {
   onChange: (protocol: string) => void;
 }
 
+/**
+ * React presentation component representing the protocol selection section UI element.
+ */
 export function ProtocolSelectionSection({ protocol, onChange }: ProtocolSelectionSectionProps) {
   const { t } = useI18n();
 

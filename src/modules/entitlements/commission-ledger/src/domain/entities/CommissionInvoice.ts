@@ -1,3 +1,6 @@
+/**
+ * Interface structure detailing the properties and attributes of Commission Invoice Data.
+ */
 export interface CommissionInvoiceData {
   id: string;
   tenantId: string;
@@ -13,6 +16,9 @@ export interface CommissionInvoiceData {
   notes: string | null;
 }
 
+/**
+ * Domain entity class representing a Commission Invoice.
+ */
 export class CommissionInvoice {
   constructor(private readonly data: CommissionInvoiceData) {}
 

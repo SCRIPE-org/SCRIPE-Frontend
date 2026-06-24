@@ -16,6 +16,9 @@ import { AccountStatusCard } from "../components/payouts/AccountStatusCard";
 import { PayoutsKpiRow } from "../components/payouts/PayoutsKpiRow";
 import { PayoutsEmptyState } from "../components/payouts/PayoutsEmptyState";
 
+/**
+ * React presentation component representing the payouts view UI element.
+ */
 export function PayoutsView() {
   useModuleLocales(() => import("../../../locales"), "stripe-connect");
   const vm = usePayoutsViewModel();

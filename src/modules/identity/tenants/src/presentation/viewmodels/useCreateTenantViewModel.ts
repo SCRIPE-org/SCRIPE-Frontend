@@ -27,6 +27,9 @@ import type { Permission } from "@modules/identity/core";
 // Types
 // ─────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Stepper Form State.
+ */
 export interface StepperFormState {
   // Step 1: Organization
   name: string;
@@ -47,6 +50,9 @@ export interface StepperFormState {
   availablePermissionIds: string[];
 }
 
+/**
+ * Constant definition representing i n i t i a l_ s t e p p e r_ f o r m.
+ */
 export const INITIAL_STEPPER_FORM: StepperFormState = {
   name: "",
   code: "",
@@ -64,12 +70,18 @@ export const INITIAL_STEPPER_FORM: StepperFormState = {
   availablePermissionIds: [],
 };
 
+/**
+ * Constant definition representing s t e p s.
+ */
 export const STEPS = [
   { id: 1, key: "organization" },
   { id: 2, key: "administrator" },
   { id: 3, key: "plan" },
 ] as const;
 
+/**
+ * Type declaration definition describing the schema of step id.
+ */
 export type StepId = (typeof STEPS)[number]["id"];
 
 // ─────────────────────────────────────────
@@ -81,6 +93,9 @@ interface UseCreateTenantViewModelParams {
   defaultParentId?: string;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for create tenant view model.
+ */
 export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams = {}) {
   const router = useRouter();
   const queryClient = useQueryClient();

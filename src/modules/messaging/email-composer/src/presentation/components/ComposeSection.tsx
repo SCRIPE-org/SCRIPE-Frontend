@@ -172,6 +172,9 @@ function RecipientSearchInput({
 }
 
 // ─── Props ──────────────────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Compose Section Props.
+ */
 export interface ComposeSectionProps {
   recipientSearch: string;
   setRecipientSearch: (v: string) => void;
@@ -226,6 +229,9 @@ export interface ComposeSectionProps {
   setTypeOverrides?: (overrides: Record<string, string>) => void;
 }
 
+/**
+ * React presentation component representing the compose section UI element.
+ */
 export function ComposeSection(vm: ComposeSectionProps) {
   const { t } = useI18n();
 

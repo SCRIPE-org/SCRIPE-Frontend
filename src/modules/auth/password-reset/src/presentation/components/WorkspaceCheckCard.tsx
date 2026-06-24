@@ -13,6 +13,9 @@ interface WorkspaceCheckCardProps {
   onToggle: (w: WorkspaceOption) => void;
 }
 
+/**
+ * React presentation component representing the workspace check card UI element.
+ */
 export function WorkspaceCheckCard({ workspace, isSelected, onToggle }: WorkspaceCheckCardProps) {
   const { t } = useI18n();
   return (

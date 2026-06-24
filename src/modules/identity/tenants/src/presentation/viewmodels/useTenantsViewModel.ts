@@ -52,6 +52,9 @@ function filterTree(nodes: TenantTreeNode[], query: string): TenantTreeNode[] {
 // ViewModel
 // ─────────────────────────────────────────
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for tenants view model.
+ */
 export function useTenantsViewModel() {
   const router = useRouter();
   const queryClient = useQueryClient();

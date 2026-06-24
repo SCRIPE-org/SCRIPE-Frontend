@@ -14,6 +14,9 @@ import type {
   CreateSubmissionPayload,
 } from "../../domain/interfaces/ISubmissionsService";
 
+/**
+ * API service for executing HTTP calls related to Submissions endpoints.
+ */
 export class SubmissionsService implements ISubmissionsService {
   constructor(private readonly api: IApiService) {}
 

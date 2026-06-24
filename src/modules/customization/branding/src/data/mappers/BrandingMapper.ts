@@ -15,6 +15,9 @@ import type { BrandingResponseJson, AuditLogEntryJson } from "../models/Branding
 import { SystemSettingsModel } from "../models/SystemSettingsModel";
 import type { SystemSettingsJson } from "../models/SystemSettingsModel";
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class BrandingMapper {
   // ── BrandingModel → BrandingConfig Entity ──
 

@@ -20,6 +20,9 @@ interface TenantStatsProps {
   onTabChange?: (tab: string) => void;
 }
 
+/**
+ * React presentation component representing the tenant stats UI element.
+ */
 export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
   const { t, direction, isRtl, stats, loading } = useTenantStatsViewModel({ tenantId });
 

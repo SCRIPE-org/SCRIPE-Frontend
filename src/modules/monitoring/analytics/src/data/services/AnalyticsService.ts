@@ -13,6 +13,9 @@ import type {
   ComparisonDataPoint,
 } from "../../domain/entities/AnalyticsEntities";
 
+/**
+ * API service for executing HTTP calls related to Analytics endpoints.
+ */
 export class AnalyticsService implements IAnalyticsService {
   constructor(private readonly api: IApiService) {}
 

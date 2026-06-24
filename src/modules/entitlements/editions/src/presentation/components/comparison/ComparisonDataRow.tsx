@@ -16,6 +16,9 @@ interface ComparisonDataRowProps {
   renderCell: (edition: Edition) => ReactNode;
 }
 
+/**
+ * React presentation component representing the comparison data row UI element.
+ */
 export function ComparisonDataRow({
   label,
   editions,

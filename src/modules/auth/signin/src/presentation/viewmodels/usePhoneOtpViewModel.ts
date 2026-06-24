@@ -8,8 +8,14 @@ import type { LoginResponseModel } from "@modules/auth/core/domain/types/AuthTyp
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+/**
+ * Type declaration definition describing the schema of phone otp step.
+ */
 export type PhoneOtpStep = "phone" | "code";
 
+/**
+ * Interface structure detailing the properties and attributes of Use Phone Otp View Model Return.
+ */
 export interface UsePhoneOtpViewModelReturn {
   // State
   step: PhoneOtpStep;

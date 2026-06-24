@@ -21,6 +21,9 @@ interface DangerZoneCardProps {
   onDelete: () => void;
 }
 
+/**
+ * React presentation component representing the danger zone card UI element.
+ */
 export function DangerZoneCard({ isDeleting, onDelete }: DangerZoneCardProps) {
   const { t } = useI18n();
 

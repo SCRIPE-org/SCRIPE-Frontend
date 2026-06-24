@@ -71,6 +71,9 @@ function resolveVariables(
 }
 
 // ─── Props ──────────────────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Email Preview Dialog Props.
+ */
 export interface EmailPreviewDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -91,6 +94,9 @@ export interface EmailPreviewDialogProps {
   attachments?: AttachmentFile[];
 }
 
+/**
+ * React presentation component representing the email preview dialog UI element.
+ */
 export function EmailPreviewDialog({
   open,
   onOpenChange,

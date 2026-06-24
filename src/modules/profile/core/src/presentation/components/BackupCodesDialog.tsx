@@ -20,6 +20,9 @@ interface BackupCodesDialogProps {
   onClose: () => void;
 }
 
+/**
+ * React presentation component representing the backup codes dialog UI element.
+ */
 export function BackupCodesDialog({
   isOpen,
   codes,

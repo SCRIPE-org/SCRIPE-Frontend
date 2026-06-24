@@ -11,6 +11,9 @@ interface DocsPrevNextProps {
   basePath?: string;
 }
 
+/**
+ * React presentation component representing the docs prev next UI element.
+ */
 export function DocsPrevNext({
   prevSlug,
   prevTitleKey,

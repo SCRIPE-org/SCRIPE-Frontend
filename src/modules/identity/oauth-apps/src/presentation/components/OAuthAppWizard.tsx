@@ -34,6 +34,9 @@ interface OAuthAppWizardProps {
   };
 }
 
+/**
+ * React presentation component representing the o auth app wizard UI element.
+ */
 export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
   const { t } = useI18n();
   const [currentStep, setCurrentStep] = useState(1);

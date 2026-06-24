@@ -5,6 +5,9 @@
 
 import type { DocSection } from "./DocSection";
 
+/**
+ * Interface structure detailing the properties and attributes of Doc Page Data.
+ */
 export interface DocPageData {
   /** URL slug, e.g. 'features/authentication' */
   slug: string;
@@ -24,6 +27,9 @@ export interface DocPageData {
   lastUpdated?: string;
 }
 
+/**
+ * Domain entity class representing a Doc Page.
+ */
 export class DocPage {
   constructor(public readonly data: DocPageData) {}
 

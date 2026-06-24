@@ -6,6 +6,9 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@core
 import { useRouter } from "next/navigation";
 import { Settings, BarChart, Link as LinkIcon, Key, Receipt, Coins, FileText } from "lucide-react";
 
+/**
+ * React presentation component representing the payment hub view UI element.
+ */
 export function PaymentHubView() {
   const { t } = useI18n();
   const router = useRouter();

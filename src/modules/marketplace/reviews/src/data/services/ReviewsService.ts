@@ -12,6 +12,9 @@ import type {
   PaginatedReviewsResponse,
 } from "../../domain/interfaces/IReviewsService";
 
+/**
+ * API service for executing HTTP calls related to Reviews endpoints.
+ */
 export class ReviewsService implements IReviewsService {
   constructor(private readonly api: IApiService) {}
 

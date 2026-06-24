@@ -9,6 +9,9 @@ import type { GenerateReportRequest } from "../../domain/entities/ComplianceRepo
 import type { PagedResult } from "@core/interfaces/common.interface";
 import { ReportMapper } from "../mappers/ReportMapper";
 
+/**
+ * Repository implementation for managing database operations on Report resources.
+ */
 export class ReportRepository implements IReportRepository {
   constructor(private readonly service: IReportService) {}
 

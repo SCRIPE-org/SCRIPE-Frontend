@@ -40,6 +40,9 @@ const STATUS_VARIANT: Record<string, "default" | "secondary" | "outline" | "dest
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for dsr view model.
+ */
 export function useDsrViewModel() {
   const { dsrRepository } = complianceContainer;
   const { t } = useI18n();

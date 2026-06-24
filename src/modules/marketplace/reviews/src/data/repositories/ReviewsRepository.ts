@@ -14,6 +14,9 @@ import { AppReview } from "../../domain/entities/AppReview";
 import type { IReviewsRepository } from "../../domain/interfaces/IReviewsRepository";
 import type { ReviewDto } from "../../domain/interfaces/IReviewsService";
 
+/**
+ * Repository implementation for managing database operations on Reviews resources.
+ */
 export class ReviewsRepository implements IReviewsRepository {
   constructor(private readonly service: IReviewsService) {}
 

@@ -24,6 +24,9 @@ interface SetRolesDialogProps {
   tenantId?: string;
 }
 
+/**
+ * React presentation component representing the set roles dialog UI element.
+ */
 export function SetRolesDialog({
   open,
   onOpenChange,

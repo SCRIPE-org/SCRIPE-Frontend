@@ -27,6 +27,9 @@ interface ClientCredentialsCardProps {
   onRegenerate: () => void;
 }
 
+/**
+ * React presentation component representing the client credentials card UI element.
+ */
 export function ClientCredentialsCard({
   clientId,
   clientType,

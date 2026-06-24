@@ -33,6 +33,9 @@ interface UpcomingRenewalsTimelineProps {
   t: (key: string, params?: any) => string;
 }
 
+/**
+ * React presentation component representing the upcoming renewals timeline UI element.
+ */
 export function UpcomingRenewalsTimeline({
   renewals,
   formatDisplay,

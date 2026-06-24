@@ -18,6 +18,9 @@ interface GeneratedSecretAlertProps {
   onClear: (redirectId?: string) => void;
 }
 
+/**
+ * React presentation component representing the generated secret alert UI element.
+ */
 export function GeneratedSecretAlert({
   generatedSecret,
   copiedField,

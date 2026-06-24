@@ -41,6 +41,9 @@ function getImpersonationState(): boolean {
   return sessionStorage.getItem(STORAGE_KEYS.IMPERSONATING) === "true";
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for impersonation.
+ */
 export function useImpersonation() {
   const { success, error: toastError } = useEnhancedToast();
   const queryClient = useQueryClient();

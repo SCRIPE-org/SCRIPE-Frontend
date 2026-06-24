@@ -3,6 +3,9 @@ import { SYSTEM_ENDPOINTS } from "@core/config/api-endpoints/system.endpoints";
 import type { IHubActivityService } from "../../domain/interfaces/IHubActivityService";
 import type { HubActivitySummaryModel } from "../models/HubActivityModels";
 
+/**
+ * API service for executing HTTP calls related to HubActivity endpoints.
+ */
 export class HubActivityService implements IHubActivityService {
   constructor(private readonly api: IApiService) {}
 

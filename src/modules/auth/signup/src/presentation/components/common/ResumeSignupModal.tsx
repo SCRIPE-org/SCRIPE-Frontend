@@ -28,6 +28,9 @@ interface ResumeSignupModalProps {
   onStartFresh: () => void | Promise<void>;
 }
 
+/**
+ * React presentation component representing the resume signup modal UI element.
+ */
 export function ResumeSignupModal({
   info,
   onResume,

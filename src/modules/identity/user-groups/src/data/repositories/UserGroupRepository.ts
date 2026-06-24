@@ -22,6 +22,9 @@ import type { PagedResult } from "@modules/identity/core/domain/types";
 import { UserGroupService } from "../services/UserGroupService";
 import { UserGroupMapper } from "../mappers/UserGroupMapper";
 
+/**
+ * Repository implementation for managing database operations on UserGroup resources.
+ */
 export class UserGroupRepository implements IUserGroupRepository {
   constructor(private readonly service: UserGroupService) {}
 

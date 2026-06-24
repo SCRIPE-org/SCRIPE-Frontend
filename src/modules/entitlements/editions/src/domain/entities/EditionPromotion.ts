@@ -23,6 +23,9 @@ export interface EditionPromotionData {
   createdAt: string;
 }
 
+/**
+ * Domain entity class representing a Edition Promotion.
+ */
 export class EditionPromotion {
   constructor(public readonly data: EditionPromotionData) {}
 
@@ -104,6 +107,9 @@ export class EditionPromotion {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Create Promotion Request.
+ */
 export interface CreatePromotionRequest {
   name: string;
   description?: string;
@@ -120,6 +126,9 @@ export interface CreatePromotionRequest {
   firstTimeOnly: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Promotion Request.
+ */
 export interface UpdatePromotionRequest {
   name?: string;
   description?: string;
@@ -128,6 +137,9 @@ export interface UpdatePromotionRequest {
   maxRedemptions?: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Promo Code Validation Result.
+ */
 export interface PromoCodeValidationResult {
   isValid: boolean;
   errorMessage?: string;

@@ -30,6 +30,9 @@ import { cn } from "@core/common/utils";
 import type { SentEmail } from "../../domain/entities/Email";
 
 // ─── Props ──────────────────────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of History Section Props.
+ */
 export interface HistorySectionProps {
   history: SentEmail[];
   historyTotal: number;
@@ -213,6 +216,9 @@ function ExpandedEmailRow({
 }
 
 // ─── Main Component ─────────────────────────────────────────
+/**
+ * React presentation component representing the history section UI element.
+ */
 export function HistorySection(vm: HistorySectionProps) {
   const { t } = useI18n();
   const [expandedId, setExpandedId] = useState<string | null>(null);

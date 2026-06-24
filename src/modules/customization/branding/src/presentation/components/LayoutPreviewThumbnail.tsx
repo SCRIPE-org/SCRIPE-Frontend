@@ -109,6 +109,9 @@ function getLayoutStructure(layout: string): {
   }
 }
 
+/**
+ * React presentation component representing the layout preview thumbnail UI element.
+ */
 export function LayoutPreviewThumbnail({
   layout,
   accentColor,

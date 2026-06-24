@@ -48,6 +48,9 @@ export interface ReorderMenuItemsRequest {
   items: ReorderItemDto[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Reorder Item Dto.
+ */
 export interface ReorderItemDto {
   id: string;
   order: number;

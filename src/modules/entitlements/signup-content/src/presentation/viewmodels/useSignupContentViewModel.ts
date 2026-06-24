@@ -17,6 +17,9 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
 const QUERY_KEY = ["entitlements", "signup-content"] as const;
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for signup content view model.
+ */
 export function useSignupContentViewModel() {
   const { signupContentRepository } = entitlementsContainer;
   const queryClient = useQueryClient();

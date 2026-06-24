@@ -11,6 +11,9 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for activate workspace view model.
+ */
 export function useActivateWorkspaceViewModel() {
   const router = useRouter();
   const { t, language } = useI18n();

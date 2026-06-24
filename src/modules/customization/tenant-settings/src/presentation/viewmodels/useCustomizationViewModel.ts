@@ -12,6 +12,9 @@ import type { AuditLogPagedResultJson as AuditLogPagedResult } from "@core/domai
 import type { SystemSettingsJson as SystemSettingsResponse } from "@core/domain/entities";
 
 // Query keys
+/**
+ * Constant definition representing customization keys.
+ */
 export const customizationKeys = {
   all: ["customization"] as const,
   auditLog: (page: number) => [...customizationKeys.all, "audit-log", page] as const,

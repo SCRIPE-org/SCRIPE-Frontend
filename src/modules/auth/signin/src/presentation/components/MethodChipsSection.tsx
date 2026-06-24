@@ -16,6 +16,9 @@ interface MethodChipsSectionProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the method chips section UI element.
+ */
 export function MethodChipsSection({ methodChips, isLoading, t }: MethodChipsSectionProps) {
   if (methodChips.length === 0) return null;
 

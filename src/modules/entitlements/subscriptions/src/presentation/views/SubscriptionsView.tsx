@@ -47,6 +47,9 @@ interface SubscriptionsViewProps {
   tenantId: string;
 }
 
+/**
+ * React presentation component representing the subscriptions view UI element.
+ */
 export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
   useModuleLocales(() => import("../../../../core/locales"), "entitlements-shared");
   const { t, direction } = useI18n();

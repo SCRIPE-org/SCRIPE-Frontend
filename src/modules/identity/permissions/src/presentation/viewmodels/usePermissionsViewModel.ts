@@ -21,6 +21,9 @@ import type {
 } from "../../domain/entities/PermissionRequests";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for permissions view model.
+ */
 export function usePermissionsViewModel() {
   const queryClient = useQueryClient();
   const { success, error: toastError } = useEnhancedToast();

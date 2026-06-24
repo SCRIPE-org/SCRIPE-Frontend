@@ -20,6 +20,9 @@ export interface UserSearchDto {
   email: string;
 }
 
+/**
+ * Interface defining operations for the UserSubscription network service.
+ */
 export interface IUserSubscriptionService {
   getAll(
     params: PaginationParams & { planId?: string; status?: string }

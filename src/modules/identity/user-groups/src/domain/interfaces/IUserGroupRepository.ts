@@ -8,6 +8,9 @@ import type {
   SetGroupRestrictionsRequest,
 } from "../entities/UserGroupRequests";
 
+/**
+ * Interface structure detailing the properties and attributes of User Group List Params.
+ */
 export interface UserGroupListParams {
   page: number;
   pageSize: number;
@@ -16,6 +19,9 @@ export interface UserGroupListParams {
   isActive?: boolean;
 }
 
+/**
+ * Interface defining repository methods for managing UserGroup data access.
+ */
 export interface IUserGroupRepository {
   getAll(params: UserGroupListParams): Promise<PagedResult<UserGroup>>;
   getMyTenantGroups(params: UserGroupListParams): Promise<PagedResult<UserGroup>>;

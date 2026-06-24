@@ -21,6 +21,9 @@ export interface AuditLogEntryDto {
   tenantId: string | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Audit Log Detail Dto.
+ */
 export interface AuditLogDetailDto {
   id: string;
   eventType: string;
@@ -46,6 +49,9 @@ export interface AuditLogDetailDto {
   tenantId: string | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Audit Log Page Dto.
+ */
 export interface AuditLogPageDto {
   items: AuditLogEntryDto[];
   totalCount: number;
@@ -56,6 +62,9 @@ export interface AuditLogPageDto {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Audit Analytics Summary Dto.
+ */
 export interface AuditAnalyticsSummaryDto {
   totalEvents: number;
   successRate: number;
@@ -64,6 +73,9 @@ export interface AuditAnalyticsSummaryDto {
   heatmapData: { hour: number; dayOfWeek: number; count: number }[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Top Audit User Dto.
+ */
 export interface TopAuditUserDto {
   username: string;
   totalActions: number;
@@ -71,6 +83,9 @@ export interface TopAuditUserDto {
   isAdmin: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Compliance Report Dto.
+ */
 export interface ComplianceReportDto {
   framework: string;
   generatedAt: string;

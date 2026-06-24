@@ -22,6 +22,9 @@ interface PasswordStrengthMeterProps {
   id?: string;
 }
 
+/**
+ * React presentation component representing the password strength meter UI element.
+ */
 export function PasswordStrengthMeter({ score, id }: PasswordStrengthMeterProps) {
   const { t } = useI18n();
   const { tokens } = useSignupTheme();

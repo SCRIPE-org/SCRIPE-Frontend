@@ -20,6 +20,9 @@ interface BillingCycleToggleProps {
   savingsPercent: number;
 }
 
+/**
+ * React presentation component representing the billing cycle toggle UI element.
+ */
 export function BillingCycleToggle({ value, onChange, savingsPercent }: BillingCycleToggleProps) {
   const { t } = useI18n();
   const { tokens } = useSignupTheme();

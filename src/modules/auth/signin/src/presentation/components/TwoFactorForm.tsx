@@ -19,6 +19,9 @@ interface TwoFactorFormProps {
   goBackToCredentials: () => void;
 }
 
+/**
+ * React presentation component representing the two factor form UI element.
+ */
 export function TwoFactorForm({
   twoFactorCode,
   setTwoFactorCode,

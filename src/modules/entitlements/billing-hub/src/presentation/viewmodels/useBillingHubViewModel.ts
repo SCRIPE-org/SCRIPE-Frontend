@@ -3,6 +3,9 @@
 import { useAppStore } from "@core/store/useAppStore";
 import { useSearchParams } from "next/navigation";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for billing hub view model.
+ */
 export function useBillingHubViewModel() {
   const tenantCode = useAppStore((s) => s.tenantCode);
   const isPlatformContext = tenantCode === null;

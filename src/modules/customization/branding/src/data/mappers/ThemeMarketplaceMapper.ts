@@ -10,6 +10,9 @@ import { ThemeCard, type ThemeCardData } from "../../domain/entities/ThemeCard";
 import { ThemeDetail, type ThemeDetailData } from "../../domain/entities/ThemeDetail";
 import type { ThemeCardDto, ThemeDetailDto } from "../models/ThemeMarketplaceTypes";
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class ThemeMarketplaceMapper {
   /** Convert ThemeCardDto → ThemeCard entity */
   static toCardEntity(dto: ThemeCardDto): ThemeCard {

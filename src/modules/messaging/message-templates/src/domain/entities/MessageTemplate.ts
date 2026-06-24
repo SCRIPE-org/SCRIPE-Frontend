@@ -16,8 +16,14 @@ export type TemplateCategory =
   | "billing"
   | "custom";
 
+/**
+ * Type declaration definition describing the schema of placeholder type.
+ */
 export type PlaceholderType = "text" | "number" | "date" | "boolean" | "list" | "object";
 
+/**
+ * Interface structure detailing the properties and attributes of Placeholder Definition.
+ */
 export interface PlaceholderDefinition {
   key: string;
   type: PlaceholderType;
@@ -25,10 +31,16 @@ export interface PlaceholderDefinition {
   sample: string;
 }
 
+/**
+ * Type declaration definition describing the schema of message channel.
+ */
 export type MessageChannel = "Email" | "SMS" | "Push";
 
 // ─── Entity Data ────────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Message Template Data.
+ */
 export interface MessageTemplateData {
   id: string;
   key: string;
@@ -142,6 +154,9 @@ export class MessageTemplate {
 
 // ─── Exported Template (for import/export) ─────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Exported Template.
+ */
 export interface ExportedTemplate {
   key: string;
   channel: string;

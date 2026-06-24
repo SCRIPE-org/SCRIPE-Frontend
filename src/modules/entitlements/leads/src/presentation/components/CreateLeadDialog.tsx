@@ -18,6 +18,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useI18n } from "@core/providers/i18n-provider";
 import { Loader2, PlusCircle } from "lucide-react";
 
+/**
+ * Interface structure detailing the properties and attributes of Create Lead Form Data.
+ */
 export interface CreateLeadFormData {
   companyName: string;
   contactName: string;
@@ -46,6 +49,9 @@ const emptyForm: CreateLeadFormData = {
   notes: "",
 };
 
+/**
+ * React presentation component representing the create lead dialog UI element.
+ */
 export function CreateLeadDialog({
   open,
   onClose,

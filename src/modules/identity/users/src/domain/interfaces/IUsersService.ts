@@ -8,6 +8,9 @@
 import type { UsersListModel, UsersDetailModel } from "../../data/models/UsersModel";
 import type { UpdateUserRequest } from "./IUsersRepository";
 
+/**
+ * Interface defining operations for the Users network service.
+ */
 export interface IUsersService {
   /** GET /api/v1/Users — paginated list */
   getAll(

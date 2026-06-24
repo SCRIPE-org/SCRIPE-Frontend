@@ -6,6 +6,9 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { RecordConsentRequest } from "../../domain/entities/ConsentStatus";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for consent view model.
+ */
 export function useConsentViewModel() {
   const { consentRepository } = complianceContainer;
   const queryClient = useQueryClient();

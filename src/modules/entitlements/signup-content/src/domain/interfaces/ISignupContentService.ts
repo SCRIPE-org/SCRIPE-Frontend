@@ -7,6 +7,9 @@ import type {
   UpdateWelcomeParams,
 } from "./ISignupContentRepository";
 
+/**
+ * Interface defining operations for the SignupContent network service.
+ */
 export interface ISignupContentService {
   getAdminContent(): Promise<unknown>;
   setMode(mode: ContentMode): Promise<void>;

@@ -87,6 +87,9 @@ function VaultLogoBlock() {
   );
 }
 
+/**
+ * React presentation component representing the vault layout UI element.
+ */
 export function VaultLayout({
   branding,
   slotConfig,

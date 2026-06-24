@@ -15,6 +15,9 @@ import type {
   Enable2FAResult,
 } from "../../domain/interfaces/IProfileRepository";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for security view model.
+ */
 export function useSecurityViewModel() {
   const repo = container.profileRepository;
   const queryClient = useQueryClient();

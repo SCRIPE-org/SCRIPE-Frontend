@@ -66,6 +66,9 @@ interface StripeOnboardingStepperProps {
   isRefreshing: boolean;
 }
 
+/**
+ * React presentation component representing the stripe onboarding stepper UI element.
+ */
 export function StripeOnboardingStepper({
   account,
   onOnboard,

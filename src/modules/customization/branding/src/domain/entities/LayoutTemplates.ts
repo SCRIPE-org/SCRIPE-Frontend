@@ -15,6 +15,9 @@ import type { CanvasComponent, CanvasBackground } from "./CanvasComponent";
 import type { LoginLayout } from "@core/domain/entities/LoginBrandingTypes";
 
 // ── Template Structure ───────────────────────────────────
+/**
+ * Interface structure detailing the properties and attributes of Layout Template.
+ */
 export interface LayoutTemplate {
   layout: LoginLayout;
   label: string;

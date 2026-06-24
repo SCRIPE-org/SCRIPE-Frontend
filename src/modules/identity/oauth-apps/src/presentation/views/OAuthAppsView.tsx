@@ -19,6 +19,9 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { OAuthAppCard, OAuthAppItem } from "../components/OAuthAppCard";
 import { NewSecretDialog } from "../components/NewSecretDialog";
 
+/**
+ * React presentation component representing the o auth apps view UI element.
+ */
 export function OAuthAppsView() {
   useModuleLocales(() => import("../../../locales"), "oauth-apps");
 

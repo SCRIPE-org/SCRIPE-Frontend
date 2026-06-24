@@ -9,6 +9,9 @@ import { ConsentAnalytics } from "../../domain/entities/ConsentStatus";
 import type { RecordConsentRequest } from "../../domain/entities/ConsentStatus";
 import { ConsentMapper } from "../mappers/ConsentMapper";
 
+/**
+ * Repository implementation for managing database operations on Consent resources.
+ */
 export class ConsentRepository implements IConsentRepository {
   constructor(private readonly service: IConsentService) {}
 

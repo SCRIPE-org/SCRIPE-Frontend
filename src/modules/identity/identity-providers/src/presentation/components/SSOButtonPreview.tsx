@@ -91,6 +91,9 @@ const DefaultProtocolIcon = () => (
   </svg>
 );
 
+/**
+ * React presentation component representing the s s o button preview UI element.
+ */
 export function SSOButtonPreview({ name, iconUrl, buttonColor, buttonLabel }: Props) {
   const { t } = useI18n();
 

@@ -25,6 +25,9 @@ interface SubscriptionTypeSelectProps {
   disabled?: boolean;
 }
 
+/**
+ * React presentation component representing the subscription type select UI element.
+ */
 export function SubscriptionTypeSelect({
   value,
   onValueChange,

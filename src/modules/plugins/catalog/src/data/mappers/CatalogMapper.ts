@@ -20,6 +20,9 @@ const PluginCatalogItemModelSchema = z.object({
   isInstalled: z.boolean().optional().default(false),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class CatalogMapper {
   static toEntity(model: PluginCatalogItemModel): PluginCatalogItem {
     const validated = safeParseApiResponse(

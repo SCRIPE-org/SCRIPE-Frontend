@@ -50,6 +50,9 @@ import type { Variants } from "framer-motion";
 // ─── Lucide icon map (from backend iconKey strings) ─────────────────────────
 // Keys are the iconKey values returned by the Onboarding Intelligence Engine.
 // Components that render engine options look up the icon here at render time.
+/**
+ * Constant definition representing l u c i d e_ m a p.
+ */
 export const LUCIDE_MAP: Record<string, React.ElementType> = {
   "building-2": Building2,
   "heart-pulse": HeartPulse,
@@ -86,6 +89,9 @@ export const LUCIDE_MAP: Record<string, React.ElementType> = {
 
 // ─── Framer Motion variants ───────────────────────────────────────────────────
 
+/**
+ * Constant definition representing slide variants.
+ */
 export const slideVariants: Variants = {
   enter: (dir: number) => ({
     x: dir > 0 ? 60 : -60,
@@ -106,6 +112,9 @@ export const slideVariants: Variants = {
   }),
 };
 
+/**
+ * Constant definition representing dot variants.
+ */
 export const dotVariants: Variants = {
   active: { scale: 1.2, opacity: 1 },
   inactive: { scale: 1, opacity: 0.3 },

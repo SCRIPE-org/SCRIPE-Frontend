@@ -5,6 +5,9 @@ import type { AccordionBlock } from "@modules/auth/core/domain/entities/LoginBra
 import { Button } from "@core/ui/button";
 import { safeItems } from "./block-style-utils";
 
+/**
+ * React presentation component representing the accordion block view UI element.
+ */
 export function AccordionBlockView({ block }: { block: AccordionBlock }) {
   const props = block.props;
   const [open, setOpen] = useState<Set<number>>(new Set([0]));

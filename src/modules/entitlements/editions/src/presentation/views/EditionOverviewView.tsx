@@ -106,6 +106,9 @@ function BoolIndicator({
   );
 }
 
+/**
+ * React presentation component representing the edition overview view UI element.
+ */
 export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
   useModuleLocales(() => import("../../../locales"), "editions");
   const { t, language } = useI18n();

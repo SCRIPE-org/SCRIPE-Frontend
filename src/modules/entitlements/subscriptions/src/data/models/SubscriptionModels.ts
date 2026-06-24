@@ -43,6 +43,9 @@ export interface SubscriptionModel {
   gatewaySubscriptionId?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Subscription List Model.
+ */
 export interface SubscriptionListModel {
   id: string;
   tenantId: string;
@@ -80,6 +83,9 @@ export interface SubscriptionListModel {
   gatewaySubscriptionId?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Global Subscription Model.
+ */
 export interface GlobalSubscriptionModel {
   id: string;
   tenantId: string;

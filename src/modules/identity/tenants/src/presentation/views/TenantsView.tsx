@@ -33,6 +33,9 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 // Component
 // ============================================
 
+/**
+ * React presentation component representing the tenants view UI element.
+ */
 export function TenantsView() {
   useModuleLocales(() => import("../../../locales"), "tenants");
 

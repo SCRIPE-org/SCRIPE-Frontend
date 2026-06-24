@@ -44,6 +44,9 @@ function formatCount(n: number): string {
   return new Intl.NumberFormat().format(Math.round(n));
 }
 
+/**
+ * React presentation component representing the trust row UI element.
+ */
 export function TrustRow({ trustMarks, trustedByCount, trustedByLabel }: TrustRowProps) {
   const { tokens } = useSignupTheme();
   const countLabel = formatCount(trustedByCount);

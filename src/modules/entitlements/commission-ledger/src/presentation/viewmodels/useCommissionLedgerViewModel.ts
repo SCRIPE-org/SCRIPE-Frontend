@@ -9,6 +9,9 @@ import { CommissionLedgerEntry } from "../../domain/entities/CommissionLedgerEnt
 import { CommissionInvoice } from "../../domain/entities/CommissionInvoice";
 import { useI18n } from "@core/providers/i18n-provider";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for commission ledger view model.
+ */
 export function useCommissionLedgerViewModel() {
   const { t } = useI18n();
   const { toast } = useToast();

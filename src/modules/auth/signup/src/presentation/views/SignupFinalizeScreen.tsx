@@ -41,6 +41,9 @@ function StatusIcon({ tone, children }: { tone: string; children: React.ReactNod
   );
 }
 
+/**
+ * Utility function executing operational rules for signup finalize screen.
+ */
 export function SignupFinalizeScreen() {
   const vm = useFinalizeViewModel();
   const { t, direction } = useI18n();

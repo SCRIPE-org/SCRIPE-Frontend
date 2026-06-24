@@ -1,3 +1,6 @@
+/**
+ * Constant definition representing ar.
+ */
 export const ar = {
   modules: {
     invoices: {

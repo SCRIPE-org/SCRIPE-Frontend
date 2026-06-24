@@ -11,6 +11,9 @@ interface KanbanCardProps {
   onDragEnd?: () => void;
 }
 
+/**
+ * React presentation component representing the kanban card UI element.
+ */
 export function KanbanCard({ lead, onClick, onDragStart, onDragEnd }: KanbanCardProps) {
   const { t } = useI18n();
 

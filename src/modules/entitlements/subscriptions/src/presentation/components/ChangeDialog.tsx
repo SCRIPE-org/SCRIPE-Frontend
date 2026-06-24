@@ -24,6 +24,9 @@ import { SubscriptionTypeSelect } from "./SubscriptionTypeSelect";
 import { PromotionPicker } from "./PromotionPicker";
 import { CurrencySelect } from "./CurrencySelect";
 
+/**
+ * React presentation component representing the change dialog UI element.
+ */
 export function ChangeDialog({ vm, editionsVm }: SubscriptionEditionDialogProps) {
   const { t } = useI18n();
 

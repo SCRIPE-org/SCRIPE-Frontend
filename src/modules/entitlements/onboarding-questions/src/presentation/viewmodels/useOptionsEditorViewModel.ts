@@ -6,6 +6,9 @@ import type { AnswerOptionRequest } from "../../domain/entities/OnboardingQuesti
 import { useI18n } from "@core/providers/i18n-provider";
 import { useToast } from "@core/ui/use-toast";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for options editor view model.
+ */
 export function useOptionsEditorViewModel(questionId: string | null) {
   const qc = useQueryClient();
   const repo = entitlementsContainer.onboardingQuestionRepository;

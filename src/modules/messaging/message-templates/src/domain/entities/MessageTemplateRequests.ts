@@ -23,6 +23,9 @@ export interface CreateMessageTemplateRequest {
   tags?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Message Template Request.
+ */
 export interface UpdateMessageTemplateRequest {
   subject?: string;
   body: string;
@@ -34,17 +37,26 @@ export interface UpdateMessageTemplateRequest {
   tags?: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Preview Template Request.
+ */
 export interface PreviewTemplateRequest {
   subject?: string;
   body: string;
   sampleData?: Record<string, unknown>;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Preview Template Response.
+ */
 export interface PreviewTemplateResponse {
   subject: string | null;
   body: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Import Template Payload.
+ */
 export interface ImportTemplatePayload {
   key: string;
   channel: string;

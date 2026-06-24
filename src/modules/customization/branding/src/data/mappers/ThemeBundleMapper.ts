@@ -58,6 +58,9 @@ const ThemeBundleDtoSchema = z.object({
   isAvailable: z.boolean().optional().default(true),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class ThemeBundleMapper {
   static toEntity(dto: ThemeBundleDto): ThemeBundle {
     const validated = safeParseApiResponse(ThemeBundleDtoSchema, dto, "ThemeBundle");

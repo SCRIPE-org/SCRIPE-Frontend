@@ -27,6 +27,9 @@ function getHeatmapStyle(rate: number): { bg: string; text: string } {
   return { bg: "bg-rose-400", text: "text-white" };
 }
 
+/**
+ * React presentation component representing the retention tab UI element.
+ */
 export function RetentionTab({ cohortData }: RetentionTabProps) {
   const { t } = useI18n();
   const maxColumns = Math.max(...cohortData.cohorts.map((c) => c.buckets.length), 0);

@@ -3,6 +3,9 @@ import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type { ILogsService } from "../../domain/interfaces/ILogsService";
 import type { PluginExecutionLogModel, PagedResult } from "../models/LogsModels";
 
+/**
+ * API service for executing HTTP calls related to Logs endpoints.
+ */
 export class LogsService implements ILogsService {
   constructor(private readonly api: IApiService) {}
 

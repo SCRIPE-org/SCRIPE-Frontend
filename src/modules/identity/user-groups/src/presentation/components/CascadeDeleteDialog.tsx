@@ -18,6 +18,9 @@ interface CascadeDeleteDialogProps {
   itemName?: string;
 }
 
+/**
+ * React presentation component representing the cascade delete dialog UI element.
+ */
 export function CascadeDeleteDialog({
   open,
   onOpenChange,

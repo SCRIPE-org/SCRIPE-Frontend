@@ -12,6 +12,9 @@ interface SecuritySectionProps {
   updateField: <K extends keyof OAuthAppFormState>(field: K, value: OAuthAppFormState[K]) => void;
 }
 
+/**
+ * React presentation component representing the security section UI element.
+ */
 export function SecuritySection({ form, updateField }: SecuritySectionProps) {
   const { t } = useI18n();
 

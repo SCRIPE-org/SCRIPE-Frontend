@@ -12,6 +12,9 @@ interface PluginLogsViewProps {
   installationId: string;
 }
 
+/**
+ * React presentation component representing the plugin logs view UI element.
+ */
 export function PluginLogsView({ installationId }: PluginLogsViewProps) {
   const { t } = useI18n();
   const { logs, isLoading, isError, refetch, page, totalPages, goToPage, totalCount } =

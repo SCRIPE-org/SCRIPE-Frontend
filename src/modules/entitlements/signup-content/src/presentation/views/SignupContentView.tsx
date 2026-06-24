@@ -9,6 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Star } from "lucide-react";
 
+/**
+ * React presentation component representing the signup content view UI element.
+ */
 export function SignupContentView() {
   const vm = useSignupContentViewModel();
   const { t } = useI18n();

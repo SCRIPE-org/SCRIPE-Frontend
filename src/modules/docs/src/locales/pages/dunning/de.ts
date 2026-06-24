@@ -1,3 +1,6 @@
+/**
+ * Constant definition representing de.
+ */
 export const de = {
   modules: {
     dunning: {

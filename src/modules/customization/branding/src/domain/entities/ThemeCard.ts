@@ -49,6 +49,9 @@ export interface ThemeCardData {
   isBuyable: boolean;
 }
 
+/**
+ * Domain entity class representing a Theme Card.
+ */
 export class ThemeCard {
   constructor(private readonly data: ThemeCardData) {}
 

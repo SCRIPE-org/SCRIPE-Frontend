@@ -31,6 +31,9 @@ interface TenantSettingsEditDialogProps {
   isSaving: boolean;
 }
 
+/**
+ * React presentation component representing the tenant settings edit dialog UI element.
+ */
 export function TenantSettingsEditDialog({
   open,
   onOpenChange,

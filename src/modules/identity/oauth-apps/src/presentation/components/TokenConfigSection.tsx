@@ -12,6 +12,9 @@ interface TokenConfigSectionProps {
   updateField: <K extends keyof OAuthAppFormState>(field: K, value: OAuthAppFormState[K]) => void;
 }
 
+/**
+ * React presentation component representing the token config section UI element.
+ */
 export function TokenConfigSection({ form, updateField }: TokenConfigSectionProps) {
   const { t } = useI18n();
 

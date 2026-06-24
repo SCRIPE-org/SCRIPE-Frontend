@@ -17,6 +17,9 @@ interface PermissionTableSkeletonProps {
   rowsPerGroup?: number;
 }
 
+/**
+ * React presentation component representing the permission table skeleton UI element.
+ */
 export function PermissionTableSkeleton({
   groupCount = 3,
   rowsPerGroup = 4,

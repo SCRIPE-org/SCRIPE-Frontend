@@ -12,6 +12,9 @@ interface PluginCardProps {
   isInstalling: boolean;
 }
 
+/**
+ * React presentation component representing the plugin card UI element.
+ */
 export function PluginCard({ plugin, onInstall, isInstalling }: PluginCardProps) {
   const { t, language } = useI18n();
   const displayName = language === "ar" ? plugin.nameAr || plugin.name : plugin.name;

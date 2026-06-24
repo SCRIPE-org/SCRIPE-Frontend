@@ -1,5 +1,8 @@
 import type { BaseEntity } from "@core/interfaces/common.interface";
 
+/**
+ * Interface structure detailing the properties and attributes of Edition Category Data.
+ */
 export interface EditionCategoryData extends BaseEntity {
   name: string;
   displayNameEn?: string;
@@ -8,6 +11,9 @@ export interface EditionCategoryData extends BaseEntity {
   sortOrder: number;
 }
 
+/**
+ * Domain entity class representing a Edition Category.
+ */
 export class EditionCategory {
   constructor(public readonly data: EditionCategoryData) {}
 

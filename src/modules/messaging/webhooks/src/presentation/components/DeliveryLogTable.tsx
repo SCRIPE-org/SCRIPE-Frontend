@@ -40,6 +40,9 @@ interface DeliveryLogTableProps {
   isLoading: boolean;
 }
 
+/**
+ * React presentation component representing the delivery log table UI element.
+ */
 export function DeliveryLogTable({
   logs,
   page,

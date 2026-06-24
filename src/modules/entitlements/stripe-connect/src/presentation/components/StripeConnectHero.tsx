@@ -25,6 +25,9 @@ interface StripeConnectHeroProps {
   isOnboarding: boolean;
 }
 
+/**
+ * React presentation component representing the stripe connect hero UI element.
+ */
 export function StripeConnectHero({ onOnboard, isOnboarding }: StripeConnectHeroProps) {
   const { t } = useI18n();
 

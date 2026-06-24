@@ -31,6 +31,9 @@ export interface AppListingDto {
   updatedAt: string | null;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of App Listing List Dto.
+ */
 export interface AppListingListDto {
   items: AppListingDto[];
   totalCount: number;

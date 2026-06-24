@@ -13,6 +13,9 @@ import type {
   AnswerOptionRequest,
 } from "../../domain/entities/OnboardingQuestionRequests";
 
+/**
+ * API service for executing HTTP calls related to OnboardingQuestion endpoints.
+ */
 export class OnboardingQuestionService implements IOnboardingQuestionService {
   constructor(private readonly api: IApiService) {}
 

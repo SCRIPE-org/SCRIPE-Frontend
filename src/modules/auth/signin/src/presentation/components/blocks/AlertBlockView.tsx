@@ -11,6 +11,9 @@ const VARIANT_CLASS = {
 
 const ICON = { info: "i", warning: "!", success: "ok", error: "!" };
 
+/**
+ * React presentation component representing the alert block view UI element.
+ */
 export function AlertBlockView({ block }: { block: AlertBlock }) {
   const props = block.props;
   return (

@@ -11,6 +11,9 @@ interface BrandingSectionProps {
   updateField: <K extends keyof OAuthAppFormState>(field: K, value: OAuthAppFormState[K]) => void;
 }
 
+/**
+ * React presentation component representing the branding section UI element.
+ */
 export function BrandingSection({ form, updateField }: BrandingSectionProps) {
   const { t } = useI18n();
 

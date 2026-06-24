@@ -4,6 +4,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { CreateEditionRequest } from "../../domain/entities/EditionRequests";
 
+/**
+ * Constant definition representing d e f a u l t_ c r e a t e_ f o r m.
+ */
 export const DEFAULT_CREATE_FORM: CreateEditionRequest = {
   name: "",
   displayNameEn: "",
@@ -26,6 +29,9 @@ export const DEFAULT_CREATE_FORM: CreateEditionRequest = {
   isContactSalesOnly: false,
 };
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for edition create view model.
+ */
 export function useEditionCreateViewModel() {
   const router = useRouter();
   const { editionRepository } = entitlementsContainer;

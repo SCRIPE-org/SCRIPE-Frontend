@@ -11,6 +11,9 @@ import type { SystemDefaults } from "../entities/SystemDefaults";
 import type { AuditLogEntry } from "../entities/AuditLogEntry";
 import type { PagedResult } from "@core/interfaces/common.interface";
 
+/**
+ * Interface defining repository methods for managing Customization data access.
+ */
 export interface ICustomizationRepository {
   // ── Tenant Branding (My Tenant) ──
 

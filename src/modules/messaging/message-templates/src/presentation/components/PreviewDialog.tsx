@@ -26,6 +26,9 @@ interface PreviewDialogProps {
   isLoading: boolean;
 }
 
+/**
+ * React presentation component representing the preview dialog UI element.
+ */
 export function PreviewDialog({ open, onOpenChange, result, isLoading }: PreviewDialogProps) {
   const { t } = useI18n();
   const [device, setDevice] = useState<DeviceId>("desktop");

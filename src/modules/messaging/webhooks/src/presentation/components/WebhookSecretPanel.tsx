@@ -43,6 +43,9 @@ interface WebhookSecretPanelProps {
   isRotating: boolean;
 }
 
+/**
+ * React presentation component representing the webhook secret panel UI element.
+ */
 export function WebhookSecretPanel({
   secret,
   hasPreviousSecret,

@@ -17,11 +17,17 @@ import { useWorkspaceSelector } from "./useWorkspaceSelector";
 import { useMagicLinkHandler } from "./useMagicLinkHandler";
 import { getAuthContainer } from "@modules/auth/di";
 
+/**
+ * Interface structure detailing the properties and attributes of Login Form Data.
+ */
 export interface LoginFormData {
   identifier: string;
   password: string;
 }
 
+/**
+ * Type declaration definition describing the schema of login step.
+ */
 export type LoginStep =
   | "credentials"
   | "two-factor"
@@ -32,6 +38,9 @@ export type LoginStep =
   | "passkey"
   | "qr-login";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for login view model.
+ */
 export function useLoginViewModel() {
   const [formData, setFormData] = useState<LoginFormData>({ identifier: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);

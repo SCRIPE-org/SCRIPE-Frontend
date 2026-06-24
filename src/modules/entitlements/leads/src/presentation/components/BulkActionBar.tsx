@@ -15,6 +15,9 @@ interface BulkActionBarProps {
   canDelete?: boolean;
 }
 
+/**
+ * React presentation component representing the bulk action bar UI element.
+ */
 export function BulkActionBar({
   count,
   onClose,

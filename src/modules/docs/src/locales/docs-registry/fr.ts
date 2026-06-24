@@ -35,6 +35,9 @@ import { fr as pageRevenueAnalytics } from "../pages/revenue-analytics/fr";
 
 import { mergeAll } from "./utils";
 
+/**
+ * Constant definition representing all docs fr.
+ */
 export const allDocsFr: Record<string, any> = mergeAll(
   common,
   getStarted,

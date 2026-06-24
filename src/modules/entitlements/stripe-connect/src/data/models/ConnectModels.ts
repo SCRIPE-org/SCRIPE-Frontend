@@ -10,6 +10,9 @@ export interface PagedResultModel<T> {
   pageSize: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Connect Account Response Model.
+ */
 export interface ConnectAccountResponseModel {
   id: string;
   tenantId: string;
@@ -32,6 +35,9 @@ export interface ConnectAccountResponseModel {
   effectiveCommissionRate: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Connect Account List Response Model.
+ */
 export interface ConnectAccountListResponseModel {
   id: string;
   tenantId: string;
@@ -46,12 +52,18 @@ export interface ConnectAccountListResponseModel {
   createdAt: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Connect Account Result Model.
+ */
 export interface ConnectAccountResultModel {
   accountId: string;
   onboardingUrl: string;
   status: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Commission Response Model.
+ */
 export interface CommissionResponseModel {
   id: string;
   tenantId: string;
@@ -69,6 +81,9 @@ export interface CommissionResponseModel {
   createdAt: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Commission Dashboard Response Model.
+ */
 export interface CommissionDashboardResponseModel {
   totalCommission: number;
   totalRefunded: number;
@@ -79,12 +94,18 @@ export interface CommissionDashboardResponseModel {
   recentTrends: CommissionTrendPointModel[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Commission Trend Point Model.
+ */
 export interface CommissionTrendPointModel {
   date: string;
   amount: number;
   count: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Top Tenant Response Model.
+ */
 export interface TopTenantResponseModel {
   tenantId: string;
   totalCommission: number;
@@ -100,11 +121,17 @@ export interface EligibleTenantItemModel {
 
 // ── Tenant Self-Service Transaction Models ──
 
+/**
+ * Interface structure detailing the properties and attributes of Tenant Transactions Response Model.
+ */
 export interface TenantTransactionsResponseModel {
   summary: TenantFinancialSummaryModel;
   transactions: PagedResultModel<TenantTransactionItemModel>;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Tenant Financial Summary Model.
+ */
 export interface TenantFinancialSummaryModel {
   totalGrossRevenue: number;
   totalPlatformFees: number;
@@ -115,6 +142,9 @@ export interface TenantFinancialSummaryModel {
   currency: string;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Tenant Transaction Item Model.
+ */
 export interface TenantTransactionItemModel {
   id: string;
   type: string; // "Payment" | "Refund" | "PartialRefund"

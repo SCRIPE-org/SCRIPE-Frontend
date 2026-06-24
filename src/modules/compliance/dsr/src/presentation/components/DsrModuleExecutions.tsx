@@ -13,6 +13,9 @@ interface DsrModuleExecutionsProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the dsr module executions UI element.
+ */
 export function DsrModuleExecutions({ dsr, t }: DsrModuleExecutionsProps) {
   if (dsr.moduleExecutions.length === 0) return null;
 

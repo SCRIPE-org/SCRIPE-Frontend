@@ -21,6 +21,9 @@ import { useThemeBundleViewModel } from "../viewmodels/useThemeBundleViewModel";
 
 const B = "studio.bundles";
 
+/**
+ * React presentation component representing the bundle gallery tab UI element.
+ */
 export function BundleGalleryTab() {
   const { t } = useI18n();
   const vm = useThemeBundleViewModel();

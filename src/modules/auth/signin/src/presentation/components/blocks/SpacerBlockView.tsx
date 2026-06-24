@@ -4,6 +4,9 @@ import type { CSSProperties } from "react";
 import type { SpacerBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { clamp } from "./block-style-utils";
 
+/**
+ * React presentation component representing the spacer block view UI element.
+ */
 export function SpacerBlockView({ block }: { block: SpacerBlock }) {
   return (
     <div

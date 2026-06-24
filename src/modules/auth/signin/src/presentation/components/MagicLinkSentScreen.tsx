@@ -14,6 +14,9 @@ interface MagicLinkSentScreenProps {
 
 const RESEND_COOLDOWN_SECONDS = 60;
 
+/**
+ * React presentation component representing the magic link sent screen UI element.
+ */
 export function MagicLinkSentScreen({ email, onBack, onResend, isRTL }: MagicLinkSentScreenProps) {
   const { t } = useI18n();
   const [countdown, setCountdown] = useState(RESEND_COOLDOWN_SECONDS);

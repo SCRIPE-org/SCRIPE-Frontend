@@ -229,6 +229,9 @@ function createDefaultBlock(type: BlockType): ContentBlock {
   }
 }
 
+/**
+ * React presentation component representing the block panel UI element.
+ */
 export function BlockPanel({
   draft,
   addBlock,

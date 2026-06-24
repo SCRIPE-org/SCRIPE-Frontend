@@ -15,6 +15,9 @@ import { DynamicIcon } from "@core/ui/layout/nexus/_parts/primary-rail-parts";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Hub Side Panel Props.
+ */
 export interface HubSidePanelProps {
   todayCount: number;
   moduleCount: number;
@@ -31,6 +34,9 @@ export interface HubSidePanelProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the hub side panel UI element.
+ */
 export function HubSidePanel({
   todayCount,
   moduleCount,

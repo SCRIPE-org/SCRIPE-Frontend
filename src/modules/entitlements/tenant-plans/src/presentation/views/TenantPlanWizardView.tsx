@@ -24,6 +24,9 @@ import { TenantPlanStepBasics } from "../components/wizard/TenantPlanStepBasics"
 import { TenantPlanStepBilling } from "../components/wizard/TenantPlanStepBilling";
 import { TenantPlanStepReview } from "../components/wizard/TenantPlanStepReview";
 
+/**
+ * React presentation component representing the tenant plan wizard view UI element.
+ */
 export function TenantPlanWizardView() {
   useModuleLocales(() => import("../../../locales"), "tenant-plans");
   const { t } = useI18n();

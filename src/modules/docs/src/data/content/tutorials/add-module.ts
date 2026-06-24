@@ -123,6 +123,9 @@ const sections: DocSection[] = [
     filename: "domain/entities/Product.ts",
     code: `import { z } from 'zod';
 
+/**
+ * Constant definition representing product schema.
+ */
 export const ProductSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1),
@@ -136,8 +139,14 @@ export const ProductSchema = z.object({
   updatedAt: z.string().datetime().optional(),
 });
 
+/**
+ * Type declaration definition describing the schema of product.
+ */
 export type Product = z.infer<typeof ProductSchema>;
 
+/**
+ * Constant definition representing create product schema.
+ */
 export const CreateProductSchema = z.object({
   name: z.string().min(1, "Name is required"),
   sku: z.string().min(1, "SKU is required"),
@@ -146,6 +155,9 @@ export const CreateProductSchema = z.object({
   category: z.string(),
 });
 
+/**
+ * Type declaration definition describing the schema of create product input.
+ */
 export type CreateProductInput = z.infer<typeof CreateProductSchema>;`,
   },
 
@@ -165,6 +177,9 @@ export type CreateProductInput = z.infer<typeof CreateProductSchema>;`,
         filename: "domain/interfaces/IProductRepository.ts",
         code: `import { Result } from '@core/common/Result';
 
+/**
+ * Interface defining repository methods for managing Product data access.
+ */
 export interface IProductRepository {
   getAll(params: PaginationParams): Promise<Result<PaginatedResult<Product>>>;
   getById(id: string): Promise<Result<Product>>;
@@ -180,6 +195,9 @@ export interface IProductRepository {
         code: `import { IApiService } from '@core/network';
 import { ProductMapper } from '../mappers/ProductMapper';
 
+/**
+ * Repository implementation for managing database operations on Product resources.
+ */
 export class ProductRepository implements IProductRepository {
   constructor(private api: IApiService) {}
 
@@ -220,6 +238,9 @@ export class ProductRepository implements IProductRepository {
     code: `import { coreContainer } from '@core/di';
 import { ProductRepository } from './src/data/repositories/ProductRepository';
 
+/**
+ * Constant definition representing container.
+ */
 export const container = {
   productRepository: new ProductRepository(coreContainer.apiService),
 };`,
@@ -240,6 +261,9 @@ export const container = {
 import { useCrudViewModel } from '@core/crud';
 import { container } from '../../../di';
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for product list view model.
+ */
 export function useProductListViewModel() {
   const repo = container.productRepository;
 
@@ -279,6 +303,9 @@ export function useProductListViewModel() {
 import { GenericCrudView } from '@core/crud';
 import { useProductListViewModel } from '../viewmodels/useProductListViewModel';
 
+/**
+ * React presentation component representing the product list view UI element.
+ */
 export function ProductListView() {
   const { table, columns } = useProductListViewModel();
 

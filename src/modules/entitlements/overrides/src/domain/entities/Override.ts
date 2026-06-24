@@ -6,6 +6,9 @@
 
 // ── Feature Override ──
 
+/**
+ * Interface structure detailing the properties and attributes of Feature Override Data.
+ */
 export interface FeatureOverrideData {
   id: string;
   tenantId: string;
@@ -20,6 +23,9 @@ export interface FeatureOverrideData {
   costReason?: string;
 }
 
+/**
+ * Domain entity class representing a Feature Override.
+ */
 export class FeatureOverride {
   constructor(public readonly data: FeatureOverrideData) {}
 
@@ -75,6 +81,9 @@ export class FeatureOverride {
 
 // ── Resolved Feature ──
 
+/**
+ * Interface structure detailing the properties and attributes of Resolved Feature Data.
+ */
 export interface ResolvedFeatureData {
   featureId: string;
   key: string;
@@ -85,6 +94,9 @@ export interface ResolvedFeatureData {
   source: "Default" | "Edition" | "Override";
 }
 
+/**
+ * Domain entity class representing a Resolved Feature.
+ */
 export class ResolvedFeature {
   constructor(public readonly data: ResolvedFeatureData) {}
 

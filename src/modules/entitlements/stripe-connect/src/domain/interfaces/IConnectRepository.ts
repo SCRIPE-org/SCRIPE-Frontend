@@ -14,11 +14,17 @@ import type {
   TenantTransactionsResult,
 } from "../entities/ConnectAccount";
 
+/**
+ * Interface structure detailing the properties and attributes of Paged Result.
+ */
 export interface PagedResult<T> {
   items: T[];
   totalCount: number;
 }
 
+/**
+ * Interface defining repository methods for managing Connect data access.
+ */
 export interface IConnectRepository {
   // ── Account Lifecycle ──
   getAccount(tenantId: string): Promise<ConnectAccount>;

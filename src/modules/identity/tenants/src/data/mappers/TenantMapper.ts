@@ -72,6 +72,9 @@ const TenantTreeNodeModelSchema = z.object({
   children: z.array(z.unknown()).optional().default([]),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class TenantMapper {
   /**
    * Map Model (DTO) to Domain Entity

@@ -8,6 +8,9 @@ interface TenantNodeCardBannersProps {
   t: (key: string, variables?: any) => string;
 }
 
+/**
+ * React presentation component representing the tenant node card banners UI element.
+ */
 export function TenantNodeCardBanners({ node, status, t }: TenantNodeCardBannersProps) {
   return (
     <>

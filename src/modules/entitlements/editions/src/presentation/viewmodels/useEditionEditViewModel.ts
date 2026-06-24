@@ -4,6 +4,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { UpdateEditionRequest } from "../../domain/entities/EditionRequests";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for edition edit view model.
+ */
 export function useEditionEditViewModel(editionId: string) {
   const router = useRouter();
   const { editionRepository } = entitlementsContainer;

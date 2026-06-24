@@ -49,6 +49,9 @@ export interface CreatePurchasePayload {
   tenantId: string;
 }
 
+/**
+ * Interface defining operations for the Financials network service.
+ */
 export interface IFinancialsService {
   /** Fetch paginated purchase transactions. */
   getPurchases(params: {

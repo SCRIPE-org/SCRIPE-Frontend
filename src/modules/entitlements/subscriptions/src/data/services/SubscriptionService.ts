@@ -10,6 +10,9 @@ import type {
 } from "../models/SubscriptionModels";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 
+/**
+ * API service for executing HTTP calls related to Subscription endpoints.
+ */
 export class SubscriptionService implements ISubscriptionService {
   constructor(private readonly api: IApiService) {}
 

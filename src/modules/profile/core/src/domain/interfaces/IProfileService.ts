@@ -9,6 +9,9 @@ import type {
   Enable2FAResult,
 } from "./IProfileRepository";
 
+/**
+ * Interface defining operations for the Profile network service.
+ */
 export interface IProfileService {
   getProfile(): Promise<AdminProfile>;
   updateProfile(data: UpdateProfileRequest): Promise<AdminProfile>;

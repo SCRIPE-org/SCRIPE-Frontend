@@ -129,6 +129,9 @@ function FeatureBadges({ theme }: { theme: ThemeCard }) {
   );
 }
 
+/**
+ * React presentation component representing the theme management view UI element.
+ */
 export function ThemeManagementView() {
   useModuleLocales(() => import("@modules/customization/studio/locales"), "customization-studio");
   const { t } = useI18n();

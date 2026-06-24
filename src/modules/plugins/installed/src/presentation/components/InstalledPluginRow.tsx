@@ -16,6 +16,9 @@ interface InstalledPluginRowProps {
   isMutating: boolean;
 }
 
+/**
+ * React presentation component representing the installed plugin row UI element.
+ */
 export function InstalledPluginRow({
   installation,
   onActivate,

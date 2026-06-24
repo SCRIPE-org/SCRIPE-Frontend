@@ -20,6 +20,9 @@ const ConsentStatusModelSchema = z.object({
   consentVersion: z.string().optional().default("1.0"),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class ConsentMapper {
   static toEntity(model: ConsentStatusModel): ConsentStatus {
     const validated = safeParseApiResponse(ConsentStatusModelSchema, model, "ConsentStatus");

@@ -16,6 +16,9 @@ import type {
 import type { PermissionModel, PermissionModuleGroupJson } from "@modules/identity/core";
 import type { MyTenantRoleListParams } from "./IRoleRepository";
 
+/**
+ * Interface structure detailing the properties and attributes of Service Role List Params.
+ */
 export interface ServiceRoleListParams {
   page?: number;
   pageSize?: number;
@@ -25,8 +28,14 @@ export interface ServiceRoleListParams {
 }
 
 // Re-export for convenience (single source of truth in IRoleRepository)
+/**
+ * Exported type in the identity/roles module.
+ */
 export type { MyTenantRoleListParams };
 
+/**
+ * Interface structure detailing the properties and attributes of Role List Result.
+ */
 export interface RoleListResult {
   items: RoleModel[];
   totalCount: number;
@@ -37,6 +46,9 @@ export interface RoleListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Interface defining operations for the Role network service.
+ */
 export interface IRoleService {
   getAll(params: ServiceRoleListParams): Promise<RoleListResult>;
   getMyTenantRoles(params: MyTenantRoleListParams): Promise<RoleListResult>;

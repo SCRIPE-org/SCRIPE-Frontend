@@ -10,6 +10,9 @@ import { ComposeSection } from "../components/ComposeSection";
 import { HistorySection } from "../components/HistorySection";
 import { EmailPreviewDialog } from "../components/EmailPreviewDialog";
 
+/**
+ * React presentation component representing the email composer view UI element.
+ */
 export function EmailComposerView() {
   const vm = useEmailComposerViewModel();
   const { t } = useI18n();

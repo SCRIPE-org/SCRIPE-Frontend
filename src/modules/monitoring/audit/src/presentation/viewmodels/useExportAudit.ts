@@ -12,6 +12,9 @@ import { useState, useCallback } from "react";
 import { monitoringContainer } from "@modules/monitoring/di";
 import type { AuditFilterState } from "./useAuditViewModel";
 
+/**
+ * Type declaration definition describing the schema of export format.
+ */
 export type ExportFormat = "csv" | "excel" | "pdf";
 
 interface ExportParams {
@@ -25,6 +28,9 @@ interface UseExportAuditResult {
   error: string | null;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for export audit.
+ */
 export function useExportAudit(): UseExportAuditResult {
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);

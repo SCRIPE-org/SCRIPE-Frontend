@@ -36,6 +36,9 @@ export interface PermissionModuleGroupJson {
   categories: PermissionCategoryGroupJson[];
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Create Permission Json.
+ */
 export interface CreatePermissionJson {
   resource: string;
   action: string;
@@ -48,6 +51,9 @@ export interface CreatePermissionJson {
   displayOrder?: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Permission Json.
+ */
 export interface UpdatePermissionJson {
   descriptionEn?: string;
   descriptionAr?: string;

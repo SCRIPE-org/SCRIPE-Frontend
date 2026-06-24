@@ -31,6 +31,9 @@ import { format } from "date-fns";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useRouter } from "next/navigation";
 
+/**
+ * React presentation component representing the tenant plans view UI element.
+ */
 export function TenantPlansView() {
   const router = useRouter();
   useModuleLocales(() => import("../../../locales"), "tenant-plans");

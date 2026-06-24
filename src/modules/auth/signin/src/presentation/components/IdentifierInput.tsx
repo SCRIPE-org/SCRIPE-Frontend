@@ -11,6 +11,9 @@ interface IdentifierInputProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the identifier input UI element.
+ */
 export function IdentifierInput({ value, onChange, disabled, hasError, t }: IdentifierInputProps) {
   return (
     <div className="flex flex-col gap-[7px]">

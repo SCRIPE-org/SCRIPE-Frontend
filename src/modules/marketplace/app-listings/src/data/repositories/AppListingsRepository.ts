@@ -17,6 +17,9 @@ import type {
 import type { AppListing } from "../../domain/entities/AppListing";
 import { AppListingMapper } from "../mappers/AppListingMapper";
 
+/**
+ * Repository implementation for managing database operations on AppListings resources.
+ */
 export class AppListingsRepository implements IAppListingsRepository {
   constructor(private readonly service: IAppListingsService) {}
 

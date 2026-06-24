@@ -29,6 +29,9 @@ interface EditionEditWizardViewProps {
   editionId: string;
 }
 
+/**
+ * React presentation component representing the edition edit wizard view UI element.
+ */
 export function EditionEditWizardView({ editionId }: EditionEditWizardViewProps) {
   useModuleLocales(() => import("../../../locales"), "editions");
   const { t } = useI18n();

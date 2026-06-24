@@ -6,6 +6,9 @@ import type {
 } from "../entities/OnboardingQuestionRequests";
 import type { PagedResult } from "@core/interfaces/common.interface";
 
+/**
+ * Interface structure detailing the properties and attributes of Onboarding Questions List Params.
+ */
 export interface OnboardingQuestionsListParams {
   page?: number;
   pageSize?: number;
@@ -14,6 +17,9 @@ export interface OnboardingQuestionsListParams {
   includeInactive?: boolean;
 }
 
+/**
+ * Interface defining repository methods for managing OnboardingQuestion data access.
+ */
 export interface IOnboardingQuestionRepository {
   getAll(params: OnboardingQuestionsListParams): Promise<PagedResult<OnboardingQuestion>>;
   getById(id: string): Promise<OnboardingQuestion>;

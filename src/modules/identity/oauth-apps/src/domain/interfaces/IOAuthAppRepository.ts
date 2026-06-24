@@ -7,6 +7,9 @@ import type {
   UpdateOAuthAppRequest,
 } from "../entities/OAuthApp";
 
+/**
+ * Interface defining repository methods for managing OAuthApp data access.
+ */
 export interface IOAuthAppRepository {
   getAll(params: {
     page: number;

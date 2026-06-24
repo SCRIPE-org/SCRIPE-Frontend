@@ -14,6 +14,9 @@ interface SubscriptionFeaturesCardProps {
   language: string;
 }
 
+/**
+ * React presentation component representing the subscription features card UI element.
+ */
 export function SubscriptionFeaturesCard({
   subscription,
   t,

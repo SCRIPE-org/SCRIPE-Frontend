@@ -28,6 +28,9 @@ interface ProfileGeneralTabProps {
   };
 }
 
+/**
+ * React presentation component representing the profile general tab UI element.
+ */
 export function ProfileGeneralTab({
   profile,
   initials,

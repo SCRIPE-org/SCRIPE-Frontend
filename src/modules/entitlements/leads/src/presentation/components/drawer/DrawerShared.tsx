@@ -6,12 +6,21 @@ import { Copy, CheckCheck } from "lucide-react";
 import type { LeadStatus } from "../../../domain/entities/PlatformLead";
 
 // Re-export for convenience
+/**
+ * Exported type in the entitlements/leads module.
+ */
 export type { LeadStatus };
 
 // ── Status config ─────────────────────────────────────────────────────────────
 
+/**
+ * Constant definition representing a l l_ s t a t u s e s.
+ */
 export const ALL_STATUSES: LeadStatus[] = ["New", "Contacted", "Qualified", "Converted", "Closed"];
 
+/**
+ * Constant definition representing s t a t u s_ s t y l e s.
+ */
 export const STATUS_STYLES: Record<LeadStatus, { badge: string; dot: string; ring: string }> = {
   New: {
     badge: "bg-blue-500/15 text-blue-300 border-blue-500/30",
@@ -42,6 +51,9 @@ export const STATUS_STYLES: Record<LeadStatus, { badge: string; dot: string; rin
 
 // ── CopyButton ────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the copy button UI element.
+ */
 export function CopyButton({ value }: { value: string }) {
   const [copied, setCopied] = useState(false);
   return (
@@ -63,6 +75,9 @@ export function CopyButton({ value }: { value: string }) {
 
 // ── InfoRow ───────────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the info row UI element.
+ */
 export function InfoRow({
   icon: Icon,
   label,
@@ -96,6 +111,9 @@ export function InfoRow({
 
 // ── SectionCard ───────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the section card UI element.
+ */
 export function SectionCard({
   title,
   icon: Icon,
@@ -122,6 +140,9 @@ export function SectionCard({
 
 // ── SkeletonPanel ─────────────────────────────────────────────────────────────
 
+/**
+ * React presentation component representing the skeleton panel UI element.
+ */
 export function SkeletonPanel() {
   return (
     <div className="animate-pulse space-y-4 p-6">

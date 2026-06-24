@@ -23,6 +23,9 @@ interface Props {
   appId?: string;
 }
 
+/**
+ * React presentation component representing the o auth app detail view UI element.
+ */
 export function OAuthAppDetailView({ appId }: Props) {
   useModuleLocales(() => import("../../../locales"), "oauth-apps");
   const vm = useOAuthAppDetailViewModel(appId);

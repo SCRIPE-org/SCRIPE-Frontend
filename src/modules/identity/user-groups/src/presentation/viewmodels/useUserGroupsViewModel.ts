@@ -17,6 +17,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useCallback, useState } from "react";
 
+/**
+ * Constant definition representing user group keys.
+ */
 export const userGroupKeys = {
   all: ["user-groups"] as const,
   list: (filters: Record<string, unknown>) => [...userGroupKeys.all, "list", filters] as const,
@@ -24,6 +27,9 @@ export const userGroupKeys = {
 };
 
 // Flat list-item shape expected by GenericCrudView (must have { id: string })
+/**
+ * Interface structure detailing the properties and attributes of User Group List Item.
+ */
 export interface UserGroupListItem {
   id: string;
   nameEn: string;
@@ -39,6 +45,9 @@ export interface UserGroupListItem {
   createdAt: string;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for user groups view model.
+ */
 export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenantId?: string }) {
   const repo = identityContainer.userGroupRepository;
   const { useMyTenant, tenantId } = options || {};

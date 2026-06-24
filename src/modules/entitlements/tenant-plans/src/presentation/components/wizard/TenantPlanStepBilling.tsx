@@ -12,6 +12,9 @@ interface TenantPlanStepBillingProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the tenant plan step billing UI element.
+ */
 export function TenantPlanStepBilling({ form, updateForm, t }: TenantPlanStepBillingProps) {
   return (
     <div className="space-y-8">

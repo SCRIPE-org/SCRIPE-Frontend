@@ -17,6 +17,9 @@ import type { CreateUserSubscriptionRequest } from "../../domain/entities/UserSu
 import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 
+/**
+ * API service for executing HTTP calls related to UserSubscription endpoints.
+ */
 export class UserSubscriptionService implements IUserSubscriptionService {
   constructor(private readonly api: IApiService) {}
 

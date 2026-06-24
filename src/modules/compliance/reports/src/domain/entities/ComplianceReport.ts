@@ -4,6 +4,9 @@
 
 export type ReportStatus = "Pending" | "Generating" | "Ready" | "Failed";
 
+/**
+ * Interface structure detailing the properties and attributes of Compliance Report Data.
+ */
 export interface ComplianceReportData {
   id: string;
   reportType: string;
@@ -16,6 +19,9 @@ export interface ComplianceReportData {
   title?: string;
 }
 
+/**
+ * Domain entity class representing a Compliance Report.
+ */
 export class ComplianceReport {
   constructor(private readonly data: ComplianceReportData) {}
 
@@ -58,6 +64,9 @@ export class ComplianceReport {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Generate Report Request.
+ */
 export interface GenerateReportRequest {
   reportType: string;
   regulationCode?: string;

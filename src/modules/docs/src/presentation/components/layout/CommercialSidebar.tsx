@@ -26,6 +26,9 @@ interface CommercialSidebarProps {
   activeSlug: string;
 }
 
+/**
+ * React presentation component representing the commercial sidebar UI element.
+ */
 export function CommercialSidebar({ categories, activeSlug }: CommercialSidebarProps) {
   const { t } = useDocsI18n();
 

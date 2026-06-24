@@ -31,6 +31,9 @@ import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 
 // ─── Types ──────────────────────────────────────────────────
+/**
+ * Type declaration definition describing the schema of placeholder type.
+ */
 export type PlaceholderType =
   | "text"
   | "textarea"
@@ -43,6 +46,9 @@ export type PlaceholderType =
   | "select"
   | "color";
 
+/**
+ * Interface structure detailing the properties and attributes of Placeholder Field.
+ */
 export interface PlaceholderField {
   id: string;
   key: string;
@@ -54,6 +60,9 @@ export interface PlaceholderField {
   options?: string[]; // For "select" type
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Placeholder Schema Builder Props.
+ */
 export interface PlaceholderSchemaBuilderProps {
   fields: PlaceholderField[];
   onChange: (fields: PlaceholderField[]) => void;
@@ -93,6 +102,9 @@ function extractVariableKeys(text: string): Set<string> {
 }
 
 // ─── Main Component ─────────────────────────────────────────
+/**
+ * React presentation component representing the placeholder schema builder UI element.
+ */
 export function PlaceholderSchemaBuilder({
   fields,
   onChange,

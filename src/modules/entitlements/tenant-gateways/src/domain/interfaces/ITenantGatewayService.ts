@@ -3,6 +3,9 @@ import type {
   ConfigureGatewayModel,
 } from "../../data/models/TenantGatewayModels";
 
+/**
+ * Interface defining operations for the TenantGateway network service.
+ */
 export interface ITenantGatewayService {
   getMyGateways(): Promise<TenantGatewayModel[]>;
   configureGateway(data: ConfigureGatewayModel): Promise<{ id: string }>;

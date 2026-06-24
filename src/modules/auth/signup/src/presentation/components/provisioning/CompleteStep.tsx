@@ -23,6 +23,9 @@ interface CompleteStepProps {
   wizard: SignupWizardViewModel;
 }
 
+/**
+ * React presentation component representing the complete step UI element.
+ */
 export function CompleteStep({ wizard }: CompleteStepProps) {
   const { t, direction } = useI18n();
   const { tokens } = useSignupTheme();

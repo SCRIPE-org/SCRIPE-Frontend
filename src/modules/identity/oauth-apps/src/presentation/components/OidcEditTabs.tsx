@@ -40,6 +40,9 @@ interface OidcEditTabsProps {
   copyToClipboard: (text: string, field: string) => void;
 }
 
+/**
+ * React presentation component representing the oidc edit tabs UI element.
+ */
 export function OidcEditTabs({ vm, copiedField, copyToClipboard }: OidcEditTabsProps) {
   const { t } = useI18n();
 

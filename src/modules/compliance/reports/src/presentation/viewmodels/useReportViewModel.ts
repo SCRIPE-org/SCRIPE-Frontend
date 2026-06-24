@@ -6,6 +6,9 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { GenerateReportRequest } from "../../domain/entities/ComplianceReport";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for report view model.
+ */
 export function useReportViewModel() {
   const { reportRepository } = complianceContainer;
   const queryClient = useQueryClient();

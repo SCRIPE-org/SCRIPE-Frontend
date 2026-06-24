@@ -3,6 +3,9 @@
 import type { TestimonialBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { clamp } from "./block-style-utils";
 
+/**
+ * React presentation component representing the testimonial block view UI element.
+ */
 export function TestimonialBlockView({ block }: { block: TestimonialBlock }) {
   const props = block.props;
   const rating = clamp(props.rating, 0, 5, 0);

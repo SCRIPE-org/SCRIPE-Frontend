@@ -1,5 +1,8 @@
 import type { DashboardSummary, RecentChange } from "../../domain/entities/DashboardEntities";
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class DashboardMapper {
   static toSummaryEntity(dto: Partial<DashboardSummary>): DashboardSummary {
     return {

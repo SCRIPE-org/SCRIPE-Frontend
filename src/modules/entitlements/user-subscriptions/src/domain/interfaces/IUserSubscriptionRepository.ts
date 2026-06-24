@@ -13,6 +13,9 @@ export interface UserSearchResult {
   email: string;
 }
 
+/**
+ * Interface defining repository methods for managing UserSubscription data access.
+ */
 export interface IUserSubscriptionRepository {
   getAll(
     params: PaginationParams & { planId?: string; status?: string }

@@ -62,6 +62,9 @@ function filterByWorkspace(nodes: MenuTreeNode[], workspaceId: string | null): M
   return filterRecursive(nodes);
 }
 
+/**
+ * React presentation component representing the menus view UI element.
+ */
 export function MenusView() {
   useModuleLocales(() => import("../../../locales"), "menus");
 

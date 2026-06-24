@@ -23,6 +23,9 @@ const InventoryItemModelSchema = z.object({
   notes: z.string().optional().nullable(),
 });
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class InventoryMapper {
   static toEntity(model: InventoryItemModel): InventoryItem {
     const validated = safeParseApiResponse(InventoryItemModelSchema, model, "InventoryItem");

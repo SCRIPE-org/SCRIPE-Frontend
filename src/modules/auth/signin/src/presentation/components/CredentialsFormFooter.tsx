@@ -8,6 +8,9 @@ interface CredentialsFormFooterProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the credentials form footer UI element.
+ */
 export function CredentialsFormFooter({ isPlatformMode, arrow, t }: CredentialsFormFooterProps) {
   return (
     <div

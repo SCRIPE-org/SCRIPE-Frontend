@@ -17,6 +17,9 @@ import type {
   UpdateReportPreferenceRequest,
 } from "../entities/AnalyticsEntities";
 
+/**
+ * Interface defining repository methods for managing Analytics data access.
+ */
 export interface IAnalyticsRepository {
   getOverview(months?: number): Promise<AnalyticsOverview>;
   getMrrMovement(months?: number): Promise<MrrMovementResponse>;

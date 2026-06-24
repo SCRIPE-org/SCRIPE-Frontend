@@ -18,6 +18,9 @@ interface PlanDetailsCardProps {
   t: (key: string) => string;
 }
 
+/**
+ * React presentation component representing the plan details card UI element.
+ */
 export function PlanDetailsCard({ sub, t }: PlanDetailsCardProps) {
   const typeKey = TYPE_KEY_MAP[sub.type] ?? sub.type;
 

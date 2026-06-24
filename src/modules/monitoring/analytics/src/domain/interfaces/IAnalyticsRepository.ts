@@ -10,6 +10,9 @@ import type {
   ComparisonDataPoint,
 } from "../entities/AnalyticsEntities";
 
+/**
+ * Interface defining repository methods for managing Analytics data access.
+ */
 export interface IAnalyticsRepository {
   getSummary(): Promise<AnalyticsSummary>;
   getEventDistribution(days?: number): Promise<DistributionData[]>;

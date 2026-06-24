@@ -5,6 +5,9 @@ import type { BaseEntity } from "@core/interfaces/common.interface";
 
 export type FeatureValueType = "Boolean" | "Numeric" | "String";
 
+/**
+ * Interface structure detailing the properties and attributes of Feature Data.
+ */
 export interface FeatureData extends BaseEntity {
   name: string;
   displayNameEn?: string;
@@ -20,6 +23,9 @@ export interface FeatureData extends BaseEntity {
   isMarketingOnly: boolean;
 }
 
+/**
+ * Domain entity class representing a Feature.
+ */
 export class Feature {
   constructor(public readonly data: FeatureData) {}
 

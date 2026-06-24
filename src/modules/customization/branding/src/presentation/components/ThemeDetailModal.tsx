@@ -70,6 +70,9 @@ interface ThemeDetailModalProps {
   themeDataJson?: string | null;
 }
 
+/**
+ * React presentation component representing the theme detail modal UI element.
+ */
 export function ThemeDetailModal({
   theme,
   isOpen,

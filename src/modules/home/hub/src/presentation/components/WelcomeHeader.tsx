@@ -12,6 +12,9 @@ interface Props {
   displayName: string;
 }
 
+/**
+ * Constant definition representing welcome header.
+ */
 export const WelcomeHeader = memo(function WelcomeHeader({ greeting, displayName }: Props) {
   return (
     <div className="space-y-1">

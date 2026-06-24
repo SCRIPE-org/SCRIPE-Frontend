@@ -6,6 +6,9 @@ import { marketplaceContainer } from "@modules/marketplace/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for reviews view model.
+ */
 export function useReviewsViewModel() {
   const queryClient = useQueryClient();
   const { reviewsRepository } = marketplaceContainer;

@@ -31,6 +31,9 @@ function relativeTime(isoDate: string): string {
 
 // ── PlatformLeadListItem (lightweight, for table rows) ────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Platform Lead List Item Data.
+ */
 export interface PlatformLeadListItemData {
   id: string;
   companyName: string;
@@ -46,6 +49,9 @@ export interface PlatformLeadListItemData {
   primaryPriority?: string;
 }
 
+/**
+ * Domain entity class representing a Platform Lead List Item.
+ */
 export class PlatformLeadListItem {
   constructor(public readonly data: PlatformLeadListItemData) {}
 
@@ -125,6 +131,9 @@ export class PlatformLeadListItem {
 
 // ── PlatformLead (full detail, for drawer) ────────────────────────────────────
 
+/**
+ * Interface structure detailing the properties and attributes of Platform Lead Data.
+ */
 export interface PlatformLeadData {
   id: string;
   companyName: string;
@@ -147,6 +156,9 @@ export interface PlatformLeadData {
   primaryPriority?: string;
 }
 
+/**
+ * Domain entity class representing a Platform Lead.
+ */
 export class PlatformLead {
   constructor(public readonly data: PlatformLeadData) {}
 
@@ -254,6 +266,9 @@ export class PlatformLead {
 
 // ── LeadActivity (activity timeline entry) ────────────────────────────────────
 
+/**
+ * Type declaration definition describing the schema of lead activity type.
+ */
 export type LeadActivityType =
   | "Submitted"
   | "StatusChanged"
@@ -262,6 +277,9 @@ export type LeadActivityType =
   | "Converted"
   | "Closed";
 
+/**
+ * Interface structure detailing the properties and attributes of Lead Activity.
+ */
 export interface LeadActivity {
   id: string;
   leadId: string;
@@ -290,6 +308,9 @@ interface LeadCommunicationLogData {
   recipientName: string;
 }
 
+/**
+ * Domain entity class representing a Lead Communication Log.
+ */
 export class LeadCommunicationLog {
   constructor(private readonly data: LeadCommunicationLogData) {}
 

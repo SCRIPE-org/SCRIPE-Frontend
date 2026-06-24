@@ -237,6 +237,9 @@ function FeatureCategoryBlock({
 }
 
 // ─── Main View ──────────────────────────────────────────────────────────────
+/**
+ * React presentation component representing the edition comparison view UI element.
+ */
 export function EditionComparisonView() {
   useModuleLocales(() => import("../../../locales"), "editions");
   const { t, language } = useI18n();

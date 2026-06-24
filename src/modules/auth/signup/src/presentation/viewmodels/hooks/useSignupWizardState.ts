@@ -31,6 +31,9 @@ interface UseSignupWizardStateOptions {
   language: string;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for signup wizard state.
+ */
 export function useSignupWizardState({ language }: UseSignupWizardStateOptions) {
   const searchParams = useSearchParams();
 

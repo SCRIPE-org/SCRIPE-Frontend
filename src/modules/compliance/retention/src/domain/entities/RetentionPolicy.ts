@@ -4,6 +4,9 @@
 
 export type ExpiryAction = "Anonymize" | "Delete";
 
+/**
+ * Interface structure detailing the properties and attributes of Retention Policy Data.
+ */
 export interface RetentionPolicyData {
   id: string;
   policyId?: string;
@@ -19,6 +22,9 @@ export interface RetentionPolicyData {
   isActive: boolean;
 }
 
+/**
+ * Domain entity class representing a Retention Policy.
+ */
 export class RetentionPolicy {
   constructor(private readonly data: RetentionPolicyData) {}
 
@@ -70,6 +76,9 @@ export class RetentionPolicy {
   }
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Retention Policy Request.
+ */
 export interface UpdateRetentionPolicyRequest {
   policyId: string;
   retentionDays: number;
@@ -77,6 +86,9 @@ export interface UpdateRetentionPolicyRequest {
   isActive: boolean;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Create Retention Policy Request.
+ */
 export interface CreateRetentionPolicyRequest {
   category: string;
   name: string;

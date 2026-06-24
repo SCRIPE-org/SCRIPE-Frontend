@@ -16,6 +16,9 @@ export interface CreateWebhookRequest {
   maxConsecutiveFailures?: number;
 }
 
+/**
+ * Interface structure detailing the properties and attributes of Update Webhook Request.
+ */
 export interface UpdateWebhookRequest {
   url?: string;
   description?: string;

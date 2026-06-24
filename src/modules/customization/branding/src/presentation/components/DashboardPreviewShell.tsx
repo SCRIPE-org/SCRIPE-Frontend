@@ -346,6 +346,9 @@ const VALID_SETTINGS_KEYS = new Set([
   "toastDuration",
 ]);
 
+/**
+ * React presentation component representing the dashboard preview shell UI element.
+ */
 export function DashboardPreviewShell() {
   // Gap #1/#11/#12 fix: Preview settings are maintained ENTIRELY in-memory.
   // No localStorage writes, no events, no auto-save triggers.

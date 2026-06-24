@@ -66,6 +66,9 @@ interface FeaturesTabProps {
   collapseAll: () => void;
 }
 
+/**
+ * React presentation component representing the features tab UI element.
+ */
 export function FeaturesTab({
   edition,
   moduleGroups,
@@ -465,6 +468,9 @@ export function FeaturesTab({
 }
 
 // ── Helpers ──
+/**
+ * Utility function executing operational rules for get feature disabled default.
+ */
 export function getFeatureDisabledDefault(valueType: string): string {
   switch (valueType?.toLowerCase()) {
     case "boolean":

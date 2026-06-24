@@ -20,6 +20,9 @@ import { BulkScopeSelect } from "./BulkScopeSelect";
 import { PermissionCategoryRow, PermissionTreeSkeleton } from "./index";
 import type { PermissionTreeProps } from "../viewmodels/useRoleDetailViewModel";
 
+/**
+ * React presentation component representing the permission tree card UI element.
+ */
 export function PermissionTreeCard({
   moduleGroups,
   isLoading,

@@ -11,6 +11,9 @@ import {
 } from "../../domain/entities/Notification";
 import type { NotificationTargetJson } from "../models/NotificationModel";
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class NotificationMapper {
   /**
    * Convert NotificationTargetJson → NotificationTarget Entity

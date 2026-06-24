@@ -9,6 +9,9 @@ import { Trash2, Tag, Plus, Pencil } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
+/**
+ * React presentation component representing the categories view UI element.
+ */
 export function CategoriesView() {
   useModuleLocales(() => import("../../../locales"), "marketplace-categories");
   const vm = useCategoriesViewModel();

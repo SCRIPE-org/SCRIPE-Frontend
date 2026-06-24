@@ -69,6 +69,9 @@ export interface TenantRolesViewModelResult {
   tenantId: string;
 }
 
+/**
+ * React hook/ViewModel managing logic, state, and repository queries for tenant roles view model.
+ */
 export function useTenantRolesViewModel({
   tenantId,
   tenantName,

@@ -15,6 +15,9 @@ interface CurrencySelectProps {
   onValueChange: (value: string) => void;
 }
 
+/**
+ * React presentation component representing the currency select UI element.
+ */
 export function CurrencySelect({ value, onValueChange }: CurrencySelectProps) {
   const { t } = useI18n();
 

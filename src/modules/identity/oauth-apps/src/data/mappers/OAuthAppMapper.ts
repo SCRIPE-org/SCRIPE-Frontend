@@ -89,6 +89,9 @@ function normaliseSpaceList(raw: string | string[] | null | undefined): string {
   return raw;
 }
 
+/**
+ * Data mapper class responsible for converting data structures between DTO models and domain entities.
+ */
 export class OAuthAppMapper {
   static toEntity(model: OAuthAppModel): OAuthApp {
     const validated = safeParseApiResponse(OAuthAppModelSchema, model, "OAuthApp");

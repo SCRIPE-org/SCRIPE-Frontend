@@ -58,6 +58,9 @@ interface PlanCardProps {
   onSelect: (edition: PlanPickerEdition, billingCycle: "monthly" | "annual") => void;
 }
 
+/**
+ * React presentation component representing the plan card UI element.
+ */
 export function PlanCard({
   edition,
   billingCycle,

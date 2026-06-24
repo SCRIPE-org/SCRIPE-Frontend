@@ -56,6 +56,9 @@ interface PricingTabProps {
   allowLifetime?: boolean;
 }
 
+/**
+ * Constant definition representing pricing tab.
+ */
 export const PricingTab = memo(function PricingTab({
   editionId,
   allowMonthly = true,

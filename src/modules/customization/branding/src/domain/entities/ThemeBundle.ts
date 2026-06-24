@@ -97,6 +97,9 @@ export const LAYER_INFO: Record<BundleLayer, { labelKey: string; icon: string; c
 //  DOMAIN ENTITY
 // ═══════════════════════════════════════════════════════════════
 
+/**
+ * Interface structure detailing the properties and attributes of Theme Bundle Data.
+ */
 export interface ThemeBundleData {
   id: string;
   slug: string;
@@ -124,6 +127,9 @@ export interface ThemeBundleData {
   isAvailable: boolean;
 }
 
+/**
+ * Domain entity class representing a Theme Bundle.
+ */
 export class ThemeBundle {
   constructor(private readonly data: ThemeBundleData) {}
 

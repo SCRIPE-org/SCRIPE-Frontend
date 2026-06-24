@@ -15,6 +15,9 @@ interface ProfileSessionsTabProps {
   };
 }
 
+/**
+ * React presentation component representing the profile sessions tab UI element.
+ */
 export function ProfileSessionsTab({ sessionsVm }: ProfileSessionsTabProps) {
   const { t } = useI18n();
 

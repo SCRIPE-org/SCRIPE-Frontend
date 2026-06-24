@@ -14,6 +14,9 @@ interface DsrSlaCellProps {
   color: string;
 }
 
+/**
+ * React presentation component representing the dsr sla cell UI element.
+ */
 export function DsrSlaCell({ percent, color }: DsrSlaCellProps) {
   return (
     <div

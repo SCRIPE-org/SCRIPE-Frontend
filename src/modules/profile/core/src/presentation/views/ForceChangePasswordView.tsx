@@ -18,6 +18,9 @@ import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
 import { Eye, EyeOff, ShieldAlert, LogOut } from "lucide-react";
 
+/**
+ * React presentation component representing the force change password view UI element.
+ */
 export function ForceChangePasswordView() {
   const {
     t,

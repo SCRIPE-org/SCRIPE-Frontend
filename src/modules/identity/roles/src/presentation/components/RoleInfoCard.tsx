@@ -10,6 +10,9 @@ import { Skeleton } from "@core/ui/skeleton";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { Role } from "../../domain/entities/Role";
 
+/**
+ * Interface structure detailing the properties and attributes of Role Info Card Props.
+ */
 export interface RoleInfoCardProps {
   role: Role | undefined;
   isLoading: boolean;
@@ -17,6 +20,9 @@ export interface RoleInfoCardProps {
   totalCount: number;
 }
 
+/**
+ * React presentation component representing the role info card UI element.
+ */
 export function RoleInfoCard({ role, isLoading, selectedCount, totalCount }: RoleInfoCardProps) {
   const { t, language } = useI18n();
 

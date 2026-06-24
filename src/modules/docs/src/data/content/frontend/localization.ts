@@ -156,6 +156,9 @@ const sections: DocSection[] = [
     filename: "t() Function — Usage Examples",
     code: `import { Language } from '@core/providers/LanguageProvider';
 
+/**
+ * React presentation component representing the admin form UI element.
+ */
 export function AdminForm() {
   const { t, language, direction } = Language();
 

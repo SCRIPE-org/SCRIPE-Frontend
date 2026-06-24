@@ -85,6 +85,9 @@ interface OptionGridProps {
   onToggle: (value: string) => void;
 }
 
+/**
+ * React presentation component representing the option grid UI element.
+ */
 export function OptionGrid({
   options,
   selectedValues,
