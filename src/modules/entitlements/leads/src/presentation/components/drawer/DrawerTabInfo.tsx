@@ -65,8 +65,6 @@ export function DrawerTabInfo({
 
   const di = lead.discoveryTagKeys;
   const hasDiscovery = di && (di.businessTypeKey ?? di.teamSizeKey ?? di.priority);
-  const hasChanges =
-    (pendingStatus !== null && pendingStatus !== lead.status) || statusNote.trim().length > 0;
 
   return (
     <div className="space-y-3 p-4">
