@@ -79,6 +79,8 @@ export const en = {
     loadError: "Failed to load leads. Please refresh and try again.",
 
     drawer: {
+      title: "Lead Details",
+      description: "Details of the selected lead",
       loadingDetail: "Loading lead details…",
       notFound: "Lead not found.",
       editionLabel: "{{edition}} Edition",

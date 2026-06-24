@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Sheet, SheetContent } from "@core/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@core/ui/sheet";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@core/ui/tabs";
 import {
   AlertDialog,
@@ -244,6 +244,8 @@ export function LeadDetailDrawer({
           side="right"
           className="flex w-full max-w-[700px] flex-col overflow-hidden border-s border-zinc-800 bg-zinc-950 p-0"
         >
+          <SheetTitle className="sr-only">{t("leads.drawer.title")}</SheetTitle>
+          <SheetDescription className="sr-only">{t("leads.drawer.description")}</SheetDescription>
           {/* ── Sticky header ── */}
           <div className="shrink-0 border-b border-zinc-800/60 bg-zinc-950/95 px-6 py-5 backdrop-blur-sm">
             {isLoading ? (
