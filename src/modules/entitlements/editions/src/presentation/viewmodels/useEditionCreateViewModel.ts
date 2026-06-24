@@ -5,7 +5,8 @@ import { entitlementsContainer } from "@modules/entitlements/di";
 import type { CreateEditionRequest } from "../../domain/entities/EditionRequests";
 
 /**
- * Constant definition representing d e f a u l t_ c r e a t e_ f o r m.
+ * Default form fields configuration schema for creating a new subscription edition.
+ * Enforces self-service default status, set active limits, fallback cycles, and standard 14-day trials.
  */
 export const DEFAULT_CREATE_FORM: CreateEditionRequest = {
   name: "",
@@ -30,7 +31,13 @@ export const DEFAULT_CREATE_FORM: CreateEditionRequest = {
 };
 
 /**
- * React hook/ViewModel managing logic, state, and repository queries for edition create view model.
+ * React hook/ViewModel managing the wizard state machine and database submission for creating subscription editions.
+ * 
+ * Logic handled:
+ * - Directs wizard progression (step indexing) with verification criteria for each segment.
+ * - Queries existing editions via the repository to supply fallback configurations.
+ * - Handles the complete multi-step creation flow, including writing the core edition profile followed by mapping and writing its currency-cycle pricing entries.
+ * - Handles TanStack query cache invalidation and router navigation updates upon successful submission.
  */
 export function useEditionCreateViewModel() {
   const router = useRouter();

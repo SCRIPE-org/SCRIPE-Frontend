@@ -14,12 +14,15 @@ interface StateViewProps {
 }
 
 /**
- * SetupAccountStateViews — Loading/invalid/success/error cards.
- *
- * Extracted from SetupAccountView so the main view focuses only on
- * the active form state, keeping it under 200 lines.
+ * SetupAccountStateViews compiles a collection of localized state cards representing the status of admin registration.
+ * Includes loading, validation error, successfully activated, and retry card views.
+ * Extracted from SetupAccountView to preserve file size limits.
  */
 
+/**
+ * SetupLoadingView renders a centered card containing an animated spinner icon.
+ * Used while validating the security token credentials from the activation URL payload.
+ */
 export function SetupLoadingView() {
   const { t } = useI18n();
   return (

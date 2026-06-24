@@ -1,5 +1,6 @@
 /**
- * Interface structure detailing the properties and attributes of Checkout Session.
+ * Interface mapping Stripe/gateway checkout session redirection details.
+ * Supplies unique checkout identifiers, customer validation URLs, and visual base64 QR code representations.
  */
 export interface CheckoutSession {
   sessionId: string;
@@ -9,14 +10,16 @@ export interface CheckoutSession {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Billing Portal.
+ * Interface mapping configuration properties for customer self-service billing portals.
+ * Enables client access to billing settings, saved payment methods, and invoice history pages.
  */
 export interface BillingPortal {
   url: string;
 }
 
 /**
- * Interface structure detailing the properties and attributes of Monthly Revenue Point.
+ * Data point mapping revenue trend aggregates for specific month intervals.
+ * Feeds billing dashboard charts detailing monthly recurring gains and registration volumes.
  */
 export interface MonthlyRevenuePoint {
   month: string;
@@ -25,7 +28,8 @@ export interface MonthlyRevenuePoint {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Edition Breakdown Item.
+ * Breakdown mapping item linking performance stats to a subscription edition.
+ * Feeds lists displaying count of active tenants per tier level and revenue statistics.
  */
 export interface EditionBreakdownItem {
   editionId: string;
@@ -35,7 +39,8 @@ export interface EditionBreakdownItem {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Billing Dashboard Data.
+ * Data schema representing dashboard aggregates for subscription performance analytics.
+ * Holds calculated metrics including MRR, ARR, active cycles volume, and cancellation rates.
  */
 export interface BillingDashboardData {
   mrr: number;
@@ -51,7 +56,8 @@ export interface BillingDashboardData {
 }
 
 /**
- * Domain entity class representing a Billing Dashboard.
+ * Domain entity mapping subscription dashboard summaries.
+ * Evaluates core telemetry metrics including combined subscription volumes and tenant retention health states.
  */
 export class BillingDashboard {
   constructor(private readonly data: BillingDashboardData) {}
@@ -100,7 +106,7 @@ export class BillingDashboard {
 }
 
 /**
- * Interface structure detailing the properties and attributes of Payment Link.
+ * Schema detail representing direct payment link urls created for standard subscriptions.
  */
 export interface PaymentLink {
   url: string;

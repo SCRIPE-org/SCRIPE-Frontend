@@ -28,9 +28,13 @@ import { LoginTopActions } from "../components/LoginTopActions";
 import { TenantSuspendedView, TenantNotFoundView } from "./TenantStatusView";
 
 /**
- * LoginView renders the 5-layout customizable login screen.
- * Resolves tenant domains, handles authentication preview states,
- * and loads dynamic slot compositions and styles based on database config.
+ * LoginView represents the main customizable portal for tenant-scoped and platform authentication.
+ * 
+ * Features:
+ * - Domain Resolution: Automatically inspects the hostname to discover tenant branding records, custom domains, or platform scopes.
+ * - Dynamic Token Style Ingestion: Injects CSS variables and layout classes based on database configuration (LoginBrandingJson).
+ * - Multi-Layout Router: Directs rendering into 1 of 5 high-fidelity layout shells, mapping dynamic top action slots, footers, and logos.
+ * - Lifecycle Gates: Prevents rendering until hydration, checks active login status, and handles redirects or suspended tenant warning states.
  */
 export function LoginView() {
   const vm = useLoginViewModel();

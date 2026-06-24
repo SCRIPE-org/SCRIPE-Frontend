@@ -3,7 +3,9 @@
  */
 // ── Invoice (Full Detail) ──
 /**
- * Interface structure detailing the properties and attributes of Invoice Data.
+ * Interface detailing the complete schema of an Invoice entity.
+ * Holds identifiers, customer and company names, total breakdowns (subtotal, tax, discounts), 
+ * navigation urls, line item details, and historical payment transactions.
  */
 export interface InvoiceData {
   id: string;
@@ -28,7 +30,9 @@ export interface InvoiceData {
   transactions: PaymentTransaction[];
 }
 /**
- * Domain entity class representing a Invoice.
+ * Domain entity wrapping full invoice properties with rich computed logic.
+ * Contains methods to query status attributes (e.g. isPaid, isOverdue), check active discounts, 
+ * compute line-item statistics, and create immutable copy overrides.
  */
 export class Invoice {
   constructor(public readonly data: InvoiceData) {}
@@ -117,7 +121,8 @@ export class Invoice {
 }
 // ── Invoice List Item ──
 /**
- * Interface structure detailing the properties and attributes of Invoice List Item Data.
+ * Data structure detailing the layout of lightweight invoice summaries.
+ * Optimized for paginated dashboard lists and reports where full line-item details are unnecessary.
  */
 export interface InvoiceListItemData {
   id: string;
@@ -133,7 +138,8 @@ export interface InvoiceListItemData {
   createdAt: string;
 }
 /**
- * Domain entity class representing a Invoice List Item.
+ * Domain entity representing a lightweight row in an invoice data list.
+ * Exposes core fields such as payment totals, active cycles, status flags, and formatting utilities.
  */
 export class InvoiceListItem {
   constructor(public readonly data: InvoiceListItemData) {}
@@ -179,7 +185,8 @@ export class InvoiceListItem {
 }
 // ── Simple Value Types (kept as interfaces — no domain logic needed) ──
 /**
- * Interface structure detailing the properties and attributes of Invoice Line Item.
+ * Schema representing an individual line-item row within an invoice receipt.
+ * Holds line identifiers, unit price rules, quantity multipliers, and calculated subtotals.
  */
 export interface InvoiceLineItem {
   id: string;
@@ -189,7 +196,8 @@ export interface InvoiceLineItem {
   total: number;
 }
 /**
- * Interface structure detailing the properties and attributes of Payment Transaction.
+ * Data structure mapping gateway payment logs (Stripe, Paypal) associated with an invoice.
+ * Captures status changes, processing timestamps, refunds, and failure codes.
  */
 export interface PaymentTransaction {
   id: string;
