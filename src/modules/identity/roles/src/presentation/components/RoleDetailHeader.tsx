@@ -10,6 +10,9 @@ import { PageBreadcrumbs } from "@core/ui/page-breadcrumbs";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { Role } from "../../domain/entities/Role";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for role detail header props.
+ */
 export interface RoleDetailHeaderProps {
   role: Role | undefined;
   isLoading: boolean;
@@ -17,6 +20,10 @@ export interface RoleDetailHeaderProps {
   onSave: () => void;
 }
 
+/**
+ * Presentation UI component rendering the role detail header.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function RoleDetailHeader({ role, isLoading, isSaving, onSave }: RoleDetailHeaderProps) {
   const { t, language } = useI18n();
   const roleName = language === "ar" ? role?.nameAr : role?.nameEn;

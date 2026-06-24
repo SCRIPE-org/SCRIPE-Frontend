@@ -5,6 +5,10 @@ import type { TextBlock } from "@modules/auth/core/domain/entities/LoginBranding
 import { ALIGN_MAP, FONT_SIZE_MAP, FONT_WEIGHT_MAP } from "./block-constants";
 import { blockColor, clamp } from "./block-style-utils";
 
+/**
+ * Presentation UI component rendering the text block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function TextBlockView({ block }: { block: TextBlock }) {
   const props = block.props;
   const style: CSSProperties = {

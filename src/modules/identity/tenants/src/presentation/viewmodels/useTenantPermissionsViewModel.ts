@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Tenant Permissions Dialog ViewModel
  *
@@ -19,8 +20,11 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { appLogger } from "@core/common/logger";
 import { identityContainer } from "@modules/identity/di";
-import type { Permission, PermissionModuleGroup } from "@modules/identity/permissions";
+import type { Permission, PermissionModuleGroup } from "@modules/identity/core";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for use tenant permissions dialog props.
+ */
 export interface UseTenantPermissionsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -29,6 +33,9 @@ export interface UseTenantPermissionsDialogProps {
   parentTenantId?: string | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for use tenant permissions dialog result.
+ */
 export interface UseTenantPermissionsDialogResult {
   // State
   search: string;
@@ -68,6 +75,10 @@ export interface UseTenantPermissionsDialogResult {
   };
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for tenant permissions dialog.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useTenantPermissionsDialog({
   open,
   onOpenChange,

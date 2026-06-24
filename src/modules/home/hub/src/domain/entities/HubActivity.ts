@@ -10,6 +10,10 @@ export interface HubRecentItemData {
   timestamp: string;
 }
 
+/**
+ * Domain model representing a Hub Recent Item structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class HubRecentItem {
   constructor(public readonly data: HubRecentItemData) {}
 
@@ -28,8 +32,19 @@ export class HubRecentItem {
   get timestamp() {
     return this.data.timestamp;
   }
+
+  copyWith(updates: Partial<HubRecentItemData>): HubRecentItem {
+    return new HubRecentItem({
+      ...this.data,
+      ...updates,
+    } as HubRecentItemData);
+  }
 }
 
+/**
+ * Domain model representing a Hub Activity Summary Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface HubActivitySummaryData {
   todayActionCount: number;
   todayModuleCount: number;
@@ -37,6 +52,10 @@ export interface HubActivitySummaryData {
   recentItems: HubRecentItemData[];
 }
 
+/**
+ * Domain model representing a Hub Activity Summary structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class HubActivitySummary {
   constructor(public readonly data: HubActivitySummaryData) {}
 

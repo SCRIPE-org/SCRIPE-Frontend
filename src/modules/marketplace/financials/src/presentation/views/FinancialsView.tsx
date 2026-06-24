@@ -9,6 +9,10 @@ import { Card, CardContent } from "@core/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { DollarSign, Play } from "lucide-react";
 
+/**
+ * Presentation UI component rendering the financials view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function FinancialsView() {
   const vm = useFinancialsViewModel();
 

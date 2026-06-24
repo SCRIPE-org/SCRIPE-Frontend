@@ -27,6 +27,9 @@ const RegulationProfileSchema = z.object({
   purposes: z.array(ConsentPurposeSchema).optional().default([]),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class RegulationMapper {
   static toEntity(model: RegulationProfileModel): Regulation {
     const validated = safeParseApiResponse(RegulationProfileSchema, model, "Regulation");

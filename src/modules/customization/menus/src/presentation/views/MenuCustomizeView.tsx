@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * Menu Customize View (Pure UI)
  *
@@ -37,6 +38,10 @@ import { cn } from "@core/common/utils";
 import Link from "next/link";
 import { MenuOverrideScope } from "../../domain/entities/MenuItemRequests";
 
+/**
+ * Presentation UI component rendering the menu customize view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function MenuCustomizeView() {
   const { t } = useI18n();
   const vm = useMenuCustomizeViewModel();

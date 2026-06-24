@@ -1,3 +1,7 @@
+/**
+ * Domain model representing a Answer Option Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface AnswerOptionRequest {
   value: string;
   labelEn: string;
@@ -9,6 +13,10 @@ export interface AnswerOptionRequest {
   signalWeight?: number;
 }
 
+/**
+ * Domain model representing a Create Onboarding Question Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface CreateOnboardingQuestionRequest {
   key: string;
   editionCategoryId?: string;
@@ -27,4 +35,8 @@ export interface CreateOnboardingQuestionRequest {
   options: AnswerOptionRequest[];
 }
 
+/**
+ * Domain model representing a Update Onboarding Question Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type UpdateOnboardingQuestionRequest = CreateOnboardingQuestionRequest;

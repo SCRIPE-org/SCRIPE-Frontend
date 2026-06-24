@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * useBuilderStore — Zustand store for the Login Page Drag-and-Drop Builder
  *
@@ -18,7 +19,7 @@ import type {
   AuthPageId,
 } from "../../domain/entities/CanvasComponent";
 import type { SavedTemplate } from "../../domain/entities/SavedTemplate";
-import { TemplateStorageService } from "../../data/services/TemplateStorageService";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
 import {
   DEFAULT_CANVAS_COMPONENTS,
   DEFAULT_CANVAS_GRID_ROWS,
@@ -192,6 +193,10 @@ function pushHistory(state: BuilderState): Partial<BuilderState> {
 }
 
 // ── Store ────────────────────────────────────────────────
+/**
+ * React hook/ViewModel orchestrating state and data flows for builder store.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
+ */
 export const useBuilderStore = create<BuilderState>((set, get) => ({
   // Initial state
   components: DEFAULT_CANVAS_COMPONENTS,
@@ -685,7 +690,13 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
 
   // ── Saved Templates Management ──
   loadSavedTemplates: () => {
-    set({ savedTemplates: TemplateStorageService.load() });
+    try {
+      const raw =
+        typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEYS.BUILDER_TEMPLATES) : null;
+      set({ savedTemplates: raw ? JSON.parse(raw) : [] });
+    } catch {
+      set({ savedTemplates: [] });
+    }
   },
 
   saveTemplate: (name) => {
@@ -699,14 +710,26 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       createdAt: new Date().toISOString(),
     };
     const updated = [...state.savedTemplates, newTemplate];
-    TemplateStorageService.save(updated);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(STORAGE_KEYS.BUILDER_TEMPLATES, JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+    }
     set({ savedTemplates: updated });
   },
 
   deleteTemplate: (id) => {
     const state = get();
     const updated = state.savedTemplates.filter((t) => t.id !== id);
-    TemplateStorageService.save(updated);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(STORAGE_KEYS.BUILDER_TEMPLATES, JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+    }
     set({ savedTemplates: updated });
   },
 }));

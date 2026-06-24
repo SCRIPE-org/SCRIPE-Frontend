@@ -14,11 +14,18 @@ import type {
   TenantTransactionsResult,
 } from "../entities/ConnectAccount";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for paged result.
+ */
 export interface PagedResult<T> {
   items: T[];
   totalCount: number;
 }
 
+/**
+ * Repository layer implementing client request queries for i connect.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export interface IConnectRepository {
   // ── Account Lifecycle ──
   getAccount(tenantId: string): Promise<ConnectAccount>;

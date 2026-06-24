@@ -2,12 +2,16 @@ import type { IEditionCategoryRepository } from "../../domain/interfaces/IEditio
 import type { IEditionCategoryService } from "../../domain/interfaces/IEditionCategoryService";
 import { EditionCategory } from "../../domain/entities/EditionCategory";
 import { EditionCategoryMapper } from "../mappers/EditionCategoryMapper";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 import type {
   CreateEditionCategoryRequest,
   UpdateEditionCategoryRequest,
 } from "../../domain/entities/EditionCategoryRequests";
 
+/**
+ * Repository layer implementing client request queries for edition category.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class EditionCategoryRepository implements IEditionCategoryRepository {
   constructor(private readonly service: IEditionCategoryService) {}
 

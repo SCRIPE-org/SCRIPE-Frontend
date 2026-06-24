@@ -5,7 +5,8 @@ export const ar = {
     title: "تطبيقات OAuth",
     description: "إدارة التطبيقات الخارجية التي تعتمد على SCRIPE للمصادقة (خادم OIDC)",
     emptyTitle: "لم يتم العثور على تطبيقات OAuth",
-    emptyDesc: "ابدأ بتسجيل تطبيق جديد لتمكين تسجيل الدخول الآمن للجهات الخارجية عبر خدمات هوية SCRIPE.",
+    emptyDesc:
+      "ابدأ بتسجيل تطبيق جديد لتمكين تسجيل الدخول الآمن للجهات الخارجية عبر خدمات هوية SCRIPE.",
     // عناوين الصفحة التفصيلية
     createTitle: "تطبيق OAuth جديد",
     samlAcsUrl: "رابط خدمة المصادقة (ACS)",
@@ -112,8 +113,10 @@ export const ar = {
     stepSamlConfig: "إعدادات SAML",
     selectProtocolTitle: "اختر بروتوكول المصادقة",
     selectProtocolDesc: "اختر المعيار الذي يناسب تكاملك. لا يمكن تغيير هذا بعد الإنشاء.",
-    oidcChoiceDesc: "معيار هوية حديث يستخدم رموز JWT. موصى به لتطبيقات الويب، تطبيقات الصفحة الواحدة (SPA)، وتطبيقات الجوال.",
-    samlChoiceDesc: "بروتوكول اتحاد مؤسسي يستخدم XML. الأفضل لتكاملات تسجيل الدخول الموحد (SSO) للشركات مع Salesforce أو Zendesk أو Okta.",
+    oidcChoiceDesc:
+      "معيار هوية حديث يستخدم رموز JWT. موصى به لتطبيقات الويب، تطبيقات الصفحة الواحدة (SPA)، وتطبيقات الجوال.",
+    samlChoiceDesc:
+      "بروتوكول اتحاد مؤسسي يستخدم XML. الأفضل لتكاملات تسجيل الدخول الموحد (SSO) للشركات مع Salesforce أو Zendesk أو Okta.",
 
     // IdP Metadata
     idpMetadataTitle: "البيانات الوصفية لموفر الهوية (IdP)",
@@ -121,7 +124,8 @@ export const ar = {
     idpEntityId: "معرف كيان موفر الهوية (المصدر)",
     idpSsoUrl: "رابط تسجيل الدخول الموحد (SSO)",
     idpXmlMetadataUrl: "رابط ملف XML للبيانات الوصفية لـ IdP",
-    idpXmlHelp: "تسمح معظم تطبيقات المؤسسات بتكوين تسجيل الدخول الموحد بمجرد لصق رابط البيانات الوصفية XML هذا.",
+    idpXmlHelp:
+      "تسمح معظم تطبيقات المؤسسات بتكوين تسجيل الدخول الموحد بمجرد لصق رابط البيانات الوصفية XML هذا.",
     samlConfigSection: "تكوين SAML",
     idpMetadataSection: "البيانات الوصفية لـ IdP",
   },

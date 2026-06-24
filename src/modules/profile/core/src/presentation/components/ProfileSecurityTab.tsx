@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 import React, { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
@@ -83,6 +84,10 @@ interface ProfileSecurityTabProps {
   };
 }
 
+/**
+ * Presentation UI component rendering the profile security tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function ProfileSecurityTab({
   profile,
   linkedMobileDevices,
@@ -103,7 +108,7 @@ export function ProfileSecurityTab({
   return (
     <div className="space-y-6">
       {/* Passkeys Block */}
-      <div className="rounded-xl border border-border/80 bg-card/45 p-6 transition-all duration-200 hover:border-violet-500/20 shadow-sm backdrop-blur-md">
+      <div className="rounded-xl border border-border/80 bg-card/45 p-6 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-violet-500/20">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex gap-4">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-purple-500/30 bg-purple-500/10 text-purple-400">
@@ -243,7 +248,7 @@ export function ProfileSecurityTab({
       </div>
 
       {/* Authenticator App (2FA) Block */}
-      <div className="rounded-xl border border-border/80 bg-card/45 p-6 transition-all duration-200 hover:border-violet-500/20 shadow-sm backdrop-blur-md">
+      <div className="rounded-xl border border-border/80 bg-card/45 p-6 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-violet-500/20">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex gap-4">
             <div
@@ -304,12 +309,7 @@ export function ProfileSecurityTab({
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <div className="relative h-4 w-4">
                 <svg className="h-full w-full -rotate-90">
-                  <circle
-                    cx="8"
-                    cy="8"
-                    r="6"
-                    className="fill-none stroke-white/5 stroke-[1.5]"
-                  />
+                  <circle cx="8" cy="8" r="6" className="fill-none stroke-white/5 stroke-[1.5]" />
                   <circle
                     cx="8"
                     cy="8"
@@ -338,7 +338,7 @@ export function ProfileSecurityTab({
       </div>
 
       {/* Cross-Device QR Sign-in Block */}
-      <div className="rounded-xl border border-border/80 bg-card/45 p-6 transition-all duration-200 hover:border-violet-500/20 shadow-sm backdrop-blur-md">
+      <div className="rounded-xl border border-border/80 bg-card/45 p-6 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-violet-500/20">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex gap-4">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-violet-500/30 bg-violet-500/10 text-violet-400">
@@ -409,7 +409,7 @@ export function ProfileSecurityTab({
       </div>
 
       {/* Password update trigger card */}
-      <div className="rounded-xl border border-border/80 bg-card/45 p-6 transition-all duration-200 hover:border-violet-500/20 shadow-sm backdrop-blur-md">
+      <div className="rounded-xl border border-border/80 bg-card/45 p-6 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-violet-500/20">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex gap-4">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-500/30 bg-slate-500/10 text-slate-500 dark:text-slate-400">

@@ -91,6 +91,9 @@ const GlobalSubscriptionModelSchema = z.object({
   refundReason: z.string().optional().nullable(),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class SubscriptionMapper {
   static toEntity(model: SubscriptionModel): Subscription {
     const v = safeParseApiResponse(SubscriptionModelSchema, model, "Subscription");

@@ -89,11 +89,18 @@ const PHASE_VARIANTS: Record<string, any> = {
         },
 };
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for signup wizard props.
+ */
 export interface SignupWizardProps {
   initialCountry?: string | null;
   initialCurrency?: string;
 }
 
+/**
+ * Presentation UI component rendering the signup wizard.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SignupWizard({ initialCountry, initialCurrency }: SignupWizardProps) {
   const [isInvalidDomain, setIsInvalidDomain] = useState(false);
   const [platformSignupUrl, setPlatformSignupUrl] = useState("");
@@ -144,7 +151,7 @@ function SignupDomainRestrictionView({ platformSignupUrl }: { platformSignupUrl:
     <SignupShell>
       <div className="flex flex-1 flex-col items-center justify-center px-4 py-12">
         <div
-          className="w-full max-w-md rounded-2xl p-8 text-center shadow-xl border backdrop-blur-md"
+          className="w-full max-w-md rounded-2xl border p-8 text-center shadow-xl backdrop-blur-md"
           style={{
             background: tokens.surface,
             borderColor: tokens.borderCard,
@@ -158,17 +165,11 @@ function SignupDomainRestrictionView({ platformSignupUrl }: { platformSignupUrl:
             <AlertTriangle className="h-8 w-8" style={{ color: tokens.accent }} />
           </div>
 
-          <h1
-            className="mb-3 text-2xl font-bold tracking-tight"
-            style={{ color: tokens.ink }}
-          >
+          <h1 className="mb-3 text-2xl font-bold tracking-tight" style={{ color: tokens.ink }}>
             {t("signup.errors.domainRestrictionTitle")}
           </h1>
 
-          <p
-            className="mb-8 text-sm leading-relaxed"
-            style={{ color: tokens.inkMuted }}
-          >
+          <p className="mb-8 text-sm leading-relaxed" style={{ color: tokens.inkMuted }}>
             {t("signup.errors.domainRestrictionDescription")}
           </p>
 
@@ -218,7 +219,9 @@ function SignupWizardContent({ initialCountry, initialCurrency }: SignupWizardPr
         phases (the shell's min-h-[100dvh] + flex-1 keep the footer pinned), and
         the consistent enter/exit transition prevents any inter-phase jump.
       */}
-      <div className={`flex flex-1 flex-col signup-stage-container ${isCentered ? "justify-center" : ""}`}>
+      <div
+        className={`signup-stage-container flex flex-1 flex-col ${isCentered ? "justify-center" : ""}`}
+      >
         <AnimatePresence mode="wait" custom={slideDir} initial={false}>
           <motion.div
             key={wizard.phase}

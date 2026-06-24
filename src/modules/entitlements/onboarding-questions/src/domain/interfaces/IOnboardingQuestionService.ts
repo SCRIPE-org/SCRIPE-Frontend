@@ -10,6 +10,10 @@ import type {
   AnswerOptionRequest,
 } from "../entities/OnboardingQuestionRequests";
 
+/**
+ * Http API network service for i onboarding question.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface IOnboardingQuestionService {
   getAll(params: OnboardingQuestionsListParams): Promise<PagedOnboardingQuestionsModel>;
   getById(id: string): Promise<OnboardingQuestionDetailModel>;

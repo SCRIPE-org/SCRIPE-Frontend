@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import React, { useMemo, useState, useCallback } from "react";
@@ -70,6 +71,9 @@ function resolveVariables(
 }
 
 // ─── Props ──────────────────────────────────────────────────
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for email preview dialog props.
+ */
 export interface EmailPreviewDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -90,6 +94,10 @@ export interface EmailPreviewDialogProps {
   attachments?: AttachmentFile[];
 }
 
+/**
+ * Presentation UI component rendering the email preview dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function EmailPreviewDialog({
   open,
   onOpenChange,

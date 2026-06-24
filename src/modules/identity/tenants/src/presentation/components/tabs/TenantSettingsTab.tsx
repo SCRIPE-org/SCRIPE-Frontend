@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Tenant Settings Tab — Redesigned
  *
@@ -37,6 +38,10 @@ interface TenantSettingsTabProps {
   parentTenantId?: string;
 }
 
+/**
+ * Presentation UI component rendering the tenant settings tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function TenantSettingsTab({
   tenantId,
   tenantName,

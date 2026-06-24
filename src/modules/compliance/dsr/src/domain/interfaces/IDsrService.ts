@@ -1,7 +1,11 @@
 import type { DsrModel } from "../../data/models/DsrModels";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import type { DsrListParams, SubmitDsrRequest, ReviewDsrRequest } from "../entities/DsrRequests";
 
+/**
+ * Http API network service for i dsr.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface IDsrService {
   getAll(params: DsrListParams): Promise<PagedResult<DsrModel>>;
   getById(id: string): Promise<DsrModel>;

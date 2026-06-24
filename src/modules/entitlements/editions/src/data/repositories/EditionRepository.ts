@@ -14,8 +14,12 @@ import type {
   UpdateEditionRequest,
 } from "../../domain/entities/EditionRequests";
 import type { IEditionService } from "../../domain/interfaces/IEditionService";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
+/**
+ * Repository layer implementing client request queries for edition.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class EditionRepository implements IEditionRepository {
   constructor(private readonly service: IEditionService) {}
 

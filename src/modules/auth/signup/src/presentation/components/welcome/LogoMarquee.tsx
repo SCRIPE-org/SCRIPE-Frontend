@@ -20,6 +20,10 @@ interface LogoMarqueeProps {
   caption?: string;
 }
 
+/**
+ * Presentation UI component rendering the logo marquee.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function LogoMarquee({ logos, caption }: LogoMarqueeProps) {
   const { tokens, theme } = useSignupTheme();
 

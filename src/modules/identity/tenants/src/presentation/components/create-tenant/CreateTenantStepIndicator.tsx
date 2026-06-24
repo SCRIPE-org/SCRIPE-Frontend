@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * CreateTenantStepIndicator — Stepper navigation bar
  *
@@ -27,6 +28,10 @@ interface CreateTenantStepIndicatorProps {
   isRtl: boolean;
 }
 
+/**
+ * Presentation UI component rendering the create tenant step indicator.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function CreateTenantStepIndicator({
   currentStep,
   isStepValid,

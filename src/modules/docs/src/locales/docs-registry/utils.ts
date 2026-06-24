@@ -23,6 +23,9 @@ export function deepMerge(
   return result;
 }
 
+/**
+ * Exported function defining parameters and fields for merge all configurations.
+ */
 export function mergeAll(...sources: Record<string, any>[]): Record<string, any> {
   let result: Record<string, any> = {};
   for (const source of sources) {

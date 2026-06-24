@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useTemplatePickerViewModel } from "../viewmodels/useTemplatePickerViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Loader2, FileText } from "lucide-react";
@@ -11,24 +11,24 @@ import type { EmailTemplate } from "../../domain/entities/Email";
 import type { IEmailRepository } from "../../domain/interfaces/IEmailRepository";
 
 // ─── Props ──────────────────────────────────────────────────
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for template picker props.
+ */
 export interface TemplatePickerProps {
   repository: IEmailRepository;
   onSelect: (template: EmailTemplate) => void;
 }
 
+/**
+ * TemplatePicker Component
+ *
+ * Provides a dropdown list for selecting active email templates.
+ * Follows clean architecture by delegating query state to the TemplatePicker ViewModel.
+ */
 export function TemplatePicker({ repository, onSelect }: TemplatePickerProps) {
   const { t } = useI18n();
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["email-templates-list"],
-    queryFn: async () => {
-      const result = await repository.getEmailTemplates({ page: 1, pageSize: 100 });
-      return result.items.filter((tpl) => tpl.isActive);
-    },
-    staleTime: 5 * 60 * 1000,
-  });
-
-  const templates = data ?? [];
+  const { templates, isLoading } = useTemplatePickerViewModel({ repository });
 
   // Convert templates to GenericSelect options
   const options: GenericSelectOption[] = useMemo(() => {

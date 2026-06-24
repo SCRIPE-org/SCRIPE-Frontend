@@ -4,8 +4,11 @@ import type {
   UpdateOnboardingQuestionRequest,
   AnswerOptionRequest,
 } from "../entities/OnboardingQuestionRequests";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for onboarding questions list params.
+ */
 export interface OnboardingQuestionsListParams {
   page?: number;
   pageSize?: number;
@@ -14,6 +17,10 @@ export interface OnboardingQuestionsListParams {
   includeInactive?: boolean;
 }
 
+/**
+ * Repository layer implementing client request queries for i onboarding question.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export interface IOnboardingQuestionRepository {
   getAll(params: OnboardingQuestionsListParams): Promise<PagedResult<OnboardingQuestion>>;
   getById(id: string): Promise<OnboardingQuestion>;

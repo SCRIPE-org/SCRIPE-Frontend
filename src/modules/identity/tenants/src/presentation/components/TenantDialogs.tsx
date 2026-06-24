@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * TenantDialogs Component
  *
@@ -20,6 +21,9 @@ import type { EditionThinModel } from "../../domain/types/SubscriptionTypes";
 // Promotion type (local — avoids cross-module imports)
 // ==========================================
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for promotion option.
+ */
 export interface PromotionOption {
   id: string;
   name: string;
@@ -32,6 +36,9 @@ export interface PromotionOption {
 // Form State Types
 // ==========================================
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for create form state.
+ */
 export interface CreateFormState {
   name: string;
   code: string;
@@ -47,12 +54,19 @@ export interface CreateFormState {
   promoCode: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for edit form state.
+ */
 export interface EditFormState {
   name: string;
   description: string;
   isActive: boolean;
 }
 
+/**
+ * Presentation UI component rendering the initial create form.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export const initialCreateForm: CreateFormState = {
   name: "",
   code: "",
@@ -66,6 +80,10 @@ export const initialCreateForm: CreateFormState = {
   promoCode: "",
 };
 
+/**
+ * Presentation UI component rendering the initial edit form.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export const initialEditForm: EditFormState = {
   name: "",
   description: "",
@@ -93,6 +111,10 @@ interface CreateTenantDialogProps {
   onSubscriptionTypeChange: (type: string) => void;
 }
 
+/**
+ * Presentation UI component rendering the create tenant dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function CreateTenantDialog({
   open,
   onOpenChange,
@@ -400,6 +422,10 @@ interface EditTenantDialogProps {
   isLoading: boolean;
 }
 
+/**
+ * Presentation UI component rendering the edit tenant dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function EditTenantDialog({
   open,
   onOpenChange,

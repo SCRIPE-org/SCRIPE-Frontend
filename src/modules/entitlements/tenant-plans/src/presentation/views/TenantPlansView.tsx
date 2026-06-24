@@ -31,6 +31,10 @@ import { format } from "date-fns";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useRouter } from "next/navigation";
 
+/**
+ * Presentation UI component rendering the tenant plans view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function TenantPlansView() {
   const router = useRouter();
   useModuleLocales(() => import("../../../locales"), "tenant-plans");

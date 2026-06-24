@@ -29,6 +29,9 @@ interface Props {
   cardClasses?: string;
 }
 
+/**
+ * Exported constant defining parameters and fields for login comparison chart configurations.
+ */
 export const LoginComparisonChart = memo(function LoginComparisonChart({
   data,
   isLoading,

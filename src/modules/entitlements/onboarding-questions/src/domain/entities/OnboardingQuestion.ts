@@ -1,7 +1,15 @@
-import type { BaseEntity } from "@modules/identity/core/domain/types";
+import type { BaseEntity } from "@core/interfaces/common.interface";
 
+/**
+ * Domain model representing a Question Type structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type QuestionType = "SingleSelect" | "MultiSelect";
 
+/**
+ * Domain model representing a Answer Option Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface AnswerOptionData {
   id: string;
   value: string;
@@ -15,6 +23,10 @@ export interface AnswerOptionData {
   isActive: boolean;
 }
 
+/**
+ * Domain model representing a Onboarding Question Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface OnboardingQuestionData extends BaseEntity {
   key: string;
   editionCategoryId?: string;
@@ -35,6 +47,10 @@ export interface OnboardingQuestionData extends BaseEntity {
   options?: AnswerOptionData[];
 }
 
+/**
+ * Domain model representing a Onboarding Question structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class OnboardingQuestion {
   constructor(public readonly data: OnboardingQuestionData) {}
 

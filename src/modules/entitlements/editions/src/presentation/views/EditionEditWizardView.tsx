@@ -29,6 +29,10 @@ interface EditionEditWizardViewProps {
   editionId: string;
 }
 
+/**
+ * Presentation UI component rendering the edition edit wizard view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function EditionEditWizardView({ editionId }: EditionEditWizardViewProps) {
   useModuleLocales(() => import("../../../locales"), "editions");
   const { t } = useI18n();

@@ -44,6 +44,9 @@ const sections: DocSection[] = [
     language: "typescript",
     filename: "TanStack Query — ViewModel Pattern",
     code: `// Key factory for consistent cache keys
+/**
+ * Exported constant defining parameters and fields for employee keys configurations.
+ */
 export const employeeKeys = {
   all: ["employees"] as const,
   list: (filters: { page: number; search: string }) =>
@@ -53,6 +56,10 @@ export const employeeKeys = {
 };
 
 // Query hook
+/**
+ * React hook/ViewModel orchestrating state and data flows for employees.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
+ */
 export function useEmployees(filters: { page: number; search: string }) {
   const repo = container.employeeRepository;
 
@@ -68,6 +75,10 @@ export function useEmployees(filters: { page: number; search: string }) {
 }
 
 // Mutation hook (auto-invalidates cache)
+/**
+ * React hook/ViewModel orchestrating state and data flows for create employee.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
+ */
 export function useCreateEmployee() {
   const queryClient = useQueryClient();
 

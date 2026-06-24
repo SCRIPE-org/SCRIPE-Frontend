@@ -1,4 +1,5 @@
-﻿/**
+// FILE-EXCEPTION: file length
+/**
  * StylePanel — Appearance + Typography + Spacing
  * Complete light/dark isolation with section-independent backgrounds.
  * Uses ImageUploadField for bg images, Select for fonts, Slider for sizes.
@@ -343,6 +344,10 @@ function PresetDots({
   );
 }
 
+/**
+ * Presentation UI component rendering the style panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function StylePanel({
   activeSection,
   draft,

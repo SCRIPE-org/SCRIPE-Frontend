@@ -35,7 +35,10 @@ export class SsoService implements ISsoService {
     return this.api.post<SsoCallbackResultDto>(API_ENDPOINTS.AUTH.OIDC.CALLBACK, params);
   }
 
-  completeWorkspaceSelection(params: { token: string; tenantId: string }): Promise<SsoCallbackResultDto> {
+  completeWorkspaceSelection(params: {
+    token: string;
+    tenantId: string;
+  }): Promise<SsoCallbackResultDto> {
     return this.api.post<SsoCallbackResultDto>(
       API_ENDPOINTS.AUTH.OIDC.COMPLETE_WORKSPACE_SELECTION,
       params

@@ -20,6 +20,10 @@ import type {
   TestConnectionResultJson,
 } from "../models/IdentityProviderModel";
 
+/**
+ * Http API network service for identity provider.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class IdentityProviderService implements IIdentityProviderService {
   constructor(private readonly api: IApiService) {}
 

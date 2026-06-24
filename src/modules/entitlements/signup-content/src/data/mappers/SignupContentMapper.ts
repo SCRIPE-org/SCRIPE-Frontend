@@ -15,6 +15,9 @@ import {
   CustomerLogoDtoSchema,
 } from "../../presentation/schemas/signup-content.schema";
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class SignupContentMapper {
   static toEntity(model: unknown): AdminSignupContent {
     const parsed = safeParseApiResponse(AdminSignupContentDtoSchema, model, "AdminSignupContent");

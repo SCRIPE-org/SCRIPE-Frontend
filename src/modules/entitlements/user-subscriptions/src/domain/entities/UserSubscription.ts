@@ -1,7 +1,7 @@
 /**
  * UserSubscription Entity — Rich domain model for user-level subscriptions.
  */
-import type { BaseEntity } from "@modules/identity/core/domain/types";
+import type { BaseEntity } from "@core/interfaces/common.interface";
 
 /** Resolved feature from the user's active subscription plan. */
 export interface UserSubscriptionFeatureData {
@@ -12,6 +12,10 @@ export interface UserSubscriptionFeatureData {
   displayNameAr?: string;
 }
 
+/**
+ * Domain model representing a User Subscription Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface UserSubscriptionData extends BaseEntity {
   userId: string;
   userName?: string;
@@ -51,6 +55,10 @@ export interface UserSubscriptionData extends BaseEntity {
   features?: UserSubscriptionFeatureData[];
 }
 
+/**
+ * Domain model representing a User Subscription structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class UserSubscription {
   constructor(private readonly data: UserSubscriptionData) {}
 

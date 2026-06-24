@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * Edition Detail View — Thin Orchestrator
  *
@@ -30,6 +31,10 @@ interface EditionDetailViewProps {
   editionId: string;
 }
 
+/**
+ * Presentation UI component rendering the edition detail view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function EditionDetailView({ editionId }: EditionDetailViewProps) {
   useModuleLocales(() => import("../../../locales"), "editions");
   const { t, language } = useI18n();

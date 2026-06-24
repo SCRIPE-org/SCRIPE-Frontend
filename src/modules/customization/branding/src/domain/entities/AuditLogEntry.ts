@@ -63,4 +63,11 @@ export class AuditLogEntry {
   toProps(): AuditLogEntryProps {
     return { ...this.props };
   }
+
+  copyWith(updates: Partial<AuditLogEntryProps>): AuditLogEntry {
+    return new AuditLogEntry({
+      ...this.props,
+      ...updates,
+    } as AuditLogEntryProps);
+  }
 }

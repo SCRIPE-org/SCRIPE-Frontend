@@ -1,9 +1,14 @@
+// FILE-EXCEPTION: file length
 /**
  * Stripe Connect Domain Entities — Rich domain models with computed properties.
  */
 
 // ── Connect Account (Full Detail) ──
 
+/**
+ * Domain model representing a Connect Account Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface ConnectAccountData {
   id: string;
   tenantId: string;
@@ -26,6 +31,10 @@ export interface ConnectAccountData {
   effectiveCommissionRate: number;
 }
 
+/**
+ * Domain model representing a Connect Account structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class ConnectAccount {
   constructor(public readonly data: ConnectAccountData) {}
 
@@ -127,6 +136,10 @@ export class ConnectAccount {
 
 // ── Connect Account List Item ──
 
+/**
+ * Domain model representing a Connect Account List Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface ConnectAccountListData {
   id: string;
   tenantId: string;
@@ -141,6 +154,10 @@ export interface ConnectAccountListData {
   createdAt: string;
 }
 
+/**
+ * Domain model representing a Connect Account List Item structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class ConnectAccountListItem {
   constructor(public readonly data: ConnectAccountListData) {}
 
@@ -190,6 +207,10 @@ export class ConnectAccountListItem {
 
 // ── Commission ──
 
+/**
+ * Domain model representing a Commission Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface CommissionData {
   id: string;
   tenantId: string;
@@ -207,6 +228,10 @@ export interface CommissionData {
   createdAt: string;
 }
 
+/**
+ * Domain model representing a Commission structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class Commission {
   constructor(public readonly data: CommissionData) {}
 
@@ -266,6 +291,10 @@ export class Commission {
 
 // ── Dashboard ──
 
+/**
+ * Domain model representing a Commission Dashboard Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface CommissionDashboardData {
   totalCommission: number;
   totalRefunded: number;
@@ -276,6 +305,10 @@ export interface CommissionDashboardData {
   recentTrends: CommissionTrendPoint[];
 }
 
+/**
+ * Domain model representing a Commission Dashboard structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class CommissionDashboard {
   constructor(public readonly data: CommissionDashboardData) {}
 
@@ -311,12 +344,20 @@ export class CommissionDashboard {
 
 // ── Simple Value Types ──
 
+/**
+ * Domain model representing a Commission Trend Point structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface CommissionTrendPoint {
   date: string;
   amount: number;
   count: number;
 }
 
+/**
+ * Domain model representing a Top Tenant Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface TopTenantData {
   tenantId: string;
   totalCommission: number;
@@ -325,6 +366,10 @@ export interface TopTenantData {
 
 // ── Tenant Self-Service Transactions ──
 
+/**
+ * Domain model representing a Tenant Financial Summary Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface TenantFinancialSummaryData {
   totalGrossRevenue: number;
   totalPlatformFees: number;
@@ -335,6 +380,10 @@ export interface TenantFinancialSummaryData {
   currency: string;
 }
 
+/**
+ * Domain model representing a Tenant Financial Summary structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class TenantFinancialSummary {
   constructor(public readonly data: TenantFinancialSummaryData) {}
 
@@ -361,6 +410,10 @@ export class TenantFinancialSummary {
   }
 }
 
+/**
+ * Domain model representing a Tenant Transaction Item Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface TenantTransactionItemData {
   id: string;
   type: string;
@@ -376,6 +429,10 @@ export interface TenantTransactionItemData {
   transactionDate: string;
 }
 
+/**
+ * Domain model representing a Tenant Transaction Item structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class TenantTransactionItem {
   constructor(public readonly data: TenantTransactionItemData) {}
 
@@ -431,6 +488,10 @@ export class TenantTransactionItem {
   }
 }
 
+/**
+ * Domain model representing a Tenant Transactions Result structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface TenantTransactionsResult {
   summary: TenantFinancialSummary;
   transactions: {

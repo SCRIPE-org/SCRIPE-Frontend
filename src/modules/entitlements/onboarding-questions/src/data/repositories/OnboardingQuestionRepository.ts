@@ -13,8 +13,12 @@ import type {
   OnboardingQuestion,
   AnswerOptionData,
 } from "../../domain/entities/OnboardingQuestion";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 
+/**
+ * Repository layer implementing client request queries for onboarding question.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class OnboardingQuestionRepository implements IOnboardingQuestionRepository {
   constructor(private readonly service: IOnboardingQuestionService) {}
 

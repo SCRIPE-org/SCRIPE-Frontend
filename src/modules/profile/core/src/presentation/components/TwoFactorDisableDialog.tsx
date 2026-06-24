@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 /**
@@ -34,6 +35,10 @@ interface TwoFactorDisableDialogProps {
   disableError: string | null;
 }
 
+/**
+ * Presentation UI component rendering the two factor disable dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function TwoFactorDisableDialog({
   open,
   onOpenChange,

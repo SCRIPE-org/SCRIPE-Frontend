@@ -9,6 +9,10 @@ import type {
   ComparisonDataPoint,
 } from "../entities/AnalyticsEntities";
 
+/**
+ * Http API network service for i analytics.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface IAnalyticsService {
   getSummary(): Promise<AnalyticsSummary>;
   getEventDistribution(days?: number): Promise<DistributionData[]>;

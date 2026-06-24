@@ -20,9 +20,13 @@ import { Badge } from "@core/ui/badge";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { usePermissions } from "@core/providers/permission-provider";
 import type { Role } from "../../domain/entities/Role";
-import { AssignToGroupDialog } from "@modules/identity/user-groups/src/presentation/components/AssignToGroupDialog";
+import { AssignToGroupDialog } from "@modules/identity/core";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
+/**
+ * Presentation UI component rendering the roles view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function RolesView() {
   useModuleLocales(() => import("../../../locales"), "roles");
 

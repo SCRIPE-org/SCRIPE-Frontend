@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 /**
@@ -117,6 +118,9 @@ const kpiConfig: KpiItem[] = [
   },
 ];
 
+/**
+ * Exported constant defining parameters and fields for k p i cards section configurations.
+ */
 export const KPICardsSection = memo(function KPICardsSection({
   data,
   isLoading,

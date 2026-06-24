@@ -14,6 +14,10 @@ interface WebhookStatsCardsProps {
   webhook: WebhookSubscription;
 }
 
+/**
+ * Presentation UI component rendering the webhook stats cards.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function WebhookStatsCards({ webhook }: WebhookStatsCardsProps) {
   const { t } = useI18n();
 

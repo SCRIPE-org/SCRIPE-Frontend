@@ -2,10 +2,14 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { marketplaceContainer } from "../../../../di";
+import { marketplaceContainer } from "@modules/marketplace/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for reviews view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useReviewsViewModel() {
   const queryClient = useQueryClient();
   const { reviewsRepository } = marketplaceContainer;

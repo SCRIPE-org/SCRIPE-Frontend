@@ -22,6 +22,9 @@ import type {
 import { qk } from "@core/common/query-keys";
 
 // Backward-compatible local keys (delegates to qk factory)
+/**
+ * Exported constant defining parameters and fields for webhook keys configurations.
+ */
 export const webhookKeys = {
   all: qk.webhooks.all,
   list: (filters: Record<string, unknown>) => qk.webhooks.list(filters),
@@ -31,6 +34,10 @@ export const webhookKeys = {
   health: ["webhooks", "health"] as const,
 };
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for webhooks view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useWebhooksViewModel() {
   const { webhookRepository } = messagingContainer;
   const { t } = useI18n();

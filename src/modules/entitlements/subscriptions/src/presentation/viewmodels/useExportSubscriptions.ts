@@ -14,6 +14,9 @@ import { useState, useCallback } from "react";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { ExportFormat, ExportParams } from "../../domain/entities/SubscriptionExport";
 
+/**
+ * Exported type in the entitlements/subscriptions module.
+ */
 export type { ExportFormat };
 
 interface ExportOptions {
@@ -33,6 +36,10 @@ interface UseExportSubscriptionsResult {
   error: string | null;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for export subscriptions.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
+ */
 export function useExportSubscriptions(): UseExportSubscriptionsResult {
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);

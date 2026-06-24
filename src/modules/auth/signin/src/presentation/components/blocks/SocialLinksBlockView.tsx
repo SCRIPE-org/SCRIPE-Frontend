@@ -9,6 +9,10 @@ import { safeItems } from "./block-style-utils";
 
 const SIZE_CLASS = { sm: "h-8 min-w-8 text-xs", md: "h-10 min-w-10 text-sm", lg: "h-12 min-w-12" };
 
+/**
+ * Presentation UI component rendering the social links block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SocialLinksBlockView({ block }: { block: SocialLinksBlock }) {
   const props = block.props;
   return (

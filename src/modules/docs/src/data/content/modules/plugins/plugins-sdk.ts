@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 import { registerPage } from "../../../repositories/DocsRepository";
 import type { DocSection } from "../../../../domain/entities/DocSection";
 
@@ -217,6 +218,9 @@ public class MyPluginStartup : IPluginStartup
       {
         label: "modules.plugins.sdk.tab1Frontend",
         code: `// Expose your component via Module Federation
+/**
+ * Exported function defining parameters and fields for my plugin configurations.
+ */
 export default function MyPlugin({ installationId }: { installationId: string }) {
   return <div>Tier 1 Plugin — {installationId}</div>;
 }

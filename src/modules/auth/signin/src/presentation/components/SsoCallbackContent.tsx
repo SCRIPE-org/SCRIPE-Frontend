@@ -20,6 +20,10 @@ interface SsoCallbackContentProps {
   handleBack?: () => void;
 }
 
+/**
+ * Presentation UI component rendering the sso callback content.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function SsoCallbackContent({
   state,
   errorInfo,

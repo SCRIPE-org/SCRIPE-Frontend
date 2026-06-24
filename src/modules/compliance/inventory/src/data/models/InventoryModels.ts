@@ -16,6 +16,9 @@ export interface InventoryItemModel {
   notes?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for create data inventory request.
+ */
 export interface CreateDataInventoryRequest {
   moduleName: string;
   entityName: string;
@@ -26,4 +29,7 @@ export interface CreateDataInventoryRequest {
   legalBasis: string;
 }
 
+/**
+ * Exported type defining parameters and fields for update data inventory request configurations.
+ */
 export type UpdateDataInventoryRequest = CreateDataInventoryRequest;

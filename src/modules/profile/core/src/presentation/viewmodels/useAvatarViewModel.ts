@@ -14,6 +14,10 @@ import { useAppStore } from "@core/store/useAppStore";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for avatar view model.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
+ */
 export function useAvatarViewModel() {
   const repo = container.profileRepository;
   const queryClient = useQueryClient();

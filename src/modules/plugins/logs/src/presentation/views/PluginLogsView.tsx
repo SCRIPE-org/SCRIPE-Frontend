@@ -12,6 +12,10 @@ interface PluginLogsViewProps {
   installationId: string;
 }
 
+/**
+ * Presentation UI component rendering the plugin logs view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function PluginLogsView({ installationId }: PluginLogsViewProps) {
   const { t } = useI18n();
   const { logs, isLoading, isError, refetch, page, totalPages, goToPage, totalCount } =

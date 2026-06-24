@@ -27,6 +27,10 @@ interface SubTenantsTabProps {
   parentCode: string;
 }
 
+/**
+ * Presentation UI component rendering the sub tenants tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SubTenantsTab({ parentId, parentName, parentCode }: SubTenantsTabProps) {
   const { t, direction } = useI18n();
   const vm = useSubTenantsViewModel({ parentId, parentName, parentCode });

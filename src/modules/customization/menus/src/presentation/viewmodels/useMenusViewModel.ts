@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Menus ViewModel (Orchestrator)
  *
@@ -29,6 +30,9 @@ import { customizationContainer } from "@modules/customization/di";
 
 export type DropPosition = "before" | "inside" | "after";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for drop target.
+ */
 export interface DropTarget {
   nodeId: string;
   position: DropPosition;

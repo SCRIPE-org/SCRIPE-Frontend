@@ -15,6 +15,10 @@ interface WebhookStatusBadgeProps {
   isAutoDisabled?: boolean;
 }
 
+/**
+ * Presentation UI component rendering the webhook status badge.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function WebhookStatusBadge({ isActive, isAutoDisabled = false }: WebhookStatusBadgeProps) {
   const { t } = useI18n();
 

@@ -92,6 +92,10 @@ const TABS: { id: StudioPanel; icon: typeof Layout; labelKey: string; section?: 
   { id: "themes", icon: Store, labelKey: "studio.tab.themes", section: "system" },
 ];
 
+/**
+ * Presentation UI component rendering the studio sidebar.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function StudioSidebar(props: StudioSidebarProps) {
   const { t } = useI18n();
   const {

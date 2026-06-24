@@ -16,6 +16,10 @@ interface FeatureControlProps {
   onChange: (value: string) => void;
 }
 
+/**
+ * Presentation UI component rendering the feature control.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function FeatureControl({ valueType, value, onChange }: FeatureControlProps) {
   if (valueType === "Boolean") {
     return (

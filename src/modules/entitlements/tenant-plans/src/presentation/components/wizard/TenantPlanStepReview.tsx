@@ -4,13 +4,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import type { CreateTenantPlanRequest } from "../../../domain/entities/TenantPlanRequests";
 import { CheckCircle2, AlertCircle } from "lucide-react";
-import { BooleanIndicator } from "@modules/entitlements/editions/src/presentation/components/comparison";
+import { BooleanIndicator } from "@modules/entitlements/core";
 
 interface TenantPlanStepReviewProps {
   form: Partial<CreateTenantPlanRequest>;
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the tenant plan step review.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function TenantPlanStepReview({ form, t }: TenantPlanStepReviewProps) {
   const missingRequired = !form.name;
 

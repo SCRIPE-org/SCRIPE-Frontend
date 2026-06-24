@@ -4,6 +4,9 @@
 export { TenantPlanService } from "./services/TenantPlanService";
 export { TenantPlanRepository } from "./repositories/TenantPlanRepository";
 export { TenantPlanMapper } from "./mappers/TenantPlanMapper";
+/**
+ * Exported type in the entitlements/tenant-plans module.
+ */
 export type {
   TenantPlanModel,
   TenantPlanListModel,

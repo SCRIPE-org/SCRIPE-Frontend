@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * SSO Button Preview
  *
@@ -90,6 +91,10 @@ const DefaultProtocolIcon = () => (
   </svg>
 );
 
+/**
+ * Presentation UI component rendering the s s o button preview.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function SSOButtonPreview({ name, iconUrl, buttonColor, buttonLabel }: Props) {
   const { t } = useI18n();
 

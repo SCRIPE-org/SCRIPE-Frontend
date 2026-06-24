@@ -8,11 +8,19 @@ export interface EditionPriceItem {
   amount: number;
 }
 
+/**
+ * Domain model representing a Edition Price List Response structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface EditionPriceListResponse {
   editionId: string;
   prices: EditionPriceItem[];
 }
 
+/**
+ * Domain model representing a Set Edition Prices Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface SetEditionPricesRequest {
   prices: EditionPriceItem[];
 }

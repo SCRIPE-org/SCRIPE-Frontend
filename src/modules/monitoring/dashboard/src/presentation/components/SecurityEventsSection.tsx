@@ -34,6 +34,9 @@ const eventConfig: Record<string, { icon: typeof AlertTriangle; color: string; b
     PasswordReset: { icon: KeyRound, color: "text-blue-500", bgColor: "bg-blue-500/10" },
   };
 
+/**
+ * Exported constant defining parameters and fields for security events section configurations.
+ */
 export const SecurityEventsSection = memo(function SecurityEventsSection({
   data,
   isLoading,

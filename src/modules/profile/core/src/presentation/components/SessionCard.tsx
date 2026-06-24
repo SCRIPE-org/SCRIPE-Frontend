@@ -43,12 +43,13 @@ function parseDeviceDetails(deviceInfo: string) {
   }
 
   // If it's not JSON, treat the entire cleaned string as the userAgent!
-  const ua = isJson ? (data.userAgent || "") : cleaned;
-  let os = isJson ? (data.platform || "Unknown OS") : "Unknown OS";
+  const ua = isJson ? data.userAgent || "" : cleaned;
+  let os = isJson ? data.platform || "Unknown OS" : "Unknown OS";
   let browser = "Unknown Browser";
 
   // Parse OS from user agent
-  if (ua.includes("Windows NT 10.0") || ua.includes("Windows 10") || ua.includes("Windows 11")) os = "Windows 10/11";
+  if (ua.includes("Windows NT 10.0") || ua.includes("Windows 10") || ua.includes("Windows 11"))
+    os = "Windows 10/11";
   else if (ua.includes("Windows NT 6.3")) os = "Windows 8.1";
   else if (ua.includes("Windows NT 6.2")) os = "Windows 8";
   else if (ua.includes("Windows NT 6.1")) os = "Windows 7";
@@ -95,11 +96,15 @@ function parseDeviceDetails(deviceInfo: string) {
   };
 }
 
+/**
+ * Presentation UI component rendering the session card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SessionCard({ session, onRevoke, isRevoking }: SessionCardProps) {
   const { t } = useI18n();
   const details = parseDeviceDetails(session.deviceInfo);
   const lowerInfo = (session.deviceInfo || "").toLowerCase();
-  
+
   const isMobile =
     details.os === "Android" ||
     details.os === "iOS" ||
@@ -132,7 +137,7 @@ export function SessionCard({ session, onRevoke, isRevoking }: SessionCardProps)
             <div className="flex items-center gap-2">
               <h4 className="text-sm font-medium text-foreground">{details.title}</h4>
               {session.isCurrent && (
-                <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
                   {t("profile.sessions.current")}
                 </span>
               )}
@@ -187,4 +192,3 @@ export function SessionCard({ session, onRevoke, isRevoking }: SessionCardProps)
     </div>
   );
 }
-

@@ -2,8 +2,12 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { marketplaceContainer } from "../../../../di";
+import { marketplaceContainer } from "@modules/marketplace/di";
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for financials view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useFinancialsViewModel() {
   const queryClient = useQueryClient();
   const { financialsRepository } = marketplaceContainer;

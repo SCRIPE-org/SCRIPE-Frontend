@@ -12,6 +12,10 @@ interface DsrDeadlineCellProps {
   overdueLabel: string;
 }
 
+/**
+ * Presentation UI component rendering the dsr deadline cell.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DsrDeadlineCell({
   dsr,
   remainingLabel,

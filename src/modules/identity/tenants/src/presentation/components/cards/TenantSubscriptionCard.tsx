@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import { useState, useMemo } from "react";
@@ -164,6 +165,10 @@ function getConvertOptions(
 
 // ── Main Component ──
 
+/**
+ * Presentation UI component rendering the tenant subscription card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps) {
   const { t } = useI18n();
   const [selectedEditionId, setSelectedEditionId] = useState("");

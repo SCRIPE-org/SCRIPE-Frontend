@@ -27,6 +27,18 @@ let _container: EcosystemContainer | null = null;
  * Get the ecosystem container (lazy initialization)
  */
 export function getEcosystemContainer(): EcosystemContainer {
+  if (typeof window === "undefined") {
+    const dummyProxy = new Proxy({} as any, {
+      get() {
+        return () => Promise.resolve({});
+      },
+    });
+    return {
+      recycleBinService: dummyProxy,
+      recycleBinRepository: dummyProxy,
+    };
+  }
+
   if (!_container) {
     const apiService = getModuleApiService("IDENTITY");
     const recycleBinService = new RecycleBinService(apiService);

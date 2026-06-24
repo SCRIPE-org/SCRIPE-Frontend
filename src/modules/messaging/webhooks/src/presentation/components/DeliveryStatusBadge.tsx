@@ -49,6 +49,10 @@ const STATUS_CONFIG: Record<
   },
 };
 
+/**
+ * Presentation UI component rendering the delivery status badge.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DeliveryStatusBadge({ status, className }: DeliveryStatusBadgeProps) {
   const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.Pending;
   const Icon = config.icon;

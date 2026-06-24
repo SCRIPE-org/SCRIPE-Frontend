@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -66,6 +67,10 @@ const TYPE_COLORS: Record<string, string> = {
     "bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-400 border-sky-200 dark:border-sky-800",
 };
 
+/**
+ * Presentation UI component rendering the subscriptions data table.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SubscriptionsDataTable({
   subscriptions,
   search,

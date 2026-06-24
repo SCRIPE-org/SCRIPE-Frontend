@@ -15,8 +15,12 @@ import type {
   CreatePromotionRequest,
   UpdatePromotionRequest,
 } from "../entities/TenantPlanRequests";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
+/**
+ * Repository layer implementing client request queries for i tenant plan.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export interface ITenantPlanRepository {
   // Plans
   getAll(params: PaginationParams): Promise<PagedResult<TenantPlan>>;

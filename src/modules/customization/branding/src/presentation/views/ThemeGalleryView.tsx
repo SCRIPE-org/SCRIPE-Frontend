@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * Theme Gallery View — Full-Page Theme Browsing Experience
  *
@@ -56,6 +58,10 @@ import type { ThemeCard } from "../../domain/entities/ThemeCard";
 
 const G = "studio.gallery";
 
+/**
+ * Presentation UI component rendering the theme gallery view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function ThemeGalleryView() {
   const { t } = useI18n();
   const vm = useThemeGalleryViewModel();

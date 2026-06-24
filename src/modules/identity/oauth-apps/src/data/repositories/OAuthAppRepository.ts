@@ -18,6 +18,10 @@ import type {
 } from "../../domain/entities/OAuthApp";
 import { OAuthAppMapper } from "../mappers/OAuthAppMapper";
 
+/**
+ * Repository layer implementing client request queries for o auth app.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class OAuthAppRepository implements IOAuthAppRepository {
   constructor(private readonly service: IOAuthAppService) {}
 

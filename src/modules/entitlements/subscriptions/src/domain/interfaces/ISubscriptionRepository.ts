@@ -9,6 +9,10 @@ import type {
 } from "../entities/Subscription";
 import type { ExportParams, ExportFileResult } from "../entities/SubscriptionExport";
 
+/**
+ * Repository layer implementing client request queries for i subscription.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export interface ISubscriptionRepository {
   // Queries
   getAll(): Promise<GlobalSubscriptionItem[]>;

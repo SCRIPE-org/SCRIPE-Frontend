@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 /**
@@ -20,6 +21,10 @@ interface PasswordChangeFormProps {
   success: boolean;
 }
 
+/**
+ * Presentation UI component rendering the password change form.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function PasswordChangeForm({
   isTwoFactorEnabled,
   onSubmit,

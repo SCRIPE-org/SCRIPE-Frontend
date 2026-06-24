@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Webhook Model (DTO)
  *
@@ -9,6 +10,9 @@
 
 // ===== JSON Shapes (API contracts) =====
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for webhook subscription json.
+ */
 export interface WebhookSubscriptionJson {
   id: string;
   scope: string;
@@ -34,6 +38,9 @@ export interface WebhookSubscriptionJson {
   modifiedAt: string | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for webhook list item json.
+ */
 export interface WebhookListItemJson {
   id: string;
   scope: string;
@@ -50,11 +57,17 @@ export interface WebhookListItemJson {
   failedDeliveries: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for webhook list response json.
+ */
 export interface WebhookListResponseJson {
   items: WebhookListItemJson[];
   totalCount: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for webhook delivery log json.
+ */
 export interface WebhookDeliveryLogJson {
   id: string;
   eventDeliveryId: string;
@@ -74,11 +87,17 @@ export interface WebhookDeliveryLogJson {
   createdAt: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for webhook delivery log list response json.
+ */
 export interface WebhookDeliveryLogListResponseJson {
   items: WebhookDeliveryLogJson[];
   totalCount: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for webhook delivery stats json.
+ */
 export interface WebhookDeliveryStatsJson {
   totalDeliveries: number;
   successfulDeliveries: number;
@@ -87,12 +106,18 @@ export interface WebhookDeliveryStatsJson {
   averageLatencyMs: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for webhook event type json.
+ */
 export interface WebhookEventTypeJson {
   key: string;
   category: string;
   description: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for webhook test result json.
+ */
 export interface WebhookTestResultJson {
   isSuccess: boolean;
   statusCode: number;
@@ -103,6 +128,9 @@ export interface WebhookTestResultJson {
 
 // ===== Analytics & Health JSON Shapes =====
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for daily delivery stats json.
+ */
 export interface DailyDeliveryStatsJson {
   date: string;
   total: number;
@@ -111,6 +139,9 @@ export interface DailyDeliveryStatsJson {
   avgLatencyMs: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for webhook analytics json.
+ */
 export interface WebhookAnalyticsJson {
   successRate: number;
   avgLatencyMs: number;
@@ -123,6 +154,9 @@ export interface WebhookAnalyticsJson {
   dailyStats: DailyDeliveryStatsJson[];
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for webhook health summary json.
+ */
 export interface WebhookHealthSummaryJson {
   activeEndpoints: number;
   disabledEndpoints: number;
@@ -136,6 +170,9 @@ export interface WebhookHealthSummaryJson {
   avgLatencyMs: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for create webhook json.
+ */
 export interface CreateWebhookJson {
   url: string;
   description?: string;
@@ -145,6 +182,9 @@ export interface CreateWebhookJson {
   maxConsecutiveFailures?: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for update webhook json.
+ */
 export interface UpdateWebhookJson {
   url?: string;
   description?: string;

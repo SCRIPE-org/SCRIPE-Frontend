@@ -53,6 +53,9 @@ export interface DiscoveryResult {
   topPriority: string | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for discovery view model.
+ */
 export interface DiscoveryViewModel {
   // ── Load state ─────────────────────────────────────────────────────────────
   isLoading: boolean;
@@ -114,6 +117,10 @@ function deriveTopPriority(
   return answers[priorities.key]?.[0] ?? null;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for discovery.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useDiscovery(): DiscoveryViewModel {
   const { language } = useI18n();
 

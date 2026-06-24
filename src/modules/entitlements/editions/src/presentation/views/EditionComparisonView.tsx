@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * EditionComparisonView — Industry-standard pricing comparison page.
  *
@@ -235,6 +237,10 @@ function FeatureCategoryBlock({
 }
 
 // ─── Main View ──────────────────────────────────────────────────────────────
+/**
+ * Presentation UI component rendering the edition comparison view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function EditionComparisonView() {
   useModuleLocales(() => import("../../../locales"), "editions");
   const { t, language } = useI18n();

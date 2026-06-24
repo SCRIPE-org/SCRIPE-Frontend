@@ -7,10 +7,13 @@ import type {
   LeadActivity,
   LeadCommunicationLog,
 } from "../entities/PlatformLead";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 
 // ── Wizard Types (domain-level) ────────────────────────────────────────────────
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for edition for conversion.
+ */
 export interface EditionForConversion {
   id: string;
   name: string;
@@ -25,11 +28,17 @@ export interface EditionForConversion {
   isFeatured: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for edition feature group.
+ */
 export interface EditionFeatureGroup {
   category: string;
   features: EditionFeatureItem[];
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for edition feature item.
+ */
 export interface EditionFeatureItem {
   featureId: string;
   featureName: string;
@@ -42,11 +51,17 @@ export interface EditionFeatureItem {
   sortOrder: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for feature override.
+ */
 export interface FeatureOverride {
   featureId: string;
   value: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for status email preview.
+ */
 export interface StatusEmailPreview {
   subject: string;
   bodyHtml: string;
@@ -56,6 +71,9 @@ export interface StatusEmailPreview {
   recipientName: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for leads list params.
+ */
 export interface LeadsListParams {
   page?: number;
   pageSize?: number;
@@ -63,6 +81,9 @@ export interface LeadsListParams {
   search?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for update lead status params.
+ */
 export interface UpdateLeadStatusParams {
   id: string;
   status: LeadStatus;
@@ -75,6 +96,9 @@ export interface UpdateLeadStatusParams {
   emailBodyOverride?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for create lead params.
+ */
 export interface CreateLeadParams {
   companyName: string;
   contactName: string;
@@ -85,6 +109,9 @@ export interface CreateLeadParams {
   notes?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for convert lead params.
+ */
 export interface ConvertLeadParams {
   /** Encrypted edition ID. Null = resolve from lead's EditionKey. */
   editionId?: string;
@@ -116,7 +143,9 @@ export interface ConvertLeadParams {
   featureOverrides?: FeatureOverride[];
 }
 
-
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for convert lead result.
+ */
 export interface ConvertLeadResult {
   tenantId: string;
   adminId: string;
@@ -127,12 +156,18 @@ export interface ConvertLeadResult {
   editionAssignmentError?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for assign lead params.
+ */
 export interface AssignLeadParams {
   /** Encrypted admin ID. Null = unassign. */
   adminId?: string;
   note?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for assignable admin.
+ */
 export interface AssignableAdmin {
   id: string;
   username: string;
@@ -142,6 +177,9 @@ export interface AssignableAdmin {
   isPlatformAdmin: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for bulk lead status result.
+ */
 export interface BulkLeadStatusResult {
   updated: number;
   notFound: number;
@@ -149,6 +187,10 @@ export interface BulkLeadStatusResult {
   failedIds: string[];
 }
 
+/**
+ * Repository layer implementing client request queries for i leads.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export interface ILeadsRepository {
   getAll(params: LeadsListParams): Promise<PagedResult<PlatformLeadListItem>>;
   getById(id: string): Promise<PlatformLead>;

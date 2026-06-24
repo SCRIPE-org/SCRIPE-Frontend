@@ -3,6 +3,10 @@
 import type { DividerBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { blockColor, clamp } from "./block-style-utils";
 
+/**
+ * Presentation UI component rendering the divider block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DividerBlockView({ block }: { block: DividerBlock }) {
   const props = block.props;
   if (props.style === "space") return <div style={{ height: clamp(props.thickness, 8, 64, 24) }} />;

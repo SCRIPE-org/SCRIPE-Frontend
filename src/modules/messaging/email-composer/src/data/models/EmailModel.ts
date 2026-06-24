@@ -9,6 +9,9 @@
 
 // ===== JSON Shapes (API contracts) =====
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for email recipient json.
+ */
 export interface EmailRecipientJson {
   id: string;
   email: string;
@@ -16,6 +19,9 @@ export interface EmailRecipientJson {
   type: "admin" | "user" | "custom";
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for sent email json.
+ */
 export interface SentEmailJson {
   id: string;
   to: string;
@@ -36,11 +42,17 @@ export interface SentEmailJson {
   attachments: string | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for sent email list response json.
+ */
 export interface SentEmailListResponseJson {
   items: SentEmailJson[];
   totalCount: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for email template json.
+ */
 export interface EmailTemplateJson {
   id: string;
   key: string;
@@ -58,11 +70,17 @@ export interface EmailTemplateJson {
   lastUsedAt: string | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for email template list response json.
+ */
 export interface EmailTemplateListResponseJson {
   items: EmailTemplateJson[];
   totalCount: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for send manual email json.
+ */
 export interface SendManualEmailJson {
   recipientType: string;
   recipientId: string | null;
@@ -79,6 +97,9 @@ export interface SendManualEmailJson {
   bcc?: string[];
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for attachment upload result json.
+ */
 export interface AttachmentUploadResultJson {
   fileName: string;
   size: number;

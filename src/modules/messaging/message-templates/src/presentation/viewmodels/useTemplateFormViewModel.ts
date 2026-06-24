@@ -17,8 +17,14 @@ import { DEFAULT_DESIGN } from "../components/DesignVariablesPanel";
 
 const QUERY_KEY = ["message-templates"];
 
+/**
+ * Exported type defining parameters and fields for template form mode configurations.
+ */
 export type TemplateFormMode = "create" | "edit";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for template form values.
+ */
 export interface TemplateFormValues {
   key: string;
   channel: MessageChannel;
@@ -32,6 +38,10 @@ export interface TemplateFormValues {
   designVariables: DesignVariables;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for template form view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useTemplateFormViewModel() {
   const params = useParams();
   const router = useRouter();

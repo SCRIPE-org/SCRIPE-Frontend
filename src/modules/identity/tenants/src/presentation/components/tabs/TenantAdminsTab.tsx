@@ -9,13 +9,17 @@
 
 import { useI18n } from "@core/providers/i18n-provider";
 // Correct usage: Import public view from Admin module public API
-import { AdminsView } from "@modules/identity/admin";
+import { AdminsView } from "@modules/identity/core";
 
 interface TenantAdminsTabProps {
   tenantId: string;
   tenantName: string;
 }
 
+/**
+ * Presentation UI component rendering the tenant admins tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function TenantAdminsTab({ tenantId, tenantName }: TenantAdminsTabProps) {
   const { t } = useI18n();
 

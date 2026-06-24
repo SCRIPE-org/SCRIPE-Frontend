@@ -7,6 +7,9 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { EditionVersion } from "../../domain/entities/EditionVersion";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for versions view model result.
+ */
 export interface VersionsViewModelResult {
   versions: EditionVersion[];
   isLoading: boolean;
@@ -36,6 +39,10 @@ export interface VersionsViewModelResult {
   cancelMutation: { mutate: (id: string) => void; isPending: boolean };
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for versions view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useVersionsViewModel(editionId: string): VersionsViewModelResult {
   const { t } = useI18n();
   const { success, error: toastError } = useEnhancedToast();

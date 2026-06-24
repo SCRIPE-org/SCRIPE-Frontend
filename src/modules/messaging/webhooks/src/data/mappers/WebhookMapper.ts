@@ -89,6 +89,9 @@ const WebhookListItemModelSchema = z.object({
   failedDeliveries: z.number().int().optional().default(0),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class WebhookMapper {
   /**
    * Convert WebhookSubscriptionModel → WebhookSubscription Entity

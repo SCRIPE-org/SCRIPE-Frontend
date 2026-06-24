@@ -1,7 +1,7 @@
 /**
  * Edition Entity
  */
-import type { BaseEntity } from "@modules/identity/core/domain/types";
+import type { BaseEntity } from "@core/interfaces/common.interface";
 
 export interface EditionFeatureDto {
   featureId: string;
@@ -34,6 +34,10 @@ export interface EditionPriceData {
   amount: number;
 }
 
+/**
+ * Domain model representing a Edition Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface EditionData extends BaseEntity {
   name: string;
   displayNameEn: string;
@@ -81,6 +85,10 @@ export interface EditionData extends BaseEntity {
   isFree: boolean;
 }
 
+/**
+ * Domain model representing a Edition structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class Edition {
   constructor(private readonly data: EditionData) {}
 

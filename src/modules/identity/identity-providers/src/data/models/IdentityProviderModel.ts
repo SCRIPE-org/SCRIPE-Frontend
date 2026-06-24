@@ -9,6 +9,9 @@
 
 // ===== JSON Shapes (API contracts) =====
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for identity provider json.
+ */
 export interface IdentityProviderJson {
   id: string;
   name: string;
@@ -38,6 +41,9 @@ export interface IdentityProviderJson {
   modifiedAt: string | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for identity provider list item json.
+ */
 export interface IdentityProviderListItemJson {
   id: string;
   name: string;
@@ -52,11 +58,17 @@ export interface IdentityProviderListItemJson {
   createdAt: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for identity provider list response json.
+ */
 export interface IdentityProviderListResponseJson {
   items: IdentityProviderListItemJson[];
   totalCount: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for test connection result json.
+ */
 export interface TestConnectionResultJson {
   isSuccess: boolean;
   message: string;
@@ -64,6 +76,9 @@ export interface TestConnectionResultJson {
   discoveredEndpoints: string[] | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for create identity provider json.
+ */
 export interface CreateIdentityProviderJson {
   name: string;
   slug: string;
@@ -88,6 +103,9 @@ export interface CreateIdentityProviderJson {
   displayOrder?: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for update identity provider json.
+ */
 export interface UpdateIdentityProviderJson {
   name?: string;
   slug?: string;
@@ -114,6 +132,9 @@ export interface UpdateIdentityProviderJson {
 
 // ===== Model Classes =====
 
+/**
+ * Exported class defining parameters and fields for identity provider model configurations.
+ */
 export class IdentityProviderModel {
   constructor(
     public readonly id: string,
@@ -176,6 +197,9 @@ export class IdentityProviderModel {
   }
 }
 
+/**
+ * Exported class defining parameters and fields for identity provider list item model configurations.
+ */
 export class IdentityProviderListItemModel {
   constructor(
     public readonly id: string,

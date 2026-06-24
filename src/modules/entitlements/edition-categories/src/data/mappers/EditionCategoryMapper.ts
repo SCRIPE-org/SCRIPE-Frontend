@@ -5,6 +5,9 @@ import type {
   UpdateEditionCategoryRequest,
 } from "../../domain/entities/EditionCategoryRequests";
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class EditionCategoryMapper {
   static toEntity(model: EditionCategoryModel): EditionCategory {
     return new EditionCategory({

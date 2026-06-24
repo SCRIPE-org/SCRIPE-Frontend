@@ -49,6 +49,10 @@ interface Props {
   isTesting: boolean;
 }
 
+/**
+ * Presentation UI component rendering the identity provider card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function IdentityProviderCard({
   item,
   onEdit,

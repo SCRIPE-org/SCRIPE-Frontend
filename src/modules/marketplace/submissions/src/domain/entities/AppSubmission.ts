@@ -1,3 +1,7 @@
+/**
+ * Domain model representing a App Submission Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface AppSubmissionData {
   id: string;
   appListingId: string;
@@ -10,6 +14,10 @@ export interface AppSubmissionData {
   reviewedAt: string | null;
 }
 
+/**
+ * Domain model representing a App Submission structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class AppSubmission {
   constructor(private readonly data: AppSubmissionData) {}
   get id() {

@@ -52,6 +52,10 @@ interface ProfilePreviewProps {
   variant?: "sidebar" | "inline";
 }
 
+/**
+ * Presentation UI component rendering the profile preview.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ProfilePreview({ questions, answers, variant = "sidebar" }: ProfilePreviewProps) {
   const { tokens } = useSignupTheme();
   const { t } = useI18n();

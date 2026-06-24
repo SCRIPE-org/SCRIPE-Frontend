@@ -1,13 +1,17 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { IEditionCategoryService } from "../../domain/interfaces/IEditionCategoryService";
 import type { EditionCategoryModel } from "../models/EditionCategoryModels";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 import type {
   CreateEditionCategoryRequest,
   UpdateEditionCategoryRequest,
 } from "../../domain/entities/EditionCategoryRequests";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 
+/**
+ * Http API network service for edition category.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class EditionCategoryService implements IEditionCategoryService {
   constructor(private readonly api: IApiService) {}
 

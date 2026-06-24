@@ -10,24 +10,37 @@ import type { SecurityLogEntry } from "../entities/SecurityLogEntry";
 import type { ExternalLogin } from "../entities/ExternalLogin";
 import type { LinkExternalLoginDto } from "../types/ProfileTypes";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for update profile request.
+ */
 export interface UpdateProfileRequest {
   firstName: string;
   lastName: string;
   phoneNumber: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for change password request.
+ */
 export interface ChangePasswordRequest {
   currentPassword: string;
   newPassword: string;
   twoFactorCode?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for enable2 f a result.
+ */
 export interface Enable2FAResult {
   qrCodeDataUri: string;
   manualEntryKey: string;
   backupCodes: string[];
 }
 
+/**
+ * Repository layer implementing client request queries for i profile.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export interface IProfileRepository {
   // Profile
   getProfile(): Promise<AdminProfile>;

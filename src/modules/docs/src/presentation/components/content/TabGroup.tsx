@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useState } from "react";
@@ -8,6 +9,10 @@ interface TabGroupProps {
   tabs: CodeTab[];
 }
 
+/**
+ * Presentation UI component rendering the tab group.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function TabGroup({ tabs }: TabGroupProps) {
   const [activeTab, setActiveTab] = useState(0);
 

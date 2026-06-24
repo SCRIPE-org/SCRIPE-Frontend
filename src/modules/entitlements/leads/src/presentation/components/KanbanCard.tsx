@@ -11,6 +11,10 @@ interface KanbanCardProps {
   onDragEnd?: () => void;
 }
 
+/**
+ * Presentation UI component rendering the kanban card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function KanbanCard({ lead, onClick, onDragStart, onDragEnd }: KanbanCardProps) {
   const { t } = useI18n();
 

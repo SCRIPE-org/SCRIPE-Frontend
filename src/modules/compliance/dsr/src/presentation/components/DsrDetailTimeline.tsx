@@ -10,6 +10,10 @@ interface DsrDetailTimelineProps {
   statusMetaMap: Record<string, { labelKey: string }>;
 }
 
+/**
+ * Presentation UI component rendering the dsr detail timeline.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DsrDetailTimeline({ dsr, t, statusMetaMap }: DsrDetailTimelineProps) {
   return (
     <Card>

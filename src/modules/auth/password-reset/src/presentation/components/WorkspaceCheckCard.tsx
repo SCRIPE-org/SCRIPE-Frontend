@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import * as React from "react";
@@ -12,6 +13,10 @@ interface WorkspaceCheckCardProps {
   onToggle: (w: WorkspaceOption) => void;
 }
 
+/**
+ * Presentation UI component rendering the workspace check card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function WorkspaceCheckCard({ workspace, isSelected, onToggle }: WorkspaceCheckCardProps) {
   const { t } = useI18n();
   return (

@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 /**
@@ -24,6 +25,10 @@ interface AvatarUploadProps {
   error: string | null;
 }
 
+/**
+ * Presentation UI component rendering the avatar upload.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function AvatarUpload({
   currentImageUrl,
   initials,

@@ -5,13 +5,17 @@
 import type { IInventoryRepository } from "../../domain/interfaces/IInventoryRepository";
 import type { IInventoryService, InventoryParams } from "../../domain/interfaces/IInventoryService";
 import type { InventoryItem } from "../../domain/entities/InventoryItem";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import { InventoryMapper } from "../mappers/InventoryMapper";
 import type {
   CreateDataInventoryRequest,
   UpdateDataInventoryRequest,
 } from "../models/InventoryModels";
 
+/**
+ * Repository layer implementing client request queries for inventory.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class InventoryRepository implements IInventoryRepository {
   constructor(private readonly service: IInventoryService) {}
 

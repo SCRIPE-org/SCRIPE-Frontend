@@ -11,6 +11,10 @@ import type {
   EventTypeCount,
 } from "../entities/DashboardEntities";
 
+/**
+ * Repository layer implementing client request queries for i dashboard.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export interface IDashboardRepository {
   getSummary(): Promise<DashboardSummary>;
   getLoginActivity(days?: number): Promise<LoginActivityPoint[]>;

@@ -54,10 +54,7 @@ export interface ILeadsService {
   /** Append a standalone CRM note to the lead's activity timeline. */
   addNote(id: string, note: string): Promise<void>;
   /** Send an email to a lead and log the communication. */
-  sendEmail(
-    leadId: string,
-    data: SendLeadEmailRequest
-  ): Promise<{ logId: string }>;
+  sendEmail(leadId: string, data: SendLeadEmailRequest): Promise<{ logId: string }>;
   /** Retrieve all communication logs for a lead. */
   getCommunicationLogs(leadId: string): Promise<LeadCommunicationLogDto[]>;
   /** Close a lead (CRM soft-close — sets status to Closed). */

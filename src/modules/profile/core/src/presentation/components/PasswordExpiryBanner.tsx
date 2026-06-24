@@ -13,6 +13,10 @@ interface PasswordExpiryBannerProps {
   passwordLastChanged: Date | null;
 }
 
+/**
+ * Presentation UI component rendering the password expiry banner.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function PasswordExpiryBanner({
   isExpired,
   daysRemaining,

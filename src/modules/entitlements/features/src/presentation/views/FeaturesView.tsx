@@ -13,6 +13,10 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { CatalogView } from "../components/CatalogView";
 import { EffectiveFeaturesView } from "../components/EffectiveFeaturesView";
 
+/**
+ * Presentation UI component rendering the features view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function FeaturesView() {
   useModuleLocales(() => import("../../../locales"), "features");
   const { t, language } = useI18n();

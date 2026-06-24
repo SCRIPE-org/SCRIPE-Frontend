@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Identity Provider Detail ViewModel
  *
@@ -15,6 +16,9 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { identityProviderKeys } from "./useIdentityProvidersViewModel";
 
 // ─── Form State ──────────────────────────────────────────────────
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for identity provider form state.
+ */
 export interface IdentityProviderFormState {
   // General
   name: string;
@@ -79,6 +83,10 @@ const DEFAULT_STATE: IdentityProviderFormState = {
 };
 
 // ─── Hook ─────────────────────────────────────────────────────────
+/**
+ * React hook/ViewModel orchestrating state and data flows for identity provider detail view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useIdentityProviderDetailViewModel(providerId?: string) {
   const { identityProviderRepository } = identityContainer;
   const { t } = useI18n();

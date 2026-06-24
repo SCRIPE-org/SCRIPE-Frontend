@@ -17,6 +17,10 @@ import type {
   UpdateFeatureDefinitionRequest,
 } from "../../domain/entities/TenantPlanRequests";
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for feature definition form view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useFeatureDefinitionFormViewModel(featureId?: string) {
   const { t } = useI18n();
   const router = useRouter();

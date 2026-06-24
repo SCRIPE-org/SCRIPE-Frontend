@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * DemoBundles -- 12+ fully-defined theme experience bundles
  *
@@ -97,6 +98,9 @@ function makeLoginTheme(config: {
   });
 }
 
+/**
+ * Exported constant defining parameters and fields for d e m o_ b u n d l e s configurations.
+ */
 export const DEMO_BUNDLES: ThemeBundleData[] = [
   // ── 1. Corporate Elite ─────────────────────────────────
   {

@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -18,6 +19,10 @@ import type { NotificationType, NotificationCategory } from "../../domain/entiti
 const TITLE_MAX = 150;
 const MESSAGE_MAX = 2000;
 
+/**
+ * Presentation UI component rendering the notification sender view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function NotificationSenderView() {
   const vm = useNotificationSenderViewModel();
   const { t } = useI18n();

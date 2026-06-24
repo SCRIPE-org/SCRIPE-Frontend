@@ -22,6 +22,10 @@ import type {
   UpdateFeatureRequest,
 } from "../../domain/entities/FeatureRequests";
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for features view model.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
+ */
 export function useFeaturesViewModel() {
   const { featureRepository } = entitlementsContainer;
 

@@ -10,7 +10,13 @@
 
 // ── Enums / Unions ───────────────────────────────────────
 
+/**
+ * Exported type defining parameters and fields for subscription type configurations.
+ */
 export type SubscriptionType = "Lifetime" | "Monthly" | "Yearly" | "Trial" | "AddOn" | "Free";
+/**
+ * Exported type defining parameters and fields for subscription status configurations.
+ */
 export type SubscriptionStatus =
   | "Active"
   | "Trialing"
@@ -18,11 +24,20 @@ export type SubscriptionStatus =
   | "Suspended"
   | "Canceled"
   | "Expired";
+/**
+ * Exported type defining parameters and fields for expiry behavior configurations.
+ */
 export type ExpiryBehavior = "Fallback" | "Suspend";
+/**
+ * Exported type defining parameters and fields for refund type configurations.
+ */
 export type RefundType = "None" | "Full" | "ProRata";
 
 // ── Edition ──────────────────────────────────────────────
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for edition thin model.
+ */
 export interface EditionThinModel {
   id: string;
   name: string;
@@ -40,6 +55,9 @@ export interface EditionThinModel {
 
 // ── Subscription ─────────────────────────────────────────
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for subscription model.
+ */
 export interface SubscriptionModel {
   id: string;
   tenantId: string;
@@ -74,6 +92,9 @@ export interface SubscriptionModel {
 
 // ── Paged Result ─────────────────────────────────────────
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for paged edition result.
+ */
 export interface PagedEditionResult {
   items: EditionThinModel[];
   totalCount: number;
@@ -86,6 +107,9 @@ export interface PagedEditionResult {
 
 // ── Downgrade Impact ─────────────────────────────────────
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for resource overflow.
+ */
 export interface ResourceOverflow {
   resourceType: string;
   featureName: string;
@@ -94,6 +118,9 @@ export interface ResourceOverflow {
   overflowCount: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for downgrade impact report.
+ */
 export interface DowngradeImpactReport {
   hasOverflow: boolean;
   overflows: ResourceOverflow[];

@@ -14,6 +14,9 @@ import type {
   ComparisonDataPoint,
 } from "../../domain/entities/AnalyticsEntities";
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class AnalyticsMapper {
   static toSummary(dto: AnalyticsSummaryDto): AnalyticsSummary {
     return {

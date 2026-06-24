@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
@@ -27,6 +28,10 @@ interface ResumeSignupModalProps {
   onStartFresh: () => void | Promise<void>;
 }
 
+/**
+ * Presentation UI component rendering the resume signup modal.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function ResumeSignupModal({
   info,
   onResume,

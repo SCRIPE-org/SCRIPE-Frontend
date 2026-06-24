@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useMemo, useState, type CSSProperties } from "react";
@@ -56,6 +58,10 @@ interface PlanCardProps {
   onSelect: (edition: PlanPickerEdition, billingCycle: "monthly" | "annual") => void;
 }
 
+/**
+ * Presentation UI component rendering the plan card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function PlanCard({
   edition,
   billingCycle,

@@ -26,6 +26,9 @@ const ReportModelSchema = z.object({
   fileUrl: z.string().optional().nullable(),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class ReportMapper {
   static toEntity(model: ReportModel): ComplianceReport {
     const validated = safeParseApiResponse(ReportModelSchema, model, "ComplianceReport");

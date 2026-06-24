@@ -36,6 +36,10 @@ const RANK_COLORS = [
   "from-orange-400 to-amber-600",
 ];
 
+/**
+ * Presentation UI component rendering the ltv tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function LtvTab({ ltvData }: LtvTabProps) {
   const { t } = useI18n();
   const maxLtv = Math.max(...ltvData.editions.map((e) => e.averageLtv), 1);

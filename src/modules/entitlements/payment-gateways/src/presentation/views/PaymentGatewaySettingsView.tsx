@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Payment Gateway Settings View
  *
@@ -282,6 +283,10 @@ function GatewayCardSkeleton() {
 }
 
 // ── Main View ──
+/**
+ * Presentation UI component rendering the payment gateway settings view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function PaymentGatewaySettingsView() {
   const { t } = useI18n();
   const vm = usePaymentGatewaysViewModel();

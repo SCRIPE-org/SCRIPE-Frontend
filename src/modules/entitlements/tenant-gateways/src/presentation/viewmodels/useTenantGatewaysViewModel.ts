@@ -8,6 +8,9 @@ import type { TenantGateway } from "../../domain/entities/TenantGateway";
 
 const QUERY_KEY = ["tenant-gateways"];
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for gateway form state.
+ */
 export interface GatewayFormState {
   isOpen: boolean;
   gatewayType: string;
@@ -64,6 +67,10 @@ export const AVAILABLE_GATEWAYS = [
   },
 ] as const;
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for tenant gateways view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useTenantGatewaysViewModel() {
   const { tenantGatewayRepository } = entitlementsContainer;
   const queryClient = useQueryClient();

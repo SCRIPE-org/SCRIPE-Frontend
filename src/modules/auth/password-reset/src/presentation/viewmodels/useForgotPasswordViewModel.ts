@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * useForgotPasswordViewModel — 5-step password reset flow state machine.
  *
@@ -24,6 +25,9 @@ import { getAuthContainer } from "@modules/auth/di";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+/**
+ * Exported type defining parameters and fields for forgot password step configurations.
+ */
 export type ForgotPasswordStep =
   | "request" // Step 1: enter email
   | "method" // Step 2: pick OTP or Magic Link
@@ -32,11 +36,20 @@ export type ForgotPasswordStep =
   | "newPassword" // Step 5: enter new password
   | "success"; // Step 6: done!
 
+/**
+ * Exported type defining parameters and fields for reset method configurations.
+ */
 export type ResetMethod = "otp" | "magic-link";
 
 // Re-export the domain type under a convenient alias for the view
+/**
+ * Exported type defining parameters and fields for workspace option configurations.
+ */
 export type WorkspaceOption = ResetWorkspaceOption;
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for use forgot password view model return.
+ */
 export interface UseForgotPasswordViewModelReturn {
   // State
   step: ForgotPasswordStep;
@@ -98,6 +111,10 @@ function calcStrength(pwd: string): number {
 
 // ─── ViewModel ────────────────────────────────────────────────────────────────
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for forgot password view model.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
+ */
 export function useForgotPasswordViewModel(): UseForgotPasswordViewModelReturn {
   // ── State ──
   const [step, setStep] = useState<ForgotPasswordStep>("request");

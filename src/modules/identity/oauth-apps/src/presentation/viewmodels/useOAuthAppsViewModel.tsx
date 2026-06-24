@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * OAuth Applications List ViewModel
  *
@@ -21,12 +22,19 @@ import { AppWindow, Loader2, KeyRound, Pencil, Trash2, Check, Copy } from "lucid
 import { format } from "date-fns";
 import type { CrudAction } from "@core/crud/components/generic-crud-view";
 
+/**
+ * Exported constant defining parameters and fields for oauth app keys configurations.
+ */
 export const oauthAppKeys = {
   all: ["oauth-apps"] as const,
   list: (filters: Record<string, unknown>) => [...oauthAppKeys.all, "list", filters] as const,
   detail: (id: string) => [...oauthAppKeys.all, "detail", id] as const,
 };
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for o auth apps view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useOAuthAppsViewModel() {
   const { oauthAppRepository } = identityContainer;
   const { t } = useI18n();

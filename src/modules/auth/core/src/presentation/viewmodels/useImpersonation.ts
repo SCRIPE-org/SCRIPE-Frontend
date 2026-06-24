@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * Cookie-Based Impersonation Hook
  *
@@ -39,6 +41,10 @@ function getImpersonationState(): boolean {
   return sessionStorage.getItem(STORAGE_KEYS.IMPERSONATING) === "true";
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for impersonation.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useImpersonation() {
   const { success, error: toastError } = useEnhancedToast();
   const queryClient = useQueryClient();
@@ -96,7 +102,7 @@ export function useImpersonation() {
         setIsImpersonationLoading(false);
       }
     },
-    [queryClient, success, toastError]
+    [success, toastError]
   );
 
   /**

@@ -23,9 +23,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 
 // Role imports
-import { Role } from "@modules/identity/roles/src/domain/entities/Role";
-import { RolePermissionsDialog } from "@modules/identity/roles/src/presentation/components/RolePermissionsDialog";
-import { AssignToGroupDialog } from "@modules/identity/user-groups/src/presentation/components/AssignToGroupDialog";
+import { Role, RolePermissionsDialog, AssignToGroupDialog } from "@modules/identity/core";
 import { useTenantRolesViewModel } from "../../viewmodels/useTenantRolesViewModel";
 
 // ViewModel - all logic lives here
@@ -59,8 +57,6 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
     setSelectedRoleForGroup(role);
     setAssignToGroupOpen(true);
   }, []);
-
-
 
   // Build CrudConfig from ViewModel data
   const config: CrudConfig<Role> = {

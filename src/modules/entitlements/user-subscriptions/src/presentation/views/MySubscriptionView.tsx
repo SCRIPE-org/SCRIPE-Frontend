@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * MySubscriptionView — Tenant admin self-service subscription portal.
  *
@@ -101,6 +102,10 @@ function formatCurrency(amount?: number, currency?: string): string {
   }
 }
 
+/**
+ * Presentation UI component rendering the my subscription view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function MySubscriptionView() {
   useModuleLocales(() => import("../../../locales"), "user-subscriptions");
   const vm = useMySubscriptionViewModel();

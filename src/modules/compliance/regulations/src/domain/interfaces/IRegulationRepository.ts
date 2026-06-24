@@ -6,6 +6,10 @@ import type {
   UpdateConsentPurposeRequest,
 } from "../entities/Regulation";
 
+/**
+ * Repository layer implementing client request queries for i regulation.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export interface IRegulationRepository {
   getAll(): Promise<Regulation[]>;
   getById(id: string): Promise<Regulation>;

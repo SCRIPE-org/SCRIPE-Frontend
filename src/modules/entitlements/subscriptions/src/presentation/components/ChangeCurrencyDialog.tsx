@@ -21,6 +21,10 @@ import { DollarSign } from "lucide-react";
 import type { SubscriptionDialogProps } from "../types";
 import { CurrencySelect } from "./CurrencySelect";
 
+/**
+ * Presentation UI component rendering the change currency dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ChangeCurrencyDialog({ vm }: SubscriptionDialogProps) {
   const { t } = useI18n();
 

@@ -15,6 +15,9 @@ export interface ThemeBundleContentsDto {
   dashboardCanvasJson?: string | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for theme bundle dto.
+ */
 export interface ThemeBundleDto {
   id: string;
   slug: string;
@@ -42,6 +45,9 @@ export interface ThemeBundleDto {
   isAvailable: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for theme bundle paged result.
+ */
 export interface ThemeBundlePagedResult {
   items: ThemeBundleDto[];
   totalCount: number;

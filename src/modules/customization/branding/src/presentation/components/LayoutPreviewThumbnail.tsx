@@ -109,6 +109,10 @@ function getLayoutStructure(layout: string): {
   }
 }
 
+/**
+ * Presentation UI component rendering the layout preview thumbnail.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function LayoutPreviewThumbnail({
   layout,
   accentColor,

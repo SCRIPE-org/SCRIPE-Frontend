@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Admins View
  *
@@ -35,7 +36,7 @@ import { format } from "date-fns";
 import { ResetPasswordDialog } from "../components/AdminRoleDialogs";
 import { ManageRolesDialog } from "../components/ManageRolesDialog";
 import { AdminTransferDialog } from "../components/AdminTransferDialog";
-import { AssignToGroupDialog } from "@modules/identity/user-groups/src/presentation/components/AssignToGroupDialog";
+import { AssignToGroupDialog } from "@modules/identity/core";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
@@ -44,6 +45,10 @@ interface AdminsViewProps {
   tenantId?: string;
 }
 
+/**
+ * Presentation UI component rendering the admins view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function AdminsView({ tenantId }: AdminsViewProps = {}) {
   useModuleLocales(() => import("../../../locales"), "admin");
   const { t, language } = useI18n();

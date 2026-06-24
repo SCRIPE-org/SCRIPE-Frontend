@@ -15,6 +15,10 @@ import type { AppSubmissionData } from "../../domain/entities/AppSubmission";
 import type { ISubmissionsRepository } from "../../domain/interfaces/ISubmissionsRepository";
 import type { SubmissionDto } from "../../domain/interfaces/ISubmissionsService";
 
+/**
+ * Repository layer implementing client request queries for submissions.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class SubmissionsRepository implements ISubmissionsRepository {
   constructor(private readonly service: ISubmissionsService) {}
 

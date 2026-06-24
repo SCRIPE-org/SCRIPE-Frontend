@@ -23,6 +23,10 @@ import { SubscriptionsDistributionCharts } from "../components/SubscriptionsDist
 import { UpcomingRenewalsTimeline } from "../components/UpcomingRenewalsTimeline";
 import { SubscriptionsDataTable } from "../components/SubscriptionsDataTable";
 
+/**
+ * Presentation UI component rendering the subscriptions overview view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SubscriptionsOverviewView() {
   useModuleLocales(() => import("../../../../core/locales"), "entitlements-shared");
   const vm = useSubscriptionsOverviewViewModel();

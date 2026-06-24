@@ -9,6 +9,10 @@ import type {
   UpdateConsentPurposeRequest,
 } from "../models/RegulationModels";
 
+/**
+ * Http API network service for regulation.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class RegulationService implements IRegulationService {
   constructor(private readonly api: IApiService) {}
 

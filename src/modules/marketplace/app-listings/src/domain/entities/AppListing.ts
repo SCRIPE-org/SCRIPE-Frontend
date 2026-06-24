@@ -32,6 +32,10 @@ export interface AppListingData {
   updatedAt: string | null;
 }
 
+/**
+ * Domain model representing a App Listing structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class AppListing {
   constructor(private readonly data: AppListingData) {}
 

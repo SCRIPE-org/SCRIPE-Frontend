@@ -13,6 +13,10 @@ export interface RolePermission {
   scope?: string;
 }
 
+/**
+ * Domain model representing a Role Props structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface RoleProps {
   id: string;
   nameEn: string;
@@ -181,8 +185,23 @@ export class Role {
     }
     return this.props.groupNamesEn ?? [];
   }
+
+  copyWith(updates: Partial<RoleProps>): Role {
+    return new Role({
+      ...this.props,
+      ...updates,
+    } as RoleProps);
+  }
 }
 
 // Keep backward compatibility alias
+/**
+ * Domain model representing a Role Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type RoleData = RoleProps;
+/**
+ * Domain model representing a Role Permission Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type RolePermissionData = RolePermission;

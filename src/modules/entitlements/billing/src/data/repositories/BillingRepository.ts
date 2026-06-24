@@ -5,22 +5,28 @@
  * Repository orchestrates Service + Mapper and returns domain entities.
  */
 import type { IBillingRepository } from "../../domain/interfaces/IBillingRepository";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import type {
   Invoice,
   InvoiceListItem,
   PaymentTransaction,
+} from "../../domain/entities/Invoice";
+import { BillingDashboard } from "../../domain/entities/BillingDashboard";
+import type {
   CheckoutSession,
   BillingPortal,
   PaymentLink,
-} from "../../domain/entities/Invoice";
-import { BillingDashboard } from "../../domain/entities/Invoice";
+} from "../../domain/entities/BillingDashboard";
 import type {
   IBillingService,
   GatewayListResponseModel,
 } from "../../domain/interfaces/IBillingService";
 import { BillingMapper } from "../mappers/BillingMapper";
 
+/**
+ * Repository layer implementing client request queries for billing.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class BillingRepository implements IBillingRepository {
   constructor(private readonly service: IBillingService) {}
 

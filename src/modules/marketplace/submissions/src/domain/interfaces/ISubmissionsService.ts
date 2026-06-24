@@ -35,6 +35,10 @@ export interface CreateSubmissionPayload {
   pluginVersionId: string;
 }
 
+/**
+ * Http API network service for i submissions.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface ISubmissionsService {
   /** Fetch paginated list of submissions. */
   getAll(params: {

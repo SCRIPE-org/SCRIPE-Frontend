@@ -8,6 +8,10 @@ import type {
   UpdateEditionCategoryRequest,
 } from "../../domain/entities/EditionCategoryRequests";
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for edition categories view model.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
+ */
 export function useEditionCategoriesViewModel() {
   const { editionCategoryRepository } = entitlementsContainer;
 

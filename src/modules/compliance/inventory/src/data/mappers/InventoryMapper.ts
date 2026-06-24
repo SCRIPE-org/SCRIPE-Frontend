@@ -23,6 +23,9 @@ const InventoryItemModelSchema = z.object({
   notes: z.string().optional().nullable(),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class InventoryMapper {
   static toEntity(model: InventoryItemModel): InventoryItem {
     const validated = safeParseApiResponse(InventoryItemModelSchema, model, "InventoryItem");

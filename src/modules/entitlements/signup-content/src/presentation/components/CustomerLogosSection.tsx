@@ -14,6 +14,10 @@ interface CustomerLogosSectionProps {
   vm: SignupContentViewModel;
 }
 
+/**
+ * Presentation UI component rendering the customer logos section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function CustomerLogosSection({ vm }: CustomerLogosSectionProps) {
   const { t } = useI18n();
   const logos = vm.content?.customerLogos ?? [];

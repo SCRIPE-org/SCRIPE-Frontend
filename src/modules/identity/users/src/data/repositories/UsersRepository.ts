@@ -10,6 +10,10 @@ import type { IUsersService } from "../../domain/interfaces/IUsersService";
 import { UsersMapper } from "../mappers/UsersMapper";
 import type { UsersEntity } from "../../domain/entities/UsersEntity";
 
+/**
+ * Repository layer implementing client request queries for users.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class UsersRepository implements IUsersRepository {
   constructor(private readonly service: IUsersService) {}
 

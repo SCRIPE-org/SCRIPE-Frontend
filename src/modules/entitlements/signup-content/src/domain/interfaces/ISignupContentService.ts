@@ -7,6 +7,10 @@ import type {
   UpdateWelcomeParams,
 } from "./ISignupContentRepository";
 
+/**
+ * Http API network service for i signup content.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface ISignupContentService {
   getAdminContent(): Promise<unknown>;
   setMode(mode: ContentMode): Promise<void>;

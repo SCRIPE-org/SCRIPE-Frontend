@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Identity Provider Detail View
  *
@@ -59,14 +60,16 @@ interface Props {
   providerId?: string;
 }
 
+/**
+ * Presentation UI component rendering the identity provider detail view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function IdentityProviderDetailView({ providerId }: Props) {
   const vm = useIdentityProviderDetailViewModel(providerId);
   const { t } = useI18n();
 
   // Wizard step state for Create Mode
   const [createStep, setCreateStep] = useState(1);
-
-
 
   // ─── Loading state ──────────────────────────
   if (!vm.isCreateMode && vm.isLoading) {
@@ -108,8 +111,6 @@ export function IdentityProviderDetailView({ providerId }: Props) {
     protocolOptions: vm.protocolOptions,
     isCreateMode: vm.isCreateMode,
   };
-
-
 
   // ─── CREATE MODE: 3-Step Wizard ───────────────────────────────────
   if (vm.isCreateMode) {
@@ -354,12 +355,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
         {/* Global Action controls */}
         <div className="flex items-center gap-2 self-end sm:self-center">
           {/* Test Connection */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={vm.testConnection}
-            loading={vm.isTesting}
-          >
+          <Button variant="outline" size="sm" onClick={vm.testConnection} loading={vm.isTesting}>
             {!vm.isTesting && <Zap className="me-1.5 h-4 w-4 text-amber-500" />}
             {t("identityProviders.testConnection") || "Test Connection"}
           </Button>

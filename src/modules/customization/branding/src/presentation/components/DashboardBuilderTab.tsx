@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * DashboardBuilderTab — Full 61-setting dashboard builder for Customizer Studio
  *
@@ -904,6 +905,10 @@ interface DashboardBuilderTabProps {
   onUpdate: (updates: Partial<DashboardThemeSettings>) => void;
 }
 
+/**
+ * Presentation UI component rendering the dashboard builder tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabProps) {
   const { t } = useI18n();
 

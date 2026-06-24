@@ -27,6 +27,10 @@ const VALUE_TYPE_OPTIONS: GenericSelectOption[] = [
   { value: "String", label: "String" },
 ];
 
+/**
+ * Presentation UI component rendering the feature definition form fields.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function FeatureDefinitionFormFields({
   form,
   mode,

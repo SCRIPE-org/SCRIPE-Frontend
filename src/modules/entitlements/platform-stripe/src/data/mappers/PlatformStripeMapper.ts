@@ -25,6 +25,9 @@ import {
   BalanceAmount,
 } from "../../domain/entities/PlatformStripeDashboard";
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class PlatformStripeMapper {
   static toDashboardEntity(dto: PlatformStripeDashboardModel): PlatformStripeDashboard {
     return new PlatformStripeDashboard({

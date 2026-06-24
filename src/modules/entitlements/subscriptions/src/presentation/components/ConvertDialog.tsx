@@ -21,6 +21,10 @@ import type { SubscriptionEditionDialogProps } from "../types";
 import type { SubscriptionListItem } from "../../domain/entities/Subscription";
 import { SubscriptionTypeSelect } from "./SubscriptionTypeSelect";
 
+/**
+ * Presentation UI component rendering the convert dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ConvertDialog({ vm, editionsVm }: SubscriptionEditionDialogProps) {
   const { t } = useI18n();
 

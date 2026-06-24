@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * PublishBar — Top bar with back button, draft status, device toggle,
  * reset dropdown, publish/discard actions.
@@ -57,6 +58,10 @@ const DEVICES: { id: DeviceSize; icon: typeof Monitor; labelKey: string }[] = [
   { id: "mobile", icon: Smartphone, labelKey: "studio.device.mobile" },
 ];
 
+/**
+ * Presentation UI component rendering the publish bar.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function PublishBar({
   isDirty,
   isPublishing,

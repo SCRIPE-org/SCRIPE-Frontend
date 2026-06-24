@@ -52,6 +52,9 @@ export interface PlanPickerEdition extends PlanEdition {
   isRecommended: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for plan picker view model.
+ */
 export interface PlanPickerViewModel {
   // ── Load state ─────────────────────────────────────────────────────────────
   isLoading: boolean;
@@ -94,6 +97,9 @@ export interface PlanPickerViewModel {
   priorityKeys: string[];
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for use plan picker args.
+ */
 export interface UsePlanPickerArgs {
   /** The chosen vertical from discovery (wizard.businessType). Defaults the industry. */
   businessType: string | null;
@@ -105,6 +111,10 @@ export interface UsePlanPickerArgs {
   initialCountry?: string | null;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for plan picker.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function usePlanPicker({
   businessType,
   discoveryAnswers,
@@ -246,7 +256,6 @@ export function usePlanPicker({
 
   const setIndustry = useCallback((slug: string) => setIndustryOverride(slug), []);
   const retry = useCallback(() => void refetch(), [refetch]);
-
   return useMemo(
     () => ({
       isLoading: (!initialCurrency && !isPricingContextFetched) || isEditionsLoading,

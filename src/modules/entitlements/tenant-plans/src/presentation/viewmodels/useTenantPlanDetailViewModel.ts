@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * TenantPlan Detail ViewModel — Elevated Tier 2
  *
@@ -40,6 +41,9 @@ interface PriceRow {
   lifetimeAmount: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for preview row.
+ */
 export interface PreviewRow {
   currency: string;
   monthlyAmount: number;
@@ -49,6 +53,10 @@ export interface PreviewRow {
   rate?: number;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for tenant plan detail view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useTenantPlanDetailViewModel(planId: string) {
   const { success, error: showError } = useEnhancedToast();
   const { tenantPlanRepository, editionRepository } = entitlementsContainer;

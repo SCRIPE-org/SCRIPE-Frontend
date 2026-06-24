@@ -1,10 +1,10 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { authContainer } from "@modules/auth/di";
 import { QrApprovalView } from "./QrApprovalView";
+import { useQrApproveViewModel } from "../viewmodels/useQrApproveViewModel";
 
 /**
  * QrApprovePageContent — Reads ?session=<id> from URL, wires approval callbacks.
@@ -32,7 +32,7 @@ export function QrApprovePageContent() {
   const deviceInfo = params.get("device") ?? undefined;
   const location = params.get("loc") ?? undefined;
 
-  const { authRepository } = authContainer;
+  const vm = useQrApproveViewModel();
 
   // Redirect to login if no session ID in URL
   useEffect(() => {
@@ -40,30 +40,6 @@ export function QrApprovePageContent() {
       router.replace("/login");
     }
   }, [sessionId, router]);
-
-  const handleApprove = useCallback(
-    async (sid: string) => {
-      await authRepository.approveQrSignIn(sid);
-    },
-    [authRepository]
-  );
-
-  const handleReject = useCallback(
-    async (sid: string) => {
-      // Best-effort — silent on fail (session expires naturally anyway)
-      try {
-        await authRepository.rejectQrSignIn(sid);
-      } catch {
-        // Silent — rejection is best-effort
-      }
-    },
-    [authRepository]
-  );
-
-  const handleComplete = useCallback(() => {
-    // After approve/reject, send user back to login or a "done" screen
-    router.replace("/login");
-  }, [router]);
 
   if (!sessionId) {
     return (
@@ -81,9 +57,9 @@ export function QrApprovePageContent() {
       sessionId={sessionId}
       deviceInfo={deviceInfo}
       location={location}
-      onApprove={handleApprove}
-      onReject={handleReject}
-      onComplete={handleComplete}
+      onApprove={vm.handleApprove}
+      onReject={vm.handleReject}
+      onComplete={vm.handleComplete}
     />
   );
 }

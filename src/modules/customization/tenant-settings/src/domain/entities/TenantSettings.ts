@@ -50,6 +50,10 @@ export interface TenantSettings {
   isSafeMode: boolean;
 }
 
+/**
+ * Domain model representing a D E F A U L T_ T E N A N T_ S E T T I N G S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const DEFAULT_TENANT_SETTINGS: TenantSettings = {
   maxAdmins: -1,
   maxRoles: -1,

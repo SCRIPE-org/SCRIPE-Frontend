@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
@@ -30,6 +31,9 @@ import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 
 // ─── Types ──────────────────────────────────────────────────
+/**
+ * Exported type defining parameters and fields for placeholder type configurations.
+ */
 export type PlaceholderType =
   | "text"
   | "textarea"
@@ -42,6 +46,9 @@ export type PlaceholderType =
   | "select"
   | "color";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for placeholder field.
+ */
 export interface PlaceholderField {
   id: string;
   key: string;
@@ -53,6 +60,9 @@ export interface PlaceholderField {
   options?: string[]; // For "select" type
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for placeholder schema builder props.
+ */
 export interface PlaceholderSchemaBuilderProps {
   fields: PlaceholderField[];
   onChange: (fields: PlaceholderField[]) => void;
@@ -92,6 +102,10 @@ function extractVariableKeys(text: string): Set<string> {
 }
 
 // ─── Main Component ─────────────────────────────────────────
+/**
+ * Presentation UI component rendering the placeholder schema builder.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function PlaceholderSchemaBuilder({
   fields,
   onChange,

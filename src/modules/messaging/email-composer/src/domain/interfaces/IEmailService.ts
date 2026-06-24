@@ -15,6 +15,9 @@ import type {
   AttachmentUploadResultJson,
 } from "../types/EmailTypes";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for service sent history params.
+ */
 export interface ServiceSentHistoryParams {
   page: number;
   pageSize: number;
@@ -22,12 +25,19 @@ export interface ServiceSentHistoryParams {
   status?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for service email template list params.
+ */
 export interface ServiceEmailTemplateListParams {
   page: number;
   pageSize: number;
   search?: string;
 }
 
+/**
+ * Http API network service for i email.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface IEmailService {
   searchRecipients(query: string): Promise<EmailRecipientJson[]>;
   send(data: SendManualEmailJson): Promise<void>;

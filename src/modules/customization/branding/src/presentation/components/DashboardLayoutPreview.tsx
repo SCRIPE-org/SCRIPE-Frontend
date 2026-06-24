@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * DashboardLayoutPreview — Iframe-based preview using the REAL layout components.
  *
@@ -40,6 +41,10 @@ const DEVICE_DIMS: Record<DeviceSize, { w: string; label: string }> = {
   mobile: { w: "375px", label: "Mobile" },
 };
 
+/**
+ * Presentation UI component rendering the dashboard layout preview.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DashboardLayoutPreview({ settings }: Props) {
   const { direction } = useI18n();
   const isRTL = direction === "rtl";

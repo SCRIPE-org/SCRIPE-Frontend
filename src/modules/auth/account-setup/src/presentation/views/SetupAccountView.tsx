@@ -28,6 +28,12 @@ import {
   PasswordCheck,
 } from "../components/SetupAccountStateViews";
 
+/**
+ * SetupAccountView is the main public page component for the workspace administrator setup flow.
+ * Orchestrates the validation of initialization tokens from query string parameters,
+ * routes the visual rendering state based on the validation outcome (loading, invalid, success, error),
+ * and renders the secure credentials setup form where tenant administrators establish their initial passcodes.
+ */
 export function SetupAccountView() {
   const { t } = useI18n();
   const searchParams = useSearchParams();

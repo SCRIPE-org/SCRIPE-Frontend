@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useMemo } from "react";
@@ -38,6 +40,10 @@ interface ReviewStepProps {
   wizard: SignupWizardViewModel;
 }
 
+/**
+ * Presentation UI component rendering the review step.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function ReviewStep({ wizard }: ReviewStepProps) {
   const { t, language, direction } = useI18n();
   const { tokens } = useSignupTheme();

@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { Button } from "@core/ui/button";
@@ -94,6 +95,10 @@ interface DsrFilterBarProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * Presentation UI component rendering the dsr filter bar.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DsrFilterBar({
   statusFilter,
   typeFilter,

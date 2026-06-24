@@ -19,6 +19,9 @@ export interface PlatformLeadListResponseModel {
   primaryPriority?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for platform lead response model.
+ */
 export interface PlatformLeadResponseModel {
   id: string;
   companyName: string;
@@ -42,6 +45,9 @@ export interface PlatformLeadResponseModel {
   primaryPriority?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for paged leads model.
+ */
 export interface PagedLeadsModel {
   items: PlatformLeadListResponseModel[];
   totalCount: number;
@@ -52,6 +58,9 @@ export interface PagedLeadsModel {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for assignable admin response model.
+ */
 export interface AssignableAdminResponseModel {
   id: string;
   username: string;
@@ -64,6 +73,9 @@ export interface AssignableAdminResponseModel {
   isSuperAdmin?: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for paged assignable admins model.
+ */
 export interface PagedAssignableAdminsModel {
   items: AssignableAdminResponseModel[];
   totalCount: number;
@@ -74,6 +86,9 @@ export interface PagedAssignableAdminsModel {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for lead activity response model.
+ */
 export interface LeadActivityResponseModel {
   id: string;
   leadId: string;
@@ -87,12 +102,18 @@ export interface LeadActivityResponseModel {
   occurredAt: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for send lead email request.
+ */
 export interface SendLeadEmailRequest {
   subject: string;
   bodyHtml: string;
   templateKey?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for lead communication log dto.
+ */
 export interface LeadCommunicationLogDto {
   id: string;
   subject: string;
@@ -153,4 +174,3 @@ export interface StatusEmailPreviewDto {
   recipientEmail: string;
   recipientName: string;
 }
-

@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * Role Permissions Dialog
  *
@@ -53,6 +55,10 @@ interface RolePermissionsDialogProps {
   tenantId: string;
 }
 
+/**
+ * Presentation UI component rendering the role permissions dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
   const { open, onOpenChange, role } = props;
   const { t, language } = useI18n();

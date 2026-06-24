@@ -11,6 +11,9 @@ export interface EditionPriceModel {
   amount: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for edition model.
+ */
 export interface EditionModel {
   id: string;
   name: string;
@@ -64,6 +67,9 @@ export interface EditionModel {
   modifiedAt?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for edition version model.
+ */
 export interface EditionVersionModel {
   id: string;
   versionNumber: number;

@@ -5,6 +5,10 @@ import { blockColor, clamp } from "./block-style-utils";
 
 const SIZE_CLASS = { sm: "text-sm", md: "text-lg", lg: "text-2xl" };
 
+/**
+ * Presentation UI component rendering the rating block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function RatingBlockView({ block }: { block: RatingBlock }) {
   const props = block.props;
   const value = clamp(props.value, 1, 5, 5);

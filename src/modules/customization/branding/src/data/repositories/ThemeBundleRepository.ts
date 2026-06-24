@@ -17,6 +17,10 @@ import type {
 import type { IThemeBundleService } from "../../domain/interfaces/IThemeBundleService";
 import { ThemeBundleMapper } from "../mappers/ThemeBundleMapper";
 
+/**
+ * Repository layer implementing client request queries for theme bundle.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class ThemeBundleRepository implements IThemeBundleRepository {
   constructor(private readonly service: IThemeBundleService) {}
 

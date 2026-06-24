@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import Link from "next/link";
@@ -42,6 +43,10 @@ const MenuIcon = () => (
   </svg>
 );
 
+/**
+ * Presentation UI component rendering the docs header.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DocsHeader({ onSearchOpen, onMobileMenuOpen }: DocsHeaderProps) {
   const { t } = useDocsI18n();
 

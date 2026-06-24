@@ -15,6 +15,9 @@ import {
 } from "lucide-react";
 import { createElement } from "react";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for status style.
+ */
 export interface StatusStyle {
   gradient: string;
   glow: string;
@@ -22,6 +25,9 @@ export interface StatusStyle {
   dotColor: string;
 }
 
+/**
+ * Exported constant defining parameters and fields for s t a t u s_ s t y l e s configurations.
+ */
 export const STATUS_STYLES: Record<string, StatusStyle> = {
   Active: {
     gradient: "from-emerald-500/10 via-emerald-500/5 to-transparent",
@@ -67,4 +73,7 @@ export const STATUS_STYLES: Record<string, StatusStyle> = {
   },
 };
 
+/**
+ * Exported constant defining parameters and fields for d e f a u l t_ s t a t u s_ s t y l e configurations.
+ */
 export const DEFAULT_STATUS_STYLE = STATUS_STYLES.Active;

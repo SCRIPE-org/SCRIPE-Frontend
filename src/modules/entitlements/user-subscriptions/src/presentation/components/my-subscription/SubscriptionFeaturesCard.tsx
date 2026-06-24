@@ -14,6 +14,10 @@ interface SubscriptionFeaturesCardProps {
   language: string;
 }
 
+/**
+ * Presentation UI component rendering the subscription features card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function SubscriptionFeaturesCard({
   subscription,
   t,

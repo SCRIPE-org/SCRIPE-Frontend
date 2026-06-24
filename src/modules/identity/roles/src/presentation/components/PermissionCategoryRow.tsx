@@ -11,10 +11,13 @@ import { Badge } from "@core/ui/badge";
 import { Checkbox } from "@core/ui/checkbox";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { Permission } from "@modules/identity/permissions";
+import type { Permission } from "@modules/identity/core";
 import { PermissionConfigDialog } from "./PermissionConfigDialog";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for permission category row props.
+ */
 export interface PermissionCategoryRowProps {
   category: string;
   permissions: Permission[];
@@ -28,6 +31,10 @@ export interface PermissionCategoryRowProps {
   onUpdateConfig?: (code: string, assignment: PermissionAssignmentJson) => void;
 }
 
+/**
+ * Presentation UI component rendering the permission category row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function PermissionCategoryRow({
   category,
   permissions,

@@ -10,6 +10,9 @@ export interface RegulationCoverageModel {
   tenantsUsingCount: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for dashboard model.
+ */
 export interface DashboardModel {
   openDsrCount: number;
   pendingDsrCount: number;

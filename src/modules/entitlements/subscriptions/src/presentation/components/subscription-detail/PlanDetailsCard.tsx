@@ -18,6 +18,10 @@ interface PlanDetailsCardProps {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the plan details card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function PlanDetailsCard({ sub, t }: PlanDetailsCardProps) {
   const typeKey = TYPE_KEY_MAP[sub.type] ?? sub.type;
 

@@ -24,6 +24,10 @@ import { SubscriptionTypeSelect } from "./SubscriptionTypeSelect";
 import { PromotionPicker } from "./PromotionPicker";
 import { CurrencySelect } from "./CurrencySelect";
 
+/**
+ * Presentation UI component rendering the change dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ChangeDialog({ vm, editionsVm }: SubscriptionEditionDialogProps) {
   const { t } = useI18n();
 

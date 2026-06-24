@@ -24,6 +24,10 @@ interface ProfileInfoFormProps {
   success: boolean;
 }
 
+/**
+ * Presentation UI component rendering the profile info form.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function ProfileInfoForm({
   profile,
   onSubmit,
@@ -111,9 +115,7 @@ export function ProfileInfoForm({
             onChange={setPhoneNumber}
             error={phoneError || undefined}
           />
-          {phoneError && (
-            <p className="text-xs text-destructive">{phoneError}</p>
-          )}
+          {phoneError && <p className="text-xs text-destructive">{phoneError}</p>}
         </div>
 
         {/* Email Address (read-only) */}

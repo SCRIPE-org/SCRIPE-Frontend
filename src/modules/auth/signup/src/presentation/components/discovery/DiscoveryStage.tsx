@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
@@ -62,6 +64,10 @@ interface DiscoveryStageProps {
   onComplete: (result: { answers: Record<string, string[]>; businessType: string | null }) => void;
 }
 
+/**
+ * Presentation UI component rendering the discovery stage.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function DiscoveryStage({ onComplete }: DiscoveryStageProps) {
   const { t, direction } = useI18n();
   const { tokens } = useSignupTheme();

@@ -28,6 +28,10 @@ interface PlanGridProps {
   onSelect: (edition: PlanPickerEdition, billingCycle: "monthly" | "annual") => void;
 }
 
+/**
+ * Presentation UI component rendering the plan grid.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function PlanGrid({
   editions,
   billingCycle,

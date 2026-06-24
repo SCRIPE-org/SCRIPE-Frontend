@@ -30,6 +30,10 @@ export interface PaginatedReviewsResponse {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Http API network service for i reviews.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface IReviewsService {
   /** Fetch paginated list of reviews. */
   getAll(params: {

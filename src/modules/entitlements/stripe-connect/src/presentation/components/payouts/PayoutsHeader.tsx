@@ -27,6 +27,10 @@ interface PayoutsHeaderProps {
   account: ConnectAccount | null;
 }
 
+/**
+ * Presentation UI component rendering the payouts header.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function PayoutsHeader({ account }: PayoutsHeaderProps) {
   const { t } = useI18n();
 

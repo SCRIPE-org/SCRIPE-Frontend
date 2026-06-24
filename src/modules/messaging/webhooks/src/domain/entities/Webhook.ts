@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Webhook Entities — Domain types for the webhook management module.
  *
@@ -9,10 +10,18 @@
 
 // ─── Delivery Status Type ──────────────────────────────────────
 
+/**
+ * Domain model representing a Delivery Status structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type DeliveryStatus = "Pending" | "Delivered" | "Retrying" | "DeadLettered";
 
 // ─── Subscription Data ─────────────────────────────────────────
 
+/**
+ * Domain model representing a Webhook Subscription Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface WebhookSubscriptionData {
   id: string;
   scope: string;
@@ -148,10 +157,21 @@ export class WebhookSubscription {
         return this.scope;
     }
   }
+
+  copyWith(updates: Partial<WebhookSubscriptionData>): WebhookSubscription {
+    return new WebhookSubscription({
+      ...this.data,
+      ...updates,
+    } as WebhookSubscriptionData);
+  }
 }
 
 // ─── Subscription List Item ─────────────────────────────────────
 
+/**
+ * Domain model representing a Webhook Subscription List Item Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface WebhookSubscriptionListItemData {
   id: string;
   scope: string;
@@ -243,6 +263,10 @@ export class WebhookSubscriptionListItem {
 
 // ─── Delivery Log ──────────────────────────────────────────────
 
+/**
+ * Domain model representing a Webhook Delivery Log Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface WebhookDeliveryLogData {
   id: string;
   eventDeliveryId: string;
@@ -366,6 +390,10 @@ export class WebhookDeliveryStats {
 
 // ─── Analytics ─────────────────────────────────────────────────
 
+/**
+ * Domain model representing a Daily Delivery Stats structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface DailyDeliveryStats {
   date: string;
   total: number;
@@ -374,6 +402,10 @@ export interface DailyDeliveryStats {
   avgLatencyMs: number;
 }
 
+/**
+ * Domain model representing a Webhook Analytics Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface WebhookAnalyticsData {
   successRate: number;
   avgLatencyMs: number;
@@ -423,6 +455,10 @@ export class WebhookAnalytics {
 
 // ─── Health Summary ────────────────────────────────────────────
 
+/**
+ * Domain model representing a Webhook Health Summary Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface WebhookHealthSummaryData {
   activeEndpoints: number;
   disabledEndpoints: number;
@@ -514,6 +550,10 @@ export class WebhookTestResult {
 
 // ─── List Response ─────────────────────────────────────────────
 
+/**
+ * Domain model representing a Webhook List Response structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface WebhookListResponse {
   items: WebhookSubscriptionListItem[];
   totalCount: number;

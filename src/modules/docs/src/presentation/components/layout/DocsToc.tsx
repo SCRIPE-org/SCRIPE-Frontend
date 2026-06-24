@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
@@ -8,6 +9,10 @@ interface DocsTocProps {
   activeId: string | null;
 }
 
+/**
+ * Presentation UI component rendering the docs toc.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DocsToc({ headings, activeId }: DocsTocProps) {
   const { t } = useDocsI18n();
 

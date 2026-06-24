@@ -15,12 +15,19 @@ import type {
   PreviewTemplateResponseJson,
 } from "../types/MessageTemplateTypes";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for service template list params.
+ */
 export interface ServiceTemplateListParams {
   page: number;
   pageSize: number;
   search?: string;
 }
 
+/**
+ * Http API network service for i message template.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface IMessageTemplateService {
   getAll(params: ServiceTemplateListParams): Promise<MessageTemplateListResponse>;
   getById(id: string): Promise<MessageTemplateJson>;

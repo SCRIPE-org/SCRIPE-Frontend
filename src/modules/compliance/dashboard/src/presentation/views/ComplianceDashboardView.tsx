@@ -87,6 +87,10 @@ function DashboardSkeleton() {
 
 // ── Main View ─────────────────────────────────────────────────────────────────
 
+/**
+ * Presentation UI component rendering the compliance dashboard view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ComplianceDashboardView() {
   useModuleLocales(() => import("../../../locales"), "compliance-dashboard");
   const { t } = useI18n();

@@ -47,6 +47,10 @@ const STATUS_CONFIG = {
 
 type StatusKey = keyof typeof STATUS_CONFIG;
 
+/**
+ * Presentation UI component rendering the onboarding status card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function OnboardingStatusCard({
   account,
   t,

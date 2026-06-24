@@ -55,6 +55,9 @@ function formatTimeAgo(
   return t("common.timeAgo.daysAgo", { count: days });
 }
 
+/**
+ * Exported constant defining parameters and fields for recent changes section configurations.
+ */
 export const RecentChangesSection = memo(function RecentChangesSection({
   data,
   isLoading,

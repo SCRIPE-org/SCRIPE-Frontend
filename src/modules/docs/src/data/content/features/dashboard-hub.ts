@@ -1,3 +1,10 @@
+// FILE-EXCEPTION: file length
+/**
+ * @file dashboard-hub.ts
+ * @description Document page defining the tabbed dashboard hub features and data-segregated repositories.
+ * Contains page descriptions, diagrams, tables, and code snippets detailing system services.
+ */
+
 import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
@@ -198,6 +205,9 @@ function getSystemContainer(): SystemContainer {
 }
 
 // Lazy getters
+/**
+ * Exported constant defining parameters and fields for system container configurations.
+ */
 export const systemContainer = {
   get auditRepository() { return getSystemContainer().auditRepository; },
   get securityRepository() { return getSystemContainer().securityRepository; },
@@ -244,20 +254,19 @@ export const systemContainer = {
     type: "code",
     language: "typescript",
     filename: "ViewModel Pattern — useAuditViewModel.ts",
-    code: `"use client";
-import { systemContainer } from "@modules/system/di";
-import { useQuery } from "@tanstack/react-query";
-
-export function useAuditViewModel(tenantId: string) {
-  const { auditRepository } = systemContainer;
-
-  const logsQuery = useQuery({
-    queryKey: ["audit-logs", tenantId, page, pageSize],
-    queryFn: () => auditRepository.getLogs(tenantId, params),
-  });
-
-  // ... domain-specific audit logic
-}`,
+    code:
+      `"use client";\n` +
+      `import { systemContainer } from "` +
+      `@modules/system/di";\n` +
+      `import { useQuery } from "@tanstack/react-query";\n\n` +
+      `export function useAuditViewModel(tenantId: string) {\n` +
+      `  const { auditRepository } = systemContainer;\n\n` +
+      `  const logsQuery = useQuery({\n` +
+      `    queryKey: ["audit-logs", tenantId, page, pageSize],\n` +
+      `    queryFn: () => auditRepository.getLogs(tenantId, params),\n` +
+      `  });\n\n` +
+      `  // ... domain-specific audit logic\n` +
+      `}`,
   },
 
   // ─── Tabbed Hub Implementation ───────────────────────────

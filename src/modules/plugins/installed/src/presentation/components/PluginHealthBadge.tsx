@@ -10,6 +10,10 @@ interface PluginHealthBadgeProps {
   className?: string;
 }
 
+/**
+ * Presentation UI component rendering the plugin health badge.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function PluginHealthBadge({ passing, lastCheckedAt, className }: PluginHealthBadgeProps) {
   const { t } = useI18n();
   const label = passing ? t("plugins.healthy") : t("plugins.unhealthy");

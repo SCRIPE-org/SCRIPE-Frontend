@@ -15,6 +15,10 @@ import type {
   SaveMenuOverrideRequest,
 } from "../entities/MenuItemRequests";
 
+/**
+ * Http API network service for i menu.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface IMenuService {
   getAll(): Promise<MenuTreeNode[]>;
   create(request: CreateMenuItemRequest): Promise<{ id: string }>;

@@ -21,9 +21,13 @@ import type {
   EditionFeatureGroup,
   StatusEmailPreview,
 } from "../../domain/interfaces";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import { LeadsMapper } from "../mappers/LeadsMapper";
 
+/**
+ * Repository layer implementing client request queries for leads.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class LeadsRepository implements ILeadsRepository {
   constructor(private readonly service: ILeadsService) {}
 

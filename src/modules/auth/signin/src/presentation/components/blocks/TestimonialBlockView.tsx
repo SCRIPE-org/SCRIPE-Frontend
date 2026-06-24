@@ -3,6 +3,10 @@
 import type { TestimonialBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { clamp } from "./block-style-utils";
 
+/**
+ * Presentation UI component rendering the testimonial block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function TestimonialBlockView({ block }: { block: TestimonialBlock }) {
   const props = block.props;
   const rating = clamp(props.rating, 0, 5, 0);

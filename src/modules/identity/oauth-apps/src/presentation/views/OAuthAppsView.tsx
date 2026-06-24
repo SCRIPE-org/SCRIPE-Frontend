@@ -9,12 +9,7 @@
 import { useState } from "react";
 import { useOAuthAppsViewModel } from "../viewmodels/useOAuthAppsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
-import {
-  AppWindow,
-  Search,
-  Plus,
-  ShieldCheck,
-} from "lucide-react";
+import { AppWindow, Search, Plus, ShieldCheck } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Input } from "@core/ui/input";
@@ -24,18 +19,17 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { OAuthAppCard, OAuthAppItem } from "../components/OAuthAppCard";
 import { NewSecretDialog } from "../components/NewSecretDialog";
 
+/**
+ * Presentation UI component rendering the o auth apps view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function OAuthAppsView() {
   useModuleLocales(() => import("../../../locales"), "oauth-apps");
 
   const { t } = useI18n();
   const router = useRouter();
-  const {
-    vm,
-    config,
-    handleRegenerateSecret,
-    generatedSecret,
-    clearGeneratedSecret,
-  } = useOAuthAppsViewModel();
+  const { vm, config, handleRegenerateSecret, generatedSecret, clearGeneratedSecret } =
+    useOAuthAppsViewModel();
 
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
@@ -66,7 +60,10 @@ export function OAuthAppsView() {
             <h1 className="text-xl font-bold tracking-tight text-foreground">
               {t("oauthApps.title") || "OAuth Applications"}
             </h1>
-            <Badge variant="outline" className="border-purple-500/20 bg-purple-500/5 text-purple-600 dark:text-purple-400 gap-1 font-semibold">
+            <Badge
+              variant="outline"
+              className="gap-1 border-purple-500/20 bg-purple-500/5 font-semibold text-purple-600 dark:text-purple-400"
+            >
               <ShieldCheck className="h-3.5 w-3.5" />
               OIDC Server
             </Badge>
@@ -79,7 +76,7 @@ export function OAuthAppsView() {
 
         <Button
           onClick={handleCreate}
-          className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold shadow hover:opacity-95 self-start sm:self-center"
+          className="self-start bg-gradient-to-r from-purple-600 to-indigo-600 font-semibold text-white shadow hover:opacity-95 sm:self-center"
         >
           <Plus className="me-1.5 h-4 w-4" />
           {t("oauthApps.createTitle") || "Register Application"}
@@ -88,13 +85,13 @@ export function OAuthAppsView() {
 
       {/* ─── Search and Filter Toolbar ─── */}
       <div className="flex items-center gap-3">
-        <div className="relative flex-1 max-w-md">
+        <div className="relative max-w-md flex-1">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder={t("common.search") || "Search applications..."}
             value={vm.searchValue}
             onChange={(e) => vm.handleSearchChange(e.target.value)}
-            className="ps-9 bg-muted/20 border-border/80 rounded-lg"
+            className="rounded-lg border-border/80 bg-muted/20 ps-9"
           />
         </div>
       </div>
@@ -115,20 +112,20 @@ export function OAuthAppsView() {
           </p>
         </Card>
       ) : vm.items.length === 0 ? (
-        <Card className="flex flex-col items-center justify-center p-12 border-dashed border bg-muted/5 text-center rounded-2xl">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-purple-500/10 border border-purple-500/20 shadow-[0_0_15px_rgba(168,85,247,0.1)] mb-4">
+        <Card className="flex flex-col items-center justify-center rounded-2xl border border-dashed bg-muted/5 p-12 text-center">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-purple-500/20 bg-purple-500/10 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
             <AppWindow className="h-8 w-8 text-purple-600 dark:text-purple-400" />
           </div>
           <h3 className="text-lg font-bold tracking-tight text-foreground">
             {t("oauthApps.emptyTitle") || "No OAuth applications found"}
           </h3>
-          <p className="mt-1.5 text-xs text-muted-foreground max-w-sm">
+          <p className="mt-1.5 max-w-sm text-xs text-muted-foreground">
             {t("oauthApps.emptyDesc") ||
               "Get started by registering a new application to enable secure third-party login via SCRIPE identity services."}
           </p>
           <Button
             onClick={handleCreate}
-            className="mt-6 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold shadow hover:opacity-95"
+            className="mt-6 bg-gradient-to-r from-purple-600 to-indigo-600 font-semibold text-white shadow hover:opacity-95"
           >
             <Plus className="me-1.5 h-4 w-4" />
             {t("oauthApps.createTitle") || "Register Application"}

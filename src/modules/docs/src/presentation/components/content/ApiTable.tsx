@@ -7,6 +7,10 @@ interface ApiTableProps {
   endpoints: ApiEndpoint[];
 }
 
+/**
+ * Presentation UI component rendering the api table.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ApiTable({ endpoints }: ApiTableProps) {
   const { t } = useDocsI18n();
 

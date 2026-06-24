@@ -24,6 +24,10 @@ const devices: { size: DeviceSize; icon: typeof Monitor; label: string }[] = [
   { size: "mobile", icon: Smartphone, label: "Mobile" },
 ];
 
+/**
+ * Presentation UI component rendering the device toggle.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DeviceToggle({ deviceSize, setDeviceSize }: DeviceToggleProps) {
   return (
     <div className="flex items-center gap-0.5 rounded-lg bg-muted/50 p-0.5">

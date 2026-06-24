@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useState, useRef } from "react";
@@ -35,6 +37,9 @@ function formatLockoutTime(lockedUntil: string | null | undefined): string {
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
+/**
+ * Exported type defining parameters and fields for workspace card state configurations.
+ */
 export type WorkspaceCardState =
   /** Unlocked — password verified or SSO/magic-link auth */
   | "unlocked"

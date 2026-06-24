@@ -6,6 +6,10 @@ import type {
   UpdateIdentityProviderRequest,
 } from "../entities/IdentityProvider";
 
+/**
+ * Repository layer implementing client request queries for i identity provider.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export interface IIdentityProviderRepository {
   getAll(params: {
     page: number;

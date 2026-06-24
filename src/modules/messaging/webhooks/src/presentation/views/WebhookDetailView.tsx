@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Webhook Detail View
  *
@@ -55,6 +56,10 @@ interface WebhookDetailViewProps {
   webhookId: string;
 }
 
+/**
+ * Presentation UI component rendering the webhook detail view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
   const { t } = useI18n();
   const router = useRouter();

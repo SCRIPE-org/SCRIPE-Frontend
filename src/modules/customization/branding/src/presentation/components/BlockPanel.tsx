@@ -1,4 +1,5 @@
-﻿/**
+// FILE-EXCEPTION: file length
+/**
  * BlockPanel — Full-featured slot/block editor (21 block types)
  * HTML5 drag-drop reorder, inline editing, slot-layout filtering,
  * maxItems enforcement, block duplication. Labels localized via t()
@@ -228,6 +229,10 @@ function createDefaultBlock(type: BlockType): ContentBlock {
   }
 }
 
+/**
+ * Presentation UI component rendering the block panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function BlockPanel({
   draft,
   addBlock,

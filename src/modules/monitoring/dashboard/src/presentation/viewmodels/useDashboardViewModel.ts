@@ -16,6 +16,9 @@ import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
 // ─── Query key factory ───────────────────────────────────────────────
 // Every key includes tenantId so caching is tenant-aware
+/**
+ * Exported constant defining parameters and fields for dashboard keys configurations.
+ */
 export const dashboardKeys = {
   all: (tenantId: string | null) => ["dashboard", tenantId ?? "system"] as const,
   summary: (tenantId: string | null) => [...dashboardKeys.all(tenantId), "summary"] as const,

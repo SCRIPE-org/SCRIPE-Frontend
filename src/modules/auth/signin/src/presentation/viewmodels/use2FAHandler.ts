@@ -8,8 +8,14 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServices } from "@core/providers/service-provider";
 
+/**
+ * Exported type defining parameters and fields for login step configurations.
+ */
 export type LoginStep = "credentials" | "two-factor" | "workspace-selection";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for use2 f a handler options.
+ */
 export interface Use2FAHandlerOptions {
   redirectPath: string;
   formIdentifier: string;

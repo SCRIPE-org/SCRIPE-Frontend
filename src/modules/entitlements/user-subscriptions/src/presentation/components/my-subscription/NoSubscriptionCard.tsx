@@ -10,6 +10,10 @@ interface NoSubscriptionCardProps {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the no subscription card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function NoSubscriptionCard({ t }: NoSubscriptionCardProps) {
   return (
     <div className="mx-auto max-w-3xl space-y-6">

@@ -1,11 +1,18 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import type React from "react";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for icon props.
+ */
 export interface IconProps extends React.SVGProps<SVGSVGElement> {
   size?: number;
 }
 
+/**
+ * Exported constant defining parameters and fields for rocket icon configurations.
+ */
 export const RocketIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -35,6 +42,9 @@ export const RocketIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for book open icon configurations.
+ */
 export const BookOpenIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -52,6 +62,9 @@ export const BookOpenIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for layout icon configurations.
+ */
 export const LayoutIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -70,6 +83,9 @@ export const LayoutIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for star icon configurations.
+ */
 export const StarIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -91,6 +107,9 @@ export const StarIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for monitor icon configurations.
+ */
 export const MonitorIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -109,6 +128,9 @@ export const MonitorIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for shield icon configurations.
+ */
 export const ShieldIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -132,6 +154,9 @@ export const ShieldIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for code icon configurations.
+ */
 export const CodeIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -149,6 +174,9 @@ export const CodeIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for server icon configurations.
+ */
 export const ServerIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -168,6 +196,9 @@ export const ServerIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for briefcase icon configurations.
+ */
 export const BriefcaseIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -185,6 +216,9 @@ export const BriefcaseIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for layers icon configurations.
+ */
 export const LayersIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -208,6 +242,9 @@ export const LayersIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for building icon configurations.
+ */
 export const BuildingIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -231,6 +268,9 @@ export const BuildingIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for cpu icon configurations.
+ */
 export const CpuIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -256,6 +296,9 @@ export const CpuIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for link icon configurations.
+ */
 export const LinkIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -273,6 +316,9 @@ export const LinkIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for globe icon configurations.
+ */
 export const GlobeIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -291,6 +337,9 @@ export const GlobeIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for zap icon configurations.
+ */
 export const ZapIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -313,6 +362,9 @@ export const ZapIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for users icon configurations.
+ */
 export const UsersIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -332,6 +384,9 @@ export const UsersIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for bar chart icon configurations.
+ */
 export const BarChartIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -350,6 +405,9 @@ export const BarChartIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for book icon configurations.
+ */
 export const BookIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -371,6 +429,9 @@ export const BookIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for database icon configurations.
+ */
 export const DatabaseIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -389,6 +450,9 @@ export const DatabaseIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for boxes icon configurations.
+ */
 export const BoxesIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -431,6 +495,9 @@ export const BoxesIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for hard drive icon configurations.
+ */
 export const HardDriveIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -455,6 +522,9 @@ export const HardDriveIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for git branch icon configurations.
+ */
 export const GitBranchIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -474,6 +544,9 @@ export const GitBranchIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for terminal icon configurations.
+ */
 export const TerminalIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -491,6 +564,9 @@ export const TerminalIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for package icon configurations.
+ */
 export const PackageIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -515,6 +591,9 @@ export const PackageIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for key icon configurations.
+ */
 export const KeyIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -536,6 +615,9 @@ export const KeyIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for scale icon configurations.
+ */
 export const ScaleIcon = ({ size = 16, ...props }: IconProps) => (
   <svg
     width={size}
@@ -556,6 +638,9 @@ export const ScaleIcon = ({ size = 16, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for chevron right icon configurations.
+ */
 export const ChevronRightIcon = ({ size = 14, ...props }: IconProps) => (
   <svg
     width={size}
@@ -572,6 +657,9 @@ export const ChevronRightIcon = ({ size = 14, ...props }: IconProps) => (
   </svg>
 );
 
+/**
+ * Exported constant defining parameters and fields for docs icons configurations.
+ */
 export const docsIcons: Record<string, (props: IconProps) => React.ReactNode> = {
   rocket: (props) => <RocketIcon {...props} />,
   "book-open": (props) => <BookOpenIcon {...props} />,

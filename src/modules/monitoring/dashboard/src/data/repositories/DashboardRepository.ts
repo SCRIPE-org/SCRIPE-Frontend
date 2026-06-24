@@ -13,6 +13,10 @@ import type {
 } from "../../domain/entities/DashboardEntities";
 import type { DashboardService } from "../services/DashboardService";
 
+/**
+ * Repository layer implementing client request queries for dashboard.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class DashboardRepository implements IDashboardRepository {
   constructor(private readonly service: DashboardService) {}
 

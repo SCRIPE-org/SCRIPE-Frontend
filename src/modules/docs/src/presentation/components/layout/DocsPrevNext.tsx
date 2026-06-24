@@ -11,6 +11,10 @@ interface DocsPrevNextProps {
   basePath?: string;
 }
 
+/**
+ * Presentation UI component rendering the docs prev next.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DocsPrevNext({
   prevSlug,
   prevTitleKey,

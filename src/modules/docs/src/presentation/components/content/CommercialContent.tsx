@@ -13,6 +13,10 @@ interface CommercialContentProps {
 }
 
 // ─── Component ───────────────────────────────────────────────────
+/**
+ * Presentation UI component rendering the commercial content.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function CommercialContent({
   sections,
   titleKey,

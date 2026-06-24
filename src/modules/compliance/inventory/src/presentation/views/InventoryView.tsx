@@ -8,6 +8,10 @@ import { useInventoryViewModel } from "../viewmodels/useInventoryViewModel";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Badge } from "@core/ui/badge";
 
+/**
+ * Presentation UI component rendering the inventory view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function InventoryView() {
   useModuleLocales(() => import("../../../locales"), "compliance");
   const { vm, getConfigBase, t } = useInventoryViewModel();

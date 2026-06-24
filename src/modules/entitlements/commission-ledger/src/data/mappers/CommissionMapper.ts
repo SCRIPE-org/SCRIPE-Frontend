@@ -35,6 +35,9 @@ const CommissionLedgerEntrySchema = z.object({
   updatedAt: z.string().optional().nullable(),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class CommissionMapper {
   static toLedgerEntity(model: CommissionLedgerEntryModel): CommissionLedgerEntry {
     const validated = safeParseApiResponse(

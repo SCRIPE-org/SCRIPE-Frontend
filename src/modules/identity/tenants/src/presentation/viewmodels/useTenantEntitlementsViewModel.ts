@@ -8,6 +8,10 @@ interface UseTenantEntitlementsViewModelProps {
   tenantId: string;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for tenant entitlements view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useTenantEntitlementsViewModel({ tenantId }: UseTenantEntitlementsViewModelProps) {
   const { t, language, direction } = useI18n();
   const isRtl = direction === "rtl";

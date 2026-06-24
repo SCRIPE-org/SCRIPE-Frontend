@@ -30,6 +30,10 @@ const TABS: { id: AnalyticsTab; icon: React.ElementType; labelKey: string }[] = 
   { id: "reports", icon: FileText, labelKey: "entitlements.analytics.tabs.reports" },
 ];
 
+/**
+ * Presentation UI component rendering the analytics view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function AnalyticsView() {
   useModuleLocales(() => import("../../../locales"), "analytics");
   const { t } = useI18n();

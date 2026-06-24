@@ -1,3 +1,10 @@
+/**
+ * @file frontend.ts
+ * @description Architecture documentation content for the SCRIPE frontend structure.
+ * Defines section lists, comparison matrices, layout guidelines, and code snippets
+ * detailing view and viewmodel separation.
+ */
+
 import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
@@ -66,6 +73,10 @@ const sections: DocSection[] = [
     filename: "UserManagementView.tsx — Pure UI View",
     code: `'use client';
 
+/**
+ * Presentation UI component rendering the user management view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function UserManagementView() {
   const vm = useUserManagementViewModel();
 
@@ -73,6 +84,7 @@ export function UserManagementView() {
     <div>
       <h1>{vm.title}</h1>
       <FilterSection {...vm.filters} />
+      <Spacer />
       <StatisticsSection {...vm.statistics} />
       <GenericCrudView {...vm.table} columns={vm.columns} />
     </div>
@@ -160,18 +172,18 @@ export function UserManagementView() {
       {
         label: "page.tsx (Server Connector)",
         language: "typescript",
-        code: `// src/app/(modules)/admin/user-management/page.tsx
-import { Metadata } from 'next';
-import { UserManagementView } from '@modules/admin/user-management';
-
-export const metadata: Metadata = {
-  title: 'User Management | SCRIPE',
-};
-
-export default function Page() {
-  return <UserManagementView />;
-}
-// That's it. Server component. No logic. Just connects.`,
+        code:
+          `// src/app/(modules)/admin/user-management/page.tsx\n` +
+          `import { Metadata } from 'next';\n` +
+          `import { UserManagementView } from '` +
+          `@modules/admin/user-management';\n\n` +
+          `export const metadata: Metadata = {\n` +
+          `  title: 'User Management | SCRIPE',\n` +
+          `};\n\n` +
+          `export default function Page() {\n` +
+          `  return <UserManagementView />;\n` +
+          `}\n` +
+          `// That's it. Server component. No logic. Just connects.`,
       },
       {
         label: "View.tsx (Client Component)",
@@ -179,6 +191,10 @@ export default function Page() {
         code: `// src/modules/admin/user-management/src/presentation/views/UserManagementView.tsx
 'use client';
 
+/**
+ * Presentation UI component rendering the user management view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function UserManagementView() {
   const vm = useUserManagementViewModel();
   // ... pure JSX composition

@@ -11,6 +11,10 @@ interface BrandingSectionProps {
   updateField: <K extends keyof OAuthAppFormState>(field: K, value: OAuthAppFormState[K]) => void;
 }
 
+/**
+ * Presentation UI component rendering the branding section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function BrandingSection({ form, updateField }: BrandingSectionProps) {
   const { t } = useI18n();
 

@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import {
@@ -23,7 +24,7 @@ import { Skeleton } from "@core/ui/skeleton";
 import { Separator } from "@core/ui/separator";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
-import type { PluginDefinition } from "@modules/plugins/catalog";
+import type { PluginDefinition } from "@modules/plugins/core";
 
 // ── Status Badge ──────────────────────────────────────────────────────────────
 
@@ -82,6 +83,10 @@ function StatCard({ label, value, icon, color }: StatCardProps) {
 
 // ── Main View ─────────────────────────────────────────────────────────────────
 
+/**
+ * Presentation UI component rendering the definitions view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DefinitionsView() {
   useModuleLocales(() => import("../../../locales"), "plugins-definitions");
   const { t, language } = useI18n();

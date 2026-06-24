@@ -52,6 +52,10 @@ function filterTree(nodes: TenantTreeNode[], query: string): TenantTreeNode[] {
 // ViewModel
 // ─────────────────────────────────────────
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for tenants view model.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
+ */
 export function useTenantsViewModel() {
   const router = useRouter();
   const queryClient = useQueryClient();

@@ -21,6 +21,9 @@ import { useQuery, useQueries } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { TenantPlan, TenantPlanFeatureData } from "../../domain/entities/TenantPlan";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for feature row.
+ */
 export interface FeatureRow {
   featureKey: string;
   displayNameEn: string;
@@ -31,11 +34,18 @@ export interface FeatureRow {
   valueType: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for pricing highlight.
+ */
 export interface PricingHighlight {
   label: string;
   isUnlimited?: boolean;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for tenant plan comparison view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useTenantPlanComparisonViewModel() {
   const { tenantPlanRepository } = entitlementsContainer;
   const [selectedCycle, setSelectedCycle] = useState<"Monthly" | "Yearly" | "Lifetime">("Monthly");

@@ -97,6 +97,10 @@ export const LAYER_INFO: Record<BundleLayer, { labelKey: string; icon: string; c
 //  DOMAIN ENTITY
 // ═══════════════════════════════════════════════════════════════
 
+/**
+ * Domain model representing a Theme Bundle Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface ThemeBundleData {
   id: string;
   slug: string;
@@ -124,6 +128,10 @@ export interface ThemeBundleData {
   isAvailable: boolean;
 }
 
+/**
+ * Domain model representing a Theme Bundle structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class ThemeBundle {
   constructor(private readonly data: ThemeBundleData) {}
 

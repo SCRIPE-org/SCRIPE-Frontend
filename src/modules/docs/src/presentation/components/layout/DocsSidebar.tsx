@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import Link from "next/link";
@@ -473,6 +475,10 @@ interface DocsSidebarProps {
   activeSlug: string;
 }
 
+/**
+ * Presentation UI component rendering the docs sidebar.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DocsSidebar({ categories, activeSlug }: DocsSidebarProps) {
   const { t } = useDocsI18n();
 

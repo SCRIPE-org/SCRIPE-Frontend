@@ -14,6 +14,10 @@ const SIZE_CLASS = {
   xl: "h-14 px-6 text-lg",
 };
 
+/**
+ * Presentation UI component rendering the cta button block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function CtaButtonBlockView({ block }: { block: CtaButtonBlock }) {
   const props = block.props;
   if (!isValidCtaUrl(props.url)) return null;

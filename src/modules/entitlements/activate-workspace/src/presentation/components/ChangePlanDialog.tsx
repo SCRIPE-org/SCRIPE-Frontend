@@ -30,6 +30,10 @@ interface ChangePlanDialogProps {
   isRtl: boolean;
 }
 
+/**
+ * Presentation UI component rendering the change plan dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ChangePlanDialog({
   editions,
   isLoadingEditions,

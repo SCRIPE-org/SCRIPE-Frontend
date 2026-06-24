@@ -8,6 +8,10 @@ interface TenantNodeCardBannersProps {
   t: (key: string, variables?: any) => string;
 }
 
+/**
+ * Presentation UI component rendering the tenant node card banners.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function TenantNodeCardBanners({ node, status, t }: TenantNodeCardBannersProps) {
   return (
     <>

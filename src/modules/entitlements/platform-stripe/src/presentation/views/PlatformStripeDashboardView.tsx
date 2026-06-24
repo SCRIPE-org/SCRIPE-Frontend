@@ -18,6 +18,10 @@ import { TransactionsCard } from "../components/TransactionsCard";
 import { PayoutsCard } from "../components/PayoutsCard";
 import { QuickLinksCard } from "../components/QuickLinksCard";
 
+/**
+ * Presentation UI component rendering the platform stripe dashboard view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function PlatformStripeDashboardView() {
   useModuleLocales(() => import("../../../locales"), "platform-stripe");
   const { t } = useI18n();

@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import Link from "next/link";
@@ -14,6 +15,10 @@ interface DocsMobileNavProps {
   basePath?: string;
 }
 
+/**
+ * Presentation UI component rendering the docs mobile nav.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DocsMobileNav({
   categories,
   activeSlug,

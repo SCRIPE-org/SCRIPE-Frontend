@@ -9,12 +9,28 @@
 
 // ─── Shared Types ──────────────────────────────────────────────
 
+/**
+ * Domain model representing a Notification Type structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type NotificationType = "Info" | "Success" | "Warning" | "Error";
+/**
+ * Domain model representing a Notification Category structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type NotificationCategory = "General" | "Security" | "System" | "Activity";
+/**
+ * Domain model representing a Notification Target Type structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type NotificationTargetType = "User" | "Role" | "Tenant" | "Broadcast";
 
 // ─── Notification Target Entity ────────────────────────────────
 
+/**
+ * Domain model representing a Notification Target Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface NotificationTargetData {
   id: string;
   name: string;
@@ -41,5 +57,12 @@ export class NotificationTarget {
   get displayLabel(): string {
     const prefix = this.type.charAt(0).toUpperCase() + this.type.slice(1);
     return `${prefix}: ${this.name}`;
+  }
+
+  copyWith(updates: Partial<NotificationTargetData>): NotificationTarget {
+    return new NotificationTarget({
+      ...this.data,
+      ...updates,
+    } as NotificationTargetData);
   }
 }

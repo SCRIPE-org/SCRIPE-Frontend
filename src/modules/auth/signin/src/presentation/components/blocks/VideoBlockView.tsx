@@ -5,6 +5,10 @@ import {
   isValidVideoUrl,
 } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 
+/**
+ * Presentation UI component rendering the video block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function VideoBlockView({ block }: { block: VideoBlock }) {
   const props = block.props;
   if (!isValidVideoUrl(props.url)) return null;

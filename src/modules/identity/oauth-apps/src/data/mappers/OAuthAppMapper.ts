@@ -89,6 +89,9 @@ function normaliseSpaceList(raw: string | string[] | null | undefined): string {
   return raw;
 }
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class OAuthAppMapper {
   static toEntity(model: OAuthAppModel): OAuthApp {
     const validated = safeParseApiResponse(OAuthAppModelSchema, model, "OAuthApp");

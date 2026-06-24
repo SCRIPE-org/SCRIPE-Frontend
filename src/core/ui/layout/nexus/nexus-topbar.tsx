@@ -81,7 +81,8 @@ export function NexusTopbar({
 
   const isIdString = (str: string): boolean => {
     if (!str) return false;
-    const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(str);
+    const isGuid =
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(str);
     if (isGuid) return true;
     const isEncrypted = str.length >= 20 && /^[a-zA-Z0-9_\-+ /=]+$/.test(str);
     return isEncrypted;

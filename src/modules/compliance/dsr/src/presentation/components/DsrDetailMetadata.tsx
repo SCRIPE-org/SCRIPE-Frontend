@@ -11,6 +11,10 @@ interface DsrDetailMetadataProps {
   typeMeta: { labelKey: string; color: string };
 }
 
+/**
+ * Presentation UI component rendering the dsr detail metadata.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DsrDetailMetadata({ dsr, t, statusMeta, typeMeta }: DsrDetailMetadataProps) {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">

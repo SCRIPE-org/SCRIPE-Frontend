@@ -8,6 +8,10 @@ import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-
 import type { EditionCategory } from "../../domain/entities/EditionCategory";
 import { Pencil, Trash2 } from "lucide-react";
 
+/**
+ * Presentation UI component rendering the edition categories view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function EditionCategoriesView() {
   const { t, language } = useI18n();
   const vm = useEditionCategoriesViewModel();
@@ -106,11 +110,7 @@ export function EditionCategoriesView() {
       resource: "editions",
       getItemDisplayName: (cat: EditionCategory) => cat.getDisplayName(language),
       deleteService: (id: string) => vm.deleteItem(id),
-      getActions: (
-        _vmInstance,
-        tFn,
-        handleDeleteFn
-      ): CrudAction<EditionCategory>[] => [
+      getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<EditionCategory>[] => [
         {
           label: tFn("common.edit") || "Edit",
           onClick: (item: EditionCategory) => vm.openEditModal(item),

@@ -15,6 +15,10 @@ interface ProfileHeaderProps {
   isLoading: boolean;
 }
 
+/**
+ * Presentation UI component rendering the profile header.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ProfileHeader({ profile, isLoading }: ProfileHeaderProps) {
   if (isLoading || !profile) {
     return (

@@ -46,6 +46,10 @@ function toCanvasBackground(v: unknown): CanvasBackgroundData | undefined {
 }
 
 // ── Props ──────────────────────────────────────────────────────────────────
+/**
+ * LoginLayoutRouterProps defines the configuration properties and visual slots
+ * required by the LoginLayoutRouter to dispatch template layouts or render custom drag-and-drop builders.
+ */
 export interface LoginLayoutRouterProps {
   layout: LoginLayout;
   slotConfig: SlotConfig;

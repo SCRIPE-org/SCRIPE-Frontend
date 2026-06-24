@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Edition Pricing ViewModel — Redesigned
  *
@@ -34,6 +35,9 @@ interface PreviewRow {
   rate?: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for edition pricing view model result.
+ */
 export interface EditionPricingViewModelResult {
   // ── USD Base ──
   usdMonthly: number;
@@ -74,6 +78,10 @@ export interface EditionPricingViewModelResult {
   createVersionWithPricing: (changeNotes?: string) => void;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for edition pricing view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useEditionPricingViewModel(editionId: string): EditionPricingViewModelResult {
   const { editionRepository } = entitlementsContainer;
   const queryClient = useQueryClient();

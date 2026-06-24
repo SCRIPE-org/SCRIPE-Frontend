@@ -35,6 +35,9 @@ import { ru as pageRevenueAnalytics } from "../pages/revenue-analytics/ru";
 
 import { mergeAll } from "./utils";
 
+/**
+ * Exported constant defining parameters and fields for all docs ru configurations.
+ */
 export const allDocsRu: Record<string, any> = mergeAll(
   common,
   getStarted,

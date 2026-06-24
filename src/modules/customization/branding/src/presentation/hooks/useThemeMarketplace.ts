@@ -65,6 +65,10 @@ const DEFAULT_FILTERS: ThemeFilterState = {
   sortBy: "popular",
 };
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for theme marketplace.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
+ */
 export function useThemeMarketplace(): UseThemeMarketplaceReturn {
   const { themeMarketplaceRepository } = customizationContainer;
   const { toast } = useToast();

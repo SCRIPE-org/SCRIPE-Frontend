@@ -21,6 +21,9 @@ import type {
   TenantTransactionItemModel,
 } from "../models/ConnectModels";
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class ConnectMapper {
   static toAccountEntity(dto: ConnectAccountResponseModel): ConnectAccount {
     return new ConnectAccount({

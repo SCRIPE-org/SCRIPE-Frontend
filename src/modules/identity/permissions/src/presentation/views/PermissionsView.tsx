@@ -19,6 +19,10 @@ import {
 } from "../components";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
+/**
+ * Presentation UI component rendering the permissions view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function PermissionsView() {
   useModuleLocales(() => import("../../../locales"), "permissions");
 

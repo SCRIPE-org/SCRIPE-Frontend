@@ -15,6 +15,10 @@ import type {
   UpdateSystemSettingsJson,
 } from "../types/CustomizationServiceTypes";
 
+/**
+ * Http API network service for i customization.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface ICustomizationService {
   // ── Tenant Branding (My Tenant) ──
   getMyBranding(): Promise<BrandingResponseJson>;

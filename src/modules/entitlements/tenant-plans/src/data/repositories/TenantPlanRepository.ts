@@ -22,8 +22,12 @@ import type {
 } from "../../domain/entities/TenantPlanRequests";
 import { TenantPlanMapper } from "../mappers/TenantPlanMapper";
 import type { ITenantPlanService } from "../../domain/interfaces/ITenantPlanService";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
+/**
+ * Repository layer implementing client request queries for tenant plan.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class TenantPlanRepository implements ITenantPlanRepository {
   constructor(private readonly service: ITenantPlanService) {}
 

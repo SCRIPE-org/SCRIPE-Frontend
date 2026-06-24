@@ -16,6 +16,10 @@ export interface UserGroupMember {
   isActive: boolean;
 }
 
+/**
+ * Domain model representing a User Group Role structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface UserGroupRole {
   roleId: string;
   nameEn: string;
@@ -24,11 +28,19 @@ export interface UserGroupRole {
   permissionCount: number;
 }
 
+/**
+ * Domain model representing a User Group Restriction structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface UserGroupRestriction {
   permissionCode: string;
   restrictedFields: string[];
 }
 
+/**
+ * Domain model representing a User Group Props structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface UserGroupProps {
   id: string;
   nameEn: string;
@@ -48,6 +60,10 @@ export interface UserGroupProps {
   restrictions?: UserGroupRestriction[];
 }
 
+/**
+ * Domain model representing a User Group structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class UserGroup {
   private readonly props: UserGroupProps;
 
@@ -120,5 +136,12 @@ export class UserGroup {
 
   toProps(): UserGroupProps {
     return { ...this.props };
+  }
+
+  copyWith(updates: Partial<UserGroupProps>): UserGroup {
+    return new UserGroup({
+      ...this.props,
+      ...updates,
+    } as UserGroupProps);
   }
 }

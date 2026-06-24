@@ -5,6 +5,10 @@ import { BG_STYLE, WRAPPER_STYLE } from "./layout-types";
 import { MobileLogo, DesktopHeading } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
+/**
+ * Presentation UI component rendering the magazine layout.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function MagazineLayout({
   branding,
   slotConfig,

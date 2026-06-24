@@ -5,7 +5,7 @@
  * Implemented by FeatureService in the data layer.
  * Returns raw DTOs (models) — never domain entities.
  */
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 import type {
   FeatureModel,
   TenantEffectiveFeatureModel,
@@ -13,6 +13,10 @@ import type {
 } from "../../data/models/FeatureModels";
 import type { CreateFeatureRequest, UpdateFeatureRequest } from "../entities/FeatureRequests";
 
+/**
+ * Http API network service for i feature.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface IFeatureService {
   getAll(params: PaginationParams): Promise<PagedResult<FeatureModel>>;
   getById(id: string): Promise<FeatureModel>;

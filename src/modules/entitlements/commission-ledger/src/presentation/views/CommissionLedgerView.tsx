@@ -8,6 +8,10 @@ import { RefreshCw, XCircle } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { CommissionInvoice } from "../../domain/entities/CommissionInvoice";
 
+/**
+ * Presentation UI component rendering the commission ledger view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function CommissionLedgerView() {
   const { t } = useI18n();
   const vm = useCommissionLedgerViewModel();

@@ -8,11 +8,18 @@ import { Shield, ExternalLink, Scale, Pencil } from "lucide-react";
 
 import type { Regulation } from "../../domain/entities/Regulation";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for regulation card props.
+ */
 export interface RegulationCardProps {
   regulation: Regulation;
   onEdit?: (regulation: Regulation) => void;
 }
 
+/**
+ * Presentation UI component rendering the regulation card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function RegulationCard({ regulation, onEdit }: RegulationCardProps) {
   const { t } = useI18n();
 

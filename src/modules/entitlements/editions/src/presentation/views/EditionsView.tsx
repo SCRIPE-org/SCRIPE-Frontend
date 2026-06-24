@@ -17,6 +17,10 @@ import { Pencil, Trash2, Eye, Settings2, Columns } from "lucide-react";
 import { format } from "date-fns";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
+/**
+ * Presentation UI component rendering the editions view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function EditionsView() {
   useModuleLocales(() => import("../../../locales"), "editions");
   const { t, language } = useI18n();

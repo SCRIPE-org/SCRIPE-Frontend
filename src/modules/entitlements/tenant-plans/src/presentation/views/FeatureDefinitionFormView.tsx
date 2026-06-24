@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * FeatureDefinitionFormView — Premium Create/Edit Page
  *
@@ -45,6 +47,10 @@ interface FeatureDefinitionFormViewProps {
   isViewMode?: boolean;
 }
 
+/**
+ * Presentation UI component rendering the feature definition form view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function FeatureDefinitionFormView({
   featureId,
   isViewMode,

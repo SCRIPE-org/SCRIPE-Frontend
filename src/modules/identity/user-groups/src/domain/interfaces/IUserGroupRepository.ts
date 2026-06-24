@@ -8,6 +8,9 @@ import type {
   SetGroupRestrictionsRequest,
 } from "../entities/UserGroupRequests";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for user group list params.
+ */
 export interface UserGroupListParams {
   page: number;
   pageSize: number;
@@ -16,6 +19,10 @@ export interface UserGroupListParams {
   isActive?: boolean;
 }
 
+/**
+ * Repository layer implementing client request queries for i user group.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export interface IUserGroupRepository {
   getAll(params: UserGroupListParams): Promise<PagedResult<UserGroup>>;
   getMyTenantGroups(params: UserGroupListParams): Promise<PagedResult<UserGroup>>;

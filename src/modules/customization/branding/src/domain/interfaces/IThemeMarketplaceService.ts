@@ -57,6 +57,10 @@ export interface UpsertThemePayload {
   isSystem?: boolean;
 }
 
+/**
+ * Http API network service for i theme marketplace.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface IThemeMarketplaceService {
   /** Get paginated themes with filters */
   getThemes(params: ThemeListParams): Promise<ThemePagedResult>;

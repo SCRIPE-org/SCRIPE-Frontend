@@ -23,6 +23,10 @@ export interface CreateMessageTemplateRequest {
   tags?: string;
 }
 
+/**
+ * Domain model representing a Update Message Template Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface UpdateMessageTemplateRequest {
   subject?: string;
   body: string;
@@ -34,17 +38,29 @@ export interface UpdateMessageTemplateRequest {
   tags?: string;
 }
 
+/**
+ * Domain model representing a Preview Template Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface PreviewTemplateRequest {
   subject?: string;
   body: string;
   sampleData?: Record<string, unknown>;
 }
 
+/**
+ * Domain model representing a Preview Template Response structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface PreviewTemplateResponse {
   subject: string | null;
   body: string;
 }
 
+/**
+ * Domain model representing a Import Template Payload structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface ImportTemplatePayload {
   key: string;
   channel: string;

@@ -14,6 +14,10 @@ import type { ICustomizationService } from "../../domain/interfaces/ICustomizati
 import type { BrandingResponseJson, AuditLogPagedResultJson } from "../models/BrandingModel";
 import type { SystemSettingsJson, UpdateSystemSettingsJson } from "../models/SystemSettingsModel";
 
+/**
+ * Http API network service for customization.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class CustomizationService implements ICustomizationService {
   constructor(private readonly apiService: IApiService) {}
 

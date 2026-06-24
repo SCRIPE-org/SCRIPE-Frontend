@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * Tenant Stats Component — Deep Redesign
  *
@@ -19,6 +20,10 @@ interface TenantStatsProps {
   onTabChange?: (tab: string) => void;
 }
 
+/**
+ * Presentation UI component rendering the tenant stats.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
   const { t, direction, isRtl, stats, loading } = useTenantStatsViewModel({ tenantId });
 

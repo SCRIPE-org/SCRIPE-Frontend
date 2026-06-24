@@ -3491,25 +3491,62 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
     --login-input-height: 44px !important;
     --login-size-headline: 1.5rem !important;
   }
-  
+
   /* Compress tailwind vertical margins and paddings in login layouts */
-  .login-page .mb-10 { margin-bottom: 1.25rem !important; }
-  .login-page .mb-8 { margin-bottom: 1rem !important; }
-  .login-page .mb-12 { margin-bottom: 1.5rem !important; }
-  .login-page .mt-12 { margin-top: 1.5rem !important; }
-  .login-page .mt-16 { margin-top: 1.75rem !important; }
-  .login-page .py-12 { padding-top: 1.25rem !important; padding-bottom: 1.25rem !important; }
-  .login-page .py-14 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
-  .login-page .py-16 { padding-top: 1.75rem !important; padding-bottom: 1.75rem !important; }
-  .login-page .py-24 { padding-top: 2rem !important; padding-bottom: 2rem !important; }
-  .login-page .pt-20 { padding-top: 2rem !important; }
-  .login-page .pb-24 { padding-bottom: 2rem !important; }
-  .login-page .mb-16 { margin-bottom: 1.75rem !important; }
-  .login-page .gap-10 { gap: 1.25rem !important; }
-  .login-page .gap-8 { gap: 1rem !important; }
-  .login-page .py-8 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
-  .login-page .mt-6 { margin-top: 1rem !important; }
-  
+  .login-page .mb-10 {
+    margin-bottom: 1.25rem !important;
+  }
+  .login-page .mb-8 {
+    margin-bottom: 1rem !important;
+  }
+  .login-page .mb-12 {
+    margin-bottom: 1.5rem !important;
+  }
+  .login-page .mt-12 {
+    margin-top: 1.5rem !important;
+  }
+  .login-page .mt-16 {
+    margin-top: 1.75rem !important;
+  }
+  .login-page .py-12 {
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.25rem !important;
+  }
+  .login-page .py-14 {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+  .login-page .py-16 {
+    padding-top: 1.75rem !important;
+    padding-bottom: 1.75rem !important;
+  }
+  .login-page .py-24 {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+  }
+  .login-page .pt-20 {
+    padding-top: 2rem !important;
+  }
+  .login-page .pb-24 {
+    padding-bottom: 2rem !important;
+  }
+  .login-page .mb-16 {
+    margin-bottom: 1.75rem !important;
+  }
+  .login-page .gap-10 {
+    gap: 1.25rem !important;
+  }
+  .login-page .gap-8 {
+    gap: 1rem !important;
+  }
+  .login-page .py-8 {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+  .login-page .mt-6 {
+    margin-top: 1rem !important;
+  }
+
   /* Signup height adaptation */
   .signup-shell header {
     height: 3rem !important;
@@ -3525,10 +3562,18 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
     padding-top: 1.5rem !important;
     padding-bottom: 1.5rem !important;
   }
-  .signup-shell .mb-7 { margin-bottom: 1.25rem !important; }
-  .signup-shell .mb-8 { margin-bottom: 1.25rem !important; }
-  .signup-shell .mt-8 { margin-top: 1.25rem !important; }
-  .signup-shell .gap-5 { gap: 1rem !important; }
+  .signup-shell .mb-7 {
+    margin-bottom: 1.25rem !important;
+  }
+  .signup-shell .mb-8 {
+    margin-bottom: 1.25rem !important;
+  }
+  .signup-shell .mt-8 {
+    margin-top: 1.25rem !important;
+  }
+  .signup-shell .gap-5 {
+    gap: 1rem !important;
+  }
 }
 
 @media (max-height: 680px) {
@@ -3544,33 +3589,72 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
     --login-input-height: 38px !important;
     --login-size-headline: 1.25rem !important;
   }
-  
-  .login-page .mb-10 { margin-bottom: 0.75rem !important; }
-  .login-page .mb-8 { margin-bottom: 0.5rem !important; }
-  .login-page .mb-12 { margin-bottom: 0.75rem !important; }
-  .login-page .mt-12 { margin-top: 1rem !important; }
-  .login-page .mt-16 { margin-top: 1.25rem !important; }
-  .login-page .py-12 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
-  .login-page .py-14 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
-  .login-page .py-16 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
-  .login-page .py-24 { padding-top: 1.25rem !important; padding-bottom: 1.25rem !important; }
-  .login-page .pt-20 { padding-top: 1.25rem !important; }
-  .login-page .pb-24 { padding-bottom: 1.25rem !important; }
-  .login-page .mb-16 { margin-bottom: 1rem !important; }
-  .login-page .gap-10 { gap: 0.75rem !important; }
-  .login-page .gap-8 { gap: 0.75rem !important; }
-  .login-page .py-8 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
-  .login-page .mt-6 { margin-top: 0.75rem !important; }
-  
+
+  .login-page .mb-10 {
+    margin-bottom: 0.75rem !important;
+  }
+  .login-page .mb-8 {
+    margin-bottom: 0.5rem !important;
+  }
+  .login-page .mb-12 {
+    margin-bottom: 0.75rem !important;
+  }
+  .login-page .mt-12 {
+    margin-top: 1rem !important;
+  }
+  .login-page .mt-16 {
+    margin-top: 1.25rem !important;
+  }
+  .login-page .py-12 {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+  .login-page .py-14 {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+  .login-page .py-16 {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+  .login-page .py-24 {
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.25rem !important;
+  }
+  .login-page .pt-20 {
+    padding-top: 1.25rem !important;
+  }
+  .login-page .pb-24 {
+    padding-bottom: 1.25rem !important;
+  }
+  .login-page .mb-16 {
+    margin-bottom: 1rem !important;
+  }
+  .login-page .gap-10 {
+    gap: 0.75rem !important;
+  }
+  .login-page .gap-8 {
+    gap: 0.75rem !important;
+  }
+  .login-page .py-8 {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+  .login-page .mt-6 {
+    margin-top: 0.75rem !important;
+  }
+
   /* Headings & copy scaling */
-  .login-page h1, .login-page .login-heading {
+  .login-page h1,
+  .login-page .login-heading {
     font-size: 1.375rem !important;
     line-height: 1.2 !important;
   }
   .login-page h2 {
     font-size: 1.25rem !important;
   }
-  .login-page p, .login-page .login-subtitle {
+  .login-page p,
+  .login-page .login-subtitle {
     font-size: 0.8125rem !important;
     line-height: 1.35 !important;
   }
@@ -3596,11 +3680,19 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
     padding-top: 1rem !important;
     padding-bottom: 1rem !important;
   }
-  .signup-shell .mb-7 { margin-bottom: 0.75rem !important; }
-  .signup-shell .mb-8 { margin-bottom: 0.75rem !important; }
-  .signup-shell .mt-8 { margin-top: 0.75rem !important; }
-  .signup-shell .gap-5 { gap: 0.75rem !important; }
-  
+  .signup-shell .mb-7 {
+    margin-bottom: 0.75rem !important;
+  }
+  .signup-shell .mb-8 {
+    margin-bottom: 0.75rem !important;
+  }
+  .signup-shell .mt-8 {
+    margin-top: 0.75rem !important;
+  }
+  .signup-shell .gap-5 {
+    gap: 0.75rem !important;
+  }
+
   .signup-shell h1 {
     font-size: 1.35rem !important;
     line-height: 1.2 !important;
@@ -3609,7 +3701,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
     font-size: 0.8125rem !important;
     line-height: 1.35 !important;
   }
-  
+
   /* Scale inputs, buttons, and selects */
   .signup-shell input,
   .signup-shell button[type="submit"],
@@ -3635,7 +3727,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
     --login-container-py: 8px !important;
     --login-input-height: 34px !important;
   }
-  
+
   .login-page .mb-10,
   .login-page .mb-8,
   .login-page .mb-12,
@@ -3655,7 +3747,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   .login-page .mb-10.flex.flex-col.items-center {
     display: none !important;
   }
-  
+
   /* Signup shell overrides */
   .signup-shell header {
     display: none !important;
@@ -3673,7 +3765,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   .signup-shell .mt-8 {
     display: none !important; /* Hide headings in wizard steps */
   }
-  
+
   .signup-shell input,
   .signup-shell button[type="submit"],
   .signup-shell select {
@@ -3684,4 +3776,3 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
     font-size: 0.6875rem !important;
   }
 }
-

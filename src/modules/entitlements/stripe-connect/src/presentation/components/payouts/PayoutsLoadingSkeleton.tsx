@@ -3,6 +3,10 @@
 import { Card, CardContent } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 
+/**
+ * Presentation UI component rendering the payouts loading skeleton.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function PayoutsLoadingSkeleton() {
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-6">

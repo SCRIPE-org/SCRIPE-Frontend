@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 // ═══════════════════════════════════════════════════════════════════════════
 // Adaptive onboarding flow helpers — unit tests (Vitest)
 //

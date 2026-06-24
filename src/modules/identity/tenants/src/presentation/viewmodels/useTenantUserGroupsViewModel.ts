@@ -17,8 +17,8 @@ import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { useRouter } from "next/navigation";
 
 // User Groups module imports
-import type { UserGroupListItem } from "@modules/identity/user-groups/src/presentation/viewmodels/useUserGroupsViewModel";
-import { useUserGroupsViewModel } from "@modules/identity/user-groups/src/presentation/viewmodels/useUserGroupsViewModel";
+import type { UserGroupListItem } from "@modules/identity/core";
+import { useUserGroupsViewModel } from "@modules/identity/core";
 
 interface UseTenantUserGroupsViewModelParams {
   tenantId: string;
@@ -75,6 +75,10 @@ export interface TenantUserGroupsViewModelResult {
   confirmStatus: (cascadeAdmins: boolean) => Promise<void>;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for tenant user groups view model.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
+ */
 export function useTenantUserGroupsViewModel({
   tenantId,
   tenantName,

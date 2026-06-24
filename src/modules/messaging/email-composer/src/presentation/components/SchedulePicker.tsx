@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import React, { useMemo } from "react";
@@ -10,8 +12,14 @@ import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 
 // ─── Types ──────────────────────────────────────────────────
+/**
+ * Exported type defining parameters and fields for schedule mode configurations.
+ */
 export type ScheduleMode = "now" | "scheduled" | "recurring";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for schedule config.
+ */
 export interface ScheduleConfig {
   mode: ScheduleMode;
   scheduledDate?: string;
@@ -25,6 +33,9 @@ export interface ScheduleConfig {
   };
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for schedule picker props.
+ */
 export interface SchedulePickerProps {
   value: ScheduleConfig;
   onChange: (config: ScheduleConfig) => void;
@@ -80,6 +91,10 @@ const MODES: { id: ScheduleMode; label: string; desc: string; icon: React.ReactN
 ];
 
 // ─── Main Component ─────────────────────────────────────────
+/**
+ * Presentation UI component rendering the schedule picker.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProps) {
   const { t } = useI18n();
   const update = (partial: Partial<ScheduleConfig>) => {

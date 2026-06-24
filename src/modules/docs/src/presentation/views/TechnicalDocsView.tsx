@@ -28,6 +28,10 @@ interface TechnicalDocsViewProps {
 }
 
 // ─── View ─────────────────────────────────────────────────────────
+/**
+ * Presentation UI component rendering the technical docs view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
   const { t, direction, loadSection } = useDocsI18n();
   const vm = useDocsViewModel(slug, "technical");

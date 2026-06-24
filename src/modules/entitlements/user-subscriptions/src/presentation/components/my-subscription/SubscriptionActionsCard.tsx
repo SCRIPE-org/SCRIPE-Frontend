@@ -27,6 +27,10 @@ interface SubscriptionActionsCardProps {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the subscription actions card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function SubscriptionActionsCard({
   subscription,
   onCancel,

@@ -18,6 +18,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useI18n } from "@core/providers/i18n-provider";
 import { Loader2, PlusCircle } from "lucide-react";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for create lead form data.
+ */
 export interface CreateLeadFormData {
   companyName: string;
   contactName: string;
@@ -46,6 +49,10 @@ const emptyForm: CreateLeadFormData = {
   notes: "",
 };
 
+/**
+ * Presentation UI component rendering the create lead dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function CreateLeadDialog({
   open,
   onClose,
@@ -190,9 +197,7 @@ export function CreateLeadDialog({
                 disabled={isSubmitting}
                 error={errors.phone}
               />
-              {errors.phone && (
-                <p className="text-xs text-destructive">{errors.phone}</p>
-              )}
+              {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
             </div>
           </div>
 

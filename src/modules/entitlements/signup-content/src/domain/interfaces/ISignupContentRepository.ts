@@ -2,6 +2,9 @@
 
 import type { AdminSignupContent, ContentMode } from "../entities/SignupContent";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for update welcome params.
+ */
 export interface UpdateWelcomeParams {
   headlineEn: string;
   headlineAr: string;
@@ -14,6 +17,9 @@ export interface UpdateWelcomeParams {
   trustedByLabelAr: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for create trust mark params.
+ */
 export interface CreateTrustMarkParams {
   key: string;
   kind: string;
@@ -26,6 +32,9 @@ export interface CreateTrustMarkParams {
   isActive: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for update trust mark params.
+ */
 export interface UpdateTrustMarkParams {
   key?: string;
   kind?: string;
@@ -38,6 +47,9 @@ export interface UpdateTrustMarkParams {
   isActive?: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for create customer logo params.
+ */
 export interface CreateCustomerLogoParams {
   key: string;
   name: string;
@@ -47,6 +59,9 @@ export interface CreateCustomerLogoParams {
   isActive: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for update customer logo params.
+ */
 export interface UpdateCustomerLogoParams {
   key?: string;
   name?: string;
@@ -56,6 +71,10 @@ export interface UpdateCustomerLogoParams {
   isActive?: boolean;
 }
 
+/**
+ * Repository layer implementing client request queries for i signup content.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export interface ISignupContentRepository {
   getAdminContent(): Promise<AdminSignupContent>;
   setMode(mode: ContentMode): Promise<void>;

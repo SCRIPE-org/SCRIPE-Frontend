@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
@@ -227,6 +228,10 @@ public async Task LogAsync(AuditEntry entry)
         language: "typescript",
         filename: "useAuditStream.ts — Frontend Hook",
         code: `// Frontend hook for real-time audit log streaming
+/**
+ * React hook/ViewModel orchestrating state and data flows for audit stream.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
+ */
 export function useAuditStream() {
   const [logs, setLogs] = useState<AuditLogDto[]>([]);
   const connection = useSignalR(); // From SignalRProvider

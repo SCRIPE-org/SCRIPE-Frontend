@@ -1,9 +1,12 @@
 /**
  * Invoice Entities — Rich domain entities with getters and computed properties.
  */
-
 // ── Invoice (Full Detail) ──
-
+/**
+ * Interface detailing the complete schema of an Invoice entity.
+ * Holds identifiers, customer and company names, total breakdowns (subtotal, tax, discounts), 
+ * navigation urls, line item details, and historical payment transactions.
+ */
 export interface InvoiceData {
   id: string;
   tenantId: string;
@@ -26,10 +29,13 @@ export interface InvoiceData {
   lineItems: InvoiceLineItem[];
   transactions: PaymentTransaction[];
 }
-
+/**
+ * Domain entity wrapping full invoice properties with rich computed logic.
+ * Contains methods to query status attributes (e.g. isPaid, isOverdue), check active discounts, 
+ * compute line-item statistics, and create immutable copy overrides.
+ */
 export class Invoice {
   constructor(public readonly data: InvoiceData) {}
-
   get id(): string {
     return this.data.id;
   }
@@ -90,7 +96,6 @@ export class Invoice {
   get transactions(): PaymentTransaction[] {
     return this.data.transactions;
   }
-
   // ── Computed Properties ──
   get isPaid(): boolean {
     return this.data.status === "Paid";
@@ -110,14 +115,15 @@ export class Invoice {
   get lineItemCount(): number {
     return this.data.lineItems.length;
   }
-
   copyWith(updates: Partial<InvoiceData>): Invoice {
     return new Invoice({ ...this.data, ...updates });
   }
 }
-
 // ── Invoice List Item ──
-
+/**
+ * Data structure detailing the layout of lightweight invoice summaries.
+ * Optimized for paginated dashboard lists and reports where full line-item details are unnecessary.
+ */
 export interface InvoiceListItemData {
   id: string;
   tenantId: string;
@@ -131,10 +137,12 @@ export interface InvoiceListItemData {
   billingCycle: string;
   createdAt: string;
 }
-
+/**
+ * Domain entity representing a lightweight row in an invoice data list.
+ * Exposes core fields such as payment totals, active cycles, status flags, and formatting utilities.
+ */
 export class InvoiceListItem {
   constructor(public readonly data: InvoiceListItemData) {}
-
   get id(): string {
     return this.data.id;
   }
@@ -168,18 +176,18 @@ export class InvoiceListItem {
   get createdAt(): string {
     return this.data.createdAt;
   }
-
   get isPaid(): boolean {
     return this.data.status === "Paid";
   }
-
   copyWith(updates: Partial<InvoiceListItemData>): InvoiceListItem {
     return new InvoiceListItem({ ...this.data, ...updates });
   }
 }
-
 // ── Simple Value Types (kept as interfaces — no domain logic needed) ──
-
+/**
+ * Schema representing an individual line-item row within an invoice receipt.
+ * Holds line identifiers, unit price rules, quantity multipliers, and calculated subtotals.
+ */
 export interface InvoiceLineItem {
   id: string;
   description: string;
@@ -187,7 +195,10 @@ export interface InvoiceLineItem {
   unitPrice: number;
   total: number;
 }
-
+/**
+ * Data structure mapping gateway payment logs (Stripe, Paypal) associated with an invoice.
+ * Captures status changes, processing timestamps, refunds, and failure codes.
+ */
 export interface PaymentTransaction {
   id: string;
   invoiceId: string;
@@ -202,96 +213,4 @@ export interface PaymentTransaction {
   processedAt?: string;
   refundedAt?: string;
   createdAt: string;
-}
-
-export interface CheckoutSession {
-  sessionId: string;
-  url: string;
-  qrCodeBase64?: string;
-  emailSent?: boolean;
-}
-
-export interface BillingPortal {
-  url: string;
-}
-
-// ── Billing Dashboard (Server-Computed KPIs) ──
-
-export interface BillingDashboardData {
-  mrr: number;
-  arr: number;
-  totalRevenue: number;
-  activeSubscriptions: number;
-  trialSubscriptions: number;
-  cancelledLast30Days: number;
-  churnRate: number;
-  revenueTrend: MonthlyRevenuePoint[];
-  editionBreakdown: EditionBreakdownItem[];
-  currency: string;
-}
-
-export class BillingDashboard {
-  constructor(public readonly data: BillingDashboardData) {}
-
-  get mrr(): number {
-    return this.data.mrr;
-  }
-  get arr(): number {
-    return this.data.arr;
-  }
-  get totalRevenue(): number {
-    return this.data.totalRevenue;
-  }
-  get activeSubscriptions(): number {
-    return this.data.activeSubscriptions;
-  }
-  get trialSubscriptions(): number {
-    return this.data.trialSubscriptions;
-  }
-  get cancelledLast30Days(): number {
-    return this.data.cancelledLast30Days;
-  }
-  get churnRate(): number {
-    return this.data.churnRate;
-  }
-  get revenueTrend(): MonthlyRevenuePoint[] {
-    return this.data.revenueTrend;
-  }
-  get editionBreakdown(): EditionBreakdownItem[] {
-    return this.data.editionBreakdown;
-  }
-  get currency(): string {
-    return this.data.currency;
-  }
-
-  // ── Computed Properties ──
-  get totalSubscriptions(): number {
-    return this.activeSubscriptions + this.trialSubscriptions;
-  }
-  get hasRevenue(): boolean {
-    return this.totalRevenue > 0;
-  }
-  get isHealthy(): boolean {
-    return this.churnRate < 5;
-  }
-}
-
-export interface MonthlyRevenuePoint {
-  month: string;
-  revenue: number;
-  newSubscriptions: number;
-}
-
-export interface EditionBreakdownItem {
-  editionId: string;
-  editionName: string;
-  activeCount: number;
-  revenue: number;
-}
-
-// ── Payment Link ──
-
-export interface PaymentLink {
-  url: string;
-  linkId: string;
 }

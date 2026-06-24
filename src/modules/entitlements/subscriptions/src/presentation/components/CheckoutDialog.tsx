@@ -60,6 +60,10 @@ function formatPad(n: number) {
   return n.toString().padStart(2, "0");
 }
 
+/**
+ * Presentation UI component rendering the checkout dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function CheckoutDialog({ vm }: SubscriptionDialogProps) {
   const { t } = useI18n();
   const countdown = useCountdown(vm.showCheckoutDialog);

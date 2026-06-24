@@ -11,6 +11,9 @@ export interface MonthlyMrrPointModel {
   activeCount: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for analytics overview model.
+ */
 export interface AnalyticsOverviewModel {
   // Current KPIs
   currentMrr: number;
@@ -34,6 +37,9 @@ export interface AnalyticsOverviewModel {
 }
 
 // ── MRR Movement ──
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for mrr movement point model.
+ */
 export interface MrrMovementPointModel {
   month: string;
   mrrStart: number;
@@ -46,6 +52,9 @@ export interface MrrMovementPointModel {
   netChange: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for mrr movement response model.
+ */
 export interface MrrMovementResponseModel {
   movements: MrrMovementPointModel[];
   totalNewMrr: number;
@@ -58,24 +67,36 @@ export interface MrrMovementResponseModel {
 }
 
 // ── Cohort Analysis ──
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for cohort cell model.
+ */
 export interface CohortCellModel {
   monthIndex: number;
   activeCount: number;
   retentionPercent: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for cohort row model.
+ */
 export interface CohortRowModel {
   cohortMonth: string;
   initialCount: number;
   retention: CohortCellModel[];
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for cohort analysis response model.
+ */
 export interface CohortAnalysisResponseModel {
   cohorts: CohortRowModel[];
   maxMonthsTracked: number;
 }
 
 // ── LTV by Edition ──
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for edition ltv model.
+ */
 export interface EditionLtvModel {
   editionId: string;
   editionName: string;
@@ -86,11 +107,17 @@ export interface EditionLtvModel {
   insufficientData: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for ltv response model.
+ */
 export interface LtvResponseModel {
   editions: EditionLtvModel[];
 }
 
 // ── Revenue Forecast ──
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for forecast point model.
+ */
 export interface ForecastPointModel {
   month: string;
   mrr: number;
@@ -98,6 +125,9 @@ export interface ForecastPointModel {
   lowerBound?: number | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for revenue forecast response model.
+ */
 export interface RevenueForecastResponseModel {
   historical: ForecastPointModel[];
   projected: ForecastPointModel[];
@@ -109,6 +139,9 @@ export interface RevenueForecastResponseModel {
 }
 
 // ── Tenant Health Score ──
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for tenant health score model.
+ */
 export interface TenantHealthScoreModel {
   tenantId: string;
   tenantName: string;
@@ -128,6 +161,9 @@ export interface TenantHealthScoreModel {
   currency: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for tenant health scores response model.
+ */
 export interface TenantHealthScoresResponseModel {
   items: TenantHealthScoreModel[];
   totalCount: number;
@@ -138,6 +174,9 @@ export interface TenantHealthScoresResponseModel {
   healthyCount: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for tenant health detail model.
+ */
 export interface TenantHealthDetailModel extends TenantHealthScoreModel {
   mrrStart: number;
   mrrNew: number;
@@ -157,6 +196,9 @@ export interface TenantHealthDetailModel extends TenantHealthScoreModel {
 }
 
 // ── Report Preferences ──
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for report preference model.
+ */
 export interface ReportPreferenceModel {
   cadence: string;
   email: string;
@@ -168,6 +210,9 @@ export interface ReportPreferenceModel {
   lastSentAt?: string | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for update report preference request model.
+ */
 export interface UpdateReportPreferenceRequestModel {
   cadence: string;
   email?: string;

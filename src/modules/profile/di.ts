@@ -15,6 +15,16 @@ interface ProfileContainer {
 let _instance: ProfileContainer | null = null;
 
 function createContainer(): ProfileContainer {
+  if (typeof window === "undefined") {
+    const dummyProxy = new Proxy({} as any, {
+      get() {
+        return () => Promise.resolve({});
+      },
+    });
+    return {
+      profileRepository: dummyProxy,
+    };
+  }
   const profileRepository = new ProfileRepository(getModuleApiService("IDENTITY"));
   return { profileRepository };
 }

@@ -18,6 +18,10 @@ interface ComparisonColumnHeaderProps {
   recommendedLabel?: string;
 }
 
+/**
+ * Presentation UI component rendering the comparison column header.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ComparisonColumnHeader({
   displayName,
   tierLevel,

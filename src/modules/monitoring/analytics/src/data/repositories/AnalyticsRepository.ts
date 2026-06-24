@@ -13,6 +13,10 @@ import type {
 } from "../../domain/entities/AnalyticsEntities";
 import { AnalyticsMapper } from "../mappers/AnalyticsMapper";
 
+/**
+ * Repository layer implementing client request queries for analytics.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class AnalyticsRepository implements IAnalyticsRepository {
   constructor(private readonly service: IAnalyticsService) {}
 

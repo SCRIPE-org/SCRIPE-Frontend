@@ -23,6 +23,10 @@ export interface EditionPromotionData {
   createdAt: string;
 }
 
+/**
+ * Domain model representing a Edition Promotion structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class EditionPromotion {
   constructor(public readonly data: EditionPromotionData) {}
 
@@ -95,8 +99,19 @@ export class EditionPromotion {
     if (this.data.type === "Percentage") return `${this.data.discountValue}% off`;
     return `${this.data.discountCurrency ?? "$"}${this.data.discountValue} off`;
   }
+
+  copyWith(updates: Partial<EditionPromotionData>): EditionPromotion {
+    return new EditionPromotion({
+      ...this.data,
+      ...updates,
+    } as EditionPromotionData);
+  }
 }
 
+/**
+ * Domain model representing a Create Promotion Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface CreatePromotionRequest {
   name: string;
   description?: string;
@@ -113,6 +128,10 @@ export interface CreatePromotionRequest {
   firstTimeOnly: boolean;
 }
 
+/**
+ * Domain model representing a Update Promotion Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface UpdatePromotionRequest {
   name?: string;
   description?: string;
@@ -121,6 +140,10 @@ export interface UpdatePromotionRequest {
   maxRedemptions?: number;
 }
 
+/**
+ * Domain model representing a Promo Code Validation Result structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface PromoCodeValidationResult {
   isValid: boolean;
   errorMessage?: string;

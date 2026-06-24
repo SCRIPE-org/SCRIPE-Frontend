@@ -143,11 +143,15 @@ vi.mock("@modules/entitlements/di", () => ({
   },
 }));
 
-vi.mock("@modules/auth/signup/src/presentation/components/common/SignupShell", () => ({
-  SignupShell: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="signup-shell">{children}</div>
-  ),
-}));
+vi.mock("@core/common/component-registry", () => {
+  const SignupShellMock = function SignupShellMock({ children }: { children: React.ReactNode }) {
+    return <div data-testid="signup-shell">{children}</div>;
+  };
+  SignupShellMock.displayName = "SignupShellMock";
+  return {
+    getComponent: vi.fn(() => SignupShellMock),
+  };
+});
 
 vi.mock("@core/hooks/use-enhanced-toast", () => ({
   useEnhancedToast: mockUseEnhancedToast,

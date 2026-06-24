@@ -4,6 +4,10 @@ import type { PluginCatalogItem } from "../../domain/entities/PluginCatalogItem"
 import { CatalogMapper } from "../mappers/CatalogMapper";
 import type { InstallPluginRequest } from "../models/CatalogModels";
 
+/**
+ * Repository layer implementing client request queries for catalog.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class CatalogRepository implements ICatalogRepository {
   constructor(private readonly service: ICatalogService) {}
 

@@ -6,6 +6,10 @@
 
 // ── Feature Override ──
 
+/**
+ * Domain model representing a Feature Override Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface FeatureOverrideData {
   id: string;
   tenantId: string;
@@ -20,6 +24,10 @@ export interface FeatureOverrideData {
   costReason?: string;
 }
 
+/**
+ * Domain model representing a Feature Override structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class FeatureOverride {
   constructor(public readonly data: FeatureOverrideData) {}
 
@@ -75,6 +83,10 @@ export class FeatureOverride {
 
 // ── Resolved Feature ──
 
+/**
+ * Domain model representing a Resolved Feature Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface ResolvedFeatureData {
   featureId: string;
   key: string;
@@ -85,6 +97,10 @@ export interface ResolvedFeatureData {
   source: "Default" | "Edition" | "Override";
 }
 
+/**
+ * Domain model representing a Resolved Feature structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class ResolvedFeature {
   constructor(public readonly data: ResolvedFeatureData) {}
 

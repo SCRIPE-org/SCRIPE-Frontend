@@ -8,6 +8,10 @@ interface PluginStatusBadgeProps {
   installation: PluginInstallation;
 }
 
+/**
+ * Presentation UI component rendering the plugin status badge.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function PluginStatusBadge({ installation }: PluginStatusBadgeProps) {
   const { t } = useI18n();
   if (installation.isActive) return <Badge variant="default">{t("plugins.statusActive")}</Badge>;

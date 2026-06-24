@@ -35,6 +35,9 @@ const RecommendationRuleModelSchema = z.object({
   modifiedAt: optionalIsoDate(),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class RecommendationRuleMapper {
   static toEntity(
     model: RecommendationRuleListModel | RecommendationRuleDetailModel

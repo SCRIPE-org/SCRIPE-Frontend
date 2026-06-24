@@ -11,6 +11,10 @@ import { PluginCard } from "../components/PluginCard";
 import { PluginInstallDialog } from "../components/PluginInstallDialog";
 import type { PluginCatalogItem } from "../../domain/entities/PluginCatalogItem";
 
+/**
+ * Presentation UI component rendering the plugin catalog view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function PluginCatalogView() {
   const { user } = useAppStore();
   const { t } = useI18n();

@@ -21,6 +21,10 @@ import { RadioGroup, RadioGroupItem } from "@core/ui/radio-group";
 import { XSquare } from "lucide-react";
 import type { SubscriptionDialogProps } from "../types";
 
+/**
+ * Presentation UI component rendering the cancel gateway dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function CancelGatewayDialog({ vm }: SubscriptionDialogProps) {
   const { t } = useI18n();
 

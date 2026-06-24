@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Theme Gallery ViewModel
  *
@@ -35,6 +36,9 @@ type GallerySortKey = "popular" | "newest" | "trending" | "nameAsc" | "nameDesc"
 
 type GalleryTab = "browse" | "featured" | "favorites" | "bundles";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for gallery filters.
+ */
 export interface GalleryFilters {
   search: string;
   category: GalleryCategory;
@@ -51,6 +55,9 @@ const DEFAULT_FILTERS: GalleryFilters = {
   sortBy: "popular",
 };
 
+/**
+ * Exported constant defining parameters and fields for gallery keys configurations.
+ */
 export const galleryKeys = {
   all: ["theme-gallery"] as const,
   browse: (filters: GalleryFilters, page: number) =>
@@ -59,6 +66,10 @@ export const galleryKeys = {
   favorites: (page: number) => [...galleryKeys.all, "favorites", page] as const,
 };
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for theme gallery view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useThemeGalleryViewModel() {
   const { themeMarketplaceRepository } = customizationContainer;
   const { t } = useI18n();

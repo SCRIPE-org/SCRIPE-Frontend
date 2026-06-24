@@ -10,6 +10,10 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { OnboardingQuestionsCatalogView } from "../components/OnboardingQuestionsCatalogView";
 
+/**
+ * Presentation UI component rendering the onboarding questions view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function OnboardingQuestionsView() {
   useModuleLocales(() => import("../../../locales"), "onboarding-questions");
   const { t, language } = useI18n();

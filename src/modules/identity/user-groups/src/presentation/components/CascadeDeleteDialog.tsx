@@ -18,6 +18,10 @@ interface CascadeDeleteDialogProps {
   itemName?: string;
 }
 
+/**
+ * Presentation UI component rendering the cascade delete dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function CascadeDeleteDialog({
   open,
   onOpenChange,

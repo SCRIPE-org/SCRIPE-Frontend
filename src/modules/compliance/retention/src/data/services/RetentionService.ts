@@ -8,6 +8,10 @@ import type { IRetentionService } from "../../domain/interfaces/IRetentionServic
 import type { RetentionPolicyModel, CreateRetentionPolicyRequest } from "../models/RetentionModels";
 import type { UpdateRetentionPolicyRequest } from "../../domain/entities/RetentionPolicy";
 
+/**
+ * Http API network service for retention.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class RetentionService implements IRetentionService {
   constructor(private readonly api: IApiService) {}
 

@@ -4,7 +4,7 @@
  * Represents a declarative scoring rule used by the onboarding intelligence engine
  * to recommend an edition tier based on user answer patterns.
  */
-import type { BaseEntity } from "@modules/identity/core/domain/types";
+import type { BaseEntity } from "@core/interfaces/common.interface";
 
 export interface RecommendationRuleData extends BaseEntity {
   name: string;
@@ -19,6 +19,10 @@ export interface RecommendationRuleData extends BaseEntity {
   isActive: boolean;
 }
 
+/**
+ * Domain model representing a Recommendation Rule structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class RecommendationRule {
   constructor(public readonly data: RecommendationRuleData) {}
 

@@ -50,6 +50,10 @@ function getAllOrderedSlugs(): string[] {
 }
 
 // ─── Repository Implementation ─────────────────────────────────
+/**
+ * Repository layer implementing client request queries for docs.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class DocsRepository implements IDocsRepository {
   getPage(slug: string): DocPage | undefined {
     const data = pageRegistry.get(slug);

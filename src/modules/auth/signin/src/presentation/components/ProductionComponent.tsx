@@ -15,6 +15,9 @@ import { BookOpen } from "lucide-react";
 import { Button } from "@core/ui/button";
 import Link from "next/link";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for production component props.
+ */
 export interface ProductionComponentProps {
   type: string;
   props: Record<string, unknown>;
@@ -26,6 +29,10 @@ export interface ProductionComponentProps {
   copyrightText?: string;
 }
 
+/**
+ * Presentation UI component rendering the production component.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function ProductionComponent({
   type,
   props,

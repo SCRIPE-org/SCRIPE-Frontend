@@ -1,9 +1,17 @@
+/**
+ * Domain model representing a Pricing Snapshot Item structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface PricingSnapshotItem {
   currency: string;
   billingCycle: string;
   amount: number;
 }
 
+/**
+ * Domain model representing a Edition Version Model structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface EditionVersionModel {
   id: string;
   versionNumber: number;
@@ -17,6 +25,10 @@ export interface EditionVersionModel {
   createdAt: string;
 }
 
+/**
+ * Domain model representing a Edition Version structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class EditionVersion {
   constructor(public readonly data: EditionVersionModel) {}
 
@@ -58,5 +70,12 @@ export class EditionVersion {
   }
   get hasPricingChanges(): boolean {
     return !!this.data.pricingSnapshotJson;
+  }
+
+  copyWith(updates: Partial<EditionVersionModel>): EditionVersion {
+    return new EditionVersion({
+      ...this.data,
+      ...updates,
+    } as EditionVersionModel);
   }
 }

@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Feature Overrides View
  *
@@ -52,6 +53,10 @@ interface OverridesViewProps {
   tenantId: string;
 }
 
+/**
+ * Presentation UI component rendering the overrides view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function OverridesView({ tenantId }: OverridesViewProps) {
   useModuleLocales(() => import("../../../../core/locales"), "entitlements-shared");
   const { t } = useI18n();

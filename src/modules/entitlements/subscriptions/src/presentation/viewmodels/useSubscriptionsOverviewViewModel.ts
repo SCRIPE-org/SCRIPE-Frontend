@@ -15,6 +15,9 @@ import { useConvertedAmount } from "@core/hooks/useConvertedAmount";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { GlobalSubscriptionItem } from "../../domain/entities/Subscription";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for status dist item.
+ */
 export interface StatusDistItem {
   status: string;
   count: number;
@@ -22,6 +25,9 @@ export interface StatusDistItem {
   color: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for type dist item.
+ */
 export interface TypeDistItem {
   type: string;
   count: number;
@@ -29,6 +35,9 @@ export interface TypeDistItem {
   color: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for edition revenue item.
+ */
 export interface EditionRevenueItem {
   edition: string;
   revenue: number;
@@ -67,6 +76,10 @@ const EDITION_CHART_COLORS = [
   "#3b82f6",
 ];
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for subscriptions overview view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useSubscriptionsOverviewViewModel() {
   const { t } = useI18n();
   const { formatDisplay, isConverting, displayCurrency } = useConvertedAmount();

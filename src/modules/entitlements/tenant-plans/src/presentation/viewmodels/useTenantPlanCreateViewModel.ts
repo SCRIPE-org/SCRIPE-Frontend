@@ -8,6 +8,10 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { CreateTenantPlanRequest } from "../../domain/entities/TenantPlanRequests";
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for tenant plan create view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useTenantPlanCreateViewModel() {
   const router = useRouter();
   const { tenantPlanRepository } = entitlementsContainer;

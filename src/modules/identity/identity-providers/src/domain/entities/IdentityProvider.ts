@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Identity Provider Entities — Domain types for SSO provider management.
  *
@@ -8,6 +9,10 @@
 
 // ─── Identity Provider Data ─────────────────────────────────────
 
+/**
+ * Domain model representing a Identity Provider Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface IdentityProviderData {
   id: string;
   name: string;
@@ -150,10 +155,21 @@ export class IdentityProvider {
   get isSystemWide(): boolean {
     return this.tenantId === null;
   }
+
+  copyWith(updates: Partial<IdentityProviderData>): IdentityProvider {
+    return new IdentityProvider({
+      ...this.data,
+      ...updates,
+    } as IdentityProviderData);
+  }
 }
 
 // ─── Identity Provider List Item ────────────────────────────────
 
+/**
+ * Domain model representing a Identity Provider List Item Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface IdentityProviderListItemData {
   id: string;
   name: string;
@@ -233,6 +249,10 @@ export class IdentityProviderListItem {
 
 // ─── Test Connection Result ─────────────────────────────────────
 
+/**
+ * Domain model representing a Test Connection Result structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class TestConnectionResult {
   constructor(
     public readonly isSuccess: boolean,
@@ -244,6 +264,10 @@ export class TestConnectionResult {
 
 // ─── List Response ──────────────────────────────────────────────
 
+/**
+ * Domain model representing a Identity Provider List Response structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface IdentityProviderListResponse {
   items: IdentityProviderListItem[];
   totalCount: number;
@@ -251,6 +275,10 @@ export interface IdentityProviderListResponse {
 
 // ─── Request Types ──────────────────────────────────────────────
 
+/**
+ * Domain model representing a Create Identity Provider Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface CreateIdentityProviderRequest {
   name: string;
   slug: string;
@@ -275,6 +303,10 @@ export interface CreateIdentityProviderRequest {
   displayOrder?: number;
 }
 
+/**
+ * Domain model representing a Update Identity Provider Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface UpdateIdentityProviderRequest {
   name?: string;
   slug?: string;

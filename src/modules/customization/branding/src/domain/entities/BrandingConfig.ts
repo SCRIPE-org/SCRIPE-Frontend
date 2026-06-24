@@ -138,4 +138,11 @@ export class BrandingConfig {
   toProps(): BrandingConfigProps {
     return { ...this.props };
   }
+
+  copyWith(updates: Partial<BrandingConfigProps>): BrandingConfig {
+    return new BrandingConfig({
+      ...this.props,
+      ...updates,
+    } as BrandingConfigProps);
+  }
 }

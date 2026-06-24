@@ -1,3 +1,6 @@
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for plugin execution log model.
+ */
 export interface PluginExecutionLogModel {
   id: string;
   installationId: string;
@@ -10,6 +13,9 @@ export interface PluginExecutionLogModel {
   errorMessage?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for paged result.
+ */
 export interface PagedResult<T> {
   items: T[];
   totalCount: number;

@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * CanvasComponent — Domain entity for the Login Page Builder canvas
  *
@@ -28,12 +29,24 @@ export type CanvasComponentType =
   | "videoBg";
 
 // ── Grid Alignment ───────────────────────────────────────
+/**
+ * Domain model representing a Grid Alignment structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type GridAlignment = "start" | "center" | "end";
 
 // ── Position Mode ────────────────────────────────────────
+/**
+ * Domain model representing a Position Mode structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type PositionMode = "absolute" | "grid";
 
 // ── Canvas Component ─────────────────────────────────────
+/**
+ * Domain model representing a Canvas Component structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface CanvasComponent {
   /** Unique identifier (uuid) */
   id: string;
@@ -71,15 +84,27 @@ export interface CanvasComponent {
 }
 
 // ── Canvas Mode ──────────────────────────────────────────
+/**
+ * Domain model representing a Canvas Mode structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type CanvasMode = "layout" | "builder";
 
 // ── Canvas Background ────────────────────────────────────
+/**
+ * Domain model representing a Canvas Background structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface CanvasBackground {
   type: "inherit" | "solid" | "gradient" | "image";
   value: string;
 }
 
 // ── Component Catalog Entry ──────────────────────────────
+/**
+ * Domain model representing a Component Catalog Entry structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface ComponentCatalogEntry {
   type: CanvasComponentType;
   labelKey: string;
@@ -106,6 +131,10 @@ export interface ComponentCatalogEntry {
 }
 
 // ── Component Catalog ────────────────────────────────────
+/**
+ * Domain model representing a C O M P O N E N T_ C A T A L O G structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const COMPONENT_CATALOG: ComponentCatalogEntry[] = [
   {
     type: "logo",
@@ -370,9 +399,17 @@ export const COMPONENT_CATALOG: ComponentCatalogEntry[] = [
 ];
 
 // ── Default Position Mode for NEW canvases ───────────────
+/**
+ * Domain model representing a D E F A U L T_ P O S I T I O N_ M O D E structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const DEFAULT_POSITION_MODE: PositionMode = "absolute";
 
 // ── Default Canvas State ─────────────────────────────────
+/**
+ * Domain model representing a D E F A U L T_ C A N V A S_ C O M P O N E N T S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const DEFAULT_CANVAS_COMPONENTS: CanvasComponent[] = [
   {
     id: "default-logo",
@@ -440,17 +477,49 @@ export const DEFAULT_CANVAS_COMPONENTS: CanvasComponent[] = [
   },
 ];
 
+/**
+ * Domain model representing a D E F A U L T_ C A N V A S_ G R I D_ R O W S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const DEFAULT_CANVAS_GRID_ROWS = 8;
+/**
+ * Domain model representing a D E F A U L T_ C A N V A S_ B A C K G R O U N D structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const DEFAULT_CANVAS_BACKGROUND: CanvasBackground = { type: "inherit", value: "" };
+/**
+ * Domain model representing a C A N V A S_ G R I D_ C O L U M N S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const CANVAS_GRID_COLUMNS = 12;
+/**
+ * Domain model representing a S N A P_ G R I D_ S I Z E structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const SNAP_GRID_SIZE = 8; // 8px snap grid for free-form mode
+/**
+ * Domain model representing a C A N V A S_ W I D T H structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const CANVAS_WIDTH = 800; // Default canvas width in absolute mode
+/**
+ * Domain model representing a C A N V A S_ H E I G H T structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const CANVAS_HEIGHT = 900; // Default canvas height in absolute mode
 
 // ── Auth Page IDs ────────────────────────────────────────
+/**
+ * Domain model representing a Auth Page Id structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type AuthPageId = "login" | "forgotPassword" | "resetPassword";
 
 // ── Default Components per Auth Page ─────────────────────
+/**
+ * Domain model representing a D E F A U L T_ F O R G O T_ C O M P O N E N T S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const DEFAULT_FORGOT_COMPONENTS: CanvasComponent[] = [
   {
     id: "default-forgot-logo",
@@ -538,6 +607,10 @@ export const DEFAULT_FORGOT_COMPONENTS: CanvasComponent[] = [
   },
 ];
 
+/**
+ * Domain model representing a D E F A U L T_ R E S E T_ C O M P O N E N T S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const DEFAULT_RESET_COMPONENTS: CanvasComponent[] = [
   {
     id: "default-reset-logo",

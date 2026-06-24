@@ -36,6 +36,9 @@ const UserGroupModelSchema = z.object({
   restrictions: z.array(z.unknown()).optional(),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class UserGroupMapper {
   static toEntity(model: UserGroupModel): UserGroup {
     // Validate API response shape — logs warnings on contract drift

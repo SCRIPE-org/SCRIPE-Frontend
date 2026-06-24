@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useMemo, useCallback, useRef } from "react";
@@ -29,6 +30,10 @@ const CATEGORY_COLORS: Record<TemplateCategory, { bg: string; text: string }> = 
   custom: { bg: "bg-gray-500/15", text: "text-gray-600 dark:text-gray-400" },
 };
 
+/**
+ * Presentation UI component rendering the message templates view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function MessageTemplatesView() {
   const router = useRouter();
   const {

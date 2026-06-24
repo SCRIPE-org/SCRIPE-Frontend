@@ -27,6 +27,10 @@ interface CatalogViewProps {
   language: string;
 }
 
+/**
+ * Presentation UI component rendering the catalog view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function CatalogView({ vm, t, language }: CatalogViewProps) {
   const config: CrudConfig<Feature> = useMemo(
     () => ({

@@ -13,6 +13,10 @@ interface ContentModeSectionProps {
   vm: SignupContentViewModel;
 }
 
+/**
+ * Presentation UI component rendering the content mode section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ContentModeSection({ vm }: ContentModeSectionProps) {
   const { t } = useI18n();
   const mode = vm.content?.contentMode ?? "Seeded";

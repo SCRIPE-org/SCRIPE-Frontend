@@ -15,6 +15,9 @@ import type { BrandingResponseJson, AuditLogEntryJson } from "../models/Branding
 import { SystemSettingsModel } from "../models/SystemSettingsModel";
 import type { SystemSettingsJson } from "../models/SystemSettingsModel";
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class BrandingMapper {
   // ── BrandingModel → BrandingConfig Entity ──
 

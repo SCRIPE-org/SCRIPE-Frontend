@@ -15,6 +15,10 @@ interface CurrencySelectProps {
   onValueChange: (value: string) => void;
 }
 
+/**
+ * Presentation UI component rendering the currency select.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function CurrencySelect({ value, onValueChange }: CurrencySelectProps) {
   const { t } = useI18n();
 

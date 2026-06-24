@@ -57,6 +57,9 @@ const EditionModelSchema = z.object({
   modifiedAt: isoDateString().optional().nullable(),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class EditionMapper {
   static toEntity(model: EditionModel): Edition {
     // Validate API response shape — logs warnings on contract drift

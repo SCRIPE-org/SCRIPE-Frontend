@@ -8,6 +8,9 @@
 
 // ===== JSON Shapes (API contracts) =====
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for o auth app json.
+ */
 export interface OAuthAppJson {
   id: string;
   displayName: string;
@@ -34,6 +37,9 @@ export interface OAuthAppJson {
   modifiedAt: string | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for o auth app list item json.
+ */
 export interface OAuthAppListItemJson {
   id: string;
   displayName: string;
@@ -49,22 +55,34 @@ export interface OAuthAppListItemJson {
   createdAt: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for o auth app list response json.
+ */
 export interface OAuthAppListResponseJson {
   items: OAuthAppListItemJson[];
   totalCount: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for regenerate secret result json.
+ */
 export interface RegenerateSecretResultJson {
   clientId: string;
   newClientSecret: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for create o auth app response json.
+ */
 export interface CreateOAuthAppResponseJson {
   id: string;
   clientId: string;
   clientSecret: string | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for create o auth app json.
+ */
 export interface CreateOAuthAppJson {
   displayName: string;
   clientType: string;
@@ -84,6 +102,9 @@ export interface CreateOAuthAppJson {
   refreshTokenLifetimeDays?: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for update o auth app json.
+ */
 export interface UpdateOAuthAppJson {
   displayName?: string;
   protocol?: string;
@@ -104,6 +125,9 @@ export interface UpdateOAuthAppJson {
 
 // ===== Model Classes =====
 
+/**
+ * Exported class defining parameters and fields for o auth app model configurations.
+ */
 export class OAuthAppModel {
   constructor(
     public readonly id: string,
@@ -160,6 +184,9 @@ export class OAuthAppModel {
   }
 }
 
+/**
+ * Exported class defining parameters and fields for o auth app list item model configurations.
+ */
 export class OAuthAppListItemModel {
   constructor(
     public readonly id: string,

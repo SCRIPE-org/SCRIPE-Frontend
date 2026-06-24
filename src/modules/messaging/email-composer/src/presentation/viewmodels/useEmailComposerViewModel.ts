@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
@@ -41,6 +42,10 @@ function resolveTemplateVariables(
   );
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for email composer view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useEmailComposerViewModel() {
   const { t } = useI18n();
   const queryClient = useQueryClient();

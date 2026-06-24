@@ -24,8 +24,10 @@ import { useSettings } from "@core/providers/settings-provider";
 import en from "react-phone-number-input/locale/en.json";
 import ar from "react-phone-number-input/locale/ar.json";
 
-export interface PhoneInputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value"> {
+export interface PhoneInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "onChange" | "value"
+> {
   value?: string;
   onChange?: (value: string) => void;
   error?: string;
@@ -223,7 +225,7 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
               {...inputProps}
               ref={inputRef}
               className={cn(
-                "flex-1 bg-transparent px-3 py-2 text-sm focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 h-full w-full placeholder:text-muted-foreground/60",
+                "h-full w-full flex-1 bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground/60 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
                 inputProps.className
               )}
             />
@@ -233,7 +235,11 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
     }, []);
 
     const CountrySelectComponent = React.useMemo(() => {
-      return function CountrySelectComponent({ value: countryVal, onChange: onCountryChange, options }: any) {
+      return function CountrySelectComponent({
+        value: countryVal,
+        onChange: onCountryChange,
+        options,
+      }: any) {
         return (
           <CountrySelect
             value={countryVal}
@@ -252,7 +258,10 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
     }, [props.disabled, labels, getSelectRoundedClass, isRTL]);
 
     const placeholder = React.useMemo(() => {
-      return props.placeholder || getPlaceholderForCountry(activeCountry, t("components.phoneInput.placeholder"));
+      return (
+        props.placeholder ||
+        getPlaceholderForCountry(activeCountry, t("components.phoneInput.placeholder"))
+      );
     }, [props.placeholder, activeCountry, t]);
 
     const expectedLength = React.useMemo(() => {
@@ -271,7 +280,8 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
             "flex items-center border border-input bg-background text-sm ring-offset-background transition-all",
             getContainerRoundedClass(),
             getFocusClasses(),
-            error && "border-destructive focus-within:border-destructive focus-within:ring-destructive",
+            error &&
+              "border-destructive focus-within:border-destructive focus-within:ring-destructive",
             className
           )}
           dir={direction}
@@ -292,16 +302,14 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
         />
         {activeCountry && (
           <div
-            className="flex justify-between items-center px-1 text-[11px] text-muted-foreground/70 mt-1.5"
+            className="mt-1.5 flex items-center justify-between px-1 text-[11px] text-muted-foreground/70"
             dir={direction}
           >
-            <span>
-              {t("components.phoneInput.enterNational")}
-            </span>
+            <span>{t("components.phoneInput.enterNational")}</span>
             <span
               className={cn(
                 "font-mono transition-colors duration-150",
-                enteredLength === expectedLength && "text-emerald-500 font-semibold"
+                enteredLength === expectedLength && "font-semibold text-emerald-500"
               )}
             >
               {enteredLength}/{expectedLength} {t("components.phoneInput.digits")}
@@ -356,7 +364,7 @@ const CountrySelect = ({
           type="button"
           variant="ghost"
           className={cn(
-            "flex gap-2 px-3 focus:z-10 h-full shrink-0 border-0 bg-transparent text-foreground hover:bg-accent/15 focus:ring-0 focus-visible:ring-0 rounded-none items-center",
+            "flex h-full shrink-0 items-center gap-2 rounded-none border-0 bg-transparent px-3 text-foreground hover:bg-accent/15 focus:z-10 focus:ring-0 focus-visible:ring-0",
             roundedClass,
             isRTL ? "border-e border-input" : "border-r border-input"
           )}
@@ -368,7 +376,7 @@ const CountrySelect = ({
               +{RPNInput.getCountryCallingCode(value)}
             </span>
           )}
-          <ChevronsUpDown className={cn("h-4 w-4 opacity-50 shrink-0", disabled && "hidden")} />
+          <ChevronsUpDown className={cn("h-4 w-4 shrink-0 opacity-50", disabled && "hidden")} />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0" align={isRTL ? "end" : "start"}>
@@ -383,13 +391,13 @@ const CountrySelect = ({
                   const name = labels[option.value] || option.label;
                   return (
                     <CommandItem
-                      className="gap-2 flex items-center cursor-pointer"
+                      className="flex cursor-pointer items-center gap-2"
                       key={option.value}
                       onSelect={() => handleSelect(option.value)}
                     >
                       <FlagComponent country={option.value} countryName={name} />
-                      <span className="flex-1 text-sm truncate">{name}</span>
-                      <span className="text-muted-foreground text-sm font-mono shrink-0">
+                      <span className="flex-1 truncate text-sm">{name}</span>
+                      <span className="shrink-0 font-mono text-sm text-muted-foreground">
                         +{RPNInput.getCountryCallingCode(option.value)}
                       </span>
                       <Check
@@ -413,7 +421,7 @@ const FlagComponent = ({ country, countryName }: RPNInput.FlagProps) => {
   const Flag = flags[country];
 
   return (
-    <span className="bg-foreground/20 flex h-4 w-6 overflow-hidden rounded-sm shrink-0 items-center justify-center">
+    <span className="flex h-4 w-6 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-foreground/20">
       {Flag ? <Flag title={countryName} /> : <span className="text-[10px]">🏳</span>}
     </span>
   );

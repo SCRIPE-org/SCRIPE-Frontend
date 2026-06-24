@@ -18,6 +18,10 @@ export interface DocNavItem {
   children?: DocNavItem[];
 }
 
+/**
+ * Domain model representing a Doc Category Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface DocCategoryData {
   /** Unique category ID, e.g. 'get-started', 'features' */
   id: string;
@@ -31,6 +35,10 @@ export interface DocCategoryData {
   items: DocNavItem[];
 }
 
+/**
+ * Domain model representing a Doc Category structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class DocCategory {
   constructor(public readonly data: DocCategoryData) {}
 
@@ -76,5 +84,12 @@ export class DocCategory {
       return undefined;
     };
     return search(this.data.items);
+  }
+
+  copyWith(updates: Partial<DocCategoryData>): DocCategory {
+    return new DocCategory({
+      ...this.data,
+      ...updates,
+    } as DocCategoryData);
   }
 }

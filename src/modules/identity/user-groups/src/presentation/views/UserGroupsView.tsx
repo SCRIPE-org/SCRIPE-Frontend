@@ -42,6 +42,10 @@ interface UserGroupListItem {
   createdAt: string;
 }
 
+/**
+ * Presentation UI component rendering the user groups view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function UserGroupsView() {
   useModuleLocales(() => import("../../../locales"), "user-groups");
 

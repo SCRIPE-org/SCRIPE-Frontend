@@ -19,6 +19,10 @@ interface SecuritySectionProps {
   updateField: <K extends keyof TenantSettings>(field: K, value: TenantSettings[K]) => void;
 }
 
+/**
+ * Presentation UI component rendering the security section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SecuritySection({ settings, updateField }: SecuritySectionProps) {
   const { t } = useI18n();
   return (

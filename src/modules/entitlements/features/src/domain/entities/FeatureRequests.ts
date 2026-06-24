@@ -17,6 +17,10 @@ export interface CreateFeatureRequest {
   isMarketingOnly?: boolean;
 }
 
+/**
+ * Domain model representing a Update Feature Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface UpdateFeatureRequest {
   name?: string;
   defaultValue?: string;

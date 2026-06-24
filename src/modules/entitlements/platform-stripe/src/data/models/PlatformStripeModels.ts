@@ -12,6 +12,9 @@ export interface PlatformStripeDashboardModel {
   links: PlatformStripeLinksModel;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for platform account model.
+ */
 export interface PlatformAccountModel {
   accountId: string;
   businessName?: string;
@@ -28,17 +31,26 @@ export interface PlatformAccountModel {
   statementDescriptor?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for platform balance model.
+ */
 export interface PlatformBalanceModel {
   available: BalanceAmountModel[];
   pending: BalanceAmountModel[];
   connectReserved: BalanceAmountModel[];
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for balance amount model.
+ */
 export interface BalanceAmountModel {
   currency: string;
   amount: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for platform transaction model.
+ */
 export interface PlatformTransactionModel {
   id: string;
   type: string;
@@ -52,6 +64,9 @@ export interface PlatformTransactionModel {
   status: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for platform payout model.
+ */
 export interface PlatformPayoutModel {
   id: string;
   amount: number;
@@ -64,6 +79,9 @@ export interface PlatformPayoutModel {
   created: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for platform connect summary model.
+ */
 export interface PlatformConnectSummaryModel {
   totalAccounts: number;
   activeAccounts: number;
@@ -73,6 +91,9 @@ export interface PlatformConnectSummaryModel {
   totalCommissionsPending: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for platform stripe links model.
+ */
 export interface PlatformStripeLinksModel {
   dashboard: string;
   payments: string;

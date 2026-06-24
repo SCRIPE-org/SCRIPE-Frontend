@@ -43,6 +43,9 @@ export interface SubscriptionModel {
   gatewaySubscriptionId?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for subscription list model.
+ */
 export interface SubscriptionListModel {
   id: string;
   tenantId: string;
@@ -80,6 +83,9 @@ export interface SubscriptionListModel {
   gatewaySubscriptionId?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for global subscription model.
+ */
 export interface GlobalSubscriptionModel {
   id: string;
   tenantId: string;

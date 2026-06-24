@@ -1,3 +1,6 @@
+/**
+ * Exported constant defining parameters and fields for ru configurations.
+ */
 export const ru = {
   modules: {
     billingEngine: {

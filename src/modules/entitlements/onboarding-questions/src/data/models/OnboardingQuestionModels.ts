@@ -1,3 +1,6 @@
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for answer option model.
+ */
 export interface AnswerOptionModel {
   id: string;
   value: string;
@@ -11,6 +14,9 @@ export interface AnswerOptionModel {
   isActive: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for onboarding question list model.
+ */
 export interface OnboardingQuestionListModel {
   id: string;
   key: string;
@@ -25,6 +31,9 @@ export interface OnboardingQuestionListModel {
   createdAt: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for onboarding question detail model.
+ */
 export interface OnboardingQuestionDetailModel extends OnboardingQuestionListModel {
   minSelections: number;
   maxSelections: number;
@@ -37,6 +46,9 @@ export interface OnboardingQuestionDetailModel extends OnboardingQuestionListMod
   options: AnswerOptionModel[];
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for paged onboarding questions model.
+ */
 export interface PagedOnboardingQuestionsModel {
   items: OnboardingQuestionListModel[];
   totalCount: number;

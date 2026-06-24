@@ -82,6 +82,10 @@ const connectionColors = {
   disconnected: "bg-red-500",
 } as const;
 
+/**
+ * Presentation UI component rendering the dashboard view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DashboardView() {
   useModuleLocales(() => import("../../../locales"), "dashboard");
 

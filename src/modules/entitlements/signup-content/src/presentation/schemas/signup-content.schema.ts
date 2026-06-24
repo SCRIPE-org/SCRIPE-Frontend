@@ -2,6 +2,9 @@ import { z } from "zod";
 import { CONTENT_MODES } from "../../domain/entities/SignupContent";
 
 // Data schemas (used by mapper)
+/**
+ * Exported constant defining parameters and fields for welcome content dto schema configurations.
+ */
 export const WelcomeContentDtoSchema = z.object({
   id: z.string(),
   headlineEn: z.string().default(""),
@@ -15,6 +18,9 @@ export const WelcomeContentDtoSchema = z.object({
   trustedByLabelAr: z.string().default(""),
 });
 
+/**
+ * Exported constant defining parameters and fields for trust mark dto schema configurations.
+ */
 export const TrustMarkDtoSchema = z.object({
   id: z.string(),
   key: z.string().default(""),
@@ -28,6 +34,9 @@ export const TrustMarkDtoSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
+/**
+ * Exported constant defining parameters and fields for customer logo dto schema configurations.
+ */
 export const CustomerLogoDtoSchema = z.object({
   id: z.string(),
   key: z.string().default(""),
@@ -38,6 +47,9 @@ export const CustomerLogoDtoSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
+/**
+ * Exported constant defining parameters and fields for admin signup content dto schema configurations.
+ */
 export const AdminSignupContentDtoSchema = z.object({
   contentMode: z.enum(CONTENT_MODES).default("Seeded"),
   welcomeContent: WelcomeContentDtoSchema.nullable().optional(),
@@ -46,6 +58,9 @@ export const AdminSignupContentDtoSchema = z.object({
 });
 
 // Form schemas
+/**
+ * Exported constant defining parameters and fields for welcome content form schema configurations.
+ */
 export const WelcomeContentFormSchema = z.object({
   headlineEn: z.string().min(1, "Headline (EN) is required"),
   headlineAr: z.string().min(1, "Headline (AR) is required"),
@@ -58,6 +73,9 @@ export const WelcomeContentFormSchema = z.object({
   trustedByLabelAr: z.string().min(1, "Label (AR) is required"),
 });
 
+/**
+ * Exported constant defining parameters and fields for trust mark form schema configurations.
+ */
 export const TrustMarkFormSchema = z.object({
   key: z.string().min(1, "Key is required"),
   kind: z.string().min(1, "Kind is required"),
@@ -70,6 +88,9 @@ export const TrustMarkFormSchema = z.object({
   isActive: z.boolean(),
 });
 
+/**
+ * Exported constant defining parameters and fields for customer logo form schema configurations.
+ */
 export const CustomerLogoFormSchema = z.object({
   key: z.string().min(1, "Key is required"),
   name: z.string().min(1, "Name is required"),

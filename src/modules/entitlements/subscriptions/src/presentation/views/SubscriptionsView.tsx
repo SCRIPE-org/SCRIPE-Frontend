@@ -13,7 +13,7 @@
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useSubscriptionsViewModel } from "../viewmodels/useSubscriptionsViewModel";
-import { useEditionsViewModel } from "@modules/entitlements/editions/src/presentation/viewmodels/useEditionsViewModel";
+import { useEditionsViewModel } from "@modules/entitlements/core";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useBreadcrumbOverride } from "@core/hooks/use-breadcrumb-override";
@@ -47,6 +47,10 @@ interface SubscriptionsViewProps {
   tenantId: string;
 }
 
+/**
+ * Presentation UI component rendering the subscriptions view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
   useModuleLocales(() => import("../../../../core/locales"), "entitlements-shared");
   const { t, direction } = useI18n();
@@ -66,9 +70,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
   }, [vm.items]);
 
   useBreadcrumbOverride(
-    currentSub
-      ? currentSub.editionName
-      : t("entSubscriptions.title") || "Subscription Details"
+    currentSub ? currentSub.editionName : t("entSubscriptions.title") || "Subscription Details"
   );
 
   // ── Loading Skeleton ──

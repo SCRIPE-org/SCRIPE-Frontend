@@ -120,6 +120,10 @@ function KpiCard({
   );
 }
 
+/**
+ * Presentation UI component rendering the overview tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function OverviewTab({ overview }: OverviewTabProps) {
   const { t } = useI18n();
 

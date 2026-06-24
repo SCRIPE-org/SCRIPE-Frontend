@@ -5,6 +5,10 @@ import { BG_STYLE, SPLIT_WRAPPER_STYLE, FORM_SIDE_BG_STYLE } from "./layout-type
 import { MobileLogo, DesktopHeading } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
+/**
+ * Presentation UI component rendering the split left layout.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SplitLeftLayout({
   branding,
   slotConfig,

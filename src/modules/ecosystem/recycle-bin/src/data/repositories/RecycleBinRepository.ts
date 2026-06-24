@@ -18,6 +18,10 @@ import type {
 import type { IRecycleBinService } from "../../domain/interfaces/IRecycleBinService";
 import { DeletedItemMapper } from "../mappers/DeletedItemMapper";
 
+/**
+ * Repository layer implementing client request queries for recycle bin.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class RecycleBinRepository implements IRecycleBinRepository {
   constructor(private readonly service: IRecycleBinService) {}
 

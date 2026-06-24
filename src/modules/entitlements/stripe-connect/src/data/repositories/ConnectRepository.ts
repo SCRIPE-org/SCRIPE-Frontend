@@ -18,6 +18,10 @@ import type {
   TenantTransactionsResult,
 } from "../../domain/entities/ConnectAccount";
 
+/**
+ * Repository layer implementing client request queries for connect.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class ConnectRepository implements IConnectRepository {
   constructor(private readonly service: IConnectService) {}
 

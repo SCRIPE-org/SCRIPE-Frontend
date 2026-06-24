@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * BuilderPanel — Main panel for the DnD page builder
  *

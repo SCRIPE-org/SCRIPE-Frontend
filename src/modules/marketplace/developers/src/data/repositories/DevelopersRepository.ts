@@ -14,6 +14,10 @@ import { DeveloperProfile } from "../../domain/entities/DeveloperProfile";
 import type { IDevelopersRepository } from "../../domain/interfaces/IDevelopersRepository";
 import type { DeveloperDto } from "../../domain/interfaces/IDevelopersService";
 
+/**
+ * Repository layer implementing client request queries for developers.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class DevelopersRepository implements IDevelopersRepository {
   constructor(private readonly service: IDevelopersService) {}
 

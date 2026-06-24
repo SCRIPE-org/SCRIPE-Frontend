@@ -16,6 +16,10 @@ interface InstalledPluginRowProps {
   isMutating: boolean;
 }
 
+/**
+ * Presentation UI component rendering the installed plugin row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function InstalledPluginRow({
   installation,
   onActivate,

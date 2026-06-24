@@ -13,6 +13,10 @@ import type { ContentMode } from "../../domain/entities/SignupContent";
 import type { ISignupContentService } from "../../domain/interfaces/ISignupContentService";
 import { SignupContentMapper } from "../mappers/SignupContentMapper";
 
+/**
+ * Repository layer implementing client request queries for signup content.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class SignupContentRepository implements ISignupContentRepository {
   constructor(private readonly service: ISignupContentService) {}
 

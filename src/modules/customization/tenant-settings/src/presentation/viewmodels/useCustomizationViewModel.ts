@@ -8,10 +8,13 @@ import { useTheme } from "next-themes";
 import { useAppStore } from "@core/store/useAppStore";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { customizationContainer } from "@modules/customization/di";
-import type { AuditLogPagedResultJson as AuditLogPagedResult } from "@modules/customization/branding/src/domain/types/CustomizationServiceTypes";
-import type { SystemSettingsJson as SystemSettingsResponse } from "@modules/customization/branding/src/domain/types/CustomizationServiceTypes";
+import type { AuditLogPagedResultJson as AuditLogPagedResult } from "@core/domain/entities";
+import type { SystemSettingsJson as SystemSettingsResponse } from "@core/domain/entities";
 
 // Query keys
+/**
+ * Exported constant defining parameters and fields for customization keys configurations.
+ */
 export const customizationKeys = {
   all: ["customization"] as const,
   auditLog: (page: number) => [...customizationKeys.all, "audit-log", page] as const,

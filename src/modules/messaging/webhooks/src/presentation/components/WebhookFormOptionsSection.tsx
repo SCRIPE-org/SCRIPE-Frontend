@@ -11,6 +11,10 @@ interface WebhookFormOptionsSectionProps {
   vm: WebhookFormViewModel;
 }
 
+/**
+ * Presentation UI component rendering the webhook form options section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function WebhookFormOptionsSection({ vm }: WebhookFormOptionsSectionProps) {
   const { t } = useI18n();
 

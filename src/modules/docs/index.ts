@@ -2,6 +2,8 @@
  * Docs Module — Public API
  */
 
+import "./src/data/content/registry";
+
 // Domain
 export type { DocPageData } from "./src/domain/entities/DocPage";
 export { DocPage } from "./src/domain/entities/DocPage";

@@ -56,6 +56,9 @@ const defaultForm: PromotionFormState = {
 
 // ── ViewModel Result ──
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for promotions view model result.
+ */
 export interface PromotionsViewModelResult {
   // Data
   promotions: EditionPromotion[];
@@ -83,6 +86,10 @@ export interface PromotionsViewModelResult {
   isToggling: boolean;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for promotions view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function usePromotionsViewModel(editionId: string): PromotionsViewModelResult {
   const { editionRepository } = entitlementsContainer;
   const queryClient = useQueryClient();

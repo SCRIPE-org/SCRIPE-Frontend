@@ -10,13 +10,17 @@ import type {
   PagedRecommendationRulesModel,
   RecommendationRuleDetailModel,
 } from "../models/RecommendationRuleModels";
-import type { PaginationParams } from "@modules/identity/core/domain/types";
+import type { PaginationParams } from "@core/interfaces/common.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type {
   CreateRecommendationRuleRequest,
   UpdateRecommendationRuleRequest,
 } from "../../domain/entities/RecommendationRuleRequests";
 
+/**
+ * Http API network service for recommendation rule.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class RecommendationRuleService implements IRecommendationRuleService {
   constructor(private readonly api: IApiService) {}
 

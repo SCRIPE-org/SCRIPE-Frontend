@@ -9,9 +9,16 @@ import { Card, CardContent } from "@core/ui/card";
 import { CheckCircle2, XCircle } from "lucide-react";
 
 // ── Types ──
+/**
+ * Exported type defining parameters and fields for t fn configurations.
+ */
 export type TFn = (key: string) => string;
 
 // ── Stat Card ──
+/**
+ * Presentation UI component rendering the stat card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function StatCard({
   icon,
   label,
@@ -35,6 +42,10 @@ export function StatCard({
 }
 
 // ── Info Row (label: value) ──
+/**
+ * Presentation UI component rendering the info row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-4 text-sm">
@@ -45,6 +56,10 @@ export function InfoRow({ label, value }: { label: string; value: string }) {
 }
 
 // ── Flag Row (label: ✓ / ✗) ──
+/**
+ * Presentation UI component rendering the flag row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function FlagRow({
   icon,
   label,
@@ -70,6 +85,10 @@ export function FlagRow({
 }
 
 // ── Currency Formatter ──
+/**
+ * Presentation UI component rendering the format amount.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function formatAmount(amount: number, currency: string): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",

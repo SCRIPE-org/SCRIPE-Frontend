@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Platform Stripe Dashboard — Rich Domain Entities
  *
@@ -11,6 +12,10 @@ export interface BalanceAmountData {
   amount: number;
 }
 
+/**
+ * Domain model representing a Balance Amount structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class BalanceAmount {
   constructor(private readonly data: BalanceAmountData) {}
   get currency() {
@@ -31,6 +36,10 @@ export class BalanceAmount {
 }
 
 // ── Platform Account ──
+/**
+ * Domain model representing a Platform Account Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface PlatformAccountData {
   accountId: string;
   businessName: string;
@@ -47,6 +56,10 @@ export interface PlatformAccountData {
   statementDescriptor: string;
 }
 
+/**
+ * Domain model representing a Platform Account structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class PlatformAccount {
   constructor(private readonly data: PlatformAccountData) {}
 
@@ -111,12 +124,20 @@ export class PlatformAccount {
 }
 
 // ── Platform Balance ──
+/**
+ * Domain model representing a Platform Balance Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface PlatformBalanceData {
   available: BalanceAmount[];
   pending: BalanceAmount[];
   connectReserved: BalanceAmount[];
 }
 
+/**
+ * Domain model representing a Platform Balance structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class PlatformBalance {
   constructor(private readonly data: PlatformBalanceData) {}
 
@@ -136,6 +157,10 @@ export class PlatformBalance {
 }
 
 // ── Platform Transaction ──
+/**
+ * Domain model representing a Platform Transaction Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface PlatformTransactionData {
   id: string;
   type: string;
@@ -149,6 +174,10 @@ export interface PlatformTransactionData {
   status: string;
 }
 
+/**
+ * Domain model representing a Platform Transaction structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class PlatformTransaction {
   constructor(private readonly data: PlatformTransactionData) {}
 
@@ -199,6 +228,10 @@ export class PlatformTransaction {
 }
 
 // ── Platform Payout ──
+/**
+ * Domain model representing a Platform Payout Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface PlatformPayoutData {
   id: string;
   amount: number;
@@ -211,6 +244,10 @@ export interface PlatformPayoutData {
   created: string;
 }
 
+/**
+ * Domain model representing a Platform Payout structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class PlatformPayout {
   constructor(private readonly data: PlatformPayoutData) {}
 
@@ -253,6 +290,10 @@ export class PlatformPayout {
 }
 
 // ── Connect Summary ──
+/**
+ * Domain model representing a Platform Connect Summary Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface PlatformConnectSummaryData {
   totalAccounts: number;
   activeAccounts: number;
@@ -262,6 +303,10 @@ export interface PlatformConnectSummaryData {
   totalCommissionsPending: number;
 }
 
+/**
+ * Domain model representing a Platform Connect Summary structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class PlatformConnectSummary {
   constructor(private readonly data: PlatformConnectSummaryData) {}
 
@@ -295,6 +340,10 @@ export class PlatformConnectSummary {
 }
 
 // ── Stripe Links ──
+/**
+ * Domain model representing a Platform Stripe Links Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface PlatformStripeLinksData {
   dashboard: string;
   payments: string;
@@ -306,6 +355,10 @@ export interface PlatformStripeLinksData {
   customers: string;
 }
 
+/**
+ * Domain model representing a Platform Stripe Links structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class PlatformStripeLinks {
   constructor(private readonly data: PlatformStripeLinksData) {}
 
@@ -340,6 +393,10 @@ export class PlatformStripeLinks {
 }
 
 // ── Root Dashboard Entity ──
+/**
+ * Domain model representing a Platform Stripe Dashboard Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface PlatformStripeDashboardData {
   account: PlatformAccount;
   balance: PlatformBalance;
@@ -349,6 +406,10 @@ export interface PlatformStripeDashboardData {
   links: PlatformStripeLinks;
 }
 
+/**
+ * Domain model representing a Platform Stripe Dashboard structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class PlatformStripeDashboard {
   constructor(private readonly data: PlatformStripeDashboardData) {}
 

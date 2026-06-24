@@ -21,6 +21,9 @@ interface Props {
   onRetry?: () => void;
 }
 
+/**
+ * Exported constant defining parameters and fields for blocked i ps section configurations.
+ */
 export const BlockedIPsSection = memo(function BlockedIPsSection({
   data,
   isLoading,

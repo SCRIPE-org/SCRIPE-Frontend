@@ -24,6 +24,10 @@ interface UseSignupOtpOptions {
   updateField: <K extends "emailVerificationToken">(field: K, value: string | null) => void;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for signup otp.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
+ */
 export function useSignupOtp({
   repository,
   email,

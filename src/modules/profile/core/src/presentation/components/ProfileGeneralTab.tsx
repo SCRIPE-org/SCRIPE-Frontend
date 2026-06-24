@@ -17,13 +17,21 @@ interface ProfileGeneralTabProps {
     uploadError: string | null;
   };
   profileVm: {
-    updateProfile: (data: { firstName: string; lastName: string; phoneNumber: string }) => Promise<unknown>;
+    updateProfile: (data: {
+      firstName: string;
+      lastName: string;
+      phoneNumber: string;
+    }) => Promise<unknown>;
     isUpdating: boolean;
     updateError: string | null;
     profileSuccess: boolean;
   };
 }
 
+/**
+ * Presentation UI component rendering the profile general tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ProfileGeneralTab({
   profile,
   initials,

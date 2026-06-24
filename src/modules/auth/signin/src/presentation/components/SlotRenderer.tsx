@@ -32,6 +32,10 @@ interface SlotRendererProps {
   className?: string;
 }
 
+/**
+ * Presentation UI component rendering the slot renderer.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SlotRenderer({ slotId, slotConfig, className = "" }: SlotRendererProps) {
   const blocks = slotConfig.slots[slotId];
 

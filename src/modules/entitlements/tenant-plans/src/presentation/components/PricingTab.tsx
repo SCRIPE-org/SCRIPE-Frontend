@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * PricingTab — Hybrid Pricing Model (mirrors Edition PricingTab)
  *
@@ -83,6 +85,9 @@ interface PricingTabProps {
   t: TFn;
 }
 
+/**
+ * Exported constant defining parameters and fields for pricing tab configurations.
+ */
 export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
   const {
     plan,

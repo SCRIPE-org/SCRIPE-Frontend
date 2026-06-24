@@ -14,7 +14,7 @@ import { Label } from "@core/ui/label";
 import type { Admin } from "../../domain/entities/Admin";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { appLogger } from "@/core/common/logger";
-import { SYSTEM_TENANT_ID } from "@modules/identity/tenants/src/domain/entities/Tenant";
+import { SYSTEM_TENANT_ID } from "@modules/identity/core";
 import { useAdminTransferViewModel } from "../viewmodels/useAdminTransferViewModel";
 
 // Special value to represent "System" tenant (null ID = Super Admin)
@@ -31,6 +31,10 @@ interface AdminTransferDialogProps {
   isTransferring: boolean;
 }
 
+/**
+ * Presentation UI component rendering the admin transfer dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function AdminTransferDialog({
   open,
   onOpenChange,
@@ -87,13 +91,21 @@ export function AdminTransferDialog({
     onOpenChange(false);
   };
 
-  const handleTenantSearchLocal = useCallback(async (query: string) => {
-    return await handleTenantSearch(query);
-  }, [handleTenantSearch]);
+  const handleTenantSearchLocal = useCallback(
+    async (query: string) => {
+      return await handleTenantSearch(query);
+    },
+    [handleTenantSearch]
+  );
 
   const handleRoleSearchLocal = useCallback(
     async (query: string) => {
-      return await handleRoleSearch(query, targetTenantId, isSystemTenantSelected, hasTenantSelected);
+      return await handleRoleSearch(
+        query,
+        targetTenantId,
+        isSystemTenantSelected,
+        hasTenantSelected
+      );
     },
     [handleRoleSearch, targetTenantId, isSystemTenantSelected, hasTenantSelected]
   );

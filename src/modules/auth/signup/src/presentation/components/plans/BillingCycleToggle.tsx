@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";
@@ -19,6 +20,10 @@ interface BillingCycleToggleProps {
   savingsPercent: number;
 }
 
+/**
+ * Presentation UI component rendering the billing cycle toggle.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function BillingCycleToggle({ value, onChange, savingsPercent }: BillingCycleToggleProps) {
   const { t } = useI18n();
   const { tokens } = useSignupTheme();

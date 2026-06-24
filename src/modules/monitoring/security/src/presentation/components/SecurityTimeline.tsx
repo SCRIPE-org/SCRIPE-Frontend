@@ -33,6 +33,9 @@ const EVENT_ICONS: Record<string, { icon: typeof Shield; color: string }> = {
   PermissionRevoked: { icon: AlertTriangle, color: "text-rose-500" },
 };
 
+/**
+ * Exported constant defining parameters and fields for security timeline configurations.
+ */
 export const SecurityTimeline = memo(function SecurityTimeline({
   data,
   isLoading,

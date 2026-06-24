@@ -2,9 +2,6 @@
 
 import { CommercialDocsView } from "./CommercialDocsView";
 
-// Content registration — ensures all pages are available
-import "../../data/content/registry";
-
 interface CommercialPageConnectorProps {
   slug: string;
 }

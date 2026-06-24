@@ -12,6 +12,10 @@ interface PriceCellProps {
   isRecommended: boolean;
 }
 
+/**
+ * Presentation UI component rendering the price cell.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function PriceCell({ price, freeLabel, isRecommended }: PriceCellProps) {
   const formatted =
     price == null || price === 0

@@ -66,6 +66,10 @@ function CycleToggle({
   );
 }
 
+/**
+ * Presentation UI component rendering the wizard step billing.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function WizardStepBilling({ form, onChange }: WizardStepBillingProps) {
   const { t } = useI18n();
 

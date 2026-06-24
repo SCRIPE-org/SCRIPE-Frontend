@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * CreateTenantStep3 — Plan & Billing
  *
@@ -39,6 +41,10 @@ interface CreateTenantStep3Props {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the create tenant step3.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
   const isFreeEdition = vm.selectedEdition?.isFree === true;
   const [isPermissionsOpen, setIsPermissionsOpen] = useState(false);

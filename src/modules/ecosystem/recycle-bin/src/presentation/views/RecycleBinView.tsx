@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * RecycleBinView
  *
@@ -24,6 +25,10 @@ import { cn } from "@core/common/utils";
 import { CascadeRestoreDialog } from "../components/CascadeRestoreDialog";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
+/**
+ * Presentation UI component rendering the recycle bin view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function RecycleBinView() {
   useModuleLocales(() => import("../../../locales"), "recycle-bin");
 

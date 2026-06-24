@@ -17,6 +17,10 @@ import { useI18n } from "@core/providers/i18n-provider";
 
 const isStripeTestMode = process.env.NEXT_PUBLIC_STRIPE_TEST_MODE === "true";
 
+/**
+ * Presentation UI component rendering the stripe test mode banner.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function StripeTestModeBanner() {
   const [dismissed, setDismissed] = useState(false);
   const { t } = useI18n();

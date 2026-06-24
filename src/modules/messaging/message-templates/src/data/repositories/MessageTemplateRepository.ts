@@ -15,10 +15,14 @@ import type {
   PreviewTemplateRequest,
   PreviewTemplateResponse,
 } from "../../domain/entities/MessageTemplateRequests";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import type { IMessageTemplateService } from "../../domain/interfaces/IMessageTemplateService";
 import { MessageTemplateMapper } from "../mappers/MessageTemplateMapper";
 
+/**
+ * Repository layer implementing client request queries for message template.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class MessageTemplateRepository implements IMessageTemplateRepository {
   constructor(private readonly service: IMessageTemplateService) {}
 

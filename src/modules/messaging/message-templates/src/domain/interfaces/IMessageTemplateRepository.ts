@@ -1,4 +1,4 @@
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import type { MessageTemplate } from "../entities/MessageTemplate";
 import type {
   CreateMessageTemplateRequest,
@@ -7,6 +7,10 @@ import type {
   PreviewTemplateResponse,
 } from "../entities/MessageTemplateRequests";
 
+/**
+ * Repository layer implementing client request queries for i message template.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export interface IMessageTemplateRepository {
   getAll(params: {
     page: number;

@@ -6,6 +6,9 @@ import { authContainer } from "@modules/auth/di";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for use passkey login view model return.
+ */
 export interface UsePasskeyLoginViewModelReturn {
   // State
   isLoading: boolean;

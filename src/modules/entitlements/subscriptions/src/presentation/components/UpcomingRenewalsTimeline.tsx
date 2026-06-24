@@ -33,6 +33,10 @@ interface UpcomingRenewalsTimelineProps {
   t: (key: string, params?: any) => string;
 }
 
+/**
+ * Presentation UI component rendering the upcoming renewals timeline.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function UpcomingRenewalsTimeline({
   renewals,
   formatDisplay,

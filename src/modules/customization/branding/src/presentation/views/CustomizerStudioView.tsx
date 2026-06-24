@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * CustomizerStudioView -- Main studio layout (Ultimate Redesign)
  *
@@ -37,6 +38,10 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { SaveAsThemeModal } from "../components/SaveAsThemeModal";
 
+/**
+ * Presentation UI component rendering the customizer studio view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function CustomizerStudioView() {
   useModuleLocales(() => import("@modules/customization/studio/locales"), "customization-studio");
   const { t } = useI18n();
@@ -399,6 +404,7 @@ export function CustomizerStudioView() {
         isOpen={showSaveAsTheme}
         onClose={() => setShowSaveAsTheme(false)}
         getDraftJson={vm.buildDraftJson}
+        onSaveTheme={vm.saveTheme}
       />
     </div>
   );

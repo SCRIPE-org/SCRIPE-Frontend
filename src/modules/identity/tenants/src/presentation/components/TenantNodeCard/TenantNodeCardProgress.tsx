@@ -14,6 +14,10 @@ interface TenantNodeCardProgressProps {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the tenant node card progress.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function TenantNodeCardProgress({
   node,
   status,

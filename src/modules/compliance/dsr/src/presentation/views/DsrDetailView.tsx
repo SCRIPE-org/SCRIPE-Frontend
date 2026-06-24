@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
   ArrowRight,
@@ -21,10 +19,7 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Button } from "@core/ui/button";
 import { Card, CardContent } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
-import { toast } from "@core/ui/use-toast";
-import { complianceContainer } from "@modules/compliance/di";
-import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
-import { useAppStore } from "@/core/store/useAppStore";
+import { useDsrDetailViewModel } from "../viewmodels/useDsrDetailViewModel";
 import {
   Dialog,
   DialogContent,
@@ -93,53 +88,30 @@ const TYPE_META: Record<string, { labelKey: string; color: string }> = {
   Restriction: { labelKey: "compliance.requestTypes.restriction", color: "text-indigo-500" },
 };
 
+/**
+ * Presentation UI component rendering the dsr detail view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function DsrDetailView({ id }: { id: string }) {
   useModuleLocales(() => import("../../../locales"), "compliance-dsr");
   const { t, direction } = useI18n();
   const router = useRouter();
   const BackIcon = direction === "rtl" ? ArrowRight : ArrowLeft;
-  const { dsrRepository } = complianceContainer;
-  const queryClient = useQueryClient();
-  const { tenantCode } = useAppStore();
-
-  const [isConfirmingErasure, setIsConfirmingErasure] = useState(false);
-  const [erasureInput, setErasureInput] = useState("");
-
-  const query = useQuery({
-    queryKey: ["compliance", "dsr", id],
-    queryFn: () => dsrRepository.getById(id),
-    refetchInterval: (query) => {
-      const r = query.state.data as DataSubjectRequest | undefined;
-      return r && (r.status === "Processing" || r.status === "InReview") ? 5_000 : false;
-    },
-  });
-
-  const confirmErasureMutation = useMutation({
-    mutationFn: () => dsrRepository.confirmErasure(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["compliance", "dsr", id] });
-      setIsConfirmingErasure(false);
-      setErasureInput("");
-      toast({ title: t("compliance.erasureConfirmed"), variant: "default" });
-    },
-    onError: () => toast({ title: t("common.error"), variant: "destructive" }),
-  });
-
-  const downloadMutation = useMutation({
-    mutationFn: () => dsrRepository.downloadExport(id),
-    onSuccess: (blob) => {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `dsr-export-${id}.zip`;
-      a.click();
-      URL.revokeObjectURL(url);
-      toast({ title: t("common.success"), variant: "default" });
-    },
-    onError: () => toast({ title: t("common.error"), variant: "destructive" }),
-  });
-
-  const dsr = query.data;
+  const {
+    dsr,
+    isLoading,
+    isError,
+    refetch,
+    isConfirmingErasure,
+    setIsConfirmingErasure,
+    erasureInput,
+    setErasureInput,
+    tenantCode,
+    isConfirmingPending,
+    isDownloadingPending,
+    confirmErasure,
+    downloadExport,
+  } = useDsrDetailViewModel(id);
   const statusMeta = dsr ? (STATUS_META[dsr.status] ?? STATUS_META.Pending) : null;
   const typeMeta = dsr
     ? (TYPE_META[dsr.requestType] ?? { labelKey: dsr.requestType, color: "" })
@@ -182,11 +154,8 @@ export function DsrDetailView({ id }: { id: string }) {
               </Button>
             )}
             {dsr.canDownloadExport && !!tenantCode && (
-              <Button
-                onClick={() => downloadMutation.mutate()}
-                disabled={downloadMutation.isPending}
-              >
-                {downloadMutation.isPending ? (
+              <Button onClick={downloadExport} disabled={isDownloadingPending}>
+                {isDownloadingPending ? (
                   <Loader2 className="me-2 h-4 w-4 animate-spin" />
                 ) : (
                   <Download className="me-2 h-4 w-4" />
@@ -198,7 +167,7 @@ export function DsrDetailView({ id }: { id: string }) {
         )}
       </div>
 
-      {query.isLoading ? (
+      {isLoading ? (
         <div className="space-y-4">
           <Skeleton className="h-[120px] rounded-xl" />
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -206,12 +175,12 @@ export function DsrDetailView({ id }: { id: string }) {
             <Skeleton className="h-[300px] rounded-xl" />
           </div>
         </div>
-      ) : query.isError ? (
+      ) : isError ? (
         <Card className="border-destructive/20 bg-destructive/5">
           <CardContent className="flex flex-col items-center justify-center py-14 text-center">
             <AlertTriangle className="mb-4 h-10 w-10 text-destructive" />
             <p className="font-semibold">{t("common.error")}</p>
-            <Button className="mt-4" variant="outline" size="sm" onClick={() => query.refetch()}>
+            <Button className="mt-4" variant="outline" size="sm" onClick={() => refetch()}>
               <RefreshCw className="me-2 h-4 w-4" />
               {t("common.refresh")}
             </Button>
@@ -259,12 +228,10 @@ export function DsrDetailView({ id }: { id: string }) {
             </Button>
             <Button
               variant="destructive"
-              onClick={() => confirmErasureMutation.mutate()}
-              disabled={erasureInput !== "CONFIRM" || confirmErasureMutation.isPending}
+              onClick={confirmErasure}
+              disabled={erasureInput !== "CONFIRM" || isConfirmingPending}
             >
-              {confirmErasureMutation.isPending && (
-                <Loader2 className="me-2 h-4 w-4 animate-spin" />
-              )}
+              {isConfirmingPending && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
               {t("compliance.executeErasureBtn")}
             </Button>
           </DialogFooter>

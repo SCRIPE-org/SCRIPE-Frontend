@@ -30,6 +30,10 @@ export interface CreateEditionRequest {
   isContactSalesOnly?: boolean;
 }
 
+/**
+ * Domain model representing a Update Edition Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface UpdateEditionRequest {
   name?: string;
   displayNameEn?: string;
@@ -56,6 +60,10 @@ export interface UpdateEditionRequest {
   isContactSalesOnly?: boolean;
 }
 
+/**
+ * Domain model representing a Set Edition Feature Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface SetEditionFeatureRequest {
   value: string;
 }

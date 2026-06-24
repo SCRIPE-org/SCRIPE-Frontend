@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 import { useState } from "react";
 import { X, Plus, Info } from "lucide-react";
 import {
@@ -19,6 +20,9 @@ import {
   type PermissionAssignmentJson,
 } from "../../domain/types/PermissionTypes";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for permission config dialog props.
+ */
 export interface PermissionConfigDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -31,6 +35,10 @@ export interface PermissionConfigDialogProps {
   onSave: (assignment: PermissionAssignmentJson) => void;
 }
 
+/**
+ * Presentation UI component rendering the permission config dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function PermissionConfigDialog({
   open,
   onOpenChange,

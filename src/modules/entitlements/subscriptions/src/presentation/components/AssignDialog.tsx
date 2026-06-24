@@ -26,6 +26,10 @@ import { SubscriptionTypeSelect } from "./SubscriptionTypeSelect";
 import { PromotionPicker } from "./PromotionPicker";
 import { CurrencySelect } from "./CurrencySelect";
 
+/**
+ * Presentation UI component rendering the assign dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function AssignDialog({ vm, editionsVm }: SubscriptionEditionDialogProps) {
   const { t } = useI18n();
 

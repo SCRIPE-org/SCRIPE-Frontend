@@ -21,6 +21,9 @@ export interface AuditLogEntryDto {
   tenantId: string | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for audit log detail dto.
+ */
 export interface AuditLogDetailDto {
   id: string;
   eventType: string;
@@ -46,6 +49,9 @@ export interface AuditLogDetailDto {
   tenantId: string | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for audit log page dto.
+ */
 export interface AuditLogPageDto {
   items: AuditLogEntryDto[];
   totalCount: number;
@@ -56,6 +62,9 @@ export interface AuditLogPageDto {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for audit analytics summary dto.
+ */
 export interface AuditAnalyticsSummaryDto {
   totalEvents: number;
   successRate: number;
@@ -64,6 +73,9 @@ export interface AuditAnalyticsSummaryDto {
   heatmapData: { hour: number; dayOfWeek: number; count: number }[];
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for top audit user dto.
+ */
 export interface TopAuditUserDto {
   username: string;
   totalActions: number;
@@ -71,6 +83,9 @@ export interface TopAuditUserDto {
   isAdmin: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for compliance report dto.
+ */
 export interface ComplianceReportDto {
   framework: string;
   generatedAt: string;

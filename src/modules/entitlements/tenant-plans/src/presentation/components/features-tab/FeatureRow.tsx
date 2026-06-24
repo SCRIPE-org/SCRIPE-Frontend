@@ -23,6 +23,10 @@ interface FeatureRowProps {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the feature row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function FeatureRow({
   definition,
   value,

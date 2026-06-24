@@ -24,6 +24,9 @@ interface Props {
   onPageChange: (page: number) => void;
 }
 
+/**
+ * Exported constant defining parameters and fields for audit log table configurations.
+ */
 export const AuditLogTable = memo(function AuditLogTable({
   data,
   isLoading,

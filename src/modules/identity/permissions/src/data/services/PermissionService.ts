@@ -23,6 +23,10 @@ import {
 import type { IPermissionService } from "../../domain/interfaces/IPermissionService";
 import type { PermissionListParams } from "../../domain/interfaces/IPermissionRepository";
 
+/**
+ * Http API network service for permission.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class PermissionService implements IPermissionService {
   constructor(private readonly api: IApiService) {}
 

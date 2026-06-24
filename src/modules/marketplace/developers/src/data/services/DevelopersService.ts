@@ -15,6 +15,10 @@ import type {
   UpdateDeveloperPayload,
 } from "../../domain/interfaces/IDevelopersService";
 
+/**
+ * Http API network service for developers.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class DevelopersService implements IDevelopersService {
   constructor(private readonly api: IApiService) {}
 

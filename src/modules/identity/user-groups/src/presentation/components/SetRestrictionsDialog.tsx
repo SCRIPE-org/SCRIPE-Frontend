@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * Set Restrictions Dialog
  *
@@ -31,6 +32,10 @@ interface SetRestrictionsDialogProps {
   tenantId?: string;
 }
 
+/**
+ * Presentation UI component rendering the set restrictions dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SetRestrictionsDialog({
   open,
   onOpenChange,
@@ -39,7 +44,10 @@ export function SetRestrictionsDialog({
   isSubmitting,
   tenantId,
 }: SetRestrictionsDialogProps) {
-  const { t, availablePermissions, isLoadingPermissions } = useSetRestrictionsViewModel({ tenantId, open });
+  const { t, availablePermissions, isLoadingPermissions } = useSetRestrictionsViewModel({
+    tenantId,
+    open,
+  });
   const [restrictions, setRestrictions] = useState<Restriction[]>([]);
   const [newPermissionCode, setNewPermissionCode] = useState("");
   const [newField, setNewField] = useState("");

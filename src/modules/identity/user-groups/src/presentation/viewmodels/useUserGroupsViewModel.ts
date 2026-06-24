@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * User Groups List ViewModel
  *
@@ -16,6 +17,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useCallback, useState } from "react";
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for group keys.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export const userGroupKeys = {
   all: ["user-groups"] as const,
   list: (filters: Record<string, unknown>) => [...userGroupKeys.all, "list", filters] as const,
@@ -23,6 +28,9 @@ export const userGroupKeys = {
 };
 
 // Flat list-item shape expected by GenericCrudView (must have { id: string })
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for user group list item.
+ */
 export interface UserGroupListItem {
   id: string;
   nameEn: string;
@@ -38,6 +46,10 @@ export interface UserGroupListItem {
   createdAt: string;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for user groups view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenantId?: string }) {
   const repo = identityContainer.userGroupRepository;
   const { useMyTenant, tenantId } = options || {};

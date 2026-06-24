@@ -21,6 +21,9 @@ export interface DsrModel {
   resolution?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for dsr status history model.
+ */
 export interface DsrStatusHistoryModel {
   fromStatus: string;
   toStatus: string;
@@ -29,6 +32,9 @@ export interface DsrStatusHistoryModel {
   occurredAt: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for dsr module execution model.
+ */
 export interface DsrModuleExecutionModel {
   moduleName: string;
   isCompleted: boolean;
@@ -38,6 +44,9 @@ export interface DsrModuleExecutionModel {
   completedAt?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for dsr detail model.
+ */
 export interface DsrDetailModel extends DsrModel {
   dsrDeadlineDays: number;
   assignedToAdminId?: string;

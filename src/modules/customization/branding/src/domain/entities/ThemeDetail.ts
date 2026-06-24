@@ -19,6 +19,10 @@ export interface ThemeDetailData extends ThemeCardData {
   displayOrder: number;
 }
 
+/**
+ * Domain model representing a Theme Detail structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class ThemeDetail extends ThemeCard {
   private readonly detailData: ThemeDetailData;
 
@@ -58,5 +62,12 @@ export class ThemeDetail extends ThemeCard {
   /** Has a replacement theme available? */
   get hasReplacement() {
     return !!this.detailData.replacedBySlug;
+  }
+
+  copyWith(updates: Partial<ThemeDetailData>): ThemeDetail {
+    return new ThemeDetail({
+      ...this.detailData,
+      ...updates,
+    } as ThemeDetailData);
   }
 }

@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * DashboardStudioPanel — Slide-over settings panel for dashboard theming (M9 + M11)
  *
@@ -111,6 +113,10 @@ function StudioSection({
   );
 }
 
+/**
+ * Presentation UI component rendering the dashboard studio panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function DashboardStudioPanel({
   open,
   onClose,

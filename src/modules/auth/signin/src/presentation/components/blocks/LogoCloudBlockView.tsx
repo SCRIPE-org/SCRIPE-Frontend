@@ -9,6 +9,10 @@ import { safeItems } from "./block-style-utils";
 
 const SIZE_CLASS = { sm: "h-8", md: "h-10", lg: "h-14" };
 
+/**
+ * Presentation UI component rendering the logo cloud block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function LogoCloudBlockView({ block }: { block: LogoCloudBlock }) {
   const props = block.props;
   const columns =

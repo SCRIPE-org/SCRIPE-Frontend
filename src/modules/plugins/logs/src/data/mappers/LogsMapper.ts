@@ -17,6 +17,9 @@ const PluginExecutionLogModelSchema = z.object({
   errorMessage: z.string().optional().nullable(),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class LogsMapper {
   static toEntity(model: PluginExecutionLogModel): PluginExecutionLog {
     const validated = safeParseApiResponse(

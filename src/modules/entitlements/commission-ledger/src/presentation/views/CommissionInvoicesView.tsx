@@ -6,6 +6,10 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import type { CommissionInvoice } from "../../domain/entities/CommissionInvoice";
 
+/**
+ * Presentation UI component rendering the commission invoices view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function CommissionInvoicesView() {
   const { t } = useI18n();
   const vm = useCommissionLedgerViewModel();

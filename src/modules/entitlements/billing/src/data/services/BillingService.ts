@@ -19,6 +19,10 @@ import type {
   PagedResultModel,
 } from "../models/BillingModels";
 
+/**
+ * Http API network service for billing.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class BillingService implements IBillingService {
   constructor(private readonly api: IApiService) {}
 

@@ -30,6 +30,9 @@ const RetentionPolicyModelSchema = z.object({
   isActive: z.boolean().optional().default(false),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class RetentionMapper {
   static toEntity(model: RetentionPolicyModel): RetentionPolicy {
     const validated = safeParseApiResponse(RetentionPolicyModelSchema, model, "RetentionPolicy");

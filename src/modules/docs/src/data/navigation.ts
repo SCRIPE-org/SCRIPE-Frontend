@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Navigation Tree — Sidebar structure for the documentation portal.
  * This is the single source of truth for sidebar navigation.
@@ -8,6 +9,9 @@
 
 import type { DocCategoryData } from "../domain/entities/DocCategory";
 
+/**
+ * Exported constant defining parameters and fields for navigation data configurations.
+ */
 export const navigationData: DocCategoryData[] = [
   // ═══════════════════════════════════════════════════════════
   //  TECHNICAL DOCUMENTATION

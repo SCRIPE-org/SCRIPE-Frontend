@@ -83,6 +83,10 @@ function detectBundleType(layers: Record<BundleLayer, boolean>): BundleType {
   return "full-bundle";
 }
 
+/**
+ * Presentation UI component rendering the save bundle dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SaveBundleDialog({ isOpen, onClose, onSave, isSaving }: SaveBundleDialogProps) {
   const { t } = useI18n();
 

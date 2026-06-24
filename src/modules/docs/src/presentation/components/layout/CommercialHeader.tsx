@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import Link from "next/link";
@@ -7,6 +8,10 @@ import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import { BRAND } from "@core/config/branding";
 
 // ─── Component ───────────────────────────────────────────────────
+/**
+ * Presentation UI component rendering the commercial header.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function CommercialHeader({
   onSearchOpen,
   onMobileMenuOpen,

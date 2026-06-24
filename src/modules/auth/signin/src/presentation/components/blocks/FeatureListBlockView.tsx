@@ -5,6 +5,10 @@ import { blockColor, safeItems } from "./block-style-utils";
 
 const ICON_SIZE = { sm: "text-lg", md: "text-2xl", lg: "text-3xl" };
 
+/**
+ * Presentation UI component rendering the feature list block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function FeatureListBlockView({ block }: { block: FeatureListBlock }) {
   const props = block.props;
   const columns = props.columns || 1;

@@ -11,8 +11,14 @@ import { ScrollArea } from "@core/ui/scroll-area";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import {
-  Loader2, ArrowRight, ArrowLeft, Building2, Package, Settings2,
-  CheckCircle2, Check,
+  Loader2,
+  ArrowRight,
+  ArrowLeft,
+  Building2,
+  Package,
+  Settings2,
+  CheckCircle2,
+  Check,
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { ConvertLeadParams } from "../../domain/interfaces/ILeadsRepository";
@@ -26,10 +32,10 @@ import { WizardStep4Confirm } from "./wizard/WizardStep4Confirm";
 // ── Step indicator config ─────────────────────────────────────────────────────
 
 const STEPS = [
-  { id: 1, label: "Edition",  icon: Package      },
-  { id: 2, label: "Setup",    icon: Building2    },
-  { id: 3, label: "Features", icon: Settings2    },
-  { id: 4, label: "Confirm",  icon: CheckCircle2 },
+  { id: 1, label: "Edition", icon: Package },
+  { id: 2, label: "Setup", icon: Building2 },
+  { id: 3, label: "Features", icon: Settings2 },
+  { id: 4, label: "Confirm", icon: CheckCircle2 },
 ] as const;
 
 // ── Props ─────────────────────────────────────────────────────────────────────
@@ -44,6 +50,10 @@ interface ConvertToTenantWizardProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * Presentation UI component rendering the convert to tenant wizard.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function ConvertToTenantWizard({
   open,
   lead,
@@ -55,11 +65,15 @@ export function ConvertToTenantWizard({
   const vm = useConvertWizardViewModel(open, lead, onConvert, onClose, isConverting);
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen && !isConverting) vm.handleClose(); }}>
-      <DialogContent className="max-h-[90vh] w-full max-w-2xl overflow-hidden p-0 flex flex-col gap-0">
-
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen && !isConverting) vm.handleClose();
+      }}
+    >
+      <DialogContent className="flex max-h-[90vh] w-full max-w-2xl flex-col gap-0 overflow-hidden p-0">
         {/* ── Header ── */}
-        <DialogHeader className="border-b border-border px-6 pb-4 pt-6 shrink-0">
+        <DialogHeader className="shrink-0 border-b border-border px-6 pb-4 pt-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-950">
               <Building2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
@@ -69,7 +83,9 @@ export function ConvertToTenantWizard({
                 {t("leads.convertDialog.title")}
               </DialogTitle>
               <DialogDescription className="mt-0.5 text-xs text-muted-foreground">
-                {lead ? `${lead.companyName} · ${lead.contactName}` : t("leads.drawer.loadingDetail")}
+                {lead
+                  ? `${lead.companyName} · ${lead.contactName}`
+                  : t("leads.drawer.loadingDetail")}
               </DialogDescription>
             </div>
           </div>
@@ -86,22 +102,28 @@ export function ConvertToTenantWizard({
                     <div
                       className={[
                         "flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-semibold transition-all duration-200",
-                        isDone   ? "border-emerald-500 bg-emerald-500 text-white"
-                        : isActive ? "border-primary bg-primary text-primary-foreground"
-                        :            "border-border bg-background text-muted-foreground",
+                        isDone
+                          ? "border-emerald-500 bg-emerald-500 text-white"
+                          : isActive
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border bg-background text-muted-foreground",
                       ].join(" ")}
                     >
                       {isDone ? <Check className="h-4 w-4" /> : <Icon className="h-3.5 w-3.5" />}
                     </div>
-                    <span className={`text-[10px] font-medium ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
+                    <span
+                      className={`text-[10px] font-medium ${isActive ? "text-foreground" : "text-muted-foreground"}`}
+                    >
                       {t(`leads.convertWizard.steps.${s.label.toLowerCase()}`)}
                     </span>
                   </div>
                   {idx < STEPS.length - 1 && (
-                    <div className={[
-                      "mx-1 mb-4 h-0.5 w-12 flex-1 transition-all duration-300",
-                      vm.step > s.id ? "bg-emerald-500" : "bg-border",
-                    ].join(" ")} />
+                    <div
+                      className={[
+                        "mx-1 mb-4 h-0.5 w-12 flex-1 transition-all duration-300",
+                        vm.step > s.id ? "bg-emerald-500" : "bg-border",
+                      ].join(" ")}
+                    />
                   )}
                 </div>
               );
@@ -117,7 +139,7 @@ export function ConvertToTenantWizard({
         </DialogHeader>
 
         {/* ── Body ── */}
-        <ScrollArea className="flex-1 min-h-0">
+        <ScrollArea className="min-h-0 flex-1 flex flex-col">
           <div className="px-6 py-4">
             {vm.step === 1 && (
               <WizardStep1Edition
@@ -161,7 +183,7 @@ export function ConvertToTenantWizard({
         </ScrollArea>
 
         {/* ── Footer ── */}
-        <div className="flex items-center justify-between border-t border-border px-6 py-4 shrink-0">
+        <div className="flex shrink-0 items-center justify-between border-t border-border px-6 py-4">
           <Button
             type="button"
             variant="ghost"
@@ -169,7 +191,14 @@ export function ConvertToTenantWizard({
             disabled={isConverting}
             className="gap-2"
           >
-            {vm.step === 1 ? t("leads.convertDialog.cancel") : <><ArrowLeft className="h-4 w-4" />{t("leads.convertWizard.back")}</>}
+            {vm.step === 1 ? (
+              t("leads.convertDialog.cancel")
+            ) : (
+              <>
+                <ArrowLeft className="h-4 w-4" />
+                {t("leads.convertWizard.back")}
+              </>
+            )}
           </Button>
 
           <div className="flex items-center gap-2">
@@ -190,9 +219,17 @@ export function ConvertToTenantWizard({
                 disabled={isConverting}
                 className="gap-2 bg-emerald-600 text-white hover:bg-emerald-700"
               >
-                {isConverting
-                  ? <><Loader2 className="h-4 w-4 animate-spin" />{t("leads.convertWizard.converting")}</>
-                  : <><Check className="h-4 w-4" />{t("leads.convertWizard.convertNow")}</>}
+                {isConverting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {t("leads.convertWizard.converting")}
+                  </>
+                ) : (
+                  <>
+                    <Check className="h-4 w-4" />
+                    {t("leads.convertWizard.convertNow")}
+                  </>
+                )}
               </Button>
             )}
           </div>

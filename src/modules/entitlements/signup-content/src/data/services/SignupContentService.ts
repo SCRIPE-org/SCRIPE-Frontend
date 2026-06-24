@@ -12,6 +12,10 @@ import type {
 import type { ISignupContentService } from "../../domain/interfaces/ISignupContentService";
 import type { ContentMode } from "../../domain/entities/SignupContent";
 
+/**
+ * Http API network service for signup content.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class SignupContentService implements ISignupContentService {
   constructor(private readonly api: IApiService) {}
 

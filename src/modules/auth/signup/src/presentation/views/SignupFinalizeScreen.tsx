@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import Link from "next/link";
@@ -39,6 +41,10 @@ function StatusIcon({ tone, children }: { tone: string; children: React.ReactNod
   );
 }
 
+/**
+ * Presentation UI component rendering the signup finalize screen.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SignupFinalizeScreen() {
   const vm = useFinalizeViewModel();
   const { t, direction } = useI18n();

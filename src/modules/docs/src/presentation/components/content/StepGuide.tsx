@@ -8,6 +8,10 @@ interface StepGuideProps {
   steps: StepItem[];
 }
 
+/**
+ * Presentation UI component rendering the step guide.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function StepGuide({ steps }: StepGuideProps) {
   const { t } = useDocsI18n();
 

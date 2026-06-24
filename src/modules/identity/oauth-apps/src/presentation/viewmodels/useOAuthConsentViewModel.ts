@@ -39,6 +39,10 @@ interface OAuthConsentViewModelResult {
   handleSwitchAccount: () => void;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for o auth consent view model.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
+ */
 export function useOAuthConsentViewModel(): OAuthConsentViewModelResult {
   const searchParams = useSearchParams();
   const router = useRouter();

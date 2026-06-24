@@ -27,6 +27,10 @@ interface ClientCredentialsCardProps {
   onRegenerate: () => void;
 }
 
+/**
+ * Presentation UI component rendering the client credentials card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function ClientCredentialsCard({
   clientId,
   clientType,
@@ -39,20 +43,22 @@ export function ClientCredentialsCard({
 
   return (
     <Card className="border border-border/80 bg-card/45 backdrop-blur-md">
-      <CardContent className="p-5 space-y-4">
+      <CardContent className="space-y-4 p-5">
         <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
           <KeyRound className="h-4 w-4 text-purple-500" />
           {t("oauthApps.credentialsSection") || "Client Credentials"}
         </h3>
-        
+
         {/* Client ID */}
         <div className="space-y-1.5">
-          <Label className="text-xs text-muted-foreground">{t("oauthApps.clientIdLabel") || "Client ID"}</Label>
+          <Label className="text-xs text-muted-foreground">
+            {t("oauthApps.clientIdLabel") || "Client ID"}
+          </Label>
           <div className="flex items-center gap-2">
             <Input
               value={clientId}
               readOnly
-              className="bg-muted/30 border-border/80 font-mono text-xs h-9"
+              className="h-9 border-border/80 bg-muted/30 font-mono text-xs"
             />
             <Button
               variant="outline"
@@ -71,9 +77,11 @@ export function ClientCredentialsCard({
 
         {/* Client Secret */}
         {clientType === "confidential" && (
-          <div className="space-y-2 pt-2 border-t border-border/40">
-            <Label className="text-xs text-muted-foreground">{t("oauthApps.clientSecret") || "Client Secret"}</Label>
-            <p className="text-[11px] leading-normal text-muted-foreground/80 font-normal">
+          <div className="space-y-2 border-t border-border/40 pt-2">
+            <Label className="text-xs text-muted-foreground">
+              {t("oauthApps.clientSecret") || "Client Secret"}
+            </Label>
+            <p className="text-[11px] font-normal leading-normal text-muted-foreground/80">
               {t("oauthApps.clientSecretHidden") ||
                 "The secret is never displayed for security. Regenerate to get a new one."}
             </p>
@@ -83,7 +91,7 @@ export function ClientCredentialsCard({
                   variant="outline"
                   size="sm"
                   loading={isRegenerating}
-                  className="w-full gap-1.5 text-xs mt-1 border-border/80 hover:bg-muted"
+                  className="mt-1 w-full gap-1.5 border-border/80 text-xs hover:bg-muted"
                 >
                   {!isRegenerating && <RefreshCw className="h-3.5 w-3.5" />}
                   {t("oauthApps.regenerateSecret") || "Regenerate Secret"}
@@ -103,7 +111,7 @@ export function ClientCredentialsCard({
                   <AlertDialogCancel>{t("common.cancel") || "Cancel"}</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={onRegenerate}
-                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                    className="bg-purple-600 text-white hover:bg-purple-700"
                   >
                     {t("oauthApps.regenerate") || "Regenerate"}
                   </AlertDialogAction>

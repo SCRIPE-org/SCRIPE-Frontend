@@ -71,6 +71,28 @@ let _container: IdentityContainer | null = null;
  */
 export function getIdentityContainer(): IdentityContainer {
   if (!_container) {
+    if (typeof window === "undefined") {
+      const dummyProxy = new Proxy({} as any, {
+        get() {
+          return () => Promise.resolve({});
+        },
+      });
+      return {
+        adminService: dummyProxy,
+        permissionService: dummyProxy,
+        roleService: dummyProxy,
+        tenantService: dummyProxy,
+        adminRepository: dummyProxy,
+        roleRepository: dummyProxy,
+        permissionRepository: dummyProxy,
+        tenantRepository: dummyProxy,
+        userGroupRepository: dummyProxy,
+        identityProviderRepository: dummyProxy,
+        oauthAppRepository: dummyProxy,
+        usersRepository: dummyProxy,
+      };
+    }
+
     const apiService = getModuleApiService("IDENTITY");
 
     // Create Services (wrap IApiService)

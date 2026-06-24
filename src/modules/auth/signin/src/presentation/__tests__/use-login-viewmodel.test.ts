@@ -93,11 +93,18 @@ vi.mock("@core/providers/navigation-provider", () => ({
   }),
 }));
 
-vi.mock("@tanstack/react-query", () => ({
-  useQueryClient: () => ({
-    invalidateQueries: vi.fn(),
-  }),
-}));
+vi.mock("@tanstack/react-query", () => {
+  class MockQueryClient {
+    invalidateQueries = vi.fn();
+    defaultOptions = {};
+  }
+  return {
+    QueryClient: MockQueryClient,
+    useQueryClient: () => ({
+      invalidateQueries: vi.fn(),
+    }),
+  };
+});
 
 vi.mock("@core/common/secure-token-service", () => ({
   secureTokenService: {

@@ -25,6 +25,9 @@ export interface MessageTemplateJson {
   modifiedAt: string | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for message template list response.
+ */
 export interface MessageTemplateListResponse {
   items: MessageTemplateJson[];
   totalCount: number;
@@ -34,6 +37,9 @@ export interface MessageTemplateListResponse {
 
 // ===== Create/Update JSON DTOs =====
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for create message template json.
+ */
 export interface CreateMessageTemplateJson {
   key: string;
   channel: string;
@@ -49,6 +55,9 @@ export interface CreateMessageTemplateJson {
   tags?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for update message template json.
+ */
 export interface UpdateMessageTemplateJson {
   subject?: string;
   body: string;
@@ -60,12 +69,18 @@ export interface UpdateMessageTemplateJson {
   tags?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for preview template json.
+ */
 export interface PreviewTemplateJson {
   subject?: string;
   body: string;
   sampleData?: Record<string, unknown>;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for preview template response json.
+ */
 export interface PreviewTemplateResponseJson {
   subject: string | null;
   body: string;

@@ -14,6 +14,10 @@ interface UseAssignToGroupViewModelProps {
   onOpenChange: (open: boolean) => void;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for assign to group view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useAssignToGroupViewModel({
   tenantId,
   useMyTenant,
@@ -56,7 +60,13 @@ export function useAssignToGroupViewModel({
   };
 
   const addMembers = useMutation({
-    mutationFn: async ({ adminIds, selectedGroupIds }: { adminIds: string[]; selectedGroupIds: string[] }) => {
+    mutationFn: async ({
+      adminIds,
+      selectedGroupIds,
+    }: {
+      adminIds: string[];
+      selectedGroupIds: string[];
+    }) => {
       for (const groupId of selectedGroupIds) {
         await identityContainer.userGroupRepository.addMembers(groupId, {
           adminIds,
@@ -66,7 +76,13 @@ export function useAssignToGroupViewModel({
   });
 
   const addRoles = useMutation({
-    mutationFn: async ({ roleIds, selectedGroupIds }: { roleIds: string[]; selectedGroupIds: string[] }) => {
+    mutationFn: async ({
+      roleIds,
+      selectedGroupIds,
+    }: {
+      roleIds: string[];
+      selectedGroupIds: string[];
+    }) => {
       for (const groupId of selectedGroupIds) {
         const group = await identityContainer.userGroupRepository.getById(groupId);
         const currentRoleIds = group.roles.map((r: any) => r.roleId);
@@ -99,7 +115,11 @@ export function useAssignToGroupViewModel({
         queryClient.invalidateQueries({ queryKey: ["admins"] });
         onOpenChange(false);
       } catch (err: any) {
-        operationError(t("userGroups.assignToGroups") || "Assign to Groups", undefined, err.message);
+        operationError(
+          t("userGroups.assignToGroups") || "Assign to Groups",
+          undefined,
+          err.message
+        );
       }
     },
     addRoles: async (roleIds: string[], selectedGroupIds: string[]) => {
@@ -117,7 +137,11 @@ export function useAssignToGroupViewModel({
         queryClient.invalidateQueries({ queryKey: ["roles"] });
         onOpenChange(false);
       } catch (err: any) {
-        operationError(t("userGroups.assignToGroups") || "Assign to Groups", undefined, err.message);
+        operationError(
+          t("userGroups.assignToGroups") || "Assign to Groups",
+          undefined,
+          err.message
+        );
       }
     },
     isPending: addMembers.isPending || addRoles.isPending,

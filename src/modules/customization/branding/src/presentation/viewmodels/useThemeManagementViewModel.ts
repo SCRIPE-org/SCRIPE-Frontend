@@ -20,12 +20,19 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type { ThemeCard } from "../../domain/entities/ThemeCard";
 
+/**
+ * Exported constant defining parameters and fields for theme keys configurations.
+ */
 export const themeKeys = {
   all: ["themes-management"] as const,
   list: (filters: Record<string, unknown>) => [...themeKeys.all, "list", filters] as const,
   detail: (slug: string) => [...themeKeys.all, "detail", slug] as const,
 };
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for theme management view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useThemeManagementViewModel() {
   const { themeMarketplaceRepository } = customizationContainer;
   const { t } = useI18n();

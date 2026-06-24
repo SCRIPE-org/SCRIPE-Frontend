@@ -14,6 +14,10 @@ interface FeatureValueBadgeProps {
   isEffective?: boolean;
 }
 
+/**
+ * Presentation UI component rendering the feature value badge.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function FeatureValueBadge({
   value,
   valueType,

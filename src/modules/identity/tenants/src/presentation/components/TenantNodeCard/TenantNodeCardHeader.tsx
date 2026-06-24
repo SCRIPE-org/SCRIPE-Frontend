@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import React from "react";
@@ -7,6 +8,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@core/ui/tooltip";
 import { cn } from "@core/common/utils";
 import type { TenantTreeNode } from "../../../domain/entities/Tenant";
 
+/**
+ * Exported type defining parameters and fields for tenant status configurations.
+ */
 export type TenantStatus = "active" | "suspended" | "canceled" | "expired" | "inactive";
 
 interface TenantNodeCardHeaderProps {
@@ -26,6 +30,10 @@ interface TenantNodeCardHeaderProps {
   onToggle: () => void;
 }
 
+/**
+ * Presentation UI component rendering the tenant node card header.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function TenantNodeCardHeader({
   node,
   isExpanded,

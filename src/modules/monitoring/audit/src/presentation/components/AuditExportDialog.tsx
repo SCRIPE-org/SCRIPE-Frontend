@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 /**
@@ -59,6 +60,10 @@ const FORMAT_OPTIONS: FormatOption[] = [
   },
 ];
 
+/**
+ * Presentation UI component rendering the audit export dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogProps) {
   const { t } = useI18n();
   const { exportAudit, isExporting, error } = useExportAudit();

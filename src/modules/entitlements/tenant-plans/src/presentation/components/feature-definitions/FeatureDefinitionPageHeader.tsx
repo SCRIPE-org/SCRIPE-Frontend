@@ -10,6 +10,10 @@ interface FeatureDefinitionPageHeaderProps {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the feature definition page header.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function FeatureDefinitionPageHeader({ t }: FeatureDefinitionPageHeaderProps) {
   return (
     <div className="flex items-center gap-3">

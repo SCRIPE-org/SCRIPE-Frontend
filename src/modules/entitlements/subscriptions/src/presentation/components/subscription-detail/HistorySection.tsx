@@ -20,6 +20,10 @@ interface HistorySectionProps {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the history section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function HistorySection({ items, currentId, t }: HistorySectionProps) {
   const pastItems = items.filter((s) => s.id !== currentId);
   if (pastItems.length === 0) return null;

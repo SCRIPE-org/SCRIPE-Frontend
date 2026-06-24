@@ -41,6 +41,20 @@ let _container: MonitoringContainer | null = null;
  * Uses IDENTITY API service — monitoring controllers live in the Identity backend
  */
 export function getMonitoringContainer(): MonitoringContainer {
+  if (typeof window === "undefined") {
+    const dummyProxy = new Proxy({} as any, {
+      get() {
+        return () => Promise.resolve({});
+      },
+    });
+    return {
+      dashboardRepository: dummyProxy,
+      auditRepository: dummyProxy,
+      securityRepository: dummyProxy,
+      analyticsRepository: dummyProxy,
+    };
+  }
+
   if (!_container) {
     const apiService = getModuleApiService("IDENTITY");
 

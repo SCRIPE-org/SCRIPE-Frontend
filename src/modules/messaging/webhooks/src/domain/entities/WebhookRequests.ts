@@ -16,6 +16,10 @@ export interface CreateWebhookRequest {
   maxConsecutiveFailures?: number;
 }
 
+/**
+ * Domain model representing a Update Webhook Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface UpdateWebhookRequest {
   url?: string;
   description?: string;

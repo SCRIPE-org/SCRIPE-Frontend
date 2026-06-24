@@ -4,7 +4,7 @@
  */
 import type { UserSubscription } from "../entities/UserSubscription";
 import type { CreateUserSubscriptionRequest } from "../entities/UserSubscriptionRequests";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
 /** Lightweight user result for the searchable user combobox in the Create form. */
 export interface UserSearchResult {
@@ -13,6 +13,10 @@ export interface UserSearchResult {
   email: string;
 }
 
+/**
+ * Repository layer implementing client request queries for i user subscription.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export interface IUserSubscriptionRepository {
   getAll(
     params: PaginationParams & { planId?: string; status?: string }

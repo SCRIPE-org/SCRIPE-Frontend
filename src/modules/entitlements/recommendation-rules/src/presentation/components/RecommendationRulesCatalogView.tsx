@@ -25,6 +25,10 @@ interface RecommendationRulesCatalogViewProps {
   language: string;
 }
 
+/**
+ * Presentation UI component rendering the recommendation rules catalog view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function RecommendationRulesCatalogView({ vm, t }: RecommendationRulesCatalogViewProps) {
   const config: CrudConfig<RecommendationRule> = useMemo(
     () => ({

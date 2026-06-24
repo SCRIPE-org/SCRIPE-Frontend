@@ -16,6 +16,9 @@ import type {
   SecurityChange,
 } from "../../domain/entities/SecurityEntities";
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class SecurityMapper {
   static toSecurityEvent(dto: SecurityEventDto): SecurityEvent {
     return {

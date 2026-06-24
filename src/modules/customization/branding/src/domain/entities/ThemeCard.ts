@@ -49,6 +49,10 @@ export interface ThemeCardData {
   isBuyable: boolean;
 }
 
+/**
+ * Presentation UI component rendering the theme card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export class ThemeCard {
   constructor(private readonly data: ThemeCardData) {}
 

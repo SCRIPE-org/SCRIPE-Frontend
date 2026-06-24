@@ -1,3 +1,6 @@
+/**
+ * Exported type in the auth/signin module.
+ */
 export type {
   DiscoverWorkspacesResponseDto,
   WorkspaceInfoDto,

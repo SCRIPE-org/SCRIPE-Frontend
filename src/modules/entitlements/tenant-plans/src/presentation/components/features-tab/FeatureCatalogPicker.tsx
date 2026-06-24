@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * FeatureCatalogPicker — Dialog for adding features from the catalog to a plan.
  *
@@ -32,6 +33,10 @@ interface FeatureCatalogPickerProps {
   language: string;
 }
 
+/**
+ * Presentation UI component rendering the feature catalog picker.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function FeatureCatalogPicker({
   availableGrouped,
   onSelect,

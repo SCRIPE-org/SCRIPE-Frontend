@@ -12,8 +12,12 @@ import type {
   CreateRecommendationRuleRequest,
   UpdateRecommendationRuleRequest,
 } from "../entities/RecommendationRuleRequests";
-import type { PaginationParams } from "@modules/identity/core/domain/types";
+import type { PaginationParams } from "@core/interfaces/common.interface";
 
+/**
+ * Http API network service for i recommendation rule.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface IRecommendationRuleService {
   getAll(params: PaginationParams): Promise<PagedRecommendationRulesModel>;
   getById(id: string): Promise<RecommendationRuleDetailModel>;

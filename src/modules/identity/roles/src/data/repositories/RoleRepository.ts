@@ -22,9 +22,12 @@ import type {
 import type { PagedResult } from "@modules/identity/core/domain/types";
 import type { IRoleService } from "../../domain/interfaces/IRoleService";
 import { RoleMapper } from "../mappers/RoleMapper";
-import { Permission, PermissionModuleGroup } from "@modules/identity/permissions";
-import { PermissionMapper } from "@modules/identity/permissions";
+import { Permission, PermissionModuleGroup, PermissionMapper } from "@modules/identity/core";
 
+/**
+ * Repository layer implementing client request queries for role.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class RoleRepository implements IRoleRepository {
   constructor(private readonly service: IRoleService) {}
 

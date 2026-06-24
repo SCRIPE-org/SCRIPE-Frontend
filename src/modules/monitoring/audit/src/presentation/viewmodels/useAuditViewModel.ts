@@ -14,6 +14,9 @@ import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
 // ─── Query keys ──────────────────────────────────────────────────────
 // Include tenantId so TanStack Query caches per-tenant
+/**
+ * Exported constant defining parameters and fields for audit keys configurations.
+ */
 export const auditKeys = {
   all: (tenantId: string | null) => ["audit", tenantId ?? "system"] as const,
   logs: (params: AuditFilterParams, tenantId: string | null) =>
@@ -25,6 +28,9 @@ export const auditKeys = {
 };
 
 // ─── Filter ViewModel ────────────────────────────────────────────────
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for audit filter state.
+ */
 export interface AuditFilterState {
   page: number;
   pageSize: number;
@@ -51,6 +57,10 @@ const defaultFilters: AuditFilterState = {
   isSuccess: undefined,
 };
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for audit filter view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useAuditFilterViewModel() {
   const [filters, setFilters] = useState<AuditFilterState>(defaultFilters);
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -128,6 +138,10 @@ export function useAuditFilterViewModel() {
 }
 
 // ─── Detail ViewModel ────────────────────────────────────────────────
+/**
+ * React hook/ViewModel orchestrating state and data flows for audit detail view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useAuditDetailViewModel(id: string | null, tenantId: string | null) {
   const repo = monitoringContainer.auditRepository;
 
@@ -141,6 +155,10 @@ export function useAuditDetailViewModel(id: string | null, tenantId: string | nu
 }
 
 // ─── Orchestrator ────────────────────────────────────────────────────
+/**
+ * React hook/ViewModel orchestrating state and data flows for audit view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useAuditViewModel() {
   const tenantId = useCurrentTenantId();
   const filterVM = useAuditFilterViewModel();

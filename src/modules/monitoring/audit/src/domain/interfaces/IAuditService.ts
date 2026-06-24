@@ -13,6 +13,10 @@ import type {
   ComplianceReport,
 } from "../entities/AuditEntities";
 
+/**
+ * Http API network service for i audit.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface IAuditService {
   getLogs(params?: AuditFilterParams): Promise<AuditLogPage>;
   getLogDetail(id: string): Promise<AuditLogDetail>;

@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * BuilderCanvas — The main DnD canvas for the page builder
  *

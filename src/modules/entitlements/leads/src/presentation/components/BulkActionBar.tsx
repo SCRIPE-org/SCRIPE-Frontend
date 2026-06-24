@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import React from "react";
@@ -14,6 +15,10 @@ interface BulkActionBarProps {
   canDelete?: boolean;
 }
 
+/**
+ * Presentation UI component rendering the bulk action bar.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function BulkActionBar({
   count,
   onClose,

@@ -20,6 +20,9 @@ const PluginCatalogItemModelSchema = z.object({
   isInstalled: z.boolean().optional().default(false),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class CatalogMapper {
   static toEntity(model: PluginCatalogItemModel): PluginCatalogItem {
     const validated = safeParseApiResponse(

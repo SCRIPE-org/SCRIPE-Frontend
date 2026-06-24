@@ -8,10 +8,20 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useNavigation } from "@core/providers/navigation-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { getAuthContainer } from "@modules/auth/di";
-import { handleOidcCallback, handleSamlCallback, completeAdminLogin } from "./sso-callback-handlers";
+import {
+  handleOidcCallback,
+  handleSamlCallback,
+  completeAdminLogin,
+} from "./useSsoCallbackHandlers";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 
+/**
+ * Exported type defining parameters and fields for sso callback kind configurations.
+ */
 export type SsoCallbackKind = "oidc" | "saml";
+/**
+ * Exported type defining parameters and fields for sso callback state configurations.
+ */
 export type SsoCallbackState =
   | "processing"
   | "success"
@@ -19,11 +29,18 @@ export type SsoCallbackState =
   | "no_linked_account"
   | "workspace_selection";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for sso callback error.
+ */
 export interface SsoCallbackError {
   title: string;
   message: string;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for sso callback handler.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
+ */
 export function useSsoCallbackHandler(kind: SsoCallbackKind) {
   const router = useRouter();
   const searchParams = useSearchParams();

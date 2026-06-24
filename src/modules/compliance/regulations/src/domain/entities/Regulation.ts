@@ -1,3 +1,7 @@
+/**
+ * Domain model representing a Consent Purpose Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface ConsentPurposeData {
   id: string;
   key: string;
@@ -9,6 +13,10 @@ export interface ConsentPurposeData {
   sortOrder: number;
 }
 
+/**
+ * Domain model representing a Regulation Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface RegulationData {
   id: string;
   code: string;
@@ -20,6 +28,10 @@ export interface RegulationData {
   purposes: ConsentPurposeData[];
 }
 
+/**
+ * Domain model representing a Regulation structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class Regulation {
   constructor(private readonly data: RegulationData) {}
 
@@ -53,6 +65,10 @@ export class Regulation {
   }
 }
 
+/**
+ * Domain model representing a Create Regulation Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface CreateRegulationRequest {
   code: string;
   name: string;
@@ -63,8 +79,16 @@ export interface CreateRegulationRequest {
   isActive: boolean;
 }
 
+/**
+ * Domain model representing a Update Regulation Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type UpdateRegulationRequest = CreateRegulationRequest;
 
+/**
+ * Domain model representing a Add Consent Purpose Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface AddConsentPurposeRequest {
   key: string;
   name: string;
@@ -74,4 +98,8 @@ export interface AddConsentPurposeRequest {
   sortOrder: number;
 }
 
+/**
+ * Domain model representing a Update Consent Purpose Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type UpdateConsentPurposeRequest = AddConsentPurposeRequest;

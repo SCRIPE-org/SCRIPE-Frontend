@@ -16,6 +16,10 @@ import type {
   ComplianceReport,
 } from "../../domain/entities/AuditEntities";
 
+/**
+ * Http API network service for audit.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class AuditService implements IAuditService {
   constructor(private readonly api: IApiService) {}
 

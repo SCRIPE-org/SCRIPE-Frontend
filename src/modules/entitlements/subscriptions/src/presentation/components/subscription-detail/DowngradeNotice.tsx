@@ -13,6 +13,10 @@ interface DowngradeNoticeProps {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the downgrade notice.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DowngradeNotice({ sub, t }: DowngradeNoticeProps) {
   if (!sub.isDowngraded) return null;
 

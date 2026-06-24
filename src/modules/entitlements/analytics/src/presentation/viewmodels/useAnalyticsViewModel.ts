@@ -20,6 +20,9 @@ const QUERY_KEYS = {
   reportPreferences: () => ["analytics", "report-preferences"],
 };
 
+/**
+ * Exported type defining parameters and fields for analytics tab configurations.
+ */
 export type AnalyticsTab =
   | "overview"
   | "revenue"
@@ -29,6 +32,10 @@ export type AnalyticsTab =
   | "health"
   | "reports";
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for analytics view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useAnalyticsViewModel() {
   const { analyticsRepository } = entitlementsContainer;
   const queryClient = useQueryClient();

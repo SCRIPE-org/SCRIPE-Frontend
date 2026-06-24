@@ -10,8 +10,12 @@ import type {
   CreateDataInventoryRequest,
   UpdateDataInventoryRequest,
 } from "../models/InventoryModels";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 
+/**
+ * Http API network service for inventory.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class InventoryService implements IInventoryService {
   constructor(private readonly api: IApiService) {}
 

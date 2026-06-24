@@ -19,6 +19,9 @@ import {
 
 // ─── Account step schema ──────────────────────────────────────────────────────
 
+/**
+ * Exported constant defining parameters and fields for account schema configurations.
+ */
 export const accountSchema = z.object({
   fullName: z.string().min(2, "signup.errors.fullNameMin").max(100, "signup.errors.fullNameMax"),
   email: z.string().email("signup.errors.emailInvalid").min(1, "signup.errors.emailRequired"),
@@ -34,10 +37,16 @@ export const accountSchema = z.object({
   marketingOptIn: z.boolean().optional().default(false),
 });
 
+/**
+ * Exported type defining parameters and fields for account form values configurations.
+ */
 export type AccountFormValues = z.infer<typeof accountSchema>;
 
 // ─── Workspace step schema ────────────────────────────────────────────────────
 
+/**
+ * Exported constant defining parameters and fields for workspace schema configurations.
+ */
 export const workspaceSchema = z.object({
   workspaceName: z
     .string()
@@ -53,10 +62,16 @@ export const workspaceSchema = z.object({
   timezone: z.string().min(1, "signup.errors.timezoneRequired"),
 });
 
+/**
+ * Exported type defining parameters and fields for workspace form values configurations.
+ */
 export type WorkspaceFormValues = z.infer<typeof workspaceSchema>;
 
 // ─── Contact Sales step schema ────────────────────────────────────────────────
 
+/**
+ * Exported constant defining parameters and fields for contact sales schema configurations.
+ */
 export const contactSalesSchema = z.object({
   fullName: z.string().min(2, "signup.errors.fullNameMin").max(100, "signup.errors.fullNameMax"),
   email: z.string().email("signup.errors.emailInvalid").min(1, "signup.errors.emailRequired"),
@@ -65,10 +80,16 @@ export const contactSalesSchema = z.object({
   note: z.string().max(1000, "signup.errors.noteMax").optional(),
 });
 
+/**
+ * Exported type defining parameters and fields for contact sales form values configurations.
+ */
 export type ContactSalesFormValues = z.infer<typeof contactSalesSchema>;
 
 // ─── OTP step schema ──────────────────────────────────────────────────────────
 
+/**
+ * Exported constant defining parameters and fields for otp schema configurations.
+ */
 export const otpSchema = z.object({
   code: z
     .string()
@@ -76,4 +97,7 @@ export const otpSchema = z.object({
     .regex(/^\d{6}$/, "signup.verification.digitsOnly"),
 });
 
+/**
+ * Exported type defining parameters and fields for otp form values configurations.
+ */
 export type OtpFormValues = z.infer<typeof otpSchema>;

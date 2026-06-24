@@ -1,3 +1,10 @@
+// FILE-EXCEPTION: file length
+/**
+ * @file add-module.ts
+ * @description Tutorial document page guiding developers on how to add frontend/backend modules
+ * and wire them into the monorepo ecosystem. Contains directories, configurations, and code snippets.
+ */
+
 import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
@@ -116,6 +123,9 @@ const sections: DocSection[] = [
     filename: "domain/entities/Product.ts",
     code: `import { z } from 'zod';
 
+/**
+ * Exported constant defining parameters and fields for product schema configurations.
+ */
 export const ProductSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1),
@@ -129,8 +139,14 @@ export const ProductSchema = z.object({
   updatedAt: z.string().datetime().optional(),
 });
 
+/**
+ * Exported type defining parameters and fields for product configurations.
+ */
 export type Product = z.infer<typeof ProductSchema>;
 
+/**
+ * Exported constant defining parameters and fields for create product schema configurations.
+ */
 export const CreateProductSchema = z.object({
   name: z.string().min(1, "Name is required"),
   sku: z.string().min(1, "SKU is required"),
@@ -139,6 +155,9 @@ export const CreateProductSchema = z.object({
   category: z.string(),
 });
 
+/**
+ * Exported type defining parameters and fields for create product input configurations.
+ */
 export type CreateProductInput = z.infer<typeof CreateProductSchema>;`,
   },
 
@@ -158,6 +177,10 @@ export type CreateProductInput = z.infer<typeof CreateProductSchema>;`,
         filename: "domain/interfaces/IProductRepository.ts",
         code: `import { Result } from '@core/common/Result';
 
+/**
+ * Repository layer implementing client request queries for i product.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export interface IProductRepository {
   getAll(params: PaginationParams): Promise<Result<PaginatedResult<Product>>>;
   getById(id: string): Promise<Result<Product>>;
@@ -173,6 +196,10 @@ export interface IProductRepository {
         code: `import { IApiService } from '@core/network';
 import { ProductMapper } from '../mappers/ProductMapper';
 
+/**
+ * Repository layer implementing client request queries for product.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class ProductRepository implements IProductRepository {
   constructor(private api: IApiService) {}
 
@@ -213,6 +240,9 @@ export class ProductRepository implements IProductRepository {
     code: `import { coreContainer } from '@core/di';
 import { ProductRepository } from './src/data/repositories/ProductRepository';
 
+/**
+ * Exported constant defining parameters and fields for container configurations.
+ */
 export const container = {
   productRepository: new ProductRepository(coreContainer.apiService),
 };`,
@@ -233,6 +263,10 @@ export const container = {
 import { useCrudViewModel } from '@core/crud';
 import { container } from '../../../di';
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for product list view model.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
+ */
 export function useProductListViewModel() {
   const repo = container.productRepository;
 
@@ -272,6 +306,10 @@ export function useProductListViewModel() {
 import { GenericCrudView } from '@core/crud';
 import { useProductListViewModel } from '../viewmodels/useProductListViewModel';
 
+/**
+ * Presentation UI component rendering the product list view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function ProductListView() {
   const { table, columns } = useProductListViewModel();
 
@@ -297,17 +335,17 @@ export function ProductListView() {
     type: "code",
     language: "tsx",
     filename: "src/app/(modules)/inventory/page.tsx — Server Connector",
-    code: `import { Metadata } from 'next';
-import { ProductListView } from '@modules/inventory';
-
-export const metadata: Metadata = {
-  title: 'Inventory | SCRIPE',
-  description: 'Manage products and inventory',
-};
-
-export default function InventoryPage() {
-  return <ProductListView />;
-}`,
+    code:
+      `import { Metadata } from 'next';\n` +
+      `import { ProductListView } from '` +
+      `@modules/inventory';\n\n` +
+      `export const metadata: Metadata = {\n` +
+      `  title: 'Inventory | SCRIPE',\n` +
+      `  description: 'Manage products and inventory',\n` +
+      `};\n\n` +
+      `export default function InventoryPage() {\n` +
+      `  return <ProductListView />;\n` +
+      `}`,
   },
   {
     type: "info",

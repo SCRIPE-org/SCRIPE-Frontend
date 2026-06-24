@@ -4,6 +4,10 @@
 
 export type ExpiryAction = "Anonymize" | "Delete";
 
+/**
+ * Domain model representing a Retention Policy Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface RetentionPolicyData {
   id: string;
   policyId?: string;
@@ -19,6 +23,10 @@ export interface RetentionPolicyData {
   isActive: boolean;
 }
 
+/**
+ * Domain model representing a Retention Policy structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class RetentionPolicy {
   constructor(private readonly data: RetentionPolicyData) {}
 
@@ -70,6 +78,10 @@ export class RetentionPolicy {
   }
 }
 
+/**
+ * Domain model representing a Update Retention Policy Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface UpdateRetentionPolicyRequest {
   policyId: string;
   retentionDays: number;
@@ -77,6 +89,10 @@ export interface UpdateRetentionPolicyRequest {
   isActive: boolean;
 }
 
+/**
+ * Domain model representing a Create Retention Policy Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface CreateRetentionPolicyRequest {
   category: string;
   name: string;

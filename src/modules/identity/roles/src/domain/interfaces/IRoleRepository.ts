@@ -4,7 +4,7 @@
  * Defines the contract for role data operations.
  */
 import type { Role } from "../entities/Role";
-import type { Permission, PermissionModuleGroup } from "@modules/identity/permissions";
+import type { Permission, PermissionModuleGroup } from "@modules/identity/core";
 import type {
   CreateRoleRequest,
   UpdateRoleRequest,
@@ -25,6 +25,9 @@ export interface RoleListParams {
   strict?: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for my tenant role list params.
+ */
 export interface MyTenantRoleListParams {
   page: number;
   pageSize: number;

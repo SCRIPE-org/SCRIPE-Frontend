@@ -6,13 +6,17 @@ import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import type { IDsrService } from "../../domain/interfaces/IDsrService";
 import type { DsrModel } from "../models/DsrModels";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import type {
   DsrListParams,
   SubmitDsrRequest,
   ReviewDsrRequest,
 } from "../../domain/entities/DsrRequests";
 
+/**
+ * Http API network service for dsr.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class DsrService implements IDsrService {
   constructor(private readonly api: IApiService) {}
 

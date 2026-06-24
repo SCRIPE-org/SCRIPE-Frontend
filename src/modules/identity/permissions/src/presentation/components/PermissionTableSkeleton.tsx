@@ -17,6 +17,10 @@ interface PermissionTableSkeletonProps {
   rowsPerGroup?: number;
 }
 
+/**
+ * Presentation UI component rendering the permission table skeleton.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function PermissionTableSkeleton({
   groupCount = 3,
   rowsPerGroup = 4,

@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useState } from "react";
@@ -23,6 +24,10 @@ interface PluginInstallDialogProps {
   isInstalling: boolean;
 }
 
+/**
+ * Presentation UI component rendering the plugin install dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function PluginInstallDialog({
   plugin,
   open,

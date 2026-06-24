@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * DeadLetterQueue
  *
@@ -50,6 +51,10 @@ interface DeadLetterQueueProps {
   isLoading: boolean;
 }
 
+/**
+ * Presentation UI component rendering the dead letter queue.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function DeadLetterQueue({
   logs,
   page,

@@ -13,6 +13,9 @@ import { monitoringContainer } from "@modules/monitoring/di";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
 // ─── Query keys ──────────────────────────────────────────────────────
+/**
+ * Exported constant defining parameters and fields for analytics keys configurations.
+ */
 export const analyticsKeys = {
   all: (tenantId: string | null) => ["analytics", tenantId ?? "system"] as const,
   summary: (tenantId: string | null) => [...analyticsKeys.all(tenantId), "summary"] as const,
@@ -23,6 +26,10 @@ export const analyticsKeys = {
 };
 
 // ─── KPI Metrics ─────────────────────────────────────────────────────
+/**
+ * React hook/ViewModel orchestrating state and data flows for tenant metrics view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useTenantMetricsViewModel(tenantId: string | null) {
   const repo = monitoringContainer.analyticsRepository;
 
@@ -54,6 +61,10 @@ export function useTenantMetricsViewModel(tenantId: string | null) {
 }
 
 // ─── Admin Distribution ──────────────────────────────────────────────
+/**
+ * React hook/ViewModel orchestrating state and data flows for admin distribution view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useAdminDistributionViewModel(tenantId: string | null) {
   const repo = monitoringContainer.analyticsRepository;
 
@@ -67,6 +78,10 @@ export function useAdminDistributionViewModel(tenantId: string | null) {
 }
 
 // ─── Login Comparison ────────────────────────────────────────────────
+/**
+ * React hook/ViewModel orchestrating state and data flows for tenant comparison view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useTenantComparisonViewModel(days: number = 30, tenantId: string | null = null) {
   const repo = monitoringContainer.analyticsRepository;
 
@@ -80,6 +95,10 @@ export function useTenantComparisonViewModel(days: number = 30, tenantId: string
 }
 
 // ─── Orchestrator ────────────────────────────────────────────────────
+/**
+ * React hook/ViewModel orchestrating state and data flows for tenant analytics view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useTenantAnalyticsViewModel() {
   const tenantId = useCurrentTenantId();
   const metrics = useTenantMetricsViewModel(tenantId);

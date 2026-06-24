@@ -5,6 +5,9 @@
 import type { ThemeBundle } from "../entities/ThemeBundle";
 import type { BundleListParams, SaveBundlePayload } from "./IThemeBundleService";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for bundle paged result.
+ */
 export interface BundlePagedResult {
   items: ThemeBundle[];
   totalCount: number;
@@ -12,6 +15,10 @@ export interface BundlePagedResult {
   pageSize: number;
 }
 
+/**
+ * Repository layer implementing client request queries for i theme bundle.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export interface IThemeBundleRepository {
   getBundles(params: BundleListParams): Promise<BundlePagedResult>;
   getFeatured(): Promise<ThemeBundle[]>;

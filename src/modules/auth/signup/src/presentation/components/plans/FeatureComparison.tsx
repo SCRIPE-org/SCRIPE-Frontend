@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useMemo, useState, useEffect, useRef } from "react";
@@ -53,6 +55,10 @@ interface FeatureComparisonProps {
   priorityKeys: string[];
 }
 
+/**
+ * Presentation UI component rendering the feature comparison.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function FeatureComparison({
   categories,
   editions,
@@ -175,7 +181,7 @@ export function FeatureComparison({
               <thead className="sticky top-14 z-20">
                 <tr style={{ background: tokens.surfaceRaised }}>
                   <th
-                    className="sticky start-0 top-14 z-30 py-4 pe-4 ps-4 text-start text-[0.6875rem] font-semibold uppercase tracking-wider sm:ps-6 transition-colors duration-200"
+                    className="sticky start-0 top-14 z-30 py-4 pe-4 ps-4 text-start text-[0.6875rem] font-semibold uppercase tracking-wider transition-colors duration-200 sm:ps-6"
                     style={{
                       color: activeCategory ? tokens.accent : tokens.inkFaint,
                       background: tokens.surfaceRaised,

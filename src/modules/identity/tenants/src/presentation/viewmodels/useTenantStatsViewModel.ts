@@ -9,6 +9,10 @@ interface UseTenantStatsViewModelProps {
   enabled?: boolean;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for tenant stats view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useTenantStatsViewModel({ tenantId, enabled }: UseTenantStatsViewModelProps) {
   const { t, direction } = useI18n();
   const isRtl = direction === "rtl";

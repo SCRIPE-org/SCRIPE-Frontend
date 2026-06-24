@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * LayoutPanel — 22 login layout selector with visual thumbnails
  * Now page-aware: each auth page can have its own layout, headline, subtitle.
@@ -10,7 +11,7 @@
 import { CheckCircle, Layout, LayoutGrid } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import { ALL_LAYOUTS } from "../../domain/entities/StudioDraft";
-import type { LoginLayout } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import type { LoginLayout } from "@core/domain/entities/LoginBrandingTypes";
 import type { AuthPageId, AuthPageOverride } from "../../domain/entities/StudioDraft";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -296,6 +297,10 @@ const LAYOUT_THUMBNAILS: Record<LoginLayout, React.ReactNode> = {
   ),
 };
 
+/**
+ * Presentation UI component rendering the layout panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function LayoutPanel({
   selectedLayout,
   onSelectLayout,

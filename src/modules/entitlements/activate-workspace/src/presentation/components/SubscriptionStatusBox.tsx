@@ -6,6 +6,10 @@ interface SubscriptionStatusBoxProps {
   isRtl: boolean;
 }
 
+/**
+ * Presentation UI component rendering the subscription status box.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function SubscriptionStatusBox({ subscription, tokens, isRtl }: SubscriptionStatusBoxProps) {
   if (!subscription) return null;
 

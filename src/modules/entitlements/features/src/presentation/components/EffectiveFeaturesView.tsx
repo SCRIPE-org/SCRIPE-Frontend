@@ -23,6 +23,10 @@ interface EffectiveFeaturesViewProps {
   language: string;
 }
 
+/**
+ * Presentation UI component rendering the effective features view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function EffectiveFeaturesView({
   features,
   isLoading,

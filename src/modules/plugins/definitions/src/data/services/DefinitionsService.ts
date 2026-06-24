@@ -1,12 +1,16 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type { IDefinitionsService } from "../../domain/interfaces/IDefinitionsService";
-import type { PluginDefinitionModel } from "@modules/plugins/catalog";
+import type { PluginDefinitionModel } from "@modules/plugins/core";
 import type {
   CreateDefinitionRequest,
   UpdateDefinitionRequest,
 } from "../../domain/interfaces/IDefinitionsRepository";
 
+/**
+ * Http API network service for definitions.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class DefinitionsService implements IDefinitionsService {
   constructor(private readonly api: IApiService) {}
 

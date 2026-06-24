@@ -47,6 +47,10 @@ const STATUS_ICONS: Record<string, React.ReactNode> = {
   Canceled: <XCircle className="h-3.5 w-3.5" />,
 };
 
+/**
+ * Presentation UI component rendering the versions tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function VersionsTab({ editionId }: VersionsTabProps) {
   useModuleLocales(() => import("../../../locales"), "editions");
   const { t } = useI18n();

@@ -44,6 +44,10 @@ function formatCount(n: number): string {
   return new Intl.NumberFormat().format(Math.round(n));
 }
 
+/**
+ * Presentation UI component rendering the trust row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function TrustRow({ trustMarks, trustedByCount, trustedByLabel }: TrustRowProps) {
   const { tokens } = useSignupTheme();
   const countLabel = formatCount(trustedByCount);

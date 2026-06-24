@@ -5,8 +5,14 @@ import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { getAuthContainer } from "@modules/auth/di";
 import type { TenantBranding } from "../../../domain/entities/TenantBranding";
 
+/**
+ * Exported type in the auth/core module.
+ */
 export type { TenantBranding };
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for tenant resolution result.
+ */
 export interface TenantResolutionResult {
   tenantId: string | null;
   branding: TenantBranding | null;
@@ -73,6 +79,10 @@ function persistDashboardPreferences(branding: TenantBranding): void {
   }
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for tenant resolution.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
+ */
 export function useTenantResolution(page?: string): TenantResolutionResult {
   const [tenantId, setTenantId] = useState<string | null>(null);
   const [branding, setBranding] = useState<TenantBranding | null>(null);

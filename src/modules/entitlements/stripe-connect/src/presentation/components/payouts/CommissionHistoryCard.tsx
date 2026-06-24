@@ -13,6 +13,9 @@ import type { Commission } from "../../../domain/entities/ConnectAccount";
 // ─────────────────────────────────────────────────────────────────────────────
 // Shared types (re-exported for the view)
 // ─────────────────────────────────────────────────────────────────────────────
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for payouts filter.
+ */
 export interface PayoutsFilter {
   status?: string;
 }
@@ -57,6 +60,10 @@ interface CommissionHistoryCardProps {
 // ─────────────────────────────────────────────────────────────────────────────
 // Component
 // ─────────────────────────────────────────────────────────────────────────────
+/**
+ * Presentation UI component rendering the commission history card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function CommissionHistoryCard({
   commissions,
   totalCount,

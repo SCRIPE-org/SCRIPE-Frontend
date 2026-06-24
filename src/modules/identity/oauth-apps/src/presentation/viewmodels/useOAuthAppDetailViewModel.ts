@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * OAuth App Detail ViewModel
  *
@@ -15,6 +16,9 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { oauthAppKeys } from "./useOAuthAppsViewModel";
 
 // ─── Form State ──────────────────────────────────────────────────
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for o auth app form state.
+ */
 export interface OAuthAppFormState {
   // General
   displayName: string;
@@ -69,6 +73,10 @@ const DEFAULT_STATE: OAuthAppFormState = {
 };
 
 // ─── Hook ─────────────────────────────────────────────────────────
+/**
+ * React hook/ViewModel orchestrating state and data flows for o auth app detail view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useOAuthAppDetailViewModel(appId?: string) {
   const { oauthAppRepository } = identityContainer;
   const { t } = useI18n();

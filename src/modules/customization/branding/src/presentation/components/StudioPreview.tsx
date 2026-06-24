@@ -24,6 +24,10 @@ const PAGE_LABELS: Record<string, string> = {
   "reset-password": "reset password",
 };
 
+/**
+ * Presentation UI component rendering the studio preview.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function StudioPreview({
   iframeRef,
   isPreviewReady,

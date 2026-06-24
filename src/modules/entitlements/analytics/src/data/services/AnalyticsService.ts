@@ -29,6 +29,10 @@ function monthsToDateRange(months?: number): { from?: string; to?: string } {
   };
 }
 
+/**
+ * Http API network service for analytics.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class AnalyticsService implements IAnalyticsService {
   constructor(private readonly api: IApiService) {}
 

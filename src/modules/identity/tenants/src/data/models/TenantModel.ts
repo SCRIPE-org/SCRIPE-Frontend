@@ -9,6 +9,9 @@
 
 // ===== JSON Shapes (API contracts) =====
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for tenant json.
+ */
 export interface TenantJson {
   id: string;
   name: string;
@@ -37,7 +40,9 @@ export interface TenantJson {
   domainCount?: number;
   adminEmail?: string;
 }
-
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for tenant tree node json.
+ */
 export interface TenantTreeNodeJson {
   id: string | null; // null for "System" pseudo-tenant (Super Admin)
   name: string;
@@ -54,7 +59,9 @@ export interface TenantTreeNodeJson {
   subscriptionStatus?: string;
   children: TenantTreeNodeJson[];
 }
-
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for tenant list response json.
+ */
 export interface TenantListResponseJson {
   items: TenantJson[];
   totalCount: number;
@@ -64,7 +71,9 @@ export interface TenantListResponseJson {
   hasNextPage: boolean;
   hasPreviousPage: boolean;
 }
-
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for create tenant json.
+ */
 export interface CreateTenantJson {
   name: string;
   code: string;
@@ -82,7 +91,6 @@ export interface CreateTenantJson {
   promoCode?: string;
   skipPayment?: boolean;
 }
-
 /** Backend returns this enriched result after tenant creation */
 export interface CreateTenantResultJson {
   tenantId: string;
@@ -92,16 +100,19 @@ export interface CreateTenantResultJson {
   accountSetupUrl: string;
   subscriptionId?: string;
 }
-
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for update tenant json.
+ */
 export interface UpdateTenantJson {
   name?: string;
   description?: string;
   isActive?: boolean;
   address?: string;
 }
-
 // ===== Model Classes =====
-
+/**
+ * Exported class defining parameters and fields for tenant model configurations.
+ */
 export class TenantModel {
   constructor(
     public readonly id: string,
@@ -124,7 +135,6 @@ export class TenantModel {
     public readonly domainCount?: number,
     public readonly adminEmail?: string
   ) {}
-
   static fromJson(json: TenantJson): TenantModel {
     return new TenantModel(
       json.id,
@@ -150,7 +160,6 @@ export class TenantModel {
       json.adminEmail
     );
   }
-
   toJson(): TenantJson {
     return {
       id: this.id,
@@ -175,7 +184,9 @@ export class TenantModel {
     };
   }
 }
-
+/**
+ * Exported class defining parameters and fields for tenant tree node model configurations.
+ */
 export class TenantTreeNodeModel {
   constructor(
     public readonly id: string | null, // null for "System" pseudo-tenant
@@ -193,7 +204,6 @@ export class TenantTreeNodeModel {
     public readonly suspensionReason?: string,
     public readonly subscriptionStatus?: string
   ) {}
-
   static fromJson(json: TenantTreeNodeJson): TenantTreeNodeModel {
     return new TenantTreeNodeModel(
       json.id,
@@ -212,7 +222,6 @@ export class TenantTreeNodeModel {
       json.subscriptionStatus
     );
   }
-
   toJson(): TenantTreeNodeJson {
     return {
       id: this.id,
@@ -232,7 +241,9 @@ export class TenantTreeNodeModel {
     };
   }
 }
-
+/**
+ * Exported class defining parameters and fields for create tenant model configurations.
+ */
 export class CreateTenantModel {
   constructor(
     public readonly name: string,
@@ -249,7 +260,6 @@ export class CreateTenantModel {
     public readonly promoCode?: string,
     public readonly skipPayment?: boolean
   ) {}
-
   toJson(): CreateTenantJson {
     return {
       name: this.name,
@@ -268,7 +278,9 @@ export class CreateTenantModel {
     };
   }
 }
-
+/**
+ * Exported class defining parameters and fields for update tenant model configurations.
+ */
 export class UpdateTenantModel {
   constructor(
     public readonly name?: string,
@@ -276,7 +288,6 @@ export class UpdateTenantModel {
     public readonly isActive?: boolean,
     public readonly address?: string
   ) {}
-
   toJson(): UpdateTenantJson {
     return {
       name: this.name,

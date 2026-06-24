@@ -18,18 +18,23 @@ import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
-import { Label } from "@core/ui/label";
-import { PasswordInput } from "@core/ui/password-input";
-import { ArrowLeft, Lock, CheckCircle, AlertTriangle, Building2, Loader2 } from "lucide-react";
+import { ArrowLeft, CheckCircle, AlertTriangle, Loader2 } from "lucide-react";
 import { useLoginBrandingTokens } from "@modules/auth/core/src/presentation/viewmodels/useLoginBrandingTokens";
 import { BRAND } from "@core/config/branding";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { useTenantResolution } from "@modules/auth/core/src/presentation/viewmodels/useTenantResolution";
-import { VaultBackground } from "@modules/auth/signin/src/presentation/components/layouts/VaultBackground";
-import { WorkspaceCheckCard } from "../components/WorkspaceCheckCard";
+import { VaultBackground } from "@modules/auth/core";
 import { useResetPasswordViewModel } from "../viewmodels/useResetPasswordViewModel";
+import { ResetWorkspacesStep } from "../components/ResetWorkspacesStep";
+import { ResetPasswordStep } from "../components/ResetPasswordStep";
 
+/**
+ * ResetPasswordView component
+ *
+ * Callback page for magic-link password reset. Decouples steps (verifying, workspaces,
+ * password, success, invalid) to comply with line limit guidelines and modular MVVM architecture.
+ */
 export function ResetPasswordView() {
   const { t, direction } = useI18n();
   const router = useRouter();
@@ -171,77 +176,7 @@ export function ResetPasswordView() {
         {topActions}
         <div className="relative z-[1] flex w-full max-w-[480px] flex-1 flex-col items-center justify-center px-5 py-24">
           <div className="sx-screen w-full rounded-[20px] p-8 sm:p-9" style={cardStyle}>
-            <div className="flex flex-col gap-5">
-              <div className="text-center">
-                <div
-                  className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl"
-                  style={{
-                    background: "var(--sx-accent-soft)",
-                    border: "1px solid var(--sx-accent-soft-border)",
-                  }}
-                >
-                  <Building2
-                    className="h-6 w-6"
-                    style={{ color: "var(--sx-accent-text)" }}
-                    aria-hidden="true"
-                  />
-                </div>
-                <h1
-                  className="text-[22px] font-semibold leading-tight tracking-[-0.025em]"
-                  style={{ color: "var(--sx-text)" }}
-                >
-                  {t("auth.forgotPickWorkspaceTitle")}
-                </h1>
-                <p
-                  className="mt-1.5 text-[13px] leading-relaxed"
-                  style={{ color: "var(--sx-text-mute)" }}
-                >
-                  {t("auth.forgotPickWorkspaceSubtitle")}
-                </p>
-              </div>
-
-              {/* Select All toggle */}
-              <div className="flex items-center justify-between">
-                <span className="text-[12px]" style={{ color: "var(--sx-text-mute)" }}>
-                  {vm.selectedWorkspaces.length} / {vm.workspaces.length}{" "}
-                  {t("auth.workspacesSelected")}
-                </span>
-                <button
-                  type="button"
-                  onClick={vm.allSelected ? vm.deselectAllWorkspaces : vm.selectAllWorkspaces}
-                  className="text-[12px] font-semibold transition-opacity hover:opacity-70"
-                  style={{ color: "var(--sx-accent-text)" }}
-                >
-                  {vm.allSelected ? t("auth.deselectAll") : t("auth.selectAll")}
-                </button>
-              </div>
-
-              {/* Workspace checklist */}
-              <div className="flex max-h-64 flex-col gap-2 overflow-y-auto">
-                {vm.workspaces.map((w) => (
-                  <WorkspaceCheckCard
-                    key={w.tenantId}
-                    workspace={w}
-                    isSelected={vm.selectedWorkspaces.some((s) => s.tenantId === w.tenantId)}
-                    onToggle={vm.toggleWorkspace}
-                  />
-                ))}
-              </div>
-
-              <Button
-                type="button"
-                onClick={vm.confirmWorkspaceSelection}
-                disabled={!vm.canConfirmWorkspaces}
-                className="flex h-12 w-full items-center justify-center rounded-xl text-[15px] font-semibold text-white transition-all active:scale-[0.985] disabled:pointer-events-none disabled:opacity-50"
-              >
-                {vm.selectedWorkspaces.length === vm.workspaces.length
-                  ? t("auth.resetAllWorkspaces")
-                  : t("auth.resetSelectedWorkspaces").replace(
-                      "{{count}}",
-                      String(vm.selectedWorkspaces.length)
-                    )}
-              </Button>
-            </div>
+            <ResetWorkspacesStep vm={vm} />
           </div>
         </div>
       </div>
@@ -313,108 +248,7 @@ export function ResetPasswordView() {
 
         {/* Glass card */}
         <div className="sx-screen w-full rounded-[20px] p-8 sm:p-9" style={cardStyle}>
-          <div className="flex flex-col gap-6">
-            {/* Icon + heading */}
-            <div className="text-center">
-              <div
-                className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl"
-                style={{
-                  background: "var(--sx-accent-soft)",
-                  border: "1px solid var(--sx-accent-soft-border)",
-                }}
-              >
-                <Lock
-                  className="h-6 w-6"
-                  style={{ color: "var(--sx-accent-text)" }}
-                  aria-hidden="true"
-                />
-              </div>
-              <h1
-                className="text-[22px] font-semibold leading-tight tracking-[-0.025em]"
-                style={{ color: "var(--sx-text)" }}
-              >
-                {headline}
-              </h1>
-              <p
-                className="mt-1.5 text-[13px] leading-relaxed"
-                style={{ color: "var(--sx-text-mute)" }}
-              >
-                {t("auth.resetPasswordDesc")}
-              </p>
-            </div>
-
-            {/* Form */}
-            <form onSubmit={vm.submit} className="flex flex-col gap-4">
-              {/* New password */}
-              <div className="space-y-2">
-                <Label
-                  htmlFor="password"
-                  className="block text-[11px] font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--sx-text-mute)" }}
-                >
-                  {t("auth.newPassword")}
-                </Label>
-                <PasswordInput
-                  id="password"
-                  value={vm.password}
-                  onChange={(e) => vm.setPassword(e.target.value)}
-                  placeholder={t("auth.newPasswordPlaceholder")}
-                  required
-                  autoFocus
-                  minLength={8}
-                  className="h-12 w-full rounded-xl border px-4 text-[15px] shadow-none transition-all focus-visible:ring-0"
-                />
-                <p className="text-[12px]" style={{ color: "var(--sx-text-faint)" }}>
-                  {t("auth.passwordMinLength")}
-                </p>
-              </div>
-
-              {/* Confirm password */}
-              <div className="space-y-2">
-                <Label
-                  htmlFor="confirmPassword"
-                  className="block text-[11px] font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--sx-text-mute)" }}
-                >
-                  {t("auth.confirmPassword")}
-                </Label>
-                <PasswordInput
-                  id="confirmPassword"
-                  value={vm.confirmPassword}
-                  onChange={(e) => vm.setConfirmPassword(e.target.value)}
-                  placeholder={t("auth.confirmPasswordPlaceholder")}
-                  required
-                  minLength={8}
-                  className="h-12 w-full rounded-xl border px-4 text-[15px] shadow-none transition-all focus-visible:ring-0"
-                />
-                {vm.confirmPassword && vm.password !== vm.confirmPassword && (
-                  <p className="text-[12px] text-destructive">{t("auth.passwordMismatch")}</p>
-                )}
-              </div>
-
-              {/* API error */}
-              {vm.error && (
-                <div
-                  className="sx-shake rounded-xl border border-destructive/20 bg-destructive/10 px-4 py-3"
-                  role="alert"
-                  aria-live="assertive"
-                >
-                  <p className="text-[13px] font-medium text-destructive">
-                    {vm.error.startsWith("auth.") ? t(vm.error as any) : vm.error}
-                  </p>
-                </div>
-              )}
-
-              <Button
-                type="submit"
-                disabled={!vm.isValid}
-                loading={vm.isSubmitting}
-                className="mt-1 flex h-12 w-full items-center justify-center rounded-xl text-[15px] font-semibold text-white transition-all active:scale-[0.985] disabled:pointer-events-none disabled:opacity-50"
-              >
-                {t("auth.resetPasswordAction")}
-              </Button>
-            </form>
-          </div>
+          <ResetPasswordStep vm={vm} headline={headline} />
         </div>
 
         {/* Footer */}

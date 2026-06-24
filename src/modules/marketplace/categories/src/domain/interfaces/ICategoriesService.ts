@@ -39,6 +39,10 @@ export interface UpdateCategoryPayload {
   sortOrder: number;
 }
 
+/**
+ * Http API network service for i categories.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface ICategoriesService {
   /** Fetch all categories. */
   getAll(): Promise<CategoryDto[]>;

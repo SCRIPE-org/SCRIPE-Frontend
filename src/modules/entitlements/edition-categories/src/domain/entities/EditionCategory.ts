@@ -1,5 +1,9 @@
-import type { BaseEntity } from "@modules/identity/core/domain/types";
+import type { BaseEntity } from "@core/interfaces/common.interface";
 
+/**
+ * Domain model representing a Edition Category Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface EditionCategoryData extends BaseEntity {
   name: string;
   displayNameEn?: string;
@@ -8,6 +12,10 @@ export interface EditionCategoryData extends BaseEntity {
   sortOrder: number;
 }
 
+/**
+ * Domain model representing a Edition Category structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class EditionCategory {
   constructor(public readonly data: EditionCategoryData) {}
 
@@ -33,5 +41,12 @@ export class EditionCategory {
   getDisplayName(lang: string): string {
     if (lang === "ar") return this.data.displayNameAr || this.data.displayNameEn || this.data.name;
     return this.data.displayNameEn || this.data.name;
+  }
+
+  copyWith(updates: Partial<EditionCategoryData>): EditionCategory {
+    return new EditionCategory({
+      ...this.data,
+      ...updates,
+    } as EditionCategoryData);
   }
 }

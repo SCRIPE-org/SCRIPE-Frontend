@@ -40,6 +40,20 @@ let _container: MessagingContainer | null = null;
  * Uses IDENTITY API service — messaging controllers live in the Identity backend
  */
 export function getMessagingContainer(): MessagingContainer {
+  if (typeof window === "undefined") {
+    const dummyProxy = new Proxy({} as any, {
+      get() {
+        return () => Promise.resolve({});
+      },
+    });
+    return {
+      emailRepository: dummyProxy,
+      notificationSenderRepository: dummyProxy,
+      messageTemplateRepository: dummyProxy,
+      webhookRepository: dummyProxy,
+    };
+  }
+
   if (!_container) {
     const apiService = getModuleApiService("IDENTITY");
 

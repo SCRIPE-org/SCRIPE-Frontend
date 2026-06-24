@@ -59,6 +59,9 @@ const METRIC_CONFIG = [
   },
 ];
 
+/**
+ * Exported constant defining parameters and fields for tenant metrics cards configurations.
+ */
 export const TenantMetricsCards = memo(function TenantMetricsCards({
   data,
   isLoading,

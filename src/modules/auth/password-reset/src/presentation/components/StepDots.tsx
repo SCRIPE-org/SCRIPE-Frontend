@@ -7,6 +7,10 @@ interface StepDotsProps {
   total: number;
 }
 
+/**
+ * Presentation UI component rendering the step dots.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function StepDots({ current, total }: StepDotsProps) {
   return (
     <div className="flex items-center justify-center gap-1.5" aria-hidden="true">

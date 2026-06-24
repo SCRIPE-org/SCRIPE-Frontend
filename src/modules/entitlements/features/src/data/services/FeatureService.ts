@@ -11,13 +11,17 @@ import type {
   TenantEffectiveFeatureModel,
   FeatureModuleGroupModel,
 } from "../models/FeatureModels";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type {
   CreateFeatureRequest,
   UpdateFeatureRequest,
 } from "../../domain/entities/FeatureRequests";
 
+/**
+ * Http API network service for feature.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class FeatureService implements IFeatureService {
   constructor(private readonly api: IApiService) {}
 

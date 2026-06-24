@@ -22,6 +22,10 @@ interface StripeCardProps {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the stripe card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function StripeCard({ sub, vm, t }: StripeCardProps) {
   const hasGatewayCustomer = !!sub.gatewayCustomerId;
 

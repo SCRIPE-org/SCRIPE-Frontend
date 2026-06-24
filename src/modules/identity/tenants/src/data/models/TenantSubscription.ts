@@ -13,6 +13,9 @@ import type {
   RefundType,
 } from "../../domain/types/SubscriptionTypes";
 
+/**
+ * Exported type in the identity/tenants module.
+ */
 export type {
   SubscriptionType,
   SubscriptionStatus,
@@ -27,6 +30,9 @@ export type {
 
 // ── Request DTOs (data-layer only) ───────────────────────
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for change edition payload.
+ */
 export interface ChangeEditionPayload {
   editionId: string;
   type: SubscriptionType;
@@ -36,14 +42,23 @@ export interface ChangeEditionPayload {
   promotionId?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for renew payload.
+ */
 export interface RenewPayload {
   type: SubscriptionType;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for convert trial payload.
+ */
 export interface ConvertTrialPayload {
   type: SubscriptionType;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for suspend payload.
+ */
 export interface SuspendPayload {
   reason: string;
   useFallback?: boolean;
@@ -51,6 +66,9 @@ export interface SuspendPayload {
   customRefundAmount?: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for cancel payload.
+ */
 export interface CancelPayload {
   reason?: string;
   useFallback?: boolean;
@@ -58,16 +76,25 @@ export interface CancelPayload {
   customRefundAmount?: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for resume payload.
+ */
 export interface ResumePayload {
   type?: SubscriptionType;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for change currency payload.
+ */
 export interface ChangeCurrencyPayload {
   currency: string;
 }
 
 // ── Price Preview ────────────────────────────────────────
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for price preview result.
+ */
 export interface PricePreviewResult {
   amount: number;
   currency: string;

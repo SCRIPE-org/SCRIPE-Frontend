@@ -12,6 +12,10 @@ interface InfoRowProps {
   muted?: boolean;
 }
 
+/**
+ * Presentation UI component rendering the info row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function InfoRow({ icon, label, value, muted = false }: InfoRowProps) {
   return (
     <div className="flex items-center justify-between py-2.5">

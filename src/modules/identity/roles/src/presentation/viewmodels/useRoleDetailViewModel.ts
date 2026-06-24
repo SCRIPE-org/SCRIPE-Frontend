@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Role Detail ViewModel
  *
@@ -28,8 +29,14 @@ import type { Role } from "../../domain/entities/Role";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
 
 // === Types ===
+/**
+ * Exported type in the identity/roles module.
+ */
 export type { PermissionModuleGroup, PermissionCategoryGroup };
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for role detail header props.
+ */
 export interface RoleDetailHeaderProps {
   role: Role | undefined;
   isLoading: boolean;
@@ -37,6 +44,9 @@ export interface RoleDetailHeaderProps {
   onSave: () => void;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for role info card props.
+ */
 export interface RoleInfoCardProps {
   role: Role | undefined;
   isLoading: boolean;
@@ -44,6 +54,9 @@ export interface RoleInfoCardProps {
   totalCount: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for permission tree props.
+ */
 export interface PermissionTreeProps {
   moduleGroups: PermissionModuleGroup[];
   isLoading: boolean;
@@ -64,6 +77,10 @@ export interface PermissionTreeProps {
 }
 
 // === ViewModel ===
+/**
+ * React hook/ViewModel orchestrating state and data flows for role detail view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useRoleDetailViewModel() {
   const { t } = useI18n();
   const params = useParams();

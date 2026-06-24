@@ -14,6 +14,10 @@ import type {
   UpdateRecommendationRuleRequest,
 } from "../../domain/entities/RecommendationRuleRequests";
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for recommendation rules view model.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
+ */
 export function useRecommendationRulesViewModel() {
   const { recommendationRuleRepository } = entitlementsContainer;
 

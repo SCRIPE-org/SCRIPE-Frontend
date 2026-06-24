@@ -20,11 +20,15 @@ import {
   CheckSquare,
 } from "lucide-react";
 import Link from "next/link";
-import { WizardStepIndicator } from "@modules/entitlements/editions/src/presentation/components/wizard/WizardStepIndicator";
+import { WizardStepIndicator } from "@modules/entitlements/core";
 import { TenantPlanStepBasics } from "../components/wizard/TenantPlanStepBasics";
 import { TenantPlanStepBilling } from "../components/wizard/TenantPlanStepBilling";
 import { TenantPlanStepReview } from "../components/wizard/TenantPlanStepReview";
 
+/**
+ * Presentation UI component rendering the tenant plan edit wizard view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function TenantPlanEditWizardView({ planId }: { planId: string }) {
   useModuleLocales(() => import("../../../locales"), "tenant-plans");
   const { t } = useI18n();

@@ -7,6 +7,9 @@ import type {
   SsoProvider,
 } from "@modules/auth/core/domain/entities/SsoProvider";
 
+/**
+ * Exported type in the auth/signin module.
+ */
 export type {
   SsoCallbackResult,
   SsoNoLinkedAccountError,
@@ -18,6 +21,10 @@ interface UseSsoProvidersOptions {
   mode?: string;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for sso providers.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
+ */
 export function useSsoProviders(options: UseSsoProvidersOptions = {}) {
   const { tenantId, mode = "inherit" } = options;
   const [providers, setProviders] = useState<SsoProvider[]>([]);
@@ -62,6 +69,9 @@ export function useSsoProviders(options: UseSsoProvidersOptions = {}) {
   };
 }
 
+/**
+ * Exported function defining parameters and fields for complete sso callback configurations.
+ */
 export function completeSsoCallback(code: string, state: string): Promise<SsoCallbackResult> {
   return getAuthContainer().ssoRepository.completeCallback(code, state);
 }

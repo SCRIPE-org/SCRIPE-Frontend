@@ -18,6 +18,10 @@ import Link from "next/link";
 import { useMagicLinkCallbackViewModel } from "../viewmodels/useMagicLinkCallbackViewModel";
 import { VaultBackground } from "../components/layouts/VaultBackground";
 
+/**
+ * Presentation UI component rendering the magic link callback view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function MagicLinkCallbackView() {
   const { t } = useI18n();
   const vm = useMagicLinkCallbackViewModel();

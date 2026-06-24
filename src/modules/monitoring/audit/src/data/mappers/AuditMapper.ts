@@ -22,6 +22,9 @@ import type {
   ComplianceSection,
 } from "../../domain/entities/AuditEntities";
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class AuditMapper {
   static toLogEntry(dto: AuditLogEntryDto): AuditLogEntry {
     return {

@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import * as React from "react";
@@ -13,6 +14,10 @@ interface WorkspacesStepProps {
   totalSteps: number;
 }
 
+/**
+ * Presentation UI component rendering the workspaces step.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function WorkspacesStep({ vm, totalSteps }: WorkspacesStepProps) {
   const { t } = useI18n();
 

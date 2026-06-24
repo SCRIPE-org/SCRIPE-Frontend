@@ -1,10 +1,10 @@
-import { PluginDefinition } from "@modules/plugins/catalog";
+import { PluginDefinition } from "@modules/plugins/core";
 import type {
   PluginDefinitionModel,
   PluginTierValue,
   PluginStatusValue,
   PluginScopeValue,
-} from "@modules/plugins/catalog";
+} from "@modules/plugins/core";
 import { z } from "zod";
 import { safeParseApiResponse, uuidField, optionalString } from "@core/common/zod-utils";
 
@@ -31,6 +31,9 @@ const PluginDefinitionModelSchema = z.object({
   createdAt: z.string().optional().nullable(),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class DefinitionsMapper {
   static toEntity(model: PluginDefinitionModel): PluginDefinition {
     const validated = safeParseApiResponse(PluginDefinitionModelSchema, model, "PluginDefinition");

@@ -2,6 +2,9 @@ import type { ReactNode } from "react";
 import type { TenantBranding } from "@modules/auth/core/domain/entities/TenantBranding";
 import type { SlotConfig } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for login layout props.
+ */
 export interface LoginLayoutProps {
   branding: TenantBranding | null;
   slotConfig: SlotConfig;

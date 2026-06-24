@@ -29,6 +29,10 @@ interface ProgressDotsProps {
   label: string;
 }
 
+/**
+ * Presentation UI component rendering the progress dots.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ProgressDots({ total, current, label }: ProgressDotsProps) {
   const { tokens } = useSignupTheme();
 

@@ -156,6 +156,10 @@ function TrustMarkDialogForm({ onClose, onSave, isSaving, editing }: TrustMarkDi
   );
 }
 
+/**
+ * Presentation UI component rendering the trust mark dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function TrustMarkDialog({
   open,
   onClose,

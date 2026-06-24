@@ -11,6 +11,10 @@ interface PluginSettingsViewProps {
   installationId: string;
 }
 
+/**
+ * Presentation UI component rendering the plugin settings view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function PluginSettingsView({ installationId }: PluginSettingsViewProps) {
   const { user } = useAppStore();
   const { t } = useI18n();

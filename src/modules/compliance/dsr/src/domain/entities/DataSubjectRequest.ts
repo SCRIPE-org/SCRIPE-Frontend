@@ -14,8 +14,16 @@ export type DsrStatus =
   | "Completed"
   | "Rejected"
   | "Cancelled";
+/**
+ * Domain model representing a Subject Type structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type SubjectType = "Admin" | "User";
 
+/**
+ * Domain model representing a Dsr Status History structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface DsrStatusHistory {
   fromStatus: string;
   toStatus: string;
@@ -24,6 +32,10 @@ export interface DsrStatusHistory {
   occurredAt: string;
 }
 
+/**
+ * Domain model representing a Dsr Module Execution structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface DsrModuleExecution {
   moduleName: string;
   isCompleted: boolean;
@@ -33,6 +45,10 @@ export interface DsrModuleExecution {
   completedAt?: string;
 }
 
+/**
+ * Domain model representing a Data Subject Request Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface DataSubjectRequestData {
   id: string;
   subjectEmail: string;
@@ -51,6 +67,10 @@ export interface DataSubjectRequestData {
   resolution?: string;
 }
 
+/**
+ * Domain model representing a Data Subject Request structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class DataSubjectRequest {
   constructor(private readonly data: DataSubjectRequestData) {}
 

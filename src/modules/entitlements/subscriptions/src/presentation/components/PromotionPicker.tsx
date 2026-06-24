@@ -13,7 +13,7 @@ import { GenericSelect } from "@core/crud/components/generic-select";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Loader2, Tag } from "lucide-react";
-import type { EditionPromotionData } from "@modules/entitlements/editions/src/domain/entities/EditionPromotion";
+import type { EditionPromotionData } from "@modules/entitlements/core";
 
 interface PromotionPickerProps {
   isLoading: boolean;
@@ -28,6 +28,10 @@ interface PromotionPickerProps {
 
 const NONE_VALUE = "__none__";
 
+/**
+ * Presentation UI component rendering the promotion picker.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function PromotionPicker({
   isLoading,
   promotions,

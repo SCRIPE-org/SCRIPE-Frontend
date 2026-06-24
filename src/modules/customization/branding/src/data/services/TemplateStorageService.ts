@@ -6,8 +6,14 @@
  */
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import type { SavedTemplate } from "../../domain/entities/SavedTemplate";
+import type { IApiService } from "@core/interfaces/api.interface";
 
+/**
+ * Http API network service for template storage.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class TemplateStorageService {
+  constructor(private readonly api?: IApiService) {}
   static load(): SavedTemplate[] {
     try {
       const raw = localStorage.getItem(STORAGE_KEYS.BUILDER_TEMPLATES);

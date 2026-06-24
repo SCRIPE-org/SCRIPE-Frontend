@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import { useState } from "react";
@@ -30,6 +31,10 @@ interface TenantSettingsEditDialogProps {
   isSaving: boolean;
 }
 
+/**
+ * Presentation UI component rendering the tenant settings edit dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function TenantSettingsEditDialog({
   open,
   onOpenChange,

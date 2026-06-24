@@ -15,6 +15,9 @@ export interface UserGroupMemberJson {
   isActive: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for user group role json.
+ */
 export interface UserGroupRoleJson {
   roleId: string;
   nameEn: string;
@@ -23,11 +26,17 @@ export interface UserGroupRoleJson {
   permissionCount: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for user group restriction json.
+ */
 export interface UserGroupRestrictionJson {
   permissionCode: string;
   restrictedFields: string[];
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for user group json.
+ */
 export interface UserGroupJson {
   id: string;
   nameEn: string;
@@ -47,6 +56,9 @@ export interface UserGroupJson {
   restrictions?: UserGroupRestrictionJson[];
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for user group list response json.
+ */
 export interface UserGroupListResponseJson {
   items: UserGroupJson[];
   totalCount: number;
@@ -57,6 +69,9 @@ export interface UserGroupListResponseJson {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Exported class defining parameters and fields for user group model configurations.
+ */
 export class UserGroupModel {
   constructor(private readonly json: UserGroupJson) {}
 

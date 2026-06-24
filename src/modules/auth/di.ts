@@ -49,6 +49,24 @@ export interface AuthContainer {
 let _instance: AuthContainer | null = null;
 
 function createContainer(): AuthContainer {
+  if (typeof window === "undefined") {
+    const dummyProxy = new Proxy({} as any, {
+      get() {
+        return () => Promise.resolve({});
+      },
+    });
+    return {
+      authService: dummyProxy,
+      authRepository: dummyProxy,
+      tenantResolutionRepository: dummyProxy,
+      ssoRepository: dummyProxy,
+      passwordResetRepository: dummyProxy,
+      accountSetupRepository: dummyProxy,
+      signupRepository: dummyProxy,
+      passkeyRepository: dummyProxy,
+    };
+  }
+
   const apiService = getModuleApiService("IDENTITY");
   const publicApiService = new PublicApiService(apiService);
 

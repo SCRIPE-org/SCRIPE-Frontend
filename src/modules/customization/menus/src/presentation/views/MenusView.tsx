@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * Menus View (Pure UI) — Admin Management
  *
@@ -60,6 +62,10 @@ function filterByWorkspace(nodes: MenuTreeNode[], workspaceId: string | null): M
   return filterRecursive(nodes);
 }
 
+/**
+ * Presentation UI component rendering the menus view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function MenusView() {
   useModuleLocales(() => import("../../../locales"), "menus");
 

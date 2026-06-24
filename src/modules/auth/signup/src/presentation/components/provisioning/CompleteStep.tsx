@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -22,6 +23,10 @@ interface CompleteStepProps {
   wizard: SignupWizardViewModel;
 }
 
+/**
+ * Presentation UI component rendering the complete step.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function CompleteStep({ wizard }: CompleteStepProps) {
   const { t, direction } = useI18n();
   const { tokens } = useSignupTheme();

@@ -57,6 +57,10 @@ export interface GetAppListingsParams {
   pricingModel?: "Free" | "OneTime" | "Subscription";
 }
 
+/**
+ * Http API network service for i app listings.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface IAppListingsService {
   /** Fetch paginated list of app listings. */
   getAll(params: GetAppListingsParams): Promise<AppListingListDto>;

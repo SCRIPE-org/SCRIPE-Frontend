@@ -36,6 +36,9 @@ export interface PermissionModuleGroupJson {
   categories: PermissionCategoryGroupJson[];
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for create permission json.
+ */
 export interface CreatePermissionJson {
   resource: string;
   action: string;
@@ -48,6 +51,9 @@ export interface CreatePermissionJson {
   displayOrder?: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for update permission json.
+ */
 export interface UpdatePermissionJson {
   descriptionEn?: string;
   descriptionAr?: string;

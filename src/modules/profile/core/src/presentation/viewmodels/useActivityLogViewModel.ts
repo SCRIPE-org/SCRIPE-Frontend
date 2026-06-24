@@ -11,6 +11,10 @@ import { container } from "@modules/profile/di";
 import { profileKeys } from "./useProfilePageViewModel";
 import type { SecurityLogEntry } from "../../domain/entities/SecurityLogEntry";
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for activity log view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useActivityLogViewModel() {
   const repo = container.profileRepository;
   const [page, setPage] = useState(1);

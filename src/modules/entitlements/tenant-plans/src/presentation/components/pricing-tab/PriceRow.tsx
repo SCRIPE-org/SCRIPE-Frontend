@@ -22,6 +22,10 @@ interface PriceRowProps {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the price row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function PriceRow({ price, currency, onUpdate, onRemove, t }: PriceRowProps) {
   return (
     <div className="flex items-center justify-between gap-4 py-3">

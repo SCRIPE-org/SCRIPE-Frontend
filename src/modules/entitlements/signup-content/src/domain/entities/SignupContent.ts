@@ -1,8 +1,20 @@
 "use client";
 
+/**
+ * Domain model representing a C O N T E N T_ M O D E S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const CONTENT_MODES = ["Seeded", "Live"] as const;
+/**
+ * Domain model representing a Content Mode structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type ContentMode = (typeof CONTENT_MODES)[number];
 
+/**
+ * Domain model representing a Welcome Content Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface WelcomeContentData {
   id: string;
   headlineEn: string;
@@ -16,6 +28,10 @@ export interface WelcomeContentData {
   trustedByLabelAr: string;
 }
 
+/**
+ * Domain model representing a Welcome Content structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class WelcomeContent {
   constructor(private readonly data: WelcomeContentData) {}
 
@@ -55,6 +71,10 @@ export class WelcomeContent {
   }
 }
 
+/**
+ * Domain model representing a Trust Mark Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface TrustMarkData {
   id: string;
   key: string;
@@ -68,6 +88,10 @@ export interface TrustMarkData {
   isActive: boolean;
 }
 
+/**
+ * Domain model representing a Trust Mark structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class TrustMark {
   constructor(private readonly data: TrustMarkData) {}
 
@@ -107,6 +131,10 @@ export class TrustMark {
   }
 }
 
+/**
+ * Domain model representing a Customer Logo Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface CustomerLogoData {
   id: string;
   key: string;
@@ -117,6 +145,10 @@ export interface CustomerLogoData {
   isActive: boolean;
 }
 
+/**
+ * Domain model representing a Customer Logo structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class CustomerLogo {
   constructor(private readonly data: CustomerLogoData) {}
 
@@ -147,6 +179,10 @@ export class CustomerLogo {
   }
 }
 
+/**
+ * Domain model representing a Admin Signup Content Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface AdminSignupContentData {
   contentMode: ContentMode;
   welcomeContent: WelcomeContent | null;
@@ -154,6 +190,10 @@ export interface AdminSignupContentData {
   customerLogos: CustomerLogo[];
 }
 
+/**
+ * Domain model representing a Admin Signup Content structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class AdminSignupContent {
   constructor(private readonly data: AdminSignupContentData) {}
 

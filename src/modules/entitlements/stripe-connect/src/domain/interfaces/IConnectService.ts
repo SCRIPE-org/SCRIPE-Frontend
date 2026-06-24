@@ -14,6 +14,10 @@ import type {
   TenantTransactionsResponseModel,
 } from "../../data/models/ConnectModels";
 
+/**
+ * Http API network service for i connect.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface IConnectService {
   // ── Account Lifecycle ──
   getAccount(tenantId: string): Promise<ConnectAccountResponseModel>;

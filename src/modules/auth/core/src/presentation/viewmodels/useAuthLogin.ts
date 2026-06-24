@@ -17,6 +17,10 @@ import {
   WorkspaceSelectionRequiredError,
 } from "../../../domain/errors/AuthErrors";
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for auth login.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
+ */
 export function useAuthLogin() {
   const { authRepository } = useServices();
   const setAuth = useAppStore((state) => state.setAuth);

@@ -20,6 +20,10 @@ interface WebhookFormEndpointSectionProps {
   vm: WebhookFormViewModel;
 }
 
+/**
+ * Presentation UI component rendering the webhook form endpoint section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function WebhookFormEndpointSection({ vm }: WebhookFormEndpointSectionProps) {
   const { t } = useI18n();
 

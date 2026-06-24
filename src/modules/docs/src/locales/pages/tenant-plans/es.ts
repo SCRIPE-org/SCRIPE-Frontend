@@ -1,3 +1,6 @@
+/**
+ * Exported constant defining parameters and fields for es configurations.
+ */
 export const es = {
   modules: {
     tenantPlans: {

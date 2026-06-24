@@ -30,6 +30,10 @@ interface UseRolesViewModelParams {
   useMyTenant?: boolean;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for roles view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
   const { tenantId: propTenantId, useMyTenant } = params;
   const contextTenantId = useCurrentTenantId();

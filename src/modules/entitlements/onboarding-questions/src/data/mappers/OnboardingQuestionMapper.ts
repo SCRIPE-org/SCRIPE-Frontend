@@ -46,6 +46,9 @@ const OnboardingQuestionSchema = z.object({
   options: z.array(AnswerOptionSchema).optional().default([]),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class OnboardingQuestionMapper {
   static toEntity(
     model: OnboardingQuestionListModel | OnboardingQuestionDetailModel

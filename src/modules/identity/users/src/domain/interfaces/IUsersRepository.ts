@@ -7,6 +7,9 @@
 
 import type { UsersEntity } from "../entities/UsersEntity";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for update user request.
+ */
 export interface UpdateUserRequest {
   firstName?: string | null;
   lastName?: string | null;
@@ -19,6 +22,10 @@ export interface UpdateUserRequest {
   notes?: string | null;
 }
 
+/**
+ * Repository layer implementing client request queries for i users.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export interface IUsersRepository {
   /** Get paginated list of users */
   getAll(params?: Record<string, unknown>): Promise<{ items: UsersEntity[]; totalCount: number }>;

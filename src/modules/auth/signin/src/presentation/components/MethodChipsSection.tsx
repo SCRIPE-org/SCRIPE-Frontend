@@ -16,6 +16,10 @@ interface MethodChipsSectionProps {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the method chips section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function MethodChipsSection({ methodChips, isLoading, t }: MethodChipsSectionProps) {
   if (methodChips.length === 0) return null;
 

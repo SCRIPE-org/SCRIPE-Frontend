@@ -2,10 +2,27 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getAuthContainer } from "@modules/auth/di";
-import type { ValidateTokenResponse } from "../../../../core/domain/interfaces/IAccountSetupService";
+import type { ValidateTokenResponse } from "@modules/auth/core/domain/interfaces/IAccountSetupService";
 
+/**
+ * PageState defines the active lifecycle state of the account setup view:
+ * - "loading": Token validation is currently in progress.
+ * - "valid": The token is valid and the setup form is ready for input.
+ * - "invalid": The token is invalid, expired, or missing.
+ * - "activating": The administrator setup request is currently submitting.
+ * - "success": The setup was completed successfully.
+ * - "error": An error occurred during account activation.
+ */
 export type PageState = "loading" | "valid" | "invalid" | "activating" | "success" | "error";
 
+/**
+ * useAccountSetupViewModel is the custom presentation hook / ViewModel for SetupAccountView.
+ * It manages the validation of workspace setup tokens, user password policy validation constraints,
+ * and coordinates account activation queries.
+ *
+ * @param params Settings, active token, and localized validation messages.
+ * @returns ViewModel state properties, user credentials input binding, and trigger callbacks.
+ */
 export function useAccountSetupViewModel(params: {
   token: string;
   missingTokenMessage: string;

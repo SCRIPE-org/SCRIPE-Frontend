@@ -3,11 +3,15 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { identityContainer } from "@modules/identity/di";
 import { appLogger } from "@/core/common/logger";
-import { SYSTEM_TENANT_ID } from "@modules/identity/tenants/src/domain/entities/Tenant";
+import { SYSTEM_TENANT_ID } from "@modules/identity/core";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 
 const SYSTEM_TENANT_VALUE = SYSTEM_TENANT_ID;
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for admin transfer view model.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
+ */
 export function useAdminTransferViewModel() {
   const { t, language } = useI18n();
 

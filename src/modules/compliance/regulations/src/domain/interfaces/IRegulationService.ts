@@ -6,6 +6,10 @@ import type {
   UpdateConsentPurposeRequest,
 } from "../entities/Regulation";
 
+/**
+ * Http API network service for i regulation.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface IRegulationService {
   getAll(): Promise<RegulationProfileModel[]>;
   getById(id: string): Promise<RegulationProfileModel>;

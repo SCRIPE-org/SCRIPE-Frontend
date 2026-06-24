@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * useEditionComparisonViewModel — Data logic for the dual-view comparison page.
  *
@@ -21,8 +22,14 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { Edition, EditionFeatureDto } from "../../domain/entities/Edition";
 
+/**
+ * Exported type defining parameters and fields for billing cycle configurations.
+ */
 export type BillingCycle = "Monthly" | "Yearly" | "Lifetime";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for feature row.
+ */
 export interface FeatureRow {
   featureName: string;
   displayNameEn: string;
@@ -35,6 +42,9 @@ export interface FeatureRow {
   displayLabels: Record<string, { en?: string; ar?: string }>;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for pricing highlight.
+ */
 export interface PricingHighlight {
   label: string;
   isUnlimited?: boolean;
@@ -99,6 +109,10 @@ function resolveAvailableCycles(editions: Edition[]): BillingCycle[] {
   return ordered;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for edition comparison view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useEditionComparisonViewModel() {
   const { editionRepository } = entitlementsContainer;
   const { language } = useI18n();

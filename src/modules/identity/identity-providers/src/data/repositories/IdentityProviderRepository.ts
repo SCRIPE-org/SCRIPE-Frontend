@@ -17,6 +17,10 @@ import type {
 } from "../../domain/entities/IdentityProvider";
 import { IdentityProviderMapper } from "../mappers/IdentityProviderMapper";
 
+/**
+ * Repository layer implementing client request queries for identity provider.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class IdentityProviderRepository implements IIdentityProviderRepository {
   constructor(private readonly service: IIdentityProviderService) {}
 

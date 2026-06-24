@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * Dashboard Builder Widget Components — Placeholder renderers for dashboard builder preview.
  * Each widget renders demo/placeholder data in the builder canvas.

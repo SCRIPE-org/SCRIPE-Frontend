@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * PlatformLead — Domain entity for the admin sales leads CRM.
  *
@@ -30,6 +31,10 @@ function relativeTime(isoDate: string): string {
 
 // ── PlatformLeadListItem (lightweight, for table rows) ────────────────────────
 
+/**
+ * Domain model representing a Platform Lead List Item Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface PlatformLeadListItemData {
   id: string;
   companyName: string;
@@ -45,6 +50,10 @@ export interface PlatformLeadListItemData {
   primaryPriority?: string;
 }
 
+/**
+ * Domain model representing a Platform Lead List Item structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class PlatformLeadListItem {
   constructor(public readonly data: PlatformLeadListItemData) {}
 
@@ -124,6 +133,10 @@ export class PlatformLeadListItem {
 
 // ── PlatformLead (full detail, for drawer) ────────────────────────────────────
 
+/**
+ * Domain model representing a Platform Lead Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface PlatformLeadData {
   id: string;
   companyName: string;
@@ -146,6 +159,10 @@ export interface PlatformLeadData {
   primaryPriority?: string;
 }
 
+/**
+ * Domain model representing a Platform Lead structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class PlatformLead {
   constructor(public readonly data: PlatformLeadData) {}
 
@@ -253,6 +270,10 @@ export class PlatformLead {
 
 // ── LeadActivity (activity timeline entry) ────────────────────────────────────
 
+/**
+ * Domain model representing a Lead Activity Type structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type LeadActivityType =
   | "Submitted"
   | "StatusChanged"
@@ -261,6 +282,10 @@ export type LeadActivityType =
   | "Converted"
   | "Closed";
 
+/**
+ * Domain model representing a Lead Activity structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface LeadActivity {
   id: string;
   leadId: string;
@@ -283,22 +308,44 @@ interface LeadCommunicationLogData {
   bodyText: string;
   sentByAdminName: string;
   sentAt: string;
-  status: 'Pending' | 'Sent' | 'Failed';
+  status: "Pending" | "Sent" | "Failed";
   templateKey?: string;
   recipientEmail: string;
   recipientName: string;
 }
 
+/**
+ * Domain model representing a Lead Communication Log structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class LeadCommunicationLog {
   constructor(private readonly data: LeadCommunicationLogData) {}
 
-  get id()              { return this.data.id; }
-  get subject()         { return this.data.subject; }
-  get bodyHtml()        { return this.data.bodyHtml; }
-  get sentByAdminName() { return this.data.sentByAdminName; }
-  get sentAt()          { return new Date(this.data.sentAt); }
-  get status()          { return this.data.status; }
-  get templateKey()     { return this.data.templateKey; }
-  get recipientEmail()  { return this.data.recipientEmail; }
-  get isFailed()        { return this.data.status === 'Failed'; }
+  get id() {
+    return this.data.id;
+  }
+  get subject() {
+    return this.data.subject;
+  }
+  get bodyHtml() {
+    return this.data.bodyHtml;
+  }
+  get sentByAdminName() {
+    return this.data.sentByAdminName;
+  }
+  get sentAt() {
+    return new Date(this.data.sentAt);
+  }
+  get status() {
+    return this.data.status;
+  }
+  get templateKey() {
+    return this.data.templateKey;
+  }
+  get recipientEmail() {
+    return this.data.recipientEmail;
+  }
+  get isFailed() {
+    return this.data.status === "Failed";
+  }
 }

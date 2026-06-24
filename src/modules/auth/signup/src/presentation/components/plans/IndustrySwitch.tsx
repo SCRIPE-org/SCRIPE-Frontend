@@ -21,7 +21,16 @@ interface IndustrySwitchProps {
   hasAnswers?: boolean;
 }
 
-export function IndustrySwitch({ value, options, onChange, hasAnswers = false }: IndustrySwitchProps) {
+/**
+ * Presentation UI component rendering the industry switch.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
+export function IndustrySwitch({
+  value,
+  options,
+  onChange,
+  hasAnswers = false,
+}: IndustrySwitchProps) {
   const { t } = useI18n();
   const { tokens, theme } = useSignupTheme();
 

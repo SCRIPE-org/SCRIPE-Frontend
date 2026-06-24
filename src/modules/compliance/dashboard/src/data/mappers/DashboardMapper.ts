@@ -27,6 +27,9 @@ const DashboardModelSchema = z.object({
   regulationCoverage: z.array(RegulationCoverageSchema).optional().default([]),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class DashboardMapper {
   static toEntity(model: DashboardModel): ComplianceDashboard {
     const validated = safeParseApiResponse(DashboardModelSchema, model, "ComplianceDashboard");

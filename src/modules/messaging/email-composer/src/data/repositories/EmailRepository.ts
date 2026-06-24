@@ -15,6 +15,10 @@ import type {
 import type { SendManualEmailPayload } from "../../domain/entities/EmailRequests";
 import { EmailMapper } from "../mappers/EmailMapper";
 
+/**
+ * Repository layer implementing client request queries for email.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class EmailRepository implements IEmailRepository {
   constructor(private readonly service: IEmailService) {}
 

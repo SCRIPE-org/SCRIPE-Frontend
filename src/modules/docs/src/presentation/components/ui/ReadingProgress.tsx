@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from "react";
 
+/**
+ * Presentation UI component rendering the reading progress.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ReadingProgress() {
   const [progress, setProgress] = useState(0);
 

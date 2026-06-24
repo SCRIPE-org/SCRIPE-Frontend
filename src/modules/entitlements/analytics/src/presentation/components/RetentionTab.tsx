@@ -27,6 +27,10 @@ function getHeatmapStyle(rate: number): { bg: string; text: string } {
   return { bg: "bg-rose-400", text: "text-white" };
 }
 
+/**
+ * Presentation UI component rendering the retention tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function RetentionTab({ cohortData }: RetentionTabProps) {
   const { t } = useI18n();
   const maxColumns = Math.max(...cohortData.cohorts.map((c) => c.buckets.length), 0);

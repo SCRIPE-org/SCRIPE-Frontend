@@ -8,6 +8,10 @@ interface LogRowProps {
   log: PluginExecutionLog;
 }
 
+/**
+ * Presentation UI component rendering the log row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function LogRow({ log }: LogRowProps) {
   const { t } = useI18n();
   return (

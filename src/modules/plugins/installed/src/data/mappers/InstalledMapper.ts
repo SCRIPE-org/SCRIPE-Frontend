@@ -28,6 +28,9 @@ const PluginInstallationModelSchema = z.object({
   lastHealthCheckAt: optionalIsoDate(),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class InstalledMapper {
   static toEntity(model: PluginInstallationModel): PluginInstallation {
     safeParseApiResponse(PluginInstallationModelSchema, model, "PluginInstallation");

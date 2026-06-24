@@ -13,6 +13,10 @@ interface DsrModuleExecutionsProps {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the dsr module executions.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DsrModuleExecutions({ dsr, t }: DsrModuleExecutionsProps) {
   if (dsr.moduleExecutions.length === 0) return null;
 

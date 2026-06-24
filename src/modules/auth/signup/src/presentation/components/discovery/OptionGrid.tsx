@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { motion } from "framer-motion";
@@ -84,6 +85,10 @@ interface OptionGridProps {
   onToggle: (value: string) => void;
 }
 
+/**
+ * Presentation UI component rendering the option grid.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function OptionGrid({
   options,
   selectedValues,

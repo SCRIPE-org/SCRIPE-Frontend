@@ -12,6 +12,10 @@ import {
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
 
+/**
+ * Presentation UI component rendering the external logins section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ExternalLoginsSection() {
   const { t } = useI18n();
   const { externalLogins, providers, isLoading, isUnlinking, unlink, handleLink } =
@@ -27,7 +31,7 @@ export function ExternalLoginsSection() {
 
   // Filter out providers that are already linked
   const linkedProviderNames = externalLogins.map((el) => el.providerName);
-  const unlinkedProviders = providers.filter((p) => !linkedProviderNames.includes(p.name));
+  const unlinkedProviders = providers.filter((p: any) => !linkedProviderNames.includes(p.name));
 
   return (
     <div className="space-y-4">
@@ -37,7 +41,7 @@ export function ExternalLoginsSection() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {externalLogins.map((login) => {
-            const providerInfo = providers.find((p) => p.name === login.providerName);
+            const providerInfo = providers.find((p: any) => p.name === login.providerName);
 
             return (
               <div
@@ -95,7 +99,7 @@ export function ExternalLoginsSection() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
-              {unlinkedProviders.map((provider) => (
+              {unlinkedProviders.map((provider: any) => (
                 <DropdownMenuItem
                   key={provider.id}
                   onClick={() => handleLink(provider.id, provider.protocol)}

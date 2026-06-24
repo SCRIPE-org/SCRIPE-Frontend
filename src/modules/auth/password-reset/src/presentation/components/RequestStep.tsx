@@ -14,6 +14,10 @@ interface RequestStepProps {
   totalSteps: number;
 }
 
+/**
+ * Presentation UI component rendering the request step.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function RequestStep({ vm, totalSteps }: RequestStepProps) {
   const { t } = useI18n();
 

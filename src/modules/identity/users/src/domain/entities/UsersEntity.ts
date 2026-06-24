@@ -26,6 +26,10 @@ export interface UsersEntityData {
   createdAt: string;
 }
 
+/**
+ * Domain model representing a Users Entity structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class UsersEntity {
   constructor(private readonly data: UsersEntityData) {}
 

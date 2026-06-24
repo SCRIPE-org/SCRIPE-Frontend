@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * Tenant Entitlements Tab — Redesigned
  *
@@ -34,6 +35,10 @@ interface TenantEntitlementsTabProps {
   tenantId: string;
 }
 
+/**
+ * Presentation UI component rendering the tenant entitlements tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function TenantEntitlementsTab({ tenantId }: TenantEntitlementsTabProps) {
   const { t, direction } = useI18n();
   const router = useRouter();
@@ -110,7 +115,9 @@ export function TenantEntitlementsTab({ tenantId }: TenantEntitlementsTabProps) 
 // ─────────────────────────────────────────────────────────────────
 
 function FeaturesGrid({ tenantId }: { tenantId: string }) {
-  const { t, language, direction, features, isLoading, error } = useTenantEntitlementsViewModel({ tenantId });
+  const { t, language, direction, features, isLoading, error } = useTenantEntitlementsViewModel({
+    tenantId,
+  });
   const isRtl = direction === "rtl";
   const ITEMS_PER_PAGE = 12;
   const [page, setPage] = useState(1);

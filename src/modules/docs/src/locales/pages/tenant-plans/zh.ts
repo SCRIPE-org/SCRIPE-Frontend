@@ -1,3 +1,6 @@
+/**
+ * Exported constant defining parameters and fields for zh configurations.
+ */
 export const zh = {
   modules: {
     tenantPlans: {

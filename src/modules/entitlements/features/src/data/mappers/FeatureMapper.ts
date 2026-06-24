@@ -55,6 +55,9 @@ const TenantEffectiveFeatureModelSchema = z.object({
   hasOverride: z.boolean().optional().default(false),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class FeatureMapper {
   static toEntity(model: FeatureModel): Feature {
     const validated = safeParseApiResponse(FeatureModelSchema, model, "Feature");

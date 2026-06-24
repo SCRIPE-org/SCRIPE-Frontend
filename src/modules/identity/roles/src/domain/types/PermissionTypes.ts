@@ -9,6 +9,9 @@
 
 // ── Permission Assignment ────────────────────────────────
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for permission assignment json.
+ */
 export interface PermissionAssignmentJson {
   permissionId: string;
   scopeOverride?: string | null;
@@ -17,6 +20,9 @@ export interface PermissionAssignmentJson {
 
 // ── Permission Scopes ────────────────────────────────────
 
+/**
+ * Exported constant defining parameters and fields for permission scopes configurations.
+ */
 export const PermissionScopes = {
   /** No override - uses permission's default scope */
   Default: "default",
@@ -30,4 +36,7 @@ export const PermissionScopes = {
   AllTenants: "all_tenants",
 } as const;
 
+/**
+ * Exported type defining parameters and fields for permission scope type configurations.
+ */
 export type PermissionScopeType = (typeof PermissionScopes)[keyof typeof PermissionScopes];

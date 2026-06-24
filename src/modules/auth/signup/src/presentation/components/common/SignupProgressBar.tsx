@@ -45,6 +45,10 @@ interface SignupProgressBarProps {
   phase: SignupPhase;
 }
 
+/**
+ * Presentation UI component rendering the signup progress bar.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SignupProgressBar({ phase }: SignupProgressBarProps) {
   const { t, direction } = useI18n();
   const { tokens } = useSignupTheme();

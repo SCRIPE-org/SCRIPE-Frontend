@@ -30,6 +30,10 @@ import {
   CreateTenantSuccess,
 } from "../components/create-tenant";
 
+/**
+ * Presentation UI component rendering the create tenant view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function CreateTenantView() {
   useModuleLocales(() => import("../../../locales"), "tenants");
 

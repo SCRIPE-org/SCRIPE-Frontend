@@ -13,6 +13,10 @@ interface SamlSectionProps {
   updateField: <K extends keyof OAuthAppFormState>(field: K, value: OAuthAppFormState[K]) => void;
 }
 
+/**
+ * Presentation UI component rendering the saml section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SamlSection({ form, updateField }: SamlSectionProps) {
   const { t } = useI18n();
 

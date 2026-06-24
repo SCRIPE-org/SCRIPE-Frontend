@@ -25,6 +25,10 @@ interface CommissionRateConfigProps {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the commission rate config.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function CommissionRateConfig({
   account,
   isOpen,

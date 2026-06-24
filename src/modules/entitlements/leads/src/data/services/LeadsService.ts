@@ -24,6 +24,10 @@ import type {
 import type { ILeadsService } from "../../domain/interfaces/ILeadsService";
 import type { LeadStatus } from "../../domain/entities/PlatformLead";
 
+/**
+ * Http API network service for leads.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class LeadsService implements ILeadsService {
   constructor(private readonly api: IApiService) {}
 
@@ -105,9 +109,7 @@ export class LeadsService implements ILeadsService {
   }
 
   async getActivity(id: string): Promise<LeadActivityResponseModel[]> {
-    return this.api.get<LeadActivityResponseModel[]>(
-      API_ENDPOINTS.ENTITLEMENTS.LEADS.ACTIVITY(id)
-    );
+    return this.api.get<LeadActivityResponseModel[]>(API_ENDPOINTS.ENTITLEMENTS.LEADS.ACTIVITY(id));
   }
 
   async bulkUpdateStatus(
@@ -157,7 +159,10 @@ export class LeadsService implements ILeadsService {
     );
   }
 
-  async getStatusEmailPreview(leadId: string, targetStatus: string): Promise<StatusEmailPreviewDto> {
+  async getStatusEmailPreview(
+    leadId: string,
+    targetStatus: string
+  ): Promise<StatusEmailPreviewDto> {
     const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.LEADS.STATUS_EMAIL_PREVIEW(leadId), {
       targetStatus,
     });

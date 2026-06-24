@@ -5,6 +5,10 @@
 
 import type { DocSection } from "./DocSection";
 
+/**
+ * Domain model representing a Doc Page Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface DocPageData {
   /** URL slug, e.g. 'features/authentication' */
   slug: string;
@@ -24,6 +28,10 @@ export interface DocPageData {
   lastUpdated?: string;
 }
 
+/**
+ * Domain model representing a Doc Page structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class DocPage {
   constructor(public readonly data: DocPageData) {}
 
@@ -57,5 +65,12 @@ export class DocPage {
     return this.data.sections.filter(
       (s): s is Extract<DocSection, { type: "heading" }> => s.type === "heading"
     );
+  }
+
+  copyWith(updates: Partial<DocPageData>): DocPage {
+    return new DocPage({
+      ...this.data,
+      ...updates,
+    } as DocPageData);
   }
 }

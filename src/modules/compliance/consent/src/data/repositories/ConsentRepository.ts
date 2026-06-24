@@ -9,6 +9,10 @@ import { ConsentAnalytics } from "../../domain/entities/ConsentStatus";
 import type { RecordConsentRequest } from "../../domain/entities/ConsentStatus";
 import { ConsentMapper } from "../mappers/ConsentMapper";
 
+/**
+ * Repository layer implementing client request queries for consent.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class ConsentRepository implements IConsentRepository {
   constructor(private readonly service: IConsentService) {}
 

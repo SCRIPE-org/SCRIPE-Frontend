@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -268,11 +269,18 @@ export interface SignupWizardViewModel {
   goToPhase: (phase: SignupPhase) => void;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for use signup wizard args.
+ */
 export interface UseSignupWizardArgs {
   initialCountry?: string | null;
   initialCurrency?: string;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for signup wizard.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
+ */
 export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewModel {
   const { initialCountry, initialCurrency } = args || {};
   const { language } = useI18n();

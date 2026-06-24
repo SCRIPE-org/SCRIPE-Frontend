@@ -6,6 +6,10 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@core
 import { useRouter } from "next/navigation";
 import { Settings, BarChart, Link as LinkIcon, Key, Receipt, Coins, FileText } from "lucide-react";
 
+/**
+ * Presentation UI component rendering the payment hub view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function PaymentHubView() {
   const { t } = useI18n();
   const router = useRouter();

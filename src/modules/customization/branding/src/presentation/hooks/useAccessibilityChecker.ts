@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * useAccessibilityChecker — Real-time WCAG AA validation hook
  *
@@ -19,9 +20,18 @@ import { useMemo } from "react";
 import type { StudioDraftProps as StudioDraft } from "../../domain/entities/StudioDraft";
 
 // ── Types ─────────────────────────────────────────────
+/**
+ * Exported type defining parameters and fields for check severity configurations.
+ */
 export type CheckSeverity = "pass" | "warn" | "fail" | "info";
+/**
+ * Exported type defining parameters and fields for check category configurations.
+ */
 export type CheckCategory = "contrast" | "target" | "overlay" | "motion";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for accessibility check.
+ */
 export interface AccessibilityCheck {
   id: string;
   category: CheckCategory;
@@ -37,6 +47,9 @@ export interface AccessibilityCheck {
   autoFix?: Partial<StudioDraft>;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for accessibility summary.
+ */
 export interface AccessibilitySummary {
   pass: number;
   warn: number;
@@ -45,6 +58,9 @@ export interface AccessibilitySummary {
   total: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for accessibility result.
+ */
 export interface AccessibilityResult {
   checks: AccessibilityCheck[];
   summary: AccessibilitySummary;
@@ -207,6 +223,10 @@ function contrastCheck(
 
 // ── Main Hook ─────────────────────────────────────────
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for accessibility checker.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
+ */
 export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult {
   return useMemo(() => {
     const checks: AccessibilityCheck[] = [];

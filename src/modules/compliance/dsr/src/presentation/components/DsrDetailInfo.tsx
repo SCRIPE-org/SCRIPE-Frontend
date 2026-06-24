@@ -9,6 +9,10 @@ interface DsrDetailInfoProps {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the dsr detail info.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DsrDetailInfo({ dsr, t }: DsrDetailInfoProps) {
   return (
     <Card>

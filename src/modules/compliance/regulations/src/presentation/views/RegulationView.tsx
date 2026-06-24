@@ -18,6 +18,10 @@ import { RegulationCard } from "../components/RegulationCard";
 
 import type { Regulation } from "../../domain/entities/Regulation";
 
+/**
+ * Presentation UI component rendering the regulation view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function RegulationView() {
   useModuleLocales(() => import("../../../locales"), "compliance-regulations");
   const { t, direction } = useI18n();

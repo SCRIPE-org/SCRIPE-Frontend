@@ -26,6 +26,10 @@ import type {
   UpdateWebhookJson,
 } from "../models/WebhookModel";
 
+/**
+ * Http API network service for webhook.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class WebhookService implements IWebhookService {
   constructor(private readonly api: IApiService) {}
 

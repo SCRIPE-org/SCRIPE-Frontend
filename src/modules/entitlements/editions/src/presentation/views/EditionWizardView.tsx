@@ -27,6 +27,16 @@ import { WizardStepBilling } from "../components/wizard/WizardStepBilling";
 import { WizardStepPricing } from "../components/wizard/WizardStepPricing";
 import { WizardStepReview } from "../components/wizard/WizardStepReview";
 
+/**
+ * EditionWizardView renders the multi-step wizard interface for creating new platform subscription editions.
+ * 
+ * Flow details:
+ * - Coordinates steps for Basic settings (name, metadata), Billing (rules, trials), Pricing (currency-specific amounts), and Final review.
+ * - Synchronizes with i18n locales via hook-based lazy translation loaders.
+ * - Integrates with a themed stepper indicator and maps back-and-forth wizard navigation using the edition create view-model.
+ * 
+ * @returns A structured layout combining design system components (@core/ui/*) to guide the admin through edition setup.
+ */
 export function EditionWizardView() {
   useModuleLocales(() => import("../../../locales"), "editions");
   const { t } = useI18n();

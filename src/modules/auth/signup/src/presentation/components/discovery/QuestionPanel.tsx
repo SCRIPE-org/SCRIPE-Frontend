@@ -32,6 +32,10 @@ interface QuestionPanelProps {
   onToggle: (value: string) => void;
 }
 
+/**
+ * Presentation UI component rendering the question panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function QuestionPanel({
   question,
   options,

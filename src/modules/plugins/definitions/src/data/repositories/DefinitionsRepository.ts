@@ -5,8 +5,12 @@ import type {
 } from "../../domain/interfaces/IDefinitionsRepository";
 import type { IDefinitionsService } from "../../domain/interfaces/IDefinitionsService";
 import { DefinitionsMapper } from "../mappers/DefinitionsMapper";
-import type { PluginDefinition } from "@modules/plugins/catalog";
+import type { PluginDefinition } from "@modules/plugins/core";
 
+/**
+ * Repository layer implementing client request queries for definitions.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class DefinitionsRepository implements IDefinitionsRepository {
   constructor(private readonly service: IDefinitionsService) {}
 

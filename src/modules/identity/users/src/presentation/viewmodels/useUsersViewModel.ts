@@ -20,6 +20,10 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { qk } from "@core/common/query-keys";
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for users view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useUsersViewModel() {
   const { usersRepository } = identityContainer;
   const { t } = useI18n();

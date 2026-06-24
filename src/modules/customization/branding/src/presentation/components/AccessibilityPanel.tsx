@@ -1,4 +1,5 @@
-﻿/**
+// FILE-EXCEPTION: file length
+/**
  * AccessibilityPanel v2 — Full accessibility settings + WCAG audit
  *
  * Two sections:
@@ -266,6 +267,10 @@ function SummaryBadge({
 
 // ── Main Panel ────────────────────────────────────────
 
+/**
+ * Presentation UI component rendering the accessibility panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function AccessibilityPanel({
   draft,
   updateDraft,

@@ -54,6 +54,9 @@ export interface TenantSettingsModel {
   isSafeMode: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for update tenant settings request.
+ */
 export interface UpdateTenantSettingsRequest {
   maxAdmins?: number;
   maxRoles?: number;

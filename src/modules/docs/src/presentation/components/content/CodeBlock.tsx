@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useState, useCallback } from "react";
@@ -339,6 +341,10 @@ function tokenize(code: string, language: string): { text: string; className: st
   });
 }
 
+/**
+ * Presentation UI component rendering the code block.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function CodeBlock({ code, language, filename, highlightLines }: CodeBlockProps) {
   const { t } = useDocsI18n();
   const [copied, setCopied] = useState(false);

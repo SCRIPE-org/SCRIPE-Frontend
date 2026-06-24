@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import { useCallback, useState } from "react";
@@ -39,6 +40,10 @@ const STATUS_VARIANT: Record<string, "default" | "secondary" | "outline" | "dest
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for dsr view model.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
+ */
 export function useDsrViewModel() {
   const { dsrRepository } = complianceContainer;
   const { t } = useI18n();

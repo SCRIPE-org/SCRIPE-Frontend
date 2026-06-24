@@ -5,6 +5,10 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { AppProvider } from "@core/providers/app-provider";
+import "@modules/auth"; // Eagerly run component registrations
+import "@modules/identity"; // Eagerly run identity registrations
+import "@modules/customization"; // Eagerly run customization registrations
+import "@modules/entitlements"; // Eagerly run entitlements registrations
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),

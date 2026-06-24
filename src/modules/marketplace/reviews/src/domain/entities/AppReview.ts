@@ -1,3 +1,7 @@
+/**
+ * Domain model representing a App Review Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface AppReviewData {
   id: string;
   appListingId: string;
@@ -11,6 +15,10 @@ export interface AppReviewData {
   isModerated: boolean;
 }
 
+/**
+ * Domain model representing a App Review structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class AppReview {
   constructor(private readonly data: AppReviewData) {}
   get id() {

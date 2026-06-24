@@ -51,6 +51,23 @@ let _container: CustomizationContainer | null = null;
  * Uses CUSTOMIZATION API service — separate microservice
  */
 export function getCustomizationContainer(): CustomizationContainer {
+  if (typeof window === "undefined") {
+    const dummyProxy = new Proxy({} as any, {
+      get() {
+        return () => Promise.resolve({});
+      },
+    });
+    return {
+      customizationService: dummyProxy,
+      tenantSettingsService: dummyProxy,
+      customizationRepository: dummyProxy,
+      tenantSettingsRepository: dummyProxy,
+      menuRepository: dummyProxy,
+      themeMarketplaceRepository: dummyProxy,
+      themeBundleRepository: dummyProxy,
+    };
+  }
+
   if (!_container) {
     const apiService = getModuleApiService("CUSTOMIZATION");
 

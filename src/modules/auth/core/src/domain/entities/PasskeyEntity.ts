@@ -15,6 +15,10 @@ export interface PasskeyData {
   signCount: number;
 }
 
+/**
+ * Domain model representing a Passkey Entity structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class PasskeyEntity {
   constructor(private readonly data: PasskeyData) {}
 

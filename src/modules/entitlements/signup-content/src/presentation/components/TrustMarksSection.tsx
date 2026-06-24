@@ -14,6 +14,10 @@ interface TrustMarksSectionProps {
   vm: SignupContentViewModel;
 }
 
+/**
+ * Presentation UI component rendering the trust marks section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function TrustMarksSection({ vm }: TrustMarksSectionProps) {
   const { t } = useI18n();
   const marks = vm.content?.trustMarks ?? [];

@@ -1,3 +1,7 @@
+/**
+ * Domain model representing a Commission Invoice Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface CommissionInvoiceData {
   id: string;
   tenantId: string;
@@ -13,6 +17,10 @@ export interface CommissionInvoiceData {
   notes: string | null;
 }
 
+/**
+ * Domain model representing a Commission Invoice structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class CommissionInvoice {
   constructor(private readonly data: CommissionInvoiceData) {}
 
@@ -51,5 +59,12 @@ export class CommissionInvoice {
   }
   get notes() {
     return this.data.notes;
+  }
+
+  copyWith(updates: Partial<CommissionInvoiceData>): CommissionInvoice {
+    return new CommissionInvoice({
+      ...this.data,
+      ...updates,
+    } as CommissionInvoiceData);
   }
 }

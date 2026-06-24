@@ -1,3 +1,6 @@
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for edition category model.
+ */
 export interface EditionCategoryModel {
   id: string;
   name: string;

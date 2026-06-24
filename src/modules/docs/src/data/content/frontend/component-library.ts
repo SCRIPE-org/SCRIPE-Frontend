@@ -41,6 +41,9 @@ const sections: DocSection[] = [
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+/**
+ * Exported function defining parameters and fields for cn configurations.
+ */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }

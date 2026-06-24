@@ -41,6 +41,10 @@ interface HeroActionsProps {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the hero actions.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function HeroActions({ sub, vm, t }: HeroActionsProps) {
   const isActive = sub.status === "Active" || sub.status === "Trialing";
   const isPending = sub.status === "PendingPayment";

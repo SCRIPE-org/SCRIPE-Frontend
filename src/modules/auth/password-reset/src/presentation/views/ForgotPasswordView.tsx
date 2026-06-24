@@ -22,8 +22,9 @@ import { BRAND } from "@core/config/branding";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { useTenantResolution } from "@modules/auth/core/src/presentation/viewmodels/useTenantResolution";
-import { VaultBackground } from "@modules/auth/signin/src/presentation/components/layouts/VaultBackground";
+import { VaultBackground } from "@modules/auth/core";
 import { useLoginBrandingTokens } from "@modules/auth/core/src/presentation/viewmodels/useLoginBrandingTokens";
+import { Button } from "@core/ui/button";
 // ARCH-EXCEPTION: pre-auth view — cannot use DI container (no auth context yet).
 import { useForgotPasswordViewModel } from "../viewmodels/useForgotPasswordViewModel";
 
@@ -34,6 +35,12 @@ import { WorkspacesStep } from "../components/WorkspacesStep";
 import { NewPasswordStep } from "../components/NewPasswordStep";
 import { SuccessStep } from "../components/SuccessStep";
 
+/**
+ * ForgotPasswordView component
+ *
+ * Renders the forgot password flow, starting from entering an email address,
+ * to selecting a workspace, verifying OTP, and setting a new password.
+ */
 export function ForgotPasswordView() {
   const { t, direction } = useI18n();
   const { branding } = useTenantResolution("forgot-password");
@@ -88,15 +95,16 @@ export function ForgotPasswordView() {
         {/* Back / Logo row */}
         <div className="mb-5 flex w-full items-center justify-between">
           {showBack || vm.step === "method" ? (
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={vm.goBack}
-              className="inline-flex items-center gap-1.5 text-[13px] font-medium transition-colors hover:opacity-80"
+              className="inline-flex h-auto items-center gap-1.5 p-0 text-[13px] font-medium transition-colors hover:bg-transparent hover:opacity-80"
               style={{ color: "var(--sx-text-mute)" }}
             >
               <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               {t("auth.back")}
-            </button>
+            </Button>
           ) : (
             <Link
               href="/login"

@@ -11,7 +11,7 @@ import type {
   UserSubscriptionListModel,
 } from "../../data/models/UserSubscriptionModels";
 import type { CreateUserSubscriptionRequest } from "../entities/UserSubscriptionRequests";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 
 /** Lightweight user result for the searchable user combobox. */
 export interface UserSearchDto {
@@ -20,6 +20,10 @@ export interface UserSearchDto {
   email: string;
 }
 
+/**
+ * Http API network service for i user subscription.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface IUserSubscriptionService {
   getAll(
     params: PaginationParams & { planId?: string; status?: string }

@@ -13,9 +13,12 @@ import type {
   UpdateRoleJson,
   AssignPermissionsJson,
 } from "../types/RoleModelTypes";
-import type { PermissionModel, PermissionModuleGroupJson } from "@modules/identity/permissions";
+import type { PermissionModel, PermissionModuleGroupJson } from "@modules/identity/core";
 import type { MyTenantRoleListParams } from "./IRoleRepository";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for service role list params.
+ */
 export interface ServiceRoleListParams {
   page?: number;
   pageSize?: number;
@@ -25,8 +28,14 @@ export interface ServiceRoleListParams {
 }
 
 // Re-export for convenience (single source of truth in IRoleRepository)
+/**
+ * Exported type in the identity/roles module.
+ */
 export type { MyTenantRoleListParams };
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for role list result.
+ */
 export interface RoleListResult {
   items: RoleModel[];
   totalCount: number;
@@ -37,6 +46,10 @@ export interface RoleListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Http API network service for i role.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface IRoleService {
   getAll(params: ServiceRoleListParams): Promise<RoleListResult>;
   getMyTenantRoles(params: MyTenantRoleListParams): Promise<RoleListResult>;

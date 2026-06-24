@@ -15,6 +15,10 @@ import type { AppCategoryData } from "../../domain/entities/AppCategory";
 import type { ICategoriesRepository } from "../../domain/interfaces/ICategoriesRepository";
 import type { CategoryDto } from "../../domain/interfaces/ICategoriesService";
 
+/**
+ * Repository layer implementing client request queries for categories.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class CategoriesRepository implements ICategoriesRepository {
   constructor(private readonly service: ICategoriesService) {}
 

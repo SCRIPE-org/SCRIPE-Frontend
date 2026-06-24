@@ -21,6 +21,9 @@ export interface FeatureModel {
   modifiedAt?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for tenant effective feature model.
+ */
 export interface TenantEffectiveFeatureModel {
   featureId: string;
   name: string;

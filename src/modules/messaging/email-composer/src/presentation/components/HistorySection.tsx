@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import React, { useState } from "react";
@@ -29,6 +30,9 @@ import { cn } from "@core/common/utils";
 import type { SentEmail } from "../../domain/entities/Email";
 
 // ─── Props ──────────────────────────────────────────────────
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for history section props.
+ */
 export interface HistorySectionProps {
   history: SentEmail[];
   historyTotal: number;
@@ -212,6 +216,10 @@ function ExpandedEmailRow({
 }
 
 // ─── Main Component ─────────────────────────────────────────
+/**
+ * Presentation UI component rendering the history section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function HistorySection(vm: HistorySectionProps) {
   const { t } = useI18n();
   const [expandedId, setExpandedId] = useState<string | null>(null);

@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * OnboardingQuestionsCatalogView — Admin CRUD table for onboarding questions.
  *
@@ -20,6 +21,10 @@ interface OnboardingQuestionsCatalogViewProps {
   language: string;
 }
 
+/**
+ * Presentation UI component rendering the onboarding questions catalog view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function OnboardingQuestionsCatalogView({
   vm,
   t,

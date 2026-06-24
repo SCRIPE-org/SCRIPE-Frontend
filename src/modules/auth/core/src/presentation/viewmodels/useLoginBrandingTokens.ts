@@ -32,6 +32,9 @@ import { buildA11yCss } from "./branding/buildA11yCss";
 import { parseA11yConfig } from "./branding/parseA11yConfig";
 
 // ─── Accessibility config type ─────────────────────────────────────────────
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for accessibility config.
+ */
 export interface AccessibilityConfig {
   // Focus & Keyboard
   focusRingEnabled: boolean;
@@ -75,6 +78,9 @@ export interface AccessibilityConfig {
   forcedColorsSupport: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for login branding tokens result.
+ */
 export interface LoginBrandingTokensResult {
   layout: LoginLayout;
   config: LoginBrandingConfig;
@@ -82,12 +88,19 @@ export interface LoginBrandingTokensResult {
   a11y: AccessibilityConfig;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for login branding tokens input.
+ */
 export interface LoginBrandingTokensInput {
   loginBrandingJson: string | null | undefined;
   slotConfigJson: string | null | undefined;
   isSafeMode: boolean;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for login branding tokens.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
+ */
 export function useLoginBrandingTokens({
   loginBrandingJson,
   slotConfigJson,

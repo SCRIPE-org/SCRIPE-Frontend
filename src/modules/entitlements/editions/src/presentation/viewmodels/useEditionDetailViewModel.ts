@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
@@ -24,6 +25,9 @@ function getDisabledDefault(valueType: string): string {
   }
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for edition detail view model result.
+ */
 export interface EditionDetailViewModelResult {
   edition: Edition | undefined;
   /**
@@ -82,6 +86,10 @@ export interface EditionDetailViewModelResult {
   tenantEffectiveCaps: Record<string, string>;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for edition detail view model.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
+ */
 export function useEditionDetailViewModel(editionId: string): EditionDetailViewModelResult {
   const { success, error: toastError } = useEnhancedToast();
   const { t } = useI18n();

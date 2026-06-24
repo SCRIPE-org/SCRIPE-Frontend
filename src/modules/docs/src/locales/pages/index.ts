@@ -91,6 +91,9 @@ export { es as revenueAnalyticsEs } from "./revenue-analytics/es";
 export { de as revenueAnalyticsDe } from "./revenue-analytics/de";
 
 // Lazy loader map for dynamic imports
+/**
+ * Exported constant defining parameters and fields for page loaders configurations.
+ */
 export const pageLoaders: Record<string, () => Promise<any>> = {
   common: () => import("./common/en"),
   "get-started": () => import("./get-started/en"),

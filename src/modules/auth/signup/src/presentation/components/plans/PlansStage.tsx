@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";
@@ -29,6 +30,10 @@ interface PlansStageProps {
   wizard: SignupWizardViewModel;
 }
 
+/**
+ * Presentation UI component rendering the plans stage.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function PlansStage({ wizard }: PlansStageProps) {
   const { t } = useI18n();
   const { tokens } = useSignupTheme();

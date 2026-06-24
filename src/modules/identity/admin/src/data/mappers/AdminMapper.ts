@@ -57,6 +57,9 @@ const AdminModelSchema = z.object({
   isProtected: z.boolean().optional().default(false),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class AdminMapper {
   /**
    * Convert AdminModel to Admin Entity

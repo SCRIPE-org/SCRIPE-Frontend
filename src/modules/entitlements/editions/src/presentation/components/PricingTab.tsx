@@ -1,4 +1,5 @@
-﻿/**
+// FILE-EXCEPTION: file length
+/**
  * Pricing Tab â€” Redesigned with Hybrid Pricing Model
  *
  * 3-Section Layout:
@@ -55,6 +56,9 @@ interface PricingTabProps {
   allowLifetime?: boolean;
 }
 
+/**
+ * Exported constant defining parameters and fields for pricing tab configurations.
+ */
 export const PricingTab = memo(function PricingTab({
   editionId,
   allowMonthly = true,

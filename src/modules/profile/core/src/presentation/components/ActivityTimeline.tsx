@@ -47,6 +47,10 @@ interface ActivityTimelineProps {
   groupedEntries: Record<string, SecurityLogEntry[]>;
 }
 
+/**
+ * Presentation UI component rendering the activity timeline.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ActivityTimeline({ groupedEntries }: ActivityTimelineProps) {
   const { t } = useI18n();
   const groups = Object.entries(groupedEntries);

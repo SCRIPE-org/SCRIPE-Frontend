@@ -1,5 +1,9 @@
 import type { PluginInstallationModel } from "../../data/models/InstalledModels";
 
+/**
+ * Domain model representing a Plugin Installation structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class PluginInstallation {
   constructor(private readonly data: PluginInstallationModel) {}
 
@@ -55,5 +59,12 @@ export class PluginInstallation {
 
   toModel() {
     return this.data;
+  }
+
+  copyWith(updates: Partial<PluginInstallationModel>): PluginInstallation {
+    return new PluginInstallation({
+      ...this.data,
+      ...updates,
+    } as PluginInstallationModel);
   }
 }

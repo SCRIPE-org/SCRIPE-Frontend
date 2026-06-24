@@ -7,6 +7,9 @@ export type {
   BrandingResponseJson,
   AuditLogPagedResultJson,
 } from "../../data/models/BrandingModel";
+/**
+ * Exported type in the customization/branding module.
+ */
 export type {
   SystemSettingsJson,
   UpdateSystemSettingsJson,

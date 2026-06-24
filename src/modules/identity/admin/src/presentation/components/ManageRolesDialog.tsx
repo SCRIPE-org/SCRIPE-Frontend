@@ -24,6 +24,10 @@ interface ManageRolesDialogProps {
   tenantId?: string; // Explicit tenant context (e.g., from drill-down)
 }
 
+/**
+ * Presentation UI component rendering the manage roles dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: ManageRolesDialogProps) {
   // Strict Scope Calculation
   const scopeTenantId = tenantId || admin?.tenantId || "";
@@ -156,11 +160,7 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
         )}
 
         <div className="mt-4 flex justify-end gap-2 border-t pt-4">
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={isSubmitting}
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
             {t("common.cancel") || "Cancel"}
           </Button>
           <Button onClick={handleSave} loading={isSubmitting} disabled={isLoading}>

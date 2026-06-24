@@ -22,6 +22,10 @@ import { Textarea } from "@core/ui/textarea";
 import type { SubscriptionDialogProps } from "../types";
 import { RefundOptions } from "./RefundOptions";
 
+/**
+ * Presentation UI component rendering the cancel dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function CancelDialog({ vm }: SubscriptionDialogProps) {
   const { t } = useI18n();
 

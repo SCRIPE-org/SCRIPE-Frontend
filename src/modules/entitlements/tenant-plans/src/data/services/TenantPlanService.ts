@@ -21,9 +21,13 @@ import type {
   CreatePromotionRequest,
   UpdatePromotionRequest,
 } from "../../domain/entities/TenantPlanRequests";
-import type { PagedResult, PaginationParams } from "@modules/identity/core/domain/types";
+import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 
+/**
+ * Http API network service for tenant plan.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class TenantPlanService implements ITenantPlanService {
   constructor(private readonly api: IApiService) {}
 

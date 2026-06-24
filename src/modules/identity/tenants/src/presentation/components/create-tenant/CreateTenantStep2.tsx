@@ -20,6 +20,10 @@ interface CreateTenantStep2Props {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the create tenant step2.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
   const touched = vm.stepTouched[2];
   const errors = vm.stepErrors[2];

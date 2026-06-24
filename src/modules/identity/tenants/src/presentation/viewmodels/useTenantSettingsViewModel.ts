@@ -18,6 +18,9 @@ import type {
 } from "@modules/customization/tenant-settings/src/domain/types/SettingsTypes";
 import { useState } from "react";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for use tenant settings view model result.
+ */
 export interface UseTenantSettingsViewModelResult {
   settings: TenantSettingsModel | undefined;
   isLoading: boolean;
@@ -37,6 +40,10 @@ export interface UseTenantSettingsViewModelResult {
   uploadLogo: (file: File) => Promise<string>;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for tenant settings view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useTenantSettingsViewModel(tenantId: string): UseTenantSettingsViewModelResult {
   const { t } = useI18n();
   const { toast } = useToast();

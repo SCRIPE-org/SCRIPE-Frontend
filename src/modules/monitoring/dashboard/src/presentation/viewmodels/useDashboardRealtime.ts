@@ -12,6 +12,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useSignalR } from "@core/hooks/useSignalR";
 import { HUB_EVENTS, HUB_METHODS } from "@core/common/constants/signalr";
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for dashboard realtime.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useDashboardRealtime() {
   const queryClient = useQueryClient();
   const { connection, connectionState } = useSignalR();

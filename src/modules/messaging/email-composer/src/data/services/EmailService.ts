@@ -21,6 +21,10 @@ import type {
   AttachmentUploadResultJson,
 } from "../models/EmailModel";
 
+/**
+ * Http API network service for email.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class EmailService implements IEmailService {
   constructor(private readonly api: IApiService) {}
 

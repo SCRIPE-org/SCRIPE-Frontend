@@ -10,6 +10,10 @@ import type {
 } from "../models/SubscriptionModels";
 import { API_ENDPOINTS } from "@core/config/api-endpoints";
 
+/**
+ * Http API network service for subscription.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class SubscriptionService implements ISubscriptionService {
   constructor(private readonly api: IApiService) {}
 
@@ -152,7 +156,7 @@ export class SubscriptionService implements ISubscriptionService {
     );
   }
 
-  // ── Export (blob download — IApiService only handles JSON) ──
+  // ── Export (blob download) ──
 
   async exportSubscriptions(params: {
     format: string;
@@ -164,8 +168,8 @@ export class SubscriptionService implements ISubscriptionService {
     expiringInDays?: number;
     editionFilter?: string;
   }): Promise<{ blob: Blob; filename: string }> {
-    const token = this.api.getAuthToken();
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+    const ext = params.format === "excel" ? "xlsx" : params.format === "csv" ? "csv" : "pdf";
+    const filename = `subscriptions-export.${ext}`;
 
     const endpointPath = API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.EXPORT(
       params.format,
@@ -178,63 +182,16 @@ export class SubscriptionService implements ISubscriptionService {
       params.editionFilter
     );
 
-    const fullUrl = `${apiUrl}${endpointPath}`;
-
-    const response = await fetch(fullUrl, {
-      method: "GET",
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      throw new Error(errorBody || `Export failed (${response.status})`);
-    }
-
-    const blob = await response.blob();
-    const contentDisposition = response.headers.get("content-disposition");
-    const ext = params.format === "excel" ? "xlsx" : params.format === "csv" ? "csv" : "pdf";
-    let filename = `subscriptions-export.${ext}`;
-
-    if (contentDisposition) {
-      const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
-      if (match?.[1]) filename = match[1].replace(/['"']*/g, "");
-    }
-
+    const blob = await this.api.getBlob(endpointPath);
     return { blob, filename };
   }
 
   // ── Receipt (blob download — backend-generated PDF) ──
 
   async downloadReceipt(tenantId: string): Promise<{ blob: Blob; filename: string }> {
-    const token = this.api.getAuthToken();
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
-
     const endpointPath = API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RECEIPT(tenantId);
-    const fullUrl = `${apiUrl}${endpointPath}`;
-
-    const response = await fetch(fullUrl, {
-      method: "GET",
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      throw new Error(errorBody || `Receipt download failed (${response.status})`);
-    }
-
-    const blob = await response.blob();
-    const contentDisposition = response.headers.get("content-disposition");
-    let filename = `subscription-receipt.pdf`;
-
-    if (contentDisposition) {
-      const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
-      if (match?.[1]) filename = match[1].replace(/['"']*/g, "");
-    }
-
+    const blob = await this.api.getBlob(endpointPath);
+    const filename = `subscription-receipt.pdf`;
     return { blob, filename };
   }
 }

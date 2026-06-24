@@ -9,6 +9,10 @@
 
 // ─── Email Recipient ───────────────────────────────────────────
 
+/**
+ * Domain model representing a Email Recipient Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface EmailRecipientData {
   id: string;
   email: string;
@@ -39,12 +43,27 @@ export class EmailRecipient {
   get displayLabel(): string {
     return this.name ? `${this.name} <${this.email}>` : this.email;
   }
+
+  copyWith(updates: Partial<EmailRecipientData>): EmailRecipient {
+    return new EmailRecipient({
+      ...this.data,
+      ...updates,
+    } as EmailRecipientData);
+  }
 }
 
 // ─── Sent Email ────────────────────────────────────────────────
 
+/**
+ * Domain model representing a Sent Email Status structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type SentEmailStatus = "Sent" | "Failed" | "Pending" | "Cancelled";
 
+/**
+ * Domain model representing a Sent Email Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface SentEmailData {
   id: string;
   to: string;
@@ -181,6 +200,10 @@ export class SentEmail {
 
 // ─── Email Template ────────────────────────────────────────────
 
+/**
+ * Domain model representing a Email Template Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface EmailTemplateData {
   id: string;
   key: string;
@@ -250,6 +273,10 @@ export class EmailTemplate {
 
 // ─── List Response ─────────────────────────────────────────────
 
+/**
+ * Domain model representing a Email Template List Response structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface EmailTemplateListResponse {
   items: EmailTemplate[];
   totalCount: number;

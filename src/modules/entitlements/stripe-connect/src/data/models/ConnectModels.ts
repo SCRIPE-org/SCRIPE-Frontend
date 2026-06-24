@@ -10,6 +10,9 @@ export interface PagedResultModel<T> {
   pageSize: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for connect account response model.
+ */
 export interface ConnectAccountResponseModel {
   id: string;
   tenantId: string;
@@ -32,6 +35,9 @@ export interface ConnectAccountResponseModel {
   effectiveCommissionRate: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for connect account list response model.
+ */
 export interface ConnectAccountListResponseModel {
   id: string;
   tenantId: string;
@@ -46,12 +52,18 @@ export interface ConnectAccountListResponseModel {
   createdAt: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for connect account result model.
+ */
 export interface ConnectAccountResultModel {
   accountId: string;
   onboardingUrl: string;
   status: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for commission response model.
+ */
 export interface CommissionResponseModel {
   id: string;
   tenantId: string;
@@ -69,6 +81,9 @@ export interface CommissionResponseModel {
   createdAt: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for commission dashboard response model.
+ */
 export interface CommissionDashboardResponseModel {
   totalCommission: number;
   totalRefunded: number;
@@ -79,12 +94,18 @@ export interface CommissionDashboardResponseModel {
   recentTrends: CommissionTrendPointModel[];
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for commission trend point model.
+ */
 export interface CommissionTrendPointModel {
   date: string;
   amount: number;
   count: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for top tenant response model.
+ */
 export interface TopTenantResponseModel {
   tenantId: string;
   totalCommission: number;
@@ -100,11 +121,17 @@ export interface EligibleTenantItemModel {
 
 // ── Tenant Self-Service Transaction Models ──
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for tenant transactions response model.
+ */
 export interface TenantTransactionsResponseModel {
   summary: TenantFinancialSummaryModel;
   transactions: PagedResultModel<TenantTransactionItemModel>;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for tenant financial summary model.
+ */
 export interface TenantFinancialSummaryModel {
   totalGrossRevenue: number;
   totalPlatformFees: number;
@@ -115,6 +142,9 @@ export interface TenantFinancialSummaryModel {
   currency: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for tenant transaction item model.
+ */
 export interface TenantTransactionItemModel {
   id: string;
   type: string; // "Payment" | "Refund" | "PartialRefund"

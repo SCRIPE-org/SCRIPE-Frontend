@@ -9,6 +9,10 @@
 
 export const SYSTEM_TENANT_ID = "__SYSTEM__";
 
+/**
+ * Domain model representing a Tenant Props structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface TenantProps {
   id: string;
   name: string;
@@ -30,6 +34,10 @@ export interface TenantProps {
   children?: TenantProps[];
 }
 
+/**
+ * Domain model representing a Tenant Tree Node Props structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface TenantTreeNodeProps {
   id: string; // "System" pseudo-tenant mapped to "__SYSTEM__" via Mapper
   name: string;
@@ -151,6 +159,13 @@ export class Tenant {
   toProps(): TenantProps {
     return { ...this.props };
   }
+
+  copyWith(updates: Partial<TenantProps>): Tenant {
+    return new Tenant({
+      ...this.props,
+      ...updates,
+    } as TenantProps);
+  }
 }
 
 /**
@@ -159,4 +174,8 @@ export class Tenant {
 export type TenantTreeNode = TenantTreeNodeProps;
 
 // Keep backward compatibility alias
+/**
+ * Domain model representing a Tenant Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type TenantData = TenantProps;

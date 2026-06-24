@@ -35,6 +35,9 @@ import { zh as pageRevenueAnalytics } from "../pages/revenue-analytics/zh";
 
 import { mergeAll } from "./utils";
 
+/**
+ * Exported constant defining parameters and fields for all docs zh configurations.
+ */
 export const allDocsZh: Record<string, any> = mergeAll(
   common,
   getStarted,

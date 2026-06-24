@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
@@ -36,6 +37,10 @@ interface SubscriptionsKpiGridProps {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the subscriptions kpi grid.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SubscriptionsKpiGrid({
   kpis,
   statusFilter,

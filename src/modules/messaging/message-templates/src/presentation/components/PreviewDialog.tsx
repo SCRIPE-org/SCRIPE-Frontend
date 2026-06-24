@@ -26,6 +26,10 @@ interface PreviewDialogProps {
   isLoading: boolean;
 }
 
+/**
+ * Presentation UI component rendering the preview dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function PreviewDialog({ open, onOpenChange, result, isLoading }: PreviewDialogProps) {
   const { t } = useI18n();
   const [device, setDevice] = useState<DeviceId>("desktop");

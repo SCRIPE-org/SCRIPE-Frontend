@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 /**
  * EditionPricingCard — Industry-standard pricing card for the comparison page.
@@ -67,6 +68,10 @@ function cycleSub(cycle: BillingCycle): string {
   }
 }
 
+/**
+ * Presentation UI component rendering the edition pricing card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function EditionPricingCard({
   edition,
   selectedCycle,

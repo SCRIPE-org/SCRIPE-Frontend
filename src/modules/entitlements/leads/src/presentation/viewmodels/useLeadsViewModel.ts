@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -30,6 +31,10 @@ const QUERY_KEYS = {
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for leads view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useLeadsViewModel() {
   const { leadsRepository } = entitlementsContainer;
   const queryClient = useQueryClient();

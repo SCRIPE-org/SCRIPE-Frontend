@@ -6,6 +6,10 @@ import { blockColor } from "./block-style-utils";
 
 const LEVEL_CLASS = { h2: "text-3xl", h3: "text-2xl", h4: "text-xl" };
 
+/**
+ * Presentation UI component rendering the heading block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function HeadingBlockView({ block }: { block: HeadingBlock }) {
   const props = block.props;
   const Tag = props.level || "h3";

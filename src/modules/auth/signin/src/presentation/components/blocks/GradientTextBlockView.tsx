@@ -16,6 +16,10 @@ const DIRECTION = {
   diagonal: "135deg",
 };
 
+/**
+ * Presentation UI component rendering the gradient text block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function GradientTextBlockView({ block }: { block: GradientTextBlock }) {
   const props = block.props;
   return (

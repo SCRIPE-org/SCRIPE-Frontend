@@ -18,6 +18,10 @@ const navItems = [
   { href: "/profile/activity", icon: Activity, labelKey: "profile.nav.activity" },
 ];
 
+/**
+ * Presentation UI component rendering the profile nav.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ProfileNav() {
   const pathname = usePathname();
   const { t } = useI18n();

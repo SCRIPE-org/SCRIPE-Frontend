@@ -16,6 +16,10 @@ interface EmptyStateProps {
   t: (key: string) => string;
 }
 
+/**
+ * Presentation UI component rendering the empty state.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function EmptyState({ vm, t }: EmptyStateProps) {
   return (
     <Card className="border-2 border-dashed border-border/60">

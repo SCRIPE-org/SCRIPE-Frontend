@@ -11,6 +11,10 @@ import type { IUsersService } from "../../domain/interfaces/IUsersService";
 import type { UsersListModel, UsersDetailModel } from "../models/UsersModel";
 import type { UpdateUserRequest } from "../../domain/interfaces/IUsersRepository";
 
+/**
+ * Http API network service for users.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class UsersService implements IUsersService {
   constructor(private readonly api: IApiService) {}
 

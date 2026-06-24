@@ -10,6 +10,10 @@ const VARIANT_CLASS = {
   premium: "bg-primary/10 text-primary",
 };
 
+/**
+ * Presentation UI component rendering the badge block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function BadgeBlockView({ block }: { block: BadgeBlock }) {
   const props = block.props;
   return (

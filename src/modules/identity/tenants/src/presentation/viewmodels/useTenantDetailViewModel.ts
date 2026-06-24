@@ -11,6 +11,10 @@ interface UseTenantDetailViewModelProps {
   tenantId: string;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for tenant detail view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useTenantDetailViewModel({ tenantId }: UseTenantDetailViewModelProps) {
   const router = useRouter();
   const { t, direction } = useI18n();

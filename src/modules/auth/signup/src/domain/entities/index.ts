@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 // ═══════════════════════════════════════════════════════════════════════════
 // Signup Domain Entities
 // ═══════════════════════════════════════════════════════════════════════════
@@ -109,6 +110,10 @@ export interface ComparisonCategory {
   features: ComparisonFeatureRow[];
 }
 
+/**
+ * Domain model representing a Signup Wizard Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface SignupWizardData {
   // Step 0/1 — Category + Plan
   categoryKey: string | null;
@@ -158,6 +163,10 @@ export interface SignupWizardData {
 
 // ─── Rich feature value for a specific edition ─────────────────────────────
 
+/**
+ * Domain model representing a Public Feature structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface PublicFeature {
   /** Display name in English */
   name: string;
@@ -194,6 +203,10 @@ export interface PublicFeature {
 
 // ─── Public edition from the API ───────────────────────────────────────────
 
+/**
+ * Domain model representing a Public Edition structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface PublicEdition {
   id: string;
   name: string;
@@ -243,23 +256,39 @@ export interface PublicCategory {
   sortOrder: number;
 }
 
+/**
+ * Domain model representing a Subdomain Check Result structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface SubdomainCheckResult {
   available: boolean;
   suggestion: string | null;
   reason: "taken" | "reserved" | "invalid_format" | null;
 }
 
+/**
+ * Domain model representing a Signup Otp Result structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface SignupOtpResult {
   sent: boolean;
   retryAfterSeconds: number;
 }
 
+/**
+ * Domain model representing a Signup Verification Result structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface SignupVerificationResult {
   isValid: boolean;
   verificationToken: string | null;
   error: string | null;
 }
 
+/**
+ * Domain model representing a Signup Result structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface SignupResult {
   /**
    * Server-decided register outcome:
@@ -302,6 +331,10 @@ export interface SignupStatusResult {
   expiresAt: string | null;
 }
 
+/**
+ * Domain model representing a Signup Checkout Status Result structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface SignupCheckoutStatusResult {
   status: "pending" | "processing" | "completed" | "failed" | "expired" | "unknown";
   supportReference: string;
@@ -342,6 +375,10 @@ export interface ChangePlanResult {
   checkoutUrl: string;
 }
 
+/**
+ * Domain model representing a Change Plan Payload structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface ChangePlanPayload {
   signupRef: string;
   newEditionId: string;

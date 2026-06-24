@@ -8,8 +8,15 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 
+/**
+ * Exported type defining parameters and fields for trend period configurations.
+ */
 export type TrendPeriod = 30 | 90 | 365;
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for commission dashboard view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useCommissionDashboardViewModel() {
   const { connectRepository } = entitlementsContainer;
 

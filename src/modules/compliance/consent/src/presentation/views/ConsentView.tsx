@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import { useState } from "react";
@@ -170,6 +171,10 @@ function WithdrawConfirmDialog({
 
 // ── Main View ─────────────────────────────────────────────────────────────────
 
+/**
+ * Presentation UI component rendering the consent view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ConsentView() {
   useModuleLocales(() => import("../../../locales"), "compliance-consent");
   const { t, direction } = useI18n();

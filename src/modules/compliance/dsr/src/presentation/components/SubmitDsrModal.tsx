@@ -27,6 +27,9 @@ const REGULATION_OPTIONS = [
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for submit dsr form data.
+ */
 export interface SubmitDsrFormData {
   requestType: string;
   regulationCode: string;
@@ -43,6 +46,10 @@ interface SubmitDsrModalProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * Presentation UI component rendering the submit dsr modal.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SubmitDsrModal({
   open,
   onOpenChange,

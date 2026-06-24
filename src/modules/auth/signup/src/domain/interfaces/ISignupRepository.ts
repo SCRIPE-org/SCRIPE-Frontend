@@ -22,6 +22,9 @@ import type {
   WelcomeContent,
 } from "../entities/OnboardingEntities";
 
+/**
+ * Exported type in the auth/signup module.
+ */
 export type { ChangePlanPayload };
 
 /** Register payload — promo codes are entered ONLY on the Stripe page, never here. */
@@ -47,6 +50,9 @@ export interface RegisterPayload {
   primaryPriority?: string | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for contact sales payload.
+ */
 export interface ContactSalesPayload {
   fullName: string;
   email: string;
@@ -61,6 +67,10 @@ export interface ContactSalesPayload {
   primaryPriority?: string | null;
 }
 
+/**
+ * Repository layer implementing client request queries for i signup.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export interface ISignupRepository {
   /** Detect visitor country and return recommended currency + all FX rates. */
   getPricingContext(): Promise<PricingContext>;

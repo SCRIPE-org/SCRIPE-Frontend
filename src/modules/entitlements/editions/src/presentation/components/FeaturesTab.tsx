@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * FeaturesTab — Feature assignment editor for an edition.
  *
@@ -65,6 +66,10 @@ interface FeaturesTabProps {
   collapseAll: () => void;
 }
 
+/**
+ * Presentation UI component rendering the features tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function FeaturesTab({
   edition,
   moduleGroups,
@@ -464,6 +469,10 @@ export function FeaturesTab({
 }
 
 // ── Helpers ──
+/**
+ * Presentation UI component rendering the get feature disabled default.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function getFeatureDisabledDefault(valueType: string): string {
   switch (valueType?.toLowerCase()) {
     case "boolean":

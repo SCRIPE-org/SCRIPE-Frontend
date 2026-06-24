@@ -13,6 +13,10 @@ import type {
   UpdateReportPreferenceRequestModel,
 } from "../../data/models/AnalyticsModels";
 
+/**
+ * Http API network service for i analytics.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface IAnalyticsService {
   getOverview(months?: number): Promise<AnalyticsOverviewModel>;
   getMrrMovement(months?: number): Promise<MrrMovementResponseModel>;

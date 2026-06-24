@@ -4,6 +4,10 @@ import type { CSSProperties } from "react";
 import type { SpacerBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { clamp } from "./block-style-utils";
 
+/**
+ * Presentation UI component rendering the spacer block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function SpacerBlockView({ block }: { block: SpacerBlock }) {
   return (
     <div

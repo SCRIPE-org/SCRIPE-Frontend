@@ -16,8 +16,8 @@ import {
   type UpdateRoleJson,
   type AssignPermissionsJson,
 } from "../models/RoleModel";
-import { PermissionModel } from "@modules/identity/permissions";
-import type { PermissionModuleGroupJson } from "@modules/identity/permissions";
+import { PermissionModel } from "@modules/identity/core";
+import type { PermissionModuleGroupJson } from "@modules/identity/core";
 import type {
   IRoleService,
   RoleListResult,
@@ -25,6 +25,10 @@ import type {
   MyTenantRoleListParams,
 } from "../../domain/interfaces/IRoleService";
 
+/**
+ * Http API network service for role.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class RoleService implements IRoleService {
   constructor(private readonly api: IApiService) {}
 

@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 /**
@@ -59,6 +60,10 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   FileKey2,
 };
 
+/**
+ * Presentation UI component rendering the bundle detail modal.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function BundleDetailModal({
   bundle,
   isOpen,

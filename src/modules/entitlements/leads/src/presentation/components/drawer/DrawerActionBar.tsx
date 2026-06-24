@@ -18,6 +18,10 @@ interface DrawerActionBarProps {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+/**
+ * Presentation UI component rendering the drawer action bar.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function DrawerActionBar({
   lead,
   onConvert,
@@ -38,7 +42,7 @@ export function DrawerActionBar({
             id="drawer-convert-btn"
             size="sm"
             onClick={() => onConvert(lead.id)}
-            className="h-8 flex-1 min-w-[100px] gap-1.5 bg-emerald-700/80 text-xs font-semibold text-emerald-100 hover:bg-emerald-600"
+            className="h-8 min-w-[100px] flex-1 gap-1.5 bg-emerald-700/80 text-xs font-semibold text-emerald-100 hover:bg-emerald-600"
           >
             <ArrowRightCircle className="h-3.5 w-3.5" />
             {t("leads.actions.convert")}
@@ -50,7 +54,7 @@ export function DrawerActionBar({
             size="sm"
             variant="outline"
             onClick={() => onAssign(lead.id)}
-            className="h-8 flex-1 min-w-[80px] gap-1.5 border-indigo-700 text-xs text-indigo-400 hover:bg-indigo-900/20"
+            className="h-8 min-w-[80px] flex-1 gap-1.5 border-indigo-700 text-xs text-indigo-400 hover:bg-indigo-900/20"
           >
             <UserPlus className="h-3.5 w-3.5" />
             {t("leads.actions.assign")}
@@ -62,7 +66,7 @@ export function DrawerActionBar({
             size="sm"
             variant="outline"
             onClick={onSendEmail}
-            className="h-8 flex-1 min-w-[80px] gap-1.5 border-violet-700 text-xs text-violet-400 hover:bg-violet-900/20"
+            className="h-8 min-w-[80px] flex-1 gap-1.5 border-violet-700 text-xs text-violet-400 hover:bg-violet-900/20"
           >
             <Send className="h-3.5 w-3.5" />
             {t("leads.email.send")}
@@ -75,11 +79,13 @@ export function DrawerActionBar({
             variant="outline"
             onClick={onCloseConfirm}
             disabled={isDeletingLead}
-            className="h-8 gap-1.5 border-zinc-700 text-xs text-zinc-500 hover:border-red-900 hover:text-red-400 hover:bg-red-900/10"
+            className="h-8 gap-1.5 border-zinc-700 text-xs text-zinc-500 hover:border-red-900 hover:bg-red-900/10 hover:text-red-400"
           >
-            {isDeletingLead
-              ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              : <XCircle className="h-3.5 w-3.5" />}
+            {isDeletingLead ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <XCircle className="h-3.5 w-3.5" />
+            )}
             {t("leads.actions.close")}
           </Button>
         )}

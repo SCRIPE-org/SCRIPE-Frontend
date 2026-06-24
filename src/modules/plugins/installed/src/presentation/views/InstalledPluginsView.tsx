@@ -8,6 +8,10 @@ import { AlertTriangle, PackageCheck, RefreshCw } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { InstalledPluginRow } from "../components/InstalledPluginRow";
 
+/**
+ * Presentation UI component rendering the installed plugins view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function InstalledPluginsView() {
   const { user } = useAppStore();
   const { t } = useI18n();

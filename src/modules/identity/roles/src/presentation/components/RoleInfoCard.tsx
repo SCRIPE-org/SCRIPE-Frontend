@@ -10,6 +10,9 @@ import { Skeleton } from "@core/ui/skeleton";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { Role } from "../../domain/entities/Role";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for role info card props.
+ */
 export interface RoleInfoCardProps {
   role: Role | undefined;
   isLoading: boolean;
@@ -17,6 +20,10 @@ export interface RoleInfoCardProps {
   totalCount: number;
 }
 
+/**
+ * Presentation UI component rendering the role info card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function RoleInfoCard({ role, isLoading, selectedCount, totalCount }: RoleInfoCardProps) {
   const { t, language } = useI18n();
 

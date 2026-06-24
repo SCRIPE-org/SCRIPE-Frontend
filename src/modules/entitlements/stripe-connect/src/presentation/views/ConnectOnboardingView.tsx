@@ -17,6 +17,10 @@ import { GenericSelect } from "@core/crud/components/generic-select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 
+/**
+ * Presentation UI component rendering the connect onboarding view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ConnectOnboardingView() {
   useModuleLocales(() => import("../../../locales"), "stripe-connect");
   const { t } = useI18n();

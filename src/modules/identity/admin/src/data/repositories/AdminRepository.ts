@@ -23,6 +23,10 @@ import type {
 } from "../../domain/entities/AdminRequests";
 import type { PagedResult } from "@modules/identity/core/domain/types";
 
+/**
+ * Repository layer implementing client request queries for admin.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class AdminRepository implements IAdminRepository {
   constructor(private readonly service: IAdminService) {}
 

@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * ThemeMarketplacePanel — Studio sidebar panel for browsing and applying themes
  *
@@ -52,6 +53,10 @@ interface ThemeMarketplacePanelProps {
   onExitPreview?: () => void;
 }
 
+/**
+ * Presentation UI component rendering the theme marketplace panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ThemeMarketplacePanel({
   onApplySuccess,
   onPreviewTheme,

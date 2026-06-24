@@ -1,4 +1,4 @@
-import type { IAccountSetupRepository } from "../../../../core/domain/interfaces/IAccountSetupRepository";
+import type { IAccountSetupRepository } from "@modules/auth/core/domain/interfaces/IAccountSetupRepository";
 import type {
   ActivateAccountRequest,
   ActivateAccountResponse,
@@ -6,6 +6,11 @@ import type {
   ValidateTokenResponse,
 } from "../../../../core/domain/interfaces/IAccountSetupService";
 
+/**
+ * AccountSetupRepository is the concrete implementation of the IAccountSetupRepository.
+ * Acts as the clean boundary data layer coordinating between presentation ViewModels
+ * and backend public services to process workspace administrator setup.
+ */
 export class AccountSetupRepository implements IAccountSetupRepository {
   constructor(private readonly service: IAccountSetupService) {}
 

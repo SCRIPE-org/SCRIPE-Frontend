@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import { Label } from "@core/ui/label";
@@ -11,6 +12,9 @@ import type {
   UpdateEditionRequest,
 } from "../../../domain/entities/EditionRequests";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for edition option.
+ */
 export interface EditionOption {
   id: string;
   name: string;
@@ -46,6 +50,10 @@ function SectionHeader({
   );
 }
 
+/**
+ * Presentation UI component rendering the wizard step basics.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function WizardStepBasics({
   form,
   onChange,

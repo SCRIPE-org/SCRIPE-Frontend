@@ -26,6 +26,9 @@ export interface InvoiceResponseModel {
   transactions: PaymentTransactionModel[];
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for invoice list response model.
+ */
 export interface InvoiceListResponseModel {
   id: string;
   tenantId: string;
@@ -40,6 +43,9 @@ export interface InvoiceListResponseModel {
   createdAt: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for invoice line item model.
+ */
 export interface InvoiceLineItemModel {
   id: string;
   description: string;
@@ -48,6 +54,9 @@ export interface InvoiceLineItemModel {
   total: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for payment transaction model.
+ */
 export interface PaymentTransactionModel {
   id: string;
   invoiceId: string;
@@ -64,6 +73,9 @@ export interface PaymentTransactionModel {
   createdAt: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for checkout session response model.
+ */
 export interface CheckoutSessionResponseModel {
   sessionId: string;
   url: string;
@@ -71,10 +83,16 @@ export interface CheckoutSessionResponseModel {
   emailSent?: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for billing portal response model.
+ */
 export interface BillingPortalResponseModel {
   url: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for paged result model.
+ */
 export interface PagedResultModel<T> {
   items: T[];
   totalCount: number;
@@ -82,6 +100,9 @@ export interface PagedResultModel<T> {
 
 // ── Dashboard Models ──
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for billing dashboard response model.
+ */
 export interface BillingDashboardResponseModel {
   mrr: number;
   arr: number;
@@ -95,12 +116,18 @@ export interface BillingDashboardResponseModel {
   currency: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for monthly revenue point model.
+ */
 export interface MonthlyRevenuePointModel {
   month: string;
   revenue: number;
   newSubscriptions: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for edition breakdown item model.
+ */
 export interface EditionBreakdownItemModel {
   editionId: string;
   editionName: string;
@@ -110,11 +137,17 @@ export interface EditionBreakdownItemModel {
 
 // ── Payment Link Models ──
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for payment link response model.
+ */
 export interface PaymentLinkResponseModel {
   url: string;
   linkId: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for create payment link request model.
+ */
 export interface CreatePaymentLinkRequestModel {
   editionId: string;
   subscriptionType: string;

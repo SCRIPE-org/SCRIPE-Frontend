@@ -3,6 +3,9 @@
 import { Check } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for wizard step config.
+ */
 export interface WizardStepConfig {
   id: string;
   label: string;
@@ -14,6 +17,10 @@ interface WizardStepIndicatorProps {
   currentStep: number;
 }
 
+/**
+ * Presentation UI component rendering the wizard step indicator.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function WizardStepIndicator({ steps, currentStep }: WizardStepIndicatorProps) {
   return (
     <div className="flex w-full items-center px-2 pb-10 pt-2 sm:px-6">

@@ -1,5 +1,13 @@
+/**
+ * Domain model representing a Payout Status structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type PayoutStatus = "Pending" | "Processing" | "Paid" | "Failed";
 
+/**
+ * Domain model representing a App Purchase Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface AppPurchaseData {
   id: string;
   appListingId: string;
@@ -12,6 +20,10 @@ export interface AppPurchaseData {
   purchasedAt: string;
 }
 
+/**
+ * Domain model representing a App Purchase structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class AppPurchase {
   constructor(private readonly data: AppPurchaseData) {}
   get id() {
@@ -48,8 +60,19 @@ export class AppPurchase {
       currency: this.data.currency || "USD",
     }).format(this.data.amount);
   }
+
+  copyWith(updates: Partial<AppPurchaseData>): AppPurchase {
+    return new AppPurchase({
+      ...this.data,
+      ...updates,
+    } as AppPurchaseData);
+  }
 }
 
+/**
+ * Domain model representing a Developer Payout Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface DeveloperPayoutData {
   id: string;
   developerProfileId: string;
@@ -63,6 +86,10 @@ export interface DeveloperPayoutData {
   createdAt: string;
 }
 
+/**
+ * Domain model representing a Developer Payout structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class DeveloperPayout {
   constructor(private readonly data: DeveloperPayoutData) {}
   get id() {

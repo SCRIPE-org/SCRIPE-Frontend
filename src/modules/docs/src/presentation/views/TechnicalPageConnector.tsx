@@ -2,9 +2,6 @@
 
 import { TechnicalDocsView } from "./TechnicalDocsView";
 
-// Content registration — ensures all pages are available
-import "../../data/content/registry";
-
 interface TechnicalPageConnectorProps {
   slug: string;
 }

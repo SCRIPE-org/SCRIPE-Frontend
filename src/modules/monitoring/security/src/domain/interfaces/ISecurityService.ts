@@ -10,6 +10,10 @@ import type {
   SecurityChange,
 } from "../entities/SecurityEntities";
 
+/**
+ * Http API network service for i security.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface ISecurityService {
   getSecurityEvents(days?: number): Promise<SecurityEvent[]>;
   getTopBlockedIPs(days?: number, limit?: number): Promise<BlockedIP[]>;

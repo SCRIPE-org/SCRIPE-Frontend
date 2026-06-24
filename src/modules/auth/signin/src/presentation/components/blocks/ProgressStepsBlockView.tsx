@@ -3,6 +3,10 @@
 import type { ProgressStepsBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { safeItems } from "./block-style-utils";
 
+/**
+ * Presentation UI component rendering the progress steps block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ProgressStepsBlockView({ block }: { block: ProgressStepsBlock }) {
   const props = block.props;
   const active = props.activeStep ?? 0;

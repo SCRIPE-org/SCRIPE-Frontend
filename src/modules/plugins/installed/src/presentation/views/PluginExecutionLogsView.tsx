@@ -5,27 +5,18 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Skeleton } from "@core/ui/skeleton";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { useAppStore } from "@core/store/useAppStore";
-import { pluginsContainer } from "@modules/plugins/di";
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { usePluginExecutionLogsViewModel } from "../viewmodels/usePluginExecutionLogsViewModel";
 
 /**
- * Global Execution Logs index — lists all active installations and links
- * to their per-installation log pages (/plugins/[installationId]/logs).
- * Full tenant-wide log aggregation is Phase 18 (BI Analytics).
+ * PluginExecutionLogsView Component
+ *
+ * Renders list of installed plugins for log navigation.
+ * Adheres to MVVM by consuming the usePluginExecutionLogsViewModel hook.
  */
 export function PluginExecutionLogsView() {
   const { t } = useI18n();
-  const { user } = useAppStore();
-  const tenantId = user?.tenantId ?? "";
-
-  const { data: installations, isLoading } = useQuery({
-    queryKey: ["installed-plugins-for-logs", tenantId],
-    queryFn: () => pluginsContainer.installedRepository.getInstalled(tenantId),
-    enabled: !!tenantId,
-    staleTime: 60_000,
-  });
+  const { installations, isLoading } = usePluginExecutionLogsViewModel();
 
   if (isLoading) {
     return (

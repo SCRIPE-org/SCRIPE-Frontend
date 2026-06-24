@@ -24,6 +24,10 @@ interface AddMembersDialogProps {
   tenantId?: string;
 }
 
+/**
+ * Presentation UI component rendering the add members dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function AddMembersDialog({
   open,
   onOpenChange,
@@ -33,7 +37,11 @@ export function AddMembersDialog({
   isSubmitting,
   tenantId,
 }: AddMembersDialogProps) {
-  const { t, language, adminsData, isLoading } = useAddMembersViewModel({ groupId, tenantId, open });
+  const { t, language, adminsData, isLoading } = useAddMembersViewModel({
+    groupId,
+    tenantId,
+    open,
+  });
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   // Filter out existing members

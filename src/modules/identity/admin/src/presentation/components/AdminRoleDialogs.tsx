@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Admin Role Dialogs
  *
@@ -32,6 +33,10 @@ interface AssignRoleDialogProps {
   tenantId?: string; // Restored prop for explicit scoping
 }
 
+/**
+ * Presentation UI component rendering the assign role dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function AssignRoleDialog({
   open,
   onOpenChange,
@@ -142,6 +147,10 @@ interface ViewRolesDialogProps {
   isRemoving: boolean;
 }
 
+/**
+ * Presentation UI component rendering the view roles dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function ViewRolesDialog({
   open,
   onOpenChange,
@@ -253,6 +262,10 @@ interface ResetPasswordDialogProps {
   defaultPassword?: string;
 }
 
+/**
+ * Presentation UI component rendering the reset password dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function ResetPasswordDialog({
   open,
   onOpenChange,

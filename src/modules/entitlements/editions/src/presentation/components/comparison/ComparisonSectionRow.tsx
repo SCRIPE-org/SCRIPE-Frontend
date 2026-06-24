@@ -10,6 +10,10 @@ interface ComparisonSectionRowProps {
   colSpan: number;
 }
 
+/**
+ * Presentation UI component rendering the comparison section row.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ComparisonSectionRow({ label, colSpan }: ComparisonSectionRowProps) {
   return (
     <TableRow>

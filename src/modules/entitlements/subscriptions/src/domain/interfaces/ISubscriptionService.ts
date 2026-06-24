@@ -10,6 +10,10 @@ import type {
   GlobalSubscriptionModel,
 } from "../../data/models/SubscriptionModels";
 
+/**
+ * Http API network service for i subscription.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface ISubscriptionService {
   // ── Queries ──
   getAll(): Promise<GlobalSubscriptionModel[]>;

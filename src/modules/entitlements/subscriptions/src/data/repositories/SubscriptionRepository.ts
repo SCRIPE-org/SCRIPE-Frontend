@@ -15,6 +15,10 @@ import type { ExportParams, ExportFileResult } from "../../domain/entities/Subsc
 import type { ISubscriptionService } from "../../domain/interfaces/ISubscriptionService";
 import { SubscriptionMapper } from "../mappers/SubscriptionMapper";
 
+/**
+ * Repository layer implementing client request queries for subscription.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class SubscriptionRepository implements ISubscriptionRepository {
   constructor(private readonly service: ISubscriptionService) {}
 

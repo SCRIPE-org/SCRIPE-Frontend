@@ -4,8 +4,15 @@ import { useCallback, useState } from "react";
 import { getAuthContainer } from "@modules/auth/di";
 import type { WorkspaceInfo } from "@modules/auth/core/domain/entities/WorkspaceInfo";
 
+/**
+ * Exported type in the auth/signin module.
+ */
 export type { WorkspaceInfo };
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for workspace discovery.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
+ */
 export function useWorkspaceDiscovery() {
   const [workspaces, setWorkspaces] = useState<WorkspaceInfo[]>([]);
   const [hasPlatformAccess, setHasPlatformAccess] = useState(false);

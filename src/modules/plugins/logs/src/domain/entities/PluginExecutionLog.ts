@@ -1,5 +1,9 @@
 import type { PluginExecutionLogModel } from "../../data/models/LogsModels";
 
+/**
+ * Domain model representing a Plugin Execution Log structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class PluginExecutionLog {
   constructor(private readonly data: PluginExecutionLogModel) {}
 
@@ -33,5 +37,12 @@ export class PluginExecutionLog {
 
   toModel() {
     return this.data;
+  }
+
+  copyWith(updates: Partial<PluginExecutionLogModel>): PluginExecutionLog {
+    return new PluginExecutionLog({
+      ...this.data,
+      ...updates,
+    } as PluginExecutionLogModel);
   }
 }

@@ -20,11 +20,17 @@ export interface AnalyticsSummaryDto {
   trialSubscriptions: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for distribution data dto.
+ */
 export interface DistributionDataDto {
   eventType: string;
   count: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for comparison data point dto.
+ */
 export interface ComparisonDataPointDto {
   date: string;
   successCount: number;

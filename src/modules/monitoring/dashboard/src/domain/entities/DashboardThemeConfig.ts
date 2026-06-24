@@ -7,35 +7,57 @@
  */
 
 import { type DashboardBuilderCanvas, DEFAULT_BUILDER_CANVAS } from "./DashboardWidget";
-
 // ── Greeting ──
+/**
+ * Domain model representing a Dashboard Greeting structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface DashboardGreeting {
   enabled: boolean;
   text?: string; // e.g. "Welcome back, {name}"
   subtitle?: string; // e.g. "Here's what's happening today"
 }
-
 // ── KPI Card Styles ──
+/**
+ * Domain model representing a Card Radius structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type CardRadius = "none" | "sm" | "md" | "lg" | "xl" | "2xl";
+/**
+ * Domain model representing a Shadow Level structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type ShadowLevel = "none" | "sm" | "md" | "lg";
-
+/**
+ * Domain model representing a Dashboard K P I Config structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface DashboardKPIConfig {
   borderRadius: CardRadius;
   showBorder: boolean;
   shadowLevel: ShadowLevel;
   accentColors: Record<string, string>; // kpiKey → hex color
 }
-
 // ── Chart Styles ──
+/**
+ * Domain model representing a Chart Style structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type ChartStyle = "gradient" | "solid" | "outline";
-
+/**
+ * Domain model representing a Dashboard Chart Config structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface DashboardChartConfig {
   colorPalette: string[]; // 6-8 hex colors
   style: ChartStyle;
   showGrid: boolean;
 }
-
 // ── Section Visibility ──
+/**
+ * Domain model representing a Dashboard Sections structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface DashboardSections {
   loginActivity: boolean;
   eventDistribution: boolean;
@@ -43,47 +65,58 @@ export interface DashboardSections {
   securityEvents: boolean;
   blockedIPs: boolean;
 }
-
 // ── Layout ──
+/**
+ * Domain model representing a Layout Density structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type LayoutDensity = "compact" | "default" | "comfortable";
-
+/**
+ * Domain model representing a Dashboard Layout structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface DashboardLayout {
   density: LayoutDensity;
   columnsPerRow: 3 | 4 | 5;
 }
-
 // ═══════════════════════════════════════════════
 // Full Config
 // ═══════════════════════════════════════════════
-
+/**
+ * Domain model representing a Dashboard Theme Config structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface DashboardThemeConfig {
   // Existing prefs (backward-compat)
   theme?: string;
   sidebarCollapsed?: boolean;
   language?: string;
-
   // M9: Visual tokens
   greeting: DashboardGreeting;
   kpiCards: DashboardKPIConfig;
   charts: DashboardChartConfig;
   sections: DashboardSections;
   layout: DashboardLayout;
-
   // M11: Builder canvas
   builderCanvas: DashboardBuilderCanvas;
 }
-
 // ═══════════════════════════════════════════════
 // Palettes (prebuilt chart color sets)
 // ═══════════════════════════════════════════════
-
+/**
+ * Domain model representing a Dashboard Palette structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface DashboardPalette {
   id: string;
   nameKey: string; // i18n key
   colors: string[];
   accent: string; // Primary accent for KPI icons
 }
-
+/**
+ * Domain model representing a D A S H B O A R D_ P A L E T T E S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const DASHBOARD_PALETTES: DashboardPalette[] = [
   {
     id: "default",
@@ -161,11 +194,13 @@ export const DASHBOARD_PALETTES: DashboardPalette[] = [
     accent: "#475569",
   },
 ];
-
 // ═══════════════════════════════════════════════
 // Defaults
 // ═══════════════════════════════════════════════
-
+/**
+ * Domain model representing a D E F A U L T_ D A S H B O A R D_ T H E M E structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const DEFAULT_DASHBOARD_THEME: DashboardThemeConfig = {
   greeting: {
     enabled: true,
@@ -196,11 +231,13 @@ export const DEFAULT_DASHBOARD_THEME: DashboardThemeConfig = {
   },
   builderCanvas: { ...DEFAULT_BUILDER_CANVAS },
 };
-
 // ═══════════════════════════════════════════════
 // Parser (JSON → typed config)
 // ═══════════════════════════════════════════════
-
+/**
+ * Domain model representing a parse Dashboard Theme Json structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export function parseDashboardThemeJson(json: string | null | undefined): DashboardThemeConfig {
   if (!json) return { ...DEFAULT_DASHBOARD_THEME };
   try {

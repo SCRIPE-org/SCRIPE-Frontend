@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 /**
  * ReportsTab — Premium scheduled report preferences + on-demand report generation.
@@ -27,6 +28,10 @@ interface ReportsTabProps {
   isGenerating?: boolean;
 }
 
+/**
+ * Presentation UI component rendering the reports tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function ReportsTab({
   preference,
   onSave,

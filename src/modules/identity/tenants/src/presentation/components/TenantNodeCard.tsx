@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * TenantNodeCard Component
  *
@@ -129,6 +130,10 @@ const statusConfig: Record<
 // Component
 // ============================================
 
+/**
+ * Presentation UI component rendering the tenant node card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function TenantNodeCard({
   node,
   level,

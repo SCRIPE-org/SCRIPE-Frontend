@@ -16,6 +16,9 @@ import {
 } from "../../domain/entities/Email";
 import type { EmailRecipientJson, SentEmailJson, EmailTemplateJson } from "../models/EmailModel";
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class EmailMapper {
   /**
    * Convert EmailRecipientJson → EmailRecipient Entity

@@ -24,6 +24,10 @@ interface DsrTypeCellProps {
   label: string;
 }
 
+/**
+ * Presentation UI component rendering the dsr type cell.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DsrTypeCell({ requestType, label }: DsrTypeCellProps) {
   return (
     <span

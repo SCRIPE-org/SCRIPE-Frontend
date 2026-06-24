@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 
 import { useState } from "react";
@@ -278,6 +279,10 @@ function ReportCard({ report }: { report: ComplianceReport }) {
 
 // ── Main View ─────────────────────────────────────────────────────────────────
 
+/**
+ * Presentation UI component rendering the reports view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function ReportsView() {
   useModuleLocales(() => import("../../../locales"), "compliance-reports");
   const { t, direction } = useI18n();

@@ -7,6 +7,9 @@
 
 // ===== Response DTOs =====
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for admin profile dto.
+ */
 export interface AdminProfileDto {
   id: string;
   username: string;
@@ -25,6 +28,9 @@ export interface AdminProfileDto {
   passwordLastChanged: string | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for active session dto.
+ */
 export interface ActiveSessionDto {
   tokenId: string;
   deviceInfo: string;
@@ -34,6 +40,9 @@ export interface ActiveSessionDto {
   isCurrent: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for security log entry dto.
+ */
 export interface SecurityLogEntryDto {
   id: string;
   eventType: string;
@@ -44,6 +53,9 @@ export interface SecurityLogEntryDto {
   details: string | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for external login dto.
+ */
 export interface ExternalLoginDto {
   id: string;
   providerName: string;
@@ -56,38 +68,59 @@ export interface ExternalLoginDto {
 
 // ===== Request DTOs =====
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for update profile dto.
+ */
 export interface UpdateProfileDto {
   firstName: string;
   lastName: string;
   phoneNumber: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for change password dto.
+ */
 export interface ChangePasswordDto {
   currentPassword: string;
   newPassword: string;
   twoFactorCode?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for regenerate backup codes dto.
+ */
 export interface RegenerateBackupCodesDto {
   twoFactorCode: string;
 }
 
 // ===== 2FA Setup DTOs =====
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for enable2 f a result dto.
+ */
 export interface Enable2FAResultDto {
   qrCodeDataUri: string;
   manualEntryKey: string;
   backupCodes: string[];
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for confirm2 f a dto.
+ */
 export interface Confirm2FADto {
   code: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for disable2 f a dto.
+ */
 export interface Disable2FADto {
   password: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for link external login dto.
+ */
 export interface LinkExternalLoginDto {
   identityProviderId: string;
   providerName: string;

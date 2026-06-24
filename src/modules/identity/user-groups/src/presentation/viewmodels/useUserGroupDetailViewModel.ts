@@ -11,6 +11,10 @@ import { identityContainer } from "@modules/identity/di";
 import { userGroupKeys } from "./useUserGroupsViewModel";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for user group detail view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useUserGroupDetailViewModel(groupId: string) {
   const repo = identityContainer.userGroupRepository;
   const queryClient = useQueryClient();

@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for preview overrides.
+ */
 export interface PreviewOverrides {
   loginBrandingJson?: string;
   slotConfigJson?: string;

@@ -11,6 +11,9 @@ import { Paintbrush, RotateCcw } from "lucide-react";
 import { ColorPickerField } from "@core/ui/rich-text-editor/ColorPickerField";
 
 // ─── Types ──────────────────────────────────────────────────
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for design variables.
+ */
 export interface DesignVariables {
   primaryColor: string;
   secondaryColor: string;
@@ -24,12 +27,18 @@ export interface DesignVariables {
   footerText: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for design variables panel props.
+ */
 export interface DesignVariablesPanelProps {
   value: DesignVariables;
   onChange: (v: DesignVariables) => void;
 }
 
 // ─── Defaults ───────────────────────────────────────────────
+/**
+ * Exported constant defining parameters and fields for d e f a u l t_ d e s i g n configurations.
+ */
 export const DEFAULT_DESIGN: DesignVariables = {
   primaryColor: "#3b82f6",
   secondaryColor: "#6366f1",
@@ -63,6 +72,10 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 }
 
 // ─── Main ───────────────────────────────────────────────────
+/**
+ * Presentation UI component rendering the design variables panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelProps) {
   const { t } = useI18n();
 

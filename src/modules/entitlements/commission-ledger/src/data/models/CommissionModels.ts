@@ -1,8 +1,14 @@
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for paged result model.
+ */
 export interface PagedResultModel<T> {
   items: T[];
   totalCount: number;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for commission ledger entry model.
+ */
 export interface CommissionLedgerEntryModel {
   id: string;
   tenantId: string;
@@ -24,6 +30,9 @@ export interface CommissionLedgerEntryModel {
   updatedAt: string | null;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for commission invoice model.
+ */
 export interface CommissionInvoiceModel {
   id: string;
   tenantId: string;

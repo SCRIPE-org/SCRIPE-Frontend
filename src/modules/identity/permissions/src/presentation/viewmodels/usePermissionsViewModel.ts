@@ -21,6 +21,10 @@ import type {
 } from "../../domain/entities/PermissionRequests";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for permissions view model.
+ * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
+ */
 export function usePermissionsViewModel() {
   const queryClient = useQueryClient();
   const { success, error: toastError } = useEnhancedToast();

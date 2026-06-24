@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 /**
@@ -20,6 +21,10 @@ import { useThemeBundleViewModel } from "../viewmodels/useThemeBundleViewModel";
 
 const B = "studio.bundles";
 
+/**
+ * Presentation UI component rendering the bundle gallery tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function BundleGalleryTab() {
   const { t } = useI18n();
   const vm = useThemeBundleViewModel();

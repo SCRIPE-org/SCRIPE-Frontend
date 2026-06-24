@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * Tenant Header Component — Redesigned
  *
@@ -74,6 +75,10 @@ interface TenantHeaderProps {
   onEnter?: () => void;
 }
 
+/**
+ * Presentation UI component rendering the tenant header.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
   const {
     t,
@@ -113,13 +118,14 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
       inactive: t("tenant.inactive") || "Inactive",
     };
 
-    const variants: Record<LocalTenantStatus, "success" | "destructive" | "outline" | "secondary"> = {
-      active: "success",
-      suspended: "outline",
-      canceled: "destructive",
-      expired: "destructive",
-      inactive: "secondary",
-    };
+    const variants: Record<LocalTenantStatus, "success" | "destructive" | "outline" | "secondary"> =
+      {
+        active: "success",
+        suspended: "outline",
+        canceled: "destructive",
+        expired: "destructive",
+        inactive: "secondary",
+      };
 
     const icons: Record<LocalTenantStatus, typeof Pause | null> = {
       active: null,
@@ -309,11 +315,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                 </Button>
               )}
               {canUpdate && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleEditOpenChange(true)}
-                >
+                <Button variant="outline" size="sm" onClick={() => handleEditOpenChange(true)}>
                   <Pencil className="me-1.5 h-4 w-4" />
                   {t("common.edit")}
                 </Button>

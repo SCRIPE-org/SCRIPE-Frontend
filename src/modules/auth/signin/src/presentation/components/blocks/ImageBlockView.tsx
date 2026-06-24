@@ -7,6 +7,10 @@ import {
 } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { ASPECT_MAP, HOVER_MAP, SHADOW_MAP } from "./block-constants";
 
+/**
+ * Presentation UI component rendering the image block view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function ImageBlockView({ block }: { block: ImageBlock }) {
   const props = block.props;
   const image = (

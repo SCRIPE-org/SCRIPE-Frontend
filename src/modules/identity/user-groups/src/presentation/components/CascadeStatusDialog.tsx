@@ -19,6 +19,10 @@ interface CascadeStatusDialogProps {
   itemName?: string;
 }
 
+/**
+ * Presentation UI component rendering the cascade status dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function CascadeStatusDialog({
   open,
   onOpenChange,

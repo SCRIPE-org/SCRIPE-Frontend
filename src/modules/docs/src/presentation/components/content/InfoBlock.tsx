@@ -72,6 +72,10 @@ const variantIcons: Record<string, React.ReactNode> = {
   ),
 };
 
+/**
+ * Presentation UI component rendering the info block.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function InfoBlock({ variant, contentKey, titleKey }: InfoBlockProps) {
   const { t } = useDocsI18n();
 

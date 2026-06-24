@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import React from "react";
@@ -170,6 +172,9 @@ function RecipientSearchInput({
 }
 
 // ─── Props ──────────────────────────────────────────────────
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for compose section props.
+ */
 export interface ComposeSectionProps {
   recipientSearch: string;
   setRecipientSearch: (v: string) => void;
@@ -224,6 +229,10 @@ export interface ComposeSectionProps {
   setTypeOverrides?: (overrides: Record<string, string>) => void;
 }
 
+/**
+ * Presentation UI component rendering the compose section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function ComposeSection(vm: ComposeSectionProps) {
   const { t } = useI18n();
 

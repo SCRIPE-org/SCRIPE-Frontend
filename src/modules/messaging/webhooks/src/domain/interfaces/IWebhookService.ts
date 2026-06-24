@@ -49,6 +49,10 @@ export interface ServiceDeadLetterParams {
   pageSize: number;
 }
 
+/**
+ * Http API network service for i webhook.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface IWebhookService {
   // ─── CRUD ─────────────────────────────────────────
   getAll(params: ServiceWebhookListParams): Promise<WebhookListResponseJson>;

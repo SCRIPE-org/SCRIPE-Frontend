@@ -16,8 +16,16 @@ export type TemplateCategory =
   | "billing"
   | "custom";
 
+/**
+ * Domain model representing a Placeholder Type structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type PlaceholderType = "text" | "number" | "date" | "boolean" | "list" | "object";
 
+/**
+ * Domain model representing a Placeholder Definition structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface PlaceholderDefinition {
   key: string;
   type: PlaceholderType;
@@ -25,10 +33,18 @@ export interface PlaceholderDefinition {
   sample: string;
 }
 
+/**
+ * Domain model representing a Message Channel structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type MessageChannel = "Email" | "SMS" | "Push";
 
 // ─── Entity Data ────────────────────────────────────────────────
 
+/**
+ * Domain model representing a Message Template Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface MessageTemplateData {
   id: string;
   key: string;
@@ -131,10 +147,21 @@ export class MessageTemplate {
   get displayName(): string {
     return `${this.key} (${this.language})`;
   }
+
+  copyWith(updates: Partial<MessageTemplateData>): MessageTemplate {
+    return new MessageTemplate({
+      ...this.data,
+      ...updates,
+    } as MessageTemplateData);
+  }
 }
 
 // ─── Exported Template (for import/export) ─────────────────────
 
+/**
+ * Domain model representing a Exported Template structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface ExportedTemplate {
   key: string;
   channel: string;

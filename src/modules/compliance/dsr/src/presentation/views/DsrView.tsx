@@ -9,6 +9,10 @@ import { SubmitDsrModal } from "../components/SubmitDsrModal";
 import { ReviewDsrModal } from "../components/ReviewDsrModal";
 import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
 
+/**
+ * Presentation UI component rendering the dsr view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DsrView() {
   useModuleLocales(() => import("../../../locales"), "compliance-dsr");
 

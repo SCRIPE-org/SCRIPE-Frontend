@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * sso-callback-handlers.ts — Pure async SSO callback processors.
  *
@@ -17,6 +18,9 @@ import type { SsoCallbackError, SsoCallbackState } from "./useSsoCallbackHandler
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for sso callback deps.
+ */
 export interface SsoCallbackDeps {
   authRepository: IAuthRepository;
   ssoRepository: ISsoRepository;
@@ -37,6 +41,9 @@ export interface SsoCallbackDeps {
   t: (key: string) => string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for sso callback setters.
+ */
 export interface SsoCallbackSetters {
   setState: (s: SsoCallbackState) => void;
   setErrorInfo: (e: SsoCallbackError | null) => void;
@@ -44,6 +51,9 @@ export interface SsoCallbackSetters {
   setWorkspaceSelectionData?: (data: { workspaces: any[]; token: string; email?: string }) => void;
 }
 
+/**
+ * Exported type defining parameters and fields for sso search params configurations.
+ */
 export type SsoSearchParams = {
   get: (key: string) => string | null;
 };
@@ -58,6 +68,9 @@ interface LinkExternalLoginParams {
 
 // ── Shared helpers ─────────────────────────────────────────────────────────
 
+/**
+ * Exported function defining parameters and fields for is no linked account error configurations.
+ */
 export function isNoLinkedAccountError(error: unknown): boolean {
   const details = (error as { details?: { error?: string } })?.details;
   return (
@@ -66,6 +79,9 @@ export function isNoLinkedAccountError(error: unknown): boolean {
   );
 }
 
+/**
+ * Exported function defining parameters and fields for complete admin login configurations.
+ */
 export async function completeAdminLogin(
   accessToken: string,
   subscription: { status?: string | null; gracePhase?: string | null; editionName?: string | null },
@@ -131,6 +147,9 @@ async function tryLinkExternalLogin(
 
 // ── OIDC Callback Handler ─────────────────────────────────────────────────
 
+/**
+ * Exported function defining parameters and fields for handle oidc callback configurations.
+ */
 export async function handleOidcCallback(
   searchParams: SsoSearchParams,
   deps: SsoCallbackDeps,
@@ -223,6 +242,9 @@ export async function handleOidcCallback(
 
 // ── SAML Callback Handler ─────────────────────────────────────────────────
 
+/**
+ * Exported function defining parameters and fields for handle saml callback configurations.
+ */
 export async function handleSamlCallback(
   searchParams: SsoSearchParams,
   deps: SsoCallbackDeps,

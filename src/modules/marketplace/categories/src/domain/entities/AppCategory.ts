@@ -1,3 +1,7 @@
+/**
+ * Domain model representing a App Category Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface AppCategoryData {
   id: string;
   name: string;
@@ -12,6 +16,10 @@ export interface AppCategoryData {
   createdAt: string;
 }
 
+/**
+ * Domain model representing a App Category structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class AppCategory {
   constructor(private readonly data: AppCategoryData) {}
   get id() {

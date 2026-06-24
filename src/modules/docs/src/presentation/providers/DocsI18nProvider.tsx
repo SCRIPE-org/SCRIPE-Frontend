@@ -27,10 +27,22 @@ import {
 } from "../../locales/docs-registry";
 
 // ─── Types ─────────────────────────────────────────────────────
+/**
+ * Exported type defining parameters and fields for doc language configurations.
+ */
 export type DocLanguage = "en" | "ar" | "fr" | "ru" | "zh" | "es" | "de";
+/**
+ * Exported type defining parameters and fields for doc direction configurations.
+ */
 export type DocDirection = "ltr" | "rtl";
+/**
+ * Exported type defining parameters and fields for doc scope configurations.
+ */
 export type DocScope = "technical" | "commercial";
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for doc language info.
+ */
 export interface DocLanguageInfo {
   code: DocLanguage;
   label: string;
@@ -38,6 +50,9 @@ export interface DocLanguageInfo {
   direction: DocDirection;
 }
 
+/**
+ * Exported constant defining parameters and fields for d o c_ l a n g u a g e s configurations.
+ */
 export const DOC_LANGUAGES: DocLanguageInfo[] = [
   { code: "en", label: "English", nativeLabel: "English", direction: "ltr" },
   { code: "ar", label: "Arabic", nativeLabel: "العربية", direction: "rtl" },
@@ -76,6 +91,10 @@ interface DocsI18nContextType {
 const DocsI18nContext = createContext<DocsI18nContextType | undefined>(undefined);
 
 // ─── Provider ──────────────────────────────────────────────────
+/**
+ * Presentation UI component rendering the docs i18n provider.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function DocsI18nProvider({
   children,
   scope = "technical",
@@ -178,6 +197,10 @@ export function DocsI18nProvider({
 }
 
 // ─── Hook ──────────────────────────────────────────────────────
+/**
+ * React hook/ViewModel orchestrating state and data flows for docs i18n.
+ * Handles active states updates, form fields validations, and browser navigation controllers.
+ */
 export function useDocsI18n(): DocsI18nContextType {
   const context = useContext(DocsI18nContext);
   if (context === undefined) {

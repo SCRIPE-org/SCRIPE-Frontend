@@ -11,6 +11,9 @@ import { useState } from "react";
 import { container } from "@modules/profile/di";
 import type { UpdateProfileRequest } from "../../domain/interfaces/IProfileRepository";
 
+/**
+ * Exported constant defining parameters and fields for profile keys configurations.
+ */
 export const profileKeys = {
   all: ["profile"] as const,
   me: () => [...profileKeys.all, "me"] as const,
@@ -18,6 +21,10 @@ export const profileKeys = {
   securityLog: (page: number) => [...profileKeys.all, "security-log", page] as const,
 };
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for profile page view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useProfilePageViewModel() {
   const repo = container.profileRepository;
   const queryClient = useQueryClient();

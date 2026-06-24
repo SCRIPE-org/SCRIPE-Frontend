@@ -48,6 +48,10 @@ function toWelcomeForm(welcome: WelcomeContent | null): FormValues {
   };
 }
 
+/**
+ * Presentation UI component rendering the welcome content form.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContentFormProps) {
   const { t } = useI18n();
 

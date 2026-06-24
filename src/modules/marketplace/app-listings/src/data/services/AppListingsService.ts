@@ -19,6 +19,10 @@ import type {
 } from "../../domain/interfaces/IAppListingsService";
 import type { AppListingDto, AppListingListDto } from "../models/AppListingModel";
 
+/**
+ * Http API network service for app listings.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class AppListingsService implements IAppListingsService {
   constructor(private readonly api: IApiService) {}
 

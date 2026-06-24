@@ -91,6 +91,9 @@ export { es as customizationEs } from "./customization/es";
 export { de as customizationDe } from "./customization/de";
 
 // Lazy loader map for dynamic imports
+/**
+ * Exported constant defining parameters and fields for page loaders configurations.
+ */
 export const pageLoaders: Record<string, () => Promise<any>> = {
   "why-uis": () => import("./why-uis/en"),
   platform: () => import("./platform/en"),

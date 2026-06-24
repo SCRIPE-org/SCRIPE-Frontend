@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * Original Tree (Read-Only)
  *

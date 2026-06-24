@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
@@ -107,6 +108,9 @@ const BASE_URL = __ENV.BASE_URL || 'http://localhost:5001';
 const ADMIN_EMAIL = __ENV.ADMIN_EMAIL || 'superadmin@scripe.com';
 const ADMIN_PASSWORD = __ENV.ADMIN_PASSWORD || 'Admin@123';
 
+/**
+ * Exported constant defining parameters and fields for options configurations.
+ */
 export const options = {
   stages: [
     { duration: '2m', target: 50 },   // Ramp up to 50 concurrent users
@@ -122,6 +126,9 @@ export const options = {
 };
 
 // Test Flow: Login → Protected Endpoint → Health Check
+/**
+ * Exported function in the docs module.
+ */
 export default function () {
   group('1. Login', () => { /* POST /api/auth/login */ });
   group('2. Access Protected Endpoint', () => { /* GET /api/admins/current */ });

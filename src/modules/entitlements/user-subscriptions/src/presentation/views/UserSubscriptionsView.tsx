@@ -22,6 +22,10 @@ import { format } from "date-fns";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { SubscriptionDetailModal } from "../components/SubscriptionDetailModal";
 
+/**
+ * Presentation UI component rendering the user subscriptions view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function UserSubscriptionsView() {
   useModuleLocales(() => import("../../../locales"), "user-subscriptions");
   const { t } = useI18n();

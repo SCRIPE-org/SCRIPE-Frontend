@@ -69,6 +69,9 @@ const UserSubscriptionListModelSchema = z.object({
   createdAt: z.string().optional().nullable(),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class UserSubscriptionMapper {
   static toEntity(model: UserSubscriptionModel): UserSubscription {
     const validated = safeParseApiResponse(UserSubscriptionModelSchema, model, "UserSubscription");

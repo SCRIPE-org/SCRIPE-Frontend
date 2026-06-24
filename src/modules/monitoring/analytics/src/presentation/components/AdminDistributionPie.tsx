@@ -34,6 +34,9 @@ interface Props {
   cardClasses?: string;
 }
 
+/**
+ * Exported constant defining parameters and fields for admin distribution pie configurations.
+ */
 export const AdminDistributionPie = memo(function AdminDistributionPie({
   data,
   isLoading,

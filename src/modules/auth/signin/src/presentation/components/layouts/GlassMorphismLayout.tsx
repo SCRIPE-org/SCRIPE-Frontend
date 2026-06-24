@@ -4,6 +4,10 @@ import { BG_STYLE, WRAPPER_STYLE } from "./layout-types";
 import { LogoImg } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
+/**
+ * Presentation UI component rendering the glass morphism layout.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function GlassMorphismLayout({
   formContent,
   topActions,

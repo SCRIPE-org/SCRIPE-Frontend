@@ -19,6 +19,10 @@ export interface TenantEffectiveFeatureData {
   hasOverride: boolean;
 }
 
+/**
+ * Domain model representing a Tenant Effective Feature structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class TenantEffectiveFeature {
   constructor(public readonly data: TenantEffectiveFeatureData) {}
 
@@ -59,5 +63,12 @@ export class TenantEffectiveFeature {
   getDisplayName(lang: string): string {
     if (lang === "ar") return this.displayNameAr || this.displayNameEn || this.name;
     return this.displayNameEn || this.name;
+  }
+
+  copyWith(updates: Partial<TenantEffectiveFeatureData>): TenantEffectiveFeature {
+    return new TenantEffectiveFeature({
+      ...this.data,
+      ...updates,
+    } as TenantEffectiveFeatureData);
   }
 }

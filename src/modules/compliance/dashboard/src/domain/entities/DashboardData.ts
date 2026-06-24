@@ -12,6 +12,10 @@ export interface RegulationCoverageData {
   tenantsUsingCount: number;
 }
 
+/**
+ * Domain model representing a Dashboard Data structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface DashboardData {
   openDsrCount: number;
   pendingDsrCount: number;
@@ -22,6 +26,10 @@ export interface DashboardData {
   regulationCoverage: RegulationCoverageData[];
 }
 
+/**
+ * Domain model representing a Compliance Dashboard structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export class ComplianceDashboard {
   constructor(private readonly data: DashboardData) {}
 

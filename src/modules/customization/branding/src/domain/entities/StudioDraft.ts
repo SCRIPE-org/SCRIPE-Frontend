@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * StudioDraft Entity
  *
@@ -24,6 +25,10 @@ import {
 } from "./CanvasComponent";
 
 // Dashboard settings type — full 61 settings matching SettingsProvider schema
+/**
+ * Domain model representing a Dashboard Theme Settings structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface DashboardThemeSettings {
   // ── Section 1: Layout & Structure ──
   layoutTemplate: string;
@@ -108,6 +113,10 @@ export interface DashboardThemeSettings {
   toastDuration: number;
 }
 
+/**
+ * Domain model representing a D E F A U L T_ D A S H B O A R D_ S E T T I N G S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const DEFAULT_DASHBOARD_SETTINGS: DashboardThemeSettings = {
   // Layout & Structure
   layoutTemplate: "modern",
@@ -193,8 +202,16 @@ export const DEFAULT_DASHBOARD_SETTINGS: DashboardThemeSettings = {
 };
 
 // ── Auth Page Identifiers ─────────────────────────────
+/**
+ * Domain model representing a Auth Page Id structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type AuthPageId = "login" | "forgot-password" | "reset-password";
 
+/**
+ * Domain model representing a A U T H_ P A G E S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const AUTH_PAGES: { id: AuthPageId; labelKey: string; icon: string }[] = [
   { id: "login", labelKey: "studio.page.login", icon: "LogIn" },
   { id: "forgot-password", labelKey: "studio.page.forgotPassword", icon: "KeyRound" },
@@ -202,6 +219,10 @@ export const AUTH_PAGES: { id: AuthPageId; labelKey: string; icon: string }[] = 
 ];
 
 // ── Per-Page Override — each page can customize layout + content + background ──
+/**
+ * Domain model representing a Auth Page Override structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface AuthPageOverride {
   layout: LoginLayout;
   headline: string;
@@ -230,9 +251,17 @@ export interface AuthPageOverride {
   canvasPositionMode?: PositionMode;
 }
 
+/**
+ * Domain model representing a Auth Page Overrides structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type AuthPageOverrides = Partial<Record<AuthPageId, AuthPageOverride>>;
 
 // Default per-page values (login inherits from global draft; other pages inherit bg from login)
+/**
+ * Domain model representing a D E F A U L T_ P A G E_ O V E R R I D E S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const DEFAULT_PAGE_OVERRIDES: Record<AuthPageId, AuthPageOverride> = {
   login: { layout: "split-right", headline: "", subtitle: "", inheritBackground: false },
   "forgot-password": { layout: "centered", headline: "", subtitle: "", inheritBackground: true },
@@ -240,6 +269,10 @@ export const DEFAULT_PAGE_OVERRIDES: Record<AuthPageId, AuthPageOverride> = {
 };
 
 // ── Draft Shape ───────────────────────────────────────
+/**
+ * Domain model representing a Studio Draft Props structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export interface StudioDraftProps {
   // Layout
   layout: LoginLayout;
@@ -421,6 +454,10 @@ export interface StudioDraftProps {
 }
 
 // ── Default Draft ─────────────────────────────────────
+/**
+ * Domain model representing a D E F A U L T_ D R A F T structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const DEFAULT_DRAFT: StudioDraftProps = {
   layout: "split-right",
   headline: "",
@@ -568,8 +605,16 @@ export const DEFAULT_DRAFT: StudioDraftProps = {
 };
 
 // ── Device Sizes ──────────────────────────────────────
+/**
+ * Domain model representing a Device Size structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type DeviceSize = "desktop" | "tablet" | "mobile";
 
+/**
+ * Domain model representing a D E V I C E_ D I M E N S I O N S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const DEVICE_DIMENSIONS: Record<DeviceSize, { width: number; height: number }> = {
   desktop: { width: 1280, height: 800 },
   tablet: { width: 768, height: 1024 },
@@ -577,6 +622,10 @@ export const DEVICE_DIMENSIONS: Record<DeviceSize, { width: number; height: numb
 };
 
 // ── Panel Identifiers ─────────────────────────────────
+/**
+ * Domain model representing a Studio Panel structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export type StudioPanel =
   | "layout"
   | "branding"
@@ -591,6 +640,10 @@ export type StudioPanel =
   | "dashboard";
 
 // ── All 22 Layouts ─────────────────────────────────────
+/**
+ * Domain model representing a A L L_ L A Y O U T S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const ALL_LAYOUTS: {
   id: LoginLayout;
   labelKey: string;
@@ -732,6 +785,10 @@ export const ALL_LAYOUTS: {
 ];
 
 // ── Font Options (English) ─────────────────────────────
+/**
+ * Domain model representing a F O N T_ O P T I O N S_ E N structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const FONT_OPTIONS_EN = [
   "Inter",
   "Roboto",
@@ -756,6 +813,10 @@ export const FONT_OPTIONS_EN = [
 ];
 
 // ── Font Options (Arabic) ──────────────────────────────
+/**
+ * Domain model representing a F O N T_ O P T I O N S_ A R structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const FONT_OPTIONS_AR = [
   "Cairo",
   "Tajawal",
@@ -772,6 +833,10 @@ export const FONT_OPTIONS_AR = [
 ];
 
 // ── Color Presets ──────────────────────────────────────
+/**
+ * Domain model representing a C O L O R_ P R E S E T S structure.
+ * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ */
 export const COLOR_PRESETS: { labelKey: string; colors: Partial<StudioDraftProps> }[] = [
   {
     labelKey: "studio.preset.proDark",

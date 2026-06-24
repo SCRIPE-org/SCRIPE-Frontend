@@ -38,6 +38,9 @@ const COLORS = [
   "hsl(30, 80%, 50%)",
 ];
 
+/**
+ * Exported constant defining parameters and fields for event distribution chart configurations.
+ */
 export const EventDistributionChart = memo(function EventDistributionChart({
   data,
   isLoading,

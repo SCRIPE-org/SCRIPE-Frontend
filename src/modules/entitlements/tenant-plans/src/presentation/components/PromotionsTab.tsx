@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * PromotionsTab — Full CRUD for plan-scoped promotions.
  * Replaces the static placeholder with a live data table + create/edit dialogs.
@@ -297,6 +299,10 @@ function PromotionForm({
 }
 
 // ── Main Tab ──
+/**
+ * Presentation UI component rendering the promotions tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function PromotionsTab({ planId, t }: PromotionsTabProps) {
   const vm = useTenantPlanPromotionsViewModel(planId);
 

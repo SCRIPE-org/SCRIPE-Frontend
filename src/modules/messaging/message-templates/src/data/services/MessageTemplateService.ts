@@ -21,6 +21,10 @@ import type {
   PreviewTemplateResponseJson,
 } from "../models/MessageTemplateModel";
 
+/**
+ * Http API network service for message template.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class MessageTemplateService implements IMessageTemplateService {
   constructor(private readonly api: IApiService) {}
 

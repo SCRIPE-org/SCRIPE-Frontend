@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 /**
  * DashboardPreviewShell — Isolated dashboard layout preview for Customizer Studio.
  *
@@ -344,6 +346,10 @@ const VALID_SETTINGS_KEYS = new Set([
   "toastDuration",
 ]);
 
+/**
+ * Presentation UI component rendering the dashboard preview shell.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function DashboardPreviewShell() {
   // Gap #1/#11/#12 fix: Preview settings are maintained ENTIRELY in-memory.
   // No localStorage writes, no events, no auto-save triggers.

@@ -24,6 +24,9 @@ const DEVICES = [
 type DeviceId = (typeof DEVICES)[number]["id"];
 
 // ─── Props ──────────────────────────────────────────────────
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for template live preview props.
+ */
 export interface TemplateLivePreviewProps {
   /** The raw HTML body of the template */
   body: string;
@@ -32,6 +35,10 @@ export interface TemplateLivePreviewProps {
 }
 
 // ─── Component ──────────────────────────────────────────────
+/**
+ * Presentation UI component rendering the template live preview.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function TemplateLivePreview({ body, subject }: TemplateLivePreviewProps) {
   const [device, setDevice] = useState<DeviceId>("desktop");
   const [debouncedBody, setDebouncedBody] = useState(body);

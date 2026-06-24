@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 "use client";
 // UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
 // compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
@@ -8,11 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@core/ui/switch";
 import { Plus, X, Eye, EyeOff } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { ContentBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
-import {
-  isValidCtaUrl,
-  isValidVideoUrl,
-} from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import type { ContentBlock } from "@core/domain/entities/LoginBrandingTypes";
+import { isValidCtaUrl, isValidVideoUrl } from "@core/domain/entities/LoginBrandingTypes";
 
 type CB = ContentBlock;
 type P = { block: CB; onChange: (b: CB) => void };
@@ -56,6 +54,10 @@ function Sel({
 }
 
 // ─── Base Props Editor (every block) ──────────────────
+/**
+ * Presentation UI component rendering the base props editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function BasePropsEditor({ block, onChange }: P) {
   const { t } = useI18n();
   const p = block.props;
@@ -122,6 +124,10 @@ export function BasePropsEditor({ block, onChange }: P) {
 }
 
 // ─── Text Editor ──────────────────────────────────────
+/**
+ * Presentation UI component rendering the text editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function TextEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "text") return null;
@@ -210,6 +216,10 @@ export function TextEditor({ block, onChange }: P) {
 }
 
 // ─── Image Editor ─────────────────────────────────────
+/**
+ * Presentation UI component rendering the image editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function ImageEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "image") return null;
@@ -329,6 +339,10 @@ export function ImageEditor({ block, onChange }: P) {
 }
 
 // ─── Feature List Editor ──────────────────────────────
+/**
+ * Presentation UI component rendering the feature list editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function FeatureListEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "featureList") return null;
@@ -436,6 +450,10 @@ export function FeatureListEditor({ block, onChange }: P) {
 }
 
 // ─── Testimonial Editor ───────────────────────────────
+/**
+ * Presentation UI component rendering the testimonial editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function TestimonialEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "testimonial") return null;
@@ -526,6 +544,10 @@ export function TestimonialEditor({ block, onChange }: P) {
 }
 
 // ─── CTA Button Editor ────────────────────────────────
+/**
+ * Presentation UI component rendering the cta editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function CtaEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "ctaButton") return null;
@@ -618,6 +640,10 @@ export function CtaEditor({ block, onChange }: P) {
 }
 
 // ─── Divider Editor ───────────────────────────────────
+/**
+ * Presentation UI component rendering the divider editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function DividerEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "divider") return null;
@@ -694,6 +720,10 @@ export function DividerEditor({ block, onChange }: P) {
 }
 
 // ─── Heading Editor ───────────────────────────────────
+/**
+ * Presentation UI component rendering the heading editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function HeadingEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "heading") return null;
@@ -757,6 +787,10 @@ export function HeadingEditor({ block, onChange }: P) {
 }
 
 // ─── Badge Editor ─────────────────────────────────────
+/**
+ * Presentation UI component rendering the badge editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function BadgeEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "badge") return null;
@@ -816,6 +850,10 @@ export function BadgeEditor({ block, onChange }: P) {
 }
 
 // ─── Spacer Editor ────────────────────────────────────
+/**
+ * Presentation UI component rendering the spacer editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SpacerEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "spacer") return null;
@@ -849,6 +887,10 @@ export function SpacerEditor({ block, onChange }: P) {
 }
 
 // ─── Alert Editor ─────────────────────────────────────
+/**
+ * Presentation UI component rendering the alert editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function AlertEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "alert") return null;
@@ -899,6 +941,10 @@ export function AlertEditor({ block, onChange }: P) {
 }
 
 // ─── Stats Row Editor ─────────────────────────────────
+/**
+ * Presentation UI component rendering the stats row editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function StatsRowEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "statsRow") return null;
@@ -985,6 +1031,10 @@ export function StatsRowEditor({ block, onChange }: P) {
 }
 
 // ─── Social Links Editor ──────────────────────────────
+/**
+ * Presentation UI component rendering the social links editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SocialLinksEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "socialLinks") return null;
@@ -1071,6 +1121,10 @@ export function SocialLinksEditor({ block, onChange }: P) {
 }
 
 // ─── Logo Cloud Editor ────────────────────────────────
+/**
+ * Presentation UI component rendering the logo cloud editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function LogoCloudEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "logoCloud") return null;
@@ -1141,6 +1195,10 @@ export function LogoCloudEditor({ block, onChange }: P) {
 }
 
 // ─── Rating Editor ────────────────────────────────────
+/**
+ * Presentation UI component rendering the rating editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function RatingEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "rating") return null;
@@ -1204,6 +1262,10 @@ export function RatingEditor({ block, onChange }: P) {
 }
 
 // ─── Icon Row Editor ──────────────────────────────────
+/**
+ * Presentation UI component rendering the icon row editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function IconRowEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "iconRow") return null;
@@ -1261,6 +1323,10 @@ export function IconRowEditor({ block, onChange }: P) {
 }
 
 // ─── Video Editor ─────────────────────────────────────
+/**
+ * Presentation UI component rendering the video editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function VideoEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "video") return null;
@@ -1321,6 +1387,10 @@ export function VideoEditor({ block, onChange }: P) {
 }
 
 // ─── Countdown Editor ─────────────────────────────────
+/**
+ * Presentation UI component rendering the countdown editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function CountdownEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "countdown") return null;
@@ -1373,6 +1443,10 @@ export function CountdownEditor({ block, onChange }: P) {
 }
 
 // ─── Accordion Editor ─────────────────────────────────
+/**
+ * Presentation UI component rendering the accordion editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function AccordionEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "accordion") return null;
@@ -1456,6 +1530,10 @@ export function AccordionEditor({ block, onChange }: P) {
 }
 
 // ─── Progress Steps Editor ────────────────────────────
+/**
+ * Presentation UI component rendering the progress steps editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function ProgressStepsEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "progressSteps") return null;
@@ -1522,6 +1600,10 @@ export function ProgressStepsEditor({ block, onChange }: P) {
 }
 
 // ─── Avatar Stack Editor ──────────────────────────────
+/**
+ * Presentation UI component rendering the avatar stack editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function AvatarStackEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "avatarStack") return null;
@@ -1594,6 +1676,10 @@ export function AvatarStackEditor({ block, onChange }: P) {
 }
 
 // ─── Gradient Text Editor ─────────────────────────────
+/**
+ * Presentation UI component rendering the gradient text editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function GradientTextEditor({ block, onChange }: P) {
   const { t } = useI18n();
   if (block.type !== "gradientText") return null;
@@ -1669,6 +1755,10 @@ export function GradientTextEditor({ block, onChange }: P) {
 }
 
 // ─── Master Switch ────────────────────────────────────
+/**
+ * Presentation UI component rendering the inline editor.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function InlineEditor(props: P) {
   const { block } = props;
   let editor: React.ReactNode = null;

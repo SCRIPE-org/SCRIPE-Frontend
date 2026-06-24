@@ -65,6 +65,10 @@ const fmt = (n: number) =>
 
 const fmtInt = (n: number) => new Intl.NumberFormat("en-US").format(n);
 
+/**
+ * Presentation UI component rendering the commission kpi cards.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function CommissionKpiCards({ dashboard, isLoading, t }: CommissionKpiCardsProps) {
   if (isLoading || !dashboard) {
     return (

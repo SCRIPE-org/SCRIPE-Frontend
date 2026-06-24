@@ -156,6 +156,10 @@ const sections: DocSection[] = [
     filename: "t() Function — Usage Examples",
     code: `import { Language } from '@core/providers/LanguageProvider';
 
+/**
+ * Presentation UI component rendering the admin form.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function AdminForm() {
   const { t, language, direction } = Language();
 

@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * Tenant Tabs Component — Deep Redesign
  *
@@ -31,6 +32,10 @@ interface TenantTabsProps {
   parentTenantId?: string;
 }
 
+/**
+ * Presentation UI component rendering the tenant tabs.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }: TenantTabsProps) {
   const { t, direction } = useI18n();
   const isRtl = direction === "rtl";

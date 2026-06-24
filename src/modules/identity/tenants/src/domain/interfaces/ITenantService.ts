@@ -17,7 +17,7 @@ import type {
   UpdateTenantJson,
 } from "../types/TenantModelTypes";
 import type { TenantStats } from "./ITenantRepository";
-import type { PermissionModel, PermissionModuleGroupJson } from "@modules/identity/permissions";
+import type { PermissionModel, PermissionModuleGroupJson } from "@modules/identity/core";
 import type {
   SubscriptionModel,
   PagedEditionResult,
@@ -43,6 +43,9 @@ export interface TenantDomainsResponse {
   verificationPrefix: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for service tenant list params.
+ */
 export interface ServiceTenantListParams {
   page?: number;
   pageSize?: number;
@@ -50,6 +53,9 @@ export interface ServiceTenantListParams {
   parentId?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for tenant list result.
+ */
 export interface TenantListResult {
   items: TenantModel[];
   totalCount: number;
@@ -60,6 +66,9 @@ export interface TenantListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for tenant tree list result.
+ */
 export interface TenantTreeListResult {
   items: TenantTreeNodeModel[];
   totalCount: number;
@@ -70,6 +79,10 @@ export interface TenantTreeListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Http API network service for i tenant.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export interface ITenantService {
   getAll(params: ServiceTenantListParams): Promise<TenantListResult>;
   getTree(): Promise<TenantTreeNodeModel[]>;
@@ -246,15 +259,12 @@ export interface ITenantService {
     refundType?: string,
     customRefundAmount?: number
   ): Promise<string>;
-
   /** Re-sync tenant permissions from current edition (data backfill) */
   resyncPermissions(tenantId: string): Promise<void>;
-
   /**
    * Get all subscriptions for a tenant
    */
   getTenantSubscriptions(tenantId: string): Promise<SubscriptionModel[]>;
-
   /**
    * Get resolved features (edition + overrides) for a tenant
    * Used by TenantStats to show quota limits without cross-module import
@@ -270,30 +280,21 @@ export interface ITenantService {
       source: string;
     }>
   >;
-
   /** Change the billing currency of the active subscription */
   changeCurrency(tenantId: string, currency: string): Promise<string>;
-
   /** Preview downgrade impact before changing edition */
   getDowngradeImpact(tenantId: string, targetEditionId: string): Promise<DowngradeImpactReport>;
-
   /** Preview resolved price for an edition + currency + type combo */
   previewPrice(editionId: string, currency: string, type: string): Promise<number>;
-
   // ── Domain Management ─────────────────────────────────────
-
   /** Get all domains for a tenant */
   getDomains(tenantId: string): Promise<TenantDomainsResponse>;
-
   /** Add a custom domain to a tenant */
   addDomain(tenantId: string, domain: string): Promise<void>;
-
   /** Verify DNS for a custom domain */
   verifyDomain(tenantId: string, domainId: string): Promise<void>;
-
   /** Set a domain as primary */
   setDomainPrimary(tenantId: string, domainId: string): Promise<void>;
-
   /** Remove a custom domain */
   removeDomain(tenantId: string, domainId: string): Promise<void>;
 }

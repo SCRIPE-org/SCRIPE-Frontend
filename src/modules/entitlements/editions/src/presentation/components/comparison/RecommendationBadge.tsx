@@ -20,6 +20,10 @@ interface RecommendationBadgeProps {
   size?: "sm" | "md";
 }
 
+/**
+ * Presentation UI component rendering the recommendation badge.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function RecommendationBadge({ label, size = "md" }: RecommendationBadgeProps) {
   const hue = labelToHue(label);
   const bg = `oklch(0.35 0.18 ${hue})`;

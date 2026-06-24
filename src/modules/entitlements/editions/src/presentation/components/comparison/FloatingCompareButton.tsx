@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * FloatingCompareButton — Sticky bottom-center button to open the full comparison table.
  *
@@ -14,6 +15,10 @@ interface FloatingCompareButtonProps {
   targetRef: React.RefObject<HTMLElement | null>;
 }
 
+/**
+ * Presentation UI component rendering the floating compare button.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function FloatingCompareButton({ label, targetRef }: FloatingCompareButtonProps) {
   const [visible, setVisible] = useState(true);
 

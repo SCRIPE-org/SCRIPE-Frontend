@@ -9,18 +9,26 @@
 import { useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { GenericSelect } from "@core/crud/components/generic-select";
-import type { Edition } from "@modules/entitlements/editions/src/domain/entities/Edition";
 
 interface SubscriptionTypeSelectProps {
   value: string;
   onValueChange: (value: string) => void;
   /** If provided, filters options by edition billing controls */
-  edition?: Edition | null;
+  edition?: {
+    allowLifetime?: boolean;
+    allowTrial?: boolean;
+    allowMonthly?: boolean;
+    allowYearly?: boolean;
+  } | null;
   /** Whether to show the Trial option (false for convert-trial dialog) */
   showTrial?: boolean;
   disabled?: boolean;
 }
 
+/**
+ * Presentation UI component rendering the subscription type select.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SubscriptionTypeSelect({
   value,
   onValueChange,

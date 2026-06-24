@@ -1,8 +1,7 @@
 "use client";
 
 import { Dialog, DialogContent } from "@core/ui/dialog";
-import { GatewaySelectionStep } from "@modules/entitlements/user-subscriptions/src/presentation/components/GatewaySelectionStep";
-import { usePaymentGatewaysViewModel } from "@modules/entitlements/payment-gateways/src/presentation/viewmodels/usePaymentGatewaysViewModel";
+import { GatewaySelectionStep, usePaymentGatewaysViewModel } from "@modules/entitlements/core";
 import { Loader2 } from "lucide-react";
 
 interface GatewaySelectionDialogProps {
@@ -11,6 +10,10 @@ interface GatewaySelectionDialogProps {
   onSelect: (gateway: string) => void;
 }
 
+/**
+ * Presentation UI component rendering the gateway selection dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function GatewaySelectionDialog({
   open,
   onOpenChange,

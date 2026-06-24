@@ -58,6 +58,9 @@ const ThemeBundleDtoSchema = z.object({
   isAvailable: z.boolean().optional().default(true),
 });
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class ThemeBundleMapper {
   static toEntity(dto: ThemeBundleDto): ThemeBundle {
     const validated = safeParseApiResponse(ThemeBundleDtoSchema, dto, "ThemeBundle");

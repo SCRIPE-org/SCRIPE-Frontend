@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useMemo } from "react";
@@ -46,6 +47,9 @@ const BAND_VARIANTS: Record<string, any> = {
   },
 };
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for signup shell props.
+ */
 export interface SignupShellProps {
   /** Main stage content (the current phase). */
   children: React.ReactNode;
@@ -62,6 +66,10 @@ export interface SignupShellProps {
   phaseLabel?: string;
 }
 
+/**
+ * Presentation UI component rendering the signup shell.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function SignupShell({ children, progressSlot, phaseLabel }: SignupShellProps) {
   const { tokens, theme, toggleTheme } = useSignupTheme();
   const { t, direction } = useI18n();
@@ -78,7 +86,7 @@ export function SignupShell({ children, progressSlot, phaseLabel }: SignupShellP
 
   return (
     <div
-      className="relative flex min-h-[100dvh] flex-col signup-shell"
+      className="signup-shell relative flex min-h-[100dvh] flex-col"
       dir={direction}
       style={{ background: tokens.gradientPage }}
     >

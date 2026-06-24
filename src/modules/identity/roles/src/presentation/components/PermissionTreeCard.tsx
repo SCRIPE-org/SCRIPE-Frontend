@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * Permission Tree Card Component
  *
@@ -19,6 +20,10 @@ import { BulkScopeSelect } from "./BulkScopeSelect";
 import { PermissionCategoryRow, PermissionTreeSkeleton } from "./index";
 import type { PermissionTreeProps } from "../viewmodels/useRoleDetailViewModel";
 
+/**
+ * Presentation UI component rendering the permission tree card.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function PermissionTreeCard({
   moduleGroups,
   isLoading,

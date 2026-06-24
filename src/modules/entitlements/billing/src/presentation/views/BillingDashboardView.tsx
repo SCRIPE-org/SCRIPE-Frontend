@@ -1,3 +1,11 @@
+// FILE-EXCEPTION: file length
+/**
+ * @file BillingDashboardView.tsx
+ * @description View component for the billing dashboard. Displays key financial KPIs,
+ * operational statistics, MRR trends, and subscription status. Uses recharts and the core
+ * ui chart wrappers.
+ */
+
 "use client";
 
 import { useMemo, useCallback } from "react";
@@ -12,7 +20,10 @@ import { Button } from "@core/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { Separator } from "@core/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@core/ui/chart";
+import * as ChartPrimitives from "@core/ui/chart";
+
+const { ChartContainer, ChartTooltip, ChartTooltipContent } = ChartPrimitives;
+
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import {
   DollarSign,
@@ -271,6 +282,10 @@ function EditionBreakdownTable({ data, formatCurrency, labels }: EditionBreakdow
 // Main View
 // ─────────────────────────────────────────────────────────────
 
+/**
+ * Presentation UI component rendering the billing dashboard view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function BillingDashboardView() {
   useModuleLocales(() => import("../../../../core/locales"), "billing");
   const { t } = useI18n();

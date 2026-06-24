@@ -6,6 +6,10 @@ import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader } from "@core/ui/card";
 import { CheckCircle, XCircle, RefreshCw } from "lucide-react";
 
+/**
+ * Presentation UI component rendering the submissions view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function SubmissionsView() {
   const vm = useSubmissionsViewModel();
   return (

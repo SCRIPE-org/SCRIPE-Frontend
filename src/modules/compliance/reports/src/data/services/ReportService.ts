@@ -6,9 +6,13 @@ import type { IApiService } from "@core/interfaces/api.interface";
 import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import type { IReportService, ReportParams } from "../../domain/interfaces/IReportService";
 import type { ReportModel } from "../models/ReportModels";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import type { GenerateReportRequest } from "../../domain/entities/ComplianceReport";
 
+/**
+ * Http API network service for report.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
 export class ReportService implements IReportService {
   constructor(private readonly api: IApiService) {}
 

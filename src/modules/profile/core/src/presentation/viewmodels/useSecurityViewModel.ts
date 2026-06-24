@@ -15,6 +15,10 @@ import type {
   Enable2FAResult,
 } from "../../domain/interfaces/IProfileRepository";
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for security view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useSecurityViewModel() {
   const repo = container.profileRepository;
   const queryClient = useQueryClient();

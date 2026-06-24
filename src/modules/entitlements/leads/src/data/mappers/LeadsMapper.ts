@@ -20,6 +20,9 @@ import type {
 } from "../models/leads.models";
 import type { AssignableAdmin } from "../../domain/interfaces/ILeadsRepository";
 
+/**
+ * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
+ */
 export class LeadsMapper {
   static toEntity(dto: PlatformLeadResponseModel): PlatformLead {
     return new PlatformLead({
@@ -92,16 +95,16 @@ export class LeadsMapper {
 
   static toCommunicationLog(dto: LeadCommunicationLogDto): LeadCommunicationLog {
     return new LeadCommunicationLog({
-      id:              dto.id,
-      subject:         dto.subject,
-      bodyHtml:        dto.bodyHtml,
-      bodyText:        dto.bodyText ?? '',
-      sentByAdminName: dto.sentByAdminName ?? '',
-      sentAt:          dto.sentAt,
-      status:          (dto.status as 'Pending' | 'Sent' | 'Failed') ?? 'Sent',
-      templateKey:     dto.templateKey,
-      recipientEmail:  dto.recipientEmail ?? '',
-      recipientName:   dto.recipientName ?? '',
+      id: dto.id,
+      subject: dto.subject,
+      bodyHtml: dto.bodyHtml,
+      bodyText: dto.bodyText ?? "",
+      sentByAdminName: dto.sentByAdminName ?? "",
+      sentAt: dto.sentAt,
+      status: (dto.status as "Pending" | "Sent" | "Failed") ?? "Sent",
+      templateKey: dto.templateKey,
+      recipientEmail: dto.recipientEmail ?? "",
+      recipientName: dto.recipientName ?? "",
     });
   }
 }

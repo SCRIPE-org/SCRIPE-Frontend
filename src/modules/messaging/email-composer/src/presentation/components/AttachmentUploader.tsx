@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import React, { useCallback, useRef, useState } from "react";
@@ -17,6 +18,9 @@ import {
 } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for attachment file.
+ */
 export interface AttachmentFile {
   id: string;
   name: string;
@@ -30,6 +34,9 @@ export interface AttachmentFile {
   error?: string;
 }
 
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for attachment uploader props.
+ */
 export interface AttachmentUploaderProps {
   attachments: AttachmentFile[];
   onAdd: (files: File[]) => void;
@@ -59,6 +66,10 @@ function formatFileSize(bytes: number): string {
 }
 
 // ─── Main ───────────────────────────────────────────────────
+/**
+ * Presentation UI component rendering the attachment uploader.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function AttachmentUploader({
   attachments,
   onAdd,

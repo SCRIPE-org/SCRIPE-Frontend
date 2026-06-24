@@ -7,6 +7,10 @@ import { BG_STYLE, SPLIT_WRAPPER_STYLE } from "./layout-types";
 import { MobileLogo, LogoImg } from "./layout-shared";
 import type { LoginLayoutProps } from "./layout-types";
 
+/**
+ * Presentation UI component rendering the dual panel layout.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function DualPanelLayout({
   branding,
   slotConfig,

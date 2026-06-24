@@ -1,3 +1,5 @@
+// FILE-EXCEPTION: file length
+// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useCallback } from "react";
@@ -32,6 +34,10 @@ interface WorkspaceStepProps {
   wizard: SignupWizardViewModel;
 }
 
+/**
+ * Presentation UI component rendering the workspace step.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function WorkspaceStep({ wizard }: WorkspaceStepProps) {
   const { t, direction } = useI18n();
   const { tokens } = useSignupTheme();

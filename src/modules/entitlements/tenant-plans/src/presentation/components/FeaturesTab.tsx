@@ -68,6 +68,10 @@ interface FeaturesTabProps {
   language: string;
 }
 
+/**
+ * Presentation UI component rendering the features tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
 export function FeaturesTab({
   plan,
   totalActiveFeatureCount,

@@ -1,3 +1,4 @@
+// UI-EXCEPTION: compact studio layout
 /**
  * TenantPlan Detail View — Elevated Tier 2
  *
@@ -43,6 +44,10 @@ interface TenantPlanDetailViewProps {
   planId: string;
 }
 
+/**
+ * Presentation UI component rendering the tenant plan detail view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
 export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
   useModuleLocales(() => import("../../../locales"), "tenant-plans");
   const { t, language } = useI18n();

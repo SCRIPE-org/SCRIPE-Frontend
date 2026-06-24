@@ -5,7 +5,7 @@
 import type { IDsrRepository } from "../../domain/interfaces/IDsrRepository";
 import type { IDsrService } from "../../domain/interfaces/IDsrService";
 import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
-import type { PagedResult } from "@modules/identity/core/domain/types";
+import type { PagedResult } from "@core/interfaces/common.interface";
 import type {
   DsrListParams,
   SubmitDsrRequest,
@@ -13,6 +13,10 @@ import type {
 } from "../../domain/entities/DsrRequests";
 import { DsrMapper } from "../mappers/DsrMapper";
 
+/**
+ * Repository layer implementing client request queries for dsr.
+ * Calls base API service routines and resolves DTO objects mapping to domain entities.
+ */
 export class DsrRepository implements IDsrRepository {
   constructor(private readonly service: IDsrService) {}
 

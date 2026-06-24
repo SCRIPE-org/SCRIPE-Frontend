@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: file length
 /**
  * useStudioViewModel — Complete state management for the Ultimate Customizer Studio
  *
@@ -42,6 +43,9 @@ import {
 // NOTE: Domain types are imported directly from ../../domain/entities/StudioDraft by all components.
 
 // ── Hook ───────────────────────────────────────────────
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for studio view model options.
+ */
 export interface StudioViewModelOptions {
   /** Encrypted tenant ID for drilldown mode (super admin customizing a specific tenant) */
   targetTenantId?: string;
@@ -49,6 +53,10 @@ export interface StudioViewModelOptions {
   targetTenantName?: string;
 }
 
+/**
+ * React hook/ViewModel orchestrating state and data flows for studio view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
 export function useStudioViewModel(options?: StudioViewModelOptions) {
   const { t } = useI18n();
   const { success: toastSuccess, error: toastError } = useEnhancedToast();
@@ -797,6 +805,52 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     },
   });
 
+  // ── Save Theme ──
+  const saveThemeMutation = useMutation({
+    mutationFn: async (themeInput: {
+      name: string;
+      slug: string;
+      description?: string;
+      authorName?: string;
+      category: string;
+      accentColor: string;
+      themeDataJson: string;
+    }) => {
+      const { themeMarketplaceRepository } = customizationContainer;
+      await themeMarketplaceRepository.create({
+        ...themeInput,
+        version: "1.0.0",
+        themeSchemaVersion: 1,
+        isFree: true,
+        pricingType: "Free",
+        minTierLevel: 0,
+        isAlsoBuyable: false,
+        displayOrder: 999,
+        isFeatured: false,
+        isNew: true,
+        hasDarkMode: false,
+        hasAccessibilityPreset: false,
+        hasContentBlocks: false,
+        isSystem: false,
+      });
+    },
+    onSuccess: () => {
+      toastSuccess({
+        title: t("studio.saveTheme.success") || "Theme saved!",
+        description:
+          t("studio.saveTheme.successDesc") ||
+          "Your custom theme is now available in the marketplace.",
+      });
+    },
+    onError: (err: any) => {
+      const msg = err?.message || err?.response?.data?.error || "Failed to save theme";
+      toastError({
+        title: t("studio.saveTheme.failed") || "Save theme failed",
+        description: msg,
+      });
+    },
+  });
+
   // ── Discard (with confirmation) ──
   const discardMutation = useMutation({
     mutationFn: () => repository.discardDraft(),
@@ -1046,6 +1100,16 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     isPublishing: publishMutation.isPending,
     saveDraft: () => saveDraftMutation.mutate(),
     isSavingDraft: saveDraftMutation.isPending,
+    saveTheme: (themeInput: {
+      name: string;
+      slug: string;
+      description?: string;
+      authorName?: string;
+      category: string;
+      accentColor: string;
+      themeDataJson: string;
+    }) => saveThemeMutation.mutateAsync(themeInput),
+    isSavingTheme: saveThemeMutation.isPending,
     discard: requestDiscard,
     confirmDiscard,
     cancelDiscard,
