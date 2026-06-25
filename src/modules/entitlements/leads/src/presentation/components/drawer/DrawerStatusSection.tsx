@@ -7,13 +7,7 @@ import { Textarea } from "@core/ui/textarea";
 import { Input } from "@core/ui/input";
 import { Switch } from "@core/ui/switch";
 import { Label } from "@core/ui/label";
-import {
-  Mail,
-  CheckCheck,
-  ArrowRightCircle,
-  Loader2,
-  Info,
-} from "lucide-react";
+import { Mail, CheckCheck, ArrowRightCircle, Loader2, Info } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { PlatformLead, LeadStatus } from "../../../domain/entities/PlatformLead";
 import { ALL_STATUSES, STATUS_STYLES } from "./DrawerShared";
@@ -165,9 +159,7 @@ export function DrawerStatusSection({
                         <Textarea
                           value={emailBody}
                           onChange={(e) => onEmailBodyChange(e.target.value)}
-                          placeholder={
-                            t("leads.email.bodyPlaceholder") || "Write your message..."
-                          }
+                          placeholder={t("leads.email.bodyPlaceholder") || "Write your message..."}
                           rows={6}
                           className="custom-scrollbar resize-none border-zinc-800 bg-zinc-900/60 font-sans text-xs leading-relaxed text-white placeholder:text-zinc-600 focus:border-zinc-700"
                         />

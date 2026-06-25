@@ -6,11 +6,7 @@
  */
 import type { IBillingRepository } from "../../domain/interfaces/IBillingRepository";
 import type { PagedResult } from "@core/interfaces/common.interface";
-import type {
-  Invoice,
-  InvoiceListItem,
-  PaymentTransaction,
-} from "../../domain/entities/Invoice";
+import type { Invoice, InvoiceListItem, PaymentTransaction } from "../../domain/entities/Invoice";
 import { BillingDashboard } from "../../domain/entities/BillingDashboard";
 import type {
   CheckoutSession,

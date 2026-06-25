@@ -4,7 +4,7 @@
 // ── Invoice (Full Detail) ──
 /**
  * Interface detailing the complete schema of an Invoice entity.
- * Holds identifiers, customer and company names, total breakdowns (subtotal, tax, discounts), 
+ * Holds identifiers, customer and company names, total breakdowns (subtotal, tax, discounts),
  * navigation urls, line item details, and historical payment transactions.
  */
 export interface InvoiceData {
@@ -31,7 +31,7 @@ export interface InvoiceData {
 }
 /**
  * Domain entity wrapping full invoice properties with rich computed logic.
- * Contains methods to query status attributes (e.g. isPaid, isOverdue), check active discounts, 
+ * Contains methods to query status attributes (e.g. isPaid, isOverdue), check active discounts,
  * compute line-item statistics, and create immutable copy overrides.
  */
 export class Invoice {

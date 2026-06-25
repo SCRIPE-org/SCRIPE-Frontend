@@ -29,7 +29,7 @@ import { TenantSuspendedView, TenantNotFoundView } from "./TenantStatusView";
 
 /**
  * LoginView represents the main customizable portal for tenant-scoped and platform authentication.
- * 
+ *
  * Features:
  * - Domain Resolution: Automatically inspects the hostname to discover tenant branding records, custom domains, or platform scopes.
  * - Dynamic Token Style Ingestion: Injects CSS variables and layout classes based on database configuration (LoginBrandingJson).

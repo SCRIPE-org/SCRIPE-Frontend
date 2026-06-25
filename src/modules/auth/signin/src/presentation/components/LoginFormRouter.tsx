@@ -41,7 +41,7 @@ interface LoginFormRouterProps {
  * - Workspace Selection: Workspace selection grid for multi-tenant accounts.
  * - Multi-Factor/2FA: Safe verification input for app authenticator tokens or fallback backup keys.
  * - Passwordless: Phone OTP code entry, FIDO2/Passkey prompts, QR code scanner sessions, and Magic Link requests/confirmation screens.
- * 
+ *
  * Supports accessibility configurations, double-submit CSRF, and safe-mode warnings.
  *
  * @param props Configuration properties containing view models, active tenant identifiers, layout slot arrays, and accessibility options.

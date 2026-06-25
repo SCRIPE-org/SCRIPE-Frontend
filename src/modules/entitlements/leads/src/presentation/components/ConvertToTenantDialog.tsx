@@ -139,7 +139,7 @@ export function ConvertToTenantWizard({
         </DialogHeader>
 
         {/* ── Body ── */}
-        <ScrollArea className="min-h-0 flex-1 flex flex-col">
+        <ScrollArea className="flex min-h-0 flex-1 flex-col">
           <div className="px-6 py-4">
             {vm.step === 1 && (
               <WizardStep1Edition

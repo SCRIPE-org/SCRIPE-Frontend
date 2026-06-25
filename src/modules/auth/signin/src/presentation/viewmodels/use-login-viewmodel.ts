@@ -44,7 +44,11 @@ export type LoginStep =
  * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useLoginViewModel() {
-  const [formData, setFormData] = useState<LoginFormData>({ identifier: "", password: "", staySignedIn: false });
+  const [formData, setFormData] = useState<LoginFormData>({
+    identifier: "",
+    password: "",
+    staySignedIn: false,
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [shakeKey, setShakeKey] = useState(0);

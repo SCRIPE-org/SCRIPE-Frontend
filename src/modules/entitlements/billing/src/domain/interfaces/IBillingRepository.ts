@@ -1,9 +1,5 @@
 import type { PagedResult } from "@core/interfaces/common.interface";
-import type {
-  Invoice,
-  InvoiceListItem,
-  PaymentTransaction,
-} from "../entities/Invoice";
+import type { Invoice, InvoiceListItem, PaymentTransaction } from "../entities/Invoice";
 import type {
   CheckoutSession,
   BillingPortal,

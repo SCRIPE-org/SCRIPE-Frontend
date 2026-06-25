@@ -32,7 +32,7 @@ export const DEFAULT_CREATE_FORM: CreateEditionRequest = {
 
 /**
  * React hook/ViewModel managing the wizard state machine and database submission for creating subscription editions.
- * 
+ *
  * Logic handled:
  * - Directs wizard progression (step indexing) with verification criteria for each segment.
  * - Queries existing editions via the repository to supply fallback configurations.

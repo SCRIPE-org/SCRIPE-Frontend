@@ -132,7 +132,7 @@ describe("useLoginViewModel", () => {
   it("should initialize with default state", () => {
     const { result } = renderHook(() => useLoginViewModel());
 
-    expect(result.current.formData).toEqual({ identifier: "", password: "" });
+    expect(result.current.formData).toEqual({ identifier: "", password: "", staySignedIn: false });
     expect(result.current.error).toBe("");
     expect(result.current.isLoading).toBe(false);
     expect(result.current.loginStep).toBe("credentials");
@@ -181,6 +181,7 @@ describe("useLoginViewModel", () => {
     expect(mockLoginMutateAsync).toHaveBeenCalledWith({
       identifier: "testuser",
       password: "password123",
+      staySignedIn: false,
       tenantCode: undefined,
       tenantId: undefined,
     });

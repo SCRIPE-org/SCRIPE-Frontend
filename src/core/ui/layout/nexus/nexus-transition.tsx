@@ -81,9 +81,9 @@ export function NexusTransitionOverlay() {
       className={cn(
         "pointer-events-none fixed inset-0 z-[9999]",
         "transition-opacity",
-        phase === "entering" && "duration-200 opacity-100 ease-out",
+        phase === "entering" && "opacity-100 duration-200 ease-out",
         phase === "holding" && "opacity-100",
-        phase === "exiting" && "duration-300 opacity-0 ease-in"
+        phase === "exiting" && "opacity-0 duration-300 ease-in"
       )}
       style={{
         background: color
