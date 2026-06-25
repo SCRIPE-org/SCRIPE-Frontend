@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
@@ -23,7 +22,7 @@ interface CredentialsFormProps {
   isRTL: boolean;
   /** True when rendered on the platform login surface (shows "Create a workspace"). */
   isPlatformMode?: boolean;
-  updateField: (field: keyof LoginFormData, value: string) => void;
+  updateField: (field: keyof LoginFormData, value: any) => void;
   togglePasswordVisibility: () => void;
   handleLogin: () => void;
   /** Called when user clicks "Email me a sign-in link". Receives current identifier. */
@@ -58,8 +57,6 @@ export function CredentialsForm({
   errorAnnounce = true,
 }: CredentialsFormProps) {
   const { t } = useI18n();
-
-  const [staySignedIn, setStaySignedIn] = useState(false);
 
   const arrow = isRTL ? "←" : "→";
 
@@ -153,8 +150,8 @@ export function CredentialsForm({
 
       {/* ── Stay signed in + Forgot password (same row) ── */}
       <FormOptions
-        staySignedIn={staySignedIn}
-        onStaySignedInChange={setStaySignedIn}
+        staySignedIn={formData.staySignedIn}
+        onStaySignedInChange={(val) => updateField("staySignedIn", val)}
         disabled={isLoading}
         t={t}
       />

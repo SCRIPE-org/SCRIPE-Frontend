@@ -23,6 +23,7 @@ import { getAuthContainer } from "@modules/auth/di";
 export interface LoginFormData {
   identifier: string;
   password: string;
+  staySignedIn: boolean;
 }
 
 /**
@@ -43,7 +44,7 @@ export type LoginStep =
  * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useLoginViewModel() {
-  const [formData, setFormData] = useState<LoginFormData>({ identifier: "", password: "" });
+  const [formData, setFormData] = useState<LoginFormData>({ identifier: "", password: "", staySignedIn: false });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [shakeKey, setShakeKey] = useState(0);
@@ -171,6 +172,7 @@ export function useLoginViewModel() {
           password: formData.password,
           tenantId: resolvedTenantId,
           tenantCode: devTenantCode,
+          staySignedIn: formData.staySignedIn,
         });
 
         setIsRedirecting(true);
@@ -224,7 +226,7 @@ export function useLoginViewModel() {
 
   // ── Form helpers ───────────────────────────────────────────────────────
   const updateField = useCallback(
-    (field: keyof LoginFormData, value: string) => {
+    (field: keyof LoginFormData, value: string | boolean) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
       if (error) setError("");
     },
@@ -244,7 +246,7 @@ export function useLoginViewModel() {
   }, [twoFA, workspaceSelector]);
 
   const resetForm = useCallback(() => {
-    setFormData({ identifier: "", password: "" });
+    setFormData({ identifier: "", password: "", staySignedIn: false });
     setShowPassword(false);
     setError("");
     setIsRedirecting(false);

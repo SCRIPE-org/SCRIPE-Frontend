@@ -15,6 +15,7 @@ export interface LoginRequestData {
   password: string;
   tenantId?: string;
   deviceInfo?: string;
+  staySignedIn?: boolean;
   /**
    * Set to true when the user explicitly selects the Platform Administration
    * workspace from the workspace picker. Prevents the workspace discovery
@@ -62,12 +63,14 @@ export class LoginRequest {
   public readonly tenantId?: string;
   public readonly deviceInfo: string;
   public readonly isPlatformAdmin: boolean;
+  public readonly staySignedIn: boolean;
 
   constructor(data: LoginRequestData) {
     this.identifier = data.identifier;
     this.password = data.password;
     this.tenantId = data.tenantId;
     this.isPlatformAdmin = data.isPlatformAdmin ?? false;
+    this.staySignedIn = data.staySignedIn ?? false;
     // Auto-populate device info if not provided
     this.deviceInfo = data.deviceInfo || getDeviceInfo();
   }

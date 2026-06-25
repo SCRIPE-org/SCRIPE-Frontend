@@ -37,15 +37,17 @@ export function useAuthLogin() {
       tenantId,
       tenantCode,
       isPlatformAdmin,
+      staySignedIn,
     }: {
       identifier: string;
       password: string;
       tenantId?: string;
       tenantCode?: string;
       isPlatformAdmin?: boolean;
+      staySignedIn?: boolean;
     }) => {
       // Construct domain entity — repository handles mapping to API model
-      const request = new LoginRequest({ identifier, password, tenantId, isPlatformAdmin });
+      const request = new LoginRequest({ identifier, password, tenantId, isPlatformAdmin, staySignedIn });
       return authRepository.login(request);
     },
     onSuccess: async (result, variables) => {
