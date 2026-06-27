@@ -50,21 +50,27 @@ const sections: DocSection[] = [
     language: "typescript",
     filename: "Generated Frontend Module Structure",
     code: `src/modules/{kebab-name}/
-├── di.ts                           # DI container (uses getModuleApiService)
+├── di.ts                           # DI container (wires all sub-modules)
 ├── index.ts                        # Public API barrel file
-└── src/
-    ├── domain/
-    │   ├── entities/{Entity}.ts    # Zod schema entity
-    │   └── interfaces/
-    │       ├── I{Entity}Repository.ts
-    │       └── I{Entity}Service.ts
-    ├── data/
-    │   ├── models/{Entity}Model.ts
-    │   ├── mappers/{Entity}Mapper.ts
-    │   └── repositories/{Entity}Repository.ts
-    └── presentation/
-        ├── viewmodels/use{Entity}ViewModel.ts
-        └── views/{Entity}ListView.tsx`,
+└── {sub-module}/                   # Sub-module named folder (e.g., {kebab-name})
+    ├── index.ts                    # Sub-module barrel
+    ├── locales/                    # Sub-module-owned translations
+    │   ├── {sub-module}.en.ts
+    │   ├── {sub-module}.ar.ts
+    │   └── index.ts
+    └── src/
+        ├── domain/
+        │   ├── entities/{Entity}.ts # Zod schema entity
+        │   └── interfaces/
+        │       ├── I{Entity}Repository.ts
+        │       └── I{Entity}Service.ts
+        ├── data/
+        │   ├── models/{Entity}Model.ts
+        │   ├── mappers/{Entity}Mapper.ts
+        │   └── repositories/{Entity}Repository.ts
+        └── presentation/
+            ├── viewmodels/use{Entity}ViewModel.ts
+            └── views/{Entity}ListView.tsx`,
   },
 
   // new-feature

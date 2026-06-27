@@ -63,7 +63,7 @@ export const ar = {
       controllerTitle: "وحدة تحكم الـ API",
       registerTitle: "تسجيل الوحدة",
       migrationNote:
-        "لا تنس تشغيل 'dotnet ef migrations add' لإنشاء الترحيل، و 'dotnet ef database update' قبل الاعتماد.",
+        "لا تنس تشغيل 'scripe db add-migration AddYourEntity -m Inventory' لإنشاء الترحيل، و 'scripe db update -m Inventory' قبل الاعتماد.",
     },
   },
 };

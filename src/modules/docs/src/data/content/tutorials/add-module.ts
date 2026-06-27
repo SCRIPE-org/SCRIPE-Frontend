@@ -78,36 +78,37 @@ const sections: DocSection[] = [
   },
   {
     type: "code",
-    language: "text",
-    filename: "Module Directory Structure",
+    language: "plaintext",
+    filename: "src/modules/inventory/directory.structure.txt",
     code: `src/modules/inventory/
-├── di.ts                        # Module DI container
+├── di.ts                        # Module DI container (wires all sub-modules)
 ├── index.ts                     # Public exports
-└── src/
-    ├── domain/
-    │   ├── entities/
-    │   │   └── Product.ts       # Zod schema
-    │   └── interfaces/
-    │       └── IProductRepository.ts
-    │
-    ├── data/
-    │   ├── models/
-    │   │   └── ProductModel.ts  # API DTO
-    │   ├── mappers/
-    │   │   └── ProductMapper.ts # DTO ↔ Entity
-    │   └── repositories/
-    │       └── ProductRepository.ts
-    │
-    └── presentation/
-        ├── viewmodels/
-        │   ├── useProductListViewModel.ts    # Orchestrator
-        │   ├── useProductStatsViewModel.ts   # Stats section
-        │   └── useProductFilterViewModel.ts  # Filter section
-        ├── views/
-        │   └── ProductListView.tsx           # Pure UI
-        └── components/
-            ├── ProductStats.tsx
-            └── ProductFilters.tsx`,
+└── products/                    # Products sub-module
+    ├── index.ts                 # Sub-module barrel
+    ├── locales/                 # Sub-module-owned translations
+    │   ├── products.en.ts
+    │   ├── products.ar.ts
+    │   └── index.ts
+    └── src/
+        ├── domain/
+        │   ├── entities/
+        │   │   └── Product.ts   # Zod schema/Entity
+        │   └── interfaces/
+        │       └── IProductRepository.ts
+        ├── data/
+        │   ├── models/
+        │   │   └── ProductModel.ts  # API DTO
+        │   ├── mappers/
+        │   │   └── ProductMapper.ts # DTO ↔ Entity
+        │   └── repositories/
+        │       └── ProductRepository.ts
+        └── presentation/
+            ├── viewmodels/
+            │   └── useProductListViewModel.ts # Hook
+            ├── views/
+            │   └── ProductListView.tsx        # Pure UI view
+            └── components/
+                └── ProductStats.tsx`,
   },
 
   // ─── Step 2: Domain Entity ────────────────────────────────
@@ -120,7 +121,7 @@ const sections: DocSection[] = [
   {
     type: "code",
     language: "typescript",
-    filename: "domain/entities/Product.ts",
+    filename: "products/src/domain/entities/Product.ts",
     code: `import { z } from 'zod';
 
 /**
@@ -174,7 +175,7 @@ export type CreateProductInput = z.infer<typeof CreateProductSchema>;`,
       {
         label: "Interface",
         language: "typescript",
-        filename: "domain/interfaces/IProductRepository.ts",
+        filename: "products/src/domain/interfaces/IProductRepository.ts",
         code: `import { Result } from '@core/common/Result';
 
 /**
@@ -192,7 +193,7 @@ export interface IProductRepository {
       {
         label: "Implementation",
         language: "typescript",
-        filename: "data/repositories/ProductRepository.ts",
+        filename: "products/src/data/repositories/ProductRepository.ts",
         code: `import { IApiService } from '@core/network';
 import { ProductMapper } from '../mappers/ProductMapper';
 
@@ -237,15 +238,37 @@ export class ProductRepository implements IProductRepository {
     type: "code",
     language: "typescript",
     filename: "di.ts — Module DI Container",
-    code: `import { coreContainer } from '@core/di';
-import { ProductRepository } from './src/data/repositories/ProductRepository';
+    code: `import { getModuleApiService } from '@core/services/api-factory';
+import { ProductRepository } from './products/src/data/repositories/ProductRepository';
+import type { IProductRepository } from './products/src/domain/interfaces/IProductRepository';
 
-/**
- * Exported constant defining parameters and fields for container configurations.
- */
-export const container = {
-  productRepository: new ProductRepository(coreContainer.apiService),
-};`,
+interface InventoryContainer {
+  productRepository: IProductRepository;
+}
+
+let _instance: InventoryContainer | null = null;
+
+function createContainer(): InventoryContainer {
+  if (typeof window === 'undefined') {
+    const dummyProxy = new Proxy({} as any, {
+      get() { return () => Promise.resolve({}); }
+    });
+    return { productRepository: dummyProxy };
+  }
+  const apiService = getModuleApiService('INVENTORY');
+  return {
+    productRepository: new ProductRepository(apiService)
+  };
+}
+
+export const container: InventoryContainer = new Proxy({} as InventoryContainer, {
+  get(_target, prop: keyof InventoryContainer) {
+    if (!_instance) {
+      _instance = createContainer();
+    }
+    return _instance[prop];
+  }
+});`,
   },
 
   // ─── Step 5: ViewModel ────────────────────────────────────
@@ -258,10 +281,10 @@ export const container = {
   {
     type: "code",
     language: "typescript",
-    filename: "useProductListViewModel.ts — Orchestrator",
+    filename: "products/src/presentation/viewmodels/useProductListViewModel.ts — Orchestrator",
     code: `'use client';
 import { useCrudViewModel } from '@core/crud';
-import { container } from '../../../di';
+import { container } from '../../../../di';
 
 /**
  * React hook/ViewModel orchestrating state and data flows for product list view model.
@@ -301,7 +324,7 @@ export function useProductListViewModel() {
   {
     type: "code",
     language: "tsx",
-    filename: "views/ProductListView.tsx — Pure UI (~20 lines)",
+    filename: "products/src/presentation/views/ProductListView.tsx — Pure UI (~20 lines)",
     code: `'use client';
 import { GenericCrudView } from '@core/crud';
 import { useProductListViewModel } from '../viewmodels/useProductListViewModel';

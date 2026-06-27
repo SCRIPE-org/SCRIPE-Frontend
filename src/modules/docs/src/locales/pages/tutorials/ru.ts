@@ -65,7 +65,7 @@ export const ru = {
       controllerTitle: "Вывод контроллера API",
       registerTitle: "Сборка и миграции",
       migrationNote:
-        "Всегда выполняйте 'dotnet ef database update' локально перед фиксацией (commit) кода.",
+        "Всегда выполняйте 'scripe db add-migration AddYourEntity -m Inventory' и 'scripe db update -m Inventory' локально перед фиксацией (commit) кода.",
     },
   },
 };

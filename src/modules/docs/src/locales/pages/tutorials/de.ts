@@ -63,7 +63,7 @@ export const de = {
       diTitle: "Dependency Injection",
       controllerTitle: "API Controller",
       registerTitle: "Modul Registrierung",
-      migrationNote: "Führen Sie immer dotnet ef migrations add AddYourEntity aus.",
+      migrationNote: "Führen Sie immer scripe db add-migration AddYourEntity -m Inventory und scripe db update -m Inventory aus.",
     },
   },
 };

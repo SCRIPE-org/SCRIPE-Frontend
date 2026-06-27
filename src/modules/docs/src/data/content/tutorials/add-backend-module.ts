@@ -16,7 +16,7 @@ const sections: DocSection[] = [
     type: "list",
     variant: "unordered",
     items: [
-      ".NET 8 SDK installed",
+      ".NET 10 SDK installed",
       "Oracle or SQL Server database configured",
       "Understanding of CQRS, AstraFlow mediator, and Clean Architecture",
     ],
@@ -329,17 +329,14 @@ public class ProductsController : ControllerBase
   {
     type: "code",
     language: "csharp",
-    filename: "Program.cs — Add Module",
-    code: `// Add to the module switch in Program.cs:
-case "inventory":
-    builder.Services.AddInventoryModule(configuration);
-    break;
-case "all":
-default:
-    builder.Services.AddIdentityModule(configuration);
-    builder.Services.AddInventoryModule(configuration); // NEW
-    break;`,
-    highlightLines: [2, 3, 8],
+    filename: "Host/API/Extensions/ModuleRegistration.cs — Add Module",
+    code: `// Add to ModuleRegistration.RegisterModules:
+if (isMonolith || moduleName.Equals("Inventory", StringComparison.OrdinalIgnoreCase))
+{
+    mediatorAssemblies.Add(typeof(Inventory.Application.DependencyInjection));
+    builder.Services.AddInventoryModule(builder.Configuration); // Register module DI
+}`,
+    highlightLines: [2, 3, 4, 5, 6],
   },
   {
     type: "info",

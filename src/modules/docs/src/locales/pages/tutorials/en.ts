@@ -74,7 +74,7 @@ export const en = {
       controllerTitle: "API Controller",
       registerTitle: "Module Registration",
       migrationNote:
-        "After creating your entity configuration, run 'dotnet ef migrations add AddYourEntity' to generate the database migration. Test with 'dotnet ef database update' before committing.",
+        "After creating your entity configuration, run 'scripe db add-migration AddYourEntity -m Inventory' to generate the database migration. Test with 'scripe db update -m Inventory' before committing.",
     },
   },
 };

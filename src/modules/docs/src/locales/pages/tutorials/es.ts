@@ -72,7 +72,7 @@ export const es = {
       controllerTitle: "Diseño de la Interfaz REST",
       registerTitle: "Modificación de Compilación General",
       migrationNote:
-        "Siempre realizar el test 'dotnet ef database update' localmente antes del commit principal a la rama.",
+        "Siempre realizar el test 'scripe db update -m Inventory' y 'scripe db add-migration AddYourEntity -m Inventory' localmente antes del commit principal a la rama.",
     },
   },
 };

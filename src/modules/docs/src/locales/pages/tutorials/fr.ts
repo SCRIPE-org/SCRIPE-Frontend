@@ -79,7 +79,7 @@ export const fr = {
       controllerTitle: "Sortie Contrôleur de l'API",
       registerTitle: "Branchement et Compilation",
       migrationNote:
-        "Vérifiez méticuleusement que vous avez passé 'dotnet ef database update' et examiné les modifications SQL en local avant de pousser vos changements.",
+        "Vérifiez méticuleusement que vous avez exécuté 'scripe db add-migration AddYourEntity -m Inventory' et 'scripe db update -m Inventory' en local avant de pousser vos changements.",
     },
   },
 };
