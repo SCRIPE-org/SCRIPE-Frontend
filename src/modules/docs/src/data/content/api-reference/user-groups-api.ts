@@ -16,51 +16,51 @@ const sections: DocSection[] = [
     endpoints: [
       {
         method: "GET",
-        path: "/api/v1/admingroups",
+        path: "/api/v1/UserGroups",
         descriptionKey: "apiReference.adminGroupsApi.listGroupsDesc",
-        auth: "admin_groups.view",
+        auth: "user_groups.view",
       },
       {
         method: "GET",
-        path: "/api/v1/admingroups/myTenantGroups",
+        path: "/api/v1/UserGroups/myTenantGroups",
         descriptionKey: "apiReference.adminGroupsApi.myTenantGroupsDesc",
-        auth: "admin_groups.view",
+        auth: "user_groups.view",
       },
       {
         method: "GET",
-        path: "/api/v1/admingroups/{id}",
+        path: "/api/v1/UserGroups/{id}",
         descriptionKey: "apiReference.adminGroupsApi.getGroupDesc",
-        auth: "admin_groups.view",
+        auth: "user_groups.view",
       },
       {
         method: "GET",
-        path: "/api/v1/admingroups/byTenant/{tenantId}",
+        path: "/api/v1/UserGroups/byTenantId/{tenantId}",
         descriptionKey: "apiReference.adminGroupsApi.groupsByTenantDesc",
-        auth: "admin_groups.view",
+        auth: "user_groups.view",
       },
       {
         method: "POST",
-        path: "/api/v1/admingroups",
+        path: "/api/v1/UserGroups",
         descriptionKey: "apiReference.adminGroupsApi.createGroupDesc",
-        auth: "admin_groups.create",
+        auth: "user_groups.create",
       },
       {
         method: "POST",
-        path: "/api/v1/admingroups/createForMyTenant",
+        path: "/api/v1/UserGroups/createForMyTenant",
         descriptionKey: "apiReference.adminGroupsApi.createGroupMyTenantDesc",
-        auth: "admin_groups.create",
+        auth: "user_groups.create",
       },
       {
         method: "PUT",
-        path: "/api/v1/admingroups/{id}",
+        path: "/api/v1/UserGroups/{id}",
         descriptionKey: "apiReference.adminGroupsApi.updateGroupDesc",
-        auth: "admin_groups.update",
+        auth: "user_groups.update",
       },
       {
         method: "DELETE",
-        path: "/api/v1/admingroups/{id}",
+        path: "/api/v1/UserGroups/{id}",
         descriptionKey: "apiReference.adminGroupsApi.deleteGroupDesc",
-        auth: "admin_groups.delete",
+        auth: "user_groups.delete",
       },
     ],
   },
@@ -70,7 +70,7 @@ const sections: DocSection[] = [
       {
         label: "Group Detail",
         language: "json",
-        filename: "GET /admingroups/{id} — Response",
+        filename: "GET /UserGroups/{id} — Response",
         code: `{
   "id": "group-uuid",
   "nameEn": "Finance Team",
@@ -79,26 +79,44 @@ const sections: DocSection[] = [
   "tenantId": "tenant-uuid",
   "isActive": true,
   "members": [
-    { "adminId": "admin-uuid", "name": "John Doe", "email": "john@example.com" }
+    {
+      "adminId": "admin-uuid",
+      "firstName": "John",
+      "lastName": "Doe",
+      "username": "johndoe",
+      "email": "john@example.com",
+      "isActive": true
+    }
   ],
   "roles": [
-    { "roleId": "role-uuid", "roleName": "Accountant" }
+    {
+      "roleId": "role-uuid",
+      "nameEn": "Accountant",
+      "nameAr": "محاسب",
+      "code": "ACCOUNTANT",
+      "permissionCount": 12
+    }
   ],
   "restrictions": [
-    { "permissionCode": "admins.view", "restrictedFields": ["salary", "ssn"] }
+    {
+      "permissionCode": "admins.view",
+      "restrictedFields": ["salary", "ssn"]
+    }
   ]
 }`,
       },
       {
         label: "Create Group",
         language: "json",
-        filename: "POST /admingroups — Request",
+        filename: "POST /UserGroups — Request",
         code: `{
   "nameEn": "Finance Team",
   "nameAr": "فريق المالية",
   "code": "FINANCE_TEAM",
-  "tenantId": "tenant-uuid",
-  "description": "All finance department admins"
+  "descriptionEn": "All finance department admins",
+  "descriptionAr": "جميع مشرفي القسم المالي",
+  "roleIds": ["role-uuid-1", "role-uuid-2"],
+  "tenantId": "tenant-uuid"
 }`,
       },
     ],
@@ -117,15 +135,15 @@ const sections: DocSection[] = [
     endpoints: [
       {
         method: "POST",
-        path: "/api/v1/admingroups/{id}/members",
+        path: "/api/v1/UserGroups/{id}/members",
         descriptionKey: "apiReference.adminGroupsApi.addMembersDesc",
-        auth: "admin_groups.update",
+        auth: "user_groups.update",
       },
       {
         method: "DELETE",
-        path: "/api/v1/admingroups/{id}/members/{adminId}",
+        path: "/api/v1/UserGroups/{id}/members/{adminId}",
         descriptionKey: "apiReference.adminGroupsApi.removeMemberDesc",
-        auth: "admin_groups.update",
+        auth: "user_groups.update",
       },
     ],
   },
@@ -143,22 +161,22 @@ const sections: DocSection[] = [
     endpoints: [
       {
         method: "PUT",
-        path: "/api/v1/admingroups/{id}/roles",
+        path: "/api/v1/UserGroups/{id}/roles",
         descriptionKey: "apiReference.adminGroupsApi.setGroupRolesDesc",
-        auth: "admin_groups.update",
+        auth: "user_groups.update",
       },
       {
         method: "PUT",
-        path: "/api/v1/admingroups/{id}/restrictions",
+        path: "/api/v1/UserGroups/{id}/restrictions",
         descriptionKey: "apiReference.adminGroupsApi.setGroupRestrictionsDesc",
-        auth: "admin_groups.update",
+        auth: "user_groups.update",
       },
     ],
   },
   {
     type: "code",
     language: "json",
-    filename: "PUT /admingroups/{id}/restrictions — Request",
+    filename: "PUT /UserGroups/{id}/restrictions — Request",
     code: `{
   "restrictions": [
     {
@@ -186,28 +204,28 @@ const sections: DocSection[] = [
     endpoints: [
       {
         method: "POST",
-        path: "/api/v1/admingroups/bulk/activate",
+        path: "/api/v1/UserGroups/bulk/activate",
         descriptionKey: "apiReference.adminGroupsApi.bulkActivateDesc",
-        auth: "admin_groups.update",
+        auth: "user_groups.update",
       },
       {
         method: "POST",
-        path: "/api/v1/admingroups/bulk/deactivate",
+        path: "/api/v1/UserGroups/bulk/deactivate",
         descriptionKey: "apiReference.adminGroupsApi.bulkDeactivateDesc",
-        auth: "admin_groups.update",
+        auth: "user_groups.update",
       },
       {
         method: "POST",
-        path: "/api/v1/admingroups/bulk/delete",
+        path: "/api/v1/UserGroups/bulk/delete",
         descriptionKey: "apiReference.adminGroupsApi.bulkDeleteDesc",
-        auth: "admin_groups.delete",
+        auth: "user_groups.delete",
       },
     ],
   },
   {
     type: "code",
     language: "json",
-    filename: "POST /admingroups/bulk/delete — Request",
+    filename: "POST /UserGroups/bulk/delete — Request",
     code: `{
   "ids": ["group-uuid-1", "group-uuid-2"],
   "cascadeAdmins": true

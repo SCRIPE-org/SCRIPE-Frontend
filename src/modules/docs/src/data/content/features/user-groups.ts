@@ -15,11 +15,11 @@ const sections: DocSection[] = [
   { type: "paragraph", contentKey: "features.adminGroups.architectureIntro" },
   {
     type: "flowchart",
-    title: "Admin Group Hierarchy",
+    title: "User Group Hierarchy",
     direction: "vertical",
     nodes: [
       { id: "tenant", label: "Tenant" },
-      { id: "group", label: "AdminGroup" },
+      { id: "group", label: "UserGroup" },
       { id: "members", label: "Members (Admins)" },
       { id: "roles", label: "Assigned Roles" },
       { id: "restrictions", label: "Field Restrictions" },
@@ -27,9 +27,9 @@ const sections: DocSection[] = [
     ],
     connections: [
       { from: "tenant", to: "group", label: "owns" },
-      { from: "group", to: "members", label: "AdminGroupMember" },
-      { from: "group", to: "roles", label: "AdminGroupRole" },
-      { from: "group", to: "restrictions", label: "AdminGroupRestriction" },
+      { from: "group", to: "members", label: "AdminUserGroup" },
+      { from: "group", to: "roles", label: "UserGroupRole" },
+      { from: "group", to: "restrictions", label: "UserGroupRestriction" },
       { from: "members", to: "jwt", label: "inherits" },
       { from: "roles", to: "jwt", label: "merge" },
       { from: "restrictions", to: "jwt", label: "merge" },
@@ -49,46 +49,56 @@ const sections: DocSection[] = [
     headers: ["Entity", "Purpose", "Key Fields"],
     rows: [
       [
-        "AdminGroup",
+        "UserGroup",
         "Named container for batch assignments",
-        "NameEn, NameAr, Code, TenantId, IsActive, Description",
+        "NameEn, NameAr, Code, DescriptionEn, DescriptionAr, TenantId, IsActive",
       ],
       [
-        "AdminGroupMember",
-        "Many-to-many junction (Admin ↔ Group)",
-        "AdminId, AdminGroupId, JoinedAt",
+        "AdminUserGroup",
+        "Many-to-many junction (Admin ↔ UserGroup)",
+        "AdminId, UserGroupId",
       ],
-      ["AdminGroupRole", "Assigns a Role to a Group", "AdminGroupId, RoleId"],
+      ["UserGroupRole", "Assigns a Role to a Group", "UserGroupId, RoleId"],
       [
-        "AdminGroupRestriction",
+        "UserGroupRestriction",
         "Field-level restriction per permission",
-        "AdminGroupId, PermissionCode, RestrictedFieldsJson",
+        "UserGroupId, PermissionCode, RestrictedFieldsJson",
       ],
     ],
   },
   {
     type: "code",
     language: "csharp",
-    filename: "AdminGroup.cs — Domain Entity",
-    code: `public class AdminGroup : AuditableEntity<Guid>, ITenantAwareEntity
+    filename: "UserGroup.cs — Domain Entity",
+    code: `public class UserGroup : AuditableEntity<Guid>
 {
-    [Required, MaxLength(200)]
-    public string NameEn { get; set; } = string.Empty;
+    [Required]
+    [MaxLength(100)]
+    public string NameEn { get; set; } = null!;
 
-    [MaxLength(200)]
-    public string? NameAr { get; set; }
+    [Required]
+    [MaxLength(100)]
+    public string NameAr { get; set; } = null!;
 
-    [Required, MaxLength(100)]
-    public string Code { get; set; } = string.Empty;
+    [Required]
+    [MaxLength(50)]
+    public string Code { get; set; } = null!;
 
-    public Guid TenantId { get; set; }
-    public bool IsActive { get; set; } = true;
+    [MaxLength(500)]
+    public string? DescriptionEn { get; set; }
+
+    [MaxLength(500)]
+    public string? DescriptionAr { get; set; }
+
+    public Guid? TenantId { get; set; }
+
+    public new bool IsActive { get; set; } = true;
 
     // Navigation
-    public virtual Tenant Tenant { get; set; } = null!;
-    public virtual ICollection<AdminGroupMember> Members { get; set; } = [];
-    public virtual ICollection<AdminGroupRole> Roles { get; set; } = [];
-    public virtual ICollection<AdminGroupRestriction> Restrictions { get; set; } = [];
+    public virtual Tenant? Tenant { get; set; }
+    public virtual ICollection<AdminUserGroup> AdminUserGroups { get; set; } = [];
+    public virtual ICollection<UserGroupRole> UserGroupRoles { get; set; } = [];
+    public virtual ICollection<UserGroupRestriction> UserGroupRestrictions { get; set; } = [];
 }`,
     highlightLines: [1, 12, 13, 17, 18, 19, 20],
   },
@@ -115,7 +125,7 @@ const sections: DocSection[] = [
     ],
     connections: [
       { from: "login", to: "direct", label: "AdminRoles" },
-      { from: "login", to: "groups", label: "AdminGroupMembers" },
+      { from: "login", to: "groups", label: "AdminUserGroups" },
       { from: "direct", to: "merge" },
       { from: "groups", to: "merge" },
       { from: "merge", to: "cache", label: "Effective perms" },
@@ -142,17 +152,17 @@ const sections: DocSection[] = [
     rows: [
       [
         "Add Members",
-        "POST /admingroups/{id}/members",
+        "POST /UserGroups/{id}/members",
         "Idempotent — duplicates are silently ignored",
       ],
       [
         "Remove Member",
-        "DELETE /admingroups/{id}/members/{adminId}",
+        "DELETE /UserGroups/{id}/members/{adminId}",
         "Removes junction record; admin keeps direct roles",
       ],
       [
         "List Members",
-        "GET /admingroups/{id}",
+        "GET /UserGroups/{id}",
         "Detail response includes members array with admin metadata",
       ],
     ],
@@ -178,7 +188,7 @@ const sections: DocSection[] = [
   {
     type: "code",
     language: "json",
-    filename: "AdminGroupRestriction Example",
+    filename: "UserGroupRestriction Example",
     code: `// Group "Finance Team" restriction for "admins.view" permission
 {
   "permissionCode": "admins.view",
@@ -207,7 +217,7 @@ const sections: DocSection[] = [
     direction: "vertical",
     nodes: [
       { id: "trigger", label: "Bulk Delete (Cascade = true)", type: "danger" },
-      { id: "soft_del_group", label: "Soft Delete Selected AdminGroups", type: "warning" },
+      { id: "soft_del_group", label: "Soft Delete Selected UserGroups", type: "warning" },
       { id: "find_admins", label: "Retrieve Assigned Admins", type: "info" },
       { id: "is_protected", label: "Check: IsProtected Admin?", type: "primary" },
       { id: "immune", label: "Skip (Root Admin Immune)", type: "success" },
@@ -234,93 +244,93 @@ const sections: DocSection[] = [
     endpoints: [
       {
         method: "GET",
-        path: "/api/v1/admingroups",
+        path: "/api/v1/UserGroups",
         descriptionKey: "Paginated list (SuperAdmin: all tenants)",
-        auth: "admin_groups.view",
+        auth: "user_groups.view",
       },
       {
         method: "GET",
-        path: "/api/v1/admingroups/myTenantGroups",
+        path: "/api/v1/UserGroups/myTenantGroups",
         descriptionKey: "Groups for current user's tenant",
-        auth: "admin_groups.view",
+        auth: "user_groups.view",
       },
       {
         method: "GET",
-        path: "/api/v1/admingroups/{id}",
+        path: "/api/v1/UserGroups/{id}",
         descriptionKey: "Full detail with members, roles, restrictions",
-        auth: "admin_groups.view",
+        auth: "user_groups.view",
       },
       {
         method: "GET",
-        path: "/api/v1/admingroups/byTenant/{tenantId}",
+        path: "/api/v1/UserGroups/byTenantId/{tenantId}",
         descriptionKey: "Groups for a specific tenant",
-        auth: "admin_groups.view",
+        auth: "user_groups.view",
       },
       {
         method: "POST",
-        path: "/api/v1/admingroups",
+        path: "/api/v1/UserGroups",
         descriptionKey: "Create group (specify tenant)",
-        auth: "admin_groups.create",
+        auth: "user_groups.create",
       },
       {
         method: "POST",
-        path: "/api/v1/admingroups/createForMyTenant",
+        path: "/api/v1/UserGroups/createForMyTenant",
         descriptionKey: "Create group for JWT tenant",
-        auth: "admin_groups.create",
+        auth: "user_groups.create",
       },
       {
         method: "PUT",
-        path: "/api/v1/admingroups/{id}",
+        path: "/api/v1/UserGroups/{id}",
         descriptionKey: "Update group metadata",
-        auth: "admin_groups.update",
+        auth: "user_groups.update",
       },
       {
         method: "DELETE",
-        path: "/api/v1/admingroups/{id}",
+        path: "/api/v1/UserGroups/{id}",
         descriptionKey: "Soft-delete group",
-        auth: "admin_groups.delete",
+        auth: "user_groups.delete",
       },
       {
         method: "POST",
-        path: "/api/v1/admingroups/bulk/activate",
+        path: "/api/v1/UserGroups/bulk/activate",
         descriptionKey: "Bulk activate groups (supports Cascade Admins)",
-        auth: "admin_groups.update",
+        auth: "user_groups.update",
       },
       {
         method: "POST",
-        path: "/api/v1/admingroups/bulk/deactivate",
+        path: "/api/v1/UserGroups/bulk/deactivate",
         descriptionKey: "Bulk deactivate groups (supports Cascade Admins)",
-        auth: "admin_groups.update",
+        auth: "user_groups.update",
       },
       {
         method: "POST",
-        path: "/api/v1/admingroups/bulk/delete",
+        path: "/api/v1/UserGroups/bulk/delete",
         descriptionKey: "Bulk soft-delete groups (supports Cascade Admins)",
-        auth: "admin_groups.delete",
+        auth: "user_groups.delete",
       },
       {
         method: "POST",
-        path: "/api/v1/admingroups/{id}/members",
+        path: "/api/v1/UserGroups/{id}/members",
         descriptionKey: "Add members (idempotent)",
-        auth: "admin_groups.update",
+        auth: "user_groups.update",
       },
       {
         method: "DELETE",
-        path: "/api/v1/admingroups/{id}/members/{adminId}",
+        path: "/api/v1/UserGroups/{id}/members/{adminId}",
         descriptionKey: "Remove member",
-        auth: "admin_groups.update",
+        auth: "user_groups.update",
       },
       {
         method: "PUT",
-        path: "/api/v1/admingroups/{id}/roles",
+        path: "/api/v1/UserGroups/{id}/roles",
         descriptionKey: "Set roles (nuke-and-pave)",
-        auth: "admin_groups.update",
+        auth: "user_groups.update",
       },
       {
         method: "PUT",
-        path: "/api/v1/admingroups/{id}/restrictions",
+        path: "/api/v1/UserGroups/{id}/restrictions",
         descriptionKey: "Set restrictions (nuke-and-pave)",
-        auth: "admin_groups.update",
+        auth: "user_groups.update",
       },
     ],
   },
