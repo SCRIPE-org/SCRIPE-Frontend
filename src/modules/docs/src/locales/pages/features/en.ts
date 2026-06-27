@@ -151,11 +151,11 @@ export const en = {
       endpointsPermissionsTitle: "Permission Endpoints",
       tenantScopingNote:
         "Roles are automatically scoped to the current user's tenant. A tenant admin can only see and manage roles within their own tenant. Super admins can see all roles across all tenants.",
-      adminGroupsTitle: "User Groups",
-      adminGroupsIntro:
+      userGroupsTitle: "User Groups",
+      userGroupsIntro:
         "User Groups enable batch assignment of roles and field-level restrictions to multiple administrators at once. Each group is tenant-scoped, contains members (admins), assigned roles, and per-permission field restrictions. When an admin logs in, roles and restrictions from all their groups are merged with direct role assignments to produce the final JWT claims.",
-      adminGroupEndpointsTitle: "User Groups API Endpoints",
-      adminGroupsNote:
+      userGroupEndpointsTitle: "User Groups API Endpoints",
+      userGroupsNote:
         "User groups are additive — an admin's effective permissions are the UNION of their direct roles plus all group-inherited roles. Group restrictions are also merged additively. Removing an admin from a group immediately revokes the inherited roles and restrictions on next login.",
     },
     auditSystem: {
@@ -368,7 +368,7 @@ export const en = {
       previewIntro:
         "The preview endpoint renders a template with sample data, allowing admins to see exactly how the email or notification will look before sending. This is invaluable for testing templates and catching formatting issues.",
     },
-    adminGroups: {
+    userGroups: {
       title: "User Groups",
       description:
         "Group-based role and restriction assignment with tenant scoping, member management, and additive merge at login.",

@@ -187,7 +187,7 @@ export const zh = {
       seededNote:
         "如果需要抹去一个权限，只能从 C# 源码层移除并重发布，系统重启时会自动抹除对应的历史关联。",
     },
-    adminGroupsApi: {
+    userGroupsApi: {
       title: "大规模用户群组策略 API (User Groups)",
       description:
         "用于调配大型团队阵列的矩阵控制器。批量继承权限、批量设置并合并复杂多级的过滤权限（Nuke-and-Pave 技术实现）。",

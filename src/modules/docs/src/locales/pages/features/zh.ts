@@ -121,11 +121,11 @@ export const zh = {
       endpointsMyTenantTitle: "我的租户相关端点",
       endpointsPermissionsTitle: "权限字典端点",
       tenantScopingNote: "角色自动限定在当前用户的租户范围内。",
-      adminGroupsTitle: "用户组 (User Groups)",
-      adminGroupsIntro:
+      userGroupsTitle: "用户组 (User Groups)",
+      userGroupsIntro:
         "用户组支持批量为多个管理员分配角色和字段限制。用户登录时，合并其直接角色和用户组角色。",
-      adminGroupEndpointsTitle: "用户组 API 端点",
-      adminGroupsNote:
+      userGroupEndpointsTitle: "用户组 API 端点",
+      userGroupsNote:
         "用户组是叠加的 (Additive) —— 管理员最终的权限是其直接角色与用户组角色的并集 (UNION)。",
     },
     auditSystem: {
@@ -301,7 +301,7 @@ export const zh = {
       previewTitle: "预览功能",
       previewIntro: "允许管理员在正式发送前通过注入模拟数据预览邮件或通知的排版效果。",
     },
-    adminGroups: {
+    userGroups: {
       title: "用户组 (User Groups)",
       description: "基于用户组的角色与限制分配，支持租户作用域及登录时的增量叠加。",
       intro: "用户组提供了一种可扩展的方式，可为大量管理员批量分配角色和字段限制，无需逐一分配。",

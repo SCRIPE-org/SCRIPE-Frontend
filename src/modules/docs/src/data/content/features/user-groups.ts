@@ -3,16 +3,16 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "features.adminGroups.intro" },
+  { type: "paragraph", contentKey: "features.userGroups.intro" },
 
   // ─── Architecture ─────────────────────────────────────────
   {
     type: "heading",
     level: 2,
-    titleKey: "features.adminGroups.architectureTitle",
+    titleKey: "features.userGroups.architectureTitle",
     id: "architecture",
   },
-  { type: "paragraph", contentKey: "features.adminGroups.architectureIntro" },
+  { type: "paragraph", contentKey: "features.userGroups.architectureIntro" },
   {
     type: "flowchart",
     title: "User Group Hierarchy",
@@ -40,10 +40,10 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "features.adminGroups.domainModelTitle",
+    titleKey: "features.userGroups.domainModelTitle",
     id: "domain-model",
   },
-  { type: "paragraph", contentKey: "features.adminGroups.domainModelIntro" },
+  { type: "paragraph", contentKey: "features.userGroups.domainModelIntro" },
   {
     type: "table",
     headers: ["Entity", "Purpose", "Key Fields"],
@@ -107,10 +107,10 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "features.adminGroups.howItWorksTitle",
+    titleKey: "features.userGroups.howItWorksTitle",
     id: "how-it-works",
   },
-  { type: "paragraph", contentKey: "features.adminGroups.howItWorksIntro" },
+  { type: "paragraph", contentKey: "features.userGroups.howItWorksIntro" },
   {
     type: "flowchart",
     title: "Login → Group Resolution → JWT",
@@ -135,17 +135,17 @@ const sections: DocSection[] = [
   {
     type: "info",
     variant: "note",
-    contentKey: "features.adminGroups.mergeNote",
+    contentKey: "features.userGroups.mergeNote",
   },
 
   // ─── Member Management ────────────────────────────────────
   {
     type: "heading",
     level: 2,
-    titleKey: "features.adminGroups.memberManagementTitle",
+    titleKey: "features.userGroups.memberManagementTitle",
     id: "member-management",
   },
-  { type: "paragraph", contentKey: "features.adminGroups.memberManagementIntro" },
+  { type: "paragraph", contentKey: "features.userGroups.memberManagementIntro" },
   {
     type: "table",
     headers: ["Operation", "Method", "Behavior"],
@@ -172,19 +172,19 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "features.adminGroups.roleAssignmentTitle",
+    titleKey: "features.userGroups.roleAssignmentTitle",
     id: "role-assignment",
   },
-  { type: "paragraph", contentKey: "features.adminGroups.roleAssignmentIntro" },
+  { type: "paragraph", contentKey: "features.userGroups.roleAssignmentIntro" },
 
   // ─── Restrictions ─────────────────────────────────────────
   {
     type: "heading",
     level: 2,
-    titleKey: "features.adminGroups.restrictionsTitle",
+    titleKey: "features.userGroups.restrictionsTitle",
     id: "restrictions",
   },
-  { type: "paragraph", contentKey: "features.adminGroups.restrictionsIntro" },
+  { type: "paragraph", contentKey: "features.userGroups.restrictionsIntro" },
   {
     type: "code",
     language: "json",
@@ -207,10 +207,10 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "features.adminGroups.cascadeTitle",
+    titleKey: "features.userGroups.cascadeTitle",
     id: "cascade-operations",
   },
-  { type: "paragraph", contentKey: "features.adminGroups.cascadeIntro" },
+  { type: "paragraph", contentKey: "features.userGroups.cascadeIntro" },
   {
     type: "flowchart",
     title: "Cascade Delete Logic with Root Immunity",
@@ -234,11 +234,11 @@ const sections: DocSection[] = [
   {
     type: "info",
     variant: "note",
-    contentKey: "features.adminGroups.cascadeNote",
+    contentKey: "features.userGroups.cascadeNote",
   },
 
   // ─── API Endpoints ────────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "features.adminGroups.endpointsTitle", id: "endpoints" },
+  { type: "heading", level: 2, titleKey: "features.userGroups.endpointsTitle", id: "endpoints" },
   {
     type: "api-table",
     endpoints: [
@@ -336,8 +336,8 @@ const sections: DocSection[] = [
   },
 
   // ─── Frontend Integration ─────────────────────────────────
-  { type: "heading", level: 2, titleKey: "features.adminGroups.frontendTitle", id: "frontend" },
-  { type: "paragraph", contentKey: "features.adminGroups.frontendIntro" },
+  { type: "heading", level: 2, titleKey: "features.userGroups.frontendTitle", id: "frontend" },
+  { type: "paragraph", contentKey: "features.userGroups.frontendIntro" },
   {
     type: "table",
     headers: ["Route", "View", "Description"],
@@ -358,14 +358,14 @@ const sections: DocSection[] = [
   {
     type: "info",
     variant: "note",
-    contentKey: "features.adminGroups.securityNote",
+    contentKey: "features.userGroups.securityNote",
   },
 ];
 
 registerPage({
   slug: "features/user-groups",
-  titleKey: "features.adminGroups.title",
-  descriptionKey: "features.adminGroups.description",
+  titleKey: "features.userGroups.title",
+  descriptionKey: "features.userGroups.description",
   category: "features",
   order: 14,
   sections,

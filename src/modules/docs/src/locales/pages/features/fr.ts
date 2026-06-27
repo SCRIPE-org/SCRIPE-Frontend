@@ -136,11 +136,11 @@ export const fr = {
       endpointsPermissionsTitle: "Endpoints des Permissions",
       tenantScopingNote:
         "Les rôles sont automatiquement cloisonnés au locataire de l'utilisateur actuel.",
-      adminGroupsTitle: "Groupes d'Utilisateurs",
-      adminGroupsIntro:
+      userGroupsTitle: "Groupes d'Utilisateurs",
+      userGroupsIntro:
         "Les Groupes d'Utilisateurs permettent l'affectation par lots de rôles et de restrictions à plusieurs administrateurs à la fois.",
-      adminGroupEndpointsTitle: "Endpoints API des Groupes d'Utilisateurs",
-      adminGroupsNote:
+      userGroupEndpointsTitle: "Endpoints API des Groupes d'Utilisateurs",
+      userGroupsNote:
         "Les groupes d'utilisateurs sont additifs : les permissions effectives sont l'UNION des rôles directs et des rôles hérités des groupes.",
     },
     auditSystem: {
@@ -351,7 +351,7 @@ export const fr = {
       previewIntro:
         "Rend la conception HTML/texte avec de fausses données pour tester la forme visuelle avant l'envoi de l'e-mail.",
     },
-    adminGroups: {
+    userGroups: {
       title: "Groupes d'Utilisateurs (User Groups)",
       description:
         "Affectation de rôles et de restrictions basée sur les groupes avec fusion additive lors de la connexion.",

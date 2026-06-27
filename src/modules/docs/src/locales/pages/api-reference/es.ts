@@ -228,7 +228,7 @@ export const es = {
       seededNote:
         "Los Permisos Base de Código no pueden borrarse por API. Tienes que ir al archivo Backend y eliminar el método API. Al volver a correr, la base de datos se sincriniza destruyendo el permiso.",
     },
-    adminGroupsApi: {
+    userGroupsApi: {
       title: "API de Grupos de Usuarios",
       description:
         "Orquestación en masa y plantillas operativas. Simplifica el mantenimiento conectando a cientos de operarios a plantillas de reglas y roles en un paso.",

@@ -231,7 +231,7 @@ export const de = {
       tenantScoped: "Mandantenisolierte Rollen",
       tenantScopedDesc:
         "Rollenkonfigurationen gehören ausschließlich dem Mandanten (Tenant). Ein 'Manager' bei Mandant A hat völlig andere Grenzen als ein 'Manager' bei Mandant B.",
-      adminGroupsTitle: "Gruppenbasierte Batch-Zuweisung",
+      userGroupsTitle: "Gruppenbasierte Batch-Zuweisung",
       adminGroupsContent:
         "Hören Sie auf, Rollen einem Administrator nach dem anderen zuzuweisen. Mit der User Groups-Funktion von SCRIPE können Sie benannte Gruppen erstellen, Rollen und Feldeinschränkungen an die Gruppe zuweisen und dann Administratoren als Mitglieder hinzufügen. Alle Mitglieder erben bei ihrem nächsten Login sofort die Berechtigungen der Gruppe – mit der vollen Leistung von Additive Merge und der Weitergabe von Feldeinschränkungen.",
       groupBatchAssign: "Sofortige Batch-Zuweisung",
@@ -248,7 +248,7 @@ export const de = {
         "Gruppenrollen erweitern die effektiven Berechtigungen. Gruppenbeschränkungen kumulieren mit direkten Beschränkungen – 'Deny' gewinnt immer.",
       title: "Granulare Zugriffskontrolle",
     },
-    adminGroups: {
+    userGroups: {
       title: "Enterprise Benutzergruppen (User Groups)",
       description:
         "Verwalten Sie mühelos Tausende von Administratoren mit hierarchischen Benutzergruppen, additiver Sicherheitszusammenführung und massiven kaskadierenden Operationen.",

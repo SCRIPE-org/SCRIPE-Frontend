@@ -242,7 +242,7 @@ export const fr = {
       seededNote:
         "L'architecture rejette les créations/suppressions virtuelles. L'unique façon de rayer un droit du système est que les ingénieurs retirent ledit attribut du code Backend C# source et redéploient la solution sur le serveur de production.",
     },
-    adminGroupsApi: {
+    userGroupsApi: {
       title: "API de Groupes d'Utilisateurs (User Groups)",
       description:
         "Silos de gestion des effectifs pour opérer un RBAC asymétrique en lot (Bulk) sur des centaines d'administrateurs simultanément.",

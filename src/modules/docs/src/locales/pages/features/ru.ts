@@ -135,11 +135,11 @@ export const ru = {
       endpointsMyTenantTitle: "Эндпоинты моего тенанта",
       endpointsPermissionsTitle: "Эндпоинты прав",
       tenantScopingNote: "Роли автоматически ограничиваются тенантом текущего пользователя.",
-      adminGroupsTitle: "Группы пользователей (User Groups)",
-      adminGroupsIntro:
+      userGroupsTitle: "Группы пользователей (User Groups)",
+      userGroupsIntro:
         "Позволяют массово назначать роли и ограничения на уровне полей нескольким администраторам одновременно.",
-      adminGroupEndpointsTitle: "API-эндпоинты групп пользователей",
-      adminGroupsNote:
+      userGroupEndpointsTitle: "API-эндпоинты групп пользователей",
+      userGroupsNote:
         "Права групп суммируются (аддитивность): эффективные права администратора — это ОБЪЕДИНЕНИЕ (UNION) его прямых ролей и ролей группы.",
     },
     auditSystem: {
@@ -346,7 +346,7 @@ export const ru = {
       previewIntro:
         "Рендеринг шаблона с фиктивными данными для визуальной проверки форматирования перед реальной отправкой.",
     },
-    adminGroups: {
+    userGroups: {
       title: "Группы пользователей (User Groups)",
       description:
         "Назначение ролей и ограничений на основе групп с аддитивным объединением (merge) при входе в систему.",

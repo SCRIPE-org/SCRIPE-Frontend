@@ -218,7 +218,7 @@ export const zh = {
       tenantScoped: "租户隔离的角色",
       tenantScopedDesc:
         "角色配置专属于每个租户 (Tenant)。租户 A 的“经理”角色所拥有的权限边界与租户 B 的“经理”截然不同。",
-      adminGroupsTitle: "基于群组的批量分配",
+      userGroupsTitle: "基于群组的批量分配",
       adminGroupsContent:
         "不要再逐个向管理员分配角色了。SCRIPE 的“用户组”功能允许您创建命名的群组，为群组分配角色和字段级限制，然后将管理员添加为成员。所有成员在下次登录时将立即继承该群组的权限——并且拥有附加合并和字段级限制传播的所有优势。",
       groupBatchAssign: "即时批量分配",
@@ -234,7 +234,7 @@ export const zh = {
         "群组角色扩展了有效权限。组的限制则与直接限制相叠加——“拒绝 (Deny)”原则永远处于优先地位。",
       title: "细粒度访问控制",
     },
-    adminGroups: {
+    userGroups: {
       title: "企业用户组 (User Groups)",
       description: "利用层级化的用户组、附加安全合并以及大规模级联操作，轻松管理数以千计的管理员。",
       intro:

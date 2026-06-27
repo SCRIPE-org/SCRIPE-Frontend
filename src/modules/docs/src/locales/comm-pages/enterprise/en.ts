@@ -229,7 +229,7 @@ export const en = {
       tenantScoped: "Tenant-Isolated Roles",
       tenantScopedDesc:
         "Role configurations belong exclusively to the Tenant. A 'Manager' in Tenant A has completely different bounds than a 'Manager' in Tenant B.",
-      adminGroupsTitle: "Group-Based Batch Assignment",
+      userGroupsTitle: "Group-Based Batch Assignment",
       adminGroupsContent:
         "Stop assigning roles one admin at a time. SCRIPE's User Groups feature allows you to create named groups, assign roles and field-level restrictions to the group, then add administrators as members. All members instantly inherit the group's permissions on their next login — with the full power of additive merge and field-level restriction propagation.",
       groupBatchAssign: "Instant Batch Assignment",
@@ -246,7 +246,7 @@ export const en = {
         "Group roles expand effective permissions. Group restrictions compound with direct restrictions — deny always wins.",
       title: "Granular Access Control",
     },
-    adminGroups: {
+    userGroups: {
       title: "Enterprise User Groups",
       description:
         "Effortlessly manage thousands of administrators with hierarchical User Groups, additive security merging, and massive cascading operations.",

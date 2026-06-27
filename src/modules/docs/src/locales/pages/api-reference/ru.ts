@@ -192,7 +192,7 @@ export const ru = {
       availableForTenantDesc: "Доступные права при создании нового тенанта.",
       seededNote: "Права инициализируются в БД автоматически при запуске приложения (Seeding).",
     },
-    adminGroupsApi: {
+    userGroupsApi: {
       title: "API групп пользователей (User Groups)",
       description:
         "Массовое назначение ролей и ограничений (Restrictions) множеству администраторов.",

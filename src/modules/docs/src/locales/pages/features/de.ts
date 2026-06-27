@@ -125,11 +125,11 @@ export const de = {
       endpointsMyTenantTitle: "Endpunkte des eigenen Mandanten",
       endpointsPermissionsTitle: "Berechtigungs-Endpunkte",
       tenantScopingNote: "Rollen sind automatisch auf den aktuellen Mandanten beschränkt.",
-      adminGroupsTitle: "Benutzergruppen (User Groups)",
-      adminGroupsIntro:
+      userGroupsTitle: "Benutzergruppen (User Groups)",
+      userGroupsIntro:
         "Ermöglicht die gebündelte Zuweisung von Rollen und Feldeinschränkungen an mehrere Administratoren.",
-      adminGroupEndpointsTitle: "User Groups API Endpunkte",
-      adminGroupsNote: "Gruppen sind additiv – Berechtigungen verschmelzen (UNION) beim Login.",
+      userGroupEndpointsTitle: "User Groups API Endpunkte",
+      userGroupsNote: "Gruppen sind additiv – Berechtigungen verschmelzen (UNION) beim Login.",
     },
     auditSystem: {
       title: "Audit-System",
@@ -310,7 +310,7 @@ export const de = {
       previewTitle: "Vorschau-Funktion (Preview)",
       previewIntro: "Erlaubt das Rendern von Vorlagen mit Beispieldaten vor dem Versand.",
     },
-    adminGroups: {
+    userGroups: {
       title: "Benutzergruppen (User Groups)",
       description:
         "Gruppenbasierte Rollen- und Einschränkungszuweisung mit additivem Merge beim Login.",

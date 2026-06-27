@@ -137,10 +137,10 @@ export const ar = {
       endpointsMyTenantTitle: "نقاط نهاية وحدةي",
       endpointsPermissionsTitle: "نقاط نهاية الصلاحيات",
       tenantScopingNote: "يتم تحديد نطاق الأدوار تلقائياً للوحدة الحالي.",
-      adminGroupsTitle: "مجموعات المستخدمين",
-      adminGroupsIntro: "تتيح تعيينات دفعة للأدوار والقيود الميدانية لمستخدمين متعددين دفعة واحدة.",
-      adminGroupEndpointsTitle: "نقاط نهاية واجهة برمجة تطبيقات مجموعات المستخدمين",
-      adminGroupsNote: "المجموعات تضافية (Additive) — تلغى عند الإزالة الفورية.",
+      userGroupsTitle: "مجموعات المستخدمين",
+      userGroupsIntro: "تتيح تعيينات دفعة للأدوار والقيود الميدانية لمستخدمين متعددين دفعة واحدة.",
+      userGroupEndpointsTitle: "نقاط نهاية واجهة برمجة تطبيقات مجموعات المستخدمين",
+      userGroupsNote: "المجموعات تضافية (Additive) — تلغى عند الإزالة الفورية.",
     },
     auditSystem: {
       title: "نظام التدقيق (Audit System)",
@@ -315,7 +315,7 @@ export const ar = {
       previewTitle: "ميزة المعاينة",
       previewIntro: "معاينة القالب ببيانات نموذجية لاختبار المظهر قبل الإرسال.",
     },
-    adminGroups: {
+    userGroups: {
       title: "مجموعات المستخدمين (User Groups)",
       description: "تعيين الأدوار والقيود المستند إلى المجموعات مع نطاق الوحدة والدمج التضافي.",
       intro:

@@ -2,15 +2,15 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "commercial.adminGroups.intro" },
+  { type: "paragraph", contentKey: "commercial.userGroups.intro" },
 
   {
     type: "heading",
     level: 2,
-    titleKey: "commercial.adminGroups.batchAssignTitle",
+    titleKey: "commercial.userGroups.batchAssignTitle",
     id: "batch-assign",
   },
-  { type: "paragraph", contentKey: "commercial.adminGroups.batchAssignContent" },
+  { type: "paragraph", contentKey: "commercial.userGroups.batchAssignContent" },
   {
     type: "flowchart",
     direction: "vertical",
@@ -33,10 +33,10 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "commercial.adminGroups.additiveRestrictionsTitle",
+    titleKey: "commercial.userGroups.additiveRestrictionsTitle",
     id: "additive-restrictions",
   },
-  { type: "paragraph", contentKey: "commercial.adminGroups.additiveRestrictionsContent" },
+  { type: "paragraph", contentKey: "commercial.userGroups.additiveRestrictionsContent" },
   {
     type: "table",
     headers: ["Scenario", "Restriction A", "Restriction B", "Result"],
@@ -55,39 +55,39 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "commercial.adminGroups.cascadeTitle",
+    titleKey: "commercial.userGroups.cascadeTitle",
     id: "cascade-operations",
   },
-  { type: "paragraph", contentKey: "commercial.adminGroups.cascadeContent" },
+  { type: "paragraph", contentKey: "commercial.userGroups.cascadeContent" },
   {
     type: "feature-grid",
     columns: 2,
     items: [
       {
         icon: "trash",
-        titleKey: "commercial.adminGroups.cascadeDelete",
-        descriptionKey: "commercial.adminGroups.cascadeDeleteDesc",
+        titleKey: "commercial.userGroups.cascadeDelete",
+        descriptionKey: "commercial.userGroups.cascadeDeleteDesc",
       },
       {
         icon: "power",
-        titleKey: "commercial.adminGroups.cascadeStatus",
-        descriptionKey: "commercial.adminGroups.cascadeStatusDesc",
+        titleKey: "commercial.userGroups.cascadeStatus",
+        descriptionKey: "commercial.userGroups.cascadeStatusDesc",
       },
       {
         icon: "shield",
-        titleKey: "commercial.adminGroups.rootProtection",
-        descriptionKey: "commercial.adminGroups.rootProtectionDesc",
+        titleKey: "commercial.userGroups.rootProtection",
+        descriptionKey: "commercial.userGroups.rootProtectionDesc",
       },
       {
         icon: "users",
-        titleKey: "commercial.adminGroups.fallbackSafety",
-        descriptionKey: "commercial.adminGroups.fallbackSafetyDesc",
+        titleKey: "commercial.userGroups.fallbackSafety",
+        descriptionKey: "commercial.userGroups.fallbackSafetyDesc",
       },
     ],
   },
 
-  { type: "heading", level: 2, titleKey: "commercial.adminGroups.roiTitle", id: "roi-scale" },
-  { type: "paragraph", contentKey: "commercial.adminGroups.roiContent" },
+  { type: "heading", level: 2, titleKey: "commercial.userGroups.roiTitle", id: "roi-scale" },
+  { type: "paragraph", contentKey: "commercial.userGroups.roiContent" },
   {
     type: "comparison",
     columns: [
@@ -117,7 +117,7 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "commercial.adminGroups.complianceGridTitle",
+    titleKey: "commercial.userGroups.complianceGridTitle",
     id: "compliance-governance",
   },
   {
@@ -126,23 +126,23 @@ const sections: DocSection[] = [
     items: [
       {
         icon: "activity",
-        titleKey: "commercial.adminGroups.auditTrackingTitle",
-        descriptionKey: "commercial.adminGroups.auditTrackingDesc",
+        titleKey: "commercial.userGroups.auditTrackingTitle",
+        descriptionKey: "commercial.userGroups.auditTrackingDesc",
       },
       {
         icon: "zap",
-        titleKey: "commercial.adminGroups.zeroLatencyTitle",
-        descriptionKey: "commercial.adminGroups.zeroLatencyDesc",
+        titleKey: "commercial.userGroups.zeroLatencyTitle",
+        descriptionKey: "commercial.userGroups.zeroLatencyDesc",
       },
       {
         icon: "lock",
-        titleKey: "commercial.adminGroups.tenantIsolationTitle",
-        descriptionKey: "commercial.adminGroups.tenantIsolationDesc",
+        titleKey: "commercial.userGroups.tenantIsolationTitle",
+        descriptionKey: "commercial.userGroups.tenantIsolationDesc",
       },
       {
         icon: "refresh-cw",
-        titleKey: "commercial.adminGroups.nukePaveTitle",
-        descriptionKey: "commercial.adminGroups.nukePaveDesc",
+        titleKey: "commercial.userGroups.nukePaveTitle",
+        descriptionKey: "commercial.userGroups.nukePaveDesc",
       },
     ],
   },
@@ -150,8 +150,8 @@ const sections: DocSection[] = [
 
 registerPage({
   slug: "commercial/user-groups",
-  titleKey: "commercial.adminGroups.title",
-  descriptionKey: "commercial.adminGroups.description",
+  titleKey: "commercial.userGroups.title",
+  descriptionKey: "commercial.userGroups.description",
   category: "commercial-enterprise",
   order: 3,
   sections,

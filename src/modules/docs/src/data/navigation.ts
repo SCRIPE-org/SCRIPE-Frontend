@@ -155,7 +155,7 @@ export const navigationData: DocCategoryData[] = [
       },
       {
         id: "feat-user-groups",
-        titleKey: "features.adminGroups.title",
+        titleKey: "features.userGroups.title",
         slug: "features/user-groups",
         order: 4,
       },
@@ -367,7 +367,7 @@ export const navigationData: DocCategoryData[] = [
       },
       {
         id: "api-user-groups",
-        titleKey: "apiReference.adminGroupsApi.title",
+        titleKey: "apiReference.userGroupsApi.title",
         slug: "api-reference/user-groups-api",
         order: 7,
       },
@@ -733,7 +733,7 @@ export const navigationData: DocCategoryData[] = [
       },
       {
         id: "comm-ent-user-groups",
-        titleKey: "commercial.adminGroups.title",
+        titleKey: "commercial.userGroups.title",
         slug: "commercial/user-groups",
         order: 3,
       },

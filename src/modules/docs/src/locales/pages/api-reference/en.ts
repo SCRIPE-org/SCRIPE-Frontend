@@ -208,7 +208,7 @@ export const en = {
       seededNote:
         "Permissions are seeded from backend code during application startup. Adding new endpoints with [RequirePermission] attributes automatically creates new permissions on next deploy.",
     },
-    adminGroupsApi: {
+    userGroupsApi: {
       title: "User Groups API",
       description:
         "Manage large fleets of administrators via unified User Groups. Supports bulk operations, cascading deletions, and additive role assignments.",

@@ -232,7 +232,7 @@ export const fr = {
       tenantScoped: "Rôles Isolés par Locataire",
       tenantScopedDesc:
         "Les configurations de rôles appartiennent exclusivement au Locataire (Tenant). Un 'Manager' chez le Locataire A a des limites complètement différentes d'un 'Manager' chez le Locataire B.",
-      adminGroupsTitle: "Attribution par Lots Basée sur les Groupes",
+      userGroupsTitle: "Attribution par Lots Basée sur les Groupes",
       adminGroupsContent:
         "Arrêtez d'attribuer des rôles à un administrateur à la fois. La fonctionnalité de Groupes d'Utilisateurs de SCRIPE vous permet de créer des groupes nommés, d'assigner des rôles et des restrictions au niveau des champs au groupe, puis d'ajouter des administrateurs comme membres. Tous les membres héritent instantanément des autorisations du groupe lors de leur prochaine connexion — avec toute la puissance de la fusion additive et de la propagation des restrictions au niveau des champs.",
       groupBatchAssign: "Attribution par Lots Instantanée",
@@ -249,7 +249,7 @@ export const fr = {
         "Les rôles de groupe étendent les autorisations effectives. Les restrictions de groupe se cumulent avec les restrictions directes — le refus (Deny) l'emporte toujours.",
       title: "Contrôle d'Accès Granulaire",
     },
-    adminGroups: {
+    userGroups: {
       title: "Groupes d'Utilisateurs d'Entreprise",
       description:
         "Gérez sans effort des milliers d'administrateurs avec des groupes d'utilisateurs hiérarchiques, une fusion de sécurité additive et des opérations massives en cascade.",

@@ -171,7 +171,7 @@ export const de = {
       seededNote:
         "Berechtigungen entstehen automatisch durch [RequirePermission]-Attribute in der API.",
     },
-    adminGroupsApi: {
+    userGroupsApi: {
       title: "User Groups API (Benutzergruppen)",
       description:
         "Verwaltung großer Admin-Flotten via Benutzergruppen. Massenoperationen und additive Rollenzuweisungen.",

@@ -232,7 +232,7 @@ export const es = {
       tenantScoped: "Roles Aislados por Inquilino",
       tenantScopedDesc:
         "Las configuraciones de roles pertenecen exclusivamente al Inquilino (Tenant). Un 'Gerente' en el Inquilino A tiene límites completamente diferentes a los de un 'Gerente' en el Inquilino B.",
-      adminGroupsTitle: "Asignación Masiva Basada en Grupos",
+      userGroupsTitle: "Asignación Masiva Basada en Grupos",
       adminGroupsContent:
         "Deje de asignar roles de administrador en administrador. La función Grupos de Usuarios de SCRIPE le permite crear grupos con nombre, asignar roles y restricciones a nivel de campo al grupo, y luego agregar administradores como miembros. Todos los miembros heredan instantáneamente los permisos del grupo en su próximo inicio de sesión, con todo el poder de la fusión aditiva y la propagación de restricciones a nivel de campo.",
       groupBatchAssign: "Asignación Masiva Instantánea",
@@ -249,7 +249,7 @@ export const es = {
         "Los roles de grupo amplían los permisos efectivos. Las restricciones de grupo se combinan con las restricciones directas: el bloqueo (deny) siempre gana.",
       title: "Control de Acceso Granular",
     },
-    adminGroups: {
+    userGroups: {
       title: "Grupos de Usuarios Empresariales",
       description:
         "Gestione sin esfuerzo miles de administradores con Grupos de Usuarios jerárquicos, fusión de seguridad aditiva y operaciones masivas en cascada.",

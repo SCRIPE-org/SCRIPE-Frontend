@@ -136,11 +136,11 @@ export const es = {
       endpointsPermissionsTitle: "Endpoints de Permisos",
       tenantScopingNote:
         "Los roles están automáticamente limitados al inquilino del usuario actual.",
-      adminGroupsTitle: "Grupos de Usuarios",
-      adminGroupsIntro:
+      userGroupsTitle: "Grupos de Usuarios",
+      userGroupsIntro:
         "Los Grupos de Usuarios permiten la asignación por lotes de roles y restricciones de campo a múltiples administradores a la vez.",
-      adminGroupEndpointsTitle: "Endpoints de Grupos de Usuarios",
-      adminGroupsNote:
+      userGroupEndpointsTitle: "Endpoints de Grupos de Usuarios",
+      userGroupsNote:
         "Los grupos de usuarios son aditivos: los permisos efectivos son la UNIÓN de los roles directos y los heredados por el grupo.",
     },
     auditSystem: {
@@ -352,7 +352,7 @@ export const es = {
       previewIntro:
         "Inyecta datos falsos en la plantilla para validar que la sustitución de variables y el estilo HTML se vean correctamente antes de cualquier envío masivo.",
     },
-    adminGroups: {
+    userGroups: {
       title: "Grupos de Usuarios (User Groups)",
       description:
         "Asignación de roles y restricciones basada en grupos con fusiones (merges) aditivas al iniciar sesión.",

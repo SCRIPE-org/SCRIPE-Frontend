@@ -2,13 +2,13 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  { type: "paragraph", contentKey: "apiReference.adminGroupsApi.intro" },
+  { type: "paragraph", contentKey: "apiReference.userGroupsApi.intro" },
 
   // ─── Admin Groups CRUD ─────────────────────────────────────
   {
     type: "heading",
     level: 2,
-    titleKey: "apiReference.adminGroupsApi.crudTitle",
+    titleKey: "apiReference.userGroupsApi.crudTitle",
     id: "user-groups-crud",
   },
   {
@@ -17,49 +17,49 @@ const sections: DocSection[] = [
       {
         method: "GET",
         path: "/api/v1/UserGroups",
-        descriptionKey: "apiReference.adminGroupsApi.listGroupsDesc",
+        descriptionKey: "apiReference.userGroupsApi.listGroupsDesc",
         auth: "user_groups.view",
       },
       {
         method: "GET",
         path: "/api/v1/UserGroups/myTenantGroups",
-        descriptionKey: "apiReference.adminGroupsApi.myTenantGroupsDesc",
+        descriptionKey: "apiReference.userGroupsApi.myTenantGroupsDesc",
         auth: "user_groups.view",
       },
       {
         method: "GET",
         path: "/api/v1/UserGroups/{id}",
-        descriptionKey: "apiReference.adminGroupsApi.getGroupDesc",
+        descriptionKey: "apiReference.userGroupsApi.getGroupDesc",
         auth: "user_groups.view",
       },
       {
         method: "GET",
         path: "/api/v1/UserGroups/byTenantId/{tenantId}",
-        descriptionKey: "apiReference.adminGroupsApi.groupsByTenantDesc",
+        descriptionKey: "apiReference.userGroupsApi.groupsByTenantDesc",
         auth: "user_groups.view",
       },
       {
         method: "POST",
         path: "/api/v1/UserGroups",
-        descriptionKey: "apiReference.adminGroupsApi.createGroupDesc",
+        descriptionKey: "apiReference.userGroupsApi.createGroupDesc",
         auth: "user_groups.create",
       },
       {
         method: "POST",
         path: "/api/v1/UserGroups/createForMyTenant",
-        descriptionKey: "apiReference.adminGroupsApi.createGroupMyTenantDesc",
+        descriptionKey: "apiReference.userGroupsApi.createGroupMyTenantDesc",
         auth: "user_groups.create",
       },
       {
         method: "PUT",
         path: "/api/v1/UserGroups/{id}",
-        descriptionKey: "apiReference.adminGroupsApi.updateGroupDesc",
+        descriptionKey: "apiReference.userGroupsApi.updateGroupDesc",
         auth: "user_groups.update",
       },
       {
         method: "DELETE",
         path: "/api/v1/UserGroups/{id}",
-        descriptionKey: "apiReference.adminGroupsApi.deleteGroupDesc",
+        descriptionKey: "apiReference.userGroupsApi.deleteGroupDesc",
         auth: "user_groups.delete",
       },
     ],
@@ -126,23 +126,23 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "apiReference.adminGroupsApi.groupMembersTitle",
+    titleKey: "apiReference.userGroupsApi.groupMembersTitle",
     id: "group-members",
   },
-  { type: "paragraph", contentKey: "apiReference.adminGroupsApi.groupMembersIntro" },
+  { type: "paragraph", contentKey: "apiReference.userGroupsApi.groupMembersIntro" },
   {
     type: "api-table",
     endpoints: [
       {
         method: "POST",
         path: "/api/v1/UserGroups/{id}/members",
-        descriptionKey: "apiReference.adminGroupsApi.addMembersDesc",
+        descriptionKey: "apiReference.userGroupsApi.addMembersDesc",
         auth: "user_groups.update",
       },
       {
         method: "DELETE",
         path: "/api/v1/UserGroups/{id}/members/{adminId}",
-        descriptionKey: "apiReference.adminGroupsApi.removeMemberDesc",
+        descriptionKey: "apiReference.userGroupsApi.removeMemberDesc",
         auth: "user_groups.update",
       },
     ],
@@ -152,23 +152,23 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "apiReference.adminGroupsApi.groupRolesRestrictionsTitle",
+    titleKey: "apiReference.userGroupsApi.groupRolesRestrictionsTitle",
     id: "group-roles-restrictions",
   },
-  { type: "paragraph", contentKey: "apiReference.adminGroupsApi.groupRolesRestrictionsIntro" },
+  { type: "paragraph", contentKey: "apiReference.userGroupsApi.groupRolesRestrictionsIntro" },
   {
     type: "api-table",
     endpoints: [
       {
         method: "PUT",
         path: "/api/v1/UserGroups/{id}/roles",
-        descriptionKey: "apiReference.adminGroupsApi.setGroupRolesDesc",
+        descriptionKey: "apiReference.userGroupsApi.setGroupRolesDesc",
         auth: "user_groups.update",
       },
       {
         method: "PUT",
         path: "/api/v1/UserGroups/{id}/restrictions",
-        descriptionKey: "apiReference.adminGroupsApi.setGroupRestrictionsDesc",
+        descriptionKey: "apiReference.userGroupsApi.setGroupRestrictionsDesc",
         auth: "user_groups.update",
       },
     ],
@@ -195,29 +195,29 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "apiReference.adminGroupsApi.bulkCascadeTitle",
+    titleKey: "apiReference.userGroupsApi.bulkCascadeTitle",
     id: "bulk-cascade-operations",
   },
-  { type: "paragraph", contentKey: "apiReference.adminGroupsApi.bulkCascadeIntro" },
+  { type: "paragraph", contentKey: "apiReference.userGroupsApi.bulkCascadeIntro" },
   {
     type: "api-table",
     endpoints: [
       {
         method: "POST",
         path: "/api/v1/UserGroups/bulk/activate",
-        descriptionKey: "apiReference.adminGroupsApi.bulkActivateDesc",
+        descriptionKey: "apiReference.userGroupsApi.bulkActivateDesc",
         auth: "user_groups.update",
       },
       {
         method: "POST",
         path: "/api/v1/UserGroups/bulk/deactivate",
-        descriptionKey: "apiReference.adminGroupsApi.bulkDeactivateDesc",
+        descriptionKey: "apiReference.userGroupsApi.bulkDeactivateDesc",
         auth: "user_groups.update",
       },
       {
         method: "POST",
         path: "/api/v1/UserGroups/bulk/delete",
-        descriptionKey: "apiReference.adminGroupsApi.bulkDeleteDesc",
+        descriptionKey: "apiReference.userGroupsApi.bulkDeleteDesc",
         auth: "user_groups.delete",
       },
     ],
@@ -234,14 +234,14 @@ const sections: DocSection[] = [
   {
     type: "info",
     variant: "warning",
-    contentKey: "apiReference.adminGroupsApi.cascadeWarningNode",
+    contentKey: "apiReference.userGroupsApi.cascadeWarningNode",
   },
 ];
 
 registerPage({
   slug: "api-reference/user-groups-api",
-  titleKey: "apiReference.adminGroupsApi.title",
-  descriptionKey: "apiReference.adminGroupsApi.description",
+  titleKey: "apiReference.userGroupsApi.title",
+  descriptionKey: "apiReference.userGroupsApi.description",
   category: "api-reference",
   order: 7,
   sections,
