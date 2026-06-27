@@ -20,8 +20,7 @@ export const zh = {
 
       // IAutoRegisteredJob Contract
       nodeConfig: "appsettings.json 文件\n提供商与每个任务的覆盖配置",
-      descConfig:
-        "提供商：Native | Hangfire | Quartz\n任务：{ id: { Enabled, CronExpression } }",
+      descConfig: "提供商：Native | Hangfire | Quartz\n任务：{ id: { Enabled, CronExpression } }",
       nodeStartup: "BackgroundJobs 配置\nAddBackgroundJobsConfiguration()",
       descStartup: "读取提供商，发现所有任务，进行调度",
       nodeDiscovery: "自动发现循环\nGetServices<IAutoRegisteredJob>()",

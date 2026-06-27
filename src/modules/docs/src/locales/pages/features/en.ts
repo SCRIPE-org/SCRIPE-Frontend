@@ -160,7 +160,7 @@ export const en = {
         "Authorization is decoupled from static configurations. The DynamicPermissionPolicyProvider dynamically constructs ASP.NET Core authorization policies for routes containing the [PermissionRequired] attribute. To keep JWT token size under 400 bytes, user permissions are not stored in claims but are cached server-side using AdminPermissionCache (with a 10-minute sliding expiration). Caching utilizes a central CancellationTokenSource for thread-safe global eviction upon any role modification. Programmatic checks are performed in handlers and services via the IPermissionChecker interface.",
       restrictedFieldsTitle: "Field-Level Restrictions",
       restrictedFieldsIntro:
-        "Field-Level Security (FLS) allows administrators to restrict specific fields of an entity for specific roles. Restricted fields are configured as a JSON array of string paths (e.g., [\"salary\", \"ssn\"]) and stored in the RestrictedFieldsJson column (varchar/nvarchar/VARCHAR2 up to 2000 chars) of the RolePermission table. During execution, the RestrictedFieldsAuthorizationFilter identifies the target resource and sets HttpContext.Items[\"RestrictedFields\"]. The FieldProjectionMiddleware intercepts HTTP 2xx JSON responses, parses the body into a JsonNode tree, and recursively nullifies restricted properties matching the exact or relative path (e.g., address.street) to prevent reflection overhead.",
+        'Field-Level Security (FLS) allows administrators to restrict specific fields of an entity for specific roles. Restricted fields are configured as a JSON array of string paths (e.g., ["salary", "ssn"]) and stored in the RestrictedFieldsJson column (varchar/nvarchar/VARCHAR2 up to 2000 chars) of the RolePermission table. During execution, the RestrictedFieldsAuthorizationFilter identifies the target resource and sets HttpContext.Items["RestrictedFields"]. The FieldProjectionMiddleware intercepts HTTP 2xx JSON responses, parses the body into a JsonNode tree, and recursively nullifies restricted properties matching the exact or relative path (e.g., address.street) to prevent reflection overhead.',
       cloneRoleTitle: "Clone Role (Anti-Escalation)",
       cloneRoleIntro:
         "To prevent privilege escalation, the CloneRoleCommandHandler filters the copied permission list against the cloner's own active permissions, silently dropping any unpossessed permissions. In the permission assignment command, attempting to explicitly add permissions that the administrator does not possess throws a Forbidden role.permissionEscalation error. Additionally, the TenantGuardianService validates all role updates and blocks any changes to locked system-critical roles (IsPermissionLocked == true).",
@@ -182,10 +182,18 @@ export const en = {
     auditSystem: {
       title: "Audit System",
       description:
-        "4-source pipeline, 35+ event types, 7 Guardian events, real-time SignalR, and CSV/PDF export.",
+        "Multi-source pipeline, change tracker mappings, database indexes, real-time SignalR, and CSV/Excel/PDF export.",
       intro:
-        "SCRIPE captures every significant action in the audit log through a 4-source pipeline: SCRIPE mediator behaviors (CQRS commands), EF Core interceptors (entity changes), middleware (HTTP requests), and explicit service calls (security events). All events are broadcasted in real-time via SignalR to tenant-scoped groups.",
+        "SCRIPE captures every significant action in the audit log through a decoupled request and database pipeline, incorporating HTTP request logging, EF Core entity mutation change tracking, and direct security logging. All events are broadcasted in real-time via SignalR to tenant-scoped groups.",
       architectureTitle: "Audit Architecture",
+      pipelineDetail:
+        "The HTTP request auditing is handled by the RequestLoggingMiddleware. It captures the request context (HTTP method, path, remote IP, User-Agent, user claims, and Correlation ID) synchronously on the request thread before HttpContext is recycled, and then invokes the AuditService asynchronously in a fire-and-forget background Task.Run to prevent blocking requests. Operations that match specific infrastructure paths are skipped, and successful GET requests are suppressed by default unless configured.",
+      changeTrackingTitle: "Entity Mutation Interception",
+      changeTrackingDetail:
+        "The AuditableEntityInterceptor tracks database-level audits before changes are saved. It intercepts SaveChangesAsync and scans the ChangeTracker for entities implementing IAuditable or ISoftDeletable. For created entities, it captures all fields. For modified entities, it performs property diffing, storing only modified fields to save storage. For hard deletions, it captures all original values. For soft-deletions, it intercepts the entity before it is marked as modified by the DbContext, logging a special delete event. It also checks for the AuditLog entity type itself to prevent stack overflow recursion.",
+      databaseSchemaTitle: "Database Schema & Multi-Provider Indexes",
+      databaseSchemaDetail:
+        "The AuditLog entity is backed by high-performance indexes on Timestamp, UserId, EventType, CorrelationId, TenantId, and composite keys for common queries (Endpoint+Timestamp, EventType+Timestamp, and TenantId+Timestamp). Data types are mapped correctly across SQL Server, PostgreSQL, and Oracle (using bit/boolean/NUMBER(1) and Guid/uuid/RAW(16) respectively) to support native database operations.",
       eventTypesTitle: "Event Types (35+ Categories)",
       authEventsTitle: "Authentication Events",
       rbacEventsTitle: "RBAC Events",
@@ -199,13 +207,15 @@ export const en = {
         "Guardian events are audit records created when the system BLOCKS a dangerous operation. These are the safety net that prevents catastrophic actions like deleting the last super admin in a tenant.",
       serviceMethodsTitle: "AuditService Methods",
       serviceMethodsIntro:
-        "The IAuditService interface exposes 5 specialized logging methods, each capturing different metadata. All methods are async and fire-and-forget  they never block the main request pipeline.",
+        "The IAuditService interface exposes 3 specialized logging methods, capturing request metrics, database-level mutations, and compliance/security logs asynchronously to avoid blocking the request pipeline.",
       realTimeTitle: "Real-Time Broadcasting",
       realTimeIntro:
         "Every audit event is broadcast in real-time via SignalR. Connected clients receive events scoped to their tenant, enabling live audit dashboards and instant security alerts. Events are sent to both the tenant group and a global group (for super admins).",
       exportTitle: "Audit Export",
       exportIntro:
         "The AuditExportService supports CSV and PDF export of filtered audit logs. Exports respect tenant scoping  admins can only export logs from their own tenant and child tenants.",
+      exportDetail:
+        "The AuditExportService provides multi-format exports. CSV export uses CsvHelper with quotes around all fields to prevent CSV injection (RFC 4180) and a UTF-8 BOM prefix for Excel. Excel export generates a ClosedXML workbook with three detailed sheets: Executive Summary (dashboard stats/KPIs), Audit Data (with auto-filters, frozen headers, and green/red conditional formatting), and Security Analysis. PDF export uses QuestPDF layout engine, which is marked as Obsolete for large datasets due to memory footprint. To protect resources, all exports are capped to a maximum of 10,000 rows and loaded in-memory before transmission.",
       endpointsTitle: "Audit API Endpoints",
       retentionTip:
         "Audit logs are retained per-tenant via TenantSettings.AuditRetentionDays. Set to 0 for indefinite retention. A background job automatically purges expired records.",
@@ -428,6 +438,15 @@ export const en = {
         "User Groups are tenant-scoped. SuperAdmins see all groups across tenants. Tenant admins can only manage groups within their own tenant. All mutations are audited and require the user_groups.* permission set.",
     },
     ssoOauth: {
+      samlTitle: "SAML 2.0 & Cryptographic Assertion Security",
+      samlContent:
+        "In addition to OIDC, the platform integrates SAML 2.0 authentication using the ITfoxtec.Identity.Saml2 library. For inbound SSO, public X.509 certificates are loaded from base64 string configurations to validate SAML response signatures while ignoring certificate chain validations. Outbound client connections use platform-wide signing certificates to issue secure SAML assertions.",
+      oidcCallbackTitle: "OIDC Callback & Workspace Caching Flow",
+      oidcCallbackContent:
+        "The callback handler validates incoming credentials and manages workspace selection for administrators with access to multiple tenants. A temporary token caches the login profile (SsoTempLoginData) in Redis for 15 minutes, allowing safe workspace selection in the frontend without transferring raw user variables.",
+      oauthMirroringTitle: "OAuth Application Mirroring & Subscription Quotas",
+      oauthMirroringContent:
+        "Administrators can register custom client applications to use SCRIPE as their primary OIDC server. New application creations are gated by tenant-scoped quotas. Once validated, client details are registered in OpenIddict and mirrored locally in the platform's OAuthApplication database table for fast performance, masking confidential client secrets.",
       title: "Enterprise SSO Architecture (Federation & Keycloak Alternative)",
       description:
         "Enterprise-grade Authentication Server capable of replacing Keycloak, Okta, and Auth0. Native OIDC Identity Providers, OAuth Application registration, PKCE enforcement, and isolated tenant federations.",

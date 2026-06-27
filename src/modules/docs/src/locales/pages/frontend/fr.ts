@@ -39,6 +39,12 @@ export const fr = {
         "Utilise GenericForm et s'intègre avec Zod pour des validations puissantes sans efforts.",
       extensionTip:
         "N'essayez jamais de modifier le GenericCrudView lui-même : englobez-le ou passez des propriétés de surcharge pour vos besoins spécifiques.",
+      zeroFlickerTitle: "Préservation du cache sans scintillement",
+      zeroFlickerIntro:
+        "Pour éviter le clignotement de chargement lors de la modification des paramètres de page ou de recherche, useGenericQuery utilise la propriété placeholderData: keepPreviousData. Cela maintient la grille existante visible pendant la transition pour une expérience fluide.",
+      optimisticDeletesTitle: "Suppression optimiste et restauration du cache",
+      optimisticDeletesIntro:
+        "Lorsqu'une suppression est déclenchée, l'interface supprime immédiatement l'élément du cache de la liste et annule les requêtes en cours. Si l'appel API échoue, la mutation restaure automatiquement le cache à son état précédent.",
     },
     stateManagement: {
       title: "Gestion de l'État (Frontend)",
@@ -95,6 +101,9 @@ export const fr = {
       serverErrorTitle: "Gestion des Erreurs côté Serveur",
       serverErrorIntro:
         "L'API intercepte les requêtes malveillantes avec FluentValidation et retourne des objets que React Hook Form colorie instantanément en rouge sur l'interface du client.",
+      zodUtilsTitle: "Générateurs Zod et analyse d'API sécurisée",
+      zodUtilsIntro:
+        "Les formulaires Zod utilisent des générateurs partagés tels que emailField, strongPassword, requiredStr et cronField. safeParseApiResponse analyse les réponses de l'API de manière sécurisée pour éviter les plantages dus aux dérives de contrat.",
     },
     componentLibrary: {
       title: "Bibliothèque de Composants",

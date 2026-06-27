@@ -58,6 +58,11 @@ export const de = {
       gettingStartedTitle: "Erste Schritte",
       gettingStartedIntro:
         "Befolgen Sie diese 5 Schritte, um das Berechtigungssystem fÃ¼r Ihre Plattform einzurichten. Jeder Schritt baut auf dem vorherigen auf:",
+      quotaGatingTitle: "Kontingentprüfung und Slot-Reservierungen",
+      quotaGatingIntro:
+        "Numerische Funktionen stellen Kontingente dar, die beim Erstellen von Mandantenressourcen erzwungen werden. SCRIPE verwendet ein threadsicheres, atomares Reservierungsmuster, um diese Limits zu verwalten.",
+      quotaGatingNote:
+        "TryReserveSlotAsync erhöht den reservierten Zähler. Der Handler bestätigt diese Reservierung bei Erfolg oder gibt sie bei Fehlschlag frei.",
     },
     editions: {
       title: "Editionen",
@@ -110,6 +115,9 @@ export const de = {
       endpointsCreateVersion: "Eine neue Entwurfsversion mit Funktions-Snapshot erstellen",
       endpointsPublishVersion:
         "Eine Entwurfsversion mit gewÃ¤hlter Rollout-Strategie verÃ¶ffentlichen",
+      seededTitle: "Standardmäßige System-Editionen",
+      seededIntro:
+        "Die Plattform initialisiert beim Start zwei Standard-Systemeditionen über den EditionSeeder, um Standardlimits für Funktionen festzulegen.",
     },
     subscriptions: {
       title: "Abonnements",
@@ -329,6 +337,58 @@ export const de = {
       },
     },
 
+    crmLeads: {
+      title: "CRM Leads",
+      description:
+        "Enterprise-Sales-Pipeline — Erfassung, Qualifizierung, Zuweisung und Konvertierung von Interessenten in Mandanten über das Admin-Panel.",
+      intro:
+        "Das CRM Leads-Modul ist die integrierte Sales-Pipeline von SCRIPE. Es erfasst Interessenten, bereichert sie mit Discovery-Daten und bietet einen vollständigen CRM-Workflow.",
+      ingestionTitle: "Lead-Erfassung und Duplikatsprüfung",
+      ingestionIntro:
+        "Bei der Lead-Übermittlung führt das System Validierungs- und Duplikatsprüfungen durch (Subdomänen-Kollisionen, ABM-Zuordnung für Kollegen und ein tägliches Limit von 1000 Leads).",
+      whatIsTitle: "Was ist das Leads-CRM?",
+      whatIsIntro:
+        "Ein Lead stellt einen potenziellen Kunden dar. Jeder Lead enthält Kontaktinformationen und einen Lebenszyklusstatus.",
+      lifecycleTitle: "Lead-Lebenszyklus",
+      lifecycleIntro:
+        "Leads durchlaufen definierte Status, die in der Aktivitätshistorie aufgezeichnet werden.",
+      discoveryTitle: "Discovery-Daten",
+      discoveryIntro:
+        "Jeder Lead wird mit Discovery-Feldern aus dem Onboarding-Fragebogen bereichert.",
+      discoveryTip: "Die empfohlene Edition wird vom Empfehlungsmodul berechnet.",
+      backendTitle: "Backend-Architektur",
+      backendIntro: "Die Lead-Funktion folgt der standardmäßigen 3-Projekt-Struktur von SCRIPE.",
+      entityTitle: "PlatformLead-Entität",
+      entityIntro:
+        "PlatformLead erbt von AuditableEntity. Alle IDs werden bei der API-Übertragung mit AES verschlüsselt.",
+      endpointsTitle: "API-Endpunkte",
+      endpointsIntro:
+        "Der LeadsController stellt 9 Endpunkte zur Verwaltung des Lebenszyklus bereit.",
+      endpointsNote:
+        "API-IDs werden mittels IdEncryptionHelper AES-verschlüsselt. Verwenden Sie niemals rohe GUIDs im Frontend.",
+      convertTitle: "In Mandant konvertieren",
+      convertIntro:
+        "ConvertLeadToTenant ist eine atomare Operation. Der Handler koordiniert Mandantenerstellung, Abonnement und Fehlerbehandlung.",
+      emailsTitle: "E-Mail-Benachrichtigungen",
+      emailsIntro:
+        "Zwei HTML-E-Mails werden asynchron (fire-and-forget) bei Formularübermittlung gesendet.",
+      emailsTip:
+        "Konfigurieren Sie die Benachrichtigungsadresse über Leads:SalesNotificationEmail in appsettings.json.",
+      frontendTitle: "Frontend-Architektur",
+      frontendIntro:
+        "Das Frontend-Submodul folgt dem standardmäßigen View/ViewModel-Muster von SCRIPE.",
+      frontendEntityTitle: "PlatformLead-Entität (Frontend)",
+      frontendEntityIntro:
+        "Die Entität kapselt die DTO-Daten mit berechneten Eigenschaften und Anzeigelogik.",
+      permissionsTitle: "Berechtigungen",
+      permissionsIntro:
+        "Der Zugriff auf Leads ist durch fünf Berechtigungen geschützt (module.action).",
+      permissionsTip:
+        "Frontend-Prüfungen dienen der UX. Das Backend validiert immer mit dem AuthorizationBehavior.",
+      quickStartTitle: "Schnellstart",
+      quickStartIntro:
+        "Der typische CRM-Ablauf besteht aus 5 Schritten von der Übermittlung bis zur Konvertierung.",
+    },
     compliance: {
       overview: {
         title: "Compliance-Modul",
@@ -384,107 +444,267 @@ export const de = {
           "Alle Endpoints befinden sich unter /api/v1/compliances/ und erfordern eine Authentifizierung mit compliance.view.",
       },
       dsr: {
-        title: "Betroffenenanfragen (DSR)",
-        description:
-          "GDPR/CCPA-Rechteanfragen verwalten â€” Export, LÃ¶schung, Berichtigung und EinschrÃ¤nkung.",
+        title: "Betroffenenrechte (DSR)",
+        description: "Beschreibung",
         intro:
-          "Betroffenenanfragen (DSRs) sind formelle Anfragen von Einzelpersonen zur AusÃ¼bung ihrer Rechte. Das Modul bietet einen vollstÃ¤ndigen DSR-Workflow.",
+          "Anfragen zu Betroffenenrechten (DSRs) sind formelle Anfragen von Personen, die ihre Rechte gemäß den Datenschutzgesetzen ausüben. Das Compliance-Modul bietet einen strukturierten, vollständigen DSR-Workflow: Einreichung, Zuweisung, Überprüfung, Verarbeitung und Abschluss — mit einem vollständigen, reinen Append-Only-Audit-Trail und SLA-Verfolgung.",
         typesTitle: "Anfragetypen",
-        typesIntro: "Das System unterstÃ¼tzt vier DSR-Typen gemÃ¤ÃŸ DSGVO-Artikel 17 und CCPA:",
-        type1:
-          "Export â€” Recht auf DatenÃ¼bertragbarkeit. Die betroffene Person wÃ¼nscht eine Kopie.",
-        type2:
-          "LÃ¶schung â€” Recht auf Vergessenwerden. Alle personenbezogenen Daten mÃ¼ssen gelÃ¶scht oder anonymisiert werden.",
-        type3: "Berichtigung â€” Korrekturanfrage. Ungenaue Daten mÃ¼ssen aktualisiert werden.",
-        type4:
-          "EinschrÃ¤nkung â€” VerarbeitungsbeschrÃ¤nkung. Daten kÃ¶nnen gespeichert, aber nicht aktiv verarbeitet werden.",
-        lifecycleTitle: "Anfrage-Lebenszyklus",
-        lifecycleIntro: "DSRs durchlaufen eine definierte Reihe von Statuswerten:",
-        status1: "Ausstehend (Pending) â€” AnfÃ¤nglicher Zustand bei Erhalt.",
-        status2: "In Bearbeitung (InProgress) â€” Ein Compliance-Beauftragter wurde zugewiesen.",
-        status3: "Abgeschlossen (Completed) â€” Die Anfrage wurde erfÃ¼llt.",
-        status4:
-          "Abgelehnt (Rejected) â€” Die Anfrage wurde abgelehnt (z. B. unzureichende IdentitÃ¤tsprÃ¼fung).",
-        slasTitle: "GDPR SLA-Anforderungen",
-        slasIntro:
-          "GemÃ¤ÃŸ Artikel 12 DSGVO mÃ¼ssen Verantwortliche innerhalb von 30 Tagen auf DSRs reagieren (auf 3 Monate verlÃ¤ngerbar). SCRIPE verfolgt dies.",
-        lifecycleFlowTitle: "DSR-Lebenszyklus-Flow",
-        nodeSubmit: "Anfrage einreichen",
-        descSubmit: "Betroffener beantragt Export, LÃ¶schung oder Berichtigung",
-        nodePending: "Status: Ausstehend",
-        descPending: "Anfrage wird protokolliert, SLA-Frist berechnet",
-        nodeProcessing: "Status: In Bearbeitung",
-        descProcessing: "DsrExecutionJob beginnt mit der Verarbeitung der Module",
-        nodeApproval: "Auf Admin warten",
-        descApproval: "Nukleare Aktionen (LÃ¶schung) erfordern manuelle Admin-BestÃ¤tigung",
-        nodeCompleted: "Status: Abgeschlossen",
-        descCompleted: "Export generiert oder Daten gelÃ¶scht; SLA erfÃ¼llt",
+        typesIntro:
+          "Das System unterstützt fünf DSR-Typen, die durch GDPR- und CCPA-Vorschriften definiert sind:",
+        typesType: "Anfragetyp",
+        typesDesc: "Beschreibung",
+        typesGdpr: "GDPR-Referenz",
+        typesAccessDesc:
+          "Recht auf Auskunft (Artikel 15). Die betroffene Person fordert eine Liste der Verarbeitungszwecke, Kategorien personenbezogener Daten und Empfänger an.",
+        typesExportDesc:
+          "Recht auf Datenübertragbarkeit (Artikel 20). Die betroffene Person fordert eine maschinenlesbare Kopie ihrer personenbezogenen Daten an.",
+        typesErasureDesc:
+          "Recht auf Löschung / Recht auf Vergessenwerden (Artikel 17). Die betroffene Person fordert die dauerhafte Löschung oder Anonymisierung ihrer PII.",
+        typesRectificationDesc:
+          "Recht auf Berichtigung (Artikel 16). Die betroffene Person fordert die Berichtigung unrichtiger oder unvollständiger personenbezogener Daten.",
+        typesRestrictionDesc:
+          "Recht auf Einschränkung der Verarbeitung (Artikel 18). Die betroffene Person fordert die Aussetzung der Datenverarbeitung bei gleichzeitiger Aufrechterhaltung der Datenspeicherung.",
+        lifecycleTitle: "Lebenszyklus von Anfragen",
+        lifecycleIntro:
+          "DSR-Tickets werden als Statusübergänge mit einem Überprüfungszyklus und Sicherheitsbestätigungsgates modelliert, um versehentliche und unwiderrufliche Löschungen zu verhindern:",
+        lifecycleFlowTitle: "Lebenszyklus von DSR-Anfragen & Sicherheitsgates",
+        nodeSubmit: "1. Anfrage einreichen",
+        descSubmit:
+          "Die Person reicht die Anfrage über SubmitDsrCommand ein. Der Status wird auf Ausstehend gesetzt und die SLA-Frist berechnet.",
+        nodeReview: "2. Admin-Überprüfung",
+        descReview:
+          "Der Admin überprüft die Anfrage über ReviewDsrCommand und ändert den Status auf Genehmigt oder Abgelehnt.",
+        nodeConfirm: "3. Löschung bestätigen",
+        descConfirm:
+          "Löschungsanfragen erfordern eine manuelle Bestätigung über ConfirmErasureCommand, wodurch der Wert ErasureConfirmed = true gesetzt wird.",
+        nodeProcessing: "4. DSR-Ausführungsjob",
+        descProcessing:
+          "Der DsrExecutionJob, der alle 5 Minuten ausgeführt wird, verarbeitet bestätigte/genehmigte Anfragen in Chargen von bis zu 50 Elementen.",
+        nodeCompleted: "5. Status: Abgeschlossen",
+        descCompleted:
+          "Erfolgreich in allen Modulen ausgeführt, wobei der Endzeitstempel gespeichert wird.",
         nodeRejected: "Status: Abgelehnt",
-        descRejected: "Anfrage vom Admin mit LÃ¶sungsnotizen abgelehnt",
-        conn1: "initiiert",
-        conn2: "Hintergrundjob Ã¼bernimmt",
-        conn3: "wenn automatisch verarbeitet (Export)",
-        conn4: "wenn nuklear (LÃ¶schung)",
-        conn5: "Admin bestÃ¤tigt",
-        conn6: "Admin lehnt ab",
-        entitiesTitle: "EntitÃ¤ten",
-        entityName: "EntitÃ¤tsname",
+        descRejected:
+          "Die Anfrage wird vom Admin während der Überprüfung abgelehnt. Die Lösungsnotizen werden gespeichert.",
+        nodeCancelled: "Status: Storniert",
+        descCancelled:
+          "Ausstehende, in Überprüfung befindliche oder genehmigte Anfragen können jederzeit manuell storniert werden.",
+        nodePartial: "6. Teilweise abgeschlossen",
+        descPartial:
+          "Wenn ein Modul fehlschlägt, wechselt DSR zu TeilweiseAbgeschlossen und erhöht den Zähler RetryCount (max 3).",
+        connSubmitReview: "Weist zu und wechselt zu InÜberprüfung",
+        connReviewApprove: "Genehmigt die Anfrage",
+        connReviewReject: "Lehnt die Anfrage ab",
+        connApproveConfirm: "Erforderlich für Löschung",
+        connConfirmExec: "Übernimmt zur Verarbeitung",
+        connExecComplete: "Alle Module sind erfolgreich",
+        connExecPartial: "Ein Modul schlägt fehl",
+        connPartialRetry: "Wiederholt fehlgeschlagene Module",
+        connCancel: "Storniert die Anfrage",
+        executionFlowTitle: "Ausführungsfluss der DSR-Anonymisierung",
+        nodeExecJob: "DsrExecutionJob-Auslösung",
+        descExecJob:
+          "Wird alle 5 Minuten ausgeführt und ruft genehmigte Löschungsanfragen ab, die zur Verarbeitung bereit sind.",
+        nodeCheckSafety: "Sicherheitskontrollgate",
+        descCheckSafety:
+          "Überprüft, ob ErasureConfirmed = true und ob die Kulanzzeit von ErasureExecuteAfter abgelaufen ist.",
+        nodeGenToken: "Anonymisierungstoken generieren",
+        descGenToken:
+          "Generiert ein sicheres SHA-256-Anonymisierungstoken basierend auf der Betroffenen-ID.",
+        nodeFanOut: "Modul-Verteilung",
+        descFanOut:
+          "Durchläuft alle registrierten Compliance-Anbieter, die IUserDataAnonymizer implementieren.",
+        nodeModuleExec: "Speicherallokationsfreie Ausführung",
+        descModuleExec:
+          "Führt Datenbankaktualisierungen über ExecuteUpdateAsync von EF Core aus, um PII-Felder zu löschen.",
+        nodeEvalStatus: "Ergebnisse auswerten",
+        descEvalStatus: "Überprüft die Modulausführungsberichte, um den Erfolg zu bestätigen.",
+        nodeComplete: "Status festlegen: Abgeschlossen",
+        descComplete:
+          "Das DSR-Ticket wird als Abgeschlossen markiert und der Zeitstempel CompletedAt gespeichert.",
+        nodePartialLimit: "Status festlegen: Teilweise abgeschlossen",
+        descPartialLimit:
+          "Protokolliert den Fehler, erhöht RetryCount und stellt fehlgeschlagene Module zur Wiederholung in die Warteschlange (max 3).",
+        connJobCheck: "ruft die Charge ab",
+        connCheckGen: "wenn Sicherheitsgates passiert wurden",
+        connGenFan: "erzeugt das Token",
+        connFanMod: "ruft die Anonymisierer auf",
+        connModEval: "sammelt die Statusinformationen",
+        connEvalComplete: "wenn alle erfolgreich waren",
+        connEvalPartial: "wenn eines fehlschlägt",
+        slaTitle: "SLA-Verfolgung und Fristberechnungen",
+        slaIntro:
+          "Compliance-Vorschriften schreiben strenge Antwortzeiten vor. SCRIPE berechnet und verfolgt SLA-Metriken automatisch auf dem Admin-Dashboard:",
+        slaWarningTitle: "SLA-Fristlogik",
+        slaWarningContent:
+          "Fristen werden bei der Einreichung berechnet, indem das aktive RegulationProfile gelesen wird (GDPR: 30 Tage, CCPA: 45 Tage). Der SLA-Fortschritt wird dynamisch als Prozentsatz berechnet: (Aktuelle Zeit - CreatedAt) / (Frist - CreatedAt) * 100.",
+        escalationTitle: "Eskalations-Engine und Warnungen",
+        escalationIntro:
+          "Der DsrEscalationJob wird täglich um 08:00 UTC ausgeführt, um den SLA-Verbrauch zu bewerten und überfällige Tickets zu eskalieren:",
+        escalationTier1:
+          "Stufe 1 (50% des SLA) — Standard-Erinnerungswarnung, die an den zugewiesenen Admin gesendet wird. Protokolliert den Statushistorien-Eintrag: [SLA-ESCALATION-50%].",
+        escalationTier2:
+          "Stufe 2 (75% des SLA) — Warnungseskalation. Protokolliert den Statushistorien-Eintrag: [SLA-ESCALATION-75%] und löst den Webhook compliance.dsr_sla_escalated aus.",
+        escalationTier3:
+          "Stufe 3 (90% des SLA) — Kritische Eskalation. Protokolliert den Statushistorien-Eintrag: [SLA-ESCALATION-90%], warnt Systemmanager und sendet kritischen Webhook.",
+        providerTitle: "Erweiterbare Anbieterarchitektur",
+        providerIntro:
+          "Um eine lose Kopplung beizubehalten, kommuniziert das Compliance-Modul mit anderen Modulen über die Abstraktionen IUserDataProvider und IUserDataAnonymizer:",
+        providerIdentityTitle: "Integration des Identitätsmoduls",
+        providerIdentityContent:
+          "IdentityUserDataProvider exporter profile-Metadaten, aktive Login-Sitzungen und verknüpfte externe Logins. IdentityUserDataAnonymizer verwendet leistungsstarke, speicherallokationsfreie Datenbankaktualisierungen, um Namen durch das Anonymisierungstoken zu ersetzen, E-Mails als {token}@anonymized.invalid zu formatieren, Telefonnummern auf null zu setzen und aktive Sitzungs-IPs als 'ANONYMIZED' zu markieren.",
+        providerComplianceTitle: "Integration des Compliance-Moduls",
+        providerComplianceContent:
+          "ComplianceUserDataProvider exportiert Anfrageprotokolle und Einwilligungseinträge. ComplianceUserDataAnonymizer löscht persönliche Informationen aus früheren DSRs (SubjectEmail und RequesterNotes) und Einwilligungsprotokollen (IpAddress und UserAgent).",
+        entitiesTitle: "Entitätsreferenz",
+        entityName: "Entitätsname",
         entityDesc: "Beschreibung",
-        entityDsrDesc: "Stellt eine Betroffenenanfrage dar.",
-        entityModuleDesc: "AusfÃ¼hrungsstatus eines Moduls.",
-        entityStatusDesc: "Verlauf der StatusÃ¤nderungen.",
-        codeTitle: "Code-Beispiel",
-        endpointsTitle: "API Endpoints",
-        endpointsIntro: "Der DSR-Controller stellt 6 Endpoints zur VerfÃ¼gung:",
+        entityDsrDesc:
+          "Repräsentiert eine Betroffenenanfrage, die Typ, Status, SLA-Frist und Ausführungsparameter enthält.",
+        entityModuleDesc:
+          "Verfolgt den Ausführungsstatus und die Wiederholungsversuche der verteilten DSR-Ausführung für jeden Modulanbieter.",
+        entityStatusDesc:
+          "Reines Append-Only-Register zur Verfolgung von DSR-Statusübergängen, Lösungsnotizen und SLA-Eskalationen.",
+        codeTitle: "Code-Implementierung",
+        endpointsTitle: "API-Endpunkte",
+        endpointsIntro:
+          "Der DSR-Controller macht die folgenden Endpunkte für die Einreichung, Überprüfung und Ausführungssteuerung von Anfragen verfügbar:",
         ep: {
-          list: "Alle DSRs auflisten (paginiert, filterbar)",
+          list: "Alle DSR auflisten (paginiert, filterbar nach Status/Typ/Verordnung)",
           get: "DSR-Details nach ID abrufen",
-          create: "Eine neue DSR einreichen",
-          updateStatus: "DSR-Status aktualisieren",
+          create: "Neue DSR einreichen (berechnet SLA-Frist)",
+          updateStatus: "DSR-Status aktualisieren (InBearbeitung, Abgeschlossen, Abgelehnt)",
           assign: "DSR einem Compliance-Beauftragten zuweisen",
-          delete: "Soft-Delete einer DSR",
+          delete: "DSR vorübergehend löschen (soft-delete)",
+          confirm:
+            "Ausdrückliche Bestätigung einer genehmigten Löschungs-DSR zur Freigabe der Ausführung",
         },
+        field: "Feld",
+        type: "Typ",
+        fId: "Eindeutiger Bezeichner für die DSR-Anfrage.",
+        fTenantId: "Fremdschlüssel, der auf den Mandantenkontext verweist.",
+        fSubjectEmail: "E-Mail-Adresse der betroffenen Person (wird bei Löschung anonymisiert).",
+        fRequestType: "DSR-Typ (Auskunft, Export, Löschung, Berichtigung, Einschränkung).",
+        fStatus: "Aktueller Lebenszyklusstatus der Anfrage.",
+        fDeadline: "Berechnete SLA-Antwortfrist.",
+        fErasureConfirmed: "Logisches Flag zur Freigabe von Löschungsanfragen für Hintergrundjobs.",
+        fErasureExecuteAfter: "Ausführungsschwelle, die die adaptive Kulanzzeit erzwingt.",
+        fExportFileUrl: "URL zum Herunterladen der gepackten Exportdaten.",
+        fAssignedTo: "Fremdschlüssel, der auf den zugewiesenen Admin-Benutzer verweist.",
+        fRetryCount:
+          "Aktuelle Anzahl der Wiederholungsversuche für fehlgeschlagene Modulausführungen.",
+        fCompletedAt: "Zeitstempel, der angibt, wann die DSR abgeschlossen wurde.",
+        quickStartTitle: "Schnellstartanleitung",
+        step1Title: "Compliance-Profile seeden",
+        step1Content:
+          "Führen Sie den Entwicklungs-Seeder aus, um GDPR- und CCPA-Verordnungsprofile mit SLA-Tagen zu füllen.",
+        step2Title: "Betroffenenanfrage einreichen",
+        step2Content:
+          "Verwenden Sie den POST-Endpunkt, um eine neue Anfrage zu protokollieren. Das System überprüft die Eingabebeschränkungen und berechnet die Frist.",
+        step3Title: "Überprüfen und genehmigen",
+        step3Content:
+          "Der zugewiesene Compliance-Beauftragte überprüft das Ticket. Die Genehmigung einer Löschungs-DSR legt die Kulanzzeit fest und wartet auf die endgültige Bestätigung.",
+        executionFlowIntro:
+          "Die Ausführung von Löschungsanfragen anonymisiert personenbezogene Daten asynchron über Module hinweg mittels verteilter Anbieter-Implementierungen:",
       },
       consent: {
-        title: "Einwilligungsmanagement",
-        description:
-          "Einwilligungen aufzeichnen, verfolgen und prÃ¼fen fÃ¼r GDPR-Artikel 6 und CCPA.",
+        title: "Einwilligungsverwaltung",
+        description: "Beschreibung",
         intro:
-          "Das Einwilligungsmanagement protokolliert jedes Mal, wenn ein Benutzer eine Einwilligung erteilt oder widerruft. SCRIPE speichert den vollstÃ¤ndigen Audit-Trail.",
-        purposesTitle: "Zwecke der Einwilligung",
-        purposesIntro: "Jeder Einwilligungsdatensatz ist an einen bestimmten Zweck gebunden:",
-        purpose1: "Marketing â€” E-Mail-Marketing und werbliche Kommunikation.",
-        purpose2: "Analyse â€” Nutzungsanalysen und Produktverbesserungen.",
-        purpose3: "Drittanbieter â€” Datenfreigabe an Drittanbieter-Dienste.",
-        purpose4: "Personalisierung â€” Personalisierte Inhalte und Empfehlungen.",
-        gdprTitle: "GDPR Rechtsgrundlage",
-        gdprIntro:
-          "GemÃ¤ÃŸ Artikel 6 DSGVO muss die Einwilligung freiwillig, spezifisch, informiert und unmissverstÃ¤ndlich sein. SCRIPE speichert den exakten Text.",
-        withdrawalTitle: "Widerruf der Einwilligung",
-        withdrawalIntro:
-          "Benutzer kÃ¶nnen ihre Einwilligung jederzeit widerrufen. ConsentRecord wird mit WithdrawnAt aktualisiert.",
-        flowTitle: "Einwilligungs-Status-Flow",
-        nodePurpose: "Zweck der Einwilligung",
-        descPurpose: "Definiert, worin eingewilligt wird (z. B. Marketing)",
-        nodeRecord: "Einwilligungsdatensatz",
-        descRecord: "Aktueller Status des Benutzers (Erteilt/Widerrufen) pro Zweck",
-        nodeSnapshot: "Einwilligungs-Snapshot",
-        descSnapshot: "UnverÃ¤nderliche Momentaufnahme der Erteilung/Widerrufung",
-        nodeJob: "Ablauf-Job fÃ¼r Einwilligung",
-        descJob: "TÃ¤glicher Job widerruft abgelaufene Einwilligungen",
-        conn1: "Vorlagen",
-        conn2: "generiert bei Ã„nderung",
-        conn3: "automatischer Widerruf bei Ablauf",
-        immutabilityTitle: "UnverÃ¤nderlichkeit",
-        immutabilityIntro: "EinwilligungsdatensÃ¤tze sind unverÃ¤nderlich.",
-        endpointsTitle: "API Endpoints",
+          "Die Einwilligungsverwaltung bietet eine unveränderliche Aufzeichnung der Einwilligungsstatus von Benutzern. Um performante Abfragen bei gleichzeitig rechtlich robuster Revisionssicherheit zu gewährleisten, verwendet SCRIPE eine Zwei-Tabellen-Architektur, aufgeteilt in ein reines Append-Only-Transaktionsregister und eine zwischengespeicherte materialisierte Ansicht.",
+        purposesTitle: "Einwilligungszwecke und -einstellungen",
+        purposesIntro:
+          "Die Einwilligungsverfolgung wird durch globale Profile und strukturierte Einwilligungszwecke geregelt, die beim Anwendungsstart geseedet werden:",
+        purposesKey: "Zweckschlüssel",
+        purposesBasis: "Rechtsgrundlage",
+        purposesRequired: "Erforderlich",
+        purposesSort: "Sortierreihenfolge",
+        purposesActive: "Aktiv",
+        purposesEssentialDesc:
+          "Wesentliche Funktionen, die für den Betrieb der Plattform erforderlich sind. (Erforderlich, vertragliche Rechtsgrundlage).",
+        purposesMarketingDesc:
+          "Werbe-Newsletter, E-Mails und Kampagnenkommunikation. (Optional, Einwilligung als Rechtsgrundlage).",
+        purposesAnalyticsDesc:
+          "Nutzungsanalysen, Verfolgung des Benutzerverhaltens und Produktverbesserungs-Telemetrie. (Optional, Einwilligung als Rechtsgrundlage).",
+        basisContract: "Vertrag",
+        basisConsent: "Einwilligung",
+        basisLegitimate: "Berechtigtes Interesse",
+        basisObligation: "Rechtliche Verpflichtung",
+        flowTitle: "Erfassungs- und Überprüfungsfluss der Einwilligung",
+        nodeSubmit: "Einwilligungseinreichung",
+        descSubmit:
+          "Der Benutzer aktualisiert seine Einstellungen oder reicht ein Einwilligungsformular ein.",
+        nodeValidate: "FluentValidation-Prüfung",
+        descValidate:
+          "Validiert regulatorische Einschränkungen und die Syntax des Zweckschlüssels.",
+        nodeLedger: "Registereintrag hinzufügen",
+        descLedger:
+          "Schreibt eine unveränderliche ConsentRecord-Transaktion mit IP-Adresse, User Agent, Version und Aktion.",
+        nodeUpsert: "Instantane Aktualisierung",
+        descUpsert:
+          "Materialisiert den aktuellen Status im ConsentSnapshot-Cache für performante Berechtigungsprüfungen.",
+        nodeEvents: "Domänenereignisse",
+        descEvents: "Veröffentlicht ConsentGrantedEvent oder ConsentWithdrawnEvent über MediatR.",
+        nodeExpiry: "Einwilligungsablaufjob",
+        descExpiry:
+          "Der wöchentliche Hintergrundjob analysiert Versionsunterschiede und markiert veraltete Aufzeichnungen für die erneute Einwilligung.",
+        connSubmitValidate: "übermittelt Details an",
+        connValidateLedger: "fügt Transaktion hinzu, wenn gültig",
+        connLedgerUpsert: "aktualisiert den aktuellen Cache-Status aus",
+        connUpsertEvents: "verteilt Ereignisse bei Erfolg",
+        connExpiryUpsert: "markiert RequiresReConsent = true in",
+        immutabilityTitle: "Zwei-Tabellen-Datenbankarchitektur",
+        immutabilityIntro:
+          "Um sowohl Datenbankleistung als auch Compliance-Revisionssicherheit zu garantieren, trennt die Einwilligungsverfolgung schreibintensive Transaktionen von leseintensiven Autorisierungsprüfungen:",
+        entitiesTitle: "Entitätsreferenz",
+        entitiesIntro:
+          "Die folgenden Tabellen definieren die Schemaeigenschaften für das Append-only-Register und die Snapshots des aktuellen Cache-Status:",
+        field: "Feld",
+        type: "Typ",
+        fId: "Eindeutiger Bezeichner für den Datensatz.",
+        fTenantId: "Fremdschlüssel, der auf den Mandantenkontext verweist.",
+        fSubjectId: "Fremdschlüssel, der auf die betroffene Person (Benutzer) verweist.",
+        fPurposeId: "Fremdschlüssel, der auf die ConsentPurpose-Konfiguration verweist.",
+        fAction: "Erfasste Einwilligungserteilung oder -widerruf (Erteilt oder Widerrufen).",
+        fCurrentAction:
+          "Letzter zwischengespeicherter Einwilligungsstatus für Betroffenen und Zweck.",
+        fRequiresReConsent:
+          "Flag, das angibt, dass der Benutzer aufgrund eines Richtlinien-Versionsupdates erneut einwilligen muss.",
+        fLastUpdatedAt: "Zeitstempel, der die letzte Änderung des Snapshots darstellt.",
+        fRecordedAt: "Zeitstempel, der angibt, wann die Registertransaktion stattgefunden hat.",
+        fIpAddress: "Bei der Registrierung erfasste Client-IP-Adresse.",
+        fUserAgent: "Bei der Registrierung erfasster Browser-User-Agent.",
+        fRegulationBasis:
+          "Regulatorischer Kontext (GDPR, CCPA), der bei der Einreichung aktiv war.",
+        fCollectionMethod: "Methode zur Einwilligungserfassung (Webformular, Mobile App, API).",
+        fConsentVersion:
+          "Version des Einwilligungsrichtlinien-Dokuments, die bei der Einreichung aktiv war.",
+        bestPracticesTitle: "Empfehlungen",
+        doTitle: "Empfohlene Praktiken",
+        dontTitle: "Zu vermeidende Praktiken",
+        do1: "Überprüfen Sie, ob der Zweckschlüssel mit dem kleingeschriebenen alphanumerischen Regex-Muster übereinstimmt.",
+        do2: "Führen Sie den wöchentlichen ConsentExpiryJob immer aus, um die erneute Einwilligung bei Versionsupdates zu erzwingen.",
+        do3: "Nutzen Sie MediatR ConsentWithdrawnEvents, um die nachgelagerte Datenverarbeitung einzuschränken.",
+        dont1:
+          "Ändern Sie ConsentRecord-Zeilen niemals direkt, um den unveränderlichen Revisionspfad nicht zu beschädigen.",
+        dont2:
+          "Führen Sie keine direkten SQL-Abfragen auf ConsentRecord für Berechtigungsprüfungen im Frontend aus; lesen Sie immer ConsentSnapshot.",
+        dont3:
+          "Geben Sie ungeschützte Endpunkte zur Einwilligungserfassung niemals unauthentifiziert frei.",
+        endpointsTitle: "API-Endpunkte",
         ep: {
-          list: "Alle EinwilligungsdatensÃ¤tze auflisten",
-          get: "Einwilligungsdatensatz nach ID abrufen",
-          record: "Neue Einwilligungserteilung aufzeichnen",
-          withdraw: "Eine zuvor erteilte Einwilligung widerrufen",
+          list: "Alle Registerdatensätze auflisten (nur Admins, filterbar mit Paginierung)",
+          get: "Datensatzdetails nach ID abrufen",
+          record: "Neue Einwilligungserteilung oder -widerruf aufzeichnen (Benutzer/Admin)",
+          withdraw: "Zuvor erteilte Einwilligung widerrufen (Benutzer/Admin)",
+          getMy: "Aktive Einwilligungssnapshots des aktuell authentifizierten Benutzers abrufen",
+          analytics: "Einwilligungsstatistiken nach Zweck und Status abrufen (nur Admins)",
         },
+        entitiesLedgerTitle: "ConsentRecord (Append-Only-Register)",
+        entitiesSnapshotTitle: "ConsentSnapshot (Materialisierte Cache-Ansicht)",
+        epWithdraw: "Zuvor erteilte Einwilligung widerrufen",
       },
+
       retention: {
         title: "Datenaufbewahrungsrichtlinien",
         description:

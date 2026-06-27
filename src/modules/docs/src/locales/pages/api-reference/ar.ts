@@ -198,9 +198,12 @@ export const ar = {
       bulkActivateDesc: "التفعيل المجمع.",
       bulkDeactivateDesc: "التعطيل المجمع.",
       bulkDeleteDesc: "الحذف المجمع الناعم (Soft delete).",
-      bulkActivateAllDesc: "تنشيط جميع مجموعات المستخدمين المطابقة لمعايير الفلترة المحددة دفعة واحدة (يدعم cascadeAdmins).",
-      bulkDeactivateAllDesc: "إلغاء تنشيط جميع مجموعات المستخدمين المطابقة لمعايير الفلترة المحددة دفعة واحدة (يدعم cascadeAdmins).",
-      bulkDeleteAllDesc: "حذف جميع مجموعات المستخدمين المطابقة لمعايير الفلترة المحددة دفعة واحدة (حذف لطيف، يدعم cascadeAdmins).",
+      bulkActivateAllDesc:
+        "تنشيط جميع مجموعات المستخدمين المطابقة لمعايير الفلترة المحددة دفعة واحدة (يدعم cascadeAdmins).",
+      bulkDeactivateAllDesc:
+        "إلغاء تنشيط جميع مجموعات المستخدمين المطابقة لمعايير الفلترة المحددة دفعة واحدة (يدعم cascadeAdmins).",
+      bulkDeleteAllDesc:
+        "حذف جميع مجموعات المستخدمين المطابقة لمعايير الفلترة المحددة دفعة واحدة (حذف لطيف، يدعم cascadeAdmins).",
       cascadeWarningNode:
         "الحذف المتتالي سيتجاوز مستخدم الوحدة الأولي لحماية هيكل الوحدة من الانهيار.",
     },

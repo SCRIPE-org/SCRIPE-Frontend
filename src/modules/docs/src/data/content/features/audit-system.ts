@@ -5,7 +5,7 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 const sections: DocSection[] = [
   { type: "paragraph", contentKey: "features.auditSystem.intro" },
 
-  //  Architecture 
+  // € Architecture €
   {
     type: "heading",
     level: 2,
@@ -14,28 +14,95 @@ const sections: DocSection[] = [
   },
   {
     type: "flowchart",
-    title: "4-Source Audit Pipeline",
+    title: "Audit Pipeline & Persistence Architecture",
     direction: "vertical",
     nodes: [
-      { id: "source1", label: "AstraFlow mediator AuditBehavior (CQRS commands)", type: "info" },
-      { id: "source2", label: "EF Core AuditableEntityInterceptor", type: "warning" },
-      { id: "source3", label: "RequestLoggingMiddleware (HTTP)", type: "primary" },
-      { id: "source4", label: "Explicit IAuditService calls (security events)", type: "danger" },
-      { id: "service", label: "AuditService", type: "default" },
-      { id: "db", label: "AuditLogs Table", type: "success" },
-      { id: "hub", label: "SignalR AuditHub (real-time)", type: "info" },
+      {
+        id: "client",
+        label: "Client Request / API Call",
+        type: "primary",
+        description: "Initiates HTTP transaction",
+      },
+      {
+        id: "middleware",
+        label: "RequestLoggingMiddleware",
+        type: "info",
+        description: "Synchronously captures context, awaits next, Task.Run background write",
+      },
+      {
+        id: "mediator",
+        label: "AstraFlow Mediator Behaviors",
+        type: "default",
+        description: "LoggingBehavior & FeatureCheckBehavior pipeline execution",
+      },
+      {
+        id: "handler",
+        label: "Command / Query Handler",
+        type: "primary",
+        description: "Processes request, triggers unit of work save changes",
+      },
+      {
+        id: "interceptor",
+        label: "AuditableEntityInterceptor",
+        type: "warning",
+        description: "ChangeTracker inspection for CRUD & Soft Delete before saving",
+      },
+      {
+        id: "service",
+        label: "AuditService",
+        type: "primary",
+        description: "Orchestrates database writes & hub broadcasting",
+      },
+      {
+        id: "db",
+        label: "IdentityDbContext (AuditLogs Table)",
+        type: "success",
+        description: "Multi-provider indexed persistent store",
+      },
+      {
+        id: "signalr",
+        label: "SignalR AuditHub",
+        type: "info",
+        description: "Broadcasts events to tenant-scoped groups",
+      },
     ],
     connections: [
-      { from: "source1", to: "service" },
-      { from: "source2", to: "service" },
-      { from: "source3", to: "service" },
-      { from: "source4", to: "service" },
+      { from: "client", to: "middleware" },
+      { from: "middleware", to: "mediator", label: "Pipeline execution" },
+      { from: "middleware", to: "service", label: "Fire-and-forget (Task.Run)", style: "dashed" },
+      { from: "mediator", to: "handler" },
+      { from: "handler", to: "interceptor", label: "SaveChanges" },
+      { from: "interceptor", to: "service", label: "LogEntityChangeAsync", style: "dashed" },
       { from: "service", to: "db" },
-      { from: "service", to: "hub", label: "Broadcast" },
+      { from: "service", to: "signalr", label: "Broadcasting" },
     ],
   },
+  {
+    type: "paragraph",
+    contentKey: "features.auditSystem.pipelineDetail",
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.auditSystem.changeTrackingTitle",
+    id: "change-tracking",
+  },
+  {
+    type: "paragraph",
+    contentKey: "features.auditSystem.changeTrackingDetail",
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.auditSystem.databaseSchemaTitle",
+    id: "database-schema",
+  },
+  {
+    type: "paragraph",
+    contentKey: "features.auditSystem.databaseSchemaDetail",
+  },
 
-  //  Event Types
+  // € Event Types
   {
     type: "heading",
     level: 2,
@@ -191,7 +258,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  //  Guardian Events
+  // € Guardian Events
   {
     type: "heading",
     level: 2,
@@ -242,7 +309,7 @@ const sections: DocSection[] = [
     contentKey: "features.auditSystem.guardianIntro",
   },
 
-  //  Service Methods
+  // € Service Methods
   {
     type: "heading",
     level: 2,
@@ -256,27 +323,30 @@ const sections: DocSection[] = [
     filename: "IAuditService Interface",
     code: `public interface IAuditService
 {
-    // 1. HTTP request logging (called from middleware)
-    Task LogRequestAsync(HttpContext context, int statusCode, long durationMs);
+    // 1. HTTP request and general log writing (asynchronous background persistence)
+    Task WriteLogAsync(AuditLog log);
 
-    // 2. Authentication events
-    Task LogLoginAttemptAsync(string username, bool success, string? ip, string? userAgent);
+    // 2. Entity mutation change tracking (with change tracker mapping & soft delete capture)
+    Task LogEntityChangeAsync(
+        string eventType,
+        string entityType,
+        string? entityId,
+        string action,
+        string? oldValues,
+        string? newValues,
+        CancellationToken ct = default);
 
-    // 3. Entity change tracking (called from EF interceptor)
-    Task LogEntityChangeAsync(string entityType, string entityId,
-        string action, object? oldValues, object? newValues);
-
-    // 4. Security events (Guardian, escalation, 2FA)
-    Task LogSecurityEventAsync(string eventType, string description,
-        Guid? adminId = null, Dictionary<string, object>? metadata = null);
-
-    // 5. Error logging
-    Task LogErrorAsync(Exception ex, string context, Guid? adminId = null);
+    // 3. Security, authentication, and compliance logging
+    Task LogSecurityEventAsync(
+        string eventType,
+        string description,
+        Guid? userId = null,
+        Dictionary<string, object>? metadata = null);
 }`,
-    highlightLines: [4, 7, 10, 14, 18],
+    highlightLines: [4, 7, 17],
   },
 
-  //  Real-Time Broadcasting 
+  // € Real-Time Broadcasting €
   {
     type: "heading",
     level: 2,
@@ -307,14 +377,14 @@ await _hubContext.Clients
     highlightLines: [3, 15],
   },
 
-  //  Export 
+  // € Export €
   {
     type: "heading",
     level: 2,
     titleKey: "features.auditSystem.exportTitle",
     id: "export",
   },
-  { type: "paragraph", contentKey: "features.auditSystem.exportIntro" },
+  { type: "paragraph", contentKey: "features.auditSystem.exportDetail" },
 
   //  API Endpoints
   {

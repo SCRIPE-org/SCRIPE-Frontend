@@ -62,7 +62,8 @@ export const zh = {
       diTitle: "服务挂接",
       controllerTitle: "请求拦截层",
       registerTitle: "整体登记",
-      migrationNote: "每次变动表结构，务必确认能够平滑通过 'scripe db add-migration AddYourEntity -m Inventory' 和 'scripe db update -m Inventory'。",
+      migrationNote:
+        "每次变动表结构，务必确认能够平滑通过 'scripe db add-migration AddYourEntity -m Inventory' 和 'scripe db update -m Inventory'。",
     },
   },
 };

@@ -20,8 +20,7 @@ export const de = {
 
       // IAutoRegisteredJob Contract
       nodeConfig: "appsettings.json-Datei\nProvider + Überschreibungen pro Job",
-      descConfig:
-        "Provider: Native | Hangfire | Quartz\nJobs: { id: { Enabled, CronExpression } }",
+      descConfig: "Provider: Native | Hangfire | Quartz\nJobs: { id: { Enabled, CronExpression } }",
       nodeStartup: "BackgroundJobs-Konfiguration\nAddBackgroundJobsConfiguration()",
       descStartup: "Liest Provider, entdeckt alle Jobs, plant sie",
       nodeDiscovery: "Auto-Discovery-Schleife\nGetServices<IAutoRegisteredJob>()",
@@ -29,7 +28,8 @@ export const de = {
       nodeSchedule: "Jeden Job planen\nWenn aktiviert -> Bei der Provider-API registrieren",
       descSchedule: "Verwendet CronExpression aus appsettings-Überschreibung oder Job-Standard",
       nodeExecute: "job.ExecuteAsync(ct)\nBei jedem Cron-Tick",
-      descExecute: "Provider-agnostisch - Job hat kein Wissen darüber, welcher Provider ihn ausführt",
+      descExecute:
+        "Provider-agnostisch - Job hat kein Wissen darüber, welcher Provider ihn ausführt",
       conn1: "steuert",
       conn2: "löst aus",
       conn3: "für jeden Job",

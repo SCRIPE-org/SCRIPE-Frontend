@@ -233,35 +233,52 @@ export const es = {
     auditCompliance: {
       title: "Auditoría y Cumplimiento",
       description:
-        "El pipeline de captura y exportación más robusto posible sobre el modelo transaccional de la empresa.",
-      intro: "Proporciona pruebas periciales de quién hizo qué, y a qué hora precisa.",
+        "Pipeline de auditoría completo, seguimiento de entidades, transmisión SignalR, exportación CSV/Excel/PDF y características de cumplimiento.",
+      intro: "Un registro completo de cada modificación de datos y cada solicitud de API.",
       architectureTitle: "Arquitectura de Auditoría",
       architectureIntro:
-        "El sistema no depende del programador sino de Interceptores a bajo nivel del ORM.",
+        "El sistema de auditoría consta del registro de solicitudes HTTP y la interceptación de mutaciones de entidades a nivel de base de datos. Los metadatos de la solicitud se registran de forma asíncrona en el nivel del host a través de RequestLoggingMiddleware, mientras que los cambios en la base de datos son capturados por AuditableEntityInterceptor antes de SaveChanges.",
       interceptorTitle: "Interceptor de Cambios de Entidad",
       interceptorIntro:
-        "Calcula los deltas del valor Viejo -> Nuevo automáticamente y lo convierte a formato JSON persistido.",
+        "El AuditableEntityInterceptor se conecta al pipeline SaveChangesAsync de EF Core. Para cada entidad agregada, modificada o eliminada (incluidas las eliminaciones lógicas), captura los valores antiguos y nuevos como JSON, el usuario que realiza el cambio y la marca de tiempo. Omite las entidades AuditLog para evitar recursividad infinita.",
       auditLogEntityTitle: "Estructura de la Entidad AuditLog",
       signalrTitle: "Transmisión (Streaming) en Tiempo Real",
       signalrIntro:
-        "SignalR emite el evento al navegador del auditor milisegundos después de ocurrir el cambio en la base de datos.",
+        "Los registros de auditoría se transmiten en tiempo real a través del hub SignalR AuditHub. Los clientes administradores conectados reciben notificaciones instantáneas de cualquier cambio en los datos, lo que permite dashboards de monitoreo en vivo.",
       exportTitle: "Capacidades de Exportación",
       exportIntro:
         "Saca los datos fuera del sistema mediante formatos corporativos CSV y Excel, listos para la autoridad correspondiente.",
+      exportDetail:
+        "El AuditExportService proporciona exportaciones multiformato. La exportación CSV utiliza CsvHelper con comillas forzadas alrededor de todos los campos para evitar la inyección de CSV (RFC 4180) y un prefijo UTF-8 BOM para Excel. La exportación a Excel genera un libro de ClosedXML con tres hojas detalladas: Executive Summary (KPI y estadísticas), Audit Data (con filtros automáticos, cabeceras congeladas y formato condicional verde/rojo) y Security Analysis. La exportación PDF utiliza el motor de QuestPDF, el cual está marcado como Obsoleto para grandes conjuntos de datos debido al consumo de memoria. Para proteger los recursos, todas las exportaciones están limitadas a un máximo de 10,000 filas y se cargan en memoria antes de la transmisión.",
       queryApiTitle: "API de Consultas y Exportaciones",
       queryApiIntro:
-        "Totalmente enlazada al sistema de RBAC y filtrada mediante los límites del inquilino respectivo.",
+        "La API de auditoría ofrece funciones de búsqueda, filtrado y exportación para registros de auditoría. Todos los endpoints requieren autenticación de administrador y el permiso audit.view o audit.export.",
       querySearchDesc: "Busca con indexación profunda y paginación rápida.",
       queryExportCsvDesc: "Generación asincrónica en formato CSV.",
       queryExportExcelDesc: "Exportación empaquetada XLSX.",
       queryExportPdfDesc: "Exportación legal sellada en PDF.",
+      scopingTitle: "Delimitación jerárquica de inquilinos e aislamiento de seguridad",
+      scopingDetail:
+        "El aislamiento de datos se aplica dinámicamente durante la ejecución de consultas. El DataScopeService determina el alcance efectivo del administrador basándose en una cadena de prioridad estricta: ContextTenant (impersonación a través de encabezados cifrados con AES), anulaciones de permisos, SystemProtectedAdmin, Hierarchy (incluyendo inquilinos secundarios) o OwnTenant. Los descendientes se recorren en tiempo constante a través de rutas materializadas, que se traducen en consultas SQL LIKE indexadas. El repositorio aplica AuditByTenantScopeSpec para asegurar el filtro 'WHERE TenantId IN (...)', mientras que las consultas directas por ID de registro son validadas por GetAuditLogDetailQueryHandler para evitar la escalación de privilegios horizontal.",
       complianceTitle: "Características de Cumplimiento",
       immutableTitle: "Registros Inmutables",
+      immutableDesc:
+        "Los registros están bloqueados y se almacenan en modo de solo lectura, lo que evita eliminaciones o modificaciones después de guardarlos.",
       fullTraceTitle: "Trazabilidad Completa",
+      fullTraceDesc:
+        "Captura los encabezados HTTP, el contexto de la solicitud y las mutaciones de entidades para garantizar una trazabilidad completa.",
       searchableTitle: "Altamente Consultable",
+      searchableDesc:
+        "Los índices optimizados en Timestamp, UserId, EventType y CorrelationId permiten búsquedas instantáneas.",
       tenantScopedTitle: "Alcance Separado por Inquilino",
+      tenantScopedDesc:
+        "Los registros se aíslan automáticamente mediante TenantId y límites jerárquicos de inquilinos para evitar fugas de datos.",
       realtimeTitle: "Vigilancia en Tiempo Real",
+      realtimeDesc:
+        "Transmita eventos de seguridad y mutaciones directamente a dashboards de SignalR aislados por inquilino.",
       retentionTitle: "Políticas Configurables de Retención",
+      retentionDesc:
+        "Los períodos de retención configurados eliminan automáticamente los registros de auditoría caducados a través de servicios en segundo plano.",
     },
   },
 };

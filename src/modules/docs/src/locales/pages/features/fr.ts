@@ -158,7 +158,7 @@ export const fr = {
         "L'autorisation est découplée des configurations statiques. Le DynamicPermissionPolicyProvider construit dynamiquement des politiques d'autorisation ASP.NET Core pour les routes contenant l'attribut [PermissionRequired]. Pour maintenir la taille du jeton JWT sous 400 octets, les permissions des utilisateurs ne sont pas stockées dans les revendications (claims) mais sont mises en cache côté serveur à l'aide d'un AdminPermissionCache (avec une expiration glissante de 10 minutes). La mise en cache utilise un CancellationTokenSource central pour une éviction globale sécurisée au niveau des threads lors de toute modification de rôle. Des vérifications programmatiques sont effectuées dans les gestionnaires et les services via l'interface IPermissionChecker.",
       restrictedFieldsTitle: "Restrictions au Niveau des Champs",
       restrictedFieldsIntro:
-        "La sécurité au niveau des champs (FLS) permet aux administrateurs de restreindre des champs spécifiques d'une entité pour des rôles déterminés. Les champs restreints sont configurés sous forme de tableau JSON de chemins de chaînes (par exemple, [\"salary\", \"ssn\"]) et stockés dans la colonne RestrictedFieldsJson (varchar/nvarchar/VARCHAR2 jusqu'à 2000 caractères) de la table RolePermission. Lors de l'exécution, le RestrictedFieldsAuthorizationFilter identifie la ressource cible et définit HttpContext.Items[\"RestrictedFields\"]. Le FieldProjectionMiddleware intercepte les réponses JSON HTTP 2xx, analyse le corps dans un arbre JsonNode et annule de manière récursive les propriétés restreintes correspondant au chemin exact ou relatif (par exemple, address.street) pour éviter la surcharge de réflexion.",
+        'La sécurité au niveau des champs (FLS) permet aux administrateurs de restreindre des champs spécifiques d\'une entité pour des rôles déterminés. Les champs restreints sont configurés sous forme de tableau JSON de chemins de chaînes (par exemple, ["salary", "ssn"]) et stockés dans la colonne RestrictedFieldsJson (varchar/nvarchar/VARCHAR2 jusqu\'à 2000 caractères) de la table RolePermission. Lors de l\'exécution, le RestrictedFieldsAuthorizationFilter identifie la ressource cible et définit HttpContext.Items["RestrictedFields"]. Le FieldProjectionMiddleware intercepte les réponses JSON HTTP 2xx, analyse le corps dans un arbre JsonNode et annule de manière récursive les propriétés restreintes correspondant au chemin exact ou relatif (par exemple, address.street) pour éviter la surcharge de réflexion.',
       cloneRoleTitle: "Clonage de Rôle (Anti-Escalade)",
       cloneRoleIntro:
         "Pour empêcher l'escalade de privilèges, le CloneRoleCommandHandler filtre la liste des permissions copiées par rapport aux propres permissions actives du cloneur, supprimant silencieusement toutes les permissions non possédées. Dans la commande d'attribution de permissions, tenter d'ajouter explicitement des permissions que l'administrateur ne possède pas lève une erreur Forbidden role.permissionEscalation. De plus, le TenantGuardianService valide toutes les mises à jour de rôles et bloque toute modification des rôles critiques du système verrouillés (IsPermissionLocked == true).",
@@ -180,10 +180,18 @@ export const fr = {
     auditSystem: {
       title: "Système d'Audit",
       description:
-        "Pipeline à 4 sources, plus de 35 types d'événements, 7 événements Guardian, SignalR en temps réel et export CSV/PDF.",
+        "Pipeline multi-sources, mappages change tracker, index de base de données, SignalR en temps réel et export CSV/Excel/PDF.",
       intro:
-        "SCRIPE capture chaque action significative dans le journal d'audit via SCRIPE mediator, EF Core, les middlewares et les appels de services.",
+        "SCRIPE capture chaque action significative dans le journal d'audit via un pipeline découplé de requêtes et de base de données, intégrant les journaux HTTP, le suivi des mutations EF Core et le logging de sécurité. Tous les événements sont diffusés en temps réel via SignalR vers les groupes de locataires.",
       architectureTitle: "Architecture d'Audit",
+      pipelineDetail:
+        "L'audit des requêtes HTTP est géré par le RequestLoggingMiddleware. Il capture le contexte de la requête (méthode HTTP, chemin, adresse IP distante, User-Agent, revendications de l'utilisateur et Correlation ID) de manière synchrone sur le thread de requête avant que l'HttpContext ne soit recyclé, puis appelle l'AuditService de manière asynchrone dans une tâche de fond (Task.Run) pour éviter de bloquer les requêtes. Les chemins d'infrastructure sont ignorés et les requêtes GET réussies sont supprimées par défaut.",
+      changeTrackingTitle: "Interception des mutations d'entités",
+      changeTrackingDetail:
+        "L'AuditableEntityInterceptor suit les modifications au niveau de la base de données avant leur enregistrement. Il intercepe SaveChangesAsync et scannt den ChangeTracker pour les entités implémentant IAuditable ou ISoftDeletable. Pour les créations, il capture tous les champs. Pour les modifications, il effectue un différentiel et ne stocke que les colonnes modifiées afin d'économiser l'espace. Pour les suppressions physiques, il capture les valeurs originales. Pour les suppressions logiques (Soft Delete), il intercepte l'entité avant sa modification par le DbContext et crée un événement de suppression dédié. Il ignore également le type AuditLog lui-même pour éviter une récursion infinie.",
+      databaseSchemaTitle: "Schéma de base de données et index multi-fournisseurs",
+      databaseSchemaDetail:
+        "L'entité AuditLog s'appuie sur des index performants sur Timestamp, UserId, EventType, CorrelationId, TenantId, ainsi que des index composites (Endpoint+Timestamp, EventType+Timestamp, TenantId+Timestamp). Les types de données sont mappés correctement pour SQL Server, PostgreSQL et Oracle (en utilisant bit/boolean/NUMBER(1) et Guid/uuid/RAW(16)) pour des performances optimales.",
       eventTypesTitle: "Types d'Événements (Plus de 35 Catégories)",
       authEventsTitle: "Événements d'Authentification",
       rbacEventsTitle: "Événements RBAC",
@@ -197,13 +205,15 @@ export const fr = {
         "Les événements Guardian sont des journaux de sécurité créés lorsque le système BLOQUE une opération dangereuse.",
       serviceMethodsTitle: "Méthodes de AuditService",
       serviceMethodsIntro:
-        "L'interface IAuditService expose 5 méthodes de journalisation asynchrones qui ne bloquent jamais la requête principale.",
+        "L'interface IAuditService expose 3 méthodes de journalisation asynchrones qui capturent les métriques de requête, les mutations en base de données et les journaux de sécurité sans bloquer la requête principale.",
       realTimeTitle: "Diffusion en Temps Réel (SignalR)",
       realTimeIntro:
-        "Chaque événement d'audit est diffusé en temps réel via SignalR aux clients connectés regroupés par leur locataire.",
+        "Chaque événement d'audit est diffusé en temps réel via SignalR aux clients connectés regroupés par leur locataire. Les événements sont diffusés à la fois au groupe du locataire et à un groupe global pour les super-administrateurs.",
       exportTitle: "Exportation d'Audit",
       exportIntro:
         "Les journaux peuvent être exportés en formats CSV, Excel ou PDF avec filtrage de dates et de locataires.",
+      exportDetail:
+        "L'AuditExportService fournit des exports multi-formats. L'export CSV utilise CsvHelper en forçant les guillemets (RFC 4180) pour éviter l'injection CSV, avec un préambule UTF-8 BOM pour Excel. L'export Excel génère un classeur ClosedXML avec trois onglets : Executive Summary (statistiques/KPI), Audit Data (avec filtres automatiques, en-têtes figés et mise en forme conditionnelle vert/rouge) et Security Analysis. L'export PDF utilise le moteur QuestPDF, marqué comme obsolète pour les grands jeux de données en raison de sa consommation mémoire. Pour protéger les ressources, les exports sont limités à 10 000 lignes et chargés entièrement en mémoire avant l'envoi.",
       endpointsTitle: "Endpoints API d'Audit",
       retentionTip:
         "Les journaux d'audit sont conservés selon TenantSettings.AuditRetentionDays. Un travail en arrière-plan purge les anciens enregistrements.",
@@ -424,6 +434,15 @@ export const fr = {
         "Les groupes d'utilisateurs sont isolés par locataire. Les SuperAdmins voient tous les groupes de tous les locataires. Les administrateurs de locataire ne peuvent gérer que les groupes de leur propre locataire. Toutes les mutations sont auditées et nécessitent le jeu d'autorisations user_groups.*.",
     },
     ssoOauth: {
+      samlTitle: "Intégration SAML 2.0 et validation cryptographique",
+      samlContent:
+        "La plateforme prend en charge le Single Sign-On SAML 2.0 à l'aide de la bibliothèque ITfoxtec.Identity.Saml2. En mode fournisseur de services (SP), les requêtes AuthnRequest sont générées et distribuées via une liaison de redirection. Pour les rappels ACS, les signatures XML sont validées à l'aide de certificats X.509 publics stockés au format base64 (avec X509CertificateLoader). La validation de la chaîne et les vérifications de révocation sont ignorées (None/NoCheck) pour accepter les certificats d'entreprise auto-signés. En mode fournisseur d'identité (IdP), des assertions SAML signées sont émises pour les applications tierces.",
+      oidcCallbackTitle: "Rappel OIDC et mise en cache de sélection de l'espace de travail",
+      oidcCallbackContent:
+        "Le ProcessOidcCallbackCommandHandler gère les rappels de défi OIDC entrants en décryptant l'ID du fournisseur via AES-256 et en échangeant le code contre des revendications. Si l'e-mail de l'utilisateur correspond à plusieurs espaces de travail d'administration, l'état de sélection de connexion SSO (SsoTempLoginData) est mis en cache dans Redis sous 'sso-login-selection:{tempToken}' avec une expiration de 15 minutes pour éviter la falsification des paramètres. Un seul espace de travail correspondant contourne cette sélection et émet directement les jetons d'accès et de rafraîchissement JWT finaux de 7 jours.",
+      oauthMirroringTitle: "Mise en miroir des clients OAuth et validation des quotas",
+      oauthMirroringContent:
+        "Les enregistrements d'applications OAuth sortantes vérifient les quotas d'abonnement au niveau du locataire via QuotaService. Les ID clients sont préfixés avec les paramètres de marque du locataire, et les secrets clients confidentiels sont générés de manière sécurisée (256 bits aléatoires) et affichés une seule fois. Les enregistrements d'applications sont synchronisés avec le magasin OpenIddict et mis en miroir dans la table OAuthApplication locale avec des secrets masqués pour optimiser les performances.",
       title: "Serveur SSO et OAuth (Alternative à Keycloak)",
       description:
         "Serveur d'authentification de niveau entreprise capable de remplacer Keycloak, Okta et Auth0. Fournisseurs d'identité OIDC natifs, enregistrement d'applications OAuth, application de PKCE et fédérations de locataires isolées.",

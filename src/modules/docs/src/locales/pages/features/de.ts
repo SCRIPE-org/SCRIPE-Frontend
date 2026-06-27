@@ -153,7 +153,7 @@ export const de = {
         "Die Autorisierung ist von statischen Konfigurationen entkoppelt. Der DynamicPermissionPolicyProvider erstellt dynamisch ASP.NET Core-Autorisierungsrichtlinien für Routen mit dem Attribut [PermissionRequired]. Um die JWT-Token-Größe unter 400 Bytes zu halten, werden Benutzerberechtigungen nicht in Claims gespeichert, sondern serverseitig im AdminPermissionCache (mit einer 10-minütigen gleitenden Gültigkeit) zwischengespeichert. Das Caching verwendet eine zentrale CancellationTokenSource für eine threadsichere globale Bereinigung bei Rollenänderungen. Programmgesteuerte Prüfungen werden in Handlern und Services über die Schnittstelle IPermissionChecker durchgeführt.",
       restrictedFieldsTitle: "Einschränkungen auf Feldebene (Restricted Fields)",
       restrictedFieldsIntro:
-        "Die Feldebenen-Sicherheit (Field-Level Security, FLS) ermöglicht es Administratoren, bestimmte Felder einer Entität für bestimmte Rollen einzuschränken. Eingeschränkte Felder werden als JSON-Array von String-Pfaden konfiguriert (z. B. [\"salary\", \"ssn\"]) und in der Spalte RestrictedFieldsJson (varchar/nvarchar/VARCHAR2 bis zu 2000 Zeichen) der Tabelle RolePermission gespeichert. Während der Ausführung identifiziert der RestrictedFieldsAuthorizationFilter die Zielressource und setzt HttpContext.Items[\"RestrictedFields\"]. Die FieldProjectionMiddleware fängt HTTP-2xx-JSON-Antworten ab, analysiert den Body in einen JsonNode-Baum und nullifiziert rekursiv eingeschränkte Eigenschaften, die mit dem genauen oder relativen Pfad (z. B. address.street) übereinstimmen, um Reflection-Overhead zu vermeiden.",
+        'Die Feldebenen-Sicherheit (Field-Level Security, FLS) ermöglicht es Administratoren, bestimmte Felder einer Entität für bestimmte Rollen einzuschränken. Eingeschränkte Felder werden als JSON-Array von String-Pfaden konfiguriert (z. B. ["salary", "ssn"]) und in der Spalte RestrictedFieldsJson (varchar/nvarchar/VARCHAR2 bis zu 2000 Zeichen) der Tabelle RolePermission gespeichert. Während der Ausführung identifiziert der RestrictedFieldsAuthorizationFilter die Zielressource und setzt HttpContext.Items["RestrictedFields"]. Die FieldProjectionMiddleware fängt HTTP-2xx-JSON-Antworten ab, analysiert den Body in einen JsonNode-Baum und nullifiziert rekursiv eingeschränkte Eigenschaften, die mit dem genauen oder relativen Pfad (z. B. address.street) übereinstimmen, um Reflection-Overhead zu vermeiden.',
       cloneRoleTitle: "Rolle klonen (Anti-Eskalation)",
       cloneRoleIntro:
         "Um eine Privilegien-Eskalation zu verhindern, filtert der CloneRoleCommandHandler die kopierte Berechtigungsliste gegen die eigenen aktiven Berechtigungen des Kloners und verwirft nicht besessene Berechtigungen stillschweigend. Im Berechtigungszuweisungsbefehl führt der Versuch, Berechtigungen explizit hinzuzufügen, die der Administrator nicht besitzt, zu einem Forbidden-Fehler role.permissionEscalation. Darüber hinaus validiert der TenantGuardianService alle Rollenaktualisierungen und blockiert Änderungen an gesperrten systemkritischen Rollen (IsPermissionLocked == true).",
@@ -172,10 +172,18 @@ export const de = {
     auditSystem: {
       title: "Audit-System",
       description:
-        "4-Quellen-Pipeline, 35+ Ereignistypen, 7 Guardian-Ereignisse, Echtzeit-SignalR und CSV/PDF-Export.",
+        "Multi-Quellen-Pipeline, Change-Tracker-Mappings, Datenbank-Indizes, Echtzeit-SignalR und CSV/Excel/PDF-Export.",
       intro:
-        "SCRIPE erfasst jede wichtige Aktion im Audit-Log durch SCRIPE mediator, EF Core, Middleware und Services.",
+        "SCRIPE erfasst jede wichtige Aktion im Audit-Log über eine entkoppelte Anfrage- und Datenbank-Pipeline, die HTTP-Anforderungsprotokollierung, EF Core Entitätsänderungsverfolgung und direkte Sicherheitsereignisse umfasst. Alle Ereignisse werden in Echtzeit via SignalR an mandantenspezifische Gruppen übertragen.",
       architectureTitle: "Audit-Architektur",
+      pipelineDetail:
+        "Die HTTP-Anforderungsprotokollierung wird von der RequestLoggingMiddleware verarbeitet. Sie erfasst den Anforderungskontext (HTTP-Methode, Pfad, Remote-IP, User-Agent, Benutzer-Claims und Correlation-ID) synchron auf dem Anforderungsthread, bevor HttpContext recycelt wird, und ruft dann den AuditService asynchron in einem Hintergrundtask (Task.Run) auf, um das Blockieren von Anforderungen zu verhindern. Infrastrukturpfamden werden übersprungen und erfolgreiche GET-Anforderungen standardmäßig unterdrückt.",
+      changeTrackingTitle: "Abfangen von Entitätsänderungen",
+      changeTrackingDetail:
+        "Der AuditableEntityInterceptor verfolgt Änderungen auf Datenbankebene, bevor diese gespeichert werden. Er fängt SaveChangesAsync ab und scannt den ChangeTracker nach Entitäten, die IAuditable oder ISoftDeletable implementieren. Bei neu erstellten Entitäten werden alle Felder erfasst. Bei geänderten Entitäten wird ein Eigenschaftsvergleich durchgeführt, sodass nur geänderte Felder gespeichert werden. Bei physischen Löschungen werden alle Originalwerte erfasst. Bei logischen Löschungen (Soft Delete) wird die Entität abgefangen, bevor sie durch den DbContext als geändert markiert wird. Zudem wird der Typ AuditLog selbst übersprungen, um Stack-Overflow-Rekursionen zu verhindern.",
+      databaseSchemaTitle: "Datenbankschema & Multi-Provider-Indizes",
+      databaseSchemaDetail:
+        "Die Entität AuditLog wird durch leistungsstarke Indizes auf Timestamp, UserId, EventType, CorrelationId, TenantId sowie zusammengesetzte Indizes für häufige Abfragen (Endpoint+Timestamp, EventType+Timestamp, TenantId+Timestamp) unterstützt. Datentypen werden für SQL Server, PostgreSQL und Oracle korrekt gemappt (z. B. bit/boolean/NUMBER(1) und Guid/uuid/RAW(16)), um native Datenbankoperationen optimal zu unterstützen.",
       eventTypesTitle: "Ereignistypen (35+ Kategorien)",
       authEventsTitle: "Authentifizierungsereignisse",
       rbacEventsTitle: "RBAC-Ereignisse",
@@ -187,12 +195,15 @@ export const de = {
       guardianTitle: "Guardian-Schutzereignisse",
       guardianIntro: "Protokollierte Blockaden gefährlicher Operationen.",
       serviceMethodsTitle: "AuditService-Methoden",
-      serviceMethodsIntro: "Spezialisierte asynchrone Protokollierungsmethoden.",
+      serviceMethodsIntro:
+        "Das IAuditService-Interface bietet 3 spezialisierte asynchrone Protokollierungsmethoden für Anforderungsmetriken, Datenbankmutationen und Compliance-Logs, ohne die Pipeline zu blockieren.",
       realTimeTitle: "Echtzeit-Übertragung (Broadcasting)",
       realTimeIntro:
-        "Audit-Ereignisse werden in Echtzeit via SignalR an mandantenspezifische Gruppen übertragen.",
+        "Audit-Ereignisse werden in Echtzeit via SignalR an mandantenspezifische Gruppen übertragen. Die Übertragung erfolgt sowohl an die Mandantengruppe als auch an eine globale Gruppe für Super-Admins.",
       exportTitle: "Audit-Export",
       exportIntro: "CSV- und PDF-Export unter Berücksichtigung der Mandantenisolierung.",
+      exportDetail:
+        "Der AuditExportService bietet Exporte in mehreren Formaten. Der CSV-Export nutzt CsvHelper mit erzwungenen Anführungszeichen (RFC 4180) zur Vermeidung von CSV-Injektionen und fügt ein UTF-8-BOM für Excel hinzu. Der Excel-Export generiert eine ClosedXML-Arbeitsmappe mit drei Tabellenblättern: Executive Summary (KPIs und Statistiken), Audit Data (mit Auto-Filtern, fixierten Kopfzeilen und bedingter Formatierung in Grün/Rot) sowie Security Analysis. Der PDF-Export basiert auf QuestPDF und ist für große Datenmengen als veraltet (Obsolete) markiert. Zum Schutz der Systemressourcen sind alle Exporte auf 10.000 Zeilen begrenzt und werden vor der Übertragung vollständig im Arbeitsspeicher gepuffert.",
       endpointsTitle: "Audit-API-Endpunkte",
       retentionTip: "Die Aufbewahrungsfrist ist pro Mandant konfigurierbar.",
     },

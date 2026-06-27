@@ -352,6 +352,95 @@ const sections: DocSection[] = [
     ],
   },
 
+  // ─── Merging & Sorting ────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.overrides.mergingTitle",
+    id: "merging-sorting",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.overrides.mergingIntro",
+  },
+  {
+    type: "table",
+    headers: ["Value Type", "Merge Logic / Priority", "Example Behavior"],
+    rows: [
+      [
+        "Boolean",
+        "OR logic ('true' wins)",
+        "If either subscription enables a feature, it is enabled.",
+      ],
+      [
+        "Numeric",
+        "MAX logic (highest wins, -1 is unlimited)",
+        "If Pro gives 50 and Add-on gives 100, the limit is 100. If either is -1, it is unlimited.",
+      ],
+      [
+        "String",
+        "First-wins logic (based on sorted subscription type)",
+        "Base plan values naturally override Trial, Add-on, and Free tier values (Base > Trial > AddOn > Free).",
+      ],
+    ],
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "Subscription Sorting",
+    code: `// Inside SubscriptionRepository.cs:
+// Active subscriptions are ordered by type priority:
+return await _db.Subscriptions
+    .Where(s => s.TenantId == tenantId && s.Status == SubscriptionStatus.Active)
+    .OrderBy(s => s.Type) // Lifetime (0) → Monthly (1) → Yearly (2) → Trial (3) → AddOn (4) → Free (5)
+    .ToListAsync(ct);`,
+  },
+
+  // ─── Permission Auto-Population ───────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.overrides.permissionsSyncTitle",
+    id: "permissions-sync",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.overrides.permissionsSyncIntro",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "SubscriptionChangedEventHandler.cs",
+    code: `// Inside SubscriptionChangedEventHandler.cs:
+public async Task Handle(SubscriptionChangedEvent notification, CancellationToken ct)
+{
+    var tenantId = notification.TenantId;
+    
+    if (notification.IsRevocation) // Canceled, Expired, Suspended, or PendingPayment
+    {
+        // Revoke all permissions and lock super admin role
+        await _tenantPermissionManager.SyncPermissionsForModulesAsync(tenantId, [], ct);
+        await _permissionCache.InvalidateAll();
+        return;
+    }
+
+    // Active/Trialing: Extract modules from enabled features (e.g. "Communication.Enabled" -> "Communication")
+    var enabledModules = notification.Features
+        .Where(f => f.Name.EndsWith(".Enabled") && f.Value == "true")
+        .Select(f => f.Name.Split('.')[0])
+        .ToList();
+
+    // Sync tenant permission pool
+    await _tenantPermissionManager.SyncPermissionsForModulesAsync(tenantId, enabledModules, ct);
+
+    // Sync super admin role permissions
+    await _roleManager.SyncSuperAdminRolePermissionsAsync(tenantId, ct);
+    
+    // Invalidate cached permissions
+    await _permissionCache.InvalidateAll();
+}`,
+  },
+
   // ─── Best Practices ───────────────────────────────────────
   {
     type: "heading",

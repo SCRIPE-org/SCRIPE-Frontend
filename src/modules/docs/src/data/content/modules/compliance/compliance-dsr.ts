@@ -35,7 +35,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // ─── DSR Lifecycle ────────────────────────────────────────
+  // ─── DSR Lifecycle & Safety Gates ──────────────────────────
   {
     type: "heading",
     level: 2,
@@ -49,28 +49,28 @@ const sections: DocSection[] = [
     direction: "vertical",
     nodes: [
       {
-        id: "create",
+        id: "submit",
         labelKey: "modules.compliance.dsr.nodeSubmit",
         type: "info",
         descriptionKey: "modules.compliance.dsr.descSubmit",
       },
       {
-        id: "pending",
-        labelKey: "modules.compliance.dsr.nodePending",
+        id: "review",
+        labelKey: "modules.compliance.dsr.nodeReview",
         type: "primary",
-        descriptionKey: "modules.compliance.dsr.descPending",
+        descriptionKey: "modules.compliance.dsr.descReview",
       },
       {
-        id: "processing",
+        id: "confirm",
+        labelKey: "modules.compliance.dsr.nodeConfirm",
+        type: "warning",
+        descriptionKey: "modules.compliance.dsr.descConfirm",
+      },
+      {
+        id: "executing",
         labelKey: "modules.compliance.dsr.nodeProcessing",
         type: "warning",
         descriptionKey: "modules.compliance.dsr.descProcessing",
-      },
-      {
-        id: "approval",
-        labelKey: "modules.compliance.dsr.nodeApproval",
-        type: "default",
-        descriptionKey: "modules.compliance.dsr.descApproval",
       },
       {
         id: "completed",
@@ -84,18 +84,106 @@ const sections: DocSection[] = [
         type: "danger",
         descriptionKey: "modules.compliance.dsr.descRejected",
       },
+      {
+        id: "cancelled",
+        labelKey: "modules.compliance.dsr.nodeCancelled",
+        type: "default",
+        descriptionKey: "modules.compliance.dsr.descCancelled",
+      },
+      {
+        id: "partial",
+        labelKey: "modules.compliance.dsr.nodePartial",
+        type: "danger",
+        descriptionKey: "modules.compliance.dsr.descPartial",
+      },
     ],
     connections: [
-      { from: "create", to: "pending", labelKey: "modules.compliance.dsr.conn1" },
-      { from: "pending", to: "processing", labelKey: "modules.compliance.dsr.conn2" },
-      { from: "processing", to: "completed", labelKey: "modules.compliance.dsr.conn3" },
-      { from: "processing", to: "approval", labelKey: "modules.compliance.dsr.conn4" },
-      { from: "approval", to: "completed", labelKey: "modules.compliance.dsr.conn5" },
-      { from: "approval", to: "rejected", labelKey: "modules.compliance.dsr.conn6" },
+      { from: "submit", to: "review", labelKey: "modules.compliance.dsr.connSubmitReview" },
+      { from: "review", to: "confirm", labelKey: "modules.compliance.dsr.connApproveConfirm" },
+      { from: "review", to: "rejected", labelKey: "modules.compliance.dsr.connReviewReject" },
+      { from: "confirm", to: "executing", labelKey: "modules.compliance.dsr.connConfirmExec" },
+      { from: "executing", to: "completed", labelKey: "modules.compliance.dsr.connExecComplete" },
+      { from: "executing", to: "partial", labelKey: "modules.compliance.dsr.connExecPartial" },
+      { from: "partial", to: "executing", labelKey: "modules.compliance.dsr.connPartialRetry" },
+      { from: "submit", to: "cancelled", labelKey: "modules.compliance.dsr.connCancel" },
+      { from: "review", to: "cancelled", labelKey: "modules.compliance.dsr.connCancel" },
     ],
   },
 
-  // ─── SLA Tracking ─────────────────────────────────────────
+  // ─── DSR Anonymization Execution Flow ──────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.compliance.dsr.executionFlowTitle",
+    id: "execution-flow",
+  },
+  { type: "paragraph", contentKey: "modules.compliance.dsr.executionFlowIntro" },
+  {
+    type: "flowchart",
+    titleKey: "modules.compliance.dsr.executionFlowTitle",
+    direction: "vertical",
+    nodes: [
+      {
+        id: "job",
+        labelKey: "modules.compliance.dsr.nodeExecJob",
+        type: "primary",
+        descriptionKey: "modules.compliance.dsr.descExecJob",
+      },
+      {
+        id: "check",
+        labelKey: "modules.compliance.dsr.nodeCheckSafety",
+        type: "warning",
+        descriptionKey: "modules.compliance.dsr.descCheckSafety",
+      },
+      {
+        id: "token",
+        labelKey: "modules.compliance.dsr.nodeGenToken",
+        type: "info",
+        descriptionKey: "modules.compliance.dsr.descGenToken",
+      },
+      {
+        id: "fanout",
+        labelKey: "modules.compliance.dsr.nodeFanOut",
+        type: "info",
+        descriptionKey: "modules.compliance.dsr.descFanOut",
+      },
+      {
+        id: "exec",
+        labelKey: "modules.compliance.dsr.nodeModuleExec",
+        type: "warning",
+        descriptionKey: "modules.compliance.dsr.descModuleExec",
+      },
+      {
+        id: "eval",
+        labelKey: "modules.compliance.dsr.nodeEvalStatus",
+        type: "default",
+        descriptionKey: "modules.compliance.dsr.descEvalStatus",
+      },
+      {
+        id: "comp",
+        labelKey: "modules.compliance.dsr.nodeComplete",
+        type: "success",
+        descriptionKey: "modules.compliance.dsr.descComplete",
+      },
+      {
+        id: "part",
+        labelKey: "modules.compliance.dsr.nodePartialLimit",
+        type: "danger",
+        descriptionKey: "modules.compliance.dsr.descPartialLimit",
+      },
+    ],
+    connections: [
+      { from: "job", to: "check", labelKey: "modules.compliance.dsr.connJobCheck" },
+      { from: "check", to: "token", labelKey: "modules.compliance.dsr.connCheckGen" },
+      { from: "token", to: "fanout", labelKey: "modules.compliance.dsr.connGenFan" },
+      { from: "fanout", to: "exec", labelKey: "modules.compliance.dsr.connFanMod" },
+      { from: "exec", to: "eval", labelKey: "modules.compliance.dsr.connModEval" },
+      { from: "eval", to: "comp", labelKey: "modules.compliance.dsr.connEvalComplete" },
+      { from: "eval", to: "part", labelKey: "modules.compliance.dsr.connEvalPartial" },
+    ],
+  },
+
+  // ─── SLA Tracking & Escalations ────────────────────────────
   {
     type: "heading",
     level: 2,
@@ -108,6 +196,34 @@ const sections: DocSection[] = [
     variant: "warning",
     titleKey: "modules.compliance.dsr.slaWarningTitle",
     contentKey: "modules.compliance.dsr.slaWarningContent",
+  },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "modules.compliance.dsr.escalationTitle",
+    id: "escalations",
+  },
+  { type: "paragraph", contentKey: "modules.compliance.dsr.escalationIntro" },
+
+  // ─── Extensible Provider Architecture ──────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.compliance.dsr.providerTitle",
+    id: "provider-architecture",
+  },
+  { type: "paragraph", contentKey: "modules.compliance.dsr.providerIntro" },
+  {
+    type: "info",
+    variant: "note",
+    titleKey: "modules.compliance.dsr.providerIdentityTitle",
+    contentKey: "modules.compliance.dsr.providerIdentityContent",
+  },
+  {
+    type: "info",
+    variant: "note",
+    titleKey: "modules.compliance.dsr.providerComplianceTitle",
+    contentKey: "modules.compliance.dsr.providerComplianceContent",
   },
 
   // ─── Entities Reference ───────────────────────────────────
@@ -133,8 +249,11 @@ const sections: DocSection[] = [
       ["Status", "Enum", "modules.compliance.dsr.fStatus"],
       ["Deadline", "DateTime", "modules.compliance.dsr.fDeadline"],
       ["ErasureConfirmed", "Boolean", "modules.compliance.dsr.fErasureConfirmed"],
+      ["ErasureExecuteAfter", "DateTime?", "modules.compliance.dsr.fErasureExecuteAfter"],
       ["ExportFileUrl", "String", "modules.compliance.dsr.fExportFileUrl"],
       ["AssignedTo", "Guid?", "modules.compliance.dsr.fAssignedTo"],
+      ["RetryCount", "Integer", "modules.compliance.dsr.fRetryCount"],
+      ["CompletedAt", "DateTime?", "modules.compliance.dsr.fCompletedAt"],
     ],
   },
 
@@ -150,7 +269,6 @@ const sections: DocSection[] = [
     type: "code",
     language: "csharp",
     filename: "SubmitDsrCommandHandler.cs",
-    highlightLines: [9, 13, 20],
     code: `public class SubmitDsrCommandHandler : ICommandHandler<SubmitDsrCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(SubmitDsrCommand request, CancellationToken ct)
@@ -179,21 +297,6 @@ const sections: DocSection[] = [
         return Result<Guid>.Success(dsr.Id);
     }
 }`,
-  },
-
-  // ─── Webhooks ─────────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "modules.compliance.dsr.webhooksTitle",
-    id: "webhooks",
-  },
-  { type: "paragraph", contentKey: "modules.compliance.dsr.webhooksIntro" },
-  {
-    type: "info",
-    variant: "tip",
-    titleKey: "modules.compliance.dsr.webhooksSuccessTitle",
-    contentKey: "modules.compliance.dsr.webhooksSuccessContent",
   },
 
   // ─── API Endpoints ─────────────────────────────────────────
@@ -231,6 +334,13 @@ const sections: DocSection[] = [
         method: "POST",
         path: "/api/v1/compliance/dsr/{id}/review",
         descriptionKey: "modules.compliance.dsr.epReview",
+        auth: "AdminOnly",
+        permission: "compliance_dsr.review",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/compliance/dsr/{id}/confirm",
+        descriptionKey: "modules.compliance.dsr.epConfirm",
         auth: "AdminOnly",
         permission: "compliance_dsr.review",
       },
@@ -285,5 +395,5 @@ registerPage({
   order: 2,
   sections,
   relatedSlugs: ["modules/compliance-overview", "infrastructure/background-jobs"],
-  lastUpdated: "2026-05-03",
+  lastUpdated: "2026-06-28",
 });

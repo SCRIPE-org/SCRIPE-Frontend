@@ -36,6 +36,12 @@ export const en = {
         "The form system integrates GenericForm (Zod schema-driven) with FormDialog for create/edit operations, and ConfirmDialog for destructive actions. Forms support field validation, loading states, and error display.",
       extensionTip:
         "The CRUD system is designed for extension, not modification. Wrap GenericCrudView with custom sections (statistics, filters) instead of modifying its internals.",
+      zeroFlickerTitle: "Zero-Flicker Query Cache Preservation",
+      zeroFlickerIntro:
+        "To prevent loading flashes when page or search parameters change, useGenericQuery leverages TanStack Query's placeholderData: keepPreviousData. This keeps the existing grid visible during transition, ensuring a seamless user experience.",
+      optimisticDeletesTitle: "Optimistic Deletes & Rollback Cache",
+      optimisticDeletesIntro:
+        "When a deletion is triggered, the UI optimistically removes the item from the list cache and cancels active queries. If the backend API call fails, the mutation automatically rolls back the cache to its previous state and displays an error toast.",
     },
     stateManagement: {
       title: "State Management",
@@ -96,6 +102,9 @@ export const en = {
       serverErrorTitle: "Server-Side Error Handling",
       serverErrorIntro:
         "When server-side FluentValidation rejects a request, the API returns structured error objects with field-level messages. The frontend maps these errors back to form fields using setError().",
+      zodUtilsTitle: "Zod Schema Builders & Safe API Parsing",
+      zodUtilsIntro:
+        "Zod forms leverage shared builders like emailField, strongPassword, requiredStr, and cronField. During API mapping, safeParseApiResponse parses responses safely to prevent crashes due to backend schema drift, falling back to safe defaults.",
     },
     componentLibrary: {
       title: "Component Library",

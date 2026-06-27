@@ -27,7 +27,8 @@ export const ru = {
       nodeDiscovery: "Цикл автообнаружения\nGetServices<IAutoRegisteredJob>()",
       descDiscovery: "Сканирует DI-контейнер для каждой зарегистрированной IAutoRegisteredJob",
       nodeSchedule: "Планирование каждой задачи\nЕсли включена -> Регистрация через API провайдера",
-      descSchedule: "Использует CronExpression из переопределения appsettings или значение по умолчанию",
+      descSchedule:
+        "Использует CronExpression из переопределения appsettings или значение по умолчанию",
       nodeExecute: "job.ExecuteAsync(ct)\nНа каждом тике cron",
       descExecute: "Независимо от провайдера - задача не знает, какой провайдер ее запускает",
       conn1: "управляет",

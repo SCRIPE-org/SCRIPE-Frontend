@@ -90,12 +90,28 @@ export const adminKeys = {
 const { data, isLoading } = useQuery({
   queryKey: adminKeys.list({ page, search, sortBy, sortDir }),
   queryFn: () => adminRepo.getAll({ page, search, sortBy, sortDir }),
-  staleTime: 5 * 60 * 1000,  // 5 min
+  staleTime: 2 * 60 * 1000,  // 2 min
 });
 
 // Invalidation after mutation
 const queryClient = useQueryClient();
 queryClient.invalidateQueries({ queryKey: adminKeys.all });`,
+  },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "query-client.ts — Global Query Cache Configuration",
+    code: `import { QueryClient } from "@tanstack/react-query";
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 2 * 60 * 1000,    // 2 minutes query cache freshness
+      refetchOnWindowFocus: false, // Prevents background query spam
+      retry: 1,                    // Fail fast on network interruption
+    },
+  },
+});`,
   },
 
   // ─── Mutations ────────────────────────────────────────────
@@ -144,8 +160,16 @@ queryClient.invalidateQueries({ queryKey: adminKeys.all });`,
     type: "table",
     headers: ["Store", "Purpose", "Persisted?"],
     rows: [
-      ["useAuthStore", "User session, tokens, permissions, impersonation", "Yes (localStorage)"],
-      ["useUIStore", "Sidebar open/collapsed, theme, mobile state", "Optional"],
+      [
+        "useAppStore",
+        "User session, permissions, roles, sidebar status, density setting, tenant context",
+        "Yes (localStorage, partialized)",
+      ],
+      [
+        "useCurrencyPreference",
+        "Preferred display currency and converting rules",
+        "Yes (only display mode setting)",
+      ],
       ["useToastStore", "Toast notification queue (auto-dismiss)", "No"],
     ],
   },
@@ -153,41 +177,67 @@ queryClient.invalidateQueries({ queryKey: adminKeys.all });`,
     type: "tabs",
     tabs: [
       {
-        label: "Auth Store",
+        label: "App Store State & Actions",
         language: "typescript",
-        filename: "useAuthStore.ts — Key Interface",
-        code: `interface AuthState {
+        filename: "useAppStore.ts — Core Interface",
+        code: `interface AppState {
+  // Sidebar State
+  sidebarOpen: boolean;
+  toggleSidebar: () => void;
+  setSidebarOpen: (open: boolean) => void;
+
+  // UI Density
+  density: "compact" | "comfortable" | "spacious";
+  setDensity: (density: "compact" | "comfortable" | "spacious") => void;
+
+  // Auth State
   user: User | null;
-  token: string | null;
-  refreshToken: string | null;
   isAuthenticated: boolean;
-  isImpersonating: boolean;
-  originalUser: User | null;
-  
-  // Actions
-  login: (user: User, token: string, refreshToken: string) => void;
+  permissions: PermissionCode[];
+  roles: AdminRole[];
+  restrictedFields: Record<string, string[]>;
+  setAuth: (user: User, permissions: PermissionCode[], roles: AdminRole[], isFreshLogin?: boolean) => void;
   logout: () => void;
-  setUser: (user: User) => void;
-  setTokens: (access: string, refresh: string) => void;
-  startImpersonation: (targetUser: User, token: string) => void;
-  stopImpersonation: () => void;
+
+  // Tenant & Subscription Info
+  tenantCode: string | null;
+  setTenantCode: (code: string | null) => void;
+  editionName: string | null;
+  subscriptionStatus: string | null;
+
+  // Hydration State
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
 }`,
       },
       {
-        label: "UI Store",
+        label: "Persist & Hydration Config",
         language: "typescript",
-        filename: "useUIStore.ts — Sidebar & Theme",
-        code: `interface UIState {
-  sidebarOpen: boolean;
-  sidebarCollapsed: boolean;
-  theme: 'light' | 'dark' | 'system';
-  isMobile: boolean;
-  
-  toggleSidebar: () => void;
-  setSidebarCollapsed: (collapsed: boolean) => void;
-  setTheme: (theme: 'light' | 'dark' | 'system') => void;
-  setIsMobile: (isMobile: boolean) => void;
-}`,
+        filename: "useAppStore.ts — Persist Middleware",
+        code: `persist(
+  (set) => ({ ... }),
+  {
+    name: "app-storage",
+    // 1. Partialize: excludes in-memory tokens, keeps user hints and layout config
+    partialize: (state) => ({
+      sidebarOpen: state.sidebarOpen,
+      density: state.density,
+      user: state.user,
+      isAuthenticated: state.isAuthenticated,
+      permissions: state.permissions,
+      roles: state.roles,
+      tenantCode: state.tenantCode,
+      subscriptionStatus: state.subscriptionStatus,
+      editionName: state.editionName,
+      mustChangePassword: state.mustChangePassword,
+      defaultRedirectPath: state.defaultRedirectPath,
+    }),
+    // 2. Hydration Sync: prevents flashing of server-rendered components
+    onRehydrateStorage: () => (state) => {
+      state?.setHasHydrated(true);
+    },
+  }
+)`,
       },
     ],
   },

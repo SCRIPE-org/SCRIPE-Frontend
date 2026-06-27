@@ -30,6 +30,12 @@ export const zh = {
       formTitle: "表单系统 (Forms)",
       formIntro: "使用 Zod 驱动验证，将新增/编辑操作接入标准的模态弹窗系统。",
       extensionTip: "系统的设计初衷是可扩展而非可修改。通过属性传入或外层包裹 (Wrap) 来拓展功能。",
+      zeroFlickerTitle: "无闪烁查询缓存保留",
+      zeroFlickerIntro:
+        "为了防止页面或搜索参数更改时出现加载闪烁，useGenericQuery 利用了 TanStack Query 的 placeholderData: keepPreviousData。这可以在转换期间保持现有网格可见，从而确保无缝的用户体验。",
+      optimisticDeletesTitle: "乐观删除和缓存回滚",
+      optimisticDeletesIntro:
+        "触发删除时，UI 会乐观地从列表缓存中删除该项并取消活动查询。如果后端 API 调用失败，变更会自动将缓存回滚到其先前的状态并显示错误提示。",
     },
     stateManagement: {
       title: "前端状态管理 (State Management)",
@@ -77,6 +83,9 @@ export const zh = {
       serverErrorTitle: "服务器拒绝与错误映射",
       serverErrorIntro:
         "如果后端 FluentValidation 拦截了数据，前端会直接捕获抛出的错误，将其精准对应到红色警告输入框上。",
+      zodUtilsTitle: "Zod 模式构建器和安全 API 解析",
+      zodUtilsIntro:
+        "Zod 表单利用共享构建器（如 emailField、strongPassword、requiredStr 和 cronField）。在 API 映射期间，safeParseApiResponse 安全地解析响应，以防止由于后端模式漂移导致的崩溃。",
     },
     componentLibrary: {
       title: "组件库 (Component Library)",

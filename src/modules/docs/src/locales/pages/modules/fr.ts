@@ -58,6 +58,11 @@ export const fr = {
       gettingStartedTitle: "Premiers Pas",
       gettingStartedIntro:
         "Suivez ces 5 Ã©tapes pour configurer le systÃ¨me de Droits pour votre plateforme. Chaque Ã©tape s'appuie sur la prÃ©cÃ©dente :",
+      quotaGatingTitle: "Contrôle des quotas et réservations de créneaux",
+      quotaGatingIntro:
+        "Les fonctionnalités numériques représentent des quotas appliqués lors de la création des ressources du locataire. SCRIPE utilise un modèle de réservation atomique sécurisé pour gérer ces limites.",
+      quotaGatingNote:
+        "La méthode TryReserveSlotAsync de QuotaCounterRepository incrémente le compteur réservé. Le gestionnaire confirme cette réservation en cas de succès ou la libère en cas d'échec.",
     },
     editions: {
       title: "Ã‰ditions",
@@ -112,6 +117,9 @@ export const fr = {
         "CrÃ©er un nouveau brouillon de version avec un instantanÃ© des fonctionnalitÃ©s",
       endpointsPublishVersion:
         "Publier une version brouillon avec la stratÃ©gie de dÃ©ploiement choisie",
+      seededTitle: "Éditions système prédéfinies",
+      seededIntro:
+        "La plateforme initialise deux éditions système standard au démarrage via EditionSeeder, établissant les limites par défaut des fonctionnalités.",
     },
     subscriptions: {
       title: "Abonnements",
@@ -349,6 +357,59 @@ export const fr = {
       },
     },
 
+    crmLeads: {
+      title: "Prospects CRM",
+      description:
+        "Pipeline de vente contact-sales — capturer, qualifier, assigner et convertir les prospects en locataires depuis le panneau d'administration.",
+      intro:
+        "Le module de prospects CRM est le pipeline de vente intégré de SCRIPE. Il capture les prospects qui soumettent le formulaire de contact commercial, les enrichit avec des données d'analyse et fournit un flux de travail CRM complet.",
+      ingestionTitle: "Cycle d'intégration et déduplication",
+      ingestionIntro:
+        "Lorsqu'un prospect soumet un formulaire, le système effectue une validation et déduplication avant de créer un PlatformLead (conflits de sous-domaine, ABM collègues, et limite quotidienne de 1000 prospects).",
+      whatIsTitle: "Qu'est-ce que le CRM des prospects ?",
+      whatIsIntro:
+        "Un prospect représente un client potentiel intéressé par la plateforme. Chaque prospect contient des informations de contact et un statut de cycle de vie.",
+      lifecycleTitle: "Cycle de vie des prospects",
+      lifecycleIntro:
+        "Les prospects passent par différents statuts, suivis dans l'historique d'activité.",
+      discoveryTitle: "Intelligence de découverte",
+      discoveryIntro:
+        "Chaque prospect is enrichi de champs de découverte issus du questionnaire d'intégration.",
+      discoveryTip:
+        "Le champ de niveau recommandé est calculé par le moteur de recommandation de l'assistant.",
+      backendTitle: "Architecture Backend",
+      backendIntro:
+        "La fonctionnalité des prospects suit la structure standard à 3 projets de SCRIPE.",
+      entityTitle: "Entité PlatformLead",
+      entityIntro:
+        "PlatformLead hérite d'AuditableEntity. Tous les identifiants sont chiffrés par AES lors des transferts API.",
+      endpointsTitle: "Points de terminaison API",
+      endpointsIntro:
+        "Le LeadsController expose 9 points de terminaison pour gérer le cycle de vie des prospects.",
+      endpointsNote:
+        "Les identifiants retournés par l'API sont chiffrés en AES via IdEncryptionHelper. N'utilisez jamais de GUID bruts sur le frontend.",
+      convertTitle: "Convertir en locataire",
+      convertIntro:
+        "La commande ConvertLeadToTenant est une opération atomique. Le gestionnaire coordonne la création du locataire, l'abonnement et la gestion des erreurs.",
+      emailsTitle: "Notifications par e-mail",
+      emailsIntro:
+        "Deux e-mails HTML sont envoyés de manière asynchrone (fire-and-forget) lors de la soumission du formulaire.",
+      emailsTip:
+        "Configurez l'adresse d'alerte via la clé Leads:SalesNotificationEmail dans appsettings.json.",
+      frontendTitle: "Architecture Frontend",
+      frontendIntro: "Le sous-module frontal suit le modèle View/ViewModel standard de SCRIPE.",
+      frontendEntityTitle: "Entité PlatformLead (Frontend)",
+      frontendEntityIntro:
+        "L'entité wrap les données DTO brutes avec des propriétés calculées et des fonctions d'affichage.",
+      permissionsTitle: "Autorisations",
+      permissionsIntro:
+        "L'accès aux prospects est protégé par de nombreuses autorisations du format standard (module.action).",
+      permissionsTip:
+        "Les vérifications côté frontend sont uniquement pour l'expérience utilisateur. Le backend valide toujours via l'AuthorizationBehavior.",
+      quickStartTitle: "Démarrage rapide",
+      quickStartIntro:
+        "Le flux standard comporte 5 étapes clés, de la soumission à la conversion finale.",
+    },
     compliance: {
       overview: {
         title: "Module de conformitÃ©",
@@ -403,109 +464,266 @@ export const fr = {
           "Tous les endpoints sont sous /api/v1/compliances/ et nÃ©cessitent l'authentification.",
       },
       dsr: {
-        title: "Demandes des sujets de donnÃ©es (DSR)",
-        description:
-          "GÃ©rer les demandes de droits RGPD/CCPA (export, effacement, rectification, restriction) avec suivi du cycle de vie.",
+        title: "Droits des personnes concernées (DSR)",
+        description: "Description",
         intro:
-          "Les DSR sont des demandes formelles des individus exerÃ§ant leurs droits. Le module fournit un flux de travail DSR complet : soumission, assignation, traitement et clÃ´ture.",
-        typesTitle: "Types de demandes",
+          "Les demandes de droits des personnes concernées (DSR) sont des demandes formelles de personnes exerçant leurs droits en vertu des lois sur la protection des données. Le module de conformité fournit un flux de travail DSR structuré et complet : soumission, affectation, examen, traitement et clôture — avec un journal d'audit complet en ajout uniquement et un suivi SLA.",
+        typesTitle: "Types de requêtes",
         typesIntro:
-          "Le systÃ¨me prend en charge quatre types de DSR dÃ©finis par l'Article 17 du RGPD et le CCPA :",
-        type1:
-          "Export â€” Demande de portabilitÃ©. Le sujet souhaite une copie de ses donnÃ©es personnelles.",
-        type2:
-          "Effacement â€” Droit Ã  l'oubli. Toutes les donnÃ©es doivent Ãªtre supprimÃ©es ou anonymisÃ©es.",
-        type3:
-          "Rectification â€” Demande de correction. Les donnÃ©es inexactes doivent Ãªtre mises Ã  jour.",
-        type4:
-          "Restriction â€” Les donnÃ©es peuvent Ãªtre conservÃ©es mais non traitÃ©es activement.",
-        lifecycleTitle: "Cycle de vie de la demande",
-        lifecycleIntro: "Les DSR passent par un ensemble dÃ©fini de statuts :",
-        status1: "En attente (Pending) â€” Ã‰tat initial lors de la rÃ©ception.",
-        status2: "En cours (InProgress) â€” Un responsable de conformitÃ© est assignÃ©.",
-        status3: "TerminÃ© (Completed) â€” La demande a Ã©tÃ© satisfaite.",
-        status4:
-          "RejetÃ© (Rejected) â€” La demande a Ã©tÃ© rejetÃ©e (ex: vÃ©rification insuffisante).",
-        slasTitle: "Exigences SLA du RGPD",
-        slasIntro:
-          "Selon l'Article 12 du RGPD, les responsables doivent rÃ©pondre aux DSR dans les 30 jours (extensible Ã  3 mois).",
-        lifecycleFlowTitle: "Flux du cycle de vie DSR",
-        nodeSubmit: "Soumettre la demande",
-        descSubmit: "Demande d'Export, d'Effacement ou de Rectification",
-        nodePending: "Statut : En attente",
-        descPending: "Demande enregistrÃ©e, dÃ©lai SLA calculÃ©",
-        nodeProcessing: "Statut : En cours",
-        descProcessing: "DsrExecutionJob commence le traitement via ISuspendableModule",
-        nodeApproval: "Attente de l'Admin",
-        descApproval: "L'effacement nÃ©cessite une confirmation manuelle de l'administrateur",
-        nodeCompleted: "Statut : TerminÃ©",
-        descCompleted: "Export gÃ©nÃ©rÃ© ou donnÃ©es effacÃ©es ; SLA respectÃ©",
-        nodeRejected: "Statut : RejetÃ©",
-        descRejected: "Demande refusÃ©e par l'administrateur avec notes de rÃ©solution",
-        conn1: "initie",
-        conn2: "la tÃ¢che en arriÃ¨re-plan prend le relais",
-        conn3: "si auto-traitÃ© (Export)",
-        conn4: "si radical (Effacement)",
-        conn5: "admin confirme",
-        conn6: "admin rejette",
-        entitiesTitle: "EntitÃ©s",
-        entityName: "Nom de l'entitÃ©",
+          "Le système prend en charge cinq types de DSR définis par les réglementations GDPR et CCPA :",
+        typesType: "Type de requête",
+        typesDesc: "Description",
+        typesGdpr: "Référence GDPR",
+        typesAccessDesc:
+          "Droit d'accès (Article 15). La personne demande la liste des finalités du traitement, les catégories de données personnelles et les destinataires.",
+        typesExportDesc:
+          "Droit à la portabilité des données (Article 20). La personne demande une copie lisible par machine de ses données personnelles.",
+        typesErasureDesc:
+          "Droit à l'effacement / Droit à l'oubli (Article 17). La personne demande la suppression définitive ou l'anonymisation de ses PII.",
+        typesRectificationDesc:
+          "Droit de rectification (Article 16). La personne demande la correction de données personnelles inexactes ou incomplètes.",
+        typesRestrictionDesc:
+          "Droit à la limitation du traitement (Article 18). La personne demande la suspension du traitement tout en conservant le stockage des données.",
+        lifecycleTitle: "Cycle de vie des demandes",
+        lifecycleIntro:
+          "Les tickets DSR sont modélisés comme des transitions d'état avec un cycle d'examen et des barrières de confirmation de sécurité pour éviter les suppressions accidentelles et irréversibles :",
+        lifecycleFlowTitle: "Cycle de vie des demandes DSR et barrières de sécurité",
+        nodeSubmit: "1. Soumettre la demande",
+        descSubmit:
+          "La personne soumet sa demande via SubmitDsrCommand. Le statut passe à En attente et l'échéance SLA est calculée.",
+        nodeReview: "2. Examen de l'administrateur",
+        descReview:
+          "L'administrateur examine la demande via ReviewDsrCommand, passant le statut à Approuvé ou Rejeté.",
+        nodeConfirm: "3. Confirmer l'effacement",
+        descConfirm:
+          "Les demandes d'effacement nécessitent une confirmation manuelle via ConfirmErasureCommand, définissant la valeur ErasureConfirmed = true.",
+        nodeProcessing: "4. Tâche d'exécution DSR",
+        descProcessing:
+          "La tâche DsrExecutionJob, exécutée toutes les 5 minutes, traite les demandes confirmées/approuvées par lots de 50.",
+        nodeCompleted: "5. Statut : Terminé",
+        descCompleted:
+          "Exécuté avec succès sur tous les modules, avec enregistrement de l'horodatage de fin.",
+        nodeRejected: "Statut : Rejeté",
+        descRejected:
+          "La demande est rejetée par l'administrateur pendant l'examen. Les notes de résolution sont enregistrées.",
+        nodeCancelled: "Statut : Annulé",
+        descCancelled:
+          "Les demandes en attente, en examen ou approuvées peuvent être annulées manuellement à tout moment.",
+        nodePartial: "6. Partiellement terminé",
+        descPartial:
+          "Si un module échoue, le DSR passe à Partiellement terminé et incrémente le compteur RetryCount (max 3).",
+        connSubmitReview: "Assigne et passe à En examen",
+        connReviewApprove: "Approuve la demande",
+        connReviewReject: "Rejette la demande",
+        connApproveConfirm: "Requis pour l'effacement",
+        connConfirmExec: "Prend en charge pour traitement",
+        connExecComplete: "Tous les modules réussissent",
+        connExecPartial: "Un module échoue",
+        connPartialRetry: "Réessaye les modules ayant échoué",
+        connCancel: "Annule la demande",
+        executionFlowTitle: "Flux d'exécution de l'anonymisation DSR",
+        nodeExecJob: "Déclenchement DsrExecutionJob",
+        descExecJob:
+          "S'exécute toutes les 5 minutes et récupère les demandes d'effacement approuvées prêtes pour traitement.",
+        nodeCheckSafety: "Barrière de contrôle de sécurité",
+        descCheckSafety:
+          "Vérifie que ErasureConfirmed = true et que le délai de grâce ErasureExecuteAfter est dépassé.",
+        nodeGenToken: "Générer le jeton d'anonymisation",
+        descGenToken:
+          "Génère un jeton d'anonymisation SHA-256 sécurisé basé sur l'ID de la personne concernée.",
+        nodeFanOut: "Distribution aux modules",
+        descFanOut:
+          "Parcourt tous les fournisseurs de conformité enregistrés implémentant IUserDataAnonymizer.",
+        nodeModuleExec: "Exécution sans allocation de mémoire",
+        descModuleExec:
+          "Exécute les mises à jour de base de données via ExecuteUpdateAsync d'EF Core pour effacer les champs PII.",
+        nodeEvalStatus: "Évaluer les résultats",
+        descEvalStatus: "Vérifie les rapports d'exécution des modules pour confirmer leur succès.",
+        nodeComplete: "Définir le statut : Terminé",
+        descComplete:
+          "Le ticket DSR est marqué comme Terminé et l'horodatage CompletedAt est stocké.",
+        nodePartialLimit: "Définir le statut : Partiellement terminé",
+        descPartialLimit:
+          "Enregistre l'erreur, incrémente RetryCount et met en file d'attente les modules ayant échoué (max 3).",
+        connJobCheck: "récupère le lot",
+        connCheckGen: "si les barrières de sécurité sont franchies",
+        connGenFan: "génère le jeton",
+        connFanMod: "appelle les anonymiseurs",
+        connModEval: "rassemble les statuts",
+        connEvalComplete: "si tous réussissent",
+        connEvalPartial: "si l'un d'eux échoue",
+        slaTitle: "Suivi SLA et calcul des échéances",
+        slaIntro:
+          "Les réglementations de conformité imposent des délais de réponse stricts. SCRIPE calcule et suit automatiquement les métriques SLA sur le tableau de bord d'administration :",
+        slaWarningTitle: "Logique d'échéance SLA",
+        slaWarningContent:
+          "Les échéances sont calculées lors de la soumission en lisant le profil de réglementation actif (GDPR : 30 jours, CCPA : 45 jours). La progression du SLA est calculée dynamiquement sous forme de pourcentage : (Heure actuelle - CreatedAt) / (Échéance - CreatedAt) * 100.",
+        escalationTitle: "Moteur d'escalade et alertes",
+        escalationIntro:
+          "La tâche DsrEscalationJob s'exécute quotidiennement à 08:00 UTC pour évaluer la consommation du SLA et escalader les tickets en retard :",
+        escalationTier1:
+          "Palier 1 (50% du SLA) — Alerte de rappel standard envoyée à l'administrateur affecté. Enregistre la note d'historique : [SLA-ESCALATION-50%].",
+        escalationTier2:
+          "Palier 2 (75% du SLA) — Escalade d'avertissement. Enregistre la note d'historique : [SLA-ESCALATION-75%] et déclenche le webhook compliance.dsr_sla_escalated.",
+        escalationTier3:
+          "Palier 3 (90% du SLA) — Escalade critique. Enregistre la note d'historique : [SLA-ESCALATION-90%], alerte les gestionnaires du système et envoie le webhook critique.",
+        providerTitle: "Architecture de fournisseurs extensible",
+        providerIntro:
+          "Pour maintenir un couplage faible, le module de conformité communique avec les autres modules en utilisant les abstractions IUserDataProvider et IUserDataAnonymizer :",
+        providerIdentityTitle: "Intégration du module d'identité",
+        providerIdentityContent:
+          "IdentityUserDataProvider exporte les métadonnées de profil, les sessions de connexion actives et les comptes externes liés. IdentityUserDataAnonymizer utilise des mises à jour de base de données ultra-performantes et sans allocation de mémoire pour remplacer les noms par le jeton d'anonymisation, formater les e-mails sous la forme {token}@anonymized.invalid, définir les numéros de téléphone sur null et marquer les adresses IP de session comme 'ANONYMIZED'.",
+        providerComplianceTitle: "Intégration du module de conformité",
+        providerComplianceContent:
+          "ComplianceUserDataProvider exporte les journaux de requêtes et les entrées du registre de consentement. ComplianceUserDataAnonymizer efface les informations personnelles des anciennes DSR (SubjectEmail et RequesterNotes) et des journaux de consentement (IpAddress et UserAgent).",
+        entitiesTitle: "Référence des entités",
+        entityName: "Nom de l'entité",
         entityDesc: "Description",
-        entityDsrDesc: "ReprÃ©sente une demande d'un sujet de donnÃ©es.",
-        entityModuleDesc: "Ã‰tat d'exÃ©cution d'un module.",
-        entityStatusDesc: "Historique des changements de statut.",
-        codeTitle: "Exemple de code",
-        endpointsTitle: "Endpoints API",
-        endpointsIntro: "Le contrÃ´leur DSR expose 6 endpoints pour le cycle complet :",
+        entityDsrDesc:
+          "Représente une demande de personne concernée contenant le type, le statut, l'échéance SLA et les paramètres d'exécutions.",
+        entityModuleDesc:
+          "Suit le statut d'exécution et les tentatives de réessai de l'exécution DSR pour chaque fournisseur de module.",
+        entityStatusDesc:
+          "Registre en ajout uniquement suivant les transitions d'état DSR, les commentaires de résolution et les escalades SLA.",
+        codeTitle: "Implémentation du code",
+        endpointsTitle: "Points d'accès API",
+        endpointsIntro:
+          "Le contrôleur DSR expose les points d'accès suivants pour la soumission, l'examen et le contrôle de l'exécution des demandes :",
         ep: {
-          list: "Lister tous les DSR (paginÃ©, filtrable)",
-          get: "Obtenir les dÃ©tails d'un DSR par ID",
-          create: "Soumettre un nouveau DSR",
-          updateStatus: "Mettre Ã  jour le statut du DSR",
-          assign: "Assigner un DSR Ã  un responsable",
-          delete: "Suppression logique d'un DSR",
+          list: "Lister toutes les DSR (paginé, filtrable par statut/type/réglementation)",
+          get: "Obtenir les détails d'une DSR par ID",
+          create: "Soumettre une nouvelle DSR (calcule l'échéance SLA)",
+          updateStatus: "Mettre à jour le statut d'une DSR (En cours, Terminé, Rejeté)",
+          assign: "Assigner la DSR à un agent de conformité",
+          delete: "Supprimer temporairement (soft-delete) une DSR",
+          confirm:
+            "Confirmer explicitement une DSR d'effacement approuvée pour déverrouiller son exécution",
         },
+        field: "Champ",
+        type: "Type",
+        fId: "Identifiant unique de la demande DSR.",
+        fTenantId: "Clé étrangère référençant le contexte du locataire.",
+        fSubjectEmail: "Adresse e-mail de la personne concernée (anonymisée lors de l'effacement).",
+        fRequestType: "Type de DSR (Accès, Exportation, Effacement, Rectification, Limitation).",
+        fStatus: "Statut actuel du cycle de vie de la demande.",
+        fDeadline: "Échéance de réponse SLA calculée.",
+        fErasureConfirmed:
+          "Drapeau logique déverrouillant les demandes d'effacement pour les tâches en arrière-plan.",
+        fErasureExecuteAfter: "Seuil d'exécution imposant le délai de grâce adaptatif.",
+        fExportFileUrl: "URL de téléchargement du fichier compressé des données exportées.",
+        fAssignedTo: "Clé étrangère référençant l'administrateur assigné.",
+        fRetryCount:
+          "Nombre actuel de tentatives de réessai pour les exécutions de modules ayant échoué.",
+        fCompletedAt: "Horodatage indiquant quand la DSR a été terminée.",
+        quickStartTitle: "Guide de démarrage rapide",
+        step1Title: "Alimenter les profils de conformité",
+        step1Content:
+          "Exécutez le seeder de développement pour remplir les profils de réglementation GDPR et CCPA avec les jours SLA.",
+        step2Title: "Soumettre une demande de personne concernée",
+        step2Content:
+          "Utilisez le point d'accès POST pour enregistrer une nouvelle demande. Le système valide les contraintes d'entrée et calcule l'échéance.",
+        step3Title: "Examiner et approuver",
+        step3Content:
+          "L'agent de conformité assigné examine le ticket. Approuver une DSR d'effacement définit le délai de grâce et attend la confirmation finale.",
+        executionFlowIntro:
+          "L'exécution de la demande d'effacement anonymise les données personnelles de manière asynchrone à travers les modules via des implémentations de fournisseurs distribuées :",
       },
       consent: {
         title: "Gestion du consentement",
-        description:
-          "Enregistrer, suivre et auditer les consentements pour la conformitÃ© Ã  l'Article 6 du RGPD et au CCPA.",
+        description: "Description",
         intro:
-          "La gestion du consentement enregistre chaque fois qu'un utilisateur accorde ou rÃ©voque son consentement pour un objectif spÃ©cifique. SCRIPE stocke la piste d'audit complÃ¨te.",
-        purposesTitle: "Objectifs du consentement",
-        purposesIntro: "Chaque consentement est liÃ© Ã  un objectif spÃ©cifique :",
-        purpose1: "Marketing â€” Emails marketing et communications promotionnelles.",
-        purpose2: "Analytique â€” Analyse d'utilisation et amÃ©lioration du produit.",
-        purpose3: "Tiers â€” Partage de donnÃ©es avec des services tiers.",
-        purpose4: "Personnalisation â€” Contenu personnalisÃ© et recommandations.",
-        gdprTitle: "Base lÃ©gale du RGPD",
-        gdprIntro:
-          "L'Article 6 du RGPD exige que le consentement soit libre, spÃ©cifique, Ã©clairÃ© et univoque. SCRIPE enregistre la version exacte du texte de consentement affichÃ© Ã  l'utilisateur.",
-        withdrawalTitle: "RÃ©vocation du consentement",
-        withdrawalIntro:
-          "Les utilisateurs peuvent rÃ©voquer leur consentement Ã  tout moment. ConsentRecord est mis Ã  jour avec WithdrawnAt.",
-        flowTitle: "Flux de l'Ã©tat du consentement",
-        nodePurpose: "Objectif de consentement",
-        descPurpose: "DÃ©finit Ã  quoi on consent (ex: Marketing)",
-        nodeRecord: "Registre de consentement",
-        descRecord: "Ã‰tat actuel (AccordÃ©/RÃ©voquÃ©) par objectif",
-        nodeSnapshot: "Snapshot de consentement",
-        descSnapshot: "Capture immuable Ã  l'instant T de l'accord/rÃ©vocation",
-        nodeJob: "TÃ¢che d'expiration du consentement",
-        descJob: "TÃ¢che quotidienne rÃ©voquant les consentements expirÃ©s",
-        conn1: "modÃ¨les",
-        conn2: "gÃ©nÃ¨re au changement",
-        conn3: "auto-rÃ©voque si expirÃ©",
-        immutabilityTitle: "ImmuabilitÃ©",
-        immutabilityIntro: "Les enregistrements de consentement sont immuables.",
-        endpointsTitle: "Endpoints API",
+          "La gestion du consentement fournit un enregistrement immuable des états de consentement. Pour prendre en charge des recherches ultra-performantes tout en conservant un journal d'audit légalement défendable, SCRIPE utilise une architecture à double table divisée entre un registre de transactions en ajout uniquement et une vue matérialisée mise en cache.",
+        purposesTitle: "Finalités du consentement et paramètres",
+        purposesIntro:
+          "Le suivi du consentement est régi par des profils globaux et des finalités de consentement structurelles alimentées au démarrage de l'application :",
+        purposesKey: "Clé de finalité",
+        purposesBasis: "Base juridique",
+        purposesRequired: "Obligatoire",
+        purposesSort: "Ordre de tri",
+        purposesActive: "Actif",
+        purposesEssentialDesc:
+          "Fonctionnalités essentielles requises pour le fonctionnement de la plateforme. (Obligatoire, base juridique contractuelle).",
+        purposesMarketingDesc:
+          "Bulletins promotionnels, e-mails et communications de campagne. (Optionnel, base juridique de consentement).",
+        purposesAnalyticsDesc:
+          "Analyses d'utilisation, suivi du comportement des utilisateurs et télémétrie d'amélioration du produit. (Optionnel, base juridique de consentement).",
+        basisContract: "Contrat",
+        basisConsent: "Consentement",
+        basisLegitimate: "Intérêt légitime",
+        basisObligation: "Obligation légale",
+        flowTitle: "Flux d'enregistrement et de vérification du consentement",
+        nodeSubmit: "Soumission du consentement",
+        descSubmit:
+          "L'utilisateur met à jour ses préférences ou soumet un formulaire de consentement.",
+        nodeValidate: "Contrôle FluentValidation",
+        descValidate: "Valide les contraintes réglementaires et la syntaxe de la clé de finalité.",
+        nodeLedger: "Ajouter au registre",
+        descLedger:
+          "Écrit une transaction ConsentRecord immuable contenant l'adresse IP, le client utilisateur, la version et l'action.",
+        nodeUpsert: "Mettre à jour l'instantané",
+        descUpsert:
+          "Matérialise l'état actuel dans le cache ConsentSnapshot pour des contrôles d'autorisation ultra-rapides.",
+        nodeEvents: "Événements de domaine",
+        descEvents: "Publie ConsentGrantedEvent ou ConsentWithdrawnEvent via MediatR.",
+        nodeExpiry: "Tâche d'expiration du consentement",
+        descExpiry:
+          "La tâche hebdomadaire en arrière-plan analyse les écarts de version et marque les enregistrements obsolètes pour ré-consentement.",
+        connSubmitValidate: "soumet les détails à",
+        connValidateLedger: "ajoute la transaction si elle est valide",
+        connLedgerUpsert: "met à jour l'état du cache depuis",
+        connUpsertEvents: "distribue les événements en cas de succès",
+        connExpiryUpsert: "marque RequiresReConsent = true dans",
+        immutabilityTitle: "Architecture de base de données à double table",
+        immutabilityIntro:
+          "Pour garantir à la fois les performances de la base de données et l'intégrité de l'audit de conformité, le suivi du consentement sépare les transactions à écriture intensive des contrôles d'autorisation à lecture intensive :",
+        entitiesTitle: "Référence des entités",
+        entitiesIntro:
+          "Les tableaux suivants définissent les propriétés du schéma pour le registre en ajout uniquement et pour les instantanés d'état actuels mis en cache :",
+        field: "Champ",
+        type: "Type",
+        fId: "Identifiant unique de l'enregistrement.",
+        fTenantId: "Clé étrangère référençant le contexte du locataire.",
+        fSubjectId: "Clé étrangère référençant la personne concernée (utilisateur).",
+        fPurposeId: "Clé étrangère référençant la configuration ConsentPurpose.",
+        fAction: "Action de consentement enregistrée (Accordé ou Retiré).",
+        fCurrentAction: "Dernier statut de consentement mis en cache pour le sujet et la finalité.",
+        fRequiresReConsent:
+          "Drapeau indiquant que l'utilisateur doit renouveler son consentement suite à une mise à jour de version.",
+        fLastUpdatedAt: "Horodatage représentant la dernière modification de l'instantané.",
+        fRecordedAt: "Horodatage représentant le moment de la transaction du registre.",
+        fIpAddress: "Adresse IP du client capturée au moment de l'enregistrement.",
+        fUserAgent: "Client utilisateur du navigateur capturé au moment de l'enregistrement.",
+        fRegulationBasis: "Contexte réglementaire (GDPR, CCPA) actif lors de la soumission.",
+        fCollectionMethod: "Méthode de collecte du consentement (Formulaire Web, App Mobile, API).",
+        fConsentVersion:
+          "Version du document de politique de consentement active lors de la soumission.",
+        bestPracticesTitle: "Bonnes pratiques",
+        doTitle: "Pratiques recommandées",
+        dontTitle: "Pratiques à éviter",
+        do1: "Vérifier que la clé de finalité respecte la contrainte regex alphanumérique en minuscules.",
+        do2: "Exécuter systématiquement la tâche ConsentExpiryJob hebdomadaire pour imposer le ré-consentement lors des mises à jour de version.",
+        do3: "Consommer les événements MediatR ConsentWithdrawnEvents pour limiter les traitements de données en aval.",
+        dont1:
+          "Ne jamais modifier directement les lignes de ConsentRecord pour éviter de rompre l'historique immuable.",
+        dont2:
+          "Ne jamais exécuter de requêtes SQL directes sur ConsentRecord pour les vérifications d'autorisations du frontend ; lire toujours ConsentSnapshot.",
+        dont3:
+          "Ne jamais exposer de points d'accès bruts non authentifiés pour l'enregistrement du consentement.",
+        endpointsTitle: "Points d'accès API",
         ep: {
-          list: "Lister tous les consentements (paginÃ©, filtrable)",
-          get: "Obtenir le consentement par ID",
-          record: "Enregistrer un nouveau consentement",
-          withdraw: "RÃ©voquer un consentement prÃ©cÃ©demment accordÃ©",
+          list: "Lister tous les enregistrements du registre (administrateurs uniquement, filtrable avec pagination)",
+          get: "Obtenir les détails d'un enregistrement par ID",
+          record: "Enregistrer un octroi ou retrait de consentement (utilisateur/administrateur)",
+          withdraw: "Retirer un consentement précédemment accordé (utilisateur/administrateur)",
+          getMy: "Récupérer les instantanés de consentement actifs de l'utilisateur connecté",
+          analytics:
+            "Obtenir les statistiques de consentement par finalité et état (administrateurs uniquement)",
         },
+        entitiesLedgerTitle: "ConsentRecord (Registre en ajout uniquement)",
+        entitiesSnapshotTitle: "ConsentSnapshot (Instant matérialisé mis en cache)",
+        epWithdraw: "Retirer un consentement précédemment accordé",
       },
+
       retention: {
         title: "Politiques de conservation des donnÃ©es",
         description:

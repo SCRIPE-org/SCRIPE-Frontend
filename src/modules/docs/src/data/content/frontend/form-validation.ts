@@ -111,6 +111,38 @@ export const CreateAdminSchema = z.object({
  */
 export type CreateAdminInput = z.infer<typeof CreateAdminSchema>;`,
   },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "frontend.formValidation.zodUtilsTitle",
+    id: "zod-schema-builders",
+  },
+  { type: "paragraph", contentKey: "frontend.formValidation.zodUtilsIntro" },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "zod-form-utils.ts & zod-utils.ts — Shared Validation Helpers",
+    code: `// 1. Shared Zod builders for react-hook-form inputs
+export const signupSchema = z.object({
+  email: emailField(),
+  password: strongPassword(),
+  workspace: requiredStr({ min: 3, max: 100, label: "Workspace Name" }),
+  cron: cronField(),
+});
+
+// 2. Safe API parsing to prevent UI crashes on API contract drift
+export function toEntity(dto: UserDto): User {
+  const result = safeParseApiResponse(UserSchema, dto, "UserDto mapping warning");
+  
+  // Degrades gracefully by returning fallback entity even if parsing fails validation
+  return new User({
+    id: result.id,
+    email: result.email ?? "",
+    firstName: result.firstName ?? "Unnamed",
+    isActive: result.isActive ?? false,
+  });
+}`,
+  },
 
   // ─── React Hook Form Integration ──────────────────────────
   {

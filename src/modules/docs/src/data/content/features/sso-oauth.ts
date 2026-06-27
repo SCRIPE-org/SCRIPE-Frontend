@@ -112,6 +112,28 @@ const sections: DocSection[] = [
     variant: "tip",
     contentKey: "features.ssoOauth.scopingTip",
   },
+
+  // ── SAML 2.0 & Cryptographic Assertion Security ──
+  { type: "heading", level: 2, titleKey: "features.ssoOauth.samlTitle", id: "saml-integration" },
+  { type: "paragraph", contentKey: "features.ssoOauth.samlContent" },
+
+  // ── OIDC Callback & Workspace Caching Flow ──
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.ssoOauth.oidcCallbackTitle",
+    id: "oidc-caching",
+  },
+  { type: "paragraph", contentKey: "features.ssoOauth.oidcCallbackContent" },
+
+  // ── OAuth Application Mirroring & Subscription Quotas ──
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.ssoOauth.oauthMirroringTitle",
+    id: "oauth-quotas",
+  },
+  { type: "paragraph", contentKey: "features.ssoOauth.oauthMirroringContent" },
 ];
 
 registerPage({
@@ -122,5 +144,5 @@ registerPage({
   order: 14,
   sections,
   relatedSlugs: ["security/sso-identity-providers", "features/authentication"],
-  lastUpdated: "2026-03-07",
+  lastUpdated: "2026-06-28",
 });

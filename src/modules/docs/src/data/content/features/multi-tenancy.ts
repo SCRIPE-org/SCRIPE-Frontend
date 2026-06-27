@@ -86,7 +86,11 @@ private void ApplyTenantFilterForEntity<TEntity>(ModelBuilder modelBuilder, Type
       { id: "decrypt", label: "AES Decrypt & Overwrite CurrentTenantId", type: "success" },
       { id: "jwt", label: "Extract TenantId from JWT Claims", type: "info" },
       { id: "filter", label: "EF Core Global Query Filter", type: "warning" },
-      { id: "db", label: "SELECT * WHERE TenantId = @CurrentTenantId OR TenantId IS NULL", type: "success" },
+      {
+        id: "db",
+        label: "SELECT * WHERE TenantId = @CurrentTenantId OR TenantId IS NULL",
+        type: "success",
+      },
     ],
     connections: [
       { from: "req", to: "context" },
@@ -744,7 +748,11 @@ if (tenant.ParentTenantId.HasValue)
       { id: "platBranding", label: "Load Platform Branding", type: "success" },
       { id: "resolveQuery", label: "ResolveTenantByDomain Query", type: "warning" },
       { id: "domainLookup", label: "Query TenantDomain (IsVerified == true)", type: "info" },
-      { id: "mergeBranding", label: "Deep-Merge LoginBranding (Safe Mode Checked)", type: "success" },
+      {
+        id: "mergeBranding",
+        label: "Deep-Merge LoginBranding (Safe Mode Checked)",
+        type: "success",
+      },
       { id: "fallback", label: "Dev Fallback (?code= / ?_tenant=)", type: "danger" },
     ],
     connections: [

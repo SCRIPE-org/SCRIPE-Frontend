@@ -120,7 +120,7 @@ export const zh = {
         "授权管道与静态配置解耦。DynamicPermissionPolicyProvider 为包含 [PermissionRequired] 特性的路由动态构建 ASP.NET Core 授权策略。为确保 JWT Token 大小控制在 400 字节以内，用户具体权限不会存储在 Token Claim 中，而是使用 AdminPermissionCache 缓存于服务器端（采用 10 分钟滑动过期策略）。缓存使用中央 CancellationTokenSource 实现角色修改时线程安全的全局缓存即时失效。在 Handler 或 Service 中，可通过 IPermissionChecker 接口执行编程式权限校验。",
       restrictedFieldsTitle: "字段级限制",
       restrictedFieldsIntro:
-        "字段级安全 (FLS) 允许管理员针对特定角色限制实体的特定字段。受限字段配置为字符串路径 of JSON 数组（例如 [\"salary\", \"ssn\"]），并存储在 RolePermission 表的 RestrictedFieldsJson 列中（在 Oracle 上为 VARCHAR2(2000)，SQL Server 上为 nvarchar(2000)，PostgreSQL 上为 varchar(2000)）。执行请求时，RestrictedFieldsAuthorizationFilter 识别目标资源并将其存入 HttpContext.Items[\"RestrictedFields\"]. FieldProjectionMiddleware 拦截 HTTP 2xx 响应，将 JSON 内容解析为 JsonNode 树，并递归地将与精确或相对路径（如 address.street）匹配的受限属性值重置为 null，从而避免了反射所带来的性能开销。",
+        '字段级安全 (FLS) 允许管理员针对特定角色限制实体的特定字段。受限字段配置为字符串路径 of JSON 数组（例如 ["salary", "ssn"]），并存储在 RolePermission 表的 RestrictedFieldsJson 列中（在 Oracle 上为 VARCHAR2(2000)，SQL Server 上为 nvarchar(2000)，PostgreSQL 上为 varchar(2000)）。执行请求时，RestrictedFieldsAuthorizationFilter 识别目标资源并将其存入 HttpContext.Items["RestrictedFields"]. FieldProjectionMiddleware 拦截 HTTP 2xx 响应，将 JSON 内容解析为 JsonNode 树，并递归地将与精确或相对路径（如 address.street）匹配的受限属性值重置为 null，从而避免了反射所带来的性能开销。',
       cloneRoleTitle: "克隆角色 (防止权限提升)",
       cloneRoleIntro:
         "为防止权限提升，CloneRoleCommandHandler 在复制权限列表时会根据克隆者自身的当前有效权限进行过滤，静默丢弃任何克隆者未拥有的权限。在直接分配权限的命令中，如果管理员尝试分配自己没有的权限，系统将抛出 role.permissionEscalation 的 Forbidden 错误。此外，TenantGuardianService 会校验所有角色变更操作，阻止任何对受保护且权限锁定角色 (IsPermissionLocked == true) 的修改。",
@@ -139,9 +139,18 @@ export const zh = {
     },
     auditSystem: {
       title: "审计系统 (Audit System)",
-      description: "4 源管道、35+ 种事件类型、7 种守护事件、实时 SignalR 广播以及 CSV/PDF 导出。",
+      description:
+        "多源管道、更改跟踪器映射、数据库索引、实时 SignalR 广播以及 CSV/Excel/PDF 导出。",
       intro:
-        "SCRIPE 通过 SCRIPE mediator 行为、EF Core 拦截器、中间件和安全服务显式调用来记录所有重大操作。",
+        "SCRIPE 通过解耦的请求和数据库管道记录所有重大操作，该管道集成了 HTTP 请求日志、EF Core 实体更改跟踪和安全事件记录。所有事件都会通过 SignalR 实时广播到租户组。",
+      pipelineDetail:
+        "HTTP 请求审计由 RequestLoggingMiddleware 处理。它在请求线程中同步捕获请求上下文（HTTP 方法、路径、远程 IP、User-Agent、用户声明和 Correlation ID），然后再回收 HttpContext，并异步在后台任务（Task.Run）中调用 AuditService，以避免阻塞请求。基础设施路径会被忽略，默认情况下会抑制成功的 GET 请求。",
+      changeTrackingTitle: "拦截实体修改",
+      changeTrackingDetail:
+        "AuditableEntityInterceptor 在保存数据前跟踪数据库级别的更改。它拦截 SaveChangesAsync 并扫描 ChangeTracker，以查找实现 IAuditable 或 ISoftDeletable 的实体。对于创建，它捕获所有字段。对于修改，它执行属性差异比对，仅保存已修改 of 字段以节省空间。对于物理删除，捕获所有原始值。对于逻辑删除（Soft Delete），它在 DbContext 修改实体前进行拦截，并记录专用的删除事件。它还会忽略 AuditLog 实体本身，以防止无限递归。",
+      databaseSchemaTitle: "数据库架构和多提供商索引",
+      databaseSchemaDetail:
+        "AuditLog 实体由 Timestamp、UserId、EventType、CorrelationId、TenantId 以及用于常用查询的复合索引（Endpoint+Timestamp、EventType+Timestamp 和 TenantId+Timestamp）的高性能索引支持。数据类型在 SQL Server、PostgreSQL 和 Oracle 中正确映射（分别使用 bit/boolean/NUMBER(1) 和 Guid/uuid/RAW(16)），以提供最佳性能。",
       architectureTitle: "审计架构",
       eventTypesTitle: "事件类型 (35+ 类别)",
       authEventsTitle: "身份验证事件",
@@ -155,11 +164,15 @@ export const zh = {
       guardianIntro:
         "当系统拦截并阻止危险操作时（例如：试图删除租户下的最后一个超级管理员），会生成此类审计记录。",
       serviceMethodsTitle: "AuditService 方法",
-      serviceMethodsIntro: "IAuditService 暴露了异步的日志记录方法，不阻塞主请求管道。",
+      serviceMethodsIntro:
+        "IAuditService 接口提供了 3 种专用的异步日志记录方法，分别用于记录请求指标、数据库变更和安全性日志，且不会阻塞请求管道。",
       realTimeTitle: "实时广播",
-      realTimeIntro: "每一个审计事件都通过 SignalR 实时广播。客户端按租户分组接收事件。",
+      realTimeIntro:
+        "每一个审计事件都通过 SignalR 实时广播。客户端按租户分组接收事件。事件将同时广播到租户组以及面向超级管理员的全局组。",
       exportTitle: "审计数据导出",
       exportIntro: "支持将筛选后的审计日志导出为 CSV、Excel 和 PDF 格式。",
+      exportDetail:
+        "AuditExportService 提供多格式导出。CSV 导出使用 CsvHelper，并对所有字段强制使用双引号以防范 CSV 注入攻击（RFC 4180），同时附带 UTF-8 BOM 以前置适配 Excel。Excel 导出利用 ClosedXML 引擎生成包含三个工作表的工作簿：Executive Summary（KPI 和图表数据）、Audit Data（包含自动筛选器、冻结首行以及绿色/红色的条件格式）和 Security Analysis。PDF 导出基于 QuestPDF 引擎，针对大型数据集标记为废弃（Obsolete）以避免过高内存消耗。出于资源保护的目的，所有导出行为均限制在 10,000 行以内，并在发送前完整在内存中进行缓冲。",
       endpointsTitle: "审计 API 端点",
       retentionTip: "审计日志保留期可通过 TenantSettings 配置，Hangfire 会自动定期清理过期的日志。",
     },
@@ -343,6 +356,15 @@ export const zh = {
       securityNote: "操作受限，超级管理员可以跨租户查看组，租户管理员仅限本地。",
     },
     ssoOauth: {
+      samlTitle: "SAML 2.0 集成与加密验证",
+      samlContent:
+        "平台支持使用 ITfoxtec.Identity.Saml2 库进行 SAML 2.0 单点登录 (SSO)。当作为服务提供商 (SP) 时，将生成并通过重定向绑定发送 AuthnRequest。对于 ACS 回调，使用以 base64 格式存储的公共 X.509 证书（使用 X509CertificateLoader）验证 XML 签名。跳过证书链验证和吊销检查 (None/NoCheck)，以允许企业自签名证书。当作为身份提供商 (IdP) 时，向第三方应用发布已签名的 SAML XML 断言。",
+      oidcCallbackTitle: "OIDC 回调与工作区选择缓存",
+      oidcCallbackContent:
+        "ProcessOidcCallbackCommandHandler 通过 AES-256 解密提供商 ID 并使用授权码交换声明来处理传入 of OIDC 回调。如果用户邮箱对应多个活动管理员工作区，SSO 登录选择状态 (SsoTempLoginData) 将缓存在 Redis 的 'sso-login-selection:{tempToken}' 下，有效期 15 分钟，以防止原始参数篡改。单一工作区匹配将绕过此选择，直接签发最终的 7 天 JWT 访问和刷新令牌。",
+      oauthMirroringTitle: "OAuth 客户端镜像与配额验证",
+      oauthMirroringContent:
+        "出站 OAuth 应用程序的注册通过 QuotaService 验证租户范围的订阅配额。客户端 ID 使用租户特定的品牌设置作为前缀，机密客户端密钥安全生成（256 位加密随机数）且仅显示一次。应用程序注册与 OpenIddict 存储完全同步，并镜像到本地 OAuthApplication 数据库表中，其中的密钥已屏蔽以提高性能和租户隔离。",
       title: "SSO 与 OAuth 服务器 (Keycloak 的企业级替代方案)",
       description:
         "企业级身份验证服务器，能够完全取代 Keycloak、Okta 和 Auth0。具备原生 OIDC 身份提供商 (IdP)、OAuth 应用程序注册、强制 PKCE 和完全隔离的租户联邦功能。",

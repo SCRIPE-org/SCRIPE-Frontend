@@ -58,6 +58,11 @@ export const en = {
       contextAwareTitle: "Context-Aware Scoping",
       contextAwareIntro:
         "All entitlements pages (Features, Editions, Permissions) are context-aware. The frontend detects whether the user is a system admin (tenantId is null), tenant admin, or in drill-down mode, and calls different backend endpoints accordingly. System admins see the full catalog with CRUD; tenant admins see only their effective data in read-only mode.",
+      quotaGatingTitle: "Quota Gating & Slot Reservations",
+      quotaGatingIntro:
+        "Numeric features represent quotas that are enforced when creating tenant resources. SCRIPE uses a concurrency-safe, atomic reservation pattern to manage these limits.",
+      quotaGatingNote:
+        "The QuotaCounterRepository TryReserveSlotAsync increments the Reserved counter. The handler confirms this reservation on success, or releases it on failure, with a fail-open strategy on database exception.",
     },
     editions: {
       title: "Editions",
@@ -109,6 +114,9 @@ export const en = {
       endpointsGetVersions: "List all versions for this edition",
       endpointsCreateVersion: "Create a new draft version with feature snapshot",
       endpointsPublishVersion: "Publish a draft version with chosen rollout strategy",
+      seededTitle: "Seeded System Editions",
+      seededIntro:
+        "The platform seeds two standard system editions out of the box on startup via EditionSeeder, establishing default limits for features.",
     },
     subscriptions: {
       title: "Subscriptions",
@@ -318,6 +326,12 @@ export const en = {
         resolved:
           "Get all resolved feature values for a tenant (shows source: Override/Edition/Default)",
       },
+      mergingTitle: "Subscription Merging & Sorting",
+      mergingIntro:
+        "When a tenant has multiple active subscriptions (such as a base plan and an add-on), features are merged. Subscriptions are loaded and sorted by their type ascending: Lifetime (0) → Monthly (1) → Yearly (2) → Trial (3) → AddOn (4) → Free (5).",
+      permissionsSyncTitle: "Permission Auto-Population",
+      permissionsSyncIntro:
+        "When a subscription becomes active or trialing, a SubscriptionChangedEvent is published. This is handled by SubscriptionChangedEventHandler in the Identity module to automatically synchronize the tenant's permissions pool and super admin role permissions.",
     },
     compliance: {
       overview: {
@@ -494,108 +508,252 @@ export const en = {
         secDont4: "Never bypass the webhook dispatcher for compliance events",
       },
       dsr: {
-        title: "Data Subject Requests (DSR)",
-        description:
-          "Manage GDPR/CCPA rights requests — export, erasure, rectification, and restriction — with full lifecycle tracking.",
+        title: "Data Subject Rights (DSR)",
+        description: "Description",
         intro:
-          "Data Subject Requests (DSRs) are formal requests from individuals exercising their rights under data protection laws. The Compliance module provides a complete DSR workflow: submission, assignment, processing, and closure — with full audit trail and SLA tracking.",
+          "Data Subject Requests (DSRs) are formal requests from individuals exercising their rights under data protection laws. The Compliance module provides a complete, structured DSR workflow: submission, assignment, review, processing, and closure — with a full append-only audit trail and SLA tracking.",
         typesTitle: "Request Types",
-        typesIntro: "The system supports four DSR types as defined by GDPR Article 17 and CCPA:",
-        type1:
-          "Export — Data portability request. The subject wants a copy of their personal data.",
-        type2: "Erasure — Right to be forgotten. All personal data must be deleted or anonymized.",
-        type3: "Rectification — Correction request. Inaccurate personal data must be updated.",
-        type4:
-          "Restriction — Processing restriction. Data can be retained but not actively processed.",
+        typesIntro: "The system supports five DSR types as defined by GDPR and CCPA regulations:",
+        typesType: "Request Type",
+        typesDesc: "Description",
+        typesGdpr: "GDPR Reference",
+        typesAccessDesc:
+          "Right of Access (Article 15). Subject requests a list of processing purposes, categories of personal data, and recipients.",
+        typesExportDesc:
+          "Right to Data Portability (Article 20). Subject requests a machine-readable copy of their personal data.",
+        typesErasureDesc:
+          "Right to Erasure / Right to be Forgotten (Article 17). Subject requests permanent deletion or anonymization of their PII.",
+        typesRectificationDesc:
+          "Right to Rectification (Article 16). Subject requests correction of inaccurate or incomplete personal data.",
+        typesRestrictionDesc:
+          "Right to Restriction of Processing (Article 18). Subject requests suspension of data processing while maintaining data storage.",
         lifecycleTitle: "Request Lifecycle",
-        lifecycleIntro: "DSRs move through a defined set of statuses from submission to closure:",
-        status1: "Pending — Initial state when the request is received.",
-        status2:
-          "InProgress — A compliance officer has been assigned and is processing the request.",
-        status3:
-          "Completed — The request has been fulfilled (data exported, erased, corrected, or restricted).",
-        status4: "Rejected — The request was rejected (e.g. insufficient identity verification).",
-        slasTitle: "GDPR SLA Requirements",
-        slasIntro:
-          "Under GDPR Article 12, data controllers must respond to DSRs within 30 days (extendable to 3 months for complex requests). SCRIPE tracks the submission date for each DSR to help you meet these deadlines.",
-        lifecycleFlowTitle: "DSR Lifecycle Flow",
-        nodeSubmit: "Submit Request",
-        descSubmit: "Subject requests Export, Erasure, or Rectification",
-        nodePending: "Status: Pending",
-        descPending: "Request is logged, SLA deadline calculated",
-        nodeProcessing: "Status: Processing",
-        descProcessing: "DsrExecutionJob begins processing modules via ISuspendableModule",
-        nodeApproval: "Wait For Admin",
-        descApproval: "Nuclear actions (Erasure) require manual admin confirmation",
-        nodeCompleted: "Status: Completed",
-        descCompleted: "Export generated or data erased; SLA fulfilled",
+        lifecycleIntro:
+          "DSR tickets are modeled as state transitions with a review cycle and safety confirmation gates to prevent accidental and irreversible deletions:",
+        lifecycleFlowTitle: "DSR Request Lifecycle & Safety Gates",
+        nodeSubmit: "1. Submit Request",
+        descSubmit:
+          "Subject submits DSR via SubmitDsrCommand. Status is set to Pending and SLA deadline is calculated.",
+        nodeReview: "2. Admin Review",
+        descReview:
+          "Admin reviews request via ReviewDsrCommand, transitioning state to Approved or Rejected.",
+        nodeConfirm: "3. Confirm Erasure",
+        descConfirm:
+          "Erasure requests require manual confirmation via ConfirmErasureCommand, setting ErasureConfirmed = true.",
+        nodeProcessing: "4. DSR Execution Job",
+        descProcessing:
+          "DsrExecutionJob running every 5 min picks up confirmed/approved requests in batches of 50.",
+        nodeCompleted: "5. Status: Completed",
+        descCompleted: "Successfully executed across all modules, storing completion timestamp.",
         nodeRejected: "Status: Rejected",
-        descRejected: "Request denied by admin with resolution notes",
-        conn1: "initiates",
-        conn2: "background job picks up",
-        conn3: "if auto-processed (Export)",
-        conn4: "if nuclear (Erasure)",
-        conn5: "admin confirms",
-        conn6: "admin rejects",
-        entitiesTitle: "Entities",
+        descRejected: "Request is rejected by admin during review. Resolution notes are saved.",
+        nodeCancelled: "Status: Cancelled",
+        descCancelled:
+          "Pending, InReview, or Approved requests can be manually cancelled at any time.",
+        nodePartial: "6. Partially Completed",
+        descPartial:
+          "If any module provider fails, DSR transitions to PartiallyCompleted and increments RetryCount (max 3).",
+        connSubmitReview: "Assigns and moves to InReview",
+        connReviewApprove: "Approves request",
+        connReviewReject: "Rejects request",
+        connApproveConfirm: "Required for Erasure",
+        connConfirmExec: "Picks up for processing",
+        connExecComplete: "All modules succeed",
+        connExecPartial: "Any module fails",
+        connPartialRetry: "Retries failed modules",
+        connCancel: "Cancels request",
+        executionFlowTitle: "DSR Anonymization Execution Flow",
+        nodeExecJob: "DsrExecutionJob Trigger",
+        descExecJob: "Runs every 5 minutes and retrieves approved requests ready for erasure.",
+        nodeCheckSafety: "Safety Check Gate",
+        descCheckSafety:
+          "Verifies that ErasureConfirmed = true and ErasureExecuteAfter grace period has passed.",
+        nodeGenToken: "Generate Anonymization Token",
+        descGenToken: "Generates secure SHA-256 anonymization token based on Subject ID.",
+        nodeFanOut: "Module Fan-Out",
+        descFanOut:
+          "Iterates through all registered compliance providers implementing IUserDataAnonymizer.",
+        nodeModuleExec: "Zero-Allocation Execution",
+        descModuleExec:
+          "Executes database updates via EF Core's ExecuteUpdateAsync to wipe PII fields.",
+        nodeEvalStatus: "Evaluate Results",
+        descEvalStatus: "Checks module execution records for successful completions.",
+        nodeComplete: "Set Status: Completed",
+        descComplete: "DSR ticket is marked Completed and CompletedAt timestamp is stored.",
+        nodePartialLimit: "Set Status: PartiallyCompleted",
+        descPartialLimit:
+          "Logs error, increments RetryCount, and queues failed modules for retry (max 3).",
+        connJobCheck: "fetches batch",
+        connCheckGen: "if safety gates passed",
+        connGenFan: "builds token",
+        connFanMod: "invokes anonymizers",
+        connModEval: "gathers statuses",
+        connEvalComplete: "if all succeeded",
+        connEvalPartial: "if any failed",
+        slaTitle: "SLA Tracking & Deadline Calculations",
+        slaIntro:
+          "Compliance regulations dictate strict response timelines. SCRIPE automatically calculates and tracks SLA metrics on the admin dashboard:",
+        slaWarningTitle: "SLA Deadline Logic",
+        slaWarningContent:
+          "Deadlines are computed upon submission by reading the active RegulationProfile (GDPR: 30 days, CCPA: 45 days). SLA progress is calculated dynamically as a percentage: (Current Time - CreatedAt) / (Deadline - CreatedAt) * 100.",
+        escalationTitle: "Escalation Engine & Alerts",
+        escalationIntro:
+          "The DsrEscalationJob runs daily at 08:00 UTC to evaluate SLA consumption and escalate overdue tickets:",
+        escalationTier1:
+          "Tier 1 (50% SLA) — Standard reminder alert sent to the assigned admin. Logs status history note: [SLA-ESCALATION-50%].",
+        escalationTier2:
+          "Tier 2 (75% SLA) — Warning escalation. Logs status history note: [SLA-ESCALATION-75%] and dispatches compliance.dsr_sla_escalated webhook.",
+        escalationTier3:
+          "Tier 3 (90% SLA) — Critical escalation. Logs status history note: [SLA-ESCALATION-90%], alerts system managers, and sends critical webhook.",
+        providerTitle: "Extensible Provider Architecture",
+        providerIntro:
+          "To maintain loose coupling, the Compliance module communicates with other modules using the IUserDataProvider and IUserDataAnonymizer abstractions:",
+        providerIdentityTitle: "Identity Module Integration",
+        providerIdentityContent:
+          "The IdentityUserDataProvider exports profile metadata, active login sessions, and linked external logins. The IdentityUserDataAnonymizer uses high-performance zero-allocation database updates to replace names with the anonymization token, format emails as {token}@anonymized.invalid, set phone numbers to null, and mark active session IPs as 'ANONYMIZED'.",
+        providerComplianceTitle: "Compliance Module Integration",
+        providerComplianceContent:
+          "The ComplianceUserDataProvider exports request logs and consent ledger entries. The ComplianceUserDataAnonymizer clears personal information from past DSRs (SubjectEmail and RequesterNotes) and consent logs (IpAddress and UserAgent).",
+        entitiesTitle: "Entity Reference",
         entityName: "Entity Name",
         entityDesc: "Description",
-        entityDsrDesc: "Represents a data subject request.",
-        entityModuleDesc: "Execution state of a module.",
-        entityStatusDesc: "History of status changes.",
-        codeTitle: "Code Example",
+        entityDsrDesc:
+          "Represents a data subject request containing the type, status, SLA deadline, and execution parameters.",
+        entityModuleDesc:
+          "Tracks the execution status and retry attempts of a fanned-out DSR execution for each module provider.",
+        entityStatusDesc:
+          "An append-only ledger tracking DSR state transitions, resolution comments, and SLA escalations.",
+        codeTitle: "Code Implementation",
         endpointsTitle: "API Endpoints",
-        endpointsIntro: "The DSR controller exposes 6 endpoints for the full DSR lifecycle:",
+        endpointsIntro:
+          "The DSR controller exposes the following endpoints for request submission, review, and execution control:",
         ep: {
           list: "List all DSRs (paginated, filterable by status/type/regulation)",
           get: "Get DSR details by ID",
-          create: "Submit a new DSR",
+          create: "Submit a new DSR (calculates SLA deadline)",
           updateStatus: "Update DSR status (InProgress, Completed, Rejected)",
           assign: "Assign DSR to a compliance officer",
           delete: "Soft-delete a DSR",
+          confirm: "Explicitly confirm an approved Erasure DSR to unlock execution",
         },
+        field: "Field",
+        type: "Type",
+        fId: "Unique identifier for the DSR request.",
+        fTenantId: "Foreign key referencing the tenant context.",
+        fSubjectEmail: "Data subject email address (anonymized upon erasure).",
+        fRequestType: "Type of DSR (Access, Export, Erasure, Rectification, Restriction).",
+        fStatus: "Current lifecycle status of the request.",
+        fDeadline: "Calculated SLA response deadline.",
+        fErasureConfirmed: "Boolean flag unlocking Erasure requests for background jobs.",
+        fErasureExecuteAfter: "Execution threshold enforcing the adaptive grace period.",
+        fExportFileUrl: "URL to download fanned-out exported data zip.",
+        fAssignedTo: "Foreign key referencing the assigned admin user.",
+        fRetryCount: "Current retry attempt count for failed module executions.",
+        fCompletedAt: "Timestamp indicating when the DSR was completed.",
+        quickStartTitle: "Quick Start Guide",
+        step1Title: "Seed Compliance Profiles",
+        step1Content:
+          "Run the development seeder to populate GDPR and CCPA regulation profiles with SLA days.",
+        step2Title: "Submit a Data Subject Request",
+        step2Content:
+          "Use the POST endpoint to log a new request. The system validates input constraints and calculates the response deadline.",
+        step3Title: "Review and Approve",
+        step3Content:
+          "The assigned compliance officer reviews the ticket. Approving an Erasure DSR sets the grace period and awaits final nuclear confirmation.",
+        executionFlowIntro:
+          "Erasure request execution anonymizes personal data asynchronously across modules via fanned-out provider implementations:",
       },
       consent: {
         title: "Consent Management",
-        description:
-          "Record, track, and audit user consent grants and withdrawals for GDPR Article 6 and CCPA compliance.",
+        description: "Description",
         intro:
-          "Consent Management records every time a user grants or withdraws consent for a specific purpose (e.g. marketing emails, analytics tracking). SCRIPE stores the full consent audit trail including timestamp, IP address, user agent, and the exact consent version shown.",
-        purposesTitle: "Consent Purposes",
+          "Consent Management provides an immutable record of user consent states. To support high-performance lookups alongside a legally defensible audit trail, SCRIPE uses a dual-table architecture split between an append-only transaction ledger and a cached materialized view.",
+        purposesTitle: "Consent Purposes & Settings",
         purposesIntro:
-          "Each consent record is tied to a specific purpose. Common purposes include:",
-        purpose1: "Marketing — Email marketing and promotional communications.",
-        purpose2: "Analytics — Usage analytics and product improvement.",
-        purpose3: "ThirdParty — Sharing data with third-party services.",
-        purpose4: "Personalization — Personalized content and recommendations.",
-        gdprTitle: "GDPR Lawful Basis",
-        gdprIntro:
-          "Under GDPR Article 6, consent must be: freely given, specific, informed, and unambiguous. SCRIPE records the exact consent text version shown to the user and the timestamp it was accepted, providing a legally defensible audit trail.",
-        withdrawalTitle: "Consent Withdrawal",
-        withdrawalIntro:
-          "Users can withdraw consent at any time. When consent is withdrawn, the ConsentRecord is updated with WithdrawnAt timestamp. Downstream systems should be notified via domain events to stop processing data for the withdrawn purpose.",
-        flowTitle: "Consent State Flow",
-        nodePurpose: "Consent Purpose",
-        descPurpose: "Defines what is being consented to (e.g. Marketing)",
-        nodeRecord: "Consent Record",
-        descRecord: "User's current state (Granted/Revoked) per purpose",
-        nodeSnapshot: "Consent Snapshot",
-        descSnapshot: "Immutable point-in-time capture of consent grant/revoke",
-        nodeJob: "Consent Expiry Job",
-        descJob: "Daily job revokes expired consents",
-        conn1: "templates",
-        conn2: "generates on change",
-        conn3: "auto-revokes if expired",
-        immutabilityTitle: "Immutability",
-        immutabilityIntro: "Consent records are immutable and track integrity.",
+          "Consent tracking is regulated by global profiles and structured consent purposes seeded at application startup:",
+        purposesKey: "Purpose Key",
+        purposesBasis: "Legal Basis",
+        purposesRequired: "Mandatory",
+        purposesSort: "Sort Order",
+        purposesActive: "Active",
+        purposesEssentialDesc:
+          "Essential capabilities required for the platform to function. (Required, contract legal basis).",
+        purposesMarketingDesc:
+          "Promotional newsletters, emails, and campaign communications. (Optional, consent legal basis).",
+        purposesAnalyticsDesc:
+          "Usage analytics, user behavior tracking, and product improvement telemetry. (Optional, consent legal basis).",
+        basisContract: "Contract",
+        basisConsent: "Consent",
+        basisLegitimate: "Legitimate Interest",
+        basisObligation: "Legal Obligation",
+        flowTitle: "Consent Logging & Verification Flow",
+        nodeSubmit: "Consent Submission",
+        descSubmit: "User updates preferences or submits a consent form.",
+        nodeValidate: "FluentValidation",
+        descValidate: "Validates regulation constraints and purpose key syntax.",
+        nodeLedger: "Append Ledger",
+        descLedger:
+          "Writes an immutable ConsentRecord transaction containing IP address, user agent, version, and action.",
+        nodeUpsert: "Upsert Snapshot",
+        descUpsert:
+          "Materializes current state in ConsentSnapshot cache for high-performance permission checks.",
+        nodeEvents: "Domain Events",
+        descEvents: "Publishes ConsentGrantedEvent or ConsentWithdrawnEvent via MediatR.",
+        nodeExpiry: "ConsentExpiryJob",
+        descExpiry:
+          "Weekly background job scans version mismatches and flags stale records for re-consent.",
+        connSubmitValidate: "submits details to",
+        connValidateLedger: "appends transaction if valid",
+        connLedgerUpsert: "updates current cache state from",
+        connUpsertEvents: "dispatches events on success",
+        connExpiryUpsert: "marks RequiresReConsent = true in",
+        immutabilityTitle: "Dual-Table Database Architecture",
+        immutabilityIntro:
+          "To ensure both database performance and compliance audit integrity, consent tracking separates write-heavy transactions from read-heavy authorization checks:",
+        entitiesTitle: "Entity Reference",
+        entitiesIntro:
+          "The following tables define the schema properties for both the append-only ledger and the materialized cache snapshots:",
+        field: "Field",
+        type: "Type",
+        fId: "Unique identifier for the record.",
+        fTenantId: "Foreign key referencing the tenant context.",
+        fSubjectId: "Foreign key referencing the data subject (user).",
+        fPurposeId: "Foreign key referencing the ConsentPurpose configuration.",
+        fAction: "Consent action recorded (Granted or Withdrawn).",
+        fCurrentAction: "Latest consent status cached for the subject and purpose.",
+        fRequiresReConsent:
+          "Flag indicating the user must re-consent due to a policy version update.",
+        fLastUpdatedAt: "Timestamp representing the last snapshot modification.",
+        fRecordedAt: "Timestamp representing when the ledger transaction occurred.",
+        fIpAddress: "Client IP address captured at the time of recording.",
+        fUserAgent: "Browser user agent captured at the time of recording.",
+        fRegulationBasis: "Regulatory context (GDPR, CCPA) active during submission.",
+        fCollectionMethod: "Method used to collect consent (Web Form, Mobile App, API).",
+        fConsentVersion: "Consent policy document version active during submission.",
+        bestPracticesTitle: "Best Practices",
+        doTitle: "Recommended Practices",
+        dontTitle: "Anti-Patterns to Avoid",
+        do1: "Verify the purpose key matches lowercase alphanumeric regex constraints.",
+        do2: "Always run the weekly ConsentExpiryJob to enforce re-consent on version updates.",
+        do3: "Consume MediatR ConsentWithdrawnEvents to restrict downstream data processing.",
+        dont1: "Never bypass the append-only ledger by modifying ConsentRecord rows directly.",
+        dont2:
+          "Never execute direct database queries against ConsentRecord for frontend permission checks; always read ConsentSnapshot.",
+        dont3: "Never expose raw unauthenticated consent recording endpoints.",
         endpointsTitle: "API Endpoints",
         ep: {
-          list: "List all consent records (paginated, filterable by purpose/status)",
-          get: "Get consent record by ID",
-          record: "Record a new consent grant",
-          withdraw: "Withdraw a previously granted consent",
+          list: "List all consent ledger records (Admin-only, paginated, filterable)",
+          get: "Get consent record details by ID",
+          record: "Record a new consent grant or withdrawal (User/Admin)",
+          withdraw: "Withdraw a previously granted consent (User/Admin)",
+          getMy: "Retrieve the active consent snapshots for the currently authenticated user",
+          analytics: "Get consent statistics by purpose and state (Admin-only)",
         },
+        entitiesLedgerTitle: "ConsentRecord (Append-Only Ledger)",
+        entitiesSnapshotTitle: "ConsentSnapshot (Materialized Cache)",
+        epWithdraw: "Withdraw a previously granted consent",
       },
+
       retention: {
         title: "Data Retention Policies",
         description:
@@ -978,6 +1136,9 @@ export const en = {
         "Enterprise contact-sales pipeline — capture, qualify, assign, and convert prospects to tenants from the admin panel.",
       intro:
         "The CRM Leads module is SCRIPE's built-in sales pipeline. It captures prospects who submit the Contact Sales form during the signup wizard, enriches each lead with discovery intelligence (business type, team size, priorities, recommended tier), and provides a full admin CRM workflow: list, detail drawer, status transitions, assignment, and one-click tenant conversion.",
+      ingestionTitle: "Ingestion and Deduplication Lifecycle",
+      ingestionIntro:
+        "When a prospect submits a lead via the website signup wizard, the system performs validation and deduplication before creating a PlatformLead record. This includes checking for workspace subdomain conflicts, identifying colleague submissions for ABM targeting, and enforcing a daily lead registration cap.",
       whatIsTitle: "What is the Leads CRM?",
       whatIsIntro:
         "A Lead represents a prospective customer who has expressed interest in the platform. Each lead carries contact info, discovery context from the signup wizard, and a lifecycle status that tracks the sales engagement from first contact to conversion. All data is soft-deleted, fully audited, and accessible only to admins with the appropriate permissions.",

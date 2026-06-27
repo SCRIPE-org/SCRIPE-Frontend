@@ -26,8 +26,10 @@ export const es = {
       descStartup: "Lee el proveedor, descubre todos los trabajos, los programa",
       nodeDiscovery: "Bucle de Autodescubrimiento\nGetServices<IAutoRegisteredJob>()",
       descDiscovery: "Escanea el contenedor DI para cada IAutoRegisteredJob registrado",
-      nodeSchedule: "Programar Cada Trabajo\nSi está habilitado -> Registrar con la API del proveedor",
-      descSchedule: "Usa la CronExpression de la anulación de appsettings o la predeterminada del trabajo",
+      nodeSchedule:
+        "Programar Cada Trabajo\nSi está habilitado -> Registrar con la API del proveedor",
+      descSchedule:
+        "Usa la CronExpression de la anulación de appsettings o la predeterminada del trabajo",
       nodeExecute: "job.ExecuteAsync(ct)\nEn cada tick de cron",
       descExecute: "Agnóstico del proveedor - el trabajo no sabe qué proveedor lo ejecuta",
       conn1: "impulsa",

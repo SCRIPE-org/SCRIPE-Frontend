@@ -14,52 +14,53 @@ const sections: DocSection[] = [
   },
   {
     type: "flowchart",
-    title: "CRUD System Architecture",
+    title: "Frontend CRUD Data Flow",
     direction: "vertical",
     nodes: [
       {
         id: "view",
-        label: "GenericCrudView",
+        label: "View / GenericCrudView",
         type: "primary",
-        description: "Orchestrates table, dialogs, pagination",
+        description: "Renders table, modals, input forms",
       },
       {
-        id: "datatable",
-        label: "DataTable",
-        type: "info",
-        description: "Flexible table with sorting, search, selection",
-      },
-      {
-        id: "formDialog",
-        label: "FormDialog",
-        type: "success",
-        description: "Create/Edit form in a dialog",
-      },
-      {
-        id: "confirm",
-        label: "ConfirmDialog",
-        type: "danger",
-        description: "Delete/bulk action confirmation",
-      },
-      {
-        id: "viewModel",
+        id: "vm",
         label: "useCrudViewModel",
         type: "warning",
-        description: "Hook: all CRUD state & mutations",
+        description: "Coordinates operational state and actions",
+      },
+      {
+        id: "query",
+        label: "useGenericQuery",
+        type: "info",
+        description: "Fetch list using keepPreviousData cache preservation",
+      },
+      {
+        id: "mutations",
+        label: "useGenericMutations",
+        type: "success",
+        description: "Handles create, update, delete mutations",
       },
       {
         id: "repo",
-        label: "ICrudRepository",
+        label: "Repository Layer",
         type: "default",
-        description: "Data access abstraction",
+        description: "Maps API DTO models to Domain Entities",
+      },
+      {
+        id: "service",
+        label: "API Service / Axios",
+        type: "info",
+        description: "Executes HTTP requests and extracts errors",
       },
     ],
     connections: [
-      { from: "view", to: "datatable" },
-      { from: "view", to: "formDialog" },
-      { from: "view", to: "confirm" },
-      { from: "view", to: "viewModel", label: "uses" },
-      { from: "viewModel", to: "repo", label: "calls" },
+      { from: "view", to: "vm", label: "binds UI state" },
+      { from: "vm", to: "query", label: "subscribes to" },
+      { from: "vm", to: "mutations", label: "triggers" },
+      { from: "query", to: "repo", label: "calls getAll()" },
+      { from: "mutations", to: "repo", label: "calls mutations" },
+      { from: "repo", to: "service", label: "uses IApiService" },
     ],
   },
 
@@ -74,96 +75,227 @@ const sections: DocSection[] = [
   {
     type: "code",
     language: "typescript",
-    filename: "useCrudViewModel — Configuration",
-    code: `interface CrudViewModelConfig<T, TCreate, TUpdate> {
-  // Data fetching
-  queryKey: string;
-  fetchFn: (params: PaginationParams) => Promise<PaginatedResult<T>>;
-  
-  // Mutations (optional)
-  createFn?: (data: TCreate) => Promise<T>;
-  updateFn?: (id: string, data: TUpdate) => Promise<T>;
-  deleteFn?: (id: string) => Promise<void>;
-  
-  // Bulk operations (optional)
-  bulkDeleteFn?: (ids: string[]) => Promise<void>;
-  bulkDeleteAllFn?: (filter: FilterParams, excludeIds: string[]) => Promise<void>;
-  bulkActionFn?: (ids: string[], action: string) => Promise<void>;
-  
-  // Configuration
-  defaultPageSize?: number;           // Default: 10
-  searchDebounceMs?: number;          // Default: 300
-  enableSelection?: boolean;          // Default: false
-  enableBulkActions?: boolean;        // Default: false
-  enableGlobalFilter?: boolean;       // Default: true
-  staleTime?: number;                 // Default: 5 min
-  
-  // Form configuration
-  formSchema?: ZodSchema;             // For validation
-  defaultFormValues?: Partial<TCreate>;
-  
-  // Callbacks
-  onCreateSuccess?: (item: T) => void;
-  onUpdateSuccess?: (item: T) => void;
-  onDeleteSuccess?: () => void;
-  onError?: (error: Error) => void;
-}`,
+    filename: "useCrudViewModel — Hook Signature & Options",
+    code: `export interface CrudViewModelOptions {
+  initialPageSize?: number; // Default: 10
+  enabled?: boolean;         // Default: true
+}
+
+export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = any>(
+  key: any[],
+  services: {
+    getAll: (params: any) => Promise<PaginatedResult<T>>;
+    create?: (data: TCreate) => Promise<T>;
+    update?: (id: string, data: TUpdate) => Promise<T>;
+    delete?: (id: string) => Promise<void>;
+  },
+  options: CrudViewModelOptions = {}
+);`,
   },
   {
     type: "code",
     language: "typescript",
-    filename: "useCrudViewModel — Returned Interface",
-    code: `interface CrudViewModelReturn<T> {
-  // Data
+    filename: "useCrudViewModel — Returned State & Actions Interface",
+    code: `interface CrudViewModelReturn<T, TCreate, TUpdate> {
+  // Data & Status
   items: T[];
-  totalCount: number;
-  isLoading: boolean;
-  error: Error | null;
-  
-  // Pagination
+  pagination: {
+    itemsCount: number;
+    pageSize: number;
+    page: number;
+    pagesCount: number;
+  };
+  loading: boolean;
+  error: string | null;
+
+  // Pagination State & Actions
   page: number;
   pageSize: number;
-  totalPages: number;
-  setPage: (page: number) => void;
-  setPageSize: (size: number) => void;
-  
-  // Search
-  search: string;
-  setSearch: (search: string) => void;
-  debouncedSearch: string;
-  
-  // Sorting
-  sortBy: string;
-  sortDirection: 'asc' | 'desc';
-  setSorting: (field: string, direction: 'asc' | 'desc') => void;
-  
-  // Selection
-  selectedIds: Set<string>;
-  selectAll: boolean;
-  toggleSelect: (id: string) => void;
-  toggleSelectAll: () => void;
-  clearSelection: () => void;
-  
-  // CRUD operations
-  create: UseMutationResult<T, Error, TCreate>;
-  update: UseMutationResult<T, Error, { id: string; data: TUpdate }>;
-  remove: UseMutationResult<void, Error, string>;
-  
-  // Dialog state
-  isCreateDialogOpen: boolean;
-  isEditDialogOpen: boolean;
-  isDeleteDialogOpen: boolean;
+  changePage: (newPage: number) => void;
+  changePageSize: (newSize: number) => void;
+
+  // Search State & Actions
+  searchValue: string;
+  searchInputRef: React.RefObject<HTMLInputElement>;
+  handleSearchChange: (term: string) => void;
+
+  // Selection State & Actions
+  selectedItems: string[];
+  setSelectedItems: React.Dispatch<React.SetStateAction<string[]>>;
+
+  // Modal Dialog Controllers
+  isCreateModalOpen: boolean;
+  setIsCreateModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isEditModalOpen: boolean;
+  setIsEditModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  viewModalOpen: boolean;
+  setViewModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   editingItem: T | null;
-  deletingItem: T | null;
-  openCreateDialog: () => void;
-  openEditDialog: (item: T) => void;
-  openDeleteDialog: (item: T) => void;
-  closeDialogs: () => void;
-  
-  // Bulk
-  bulkDelete: () => void;
-  bulkAction: (action: string) => void;
+  viewItem: T | null;
+
+  // Modal State Transitions
+  openEditModal: (item: T) => void;
+  closeEditModal: () => void;
+  openViewModal: (item: T) => void;
+  closeViewModal: () => void;
+  refreshItems: () => Promise<void>;
+  refresh: () => Promise<void>; // Alias for refreshItems
+
+  // Mutation Wrappers
+  createItem: (data: TCreate) => Promise<T>;
+  updateItem: (id: string, data: TUpdate) => Promise<T>;
+  deleteItem: (id: string) => Promise<void>;
+
+  // Pending States
+  isCreating: boolean;
+  isUpdating: boolean;
+  isDeleting: boolean;
 }`,
+  },
+
+  // ─── Zero-Flicker Query Cache Preservation ────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.crudSystem.zeroFlickerTitle",
+    id: "zero-flicker-query",
+  },
+  { type: "paragraph", contentKey: "frontend.crudSystem.zeroFlickerIntro" },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "useGenericQuery.ts — Cache Preservation Config",
+    code: `export function useGenericQuery<T, TParams = any>(
+  key: any[],
+  fetcher: (params: TParams) => Promise<PaginatedResult<T>>,
+  params: TParams,
+  enabled: boolean = true,
+  options?: Omit<UseQueryOptions<PaginatedResult<T>>, "queryKey" | "queryFn">
+) {
+  return useQuery({
+    queryKey: [...key, params],
+    queryFn: () => fetcher(params),
+    enabled,
+    placeholderData: keepPreviousData, // Keeps the existing grid visible on page/search change
+    ...options,
+  });
+}`,
+  },
+
+  // ─── Optimistic Deletes & Rollback Cache ──────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "frontend.crudSystem.optimisticDeletesTitle",
+    id: "optimistic-deletes",
+  },
+  { type: "paragraph", contentKey: "frontend.crudSystem.optimisticDeletesIntro" },
+  {
+    type: "flowchart",
+    title: "Optimistic Deletes & Rollback Sequence",
+    direction: "vertical",
+    nodes: [
+      {
+        id: "trigger",
+        label: "User Delete Action",
+        type: "danger",
+        description: "Clicks delete confirm dialog",
+      },
+      {
+        id: "onMutate",
+        label: "onMutate Lifecycle Hook",
+        type: "warning",
+        description: "Executes immediately before API request",
+      },
+      {
+        id: "cancel",
+        label: "Cancel Outgoing Queries",
+        type: "info",
+        description: "Prevents race conditions from active fetches",
+      },
+      {
+        id: "backup",
+        label: "Capture Cache Snapshot",
+        type: "default",
+        description: "Saves previous list data to mutation context",
+      },
+      {
+        id: "optimistic",
+        label: "Update Cache In-Memory",
+        type: "success",
+        description: "Filters out deleted record from UI state",
+      },
+      {
+        id: "apiCall",
+        label: "Backend API Call",
+        type: "primary",
+        description: "Executes HTTP DELETE query",
+      },
+      {
+        id: "success",
+        label: "API Call Result",
+        type: "info",
+        description: "Checks if backend request succeeded",
+      },
+      {
+        id: "rollback",
+        label: "Rollback Cache State",
+        type: "danger",
+        description: "Restores saved list data snapshot on error",
+      },
+      {
+        id: "settle",
+        label: "Re-fetch / Invalidate",
+        type: "success",
+        description: "Forces query invalidate to sync with backend",
+      },
+    ],
+    connections: [
+      { from: "trigger", to: "onMutate" },
+      { from: "onMutate", to: "cancel" },
+      { from: "cancel", to: "backup" },
+      { from: "backup", to: "optimistic" },
+      { from: "optimistic", to: "apiCall" },
+      { from: "apiCall", to: "success" },
+      { from: "success", to: "settle", label: "Success" },
+      { from: "success", to: "rollback", label: "Failure" },
+      { from: "rollback", to: "settle", label: "Settles cache" },
+    ],
+  },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "useGenericMutations.ts — Optimistic Delete Setup",
+    code: `const deleteMutation = useMutation({
+  mutationKey: [...(baseKey as unknown[]), "delete"],
+  mutationFn: async (id: string) => services.delete(id),
+  onMutate: options?.optimisticDelete
+    ? async (id: string) => {
+        await queryClient.cancelQueries({ queryKey: baseKey });
+        const previous = queryClient.getQueryData(baseKey);
+        
+        // Optimistically remove from list cache
+        queryClient.setQueryData(baseKey, (old: any) => {
+          if (!old) return old;
+          const items = old.items ?? old.data ?? [];
+          const filtered = items.filter((item: any) => item.id !== id);
+          return { ...old, items: filtered };
+        });
+        
+        return { previous };
+      }
+    : undefined,
+  onError: (_, __, context) => {
+    if (context?.previous !== undefined) {
+      // Rollback on failure
+      queryClient.setQueryData(baseKey, context.previous);
+    }
+  },
+  onSettled: () => {
+    // Sync with database
+    queryClient.invalidateQueries({ queryKey: baseKey });
+  }
+});`,
   },
 
   // ─── GenericCrudView ──────────────────────────────────────

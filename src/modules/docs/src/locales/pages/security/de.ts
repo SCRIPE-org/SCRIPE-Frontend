@@ -195,30 +195,52 @@ export const de = {
     },
     auditCompliance: {
       title: "Audit & Compliance",
-      description: "Interceptors, Entity-Tracking, SignalR-Streaming und Export.",
+      description:
+        "Vollständige Audit-Pipeline, Entitätsverfolgung, SignalR-Streaming, CSV/Excel/PDF-Export und Compliance-Funktionen.",
       intro: "Ein lückenloses Protokoll jeder Datenänderung und API-Anfrage.",
       architectureTitle: "Audit-Architektur",
-      architectureIntro: "Drei Schichten: Interceptors, SCRIPE mediator-Behavior, Middleware.",
+      architectureIntro:
+        "Das Audit-System besteht aus der HTTP-Anforderungsprotokollierung und dem Abfangen von Entitätsänderungen auf Datenbankebene. Anforderungsmetadaten werden asynchron auf Host-Ebene über die RequestLoggingMiddleware protokolliert, während Änderungen auf Datenbankebene durch den AuditableEntityInterceptor vor SaveChanges erfasst werden.",
       interceptorTitle: "Entity Change Interceptor",
-      interceptorIntro: "Fängt Added, Modified, Deleted ab und serialisiert sie als JSON.",
+      interceptorIntro:
+        "Der AuditableEntityInterceptor klinkt sich in die SaveChangesAsync-Pipeline von EF Core ein. Für jede hinzugefügte, geänderte oder gelöschte Entität (einschließlich Soft Deletes) erfasst er die alten und neuen Werte als JSON, den ausführenden Benutzer und den Zeitstempel. AuditLog-Entitäten werden übersprungen, um unendliche Rekursionen zu verhindern.",
       auditLogEntityTitle: "AuditLog Entitäts-Struktur",
       signalrTitle: "Echtzeit SignalR-Streaming",
-      signalrIntro: "Verbindungen zu AuditHub ermöglichen Live-Dashboards.",
+      signalrIntro:
+        "Audit-Logs werden in Echtzeit über den SignalR AuditHub übertragen. Verbundene Admin-Clients erhalten sofortige Benachrichtigungen bei Datenänderungen, was Live-Überwachungs-Dashboards ermöglicht.",
       exportTitle: "Exportfunktionen",
       exportIntro: "Unterstützt CSV, Excel und PDF gefiltert nach Mandant.",
+      exportDetail:
+        "Der AuditExportService bietet Exporte in mehreren Formaten. Der CSV-Export nutzt CsvHelper mit erzwungenen Anführungszeichen (RFC 4180) zur Vermeidung von CSV-Injektionen und fügt ein UTF-8-BOM für Excel hinzu. Der Excel-Export generiert eine ClosedXML-Arbeitsmappe mit drei Tabellenblättern: Executive Summary (KPIs und Statistiken), Audit Data (mit Auto-Filtern, fixierten Kopfzeilen und bedingter Formatierung in Grün/Rot) sowie Security Analysis. Der PDF-Export basiert auf QuestPDF und ist für große Datenmengen als veraltet (Obsolete) markiert. Zum Schutz der Systemressourcen sind alle Exporte auf 10.000 Zeilen begrenzt und werden vor der Übertragung vollständig im Arbeitsspeicher gepuffert.",
       queryApiTitle: "Abfrage- & Export-API",
-      queryApiIntro: "Vollständige Such- und Filter-API für Audit-Einträge.",
+      queryApiIntro:
+        "Die Audit-API bietet Such-, Filter- und Exportfunktionen für Audit-Logs. Alle Endpunkte erfordern eine Admin-Authentifizierung sowie die Berechtigung audit.view oder audit.export.",
       querySearchDesc: "Audit-Logs durchsuchen.",
       queryExportCsvDesc: "Audit-Logs als CSV exportieren.",
       queryExportExcelDesc: "Als Excel-Tabelle exportieren.",
       queryExportPdfDesc: "Als PDF-Dokument exportieren.",
+      scopingTitle: "Hierarchische Mandantenabgrenzung und Sicherheitsisolation",
+      scopingDetail:
+        "Die Datenisolation wird dynamisch bei der Abfrageausführung erzwungen. Der DataScopeService ermittelt den effektiven Bereich des Administrators basierend auf einer strikten Prioritätskette: ContextTenant (Drilldown über AES-verschlüsselte Kontext-Header), Berechtigungs-Overrides, SystemProtectedAdmin, Hierarchy (einschließlich Unterkunden) oder OwnTenant. Nachkommen werden in konstanter Zeit über materialisierte Pfade durchlaufen, wobei Starts-With-Abfragen in indexierte SQL-LIKE-Befehle übersetzt werden. Das Repository wendet AuditByTenantScopeSpec an, um die Filterung per 'WHERE TenantId IN (...)' sicherzustellen, während direkte GUID-Abfragen durch GetAuditLogDetailQueryHandler validiert werden, um horizontale Rechteausweitung zu verhindern.",
       complianceTitle: "Compliance-Funktionen",
       immutableTitle: "Unveränderliche Logs",
+      immutableDesc:
+        "Protokolle sind gesperrt und schreibgeschützt gespeichert, um Löschungen oder Änderungen nach dem Speichern zu verhindern.",
       fullTraceTitle: "Lückenlose Nachverfolgbarkeit",
+      fullTraceDesc:
+        "Erfasst HTTP-Header, Anforderungskontext und Entitätsänderungen, um eine vollständige Nachverfolgbarkeit zu gewährleisten.",
       searchableTitle: "Durchsuchbar",
+      searchableDesc:
+        "Optimierte Indizes auf Timestamp, UserId, EventType und CorrelationId ermöglichen eine sofortige Suche.",
       tenantScopedTitle: "Mandantenbezogen (Tenant Scoped)",
+      tenantScopedDesc:
+        "Protokolle werden automatisch durch TenantId- und Mandantenhierarchie-Grenzen isoliert, um Datenlecks zu verhindern.",
       realtimeTitle: "In Echtzeit",
+      realtimeDesc:
+        "Streamen Sie Sicherheitsereignisse und Mutationen direkt an mandantenspezifische SignalR-Dashboards.",
       retentionTitle: "Aufbewahrungsrichtlinie",
+      retentionDesc:
+        "Konfigurierte Aufbewahrungsfristen löschen abgelaufene Audit-Logs automatisch über Hintergrunddienste.",
     },
   },
 };

@@ -35,6 +35,12 @@ export const ru = {
       formIntro: "Интеграция GenericForm с Zod-схемами для валидации на лету.",
       extensionTip:
         "Система CRUD предназначена для расширения путем оборачивания (wrapping), а не прямого изменения исходного кода.",
+      zeroFlickerTitle: "Сохранение кэша без мерцания",
+      zeroFlickerIntro:
+        "Для предотвращения мерцания загрузки при изменении параметров страницы или поиска useGenericQuery использует placeholderData: keepPreviousData. Это сохраняет сетку видимой во время перехода, обеспечивая плавность интерфейса.",
+      optimisticDeletesTitle: "Оптимистичное удаление и откат кэша",
+      optimisticDeletesIntro:
+        "При удалении интерфейс оптимистично удаляет элемент из кэша списка и отменяет активные запросы. Если вызов API завершается сбоем, мутация автоматически откатывает кэш к его предыдущему состоянию.",
     },
     stateManagement: {
       title: "Управление состоянием (Frontend)",
@@ -86,6 +92,9 @@ export const ru = {
       serverErrorTitle: "Обработка серверных ошибок",
       serverErrorIntro:
         "Ошибки бэкенда (400 Bad Request) автоматически связываются с полями ввода React Hook Form.",
+      zodUtilsTitle: "Конструкторы схем Zod и безопасный парсинг API",
+      zodUtilsIntro:
+        "Формы Zod используют общие конструкторы, такие как emailField, strongPassword, requiredStr и cronField. safeParseApiResponse безопасно анализирует ответы, предотвращая сбои UI при изменениях схем бэкенда.",
     },
     componentLibrary: {
       title: "Библиотека компонентов",

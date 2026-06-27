@@ -37,6 +37,12 @@ export const es = {
         "Integrado en Zod. Utiliza GenricForm sobre un diálogo o página completa para operar validaciones precisas.",
       extensionTip:
         "Nunca modifiques los componentes Generic. Deben envolverse o sobreescribirse parcialmente para extenderlos.",
+      zeroFlickerTitle: "Preservación del caché sin parpadeos",
+      zeroFlickerIntro:
+        "Para evitar parpadeos de carga cuando cambian los parámetros de página o búsqueda, useGenericQuery utiliza placeholderData: keepPreviousData. Esto mantiene la cuadrícula visible durante la transición, asegurando una experiencia de usuario perfecta.",
+      optimisticDeletesTitle: "Eliminación optimista y reversión de caché",
+      optimisticDeletesIntro:
+        "Cuando se activa una eliminación, la interfaz elimina optimistamente el elemento del caché de la lista y cancela las consultas activas. Si la llamada API falla, la mutación revierte automáticamente el caché a su estado anterior.",
     },
     stateManagement: {
       title: "Gestión de Estado (Frontend)",
@@ -93,6 +99,9 @@ export const es = {
       serverErrorTitle: "Manejo de Errores del Lado Servidor",
       serverErrorIntro:
         "Traduce y mapea los errores FluentValidation y los pinta directamente sobre la entrada (input) roja de React Hook Form.",
+      zodUtilsTitle: "Constructores Zod y análisis seguro de API",
+      zodUtilsIntro:
+        "Los formularios Zod aprovechan constructores compartidos como emailField, strongPassword, requiredStr y cronField. safeParseApiResponse analiza las respuestas de API de manera segura para evitar caídas por cambios en el esquema del servidor.",
     },
     componentLibrary: {
       title: "Biblioteca de Componentes",

@@ -31,6 +31,12 @@ export const de = {
       formTitle: "Formularsystem",
       formIntro: "Integriert Zod-Schemas mit GenericForm für Erstellen/Bearbeiten.",
       extensionTip: "Das System ist auf Erweiterung, nicht auf Modifikation ausgelegt.",
+      zeroFlickerTitle: "Flackerfreie Cache-Erhaltung",
+      zeroFlickerIntro:
+        "Um Ladeflackern beim Ändern von Seiten- oder Suchparametern zu verhindern, verwendet useGenericQuery placeholderData: keepPreviousData von TanStack Query. Dadurch bleibt das vorhandene Raster während des Übergangs sichtbar.",
+      optimisticDeletesTitle: "Optimistisches Löschen und Cache-Rollback",
+      optimisticDeletesIntro:
+        "Wenn ein Löschvorgang ausgelöst wird, entfernt die UI das Element sofort optimistisch aus dem Listencache und bricht aktive Abfragen ab. Schlägt der API-Aufruf fehl, wird der Cache automatisch auf den vorherigen Zustand zurückgesetzt.",
     },
     stateManagement: {
       title: "State Management",
@@ -76,6 +82,9 @@ export const de = {
       rulesTitle: "Validierungsregeln Referenz",
       serverErrorTitle: "Serverseitige Fehlerbehandlung",
       serverErrorIntro: "Server-Fehler werden über setError() den Feldern in der UI zugeordnet.",
+      zodUtilsTitle: "Zod Schema Builder und sicheres API-Parsing",
+      zodUtilsIntro:
+        "Zod-Formulare nutzen gemeinsam genutzte Builder wie emailField, strongPassword, requiredStr und cronField. safeParseApiResponse analysiert Antworten sicher, um Abstürze bei Änderungen des Backend-Schemas zu verhindern.",
     },
     componentLibrary: {
       title: "Komponentenbibliothek",

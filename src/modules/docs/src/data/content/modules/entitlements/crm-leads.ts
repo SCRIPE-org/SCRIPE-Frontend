@@ -51,6 +51,70 @@ const sections: DocSection[] = [
     ],
   },
 
+  // ─── Ingestion and Deduplication Lifecycle ────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.crmLeads.ingestionTitle",
+    id: "ingestion-deduplication",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.crmLeads.ingestionIntro",
+  },
+  {
+    type: "table",
+    headers: ["Check Name", "Logic / Trigger", "Error Code / Behavior"],
+    rows: [
+      [
+        "Workspace Collision",
+        "Checks if a tenant already exists with the same company name or normalized subdomain slug.",
+        "workspace_exists (Conflict error)",
+      ],
+      [
+        "Deduplication",
+        "Checks active leads (non-Converted/non-Closed) with the same company name and exact email match.",
+        "duplicate_lead (Rejection error)",
+      ],
+      [
+        "Colleague Submission",
+        "If company name matches an active lead but email is different, registers as colleague submission for Enterprise ABM.",
+        "Sets ParentLeadId to existing lead's ID",
+      ],
+      [
+        "Daily Cap",
+        "Checks if count of leads created today is at or above the system cap (1,000 leads).",
+        "daily_cap_exceeded (Rejection error)",
+      ],
+    ],
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "SubmitContactSalesLeadCommandHandler.cs",
+    code: `// Inside SubmitContactSalesLeadCommandHandler.cs:
+// Check 1: Workspace Collision
+var slug = SubdomainHelper.Normalize(request.CompanyName);
+if (await _tenantRepository.ExistsBySlugAsync(slug, ct))
+    return Result.Fail("workspace_exists");
+
+// Check 2: Deduplication & ABM Parent Linking
+var activeLead = await _leadRepository.GetActiveByCompanyAsync(request.CompanyName, ct);
+if (activeLead != null)
+{
+    if (activeLead.Email == request.Email)
+        return Result.Fail("duplicate_lead");
+        
+    // Enterprise ABM: link colleague submission
+    parentLeadId = activeLead.Id;
+}
+
+// Check 3: Daily Cap
+var todayCount = await _leadRepository.CountTodayAsync(ct);
+if (todayCount >= 1000) // DailyLeadCap
+    return Result.Fail("daily_cap_exceeded");`,
+  },
+
   // ─── Lead Lifecycle ───────────────────────────────────────────
   {
     type: "heading",
@@ -271,6 +335,62 @@ Entitlements.Infrastructure/
     contentKey: "modules.crmLeads.convertIntro",
   },
   {
+    type: "flowchart",
+    direction: "vertical",
+    nodes: [
+      {
+        id: "leadsView",
+        label: "Leads UI",
+        description: "Sales admin initiates conversion on qualified lead",
+      },
+      {
+        id: "wizard",
+        label: "ConvertToTenantDialog",
+        description: "4-step wizard: Plan Selection → Configuration → Feature Overrides → Confirm",
+      },
+      {
+        id: "handler",
+        label: "ConvertLeadToTenantCommand",
+        description: "Executes in a single atomic database transaction",
+      },
+      {
+        id: "prov1",
+        label: "TenantProvisioner Phase 1",
+        description: "Creates Tenant, Default Roles (Admin, User), and Admin User",
+      },
+      {
+        id: "prov2",
+        label: "TenantProvisioner Phase 2",
+        description: "Calls SubscriptionManager.AssignEditionAsync to create subscription",
+      },
+      {
+        id: "overrides",
+        label: "Apply Custom Overrides",
+        description: "Saves custom feature overrides for the new tenant",
+      },
+      {
+        id: "finalize",
+        label: "Finalize Lead Status",
+        description: "Lead set to Converted, ConvertedToTenantId is mapped, activity logs saved",
+      },
+      {
+        id: "comp",
+        label: "Saga Compensation",
+        description:
+          "If saving lead fails, throws critical exception to trigger manual rollback alert",
+      },
+    ],
+    connections: [
+      { from: "leadsView", to: "wizard" },
+      { from: "wizard", to: "handler", label: "Submit payload" },
+      { from: "handler", to: "prov1" },
+      { from: "prov1", to: "prov2", label: "Phase 1 complete" },
+      { from: "prov2", to: "overrides", label: "Phase 2 complete" },
+      { from: "overrides", to: "finalize" },
+      { from: "finalize", to: "comp", label: "On DB Error (Alert)" },
+    ],
+  },
+  {
     type: "code",
     language: "csharp",
     filename: "ConvertLeadToTenantCommand.cs",
@@ -286,14 +406,18 @@ Entitlements.Infrastructure/
     bool    SkipPayment = true  // always true for contact-sales
 ) : ICommand<ConvertLeadToTenantResult>;
 
-// Handler steps (all in a single transaction):
-// 1. Decrypt + fetch lead — validate Status ≠ Converted
-// 2. Resolve EditionId from lead.EditionKey if not provided
-// 3. Call ITenantProvisioner.ProvisionAsync() → creates tenant + admin user
-// 4. Assign edition subscription (SkipPayment = true → no Stripe)
-// 5. Log LeadActivity: "Converted to Tenant {tenantId}"
-// 6. Update lead: Status = Converted, ConvertedAt = UtcNow, ConvertedToTenantId
-// 7. SaveChangesAsync → publish domain events → return result`,
+// Inside ConvertLeadToTenantCommandHandler.cs:
+// 1. Check if lead is already Converted/Closed.
+// 2. Resolve EditionId from lead.EditionKey if not provided.
+// 3. Call ITenantProvisioner.ProvisionAsync() inside transaction:
+//    - Phase 1: Create tenant, seed default roles, and create tenant admin user.
+//    - Phase 2: Call _subscriptionManager.AssignEditionAsync() to create subscription.
+// 4. Save custom feature overrides.
+// 5. Update lead entity status = Converted, set ConvertedAt and ConvertedToTenantId.
+// 6. Log Converted activity.
+// 7. SaveChangesAsync() to commit the transaction.
+// 8. Saga Compensation: If updating the lead fails after tenant provisioning,
+//    throw a critical exception to trigger database transaction rollback or manual reconciliation.`,
   },
 
   // ─── Email Notifications ──────────────────────────────────────

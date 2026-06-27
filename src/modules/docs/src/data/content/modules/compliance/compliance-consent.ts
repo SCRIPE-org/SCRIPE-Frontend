@@ -11,7 +11,7 @@ const sections: DocSection[] = [
     contentKey: "modules.compliance.consent.infoContent",
   },
 
-  // ─── Consent Flow ─────────────────────────────────────────
+  // ─── Consent Logging & Verification Flow ──────────────────
   {
     type: "heading",
     level: 2,
@@ -25,38 +25,52 @@ const sections: DocSection[] = [
     direction: "vertical",
     nodes: [
       {
-        id: "purpose",
-        labelKey: "modules.compliance.consent.nodePurpose",
+        id: "submit",
+        labelKey: "modules.compliance.consent.nodeSubmit",
         type: "primary",
-        descriptionKey: "modules.compliance.consent.descPurpose",
+        descriptionKey: "modules.compliance.consent.descSubmit",
       },
       {
-        id: "record",
-        labelKey: "modules.compliance.consent.nodeRecord",
-        type: "info",
-        descriptionKey: "modules.compliance.consent.descRecord",
-      },
-      {
-        id: "snapshot",
-        labelKey: "modules.compliance.consent.nodeSnapshot",
+        id: "validate",
+        labelKey: "modules.compliance.consent.nodeValidate",
         type: "warning",
-        descriptionKey: "modules.compliance.consent.descSnapshot",
+        descriptionKey: "modules.compliance.consent.descValidate",
       },
       {
-        id: "job",
-        labelKey: "modules.compliance.consent.nodeJob",
+        id: "ledger",
+        labelKey: "modules.compliance.consent.nodeLedger",
+        type: "info",
+        descriptionKey: "modules.compliance.consent.descLedger",
+      },
+      {
+        id: "upsert",
+        labelKey: "modules.compliance.consent.nodeUpsert",
+        type: "success",
+        descriptionKey: "modules.compliance.consent.descUpsert",
+      },
+      {
+        id: "events",
+        labelKey: "modules.compliance.consent.nodeEvents",
         type: "default",
-        descriptionKey: "modules.compliance.consent.descJob",
+        descriptionKey: "modules.compliance.consent.descEvents",
+      },
+      {
+        id: "expiry",
+        labelKey: "modules.compliance.consent.nodeExpiry",
+        type: "danger",
+        descriptionKey: "modules.compliance.consent.descExpiry",
       },
     ],
     connections: [
-      { from: "purpose", to: "record", labelKey: "modules.compliance.consent.conn1" },
-      { from: "record", to: "snapshot", labelKey: "modules.compliance.consent.conn2" },
-      { from: "job", to: "record", labelKey: "modules.compliance.consent.conn3" },
+      { from: "submit", to: "validate", labelKey: "modules.compliance.consent.connSubmitValidate" },
+      { from: "validate", to: "ledger", labelKey: "modules.compliance.consent.connValidateLedger" },
+      { from: "ledger", to: "upsert", labelKey: "modules.compliance.consent.connLedgerUpsert" },
+      { from: "upsert", to: "events", labelKey: "modules.compliance.consent.connUpsertEvents" },
+      { from: "expiry", to: "upsert", labelKey: "modules.compliance.consent.connExpiryUpsert" },
     ],
   },
 
-  // ─── Consent Purposes ─────────────────────────────────────
+  // ─── Consent Purposes & Settings ──────────────────────────
   {
     type: "heading",
     level: 2,
@@ -67,55 +81,64 @@ const sections: DocSection[] = [
   {
     type: "table",
     headers: [
-      "modules.compliance.consent.purposesCode",
-      "modules.compliance.consent.purposesDesc",
+      "modules.compliance.consent.purposesKey",
       "modules.compliance.consent.purposesBasis",
+      "modules.compliance.consent.purposesRequired",
+      "modules.compliance.consent.purposesSort",
+      "modules.compliance.consent.purposesActive",
     ],
     rows: [
-      [
-        "Marketing",
-        "modules.compliance.consent.purposesMarketingDesc",
-        "modules.compliance.consent.basisConsent",
-      ],
-      [
-        "Analytics",
-        "modules.compliance.consent.purposesAnalyticsDesc",
-        "modules.compliance.consent.basisConsent",
-      ],
-      [
-        "ThirdParty",
-        "modules.compliance.consent.purposesThirdPartyDesc",
-        "modules.compliance.consent.basisConsent",
-      ],
-      [
-        "Essential",
-        "modules.compliance.consent.purposesEssentialDesc",
-        "modules.compliance.consent.basisLegitimate",
-      ],
+      ["essential", "modules.compliance.consent.basisContract", "True", "1", "True"],
+      ["marketing", "modules.compliance.consent.basisConsent", "False", "2", "True"],
+      ["analytics", "modules.compliance.consent.basisConsent", "False", "3", "True"],
     ],
   },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "AddConsentPurposeCommandValidator.cs",
+    code: `RuleFor(x => x.RegulationProfileId).NotEmpty().WithMessage("Regulation profile ID is required.");
+RuleFor(x => x.Key)
+    .NotEmpty().WithMessage("Purpose key is required.")
+    .MaximumLength(100).WithMessage("Purpose key must not exceed 100 characters.")
+    .Matches(@"^[a-z0-9_\\.\\-]+$").WithMessage("Purpose key must use lowercase letters, digits, underscores, dots or hyphens.");
+RuleFor(x => x.Name)
+    .NotEmpty().WithMessage("Purpose name is required.")
+    .MaximumLength(200).WithMessage("Purpose name must not exceed 200 characters.");
+RuleFor(x => x.LegalBasis)
+    .NotEmpty().WithMessage("Legal basis is required.")
+    .MaximumLength(100).WithMessage("Legal basis must not exceed 100 characters.");
+RuleFor(x => x.SortOrder)
+    .GreaterThanOrEqualTo(0).WithMessage("Sort order cannot be negative.");`,
+  },
 
-  // ─── Snapshot Immutability ────────────────────────────────
+  // ─── Dual-Table Database Architecture ────────────────────
   {
     type: "heading",
     level: 2,
     titleKey: "modules.compliance.consent.immutabilityTitle",
-    id: "immutability",
+    id: "dual-table",
   },
   { type: "paragraph", contentKey: "modules.compliance.consent.immutabilityIntro" },
   {
     type: "code",
     language: "csharp",
-    filename: "ConsentSnapshot.cs",
-    code: `public class ConsentSnapshot : BaseEntity<Guid>
+    filename: "ConsentSnapshotRepository.cs",
+    code: `public async Task UpsertAsync(ConsentSnapshot snapshot, CancellationToken ct = default)
 {
-    public Guid ConsentRecordId { get; set; }
-    public ConsentState State { get; set; } // Granted/Revoked
-    public DateTime Timestamp { get; set; }
-    
-    // Hash of (RecordId + State + Timestamp + PreviousHash) for tampering detection
-    [MaxLength(256)]
-    public string IntegrityHash { get; set; } = null!;
+    var existing = await context.Set<ConsentSnapshot>()
+        .FirstOrDefaultAsync(s => s.SubjectId == snapshot.SubjectId
+                               && s.PurposeId == snapshot.PurposeId
+                               && s.TenantId == snapshot.TenantId, ct);
+    if (existing is null)
+        await context.Set<ConsentSnapshot>().AddAsync(snapshot, ct);
+    else
+    {
+        existing.CurrentAction = snapshot.CurrentAction;
+        existing.ConsentVersion = snapshot.ConsentVersion;
+        existing.RequiresReConsent = snapshot.RequiresReConsent;
+        existing.LastUpdatedAt = snapshot.LastUpdatedAt;
+    }
 }`,
   },
 
@@ -128,6 +151,12 @@ const sections: DocSection[] = [
   },
   { type: "paragraph", contentKey: "modules.compliance.consent.entitiesIntro" },
   {
+    type: "heading",
+    level: 3,
+    titleKey: "modules.compliance.consent.entitiesLedgerTitle",
+    id: "entity-consent-record",
+  },
+  {
     type: "table",
     headers: [
       "modules.compliance.consent.field",
@@ -137,12 +166,39 @@ const sections: DocSection[] = [
     rows: [
       ["Id", "Guid", "modules.compliance.consent.fId"],
       ["TenantId", "Guid", "modules.compliance.consent.fTenantId"],
-      ["SubjectId", "String", "modules.compliance.consent.fSubjectId"],
-      ["PurposeCode", "String", "modules.compliance.consent.fPurposeCode"],
-      ["State", "Enum", "modules.compliance.consent.fState"],
+      ["SubjectId", "Guid", "modules.compliance.consent.fSubjectId"],
+      ["PurposeId", "Guid", "modules.compliance.consent.fPurposeId"],
+      ["Action", "Enum (Granted/Withdrawn)", "modules.compliance.consent.fAction"],
+      ["RecordedAt", "DateTime", "modules.compliance.consent.fRecordedAt"],
+      ["ConsentVersion", "String", "modules.compliance.consent.fConsentVersion"],
       ["IpAddress", "String", "modules.compliance.consent.fIpAddress"],
       ["UserAgent", "String", "modules.compliance.consent.fUserAgent"],
-      ["PolicyVersion", "String", "modules.compliance.consent.fPolicyVersion"],
+      ["RegulationBasis", "String", "modules.compliance.consent.fRegulationBasis"],
+      ["CollectionMethod", "String", "modules.compliance.consent.fCollectionMethod"],
+    ],
+  },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "modules.compliance.consent.entitiesSnapshotTitle",
+    id: "entity-consent-snapshot",
+  },
+  {
+    type: "table",
+    headers: [
+      "modules.compliance.consent.field",
+      "modules.compliance.consent.type",
+      "modules.compliance.consent.description",
+    ],
+    rows: [
+      ["Id", "Guid", "modules.compliance.consent.fId"],
+      ["TenantId", "Guid", "modules.compliance.consent.fTenantId"],
+      ["SubjectId", "Guid", "modules.compliance.consent.fSubjectId"],
+      ["PurposeId", "Guid", "modules.compliance.consent.fPurposeId"],
+      ["CurrentAction", "Enum (Granted/Withdrawn)", "modules.compliance.consent.fCurrentAction"],
+      ["LastUpdatedAt", "DateTime", "modules.compliance.consent.fLastUpdatedAt"],
+      ["RequiresReConsent", "Boolean", "modules.compliance.consent.fRequiresReConsent"],
+      ["ConsentVersion", "String", "modules.compliance.consent.fConsentVersion"],
     ],
   },
 
@@ -191,8 +247,22 @@ const sections: DocSection[] = [
         method: "POST",
         path: "/api/v1/compliance/consent",
         descriptionKey: "modules.compliance.consent.epRecord",
-        auth: "AdminOnly",
+        auth: "AdminOrUser",
         permission: "compliance_consent.manage",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/compliance/consent/withdraw",
+        descriptionKey: "modules.compliance.consent.epWithdraw",
+        auth: "AdminOrUser",
+        permission: "compliance_consent.manage",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/compliance/consent/me",
+        descriptionKey: "modules.compliance.consent.epGetMy",
+        auth: "UserOnly",
+        permission: "compliance_consent.view_self",
       },
       {
         method: "GET",
@@ -220,5 +290,5 @@ registerPage({
   order: 3,
   sections,
   relatedSlugs: ["modules/compliance-overview", "infrastructure/background-jobs"],
-  lastUpdated: "2026-05-03",
+  lastUpdated: "2026-06-28",
 });

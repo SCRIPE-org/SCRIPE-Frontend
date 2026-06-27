@@ -232,34 +232,51 @@ export const fr = {
     auditCompliance: {
       title: "Audit et Conformité",
       description:
-        "Pipeline de journalisation immuable interceptant les changements de la base de données et exportant vers Excel/PDF.",
-      intro: "SCRIPE est dotée d'une suite permettant une piste d'audit juridique inaltérable.",
+        "Pipeline d'audit complet, suivi des entités, streaming SignalR, export CSV/Excel/PDF et fonctionnalités de conformité.",
+      intro: "Un journal complet de chaque modification de données et de chaque requête API.",
       architectureTitle: "Architecture d'Audit",
       architectureIntro:
-        "Combine l'AuditableEntityInterceptor d'EF Core, l'AuditBehavior de SCRIPE mediator et le RequestLoggingMiddleware.",
+        "Le système d'audit comprend la journalisation des requêtes HTTP et l'interception des mutations d'entités en base de données. Les métadonnées de requête sont enregistrées de manière asynchrone au niveau de l'hôte via le RequestLoggingMiddleware, tandis que les modifications en base de données sont capturées par l'AuditableEntityInterceptor avant SaveChanges.",
       interceptorTitle: "Intercepteur de Changement d'Entité",
       interceptorIntro:
-        "S'exécute à l'intérieur de l'ORM, calculant l'ancienne et la nouvelle valeur, l'auteur de l'action, puis sérialise le tout en JSON.",
+        "L'AuditableEntityInterceptor se branche sur le pipeline SaveChangesAsync d'EF Core. Pour chaque entité ajoutée, modifiée ou supprimée (y compris les suppressions logiques), il capture les anciennes et nouvelles valeurs sous format JSON, l'utilisateur auteur du changement et le timestamp. Il ignore les entités AuditLog pour éviter une récursion infinie.",
       auditLogEntityTitle: "Structure de l'Entité AuditLog",
       signalrTitle: "Diffusion SignalR en Temps Réel",
       signalrIntro:
-        "Les journaux d'audit sont envoyés aux écrans de la salle de contrôle via le canal AuditHub de SignalR dès que l'événement se produit.",
+        "Les journaux d'audit sont diffusés en temps réel via le hub SignalR AuditHub. Les clients administrateurs connectés reçoivent des notifications instantanées lors de toute modification de données, ce qui permet des tableaux de bord de surveillance en direct.",
       exportTitle: "Capacités d'Exportation",
       exportIntro: "Fichiers PDF à des fins légales ou Excel/CSV pour un retraitement Big Data.",
+      exportDetail:
+        "L'AuditExportService fournit des exports multi-formats. L'export CSV utilise CsvHelper en forçant les guillemets (RFC 4180) pour éviter l'injection CSV, avec un préambule UTF-8 BOM pour Excel. L'export Excel génère un classeur ClosedXML avec trois onglets : Executive Summary (statistiques/KPI), Audit Data (avec filtres automatiques, en-têtes figés et mise en forme conditionnelle vert/rouge) et Security Analysis. L'export PDF utilise le moteur QuestPDF, marqué comme obsolète pour les grands jeux de données en raison de sa consommation mémoire. Pour protéger les ressources, les exports sont limités à 10 000 lignes et chargés entièrement en mémoire avant l'envoi.",
       queryApiTitle: "API de Requête et Exportation",
       queryApiIntro:
-        "Permet des recherches extrêmement rapides combinées au système RBAC pour le filtrage.",
+        "L'API d'audit offre des fonctionnalités de recherche, de filtrage et d'exportation pour les journaux d'audit. Tous les endpoints nécessitent une authentification administrateur et la permission audit.view ou audit.export.",
       querySearchDesc: "Rechercher et filtrer les journaux.",
       queryExportCsvDesc: "Exporter sous format fichier CSV.",
       queryExportExcelDesc: "Exporter sous tableur Excel.",
       queryExportPdfDesc: "Exporter sous document PDF.",
+      scopingTitle: "Ciblage hiérarchique des locataires et isolation de sécurité",
+      scopingDetail:
+        "L'isolation des données est appliquée dynamiquement lors de l'exécution des requêtes. Le DataScopeService résout la portée effective de l'administrateur selon une chaîne de priorité stricte : ContextTenant (impersonnalisation via des en-têtes chiffrés AES), surcharges de permission, SystemProtectedAdmin, Hierarchy (incluant les enfants) ou OwnTenant. Les descendants sont parcourus en temps fixe via des chemins matérialisés, traduits en requêtes SQL LIKE indexées. Le dépôt applique AuditByTenantScopeSpec pour assurer le filtre 'WHERE TenantId IN (...)', tandis que l'accès direct par identifiant est vérifié par GetAuditLogDetailQueryHandler afin d'éviter toute escalade horizontale de privilèges.",
       complianceTitle: "Fonctionnalités de Conformité",
       immutableTitle: "Journaux Immuables",
+      immutableDesc:
+        "Les journaux sont verrouillés et stored en lecture seule, empêchant toute suppression ou mise à jour après validation.",
       fullTraceTitle: "Traçabilité Totale",
+      fullTraceDesc:
+        "Capture les en-têtes HTTP, le contexte de requête et les mutations d'entité pour garantir une traçabilité complète.",
       searchableTitle: "Facilement Consultable",
+      searchableDesc:
+        "Des index optimisés sur Timestamp, UserId, EventType et CorrelationId permettent des recherches instantanées.",
       tenantScopedTitle: "Cloisonné par Locataire",
+      tenantScopedDesc:
+        "Les journaux sont isolés automatiquement par TenantId et arborescence de descendants, évitant toute fuite.",
       realtimeTitle: "Temps Réel",
+      realtimeDesc:
+        "Diffusez les événements de sécurité en direct vers des tableaux de bord SignalR isolés par locataire.",
       retentionTitle: "Politique de Rétention",
+      retentionDesc:
+        "Les périodes de rétention configurées purgent automatiquement les journaux expirés via des tâches de fond.",
     },
   },
 };

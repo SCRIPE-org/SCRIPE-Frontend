@@ -182,49 +182,110 @@ public class CreateChatRoomCommand : ICommand<Guid>, IRequireFeature
 }`,
   },
   {
-    type: "code",
-    language: "csharp",
-    filename: "FeatureCheckBehavior Pipeline",
-    code: `public class FeatureCheckBehavior<TRequest, TResponse> 
-    : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequireFeature
-{
-    private readonly IFeatureCache _cache;
-    private readonly ICurrentTenantAccessor _tenant;
-
-    public async Task<TResponse> Handle(
-        TRequest request, 
-        RequestHandlerDelegate<TResponse> next, 
-        CancellationToken ct)
-    {
-        var tenantId = _tenant.TenantId;
-        var featureName = request.RequiredFeatureName;
-        
-        // Resolve: Override → Edition → Default
-        var resolved = await _cache.GetResolvedValue(tenantId, featureName);
-        
-        if (resolved.ValueType == FeatureValueType.Boolean && resolved.Value == "false")
-            return Result.Forbidden("Feature is disabled for your plan");
-            
-        if (resolved.ValueType == FeatureValueType.Numeric)
-        {
-            var limit = int.Parse(resolved.Value);
-            if (limit != -1) // -1 = unlimited
-            {
-                var usage = await _cache.GetCurrentUsage(tenantId, featureName);
-                if (usage >= limit)
-                    return Result.Forbidden("Quota exceeded for your plan");
-            }
-        }
-        
-        return await next(); // Feature check passed
-    }
-}`,
+    type: "flowchart",
+    direction: "vertical",
+    nodes: [
+      {
+        id: "start",
+        label: "Request Received",
+        description: "Command/Query enters FeatureCheckBehavior",
+      },
+      {
+        id: "optCheck",
+        label: "Opt-in Check",
+        description: "Does the request implement IRequireFeature?",
+      },
+      {
+        id: "bypassCheck",
+        label: "System Bypass",
+        description: "Is user system protected admin or super admin with no TenantId context?",
+      },
+      {
+        id: "tenantCheck",
+        label: "Tenant Context check",
+        description: "Is TenantId present in current user context?",
+      },
+      {
+        id: "resolve",
+        label: "Resolve Feature",
+        description: "IFeatureChecker.IsEnabledAsync(tenantId, featureName) called",
+      },
+      {
+        id: "fail",
+        label: "Forbidden Failure",
+        description: "Return Result.Failure(Forbidden) with feature.notAvailable",
+      },
+      {
+        id: "proceed",
+        label: "Proceed",
+        description: "Forward to next behavior or command handler",
+      },
+    ],
+    connections: [
+      { from: "start", to: "optCheck" },
+      { from: "optCheck", to: "proceed", label: "No (pass through)" },
+      { from: "optCheck", to: "bypassCheck", label: "Yes" },
+      { from: "bypassCheck", to: "proceed", label: "Yes (bypass)" },
+      { from: "bypassCheck", to: "tenantCheck", label: "No" },
+      { from: "tenantCheck", to: "fail", label: "No TenantId" },
+      { from: "tenantCheck", to: "resolve", label: "TenantId exists" },
+      { from: "resolve", to: "fail", label: "Disabled (false)" },
+      { from: "resolve", to: "proceed", label: "Enabled (true)" },
+    ],
   },
   {
     type: "info",
     variant: "tip",
     contentKey: "modules.entitlementsOverview.pipelineTip",
+  },
+
+  // ─── Quota Gating & Slot Reservations ──────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.entitlementsOverview.quotaGatingTitle",
+    id: "quota-gating",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.entitlementsOverview.quotaGatingIntro",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "TryReserveSlotAsync Implementation",
+    code: `// Inside QuotaCounterRepository.cs:
+public async Task<bool> TryReserveSlotAsync(Guid tenantId, string resourceType, CancellationToken ct = default)
+{
+    var counter = await GetAsync(tenantId, resourceType, ct);
+    if (counter == null) return true; // No counter = no limit
+
+    // Check 1: Per-tenant limit
+    if (counter.Max != -1 && (counter.Used + counter.Reserved) >= counter.Max)
+        return false;
+
+    // Check 2: Pooled limit (sibling tenants sharing a PoolRootTenantId)
+    if (counter.PoolRootTenantId.HasValue)
+    {
+        var rootCounter = await GetAsync(counter.PoolRootTenantId.Value, resourceType, ct);
+        if (rootCounter != null && rootCounter.PoolMax != -1)
+        {
+            var poolUsage = await GetPoolUsageAsync(counter.PoolRootTenantId.Value, resourceType, ct);
+            if (poolUsage >= rootCounter.PoolMax)
+                return false;
+        }
+    }
+
+    // Atomically reserve the slot
+    counter.Reserved++;
+    await _db.SaveChangesAsync(ct);
+    return true;
+}`,
+  },
+  {
+    type: "info",
+    variant: "note",
+    contentKey: "modules.entitlementsOverview.quotaGatingNote",
   },
 
   // ─── CQRS Command/Query Map ───────────────────────────────

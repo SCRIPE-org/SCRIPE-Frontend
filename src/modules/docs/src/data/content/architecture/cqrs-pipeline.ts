@@ -724,7 +724,11 @@ public class FeatureCache : IFeatureCache
     direction: "vertical",
     nodes: [
       { id: "operation", labelKey: "architecture.cqrsPipeline.flowOutboxRaise", type: "primary" },
-      { id: "intercept", labelKey: "architecture.cqrsPipeline.flowOutboxIntercept", type: "warning" },
+      {
+        id: "intercept",
+        labelKey: "architecture.cqrsPipeline.flowOutboxIntercept",
+        type: "warning",
+      },
       { id: "serialize", labelKey: "architecture.cqrsPipeline.flowOutboxSerialize", type: "info" },
       { id: "commit", labelKey: "architecture.cqrsPipeline.flowOutboxCommit", type: "success" },
       { id: "poll", labelKey: "architecture.cqrsPipeline.flowOutboxPoll", type: "warning" },

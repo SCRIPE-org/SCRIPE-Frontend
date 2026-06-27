@@ -23,19 +23,57 @@ const sections: DocSection[] = [
     type: "table",
     headers: ["Property", "Type", "Description"],
     rows: [
-      ["Id", "Guid", "Primary key"],
-      ["Name", "string", "Display name (e.g. 'Pro', 'Enterprise')"],
-      ["Description", "string?", "Human-readable description of the plan"],
-      ["IsSystemEdition", "bool", "true = created by platform admin, false = retail edition"],
-      ["CreatedByTenantId", "Guid?", "If retail edition, the tenant that created it"],
-      ["OverflowPolicy", "enum", "What happens on downgrade: Block, Warn, Allow"],
-      ["IsActive", "bool", "Whether the edition can be subscribed to"],
-      ["Price", "decimal?", "Optional pricing for display purposes"],
-      ["BillingCycle", "string?", "Monthly, Annual, Lifetime, Custom"],
-      ["MaxTenants", "int?", "Maximum tenants that can subscribe (-1 = unlimited)"],
-      ["SortOrder", "int", "Display order in edition list"],
-      ["CreatedAt", "DateTime", "When the edition was created"],
-      ["UpdatedAt", "DateTime?", "When the edition was last modified"],
+      ["Id", "Guid", "Primary key (auto-generated)"],
+      [
+        "Name",
+        "string",
+        "Unique plan slug (e.g., 'general-free', 'general-pro', 'general-enterprise')",
+      ],
+      ["DisplayNameEn / DisplayNameAr", "string", "Localized titles for display in the UI"],
+      [
+        "TierLevel",
+        "int",
+        "Hierarchical level (0 = Free, 1+ = premium) used for upgrades/downgrades",
+      ],
+      [
+        "IsSystem",
+        "bool",
+        "true = system-defined standard plan, false = reseller-defined retail plan",
+      ],
+      [
+        "FallbackEditionId",
+        "Guid?",
+        "Downgrade target plan on subscription expiry. If null, the tenant is suspended.",
+      ],
+      [
+        "OverflowPolicy",
+        "enum",
+        "Downgrade behavior (Block, Warn, Allow) when resource counts exceed new limits",
+      ],
+      [
+        "AllowMonthly / AllowYearly / AllowLifetime / AllowTrial",
+        "bool",
+        "Billing cycle configuration toggles",
+      ],
+      [
+        "IsFree",
+        "bool",
+        "Computed: true if plan has no trial, billing cycles, or contact-sales toggles",
+      ],
+      [
+        "IsContactSalesOnly",
+        "bool",
+        "Bypasses self-service Stripe Checkout (Enterprise custom plans)",
+      ],
+      [
+        "TrialDurationDays / TrialIsFree / TrialDiscountPercent",
+        "fields",
+        "Trial tier setup parameters",
+      ],
+      ["GracePeriodDays", "int", "Stripe payment retry/grace period duration in days"],
+      ["MaxActiveSubscriptions", "int", "Global capacity limit for this specific plan"],
+      ["StripeProductId", "string?", "Catalog ID for Stripe synchronization"],
+      ["CreatedAt / UpdatedAt", "DateTime", "Audit timestamps"],
     ],
   },
   {
@@ -45,20 +83,33 @@ const sections: DocSection[] = [
     code: `public class Edition : AuditableEntity, ISoftDeletable
 {
     public string Name { get; set; } = string.Empty;
-    public string? Description { get; set; }
-    public bool IsSystemEdition { get; set; } = true;
-    public Guid? CreatedByTenantId { get; set; }
-    public OverflowPolicy OverflowPolicy { get; set; } = OverflowPolicy.Warn;
-    public bool IsActive { get; set; } = true;
-    public decimal? Price { get; set; }
-    public string? BillingCycle { get; set; }
-    public int? MaxTenants { get; set; }
-    public int SortOrder { get; set; }
+    public string DisplayNameEn { get; set; } = string.Empty;
+    public string DisplayNameAr { get; set; } = string.Empty;
+    public int TierLevel { get; set; }
+    public bool IsSystem { get; set; } = true;
+    public Guid? FallbackEditionId { get; set; }
+    public OverflowPolicy OverflowPolicy { get; set; } = OverflowPolicy.Block;
 
-    // Navigation properties
-    public ICollection<EditionFeature> Features { get; set; } = [];
-    public ICollection<EditionVersion> Versions { get; set; } = [];
-    public ICollection<TenantSubscription> Subscriptions { get; set; } = [];
+    // Billing Toggles
+    public bool AllowMonthly { get; set; }
+    public bool AllowYearly { get; set; }
+    public bool AllowLifetime { get; set; }
+    public bool AllowTrial { get; set; }
+    
+    public bool IsFree => !AllowTrial && !AllowMonthly && !AllowYearly && !AllowLifetime && !IsContactSalesOnly;
+    public bool IsContactSalesOnly { get; set; }
+    
+    // Trial Configuration
+    public int TrialDurationDays { get; set; }
+    public bool TrialIsFree { get; set; }
+    public decimal TrialDiscountPercent { get; set; }
+    
+    public int GracePeriodDays { get; set; }
+    public int MaxActiveSubscriptions { get; set; }
+    public string? StripeProductId { get; set; }
+
+    public virtual ICollection<EditionFeature> Features { get; set; } = [];
+    public virtual ICollection<EditionVersion> Versions { get; set; } = [];
 }`,
   },
 
@@ -97,6 +148,32 @@ const sections: DocSection[] = [
     type: "info",
     variant: "note",
     contentKey: "modules.editions.scopingNote",
+  },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.editions.seededTitle",
+    id: "seeded-editions",
+  },
+  {
+    type: "paragraph",
+    contentKey: "modules.editions.seededIntro",
+  },
+  {
+    type: "table",
+    headers: ["Edition", "Description", "Included Features & Limits"],
+    rows: [
+      [
+        "Free",
+        "TierLevel = 0. Default fallback plan for all tenants upon subscription expiry. Permanent $0 plan.",
+        "5 Admins, 3 Roles, 1 User Group, 0 child tenants, 256MB storage, 10MB upload limit. Two-Factor Authentication and External Auth are disabled.",
+      ],
+      [
+        "Standard",
+        "TierLevel = 1. Premium plan enabling advanced administrative and organization capabilities.",
+        "50 Admins, 10 Roles, 5 User Groups, 5 child tenants, 5GB storage, 25MB upload limit. Two-Factor Authentication and External Auth are enabled.",
+      ],
+    ],
   },
 
   // ─── Overflow Policy ──────────────────────────────────────

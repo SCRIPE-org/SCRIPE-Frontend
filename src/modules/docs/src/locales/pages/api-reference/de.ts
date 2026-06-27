@@ -203,9 +203,12 @@ export const de = {
       bulkActivateDesc: "Massenaktivierung von Gruppen.",
       bulkDeactivateDesc: "Massendeaktivierung von Gruppen.",
       bulkDeleteDesc: "Massenlöschung von Gruppen.",
-      bulkActivateAllDesc: "Aktiviert alle Benutzergruppen massenhaft, die den angegebenen Filterkriterien entsprechen (unterstützt cascadeAdmins).",
-      bulkDeactivateAllDesc: "Deaktiviert alle Benutzergruppen massenhaft, die den angegebenen Filterkriterien entsprechen (unterstützt cascadeAdmins).",
-      bulkDeleteAllDesc: "Löscht alle Benutzergruppen massenhaft soft (Soft-Delete), die den angegebenen Filterkriterien entsprechen (unterstützt cascadeAdmins).",
+      bulkActivateAllDesc:
+        "Aktiviert alle Benutzergruppen massenhaft, die den angegebenen Filterkriterien entsprechen (unterstützt cascadeAdmins).",
+      bulkDeactivateAllDesc:
+        "Deaktiviert alle Benutzergruppen massenhaft, die den angegebenen Filterkriterien entsprechen (unterstützt cascadeAdmins).",
+      bulkDeleteAllDesc:
+        "Löscht alle Benutzergruppen massenhaft soft (Soft-Delete), die den angegebenen Filterkriterien entsprechen (unterstützt cascadeAdmins).",
       cascadeWarningNode:
         "Cascade-Operationen überspringen geschützte Admins (Tenant Owner) zur Sicherheit.",
     },

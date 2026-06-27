@@ -232,36 +232,42 @@ const sections: DocSection[] = [
     headers: ["Property", "Type", "Description"],
     rows: [
       ["TenantId", "Guid", "The tenant owning this counter"],
-      ["FeatureName", "string", "The numeric feature being tracked"],
-      ["CurrentUsage", "int", "Current resource count"],
-      ["LastUpdated", "DateTime", "When usage was last updated"],
+      [
+        "ResourceType",
+        "string",
+        "The feature/resource type being tracked (e.g. Identity.MaxAdminsPerTenant)",
+      ],
+      ["Used", "int", "Current confirmed resource count in the database"],
+      ["Reserved", "int", "Active slot reservations for in-flight requests"],
+      ["Max", "int", "Specific tenant limit resolved from plans or settings (-1 = unlimited)"],
+      [
+        "PoolRootTenantId",
+        "Guid?",
+        "Root tenant ID if this resource is shared across sibling tenants in a pool",
+      ],
+      ["PoolMax", "int", "Maximum total limit allowed across the entire pool (-1 = unlimited)"],
     ],
   },
   {
     type: "code",
     language: "csharp",
-    filename: "Quota Enforcement Flow",
-    code: `// Inside FeatureCheckBehavior for Numeric features:
-if (resolved.ValueType == FeatureValueType.Numeric)
+    filename: "TenantQuotaService Gating Flow",
+    code: `// Inside TenantQuotaService.cs:
+public async Task<bool> IsQuotaAvailableAsync(
+    Guid tenantId, 
+    string featureName, 
+    int currentUsage, 
+    CancellationToken ct = default)
 {
-    var limit = int.Parse(resolved.Value);
-    
+    // Concurrency Protection: acquire row-level lock on the tenant
+    await _tenantRepository.LockTenantForQuotaAsync(tenantId, ct);
+
+    // Resolve: 1. IFeatureChecker limit, 2. Fallback to legacy TenantSettings, 3. -1 fallback
+    var limit = await GetEffectiveLimitAsync(tenantId, featureName, ct);
     if (limit == -1) 
-        return await next(); // -1 = unlimited, skip check
-    
-    var counter = await _quotaCounterProvider.GetCounter(tenantId, featureName);
-    
-    if (counter.CurrentUsage >= limit)
-    {
-        return Result.Forbidden(
-            $"Quota exceeded: {featureName} " +
-            $"(usage: {counter.CurrentUsage}, limit: {limit})");
-    }
-    
-    // Increment counter after successful operation
-    await _quotaCounterProvider.Increment(tenantId, featureName);
-    
-    return await next();
+        return true; 
+        
+    return currentUsage < limit;
 }`,
   },
 
@@ -314,8 +320,9 @@ if (resolved.ValueType == FeatureValueType.Numeric)
   {
     type: "code",
     language: "csharp",
-    filename: "Using IRequireFeature",
-    code: `// Step 1: Mark your command
+    filename: "Using Feature Gates & Quota Gating",
+    code: `// ─── Boolean Feature Gate (IRequireFeature) ───
+// Step 1: Mark your command
 public class SendBulkEmailCommand : ICommand, IRequireFeature
 {
     public string RequiredFeatureName => "BulkEmail.Enabled";
@@ -326,17 +333,42 @@ public class SendBulkEmailCommand : ICommand, IRequireFeature
 }
 
 // Step 2: That's it! FeatureCheckBehavior handles the rest.
-// If "BulkEmail.Enabled" is false for the tenant → 403 Forbidden
-// If "BulkEmail.Enabled" is true → command proceeds normally
+// If "BulkEmail.Enabled" is resolved to false → returns 403 Forbidden
+// If resolved to true → command proceeds normally to the handler
 
-// For numeric features with quotas:
-public class CreateProjectCommand : ICommand<Guid>, IRequireFeature
+
+// ─── Numeric Feature Quota (Handler Enforcement) ───
+// For numeric features with resource limits, validate quotas in the handler:
+public class CreateAdminCommandHandler : IRequestHandler<CreateAdminCommand, Result<Guid>>
 {
-    public string RequiredFeatureName => "MaxProjects";
-    
-    // FeatureCheckBehavior checks: current_projects < MaxProjects limit
-    // If over limit → 403 "Quota exceeded"
-    // If under limit → auto-increment QuotaCounter + proceed
+    private readonly ITenantQuotaService _quotaService;
+    private readonly IQuotaCounterRepository _quotaCounterRepository;
+
+    public async Task<Result<Guid>> Handle(CreateAdminCommand request, CancellationToken ct)
+    {
+        // 1. Validate quota availability (concurrency-safe via LockTenantForQuotaAsync)
+        var isAvailable = await _quotaService.IsQuotaAvailableAsync(request.TenantId, "Identity.MaxAdminsPerTenant", currentUsage, ct);
+        if (!isAvailable) 
+            return Result.Failure(Error.Forbidden("Admin limit exceeded"));
+
+        // 2. Atomically reserve slot in repository
+        var reserved = await _quotaCounterRepository.TryReserveSlotAsync(request.TenantId, "Identity.MaxAdminsPerTenant", ct);
+        if (!reserved) 
+            return Result.Failure(Error.Forbidden("Admin limit exceeded"));
+
+        try
+        {
+            // Provision resource...
+            await _quotaCounterRepository.ConfirmReservationAsync(request.TenantId, "Identity.MaxAdminsPerTenant", ct);
+            return Result.Success(adminId);
+        }
+        catch
+        {
+            // Rollback reservation on failure
+            await _quotaCounterRepository.ReleaseReservationAsync(request.TenantId, "Identity.MaxAdminsPerTenant", ct);
+            throw;
+        }
+    }
 }`,
   },
 

@@ -58,6 +58,11 @@ export const es = {
       gettingStartedTitle: "Primeros Pasos",
       gettingStartedIntro:
         "Siga estos 5 pasos para configurar el sistema de Derechos para su plataforma. Cada paso se basa en el anterior:",
+      quotaGatingTitle: "Control de cuotas y reservas de espacios",
+      quotaGatingIntro:
+        "Las funciones numéricas representan cuotas que se aplican al crear recursos del inquilino. SCRIPE utiliza un patrón de reserva atómico y seguro para gestionar estos límites.",
+      quotaGatingNote:
+        "TryReserveSlotAsync incrementa el contador reservado. El controlador confirma esta reserva en caso de éxito o la libera en caso de fallo.",
     },
     editions: {
       title: "Ediciones",
@@ -110,6 +115,9 @@ export const es = {
       endpointsCreateVersion: "Crear una nueva versiÃ³n borrador con una instantÃ¡nea de funciones",
       endpointsPublishVersion:
         "Publicar una versiÃ³n borrador con la estrategia de implementaciÃ³n elegida",
+      seededTitle: "Ediciones del sistema preconfiguradas",
+      seededIntro:
+        "La plataforma inicializa dos ediciones estándar del sistema al arrancar mediante EditionSeeder, estableciendo los límites por defecto.",
     },
     subscriptions: {
       title: "Suscripciones",
@@ -329,6 +337,59 @@ export const es = {
       },
     },
 
+    crmLeads: {
+      title: "Prospectos CRM",
+      description:
+        "Línea de ventas de contacto y ventas: capture, califique, asigne y convierta clientes potenciales en inquilinos desde el panel de administración.",
+      intro:
+        "El módulo CRM Leads es la línea de ventas integrada de SCRIPE. Captura prospectos que envían el formulario de contacto, los enriquece con inteligencia de descubrimiento y proporciona un flujo de trabajo CRM completo.",
+      ingestionTitle: "Ciclo de ingesta y deduplicación",
+      ingestionIntro:
+        "Cuando un cliente potencial envía un formulario, el sistema realiza validaciones y deduplicación antes de crear un registro PlatformLead (conflictos de subdominio, ABM de colegas y límite diario de 1000 prospectos).",
+      whatIsTitle: "¿Qué es el CRM de prospectos?",
+      whatIsIntro:
+        "Un prospecto representa a un cliente potencial interesado en la plataforma. Cada prospecto contiene información de contacto y un estado de ciclo de vida.",
+      lifecycleTitle: "Ciclo de vida del prospecto",
+      lifecycleIntro:
+        "Los prospectos se mueven a través de estados definidos, registrados en el historial de actividad.",
+      discoveryTitle: "Inteligencia de descubrimiento",
+      discoveryIntro:
+        "Cada prospecto se enriquece con campos de descubrimiento del cuestionario de integración.",
+      discoveryTip:
+        "El campo de nivel recomendado es calculado por el motor de recomendaciones del asistente.",
+      backendTitle: "Arquitectura del Backend",
+      backendIntro:
+        "La función de prospectos sigue la estructura estándar de 3 proyectos de SCRIPE.",
+      entityTitle: "Entidad PlatformLead",
+      entityIntro:
+        "PlatformLead hereda de AuditableEntity. Todos los IDs se cifran mediante AES en el tránsito de la API.",
+      endpointsTitle: "Puntos de conexión API",
+      endpointsIntro:
+        "LeadsController expone 9 puntos de conexión para gestionar el ciclo de vida de los prospectos.",
+      endpointsNote:
+        "Los IDs de entidad devueltos por la API se cifran mediante AES con IdEncryptionHelper. Nunca use GUIDs crudos en el frontend.",
+      convertTitle: "Convertir a inquilino",
+      convertIntro:
+        "El comando ConvertLeadToTenant es una operación atómica. El controlador coordina la creación del inquilino, la suscripción y el manejo de errores.",
+      emailsTitle: "Notificaciones por correo electrónico",
+      emailsIntro:
+        "Se envían dos correos electrónicos HTML de forma asíncrona (fire-and-forget) al enviar el formulario.",
+      emailsTip:
+        "Configure el correo de alertas mediante la clave Leads:SalesNotificationEmail en appsettings.json.",
+      frontendTitle: "Arquitectura del Frontend",
+      frontendIntro: "El submódulo del frontend sigue el patrón estándar View/ViewModel de SCRIPE.",
+      frontendEntityTitle: "Entidad PlatformLead (Frontend)",
+      frontendEntityIntro:
+        "La entidad envuelve los datos DTO crudos con propiedades calculadas y visualizaciones.",
+      permissionsTitle: "Permisos",
+      permissionsIntro:
+        "El acceso a los prospectos está protegido por cinco permisos granulares con el formato estándar (module.action).",
+      permissionsTip:
+        "Las comprobaciones en el frontend son de experiencia de usuario. El backend valida siempre con AuthorizationBehavior.",
+      quickStartTitle: "Inicio rápido",
+      quickStartIntro:
+        "El flujo típico consta de 5 pasos clave, desde el envío hasta la conversión del inquilino.",
+    },
     compliance: {
       overview: {
         title: "MÃ³dulo de Cumplimiento",
@@ -385,112 +446,272 @@ export const es = {
           "Todos los endpoints estÃ¡n bajo /api/v1/compliances/ y requieren autenticaciÃ³n con el permiso compliance.view.",
       },
       dsr: {
-        title: "Solicitudes de Sujetos de Datos (DSR)",
-        description:
-          "GestiÃ³n de solicitudes de derechos GDPR/CCPA â€” exportaciÃ³n, borrado, rectificaciÃ³n y restricciÃ³n â€” con seguimiento del ciclo de vida.",
+        title: "Derechos de los interesados (DSR)",
+        description: "Descripción",
         intro:
-          "Las Solicitudes de Sujetos de Datos (DSR) son peticiones formales de individuos que ejercen sus derechos. El mÃ³dulo proporciona un flujo de trabajo DSR completo: envÃ­o, asignaciÃ³n, procesamiento y cierre.",
-        typesTitle: "Tipos de Solicitud",
+          "Las solicitudes de derechos de los interesados (DSR) son solicitudes formales de personas que ejercen sus derechos en virtud de las leyes de protección de datos. El módulo de cumplimiento proporciona un flujo de trabajo DSR estructurado y completo: envío, asignación, revisión, procesamiento y cierre, con un registro de auditoría completo de solo adición y seguimiento de SLA.",
+        typesTitle: "Tipos de solicitudes",
         typesIntro:
-          "El sistema soporta cuatro tipos de DSR como se define en el ArtÃ­culo 17 de GDPR y CCPA:",
-        type1:
-          "ExportaciÃ³n â€” Solicitud de portabilidad de datos. El sujeto desea una copia de sus datos personales.",
-        type2:
-          "Borrado â€” Derecho al olvido. Todos los datos personales deben ser eliminados o anonimizados.",
-        type3:
-          "Rectification â€” Solicitud de correcciÃ³n. Los datos inexactos deben actualizarse.",
-        type4:
-          "RestricciÃ³n â€” RestricciÃ³n del procesamiento. Los datos pueden conservarse pero no procesarse activamente.",
-        lifecycleTitle: "Ciclo de vida de la solicitud",
-        lifecycleIntro: "Las DSR pasan por un conjunto definido de estados:",
-        status1: "Pendiente (Pending) â€” Estado inicial cuando se recibe la solicitud.",
-        status2: "En Progreso (InProgress) â€” Un oficial de cumplimiento ha sido asignado.",
-        status3:
-          "Completada (Completed) â€” La solicitud ha sido cumplida (datos exportados, borrados, corregidos o restringidos).",
-        status4:
-          "Rechazada (Rejected) â€” La solicitud fue rechazada (ej. insuficiente verificaciÃ³n de identidad).",
-        slasTitle: "Requisitos de SLA de GDPR",
-        slasIntro:
-          "Bajo el ArtÃ­culo 12 de GDPR, los controladores deben responder a las DSR dentro de los 30 dÃ­as (extensible a 3 meses para casos complejos). SCRIPE rastrea esto.",
-        lifecycleFlowTitle: "Flujo de Vida DSR",
-        nodeSubmit: "Enviar solicitud",
-        descSubmit: "El sujeto solicita ExportaciÃ³n, Borrado o RectificaciÃ³n",
-        nodePending: "Estado: Pendiente",
-        descPending: "Solicitud registrada, plazo de SLA calculado",
-        nodeProcessing: "Estado: En Progreso",
-        descProcessing: "DsrExecutionJob procesa los mÃ³dulos vÃ­a ISuspendableModule",
-        nodeApproval: "Esperar a Admin",
-        descApproval:
-          "Acciones nucleares (Borrado) requieren confirmaciÃ³n manual del administrador",
-        nodeCompleted: "Estado: Completada",
-        descCompleted: "ExportaciÃ³n generada o datos borrados; SLA cumplido",
-        nodeRejected: "Estado: Rechazada",
-        descRejected: "Solicitud denegada por el admin con notas de resoluciÃ³n",
-        conn1: "inicia",
-        conn2: "tarea en segundo plano recoge",
-        conn3: "si es auto-procesada (ExportaciÃ³n)",
-        conn4: "si es nuclear (Borrado)",
-        conn5: "admin confirma",
-        conn6: "admin rechaza",
-        entitiesTitle: "Entidades",
-        entityName: "Nombre de la Entidad",
-        entityDesc: "DescripciÃ³n",
-        entityDsrDesc: "Representa una solicitud de sujeto de datos.",
-        entityModuleDesc: "Estado de ejecuciÃ³n de un mÃ³dulo.",
-        entityStatusDesc: "Historial de cambios de estado.",
-        codeTitle: "Ejemplo de CÃ³digo",
-        endpointsTitle: "Endpoints API",
-        endpointsIntro: "El controlador de DSR expone 6 endpoints:",
+          "El sistema admite cinco tipos de DSR definidos por las regulaciones GDPR y CCPA:",
+        typesType: "Tipo de solicitud",
+        typesDesc: "Descripción",
+        typesGdpr: "Referencia GDPR",
+        typesAccessDesc:
+          "Derecho de acceso (Artículo 15). El interesado solicita la lista de fines de tratamiento, categorías de datos personales y destinatarios.",
+        typesExportDesc:
+          "Derecho a la portabilidad de datos (Artículo 20). El interesado solicita una copia legible por máquina de sus datos personales.",
+        typesErasureDesc:
+          "Derecho de supresión / Derecho al olvido (Artículo 17). El interesado solicita la eliminación permanente o anonimización de sus PII.",
+        typesRectificationDesc:
+          "Derecho de rectificación (Artículo 16). El interesado solicita la corrección de datos personales inexactos o incompletos.",
+        typesRestrictionDesc:
+          "Derecho a la limitación del tratamiento (Artículo 18). El interesado solicita la suspensión del tratamiento conservando el almacenamiento de los datos.",
+        lifecycleTitle: "Ciclo de vida de las solicitudes",
+        lifecycleIntro:
+          "Las solicitudes DSR se modelan como transiciones de estado con un ciclo de revisión y puertas de confirmación de seguridad para evitar eliminaciones accidentales e irrecuperables:",
+        lifecycleFlowTitle: "Ciclo de vida de solicitudes DSR y puertas de seguridad",
+        nodeSubmit: "1. Enviar solicitud",
+        descSubmit:
+          "El interesado envía su solicitud mediante SubmitDsrCommand. El estado cambia a Pendiente y se calcula el plazo del SLA.",
+        nodeReview: "2. Revisión del administrador",
+        descReview:
+          "El administrador revisa la solicitud mediante ReviewDsrCommand, cambiando el estado a Aprobado o Rechazado.",
+        nodeConfirm: "3. Confirmar eliminación",
+        descConfirm:
+          "Las solicitudes de eliminación requieren confirmación manual mediante ConfirmErasureCommand, estableciendo ErasureConfirmed = true.",
+        nodeProcessing: "4. Tarea de ejecución DSR",
+        descProcessing:
+          "La tarea DsrExecutionJob, ejecutada cada 5 minutos, procesa las solicitudes confirmadas/aprobadas en lotes de 50.",
+        nodeCompleted: "5. Estado: Completado",
+        descCompleted:
+          "Ejecutado correctamente en todos los módulos, registrando la marca de tiempo de finalización.",
+        nodeRejected: "Estado: Rechazado",
+        descRejected:
+          "La solicitud es rechazada por el administrador durante la revisión. Se guardan las notas de resolución.",
+        nodeCancelled: "Estado: Cancelado",
+        descCancelled:
+          "Las solicitudes pendientes, en revisión o aprobadas pueden cancelarse manualmente en cualquier momento.",
+        nodePartial: "6. Parcialmente completado",
+        descPartial:
+          "Si algún módulo falla, el DSR pasa a Parcialmente completado e incrementa el contador RetryCount (máx 3).",
+        connSubmitReview: "Asigna y pasa a En revisión",
+        connReviewApprove: "Aprueba la solicitud",
+        connReviewReject: "Rechaza la solicitud",
+        connApproveConfirm: "Requerido para eliminación",
+        connConfirmExec: "Toma para procesamiento",
+        connExecComplete: "Todos los módulos tienen éxito",
+        connExecPartial: "Cualquier módulo falla",
+        connPartialRetry: "Reintenta los módulos fallidos",
+        connCancel: "Cancela la solicitud",
+        executionFlowTitle: "Flujo de ejecución de la anonimización DSR",
+        nodeExecJob: "Activación de DsrExecutionJob",
+        descExecJob:
+          "Se ejecuta cada 5 minutos y recupera las solicitudes de eliminación aprobadas listas para su ejecución.",
+        nodeCheckSafety: "Puerta de control de seguridad",
+        descCheckSafety:
+          "Verifica que ErasureConfirmed = true y que el período de gracia ErasureExecuteAfter haya pasado.",
+        nodeGenToken: "Generar token de anonimización",
+        descGenToken:
+          "Genera un token de anonimización SHA-256 seguro basado en el ID del interesado.",
+        nodeFanOut: "Distribución a módulos",
+        descFanOut:
+          "Itera a través de todos los proveedores de cumplimiento registrados que implementan IUserDataAnonymizer.",
+        nodeModuleExec: "Ejecución sin asignación de memoria",
+        descModuleExec:
+          "Ejecuta actualizaciones de base de datos a través de ExecuteUpdateAsync de EF Core para borrar los campos PII.",
+        nodeEvalStatus: "Evaluar resultados",
+        descEvalStatus:
+          "Verifica los registros de ejecución del módulo para confirmar que se completaron con éxito.",
+        nodeComplete: "Establecer estado: Completado",
+        descComplete:
+          "El ticket DSR se marca como Completado y se guarda la marca de tiempo CompletedAt.",
+        nodePartialLimit: "Establecer estado: Parcialmente completado",
+        descPartialLimit:
+          "Registra el error, incrementa RetryCount y pone en cola los módulos fallidos para reintento (máx 3).",
+        connJobCheck: "recupera el lote",
+        connCheckGen: "si se superan las puertas de seguridad",
+        connGenFan: "genera el token",
+        connFanMod: "invoca a los anonimizadores",
+        connModEval: "recopila los estados",
+        connEvalComplete: "si todos tienen éxito",
+        connEvalPartial: "si alguno falla",
+        slaTitle: "Seguimiento de SLA y cálculo de plazos",
+        slaIntro:
+          "Las regulaciones de cumplimiento imponen plazos de respuesta estrictos. SCRIPE calcula y realiza el seguimiento automático de las métricas de SLA en el panel de administración:",
+        slaWarningTitle: "Lógica de plazo de SLA",
+        slaWarningContent:
+          "Los plazos se calculan al enviar la solicitud leyendo el perfil de regulación activo (GDPR: 30 días, CCPA: 45 días). El progreso del SLA se calcula dinámicamente como un porcentaje: (Hora actual - CreatedAt) / (Plazo - CreatedAt) * 100.",
+        escalationTitle: "Motor de escalada y alertas",
+        escalationIntro:
+          "La tarea DsrEscalationJob se ejecuta diariamente a las 08:00 UTC para evaluar el consumo del SLA y escalar los tickets atrasados:",
+        escalationTier1:
+          "Nivel 1 (50% del SLA) — Alerta de recordatorio estándar enviada al administrador asignado. Registra la nota de historial: [SLA-ESCALATION-50%].",
+        escalationTier2:
+          "Nivel 2 (75% del SLA) — Escalada de advertencia. Registra la nota de historial: [SLA-ESCALATION-75%] y envía el webhook compliance.dsr_sla_escalated.",
+        escalationTier3:
+          "Nivel 3 (90% del SLA) — Escalada crítica. Registra la nota de historial: [SLA-ESCALATION-90%], alerta a los administradores del sistema y envía el webhook crítico.",
+        providerTitle: "Arquitectura de proveedores extensible",
+        providerIntro:
+          "Para mantener un acoplamiento débil, el módulo de cumplimiento se comunica con otros módulos utilizando las abstracciones IUserDataProvider y IUserDataAnonymizer:",
+        providerIdentityTitle: "Integración del módulo de identidad",
+        providerIdentityContent:
+          "IdentityUserDataProvider exporta metadatos de perfil, sesiones de inicio de sesión activas y cuentas externas vinculadas. IdentityUserDataAnonymizer utiliza actualizaciones de base de datos de alto rendimiento y sin asignación de memoria para reemplazar nombres con el token de anonimización, formatear correos electrónicos como {token}@anonymized.invalid, establecer números de teléfono en null y marcar las IP de sesión activas como 'ANONYMIZED'.",
+        providerComplianceTitle: "Integración del módulo de cumplimiento",
+        providerComplianceContent:
+          "ComplianceUserDataProvider exporta registros de solicitudes y entradas del registro de consentimiento. ComplianceUserDataAnonymizer borra la información personal de las DSR anteriores (SubjectEmail y RequesterNotes) y de los registros de consentimiento (IpAddress y UserAgent).",
+        entitiesTitle: "Referencia de entidades",
+        entityName: "Nombre de la entidad",
+        entityDesc: "Descripción",
+        entityDsrDesc:
+          "Representa una solicitud de interesado que contiene el tipo, estado, plazo del SLA y parámetros de ejecución.",
+        entityModuleDesc:
+          "Realiza el seguimiento del estado de ejecución y los intentos de reintento de la ejecución de DSR fanned-out para cada proveedor de módulo.",
+        entityStatusDesc:
+          "Registro de solo adición que realiza el seguimiento de las transiciones de estado de DSR, comentarios de resolución y escaladas de SLA.",
+        codeTitle: "Implementación del código",
+        endpointsTitle: "Puntos de acceso API",
+        endpointsIntro:
+          "El controlador DSR expone los siguientes puntos de acceso para el envío, revisión y control de la ejecución de solicitudes:",
         ep: {
-          list: "Listar todas las DSR (paginado, filtrable)",
-          get: "Obtener detalles de la DSR por ID",
-          create: "Enviar una nueva DSR",
-          updateStatus: "Actualizar estado de la DSR (InProgress, Completed, Rejected)",
-          assign: "Asignar DSR a un oficial de cumplimiento",
-          delete: "Borrado lÃ³gico de una DSR",
+          list: "Listar todas las DSR (paginado, filtrable por estado/tipo/regulación)",
+          get: "Obtener detalles de una DSR por ID",
+          create: "Enviar una nueva DSR (calcula el plazo del SLA)",
+          updateStatus: "Actualizar el estado de una DSR (En progreso, Completado, Rechazado)",
+          assign: "Asignar la DSR a un agente de cumplimiento",
+          delete: "Eliminar temporalmente (soft-delete) una DSR",
+          confirm:
+            "Confirmar explícitamente una DSR de eliminación aprobada para desbloquear la ejecución",
         },
+        field: "Campo",
+        type: "Tipo",
+        fId: "Identificador único de la solicitud DSR.",
+        fTenantId: "Clave externa que hace referencia al contexto del inquilino.",
+        fSubjectEmail:
+          "Dirección de correo electrónico del interesado (anonimizada tras la eliminación).",
+        fRequestType: "Tipo de DSR (Acceso, Exportación, Eliminación, Rectificación, Limitación).",
+        fStatus: "Estado actual del ciclo de vida de la solicitud.",
+        fDeadline: "Plazo de respuesta SLA calculado.",
+        fErasureConfirmed:
+          "Bandera lógica que desbloquea las solicitudes de eliminación para las tareas en segundo plano.",
+        fErasureExecuteAfter: "Umbral de ejecución que impone el período de gracia adaptativo.",
+        fExportFileUrl: "URL para descargar el archivo zip de los datos exportados fanned-out.",
+        fAssignedTo: "Clave externa que hace referencia al administrador asignado.",
+        fRetryCount:
+          "Número actual de intentos de reintento para las ejecuciones de módulos fallidas.",
+        fCompletedAt: "Marca de tiempo que indica cuándo se completó la DSR.",
+        quickStartTitle: "Guía de inicio rápido",
+        step1Title: "Sembrar perfiles de cumplimiento",
+        step1Content:
+          "Ejecute el seeder de desarrollo para rellenar los perfiles de regulación GDPR y CCPA con los días de SLA.",
+        step2Title: "Enviar una solicitud de interesado",
+        step2Content:
+          "Utilice el punto de acceso POST para registrar una nueva solicitud. El sistema valida las restricciones de entrada y calcula el plazo.",
+        step3Title: "Revisar y aprobar",
+        step3Content:
+          "El agente de cumplimiento asignado revisa el ticket. Aprobar una DSR de eliminación establece el período de gracia y espera la confirmación final.",
+        executionFlowIntro:
+          "La ejecución de la solicitud de eliminación anonimiza los datos personales de forma asíncrona a través de los módulos mediante implementaciones de proveedores distribuidas:",
       },
       consent: {
-        title: "GestiÃ³n de Consentimiento",
-        description:
-          "Registrar, rastrear y auditar los consentimientos de los usuarios para cumplir con el ArtÃ­culo 6 de GDPR y CCPA.",
+        title: "Gestión del consentimiento",
+        description: "Descripción",
         intro:
-          "La GestiÃ³n de Consentimiento registra cada vez que un usuario otorga o revoca su consentimiento. SCRIPE almacena toda la pista de auditorÃ­a.",
-        purposesTitle: "PropÃ³sitos del Consentimiento",
+          "La gestión del consentimiento proporciona un registro inmutable de los estados de consentimiento del usuario. Para admitir búsquedas de alto rendimiento junto con un registro de auditoría legalmente defendible, SCRIPE utiliza una arquitectura de doble tabla dividida entre un registro de transacciones de solo adición y una vista materializada almacenada en caché.",
+        purposesTitle: "Fines de consentimiento y configuración",
         purposesIntro:
-          "Cada registro de consentimiento estÃ¡ vinculado a un propÃ³sito especÃ­fico:",
-        purpose1: "Marketing â€” Emails de marketing y comunicaciones promocionales.",
-        purpose2: "AnalÃ­tica â€” AnÃ¡lisis de uso y mejora del producto.",
-        purpose3: "Terceros â€” ComparticiÃ³n de datos con servicios de terceros.",
-        purpose4: "PersonalizaciÃ³n â€” Contenido personalizado y recomendaciones.",
-        gdprTitle: "Base Legal GDPR",
-        gdprIntro:
-          "El ArtÃ­culo 6 de GDPR establece que el consentimiento debe ser: libremente dado, especÃ­fico, informado e inequÃ­voco. SCRIPE registra el texto exacto mostrado al usuario.",
-        withdrawalTitle: "Retirada del Consentimiento",
-        withdrawalIntro:
-          "Los usuarios pueden retirar su consentimiento en cualquier momento. El ConsentRecord se actualiza con WithdrawnAt.",
-        flowTitle: "Flujo de Estado de Consentimiento",
-        nodePurpose: "PropÃ³sito del Consentimiento",
-        descPurpose: "Define a quÃ© se estÃ¡ consintiendo (ej. Marketing)",
-        nodeRecord: "Registro de Consentimiento",
-        descRecord: "Estado actual (Otorgado/Revocado) por propÃ³sito",
-        nodeSnapshot: "Captura de Consentimiento",
-        descSnapshot: "Captura inmutable del otorgamiento/revocaciÃ³n",
-        nodeJob: "Tarea de ExpiraciÃ³n",
-        descJob: "Tarea diaria que revoca consentimientos expirados",
-        conn1: "plantillas",
-        conn2: "genera al cambiar",
-        conn3: "auto-revoca si expirÃ³",
-        immutabilityTitle: "Inmutabilidad",
-        immutabilityIntro: "Los registros de consentimiento son inmutables.",
-        endpointsTitle: "Endpoints API",
+          "El seguimiento del consentimiento está regulado por perfiles globales y fines de consentimiento estructurales sembrados al iniciar la aplicación:",
+        purposesKey: "Clave del fin",
+        purposesBasis: "Base legal",
+        purposesRequired: "Obligatorio",
+        purposesSort: "Orden de clasificación",
+        purposesActive: "Activo",
+        purposesEssentialDesc:
+          "Capacidades esenciales requeridas para el funcionamiento de la plataforma. (Obligatorio, base legal contractual).",
+        purposesMarketingDesc:
+          "Boletines promocionales, correos electrónicos y comunicaciones de campaña. (Opcional, base legal de consentimiento).",
+        purposesAnalyticsDesc:
+          "Análisis de uso, seguimiento del comportamiento de los usuarios y telemetría de mejora del producto. (Opcional, base legal de consentimiento).",
+        basisContract: "Contrato",
+        basisConsent: "Consentimiento",
+        basisLegitimate: "Interés legítimo",
+        basisObligation: "Obligación legal",
+        flowTitle: "Flujo de registro y verificación del consentimiento",
+        nodeSubmit: "Envío de consentimiento",
+        descSubmit:
+          "El usuario actualiza sus preferencias o envía un formulario de consentimiento.",
+        nodeValidate: "Control FluentValidation",
+        descValidate: "Valida las restricciones regulatorias y la sintaxis de la clave del fin.",
+        nodeLedger: "Agregar al registro",
+        descLedger:
+          "Escribe una transacción ConsentRecord inmutable que contiene la dirección IP, el agente de usuario, la versión y la acción.",
+        nodeUpsert: "Actualizar instantánea",
+        descUpsert:
+          "Materializa el estado actual en la caché ConsentSnapshot para verificaciones de permisos de alto rendimiento.",
+        nodeEvents: "Eventos de dominio",
+        descEvents: "Publica ConsentGrantedEvent o ConsentWithdrawnEvent a través de MediatR.",
+        nodeExpiry: "Tarea de expiración de consentimiento",
+        descExpiry:
+          "La tarea semanal en segundo plano analiza los desfases de versión y marca los registros obsoletos para el re-consentimiento.",
+        connSubmitValidate: "envía los detalles a",
+        connValidateLedger: "agrega la transacción si es válida",
+        connLedgerUpsert: "actualiza el estado de la caché desde",
+        connUpsertEvents: "distribuye los eventos en caso de éxito",
+        connExpiryUpsert: "marca RequiresReConsent = true en",
+        immutabilityTitle: "Arquitectura de base de datos de doble tabla",
+        immutabilityIntro:
+          "Para garantizar tanto el rendimiento de la base de datos como la integridad de la auditoría de cumplimiento, el seguimiento del consentimiento separa las transacciones de escritura intensa de las verificaciones de permisos de lectura intensa:",
+        entitiesTitle: "Referencia de entidades",
+        entitiesIntro:
+          "Las siguientes tablas definen las propiedades del esquema tanto para el registro de solo adición como para las instantáneas de caché de estado actuales:",
+        field: "Campo",
+        type: "Type",
+        fId: "Identificador único del registro.",
+        fTenantId: "Clave externa que hace referencia al contexto del inquilino.",
+        fSubjectId: "Clave externa que hace referencia al interesado (usuario).",
+        fPurposeId: "Clave externa que hace referencia a la configuración de ConsentPurpose.",
+        fAction: "Acción de consentimiento registrada (Concedido o Retirado).",
+        fCurrentAction:
+          "Último estado de consentimiento almacenado en caché para el sujeto y el fin.",
+        fRequiresReConsent:
+          "Bandera que indica que el usuario debe volver a consentir debido a una actualización de versión de la política.",
+        fLastUpdatedAt: "Marca de tiempo que representa la última modificación de la instantánea.",
+        fRecordedAt: "Marca de tiempo que representa cuándo ocurrió la transacción del registro.",
+        fIpAddress: "Dirección IP del cliente capturada en el momento del registro.",
+        fUserAgent: "Agente de usuario del navegador capturado en el momento del registro.",
+        fRegulationBasis: "Contexto regulatorio (GDPR, CCPA) activo durante el envío.",
+        fCollectionMethod:
+          "Método utilizado para recopilar el consentimiento (Formulario web, App móvil, API).",
+        fConsentVersion:
+          "Versión del documento de política de consentimiento activa durante el envío.",
+        bestPracticesTitle: "Mejores prácticas",
+        doTitle: "Prácticas recomendadas",
+        dontTitle: "Prácticas a evitar",
+        do1: "Verificar que la clave del fin coincida con la restricción regex alfanumérica en minúsculas.",
+        do2: "Ejecutar siempre la tarea semanal ConsentExpiryJob para imponer el re-consentimiento en las actualizaciones de versión.",
+        do3: "Consumir los eventos MediatR ConsentWithdrawnEvents para restringir el procesamiento de datos posterior.",
+        dont1:
+          "No modificar directamente las filas de ConsentRecord para evitar romper el historial inmutable.",
+        dont2:
+          "No ejecutar consultas SQL directas en ConsentRecord para verificaciones de permisos del frontend; leer siempre ConsentSnapshot.",
+        dont3:
+          "No exponer puntos de acceso de registro de consentimiento brutos y no autenticados.",
+        endpointsTitle: "Puntos de acceso API",
         ep: {
-          list: "Listar registros de consentimiento",
-          get: "Obtener registro de consentimiento por ID",
-          record: "Registrar un nuevo otorgamiento de consentimiento",
-          withdraw: "Retirar un consentimiento previamente otorgado",
+          list: "Listar todos los registros del registro (solo administradores, filtrable con paginación)",
+          get: "Obtener detalles de un registro por ID",
+          record:
+            "Registrar una nueva concesión o retirada de consentimiento (usuario/administrador)",
+          withdraw: "Retirar un consentimiento previamente concedido (usuario/administrador)",
+          getMy:
+            "Recuperar las instantáneas de consentimiento activas del usuario autenticado actual",
+          analytics:
+            "Obtener estadísticas de consentimiento por fin y estado (solo administradores)",
         },
+        entitiesLedgerTitle: "ConsentRecord (Registro de solo adición)",
+        entitiesSnapshotTitle: "ConsentSnapshot (Instantánea de caché materializada)",
+        epWithdraw: "Retirar un consentimiento previamente concedido",
       },
+
       retention: {
         title: "PolÃ­ticas de RetenciÃ³n de Datos",
         description:

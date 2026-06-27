@@ -189,8 +189,7 @@ export const zh = {
     },
     userGroupsApi: {
       title: "用户组 API",
-      description:
-        "通过统一的用户组管理大量的管理员。支持批量操作、级联删除和叠加角色分配。",
+      description: "通过统一的用户组管理大量的管理员。支持批量操作、级联删除和叠加角色分配。",
       intro:
         "用户组 API 用于管理分配给管理员的批量角色和字段限制。在下次令牌刷新时，删除组、限制权限或级联删除都会立即更新所有关联的管理员。",
       crudTitle: "用户组 CRUD",
@@ -198,44 +197,30 @@ export const zh = {
         "检索所有用户组的分页列表。超级管理员可以查看全局用户组；租户管理员只能查看其自身租户的用户组。",
       myTenantGroupsDesc:
         "快速获取当前登录用户活动租户的核心用户组数据（针对下拉列表进行了优化）。",
-      getGroupDesc:
-        "获取特定用户组的详细信息，包括所有活动成员、角色和 JSON 字段限制。",
+      getGroupDesc: "获取特定用户组的详细信息，包括所有活动成员、角色和 JSON 字段限制。",
       groupsByTenantDesc: "仅限超级管理员。直接通过特定的 TenantId 筛选用户组。",
-      createGroupDesc:
-        "创建新的用户组，严格验证所提供的 RoleIds 是否存在且属于目标租户。",
-      createGroupMyTenantDesc:
-        "创建新的用户组，并自动映射到 JWT 的 TenantId 上下文。",
+      createGroupDesc: "创建新的用户组，严格验证所提供的 RoleIds 是否存在且属于目标租户。",
+      createGroupMyTenantDesc: "创建新的用户组，并自动映射到 JWT 的 TenantId 上下文。",
       updateGroupDesc:
         "更新核心组元数据（名称、描述、状态），并对 RoleIds 进行完整的覆盖式同步（nuke-and-pave）。",
-      deleteGroupDesc:
-        "软删除用户组（AdminAdminGroup 关联关系将自动取消绑定）。",
+      deleteGroupDesc: "软删除用户组（AdminAdminGroup 关联关系将自动取消绑定）。",
       groupMembersTitle: "组成员",
       groupMembersIntro: "管理分配给特定用户组的管理员。",
       addMembersDesc: "向组内添加一个或多个 AdminId。此操作是幂等的。",
-      removeMemberDesc:
-        "断开管理员与用户组之间的关联。这不会影响该管理员直接分配的角色。",
+      removeMemberDesc: "断开管理员与用户组之间的关联。这不会影响该管理员直接分配的角色。",
       groupRolesRestrictionsTitle: "组角色与限制",
-      groupRolesRestrictionsIntro:
-        "管理该组内成员所继承的精确角色负载和字段级序列化限制块。",
-      setGroupRolesDesc:
-        "对分配给用户组的所有 RoleId 进行覆盖式同步（破坏性操作）。",
-      setGroupRestrictionsDesc:
-        "对用户组的所有 JSON 字段限制进行覆盖式同步（破坏性操作）。",
+      groupRolesRestrictionsIntro: "管理该组内成员所继承的精确角色负载和字段级序列化限制块。",
+      setGroupRolesDesc: "对分配给用户组的所有 RoleId 进行覆盖式同步（破坏性操作）。",
+      setGroupRestrictionsDesc: "对用户组的所有 JSON 字段限制进行覆盖式同步（破坏性操作）。",
       bulkCascadeTitle: "批量与级联操作",
       bulkCascadeIntro:
         "同时向成千上万条记录执行批量操作命令，并可选择将效果级联到关联的成员管理员。",
-      bulkActivateDesc:
-        "批量为多个用户组设置 IsActive=true。支持选择是否将启用级联应用至成员。",
-      bulkDeactivateDesc:
-        "批量为多个用户组设置 IsActive=false。支持选择是否将禁用级联应用至成员。",
-      bulkDeleteDesc:
-        "批量软删除多个用户组。支持选择是否将删除级联应用至成员。",
-      bulkActivateAllDesc:
-        "批量启用符合指定过滤条件的所有用户组（支持 cascadeAdmins）。",
-      bulkDeactivateAllDesc:
-        "批量禁用符合指定过滤条件的所有用户组（支持 cascadeAdmins）。",
-      bulkDeleteAllDesc:
-        "批量软删除符合指定过滤条件的所有用户组（支持 cascadeAdmins）。",
+      bulkActivateDesc: "批量为多个用户组设置 IsActive=true。支持选择是否将启用级联应用至成员。",
+      bulkDeactivateDesc: "批量为多个用户组设置 IsActive=false。支持选择是否将禁用级联应用至成员。",
+      bulkDeleteDesc: "批量软删除多个用户组。支持选择是否将删除级联应用至成员。",
+      bulkActivateAllDesc: "批量启用符合指定过滤条件的所有用户组（支持 cascadeAdmins）。",
+      bulkDeactivateAllDesc: "批量禁用符合指定过滤条件的所有用户组（支持 cascadeAdmins）。",
+      bulkDeleteAllDesc: "批量软删除符合指定过滤条件的所有用户组（支持 cascadeAdmins）。",
       cascadeWarningNode:
         "级联操作会自动避开受保护的管理员。如果您尝试对租户所有者执行级联删除，该用户组会被删除，但所有者账号会被完全保留。",
     },

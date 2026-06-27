@@ -57,6 +57,15 @@ export const zh = {
         "为获得最佳安全性，请配置通过 HttpOnly 且 SameSite=Strict 的 Cookie 来传输 Refresh Token。",
     },
     sso: {
+      samlTitle: "SAML 2.0 集成与加密验证",
+      samlContent:
+        "平台支持使用 ITfoxtec.Identity.Saml2 库进行 SAML 2.0 单点登录 (SSO)。当作为服务提供商 (SP) 时，将生成并通过重定向绑定发送 AuthnRequest。对于 ACS 回调，使用以 base64 格式存储的公共 X.509 证书（使用 X509CertificateLoader）验证 XML 签名。跳过证书链验证和吊销检查 (None/NoCheck)，以允许企业自签名证书。当作为身份提供商 (IdP) 时，向第三方应用发布已签名的 SAML XML 断言。",
+      oidcCallbackTitle: "OIDC 回调与工作区选择缓存",
+      oidcCallbackContent:
+        "ProcessOidcCallbackCommandHandler 通过 AES-256 解密提供商 ID 并使用授权码交换声明来处理传入 of OIDC 回调。如果用户邮箱对应多个活动管理员工作区，SSO 登录选择状态 (SsoTempLoginData) 将缓存在 Redis 的 'sso-login-selection:{tempToken}' 下，有效期 15 分钟，以防止原始参数篡改。单一工作区匹配将绕过此选择，直接签发最终的 7 天 JWT 访问和刷新令牌。",
+      oauthMirroringTitle: "OAuth 客户端镜像与配额验证",
+      oauthMirroringContent:
+        "出站 OAuth 应用程序的注册通过 QuotaService 验证租户范围的订阅配额。客户端 ID 使用租户特定的品牌设置作为前缀，机密客户端密钥安全生成（256 位加密随机数）且仅显示一次。应用程序注册与 OpenIddict 存储完全同步，并镜像到本地 OAuthApplication 数据库表中，其中的密钥已屏蔽以提高性能和租户隔离。",
       title: "单点登录 (SSO)",
       description: "OIDC 身份验证，外部身份绑定及 OAuth 应用集成。",
       intro:
@@ -192,31 +201,45 @@ export const zh = {
     },
     auditCompliance: {
       title: "审计与合规 (Audit & Compliance)",
-      description: "由拦截器、实体跟踪驱动的完整审计管道，支持 SignalR 流式推送和导出。",
-      intro: "审计系统自动化记录了每个数据库操作并生成无法篡改的历史证据。",
+      description: "完整审计管道、实体跟踪、SignalR 流式推送、CSV/Excel/PDF 导出和合规功能。",
+      intro: "完整记录每次数据修改和每次 API 请求的审计日志。",
       architectureTitle: "审计架构",
-      architectureIntro: "涉及 EF Core 拦截器机制、SCRIPE mediator 行为拦截以及请求日志跟踪。",
+      architectureIntro:
+        "审计系统由 HTTP 请求日志记录和数据库级别的实体变更拦截组成。请求元数据通过 RequestLoggingMiddleware 在主机级别异步记录，而数据库更改由 AuditableEntityInterceptor 在 SaveChanges 之前捕获。",
       interceptorTitle: "实体变更拦截器",
       interceptorIntro:
-        "在 SaveChanges 之前，AuditableEntityInterceptor 计算新旧快照数据并转换为 JSON。",
+        "AuditableEntityInterceptor 挂载到 EF Core 的 SaveChangesAsync 管道中。对于每个新增、修改或删除的实体（包括软删除），它将旧值和新值捕获为 JSON，并记录执行用户和时间戳。它会跳过 AuditLog 实体本身以防止无限递归。",
       auditLogEntityTitle: "审计日志实体结构",
       signalrTitle: "SignalR 实时大屏流",
-      signalrIntro: "审计日志会在触发的毫秒内推送到管理员的前端控制台中。",
+      signalrIntro:
+        "审计日志通过 SignalR 的 AuditHub 实时推送。已连接的管理员客户端在数据修改时可立即接收到实时通知，从而支持实时监控仪表盘的展示。",
       exportTitle: "审计数据导出",
       exportIntro: "用于企业存档、Excel 加工和 PDF 文件合规性归档。",
+      exportDetail:
+        "AuditExportService 提供多格式导出。CSV 导出使用 CsvHelper，并对所有字段强制使用双引号以防范 CSV 注入攻击（RFC 4180），同时附带 UTF-8 BOM 以前置适配 Excel。Excel 导出利用 ClosedXML 引擎生成包含三个工作表的工作簿：Executive Summary（KPI 和图表数据）、Audit Data（包含自动筛选器、冻结首行以及绿色/红色的条件格式）和 Security Analysis. PDF 导出基于 QuestPDF 引擎，针对大型数据集标记为废弃（Obsolete）以避免过高内存消耗。出于资源保护的目的，所有导出行为均限制在 10,000 行以内，并在发送前完整在内存中进行缓冲。",
       queryApiTitle: "查询与导出 API",
       queryApiIntro: "高性能的数据筛查查询端点，仅限授权的审计员或管理层使用。",
+      scopingTitle: "层级租户范围和安全隔离",
+      scopingDetail:
+        "数据隔离在查询执行期间强制执行。DataScopeService 基于严格的优先级链确定管理员的有效范围：ContextTenant（通过 AES 加密标头进行穿透）、权限重写、SystemProtectedAdmin、Hierarchy（包括子租户）或 OwnTenant。后代通过物化路径在常数时间内遍历，这被翻译为索引 SQL LIKE 查询。存储库应用 AuditByTenantScopeSpec 以确保使用 'WHERE TenantId IN (...)' 进行过滤，而按记录 ID 进行的直接查询通过 GetAuditLogDetailQueryHandler 验证，以防止水平权限提升。",
       querySearchDesc: "分页过滤查询。",
       queryExportCsvDesc: "导出 CSV 数据格式。",
       queryExportExcelDesc: "导出 Excel 格式。",
       queryExportPdfDesc: "导出带水印的 PDF 文档。",
       complianceTitle: "合规功能清单",
       immutableTitle: "不可变日志",
+      immutableDesc: "日志锁定并以只读方式存储，防止在提交后被删除或修改。",
       fullTraceTitle: "完整可追溯",
+      fullTraceDesc: "捕获 HTTP 标头、请求上下文和实体变更，确保端到端的可追溯性。",
       searchableTitle: "高速检索",
+      searchableDesc:
+        "针对 Timestamp、UserId、EventType 和 Correlation ID 进行优化的索引，支持即时搜索。",
       tenantScopedTitle: "租户数据隔离",
+      tenantScopedDesc: "日志通过 TenantId 和层级租户边界进行自动隔离，防范跨租户数据泄露。",
       realtimeTitle: "实时推送",
+      realtimeDesc: "直接将安全性事件和数据更改推送到对应租户的 SignalR 实时大屏。",
       retentionTitle: "自动保留策略清理",
+      retentionDesc: "已配置的保留期参数指示后台服务自动定期清理过期的审计日志记录。",
     },
   },
 };

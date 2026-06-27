@@ -26,7 +26,8 @@ export const fr = {
       descStartup: "Lit le fournisseur, découvre toutes les tâches, les planifie",
       nodeDiscovery: "Boucle d'Auto-Découverte\nGetServices<IAutoRegisteredJob>()",
       descDiscovery: "Parcourt le conteneur DI pour chaque IAutoRegisteredJob enregistré",
-      nodeSchedule: "Planification de Chaque Tâche\nSi activé -> Enregistrer via l'API du fournisseur",
+      nodeSchedule:
+        "Planification de Chaque Tâche\nSi activé -> Enregistrer via l'API du fournisseur",
       descSchedule: "Utilise la CronExpression du remplacement appsettings ou celle par défaut",
       nodeExecute: "job.ExecuteAsync(ct)\nÀ chaque tick de cron",
       descExecute: "Agnostique du fournisseur - la tâche ignore quel fournisseur l'exécute",

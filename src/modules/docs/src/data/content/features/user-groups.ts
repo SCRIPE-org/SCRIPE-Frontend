@@ -49,36 +49,42 @@ const sections: DocSection[] = [
   { type: "paragraph", contentKey: "features.userGroups.domainModelIntro" },
   {
     type: "table",
-    headers: ["Entity", "Purpose", "Database Table", "Keys & Composite Indexes", "Cascade Deletion Rule"],
+    headers: [
+      "Entity",
+      "Purpose",
+      "Database Table",
+      "Keys & Composite Indexes",
+      "Cascade Deletion Rule",
+    ],
     rows: [
       [
         "UserGroup",
         "Belongs to Tenant (or null for global groups). Group names are localizable.",
         "UserGroups",
         "PK: Id, Unique Composite: { TenantId, Code }, Indexes: TenantId, IsActive, IsDeleted",
-        "Tenant: Restrict (cannot delete Tenant if active groups exist)."
+        "Tenant: Restrict (cannot delete Tenant if active groups exist).",
       ],
       [
         "AdminUserGroup",
         "Links an Admin to a UserGroup (enrollment junction).",
         "AdminUserGroups",
         "PK: Id, Unique Composite: { AdminId, UserGroupId }, Indexes: AdminId, UserGroupId, IsDeleted",
-        "Admin: Cascade, UserGroup: Cascade (junction deleted if either side is removed)."
+        "Admin: Cascade, UserGroup: Cascade (junction deleted if either side is removed).",
       ],
       [
         "UserGroupRole",
         "Maps group memberships to RBAC Roles.",
         "UserGroupRoles",
         "PK: Id, Unique Composite: { UserGroupId, RoleId }, Indexes: UserGroupId, RoleId, IsDeleted",
-        "UserGroup: Cascade, Role: Restrict (cannot delete Role if mapped to active groups)."
+        "UserGroup: Cascade, Role: Restrict (cannot delete Role if mapped to active groups).",
       ],
       [
         "UserGroupRestriction",
         "Defines group-level field restrictions per permission code.",
         "UserGroupRestrictions",
         "PK: Id, Indexes: UserGroupId, IsDeleted",
-        "UserGroup: Cascade (restrictions deleted when the group is deleted)."
-      ]
+        "UserGroup: Cascade (restrictions deleted when the group is deleted).",
+      ],
     ],
   },
   {
@@ -150,7 +156,7 @@ const sections: DocSection[] = [
             .OnDelete(DeleteBehavior.Restrict);
     }
 }`,
-      }
+      },
     ],
   },
 
@@ -403,33 +409,33 @@ const sections: DocSection[] = [
       [
         "UserGroupService.ts",
         "API Data Service",
-        "Communicates with backend PascalCase routes (/api/v1/UserGroups) and handles payload mapping."
+        "Communicates with backend PascalCase routes (/api/v1/UserGroups) and handles payload mapping.",
       ],
       [
         "UserGroupRepository.ts",
         "Data Layer Repository",
-        "Mediates between UI and service. Leverages Zod schema validation to verify contract compliance."
+        "Mediates between UI and service. Leverages Zod schema validation to verify contract compliance.",
       ],
       [
         "UserGroupMapper.ts",
         "Data Mapper",
-        "Converts response DTOs to UI domain entities, null-coalescing missing properties."
+        "Converts response DTOs to UI domain entities, null-coalescing missing properties.",
       ],
       [
         "useUserGroupsViewModel.ts",
         "Presentation ViewModel",
-        "Consumes repository via DI, drives table state, filters, and manages cascade delete/status modal dialogs."
+        "Consumes repository via DI, drives table state, filters, and manages cascade delete/status modal dialogs.",
       ],
       [
         "UserGroupsView.tsx",
         "Presentation View",
-        "Renders table columns, localized names, member badges, and links to bulk action execution."
+        "Renders table columns, localized names, member badges, and links to bulk action execution.",
       ],
       [
         "UserGroupDetailView.tsx",
         "Presentation View",
-        "Tabbed workspace details (Members, Roles, Restrictions) supporting nuke-and-pave updates."
-      ]
+        "Tabbed workspace details (Members, Roles, Restrictions) supporting nuke-and-pave updates.",
+      ],
     ],
   },
 

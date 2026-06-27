@@ -210,5 +210,5 @@ registerPage({
   order: 7,
   sections,
   relatedSlugs: ["security/authentication-deep", "security/api-security", "features/sso-oauth"],
-  lastUpdated: "2026-03-07",
+  lastUpdated: "2026-06-28",
 });

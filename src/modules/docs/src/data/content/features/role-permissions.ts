@@ -61,8 +61,16 @@ const sections: DocSection[] = [
         "Regulations, Consent Management, DSR Create/Review/Execute",
         "compliance_regulations.view, compliance_dsr.execute, compliance_consent.manage",
       ],
-      ["Audit Logs", "Read, Export, View Children", "audit.view, audit.export, audit.view_children"],
-      ["Dashboard", "View Stats, View Charts, View Security Feed", "dashboard.view, analytics.view, security.view"],
+      [
+        "Audit Logs",
+        "Read, Export, View Children",
+        "audit.view, audit.export, audit.view_children",
+      ],
+      [
+        "Dashboard",
+        "View Stats, View Charts, View Security Feed",
+        "dashboard.view, analytics.view, security.view",
+      ],
     ],
   },
 
@@ -100,11 +108,31 @@ const sections: DocSection[] = [
     type: "table",
     headers: ["Scope Value", "Data Access Description", "Use Case / Scoping Boundary"],
     rows: [
-      ["all_tenants", "System-wide access across all tenants in the system", "Super admin global operations"],
-      ["context_tenant", "Data restricted to a specific tenant context (drill-down mode)", "Super admin tenant drill-down"],
-      ["hierarchy", "Data from own tenant + all descendant child tenants", "Branch manager overseeing sub-tenants"],
-      ["own_tenant", "Data from own tenant only (default isolation boundary)", "Default for tenant-level administrators"],
-      ["own", "Only data created by the current user (CreatedBy == UserId)", "Individual team members seeing only their entries"],
+      [
+        "all_tenants",
+        "System-wide access across all tenants in the system",
+        "Super admin global operations",
+      ],
+      [
+        "context_tenant",
+        "Data restricted to a specific tenant context (drill-down mode)",
+        "Super admin tenant drill-down",
+      ],
+      [
+        "hierarchy",
+        "Data from own tenant + all descendant child tenants",
+        "Branch manager overseeing sub-tenants",
+      ],
+      [
+        "own_tenant",
+        "Data from own tenant only (default isolation boundary)",
+        "Default for tenant-level administrators",
+      ],
+      [
+        "own",
+        "Only data created by the current user (CreatedBy == UserId)",
+        "Individual team members seeing only their entries",
+      ],
     ],
   },
 
@@ -142,9 +170,21 @@ const sections: DocSection[] = [
     direction: "horizontal",
     nodes: [
       { id: "req", label: "Request with [PermissionRequired]", type: "default" },
-      { id: "policy", label: "DynamicPermissionPolicyProvider\n(Resolves dynamic policy)", type: "info" },
-      { id: "handler", label: "PermissionAuthorizationHandler\n(Evaluates requirements)", type: "warning" },
-      { id: "cache", label: "AdminPermissionCache\n(Checks IMemoryCache - 10m sliding)", type: "primary" },
+      {
+        id: "policy",
+        label: "DynamicPermissionPolicyProvider\n(Resolves dynamic policy)",
+        type: "info",
+      },
+      {
+        id: "handler",
+        label: "PermissionAuthorizationHandler\n(Evaluates requirements)",
+        type: "warning",
+      },
+      {
+        id: "cache",
+        label: "AdminPermissionCache\n(Checks IMemoryCache - 10m sliding)",
+        type: "primary",
+      },
       { id: "db_load", label: "LoadAndCacheAsync\n(DB Fallback)", type: "danger" },
       { id: "checker", label: "PermissionChecker\n(Validates tenant & scopes)", type: "success" },
       { id: "decision", label: "Allow / Deny access", type: "default" },
@@ -235,10 +275,27 @@ const sections: DocSection[] = [
     direction: "vertical",
     nodes: [
       { id: "request", label: "Incoming API Request", type: "default" },
-      { id: "filter", label: "RestrictedFieldsAuthorizationFilter\n(Checks cache, sets HttpContext.Items[\"RestrictedFields\"])", type: "warning" },
-      { id: "controller", label: "Controller & Handler Execution\n(Fetches data & maps to DTO)", type: "primary" },
-      { id: "middleware", label: "FieldProjectionMiddleware\n(Intercepts 2xx JSON, parses JsonNode tree)", type: "info" },
-      { id: "nullify", label: "Recursive Nullifier\n(Nullifies restricted properties in response)", type: "danger" },
+      {
+        id: "filter",
+        label:
+          'RestrictedFieldsAuthorizationFilter\n(Checks cache, sets HttpContext.Items["RestrictedFields"])',
+        type: "warning",
+      },
+      {
+        id: "controller",
+        label: "Controller & Handler Execution\n(Fetches data & maps to DTO)",
+        type: "primary",
+      },
+      {
+        id: "middleware",
+        label: "FieldProjectionMiddleware\n(Intercepts 2xx JSON, parses JsonNode tree)",
+        type: "info",
+      },
+      {
+        id: "nullify",
+        label: "Recursive Nullifier\n(Nullifies restricted properties in response)",
+        type: "danger",
+      },
       { id: "response", label: "Cleaned JSON Response Sent", type: "success" },
     ],
     connections: [
@@ -263,11 +320,27 @@ const sections: DocSection[] = [
     title: "Clone Role & Permission Assignment Anti-Escalation Flow",
     direction: "vertical",
     nodes: [
-      { id: "cloner", label: "Cloner / Assignor Admin\n(Current User Permissions Pool)", type: "primary" },
-      { id: "action", label: "Security Operation\n(Clone Role OR Assign Permissions)", type: "default" },
+      {
+        id: "cloner",
+        label: "Cloner / Assignor Admin\n(Current User Permissions Pool)",
+        type: "primary",
+      },
+      {
+        id: "action",
+        label: "Security Operation\n(Clone Role OR Assign Permissions)",
+        type: "default",
+      },
       { id: "clone_check", label: "Cloning Flow\n(Silent Intersection Filtering)", type: "info" },
-      { id: "assign_check", label: "Assignment Flow\n(Strict Validation: Has permission?)", type: "warning" },
-      { id: "guardian", label: "TenantGuardianService\n(Is role permission-locked?)", type: "danger" },
+      {
+        id: "assign_check",
+        label: "Assignment Flow\n(Strict Validation: Has permission?)",
+        type: "warning",
+      },
+      {
+        id: "guardian",
+        label: "TenantGuardianService\n(Is role permission-locked?)",
+        type: "danger",
+      },
       { id: "allow", label: "Permit Operation & Update Cache", type: "success" },
       { id: "deny", label: "Forbidden (PermissionEscalation / LockedRole)", type: "danger" },
     ],
