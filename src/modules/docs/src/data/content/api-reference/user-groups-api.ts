@@ -70,17 +70,19 @@ const sections: DocSection[] = [
       {
         label: "Group Detail",
         language: "json",
-        filename: "GET /UserGroups/{id} — Response",
+        filename: "GET /api/v1/UserGroups/{id} — Response (200 OK)",
         code: `{
-  "id": "group-uuid",
+  "id": "ENCRYPTED_USER_GROUP_ID",
   "nameEn": "Finance Team",
   "nameAr": "فريق المالية",
   "code": "FINANCE_TEAM",
-  "tenantId": "tenant-uuid",
+  "descriptionEn": "All finance department admins",
+  "descriptionAr": "جميع مشرفي القسم المالي",
+  "tenantId": "ENCRYPTED_TENANT_ID",
   "isActive": true,
   "members": [
     {
-      "adminId": "admin-uuid",
+      "adminId": "ENCRYPTED_ADMIN_ID",
       "firstName": "John",
       "lastName": "Doe",
       "username": "johndoe",
@@ -90,7 +92,7 @@ const sections: DocSection[] = [
   ],
   "roles": [
     {
-      "roleId": "role-uuid",
+      "roleId": "ENCRYPTED_ROLE_ID",
       "nameEn": "Accountant",
       "nameAr": "محاسب",
       "code": "ACCOUNTANT",
@@ -100,7 +102,7 @@ const sections: DocSection[] = [
   "restrictions": [
     {
       "permissionCode": "admins.view",
-      "restrictedFields": ["salary", "ssn"]
+      "restrictedFields": ["salary", "ssn", "bankAccount"]
     }
   ]
 }`,
@@ -108,15 +110,28 @@ const sections: DocSection[] = [
       {
         label: "Create Group",
         language: "json",
-        filename: "POST /UserGroups — Request",
+        filename: "POST /api/v1/UserGroups — Request",
         code: `{
   "nameEn": "Finance Team",
   "nameAr": "فريق المالية",
   "code": "FINANCE_TEAM",
   "descriptionEn": "All finance department admins",
   "descriptionAr": "جميع مشرفي القسم المالي",
-  "roleIds": ["role-uuid-1", "role-uuid-2"],
-  "tenantId": "tenant-uuid"
+  "roleIds": ["ENCRYPTED_ROLE_ID_1", "ENCRYPTED_ROLE_ID_2"],
+  "tenantId": "ENCRYPTED_TENANT_ID"
+}`,
+      },
+      {
+        label: "Update Group",
+        language: "json",
+        filename: "PUT /api/v1/UserGroups/{id} — Request",
+        code: `{
+  "nameEn": "Updated Finance Team",
+  "nameAr": "فريق المالية المحدث",
+  "descriptionEn": "Updated description",
+  "descriptionAr": "الوصف المحدث",
+  "roleIds": ["ENCRYPTED_ROLE_ID_1", "ENCRYPTED_ROLE_ID_3"],
+  "isActive": true
 }`,
       },
     ],
@@ -135,17 +150,28 @@ const sections: DocSection[] = [
     endpoints: [
       {
         method: "POST",
-        path: "/api/v1/UserGroups/{id}/members",
+        path: "/api/v1/UserGroups/{groupId}/members",
         descriptionKey: "apiReference.userGroupsApi.addMembersDesc",
         auth: "user_groups.update",
       },
       {
         method: "DELETE",
-        path: "/api/v1/UserGroups/{id}/members/{adminId}",
+        path: "/api/v1/UserGroups/{groupId}/members/{adminId}",
         descriptionKey: "apiReference.userGroupsApi.removeMemberDesc",
         auth: "user_groups.update",
       },
     ],
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "POST /api/v1/UserGroups/{groupId}/members — Request",
+    code: `{
+  "adminIds": [
+    "ENCRYPTED_ADMIN_ID_1",
+    "ENCRYPTED_ADMIN_ID_2"
+  ]
+}`,
   },
 
   // ─── Admin Group Roles & Restrictions ───────────────────────
@@ -161,23 +187,37 @@ const sections: DocSection[] = [
     endpoints: [
       {
         method: "PUT",
-        path: "/api/v1/UserGroups/{id}/roles",
+        path: "/api/v1/UserGroups/{groupId}/roles",
         descriptionKey: "apiReference.userGroupsApi.setGroupRolesDesc",
         auth: "user_groups.update",
       },
       {
         method: "PUT",
-        path: "/api/v1/UserGroups/{id}/restrictions",
+        path: "/api/v1/UserGroups/{groupId}/restrictions",
         descriptionKey: "apiReference.userGroupsApi.setGroupRestrictionsDesc",
         auth: "user_groups.update",
       },
     ],
   },
   {
-    type: "code",
-    language: "json",
-    filename: "PUT /UserGroups/{id}/restrictions — Request",
-    code: `{
+    type: "tabs",
+    tabs: [
+      {
+        label: "Set Roles",
+        language: "json",
+        filename: "PUT /api/v1/UserGroups/{groupId}/roles — Request",
+        code: `{
+  "roleIds": [
+    "ENCRYPTED_ROLE_ID_1",
+    "ENCRYPTED_ROLE_ID_2"
+  ]
+}`,
+      },
+      {
+        label: "Set Restrictions",
+        language: "json",
+        filename: "PUT /api/v1/UserGroups/{groupId}/restrictions — Request",
+        code: `{
   "restrictions": [
     {
       "permissionCode": "admins.view",
@@ -189,6 +229,8 @@ const sections: DocSection[] = [
     }
   ]
 }`,
+      },
+    ],
   },
 
   // ─── Bulk & Cascade Operations ─────────────────────────────
@@ -220,16 +262,53 @@ const sections: DocSection[] = [
         descriptionKey: "apiReference.userGroupsApi.bulkDeleteDesc",
         auth: "user_groups.delete",
       },
+      {
+        method: "POST",
+        path: "/api/v1/UserGroups/bulk/activate-all",
+        descriptionKey: "apiReference.userGroupsApi.bulkActivateAllDesc",
+        auth: "user_groups.update",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/UserGroups/bulk/deactivate-all",
+        descriptionKey: "apiReference.userGroupsApi.bulkDeactivateAllDesc",
+        auth: "user_groups.update",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/UserGroups/bulk/delete-all",
+        descriptionKey: "apiReference.userGroupsApi.bulkDeleteAllDesc",
+        auth: "user_groups.delete",
+      },
     ],
   },
   {
-    type: "code",
-    language: "json",
-    filename: "POST /UserGroups/bulk/delete — Request",
-    code: `{
-  "ids": ["group-uuid-1", "group-uuid-2"],
+    type: "tabs",
+    tabs: [
+      {
+        label: "Bulk Action (by IDs)",
+        language: "json",
+        filename: "POST /api/v1/UserGroups/bulk/{activate|deactivate|delete} — Request",
+        code: `{
+  "ids": [
+    "ENCRYPTED_GROUP_ID_1",
+    "ENCRYPTED_GROUP_ID_2"
+  ],
   "cascadeAdmins": true
 }`,
+      },
+      {
+        label: "Bulk Action (by Filter)",
+        language: "json",
+        filename: "POST /api/v1/UserGroups/bulk/{activate|deactivate|delete}-all — Request",
+        code: `{
+  "tenantId": "ENCRYPTED_TENANT_ID",
+  "search": "Finance",
+  "isActive": true,
+  "cascadeAdmins": true
+}`,
+      },
+    ],
   },
   {
     type: "info",
@@ -246,5 +325,5 @@ registerPage({
   order: 7,
   sections,
   relatedSlugs: ["api-reference/role-permission-api", "api-reference/admin-api"],
-  lastUpdated: "2026-02-22",
+  lastUpdated: "2026-06-28",
 });

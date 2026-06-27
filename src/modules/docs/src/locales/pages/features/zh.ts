@@ -38,6 +38,10 @@ export const zh = {
       intro:
         "SCRIPE 使用 EF Core 全局查询过滤器实现完全的行级数据隔离，支持多租户。确保租户之间的数据完全隔离。",
       architectureTitle: "架构",
+      isolationIntro:
+        "行级数据隔离是通过 EF Core 全局查询过滤器动态实现的。基类数据库上下文动态构建查询过滤器，将数据访问限制在当前活跃租户 (`CurrentTenantId`) 或平台全局记录 (`TenantId == null`) 范围内。EF Core 不是在编译时捕获静态值，而是在每次查询执行时动态评估活跃租户的上下文。",
+      drilldownIntro:
+        "系统管理员不会隐式绕过租户数据边界。绕过需要触发下钻 (drill-down) 操作，此时客户端应用会在 `X-Tenant-Context` 请求头中附加加密的租户 ID。中间件防火墙拦截请求，校验 `tenants.drill_down` 权限，使用 AES 解密请求头，并在请求持续期间覆写活跃租户 ID 上下文。",
       featuresTitle: "租户特性",
       featureIsolation: "数据隔离",
       featureIsolationDesc:
@@ -55,6 +59,8 @@ export const zh = {
       hierarchyTitle: "租户层级树",
       hierarchyIntro:
         "租户通过 ParentTenantId 形成树状结构。包含层级深度和路径，支持总公司与分支机构的管理。",
+      hierarchyQueriesIntro:
+        "SCRIPE 不依赖特定数据库的递归 CTE 查询，而是在创建子租户时，通过拼接物化路径 (`HierarchyPath`) 如 `/{grandparent-id}/{parent-id}/` 来构建租户层级结构。祖先关系校验和子树查询通过已索引的 StartsWith/Contains 字符串校验在常数时间内执行，这会转换为高效 SQL `LIKE` 查询。",
       settingsTitle: "租户设置 (Tenant Settings)",
       settingsIntro:
         "每个租户有对应的 1:1 TenantSettings 实体，分 4 个配置组。值为 -1 代表无限制。",
@@ -63,10 +69,11 @@ export const zh = {
       auditGroup: "审计配置",
       brandingGroup: "品牌定制",
       autoRoleTitle: "自动角色创建",
-      autoRoleIntro: "创建新租户时，系统会自动生成 Super Admin 和 Default 两个基础角色。",
+      autoRoleIntro:
+        "创建租户会在原子事务中动态初始化角色和管理员账户。创建的角色包括 `{CODE}_SUPER_ADMIN` 和 `{CODE}_DEFAULT`。超级管理员角色遵循锁定状态转换：在脚手架创建阶段未锁定 (`IsPermissionLocked = false`)，以通过绑定订阅版本来配置初始权限，之后转换为锁定状态 (`IsPermissionLocked = true`) 阻止任何后续修改。",
       cascadeDeleteTitle: "级联删除保护",
       cascadeDeleteIntro:
-        "提供端点以计算受删除租户影响的子级和相关数据数量，删除操作受到严格保护和审计。",
+        "删除租户强制执行严格的安全校验关卡。若存在子级，除非请求中设置 `CascadeChildren` 为 `true`，否则删除操作将被拦截。执行时会校验订阅版本门槛 `Identity.CascadeDelete.Enabled` 以及 `tenants.cascade_delete` 权限，并执行自底向上的逆向路径删除（最深子级最先删除），同时执行大批量软删除和立即清理关联表记录（域名、直接权限）以避免域名被占用，最后进行父级配额数重算。",
       permissionInheritanceTitle: "权限继承",
       permissionInheritanceIntro:
         "创建子租户时，父租户只能授予其已拥有的权限。子级权限无法超越父级。",
@@ -83,10 +90,10 @@ export const zh = {
       domainTypesTitle: "域名类型",
       domainArchTitle: "域名解析架构",
       domainArchIntro:
-        "当请求到达时，系统通过在 TenantDomain 表中查找主机名来解析租户。自动生成的域名（例如 sofa.scripe.com）始终已验证并立即解析。自定义域名必须先通过 DNS 验证。在未配置 DNS 的开发环境中，可使用 ?code= 查询参数作为回退机制。",
+        "传入的请求通过客户端 `useTenantResolution` 钩子和服务器端 `ResolveTenantByDomainQueryHandler` 查询处理器来解析租户上下文。客户端校验主机名是否为本地或平台域名，否则请求 API。服务器查找 TenantDomain 表，验证 `IsVerified == true`，深度合并租户专有的登录 brand 覆盖配置，或在开发模式下回退到 `?code=` 查询参数。",
       domainDnsTitle: "DNS 验证流程",
       domainDnsIntro:
-        "自定义域名需要 DNS 验证以证明所有权。当管理员添加自定义域名时，系统会生成唯一的验证令牌。管理员随后配置两条 DNS 记录：一条 CNAME 记录将域名指向平台的 CnameTarget，以及一条 TXT 记录位于 {VerificationPrefix}.{domain}，包含验证令牌。配置完成后，点击'验证'会触发 DNS 查询以确认两条记录均存在。",
+        "自定义域名必须通过 RFC 1123 规范校验、排除保留子域名列表并符合租户 `Tenancy.MaxCustomDomains` 配额限制。所有权证明通过生成以 `scr_` 为前缀的验证令牌，并使用 DNS 查询检测 CNAME 目标映射以及匹配的 TXT 记录 (`_scr-verify.{domain}`) 的存在来完成。",
       domainDnsNote:
         "DNS 验证目前是 UI 驱动的流程，管理员点击'验证'来触发检查。后端已预留接口，可与完整的 DNS 解析集成。自动生成的域名完全跳过验证——它们始终受信任。",
       domainConfigTitle: "可配置的平台域名",
@@ -98,23 +105,25 @@ export const zh = {
     },
     rolePermissions: {
       title: "角色与权限 (RBAC)",
-      description: "包含作用域覆盖、字段级限制、防权限提升和租户级角色的 RBAC 系统。",
+      description: "包含作用域覆盖、字段级限制、防权限提升和租户级角色的 RBAC system。",
       intro:
-        "SCRIPE 实施全面的基于角色的访问控制 (RBAC) 系统。权限在服务器端被缓存以保障极高的性能。",
+        "SCRIPE 实施了全面且高度优化的基于角色访问控制 (RBAC) 系统，支持模块化类别权限、作用域覆盖、字段级限制 (FLS) 以及租户隔离。权限通过提供程序动态加载，在服务器端使用 IMemoryCache 进行缓存，并通过编程化检查器进行验证。",
       hierarchyTitle: "权限层级",
       systemTitle: "权限系统",
-      systemIntro: "权限被组织成不同的类别，命名约定遵循：{资源}.{动作}。",
+      systemIntro:
+        "权限遵循严格的 {Resource}.{Action} 命名约定。各个后端模块不使用静态声明，而是通过实现 IModulePermissionProvider（如 IdentityPermissionProvider、CompliancePermissionProvider）来定义其权限。在应用启动时，这些提供程序会被自动扫描 and 注册，随后 DatabaseSeeder 调用 PermissionSeeder.SyncFromProvidersAsync 将代码中定义的权限同步并播种到数据库中。",
       scopeOverrideTitle: "作用域覆盖 (数据访问控制)",
       scopeOverrideIntro:
-        "RolePermission 可以覆盖权限的默认作用域，从而实现对特定角色数据访问级别的细粒度控制。",
+        "每个 RolePermission 均可通过 ScopeOverride 字段覆盖权限 of 默认作用域。DataScopeService 按照严格 the 优先级列表解析有效作用域：1) 穿透下钻上下文 (ContextTenantId Claim)，2) RolePermission 作用域覆盖，3) 系统保护超级管理员免检模式 (SystemProtectedAdmin)，4) 包含子租户标志 (IncludeChildTenants)，5) 已分配的租户，6) 全局回退。当用户被分配多个角色时，AdminSecurityService.GetWidestScope 会按照 all_tenants > hierarchy > own_tenant > own 的层级解析出最宽泛的作用域。为防止权限泄露，租户管理员的作用域解析范围被严格限制在其自身的子层级树中。",
       authPipelineTitle: "授权管道",
-      authPipelineIntro: "SCRIPE 使用 4 个属性组合的安全系统，动态生成 ASP.NET Core 授权策略。",
+      authPipelineIntro:
+        "授权管道与静态配置解耦。DynamicPermissionPolicyProvider 为包含 [PermissionRequired] 特性的路由动态构建 ASP.NET Core 授权策略。为确保 JWT Token 大小控制在 400 字节以内，用户具体权限不会存储在 Token Claim 中，而是使用 AdminPermissionCache 缓存于服务器端（采用 10 分钟滑动过期策略）。缓存使用中央 CancellationTokenSource 实现角色修改时线程安全的全局缓存即时失效。在 Handler 或 Service 中，可通过 IPermissionChecker 接口执行编程式权限校验。",
       restrictedFieldsTitle: "字段级限制",
       restrictedFieldsIntro:
-        "除了标准 CRUD，角色可以配置受限字段 (RestrictedFields)。特定字段（如薪水）将被 API 自动置空隐藏。",
+        "字段级安全 (FLS) 允许管理员针对特定角色限制实体的特定字段。受限字段配置为字符串路径 of JSON 数组（例如 [\"salary\", \"ssn\"]），并存储在 RolePermission 表的 RestrictedFieldsJson 列中（在 Oracle 上为 VARCHAR2(2000)，SQL Server 上为 nvarchar(2000)，PostgreSQL 上为 varchar(2000)）。执行请求时，RestrictedFieldsAuthorizationFilter 识别目标资源并将其存入 HttpContext.Items[\"RestrictedFields\"]. FieldProjectionMiddleware 拦截 HTTP 2xx 响应，将 JSON 内容解析为 JsonNode 树，并递归地将与精确或相对路径（如 address.street）匹配的受限属性值重置为 null，从而避免了反射所带来的性能开销。",
       cloneRoleTitle: "克隆角色 (防止权限提升)",
       cloneRoleIntro:
-        "被克隆的角色只能获得操作者本人所拥有的权限，防止低权限管理员通过克隆获取高权限。",
+        "为防止权限提升，CloneRoleCommandHandler 在复制权限列表时会根据克隆者自身的当前有效权限进行过滤，静默丢弃任何克隆者未拥有的权限。在直接分配权限的命令中，如果管理员尝试分配自己没有的权限，系统将抛出 role.permissionEscalation 的 Forbidden 错误。此外，TenantGuardianService 会校验所有角色变更操作，阻止任何对受保护且权限锁定角色 (IsPermissionLocked == true) 的修改。",
       rolePropertiesTitle: "角色实体属性",
       rolePropertiesIntro: "每个角色包含若干控制其行为和保护级别的系统标志。",
       endpointsTitle: "角色 API 端点",
@@ -123,10 +132,10 @@ export const zh = {
       tenantScopingNote: "角色自动限定在当前用户的租户范围内。",
       userGroupsTitle: "用户组 (User Groups)",
       userGroupsIntro:
-        "用户组支持批量为多个管理员分配角色和字段限制。用户登录时，合并其直接角色和用户组角色。",
+        "用户组支持批量为多个管理员分配角色 and 字段限制。用户登录时，合并其直接角色 and 用户组角色。",
       userGroupEndpointsTitle: "用户组 API 端点",
       userGroupsNote:
-        "用户组是叠加的 (Additive) —— 管理员最终的权限是其直接角色与用户组角色的并集 (UNION)。",
+        "用户组是叠加的 (Additive) —— 管理员最终 the 权限是其直接角色与用户组角色的并集 (UNION)。",
     },
     auditSystem: {
       title: "审计系统 (Audit System)",

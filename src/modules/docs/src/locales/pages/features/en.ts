@@ -48,6 +48,21 @@ export const en = {
         "Authentication endpoints are protected by multiple rate limiting policies to prevent brute-force attacks and abuse.",
       lockoutWarning:
         "After 5 failed login attempts, the account is locked for 15 minutes. The lockout counter resets after a successful login. Admins can manually unlock accounts from the admin panel.",
+      tokenValidationTitle: "Token Validation & Claim Checks",
+      tokenValidationIntro:
+        "Both authentication pipelines share the same JWT token validation process. The middleware verifies name identifier claims, checks the 'admin' flag, and queries the database bypassing global query filters using `IgnoreQueryFilters()` to verify the admin or user account is still active and has not been soft-deleted.",
+      mcpMiddlewareTitle: "MustChangePassword Middleware & Whitelist",
+      mcpMiddlewareIntro:
+        "When a password expires, the user's JWT receives the `mcp: true` claim. The `MustChangePasswordMiddleware` blocks all incoming requests with 403 Forbidden unless the request matches the whitelist: password change endpoint `/api/v1/admins/{adminId}/change-password`, profile details `/api/v1/auth/admin/me`, token refresh `/api/v1/auth/admin/refresh`, session logouts `/api/v1/auth/admin/logout` or `/api/v1/auth/admin/revoke`, and the system `/health` endpoint.",
+      ssoCallbackTitle: "OIDC/SSO Callback & Workspace Selection",
+      ssoCallbackIntro:
+        "For Single Sign-On (OIDC/SAML) callbacks, the system resolves the email and checks if multiple workspaces are linked. If there are multiple candidate workspaces, a temporary workspace selection token is generated and stored in a cache under `sso-login-selection:{token}`. The user is redirected to choose a workspace, which then dispatches `CompleteOidcWorkspaceSelectionCommand` to decrypt the selected tenant ID and issue final JWTs.",
+      antiReplayTitle: "Anti-Replay Windowing & TOTP Security",
+      antiReplayIntro:
+        "To prevent token reuse attacks, the `Verify2FACommandHandler` implements a strict 60-second anti-replay window. It computes a SHA256 hash of the verification code and matches it against `LastTwoFactorCodeUsed` and checks `LastTwoFactorCodeUsedAt` timestamp. If the same code is used again within 60 seconds, it is rejected.",
+      lockoutPolicyTitle: "Lockout Policies & brute-force limits",
+      lockoutPolicyIntro:
+        "Brute-force protection sets `MaxFailedAttempts = 5` and a lockout duration of `LockoutMinutes = 15`. During a lockout, password validation is bypassed entirely to avoid timing attacks and CPU exhaustion, returning an immediate account locked error.",
     },
     multiTenancy: {
       title: "Multi-Tenancy",
@@ -56,6 +71,10 @@ export const en = {
       intro:
         "SCRIPE supports full multi-tenancy with row-level data isolation using EF Core's global query filters. Every entity with a TenantId column is automatically filtered based on the current user's tenant, ensuring complete data separation between tenants.",
       architectureTitle: "Architecture",
+      isolationIntro:
+        "Row-level data isolation is achieved dynamically via EF Core Global Query Filters. The base DB context dynamically builds query filters that restrict access to the current tenant (`CurrentTenantId`) or platform-wide records (`TenantId == null`). Rather than capturing a static value during compilation, EF Core dynamically evaluates the active tenant's context on each database query execution.",
+      drilldownIntro:
+        "System administrators do not bypass tenant data boundaries implicitly. Bypassing requires a drill-down action where the client app attaches the encrypted tenant ID in the `X-Tenant-Context` header. The middleware firewall intercepts the request, checks for the `tenants.drill_down` permission, decrypts the header using AES, and overrides the active tenant ID context for the duration of the request.",
       featuresTitle: "Tenant Features",
       featureIsolation: "Data Isolation",
       featureIsolationDesc:
@@ -78,6 +97,8 @@ export const en = {
       hierarchyTitle: "Tenant Hierarchy",
       hierarchyIntro:
         "Tenants form a tree structure via ParentTenantId. Each tenant has a HierarchyLevel (depth counter) and HierarchyPath (materialized path like /root/company/branch/). This enables organizational structures with parent companies, branches, and departments.",
+      hierarchyQueriesIntro:
+        "Instead of relying on database-specific recursive CTE queries, SCRIPE scaffolds tenant hierarchy on child tenant creation by concatenating materialized paths (`HierarchyPath`) like `/{grandparent-id}/{parent-id}/`. Ancestry checks and descendants sub-tree queries are executed in constant time using indexed starts-with/contains string checks, which translate into highly performant SQL `LIKE` queries.",
       settingsTitle: "Tenant Settings (Per-Tenant Configuration)",
       settingsIntro:
         "Each tenant has a 1:1 TenantSettings entity with 4 configuration groups. Values of -1 mean unlimited.",
@@ -87,10 +108,10 @@ export const en = {
       brandingGroup: "Branding",
       autoRoleTitle: "Auto-Role Creation",
       autoRoleIntro:
-        "When a new tenant is created via POST /tenants, the system automatically creates two roles: {CODE}_SUPER_ADMIN (with all granted permissions, IsTenantSuperAdmin=true, IsPermissionLocked=true) and {CODE}_DEFAULT (with basic read permissions, IsDefaultRole=true). The creating admin is automatically assigned the super admin role.",
+        "Creating a tenant dynamically provisions roles and an administrator account within an atomic transaction. Roles created are `{CODE}_SUPER_ADMIN` and `{CODE}_DEFAULT`. The Super Admin role follows a lock state transition: during scaffolding, it is unlocked (`IsPermissionLocked = false`) to configure initial permissions via plan edition assignment before transition to a locked state (`IsPermissionLocked = true`) preventing further modifications.",
       cascadeDeleteTitle: "Cascade Delete Protection",
       cascadeDeleteIntro:
-        "Deleting a tenant is a dangerous operation. The system provides a GET /tenants/{id}/descendant-count endpoint that returns the count of all descendants (sub-tenants, admins, users, roles) that would be affected. Cascade delete requires the special tenants.cascade_delete permission and is fully audited.",
+        "Tenant deletion enforces strict security check gates. If descendants exist, deletion is blocked unless the request sets `CascadeChildren` to `true`. Execution enforces the `Identity.CascadeDelete.Enabled` plan gate, validation of `tenants.cascade_delete` RBAC permissions, and performs a bottom-up reverse path deletion (deepest children first) along with bulk soft deletes and immediate cleanup of junction table records (domains, direct permissions) to avoid hostage domains, followed by quota counter reconciliation.",
       permissionInheritanceTitle: "Permission Inheritance",
       permissionInheritanceIntro:
         "When creating a child tenant, the parent can only grant permissions that it already has. This creates a cascading security model  a child tenant can never have more permissions than its parent. The GET /tenants/creation-permissions endpoint returns the available permission pool filtered by the current user's tenant.",
@@ -108,10 +129,10 @@ export const en = {
       domainTypesTitle: "Domain Types",
       domainArchTitle: "Domain Resolution Architecture",
       domainArchIntro:
-        "When a request arrives, the system resolves the tenant by looking up the hostname in the TenantDomain table. Auto-generated domains (e.g. sofa.scripe.com) are always verified and resolve immediately. Custom domains must pass DNS verification first. A fallback mechanism using the ?code= query parameter is available for development environments where DNS is not configured.",
+        "Incoming requests resolve the tenant context via the client-side `useTenantResolution` hook and server-side `ResolveTenantByDomainQueryHandler`. The client checks if the hostname is a local/platform domain, otherwise query the API. The server looks up the TenantDomain table, verifies `IsVerified == true`, deep-merges tenant-specific login branding overrides, or falls back to `?code=` query parameters in developer mode.",
       domainDnsTitle: "DNS Verification Flow",
       domainDnsIntro:
-        "Custom domains require DNS verification to prove ownership. When an admin adds a custom domain, the system generates a unique verification token. The admin then configures two DNS records: a CNAME record pointing the domain to the platform's CnameTarget, and a TXT record at {VerificationPrefix}.{domain} containing the verification token. Once configured, clicking 'Verify' triggers a DNS lookup to confirm both records are present.",
+        "Custom domains must be validated against RFC 1123, reserved subdomains list, and the tenant's `Tenancy.MaxCustomDomains` quota limit. Ownership is proved by generating a verification token (`scr_` prefix) and checking the presence of a CNAME target mapping and a matching TXT record (`_scr-verify.{domain}`) utilizing DNS lookup queries.",
       domainDnsNote:
         "DNS verification is currently a UI-driven process where the admin clicks 'Verify' to trigger the check. The backend placeholder is ready for full DNS resolution integration. Auto-generated domains skip verification entirely — they are always trusted.",
       domainConfigTitle: "Configurable Platform Domain",
@@ -126,23 +147,23 @@ export const en = {
       description:
         "RBAC system with scope override, field-level restrictions, anti-escalation, and tenant-scoped roles.",
       intro:
-        "SCRIPE implements a comprehensive RBAC (Role-Based Access Control) system with category-based permissions, scope overrides, field-level restrictions, and tenant scoping. Permissions are cached server-side for performance  changes take effect immediately without token refresh.",
+        "SCRIPE implements a comprehensive, highly optimized RBAC (Role-Based Access Control) system with modular category-based permissions, scope overrides, field-level restrictions (FLS), and tenant scoping. Permissions are dynamically loaded from providers, cached server-side using IMemoryCache, and validated via programmatic checkers.",
       hierarchyTitle: "Permission Hierarchy",
       systemTitle: "Permission System",
       systemIntro:
-        "Permissions are organized into categories, each containing multiple granular permissions. The naming convention follows the pattern: {resource}.{action}.",
+        "Permissions follow a strict {Resource}.{Action} naming convention. Instead of static declarations, each backend module defines its permissions by implementing IModulePermissionProvider (e.g., IdentityPermissionProvider, CompliancePermissionProvider). On startup, these providers are automatically discovered, and the DatabaseSeeder uses PermissionSeeder.SyncFromProvidersAsync to synchronize and seed permissions in the database.",
       scopeOverrideTitle: "Scope Override (Data Access Control)",
       scopeOverrideIntro:
-        "Each RolePermission can override the default scope of a permission. This controls how much data a role can access for a given permission. The scope override is stored in the RolePermission junction table, allowing fine-grained control per role.",
+        "Each RolePermission can override the default scope of a permission via the ScopeOverride field. The DataScopeService resolves the effective scope using a strict priority list: 1) Drill-down Context (ContextTenantId claim), 2) RolePermission Scope Override, 3) God-Mode Check (SystemProtectedAdmin), 4) Hierarchy Flag (IncludeChildTenants), 5) Tenant Assigned, 6) Global Fallback. When multiple roles are assigned, AdminSecurityService.GetWidestScope resolves the widest scope: all_tenants > hierarchy > own_tenant > own. To prevent privilege leakage, tenant administrators are strictly capped to their own sub-hierarchy during scope resolution.",
       authPipelineTitle: "Authorization Pipeline",
       authPipelineIntro:
-        "SCRIPE uses a 4-attribute authorization system. The PermissionRequired attribute supports an optional scope parameter. The DynamicPermissionPolicyProvider creates ASP.NET Core authorization policies on-the-fly from these attributes. The PermissionChecker service resolves the effective scope and checks tenant hierarchy access.",
+        "Authorization is decoupled from static configurations. The DynamicPermissionPolicyProvider dynamically constructs ASP.NET Core authorization policies for routes containing the [PermissionRequired] attribute. To keep JWT token size under 400 bytes, user permissions are not stored in claims but are cached server-side using AdminPermissionCache (with a 10-minute sliding expiration). Caching utilizes a central CancellationTokenSource for thread-safe global eviction upon any role modification. Programmatic checks are performed in handlers and services via the IPermissionChecker interface.",
       restrictedFieldsTitle: "Field-Level Restrictions",
       restrictedFieldsIntro:
-        "Beyond standard CRUD permissions, roles can have field-level restrictions. The RestrictedFieldsJson column stores a JSON array of field names that should be hidden from API responses for that role. This means a role might have 'users.read' permission but with certain fields (like salary or SSN) nullified.",
+        "Field-Level Security (FLS) allows administrators to restrict specific fields of an entity for specific roles. Restricted fields are configured as a JSON array of string paths (e.g., [\"salary\", \"ssn\"]) and stored in the RestrictedFieldsJson column (varchar/nvarchar/VARCHAR2 up to 2000 chars) of the RolePermission table. During execution, the RestrictedFieldsAuthorizationFilter identifies the target resource and sets HttpContext.Items[\"RestrictedFields\"]. The FieldProjectionMiddleware intercepts HTTP 2xx JSON responses, parses the body into a JsonNode tree, and recursively nullifies restricted properties matching the exact or relative path (e.g., address.street) to prevent reflection overhead.",
       cloneRoleTitle: "Clone Role (Anti-Escalation)",
       cloneRoleIntro:
-        "The CloneRole endpoint creates a copy of an existing role with a new name. Crucially, it implements anti-privilege-escalation: the cloned role only receives permissions that the cloning admin also has. This prevents a lower-privileged admin from cloning a higher-privileged role to gain access.",
+        "To prevent privilege escalation, the CloneRoleCommandHandler filters the copied permission list against the cloner's own active permissions, silently dropping any unpossessed permissions. In the permission assignment command, attempting to explicitly add permissions that the administrator does not possess throws a Forbidden role.permissionEscalation error. Additionally, the TenantGuardianService validates all role updates and blocks any changes to locked system-critical roles (IsPermissionLocked == true).",
       rolePropertiesTitle: "Role Entity Properties",
       rolePropertiesIntro:
         "Each role has several system flags that control its behavior and protection level.",
@@ -376,15 +397,15 @@ export const en = {
         "User Groups provide a scalable way to assign roles and field-level restrictions to large numbers of administrators. Instead of assigning roles individually to each admin, you create a group, add roles and restrictions to it, then add admins as members. All members automatically inherit the group's roles and restrictions on their next login.",
       architectureTitle: "Architecture",
       architectureIntro:
-        "Each AdminGroup belongs to a single tenant and contains three collections: Members (AdminAdminGroup junction), Roles (AdminGroupRole), and Restrictions (AdminGroupRestriction). The group inherits from AuditableEntity for soft-delete support and implements ITenantAwareEntity for automatic tenant scoping.",
-      domainModelTitle: "Domain Model",
+        "Each UserGroup belongs to a tenant and has junction links: AdminUserGroup for members, UserGroupRole for roles, and UserGroupRestriction for field-level security. Relations are configured with Cascade Delete on the UserGroup side, so deleting a group automatically removes member links, roles, and restrictions, but Restrict Delete on the Tenant side prevents removing a Tenant with active groups.",
+      domainModelTitle: "Domain Model & Configurations",
       domainModelIntro:
-        "The User Groups feature adds 4 entities to the Identity domain. AdminGroup is the aggregate root. AdminAdminGroup is the many-to-many junction between Admin and AdminGroup. AdminGroupRole assigns a role to all group members. AdminGroupRestriction defines per-permission field restrictions.",
+        "The User Groups feature utilizes four domain entities: UserGroup (aggregate root), AdminUserGroup (many-to-many junction), UserGroupRole (many-to-many junction), and UserGroupRestriction (field restrictions). Database configurations enforce unique composite indexes on {TenantId, Code} for UserGroup, {AdminId, UserGroupId} for AdminUserGroup, and {UserGroupId, RoleId} for UserGroupRole to prevent duplicate mappings.",
       howItWorksTitle: "How It Works at Login",
       howItWorksIntro:
-        "When an admin logs in, the AdminSecurityService loads their direct roles AND all groups they belong to. For each group, it collects the group's roles and restrictions. The final set of permissions is the UNION of direct roles and all group-inherited roles. Restrictions are merged additively — if any source restricts a field, it is restricted in the effective claim set.",
+        "At authentication, the AdminRepository implements a single-query projection pattern (GetWithRolesAsync) to fetch direct and group-inherited roles and restrictions in one database round-trip. Group-inherited roles are projected into synthetic AdminRole instances (with Id = Guid.Empty) and appended to the admin's Roles collection. AdminSecurityService then performs an additive union merge of role-level and group-level field restrictions (where 'deny wins' for FLS).",
       mergeNote:
-        "Group roles and restrictions are additive — they can only EXPAND an admin's effective restrictions, never remove direct role assignments. This matches the 'deny wins' security principle.",
+        "Group roles and restrictions are additive — they can only expand an admin's effective restrictions, never remove direct role assignments. This matches the 'deny wins' security principle.",
       memberManagementTitle: "Member Management",
       memberManagementIntro:
         "Adding members is idempotent — posting an admin ID that is already a member silently succeeds. Removing a member removes the junction record; the admin retains all directly-assigned roles. The member list is queryable with admin metadata (name, email, status).",
@@ -396,13 +417,13 @@ export const en = {
         "Group restrictions follow the same model as role-level RestrictedFields. Each restriction targets a specific permission code and lists the fields to hide. At login, the system takes the UNION of all restricted fields across direct roles and all group memberships — if any source restricts 'salary', it's restricted regardless of other assignments.",
       cascadeTitle: "Cascade Operations",
       cascadeIntro:
-        "User Groups support massive bulk operations and cascading soft-deletes. When a AdminGroup is deactivated or deleted, an administrator can optionally trigger a cascade operation to also deactivate or soft-delete all Administrators exclusively belonging to that group.",
+        "User Groups support bulk operations (activate, deactivate, delete, and their filter-based -all variants). If cascadeAdmins is enabled, deactivation or soft-delete cascades to group members. Cascade operations automatically skip Protected Admins (like the tenant creator). If cascadeAdmins is false, any orphaned admin who loses all role assignments is automatically transferred to the SYSTEM_DEFAULT fallback role.",
       cascadeNote:
         "Cascade operations automatically skip Protected Admins (like the tenant creator). This ensures that a massive group deletion cannot accidentally wipe out the tenant's primary recovery account.",
-      endpointsTitle: "API Endpoints (12)",
+      endpointsTitle: "API Endpoints (18)",
       frontendTitle: "Frontend Module",
       frontendIntro:
-        "The frontend module follows the standard SCRIPE module structure with domain, data, and presentation layers. The list page uses GenericCrudView for standard CRUD operations. The detail page provides 3 tabs for managing members, roles, and restrictions independently.",
+        "The frontend utilizes a clean MVVM pattern. UserGroupService communicates with the backend, UserGroupRepository validates contracts with Zod schema verification (UserGroupModelSchema), and UserGroupMapper maps response DTOs. The useUserGroupsViewModel coordinates CRUD states, including custom deleteDialog and statusDialog state handlers for cascading actions.",
       securityNote:
         "User Groups are tenant-scoped. SuperAdmins see all groups across tenants. Tenant admins can only manage groups within their own tenant. All mutations are audited and require the user_groups.* permission set.",
     },

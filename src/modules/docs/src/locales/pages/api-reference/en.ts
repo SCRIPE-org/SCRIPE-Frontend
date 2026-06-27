@@ -251,6 +251,12 @@ export const en = {
         "Bulk set IsActive=false for multiple User Groups. Options to cascade deactivation to members.",
       bulkDeleteDesc:
         "Bulk soft-delete multiple User Groups. Options to cascade soft-delete to members.",
+      bulkActivateAllDesc:
+        "Bulk activate all User Groups matching the specified filter criteria (supports cascadeAdmins).",
+      bulkDeactivateAllDesc:
+        "Bulk deactivate all User Groups matching the specified filter criteria (supports cascadeAdmins).",
+      bulkDeleteAllDesc:
+        "Bulk soft-delete all User Groups matching the specified filter criteria (supports cascadeAdmins).",
       cascadeWarningNode:
         "Cascade operations securely skip Protected Admins. If you attempt to cascade a delete onto the Tenant Owner, the group is deleted, but the Owner is completely spared.",
     },

@@ -280,13 +280,19 @@ export const fr = {
         "Mise à jour Nuke-and-Pave des colonnes JSON des limitations de champs (ex : cacher le mot de passe aux RH), répliquant les règles de manière implacable au conteneur groupe.",
       bulkCascadeTitle: "Armement Lourd (Masse & Actions en Cascade)",
       bulkCascadeIntro:
-        "Commandes terrifiantes destinées à paralyser, réactiver ou éliminer simultanément de multiples groupes entiers et leurs opérateurs sous-jacents de la plateforme de production en un clic.",
+        "Commandes destinées à paralyser, réactiver ou éliminer simultanément de multiples groupes entiers et leurs opérateurs sous-jacents de la plateforme de production en un clic.",
       bulkActivateDesc:
         "Remise en service d'un tableau ou liste de Groupes. L'option de Cascade peut éveiller de nouveau tous les administrateurs y appartenant de manière exclusive.",
       bulkDeactivateDesc:
         "Verrouillage absolu. Plonge dans l'obscurité l'entièreté d'un département ou liste de Groupes. Cascade coupe l'accès physique à la plateforme via le booléen des Administrateurs concernés.",
       bulkDeleteDesc:
         "Hécatombe de bases de données gérée en Soft Delete. L'ordre raye de la carte les groupes donnés avec la possibilité que la Cascade réduise aussi en suppression logique chaque opérateur lié.",
+      bulkActivateAllDesc:
+        "Activer en masse tous les groupes d'utilisateurs correspondant aux critères de filtrage spécifiés (prend en charge cascadeAdmins).",
+      bulkDeactivateAllDesc:
+        "Désactiver en masse tous les groupes d'utilisateurs correspondant aux critères de filtrage spécifiés (prend en charge cascadeAdmins).",
+      bulkDeleteAllDesc:
+        "Supprimer en masse (soft-delete) tous les groupes d'utilisateurs correspondant aux critères de filtrage spécifiés (prend en charge cascadeAdmins).",
       cascadeWarningNode:
         "Alerte Automatisée d'Exclusion : le pare-feu du script de Cascade détectera tout membre détenant la balise de Protect System Owner et la contournera pour éviter d'effacer le propriétaire légitime de l'entreprise lors d'un massacre massif de base de données.",
     },

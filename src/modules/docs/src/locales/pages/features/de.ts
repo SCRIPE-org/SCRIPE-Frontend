@@ -8,31 +8,61 @@ export const de = {
     authentication: {
       title: "Authentifizierung",
       description:
-        "Duale Authentifizierung (Admin + User), JWT-Tokens, 2FA mit Backup-Codes und mandantenbezogene Passwortrichtlinien.",
+        "Duale Authentifizierung (Admin + User), Multi-Workspace-Routing, JWT-Tokens, 2FA mit Backup-Codes, Durchsetzung des Passwortablaufs, SSO-Sperrgatter und mandantenspezifische Passwortrichtlinien.",
       intro:
-        "SCRIPE bietet ein sicheres Authentifizierungssystem mit JWT-Access-Tokens, Refresh-Token-Rotation und optionaler 2FA.",
+        "SCRIPE bietet ein sichere Authentifizierungssystem mit JWT-Access-Tokens, Refresh-Token-Rotation, optionaler Zwei-Faktor-Authentifizierung, Multi-Workspace-Anmeldeerkennung, Passwortablaufdurchsetzung und umfassendem Rate-Limiting. Das System unterstützt separate Admin- und User-Authentifizierungspipelines mit unterschiedlichen JWT-Claims und Berechtigungen.",
       flowTitle: "Authentifizierungs-Ablauf",
+      workspaceTitle: "Multi-Workspace-Anmeldeerkennung",
+      workspaceIntro:
+        "Wenn sich ein Administrator über die Plattform-Domain anmeldet (ohne vordefinierten Mandanten), führt das Backend einen Routing-Algorithmus mit 3 Fällen aus. Fall A verwendet eine bereitgestellte tenantId für eine strikte Domain-Isolierung. Fall A' wird ausgelöst, wenn das Flag isPlatformAdmin gesetzt ist – dies sucht direkt nach dem Plattform-Admin (TenantId = null) und umgeht die Workspace-Erkennung vollständig, um Endlosschleifen zu verhindern. Fall B führt die Workspace-Erkennung durch: Zuerst wird nach einem Plattform-Admin gesucht, dann werden alle Mandanten per E-Mail durchsucht – bei mehreren Treffern wird eine Arbeitsbereichsauswahl zurückgegeben.",
+      workspaceNote:
+        "Das Flag isPlatformAdmin wurde eingeführt, um eine kritische Schleife zu lösen: Wenn ein Plattform-Admin 'Plattform-Administration' aus der Arbeitsbereichsauswahl wählte, wurde die Workspace-Erkennung erneut ausgelöst (da kein tenantId für die Plattform vorhanden war). Das Flag signalisiert dem Backend nun, die Erkennung zu überspringen und sich direkt mit dem Plattform-Admin-Datensatz zu authentifizieren.",
+      passwordExpiryTitle: "Durchsetzung des Passwortablaufs",
+      passwordExpiryIntro:
+        "Während der Anmeldung, nach der BCrypt-Verifizierung und den Kontosperrprüfungen, ruft der Handler den ITenantPasswordValidator auf, um zu prüfen, ob das Passwort des Administrators die Einstellung PasswordExpiryDays des Mandanten überschritten hat. Wenn es abgelaufen ist, enthält die Antwort MustChangePassword = true, was das Frontend zwingt, den Administrator auf die Passwortänderungsseite umzuleiten. Der Administrator erhält ein gültiges JWT, kann jedoch nicht auf das Dashboard zugreifen, bis das Passwort aktualisiert wurde.",
+      ssoSuspensionTitle: "SSO-Mandantensperrgatter",
+      ssoSuspensionIntro:
+        "Der ExternalLoginCommandHandler enthält ein Sicherheitsgatter für Mandantensperren. Nach der SSO-Token-Validierung und der Kontoverknüpfung prüft der Handler den Mandantenstatus des Administrators. Wenn der Mandant gesperrt oder gekündigt ist, wird die Anmeldung mit einem lokalisierten Fehler abgelehnt. Dies verhindert, dass deaktivierte Benutzer Standard-Anmeldeprüfungen über SSO-Anbieter wie Google oder Azure AD umgehen.",
+      ssoSuspensionWarning:
+        "Ohne dieses Gatter könnten sich SSO-Benutzer über einen externen Identitätsanbieter authentifizieren und ein gültiges SCRIPE-JWT erhalten, selbst wenn ihr Mandant gesperrt wurde. Alle SSO-Anmeldepfade erzwingen nun dieselben Mandantenstatusprüfungen wie die Standard-Passwortanmeldung.",
       jwtTitle: "JWT-Token Konfiguration",
       jwtIntro:
-        "Kurzlebige Access-Tokens (15 Min.) und langlebige Refresh-Tokens (7 Tage), die bei Nutzung rotiert werden.",
+        "Das System verwendet kurzlebige Access-Tokens (15 Minuten) und langlebige Refresh-Tokens (7 Tage). Refresh-Tokens werden bei jeder Verwendung rotiert, um Wiederverwendungsangriffe zu verhindern.",
       dualAuthTitle: "Duale Authentifizierung (Admin & User)",
       dualAuthIntro:
-        "Getrennte Pipelines für Admin- und User-Authentifizierung mit unterschiedlichen Claims und Rechten.",
+        "SCRIPE verfügt über zwei separate Authentifizierungspipelines. Die Admin-Authentifizierung (AdminAuthController) stellt JWTs mit admin-spezifischen Claims (TenantId, IsSuperAdmin, Roles) aus. Die User-Authentifizierung (UserAuthController) stellt JWTs mit benutzerspezifischen Claims (NationalId, Gender, Country) aus. Jede Pipeline hat ihre eigenen Anmelde-, Registrierungs- und Token-Aktualisierungs-Endpunkte.",
       adminEntityTitle: "Admin-Entität (Sicherheitsfunktionen)",
-      adminEntityIntro: "Sicherheitskritische Felder, die das Kontoverhalten steuern.",
+      adminEntityIntro:
+        "Die Admin-Entität verfügt über mehrere sicherheitskritische Felder, die das Kontoverhalten und den Schutz steuern.",
       twoFactorTitle: "Zwei-Faktor-Authentifizierung (Deep Dive)",
-      twoFactorIntro: "2FA via TOTP mit Anti-Replay-Schutz und Backup-Codes.",
+      twoFactorIntro:
+        "Die 2FA ist mit TOTP (Time-based One-Time Password) unter Verwendung eines mandantenspezifischen TwoFactorSecret implementiert. Backup-Codes werden verschlüsselt in BackupCodesJson gespeichert. Der Anti-Replay-Schutz stellt sicher, dass derselbe Code nicht zweimal verwendet werden kann, indem die Zeitstempel LastTwoFactorCodeUsed und LastTwoFactorCodeUsedAt überprüft werden.",
       passwordPolicyTitle: "Mandantenbezogene Passwortrichtlinie",
       passwordPolicyIntro:
-        "Die Passwortanforderungen sind pro Mandant über TenantSettings konfigurierbar.",
-      endpointsTitle: "Auth-API-Endpunkte",
+        "Passwortanforderungen sind pro Mandant über TenantSettings konfigurierbar. Jeder Mandant kann Mindestlänge, Großbuchstaben, Zahlen, Sonderzeichen und Ablaufdauer festlegen. Das Feld PasswordLastChanged in der Admin-Entität wird mit den PasswordExpiryDays des Mandanten abgeglichen, um die Passwortrotation zu erzwingen.",
+      endpointsTitle: "Authentifizierungs-API-Endpunkte",
       endpointsAdminTitle: "Admin Auth Endpunkte",
       endpointsUserTitle: "User Auth Endpunkte",
       rateLimitingTitle: "Rate Limiting",
       rateLimitingIntro:
-        "Schutz vor Brute-Force-Angriffen durch Limitierung der Authentifizierungsendpunkte.",
+        "Authentifizierungsendpunkte sind durch mehrere Rate-Limiting-Richtlinien geschützt, um Brute-Force-Angriffe und Missbrauch zu verhindern.",
       lockoutWarning:
-        "Nach 5 fehlgeschlagenen Anmeldeversuchen wird das Konto für 15 Minuten gesperrt.",
+        "Nach 5 fehlgeschlagenen Anmeldeversuchen wird das Konto für 15 Minuten gesperrt. Der Sperrzähler wird nach einer erfolgreichen Anmeldung zurückgesetzt. Administratoren können Konten manuell über das Admin-Panel entsperren.",
+      tokenValidationTitle: "Token-Validierung & Claim-Prüfungen",
+      tokenValidationIntro:
+        "Beide Authentifizierungspipelines teilen denselben JWT-Token-Validierungsprozess. Die Middleware überprüft Name-Identifier-Claims, prüft das 'admin'-Flag und fragt die Datenbank unter Umgehung globaler Abfragefilter mit `IgnoreQueryFilters()` ab, um sicherzustellen, dass das Administrator- oder Benutzerkonto noch aktiv und nicht logisch gelöscht ist.",
+      mcpMiddlewareTitle: "MustChangePassword-Middleware & Whitelist",
+      mcpMiddlewareIntro:
+        "Wenn ein Passwort abläuft, erhält das JWT des Benutzers den Claim `mcp: true`. Die `MustChangePasswordMiddleware` blockiert alle eingehenden Anfragen mit 403 Forbidden, es sei denn, die Anforderung entspricht der Whitelist: Passwortänderungs-Endpunkt `/api/v1/admins/{adminId}/change-password`, Profildetails `/api/v1/auth/admin/me`, Token-Aktualisierung `/api/v1/auth/admin/refresh`, Sitzungsabmeldungen `/api/v1/auth/admin/logout` oder `/api/v1/auth/admin/revoke` sowie der Systemdiagnose-Endpunkt `/health`.",
+      ssoCallbackTitle: "OIDC/SSO-Callback & Arbeitsbereichsauswahl",
+      ssoCallbackIntro:
+        "Bei Single Sign-On-Callbacks (OIDC/SAML) löst das System die E-Mail-Adresse auf und prüft, ob mehrere Arbeitsbereiche verknüpft sind. Wenn mehrere Kandidaten-Arbeitsbereiche vorhanden sind, wird ein temporäres Arbeitsbereichs-Auswahltoken generiert und im Cache unter `sso-login-selection:{token}` gespeichert. Der Benutzer wird zur Auswahl eines Arbeitsbereichs weitergeleitet, wodurch anschließend der Befehl `CompleteOidcWorkspaceSelectionCommand` gesendet wird, um die ausgewählte Tenant-ID zu entschlüsseln und die endgültigen JWTs auszustellen.",
+      antiReplayTitle: "Anti-Replay-Fenster & TOTP-Sicherheit",
+      antiReplayIntro:
+        "Um Token-Wiederverwendungsangriffe zu verhindern, implementiert der `Verify2FACommandHandler` ein striktes 60-Sekunden-Anti-Replay-Fenster. Er berechnet einen SHA256-Hash des Verifizierungscodes und vergleicht ihn mit `LastTwoFactorCodeUsed` unter Prüfung des Zeitstempels `LastTwoFactorCodeUsedAt`. Wenn derselbe Code innerhalb von 60 Sekunden erneut verwendet wird, wird er abgewiesen.",
+      lockoutPolicyTitle: "Sperrrichtlinien & Brute-Force-Grenzwerte",
+      lockoutPolicyIntro:
+        "Der Brute-Force-Schutz setzt `MaxFailedAttempts = 5` und eine Sperrdauer von `LockoutMinutes = 15` voraus. Während einer Sperre wird die Passwortvalidierung vollständig umgangen, um Timing-Angriffe und CPU-Überlastung zu verhindern, und es wird ein sofortiger Fehler für ein gesperrtes Konto zurückgegeben.",
     },
     multiTenancy: {
       title: "Mandantenfähigkeit (Multi-Tenancy)",
@@ -41,6 +71,10 @@ export const de = {
       intro:
         "SCRIPE unterstützt vollständige Mandantenfähigkeit (Multi-Tenancy) mit Datenisolierung auf Zeilenebene.",
       architectureTitle: "Architektur",
+      isolationIntro:
+        "Die Datenisolierung auf Zeilenebene wird dynamisch über globale EF Core-Abfragefilter erreicht. Der Basis-Datenbankkontext erstellt dynamisch Abfragefilter, die den Zugriff auf den aktiven Mandanten (`CurrentTenantId`) oder plattformweite Datensätze (`TenantId == null`) beschränken. Anstatt einen statischen Wert zur Kompilierungszeit zu erfassen, wertet EF Core den Kontext des aktiven Mandanten bei jeder Abfrageausführung dynamisch aus.",
+      drilldownIntro:
+        "Systemadministratoren umgehen die Mandantendatengrenzen nicht implizit. Das Umgehen erfordert eine Drilldown-Aktion, bei der die Client-App die verschlüsselte Mandanten-ID im Header `X-Tenant-Context` anhängt. Die Middleware-Firewall fängt die Anfrage ab, prüft auf die Berechtigung `tenants.drill_down`, entschlüsselt den Header mittels AES und überschreibt den Kontext der Mandanten-ID für die Dauer der Anfrage.",
       featuresTitle: "Mandanten-Funktionen",
       featureIsolation: "Datenisolierung",
       featureIsolationDesc: "Isolierung auf Zeilenebene über globale EF Core-Abfragefilter.",
@@ -58,6 +92,8 @@ export const de = {
         "Sämtliche Geschäftsdaten werden automatisch dem Mandanten zugeordnet.",
       hierarchyTitle: "Mandanten-Hierarchie",
       hierarchyIntro: "Mandanten bilden eine Baumstruktur (Parent/Child).",
+      hierarchyQueriesIntro:
+        "Anstatt sich auf datenbankspezifische rekursive CTE-Abfragen zu verlassen, baut SCRIPE die Mandantenhierarchie bei der Erstellung von Kind-Mandanten durch Verknüpfung materialisierter Pfade (`HierarchyPath`) wie `/{grandparent-id}/{parent-id}/` auf. Abstammungsprüfungen und Unterbaum-Abfragen von Nachkommen werden in konstanter Zeit mittels indexierter StartsWith/Contains-Zeichenfolgenprüfungen ausgeführt, die in hochperformante SQL-`LIKE`-Abfragen übersetzt werden.",
       settingsTitle: "Mandanteneinstellungen (Tenant Settings)",
       settingsIntro: "Jeder Mandant hat eine unabhängige Konfigurationsentität.",
       quotaGroup: "Quota-Einstellungen",
@@ -66,10 +102,10 @@ export const de = {
       brandingGroup: "Branding",
       autoRoleTitle: "Automatische Rollenerstellung",
       autoRoleIntro:
-        "Beim Erstellen eines Mandanten werden automatisch Super-Admin- und Standardrollen angelegt.",
+        "Die Erstellung eines Mandanten stellt Rollen und ein Administratorkonto dynamisch innerhalb einer atomaren Transaktion bereit. Die erstellten Rollen sind `{CODE}_SUPER_ADMIN` und `{CODE}_DEFAULT`. Die Super-Admin-Rolle durchläuft einen Sperrzustandsübergang: Während der Bereitstellung ist sie entsperrt (`IsPermissionLocked = false`), um Anfangsberechtigungen über die Zuweisung der Plan-Edition zu konfigurieren, bevor sie in einen gesperrten Zustand (`IsPermissionLocked = true`) übergeht, der weitere Änderungen verhindert.",
       cascadeDeleteTitle: "Cascade-Delete-Schutz",
       cascadeDeleteIntro:
-        "Eine Endpunktprüfung zur Vorhersage der Auswirkungen beim Löschen eines Mandanten.",
+        "Das Löschen von Mandanten erzwingt strenge Sicherheitsprüfungen. Wenn Nachkommen vorhanden sind, wird das Löschen blockiert, es sei denn, die Anfrage setzt `CascadeChildren` auf `true`. Die Ausführung validiert das Plan-Gate `Identity.CascadeDelete.Enabled`, die RBAC-Berechtigung `tenants.cascade_delete` und führt eine Bottom-Up-Löschung in umgekehrter Pfadreihenfolge (tiefste Kinder zuerst) sowie Massen-Soft-Deletes und die sofortige Bereinigung von Verknüpfungstabellen (Domains, direkte Berechtigungen) durch, um Hostage-Domains zu vermeiden, gefolgt von der Quotenabstimmung des Eltern-Mandanten.",
       permissionInheritanceTitle: "Berechtigungsvererbung",
       permissionInheritanceIntro:
         "Ein Kind-Mandant kann niemals mehr Rechte haben als sein Eltern-Mandant.",
@@ -82,14 +118,14 @@ export const de = {
       logoTip: "Mandantenlogos werden über eine Static File Middleware bereitgestellt.",
       domainTitle: "Domain-Verwaltung",
       domainIntro:
-        "Jeder Mandant kann mehrere Domains besitzen — eine automatisch generierte Subdomain, die bei der Erstellung des Mandanten erstellt wird, sowie optionale benutzerdefinierte Domains, die von Administratoren hinzugefügt werden. Das System unterstützt DNS-basierte Domain-Verifizierung, um den Besitz benutzerdefinierter Domains nachzuweisen, bevor sie aktiv werden. Alle domainbezogenen Konfigurationen sind vollständig in appsettings.json ausgelagert, was nahtloses Rebranding und Multi-Deployment-Setups ermöglicht.",
+        "Jeder Mandant kann mehrere Domains besitzen — eine automatisch generierte Subdomain, die bei der Erstellung des Mandanten erstellt wird, sowie optionale benutzerdefinierte Domains, die von Administratoren hinzugefügt werden. Das System unterstützt DNS-based Domain-Verifizierung, um den Besitz benutzerdefinierter Domains nachzuweisen, bevor sie aktiv werden. Alle domainbezogenen Konfigurationen sind vollständig in appsettings.json ausgelagert, was nahtloses Rebranding und Multi-Deployment-Setups ermöglicht.",
       domainTypesTitle: "Domain-Typen",
       domainArchTitle: "Domain-Auflösungsarchitektur",
       domainArchIntro:
-        "Wenn eine Anfrage eingeht, löst das System den Mandanten auf, indem es den Hostnamen in der TenantDomain-Tabelle nachschlägt. Automatisch generierte Domains (z.B. sofa.scripe.com) sind immer verifiziert und werden sofort aufgelöst. Benutzerdefinierte Domains müssen zuerst die DNS-Verifizierung bestehen. Ein Fallback-Mechanismus mit dem ?code=-Abfrageparameter steht für Entwicklungsumgebungen zur Verfügung, in denen kein DNS konfiguriert ist.",
+        "Eingehende Anfragen lösen den Mandantenkontext über den clientseitigen Hook `useTenantResolution` und den serverseitigen Abfrage-Handler `ResolveTenantByDomainQueryHandler` auf. Der Client prüft, ob der Hostname eine lokale/Plattform-Domain ist, andernfalls wird die API abgefragt. Der Server schlägt in der TenantDomain-Tabelle nach, verifiziert `IsVerified == true`, führt einen Deep-Merge der mandantenspezifischen Login-Branding-Overrides durch oder greift im Entwicklungsmodus auf `?code=`-Abfrageparameter zurück.",
       domainDnsTitle: "DNS-Verifizierungsablauf",
       domainDnsIntro:
-        "Benutzerdefinierte Domains erfordern eine DNS-Verifizierung zum Eigentumsnachweis. Wenn ein Admin eine benutzerdefinierte Domain hinzufügt, generiert das System einen eindeutigen Verifizierungstoken. Der Admin konfiguriert dann zwei DNS-Einträge: einen CNAME-Eintrag, der die Domain auf das CnameTarget der Plattform verweist, und einen TXT-Eintrag bei {VerificationPrefix}.{domain} mit dem Verifizierungstoken. Nach der Konfiguration löst ein Klick auf 'Verifizieren' eine DNS-Abfrage aus, um beide Einträge zu bestätigen.",
+        "Benutzerdefinierte Domains müssen auf RFC 1123, die Liste der reservierten Subdomains und das Quotalimit `Tenancy.MaxCustomDomains` des Mandanten überprüft werden. Der Besitz wird nachgewiesen, indem ein Verifizierungstoken (Präfix `scr_`) generiert und das Vorhandensein einer CNAME-Zielzuordnung sowie eines passenden TXT-Eintrags (`_scr-verify.{domain}`) über DNS-Abfragen überprüft wird.",
       domainDnsNote:
         "Die DNS-Verifizierung ist derzeit ein UI-gesteuerter Prozess, bei dem der Admin auf 'Verifizieren' klickt, um die Prüfung auszulösen. Das Backend-Platzhalter ist bereit für die vollständige DNS-Auflösungsintegration. Automatisch generierte Domains überspringen die Verifizierung vollständig — sie sind immer vertrauenswürdig.",
       domainConfigTitle: "Konfigurierbarer Plattform-Domain",
@@ -104,27 +140,29 @@ export const de = {
       description:
         "RBAC-System mit Scope-Override, Einschränkungen auf Feldebene, Anti-Eskalation und mandantenbezogenen Rollen.",
       intro:
-        "Ein umfassendes rollenbasiertes Zugriffskontrollsystem (RBAC) mit feingranularen Berechtigungen.",
+        "SCRIPE implementiert ein umfassendes, hochoptimiertes RBAC-System (Role-Based Access Control) mit modularen, kategoriebasierten Berechtigungen, Scope-Overrides, Einschränkungen auf Feldebene (FLS) und Mandantenscoperung. Berechtigungen werden dynamisch aus Providern geladen, serverseitig mit IMemoryCache zwischengespeichert und programmgesteuert validiert.",
       hierarchyTitle: "Berechtigungshierarchie",
       systemTitle: "Berechtigungssystem",
-      systemIntro: "Berechtigungen sind in Kategorien organisiert (Muster: {resource}.{action}).",
+      systemIntro:
+        "Berechtigungen folgen einer strengen Namenskonvention {Resource}.{Action}. Anstatt statischer Deklarationen definiert jedes Backend-Modul seine Berechtigungen durch Implementierung von IModulePermissionProvider (z. B. IdentityPermissionProvider, CompliancePermissionProvider). Beim Startup werden diese Provider automatisch erkannt, und der DatabaseSeeder verwendet PermissionSeeder.SyncFromProvidersAsync, um Berechtigungen in der Datenbank zu synchronisieren und zu seeden.",
       scopeOverrideTitle: "Scope Override (Datenzugriffskontrolle)",
       scopeOverrideIntro:
-        "Jede RolePermission kann den Standard-Scope einer Berechtigung überschreiben.",
+        "Jede RolePermission kann den Standard-Scope einer Berechtigung über das Feld ScopeOverride überschreiben. Der DataScopeService löst den effektiven Scope anhand einer strengen Prioritätenliste auf: 1) Drilldown-Kontext (ContextTenantId-Claim), 2) RolePermission Scope-Override, 3) God-Mode-Check (SystemProtectedAdmin), 4) Hierarchie-Flag (IncludeChildTenants), 5) zugewiesener Mandant, 6) globaler Fallback. Bei mehreren Rollen löst AdminSecurityService.GetWidestScope den breitesten Scope auf: all_tenants > hierarchy > own_tenant > own. Um Privilegien-Leckagen zu verhindern, sind Mandantenadministratoren bei der Scope-Auflösung streng auf ihre eigene Unterhierarchie beschränkt.",
       authPipelineTitle: "Autorisierungs-Pipeline",
-      authPipelineIntro: "Richtlinien werden on-the-fly aus Attributen erstellt.",
+      authPipelineIntro:
+        "Die Autorisierung ist von statischen Konfigurationen entkoppelt. Der DynamicPermissionPolicyProvider erstellt dynamisch ASP.NET Core-Autorisierungsrichtlinien für Routen mit dem Attribut [PermissionRequired]. Um die JWT-Token-Größe unter 400 Bytes zu halten, werden Benutzerberechtigungen nicht in Claims gespeichert, sondern serverseitig im AdminPermissionCache (mit einer 10-minütigen gleitenden Gültigkeit) zwischengespeichert. Das Caching verwendet eine zentrale CancellationTokenSource für eine threadsichere globale Bereinigung bei Rollenänderungen. Programmgesteuerte Prüfungen werden in Handlern und Services über die Schnittstelle IPermissionChecker durchgeführt.",
       restrictedFieldsTitle: "Einschränkungen auf Feldebene (Restricted Fields)",
       restrictedFieldsIntro:
-        "Rollen können den Zugriff auf sensible Felder (wie Gehalt oder SSN) verbergen.",
+        "Die Feldebenen-Sicherheit (Field-Level Security, FLS) ermöglicht es Administratoren, bestimmte Felder einer Entität für bestimmte Rollen einzuschränken. Eingeschränkte Felder werden als JSON-Array von String-Pfaden konfiguriert (z. B. [\"salary\", \"ssn\"]) und in der Spalte RestrictedFieldsJson (varchar/nvarchar/VARCHAR2 bis zu 2000 Zeichen) der Tabelle RolePermission gespeichert. Während der Ausführung identifiziert der RestrictedFieldsAuthorizationFilter die Zielressource und setzt HttpContext.Items[\"RestrictedFields\"]. Die FieldProjectionMiddleware fängt HTTP-2xx-JSON-Antworten ab, analysiert den Body in einen JsonNode-Baum und nullifiziert rekursiv eingeschränkte Eigenschaften, die mit dem genauen oder relativen Pfad (z. B. address.street) übereinstimmen, um Reflection-Overhead zu vermeiden.",
       cloneRoleTitle: "Rolle klonen (Anti-Eskalation)",
       cloneRoleIntro:
-        "Kopiert eine Rolle, lässt aber nur Berechtigungen zu, die der klonende Admin selbst besitzt.",
+        "Um eine Privilegien-Eskalation zu verhindern, filtert der CloneRoleCommandHandler die kopierte Berechtigungsliste gegen die eigenen aktiven Berechtigungen des Kloners und verwirft nicht besessene Berechtigungen stillschweigend. Im Berechtigungszuweisungsbefehl führt der Versuch, Berechtigungen explizit hinzuzufügen, die der Administrator nicht besitzt, zu einem Forbidden-Fehler role.permissionEscalation. Darüber hinaus validiert der TenantGuardianService alle Rollenaktualisierungen und blockiert Änderungen an gesperrten systemkritischen Rollen (IsPermissionLocked == true).",
       rolePropertiesTitle: "Rollen-Entitäts-Eigenschaften",
       rolePropertiesIntro: "System-Flags steuern das Verhalten und den Schutz von Rollen.",
       endpointsTitle: "Rollen-API-Endpunkte",
       endpointsMyTenantTitle: "Endpunkte des eigenen Mandanten",
       endpointsPermissionsTitle: "Berechtigungs-Endpunkte",
-      tenantScopingNote: "Rollen sind automatisch auf den aktuellen Mandanten beschränkt.",
+      tenantScopingNote: "Rollen are automatisch auf den aktuellen Mandanten beschränkt.",
       userGroupsTitle: "Benutzergruppen (User Groups)",
       userGroupsIntro:
         "Ermöglicht die gebündelte Zuweisung von Rollen und Feldeinschränkungen an mehrere Administratoren.",
@@ -313,36 +351,40 @@ export const de = {
     userGroups: {
       title: "Benutzergruppen (User Groups)",
       description:
-        "Gruppenbasierte Rollen- und Einschränkungszuweisung mit additivem Merge beim Login.",
+        "Gruppenbasierte Rollen- und Einschränkungszuweisung mit Mandantenscope, Mitgliederverwaltung und additivem Merge beim Login.",
       intro:
-        "Skalierbare Verwaltung von Flotten von Administratoren durch gebündelte Berechtigungen.",
+        "Benutzergruppen bieten eine skalierbare Methode zur Zuweisung von Rollen und Feldeinschränkungen für eine große Anzahl von Administratoren. Anstatt jedem Admin einzeln Rollen zuzuweisen, erstellen Sie eine Gruppe, fügen ihr Rollen und Einschränkungen hinzu und tragen Admins als Mitglieder ein. Alle Mitglieder erben automatisch die Rollen und Einschränkungen der Gruppe bei ihrem nächsten Login.",
       architectureTitle: "Architektur",
       architectureIntro:
-        "Enthält Mitglieder, Rollen und Feldeinschränkungen, angebunden an den Mandanten.",
-      domainModelTitle: "Domain-Modell",
-      domainModelIntro: "Junction-Tabellen verbinden Administratoren und Rollen mit der Gruppe.",
+        "Jede UserGroup gehört zu einem Mandanten und besitzt Junction-Verbindungen: AdminUserGroup für Mitglieder, UserGroupRole für Rollen und UserGroupRestriction für Feldeinschränkungen (FLS). Die Beziehungen sind auf der UserGroup-Seite mit Cascade Delete konfiguriert, sodass das Löschen einer Gruppe automatisch Mitgliedschaften, Rollen und Einschränkungen entfernt. Ein Restrict Delete auf der Tenant-Seite verhindert jedoch das Löschen eines Mandanten mit aktiven Benutzergruppen.",
+      domainModelTitle: "Domain-Modell & Konfigurationen",
+      domainModelIntro:
+        "Das Benutzergruppen-Feature nutzt vier Domain-Entitäten: UserGroup (Aggregate Root), AdminUserGroup (n:m Junction), UserGroupRole (n:m Junction) und UserGroupRestriction (Feldeinschränkungen). Datenbankkonfigurationen erzwingen eindeutige zusammengesetzte Indizes auf {TenantId, Code} für UserGroup, {AdminId, UserGroupId} für AdminUserGroup und {UserGroupId, RoleId} für UserGroupRole, um doppelte Mappings zu verhindern.",
       howItWorksTitle: "Funktionsweise beim Login",
       howItWorksIntro:
-        "Die effektiven Berechtigungen sind eine UNION aus direkten und gruppenvererbten Rollen.",
+        "Bei der Authentifizierung nutzt das AdminRepository ein Single-Query-Projektionsmuster (GetWithRolesAsync), um direkte sowie gruppenvererbte Rollen und Einschränkungen in einem einzigen Datenbank-Roundtrip abzurufen. Gruppenvererbte Rollen werden als synthetische AdminRole-Instanzen (mit Id = Guid.Empty) im Speicher abgebildet und an die Rollen-Sammlung des Admins angehängt. Der AdminSecurityService führt anschließend einen additiven Union-Merge von Rollen- und Gruppeneinschränkungen durch (wobei 'Deny Wins' für FLS gilt).",
       mergeNote:
-        "Gruppenrollen sind additiv – sie KÖNNEN direkte Zuweisungen niemals entfernen (Deny Wins).",
+        "Gruppenrollen und -einschränkungen sind additiv – sie können die effektiven Einschränkungen eines Admins nur erweitern, niemals direkte Rollenzuweisungen entfernen. Dies entspricht dem Sicherheitsprinzip 'Deny Wins'.",
       memberManagementTitle: "Mitgliederverwaltung",
       memberManagementIntro:
-        "Das Hinzufügen ist idempotent, das Entfernen betrifft keine direkten Rollen.",
+        "Das Hinzufügen von Mitgliedern ist idempotent – das Übermitteln einer bereits vorhandenen Admin-ID ist geräuschlos erfolgreich. Das Entfernen eines Mitglieds löscht den Junction-Datensatz; der Admin behält alle direkt zugewiesenen Rollen. Die Mitgliederliste kann mit Admin-Metadaten (name, E-Mail, Status) abgefragt werden.",
       roleAssignmentTitle: "Rollenzuweisung",
-      roleAssignmentIntro: "Verwendet das Nuke-and-Pave-Muster für garantierte UI-Synchronisation.",
-      restrictionsTitle: "Feldeinschränkungen (Field Restrictions)",
+      roleAssignmentIntro:
+        "Gruppenrollen verwenden ein Nuke-and-Pave-Muster (PUT ersetzt alle). Dies stellt sicher, dass die Datenbank immer exakt mit dem UI-Zustand übereinstimmt. Jede Rolle muss zum selben Mandanten wie die Gruppe gehören. Über Gruppen zugewiesene Rollen erscheinen neben direkt zugewiesenen Rollen im effektiven Berechtigungssatz des Admins.",
+      restrictionsTitle: "Feldeinschränkungen",
       restrictionsIntro:
-        "Folgt demselben UNION-Prinzip wie Rollen zur Ausblendung sensibler Felder.",
-      cascadeTitle: "Cascade-Operationen",
+        "Gruppeneinschränkungen folgen demselben Modell wie RestrictedFields auf Rollenebene. Jede Einschränkung zielt auf einen bestimmten Berechtigungscode ab und listet die auszublendenden Felder auf. Beim Login bildet das System die UNION aller eingeschränkten Felder über direkte Rollen und alle Gruppenmitgliedschaften – schränkt eine Quelle 'salary' ein, ist es unabhängig von anderen Zuweisungen eingeschränkt.",
+      cascadeTitle: "Kaskadierende Operationen",
       cascadeIntro:
-        "Ermöglicht das Massen-Löschen (Soft-Delete) von Administratoren, die an eine Gruppe gebunden sind.",
-      cascadeNote: "Überspringt automatisch geschützte Admins (Tenant Owner).",
-      endpointsTitle: "API-Endpunkte (12)",
+        "Benutzergruppen unterstützen Massenoperationen (Aktivieren, Deaktivieren, Löschen und ihre filterbasierten -all Varianten). Wenn cascadeAdmins aktiviert ist, kaskadiert die Deaktivierung oder das Soft-Delete auf die Gruppenmitglieder. Kaskadierende Operationen überspringen automatisch geschützte Admins (wie den Mandantenersteller). Wenn cascadeAdmins false ist, wird jeder verwaiste Admin, der alle Rollenzuweisungen verliert, automatisch der Fallback-Rolle SYSTEM_DEFAULT zugewiesen.",
+      cascadeNote:
+        "Kaskadierende Operationen überspringen automatisch geschützte Admins (wie den Mandantenersteller). Dies stellt sicher, dass eine massive Gruppenlöschung nicht versehentlich das primäre Wiederherstellungskonto des Mandanten löscht.",
+      endpointsTitle: "API-Endpunkte (18)",
       frontendTitle: "Frontend-Modul",
       frontendIntro:
-        "Standard-CRUD-Listen mit GenericCrudView und 3 Tabs für die Detailverwaltung.",
-      securityNote: "SuperAdmins sehen alle, Tenant-Admins nur die eigenen Gruppen.",
+        "Das Frontend nutzt ein sauberes MVVM-Muster. Der UserGroupService kommuniziert mit dem Backend, das UserGroupRepository validiert Verträge via Zod-Schema-Verifizierung (UserGroupModelSchema) und der UserGroupMapper transformiert Antwort-DTOs. Das useUserGroupsViewModel koordiniert CRUD-Zustände, einschließlich benutzerdefinierter deleteDialog- und statusDialog-Status-Handler für kaskadierende Aktionen.",
+      securityNote:
+        "Benutzergruppen sind mandantengebunden. SuperAdmins sehen alle Gruppen über Mandanten hinweg. Mandanten-Admins können nur Gruppen innerhalb ihres eigenen Mandanten verwalten. Alle Mutationen werden auditiert und erfordern das user_groups.* Berechtigungsset.",
     },
     ssoOauth: {
       title: "SSO & OAuth Server (Keycloak-Alternative)",

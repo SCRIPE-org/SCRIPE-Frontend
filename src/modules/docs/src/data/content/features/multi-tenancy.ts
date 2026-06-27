@@ -10,21 +10,133 @@ const sections: DocSection[] = [
     titleKey: "features.multiTenancy.architectureTitle",
     id: "architecture",
   },
+  { type: "paragraph", contentKey: "features.multiTenancy.isolationIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "BaseDbContext.cs (EF Core Global Filters)",
+    code: `protected void ApplyTenantFilters(ModelBuilder modelBuilder)
+{
+    foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+    {
+        var tenantIdProperty = entityType.FindProperty("TenantId");
+        var tenantIdClrType = tenantIdProperty?.ClrType;
+
+        if (tenantIdClrType == typeof(Guid) || tenantIdClrType == typeof(Guid?))
+        {
+            var method = typeof(BaseDbContext)
+                .GetMethod(
+                    nameof(ApplyTenantFilterForEntity),
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance
+                )!
+                .MakeGenericMethod(entityType.ClrType);
+
+            method.Invoke(this, new object[] { modelBuilder, tenantIdClrType });
+        }
+    }
+}
+
+private void ApplyTenantFilterForEntity<TEntity>(ModelBuilder modelBuilder, Type tenantIdClrType)
+    where TEntity : class
+{
+    var parameter = Expression.Parameter(typeof(TEntity), "e");
+    var tenantId = CreateTenantIdExpression(parameter, tenantIdClrType);
+    var currentTenantId = Expression.Property(
+        Expression.Constant(this),
+        typeof(BaseDbContext).GetProperty(
+            nameof(CurrentTenantId),
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic
+        )!
+    );
+
+    // e.TenantId == null || e.TenantId == this.CurrentTenantId
+    var tenantFilterBody = Expression.OrElse(
+        Expression.Equal(tenantId, Expression.Constant(null, typeof(Guid?))),
+        Expression.Equal(tenantId, currentTenantId)
+    );
+
+    var entityBuilder = modelBuilder.Entity<TEntity>();
+
+    foreach (var existingFilter in entityBuilder.Metadata.GetDeclaredQueryFilters())
+    {
+        var existingExpression = existingFilter.Expression;
+        if (existingExpression is null) continue;
+
+        var existingBody = new ParameterReplaceVisitor(
+            existingExpression.Parameters[0],
+            parameter
+        ).Visit(existingExpression.Body)!;
+
+        tenantFilterBody = Expression.AndAlso(existingBody, tenantFilterBody);
+    }
+
+    entityBuilder.HasQueryFilter(
+        Expression.Lambda<Func<TEntity, bool>>(tenantFilterBody, parameter)
+    );
+}`,
+  },
   {
     type: "flowchart",
-    title: "Multi-Tenant Data Isolation",
+    title: "Multi-Tenant Data Isolation & Context Resolution",
     direction: "vertical",
     nodes: [
       { id: "req", label: "Incoming Request", type: "default" },
-      { id: "jwt", label: "Extract TenantId from JWT", type: "primary" },
+      { id: "context", label: "X-Tenant-Context Header?", type: "primary" },
+      { id: "perm", label: "Verify tenants.drill_down Permission", type: "warning" },
+      { id: "decrypt", label: "AES Decrypt & Overwrite CurrentTenantId", type: "success" },
+      { id: "jwt", label: "Extract TenantId from JWT Claims", type: "info" },
       { id: "filter", label: "EF Core Global Query Filter", type: "warning" },
-      { id: "db", label: "SELECT * WHERE TenantId = @tid", type: "success" },
+      { id: "db", label: "SELECT * WHERE TenantId = @CurrentTenantId OR TenantId IS NULL", type: "success" },
     ],
     connections: [
-      { from: "req", to: "jwt" },
+      { from: "req", to: "context" },
+      { from: "context", to: "perm", label: "Header Present" },
+      { from: "perm", to: "decrypt", label: "Permitted" },
+      { from: "context", to: "jwt", label: "Header Absent" },
       { from: "jwt", to: "filter" },
+      { from: "decrypt", to: "filter" },
       { from: "filter", to: "db" },
     ],
+  },
+  { type: "paragraph", contentKey: "features.multiTenancy.drilldownIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "CurrentUserService.cs (Admin Drill-Down Scoping)",
+    code: `public Guid? ContextTenantId
+{
+    get
+    {
+        if (!HasPermission("tenants.drill_down")) return null;
+
+        var header = _httpContextAccessor.HttpContext?.Request.Headers["X-Tenant-Context"];
+        var contextTenantStr = header?.ToString();
+        if (string.IsNullOrEmpty(contextTenantStr)) return null;
+
+        var decryptedId = _idEncryptionService.TryDecrypt(contextTenantStr) ?? Guid.Empty;
+        return decryptedId != Guid.Empty ? decryptedId : null;
+    }
+}
+
+public Guid? TenantId => ContextTenantId.HasValue ? ContextTenantId.Value : _claimTenantId;`,
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "TenantContextMiddleware.cs (Middleware Firewall)",
+    code: `var tenantContextHeader = context.Request.Headers["X-Tenant-Context"].FirstOrDefault();
+if (!string.IsNullOrEmpty(tenantContextHeader))
+{
+    if (!currentUser.HasPermission("tenants.drill_down"))
+    {
+        context.Response.StatusCode = 403;
+        await context.Response.WriteAsJsonAsync(new {
+            error = "TENANT_CONTEXT_FORBIDDEN",
+            message = "You do not have permission to switch tenant context. Missing: tenants.drill_down"
+        });
+        return;
+    }
+}`,
   },
   {
     type: "table",
@@ -44,7 +156,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Hierarchy €
+  // Hierarchy
   {
     type: "heading",
     level: 2,
@@ -55,7 +167,7 @@ const sections: DocSection[] = [
   {
     type: "code",
     language: "csharp",
-    filename: "Tenant.cs  Hierarchy Fields",
+    filename: "Tenant.cs Hierarchy Fields",
     code: `public class Tenant : AuditableEntity<Guid>
 {
     [Required] [MaxLength(200)]
@@ -64,7 +176,7 @@ const sections: DocSection[] = [
     [Required] [MaxLength(50)]
     public string Code { get; set; } = null!;
 
-    public Guid? ParentTenantId { get; set; }     // Self-ref FK †’ tree
+    public Guid? ParentTenantId { get; set; }     // Self-ref FK -> tree
 
     public int HierarchyLevel { get; set; }        // 0 = root, 1 = child, 2 = grandchild...
 
@@ -77,6 +189,32 @@ const sections: DocSection[] = [
     public virtual TenantSettings? Settings { get; set; }
 }`,
     highlightLines: [9, 11, 14],
+  },
+  { type: "paragraph", contentKey: "features.multiTenancy.hierarchyQueriesIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "TenantHierarchyService.cs (Constant-Time Queries)",
+    code: `// Descendant Verification (StartsWith path matching utilizes indexes)
+public async Task<bool> IsDescendantOrSameAsync(Guid parentTenantId, Guid targetTenantId, CancellationToken ct = default)
+{
+    if (parentTenantId == targetTenantId) return true;
+
+    var targetPath = await GetHierarchyPathAsync(targetTenantId, ct);
+    if (string.IsNullOrEmpty(targetPath)) return false;
+
+    return targetPath.Contains($"/{parentTenantId}/");
+}
+
+// Sub-tree Retrieval using StartsWith (LIKE 'path%')
+public async Task<IReadOnlyList<Guid>> GetDescendantIdsAsync(Guid parentTenantId, CancellationToken ct = default)
+{
+    var parentPath = await GetHierarchyPathAsync(parentTenantId, ct);
+    if (string.IsNullOrEmpty(parentPath)) return Array.Empty<Guid>();
+
+    var descendants = await _tenantRepository.GetDescendantsAsync(parentPath, ct);
+    return descendants.Select(t => t.Id).ToList();
+}`,
   },
   {
     type: "flowchart",
@@ -97,7 +235,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Tenant Features Grid €
+  // Tenant Features Grid
   {
     type: "heading",
     level: 2,
@@ -141,7 +279,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // € Tenant Settings
+  // Tenant Settings
   {
     type: "heading",
     level: 2,
@@ -155,7 +293,7 @@ const sections: DocSection[] = [
       {
         label: "Quota Settings",
         language: "csharp",
-        code: `// TenantSettings.cs  Quota Group
+        code: `// TenantSettings.cs Quota Group
 public int MaxAdmins { get; set; } = -1;       // -1 = unlimited
 public int MaxRoles { get; set; } = -1;
 public int MaxSubTenants { get; set; } = -1;`,
@@ -163,7 +301,7 @@ public int MaxSubTenants { get; set; } = -1;`,
       {
         label: "Security Policy",
         language: "csharp",
-        code: `// TenantSettings.cs  Per-Tenant Password Policy
+        code: `// TenantSettings.cs Per-Tenant Password Policy
 public int MinPasswordLength { get; set; } = 8;
 public bool RequireUppercase { get; set; } = true;
 public bool RequireNumber { get; set; } = true;
@@ -180,14 +318,14 @@ public bool Require2FA { get; set; } = false;`,
       {
         label: "Audit Config",
         language: "csharp",
-        code: `// TenantSettings.cs  Audit Configuration
+        code: `// TenantSettings.cs Audit Configuration
 public int AuditRetentionDays { get; set; } = 365;  // 0 = forever
 public bool AuditEnabled { get; set; } = true;`,
       },
       {
         label: "Branding",
         language: "csharp",
-        code: `// TenantSettings.cs  Custom Branding
+        code: `// TenantSettings.cs Custom Branding
 public string? LogoUrl { get; set; }           // Tenant logo path
 public string? PrimaryColor { get; set; }      // Hex color code
 public string? CompanyName { get; set; }       // Display name`,
@@ -195,7 +333,7 @@ public string? CompanyName { get; set; }       // Display name`,
     ],
   },
 
-  // € Auto-Role Creation €
+  // Auto-Role Creation
   {
     type: "heading",
     level: 2,
@@ -204,23 +342,47 @@ public string? CompanyName { get; set; }       // Display name`,
   },
   { type: "paragraph", contentKey: "features.multiTenancy.autoRoleIntro" },
   {
+    type: "code",
+    language: "csharp",
+    filename: "CreateTenantCommandHandler.cs (Auto-Role Scaffolding)",
+    code: `// Provisioning Super Admin & Default Roles within an atomic database transaction
+var superAdminRole = Role.Create("\${tenant.Code}_SUPER_ADMIN", "Super Administrator", tenant.Id);
+superAdminRole.IsSystem = true;
+superAdminRole.IsDeletable = false;
+superAdminRole.IsTenantSuperAdmin = true;
+superAdminRole.IsPermissionLocked = false; // Unlocked for scaffolding
+
+var defaultRole = Role.Create("\${tenant.Code}_DEFAULT", "Default User Role", tenant.Id);
+defaultRole.IsSystem = true;
+defaultRole.IsDeletable = false;
+defaultRole.IsDefaultRole = true;
+
+await _roleRepository.AddAsync(superAdminRole, ct);
+await _roleRepository.AddAsync(defaultRole, ct);
+
+// Lock transition phase:
+// 1. AssignEditionCommand executes post-creation, raising SubscriptionChangedEvent.
+// 2. SyncSuperAdminRolePermissionsAsync copies edition permissions to SUPER_ADMIN.
+// 3. SUPER_ADMIN is set to IsPermissionLocked = true, freezing permissions.`,
+  },
+  {
     type: "table",
     headers: ["Auto-Created Role", "Properties", "Permissions"],
     rows: [
       [
         "{CODE}_SUPER_ADMIN",
         "IsTenantSuperAdmin=true, IsPermissionLocked=true, IsDeletable=false, Priority=0",
-        "All permissions granted to the tenant",
+        "All permissions granted to the tenant via plan edition",
       ],
       [
         "{CODE}_DEFAULT",
-        "IsDefaultRole=true, IsDeletable=true, Priority=100",
+        "IsDefaultRole=true, IsDeletable=false, Priority=100",
         "Basic read-only permissions",
       ],
     ],
   },
 
-  // € Cascade Delete €
+  // Cascade Delete
   {
     type: "heading",
     level: 2,
@@ -229,12 +391,86 @@ public string? CompanyName { get; set; }       // Display name`,
   },
   { type: "paragraph", contentKey: "features.multiTenancy.cascadeDeleteIntro" },
   {
-    type: "info",
-    variant: "warning",
-    contentKey: "features.multiTenancy.cascadeDeleteIntro",
+    type: "flowchart",
+    title: "Cascade Delete Dependency Check Flow",
+    direction: "vertical",
+    nodes: [
+      { id: "start", label: "Delete Tenant Request", type: "default" },
+      { id: "checkChild", label: "Has Child Tenants?", type: "primary" },
+      { id: "cascadeFlag", label: "CascadeChildren Parameter == true?", type: "warning" },
+      { id: "blockDelete", label: "Block Deletion (Validation Error)", type: "danger" },
+      { id: "planGate", label: "Verify Plan Gate: Identity.CascadeDelete.Enabled", type: "info" },
+      { id: "permCheck", label: "Verify tenants.cascade_delete Permission", type: "warning" },
+      { id: "execCascade", label: "Execute Bottom-Up Cascade Deletion", type: "success" },
+      { id: "bulkUser", label: "Bulk Soft Delete Users & Roles", type: "info" },
+      { id: "junctionClean", label: "Clean Permissions & Domains", type: "info" },
+      { id: "auditQuota", label: "Log Audit Event & Reconcile Quotas", type: "success" },
+    ],
+    connections: [
+      { from: "start", to: "checkChild" },
+      { from: "checkChild", to: "planGate", label: "No Children" },
+      { from: "checkChild", to: "cascadeFlag", label: "Has Children" },
+      { from: "cascadeFlag", to: "blockDelete", label: "No" },
+      { from: "cascadeFlag", to: "planGate", label: "Yes" },
+      { from: "planGate", to: "permCheck" },
+      { from: "permCheck", to: "execCascade" },
+      { from: "execCascade", to: "bulkUser" },
+      { from: "bulkUser", to: "junctionClean" },
+      { from: "junctionClean", to: "auditQuota" },
+    ],
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "DeleteTenantCommandHandler.cs (Cascade Gates & Bottom-Up Deletion)",
+    code: `// 1. Descendant check gate
+if (tenant.ChildTenants?.Count > 0 && !request.CascadeChildren)
+{
+    var childCount = await _tenantRepository.GetDescendantCountAsync(tenant.Id, ct);
+    return Error.Validation(
+        ErrorCodes.ValidationFailed,
+        _l["tenant.cannotDeleteWithDescendants", new { count = childCount }]
+    );
+}
+
+// 2. Plan feature check & permissions validation
+var cascadeEnabled = await _featureChecker.IsEnabledAsync(_currentUser.TenantId.Value, "Identity.CascadeDelete.Enabled", ct);
+if (!cascadeEnabled) return Error.Forbidden(ErrorCodes.Forbidden, _l["feature.notAvailable"]);
+
+if (!_currentUser.HasPermission("tenants.cascade_delete")) return Error.Forbidden(ErrorCodes.Forbidden, _l["permission.missing"]);
+
+// 3. Bottom-up deletion ordering (deepest children soft-deleted first)
+var descendantIds = await _tenantRepository.GetDescendantIdsAsync(tenant.Id, ct);
+foreach (var descendantId in descendantIds.Reverse())
+{
+    var descendant = await _tenantRepository.GetByIdAsync(descendantId, ct);
+    if (descendant != null && !descendant.IsDeleted)
+    {
+        _tenantRepository.Delete(descendant);
+    }
+}
+
+// 4. Bulk soft deletes and junction cleanups
+await _adminRepository.BulkSoftDeleteByTenantIdsAsync(targetTenantIds, ct);
+await _roleRepository.BulkSoftDeleteByTenantIdsAsync(targetTenantIds, ct);
+
+foreach (var tenantId in targetTenantIds)
+{
+    await _tenantPermissionRepository.RemoveAllDirectAsync(tenantId, ct);
+    await _tenantDomainRepository.SoftDeleteAllForTenantAsync(tenantId, ct);
+}
+
+// 5. Auditing & Quota Reconciliation
+await _auditService.LogEntityChangeAsync(
+    targetTenantIds.Count > 1 ? AuditEventTypes.BulkTenantCascadeDelete : AuditEventTypes.Delete,
+    "Tenant", tenant.Id.ToString(), auditDetails, null, null, ct
+);
+
+if (tenant.ParentTenantId.HasValue)
+    await _quotaService.OnResourceDeletedAsync(tenant.ParentTenantId.Value, "subtenant", ct);`,
   },
 
-  // € Permission Inheritance €
+  // Permission Inheritance
   {
     type: "heading",
     level: 2,
@@ -261,12 +497,18 @@ public string? CompanyName { get; set; }       // Display name`,
     ],
   },
 
-  // € CRUD Endpoints €
+  // CRUD Endpoints
   {
     type: "heading",
     level: 2,
-    titleKey: "features.multiTenancy.endpointsCrudTitle",
+    titleKey: "features.multiTenancy.endpointsTitle",
     id: "crud-endpoints",
+  },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.multiTenancy.endpointsCrudTitle",
+    id: "crud-endpoints-sub",
   },
   {
     type: "api-table",
@@ -310,10 +552,10 @@ public string? CompanyName { get; set; }       // Display name`,
     ],
   },
 
-  // € Hierarchy Endpoints
+  // Hierarchy Endpoints
   {
     type: "heading",
-    level: 2,
+    level: 3,
     titleKey: "features.multiTenancy.endpointsHierarchyTitle",
     id: "hierarchy-endpoints",
   },
@@ -353,10 +595,10 @@ public string? CompanyName { get; set; }       // Display name`,
     ],
   },
 
-  // € Settings Endpoints €
+  // Settings Endpoints
   {
     type: "heading",
-    level: 2,
+    level: 3,
     titleKey: "features.multiTenancy.endpointsSettingsTitle",
     id: "settings-endpoints",
   },
@@ -396,10 +638,10 @@ public string? CompanyName { get; set; }       // Display name`,
     ],
   },
 
-  // € Permission Endpoints €
+  // Permission Endpoints
   {
     type: "heading",
-    level: 2,
+    level: 3,
     titleKey: "features.multiTenancy.endpointsPermissionsTitle",
     id: "permission-endpoints",
   },
@@ -427,10 +669,10 @@ public string? CompanyName { get; set; }       // Display name`,
     ],
   },
 
-  // € Drill-Down Endpoints €
+  // Drill-Down Endpoints
   {
     type: "heading",
-    level: 2,
+    level: 3,
     titleKey: "features.multiTenancy.endpointsDrilldownTitle",
     id: "drilldown-endpoints",
   },
@@ -458,7 +700,7 @@ public string? CompanyName { get; set; }       // Display name`,
     contentKey: "features.multiTenancy.logoTip",
   },
 
-  // ═ Domain Management ═
+  // Domain Management
   {
     type: "heading",
     level: 2,
@@ -497,19 +739,59 @@ public string? CompanyName { get; set; }       // Display name`,
     direction: "vertical",
     nodes: [
       { id: "req", label: "Incoming Request", type: "default" },
-      { id: "host", label: "Extract Host Header / ?domain=", type: "primary" },
-      { id: "lookup", label: "Lookup TenantDomain by FQDN", type: "warning" },
-      { id: "found", label: "Domain Found & Verified?", type: "info" },
-      { id: "resolve", label: "Resolve Tenant → Set TenantId", type: "success" },
-      { id: "fallback", label: "Fallback: ?code=CODE", type: "danger" },
+      { id: "host", label: "Host Sniffer (useTenantResolution Hook)", type: "primary" },
+      { id: "checkPlatform", label: "Is Localhost or Platform Domain?", type: "info" },
+      { id: "platBranding", label: "Load Platform Branding", type: "success" },
+      { id: "resolveQuery", label: "ResolveTenantByDomain Query", type: "warning" },
+      { id: "domainLookup", label: "Query TenantDomain (IsVerified == true)", type: "info" },
+      { id: "mergeBranding", label: "Deep-Merge LoginBranding (Safe Mode Checked)", type: "success" },
+      { id: "fallback", label: "Dev Fallback (?code= / ?_tenant=)", type: "danger" },
     ],
     connections: [
       { from: "req", to: "host" },
-      { from: "host", to: "lookup" },
-      { from: "lookup", to: "found" },
-      { from: "found", to: "resolve", label: "Yes" },
-      { from: "found", to: "fallback", label: "No" },
+      { from: "host", to: "checkPlatform" },
+      { from: "checkPlatform", to: "platBranding", label: "Yes" },
+      { from: "checkPlatform", to: "resolveQuery", label: "No" },
+      { from: "resolveQuery", to: "domainLookup" },
+      { from: "domainLookup", to: "mergeBranding", label: "Found" },
+      { from: "domainLookup", to: "fallback", label: "Not Found" },
     ],
+  },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "useTenantResolution.ts (Client Domain Sniffer)",
+    code: `const hostname = window.location.hostname;
+const isPlatform = hostname === "localhost" || hostname === process.env.NEXT_PUBLIC_APP_URL;
+
+if (isPlatform) {
+  loadPlatformBranding();
+} else {
+  const resolved = await resolveTenantApi(hostname);
+  loadTenantBranding(resolved);
+}`,
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "ResolveTenantByDomainQueryHandler.cs (Server Resolution)",
+    code: `public async Task<Result<TenantResolutionResponse>> Handle(ResolveTenantByDomainQuery request, CancellationToken ct)
+{
+    // Query verified domain from TenantDomain table
+    var domain = await _tenantDomainRepository.GetByDomainAsync(request.Host, ct);
+    if (domain == null || !domain.IsVerified)
+    {
+        // Dev Mode Fallback: query by ?code= parameter
+        return await ResolveByCodeAsync(request.Code, ct);
+    }
+    
+    var tenant = await _tenantRepository.GetByIdAsync(domain.TenantId, ct);
+    var settings = tenant.Settings;
+    
+    // Deep-merge login branding override on top of default platform settings
+    var branding = settings?.IsSafeMode == true ? null 
+        : (settings?.LoginBrandingJson ?? sys?.LoginBrandingJson);
+}`,
   },
 
   // DNS Verification
@@ -525,12 +807,15 @@ public string? CompanyName { get; set; }       // Display name`,
     title: "Custom Domain Verification Flow",
     direction: "vertical",
     nodes: [
-      { id: "add", label: "Admin adds custom domain", type: "default" },
-      { id: "token", label: "System generates verification token", type: "primary" },
-      { id: "dns", label: "Admin configures DNS records", type: "warning" },
-      { id: "cname", label: "CNAME: domain → {CnameTarget}", type: "info" },
-      { id: "txt", label: "TXT: {VerificationPrefix}.{domain}", type: "info" },
-      { id: "verify", label: "Click 'Verify' → DNS lookup", type: "success" },
+      { id: "add", label: "Admin Adds Custom Domain (RFC 1123 & Quota Checked)", type: "default" },
+      { id: "token", label: "System Generates scr_ Verification Token", type: "primary" },
+      { id: "dns", label: "Admin Configures DNS Records", type: "warning" },
+      { id: "cname", label: "CNAME: domain.com -> app.scripe.com", type: "info" },
+      { id: "txt", label: "TXT: _scr-verify.domain.com = scr_{token}", type: "info" },
+      { id: "verify", label: "Click Verify -> DnsClient.NET Query TXT", type: "success" },
+      { id: "isMatch", label: "Token Found in DNS TXT Records?", type: "info" },
+      { id: "active", label: "Set IsVerified = true & Activate Domain", type: "success" },
+      { id: "fail", label: "Show Verification Error", type: "danger" },
     ],
     connections: [
       { from: "add", to: "token" },
@@ -539,7 +824,27 @@ public string? CompanyName { get; set; }       // Display name`,
       { from: "dns", to: "txt" },
       { from: "cname", to: "verify" },
       { from: "txt", to: "verify" },
+      { from: "verify", to: "isMatch" },
+      { from: "isMatch", to: "active", label: "Yes" },
+      { from: "isMatch", to: "fail", label: "No" },
     ],
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "VerifyTenantDomainCommandHandler.cs (DNS lookup validation)",
+    code: `// Verify custom domain using DnsClient.NET TXT record checking
+var domain = await _tenantDomainRepository.GetByIdAsync(request.DomainId, ct);
+var expectedHost = $"\\{_tenancySettings.VerificationPrefix\\}.\\{domain.Domain\\}";
+var result = await lookup.QueryAsync(expectedHost, QueryType.TXT, ct);
+
+// Checks if TXT record includes the verification token
+var verified = result.Answers.TxtRecords().Any(r => r.Text.Contains(domain.VerificationToken));
+if (verified)
+{
+    domain.IsVerified = true;
+    await _unitOfWork.SaveChangesAsync(ct);
+}`,
   },
   {
     type: "info",
@@ -559,14 +864,12 @@ public string? CompanyName { get; set; }       // Display name`,
     type: "code",
     language: "json",
     filename: "appsettings.json — Tenancy Section",
-    code: `// All domain-related values are configurable — zero hardcoded strings.
-// Change these when rebranding or deploying to a different domain.
-{
+    code: `{
   "Tenancy": {
     "PlatformDomain": "scripe.com",       // Auto-subdomains: {code}.scripe.com
-    "CnameTarget": "app.scripe.com",      // DNS instruction: CNAME → this
-    "VerificationPrefix": "_uis-verify",// TXT record: _uis-verify.{domain}
-    "TokenPrefix": "nxr_"                 // Token format: nxr_base64...
+    "CnameTarget": "app.scripe.com",      // DNS instruction: CNAME -> this
+    "VerificationPrefix": "_scr-verify",  // TXT record: _scr-verify.{domain}
+    "TokenPrefix": "scr_"                 // Token format: scr_base64...
   }
 }`,
     highlightLines: [4, 5, 6, 7],
@@ -581,8 +884,8 @@ public string? CompanyName { get; set; }       // Display name`,
 
     public string PlatformDomain { get; init; } = "scripe.com";
     public string CnameTarget { get; init; } = "app.scripe.com";
-    public string VerificationPrefix { get; init; } = "_uis-verify";
-    public string TokenPrefix { get; init; } = "nxr_";
+    public string VerificationPrefix { get; init; } = "_scr-verify";
+    public string TokenPrefix { get; init; } = "scr_";
 }`,
     highlightLines: [5, 6, 7, 8],
   },
@@ -600,10 +903,10 @@ public string? CompanyName { get; set; }       // Display name`,
       [
         "VerificationPrefix",
         "TXT record hostname prefix for domain ownership verification",
-        "_uis-verify",
-        "_myapp-verify",
+        "_scr-verify",
+        "_custom-verify",
       ],
-      ["TokenPrefix", "Prefix for verification token strings", "nxr_", "ma_"],
+      ["TokenPrefix", "Prefix for verification token strings", "scr_", "verify_"],
     ],
   },
   {
@@ -664,5 +967,5 @@ registerPage({
   order: 2,
   sections,
   relatedSlugs: ["features/authentication", "features/role-permissions"],
-  lastUpdated: "2026-03-16",
+  lastUpdated: "2026-06-28",
 });

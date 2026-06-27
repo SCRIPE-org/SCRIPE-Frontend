@@ -5,7 +5,7 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 const sections: DocSection[] = [
   { type: "paragraph", contentKey: "features.authentication.intro" },
 
-  // € Auth Flow
+  // Flowchart 1: Login and Workspace Routing Flow
   {
     type: "heading",
     level: 2,
@@ -14,71 +14,78 @@ const sections: DocSection[] = [
   },
   {
     type: "flowchart",
-    title: "Authentication Flow",
+    title: "Login & Workspace Routing Flow",
     direction: "vertical",
     nodes: [
-      { id: "login", label: "POST /auth/login", type: "default" },
-      {
-        id: "route",
-        label: "Route Decision",
-        type: "info",
-        description: "Check tenantId & isPlatformAdmin flags",
-      },
-      {
-        id: "caseA",
-        label: "Case A: Tenant-Scoped",
-        type: "primary",
-        description: "tenantId provided → strict domain isolation",
-      },
-      {
-        id: "caseAp",
-        label: "Case A': Platform Admin",
-        type: "primary",
-        description: "isPlatformAdmin = true → direct platform auth",
-      },
-      {
-        id: "caseB",
-        label: "Case B: Discovery",
-        type: "warning",
-        description: "No tenantId → workspace discovery",
-      },
-      { id: "validate", label: "Validate Credentials + BCrypt", type: "warning" },
-      { id: "lockout", label: "Check Lockout (5 attempts / 15 min)", type: "danger" },
-      {
-        id: "pwExpiry",
-        label: "Password Expiry Check",
-        type: "warning",
-        description: "ITenantPasswordValidator → MustChangePassword",
-      },
-      { id: "2fa", label: "2FA Required?", type: "info" },
-      { id: "no2fa", label: "Issue JWT + Refresh Token", type: "success" },
-      { id: "yes2fa", label: "Issue Temporary 2FA Token", type: "info" },
-      { id: "verify2fa", label: "POST /auth/verify-2fa", type: "default" },
-      { id: "jwt", label: "Issue Full JWT + Refresh Token", type: "success" },
-      {
-        id: "workspace",
-        label: "Workspace Picker",
-        type: "info",
-        description: "Frontend shows workspace list",
-      },
+      { id: "login_start", label: "POST /api/v1/auth/admin/login", type: "default" },
+      { id: "check_lockout", label: "Is Account Locked Out? (LockoutEnd > UtcNow)", type: "danger" },
+      { id: "lockout_reject", label: "Reject Login: auth.accountLocked", type: "danger" },
+      { id: "check_tenant", label: "Is TenantId / isPlatformAdmin provided?", type: "info" },
+      { id: "tenant_scoped", label: "Case A: Decrypt TenantId & Query Candidate", type: "primary" },
+      { id: "platform_scoped", label: "Case A': Query TenantId = null", type: "primary" },
+      { id: "discovery", label: "Case B: Cross-Tenant Email Discovery", type: "warning" },
+      { id: "verify_pw", label: "Verify Password via BCrypt", type: "warning" },
+      { id: "pw_candidates", label: "Verify Candidates (Password Verified?)", type: "warning" },
+      { id: "workspace_count", label: "Workspace Matches Count?", type: "info" },
+      { id: "picker", label: "Return: RequiresWorkspaceSelection", type: "info" },
+      { id: "direct_login", label: "Proceed to Post-Login Checks", type: "success" },
     ],
     connections: [
-      { from: "login", to: "route" },
-      { from: "route", to: "caseA", label: "has tenantId" },
-      { from: "route", to: "caseAp", label: "isPlatformAdmin" },
-      { from: "route", to: "caseB", label: "neither" },
-      { from: "caseA", to: "validate" },
-      { from: "caseAp", to: "validate" },
-      { from: "caseB", to: "validate", label: "1 match" },
-      { from: "caseB", to: "workspace", label: "N matches" },
-      { from: "workspace", to: "login", label: "re-login with tenantId", style: "dashed" },
-      { from: "validate", to: "lockout" },
-      { from: "lockout", to: "pwExpiry" },
-      { from: "pwExpiry", to: "2fa" },
-      { from: "2fa", to: "no2fa", label: "No" },
-      { from: "2fa", to: "yes2fa", label: "Yes" },
-      { from: "yes2fa", to: "verify2fa" },
-      { from: "verify2fa", to: "jwt" },
+      { from: "login_start", to: "check_lockout" },
+      { from: "check_lockout", to: "lockout_reject", label: "Yes" },
+      { from: "check_lockout", to: "check_tenant", label: "No" },
+      { from: "check_tenant", to: "tenant_scoped", label: "Has TenantId" },
+      { from: "check_tenant", to: "platform_scoped", label: "isPlatformAdmin" },
+      { from: "check_tenant", to: "discovery", label: "Neither" },
+      { from: "tenant_scoped", to: "verify_pw" },
+      { from: "platform_scoped", to: "verify_pw" },
+      { from: "discovery", to: "pw_candidates" },
+      { from: "pw_candidates", to: "workspace_count" },
+      { from: "workspace_count", to: "picker", label: "N > 1 workspaces" },
+      { from: "workspace_count", to: "direct_login", label: "1 workspace" },
+      { from: "verify_pw", to: "direct_login", label: "Success" },
+    ],
+  },
+
+  // Flowchart 2: Post-Login Security Gates & 2FA Flow
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.twoFactorTitle",
+    id: "two-factor-flow",
+  },
+  {
+    type: "flowchart",
+    title: "Post-Login Security Gates & 2FA Flow",
+    direction: "vertical",
+    nodes: [
+      { id: "gate_start", label: "Post-Login Security Gate", type: "default" },
+      { id: "tenant_status", label: "Is Tenant Suspended / Deactivated?", type: "warning" },
+      { id: "tenant_blocked", label: "Block login: tenantSuspended / tenantDeactivated", type: "danger" },
+      { id: "pw_expiry", label: "ITenantPasswordValidator: Password Expired?", type: "warning" },
+      { id: "mcp_active", label: "Set MustChangePassword = true, JWT has mcp:true", type: "warning" },
+      { id: "check_2fa", label: "Is 2FA enabled on Admin?", type: "info" },
+      { id: "temp_token", label: "Issue Temporary 2FA Token", type: "info" },
+      { id: "verify_2fa", label: "POST /api/v1/auth/admin/2fa/verify", type: "default" },
+      { id: "anti_replay", label: "Check 60s Window & SHA256 Code Match", type: "danger" },
+      { id: "replay_reject", label: "Reject: 2FA Code Already Used", type: "danger" },
+      { id: "backup_code", label: "Backup Code Used? Consume One-Time Code", type: "warning" },
+      { id: "issue_jwt", label: "Issue Final JWT Access & Refresh Tokens", type: "success" },
+    ],
+    connections: [
+      { from: "gate_start", to: "tenant_status" },
+      { from: "tenant_status", to: "tenant_blocked", label: "Yes" },
+      { from: "tenant_status", to: "pw_expiry", label: "No" },
+      { from: "pw_expiry", to: "mcp_active", label: "Yes" },
+      { from: "mcp_active", to: "check_2fa" },
+      { from: "pw_expiry", to: "check_2fa", label: "No" },
+      { from: "check_2fa", to: "issue_jwt", label: "No" },
+      { from: "check_2fa", to: "temp_token", label: "Yes" },
+      { from: "temp_token", to: "verify_2fa" },
+      { from: "verify_2fa", to: "anti_replay" },
+      { from: "anti_replay", to: "replay_reject", label: "Replayed" },
+      { from: "anti_replay", to: "backup_code", label: "Not Replayed" },
+      { from: "backup_code", to: "issue_jwt", label: "Valid OTP/Backup" },
     ],
   },
 
@@ -95,19 +102,19 @@ const sections: DocSection[] = [
     headers: ["Case", "Condition", "Behavior"],
     rows: [
       [
-        "A — Tenant-Scoped",
+        "Case A — Tenant-Scoped",
         "tenantId is provided",
-        "Strict domain isolation. Only the admin within that exact tenant is matched.",
+        "Strict domain isolation. Decrypts TenantId and queries exclusively for the admin in that tenant.",
       ],
       [
-        "A' — Platform Admin",
+        "Case A' — Platform Admin",
         "isPlatformAdmin = true",
-        "Bypasses workspace discovery. Looks up admin with TenantId = null (platform-level). Prevents workspace picker infinite loop.",
+        "Bypasses workspace discovery. Queries for TenantId = null (platform level) to prevent workspace picker infinite loop.",
       ],
       [
-        "B — Discovery",
+        "Case B — Discovery",
         "No tenantId, not isPlatformAdmin",
-        "Step 1: Check for platform admin (TenantId = null). Step 2: Search all tenants by email. 0 → invalid, 1 → direct login, N → return workspace list.",
+        "Step 1: Check for platform admin. Step 2: Search all tenants by email. 0 matches -> invalid, 1 match -> direct login, N matches -> return workspace selection list.",
       ],
     ],
   },
@@ -115,6 +122,32 @@ const sections: DocSection[] = [
     type: "info",
     variant: "note",
     contentKey: "features.authentication.workspaceNote",
+  },
+
+  // — OIDC/SSO Callback Flow
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.ssoCallbackTitle",
+    id: "sso-callback-flow",
+  },
+  { type: "paragraph", contentKey: "features.authentication.ssoCallbackIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "SSO Callback & Selection Cache",
+    code: `// Temporary selection cache setup in OIDC Callback:
+var token = Guid.NewGuid().ToString("N");
+await _cache.SetAsync($"sso-login-selection:{token}", new SsoTempLoginData
+{
+    Email = email,
+    Provider = provider
+}, TimeSpan.FromMinutes(10));
+
+// Complete Workspace Selection command handler:
+var loginData = await _cache.GetAsync<SsoTempLoginData>($"sso-login-selection:{request.Token}");
+var targetTenantId = _idEncryption.Decrypt(request.TenantId);
+var admin = allMatchingAdmins.FirstOrDefault(a => a.IsActive && a.TenantId == targetTenantId);`,
   },
 
   // — Password Expiry Enforcement
@@ -125,6 +158,41 @@ const sections: DocSection[] = [
     id: "password-expiry",
   },
   { type: "paragraph", contentKey: "features.authentication.passwordExpiryIntro" },
+
+  // — MustChangePassword Middleware
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.mcpMiddlewareTitle",
+    id: "mcp-middleware",
+  },
+  { type: "paragraph", contentKey: "features.authentication.mcpMiddlewareIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "MustChangePasswordMiddleware.cs Whitelist Enforcement",
+    code: `public async Task InvokeAsync(HttpContext context)
+{
+    if (context.User.Identity?.IsAuthenticated == true)
+    {
+        var mcpClaim = context.User.FindFirst("mcp")?.Value;
+        if (mcpClaim == "true")
+        {
+            var path = context.Request.Path.Value ?? "";
+            var isAllowed = AllowedPatterns.Any(pattern => pattern.IsMatch(path));
+
+            if (!isAllowed)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                context.Response.ContentType = "application/json";
+                await context.Response.WriteAsync("{\\"error\\":\\"Password change required.\\",\\"code\\":\\"MustChangePassword\\"}");
+                return;
+            }
+        }
+    }
+    await _next(context);
+}`,
+  },
 
   // — SSO Tenant Suspension Gate
   {
@@ -140,7 +208,7 @@ const sections: DocSection[] = [
     contentKey: "features.authentication.ssoSuspensionWarning",
   },
 
-  // € JWT Config €
+  // — JWT Token Configuration & Validation
   {
     type: "heading",
     level: 2,
@@ -150,36 +218,64 @@ const sections: DocSection[] = [
   { type: "paragraph", contentKey: "features.authentication.jwtIntro" },
   {
     type: "table",
-    headers: ["Token Type", "Lifetime", "Storage", "Rotation"],
+    headers: ["Token Type", "Lifetime", "Storage", "Rotation / Purpose"],
     rows: [
       ["Access Token (JWT)", "15 minutes", "Memory / Cookie", "Refreshed automatically"],
-      ["Refresh Token", "7 days", "HttpOnly Cookie", "Rotated on each use (one-time)"],
+      ["Refresh Token", "7 days", "HttpOnly Cookie", "Rotated on each use (one-time use)"],
       ["2FA Temporary Token", "5 minutes", "Memory", "Discarded after 2FA verification"],
     ],
   },
   {
+    type: "heading",
+    level: 3,
+    titleKey: "features.authentication.tokenValidationTitle",
+    id: "token-validation-pipeline",
+  },
+  { type: "paragraph", contentKey: "features.authentication.tokenValidationIntro" },
+  {
     type: "code",
     language: "csharp",
-    filename: "JWT Generation",
-    code: `var claims = new[]
+    filename: "JwtBearerEvents.OnTokenValidated Pipeline Enforcement",
+    code: `OnTokenValidated = async context =>
 {
-    new Claim(ClaimTypes.NameIdentifier, admin.Id.ToString()),
-    new Claim("TenantId", admin.TenantId.ToString()),
-    new Claim("IsSuperAdmin", admin.IsSuperAdmin.ToString()),
-    new Claim(ClaimTypes.Role, string.Join(",", roleNames)),
-};
+    var idClaim = context.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    var isAdmin = context.Principal?.FindFirst("admin")?.Value == "true";
 
-var token = new JwtSecurityToken(
-    issuer: _config["Jwt:Issuer"],
-    audience: _config["Jwt:Audience"],
-    claims: claims,
-    expires: DateTime.UtcNow.AddMinutes(15),
-    signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
-);`,
-    highlightLines: [3, 4, 5],
+    if (string.IsNullOrEmpty(idClaim) || !Guid.TryParse(idClaim, out var id))
+    {
+        context.Fail("Invalid token: missing or invalid ID claim");
+        return;
+    }
+
+    using var scope = context.HttpContext.RequestServices.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+
+    if (isAdmin)
+    {
+        var admin = await dbContext.Admins
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(a => a.Id == id && !a.IsDeleted, context.HttpContext.RequestAborted);
+
+        if (admin == null || !admin.IsActive)
+        {
+            context.Fail("Admin no longer exists or is inactive");
+        }
+    }
+    else
+    {
+        var user = await dbContext.Users
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted, context.HttpContext.RequestAborted);
+
+        if (user == null || !user.IsActive)
+        {
+            context.Fail("User no longer exists or is inactive");
+        }
+    }
+}`,
   },
 
-  // € Dual Auth
+  // — Dual Authentication (Admin & User)
   {
     type: "heading",
     level: 2,
@@ -189,19 +285,20 @@ var token = new JwtSecurityToken(
   { type: "paragraph", contentKey: "features.authentication.dualAuthIntro" },
   {
     type: "table",
-    headers: ["Feature", "Admin Auth", "User Auth"],
+    headers: ["Dimension", "Admin Authentication", "User (Client) Authentication"],
     rows: [
-      ["Controller", "AdminAuthController", "UserAuthController"],
-      ["JWT Claims", "TenantId, IsSuperAdmin, Roles", "NationalId, Gender, Country"],
-      ["2FA Support", "Yes (TOTP + backup codes)", "No"],
-      ["Register", "Created by another admin", "Self-registration (POST /user-auth/register)"],
-      ["Refresh Token", "7-day rotation", "7-day rotation"],
-      ["Rate Limiting", "5 attempts / 15 min lockout", "5 attempts / 15 min lockout"],
-      ["Session Management", "Revoke individual/all sessions", "Basic logout"],
+      ["API Route Prefix", "/api/v1/auth/admin", "/api/v1/auth/user"],
+      ["Controller File", "AdminAuthController.cs", "UserAuthController.cs"],
+      ["Primary Command", "AdminLoginCommand", "UserLoginCommand"],
+      ["Domain Entity", "Admin", "User"],
+      ["Token Claims", "Sub (Id), Username, TenantId, HierarchyPath, MCP", "Sub (Id), Username, TenantId"],
+      ["Permission Scheme", "Server-side cache IAdminPermissionCache", "Lean JWT (implied tenant scopes, no cache)"],
+      ["2FA Support", "Yes (TOTP + Backup Codes)", "Yes (TOTP + Backup Codes)"],
+      ["Lockout Policy", "5 attempts / 15 min lockout", "5 attempts / 15 min lockout"],
     ],
   },
 
-  // € Admin Entity €
+  // — Admin Entity
   {
     type: "heading",
     level: 2,
@@ -215,70 +312,50 @@ var token = new JwtSecurityToken(
     rows: [
       ["IsSuperAdmin", "bool", "System-level access, bypasses tenant scoping"],
       ["IsProtected", "bool", "Cannot be deleted, deactivated, or demoted (Guardian enforced)"],
-      [
-        "IsLastSuperAdminInTenant",
-        "bool (cached)",
-        "Safety flag  blocks deletion/deactivation if true",
-      ],
-      [
-        "PasswordLastChanged",
-        "DateTime?",
-        "Checked against TenantSettings.PasswordExpiryDays for rotation enforcement",
-      ],
+      ["IsLastSuperAdminInTenant", "bool", "Safety flag; blocks deletion/deactivation if true"],
+      ["PasswordLastChanged", "DateTime?", "Checked against TenantSettings.PasswordExpiryDays for rotation"],
       ["UsernameLastChanged", "DateTime?", "30-day cooldown on username changes"],
-      ["TwoFactorEnabled", "bool", "Whether 2FA is active for this admin"],
+      ["IsTwoFactorEnabled", "bool", "Whether 2FA is active for this admin"],
       ["TwoFactorSecret", "string?", "Secret key for TOTP generation"],
       ["BackupCodesJson", "string?", "JSON array of hashed backup codes"],
-      ["LastTwoFactorCodeUsed", "string?", "Anti-replay: last OTP code used"],
+      ["LastTwoFactorCodeUsed", "string?", "Anti-replay: hash of last OTP code used"],
       ["LastTwoFactorCodeUsedAt", "DateTime?", "Anti-replay: timestamp of last OTP use"],
       ["FailedLoginAttempts", "int", "Counter for lockout threshold"],
       ["LockoutEnd", "DateTime?", "When lockout expires"],
     ],
   },
 
-  // € 2FA Deep €
+  // — 2FA / TOTP Anti-Replay
   {
     type: "heading",
     level: 2,
-    titleKey: "features.authentication.twoFactorTitle",
-    id: "two-factor",
+    titleKey: "features.authentication.antiReplayTitle",
+    id: "two-factor-deep",
   },
-  { type: "paragraph", contentKey: "features.authentication.twoFactorIntro" },
+  { type: "paragraph", contentKey: "features.authentication.antiReplayIntro" },
   {
     type: "code",
     language: "csharp",
-    filename: "2FA Anti-Replay Protection",
-    code: `// In Verify2FA handler:
-if (admin.LastTwoFactorCodeUsed == code &&
-    admin.LastTwoFactorCodeUsedAt?.AddMinutes(1) > DateTime.UtcNow)
+    filename: "CheckAndTrackTotpReplay Implementation",
+    code: `public bool CheckAndTrackTotpReplay(string code, Func<string, string> hashCode)
 {
-    // Same code used within 1 minute  replay attack!
-    return Result.Failure("2FA code already used");
-}
-
-// Verify TOTP
-var totp = new Totp(Base32Encoding.ToBytes(admin.TwoFactorSecret));
-bool isValid = totp.VerifyTotp(code, out _);
-
-// If backup code
-if (!isValid && admin.BackupCodesJson != null)
-{
-    var backupCodes = JsonSerializer.Deserialize<List<string>>(admin.BackupCodesJson);
-    var hashedCode = HashHelper.Sha256(code);
-    if (backupCodes.Remove(hashedCode))  // One-time use
+    var hashedCode = hashCode(code);
+    if (LastTwoFactorCodeUsedAt.HasValue)
     {
-        admin.BackupCodesJson = JsonSerializer.Serialize(backupCodes);
-        isValid = true;
+        var timeSinceLastUse = DateTime.UtcNow - LastTwoFactorCodeUsedAt.Value;
+        if (timeSinceLastUse.TotalSeconds < 60 && LastTwoFactorCodeUsed == hashedCode)
+        {
+            return false; // Code replayed within the 60-second window
+        }
     }
-}
 
-// Record for anti-replay
-admin.LastTwoFactorCodeUsed = code;
-admin.LastTwoFactorCodeUsedAt = DateTime.UtcNow;`,
-    highlightLines: [2, 3, 17, 25, 26],
+    LastTwoFactorCodeUsed = hashedCode;
+    LastTwoFactorCodeUsedAt = DateTime.UtcNow;
+    return true;
+}`,
   },
 
-  // € Password Policy
+  // — Password Policy
   {
     type: "heading",
     level: 2,
@@ -301,7 +378,7 @@ admin.LastTwoFactorCodeUsedAt = DateTime.UtcNow;`,
     ],
   },
 
-  // € Admin Auth Endpoints €
+  // — Admin Auth Endpoints
   {
     type: "heading",
     level: 2,
@@ -313,56 +390,86 @@ admin.LastTwoFactorCodeUsedAt = DateTime.UtcNow;`,
     endpoints: [
       {
         method: "POST",
-        path: "/api/v1/admin-auth/login",
-        descriptionKey: "Username + password login",
+        path: "/api/v1/auth/admin/login",
+        descriptionKey: "Username + password login with discovery option",
         auth: "Public",
       },
       {
         method: "POST",
-        path: "/api/v1/admin-auth/refresh",
-        descriptionKey: "Rotate refresh token",
+        path: "/api/v1/auth/admin/refresh",
+        descriptionKey: "Rotate refresh token and issue new JWT",
         auth: "Refresh Token",
       },
       {
         method: "POST",
-        path: "/api/v1/admin-auth/verify-2fa",
-        descriptionKey: "Verify TOTP code or backup code",
-        auth: "2FA Token",
+        path: "/api/v1/auth/admin/discover-workspaces",
+        descriptionKey: "Discover all workspaces associated with email",
+        auth: "Public",
       },
       {
         method: "POST",
-        path: "/api/v1/admin-auth/logout",
-        descriptionKey: "Revoke current refresh token",
+        path: "/api/v1/auth/admin/logout",
+        descriptionKey: "Revoke current refresh token and clear session",
+        auth: "Public",
+      },
+      {
+        method: "GET",
+        path: "/api/v1/auth/admin/sessions",
+        descriptionKey: "List all active sessions for current admin",
+        auth: "JWT",
+      },
+      {
+        method: "DELETE",
+        path: "/api/v1/auth/admin/sessions/{tokenId}",
+        descriptionKey: "Revoke specific active session by ID",
+        auth: "JWT",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/auth/admin/sessions/revoke-all",
+        descriptionKey: "Revoke all sessions except the current one",
+        auth: "JWT",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/auth/admin/2fa/enable",
+        descriptionKey: "Generate TOTP secret and QR code for activation",
+        auth: "JWT",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/auth/admin/2fa/confirm",
+        descriptionKey: "Confirm 2FA setup by verifying code from authenticator",
+        auth: "JWT",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/auth/admin/2fa/verify",
+        descriptionKey: "Verify 2FA code during login process",
+        auth: "Public",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/auth/admin/2fa/disable",
+        descriptionKey: "Disable 2FA for the account",
+        auth: "JWT",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/auth/admin/2fa/backup-codes/regenerate",
+        descriptionKey: "Regenerate a new set of backup codes",
         auth: "JWT",
       },
       {
         method: "GET",
-        path: "/api/v1/admin-auth/me",
-        descriptionKey: "Current admin profile + roles",
-        auth: "JWT",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/admin-auth/enable-2fa",
-        descriptionKey: "Generate TOTP secret + QR code",
-        auth: "JWT",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/admin-auth/disable-2fa",
-        descriptionKey: "Disable 2FA (requires current code)",
-        auth: "JWT",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/admin-auth/regenerate-backup-codes",
-        descriptionKey: "Generate new set of backup codes",
+        path: "/api/v1/auth/admin/security-log",
+        descriptionKey: "Get security activity log for the current admin",
         auth: "JWT",
       },
     ],
   },
 
-  // € User Auth Endpoints
+  // — User Auth Endpoints
   {
     type: "heading",
     level: 2,
@@ -374,62 +481,74 @@ admin.LastTwoFactorCodeUsedAt = DateTime.UtcNow;`,
     endpoints: [
       {
         method: "POST",
-        path: "/api/v1/user-auth/register",
-        descriptionKey: "Self-registration",
-        auth: "Public",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/user-auth/login",
+        path: "/api/v1/auth/user/login",
         descriptionKey: "Email/phone + password login",
         auth: "Public",
       },
       {
         method: "POST",
-        path: "/api/v1/user-auth/refresh",
-        descriptionKey: "Rotate refresh token",
-        auth: "Refresh Token",
+        path: "/api/v1/auth/user/login/{provider}",
+        descriptionKey: "External provider login (Google, Facebook, Apple, Microsoft)",
+        auth: "Public",
       },
       {
         method: "POST",
-        path: "/api/v1/user-auth/logout",
-        descriptionKey: "Revoke current session",
+        path: "/api/v1/auth/user/register",
+        descriptionKey: "Self-registration using TenantCode",
+        auth: "Public",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/auth/user/verify-email",
+        descriptionKey: "Verify email address with OTP code",
+        auth: "Public",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/auth/user/verify-phone",
+        descriptionKey: "Verify phone number with OTP code",
+        auth: "Public",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/auth/user/send-email-verification",
+        descriptionKey: "Send or resend email verification OTP",
+        auth: "Public",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/auth/user/send-phone-verification",
+        descriptionKey: "Send or resend phone verification OTP",
+        auth: "Public",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/auth/user/request-password-reset",
+        descriptionKey: "Request password reset via email OTP",
+        auth: "Public",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/auth/user/reset-password",
+        descriptionKey: "Reset password using OTP code",
+        auth: "Public",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/auth/user/refresh",
+        descriptionKey: "Rotate refresh token and issue new JWT",
+        auth: "Public",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/auth/user/logout",
+        descriptionKey: "Revoke current refresh token and log out",
         auth: "JWT",
-      },
-      {
-        method: "GET",
-        path: "/api/v1/user-auth/me",
-        descriptionKey: "Current user profile",
-        auth: "JWT",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/user-auth/verify-email",
-        descriptionKey: "Verify email via OTP",
-        auth: "Public",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/user-auth/verify-phone",
-        descriptionKey: "Verify phone via OTP",
-        auth: "Public",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/user-auth/forgot-password",
-        descriptionKey: "Send password reset OTP",
-        auth: "Public",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/user-auth/reset-password",
-        descriptionKey: "Reset password with OTP",
-        auth: "Public",
       },
     ],
   },
 
-  // € Rate Limiting
+  // — Rate Limiting Policies
   {
     type: "heading",
     level: 2,
@@ -439,16 +558,31 @@ admin.LastTwoFactorCodeUsedAt = DateTime.UtcNow;`,
   { type: "paragraph", contentKey: "features.authentication.rateLimitingIntro" },
   {
     type: "table",
-    headers: ["Endpoint", "Policy", "Limit", "Window"],
+    headers: ["Policy Name", "Window Type", "Limit Threshold", "Scope / Partition Key"],
     rows: [
-      ["/admin-auth/login", "Login", "5 requests", "15 minutes"],
-      ["/admin-auth/refresh", "Refresh", "10 requests", "1 minute"],
-      ["/admin-auth/verify-2fa", "2FA", "5 requests", "5 minutes"],
-      ["/user-auth/login", "Login", "5 requests", "15 minutes"],
-      ["/user-auth/register", "Register", "3 requests", "1 hour"],
-      ["/user-auth/forgot-password", "ForgotPwd", "3 requests", "1 hour"],
+      ["Global", "Fixed Window", "1000 requests per minute", "Server-wide global DDoS ceiling"],
+      ["PerIp", "Fixed Window", "200 requests per minute", "Client IP Address"],
+      ["Login", "Fixed Window", "10 requests per 5 minutes", "Brute-force protection: login:{IP}"],
+      ["read-api", "Sliding Window", "200 requests per minute", "Infinite loop/scraping protection: read:{UserId/IP}"],
+      ["mutation-api", "Sliding Window", "30 requests per minute", "Automated modification abuse: mutation:{UserId/IP}"],
+      ["per-user", "Sliding Window", "100 requests per minute", "User-session activity ceiling: user:{UserId/IP}"],
+      ["export-heavy", "Fixed Window", "5 requests per minute", "High CPU reports/exports: export:{UserId/IP}"],
+      ["webhook", "Sliding Window", "500 requests per minute", "Webhook delivery burster: webhook:{IP}"],
+      ["signup", "Fixed Window", "3 requests per hour", "Registration/Tenant creation spam: signup:{IP}"],
+      ["phone-otp-send", "Fixed Window", "3 requests per 15 minutes", "SMS billing bombing prevention: phone-otp:{IP}"],
+      ["passkey-auth", "Fixed Window", "5 requests per 15 minutes", "WebAuthn brute-force protection: passkey:{IP}"],
+      ["qr-poll", "Sliding Window", "60 requests per minute", "Session polling limits: qr-poll:{IP}"],
+      ["password-reset", "Fixed Window", "5 requests per 15 minutes", "Recovery enumeration protection: password-reset:{IP}"],
+      ["token-refresh", "Sliding Window", "20 requests per minute", "Refresh farming prevention: token-refresh:{IP}"],
     ],
   },
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.authentication.lockoutPolicyTitle",
+    id: "lockout-policy-section",
+  },
+  { type: "paragraph", contentKey: "features.authentication.lockoutPolicyIntro" },
   {
     type: "info",
     variant: "warning",
@@ -468,5 +602,5 @@ registerPage({
     "features/audit-system",
     "security/authentication-deep",
   ],
-  lastUpdated: "2026-05-02",
+  lastUpdated: "2026-06-28",
 });

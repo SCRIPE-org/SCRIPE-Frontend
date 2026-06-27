@@ -251,7 +251,7 @@ export const es = {
         "Acabar la estructura (El sistema saca a los Admins sin afectarlos, y deja el Grupo en estado IsDeleted=true).",
       groupMembersTitle: "Adición e Interfaz de Recursos a Grupos",
       groupMembersIntro:
-        "Modificadores de la tabla Junction entre Admins y su Grupo Contenedor Principal.",
+        "Modificadores de la tabla Junction entre Admins and su Grupo Contenedor Principal.",
       addMembersDesc:
         "Dispara la creación de relaciones Junction ignorando colisiones si el Admin ya formaba parte de esto en un ciclo previo para no crashear (Idempotencia en POST).",
       removeMemberDesc:
@@ -272,6 +272,12 @@ export const es = {
         "Re-apagado de Grupos. Anula en bloque los grupos desabilitando el ingreso al App Front para todo el esquema inferior.",
       bulkDeleteDesc:
         "Eliminación paralela al basurero con modo optativo en cascada arrasador a operarios.",
+      bulkActivateAllDesc:
+        "Activar de forma masiva todos los grupos de usuarios que coincidan con los criterios de filtrado especificados (admite cascadeAdmins).",
+      bulkDeactivateAllDesc:
+        "Desactivar de forma masiva todos los grupos de usuarios que coincidan con los criterios de filtrado especificados (admite cascadeAdmins).",
+      bulkDeleteAllDesc:
+        "Eliminar de forma masiva (soft-delete) todos los grupos de usuarios que coincidan con los criterios de filtrado especificados (admite cascadeAdmins).",
       cascadeWarningNode:
         "Aviso de Seguridad en Pipeline: Si decides arrastrar cascada destructiva a Admins, el sistema buscará el atributo Protected (isProtectedFlag=True del SystemOwner) y se brincará silenciosamente el comando hacia este humano salvando su cuenta y aniquilando al resto del grupo.",
     },

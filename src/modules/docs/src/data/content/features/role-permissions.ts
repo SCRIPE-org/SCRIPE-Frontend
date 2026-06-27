@@ -5,7 +5,7 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 const sections: DocSection[] = [
   { type: "paragraph", contentKey: "features.rolePermissions.intro" },
 
-  //  Permission Hierarchy 
+  // € Permission Hierarchy €
   {
     type: "heading",
     level: 2,
@@ -17,19 +17,19 @@ const sections: DocSection[] = [
     title: "Permission Hierarchy",
     direction: "vertical",
     nodes: [
-      { id: "super", label: "Super Admin (Full Access)", type: "danger" },
-      { id: "admin", label: "Tenant Admin", type: "warning" },
-      { id: "manager", label: "Manager Roles", type: "info" },
-      { id: "user", label: "Regular User Roles", type: "default" },
+      { id: "super", label: "System Protected Admin (Full Access)", type: "danger" },
+      { id: "admin", label: "Tenant Super Admin", type: "warning" },
+      { id: "manager", label: "Custom Tenant Roles", type: "info" },
+      { id: "user", label: "Default / Regular User Roles", type: "default" },
     ],
     connections: [
-      { from: "super", to: "admin", label: "Can create" },
-      { from: "admin", to: "manager", label: "Can assign" },
-      { from: "manager", to: "user", label: "Can manage" },
+      { from: "super", to: "admin", label: "Spawns" },
+      { from: "admin", to: "manager", label: "Creates & Configures" },
+      { from: "manager", to: "user", label: "Assigns" },
     ],
   },
 
-  //  Permission System
+  // € Permission System
   {
     type: "heading",
     level: 2,
@@ -43,34 +43,30 @@ const sections: DocSection[] = [
     rows: [
       [
         "Admin Management",
-        "Create, Read, Update, Delete, Block, Impersonate",
-        "admin.create, admin.read, ...",
+        "Create, Read, Update, Delete, Block, Impersonate, Transfer",
+        "admins.view, admins.create, admins.impersonate, admins.transfer",
       ],
-      ["User Management", "Create, Read, Update, Delete, Block", "users.create, users.read, ..."],
       [
         "Role Management",
-        "Create, Read, Update, Delete, Assign Permissions",
-        "roles.create, roles.assign, ...",
+        "Create, Read, Update, Delete, Assign Permissions, Clone Role",
+        "roles.view, roles.create, roles.manage_permissions, roles.clone",
       ],
       [
         "Tenant Management",
-        "Create, Read, Update, Delete, Settings, Cascade Delete",
-        "tenants.create, tenants.cascade_delete, ...",
+        "Create, Read, Update, Delete, Settings, Drill-Down, Cascade Delete",
+        "tenants.view, tenants.create, tenants.drill_down, tenants.cascade_delete",
       ],
-      ["Audit Logs", "Read, Export, Stream", "audit.read, audit.export, ..."],
-      ["Dashboard", "View Stats, View Charts, View Feed", "dashboard.stats, dashboard.charts, ..."],
-      ["Menus", "Create, Read, Update, Delete, Reorder", "menus.create, menus.reorder, ..."],
       [
-        "Notifications",
-        "Read, Create, Settings",
-        "notifications.read, notifications.settings, ...",
+        "Compliance & Privacy",
+        "Regulations, Consent Management, DSR Create/Review/Execute",
+        "compliance_regulations.view, compliance_dsr.execute, compliance_consent.manage",
       ],
-      ["Settings", "Read, Update, Reset", "settings.read, settings.update, ..."],
-      ["Recycle Bin", "Read, Restore, Purge", "recycleBin.read, recycleBin.restore, ..."],
+      ["Audit Logs", "Read, Export, View Children", "audit.view, audit.export, audit.view_children"],
+      ["Dashboard", "View Stats, View Charts, View Security Feed", "dashboard.view, analytics.view, security.view"],
     ],
   },
 
-  //  Scope Override 
+  // € Scope Override €
   {
     type: "heading",
     level: 2,
@@ -81,18 +77,16 @@ const sections: DocSection[] = [
   {
     type: "code",
     language: "csharp",
-    filename: "RolePermission.cs  Scope Override & Restricted Fields",
-    code: `public class RolePermission : AuditableEntity<Guid>
+    filename: "RolePermission.cs",
+    code: `public class RolePermission : AuditableEntity
 {
     public Guid RoleId { get; set; }
     public Guid PermissionId { get; set; }
 
     // Override the permission's default scope for THIS role
-    [MaxLength(50)]
     public string? ScopeOverride { get; set; }
 
     // JSON array of field names hidden for this role
-    [MaxLength(2000)]
     public string? RestrictedFieldsJson { get; set; }
     // Example: ["salary", "ssn", "bankAccount"]
 
@@ -100,29 +94,21 @@ const sections: DocSection[] = [
     public virtual Role Role { get; set; } = null!;
     public virtual Permission Permission { get; set; } = null!;
 }`,
-    highlightLines: [7, 8, 11, 12],
+    highlightLines: [6, 7, 9, 10],
   },
   {
     type: "table",
-    headers: ["Scope Value", "Data Access", "Use Case"],
+    headers: ["Scope Value", "Data Access Description", "Use Case / Scoping Boundary"],
     rows: [
-      ["all", "All data across all tenants in hierarchy", "Super admin, global reports"],
-      [
-        "own_site_children",
-        "Data from own tenant + all child tenants",
-        "Branch manager overseeing sub-branches",
-      ],
-      ["own_site", "Data from own tenant only", "Default for most tenant admins"],
-      ["own", "Only data created by the current user", "Team lead seeing only their entries"],
+      ["all_tenants", "System-wide access across all tenants in the system", "Super admin global operations"],
+      ["context_tenant", "Data restricted to a specific tenant context (drill-down mode)", "Super admin tenant drill-down"],
+      ["hierarchy", "Data from own tenant + all descendant child tenants", "Branch manager overseeing sub-tenants"],
+      ["own_tenant", "Data from own tenant only (default isolation boundary)", "Default for tenant-level administrators"],
+      ["own", "Only data created by the current user (CreatedBy == UserId)", "Individual team members seeing only their entries"],
     ],
   },
-  {
-    type: "info",
-    variant: "note",
-    contentKey: "features.rolePermissions.scopeOverrideIntro",
-  },
 
-  //  Authorization Pipeline 
+  // € Authorization Pipeline €
   {
     type: "heading",
     level: 2,
@@ -133,45 +119,48 @@ const sections: DocSection[] = [
   {
     type: "code",
     language: "csharp",
-    filename: "Authorization Attributes",
-    code: `// 4 Authorization Attributes
+    filename: "Authorization & Security Attributes",
+    code: `// Route-level and pipeline authorization attributes
 
-// 1. Permission-based (with optional scope requirement)
-[PermissionRequired("admins.view")]           // Any scope
-[PermissionRequired("admins.view", "all")]    // Must have scope "all"
+// 1. Dynamic RBAC verification with dynamic policy generation
+[PermissionRequired("admins.view")]
 
-// 2. Admin JWT only
+// 2. Requires active administrator token
 [AdminOnly]
 
-// 3. User JWT only
+// 3. Requires standard client/user token
 [UserOnly]
 
-// 4. Either admin or user
-[Authenticated]`,
-    highlightLines: [3, 4, 5],
+// 4. Rate limiting policies applied per-user or at auth endpoints
+[EnableRateLimiting("per-user")]
+[EnableRateLimiting("login")]`,
+    highlightLines: [3, 4, 7, 10, 13, 14],
   },
   {
     type: "flowchart",
-    title: "Permission Resolution Flow",
+    title: "Permission Policy & Caching Flow",
     direction: "horizontal",
     nodes: [
-      { id: "req", label: "Request", type: "default" },
-      { id: "policy", label: "DynamicPermissionPolicyProvider", type: "info" },
-      { id: "handler", label: "PermissionAuthorizationHandler", type: "warning" },
-      { id: "checker", label: "PermissionChecker", type: "primary" },
-      { id: "tenant", label: "ITenantHierarchyService", type: "success" },
-      { id: "result", label: "Allow / Deny", type: "danger" },
+      { id: "req", label: "Request with [PermissionRequired]", type: "default" },
+      { id: "policy", label: "DynamicPermissionPolicyProvider\n(Resolves dynamic policy)", type: "info" },
+      { id: "handler", label: "PermissionAuthorizationHandler\n(Evaluates requirements)", type: "warning" },
+      { id: "cache", label: "AdminPermissionCache\n(Checks IMemoryCache - 10m sliding)", type: "primary" },
+      { id: "db_load", label: "LoadAndCacheAsync\n(DB Fallback)", type: "danger" },
+      { id: "checker", label: "PermissionChecker\n(Validates tenant & scopes)", type: "success" },
+      { id: "decision", label: "Allow / Deny access", type: "default" },
     ],
     connections: [
-      { from: "req", to: "policy", label: "[PermissionRequired]" },
-      { from: "policy", to: "handler", label: "Creates policy" },
-      { from: "handler", to: "checker", label: "HasPermission?" },
-      { from: "checker", to: "tenant", label: "CanAccessTenant?" },
-      { from: "tenant", to: "result" },
+      { from: "req", to: "policy" },
+      { from: "policy", to: "handler" },
+      { from: "handler", to: "cache" },
+      { from: "cache", to: "db_load", label: "Cache Miss" },
+      { from: "cache", to: "checker", label: "Cache Hit" },
+      { from: "db_load", to: "checker" },
+      { from: "checker", to: "decision" },
     ],
   },
 
-  //  Restricted Fields
+  // € Restricted Fields
   {
     type: "heading",
     level: 2,
@@ -185,23 +174,83 @@ const sections: DocSection[] = [
     filename: "RestrictedFieldsJson Example",
     code: `// RolePermission for role "HR_VIEWER" on permission "admins.view"
 {
-  "scopeOverride": "own_site",
+  "scopeOverride": "own_tenant",
   "restrictedFieldsJson": "[\"salary\", \"ssn\", \"bankAccount\", \"nationalId\"]"
 }
 
-// API Response: restricted fields are nullified
+// API Response: restricted fields are recursively nullified by middleware
 {
   "id": "abc-123",
   "name": "John Doe",
   "email": "john@example.com",
-  "salary": null,       // Restricted
-  "ssn": null,          // Restricted
-  "bankAccount": null   // Restricted
+  "salary": null,       // Nullified
+  "ssn": null,          // Nullified
+  "bankAccount": null   // Nullified
 }`,
     highlightLines: [3, 4, 11, 12, 13],
   },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "FieldProjectionMiddleware.cs (Recursive Nullification)",
+    code: `private void FilterNode(JsonNode? node, HashSet<string> restrictedFields, string path)
+{
+    if (node == null) return;
 
-  //  Clone Role 
+    if (node is JsonObject obj)
+    {
+        var keysToNullify = new List<string>();
+        foreach (var prop in obj)
+        {
+            var fieldPath = string.IsNullOrEmpty(path) ? prop.Key : path + "." + prop.Key;
+            if (restrictedFields.Contains(prop.Key, StringComparer.OrdinalIgnoreCase) ||
+                restrictedFields.Contains(fieldPath, StringComparer.OrdinalIgnoreCase))
+            {
+                keysToNullify.Add(prop.Key);
+            }
+            else
+            {
+                FilterNode(prop.Value, restrictedFields, fieldPath);
+            }
+        }
+
+        foreach (var key in keysToNullify)
+        {
+            obj[key] = null; // Zero-reflection nullification
+        }
+    }
+    else if (node is JsonArray arr)
+    {
+        foreach (var item in arr)
+        {
+            FilterNode(item, restrictedFields, path);
+        }
+    }
+}`,
+    highlightLines: [10, 11, 12, 22],
+  },
+  {
+    type: "flowchart",
+    title: "Field-Level Security (FLS) Pipeline Flow",
+    direction: "vertical",
+    nodes: [
+      { id: "request", label: "Incoming API Request", type: "default" },
+      { id: "filter", label: "RestrictedFieldsAuthorizationFilter\n(Checks cache, sets HttpContext.Items[\"RestrictedFields\"])", type: "warning" },
+      { id: "controller", label: "Controller & Handler Execution\n(Fetches data & maps to DTO)", type: "primary" },
+      { id: "middleware", label: "FieldProjectionMiddleware\n(Intercepts 2xx JSON, parses JsonNode tree)", type: "info" },
+      { id: "nullify", label: "Recursive Nullifier\n(Nullifies restricted properties in response)", type: "danger" },
+      { id: "response", label: "Cleaned JSON Response Sent", type: "success" },
+    ],
+    connections: [
+      { from: "request", to: "filter" },
+      { from: "filter", to: "controller" },
+      { from: "controller", to: "middleware" },
+      { from: "middleware", to: "nullify" },
+      { from: "nullify", to: "response" },
+    ],
+  },
+
+  // € Clone Role €
   {
     type: "heading",
     level: 2,
@@ -211,22 +260,30 @@ const sections: DocSection[] = [
   { type: "paragraph", contentKey: "features.rolePermissions.cloneRoleIntro" },
   {
     type: "flowchart",
-    title: "Clone Role Anti-Escalation",
+    title: "Clone Role & Permission Assignment Anti-Escalation Flow",
     direction: "vertical",
     nodes: [
-      { id: "admin", label: "Admin (has 40 permissions)", type: "primary" },
-      { id: "source", label: "Source Role (has 60 permissions)", type: "info" },
-      { id: "intersect", label: "Intersection: 40 © 60 = 35", type: "warning" },
-      { id: "clone", label: "Cloned Role (gets 35 permissions)", type: "success" },
+      { id: "cloner", label: "Cloner / Assignor Admin\n(Current User Permissions Pool)", type: "primary" },
+      { id: "action", label: "Security Operation\n(Clone Role OR Assign Permissions)", type: "default" },
+      { id: "clone_check", label: "Cloning Flow\n(Silent Intersection Filtering)", type: "info" },
+      { id: "assign_check", label: "Assignment Flow\n(Strict Validation: Has permission?)", type: "warning" },
+      { id: "guardian", label: "TenantGuardianService\n(Is role permission-locked?)", type: "danger" },
+      { id: "allow", label: "Permit Operation & Update Cache", type: "success" },
+      { id: "deny", label: "Forbidden (PermissionEscalation / LockedRole)", type: "danger" },
     ],
     connections: [
-      { from: "admin", to: "intersect" },
-      { from: "source", to: "intersect" },
-      { from: "intersect", to: "clone", label: "Only shared permissions" },
+      { from: "cloner", to: "action" },
+      { from: "action", to: "clone_check", label: "Clone Command" },
+      { from: "action", to: "assign_check", label: "Assign Command" },
+      { from: "clone_check", to: "guardian", label: "Extracts shared subset" },
+      { from: "assign_check", to: "deny", label: "No (throws 403 Forbidden)" },
+      { from: "assign_check", to: "guardian", label: "Yes" },
+      { from: "guardian", to: "deny", label: "Locked (throws 403)" },
+      { from: "guardian", to: "allow", label: "Not Locked" },
     ],
   },
 
-  //  Role Properties
+  // € Role Properties
   {
     type: "heading",
     level: 2,
@@ -250,7 +307,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  //  Role CRUD Endpoints
+  // € Role CRUD Endpoints
   {
     type: "heading",
     level: 2,
@@ -323,7 +380,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  //  My Tenant Endpoints
+  // € My Tenant Endpoints
   {
     type: "heading",
     level: 2,
@@ -354,7 +411,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  //  Permission Endpoints 
+  // € Permission Endpoints €
   {
     type: "heading",
     level: 2,

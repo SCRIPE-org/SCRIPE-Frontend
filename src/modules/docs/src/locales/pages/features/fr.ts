@@ -8,33 +8,61 @@ export const fr = {
     authentication: {
       title: "Authentification",
       description:
-        "Authentification double (Admin + Utilisateur), jetons JWT, 2FA avec codes de secours et politique de mot de passe par locataire.",
+        "Authentification double (Admin + Utilisateur), routage multi-espace de travail, jetons JWT, 2FA avec codes de secours, expiration du mot de passe, porte de suspension SSO et politique de mot de passe par locataire.",
       intro:
-        "SCRIPE fournit un système d'authentification sécurisé avec des jetons (tokens) d'accès JWT, une rotation des jetons d'actualisation (refresh tokens) et une 2FA.",
+        "SCRIPE fournit un système d'authentification sécurisé avec des jetons d'accès JWT, une rotation des jetons d'actualisation, une authentification à deux facteurs optionnelle, une détection de connexion multi-espace de travail, une application de l'expiration du mot de passe et une limitation de débit complète. Le système prend en charge des pipelines d'authentification distincts pour l'Admin et l'Utilisateur avec des revendications JWT et des autorisations différentes.",
       flowTitle: "Flux d'Authentification",
+      workspaceTitle: "Détection de Connexion Multi-Espace de Travail",
+      workspaceIntro:
+        "Lorsqu'un administrateur se connecte à partir du domaine de la plateforme (sans locataire pré-résolu), le backend exécute un algorithme de routage à 3 cas. Le cas A utilise un tenantId fourni pour une isolation stricte du domaine. Le cas A' se déclenche lorsque l'indicateur isPlatformAdmin est défini — cela recherche directement l'admin de la plateforme (TenantId = null) et contourne complètement la détection de l'espace de travail, évitant ainsi une boucle infinie. Le cas B effectue la détection de l'espace de travail : il vérifie d'abord la présence d'un admin de la plateforme, puis recherche tous les locataires par e-mail — renvoyant un sélecteur d'espace de travail si plusieurs correspondances sont trouvées.",
+      workspaceNote:
+        "L'indicateur isPlatformAdmin a été introduit pour résoudre une boucle critique : lorsqu'un administrateur de plateforme sélectionnait 'Administration de la Plateforme' dans le sélecteur d'espace de travail, cela déclenchait à nouveau la détection de l'espace de travail (car il n'y a pas de tenantId pour la plateforme). L'indicateur signale désormais au backend de sauter la détection et de s'authentifier directement par rapport à l'enregistrement admin de la plateforme.",
+      passwordExpiryTitle: "Application de l'Expiration du Mot de Passe",
+      passwordExpiryIntro:
+        "Lors de la connexion, après la vérification BCrypt et les contrôles de verrouillage, le gestionnaire invoque ITenantPasswordValidator to check if the admin's password has exceeded the tenant's PasswordExpiryDays setting. If expired, the response includes MustChangePassword = true, forcing the frontend to redirect the admin to the change-password page. The admin receives a valid JWT but cannot access the dashboard until the password is updated.",
+      ssoSuspensionTitle: "Porte de Suspension de Locataire SSO",
+      ssoSuspensionIntro:
+        "L'ExternalLoginCommandHandler inclut une porte de sécurité pour la suspension des locataires. Après la validation du jeton SSO et la liaison du compte, le gestionnaire vérifie le statut du locataire de l'administrateur. Si le locataire est suspendu ou annulé, la connexion est rejetée avec une erreur localisée — empêchant les utilisateurs désactivés de contourner les contrôles de connexion standard via des fournisseurs SSO comme Google ou Azure AD.",
+      ssoSuspensionWarning:
+        "Sans cette porte, les utilisateurs SSO pourraient s'authentifier via un fournisseur d'identité externe et recevoir un JWT SCRIPE valide même si leur locataire a été suspendu. Tous les chemins de connexion SSO imposent désormais les mêmes contrôles de statut de locataire que la connexion par mot de passe standard.",
       jwtTitle: "Configuration des Jetons JWT",
       jwtIntro:
-        "Le système utilise des jetons d'accès de courte durée (15 minutes) avec des jetons d'actualisation de longue durée (7 jours) pivotés à chaque utilisation.",
+        "Le système utilise des jetons d'accès de courte durée (15 minutes) avec des jetons d'actualisation de longue durée (7 jours). Les jetons d'actualisation sont pivotés à chaque utilisation pour empêcher les attaques par rejeu.",
       dualAuthTitle: "Double Authentification (Admin et Utilisateur)",
       dualAuthIntro:
-        "SCRIPE dispose de deux pipelines d'authentification distincts : AdminAuthController et UserAuthController, émettant des revendications (claims) différentes.",
+        "SCRIPE dispose de deux pipelines d'authentification distincts. L'authentification admin (AdminAuthController) émet des JWT avec des revendications spécifiques à l'admin (TenantId, IsSuperAdmin, Roles). L'authentification utilisateur (UserAuthController) émet des JWT avec des revendications spécifiques à l'utilisateur (NationalId, Gender, Country). Chacun a ses propres endpoints de connexion, d'inscription et de rafraîchissement de jeton.",
       adminEntityTitle: "Entité Admin (Sécurité)",
       adminEntityIntro:
-        "L'entité Admin possède plusieurs champs de sécurité critiques contrôlant le verrouillage et la protection du compte.",
+        "L'entité Admin possède plusieurs champs critiques pour la sécurité qui contrôlent le comportement et la protection du compte.",
       twoFactorTitle: "Authentification à Deux Facteurs (2FA)",
       twoFactorIntro:
-        "La 2FA est implémentée avec TOTP. Les codes de secours sont hachés avec une protection anti-replay.",
+        "La 2FA est implémentée avec TOTP (Time-based One-Time Password) en utilisant un secret TwoFactorSecret par admin. Les codes de secours sont hachés et stockés dans BackupCodesJson. La protection anti-rejeu garantit que le même code ne peut pas être utilisé deux fois via les timestamps LastTwoFactorCodeUsed et LastTwoFactorCodeUsedAt.",
       passwordPolicyTitle: "Politique de Mot de Passe par Locataire",
       passwordPolicyIntro:
-        "Les exigences de mot de passe sont configurables par locataire via TenantSettings.",
+        "Les exigences de mot de passe sont configurables par locataire via TenantSettings. Chaque locataire peut définir la longueur minimale, les exigences de majuscules, de chiffres, de caractères spéciaux et la durée d'expiration. Le champ PasswordLastChanged sur l'entité Admin est vérifié par rapport aux PasswordExpiryDays du locataire pour imposer la rotation des mots de passe.",
       endpointsTitle: "Endpoints API d'Authentification",
       endpointsAdminTitle: "Endpoints d'Authentification Admin",
       endpointsUserTitle: "Endpoints d'Authentification Utilisateur",
       rateLimitingTitle: "Limitation de Débit (Rate Limiting)",
       rateLimitingIntro:
-        "Les endpoints d'authentification sont protégés par plusieurs politiques de limitation de débit pour empêcher les attaques par force brute.",
+        "Les endpoints d'authentification sont protégés par plusieurs politiques de limitation de débit pour empêcher les attaques par force brute et les abus.",
       lockoutWarning:
-        "Après 5 tentatives de connexion échouées, le compte est verrouillé pendant 15 minutes.",
+        "Après 5 tentatives de connexion échouées, le compte est verrouillé pendant 15 minutes. Le compteur de verrouillage se réinitialise après une connexion réussie. Les administrateurs peuvent déverrouiller manuellement les comptes depuis le panneau d'administration.",
+      tokenValidationTitle: "Validation des Jetons et Vérification des Revendications",
+      tokenValidationIntro:
+        "Les deux pipelines d'authentification partagent le même processus de validation des jetons JWT. Le middleware vérifie les revendications de l'identifiant de nom, vérifie l'indicateur 'admin' et interroge la base de données en contournant les filtres de requête globaux via `IgnoreQueryFilters()` pour vérifier que le compte administrateur ou utilisateur est toujours actif et n'a pas été supprimé logiquement.",
+      mcpMiddlewareTitle: "Middleware MustChangePassword et Liste Blanche",
+      mcpMiddlewareIntro:
+        "Lorsqu'un mot de passe expire, le JWT de l'utilisateur reçoit la revendication `mcp: true`. Le middleware `MustChangePasswordMiddleware` bloque toutes les requêtes entrantes avec un statut 403 Forbidden, sauf si la requête correspond à la liste blanche : changement de mot de passe `/api/v1/admins/{adminId}/change-password`, profil `/api/v1/auth/admin/me`, rafraîchissement `/api/v1/auth/admin/refresh`, déconnexions `/api/v1/auth/admin/logout` ou `/api/v1/auth/admin/revoke`, et l'état du système `/health`.",
+      ssoCallbackTitle: "Rappel OIDC/SSO et Sélection de l'Espace de Travail",
+      ssoCallbackIntro:
+        "Pour les rappels d'authentification unique (OIDC/SAML), le système résout l'e-mail et vérifie si plusieurs espaces de travail sont liés. Si plusieurs espaces de travail candidats existent, un jeton temporaire de sélection d'espace de travail est généré et stocké dans le cache sous `sso-login-selection:{token}`. L'utilisateur est redirigé pour choisir un espace de travail, ce qui déclenche ensuite `CompleteOidcWorkspaceSelectionCommand` pour décrypter l'identifiant de locataire sélectionné et émettre les jetons JWT finaux.",
+      antiReplayTitle: "Fenêtre Anti-Rejeu et Sécurité TOTP",
+      antiReplayIntro:
+        "Pour éviter les attaques par rejeu de jetons, le `Verify2FACommandHandler` applique une fenêtre anti-rejeu stricte de 60 secondes. Il calcule un hachage SHA256 du code de vérification, le compare à `LastTwoFactorCodeUsed` et vérifie le timestamp de `LastTwoFactorCodeUsedAt`. Si le même code est réutilisé dans les 60 secondes, il est rejeté.",
+      lockoutPolicyTitle: "Politiques de Verrouillage et Limites de Brute-Force",
+      lockoutPolicyIntro:
+        "La protection contre la force brute définit `MaxFailedAttempts = 5` et une durée de verrouillage de `LockoutMinutes = 15`. Pendant le verrouillage, la validation du mot de passe est entièrement contournée pour éviter les attaques temporelles et l'épuisement du CPU, renvoyant une erreur de compte verrouillé immédiate.",
     },
     multiTenancy: {
       title: "Multi-locataire (Multi-Tenancy)",
@@ -43,6 +71,10 @@ export const fr = {
       intro:
         "SCRIPE prend en charge une architecture multi-locataire complète avec isolation des données à l'aide des filtres de requêtes globaux d'EF Core.",
       architectureTitle: "Architecture",
+      isolationIntro:
+        "L'isolation des données au niveau des lignes est réalisée de manière dynamique via les filtres de requête globaux d'EF Core. Le contexte de base de données compile dynamiquement des filtres limitant l'accès au locataire actif (`CurrentTenantId`) ou aux enregistrements globaux (`TenantId == null`). Au lieu de capturer une valeur statique lors de la compilation, EF Core évalue dynamiquement le contexte du locataire actif lors de l'exécution de chaque requête.",
+      drilldownIntro:
+        "Les administrateurs système ne contournent pas implicitement les limites de données des locataires. Le contournement nécessite une action de drill-down où l'application cliente attache l'identifiant chiffré du locataire cible dans l'en-tête `X-Tenant-Context`. Le pare-feu middleware intercepte la requête, vérifie la permission `tenants.drill_down`, décrypte l'en-tête via AES, et remplace le contexte du locataire actif pour la durée de la requête.",
       featuresTitle: "Fonctionnalités du Locataire (Tenant)",
       featureIsolation: "Isolation des Données",
       featureIsolationDesc:
@@ -63,6 +95,8 @@ export const fr = {
       hierarchyTitle: "Hiérarchie des Locataires",
       hierarchyIntro:
         "Les locataires forment une structure arborescente (Parent/Enfant), permettant de gérer des succursales et des départements.",
+      hierarchyQueriesIntro:
+        "Au lieu de s'appuyer sur des requêtes CTE récursives complexes et spécifiques à chaque base de données, SCRIPE échafaude la hiérarchie des locataires lors de la création d'un locataire enfant en concaténant des chemins matérialisés (`HierarchyPath`) sous la forme `/{grandparent-id}/{parent-id}/`. Les vérifications d'ascendance et les requêtes de sous-arbre de descendants sont exécutées en temps constant à l'aide de correspondances textuelles indexées de type StartsWith/Contains, compilées en requêtes SQL `LIKE` hautement performantes.",
       settingsTitle: "Paramètres du Locataire",
       settingsIntro:
         "Chaque locataire possède une entité TenantSettings 1:1 avec 4 groupes de configuration.",
@@ -72,10 +106,10 @@ export const fr = {
       brandingGroup: "Image de Marque (Branding)",
       autoRoleTitle: "Création Automatique de Rôles",
       autoRoleIntro:
-        "Lorsqu'un nouveau locataire est créé, le système crée automatiquement les rôles Super Admin et Default.",
+        "La création d'un locataire provisionne de manière dynamique les rôles et un compte administrateur au sein d'une transaction atomique. Les rôles créés sont `{CODE}_SUPER_ADMIN` et `{CODE}_DEFAULT`. Le rôle Super Admin suit une transition d'état de verrouillage : lors de la phase d'échafaudage, il est déverrouillé (`IsPermissionLocked = false`) pour configurer les autorisations initiales via l'affectation de l'édition du plan avant de passer à un état verrouillé (`IsPermissionLocked = true`) empêchant toute modification ultérieure.",
       cascadeDeleteTitle: "Protection contre la Suppression en Cascade",
       cascadeDeleteIntro:
-        "La suppression d'un locataire impacte l'arbre entier. Un endpoint permet de chiffrer les descendants impactés avant l'action.",
+        "La suppression d'un locataire impose des contrôles de sécurité stricts. Si des descendants existent, la suppression est bloquée à moins que la requête ne définisse `CascadeChildren` à `true`. L'exécution valide la fonctionnalité de plan `Identity.CascadeDelete.Enabled`, la permission RBAC `tenants.cascade_delete`, et effectue une suppression ascendante inversée (les enfants les plus profonds d'abord), des suppressions douces en bloc et le nettoyage immédiat des tables de liaison (domaines, permissions directes) pour éviter les domaines otages, suivis de la réconciliation des quotas du parent.",
       permissionInheritanceTitle: "Héritage des Permissions",
       permissionInheritanceIntro:
         "Lors de la création d'un locataire enfant, le parent ne peut accorder que les permissions qu'il possède déjà.",
@@ -93,10 +127,10 @@ export const fr = {
       domainTypesTitle: "Types de Domaines",
       domainArchTitle: "Architecture de Résolution de Domaines",
       domainArchIntro:
-        "Lorsqu'une requête arrive, le système résout le locataire en recherchant le nom d'hôte dans la table TenantDomain. Les domaines générés automatiquement (ex. sofa.scripe.com) sont toujours vérifiés et résolus immédiatement. Les domaines personnalisés doivent d'abord passer la vérification DNS. Un mécanisme de repli utilisant le paramètre de requête ?code= est disponible pour les environnements de développement où le DNS n'est pas configuré.",
+        "Les requêtes entrantes résolvent le contexte du locataire via le hook client `useTenantResolution` et le gestionnaire de requêtes serveur `ResolveTenantByDomainQueryHandler`. Le client vérifie si le nom d'hôte est un domaine local/de plateforme, sinon il interroge l'API. Le serveur interroge la table TenantDomain, valide `IsVerified == true`, fusionne les surcharges d'image de marque du locataire, ou se replie sur les paramètres `?code=` en mode développement.",
       domainDnsTitle: "Flux de Vérification DNS",
       domainDnsIntro:
-        "Les domaines personnalisés nécessitent une vérification DNS pour prouver la propriété. Lorsqu'un administrateur ajoute un domaine personnalisé, le système génère un jeton de vérification unique. L'administrateur configure ensuite deux enregistrements DNS : un enregistrement CNAME pointant le domaine vers le CnameTarget de la plateforme, et un enregistrement TXT à {VerificationPrefix}.{domain} contenant le jeton de vérification. Une fois configuré, cliquer sur 'Vérifier' déclenche une requête DNS pour confirmer la présence des deux enregistrements.",
+        "Les domaines personnalisés doivent être validés par rapport à la RFC 1123, la liste des sous-domaines réservés et la limite de quota `Tenancy.MaxCustomDomains`. La propriété est prouvée en générant un jeton de vérification (préfixe `scr_`) et en vérifiant la présence d'un mappage cible CNAME et d'un enregistrement TXT correspondant (`_scr-verify.{domain}`) à l'aide de requêtes de recherche DNS.",
       domainDnsNote:
         "La vérification DNS est actuellement un processus piloté par l'interface utilisateur où l'administrateur clique sur 'Vérifier' pour déclencher la vérification. Le backend est prêt pour l'intégration complète de la résolution DNS. Les domaines générés automatiquement ignorent complètement la vérification — ils sont toujours fiables.",
       domainConfigTitle: "Domaine de Plateforme Configurable",
@@ -111,23 +145,23 @@ export const fr = {
       description:
         "Système RBAC avec remplacement de portée (scope override), restrictions au niveau des champs et rôles cloisonnés par locataire.",
       intro:
-        "SCRIPE met en œuvre un système complet de contrôle d'accès basé sur les rôles (RBAC) mis en cache côté serveur pour des performances optimales.",
+        "SCRIPE implémente un système RBAC (Contrôle d'Accès Basé sur les Rôles) complet et hautement optimisé avec des permissions modulaires basées sur des catégories, des remplacements de portée, des restrictions au niveau des champs (FLS) et un cloisonnement par locataire. Les permissions sont chargées dynamiquement depuis des fournisseurs, mises en cache côté serveur via IMemoryCache et validées par des vérificateurs programmatiques.",
       hierarchyTitle: "Hiérarchie des Permissions",
       systemTitle: "Système de Permissions",
       systemIntro:
-        "Les permissions sont organisées en catégories suivant le modèle {resource}.{action}.",
+        "Les permissions suivent une convention de nommage stricte {Resource}.{Action}. Au lieu de déclarations statiques, chaque module backend définit ses permissions en implémentant IModulePermissionProvider (par exemple, IdentityPermissionProvider, CompliancePermissionProvider). Au démarrage, ces fournisseurs sont automatiquement découverts, et le DatabaseSeeder utilise PermissionSeeder.SyncFromProvidersAsync pour synchroniser et initialiser les permissions dans la base de données.",
       scopeOverrideTitle: "Remplacement de Portée (Scope Override)",
       scopeOverrideIntro:
-        "Chaque RolePermission peut remplacer la portée par défaut, contrôlant l'accès aux données de manière fine.",
+        "Chaque RolePermission peut remplacer la portée par défaut d'une permission via le champ ScopeOverride. Le DataScopeService résout la portée effective en utilisant une liste de priorités stricte : 1) Contexte d'exploration (claim ContextTenantId), 2) Remplacement de portée de RolePermission, 3) Vérification du mode Dieu (SystemProtectedAdmin), 4) Drapeau de hiérarchie (IncludeChildTenants), 5) Locataire assigné, 6) Repli global. Lorsque plusieurs rôles sont attribués, AdminSecurityService.GetWidestScope résout la portée la plus large : all_tenants > hierarchy > own_tenant > own. Pour éviter les fuites de privilèges, les administrateurs de locataires sont strictement limités à leur propre sous-hiérarchie lors de la résolution de la portée.",
       authPipelineTitle: "Pipeline d'Autorisation",
       authPipelineIntro:
-        "Le DynamicPermissionPolicyProvider crée des politiques d'autorisation ASP.NET Core à la volée à partir des attributs.",
+        "L'autorisation est découplée des configurations statiques. Le DynamicPermissionPolicyProvider construit dynamiquement des politiques d'autorisation ASP.NET Core pour les routes contenant l'attribut [PermissionRequired]. Pour maintenir la taille du jeton JWT sous 400 octets, les permissions des utilisateurs ne sont pas stockées dans les revendications (claims) mais sont mises en cache côté serveur à l'aide d'un AdminPermissionCache (avec une expiration glissante de 10 minutes). La mise en cache utilise un CancellationTokenSource central pour une éviction globale sécurisée au niveau des threads lors de toute modification de rôle. Des vérifications programmatiques sont effectuées dans les gestionnaires et les services via l'interface IPermissionChecker.",
       restrictedFieldsTitle: "Restrictions au Niveau des Champs",
       restrictedFieldsIntro:
-        "Les rôles peuvent restreindre l'accès à des champs spécifiques (ex: masquer 'salaire' ou 'numéro de sécurité sociale') dans les réponses de l'API.",
+        "La sécurité au niveau des champs (FLS) permet aux administrateurs de restreindre des champs spécifiques d'une entité pour des rôles déterminés. Les champs restreints sont configurés sous forme de tableau JSON de chemins de chaînes (par exemple, [\"salary\", \"ssn\"]) et stockés dans la colonne RestrictedFieldsJson (varchar/nvarchar/VARCHAR2 jusqu'à 2000 caractères) de la table RolePermission. Lors de l'exécution, le RestrictedFieldsAuthorizationFilter identifie la ressource cible et définit HttpContext.Items[\"RestrictedFields\"]. Le FieldProjectionMiddleware intercepte les réponses JSON HTTP 2xx, analyse le corps dans un arbre JsonNode et annule de manière récursive les propriétés restreintes correspondant au chemin exact ou relatif (par exemple, address.street) pour éviter la surcharge de réflexion.",
       cloneRoleTitle: "Clonage de Rôle (Anti-Escalade)",
       cloneRoleIntro:
-        "Pour éviter l'escalade de privilèges, un rôle cloné ne reçoit que les permissions que l'administrateur clonateur possède également.",
+        "Pour empêcher l'escalade de privilèges, le CloneRoleCommandHandler filtre la liste des permissions copiées par rapport aux propres permissions actives du cloneur, supprimant silencieusement toutes les permissions non possédées. Dans la commande d'attribution de permissions, tenter d'ajouter explicitement des permissions que l'administrateur ne possède pas lève une erreur Forbidden role.permissionEscalation. De plus, le TenantGuardianService valide toutes les mises à jour de rôles et bloque toute modification des rôles critiques du système verrouillés (IsPermissionLocked == true).",
       rolePropertiesTitle: "Propriétés de l'Entité Rôle",
       rolePropertiesIntro:
         "Le comportement et la protection des rôles sont gérés par des drapeaux (flags) du système.",
@@ -354,40 +388,40 @@ export const fr = {
     userGroups: {
       title: "Groupes d'Utilisateurs (User Groups)",
       description:
-        "Affectation de rôles et de restrictions basée sur les groupes avec fusion additive lors de la connexion.",
+        "Assignation de rôles et de restrictions par groupe avec isolation de locataire, gestion des membres et fusion additive lors de la connexion.",
       intro:
-        "Fournit un moyen évolutif d'affecter des rôles et des restrictions au niveau des champs à un grand nombre d'administrateurs.",
+        "Les groupes d'utilisateurs offrent un moyen évolutif d'assigner des rôles et des restrictions au niveau des champs à un grand nombre d'administrateurs. Au lieu d'assigner des rôles individuellement à chaque administrateur, vous créez un groupe, lui ajoutez des rôles et des restrictions, puis ajoutez des administrateurs en tant que membres. Tous les membres héritent automatiquement des rôles et des restrictions du groupe lors de leur prochaine connexion.",
       architectureTitle: "Architecture",
       architectureIntro:
-        "Chaque AdminGroup appartient à un locataire unique et contient trois collections : Membres, Rôles et Restrictions.",
-      domainModelTitle: "Modèle de Domaine",
+        "Chaque UserGroup appartient à un locataire (tenant) et possède des liens de jonction : AdminUserGroup pour les membres, UserGroupRole pour les rôles et UserGroupRestriction pour la sécurité au niveau des champs (FLS). Les relations sont configurées avec Cascade Delete du côté de UserGroup, ainsi la suppression d'un groupe supprime automatiquement les liens de membres, rôles et restrictions. Cependant, un Restrict Delete du côté de Tenant empêche la suppression d'un locataire contenant des groupes d'utilisateurs actifs.",
+      domainModelTitle: "Modèle de Domaine & Configurations",
       domainModelIntro:
-        "La fonctionnalité ajoute 4 entités au domaine d'Identité pour lier dynamiquement les groupes aux administrateurs.",
-      howItWorksTitle: "Fonctionnement lors de la Connexion",
+        "La fonctionnalité de groupes d'utilisateurs utilise quatre entités de domaine : UserGroup (racine d'agrégat), AdminUserGroup (jonction plusieurs-à-plusieurs), UserGroupRole (jonction plusieurs-à-plusieurs) et UserGroupRestriction (restrictions de champs). Les configurations de base de données imposent des index composites uniques sur {TenantId, Code} pour UserGroup, {AdminId, UserGroupId} pour AdminUserGroup, et {UserGroupId, RoleId} pour UserGroupRole afin d'éviter les mappages en double.",
+      howItWorksTitle: "Fonctionnement à la Connexion",
       howItWorksIntro:
-        "Les permissions effectives dans le JWT sont l'UNION des rôles directs et de tous les rôles hérités via les groupes.",
+        "Lors de l'authentification, l'AdminRepository implémente un modèle de projection à requête unique (GetWithRolesAsync) pour récupérer les rôles et restrictions directs et hérités du groupe en un seul aller-retour de base de données. Les rôles hérités du groupe sont projetés dans des instances synthétiques d'AdminRole (avec Id = Guid.Empty) et ajoutés à la collection de rôles de l'administrateur. L'AdminSecurityService effectue ensuite une fusion additive d'union des restrictions de champs au niveau du rôle et du groupe (le principe 'le refus l'emporte' s'applique pour FLS).",
       mergeNote:
-        "Les rôles et restrictions de groupe sont additifs : ils ne peuvent qu'ÉTENDRE les restrictions (principe 'deny wins' ou le refus l'emporte).",
+        "Les rôles et restrictions de groupe sont additifs — ils ne peuvent qu'élargir les restrictions effectives d'un administrateur, sans jamais supprimer les affectations de rôles directes. Cela correspond au principe de sécurité 'le refus l'emporte' (Deny Wins).",
       memberManagementTitle: "Gestion des Membres",
       memberManagementIntro:
-        "Endpoints de type PUT idempotents pour ajouter et supprimer des membres.",
-      roleAssignmentTitle: "Affectation des Rôles",
+        "L'ajout de membres est idempotent — l'envoi d'un ID d'administrateur déjà membre réussit silencieusement. La suppression d'un membre supprime l'enregistrement de jonction ; l'administrateur conserve tous les rôles directement assignés. La liste des membres peut être interrogée avec les métadonnées de l'administrateur (nom, e-mail, statut).",
+      roleAssignmentTitle: "Assignation de Rôles",
       roleAssignmentIntro:
-        "Les rôles de groupe utilisent le modèle Nuke & Pave (le PUT remplace tout) pour une synchronisation stricte avec l'interface utilisateur.",
+        "Les rôles de groupe utilisent un modèle nuke-and-pave (PUT remplace tout). Cela garantit que la base de données correspond toujours exactement à l'état de l'interface utilisateur. Chaque rôle doit appartenir au même locataire que le groupe. Les rôles attribués via les groupes apparaissent aux côtés des rôles directement attribués dans l'ensemble d'autorisations effectives de l'administrateur.",
       restrictionsTitle: "Restrictions de Champs",
       restrictionsIntro:
-        "Les restrictions de groupes s'additionnent dynamiquement avec les autres restrictions directes de l'administrateur.",
+        "Les restrictions de groupe suivent le même modèle que les RestrictedFields au niveau du rôle. Chaque restriction cible un code d'autorisation spécifique et répertorie les champs à masquer. Lors de la connexion, le système effectue l'UNION de tous les champs restreints à travers les rôles directs et toutes les adhésions aux groupes — si une source restreint 'salary', il sera restreint quelles que soient les autres affectations.",
       cascadeTitle: "Opérations en Cascade",
       cascadeIntro:
-        "Les opérations de groupe massives peuvent éventuellement déclencher une suppression logique (soft-delete) en cascade de tous les administrateurs exclusifs.",
+        "Les groupes d'utilisateurs prennent en charge les opérations en bloc (activer, désactiver, supprimer et leurs variantes -all basées sur des filtres). Si cascadeAdmins est activé, la désactivation ou la suppression logique (Soft Delete) se propage aux membres du groupe. Les opérations en cascade ignorent automatiquement les administrateurs protégés (comme le créateur du locataire). Si cascadeAdmins est false, tout administrateur orphelin qui perd toutes ses affectations de rôles est automatiquement transféré vers le rôle de secours SYSTEM_DEFAULT.",
       cascadeNote:
-        "Les opérations en cascade ignorent automatiquement les Administrateurs Protégés (propriétaire du locataire).",
-      endpointsTitle: "Endpoints de l'API (12)",
+        "Les opérations en cascade ignorent automatiquement les administrateurs protégés (comme le créateur du locataire). Cela garantit qu'une suppression massive de groupe ne puisse pas effacer accidentellement le compte de récupération principal du locataire.",
+      endpointsTitle: "Points de Terminaison API (18)",
       frontendTitle: "Module Frontend",
       frontendIntro:
-        "Utilise le GenericCrudView avec 3 onglets pour gérer les membres, les rôles et les restrictions indépendamment.",
+        "Le frontend utilise un modèle MVVM propre. UserGroupService communique avec le backend, UserGroupRepository valide les contrats avec la vérification du schéma Zod (UserGroupModelSchema), et UserGroupMapper mappe les DTO de réponse. Le useUserGroupsViewModel coordonne les états CRUD, y compris les gestionnaires d'état personnalisés deleteDialog et statusDialog pour les actions en cascade.",
       securityNote:
-        "Les groupes d'utilisateurs sont cloisonnés par locataire. Les SuperAdmins ont une vue globale de l'ensemble.",
+        "Les groupes d'utilisateurs sont isolés par locataire. Les SuperAdmins voient tous les groupes de tous les locataires. Les administrateurs de locataire ne peuvent gérer que les groupes de leur propre locataire. Toutes les mutations sont auditées et nécessitent le jeu d'autorisations user_groups.*.",
     },
     ssoOauth: {
       title: "Serveur SSO et OAuth (Alternative à Keycloak)",
