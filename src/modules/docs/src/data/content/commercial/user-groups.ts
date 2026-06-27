@@ -149,7 +149,7 @@ const sections: DocSection[] = [
 ];
 
 registerPage({
-  slug: "commercial/admin-groups",
+  slug: "commercial/user-groups",
   titleKey: "commercial.adminGroups.title",
   descriptionKey: "commercial.adminGroups.description",
   category: "commercial-enterprise",

@@ -9,7 +9,7 @@ const sections: DocSection[] = [
     type: "heading",
     level: 2,
     titleKey: "apiReference.adminGroupsApi.crudTitle",
-    id: "admin-groups-crud",
+    id: "user-groups-crud",
   },
   {
     type: "api-table",
@@ -221,7 +221,7 @@ const sections: DocSection[] = [
 ];
 
 registerPage({
-  slug: "api-reference/admin-groups-api",
+  slug: "api-reference/user-groups-api",
   titleKey: "apiReference.adminGroupsApi.title",
   descriptionKey: "apiReference.adminGroupsApi.description",
   category: "api-reference",

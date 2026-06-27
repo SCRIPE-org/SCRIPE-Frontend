@@ -333,13 +333,13 @@ const sections: DocSection[] = [
     headers: ["Route", "View", "Description"],
     rows: [
       [
-        "/admin-groups",
-        "AdminGroupsView",
+        "/user-groups",
+        "UserGroupsView",
         "CRUD list with GenericCrudView — search, paginate, create, edit, delete",
       ],
       [
-        "/admin-groups/[id]",
-        "AdminGroupDetailView",
+        "/user-groups/[id]",
+        "UserGroupDetailView",
         "3-tab detail — Members, Roles, Restrictions with mutation support",
       ],
     ],
@@ -353,7 +353,7 @@ const sections: DocSection[] = [
 ];
 
 registerPage({
-  slug: "features/admin-groups",
+  slug: "features/user-groups",
   titleKey: "features.adminGroups.title",
   descriptionKey: "features.adminGroups.description",
   category: "features",

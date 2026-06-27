@@ -30,7 +30,7 @@ import "./architecture/dependency-injection";
 import "./features/authentication";
 import "./features/multi-tenancy";
 import "./features/role-permissions";
-import "./features/admin-groups";
+import "./features/user-groups";
 import "./features/audit-system";
 import "./features/notification-system";
 import "./features/email-system";
@@ -96,7 +96,7 @@ import "./api-reference/user-auth-api";
 import "./api-reference/admin-api";
 import "./api-reference/tenant-api";
 import "./api-reference/role-permission-api";
-import "./api-reference/admin-groups-api";
+import "./api-reference/user-groups-api";
 import "./api-reference/webhook-email-api";
 import "./api-reference/system-api";
 
@@ -144,7 +144,7 @@ import "./commercial/system-requirements";
 // Enterprise Features
 import "./commercial/multi-tenancy";
 import "./commercial/roles-permissions";
-import "./commercial/admin-groups";
+import "./commercial/user-groups";
 import "./commercial/audit-compliance";
 import "./commercial/real-time-capabilities";
 import "./commercial/localization-i18n";
