@@ -1,4 +1,4 @@
-// FILE-EXCEPTION: file length
+﻿// FILE-EXCEPTION: file length
 /**
  * Docs page locale — EN
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -317,6 +317,22 @@ export const en = {
         "The localization engine penetrates deeply into the backend. Exception messages, validation errors, and audit logs are dynamically translated via specialized .NET string localizers before ever reaching the API surface.",
       templatesTitle: "Deep Backend Localization",
       title: "Global Enterprise i18n",
+    },
+  
+    whiteLabeling: {
+      title: "White-Labeling",
+      description: "Rebrand the SCRIPE workspace with your own identity, logos, and custom domains.",
+      intro: "Provide a fully branded SaaS experience to your clients with complete white-label control.",
+    },
+    slaGuarantees: {
+      title: "SLA & Guarantees",
+      description: "Binding SLAs, performance guarantees, and operational support tiers.",
+      intro: "We back our enterprise platform with contractually binding service level agreements.",
+    },
+    tenantIsolation: {
+      title: "Tenant Isolation",
+      description: "Advanced data segregation, security compliance, and hybrid deployment models.",
+      intro: "Ensure absolute data residency and row-level segregation across all enterprise tenants.",
     },
   },
 };

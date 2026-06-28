@@ -1,4 +1,4 @@
-// FILE-EXCEPTION: file length
+﻿// FILE-EXCEPTION: file length
 /**
  * Docs page locale — ZH
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -380,6 +380,27 @@ export const zh = {
       tblDbR5C1: "SQLite",
       tblDbR5C2: "⚙️ 仅开发用",
       tblDbR5C3: "适用于本地开发和测试",
+    },
+  
+    pricingShowcase: {
+      title: "ä»·æ ¼è®¡åˆ’",
+      description: "ä¸“ä¸ºåˆåˆ›ä¼ä¸šå’Œè§„æ¨¡åŒ–ä¼ä¸šå®šåˆ¶çš„ç®€å•é€æ˜Žçš„ä»·æ ¼ã€‚",
+      intro: "é€‰æ‹©é€‚åˆæ‚¨å¢žé•¿è·¯å¾„çš„å®Œç¾Žçº§åˆ«ã€‚",
+    },
+    investorOverview: {
+      title: "æŠ•èµ„è€…é—¨æˆ·",
+      description: "SCRIPE æŠ•èµ„è€…çš„ SaaS å¢žé•¿æŠ•èµ„å›žæŠ¥çŽ‡ã€æŒ‡æ ‡å’Œåˆä½œæœºä¼šã€‚",
+      intro: "æŽ¢ç´¢æˆ‘ä»¬å¼ºå¤§çš„ SaaS å¢žé•¿æ¨¡åž‹ï¼Œäº†è§£ä¸ºä»€ä¹ˆæŠ•èµ„ SCRIPE ä¿è¯é«˜å›žæŠ¥ã€‚",
+    },
+    coFounderJourney: {
+      title: "è”åˆåˆ›å§‹äººåŽ†ç¨‹",
+      description: "æŽ¢ç´¢æˆä¸º SCRIPE è”åˆåˆ›å§‹äººçš„æˆ˜ç•¥è§’è‰²ã€æœŸæœ›å’Œé€”å¾„ã€‚",
+      intro: "åœ¨åŸºç¡€å±‚é¢ä¸Žà¹€à¸£à¸²åˆä½œï¼Œå¼•é¢†ä¼ä¸š ERP ç³»ç»Ÿçš„æœªæ¥ã€‚",
+    },
+    partnerJourney: {
+      title: "åˆä½œä¼™ä¼´åŽ†ç¨‹",
+      description: "ä½œä¸º SCRIPE å®˜æ–¹æ¸ é“åˆä½œä¼™ä¼´å»ºç«‹ã€æ•´åˆå¹¶æ‰©å±•æ‚¨çš„ä¸šåŠ¡ã€‚",
+      intro: "åŠ å…¥æˆ‘ä»¬çš„å…¨çƒç³»ç»Ÿé›†æˆå•†å’Œé¡¾é—®ç½‘ç»œï¼Œæä¾›é«˜ä»·å€¼çš„è§£å†³æ–¹æ¡ˆã€‚",
     },
   },
 };

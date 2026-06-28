@@ -1,4 +1,4 @@
-// FILE-EXCEPTION: file length
+﻿// FILE-EXCEPTION: file length
 /**
  * Docs page locale — DE
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -586,6 +586,22 @@ export const de = {
       tblEcoR8C1: "Caching",
       tblEcoR8C2: "Redis + In-Memory",
       tblEcoR8C3: "Produktionsreif",
+    },
+  
+    businessClientJourneys: {
+      title: "GeschÃ¤ftskunden-Reisen",
+      description: "Erfahren Sie, wie Unternehmen ihre Arbeitsbereiche mit SCRIPE skalieren.",
+      intro: "SCRIPE bietet maÃŸgeschneiderte Reisen fÃ¼r Unternehmen jeder GrÃ¶ÃŸe.",
+    },
+    workspaceTours: {
+      title: "Arbeitsbereich-Touren",
+      description: "Machen Sie eine gefÃ¼hrte visuelle Tour durch den SCRIPE-Arbeitsbereich.",
+      intro: "Entdecken Sie die intuitive BenutzeroberflÃ¤che zur Effizienzsteigerung.",
+    },
+    marketplaceShowcase: {
+      title: "Marktplatz-PrÃ¤sentation",
+      description: "Entdecken Sie den Marktplatz fÃ¼r Erweiterungen und Module.",
+      intro: "Erweitern Sie Ihren SaaS-Arbeitsbereich sofort mit unseren Integrationen.",
     },
   },
 };

@@ -1,4 +1,4 @@
-// FILE-EXCEPTION: file length
+﻿// FILE-EXCEPTION: file length
 /**
  * Docs page locale — EN
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -396,6 +396,27 @@ export const en = {
       tblDbR5C1: "SQLite",
       tblDbR5C2: "⚙️ Dev only",
       tblDbR5C3: "For local development and testing",
+    },
+  
+    pricingShowcase: {
+      title: "Pricing Plans",
+      description: "Simple, transparent pricing tailored for startups and scale-ups alike.",
+      intro: "Choose the perfect tier for your growth path. All pricing plan options scale with your business.",
+    },
+    investorOverview: {
+      title: "Investor Portal",
+      description: "SaaS growth ROI, metrics, and partnership opportunities for SCRIPE investors.",
+      intro: "Explore our robust SaaS growth model and discover why investing in SCRIPE guarantees high returns.",
+    },
+    coFounderJourney: {
+      title: "Co-founder Journey",
+      description: "Explore the strategic role, expectations, and pathway to becoming a SCRIPE co-founder.",
+      intro: "Partner with us at the foundational level and steer the future of enterprise ERP systems.",
+    },
+    partnerJourney: {
+      title: "Partner Program",
+      description: "Build, integrate, and grow your business as an official SCRIPE channel partner.",
+      intro: "Join our global network of system integrators and consultants delivering high-value solutions.",
     },
   },
 };

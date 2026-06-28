@@ -1,4 +1,4 @@
-// FILE-EXCEPTION: file length
+﻿// FILE-EXCEPTION: file length
 /**
  * Docs page locale — DE
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -319,6 +319,22 @@ export const de = {
         "Die Lokalisierungs-Engine dringt tief ins Backend ein. Ausnahme-Meldungen, Validierungsfehler und Audit-Logs werden über spezialisierte .NET String Localizer dynamisch übersetzt, bevor sie jemals die API-Oberfläche erreichen.",
       templatesTitle: "Tiefgreifende Backend-Lokalisierung",
       title: "Globale Enterprise i18n",
+    },
+  
+    whiteLabeling: {
+      title: "White-Labeling",
+      description: "PrÃ¤sentieren Sie den Arbeitsbereich with Ihrer eigenen Marke.",
+      intro: "Bieten Sie Ihren Kunden ein vollstÃ¤ndig personalisiertes SaaS-Erlebnis.",
+    },
+    slaGuarantees: {
+      title: "SLA & Garantien",
+      description: "Leistungsgarantien und Supportstufen fÃ¼r Unternehmen.",
+      intro: "Wir unterstÃ¼tzen unsere Plattform mit SLAs.",
+    },
+    tenantIsolation: {
+      title: "Mandantenisolierung",
+      description: "Fortgeschrittene Datentrennung und hybride Bereitstellungsmodelle.",
+      intro: "GewÃ¤hrleisten Sie absolute Datensicherheit.",
     },
   },
 };

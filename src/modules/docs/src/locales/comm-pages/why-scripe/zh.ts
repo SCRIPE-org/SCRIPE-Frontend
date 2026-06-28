@@ -1,4 +1,4 @@
-// FILE-EXCEPTION: file length
+﻿// FILE-EXCEPTION: file length
 /**
  * Docs page locale — ZH
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -576,6 +576,22 @@ export const zh = {
       tblEcoR8C1: "缓存",
       tblEcoR8C2: "Redis + 内存缓存",
       tblEcoR8C3: "生产就绪",
+    },
+  
+    businessClientJourneys: {
+      title: "å•†ä¸šå®¢æˆ·æ—…ç¨‹",
+      description: "äº†è§£ä¼ä¸šå¦‚ä½•ä½¿ç”¨ SCRIPE å¹³å°æ‰©å±•å…¶å·¥ä½œç©ºé—´å’Œä¸šåŠ¡ã€‚",
+      intro: "SCRIPE ä¸ºå„ç§è§„æ¨¡çš„ä¼ä¸šæä¾›å®šåˆ¶åŒ–çš„æ—…ç¨‹ã€‚",
+    },
+    workspaceTours: {
+      title: "å·¥ä½œç©ºé—´å·¡æ£€",
+      description: "å¼•å¯¼å¼è§†è§‰å·¡æ£€ SCRIPE å·¥ä½œç©ºé—´å’Œå¼€å‘äººå‘˜ä»ªè¡¨æ¿ã€‚",
+      intro: "æŽ¢ç´¢ä¸“ä¸ºæœ€å¤§åŒ–å¼€å‘äººå‘˜å’Œç®¡ç†å‘˜æ•ˆçŽ‡è€Œè®¾è®¡çš„ç›´è§‚ç•Œé¢ã€‚",
+    },
+    marketplaceShowcase: {
+      title: "å¸‚åœºå±•ç¤º",
+      description: "æŽ¢ç´¢æ‰©å±•ã€æ¨¡å— and æ’ä»¶çš„è§†è§‰å±•ç¤ºã€‚",
+      intro: "é€šè¿‡æˆ‘ä»¬ç²¾å¿ƒæŒ‘é€‰çš„é«˜è´¨é‡æ’ä»¶å’Œé›†æˆå¸‚åœºï¼Œç«‹å³æ‰©å±•æ‚¨çš„ SaaS å·¥ä½œç©ºé—´ã€‚",
     },
   },
 };

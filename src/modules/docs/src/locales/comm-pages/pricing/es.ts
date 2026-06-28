@@ -1,4 +1,4 @@
-// FILE-EXCEPTION: file length
+﻿// FILE-EXCEPTION: file length
 /**
  * Docs page locale — ES
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -403,6 +403,27 @@ export const es = {
       tblDbR5C1: "SQLite",
       tblDbR5C2: "⚙️ Solo Desarrollo",
       tblDbR5C3: "Para desarrollo local y pruebas",
+    },
+  
+    pricingShowcase: {
+      title: "Precios",
+      description: "Precios sencillos y transparentes para todos.",
+      intro: "Elija el nivel perfecto para su crecimiento.",
+    },
+    investorOverview: {
+      title: "Portal de Inversores",
+      description: "Retorno de inversiÃ³n SaaS y oportunidades de asociaciÃ³n.",
+      intro: "Explore nuestro modelo de crecimiento SaaS.",
+    },
+    coFounderJourney: {
+      title: "Camino del Co-fundador",
+      description: "Explore el papel estratÃ©gico para convertirse en cofundador.",
+      intro: "AsÃ³ciese con nosotros a nivel de fundador.",
+    },
+    partnerJourney: {
+      title: "Programa de Socios",
+      description: "Haga crecer su negocio como socio oficial.",
+      intro: "Ãšnase a nuestra red global de socios.",
     },
   },
 };

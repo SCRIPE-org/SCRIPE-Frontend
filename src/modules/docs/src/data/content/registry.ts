@@ -215,3 +215,15 @@ import "./commercial/compliance-overview";
 import "./commercial/compliance-gdpr";
 import "./commercial/compliance-dsr";
 import "./commercial/compliance-roi";
+
+// New Commercial Pages
+import "./commercial/business-client-journeys";
+import "./commercial/workspace-tours";
+import "./commercial/marketplace-showcase";
+import "./commercial/pricing-showcase";
+import "./commercial/investor-overview";
+import "./commercial/co-founder-journey";
+import "./commercial/partner-journey";
+import "./commercial/white-labeling";
+import "./commercial/sla-guarantees";
+import "./commercial/tenant-isolation";

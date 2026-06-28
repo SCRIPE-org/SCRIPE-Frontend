@@ -1,4 +1,4 @@
-// FILE-EXCEPTION: file length
+﻿// FILE-EXCEPTION: file length
 /**
  * Docs page locale — ES
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -320,6 +320,22 @@ export const es = {
         "El motor de localización penetra profundamente en el backend. Los mensajes de excepción, los errores de validación y los registros de auditoría se traducen dinámicamente a través de localizadores de cadenas de .NET especializados antes de llegar a la superficie de la API.",
       templatesTitle: "Localización Profunda del Backend",
       title: "Internacionalización (i18n) Empresarial Global",
+    },
+  
+    whiteLabeling: {
+      title: "Marca Blanca",
+      description: "Personalice el espacio SCRIPE con su propia marca.",
+      intro: "Ofrezca una experiencia SaaS personalizada a sus clientes.",
+    },
+    slaGuarantees: {
+      title: "SLA y GarantÃ­as",
+      description: "GarantÃ­as de rendimiento y niveles de soporte operacional.",
+      intro: "Respaldamos nuestra plataforma con acuerdos de nivel de servicio.",
+    },
+    tenantIsolation: {
+      title: "Aislamiento de Inquilinos",
+      description: "SegregaciÃ³n de datos y modelos de despliegue hÃ­bridos.",
+      intro: "Garantice un aislamiento absoluto de los datos a nivel de fila.",
     },
   },
 };

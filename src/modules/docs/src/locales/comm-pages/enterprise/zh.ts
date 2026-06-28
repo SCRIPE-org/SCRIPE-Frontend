@@ -1,4 +1,4 @@
-// FILE-EXCEPTION: file length
+﻿// FILE-EXCEPTION: file length
 /**
  * Docs page locale — ZH
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -302,6 +302,22 @@ export const zh = {
         "本地化引擎深入到后端深处。异常消息、验证错误和审计日志在到达 API 表面之前，就会通过专用的 .NET 字符串本地化器进行动态翻译。",
       templatesTitle: "深度的后端本地化",
       title: "全球企业国际化 (i18n)",
+    },
+  
+    whiteLabeling: {
+      title: "ç™½æ ‡å®šåˆ¶",
+      description: "ä½¿ç”¨æ‚¨è‡ªå·±çš„æ ‡è¯†ã€å¾½æ ‡å’Œè‡ªå®šä¹‰åŸŸåé‡æ–°å“ç‰ŒåŒ– SCRIPE å·¥ä½œç©ºé—´ã€‚",
+      intro: "ä¸ºæ‚¨çš„å®¢æˆ·æä¾›å…·æœ‰å®Œæ•´ç™½æ ‡æŽ§åˆ¶æƒçš„å®Œå…¨å“ç‰ŒåŒ– SaaS ä½“éªŒã€‚",
+    },
+    slaGuarantees: {
+      title: "SLAä¿è¯",
+      description: "å…·æœ‰çº¦æŸåŠ›çš„ SLAã€æ€§èƒ½ä¿è¯å’Œè¿è¥æ”¯æŒå±‚çº§ã€‚",
+      intro: "æˆ‘ä»¬é€šè¿‡å…·æœ‰åˆåŒçº¦æŸåŠ›çš„æœåŠ¡æ°´å¹³åè®®æ¥æ”¯æŒæˆ‘ä»¬çš„ä¼ä¸šå¹³å°ã€‚",
+    },
+    tenantIsolation: {
+      title: "ç§Ÿæˆ·éš”ç¦»",
+      description: "é«˜çº§æ•°æ®éš”ç¦»ã€å®‰å…¨åˆè§„æ€§å’Œæ··åˆéƒ¨ç½²æ¨¡åž‹ã€‚",
+      intro: "ç¡®ä¿æ‰€æœ‰ä¼ä¸šç§Ÿæˆ·çš„ç»å¯¹æ•°æ®é©»ç•™å’Œè¡Œçº§éš”ç¦»ã€‚",
     },
   },
 };

@@ -90,6 +90,30 @@ export { zh as customizationZh } from "./customization/zh";
 export { es as customizationEs } from "./customization/es";
 export { de as customizationDe } from "./customization/de";
 
+export { en as billingPaymentsEn } from "./billing-payments/en";
+export { ar as billingPaymentsAr } from "./billing-payments/ar";
+export { fr as billingPaymentsFr } from "./billing-payments/fr";
+export { ru as billingPaymentsRu } from "./billing-payments/ru";
+export { zh as billingPaymentsZh } from "./billing-payments/zh";
+export { es as billingPaymentsEs } from "./billing-payments/es";
+export { de as billingPaymentsDe } from "./billing-payments/de";
+
+export { en as entitlementsTenantPlansEn } from "./entitlements-tenant-plans/en";
+export { ar as entitlementsTenantPlansAr } from "./entitlements-tenant-plans/ar";
+export { fr as entitlementsTenantPlansFr } from "./entitlements-tenant-plans/fr";
+export { ru as entitlementsTenantPlansRu } from "./entitlements-tenant-plans/ru";
+export { zh as entitlementsTenantPlansZh } from "./entitlements-tenant-plans/zh";
+export { es as entitlementsTenantPlansEs } from "./entitlements-tenant-plans/es";
+export { de as entitlementsTenantPlansDe } from "./entitlements-tenant-plans/de";
+
+export { en as entitlementsUserSubscriptionsEn } from "./entitlements-user-subscriptions/en";
+export { ar as entitlementsUserSubscriptionsAr } from "./entitlements-user-subscriptions/ar";
+export { fr as entitlementsUserSubscriptionsFr } from "./entitlements-user-subscriptions/fr";
+export { ru as entitlementsUserSubscriptionsRu } from "./entitlements-user-subscriptions/ru";
+export { zh as entitlementsUserSubscriptionsZh } from "./entitlements-user-subscriptions/zh";
+export { es as entitlementsUserSubscriptionsEs } from "./entitlements-user-subscriptions/es";
+export { de as entitlementsUserSubscriptionsDe } from "./entitlements-user-subscriptions/de";
+
 // Lazy loader map for dynamic imports
 /**
  * Exported constant defining parameters and fields for page loaders configurations.
@@ -106,4 +130,7 @@ export const pageLoaders: Record<string, () => Promise<any>> = {
   modules: () => import("./modules/en"),
   entitlements: () => import("./entitlements/en"),
   customization: () => import("./customization/en"),
+  "billing-payments": () => import("./billing-payments/en"),
+  "entitlements-tenant-plans": () => import("./entitlements-tenant-plans/en"),
+  "entitlements-user-subscriptions": () => import("./entitlements-user-subscriptions/en"),
 };

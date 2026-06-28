@@ -24,6 +24,9 @@ import { en as commPricing } from "../comm-pages/pricing/en";
 import { en as commModules } from "../comm-pages/modules/en";
 import { en as commEntitlements } from "../comm-pages/entitlements/en";
 import { en as commCustomization } from "../comm-pages/customization/en";
+import { en as commBillingPayments } from "../comm-pages/billing-payments/en";
+import { en as commEntitlementsTenantPlans } from "../comm-pages/entitlements-tenant-plans/en";
+import { en as commEntitlementsUserSubscriptions } from "../comm-pages/entitlements-user-subscriptions/en";
 
 import { en as pageBillingEngine } from "../pages/billing-engine/en";
 import { en as pageInvoices } from "../pages/invoices/en";
@@ -60,6 +63,9 @@ export const allDocsEn: Record<string, any> = mergeAll(
   commModules,
   commEntitlements,
   commCustomization,
+  commBillingPayments,
+  commEntitlementsTenantPlans,
+  commEntitlementsUserSubscriptions,
   pageBillingEngine,
   pageInvoices,
   pageDunning,

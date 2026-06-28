@@ -114,7 +114,8 @@ export type DocSectionType =
   | "config-builder"
   | "schema-visualizer"
   | "cli-simulator"
-  | "lifecycle-tracer";
+  | "lifecycle-tracer"
+  | "persona-selector";
 
 /**
  * Domain model representing a Doc Section Base structure.
@@ -284,7 +285,12 @@ export type DocSection =
   | ConfigBuilderSection
   | SchemaVisualizerSection
   | CliSimulatorSection
-  | LifecycleTracerSection;
+  | LifecycleTracerSection
+  | PersonaSelectorSection;
+
+export interface PersonaSelectorSection extends DocSectionBase {
+  type: "persona-selector";
+}
 
 export interface TerminalTab {
   tabId: string;
