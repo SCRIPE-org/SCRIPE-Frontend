@@ -35,6 +35,8 @@ export const ru = {
     documentation: "Документация",
     pagesCount: "{{count}} страниц",
     bookDemo: "Заказать демо",
+    getStarted: "Начать",
+    investorLabel: "Для инвесторов",
   },
   info: {
     note: "Примечание",

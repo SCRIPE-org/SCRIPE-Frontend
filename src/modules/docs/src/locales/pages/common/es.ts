@@ -35,6 +35,8 @@ export const es = {
     documentation: "Documentación",
     pagesCount: "{{count}} páginas",
     bookDemo: "Reservar Demo",
+    getStarted: "Comenzar",
+    investorLabel: "Para inversores",
   },
   info: {
     note: "Nota",

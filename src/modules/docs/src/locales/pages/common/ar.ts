@@ -35,6 +35,8 @@ export const ar = {
     documentation: "التوثيق",
     pagesCount: "{{count}} صفحة",
     bookDemo: "احجز عرضاً توضيحياً",
+    getStarted: "ابدأ الآن",
+    investorLabel: "للمستثمرين",
   },
   info: {
     note: "ملاحظة",

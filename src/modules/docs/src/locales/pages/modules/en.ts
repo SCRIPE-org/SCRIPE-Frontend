@@ -1184,5 +1184,78 @@ export const en = {
       quickStartIntro:
         "The typical CRM flow from prospect submission to live tenant takes 5 steps. Conversion is the only step requiring senior admin permissions — all other transitions can be performed by any admin with leads.update.",
     },
+    subscriptions2: {
+      title: "Subscriptions Module",
+      description:
+        "TenantSubscription entity, subscription status lifecycle (Trial → Active → Suspended → Expired), API endpoints, and feature gating integration.",
+      intro:
+        "Subscriptions link a tenant to an edition and track their billing lifecycle. A single tenant may have multiple concurrent subscriptions (e.g., base plan + add-ons). The subscription status drives access: only Active tenants can log in and use features. Trial, Suspended, and Expired tenants have access restrictions enforced by AstraFlow's AuthorizationBehavior pipeline.",
+      entityTitle: "TenantSubscription Entity",
+      lifecycleTitle: "Subscription Status Lifecycle",
+      statusEnumTitle: "SubscriptionStatus Enum Reference",
+      endpointsTitle: "API Endpoints",
+      featureGatingTip:
+        "Feature gating is NOT checked in subscription endpoints themselves. It is enforced by the FeatureCheckBehavior AstraFlow pipeline on any command that implements IRequireFeature. Changing a tenant's subscription immediately propagates to the feature resolution chain via SubscriptionChangedEvent, with no additional calls needed from the API layer.",
+    },
+    editions2: {
+      title: "Editions Module",
+      description:
+        "Edition entity, feature value types (Boolean/Numeric/String), feature resolution chain (TenantFeatureOverride → EditionFeature → DefaultValue), and multi-subscription merge rules.",
+      intro:
+        "An Edition is the product tier definition that determines what a tenant can do. Each edition can define values for any registered Feature. The resolution chain is hierarchical: tenant-level overrides always win, then edition values, then the feature's global default. When a tenant has multiple active subscriptions, values are merged using type-specific rules (boolean OR, numeric MAX, string from primary plan).",
+      entityTitle: "Edition Entity",
+      featureValueTypesTitle: "Feature Value Types",
+      resolutionTitle: "Feature Value Resolution Chain",
+      resolutionContent:
+        "IFeatureChecker.IsEnabledAsync() executes the resolution chain in strict priority order. TenantFeatureOverride is checked first — these are direct admin overrides that bypass the edition entirely. If no override exists, the edition's EditionFeature value is used. If the current edition doesn't define the feature, the Feature.DefaultValue is used as the fallback. For multi-subscription tenants, the merge step occurs BEFORE the per-feature override check.",
+      addingFeaturesTitle: "Adding Features to Editions",
+      mergeRulesTitle: "Multi-Subscription Merge Rules",
+      overrideTip:
+        "TenantFeatureOverride is the escape hatch for enterprise negotiations. Use it when a specific tenant needs a value that differs from their edition tier (e.g., a Growth tenant that negotiated unlimited API calls). Overrides persist until explicitly removed — they are NOT reset when the tenant upgrades or changes subscriptions.",
+    },
+    auditLogs: {
+      title: "Audit Logs Module",
+      description:
+        "AuditBehavior pipeline, AuditLog entity, tamper-proof persistence, searchable audit trail, and retention policies.",
+      intro:
+        "SCRIPE's audit logging system captures a tamper-proof record of every mutation in the platform. The AuditBehavior at position 6 in the AstraFlow pipeline automatically intercepts every command, capturing the request payload, user identity, tenant context, client IP, and HTTP metadata — then persisting it to a dedicated, append-only AuditLog table. Audit logs are never soft-deleted; they retain permanently unless an explicit retention cleanup job runs.",
+      architectureTitle: "AuditBehavior Architecture",
+      architectureContent:
+        "The AuditBehavior runs for every command (not queries) at pipeline position 6, just before the handler. It captures the request via JSON serialization and persists the AuditLog entry synchronously in the same database transaction as the entity mutation. This ensures atomicity — the audit record and the entity change commit together or both roll back.",
+      entityTitle: "AuditLog Entity",
+      entityContent:
+        "The AuditLog entity is append-only. It inherits from BaseEntity (not AuditableEntity) to avoid recursive audit-of-audit cycles. The payload is stored as serialized JSON for full-text search capability. CommandName identifies the CQRS command class name.",
+      searchTitle: "Searching Audit Logs",
+      searchContent:
+        "The AuditLogsController exposes a paginated GET endpoint with filters for EntityId, CommandName, UserId, TenantId, and date range. Results are sorted descending by CreatedAt. The table uses a composite index on (TenantId, CreatedAt) and a partial index on EntityId for optimal query performance.",
+      retentionTitle: "Retention Policy",
+      retentionContent:
+        "A configurable AuditLogCleanupJob runs daily and permanently deletes AuditLog entries older than the configured retention period. The default retention is 90 days for standard editions. Enterprise editions can configure up to 7 years. GDPR data subject erasure requests will remove entity-level data but retain the audit log entries with payload data anonymized (user details replaced with REDACTED).",
+      retentionWarning:
+        "Audit log cleanup is a hard delete — there is no recycle bin for audit records. Ensure your retention period complies with your jurisdiction's regulatory requirements (e.g., GDPR Article 17, SOC 2) before configuring a short retention window.",
+    },
+    webhooks: {
+      title: "Webhooks Module",
+      description:
+        "Outbound webhook engine with HMAC-SHA256 signatures, automatic retry with exponential backoff, per-tenant endpoint configuration, and event filtering.",
+      intro:
+        "The SCRIPE webhook system allows external applications to receive real-time push notifications when system events occur. Webhooks are outbound only — SCRIPE sends HTTP POST payloads to registered endpoint URLs. The engine supports event filtering (per webhook, select which event types to receive), HMAC-SHA256 request signing for authenticity verification, and automatic retry with exponential backoff (up to 5 attempts over 24 hours).",
+      engineTitle: "Webhook Engine Architecture",
+      engineContent:
+        "WebhookDispatcher is an INotificationHandler that subscribes to all domain events that implement IWebhookTriggered. When an event fires, the dispatcher looks up all active tenant webhooks filtered by event type and dispatches HTTP POST payloads asynchronously via background Task. Failed deliveries are queued to WebhookDeliveryAttempts for the retry scheduler.",
+      payloadTitle: "Webhook Payload Format",
+      payloadContent:
+        "All webhook payloads follow a standard envelope. The X-Scripe-Signature header contains an HMAC-SHA256 signature of the raw JSON body using the webhook's secret key. Always verify this signature on your receiving server before processing the payload.",
+      retryTitle: "Retry & Backoff Schedule",
+      retryContent:
+        "Failed webhook deliveries are automatically retried by WebhookRetryJob (a daily IAutoRegisteredJob). The retry schedule uses exponential backoff: 5 min, 30 min, 2 h, 8 h, 24 h. After 5 failed attempts, the webhook delivery is marked Abandoned and the webhook endpoint is flagged for review. If a webhook endpoint fails consistently across 10 events, the webhook is automatically disabled to prevent wasted calls.",
+      securityTitle: "Security: Signature Verification",
+      securityContent:
+        "Generate a unique secret key per webhook endpoint. On your server, compute HMAC-SHA256 of the raw request body using the secret key and compare it to the X-Scripe-Signature header. NEVER verify signatures using reconstructed JSON — always use the raw bytes of the request body.",
+      signatureWarning:
+        "Never skip signature verification in production. Without it, any party that discovers your webhook URL can send fake payloads. Always compare signatures using a constant-time comparison function (e.g., CryptographicOperations.FixedTimeEquals) to prevent timing attacks.",
+      registeringTitle: "Registering a Webhook Endpoint",
+    },
   },
 };
+

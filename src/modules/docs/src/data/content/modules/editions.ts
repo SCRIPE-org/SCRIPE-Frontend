@@ -63,9 +63,9 @@ const sections: DocSection[] = [
     direction: "vertical",
     nodes: [
       { id: "n1", label: "Request for Feature Value", type: "default" },
-      { id: "n2", label: "TenantFeatureOverride exists?", type: "decision" },
+      { id: "n2", label: "TenantFeatureOverride exists?", type: "warning" },
       { id: "n3", label: "Return Override Value", type: "success" },
-      { id: "n4", label: "EditionFeature exists?", type: "decision" },
+      { id: "n4", label: "EditionFeature exists?", type: "warning" },
       { id: "n5", label: "Return Edition Value", type: "success" },
       { id: "n6", label: "Return Feature.DefaultValue", type: "info" },
     ],

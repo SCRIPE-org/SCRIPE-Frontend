@@ -18,6 +18,7 @@ import { DocsMobileNav } from "../components/layout/DocsMobileNav";
 import { DocsToc } from "../components/layout/DocsToc";
 import { ReadingProgress } from "../components/ui/ReadingProgress";
 import { DocsSearch } from "../components/ui/DocsSearch";
+import { CommercialHomeLanding } from "./CommercialHomeLanding";
 
 // ─── Props ────────────────────────────────────────────────────────
 interface CommercialDocsViewProps {
@@ -40,6 +41,32 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
   useEffect(() => {
     loadSection(slug);
   }, [slug, loadSection]);
+
+  // ── Full-screen marketing landing for the home/overview page ─────
+  if (slug === "commercial/why-scripe-overview") {
+    return (
+      <div className="commercial-root" dir={direction}>
+        <CommercialHeader
+          onSearchOpen={search.openSearch}
+          onMobileMenuOpen={sidebar.openMobileMenu}
+        />
+        <CommercialHomeLanding />
+        <DocsSearch
+          isOpen={search.isSearchOpen}
+          onClose={search.closeSearch}
+          onSearch={search.searchFn}
+          basePath="/commercial"
+        />
+        <DocsMobileNav
+          categories={vm.categories}
+          activeSlug={slug}
+          isOpen={sidebar.isMobileMenuOpen}
+          onClose={sidebar.closeMobileMenu}
+          basePath="/commercial"
+        />
+      </div>
+    );
+  }
 
   // ── 404 ──────────────────────────────────────────────────────────
   if (vm.isNotFound) {

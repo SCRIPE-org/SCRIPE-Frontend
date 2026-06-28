@@ -26,6 +26,7 @@ import "./architecture/domain-events";
 import "./architecture/cqrs-pipeline";
 import "./architecture/dependency-injection";
 import "./architecture/module-collaboration";
+import "./architecture/cross-module-collaboration";
 
 // Features
 import "./features/authentication";
@@ -88,6 +89,8 @@ import "./modules/security-monitoring";
 import "./modules/webhooks";
 import "./modules/marketplace";
 import "./modules/ecosystem-recycle-bin";
+import "./modules/subscriptions";
+import "./modules/editions";
 
 // Security
 import "./security/overview";
@@ -128,6 +131,8 @@ import "./infrastructure/health-checks";
 import "./infrastructure/observability";
 import "./infrastructure/audit-trail";
 import "./infrastructure/load-testing";
+import "./infrastructure/cache-invalidation";
+import "./infrastructure/outbox-pattern";
 
 // Tutorials
 import "./tutorials/add-module";

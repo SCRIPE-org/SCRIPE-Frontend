@@ -473,5 +473,52 @@ export const en = {
       drWarning:
         "Critical: Test your disaster recovery procedures quarterly. A backup that has never been restored is not a backup — it is a hope. Schedule DR drills on a calendar, document the recovery steps, and measure actual RTO.",
     },
+    cacheInvalidation: {
+      title: "Cache Invalidation",
+      description:
+        "ICacheService layered cache, IInvalidatesCache pattern, cache key conventions, Redis-with-in-memory-fallback architecture, and ETag-based HTTP cache.",
+      intro:
+        "SCRIPE's caching system is a two-layer architecture: Redis as the distributed cache for multi-instance deployments, with an in-memory fallback for development and offline scenarios. All caching is coordinated through ICacheService — handlers and services never interact with Redis directly. Cache invalidation is declarative: commands implement IInvalidatesCache and list the cache key prefixes they invalidate, with zero code in the CachingBehavior.",
+      architectureTitle: "Two-Layer Cache Architecture",
+      architectureContent:
+        "ICacheService is the single entry point for all caching. In production, it delegates to RedisCache (ConnectionMultiplexer) with IMemoryCache as a fallback if Redis is unavailable. In development, the InMemoryOnlyCache implementation is used, with no Redis dependency. The CachingBehavior pipeline behavior coordinates cache reads (position 5 in the pipeline — before the handler for queries) and cache invalidation (triggered by IInvalidatesCache on commands).",
+      keyConventionsTitle: "Cache Key Conventions",
+      keyConventionsContent:
+        "Cache keys follow a strict hierarchical format: {EntityType}:{TenantId}:{Qualifier}. The TenantId isolation is critical — it prevents cache bleed between tenants in a multi-tenant setup. The {Qualifier} can be a specific entity ID, a page+filter hash, or a logical group name.",
+      iInvalidatesCacheTitle: "IInvalidatesCache — Declarative Invalidation",
+      iInvalidatesCacheContent:
+        "Commands that modify data declare their cache invalidation side effects by implementing IInvalidatesCache. The CachingBehavior reads the CachePrefixesToInvalidate array after the handler succeeds and calls ICacheService.RemoveByPrefixAsync for each prefix. This means cache invalidation logic lives on the command — not scattered across handlers.",
+      etagTitle: "ETag-Based HTTP Cache",
+      etagContent:
+        "GET API responses include an ETag header (a hash of the response body). Clients can send If-None-Match: {etag} on subsequent requests; if the response body hasn't changed, the server returns 304 Not Modified with no body. This dramatically reduces bandwidth for frequently polled data. ETag generation is handled by the ETagFilter action filter registered globally.",
+      etagTip:
+        "ETags work independently of Redis caching. A Redis cache hit may still return 200 if the client sends no If-None-Match. The best performance comes from combining both: Redis reduces backend compute, ETags reduce network transfer. Clients that implement both get the optimal experience.",
+      invalidationWarning:
+        "Cache prefix invalidation uses SCAN + DEL in Redis, which is O(N) where N is the number of matching keys. Avoid extremely broad prefixes (e.g., a single prefix covering millions of keys) in high-throughput scenarios. Use entity-type-specific prefixes to keep invalidation scoped and fast.",
+    },
+    outboxPattern: {
+      title: "Outbox Pattern",
+      description:
+        "How SCRIPE guarantees exactly-once domain event dispatch using an EF Core OutboxInterceptor, OutboxMessage table, and OutboxProcessor background job.",
+      intro:
+        "The Outbox Pattern solves the dual-write problem: how do you atomically save an entity AND dispatch a side-effect (email, webhook, permission sync) without risking sending the side-effect even if the database transaction rolls back? SCRIPE's implementation uses EF Core interceptors to capture domain events into an OutboxMessage table in the same database transaction as the entity mutation. The OutboxProcessor background job then dispatches them asynchronously.",
+      dualWriteProblemTitle: "The Dual-Write Problem",
+      dualWriteProblemContent:
+        "Without the Outbox Pattern, a typical handler might save the entity and then call an email service. If the email call succeeds but the database transaction fails (or vice versa), the system is in an inconsistent state. The Outbox Pattern solves this by making the event persistence part of the entity transaction — if the transaction fails, the event is also rolled back. If the transaction succeeds, the event is guaranteed to be dispatched eventually.",
+      implementationTitle: "SCRIPE Outbox Implementation",
+      implementationContent:
+        "SCRIPE's OutboxInterceptor is an EF Core ISaveChangesInterceptor. Before SaveChangesAsync completes, it reads all pending domain events from tracked entities, serializes them to JSON, inserts them as OutboxMessage records in the same SaveChanges call, and clears the events from the entities. The OutboxProcessor (an IAutoRegisteredJob running every 30 seconds) reads unprocessed messages and dispatches them via IMediator.Publish.",
+      flowTitle: "Outbox Pattern Flow",
+      outboxMessageTitle: "OutboxMessage Entity",
+      processorTitle: "OutboxProcessor — The Reliable Dispatcher",
+      processorContent:
+        "OutboxProcessor runs every 30 seconds. It fetches a batch of unprocessed OutboxMessage records (ordered by CreatedAt), dispatches each via IMediator.Publish, and marks successful dispatches as ProcessedAt = DateTime.UtcNow. Failed dispatches increment the Retries counter. Messages that exceed 5 retries are marked as failed and logged to observability. The processor uses optimistic concurrency (CompareExchange in Redis) to prevent double-dispatch in multi-instance deployments.",
+      idempotencyTitle: "Idempotency Requirements",
+      idempotencyContent:
+        "OutboxMessage.Id (a GUID generated at event time) is the idempotency key. Each INotificationHandler that processes outbox-dispatched events MUST be idempotent — check if the operation was already applied before re-applying. In practice, most handlers are naturally idempotent (e.g., writing a value that was already written has no additional effect). For non-idempotent operations (e.g., sending an email), store the OutboxMessageId in a processed-events table and skip if already present.",
+      idempotencyTip:
+        "The OutboxProcessor guarantees at-least-once delivery, not exactly-once. The exactly-once semantic comes from idempotent event handlers. Always design handlers to be safe to run twice. This is especially important for Entitlements' SubscriptionChangedEvent handler that syncs permissions — double-syncing is safe (idempotent), double-charging would not be.",
+    },
   },
 };
+

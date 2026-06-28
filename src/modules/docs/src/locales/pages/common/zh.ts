@@ -35,6 +35,8 @@ export const zh = {
     documentation: "文档中心",
     pagesCount: "{{count}} 页",
     bookDemo: "预约演示",
+    getStarted: "立即开始",
+    investorLabel: "投资者专区",
   },
   info: {
     note: "注意",
