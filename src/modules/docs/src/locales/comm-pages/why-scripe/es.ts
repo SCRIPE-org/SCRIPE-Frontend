@@ -5,7 +5,7 @@
  */
 export const es = {
   commercial: {
-    whyUISOverview: {
+    whyScripeOverview: {
       description:
         "Un resumen ejecutivo definitivo y detallado sobre por qué exactamente la elección del framework SCRIPE elimina fundamentalmente los riesgos en toda su trayectoria de software empresarial.",
       glanceTitle: "La Arquitectura en un Vistazo",
@@ -118,7 +118,7 @@ export const es = {
         "Importante: Lleve a cabo una prueba de concepto. La prueba de 30 días de SCRIPE permite a sus ingenieros principales validar nuestras afirmaciones arquitectónicas directamente frente a sus desafíos técnicos más difíciles.",
       intro:
         "SCRIPE está diseñado para destruir por completo las limitaciones convencionales del desarrollo de software empresarial: dependencias de proveedores, entropía arquitectónica y ciclos de lanzamiento glaciales. Así es como las organizaciones visionarias multiplican su capital de ingeniería.",
-      uisApproach: "La Ventaja de SCRIPE",
+      scripeApproach: "La Ventaja de SCRIPE",
       productivityContent:
         "Tanto las startups como las grandes empresas utilizan SCRIPE para omitir de 6 a 12 meses de desarrollo fundacional. Al proporcionar autenticación lista para producción, multitenencia y registros de auditoría desde el primer día, los equipos comienzan inmediatamente a entregar un valor comercial único.",
       productivityTitle: "Productividad Sin Precedentes",
@@ -139,12 +139,12 @@ export const es = {
         "Garantice el cumplimiento global. El JWT de identidad de un usuario está criptográficamente vinculado a su inquilino, impidiendo el movimiento lateral.",
       title: "Ventajas Competitivas",
       traditionalApproach: "El Dilema Tradicional",
-      compUISI1: "Arquitectura evolutiva: Monolito Modular → API Gateway → Microservicios",
-      compUISI2: "Una única base de código, tres modos de despliegue dinámicos",
-      compUISI3:
+      compScripeI1: "Arquitectura evolutiva: Monolito Modular → API Gateway → Microservicios",
+      compScripeI2: "Una única base de código, tres modos de despliegue dinámicos",
+      compScripeI3:
         "Las capacidades de los módulos se aplican matemáticamente en tiempo de compilación",
-      compUISI4: "Extraiga cualquier módulo a un servicio independiente sin reescribir código",
-      compUISI5:
+      compScripeI4: "Extraiga cualquier módulo a un servicio independiente sin reescribir código",
+      compScripeI5:
         "Una infraestructura central compartida y prístina que se capitaliza en todos los módulos",
       compTradI1: "Forzados a elegir entre un monolito O microservicios por adelantado",
       compTradI2: "Se requiere una reescritura completa para cambiar las topologías de despliegue",
@@ -282,7 +282,7 @@ export const es = {
       saasWhiteLabelDesc:
         "Permita a sus grandes clientes corporativos inyectar dinámicamente sus propios logotipos, tipografía y dominios de correo electrónico a nivel mundial.",
       title: "Aplicaciones Industriales Verticales",
-      tblGovHeader1: "Requisito",
+      tblGovHeader1: "Reqscripeito",
       tblGovHeader2: "Capacidad SCRIPE",
       tblGovR1C1: "Soberanía de datos",
       tblGovR1C2: "Despliegue local (on-premise), no requiere dependencia en la nube",

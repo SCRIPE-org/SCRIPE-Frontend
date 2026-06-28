@@ -167,7 +167,7 @@ if (isMonolith || moduleName.Equals("Identity", StringComparison.OrdinalIgnoreCa
       ["2", "AddCorsConfiguration", "5KB", "Dev vs Production CORS policies"],
       ["3", "AddRateLimitingConfiguration", "13KB", "DDoS prevention, per-IP, login rate limits"],
       ["4", "AddSwaggerConfiguration", "8KB", "OpenAPI documentation"],
-      ["5", "AddUISObservability", "8KB", "OpenTelemetry tracing + metrics"],
+      ["5", "AddScripeObservability", "8KB", "OpenTelemetry tracing + metrics"],
       ["6", "AddCoreInfrastructure", "11KB", "ICurrentUser, Audit, Cache, DI container"],
       ["7", "AddBlobStorage", "2KB", "Local / Azure / S3 / MinIO storage"],
       ["8", "AddIdentityModule", "Module", "Identity-specific services"],

@@ -233,7 +233,7 @@ export const ar = {
       newProviderStep3: "3. التسجيل ضمن InfrastructureDI.cs.",
       newProviderStep4: "4. تشغيل أمر scripe db add-migration.",
     },
-    uisCli: {
+    scripeCli: {
       title: "أداة سطر الأوامر (SCRIPE CLI)",
       description: "66 قالب لزيادة الإنتاجية ودعم قواعد البيانات المتعددة وعمليات الربط العميق.",
       intro: "توفر الأداة بناء كود نموذجي وهيكل لـ Backend و Frontend بسرعة قياسية.",
@@ -275,7 +275,7 @@ export const ar = {
       utilityTitle: "أدوات النظام البيئي",
       utilityIntro: "بناء وتشغيل خوادم التطوير من موجه أوامر واحد.",
     },
-    uisStudio: {
+    scripeStudio: {
       title: "استوديو SCRIPE",
       description:
         "لوحة تحكم مرئية للمطورين مع إدارة وحدات لحظية ومولّدات أكواد وعناصر تحكم بخوادم التطوير وطرفية مدمجة.",
@@ -398,7 +398,7 @@ export const ar = {
       thresholdsTitle: "عتبات اتفاقية مستوى الخدمة (SLA)",
       authFlowTitle: "سكربت اختبار تدفق المصادقة",
       authFlowIntro:
-        "يحاكي اختبار auth-flow.js أنماط مصادقة المستخدم الواقعية: تسجيل الدخول بالاعتمادات والوصول إلى نقطة محمية باستخدام رمز JWT والتحقق من نقطة فحص الصحة. المقاييس المخصصة (uis_login_duration وuis_login_fail_rate) تتتبع اتفاقيات SLA الخاصة بالمصادقة بشكل مستقل.",
+        "يحاكي اختبار auth-flow.js أنماط مصادقة المستخدم الواقعية: تسجيل الدخول بالاعتمادات والوصول إلى نقطة محمية باستخدام رمز JWT والتحقق من نقطة فحص الصحة. المقاييس المخصصة (scripe_login_duration وscripe_login_fail_rate) تتتبع اتفاقيات SLA الخاصة بالمصادقة بشكل مستقل.",
       runningTitle: "تشغيل اختبارات الحمل",
       cicdTitle: "تكامل CI/CD",
       cicdIntro:

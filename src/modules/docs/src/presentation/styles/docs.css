@@ -2106,4 +2106,24 @@
   color: var(--text-secondary);
 }
 
+/* CLI Autocomplete Suggestions */
+.docs-terminal-window ul {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Lifecycle Stepper Cards */
+.docs-lifecycle-step-card {
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+.docs-lifecycle-step-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px var(--docs-purple-muted);
+}
+.docs-lifecycle-step-card.active {
+  border-color: var(--docs-purple-primary);
+  background: var(--docs-purple-muted) !important;
+}
+
+
 

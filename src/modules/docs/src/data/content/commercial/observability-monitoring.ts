@@ -78,12 +78,12 @@ const sections: DocSection[] = [
     type: "table",
     headers: ["Metric", "Type", "Description"],
     rows: [
-      ["uis_http_requests_total", "Counter", "Total HTTP requests by method, path, status"],
-      ["uis_http_request_duration_ms", "Histogram", "Request latency distribution"],
-      ["uis_db_query_duration_ms", "Histogram", "Database query execution time"],
-      ["uis_cache_hits_total", "Counter", "Cache hit/miss ratio tracking"],
-      ["uis_active_sessions", "Gauge", "Currently active user sessions"],
-      ["uis_background_jobs_total", "Counter", "Background job executions by type"],
+      ["scripe_http_requests_total", "Counter", "Total HTTP requests by method, path, status"],
+      ["scripe_http_request_duration_ms", "Histogram", "Request latency distribution"],
+      ["scripe_db_query_duration_ms", "Histogram", "Database query execution time"],
+      ["scripe_cache_hits_total", "Counter", "Cache hit/miss ratio tracking"],
+      ["scripe_active_sessions", "Gauge", "Currently active user sessions"],
+      ["scripe_background_jobs_total", "Counter", "Background job executions by type"],
     ],
   },
 

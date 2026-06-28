@@ -5,7 +5,7 @@
  */
 export const zh = {
   commercial: {
-    whyUISOverview: {
+    whyScripeOverview: {
       description:
         "一份决定性的、高管级别的摘要，准确地说明了选择 SCRIPE 框架为何从根本上消除了您整个企业软件开发之旅的风险。",
       glanceTitle: "架构概览",
@@ -115,7 +115,7 @@ export const zh = {
         "重要提示：进行概念验证 (PoC)。SCRIPE 的 30 天试用版允许您的首席工程师直接针对您最困难的技术挑战验证我们的架构声明。",
       intro:
         "SCRIPE 旨在彻底摧毁企业软件开发的传统限制：供应商依赖、架构熵和缓慢的发布周期。以下是有远见的组织如何倍增其工程资本的方式。",
-      uisApproach: "SCRIPE 优势",
+      scripeApproach: "SCRIPE 优势",
       productivityContent:
         "初创公司和大型企业都使用 SCRIPE 来绕过 6-12 个月的基础开发工作。通过在第一天就提供生产就绪的身份验证、多租户和审计日志，团队能够立即开始交付独特的商业价值。",
       productivityTitle: "史无前例的生产力",
@@ -135,11 +135,11 @@ export const zh = {
         "保证全球合规性。用户的身份 JWT 以密码学方式绑定到其租户，防止横向越权移动。",
       title: "竞争优势",
       traditionalApproach: "传统困境",
-      compUISI1: "模块化单体 → API 网关 → 微服务演进式架构",
-      compUISI2: "单一代码库，三种动态部署模式",
-      compUISI3: "在编译时以数学方式强制执行模块功能",
-      compUISI4: "将任何模块提取到独立服务中，无需任何重写",
-      compUISI5: "纯净的共享核心基础架构在所有模块间产生复利效应",
+      compScripeI1: "模块化单体 → API 网关 → 微服务演进式架构",
+      compScripeI2: "单一代码库，三种动态部署模式",
+      compScripeI3: "在编译时以数学方式强制执行模块功能",
+      compScripeI4: "将任何模块提取到独立服务中，无需任何重写",
+      compScripeI5: "纯净的共享核心基础架构在所有模块间产生复利效应",
       compTradI1: "被迫预先选择单体架构或微服务架构",
       compTradI2: "需要完全重写才能更改部署拓扑",
       compTradI3: "高度耦合的服务之间存在意大利面条式的依赖关系",

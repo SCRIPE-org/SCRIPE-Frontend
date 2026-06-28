@@ -107,8 +107,8 @@ export const en = {
       verifyInstallTitle: "Verify Installation",
       verifyInstallIntro:
         "Once both servers are running, verify the installation using these checks.",
-      uisCliTitle: "SCRIPE CLI",
-      uisCliIntro:
+      scripeCliTitle: "SCRIPE CLI",
+      scripeCliIntro:
         "The SCRIPE CLI (scripe-cli) provides scaffolding commands to generate modules, entities, commands, queries, and more. It follows the project's architecture conventions automatically.",
       cliDevTitle: "Development with the CLI",
       cliDevIntro:

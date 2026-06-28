@@ -11,7 +11,7 @@ const sections: DocSection[] = [
   },
   {
     type: "table",
-    headers: ["commercial.complianceGdpr.articleCol", "commercial.complianceGdpr.uisFeatureCol"],
+    headers: ["commercial.complianceGdpr.articleCol", "commercial.complianceGdpr.scripeFeatureCol"],
     rows: [
       ["Article 15: Right of Access", "commercial.complianceGdpr.featureAccess"],
       ["Article 17: Right to Erasure", "commercial.complianceGdpr.featureErasure"],

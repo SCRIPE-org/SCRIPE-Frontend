@@ -61,14 +61,14 @@ import "./modules/entitlements/overrides";
 import "./modules/entitlements/crm-leads";
 
 // Modules (Billing & Tier 2 — Phases 0–9)
-// import "./modules/entitlements/billing-engine";
-// import "./modules/entitlements/invoices";
-// import "./modules/entitlements/dunning";
-// import "./modules/entitlements/tenant-plans";
-// import "./modules/entitlements/user-subscriptions";
+import "./modules/entitlements/billing-engine";
+import "./modules/entitlements/invoices";
+import "./modules/entitlements/dunning";
+import "./modules/entitlements/tenant-plans";
+import "./modules/entitlements/user-subscriptions";
 
 // Modules (Revenue Analytics — Phase 11)
-// import "./modules/entitlements/revenue-analytics";
+import "./modules/entitlements/revenue-analytics";
 
 // Modules (Plugins — Phase 15)
 import "./modules/plugins/plugins-overview";
@@ -116,7 +116,7 @@ import "./infrastructure/file-storage";
 import "./infrastructure/resilience";
 import "./infrastructure/gateway-deployment";
 import "./infrastructure/database-migrations";
-import "./infrastructure/uis-cli";
+import "./infrastructure/scripe-cli";
 import "./infrastructure/health-checks";
 import "./infrastructure/observability";
 import "./infrastructure/audit-trail";
@@ -131,7 +131,7 @@ import "./tutorials/add-backend-module";
 // ═══════════════════════════════════════════════════════════
 
 // Why SCRIPE
-import "./commercial/why-uis-overview";
+import "./commercial/why-scripe-overview";
 import "./commercial/competitive-advantages";
 import "./commercial/target-industries";
 import "./commercial/success-metrics";
@@ -203,9 +203,9 @@ import "./commercial/entitlements-features";
 import "./commercial/entitlements-overrides";
 
 // Modules (Commercial Billing & Tier 2 — Phases 0–9)
-// import "./commercial/billing-payments";
-// import "./commercial/entitlements-tenant-plans";
-// import "./commercial/entitlements-user-subscriptions";
+import "./commercial/billing-payments";
+import "./commercial/entitlements-tenant-plans";
+import "./commercial/entitlements-user-subscriptions";
 
 // Modules (Commercial Plugins — Phase 15)
 import "./commercial/plugins-overview";

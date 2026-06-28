@@ -56,7 +56,7 @@ export const en = {
       mutationsTitle: "Mutations & Cache Invalidation",
       zustandTitle: "Zustand (Global UI State)",
       zustandIntro:
-        "Zustand stores manage UI state that needs to be shared across components: authentication state (useAuthStore), sidebar/theme (useUIStore), and toast notifications (useToastStore).",
+        "Zustand stores manage UI state that needs to be shared across components: authentication state (useAuthStore), sidebar/theme (useScripetore), and toast notifications (useToastStore).",
       languageTitle: "Localization State",
       languageIntro:
         "Language preferences are managed through the LanguageProvider context. It persists the selected language in localStorage and provides the t() function for translations throughout the app.",

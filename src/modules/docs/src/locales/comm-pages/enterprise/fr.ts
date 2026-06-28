@@ -20,7 +20,7 @@ export const fr = {
         "Besoin de synchroniser des données avec Salesforce, SAP ou un ancien mainframe AS400 ? Nous fournissons des adaptateurs d'intégration prêts à l'emploi et très résilients utilisant Apache Kafka ou Azure Service Bus pour combler le fossé de manière transparente.",
       integrationTitle: "Intégrations de Systèmes Existants (Legacy)",
       intro:
-        "Bien que SCRIPE soit extraordinairement puissant dès sa sortie de boîte, les grandes organisations ont souvent besoin de services de pointe. Notre niveau Entreprise offre des heures d'ingénierie dédiées, une prise en charge de bases de données exotiques et des modules métiers spécialisés.",
+        "Bien que SCRIPE soit extraordinairement pscripesant dès sa sortie de boîte, les grandes organisations ont souvent besoin de services de pointe. Notre niveau Entreprise offre des heures d'ingénierie dédiées, une prise en charge de bases de données exotiques et des modules métiers spécialisés.",
       migrationIntro:
         "La transition d'un système monolithique existant est la phase la plus risquée de la modernisation. Notre équipe fournit des scripts ETLA (Extraction, Transformation, Chargement, Audit) éprouvés sur le terrain et une assistance de mappage manuel.",
       migrationTitle: "Services de Migration Haut de Gamme",
@@ -173,7 +173,7 @@ export const fr = {
       settSecurityDesc:
         "Permettez aux locataires de dicter leurs propres complexités de mots de passe, durées de vie JWT et exigences MFA.",
       settingsContent:
-        "La multi-location va bien au-delà de la séparation des données. Chaque locataire (tenant) du système fonctionne comme une application virtuelle autonome. Ils peuvent définir indépendamment les paramètres linguistiques par défaut, les indicateurs de fonctionnalités (feature flags), les thèmes de l'interface utilisateur et les abonnements aux webhooks sans impacter le cluster global.",
+        "La multi-location va bien au-delà de la séparation des données. Chaque locataire (tenant) du système fonctionne comme une application virtuelle autonome. Ils peuvent définir indépendamment les paramètres lingscripetiques par défaut, les indicateurs de fonctionnalités (feature flags), les thèmes de l'interface utilisateur et les abonnements aux webhooks sans impacter le cluster global.",
       settingsTitle: "Surcharges Autonomes des Locataires",
       title: "Architecture Multi-Tenant d'Entreprise",
       whiteLabelContent:
@@ -184,7 +184,7 @@ export const fr = {
         "Chaque locataire reçoit automatiquement un sous-domaine de marque lors de la création (ex. acme.yourplatform.com), et peut ajouter des domaines personnalisés illimités (ex. app.acme.com) avec vérification complète de propriété DNS. L'ensemble du système de domaines est piloté uniquement par la configuration — changer le domaine de la plateforme, la cible CNAME et le préfixe de vérification ne nécessite aucun changement de code.",
       domainAutoSub: "Sous-domaines Auto-Générés",
       domainAutoSubDesc:
-        "Chaque locataire reçoit instantanément un sous-domaine de marque ({code}.{PlatformDomain}) lors de la création — toujours vérifié, toujours actif, aucune configuration manuelle requise.",
+        "Chaque locataire reçoit instantanément un sous-domaine de marque ({code}.{PlatformDomain}) lors de la création — toujours vérifié, toujours actif, aucune configuration manuelle reqscripee.",
       domainCustom: "Mappage de Domaines Personnalisés",
       domainCustomDesc:
         "Les locataires peuvent apporter leurs propres domaines (ex. app.acme.com) pour une expérience marque blanche complète. Les domaines personnalisés sont ajoutés via l'API ou le panneau d'administration.",
@@ -202,10 +202,10 @@ export const fr = {
         "Renommez l'ensemble de la plateforme en changeant 4 valeurs de configuration. Tous les locataires existants, les instructions DNS et les jetons de vérification s'adaptent automatiquement.",
       domainWhiteLabelTitle: "Architecture de Domaines Marque Blanche pour Entreprises",
       domainWhiteLabelContent:
-        "Le système de domaines personnalisés permet un véritable white-labeling B2B où vos clients de plateforme présentent votre produit SaaS sous leur propre domaine de marque. Le panneau d'administration fournit des instructions guidées de configuration DNS avec des actions de copier-coller, et le flux de vérification est en libre-service — aucun ticket de support requis.",
+        "Le système de domaines personnalisés permet un véritable white-labeling B2B où vos clients de plateforme présentent votre produit SaaS sous leur propre domaine de marque. Le panneau d'administration fournit des instructions guidées de configuration DNS avec des actions de copier-coller, et le flux de vérification est en libre-service — aucun ticket de support reqscripe.",
       domainApiTitle: "API de Gestion de Domaines",
       domainTip:
-        "Super-pouvoir SaaS B2B : Vos clients entreprises peuvent apporter leurs propres domaines personnalisés, les définir comme primaires et présenter votre plateforme à leurs utilisateurs finaux sous leur propre marque d'entreprise — tout en libre-service depuis le panneau d'administration.",
+        "Super-pouvoir SaaS B2B : Vos clients entreprises peuvent apporter leurs propres domaines personnalisés, les définir comme primaires et présenter votre plateforme à leurs utilisateurs finaux sous leur propre marque d'entreprise — tout en libre-service depscripe le panneau d'administration.",
     },
     rolesPermissions: {
       categoriesTitle: "Groupement Logique des Autorisations",
@@ -234,7 +234,7 @@ export const fr = {
         "Les configurations de rôles appartiennent exclusivement au Locataire (Tenant). Un 'Manager' chez le Locataire A a des limites complètement différentes d'un 'Manager' chez le Locataire B.",
       userGroupsTitle: "Attribution par Lots Basée sur les Groupes",
       adminGroupsContent:
-        "Arrêtez d'attribuer des rôles à un administrateur à la fois. La fonctionnalité de Groupes d'Utilisateurs de SCRIPE vous permet de créer des groupes nommés, d'assigner des rôles et des restrictions au niveau des champs au groupe, puis d'ajouter des administrateurs comme membres. Tous les membres héritent instantanément des autorisations du groupe lors de leur prochaine connexion — avec toute la puissance de la fusion additive et de la propagation des restrictions au niveau des champs.",
+        "Arrêtez d'attribuer des rôles à un administrateur à la fois. La fonctionnalité de Groupes d'Utilisateurs de SCRIPE vous permet de créer des groupes nommés, d'assigner des rôles et des restrictions au niveau des champs au groupe, pscripe d'ajouter des administrateurs comme membres. Tous les membres héritent instantanément des autorisations du groupe lors de leur prochaine connexion — avec toute la pscripesance de la fusion additive et de la propagation des restrictions au niveau des champs.",
       groupBatchAssign: "Attribution par Lots Instantanée",
       groupBatchAssignDesc:
         "Attribuez simultanément des rôles complexes et des matrices de restrictions à des centaines d'administrateurs via l'appartenance à un groupe nommé.",
@@ -306,7 +306,7 @@ export const fr = {
       intro:
         "Un logiciel d'entreprise mondial doit parler la langue de ses utilisateurs. SCRIPE fournit une infrastructure d'internationalisation (i18n) inégalée qui ne se contente pas d'échanger des chaînes de texte—elle remodèle fondamentalement toute l'architecture de l'application pour prendre en charge une véritable localisation sémantique.",
       languagesTitle: "Portée Mondiale Immédiate",
-      uisRTL: "Le Standard SCRIPE",
+      scripeRTL: "Le Standard SCRIPE",
       rtlContent:
         "Nous ne nous sommes pas contentés d'inverser le CSS. Les interfaces en arabe et en hébreu sont structurellement repensées. Notre système de conception atomique inverse intelligemment les marges, les remplissages (paddings), les icônes vectorielles et les hiérarchies de mise en page pour offrir une expérience RTL véritablement native qui ravit les utilisateurs.",
       rtlTitle: "Matrice Architecturale RTL Impeccable",

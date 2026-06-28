@@ -483,7 +483,7 @@ export const navigationData: DocCategoryData[] = [
       },
       {
         id: "infra-scripe-cli",
-        titleKey: "infrastructure.uisCli.title",
+        titleKey: "infrastructure.scripeCli.title",
         slug: "infrastructure/scripe-cli",
         order: 6,
       },
@@ -579,6 +579,42 @@ export const navigationData: DocCategoryData[] = [
             slug: "modules/overrides",
             order: 5,
           },
+          {
+            id: "mod-ent-billing-engine",
+            titleKey: "modules.billingEngine.title",
+            slug: "modules/billing-engine",
+            order: 6,
+          },
+          {
+            id: "mod-ent-invoices",
+            titleKey: "modules.invoices.title",
+            slug: "modules/invoices",
+            order: 7,
+          },
+          {
+            id: "mod-ent-dunning",
+            titleKey: "modules.dunning.title",
+            slug: "modules/dunning",
+            order: 8,
+          },
+          {
+            id: "mod-ent-tenant-plans",
+            titleKey: "modules.tenantPlans.title",
+            slug: "modules/tenant-plans",
+            order: 9,
+          },
+          {
+            id: "mod-ent-user-subscriptions",
+            titleKey: "modules.userSubscriptions.title",
+            slug: "modules/user-subscriptions",
+            order: 10,
+          },
+          {
+            id: "mod-ent-revenue-analytics",
+            titleKey: "modules.revenueAnalytics.title",
+            slug: "modules/revenue-analytics",
+            order: 11,
+          },
         ],
       },
       // ── Compliance Module ──────────────────────────────────────
@@ -659,13 +695,13 @@ export const navigationData: DocCategoryData[] = [
   // ─── Why SCRIPE ────────────────────────────────────────────
   {
     id: "commercial-why-scripe",
-    titleKey: "nav.commercialWhyUIS",
+    titleKey: "nav.commercialWhyScripe",
     icon: "rocket",
     order: 10,
     items: [
       {
         id: "comm-why-overview",
-        titleKey: "commercial.whyUISOverview.title",
+        titleKey: "commercial.whyScripeOverview.title",
         slug: "commercial/why-scripe-overview",
         order: 1,
       },
@@ -1065,6 +1101,24 @@ export const navigationData: DocCategoryData[] = [
             titleKey: "commercial.entOverrides.title",
             slug: "commercial/entitlements-overrides",
             order: 5,
+          },
+          {
+            id: "comm-mod-billing-payments",
+            titleKey: "Billing & Payments",
+            slug: "commercial/billing-payments",
+            order: 6,
+          },
+          {
+            id: "comm-mod-ent-tenant-plans",
+            titleKey: "Tenant Plans",
+            slug: "commercial/entitlements-tenant-plans",
+            order: 7,
+          },
+          {
+            id: "comm-mod-ent-user-subscriptions",
+            titleKey: "User Subscriptions",
+            slug: "commercial/entitlements-user-subscriptions",
+            order: 8,
           },
         ],
       },

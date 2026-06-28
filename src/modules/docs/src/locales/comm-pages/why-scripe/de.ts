@@ -5,7 +5,7 @@
  */
 export const de = {
   commercial: {
-    whyUISOverview: {
+    whyScripeOverview: {
       description:
         "Eine definitive Zusammenfassung auf Executive-Ebene, die genau erklärt, warum die Wahl des SCRIPE-Frameworks Ihre gesamte Enterprise-Software-Reise grundlegend risikoärmer macht (derisks).",
       glanceTitle: "Die Architektur auf einen Blick",
@@ -118,7 +118,7 @@ export const de = {
         "Wichtig: Führen Sie einen Proof-of-Concept durch. Die 30-tägige Testversion von SCRIPE ermöglicht es Ihren leitenden Ingenieuren, unsere architektonischen Behauptungen direkt anhand Ihrer schwierigsten technischen Herausforderungen zu validieren.",
       intro:
         "SCRIPE wurde entwickelt, um die konventionellen Einschränkungen der Enterprise-Softwareentwicklung völlig zu zerstören: Lieferantenabhängigkeiten, architektonische Entropie und extrem langsame Release-Zyklen. Hier erfahren Sie, wie visionäre Organisationen ihr technisches Kapital multiplizieren.",
-      uisApproach: "Der SCRIPE-Vorteil",
+      scripeApproach: "Der SCRIPE-Vorteil",
       productivityContent:
         "Startups wie auch Großunternehmen nutzen SCRIPE, um 6-12 Monate grundlegender Entwicklungsarbeit zu umgehen. Durch die Bereitstellung produktionsreifer Authentifizierung, Mandantenfähigkeit und Audit-Logs am ersten Tag können Teams sofort damit beginnen, einzigartigen Geschäftswert zu liefern.",
       productivityTitle: "Beispiellose Produktivität",
@@ -139,12 +139,12 @@ export const de = {
         "Garantieren Sie globale Compliance. Die Identitäts-JWT eines Benutzers ist kryptographisch an seinen Mandanten gebunden, was laterale Bewegungen verhindert.",
       title: "Wettbewerbsvorteile",
       traditionalApproach: "Das Legacy-Dilemma",
-      compUISI1: "Modularer Monolith → API Gateway → Microservices evolutionäre Architektur",
-      compUISI2: "Einzige Codebasis, drei dynamische Deployment-Modi",
-      compUISI3: "Modulfunktionen mathematisch erzwungen zur Kompilierzeit",
-      compUISI4:
+      compScripeI1: "Modularer Monolith → API Gateway → Microservices evolutionäre Architektur",
+      compScripeI2: "Einzige Codebasis, drei dynamische Deployment-Modi",
+      compScripeI3: "Modulfunktionen mathematisch erzwungen zur Kompilierzeit",
+      compScripeI4:
         "Extrahieren Sie jedes Modul in einen separaten Service, ohne etwas neu zu schreiben",
-      compUISI5: "Makellose gemeinsame Kerninfrastruktur, die sich über alle Module summiert",
+      compScripeI5: "Makellose gemeinsame Kerninfrastruktur, die sich über alle Module summiert",
       compTradI1: "Gezwungen, sich vorab für Monolith ODER Microservices zu entscheiden",
       compTradI2: "Komplette Umschreibung erforderlich, um Deployment-Topologien zu ändern",
       compTradI3: "Spaghetti-Abhängigkeiten zwischen stark gekoppelten Services",

@@ -112,7 +112,7 @@ export function useCreateEmployee() {
         "localStorage (persist)",
         "@core/store/useAuthStore",
       ],
-      ["useUIStore", "Sidebar, theme, mobile menu", "None", "@core/store/useUIStore"],
+      ["useScripetore", "Sidebar, theme, mobile menu", "None", "@core/store/useScripetore"],
       ["useToastStore", "Toast notification queue", "None", "@core/store/useToastStore"],
     ],
   },

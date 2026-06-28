@@ -10,7 +10,7 @@ export const fr = {
         "Guide étape par étape pour créer un nouveau module frontend suivant le modèle SOLID View/ViewModel.",
       intro:
         "Ce tutoriel vous accompagne dans la création d'un module complet en assurant une qualité conforme aux architectures de la plateforme.",
-      prerequisitesTitle: "Prérequis",
+      prerequisitesTitle: "Préreqscripe",
       stepsTitle: "Guide Étape par Étape",
       step1Title: "1. Créer la Structure du Module",
       step1Desc:
@@ -24,10 +24,10 @@ export const fr = {
       step4Desc: "Enregistrez votre référentiel au sein de l'injection de dépendances React.",
       step5Title: "5. Construire le ViewModel",
       step5Desc:
-        "Construisez le chef d'orchestre principal des opérations CRUD en appelant useCrudViewModel.",
+        "Constrscripeez le chef d'orchestre principal des opérations CRUD en appelant useCrudViewModel.",
       step6Title: "6. Créer la Vue (View)",
       step6Desc:
-        "Construisez le composant visuel de pure interface utilisateur consommant le ViewModel (moins de 60 lignes de code).",
+        "Constrscripeez le composant visuel de pure interface utilisateur consommant le ViewModel (moins de 60 lignes de code).",
       step7Title: "7. Ajouter la Route et la Navigation",
       step7Desc:
         "Déclarez la page connectrice (page.tsx) de Next.js pour brancher le visuel à l'arborescence URL.",
@@ -47,7 +47,7 @@ export const fr = {
         "Guide complet pour créer un module de microservice C# avec Clean Architecture et CQRS.",
       intro:
         "Ce guide expose comment déployer une API complète de la base de données au contrôleur REST public en respectant les standards de l'entreprise.",
-      prerequisitesTitle: "Prérequis",
+      prerequisitesTitle: "Préreqscripe",
       stepsTitle: "Guide Étape par Étape",
       step1Title: "1. Créer la Structure du Projet",
       step1Desc: "Générez les bibliothèques de classes C# conformes aux couches du DDD.",
@@ -56,10 +56,10 @@ export const fr = {
         "Héritez de la classe de base AuditableEntity et fixez les règles de validation du modèle.",
       step3Title: "3. Créer les Commandes (Commands)",
       step3Desc:
-        "Produisez les modèles de requête de mutation (Créer, Mettre à jour, Supprimer) et couvrez-les par FluentValidation.",
+        "Prodscripeez les modèles de requête de mutation (Créer, Mettre à jour, Supprimer) et couvrez-les par FluentValidation.",
       step4Title: "4. Créer les Requêtes (Queries)",
       step4Desc:
-        "Produisez les modèles de lecture (GetById, GetPaged) avec mapping rapide et sécurisé DTO.",
+        "Prodscripeez les modèles de lecture (GetById, GetPaged) avec mapping rapide et sécurisé DTO.",
       step5Title: "5. Implémenter le Référentiel",
       step5Desc:
         "Appuyez-vous sur les classes de base génériques de EF Core au sein de la couche infrastructure.",

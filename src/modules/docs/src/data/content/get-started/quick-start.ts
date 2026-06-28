@@ -136,12 +136,12 @@ NEXT_PUBLIC_APP_NAME=SCRIPE`,
   {
     type: "heading",
     level: 2,
-    titleKey: "getStarted.quickStart.uisCliTitle",
+    titleKey: "getStarted.quickStart.scripeCliTitle",
     id: "scripe-cli",
   },
   {
     type: "paragraph",
-    contentKey: "getStarted.quickStart.uisCliIntro",
+    contentKey: "getStarted.quickStart.scripeCliIntro",
   },
   {
     type: "code",

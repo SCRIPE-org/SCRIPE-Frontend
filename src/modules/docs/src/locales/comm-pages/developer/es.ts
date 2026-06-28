@@ -137,7 +137,7 @@ export const es = {
       intro:
         "El tiempo de valor (time to value) es la única métrica que importa. Esta guía completa acelera a su equipo de ingeniería desde la extracción (pull) del repositorio hasta la ejecución exitosa de su primera invocación de API autenticada en una base de datos completamente poblada (seeded) en menos de 15 minutos.",
       nextStepsTitle: "Próximos Pasos Arquitectónicos",
-      prereqTitle: "Requisitos del Sistema",
+      prereqTitle: "Reqscripeitos del Sistema",
       quickStartTitle: "El Inicio Rápido de 15 Minutos",
       step1Content:
         "Asegúrese de que el SDK de .NET 9, Node.js 20+ y su motor de Docker preferido estén instalados y sean accesibles a nivel global en su máquina de desarrollo.",
@@ -210,7 +210,7 @@ export const es = {
       networkTitle: "Topología de Red y Puertos",
       prodMicroTitle: "Topologías de Microservicios Globales",
       prodMonoTitle: "Servidores Monolíticos de Producción",
-      title: "Requisitos de Sistema e Infraestructura",
+      title: "Reqscripeitos de Sistema e Infraestructura",
       tblDevHeader1: "Componente",
       tblDevHeader2: "Mínimo",
       tblDevHeader3: "Recomendado",

@@ -13,7 +13,7 @@ export const en = {
       tblRuntimeHeader2: "SCRIPE-owned replacement",
       tblRuntimeHeader3: "Production effect",
       tblRuntimeR1C1: "Request dispatch",
-      tblRuntimeR1C2: "UISMediator with cached delegates and ordered behaviors",
+      tblRuntimeR1C2: "ScripeMediator with cached delegates and ordered behaviors",
       tblRuntimeR1C3: "No third-party mediator license key or package-policy risk",
       tblRuntimeR2C1: "DTO mapping",
       tblRuntimeR2C2: "Explicit mapping rules plus EncryptedIdMapper",
@@ -136,7 +136,7 @@ export const en = {
       lstTermsI1: "Perpetual fallback license for the version at renewal expiry",
       lstTermsI2: "30-day money-back guarantee on first purchase",
       lstTermsI3: "No vendor lock-in — you own your data and customizations",
-      lstTermsI4: "Transfer rights available for company acquisitions",
+      lstTermsI4: "Transfer rights available for company acqscripeitions",
       lstTermsI5: "Educational and non-profit discounts available",
       entitlementsTitle: "Entitlements-Powered Plan Differentiation",
       entitlementsIntro:

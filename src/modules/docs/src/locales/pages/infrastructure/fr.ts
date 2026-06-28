@@ -10,12 +10,12 @@ export const fr = {
       description:
         "Tâches récurrentes auto-découvertes et agnostiques du fournisseur (Native, Hangfire, Quartz.NET) — 24 tâches à travers 4 modules, aucun câblage manuel.",
       intro:
-        "Le système de tâches en arrière-plan de SCRIPE repose sur un principe : écrire une fois, exécuter sur n'importe quel fournisseur. Chaque tâche implémente IAutoRegisteredJob et est découverte automatiquement au démarrage. Basculer entre Native, Hangfire ou Quartz est un simple changement de configuration dans appsettings.json — aucune modification de code n'est requise.",
+        "Le système de tâches en arrière-plan de SCRIPE repose sur un principe : écrire une fois, exécuter sur n'importe quel fournisseur. Chaque tâche implémente IAutoRegisteredJob et est découverte automatiquement au démarrage. Basculer entre Native, Hangfire ou Quartz est un simple changement de configuration dans appsettings.json — aucune modification de code n'est reqscripee.",
 
       // Architecture
       architectureTitle: "Aperçu de l'Architecture",
       architectureIntro:
-        "Au démarrage, BackgroundJobsConfiguration lit le fournisseur actif depuis appsettings.json et appelle GetServices<IAutoRegisteredJob>() pour découvrir chaque tâche enregistrée depuis le conteneur DI. Pour chaque tâche, il vérifie un remplacement appsettings par tâche, résout Enabled et CronExpression, puis planifie la tâche avec l'API du fournisseur. La tâche elle-même ne contient aucun code spécifique au fournisseur.",
+        "Au démarrage, BackgroundJobsConfiguration lit le fournisseur actif depscripe appsettings.json et appelle GetServices<IAutoRegisteredJob>() pour découvrir chaque tâche enregistrée depscripe le conteneur DI. Pour chaque tâche, il vérifie un remplacement appsettings par tâche, résout Enabled et CronExpression, pscripe planifie la tâche avec l'API du fournisseur. La tâche elle-même ne contient aucun code spécifique au fournisseur.",
       architectureFlowTitle: "Pipeline d'Auto-Découverte",
 
       // IAutoRegisteredJob Contract
@@ -66,7 +66,7 @@ export const fr = {
       // Providers
       providersTitle: "Comparaison des Fournisseurs",
       providersIntro:
-        "Les trois fournisseurs utilisent exactement la même interface IAutoRegisteredJob. La seule différence réside dans la manière dont ils planifient et persistent les tâches. Configurez le fournisseur dans appsettings.json — aucune modification de code requise pour basculer.",
+        "Les trois fournisseurs utilisent exactement la même interface IAutoRegisteredJob. La seule différence réside dans la manière dont ils planifient et persistent les tâches. Configurez le fournisseur dans appsettings.json — aucune modification de code reqscripee pour basculer.",
       providerColFeature: "Fonctionnalité",
       providerColNative: "Native",
       providerColHangfire: "Hangfire",
@@ -277,14 +277,14 @@ export const fr = {
       newProviderStep3: "Déclarez le nouveau fournisseur dans le tableau InfrastructureDI.cs.",
       newProviderStep4: "Initialisez le premier instantané avec scripe db add-migration.",
     },
-    uisCli: {
+    scripeCli: {
       title: "L'Outil SCRIPE CLI",
       description:
         "Générateur productif via 66 modèles de scaffolding, commandes de multi-base de données et inter-cblage automatique.",
       intro:
         "La CLI Node.js propriétaire de SCRIPE résout le problème de répétition inhérent aux architectures propres. Elle conçoit des modules full-stack complets qui traversent de React à SQL.",
       commandsTitle: "Commandes de Scaffolding de Base",
-      commandsIntro: "Les opérations pivots qui produisent le volume principal de la base de code.",
+      commandsIntro: "Les opérations pivots qui prodscripeent le volume principal de la base de code.",
       newModuleTitle: "Génération de Modules : new-module",
       newModuleIntro:
         "Crée des partitions logiques isolées DDD en Backend (Application, Domain, Infrastructure) et le squelette en Frontend simultanément.",
@@ -333,14 +333,14 @@ export const fr = {
         "Traite une variable et la pluralise, la transforme en PascalCase, kebab-case et en constante SNAKE_CASE infailliblement.",
       utilityTitle: "Outils Utilitaires d'Écosystème",
       utilityIntro:
-        "Démarre les environnements Node.js et les projets .NET en simultané depuis une invite de commande unique.",
+        "Démarre les environnements Node.js et les projets .NET en simultané depscripe une invite de commande unique.",
     },
-    uisStudio: {
+    scripeStudio: {
       title: "SCRIPE Studio",
       description:
         "Tableau de bord visuel pour développeurs avec gestion de modules en temps réel, générateurs de code, contrôles de serveurs de développement et terminal intégré.",
       intro:
-        "SCRIPE Studio est un tableau de bord visuel complet pour développeurs offrant une interface web en temps réel pour la gestion des modules, l'exécution de générateurs de code, le contrôle des serveurs de développement, les opérations de base de données, la gestion Docker et plus encore — le tout depuis un seul onglet de navigateur.",
+        "SCRIPE Studio est un tableau de bord visuel complet pour développeurs offrant une interface web en temps réel pour la gestion des modules, l'exécution de générateurs de code, le contrôle des serveurs de développement, les opérations de base de données, la gestion Docker et plus encore — le tout depscripe un seul onglet de navigateur.",
       architectureTitle: "Architecture du Studio",
       architectureIntro:
         "Le Studio se compose de deux composants : le Moteur (Express + Socket.io + SQLite sur le port 4201) gère les requêtes API, l'exécution des commandes et le streaming en temps réel. L'UI (Next.js sur le port 4200) offre 19 pages couvrant tous les aspects du workflow de développement.",
@@ -460,7 +460,7 @@ export const fr = {
       thresholdsTitle: "Seuils SLA",
       authFlowTitle: "Script de Test du Flux d'Authentification",
       authFlowIntro:
-        "Le test auth-flow.js simule des patterns d'authentification réalistes : connexion, accès aux endpoints protégés avec jeton JWT et vérification du health check. Des métriques personnalisées (uis_login_duration, uis_login_fail_rate) suivent les SLAs d'authentification.",
+        "Le test auth-flow.js simule des patterns d'authentification réalistes : connexion, accès aux endpoints protégés avec jeton JWT et vérification du health check. Des métriques personnalisées (scripe_login_duration, scripe_login_fail_rate) suivent les SLAs d'authentification.",
       runningTitle: "Exécuter les Tests de Charge",
       cicdTitle: "Intégration CI/CD",
       cicdIntro:

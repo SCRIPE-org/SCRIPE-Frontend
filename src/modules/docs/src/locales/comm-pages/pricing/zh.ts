@@ -13,7 +13,7 @@ export const zh = {
       tblRuntimeHeader2: "SCRIPE 自有替代",
       tblRuntimeHeader3: "生产影响",
       tblRuntimeR1C1: "请求分发",
-      tblRuntimeR1C2: "带缓存委托和有序行为的 UISMediator",
+      tblRuntimeR1C2: "带缓存委托和有序行为的 ScripeMediator",
       tblRuntimeR1C3: "没有第三方中介器许可证密钥或包策略风险",
       tblRuntimeR2C1: "DTO 映射",
       tblRuntimeR2C2: "显式映射规则加 EncryptedIdMapper",

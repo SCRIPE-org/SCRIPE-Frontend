@@ -264,7 +264,7 @@ export const ru = {
       newProviderStep3: "3. Зарегистрировать в InfrastructureDI.cs.",
       newProviderStep4: "4. Выполнить команду scripe db add-migration.",
     },
-    uisCli: {
+    scripeCli: {
       title: "Инструментарий SCRIPE CLI",
       description:
         "Генерация кода (scaffolding), 66 шаблонов, работа с БД и автоматическая связка (Auto-Wiring).",
@@ -312,7 +312,7 @@ export const ru = {
       utilityTitle: "Утилиты экосистемы",
       utilityIntro: "Управление пайплайнами сборок (npm, dotnet) из одной консоли.",
     },
-    uisStudio: {
+    scripeStudio: {
       title: "SCRIPE Studio",
       description:
         "Визуальная панель разработчика с управлением модулями в реальном времени, генераторами кода, управлением dev-серверами и встроенным терминалом.",
@@ -437,7 +437,7 @@ export const ru = {
       thresholdsTitle: "Пороги SLA",
       authFlowTitle: "Скрипт теста потока аутентификации",
       authFlowIntro:
-        "Тест auth-flow.js моделирует реалистичные паттерны аутентификации: вход с учетными данными, доступ к защищенным эндпоинтам с JWT-токеном и проверка health check. Пользовательские метрики (uis_login_duration, uis_login_fail_rate) отслеживают SLA аутентификации.",
+        "Тест auth-flow.js моделирует реалистичные паттерны аутентификации: вход с учетными данными, доступ к защищенным эндпоинтам с JWT-токеном и проверка health check. Пользовательские метрики (scripe_login_duration, scripe_login_fail_rate) отслеживают SLA аутентификации.",
       runningTitle: "Запуск нагрузочных тестов",
       cicdTitle: "Интеграция CI/CD",
       cicdIntro:

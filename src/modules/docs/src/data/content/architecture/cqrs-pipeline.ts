@@ -691,7 +691,7 @@ public class FeatureCache : IFeatureCache
         .GetSection(MediatorOptions.SectionName)
         .Get<MediatorOptions>() ?? new MediatorOptions();
 
-    services.AddUISMediator(
+    services.AddScripeMediator(
         validateRequestCoverage: mediatorOptions.ValidateRequestHandlerCoverage,
         assemblyMarkerTypes: handlerAssemblyMarkerTypes);
 

@@ -5,7 +5,7 @@
  */
 export const fr = {
   commercial: {
-    whyUISOverview: {
+    whyScripeOverview: {
       description:
         "Un résumé exécutif définitif expliquant exactement pourquoi le choix du framework SCRIPE dé-risque fondamentalement l'ensemble de votre parcours logiciel d'entreprise.",
       glanceTitle: "L'Architecture en un Coup d'Œil",
@@ -57,7 +57,7 @@ export const fr = {
       tblCostR5C3: "Layouts RTL cassés, UX incohérente, refontes coûteuses",
       tblCostR6C1: "Intégration de l'équipe (Onboarding)",
       tblCostR6C2: "Chaque développeur apprend ses propres modèles",
-      tblCostR6C3: "Rampe de montée en puissance de 3-6 mois, base de code incohérente",
+      tblCostR6C3: "Rampe de montée en pscripesance de 3-6 mois, base de code incohérente",
       tblMetricsHeader1: "Métrique",
       tblMetricsHeader2: "Valeur",
       tblMetricsR1C1: "Points de terminaison API",
@@ -118,7 +118,7 @@ export const fr = {
         "Important : Réalisez une preuve de concept (PoC). L'essai de 30 jours de SCRIPE permet à vos ingénieurs principaux de valider nos affirmations architecturales directement face à vos défis techniques les plus ardus.",
       intro:
         "SCRIPE est conçu pour anéantir totalement les limitations conventionnelles du développement de logiciels d'entreprise : les dépendances fournisseurs, l'entropie architecturale et les cycles de publication glaciaires. Voici comment les organisations visionnaires capitalisent leur ingénierie.",
-      uisApproach: "L'Avantage SCRIPE",
+      scripeApproach: "L'Avantage SCRIPE",
       productivityContent:
         "Les startups comme les grandes entreprises utilisent SCRIPE pour contourner 6 à 12 mois de développement de base. En fournissant une authentification prête pour la production, le multi-tenant et des journaux d'audit dès le premier jour, les équipes commencent immédiatement à fournir une valeur métier unique.",
       productivityTitle: "Productivité Sans Précédent",
@@ -139,14 +139,14 @@ export const fr = {
         "Garantissez la conformité mondiale. Le JWT d'identité d'un utilisateur est cryptographiquement lié à son locataire, empêchant les mouvements latéraux.",
       title: "Avantages Compétitifs",
       traditionalApproach: "Le Dilemme Classique",
-      compUISI1: "Architecture évolutive : Monolithe Modulaire → API Gateway → Microservices",
-      compUISI2: "Base de code unique, trois modes de déploiement dynamiques",
-      compUISI3: "Capacités des modules mathématiquement imposées à la compilation",
-      compUISI4: "Extrayez n'importe quel module vers un service séparé sans une seule réécriture",
-      compUISI5:
+      compScripeI1: "Architecture évolutive : Monolithe Modulaire → API Gateway → Microservices",
+      compScripeI2: "Base de code unique, trois modes de déploiement dynamiques",
+      compScripeI3: "Capacités des modules mathématiquement imposées à la compilation",
+      compScripeI4: "Extrayez n'importe quel module vers un service séparé sans une seule réécriture",
+      compScripeI5:
         "Infrastructure de base partagée immaculée se multipliant à travers tous les modules",
       compTradI1: "Forcé de choisir entre monolithe OU microservices dès le départ",
-      compTradI2: "Réécriture complète requise pour modifier les topologies de déploiement",
+      compTradI2: "Réécriture complète reqscripee pour modifier les topologies de déploiement",
       compTradI3: "Dépendances en plat de spaghettis entre des services hautement couplés",
       compTradI4: "Chaque service réimplémente à grands frais des préoccupations partagées",
       compTradI5: "Modèles incohérents et non évolutifs entre les équipes de développement",
@@ -283,7 +283,7 @@ export const fr = {
       tblGovHeader1: "Exigence",
       tblGovHeader2: "Capacité SCRIPE",
       tblGovR1C1: "Souveraineté des données",
-      tblGovR1C2: "Déploiement sur site (on-premise), pas de dépendance cloud requise",
+      tblGovR1C2: "Déploiement sur site (on-premise), pas de dépendance cloud reqscripee",
       tblGovR2C1: "Conformité d'audit",
       tblGovR2C2: "Piste d'audit à 4 sources avec surveillance en temps réel",
       tblGovR3C1: "Accès basé sur les rôles",
@@ -348,7 +348,7 @@ export const fr = {
       description:
         "Une ventilation financière médico-légale comparant le Coût Total de Possession (TCO) de SCRIPE par rapport à la création d'une architecture d'entreprise équivalente entièrement à partir de zéro.",
       intro:
-        "L'architecture d'entreprise est sans doute le risque le plus coûteux qu'un fondateur technique puisse prendre. SCRIPE élimine complètement ce risque, garantissant un retour sur investissement massif et mathématiquement prouvable avant même d'écrire votre première ligne de logique métier.",
+        "L'architecture d'entreprise est sans doute le risque le plus coûteux qu'un fondateur technique pscripese prendre. SCRIPE élimine complètement ce risque, garantissant un retour sur investissement massif et mathématiquement prouvable avant même d'écrire votre première ligne de logique métier.",
       ongoingTitle: "Maintenance Drastiquement Réduite",
       teamContent:
         "SCRIPE permet à une équipe réduite de 3 ingénieurs de fournir le débit, la stabilité et l'échelle d'un département d'entreprise traditionnel de 15 personnes, maximisant ainsi l'efficacité des effectifs.",

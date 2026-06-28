@@ -683,7 +683,7 @@ const sections: DocSection[] = [
       {
         titleKey: "modules.plugins.overview.step1Title",
         contentKey: "modules.plugins.overview.step1Content",
-        code: "scripe db add-migration Initial -m Plugins\nuis db update -m Plugins",
+        code: "scripe db add-migration Initial -m Plugins\nscripe db update -m Plugins",
         codeLanguage: "bash",
       },
       {

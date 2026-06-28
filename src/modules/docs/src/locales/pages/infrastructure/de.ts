@@ -257,7 +257,7 @@ export const de = {
       newProviderStep3: "Registrierung im DI-Container.",
       newProviderStep4: "Ausführen des add-migration Befehls.",
     },
-    uisCli: {
+    scripeCli: {
       title: "SCRIPE CLI Tooling",
       description: "Produktivitäts-CLI mit 66 Scaffolding-Templates und automatischem Wiring.",
       intro:
@@ -302,7 +302,7 @@ export const de = {
       utilityTitle: "Ecosystem-Werkzeuge",
       utilityIntro: "Steuerung von Build-Pipelines und Entwicklungsservern aus einem Prompt.",
     },
-    uisStudio: {
+    scripeStudio: {
       title: "SCRIPE Studio",
       description:
         "Visuelles Entwickler-Dashboard mit Echtzeit-Modulverwaltung, Code-Generatoren, Dev-Server-Steuerung und integriertem Terminal.",
@@ -427,7 +427,7 @@ export const de = {
       thresholdsTitle: "SLA-Schwellenwerte",
       authFlowTitle: "Auth-Flow-Testskript",
       authFlowIntro:
-        "Der auth-flow.js Test simuliert realistische Benutzerauthentifizierungsmuster: Login, Zugriff auf geschützte Endpoints mit JWT-Token und Health-Check-Verifizierung. Benutzerdefinierte Metriken (uis_login_duration, uis_login_fail_rate) verfolgen auth-spezifische SLAs.",
+        "Der auth-flow.js Test simuliert realistische Benutzerauthentifizierungsmuster: Login, Zugriff auf geschützte Endpoints mit JWT-Token und Health-Check-Verifizierung. Benutzerdefinierte Metriken (scripe_login_duration, scripe_login_fail_rate) verfolgen auth-spezifische SLAs.",
       runningTitle: "Lasttests ausführen",
       cicdTitle: "CI/CD-Integration",
       cicdIntro:

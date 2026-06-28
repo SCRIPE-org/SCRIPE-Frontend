@@ -303,7 +303,7 @@ export const en = {
       intro:
         "Global enterprise software must speak the language of its users. SCRIPE delivers an unparalleled internationalization infrastructure that doesn't just swap text strings—it fundamentally reshapes the entire application architecture to support true semantic localization.",
       languagesTitle: "Immediate Global Reach",
-      uisRTL: "The SCRIPE Standard",
+      scripeRTL: "The SCRIPE Standard",
       rtlContent:
         "We didn't just mirror the CSS. Arabic and Hebrew interfaces are structurally re-architected. Our atomic design system intelligently reverses margins, paddings, vector icons, and layout hierarchies to provide a truly native RTL experience that delights users.",
       rtlTitle: "Flawless RTL Architectural Matrix",

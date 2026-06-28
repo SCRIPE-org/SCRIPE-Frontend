@@ -5,31 +5,31 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 const sections: DocSection[] = [
   {
     type: "paragraph",
-    contentKey: "infrastructure.uisCli.intro",
+    contentKey: "infrastructure.scripeCli.intro",
   },
 
   // ─── Core Scaffolding Commands ─────────────────────────────────
   {
     type: "heading",
     level: 2,
-    titleKey: "infrastructure.uisCli.commandsTitle",
+    titleKey: "infrastructure.scripeCli.commandsTitle",
     id: "commands",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.uisCli.commandsIntro",
+    contentKey: "infrastructure.scripeCli.commandsIntro",
   },
 
   // new-module
   {
     type: "heading",
     level: 3,
-    titleKey: "infrastructure.uisCli.newModuleTitle",
+    titleKey: "infrastructure.scripeCli.newModuleTitle",
     id: "new-module",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.uisCli.newModuleIntro",
+    contentKey: "infrastructure.scripeCli.newModuleIntro",
   },
   {
     type: "code",
@@ -77,12 +77,12 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 3,
-    titleKey: "infrastructure.uisCli.newFeatureTitle",
+    titleKey: "infrastructure.scripeCli.newFeatureTitle",
     id: "new-feature",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.uisCli.newFeatureIntro",
+    contentKey: "infrastructure.scripeCli.newFeatureIntro",
   },
   {
     type: "code",
@@ -107,12 +107,12 @@ $ scripe new-feature Products Invoice \\
   {
     type: "heading",
     level: 3,
-    titleKey: "infrastructure.uisCli.destructionTitle",
+    titleKey: "infrastructure.scripeCli.destructionTitle",
     id: "destructive-commands",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.uisCli.destructionIntro",
+    contentKey: "infrastructure.scripeCli.destructionIntro",
   },
   {
     type: "code",
@@ -132,12 +132,12 @@ $ scripe remove-module --last --confirm`,
   {
     type: "heading",
     level: 3,
-    titleKey: "infrastructure.uisCli.bgJobsTitle",
+    titleKey: "infrastructure.scripeCli.bgJobsTitle",
     id: "bg-jobs",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.uisCli.bgJobsIntro",
+    contentKey: "infrastructure.scripeCli.bgJobsIntro",
   },
   {
     type: "code",
@@ -153,17 +153,17 @@ $ scripe remove-bg-service Products`,
   {
     type: "heading",
     level: 2,
-    titleKey: "infrastructure.uisCli.dslTitle",
+    titleKey: "infrastructure.scripeCli.dslTitle",
     id: "dsl-syntax",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.uisCli.dslIntro",
+    contentKey: "infrastructure.scripeCli.dslIntro",
   },
   {
     type: "info",
     variant: "note",
-    contentKey: "infrastructure.uisCli.dslSyntaxInfo",
+    contentKey: "infrastructure.scripeCli.dslSyntaxInfo",
   },
   {
     type: "table",
@@ -193,12 +193,12 @@ $ scripe remove-bg-service Products`,
   {
     type: "heading",
     level: 2,
-    titleKey: "infrastructure.uisCli.templatesTitle",
+    titleKey: "infrastructure.scripeCli.templatesTitle",
     id: "templates",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.uisCli.templatesIntro",
+    contentKey: "infrastructure.scripeCli.templatesIntro",
   },
   {
     type: "table",
@@ -233,12 +233,12 @@ $ scripe remove-bg-service Products`,
   {
     type: "heading",
     level: 2,
-    titleKey: "infrastructure.uisCli.securityTitle",
+    titleKey: "infrastructure.scripeCli.securityTitle",
     id: "security-defaults",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.uisCli.securityIntro",
+    contentKey: "infrastructure.scripeCli.securityIntro",
   },
   {
     type: "table",
@@ -256,47 +256,47 @@ $ scripe remove-bg-service Products`,
   {
     type: "heading",
     level: 2,
-    titleKey: "infrastructure.uisCli.autoWiringTitle",
+    titleKey: "infrastructure.scripeCli.autoWiringTitle",
     id: "auto-wiring",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.uisCli.autoWiringIntro",
+    contentKey: "infrastructure.scripeCli.autoWiringIntro",
   },
   {
     type: "list",
     variant: "unordered",
     items: [
-      "infrastructure.uisCli.wiringSln",
-      "infrastructure.uisCli.wiringProgram",
-      "infrastructure.uisCli.wiringSettings",
-      "infrastructure.uisCli.wiringDocker",
-      "infrastructure.uisCli.wiringPermissions",
-      "infrastructure.uisCli.wiringFrontendApp",
-      "infrastructure.uisCli.wiringFrontEnv",
+      "infrastructure.scripeCli.wiringSln",
+      "infrastructure.scripeCli.wiringProgram",
+      "infrastructure.scripeCli.wiringSettings",
+      "infrastructure.scripeCli.wiringDocker",
+      "infrastructure.scripeCli.wiringPermissions",
+      "infrastructure.scripeCli.wiringFrontendApp",
+      "infrastructure.scripeCli.wiringFrontEnv",
     ],
   },
   {
     type: "info",
     variant: "tip",
-    contentKey: "infrastructure.uisCli.revertSafely",
+    contentKey: "infrastructure.scripeCli.revertSafely",
   },
 
   // ─── Database & API Synchronization ───────────────────────────
   {
     type: "heading",
     level: 2,
-    titleKey: "infrastructure.uisCli.dbSyncTitle",
+    titleKey: "infrastructure.scripeCli.dbSyncTitle",
     id: "db-sync",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.uisCli.dbSyncIntro",
+    contentKey: "infrastructure.scripeCli.dbSyncIntro",
   },
   {
     type: "list",
     variant: "unordered",
-    items: ["infrastructure.uisCli.dbCliCmd", "infrastructure.uisCli.syncApiCmd"],
+    items: ["infrastructure.scripeCli.dbCliCmd", "infrastructure.scripeCli.syncApiCmd"],
   },
   {
     type: "code",
@@ -328,12 +328,12 @@ $ scripe sync-api https://localhost:5001/swagger/v1/swagger.json -m crm`,
   {
     type: "heading",
     level: 2,
-    titleKey: "infrastructure.uisCli.configTitle",
+    titleKey: "infrastructure.scripeCli.configTitle",
     id: "configuration",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.uisCli.configIntro",
+    contentKey: "infrastructure.scripeCli.configIntro",
   },
   {
     type: "code",
@@ -365,12 +365,12 @@ $ scripe sync-api https://localhost:5001/swagger/v1/swagger.json -m crm`,
   {
     type: "heading",
     level: 2,
-    titleKey: "infrastructure.uisCli.namingTitle",
+    titleKey: "infrastructure.scripeCli.namingTitle",
     id: "naming-conventions",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.uisCli.namingIntro",
+    contentKey: "infrastructure.scripeCli.namingIntro",
   },
   {
     type: "table",
@@ -392,12 +392,12 @@ $ scripe sync-api https://localhost:5001/swagger/v1/swagger.json -m crm`,
   {
     type: "heading",
     level: 3,
-    titleKey: "infrastructure.uisCli.utilityTitle",
+    titleKey: "infrastructure.scripeCli.utilityTitle",
     id: "utility",
   },
   {
     type: "paragraph",
-    contentKey: "infrastructure.uisCli.utilityIntro",
+    contentKey: "infrastructure.scripeCli.utilityIntro",
   },
   {
     type: "code",
@@ -419,8 +419,8 @@ $ scripe dev backend        # Kestrel .NET Engine`,
 
 registerPage({
   slug: "infrastructure/scripe-cli",
-  titleKey: "infrastructure.uisCli.title",
-  descriptionKey: "infrastructure.uisCli.description",
+  titleKey: "infrastructure.scripeCli.title",
+  descriptionKey: "infrastructure.scripeCli.description",
   category: "infrastructure",
   order: 2,
   sections,

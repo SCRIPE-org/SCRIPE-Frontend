@@ -36,7 +36,7 @@ export const fr = {
         "Le tableau entier se retourne nativement lorsque la langue choisie s'écrit de droite à gauche.",
       formTitle: "Système de Formulaires",
       formIntro:
-        "Utilise GenericForm et s'intègre avec Zod pour des validations puissantes sans efforts.",
+        "Utilise GenericForm et s'intègre avec Zod pour des validations pscripesantes sans efforts.",
       extensionTip:
         "N'essayez jamais de modifier le GenericCrudView lui-même : englobez-le ou passez des propriétés de surcharge pour vos besoins spécifiques.",
       zeroFlickerTitle: "Préservation du cache sans scintillement",
@@ -62,7 +62,7 @@ export const fr = {
         "Gère les petites informations purement locales à l'application web (Thèmes, Alertes/Toasts, Barres latérales).",
       languageTitle: "État de Localisation",
       languageIntro:
-        "Le Context LanguageProvider sauvegarde et rafraîchit la langue depuis le localStorage sans recharger la page web.",
+        "Le Context LanguageProvider sauvegarde et rafraîchit la langue depscripe le localStorage sans recharger la page web.",
       antiPatternsTitle: "Anti-Modèles (Anti-Patterns)",
     },
     localization: {

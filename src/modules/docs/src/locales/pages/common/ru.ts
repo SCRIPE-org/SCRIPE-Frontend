@@ -62,7 +62,7 @@ export const ru = {
     security: "Безопасность",
     apiReference: "Справочник API",
     infrastructure: "Инфраструктура",
-    commercialWhyUIS: "Почему SCRIPE",
+    commercialWhyScripe: "Почему SCRIPE",
     commercialPlatform: "Обзор платформы",
     commercialEnterprise: "Возможности Enterprise",
     commercialSecurity: "Безопасность и комплаенс",

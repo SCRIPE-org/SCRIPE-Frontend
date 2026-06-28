@@ -107,8 +107,8 @@ export const ru = {
       verifyInstallTitle: "Проверка установки",
       verifyInstallIntro:
         "После запуска обоих серверов проверьте установку с помощью этих проверок.",
-      uisCliTitle: "SCRIPE CLI",
-      uisCliIntro:
+      scripeCliTitle: "SCRIPE CLI",
+      scripeCliIntro:
         "Инструмент интерфейса командной строки SCRIPE (scripe-cli) предоставляет команды скаффолдинга для генерации модулей, сущностей, команд, запросов и многого другого. Он автоматически следует конвенциям архитектуры проекта.",
       cliDevTitle: "Разработка с CLI",
       cliDevIntro:

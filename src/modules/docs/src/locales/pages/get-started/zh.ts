@@ -97,8 +97,8 @@ export const zh = {
         "请在生产环境中立即更改这些密码！默认凭据由数据库迁移种子数据生成，仅应用于本地开发。",
       verifyInstallTitle: "验证安装",
       verifyInstallIntro: "一旦两个服务器都在运行，请使用以下检查验证安装是否成功。",
-      uisCliTitle: "SCRIPE 命令行工具 (CLI)",
-      uisCliIntro:
+      scripeCliTitle: "SCRIPE 命令行工具 (CLI)",
+      scripeCliIntro:
         "SCRIPE CLI (scripe-cli) 提供了脚手架命令来生成模块、实体、命令、查询等。它会自动遵循项目的架构约定。",
       cliDevTitle: "使用 CLI 开发",
       cliDevIntro:

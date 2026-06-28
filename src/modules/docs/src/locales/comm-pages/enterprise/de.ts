@@ -305,7 +305,7 @@ export const de = {
       intro:
         "Globale Enterprise-Software muss die Sprache ihrer Benutzer sprechen. SCRIPE liefert eine beispiellose Internationalisierungsinfrastruktur, die nicht nur Text-Strings austauscht – sie formt die gesamte Anwendungsarchitektur grundlegend um, um eine echte semantische Lokalisierung zu unterstützen.",
       languagesTitle: "Sofortige globale Reichweite",
-      uisRTL: "Der SCRIPE-Standard",
+      scripeRTL: "Der SCRIPE-Standard",
       rtlContent:
         "Wir spiegeln nicht einfach nur das CSS. Arabische und hebräische Schnittstellen sind strukturell neu aufgebaut. Unser atomares Designsystem kehrt Ränder (Margins), Abstände (Paddings), Vektor-Icons und Layout-Hierarchien intelligent um, um ein wirklich natives RTL-Erlebnis zu bieten, das Benutzer begeistert.",
       rtlTitle: "Makellose RTL-Architektur-Matrix",

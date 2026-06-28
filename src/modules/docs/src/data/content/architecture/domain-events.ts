@@ -111,12 +111,12 @@ public interface IDomainEventPublisher
       {
         label: "AstraFlow mediator Implementation",
         language: "csharp",
-        filename: "UISDomainEventPublisher.cs",
-        code: `public class UISDomainEventPublisher : IDomainEventPublisher
+        filename: "ScripeDomainEventPublisher.cs",
+        code: `public class ScripeDomainEventPublisher : IDomainEventPublisher
 {
     private readonly IPublisher _publisher;
 
-    public UISDomainEventPublisher(IPublisher publisher)
+    public ScripeDomainEventPublisher(IPublisher publisher)
         => _publisher = publisher;
 
     public async Task PublishAsync<TEvent>(TEvent domainEvent, CancellationToken ct)
@@ -383,8 +383,8 @@ public class OutboxCleanupJob : RecurringJobBase
         "Abstraction for publishing domain events",
       ],
       [
-        "UISDomainEventPublisher",
-        "Events/UISDomainEventPublisher.cs",
+        "ScripeDomainEventPublisher",
+        "Events/ScripeDomainEventPublisher.cs",
         "In-process pub/sub via AstraFlow mediator",
       ],
       [

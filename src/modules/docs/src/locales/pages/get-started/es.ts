@@ -48,11 +48,11 @@ export const es = {
         "Solo se cargan las variables de entorno que comienzan con UIS_. Por ejemplo, UIS_ConnectionStrings__DefaultConnection anula la cadena de conexión. Los guiones bajos dobles (__) representan anidamiento en la configuración JSON.",
     },
     prerequisites: {
-      title: "Requisitos Previos",
+      title: "Reqscripeitos Previos",
       description:
         "Herramientas requeridas, configuración de la base de datos y del entorno para el desarrollo.",
       intro:
-        "Antes de comenzar a desarrollar con SCRIPE, asegúrate de que tu máquina tenga instaladas las herramientas necesarias. Esta página cubre los requisitos exactos de versión, soporte de base de datos, configuración paso a paso y el inicio rápido con Docker.",
+        "Antes de comenzar a desarrollar con SCRIPE, asegúrate de que tu máquina tenga instaladas las herramientas necesarias. Esta página cubre los reqscripeitos exactos de versión, soporte de base de datos, configuración paso a paso y el inicio rápido con Docker.",
       requiredToolsTitle: "Herramientas Requeridas",
       databaseTitle: "Soporte de Bases de Datos",
       databaseIntro:
@@ -62,7 +62,7 @@ export const es = {
       envSetupTitle: "Configuración del Entorno",
       step1Title: "Verificar Versiones de Herramientas",
       step1Content:
-        "Asegúrate de que todas las herramientas estén instaladas y cumplan con los requisitos mínimos de versión.",
+        "Asegúrate de que todas las herramientas estén instaladas y cumplan con los reqscripeitos mínimos de versión.",
       step2Title: "Clonar el Repositorio",
       step2Content: "Clona el monorepo con submódulos de Git para el backend y el frontend.",
       step3Title: "Configurar Cadena de Conexión",
@@ -109,8 +109,8 @@ export const es = {
       verifyInstallTitle: "Verificar Instalación",
       verifyInstallIntro:
         "Una vez que ambos servidores estén funcionando, verifica la instalación mediante estas comprobaciones.",
-      uisCliTitle: "CLI de SCRIPE",
-      uisCliIntro:
+      scripeCliTitle: "CLI de SCRIPE",
+      scripeCliIntro:
         "La herramienta CLI de SCRIPE (scripe-cli) proporciona comandos de andamiaje (scaffolding) para generar módulos, entidades, comandos y consultas, siguiendo automáticamente las convenciones de la arquitectura.",
       cliDevTitle: "Desarrollo con la CLI",
       cliDevIntro:

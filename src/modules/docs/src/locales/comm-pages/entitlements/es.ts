@@ -169,7 +169,7 @@ export const es = {
       tblPriceR6C3: "119.76",
       promoTitle: "Descuentos Promocionales",
       promoContent:
-        "Impulse la adquisición y retención con soporte de códigos promocionales integrado en cada suscripción. Las promociones aplicadas se rastrean con el nombre del código y el porcentaje de descuento para visibilidad completa de auditoría y analítica.",
+        "Impulse la adqscripeición y retención con soporte de códigos promocionales integrado en cada suscripción. Las promociones aplicadas se rastrean con el nombre del código y el porcentaje de descuento para visibilidad completa de auditoría y analítica.",
       fgPromoCode: "Seguimiento de Códigos Promocionales",
       fgPromoCodeDesc:
         "Cada suscripción registra su AppliedPromoCode y su porcentaje PromotionDiscount. Los paneles analíticos muestran qué promociones generan más conversiones.",
@@ -301,7 +301,7 @@ export const es = {
         "Habilite una función experimental para inquilinos seleccionados antes de implementarla en todos los planes. Sobreescriba la función para inquilinos específicos durante la versión beta.",
       ucExpiring: "Excepciones de Tiempo Limitado",
       ucExpiringDesc:
-        "Los requisitos normativos pueden exigir un acceso temporal a funciones. Establezca una sobreescritura con una fecha de expiración: el sistema la revierte automáticamente cuando expira.",
+        "Los reqscripeitos normativos pueden exigir un acceso temporal a funciones. Establezca una sobreescritura con una fecha de expiración: el sistema la revierte automáticamente cuando expira.",
       settingTitle: "Establecer una Sobreescritura",
       settingContent:
         "Las sobreescrituras se establecen a través de una simple llamada a la API. Cada sobreescritura incluye la función, el valor personalizado, una fecha de expiración opcional y un motivo con fines de auditoría.",

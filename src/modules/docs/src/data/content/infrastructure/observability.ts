@@ -93,7 +93,7 @@ public class TracingBehavior<TRequest, TResponse>
     headers: ["Span Tag", "Example Value", "Purpose"],
     rows: [
       ["mediatr.request_type", "GetAdminsQuery", "Identify the handler being executed"],
-      ["mediatr.kind", "Query / Command", "Distinguish read vs write operations"],
+      ["mediatr.kind", "Query / Command", "Distingscripeh read vs write operations"],
       ["mediatr.module", "Identity / Entitlements", "Filter traces by module in Jaeger UI"],
       ["mediatr.duration_ms", "45", "Performance profiling and SLA monitoring"],
       ["otel.status_code", "OK / ERROR", "Error attribution and alert triggering"],
@@ -204,7 +204,7 @@ scrape_configs:
       [
         "EnvironmentName",
         "ASPNETCORE_ENVIRONMENT",
-        "Distinguish Development/Staging/Production logs",
+        "Distingscripeh Development/Staging/Production logs",
       ],
       [
         "CorrelationId",
@@ -224,7 +224,7 @@ scrape_configs:
       [
         "Application",
         "Static enrichment",
-        "Fixed label 'SCRIPE' — distinguish from other apps in shared Loki",
+        "Fixed label 'SCRIPE' — distingscripeh from other apps in shared Loki",
       ],
     ],
   },

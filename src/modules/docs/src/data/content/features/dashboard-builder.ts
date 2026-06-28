@@ -299,7 +299,7 @@ export interface DashboardBuilderCanvas {
       ["Cross-admin settings leak", "AUTH_STORAGE_KEYS_TO_CLEAR wipes all settings on logout"],
       [
         "Raw theme key leak",
-        "clearAllLocalStorage() removes theme and uis_admin_prefs_version explicitly",
+        "clearAllLocalStorage() removes theme and scripe_admin_prefs_version explicitly",
       ],
       ["Oversized payload", "8KB client guard + 10KB server column limit"],
       ["Admin modifies locked setting", "Server validates keys against AllowedAdminSettingsJson"],

@@ -294,7 +294,7 @@ t('errors.minLength', { min: '8' });        // "Must be at least 8 characters"
         variant: "positive",
         items: [
           "Use TanStack Query for all server-state (useQuery + useQueryClient)",
-          "Access Zustand directly where needed (useUIStore())",
+          "Access Zustand directly where needed (useScripetore())",
           "Use LanguageProvider + t() function with localStorage persistence",
           "Use hooks + TanStack Query per module; Zustand only for global UI",
         ],

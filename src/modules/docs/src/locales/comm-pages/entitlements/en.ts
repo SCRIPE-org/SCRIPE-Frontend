@@ -168,7 +168,7 @@ export const en = {
       tblPriceR6C3: "119.76",
       promoTitle: "Promotional Discounts",
       promoContent:
-        "Drive acquisition and retention with promo code support built into every subscription. Applied promotions are tracked with the code name and discount percentage for full audit and analytics visibility.",
+        "Drive acqscripeition and retention with promo code support built into every subscription. Applied promotions are tracked with the code name and discount percentage for full audit and analytics visibility.",
       fgPromoCode: "Promo Code Tracking",
       fgPromoCodeDesc:
         "Each subscription records its AppliedPromoCode and PromotionDiscount percentage. Analytics dashboards show which promotions drive the most conversions.",

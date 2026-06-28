@@ -13,7 +13,7 @@ export const de = {
       tblRuntimeHeader2: "SCRIPE-eigener Ersatz",
       tblRuntimeHeader3: "Produktionseffekt",
       tblRuntimeR1C1: "Request-Dispatching",
-      tblRuntimeR1C2: "UISMediator mit gecachten Delegates und geordneten Behaviors",
+      tblRuntimeR1C2: "ScripeMediator mit gecachten Delegates und geordneten Behaviors",
       tblRuntimeR1C3: "Kein Drittanbieter-Mediator-Lizenzschlüssel und kein Paketpolitik-Risiko",
       tblRuntimeR2C1: "DTO-Mapping",
       tblRuntimeR2C2: "Explizite Mapping-Regeln plus EncryptedIdMapper",

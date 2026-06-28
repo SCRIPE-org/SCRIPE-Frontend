@@ -35,7 +35,7 @@ export const es = {
       securityAuditDesc:
         "Interactuamos directamente con sus auditores de seguridad externos para parchear o demostrar falsos positivos inmediatamente durante las auditorías técnicas.",
       step1Content:
-        "Determine los límites arquitectónicos exactos y los requisitos de cumplimiento de datos de la integración a medida.",
+        "Determine los límites arquitectónicos exactos y los reqscripeitos de cumplimiento de datos de la integración a medida.",
       step1Title: "1. Descubrimiento Arquitectónico",
       step2Content:
         "Establezca Acuerdos de Nivel de Servicio (SLAs) claros y el ritmo de entrega esperado.",
@@ -171,13 +171,13 @@ export const es = {
         "Habilite o deshabilite granularmente módulos de plataforma específicos de manera estricta por inquilino.",
       settSecurity: "Criptografía Específica del Inquilino",
       settSecurityDesc:
-        "Permita a los inquilinos dictar sus propias complejidades de contraseñas, tiempos de vida de JWT y requisitos de MFA.",
+        "Permita a los inquilinos dictar sus propias complejidades de contraseñas, tiempos de vida de JWT y reqscripeitos de MFA.",
       settingsContent:
         "La multitenencia va mucho más allá de la segregación de datos. Cada inquilino en el sistema funciona como una aplicación virtual autónoma. Pueden definir de forma independiente los valores predeterminados del idioma, las banderas de características (feature flags), los temas de la interfaz de usuario y las suscripciones de webhooks sin afectar al clúster global.",
       settingsTitle: "Anulaciones Autónomas de Inquilinos",
       title: "Multitenencia Empresarial (Multi-Tenancy)",
       whiteLabelContent:
-        "Ofrezca una experiencia premium y personalizada. Nuestra arquitectura permite que cada ruta, plantilla de correo electrónico y componente de React se adapte sin problemas a los requisitos específicos de la marca del inquilino autenticado en ese momento.",
+        "Ofrezca una experiencia premium y personalizada. Nuestra arquitectura permite que cada ruta, plantilla de correo electrónico y componente de React se adapte sin problemas a los reqscripeitos específicos de la marca del inquilino autenticado en ese momento.",
       whiteLabelTitle: "Marca Blanca (White-Labeling) Sin Fricciones",
       domainTitle: "Gestión de Dominios Personalizados",
       domainIntro:
@@ -306,7 +306,7 @@ export const es = {
       intro:
         "El software empresarial global debe hablar el idioma de sus usuarios. SCRIPE ofrece una infraestructura de internacionalización incomparable que no se limita a intercambiar cadenas de texto: remodela fundamentalmente toda la arquitectura de la aplicación para soportar una verdadera localización semántica.",
       languagesTitle: "Alcance Global Inmediato",
-      uisRTL: "El Estándar SCRIPE",
+      scripeRTL: "El Estándar SCRIPE",
       rtlContent:
         "No nos limitamos a reflejar el CSS. Las interfaces en árabe y hebreo se han rediseñado estructuralmente. Nuestro sistema de diseño atómico invierte de forma inteligente los márgenes, los rellenos (paddings), los íconos vectoriales y las jerarquías de diseño para proporcionar una experiencia RTL verdaderamente nativa que encanta a los usuarios.",
       rtlTitle: "Matriz Arquitectónica RTL Impecable",

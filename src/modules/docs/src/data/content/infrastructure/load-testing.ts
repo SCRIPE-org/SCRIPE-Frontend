@@ -68,13 +68,13 @@ const sections: DocSection[] = [
         "Pipeline FAILS if breached",
       ],
       [
-        "uis_login_duration (P95)",
+        "scripe_login_duration (P95)",
         "< 3000ms",
         "95% of login requests complete in 3 seconds",
         "Auth-specific SLA",
       ],
       [
-        "uis_login_fail_rate",
+        "scripe_login_fail_rate",
         "< 5%",
         "Less than 5% of login attempts may fail",
         "Auth reliability SLA",
@@ -99,9 +99,9 @@ import { check, sleep, group } from 'k6';
 import { Rate, Trend } from 'k6/metrics';
 
 // ── Custom Metrics (visible in k6 output + Grafana) ──
-const loginDuration = new Trend('uis_login_duration', true);
-const loginFailRate = new Rate('uis_login_fail_rate');
-const tokenRefreshDuration = new Trend('uis_token_refresh_duration', true);
+const loginDuration = new Trend('scripe_login_duration', true);
+const loginFailRate = new Rate('scripe_login_fail_rate');
+const tokenRefreshDuration = new Trend('scripe_token_refresh_duration', true);
 
 // ── Environment Configuration ──
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:5001';
@@ -119,8 +119,8 @@ export const options = {
   ],
   thresholds: {
     'http_req_duration': ['p(95)<2000', 'p(99)<5000'],
-    'uis_login_duration': ['p(95)<3000'],
-    'uis_login_fail_rate': ['rate<0.05'],
+    'scripe_login_duration': ['p(95)<3000'],
+    'scripe_login_fail_rate': ['rate<0.05'],
     'http_req_failed': ['rate<0.01'],
   },
 };
@@ -326,21 +326,21 @@ jobs:
 # ═══════════════════════════════════════════════════════════
 # Full backup
 sqlcmd -S localhost -U sa -P 'YourPassword' -Q \\
-  "BACKUP DATABASE SCRIPE TO DISK='/backups/uis_full.bak'"
+  "BACKUP DATABASE SCRIPE TO DISK='/backups/scripe_full.bak'"
 
 # Point-in-time restore
 sqlcmd -S localhost -U sa -P 'YourPassword' -Q \\
-  "RESTORE DATABASE SCRIPE FROM DISK='/backups/uis_full.bak' \\
+  "RESTORE DATABASE SCRIPE FROM DISK='/backups/scripe_full.bak' \\
    WITH STOPAT='2026-04-06T20:00:00'"
 
 # ═══════════════════════════════════════════════════════════
 # POSTGRESQL BACKUP (Linux / Docker)
 # ═══════════════════════════════════════════════════════════
 # Full dump
-pg_dump -h localhost -U scripe -d uis_db -F c > uis_backup.dump
+pg_dump -h localhost -U scripe -d scripe_db -F c > scripe_backup.dump
 
 # Restore
-pg_restore -h localhost -U scripe -d uis_db uis_backup.dump
+pg_restore -h localhost -U scripe -d scripe_db scripe_backup.dump
 
 # ═══════════════════════════════════════════════════════════
 # REDIS BACKUP

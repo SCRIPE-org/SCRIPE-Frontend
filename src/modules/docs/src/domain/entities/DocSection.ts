@@ -112,7 +112,9 @@ export type DocSectionType =
   | "compatibility-matrix"
   | "pipeline-simulator"
   | "config-builder"
-  | "schema-visualizer";
+  | "schema-visualizer"
+  | "cli-simulator"
+  | "lifecycle-tracer";
 
 /**
  * Domain model representing a Doc Section Base structure.
@@ -280,7 +282,9 @@ export type DocSection =
   | CompatibilityMatrixSection
   | PipelineSimulatorSection
   | ConfigBuilderSection
-  | SchemaVisualizerSection;
+  | SchemaVisualizerSection
+  | CliSimulatorSection
+  | LifecycleTracerSection;
 
 export interface TerminalTab {
   tabId: string;
@@ -379,5 +383,24 @@ export interface SchemaTable {
 export interface SchemaVisualizerSection extends DocSectionBase {
   type: "schema-visualizer";
   tables: SchemaTable[];
+  titleKey: string;
+}
+
+export interface CliSimulatorSection extends DocSectionBase {
+  type: "cli-simulator";
+  titleKey: string;
+}
+
+export interface LifecycleStep {
+  id: string;
+  actor: "view" | "viewmodel" | "repository" | "controller" | "handler" | "database";
+  labelKey: string;
+  descriptionKey: string;
+  direction: "inbound" | "outbound";
+}
+
+export interface LifecycleTracerSection extends DocSectionBase {
+  type: "lifecycle-tracer";
+  steps: LifecycleStep[];
   titleKey: string;
 }

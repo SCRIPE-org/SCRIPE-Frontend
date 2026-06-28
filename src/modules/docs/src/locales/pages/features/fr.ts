@@ -14,7 +14,7 @@ export const fr = {
       flowTitle: "Flux d'Authentification",
       workspaceTitle: "Détection de Connexion Multi-Espace de Travail",
       workspaceIntro:
-        "Lorsqu'un administrateur se connecte à partir du domaine de la plateforme (sans locataire pré-résolu), le backend exécute un algorithme de routage à 3 cas. Le cas A utilise un tenantId fourni pour une isolation stricte du domaine. Le cas A' se déclenche lorsque l'indicateur isPlatformAdmin est défini — cela recherche directement l'admin de la plateforme (TenantId = null) et contourne complètement la détection de l'espace de travail, évitant ainsi une boucle infinie. Le cas B effectue la détection de l'espace de travail : il vérifie d'abord la présence d'un admin de la plateforme, puis recherche tous les locataires par e-mail — renvoyant un sélecteur d'espace de travail si plusieurs correspondances sont trouvées.",
+        "Lorsqu'un administrateur se connecte à partir du domaine de la plateforme (sans locataire pré-résolu), le backend exécute un algorithme de routage à 3 cas. Le cas A utilise un tenantId fourni pour une isolation stricte du domaine. Le cas A' se déclenche lorsque l'indicateur isPlatformAdmin est défini — cela recherche directement l'admin de la plateforme (TenantId = null) et contourne complètement la détection de l'espace de travail, évitant ainsi une boucle infinie. Le cas B effectue la détection de l'espace de travail : il vérifie d'abord la présence d'un admin de la plateforme, pscripe recherche tous les locataires par e-mail — renvoyant un sélecteur d'espace de travail si plusieurs correspondances sont trouvées.",
       workspaceNote:
         "L'indicateur isPlatformAdmin a été introduit pour résoudre une boucle critique : lorsqu'un administrateur de plateforme sélectionnait 'Administration de la Plateforme' dans le sélecteur d'espace de travail, cela déclenchait à nouveau la détection de l'espace de travail (car il n'y a pas de tenantId pour la plateforme). L'indicateur signale désormais au backend de sauter la détection et de s'authentifier directement par rapport à l'enregistrement admin de la plateforme.",
       passwordExpiryTitle: "Application de l'Expiration du Mot de Passe",
@@ -47,7 +47,7 @@ export const fr = {
       rateLimitingIntro:
         "Les endpoints d'authentification sont protégés par plusieurs politiques de limitation de débit pour empêcher les attaques par force brute et les abus.",
       lockoutWarning:
-        "Après 5 tentatives de connexion échouées, le compte est verrouillé pendant 15 minutes. Le compteur de verrouillage se réinitialise après une connexion réussie. Les administrateurs peuvent déverrouiller manuellement les comptes depuis le panneau d'administration.",
+        "Après 5 tentatives de connexion échouées, le compte est verrouillé pendant 15 minutes. Le compteur de verrouillage se réinitialise après une connexion réussie. Les administrateurs peuvent déverrouiller manuellement les comptes depscripe le panneau d'administration.",
       tokenValidationTitle: "Validation des Jetons et Vérification des Revendications",
       tokenValidationIntro:
         "Les deux pipelines d'authentification partagent le même processus de validation des jetons JWT. Le middleware vérifie les revendications de l'identifiant de nom, vérifie l'indicateur 'admin' et interroge la base de données en contournant les filtres de requête globaux via `IgnoreQueryFilters()` pour vérifier que le compte administrateur ou utilisateur est toujours actif et n'a pas été supprimé logiquement.",
@@ -62,7 +62,7 @@ export const fr = {
         "Pour éviter les attaques par rejeu de jetons, le `Verify2FACommandHandler` applique une fenêtre anti-rejeu stricte de 60 secondes. Il calcule un hachage SHA256 du code de vérification, le compare à `LastTwoFactorCodeUsed` et vérifie le timestamp de `LastTwoFactorCodeUsedAt`. Si le même code est réutilisé dans les 60 secondes, il est rejeté.",
       lockoutPolicyTitle: "Politiques de Verrouillage et Limites de Brute-Force",
       lockoutPolicyIntro:
-        "La protection contre la force brute définit `MaxFailedAttempts = 5` et une durée de verrouillage de `LockoutMinutes = 15`. Pendant le verrouillage, la validation du mot de passe est entièrement contournée pour éviter les attaques temporelles et l'épuisement du CPU, renvoyant une erreur de compte verrouillé immédiate.",
+        "La protection contre la force brute définit `MaxFailedAttempts = 5` et une durée de verrouillage de `LockoutMinutes = 15`. Pendant le verrouillage, la validation du mot de passe est entièrement contournée pour éviter les attaques temporelles et l'épscripeement du CPU, renvoyant une erreur de compte verrouillé immédiate.",
     },
     multiTenancy: {
       title: "Multi-locataire (Multi-Tenancy)",
@@ -135,7 +135,7 @@ export const fr = {
         "La vérification DNS est actuellement un processus piloté par l'interface utilisateur où l'administrateur clique sur 'Vérifier' pour déclencher la vérification. Le backend est prêt pour l'intégration complète de la résolution DNS. Les domaines générés automatiquement ignorent complètement la vérification — ils sont toujours fiables.",
       domainConfigTitle: "Domaine de Plateforme Configurable",
       domainConfigIntro:
-        "Chaque valeur liée aux domaines est configurable via la section Tenancy dans appsettings.json. Cela signifie que vous pouvez renommer entièrement la plateforme — en changeant le domaine de base, la cible CNAME, le préfixe de vérification et le préfixe de jeton — en éditant un seul bloc de configuration. Aucun changement de code requis. Le backend injecte TenancySettings via IOptions<T>, et le frontend reçoit la cible CNAME et le préfixe de vérification de la réponse API GET /domains.",
+        "Chaque valeur liée aux domaines est configurable via la section Tenancy dans appsettings.json. Cela signifie que vous pouvez renommer entièrement la plateforme — en changeant le domaine de base, la cible CNAME, le préfixe de vérification et le préfixe de jeton — en éditant un seul bloc de configuration. Aucun changement de code reqscripe. Le backend injecte TenancySettings via IOptions<T>, et le frontend reçoit la cible CNAME et le préfixe de vérification de la réponse API GET /domains.",
       domainConfigTip:
         "Pour déployer sur un domaine complètement différent (ex. myplatform.io au lieu de scripe.com), mettez simplement à jour les 4 valeurs dans appsettings.json. Tous les sous-domaines générés automatiquement, les instructions DNS et les jetons de vérification utiliseront automatiquement les nouvelles valeurs.",
       domainEndpointsTitle: "Points d'Accès API de Domaines",
@@ -145,7 +145,7 @@ export const fr = {
       description:
         "Système RBAC avec remplacement de portée (scope override), restrictions au niveau des champs et rôles cloisonnés par locataire.",
       intro:
-        "SCRIPE implémente un système RBAC (Contrôle d'Accès Basé sur les Rôles) complet et hautement optimisé avec des permissions modulaires basées sur des catégories, des remplacements de portée, des restrictions au niveau des champs (FLS) et un cloisonnement par locataire. Les permissions sont chargées dynamiquement depuis des fournisseurs, mises en cache côté serveur via IMemoryCache et validées par des vérificateurs programmatiques.",
+        "SCRIPE implémente un système RBAC (Contrôle d'Accès Basé sur les Rôles) complet et hautement optimisé avec des permissions modulaires basées sur des catégories, des remplacements de portée, des restrictions au niveau des champs (FLS) et un cloisonnement par locataire. Les permissions sont chargées dynamiquement depscripe des fournisseurs, mises en cache côté serveur via IMemoryCache et validées par des vérificateurs programmatiques.",
       hierarchyTitle: "Hiérarchie des Permissions",
       systemTitle: "Système de Permissions",
       systemIntro:
@@ -185,7 +185,7 @@ export const fr = {
         "SCRIPE capture chaque action significative dans le journal d'audit via un pipeline découplé de requêtes et de base de données, intégrant les journaux HTTP, le suivi des mutations EF Core et le logging de sécurité. Tous les événements sont diffusés en temps réel via SignalR vers les groupes de locataires.",
       architectureTitle: "Architecture d'Audit",
       pipelineDetail:
-        "L'audit des requêtes HTTP est géré par le RequestLoggingMiddleware. Il capture le contexte de la requête (méthode HTTP, chemin, adresse IP distante, User-Agent, revendications de l'utilisateur et Correlation ID) de manière synchrone sur le thread de requête avant que l'HttpContext ne soit recyclé, puis appelle l'AuditService de manière asynchrone dans une tâche de fond (Task.Run) pour éviter de bloquer les requêtes. Les chemins d'infrastructure sont ignorés et les requêtes GET réussies sont supprimées par défaut.",
+        "L'audit des requêtes HTTP est géré par le RequestLoggingMiddleware. Il capture le contexte de la requête (méthode HTTP, chemin, adresse IP distante, User-Agent, revendications de l'utilisateur et Correlation ID) de manière synchrone sur le thread de requête avant que l'HttpContext ne soit recyclé, pscripe appelle l'AuditService de manière asynchrone dans une tâche de fond (Task.Run) pour éviter de bloquer les requêtes. Les chemins d'infrastructure sont ignorés et les requêtes GET réussies sont supprimées par défaut.",
       changeTrackingTitle: "Interception des mutations d'entités",
       changeTrackingDetail:
         "L'AuditableEntityInterceptor suit les modifications au niveau de la base de données avant leur enregistrement. Il intercepe SaveChangesAsync et scannt den ChangeTracker pour les entités implémentant IAuditable ou ISoftDeletable. Pour les créations, il capture tous les champs. Pour les modifications, il effectue un différentiel et ne stocke que les colonnes modifiées afin d'économiser l'espace. Pour les suppressions physiques, il capture les valeurs originales. Pour les suppressions logiques (Soft Delete), il intercepte l'entité avant sa modification par le DbContext et crée un événement de suppression dédié. Il ignore également le type AuditLog lui-même pour éviter une récursion infinie.",
@@ -400,7 +400,7 @@ export const fr = {
       description:
         "Assignation de rôles et de restrictions par groupe avec isolation de locataire, gestion des membres et fusion additive lors de la connexion.",
       intro:
-        "Les groupes d'utilisateurs offrent un moyen évolutif d'assigner des rôles et des restrictions au niveau des champs à un grand nombre d'administrateurs. Au lieu d'assigner des rôles individuellement à chaque administrateur, vous créez un groupe, lui ajoutez des rôles et des restrictions, puis ajoutez des administrateurs en tant que membres. Tous les membres héritent automatiquement des rôles et des restrictions du groupe lors de leur prochaine connexion.",
+        "Les groupes d'utilisateurs offrent un moyen évolutif d'assigner des rôles et des restrictions au niveau des champs à un grand nombre d'administrateurs. Au lieu d'assigner des rôles individuellement à chaque administrateur, vous créez un groupe, lui ajoutez des rôles et des restrictions, pscripe ajoutez des administrateurs en tant que membres. Tous les membres héritent automatiquement des rôles et des restrictions du groupe lors de leur prochaine connexion.",
       architectureTitle: "Architecture",
       architectureIntro:
         "Chaque UserGroup appartient à un locataire (tenant) et possède des liens de jonction : AdminUserGroup pour les membres, UserGroupRole pour les rôles et UserGroupRestriction pour la sécurité au niveau des champs (FLS). Les relations sont configurées avec Cascade Delete du côté de UserGroup, ainsi la suppression d'un groupe supprime automatiquement les liens de membres, rôles et restrictions. Cependant, un Restrict Delete du côté de Tenant empêche la suppression d'un locataire contenant des groupes d'utilisateurs actifs.",
@@ -425,7 +425,7 @@ export const fr = {
       cascadeIntro:
         "Les groupes d'utilisateurs prennent en charge les opérations en bloc (activer, désactiver, supprimer et leurs variantes -all basées sur des filtres). Si cascadeAdmins est activé, la désactivation ou la suppression logique (Soft Delete) se propage aux membres du groupe. Les opérations en cascade ignorent automatiquement les administrateurs protégés (comme le créateur du locataire). Si cascadeAdmins est false, tout administrateur orphelin qui perd toutes ses affectations de rôles est automatiquement transféré vers le rôle de secours SYSTEM_DEFAULT.",
       cascadeNote:
-        "Les opérations en cascade ignorent automatiquement les administrateurs protégés (comme le créateur du locataire). Cela garantit qu'une suppression massive de groupe ne puisse pas effacer accidentellement le compte de récupération principal du locataire.",
+        "Les opérations en cascade ignorent automatiquement les administrateurs protégés (comme le créateur du locataire). Cela garantit qu'une suppression massive de groupe ne pscripese pas effacer accidentellement le compte de récupération principal du locataire.",
       endpointsTitle: "Points de Terminaison API (18)",
       frontendTitle: "Module Frontend",
       frontendIntro:
@@ -483,7 +483,7 @@ export const fr = {
         "SCRIPE propose un Centre de Contrôle IAM dédié au sein des Paramètres Système pour l'agrégation OIDC et la configuration de l'émission des serveurs.",
       loginFlowTitle: "Architecture OIDC",
       loginFlowContent:
-        "Lors de la connexion via Azure AD: SCRIPE agit en tant que Client. Il redirige l'utilisateur vers Azure, accepte le retour, valide le JWT externe puis émet SON PROPRE JWT interne, déconnectant l'autorisation interne du fournisseur externe.",
+        "Lors de la connexion via Azure AD: SCRIPE agit en tant que Client. Il redirige l'utilisateur vers Azure, accepte le retour, valide le JWT externe pscripe émet SON PROPRE JWT interne, déconnectant l'autorisation interne du fournisseur externe.",
       scopingTitle: "Partitionnement du Royaume (Locataires)",
       scopingContent:
         "SCRIPE reproduit le concept de Realm de Keycloak via les Partitions de Locataires. Les fournisseurs d'identité et applications OAuth sont formellement liés à leur TenantId. Les SuperAdmins gèrent tous les royaumes via 'Entrer dans le monde du Locataire'.",
@@ -495,7 +495,7 @@ export const fr = {
       description:
         "Personnalisation visuelle de la page de connexion avec 22 mises en page, jetons de design, contrôles de superposition/flou, thèmes clair/sombre, suite d'accessibilité WCAG AA et aperçu en direct isolé — sans aucun code.",
       intro:
-        "Le Studio de Personnalisation du Login de SCRIPE est un puissant éditeur visuel qui permet aux administrateurs de locataires de personnaliser entièrement l'expérience de la page de connexion sans écrire de code. Le studio fournit une interface à panneaux divisés avec des panneaux de configuration à gauche et un aperçu iframe isolé à droite, offrant un retour visuel en temps réel. Le studio comprend 8 onglets de configuration : Apparence, Couleurs, Typographie, Arrière-plan, Superposition, Panneau de Marque, Accessibilité et Avancé. Toutes les modifications sont basées sur des brouillons, nécessitant une publication explicite avant mise en production.",
+        "Le Studio de Personnalisation du Login de SCRIPE est un pscripesant éditeur visuel qui permet aux administrateurs de locataires de personnaliser entièrement l'expérience de la page de connexion sans écrire de code. Le studio fournit une interface à panneaux divisés avec des panneaux de configuration à gauche et un aperçu iframe isolé à droite, offrant un retour visuel en temps réel. Le studio comprend 8 onglets de configuration : Apparence, Couleurs, Typographie, Arrière-plan, Superposition, Panneau de Marque, Accessibilité et Avancé. Toutes les modifications sont basées sur des brouillons, nécessitant une publication explicite avant mise en production.",
       studioTitle: "Vue d'Ensemble du Studio",
       studioIntro:
         "Le Studio utilise une architecture à panneaux divisés : le panneau gauche contient 8 sections de configuration par onglets (Apparence, Couleurs, Typographie, Arrière-plan, Superposition, Panneau de Marque, Accessibilité, Avancé) tandis que le panneau droit fournit un iframe isolé qui rend la page de connexion avec injection de variables CSS en temps réel via postMessage. Les bascules d'appareils permettent de prévisualiser sur les breakpoints bureau, tablette et mobile.",
@@ -508,7 +508,7 @@ export const fr = {
         "Les mises en page divisées affichent le composant LoginBranding avec des contrôles indépendants de superposition/flou sur le panneau de marque. Les mises en page pleine page appliquent l'arrière-plan et la superposition à l'ensemble du conteneur. Les mises en page centrées et spéciales ont chacune leurs propres stratégies de rendu. Le changement de mise en page préserve toute la configuration — seule la structure de rendu change.",
       tokensTitle: "Pipeline de Jetons de Design",
       tokensIntro:
-        "Le système de personnalisation repose sur un pipeline complet de jetons de design. Les paramètres du locataire stockés en JSON sont transformés en jetons de design sémantiques, puis émis comme propriétés CSS personnalisées et injectés dans le DOM en direct. Cette architecture assure un style cohérent et typé sur les 22 mises en page, incluant 23+ règles CSS spécifiques à l'accessibilité.",
+        "Le système de personnalisation repose sur un pipeline complet de jetons de design. Les paramètres du locataire stockés en JSON sont transformés en jetons de design sémantiques, pscripe émis comme propriétés CSS personnalisées et injectés dans le DOM en direct. Cette architecture assure un style cohérent et typé sur les 22 mises en page, incluant 23+ règles CSS spécifiques à l'accessibilité.",
       bgOverlayTitle: "Contrôles d'Arrière-plan & Superposition",
       bgOverlayIntro:
         "Les contrôles d'arrière-plan et de superposition s'adaptent au type de mise en page sélectionné. Les mises en page pleine page appliquent les arrière-plans et superpositions au conteneur wrapper, tandis que les mises en page divisées limitent les arrière-plans au panneau de marque avec des superpositions de section formulaire indépendantes. Les contrôles de superposition incluent couleur, opacité (0–100%) et flou (0–20px).",
@@ -522,7 +522,7 @@ export const fr = {
         "Le Panneau de Marque (visible dans les mises en page divisées) fournit des contrôles dédiés pour le côté marque de la page de connexion. Il prend en charge un logo personnalisé, le nom de l'entreprise, le texte d'en-tête, le sous-titre et des contrôles indépendants d'arrière-plan/superposition. La superposition du panneau de marque utilise son propre ensemble de variables CSS (--login-panel-overlay-*) pour un contrôle granulaire séparé de la section formulaire.",
       draftTitle: "Brouillon / Publier / Revenir",
       draftIntro:
-        "Le studio implémente un flux de travail sécurisé Brouillon → Aperçu → Publication utilisant le contrôle de concurrence optimiste. Toutes les modifications sont enregistrées comme brouillons (DraftBrandingJson) jusqu'à ce que l'administrateur les publie explicitement. La publication incrémente le compteur SettingsVersion — les publications concurrentes d'autres administrateurs sont rejetées avec un conflit 409. Toute version publiée peut être restaurée depuis les snapshots du journal d'audit.",
+        "Le studio implémente un flux de travail sécurisé Brouillon → Aperçu → Publication utilisant le contrôle de concurrence optimiste. Toutes les modifications sont enregistrées comme brouillons (DraftBrandingJson) jusqu'à ce que l'administrateur les publie explicitement. La publication incrémente le compteur SettingsVersion — les publications concurrentes d'autres administrateurs sont rejetées avec un conflit 409. Toute version publiée peut être restaurée depscripe les snapshots du journal d'audit.",
       draftNote:
         "La concurrence optimiste empêche la perte de données lors de l'édition simultanée. Si un autre administrateur publie pendant votre édition, votre publication sera rejetée (409), et vous devrez rafraîchir et fusionner vos modifications.",
       safeModeTitle: "Mode Sécurisé",
@@ -607,9 +607,9 @@ export const fr = {
         "Le Constructeur de Tableau de Bord est le système de préférences d'administration de niveau entreprise de SCRIPE. Il synchronise 61 paramètres de tableau de bord configurables entre le navigateur et le serveur, utilisant un moteur de fusion à 4 couches (Plateforme → Locataire → Admin → Exécution) pour la résolution des paramètres avec contrôle de remplacement basé sur le locataire, persistance inter-appareils via AdminSettingsJson et 5 protections contre les cas limites.",
       overviewTitle: "Vue d'Ensemble du Système",
       overviewIntro:
-        "Le Constructeur de Tableau de Bord fournit un cycle de vie complet pour les préférences d'administration — du rendu immédiat depuis le cache à la réconciliation en arrière-plan avec le serveur.",
+        "Le Constructeur de Tableau de Bord fournit un cycle de vie complet pour les préférences d'administration — du rendu immédiat depscripe le cache à la réconciliation en arrière-plan avec le serveur.",
       overviewTip:
-        "Les paramètres sont rendus immédiatement depuis le cache localStorage au chargement de la page. La récupération depuis le serveur s'effectue en arrière-plan.",
+        "Les paramètres sont rendus immédiatement depscripe le cache localStorage au chargement de la page. La récupération depscripe le serveur s'effectue en arrière-plan.",
       mergeEngineTitle: "Moteur de Fusion à 4 Couches",
       mergeEngineIntro:
         "Les paramètres suivent une chaîne de priorité stricte à 4 couches. Chaque couche peut remplacer la précédente, avec un contrôle d'accès optionnel basé sur les chemins au niveau du locataire.",
@@ -617,7 +617,7 @@ export const fr = {
         "La Couche 2 (Restrictions d'Édition) est gérée côté serveur via le pipeline FeatureCheckBehavior.",
       syncHookTitle: "Hook de Synchronisation Serveur",
       syncHookIntro:
-        "Le hook useAdminSettingsSync gère le cycle de vie complet des préférences d'administration : chargement initial depuis le cache, flush différé, récupération serveur en arrière-plan et réconciliation silencieuse.",
+        "Le hook useAdminSettingsSync gère le cycle de vie complet des préférences d'administration : chargement initial depscripe le cache, flush différé, récupération serveur en arrière-plan et réconciliation silencieuse.",
       edgeCasesTitle: "Protections contre les Cas Limites",
       edgeCasesIntro:
         "Le système de synchronisation gère 5 cas limites critiques couramment rencontrés dans les environnements d'entreprise.",
@@ -840,7 +840,7 @@ export const fr = {
         "Le marché des thèmes permet aux développeurs de thèmes enregistrés de publier leurs conceptions. Les profils de développeur sont enregistrés et gérés via le DeveloperProfileController et stockés en tant qu'entités DeveloperProfile liées au locataire. La vérification des profils est limitée aux administrateurs de la plateforme (VerifyDeveloperCommand), tandis que les versements et les taux de commission sont suivis via l'AppFinancialsController (nécessitant des autorisations comme developerprofiles.verify et developerpayouts.process) et les passerelles de paiement (Stripe Connect).",
       purchaseVerifyTitle: "Séquence de Vérification d'Achat",
       purchaseVerifyIntro:
-        "Les thèmes premium et autonomes uniquement nécessitent un achat explicite avant de pouvoir être appliqués par un locataire. Le système vérifie le niveau du locataire et les achats existants (GetPurchasedThemeIdsAsync) dans la base de données. Si un achat est requis, le système redirige l'administrateur vers une session Stripe Checkout sécurisée. En cas de paiement réussi, Stripe émet un webhook checkout.session.completed contenant l'identifiant de corrélation, créant un enregistrement LoginThemePurchase dans la base de données qui accorde un accès permanent à ce thème.",
+        "Les thèmes premium et autonomes uniquement nécessitent un achat explicite avant de pouvoir être appliqués par un locataire. Le système vérifie le niveau du locataire et les achats existants (GetPurchasedThemeIdsAsync) dans la base de données. Si un achat est reqscripe, le système redirige l'administrateur vers une session Stripe Checkout sécurisée. En cas de paiement réussi, Stripe émet un webhook checkout.session.completed contenant l'identifiant de corrélation, créant un enregistrement LoginThemePurchase dans la base de données qui accorde un accès permanent à ce thème.",
       downloadsVerifyTitle: "Vérification des Téléchargements de Thèmes",
       downloadsVerifyIntro:
         "Pour télécharger en toute sécurité des préréglages de thèmes personnalisés ou des fichiers de configuration hors ligne, le système implémente un framework de téléchargement de fichiers lié à la session. Le DownloadsController multimédia génère une sessionId limitée dans le temps et cryptographiquement aléatoire via IDownloadService. L'utilisateur télécharge le package via une requête GET sécurisée vers /api/v1/downloads/session/{sessionId} , évitant ainsi le besoin d'en-têtes d'authentification côté client dans le lien de téléchargement tout en protégeant les fichiers contre tout accès non autorisé.",
@@ -1118,7 +1118,7 @@ export const fr = {
       compatIntro:
         "Pour éviter les erreurs de build pendant la migration, DashboardEntities.ts conserve des alias de type dépréciés qui ré-exportent les types des nouveaux modules spécifiques au domaine.",
       compatWarning:
-        "Les alias dépréciés doivent être supprimés lors d'une future passe de nettoyage une fois que tous les composants consommateurs auront migré vers l'import depuis leur module de domaine respectif (audit/security/analytics).",
+        "Les alias dépréciés doivent être supprimés lors d'une future passe de nettoyage une fois que tous les composants consommateurs auront migré vers l'import depscripe leur module de domaine respectif (audit/security/analytics).",
       sourceTitle: "Référence des Fichiers Source",
       sourceIntro:
         "Le Hub du Tableau de Bord refactorisé s'étend sur 4 modules (dashboard, audit, security, analytics), chacun avec sa propre pile complète de 6 couches.",
@@ -1144,7 +1144,7 @@ export const fr = {
       tableReason: "Raison de sécurité",
       emailVerificationTitle: "Tickets de vérification d'e-mail",
       emailVerificationIntro:
-        "Avant qu'une saga ne puisse démarrer, l'e-mail du prospect doit être vérifié. Le système émet un ticket signé par cryptographie HMAC-SHA256 avec un délai d'expiration de 15 minutes.",
+        "Avant qu'une saga ne pscripese démarrer, l'e-mail du prospect doit être vérifié. Le système émet un ticket signé par cryptographie HMAC-SHA256 avec un délai d'expiration de 15 minutes.",
       phase2Title: "Phase 2 : Droits et transfert de facturation",
       phase2Intro:
         "La phase 2 lie le locataire nouvellement créé au module Entitlements. Si l'édition choisie est payante, le système génère une session de paiement Stripe et redirige l'utilisateur.",

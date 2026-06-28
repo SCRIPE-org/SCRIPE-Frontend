@@ -9,7 +9,7 @@ export const fr = {
         "Notre architecture privilégie la vitesse sans sacrifier l'abstraction. Chaque couche de l'API est rigoureusement évaluée pour garantir une allocation minimale et un débit maximal.",
       apiTitle: "Vitesse Soutenue de l'API",
       cachingContent:
-        "Nous n'interrogeons pas la base de données à moins que cela ne soit légalement (logiquement) requis. SCRIPE met en œuvre une stratégie de mise en cache sophistiquée à plusieurs niveaux. Des caches en mémoire L1 à courte durée de vie interceptent les requêtes simultanées identiques, tandis que le cache Redis L2 distribué fournit un débit de lecture croisé de nœuds massif.",
+        "Nous n'interrogeons pas la base de données à moins que cela ne soit légalement (logiquement) reqscripe. SCRIPE met en œuvre une stratégie de mise en cache sophistiquée à plusieurs niveaux. Des caches en mémoire L1 à courte durée de vie interceptent les requêtes simultanées identiques, tandis que le cache Redis L2 distribué fournit un débit de lecture croisé de nœuds massif.",
       cachingTitle: "Mise en Cache Agressive Multi-Niveaux",
       dbTitle: "Optimisation d'Entity Framework",
       description:
@@ -31,12 +31,12 @@ export const fr = {
         "Les applications d'entreprise modernes doivent être vivantes. SCRIPE intègre nativement un fond de panier (backplane) SignalR WebSocket distribué et hautement optimisé, fournissant une communication bidirectionnelle en temps réel à des millions de clients simultanés.",
       liveAudit: "Streaming Forensique en Temps Réel",
       liveAuditDesc:
-        "Diffusez les journaux de sécurité et d'audit critiques directement vers les tableaux de bord des administrateurs dès qu'ils se produisent globalement.",
+        "Diffusez les journaux de sécurité et d'audit critiques directement vers les tableaux de bord des administrateurs dès qu'ils se prodscripeent globalement.",
       liveCharts: "Rendu Télémétrique Dynamique",
       liveChartsDesc:
         "Les points de données des graphiques s'animent à l'écran au moment même où un événement backend est publié.",
       notificationsContent:
-        "Le hub de notification unifié de la plateforme peut transmettre instantanément des alertes transactionnelles, des demandes d'approbation et des avertissements système directement dans l'interface utilisateur React sans interroger le serveur en boucle (polling), réduisant considérablement la charge de la base de données et la consommation de la batterie sur les clients mobiles.",
+        "Le hub de notification unifié de la plateforme peut transmettre instantanément des alertes transactionnelles, des demandes d'approbation et des avertissements système directement dans l'interface utilisateur React sans interroger le serveur en boucle (polling), rédscripeant considérablement la charge de la base de données et la consommation de la batterie sur les clients mobiles.",
       notificationsTitle: "Notifications Globales Instantanées",
       presenceTrack: "Suivi de Présence & Verrouillage",
       presenceTrackDesc:
@@ -76,9 +76,9 @@ export const fr = {
       cacheMetrics: "Efficacité du Cache Redis",
       cacheMetricsDesc:
         "Surveillez en permanence la fragmentation de la mémoire, les ratios succès/échecs et les métriques d'éviction pour ajuster les performances.",
-      dbMetrics: "Épuisement du Pool de Base de Données",
+      dbMetrics: "Épscripeement du Pool de Base de Données",
       dbMetricsDesc:
-        "Suivez les connexions actives, les exécutions de requêtes lentes et les temps de compilation des commandes directement depuis EF Core.",
+        "Suivez les connexions actives, les exécutions de requêtes lentes et les temps de compilation des commandes directement depscripe EF Core.",
       description:
         "Journalisation structurée forensique, sondes d'intégrité sans temps d'arrêt, métriques Prometheus et traçage distribué OpenTelemetry.",
       healthContent:
@@ -215,7 +215,7 @@ export const fr = {
       providersTitle: "Backends de Stockage Pris en Charge",
       resumableDownload: "Téléchargements Multi-Parties",
       resumableDownloadDesc:
-        "Diffusez de manière fiable des fichiers massifs à l'échelle du gigaoctet sans planter les nœuds d'API ni épuiser la mémoire.",
+        "Diffusez de manière fiable des fichiers massifs à l'échelle du gigaoctet sans planter les nœuds d'API ni épscripeer la mémoire.",
       tenantIsolation: "Isolation Cryptographique des Chemins",
       tenantIsolationDesc:
         "Les fichiers sont physiquement regroupés (bucketed) par `[TenantId]`, garantissant une sécurité massive des données.",

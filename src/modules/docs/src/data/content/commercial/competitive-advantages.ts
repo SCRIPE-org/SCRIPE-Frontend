@@ -16,14 +16,14 @@ const sections: DocSection[] = [
     type: "comparison",
     columns: [
       {
-        titleKey: "commercial.competitiveAdvantages.uisApproach",
+        titleKey: "commercial.competitiveAdvantages.scripeApproach",
         variant: "positive",
         items: [
-          "commercial.competitiveAdvantages.compUISI1",
-          "commercial.competitiveAdvantages.compUISI2",
-          "commercial.competitiveAdvantages.compUISI3",
-          "commercial.competitiveAdvantages.compUISI4",
-          "commercial.competitiveAdvantages.compUISI5",
+          "commercial.competitiveAdvantages.compScripeI1",
+          "commercial.competitiveAdvantages.compScripeI2",
+          "commercial.competitiveAdvantages.compScripeI3",
+          "commercial.competitiveAdvantages.compScripeI4",
+          "commercial.competitiveAdvantages.compScripeI5",
         ],
       },
       {

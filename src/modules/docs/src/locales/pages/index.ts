@@ -90,6 +90,46 @@ export { zh as revenueAnalyticsZh } from "./revenue-analytics/zh";
 export { es as revenueAnalyticsEs } from "./revenue-analytics/es";
 export { de as revenueAnalyticsDe } from "./revenue-analytics/de";
 
+export { en as billingEngineEn } from "./billing-engine/en";
+export { ar as billingEngineAr } from "./billing-engine/ar";
+export { fr as billingEngineFr } from "./billing-engine/fr";
+export { ru as billingEngineRu } from "./billing-engine/ru";
+export { zh as billingEngineZh } from "./billing-engine/zh";
+export { es as billingEngineEs } from "./billing-engine/es";
+export { de as billingEngineDe } from "./billing-engine/de";
+
+export { en as invoicesEn } from "./invoices/en";
+export { ar as invoicesAr } from "./invoices/ar";
+export { fr as invoicesFr } from "./invoices/fr";
+export { ru as invoicesRu } from "./invoices/ru";
+export { zh as invoicesZh } from "./invoices/zh";
+export { es as invoicesEs } from "./invoices/es";
+export { de as invoicesDe } from "./invoices/de";
+
+export { en as dunningEn } from "./dunning/en";
+export { ar as dunningAr } from "./dunning/ar";
+export { fr as dunningFr } from "./dunning/fr";
+export { ru as dunningRu } from "./dunning/ru";
+export { zh as dunningZh } from "./dunning/zh";
+export { es as dunningEs } from "./dunning/es";
+export { de as dunningDe } from "./dunning/de";
+
+export { en as tenantPlansEn } from "./tenant-plans/en";
+export { ar as tenantPlansAr } from "./tenant-plans/ar";
+export { fr as tenantPlansFr } from "./tenant-plans/fr";
+export { ru as tenantPlansRu } from "./tenant-plans/ru";
+export { zh as tenantPlansZh } from "./tenant-plans/zh";
+export { es as tenantPlansEs } from "./tenant-plans/es";
+export { de as tenantPlansDe } from "./tenant-plans/de";
+
+export { en as userSubscriptionsEn } from "./user-subscriptions/en";
+export { ar as userSubscriptionsAr } from "./user-subscriptions/ar";
+export { fr as userSubscriptionsFr } from "./user-subscriptions/fr";
+export { ru as userSubscriptionsRu } from "./user-subscriptions/ru";
+export { zh as userSubscriptionsZh } from "./user-subscriptions/zh";
+export { es as userSubscriptionsEs } from "./user-subscriptions/es";
+export { de as userSubscriptionsDe } from "./user-subscriptions/de";
+
 // Lazy loader map for dynamic imports
 /**
  * Exported constant defining parameters and fields for page loaders configurations.
@@ -106,4 +146,9 @@ export const pageLoaders: Record<string, () => Promise<any>> = {
   tutorials: () => import("./tutorials/en"),
   "api-reference": () => import("./api-reference/en"),
   "revenue-analytics": () => import("./revenue-analytics/en"),
+  "billing-engine": () => import("./billing-engine/en"),
+  invoices: () => import("./invoices/en"),
+  dunning: () => import("./dunning/en"),
+  "tenant-plans": () => import("./tenant-plans/en"),
+  "user-subscriptions": () => import("./user-subscriptions/en"),
 };

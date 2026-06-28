@@ -13,7 +13,7 @@ import { ar as infrastructure } from "../pages/infrastructure/ar";
 import { ar as tutorials } from "../pages/tutorials/ar";
 import { ar as apiReference } from "../pages/api-reference/ar";
 
-import { ar as commWhyUIS } from "../comm-pages/why-uis/ar";
+import { ar as commWhyScripe } from "../comm-pages/why-scripe/ar";
 import { ar as commPlatform } from "../comm-pages/platform/ar";
 import { ar as commEnterprise } from "../comm-pages/enterprise/ar";
 import { ar as commSecurity } from "../comm-pages/security/ar";
@@ -49,7 +49,7 @@ export const allDocsAr: Record<string, any> = mergeAll(
   infrastructure,
   tutorials,
   apiReference,
-  commWhyUIS,
+  commWhyScripe,
   commPlatform,
   commEnterprise,
   commSecurity,

@@ -22,7 +22,7 @@ export const fr = {
         "La pollution de l'espace de noms entre les modules est physiquement impossible. SCRIPE impose une ségrégation définitive des modules via des outils stricts et une validation CI automatisée, garantissant que des équipes de développement massives opèrent avec une autonomie totale et sans conflits de fusion (merge collisions).",
       cqrsTitle: "Pipelines d'Événements CQRS Éprouvés",
       cqrsContent:
-        "Détruisez les blocages de bases de données (deadlocks) en séparant définitivement les responsabilités opérationnelles de Commande (Écriture) et de Requête (Lecture). Le pipeline de requêtes SCRIPE mediator agit comme un système nerveux central à grande vitesse, interceptant, validant, authentifiant et consignant de manière cryptographique et agressive chaque action atomique avant son exécution.",
+        "Détrscripeez les blocages de bases de données (deadlocks) en séparant définitivement les responsabilités opérationnelles de Commande (Écriture) et de Requête (Lecture). Le pipeline de requêtes SCRIPE mediator agit comme un système nerveux central à grande vitesse, interceptant, validant, authentifiant et consignant de manière cryptographique et agressive chaque action atomique avant son exécution.",
       deploymentTitle: "Topologies de Déploiement Sans Friction",
       monolith: "Domination Monolithique",
       gateway: "Agilité de la Passerelle (Gateway)",
@@ -169,7 +169,7 @@ export const fr = {
         "La transition entre les modes de déploiement est fluide. Passer d'un monolithe à des microservices ne nécessite aucune réécriture logique — reconfigurez simplement les conteneurs DI, lancez un courtier de messages (RabbitMQ/Kafka) en utilisant nos abstractions pré-construites, et déployez les modules dans des conteneurs Docker indépendants.",
       migrationTitle: "Architecture Évolutive Sans Friction",
       monolithContent:
-        "Démarrez rapidement et réduisez les frais généraux opérationnels initiaux. L'ensemble de l'écosystème SCRIPE — y compris tous les modules, l'API unifiée et le frontend React — est compilé en une unité de déploiement unique hautement optimisée. Une isolation stricte des modules garantit que la base de code reste immaculée même au sein d'un monolithe.",
+        "Démarrez rapidement et rédscripeez les frais généraux opérationnels initiaux. L'ensemble de l'écosystème SCRIPE — y compris tous les modules, l'API unifiée et le frontend React — est compilé en une unité de déploiement unique hautement optimisée. Une isolation stricte des modules garantit que la base de code reste immaculée même au sein d'un monolithe.",
       monolithTitle: "Le Monolithe Modulaire",
       step1Content: "Définissez des limites strictes à l'aide du Domain-Driven Design.",
       step1Title: "1. Création du Contexte Délimité",

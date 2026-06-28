@@ -278,7 +278,7 @@ export const es = {
       newProviderStep3: "Inyección al InfrastructureDI de la arquitectura principal.",
       newProviderStep4: "Correr la CLI y generar el ModelSnapshot cero.",
     },
-    uisCli: {
+    scripeCli: {
       title: "Herramientas SCRIPE CLI",
       description:
         "Productividad inmensa con andamiaje de 66 archivos generados de golpe y conexiones automatizadas al ecosistema.",
@@ -330,7 +330,7 @@ export const es = {
       utilityTitle: "Aceleradores de Flujo",
       utilityIntro: "Comandos de arranque npm y dotnet unificados.",
     },
-    uisStudio: {
+    scripeStudio: {
       title: "SCRIPE Studio",
       description:
         "Panel de control visual para desarrolladores con gestión de módulos en tiempo real, generadores de código, controles de servidor de desarrollo y terminal integrado.",
@@ -455,7 +455,7 @@ export const es = {
       thresholdsTitle: "Umbrales SLA",
       authFlowTitle: "Script de Prueba de Flujo de Autenticación",
       authFlowIntro:
-        "La prueba auth-flow.js simula patrones de autenticación de usuario realistas: inicio de sesión, acceso a endpoints protegidos con token JWT y verificación de health check. Métricas personalizadas (uis_login_duration, uis_login_fail_rate) rastrean SLAs de autenticación.",
+        "La prueba auth-flow.js simula patrones de autenticación de usuario realistas: inicio de sesión, acceso a endpoints protegidos con token JWT y verificación de health check. Métricas personalizadas (scripe_login_duration, scripe_login_fail_rate) rastrean SLAs de autenticación.",
       runningTitle: "Ejecutar Pruebas de Carga",
       cicdTitle: "Integración CI/CD",
       cicdIntro:

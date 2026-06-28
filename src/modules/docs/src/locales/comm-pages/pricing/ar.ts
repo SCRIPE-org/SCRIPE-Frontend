@@ -13,7 +13,7 @@ export const ar = {
       tblRuntimeHeader2: "بديل مملوك لـ SCRIPE",
       tblRuntimeHeader3: "الأثر في الإنتاج",
       tblRuntimeR1C1: "إرسال الطلبات",
-      tblRuntimeR1C2: "UISMediator مع مفوضات مخزنة وسلوكيات مرتبة",
+      tblRuntimeR1C2: "ScripeMediator مع مفوضات مخزنة وسلوكيات مرتبة",
       tblRuntimeR1C3: "لا يوجد خطر مفتاح ترخيص وسيط خارجي أو تغيير سياسة حزمة",
       tblRuntimeR2C1: "تحويل DTO",
       tblRuntimeR2C2: "قواعد تحويل صريحة مع EncryptedIdMapper",

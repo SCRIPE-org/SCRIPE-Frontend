@@ -62,7 +62,7 @@ export const es = {
     security: "Seguridad",
     apiReference: "Referencia de API",
     infrastructure: "Infraestructura",
-    commercialWhyUIS: "Por qué SCRIPE",
+    commercialWhyScripe: "Por qué SCRIPE",
     commercialPlatform: "Visión general de la Plataforma",
     commercialEnterprise: "Características Enterprise",
     commercialSecurity: "Seguridad y Cumplimiento",

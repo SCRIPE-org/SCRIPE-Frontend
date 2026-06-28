@@ -13,7 +13,7 @@ import { de as infrastructure } from "../pages/infrastructure/de";
 import { de as tutorials } from "../pages/tutorials/de";
 import { de as apiReference } from "../pages/api-reference/de";
 
-import { de as commWhyUIS } from "../comm-pages/why-uis/de";
+import { de as commWhyScripe } from "../comm-pages/why-scripe/de";
 import { de as commPlatform } from "../comm-pages/platform/de";
 import { de as commEnterprise } from "../comm-pages/enterprise/de";
 import { de as commSecurity } from "../comm-pages/security/de";
@@ -49,7 +49,7 @@ export const allDocsDe: Record<string, any> = mergeAll(
   infrastructure,
   tutorials,
   apiReference,
-  commWhyUIS,
+  commWhyScripe,
   commPlatform,
   commEnterprise,
   commSecurity,

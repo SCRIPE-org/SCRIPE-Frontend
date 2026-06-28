@@ -13,7 +13,7 @@ export const ru = {
       tblRuntimeHeader2: "Замена, принадлежащая SCRIPE",
       tblRuntimeHeader3: "Эффект в production",
       tblRuntimeR1C1: "Диспетчеризация запросов",
-      tblRuntimeR1C2: "UISMediator с кэшированными делегатами и упорядоченными behaviors",
+      tblRuntimeR1C2: "ScripeMediator с кэшированными делегатами и упорядоченными behaviors",
       tblRuntimeR1C3: "Нет риска стороннего лицензионного ключа медиатора или политики пакета",
       tblRuntimeR2C1: "DTO-маппинг",
       tblRuntimeR2C2: "Явные правила маппинга плюс EncryptedIdMapper",

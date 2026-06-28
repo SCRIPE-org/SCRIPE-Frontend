@@ -62,7 +62,7 @@ export const de = {
     infrastructure: "Infrastruktur",
     modules: "Module",
     entitlements: "Berechtigungen",
-    commercialWhyUIS: "Warum SCRIPE",
+    commercialWhyScripe: "Warum SCRIPE",
     commercialPlatform: "Plattform-Übersicht",
     commercialEnterprise: "Enterprise-Funktionen",
     commercialSecurity: "Sicherheit & Compliance",

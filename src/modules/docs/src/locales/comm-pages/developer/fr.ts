@@ -62,7 +62,7 @@ export const fr = {
       tblCmdHeader3: "Exemple de Commande",
       step1Title: "1. Définir la Cible du Domaine",
       step1Content:
-        "Fournissez à la CLI strictement le nom du contexte délimité (Bounded Context). Elle calculera immédiatement la topologie structurelle multicouche requise pour héberger la nouvelle fonctionnalité.",
+        "Fournissez à la CLI strictement le nom du contexte délimité (Bounded Context). Elle calculera immédiatement la topologie structurelle multicouche reqscripee pour héberger la nouvelle fonctionnalité.",
       step2Title: "2. Phase d'Exécution Handlebars",
       step2Content:
         "Le moteur évalue séquentiellement 66 dispositions Handlebars intégrées. Il analyse dynamiquement les espaces de noms, les associations d'entités et les structures d'arbres de composants React sans intervention humaine.",
@@ -77,7 +77,7 @@ export const fr = {
       description:
         "Configurations de pipeline d'intégration et de déploiement continus (CI/CD) clés en main et éprouvées.",
       dockerContent:
-        "Les Dockerfiles prêts pour la production sont inclus immédiatement après la génération. Ils présentent des builds Alpine Linux multi-étapes qui réduisent considérablement les surfaces d'attaque et génèrent des charges utiles de conteneurs incroyablement petites et à démarrage rapide.",
+        "Les Dockerfiles prêts pour la production sont inclus immédiatement après la génération. Ils présentent des builds Alpine Linux multi-étapes qui rédscripeent considérablement les surfaces d'attaque et génèrent des charges utiles de conteneurs incroyablement petites et à démarrage rapide.",
       dockerTitle: "Dockerisation Multi-Étapes",
       environmentsTitle: "Parité des Environnements",
       hostingTitle: "Hébergement Agnostique",
@@ -136,7 +136,7 @@ export const fr = {
       intro:
         "Le délai de rentabilité (Time to value) est la seule mesure qui compte. Ce guide complet accélère votre équipe d'ingénierie, de l'extraction du référentiel à l'exécution réussie de leur première invocation d'API authentifiée contre une base de données entièrement initialisée en moins de 15 minutes.",
       nextStepsTitle: "Prochaines Étapes Architecturales",
-      prereqTitle: "Prérequis Système",
+      prereqTitle: "Préreqscripe Système",
       quickStartTitle: "Le Démarrage Rapide en 15 Minutes",
       step1Content:
         "Assurez-vous que le SDK .NET 9, Node.js 20+, et votre moteur Docker préféré sont installés et globalement accessibles sur votre machine de développement.",
@@ -194,7 +194,7 @@ export const fr = {
       lstNextI2: "Configurez les paramètres de messagerie pour la livraison des notifications",
       lstNextI3: "Créez votre premier locataire (tenant) via le panneau d'administration",
       lstNextI4: "Ajoutez des rôles et des autorisations personnalisés",
-      lstNextI5: "Construisez votre premier module métier avec la CLI",
+      lstNextI5: "Constrscripeez votre premier module métier avec la CLI",
       lstNextI6: "Explorez la documentation technique complète pour approfondir",
     },
     systemRequirements: {
@@ -202,7 +202,7 @@ export const fr = {
         "Astuce Migration Cloud : SCRIPE est totalement indépendant du cloud (Cloud-agnostic). Déployez sur AWS ECS, Azure App Services ou Google Kubernetes Engine (GKE) en utilisant nos modèles d'Infrastructure-as-Code (IaC) fournis.",
       dbTitle: "Lignes de Base Matérielles des Bases de Données",
       description:
-        "Profils matériels de base, chaînes d'outils (toolchains) logicielles nécessaires et configurations réseau exactes requises pour héberger SCRIPE sur différentes échelles de déploiement.",
+        "Profils matériels de base, chaînes d'outils (toolchains) logicielles nécessaires et configurations réseau exactes reqscripees pour héberger SCRIPE sur différentes échelles de déploiement.",
       devTitle: "Postes de Travail de Développement Local",
       intro:
         "SCRIPE est conçu pour être extraordinairement économe en ressources. Bien qu'il s'adapte dynamiquement pour consommer des clusters cloud massifs, il peut démarrer et exécuter l'intégralité de sa suite de tests confortablement sur l'ordinateur portable d'un développeur standard.",
@@ -259,7 +259,7 @@ export const fr = {
       tblProdMonoR6C2: "Windows Server 2022 / Ubuntu 22.04",
       tblProdMonoR6C3: "Idem",
       tblProdMonoR7C1: "Certificat SSL",
-      tblProdMonoR7C2: "Requis (Let's Encrypt)",
+      tblProdMonoR7C2: "Reqscripe (Let's Encrypt)",
       tblProdMonoR7C3: "Certificat signé par une CA",
       tblProdMicroHeader1: "Composant",
       tblProdMicroHeader2: "Par Service",
@@ -300,18 +300,18 @@ export const fr = {
       tblDbR3C1: "Oracle 21c",
       tblDbR3C2: "8 Go",
       tblDbR3C3: "100 Go",
-      tblDbR3C4: "Licence d'entreprise requise",
+      tblDbR3C4: "Licence d'entreprise reqscripee",
       tblDbR4C1: "SQLite",
       tblDbR4C2: "N/A",
       tblDbR4C3: "1 Go",
       tblDbR4C4: "Dev/test uniquement, basé sur des fichiers",
-      lstNetI1: "Port 443 (HTTPS) — Requis pour tous les déploiements en production",
+      lstNetI1: "Port 443 (HTTPS) — Reqscripe pour tous les déploiements en production",
       lstNetI2: "Port 80 (HTTP) — Redirection vers HTTPS uniquement",
       lstNetI3: "Port 5000/5001 — Backend Kestrel (derrière proxy inverse)",
       lstNetI4: "Port 3000 — Frontend Next.js (derrière proxy inverse)",
       lstNetI5: "Port 6379 — Redis (réseau interne uniquement)",
       lstNetI6: "Port 1433/5432/1521 — Base de données (réseau interne uniquement)",
-      lstNetI7: "Prise en charge WebSocket — Requise pour les fonctionnalités temps réel SignalR",
+      lstNetI7: "Prise en charge WebSocket — Reqscripee pour les fonctionnalités temps réel SignalR",
     },
   },
 };

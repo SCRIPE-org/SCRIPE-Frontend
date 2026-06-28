@@ -14,7 +14,7 @@ export const fr = {
       layersTitle: "Couches de la Clean Architecture",
       backendArchTitle: "Architecture du Backend",
       backendArchIntro:
-        "Le backend suit une architecture de pipeline de requêtes où chaque requête HTTP passe par des middlewares, des contrôleurs, des comportements (behaviors) SCRIPE mediator, puis le gestionnaire CQRS. Cela garantit une validation, un audit et une gestion des erreurs cohérents.",
+        "Le backend suit une architecture de pipeline de requêtes où chaque requête HTTP passe par des middlewares, des contrôleurs, des comportements (behaviors) SCRIPE mediator, pscripe le gestionnaire CQRS. Cela garantit une validation, un audit et une gestion des erreurs cohérents.",
       frontendArchTitle: "Architecture du Frontend",
       frontendArchIntro:
         "Le frontend utilise un modèle Vue/ViewModel SOLID où les Vues sont de la pure UI (sans état, sans logique) et les ViewModels contiennent toute la logique métier. Le modèle connecteur sépare le routage Next.js (Server Components) de la logique applicative (Client Components).",
@@ -117,7 +117,7 @@ export const fr = {
       pattern3Content:
         "Publiez et abonnez-vous à des événements via un bus partagé dans @core/. (Modèle futur, pas encore implémenté).",
       boundaryWarning:
-        "Les limites des modules sont une loi absolue. Si vous devez partager du code entre les modules, il DOIT aller dans @core/. Toute importation depuis @modules/{autre}/ est une violation et sera détectée lors de la revue de code.",
+        "Les limites des modules sont une loi absolue. Si vous devez partager du code entre les modules, il DOIT aller dans @core/. Toute importation depscripe @modules/{autre}/ est une violation et sera détectée lors de la revue de code.",
     },
     solidPattern: {
       title: "SOLID View/ViewModel",
@@ -175,14 +175,14 @@ export const fr = {
       description:
         "Diagrammes de flux de données de bout en bout : requête, mutation, pipeline backend, gestion des erreurs et stratégie de cache.",
       intro:
-        "Comprendre comment les données circulent dans SCRIPE est essentiel pour déboguer et étendre le système. Cette page trace les données depuis un clic dans l'interface utilisateur jusqu'à la base de données et retour.",
+        "Comprendre comment les données circulent dans SCRIPE est essentiel pour déboguer et étendre le système. Cette page trace les données depscripe un clic dans l'interface utilisateur jusqu'à la base de données et retour.",
       queryFlowTitle: "Flux de Requête (Lecture)",
       queryFlowIntro:
         "Lorsqu'un utilisateur consulte des données, le flux commence à la Vue, traverse le ViewModel, TanStack Query, le Référentiel (Repository), le Service API et enfin l'API backend.",
       mutationFlowTitle: "Flux de Mutation (Écriture)",
       backendPipelineTitle: "Pipeline de Requêtes Backend",
       backendPipelineIntro:
-        "Chaque requête backend passe par les middlewares puis les comportements du médiateur SCRIPE avant d'atteindre le gestionnaire. Cela garantit une journalisation, une authentification, une autorisation, une validation, un contrôle de fonctionnalités et une diffusion Webhook cohérents.",
+        "Chaque requête backend passe par les middlewares pscripe les comportements du médiateur SCRIPE avant d'atteindre le gestionnaire. Cela garantit une journalisation, une authentification, une autorisation, une validation, un contrôle de fonctionnalités et une diffusion Webhook cohérents.",
       errorFlowTitle: "Gestion des Erreurs",
       errorFlowIntro:
         "Les erreurs sont gérées à plusieurs niveaux. Chaque source d'erreur possède un gestionnaire spécifique, un code de réponse et une stratégie de gestion front-end.",
@@ -242,7 +242,7 @@ export const fr = {
         "Tous les événements de domaine implémentent l'interface IDomainEvent, qui hérite de INotification de SCRIPE mediator. Cela permet le modèle Pub/Sub en cours de processus.",
       publishingTitle: "Flux de Publication et Traitement",
       publishingIntro:
-        "Les événements suivent un cycle de 6 étapes : déclenchement, capture par l'OutboxInterceptor, persistance dans la même transaction, sondage par l'OutboxProcessor, puis publication via SCRIPE mediator.",
+        "Les événements suivent un cycle de 6 étapes : déclenchement, capture par l'OutboxInterceptor, persistance dans la même transaction, sondage par l'OutboxProcessor, pscripe publication via SCRIPE mediator.",
       publisherTitle: "IDomainEventPublisher",
       outboxTitle: "Modèle Outbox (Outbox Pattern)",
       outboxIntro:
@@ -264,8 +264,8 @@ export const fr = {
       customEventsIntro: "Suivez ces 3 étapes pour ajouter un nouvel événement de domaine.",
       step1Title: "1. Définir l'événement",
       step1Content: "Créez un record implémentant IDomainEvent dans Domain/Events/.",
-      step2Title: "2. Déclencher depuis le Handler",
-      step2Content: "Appelez entity.RaiseDomainEvent(), puis SaveChangesAsync.",
+      step2Title: "2. Déclencher depscripe le Handler",
+      step2Content: "Appelez entity.RaiseDomainEvent(), pscripe SaveChangesAsync.",
       step3Title: "3. Créer des Gestionnaires",
       step3Content: "Implémentez INotificationHandler<DomainEventNotification>.",
       reliabilityTitle: "Garanties de Fiabilité",
@@ -277,7 +277,7 @@ export const fr = {
       description:
         "Comportements de la pipeline du médiateur SCRIPE : LoggingBehavior, ValidationBehavior, FeatureCheckBehavior, WebhookDispatchBehavior, CachingBehavior, modèle Result et catalogue complet commandes/requêtes.",
       intro:
-        "Chaque commande et requête dans SCRIPE passe par une pipeline configurable du médiateur SCRIPE avec 5 comportements intégrés : LoggingBehavior, ValidationBehavior, FeatureCheckBehavior, WebhookDispatchBehavior et CachingBehavior. L'ordre est géré depuis appsettings ou les variables d'environnement et validé au démarrage.",
+        "Chaque commande et requête dans SCRIPE passe par une pipeline configurable du médiateur SCRIPE avec 5 comportements intégrés : LoggingBehavior, ValidationBehavior, FeatureCheckBehavior, WebhookDispatchBehavior et CachingBehavior. L'ordre est géré depscripe appsettings ou les variables d'environnement et validé au démarrage.",
       overviewTitle: "Vue d'ensemble du Pipeline",
       overviewIntro:
         "L'ordre par défaut est Logging -> Validation -> FeatureCheck -> WebhookDispatch -> Caching -> Handler. La validation et les contrôles de fonctionnalités précèdent volontairement la lecture du cache, tandis que l'invalidation du cache s'exécute avant l'envoi des webhooks après les mutations réussies.",
@@ -345,7 +345,7 @@ export const fr = {
         "Le tableau suivant répertorie chaque commande, requête et validateur enregistré dans le système.",
       registrationTitle: "Enregistrement du Pipeline",
       registrationIntro:
-        "AddCoreApplication() enregistre les comportements de pipeline depuis les options Mediator. Le scan des handlers, la validation de couverture, la politique d'échec des notifications et l'ordre de pipeline sont contrôlés par configuration.",
+        "AddCoreApplication() enregistre les comportements de pipeline depscripe les options Mediator. Le scan des handlers, la validation de couverture, la politique d'échec des notifications et l'ordre de pipeline sont contrôlés par configuration.",
       behaviorOrderTip:
         "La validation de sécurité par défaut rejette les ordres où Caching s'exécute avant Validation ou FeatureCheck. Ne désactivez WebhookDispatchBehavior que si vous maîtrisez entièrement le risque.",
       featureCheckTitle: "FeatureCheckBehavior",
@@ -393,7 +393,7 @@ export const fr = {
     },
     moduleCollab: {
       title: "Collaboration Inter-Modules en Profondeur",
-      description: "Analyse détaillée de la communication inter-modules dans le monolithe UIS.",
+      description: "Analyse détaillée de la communication inter-modules dans le monolithe SCRIPE.",
       intro:
         "Les modules Identity et Entitlements ne peuvent pas s'importer mutuellement (dépendance circulaire). Ils collaborent via la couche Core — abstractions partagées, événements de domaine et pipeline Mediator.",
       coreBridgeTitle: "Le Pont de la Couche Core",
@@ -415,7 +415,7 @@ export const fr = {
         "PostBuildInitialization.cs s'exécute après la construction du conteneur DI. Il vérifie le type résolu pour les interfaces critiques. Si le type résolu est encore un NoOp, il journalise un message LogCritical.",
       featureCheckTitle: "FeatureCheckBehavior — Analyse Approfondie",
       featureCheckIntro:
-        "FeatureCheckBehavior est un comportement de pipeline AstraFlow qui intercepte toutes les commandes implémentant IRequireFeature. Il vérifie si la fonctionnalité requise est activée pour le tenant avant d'atteindre le gestionnaire.",
+        "FeatureCheckBehavior est un comportement de pipeline AstraFlow qui intercepte toutes les commandes implémentant IRequireFeature. Il vérifie si la fonctionnalité reqscripee est activée pour le tenant avant d'atteindre le gestionnaire.",
       requireFeatureInterfaceTitle: "IRequireFeature — L'Interface Marqueur Opt-In",
       requireFeatureInterfaceIntro:
         "IRequireFeature est une interface marqueur sans surcharge. Les commandes qui l'implémentent optent pour le contrôle de fonctionnalité par édition via FeatureCheckBehavior. Les commandes qui ne l'implémentent pas passent sans surcharge.",
@@ -433,7 +433,7 @@ export const fr = {
         "Le gestionnaire Entitlements résout la carte complète des fonctionnalités effectives : fonctionnalités d'édition fusionnées avec les remplacements de tenant et les expansions de bundle.",
       permSyncStep2Title: "Étape 2 : Publication de l'Événement de Domaine",
       permSyncStep2Content:
-        "SubscriptionChangedEvent est publié comme événement de domaine, capturé par OutboxInterceptor, persisté dans la table OutboxMessages, puis distribué après SaveChangesAsync.",
+        "SubscriptionChangedEvent est publié comme événement de domaine, capturé par OutboxInterceptor, persisté dans la table OutboxMessages, pscripe distribué après SaveChangesAsync.",
       permSyncStep3Title: "Étape 3 : Gestionnaire d'Événement Identity",
       permSyncStep3Content:
         "SubscriptionChangedEventHandler d'Identity reçoit l'événement et délègue à ITenantPermissionManager pour synchroniser les permissions.",
@@ -442,7 +442,7 @@ export const fr = {
         "TenantPermissionManager lit les IDs de permission par module, diff avec les permissions actuelles du tenant, et ajoute/supprime selon les besoins.",
       permSyncStep5Title: "Étape 5 : Invalidation du Cache",
       permSyncStep5Content:
-        "Après la synchronisation, tous les caches de permissions d'admin pour ce tenant sont invalidés. La prochaine requête recharge les permissions depuis la base de données.",
+        "Après la synchronisation, tous les caches de permissions d'admin pour ce tenant sont invalidés. La prochaine requête recharge les permissions depscripe la base de données.",
       loginEnrichTitle: "Enrichissement de la Réponse de Connexion",
       loginEnrichIntro:
         "LoginCommandHandler d'Identity enrichit la réponse JWT avec le statut d'abonnement sans importer Entitlements directement.",

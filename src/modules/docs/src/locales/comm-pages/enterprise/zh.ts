@@ -289,7 +289,7 @@ export const zh = {
       intro:
         "全球企业软件必须讲其用户的语言。SCRIPE 提供无与伦比的国际化基础设施，它不仅替换文本字符串——它还从根本上重塑整个应用程序架构，以支持真正的语义本地化。",
       languagesTitle: "立即实现全球覆盖",
-      uisRTL: "SCRIPE 标准",
+      scripeRTL: "SCRIPE 标准",
       rtlContent:
         "我们不只是简单地镜像 CSS。阿拉伯语和希伯来语界面经过了结构性的重新架构。我们的原子设计系统智能地反转边距 (margins)、内边距 (paddings)、矢量图标和布局层次结构，以提供让用户愉悦的真正原生 RTL 体验。",
       rtlTitle: "完美无瑕的 RTL 架构矩阵",

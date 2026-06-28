@@ -5,7 +5,7 @@
  */
 export const en = {
   commercial: {
-    whyUISOverview: {
+    whyScripeOverview: {
       description:
         "A definitive, executive-level summary of exactly why choosing the SCRIPE framework fundamentally derisks your entire enterprise software journey.",
       glanceTitle: "The Architecture at a Glance",
@@ -118,7 +118,7 @@ export const en = {
         "Important: Conduct a proof-of-concept. SCRIPE's 30-day trial allows your lead engineers to validate our architectural claims directly against your hardest technical challenges.",
       intro:
         "SCRIPE is engineered to utterly obliterate the conventional limitations of enterprise software development: vendor dependencies, architectural entropy, and glacial release cycles. Here is how visionary organizations compound their engineering capital.",
-      uisApproach: "The SCRIPE Advantage",
+      scripeApproach: "The SCRIPE Advantage",
       productivityContent:
         "Startups and enterprises alike use SCRIPE to bypass 6-12 months of foundational development. By providing production-ready authentication, multi-tenancy, and audit logs on day one, teams immediately begin delivering unique business value.",
       productivityTitle: "Unprecedented Productivity",
@@ -139,11 +139,11 @@ export const en = {
         "Guarantee global compliance. A user's Identity JWT is cryptographically bound to their tenant, preventing lateral movement.",
       title: "Competitive Advantages",
       traditionalApproach: "The Legacy Dilemma",
-      compUISI1: "Modular Monolith → API Gateway → Microservices evolutionary architecture",
-      compUISI2: "Single codebase, three dynamic deployment modes",
-      compUISI3: "Module capabilities mathematically enforced at compile time",
-      compUISI4: "Extract any module to a separate service without a single rewrite",
-      compUISI5: "Pristine shared core infrastructure compounding across all modules",
+      compScripeI1: "Modular Monolith → API Gateway → Microservices evolutionary architecture",
+      compScripeI2: "Single codebase, three dynamic deployment modes",
+      compScripeI3: "Module capabilities mathematically enforced at compile time",
+      compScripeI4: "Extract any module to a separate service without a single rewrite",
+      compScripeI5: "Pristine shared core infrastructure compounding across all modules",
       compTradI1: "Forced to choose monolith OR microservices upfront",
       compTradI2: "Complete rewrite required to change deployment topologies",
       compTradI3: "Spaghetti dependencies between highly coupled services",

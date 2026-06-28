@@ -238,7 +238,7 @@ export const en = {
         "For Numeric features, use -1 to represent 'unlimited'. The FeatureCheckBehavior recognizes -1 as a special value and never blocks requests for features with an unlimited quota.",
       systemVsCustomTitle: "System vs Custom Features",
       systemVsCustomIntro:
-        "SCRIPE distinguishes between system features (seeded at startup, read-only) and custom features (created by admins via API):",
+        "SCRIPE distingscripehes between system features (seeded at startup, read-only) and custom features (created by admins via API):",
       cacheTitle: "Feature Cache",
       cacheIntro:
         "Resolved feature values are cached in the IFeatureCache to avoid database queries on every request. The cache is invalidated whenever an edition's features change, a subscription is modified, or an override is set/removed. In microservice deployments without the Entitlements module, a NoOpFeatureCache treats all features as enabled.",

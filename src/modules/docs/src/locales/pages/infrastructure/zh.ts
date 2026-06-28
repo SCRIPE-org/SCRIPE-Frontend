@@ -249,7 +249,7 @@ export const zh = {
       newProviderStep3: "3. 加入注册数组中心。",
       newProviderStep4: "4. 执行 add-migration Initial 导出。 ",
     },
-    uisCli: {
+    scripeCli: {
       title: "SCRIPE CLI 命令行工具",
       description: "内置 66 套开发模板、支持多库同步及文件自动化编织的脚手架引擎。",
       intro:
@@ -295,7 +295,7 @@ export const zh = {
       utilityTitle: "工程环境支持",
       utilityIntro: "包含针对 .NET 与 NPM 构建与运行的统合快捷操作。",
     },
-    uisStudio: {
+    scripeStudio: {
       title: "SCRIPE Studio",
       description: "可视化开发者仪表板，提供实时模块管理、代码生成器、开发服务器控制和嵌入式终端。",
       intro:
@@ -404,7 +404,7 @@ export const zh = {
       thresholdsTitle: "SLA 阈值",
       authFlowTitle: "身份验证流程测试脚本",
       authFlowIntro:
-        "auth-flow.js 测试模拟真实的用户身份验证模式：使用凭据登录、使用 JWT 令牌访问受保护端点和验证健康检查端点。自定义指标（uis_login_duration、uis_login_fail_rate）独立跟踪身份验证 SLA。",
+        "auth-flow.js 测试模拟真实的用户身份验证模式：使用凭据登录、使用 JWT 令牌访问受保护端点和验证健康检查端点。自定义指标（scripe_login_duration、scripe_login_fail_rate）独立跟踪身份验证 SLA。",
       runningTitle: "运行负载测试",
       cicdTitle: "CI/CD 集成",
       cicdIntro:

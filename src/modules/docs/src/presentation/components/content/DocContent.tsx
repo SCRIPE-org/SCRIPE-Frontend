@@ -18,6 +18,8 @@ import { CompatibilityMatrix } from "./CompatibilityMatrix";
 import { PipelineSimulator } from "./PipelineSimulator";
 import { ConfigBuilder } from "./ConfigBuilder";
 import { SchemaVisualizer } from "./SchemaVisualizer";
+import { CliSimulator } from "./CliSimulator";
+import { LifecycleTracer } from "./LifecycleTracer";
 
 interface DocContentProps {
   sections: DocSection[];
@@ -227,6 +229,18 @@ export function DocContent({ sections }: DocContentProps) {
               <SchemaVisualizer
                 key={key}
                 tables={section.tables}
+                titleKey={section.titleKey}
+              />
+            );
+
+          case "cli-simulator":
+            return <CliSimulator key={key} titleKey={section.titleKey} />;
+
+          case "lifecycle-tracer":
+            return (
+              <LifecycleTracer
+                key={key}
+                steps={section.steps}
                 titleKey={section.titleKey}
               />
             );

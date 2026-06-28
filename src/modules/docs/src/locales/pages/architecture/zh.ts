@@ -380,7 +380,7 @@ export const zh = {
     },
     moduleCollab: {
       title: "跨模块协作深度剖析",
-      description: "UIS 模块化单体架构中跨模块通信的真实代码分析。",
+      description: "SCRIPE 模块化单体架构中跨模块通信的真实代码分析。",
       intro:
         "Identity 和 Entitlements 模块不能相互导入（循环依赖）。它们通过 Core 层协作——共享抽象、领域事件和 Mediator 管道。",
       coreBridgeTitle: "Core 层桥接",

@@ -137,7 +137,7 @@ export const fr = {
       tenantScopingTitle: "Ciblage du Filtre de Requête",
       tenantServicesTitle: "Services Sensibles aux Locataires (Tenant-Aware)",
       tenantServicesIntro:
-        "Les services injectent IDataScopeService pour récupérer l'ID du locataire à la volée depuis le JWT.",
+        "Les services injectent IDataScopeService pour récupérer l'ID du locataire à la volée depscripe le JWT.",
       dataAtRestTitle: "Chiffrement des Données au Repos",
       dataAtRestIntro:
         "Utilisation du TDE au niveau de la base de données et de l'API de Protection des Données ASP.NET Core.",
