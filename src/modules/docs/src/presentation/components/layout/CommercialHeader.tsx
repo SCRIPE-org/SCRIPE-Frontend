@@ -33,6 +33,14 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
       <div className="com-header-inner">
         {/* Logo */}
         <Link href="/commercial/why-scripe-overview" className="com-header-logo">
+          <img
+            src="/app-logo.png"
+            alt="SCRIPE"
+            width={32}
+            height={32}
+            className="inline-block object-contain mr-2"
+            style={{ width: "32px", height: "32px" }}
+          />
           <span className="com-header-logo-name">SCRIPE</span>
           <span className="com-header-logo-badge">B2B2C SaaS</span>
         </Link>

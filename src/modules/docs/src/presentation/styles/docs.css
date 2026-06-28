@@ -357,49 +357,56 @@
 
 /* ─── Page Title ──────────────────────────────────────────────────────── */
 .docs-page-title {
-  font-size: 2rem;
+  font-family: var(--font-display, 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif);
+  font-size: 2.25rem;
   font-weight: 800;
   color: hsl(var(--foreground));
   line-height: 1.2;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.025em;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.03em;
 }
 
 .docs-page-description {
-  font-size: 1.0625rem;
+  font-size: 1.125rem;
   color: hsl(var(--muted-foreground));
-  line-height: 1.6;
-  margin-bottom: 2rem;
+  line-height: 1.625;
+  margin-bottom: 2.5rem;
 }
 
 /* ─── Section Headings ────────────────────────────────────────────────── */
 .docs-h2 {
-  font-size: 1.5rem;
+  font-family: var(--font-display, 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif);
+  font-size: 1.625rem;
   font-weight: 700;
   color: hsl(var(--foreground));
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
+  margin-top: 3rem;
+  margin-bottom: 1.25rem;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid hsl(var(--border));
   scroll-margin-top: 80px;
+  letter-spacing: -0.025em;
 }
 
 .docs-h3 {
-  font-size: 1.25rem;
+  font-family: var(--font-display, 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif);
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  scroll-margin-top: 80px;
+  letter-spacing: -0.02em;
+}
+
+.docs-h4 {
+  font-family: var(--font-display, 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif);
+  font-size: 1.125rem;
   font-weight: 600;
   color: hsl(var(--foreground));
   margin-top: 2rem;
   margin-bottom: 0.75rem;
   scroll-margin-top: 80px;
-}
-
-.docs-h4 {
-  font-size: 1.0625rem;
-  font-weight: 600;
-  color: hsl(var(--foreground));
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-  scroll-margin-top: 80px;
+  letter-spacing: -0.015em;
 }
 
 .docs-heading-anchor {
@@ -429,83 +436,100 @@
 
 /* ── Code Blocks — Elevated ─────────────────────── */
 .docs-code-block {
-  margin: 1.5rem 0 1.5rem;
-  border: 1px solid oklch(0.28 0.018 265);
-  border-radius: 10px;
+  margin: 2rem 0;
+  border: 1px solid oklch(0.24 0.02 265);
+  border-radius: 12px;
   overflow: hidden;
-  background: oklch(0.1 0.018 265);
+  background: oklch(0.09 0.015 265);
+  box-shadow: 0 4px 20px oklch(0 0 0 / 0.25);
+  transition: border-color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.docs-code-block:hover {
+  border-color: oklch(0.32 0.03 265);
 }
 
 .docs-code-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem 1rem;
-  background: oklch(0.15 0.022 265);
-  border-bottom: 1px solid oklch(0.25 0.018 265);
+  padding: 0.75rem 1.25rem;
+  background: oklch(0.12 0.02 265);
+  border-bottom: 1px solid oklch(0.18 0.02 265);
 }
 
 .docs-code-filename {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
-  font-size: 0.75rem;
-  color: oklch(0.62 0.015 265);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.775rem;
+  color: oklch(0.72 0.015 265);
   font-weight: 500;
 }
 
 .docs-code-lang {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
-  font-size: 0.72rem;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.7rem;
   font-weight: 600;
   color: oklch(0.65 0.22 265);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .docs-code-copy {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.25rem 0.625rem;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
   font-size: 0.75rem;
   font-weight: 500;
-  color: oklch(0.6 0.015 265);
-  background: none;
-  border: 1px solid oklch(0.3 0.02 265);
-  border-radius: 6px;
+  color: oklch(0.65 0.015 265);
+  background: oklch(0.16 0.02 265 / 0.4);
+  border: 1px solid oklch(0.24 0.02 265);
+  border-radius: 8px;
   cursor: pointer;
-  transition: color 120ms, border-color 120ms, background 120ms;
+  transition: all 120ms cubic-bezier(0.16, 1, 0.3, 1);
   font-family: inherit;
   line-height: 1;
 }
 
 .docs-code-copy:hover {
-  color: oklch(0.85 0.01 265);
-  border-color: oklch(0.45 0.025 265);
+  color: oklch(0.92 0.01 265);
+  border-color: oklch(0.4 0.03 265);
   background: oklch(0.2 0.02 265);
 }
 
 .docs-code-copy[data-copied="true"] {
   color: oklch(0.72 0.17 158);
-  border-color: oklch(0.72 0.17 158 / 0.4);
+  border-color: oklch(0.72 0.17 158 / 0.5);
+  background: oklch(0.72 0.17 158 / 0.08);
 }
 
 .docs-code-pre {
   margin: 0;
-  padding: 1.25rem;
+  padding: 1.5rem 1.25rem;
   overflow-x: auto;
   font-size: 0.875rem;
-  line-height: 1.65;
+  line-height: 1.7;
   background: none;
   tab-size: 2;
+  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
-  scrollbar-color: oklch(0.3 0.02 265) transparent;
+  scrollbar-color: oklch(0.25 0.02 265) transparent;
 }
 
-.docs-code-pre::-webkit-scrollbar { height: 4px; }
-.docs-code-pre::-webkit-scrollbar-track { background: oklch(0.1 0.018 265); }
-.docs-code-pre::-webkit-scrollbar-thumb { background: oklch(0.3 0.02 265); border-radius: 2px; }
-.docs-code-pre::-webkit-scrollbar-thumb:hover { background: oklch(0.4 0.025 265); }
+.docs-code-pre::-webkit-scrollbar {
+  height: 6px;
+}
+.docs-code-pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+.docs-code-pre::-webkit-scrollbar-thumb {
+  background: oklch(0.25 0.02 265);
+  border-radius: 3px;
+}
+.docs-code-pre::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.35 0.03 265);
+}
 
 .docs-code-pre code {
   font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
@@ -531,11 +555,11 @@
 .docs-code-pre .token-property   { color: #e06c75; }
 
 .docs-code-line-highlight {
-  background: hsl(var(--primary) / 0.12);
+  background: oklch(0.65 0.22 265 / 0.1);
   display: block;
   margin: 0 -1.25rem;
   padding: 0 1.25rem;
-  border-inline-start: 3px solid hsl(var(--primary));
+  border-inline-start: 3px solid oklch(0.65 0.22 265);
 }
 
 @media (prefers-reduced-motion: reduce) {
