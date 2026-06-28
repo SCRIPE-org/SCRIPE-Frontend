@@ -169,7 +169,7 @@ export const de = {
       tblPriceR6C3: "119.76",
       promoTitle: "Aktionsrabatte",
       promoContent:
-        "Fördern Sie Akqscripee und Kundenbindung mit integrierter Aktionscode-Unterstützung in jedem Abonnement. Angewandte Aktionen werden mit Codename und Rabattprozentsatz für volle Audit- und Analytik-Transparenz verfolgt.",
+        "Fördern Sie Akquise und Kundenbindung mit integrierter Aktionscode-Unterstützung in jedem Abonnement. Angewandte Aktionen werden mit Codename und Rabattprozentsatz für volle Audit- und Analytik-Transparenz verfolgt.",
       fgPromoCode: "Aktionscode-Tracking",
       fgPromoCodeDesc:
         "Jedes Abonnement zeichnet seinen AppliedPromoCode und den PromotionDiscount-Prozentsatz auf. Analytik-Dashboards zeigen, welche Aktionen die meisten Konversionen generieren.",

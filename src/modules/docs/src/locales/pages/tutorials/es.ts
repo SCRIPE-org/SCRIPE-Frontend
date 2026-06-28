@@ -10,7 +10,7 @@ export const es = {
         "Paso a paso para integrar un nuevo Módulo Frontend con patrón SOLID View/ViewModel.",
       intro:
         "Este tutorial garantiza que evites el código espagueti guiándote en la construcción exacta validada por las reglas arquitectónicas de SCRIPE.",
-      prerequisitesTitle: "Reqscripeitos Previos",
+      prerequisitesTitle: "Requisitos Previos",
       stepsTitle: "Guía Paso a Paso",
       step1Title: "1. Crear Estructura",
       step1Desc: "Creación de carpetas Domain, Presentation, Data.",
@@ -44,7 +44,7 @@ export const es = {
         "El flujo de datos completo a través de Arquitectura Limpia, conectando el patrón CQRS.",
       intro:
         "Cubrimos cómo exponer datos de C# fuertemente seguros y auditados en una API lista para producción.",
-      prerequisitesTitle: "Reqscripeitos Previos",
+      prerequisitesTitle: "Requisitos Previos",
       stepsTitle: "Guía Paso a Paso",
       step1Title: "1. Crear Estructura",
       step1Desc:

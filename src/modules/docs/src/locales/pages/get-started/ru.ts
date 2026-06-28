@@ -45,7 +45,7 @@ export const ru = {
         "НЕ меняйте порядок регистрации сервисов в Program.cs. AddCoreInfrastructure должен идти перед модулями (они зависят от ICurrentUser), а AddCoreApplication — после модулей (SCRIPE mediator нужны их сборки).",
       environmentProfilesTitle: "Профили окружения",
       envVarPrefixTip:
-        "Загружаются только переменные среды, начинающиеся с UIS_. Например, UIS_ConnectionStrings__DefaultConnection переопределяет строку подключения. Двойное подчеркивание (__) представляет вложенность в JSON.",
+        "Загружаются только переменные среды, начинающиеся с SCRIPE_. Например, SCRIPE_ConnectionStrings__DefaultConnection переопределяет строку подключения. Двойное подчеркивание (__) представляет вложенность в JSON.",
     },
     prerequisites: {
       title: "Предварительные требования",

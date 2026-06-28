@@ -45,7 +45,7 @@ export const de = {
         "Ändern Sie NICHT die Reihenfolge der Service-Registrierungen in der Program.cs. AddCoreInfrastructure muss vor den Modulen stehen (sie hängen von ICurrentUser ab) und AddCoreApplication muss nach den Modulen stehen (SCRIPE mediator benötigt deren Assemblies).",
       environmentProfilesTitle: "Umgebungsprofile",
       envVarPrefixTip:
-        "Es werden nur Umgebungsvariablen geladen, die mit UIS_ beginnen. Beispielsweise überschreibt UIS_ConnectionStrings__DefaultConnection den Connection String. Doppelte Unterstriche (__) repräsentieren Verschachtelungen in der JSON-Konfiguration.",
+        "Es werden nur Umgebungsvariablen geladen, die mit SCRIPE_ beginnen. Beispielsweise überschreibt SCRIPE_ConnectionStrings__DefaultConnection den Connection String. Doppelte Unterstriche (__) repräsentieren Verschachtelungen in der JSON-Konfiguration.",
     },
     prerequisites: {
       title: "Voraussetzungen",

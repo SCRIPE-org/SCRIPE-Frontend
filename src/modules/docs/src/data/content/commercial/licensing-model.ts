@@ -4,84 +4,101 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 const sections: DocSection[] = [
   { type: "paragraph", contentKey: "commercial.licensingModel.intro" },
 
+  // ─── Subscription Plans ─────────────────────────────────────
   {
     type: "heading",
     level: 2,
-    titleKey: "commercial.licensingModel.runtimeOwnershipTitle",
-    id: "runtime-ownership",
+    titleKey: "commercial.licensingModel.plansTitle",
+    id: "subscription-plans",
   },
-  { type: "paragraph", contentKey: "commercial.licensingModel.runtimeOwnershipIntro" },
+  { type: "paragraph", contentKey: "commercial.licensingModel.plansIntro" },
   {
     type: "table",
     headers: [
-      "commercial.licensingModel.tblRuntimeHeader1",
-      "commercial.licensingModel.tblRuntimeHeader2",
-      "commercial.licensingModel.tblRuntimeHeader3",
+      "commercial.licensingModel.tblPlansHeader1",
+      "commercial.licensingModel.tblPlansHeader2",
+      "commercial.licensingModel.tblPlansHeader3",
+      "commercial.licensingModel.tblPlansHeader4",
+      "commercial.licensingModel.tblPlansHeader5",
     ],
     rows: [
       [
-        "commercial.licensingModel.tblRuntimeR1C1",
-        "commercial.licensingModel.tblRuntimeR1C2",
-        "commercial.licensingModel.tblRuntimeR1C3",
+        "commercial.licensingModel.tblPlansR1C1",
+        "commercial.licensingModel.tblPlansR1C2",
+        "commercial.licensingModel.tblPlansR1C3",
+        "commercial.licensingModel.tblPlansR1C4",
+        "commercial.licensingModel.tblPlansR1C5",
       ],
       [
-        "commercial.licensingModel.tblRuntimeR2C1",
-        "commercial.licensingModel.tblRuntimeR2C2",
-        "commercial.licensingModel.tblRuntimeR2C3",
+        "commercial.licensingModel.tblPlansR2C1",
+        "commercial.licensingModel.tblPlansR2C2",
+        "commercial.licensingModel.tblPlansR2C3",
+        "commercial.licensingModel.tblPlansR2C4",
+        "commercial.licensingModel.tblPlansR2C5",
       ],
       [
-        "commercial.licensingModel.tblRuntimeR3C1",
-        "commercial.licensingModel.tblRuntimeR3C2",
-        "commercial.licensingModel.tblRuntimeR3C3",
+        "commercial.licensingModel.tblPlansR3C1",
+        "commercial.licensingModel.tblPlansR3C2",
+        "commercial.licensingModel.tblPlansR3C3",
+        "commercial.licensingModel.tblPlansR3C4",
+        "commercial.licensingModel.tblPlansR3C5",
       ],
       [
-        "commercial.licensingModel.tblRuntimeR4C1",
-        "commercial.licensingModel.tblRuntimeR4C2",
-        "commercial.licensingModel.tblRuntimeR4C3",
+        "commercial.licensingModel.tblPlansR4C1",
+        "commercial.licensingModel.tblPlansR4C2",
+        "commercial.licensingModel.tblPlansR4C3",
+        "commercial.licensingModel.tblPlansR4C4",
+        "commercial.licensingModel.tblPlansR4C5",
       ],
     ],
   },
 
-  // ─── License Types ──────────────────────────────────────────
+  // ─── What's Included in Every Plan ─────────────────────────
   {
     type: "heading",
     level: 2,
-    titleKey: "commercial.licensingModel.typesTitle",
-    id: "license-types",
+    titleKey: "commercial.licensingModel.includedTitle",
+    id: "whats-included",
   },
-  { type: "paragraph", contentKey: "commercial.licensingModel.typesIntro" },
+  { type: "paragraph", contentKey: "commercial.licensingModel.includedContent" },
   {
-    type: "table",
-    headers: [
-      "commercial.licensingModel.tblTypesHeader1",
-      "commercial.licensingModel.tblTypesHeader2",
-      "commercial.licensingModel.tblTypesHeader3",
-    ],
-    rows: [
-      [
-        "commercial.licensingModel.tblTypesR1C1",
-        "commercial.licensingModel.tblTypesR1C2",
-        "commercial.licensingModel.tblTypesR1C3",
-      ],
-      [
-        "commercial.licensingModel.tblTypesR2C1",
-        "commercial.licensingModel.tblTypesR2C2",
-        "commercial.licensingModel.tblTypesR2C3",
-      ],
-      [
-        "commercial.licensingModel.tblTypesR3C1",
-        "commercial.licensingModel.tblTypesR3C2",
-        "commercial.licensingModel.tblTypesR3C3",
-      ],
-      [
-        "commercial.licensingModel.tblTypesR4C1",
-        "commercial.licensingModel.tblTypesR4C2",
-        "commercial.licensingModel.tblTypesR4C3",
-      ],
+    type: "feature-grid",
+    columns: 3,
+    items: [
+      {
+        icon: "shield",
+        titleKey: "commercial.licensingModel.featSecurity",
+        descriptionKey: "commercial.licensingModel.featSecurityDesc",
+      },
+      {
+        icon: "users",
+        titleKey: "commercial.licensingModel.featUsers",
+        descriptionKey: "commercial.licensingModel.featUsersDesc",
+      },
+      {
+        icon: "layers",
+        titleKey: "commercial.licensingModel.featModules",
+        descriptionKey: "commercial.licensingModel.featModulesDesc",
+      },
+      {
+        icon: "globe",
+        titleKey: "commercial.licensingModel.featI18n",
+        descriptionKey: "commercial.licensingModel.featI18nDesc",
+      },
+      {
+        icon: "zap",
+        titleKey: "commercial.licensingModel.featRealtime",
+        descriptionKey: "commercial.licensingModel.featRealtimeDesc",
+      },
+      {
+        icon: "bar-chart",
+        titleKey: "commercial.licensingModel.featAudit",
+        descriptionKey: "commercial.licensingModel.featAuditDesc",
+      },
     ],
   },
 
-  // ─── Feature Comparison ─────────────────────────────────────
+  // ─── Plan Comparison ─────────────────────────────────────────
   {
     type: "heading",
     level: 2,
@@ -171,72 +188,30 @@ const sections: DocSection[] = [
     ],
   },
 
-  // ─── Source Code Access ─────────────────────────────────────
+  // ─── Subscription Lifecycle ──────────────────────────────────
   {
     type: "heading",
     level: 2,
-    titleKey: "commercial.licensingModel.sourcCodeTitle",
-    id: "source-code",
+    titleKey: "commercial.licensingModel.renewalTitle",
+    id: "subscription-lifecycle",
   },
-  { type: "paragraph", contentKey: "commercial.licensingModel.sourceCodeContent" },
-  {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "commercial.licensingModel.lstSourceI1",
-      "commercial.licensingModel.lstSourceI2",
-      "commercial.licensingModel.lstSourceI3",
-      "commercial.licensingModel.lstSourceI4",
-      "commercial.licensingModel.lstSourceI5",
-      "commercial.licensingModel.lstSourceI6",
-    ],
-  },
-
-  // ─── Renewal & Upgrades ─────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.licensingModel.renewalTitle", id: "renewal" },
   { type: "paragraph", contentKey: "commercial.licensingModel.renewalContent" },
   {
-    type: "table",
-    headers: [
-      "commercial.licensingModel.tblRenewHeader1",
-      "commercial.licensingModel.tblRenewHeader2",
-      "commercial.licensingModel.tblRenewHeader3",
+    type: "flowchart",
+    title: "Subscription Lifecycle",
+    direction: "horizontal",
+    nodes: [
+      { id: "trial", label: "30-Day Free Trial", type: "default" },
+      { id: "subscribe", label: "Choose Your Plan", type: "primary" },
+      { id: "onboard", label: "Onboarding & Setup", type: "info" },
+      { id: "grow", label: "Scale & Expand", type: "success" },
+      { id: "upgrade", label: "Upgrade Anytime", type: "primary" },
     ],
-    rows: [
-      [
-        "commercial.licensingModel.tblRenewR1C1",
-        "commercial.licensingModel.tblRenewR1C2",
-        "commercial.licensingModel.tblRenewR1C3",
-      ],
-      [
-        "commercial.licensingModel.tblRenewR2C1",
-        "commercial.licensingModel.tblRenewR2C2",
-        "commercial.licensingModel.tblRenewR2C3",
-      ],
-      [
-        "commercial.licensingModel.tblRenewR3C1",
-        "commercial.licensingModel.tblRenewR3C2",
-        "commercial.licensingModel.tblRenewR3C3",
-      ],
-      [
-        "commercial.licensingModel.tblRenewR4C1",
-        "commercial.licensingModel.tblRenewR4C2",
-        "commercial.licensingModel.tblRenewR4C3",
-      ],
-    ],
-  },
-
-  // ─── Commercial Terms ───────────────────────────────────────
-  { type: "heading", level: 2, titleKey: "commercial.licensingModel.termsTitle", id: "terms" },
-  {
-    type: "list",
-    variant: "unordered",
-    items: [
-      "commercial.licensingModel.lstTermsI1",
-      "commercial.licensingModel.lstTermsI2",
-      "commercial.licensingModel.lstTermsI3",
-      "commercial.licensingModel.lstTermsI4",
-      "commercial.licensingModel.lstTermsI5",
+    connections: [
+      { from: "trial", to: "subscribe" },
+      { from: "subscribe", to: "onboard" },
+      { from: "onboard", to: "grow" },
+      { from: "grow", to: "upgrade" },
     ],
   },
 
@@ -245,7 +220,7 @@ const sections: DocSection[] = [
     type: "heading",
     level: 2,
     titleKey: "commercial.licensingModel.entitlementsTitle",
-    id: "entitlements-integration",
+    id: "how-plans-work",
   },
   { type: "paragraph", contentKey: "commercial.licensingModel.entitlementsIntro" },
   {
@@ -274,8 +249,22 @@ const sections: DocSection[] = [
       },
     ],
   },
-  { type: "info", variant: "tip", contentKey: "commercial.licensingModel.entitlementsTip" },
 
+  // ─── Terms ──────────────────────────────────────────────────
+  { type: "heading", level: 2, titleKey: "commercial.licensingModel.termsTitle", id: "terms" },
+  {
+    type: "list",
+    variant: "unordered",
+    items: [
+      "commercial.licensingModel.lstTermsI1",
+      "commercial.licensingModel.lstTermsI2",
+      "commercial.licensingModel.lstTermsI3",
+      "commercial.licensingModel.lstTermsI4",
+      "commercial.licensingModel.lstTermsI5",
+    ],
+  },
+
+  { type: "info", variant: "tip", contentKey: "commercial.licensingModel.entitlementsTip" },
   { type: "info", variant: "tip", contentKey: "commercial.licensingModel.trialTip" },
 ];
 
@@ -287,5 +276,5 @@ registerPage({
   order: 1,
   sections,
   relatedSlugs: ["commercial/roi-analysis", "commercial/support-plans"],
-  lastUpdated: "2026-02-20",
+  lastUpdated: "2026-06-28",
 });

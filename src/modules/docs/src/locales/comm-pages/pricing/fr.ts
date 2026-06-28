@@ -21,7 +21,7 @@ export const fr = {
       tblRuntimeR3C1: "Scaffolding CLI",
       tblRuntimeR3C2:
         "Les templates émettent les namespaces du médiateur SCRIPE et les règles de mapping",
-      tblRuntimeR3C3: "Les nouveaux modules ne réintrodscripeent pas les packages supprimés",
+      tblRuntimeR3C3: "Les nouveaux modules ne réintroduisent pas les packages supprimés",
       tblRuntimeR4C1: "Opérations",
       tblRuntimeR4C2: "Aucune vérification phone-home sur ces chemins centraux",
       tblRuntimeR4C3: "Déploiements hors ligne, isolés et enterprise plus sûrs",
@@ -155,13 +155,13 @@ export const fr = {
       lstTermsI2: "Garantie satisfait ou remboursé de 30 jours au premier achat",
       lstTermsI3:
         "Aucun verrouillage propriétaire (vendor lock-in) : vous possédez vos données et vos personnalisations",
-      lstTermsI4: "Droits de transfert disponibles pour les acqscripeitions d'entreprises",
+      lstTermsI4: "Droits de transfert disponibles pour les acquisitions d'entreprises",
       lstTermsI5: "Remises disponibles pour l'éducation et les organismes à but non lucratif",
     },
     supportPlans: {
       communityAccess: "Accès Global Discord & GitHub",
       communityAccessDesc:
-        "Collaborez directement avec des centaines d'ingénieurs logiciels d'élite constrscripeant sur SCRIPE.",
+        "Collaborez directement avec des centaines d'ingénieurs logiciels d'élite construisant sur SCRIPE.",
       description:
         "Accords de niveau de service dédiés (SLA), revues architecturales et support d'ingénierie prioritaire strictement adaptés aux clients d'entreprise.",
       hotfixes: "Routage de Correctifs d'Urgence",
@@ -320,7 +320,7 @@ export const fr = {
       q1: "Qu'est-ce que SCRIPE ?",
       a1: "SCRIPE est une plateforme ERP modulaire de niveau entreprise, construite sur .NET 9 et Next.js 15. Elle fournit une fondation prête pour la production intégrant la Clean Architecture, le multi-tenant, le contrôle d'accès basé sur les rôles (RBAC), des capacités en temps réel et un catalogue croissant de modules métier — tout cela à partir d'une base de code unique qui prend en charge les déploiements de types monolithe, passerelle (gateway) et microservices.",
       q2: "À qui s'adresse SCRIPE ?",
-      a2: "SCRIPE est conçu pour les équipes de développement et les organisations qui ont besoin de lancer rapidement des applications d'entreprise sans sacrifier la qualité architecturale. Que vous soyez une startup à la recherche d'une base évolutive, une SSII (Software House) livrant des projets clients, ou une grande entreprise modernisant des systèmes hérités, SCRIPE élimine des mois de code répétitif fondamental (boilerplate) afin que vous pscripesiez vous concentrer sur la logique métier.",
+      a2: "SCRIPE est conçu pour les équipes de développement et les organisations qui ont besoin de lancer rapidement des applications d'entreprise sans sacrifier la qualité architecturale. Que vous soyez une startup à la recherche d'une base évolutive, une SSII (Software House) livrant des projets clients, ou une grande entreprise modernisant des systèmes hérités, SCRIPE élimine des mois de code répétitif fondamental (boilerplate) afin que vous puissiez vous concentrer sur la logique métier.",
       q3: "En quoi SCRIPE diffère-t-il des autres plateformes ERP ?",
       a3: "Contrairement aux systèmes ERP traditionnels qui vous enferment dans des flux de travail rigides, SCRIPE vous donne un accès complet au code source tout en respectant les principes de la Clean Architecture. Vous bénéficiez d'une véritable isolation des modules (chaque module peut être extrait dans son propre microservice), d'une architecture multi-tenant intégrée avec isolation des données au niveau des lignes, de 4 fournisseurs de bases de données, d'une internationalisation (i18n) en 7 langues avec support complet RTL, et de fonctionnalités de sécurité d'entreprise telles que le modèle de sécurité à 8 couches — le tout conçu pour être étendu, et non seulement configuré.",
       qWhatIndustries: "Pour quels secteurs SCRIPE est-il adapté ?",
@@ -350,7 +350,7 @@ export const fr = {
       a9: "Cela dépend de votre niveau de licence. La licence Starter couvre un seul projet, tandis que les licences Professional et Enterprise prennent en charge de multiples déploiements. Le niveau Enterprise fournit des déploiements de projets illimités, ce qui le rend idéal pour les éditeurs de logiciels (Software Houses) et les cabinets de conseil qui créent des solutions pour plusieurs clients. Chaque déploiement peut être personnalisé de manière indépendante.",
       qTrialPeriod: "Y a-t-il une période d'essai ou d'évaluation ?",
       aTrialPeriod:
-        "Oui. SCRIPE offre une période d'évaluation de 30 jours avec un accès complet aux fonctionnalités de la plateforme, à la documentation et au support de la communauté. Pendant l'essai, vous pouvez construire une preuve de concept (PoC), explorer l'architecture, et évaluer si SCRIPE correspond à vos exigences techniques. Aucune carte de crédit n'est reqscripee pour commencer l'évaluation.",
+        "Oui. SCRIPE offre une période d'évaluation de 30 jours avec un accès complet aux fonctionnalités de la plateforme, à la documentation et au support de la communauté. Pendant l'essai, vous pouvez construire une preuve de concept (PoC), explorer l'architecture, et évaluer si SCRIPE correspond à vos exigences techniques. Aucune carte de crédit n'est requise pour commencer l'évaluation.",
       qUpgradePath: "Quel est le processus de mise à niveau entre les niveaux de licence ?",
       aUpgradePath:
         "Vous pouvez mettre à niveau votre niveau de licence à tout moment en payant la différence entre votre niveau actuel et le nouveau. Les mises à niveau sont immédiates — vous recevrez l'accès aux fonctionnalités supplémentaires, aux canaux de support et aux droits de déploiement dès que la mise à niveau sera traitée. Il n'y a pas de pénalités ni de périodes d'engagement (lock-in). Les rétrogradations (downgrades) sont traitées au moment du renouvellement.",
@@ -369,7 +369,7 @@ export const fr = {
       qBreakingChanges: "Comment SCRIPE gère-t-il les changements majeurs (breaking changes) ?",
       aBreakingChanges:
         "Les changements majeurs sont minimisés par l'adhésion de SCRIPE au principe Ouvert/Fermé (Open/Closed) — de nouvelles fonctionnalités sont ajoutées par extension, et non par modification. Lorsque des changements majeurs sont inévitables (comme les mises à niveau majeures du framework), ils sont clairement documentés avec des guides de migration étape par étape, des scripts de migration automatisés lorsque c'est possible, et une période de dépréciation (deprecation) d'au moins un cycle de version majeur. Les clients Enterprise reçoivent une assistance à la migration dédiée.",
-      qMigrationHelp: "Pouvons-nous obtenir de l'aide pour migrer depscripe un système existant ?",
+      qMigrationHelp: "Pouvons-nous obtenir de l'aide pour migrer depuis un système existant ?",
       aMigrationHelp:
         "Oui. Les titulaires de licences Professional et Enterprise ont accès à des services de conseil en migration. L'équipe SCRIPE peut aider à la planification de la migration des données, au mappage des schémas, aux scripts ETL et aux stratégies de basculement progressif (phased cutover). Pour les migrations complexes, un support d'ingénierie dédié est disponible pour accélérer la transition et minimiser les temps d'arrêt. Des ressources communautaires et des guides de migration sont également disponibles pour les migrations en libre-service.",
       contactNote:
@@ -416,6 +416,15 @@ export const fr = {
       personaSelectorInvestorDesc: "Découvrez notre ROI, nos levées de fonds et nos mesures de croissance.",
       personaSelectorCofounderDesc: "Explorez notre stratégie, nos rôles et notre parcours de partenariat.",
       personaSelectorPartnerDesc: "Découvrez comment nos partenaires développent leurs revenus SaaS.",
+      personaSelectorInvestorBenefit1: "ROI moyen de 250% sur 3 ans projeté pour les métriques de croissance.",
+      personaSelectorInvestorBenefit2: "Visibilité complète sur les taux d'ARR, de MRR et de désabonnement des utilisateurs.",
+      personaSelectorInvestorBenefit3: "Opportunité de capture du marché des logiciels ERP d'entreprise de base.",
+      personaSelectorCofounderBenefit1: "Participation directe au capital et droit de vote sur les décisions de la plateforme.",
+      personaSelectorCofounderBenefit2: "Propriété des voies d'architecture propre modulaire de base.",
+      personaSelectorCofounderBenefit3: "Piloter l'intégration des canaux et la mise sur le marché mondial.",
+      personaSelectorPartnerBenefit1: "Partage généreux de 30% des revenus récurrents pour les ventes indirectes.",
+      personaSelectorPartnerBenefit2: "Support dédié aux développeurs et droits de marque blanche.",
+      personaSelectorPartnerBenefit3: "Certification technique et référencement officiel sur le marché.",
       personaSelectorLearnMore: "En savoir plus",
       title: "Portail des Investisseurs",
       description: "Retour sur investissement SaaS et opportunitÃ©s de partenariat.",

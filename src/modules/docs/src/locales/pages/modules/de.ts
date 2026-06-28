@@ -6,14 +6,14 @@
 export const de = {
   modules: {
     entitlementsOverview: {
-      title: "BerechtigungsÃ¼bersicht",
+      title: "Berechtigungsübersicht",
       description:
-        "Editionsbasiertes Feature-Gating mit Funktionen, Editionen, Abonnements und mandantenspezifischen Ãœberschreibungen.",
+        "Editionsbasiertes Feature-Gating mit Funktionen, Editionen, Abonnements und mandantenspezifischen Überschreibungen.",
       intro:
-        "Das Berechtigungsmodul (Entitlements) ist UISs Engine zur Verwaltung von PlÃ¤nen und Funktionen. Es definiert, welche FÃ¤higkeiten jeder Mandant (Tenant) erhÃ¤lt, wie PlÃ¤ne (Editionen) diese FÃ¤higkeiten bÃ¼ndeln und wie Abonnements Mandanten mit PlÃ¤nen verknÃ¼pfen.",
+        "Das Berechtigungsmodul (Entitlements) ist SCRIPEs Engine zur Verwaltung von Plänen und Funktionen. Es definiert, welche Fähigkeiten jeder Mandant (Tenant) erhält, wie Pläne (Editionen) diese Fähigkeiten bündeln und wie Abonnements Mandanten mit Plänen verknüpfen.",
       whatIsTitle: "Was sind Berechtigungen (Entitlements)?",
       whatIsIntro:
-        "Berechtigungen ist das Modul, das steuert, auf welche Funktionen ein Mandant basierend auf seiner abonnierten Edition (Plan) zugreifen kann. Es bietet eine dreistufige AuflÃ¶sungskette: Funktionsstandards â†’ Editions-Werte â†’ Mandantenspezifische Ãœberschreibungen, um maximale FlexibilitÃ¤t fÃ¼r Plattformbetreiber und Reseller-Mandanten zu gewÃ¤hrleisten.",
+        "Berechtigungen ist das Modul, das steuert, auf welche Funktionen ein Mandant basierend auf seiner abonnierten Edition (Plan) zugreifen kann. Es bietet eine dreistufige Auflösungskette: Funktionsstandards → Editions-Werte → Mandantenspezifische Überschreibungen, um maximale Flexibilität für Plattformbetreiber und Reseller-Mandanten zu gewährleisten.",
       architectureTitle: "Architektur",
       architectureIntro:
         "Das Berechtigungssystem besteht aus vier miteinander verbundenen DomÃ¤nen, die zusammenarbeiten, um eine vollstÃ¤ndige Feature-Gating-LÃ¶sung zu bieten.",
@@ -29,7 +29,7 @@ export const de = {
         "Um einen Befehl hinter einer Funktion zu verbergen, implementieren Sie einfach IRequireFeature und setzen Sie RequiredFeatureName auf den stabilen SystemschlÃ¼ssel der Funktion (z. B. 'Chat.Enabled'). Es ist kein zusÃ¤tzlicher Code erforderlich.",
       backendTitle: "Backend-Struktur",
       backendIntro:
-        "Das Berechtigungs-Backend folgt UISs standardmÃ¤ÃŸigem Clean-Architecture-Modullayout mit Domain-, Application- und Infrastructure-Schichten.",
+        "Das Berechtigungs-Backend folgt SCRIPEs standardmÃ¤ÃŸigem Clean-Architecture-Modullayout mit Domain-, Application- und Infrastructure-Schichten.",
       frontendTitle: "Frontend-Struktur",
       frontendIntro:
         "Das Frontend spiegelt das Backend mit vier Untermodulen (Editionen, Funktionen, Abonnements, Ãœberschreibungen) wider, die alle dem SOLID View/ViewModel-Muster folgen.",
@@ -51,7 +51,7 @@ export const de = {
         "Das Berechtigungsmodul registriert 31 SCRIPE mediator-Handler, die sich Ã¼ber die vier DomÃ¤nen erstrecken. Jeder Befehl hat einen entsprechenden FluentValidation-Validator zur EingabeÃ¼berprÃ¼fung.",
       diTitle: "Dependency Injection Registrierung",
       diIntro:
-        "Alle Berechtigungsdienste werden Ã¼ber die Erweiterungsmethode AddEntitlementsModule in DependencyInjection.cs registriert. Das Modul folgt UISs Standard-Registrierungsmuster.",
+        "Alle Berechtigungsdienste werden Ã¼ber die Erweiterungsmethode AddEntitlementsModule in DependencyInjection.cs registriert. Das Modul folgt SCRIPEs Standard-Registrierungsmuster.",
       comparisonTitle: "Mit vs. Ohne Berechtigungen",
       comparisonIntro:
         "Die folgende Tabelle zeigt die unterschiedlichen FÃ¤higkeiten, wenn das Berechtigungsmodul aktiviert ist, im Vergleich zum Betrieb ohne dieses Modul:",

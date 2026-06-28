@@ -45,14 +45,14 @@ export const es = {
         "NO reordene los registros de servicios en Program.cs. AddCoreInfrastructure debe ir antes que los módulos (dependen de ICurrentUser), y AddCoreApplication debe ir después de los módulos (SCRIPE mediator necesita sus ensamblados).",
       environmentProfilesTitle: "Perfiles de Entorno",
       envVarPrefixTip:
-        "Solo se cargan las variables de entorno que comienzan con UIS_. Por ejemplo, UIS_ConnectionStrings__DefaultConnection anula la cadena de conexión. Los guiones bajos dobles (__) representan anidamiento en la configuración JSON.",
+        "Solo se cargan las variables de entorno que comienzan con SCRIPE_. Por ejemplo, SCRIPE_ConnectionStrings__DefaultConnection anula la cadena de conexión. Los guiones bajos dobles (__) representan anidamiento en la configuración JSON.",
     },
     prerequisites: {
-      title: "Reqscripeitos Previos",
+      title: "Requisitos Previos",
       description:
         "Herramientas requeridas, configuración de la base de datos y del entorno para el desarrollo.",
       intro:
-        "Antes de comenzar a desarrollar con SCRIPE, asegúrate de que tu máquina tenga instaladas las herramientas necesarias. Esta página cubre los reqscripeitos exactos de versión, soporte de base de datos, configuración paso a paso y el inicio rápido con Docker.",
+        "Antes de comenzar a desarrollar con SCRIPE, asegúrate de que tu máquina tenga instaladas las herramientas necesarias. Esta página cubre los requisitos exactos de versión, soporte de base de datos, configuración paso a paso y el inicio rápido con Docker.",
       requiredToolsTitle: "Herramientas Requeridas",
       databaseTitle: "Soporte de Bases de Datos",
       databaseIntro:
@@ -62,7 +62,7 @@ export const es = {
       envSetupTitle: "Configuración del Entorno",
       step1Title: "Verificar Versiones de Herramientas",
       step1Content:
-        "Asegúrate de que todas las herramientas estén instaladas y cumplan con los reqscripeitos mínimos de versión.",
+        "Asegúrate de que todas las herramientas estén instaladas y cumplan con los requisitos mínimos de versión.",
       step2Title: "Clonar el Repositorio",
       step2Content: "Clona el monorepo con submódulos de Git para el backend y el frontend.",
       step3Title: "Configurar Cadena de Conexión",

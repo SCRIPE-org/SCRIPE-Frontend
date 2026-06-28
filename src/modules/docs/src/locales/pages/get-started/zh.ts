@@ -43,7 +43,7 @@ export const zh = {
         "请勿重新排列 Program.cs 中的服务注册顺序。AddCoreInfrastructure 必须在模块之前（模块依赖 ICurrentUser），AddCoreApplication 必须在模块之后（SCRIPE mediator 需要其程序集）。",
       environmentProfilesTitle: "环境变量配置",
       envVarPrefixTip:
-        "仅加载以 UIS_ 开头的环境变量。例如，UIS_ConnectionStrings__DefaultConnection 会覆盖连接字符串。双下划线 (__) 代表 JSON 配置中的嵌套层级。",
+        "仅加载以 SCRIPE_ 开头的环境变量。例如，SCRIPE_ConnectionStrings__DefaultConnection 会覆盖连接字符串。双下划线 (__) 代表 JSON 配置中的嵌套层级。",
     },
     prerequisites: {
       title: "环境要求",

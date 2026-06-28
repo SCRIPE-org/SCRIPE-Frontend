@@ -77,7 +77,7 @@ export const fr = {
     entEditions: {
       title: "Éditions & Plans",
       description:
-        "Définissez, gérez et versionnez les plans de vos produits SaaS à l'aide du pscripesant moteur d'Éditions de SCRIPE.",
+        "Définissez, gérez et versionnez les plans de vos produits SaaS à l'aide du puissant moteur d'Éditions de SCRIPE.",
       intro:
         "Les éditions sont les éléments constitutifs de votre stratégie de tarification SaaS. Chaque édition regroupe un ensemble spécifique de valeurs de fonctionnalités (commutateurs booléens, limites numériques, configurations textuelles) dans un plan nommé qui peut être attribué aux locataires via des abonnements.",
       whatTitle: "Que sont les Éditions ?",
@@ -104,7 +104,7 @@ export const fr = {
         "Appliquer strictement la limite. Les commandes sont rejetées avec un message d'erreur clair indiquant que la fonctionnalité est à sa capacité maximale pour le plan actuel.",
       versionTitle: "Versionnage & Déploiements",
       versionContent:
-        "Les versions d'édition vous permettent de modifier les fonctionnalités d'un plan sans perturber les abonnés existants. Créez une nouvelle version avec des valeurs de fonctionnalités mises à jour, pscripe choisissez votre stratégie de déploiement.",
+        "Les versions d'édition vous permettent de modifier les fonctionnalités d'un plan sans perturber les abonnés existants. Créez une nouvelle version avec des valeurs de fonctionnalités mises à jour, puis choisissez votre stratégie de déploiement.",
       tblRollH1: "Stratégie",
       tblRollH2: "Comportement",
       tblRollH3: "Idéal Pour",
@@ -168,7 +168,7 @@ export const fr = {
       tblPriceR6C3: "119.76",
       promoTitle: "Remises Promotionnelles",
       promoContent:
-        "Stimulez l'acqscripeition et la fidélisation avec la prise en charge des codes promotionnels intégrée dans chaque abonnement. Les promotions appliquées sont suivies avec le nom du code et le pourcentage de remise pour une visibilité complète d'audit et d'analytique.",
+        "Stimulez l'acquisition et la fidélisation avec la prise en charge des codes promotionnels intégrée dans chaque abonnement. Les promotions appliquées sont suivies avec le nom du code et le pourcentage de remise pour une visibilité complète d'audit et d'analytique.",
       fgPromoCode: "Suivi des Codes Promotionnels",
       fgPromoCodeDesc:
         "Chaque abonnement enregistre son AppliedPromoCode et son pourcentage PromotionDiscount. Les tableaux de bord analytiques montrent quelles promotions génèrent le plus de conversions.",
@@ -230,7 +230,7 @@ export const fr = {
       crossModuleDesc:
         "Les événements du cycle de vie des abonnements se propagent automatiquement à la gestion des identités. Lors d'une suspension, tous les administrateurs du locataire sont désactivés en toute sécurité. Lors d'une reprise, seuls les administrateurs désactivés par suspension sont réactivés.",
       apiTitle: "Points de terminaison API (Endpoints)",
-      tip: "L'API d'analyse d'impact de rétrogradation est un pscripesant outil de fidélisation commerciale. Montrez aux clients exactement ce qu'ils vont perdre avant qu'ils ne rétrogradent — créant ainsi des moments naturels de rétention.",
+      tip: "L'API d'analyse d'impact de rétrogradation est un puissant outil de fidélisation commerciale. Montrez aux clients exactement ce qu'ils vont perdre avant qu'ils ne rétrogradent — créant ainsi des moments naturels de rétention.",
     },
     entFeatures: {
       title: "Gestion des Fonctionnalités (Features)",
@@ -277,7 +277,7 @@ export const fr = {
       cacheInvDesc:
         "Toute modification des éditions, des abonnements ou des surcharges invalide immédiatement le cache de fonctionnalités du locataire concerné.",
       apiTitle: "Points de terminaison API (Endpoints)",
-      tip: "Les fonctionnalités système sont automatiquement initialisées (seeded) à partir de votre code à chaque démarrage de l'application. Cela signifie que votre catalogue de fonctionnalités reste parfaitement synchronisé avec votre base de code réelle — aucune gestion manuelle de la base de données n'est reqscripee.",
+      tip: "Les fonctionnalités système sont automatiquement initialisées (seeded) à partir de votre code à chaque démarrage de l'application. Cela signifie que votre catalogue de fonctionnalités reste parfaitement synchronisé avec votre base de code réelle — aucune gestion manuelle de la base de données n'est requise.",
     },
     entOverrides: {
       title: "Surcharges par Locataire",
@@ -320,7 +320,7 @@ export const fr = {
       tblAuditR3C2: "Fonctionnalité, locataire, valeur finale, acteur",
       tblAuditR3C3: "Vérification de la réversion",
       apiTitle: "Points de terminaison API (Endpoints)",
-      tip: "Les surcharges sont l'outil le plus pscripesant de votre arsenal de vente. Elles permettent à votre équipe commerciale de conclure des accords d'entreprise en quelques minutes — pas en sprints de développement.",
+      tip: "Les surcharges sont l'outil le plus puissant de votre arsenal de vente. Elles permettent à votre équipe commerciale de conclure des accords d'entreprise en quelques minutes — pas en sprints de développement.",
     },
   },
 };

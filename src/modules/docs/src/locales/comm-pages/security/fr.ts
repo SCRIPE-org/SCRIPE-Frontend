@@ -36,7 +36,7 @@ export const fr = {
         "Nous utilisons des JSON Web Tokens (JWT) rapides et sans état, signés à l'aide de clés RSA asymétriques. Les jetons d'accès ont une courte durée de vie, tandis que les jetons d'actualisation (refresh tokens) sécurisés et HTTP-only garantissent des expériences utilisateur sans friction et sans compromettre la sécurité.",
       jwtTitle: "Protocole JWT Asymétrique",
       passwordContent:
-        "Appliquez la complexité des mots de passe conforme au NIST. Dictez les longueurs reqscripees, les combinaisons de caractères spéciaux et empêchez la réutilisation des mots de passe historiques sur des périodes configurables.",
+        "Appliquez la complexité des mots de passe conforme au NIST. Dictez les longueurs requises, les combinaisons de caractères spéciaux et empêchez la réutilisation des mots de passe historiques sur des périodes configurables.",
       passwordTitle: "Politiques de Mots de Passe Adaptatives",
       sessionTitle: "Contrôle des Sessions Simultanées",
       title: "Authentification & Sécurité",
@@ -95,13 +95,13 @@ export const fr = {
         "Isolez les bases de données et les processus d'arrière-plan dans des sous-réseaux privés, non routables et complètement déconnectés de l'internet public.",
       networkTitle: "Bouclier Topologique",
       rateLimitContent:
-        "Survivez aux pics de trafic soudains et aux balayages par force brute. SCRIPE inclut une limitation de débit (rate limiting) distribuée, soutenue par Redis, qui limite dynamiquement les adresses IP abusives ou les JWT spécifiques avant qu'ils ne pscripesent épscripeer les pools de connexions de la base de données.",
+        "Survivez aux pics de trafic soudains et aux balayages par force brute. SCRIPE inclut une limitation de débit (rate limiting) distribuée, soutenue par Redis, qui limite dynamiquement les adresses IP abusives ou les JWT spécifiques avant qu'ils ne puissent épuiser les pools de connexions de la base de données.",
       rateLimitTitle: "Limitation de Débit Distribuée (Throttling)",
       reverseProxy: "Validation de l'En-tête du Proxy",
       reverseProxyDesc:
         "Résolvez en toute sécurité les adresses IP clientes originales derrière les équilibreurs de charge à l'aide d'en-têtes X-Forwarded-For rigoureusement validés, empêchant ainsi l'usurpation d'IP.",
       secretsContent:
-        "Les mots de passe codés en dur (hardcoded) constituent une vulnérabilité catastrophique. Le pipeline de configuration de SCRIPE intercepte et injecte dynamiquement des chaînes sécurisées au moment du démarrage directement depscripe les gestionnaires de secrets d'entreprise.",
+        "Les mots de passe codés en dur (hardcoded) constituent une vulnérabilité catastrophique. Le pipeline de configuration de SCRIPE intercepte et injecte dynamiquement des chaînes sécurisées au moment du démarrage directement depuis les gestionnaires de secrets d'entreprise.",
       secretsTitle: "Gestion des Secrets Zero-Trust",
       title: "Sécurité du Périmètre & de l'Infrastructure",
       tlsInspection: "TLS 1.3 Obligatoire",

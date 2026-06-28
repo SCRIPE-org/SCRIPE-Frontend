@@ -18,9 +18,9 @@ export function PersonaSelector() {
           title: t("commercial.investorOverview.personaSelectorInvestor"),
           desc: t("commercial.investorOverview.personaSelectorInvestorDesc"),
           benefits: [
-            "250% average ROI over 3 years projected scaling metrics.",
-            "Complete visibility into ARR, MRR, and user churn rates.",
-            "Foundational ERP software market capture opportunity.",
+            t("commercial.investorOverview.personaSelectorInvestorBenefit1"),
+            t("commercial.investorOverview.personaSelectorInvestorBenefit2"),
+            t("commercial.investorOverview.personaSelectorInvestorBenefit3"),
           ],
         };
       case "cofounder":
@@ -28,9 +28,9 @@ export function PersonaSelector() {
           title: t("commercial.investorOverview.personaSelectorCofounder"),
           desc: t("commercial.investorOverview.personaSelectorCofounderDesc"),
           benefits: [
-            "Direct equity stake and voting rights on platform decisions.",
-            "Ownership over core modular cleanest architecture pathways.",
-            "Steer global go-to-market and channel integrations.",
+            t("commercial.investorOverview.personaSelectorCofounderBenefit1"),
+            t("commercial.investorOverview.personaSelectorCofounderBenefit2"),
+            t("commercial.investorOverview.personaSelectorCofounderBenefit3"),
           ],
         };
       case "partner":
@@ -38,9 +38,9 @@ export function PersonaSelector() {
           title: t("commercial.investorOverview.personaSelectorPartner"),
           desc: t("commercial.investorOverview.personaSelectorPartnerDesc"),
           benefits: [
-            "Generous 30% recurring revenue share for channel sales.",
-            "Dedicated developer support and white-label rights.",
-            "Technical certification and official marketplace listing.",
+            t("commercial.investorOverview.personaSelectorPartnerBenefit1"),
+            t("commercial.investorOverview.personaSelectorPartnerBenefit2"),
+            t("commercial.investorOverview.personaSelectorPartnerBenefit3"),
           ],
         };
       default:

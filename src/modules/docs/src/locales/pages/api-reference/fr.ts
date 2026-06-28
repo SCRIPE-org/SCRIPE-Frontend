@@ -286,7 +286,7 @@ export const fr = {
       bulkDeactivateDesc:
         "Verrouillage absolu. Plonge dans l'obscurité l'entièreté d'un département ou liste de Groupes. Cascade coupe l'accès physique à la plateforme via le booléen des Administrateurs concernés.",
       bulkDeleteDesc:
-        "Hécatombe de bases de données gérée en Soft Delete. L'ordre raye de la carte les groupes donnés avec la possibilité que la Cascade rédscripee aussi en suppression logique chaque opérateur lié.",
+        "Hécatombe de bases de données gérée en Soft Delete. L'ordre raye de la carte les groupes donnés avec la possibilité que la Cascade réduise aussi en suppression logique chaque opérateur lié.",
       bulkActivateAllDesc:
         "Activer en masse tous les groupes d'utilisateurs correspondant aux critères de filtrage spécifiés (prend en charge cascadeAdmins).",
       bulkDeactivateAllDesc:
@@ -351,8 +351,8 @@ export const fr = {
         "Endpoint rapide qui renvoie le simple nombre atomique (Integer) pour peindre le point rouge (Badge) sur la clochette d'interface utilisateur en moins d'une fraction de seconde.",
       markReadDesc: "Évite l'entassement des messages d'alerte avec une mise à jour d'état de vue.",
       markAllReadDesc:
-        "Opération destructive qui transforme l'ensemble du compteur à zéro (0) d'une seule rafale SQL sans avoir à renvoyer chaque identifiant de message depscripe l'UI React.",
-      deleteNotifDesc: "Annihilation pure du message depscripe le visuel de la table SQL.",
+        "Opération destructive qui transforme l'ensemble du compteur à zéro (0) d'une seule rafale SQL sans avoir à renvoyer chaque identifiant de message depuis l'UI React.",
+      deleteNotifDesc: "Annihilation pure du message depuis le visuel de la table SQL.",
       searchTargetsDesc:
         "Recherche sur les UID de tous les administrateurs / employés / contacts pour permettre le tir de notifications personnalisées à une entité externe ou distante de votre compagnie.",
       signalrTip:
@@ -398,7 +398,7 @@ export const fr = {
       deleteMenuDesc:
         "Processus destructif global : si la fonction détruit le nœud parent (Ex: Paramètres), elle détruira également tous les sous-menus dépendants existants en dessous.",
       reorderMenuDesc:
-        "Endpoint massif recevant un tableau dynamique (Array) d'indices depscripe l'interface Drag & Drop du Frontend et l'imprimant instantanément de manière ordonnée en base de données.",
+        "Endpoint massif recevant un tableau dynamique (Array) d'indices depuis l'interface Drag & Drop du Frontend et l'imprimant instantanément de manière ordonnée en base de données.",
       roleVisibilityDesc:
         "Endpoint d'interconnexion liant tel Menu spécifique à l'affichage pour tel ou tel Rôle de travail (Visibilité).",
       tenantOverrideDesc:
@@ -424,7 +424,7 @@ export const fr = {
       updateSettingsDesc:
         "Mise à jour transactionnelle du fichier d'application de base poussée en live sans nécessiter le redémarrage (Reboot) du Service / IIS Container.",
       resetSettingsDesc:
-        "Recharge le fichier de paramètres depscripe le code source originel pur pour annuler un dysfonctionnement humain fatal.",
+        "Recharge le fichier de paramètres depuis le code source originel pur pour annuler un dysfonctionnement humain fatal.",
       readinessDesc:
         "Probe (Sonde) Endpoint pour conteneurs Docker/Kubernetes de type /health/ready : effectue un Ping asynchrone profond à la base Redis, à Hangfire et la BD relationnelle. Si le cluster répond un 200 OK, la plateforme signale aux répartiteurs (Load Balancers) d'orchestration que les requêtes peuvent passer.",
     },

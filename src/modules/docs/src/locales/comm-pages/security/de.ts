@@ -7,7 +7,7 @@ export const de = {
     securityOverview: {
       complianceTitle: "Grundlage für Compliance",
       description:
-        "Eine umfassende Aufschlüsselung von UISs mehrschichtigem Defense-in-Depth Sicherheitsperimeter, der alles von der Routing-Schicht bis zur Persistenz-Schicht schützt.",
+        "Eine umfassende Aufschlüsselung von SCRIPEs mehrschichtigem Defense-in-Depth Sicherheitsperimeter, der alles von der Routing-Schicht bis zur Persistenz-Schicht schützt.",
       gdpr: "DSGVO Recht auf Vergessenwerden (Let-To-Forget)",
       gdprDesc:
         "Out-of-the-box-Unterstützung für strikte PII-Anonymisierung und Hard-Deletion-Protokolle.",

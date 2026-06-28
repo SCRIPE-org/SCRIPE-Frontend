@@ -39,7 +39,7 @@ export const es = {
         "El 2FA se implementa con TOTP (Time-based One-Time Password) utilizando un secreto TwoFactorSecret por administrador. Los códigos de respaldo se cifran y almacenan en BackupCodesJson. La protección anti-repetición garantiza que el mismo código no se pueda usar dos veces a través de las marcas de tiempo LastTwoFactorCodeUsed y LastTwoFactorCodeUsedAt.",
       passwordPolicyTitle: "Política de Contraseñas por Inquilino",
       passwordPolicyIntro:
-        "Los reqscripeitos de la contraseña son configurables por inquilino a través de TenantSettings. Cada inquilino puede establecer la longitud mínima, reqscripeitos de mayúsculas, números, caracteres especiales y duración de vencimiento. El campo PasswordLastChanged en la entidad Admin se verifica con PasswordExpiryDays del inquilino para exigir la rotación de contraseñas.",
+        "Los requisitos de la contraseña son configurables por inquilino a través de TenantSettings. Cada inquilino puede establecer la longitud mínima, requisitos de mayúsculas, números, caracteres especiales y duración de vencimiento. El campo PasswordLastChanged en la entidad Admin se verifica con PasswordExpiryDays del inquilino para exigir la rotación de contraseñas.",
       endpointsTitle: "Endpoints de la API de Autenticación",
       endpointsAdminTitle: "Endpoints de Auth para Admin",
       endpointsUserTitle: "Endpoints de Auth para Usuario",
@@ -557,7 +557,7 @@ export const es = {
       a11yProfilesIntro:
         "Los perfiles de accesibilidad preconfigurados aplican configuraciones por lotes instantáneamente. Cada perfil apunta a una necesidad de usuario específica y puede personalizarse después de la aplicación.",
       a11yProfile1:
-        "Base WCAG AA — Aplica reqscripeitos mínimos WCAG AA: contraste 4.5:1, objetivos táctiles 44px, anillos de enfoque visibles.",
+        "Base WCAG AA — Aplica requisitos mínimos WCAG AA: contraste 4.5:1, objetivos táctiles 44px, anillos de enfoque visibles.",
       a11yProfile2:
         "Baja Visión — Fuentes grandes (140%), alto contraste, texto en negrita, espaciado extra, indicadores de enfoque gruesos.",
       a11yProfile3:

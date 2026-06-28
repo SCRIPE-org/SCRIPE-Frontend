@@ -44,20 +44,29 @@ export function PipelineSimulator({ titleKey, samplePayloadKey }: PipelineSimula
   };
 
   useEffect(() => {
+    let logsTimeout: NodeJS.Timeout | null = null;
+    let completeTimeout: NodeJS.Timeout | null = null;
+
     if (isRunning && activeStep >= 0 && activeStep < pipelineBehaviors.length) {
       const current = pipelineBehaviors[activeStep];
-      setLogs((prev) => [...prev, `[AstraFlow] Entering ${current.name}Behavior...`, ` -> ${current.log}`]);
+      logsTimeout = setTimeout(() => {
+        setLogs((prev) => [...prev, `[AstraFlow] Entering ${current.name}Behavior...`, ` -> ${current.log}`]);
+      }, 0);
       
       intervalRef.current = setTimeout(() => {
         setActiveStep((prev) => prev + 1);
       }, 1500);
     } else if (activeStep >= pipelineBehaviors.length) {
-      setLogs((prev) => [...prev, `[System] Simulation completed successfully in 10500ms.`]);
-      setIsRunning(false);
-      setActiveStep(-1);
+      completeTimeout = setTimeout(() => {
+        setLogs((prev) => [...prev, `[System] Simulation completed successfully in 10500ms.`]);
+        setIsRunning(false);
+        setActiveStep(-1);
+      }, 0);
     }
 
     return () => {
+      if (logsTimeout) clearTimeout(logsTimeout);
+      if (completeTimeout) clearTimeout(completeTimeout);
       if (intervalRef.current) {
         clearTimeout(intervalRef.current);
       }
@@ -69,44 +78,34 @@ export function PipelineSimulator({ titleKey, samplePayloadKey }: PipelineSimula
       <div className="docs-pipeline-title" style={{ fontSize: "1.1rem", fontWeight: "700", marginBottom: "1rem" }}>
         {t(titleKey)}
       </div>
-      
-      <div className="docs-pipeline-controls" style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
-        <button
-          className="docs-terminal-tab active"
-          onClick={startSimulator}
-          disabled={isRunning}
-          style={{ cursor: isRunning ? "not-allowed" : "pointer" }}
-        >
-          {t("docs.pipeline.run") || "Run Simulator"}
-        </button>
-        <button
-          className="docs-terminal-tab"
-          onClick={resetSimulator}
-          style={{ cursor: "pointer" }}
-        >
-          {t("docs.pipeline.reset") || "Reset"}
-        </button>
+
+      <div className="docs-pipeline-steps" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+        {pipelineBehaviors.map((step, idx) => (
+          <PipelineNodeItem
+            key={idx}
+            name={`${step.name}Behavior`}
+            description={step.log}
+            isActive={idx === activeStep}
+            isCompleted={idx < activeStep}
+          />
+        ))}
       </div>
 
-      <div className="docs-pipeline-track" style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", padding: "1rem", background: "var(--bg-secondary)", borderRadius: "8px", border: "1px solid var(--border)", marginBottom: "1rem" }}>
-        {pipelineBehaviors.map((item, idx) => {
-          const isActive = idx === activeStep;
-          const isCompleted = activeStep === -1 ? false : idx < activeStep;
-          return (
-            <div key={idx} style={{ display: "contents" }}>
-              <PipelineNodeItem
-                name={item.name}
-                isActive={isActive}
-                isCompleted={isCompleted}
-                duration={idx * 15 + 10}
-                onClick={() => {}}
-              />
-              {idx < pipelineBehaviors.length - 1 && (
-                <span style={{ color: isCompleted ? "var(--docs-purple-primary)" : "var(--border)", fontWeight: "bold" }}>➔</span>
-              )}
-            </div>
-          );
-        })}
+      <div className="docs-pipeline-controls" style={{ display: "flex", gap: "1rem", marginTop: "1.5rem", marginBottom: "1.5rem" }}>
+        <button
+          className="docs-pipeline-btn docs-pipeline-btn-primary"
+          onClick={startSimulator}
+          disabled={isRunning}
+        >
+          {t("common.run")}
+        </button>
+        <button
+          className="docs-pipeline-btn docs-pipeline-btn-secondary"
+          onClick={resetSimulator}
+          disabled={!isRunning && logs.length === 0}
+        >
+          {t("common.reset")}
+        </button>
       </div>
 
       <div className="docs-terminal-window">
@@ -128,7 +127,7 @@ export function PipelineSimulator({ titleKey, samplePayloadKey }: PipelineSimula
           ))}
           {logs.length === 0 && (
             <div style={{ color: "var(--text-tertiary)", fontSize: "0.8rem" }}>
-              Click "Run Simulator" above to trace flow...
+              Click &quot;Run Simulator&quot; above to trace flow...
             </div>
           )}
         </div>

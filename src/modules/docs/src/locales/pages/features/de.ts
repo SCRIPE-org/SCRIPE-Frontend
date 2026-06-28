@@ -558,7 +558,7 @@ export const de = {
       description:
         "Server-synchronisierte Admin-Einstellungen mit 4-Schichten-Merge-Engine, 61 konfigurierbaren Einstellungen, FOUC-Prävention, 409-Konfliktlösung und editionsbasierter Feature-Kontrolle.",
       intro:
-        "Der Dashboard-Builder ist UISs Enterprise-Klasse Admin-Präferenzsystem, das 61 konfigurierbare Dashboard-Einstellungen zwischen Browser und Server synchronisiert. Es verwendet eine 4-Schichten-Merge-Engine (Plattform → Mandant → Admin → Laufzeit) zur Auflösung von Einstellungen mit mandantenbasierter Override-Kontrolle, geräteübergreifender Persistenz über AdminSettingsJson und 5 Edge-Case-Schutzmaßnahmen.",
+        "Der Dashboard-Builder ist SCRIPEs Enterprise-Klasse Admin-Präferenzsystem, das 61 konfigurierbare Dashboard-Einstellungen zwischen Browser und Server synchronisiert. Es verwendet eine 4-Schichten-Merge-Engine (Plattform → Mandant → Admin → Laufzeit) zur Auflösung von Einstellungen mit mandantenbasierter Override-Kontrolle, geräteübergreifender Persistenz über AdminSettingsJson und 5 Edge-Case-Schutzmaßnahmen.",
       overviewTitle: "Systemübersicht",
       overviewIntro:
         "Der Dashboard-Builder bietet einen vollständigen Lebenszyklus für Admin-Einstellungen — von sofortigem Cache-First-Rendering bis hin zur Hintergrund-Serverabstimmung.",
@@ -588,7 +588,7 @@ export const de = {
         "Der Dashboard-Builder implementiert Defense-in-Depth-Sicherheit, um Datenlecks zwischen Admins und Payload-Überläufe zu verhindern.",
       archTitle: "Architektur & Dateiübersicht",
       archIntro:
-        "Der Dashboard-Builder ist über 7 Dateien in der Core-Schicht implementiert und folgt UISs Provider-basiertem Architekturmuster.",
+        "Der Dashboard-Builder ist über 7 Dateien in der Core-Schicht implementiert und folgt SCRIPEs Provider-basiertem Architekturmuster.",
       archTip:
         "Um eine neue Einstellung hinzuzufügen, erweitern Sie die Settings-Schnittstelle und defaultSettings in settings-provider.tsx.",
       widgetConfigTitle: "Widget- & Grid-Konfigurationsschema",
@@ -1038,7 +1038,7 @@ export const de = {
       description:
         "Modulares Tab-Dashboard mit domänensegmentierten Sub-Modulen (Audit, Sicherheit, Analytics), 6-Schichten Clean Architecture pro Modul, ISP-konforme Interfaces, Lazy Loading und berechtigungsgesteuerter Tab-Sichtbarkeit.",
       intro:
-        "Der Dashboard Hub ist UISs zentrale Operationszentrale — eine Tab-Oberfläche, die vier domänenspezifische Ansichten (Übersicht, Audit, Sicherheit, Analytics) in einem einheitlichen Hub zusammenfasst. Jedes Domänenmodul folgt einer strikten 6-Schichten Clean Architecture (Models → Entities → Interfaces → Services → Repositories → Mappers) mit eigenem DI-Eintrag. Sub-Views werden via React.lazy lazy-loaded und berechtigungsgesteuert.",
+        "Der Dashboard Hub ist SCRIPEs zentrale Operationszentrale — eine Tab-Oberfläche, die vier domänenspezifische Ansichten (Übersicht, Audit, Sicherheit, Analytics) in einem einheitlichen Hub zusammenfasst. Jedes Domänenmodul folgt einer strikten 6-Schichten Clean Architecture (Models → Entities → Interfaces → Services → Repositories → Mappers) mit eigenem DI-Eintrag. Sub-Views werden via React.lazy lazy-loaded und berechtigungsgesteuert.",
       archTitle: "Hub-and-Spoke Architektur",
       archIntro:
         "Der Dashboard Hub verwendet ein Hub-and-Spoke-Muster, bei dem die DashboardView als zentraler Hub den Tab-Streifen rendert und jeder Tab eine unabhängige, domänenspezifische View (Spoke) lazy-loaded. Der Übersicht-Tab ist inline für sofortiges Rendering. Audit-, Sicherheits- und Analytics-Tabs werden bei Bedarf via React.lazy mit Suspense-Fallbacks geladen.",

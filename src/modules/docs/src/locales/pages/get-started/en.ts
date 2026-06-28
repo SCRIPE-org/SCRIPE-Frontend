@@ -45,7 +45,7 @@ export const en = {
         "Do NOT reorder the service registrations in Program.cs. AddCoreInfrastructure must come before modules (they depend on ICurrentUser), and AddCoreApplication must come after modules (SCRIPE mediator needs their assemblies).",
       environmentProfilesTitle: "Environment Profiles",
       envVarPrefixTip:
-        "Only environment variables starting with UIS_ are loaded. For example, UIS_ConnectionStrings__DefaultConnection overrides the connection string. Double underscores (__) represent nesting in JSON config.",
+        "Only environment variables starting with SCRIPE_ are loaded. For example, SCRIPE_ConnectionStrings__DefaultConnection overrides the connection string. Double underscores (__) represent nesting in JSON config.",
     },
     prerequisites: {
       title: "Prerequisites",

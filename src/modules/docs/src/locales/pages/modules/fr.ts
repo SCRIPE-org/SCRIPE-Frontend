@@ -379,7 +379,7 @@ export const fr = {
           "Applique des politiques de destruction des données basées sur des périodes de rétention configurables avec des actions automatisées de Suppression ou d'Anonymisation.",
         featureInventory: "Inventaire des Données",
         featureInventoryDesc:
-          "Cartographie les emplacements sensibles des PII à travers les modules, reqscripe pour le Registre des Activités de Traitement (RoPA) de l'Article 30 du RGPD.",
+          "Cartographie les emplacements sensibles des PII à travers les modules, requis pour le Registre des Activités de Traitement (RoPA) de l'Article 30 du RGPD.",
         featureReports: "Rapports de Conformité",
         featureReportsDesc:
           "Génère des rapports asynchrones prêts pour l'audit (Aperçu RGPD, Résumé DSR, Audit du Consentement, Analyse de la Rétention, Exportation de l'Inventaire).",
@@ -597,7 +597,7 @@ export const fr = {
         connSubmitReview: "Assigne et passe à En examen",
         connReviewApprove: "Approuve la demande",
         connReviewReject: "Rejette la demande",
-        connApproveConfirm: "Reqscripe pour l'effacement",
+        connApproveConfirm: "Requis pour l'effacement",
         connConfirmExec: "Prend en charge pour traitement",
         connExecComplete: "Tous les modules réussissent",
         connExecPartial: "Un module échoue",
@@ -724,7 +724,7 @@ export const fr = {
         purposesSort: "Ordre de tri",
         purposesActive: "Actif",
         purposesEssentialDesc:
-          "Fonctionnalités essentielles reqscripees pour le fonctionnement de la plateforme. (Obligatoire, base juridique contractuelle).",
+          "Fonctionnalités essentielles requises pour le fonctionnement de la plateforme. (Obligatoire, base juridique contractuelle).",
         purposesMarketingDesc:
           "Bulletins promotionnels, e-mails et communications de campagne. (Optionnel, base juridique de consentement).",
         purposesAnalyticsDesc:
@@ -752,7 +752,7 @@ export const fr = {
           "La tâche hebdomadaire en arrière-plan analyse les écarts de version et marque les enregistrements obsolètes pour ré-consentement.",
         connSubmitValidate: "soumet les détails à",
         connValidateLedger: "ajoute la transaction si elle est valide",
-        connLedgerUpsert: "met à jour l'état du cache depscripe",
+        connLedgerUpsert: "met à jour l'état du cache depuis",
         connUpsertEvents: "distribue les événements en cas de succès",
         connExpiryUpsert: "marque RequiresReConsent = true dans",
         immutabilityTitle: "Architecture de base de données à double table",
@@ -847,7 +847,7 @@ export const fr = {
       inventory: {
         title: "Inventaire des donnÃ©es",
         description:
-          "Un registre de toutes les catÃ©gories de donnÃ©es personnelles traitÃ©es â€” reqscripe pour les Registres d'activitÃ©s de traitement (RoPA) Article 30 du RGPD.",
+          "Un registre de toutes les catÃ©gories de donnÃ©es personnelles traitÃ©es â€” requis pour les Registres d'activitÃ©s de traitement (RoPA) Article 30 du RGPD.",
         intro:
           "L'inventaire des donnÃ©es est un registre structurÃ© de toutes les catÃ©gories de donnÃ©es personnelles que la plateforme traite.",
         fieldsTitle: "Champs de l'inventaire",

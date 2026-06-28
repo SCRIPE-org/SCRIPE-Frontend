@@ -156,7 +156,7 @@ export const es = {
       lstTermsI2: "Garantía de devolución de dinero de 30 días en la primera compra",
       lstTermsI3:
         "Sin dependencia de un único proveedor: usted es dueño de sus datos y personalizaciones",
-      lstTermsI4: "Derechos de transferencia disponibles para adqscripeiciones de empresas",
+      lstTermsI4: "Derechos de transferencia disponibles para adquisiciones de empresas",
       lstTermsI5: "Descuentos educativos y para organizaciones sin fines de lucro disponibles",
     },
     supportPlans: {
@@ -302,7 +302,7 @@ export const es = {
       description:
         "Una visión general transparente de nuestras iniciativas arquitectónicas estratégicas, los próximos módulos de características y los hitos de ingeniería.",
       feedbackTip:
-        "¿Tiene un reqscripeito crítico? Los titulares de licencias Enterprise determinan nuestras prioridades de backlog. Comuníquese con el equipo de arquitectura.",
+        "¿Tiene un requisito crítico? Los titulares de licencias Enterprise determinan nuestras prioridades de backlog. Comuníquese con el equipo de arquitectura.",
       inProgressTitle: "Ingeniería Activa",
       intro:
         "SCRIPE evoluciona continuamente. Nuestra hoja de ruta de ingeniería es pública, predecible y se centra agresivamente en la eliminación de código repetitivo (boilerplate) para equipos de desarrollo empresariales masivos.",
@@ -352,11 +352,11 @@ export const es = {
       a9: "Esto depende de su nivel de licencia. La licencia Starter cubre un solo proyecto, mientras que las licencias Professional y Enterprise admiten múltiples implementaciones. El nivel Enterprise proporciona implementaciones de proyectos ilimitadas, por lo que es ideal para empresas de software (software houses) y firmas de consultoría que crean soluciones para múltiples clientes. Cada despliegue se puede personalizar de forma independiente.",
       qTrialPeriod: "¿Existe un período de prueba o evaluación?",
       aTrialPeriod:
-        "Sí. SCRIPE ofrece un período de evaluación de 30 días con acceso completo a las funciones, la documentación y el soporte de la comunidad de la plataforma. Durante la prueba, puede crear una prueba de concepto (PoC), explorar la arquitectura y evaluar si SCRIPE se adapta a sus reqscripeitos técnicos. No se requiere tarjeta de crédito para iniciar la evaluación.",
+        "Sí. SCRIPE ofrece un período de evaluación de 30 días con acceso completo a las funciones, la documentación y el soporte de la comunidad de la plataforma. Durante la prueba, puede crear una prueba de concepto (PoC), explorar la arquitectura y evaluar si SCRIPE se adapta a sus requisitos técnicos. No se requiere tarjeta de crédito para iniciar la evaluación.",
       qUpgradePath: "¿Cuál es la vía de actualización entre los niveles de licencia?",
       aUpgradePath:
         "Puede actualizar su nivel de licencia en cualquier momento pagando la diferencia entre su nivel actual y el nuevo. Las actualizaciones son inmediatas: recibirá acceso a funciones adicionales, canales de soporte y derechos de implementación tan pronto como se procese la actualización. No hay penalizaciones ni períodos de bloqueo (lock-in). Las rebajas (downgrades) se gestionan en el momento de la renovación.",
-      qDataResidency: "¿Cómo maneja SCRIPE los reqscripeitos de residencia de datos?",
+      qDataResidency: "¿Cómo maneja SCRIPE los requisitos de residencia de datos?",
       aDataResidency:
         "SCRIPE es autohospedado (self-hosted), lo que significa que usted tiene el control total sobre dónde residen sus datos. Despliegue en su propia infraestructura: en las instalaciones (on-premises), en su región de nube preferida (AWS, Azure, GCP) o en un centro de datos privado. El sistema multitenencia admite la configuración por inquilino, por lo que puede incluso alojar diferentes inquilinos en diferentes regiones para cumplir con GDPR, HIPAA o las regulaciones locales de soberanía de datos.",
       qAuditLogs: "¿Qué capacidades de auditoría proporciona SCRIPE?",
@@ -418,6 +418,15 @@ export const es = {
       personaSelectorInvestorDesc: "Conozca nuestro ROI de crecimiento SaaS, rondas de financiación y métricas.",
       personaSelectorCofounderDesc: "Explore nuestra estrategia fundacional, roles y camino hacia la asociación.",
       personaSelectorPartnerDesc: "Vea cómo los socios escalan su participación en los ingresos de SaaS.",
+      personaSelectorInvestorBenefit1: "ROI promedio del 250% en 3 años métricas de escala proyectadas.",
+      personaSelectorInvestorBenefit2: "Visibilidad completa de las tasas de ARR, MRR y deserción de usuarios.",
+      personaSelectorInvestorBenefit3: "Oportunidad fundacional de captación del mercado de software ERP.",
+      personaSelectorCofounderBenefit1: "Participación directa en el capital y derecho a voto en las decisiones.",
+      personaSelectorCofounderBenefit2: "Propiedad sobre las rutas de arquitectura limpia y modular central.",
+      personaSelectorCofounderBenefit3: "Dirigir las integraciones de canales y salida al mercado global.",
+      personaSelectorPartnerBenefit1: "Generosa participación del 30% en ingresos recurrentes por ventas.",
+      personaSelectorPartnerBenefit2: "Soporte dedicado al desarrollador y derechos de marca blanca.",
+      personaSelectorPartnerBenefit3: "Certificación técnica y listado oficial en el mercado.",
       personaSelectorLearnMore: "Saber más",
       title: "Portal de Inversores",
       description: "Retorno de inversiÃ³n SaaS y oportunidades de asociaciÃ³n.",

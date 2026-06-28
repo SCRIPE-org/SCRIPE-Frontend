@@ -30,7 +30,7 @@ export const fr = {
         "Fini l'analyse de chaînes d'erreurs aléatoires. Chaque réponse de l'API — qu'il s'agisse d'un succès ou d'un échec catastrophique — est encapsulée dans notre structure standardisée de détails du problème `Result<T>`, garantissant une prévisibilité absolue pour les frontends et les consommateurs tiers.",
       responseTitle: "Charges Utiles (Payloads) Prévisibles Standardisées",
       swaggerContent:
-        "Nous générons une documentation Swagger (OpenAPI 3.0) complète et profondément annotée directement à partir du code source C# au moment de l'exécution. Les développeurs peuvent tester de manière interactive les charges utiles authentifiées directement depscripe leur navigateur dès le démarrage du système.",
+        "Nous générons une documentation Swagger (OpenAPI 3.0) complète et profondément annotée directement à partir du code source C# au moment de l'exécution. Les développeurs peuvent tester de manière interactive les charges utiles authentifiées directement depuis leur navigateur dès le démarrage du système.",
       swaggerTitle: "Portails OpenAPI Interactifs",
       title: "La Surface RESTful",
       tblCtrlHeader1: "Contrôleur",

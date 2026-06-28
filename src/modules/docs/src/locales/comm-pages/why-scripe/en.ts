@@ -1,4 +1,4 @@
-﻿// FILE-EXCEPTION: file length
+// FILE-EXCEPTION: file length
 /**
  * Docs page locale — EN
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -32,7 +32,7 @@ export const en = {
         "Transcend traditional development bottlenecks by leveraging a pristine, production-ready enterprise foundation. SCRIPE equips your engineering teams with a pristine Clean Architecture backend, a blazing-fast Next.js frontend, and distributed observability tools out of the box.",
       solutionTitle: "The Definitive Solution Provider",
       startTip:
-        "Architectural Action: Don't guess. Clone the repository today, initialize the system in 15 minutes, and experience absolute architectural clarity.",
+        "Ready to transform your business operations? Start your 30-day free trial today and experience SCRIPE's power firsthand. Our onboarding team will have you fully configured and live within 48 hours.",
       title: "Why Choose SCRIPE?",
       visionContent:
         "We don't just provide code; we actively partner in your scale. Our vision is to absolutely eliminate the concept of 'Technical Debt' by providing a framework so inherently structured and logically perfect that it elegantly absorbs decades of aggressive feature development.",
@@ -336,8 +336,8 @@ export const en = {
         "A recent enterprise client migrated to SCRIPE after 18 months of struggling with a catastrophic custom-built infrastructure. Within 30 days, they completely eliminated their authentication service overhead, permanently reduced infrastructure OpEx by 60%, and redirected 4 senior engineers directly back to aggressive feature development. Their subsequent Series B was secured largely on the provable infinite scalability of their new architectural foundation.",
       caseStudyTitle: "Proven Financial Impact",
       costIntro:
-        "By purchasing a perpetual license, you avoid the compounding, punitive cost of PaaS/SaaS subscriptions that aggressively scale with your success.",
-      costTitle: "Predictable Capital Expenditure",
+        "SCRIPE's transparent subscription pricing means your cost is predictable and scales sensibly with your business. No hidden fees, no surprise charges — just a monthly subscription that grows with you.",
+      costTitle: "Predictable Monthly Subscription",
       description:
         "A forensic financial breakdown comparing the Total Cost of Ownership (TCO) of SCRIPE versus building an equivalent enterprise architecture entirely from scratch.",
       intro:
@@ -387,7 +387,7 @@ export const en = {
       tblCostR8C4: "$10-20K",
       tblCostR9C1: "**Total Infrastructure**",
       tblCostR9C2: "**$225K - $395K**",
-      tblCostR9C3: "**License cost**",
+      tblCostR9C3: "**Monthly subscription fee**",
       tblCostR9C4: "**$200K+**",
       tblTimeHeader1: "Phase",
       tblTimeHeader2: "Without SCRIPE",

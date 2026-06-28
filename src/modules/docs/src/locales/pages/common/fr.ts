@@ -47,7 +47,7 @@ export const fr = {
     endpoint: "Endpoint",
     description: "Description",
     auth: "Auth",
-    authRequired: "Reqscripe",
+    authRequired: "Requis",
     noAuth: "Public",
     permission: "Permission",
   },

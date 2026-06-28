@@ -1,4 +1,4 @@
-﻿// FILE-EXCEPTION: file length
+// FILE-EXCEPTION: file length
 /**
  * Docs page locale — DE
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -277,7 +277,7 @@ export const de = {
         "SCRIPE verhindert, dass Sie Administratoren völlig verwaist zurücklassen. Wenn eine Gruppe gelöscht wird, werden Benutzer sicher aufgefangen und ihnen eine unveränderliche Rolle 'System_default' zugewiesen, um sicherzustellen, dass sie sich weiterhin authentifizieren können, aber null destruktive Fähigkeiten besitzen.",
       roiTitle: "Enterprise ROI & Skalierung Freigeschaltet",
       roiContent:
-        "Hören Sie auf, teure Engineering-Zyklen für den Bau benutzerdefinierter Provisioning-Pipelines zu verschwenden. Die Implementierung von UISs nativen User Groups spart Monate an architektonischen Schulden. Erleben Sie, wie der Übergang von einer flachen 1:1-Rollenzuweisung die Sicherheitslage drastisch verbessert und die operative IT-Belastung um über 90 % senkt.",
+        "Hören Sie auf, teure Engineering-Zyklen für den Bau benutzerdefinierter Provisioning-Pipelines zu verschwenden. Die Implementierung von SCRIPEs nativen User Groups spart Monate an architektonischen Schulden. Erleben Sie, wie der Übergang von einer flachen 1:1-Rollenzuweisung die Sicherheitslage drastisch verbessert und die operative IT-Belastung um über 90 % senkt.",
       complianceGridTitle: "Gebaut für organisatorische Governance",
       auditTrackingTitle: "Granulares Audit-Trailing",
       auditTrackingDesc:

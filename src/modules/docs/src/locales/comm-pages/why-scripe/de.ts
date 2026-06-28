@@ -1,4 +1,4 @@
-﻿// FILE-EXCEPTION: file length
+// FILE-EXCEPTION: file length
 /**
  * Docs page locale — DE
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -32,7 +32,7 @@ export const de = {
         "Überwinden Sie traditionelle Entwicklungsengpässe, indem Sie ein makelloses, produktionsreifes Enterprise-Fundament nutzen. SCRIPE rüstet Ihre Engineering-Teams mit einem reinen Clean Architecture-Backend, einem blitzschnellen Next.js-Frontend und verteilten Observability-Tools out-of-the-box aus.",
       solutionTitle: "Der definitive Lösungsanbieter",
       startTip:
-        "Architektonische Aktion: Raten Sie nicht. Klonen Sie das Repository noch heute, initialisieren Sie das System in 15 Minuten und erleben Sie absolute architektonische Klarheit.",
+        "Bereit, Ihre Geschäftsprozesse zu transformieren? Starten Sie noch heute Ihre kostenlose 30-Tage-Testversion und erleben Sie die Stärke von SCRIPE aus erster Hand. Unser Onboarding-Team wird Ihre Plattform innerhalb von 48 Stunden vollständig konfigurieren und live schalten.",
       title: "Warum SCRIPE wählen?",
       visionContent:
         "Wir stellen nicht nur Code zur Verfügung; wir sind aktive Partner bei Ihrer Skalierung. Unsere Vision ist es, das Konzept der 'Technical Debt' (Technischen Schulden) absolut zu eliminieren, indem wir ein Framework bereitstellen, das von Natur aus so strukturiert und logisch perfekt ist, dass es Jahrzehnte aggressiver Feature-Entwicklung elegant absorbiert.",
@@ -339,8 +339,8 @@ export const de = {
         "Ein Enterprise-Kunde ist kürzlich nach 18 Monaten des Kampfes mit einer katastrophalen, selbstgebauten Infrastruktur zu SCRIPE migriert. Innerhalb von 30 Tagen haben sie ihren Authentifizierungs-Service-Overhead vollständig eliminiert, den Infrastruktur-OpEx permanent um 60 % reduziert und 4 Senior-Ingenieure direkt zurück zur aggressiven Feature-Entwicklung umgeleitet. Ihre anschließende Series B wurde größtenteils durch die nachweisbare unendliche Skalierbarkeit ihres neuen architektonischen Fundaments gesichert.",
       caseStudyTitle: "Nachweisbare finanzielle Auswirkungen",
       costIntro:
-        "Durch den Kauf einer unbefristeten Lizenz (Perpetual License) vermeiden Sie die kumulierten, strafenden Kosten von PaaS/SaaS-Abonnements, die aggressiv mit Ihrem Erfolg skalieren.",
-      costTitle: "Vorhersehbare Investitionsausgaben (CapEx)",
+        "Die transparente Abonnementpreisgestaltung von SCRIPE bedeutet, dass Ihre Kosten vorhersehbar sind und sich sinnvoll mit Ihrem Unternehmen skalieren. Keine versteckten Gebühren, keine überraschenden Rechnungen — nur ein monatliches Abonnement, das mit Ihnen wächst.",
+      costTitle: "Vorhersehbares Monatsabonnement",
       description:
         "Eine forensische finanzielle Aufschlüsselung, die die Total Cost of Ownership (TCO) von SCRIPE mit dem Aufbau einer gleichwertigen Enterprise-Architektur komplett von Grund auf vergleicht.",
       intro:
@@ -390,7 +390,7 @@ export const de = {
       tblCostR8C4: "$10-20K",
       tblCostR9C1: "**Gesamte Infrastruktur**",
       tblCostR9C2: "**$225K - $395K**",
-      tblCostR9C3: "**Lizenzkosten**",
+      tblCostR9C3: "**Monatliche Abonnementgebühr**",
       tblCostR9C4: "**$200K+**",
       tblTimeHeader1: "Phase",
       tblTimeHeader2: "Ohne SCRIPE",

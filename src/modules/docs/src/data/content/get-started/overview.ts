@@ -209,7 +209,7 @@ if (isMonolith || moduleName.Equals("Identity", StringComparison.OrdinalIgnoreCa
     filename: "Secrets Provider Chain (highest wins)",
     code: `Priority (highest wins):
   1. UserSecrets          (Development only)
-  2. Environment Variables (prefix: UIS_)
+  2. Environment Variables (prefix: SCRIPE_)
   3. appsettings.Secrets.json (optional)
   4. appsettings.json         (base)`,
   },

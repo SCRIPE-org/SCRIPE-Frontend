@@ -1,4 +1,4 @@
-﻿// FILE-EXCEPTION: file length
+// FILE-EXCEPTION: file length
 /**
  * Docs page locale — ES
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -32,7 +32,7 @@ export const es = {
         "Trascienda los cuellos de botella del desarrollo tradicional aprovechando una base empresarial prístina, lista para producción. SCRIPE equipa a sus equipos de ingeniería con un backend de Arquitectura Limpia puro, un frontend Next.js ultrarrápido y herramientas de observabilidad distribuidas listas para usar.",
       solutionTitle: "El Proveedor de Soluciones Definitivo",
       startTip:
-        "Acción Arquitectónica: No adivine. Clone el repositorio hoy, inicialice el sistema en 15 minutos y experimente la absoluta claridad arquitectónica.",
+        "¿Listo para transformar las operaciones de su negocio? Comience su prueba gratuita de 30 días hoy y experimente el poder de SCRIPE de primera mano. Nuestro equipo de incorporación lo tendrá completamente configurado y en funcionamiento en 48 horas.",
       title: "¿Por qué elegir SCRIPE?",
       visionContent:
         "No nos limitamos a proporcionar código; nos asociamos activamente en su crecimiento. Nuestra visión es eliminar por completo el concepto de 'Deuda Técnica' al brindar un framework intrínsecamente tan estructurado y lógicamente perfecto que absorbe con elegancia décadas de desarrollo agresivo de características.",
@@ -282,7 +282,7 @@ export const es = {
       saasWhiteLabelDesc:
         "Permita a sus grandes clientes corporativos inyectar dinámicamente sus propios logotipos, tipografía y dominios de correo electrónico a nivel mundial.",
       title: "Aplicaciones Industriales Verticales",
-      tblGovHeader1: "Reqscripeito",
+      tblGovHeader1: "Requisito",
       tblGovHeader2: "Capacidad SCRIPE",
       tblGovR1C1: "Soberanía de datos",
       tblGovR1C2: "Despliegue local (on-premise), no requiere dependencia en la nube",
@@ -345,8 +345,8 @@ export const es = {
         "Un cliente corporativo reciente migró a SCRIPE tras 18 meses de lucha con una infraestructura catastrófica construida a medida. En 30 días, eliminaron por completo la sobrecarga de su servicio de autenticación, redujeron de forma permanente los gastos operativos (OpEx) de infraestructura en un 60 % y reasignaron a 4 ingenieros senior directamente al desarrollo intensivo de nuevas funcionalidades. Aseguraron su posterior ronda Serie B respaldados en gran medida por la escalabilidad infinita y demostrable de su nueva base arquitectónica.",
       caseStudyTitle: "Impacto Financiero Comprobado",
       costIntro:
-        "Al adquirir una licencia perpetua, usted evita el coste acumulativo y punitivo de las suscripciones PaaS/SaaS que escalan de manera agresiva a medida que usted tiene éxito.",
-      costTitle: "Gastos de Capital (CapEx) Predecibles",
+        "La fijación de precios de suscripción transparente de SCRIPE significa que su costo es predecible y escala de manera sensata con su negocio. Sin tarifas ocultas, sin cargos sorpresa — solo una suscripción mensual que crece con usted.",
+      costTitle: "Suscripción Mensual Predecible",
       description:
         "Un desglose financiero forense que compara el Costo Total de Propiedad (TCO) de SCRIPE frente a la construcción de una arquitectura empresarial equivalente totalmente desde cero.",
       intro:
@@ -396,7 +396,7 @@ export const es = {
       tblCostR8C4: "$10-20K",
       tblCostR9C1: "**Total Infraestructura**",
       tblCostR9C2: "**$225K - $395K**",
-      tblCostR9C3: "**Costo de licencia**",
+      tblCostR9C3: "**Cuota de suscripción mensual**",
       tblCostR9C4: "**$200K+**",
       tblTimeHeader1: "Fase",
       tblTimeHeader2: "Sin SCRIPE",

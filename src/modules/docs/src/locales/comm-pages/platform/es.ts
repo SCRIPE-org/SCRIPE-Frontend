@@ -221,7 +221,7 @@ export const es = {
         "Despliegue SCRIPE sin problemas en SQL Server, PostgreSQL, Oracle o SQLite sin reescribir una sola consulta.",
       featuresTitle: "Capacidades Independientes del Proveedor",
       intro:
-        "SCRIPE utiliza Entity Framework Core para abstraer completamente las interacciones con la base de datos. Elija el motor relacional que se adapte a su presupuesto de licencias, sus reqscripeitos de alta disponibilidad o los mandatos corporativos. La configuración Database.Mode ('Single' o 'Multi') controla si todos los módulos comparten una base de datos o cada uno obtiene la suya propia — configurable sin cambios de código.",
+        "SCRIPE utiliza Entity Framework Core para abstraer completamente las interacciones con la base de datos. Elija el motor relacional que se adapte a su presupuesto de licencias, sus requisitos de alta disponibilidad o los mandatos corporativos. La configuración Database.Mode ('Single' o 'Multi') controla si todos los módulos comparten una base de datos o cada uno obtiene la suya propia — configurable sin cambios de código.",
       mig1Content:
         "Olvídese de los scripts SQL manuales. SCRIPE utiliza Migraciones Code-First de EF Core, generando automáticamente la sintaxis específica para su proveedor elegido.",
       mig1Title: "Generación Automatizada Multi-Esquema",

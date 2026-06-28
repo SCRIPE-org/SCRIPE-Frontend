@@ -505,7 +505,7 @@ export const es = {
       // IRequireFeature Interface
       requireFeatureInterfaceTitle: "IRequireFeature — La interfaz marcador opt-in",
       requireFeatureInterfaceIntro:
-        "IRequireFeature es una interfaz marcador sin sobrecarga. Los comandos que la implementan se adhieren al filtrado de funciones basado en edición a través de FeatureCheckBehavior. Los comandos que no la implementan pasan por el comportamiento sin ninguna sobrecarga. Este diseño significa que el filtrado de funciones es explícito y opt-in — los comandos existentes nunca son filtrados accidentalmente, y los nuevos comandos declaran conscientemente sus reqscripeitos de funciones.",
+        "IRequireFeature es una interfaz marcador sin sobrecarga. Los comandos que la implementan se adhieren al filtrado de funciones basado en edición a través de FeatureCheckBehavior. Los comandos que no la implementan pasan por el comportamiento sin ninguna sobrecarga. Este diseño significa que el filtrado de funciones es explícito y opt-in — los comandos existentes nunca son filtrados accidentalmente, y los nuevos comandos declaran conscientemente sus requisitos de funciones.",
 
       // Event Triggers
       eventTriggersTitle: "Todos los comandos que publican SubscriptionChangedEvent",

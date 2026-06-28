@@ -44,7 +44,7 @@ export const ar = {
         "لا تقم بإعادة ترتيب تسجيلات الخدمات في Program.cs. يجب أن يأتي AddCoreInfrastructure قبل الوحدات (لأنها تعتمد على ICurrentUser)، ويجب أن يأتي AddCoreApplication بعد الوحدات (لأن SCRIPE mediator يحتاج إلى تجميعاتها).",
       environmentProfilesTitle: "ملفات البيئة",
       envVarPrefixTip:
-        "يتم تحميل متغيرات البيئة التي تبدأ بـ UIS_ فقط. على سبيل المثال، يقوم UIS_ConnectionStrings__DefaultConnection بتجاوز سلسلة الاتصال. تمثل الشرطتان السفليتان (__) التداخل في إعدادات JSON.",
+        "يتم تحميل متغيرات البيئة التي تبدأ بـ SCRIPE_ فقط. على سبيل المثال، يقوم SCRIPE_ConnectionStrings__DefaultConnection بتجاوز سلسلة الاتصال. تمثل الشرطتان السفليتان (__) التداخل في إعدادات JSON.",
     },
     prerequisites: {
       title: "المتطلبات الأساسية",

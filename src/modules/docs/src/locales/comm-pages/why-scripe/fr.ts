@@ -1,4 +1,4 @@
-﻿// FILE-EXCEPTION: file length
+// FILE-EXCEPTION: file length
 /**
  * Docs page locale — FR
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -32,7 +32,7 @@ export const fr = {
         "Transcendez les goulots d'étranglement de développement traditionnels en tirant parti d'une fondation d'entreprise immaculée et prête pour la production. SCRIPE équipe vos équipes d'ingénierie d'un backend en Clean Architecture pur, d'un frontend Next.js ultra-rapide et d'outils d'observabilité distribués prêts à l'emploi.",
       solutionTitle: "Le Fournisseur de Solutions Définitif",
       startTip:
-        "Action Architecturale : Ne devinez pas. Clonez le dépôt aujourd'hui, initialisez le système en 15 minutes et faites l'expérience de la clarté architecturale absolue.",
+        "Prêt à transformer vos opérations métier ? Démarrez votre essai gratuit de 30 jours dès aujourd'hui et découvrez la puissance de SCRIPE par vous-même. Notre équipe d'onboarding vous configurera et vous mettra en ligne en moins de 48 heures.",
       title: "Pourquoi Choisir SCRIPE ?",
       visionContent:
         "Nous ne fournissons pas seulement du code ; nous sommes un partenaire actif de votre mise à l'échelle. Notre vision est d'éliminer absolument le concept de 'Dette Technique' en fournissant un framework intrinsèquement si structuré et logiquement parfait qu'il absorbe avec élégance des décennies de développement agressif de fonctionnalités.",
@@ -57,7 +57,7 @@ export const fr = {
       tblCostR5C3: "Layouts RTL cassés, UX incohérente, refontes coûteuses",
       tblCostR6C1: "Intégration de l'équipe (Onboarding)",
       tblCostR6C2: "Chaque développeur apprend ses propres modèles",
-      tblCostR6C3: "Rampe de montée en pscripesance de 3-6 mois, base de code incohérente",
+      tblCostR6C3: "Rampe de montée en puissance de 3-6 mois, base de code incohérente",
       tblMetricsHeader1: "Métrique",
       tblMetricsHeader2: "Valeur",
       tblMetricsR1C1: "Points de terminaison API",
@@ -146,7 +146,7 @@ export const fr = {
       compScripeI5:
         "Infrastructure de base partagée immaculée se multipliant à travers tous les modules",
       compTradI1: "Forcé de choisir entre monolithe OU microservices dès le départ",
-      compTradI2: "Réécriture complète reqscripee pour modifier les topologies de déploiement",
+      compTradI2: "Réécriture complète requise pour modifier les topologies de déploiement",
       compTradI3: "Dépendances en plat de spaghettis entre des services hautement couplés",
       compTradI4: "Chaque service réimplémente à grands frais des préoccupations partagées",
       compTradI5: "Modèles incohérents et non évolutifs entre les équipes de développement",
@@ -283,7 +283,7 @@ export const fr = {
       tblGovHeader1: "Exigence",
       tblGovHeader2: "Capacité SCRIPE",
       tblGovR1C1: "Souveraineté des données",
-      tblGovR1C2: "Déploiement sur site (on-premise), pas de dépendance cloud reqscripee",
+      tblGovR1C2: "Déploiement sur site (on-premise), pas de dépendance cloud requise",
       tblGovR2C1: "Conformité d'audit",
       tblGovR2C2: "Piste d'audit à 4 sources avec surveillance en temps réel",
       tblGovR3C1: "Accès basé sur les rôles",
@@ -343,12 +343,12 @@ export const fr = {
         "Un client d'entreprise récent a migré vers SCRIPE après 18 mois de lutte contre une infrastructure personnalisée catastrophique. En 30 jours, ils ont complètement éliminé les frais généraux de leur service d'authentification, réduit de façon permanente l'OpEx d'infrastructure de 60 %, et réaffecté 4 ingénieurs seniors directement au développement agressif de fonctionnalités. Leur série B ultérieure a été obtenue en grande partie grce à l'évolutivité infinie et prouvable de leur nouvelle fondation architecturale.",
       caseStudyTitle: "Impact Financier Prouvé",
       costIntro:
-        "En achetant une licence perpétuelle, vous évitez le coût cumulatif et punitif des abonnements PaaS/SaaS qui évoluent agressivement avec votre succès.",
-      costTitle: "Dépenses d'Investissement Prévisibles (CapEx)",
+        "La tarification d'abonnement transparente de SCRIPE signifie que vos coûts sont prévisibles et évoluent raisonnablement avec votre activité. Pas de frais cachés, pas de surprises — juste un abonnement mensuel qui grandit avec vous.",
+      costTitle: "Abonnement Mensuel Prévisible",
       description:
         "Une ventilation financière médico-légale comparant le Coût Total de Possession (TCO) de SCRIPE par rapport à la création d'une architecture d'entreprise équivalente entièrement à partir de zéro.",
       intro:
-        "L'architecture d'entreprise est sans doute le risque le plus coûteux qu'un fondateur technique pscripese prendre. SCRIPE élimine complètement ce risque, garantissant un retour sur investissement massif et mathématiquement prouvable avant même d'écrire votre première ligne de logique métier.",
+        "L'architecture d'entreprise est sans doute le risque le plus coûteux qu'un fondateur technique puisse prendre. SCRIPE élimine complètement ce risque, garantissant un retour sur investissement massif et mathématiquement prouvable avant même d'écrire votre première ligne de logique métier.",
       ongoingTitle: "Maintenance Drastiquement Réduite",
       teamContent:
         "SCRIPE permet à une équipe réduite de 3 ingénieurs de fournir le débit, la stabilité et l'échelle d'un département d'entreprise traditionnel de 15 personnes, maximisant ainsi l'efficacité des effectifs.",
@@ -394,7 +394,7 @@ export const fr = {
       tblCostR8C4: "10-20K $",
       tblCostR9C1: "**Total Infrastructure**",
       tblCostR9C2: "**225K $ - 395K $**",
-      tblCostR9C3: "**Coût de la licence**",
+      tblCostR9C3: "**Frais d'abonnement mensuel**",
       tblCostR9C4: "**200K+ $**",
       tblTimeHeader1: "Phase",
       tblTimeHeader2: "Sans SCRIPE",

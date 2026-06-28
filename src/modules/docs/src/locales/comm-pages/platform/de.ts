@@ -8,7 +8,7 @@ export const de = {
     platformArchitecture: {
       title: "Plattform-Architektur",
       description:
-        "Erkunden Sie die strukturelle Perfektion von UISs Clean Architecture, SCRIPE mediator-Pipelines und undurchdringlichen Modulgrenzen, entwickelt für massive Enterprise-Skalierung.",
+        "Erkunden Sie die strukturelle Perfektion von SCRIPEs Clean Architecture, SCRIPE mediator-Pipelines und undurchdringlichen Modulgrenzen, entwickelt für massive Enterprise-Skalierung.",
       intro:
         "Erleben Sie die Konvergenz von massiver horizontaler Skalierbarkeit und makelloser Code-Organisation. Die Architektur von SCRIPE ist ein akribisch konstruiertes Fundament, das gebaut wurde, um Jahrzehnten der Unternehmensentwicklung standzuhalten.",
       modularTitle: "Der evolutionäre modulare Monolith",

@@ -45,15 +45,15 @@ export const fr = {
         "NE modifiez PAS l'ordre des enregistrements de services dans Program.cs. AddCoreInfrastructure doit précéder les modules (ils dépendent de ICurrentUser), et AddCoreApplication doit suivre les modules (SCRIPE mediator a besoin de leurs assemblages).",
       environmentProfilesTitle: "Profils d'Environnement",
       envVarPrefixTip:
-        "Seules les variables d'environnement commençant par UIS_ sont chargées. Par exemple, UIS_ConnectionStrings__DefaultConnection remplace la chaîne de connexion. Les doubles traits de soulignement (__) représentent l'imbrication dans la configuration JSON.",
+        "Seules les variables d'environnement commençant par SCRIPE_ sont chargées. Par exemple, SCRIPE_ConnectionStrings__DefaultConnection remplace la chaîne de connexion. Les doubles traits de soulignement (__) représentent l'imbrication dans la configuration JSON.",
     },
     prerequisites: {
-      title: "Préreqscripe",
+      title: "Prérequis",
       description:
-        "Outils reqscripe, configuration de la base de données et de l'environnement pour le développement.",
+        "Outils requis, configuration de la base de données et de l'environnement pour le développement.",
       intro:
-        "Avant de commencer à développer avec SCRIPE, assurez-vous que votre machine de développement dispose des outils reqscripe. Cette page couvre les exigences exactes de version, la prise en charge des bases de données, la configuration étape par étape et le démarrage rapide avec Docker.",
-      requiredToolsTitle: "Outils Reqscripe",
+        "Avant de commencer à développer avec SCRIPE, assurez-vous que votre machine de développement dispose des outils requis. Cette page couvre les exigences exactes de version, la prise en charge des bases de données, la configuration étape par étape et le démarrage rapide avec Docker.",
+      requiredToolsTitle: "Outils Requis",
       databaseTitle: "Prise en Charge des Bases de Données",
       databaseIntro:
         "SCRIPE prend en charge trois fournisseurs de bases de données de manière native : SQL Server, PostgreSQL et Oracle. Le fournisseur est configuré via Database.Provider dans appsettings.json. De plus, le paramètre Database.Mode contrôle l'isolation de la base de données : 'Single' place toutes les tables des modules dans une seule base de données partagée, tandis que 'Multi' (par défaut) permet à chaque module d'avoir sa propre base de données avec des chaînes de connexion séparées.",
@@ -62,7 +62,7 @@ export const fr = {
       envSetupTitle: "Configuration de l'Environnement",
       step1Title: "Vérifier les Versions des Outils",
       step1Content:
-        "Assurez-vous que tous les outils reqscripe sont installés et répondent aux exigences minimales de version.",
+        "Assurez-vous que tous les outils requis sont installés et répondent aux exigences minimales de version.",
       step2Title: "Cloner le Référentiel",
       step2Content: "Clonez le monorepo avec les sous-modules Git pour le backend et le frontend.",
       step3Title: "Configurer la Chaîne de Connexion",
@@ -83,7 +83,7 @@ export const fr = {
       description:
         "Faites fonctionner SCRIPE localement en moins de 5 minutes avec le backend, le frontend et les étapes de vérification.",
       intro:
-        "Ce guide vous accompagne dans le démarrage du serveur API backend et du serveur de développement frontend, pscripe dans la vérification de leur bon fonctionnement.",
+        "Ce guide vous accompagne dans le démarrage du serveur API backend et du serveur de développement frontend, puis dans la vérification de leur bon fonctionnement.",
       backendTitle: "Démarrer le Backend",
       backendStep1Title: "Restaurer les Dépendances",
       backendStep1Content: "Restaurez tous les packages NuGet pour la solution.",
@@ -140,7 +140,7 @@ export const fr = {
       prodStartAllCmd:
         "scripe start all — Démarrer le backend (mode Release) et le frontend (next start) simultanément. Ouvre automatiquement le navigateur.",
       prodStartPublishedCmd:
-        "scripe start all --published — Exécuter depscripe le DLL pré-compilé pour le démarrage le plus rapide. Nécessite scripe build backend d'abord.",
+        "scripe start all --published — Exécuter depuis le DLL pré-compilé pour le démarrage le plus rapide. Nécessite scripe build backend d'abord.",
       prodStartFrontendCmd:
         "scripe start frontend — Démarrer uniquement le serveur frontend de production.",
       prodStartBackendCmd:

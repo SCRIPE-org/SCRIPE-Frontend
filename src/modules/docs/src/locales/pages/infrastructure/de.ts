@@ -355,7 +355,7 @@ export const de = {
         "Gesundheitsprüfungen werden zentral in HealthCheckExtensions.cs mit expliziten Tags und Fehlerstatus registriert. Tags bestimmen, welcher Endpoint jede Prüfung einschließt.",
       k8sTitle: "Kubernetes-Probe-Konfiguration",
       k8sIntro:
-        "UISs Health-Endpoints korrespondieren direkt mit Kubernetes-Probe-Typen. Die Startup-Probe erlaubt bis zu 5 Minuten (30 Fehler × 10s Intervall) für die Datenbankmigration beim Erstdeployment.",
+        "SCRIPEs Health-Endpoints korrespondieren direkt mit Kubernetes-Probe-Typen. Die Startup-Probe erlaubt bis zu 5 Minuten (30 Fehler × 10s Intervall) für die Datenbankmigration beim Erstdeployment.",
       dockerTitle: "Docker Compose Health Check",
       dockerIntro:
         "Für Docker Compose Deployments konfigurieren Sie Health Checks in der Service-Definition. Verwenden Sie /health/live für grundlegende Liveness und /health/ready für Readiness. Setzen Sie start_period, um Zeit für Datenbankmigrationen zu gewähren.",
@@ -397,7 +397,7 @@ export const de = {
       description:
         "Vollständiges Audit-Logging mit automatischer Modulerkennung, Korrelationsverfolgung, Echtzeit-SignalR-Broadcasting und 45+ Ereignistypen.",
       intro:
-        "UISs Enterprise Audit Trail erfasst jede bedeutende Aktion auf der Plattform — von Authentifizierungsereignissen über Entitätsmutationen bis hin zu Berechtigungsänderungen und Sicherheitsvorfällen.",
+        "SCRIPEs Enterprise Audit Trail erfasst jede bedeutende Aktion auf der Plattform — von Authentifizierungsereignissen über Entitätsmutationen bis hin zu Berechtigungsänderungen und Sicherheitsvorfällen.",
       architectureTitle: "Audit-Trail-Architektur",
       entityTitle: "AuditLog-Entitätsschema",
       entityIntro:
