@@ -314,7 +314,7 @@ export const en = {
     },
     faq: {
       q1: "What is SCRIPE?",
-      a1: "SCRIPE is an enterprise-grade modular ERP platform built on .NET 9 and Next.js 15. It provides a production-ready foundation with Clean Architecture, multi-tenancy, role-based access control, real-time capabilities, and a growing catalog of business modules — all from a single codebase that supports monolith, gateway, and microservice deployments.",
+      a1: "SCRIPE is an enterprise B2B2C SaaS platform that gives your business a fully managed workspace with user management, role-based access, real-time operations, module-based feature expansion, and complete white-labeling capabilities — all in one subscription.",
       q2: "Who is SCRIPE designed for?",
       a2: "SCRIPE is built for development teams and organizations that need to launch enterprise applications quickly without sacrificing architectural quality. Whether you're a startup looking for a scalable foundation, a software house delivering client projects, or an enterprise modernizing legacy systems, SCRIPE eliminates months of foundational boilerplate so you can focus on business logic.",
       q3: "How is SCRIPE different from other ERP platforms?",
@@ -324,7 +324,7 @@ export const en = {
         "SCRIPE is industry-agnostic by design. Its modular architecture allows you to build solutions for healthcare, finance, manufacturing, logistics, education, government, retail, real estate, and more. The core platform provides the common infrastructure (authentication, tenancy, audit, permissions), while business-specific modules can be added or custom-built following the established patterns.",
       qHowLongSetup: "How long does it take to get started?",
       aHowLongSetup:
-        "You can have SCRIPE running locally in under 15 minutes. Clone the repository, configure your database connection (SQL Server, Oracle, PostgreSQL, or SQLite), run the migrations, and start the development server. The scripe-cli tool further accelerates development by scaffolding new modules, entities, and boilerplate code in seconds. Most teams are productive within the first day.",
+        "Getting started with SCRIPE is effortless. Sign up online, and our onboarding team will set up your workspace within 24 hours. Your platform comes pre-configured with all selected modules, user management, and security settings ready to go. Most teams are fully productive from day one.",
       q4: "What technology stack does SCRIPE use?",
       a4: "The backend is built on ASP.NET Core (.NET 9) with Entity Framework Core, SCRIPE mediator (CQRS), and FluentValidation. The frontend uses Next.js 15 with TypeScript, TanStack Query, Zustand, and a custom design system built on Radix UI. Real-time features are powered by SignalR WebSockets, and the platform supports Docker containerization for deployment.",
       q5: "Can SCRIPE scale from monolith to microservices?",
