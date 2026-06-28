@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDocsViewModel } from "../viewmodels/useDocsViewModel";
 import { useSidebarViewModel } from "../viewmodels/useSidebarViewModel";
 import { useSearchViewModel } from "../viewmodels/useSearchViewModel";
@@ -38,6 +38,11 @@ export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
   const sidebar = useSidebarViewModel();
   const search = useSearchViewModel(vm.search);
   const toc = useTocViewModel(vm.headingIds);
+
+  // Reader states
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [fontSize, setFontSize] = useState<14 | 16 | 18>(16);
+  const [wideLayout, setWideLayout] = useState(false);
 
   // Lazy-load the section locale for the current page
   useEffect(() => {
@@ -77,16 +82,83 @@ export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
       <ReadingProgress />
       <DocsHeader onSearchOpen={search.openSearch} onMobileMenuOpen={sidebar.openMobileMenu} />
 
-      <div className="docs-wrapper">
+      <div className={`docs-wrapper ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
         <DocsSidebar categories={vm.categories} activeSlug={slug} />
 
         <div className="docs-content-wrapper">
-          <main className="docs-content">
-            <DocsBreadcrumb
-              slug={slug}
-              categoryTitleKey={vm.categoryInfo.titleKey}
-              pageTitleKey={page.titleKey}
-            />
+          <main
+            className="docs-content transition-all duration-200"
+            style={{
+              fontSize: `${fontSize}px`,
+              maxWidth: wideLayout ? "1200px" : "800px"
+            }}
+          >
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+              <DocsBreadcrumb
+                slug={slug}
+                categoryTitleKey={vm.categoryInfo.titleKey}
+                pageTitleKey={page.titleKey}
+              />
+              
+              {/* Reader Toolbar */}
+              <div className="reader-toolbar flex items-center gap-2 px-3 py-1.5 bg-muted/40 border border-border/40 rounded-lg text-sm select-none">
+                <button
+                  onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                  className={`reader-toolbar-btn p-1 rounded text-muted-foreground hover:text-foreground transition-colors ${sidebarCollapsed ? "bg-primary/10 text-primary" : "hover:bg-muted"}`}
+                  title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+                  aria-label="Toggle Sidebar"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <path d="M9 3v18" />
+                  </svg>
+                </button>
+
+                <div className="reader-toolbar-divider w-px h-4 bg-border/60 mx-1" />
+
+                <button
+                  onClick={() => setFontSize(14)}
+                  className={`reader-toolbar-btn px-2 py-0.5 rounded transition-colors ${fontSize === 14 ? "bg-primary text-primary-foreground font-bold" : "hover:bg-muted text-muted-foreground hover:text-foreground"}`}
+                  title="Small Font Size"
+                >
+                  A-
+                </button>
+                <button
+                  onClick={() => setFontSize(16)}
+                  className={`reader-toolbar-btn px-2 py-0.5 rounded transition-colors ${fontSize === 16 ? "bg-primary text-primary-foreground font-bold" : "hover:bg-muted text-muted-foreground hover:text-foreground"}`}
+                  title="Medium Font Size"
+                >
+                  A
+                </button>
+                <button
+                  onClick={() => setFontSize(18)}
+                  className={`reader-toolbar-btn px-2 py-0.5 rounded transition-colors ${fontSize === 18 ? "bg-primary text-primary-foreground font-bold" : "hover:bg-muted text-muted-foreground hover:text-foreground"}`}
+                  title="Large Font Size"
+                >
+                  A+
+                </button>
+
+                <div className="reader-toolbar-divider w-px h-4 bg-border/60 mx-1" />
+
+                <button
+                  onClick={() => setWideLayout(!wideLayout)}
+                  className={`reader-toolbar-btn px-2 py-0.5 rounded transition-colors ${wideLayout ? "bg-primary text-primary-foreground font-bold" : "hover:bg-muted text-muted-foreground hover:text-foreground"}`}
+                  title="Toggle Wide Layout"
+                >
+                  {wideLayout ? "Compact" : "Wide"}
+                </button>
+              </div>
+            </div>
 
             <h1 className="docs-page-title">{t(page.titleKey)}</h1>
             {page.descriptionKey && (

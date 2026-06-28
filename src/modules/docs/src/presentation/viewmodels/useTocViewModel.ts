@@ -12,26 +12,26 @@ export function useTocViewModel(headingIds: string[]) {
   useEffect(() => {
     if (headingIds.length === 0) return;
 
+    const visibleHeadings = new Map<string, boolean>();
+
     const observer = new IntersectionObserver(
       (entries) => {
-        // Find the first visible heading
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => {
-            return a.boundingClientRect.top - b.boundingClientRect.top;
-          });
+        for (const entry of entries) {
+          visibleHeadings.set(entry.target.id, entry.isIntersecting);
+        }
 
-        if (visible.length > 0) {
-          setActiveId(visible[0].target.id);
+        const firstVisibleId = headingIds.find((id) => visibleHeadings.get(id) === true);
+
+        if (firstVisibleId) {
+          setActiveId(firstVisibleId);
         }
       },
       {
-        rootMargin: "-80px 0px -70% 0px",
+        rootMargin: "-80px 0px -60% 0px",
         threshold: 0,
       }
     );
 
-    // Observe all headings
     for (const id of headingIds) {
       const el = document.getElementById(id);
       if (el) observer.observe(el);

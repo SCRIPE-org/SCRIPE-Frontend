@@ -2,6 +2,7 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
+  { type: "persona-selector" },
   { type: "paragraph", contentKey: "commercial.investorOverview.intro" },
 
   // ═══ Market Opportunity ═══
@@ -226,6 +227,7 @@ registerPage({
   slug: "commercial/investor-overview",
   titleKey: "commercial.investorOverview.title",
   descriptionKey: "commercial.investorOverview.description",
+  layout: "landing",
   category: "commercial-pricing",
   order: 11,
   sections,

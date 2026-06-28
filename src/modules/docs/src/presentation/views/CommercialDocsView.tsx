@@ -9,15 +9,15 @@ import { useDocsI18n } from "../providers/DocsI18nProvider";
 
 // Commercial layout components
 import { CommercialHeader } from "../components/layout/CommercialHeader";
+import { CommercialSubNav } from "../components/layout/CommercialSubNav";
 import { CommercialContent } from "../components/content/CommercialContent";
+import { DocContent } from "../components/content/DocContent";
 
 // Shared components
 import { DocsPrevNext } from "../components/layout/DocsPrevNext";
 import { DocsMobileNav } from "../components/layout/DocsMobileNav";
 import { ReadingProgress } from "../components/ui/ReadingProgress";
 import { DocsSearch } from "../components/ui/DocsSearch";
-import { CommercialHomeLanding } from "./CommercialHomeLanding";
-import { InvestorLandingView } from "./InvestorLandingView";
 
 // ─── Props ────────────────────────────────────────────────────────
 interface CommercialDocsViewProps {
@@ -126,60 +126,6 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
     loadSection(slug);
   }, [slug, loadSection]);
 
-  // ── Full-screen marketing landing for the home/overview page ─────
-  if (slug === "commercial/why-scripe-overview") {
-    return (
-      <div className="commercial-root" dir={direction}>
-        <CommercialHeader
-          onSearchOpen={search.openSearch}
-          onMobileMenuOpen={sidebar.openMobileMenu}
-        />
-        <CommercialHomeLanding />
-        <CommercialFooter />
-        <DocsSearch
-          isOpen={search.isSearchOpen}
-          onClose={search.closeSearch}
-          onSearch={search.searchFn}
-          basePath="/commercial"
-        />
-        <DocsMobileNav
-          categories={vm.categories}
-          activeSlug={slug}
-          isOpen={sidebar.isMobileMenuOpen}
-          onClose={sidebar.closeMobileMenu}
-          basePath="/commercial"
-        />
-      </div>
-    );
-  }
-
-  // ── Full-screen custom view for investor overview page ────────────
-  if (slug === "commercial/investor-overview") {
-    return (
-      <div className="commercial-root" dir={direction}>
-        <CommercialHeader
-          onSearchOpen={search.openSearch}
-          onMobileMenuOpen={sidebar.openMobileMenu}
-        />
-        <InvestorLandingView />
-        <CommercialFooter />
-        <DocsSearch
-          isOpen={search.isSearchOpen}
-          onClose={search.closeSearch}
-          onSearch={search.searchFn}
-          basePath="/commercial"
-        />
-        <DocsMobileNav
-          categories={vm.categories}
-          activeSlug={slug}
-          isOpen={sidebar.isMobileMenuOpen}
-          onClose={sidebar.closeMobileMenu}
-          basePath="/commercial"
-        />
-      </div>
-    );
-  }
-
   // ── 404 ──────────────────────────────────────────────────────────
   if (vm.isNotFound) {
     return (
@@ -203,6 +149,41 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
 
   const page = vm.page!;
 
+  // ── Premium Landing Layout ────────────────────────────────────────
+  if (page.layout === "landing") {
+    return (
+      <div className="commercial-root" dir={direction}>
+        <CommercialHeader
+          onSearchOpen={search.openSearch}
+          onMobileMenuOpen={sidebar.openMobileMenu}
+        />
+        <CommercialSubNav
+          categories={vm.categories}
+          activeSlug={slug}
+          pageTitleKey={page.titleKey}
+          categoryInfo={vm.categoryInfo}
+        />
+        <div className="com-landing">
+          <DocContent sections={page.sections} />
+        </div>
+        <CommercialFooter />
+        <DocsSearch
+          isOpen={search.isSearchOpen}
+          onClose={search.closeSearch}
+          onSearch={search.searchFn}
+          basePath="/commercial"
+        />
+        <DocsMobileNav
+          categories={vm.categories}
+          activeSlug={slug}
+          isOpen={sidebar.isMobileMenuOpen}
+          onClose={sidebar.closeMobileMenu}
+          basePath="/commercial"
+        />
+      </div>
+    );
+  }
+
   // ── Main layout ──────────────────────────────────────────────────
   return (
     <div className="commercial-root" dir={direction}>
@@ -210,6 +191,12 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
       <CommercialHeader
         onSearchOpen={search.openSearch}
         onMobileMenuOpen={sidebar.openMobileMenu}
+      />
+      <CommercialSubNav
+        categories={vm.categories}
+        activeSlug={slug}
+        pageTitleKey={page.titleKey}
+        categoryInfo={vm.categoryInfo}
       />
 
       <div className="commercial-wrapper commercial-wrapper--full-width">

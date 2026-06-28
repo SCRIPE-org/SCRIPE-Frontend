@@ -115,7 +115,11 @@ export type DocSectionType =
   | "schema-visualizer"
   | "cli-simulator"
   | "lifecycle-tracer"
-  | "persona-selector";
+  | "persona-selector"
+  | "landing-hero-block"
+  | "stats-strip-block"
+  | "value-props-block"
+  | "cta-banner-block";
 
 /**
  * Domain model representing a Doc Section Base structure.
@@ -286,10 +290,58 @@ export type DocSection =
   | SchemaVisualizerSection
   | CliSimulatorSection
   | LifecycleTracerSection
-  | PersonaSelectorSection;
+  | PersonaSelectorSection
+  | LandingHeroBlockSection
+  | StatsStripBlockSection
+  | ValuePropsBlockSection
+  | CtaBannerBlockSection;
 
 export interface PersonaSelectorSection extends DocSectionBase {
   type: "persona-selector";
+}
+
+export interface LandingHeroBlockSection extends DocSectionBase {
+  type: "landing-hero-block";
+  kickerKey?: string;
+  title1Key: string;
+  title2Key?: string;
+  subtitleKey: string;
+  primaryCtaKey: string;
+  primaryCtaHref: string;
+  secondaryCtaKey?: string;
+  secondaryCtaHref?: string;
+}
+
+export interface StatItem {
+  value: string;
+  labelKey: string;
+}
+
+export interface StatsStripBlockSection extends DocSectionBase {
+  type: "stats-strip-block";
+  stats: StatItem[];
+}
+
+export interface ValuePropItem {
+  icon: string;
+  titleKey: string;
+  descKey: string;
+}
+
+export interface ValuePropsBlockSection extends DocSectionBase {
+  type: "value-props-block";
+  titleKey: string;
+  props: ValuePropItem[];
+}
+
+export interface CtaBannerBlockSection extends DocSectionBase {
+  type: "cta-banner-block";
+  titleKey: string;
+  subtitleKey: string;
+  primaryCtaKey: string;
+  primaryCtaHref: string;
+  secondaryCtaKey?: string;
+  secondaryCtaHref?: string;
 }
 
 export interface TerminalTab {

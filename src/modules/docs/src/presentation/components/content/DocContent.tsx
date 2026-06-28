@@ -21,6 +21,10 @@ import { SchemaVisualizer } from "./SchemaVisualizer";
 import { CliSimulator } from "./CliSimulator";
 import { LifecycleTracer } from "./LifecycleTracer";
 import { PersonaSelector } from "./PersonaSelector";
+import { LandingHeroBlock } from "./LandingHeroBlock";
+import { StatsStripBlock } from "./StatsStripBlock";
+import { ValuePropsBlock } from "./ValuePropsBlock";
+import { CtaBannerBlock } from "./CtaBannerBlock";
 
 interface DocContentProps {
   sections: DocSection[];
@@ -42,12 +46,46 @@ export function DocContent({ sections }: DocContentProps) {
           case "heading": {
             const id = section.id || section.titleKey.split(".").pop() || `h-${idx}`;
             const Tag = `h${section.level}` as "h2" | "h3" | "h4";
-            const className = `docs-h${section.level}`;
+            const className = `docs-h${section.level} group relative flex items-center`;
+
+            const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+              e.preventDefault();
+              const url = `${window.location.origin}${window.location.pathname}#${id}`;
+              navigator.clipboard.writeText(url).then(() => {
+                window.history.pushState(null, "", `#${id}`);
+                const element = document.getElementById(id);
+                if (element) {
+                  element.scrollIntoView({ behavior: "smooth" });
+                }
+              }).catch((err) => {
+                console.error("Failed to copy anchor link: ", err);
+              });
+            };
+
             return (
               <Tag key={key} id={id} className={className}>
-                <a href={`#${id}`} className="docs-heading-anchor">
-                  {t(section.titleKey)}
-                  <span className="docs-heading-hash">#</span>
+                <span className="flex-1">{t(section.titleKey)}</span>
+                <a
+                  href={`#${id}`}
+                  onClick={handleAnchorClick}
+                  className="docs-heading-anchor-link ml-2 opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
+                  aria-label={`Link to ${t(section.titleKey)}`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="inline-block text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                  </svg>
                 </a>
               </Tag>
             );
@@ -248,6 +286,18 @@ export function DocContent({ sections }: DocContentProps) {
 
           case "persona-selector":
             return <PersonaSelector key={key} />;
+
+          case "landing-hero-block":
+            return <LandingHeroBlock key={key} section={section} />;
+
+          case "stats-strip-block":
+            return <StatsStripBlock key={key} section={section} />;
+
+          case "value-props-block":
+            return <ValuePropsBlock key={key} section={section} />;
+
+          case "cta-banner-block":
+            return <CtaBannerBlock key={key} section={section} />;
 
           default:
             return null;

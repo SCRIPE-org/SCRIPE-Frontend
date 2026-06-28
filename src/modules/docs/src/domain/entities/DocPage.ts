@@ -20,6 +20,8 @@ export interface DocPageData {
   category: string;
   /** Sort order within the category */
   order: number;
+  /** Layout style: standard, premium landing page, or split view */
+  layout?: "standard" | "landing" | "split";
   /** Content sections rendered in order */
   sections: DocSection[];
   /** Slugs of related doc pages */
@@ -49,6 +51,9 @@ export class DocPage {
   }
   get order() {
     return this.data.order;
+  }
+  get layout() {
+    return this.data.layout ?? "standard";
   }
   get sections() {
     return this.data.sections;
