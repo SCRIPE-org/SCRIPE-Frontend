@@ -3,36 +3,82 @@
    Completely isolated from technical docs CSS.
    ═══════════════════════════════════════════════════════════════════ */
 
+/* ── TASK 1: OKLCH tokens added ── */
 /* ─── CSS Variables (Commercial Palette) ─────────────────────────── */
 .commercial-root {
-  --commercial-accent-blue: #3b82f6;
-  --commercial-accent-purple: #8b5cf6;
-  --commercial-accent-teal: #14b8a6;
-  --commercial-accent-red: #ef4444;
-  --commercial-accent-orange: #f97316;
-  --commercial-accent-cyan: #06b6d4;
-  --commercial-accent-green: #22c55e;
-  --commercial-accent-amber: #f59e0b;
-  --commercial-accent-indigo: #6366f1;
-  --commercial-accent-pink: #ec4899;
+  /* ── OKLCH Brand Palette ────────────────────────── */
+  --com-bg:            oklch(0.12 0.02 265);
+  --com-bg-subtle:     oklch(0.14 0.022 265);
+  --com-surface:       oklch(0.17 0.028 265);
+  --com-surface-2:     oklch(0.21 0.032 265);
+  --com-border:        oklch(0.28 0.025 265);
+  --com-border-strong: oklch(0.38 0.04 265);
 
-  --commercial-bg: hsl(var(--background));
-  --commercial-surface: hsl(var(--card));
-  --commercial-surface-hover: hsl(var(--accent));
-  --commercial-border: hsl(var(--border));
-  --commercial-text: hsl(var(--foreground));
-  --commercial-text-muted: hsl(var(--muted-foreground));
-  --commercial-gradient-start: #3b82f6;
-  --commercial-gradient-end: #8b5cf6;
-}
+  /* ── Ink ─────────────────────────────────────────── */
+  --com-ink:           oklch(0.97 0.005 265);
+  --com-ink-2:         oklch(0.78 0.01 265);
+  --com-ink-3:         oklch(0.58 0.015 265);
 
-/* ─── Root ────────────────────────────────────────────────────────── */
-.commercial-root {
+  /* ── Brand Colors ────────────────────────────────── */
+  --com-violet:        oklch(0.65 0.22 265);
+  --com-violet-glow:   oklch(0.65 0.22 265 / 0.15);
+  --com-violet-dim:    oklch(0.48 0.18 265);
+  --com-cyan:          oklch(0.75 0.15 198);
+  --com-cyan-glow:     oklch(0.75 0.15 198 / 0.12);
+  --com-emerald:       oklch(0.72 0.17 158);
+  --com-amber:         oklch(0.80 0.18 65);
+  --com-rose:          oklch(0.68 0.22 10);
+
+  /* ── Typography ──────────────────────────────────── */
+  --com-font-display:  'Inter', system-ui, sans-serif;
+  --com-font-body:     'Inter', system-ui, sans-serif;
+  --com-font-mono:     'JetBrains Mono', 'Fira Code', monospace;
+
+  /* ── Motion ──────────────────────────────────────── */
+  --com-ease-out:      cubic-bezier(0.16, 1, 0.3, 1);
+  --com-ease-in-out:   cubic-bezier(0.45, 0, 0.55, 1);
+  --com-duration-fast: 150ms;
+  --com-duration-base: 280ms;
+  --com-duration-slow: 480ms;
+
+  /* ── Radius ──────────────────────────────────────── */
+  --com-radius-sm:  6px;
+  --com-radius-md:  10px;
+  --com-radius-lg:  14px;
+  --com-radius-xl:  20px;
+
+  /* ── Shadows ─────────────────────────────────────── */
+  --com-shadow-sm:  0 1px 3px oklch(0 0 0 / 0.4);
+  --com-shadow-md:  0 4px 16px oklch(0 0 0 / 0.5);
+  --com-shadow-glow: 0 0 40px var(--com-violet-glow);
+
+  /* ── Legacy bridge (keep old vars pointing to new for existing rules) */
+  --commercial-bg: var(--com-bg);
+  --commercial-surface: var(--com-surface);
+  --commercial-surface-hover: var(--com-surface-2);
+  --commercial-border: var(--com-border);
+  --commercial-text: var(--com-ink);
+  --commercial-text-muted: var(--com-ink-3);
+  --commercial-gradient-start: var(--com-violet);
+  --commercial-gradient-end: var(--com-cyan);
+  --commercial-accent-blue: var(--com-violet);
+  --commercial-accent-purple: var(--com-violet);
+  --commercial-accent-teal: var(--com-cyan);
+  --commercial-accent-green: var(--com-emerald);
+  --commercial-accent-amber: var(--com-amber);
+  --commercial-accent-red: var(--com-rose);
+  --commercial-accent-cyan: var(--com-cyan);
+  --commercial-accent-orange: var(--com-amber);
+  --commercial-accent-indigo: var(--com-violet);
+  --commercial-accent-pink: var(--com-rose);
+
+  /* Root appearance */
+  background: var(--com-bg);
+  color: var(--com-ink);
+  font-family: var(--com-font-body);
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  background: var(--commercial-bg);
-  color: var(--commercial-text);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -551,13 +597,10 @@
 .commercial-content-title {
   font-size: 2rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.04em;
   line-height: 1.2;
   margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, var(--commercial-text), var(--commercial-gradient-start));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--com-ink);
 }
 
 .commercial-content-description {
@@ -589,14 +632,7 @@
 .commercial-404 h1 {
   font-size: 3rem;
   font-weight: 800;
-  background: linear-gradient(
-    135deg,
-    var(--commercial-gradient-start),
-    var(--commercial-gradient-end)
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--com-violet);
 }
 
 .commercial-404 p {
@@ -721,4 +757,58 @@
 [dir="rtl"] .commercial-header-actions {
   margin-left: 0;
   margin-right: 0.5rem;
+}
+
+/* ── Shared utility classes (used by landing + content) ── */
+.com-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: transform var(--com-duration-fast, 150ms), background var(--com-duration-fast, 150ms);
+  cursor: pointer;
+  border: none;
+}
+
+.com-btn--primary {
+  background: var(--com-violet);
+  color: oklch(0.12 0.02 265);
+}
+.com-btn--primary:hover { background: oklch(0.72 0.22 265); transform: translateY(-2px); }
+
+.com-btn--ghost {
+  background: oklch(1 0 0 / 0.06);
+  color: var(--com-ink);
+  border: 1px solid var(--com-border-strong);
+}
+.com-btn--ghost:hover { background: oklch(1 0 0 / 0.1); transform: translateY(-2px); }
+
+.com-section-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.com-section-title {
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  text-align: center;
+  margin-bottom: 0.75rem;
+  text-wrap: balance;
+}
+
+.com-section-sub {
+  text-align: center;
+  color: var(--com-ink-2);
+  font-size: 1.0625rem;
+  margin-bottom: 3rem;
+  line-height: 1.65;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .com-btn { transition: none; }
 }
