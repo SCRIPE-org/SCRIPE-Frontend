@@ -19,6 +19,7 @@ import { DocsToc } from "../components/layout/DocsToc";
 import { ReadingProgress } from "../components/ui/ReadingProgress";
 import { DocsSearch } from "../components/ui/DocsSearch";
 import { CommercialHomeLanding } from "./CommercialHomeLanding";
+import { InvestorLandingView } from "./InvestorLandingView";
 
 // ─── Props ────────────────────────────────────────────────────────
 interface CommercialDocsViewProps {
@@ -51,6 +52,32 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
           onMobileMenuOpen={sidebar.openMobileMenu}
         />
         <CommercialHomeLanding />
+        <DocsSearch
+          isOpen={search.isSearchOpen}
+          onClose={search.closeSearch}
+          onSearch={search.searchFn}
+          basePath="/commercial"
+        />
+        <DocsMobileNav
+          categories={vm.categories}
+          activeSlug={slug}
+          isOpen={sidebar.isMobileMenuOpen}
+          onClose={sidebar.closeMobileMenu}
+          basePath="/commercial"
+        />
+      </div>
+    );
+  }
+
+  // ── Full-screen custom view for investor overview page ────────────
+  if (slug === "commercial/investor-overview") {
+    return (
+      <div className="commercial-root" dir={direction}>
+        <CommercialHeader
+          onSearchOpen={search.openSearch}
+          onMobileMenuOpen={sidebar.openMobileMenu}
+        />
+        <InvestorLandingView />
         <DocsSearch
           isOpen={search.isSearchOpen}
           onClose={search.closeSearch}
