@@ -1,4 +1,4 @@
-﻿// FILE-EXCEPTION: file length
+// FILE-EXCEPTION: file length
 /**
  * Docs page locale — ZH
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -29,7 +29,7 @@ export const zh = {
         "通过利用纯净、生产就绪的企业基础，超越传统的开发瓶颈。SCRIPE 为您的工程团队开箱即用地配备了纯正的整洁架构后端、极其快速的 Next.js 前端以及分布式可观测性工具。",
       solutionTitle: "权威的解决方案提供商",
       startTip:
-        "架构行动：不要只是猜测。立即克隆代码库，在 15 分钟内初始化系统，体验绝对的架构清晰度。",
+        "准备好改变您的业务运营方式了吗？立即开始 30 天免费试用，亲身体验 SCRIPE 的强大功能。我们的入驻团队将在 48 小时内完成您平台的全面配置并上线。",
       title: "为何选择 SCRIPE？",
       visionContent:
         "我们不仅提供代码；我们积极参与您的规模扩展。我们的愿景是通过提供一个具有内在结构且逻辑完美的框架来优雅地吸收数十年的激进功能开发，从而彻底消除“技术债务”的概念。",
@@ -331,8 +331,8 @@ export const zh = {
         "最近，一家企业客户在经历了长达 18 个月与灾难性的定制基础设施的斗争后，迁移到了 SCRIPE。在短短 30 天内，他们完全消除了认证服务的开销，将基础设施运营支出 (OpEx) 永久削减了 60%，并让 4 名高级工程师重新专注于激进的业务功能开发。得益于新架构基础那可证明的无限可扩展性，他们成功获得了随后的 B 轮融资。",
       caseStudyTitle: "经验证的财务影响",
       costIntro:
-        "通过购买永久许可证，您能够避免 PaaS/SaaS 订阅模式随着您的业务成功而带来的不断复利累积的惩罚性成本。",
-      costTitle: "可预测的资本支出 (CapEx)",
+        "SCRIPE 透明的订阅定价意味着您的成本可预测，并随着业务发展合理扩展。无隐藏费用，无意外收费——只需一个随您共同成长的月度订阅计划。",
+      costTitle: "可预测的月度订阅",
       description:
         "深入的财务细分，比较采用 SCRIPE 的总拥有成本 (TCO) 与从零开始构建同等企业架构的成本。",
       intro:
@@ -382,7 +382,7 @@ export const zh = {
       tblCostR8C4: "$10-20K",
       tblCostR9C1: "**基础设施总计**",
       tblCostR9C2: "**$225K - $395K**",
-      tblCostR9C3: "**许可费用**",
+      tblCostR9C3: "**月度订阅费用**",
       tblCostR9C4: "**省 $200K+**",
       tblTimeHeader1: "阶段",
       tblTimeHeader2: "未使用 SCRIPE",
