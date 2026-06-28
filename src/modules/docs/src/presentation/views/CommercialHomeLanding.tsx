@@ -1,148 +1,94 @@
 "use client";
 
-import Link from "next/link";
-import { useDocsI18n } from "../providers/DocsI18nProvider";
+import { CtaBannerBlock } from "../components/content/CtaBannerBlock";
+import { LandingHeroBlock } from "../components/content/LandingHeroBlock";
+import { PersonaSelector } from "../components/content/PersonaSelector";
+import { StatsStripBlock } from "../components/content/StatsStripBlock";
+import { ValuePropsBlock } from "../components/content/ValuePropsBlock";
+import type {
+  CtaBannerBlockSection,
+  LandingHeroBlockSection,
+  StatsStripBlockSection,
+  ValuePropsBlockSection,
+} from "../../domain/entities/DocSection";
 
-const PERSONAS = [
-  {
-    id: "business",
-    icon: "\uD83C\uDFE2",
-    titleKey: "commercial.landing.personaBusiness",
-    descKey: "commercial.landing.personaBusinessDesc",
-    href: "/commercial/business-client-journeys",
-    color: "var(--com-violet)",
-  },
-  {
-    id: "investor",
-    icon: "\uD83D\uDCC8",
-    titleKey: "commercial.landing.personaInvestor",
-    descKey: "commercial.landing.personaInvestorDesc",
-    href: "/commercial/investor-overview",
-    color: "var(--com-cyan)",
-  },
-  {
-    id: "partner",
-    icon: "\uD83E\uDD1D",
-    titleKey: "commercial.landing.personaPartner",
-    descKey: "commercial.landing.personaPartnerDesc",
-    href: "/commercial/partner-journey",
-    color: "var(--com-emerald)",
-  },
-];
+const heroSection: LandingHeroBlockSection = {
+  type: "landing-hero-block",
+  kickerKey: "commercial.landing.kicker",
+  title1Key: "commercial.landing.heroTitle1",
+  title2Key: "commercial.landing.heroTitle2",
+  subtitleKey: "commercial.landing.heroSubtitle",
+  primaryCtaKey: "commercial.landing.ctaPrimary",
+  primaryCtaHref: "/commercial/pricing-showcase",
+  secondaryCtaKey: "commercial.landing.ctaSecondary",
+  secondaryCtaHref: "/commercial/business-client-journeys",
+};
 
-const STATS = [
-  { value: "B2B2C", labelKey: "commercial.landing.statModel" },
-  { value: "\u221E", labelKey: "commercial.landing.statModules" },
-  { value: "3 DBs", labelKey: "commercial.landing.statDb" },
-  { value: "7 Lang", labelKey: "commercial.landing.statLang" },
-];
+const statsSection: StatsStripBlockSection = {
+  type: "stats-strip-block",
+  stats: [
+    { value: "B2B2C", labelKey: "commercial.landing.statModel" },
+    { value: "Open", labelKey: "commercial.landing.statModules" },
+    { value: "3 DBs", labelKey: "commercial.landing.statDb" },
+    { value: "7 Lang", labelKey: "commercial.landing.statLang" },
+  ],
+};
 
-const VALUE_PROPS = [
-  { icon: "\uD83E\uDDE9", titleKey: "commercial.landing.val1Title", descKey: "commercial.landing.val1Desc" },
-  { icon: "\uD83D\uDD10", titleKey: "commercial.landing.val2Title", descKey: "commercial.landing.val2Desc" },
-  { icon: "\uD83D\uDE80", titleKey: "commercial.landing.val3Title", descKey: "commercial.landing.val3Desc" },
-  { icon: "\uD83C\uDF0D", titleKey: "commercial.landing.val4Title", descKey: "commercial.landing.val4Desc" },
-  { icon: "\uD83D\uDCCA", titleKey: "commercial.landing.val5Title", descKey: "commercial.landing.val5Desc" },
-  { icon: "\uD83E\uDD1D", titleKey: "commercial.landing.val6Title", descKey: "commercial.landing.val6Desc" },
-];
+const valuesSection: ValuePropsBlockSection = {
+  type: "value-props-block",
+  titleKey: "commercial.landing.valueTitle",
+  props: [
+    {
+      icon: "modules",
+      titleKey: "commercial.landing.val1Title",
+      descKey: "commercial.landing.val1Desc",
+    },
+    {
+      icon: "access",
+      titleKey: "commercial.landing.val2Title",
+      descKey: "commercial.landing.val2Desc",
+    },
+    {
+      icon: "launch",
+      titleKey: "commercial.landing.val3Title",
+      descKey: "commercial.landing.val3Desc",
+    },
+    {
+      icon: "global",
+      titleKey: "commercial.landing.val4Title",
+      descKey: "commercial.landing.val4Desc",
+    },
+    {
+      icon: "analytics",
+      titleKey: "commercial.landing.val5Title",
+      descKey: "commercial.landing.val5Desc",
+    },
+    {
+      icon: "partner",
+      titleKey: "commercial.landing.val6Title",
+      descKey: "commercial.landing.val6Desc",
+    },
+  ],
+};
+
+const ctaSection: CtaBannerBlockSection = {
+  type: "cta-banner-block",
+  titleKey: "commercial.landing.footerCtaTitle",
+  subtitleKey: "commercial.landing.footerCtaSub",
+  primaryCtaKey: "commercial.landing.ctaPrimary",
+  primaryCtaHref: "/commercial/pricing-showcase",
+  secondaryCtaKey: "commercial.landing.ctaInvestor",
+  secondaryCtaHref: "/commercial/investor-overview",
+};
 
 export function CommercialHomeLanding() {
-  const { t } = useDocsI18n();
-
   return (
     <div className="com-landing">
-      {/* Hero */}
-      <section className="com-hero" aria-labelledby="hero-title">
-        <div className="com-hero-bg" aria-hidden="true">
-          <div className="com-hero-orb com-hero-orb--1" />
-          <div className="com-hero-orb com-hero-orb--2" />
-          <div className="com-hero-grid" />
-        </div>
-        <div className="com-hero-content">
-          <p className="com-hero-kicker" aria-hidden="true">{t("commercial.landing.kicker")}</p>
-          <h1 id="hero-title" className="com-hero-title">
-            {t("commercial.landing.heroTitle1")}
-            <br />
-            <span className="com-hero-title-accent">{t("commercial.landing.heroTitle2")}</span>
-          </h1>
-          <p className="com-hero-subtitle">{t("commercial.landing.heroSubtitle")}</p>
-          <div className="com-hero-ctas">
-            <Link href="/commercial/pricing-showcase" className="com-btn com-btn--primary">
-              {t("commercial.landing.ctaPrimary")}
-            </Link>
-            <Link href="/commercial/business-client-journeys" className="com-btn com-btn--ghost">
-              {t("commercial.landing.ctaSecondary")}
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Strip */}
-      <section className="com-stats-strip" aria-label="Platform statistics">
-        <div className="com-stats-inner">
-          {STATS.map((s) => (
-            <div key={s.value} className="com-stat">
-              <span className="com-stat-value" aria-hidden="true">{s.value}</span>
-              <span className="com-stat-label">{t(s.labelKey)}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Persona Selector */}
-      <section className="com-personas">
-        <div className="com-section-inner">
-          <h2 className="com-section-title">{t("commercial.landing.personaTitle")}</h2>
-          <p className="com-section-sub">{t("commercial.landing.personaSub")}</p>
-          <div className="com-persona-cards">
-            {PERSONAS.map((p) => (
-              <Link
-                key={p.id}
-                href={p.href}
-                className="com-persona-card"
-                style={{ "--card-accent": p.color } as React.CSSProperties}
-              >
-                <span className="com-persona-icon" aria-hidden="true">{p.icon}</span>
-                <h3 className="com-persona-title">{t(p.titleKey)}</h3>
-                <p className="com-persona-desc">{t(p.descKey)}</p>
-                <span className="com-persona-arrow" aria-hidden="true">→</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Value Props */}
-      <section className="com-values">
-        <div className="com-section-inner">
-          <h2 className="com-section-title">{t("commercial.landing.valueTitle")}</h2>
-          <div className="com-value-grid">
-            {VALUE_PROPS.map((v) => (
-              <div key={v.titleKey} className="com-value-item">
-                <span className="com-value-icon" aria-hidden="true">{v.icon}</span>
-                <h4 className="com-value-title">{t(v.titleKey)}</h4>
-                <p className="com-value-desc">{t(v.descKey)}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Footer CTA */}
-      <section className="com-footer-cta">
-        <div className="com-section-inner com-footer-cta-inner">
-          <h2 className="com-footer-cta-title">{t("commercial.landing.footerCtaTitle")}</h2>
-          <p className="com-footer-cta-sub">{t("commercial.landing.footerCtaSub")}</p>
-          <div className="com-hero-ctas">
-            <Link href="/commercial/pricing-showcase" className="com-btn com-btn--primary">
-              {t("commercial.landing.ctaPrimary")}
-            </Link>
-            <Link href="/commercial/investor-overview" className="com-btn com-btn--ghost">
-              {t("commercial.landing.ctaInvestor")}
-            </Link>
-          </div>
-        </div>
-      </section>
+      <LandingHeroBlock section={heroSection} />
+      <StatsStripBlock section={statsSection} />
+      <ValuePropsBlock section={valuesSection} />
+      <PersonaSelector />
+      <CtaBannerBlock section={ctaSection} />
     </div>
   );
 }

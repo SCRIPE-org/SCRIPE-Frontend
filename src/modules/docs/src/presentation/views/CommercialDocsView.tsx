@@ -9,9 +9,8 @@ import { useDocsI18n } from "../providers/DocsI18nProvider";
 
 // Commercial layout components
 import { CommercialHeader } from "../components/layout/CommercialHeader";
-import { CommercialSubNav } from "../components/layout/CommercialSubNav";
 import { CommercialContent } from "../components/content/CommercialContent";
-import { DocContent } from "../components/content/DocContent";
+import { CommercialHomeLanding } from "./CommercialHomeLanding";
 
 // Shared components
 import { DocsPrevNext } from "../components/layout/DocsPrevNext";
@@ -19,80 +18,71 @@ import { DocsMobileNav } from "../components/layout/DocsMobileNav";
 import { ReadingProgress } from "../components/ui/ReadingProgress";
 import { DocsSearch } from "../components/ui/DocsSearch";
 
-// ─── Props ────────────────────────────────────────────────────────
+// CommercialSubNav is intentionally omitted — replaced by the mega-menu in CommercialHeader
+
+// ── Props ──────────────────────────────────────────────────────────────────
 interface CommercialDocsViewProps {
   slug: string;
 }
 
-// ─── Footer Component ─────────────────────────────────────────────
+// ── Footer ─────────────────────────────────────────────────────────────────
 function CommercialFooter() {
   const { t } = useDocsI18n();
 
-  const footerLinks = [
+  const footerCols = [
     {
-      titleKey: "nav.commercialWhyScripe",
+      title: "Why SCRIPE",
       links: [
-        { href: "/commercial/why-scripe-overview", labelKey: "commercial.whyScripeOverview.title" },
-        { href: "/commercial/business-client-journeys", labelKey: "commercial.businessClientJourneys.title" },
-        { href: "/commercial/marketplace-showcase", labelKey: "commercial.marketplaceShowcase.title" },
-        { href: "/commercial/workspace-tours", labelKey: "commercial.workspaceTours.title" },
+        { href: "/commercial/why-scripe-overview",   label: "Overview" },
+        { href: "/commercial/competitive-advantages", label: "Competitive Edge" },
+        { href: "/commercial/target-industries",      label: "Industries" },
+        { href: "/commercial/business-client-journeys", label: "Client Journeys" },
       ],
     },
     {
-      titleKey: "nav.commercialEnterprise",
+      title: "Platform",
       links: [
-        { href: "/commercial/white-labeling", labelKey: "commercial.whiteLabeling.title" },
-        { href: "/commercial/tenant-isolation", labelKey: "commercial.tenantIsolation.title" },
-        { href: "/commercial/sla-guarantees", labelKey: "commercial.slaGuarantees.title" },
-        { href: "/commercial/multi-tenancy", labelKey: "commercial.multiTenancy.title" },
+        { href: "/commercial/platform-architecture", label: "Architecture" },
+        { href: "/commercial/module-catalog",         label: "Module Catalog" },
+        { href: "/commercial/technology-stack",       label: "Tech Stack" },
+        { href: "/commercial/deployment-modes",       label: "Deployment" },
       ],
     },
     {
-      titleKey: "nav.commercialPricing",
+      title: "Commercial",
       links: [
-        { href: "/commercial/pricing-showcase", labelKey: "commercial.pricingShowcase.title" },
-        { href: "/commercial/licensing-model", labelKey: "commercial.licensingModel.title" },
-        { href: "/commercial/support-plans", labelKey: "commercial.supportPlans.title" },
-      ],
-    },
-    {
-      titleKey: "nav.commercialSupport",
-      links: [
-        { href: "/commercial/investor-overview", labelKey: "commercial.investorOverview.title" },
-        { href: "/commercial/partner-journey", labelKey: "commercial.partnerJourney.title" },
-        { href: "/commercial/co-founder-journey", labelKey: "commercial.coFounderJourney.title" },
+        { href: "/commercial/pricing-showcase",   label: "Pricing" },
+        { href: "/commercial/investor-overview",  label: "Investors" },
+        { href: "/commercial/partner-program",    label: "Partners" },
+        { href: "/commercial/roi-calculator",     label: "ROI Calculator" },
       ],
     },
   ];
 
   return (
-    <footer className="com-footer">
+    <footer className="com-footer" role="contentinfo">
       <div className="com-footer-inner">
         <div className="com-footer-grid">
-          <div className="com-footer-brand-col">
-            <Link href="/commercial/why-scripe-overview" className="com-footer-logo">
-              <img
-                src="/app-logo.png"
-                alt="SCRIPE"
-                width={28}
-                height={28}
-                className="object-contain inline-block mr-2"
-                style={{ width: "28px", height: "28px" }}
-              />
-              <span className="com-footer-logo-text">SCRIPE</span>
+          {/* Brand column */}
+          <div className="com-footer-brand">
+            <Link href="/commercial" className="com-footer-logo" aria-label="SCRIPE Commercial home">
+              <img src="/app-logo.png" alt="SCRIPE" style={{ width: 24, height: 24, objectFit: "contain" }} />
+              <span>SCRIPE</span>
             </Link>
             <p className="com-footer-tagline">
-              Enterprise-grade modular monolith platform for B2B2C SaaS.
+              Enterprise-grade modular SaaS platform. B2B2C subscription infrastructure built for scale.
             </p>
           </div>
-          {footerLinks.map((group) => (
-            <div key={group.titleKey} className="com-footer-col">
-              <h4 className="com-footer-title">{t(group.titleKey)}</h4>
-              <ul className="com-footer-list">
-                {group.links.map((link) => (
+
+          {/* Link columns */}
+          {footerCols.map((col) => (
+            <div key={col.title}>
+              <h4 className="com-footer-col-title">{col.title}</h4>
+              <ul className="com-footer-links" role="list">
+                {col.links.map((link) => (
                   <li key={link.href}>
                     <Link href={link.href} className="com-footer-link">
-                      {t(link.labelKey)}
+                      {link.label}
                     </Link>
                   </li>
                 ))}
@@ -100,20 +90,28 @@ function CommercialFooter() {
             </div>
           ))}
         </div>
+
+        {/* Bottom bar */}
         <div className="com-footer-bottom">
-          <p className="com-footer-copyright">
+          <p className="com-footer-copy">
             &copy; {new Date().getFullYear()} SCRIPE. All rights reserved.
           </p>
+          <div className="com-footer-bottom-links">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+            <Link href="/docs">Developer Docs</Link>
+          </div>
         </div>
       </div>
     </footer>
   );
 }
 
-// ─── View ─────────────────────────────────────────────────────────
+// ── Main View ──────────────────────────────────────────────────────────────
 /**
  * Presentation UI component rendering the commercial docs view.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ * Single-header layout — CommercialSubNav has been retired; mega-menu in CommercialHeader replaces it.
+ * Universal horizontal padding applied via com-content-wrap / --com-gutter on all containers.
  */
 export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
   const { direction, loadSection } = useDocsI18n();
@@ -126,7 +124,7 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
     loadSection(slug);
   }, [slug, loadSection]);
 
-  // ── 404 ──────────────────────────────────────────────────────────
+  // ── 404 ────────────────────────────────────────────────────────────────
   if (vm.isNotFound) {
     return (
       <div className="commercial-root" dir={direction}>
@@ -134,12 +132,13 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
           onSearchOpen={search.openSearch}
           onMobileMenuOpen={sidebar.openMobileMenu}
         />
-        <div className="commercial-wrapper commercial-wrapper--full-width">
-          <div className="commercial-main commercial-main--full-width">
-            <div className="commercial-404">
-              <h1>404</h1>
-              <p>Page not found: /commercial/{slug.replace("commercial/", "")}</p>
-            </div>
+        <div className="commercial-page">
+          <div className="com-404" role="main">
+            <h1>404</h1>
+            <p>Page not found: /commercial/{slug.replace("commercial/", "")}</p>
+            <Link href="/commercial" className="com-btn com-btn--ghost" style={{ marginTop: "1rem" }}>
+              Back to Commercial Home
+            </Link>
           </div>
         </div>
         <CommercialFooter />
@@ -149,7 +148,7 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
 
   const page = vm.page!;
 
-  // ── Premium Landing Layout ────────────────────────────────────────
+  // ── Landing layout (commercial homepage / section overviews) ─────────────
   if (page.layout === "landing") {
     return (
       <div className="commercial-root" dir={direction}>
@@ -157,16 +156,11 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
           onSearchOpen={search.openSearch}
           onMobileMenuOpen={sidebar.openMobileMenu}
         />
-        <CommercialSubNav
-          categories={vm.categories}
-          activeSlug={slug}
-          pageTitleKey={page.titleKey}
-          categoryInfo={vm.categoryInfo}
-        />
-        <div className="com-landing">
-          <DocContent sections={page.sections} />
-        </div>
+        <main className="commercial-page" id="main-content" role="main">
+          <CommercialHomeLanding />
+        </main>
         <CommercialFooter />
+
         <DocsSearch
           isOpen={search.isSearchOpen}
           onClose={search.closeSearch}
@@ -184,7 +178,7 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
     );
   }
 
-  // ── Main layout ──────────────────────────────────────────────────
+  // ── Standard content page layout ───────────────────────────────────────
   return (
     <div className="commercial-root" dir={direction}>
       <ReadingProgress />
@@ -192,31 +186,28 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
         onSearchOpen={search.openSearch}
         onMobileMenuOpen={sidebar.openMobileMenu}
       />
-      <CommercialSubNav
-        categories={vm.categories}
-        activeSlug={slug}
-        pageTitleKey={page.titleKey}
-        categoryInfo={vm.categoryInfo}
-      />
 
-      <div className="commercial-wrapper commercial-wrapper--full-width">
-        <div className="commercial-main commercial-main--full-width">
-          <CommercialContent
-            sections={page.sections}
-            titleKey={page.titleKey}
-            descriptionKey={page.descriptionKey}
-            lastUpdated={page.lastUpdated}
-          />
+      <main className="commercial-page" id="main-content" role="main">
+        <CommercialContent
+          sections={page.sections}
+          titleKey={page.titleKey}
+          descriptionKey={page.descriptionKey}
+          lastUpdated={page.lastUpdated}
+          categoryInfo={vm.categoryInfo}
+        />
 
-          <DocsPrevNext
-            prevSlug={vm.prevSlug}
-            prevTitleKey={vm.prevTitleKey}
-            nextSlug={vm.nextSlug}
-            nextTitleKey={vm.nextTitleKey}
-            basePath="/commercial"
-          />
+        <div style={{ padding: "0 var(--com-gutter)" }}>
+          <div style={{ maxWidth: "var(--com-max)", margin: "0 auto" }}>
+            <DocsPrevNext
+              prevSlug={vm.prevSlug}
+              prevTitleKey={vm.prevTitleKey}
+              nextSlug={vm.nextSlug}
+              nextTitleKey={vm.nextTitleKey}
+              basePath="/commercial"
+            />
+          </div>
         </div>
-      </div>
+      </main>
 
       <CommercialFooter />
 
@@ -227,7 +218,6 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
         onSearch={search.searchFn}
         basePath="/commercial"
       />
-
       <DocsMobileNav
         categories={vm.categories}
         activeSlug={slug}

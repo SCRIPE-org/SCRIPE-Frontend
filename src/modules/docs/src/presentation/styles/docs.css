@@ -321,7 +321,9 @@
   flex: 1;
   min-width: 0;
   padding: 2rem 2.5rem;
-  max-width: 800px;
+  /* max-width controlled by the reader toolbar inline style via TechnicalDocsView.tsx */
+  max-width: 800px; /* default when no style override — this is the "compact" starting value */
+  transition: max-width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ─── Breadcrumb ──────────────────────────────────────────────────────── */
@@ -1685,7 +1687,7 @@
   }
 
   .docs-content {
-    padding: 1.5rem;
+    padding: clamp(1.25rem, 3vw, 2rem) clamp(1rem, 2vw, 1.5rem);
   }
 
   .docs-feature-grid,
@@ -1736,11 +1738,12 @@
   }
 
   .docs-page-title {
-    font-size: 1.5rem;
+    font-size: clamp(1.375rem, 5vw, 1.75rem);
+    letter-spacing: -0.025em;
   }
 
   .docs-h2 {
-    font-size: 1.25rem;
+    font-size: clamp(1.125rem, 4vw, 1.375rem);
   }
 
   .docs-feature-grid,

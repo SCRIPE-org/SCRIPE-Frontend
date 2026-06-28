@@ -17,25 +17,49 @@ const sections: DocSection[] = [
     type: "stats-strip-block",
     stats: [
       { value: "B2B2C", labelKey: "commercial.landing.statModel" },
-      { value: "∞", labelKey: "commercial.landing.statModules" },
+      { value: "Open", labelKey: "commercial.landing.statModules" },
       { value: "3 DBs", labelKey: "commercial.landing.statDb" },
       { value: "7 Lang", labelKey: "commercial.landing.statLang" },
     ],
   },
   {
-    type: "persona-selector",
-  },
-  {
     type: "value-props-block",
     titleKey: "commercial.landing.valueTitle",
     props: [
-      { icon: "🧩", titleKey: "commercial.landing.val1Title", descKey: "commercial.landing.val1Desc" },
-      { icon: "🔑", titleKey: "commercial.landing.val2Title", descKey: "commercial.landing.val2Desc" },
-      { icon: "🚀", titleKey: "commercial.landing.val3Title", descKey: "commercial.landing.val3Desc" },
-      { icon: "🌎", titleKey: "commercial.landing.val4Title", descKey: "commercial.landing.val4Desc" },
-      { icon: "📊", titleKey: "commercial.landing.val5Title", descKey: "commercial.landing.val5Desc" },
-      { icon: "🤝", titleKey: "commercial.landing.val6Title", descKey: "commercial.landing.val6Desc" },
+      {
+        icon: "modules",
+        titleKey: "commercial.landing.val1Title",
+        descKey: "commercial.landing.val1Desc",
+      },
+      {
+        icon: "access",
+        titleKey: "commercial.landing.val2Title",
+        descKey: "commercial.landing.val2Desc",
+      },
+      {
+        icon: "launch",
+        titleKey: "commercial.landing.val3Title",
+        descKey: "commercial.landing.val3Desc",
+      },
+      {
+        icon: "global",
+        titleKey: "commercial.landing.val4Title",
+        descKey: "commercial.landing.val4Desc",
+      },
+      {
+        icon: "analytics",
+        titleKey: "commercial.landing.val5Title",
+        descKey: "commercial.landing.val5Desc",
+      },
+      {
+        icon: "partner",
+        titleKey: "commercial.landing.val6Title",
+        descKey: "commercial.landing.val6Desc",
+      },
     ],
+  },
+  {
+    type: "persona-selector",
   },
   {
     type: "cta-banner-block",
