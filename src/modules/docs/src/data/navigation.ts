@@ -683,8 +683,41 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
-      // Future modules:
-      // { id: "mod-inventory", titleKey: "nav.inventory", order: 4, children: [...] },
+      {
+        id: "mod-audit-logs",
+        titleKey: "modules.auditLogs.title",
+        slug: "modules/audit-logs",
+        icon: "file-text",
+        order: 4,
+      },
+      {
+        id: "mod-security-monitoring",
+        titleKey: "modules.securityMonitoring.title",
+        slug: "modules/security-monitoring",
+        icon: "shield",
+        order: 5,
+      },
+      {
+        id: "mod-webhooks",
+        titleKey: "modules.webhooks.title",
+        slug: "modules/webhooks",
+        icon: "rss",
+        order: 6,
+      },
+      {
+        id: "mod-marketplace",
+        titleKey: "modules.marketplace.title",
+        slug: "modules/marketplace",
+        icon: "shopping-bag",
+        order: 7,
+      },
+      {
+        id: "mod-recycle-bin",
+        titleKey: "modules.ecosystemRecycleBin.title",
+        slug: "modules/ecosystem-recycle-bin",
+        icon: "trash-2",
+        order: 8,
+      },
     ],
   },
 
