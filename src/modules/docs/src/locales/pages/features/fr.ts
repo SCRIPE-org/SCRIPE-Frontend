@@ -1099,5 +1099,23 @@ export const fr = {
       sourceIntro:
         "Le Hub du Tableau de Bord refactorisé s'étend sur 4 modules (dashboard, audit, security, analytics), chacun avec sa propre pile complète de 6 couches.",
     },
+    selfServiceSignup: {
+      title: "Inscription en libre-service et intégration B2B2C",
+      description: "Saga d'intégration multi-locataire automatisée avec OTP de vérification, résolution des devises régionales et intégration de Stripe.",
+      intro: "SCRIPE propose un moteur complet d'intégration de locataires en libre-service B2B2C orchestré via une saga robuste en deux phases. Il coordonne les transactions de base de données, la configuration des abonnements, les connexions de facturation et fournit des annulations automatiques si les paiements sont abandonnés.",
+      flowTitle: "Flux d'intégration",
+      phase1Title: "Phase 1 : Transaction d'identité et de provisionnement",
+      phase1Intro: "La phase 1 s'exécute dans une seule transaction de base de données. Elle génère l'espace de travail du locataire, configure le sous-domaine par défaut, provisionne les paramètres, configure les rôles de sécurité par défaut et crée le compte de l'administrateur propriétaire.",
+      validationTitle: "Validation du sous-domaine et de l'identité",
+      validationIntro: "Pour maintenir la sécurité et éviter les conflits de routage, le système applique des règles de format strictes et vérifie la disponibilité du sous-domaine par rapport à une liste noire de mots réservés.",
+      tableConstraint: "Contrainte",
+      tableRule: "Règle / Modèle",
+      tableReason: "Raison de sécurité",
+      emailVerificationTitle: "Tickets de vérification d'e-mail",
+      emailVerificationIntro: "Avant qu'une saga ne puisse démarrer, l'e-mail du prospect doit être vérifié. Le système émet un ticket signé par cryptographie HMAC-SHA256 avec un délai d'expiration de 15 minutes.",
+      phase2Title: "Phase 2 : Droits et transfert de facturation",
+      phase2Intro: "La phase 2 lie le locataire nouvellement créé au module Entitlements. Si l'édition choisie est payante, le système génère une session de paiement Stripe et redirige l'utilisateur.",
+      compensationWarning: "Si une session de paiement payante est abandonnée par l'utilisateur ou ne parvient pas à s'initialiser, le système exécute un flux de compensation automatique (CompensatePhase1Async) pour annuler les créations du locataire et de l'administrateur, évitant ainsi les comptes orphelins.",
+    },
   },
 };

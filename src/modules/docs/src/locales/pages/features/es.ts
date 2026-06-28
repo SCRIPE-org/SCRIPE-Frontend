@@ -1101,5 +1101,23 @@ export const es = {
       sourceIntro:
         "El Centro del Panel refactorizado abarca 4 módulos (dashboard, audit, security, analytics), cada uno con su propia pila completa de 6 capas.",
     },
+    selfServiceSignup: {
+      title: "Registro de autoservicio e incorporación B2B2C",
+      description: "Saga automatizada de incorporación de múltiples inquilinos con OTP de verificación, resolución de moneda regional e integración de Stripe.",
+      intro: "SCRIPE cuenta con un completo motor de incorporación de inquilinos de autoservicio B2B2C orquestado a través de una sólida saga de dos fases. Coordina las transacciones de la base de datos, la configuración de la suscripción, las conexiones de facturación y proporciona reversiones de compensación automáticas si se abandonan los pagos.",
+      flowTitle: "Flujo de incorporación",
+      phase1Title: "Fase 1: Transacción de identidad y aprovisionamiento",
+      phase1Intro: "Fase 1 se ejecuta en una única transacción de base de datos. Genera el espacio de trabajo del inquilino, conecta el subdominio predeterminado, aprovisiona la configuración, crea los roles de seguridad predeterminados y crea la cuenta del usuario administrador propietario.",
+      validationTitle: "Validación de subdominio e identidad",
+      validationIntro: "Para mantener la seguridad y evitar conflictos de enrutamiento, el sistema de incorporación aplica reglas de formato estrictas y verifica la disponibilidad del subdominio frente a una lista negra de palabras reservadas.",
+      tableConstraint: "Restricción",
+      tableRule: "Regla / Patrón",
+      tableReason: "Razón de seguridad",
+      emailVerificationTitle: "Tickets de verificación de correo electrónico",
+      emailVerificationIntro: "Antes de que pueda comenzar una saga, se debe verificar el correo electrónico del cliente potencial. El sistema emite un boleto firmado criptográficamente con HMAC-SHA256 con un tiempo de vencimiento de 15 minutos.",
+      phase2Title: "Fase 2: Derechos y transferencia de facturación",
+      phase2Intro: "La Fase 2 vincula al inquilino recién creado con el módulo Entitlements. Si la edición elegida es de pago, el sistema genera una sesión de pago de Stripe y redirige al usuario.",
+      compensationWarning: "Si el usuario abandona una sesión de pago de pago o no se inicializa, el sistema ejecuta un flujo de compensación automática (CompensatePhase1Async) para revertir las creaciones del inquilino y del administrador, evitando cuentas huérfanas.",
+    },
   },
 };

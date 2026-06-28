@@ -1052,5 +1052,23 @@ export const de = {
       sourceIntro:
         "Der refaktorisierte Dashboard Hub erstreckt sich über 4 Module (Dashboard, Audit, Security, Analytics), jeweils mit eigenem vollständigen 6-Schichten-Stack.",
     },
+    selfServiceSignup: {
+      title: "Self-Service-Registrierung und B2B2C-Onboarding",
+      description: "Automatisierte Multi-Tenant-Onboarding-Saga mit Verifizierungs-OTPs, regionaler Währungsauflösung und Stripe-Checkout-Integration.",
+      intro: "SCRIPE verfügt über eine umfassende B2B2C-Self-Service-Mandanten-Onboarding-Engine, die über eine robuste zweiphasige Saga orchestriert wird. Es koordiniert Datenbanktransaktionen, das Einrichten von Abonnements, Rechnungsverbindungen und bietet automatische Kompensations-Rollbacks, wenn Zahlungen abgebrochen werden.",
+      flowTitle: "Onboarding-Ablauf",
+      phase1Title: "Phase 1: Identitäts- und Bereitstellungstransaktion",
+      phase1Intro: "Phase 1 wird in einer einzigen Datenbanktransaktion ausgeführt. Sie generiert den Mandanten-Arbeitsbereich, richtet die Standard-Unterdomäne ein, stellt Einstellungen bereit, erstellt die Standard-Sicherheitsrollen und erstellt das Benutzerkonto des Mandantenbesitzers.",
+      validationTitle: "Subdomain- und Identitätsprüfung",
+      validationIntro: "Um die Sicherheit zu gewährleisten und Routing-Konflikte zu vermeiden, das Onboarding-System wendet strenge Formatierungsregeln an und prüft die Verfügbarkeit von Subdomains anhand einer Blacklist für reservierte Wörter.",
+      tableConstraint: "Einschränkung",
+      tableRule: "Regel / Muster",
+      tableReason: "Sicherheitsbegründung",
+      emailVerificationTitle: "E-Mail-Verifizierungstickets",
+      emailVerificationIntro: "Bevor eine Saga starten kann, muss die E-Mail-Adresse des Interessenten verifiziert werden. Das System stellt ein kryptografisch HMAC-SHA256-signiertes Ticket mit einer Gültigkeitsdauer von 15 Minuten aus.",
+      phase2Title: "Phase 2: Berechtigungen und Rechnungsübergabe",
+      phase2Intro: "Phase 2 verknüpft den neu erstellten Mandanten mit dem Berechtigungsmodul (Entitlements). Wenn die gewählte Edition kostenpflichtig ist, generiert das System eine Stripe-Checkout-Sitzung und leitet den Benutzer weiter.",
+      compensationWarning: "Wenn eine kostenpflichtige Checkout-Sitzung vom Benutzer abgebrochen wird oder die Initialisierung fehlschlägt, führt das System einen automatischen Kompensationsablauf (CompensatePhase1Async) aus, um die Erstellung des Mandanten und des Administrators rückgängig zu machen und verwaiste Konten zu verhindern.",
+    },
   },
 };

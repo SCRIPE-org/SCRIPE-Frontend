@@ -49,6 +49,7 @@ import "./features/login-page-builder";
 import "./features/dashboard-builder";
 import "./features/dashboard-hub";
 import "./features/tenant-context-gate";
+import "./features/self-service-signup";
 
 // Modules (Entitlements)
 import "./modules/entitlements/entitlements-overview";

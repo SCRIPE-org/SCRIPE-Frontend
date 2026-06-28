@@ -1103,5 +1103,23 @@ export const en = {
       sourceIntro:
         "The refactored Dashboard Hub spans 4 modules (dashboard, audit, security, analytics), each with its own complete 6-layer stack. The DI container (di.ts) is the single integration point where all modules are wired together.",
     },
+    selfServiceSignup: {
+      title: "Self-Service Signup & B2B2C Onboarding",
+      description: "Automated multi-tenant onboarding saga with verification OTPs, regional currency resolving, and Stripe checkout integration.",
+      intro: "SCRIPE features a comprehensive B2B2C self-service tenant onboarding engine orchestrated via a robust two-phase saga. It coordinates database transactions, subscription setup, billing connections, and provides automatic compensation rollbacks if payments are abandoned.",
+      flowTitle: "Onboarding Flow",
+      phase1Title: "Phase 1: Identity & Provisioning Transaction",
+      phase1Intro: "Phase 1 executes in a single database transaction. It generates the tenant workspace, hooks up the default subdomain, provisions settings, scaffolds the default security roles, and creates the tenant owner user account.",
+      validationTitle: "Subdomain & Identity Verification",
+      validationIntro: "To maintain security and prevent routing conflicts, the onboarding system applies strict format rules and checks subdomain availability against a reserved word blacklist.",
+      tableConstraint: "Constraint",
+      tableRule: "Rule / Pattern",
+      tableReason: "Security Rationale",
+      emailVerificationTitle: "Email Verification Tickets",
+      emailVerificationIntro: "Before a saga can start, the prospect's email must be verified. The system issues a cryptographic HMAC-SHA256 signed ticket with a 15-minute expiration time.",
+      phase2Title: "Phase 2: Entitlements & Billing Handoff",
+      phase2Intro: "Phase 2 links the newly created tenant to the Entitlements module. If the chosen edition is paid, the system generates a Stripe checkout session and redirects the user.",
+      compensationWarning: "If a paid checkout session is abandoned by the user or fails to initialize, the system executes an automatic compensation flow (CompensatePhase1Async) to roll back the tenant and admin creations, preventing orphan accounts.",
+    },
   },
 };

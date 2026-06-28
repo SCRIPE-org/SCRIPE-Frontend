@@ -1000,5 +1000,23 @@ export const zh = {
       sourceIntro:
         "重构后的仪表板中心横跨4个模块(dashboard、audit、security、analytics),每个模块都有自己完整的6层堆栈。",
     },
+    selfServiceSignup: {
+      title: "自助注册与 B2B2C 租户初始化",
+      description: "自动化多租户初始化流程，集成 OTP 邮箱验证、区域货币自动识别及 Stripe 结账支付。",
+      intro: "SCRIPE 包含一个完善的 B2B2C 自助租户初始化引擎，通过双阶段事务萨迦（Saga）进行编排。它协同数据库事务、订阅配置及支付渠道绑定，并提供在支付放弃时的自动补偿回滚机制。",
+      flowTitle: "初始化工作流",
+      phase1Title: "阶段 1：身份与资源初始化事务",
+      phase1Intro: "阶段 1 在单个数据库事务中执行。它生成租户工作区、绑定默认子域名、初始化基础配置、构建默认安全角色，并创建租户所有者管理员账户。",
+      validationTitle: "子域名与身份验证",
+      validationIntro: "为了维护安全并防止路由冲突，初始化系统应用了严格的格式规则，并通过保留字黑名单验证子域名的可用性。",
+      tableConstraint: "条件",
+      tableRule: "规则 / 模式",
+      tableReason: "安全逻辑",
+      emailVerificationTitle: "邮箱验证令牌",
+      emailVerificationIntro: "在启动 Saga 事务前，必须先验证邮箱。系统会发放一个带有 HMAC-SHA256 加密签名的验证凭证，有效期为 15 分钟。",
+      phase2Title: "阶段 2：订阅授权与支付对接",
+      phase2Intro: "阶段 2 将新创建的租户与订阅管理模块进行绑定。如果选择的订阅版本为付费版，系统将创建 Stripe 支付会话并重定向用户。",
+      compensationWarning: "如果付费会话被用户中途放弃或创建失败，系统会执行自动补偿流程（CompensatePhase1Async）回滚已创建的租户和管理员，防止产生垃圾数据孤立账户。",
+    },
   },
 };

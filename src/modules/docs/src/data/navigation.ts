@@ -267,6 +267,12 @@ export const navigationData: DocCategoryData[] = [
         slug: "features/tenant-context-gate",
         order: 21,
       },
+      {
+        id: "feat-self-service-signup",
+        titleKey: "features.selfServiceSignup.title",
+        slug: "features/self-service-signup",
+        order: 22,
+      },
     ],
   },
 
