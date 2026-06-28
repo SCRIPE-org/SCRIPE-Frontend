@@ -3,10 +3,10 @@ import type { Metadata } from "next";
 import { DocsLayout } from "@modules/docs/src/presentation/components/layout/DocsLayout";
 
 export const metadata: Metadata = {
-  title: "Commercial Documentation | SCRIPE Platform",
+  title: "SCRIPE — B2B2C SaaS Platform for Growing Businesses",
   description:
-    "Enterprise features, pricing, security, and deployment options for the SCRIPE ERP Platform.",
-  keywords: ["scripe", "commercial", "enterprise", "erp", "pricing", "security", "deployment"],
+    "Discover what SCRIPE offers: multi-tenant workspaces, subscription management, enterprise security, white-labeling, marketplace integrations, and everything your business needs to scale.",
+  keywords: ["scripe", "b2b2c", "saas", "enterprise", "multi-tenant", "pricing", "security", "white-label", "marketplace"],
 };
 
 /**

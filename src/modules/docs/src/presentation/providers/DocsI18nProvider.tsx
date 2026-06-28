@@ -103,7 +103,6 @@ export function DocsI18nProvider({
   scope?: DocScope;
 }) {
   const [language, setLanguageState] = useState<DocLanguage>("en");
-  const [isHydrated, setIsHydrated] = useState(false);
 
   const currentLanguageInfo = useMemo(
     () => DOC_LANGUAGES.find((l) => l.code === language) ?? DOC_LANGUAGES[0],
@@ -162,20 +161,16 @@ export function DocsI18nProvider({
     }
   }, []);
 
-  // Hydrate from localStorage
+  // Hydrate language preference from localStorage (after mount — client side only)
   useEffect(() => {
-    const hydrate = () => {
-      try {
-        const saved = localStorage.getItem(DOCS_LANG_KEY) as DocLanguage | null;
-        if (saved && DOC_LANGUAGES.some((l) => l.code === saved)) {
-          setLanguageState(saved);
-        }
-      } catch {
-        /* noop */
+    try {
+      const saved = localStorage.getItem(DOCS_LANG_KEY) as DocLanguage | null;
+      if (saved && DOC_LANGUAGES.some((l) => l.code === saved)) {
+        setLanguageState(saved);
       }
-      setIsHydrated(true);
-    };
-    hydrate();
+    } catch {
+      /* noop */
+    }
   }, []);
 
   const contextValue = useMemo(
@@ -191,7 +186,10 @@ export function DocsI18nProvider({
     [language, direction, setLanguage, t, currentLanguageInfo, loadSection]
   );
 
-  if (!isHydrated) return null;
+  // Note: isHydrated is only used to restore the saved language from localStorage.
+  // Since all translations are eagerly loaded (zero-flash), we do NOT block rendering.
+  // The language preference is applied after mount — first render always uses "en"
+  // which immediately switches to the stored preference without any visible flash.
 
   return <DocsI18nContext.Provider value={contextValue}>{children}</DocsI18nContext.Provider>;
 }
