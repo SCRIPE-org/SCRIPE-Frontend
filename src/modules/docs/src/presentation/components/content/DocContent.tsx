@@ -10,6 +10,14 @@ import { StepGuide } from "./StepGuide";
 import { TabGroup } from "./TabGroup";
 import { ComparisonBlock } from "./ComparisonBlock";
 import { FeatureGrid } from "./FeatureGrid";
+import { InteractiveTerminal } from "./InteractiveTerminal";
+import { FileExplorer } from "./FileExplorer";
+import { InteractiveDiagram } from "./InteractiveDiagram";
+import { BilingualGlossary } from "./BilingualGlossary";
+import { CompatibilityMatrix } from "./CompatibilityMatrix";
+import { PipelineSimulator } from "./PipelineSimulator";
+import { ConfigBuilder } from "./ConfigBuilder";
+import { SchemaVisualizer } from "./SchemaVisualizer";
 
 interface DocContentProps {
   sections: DocSection[];
@@ -161,6 +169,67 @@ export function DocContent({ sections }: DocContentProps) {
 
           case "feature-grid":
             return <FeatureGrid key={key} items={section.items} columns={section.columns} />;
+
+          case "interactive-terminal":
+            return (
+              <InteractiveTerminal
+                key={key}
+                tabs={section.tabs}
+                titleKey={section.titleKey}
+              />
+            );
+
+          case "file-explorer":
+            return (
+              <FileExplorer
+                key={key}
+                moduleName={section.moduleName}
+                files={section.files}
+              />
+            );
+
+          case "interactive-diagram":
+            return (
+              <InteractiveDiagram
+                key={key}
+                nodes={section.nodes}
+                connections={section.connections}
+                titleKey={section.titleKey}
+              />
+            );
+
+          case "bilingual-glossary":
+            return <BilingualGlossary key={key} terms={section.terms} />;
+
+          case "compatibility-matrix":
+            return (
+              <CompatibilityMatrix
+                key={key}
+                headers={section.headers}
+                rows={section.rows}
+              />
+            );
+
+          case "pipeline-simulator":
+            return (
+              <PipelineSimulator
+                key={key}
+                titleKey={section.titleKey}
+                samplePayloadKey={section.samplePayloadKey}
+              />
+            );
+
+          case "config-builder":
+            return <ConfigBuilder key={key} titleKey={section.titleKey} />;
+
+          case "schema-visualizer":
+            return (
+              <SchemaVisualizer
+                key={key}
+                tables={section.tables}
+                titleKey={section.titleKey}
+              />
+            );
 
           default:
             return null;

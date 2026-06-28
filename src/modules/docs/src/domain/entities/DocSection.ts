@@ -104,7 +104,15 @@ export type DocSectionType =
   | "list"
   | "image"
   | "comparison"
-  | "feature-grid";
+  | "feature-grid"
+  | "interactive-terminal"
+  | "file-explorer"
+  | "interactive-diagram"
+  | "bilingual-glossary"
+  | "compatibility-matrix"
+  | "pipeline-simulator"
+  | "config-builder"
+  | "schema-visualizer";
 
 /**
  * Domain model representing a Doc Section Base structure.
@@ -264,4 +272,112 @@ export type DocSection =
   | ListSection
   | ImageSection
   | ComparisonSection
-  | FeatureGridSection;
+  | FeatureGridSection
+  | InteractiveTerminalSection
+  | FileExplorerSection
+  | InteractiveDiagramSection
+  | BilingualGlossarySection
+  | CompatibilityMatrixSection
+  | PipelineSimulatorSection
+  | ConfigBuilderSection
+  | SchemaVisualizerSection;
+
+export interface TerminalTab {
+  tabId: string;
+  label: string;
+  command: string;
+  outputKey: string;
+}
+
+export interface InteractiveTerminalSection extends DocSectionBase {
+  type: "interactive-terminal";
+  tabs: TerminalTab[];
+  titleKey: string;
+}
+
+export interface ExplorerFile {
+  path: string;
+  name: string;
+  type: "dir" | "file";
+  depth: number;
+  descriptionKey: string;
+}
+
+export interface FileExplorerSection extends DocSectionBase {
+  type: "file-explorer";
+  moduleName: string;
+  files: ExplorerFile[];
+}
+
+export interface DiagramNode {
+  id: string;
+  labelKey: string;
+  type: "default" | "primary" | "success" | "warning";
+  descriptionKey: string;
+}
+
+export interface DiagramConnection {
+  from: string;
+  to: string;
+  labelKey?: string;
+}
+
+export interface InteractiveDiagramSection extends DocSectionBase {
+  type: "interactive-diagram";
+  nodes: DiagramNode[];
+  connections: DiagramConnection[];
+  titleKey?: string;
+}
+
+export interface GlossaryTerm {
+  termEn: string;
+  termAr: string;
+  descriptionKey: string;
+}
+
+export interface BilingualGlossarySection extends DocSectionBase {
+  type: "bilingual-glossary";
+  terms: GlossaryTerm[];
+}
+
+export interface MatrixCell {
+  value: string;
+  status: "supported" | "partial" | "unsupported";
+}
+
+export interface CompatibilityMatrixSection extends DocSectionBase {
+  type: "compatibility-matrix";
+  headers: string[];
+  rows: { nameKey: string; cells: MatrixCell[] }[];
+}
+
+export interface PipelineSimulatorSection extends DocSectionBase {
+  type: "pipeline-simulator";
+  titleKey: string;
+  samplePayloadKey: string;
+}
+
+export interface ConfigBuilderSection extends DocSectionBase {
+  type: "config-builder";
+  titleKey: string;
+}
+
+export interface SchemaColumn {
+  name: string;
+  type: string;
+  isPrimaryKey: boolean;
+  isForeignKey: boolean;
+  nullable: boolean;
+  notesKey: string;
+}
+
+export interface SchemaTable {
+  tableName: string;
+  columns: SchemaColumn[];
+}
+
+export interface SchemaVisualizerSection extends DocSectionBase {
+  type: "schema-visualizer";
+  tables: SchemaTable[];
+  titleKey: string;
+}
