@@ -87,6 +87,7 @@ export function PipelineSimulator({ titleKey, samplePayloadKey }: PipelineSimula
             description={step.log}
             isActive={idx === activeStep}
             isCompleted={idx < activeStep}
+            duration={idx < activeStep ? idx * 12 + 8 : undefined}
           />
         ))}
       </div>
