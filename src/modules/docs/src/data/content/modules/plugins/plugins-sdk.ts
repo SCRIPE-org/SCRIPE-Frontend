@@ -96,6 +96,96 @@ unsub();`,
 />`,
   },
 
+  // ─── Sandboxed Execution Lifecycle ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.plugins.sdk.executionTitle",
+    id: "sandboxed-execution-lifecycle",
+  },
+  { type: "paragraph", contentKey: "modules.plugins.sdk.executionIntro" },
+  {
+    type: "flowchart",
+    titleKey: "modules.plugins.sdk.executionTitle",
+    direction: "vertical",
+    nodes: [
+      {
+        id: "hostFrame",
+        labelKey: "modules.plugins.sdk.nodeExecMount",
+        descriptionKey: "modules.plugins.sdk.nodeExecMountDesc",
+        icon: "Layout",
+        type: "default",
+      },
+      {
+        id: "postMessageReady",
+        labelKey: "modules.plugins.sdk.nodeExecReady",
+        descriptionKey: "modules.plugins.sdk.nodeExecReadyDesc",
+        icon: "MessageSquare",
+        type: "primary",
+      },
+      {
+        id: "tokenRequest",
+        labelKey: "modules.plugins.sdk.nodeExecToken",
+        descriptionKey: "modules.plugins.sdk.nodeExecTokenDesc",
+        icon: "Key",
+        type: "info",
+      },
+      {
+        id: "gatewayCall",
+        labelKey: "modules.plugins.sdk.nodeExecGateway",
+        descriptionKey: "modules.plugins.sdk.nodeExecGatewayDesc",
+        icon: "Globe",
+        type: "warning",
+      },
+      {
+        id: "sandboxCheck",
+        labelKey: "modules.plugins.sdk.nodeExecSandbox",
+        descriptionKey: "modules.plugins.sdk.nodeExecSandboxDesc",
+        icon: "Shield",
+        type: "danger",
+      },
+      {
+        id: "logEvent",
+        labelKey: "modules.plugins.sdk.nodeExecLog",
+        descriptionKey: "modules.plugins.sdk.nodeExecLogDesc",
+        icon: "Database",
+        type: "success",
+      },
+    ],
+    connections: [
+      {
+        from: "hostFrame",
+        to: "postMessageReady",
+        labelKey: "modules.plugins.sdk.connExecFrame",
+        style: "solid",
+      },
+      {
+        from: "postMessageReady",
+        to: "tokenRequest",
+        labelKey: "modules.plugins.sdk.connExecReady",
+        style: "solid",
+      },
+      {
+        from: "tokenRequest",
+        to: "gatewayCall",
+        labelKey: "modules.plugins.sdk.connExecRequest",
+        style: "solid",
+      },
+      {
+        from: "gatewayCall",
+        to: "sandboxCheck",
+        labelKey: "modules.plugins.sdk.connExecForward",
+        style: "solid",
+      },
+      {
+        from: "sandboxCheck",
+        to: "logEvent",
+        labelKey: "modules.plugins.sdk.connExecCheck",
+        style: "solid",
+      },
+    ],
+  },
+
   // ─── Bridge Classes ──────────────────────────────────────────
   {
     type: "heading",

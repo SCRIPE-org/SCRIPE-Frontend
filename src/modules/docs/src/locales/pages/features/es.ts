@@ -594,6 +594,12 @@ export const es = {
         "Multi-Page Branding — Configure independent branding for Login, Forgot Password, and Reset Password pages.",
       relatedBuilder:
         "Login Page Builder — Drag-and-drop visual canvas for building custom login page layouts with 14 component types.",
+      logoPathsTitle: "Rutas de Logotipo y Resolución",
+      logoPathsIntro:
+        "Los recursos de logotipo del inquilino se almacenan en un directorio dedicado de almacenamiento local o en la nube (predeterminado: 'FileHost/TenantLogos/') estructurado mediante el esquema de almacenamiento de archivos 'tenant-logo'. Los archivos almacenados se denominan '{TenantCode}_logo.{extension}' para evitar colisiones de nombres y hacer cumplir el aislamiento del inquilino. Las rutas de solicitud de logotipo servidas se enrutan a través de '/api/files/tenant-logos/{filename}', que valida las extensiones de medios (JPG, PNG, WEBP, GIF, SVG) y aplica un límite de tamaño de archivo de 10 MB.",
+      cssPreviewsTitle: "Canalización de Vista Previa de CSS en Vivo",
+      cssPreviewsIntro:
+        "El marco de Vista Previa en Vivo en Customizer Studio se comunica a través de un canal postMessage seguro y validado por origen utilizando el gancho useStudioBridge. Cuando un administrador modifica cualquier token de diseño en el panel de la barra lateral, la ventana principal envía un evento postMessage en tiempo real que contiene el objeto StudioDraft serializado completo. El iframe de vista previa (por ejemplo, LoginPreviewShell) intercepta el mensaje e invoca useLoginBrandingTokens para actualizar instantáneamente las variables personalizadas de CSS (--login-*) en el elemento document :root, lo que proporciona redibujados del DOM sin latencia sin activar actualizaciones completas de la página.",
     },
     dashboardBuilder: {
       title: "Constructor de Dashboard",
@@ -633,6 +639,9 @@ export const es = {
         "El Constructor de Dashboard está implementado en 7 archivos en la capa Core, siguiendo el patrón de arquitectura basado en proveedores de SCRIPE.",
       archTip:
         "Para agregar un nuevo ajuste, extienda la interfaz Settings y defaultSettings en settings-provider.tsx.",
+      widgetConfigTitle: "Esquema de configuración de widgets y cuadrícula",
+      widgetConfigIntro:
+        "Cada widget colocado en el lienzo del constructor de paneles es un bloque posicionado en una cuadrícula CSS de 12 columnas. El constructor configura sus columnas, filas, alineación, propiedades específicas, zIndex y visibilidad, y los serializa en DashboardThemeJson junto con los tokens de tema existentes.",
     },
     themeMarketplace: {
       title: "Theme Marketplace",
@@ -828,6 +837,15 @@ export const es = {
         "Domain Layer: ThemeDetail.ts (entity), IThemeMarketplaceService.ts, IThemeMarketplaceRepository.ts",
       sourceViewModel:
         "ViewModel: useThemeMarketplace.ts (gallery state), useStudioViewModel.ts (preview/apply integration)",
+      devProfilesTitle: "Portal y Perfiles de Desarrolladores de Temas",
+      devProfilesIntro:
+        "El mercado de temas permite a los desarrolladores de temas registrados publicar sus diseños. Los perfiles de desarrollador se registran y administran a través de DeveloperProfileController y se almacenan como entidades DeveloperProfile vinculadas al inquilino. La verificación de perfiles está restringida a los administradores de la plataforma (VerifyDeveloperCommand), mientras que los pagos y las tasas de comisión se controlan a través de AppFinancialsController (que requiere permisos como developerprofiles.verify y developerpayouts.process) y pasarelas de pago (Stripe Connect).",
+      purchaseVerifyTitle: "Secuencia de Verificación de Compra",
+      purchaseVerifyIntro:
+        "Los temas premium y solo independientes requieren una compra explícita antes de que un inquilino pueda aplicarlos. El sistema verifica el nivel del inquilino y las compras existentes (GetPurchasedThemeIdsAsync) en la base de datos. Si se requiere una compra, el sistema redirige al administrador a una sesión segura de Stripe Checkout. Tras un pago exitoso, Stripe emite un webhook checkout.session.completed que contiene el ID de correlación, creando un registro LoginThemePurchase en la base de datos que otorga acceso permanente a ese tema.",
+      downloadsVerifyTitle: "Verificación de Descargas de Temas",
+      downloadsVerifyIntro:
+        "Para descargar de forma segura preajustes de temas personalizados o activos de configuración sin conexión, el sistema implementa un marco de descarga de archivos vinculado a la sesión. El controlador de descargas de medios genera una sessionId de duración limitada y criptográficamente aleatoria a través de IDownloadService. El usuario descarga el paquete a través de una solicitud GET segura a /api/v1/downloads/session/{sessionId}, lo que evita la necesidad de encabezados de autenticación del lado del cliente en el enlace de descarga mientras protege los archivos del acceso no autorizado.",
     },
     multiPageBranding: {
       title: "Multi-Page Branding",
@@ -909,6 +927,12 @@ export const es = {
         "Types: StudioDraft.ts (pageOverrides interface), ThemeTypes.ts (page override type definitions)",
       sourceSeeder:
         "Backend: LoginThemeSeeder.cs (PageOverrideDesign records, BuildFullThemeJson pages serialization)",
+      domainMatchingTitle: "Coincidencia de Dominio y Aislamiento de Inquilinos",
+      domainMatchingIntro:
+        "Para resolver el contexto correcto del inquilino en tiempo de ejecución, la puerta de enlace de la API y el TenantContextMiddleware del backend inspeccionan los encabezados de las solicitudes entrantes. Cuando un SuperAdmin desciende a un espacio de trabajo de inquilino específico, la aplicación cliente transmite el ID del inquilino cifrado en el encabezado 'X-Tenant-Context'. El middleware intercepta la solicitud, verifica el permiso tenants.drill_down, descifra el encabezado utilizando AES y lo asigna a CurrentUserService.TenantId. Para el tráfico de clientes estándar que llega a dominios personalizados, la resolución del nombre de host hace coincidir los encabezados de host con las asignaciones de dominio del inquilino.",
+      dnsCnameTitle: "Validación de CNAME de DNS de Dominio Personalizado",
+      dnsCnameIntro:
+        "Los administradores pueden configurar dominios personalizados (por ejemplo, login.acme.com) a través de los puntos de conexión de TenantDomain. El dominio debe pasar las validaciones de RFC 1123 y mantenerse dentro de la cuota Tenancy.MaxCustomDomains del inquilino. Para verificar la propiedad del dominio, el sistema genera un token de verificación único con el prefijo 'scr_'. El administrador debe crear un registro CNAME que apunte su dominio al punto de conexión de la plataforma, y un registro TXT para '_scr-verify.{domain}' que contenga el token. DnsClient.NET consulta los registros TXT para confirmar la coincidencia antes de activar el dominio.",
     },
     loginPageBuilder: {
       title: "Login Page Builder",
@@ -1100,24 +1124,34 @@ export const es = {
       sourceTitle: "Referencia de Archivos Fuente",
       sourceIntro:
         "El Centro del Panel refactorizado abarca 4 módulos (dashboard, audit, security, analytics), cada uno con su propia pila completa de 6 capas.",
+      realtimeTitle: "Actualizaciones de SignalR en tiempo real",
+      realtimeIntro:
+        "El centro de control de paneles se integra con SignalR para proporcionar actualizaciones en tiempo real e invalidación de caché. Comparte la conexión con el oyente del registro de auditoría, invalidando la caché de consultas de 'dashboard' cada vez que se reciben nuevos eventos de auditoría. Esto activa actualizaciones automáticas de consultas de TanStack sin recargar la página ni realizar sondeos basados en intervalos.",
     },
     selfServiceSignup: {
       title: "Registro de autoservicio e incorporación B2B2C",
-      description: "Saga automatizada de incorporación de múltiples inquilinos con OTP de verificación, resolución de moneda regional e integración de Stripe.",
-      intro: "SCRIPE cuenta con un completo motor de incorporación de inquilinos de autoservicio B2B2C orquestado a través de una sólida saga de dos fases. Coordina las transacciones de la base de datos, la configuración de la suscripción, las conexiones de facturación y proporciona reversiones de compensación automáticas si se abandonan los pagos.",
+      description:
+        "Saga automatizada de incorporación de múltiples inquilinos con OTP de verificación, resolución de moneda regional e integración de Stripe.",
+      intro:
+        "SCRIPE cuenta con un completo motor de incorporación de inquilinos de autoservicio B2B2C orquestado a través de una sólida saga de dos fases. Coordina las transacciones de la base de datos, la configuración de la suscripción, las conexiones de facturación y proporciona reversiones de compensación automáticas si se abandonan los pagos.",
       flowTitle: "Flujo de incorporación",
       phase1Title: "Fase 1: Transacción de identidad y aprovisionamiento",
-      phase1Intro: "Fase 1 se ejecuta en una única transacción de base de datos. Genera el espacio de trabajo del inquilino, conecta el subdominio predeterminado, aprovisiona la configuración, crea los roles de seguridad predeterminados y crea la cuenta del usuario administrador propietario.",
+      phase1Intro:
+        "Fase 1 se ejecuta en una única transacción de base de datos. Genera el espacio de trabajo del inquilino, conecta el subdominio predeterminado, aprovisiona la configuración, crea los roles de seguridad predeterminados y crea la cuenta del usuario administrador propietario.",
       validationTitle: "Validación de subdominio e identidad",
-      validationIntro: "Para mantener la seguridad y evitar conflictos de enrutamiento, el sistema de incorporación aplica reglas de formato estrictas y verifica la disponibilidad del subdominio frente a una lista negra de palabras reservadas.",
+      validationIntro:
+        "Para mantener la seguridad y evitar conflictos de enrutamiento, el sistema de incorporación aplica reglas de formato estrictas y verifica la disponibilidad del subdominio frente a una lista negra de palabras reservadas.",
       tableConstraint: "Restricción",
       tableRule: "Regla / Patrón",
       tableReason: "Razón de seguridad",
       emailVerificationTitle: "Tickets de verificación de correo electrónico",
-      emailVerificationIntro: "Antes de que pueda comenzar una saga, se debe verificar el correo electrónico del cliente potencial. El sistema emite un boleto firmado criptográficamente con HMAC-SHA256 con un tiempo de vencimiento de 15 minutos.",
+      emailVerificationIntro:
+        "Antes de que pueda comenzar una saga, se debe verificar el correo electrónico del cliente potencial. El sistema emite un boleto firmado criptográficamente con HMAC-SHA256 con un tiempo de vencimiento de 15 minutos.",
       phase2Title: "Fase 2: Derechos y transferencia de facturación",
-      phase2Intro: "La Fase 2 vincula al inquilino recién creado con el módulo Entitlements. Si la edición elegida es de pago, el sistema genera una sesión de pago de Stripe y redirige al usuario.",
-      compensationWarning: "Si el usuario abandona una sesión de pago de pago o no se inicializa, el sistema ejecuta un flujo de compensación automática (CompensatePhase1Async) para revertir las creaciones del inquilino y del administrador, evitando cuentas huérfanas.",
+      phase2Intro:
+        "La Fase 2 vincula al inquilino recién creado con el módulo Entitlements. Si la edición elegida es de pago, el sistema genera una sesión de pago de Stripe y redirige al usuario.",
+      compensationWarning:
+        "Si el usuario abandona una sesión de pago de pago o no se inicializa, el sistema ejecuta un flujo de compensación automática (CompensatePhase1Async) para revertir las creaciones del inquilino y del administrador, evitando cuentas huérfanas.",
     },
   },
 };

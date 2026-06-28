@@ -1,7 +1,7 @@
 // FILE-EXCEPTION: file length
 /**
  * @file dashboard-hub.ts
- * @description Document page defining the tabbed dashboard hub features and data-segregated repositories.
+ * @description Document page defining the tabbed dashboard hub features, data-segregated repositories, and SignalR real-time updates.
  * Contains page descriptions, diagrams, tables, and code snippets detailing system services.
  */
 
@@ -51,6 +51,51 @@ const sections: DocSection[] = [
     type: "info",
     variant: "tip",
     contentKey: "features.dashboardHub.archTip",
+  },
+
+  // ─── Real-Time SignalR Cache Invalidation ─────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardHub.realtimeTitle",
+    id: "realtime-signalr",
+  },
+  { type: "paragraph", contentKey: "features.dashboardHub.realtimeIntro" },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "useDashboardRealtime.ts",
+    code: `"use client";
+import { useEffect, useCallback } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSignalR } from "@core/hooks/useSignalR";
+import { HUB_EVENTS, HUB_METHODS } from "@core/common/constants/signalr";
+
+export function useDashboardRealtime() {
+  const queryClient = useQueryClient();
+  const { connection, connectionState } = useSignalR();
+
+  const handleAuditEvent = useCallback(() => {
+    // Invalidate dashboard query cache to trigger automatic TanStack query refetching
+    queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+  }, [queryClient]);
+
+  useEffect(() => {
+    if (!connection || connectionState !== "connected") return;
+
+    // Listen for audit events broadcasted by the server
+    connection.on(HUB_EVENTS.AUDIT_EVENT, handleAuditEvent);
+    // Join tenant-scoped global notifications group
+    connection.invoke(HUB_METHODS.JOIN_GLOBAL_GROUP).catch(() => {});
+
+    return () => {
+      connection.off(HUB_EVENTS.AUDIT_EVENT, handleAuditEvent);
+      connection.invoke(HUB_METHODS.LEAVE_GLOBAL_GROUP).catch(() => {});
+    };
+  }, [connection, connectionState, handleAuditEvent]);
+
+  return { connectionState };
+}`,
   },
 
   // ─── Domain Segregation (ISP) ────────────────────────────
@@ -139,7 +184,7 @@ const sections: DocSection[] = [
     type: "code",
     language: "text",
     filename: "6-Layer Module Structure (per domain)",
-    code: `modules/system/{audit|security|analytics}/
+    code: `modules/monitoring/{audit|security|analytics|dashboard}/
 ├── src/
 │   ├── domain/
 │   │   ├── entities/     # Rich domain entity classes (getters + computed)
@@ -185,7 +230,6 @@ const sections: DocSection[] = [
     language: "typescript",
     filename: "modules/system/di.ts — SystemContainer Registration",
     code: `export interface SystemContainer {
-  // ... existing repositories ...
   auditRepository: IAuditRepository;
   securityRepository: ISecurityRepository;
   analyticsRepository: IAnalyticsRepository;
@@ -204,10 +248,6 @@ function getSystemContainer(): SystemContainer {
   };
 }
 
-// Lazy getters
-/**
- * Exported constant defining parameters and fields for system container configurations.
- */
 export const systemContainer = {
   get auditRepository() { return getSystemContainer().auditRepository; },
   get securityRepository() { return getSystemContainer().securityRepository; },
@@ -375,34 +415,34 @@ export type LoginActivityPoint = import("../../analytics/...").ComparisonDataPoi
     language: "text",
     filename: "Source File Map",
     code: `Hub:
-  modules/system/dashboard/src/presentation/views/DashboardView.tsx
+  modules/monitoring/dashboard/src/presentation/views/DashboardView.tsx
 
 Audit Module:
-  modules/system/audit/src/domain/entities/AuditEntities.ts
-  modules/system/audit/src/domain/interfaces/IAuditRepository.ts
-  modules/system/audit/src/data/services/AuditService.ts
-  modules/system/audit/src/data/repositories/AuditRepository.ts
-  modules/system/audit/src/data/mappers/AuditMapper.ts
-  modules/system/audit/src/data/models/AuditModels.ts
+  modules/monitoring/audit/src/domain/entities/AuditEntities.ts
+  modules/monitoring/audit/src/domain/interfaces/IAuditRepository.ts
+  modules/monitoring/audit/src/data/services/AuditService.ts
+  modules/monitoring/audit/src/data/repositories/AuditRepository.ts
+  modules/monitoring/audit/src/data/mappers/AuditMapper.ts
+  modules/monitoring/audit/src/data/models/AuditModels.ts
 
 Security Module:
-  modules/system/security/src/domain/entities/SecurityEntities.ts
-  modules/system/security/src/domain/interfaces/ISecurityRepository.ts
-  modules/system/security/src/data/services/SecurityService.ts
-  modules/system/security/src/data/repositories/SecurityRepository.ts
+  modules/monitoring/security/src/domain/entities/SecurityEntities.ts
+  modules/monitoring/security/src/domain/interfaces/ISecurityRepository.ts
+  modules/monitoring/security/src/data/services/SecurityService.ts
+  modules/monitoring/security/src/data/repositories/SecurityRepository.ts
 
 Analytics Module:
-  modules/system/analytics/src/domain/entities/AnalyticsEntities.ts
-  modules/system/analytics/src/domain/interfaces/IAnalyticsRepository.ts
-  modules/system/analytics/src/data/services/AnalyticsService.ts
-  modules/system/analytics/src/data/repositories/AnalyticsRepository.ts
+  modules/monitoring/analytics/src/domain/entities/AnalyticsEntities.ts
+  modules/monitoring/analytics/src/domain/interfaces/IAnalyticsRepository.ts
+  modules/monitoring/analytics/src/data/services/AnalyticsService.ts
+  modules/monitoring/analytics/src/data/repositories/AnalyticsRepository.ts
 
 DI Container:
   modules/system/di.ts
 
 Locales:
-  modules/system/dashboard/locales/dashboard.en.ts
-  modules/system/dashboard/locales/dashboard.ar.ts`,
+  modules/monitoring/dashboard/locales/dashboard.en.ts
+  modules/monitoring/dashboard/locales/dashboard.ar.ts`,
   },
 ];
 
@@ -418,5 +458,5 @@ registerPage({
     "features/audit-system",
     "infrastructure/audit-trail",
   ],
-  lastUpdated: "2026-04-07",
+  lastUpdated: "2026-06-28",
 });

@@ -108,7 +108,67 @@ const sections: DocSection[] = [
   },
   { type: "info", variant: "note", contentKey: "features.recycleBin.interceptorNote" },
 
-  //  Controller Endpoints 
+  // € Item Restoration Process
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.recycleBin.restorationTitle",
+    id: "restoration",
+  },
+  { type: "paragraph", contentKey: "features.recycleBin.restorationIntro" },
+  {
+    type: "flowchart",
+    direction: "vertical",
+    title: "Recycle Bin Item Restoration Flow",
+    nodes: [
+      {
+        id: "req",
+        label: "Admin Sends Restore Request (RestoreDeletedItemCommand)",
+        type: "default",
+      },
+      { id: "decrypt", label: "Decrypt Encrypted ID & Resolve EntityType", type: "info" },
+      {
+        id: "query",
+        label: "Query DB with IgnoreQueryFilters() to Find Soft-Deleted Item",
+        type: "info",
+      },
+      {
+        id: "restore_base",
+        label: "Reset Soft-Delete Flags (IsDeleted=false, DeletedAt/By=null)",
+        type: "success",
+      },
+      { id: "check_tenant", label: "Is Entity a Tenant?", type: "info" },
+      {
+        id: "cascade_tenant",
+        label:
+          "Cascade Restore: Bulk Update Tenant's Admins, Users, Roles, Groups (ExecuteUpdateAsync)",
+        type: "warning",
+      },
+      { id: "check_group", label: "Is Entity a UserGroup?", type: "info" },
+      {
+        id: "cascade_group",
+        label: "Restore AdminUserGroup mappings & group admins (optional)",
+        type: "warning",
+      },
+      { id: "cache", label: "Invalidate Admin Permission Cache & Role Cache", type: "danger" },
+      { id: "complete", label: "Save Changes and Return Success Status", type: "success" },
+    ],
+    connections: [
+      { from: "req", to: "decrypt" },
+      { from: "decrypt", to: "query" },
+      { from: "query", to: "restore_base" },
+      { from: "restore_base", to: "check_tenant" },
+      { from: "check_tenant", to: "cascade_tenant", label: "Yes" },
+      { from: "check_tenant", to: "check_group", label: "No" },
+      { from: "cascade_tenant", to: "cache" },
+      { from: "check_group", to: "cascade_group", label: "Yes" },
+      { from: "check_group", to: "cache", label: "No" },
+      { from: "cascade_group", to: "cache" },
+      { from: "cache", to: "complete" },
+    ],
+  },
+
+  // € Controller Endpoints €
   { type: "heading", level: 2, titleKey: "features.recycleBin.endpointsTitle", id: "endpoints" },
   {
     type: "api-table",

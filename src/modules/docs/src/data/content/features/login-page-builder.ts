@@ -235,7 +235,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  // ─── State Management ─────────────────────────────────────
+  // ─── State Management & Saving ─────────────────────────────
   {
     type: "heading",
     level: 2,
@@ -253,16 +253,22 @@ const sections: DocSection[] = [
   {
     type: "code",
     language: "typescript",
-    filename: "Builder Component State",
-    code: `interface BuilderComponent {
-  id: string;          // UUID v4
-  type: ComponentType; // 'logo' | 'heading' | 'form' | ...
-  props: Record<string, unknown>;
-  position: { x: number; y: number };
-  gridPosition: { colSpan: number; rowSpan: number; colStart: number; rowStart: number };
-  section: 'header' | 'body' | 'footer';
-  order: number;
-  responsive: { sm: GridOverride; md: GridOverride };
+    filename: "Builder Component State Schema",
+    code: `export interface CanvasComponent {
+  id: string;                      // Unique identifier (UUID v4)
+  type: CanvasComponentType;       // Component type selector
+  gridColumn: string;              // CSS Grid Column (e.g. "1 / 7")
+  gridRow: string;                 // CSS Grid Row (e.g. "1 / 2")
+  alignment: GridAlignment;        // Horizontal alignment (start/center/end)
+  verticalAlignment: GridAlignment;// Vertical alignment (start/center/end)
+  x: number;                       // Absolute mode X coordinate (px)
+  y: number;                       // Absolute mode Y coordinate (px)
+  width: number;                   // Absolute mode width (px)
+  height: number;                  // Absolute mode height (px)
+  locked: boolean;                 // Lock element from modifications
+  props: Record<string, unknown>;  // Element specific settings (e.g. src, text)
+  zIndex: number;                  // Absolute mode stacking z-index
+  visible: boolean;                // Visibility switch
 }`,
   },
   {
@@ -272,6 +278,54 @@ const sections: DocSection[] = [
     id: "undo-redo",
   },
   { type: "paragraph", contentKey: "features.loginPageBuilder.stateUndoIntro" },
+
+  // ─── Flowchart: State Save & Sync Pipeline ──────────────────
+  {
+    type: "flowchart",
+    title: "Builder State Save & Sync Pipeline",
+    direction: "vertical",
+    nodes: [
+      {
+        id: "canvasChange",
+        label: "Canvas Interaction (Move / Resize Component)",
+        type: "default",
+      },
+      {
+        id: "gridSnap",
+        label: "Coordinates Snapped to Grid (8px grid spacing, adjusted by zoom)",
+        type: "info",
+      },
+      { id: "storeUpdate", label: "Zustand Store Updates components array state", type: "info" },
+      {
+        id: "undoStack",
+        label: "Interaction Committed -> History Stack (Max 50)",
+        type: "warning",
+      },
+      {
+        id: "postMsg",
+        label: "postMessage Broadcasts components schema to Preview Iframe",
+        type: "info",
+      },
+      {
+        id: "draftSave",
+        label: "Debounced (2s) Save to Server (PUT /api/v1/branding/draft)",
+        type: "success",
+      },
+      {
+        id: "promotion",
+        label: "Publish Action -> Promotes DraftBrandingJson to LiveBrandingJson",
+        type: "success",
+      },
+    ],
+    connections: [
+      { from: "canvasChange", to: "gridSnap" },
+      { from: "gridSnap", to: "storeUpdate" },
+      { from: "storeUpdate", to: "undoStack" },
+      { from: "storeUpdate", to: "postMsg" },
+      { from: "undoStack", to: "draftSave" },
+      { from: "draftSave", to: "promotion" },
+    ],
+  },
 
   // ─── Serialization ────────────────────────────────────────
   {
@@ -461,24 +515,20 @@ const sections: DocSection[] = [
     type: "code",
     language: "text",
     filename: "Login Page Builder Components",
-    code: `src/modules/system/customization/src/presentation/
+    code: `src/modules/customization/branding/src/presentation/
 ├── components/
-│   ├── Builder/
-│   │   ├── BuilderCanvas.tsx          # Main canvas — mode switching
-│   │   ├── ComponentPalette.tsx        # 14-type palette strip
-│   │   ├── PropertiesPanel.tsx         # Selected component config
-│   │   ├── GridCanvas.tsx             # 12-column grid renderer
-│   │   ├── FreeformCanvas.tsx         # Absolute-position renderer
-│   │   ├── BuilderModeCanvas.tsx      # Section-based renderer
-│   │   ├── GridOverlay.tsx            # Grid visualization
-│   │   └── BuilderToolbar.tsx         # Mode switcher, undo/redo, zoom
-│   ├── DashboardBuilderTab.tsx         # Dashboard theming controls (61 settings)
-│   ├── BundleGalleryTab.tsx           # Bundle marketplace
-│   └── ThemeMarketplacePanel.tsx      # Theme quick-apply
+│   ├── builder/
+│   │   ├── BuilderCanvas.tsx          # Main canvas — absolute/grid positioning
+│   │   ├── BuilderPanel.tsx           # Side palette controller
+│   │   ├── GridOverlay.tsx            # CSS Grid layout helper lines
+│   │   └── DraggableCanvasItem.tsx    # Draggable item wrapper
+│   └── views/
+│       └── CustomizerStudioView.tsx   # Customizer workspace frame
 ├── hooks/
-│   └── useBuilderState.ts             # Builder state management
+│   └── useBuilderDnd.ts               # @dnd-kit/core sensor integrations
 └── viewmodels/
-    └── useStudioViewModel.ts          # Master studio state`,
+    ├── useBuilderStore.ts             # Zustand state manager & snap calculation
+    └── useStudioViewModel.ts          # Studio logic bridge & debounced HTTP saves`,
   },
   {
     type: "info",
@@ -499,5 +549,5 @@ registerPage({
     "features/theme-marketplace",
     "features/multi-page-branding",
   ],
-  lastUpdated: "2026-04-02",
+  lastUpdated: "2026-06-28",
 });

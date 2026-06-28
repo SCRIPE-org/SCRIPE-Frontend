@@ -2,7 +2,7 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  //  Template Architecture
+  // ─── Template Architecture ──────────────────────────
   {
     type: "heading",
     level: 2,
@@ -35,7 +35,7 @@ const sections: DocSection[] = [
     ],
   },
 
-  //  Scriban Syntax 
+  // ─── Scriban Syntax ─────────────────────────────────
   { type: "heading", level: 2, titleKey: "features.messageTemplates.syntaxTitle", id: "syntax" },
   {
     type: "code",
@@ -46,7 +46,7 @@ Hello {{ admin.name }},
 
 <!-- Conditional content -->
 {{ if admin.is_protected }}
- ï¸ You are the super admin for {{ tenant.name }}.
+  You are the super admin for {{ tenant.name }}.
 {{ end }}
 
 <!-- Loops -->
@@ -59,7 +59,7 @@ Created: {{ created_at | date.to_string "%B %d, %Y" }}
 Amount: {{ amount | math.format "0.00" }}`,
   },
 
-  //  Built-in Templates 
+  // ─── Built-in Templates ─────────────────────────────
   { type: "heading", level: 2, titleKey: "features.messageTemplates.builtInTitle", id: "built-in" },
   {
     type: "table",
@@ -74,7 +74,7 @@ Amount: {{ amount | math.format "0.00" }}`,
     ],
   },
 
-  //  Template Entity
+  // ─── MessageTemplate Entity ─────────────────────────
   { type: "heading", level: 2, titleKey: "features.messageTemplates.entityTitle", id: "entity" },
   {
     type: "code",
@@ -82,29 +82,43 @@ Amount: {{ amount | math.format "0.00" }}`,
     filename: "MessageTemplate.cs",
     code: `public class MessageTemplate : AuditableEntity<Guid>
 {
-    [Required] [MaxLength(200)]
-    public string Key { get; set; }           // Unique identifier e.g. "welcome_admin"
+    [Required] [MaxLength(100)]
+    public string Key { get; set; } = null!;       // Unique key, e.g., "welcome_admin"
     
-    [Required] [MaxLength(200)]
-    public string SubjectEn { get; set; }     // English subject line
+    public MessageChannel Channel { get; set; }    // Email, SMS, Push
     
-    [Required] [MaxLength(200)]
-    public string SubjectAr { get; set; }     // Arabic subject line
+    [MaxLength(500)]
+    public string? Subject { get; set; }           // Subject with variables
     
-    [Required]
-    public string BodyEn { get; set; }        // English HTML body (Scriban)
+    [Required] [MaxLength(50000)]
+    public string Body { get; set; } = null!;      // HTML/Text body with Scriban template syntax
     
-    [Required]
-    public string BodyAr { get; set; }        // Arabic HTML body (Scriban)
+    [Required] [MaxLength(10)]
+    public string Language { get; set; } = "en";   // "en" or "ar"
     
-    public bool IsSystem { get; set; }        // System templates can't be deleted
+    public new bool IsActive { get; set; } = true;
+    public Guid? TenantId { get; set; }            // Null = system-wide, set = tenant override
+    
+    [MaxLength(500)]
+    public string? Description { get; set; }
+    
+    [MaxLength(4000)]
+    public string? PlaceholderSchema { get; set; } // JSON array of placehoders (key, type, required)
     
     [MaxLength(2000)]
-    public string? PlaceholderSchema { get; set; } // JSON schema of available variables
+    public string? DesignVariables { get; set; }   // Theme-able CSS variables in JSON format
+    
+    public int Version { get; set; } = 1;          // Auto-incremented version number
+    
+    [MaxLength(50)]
+    public string? Category { get; set; }          // e.g. Transactional, Marketing
+    
+    [MaxLength(500)]
+    public string? Tags { get; set; }
 }`,
   },
 
-  //  Template Renderer
+  // ─── Template Renderer & Fallbacks ──────────────────
   {
     type: "heading",
     level: 2,
@@ -117,26 +131,91 @@ Amount: {{ amount | math.format "0.00" }}`,
     filename: "TemplateRenderer.cs",
     code: `public class TemplateRenderer : ITemplateRenderer
 {
-    public async Task<string> RenderAsync(string template, object data)
+    private static string RenderWithScriban(string templateText, Dictionary<string, object> data)
     {
-        // Parse Scriban template
-        var parsed = Template.Parse(template);
-        if (parsed.HasErrors)
-            throw new TemplateException(string.Join(", ", parsed.Messages));
+        var parsedTemplate = Template.Parse(templateText);
 
-        // Create script object from data
+        if (parsedTemplate.HasErrors)
+        {
+            // Syntax error fallback: Safe literal double curly braces replacement
+            var result = templateText;
+            foreach (var kvp in data)
+            {
+                result = result.Replace($"{{{{{kvp.Key}}}}}", kvp.Value?.ToString() ?? "");
+            }
+            return result;
+        }
+
         var scriptObject = new ScriptObject();
-        scriptObject.Import(data);
+        foreach (var kvp in data)
+        {
+            scriptObject[kvp.Key] = kvp.Value;
+        }
 
         var context = new TemplateContext();
         context.PushGlobal(scriptObject);
-
-        return await parsed.RenderAsync(context);
+        return parsedTemplate.Render(context);
     }
 }`,
   },
 
-  //  Controller Endpoints 
+  // ─── Placeholder Schema & Validation ────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.messageTemplates.placeholderTitle",
+    id: "placeholder-validation",
+  },
+  { type: "paragraph", contentKey: "features.messageTemplates.placeholderIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "UpdateMessageTemplateCommandValidator.cs",
+    code: `// Validation rule enforcing correct JSON syntax on placeholder schema & design variables
+RuleFor(x => x.PlaceholderSchema)
+    .MaximumLength(4000)
+    .Must(BeValidJson)
+    .When(x => !string.IsNullOrWhiteSpace(x.PlaceholderSchema))
+    .WithMessage("PlaceholderSchema must be valid JSON.");
+
+private static bool BeValidJson(string? json)
+{
+    if (string.IsNullOrWhiteSpace(json)) return true;
+    try
+    {
+        System.Text.Json.JsonDocument.Parse(json);
+        return true;
+    }
+    catch { return false; }
+}`,
+  },
+
+  // ─── Template Version Control ───────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.messageTemplates.versionTitle",
+    id: "version-control",
+  },
+  { type: "paragraph", contentKey: "features.messageTemplates.versionIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "UpdateMessageTemplateCommandHandler.cs",
+    code: `// Validate Scriban syntax and increment template version on change
+var parsed = Template.Parse(request.Body);
+if (parsed.HasErrors)
+    return Error.Validation("Template body has syntax errors.");
+
+template.Subject = request.Subject;
+template.Body = request.Body;
+template.PlaceholderSchema = request.PlaceholderSchema;
+template.Version += 1; // Auto-increment version
+
+await _unitOfWork.SaveChangesAsync(cancellationToken);`,
+  },
+
+  // ─── Controller Endpoints ───────────────────────────
   {
     type: "heading",
     level: 2,
@@ -151,63 +230,68 @@ Amount: {{ amount | math.format "0.00" }}`,
         path: "/message-templates",
         descriptionKey: "List all templates",
         auth: "JWT",
-        permission: "templates.view",
+        permission: "message-templates.view",
       },
       {
         method: "GET",
         path: "/message-templates/{id}",
         descriptionKey: "Get template detail",
         auth: "JWT",
-        permission: "templates.view",
+        permission: "message-templates.view",
       },
       {
         method: "POST",
         path: "/message-templates",
         descriptionKey: "Create custom template",
         auth: "JWT",
-        permission: "templates.create",
+        permission: "message-templates.create",
       },
       {
         method: "PUT",
         path: "/message-templates/{id}",
         descriptionKey: "Update template",
         auth: "JWT",
-        permission: "templates.edit",
+        permission: "message-templates.update",
       },
       {
         method: "DELETE",
         path: "/message-templates/{id}",
         descriptionKey: "Delete (non-system only)",
         auth: "JWT",
-        permission: "templates.delete",
+        permission: "message-templates.delete",
       },
       {
         method: "POST",
-        path: "/message-templates/{id}/preview",
+        path: "/message-templates/preview",
         descriptionKey: "Render with sample data",
         auth: "JWT",
-        permission: "templates.view",
+        permission: "message-templates.view",
       },
     ],
   },
 
-  //  Preview Feature
+  // ─── Preview Feature ────────────────────────────────
   { type: "heading", level: 2, titleKey: "features.messageTemplates.previewTitle", id: "preview" },
   { type: "paragraph", contentKey: "features.messageTemplates.previewIntro" },
   {
     type: "code",
     language: "json",
     filename: "Preview Request",
-    code: `// POST /message-templates/{id}/preview
+    code: `// POST /api/v1/message-templates/preview
 {
-  "data": {
+  "subject": "Welcome {{ admin.name }}",
+  "body": "<p>Hello {{ admin.name }}, welcome to {{ tenant.name }}!</p>",
+  "sampleData": {
     "admin": { "name": "John Doe", "email": "john@example.com" },
-    "tenant": { "name": "ACME Corp" },
-    "otp_code": "123456"
+    "tenant": { "name": "ACME Corp" }
   }
 }
 
-// Response: rendered HTML body`,
+// Response:
+// {
+//   "subject": "Welcome John Doe",
+//   "body": "<p>Hello John Doe, welcome to ACME Corp!</p>"
+// }`,
   },
 ];
 

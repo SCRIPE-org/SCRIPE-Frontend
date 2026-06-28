@@ -2,13 +2,15 @@
 
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 
+type InfoVariant = "note" | "tip" | "warning" | "danger" | "info" | "success" | "caution";
+
 interface InfoBlockProps {
-  variant: "note" | "tip" | "warning" | "danger";
+  variant: InfoVariant;
   contentKey: string;
   titleKey?: string;
 }
 
-const variantIcons: Record<string, React.ReactNode> = {
+const variantIcons: Record<InfoVariant, React.ReactNode> = {
   note: (
     <svg
       className="docs-info-icon"
@@ -70,11 +72,55 @@ const variantIcons: Record<string, React.ReactNode> = {
       <path d="m9 9 6 6" />
     </svg>
   ),
+  info: (
+    <svg
+      className="docs-info-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="3" y="3" width="18" height="18" rx="3" ry="3" />
+      <path d="M12 8h.01" />
+      <path d="M11 12h1v4h1" />
+    </svg>
+  ),
+  success: (
+    <svg
+      className="docs-info-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+      <path d="m9 11 3 3L22 4" />
+    </svg>
+  ),
+  caution: (
+    <svg
+      className="docs-info-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Z" />
+      <path d="M12 8v5" />
+      <path d="m12 16-.01.01" />
+    </svg>
+  ),
 };
 
 /**
- * Presentation UI component rendering the info block.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ * InfoBlock — Renders a callout/alert box with one of 7 semantic variants.
+ * Supports: note, tip, warning, danger, info, success, caution.
  */
 export function InfoBlock({ variant, contentKey, titleKey }: InfoBlockProps) {
   const { t } = useDocsI18n();

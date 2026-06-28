@@ -337,112 +337,191 @@ export const de = {
       },
     },
 
-    crmLeads: {
-      title: "CRM Leads",
-      description:
-        "Enterprise-Sales-Pipeline — Erfassung, Qualifizierung, Zuweisung und Konvertierung von Interessenten in Mandanten über das Admin-Panel.",
-      intro:
-        "Das CRM Leads-Modul ist die integrierte Sales-Pipeline von SCRIPE. Es erfasst Interessenten, bereichert sie mit Discovery-Daten und bietet einen vollständigen CRM-Workflow.",
-      ingestionTitle: "Lead-Erfassung und Duplikatsprüfung",
-      ingestionIntro:
-        "Bei der Lead-Übermittlung führt das System Validierungs- und Duplikatsprüfungen durch (Subdomänen-Kollisionen, ABM-Zuordnung für Kollegen und ein tägliches Limit von 1000 Leads).",
-      whatIsTitle: "Was ist das Leads-CRM?",
-      whatIsIntro:
-        "Ein Lead stellt einen potenziellen Kunden dar. Jeder Lead enthält Kontaktinformationen und einen Lebenszyklusstatus.",
-      lifecycleTitle: "Lead-Lebenszyklus",
-      lifecycleIntro:
-        "Leads durchlaufen definierte Status, die in der Aktivitätshistorie aufgezeichnet werden.",
-      discoveryTitle: "Discovery-Daten",
-      discoveryIntro:
-        "Jeder Lead wird mit Discovery-Feldern aus dem Onboarding-Fragebogen bereichert.",
-      discoveryTip: "Die empfohlene Edition wird vom Empfehlungsmodul berechnet.",
-      backendTitle: "Backend-Architektur",
-      backendIntro: "Die Lead-Funktion folgt der standardmäßigen 3-Projekt-Struktur von SCRIPE.",
-      entityTitle: "PlatformLead-Entität",
-      entityIntro:
-        "PlatformLead erbt von AuditableEntity. Alle IDs werden bei der API-Übertragung mit AES verschlüsselt.",
-      endpointsTitle: "API-Endpunkte",
-      endpointsIntro:
-        "Der LeadsController stellt 9 Endpunkte zur Verwaltung des Lebenszyklus bereit.",
-      endpointsNote:
-        "API-IDs werden mittels IdEncryptionHelper AES-verschlüsselt. Verwenden Sie niemals rohe GUIDs im Frontend.",
-      convertTitle: "In Mandant konvertieren",
-      convertIntro:
-        "ConvertLeadToTenant ist eine atomare Operation. Der Handler koordiniert Mandantenerstellung, Abonnement und Fehlerbehandlung.",
-      emailsTitle: "E-Mail-Benachrichtigungen",
-      emailsIntro:
-        "Zwei HTML-E-Mails werden asynchron (fire-and-forget) bei Formularübermittlung gesendet.",
-      emailsTip:
-        "Konfigurieren Sie die Benachrichtigungsadresse über Leads:SalesNotificationEmail in appsettings.json.",
-      frontendTitle: "Frontend-Architektur",
-      frontendIntro:
-        "Das Frontend-Submodul folgt dem standardmäßigen View/ViewModel-Muster von SCRIPE.",
-      frontendEntityTitle: "PlatformLead-Entität (Frontend)",
-      frontendEntityIntro:
-        "Die Entität kapselt die DTO-Daten mit berechneten Eigenschaften und Anzeigelogik.",
-      permissionsTitle: "Berechtigungen",
-      permissionsIntro:
-        "Der Zugriff auf Leads ist durch fünf Berechtigungen geschützt (module.action).",
-      permissionsTip:
-        "Frontend-Prüfungen dienen der UX. Das Backend validiert immer mit dem AuthorizationBehavior.",
-      quickStartTitle: "Schnellstart",
-      quickStartIntro:
-        "Der typische CRM-Ablauf besteht aus 5 Schritten von der Übermittlung bis zur Konvertierung.",
-    },
-    compliance: {
+    // ── Plugins Module (Phase 15) ────────────────────────────
+    plugins: {
       overview: {
         title: "Compliance-Modul",
         description:
-          "GDPR, CCPA und PDPA Compliance-Automatisierung â€” Richtlinien, DSR-Verarbeitung, Einwilligungsmanagement, Datenaufbewahrung, Inventar und Berichtserstellung.",
+          "Automatisierung der DSGVO-, CCPA- und PDPA-Konformität — Vorschriften, DSR-Bearbeitung, Einwilligungsverwaltung, Datenaufbewahrung, Inventar und Berichtserstellung.",
         intro:
-          "Das Compliance-Modul ist die integrierte Regulierungs-Engine von SCRIPE. Es hilft Betreibern und deren Mandanten, Datenschutzgesetze (GDPR, CCPA, PDPA) durch automatisierte Werkzeuge einzuhalten.",
+          "Das Compliance-Modul ist die integrierte regulatorische Compliance-Engine von SCRIPE. Es hilft Plattformbetreibern und deren Mandanten, die wichtigsten Datenschutzgesetze (DSGVO, CCPA, PDPA) einzuhalten, indem es automatisierte Tools zur Verwaltung von Betroffenenanfragen, Einwilligungsdatensätzen und Aufbewahrungsrichtlinien sowie zur Erstellung prüfungsbereiter Compliance-Berichte bereitstellt.",
         infoTitle: "Compliance-Hinweis",
         infoContent:
-          "Das Modul ist entscheidend fÃ¼r die Einhaltung gesetzlicher Vorschriften und die Vermeidung von Strafen. Stellen Sie sicher, dass alle Funktionen korrekt den Datenverarbeitungsrichtlinien zugeordnet sind.",
-        descDsr: "Verarbeitet Betroffenenanfragen (Export, LÃ¶schung, Berichtigung)",
-        descConsent: "UnverÃ¤nderliche Verfolgung von Einwilligungsstatus und Snapshots",
-        descRet: "Setzt DatenlÃ¶schrichtlinien basierend auf dem Alter durch",
-        descInv: "Ordnet sensible PII-Standorte modulÃ¼bergreà¤¦à¤¾à¤¤à¤¾à¤“à¤‚ zu",
-        descRep: "Generiert RoPA- und DPIA-Compliance-Berichte",
-        descId: "IdentitÃ¤tsmodul",
-        descIdDesc: "Bietet Benutzer-/Admin-Kontext und Authentifizierung",
+          "Das Compliance-Modul ist entscheidend für die Einhaltung gesetzlicher Vorschriften und die Vermeidung von Geldbußen. Stellen Sie sicher, dass alle Funktionen korrekt den Datenverarbeitungsrichtlinien zugeordnet sind.",
+        featureDsr: "Anfragen von Betroffenen (DSR)",
+        featureDsrDesc:
+          "Bearbeitet Anfragen von Betroffenen, einschließlich Export, Löschung, Berichtigung und Einschränkung, mit vollständiger Lebenszyklusverfolgung und SLA-Überwachung.",
+        featureConsent: "Einwilligungsverwaltung",
+        featureConsentDesc:
+          "Unveränderliche Verfolgung von Einwilligungszuständen, Snapshots und Audit-Trails für die Konformität mit DSGVO Artikel 6 und CCPA.",
+        featureRetention: "Aufbewahrungsrichtlinien",
+        featureRetentionDesc:
+          "Setzt Datenlöschungsrichtlinien basierend auf konfigurierbaren Aufbewahrungsfristen mit automatisierten Lösch- oder Anonymisierungsaktionen durch.",
+        featureInventory: "Dateninventar",
+        featureInventoryDesc:
+          "Ordnet sensible PII-Standorte modulübergreifend zu — erforderlich für das DSGVO-Artikel 30 Verzeichnis von Verarbeitungstätigkeiten (RoPA).",
+        featureReports: "Compliance-Berichte",
+        featureReportsDesc:
+          "Generiert asynchrone prüfungsbereite Berichte (DSGVO-Übersicht, DSR-Zusammenfassung, Einwilligungs-Audit, Aufbewahrungsanalyse, Dateninventar-Export).",
+        featureWebhooks: "Webhook-Ereignisse",
+        featureWebhooksDesc:
+          "11 Echtzeit-Webhook-Ereignisse, die den DSR-Lebenszyklus, Einwilligungsänderungen, die Durchsetzung der Aufbewahrung und die Berichtserstellung abdecken.",
+        descDsr: "Bearbeitet Betroffenenanfragen (Export, Löschung, Berichtigung)",
+        descConsent: "Unveränderliche Verfolgung von Einwilligungszuständen & Snapshots",
+        descRet: "Setzt Datenlöschungsrichtlinien basierend auf dem Alter durch",
+        descInv: "Ordnet sensible PII-Standorte modulübergreifend zu",
+        descRep: "Erstellt RoPA- und DPIA-Compliance-Berichte",
+        descId: "Identitätsmodul",
+        descIdDesc: "Stellt Benutzer-/Admin-Kontext & Authentifizierung bereit",
         descEnt: "Berechtigungsmodul",
-        descEntDesc: "Steuert Compliance-Funktionen Ã¼ber Feature-Gates",
+        descEntDesc: "Steuert Compliance-Funktionen über Feature-Gates",
         conn1: "initiiert Anfragen",
-        conn2: "gewÃ¤hrt/widerruft",
+        conn2: "erteilt/widerruft",
         conn3: "steuert Richtlinien",
-        conn4: "leitet LÃ¶schung an",
-        conn5: "zielt auf Daten",
+        conn4: "leitet Löschung an",
+        conn5: "zielt auf Daten ab",
         conn6: "Audit-Trails",
         conn7: "Audit-Trails",
         th1: "Komponente",
-        th2: "Verantwortung",
+        th2: "Responsibility",
         tr1_1: "DsrListViewModel",
         tr1_2:
-          "Behandelt Paginierung, Filterung und Zuweisung von eingehenden Betroffenenanfragen.",
+          "Verwaltet die Paginierung, Filterung und Zuweisung eingehender Betroffenenanfragen.",
         tr2_1: "ConsentRecordView",
-        tr2_2: "Rendert den unverÃ¤nderlichen Einwilligungs-Snapshot zusammen mit Metadaten.",
+        tr2_2:
+          "Rendert den unveränderlichen Einwilligungs-Snapshot zusammen mit User-Agent und Zeitstempel-Metadaten.",
         whatIsTitle: "Was ist das Compliance-Modul?",
         whatIsIntro:
-          "Das Modul bietet sechs miteinander verbundene Subsysteme, die den gesamten Compliance-Lebenszyklus abdecken. Mandanten erhalten ein produktionsbereites System.",
+          "Das Compliance-Modul bietet sechs miteinander verbundene Subsysteme, die den gesamten Compliance-Lebenszyklus abdecken. Anstatt Compliance-Tools von Grund auf neu zu entwickeln, erhalten SCRIPE-Mandanten ein produktionsbereites System, das ihre Datenschutzverpflichtungen verfolgt, automatisiert und darüber berichtet.",
         subModulesTitle: "Sechs Subsysteme",
-        subModulesIntro: "Jedes Subsystem behandelt eine bestimmte Compliance-DomÃ¤ne:",
-        sub1: "Regulierungsprofile â€” Speichert die rechtlichen Rahmenbedingungen (GDPR, CCPA, PDPA).",
-        sub2: "Betroffenenanfragen (DSR) â€” Verwaltet Anfragen zu Rechten der Betroffenen (Export, LÃ¶schung, Berichtigung, EinschrÃ¤nkung).",
-        sub3: "Einwilligungsmanagement â€” Protokolliert, verfolgt und prÃ¼ft die Erteilung und den Widerruf von Benutzereinwilligungen.",
-        sub4: "Datenaufbewahrungsrichtlinien â€” Definiert, wie lange Daten aufbewahrt werden und was bei Ablauf geschieht (LÃ¶schen oder Anonymisieren).",
-        sub5: "Dateninventar â€” Ein Register aller personenbezogenen Datenkategorien, die die Plattform verarbeitet.",
-        sub6: "Compliance-Berichte â€” Generiert asynchrone, revisionssichere Berichte (GDPR-Ãœbersicht, DSR-Zusammenfassung usw.).",
+        subModulesIntro: "Jedes Subsystem verwaltet einen bestimmten Compliance-Bereich:",
+        sub1: "Regulierungsprofile — Speichert die regulatorischen Rahmenbedingungen (DSGVO, CCPA, PDPA), unter denen die Plattform betrieben wird.",
+        sub2: "Anfragen von Betroffenen (DSR) — Verwaltet Rechteanfragen von Betroffenen (Export, Löschung, Berichtigung, Einschränkung).",
+        sub3: "Einwilligungsverwaltung — Erfasst, verfolgt und prüft die Erteilung und den Widerruf von Benutzereinwilligungen.",
+        sub4: "Datenaufbewahrungsrichtlinien — Definiert, wie lange Daten aufbewahrt werden und was nach Ablauf geschieht (Löschen oder Anonymisieren).",
+        sub5: "Dateninventar — Ein Register aller personenbezogenen Datenkategorien, die die Plattform verarbeitet.",
+        sub6: "Compliance-Berichte — Generiert asynchrone prüfungsbereite Berichte (DSGVO-Übersicht, DSR-Zusammenfassung, Einwilligungs-Audit usw.).",
+        regulationsTitle: "Unterstützte Vorschriften",
+        regulationsIntro:
+          "Das Compliance-Modul von SCRIPE unterstützt die Durchsetzung dieser wichtigsten Datenschutzvorschriften. Jede Vorschrift ist mit ihren SLA-Fristen und Strafstrukturen vorab eingerichtet.",
+        regName: "Vorschrift",
+        regRegion: "Region / Gerichtsbarkeit",
+        regSla: "Antwort-SLA",
+        regPenalty: "Höchststrafe",
+        regGdprRegion: "Europäische Union (EU/EWR)",
+        regCcpaRegion: "Kalifornien, USA",
+        regLgpdRegion: "Brasilien",
+        regPopiaRegion: "Südafrika",
+        regPdpaRegion: "Singapur",
         backendTitle: "Backend-Architektur",
         backendIntro:
-          "Folgt dem SCRIPE-Standardlayout fÃ¼r 3-Projekt-Module (Domain / Application / Infrastructure) mit ComplianceDbContext.",
+          "Das Compliance-Backend folgt dem standardmäßigen dreiphasigen SCRIPE-Modullayout (Domain / Application / Infrastructure) mit einem dedizierten ComplianceDbContext und ComplianceController.",
+        cqrsTitle: "CQRS-Befehle & -Abfragen",
+        cqrsIntro:
+          "Das Compliance-Modul verwendet das standardmäßige SCRIPE-Mediator-CQRS-Muster. Befehle verarbeiten Schreibvorgänge und Abfragen verarbeiten Lesevorgänge, jeweils mit dedizierten FluentValidation-Validatoren.",
+        cqrsType: "Typ",
+        cqrsExample: "Handler",
+        cqrsDesc: "Beschreibung",
+        cqrsSubmit: "Reicht eine neue Betroffenenanfrage mit Validierung und SLA-Berechnung ein",
+        cqrsReview:
+          "Überprüft und aktualisiert den Status einer DSR (Genehmigen, Ablehnen, Abschließen)",
+        cqrsConsent:
+          "Erfasst eine Einwilligungserteilung mit vollständigen Audit-Metadaten (IP, User-Agent, Version)",
+        cqrsRetention:
+          "Aktualisiert die Konfiguration der Aufbewahrungsrichtlinie (Tage, Aktion, Aktivitätsstatus)",
+        cqrsDsrList: "Listet alle DSRs mit Paginierung auf, filterbar nach Status/Typ/Vorschrift",
+        cqrsConsentAnalytics: "Aggregiert Einwilligungsstatistiken nach Zweck, Status und Zeitraum",
+        cqrsDashboard:
+          "Gibt ein Übersichts-Dashboard mit Zählungen über alle Compliance-Subsysteme zurück",
         frontendTitle: "Frontend-Architektur",
         frontendIntro:
-          "Organisiert in sechs unabhÃ¤ngigen Submodulen unter src/modules/compliance/, die dem View/ViewModel-Muster folgen.",
-        endpointsTitle: "API Endpoints Ãœbersicht",
+          "Das Frontend ist in sechs unabhängige Submodule unter src/modules/compliance/ unterteilt, die jeweils über eigene Domain-, Daten- und Präsentationsschichten verfügen und dem View/ViewModel-Muster folgen.",
+        endpointsTitle: "API-Endpunkte Übersicht",
         endpointsIntro:
-          "Alle Endpoints befinden sich unter /api/v1/compliances/ und erfordern eine Authentifizierung mit compliance.view.",
+          "Alle Endpunkte befinden sich unter /api/v1/compliances/ und erfordern eine Authentifizierung mit der Berechtigung compliance.view.",
+        apiRegList: "Listet alle für die Plattform konfigurierten Regulierungsprofile auf",
+        apiDsrSubmit:
+          "Reicht eine neue Betroffenenanfrage ein (Export, Löschung, Berichtigung, Einschränkung)",
+        apiDsrList: "Listet alle DSRs mit Paginierung auf, filterbar nach Status/Typ/Vorschrift",
+        apiDsrReview:
+          "Überprüft eine DSR — genehmigen, ablehnen oder mit Lösungsnotizen als abgeschlossen markieren",
+        apiConsentRecord:
+          "Erfasst eine neue Einwilligungserteilung mit vollständigen Audit-Metadaten",
+        apiConsentAnalytics:
+          "Ruft Einwilligungsanalysen ab (Erteilungs-/Widerrufsraten nach Zweck)",
+        apiRetentionList: "Listet alle Aufbewahrungsrichtlinien mit Durchsetzungsstatus auf",
+        apiRetentionUpdate:
+          "Aktualisiert eine Aufbewahrungsrichtlinie (Tage, Aktion, Aktivitätsstatus)",
+        apiInventoryList: "Listet alle Dateninventarelemente auf (DSGVO Artikel 30 RoPA)",
+        apiReportsList: "Listet alle Compliance-Berichte mit Status- und Typfiltern auf",
+        apiReportDownload:
+          "Lädt einen generierten Bericht im CSV-, JSON-, XLSX- oder PDF-Format herunter",
+        apiReportGenerate:
+          "Reiht einen neuen asynchronen Job zur Generierung von Compliance-Berichten ein",
+        apiDashboard:
+          "Ruft die Zusammenfassung des Compliance-Dashboards ab (Zählungen, SLA-Status, Warnungen)",
+        webhooksTitle: "Webhook-Ereignisse",
+        webhooksIntro:
+          "Das Compliance-Modul löst 11 Echtzeit-Webhook-Ereignisse aus, die externe Systeme abonnieren können. Ereignisse werden automatisch über den ComplianceWebhookEventCatalog registriert und über die IWebhookDispatcher-Pipeline versendet.",
+        webhookEvent: "Ereignisschlüssel",
+        webhookCategory: "Kategorie",
+        webhookDesc: "Beschreibung",
+        whDsrSubmitted: "Ausgelöst, wenn eine neue Betroffenenanfrage eingereicht wird",
+        whDsrStatusChanged:
+          "Ausgelöst, wenn ein DSR-Status wechselt (Ausstehend → In Bearbeitung → Abgeschlossen/Abgelehnt)",
+        whDsrCompleted:
+          "Ausgelöst, wenn eine DSR vollständig abgeschlossen ist (Daten exportiert, gelöscht oder berichtigt)",
+        whDsrErasure:
+          "Ausgelöst, wenn eine Löschungs-DSR von einem Admin bestätigt wird (nukleare Aktion)",
+        whDsrCancelled: "Ausgelöst, wenn eine DSR vor Abschluss abgebrochen wird",
+        whConsentGranted:
+          "Ausgelöst, wenn ein Benutzer seine Einwilligung für einen bestimmten Zweck erteilt",
+        whConsentWithdrawn:
+          "Ausgelöst, wenn ein Benutzer eine zuvor erteilte Einwilligung widerruft",
+        whRetentionUpdated:
+          "Ausgelöst, wenn die Konfiguration einer Aufbewahrungsrichtlinie aktualisiert wird",
+        whRetentionExec:
+          "Ausgelöst, wenn ein Aufbewahrungsdurchsetzungsjob die Ausführung abschließt",
+        whReportGenerated:
+          "Ausgelöst, wenn die Generierung eines Compliance-Berichts erfolgreich abgeschlossen wurde",
+        whReportFailed: "Ausgelöst, wenn die Generierung eines Compliance-Berichts fehlschlägt",
+        quickStartTitle: "Schnellstartanleitung",
+        step1Title: "Compliance-Daten einspielen",
+        step1Content:
+          "Führen Sie den Entwicklungs-Seeder aus, um Regulierungsprofile, Muster-Einwilligungszwecke und Aufbewahrungsrichtlinien für Ihre Testumgebung zu füllen.",
+        step2Title: "Regulierungsprofile konfigurieren",
+        step2Content:
+          "Navigieren Sie im Admin-Panel zu Compliance → Regulations. Aktivieren Sie die Vorschriften, unter denen Ihre Plattform betrieben wird (DSGVO, CCPA, PDPA). Jede Vorschrift definiert die SLA-Fristen und Strafstrukturen, die durchgesetzt werden.",
+        step3Title: "Eine Test-DSR einreichen",
+        step3Content:
+          "Erstellen Sie eine Betroffenenanfrage, um den gesamten Lebenszyklus zu testen. Das System validiert die Anfrage, berechnet die SLA-Frist und stellt sie zur Zuweisung an einen Compliance-Beauftragten bereit.",
+        step4Title: "Einwilligung erfassen & Aufbewahrung konfigurieren",
+        step4Content:
+          "Richten Sie Einwilligungszwecke ein (Marketing, Analysen, Dritte) und konfigurieren Sie Aufbewahrungsrichtlinien für jede Datenkategorie. Der Aufbewahrungsdurchsetzungsjob wendet automatisch die konfigurierten Aktionen an, wenn Daten das Aufbewahrungsalter überschreiten.",
+        step5Title: "Compliance-Bericht generieren",
+        step5Content:
+          "Reihen Sie einen asynchronen Compliance-Bericht ein. Der Bericht wird im Hintergrund generiert und erscheint in der Berichtsliste, sobald er fertig ist. Laden Sie ihn im CSV-, JSON-, XLSX- oder PDF-Format herunter.",
+        securityTitle: "Sicherheitsüberlegungen",
+        securityIntro:
+          "Compliance-Daten gehören zu den sensibelsten auf der Plattform. Alle Endpunkte sind durch JWT-Authentifizierung, rollenbasierte Autorisierung und verschlüsselte ID-Übertragung geschützt. Personenbezogene Daten in DSRs und Einwilligungsdatensätzen unterliegen Sicherheitsbeschränkungen auf Feldebene.",
+        securityWarningTitle: "Datenschutz-Warnung",
+        securityWarningContent:
+          "Compliance-Daten enthalten personenbezogene Daten (PII). Stellen Sie sicher, dass geeignete Zugriffskontrollen, Audit-Protokollierung und Datenverschlüsselung konfiguriert sind. Legen Sie niemals rohe Compliance-Endpunkte ohne Authentifizierung offen.",
+        secDoTitle: "Empfohlene Praktiken",
+        secDo1: "Aktivieren Sie die Feldebenen-Sicherheit für PII-Felder in DSR-Antworten",
+        secDo2: "Konfigurieren Sie Webhook-Secrets für alle Abonnements von Compliance-Ereignissen",
+        secDo3:
+          "Legen Sie Aufbewahrungsrichtlinien für Compliance-Daten selbst fest (Meta-Compliance)",
+        secDo4: "Überprüfen Sie regelmäßig die Audit-Protokolle auf unbefugte Zugriffsversuche",
+        secDontTitle: "Zu vermeidende Anti-Patterns",
+        secDont1: "Legen Sie DSR-Endpunkte niemals ohne AdminOnly-Authentifizierung offen",
+        secDont2:
+          "Überspringen Sie niemals die Einwilligungsversionsverfolgung — dies macht den Audit-Trail ungültig",
+        secDont3:
+          "Löschen Sie Compliance-Datensätze niemals dauerhaft — verwenden Sie immer Soft-Delete",
+        secDont4: "Umgehen Sie niemals den Webhook-Dispatcher für Compliance-Ereignisse",
       },
+
       dsr: {
         title: "Betroffenenrechte (DSR)",
         description: "Beschreibung",

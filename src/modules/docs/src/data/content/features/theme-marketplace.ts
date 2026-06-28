@@ -454,6 +454,57 @@ private static LoginTheme Build(ThemeMeta meta, ThemeDesign design)
     ],
   },
 
+  // ─── Developer Portal Profiles ─────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.themeMarketplace.devProfilesTitle",
+    id: "developer-profiles",
+  },
+  { type: "paragraph", contentKey: "features.themeMarketplace.devProfilesIntro" },
+
+  // ─── Purchase Verification Sequence ────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.themeMarketplace.purchaseVerifyTitle",
+    id: "purchase-verification",
+  },
+  { type: "paragraph", contentKey: "features.themeMarketplace.purchaseVerifyIntro" },
+  {
+    type: "flowchart",
+    title: "Theme Purchase Verification Sequence",
+    direction: "vertical",
+    nodes: [
+      { id: "select", label: "Select Theme in Marketplace", type: "default" },
+      { id: "checkExist", label: "Check Existing Purchase & Edition Tier", type: "info" },
+      { id: "checkout", label: "Create Stripe Checkout Session", type: "warning" },
+      { id: "payment", label: "Process Stripe Payment Handoff", type: "info" },
+      { id: "webhook", label: "Receive Stripe Webhook callback", type: "primary" },
+      { id: "record", label: "Record Theme Purchase (PaymentIntent ID)", type: "success" },
+      { id: "verify", label: "ApplyTheme: Verify Purchased Theme ID", type: "success" },
+      { id: "apply", label: "Inject ThemeDataJson to Tenant Settings", type: "danger" },
+    ],
+    connections: [
+      { from: "select", to: "checkExist" },
+      { from: "checkExist", to: "checkout", label: "Not Owned / Upgrade Needed" },
+      { from: "checkout", to: "payment" },
+      { from: "payment", to: "webhook" },
+      { from: "webhook", to: "record" },
+      { from: "record", to: "verify" },
+      { from: "verify", to: "apply" },
+    ],
+  },
+
+  // ─── Theme Downloads Verification ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.themeMarketplace.downloadsVerifyTitle",
+    id: "downloads-verification",
+  },
+  { type: "paragraph", contentKey: "features.themeMarketplace.downloadsVerifyIntro" },
+
   // ─── API Endpoints ────────────────────────────────────────
   {
     type: "heading",

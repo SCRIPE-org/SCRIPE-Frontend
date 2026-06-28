@@ -71,7 +71,7 @@ export interface StepItem {
  */
 export interface ComparisonColumn {
   titleKey: string;
-  variant: "positive" | "negative" | "neutral";
+  variant: "positive" | "negative" | "neutral" | "warning" | "info";
   items: string[];
 }
 
@@ -183,7 +183,7 @@ export interface ApiTableSection extends DocSectionBase {
  */
 export interface InfoSection extends DocSectionBase {
   type: "info";
-  variant: "note" | "tip" | "warning" | "danger";
+  variant: "note" | "tip" | "warning" | "danger" | "info" | "success" | "caution";
   contentKey: string;
   titleKey?: string;
 }

@@ -378,5 +378,124 @@ export const zh = {
       captiveTip:
         "当 Singleton 服务注入了 Scoped 服务时，就会发生“依赖捕获”(Captive Dependency)，导致内存泄漏和数据陈旧。需要时请使用 IServiceScopeFactory。",
     },
+    moduleCollab: {
+      title: "跨模块协作深度剖析",
+      description: "UIS 模块化单体架构中跨模块通信的真实代码分析。",
+      intro:
+        "Identity 和 Entitlements 模块不能相互导入（循环依赖）。它们通过 Core 层协作——共享抽象、领域事件和 Mediator 管道。",
+      coreBridgeTitle: "Core 层桥接",
+      coreBridgeIntro:
+        "所有跨模块协作都通过 Core.Application.Abstractions 进行。每个模块实现 Core 中定义的接口，并通过依赖注入消费其他模块的接口。",
+      catalogTitle: "完整接口目录",
+      catalogIntro:
+        "这些接口是模块间的完整契约。所有接口定义在 Core.Application.Abstractions，由各模块基础设施实现，并在 Core.Infrastructure 中默认注册 NoOp。",
+      noopTitle: "NoOp 安全模式",
+      noopIntro:
+        "每个跨模块接口在 Core.Infrastructure 中都有一个 NoOp 实现。当模块缺失时，NoOp 确保系统以优雅降级模式运行。",
+      noopWarning:
+        "NoOp 是安全网，而非永久默认值。在生产环境中加载所有模块时，不应有任何 NoOp 处于活动状态。",
+      noopRegistrationTitle: "NoOp 注册 — TryAddScoped 与 AddScoped",
+      noopRegistrationIntro:
+        "NoOp 替换机制依赖一个关键规则：Core.Infrastructure 使用 TryAddScoped 注册 NoOp，真实模块使用 AddScoped 注册，从而无条件覆盖。",
+      startupDiagnosticsTitle: "启动诊断 — 检测 NoOp 泄漏",
+      startupDiagnosticsIntro:
+        "PostBuildInitialization.cs 在 DI 容器构建后运行，检查关键接口的解析类型是否仍为 NoOp。",
+      featureCheckTitle: "FeatureCheckBehavior — 深度分析",
+      featureCheckIntro:
+        "FeatureCheckBehavior 是 AstraFlow 管道行为，拦截所有实现 IRequireFeature 的命令。",
+      requireFeatureInterfaceTitle: "IRequireFeature — 可选标记接口",
+      requireFeatureInterfaceIntro:
+        "IRequireFeature 是零开销标记接口。实现它的命令通过 FeatureCheckBehavior 启用版本功能门控。",
+      subscriptionEventTitle: "SubscriptionChangedEvent",
+      subscriptionEventIntro:
+        "SubscriptionChangedEvent 是系统中最关键的领域事件，每当租户订阅发生变化时由 Entitlements 发布。",
+      eventTriggersTitle: "发布 SubscriptionChangedEvent 的所有命令",
+      eventTriggersIntro:
+        "SubscriptionChangedEvent 由任何改变租户订阅状态的 Entitlements 命令或服务发布。",
+      permSyncTitle: "权限同步生命周期",
+      permSyncIntro:
+        "当 Identity 处理 SubscriptionChangedEvent 时，会对受影响的租户执行完整的权限同步。",
+      permSyncStep1Title: "步骤 1：解析功能映射",
+      permSyncStep1Content:
+        "Entitlements 处理程序解析完整的有效功能映射：版本功能与租户覆盖和 Bundle 扩展合并。",
+      permSyncStep2Title: "步骤 2：发布领域事件",
+      permSyncStep2Content:
+        "SubscriptionChangedEvent 作为领域事件发布，被 OutboxInterceptor 捕获并持久化到 OutboxMessages 表。",
+      permSyncStep3Title: "步骤 3：Identity 事件处理程序",
+      permSyncStep3Content:
+        "Identity 的 SubscriptionChangedEventHandler 接收事件，委托给 ITenantPermissionManager 同步权限。",
+      permSyncStep4Title: "步骤 4：权限差异和应用",
+      permSyncStep4Content:
+        "TenantPermissionManager 按模块读取权限 ID，与租户当前权限对比，按需添加或删除。",
+      permSyncStep5Title: "步骤 5：缓存失效",
+      permSyncStep5Content:
+        "同步后，该租户所有管理员的权限缓存失效。下次请求时从数据库重新加载权限。",
+      loginEnrichTitle: "登录响应增强",
+      loginEnrichIntro:
+        "Identity 的 LoginCommandHandler 在不直接导入 Entitlements 的情况下，使用订阅状态丰富 JWT 响应。",
+      loginEnrichNote:
+        "如果 Entitlements 未加载，ISubscriptionStatusProvider 返回 null。JWT 令牌仍会签发，但不含订阅数据。",
+      deployTopologyTitle: "部署拓扑影响",
+      deployTopologyIntro: "跨模块协作模式在单体模式和微服务模式下工作方式不同。",
+      monolithMode: "单体模式",
+      microserviceMode: "微服务模式",
+      moduleNameEnvTitle: "MODULE_NAME 环境变量参考",
+      moduleNameEnvIntro: "MODULE_NAME 环境变量在容器启动时设置，决定哪些模块加载到进程中。",
+      microserviceCaution:
+        "永远不要在没有为领域事件实现消息总线的情况下，将 Identity 和 Entitlements 部署到独立进程。",
+      coDependencyTitle: "模块协同依赖映射",
+      coDependencyIntro: "此表记录系统中每个跨模块依赖关系。",
+      signupSagaTitle: "自助注册 Saga",
+      signupSagaIntro: "自助注册是跨模块协作最复杂的示例。",
+      signupMonolithOnly:
+        "自助注册仅在单体模式下支持。在微服务模式下，PostBuildInitialization.cs 中的 G15 守卫会在启动时阻止。",
+      signupStep1Title: "阶段 1：租户预置（Identity）",
+      signupStep1Content:
+        "RegisterTenantSelfServiceCommand 在单个原子事务中创建租户、管理员、角色并发布 SignupPhase1CompletedEvent。",
+      signupStep2Title: "阶段 2：订阅绑定（Entitlements）",
+      signupStep2Content:
+        "SignupPhase1CompletedEventHandler 创建订阅。免费版本立即激活，付费版本创建 Stripe 结账会话。",
+      signupStep3Title: "阶段 3：支付确认（Stripe）",
+      signupStep3Content: "Stripe Webhook 处理支付确认并激活订阅，发布 SubscriptionChangedEvent。",
+      signupStep4Title: "阶段 4：补偿（如结账放弃）",
+      signupStep4Content:
+        "如果 Stripe 结账被放弃，CompensatePhase1Async 删除租户和管理员，防止产生孤立账户。",
+      signupEventChainTitle: "注册事件链",
+      signupEventChainIntro: "注册 Saga 通过三个进程内领域事件跨越模块边界。",
+      bundleExpansionTitle: "Bundle 扩展 — 细粒度权限授予",
+      bundleExpansionIntro: "Bundle 扩展允许版本在模块级启用之外，授予或拒绝特定权限代码。",
+      bundleExpansionNote: "Bundle 扩展在主模块权限同步之后处理。",
+      adminPermCacheTitle: "IAdminPermissionCache — 授权缓存",
+      adminPermCacheIntro:
+        "IAdminPermissionCache 是 AuthorizationBehavior 使用的服务器端 Redis 缓存，无需每次请求访问数据库即可检查权限。",
+      currentUserTitle: "ICurrentUser — 通用横切接口",
+      currentUserIntro:
+        "ICurrentUser 是所有模块直接使用的唯一接口，由 Identity 的 JWT 中间件在每次认证请求时填充。",
+      currentUserNote:
+        "ICurrentUser 与其他跨模块接口不同，不需要 NoOp 回退，始终由 Core.Infrastructure 的 JWT 中间件实现。",
+      featureResolutionTitle: "功能值解析链",
+      featureResolutionIntro:
+        "调用 IFeatureChecker.IsEnabledAsync() 时，Entitlements 通过优先级链解析值。",
+      devChecklistTitle: "开发者检查清单",
+      devChecklistIntro: "每次添加新的跨模块依赖时，遵循以下步骤。",
+      checkStep1Title: "步骤 1：在 Core.Application 中定义接口",
+      checkStep1Content:
+        "在 Core.Application.Abstractions 中定义契约，只有接口定义，没有实现逻辑。",
+      checkStep2Title: "步骤 2：注册 NoOp 回退",
+      checkStep2Content: "在 Core.Infrastructure 中创建 NoOp 实现，并通过 TryAddScoped 注册。",
+      checkStep3Title: "步骤 3：在所有者模块中实现",
+      checkStep3Content: "在所有者模块中创建真实实现，并通过 AddScoped（而非 TryAddScoped）注册。",
+      checkStep4Title: "步骤 4：添加启动诊断",
+      checkStep4Content: "在 PostBuildInitialization.cs 中添加检查，以检测 NoOp 是否仍然活跃。",
+      addScopedTip:
+        "在真实模块中始终使用 AddScoped（不加 Try）以确保覆盖 Core.Infrastructure 的 NoOp。",
+      archRulesTitle: "架构规则摘要",
+      archRulesIntro: "这些约束性规则适用于 SCRIPE 中所有跨模块通信。",
+      doTitle: "应该做",
+      dontTitle: "绝不能做",
+      securityBoundaryTitle: "安全边界执行",
+      securityBoundaryIntro: "模块隔离规则不仅仅是架构偏好，它们是安全边界。",
+      archCheckCaution: "在每次涉及跨模块代码的 PR 之前运行 scripe arch-check。",
+    },
   },
 };

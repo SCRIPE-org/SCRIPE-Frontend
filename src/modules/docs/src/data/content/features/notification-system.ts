@@ -2,7 +2,7 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  //  Architecture 
+  // ── Architecture Section ──
   {
     type: "heading",
     level: 2,
@@ -13,48 +13,92 @@ const sections: DocSection[] = [
   {
     type: "flowchart",
     direction: "vertical",
-    title: "Notification Flow",
+    title: "Notification Dispatch & Delivery Flow",
     nodes: [
-      { id: "backend", label: "Backend Service", type: "default" },
-      { id: "svc", label: "NotificationService", type: "primary" },
-      { id: "db", label: "Database", type: "info" },
-      { id: "hub", label: "NotificationHub", type: "success" },
-      { id: "client", label: "Browser (SignalR)", type: "warning" },
+      { id: "event", label: "Domain Event Trigger", type: "default" },
+      { id: "svc", label: "NotificationService.SendAsync()", type: "primary" },
+      { id: "db", label: "Save to UserNotifications Table", type: "info" },
+      { id: "encrypt", label: "AES-Encrypt Notification ID", type: "warning" },
+      { id: "hub", label: "SignalR NotificationHub", type: "success" },
+      { id: "group", label: "user_{userId} Group", type: "primary" },
+      { id: "client", label: "Browser (ReceiveNotification)", type: "warning" },
+      { id: "count_calc", label: "Recalculate Unread Count", type: "info" },
+      { id: "count_push", label: "Push count (UnreadCountUpdated)", type: "success" },
     ],
     connections: [
-      { from: "backend", to: "svc", label: "SendNotification(userId, message)" },
-      { from: "svc", to: "db", label: "Save Notification entity" },
-      { from: "svc", to: "hub", label: "SendAsync()" },
-      { from: "hub", to: "client", label: "Real-time push to user_{userId} group" },
+      { from: "event", to: "svc", label: "Invoke SendAsync" },
+      { from: "svc", to: "db", label: "Persist notification" },
+      { from: "db", to: "encrypt", label: "Encrypt Guid ID" },
+      { from: "encrypt", to: "hub", label: "Send ReceiveNotification" },
+      { from: "hub", to: "group" },
+      { from: "group", to: "client" },
+      { from: "db", to: "count_calc", label: "Read unread state" },
+      { from: "count_calc", to: "hub", label: "Send UnreadCountUpdated" },
+      { from: "hub", to: "group" },
     ],
   },
 
-  //  NotificationHub
-  { type: "heading", level: 2, titleKey: "features.notificationSystem.hubTitle", id: "hub" },
+  // ── Hub Details Section ──
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.notificationSystem.hubTitle",
+    id: "hub",
+  },
   { type: "paragraph", contentKey: "features.notificationSystem.hubIntro" },
   {
     type: "code",
     language: "csharp",
     filename: "NotificationHub.cs",
-    code: `public class NotificationHub : Hub<INotificationHubClient>
+    code: `public sealed class NotificationHub : Hub<INotificationHubClient>
 {
+    private readonly ILogger<NotificationHub> _logger;
+    private readonly INotificationService _notificationService;
+
+    public NotificationHub(
+        ILogger<NotificationHub> logger,
+        INotificationService notificationService)
+    {
+        _logger = logger;
+        _notificationService = notificationService;
+    }
+
     public override async Task OnConnectedAsync()
     {
-        var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userId != null)
+        var userId = GetUserId();
+        if (userId.HasValue)
         {
             // Auto-join user-specific group
-            await Groups.AddToGroupAsync(Context.ConnectionId, $"user_{userId}");
-            
-            // Push initial unread count
-            var count = await _notificationService.GetUnreadCountAsync(Guid.Parse(userId));
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"user_{userId.Value}");
+            _logger.LogDebug("NotificationHub: {ConnectionId} joined user group {UserId}", Context.ConnectionId, userId.Value);
+
+            // Push current unread count immediately
+            var count = await _notificationService.GetUnreadCountAsync(userId.Value);
             await Clients.Caller.UnreadCountUpdated(count);
         }
+        await base.OnConnectedAsync();
+    }
+
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        var userId = GetUserId();
+        if (userId.HasValue)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"user_{userId.Value}");
+            _logger.LogDebug("NotificationHub: {ConnectionId} left user group {UserId}", Context.ConnectionId, userId.Value);
+        }
+        await base.OnDisconnectedAsync(exception);
+    }
+
+    private Guid? GetUserId()
+    {
+        var claim = Context.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        return Guid.TryParse(claim, out var id) ? id : null;
     }
 }`,
   },
 
-  //  Auto-Join Pattern
+  // ── Connection Pattern & Auto-Join ──
   {
     type: "heading",
     level: 3,
@@ -65,13 +109,14 @@ const sections: DocSection[] = [
     type: "list",
     variant: "unordered",
     items: [
-      "No client-side group management needed",
-      "Notifications are targeted to specific users",
-      "User can have multiple connections (tabs)  all receive the notification",
+      "Zero Client Group Management: Client apps do not subscribe to or request group additions; the hub maps them on authorization.",
+      "Connection-Independent Grouping: Users can have multiple concurrent connections (browser tabs/sessions), and all receive notifications via the user_{userId} group.",
+      "Claim Types Mapping: The hub extracts User IDs from Context.User using the full URI identifier: ClaimTypes.NameIdentifier.",
+      "Unread State Hydration: Pushes initial unread count to Clients.Caller immediately upon connection initialization.",
     ],
   },
 
-  //  Hub Client Interface 
+  // ── Hub Client Interface ──
   {
     type: "heading",
     level: 2,
@@ -84,12 +129,15 @@ const sections: DocSection[] = [
     filename: "INotificationHubClient.cs",
     code: `public interface INotificationHubClient
 {
-    Task NotificationReceived(NotificationDto notification);
+    // Real-time notification payload delivery (ID is AES-encrypted)
+    Task ReceiveNotification(NotificationPushDto notification);
+    
+    // Pushes unread count updates when status changes
     Task UnreadCountUpdated(int count);
 }`,
   },
 
-  //  NotificationService Methods
+  // ── NotificationService Details ──
   {
     type: "heading",
     level: 2,
@@ -98,17 +146,37 @@ const sections: DocSection[] = [
   },
   {
     type: "table",
-    headers: ["Method", "Purpose"],
+    headers: ["Method / Operation", "Scope Mapping", "Push Mechanism"],
     rows: [
-      ["SendAsync(userId, title, message)", "Create + persist + push via SignalR"],
-      ["GetUnreadCountAsync(userId)", "Count unread notifications"],
-      ["MarkAsReadAsync(notificationId)", "Mark single notification as read"],
-      ["MarkAllAsReadAsync(userId)", "Mark all notifications as read"],
-      ["GetPagedAsync(userId, page, size)", "Paginated notification list"],
+      [
+        "SendAsync(..., NotificationTarget.User, ...)",
+        "Resolves target User ID",
+        "Persists UserNotification entity, AES encrypts ID, pushes payload to user_{userId} and triggers UnreadCountUpdated",
+      ],
+      [
+        "SendAsync(..., NotificationTarget.Role, ...)",
+        "Resolves User IDs by RoleId",
+        "Iterates through matching users, persisting and pushing notifications individually",
+      ],
+      [
+        "SendAsync(..., NotificationTarget.Tenant, ...)",
+        "Resolves User IDs by TenantId",
+        "Iterates through matching users in the tenant, persisting and pushing notifications individually",
+      ],
+      [
+        "SendAsync(..., NotificationTarget.Broadcast, ...)",
+        "Resolves all active User IDs",
+        "Broadcasts to all users globally by iterating through the entire system user list",
+      ],
+      [
+        "GetUnreadCountAsync(userId, ...)",
+        "Queries unread notifications in Db",
+        "Called by the hub on connection to retrieve initial unread count",
+      ],
     ],
   },
 
-  //  Controller Endpoints 
+  // ── Controller Endpoints ──
   {
     type: "heading",
     level: 2,
@@ -120,32 +188,32 @@ const sections: DocSection[] = [
     endpoints: [
       {
         method: "GET",
-        path: "/api/notifications",
-        descriptionKey: "List notifications (paginated)",
+        path: "/api/v1/notifications",
+        descriptionKey: "List user notifications (paginated, returning decrypted records)",
         auth: "JWT",
       },
       {
         method: "GET",
-        path: "/api/notifications/unread-count",
-        descriptionKey: "Get unread count",
+        path: "/api/v1/notifications/unread-count",
+        descriptionKey: "Get current unread count from the database",
         auth: "JWT",
       },
       {
         method: "PUT",
-        path: "/api/notifications/{id}/read",
-        descriptionKey: "Mark as read",
+        path: "/api/v1/notifications/{id}/read",
+        descriptionKey: "Mark a single notification as read (using encrypted ID)",
         auth: "JWT",
       },
       {
         method: "PUT",
-        path: "/api/notifications/read-all",
-        descriptionKey: "Mark all as read",
+        path: "/api/v1/notifications/read-all",
+        descriptionKey: "Mark all notifications for the authenticated user as read",
         auth: "JWT",
       },
       {
         method: "DELETE",
-        path: "/api/notifications/{id}",
-        descriptionKey: "Delete notification",
+        path: "/api/v1/notifications/{id}",
+        descriptionKey: "Soft-delete a notification (using encrypted ID)",
         auth: "JWT",
       },
     ],
@@ -160,5 +228,5 @@ registerPage({
   order: 5,
   sections,
   relatedSlugs: ["features/email-system", "features/webhook-system"],
-  lastUpdated: "2026-02-20",
+  lastUpdated: "2026-06-28",
 });

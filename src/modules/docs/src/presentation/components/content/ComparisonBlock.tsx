@@ -7,7 +7,7 @@ interface ComparisonBlockProps {
   columns: ComparisonColumn[];
 }
 
-const variantConfig = {
+const variantConfig: Record<ComparisonColumn["variant"], { icon: string; className: string }> = {
   positive: {
     icon: "✅",
     className: "docs-comparison-positive",
@@ -20,11 +20,19 @@ const variantConfig = {
     icon: "•",
     className: "docs-comparison-neutral",
   },
+  warning: {
+    icon: "⚠️",
+    className: "docs-comparison-warning",
+  },
+  info: {
+    icon: "ℹ️",
+    className: "docs-comparison-info",
+  },
 };
 
 /**
  * ComparisonBlock — Side-by-side comparison columns.
- * Used to show ✅ Do vs ❌ Don't patterns, or feature comparisons.
+ * Supports: positive, negative, neutral, warning, info variants.
  */
 export function ComparisonBlock({ columns }: ComparisonBlockProps) {
   const { t } = useDocsI18n();

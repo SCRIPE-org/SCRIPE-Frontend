@@ -284,6 +284,24 @@ const sections: DocSection[] = [
     variant: "tip",
     contentKey: "features.loginCustomizer.archTip",
   },
+
+  // ─── Logo Paths ───────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginCustomizer.logoPathsTitle",
+    id: "logo-paths",
+  },
+  { type: "paragraph", contentKey: "features.loginCustomizer.logoPathsIntro" },
+
+  // ─── Live Previews ────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.loginCustomizer.cssPreviewsTitle",
+    id: "css-previews",
+  },
+  { type: "paragraph", contentKey: "features.loginCustomizer.cssPreviewsIntro" },
 ];
 
 registerPage({

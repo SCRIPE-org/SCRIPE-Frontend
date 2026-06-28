@@ -22,6 +22,60 @@ const sections: DocSection[] = [
   },
   { type: "paragraph", contentKey: "features.tenantContextGate.solutionIntro" },
 
+  // ─── Flowchart: Routing Context Validations ───────────────────
+  {
+    type: "flowchart",
+    title: "Routing Context & Middleware Validation Gate",
+    direction: "vertical",
+    nodes: [
+      { id: "request", label: "User Requests Route (e.g., /tenant-plans)", type: "default" },
+      {
+        id: "navGate",
+        label: "Next.js Sidebar / Navigation checks RequiresTenantContext flag",
+        type: "info",
+      },
+      {
+        id: "clientVerify",
+        label: "Client verification: useAppStore checks if tenantId !== null",
+        type: "info",
+      },
+      {
+        id: "headerInject",
+        label: "Axios Request: injects X-Tenant-Context header into API call",
+        type: "info",
+      },
+      {
+        id: "middleware",
+        label: "TenantContextMiddleware: checks X-Tenant-Context header presence",
+        type: "warning",
+      },
+      {
+        id: "permissionGate",
+        label: "Middleware checks user HasPermission('tenants.drill_down')",
+        type: "warning",
+      },
+      {
+        id: "handlerCheck",
+        label: "GetMyMenuQuery / Controller checks currentUser.EffectiveTenantId",
+        type: "warning",
+      },
+      {
+        id: "allowDeny",
+        label: "Authorized -> Serve Page | Unauthorized -> 403 Forbidden Response",
+        type: "success",
+      },
+    ],
+    connections: [
+      { from: "request", to: "navGate" },
+      { from: "navGate", to: "clientVerify" },
+      { from: "clientVerify", to: "headerInject" },
+      { from: "headerInject", to: "middleware" },
+      { from: "middleware", to: "permissionGate" },
+      { from: "permissionGate", to: "handlerCheck" },
+      { from: "handlerCheck", to: "allowDeny" },
+    ],
+  },
+
   // ─── Multi-Layer Defense ──────────────────────────────────────
   {
     type: "heading",
@@ -36,7 +90,7 @@ const sections: DocSection[] = [
     type: "heading",
     level: 3,
     titleKey: "features.tenantContextGate.layer1Title",
-    id: "layer-1-backend",
+    id: "layer-1-frontend",
   },
   { type: "paragraph", contentKey: "features.tenantContextGate.layer1Intro" },
   {
@@ -62,7 +116,7 @@ if (currentUser.IsSystemProtectedAdmin)
     type: "heading",
     level: 3,
     titleKey: "features.tenantContextGate.layer2Title",
-    id: "layer-2-frontend",
+    id: "layer-2-frontend-guard",
   },
   { type: "paragraph", contentKey: "features.tenantContextGate.layer2Intro" },
 
@@ -92,6 +146,45 @@ public async Task<IActionResult> GetAll(int page = 1, int pageSize = 20)
     return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
 }`,
   },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "TenantContextMiddleware.cs",
+    code: `public class TenantContextMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly ILogger<TenantContextMiddleware> _logger;
+    private const string TenantContextHeader = "X-Tenant-Context";
+    private const string DrillDownPermission = "tenants.drill_down";
+
+    public TenantContextMiddleware(RequestDelegate next, ILogger<TenantContextMiddleware> logger)
+    {
+        _next = next;
+        _logger = logger;
+    }
+
+    public async Task InvokeAsync(HttpContext context, ICurrentUser currentUser)
+    {
+        var tenantContextHeader = context.Request.Headers[TenantContextHeader].FirstOrDefault();
+
+        if (!string.IsNullOrEmpty(tenantContextHeader))
+        {
+            // Validate that the user switching context has tenants.drill_down permission
+            if (!currentUser.HasPermission(DrillDownPermission))
+            {
+                _logger.LogWarning("User {UserId} attempted context switch without {Permission} permission", currentUser.Id, DrillDownPermission);
+                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                context.Response.ContentType = "application/json";
+
+                var error = new { error = "TENANT_CONTEXT_FORBIDDEN", message = "Missing permission: tenants.drill_down", code = 403 };
+                await context.Response.WriteAsJsonAsync(error);
+                return;
+            }
+        }
+        await _next(context);
+    }
+}`,
+  },
 
   // ─── Drill-Down ───────────────────────────────────────────────
   {
@@ -104,6 +197,7 @@ public async Task<IActionResult> GetAll(int page = 1, int pageSize = 20)
   {
     type: "flowchart",
     direction: "vertical",
+    title: "Drill-Down Behavior",
     nodes: [
       { id: "A", label: "System Admin (no TenantId in JWT)", type: "default" },
       { id: "B", label: "Opens Tenant list, clicks 'Drill Down'", type: "default" },
@@ -227,5 +321,5 @@ registerPage({
   order: 22,
   sections,
   relatedSlugs: ["modules/tenant-plans", "modules/user-subscriptions", "features/menu-system"],
-  lastUpdated: "2026-04-18",
+  lastUpdated: "2026-06-28",
 });

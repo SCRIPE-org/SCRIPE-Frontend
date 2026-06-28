@@ -15,78 +15,134 @@ const sections: DocSection[] = [
   { type: "paragraph", contentKey: "security.middlewarePipeline.overviewIntro" },
   {
     type: "flowchart",
-    title: "Full Middleware Pipeline (Order of Execution)",
+    title: "Full HTTP Request Middleware Execution Pipeline",
     direction: "vertical",
     nodes: [
-      {
-        id: "m1",
-        label: "1. GlobalExceptionMiddleware",
-        type: "danger",
-        description: "Catches all unhandled exceptions",
-      },
+      { id: "p1", label: "PHASE 1: Request Bootstrapping & Diagnostics", type: "primary" },
+      { id: "m1", label: "1. Forwarded Headers (Real IP)", type: "default" },
       {
         id: "m2",
-        label: "2. CorrelationIdMiddleware",
-        type: "info",
-        description: "Assigns X-Correlation-Id to every request",
+        label: "2. Global Exception Middleware",
+        type: "danger",
+        description: "Sanitizes stack traces",
       },
       {
         id: "m3",
-        label: "3. RequestLoggingMiddleware",
-        type: "info",
-        description: "Structured logging with timing",
+        label: "3. HSTS & Security Headers",
+        type: "default",
+        description: "HSTS in Prod, X-Frame-Options",
       },
-      { id: "m4", label: "4. CORS Middleware", type: "default" },
-      { id: "m5", label: "5. HSTS Middleware", type: "default", description: "Production only" },
-      { id: "m6", label: "6. Rate Limiter", type: "warning" },
       {
-        id: "m7",
-        label: "7. CsrfMiddleware",
-        type: "warning",
-        description: "Double-submit cookie validation",
+        id: "m4",
+        label: "4. Correlation ID Middleware",
+        type: "info",
+        description: "Assigns X-Correlation-Id",
       },
+      {
+        id: "m5",
+        label: "5. Observability Middleware",
+        type: "info",
+        description: "OpenTelemetry enrichment",
+      },
+      { id: "m6", label: "6. HTTPS Redirection", type: "default" },
+      { id: "m7", label: "7. Response Compression", type: "success" },
       {
         id: "m8",
-        label: "8. ReplayProtectionMiddleware",
-        type: "warning",
-        description: "Nonce-based replay prevention",
+        label: "8. Request Localization",
+        type: "default",
+        description: "Culture selection",
       },
-      { id: "m9", label: "9. Authentication", type: "primary" },
-      {
-        id: "m10",
-        label: "10. CookieAuthMiddleware",
-        type: "primary",
-        description: "Cookie-based auth fallback",
-      },
+
+      { id: "p2", label: "PHASE 2: Routing, Gateway & Access Policies", type: "primary" },
+      { id: "m9", label: "9. Static Files (/api/files)", type: "default" },
+      { id: "m10", label: "10. CORS Middleware", type: "default", description: "Origin checking" },
       {
         id: "m11",
-        label: "11. TenantContextMiddleware",
-        type: "success",
-        description: "Sets tenant scope from JWT",
+        label: "11. Cloudflare Origin Verification",
+        type: "danger",
+        description: "Fail-closed check",
       },
-      { id: "m12", label: "12. Authorization", type: "primary" },
+      { id: "m12", label: "12. Background Jobs Dashboard", type: "default" },
       {
         id: "m13",
-        label: "13. FieldProjectionMiddleware",
-        type: "info",
-        description: "Restricted field filtering",
+        label: "13. Rate Limiter",
+        type: "warning",
+        description: "Tiered rate limiting",
+      },
+      { id: "m14", label: "14. Response Caching & Cache Headers", type: "success" },
+
+      { id: "p3", label: "PHASE 3: Authentication & Anti-CSRF", type: "primary" },
+      { id: "m15", label: "15. Cookie Auth (Cookie-to-Bearer)", type: "info" },
+      {
+        id: "m16",
+        label: "16. Authentication (JWT)",
+        type: "primary",
+        description: "Validates access token",
       },
       {
-        id: "m14",
-        label: "14. CacheHeadersMiddleware",
+        id: "m17",
+        label: "17. CSRF Protection",
+        type: "warning",
+        description: "Double-submit validation",
+      },
+      { id: "m18", label: "18. Input Sanitization", type: "info", description: "Strips HTML tags" },
+
+      { id: "p4", label: "PHASE 4: Authorization, Replay & Tenant Isolation", type: "primary" },
+      {
+        id: "m19",
+        label: "19. Authorization (RBAC)",
+        type: "primary",
+        description: "Permission checks",
+      },
+      {
+        id: "m20",
+        label: "20. Must Change Password Gate",
+        type: "danger",
+        description: "Blocks expired credentials",
+      },
+      {
+        id: "m21",
+        label: "21. Replay Protection",
+        type: "danger",
+        description: "Timestamp ±5m & Nonce unique",
+      },
+      {
+        id: "m22",
+        label: "22. Tenant Context Validation",
+        type: "warning",
+        description: "Validates tenant context",
+      },
+      {
+        id: "m23",
+        label: "23. TenantContextMiddleware",
         type: "success",
-        description: "ETag + Cache-Control",
+        description: "IDataScopeService scoping",
       },
       {
-        id: "m15",
-        label: "15. ObservabilityMiddleware",
+        id: "m24",
+        label: "24. Field Projection",
         type: "info",
-        description: "Metrics + distributed tracing",
+        description: "Filters restricted fields",
       },
-      { id: "m16", label: "16. Response Compression", type: "success" },
-      { id: "controller", label: "Controller / Endpoint", type: "primary" },
+      {
+        id: "m25",
+        label: "25. Request Logging & Audit",
+        type: "success",
+        description: "Serilog audit trail creation",
+      },
+
+      { id: "p5", label: "PHASE 5: Endpoint Mapping & Execution", type: "primary" },
+      { id: "m26", label: "26. Health Checks (/health)", type: "success" },
+      {
+        id: "m27",
+        label: "27. ETag Middleware",
+        type: "success",
+        description: "Calculates ETag hashes",
+      },
+      { id: "m28", label: "28. API Controllers / SignalR / YARP", type: "primary" },
     ],
     connections: [
+      { from: "p1", to: "m1" },
       { from: "m1", to: "m2" },
       { from: "m2", to: "m3" },
       { from: "m3", to: "m4" },
@@ -94,15 +150,33 @@ const sections: DocSection[] = [
       { from: "m5", to: "m6" },
       { from: "m6", to: "m7" },
       { from: "m7", to: "m8" },
-      { from: "m8", to: "m9" },
+      { from: "m8", to: "p2" },
+
+      { from: "p2", to: "m9" },
       { from: "m9", to: "m10" },
       { from: "m10", to: "m11" },
       { from: "m11", to: "m12" },
       { from: "m12", to: "m13" },
       { from: "m13", to: "m14" },
-      { from: "m14", to: "m15" },
+      { from: "m14", to: "p3" },
+
+      { from: "p3", to: "m15" },
       { from: "m15", to: "m16" },
-      { from: "m16", to: "controller" },
+      { from: "m16", to: "m17" },
+      { from: "m17", to: "m18" },
+      { from: "m18", to: "p4" },
+
+      { from: "p4", to: "m19" },
+      { from: "m19", to: "m20" },
+      { from: "m20", to: "m21" },
+      { from: "m21", to: "m22" },
+      { from: "m22", to: "m23" },
+      { from: "m23", to: "m24" },
+      { from: "m25", to: "p5" },
+
+      { from: "p5", to: "m26" },
+      { from: "m26", to: "m27" },
+      { from: "m27", to: "m28" },
     ],
   },
 
@@ -498,34 +572,39 @@ public class ObservabilityMiddleware
     code: `var app = builder.Build();
 
 // ─── Middleware Pipeline (ORDER MATTERS!) ───────────────
-app.UseMiddleware<GlobalExceptionMiddleware>();      // 1. Catch all errors
-app.UseMiddleware<CorrelationIdMiddleware>();         // 2. Request tracing
-app.UseMiddleware<RequestLoggingMiddleware>();        // 3. Structured logging
+app.UseForwardedHeaders();                           // 1. Resolve client IP
+app.UseMiddleware<GlobalExceptionMiddleware>();      // 2. Catch all errors
+if (!app.Environment.IsDevelopment())
+    app.UseHsts();                                   // 3. Enable HSTS
+app.UseSecurityHeaders();                            // 4. Set secure response headers
+app.UseCorrelationId();                              // 5. Trace logging correlation
+app.UseObservabilityMiddleware();                    // 6. Trace enrichment
+if (!app.Environment.IsDevelopment())
+    app.UseHttpsRedirection();                       // 7. Enforce SSL
+app.UseResponseCompression();                        // 8. Brotli/Gzip compression
+app.UseRequestLocalization();                        // 9. Multi-lingual context
+app.UseStaticFiles();                                // 10. Serve static files
+app.UseCorsConfiguration();                          // 11. CORS policies
+app.UseCloudflareOriginVerification();               // 12. Cloudflare gate
+app.UseBackgroundJobsDashboard();                    // 13. Hangfire dashboard
+app.UseRateLimiting();                               // 14. Throttling limiters
+app.UseResponseCaching();                            // 15. Response caching
+app.UseMiddleware<CacheHeadersMiddleware>();          // 16. Cache headers
+app.UseCookieAuth();                                 // 17. Cookie auth fallback
+app.UseAuthentication();                             // 18. Authenticate JWT token
+app.UseCsrfProtection();                             // 19. CSRF double-submit
+app.UseInputSanitization();                          // 20. Input sanitization
+app.UseAuthorization();                              // 21. Check RBAC permissions
+app.UseMiddleware<MustChangePasswordMiddleware>();   // 22. MCP flag check
+app.UseReplayProtection();                           // 23. Timestamp & Nonce check
+app.UseTenantContextValidation();                    // 24. Switch-tenant checks
+app.UseMiddleware<FieldProjectionMiddleware>();       // 25. Field level security
+app.UseRequestLogging();                             // 26. Log HTTP audits (after auth)
 
-app.UseCors(policyName);                             // 4. CORS
-if (app.Environment.IsProduction())
-    app.UseHsts();                                   // 5. HSTS
-
-app.UseRateLimiter();                                // 6. Rate limiting
-app.UseMiddleware<CsrfMiddleware>();                 // 7. CSRF protection
-app.UseMiddleware<ReplayProtectionMiddleware>();      // 8. Replay protection
-
-app.UseAuthentication();                             // 9. JWT validation
-app.UseMiddleware<CookieAuthMiddleware>();            // 10. Cookie fallback
-app.UseMiddleware<TenantContextMiddleware>();         // 11. Tenant scope
-
-app.UseAuthorization();                              // 12. Permission checks
-app.UseMiddleware<FieldProjectionMiddleware>();       // 13. Field filtering
-app.UseMiddleware<CacheHeadersMiddleware>();          // 14. ETag/caching
-app.UseMiddleware<ObservabilityMiddleware>();         // 15. Metrics/tracing
-
-app.UseResponseCompression();                        // 16. Brotli+Gzip
-
-app.MapControllers();
-app.MapHub<AuditHub>("/hubs/audit");
-app.MapHub<NotificationHub>("/hubs/notification");
+app.MapHealthChecks("/health");                      // 27. Health endpoint
+app.UseMiddleware<ETagMiddleware>();                 // 28. Client ETag validation
+app.MapControllers();                                // 29. Route to controllers
 app.Run();`,
-    highlightLines: [3, 4, 5, 6, 12, 13, 14, 16, 17, 18, 20, 21, 22, 23],
   },
   {
     type: "info",
@@ -542,78 +621,217 @@ app.Run();`,
   },
   {
     type: "table",
-    headers: ["#", "Middleware", "Purpose", "Short-Circuits?", "Scope"],
+    headers: [
+      "#",
+      "Middleware",
+      "Purpose & Responsibility",
+      "Short-Circuits?",
+      "Scope & Conditions",
+    ],
     rows: [
       [
         "1",
-        "GlobalExceptionMiddleware",
-        "Structured error responses",
-        "On exception",
-        "All requests",
+        "Forwarded Headers",
+        "Resolves client IP/Host headers behind reverse proxies",
+        "No",
+        "All incoming requests",
       ],
       [
         "2",
-        "CorrelationIdMiddleware",
-        "Distributed tracing via X-Correlation-Id",
-        "No",
-        "All requests",
+        "GlobalExceptionMiddleware",
+        "Catches all unhandled exceptions and returns structured errors",
+        "On exception",
+        "All requests (top handler)",
       ],
       [
         "3",
-        "RequestLoggingMiddleware",
-        "Structured request logging + audit trail",
+        "HSTS",
+        "Enforces Strict Transport Security header in production",
+        "No",
+        "Production requests only",
+      ],
+      [
+        "4",
+        "Security Headers",
+        "Injects anti-clickjacking, nosniff, and CSP headers",
+        "No",
+        "All responses",
+      ],
+      [
+        "5",
+        "Correlation ID",
+        "Generates or extracts X-Correlation-Id for distributed tracing",
         "No",
         "All requests",
       ],
-      ["4", "CORS", "Cross-origin request validation", "On invalid origin", "Cross-origin"],
-      ["5", "HSTS", "Force HTTPS in production", "No", "Production only"],
       [
         "6",
-        "Rate Limiter",
-        "Request throttling",
-        "On rate limit exceeded (429)",
-        "Configurable per policy",
+        "Observability Middleware",
+        "Enriches trace spans with tenant and user ID metadata",
+        "No",
+        "All requests",
       ],
       [
         "7",
-        "CsrfMiddleware",
-        "CSRF token validation",
-        "On invalid token (403)",
-        "State-changing methods",
+        "HTTPS Redirection",
+        "Redirects unencrypted HTTP requests to secure HTTPS",
+        "Yes (Redirects 301)",
+        "Non-development requests",
       ],
       [
         "8",
-        "ReplayProtectionMiddleware",
-        "Nonce-based replay prevention",
-        "On duplicate nonce (409)",
-        "All with nonce header",
+        "Response Compression",
+        "Compresses HTTP payload using Brotli/Gzip",
+        "No",
+        "Responses exceeding threshold",
       ],
-      ["9", "Authentication", "JWT token validation", "No (sets User)", "All requests"],
+      [
+        "9",
+        "Request Localization",
+        "Sets request culture context based on Accept-Language",
+        "No",
+        "All requests",
+      ],
       [
         "10",
-        "CookieAuthMiddleware",
-        "Cookie-to-Bearer fallback",
-        "No",
-        "Requests without Auth header",
+        "Static Files",
+        "Serves secure files from FileHost folder under /api/files",
+        "Yes (200 / 304)",
+        "Requests to RequestPath",
       ],
       [
         "11",
-        "TenantContextMiddleware",
-        "Sets tenant scope for DB queries",
-        "No",
-        "Authenticated requests",
+        "CORS",
+        "Validates cross-origin requests against whitelisted origins",
+        "Yes (400 / Preflight 204)",
+        "Cross-origin requests",
       ],
-      ["12", "Authorization", "Permission/role checks", "On denied (403)", "Attributed endpoints"],
-      ["13", "FieldProjectionMiddleware", "Filters response fields by role", "No", "GET responses"],
+      [
+        "12",
+        "Cloudflare Origin Verification",
+        "Blocks non-health requests that bypass Cloudflare proxies",
+        "Yes (403 Forbidden)",
+        "Non-health requests in Prod",
+      ],
+      [
+        "13",
+        "Background Jobs Dashboard",
+        "Provides secure access dashboard for Hangfire or Quartz",
+        "Yes (UI pages / 401)",
+        "/hangfire or dashboard routes",
+      ],
       [
         "14",
+        "Rate Limiting",
+        "Enforces request throttling based on IP/User policies",
+        "Yes (429 Too Many Requests)",
+        "All endpoints (configured)",
+      ],
+      [
+        "15",
+        "Response Caching",
+        "Serves cached responses directly when available",
+        "Yes (Cache hit 200)",
+        "Configured GET requests",
+      ],
+      [
+        "16",
         "CacheHeadersMiddleware",
-        "ETag + conditional 304 responses",
-        "On cache hit (304)",
+        "Injects cache-control headers and computes ETag hashes",
+        "Yes (304 Not Modified)",
+        "All GET requests",
+      ],
+      [
+        "17",
+        "CookieAuthMiddleware",
+        "Reads JWT from httpOnly cookie as Authorization header fallback",
+        "No",
+        "Authorization header missing",
+      ],
+      [
+        "18",
+        "Authentication",
+        "Validates JWT signature, validity, and extracts identity claims",
+        "Yes (401 Unauthorized on invalid)",
+        "All requests",
+      ],
+      [
+        "19",
+        "CSRF Protection",
+        "Validates double-submit cookie signature for state mutation",
+        "Yes (403 CSRF Mismatch)",
+        "POST/PUT/DELETE non-Bearer",
+      ],
+      [
+        "20",
+        "Input Sanitization",
+        "Strips dangerous HTML/script tags from incoming JSON models",
+        "No",
+        "Mutating requests (JSON bodies)",
+      ],
+      [
+        "21",
+        "Authorization",
+        "Validates user permissions and roles against endpoint targets",
+        "Yes (403 Forbidden)",
+        "Endpoints with auth attributes",
+      ],
+      [
+        "22",
+        "MustChangePasswordMiddleware",
+        "Blocks resource access when password needs rotation",
+        "Yes (403 Force Change)",
+        "JWT contains mcp=true claim",
+      ],
+      [
+        "23",
+        "Replay Protection",
+        "Validates uniqueness of request UUID nonces within skew window",
+        "Yes (409 Conflict / 400)",
+        "Mutating authenticated requests",
+      ],
+      [
+        "24",
+        "Tenant Context Validation",
+        "Ensures request tenant matches user bounds or drill-downs",
+        "Yes (403 Forbidden)",
+        "Tenant-scoped requests",
+      ],
+      [
+        "25",
+        "TenantContextMiddleware",
+        "Binds the active tenant context to IDataScopeService",
+        "No",
+        "Tenant-scoped requests",
+      ],
+      [
+        "26",
+        "FieldProjectionMiddleware",
+        "Removes unauthorized restricted fields from JSON responses",
+        "No",
+        "GET requests with active policies",
+      ],
+      [
+        "27",
+        "Request Logging",
+        "Logs request auditing data including user and tenant IDs",
+        "No",
+        "All requests (post-auth context)",
+      ],
+      [
+        "28",
+        "Health Checks",
+        "Exposes system health, database, and readiness probes",
+        "Yes (200 / 503)",
+        "/health and /health/ready",
+      ],
+      [
+        "29",
+        "ETag Middleware",
+        "Validates If-None-Match header against response MD5 hash",
+        "Yes (304 Not Modified)",
         "GET requests",
       ],
-      ["15", "ObservabilityMiddleware", "Metrics + OpenTelemetry enrichment", "No", "All requests"],
-      ["16", "Response Compression", "Brotli + Gzip compression", "No", "Responses > threshold"],
     ],
   },
 ];
@@ -626,5 +844,5 @@ registerPage({
   order: 5,
   sections,
   relatedSlugs: ["security/api-security", "architecture/backend", "security/authentication-deep"],
-  lastUpdated: "2026-02-20",
+  lastUpdated: "2026-06-28",
 });

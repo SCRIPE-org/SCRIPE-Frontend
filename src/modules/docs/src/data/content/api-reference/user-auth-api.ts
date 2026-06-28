@@ -14,12 +14,21 @@ const sections: DocSection[] = [
   },
   {
     type: "table",
-    headers: ["Setting", "Value"],
+    headers: ["Setting", "Value", "Description"],
     rows: [
-      ["Base URL", "/api/v1/user-auth"],
-      ["Auth Required", "Partial (Login, Register, Verify are public)"],
-      ["Rate Limit", "auth policy (10 req / 5 min)"],
-      ["Total Endpoints", "19"],
+      ["Base URL", "/api/v1/auth/user", "All regular user (client) auth endpoints base path"],
+      ["Profile Base URL", "/api/v1/Users", "User profile management endpoints"],
+      [
+        "Auth Required",
+        "Partial",
+        "Login, register, external-login, verification, refresh, and password-reset are public; others require Bearer token",
+      ],
+      [
+        "Rate Limits",
+        "Login (10 req/5 min), password-reset, otp-verification",
+        "Protects client-facing auth endpoints",
+      ],
+      ["Content-Type", "application/json", "All requests and responses use JSON format"],
     ],
   },
 
@@ -35,7 +44,7 @@ const sections: DocSection[] = [
     endpoints: [
       {
         method: "POST",
-        path: "/api/v1/user-auth/register",
+        path: "/api/v1/auth/user/register",
         descriptionKey: "apiReference.userAuthApi.registerDesc",
         auth: "None",
       },
@@ -45,34 +54,45 @@ const sections: DocSection[] = [
     type: "tabs",
     tabs: [
       {
-        label: "Request",
+        label: "Registration Request",
         language: "json",
-        filename: "POST /user-auth/register",
+        filename: "POST /api/v1/auth/user/register — Request Body",
         code: `{
-  "email": "user@example.com",
-  "password": "SecureP@ss1!",
-  "confirmPassword": "SecureP@ss1!",
-  "firstName": "Alice",
-  "lastName": "Johnson",
+  "username": "alicejohnson",
+  "password": "SecureP@ssword1!",
+  "email": "alice@example.com",
   "phoneNumber": "+1234567890",
-  "tenantId": "f8e7d6c5-b4a3-2190-fedc-ba0987654321"
+  "tenantCode": "ACME" // Public tenant workspace code
 }`,
       },
       {
-        label: "Response (201)",
+        label: "Registration Response (201)",
         language: "json",
-        filename: "Register — Success Response",
+        filename: "Registration Success — Response",
         code: `{
-  "id": "new-user-uuid",
-  "email": "user@example.com",
-  "message": "Registration successful. Please verify your email.",
-  "requiresEmailVerification": true
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4...",
+  "expiresIn": 3600,
+  "tokenType": "Bearer",
+  "requiresTwoFactor": false,
+  "user": {
+    "id": "user-uuid-12345",
+    "email": "alice@example.com",
+    "username": "alicejohnson",
+    "firstName": null,
+    "lastName": null,
+    "role": "User",
+    "tenantId": "f8e7d6c5-b4a3-2190-fedc-ba0987654321",
+    "tenantCode": "ACME",
+    "emailVerified": false,
+    "phoneVerified": false
+  }
 }`,
       },
     ],
   },
 
-  // ─── Login ────────────────────────────────────────────────
+  // ─── Login & OAuth ────────────────────────────────────────
   {
     type: "heading",
     level: 2,
@@ -84,52 +104,14 @@ const sections: DocSection[] = [
     endpoints: [
       {
         method: "POST",
-        path: "/api/v1/user-auth/login",
+        path: "/api/v1/auth/user/login",
         descriptionKey: "apiReference.userAuthApi.loginDesc",
         auth: "None",
       },
-    ],
-  },
-  {
-    type: "code",
-    language: "json",
-    filename: "POST /user-auth/login — Same structure as admin auth",
-    code: `// Request
-{ "email": "user@example.com", "password": "SecureP@ss1!" }
-
-// Response (200)
-{
-  "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
-  "refreshToken": "cmVmcmVzaC10b2tlbg...",
-  "expiresIn": 900,
-  "requiresTwoFactor": false,
-  "user": {
-    "id": "user-uuid",
-    "email": "user@example.com",
-    "firstName": "Alice",
-    "role": "User",
-    "tenantId": "tenant-uuid",
-    "emailVerified": true,
-    "phoneVerified": false
-  }
-}`,
-  },
-
-  // ─── External Auth ────────────────────────────────────────
-  {
-    type: "heading",
-    level: 2,
-    titleKey: "apiReference.userAuthApi.externalTitle",
-    id: "external-auth",
-  },
-  { type: "paragraph", contentKey: "apiReference.userAuthApi.externalIntro" },
-  {
-    type: "api-table",
-    endpoints: [
       {
         method: "POST",
-        path: "/api/v1/user-auth/external-login",
-        descriptionKey: "apiReference.userAuthApi.externalLoginDesc",
+        path: "/api/v1/auth/user/login/{provider}",
+        descriptionKey: "apiReference.userAuthApi.loginProviderDesc",
         auth: "None",
       },
     ],
@@ -138,56 +120,49 @@ const sections: DocSection[] = [
     type: "tabs",
     tabs: [
       {
-        label: "Google Login",
+        label: "Password Login",
         language: "json",
-        filename: "External Login — Google",
-        code: `// Request
-{
-  "provider": "google",
-  "token": "ya29.a0AfH6SMC...",
-  "tenantId": "tenant-uuid"
-}
-
-// Response (200) — New or existing user
-{
-  "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
-  "refreshToken": "cmVmcmVzaC10b2tlbg...",
-  "expiresIn": 900,
-  "isNewUser": true,
+        filename: "POST /api/v1/auth/user/login — Request",
+        code: `{
+  "username": "alicejohnson", // Can be email or username
+  "password": "SecureP@ssword1!",
+  "deviceInfo": "Mozilla/5.0 Chrome/120.0.0" // Optional
+}`,
+      },
+      {
+        label: "OAuth Login (Google/etc.)",
+        language: "json",
+        filename: "POST /api/v1/auth/user/login/google — Request",
+        code: `{
+  "token": "oauth-provider-id-token-here...",
+  "deviceInfo": "Mozilla/5.0 Chrome/120.0.0"
+}`,
+      },
+      {
+        label: "Success Response (200)",
+        language: "json",
+        filename: "Login Success — Response",
+        code: `{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refreshToken": "dGhpcyBpcyBhIHJlZnJlc2ggdG9rZW4...",
+  "expiresIn": 3600,
+  "tokenType": "Bearer",
+  "requiresTwoFactor": false,
   "user": {
-    "id": "user-uuid",
-    "email": "alice@gmail.com",
-    "firstName": "Alice",
-    "lastName": "Johnson",
-    "avatarUrl": "https://lh3.googleusercontent.com/...",
-    "provider": "google"
+    "id": "user-uuid-12345",
+    "email": "alice@example.com",
+    "username": "alicejohnson",
+    "role": "User",
+    "tenantId": "f8e7d6c5-b4a3-2190-fedc-ba0987654321",
+    "emailVerified": true,
+    "phoneVerified": false
   }
-}`,
-      },
-      {
-        label: "Facebook Login",
-        language: "json",
-        filename: "External Login — Facebook",
-        code: `{
-  "provider": "facebook",
-  "token": "EAAGm0PX4ZCps...",
-  "tenantId": "tenant-uuid"
-}`,
-      },
-      {
-        label: "Apple Login",
-        language: "json",
-        filename: "External Login — Apple",
-        code: `{
-  "provider": "apple",
-  "token": "eyJraWQiOiI4NkQ4OT...",
-  "tenantId": "tenant-uuid"
 }`,
       },
     ],
   },
 
-  // ─── Verification Endpoints ───────────────────────────────
+  // ─── Verification & OTPs ──────────────────────────────────
   {
     type: "heading",
     level: 2,
@@ -199,20 +174,26 @@ const sections: DocSection[] = [
     endpoints: [
       {
         method: "POST",
-        path: "/api/v1/user-auth/verify-email",
+        path: "/api/v1/auth/user/verify-email",
         descriptionKey: "apiReference.userAuthApi.verifyEmailDesc",
-        auth: "None (uses OTP)",
+        auth: "None",
       },
       {
         method: "POST",
-        path: "/api/v1/user-auth/verify-phone",
+        path: "/api/v1/auth/user/verify-phone",
         descriptionKey: "apiReference.userAuthApi.verifyPhoneDesc",
-        auth: "None (uses OTP)",
+        auth: "None",
       },
       {
         method: "POST",
-        path: "/api/v1/user-auth/send-verification",
-        descriptionKey: "apiReference.userAuthApi.sendVerificationDesc",
+        path: "/api/v1/auth/user/send-email-verification",
+        descriptionKey: "apiReference.userAuthApi.sendEmailVerificationDesc",
+        auth: "None",
+      },
+      {
+        method: "POST",
+        path: "/api/v1/auth/user/send-phone-verification",
+        descriptionKey: "apiReference.userAuthApi.sendPhoneVerificationDesc",
         auth: "None",
       },
     ],
@@ -223,36 +204,47 @@ const sections: DocSection[] = [
       {
         label: "Verify Email",
         language: "json",
-        filename: "POST /user-auth/verify-email",
-        code: `// Request
+        filename: "POST /api/v1/auth/user/verify-email — Request & Response",
+        code: `// Request Body
 {
-  "email": "user@example.com",
-  "code": "123456"
+  "email": "alice@example.com",
+  "code": "654321"
 }
 
-// Response (200)
+// Response (200 OK)
 {
-  "message": "Email verified successfully",
-  "emailVerified": true
+  "message": "Email verified successfully"
 }`,
       },
       {
-        label: "Send Verification",
+        label: "Send Email OTP",
         language: "json",
-        filename: "POST /user-auth/send-verification",
-        code: `// Request
+        filename: "POST /api/v1/auth/user/send-email-verification — Request & Response",
+        code: `// Request Body
 {
-  "email": "user@example.com",
-  "type": "email"  // "email" | "phone"
+  "email": "alice@example.com"
 }
 
-// Response (200)
+// Response (202 Accepted)
 {
-  "message": "Verification code sent",
-  "expiresIn": 900
+  "sent": true,
+  "retryAfterSeconds": null
+}`,
+      },
+      {
+        label: "Verify Phone",
+        language: "json",
+        filename: "POST /api/v1/auth/user/verify-phone — Request & Response",
+        code: `// Request Body
+{
+  "phoneNumber": "+1234567890",
+  "code": "123456"
 }
 
-// Rate limited: max 5 requests per hour per email/phone`,
+// Response (200 OK)
+{
+  "message": "Phone verified successfully"
+}`,
       },
     ],
   },
@@ -269,15 +261,15 @@ const sections: DocSection[] = [
     endpoints: [
       {
         method: "POST",
-        path: "/api/v1/user-auth/forgot-password",
+        path: "/api/v1/auth/user/request-password-reset",
         descriptionKey: "apiReference.userAuthApi.forgotPasswordDesc",
         auth: "None",
       },
       {
         method: "POST",
-        path: "/api/v1/user-auth/reset-password",
+        path: "/api/v1/auth/user/reset-password",
         descriptionKey: "apiReference.userAuthApi.resetPasswordDesc",
-        auth: "None (uses OTP)",
+        auth: "None",
       },
     ],
   },
@@ -285,29 +277,30 @@ const sections: DocSection[] = [
     type: "tabs",
     tabs: [
       {
-        label: "Forgot Password",
+        label: "Request Reset OTP",
         language: "json",
-        filename: "POST /user-auth/forgot-password",
-        code: `// Request
-{ "email": "user@example.com" }
-
-// Response (200) — Always returns success (prevent email enumeration)
-{ "message": "If an account exists, a reset code has been sent" }`,
-      },
-      {
-        label: "Reset Password",
-        language: "json",
-        filename: "POST /user-auth/reset-password",
+        filename: "POST /api/v1/auth/user/request-password-reset — Request & Response",
         code: `// Request
 {
-  "email": "user@example.com",
-  "code": "123456",
-  "newPassword": "NewSecureP@ss2!",
-  "confirmPassword": "NewSecureP@ss2!"
+  "email": "alice@example.com"
 }
 
-// Response (200)
-{ "message": "Password reset successfully" }`,
+// Response (202 Accepted)
+{
+  "sent": true,
+  "retryAfterSeconds": null
+}`,
+      },
+      {
+        label: "Reset Password with OTP",
+        language: "json",
+        filename: "POST /api/v1/auth/user/reset-password — Request",
+        code: `// Request
+{
+  "email": "alice@example.com",
+  "code": "123456",
+  "newPassword": "NewSecurePassword2!"
+}`,
       },
     ],
   },
@@ -324,20 +317,20 @@ const sections: DocSection[] = [
     endpoints: [
       {
         method: "POST",
-        path: "/api/v1/user-auth/refresh",
+        path: "/api/v1/auth/user/refresh",
         descriptionKey: "apiReference.userAuthApi.refreshDesc",
         auth: "None (uses refresh token)",
       },
       {
         method: "POST",
-        path: "/api/v1/user-auth/logout",
+        path: "/api/v1/auth/user/logout",
         descriptionKey: "apiReference.userAuthApi.logoutDesc",
         auth: "Bearer Token",
       },
     ],
   },
 
-  // ─── 2FA Endpoints ────────────────────────────────────────
+  // ─── Two-Factor Authentication (2FA) ──────────────────────
   {
     type: "heading",
     level: 2,
@@ -349,66 +342,127 @@ const sections: DocSection[] = [
     endpoints: [
       {
         method: "POST",
-        path: "/api/v1/user-auth/2fa/enable",
+        path: "/api/v1/auth/user/2fa/enable",
         descriptionKey: "apiReference.userAuthApi.tfaEnableDesc",
         auth: "Bearer Token",
       },
       {
         method: "POST",
-        path: "/api/v1/user-auth/2fa/confirm",
+        path: "/api/v1/auth/user/2fa/confirm",
         descriptionKey: "apiReference.userAuthApi.tfaConfirmDesc",
         auth: "Bearer Token",
       },
       {
         method: "POST",
-        path: "/api/v1/user-auth/2fa/verify",
+        path: "/api/v1/auth/user/2fa/verify",
         descriptionKey: "apiReference.userAuthApi.tfaVerifyDesc",
-        auth: "2FA Session Token",
+        auth: "None",
       },
       {
         method: "POST",
-        path: "/api/v1/user-auth/2fa/disable",
+        path: "/api/v1/auth/user/2fa/disable",
         descriptionKey: "apiReference.userAuthApi.tfaDisableDesc",
-        auth: "Bearer Token",
-      },
-      {
-        method: "POST",
-        path: "/api/v1/user-auth/2fa/backup-codes",
-        descriptionKey: "apiReference.userAuthApi.tfaBackupDesc",
         auth: "Bearer Token",
       },
     ],
   },
+  {
+    type: "tabs",
+    tabs: [
+      {
+        label: "Enable 2FA Response",
+        language: "json",
+        filename: "POST /2fa/enable — Response",
+        code: `{
+  "secret": "JBSWY3DPEHPK3PXP",
+  "qrCodeUri": "otpauth://totp/SCRIPE:alice@example.com?secret=JBSWY3DPEHPK3PXP&issuer=SCRIPE",
+  "qrCodeBase64": "data:image/png;base64,iVBORw..."
+}`,
+      },
+      {
+        label: "Confirm 2FA Setup",
+        language: "json",
+        filename: "POST /2fa/confirm — Request & Response",
+        code: `// Request
+{
+  "code": "123456"
+}
 
-  // ─── Profile Endpoints ────────────────────────────────────
+// Response (200 OK)
+{
+  "message": "2FA enabled successfully"
+}`,
+      },
+    ],
+  },
+
+  // ─── External Logins Linking ──────────────────────────────
   {
     type: "heading",
     level: 2,
-    titleKey: "apiReference.userAuthApi.profileTitle",
-    id: "profile",
+    titleKey: "apiReference.userAuthApi.externalTitle",
+    id: "external-logins",
   },
   {
     type: "api-table",
     endpoints: [
       {
         method: "GET",
-        path: "/api/v1/user-auth/me",
-        descriptionKey: "apiReference.userAuthApi.meDesc",
+        path: "/api/v1/auth/user/external-logins",
+        descriptionKey: "apiReference.userAuthApi.getExternalLoginsDesc",
         auth: "Bearer Token",
       },
       {
-        method: "PUT",
-        path: "/api/v1/user-auth/profile",
-        descriptionKey: "apiReference.userAuthApi.updateProfileDesc",
+        method: "POST",
+        path: "/api/v1/auth/user/external-logins/link",
+        descriptionKey: "apiReference.userAuthApi.linkExternalLoginDesc",
         auth: "Bearer Token",
       },
       {
-        method: "PUT",
-        path: "/api/v1/user-auth/change-password",
-        descriptionKey: "apiReference.userAuthApi.changePasswordDesc",
+        method: "DELETE",
+        path: "/api/v1/auth/user/external-logins/{externalLoginId}",
+        descriptionKey: "apiReference.userAuthApi.unlinkExternalLoginDesc",
         auth: "Bearer Token",
       },
     ],
+  },
+
+  // ─── User Profile ─────────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "apiReference.userAuthApi.profileTitle",
+    id: "user-profile",
+  },
+  {
+    type: "api-table",
+    endpoints: [
+      {
+        method: "GET",
+        path: "/api/v1/Users/me",
+        descriptionKey: "apiReference.userAuthApi.meDesc",
+        auth: "Bearer Token",
+      },
+    ],
+  },
+  {
+    type: "code",
+    language: "json",
+    filename: "GET /api/v1/Users/me — Response",
+    code: `{
+  "id": "user-uuid-12345",
+  "username": "alicejohnson",
+  "email": "alice@example.com",
+  "firstName": "Alice",
+  "lastName": "Johnson",
+  "phoneNumber": "+1234567890",
+  "avatarUrl": "/uploads/avatars/user1.png",
+  "isActive": true,
+  "tenantId": "f8e7d6c5-b4a3-2190-fedc-ba0987654321",
+  "emailVerified": true,
+  "phoneVerified": false,
+  "createdAt": "2026-06-25T14:20:00Z"
+}`,
   },
 
   // ─── Full Endpoint Summary ────────────────────────────────
@@ -420,27 +474,27 @@ const sections: DocSection[] = [
   },
   {
     type: "table",
-    headers: ["#", "Endpoint", "Method", "Auth", "Rate Limit"],
+    headers: ["Endpoint", "Method", "Auth", "Rate Limit"],
     rows: [
-      ["1", "/user-auth/register", "POST", "None", "global"],
-      ["2", "/user-auth/login", "POST", "None", "auth"],
-      ["3", "/user-auth/external-login", "POST", "None", "auth"],
-      ["4", "/user-auth/refresh", "POST", "Refresh Token", "auth"],
-      ["5", "/user-auth/logout", "POST", "Bearer", "global"],
-      ["6", "/user-auth/verify-email", "POST", "None", "otp"],
-      ["7", "/user-auth/verify-phone", "POST", "None", "otp"],
-      ["8", "/user-auth/send-verification", "POST", "None", "otp"],
-      ["9", "/user-auth/forgot-password", "POST", "None", "otp"],
-      ["10", "/user-auth/reset-password", "POST", "None", "otp"],
-      ["11", "/user-auth/2fa/enable", "POST", "Bearer", "global"],
-      ["12", "/user-auth/2fa/confirm", "POST", "Bearer", "global"],
-      ["13", "/user-auth/2fa/verify", "POST", "2FA Session", "auth"],
-      ["14", "/user-auth/2fa/disable", "POST", "Bearer", "global"],
-      ["15", "/user-auth/2fa/backup-codes", "POST", "Bearer", "global"],
-      ["16", "/user-auth/me", "GET", "Bearer", "global"],
-      ["17", "/user-auth/profile", "PUT", "Bearer", "global"],
-      ["18", "/user-auth/change-password", "PUT", "Bearer", "global"],
-      ["19", "/user-auth/sessions", "GET", "Bearer", "global"],
+      ["/api/v1/auth/user/register", "POST", "None", "global"],
+      ["/api/v1/auth/user/login", "POST", "None", "auth"],
+      ["/api/v1/auth/user/login/{provider}", "POST", "None", "auth"],
+      ["/api/v1/auth/user/verify-email", "POST", "None", "otp"],
+      ["/api/v1/auth/user/verify-phone", "POST", "None", "otp"],
+      ["/api/v1/auth/user/send-email-verification", "POST", "None", "otp"],
+      ["/api/v1/auth/user/send-phone-verification", "POST", "None", "otp"],
+      ["/api/v1/auth/user/request-password-reset", "POST", "None", "password-reset"],
+      ["/api/v1/auth/user/reset-password", "POST", "None", "global"],
+      ["/api/v1/auth/user/refresh", "POST", "None", "token-refresh"],
+      ["/api/v1/auth/user/logout", "POST", "Bearer", "global"],
+      ["/api/v1/auth/user/2fa/enable", "POST", "Bearer", "global"],
+      ["/api/v1/auth/user/2fa/confirm", "POST", "Bearer", "global"],
+      ["/api/v1/auth/user/2fa/verify", "POST", "None", "auth"],
+      ["/api/v1/auth/user/2fa/disable", "POST", "Bearer", "global"],
+      ["/api/v1/auth/user/external-logins", "GET", "Bearer", "global"],
+      ["/api/v1/auth/user/external-logins/link", "POST", "Bearer", "global"],
+      ["/api/v1/auth/user/external-logins/{externalLoginId}", "DELETE", "Bearer", "global"],
+      ["/api/v1/Users/me", "GET", "Bearer", "global"],
     ],
   },
   {
@@ -462,5 +516,5 @@ registerPage({
     "security/authentication-deep",
     "api-reference/admin-api",
   ],
-  lastUpdated: "2026-02-20",
+  lastUpdated: "2026-06-28",
 });

@@ -390,5 +390,138 @@ export const ru = {
       captiveTip:
         "Опасайтесь «плененных зависимостей» (Captive Dependencies), когда сервис Singleton инжектит сервис Scoped. Используйте IServiceScopeFactory.",
     },
+    moduleCollab: {
+      title: "Глубокое Погружение в Межмодульную Коллаборацию",
+      description: "Реальный анализ межмодульной коммуникации в монолитной архитектуре UIS.",
+      intro:
+        "Модули Identity и Entitlements не могут импортировать друг друга (циклическая зависимость). Они взаимодействуют через слой Core — общие абстракции, доменные события и пайплайн Mediator.",
+      coreBridgeTitle: "Мост Слоя Core",
+      coreBridgeIntro:
+        "Вся межмодульная коллаборация проходит через Core.Application.Abstractions. Каждый модуль реализует интерфейсы, определённые в Core, и потребляет интерфейсы других модулей через внедрение зависимостей.",
+      catalogTitle: "Полный Каталог Интерфейсов",
+      catalogIntro:
+        "Эти интерфейсы — полный контракт между модулями. Все определены в Core.Application.Abstractions, реализованы инфраструктурой модулей и зарегистрированы по умолчанию с NoOp в Core.Infrastructure.",
+      noopTitle: "Паттерн Безопасности NoOp",
+      noopIntro:
+        "Каждый межмодульный интерфейс имеет реализацию NoOp в Core.Infrastructure. Когда модуль отсутствует, NoOp гарантирует корректную работу системы в деградированном режиме.",
+      noopWarning:
+        "NoOp — это страховочные сети, а не постоянные значения по умолчанию. В продакшне со всеми загруженными модулями ни один NoOp не должен быть активен.",
+      noopRegistrationTitle: "Регистрация NoOp — TryAddScoped vs AddScoped",
+      noopRegistrationIntro:
+        "Механизм замены NoOp зависит от одного критического правила: Core.Infrastructure регистрирует NoOp с TryAddScoped. Реальные модули регистрируются с AddScoped.",
+      startupDiagnosticsTitle: "Диагностика Запуска — Обнаружение NoOp",
+      startupDiagnosticsIntro:
+        "PostBuildInitialization.cs выполняется после построения DI-контейнера и проверяет критические интерфейсы на наличие активных NoOp реализаций.",
+      featureCheckTitle: "FeatureCheckBehavior — Детальный Анализ",
+      featureCheckIntro:
+        "FeatureCheckBehavior — поведение пайплайна AstraFlow, перехватывающее все команды, реализующие IRequireFeature.",
+      requireFeatureInterfaceTitle: "IRequireFeature — Интерфейс-Маркер Opt-In",
+      requireFeatureInterfaceIntro:
+        "IRequireFeature — интерфейс-маркер без накладных расходов. Команды, реализующие его, включают проверку функциональности через FeatureCheckBehavior.",
+      subscriptionEventTitle: "SubscriptionChangedEvent",
+      subscriptionEventIntro:
+        "SubscriptionChangedEvent — наиболее критическое доменное событие в системе. Публикуется Entitlements при изменении подписки тенанта.",
+      eventTriggersTitle: "Все Команды, Публикующие SubscriptionChangedEvent",
+      eventTriggersIntro:
+        "SubscriptionChangedEvent публикуется любой командой или сервисом Entitlements, изменяющим статус подписки тенанта.",
+      permSyncTitle: "Жизненный Цикл Синхронизации Прав",
+      permSyncIntro:
+        "При обработке SubscriptionChangedEvent в Identity выполняется полная синхронизация прав для затронутого тенанта.",
+      permSyncStep1Title: "Шаг 1: Разрешение Карты Функций",
+      permSyncStep1Content:
+        "Обработчик Entitlements разрешает полную карту эффективных функций: функции издания, объединённые с переопределениями тенанта.",
+      permSyncStep2Title: "Шаг 2: Публикация Доменного События",
+      permSyncStep2Content:
+        "SubscriptionChangedEvent публикуется как доменное событие, перехватывается OutboxInterceptor и сохраняется в таблице OutboxMessages.",
+      permSyncStep3Title: "Шаг 3: Обработчик Событий Identity",
+      permSyncStep3Content:
+        "SubscriptionChangedEventHandler Identity получает событие и делегирует ITenantPermissionManager для синхронизации прав.",
+      permSyncStep4Title: "Шаг 4: Дифф и Применение Прав",
+      permSyncStep4Content:
+        "TenantPermissionManager читает ID прав по модулю, сравнивает с текущими правами тенанта и добавляет или удаляет по необходимости.",
+      permSyncStep5Title: "Шаг 5: Инвалидация Кеша",
+      permSyncStep5Content:
+        "После синхронизации все кеши прав администраторов для этого тенанта инвалидируются. Следующий запрос перезагружает права из БД.",
+      loginEnrichTitle: "Обогащение Ответа Входа",
+      loginEnrichIntro:
+        "LoginCommandHandler Identity обогащает JWT-ответ статусом подписки без прямого импорта Entitlements.",
+      loginEnrichNote:
+        "Если Entitlements не загружен, ISubscriptionStatusProvider возвращает null. JWT-токен всё равно выдаётся, но без данных подписки.",
+      deployTopologyTitle: "Влияние Топологии Развёртывания",
+      deployTopologyIntro:
+        "Паттерн межмодульной коллаборации работает по-разному в режиме монолита и микросервисов.",
+      monolithMode: "Режим Монолита",
+      microserviceMode: "Режим Микросервиса",
+      moduleNameEnvTitle: "Справочник Переменной MODULE_NAME",
+      moduleNameEnvIntro:
+        "Переменная окружения MODULE_NAME задаётся при запуске контейнера и определяет, какие модули загружаются в процесс.",
+      microserviceCaution:
+        "НИКОГДА не развёртывайте Identity и Entitlements в отдельных процессах без реализации шины сообщений для доменных событий.",
+      coDependencyTitle: "Карта Взаимозависимостей Модулей",
+      coDependencyIntro: "Эта таблица документирует каждую межмодульную зависимость в системе.",
+      signupSagaTitle: "Сага Самостоятельной Регистрации",
+      signupSagaIntro:
+        "Самостоятельная регистрация — наиболее сложный пример межмодульной коллаборации.",
+      signupMonolithOnly:
+        "Самостоятельная регистрация поддерживается ТОЛЬКО в режиме монолита. В режиме микросервиса охранник G15 блокирует запуск.",
+      signupStep1Title: "Фаза 1: Создание Тенанта (Identity)",
+      signupStep1Content:
+        "RegisterTenantSelfServiceCommand создаёт тенанта, администратора, роли и публикует SignupPhase1CompletedEvent в одной транзакции.",
+      signupStep2Title: "Фаза 2: Привязка Подписки (Entitlements)",
+      signupStep2Content:
+        "SignupPhase1CompletedEventHandler создаёт подписку. Для бесплатных изданий — немедленная активация. Для платных — создание Stripe-сессии.",
+      signupStep3Title: "Фаза 3: Подтверждение Оплаты (Stripe)",
+      signupStep3Content:
+        "Webhook Stripe обрабатывает подтверждение оплаты и активирует подписку, публикуя SubscriptionChangedEvent.",
+      signupStep4Title: "Фаза 4: Компенсация (при отказе)",
+      signupStep4Content:
+        "Если Stripe-checkout отменён, CompensatePhase1Async удаляет тенанта и администратора для предотвращения осиротевших аккаунтов.",
+      signupEventChainTitle: "Цепочка Событий Регистрации",
+      signupEventChainIntro:
+        "Сага регистрации пересекает границы модулей через три внутрипроцессных доменных события.",
+      bundleExpansionTitle: "Расширение Бандла — Детальные Гранты Прав",
+      bundleExpansionIntro:
+        "Расширение бандла позволяет изданию предоставлять или запрещать конкретные коды прав помимо активации на уровне модуля.",
+      bundleExpansionNote:
+        "Расширения бандла обрабатываются ПОСЛЕ основной синхронизации прав модуля.",
+      adminPermCacheTitle: "IAdminPermissionCache — Кеш Авторизации",
+      adminPermCacheIntro:
+        "IAdminPermissionCache — серверный Redis-кеш, используемый AuthorizationBehavior для проверки прав без обращения к БД на каждый запрос.",
+      currentUserTitle: "ICurrentUser — Универсальный Сквозной Интерфейс",
+      currentUserIntro:
+        "ICurrentUser — единственный интерфейс, используемый всеми модулями напрямую. Заполняется JWT-мидлварой Identity при каждом аутентифицированном запросе.",
+      currentUserNote:
+        "ICurrentUser отличается от других межмодульных интерфейсов. Он не требует NoOp-фолбека — всегда реализован JWT-мидлварой Core.Infrastructure.",
+      featureResolutionTitle: "Цепочка Разрешения Значений Функций",
+      featureResolutionIntro:
+        "При вызове IFeatureChecker.IsEnabledAsync() Entitlements разрешает значение через цепочку приоритетов.",
+      devChecklistTitle: "Чеклист Разработчика",
+      devChecklistIntro:
+        "Выполняйте эти шаги каждый раз при добавлении новой межмодульной зависимости.",
+      checkStep1Title: "Шаг 1: Определить Интерфейс в Core.Application",
+      checkStep1Content:
+        "Определите контракт в Core.Application.Abstractions. Никакой логики реализации, только определение интерфейса.",
+      checkStep2Title: "Шаг 2: Зарегистрировать NoOp-фолбек",
+      checkStep2Content:
+        "Создайте NoOp реализацию в Core.Infrastructure и зарегистрируйте через TryAddScoped.",
+      checkStep3Title: "Шаг 3: Реализовать в Модуле-Владельце",
+      checkStep3Content:
+        "Создайте реальную реализацию в модуле-владельце и зарегистрируйте через AddScoped (не TryAddScoped).",
+      checkStep4Title: "Шаг 4: Добавить Диагностику Запуска",
+      checkStep4Content:
+        "Добавьте проверку в PostBuildInitialization.cs для обнаружения активного NoOp.",
+      addScopedTip:
+        "Всегда используйте AddScoped (без Try) в реальных модулях для гарантии замены NoOp из Core.Infrastructure.",
+      archRulesTitle: "Правила Архитектуры — Сводка",
+      archRulesIntro:
+        "Эти обязательные правила применяются ко всей межмодульной коммуникации в SCRIPE.",
+      doTitle: "Делать",
+      dontTitle: "Никогда Не Делать",
+      securityBoundaryTitle: "Обеспечение Границ Безопасности",
+      securityBoundaryIntro:
+        "Правила изоляции модулей — это не просто архитектурное предпочтение, это границы безопасности.",
+      archCheckCaution:
+        "Запускайте scripe arch-check перед каждым PR, затрагивающим межмодульный код.",
+    },
   },
 };

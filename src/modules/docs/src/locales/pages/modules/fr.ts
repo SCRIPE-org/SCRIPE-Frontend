@@ -357,112 +357,194 @@ export const fr = {
       },
     },
 
-    crmLeads: {
-      title: "Prospects CRM",
-      description:
-        "Pipeline de vente contact-sales — capturer, qualifier, assigner et convertir les prospects en locataires depuis le panneau d'administration.",
-      intro:
-        "Le module de prospects CRM est le pipeline de vente intégré de SCRIPE. Il capture les prospects qui soumettent le formulaire de contact commercial, les enrichit avec des données d'analyse et fournit un flux de travail CRM complet.",
-      ingestionTitle: "Cycle d'intégration et déduplication",
-      ingestionIntro:
-        "Lorsqu'un prospect soumet un formulaire, le système effectue une validation et déduplication avant de créer un PlatformLead (conflits de sous-domaine, ABM collègues, et limite quotidienne de 1000 prospects).",
-      whatIsTitle: "Qu'est-ce que le CRM des prospects ?",
-      whatIsIntro:
-        "Un prospect représente un client potentiel intéressé par la plateforme. Chaque prospect contient des informations de contact et un statut de cycle de vie.",
-      lifecycleTitle: "Cycle de vie des prospects",
-      lifecycleIntro:
-        "Les prospects passent par différents statuts, suivis dans l'historique d'activité.",
-      discoveryTitle: "Intelligence de découverte",
-      discoveryIntro:
-        "Chaque prospect is enrichi de champs de découverte issus du questionnaire d'intégration.",
-      discoveryTip:
-        "Le champ de niveau recommandé est calculé par le moteur de recommandation de l'assistant.",
-      backendTitle: "Architecture Backend",
-      backendIntro:
-        "La fonctionnalité des prospects suit la structure standard à 3 projets de SCRIPE.",
-      entityTitle: "Entité PlatformLead",
-      entityIntro:
-        "PlatformLead hérite d'AuditableEntity. Tous les identifiants sont chiffrés par AES lors des transferts API.",
-      endpointsTitle: "Points de terminaison API",
-      endpointsIntro:
-        "Le LeadsController expose 9 points de terminaison pour gérer le cycle de vie des prospects.",
-      endpointsNote:
-        "Les identifiants retournés par l'API sont chiffrés en AES via IdEncryptionHelper. N'utilisez jamais de GUID bruts sur le frontend.",
-      convertTitle: "Convertir en locataire",
-      convertIntro:
-        "La commande ConvertLeadToTenant est une opération atomique. Le gestionnaire coordonne la création du locataire, l'abonnement et la gestion des erreurs.",
-      emailsTitle: "Notifications par e-mail",
-      emailsIntro:
-        "Deux e-mails HTML sont envoyés de manière asynchrone (fire-and-forget) lors de la soumission du formulaire.",
-      emailsTip:
-        "Configurez l'adresse d'alerte via la clé Leads:SalesNotificationEmail dans appsettings.json.",
-      frontendTitle: "Architecture Frontend",
-      frontendIntro: "Le sous-module frontal suit le modèle View/ViewModel standard de SCRIPE.",
-      frontendEntityTitle: "Entité PlatformLead (Frontend)",
-      frontendEntityIntro:
-        "L'entité wrap les données DTO brutes avec des propriétés calculées et des fonctions d'affichage.",
-      permissionsTitle: "Autorisations",
-      permissionsIntro:
-        "L'accès aux prospects est protégé par de nombreuses autorisations du format standard (module.action).",
-      permissionsTip:
-        "Les vérifications côté frontend sont uniquement pour l'expérience utilisateur. Le backend valide toujours via l'AuthorizationBehavior.",
-      quickStartTitle: "Démarrage rapide",
-      quickStartIntro:
-        "Le flux standard comporte 5 étapes clés, de la soumission à la conversion finale.",
-    },
-    compliance: {
+    // ── Plugins Module (Phase 15) ────────────────────────────
+    plugins: {
       overview: {
-        title: "Module de conformitÃ©",
+        title: "Module de Conformité",
         description:
-          "Automatisation de la conformitÃ© RGPD, CCPA et PDPA : profils, gestion DSR, consentement, conservation, inventaire et rapports.",
+          "Automatisation de la conformité au RGPD, CCPA et PDPA — réglementations, traitement des DSR, gestion du consentement, rétention des données, inventaire et génération de rapports.",
         intro:
-          "Le module ConformitÃ© est le moteur de conformitÃ© rÃ©glementaire intÃ©grÃ© Ã  SCRIPE. Il aide les opÃ©rateurs et locataires Ã  respecter les principales lois (RGPD, CCPA, PDPA) via des outils automatisÃ©s.",
-        infoTitle: "Avis de conformitÃ©",
+          "Le module de Conformité est le moteur de conformité réglementaire intégré de SCRIPE. Il aide les opérateurs de plateformes et leurs locataires à se conformer aux principales lois sur la protection des données (RGPD, CCPA, PDPA) via des outils automatisés pour gérer les demandes des personnes concernées, les registres de consentement, les politiques de rétention et générer des rapports de conformité prêts pour l'audit.",
+        infoTitle: "Avis de Conformité",
         infoContent:
-          "Ce module est essentiel pour maintenir la conformitÃ© et Ã©viter les amendes. Assurez-vous que toutes les fonctionnalitÃ©s sont mappÃ©es correctement.",
-        descDsr: "GÃ¨re les demandes des sujets (Export, Effacement, Rectification)",
-        descConsent: "Suivi immuable des Ã©tats de consentement",
-        descRet: "Applique les politiques de destruction des donnÃ©es",
-        descInv: "Cartographie les PII sensibles dans les modules",
-        descRep: "GÃ©nÃ¨re les rapports RoPA et DPIA",
-        descId: "Module d'identitÃ©",
-        descIdDesc: "Fournit le contexte Utilisateur/Admin et Auth",
-        descEnt: "Module des droits",
-        descEntDesc: "ContrÃ´le l'accÃ¨s aux capacitÃ©s de conformitÃ©",
+          "Le module de Conformité est essentiel pour maintenir le respect des réglementations et éviter les amendes. Assurez-vous que toutes les fonctionnalités sont correctement mappées aux politiques de traitement des données.",
+        featureDsr: "Demandes des Personnes Concernées (DSR)",
+        featureDsrDesc:
+          "Gère les demandes des personnes concernées, y compris l'Exportation, la Suppression, la Rectification et la Restriction avec suivi complet du cycle de vie et surveillance du SLA.",
+        featureConsent: "Gestion du Consentement",
+        featureConsentDesc:
+          "Suivi immuable des états de consentement, instantanés et pistes d'audit pour la conformité à l'Article 6 du RGPD et à la CCPA.",
+        featureRetention: "Politiques de Rétention",
+        featureRetentionDesc:
+          "Applique des politiques de destruction des données basées sur des périodes de rétention configurables avec des actions automatisées de Suppression ou d'Anonymisation.",
+        featureInventory: "Inventaire des Données",
+        featureInventoryDesc:
+          "Cartographie les emplacements sensibles des PII à travers les modules, requis pour le Registre des Activités de Traitement (RoPA) de l'Article 30 du RGPD.",
+        featureReports: "Rapports de Conformité",
+        featureReportsDesc:
+          "Génère des rapports asynchrones prêts pour l'audit (Aperçu RGPD, Résumé DSR, Audit du Consentement, Analyse de la Rétention, Exportation de l'Inventaire).",
+        featureWebhooks: "Événements Webhook",
+        featureWebhooksDesc:
+          "11 événements webhook en temps réel couvrant le cycle de vie des DSR, les changements de consentement, l'application de la rétention et la génération de rapports.",
+        descDsr:
+          "Gère les demandes des personnes concernées (Exportation, Suppression, Rectification)",
+        descConsent: "Suivi immuable des états de consentement et instantanés",
+        descRet: "Applique des politiques de destruction des données basées sur l'âge",
+        descInv: "Cartographie les emplacements sensibles des PII dans tous les modules",
+        descRep: "Génère des rapports de conformité RoPA et DPIA",
+        descId: "Module d'Identité",
+        descIdDesc: "Fournit le contexte Utilisateur/Administrateur et l'Authentification",
+        descEnt: "Module d'Autorisations",
+        descEntDesc: "Contrôle les capacités de conformité via des portes de fonctionnalités",
         conn1: "initie les demandes",
-        conn2: "accorde/rÃ©voque",
-        conn3: "contrÃ´le les politiques",
-        conn4: "guide l'effacement",
-        conn5: "cible les donnÃ©es",
+        conn2: "accorde/révoque",
+        conn3: "contrôle les politiques",
+        conn4: "guide la suppression",
+        conn5: "cible les données",
         conn6: "pistes d'audit",
         conn7: "pistes d'audit",
         th1: "Composant",
-        th2: "ResponsabilitÃ©",
+        th2: "Responsabilité",
         tr1_1: "DsrListViewModel",
-        tr1_2: "GÃ¨re la pagination, le filtrage et l'assignation des demandes (DSR).",
+        tr1_2:
+          "Gère la pagination, le filtrage et l'attribution des demandes de droits des personnes concernées entrantes.",
         tr2_1: "ConsentRecordView",
-        tr2_2: "Affiche le snapshot immuable du consentement avec les mÃ©tadonnÃ©es.",
-        whatIsTitle: "Qu'est-ce que le module ConformitÃ© ?",
+        tr2_2:
+          "Affiche l'instantané de consentement immuable aux côtés de l'agent utilisateur et des métadonnées de timestamp.",
+        whatIsTitle: "Qu'est-ce que le Module de Conformité ?",
         whatIsIntro:
-          "Le module offre six sous-systÃ¨mes couvrant tout le cycle de conformitÃ©. Les locataires SCRIPE obtiennent un systÃ¨me prÃªt pour la production.",
-        subModulesTitle: "Six Sous-systÃ¨mes",
-        subModulesIntro: "Chaque sous-systÃ¨me gÃ¨re un domaine de conformitÃ© spÃ©cifique :",
-        sub1: "Profils de rÃ©glementation â€” Stocke les cadres rÃ©glementaires (RGPD, CCPA, PDPA).",
-        sub2: "Demandes des sujets de donnÃ©es (DSR) â€” GÃ¨re les demandes de droits (export, effacement, rectification, restriction).",
-        sub3: "Gestion du consentement â€” Enregistre, suit et audite les consentements accordÃ©s et rÃ©voquÃ©s.",
-        sub4: "Politiques de conservation â€” DÃ©finit la durÃ©e de conservation et l'action Ã  l'expiration (supprimer ou anonymiser).",
-        sub5: "Inventaire des donnÃ©es â€” Un registre de toutes les catÃ©gories de donnÃ©es personnelles.",
-        sub6: "Rapports de conformitÃ© â€” GÃ©nÃ¨re des rapports asynchrones (AperÃ§u RGPD, RÃ©sumÃ© DSR, Audit des consentements, etc.).",
-        backendTitle: "Architecture Backend",
+          "Le module de Conformité fournit six sous-systèmes interconnectés qui couvrent le cycle de vie complet de conformité. Au lieu de concevoir des outils de conformité de toutes pièces, les locataires de SCRIPE bénéficient d'un système prêt pour la production qui suit, automatise et rend compte de leurs obligations de protection des données.",
+        subModulesTitle: "Six Sous-Systèmes",
+        subModulesIntro: "Chaque sous-système gère un domaine de conformité spécifique :",
+        sub1: "Profils Réglementaires — Stocke les cadres réglementaires (RGPD, CCPA, PDPA) sous lesquels la plateforme opère.",
+        sub2: "Demandes des Personnes Concernées (DSR) — Gère les demandes de droits des personnes concernées (exportation, suppression, rectification, restriction).",
+        sub3: "Gestion du Consentement — Enregistre, suit et audite les octrois et retraits de consentement des utilisateurs.",
+        sub4: "Politiques de Rétention des Données — Définit combien de temps les données sont conservées et ce qui se passe à l'expiration (suppression ou anonymisation).",
+        sub5: "Inventaire des Données — Un registre de toutes les catégories de données personnelles traitées par la plateforme.",
+        sub6: "Rapports de Conformité — Génère des rapports asynchrones prêts pour l'audit (Aperçu RGPD, Résumé DSR, Audit du Consentement, etc.).",
+        regulationsTitle: "Réglementations Prises en Charge",
+        regulationsIntro:
+          "Le module de Conformité de SCRIPE prend en charge l'application de ces principales réglementations de protection des données. Chaque réglementation est pré-configurée avec ses délais de SLA et ses structures de sanctions.",
+        regName: "Réglementation",
+        regRegion: "Région / Juridiction",
+        regSla: "SLA de Réponse",
+        regPenalty: "Sanction Maximale",
+        regGdprRegion: "Union Européenne (UE/EEE)",
+        regCcpaRegion: "Californie, États-Unis",
+        regLgpdRegion: "Brésil",
+        regPopiaRegion: "Afrique du Sud",
+        regPdpaRegion: "Singapour",
+        backendTitle: "Architecture du Backend",
         backendIntro:
-          "Suit la structure SCRIPE Ã  3 projets (Domain / Application / Infrastructure) avec un ComplianceDbContext.",
-        frontendTitle: "Architecture Frontend",
+          "Le backend de conformité suit la structure de module standard de 3 projets SCRIPE (Domain / Application / Infrastructure) avec un ComplianceDbContext et ComplianceController dédiés.",
+        cqrsTitle: "Commandes & Requêtes CQRS",
+        cqrsIntro:
+          "Le module de Conformité utilise le modèle de médiateur CQRS standard de SCRIPE. Les commandes gèrent les opérations d'écriture et les requêtes gèrent les opérations de lecture, chacune ayant des validateurs FluentValidation dédiés.",
+        cqrsType: "Type",
+        cqrsExample: "Gestionnaire",
+        cqrsDesc: "Description",
+        cqrsSubmit: "Soumet une nouvelle demande DSR avec validation et calcul de SLA",
+        cqrsReview: "Examine et met à jour le statut d'une DSR (approuver, rejeter, terminer)",
+        cqrsConsent:
+          "Enregistre un octroi de consentement avec des métadonnées d'audit complètes (IP, agent utilisateur, version)",
+        cqrsRetention:
+          "Met à jour la configuration de la politique de rétention (jours, action, statut actif)",
+        cqrsDsrList:
+          "Liste toutes les DSR avec pagination, filtrage par statut/type/réglementation",
+        cqrsConsentAnalytics: "Agrège les statistiques de consentement par but, statut et période",
+        cqrsDashboard:
+          "Renvoie un tableau de bord de résumé avec des décomptes pour tous les sous-systèmes de conformité",
+        frontendTitle: "Architecture du Frontend",
         frontendIntro:
-          "OrganisÃ© en six sous-modules indÃ©pendants dans src/modules/compliance/ suivant le modÃ¨le View/ViewModel.",
-        endpointsTitle: "AperÃ§u des Endpoints API",
+          "Le frontend est organisé en six sous-modules indépendants sous src/modules/compliance/, chacun avec ses propres couches de domaine, de données et de présentation suivant le modèle View/ViewModel.",
+        endpointsTitle: "Aperçu des Endpoints API",
         endpointsIntro:
-          "Tous les endpoints sont sous /api/v1/compliances/ et nÃ©cessitent l'authentification.",
+          "Tous les points de terminaison sont sous /api/v1/compliances/ et nécessitent une authentification avec la permission compliance.view.",
+        apiRegList: "Liste tous les profils réglementaires configurés pour la plateforme",
+        apiDsrSubmit:
+          "Soumet une nouvelle demande DSR (Exportation, Suppression, Rectification, Restriction)",
+        apiDsrList: "Liste toutes les DSR avec pagination, filtrage par statut/type/réglementation",
+        apiDsrReview:
+          "Examine une DSR — approuver, rejeter, ou marquer comme terminée avec des notes de résolution",
+        apiConsentRecord:
+          "Enregistre un nouvel octroi de consentement avec des métadonnées d'audit complètes",
+        apiConsentAnalytics:
+          "Récupère les analyses de consentement (taux d'octroi/retrait par but)",
+        apiRetentionList: "Liste toutes les politiques de rétention avec le statut d'application",
+        apiRetentionUpdate: "Met à jour une politique de rétention (jours, action, statut actif)",
+        apiInventoryList:
+          "Liste tous les éléments de l'inventaire des données (RGPD Article 30 RoPA)",
+        apiReportsList: "Liste tous les rapports de conformité avec filtres de statut et de type",
+        apiReportDownload: "Télécharge un rapport généré au format CSV, JSON, XLSX ou PDF",
+        apiReportGenerate:
+          "Met en file d'attente un travail de génération de rapport de conformité asynchrone",
+        apiDashboard:
+          "Récupère le résumé du tableau de bord de conformité (décomptes, statut SLA, alertes)",
+        webhooksTitle: "Événements Webhook",
+        webhooksIntro:
+          "Le module de Conformité déclenche 11 événements webhook en temps réel auxquels les systèmes externes peuvent s'abonner. Les événements sont enregistrés via le ComplianceWebhookEventCatalog et distribués par la pipeline IWebhookDispatcher.",
+        webhookEvent: "Clé de l'Événement",
+        webhookCategory: "Catégorie",
+        webhookDesc: "Description",
+        whDsrSubmitted: "Déclenché lors de la soumission d'une nouvelle demande DSR",
+        whDsrStatusChanged:
+          "Déclenché lorsque le statut d'une DSR change (En attente → En cours → Terminé/Rejeté)",
+        whDsrCompleted:
+          "Déclenché lorsqu'une DSR est entièrement terminée (données exportées, supprimées ou rectifiées)",
+        whDsrErasure:
+          "Déclenché lorsqu'une DSR de suppression est confirmée par un administrateur (action nucléaire)",
+        whDsrCancelled: "Déclenché lorsqu'une DSR est annulée avant la fin",
+        whConsentGranted:
+          "Déclenché lorsqu'un utilisateur accorde son consentement pour un but spécifique",
+        whConsentWithdrawn:
+          "Déclenché lorsqu'un utilisateur retire un consentement préalablement accordé",
+        whRetentionUpdated: "Déclenché lors de la mise à jour d'une politique de rétention",
+        whRetentionExec:
+          "Déclenché à la fin d'un travail d'application des politiques de rétention",
+        whReportGenerated:
+          "Déclenché lorsque la génération d'un rapport de conformité se termine avec succès",
+        whReportFailed: "Déclenché lorsque la génération d'un rapport de conformité échoue",
+        quickStartTitle: "Guide de Démarrage Rapide",
+        step1Title: "Alimenter les Données de Conformité",
+        step1Content:
+          "Exécutez le seeder de développement pour remplir les profils réglementaires, les buts de consentement types et les politiques de rétention pour votre environnement de test.",
+        step2Title: "Configurer les Profils Réglementaires",
+        step2Content:
+          "Accédez à Conformité → Réglementations dans le panneau d'administration. Activez les réglementations sous lesquelles votre plateforme opère (RGPD, CCPA, PDPA). Chaque réglementation définit les délais de SLA et les sanctions qui seront appliquées.",
+        step3Title: "Soumettre une DSR de Test",
+        step3Content:
+          "Créez une demande de droits pour tester le cycle de vie. Le système validera la demande, calculera le délai de SLA et la mettra à disposition pour attribution à un officier de conformité.",
+        step4Title: "Enregistrer le Consentement et Configurer la Rétention",
+        step4Content:
+          "Définissez les buts de consentement (Marketing, Analyses, Tiers) et configurez les politiques de rétention pour chaque catégorie de données. La tâche d'application de la rétention appliquera automatiquement les actions configurées lorsque les données dépassent le délai.",
+        step5Title: "Générer un Rapport de Conformité",
+        step5Content:
+          "Mettez en file d'attente un rapport de conformité asynchrone. Le rapport sera généré en arrière-plan et apparaîtra dans la liste des rapports dès qu'il sera prêt. Téléchargez-le au format CSV, JSON, XLSX ou PDF.",
+        securityTitle: "Considérations de Sécurité",
+        securityIntro:
+          "Les données de conformité sont parmi les plus sensibles de la plateforme. Tous les points de terminaison sont protégés par l'authentification JWT, l'autorisation basée sur les rôles et le transfert d'identifiants chiffrés. Les données personnelles dans les DSR et les registres de consentement sont soumises à des restrictions de sécurité au niveau du champ.",
+        securityWarningTitle: "Avertissement de Protection des Données",
+        securityWarningContent:
+          "Les données de conformité contiennent des informations personnelles (PII). Assurez-vous que les contrôles d'accès, la journalisation d'audit et le chiffrement des données appropriés sont configurés. Ne divulguez jamais d'endpoints de conformité bruts sans authentification.",
+        secDoTitle: "Pratiques Recommandées",
+        secDo1: "Activer la sécurité au niveau du champ pour les champs PII dans les réponses DSR",
+        secDo2:
+          "Configurer des secrets de webhook pour tous les abonnements aux événements de conformité",
+        secDo3:
+          "Définir des politiques de rétention pour les données de conformité elles-mêmes (méta-conformité)",
+        secDo4:
+          "Examiner régulièrement les journaux d'audit pour détecter les tentatives d'accès non autorisées",
+        secDontTitle: "Anti-patterns à Éviter",
+        secDont1:
+          "Ne jamais exposer les points de terminaison DSR sans authentification réservée aux administrateurs (AdminOnly)",
+        secDont2:
+          "Ne jamais sauter le suivi de version du consentement — cela annule la piste d'audit",
+        secDont3:
+          "Ne jamais supprimer définitivement les dossiers de conformité — utilisez toujours la suppression logique (soft-delete)",
+        secDont4:
+          "Ne jamais contourner le répartiteur de webhooks pour les événements de conformité",
       },
+
       dsr: {
         title: "Droits des personnes concernées (DSR)",
         description: "Description",

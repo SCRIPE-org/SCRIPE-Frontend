@@ -646,6 +646,39 @@
   color: hsl(0 84% 60%);
 }
 
+/* ─── Info variant (blue, informational) ────────────────────── */
+.docs-info[data-variant="info"] {
+  background: hsl(199 89% 48% / 0.06);
+  border-color: hsl(199 89% 48% / 0.25);
+  color: hsl(var(--foreground));
+}
+
+.docs-info[data-variant="info"] .docs-info-icon {
+  color: hsl(199 89% 48%);
+}
+
+/* ─── Success variant (emerald green, achievement) ───────────── */
+.docs-info[data-variant="success"] {
+  background: hsl(158 64% 52% / 0.06);
+  border-color: hsl(158 64% 52% / 0.25);
+  color: hsl(var(--foreground));
+}
+
+.docs-info[data-variant="success"] .docs-info-icon {
+  color: hsl(158 64% 52%);
+}
+
+/* ─── Caution variant (amber, softer than warning) ───────────── */
+.docs-info[data-variant="caution"] {
+  background: hsl(43 96% 56% / 0.07);
+  border-color: hsl(43 96% 56% / 0.3);
+  color: hsl(var(--foreground));
+}
+
+.docs-info[data-variant="caution"] .docs-info-icon {
+  color: hsl(43 96% 56%);
+}
+
 /* ─── Flowchart ───────────────────────────────────────────────────────── */
 .docs-flowchart {
   margin-bottom: 1.5rem;
@@ -1303,6 +1336,39 @@
 .docs-comparison-neutral .docs-comparison-list li::before {
   content: "•";
   color: hsl(var(--muted-foreground));
+}
+
+/* ─── Comparison: warning variant (amber caution column) ─────── */
+.docs-comparison-warning {
+  border-color: hsl(38 92% 50% / 0.3);
+  background: hsl(38 92% 50% / 0.04);
+}
+
+.docs-comparison-warning .docs-comparison-header {
+  background: hsl(38 92% 50% / 0.1);
+  border-bottom-color: hsl(38 92% 50% / 0.2);
+  color: hsl(38 92% 50%);
+}
+
+.docs-comparison-warning .docs-comparison-list li::before {
+  content: "⚡";
+}
+
+/* ─── Comparison: info variant (cyan informational column) ──── */
+.docs-comparison-info {
+  border-color: hsl(199 89% 48% / 0.25);
+  background: hsl(199 89% 48% / 0.04);
+}
+
+.docs-comparison-info .docs-comparison-header {
+  background: hsl(199 89% 48% / 0.08);
+  border-bottom-color: hsl(199 89% 48% / 0.15);
+  color: hsl(199 89% 48%);
+}
+
+.docs-comparison-info .docs-comparison-list li::before {
+  content: "ℹ";
+  color: hsl(199 89% 48%);
 }
 
 /* ─── Feature Grid ───────────────────────────────────────────────── */

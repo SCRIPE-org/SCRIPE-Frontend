@@ -2,7 +2,7 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  //  Architecture 
+  // ─── Architecture ───────────────────────────────────
   {
     type: "heading",
     level: 2,
@@ -27,9 +27,9 @@ const sections: DocSection[] = [
         type: "warning",
       },
       { id: "ds", label: "DownloadService", type: "primary" },
-      { id: "cache", label: "Cache: ETag check  304", type: "info" },
-      { id: "range", label: "Range: partial  206", type: "info" },
-      { id: "stream", label: "FileStream: 64KB buffer  200", type: "success" },
+      { id: "cache", label: "Cache: ETag check -> 304", type: "info" },
+      { id: "range", label: "Range: partial -> 206", type: "info" },
+      { id: "stream", label: "FileStream: 64KB buffer -> 200", type: "success" },
     ],
     connections: [
       { from: "auth", to: "ds" },
@@ -41,7 +41,46 @@ const sections: DocSection[] = [
     ],
   },
 
-  //  Controller Endpoints 
+  // ─── Download Session Token Generation ──────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.downloadExport.sessionTokenTitle",
+    id: "session-token",
+  },
+  { type: "paragraph", contentKey: "features.downloadExport.sessionTokenIntro" },
+  {
+    type: "flowchart",
+    direction: "vertical",
+    title: "Download Session Token Generation",
+    nodes: [
+      { id: "req", label: "Request Token (POST /api/downloads/session)", type: "default" },
+      { id: "auth", label: "Verify JWT & Permissions", type: "primary" },
+      { id: "check", label: "Verify File Existence", type: "warning" },
+      { id: "gen", label: "Generate unique Session ID (GUID N)", type: "primary" },
+      { id: "redis", label: "Store in Redis cache (TTL: ExpirationHours)", type: "success" },
+      { id: "resp", label: "Return sessionId to Client", type: "info" },
+      {
+        id: "get",
+        label: "Request File (GET /api/downloads/session/{sessionId})",
+        type: "default",
+      },
+      { id: "lookup", label: "Fetch Session from Redis Cache", type: "primary" },
+      { id: "stream", label: "Stream file to client with 64KB buffer", type: "success" },
+    ],
+    connections: [
+      { from: "req", to: "auth" },
+      { from: "auth", to: "check" },
+      { from: "check", to: "gen" },
+      { from: "gen", to: "redis" },
+      { from: "redis", to: "resp" },
+      { from: "resp", to: "get", label: "Share URL with external users" },
+      { from: "get", to: "lookup" },
+      { from: "lookup", to: "stream", label: "If exists & not expired" },
+    ],
+  },
+
+  // ─── Controller Endpoints ───────────────────────────
   {
     type: "heading",
     level: 2,
@@ -72,7 +111,57 @@ const sections: DocSection[] = [
     ],
   },
 
-  //  Resumable Downloads
+  // ─── Excel & CSV Export Engines ─────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.downloadExport.exportEnginesTitle",
+    id: "export-engines",
+  },
+  { type: "paragraph", contentKey: "features.downloadExport.exportEnginesIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "ExcelExportService.cs",
+    code: `public Task<byte[]> GenerateExcelReportAsync(AuditExportData data, CancellationToken ct = default)
+{
+    using var workbook = new XLWorkbook();
+
+    BuildSummarySheet(workbook, data);   // Sheet 1: Executive Summary & KPIs
+    BuildDataSheet(workbook, data, ct);  // Sheet 2: Audit Logs Table (failures in light-red)
+    BuildSecuritySheet(workbook, data);  // Sheet 3: Security Alerts & Suspicious IPs
+
+    using var ms = new MemoryStream();
+    workbook.SaveAs(ms);
+    return Task.FromResult(ms.ToArray());
+}`,
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "CsvExportService.cs",
+    code: `public Task<byte[]> GenerateCsvAsync(AuditExportData data, CancellationToken ct = default)
+{
+    using var ms = new MemoryStream();
+    
+    // Write UTF-8 BOM first for automatic Excel double-click encoding detection
+    ms.Write(Encoding.UTF8.GetPreamble());
+
+    using var writer = new StreamWriter(ms, new UTF8Encoding(false), leaveOpen: true);
+    using var csv = new CsvWriter(writer, new CsvConfiguration(CultureInfo.InvariantCulture)
+    {
+        HasHeaderRecord = true,
+        ShouldQuote = args => true // Security: always quote fields to prevent CSV Injection
+    });
+
+    // Write header and rows...
+    csv.NextRecord();
+    writer.Flush();
+    return Task.FromResult(ms.ToArray());
+}`,
+  },
+
+  // ─── Resumable Downloads ────────────────────────────
   {
     type: "heading",
     level: 2,
@@ -93,7 +182,7 @@ private (long? Start, long? End) ParseRangeHeader(long fileSize)
     long? start = string.IsNullOrEmpty(parts[0]) ? null : long.Parse(parts[0]);
     long? end = string.IsNullOrEmpty(parts[1]) ? null : long.Parse(parts[1]);
 
-    // Handle suffix range (last N bytes): "bytes=-500"  last 500 bytes
+    // Handle suffix range (last N bytes): "bytes=-500" -> last 500 bytes
     if (!start.HasValue && end.HasValue)
     {
         start = fileSize - end.Value;
@@ -112,7 +201,7 @@ Content-Range: bytes 1024-2048/10240
 Accept-Ranges: bytes`,
   },
 
-  //  ETag Caching 
+  // ─── ETag Caching ───────────────────────────────────
   { type: "heading", level: 2, titleKey: "features.downloadExport.etagTitle", id: "etag" },
   {
     type: "code",
@@ -121,14 +210,14 @@ Accept-Ranges: bytes`,
     code: `// Generate deterministic ETag from file metadata
 private static string GenerateETag(FileInfo fileInfo)
 {
-    var data = $"{fileInfo.FullName}|{fileInfo.Length}|{fileInfo.LastWriteTimeUtc:O}";
+    var data = \`\${fileInfo.FullName}|\${fileInfo.Length}|\${fileInfo.LastWriteTimeUtc:O}\`;
     var hash = MD5.HashData(System.Text.Encoding.UTF8.GetBytes(data));
     return $"\\"{Convert.ToHexString(hash)}\\"";
 }`,
   },
   { type: "paragraph", contentKey: "features.downloadExport.etagNote" },
 
-  //  Session-Based Downloads
+  // ─── Session-Based Downloads ────────────────────────
   { type: "heading", level: 2, titleKey: "features.downloadExport.sessionTitle", id: "session" },
   { type: "paragraph", contentKey: "features.downloadExport.sessionIntro" },
   {
@@ -150,7 +239,7 @@ private static string GenerateETag(FileInfo fileInfo)
   },
   { type: "info", variant: "warning", contentKey: "features.downloadExport.sessionWarning" },
 
-  //  Path Traversal Prevention
+  // ─── Path Traversal Prevention ──────────────────────
   {
     type: "heading",
     level: 2,
@@ -169,7 +258,7 @@ private static string GenerateETag(FileInfo fileInfo)
   },
   { type: "paragraph", contentKey: "features.downloadExport.pathTraversalNote" },
 
-  //  FileStream Configuration 
+  // ─── FileStream Configuration ───────────────────────
   {
     type: "heading",
     level: 2,
@@ -185,7 +274,7 @@ private static string GenerateETag(FileInfo fileInfo)
     FileMode.Open,
     FileAccess.Read,
     FileShare.Read,      // Allow concurrent reads
-    bufferSize: 64 * 1024, // 64KB buffer (4Ã default)
+    bufferSize: 64 * 1024, // 64KB buffer (4x default)
     useAsync: true         // Async I/O for non-blocking reads
 );`,
   },

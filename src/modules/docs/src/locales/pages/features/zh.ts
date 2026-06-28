@@ -502,6 +502,12 @@ export const zh = {
         "Multi-Page Branding — Configure independent branding for Login, Forgot Password, and Reset Password pages.",
       relatedBuilder:
         "Login Page Builder — Drag-and-drop visual canvas for building custom login page layouts with 14 component types.",
+      logoPathsTitle: "Logo 路径与分辨率",
+      logoPathsIntro:
+        "租户徽标资产存储在专用的本地或云存储目录中（默认：'FileHost/TenantLogos/'），通过 'tenant-logo' 文件存储方案进行结构化。存储的文件命名为 '{TenantCode}_logo.{extension}'，以防止命名冲突并强制执行租户隔离。服务的徽标请求路径通过 '/api/files/tenant-logos/{filename}' 进行路由，该路径验证媒体扩展名（JPG、PNG、WEBP、GIF、SVG）并强制执行 10MB 的文件大小限制。",
+      cssPreviewsTitle: "实时 CSS 预览管道",
+      cssPreviewsIntro:
+        "Customizer Studio 中的实时预览框架通过使用 useStudioBridge 钩子的安全、经过源验证的 postMessage 通道进行通信。当管理员更改侧边栏面板中的任何设计令牌时，父窗口会推送一个包含完整序列化 StudioDraft 对象的实时 postMessage 事件。预览 iframe（例如 LoginPreviewShell）拦截该消息并调用 useLoginBrandingTokens，以立即更新文档 :root 元素上的 CSS 自定义变量（--login-*），从而提供零延迟的 DOM 重绘，而无需触发全页刷新。",
     },
     dashboardBuilder: {
       title: "仪表盘构建器",
@@ -532,6 +538,9 @@ export const zh = {
       archTitle: "架构与文件映射",
       archIntro: "仪表盘构建器在 Core 层中以7个文件实现，遵循 SCRIPE 基于 Provider 的架构模式。",
       archTip: "添加新设置时，请扩展 settings-provider.tsx 中的 Settings 接口和 defaultSettings。",
+      widgetConfigTitle: "小部件和网格配置架构",
+      widgetConfigIntro:
+        "放置在仪表板构建器画布上的每个小部件都是 12 列 CSS 网格上的定位块。构建器配置它们的列、行、对齐方式、特定属性、zIndex 和可见性，并将它们与现有主题标记一起序列化到 DashboardThemeJson 中。",
     },
     themeMarketplace: {
       title: "Theme Marketplace",
@@ -727,6 +736,15 @@ export const zh = {
         "Domain Layer: ThemeDetail.ts (entity), IThemeMarketplaceService.ts, IThemeMarketplaceRepository.ts",
       sourceViewModel:
         "ViewModel: useThemeMarketplace.ts (gallery state), useStudioViewModel.ts (preview/apply integration)",
+      devProfilesTitle: "主题开发者门户与个人资料",
+      devProfilesIntro:
+        "主题市场允许注册的主题开发者发布他们的设计。开发者个人资料通过 DeveloperProfileController 进行注册和管理，并存储为租户绑定的 DeveloperProfile 实体。个人资料的验证仅限于平台管理员（VerifyDeveloperCommand），而付款和佣金率通过 AppFinancialsController（需要 developerprofiles.verify 和 developerpayouts.process 等权限）和支付网关（Stripe Connect）进行跟踪。",
+      purchaseVerifyTitle: "购买验证流程",
+      purchaseVerifyIntro:
+        "高级主题和仅限独立购买的主题在租户应用之前需要明确购买。系统会在数据库中检查租户的层级和现有购买记录（GetPurchasedThemeIdsAsync）。如果需要购买，系统会将管理员重定向到安全的 Stripe Checkout 会话。付款成功后，Stripe 会发出一个包含关联 ID 的 checkout.session.completed Webhook，在数据库中创建一条 LoginThemePurchase 记录，从而授予对该主题的永久访问权限。",
+      downloadsVerifyTitle: "主题下载验证",
+      downloadsVerifyIntro:
+        "为了安全地下载自定义主题预设或离线配置资产，系统实现了一个基于会话的文件下载框架。媒体 DownloadsController 通过 IDownloadService 生成一个受时间限制的、密码学随机的 sessionId。用户通过对 /api/v1/downloads/session/{sessionId} 发送安全的 GET 请求来下载数据包，从而避免在下载链接中使用客户端身份验证标头，同时保护文件免受未经授权的访问。",
     },
     multiPageBranding: {
       title: "Multi-Page Branding",
@@ -808,6 +826,12 @@ export const zh = {
         "Types: StudioDraft.ts (pageOverrides interface), ThemeTypes.ts (page override type definitions)",
       sourceSeeder:
         "Backend: LoginThemeSeeder.cs (PageOverrideDesign records, BuildFullThemeJson pages serialization)",
+      domainMatchingTitle: "域名匹配与租户隔离",
+      domainMatchingIntro:
+        "为了在运行时解析正确的租户上下文，API 网关和后端 TenantContextMiddleware 将检查传入的请求标头。当超级管理员下钻到特定的租户工作区时，客户端应用程序会在 'X-Tenant-Context' 标头中发送加密的租户 ID。中间件拦截请求，检查 tenants.drill_down 权限，使用 AES 解密标头，并将其映射到 CurrentUserService.TenantId。对于到达自定义域名的标准客户端流量，主机名解析会将主机标头与租户域名映射进行匹配。",
+      dnsCnameTitle: "自定义域名 DNS CNAME 验证",
+      dnsCnameIntro:
+        "管理员可以通过 TenantDomain 端点配置自定义域名（例如 login.acme.com）。该域名必须通过 RFC 1123 验证，且不能超过租户的 Tenancy.MaxCustomDomains 配额。为了验证域名所有权，系统会生成一个以 'scr_' 为前缀的唯一验证令牌。管理员必须创建一个 CNAME 记录将域名指向平台端点，并为包含该令牌的 '_scr-verify.{domain}' 创建一个 TXT 记录。DnsClient.NET 查询 TXT 记录以在激活域名之前确认匹配。",
     },
     loginPageBuilder: {
       title: "Login Page Builder",
@@ -999,24 +1023,34 @@ export const zh = {
       sourceTitle: "源文件参考",
       sourceIntro:
         "重构后的仪表板中心横跨4个模块(dashboard、audit、security、analytics),每个模块都有自己完整的6层堆栈。",
+      realtimeTitle: "SignalR 实时更新",
+      realtimeIntro:
+        "仪表板中心与 SignalR 集成，提供实时更新和缓存失效。它与审核日志侦听器共享连接，在收到新的审核事件时使 'dashboard'查询缓存失效。这会触发自动的 TanStack 查询更新，而无需重新加载页面或基于时间间隔的轮询。",
     },
     selfServiceSignup: {
       title: "自助注册与 B2B2C 租户初始化",
-      description: "自动化多租户初始化流程，集成 OTP 邮箱验证、区域货币自动识别及 Stripe 结账支付。",
-      intro: "SCRIPE 包含一个完善的 B2B2C 自助租户初始化引擎，通过双阶段事务萨迦（Saga）进行编排。它协同数据库事务、订阅配置及支付渠道绑定，并提供在支付放弃时的自动补偿回滚机制。",
+      description:
+        "自动化多租户初始化流程，集成 OTP 邮箱验证、区域货币自动识别及 Stripe 结账支付。",
+      intro:
+        "SCRIPE 包含一个完善的 B2B2C 自助租户初始化引擎，通过双阶段事务萨迦（Saga）进行编排。它协同数据库事务、订阅配置及支付渠道绑定，并提供在支付放弃时的自动补偿回滚机制。",
       flowTitle: "初始化工作流",
       phase1Title: "阶段 1：身份与资源初始化事务",
-      phase1Intro: "阶段 1 在单个数据库事务中执行。它生成租户工作区、绑定默认子域名、初始化基础配置、构建默认安全角色，并创建租户所有者管理员账户。",
+      phase1Intro:
+        "阶段 1 在单个数据库事务中执行。它生成租户工作区、绑定默认子域名、初始化基础配置、构建默认安全角色，并创建租户所有者管理员账户。",
       validationTitle: "子域名与身份验证",
-      validationIntro: "为了维护安全并防止路由冲突，初始化系统应用了严格的格式规则，并通过保留字黑名单验证子域名的可用性。",
+      validationIntro:
+        "为了维护安全并防止路由冲突，初始化系统应用了严格的格式规则，并通过保留字黑名单验证子域名的可用性。",
       tableConstraint: "条件",
       tableRule: "规则 / 模式",
       tableReason: "安全逻辑",
       emailVerificationTitle: "邮箱验证令牌",
-      emailVerificationIntro: "在启动 Saga 事务前，必须先验证邮箱。系统会发放一个带有 HMAC-SHA256 加密签名的验证凭证，有效期为 15 分钟。",
+      emailVerificationIntro:
+        "在启动 Saga 事务前，必须先验证邮箱。系统会发放一个带有 HMAC-SHA256 加密签名的验证凭证，有效期为 15 分钟。",
       phase2Title: "阶段 2：订阅授权与支付对接",
-      phase2Intro: "阶段 2 将新创建的租户与订阅管理模块进行绑定。如果选择的订阅版本为付费版，系统将创建 Stripe 支付会话并重定向用户。",
-      compensationWarning: "如果付费会话被用户中途放弃或创建失败，系统会执行自动补偿流程（CompensatePhase1Async）回滚已创建的租户和管理员，防止产生垃圾数据孤立账户。",
+      phase2Intro:
+        "阶段 2 将新创建的租户与订阅管理模块进行绑定。如果选择的订阅版本为付费版，系统将创建 Stripe 支付会话并重定向用户。",
+      compensationWarning:
+        "如果付费会话被用户中途放弃或创建失败，系统会执行自动补偿流程（CompensatePhase1Async）回滚已创建的租户和管理员，防止产生垃圾数据孤立账户。",
     },
   },
 };

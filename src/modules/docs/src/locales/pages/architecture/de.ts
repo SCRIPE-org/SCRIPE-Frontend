@@ -388,5 +388,171 @@ export const de = {
       captiveTip:
         "Achten Sie auf Captive Dependencies (wenn ein Singleton einen Scoped-Service injiziert).",
     },
+    moduleCollab: {
+      title: "Tiefenanalyse der Modul-Kollaboration",
+      description:
+        "Wie Identity und Entitlements über Core-Abstraktionen zusammenarbeiten, das NoOp-Sicherheitsmuster, der SubscriptionChangedEvent-Lebenszyklus und die Auswirkungen der Deployment-Topologie.",
+      intro:
+        "SCRIPE hat 5 Module (Identity, Entitlements, Compliance, Plugins, Marketplace). Sie sind hermetisch versiegelt — keine Cross-Imports erlaubt. Dennoch müssen sie zusammenarbeiten, um Berechtigungen, Abonnementfunktionen und Abrechnung zu steuern. Die Lösung: Die Core.Application.Abstractions-Schicht fungiert als typisierte, interfacebasierte Brücke. Jede modulübergreifende Interaktion fließt über diese Brücke — niemals durch direkte Modul-zu-Modul-Imports. Diese Seite dokumentiert jedes Interface, jedes Muster und jeden Laufzeitfluss, der dies ermöglicht.",
+      coreBridgeTitle: "Die Core-Schicht-Brücke",
+      coreBridgeIntro:
+        "Core.Application.Abstractions ist das Herzstück der modulübergreifenden Kommunikation. Es definiert mehr als 32 Interface-Verträge. Identity.Infrastructure und Entitlements.Infrastructure implementieren jeweils ihre Seite dieser Verträge. Die AstraFlow-Pipeline-Behaviors und Modul-Handler konsumieren ausschließlich die Interfaces — nie die konkreten Implementierungen. Das bedeutet, das System kompiliert und läuft identisch, unabhängig davon, ob Entitlements bereitgestellt ist oder nicht.",
+      catalogTitle: "Vollständiger Katalog modulübergreifender Interfaces",
+      catalogIntro:
+        "Die folgende Tabelle dokumentiert jedes Interface, das Modulgrenzen überschreitet. In Core.Application definiert, sind diese Interfaces der einzige legitime Weg für Module, miteinander zu kommunizieren.",
+      noopTitle: "Das NoOp-Sicherheitsmuster",
+      noopIntro:
+        "Core.Infrastructure registriert eine NoOp-Implementierung (keine Operation) für jedes modulübergreifende Interface. Diese werden mit TryAddScoped registriert, was bedeutet, dass echte Modul-Implementierungen sie beim Deployment überschreiben. Wenn ein Modul nicht lädt, hält der NoOp das System still am Laufen. Startup-Diagnosen erkennen, wenn kritische Interfaces noch NoOp sind, und geben LogCritical-Warnungen aus.",
+      noopWarning:
+        "SICHERHEITSKRITISCH: Wenn IFeatureChecker in der Produktion als NoOpFeatureChecker verbleibt, erscheinen ALLE Editions-Features aktiviert und ALLE Kontingente sind für jeden Mandanten unbegrenzt. Die Startup-Diagnose gibt einen LogCritical-Log aus, aber dies stoppt den Server NICHT. Vergewissern Sie sich immer, dass das Entitlements-Modul geladen ist, wenn Sie abonnementbasierte Feature-Kontrolle nutzen.",
+      noopTableTitle: "NoOp-Implementierungsregister",
+      featureCheckTitle: "FeatureCheckBehavior — Der Kontrollpunkt",
+      featureCheckIntro:
+        "FeatureCheckBehavior ist ein AstraFlow-Pipeline-Behavior, das Commands abfängt, die IRequireFeature implementieren. Es löst die Mandanten-ID aus dem aktuellen Benutzerkontext auf, ruft IFeatureChecker.IsEnabledAsync auf und lässt die Anfrage entweder durch oder gibt ein 403 Forbidden-Ergebnis zurück. Da es IFeatureChecker (keine konkrete Klasse) verwendet, arbeitet es transparent, unabhängig davon, ob Entitlements bereitgestellt ist oder nicht. Wenn Entitlements fehlt, gibt NoOpFeatureChecker für jede Prüfung true zurück, wodurch das Behavior zu einem transparenten Pass-through ohne Overhead wird.",
+      featureCheckFlowTitle: "FeatureCheck-Entscheidungsfluss",
+      featureCheckCodeTitle: "Einen Command in das Feature-Gating einbinden",
+      subscriptionEventTitle:
+        "SubscriptionChangedEvent — Das Rückgrat der Berechtigungssynchronisation",
+      subscriptionEventIntro:
+        "SubscriptionChangedEvent ist das kritischste modulübergreifende Domain-Event in SCRIPE. Von Entitlements veröffentlicht, von Identity behandelt. Es trägt die vollständige effektive Feature-Sammlung, den Abonnementstatus und vorab erweiterte Bundle-Daten. Identity verwendet dieses Event, um den gesamten Berechtigungspool des Mandanten neu aufzubauen — Berechtigungen für neu aktivierte Module hinzuzufügen und Berechtigungen für deaktivierte zu entfernen. So wird eine Abrechnungsänderung in Entitlements zu einer Berechtigungsänderung in Identity, ohne direkte Modulkopplung.",
+      subscriptionEventDefTitle: "Event-Definition",
+      subscriptionEventTriggersTitle: "Alle Commands, die dieses Event veröffentlichen",
+      permSyncTitle: "Berechtigungssynchronisations-Lebenszyklus — Schritt für Schritt",
+      permSyncIntro:
+        "Wenn sich das Abonnement eines Mandanten ändert, wird ein präziser 5-Schritte-Lebenszyklus ausgeführt, um seinen Berechtigungspool neu aufzubauen. Diesen Lebenszyklus zu verstehen ist unerlässlich für das Debugging von Berechtigungsproblemen und das Design neuer abonnementgesteuerter Features.",
+      permSyncStep1Title: "Schritt 1 — Entitlements löst Editions-Features auf",
+      permSyncStep1Content:
+        "Der Entitlements-Command-Handler löst die vollständige effektive Feature-Karte für den Mandanten auf. Dies fügt die Basis-Features der Edition mit TenantFeatureOverrides und BundleExpansion-Ergänzungen zusammen. Das Ergebnis ist ein flaches Dictionary von Feature-Name zu Wert. Daraus leitet es ab, welche Modulnamen aktiviert sind.",
+      permSyncStep2Title: "Schritt 2 — Event per Outbox veröffentlicht",
+      permSyncStep2Content:
+        "Das SubscriptionChangedEvent wird als Domain-Event ausgelöst. Der EF Core OutboxInterceptor erfasst es vor SaveChangesAsync. Das Event wird in derselben Datenbanktransaktion wie die Abonnementänderung persistiert. Nach dem Commit verteilt der OutboxProcessor das Event. Dies garantiert Exactly-once-Zustellung.",
+      permSyncStep3Title: "Schritt 3 — Identity-Handler verarbeitet das Event",
+      permSyncStep3Content:
+        "Identity.Applications SubscriptionChangedEventHandler empfängt das Event. Wenn IsRevocation true ist, synchronisiert es mit leeren Modulen, um alle Berechtigungen zu entfernen. Andernfalls synchronisiert es für alle aktivierten Module und verarbeitet Bundle-Erweiterungen.",
+      permSyncStep4Title: "Schritt 4 — ITenantPermissionManager synchronisiert den Pool",
+      permSyncStep4Content:
+        "TenantPermissionManager verwendet IPermissionReader, um Berechtigungs-IDs für aktivierte Module zu ermitteln. Es filtert nach RequiredFeature, vergleicht mit aktuellen Datensätzen, fügt fehlende hinzu und entfernt überschüssige Einträge atomar.",
+      permSyncStep5Title: "Schritt 5 — Administrator-Berechtigungs-Cache invalidiert",
+      permSyncStep5Content:
+        "Nach der Synchronisation wird IAdminPermissionCache.InvalidateAll() aufgerufen. Die gecachten Berechtigungen jedes Administrators werden gelöscht. Bei der nächsten API-Anfrage lädt AuthorizationBehavior aus der Datenbank neu.",
+      loginEnrichTitle: "Login-Antwort-Anreicherung — ISubscriptionStatusProvider",
+      loginEnrichIntro:
+        "Der Login-Handler von Identity reichert Antworten mit dem Abonnementstatus über ISubscriptionStatusProvider (von Entitlements implementiert) an. So kann das Frontend Warnungen für Kulanzzeiten anzeigen, ohne dass Identity Entitlements importiert.",
+      loginEnrichNote:
+        "Wenn Entitlements nicht bereitgestellt ist, gibt der NoOp null für Abonnementinformationen zurück. Das Frontend zeigt keinen Abonnementstatus an — ein sicheres, korrektes Verhalten für Deployments ohne Abrechnung.",
+      deployTopologyTitle: "Auswirkungen der Deployment-Topologie",
+      deployTopologyIntro:
+        "Die Umgebungsvariable MODULE_NAME steuert, welche Module geladen werden, und verändert damit grundlegend die modulübergreifende Kommunikation. Der Monolith-Modus unterstützt alle Kollaborationsmuster. Der Microservice-Modus hat kritische Einschränkungen.",
+      monolithMode: 'Monolith-Modus (MODULE_NAME="")',
+      microserviceMode: 'Microservice-Modus (MODULE_NAME="Identity")',
+      microserviceCaution:
+        "KRITISCH: Self-Service-Anmeldung ist im Microservice-Modus blockiert. Der G15-Guard in PostBuildInitialization.cs wirft InvalidOperationException, wenn die Anmeldung mit einem bestimmten MODULE_NAME aktiviert ist. Anmeldungsereignisse gehen zwischen Prozessen lautlos verloren. v2-Roadmap: Outbox + Message-Bus wird diese Lücke schließen.",
+      coDependencyTitle: "Modul-Co-Abhängigkeitskarte",
+      coDependencyIntro:
+        "Diese Tabelle dokumentiert jede formale Abhängigkeit zwischen Modulen und zeigt, was jedes Modul von einem anderen benötigt und wie es über Core-Interfaces erfüllt wird.",
+      signupSagaTitle: "Die Self-Service-Anmeldung Cross-Module-Saga",
+      signupSagaIntro:
+        "Die B2B2C-Mandanten-Self-Service-Anmeldung ist die komplexeste modulübergreifende Saga in SCRIPE. Sie umspannt Identity, Entitlements und Stripe.",
+      signupMonolithOnly:
+        "NUR MONOLITH: Die Anmeldungs-Saga verwendet In-Process-Domain-Events, die Modulgrenzen überschreiten. Dies funktioniert nur, wenn beide Module im selben Prozess laufen. Der Microservice-Modus blockiert die Anmeldung beim Start über den G15-Guard.",
+      signupStep1Title: "Phase 1 — Identity stellt den Mandanten bereit",
+      signupStep1Content:
+        "RegisterTenantSelfServiceCommand wird atomar ausgeführt: erstellt Mandant, richtet Subdomain ein, stellt Standard-Rollen bereit, erstellt Admin-Konto, veröffentlicht SignupPhase1CompletedEvent.",
+      signupStep2Title: "Phase 2 — Entitlements verknüpft das Abonnement",
+      signupStep2Content:
+        "SignupPhase1CompletedEventHandler erstellt TenantSubscription. Die kostenlose Edition aktiviert sich sofort mit SubscriptionChangedEvent. Die kostenpflichtige Edition erstellt eine Stripe-Checkout-Session.",
+      signupStep3Title: "Phase 3 — Stripe bestätigt, Entitlements aktiviert",
+      signupStep3Content:
+        "StripeWebhookHelper verarbeitet checkout.session.completed, aktiviert das Abonnement, veröffentlicht SubscriptionChangedEvent. Identity erteilt Editions-Berechtigungen.",
+      signupStep4Title: "Kompensation — Bei abgebrochenem Checkout",
+      signupStep4Content:
+        "CompensatePhase1Async löscht den bereitgestellten Mandanten und Admin, um verwaiste Konten zu verhindern. SignupReconciliationSweepJob bereinigt täglich veraltete Anmeldungen.",
+      devChecklistTitle:
+        "Entwickler-Checkliste — Eine neue modulübergreifende Abhängigkeit hinzufügen",
+      devChecklistIntro:
+        "Wenn zwei Module Daten teilen müssen, folgen Sie diesem genauen Muster. Importieren Sie niemals ein Modul aus einem anderen. Gehen Sie immer über Core.Application.Abstractions.",
+      checkStep1Title: "1. Den Vertrag in Core.Application.Abstractions definieren",
+      checkStep1Content:
+        "Erstellen Sie ein Interface in Core.Application/Abstractions/. Halten Sie es minimal. Fügen Sie XML-Kommentare hinzu, die erklären, welches Modul implementiert und welches konsumiert.",
+      checkStep2Title: "2. Einen NoOp in Core.Infrastructure registrieren",
+      checkStep2Content:
+        "Erstellen Sie einen NoOp in Core.Infrastructure/Services/ und registrieren Sie ihn mit TryAddScoped. Geben Sie sichere neutrale Werte zurück. Verwenden Sie niemals NotImplementedException.",
+      checkStep3Title: "3. In der Infrastructure des Zielmoduls implementieren",
+      checkStep3Content:
+        "Erstellen Sie eine echte Implementierung in {Module}.Infrastructure/CrossModule/. Registrieren Sie mit AddScoped (nicht TryAddScoped), um den von Core zuerst registrierten NoOp zu überschreiben.",
+      checkStep4Title: "4. Startup-Diagnose in PostBuildInitialization.cs hinzufügen",
+      checkStep4Content:
+        "Fügen Sie eine Prüfung hinzu, um zu erkennen, ob das Interface zu NoOp auflöst. Loggen Sie LogCritical, wenn dies der Fall ist. Dies warnt Entwickler vor falsch konfigurierten Deployments, ohne den Server zu stoppen.",
+      addScopedTip:
+        "Verwenden Sie immer AddScoped (nicht TryAddScoped) für echte Modul-Implementierungen. TryAddScoped registriert nur, wenn noch nichts registriert ist — und der NoOp wurde zuerst registriert.",
+
+      // NoOp Registration
+      noopRegistrationTitle: "NoOp-Registrierung — TryAddScoped vs AddScoped",
+      noopRegistrationIntro:
+        "Der gesamte NoOp-Überschreibungsmechanismus hängt von einer kritischen Regel ab: Core.Infrastructure registriert NoOps mit TryAddScoped. Echte Modul-Implementierungen registrieren sich mit AddScoped. Da TryAddScoped nur registriert, wenn noch kein Service registriert ist, überschreibt ein nachfolgender AddScoped-Aufruf ihn bedingungslos. Die Reihenfolge ist wichtig: Core.Infrastructure wird immer zuerst geladen (es ist eine transitive Abhängigkeit aller Modul-Infrastructure-Projekte), sodass der NoOp immer zuerst registriert wird und die echte Implementierung des Moduls immer gewinnt.",
+
+      // Startup Diagnostics
+      startupDiagnosticsTitle: "Startdiagnosen — Erkennung von NoOp-Lecks",
+      startupDiagnosticsIntro:
+        "PostBuildInitialization.cs wird ausgeführt, nachdem der DI-Container erstellt und alle Module registriert wurden. Er überprüft den aufgelösten Typ für kritische Schnittstellen. Wenn der aufgelöste Typ noch eine NoOp-Implementierung ist, protokolliert er eine LogCritical-Meldung. Dies ist das Sicherheitsnetz in der Produktion — es stoppt den Server nicht, erzeugt aber eine sichtbare Warnung in Logs und Monitoring-Dashboards, auf die Betreiber sofort reagieren können.",
+
+      // IRequireFeature Interface
+      requireFeatureInterfaceTitle: "IRequireFeature — Die Opt-In-Markierungsschnittstelle",
+      requireFeatureInterfaceIntro:
+        "IRequireFeature ist eine Markierungsschnittstelle ohne Overhead. Befehle, die sie implementieren, entscheiden sich für editions-basiertes Feature-Gating über FeatureCheckBehavior. Befehle, die sie nicht implementieren, passieren das Verhalten ohne jeglichen Overhead. Dieses Design bedeutet, dass Feature-Gating explizit und opt-in ist — bestehende Befehle werden nie versehentlich geblockt, und neue Befehle deklarieren ihre Feature-Anforderungen bewusst.",
+
+      // Event Triggers
+      eventTriggersTitle: "Alle Befehle, die SubscriptionChangedEvent veröffentlichen",
+      eventTriggersIntro:
+        "SubscriptionChangedEvent wird von jedem Entitlements-Befehl oder -Service veröffentlicht, der den Abonnementstatus eines Mandanten ändert. Die folgende Tabelle dokumentiert jeden Auslösepunkt im System. Das Verständnis dieser Liste ist wichtig für das Debuggen von Berechtigungssynchronisierungsproblemen — wenn die Berechtigungen eines Mandanten falsch sind, ist einer dieser Auslöser die Quelle der letzten Synchronisierung.",
+
+      // Signup Event Chain
+      signupEventChainTitle: "Registrierungs-Ereigniskette — Modul-übergreifender Ereignisfluss",
+      signupEventChainIntro:
+        "Die Registrierungs-Saga überschreitet Modulgrenzen über drei In-Process-Domänenereignisse. SignupPhase1CompletedEvent fließt von Identity zu Entitlements. SignupCheckoutCompletedEvent fließt innerhalb von Entitlements (Stripe-Webhook zur Aktivierung). SubscriptionChangedEvent fließt von Entitlements zurück zu Identity. Diese bidirektionale Ereigniskette erklärt, warum die Registrierung NUR im Monolith-Modus funktioniert — alle drei Ereignisse erfordern, dass beide Module im selben Prozess laufen.",
+
+      // Bundle Expansion
+      bundleExpansionTitle: "Bundle-Erweiterung — Granulare Berechtigungszuweisungen",
+      bundleExpansionIntro:
+        "Bundle-Erweiterung ermöglicht es einer Edition, spezifische Berechtigungscodes über die Modul-Level-Aktivierung hinaus zu erteilen oder zu verweigern, die SubscriptionChangedEvent trägt. Wenn ein Abonnement Bundles enthält, trägt das SubscriptionChangedEvent vorab erweiterte BundleExpansionDto-Einträge. Der Ereignishandler von Identity verarbeitet jedes Bundle separat über ITenantPermissionManager.SyncBundlePermissionsAsync, der Erteilungs- und Verweigerungscodes gegen den aktuellen Berechtigungssatz des Mandanten abgleicht.",
+      bundleExpansionNote:
+        "Bundle-Erweiterungen werden NACH der Hauptmodul-Berechtigungssynchronisierung verarbeitet. Wenn der Erteilungscode eines Bundles mit einer Modulberechtigungsentfernung in Konflikt steht (d.h. das Modul ist deaktiviert, aber das Bundle versucht, eine Berechtigung davon zu erteilen), hat die Modulrevokation Vorrang. Bundle-Erweiterungen können keine Berechtigungen von deaktivierten Modulen neu erteilen.",
+
+      // IAdminPermissionCache
+      adminPermCacheTitle: "IAdminPermissionCache — Der Autorisierungscache",
+      adminPermCacheIntro:
+        "IAdminPermissionCache ist der serverseitige Redis-Cache, den AuthorizationBehavior verwendet, um Berechtigungen zu prüfen, ohne bei jeder Anfrage die Datenbank zu treffen. Er speichert einen denormalisierten Snapshot der Berechtigungen, Rollen und Feldprojektionen jedes Administrators. Der Cache-Eintrag wird bei der ersten Anfrage nach einem Cache-Miss lazy befüllt. InvalidateAll() wird nach Massen-Berechtigungssynchronisierungsoperationen (SubscriptionChangedEvent-Verarbeitung) aufgerufen, um alle Admins bei ihrer nächsten Anfrage zum Neuladen zu zwingen.",
+
+      // ICurrentUser
+      currentUserTitle: "ICurrentUser — Die allgegenwärtige Querschnittsschnittstelle",
+      currentUserIntro:
+        "ICurrentUser ist die einzige Schnittstelle, die jedes Modul direkt verwendet — es ist keine modulübergreifende Brücke wie die anderen, sondern eine grundlegende Querschnittsangelegenheit, die überall verfügbar ist. Sie wird von Identitys JWT-Middleware bei jeder authentifizierten Anfrage befüllt und stellt den aktuellen Admin-/Benutzerkontext jedem Handler in jedem Modul zur Verfügung. Jedes Modul hängt von Core.Application ab, das ICurrentUser definiert, sodass es immer ohne modulübergreifende Zeremonie verfügbar ist.",
+      currentUserNote:
+        "ICurrentUser unterscheidet sich von den anderen modulübergreifenden Schnittstellen. Sie wird von Identity-Middleware befüllt und universell konsumiert. Sie benötigt KEINEN NoOp-Fallback — sie wird immer von der JWT-Middleware von Core.Infrastructure implementiert, unabhängig davon, welche Module geladen sind. Sie ist die einzige Ausnahme vom NoOp-Muster.",
+
+      // Feature Resolution
+      featureResolutionTitle: "Feature-Wert-Auflösungskette",
+      featureResolutionIntro:
+        "Wenn IFeatureChecker.IsEnabledAsync() für einen Mandanten und ein Feature aufgerufen wird, löst Entitlements den Wert über eine Prioritätskette auf. TenantFeatureOverride (manuelle Überschreibung pro Mandant) gewinnt immer. Wenn keine Überschreibung existiert, wird der EditionFeature-Wert verwendet. Wenn die Edition das Feature nicht definiert, wird Feature.DefaultValue verwendet. Für numerische Features mit mehreren aktiven Abonnements (Trial + Basisplan) gewinnt der MAX-Wert. Für boolesche Features gewinnt true. Für String-Features gewinnt das Base-Abonnement.",
+
+      // Architecture Rules
+      archRulesTitle: "Modulzusammenarbeit — Zusammenfassung der Architekturregeln",
+      archRulesIntro:
+        "Dies sind die verbindlichen Regeln für die gesamte modulübergreifende Kommunikation in SCRIPE. Sie werden durchgesetzt durch scripe arch-check (30-Regel-Tiefenscan), Projektreferenz-Einschränkungen in der .sln-Datei und Code-Review. Verletzungen dieser Regeln erzeugen zirkuläre Abhängigkeiten, Deployment-Kopplung und Testunmöglichkeit.",
+      doTitle: "✅ Tue dies",
+      dontTitle: "❌ Tue dies niemals",
+
+      // Security Boundary
+      securityBoundaryTitle: "Durchsetzung von Sicherheitsgrenzen",
+      securityBoundaryIntro:
+        "Die Modul-Isolationsregeln sind nicht nur eine architektonische Präferenz — sie sind Sicherheitsgrenzen. Die modulübergreifende Isolation stellt sicher, dass ein Fehler oder Kompromittierung in einem Modul nicht direkt auf den Datenspeicher eines anderen Moduls zugreifen kann. Diese Regeln werden auf mehreren Ebenen durchgesetzt: Projektreferenz-Einschränkungen, Architektur-Lint-Regeln und Code-Review-Checklisten.",
+      archCheckCaution:
+        "Führen Sie scripe arch-check vor jedem PR aus, der modulübergreifenden Code berührt. Das --json-Flag beendet mit Code 1, wenn kritische Verletzungen gefunden werden, was es als CI-Gate geeignet macht. Architekturverletzungen sind bei der PR-Überprüfung viel günstiger zu beheben als nach einem Deployment.",
+
+      // MODULE_NAME env
+      moduleNameEnvTitle: "MODULE_NAME-Umgebungsvariablen-Referenz",
+      moduleNameEnvIntro:
+        "Die Umgebungsvariable MODULE_NAME wird beim Container-Start gesetzt und bestimmt, welche Module in den Prozess geladen werden. Die Datei ModuleRegistration.cs in Host/API liest diese Variable und registriert bedingt nur die DI-Registrierungen des angegebenen Moduls und seinen EF Core DbContext. Wenn sie leer ist (die Standardeinstellung), werden alle Module registriert — dies ist der Monolith-Modus, der alle modulübergreifenden Zusammenarbeitsmuster unterstützt.",
+    },
   },
 };

@@ -383,5 +383,180 @@ export const ar = {
       captiveTip:
         "تحدث التبعية المقيدة (Captive Dependency) عندما تقوم خدمة Singleton بحقن خدمة Scoped. استخدم IServiceScopeFactory لتجنب ذلك.",
     },
+    moduleCollab: {
+      title: "التعاون بين الوحدات — تحليل معمق",
+      description:
+        "كيفية تعاون وحدتي Identity وEntitlements عبر تجريدات Core، ونمط NoOp للسلامة، ودورة حياة SubscriptionChangedEvent، وتأثير طوبولوجيا النشر.",
+      intro:
+        "يحتوي SCRIPE على 5 وحدات (Identity وEntitlements وCompliance وPlugins وMarketplace). وهي معزولة تمامًا — لا يُسمح بالاستيرادات المتقاطعة. غير أنها يجب أن تتعاون لإدارة الصلاحيات وميزات الاشتراكات والفوترة. الحل: تعمل طبقة Core.Application.Abstractions كجسر مبني على الواجهات البرمجية. كل تفاعل بين الوحدات يمر عبر هذا الجسر — ولا يمر أبدًا عبر استيرادات مباشرة بين الوحدات. تُوثق هذه الصفحة كل واجهة ونمط وتدفق وقت تشغيل يجعل هذا ممكنًا.",
+
+      coreBridgeTitle: "جسر طبقة Core",
+      coreBridgeIntro:
+        "Core.Application.Abstractions هو قلب التواصل بين الوحدات. يُعرّف أكثر من 32 عقد واجهة برمجية. تُنفذ Identity.Infrastructure وEntitlements.Infrastructure كلٌّ منهما الجانب المقابل لها من هذه العقود. تستهلك سلوكيات خط أنابيب AstraFlow ومعالجات الوحدات هذه الواجهات فقط — ولا تستهلك أبدًا التطبيقات الفعلية. هذا يعني أن النظام يُجمَّع ويعمل بالتطابق سواء تم نشر Entitlements أم لا.",
+
+      catalogTitle: "فهرس الواجهات المتقاطعة الكاملة",
+      catalogIntro:
+        "يُوثق الجدول التالي كل واجهة تتجاوز حدود الوحدات. مُعرَّفة في Core.Application، هذه الواجهات هي الطريقة القانونية الوحيدة للتواصل بين الوحدات.",
+
+      noopTitle: "نمط سلامة NoOp",
+      noopIntro:
+        "تُسجِّل Core.Infrastructure تطبيق NoOp (عملية فارغة) لكل واجهة متقاطعة. تُسجَّل هذه التطبيقات باستخدام TryAddScoped، مما يعني أن تطبيقات الوحدات الحقيقية تتجاوزها عند النشر. إذا فشلت وحدة في التحميل، يُبقي NoOp النظام على قيد الحياة بصمت. تكتشف تشخيصات بدء التشغيل متى تظل الواجهات الحيوية في حالة NoOp وتُصدر تحذيرات LogCritical.",
+      noopWarning:
+        "تحذير أمني بالغ: إذا بقي IFeatureChecker في الإنتاج كـ NoOpFeatureChecker، ستبدو جميع ميزات الإصدار مُفعَّلة وجميع الحصص غير محدودة لكل مستأجر. تُصدر تشخيصات بدء التشغيل سجل LogCritical، لكن هذا لا يوقف الخادم. تحقق دائمًا من تحميل وحدة Entitlements عند استخدام بوابة الميزات المبنية على الاشتراكات.",
+      noopTableTitle: "سجل تطبيقات NoOp",
+
+      featureCheckTitle: "FeatureCheckBehavior — نقطة البوابة",
+      featureCheckIntro:
+        "FeatureCheckBehavior هو سلوك خط أنابيب AstraFlow يعترض الأوامر التي تُنفذ IRequireFeature. يُحل معرف المستأجر من سياق المستخدم الحالي، ويستدعي IFeatureChecker.IsEnabledAsync، ثم يمرر الطلب أو يُعيد نتيجة 403 ممنوع. بما أنه يستخدم IFeatureChecker (لا فئة فعلية)، فإنه يعمل بشفافية سواء تم نشر Entitlements أم لا. عند غياب Entitlements، يُعيد NoOpFeatureChecker القيمة true لكل فحص، مما يجعل السلوك ممرًا شفافًا بلا أعباء.",
+      featureCheckFlowTitle: "تدفق قرار FeatureCheck",
+      featureCheckCodeTitle: "إضافة أمر إلى بوابة الميزات",
+
+      subscriptionEventTitle: "SubscriptionChangedEvent — العمود الفقري لمزامنة الصلاحيات",
+      subscriptionEventIntro:
+        "SubscriptionChangedEvent هو أهم حدث مجال متقاطع في SCRIPE. يُنشره Entitlements ويُعالجه Identity. يحمل مجموعة الميزات الفعالة الكاملة وحالة الاشتراك وبيانات الحزمة الموسعة مسبقًا. يستخدم Identity هذا الحدث لإعادة بناء مجموعة صلاحيات المستأجر بالكامل — بإضافة صلاحيات الوحدات المُفعَّلة حديثًا وإزالة صلاحيات الوحدات المُعطَّلة. هكذا يتحول تغيير الفوترة في Entitlements إلى تغيير في الصلاحيات في Identity دون أي اقتران مباشر بين الوحدات.",
+      subscriptionEventDefTitle: "تعريف الحدث",
+      subscriptionEventTriggersTitle: "جميع الأوامر التي تُنشر هذا الحدث",
+
+      permSyncTitle: "دورة حياة مزامنة الصلاحيات — خطوة بخطوة",
+      permSyncIntro:
+        "عند تغيير اشتراك المستأجر، تُنفَّذ دورة حياة دقيقة من 5 خطوات لإعادة بناء مجموعة صلاحياته. يُعدّ فهم هذه الدورة ضروريًا لتشخيص مشاكل الصلاحيات وتصميم ميزات جديدة مدفوعة بالاشتراكات.",
+      permSyncStep1Title: "الخطوة 1 — يحل Entitlements ميزات الإصدار",
+      permSyncStep1Content:
+        "يُحل معالج أمر Entitlements (مثل AssignEditionCommandHandler) خريطة الميزات الفعالة الكاملة للمستأجر. تدمج هذه الخريطة الميزات الأساسية للإصدار مع أي تجاوزات TenantFeatureOverrides وإضافات ميزات BundleExpansion. النتيجة قاموس مسطح من اسم الميزة إلى القيمة. منه يُشتق أسماء الوحدات المُفعَّلة.",
+      permSyncStep2Title: "الخطوة 2 — نشر الحدث عبر Outbox",
+      permSyncStep2Content:
+        "يُرفع SubscriptionChangedEvent على الكيان كحدث مجال. يلتقطه OutboxInterceptor الخاص بـ EF Core قبل SaveChangesAsync. يُحفظ الحدث في جدول OutboxMessages في نفس معاملة قاعدة البيانات كتغيير الاشتراك. بعد الإيداع، يُرسل OutboxProcessor الحدث إلى جميع المعالجين المسجلين. هذا يضمن التسليم مرة واحدة بالضبط حتى لو تعطل العملية في منتصف التنفيذ.",
+      permSyncStep3Title: "الخطوة 3 — معالج Identity يعالج الحدث",
+      permSyncStep3Content:
+        "يستقبل SubscriptionChangedEventHandler في Identity.Application الحدث. إذا كانت IsRevocation صحيحة، يستدعي SyncPermissionsForModulesAsync بقائمة وحدات فارغة، مما يُزيل جميع صلاحيات الإصدار. في الحالة غير الإلغائية، يزامن الصلاحيات لجميع الوحدات المُفعَّلة ويعالج كل BundleExpansion.",
+      permSyncStep4Title: "الخطوة 4 — ITenantPermissionManager يزامن المجموعة",
+      permSyncStep4Content:
+        "يُنفذ Identity.Infrastructure.TenantPermissionManager واجهة ITenantPermissionManager. يستخدم IPermissionReader للحصول على جميع معرفات الصلاحيات للوحدات المُفعَّلة من قاعدة بيانات Identity. يُصفيها بـ RequiredFeature، ثم يُحدد الفرق ويُضيف المفقودة ويُزيل الزائدة بشكل ذري.",
+      permSyncStep5Title: "الخطوة 5 — إبطال ذاكرة التخزين المؤقت للصلاحيات",
+      permSyncStep5Content:
+        "بعد مزامنة مجموعة الصلاحيات، يُستدعى IAdminPermissionCache.InvalidateAll() للمستأجر. تُمسح مجموعة الصلاحيات المخزنة مؤقتًا لكل مسؤول من الذاكرة المحلية وذاكرة Redis. في طلب API التالي، يعيد AuthorizationBehavior تحميل الصلاحيات من قاعدة البيانات ويُعيد ملء الذاكرة المؤقتة.",
+
+      loginEnrichTitle: "إثراء استجابة تسجيل الدخول — ISubscriptionStatusProvider",
+      loginEnrichIntro:
+        "يحتاج معالج تسجيل الدخول في Identity إلى إعادة حالة اشتراك المستأجر حتى يتمكن الواجهة الأمامية من عرض تحذيرات فترة السماح وعروض الترقية وشارات الإصدار. لكن Identity لا يمكنه استيراد Entitlements. الحل: يُحقن ISubscriptionStatusProvider في معالج تسجيل الدخول. تُنفذ Entitlements.Infrastructure هذه الواجهة، وتُعيد TenantSubscriptionInfo بالحالة واسم الإصدار ومرحلة السماح وتاريخ الانتهاء.",
+      loginEnrichNote:
+        "إذا لم يتم نشر Entitlements، يُعيد تطبيق NoOp القيمة null لمعلومات الاشتراك. ستحتوي استجابة تسجيل الدخول على حقول اشتراك null، ولن تعرض الواجهة الأمامية أي حالة اشتراك — وهو سلوك آمن وصحيح للنشر بدون فوترة.",
+
+      deployTopologyTitle: "تأثير طوبولوجيا النشر",
+      deployTopologyIntro:
+        "يتحكم متغير البيئة MODULE_NAME في الوحدات التي يتم تحميلها. هذا يغير جذريًا كيفية عمل التواصل بين الوحدات. يدعم وضع المونوليث جميع أنماط التعاون. أما وضع الخدمات المصغرة فله قيود حيوية يجب فهمها قبل استخراج الوحدات.",
+      monolithMode: 'وضع المونوليث (MODULE_NAME="")',
+      microserviceMode: 'وضع الخدمة المصغرة (MODULE_NAME="Identity")',
+      microserviceCaution:
+        "حرج: يُحظر التسجيل الذاتي عند بدء التشغيل في وضع الخدمات المصغرة. يحتوي PostBuildInitialization.cs على حارس G15 يُطلق InvalidOperationException إذا كان Signup:Enabled=true ومُحدَّد MODULE_NAME (غير بوابة). تعتمد ملحمة التسجيل على SignupCheckoutCompletedEvent وSubscriptionChangedEvent الموزَّعَين داخليًا. في وضع الخدمات المصغرة، تُفقد هذه الأحداث بصمت. خارطة طريق الإصدار الثاني: صندوق البريد الصادر + ناقل الرسائل سيسد هذه الثغرة.",
+
+      coDependencyTitle: "خريطة الاعتماد المتبادل بين الوحدات",
+      coDependencyIntro:
+        "يُوثق هذا الجدول كل اعتماد رسمي بين الوحدات، ويُظهر بالضبط ما تحتاجه كل وحدة من الأخرى وكيف يُلبَّى هذا الاحتياج عبر واجهات Core. استخدمه كمرجع عند التخطيط لاستخراج الخدمات المصغرة أو عند تشخيص مشاكل تدفق البيانات المتقاطعة.",
+
+      signupSagaTitle: "ملحمة التسجيل الذاتي متعددة الوحدات",
+      signupSagaIntro:
+        "التسجيل الذاتي للمستأجر B2B2C هو الملحمة المتقاطعة الأكثر تعقيدًا في SCRIPE. تمتد عبر Identity (توفير المستأجر) وEntitlements (ربط الاشتراك والفوترة) وStripe (معالجة الدفع). فهم هذا التدفق أساسي لدعم العملاء وصيانة البنية التحتية للتسجيل.",
+      signupMonolithOnly:
+        "مونوليث فقط: تستخدم ملحمة التسجيل أحداث مجال داخلية (SignupPhase1CompletedEvent وSignupCheckoutCompletedEvent وSubscriptionChangedEvent) تتجاوز حدود Identity وEntitlements. هذا يعمل فقط عندما تعمل كلتا الوحدتين في نفس العملية. يحظر وضع الخدمات المصغرة التسجيل عند بدء التشغيل عبر الحارس G15 في PostBuildInitialization.cs.",
+      signupStep1Title: "المرحلة 1 — Identity يُوفِّر المستأجر",
+      signupStep1Content:
+        "يُنفَّذ RegisterTenantSelfServiceCommand (في وحدة Identity) في معاملة قاعدة بيانات ذرية واحدة. ينشئ كيان المستأجر ويُعدّ النطاق الفرعي والعلامة التجارية الافتراضية ويُوفر أدوار الأمان الافتراضية وينشئ حساب المسؤول المالك. عند النجاح، ينشر SignupPhase1CompletedEvent.",
+      signupStep2Title: "المرحلة 2 — Entitlements يربط الاشتراك",
+      signupStep2Content:
+        "يعالج SignupPhase1CompletedEventHandler (في وحدة Entitlements) الحدث. ينشئ سجل TenantSubscription للإصدار المختار. إذا كان الإصدار مجانيًا، يُفعَّل فورًا وينشر SubscriptionChangedEvent لمنح الصلاحيات. إذا كان الإصدار مدفوعًا، ينشئ جلسة Stripe Checkout ويُعيد رابط الدفع.",
+      signupStep3Title: "المرحلة 3 — Stripe يؤكد، Entitlements يُفعِّل",
+      signupStep3Content:
+        "عند إتمام المستخدم الدفع عبر Stripe، يُرسل Stripe خطاف checkout.session.completed. يعالج StripeWebhookHelper الحدث، يجد SignupSession المقابلة، يُفعِّل الاشتراك وينشر SubscriptionChangedEvent. يمنح معالج Identity جميع صلاحيات الإصدار لمجموعة صلاحيات المستأجر الجديد.",
+      signupStep4Title: "التعويض — في حال التخلي عن الدفع",
+      signupStep4Content:
+        "إذا تخلى المستخدم عن دفع Stripe، يُستدعى CompensatePhase1Async لحذف المستأجر المُوفَّر وحساب المسؤول، مما يمنع الحسابات المعلقة. يعمل SignupReconciliationSweepJob يوميًا لتنظيف التسجيلات غير المكتملة.",
+
+      devChecklistTitle: "قائمة تحقق المطور — إضافة اعتماد متقاطع جديد",
+      devChecklistIntro:
+        "عند الحاجة إلى مشاركة البيانات بين وحدتين، اتبع هذا النمط بالضبط. لا تستورد وحدة من أخرى أبدًا. اذهب دائمًا عبر Core.Application.Abstractions.",
+      checkStep1Title: "1. عرِّف العقد في Core.Application.Abstractions",
+      checkStep1Content:
+        "أنشئ ملف واجهة جديدًا في Core.Application/Abstractions/. يجب أن تكون الواجهة في أدنى حد — فقط ما تحتاجه الوحدة المستهلكة فعليًا. أضف توثيق XML يوضح أي وحدة تُنفذها وأيها تستهلكها.",
+      checkStep2Title: "2. سجِّل NoOp في Core.Infrastructure",
+      checkStep2Content:
+        "أنشئ تطبيق NoOp في Core.Infrastructure/Services/. سجِّله باستخدام TryAddScoped في Core.Infrastructure/DependencyInjection.cs. يجب أن يُعيد NoOp قيمة آمنة محايدة (null أو فارغة أو false أو -1 للقيم غير المحدودة). لا تستخدم NotImplementedException في NoOp أبدًا.",
+      checkStep3Title: "3. نفِّذه في Infrastructure الوحدة الهدف",
+      checkStep3Content:
+        "أنشئ التطبيق الحقيقي في {Module}.Infrastructure/CrossModule/ أو {Module}.Infrastructure/Services/. سجِّله باستخدام AddScoped (ليس TryAddScoped) في DependencyInjection.cs للوحدة. استخدام AddScoped يضمن تجاوز التطبيق الحقيقي للـ NoOp المسجل أولًا بواسطة Core.",
+      checkStep4Title: "4. أضف تشخيص بدء التشغيل في PostBuildInitialization.cs",
+      checkStep4Content:
+        "أضف فحصًا في PostBuildInitialization.cs لاكتشاف ما إذا كانت الواجهة لا تزال تحل كـ NoOp. سجِّل تحذيرًا LogCritical إذا كان كذلك. هذا هو شبكة الأمان التي تُنبه المطورين إلى عمليات النشر الخاطئة في الإنتاج دون إيقاف الخادم.",
+      addScopedTip:
+        "استخدم دائمًا AddScoped (ليس TryAddScoped) عند تسجيل تطبيقات الوحدات الحقيقية. TryAddScoped يسجل فقط إذا لم يكن هناك تسجيل موجود — وCore.Infrastructure سجّل بالفعل NoOp باستخدام TryAddScoped أولًا. للتجاوز، تحتاج إلى AddScoped غير المشروط.",
+
+      // NoOp Registration
+      noopRegistrationTitle: "تسجيل NoOp — TryAddScoped مقابل AddScoped",
+      noopRegistrationIntro:
+        "تعتمد آلية التجاوز بالكامل على قاعدة واحدة حاسمة: تُسجّل Core.Infrastructure الـ NoOps باستخدام TryAddScoped، بينما تُسجّل تطبيقات الوحدات الحقيقية باستخدام AddScoped. نظرًا لأن TryAddScoped لا يُسجّل إلا إذا لم تكن هناك خدمة مُسجَّلة بعد، فإن استدعاء AddScoped بعده يُلغيه دون شروط. الترتيب مهم: تُحمَّل Core.Infrastructure دائمًا أولًا (إذ إنها تبعية متعدية لجميع مشاريع Infrastructure الخاصة بالوحدات)، لذا يُسجَّل الـ NoOp أولًا دائمًا، وتفوز التطبيقات الحقيقية للوحدة دائمًا.",
+
+      // Startup Diagnostics
+      startupDiagnosticsTitle: "تشخيصات بدء التشغيل — اكتشاف تسرب NoOp",
+      startupDiagnosticsIntro:
+        "يعمل PostBuildInitialization.cs بعد بناء حاوية الحقن وتسجيل جميع الوحدات. يتحقق من النوع المُحلَّل للواجهات الحرجة. إذا كان النوع المُحلَّل لا يزال تطبيق NoOp، فإنه يُسجّل رسالة LogCritical. هذا هو شبكة الأمان في الإنتاج — لا تُوقف الخادم، لكنها تُنتج تنبيهًا مرئيًا في السجلات ولوحات المراقبة يمكن للمشغلين التصرف بناءً عليه فورًا.",
+
+      // IRequireFeature Interface
+      requireFeatureInterfaceTitle: "IRequireFeature — واجهة الوصول الاختياري",
+      requireFeatureInterfaceIntro:
+        "IRequireFeature هي واجهة علامة لا تُكلّف أي عبء. الأوامر التي تُطبّقها تختار بوابة الميزات المعتمدة على الإصدار عبر FeatureCheckBehavior. الأوامر التي لا تُطبّقها تمر عبر السلوك دون أي عبء. يعني هذا التصميم أن بوابة الميزات صريحة واختيارية — لا يُقيَّد أي أمر موجود بشكل عرضي، والأوامر الجديدة تُصرّح بمتطلبات ميزاتها بوعي.",
+
+      // Event Triggers
+      eventTriggersTitle: "جميع الأوامر التي تنشر SubscriptionChangedEvent",
+      eventTriggersIntro:
+        "يُنشَر SubscriptionChangedEvent من قِبَل أي أمر أو خدمة في Entitlements تُغيّر حالة اشتراك المستأجر. يوثّق الجدول التالي كل نقطة تشغيل في النظام. فهم هذه القائمة ضروري لتصحيح أخطاء مزامنة الأذونات — إذا كانت أذونات مستأجر خاطئة، فأحد هذه المُشغِّلات هو مصدر آخر مزامنة.",
+
+      // Signup Event Chain
+      signupEventChainTitle: "سلسلة أحداث التسجيل — تدفق الأحداث عبر الوحدات",
+      signupEventChainIntro:
+        "تعبر رحلة التسجيل حدود الوحدات عبر ثلاثة أحداث نطاق داخلية. ينتقل SignupPhase1CompletedEvent من Identity إلى Entitlements. ينتقل SignupCheckoutCompletedEvent داخل Entitlements (من Stripe webhook إلى التفعيل). ينتقل SubscriptionChangedEvent من Entitlements مرة أخرى إلى Identity. هذه السلسلة الثنائية الاتجاه هي سبب عمل التسجيل فقط في وضع الـ monolith — تتطلب الأحداث الثلاثة وجود كلتا الوحدتين في نفس العملية.",
+
+      // Bundle Expansion
+      bundleExpansionTitle: "توسعة الحزم — منح أذونات دقيقة",
+      bundleExpansionIntro:
+        "تتيح توسعة الحزم لإصدار ما منح أو رفض أكواد أذونات محددة تتجاوز تفعيل مستوى الوحدة الذي يحمله SubscriptionChangedEvent. عند احتواء اشتراك ما على حزم، يحمل SubscriptionChangedEvent إدخالات BundleExpansionDto مُوسَّعة مسبقًا. يعالج معالج الأحداث في Identity كل حزمة بشكل منفصل عبر ITenantPermissionManager.SyncBundlePermissionsAsync، الذي يُقارن أكواد المنح والرفض مقابل مجموعة أذونات المستأجر الحالية.",
+      bundleExpansionNote:
+        "تُعالَج توسعات الحزم بعد مزامنة أذونات الوحدة الرئيسية. إذا تعارض كود منح الحزمة مع إزالة إذن وحدة (أي أن الوحدة معطّلة لكن الحزمة تحاول منح إذن منها)، فإن إلغاء الوحدة يسود. لا يمكن لتوسعات الحزم إعادة منح أذونات من وحدات معطّلة.",
+
+      // IAdminPermissionCache
+      adminPermCacheTitle: "IAdminPermissionCache — ذاكرة التخزين المؤقت للتفويض",
+      adminPermCacheIntro:
+        "IAdminPermissionCache هي ذاكرة التخزين المؤقت Redis من جانب الخادم التي يستخدمها AuthorizationBehavior للتحقق من الأذونات دون الوصول إلى قاعدة البيانات في كل طلب. تخزّن لقطة مُبسَّطة من أذونات كل مدير وأدواره وإسقاطات حقوله. تُملأ إدخالات الذاكرة المؤقتة بشكل كسول عند أول طلب بعد عدم الإصابة. يُستدعى InvalidateAll() بعد عمليات مزامنة الأذونات الجماعية (معالجة SubscriptionChangedEvent) لإجبار جميع المديرين على إعادة التحميل عند طلبهم التالي.",
+
+      // ICurrentUser
+      currentUserTitle: "ICurrentUser — الواجهة الشاملة عبر القطاعات",
+      currentUserIntro:
+        "ICurrentUser هي الواجهة الوحيدة التي تستخدمها كل وحدة مباشرة — إنها ليست جسر عبر الوحدات كالواجهات الأخرى، بل هي اهتمام مشترك جوهري متاح في كل مكان. تُملأ بواسطة برمجية JWT في Identity عند كل طلب مُصادَق عليه وتوفر سياق المدير/المستخدم الحالي لأي معالج في أي وحدة. تعتمد كل وحدة على Core.Application التي تُعرّف ICurrentUser، لذا فهي متاحة دائمًا دون أي تعقيدات عبر الوحدات.",
+      currentUserNote:
+        "تختلف ICurrentUser عن واجهات التعاون الأخرى عبر الوحدات. تُملأ بواسطة برمجية Identity وتُستهلك عالميًا. لا تحتاج إلى بديل NoOp — فهي مُطبَّقة دائمًا بواسطة برمجية JWT في Core.Infrastructure بغض النظر عن الوحدات المُحمَّلة. إنها الاستثناء الوحيد لنمط NoOp.",
+
+      // Feature Resolution
+      featureResolutionTitle: "سلسلة دقة قيمة الميزة",
+      featureResolutionIntro:
+        "عند استدعاء IFeatureChecker.IsEnabledAsync() لمستأجر وميزة ما، يُحلّ Entitlements القيمة عبر سلسلة أولويات. TenantFeatureOverride (تجاوز يدوي لكل مستأجر) يفوز دائمًا. إذا لم يكن هناك تجاوز، تُستخدم قيمة EditionFeature. إذا لم يُعرّف الإصدار الميزة، تُستخدم Feature.DefaultValue. بالنسبة للميزات الرقمية ذات الاشتراكات النشطة المتعددة (تجريبي + خطة أساسية)، تفوز القيمة الأعلى. بالنسبة للميزات البوليانية، تفوز القيمة true. بالنسبة للميزات النصية، يفوز اشتراك Base.",
+
+      // Architecture Rules
+      archRulesTitle: "تعاون الوحدات — ملخص قواعد البنية",
+      archRulesIntro:
+        "هذه هي القواعد الملزمة لجميع الاتصالات عبر الوحدات في SCRIPE. تُطبَّق بواسطة scripe arch-check (فحص عميق بـ30 قاعدة)، وقيود مراجع المشاريع في ملف .sln، ومراجعة الكود. انتهاكات هذه القواعد تُنشئ تبعيات دائرية وتزاوج النشر واستحالة الاختبار.",
+      doTitle: "✅ افعل هذا",
+      dontTitle: "❌ لا تفعل هذا أبدًا",
+
+      // Security Boundary
+      securityBoundaryTitle: "تطبيق حدود الأمان",
+      securityBoundaryIntro:
+        "قواعد عزل الوحدات ليست مجرد تفضيل معماري — إنها حدود أمان. يضمن عزل الوحدات أن الخطأ أو الاختراق في وحدة واحدة لا يمكنه الوصول المباشر إلى مخزن بيانات وحدة أخرى. تُطبَّق هذه القواعد على مستويات متعددة: قيود مراجع المشاريع، وقواعد lint المعمارية، وقوائم مراجعة الكود.",
+      archCheckCaution:
+        "شغّل scripe arch-check قبل كل PR يلمس كود الوحدات المتقاطعة. علامة --json تخرج بكود 1 إذا وُجدت أي انتهاكات حرجة، مما يجعلها مناسبة كبوابة CI. انتهاكات البنية أرخص بكثير في الإصلاح عند مراجعة PR مقارنة بعد النشر.",
+
+      // MODULE_NAME env
+      moduleNameEnvTitle: "مرجع متغير بيئة MODULE_NAME",
+      moduleNameEnvIntro:
+        "يُضبَط متغير البيئة MODULE_NAME عند بدء تشغيل الحاوية ويحدد الوحدات المُحمَّلة في العملية. يقرأ ملف ModuleRegistration.cs في Host/API هذا المتغير ويُسجّل بشكل مشروط تسجيلات DI الخاصة بالوحدة المحددة وDbContext الخاص بها فقط. عندما يكون فارغًا (الافتراضي)، تُسجَّل جميع الوحدات — وهو وضع الـ monolith الذي يدعم جميع أنماط التعاون عبر الوحدات.",
+    },
   },
 };

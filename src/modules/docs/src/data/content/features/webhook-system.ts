@@ -3,7 +3,7 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  // € Architecture €
+  // ── Architecture Section ──
   {
     type: "heading",
     level: 2,
@@ -14,91 +14,115 @@ const sections: DocSection[] = [
   {
     type: "flowchart",
     direction: "vertical",
-    title: "Webhook Delivery Flow",
+    title: "Webhook Delivery & Signature Verification Flow",
     nodes: [
-      { id: "event", label: "Domain Event", type: "default" },
-      { id: "whs", label: "WebhookService", type: "primary" },
-      { id: "db", label: "Match event †’ active subscriptions", type: "info" },
-      { id: "sign", label: "HMAC-SHA256 Sign Payload", type: "success" },
-      { id: "send", label: "HTTP POST to subscriber URL", type: "warning" },
-      { id: "log", label: "Log delivery attempt", type: "success" },
-      { id: "retry", label: "Retry with exponential backoff", type: "danger" },
-      { id: "circuit", label: "Circuit breaker if MaxConsecutiveFailures reached", type: "danger" },
+      { id: "webhook_event", label: "Domain Event Triggered", type: "default" },
+      { id: "resolver", label: "Match active WebhookSubscriptions", type: "primary" },
+      { id: "payload_check", label: "NFR-02: Size Check & Truncation", type: "info" },
+      { id: "ssrf_filter", label: "SSRF URL Verification", type: "danger" },
+      { id: "hmac_compute", label: "Compute HMAC-SHA256 Signature", type: "success" },
+      { id: "prev_secret_check", label: "PreviousSecret Exists & Not Expired?", type: "info" },
+      { id: "dual_sign", label: "Dual-Sign (Generate secondary signature)", type: "warning" },
+      { id: "client_post", label: "HTTP POST (30s timeout)", type: "warning" },
+      { id: "receiver_verify", label: "Receiver Signature Verification", type: "success" },
+      { id: "retry_logic", label: "WebhookRetryJob (Backoff queues)", type: "danger" },
     ],
     connections: [
-      { from: "event", to: "whs" },
-      { from: "whs", to: "db" },
-      { from: "db", to: "sign" },
-      { from: "sign", to: "send" },
-      { from: "send", to: "log", label: "Success" },
-      { from: "send", to: "retry", label: "Failure" },
-      { from: "retry", to: "circuit", label: "Max retries exceeded" },
+      { from: "webhook_event", to: "resolver" },
+      { from: "resolver", to: "payload_check" },
+      { from: "payload_check", to: "ssrf_filter" },
+      { from: "ssrf_filter", to: "hmac_compute", label: "URL resolved & allowed" },
+      { from: "hmac_compute", to: "prev_secret_check" },
+      { from: "prev_secret_check", to: "dual_sign", label: "Yes (rotation active)" },
+      { from: "prev_secret_check", to: "client_post", label: "No (regular state)" },
+      { from: "dual_sign", to: "client_post" },
+      { from: "client_post", to: "receiver_verify", label: "Request dispatched" },
+      { from: "client_post", to: "retry_logic", label: "Failed attempt (non-2xx / timeout)" },
     ],
   },
 
-  // € Entity €
-  { type: "heading", level: 2, titleKey: "features.webhookSystem.entityTitle", id: "entity" },
+  // ── Entity Details Section ──
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.webhookSystem.entityTitle",
+    id: "entity",
+  },
   {
     type: "code",
     language: "csharp",
-    filename: "WebhookSubscription Entity",
-    code: `public class WebhookSubscription : AuditableEntity<Guid>
+    filename: "WebhookSubscription.cs",
+    code: `public class WebhookSubscription : AuditableEntity
 {
+    public Guid Id { get; set; }
+    
     [Required] [MaxLength(500)]
-    public string Url { get; set; } = null!;            // Delivery URL
-
+    public string Url { get; set; } = string.Empty;       // Allowed HTTPS destination URL
+    
     [Required] [MaxLength(100)]
-    public string Secret { get; set; } = null!;          // HMAC signing key
-
+    public string Secret { get; set; } = string.Empty;    // HMAC signature key
+    
     [MaxLength(100)]
-    public string? PreviousSecret { get; set; }          // Old key during rotation
-    public DateTime? PreviousSecretExpiresAt { get; set; }  // 24h grace
-
-    public bool IsActive { get; set; } = true;           // Circuit breaker toggle
-
-    public string EventsJson { get; set; } = "[]";       // Subscribed events
-
-    public bool IncludeChildren { get; set; } = false;   // Tenant hierarchy events
-    public bool PlatformEventsOnly { get; set; } = false; // System-scoped events only
-
-    public int MaxRetries { get; set; } = 5;
-    public int MaxConsecutiveFailures { get; set; } = 10; // Auto-disable threshold
-    public int ConsecutiveFailures { get; set; } = 0;    // Current failure count
-
-    public Guid TenantId { get; set; }
-    public virtual Tenant Tenant { get; set; } = null!;
+    public string? PreviousSecret { get; set; }           // Temporary old key
+    public DateTime? PreviousSecretExpiresAt { get; set; } // 24-hour grace period threshold
+    
+    public bool IsActive { get; set; } = true;            // Toggle state (disabled by circuit breaker)
+    public string EventsJson { get; set; } = "[]";        // Subscribed event types JSON array
+    public WebhookScope Scope { get; set; }               // Scope filter settings
+    
+    public int MaxRetries { get; set; } = 4;              // Max retry attempts
+    public int MaxConsecutiveFailures { get; set; } = 10; // Circuit breaker threshold
+    public int ConsecutiveFailures { get; set; } = 0;     // Consecutive failure counter
+    
+    public Guid? TenantId { get; set; }                   // Owning tenant ID context
+    public virtual Tenant? Tenant { get; set; }
 }`,
-    highlightLines: [10, 11, 16, 17, 20, 21],
   },
 
-  // € HMAC Signing €
-  { type: "heading", level: 2, titleKey: "features.webhookSystem.hmacTitle", id: "hmac" },
+  // ── HMAC Signature Check ──
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.webhookSystem.hmacTitle",
+    id: "hmac",
+  },
   { type: "paragraph", contentKey: "features.webhookSystem.hmacIntro" },
   {
     type: "code",
     language: "csharp",
-    filename: "HMAC Signing & Verification",
-    code: `// Server-side: Sign payload
+    filename: "WebhookSignatureVerification.cs",
+    code: `// Server-side: Sign payload with timestamp prefix
+long timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+string signatureInput = $"{timestamp}.{payloadJson}";
 using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(subscription.Secret));
-var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(payload));
-var signature = Convert.ToBase64String(hash);
+byte[] hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(signatureInput));
+string signature = $"sha256={Convert.ToHexString(hashBytes).ToLowerInvariant()}";
 
-// HTTP Headers sent:
-// X-Webhook-Signature: {signature}
-// X-Webhook-Signature-Old: {signatureWithOldSecret} During rotation
+// Dispatched HTTP Headers:
+// X-Webhook-Signature: sha256={hash}
+// X-Webhook-Signature-Old: sha256={oldHash} (only during secret rotation)
+// X-Webhook-Timestamp: {timestamp}
 // X-Webhook-Event: {eventType}
-// X-Webhook-Delivery-Id: {deliveryId}
+// X-Webhook-Delivery: {eventDeliveryId} (same for all retries)
+// X-Webhook-Attempt: {attemptNumber}
 
-// Receiver: Verify signature
-var computedSignature = Convert.ToBase64String(
-    new HMACSHA256(Encoding.UTF8.GetBytes(mySecret))
-        .ComputeHash(Encoding.UTF8.GetBytes(requestBody))
-);
-bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
-    highlightLines: [8, 9, 10],
+// Receiver: Reconstruct signature input & verify
+string receivedSignature = request.Headers["X-Webhook-Signature"];
+string receivedTimestamp = request.Headers["X-Webhook-Timestamp"];
+string requestBody = await ReadBodyAsStringAsync(request);
+
+string computedInput = $"{receivedTimestamp}.{requestBody}";
+using var verifierHmac = new HMACSHA256(Encoding.UTF8.GetBytes(mySecret));
+byte[] computedHash = verifierHmac.ComputeHash(Encoding.UTF8.GetBytes(computedInput));
+string computedSignature = $"sha256={Convert.ToHexString(computedHash).ToLowerInvariant()}";
+
+bool isValid = CryptographicOperations.FixedTimeEquals(
+    Encoding.UTF8.GetBytes(computedSignature),
+    Encoding.UTF8.GetBytes(receivedSignature)
+);`,
   },
 
-  // € Secret Rotation
+  // ── Secret Rotation ──
   {
     type: "heading",
     level: 2,
@@ -108,26 +132,26 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
   { type: "paragraph", contentKey: "features.webhookSystem.secretRotationIntro" },
   {
     type: "flowchart",
-    title: "Secret Rotation with 24h Grace Period",
+    title: "Secret Rotation 24-Hour Grace Period Lifecycle",
     direction: "horizontal",
     nodes: [
-      { id: "rotate", label: "POST /webhooks/{id}/rotate-secret", type: "primary" },
-      { id: "new", label: "New Secret generated", type: "success" },
-      { id: "old", label: "Old Secret †’ PreviousSecret", type: "warning" },
-      { id: "grace", label: "PreviousSecretExpiresAt = Now + 24h", type: "info" },
-      { id: "dual", label: "Dual-sign payloads (24h)", type: "default" },
-      { id: "expire", label: "PreviousSecret = null", type: "danger" },
+      { id: "rotate", label: "POST /rotate-secret", type: "primary" },
+      { id: "backup", label: "PreviousSecret = current Secret", type: "info" },
+      { id: "expiry", label: "Set PreviousSecretExpiresAt = Now + 24h", type: "info" },
+      { id: "generate", label: "Secret = new Secret", type: "success" },
+      { id: "dual_sign", label: "Dual-sign payloads in dispatcher", type: "warning" },
+      { id: "purge", label: "WebhookRetryJob removes expired PreviousSecrets", type: "danger" },
     ],
     connections: [
-      { from: "rotate", to: "new" },
-      { from: "rotate", to: "old" },
-      { from: "old", to: "grace" },
-      { from: "grace", to: "dual" },
-      { from: "dual", to: "expire", label: "After 24h" },
+      { from: "rotate", to: "backup" },
+      { from: "backup", to: "expiry" },
+      { from: "expiry", to: "generate" },
+      { from: "generate", to: "dual_sign", label: "Active transition" },
+      { from: "dual_sign", to: "purge", label: "After 24 hours" },
     ],
   },
 
-  // € Tenant Hierarchy €
+  // ── Tenant Hierarchy & Scopes ──
   {
     type: "heading",
     level: 2,
@@ -137,25 +161,36 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
   { type: "paragraph", contentKey: "features.webhookSystem.includeChildrenIntro" },
   {
     type: "table",
-    headers: ["IncludeChildren", "PlatformEventsOnly", "Events Received", "Use Case"],
+    headers: ["Webhook Scope Type", "TenantId Context", "Event Filtering Logic", "Common Use Case"],
     rows: [
-      ["false (default)", "false", "Only events from own tenant", "Single-site integration"],
       [
-        "true",
-        "false",
-        "Events from own tenant + all descendants",
-        "Parent company monitoring all branches",
+        "PlatformOnly",
+        "null",
+        "Receives events from the platform level only (TenantId = null)",
+        "Global analytics / tenant management engines",
       ],
       [
-        "false/true",
-        "true",
-        "Only system-wide platform events (TenantId=null)",
-        "System administrators listening to global configuration changes",
+        "AllTenants",
+        "null / non-null",
+        "Receives all events across all tenants in the system",
+        "Super-admin audits & monitoring dashboard",
+      ],
+      [
+        "TenantOnly",
+        "non-null",
+        "Receives events originating strictly from own tenant context",
+        "Single tenant custom automation hooks",
+      ],
+      [
+        "TenantWithChildren",
+        "non-null",
+        "Receives events from own tenant and all descendant tenants",
+        "Parent companies monitoring branch subsidiaries",
       ],
     ],
   },
 
-  // € Circuit Breaker
+  // ── Circuit Breaker Section ──
   {
     type: "heading",
     level: 2,
@@ -165,41 +200,59 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
   { type: "paragraph", contentKey: "features.webhookSystem.circuitBreakerIntro" },
   {
     type: "flowchart",
-    title: "Circuit Breaker Flow",
+    title: "Webhook Circuit Breaker & Auto-Disable Logic",
     direction: "vertical",
     nodes: [
-      { id: "fail", label: "Delivery fails", type: "warning" },
-      { id: "inc", label: "ConsecutiveFailures++", type: "default" },
-      { id: "check", label: "ConsecutiveFailures >= MaxConsecutiveFailures?", type: "info" },
-      { id: "no", label: "Schedule retry", type: "primary" },
-      { id: "yes", label: "IsActive = false (auto-disabled)", type: "danger" },
-      { id: "audit", label: "AuditLog: WebhookCircuitBroken", type: "warning" },
+      { id: "deliver", label: "DeliverAsync execution", type: "default" },
+      { id: "is_success", label: "Delivery successful (HTTP 2xx)?", type: "info" },
+      { id: "reset_count", label: "Reset ConsecutiveFailures = 0", type: "success" },
+      { id: "inc_count", label: "ConsecutiveFailures++", type: "warning" },
+      { id: "check_breaker", label: "ConsecutiveFailures >= Max?", type: "info" },
+      { id: "disable", label: "IsActive = false (Auto-Disabled)", type: "danger" },
+      { id: "audit_log", label: "Log security event (WebhookCircuitBroken)", type: "danger" },
     ],
     connections: [
-      { from: "fail", to: "inc" },
-      { from: "inc", to: "check" },
-      { from: "check", to: "no", label: "No" },
-      { from: "check", to: "yes", label: "Yes" },
-      { from: "yes", to: "audit" },
+      { from: "deliver", to: "is_success" },
+      { from: "is_success", to: "reset_count", label: "Yes" },
+      { from: "is_success", to: "inc_count", label: "No" },
+      { from: "inc_count", to: "check_breaker" },
+      { from: "check_breaker", to: "disable", label: "Yes" },
+      { from: "disable", to: "audit_log" },
     ],
   },
 
-  // € Retry Policy
-  { type: "heading", level: 2, titleKey: "features.webhookSystem.retryTitle", id: "retry" },
+  // ── Retry Policy Section ──
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.webhookSystem.retryTitle",
+    id: "retry",
+  },
   { type: "paragraph", contentKey: "features.webhookSystem.retryIntro" },
   {
     type: "table",
-    headers: ["Attempt", "Delay", "Cumulative Wait"],
+    headers: ["Retry Attempt", "Delay Offset", "Cumulative Retries Timeline", "Mechanism Details"],
     rows: [
-      ["1st retry", "30 seconds", "30s"],
-      ["2nd retry", "1 minute", "1m 30s"],
-      ["3rd retry", "5 minutes", "6m 30s"],
-      ["4th retry", "30 minutes", "36m 30s"],
-      ["5th retry (final)", "2 hours", "2h 36m 30s"],
+      ["Initial Attempt", "Immediate", "0 seconds", "Dispatched synchronously in command pipeline"],
+      [
+        "1st Retry",
+        "10 seconds",
+        "10 seconds",
+        "Queued as DeliveryStatus.Retrying, processed by WebhookRetryJob",
+      ],
+      ["2nd Retry", "60 seconds", "1 minute 10s", "Scheduled with exponential delay offset"],
+      ["3rd Retry", "5 minutes", "6 minutes 10s", "Scheduled with exponential delay offset"],
+      ["4th Retry (Final)", "30 minutes", "36 minutes 10s", "Last attempt before dead-lettering"],
+      [
+        "Exhausted",
+        "No further retry",
+        "Dead-lettered",
+        "Status = DeadLettered, increments subscription.FailedDeliveries",
+      ],
     ],
   },
 
-  // € Delivery Logs €
+  // ── Delivery Logs Details ──
   {
     type: "heading",
     level: 2,
@@ -210,41 +263,90 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
   {
     type: "code",
     language: "csharp",
-    filename: "WebhookDeliveryLog Entity",
-    code: `public class WebhookDeliveryLog : AuditableEntity<Guid>
+    filename: "WebhookDeliveryLog.cs",
+    code: `public class WebhookDeliveryLog
 {
+    public Guid Id { get; set; }
     public Guid SubscriptionId { get; set; }
-    public string EventType { get; set; } = null!;
-    public Guid? EventTenantId { get; set; }     // The tenant context of the event
-    public int? StatusCode { get; set; }         // null = connection failed
-    public string? ResponseBody { get; set; }    // First 1000 chars
-    public string? ErrorMessage { get; set; }
-    public int AttemptNumber { get; set; }
-    public long DurationMs { get; set; }
-    public bool IsSuccess { get; set; }
+    public Guid EventDeliveryId { get; set; }     // Matches across all retry attempts for de-duplication
+    public Guid? EventTenantId { get; set; }       // Tenant context of origin event
+    public string EventType { get; set; } = "";
+    public string PayloadJson { get; set; } = "";
+    
+    public string RequestUrl { get; set; } = "";
+    public string? RequestHeaders { get; set; }    // JSON string of headers (excluding secrets)
+    public int HttpStatusCode { get; set; }        // HTTP response status code (0 for connection issues)
+    public string? ResponseBody { get; set; }      // Snapped response snippet (max 2048 chars)
+    
+    public int AttemptNumber { get; set; }         // Attempt index: 1, 2, 3, etc.
+    public double LatencyMs { get; set; }          // Network latency timing
+    public bool IsSuccess { get; set; }            // Status flag: HTTP status 2xx
+    public string? ErrorMessage { get; set; }      // Network error snippet (if any)
+    public DeliveryStatus Status { get; set; }     // State enum: Delivered, Retrying, DeadLettered
+    public DateTime CreatedAt { get; set; }
 }`,
-    highlightLines: [5, 6, 9],
   },
 
-  // € Events
-  { type: "heading", level: 2, titleKey: "features.webhookSystem.eventsTitle", id: "events" },
+  // ── Event Types Catalog ──
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.webhookSystem.eventsTitle",
+    id: "events",
+  },
   {
     type: "table",
-    headers: ["Event", "Payload", "Trigger"],
+    headers: ["Subscribable Event Type", "Payload Attributes", "Trigger Point Description"],
     rows: [
-      ["admin.created", "Admin details + TenantId", "New admin account created"],
-      ["admin.updated", "Changed fields + old/new values", "Admin profile modified"],
-      ["admin.deleted", "AdminId + DeletedBy", "Admin soft-deleted"],
-      ["tenant.created", "Tenant + auto-created roles", "New tenant with settings"],
-      ["tenant.updated", "Changed settings/details", "Tenant settings modified"],
-      ["tenant.deleted", "TenantId + cascade info", "Tenant soft-deleted"],
-      ["role.created", "Role + initial permissions", "New role created"],
-      ["role.permissions_changed", "Added/Removed lists", "Role permissions modified"],
-      ["audit.security_event", "EventType + metadata", "Guardian or security event"],
+      [
+        "admin.created",
+        "Admin ID, Username, Email, TenantId context",
+        "Triggered when a new administrator is registered",
+      ],
+      [
+        "admin.updated",
+        "Modified property changes, old and new values",
+        "Triggered when administrator profile changes are saved",
+      ],
+      [
+        "admin.deleted",
+        "Admin ID, Soft-delete timestamp, DeletedBy user",
+        "Triggered when administrator account is soft-deleted",
+      ],
+      [
+        "tenant.created",
+        "Tenant details, plan setting overrides",
+        "Triggered when a new tenant/workspace is registered",
+      ],
+      [
+        "tenant.updated",
+        "Modified settings or billing preferences",
+        "Triggered when workspace configuration is updated",
+      ],
+      [
+        "tenant.deleted",
+        "Tenant ID, cascade deletion results status",
+        "Triggered when a workspace is soft-deleted",
+      ],
+      [
+        "role.created",
+        "Role ID, assigned permissions array list",
+        "Triggered when a new user role is created",
+      ],
+      [
+        "role.permissions_changed",
+        "Added permissions list, revoked permissions list",
+        "Triggered when permission scopes are modified on a role",
+      ],
+      [
+        "audit.security_event",
+        "Security event type, host IP, actor details",
+        "Triggered on unauthorized actions or guardian blocks",
+      ],
     ],
   },
 
-  // € Subscription Management Endpoints
+  // ── Subscription Management Endpoints ──
   {
     type: "heading",
     level: 2,
@@ -257,38 +359,42 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
       {
         method: "GET",
         path: "/api/v1/webhooks",
-        descriptionKey: "List subscriptions (tenant-scoped)",
-        auth: "webhooks.view",
+        descriptionKey: "List all subscriptions (tenant-scoped)",
+        auth: "JWT",
+        permission: "webhooks.view",
       },
       {
         method: "GET",
         path: "/api/v1/webhooks/{id}",
-        descriptionKey: "Get subscription detail",
-        auth: "webhooks.view",
+        descriptionKey: "Get subscription details (including stats and state)",
+        auth: "JWT",
+        permission: "webhooks.view",
       },
       {
         method: "POST",
         path: "/api/v1/webhooks",
-        descriptionKey:
-          "Create subscription (with IncludeChildren, PlatformEventsOnly, MaxRetries)",
-        auth: "webhooks.create",
+        descriptionKey: "Create subscription (configurable url, events list, scope filters)",
+        auth: "JWT",
+        permission: "webhooks.create",
       },
       {
         method: "PUT",
         path: "/api/v1/webhooks/{id}",
-        descriptionKey: "Update subscription URL, events, settings",
-        auth: "webhooks.edit",
+        descriptionKey: "Update subscription URL, events catalog list, or status",
+        auth: "JWT",
+        permission: "webhooks.edit",
       },
       {
         method: "DELETE",
         path: "/api/v1/webhooks/{id}",
-        descriptionKey: "Delete subscription",
-        auth: "webhooks.delete",
+        descriptionKey: "Permanently remove a webhook subscription",
+        auth: "JWT",
+        permission: "webhooks.delete",
       },
     ],
   },
 
-  // € Operations Endpoints €
+  // ── Operations Monitoring Endpoints ──
   {
     type: "heading",
     level: 2,
@@ -301,32 +407,37 @@ bool isValid = computedSignature == request.Headers["X-Webhook-Signature"];`,
       {
         method: "POST",
         path: "/api/v1/webhooks/{id}/rotate-secret",
-        descriptionKey: "HMAC rotation with 24h grace period",
-        auth: "webhooks.edit",
+        descriptionKey: "Trigger secret rotation with a 24-hour grace period",
+        auth: "JWT",
+        permission: "webhooks.edit",
       },
       {
         method: "PUT",
         path: "/api/v1/webhooks/{id}/toggle",
-        descriptionKey: "Activate/deactivate subscription",
-        auth: "webhooks.edit",
+        descriptionKey: "Manually enable/disable subscription (resets circuit breaker)",
+        auth: "JWT",
+        permission: "webhooks.edit",
       },
       {
         method: "POST",
         path: "/api/v1/webhooks/{id}/test",
-        descriptionKey: "Send test ping payload",
-        auth: "webhooks.edit",
+        descriptionKey: "Dispatch a 'webhook.test' ping payload immediately without retries",
+        auth: "JWT",
+        permission: "webhooks.edit",
       },
       {
         method: "GET",
         path: "/api/v1/webhooks/{id}/delivery-logs",
-        descriptionKey: "Paginated delivery history with status filter",
-        auth: "webhooks.view",
+        descriptionKey: "Get paginated delivery logs (filtering by status, latency)",
+        auth: "JWT",
+        permission: "webhooks.view",
       },
       {
         method: "GET",
         path: "/api/v1/webhooks/available-events",
-        descriptionKey: "Catalog of all subscribable event types",
-        auth: "webhooks.view",
+        descriptionKey: "Get the complete catalog of subscribable event types",
+        auth: "JWT",
+        permission: "webhooks.view",
       },
     ],
   },
@@ -340,5 +451,5 @@ registerPage({
   order: 6,
   sections,
   relatedSlugs: ["features/audit-system", "features/multi-tenancy"],
-  lastUpdated: "2026-02-20",
+  lastUpdated: "2026-06-28",
 });

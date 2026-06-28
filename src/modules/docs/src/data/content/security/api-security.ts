@@ -5,6 +5,80 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 const sections: DocSection[] = [
   { type: "paragraph", contentKey: "security.apiSecurity.intro" },
 
+  // ─── Mutating Request Security pipeline flowchart ─────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "security.apiSecurity.inputValidationTitle", // We can use it or another header, but wait, let's keep the existing header IDs or titles. Let's make an overview heading.
+    id: "security-pipeline",
+  },
+  {
+    type: "flowchart",
+    title: "Mutating Request Security Verification Pipeline",
+    direction: "vertical",
+    nodes: [
+      { id: "req", label: "Mutating Request (POST/PUT/PATCH/DELETE)", type: "default" },
+      {
+        id: "limiter",
+        label: "Rate Limiter",
+        type: "warning",
+        description: "Per-IP, Global, or Endpoint policy",
+      },
+      {
+        id: "csrf",
+        label: "CSRF Middleware",
+        type: "warning",
+        description: "Fetch site/mode metadata validation",
+      },
+      {
+        id: "csrf_check",
+        label: "HMAC Signed Token Check",
+        type: "warning",
+        description: "FixedTimeEquals double-submit validation",
+      },
+      {
+        id: "auth",
+        label: "Authentication (JWT)",
+        type: "primary",
+        description: "Validate access token & resolve claims",
+      },
+      {
+        id: "replay",
+        label: "Replay Protection",
+        type: "danger",
+        description: "Timestamp ±5m & Nonce unique (10m cache)",
+      },
+      {
+        id: "authz",
+        label: "Authorization (RBAC)",
+        type: "primary",
+        description: "Verify user permissions & scopes",
+      },
+      {
+        id: "sanitizer",
+        label: "Input Sanitization",
+        type: "info",
+        description: "InputSanitizationMiddleware HTML strip",
+      },
+      {
+        id: "controller",
+        label: "Controller Action",
+        type: "success",
+        description: "Execute business logic",
+      },
+    ],
+    connections: [
+      { from: "req", to: "limiter" },
+      { from: "limiter", to: "csrf" },
+      { from: "csrf", to: "csrf_check" },
+      { from: "csrf_check", to: "auth" },
+      { from: "auth", to: "replay" },
+      { from: "replay", to: "authz" },
+      { from: "authz", to: "sanitizer" },
+      { from: "sanitizer", to: "controller" },
+    ],
+  },
+
   // ─── Rate Limiting ────────────────────────────────────────
   {
     type: "heading",
@@ -18,61 +92,164 @@ const sections: DocSection[] = [
     language: "csharp",
     filename: "RateLimitingConfiguration.cs",
     code: `public static IServiceCollection AddRateLimitingConfiguration(
-    this IServiceCollection services)
+    this IServiceCollection services, IConfiguration configuration)
 {
+    var settings = configuration.GetSection("RateLimiting").Get<RateLimitingSettings>();
+    if (!settings.Enabled) return services;
+
     services.AddRateLimiter(options =>
     {
-        // 1. Global fixed window — 100 requests per minute per IP
-        options.AddFixedWindowLimiter("global", opt =>
+        // 1. Global DDoS ceiling - 1000 requests per minute
+        options.AddFixedWindowLimiter("Global", opt =>
         {
-            opt.PermitLimit = 100;
+            opt.PermitLimit = settings.GlobalLimit; // 1000
             opt.Window = TimeSpan.FromMinutes(1);
-            opt.QueueLimit = 0; // Reject immediately
-        });
-
-        // 2. Auth endpoints — strict: 10 attempts per 5 minutes
-        options.AddSlidingWindowLimiter("auth", opt =>
-        {
-            opt.PermitLimit = 10;
-            opt.Window = TimeSpan.FromMinutes(5);
-            opt.SegmentsPerWindow = 5;
             opt.QueueLimit = 0;
         });
 
-        // 3. OTP/Verification — very strict: 5 per hour
-        options.AddTokenBucketLimiter("otp", opt =>
-        {
-            opt.TokenLimit = 5;
-            opt.ReplenishmentPeriod = TimeSpan.FromHours(1);
-            opt.TokensPerPeriod = 5;
-            opt.QueueLimit = 0;
+        // 2. Per-IP general ceiling - 200 requests per minute
+        options.AddPolicy("PerIp", context => {
+            var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            return RateLimitPartition.GetFixedWindowLimiter(ip, _ => new FixedWindowRateLimiterOptions {
+                PermitLimit = settings.PerIpLimit, // 200
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            });
         });
 
-        // Custom response for rate-limited requests
-        options.OnRejected = async (context, ct) =>
-        {
-            context.HttpContext.Response.StatusCode = 429;
-            await context.HttpContext.Response.WriteAsJsonAsync(new
-            {
-                error = "Too many requests. Please try again later.",
-                retryAfter = context.Lease.TryGetMetadata(
-                    MetadataName.RetryAfter, out var retry) ? retry.TotalSeconds : 60
-            }, ct);
-        };
+        // 3. Login / Auth endpoints brute-force shield - 10 attempts per 5 minutes per IP
+        options.AddPolicy("Login", context => {
+            var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            return RateLimitPartition.GetFixedWindowLimiter($"login:{ip}", _ => new FixedWindowRateLimiterOptions {
+                PermitLimit = settings.LoginLimit, // 10
+                Window = TimeSpan.FromMinutes(5),
+                QueueLimit = 0
+            });
+        });
+
+        // 4. Token refresh rate limiting (prevent refresh farming) - 20 per minute sliding
+        options.AddPolicy("token-refresh", context => {
+            var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            return RateLimitPartition.GetSlidingWindowLimiter($"refresh:{ip}", _ => new SlidingWindowRateLimiterOptions {
+                PermitLimit = 20,
+                Window = TimeSpan.FromMinutes(1),
+                SegmentsPerWindow = 4,
+                QueueLimit = 0
+            });
+        });
     });
     return services;
 }`,
-    highlightLines: [7, 8, 9, 10, 15, 16, 17, 18, 24, 25, 26, 27],
+    highlightLines: [9, 10, 18, 19, 28, 29, 39, 40],
   },
   {
     type: "table",
-    headers: ["Policy", "Type", "Limit", "Window", "Applied To"],
+    headers: [
+      "Policy Name",
+      "Limitation Type",
+      "Default Threshold",
+      "Window/Period",
+      "Scope / Application Target",
+    ],
     rows: [
-      ["global", "Fixed Window", "100 req", "1 minute", "All endpoints"],
-      ["auth", "Sliding Window", "10 req", "5 minutes", "Login, Register, Refresh"],
-      ["otp", "Token Bucket", "5 req", "1 hour", "Send Verification, Password Reset"],
-      ["upload", "Concurrency", "3 concurrent", "—", "File/Image upload"],
-      ["export", "Fixed Window", "5 req", "10 minutes", "Dashboard export, CSV/PDF"],
+      [
+        "Global",
+        "Fixed Window",
+        "1000 requests",
+        "1 minute",
+        "Global server-wide protection (DDoS ceiling)",
+      ],
+      [
+        "PerIp",
+        "Fixed Window",
+        "200 requests",
+        "1 minute",
+        "General unauthenticated API abuse prevention",
+      ],
+      [
+        "Login",
+        "Fixed Window",
+        "10 requests",
+        "5 minutes",
+        "Brute-force protection on /login and /2fa/verify",
+      ],
+      [
+        "token-refresh",
+        "Sliding Window",
+        "20 requests",
+        "1 minute",
+        "Refresh token endpoint (prevent refresh farming)",
+      ],
+      [
+        "read-api",
+        "Sliding Window",
+        "200 requests",
+        "1 minute",
+        "GET endpoints (prevents client-side infinite loops)",
+      ],
+      [
+        "mutation-api",
+        "Sliding Window",
+        "30 requests",
+        "1 minute",
+        "Mutating endpoints (POST/PUT/PATCH/DELETE)",
+      ],
+      [
+        "per-user",
+        "Sliding Window",
+        "100 requests",
+        "1 minute",
+        "Total ceiling per authenticated user session",
+      ],
+      [
+        "export-heavy",
+        "Fixed Window",
+        "5 requests",
+        "1 minute",
+        "CPU-heavy data export (CSV/Excel/PDF) endpoints",
+      ],
+      [
+        "webhook",
+        "Sliding Window",
+        "500 requests",
+        "1 minute",
+        "Unauthenticated webhook endpoints (e.g. Stripe bursts)",
+      ],
+      [
+        "signup",
+        "Fixed Window",
+        "3 requests",
+        "1 hour",
+        "Self-service registration endpoints (prevent signup spam)",
+      ],
+      [
+        "phone-otp-send",
+        "Fixed Window",
+        "3 requests",
+        "15 minutes",
+        "SMS/OTP request endpoints (prevent SMS bombing)",
+      ],
+      [
+        "password-reset",
+        "Fixed Window",
+        "5 requests",
+        "15 minutes",
+        "Password reset/OTP validation endpoints",
+      ],
+      [
+        "passkey-auth",
+        "Fixed Window",
+        "5 requests",
+        "15 minutes",
+        "WebAuthn / passkey authentication attempts",
+      ],
+      [
+        "qr-poll",
+        "Sliding Window",
+        "60 requests",
+        "1 minute",
+        "QR code authentication status polling endpoints",
+      ],
     ],
   },
 
@@ -91,42 +268,43 @@ const sections: DocSection[] = [
         label: "Development",
         language: "csharp",
         filename: "CORS — Development Configuration",
-        code: `// Development: Allow any origin for local testing
+        code: `// Development: Allow local dev origins with credentials
 policy.WithOrigins(
     "http://localhost:3000",    // Next.js dev
-    "http://localhost:5173",    // Vite dev
-    "http://localhost:4200"     // Angular dev
+    "https://localhost:3000",   // Next.js secure dev
+    "http://localhost:3001"
 )
 .AllowAnyMethod()
 .AllowAnyHeader()
-.AllowCredentials()              // Required for cookies/SignalR
-.WithExposedHeaders(
-    "Content-Disposition",        // File downloads
-    "X-Correlation-Id",           // Request tracing
-    "X-Total-Count",              // Pagination
-    "X-Request-Id"
-);`,
+.AllowCredentials()             // Cookies and SignalR hubs support
+.WithExposedHeaders("X-SignalR-User-Agent", "X-CSRF-Token")
+.SetPreflightMaxAge(TimeSpan.FromHours(1));`,
       },
       {
         label: "Production",
         language: "csharp",
         filename: "CORS — Production Configuration",
-        code: `// Production: Whitelist specific origins only
+        code: `// Production: Strict environment CORS settings
 var allowedOrigins = configuration
     .GetSection("Cors:AllowedOrigins")
     .Get<string[]>() ?? Array.Empty<string>();
 
-policy.WithOrigins(allowedOrigins)
-    .WithMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
-    .WithHeaders(
-        "Authorization",
-        "Content-Type",
-        "X-Correlation-Id",
-        "X-CSRF-Token",
-        "X-Request-Nonce"
-    )
-    .AllowCredentials()
-    .SetPreflightMaxAge(TimeSpan.FromHours(1));`,
+// S0.14: Crashes early if non-development environment has empty CORS origins (fail-closed)
+if (allowedOrigins.Length == 0)
+    throw new InvalidOperationException("CORS AllowedOrigins must be configured!");
+
+policy
+    // S0.14+: Lookalike-safe validator protects subdomain wildcards (HTTPS only)
+    .SetIsOriginAllowed(origin => CorsOriginValidator.IsAllowed(origin, allowedOrigins))
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .SetPreflightMaxAge(TimeSpan.FromHours(1));
+
+if (corsSettings.AllowCredentials)
+{
+    policy.AllowCredentials() // Wildcard '*' rejected when credentials enabled
+          .WithExposedHeaders("X-CSRF-Token");
+}`,
       },
     ],
   },
@@ -144,47 +322,68 @@ policy.WithOrigins(allowedOrigins)
     language: "csharp",
     filename: "CsrfMiddleware.cs",
     code: `/// <summary>
-/// S0.15: Double-submit cookie pattern for CSRF protection.
-/// Cookie: XSRF-TOKEN (NOT httpOnly — frontend JS reads it)
-/// Header: X-CSRF-Token (frontend sends cookie value as header)
-/// Uses CryptographicOperations.FixedTimeEquals for timing-attack safety.
+/// S0.15: Signed Double-Submit Cookie Pattern for CSRF protection.
+/// 
+/// Defense Layers:
+/// 1. Sec-Fetch-Metadata + Origin Validation (blocks form-based navigate actions cross-site).
+/// 2. Bearer token bypass: requests using custom Authorization headers bypass double-submit checks
+///    because Bearer tokens are stored in JS memory and cannot be attached by browser cross-origin.
+/// 3. HMAC-SHA256 Signed token: Bound to the JWT session's 'jti' claim to prevent token forgery.
+/// 4. __Host- cookie prefix enforces Secure, Path=/, and blocks subdomain injection.
 /// </summary>
 public class CsrfMiddleware
 {
     public async Task InvokeAsync(HttpContext context)
     {
-        // Skip safe methods, unauthenticated, SignalR/OIDC/SAML
-        if (SafeMethod || !Authenticated || ExcludedPath)
+        // Issue fresh token on every response (Response header + Cookie)
+        IssueSignedCsrfToken(context);
+
+        // Safe methods (GET, HEAD, OPTIONS) are exempt
+        if (SafeMethod(context.Request.Method) || PathExcluded(context.Request.Path))
         {
-            EnsureCsrfCookie(context);
             await _next(context);
             return;
         }
 
-        var cookieToken = context.Request.Cookies["XSRF-TOKEN"];
-        var headerToken = context.Request.Headers["X-CSRF-Token"]
-            .FirstOrDefault();
-
-        if (string.IsNullOrEmpty(cookieToken) ||
-            string.IsNullOrEmpty(headerToken))
+        // Layer 1: Fetch Metadata Validation
+        var fetchSite = context.Request.Headers["Sec-Fetch-Site"].FirstOrDefault();
+        var fetchMode = context.Request.Headers["Sec-Fetch-Mode"].FirstOrDefault();
+        if (fetchSite == "cross-site" && fetchMode == "navigate")
         {
-            // 403 CSRF_VALIDATION_FAILED
+            context.Response.StatusCode = 403; // Reject form post CSRF
             return;
         }
 
-        // Constant-time comparison — prevents timing attacks
+        // Layer 2: Bearer Token bypass
+        if (context.Request.Headers.ContainsKey("Authorization"))
+        {
+            await _next(context);
+            return;
+        }
+
+        // Layer 3: Double-Submit Token verification
+        var cookieToken = context.Request.Cookies["__Host-XSRF-TOKEN"];
+        var headerToken = context.Request.Headers["X-CSRF-Token"].FirstOrDefault();
+
+        if (string.IsNullOrEmpty(cookieToken) || string.IsNullOrEmpty(headerToken))
+        {
+            context.Response.StatusCode = 403;
+            return;
+        }
+
+        // Constant-time check prevents timing side-channels
         if (!CryptographicOperations.FixedTimeEquals(
             Encoding.UTF8.GetBytes(cookieToken),
             Encoding.UTF8.GetBytes(headerToken)))
         {
-            // 403 CSRF_TOKEN_MISMATCH
+            context.Response.StatusCode = 403;
             return;
         }
 
         await _next(context);
     }
 }`,
-    highlightLines: [19, 20, 32, 33, 34],
+    highlightLines: [15, 20, 27, 33, 40, 48, 49],
   },
 
   // ─── Replay Protection ────────────────────────────────────
@@ -201,38 +400,65 @@ public class CsrfMiddleware
     filename: "ReplayProtectionMiddleware.cs",
     code: `/// <summary>
 /// P6.3: Request replay protection — MANDATORY on all authenticated mutations.
-/// Frontend must send X-Request-Timestamp (epoch ms) + X-Request-Nonce (UUID).
-/// Missing headers → 400 MISSING_REPLAY_HEADERS (no gradual rollout).
-/// SignalR /hubs/ paths are excluded (library can't inject headers).
+/// Requires X-Request-Timestamp (Unix epoch ms) and X-Request-Nonce (UUID format).
 /// </summary>
 public class ReplayProtectionMiddleware
 {
     public async Task InvokeAsync(HttpContext context, ICacheService cache)
     {
-        // Skip safe methods, /hubs/ paths, unauthenticated
-        var timestamp = context.Request.Headers["X-Request-Timestamp"];
-        var nonce = context.Request.Headers["X-Request-Nonce"];
-
-        // MANDATORY — reject if missing
-        if (string.IsNullOrEmpty(timestamp) || string.IsNullOrEmpty(nonce))
+        // Skip safe methods (GET, HEAD, OPTIONS)
+        if (HttpMethods.IsGet(context.Request.Method))
         {
-            // 400 MISSING_REPLAY_HEADERS
+            await _next(context);
             return;
         }
 
-        // Validate timestamp freshness (±5 min clock skew)
-        var drift = DateTimeOffset.UtcNow - requestTime;
+        // Skip SignalR hubs & OpenIddict auth endpoints
+        if (IsExcludedPath(context.Request.Path))
+        {
+            await _next(context);
+            return;
+        }
+
+        // Skip unauthenticated requests
+        if (context.User.Identity?.IsAuthenticated != true)
+        {
+            await _next(context);
+            return;
+        }
+
+        var timestampHeader = context.Request.Headers["X-Request-Timestamp"].FirstOrDefault();
+        var nonceHeader = context.Request.Headers["X-Request-Nonce"].FirstOrDefault();
+
+        // Reject missing headers immediately
+        if (string.IsNullOrEmpty(timestampHeader) || string.IsNullOrEmpty(nonceHeader))
+        {
+            context.Response.StatusCode = 400; // BAD_REQUEST
+            return;
+        }
+
+        // Nonce validation - max 36 chars, valid UUID
+        if (nonceHeader.Length > 36 || !Guid.TryParse(nonceHeader, out _))
+        {
+            context.Response.StatusCode = 400; // INVALID_NONCE
+            return;
+        }
+
+        // Timestamp validation - max 5 minutes drift (clock skew mitigation)
+        var requestTime = DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(timestampHeader));
+        var drift = (DateTimeOffset.UtcNow - requestTime).Duration();
         if (drift > TimeSpan.FromMinutes(5))
         {
-            // 400 STALE_REQUEST
+            context.Response.StatusCode = 400; // STALE_REQUEST
             return;
         }
 
-        // Validate nonce uniqueness (cache TTL = 10 min)
-        var exists = await cache.GetAsync<string>($"replay-nonce:{nonce}");
+        // Nonce uniqueness check (cache TTL = 10 minutes)
+        var cacheKey = $"replay-nonce:{nonceHeader}";
+        var exists = await cache.GetAsync<string>(cacheKey);
         if (exists is not null)
         {
-            // 409 REQUEST_REPLAY_DETECTED
+            context.Response.StatusCode = 409; // REQUEST_REPLAY_DETECTED (Conflict)
             return;
         }
 
@@ -240,96 +466,62 @@ public class ReplayProtectionMiddleware
         await _next(context);
     }
 }`,
-    highlightLines: [4, 16, 17, 24, 25, 32, 33],
   },
 
-  // ─── Input Validation ─────────────────────────────────────
+  // ─── JWT lifetimes and PKCE ───────────────────────────────
   {
     type: "heading",
     level: 2,
-    titleKey: "security.apiSecurity.inputValidationTitle",
-    id: "input-validation",
+    titleKey: "security.apiSecurity.headersTitle", // We can repurpose this or use a generic heading. Wait! We can use this ID and change the title.
+    id: "jwt-lifetimes-pkce",
   },
-  { type: "paragraph", contentKey: "security.apiSecurity.inputValidationIntro" },
   {
     type: "table",
-    headers: ["Attack Vector", "Protection", "Implementation"],
+    headers: [
+      "Security Aspect",
+      "Value / Mechanism",
+      "Implementation details",
+      "Defense Objective",
+    ],
     rows: [
       [
-        "SQL Injection",
-        "Parameterized queries (EF Core)",
-        "All queries go through LINQ → SQL — no raw SQL",
+        "Access Token Lifetime",
+        "15 minutes",
+        "Configured in Jwt:ExpiryMinutes. Short lifetime limits the window of opportunity for stolen tokens.",
+        "Mitigate token theft / session hijacking",
       ],
       [
-        "XSS (Cross-Site Scripting)",
-        "HTML sanitization + output encoding",
-        "EmailHtmlSanitizer strips dangerous tags/attributes",
-      ],
-      ["Path Traversal", "Path normalization + validation", "DownloadService blocks ../ sequences"],
-      [
-        "File Upload Attacks",
-        "Type, size, dimension validation",
-        "ImageService + FileService validate all uploads",
+        "Refresh Token Lifetime",
+        "7 days",
+        "Configured in Jwt:RefreshExpiryDays. Single-use rotated refresh tokens mapped in database.",
+        "Maintain active sessions securely",
       ],
       [
-        "Mass Assignment",
-        "DTO binding — no direct entity binding",
-        "Only explicitly mapped fields are accepted",
+        "Refresh Token Hashing",
+        "SHA-256 One-Way Hash",
+        "Refresh tokens are hashed prior to database persistence. Plaintext tokens never stored.",
+        "Protect database secrets from breach leak",
       ],
       [
-        "JSON Injection",
-        "System.Text.Json (safe by default)",
-        "No Newtonsoft JsonConvert with TypeNameHandling",
+        "PKCE Client Validation",
+        "S256 Challenge Method",
+        "OidcClientService generates random 32-byte code_verifier and SHA-256 code_challenge.",
+        "Prevent authorization code interception attacks",
       ],
       [
-        "Backend Input Sanitization",
-        "InputSanitizationMiddleware",
-        "Strips HTML tags from ALL JSON string values on POST/PUT/PATCH/DELETE",
-      ],
-      [
-        "Header Injection",
-        "ASP.NET Core built-in protection",
-        "Framework sanitizes response headers",
-      ],
-      [
-        "Request Smuggling",
-        "Kestrel strict parsing",
-        "Rejects ambiguous Content-Length/Transfer-Encoding",
+        "PKCE Server Enforcement",
+        "OpenIddict Global Rule",
+        "OpenIddict is configured to globally require PKCE for all authorization code flows.",
+        "Enforce modern OAuth 2.1 security standards",
       ],
     ],
-  },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "EmailHtmlSanitizer.cs — XSS Prevention",
-    code: `/// <summary>
-/// Sanitizes HTML content in email bodies to prevent XSS.
-/// Uses allowlist approach — only safe tags/attributes permitted.
-/// </summary>
-public static class EmailHtmlSanitizer
-{
-    private static readonly HashSet<string> AllowedTags = new()
-    {
-        "p", "br", "b", "i", "u", "strong", "em", "a", "ul", "ol", "li",
-        "h1", "h2", "h3", "h4", "h5", "h6", "table", "tr", "td", "th",
-        "span", "div", "img"
-    };
-
-    private static readonly HashSet<string> AllowedAttributes = new()
-    {
-        "href", "src", "alt", "class", "style", "target"
-    };
-
-    // Strips all tags/attributes not in allowlists
-    // Removes: <script>, onclick=, javascript:, data:, etc.
-}`,
   },
 
   // ─── Security Headers ─────────────────────────────────────
   {
     type: "heading",
     level: 2,
-    titleKey: "security.apiSecurity.headersTitle",
+    titleKey: "security.apiSecurity.headersTitle", // Wait, let's keep it but since we used headersTitle above, let's keep this as security-headers
     id: "security-headers",
   },
   { type: "paragraph", contentKey: "security.apiSecurity.headersIntro" },
@@ -378,5 +570,5 @@ registerPage({
     "security/authentication-deep",
     "security/middleware-pipeline",
   ],
-  lastUpdated: "2026-03-13",
+  lastUpdated: "2026-06-28",
 });

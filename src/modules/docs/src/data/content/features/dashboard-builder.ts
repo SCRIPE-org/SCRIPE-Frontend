@@ -152,6 +152,36 @@ if (!isSettingsReady) {
 }`,
   },
 
+  // ─── Widget & Grid Configuration Schema ───────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.dashboardBuilder.widgetConfigTitle",
+    id: "widget-config",
+  },
+  { type: "paragraph", contentKey: "features.dashboardBuilder.widgetConfigIntro" },
+  {
+    type: "code",
+    language: "typescript",
+    filename: "DashboardWidget.ts Schema",
+    code: `export interface DashboardWidget {
+  id: string;                      // Unique identifier
+  type: DashboardWidgetType;       // 'statsCard' | 'chart' | 'dataTable' | 'quickActions' | ...
+  gridColumn: string;              // CSS Grid span configuration (e.g. "1 / 7")
+  gridRow: string;                 // CSS Grid row configuration (e.g. "1 / 3")
+  alignment: WidgetAlignment;      // 'start' | 'center' | 'end' | 'stretch'
+  props: Record<string, unknown>;  // Element specific settings (title, chartType, customUrl)
+  zIndex: number;                  // Overlap layer control
+  visible: boolean;                // Hide/show toggle
+}
+
+export interface DashboardBuilderCanvas {
+  enabled: boolean;                // True if layout customization is enabled
+  widgets: DashboardWidget[];      // Collection of positioned dashboard widgets
+  gridRows: number;                // Configured row height (default: 6)
+}`,
+  },
+
   // ─── Edge Case Protections ────────────────────────────────
   {
     type: "heading",
@@ -304,7 +334,12 @@ src/core/ui/layout/
 ├── dashboard-layout.tsx       # FOUC shimmer gate (layout entry point)
 
 src/modules/auth/core/data/
-├── repositories/AuthRepository.ts  # Logout cleanup (raw key removal)`,
+├── repositories/AuthRepository.ts  # Logout cleanup (raw key removal)
+
+src/modules/monitoring/dashboard/
+├── domain/entities/DashboardWidget.ts # 12-column widget schema
+├── presentation/components/dashboard-builder/DashboardBuilderPanel.tsx # DnD wrapper
+└── presentation/viewmodels/useDashboardBuilderStore.ts # Zustand layout manager`,
   },
   {
     type: "info",
@@ -325,5 +360,5 @@ registerPage({
     "features/theme-marketplace",
     "features/login-page-builder",
   ],
-  lastUpdated: "2026-04-05",
+  lastUpdated: "2026-06-28",
 });

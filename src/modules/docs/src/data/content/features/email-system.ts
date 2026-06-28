@@ -2,193 +2,330 @@ import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
-  //  Pipeline Architecture
-  { type: "heading", level: 2, titleKey: "features.emailSystem.pipelineTitle", id: "pipeline" },
+  // ── Pipeline Architecture Section ──
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.emailSystem.pipelineTitle",
+    id: "pipeline",
+  },
   { type: "paragraph", contentKey: "features.emailSystem.pipelineIntro" },
   {
     type: "flowchart",
     direction: "vertical",
-    title: "Email Pipeline",
+    title: "Email Dispatch & Execution Flow",
     nodes: [
-      { id: "manual", label: "SendManualEmailCommand", type: "default" },
-      { id: "bulk", label: "SendBulkEmailCommand", type: "default" },
-      { id: "system", label: "System Events (OTP, Reset)", type: "default" },
-      { id: "ieq", label: "IEmailQueue interface", type: "primary" },
-      { id: "mq", label: "EmailQueue (In-memory Channel)", type: "info" },
-      { id: "hq", label: "HangfireEmailQueue (Persistent)", type: "info" },
-      { id: "eqw", label: "EmailQueueWorker (BackgroundService)", type: "success" },
-      { id: "esw", label: "EmailSendingWorker (Hangfire)", type: "success" },
-      { id: "smtp", label: "SmtpEmailSender (Production)", type: "warning" },
-      { id: "dev", label: "DevEmailSender (Console log)", type: "warning" },
-      { id: "log", label: "SentEmailLog (Audit)", type: "danger" },
+      { id: "trigger", label: "Email Event Trigger", type: "default" },
+      { id: "queue_facade", label: "IEmailQueue Interface", type: "primary" },
+      { id: "in_memory_channel", label: "EmailQueue (Channels)", type: "info" },
+      { id: "hangfire_queue", label: "HangfireEmailQueue (Db)", type: "info" },
+      { id: "worker_in_memory", label: "EmailQueueWorker (BgService)", type: "success" },
+      { id: "worker_hangfire", label: "Hangfire Job Processor", type: "success" },
+      { id: "sender_resolve", label: "IEmailSender.ForRole(role)", type: "warning" },
+      { id: "smtp_sender", label: "SmtpEmailSender (SMTP Client)", type: "danger" },
+      { id: "console_sender", label: "DevEmailSender (Console)", type: "warning" },
+      { id: "null_sender", label: "NullEmailSender (Test stub)", type: "default" },
+      { id: "db_log", label: "SentEmailLog (Audit Log)", type: "info" },
     ],
     connections: [
-      { from: "manual", to: "ieq" },
-      { from: "bulk", to: "ieq" },
-      { from: "system", to: "ieq" },
-      { from: "ieq", to: "mq", style: "dashed" },
-      { from: "ieq", to: "hq", style: "dashed" },
-      { from: "mq", to: "eqw" },
-      { from: "hq", to: "esw" },
-      { from: "eqw", to: "smtp" },
-      { from: "esw", to: "smtp" },
-      { from: "smtp", to: "log" },
-      { from: "dev", to: "log" },
+      { from: "trigger", to: "queue_facade", label: "Invoke QueueEmailAsync" },
+      { from: "queue_facade", to: "in_memory_channel", label: "InMemory provider active" },
+      { from: "queue_facade", to: "hangfire_queue", label: "Hangfire provider active" },
+      { from: "in_memory_channel", to: "worker_in_memory", label: "Read from channel" },
+      { from: "hangfire_queue", to: "worker_hangfire", label: "Execute BackgroundJob" },
+      { from: "worker_in_memory", to: "sender_resolve", label: "Resolve sender" },
+      { from: "worker_hangfire", to: "sender_resolve", label: "Resolve sender" },
+      { from: "sender_resolve", to: "smtp_sender", label: "Production context" },
+      { from: "sender_resolve", to: "console_sender", label: "Development context" },
+      { from: "sender_resolve", to: "null_sender", label: "Testing context" },
+      { from: "smtp_sender", to: "db_log", label: "Save delivery status" },
+      { from: "console_sender", to: "db_log", label: "Log mock send" },
     ],
   },
 
-  //  Controller Endpoints 
-  { type: "heading", level: 2, titleKey: "features.emailSystem.endpointsTitle", id: "endpoints" },
+  // ── Controller Endpoints ──
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.emailSystem.endpointsTitle",
+    id: "endpoints",
+  },
   {
     type: "api-table",
     endpoints: [
       {
         method: "POST",
-        path: "/emails/send",
-        descriptionKey: "Send manual email  queued",
+        path: "/api/v1/emails/send",
+        descriptionKey: "Send manual transactional email (queues message)",
         auth: "JWT",
         permission: "emails.create",
       },
       {
         method: "POST",
-        path: "/emails/send-bulk",
-        descriptionKey: "Send to multiple recipients",
+        path: "/api/v1/emails/send-bulk",
+        descriptionKey: "Send transactional email to multiple recipients",
         auth: "JWT",
         permission: "emails.create",
       },
       {
         method: "GET",
-        path: "/emails/search-recipients",
-        descriptionKey: "Autocomplete for admin/user selection",
+        path: "/api/v1/emails/search-recipients",
+        descriptionKey: "Search matching recipients for administration panel selection",
         auth: "JWT",
         permission: "emails.view",
       },
       {
         method: "GET",
-        path: "/emails/sent",
-        descriptionKey: "Paginated sent history (filter: status, date range, search)",
+        path: "/api/v1/emails/sent",
+        descriptionKey: "Paginated log history of sent emails (filters by status, date range)",
         auth: "JWT",
         permission: "emails.view",
       },
       {
         method: "GET",
-        path: "/emails/{id}",
-        descriptionKey: "Single sent email detail",
+        path: "/api/v1/emails/{id}",
+        descriptionKey: "Retrieve single sent email audit log details",
         auth: "JWT",
         permission: "emails.view",
       },
       {
         method: "GET",
-        path: "/emails/statistics",
-        descriptionKey: "Totals by status + time-based counts",
+        path: "/api/v1/emails/statistics",
+        descriptionKey: "Retrieve overall totals and status counts of sent emails",
         auth: "JWT",
         permission: "emails.view",
       },
       {
         method: "POST",
-        path: "/emails/{id}/resend",
-        descriptionKey: "Re-queue a failed/sent email",
+        path: "/api/v1/emails/{id}/resend",
+        descriptionKey: "Re-enqueue a failed or completed email for redelivery",
         auth: "JWT",
         permission: "emails.create",
       },
       {
         method: "DELETE",
-        path: "/emails/{id}",
-        descriptionKey: "Cancel pending email (soft-delete)",
+        path: "/api/v1/emails/{id}",
+        descriptionKey: "Cancel/remove a pending email from the queue (soft-delete)",
         auth: "JWT",
         permission: "emails.create",
       },
     ],
   },
 
-  //  Queue Implementations
-  { type: "heading", level: 2, titleKey: "features.emailSystem.queueTitle", id: "queue" },
-  { type: "heading", level: 3, titleKey: "features.emailSystem.inMemoryTitle", id: "in-memory" },
+  // ── Queue Implementations ──
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.emailSystem.queueTitle",
+    id: "queue",
+  },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.emailSystem.inMemoryTitle",
+    id: "in-memory",
+  },
   {
     type: "code",
     language: "csharp",
     filename: "EmailQueue.cs",
-    code: `// Uses System.Threading.Channels for backpressure
-private readonly Channel<EmailMessage> _channel = Channel.CreateUnbounded<EmailMessage>();
+    code: `// Bounded System.Threading.Channels for backpressure control (max 1000 items)
+public sealed class EmailQueue : IEmailQueue
+{
+    private readonly Channel<EmailMessage> _queue;
 
-// Enqueue: non-blocking write
-await _channel.Writer.WriteAsync(message);
+    public EmailQueue()
+    {
+        var options = new BoundedChannelOptions(1000) 
+        { 
+            FullMode = BoundedChannelFullMode.Wait 
+        };
+        _queue = Channel.CreateBounded<EmailMessage>(options);
+    }
 
-// Dequeue: blocking read (in BackgroundService loop)
-var message = await _channel.Reader.ReadAsync(stoppingToken);`,
+    public async ValueTask QueueEmailAsync(EmailMessage message, CancellationToken ct = default)
+    {
+        await _queue.Writer.WriteAsync(message, ct);
+    }
+
+    public async ValueTask<EmailMessage?> DequeueAsync(CancellationToken ct)
+    {
+        try
+        {
+            return await _queue.Reader.ReadAsync(ct);
+        }
+        catch (OperationCanceledException)
+        {
+            return null;
+        }
+    }
+}`,
   },
-  { type: "heading", level: 3, titleKey: "features.emailSystem.hangfireTitle", id: "hangfire" },
+  {
+    type: "heading",
+    level: 3,
+    titleKey: "features.emailSystem.hangfireTitle",
+    id: "hangfire",
+  },
   {
     type: "code",
     language: "csharp",
     filename: "HangfireEmailQueue.cs",
-    code: `// Enqueues as a Hangfire background job  survives app restarts
-BackgroundJob.Enqueue<IEmailSender>(sender => sender.SendEmailAsync(to, subject, body, ...));`,
-  },
-
-  //  Sender Implementations 
-  { type: "heading", level: 2, titleKey: "features.emailSystem.sendersTitle", id: "senders" },
-  {
-    type: "table",
-    headers: ["Sender", "Environment", "Behavior"],
-    rows: [
-      ["SmtpEmailSender", "Production", "Full SMTP delivery via EmailSettings"],
-      ["DevEmailSender", "Development", "Logs email content to console (no actual send)"],
-      ["NullEmailSender", "Testing", "No-op, always succeeds"],
-    ],
-  },
-  { type: "info", variant: "note", contentKey: "features.emailSystem.senderNote" },
-
-  //  Background Worker Pattern
-  { type: "heading", level: 2, titleKey: "features.emailSystem.workerTitle", id: "worker" },
-  {
-    type: "code",
-    language: "csharp",
-    filename: "EmailQueueWorker.cs",
-    code: `// EmailQueueWorker  infinite loop processing
-protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    code: `// Hangfire-backed email queue: Jobs are serialized and persisted to DB
+public sealed class HangfireEmailQueue : IEmailQueue
 {
-    while (!stoppingToken.IsCancellationRequested)
+    public ValueTask QueueEmailAsync(EmailMessage message, CancellationToken ct = default)
     {
-        var message = await _emailQueue.DequeueAsync(stoppingToken);
-        if (message is null) continue;
-
-        // Scoped service resolution (IEmailSender may be transient)
-        using var scope = _serviceProvider.CreateScope();
-        var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
-
-        // Template vs raw email
-        if (!string.IsNullOrEmpty(message.TemplateName))
-            await emailSender.SendTemplatedEmailAsync(message.To, message.TemplateName, message.TemplateData);
+        if (!string.IsNullOrEmpty(message.TemplateName) && message.TemplateData is not null)
+        {
+            var placeholders = new Dictionary<string, string>(message.TemplateData);
+            BackgroundJob.Enqueue<EmailJobProcessor>(
+                processor => processor.SendTemplatedEmailAsync(
+                    message.To, message.TemplateName, placeholders, message.SenderRole
+                )
+            );
+        }
         else
-            await emailSender.SendEmailAsync(message.To, message.Subject, message.Body);
+        {
+            BackgroundJob.Enqueue<EmailJobProcessor>(
+                processor => processor.SendEmailAsync(
+                    message.To, message.Subject, message.Body, message.SenderRole
+                )
+            );
+        }
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask<EmailMessage?> DequeueAsync(CancellationToken ct)
+    {
+        throw new NotSupportedException("Hangfire processes jobs automatically via its own workers");
     }
 }`,
   },
 
-  //  Error Handling 
-  { type: "heading", level: 2, titleKey: "features.emailSystem.errorTitle", id: "errors" },
+  // ── Pluggable Senders ──
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.emailSystem.sendersTitle",
+    id: "senders",
+  },
+  {
+    type: "table",
+    headers: ["Sender Strategy", "Active Environment", "Execution Mode", "Behavior"],
+    rows: [
+      [
+        "SmtpEmailSender",
+        "Production / Staging",
+        "Active SMTP Client",
+        "Sends fully styled HTML emails via System.Net.Mail using verified credentials and brand layout rules",
+      ],
+      [
+        "DevEmailSender",
+        "Development",
+        "Logger Console Stub",
+        "Intercepts dispatch requests and logs styled HTML to the console log, creating mock SentEmailLog entries",
+      ],
+      [
+        "NullEmailSender",
+        "Testing",
+        "No-Op Stub",
+        "Accepts all emails and returns task completion instantly, skipping any logging or output operations",
+      ],
+    ],
+  },
+  { type: "info", variant: "note", contentKey: "features.emailSystem.senderNote" },
+
+  // ── Background Worker ──
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.emailSystem.workerTitle",
+    id: "worker",
+  },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "EmailQueueWorker.cs",
+    code: `// Hosted background worker loop processing System.Threading.Channels messages
+public sealed class EmailQueueWorker : BackgroundService
+{
+    private readonly IEmailQueue _emailQueue;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<EmailQueueWorker> _logger;
+
+    public EmailQueueWorker(
+        IEmailQueue emailQueue,
+        IServiceProvider serviceProvider,
+        ILogger<EmailQueueWorker> logger)
+    {
+        _emailQueue = emailQueue;
+        _serviceProvider = serviceProvider;
+        _logger = logger;
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        _logger.LogInformation("Email queue worker started");
+
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            try
+            {
+                var message = await _emailQueue.DequeueAsync(stoppingToken);
+                if (message is null) continue;
+
+                await ProcessEmailAsync(message, stoppingToken);
+            }
+            catch (OperationCanceledException)
+            {
+                break;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error processing email from queue");
+                // 5-second backoff prevents tight loop CPU lockups on connection failures
+                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+            }
+        }
+    }
+}`,
+  },
+
+  // ── Error Handling and Sanitization ──
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.emailSystem.errorTitle",
+    id: "errors",
+  },
   {
     type: "list",
     variant: "unordered",
     items: [
-      "On SMTP failure: logged with error, worker continues processing next email",
-      "After failure: 5-second delay before next dequeue (prevents tight error loops)",
-      "ResendEmail endpoint allows re-queuing failed emails",
-      "CancelEmail soft-deletes pending emails before they're processed",
+      "SMTP Connection Failures: Exceptions are caught, logged, and worker thread sleeps for 5 seconds before processing subsequent queue elements.",
+      "Hangfire Retry Policies: Automatic retry filters retry failed background deliveries (3 attempts) with a custom exponential delay (10s, 60s, 300s).",
+      "Deferred Email Processing: Scheduled emails are kept pending in the database (SentEmailLog) and processed in batches of 50 by EmailProcessingJob.",
+      "Gmail/Yahoo Bulk Compliances: Every SMTP email header contains List-Unsubscribe, List-Unsubscribe-Post='List-Unsubscribe=One-Click', Return-Path, and X-Mailer values to avoid spam classification.",
+      "Email Sender Roles: Specific roles (Auth, Billing, Sales, Support) resolve automatically to Gmail/Google Workspace group aliases to delegating sends dynamically.",
     ],
   },
 
-  //  HTML Sanitizer 
-  { type: "heading", level: 2, titleKey: "features.emailSystem.sanitizerTitle", id: "sanitizer" },
+  // ── HTML Sanitizer ──
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.emailSystem.sanitizerTitle",
+    id: "sanitizer",
+  },
   { type: "paragraph", contentKey: "features.emailSystem.sanitizerIntro" },
   {
     type: "list",
     variant: "unordered",
     items: [
-      "Removes <script> tags",
-      "Removes javascript: URLs in href attributes",
-      "Strips event handlers (onclick, onerror, etc.)",
+      "Strips script elements (<script>) and nested code structures entirely from the body.",
+      "Blocks all javascript: scheme references in link anchors (href) and image src attributes.",
+      "Removes inline Javascript event handler attributes (such as onload, onclick, onerror, and onmouseover) from HTML nodes.",
     ],
   },
 ];
@@ -201,5 +338,5 @@ registerPage({
   order: 6,
   sections,
   relatedSlugs: ["features/notification-system", "features/message-templates"],
-  lastUpdated: "2026-02-20",
+  lastUpdated: "2026-06-28",
 });

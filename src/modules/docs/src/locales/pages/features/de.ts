@@ -546,6 +546,12 @@ export const de = {
         "Multi-Page Branding — Configure independent branding for Login, Forgot Password, and Reset Password pages.",
       relatedBuilder:
         "Login Page Builder — Drag-and-drop visual canvas for building custom login page layouts with 14 component types.",
+      logoPathsTitle: "Logo-Pfade & Auflösung",
+      logoPathsIntro:
+        "Mandanten-Logo-Assets werden in einem dedizierten lokalen oder Cloud-Speicherverzeichnis (Standard: 'FileHost/TenantLogos/') gespeichert, das über das Dateispeicherschema 'tenant-logo' strukturiert ist. Gespeicherte Dateien werden als '{TenantCode}_logo.{extension}' benannt, um Namenskollisionen zu vermeiden und die Mandantentrennung zu erzwingen. Bereitgestellte Logo-Anforderungspfade werden über '/api/files/tenant-logos/{filename}' geleitet, was Medienendungen (JPG, PNG, WEBP, GIF, SVG) validiert und ein Dateigrößenlimit von 10 MB erzwingt.",
+      cssPreviewsTitle: "Live-CSS-Vorschau-Pipeline",
+      cssPreviewsIntro:
+        "Der Live-Vorschaurahmen im Customizer Studio kommuniziert über einen sicheren, herkunftsvalidierten postMessage-Kanal unter Verwendung des useStudioBridge-Hooks. Wenn ein Administrator ein Design-Token im Seitenleistenpanel ändert, sendet das übergeordnete Fenster ein Echtzeit-postMessage-Ereignis, das das vollständige serialisierte StudioDraft-Objekt enthält. Das Vorschau-iframe (z.B. LoginPreviewShell) fängt die Nachricht ab und ruft useLoginBrandingTokens auf, um CSS-Variablen (--login-*) auf dem document :root-Element sofort zu aktualisieren und latenzfreie DOM-Neuzeichnungen bereitzustellen.",
     },
     dashboardBuilder: {
       title: "Dashboard-Builder",
@@ -585,6 +591,9 @@ export const de = {
         "Der Dashboard-Builder ist über 7 Dateien in der Core-Schicht implementiert und folgt UISs Provider-basiertem Architekturmuster.",
       archTip:
         "Um eine neue Einstellung hinzuzufügen, erweitern Sie die Settings-Schnittstelle und defaultSettings in settings-provider.tsx.",
+      widgetConfigTitle: "Widget- & Grid-Konfigurationsschema",
+      widgetConfigIntro:
+        "Jedes Widget auf der Dashboard-Builder-Leinwand ist ein positionierter Block in einem 12-Spalten-CSS-Grid. Der Builder konfiguriert Spalten, Zeilen, Ausrichtung, spezifische Props, zIndex und Sichtbarkeit und serialisiert diese zusammen mit den bestehenden Theme-Tokens in DashboardThemeJson.",
     },
     themeMarketplace: {
       title: "Theme Marketplace",
@@ -780,6 +789,15 @@ export const de = {
         "Domain Layer: ThemeDetail.ts (entity), IThemeMarketplaceService.ts, IThemeMarketplaceRepository.ts",
       sourceViewModel:
         "ViewModel: useThemeMarketplace.ts (gallery state), useStudioViewModel.ts (preview/apply integration)",
+      devProfilesTitle: "Theme-Entwicklerportal & Profile",
+      devProfilesIntro:
+        "Der Theme-Marktplatz ermöglicht es registrierten Theme-Entwicklern, ihre Designs zu veröffentlichen. Entwicklerprofile werden über den DeveloperProfileController registriert und verwaltet und als mandantengebundene DeveloperProfile-Entitäten gespeichert. Die Verifizierung von Profilen ist auf Plattformadministratoren beschränkt (VerifyDeveloperCommand), während Auszahlungen und Provisionssätze über den AppFinancialsController (erfordert Berechtigungen wie developerprofiles.verify und developerpayouts.process) und Zahlungs-Gateways (Stripe Connect) verfolgt werden.",
+      purchaseVerifyTitle: "Kaufverifizierungssequenz",
+      purchaseVerifyIntro:
+        "Premium- und Standalone-Themes erfordern einen expliziten Kauf, bevor sie von einem Mandanten angewendet werden können. Das System prüft die Stufe des Mandanten und bestehende Käufe (GetPurchasedThemeIdsAsync) in der Datenbank. Wenn ein Kauf erforderlich ist, leitet das System den Administrator zu einer sicheren Stripe Checkout-Sitzung weiter. Nach erfolgreicher Zahlung sendet Stripe einen checkout.session.completed-Webhook mit der Korrelations-ID, wodurch ein LoginThemePurchase-Datensatz in der Datenbank erstellt wird, der dauerhaften Zugriff auf dieses Theme gewährt.",
+      downloadsVerifyTitle: "Theme-Download-Verifizierung",
+      downloadsVerifyIntro:
+        "Um benutzerdefinierte Theme-Presets oder Offline-Konfigurations-Assets sicher herunterzuladen, implementiert das System ein sitzungsgebundenes Dateidownload-Framework. Der Medien-DownloadsController generiert über den IDownloadService eine zeitlich begrenzte, kryptografisch zufällige sessionId. Der Benutzer lädt das Paket über eine sichere GET-Anforderung an /api/v1/downloads/session/{sessionId} herunter, wodurch clientseitige Authentifizierungs-Header im Download-Link vermieden und Dateien vor unbefugtem Zugriff geschützt werden.",
     },
     multiPageBranding: {
       title: "Multi-Page Branding",
@@ -861,6 +879,12 @@ export const de = {
         "Types: StudioDraft.ts (pageOverrides interface), ThemeTypes.ts (page override type definitions)",
       sourceSeeder:
         "Backend: LoginThemeSeeder.cs (PageOverrideDesign records, BuildFullThemeJson pages serialization)",
+      domainMatchingTitle: "Domain-Matching & Mandanten-Isolation",
+      domainMatchingIntro:
+        "Um den korrekten Mandantenkontext zur Laufzeit aufzulösen, prüfen das API-Gateway und das Backend TenantContextMiddleware die eingehenden Anforderungs-Header. Wenn ein SuperAdmin zu einem bestimmten Mandanten-Arbeitsbereich drillt, überträgt die Client-App die verschlüsselte Mandanten-ID im Header 'X-Tenant-Context'. Die Middleware fängt die Anforderung ab, prüft auf die Berechtigung tenants.drill_down, entschlüsselt den Header mittels AES und ordnet ihn CurrentUserService.TenantId zu. Bei normalem Client-Verkehr, der auf benutzerdefinierten Domains eingeht, gleicht die Hostnamen-Auflösung Host-Header mit Mandanten-Domain-Zuordnungen ab.",
+      dnsCnameTitle: "Custom-Domain DNS CNAME-Validierung",
+      dnsCnameIntro:
+        "Administratoren können benutzerdefinierte Domains (z. B. login.acme.com) über die TenantDomain-Endpunkte konfigurieren. Die Domain muss die RFC 1123-Validierungen bestehen und innerhalb des Mandanten-Kontingents Tenancy.MaxCustomDomains bleiben. Zur Überprüfung des Domainbesitzes generiert das System ein eindeutiges Verifizierungstoken mit dem Präfix 'scr_'. Der Administrator muss einen CNAME-Eintrag erstellen, der seine Domain auf den Plattform-Endpunkt verweist, und einen TXT-Eintrag für '_scr-verify.{domain}', der das Token enthält. DnsClient.NET fragt die TXT-Einträge ab, um die Übereinstimmung vor der Aktivierung der Domain zu bestätigen.",
     },
     loginPageBuilder: {
       title: "Login Page Builder",
@@ -1051,24 +1075,34 @@ export const de = {
       sourceTitle: "Quelldatei-Referenz",
       sourceIntro:
         "Der refaktorisierte Dashboard Hub erstreckt sich über 4 Module (Dashboard, Audit, Security, Analytics), jeweils mit eigenem vollständigen 6-Schichten-Stack.",
+      realtimeTitle: "Echtzeit-SignalR-Updates",
+      realtimeIntro:
+        "Der Dashboard-Hub lässt sich in SignalR integrieren, um Echtzeit-Updates und Cache-Invalidierung bereitzustellen. Er teilt die Verbindung mit dem Audit-Log-Listener und invalidiert den Cache der Abfrage 'dashboard', wenn neue Audit-Ereignisse empfangen werden. Dies löst automatische Updates für TanStack-Abfragen aus, ohne dass die Seite neu geladen oder regelmäßige Abfragen durchgeführt werden müssen.",
     },
     selfServiceSignup: {
       title: "Self-Service-Registrierung und B2B2C-Onboarding",
-      description: "Automatisierte Multi-Tenant-Onboarding-Saga mit Verifizierungs-OTPs, regionaler Währungsauflösung und Stripe-Checkout-Integration.",
-      intro: "SCRIPE verfügt über eine umfassende B2B2C-Self-Service-Mandanten-Onboarding-Engine, die über eine robuste zweiphasige Saga orchestriert wird. Es koordiniert Datenbanktransaktionen, das Einrichten von Abonnements, Rechnungsverbindungen und bietet automatische Kompensations-Rollbacks, wenn Zahlungen abgebrochen werden.",
+      description:
+        "Automatisierte Multi-Tenant-Onboarding-Saga mit Verifizierungs-OTPs, regionaler Währungsauflösung und Stripe-Checkout-Integration.",
+      intro:
+        "SCRIPE verfügt über eine umfassende B2B2C-Self-Service-Mandanten-Onboarding-Engine, die über eine robuste zweiphasige Saga orchestriert wird. Es koordiniert Datenbanktransaktionen, das Einrichten von Abonnements, Rechnungsverbindungen und bietet automatische Kompensations-Rollbacks, wenn Zahlungen abgebrochen werden.",
       flowTitle: "Onboarding-Ablauf",
       phase1Title: "Phase 1: Identitäts- und Bereitstellungstransaktion",
-      phase1Intro: "Phase 1 wird in einer einzigen Datenbanktransaktion ausgeführt. Sie generiert den Mandanten-Arbeitsbereich, richtet die Standard-Unterdomäne ein, stellt Einstellungen bereit, erstellt die Standard-Sicherheitsrollen und erstellt das Benutzerkonto des Mandantenbesitzers.",
+      phase1Intro:
+        "Phase 1 wird in einer einzigen Datenbanktransaktion ausgeführt. Sie generiert den Mandanten-Arbeitsbereich, richtet die Standard-Unterdomäne ein, stellt Einstellungen bereit, erstellt die Standard-Sicherheitsrollen und erstellt das Benutzerkonto des Mandantenbesitzers.",
       validationTitle: "Subdomain- und Identitätsprüfung",
-      validationIntro: "Um die Sicherheit zu gewährleisten und Routing-Konflikte zu vermeiden, das Onboarding-System wendet strenge Formatierungsregeln an und prüft die Verfügbarkeit von Subdomains anhand einer Blacklist für reservierte Wörter.",
+      validationIntro:
+        "Um die Sicherheit zu gewährleisten und Routing-Konflikte zu vermeiden, das Onboarding-System wendet strenge Formatierungsregeln an und prüft die Verfügbarkeit von Subdomains anhand einer Blacklist für reservierte Wörter.",
       tableConstraint: "Einschränkung",
       tableRule: "Regel / Muster",
       tableReason: "Sicherheitsbegründung",
       emailVerificationTitle: "E-Mail-Verifizierungstickets",
-      emailVerificationIntro: "Bevor eine Saga starten kann, muss die E-Mail-Adresse des Interessenten verifiziert werden. Das System stellt ein kryptografisch HMAC-SHA256-signiertes Ticket mit einer Gültigkeitsdauer von 15 Minuten aus.",
+      emailVerificationIntro:
+        "Bevor eine Saga starten kann, muss die E-Mail-Adresse des Interessenten verifiziert werden. Das System stellt ein kryptografisch HMAC-SHA256-signiertes Ticket mit einer Gültigkeitsdauer von 15 Minuten aus.",
       phase2Title: "Phase 2: Berechtigungen und Rechnungsübergabe",
-      phase2Intro: "Phase 2 verknüpft den neu erstellten Mandanten mit dem Berechtigungsmodul (Entitlements). Wenn die gewählte Edition kostenpflichtig ist, generiert das System eine Stripe-Checkout-Sitzung und leitet den Benutzer weiter.",
-      compensationWarning: "Wenn eine kostenpflichtige Checkout-Sitzung vom Benutzer abgebrochen wird oder die Initialisierung fehlschlägt, führt das System einen automatischen Kompensationsablauf (CompensatePhase1Async) aus, um die Erstellung des Mandanten und des Administrators rückgängig zu machen und verwaiste Konten zu verhindern.",
+      phase2Intro:
+        "Phase 2 verknüpft den neu erstellten Mandanten mit dem Berechtigungsmodul (Entitlements). Wenn die gewählte Edition kostenpflichtig ist, generiert das System eine Stripe-Checkout-Sitzung und leitet den Benutzer weiter.",
+      compensationWarning:
+        "Wenn eine kostenpflichtige Checkout-Sitzung vom Benutzer abgebrochen wird oder die Initialisierung fehlschlägt, führt das System einen automatischen Kompensationsablauf (CompensatePhase1Async) aus, um die Erstellung des Mandanten und des Administrators rückgängig zu machen und verwaiste Konten zu verhindern.",
     },
   },
 };

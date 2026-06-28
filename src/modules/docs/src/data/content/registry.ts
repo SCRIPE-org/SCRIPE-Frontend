@@ -25,6 +25,7 @@ import "./architecture/domain-model";
 import "./architecture/domain-events";
 import "./architecture/cqrs-pipeline";
 import "./architecture/dependency-injection";
+import "./architecture/module-collaboration";
 
 // Features
 import "./features/authentication";
@@ -54,7 +55,7 @@ import "./features/self-service-signup";
 // Modules (Entitlements)
 import "./modules/entitlements/entitlements-overview";
 import "./modules/entitlements/editions";
-// import "./modules/entitlements/subscriptions";
+import "./modules/entitlements/subscriptions";
 import "./modules/entitlements/features";
 import "./modules/entitlements/overrides";
 import "./modules/entitlements/crm-leads";
@@ -197,7 +198,7 @@ import "./commercial/roadmap";
 // Modules (Commercial Entitlements)
 import "./commercial/entitlements-overview";
 import "./commercial/entitlements-editions";
-// import "./commercial/entitlements-subscriptions";
+import "./commercial/entitlements-subscriptions";
 import "./commercial/entitlements-features";
 import "./commercial/entitlements-overrides";
 

@@ -26,7 +26,88 @@ const sections: DocSection[] = [
     ],
   },
 
-  //  AdminsController CRUD
+  // € RegisterUserCommand Validation
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.userManagement.registerValidationTitle",
+    id: "register-validation",
+  },
+  { type: "paragraph", contentKey: "features.userManagement.registerValidationIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "RegisterUserCommandValidator.cs",
+    code: `public sealed class RegisterUserCommandValidator : AbstractValidator<RegisterUserCommand>
+{
+    public RegisterUserCommandValidator()
+    {
+        RuleFor(x => x.Username)
+            .NotEmpty().MaximumLength(100)
+            .Matches("^[a-zA-Z0-9_]+$");
+
+        RuleFor(x => x.Password)
+            .NotEmpty().MinimumLength(6);
+
+        RuleFor(x => x.Email)
+            .EmailAddress().When(x => !string.IsNullOrEmpty(x.Email));
+
+        RuleFor(x => x.TenantCode)
+            .NotEmpty().MaximumLength(100).WithMessage("TenantCode is required.");
+    }
+}`,
+  },
+
+  // € User Invitations & Setup Tokens
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.userManagement.invitationTitle",
+    id: "invitations",
+  },
+  { type: "paragraph", contentKey: "features.userManagement.invitationIntro" },
+  {
+    type: "flowchart",
+    direction: "vertical",
+    title: "User Invitation & Activation Flow",
+    nodes: [
+      {
+        id: "invite",
+        label: "Admin Invites User (CreateAdminCommand, SendSetupEmail=true)",
+        type: "default",
+      },
+      {
+        id: "generate",
+        label: "Generate 256-bit Secure Token (RandomNumberGenerator)",
+        type: "info",
+      },
+      { id: "hash", label: "Hash Token (SHA256) & Set 24-Hour Expiry", type: "info" },
+      { id: "save", label: "Save Inactive User with Token Hash", type: "warning" },
+      { id: "url", label: "Resolve URL (Tenant Custom Domain or Platform URL)", type: "info" },
+      { id: "email", label: "Send Activation Email (Scriban Template & SMTP)", type: "success" },
+      { id: "click", label: "User clicks link, submits new password", type: "primary" },
+      { id: "verify", label: "Verify Token Hash & Check Expiry", type: "info" },
+      { id: "validate", label: "Validate Password against Tenant Password Policy", type: "info" },
+      {
+        id: "active",
+        label: "Hash Password, Set IsAccountActivated=true, Clear Token",
+        type: "success",
+      },
+    ],
+    connections: [
+      { from: "invite", to: "generate" },
+      { from: "generate", to: "hash" },
+      { from: "hash", to: "save" },
+      { from: "save", to: "url" },
+      { from: "url", to: "email" },
+      { from: "email", to: "click" },
+      { from: "click", to: "verify" },
+      { from: "verify", to: "validate" },
+      { from: "validate", to: "active" },
+    ],
+  },
+
+  // € AdminsController CRUD
   { type: "heading", level: 2, titleKey: "features.userManagement.crudTitle", id: "crud" },
   {
     type: "api-table",

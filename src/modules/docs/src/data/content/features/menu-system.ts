@@ -174,7 +174,42 @@ const sections: DocSection[] = [
     ],
   },
 
-  //  Override System
+  // € Custom Domain Menu Access
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.menuSystem.customDomainTitle",
+    id: "custom-domain",
+  },
+  { type: "paragraph", contentKey: "features.menuSystem.customDomainIntro" },
+  {
+    type: "code",
+    language: "csharp",
+    filename: "TenantUrlResolver.cs",
+    code: `public async Task<string> GetTenantUrlAsync(Guid tenantId, string tenantCode, string path, CancellationToken ct)
+{
+    var baseUrl = _tenancySettings.FrontendBaseUrl.TrimEnd('/');
+    path = path.TrimStart('/');
+
+    // DEV MODE: localhost doesn't support subdomains — always use base URL + query param
+    if (IsDevMode(baseUrl))
+    {
+        var separator = path.Contains('?') ? "&" : "?";
+        return \`\${baseUrl}/\${path}\${separator}_tenant=\${tenantCode}\`;
+    }
+
+    // PRODUCTION MODE: Resolve tenant's primary verified custom domain or auto-generated domain
+    var tenantBaseUrl = await GetFrontendBaseUrlAsync(tenantId, ct);
+    if (!tenantBaseUrl.Equals(baseUrl, StringComparison.OrdinalIgnoreCase))
+        return \`\${tenantBaseUrl}/\${path}\`;
+
+    // Fallback: base URL with query param
+    var sep = path.Contains('?') ? "&" : "?";
+    return \`\${baseUrl}/\${path}\${sep}_tenant=\${tenantCode}\`;
+}`,
+  },
+
+  // € Override System
   { type: "heading", level: 2, titleKey: "features.menuSystem.overrideTitle", id: "overrides" },
   {
     type: "table",

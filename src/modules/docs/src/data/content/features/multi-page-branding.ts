@@ -237,6 +237,48 @@ const sections: DocSection[] = [
     contentKey: "features.multiPageBranding.conflictWarning",
   },
 
+  // ─── Domain Matching ──────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.multiPageBranding.domainMatchingTitle",
+    id: "domain-matching",
+  },
+  { type: "paragraph", contentKey: "features.multiPageBranding.domainMatchingIntro" },
+
+  // ─── DNS CNAME checks ─────────────────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "features.multiPageBranding.dnsCnameTitle",
+    id: "dns-cname",
+  },
+  { type: "paragraph", contentKey: "features.multiPageBranding.dnsCnameIntro" },
+  {
+    type: "flowchart",
+    title: "Custom Domain Verification Sequence",
+    direction: "vertical",
+    nodes: [
+      { id: "add", label: "Admin Enters Custom Domain", type: "default" },
+      { id: "token", label: "Generate Token (scr_ prefix)", type: "primary" },
+      { id: "dns", label: "Create DNS CNAME & TXT Records", type: "warning" },
+      { id: "verify", label: "Trigger Verification Request", type: "info" },
+      { id: "query", label: "DnsClient.NET DNS Query (TXT)", type: "info" },
+      { id: "match", label: "Compare TXT Record value with Token", type: "success" },
+      { id: "cname", label: "Validate CNAME resolved target", type: "warning" },
+      { id: "activate", label: "Activate Domain & Bind context mappings", type: "success" },
+    ],
+    connections: [
+      { from: "add", to: "token" },
+      { from: "token", to: "dns" },
+      { from: "dns", to: "verify" },
+      { from: "verify", to: "query" },
+      { from: "query", to: "match" },
+      { from: "match", to: "cname", label: "Token Match" },
+      { from: "cname", to: "activate", label: "Target Valid" },
+    ],
+  },
+
   // ─── Source Files ─────────────────────────────────────────
   {
     type: "heading",

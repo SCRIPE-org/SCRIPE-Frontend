@@ -125,6 +125,12 @@ export const navigationData: DocCategoryData[] = [
         slug: "architecture/dependency-injection",
         order: 12,
       },
+      {
+        id: "arch-module-collab",
+        titleKey: "architecture.moduleCollab.title",
+        slug: "architecture/module-collaboration",
+        order: 13,
+      },
     ],
   },
 
@@ -554,6 +560,12 @@ export const navigationData: DocCategoryData[] = [
             titleKey: "modules.editions.title",
             slug: "modules/editions",
             order: 2,
+          },
+          {
+            id: "mod-ent-subscriptions",
+            titleKey: "modules.subscriptions.title",
+            slug: "modules/subscriptions",
+            order: 3,
           },
           {
             id: "mod-ent-features",
@@ -1035,6 +1047,12 @@ export const navigationData: DocCategoryData[] = [
             titleKey: "commercial.entEditions.title",
             slug: "commercial/entitlements-editions",
             order: 2,
+          },
+          {
+            id: "comm-mod-ent-subscriptions",
+            titleKey: "commercial.entSubscriptions.title",
+            slug: "commercial/entitlements-subscriptions",
+            order: 3,
           },
           {
             id: "comm-mod-ent-features",

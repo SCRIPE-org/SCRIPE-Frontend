@@ -391,5 +391,139 @@ export const fr = {
       captiveTip:
         "Évitez les dépendances captives (quand un service Singleton injecte un service Scoped). Utilisez IServiceScopeFactory à la place.",
     },
+    moduleCollab: {
+      title: "Collaboration Inter-Modules en Profondeur",
+      description: "Analyse détaillée de la communication inter-modules dans le monolithe UIS.",
+      intro:
+        "Les modules Identity et Entitlements ne peuvent pas s'importer mutuellement (dépendance circulaire). Ils collaborent via la couche Core — abstractions partagées, événements de domaine et pipeline Mediator.",
+      coreBridgeTitle: "Le Pont de la Couche Core",
+      coreBridgeIntro:
+        "Toute collaboration inter-modules passe par Core.Application.Abstractions. Chaque module implémente les interfaces définies dans Core et consomme celles des autres modules via l'injection de dépendances.",
+      catalogTitle: "Catalogue Complet des Interfaces",
+      catalogIntro:
+        "Ces interfaces sont le contrat complet entre modules. Toutes sont définies dans Core.Application.Abstractions, implémentées par les modules Infrastructure, et enregistrées par défaut avec des NoOp dans Core.Infrastructure.",
+      noopTitle: "Le Modèle de Sécurité NoOp",
+      noopIntro:
+        "Chaque interface inter-modules a une implémentation NoOp dans Core.Infrastructure. Quand un module est absent, le NoOp garantit que le système continue de fonctionner en mode dégradé gracieux plutôt qu'en erreur.",
+      noopWarning:
+        "Les NoOp sont des filets de sécurité, pas des valeurs par défaut permanentes. En production avec tous les modules chargés, aucun NoOp ne doit être actif. Les diagnostics au démarrage détectent les NoOp actifs et journalisent une alerte critique.",
+      noopRegistrationTitle: "Enregistrement NoOp — TryAddScoped vs AddScoped",
+      noopRegistrationIntro:
+        "Le mécanisme de remplacement NoOp repose sur une règle critique : Core.Infrastructure enregistre les NoOp avec TryAddScoped. Les vrais modules s'enregistrent avec AddScoped. Comme TryAddScoped n'enregistre que si aucun service n'existe déjà, appeler AddScoped ensuite le remplace inconditionnellement.",
+      startupDiagnosticsTitle: "Diagnostics au Démarrage — Détection des NoOp",
+      startupDiagnosticsIntro:
+        "PostBuildInitialization.cs s'exécute après la construction du conteneur DI. Il vérifie le type résolu pour les interfaces critiques. Si le type résolu est encore un NoOp, il journalise un message LogCritical.",
+      featureCheckTitle: "FeatureCheckBehavior — Analyse Approfondie",
+      featureCheckIntro:
+        "FeatureCheckBehavior est un comportement de pipeline AstraFlow qui intercepte toutes les commandes implémentant IRequireFeature. Il vérifie si la fonctionnalité requise est activée pour le tenant avant d'atteindre le gestionnaire.",
+      requireFeatureInterfaceTitle: "IRequireFeature — L'Interface Marqueur Opt-In",
+      requireFeatureInterfaceIntro:
+        "IRequireFeature est une interface marqueur sans surcharge. Les commandes qui l'implémentent optent pour le contrôle de fonctionnalité par édition via FeatureCheckBehavior. Les commandes qui ne l'implémentent pas passent sans surcharge.",
+      subscriptionEventTitle: "SubscriptionChangedEvent",
+      subscriptionEventIntro:
+        "SubscriptionChangedEvent est l'événement de domaine le plus critique du système. Il est publié par Entitlements chaque fois que l'abonnement d'un tenant change, et déclenche la synchronisation des permissions dans Identity.",
+      eventTriggersTitle: "Toutes les Commandes qui Publient SubscriptionChangedEvent",
+      eventTriggersIntro:
+        "SubscriptionChangedEvent est publié par toute commande ou service Entitlements qui modifie l'état d'abonnement d'un tenant.",
+      permSyncTitle: "Cycle de Vie de la Synchronisation des Permissions",
+      permSyncIntro:
+        "Lorsqu'un SubscriptionChangedEvent est traité par Identity, une synchronisation complète des permissions est effectuée pour le tenant concerné.",
+      permSyncStep1Title: "Étape 1 : Résolution de la Carte des Fonctionnalités",
+      permSyncStep1Content:
+        "Le gestionnaire Entitlements résout la carte complète des fonctionnalités effectives : fonctionnalités d'édition fusionnées avec les remplacements de tenant et les expansions de bundle.",
+      permSyncStep2Title: "Étape 2 : Publication de l'Événement de Domaine",
+      permSyncStep2Content:
+        "SubscriptionChangedEvent est publié comme événement de domaine, capturé par OutboxInterceptor, persisté dans la table OutboxMessages, puis distribué après SaveChangesAsync.",
+      permSyncStep3Title: "Étape 3 : Gestionnaire d'Événement Identity",
+      permSyncStep3Content:
+        "SubscriptionChangedEventHandler d'Identity reçoit l'événement et délègue à ITenantPermissionManager pour synchroniser les permissions.",
+      permSyncStep4Title: "Étape 4 : Diff et Application des Permissions",
+      permSyncStep4Content:
+        "TenantPermissionManager lit les IDs de permission par module, diff avec les permissions actuelles du tenant, et ajoute/supprime selon les besoins.",
+      permSyncStep5Title: "Étape 5 : Invalidation du Cache",
+      permSyncStep5Content:
+        "Après la synchronisation, tous les caches de permissions d'admin pour ce tenant sont invalidés. La prochaine requête recharge les permissions depuis la base de données.",
+      loginEnrichTitle: "Enrichissement de la Réponse de Connexion",
+      loginEnrichIntro:
+        "LoginCommandHandler d'Identity enrichit la réponse JWT avec le statut d'abonnement sans importer Entitlements directement.",
+      loginEnrichNote:
+        "Si Entitlements n'est pas chargé, ISubscriptionStatusProvider est le NoOp qui retourne null. Le token JWT est toujours émis, mais sans données d'abonnement.",
+      deployTopologyTitle: "Impact de la Topologie de Déploiement",
+      deployTopologyIntro:
+        "Le modèle de collaboration inter-modules fonctionne différemment selon que vous déployez en mode monolithe ou microservice.",
+      monolithMode: "Mode Monolithe",
+      microserviceMode: "Mode Microservice",
+      moduleNameEnvTitle: "Référence de la Variable MODULE_NAME",
+      moduleNameEnvIntro:
+        "La variable d'environnement MODULE_NAME est définie au démarrage du conteneur et détermine quels modules sont chargés dans le processus.",
+      microserviceCaution:
+        "Ne déployez JAMAIS Identity et Entitlements dans des processus séparés sans d'abord implémenter un bus de messages pour les événements de domaine. Sans cela, SubscriptionChangedEvent sera silencieusement perdu et les permissions des tenants ne se synchroniseront jamais.",
+      coDependencyTitle: "Carte des Co-dépendances de Modules",
+      coDependencyIntro:
+        "Ce tableau documente chaque dépendance inter-modules dans le système, quelle interface est utilisée et dans quelle direction.",
+      signupSagaTitle: "La Saga d'Inscription en Libre-Service",
+      signupSagaIntro:
+        "L'inscription en libre-service est l'exemple le plus complexe de collaboration inter-modules.",
+      signupMonolithOnly:
+        "L'inscription en libre-service n'est prise en charge QUE en mode monolithe. En mode microservice, la garde G15 dans PostBuildInitialization.cs bloque le démarrage si la configuration d'inscription est activée.",
+      signupStep1Title: "Phase 1 : Provisionnement du Tenant (Identity)",
+      signupStep1Content:
+        "RegisterTenantSelfServiceCommand crée le tenant, l'admin, les rôles et publie SignupPhase1CompletedEvent dans une transaction atomique.",
+      signupStep2Title: "Phase 2 : Liaison de l'Abonnement (Entitlements)",
+      signupStep2Content:
+        "SignupPhase1CompletedEventHandler crée l'abonnement. Pour les éditions gratuites, activation immédiate. Pour les payantes, création d'une session Stripe.",
+      signupStep3Title: "Phase 3 : Confirmation du Paiement (Stripe)",
+      signupStep3Content:
+        "Le webhook Stripe traite la confirmation de paiement et active l'abonnement, publiant SubscriptionChangedEvent.",
+      signupStep4Title: "Phase 4 : Compensation (si abandon)",
+      signupStep4Content:
+        "Si le checkout Stripe est abandonné, CompensatePhase1Async supprime le tenant et l'admin pour éviter les comptes orphelins.",
+      signupEventChainTitle: "Chaîne d'Événements d'Inscription",
+      signupEventChainIntro:
+        "La saga d'inscription traverse les limites de modules via trois événements de domaine in-process.",
+      bundleExpansionTitle: "Expansion de Bundle — Octrois de Permissions Fins",
+      bundleExpansionIntro:
+        "L'expansion de bundle permet à une édition d'octroyer ou de refuser des codes de permission spécifiques au-delà de l'activation au niveau module.",
+      bundleExpansionNote:
+        "Les expansions de bundle sont traitées APRÈS la synchronisation principale des permissions de module.",
+      adminPermCacheTitle: "IAdminPermissionCache — Le Cache d'Autorisation",
+      adminPermCacheIntro:
+        "IAdminPermissionCache est le cache Redis côté serveur utilisé par AuthorizationBehavior pour vérifier les permissions sans accès à la base de données à chaque requête.",
+      currentUserTitle: "ICurrentUser — L'Interface Transversale Universelle",
+      currentUserIntro:
+        "ICurrentUser est l'interface utilisée par tous les modules directement. Elle est peuplée par le middleware JWT d'Identity à chaque requête authentifiée.",
+      currentUserNote:
+        "ICurrentUser est différent des autres interfaces inter-modules. Il n'a pas besoin de fallback NoOp — il est toujours implémenté par le middleware JWT de Core.Infrastructure.",
+      featureResolutionTitle: "Chaîne de Résolution de Valeur de Fonctionnalité",
+      featureResolutionIntro:
+        "Quand IFeatureChecker.IsEnabledAsync() est appelé, Entitlements résout la valeur via une chaîne de priorité.",
+      devChecklistTitle: "Liste de Contrôle Développeur",
+      devChecklistIntro:
+        "Suivez ces étapes chaque fois que vous ajoutez une nouvelle dépendance inter-modules.",
+      checkStep1Title: "Étape 1 : Définir l'Interface dans Core.Application",
+      checkStep1Content:
+        "Définissez le contrat dans Core.Application.Abstractions. Aucune logique d'implémentation, seulement la définition de l'interface.",
+      checkStep2Title: "Étape 2 : Enregistrer un Fallback NoOp",
+      checkStep2Content:
+        "Créez une implémentation NoOp dans Core.Infrastructure et enregistrez-la avec TryAddScoped.",
+      checkStep3Title: "Étape 3 : Implémenter dans le Module Propriétaire",
+      checkStep3Content:
+        "Créez la vraie implémentation dans le module propriétaire et enregistrez avec AddScoped (pas TryAddScoped).",
+      checkStep4Title: "Étape 4 : Ajouter des Diagnostics au Démarrage",
+      checkStep4Content:
+        "Ajoutez une vérification dans PostBuildInitialization.cs pour détecter si le NoOp est encore actif.",
+      addScopedTip:
+        "Utilisez toujours AddScoped (sans Try) dans les modules réels pour garantir que l'implémentation réelle remplace le NoOp de Core.Infrastructure.",
+      archRulesTitle: "Règles d'Architecture — Récapitulatif",
+      archRulesIntro:
+        "Ces règles contraignantes s'appliquent à toute communication inter-modules dans SCRIPE.",
+      doTitle: "A Faire",
+      dontTitle: "A Ne Jamais Faire",
+      securityBoundaryTitle: "Application des Limites de Sécurité",
+      securityBoundaryIntro:
+        "Les règles d'isolation des modules ne sont pas seulement une préférence architecturale — ce sont des limites de sécurité.",
+      archCheckCaution:
+        "Exécutez scripe arch-check avant chaque PR touchant le code inter-modules. Le flag --json retourne le code 1 si des violations critiques sont trouvées.",
+    },
   },
 };

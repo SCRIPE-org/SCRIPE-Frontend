@@ -393,5 +393,191 @@ export const en = {
       captiveTip:
         "A captive dependency occurs when a Singleton service injects a Scoped service — the Scoped service becomes a de-facto Singleton, causing stale data and memory leaks. Use IServiceScopeFactory to create a new scope inside Singleton services when you need Scoped dependencies.",
     },
+    moduleCollab: {
+      title: "Module Collaboration Deep Dive",
+      description:
+        "How Identity and Entitlements collaborate via Core abstractions, the NoOp safety pattern, SubscriptionChangedEvent lifecycle, and deployment topology impact.",
+      intro:
+        "SCRIPE has 5 modules (Identity, Entitlements, Compliance, Plugins, Marketplace). They are hermetically sealed — no cross-imports allowed. Yet they must collaborate to drive permissions, subscription features, and billing. The solution: the Core.Application.Abstractions layer acts as a typed, interface-based bridge. Every cross-module interaction flows through this bridge — never through direct module-to-module imports. This page documents every interface, pattern, and runtime flow that makes this work.",
+
+      // Core Bridge
+      coreBridgeTitle: "The Core Layer Bridge",
+      coreBridgeIntro:
+        "Core.Application.Abstractions is the heart of cross-module communication. It defines 32+ interface contracts. Identity.Infrastructure and Entitlements.Infrastructure each implement their respective side of these contracts. The AstraFlow pipeline behaviors and module handlers consume only the interfaces — never the concrete implementations. This means the system compiles and runs identically whether Entitlements is deployed or not.",
+
+      // Interface catalog
+      catalogTitle: "Complete Cross-Module Interface Catalog",
+      catalogIntro:
+        "The following table documents every interface that crosses module boundaries. Defined in Core.Application, these interfaces are the only legal way for modules to communicate with each other.",
+
+      // NoOp pattern
+      noopTitle: "The NoOp Safety Pattern",
+      noopIntro:
+        "Core.Infrastructure registers a NoOp (no-operation) implementation for every cross-module interface. These are registered with TryAddScoped, meaning real module implementations override them when deployed. If a module fails to load, the NoOp silently keeps the system alive. Startup diagnostics detect when critical interfaces are still NoOp and emit LogCritical warnings.",
+      noopWarning:
+        "SAFETY CRITICAL: If IFeatureChecker remains as NoOpFeatureChecker in production, ALL edition features appear enabled and ALL quotas are unlimited for every tenant. The startup diagnostic emits a LogCritical log, but this does NOT stop the server. Always verify the Entitlements module is loaded when using subscription-based feature gating.",
+      noopTableTitle: "NoOp Implementation Registry",
+
+      // FeatureCheckBehavior
+      featureCheckTitle: "FeatureCheckBehavior — The Gating Point",
+      featureCheckIntro:
+        "FeatureCheckBehavior is an AstraFlow pipeline behavior that intercepts commands implementing IRequireFeature. It resolves the tenant ID from the current user context, calls IFeatureChecker.IsEnabledAsync, and either passes the request through or returns a 403 Forbidden result. Because it uses IFeatureChecker (not a concrete class), it works transparently whether Entitlements is deployed or not. When Entitlements is absent, NoOpFeatureChecker returns true for every check, making the behavior a transparent pass-through with zero overhead.",
+      featureCheckFlowTitle: "FeatureCheck Decision Flow",
+      featureCheckCodeTitle: "Opting a Command into Feature Gating",
+
+      // SubscriptionChangedEvent
+      subscriptionEventTitle: "SubscriptionChangedEvent — The Permission Sync Backbone",
+      subscriptionEventIntro:
+        "SubscriptionChangedEvent is the most critical cross-module domain event in SCRIPE. Published by Entitlements, handled by Identity. It carries the complete effective feature set, the subscription status, and pre-expanded bundle data. Identity uses this event to rebuild the tenant's entire permission pool — adding permissions for newly enabled modules and removing permissions for disabled ones. This is how a billing change in Entitlements becomes a permission change in Identity without any direct module coupling.",
+      subscriptionEventDefTitle: "Event Definition",
+      subscriptionEventTriggersTitle: "All Commands That Publish This Event",
+
+      // Permission sync lifecycle
+      permSyncTitle: "Permission Sync Lifecycle — Step by Step",
+      permSyncIntro:
+        "When a tenant's subscription changes, a precise 5-step lifecycle executes to rebuild their permission pool. Understanding this lifecycle is essential for debugging permission issues and for designing new subscription-driven features.",
+      permSyncStep1Title: "Step 1 — Entitlements Resolves Edition Features",
+      permSyncStep1Content:
+        "The Entitlements command handler (e.g., AssignEditionCommandHandler) resolves the full effective feature map for the tenant. This merges the Edition's base features, any TenantFeatureOverrides, and BundleExpansion feature additions. The result is a flat dictionary of feature name to value (e.g., 'Communication.Enabled' → 'true'). From this, it derives which module names are enabled.",
+      permSyncStep2Title: "Step 2 — Event Published via Outbox",
+      permSyncStep2Content:
+        "The SubscriptionChangedEvent is raised on the entity as a domain event. The EF Core OutboxInterceptor captures it before SaveChangesAsync. The event is persisted to the OutboxMessages table in the same database transaction as the subscription change. After commit, the OutboxProcessor dispatches the event to all registered handlers. This guarantees exactly-once delivery even if the process crashes mid-execution.",
+      permSyncStep3Title: "Step 3 — Identity Handler Processes the Event",
+      permSyncStep3Content:
+        "Identity.Application's SubscriptionChangedEventHandler receives the event. If IsRevocation is true (subscription canceled/expired/suspended), it calls SyncPermissionsForModulesAsync with an empty module list — which removes all edition-based permissions. If not a revocation, it syncs permissions for all enabled modules and processes each BundleExpansion (grant and deny codes).",
+      permSyncStep4Title: "Step 4 — ITenantPermissionManager Syncs the Pool",
+      permSyncStep4Content:
+        "Identity.Infrastructure.TenantPermissionManager implements ITenantPermissionManager. It uses IPermissionReader to get all permission IDs for the enabled modules from the Identity database. It filters these by RequiredFeature (permissions gated on specific features are only granted if that feature is enabled). It diffs against the current TenantPermission records, adding missing and removing excess entries atomically.",
+      permSyncStep5Title: "Step 5 — Admin Permission Cache Invalidated",
+      permSyncStep5Content:
+        "After the permission pool is synced, IAdminPermissionCache.InvalidateAll() is called for the tenant. Every admin's cached permission set is cleared from the in-memory + Redis cache. On their next API request, the AuthorizationBehavior will reload their permissions from the database and re-populate the cache. The frontend receives updated permissions on the next token refresh cycle.",
+
+      // Login enrichment
+      loginEnrichTitle: "Login Response Enrichment — ISubscriptionStatusProvider",
+      loginEnrichIntro:
+        "Identity's login handler needs to return the tenant's subscription status so the frontend can display grace period warnings, upgrade prompts, and edition badges. But Identity cannot import Entitlements. The solution: ISubscriptionStatusProvider is injected into the login handler. Entitlements.Infrastructure implements this interface, returning TenantSubscriptionInfo with status, edition name, grace phase, and expiry date.",
+      loginEnrichNote:
+        "If Entitlements is not deployed, the NoOp implementation returns null for subscription info. The login response will have null subscription fields, and the frontend will show no subscription status — a safe, correct behavior for deployments without billing.",
+
+      // Deployment topology
+      deployTopologyTitle: "Deployment Topology Impact",
+      deployTopologyIntro:
+        "The MODULE_NAME environment variable controls which modules are loaded. This fundamentally changes how cross-module communication works. Monolith mode supports all collaboration patterns. Microservice mode has critical limitations you must understand before extracting modules.",
+      monolithMode: 'Monolith Mode (MODULE_NAME="")',
+      microserviceMode: 'Microservice Mode (MODULE_NAME="Identity")',
+      microserviceCaution:
+        "CRITICAL: Self-service signup is blocked at startup in microservice mode. PostBuildInitialization.cs contains a G15 guard that throws InvalidOperationException if Signup:Enabled=true AND a specific MODULE_NAME is set (non-gateway). The signup saga relies on SignupCheckoutCompletedEvent and SubscriptionChangedEvent being dispatched in-process. In microservice mode, these events are silently lost — paid tenants would never activate and would have zero permissions. v2 roadmap: outbox + message bus will bridge this gap.",
+
+      // Co-dependency map
+      coDependencyTitle: "Module Co-Dependency Map",
+      coDependencyIntro:
+        "This table documents every formal dependency between modules, showing exactly what each module needs from another and how that need is satisfied via Core interfaces. Use this as a reference when planning microservice extraction or when debugging cross-module data flow issues.",
+
+      // Signup saga
+      signupSagaTitle: "The Self-Service Signup Cross-Module Saga",
+      signupSagaIntro:
+        "The self-service B2B2C tenant signup is the most complex cross-module saga in SCRIPE. It spans Identity (tenant provisioning), Entitlements (subscription linking and billing), and Stripe (payment processing). Understanding this flow is critical for supporting customers and for maintaining the signup infrastructure.",
+      signupMonolithOnly:
+        "MONOLITH ONLY: The signup saga uses in-process domain events (SignupPhase1CompletedEvent, SignupCheckoutCompletedEvent, SubscriptionChangedEvent) that cross the Identity ↔ Entitlements boundary. This only works when both modules run in the same process. Microservice mode blocks signup at startup via the G15 guard in PostBuildInitialization.cs.",
+      signupStep1Title: "Phase 1 — Identity Provisions Tenant",
+      signupStep1Content:
+        "RegisterTenantSelfServiceCommand (in Identity module) executes in a single atomic database transaction. It creates the Tenant entity, sets up the default subdomain and branding, provisions default security roles (Admin, User), creates the tenant owner Admin account, and verifies the email verification ticket. On success, it publishes SignupPhase1CompletedEvent.",
+      signupStep2Title: "Phase 2 — Entitlements Links Subscription",
+      signupStep2Content:
+        "The SignupPhase1CompletedEventHandler (in Entitlements module) handles SignupPhase1CompletedEvent. It creates a TenantSubscription record for the chosen edition. If the edition is free, it immediately activates and publishes SubscriptionChangedEvent to grant permissions. If the edition is paid, it creates a Stripe Checkout session and returns the payment URL.",
+      signupStep3Title: "Phase 3 — Stripe Confirms, Entitlements Activates",
+      signupStep3Content:
+        "When the user completes Stripe checkout, Stripe sends a checkout.session.completed webhook. StripeWebhookHelper (in Entitlements) processes this event, finds the matching SignupSession, activates the subscription, and publishes SubscriptionChangedEvent. Identity's handler grants all edition permissions to the new tenant's permission pool.",
+      signupStep4Title: "Compensation — If Checkout Abandoned",
+      signupStep4Content:
+        "If the user abandons the Stripe checkout (or Stripe fails to initialize), CompensatePhase1Async is called. This deletes the provisioned tenant and the tenant admin account, preventing orphaned accounts with no active subscription. A daily SignupReconciliationSweepJob also sweeps for stale incomplete signups and cleans them up.",
+
+      // Developer checklist
+      devChecklistTitle: "Developer Checklist — Adding a New Cross-Module Dependency",
+      devChecklistIntro:
+        "When you need two modules to share data, follow this exact pattern. Never import one module from another. Always go through Core.Application.Abstractions.",
+      checkStep1Title: "1. Define the contract in Core.Application.Abstractions",
+      checkStep1Content:
+        "Create a new interface file in Core.Application/Abstractions/. The interface should be minimal — only what the consuming module actually needs. Add XML documentation explaining which module implements it and which module consumes it.",
+      checkStep2Title: "2. Register a NoOp in Core.Infrastructure",
+      checkStep2Content:
+        "Create a NoOp implementation in Core.Infrastructure/Services/ (or appropriate subfolder). Register it with TryAddScoped in Core.Infrastructure/DependencyInjection.cs. The NoOp should return a safe, neutral value (null, empty, false, -1 for unlimited). Never throw NotImplementedException in a NoOp.",
+      checkStep3Title: "3. Implement in the target module's Infrastructure",
+      checkStep3Content:
+        "Create the real implementation in {Module}.Infrastructure/CrossModule/ or {Module}.Infrastructure/Services/. Register it with AddScoped (NOT TryAddScoped) in the module's DependencyInjection.cs. Using AddScoped ensures the real implementation OVERRIDES the NoOp that Core registered first.",
+      checkStep4Title: "4. Add startup diagnostic in PostBuildInitialization.cs",
+      checkStep4Content:
+        "Add a check in PostBuildInitialization.cs to detect if the interface is still resolved as the NoOp. Log a LogCritical warning if so. This is the safety net that alerts developers to misconfigured deployments in production without crashing the server.",
+      addScopedTip:
+        "Always use AddScoped (not TryAddScoped) when registering real module implementations. TryAddScoped only registers if no registration exists — and Core.Infrastructure already registered the NoOp with TryAddScoped first. To override, you need the unconditional AddScoped.",
+
+      // NoOp Registration
+      noopRegistrationTitle: "NoOp Registration — TryAddScoped vs AddScoped",
+      noopRegistrationIntro:
+        "The entire NoOp override mechanism depends on one critical rule: Core.Infrastructure registers NoOps with TryAddScoped. Real module implementations register with AddScoped. Because TryAddScoped only registers if no service is registered yet, calling AddScoped afterward unconditionally overrides it. The order matters: Core.Infrastructure always loads first (it's a transitive dependency of all module Infrastructure projects), so the NoOp is always registered first, and the module's real implementation always wins.",
+
+      // Startup Diagnostics
+      startupDiagnosticsTitle: "Startup Diagnostics — Detecting NoOp Leakage",
+      startupDiagnosticsIntro:
+        "PostBuildInitialization.cs runs after the DI container is built and all modules are registered. It checks the resolved type for critical interfaces. If the resolved type is still a NoOp implementation, it logs a LogCritical message. This is the production safety net — it doesn't crash the server, but it produces a visible alert in logs and monitoring dashboards that operators can act on immediately.",
+
+      // IRequireFeature Interface
+      requireFeatureInterfaceTitle: "IRequireFeature — The Opt-In Marker Interface",
+      requireFeatureInterfaceIntro:
+        "IRequireFeature is a zero-overhead marker interface. Commands that implement it opt into edition-based feature gating via FeatureCheckBehavior. Commands that don't implement it pass through the behavior with zero overhead. This design means feature gating is explicit and opt-in — existing commands are never accidentally gated, and new commands consciously declare their feature requirements.",
+
+      // Event Triggers
+      eventTriggersTitle: "All Commands That Publish SubscriptionChangedEvent",
+      eventTriggersIntro:
+        "SubscriptionChangedEvent is published by any Entitlements command or service that changes a tenant's subscription state. The following table documents every trigger point in the system. Understanding this list is essential for debugging permission sync issues — if a tenant's permissions are wrong, one of these triggers is the source of the last sync.",
+
+      // Signup Event Chain
+      signupEventChainTitle: "Signup Event Chain — Cross-Module Event Flow",
+      signupEventChainIntro:
+        "The signup saga crosses module boundaries via three in-process domain events. SignupPhase1CompletedEvent flows from Identity to Entitlements. SignupCheckoutCompletedEvent flows within Entitlements (Stripe webhook to activation). SubscriptionChangedEvent flows from Entitlements back to Identity. This bidirectional event chain is why signup ONLY works in monolith mode — all three events require both modules in the same process.",
+
+      // Bundle Expansion
+      bundleExpansionTitle: "Bundle Expansion — Fine-Grained Permission Grants",
+      bundleExpansionIntro:
+        "Bundle Expansion allows an edition to grant or deny specific permission codes beyond the module-level enablement that SubscriptionChangedEvent carries. When a subscription includes bundles, the SubscriptionChangedEvent carries pre-expanded BundleExpansionDto entries. Identity's event handler processes each bundle separately via ITenantPermissionManager.SyncBundlePermissionsAsync, which diffs grant and deny codes against the current tenant permission set.",
+      bundleExpansionNote:
+        "Bundle expansions are processed AFTER the main module permission sync. If a bundle's grant code conflicts with a module permission removal (i.e., the module is disabled but the bundle tries to grant a permission from it), the module revocation takes precedence. Bundle expansions cannot re-grant permissions from disabled modules.",
+
+      // IAdminPermissionCache
+      adminPermCacheTitle: "IAdminPermissionCache — The Authorization Cache",
+      adminPermCacheIntro:
+        "IAdminPermissionCache is the server-side Redis cache that AuthorizationBehavior uses to check permissions without hitting the database on every request. It stores a denormalized snapshot of each admin's permissions, roles, and field projections. The cache entry is populated lazily on the first request after a cache miss. InvalidateAll() is called after bulk permission sync operations (SubscriptionChangedEvent handling) to force all admins to reload on their next request.",
+
+      // ICurrentUser
+      currentUserTitle: "ICurrentUser — The Ubiquitous Cross-Cutting Interface",
+      currentUserIntro:
+        "ICurrentUser is the one interface that every module uses directly — it's not a cross-module bridge like the others, it's a fundamental cross-cutting concern available everywhere. It's populated by Identity's JWT middleware on every authenticated request and provides the current admin/user context to any handler in any module. Every module depends on Core.Application which defines ICurrentUser, so it's always available without any cross-module ceremony.",
+      currentUserNote:
+        "ICurrentUser is different from the other cross-module interfaces. It is populated by Identity middleware and consumed universally. It does NOT need a NoOp fallback — it's always implemented by the Core.Infrastructure JWT middleware regardless of which modules are loaded. It's the single exception to the NoOp pattern.",
+
+      // Feature Resolution
+      featureResolutionTitle: "Feature Value Resolution Chain",
+      featureResolutionIntro:
+        "When IFeatureChecker.IsEnabledAsync() is called for a tenant and feature, Entitlements resolves the value through a priority chain. TenantFeatureOverride (per-tenant manual override) always wins. If no override exists, the EditionFeature value is used. If the edition doesn't define the feature, the Feature.DefaultValue is used. For numeric features with multiple active subscriptions (trial + base plan), the MAX value wins. For boolean features, true wins. For string features, the Base subscription wins.",
+
+      // Architecture Rules
+      archRulesTitle: "Module Collaboration — Architecture Rules Summary",
+      archRulesIntro:
+        "These are the binding rules for all cross-module communication in SCRIPE. They are enforced by scripe arch-check (30-rule deep scan), project reference constraints in the .sln file, and code review. Violations of these rules create circular dependencies, deployment coupling, and testing impossibility.",
+      doTitle: "✅ Do This",
+      dontTitle: "❌ Never Do This",
+
+      // Security Boundary
+      securityBoundaryTitle: "Security Boundary Enforcement",
+      securityBoundaryIntro:
+        "The module isolation rules are not just an architectural preference — they are security boundaries. Cross-module isolation ensures that a bug or compromise in one module cannot directly access another module's data store. These rules are enforced at multiple levels: project reference constraints, architecture lint rules, and code review checklists.",
+      archCheckCaution:
+        "Run scripe arch-check before every PR that touches cross-module code. The --json flag exits with code 1 if any critical violations are found, making it suitable as a CI gate. Architecture violations are much cheaper to fix at PR review time than after a deployment.",
+
+      // MODULE_NAME env
+      moduleNameEnvTitle: "MODULE_NAME Environment Variable Reference",
+      moduleNameEnvIntro:
+        "The MODULE_NAME environment variable is set at container startup and determines which modules are loaded into the process. The ModuleRegistration.cs file in Host/API reads this variable and conditionally registers only the specified module's DI registrations and EF Core DbContext. When empty (the default), all modules are registered — this is the monolith mode that supports all cross-module collaboration patterns.",
+    },
   },
 };

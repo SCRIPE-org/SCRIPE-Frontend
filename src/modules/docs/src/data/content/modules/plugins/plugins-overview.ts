@@ -167,6 +167,96 @@ const sections: DocSection[] = [
     ],
   },
 
+  // ─── Plugin Registration Lifecycle ──────────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: "modules.plugins.overview.registrationTitle",
+    id: "plugin-registration-lifecycle",
+  },
+  { type: "paragraph", contentKey: "modules.plugins.overview.registrationIntro" },
+  {
+    type: "flowchart",
+    titleKey: "modules.plugins.overview.registrationTitle",
+    direction: "vertical",
+    nodes: [
+      {
+        id: "register",
+        labelKey: "modules.plugins.overview.nodeRegRegister",
+        descriptionKey: "modules.plugins.overview.nodeRegRegisterDesc",
+        icon: "FilePlus",
+        type: "default",
+      },
+      {
+        id: "publish",
+        labelKey: "modules.plugins.overview.nodeRegPublish",
+        descriptionKey: "modules.plugins.overview.nodeRegPublishDesc",
+        icon: "Send",
+        type: "primary",
+      },
+      {
+        id: "version",
+        labelKey: "modules.plugins.overview.nodeRegVersion",
+        descriptionKey: "modules.plugins.overview.nodeRegVersionDesc",
+        icon: "GitBranch",
+        type: "info",
+      },
+      {
+        id: "install",
+        labelKey: "modules.plugins.overview.nodeRegInstall",
+        descriptionKey: "modules.plugins.overview.nodeRegInstallDesc",
+        icon: "Download",
+        type: "success",
+      },
+      {
+        id: "upgrade",
+        labelKey: "modules.plugins.overview.nodeRegUpgrade",
+        descriptionKey: "modules.plugins.overview.nodeRegUpgradeDesc",
+        icon: "ArrowUpCircle",
+        type: "warning",
+      },
+      {
+        id: "uninstall",
+        labelKey: "modules.plugins.overview.nodeRegUninstall",
+        descriptionKey: "modules.plugins.overview.nodeRegUninstallDesc",
+        icon: "Trash2",
+        type: "danger",
+      },
+    ],
+    connections: [
+      {
+        from: "register",
+        to: "publish",
+        labelKey: "modules.plugins.overview.connRegDraft",
+        style: "solid",
+      },
+      {
+        from: "publish",
+        to: "version",
+        labelKey: "modules.plugins.overview.connRegPublish",
+        style: "solid",
+      },
+      {
+        from: "version",
+        to: "install",
+        labelKey: "modules.plugins.overview.connRegVersion",
+        style: "solid",
+      },
+      {
+        from: "install",
+        to: "upgrade",
+        labelKey: "modules.plugins.overview.connRegActive",
+        style: "solid",
+      },
+      {
+        from: "install",
+        to: "uninstall",
+        labelKey: "modules.plugins.overview.connRegChange",
+        style: "solid",
+      },
+    ],
+  },
+
   // ─── Backend Architecture ───────────────────────────────────
   {
     type: "heading",
