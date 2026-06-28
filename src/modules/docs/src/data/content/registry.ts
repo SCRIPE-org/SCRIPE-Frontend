@@ -82,6 +82,13 @@ import "./modules/compliance/compliance-retention";
 import "./modules/compliance/compliance-inventory";
 import "./modules/compliance/compliance-reports";
 
+// New Technical Modules
+import "./modules/audit-logs";
+import "./modules/security-monitoring";
+import "./modules/webhooks";
+import "./modules/marketplace";
+import "./modules/ecosystem-recycle-bin";
+
 // Security
 import "./security/overview";
 import "./security/authentication-deep";
