@@ -1,6 +1,6 @@
 /**
  * Docs Locale Registry — ZH
- * Eagerly merges all Chinese docs translations (tech + commercial).
+ * Eagerly merges all ZH docs translations (tech + commercial).
  */
 import { zh as common } from "../pages/common/zh";
 import { zh as getStarted } from "../pages/get-started/zh";
@@ -24,6 +24,9 @@ import { zh as commPricing } from "../comm-pages/pricing/zh";
 import { zh as commModules } from "../comm-pages/modules/zh";
 import { zh as commEntitlements } from "../comm-pages/entitlements/zh";
 import { zh as commCustomization } from "../comm-pages/customization/zh";
+import { zh as commBillingPayments } from "../comm-pages/billing-payments/zh";
+import { zh as commEntitlementsTenantPlans } from "../comm-pages/entitlements-tenant-plans/zh";
+import { zh as commEntitlementsUserSubscriptions } from "../comm-pages/entitlements-user-subscriptions/zh";
 
 import { zh as pageBillingEngine } from "../pages/billing-engine/zh";
 import { zh as pageInvoices } from "../pages/invoices/zh";
@@ -32,11 +35,16 @@ import { zh as pageTenantPlans } from "../pages/tenant-plans/zh";
 import { zh as pageUserSubscriptions } from "../pages/user-subscriptions/zh";
 import { zh as pageTenantContextGate } from "../pages/tenant-context-gate/zh";
 import { zh as pageRevenueAnalytics } from "../pages/revenue-analytics/zh";
+import { zh as pageAuditLogs } from "../pages/audit-logs/zh";
+import { zh as pageSecurityMonitoring } from "../pages/security-monitoring/zh";
+import { zh as pageWebhooks } from "../pages/webhooks/zh";
+import { zh as pageMarketplace } from "../pages/marketplace/zh";
+import { zh as pageEcosystemRecycleBin } from "../pages/ecosystem-recycle-bin/zh";
 
 import { mergeAll } from "./utils";
 
 /**
- * Exported constant defining parameters and fields for all docs zh configurations.
+ * Exported constant defining parameters and fields for all docs en configurations.
  */
 export const allDocsZh: Record<string, any> = mergeAll(
   common,
@@ -60,14 +68,19 @@ export const allDocsZh: Record<string, any> = mergeAll(
   commModules,
   commEntitlements,
   commCustomization,
- commBillingPayments,
- commEntitlementsTenantPlans,
- commEntitlementsUserSubscriptions,
+  commBillingPayments,
+  commEntitlementsTenantPlans,
+  commEntitlementsUserSubscriptions,
   pageBillingEngine,
   pageInvoices,
   pageDunning,
   pageTenantPlans,
   pageUserSubscriptions,
   pageTenantContextGate,
-  pageRevenueAnalytics
+  pageRevenueAnalytics,
+  pageAuditLogs,
+  pageSecurityMonitoring,
+  pageWebhooks,
+  pageMarketplace,
+  pageEcosystemRecycleBin
 );

@@ -130,6 +130,46 @@ export { zh as userSubscriptionsZh } from "./user-subscriptions/zh";
 export { es as userSubscriptionsEs } from "./user-subscriptions/es";
 export { de as userSubscriptionsDe } from "./user-subscriptions/de";
 
+export { en as auditLogsEn } from "./audit-logs/en";
+export { ar as auditLogsAr } from "./audit-logs/ar";
+export { fr as auditLogsFr } from "./audit-logs/fr";
+export { ru as auditLogsRu } from "./audit-logs/ru";
+export { zh as auditLogsZh } from "./audit-logs/zh";
+export { es as auditLogsEs } from "./audit-logs/es";
+export { de as auditLogsDe } from "./audit-logs/de";
+
+export { en as securityMonitoringEn } from "./security-monitoring/en";
+export { ar as securityMonitoringAr } from "./security-monitoring/ar";
+export { fr as securityMonitoringFr } from "./security-monitoring/fr";
+export { ru as securityMonitoringRu } from "./security-monitoring/ru";
+export { zh as securityMonitoringZh } from "./security-monitoring/zh";
+export { es as securityMonitoringEs } from "./security-monitoring/es";
+export { de as securityMonitoringDe } from "./security-monitoring/de";
+
+export { en as webhooksEn } from "./webhooks/en";
+export { ar as webhooksAr } from "./webhooks/ar";
+export { fr as webhooksFr } from "./webhooks/fr";
+export { ru as webhooksRu } from "./webhooks/ru";
+export { zh as webhooksZh } from "./webhooks/zh";
+export { es as webhooksEs } from "./webhooks/es";
+export { de as webhooksDe } from "./webhooks/de";
+
+export { en as marketplaceEn } from "./marketplace/en";
+export { ar as marketplaceAr } from "./marketplace/ar";
+export { fr as marketplaceFr } from "./marketplace/fr";
+export { ru as marketplaceRu } from "./marketplace/ru";
+export { zh as marketplaceZh } from "./marketplace/zh";
+export { es as marketplaceEs } from "./marketplace/es";
+export { de as marketplaceDe } from "./marketplace/de";
+
+export { en as ecosystemRecycleBinEn } from "./ecosystem-recycle-bin/en";
+export { ar as ecosystemRecycleBinAr } from "./ecosystem-recycle-bin/ar";
+export { fr as ecosystemRecycleBinFr } from "./ecosystem-recycle-bin/fr";
+export { ru as ecosystemRecycleBinRu } from "./ecosystem-recycle-bin/ru";
+export { zh as ecosystemRecycleBinZh } from "./ecosystem-recycle-bin/zh";
+export { es as ecosystemRecycleBinEs } from "./ecosystem-recycle-bin/es";
+export { de as ecosystemRecycleBinDe } from "./ecosystem-recycle-bin/de";
+
 // Lazy loader map for dynamic imports
 /**
  * Exported constant defining parameters and fields for page loaders configurations.
@@ -151,4 +191,9 @@ export const pageLoaders: Record<string, () => Promise<any>> = {
   dunning: () => import("./dunning/en"),
   "tenant-plans": () => import("./tenant-plans/en"),
   "user-subscriptions": () => import("./user-subscriptions/en"),
+  "audit-logs": () => import("./audit-logs/en"),
+  "security-monitoring": () => import("./security-monitoring/en"),
+  webhooks: () => import("./webhooks/en"),
+  marketplace: () => import("./marketplace/en"),
+  "ecosystem-recycle-bin": () => import("./ecosystem-recycle-bin/en"),
 };

@@ -1,4 +1,4 @@
-﻿// FILE-EXCEPTION: file length
+// FILE-EXCEPTION: file length
 /**
  * Docs page locale — EN
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -404,6 +404,14 @@ export const en = {
       intro: "Choose the perfect tier for your growth path. All pricing plan options scale with your business.",
     },
     investorOverview: {
+      personaSelectorQuestion: "What is your primary interest?",
+      personaSelectorInvestor: "I am an Investor",
+      personaSelectorCofounder: "I want to be a Co-founder",
+      personaSelectorPartner: "I want to be a Partner",
+      personaSelectorInvestorDesc: "Learn about our SaaS growth ROI, funding rounds, and scaling projection metrics.",
+      personaSelectorCofounderDesc: "Explore our foundational strategy, roles, and pathway to direct partnership.",
+      personaSelectorPartnerDesc: "See how system integrators, consultants, and developers scale B2B SaaS revenue share.",
+      personaSelectorLearnMore: "Learn More",
       title: "Investor Portal",
       description: "SaaS growth ROI, metrics, and partnership opportunities for SCRIPE investors.",
       intro: "Explore our robust SaaS growth model and discover why investing in SCRIPE guarantees high returns.",

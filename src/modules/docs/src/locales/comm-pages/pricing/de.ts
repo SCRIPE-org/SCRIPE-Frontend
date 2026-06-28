@@ -1,4 +1,4 @@
-﻿// FILE-EXCEPTION: file length
+// FILE-EXCEPTION: file length
 /**
  * Docs page locale — DE
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -406,6 +406,14 @@ export const de = {
       intro: "WÃ¤hlen Sie die passende Stufe fÃ¼r Ihr Wachstum.",
     },
     investorOverview: {
+      personaSelectorQuestion: "Was ist Ihr Hauptinteresse?",
+      personaSelectorInvestor: "Ich bin ein Investor",
+      personaSelectorCofounder: "Ich möchte Mitgründer werden",
+      personaSelectorPartner: "Ich möchte Partner werden",
+      personaSelectorInvestorDesc: "Erfahren Sie mehr über unseren SaaS-Wachstums-ROI und Finanzierungsrunden.",
+      personaSelectorCofounderDesc: "Entdecken Sie unsere Strategie, Rollen und den Weg zur Partnerschaft.",
+      personaSelectorPartnerDesc: "Sehen Sie, wie Partner ihren SaaS-Umsatzanteil skalieren.",
+      personaSelectorLearnMore: "Mehr erfahren",
       title: "Investoren-Portal",
       description: "SaaS-Wachstums-ROI und PartnerschaftsmÃ¶glichkeiten.",
       intro: "Entdecken Sie unser SaaS-Wachstumsmodell.",

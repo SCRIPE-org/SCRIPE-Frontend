@@ -1,4 +1,4 @@
-﻿// FILE-EXCEPTION: file length
+// FILE-EXCEPTION: file length
 /**
  * Docs page locale — ZH
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -388,6 +388,14 @@ export const zh = {
       intro: "é€‰æ‹©é€‚åˆæ‚¨å¢žé•¿è·¯å¾„çš„å®Œç¾Žçº§åˆ«ã€‚",
     },
     investorOverview: {
+      personaSelectorQuestion: "您的主要兴趣是什么？",
+      personaSelectorInvestor: "我是投资者",
+      personaSelectorCofounder: "我想成为联合创始人",
+      personaSelectorPartner: "我想成为合作伙伴",
+      personaSelectorInvestorDesc: "了解我们的 SaaS 增长投资回报率、融资轮次和扩展预测指标。",
+      personaSelectorCofounderDesc: "探索我们的基础战略、角色以及直接合作伙伴关系的途径。",
+      personaSelectorPartnerDesc: "了解系统集成商、顾问和开发人员如何扩展 B2B SaaS 收入分成。",
+      personaSelectorLearnMore: "了解更多",
       title: "æŠ•èµ„è€…é—¨æˆ·",
       description: "SCRIPE æŠ•èµ„è€…çš„ SaaS å¢žé•¿æŠ•èµ„å›žæŠ¥çŽ‡ã€æŒ‡æ ‡å’Œåˆä½œæœºä¼šã€‚",
       intro: "æŽ¢ç´¢æˆ‘ä»¬å¼ºå¤§çš„ SaaS å¢žé•¿æ¨¡åž‹ï¼Œäº†è§£ä¸ºä»€ä¹ˆæŠ•èµ„ SCRIPE ä¿è¯é«˜å›žæŠ¥ã€‚",

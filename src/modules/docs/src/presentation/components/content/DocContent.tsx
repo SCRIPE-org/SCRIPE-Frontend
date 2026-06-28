@@ -20,6 +20,7 @@ import { ConfigBuilder } from "./ConfigBuilder";
 import { SchemaVisualizer } from "./SchemaVisualizer";
 import { CliSimulator } from "./CliSimulator";
 import { LifecycleTracer } from "./LifecycleTracer";
+import { PersonaSelector } from "./PersonaSelector";
 
 interface DocContentProps {
   sections: DocSection[];
@@ -244,6 +245,9 @@ export function DocContent({ sections }: DocContentProps) {
                 titleKey={section.titleKey}
               />
             );
+
+          case "persona-selector":
+            return <PersonaSelector key={key} />;
 
           default:
             return null;

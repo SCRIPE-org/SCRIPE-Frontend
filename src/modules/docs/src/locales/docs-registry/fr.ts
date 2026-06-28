@@ -1,6 +1,6 @@
 /**
  * Docs Locale Registry — FR
- * Eagerly merges all French docs translations (tech + commercial).
+ * Eagerly merges all FR docs translations (tech + commercial).
  */
 import { fr as common } from "../pages/common/fr";
 import { fr as getStarted } from "../pages/get-started/fr";
@@ -24,6 +24,9 @@ import { fr as commPricing } from "../comm-pages/pricing/fr";
 import { fr as commModules } from "../comm-pages/modules/fr";
 import { fr as commEntitlements } from "../comm-pages/entitlements/fr";
 import { fr as commCustomization } from "../comm-pages/customization/fr";
+import { fr as commBillingPayments } from "../comm-pages/billing-payments/fr";
+import { fr as commEntitlementsTenantPlans } from "../comm-pages/entitlements-tenant-plans/fr";
+import { fr as commEntitlementsUserSubscriptions } from "../comm-pages/entitlements-user-subscriptions/fr";
 
 import { fr as pageBillingEngine } from "../pages/billing-engine/fr";
 import { fr as pageInvoices } from "../pages/invoices/fr";
@@ -32,11 +35,16 @@ import { fr as pageTenantPlans } from "../pages/tenant-plans/fr";
 import { fr as pageUserSubscriptions } from "../pages/user-subscriptions/fr";
 import { fr as pageTenantContextGate } from "../pages/tenant-context-gate/fr";
 import { fr as pageRevenueAnalytics } from "../pages/revenue-analytics/fr";
+import { fr as pageAuditLogs } from "../pages/audit-logs/fr";
+import { fr as pageSecurityMonitoring } from "../pages/security-monitoring/fr";
+import { fr as pageWebhooks } from "../pages/webhooks/fr";
+import { fr as pageMarketplace } from "../pages/marketplace/fr";
+import { fr as pageEcosystemRecycleBin } from "../pages/ecosystem-recycle-bin/fr";
 
 import { mergeAll } from "./utils";
 
 /**
- * Exported constant defining parameters and fields for all docs fr configurations.
+ * Exported constant defining parameters and fields for all docs en configurations.
  */
 export const allDocsFr: Record<string, any> = mergeAll(
   common,
@@ -60,14 +68,19 @@ export const allDocsFr: Record<string, any> = mergeAll(
   commModules,
   commEntitlements,
   commCustomization,
- commBillingPayments,
- commEntitlementsTenantPlans,
- commEntitlementsUserSubscriptions,
+  commBillingPayments,
+  commEntitlementsTenantPlans,
+  commEntitlementsUserSubscriptions,
   pageBillingEngine,
   pageInvoices,
   pageDunning,
   pageTenantPlans,
   pageUserSubscriptions,
   pageTenantContextGate,
-  pageRevenueAnalytics
+  pageRevenueAnalytics,
+  pageAuditLogs,
+  pageSecurityMonitoring,
+  pageWebhooks,
+  pageMarketplace,
+  pageEcosystemRecycleBin
 );

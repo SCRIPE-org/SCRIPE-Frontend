@@ -35,6 +35,11 @@ import { en as pageTenantPlans } from "../pages/tenant-plans/en";
 import { en as pageUserSubscriptions } from "../pages/user-subscriptions/en";
 import { en as pageTenantContextGate } from "../pages/tenant-context-gate/en";
 import { en as pageRevenueAnalytics } from "../pages/revenue-analytics/en";
+import { en as pageAuditLogs } from "../pages/audit-logs/en";
+import { en as pageSecurityMonitoring } from "../pages/security-monitoring/en";
+import { en as pageWebhooks } from "../pages/webhooks/en";
+import { en as pageMarketplace } from "../pages/marketplace/en";
+import { en as pageEcosystemRecycleBin } from "../pages/ecosystem-recycle-bin/en";
 
 import { mergeAll } from "./utils";
 
@@ -72,5 +77,10 @@ export const allDocsEn: Record<string, any> = mergeAll(
   pageTenantPlans,
   pageUserSubscriptions,
   pageTenantContextGate,
-  pageRevenueAnalytics
+  pageRevenueAnalytics,
+  pageAuditLogs,
+  pageSecurityMonitoring,
+  pageWebhooks,
+  pageMarketplace,
+  pageEcosystemRecycleBin
 );

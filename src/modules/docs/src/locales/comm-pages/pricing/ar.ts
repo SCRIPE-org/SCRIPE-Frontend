@@ -1,4 +1,4 @@
-﻿// FILE-EXCEPTION: file length
+// FILE-EXCEPTION: file length
 /**
  * Docs page locale — AR
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -401,6 +401,14 @@ export const ar = {
       intro: "Ø§Ø®ØªØ± Ø§Ù„Ù…Ø³ØªÙˆÙ‰ Ø§Ù„Ù…Ø«Ø§Ù„ÙŠ Ù„Ù…Ø³Ø§Ø± Ù†Ù…ÙˆÙƒ. ØªØªÙˆØ³Ø¹ Ø¬Ù…ÙŠØ¹ Ø®Ø·Ø· Ø§Ù„Ø£Ø³Ø¹Ø§Ø± Ù…Ø¹ Ø¹Ù…Ù„Ùƒ.",
     },
     investorOverview: {
+      personaSelectorQuestion: "ما هو اهتمامك الرئيسي؟",
+      personaSelectorInvestor: "أنا مستثمر",
+      personaSelectorCofounder: "أريد أن أكون مؤسسًا مشاركًا",
+      personaSelectorPartner: "أريد أن أكون شريكًا",
+      personaSelectorInvestorDesc: "تعرف على عائد الاستثمار لنمو SaaS وجولات التمويل ومقاييس توقعات التوسع.",
+      personaSelectorCofounderDesc: "استكشف استراتيجيتنا التأسيسية وأدوارنا ومسارنا للشراكة المباشرة.",
+      personaSelectorPartnerDesc: "شاهد كيف يقوم متكاملو الأنظمة والاستشاريون والمطورون بتوسيع حصة إيرادات SaaS.",
+      personaSelectorLearnMore: "تعرف على المزيد",
       title: "Ø¨ÙˆØ§Ø¨Ø© Ø§Ù„Ù…Ø³ØªØ«Ù…Ø±ÙŠÙ†",
       description: "Ø¹Ø§Ø¦Ø¯ Ø§Ù„Ø§Ø³ØªØ«Ù…Ø§Ø± Ù„Ù†Ù…Ùˆ SaaS ÙˆØ§Ù„Ù…Ù‚Ø§ÙŠÙŠØ³ ÙˆÙØ±Øµ Ø§Ù„Ø´Ø±Ø§ÙƒØ© Ù„Ù…Ø³ØªØ«Ù…Ø±ÙŠ SCRIPE.",
       intro: "Ø§Ø³ØªÙƒØ´Ù Ù†Ù…ÙˆØ°Ø¬ Ù†Ù…Ùˆ SaaS Ø§Ù„Ù‚ÙˆÙŠ Ù„Ø¯ÙŠÙ†Ø§ ÙˆØ§ÙƒØªØ´Ù Ù„Ù…Ø§Ø°Ø§ ÙŠØ¶Ù…Ù† Ø§Ù„Ø§Ø³ØªØ«Ù…Ø§Ø± ÙÙŠ SCRIPE Ø¹ÙˆØ§Ø¦Ø¯ Ø¹Ø§Ù„ÙŠØ©.",
