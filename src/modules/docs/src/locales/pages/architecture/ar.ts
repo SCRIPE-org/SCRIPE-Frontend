@@ -558,5 +558,42 @@ export const ar = {
       moduleNameEnvIntro:
         "يُضبَط متغير البيئة MODULE_NAME عند بدء تشغيل الحاوية ويحدد الوحدات المُحمَّلة في العملية. يقرأ ملف ModuleRegistration.cs في Host/API هذا المتغير ويُسجّل بشكل مشروط تسجيلات DI الخاصة بالوحدة المحددة وDbContext الخاص بها فقط. عندما يكون فارغًا (الافتراضي)، تُسجَّل جميع الوحدات — وهو وضع الـ monolith الذي يدعم جميع أنماط التعاون عبر الوحدات.",
     },
+    crossModule: {
+      title: "التعاون العميق بين الوحدات",
+      description:
+        "كيف تتعاون وحدتا Identity وEntitlements دون استيراد إحداهما للأخرى — عبر تجريدات Core.Application وIRequireFeature وسلوكيات AstraFlow.",
+      intro:
+        "يجب على وحدتي Identity وEntitlements في SCRIPE التعاون بشكل وثيق: تُقيّد Entitlements الميزات التي تستهلكها أوامر Identity؛ وتمتلك Identity الصلاحيات التي يجب على Entitlements مزامنتها عند تغيير الاشتراك. لكنهما لا تستطيعان استيراد إحداهما الأخرى — فعل ذلك سيُنشئ تبعية دائرية. الحل هو طبقة Core.Application: جسر محايد يُعرّف عقود الواجهات المكتوبة التي تعتمد عليها كلتا الوحدتين، لكن لا تملكها أي منهما.",
+      bridgeTitle: "الجسر ذو الثلاث طبقات",
+      bridgeContent:
+        "مساحة الأسماء Core.Application.Abstractions هي قلب التواصل عبر الوحدات. تُعرّف أكثر من 32 عقد واجهة. تُطبّق كل من Identity.Infrastructure وEntitlements.Infrastructure جانبها المعني. تستهلك سلوكيات AstraFlow pipeline ومعالجات الوحدات هذه الواجهات فقط — وليس التطبيقات الفعلية. هذا يعني أن النظام يُجمَّع ويعمل بشكل متطابق سواء تم نشر Entitlements أم لا.",
+      gridCoreTitle: "تجريدات Core.Application",
+      gridCoreDesc:
+        "أكثر من 32 عقد واجهة مكتوبة (IFeatureChecker وITenantPermissionManager وICurrentUser) تعتمد عليها كلتا الوحدتين لكن لا تملكها أي منهما.",
+      gridEventsTitle: "أحداث المجال",
+      gridEventsDesc:
+        "ترفع الكيانات أحداث المجال (AdminCreatedEvent وSubscriptionChangedEvent). تعالجها الوحدات الأخرى عبر INotificationHandler دون أي استيراد مباشر.",
+      gridPipelineTitle: "AstraFlow Pipeline",
+      gridPipelineDesc:
+        "يُطبّق FeatureCheckBehavior وAuthorizationBehavior سياسات الوحدات المتقاطعة تلقائيًا لكل أمر — صفر من الكود المتكرر في المعالجات.",
+      coreAbstractionsTitle: "تجريدات Core.Application",
+      coreAbstractionsContent:
+        "تعيش كل من IFeatureChecker وITenantPermissionManager وITenantContext في Core.Application — مشروع تعتمد عليه كل من Identity وEntitlements. لا تستورد أي وحدة الأخرى. بدلًا من ذلك، تعتمد كلتاهما على طبقة العقد المشتركة هذه. تُسجّل Core.Infrastructure تطبيقات NoOp مع TryAddScoped؛ تتجاوزها تطبيقات الوحدات الحقيقية مع AddScoped.",
+      requireFeatureTitle: "IRequireFeature: تقييد الميزات في الأوامر",
+      requireFeatureContent:
+        "تُطبّق الأوامر IRequireFeature للإعلان عن أنها تتطلب تفعيل ميزة معينة للمستأجر الحالي. يعترض FeatureCheckBehavior في AstraFlow pipeline هذه الأوامر تلقائيًا في الموضع 4، ويستدعي IFeatureChecker.CheckQuotaAsync، ويُرجع نتيجة Forbidden إذا فشل الفحص — قبل أن يعمل المعالج. هذا يعني صفر من كود فحص الميزات في أي معالج.",
+      pipelineTitle: "ترتيب تنفيذ AstraFlow Pipeline",
+      pipelineContent:
+        "يتدفق كل أمر واستعلام في SCRIPE عبر 7 سلوكيات pipeline بترتيب صارم. الترتيب ليس اعتباطيًا — يجب أن يعمل Validation قبل Authorization (لا ينبغي للمدخلات السيئة الوصول إلى فحوصات المصادقة)، ويجب أن يعمل FeatureCheck بعد Authorization (فقط الطلبات المصادق عليها يجب أن تتكبد تكلفة فحص الميزات). يعمل المعالج فقط إذا مرّت السلوكيات الـ6 السابقة بنجاح.",
+      eventFlowTitle: "تدفق أحداث المجال: إشعار عبر الوحدات",
+      eventFlowContent:
+        "عندما يكتمل معالج الأمر، يرفع أحداث المجال عبر entity.AddDomainEvent(). يلتقط OutboxInterceptor في EF Core هذه الأحداث في نفس المعاملة الخاصة بطفرة الكيان. يُرسلها OutboxProcessor لاحقًا إلى تطبيقات INotificationHandler المسجلة. يمكن لمعالج Entitlements الاشتراك في AdminCreatedEvent (التي رفعتها Identity) دون استيراد Identity من Entitlements.",
+      realWorldTitle: "الواقع العملي: Identity ↔ Entitlements",
+      realWorldContent:
+        "يوضح الجدول التالي من يمتلك ماذا في علاقة Identity–Entitlements وكيف تصل إليه الوحدة الأخرى. لا تصل أي وحدة إلى مخزن بيانات وحدة أخرى مباشرة. يمر جميع الوصول عبر واجهات Core.Application، التي يحلها حاوية DI إلى التطبيق المناسب في وقت التشغيل.",
+      keyInsightTip:
+        "الفكرة الأساسية: لا تستورد Identity وحدة Entitlements أبدًا، ولا تستورد Entitlements وحدة Identity أبدًا. يعتمد كلاهما فقط على Core.Application — الأرضية المشتركة المحايدة. هذا يُتيح النشر المستقل والاختبار المعزول وصفر من مخاطر التبعية الدائرية.",
+    },
   },
 };
+

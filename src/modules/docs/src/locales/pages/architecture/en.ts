@@ -579,5 +579,41 @@ export const en = {
       moduleNameEnvIntro:
         "The MODULE_NAME environment variable is set at container startup and determines which modules are loaded into the process. The ModuleRegistration.cs file in Host/API reads this variable and conditionally registers only the specified module's DI registrations and EF Core DbContext. When empty (the default), all modules are registered — this is the monolith mode that supports all cross-module collaboration patterns.",
     },
+    crossModule: {
+      title: "Cross-Module Collaboration Deep Dive",
+      description:
+        "How Identity and Entitlements collaborate without importing each other — via Core.Application abstractions, IRequireFeature, and AstraFlow pipeline behaviors.",
+      intro:
+        "SCRIPE's Identity and Entitlements modules must collaborate closely: Entitlements gates features that Identity commands consume; Identity holds the permissions that Entitlements must sync on subscription change. Yet they cannot import each other — doing so would create a circular dependency. The solution is the Core.Application layer: a neutral bridge that defines typed interface contracts both modules depend on, but neither owns.",
+      bridgeTitle: "The Three-Layer Bridge",
+      bridgeContent:
+        "The Core.Application.Abstractions namespace is the heart of cross-module communication. It defines over 32 interface contracts. Identity.Infrastructure and Entitlements.Infrastructure each implement their respective side. AstraFlow pipeline behaviors and module handlers consume only these interfaces — never the concrete implementations. This means the system compiles and runs identically whether Entitlements is deployed or not.",
+      gridCoreTitle: "Core.Application Abstractions",
+      gridCoreDesc:
+        "32+ typed interface contracts (IFeatureChecker, ITenantPermissionManager, ICurrentUser) that both modules depend on but neither owns.",
+      gridEventsTitle: "Domain Events",
+      gridEventsDesc:
+        "Entities raise domain events (AdminCreatedEvent, SubscriptionChangedEvent). Other modules handle them via INotificationHandler without any direct import.",
+      gridPipelineTitle: "AstraFlow Pipeline",
+      gridPipelineDesc:
+        "FeatureCheckBehavior and AuthorizationBehavior enforce cross-module policies automatically for every command — zero boilerplate in handlers.",
+      coreAbstractionsTitle: "Core.Application Abstractions",
+      coreAbstractionsContent:
+        "IFeatureChecker, ITenantPermissionManager, and ITenantContext all live in Core.Application — a project that both Identity and Entitlements depend on. Neither module imports the other. Instead, both depend on this shared contract layer. Core.Infrastructure registers NoOp implementations with TryAddScoped; real module implementations override them with AddScoped.",
+      requireFeatureTitle: "IRequireFeature: Feature Gating in Commands",
+      requireFeatureContent:
+        "Commands implement IRequireFeature to declare that they require a specific feature to be enabled for the current tenant. The FeatureCheckBehavior in the AstraFlow pipeline automatically intercepts these commands at position 4, calls IFeatureChecker.CheckQuotaAsync, and returns a Forbidden Result if the check fails — before the handler ever runs. This means zero feature-check boilerplate in any handler.",
+      pipelineTitle: "AstraFlow Pipeline Execution Order",
+      pipelineContent:
+        "Every command and query in SCRIPE flows through 7 pipeline behaviors in strict order. The order is not arbitrary — Validation must run before Authorization (bad input should not reach auth checks), and FeatureCheck must run after Authorization (only authenticated requests should incur the feature check overhead). The Handler only runs if all 6 preceding behaviors pass.",
+      eventFlowTitle: "Domain Event Flow: Cross-Module Notification",
+      eventFlowContent:
+        "When a command handler completes, it raises domain events via entity.AddDomainEvent(). The EF Core OutboxInterceptor captures these events in the same transaction as the entity mutation. The OutboxProcessor later dispatches them to registered INotificationHandler implementations. An Entitlements handler can subscribe to AdminCreatedEvent (raised by Identity) without Identity importing Entitlements at all.",
+      realWorldTitle: "Real-World: Identity ↔ Entitlements",
+      realWorldContent:
+        "The following table shows who owns what in the Identity–Entitlements relationship and how the other module accesses it. No module ever accesses another module's data store directly. All access goes through the Core.Application interfaces, which are resolved by the DI container to the appropriate implementation at runtime.",
+      keyInsightTip:
+        "The key insight: Identity never imports Entitlements, and Entitlements never imports Identity. They only both depend on Core.Application — the neutral common ground. This enables independent deployment, isolated testing, and zero circular dependency risk.",
+    },
   },
 };

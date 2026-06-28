@@ -345,6 +345,31 @@ function tokenize(code: string, language: string): { text: string; className: st
  * Presentation UI component rendering the code block.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
+const LANG_LABELS: Record<string, string> = {
+  csharp: "C#",
+  cs: "C#",
+  "c#": "C#",
+  typescript: "TypeScript",
+  ts: "TypeScript",
+  javascript: "JavaScript",
+  js: "JavaScript",
+  jsx: "JSX",
+  tsx: "TSX",
+  json: "JSON",
+  http: "HTTP",
+  sql: "SQL",
+  bash: "Shell",
+  shell: "Shell",
+  sh: "Shell",
+  yaml: "YAML",
+  yml: "YAML",
+  xml: "XML",
+  html: "HTML",
+  css: "CSS",
+  text: "Text",
+  plaintext: "Text",
+};
+
 export function CodeBlock({ code, language, filename, highlightLines }: CodeBlockProps) {
   const { t } = useDocsI18n();
   const [copied, setCopied] = useState(false);
@@ -359,6 +384,7 @@ export function CodeBlock({ code, language, filename, highlightLines }: CodeBloc
     }
   }, [code]);
 
+  const langLabel = LANG_LABELS[language?.toLowerCase() ?? ""] ?? language ?? "Code";
   const tokenizedLines = tokenize(code.trim(), language);
   const highlightSet = new Set(highlightLines || []);
 
@@ -367,7 +393,7 @@ export function CodeBlock({ code, language, filename, highlightLines }: CodeBloc
       <div className="docs-code-header">
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           {filename && <span className="docs-code-filename">{filename}</span>}
-          <span className="docs-code-lang">{language}</span>
+          <span className="docs-code-lang">{langLabel}</span>
         </div>
         <button className="docs-code-copy" data-copied={copied} onClick={handleCopy}>
           {copied ? (
