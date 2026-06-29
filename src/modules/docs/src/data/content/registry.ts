@@ -80,6 +80,11 @@ import "./modules/entitlements/platform-management";
 import "./modules/plugins/plugins-overview";
 import "./modules/plugins/plugins-sdk";
 
+// Modules (Plugins Entity Level — Phase 16)
+import "./modules/plugins/plugin-entities";
+import "./modules/plugins/plugin-installation";
+import "./modules/plugins/plugin-runtime";
+
 // Modules (Compliance — Phase 12)
 import "./modules/compliance/compliance-overview";
 import "./modules/compliance/compliance-dsr";
@@ -93,7 +98,14 @@ import "./modules/compliance/compliance-regulation-profiles";
 import "./modules/audit-logs";
 import "./modules/security-monitoring";
 import "./modules/webhooks";
-import "./modules/marketplace";
+
+// Modules (Marketplace — Phase 16)
+import "./modules/marketplace/marketplace-overview";
+import "./modules/marketplace/app-listings";
+import "./modules/marketplace/developer-portal";
+import "./modules/marketplace/app-purchases";
+import "./modules/marketplace/ratings-reviews";
+
 import "./modules/ecosystem-recycle-bin";
 
 // Modules (Identity — Entity Deep Dives)
