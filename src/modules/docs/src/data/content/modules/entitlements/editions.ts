@@ -24,92 +24,79 @@ const sections: DocSection[] = [
     headers: ["Property", "Type", "Description"],
     rows: [
       ["Id", "Guid", "Primary key (auto-generated)"],
-      [
-        "Name",
-        "string",
-        "Unique plan slug (e.g., 'general-free', 'general-pro', 'general-enterprise')",
-      ],
-      ["DisplayNameEn / DisplayNameAr", "string", "Localized titles for display in the UI"],
-      [
-        "TierLevel",
-        "int",
-        "Hierarchical level (0 = Free, 1+ = premium) used for upgrades/downgrades",
-      ],
-      [
-        "IsSystem",
-        "bool",
-        "true = system-defined standard plan, false = reseller-defined retail plan",
-      ],
-      [
-        "FallbackEditionId",
-        "Guid?",
-        "Downgrade target plan on subscription expiry. If null, the tenant is suspended.",
-      ],
-      [
-        "OverflowPolicy",
-        "enum",
-        "Downgrade behavior (Block, Warn, Allow) when resource counts exceed new limits",
-      ],
-      [
-        "AllowMonthly / AllowYearly / AllowLifetime / AllowTrial",
-        "bool",
-        "Billing cycle configuration toggles",
-      ],
-      [
-        "IsFree",
-        "bool",
-        "Computed: true if plan has no trial, billing cycles, or contact-sales toggles",
-      ],
-      [
-        "IsContactSalesOnly",
-        "bool",
-        "Bypasses self-service Stripe Checkout (Enterprise custom plans)",
-      ],
-      [
-        "TrialDurationDays / TrialIsFree / TrialDiscountPercent",
-        "fields",
-        "Trial tier setup parameters",
-      ],
-      ["GracePeriodDays", "int", "Stripe payment retry/grace period duration in days"],
-      ["MaxActiveSubscriptions", "int", "Global capacity limit for this specific plan"],
-      ["StripeProductId", "string?", "Catalog ID for Stripe synchronization"],
+      ["Name", "string", "Unique internal slug per platform (e.g. 'general-free', 'general-pro')"],
+      ["DisplayNameEn / DisplayNameAr", "string?", "Localized display titles shown in UI and pricing pages"],
+      ["Description", "string?", "Marketing description for the edition"],
+      ["Tagline", "string?", "Short marketing tagline (e.g. 'Best for growing teams')"],
+      ["RecommendationLabels", "string?", "JSON array of badge labels (e.g. ['Best Value', 'Most Popular'])"],
+      ["TierLevel", "int", "Hierarchical level (0 = Free, 1+ = premium) — used for upgrade/downgrade logic"],
+      ["IsSystem", "bool", "true = system-defined platform plan. false = reseller-defined retail plan"],
+      ["IsRetired", "bool", "When true, no new tenant assignments allowed (soft retirement)"],
+      ["EditionCategoryId", "Guid?", "Optional grouping for the plan picker UI on the signup flow"],
+      ["FallbackEditionId", "Guid?", "Downgrade target on subscription expiry. Null = tenant is suspended"],
+      ["OverflowPolicy", "OverflowPolicy enum", "Block | Warn | Allow — governs behavior when resource counts exceed new limits after downgrade"],
+      ["AllowMonthly / AllowYearly / AllowLifetime / AllowTrial", "bool", "Billing cycle toggles — controls which billing modes are available for this edition"],
+      ["IsSelfServiceEnabled", "bool", "When true, tenants can self-subscribe via Stripe Checkout. False = sales-assisted only"],
+      ["IsContactSalesOnly", "bool", "Enterprise plans where no Stripe Checkout is presented — sales contact required"],
+      ["IsFree", "bool (computed)", "Derived: true when no billing cycles AND no trial AND IsContactSalesOnly is false"],
+      ["TrialDurationDays", "int", "Length of the trial period in days (0 = no trial). Range: 1–730"],
+      ["TrialIsFree", "bool", "true = 100% free trial. false = discounted trial (see TrialDiscountPercent)"],
+      ["TrialDiscountPercent", "int", "Discount during trial (0–100). Only meaningful when TrialIsFree = false"],
+      ["GracePeriodDays", "int", "Days after payment failure before subscription is suspended"],
+      ["MaxActiveSubscriptions", "int", "Global capacity cap for this edition. -1 = unlimited"],
+      ["CurrentVersion", "int", "Auto-incremented version number — incremented each time features are published"],
+      ["ConnectCommissionRate", "decimal?", "Stripe Connect platform commission rate. Null = use global default"],
+      ["StripeProductId", "string?", "Stripe product catalog ID — null until first sync"],
       ["CreatedAt / UpdatedAt", "DateTime", "Audit timestamps"],
     ],
   },
   {
     type: "code",
     language: "csharp",
-    filename: "Edition Entity",
-    code: `public class Edition : AuditableEntity, ISoftDeletable
+    filename: "Edition.cs (Domain Entity — simplified)",
+    code: `public class Edition : AuditableEntity<Guid>
 {
-    public string Name { get; set; } = string.Empty;
-    public string DisplayNameEn { get; set; } = string.Empty;
-    public string DisplayNameAr { get; set; } = string.Empty;
-    public int TierLevel { get; set; }
-    public bool IsSystem { get; set; } = true;
+    public string Name { get; set; } = null!;           // internal slug (e.g. "basic", "pro")
+    public string? DisplayNameEn { get; set; }          // localized display name
+    public string? DisplayNameAr { get; set; }
+    public string? Description { get; set; }
+    public string? Tagline { get; set; }                // short marketing tagline
+    public string? RecommendationLabels { get; set; }   // JSON badge labels (e.g. ["Best Value"])
+    public int TierLevel { get; set; }                  // 0 = Free, 1+ = premium
+    public bool IsSystem { get; set; }
+    public bool IsRetired { get; set; }                 // no new assignments allowed
+    public Guid? EditionCategoryId { get; set; }        // grouping for signup plan picker
     public Guid? FallbackEditionId { get; set; }
     public OverflowPolicy OverflowPolicy { get; set; } = OverflowPolicy.Block;
 
     // Billing Toggles
-    public bool AllowMonthly { get; set; }
-    public bool AllowYearly { get; set; }
-    public bool AllowLifetime { get; set; }
-    public bool AllowTrial { get; set; }
-    
-    public bool IsFree => !AllowTrial && !AllowMonthly && !AllowYearly && !AllowLifetime && !IsContactSalesOnly;
+    public bool AllowMonthly { get; set; } = true;
+    public bool AllowYearly { get; set; } = true;
+    public bool AllowLifetime { get; set; } = true;
+    public bool AllowTrial { get; set; } = true;
+    public bool IsSelfServiceEnabled { get; set; } = true;
     public bool IsContactSalesOnly { get; set; }
-    
-    // Trial Configuration
-    public int TrialDurationDays { get; set; }
-    public bool TrialIsFree { get; set; }
-    public decimal TrialDiscountPercent { get; set; }
-    
-    public int GracePeriodDays { get; set; }
-    public int MaxActiveSubscriptions { get; set; }
-    public string? StripeProductId { get; set; }
 
-    public virtual ICollection<EditionFeature> Features { get; set; } = [];
-    public virtual ICollection<EditionVersion> Versions { get; set; } = [];
+    // Computed: free when no billing types enabled
+    public bool IsFree => !AllowTrial && !AllowMonthly && !AllowYearly && !AllowLifetime && !IsContactSalesOnly;
+
+    // Trial Configuration
+    [Range(1, 730)]
+    public int TrialDurationDays { get; set; } = 14;
+    public bool TrialIsFree { get; set; } = true;
+    [Range(0, 100)]
+    public int TrialDiscountPercent { get; set; } = 100;  // int, not decimal
+
+    public int GracePeriodDays { get; set; } = 0;
+    public int MaxActiveSubscriptions { get; set; } = -1;  // -1 = unlimited
+    public int CurrentVersion { get; set; } = 1;
+    public decimal? ConnectCommissionRate { get; set; }    // Stripe Connect commission (null = global default)
+    public string? StripeProductId { get; set; }           // null until first catalog sync
+
+    public virtual ICollection<EditionFeature> Features { get; set; } = new List<EditionFeature>();
+    public virtual ICollection<EditionPrice> Prices { get; set; } = new List<EditionPrice>();
+    public virtual ICollection<EditionVersion> Versions { get; set; } = new List<EditionVersion>();
+    public ICollection<EditionPromotion> Promotions { get; set; } = new List<EditionPromotion>();
 }`,
   },
 

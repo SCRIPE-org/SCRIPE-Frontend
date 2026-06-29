@@ -1256,6 +1256,137 @@ export const en = {
         "Never skip signature verification in production. Without it, any party that discovers your webhook URL can send fake payloads. Always compare signatures using a constant-time comparison function (e.g., CryptographicOperations.FixedTimeEquals) to prevent timing attacks.",
       registeringTitle: "Registering a Webhook Endpoint",
     },
+    tenantPlans: {
+      title: "Tenant Plans",
+      description:
+        "Tenant-defined subscription plans (Tier 2) that businesses configure for their end-user customers. Supports multi-currency pricing, versioning, and subscriber grandfathering.",
+      intro:
+        "Tenant Plans form the Tier 2 of SCRIPE's B2B2C architecture. While Editions (Tier 1) are configured by the platform operator and govern what a tenant can do, TenantPlans are configured by the tenant themselves to offer subscription plans to their own end-user customers. This makes SCRIPE a full B2B2C engine: operators sell to businesses, businesses sell to their customers — all within one platform.",
+      conceptTitle: "B2B2C Model",
+      conceptIntro:
+        "SCRIPE's dual-tier subscription model enables platform operators to monetize tenants (businesses) via Editions, while those same tenants can independently monetize their end-users via TenantPlans. Each tier is fully isolated — a tenant's plan configuration is scoped to their TenantId and never visible to other tenants.",
+      entityTitle: "TenantPlan Entity",
+      entityIntro:
+        "A TenantPlan is the business's self-managed subscription product. It defines the plan name, pricing, billing cycles, trial configuration, and feature assignments for their customers.",
+      entityNote:
+        "Pricing is NOT stored directly on TenantPlan. Instead, a separate TenantPlanPrice table stores multi-currency × multi-cycle pricing matrices (one row per Currency + BillingCycle combination). This allows a single plan to be priced in USD monthly, USD yearly, EUR monthly, etc.",
+      lifecycleTitle: "Plan Lifecycle",
+      lifecycleIntro:
+        "Plans follow a three-state lifecycle. Draft plans are invisible to subscribers and can be freely edited. Publishing a plan increments CurrentVersion and makes it available for new subscribers. Archiving prevents new subscribers while preserving existing ones.",
+      versioningTitle: "Versioning & Subscriber Grandfathering",
+      versioningIntro:
+        "Each time a plan is published, CurrentVersion increments. Existing subscribers are optionally pinned to their subscription's TenantPlanVersionNumber, preserving the plan features they signed up for (grandfathering). Subscribers with TenantPlanVersionNumber = null always use the latest published version.",
+      versioningTip:
+        "Use versioning when making breaking changes to a plan's features. Existing subscribers stay on their pinned version; new subscribers get the latest. This allows safe, non-disruptive plan evolution.",
+      pricingTitle: "Pricing Architecture",
+      pricingIntro:
+        "Pricing is stored in a relational matrix to support multi-currency and multi-billing-cycle configurations independently.",
+      featureEntityTitle: "Plan Features (TenantPlanFeature)",
+      featureEntityIntro:
+        "Each plan can have multiple TenantPlanFeature records that link the plan to the tenant's feature catalog. Features are key-value pairs where the key is the feature's stable system key and the value is a string representation (e.g. 'true', '50', 'priority').",
+      contextTitle: "Tenant Context Required",
+      contextIntro:
+        "All TenantPlan operations are tenant-scoped. The current tenant's ID is injected from the JWT token. System admins in drill-down mode operate within the target tenant's context.",
+      contextWarning:
+        "TenantPlans are fully isolated per tenant. A tenant can never view or modify another tenant's plans. The API enforces this via the ITenantContext middleware — TenantId is always sourced from the authenticated token, never from the request body.",
+      endpointsTitle: "API Endpoints",
+      endpointsIntro:
+        "All TenantPlan endpoints require JWT authentication and appropriate permissions.",
+      permissionsTitle: "Permissions",
+      permissionsIntro:
+        "Access to tenant plan management is controlled by the following RBAC permissions:",
+      "ep.list": "Get all plans for the current tenant (paginated)",
+      "ep.get": "Get a single plan by ID",
+      "ep.create": "Create a new plan draft",
+      "ep.update": "Update plan fields or lifecycle (publish/archive)",
+      "ep.delete": "Soft-delete a plan",
+    },
+    invoices: {
+      title: "Invoices & Billing",
+      description:
+        "Invoice entity lifecycle, line items, payment transactions, multi-currency billing, and the Stripe webhook integration that drives automated invoice generation.",
+      intro:
+        "The Invoice system is the financial backbone of SCRIPE's billing engine. Invoices are automatically generated by Stripe webhook events (e.g. invoice.payment_succeeded) or manually created by platform admins for custom billing scenarios. Each invoice carries a human-readable sequenced number (INV-YYYY-NNNNN), is denominated in the tenant's subscription currency, and has a full audit trail of payment attempts via PaymentTransaction records.",
+      invoiceEntityTitle: "Invoice Entity",
+      invoiceEntityIntro:
+        "Each Invoice represents one billing cycle charge. It links to a TenantSubscription and captures the complete financial picture: amount before and after discounts, tax, final total, and Stripe gateway references.",
+      invoiceFieldsNote:
+        "Exchange rate normalization (USD equivalent amounts) lives on TenantSubscription, NOT on Invoice. Invoice stores the amounts in the billed currency only.",
+      lineItemTitle: "Invoice Line Items",
+      lineItemIntro:
+        "Each invoice has one or more InvoiceLineItem records describing exactly what was charged. This enables detailed, transparent invoicing with subscription charges, add-ons, discounts, and tax shown separately.",
+      transactionTitle: "Payment Transactions",
+      transactionIntro:
+        "PaymentTransaction records each payment attempt against an invoice. Multiple transactions per invoice are possible (e.g., a failed attempt followed by a successful retry). The Gateway field uses the PaymentGatewayType enum (Stripe, PayPal, Paymob, Manual).",
+      statusTitle: "Invoice Status Lifecycle",
+      statusIntro:
+        "Invoices follow a linear status progression. Manual admin actions can Void a Pending invoice. Stripe webhook events drive the Pending → Paid transition.",
+      numberingTitle: "Invoice Numbering",
+      numberingIntro:
+        "Invoice numbers use a DB-native IDENTITY/SERIAL/SEQUENCE (SequenceNumber column) for atomic, gap-free sequence generation under concurrency. The InvoiceNumber string is formatted as INV-YYYY-NNNNN from SequenceNumber.",
+      dashboardTitle: "Revenue Dashboard",
+      dashboardIntro:
+        "SCRIPE provides a real-time revenue analytics dashboard at /api/v1/billing/dashboard, aggregating all invoice and subscription data into KPI metrics.",
+      metricsTitle: "Dashboard KPIs",
+      metricsIntro: "The dashboard exposes the following key metrics:",
+      metric1: "MRR (Monthly Recurring Revenue) — normalized to USD",
+      metric2: "ARR (Annual Recurring Revenue) — normalized to USD",
+      metric3: "Total active subscriptions (by type: Base, Trial, AddOn)",
+      metric4: "New subscriptions this period",
+      metric5: "Churn rate (%) — cancellations / start of period active",
+      metric6: "Trial conversions",
+      metric7: "Revenue by edition tier",
+      metric8: "Revenue by currency (before USD normalization)",
+      currencyTitle: "Multi-Currency Support",
+      currencyIntro:
+        "SCRIPE supports all Stripe-compatible currencies. The currency handling in Stripe API calls depends on the decimal precision of the currency:",
+      exportTitle: "Export Formats",
+      exportIntro:
+        "Invoices and subscription data can be exported via the /api/v1/subscriptions/export endpoint:",
+      exportCsv: "CSV — for spreadsheet import and financial reconciliation",
+      exportExcel: "Excel (.xlsx) — formatted invoice report",
+      exportPdf: "PDF — professional invoice documents with tenant branding",
+      endpointsTitle: "API Endpoints",
+      endpointsIntro:
+        "Invoice endpoints are read-only for tenant users. Only platform admins can create or void invoices manually.",
+      "ep.list": "Get paginated invoice list for the current tenant",
+      "ep.get": "Get invoice details by ID",
+      "ep.pdf": "Download the PDF version of an invoice",
+      "ep.dashboard": "Get revenue analytics dashboard KPIs",
+      "ep.export": "Export invoices and subscriptions to CSV/Excel",
+    },
+    userSubscriptions: {
+      title: "User Subscriptions",
+      description:
+        "End-user subscription management for Tier 2 of the B2B2C model. Users subscribe to TenantPlans configured by the tenant. Supports versioning, promotions, trial periods, and immutable audit trail via Cancel + Replace.",
+      intro:
+        "UserSubscription records link an end-user to a TenantPlan. This is Tier 2 of SCRIPE's B2B2C model — the tenant manages plans, users subscribe to those plans. UserSubscriptions are intentionally immutable after creation: there is no 'edit' action. To change a plan, the admin cancels the existing subscription and creates a new one (Cancel + Replace flow). This preserves a clean audit trail and aligns with Stripe Connect billing semantics.",
+      entityTitle: "UserSubscription Entity",
+      entityIntro:
+        "Each UserSubscription represents one user's current or historical subscription to a TenantPlan. The UserId is a plain Guid (no navigation property) to preserve module boundary isolation — Entitlements never imports Identity entities directly.",
+      statusTitle: "Status Lifecycle",
+      statusIntro:
+        "UserSubscription statuses follow the user's payment and trial journey. The Cancel + Replace pattern means Cancelled subscriptions are terminal — a new subscription record is always created for plan changes.",
+      featureCheckerTitle: "UserFeatureCheckerService",
+      featureCheckerIntro:
+        "The UserFeatureCheckerService resolves which features a user can access based on their active UserSubscription and the linked TenantPlanFeature records. It returns a key-value dictionary of feature values that can be used for runtime feature gating.",
+      reconciliationTitle: "Subscription Reconciliation Job",
+      reconciliationIntro:
+        "A daily IAutoRegisteredJob (UserSubscriptionReconciliationJob) runs to transition subscriptions whose ExpiresAt has passed to Expired status. It also handles trial-to-active promotions for subscribers with IsAutoRenew = true.",
+      endpointsTitle: "API Endpoints",
+      endpointsIntro:
+        "User subscription endpoints support both admin operations (create, cancel) and user-facing queries (my subscription, feature access).",
+      permissionsTitle: "Permissions",
+      permissionsIntro:
+        "Access to user subscription management is controlled by the following RBAC permissions:",
+      "ep.list": "Get all user subscriptions for the tenant (paginated)",
+      "ep.get": "Get a specific user's subscription details",
+      "ep.create": "Assign a subscription plan to a user",
+      "ep.cancel": "Cancel an active user subscription",
+      "ep.mySubscription": "Get the calling user's own subscription",
+      "ep.myFeatures": "Get the calling user's feature access dictionary",
+    },
   },
 };
+
 
