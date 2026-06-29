@@ -89,8 +89,6 @@ import "./modules/security-monitoring";
 import "./modules/webhooks";
 import "./modules/marketplace";
 import "./modules/ecosystem-recycle-bin";
-import "./modules/subscriptions";
-import "./modules/editions";
 
 // Security
 import "./security/overview";
