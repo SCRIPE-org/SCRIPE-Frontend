@@ -858,6 +858,43 @@ export const en = {
           download: "Download the generated report file",
         },
       },
+      regulationProfiles: {
+        title: "Regulation Profiles",
+        description:
+          "Configure the data protection regulations (GDPR, CCPA, LGPD, PDPA) your platform enforces — each profile defines DSR deadlines, default retention periods, and consent versioning.",
+        intro:
+          "Regulation Profiles are the foundation of SCRIPE's Compliance module. Each profile represents a specific data protection law that the platform enforces, storing the legal DSR response deadline, default retention periods, and the active consent document version. Profiles are seeded on startup and can be extended or overridden by platform administrators.",
+        whatIsTitle: "What Are Regulation Profiles?",
+        whatIsIntro:
+          "A RegulationProfile is the authoritative record of a regulatory framework's enforcement parameters. When a Data Subject Request is submitted, the system reads the active RegulationProfile to calculate the SLA deadline. When the CurrentConsentVersion changes, the ConsentExpiryJob flags all active consents as requiring re-consent per GDPR Article 7.",
+        entityTitle: "RegulationProfile Entity",
+        entityIntro:
+          "Each row represents one regulation and stores all the parameters needed to enforce it across DSR, consent, and retention sub-systems.",
+        seededTitle: "Pre-Seeded Regulations",
+        seededIntro:
+          "SCRIPE seeds the following regulations on startup. Administrators can extend this list or override parameters without code changes via the compliance admin panel.",
+        consentVersionTitle: "Consent Version & Re-Consent Trigger",
+        consentVersionIntro:
+          "The CurrentConsentVersion field stores the semantic version of the active consent policy document. When this value is updated (e.g. from '1.0' to '2.0'), the ConsentExpiryJob automatically scans all active ConsentSnapshots and sets RequiresReConsent = true, forcing users to re-acknowledge the updated terms before their consent is valid again.",
+        consentVersionWarning:
+          "Changing CurrentConsentVersion is a high-impact operation. ALL active consents for this regulation will be invalidated and users will be prompted to re-consent on next visit. Coordinate this with your legal team before making changes in production.",
+        retentionJsonTitle: "DefaultRetentionJson Format",
+        retentionJsonIntro:
+          "The DefaultRetentionJson field stores a JSON object mapping retention category keys to their default period in days. These defaults pre-populate new RetentionPolicy rows when the regulation is first activated for a tenant. Values of -1 indicate indefinite retention.",
+        retentionJsonNote:
+          "DefaultRetentionJson is informational — actual enforcement is done by RetentionPolicy rows, which can be customized per tenant beyond these defaults.",
+        endpointsTitle: "API Endpoints",
+        endpointsIntro:
+          "Regulation profile endpoints allow admins to configure which regulations the platform enforces. System-seeded profiles can be updated but not deleted.",
+        "ep.list": "List all regulation profiles configured for the platform",
+        "ep.get": "Get a specific regulation profile by ID",
+        "ep.create": "Create a new custom regulation profile",
+        "ep.update": "Update an existing regulation profile (DSR deadline, consent version, retention defaults)",
+        "ep.delete": "Soft-delete a custom regulation profile (system-seeded profiles cannot be deleted)",
+        bestPracticesTitle: "Best Practices",
+        bestPracticesTip:
+          "Always bump CurrentConsentVersion when your privacy policy changes materially. This triggers the automated re-consent flow and provides a legally defensible audit trail of when users re-acknowledged the updated policy.",
+      },
     },
     // ── Plugins Module (Phase 15) ────────────────────────────
     plugins: {
@@ -1355,6 +1392,150 @@ export const en = {
       "ep.dashboard": "Get revenue analytics dashboard KPIs",
       "ep.export": "Export invoices and subscriptions to CSV/Excel",
     },
+    identityAuthSessions: {
+      title: "Auth Sessions & Token Management",
+      description:
+        "Deep-dive into the six session and authentication entities: RefreshToken, OtpCode, QrLoginSession, WebAuthnChallenge, AdminPasskey, and ExternalLogin — including all fields, security semantics, and the QR login flow.",
+      intro:
+        "SCRIPE supports multiple concurrent authentication mechanisms. Each mechanism has a dedicated entity in the Identity module. RefreshToken manages sliding session windows. OtpCode handles time-limited one-time codes. QrLoginSession enables cross-device login via QR scanning. WebAuthnChallenge powers FIDO2 passkey ceremonies. AdminPasskey stores registered FIDO2 credentials. ExternalLogin links third-party identity providers to Admin and User accounts.",
+      refreshTokenTitle: "RefreshToken Entity",
+      refreshTokenIntro:
+        "RefreshToken stores a long-lived opaque token issued alongside a JWT access token. Tokens are rotated on each use — the old token is revoked with a ReplacedByToken pointer, and a new token is issued. Impersonation sessions are tracked via ImpersonatorAdminId, enabling the StopImpersonation flow to restore the original admin's session.",
+      otpCodeTitle: "OtpCode Entity",
+      otpCodeIntro:
+        "OtpCode is a polymorphic one-time code that serves both users and admins. The Purpose integer maps to an enum (email verification, password reset, 2FA, etc.). Codes are invalidated via Invalidate() after successful use. The Attempts / MaxAttempts pair implements brute-force protection.",
+      otpCodeNote:
+        "OtpCode.Purpose is stored as an integer for database efficiency. The application-layer enum is defined in Identity.Application. Always check IsUsed and ExpiresAt before trusting a code — do NOT rely solely on the code value.",
+      qrLoginTitle: "QrLoginSession Entity",
+      qrLoginIntro:
+        "QrLoginSession orchestrates cross-device login: a desktop browser creates a session (status = Pending) and displays a QR code containing the SessionToken. An authenticated mobile device scans the QR (Scanned), the user approves (Approved), the backend generates tokens, and the polling desktop browser consumes them (Consumed). Sessions are cleaned up by QrSessionCleanupJob after the 5-minute TTL.",
+      qrLoginWarning:
+        "QR session tokens are single-use. Once Consumed or Rejected, the session cannot be reused. The desktop browser must create a new session. Never cache or re-display a QR code after its session has advanced past Pending — it provides no security value and may confuse users.",
+      webAuthnChallengeTitle: "WebAuthnChallenge Entity",
+      webAuthnChallengeIntro:
+        "WebAuthnChallenge is a short-lived (5-minute) server-side nonce generated at the start of each WebAuthn ceremony (registration or authentication). The challenge is sent to the browser, signed by the authenticator, and verified on return. IsUsed = true prevents replay attacks. Origin binding prevents cross-origin ceremony hijacking.",
+      adminPasskeyTitle: "AdminPasskey Entity",
+      adminPasskeyIntro:
+        "AdminPasskey stores a registered FIDO2/WebAuthn credential for an admin. Each admin can have multiple passkeys (Touch ID, YubiKey, Windows Hello, etc.). The SignatureCounter is incremented by the authenticator on each use — a counter that goes backwards indicates a cloned credential. IsDiscoverable = true enables true passwordless login (no username entry required).",
+      adminPasskeyNote:
+        "The PublicKey field stores the COSE-encoded public key (not a PEM certificate). Never confuse it with a TLS certificate. Authenticators with Aaguid all-zeros (00000000-0000-0000-0000-000000000000) are privacy-preserving — the authenticator model is deliberately not disclosed.",
+      externalLoginTitle: "ExternalLogin Entity",
+      externalLoginIntro:
+        "ExternalLogin creates a polymorphic link between an external identity (any OAuth / OIDC / SAML provider) and an Admin or User. AdminId and UserId are mutually exclusive — an external login linked to an Admin cannot authenticate a User. IdentityProviderId is null for built-in social providers (Google, Facebook, Apple, Microsoft) and set for custom OIDC/SAML providers configured per-tenant.",
+      externalLoginNote:
+        "The ProviderKey (the OIDC 'sub' claim) combined with ProviderName forms a globally unique external identity. Never rely on the Email field alone for matching — emails can change in external providers. Always use ProviderName + ProviderKey as the stable identity.",
+    },
+    identityMenuSystem: {
+      title: "Menu System Entities",
+      description:
+        "Entity-level documentation for SCRIPE's dynamic navigation menu system: MenuItem, RoleMenuItem, MenuOverrideScope, and TenantMenuOverride — including the full menu resolution priority chain.",
+      intro:
+        "SCRIPE's navigation menu is fully dynamic and data-driven. MenuItems define the global navigation tree, seeded by IModuleMenuProvider instances at startup. RoleMenuItems control per-role visibility. TenantMenuOverrides allow tenant-level and personal menu customization without touching base data. The resolution chain (base → role filter → tenant override → user override) ensures the highest-priority override always wins.",
+      menuItemTitle: "MenuItem Entity",
+      menuItemIntro:
+        "MenuItem is the core navigation node. Items form a tree via ParentMenuItemId. WorkspaceId links each item to the Nexus dual-rail workspace it belongs to. IsSystem items are seeded by module providers and refreshed on startup — display names and routes are updated, but admin-only fields (Order, TenantScopeJson) are preserved. Non-system items are fully user-editable.",
+      roleMenuItemTitle: "RoleMenuItem Entity",
+      roleMenuItemIntro:
+        "RoleMenuItem provides explicit per-role menu visibility control. When IsVisible = true, the item is shown for that role. When false, it is hidden. If no RoleMenuItem record exists for a role/item pair, the system falls back to auto-inherit: the item is shown if the role has the corresponding resource permission.",
+      roleMenuItemNote:
+        "RoleMenuItem records are auditable — AuditableEntityInterceptor captures who changed menu visibility for which role. This provides a complete audit trail for menu permission changes, which is important for compliance in regulated environments.",
+      menuOverrideScopeTitle: "MenuOverrideScope Enum",
+      menuOverrideScopeIntro:
+        "MenuOverrideScope is a two-value enum controlling the reach of a TenantMenuOverride. User scope is personal (only the admin who created the override sees it). Tenant scope affects all admins in the tenant. Super admins without a tenant can only use User scope — to change menus for everyone, they edit the base MenuItem directly.",
+      menuOverrideScopeNote:
+        "The simplified 2-scope model (User / Tenant) replaces a previous 4-scope model. Super admins who want to change menus globally should update the base MenuItem or use the IModuleMenuProvider interface — not create Tenant-scoped overrides.",
+      tenantMenuOverrideTitle: "TenantMenuOverride Entity",
+      tenantMenuOverrideIntro:
+        "TenantMenuOverride allows each tenant (or individual admin) to customize menu item names, order, parent, and visibility without modifying the underlying MenuItem. Overrides are nullable — a null override field means 'inherit from base'. IsHidden = true completely suppresses the item for the scope regardless of role permissions.",
+      resolutionFlowTitle: "Menu Resolution Priority Chain",
+      resolutionFlowIntro:
+        "When building the final menu for a request, SCRIPE applies overrides in priority order. The highest-priority override wins for each attribute (name, order, visibility).",
+      resolutionNote:
+        "The resolution chain is applied per-attribute, not per-item. For example, a user override may change only the display name, while the tenant override changes the order. Both are applied independently — SCRIPE does not require an override to be 'complete' to be effective.",
+    },
+    identityTenantConfig: {
+      title: "Tenant Configuration Entities",
+      description:
+        "Deep-dive into TenantDomain (custom domain management with DNS verification), TenantPermission (per-tenant permission grants), SystemSettings (singleton platform defaults), and SettingsAuditLog (append-only change history).",
+      intro:
+        "Tenant configuration entities govern how each tenant is isolated, branded, and permissioned on the platform. TenantDomain manages custom hostnames with Shopify-style DNS verification. TenantPermission tracks which platform permissions a tenant's admins can exercise. SystemSettings is a singleton entity providing platform-wide defaults for branding, themes, and layout. SettingsAuditLog is an append-only log capturing every settings publish event for rollback and compliance.",
+      tenantDomainTitle: "TenantDomain Entity",
+      tenantDomainIntro:
+        "TenantDomain represents a hostname attached to a tenant — either an auto-generated subdomain ({code}.scripe.org) or a custom domain added by the tenant admin. Auto-generated domains are created at tenant creation, always verified, and cannot be deleted. Custom domains require DNS verification via TXT record before activation. Only one domain can be primary at a time.",
+      tenantDomainNote:
+        "Domain verification uses a DNS TXT record: TXT _scr-verify.{domain} = 'scr_{token}'. The VerificationToken is a 128-bit random value generated at domain registration. Verification is polled or triggered manually — it does not happen automatically. Reserved prefixes (www, api, admin, auth, login, etc.) cannot be used as custom domains.",
+      tenantPermissionTitle: "TenantPermission Entity",
+      tenantPermissionIntro:
+        "TenantPermission is the junction entity that grants a specific Permission to a specific Tenant. When a tenant is created, the creating admin assigns a subset of their own permissions to the new tenant. This prevents privilege escalation — a tenant admin can never grant a permission they don't hold themselves.",
+      tenantPermissionNote:
+        "AssignedBy and AssignedAt are redundant with AuditableEntity.CreatedBy and CreatedAt but are kept for backward compatibility with older migration-based audit queries. New code should prefer the AuditableEntity fields.",
+      systemSettingsTitle: "SystemSettings Entity",
+      systemSettingsIntro:
+        "SystemSettings is a singleton entity (one row in the database) that acts as the platform-wide defaults layer. It stores the default theme configuration, the layout catalog, the slot registry, and default login/dashboard branding that tenants without their own customization inherit. The SettingsVersion field enables optimistic concurrency — each publish increments the version and is recorded in SettingsAuditLog.",
+      systemSettingsNote:
+        "SystemSettings is managed exclusively by system admins. Tenant admins can customize their own TenantSettings but cannot modify SystemSettings. The DraftBrandingJson and DraftDashboardThemeJson fields hold auto-saved Studio drafts — they are cleared on publish or discard, ensuring the live settings are always in LoginBrandingJson / DashboardThemeJson.",
+      settingsAuditLogTitle: "SettingsAuditLog Entity",
+      settingsAuditLogIntro:
+        "SettingsAuditLog is an append-only log that captures every settings change — publish, rollback, safe-mode toggle, or draft discard. Each entry stores a full before/after JSON snapshot for rollback capability. The VersionNumber field is monotonically increasing and corresponds to SettingsVersion at the time of the change.",
+      settingsAuditLogWarning:
+        "SettingsAuditLog entries cannot be modified or deleted by any admin through the application API. This immutability is enforced at the repository layer. Rollback uses PreviousValueJson as the source of truth — verify the VersionNumber matches your intended rollback target before applying it.",
+    },
+    identityThemesWorkspace: {
+      title: "Themes, Workspaces & Pinning Entities",
+      description:
+        "Entity-level documentation for theme lifecycle entities (LoginThemePurchase, TenantThemeFavorite, ThemeApplyLog) and the Nexus dual-rail workspace system (Workspace, AdminWorkspacePin, DashboardPreset).",
+      intro:
+        "SCRIPE's visual layer is powered by six supporting entities. LoginThemePurchase records theme transactions for the marketplace. TenantThemeFavorite lets admins bookmark themes. ThemeApplyLog provides an append-only analytics trail of theme applications. Workspace defines top-level navigation contexts in the Nexus dual-rail layout. AdminWorkspacePin stores per-admin pinned workspaces. DashboardPreset holds reusable dashboard theme snapshots.",
+      loginThemePurchaseTitle: "LoginThemePurchase Entity",
+      loginThemePurchaseIntro:
+        "LoginThemePurchase records a theme acquisition by a tenant. In v1, system admins manually grant purchases (TransactionRef = 'manual-grant'). In v2, Stripe webhooks create records automatically (TransactionRef = Stripe PaymentIntent ID). The PaidAmount is locked at purchase time and is unaffected by future price changes — ensuring accurate revenue reporting.",
+      loginThemePurchaseNote:
+        "IsRefunded and RefundedAt are set by the billing system on refund events. A refunded purchase does NOT automatically remove the theme from the tenant — theme access revocation is a separate operation handled by the subscription/access layer.",
+      tenantThemeFavoriteTitle: "TenantThemeFavorite Entity",
+      tenantThemeFavoriteIntro:
+        "TenantThemeFavorite is a lightweight bookmark entity — an admin marks a theme as favorited in the marketplace. It uses Entity (not AuditableEntity) since favorite operations are ephemeral user preferences that don't need a full audit trail.",
+      themeApplyLogTitle: "ThemeApplyLog Entity",
+      themeApplyLogIntro:
+        "ThemeApplyLog is an append-only analytics and audit record created whenever an admin applies a theme to a tenant's login page draft. ThemeSlug is denormalized for analytics efficiency. WasPublished is updated asynchronously when the tenant publishes, enabling analytics on theme adoption vs. theme evaluation.",
+      workspaceTitle: "Workspace Entity",
+      workspaceIntro:
+        "Workspace is the top-level navigation container in SCRIPE's Nexus dual-rail layout. The primary rail shows workspace icons; clicking one switches the secondary rail to that workspace's menu tree. System workspaces are seeded by IModuleMenuProvider at startup (smart-sync by Key). The Key field is an immutable stable identifier — changing it would break all FK references in MenuItem.",
+      adminWorkspacePinTitle: "AdminWorkspacePin Entity",
+      adminWorkspacePinIntro:
+        "AdminWorkspacePin stores an admin's pinned workspaces in the primary rail. Pins are context-scoped: platform-level pins (TenantId = null) are shown when the admin has no tenant selected; tenant-level pins (TenantId = GUID) are shown when that tenant is active. This entity intentionally does NOT use soft delete — unpinning permanently removes the row (pins are ephemeral preferences, not business data).",
+      adminWorkspacePinNote:
+        "AdminWorkspacePin uses a factory method (AdminWorkspacePin.Create) and private setters to enforce invariants. This is a deliberate domain design choice — the entity is immutable after creation except for SortOrder via SetSortOrder(). Bootstrap auto-pinning happens via BootstrapAdminPinsCommand on first workspace fetch.",
+      dashboardPresetTitle: "DashboardPreset Entity",
+      dashboardPresetIntro:
+        "DashboardPreset stores a complete DashboardThemeJson snapshot that can be applied to any tenant's dashboard. System presets (IsSystem = true) are seeded and available to all tenants; admin-created presets are tenant-scoped. Applying a preset replaces the tenant's DashboardThemeJson in full — this is a snapshot-based, not patch-based, apply operation.",
+    },
+    identityAccessControlDeep: {
+      title: "Access Control Deep Dive",
+      description:
+        "Entity-level documentation for AdminRole (role assignment junction with tenant scoping and expiry), AdminUserGroup (group membership), and UserGroupRestriction (additive field-level restrictions for group members).",
+      intro:
+        "SCRIPE's access control system is built on three junction/restriction entities. AdminRole links an admin to a role, optionally scoped to a specific tenant with an optional expiry date. AdminUserGroup links an admin to a user group, granting all roles inherited by that group. UserGroupRestriction defines field-level restrictions that are applied additively (UNION) to all group members' API responses. These three entities work together to produce a fine-grained, auditable access control model.",
+      adminRoleTitle: "AdminRole Entity",
+      adminRoleIntro:
+        "AdminRole is the junction entity between Admin and Role. TenantId scoping enables a single admin to have different roles across different tenants — a common pattern where a platform admin has SuperAdmin at platform level but only ReadOnly when drilling into a specific tenant. InheritToChildren cascades the role to all child tenants in a hierarchy. ExpiresAt enables time-limited role grants for contractors or temporary access.",
+      adminRoleNote:
+        "Expired AdminRole records (ExpiresAt < UtcNow) are treated as inactive by the AuthorizationBehavior pipeline without requiring deletion. A daily cleanup job removes expired records after a grace period. AssignedBy is kept alongside AuditableEntity.CreatedBy for explicit tracking in permission audit reports.",
+      adminUserGroupTitle: "AdminUserGroup Entity",
+      adminUserGroupIntro:
+        "AdminUserGroup is the membership junction between Admin and UserGroup. An admin inherits all roles assigned to a group via RolePermission records. Groups simplify bulk role management — instead of assigning roles individually, assign them to a group and add admins to that group. AdminUserGroup is auditable via AuditableEntity.",
+      adminUserGroupNote:
+        "Role inheritance through groups is additive: an admin's effective permissions are the UNION of their direct AdminRole assignments and all roles inherited through every group they belong to. Removing an admin from a group immediately revokes group-inherited permissions.",
+      userGroupRestrictionTitle: "UserGroupRestriction Entity",
+      userGroupRestrictionIntro:
+        "UserGroupRestriction defines field-level data restrictions for a user group. When an admin belongs to a group with restrictions, the listed fields are nullified in API responses for that resource. Restrictions are additive — group restrictions UNION with role-level restrictions, never override or reduce them. This means belonging to more groups can only increase restrictions, never decrease them.",
+      userGroupRestrictionWarning:
+        "Field restrictions are enforced server-side in the FieldProjection pipeline behavior — they are NOT a client-side UI feature. However, restrictions only nullify field values in responses; they do not prevent create/update operations on those fields. Use role permissions to control write access, and UserGroupRestriction to control read visibility.",
+      restrictionFlowTitle: "Restriction Evaluation Flow",
+      restrictionFlowIntro:
+        "When an admin makes an API request for a restricted resource, SCRIPE evaluates all applicable restrictions and applies them as a UNION to the response payload.",
+      restrictionFlowNote:
+        "Restriction evaluation is lazy — it runs per-request, not at login time. This means adding a restriction to a group takes effect immediately on the next API call without requiring a session refresh. The UNION merge strategy guarantees restrictions only accumulate — an admin who belongs to two groups with overlapping restrictions sees both restriction sets applied.",
+    },
     userSubscriptions: {
       title: "User Subscriptions",
       description:
@@ -1385,6 +1566,356 @@ export const en = {
       "ep.cancel": "Cancel an active user subscription",
       "ep.mySubscription": "Get the calling user's own subscription",
       "ep.myFeatures": "Get the calling user's feature access dictionary",
+    },
+    stripeConnect: {
+      title: "Stripe Connect",
+      description:
+        "Marketplace payment splitting via Stripe Connect Express — tenant accounts, commission rate resolution chain, ledger entries, commission invoicing, promotion redemption, and operational alerts.",
+      intro:
+        "Stripe Connect enables SCRIPE's marketplace payment splitting model. When a tenant processes a user payment, the platform automatically deducts a commission via Stripe's application_fee_amount and routes the net amount to the tenant's Stripe Express account. This page covers the full domain model, commission resolution chain, and operational tooling.",
+      whatIsTitle: "What Is Stripe Connect?",
+      whatIsIntro:
+        "Stripe Connect is Stripe's multi-party payment infrastructure. In SCRIPE, it powers the B2B2C marketplace: tenants sell plans to their end-users, Stripe routes payments, and SCRIPE's commission engine deducts the platform fee automatically on each charge without requiring tenant cooperation.",
+      architectureTitle: "Payment Split Architecture",
+      architectureIntro:
+        "Every user payment flows through Stripe, which instantly splits it between the tenant and the platform based on the resolved commission rate.",
+      accountEntityTitle: "TenantStripeAccount Entity",
+      accountEntityIntro:
+        "One TenantStripeAccount row exists per tenant. It tracks the Stripe account ID, onboarding lifecycle, charge/payout capability, commission rate override, and cumulative payout statistics.",
+      onboardingTitle: "Onboarding Status Lifecycle",
+      onboardingIntro:
+        "Tenant accounts go through a Stripe-managed KYC/identity verification process before they can accept charges or receive payouts.",
+      commissionTitle: "Commission Rate Resolution Chain",
+      commissionIntro:
+        "The effective commission rate is resolved from most-specific to most-general. The first non-null value in the chain wins.",
+      commChain1: "Per-tenant override — set by platform admin in the Stripe Connect admin panel.",
+      commChain2: "Per-edition rate — configured on the Edition entity via ConnectCommissionRate field.",
+      commChain3: "Platform-wide default — stored in the ConnectPlatformSettings singleton row.",
+      commChain4: "Hardcoded safety fallback — 10% — only used if the singleton row is missing.",
+      settingsTitle: "ConnectPlatformSettings (Singleton)",
+      settingsIntro:
+        "A single row (ID: 00000001-0000-0000-0000-000000000001) stores platform-wide Connect defaults. Always access via ConnectPlatformSettings.SingletonId — never insert a second row.",
+      settingsSingletonNote:
+        "ConnectPlatformSettings uses the Singleton pattern: exactly ONE row always exists, identified by the well-known SingletonId constant. The admin UI surfaces it as an editable settings form rather than a list.",
+      ledgerTitle: "Commission Ledger & Invoicing",
+      ledgerIntro:
+        "Three entities form the commission accounting system. For Stripe Connect payments, commissions are collected instantly via application_fee_amount. For non-Connect gateways (PayPal, Paymob), commissions are tracked in CommissionLedgerEntry and billed monthly or on threshold.",
+      invoiceTriggerTitle: "Commission Invoice Triggers",
+      invoiceTriggerIntro:
+        "CommissionInvoice rows are generated by one of three triggers, configurable in ConnectPlatformSettings.",
+      promoTitle: "Promotion Redemption (FirstTimeOnly Enforcement)",
+      promoIntro:
+        "PromotionRedemption records each promotional code usage at signup activation. Because SCRIPE creates a new Stripe Customer per signup, Stripe's first_time_transaction flag is unreliable. SCRIPE instead stores a SHA-256 hash of the subscriber's email to enforce FirstTimeOnly promotions locally for up to 12 months.",
+      promoNote:
+        "PromotionRedemption rows are hard-deleted after 12 months (not soft-deleted — accepted v1 trade-off). FirstTimeOnly enforcement weakens past this horizon. Raw email addresses are never stored — only the SHA-256 hex hash.",
+      alertsTitle: "Operational Alerts",
+      alertsIntro:
+        "OperationalAlert is a dead-letter table for events requiring human review. Every alert also triggers an ops notification email via the email outbox. Alerts are visible in the admin panel where operators can acknowledge and resolve them inline.",
+      configTitle: "Configuration",
+      configIntro:
+        "Stripe Connect requires two webhook secrets: the standard webhook secret for SaaS subscription events, and a Connect webhook secret for account-level events (charges, payouts, account.updated).",
+      endpointsTitle: "API Endpoints",
+      endpointsIntro:
+        "Connect management endpoints are restricted to super-admin roles. Tenant-facing onboarding links are generated per-tenant and are single-use.",
+      "ep.create": "Register a new Stripe Connect Express account for a tenant",
+      "ep.get": "Get the Stripe account status and onboarding details for a tenant",
+      "ep.onboardingLink": "Generate a single-use Stripe Connect onboarding link for a tenant",
+      "ep.ledger": "List commission ledger entries (filterable by tenant, status, gateway)",
+      "ep.invoices": "List commission invoices (filterable by tenant, status, trigger)",
+      "ep.invoiceGenerate": "Manually trigger commission invoice generation for a tenant",
+      "ep.settings": "Get the ConnectPlatformSettings singleton",
+      "ep.settingsUpdate": "Update platform-wide Connect defaults (commission rate, payout delay, threshold)",
+      "ep.alerts": "List all operational alerts (filterable by type, status, severity)",
+      "ep.alertResolve": "Acknowledge or resolve an operational alert with a resolution note",
+    },
+    signupCustomization: {
+      title: "Signup Customization",
+      description:
+        "Intelligence Engine for self-service signup — configurable onboarding questions with branching logic, option-level visibility conditions, and declarative recommendation rules that map user answers to the right edition.",
+      intro:
+        "The Signup Customization system is SCRIPE's Intelligence Engine for the self-service signup flow. Platform administrators define a question tree, each answer option carries a signal weight, and declarative RecommendationRules map answer patterns to specific editions — automatically guiding users to the plan best suited to their needs.",
+      whatIsTitle: "What Is the Intelligence Engine?",
+      whatIsIntro:
+        "The Intelligence Engine is the recommendation system behind SCRIPE's self-service signup. Instead of presenting a static pricing table, users answer a short onboarding questionnaire. The engine matches their answers against RecommendationRules and presents a personalized edition recommendation with a localized reason. Administrators configure questions, options, and rules without code changes.",
+      flowTitle: "Signup Flow Overview",
+      flowIntro:
+        "The full signup flow from category selection through recommendation.",
+      questionTitle: "OnboardingQuestion Entity",
+      questionIntro:
+        "Each OnboardingQuestion represents a single step in the onboarding flow. Questions can be global (shown to all users) or scoped to an EditionCategory. Question-level branching is supported via DependsOnQuestionKey + DependsOnAnswerValue.",
+      optionTitle: "OnboardingAnswerOption Entity",
+      optionIntro:
+        "Each OnboardingAnswerOption is a selectable answer choice for a question. Options carry scoring signals (SignalWeight) for the recommendation engine and optional visibility relevance boosts (RelevanceBoost) that re-rank options based on earlier answers.",
+      conditionTitle: "Option-Level Visibility Conditions",
+      conditionIntro:
+        "OnboardingAnswerOptionCondition enables fine-grained client-side visibility control at the individual option level. Unlike question-level branching (which shows/hides entire questions), option conditions show/hide specific answer choices based on earlier answers.",
+      conditionNote:
+        "Condition evaluation happens client-side only. The backend stores and returns conditions in the onboarding-flow payload — no server-side filtering is applied. MatchValuesRaw stores the set as a comma-delimited string (e.g. \"2-10,11-50\") for DB portability across SQL Server, Oracle, and PostgreSQL without provider-specific JSON columns.",
+      sessionAnswerTitle: "SignupSessionAnswer Entity",
+      sessionAnswerIntro:
+        "SignupSessionAnswer persists each user's answer during an in-progress signup. It deliberately uses SignupSessionRef (a plain string) instead of a FK to the SignupSession entity to avoid cross-module coupling — the Entitlements module never imports Identity session types.",
+      sessionAnswerTip:
+        "SignupSessionAnswer enables session resume: if a user closes the browser mid-flow, their answers can be reloaded on return via the SignupSessionRef. The ValueJson field stores both single-select (\"\\\"solo\\\"\") and multi-select (\"[\\\"compliance\\\",\\\"scale\\\"]\") answers in a uniform format.",
+      ruleTitle: "RecommendationRule Entity",
+      ruleIntro:
+        "RecommendationRules are the declarative matching engine. Each rule defines a ConditionJson predicate, a target edition (by tier level or specific ID), and a ScoreBonus. Rules evaluated in Priority order accumulate scores per candidate edition — the highest-scoring edition wins.",
+      scoringTitle: "Scoring Algorithm",
+      scoringIntro:
+        "The recommendation engine evaluates all active rules, accumulates scores, and returns the top-scoring edition with the reason from the highest-priority matching rule.",
+      endpointsTitle: "API Endpoints",
+      endpointsIntro:
+        "Admin endpoints for question/rule management require entitlements.manage permission. Flow and answer endpoints are public — no authentication required during signup.",
+      "ep.questions": "List all onboarding questions with their options and conditions",
+      "ep.createQuestion": "Create a new onboarding question with answer options",
+      "ep.updateQuestion": "Update an existing question (label, hint, sort order, branching)",
+      "ep.deleteQuestion": "Delete a non-system onboarding question",
+      "ep.flow": "Get the full onboarding flow for a given category (public — used during signup)",
+      "ep.submitAnswers": "Submit answers for a signup session step (public)",
+      "ep.recommend": "Get edition recommendation based on submitted answers (public)",
+      "ep.rules": "List all recommendation rules",
+      "ep.createRule": "Create or upsert a recommendation rule by stable Name slug",
+    },
+    platformManagement: {
+      title: "Platform Management",
+      description:
+        "Concurrency-safe quota counters with pooled enforcement, trial resource snapshots, and the non-Connect commission ledger for PayPal and Paymob gateway commissions.",
+      intro:
+        "Platform Management covers the operational infrastructure that keeps SCRIPE's multi-tenant platform numerically consistent: quota counters that prevent resource over-provisioning, trial snapshots that enable accurate downgrade enforcement, and the commission ledger that tracks platform revenue from non-Stripe-Connect payment gateways.",
+      whatIsTitle: "What Is Platform Management?",
+      whatIsIntro:
+        "Platform Management is the collection of domain entities responsible for enforcing tenant resource limits (quotas), capturing resource state at trial start, and tracking platform commissions from PayPal and Paymob gateway payments. These components work together to ensure billing integrity and fair resource allocation across the multi-tenant hierarchy.",
+      quotaTitle: "QuotaCounter Entity",
+      quotaIntro:
+        "QuotaCounter tracks resource usage per tenant with optional pooled enforcement. One row exists per tenant per resource type (admin, role, subtenant, usergroup). The reservation pattern prevents race conditions under concurrent creation requests.",
+      reservationTitle: "Atomic Reservation Pattern",
+      reservationIntro:
+        "The reservation pattern is a three-phase protocol that prevents quota over-provisioning even under high concurrency.",
+      reservationNote:
+        "TryReserveSlotAsync uses a database-level atomic increment of Reserved. On failure (e.g. database exception), the strategy is fail-open to preserve availability — the reservation is released and the creation is allowed with a warning logged. This matches the quota enforcement philosophy: approximate limits are preferable to service unavailability.",
+      pooledTitle: "Quota Enforcement Modes",
+      pooledIntro:
+        "QuotaCounter supports two enforcement modes controlled by PoolRootTenantId. Per-tenant enforcement is the default; pooled enforcement enables resource sharing across a tenant hierarchy (e.g. a parent tenant that allocates admins across its sub-tenants).",
+      trialSnapshotTitle: "TrialSnapshot Entity",
+      trialSnapshotIntro:
+        "A TrialSnapshot captures the resource counts (admin, role, sub-tenant, user-group) at the exact moment a trial subscription begins. At trial expiry, the system compares current counts against the snapshot to determine if the tenant provisioned resources beyond the base edition's limits during the trial period.",
+      trialSnapshotTip:
+        "TrialSnapshot enables the trial downgrade safety check: if AdminCount grew from 2 (snapshot) to 8 (current) and the post-trial edition allows only 5, the system can trigger the OverflowPolicy action (Freeze or Notify) before activating the downgraded subscription.",
+      ledgerEntryTitle: "CommissionLedgerEntry Entity",
+      ledgerEntryIntro:
+        "CommissionLedgerEntry records commissions from non-Connect gateway payments (PayPal, Paymob). For Stripe Connect payments, commissions are collected instantly via application_fee_amount — this entity is only for post-billing gateway flows that require deferred commission collection.",
+      revenueTitle: "Revenue Analytics Integration",
+      revenueIntro:
+        "The commission ledger feeds directly into the Revenue Analytics module for platform-wide financial reporting.",
+      endpointsTitle: "API Endpoints",
+      endpointsIntro:
+        "Platform management endpoints are restricted to super-admin roles. Quota data is read-only for standard platform admins.",
+      "ep.quotaList": "List all quota counters (filterable by tenant, resource type)",
+      "ep.quotaGet": "Get the quota counter for a specific tenant and resource type",
+      "ep.quotaReset": "Reset quota counters for a tenant (use with caution — clears Reserved and resets Used)",
+      "ep.trialSnapshot": "Get the trial snapshot for a subscription (used by downgrade enforcement)",
+      "ep.ledger": "List commission ledger entries (filterable by tenant, gateway, status)",
+      "ep.waive": "Waive a commission ledger entry with an admin note",
+      "ep.dashboard": "Get platform management dashboard KPIs (total commissions, quota utilization, trial snapshots)",
+    },
+
+    // ─── Marketplace Module (Phase 16) ────────────────────────────
+    marketplaceOverview: {
+      title: "Marketplace Overview",
+      description:
+        "The SCRIPE Marketplace — ecosystem of installable apps, categories, developer profiles, and the entity map for all 13 domain entities.",
+      intro:
+        "The Marketplace module powers SCRIPE's app ecosystem: developers publish plugins as commercial listings, tenants browse and purchase them, and the platform enforces a multi-stage review pipeline before any app goes live. This page covers the full entity map and the two organizational entities — AppCategory and AppCategoryMapping.",
+      infoTitle: "Marketplace + Plugins",
+      infoContent:
+        "The Marketplace module builds on top of the Plugins module. An AppListing is the commercial 'face' of a PluginDefinition. Tenants install the underlying plugin; the marketplace handles discovery, pricing, and payments.",
+      featuresTitle: "Key Capabilities",
+      featurePublish: "App Publishing",
+      featurePublishDesc:
+        "Developers create AppListings that link PluginDefinitions to a storefront presence with name, tagline, screenshots, and pricing.",
+      featureInstall: "One-Click Install",
+      featureInstallDesc:
+        "Tenants browse the catalog, purchase or trial apps, and trigger plugin installation in a single flow.",
+      featureReview: "Ratings & Reviews",
+      featureReviewDesc:
+        "Users submit 1–5 star ratings with review text. Developers can reply once per review. AverageRating is denormalized on AppListing for fast catalog queries.",
+      featurePricing: "Flexible Pricing",
+      featurePricingDesc:
+        "Six pricing models: Free, PaidOnce, Subscription, Freemium, PerSeat, UsageBased — all configured via AppPricing with trial-day support.",
+      featureAnalytics: "Install Analytics",
+      featureAnalyticsDesc:
+        "Daily AppInstallCount snapshots power developer dashboards showing install trends, growth rates, and active install counts.",
+      featureReviewGate: "Submission Review Gate",
+      featureReviewGateDesc:
+        "Every new version goes through automated scan → manual admin review (AppSubmission + AppReviewTask) before it can be published.",
+      entitiesTitle: "Domain Entity Map",
+      entitiesIntro:
+        "The Marketplace module contains 13 domain entities across five functional areas: listings, developer portal, purchases, analytics, and reviews.",
+      categoryTitle: "AppCategory Entity",
+      categoryIntro:
+        "Represents a marketplace category used to organize app listings (e.g. \"Productivity\", \"Analytics\", \"Communication\"). Supports bilingual names (EN/AR) and a URL-safe slug for routing.",
+      mappingTitle: "AppCategoryMapping Entity",
+      mappingIntro:
+        "Join entity implementing the many-to-many relationship between AppListing and AppCategory. An app can belong to multiple categories, and a category can contain multiple apps.",
+      architectureTitle: "Entity Relationship Overview",
+      architectureIntro:
+        "The diagram below shows how the 13 Marketplace entities relate. DeveloperProfile is the root — it owns AppListings, which are the hub connecting pricing, submissions, purchases, reviews, screenshots, and analytics.",
+    },
+
+    marketplaceListings: {
+      title: "App Listings & Screenshots",
+      description:
+        "AppListing — the central marketplace storefront entity linking a PluginDefinition to its commercial presence, plus AppScreenshot for the media gallery.",
+      intro:
+        "An AppListing is the storefront face of a Plugin. It carries everything a tenant sees in the catalog: name, tagline, icon, version, ratings, and install counts. Screenshots provide the visual gallery on the listing detail page.",
+      listingTitle: "AppListing Entity",
+      listingIntro:
+        "The central entity of the Marketplace module. It connects a Plugin to its commercial presence including pricing, reviews, screenshots, and install metrics. AverageRating and ReviewCount are denormalized for query performance and recalculated whenever a review is added or updated.",
+      listingNote:
+        "AverageRating and ReviewCount are denormalized on AppListing for catalog query performance. They are recalculated atomically by the domain logic every time an AppReview is created, updated, or deleted.",
+      codeTitle: "Entity Source",
+      screenshotTitle: "AppScreenshot Entity",
+      screenshotIntro:
+        "Represents a screenshot image for an app listing's detail page. Screenshots are ordered by SortOrder and displayed in a carousel on the storefront.",
+      statusTitle: "Listing Status Lifecycle",
+      statusIntro:
+        "An AppListing moves through several states from first draft to public visibility. The IsPublished flag controls storefront visibility; IsFeatured promotes a listing to the hero section.",
+    },
+
+    marketplaceDeveloper: {
+      title: "Developer Portal",
+      description:
+        "DeveloperProfile, AppSubmission, and DeveloperPayout — the three entities powering the developer-side of the SCRIPE Marketplace.",
+      intro:
+        "The developer portal covers everything from registering a developer account to publishing apps and receiving revenue-sharing payouts. Three entities work together: DeveloperProfile (identity and payment details), AppSubmission (version review pipeline), and DeveloperPayout (settlement records).",
+      profileTitle: "DeveloperProfile Entity",
+      profileIntro:
+        "Represents a developer (tenant) registered to publish apps on the marketplace. Each tenant can have at most one developer profile. Admin verification is required before the developer can publish paid apps.",
+      profileNote:
+        "StripeConnectAccountId links the developer's marketplace earnings to their Stripe Connect account. Payouts are transferred via Stripe's Connect Transfers API. IsVerified must be true before paid listings are accepted.",
+      submissionTitle: "AppSubmission Entity",
+      submissionIntro:
+        "Represents a version submission of an app listing for marketplace review. Each submission goes through a lifecycle: Submitted → InAutomatedScan → InManualReview → Approved/Rejected. Only approved submissions result in the listing being published.",
+      payoutTitle: "DeveloperPayout Entity",
+      payoutIntro:
+        "Records a revenue-sharing payout to a developer for a specific period. Payouts are calculated from purchase commissions and transferred to the developer's Stripe Connect account.",
+      onboardingTitle: "Developer Onboarding Flow",
+      onboardingIntro:
+        "The end-to-end onboarding flow from profile creation to receiving first payout.",
+    },
+
+    marketplacePurchases: {
+      title: "App Purchases & Analytics",
+      description:
+        "AppPricing, AppPurchase, and AppInstallCount — the three entities handling pricing models, transaction records, and daily install-metric snapshots.",
+      intro:
+        "Purchases and analytics form the commercial backbone of the Marketplace. AppPricing defines how an app is monetized; AppPurchase records each transaction; AppInstallCount provides daily snapshots for developer analytics dashboards.",
+      pricingTitle: "AppPricing Entity",
+      pricingIntro:
+        "Defines the pricing configuration for an app listing. One AppPricing record exists per listing (one-to-one relationship). Supports six pricing models.",
+      pricingNote:
+        "PricingModel options: Free (Price=0, no purchase needed), PaidOnce (single payment, permanent access), Subscription (recurring billing), Freemium (free tier + paid upgrades), PerSeat (price × admin count), UsageBased (metered via Stripe Meters).",
+      purchaseTitle: "AppPurchase Entity",
+      purchaseIntro:
+        "Records a purchase transaction when a tenant buys or installs a paid app. Tracks the amount paid, currency, and transaction status for financial reporting and developer payout calculations.",
+      installCountTitle: "AppInstallCount Entity",
+      installCountIntro:
+        "Daily snapshot of installation metrics for an app listing. Used by the analytics dashboard to display install trend charts and calculate growth rates over time.",
+      installCountTip:
+        "AppInstallCount records are created by a nightly background job that calculates NetInstalls (installs - uninstalls) and TotalActiveInstalls from AppPurchase and plugin installation data for each listing.",
+      flowTitle: "Purchase Flow",
+      flowIntro:
+        "The end-to-end flow from browsing the catalog to a plugin being installed and analytics being updated.",
+    },
+
+    marketplaceReviews: {
+      title: "Ratings & Reviews",
+      description:
+        "AppReview, AppReviewReply, and AppReviewTask — the three entities powering user ratings, developer replies, and the admin submission review pipeline.",
+      intro:
+        "The review system serves two purposes: user-facing ratings and text reviews that appear on listing pages, and the admin review pipeline that gates new app versions before publication.",
+      reviewTitle: "AppReview Entity",
+      reviewIntro:
+        "Represents a user-submitted rating and review for an app listing. Each tenant user can leave one review per app. Reviews include a 1–5 star rating and optional text content. Developers can reply via AppReviewReply.",
+      reviewNote:
+        "Each user (UserId) can submit at most one AppReview per AppListing. A unique constraint on (AppListingId, UserId) enforces this at the database level. Updating a review recalculates AverageRating on the parent AppListing.",
+      replyTitle: "AppReviewReply Entity",
+      replyIntro:
+        "Represents a developer's reply to a user review on their app listing. Each review can have at most one reply from the developer.",
+      taskTitle: "AppReviewTask Entity",
+      taskIntro:
+        "Represents an admin review task assigned to evaluate an app submission. Tracks the assigned reviewer, current review status (Pending → InProgress → Approved/Rejected/Escalated), and feedback provided to the developer during the review process.",
+      moderationTitle: "Submission Review Pipeline",
+      moderationIntro:
+        "Every app version submission passes through an automated scan followed by manual admin review before it can be published to the storefront.",
+    },
+
+    // ─── Plugins Entity Pages (Phase 16) ─────────────────────────
+    pluginEntities: {
+      title: "Plugin Definition & Versioning",
+      description:
+        "PluginDefinition and PluginVersion — the two root entities of the Plugins module that define a plugin's identity, capabilities, and release history.",
+      intro:
+        "Every plugin in the SCRIPE ecosystem starts with a PluginDefinition — the immutable identity record. Versions are snapshotted releases of that definition. Together they form the foundation that installations, API keys, and data stores build upon.",
+      definitionTitle: "PluginDefinition Entity",
+      definitionIntro:
+        "Core entity representing a registered plugin in the platform. Contains metadata (name, description, icon), configuration (manifest, tier, scope), and developer association. Supports both Tier 1 (embedded .NET assembly) and Tier 2 (external HTTP service) plugin architectures.",
+      definitionNote:
+        "Tier 1 plugins use AssemblyName + EntryPointType to locate the .NET class loaded into the host process. Tier 2 plugins use BaseUrl + FrontendUrl + WebhookUrl to communicate with an external service. Fields for the other tier are left null.",
+      codeTitle: "Entity Source",
+      versionTitle: "PluginVersion Entity",
+      versionIntro:
+        "Represents a specific release version of a PluginDefinition. Tracks version number, bilingual release notes, manifest snapshot, and whether this is the latest active version. Each installation pins to a specific version at install time.",
+      versionLifecycleTitle: "Version Lifecycle",
+      versionLifecycleIntro:
+        "When a new version is published, it becomes IsLatest = true and the previous version is demoted to IsLatest = false. Existing installations remain pinned to their installed version until an admin explicitly runs the upgrade command.",
+    },
+
+    pluginInstallation: {
+      title: "Plugin Installation & Security",
+      description:
+        "PluginInstallation, PluginApiKey, and PluginPermissionGrant — the three entities managing per-tenant plugin deployment, API authentication, and permission grants.",
+      intro:
+        "When a tenant installs a plugin, three core entities are created: a PluginInstallation record tracking deployment state, a PluginApiKey for secure plugin-to-platform API calls, and PluginPermissionGrant records for each platform capability the plugin is allowed to access.",
+      installationTitle: "PluginInstallation Entity",
+      installationIntro:
+        "Represents a tenant's installation of a specific PluginDefinition at a particular PluginVersion. A tenant can install the same plugin only once — enforced by a unique constraint on (TenantId + PluginDefinitionId).",
+      installationNote:
+        "ConsecutiveHealthCheckFails is incremented by the plugins-health-check background job on each failed check and reset to 0 when the health check passes again. The Status is automatically transitioned to Error after a configurable failure threshold.",
+      lifecycleTitle: "Installation Lifecycle",
+      lifecycleIntro:
+        "A PluginInstallation starts in Installing status while the platform provisions resources, then transitions to Active. Admins can deactivate/reactivate it. Persistent health-check failures move it to Error.",
+      apiKeyTitle: "PluginApiKey Entity",
+      apiKeyIntro:
+        "Represents an API key issued to a plugin installation for authenticating plugin-to-platform API calls. Stores the hashed key value, a human-readable prefix for identification, activation status, and optional expiration.",
+      apiKeyWarning:
+        "The raw API key value is shown only once at creation time and is never stored — only the hash is persisted. Plugins must store the key securely in their own secrets management system.",
+      permGrantTitle: "PluginPermissionGrant Entity",
+      permGrantIntro:
+        "Records an explicit permission grant to a plugin installation within a tenant. Each grant authorizes the plugin to access a specific platform capability. Platform admins must explicitly approve each permission during the installation setup wizard.",
+    },
+
+    pluginRuntime: {
+      title: "Plugin Runtime & Data",
+      description:
+        "PluginDataStore, PluginExecutionLog, and PluginWebhookSubscription — the three entities powering plugin data persistence, execution monitoring, and event subscription.",
+      intro:
+        "Once a plugin is installed and active, three runtime entities handle its ongoing operation: PluginDataStore for persisting plugin state, PluginExecutionLog for monitoring API call health, and PluginWebhookSubscription for receiving platform events.",
+      dataStoreTitle: "PluginDataStore Entity",
+      dataStoreIntro:
+        "Key-value data store entry scoped to a plugin installation and tenant. Plugins use this to persist arbitrary JSON data organized by namespace and key. Tracks the serialized size for quota enforcement.",
+      dataStoreNote:
+        "Data isolation is enforced at two levels: the unique constraint on (PluginInstallationId + TenantId + Namespace + Key) prevents collisions, and TenantId is always required to prevent cross-tenant data leakage. Plugins cannot read another tenant's data store entries.",
+      execLogTitle: "PluginExecutionLog Entity",
+      execLogIntro:
+        "Immutable audit log entry recording a single plugin API execution. Captures the HTTP method, endpoint, response status code, duration in milliseconds, and success/failure status. Used for monitoring plugin health and debugging.",
+      execLogTip:
+        "The plugins-health-check background job queries PluginExecutionLog to compute ConsecutiveHealthCheckFails and update HealthCheckPassing on PluginInstallation. High DurationMs values are flagged as performance warnings.",
+      webhookTitle: "PluginWebhookSubscription Entity",
+      webhookIntro:
+        "Represents a webhook subscription registered by a plugin installation. When the specified platform event type fires, the system dispatches an HTTP POST to the callback URL. Subscriptions can be deactivated (IsActive=false) without deletion.",
+      webhookFlowTitle: "Webhook Delivery Flow",
+      webhookFlowIntro:
+        "The platform uses an outbox pattern for reliable webhook delivery. Events are first written to the outbox, then delivered asynchronously to the plugin's CallbackUrl with exponential backoff retries.",
     },
   },
 };

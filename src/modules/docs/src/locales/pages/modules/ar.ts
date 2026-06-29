@@ -833,6 +833,43 @@ export const ar = {
           download: "تنزيل ملف التقرير المُنشأ",
         },
       },
+      regulationProfiles: {
+        title: "ملفات تعريف اللوائح",
+        description:
+          "تكوين لوائح حماية البيانات (GDPR، CCPA، LGPD، PDPA) التي تطبقها المنصة — يحدد كل ملف تعريف مواعيد نهاية DSR وفترات الاحتفاظ الافتراضية وإصدار الموافقة.",
+        intro:
+          "ملفات تعريف اللوائح هي أساس وحدة الامتثال في SCRIPE. يمثل كل ملف تعريف قانون حماية بيانات محدداً تطبقه المنصة، مع تخزين الموعد النهائي القانوني لـ DSR وفترات الاحتفاظ الافتراضية وإصدار وثيقة الموافقة النشطة.",
+        whatIsTitle: "ما هي ملفات تعريف اللوائح؟",
+        whatIsIntro:
+          "RegulationProfile هو السجل الموثوق لمعاملات تطبيق الإطار التنظيمي. عند تقديم طلب موضوع البيانات، يقرأ النظام RegulationProfile النشط لحساب الموعد النهائي لـ SLA.",
+        entityTitle: "كيان RegulationProfile",
+        entityIntro:
+          "يمثل كل صف لائحة واحدة ويخزن جميع المعاملات اللازمة لتطبيقها عبر الأنظمة الفرعية لـ DSR والموافقة والاحتفاظ.",
+        seededTitle: "اللوائح المبذرة مسبقاً",
+        seededIntro:
+          "يبذر SCRIPE اللوائح التالية عند بدء التشغيل. يمكن للمسؤولين توسيع هذه القائمة أو تجاوز المعاملات دون تغييرات في الكود.",
+        consentVersionTitle: "إصدار الموافقة ومشغل إعادة الموافقة",
+        consentVersionIntro:
+          "يخزن حقل CurrentConsentVersion الإصدار الدلالي لوثيقة سياسة الموافقة النشطة. عند تحديث هذه القيمة، يقوم ConsentExpiryJob تلقائياً بمسح جميع ConsentSnapshots النشطة وتعيين RequiresReConsent = true.",
+        consentVersionWarning:
+          "تغيير CurrentConsentVersion هو عملية عالية التأثير. سيتم إبطال جميع الموافقات النشطة لهذه اللائحة وسيُطلب من المستخدمين إعادة الموافقة. نسّق مع فريقك القانوني قبل إجراء تغييرات في بيئة الإنتاج.",
+        retentionJsonTitle: "تنسيق DefaultRetentionJson",
+        retentionJsonIntro:
+          "يخزن حقل DefaultRetentionJson كائن JSON يربط مفاتيح فئة الاحتفاظ بفترتها الافتراضية بالأيام. القيم -1 تعني الاحتفاظ إلى أجل غير مسمى.",
+        retentionJsonNote:
+          "DefaultRetentionJson إعلامي فقط — يتم التطبيق الفعلي بواسطة صفوف RetentionPolicy التي يمكن تخصيصها لكل مستأجر.",
+        endpointsTitle: "نقاط نهاية API",
+        endpointsIntro:
+          "تسمح نقاط نهاية ملف تعريف اللائحة للمسؤولين بتكوين اللوائح التي تطبقها المنصة.",
+        "ep.list": "عرض جميع ملفات تعريف اللوائح المكوّنة للمنصة",
+        "ep.get": "الحصول على ملف تعريف لائحة محدد بالمعرف",
+        "ep.create": "إنشاء ملف تعريف لائحة مخصص جديد",
+        "ep.update": "تحديث ملف تعريف لائحة موجود (الموعد النهائي لـ DSR، إصدار الموافقة، افتراضيات الاحتفاظ)",
+        "ep.delete": "الحذف الناعم لملف تعريف لائحة مخصص (لا يمكن حذف الملفات المبذرة من النظام)",
+        bestPracticesTitle: "أفضل الممارسات",
+        bestPracticesTip:
+          "ارفع دائماً CurrentConsentVersion عند تغيير سياسة الخصوصية بشكل جوهري. يؤدي هذا إلى تشغيل تدفق إعادة الموافقة الآلي وتوفير سجل تدقيق قانوني.",
+      },
     },
     // ── إدارة العملاء المحتملين (CRM Leads) ─────────────────────
     // ── Plugins Module (Phase 15) ────────────────────────────
@@ -1378,6 +1415,150 @@ export const ar = {
       "ep.dashboard": "الحصول على مؤشرات KPI للوحة تحليلات الإيرادات",
       "ep.export": "تصدير الفواتير والاشتراكات إلى CSV/Excel",
     },
+    identityAuthSessions: {
+      title: "جلسات المصادقة وإدارة الرموز",
+      description:
+        "تعمق في كيانات الجلسة والمصادقة الستة: RefreshToken وOtpCode وQrLoginSession وWebAuthnChallenge وAdminPasskey وExternalLogin — بما في ذلك جميع الحقول والدلالات الأمنية وتدفق تسجيل الدخول عبر QR.",
+      intro:
+        "يدعم SCRIPE آليات مصادقة متزامنة متعددة. لكل آلية كيان مخصص في وحدة Identity. يدير RefreshToken نوافذ الجلسة المتجددة. يتعامل OtpCode مع الرموز ذات الاستخدام الواحد محدودة الوقت. يتيح QrLoginSession تسجيل الدخول عبر الأجهزة بمسح QR. يشغّل WebAuthnChallenge مراسم passkey بـ FIDO2. يخزن AdminPasskey بيانات اعتماد FIDO2 المسجلة. يربط ExternalLogin مزودي الهوية الخارجيين بحسابات Admin والمستخدم.",
+      refreshTokenTitle: "كيان RefreshToken",
+      refreshTokenIntro:
+        "يخزن RefreshToken رمزًا مبهمًا طويل الأمد صادرًا مع رمز JWT. تُدار الرموز بالتناوب عند كل استخدام — يُلغى الرمز القديم مع مؤشر ReplacedByToken ويُصدر رمز جديد. تُتتبع جلسات الانتحال عبر ImpersonatorAdminId لتمكين تدفق StopImpersonation لاستعادة جلسة المسؤول الأصلية.",
+      otpCodeTitle: "كيان OtpCode",
+      otpCodeIntro:
+        "OtpCode هو رمز ذو استخدام واحد متعدد الأشكال يخدم المستخدمين والمسؤولين معًا. تعيين Purpose يشير إلى enum (التحقق من البريد الإلكتروني، إعادة تعيين كلمة المرور، 2FA، إلخ). تُلغى الرموز عبر Invalidate() بعد الاستخدام الناجح. يُنفذ الزوج Attempts/MaxAttempts الحماية من القوة الغاشمة.",
+      otpCodeNote:
+        "يُخزَّن OtpCode.Purpose كعدد صحيح لكفاءة قاعدة البيانات. الـ enum على مستوى التطبيق معرَّف في Identity.Application. تحقق دائمًا من IsUsed وExpiresAt قبل الوثوق برمز — لا تعتمد فقط على قيمة الرمز.",
+      qrLoginTitle: "كيان QrLoginSession",
+      qrLoginIntro:
+        "ينسق QrLoginSession تسجيل الدخول عبر الأجهزة: ينشئ متصفح سطح المكتب جلسة (الحالة = Pending) ويعرض رمز QR يحتوي على SessionToken. يمسح جهاز محمول مُصادق QR (Scanned)، يوافق المستخدم (Approved)، تُنشئ الخلفية الرموز، ويستلمها متصفح سطح المكتب الذي يستطلع (Consumed). تُنظف الجلسات بواسطة QrSessionCleanupJob بعد مهلة 5 دقائق.",
+      qrLoginWarning:
+        "رموز جلسة QR ذات استخدام واحد. بمجرد Consumed أو Rejected، لا يمكن إعادة استخدام الجلسة. يجب على متصفح سطح المكتب إنشاء جلسة جديدة. لا تخزن مؤقتًا أو تُعيد عرض رمز QR بعد أن تجاوزت جلسته Pending — لا تقدم أي قيمة أمنية وقد تُشوش المستخدمين.",
+      webAuthnChallengeTitle: "كيان WebAuthnChallenge",
+      webAuthnChallengeIntro:
+        "WebAuthnChallenge هو nonce قصير العمر (5 دقائق) يُنشأ من طرف الخادم في بداية كل مراسم WebAuthn (تسجيل أو مصادقة). يُرسل التحدي إلى المتصفح، يوقعه المُصادق ويُتحقق منه عند العودة. IsUsed = true يمنع هجمات الإعادة. ربط Origin يمنع اختطاف المراسم عبر الأصول.",
+      adminPasskeyTitle: "كيان AdminPasskey",
+      adminPasskeyIntro:
+        "يخزن AdminPasskey بيانات اعتماد FIDO2/WebAuthn مسجلة للمسؤول. يمكن لكل مسؤول امتلاك passkeys متعددة (Touch ID، YubiKey، Windows Hello، إلخ). تزداد SignatureCounter بالمُصادق عند كل استخدام — العداد المتراجع يشير إلى بيانات اعتماد مستنسخة. IsDiscoverable = true يتيح تسجيل الدخول بلا كلمة مرور حقيقية (لا حاجة لإدخال اسم المستخدم).",
+      adminPasskeyNote:
+        "يخزن حقل PublicKey المفتاح العام بترميز COSE (وليس شهادة PEM). لا تخلط بينه وبين شهادة TLS. المُصادقون ذوو Aaguid كلها أصفار يحافظون على الخصوصية — نموذج المُصادق لا يُكشف عمدًا.",
+      externalLoginTitle: "كيان ExternalLogin",
+      externalLoginIntro:
+        "ينشئ ExternalLogin رابطًا متعدد الأشكال بين هوية خارجية (أي مزود OAuth/OIDC/SAML) وAdmin أو User. AdminId وUserId حصريان متبادلان — تسجيل الدخول الخارجي المرتبط بـ Admin لا يمكنه مصادقة User. IdentityProviderId فارغ لمزودي الشبكات الاجتماعية المدمجين ومُعيَّن لمزودي OIDC/SAML المخصصين لكل مستأجر.",
+      externalLoginNote:
+        "يُشكّل ProviderKey (المطالبة 'sub' في OIDC) مع ProviderName هوية خارجية فريدة عالميًا. لا تعتمد على حقل Email وحده للمطابقة — يمكن أن تتغير رسائل البريد الإلكتروني لدى المزودين الخارجيين. استخدم دائمًا ProviderName + ProviderKey كهوية مستقرة.",
+    },
+    identityMenuSystem: {
+      title: "كيانات نظام القائمة",
+      description:
+        "توثيق على مستوى الكيان لنظام قائمة التنقل الديناميكي في SCRIPE: MenuItem وRoleMenuItem وMenuOverrideScope وTenantMenuOverride — بما في ذلك سلسلة أولوية حل القائمة الكاملة.",
+      intro:
+        "قائمة تنقل SCRIPE ديناميكية تمامًا ومدفوعة بالبيانات. تعرّف MenuItems شجرة التنقل العالمية، يزرعها IModuleMenuProvider عند بدء التشغيل. تتحكم RoleMenuItems في الرؤية لكل دور. تتيح TenantMenuOverrides تخصيص قائمة المستأجر والقائمة الشخصية دون تعديل البيانات الأساسية. تضمن سلسلة الحل (الأساسي ← فلتر الدور ← تجاوز المستأجر ← تجاوز المستخدم) فوز التجاوز ذي الأولوية الأعلى دائمًا.",
+      menuItemTitle: "كيان MenuItem",
+      menuItemIntro:
+        "MenuItem هو عقدة التنقل الأساسية. تشكّل العناصر شجرة عبر ParentMenuItemId. يربط WorkspaceId كل عنصر بمساحة عمل Nexus ذات السكة المزدوجة التي ينتمي إليها. عناصر IsSystem يزرعها مزودو الوحدات وتُحدَّث عند بدء التشغيل — تُحدَّث أسماء العرض والمسارات، لكن الحقول الإدارية فقط (Order وTenantScopeJson) تُحفظ. العناصر غير النظامية قابلة للتحرير الكامل من قِبل المستخدم.",
+      roleMenuItemTitle: "كيان RoleMenuItem",
+      roleMenuItemIntro:
+        "يوفر RoleMenuItem تحكمًا صريحًا في رؤية القائمة لكل دور. عندما IsVisible = true، يُعرض العنصر لذلك الدور. عندما false، يُخفى. إذا لم يوجد سجل RoleMenuItem للزوج دور/عنصر، يلجأ النظام إلى الوراثة التلقائية: يُعرض العنصر إذا كان الدور يمتلك إذن الموارد المقابل.",
+      roleMenuItemNote:
+        "سجلات RoleMenuItem قابلة للتدقيق — يلتقط AuditableEntityInterceptor من غيّر رؤية القائمة لأي دور. يوفر هذا مسار تدقيق كاملًا لتغييرات أذونات القائمة، مما يهم البيئات الخاضعة للامتثال.",
+      menuOverrideScopeTitle: "تعداد MenuOverrideScope",
+      menuOverrideScopeIntro:
+        "MenuOverrideScope هو تعداد ذو قيمتين يتحكم في نطاق TenantMenuOverride. نطاق User شخصي (المسؤول الذي أنشأ التجاوز فقط يراه). نطاق Tenant يؤثر على جميع مسؤولي المستأجر. المسؤولون الخارقون بلا مستأجر يمكنهم استخدام نطاق User فقط — لتغيير القوائم للجميع يعدّلون MenuItem الأساسي مباشرةً.",
+      menuOverrideScopeNote:
+        "يحل النموذج المبسط ذو القيمتين (User/Tenant) محل نموذج سابق ذي 4 نطاقات. يجب على المسؤولين الخارقين الراغبين في تغيير القوائم عالميًا تحديث MenuItem الأساسي أو استخدام واجهة IModuleMenuProvider — وليس إنشاء تجاوزات بنطاق Tenant.",
+      tenantMenuOverrideTitle: "كيان TenantMenuOverride",
+      tenantMenuOverrideIntro:
+        "يتيح TenantMenuOverride لكل مستأجر (أو مسؤول فردي) تخصيص أسماء عناصر القائمة والترتيب والأصل والرؤية دون تعديل MenuItem الأساسي. التجاوزات قابلة للإفراغ — حقل التجاوز الفارغ يعني 'ورث من الأساسي'. IsHidden = true يقمع العنصر تمامًا للنطاق بصرف النظر عن أذونات الدور.",
+      resolutionFlowTitle: "سلسلة أولوية حل القائمة",
+      resolutionFlowIntro:
+        "عند بناء القائمة النهائية للطلب، يطبق SCRIPE التجاوزات بترتيب الأولوية. التجاوز ذو الأولوية الأعلى يفوز لكل سمة (الاسم والترتيب والرؤية).",
+      resolutionNote:
+        "تُطبَّق سلسلة الحل لكل سمة، وليس لكل عنصر. مثلًا، يمكن لتجاوز المستخدم تغيير اسم العرض فقط، بينما يغيّر تجاوز المستأجر الترتيب. يُطبَّق كلاهما بشكل مستقل — لا يشترط SCRIPE أن يكون التجاوز 'كاملًا' ليكون فعالًا.",
+    },
+    identityTenantConfig: {
+      title: "كيانات تهيئة المستأجر",
+      description:
+        "تعمق في TenantDomain (إدارة النطاق المخصص بالتحقق عبر DNS) وTenantPermission (منح الأذونات لكل مستأجر) وSystemSettings (الإعدادات الافتراضية الفردية للمنصة) وSettingsAuditLog (سجل التغييرات للإضافة فقط).",
+      intro:
+        "تحكم كيانات تهيئة المستأجر كيفية عزل كل مستأجر وتمييزه بالعلامة التجارية ومنح أذوناته على المنصة. يدير TenantDomain أسماء المضيف المخصصة بالتحقق عبر DNS بأسلوب Shopify. يتتبع TenantPermission أذونات المنصة التي يمكن لمسؤولي المستأجر ممارستها. SystemSettings كيان فردي يوفر الافتراضيات العامة للمنصة للعلامة التجارية والمظاهر والتخطيط. SettingsAuditLog سجل للإضافة فقط يلتقط كل حدث نشر إعدادات للتراجع والامتثال.",
+      tenantDomainTitle: "كيان TenantDomain",
+      tenantDomainIntro:
+        "يمثل TenantDomain اسم مضيف مرتبطًا بمستأجر — إما نطاق فرعي تلقائي ({code}.scripe.org) أو نطاق مخصص يضيفه مسؤول المستأجر. تُنشأ النطاقات التلقائية عند إنشاء المستأجر وتكون دائمًا مُتحققًا منها ولا يمكن حذفها. تتطلب النطاقات المخصصة التحقق عبر سجل DNS TXT قبل التفعيل. يمكن أن يكون نطاق واحد فقط أساسيًا في كل مرة.",
+      tenantDomainNote:
+        "يستخدم التحقق من النطاق سجل DNS TXT: TXT _scr-verify.{domain} = 'scr_{token}'. VerificationToken هو قيمة عشوائية 128 بت تُنشأ عند تسجيل النطاق. يتم الاستطلاع عن التحقق أو تشغيله يدويًا — لا يحدث تلقائيًا. لا يمكن استخدام البادئات المحجوزة (www وapi وadmin وauth وlogin وما إلى ذلك) كنطاقات مخصصة.",
+      tenantPermissionTitle: "كيان TenantPermission",
+      tenantPermissionIntro:
+        "TenantPermission هو كيان الربط الذي يمنح إذنًا محددًا لمستأجر محدد. عند إنشاء مستأجر، يمنح المسؤول المُنشئ مجموعة فرعية من أذوناته الخاصة للمستأجر الجديد. يمنع هذا تصعيد الامتيازات — لا يمكن لمسؤول المستأجر منح إذن لا يمتلكه هو نفسه.",
+      tenantPermissionNote:
+        "AssignedBy وAssignedAt مكررتان مع AuditableEntity.CreatedBy وCreatedAt لكن يُحتفظ بهما لتوافق الاستعلامات القائمة على الهجرة القديمة. يجب أن تفضّل الأكواد الجديدة حقول AuditableEntity.",
+      systemSettingsTitle: "كيان SystemSettings",
+      systemSettingsIntro:
+        "SystemSettings هو كيان فردي (صف واحد في قاعدة البيانات) يعمل كطبقة الافتراضيات العامة للمنصة. يخزن تهيئة المظهر الافتراضية وكتالوج التخطيطات وسجل الفتحات وعلامة تجارية تسجيل الدخول/لوحة التحكم الافتراضية التي يرثها المستأجرون دون تخصيص خاص بهم. يتيح حقل SettingsVersion التزامن المتفائل — كل نشر يزيد الإصدار ويُسجَّل في SettingsAuditLog.",
+      systemSettingsNote:
+        "يُدار SystemSettings حصريًا من قِبل مسؤولي النظام. يمكن لمسؤولي المستأجر تخصيص TenantSettings الخاصة بهم لكن لا يمكنهم تعديل SystemSettings. يحمل DraftBrandingJson وDraftDashboardThemeJson مسودات Studio المحفوظة تلقائيًا — تُمسح عند النشر أو الإلغاء لضمان أن الإعدادات الحية دائمًا في LoginBrandingJson/DashboardThemeJson.",
+      settingsAuditLogTitle: "كيان SettingsAuditLog",
+      settingsAuditLogIntro:
+        "SettingsAuditLog سجل للإضافة فقط يلتقط كل تغيير في الإعدادات — نشر أو تراجع أو تبديل الوضع الآمن أو إلغاء المسودة. يخزن كل إدخال لقطة كاملة قبل/بعد بتنسيق JSON لإمكانية التراجع. حقل VersionNumber متزايد تلقائيًا ويقابل SettingsVersion وقت التغيير.",
+      settingsAuditLogWarning:
+        "لا يمكن تعديل أو حذف إدخالات SettingsAuditLog من قِبل أي مسؤول عبر واجهة برمجة التطبيقات. تُطبَّق هذه الثبات في طبقة المستودع. يستخدم التراجع PreviousValueJson كمصدر للحقيقة — تحقق من أن VersionNumber يطابق هدف التراجع المقصود قبل تطبيقه.",
+    },
+    identityThemesWorkspace: {
+      title: "كيانات المظاهر ومساحات العمل والتثبيت",
+      description:
+        "توثيق على مستوى الكيان لكيانات دورة حياة المظهر (LoginThemePurchase وTenantThemeFavorite وThemeApplyLog) ونظام مساحة عمل Nexus ذي السكة المزدوجة (Workspace وAdminWorkspacePin وDashboardPreset).",
+      intro:
+        "تُشغَّل الطبقة المرئية في SCRIPE بستة كيانات داعمة. يسجل LoginThemePurchase معاملات المظهر للسوق. يسمح TenantThemeFavorite للمسؤولين بإشارة المظاهر المفضلة. يوفر ThemeApplyLog مسار تحليلات للإضافة فقط لتطبيقات المظهر. يعرّف Workspace سياقات التنقل العليا في تخطيط Nexus ذي السكة المزدوجة. يخزن AdminWorkspacePin مساحات العمل المثبتة لكل مسؤول. يحمل DashboardPreset لقطات مظهر لوحة تحكم قابلة لإعادة الاستخدام.",
+      loginThemePurchaseTitle: "كيان LoginThemePurchase",
+      loginThemePurchaseIntro:
+        "يسجل LoginThemePurchase اقتناء مظهر من قِبل مستأجر. في v1، يمنح مسؤولو النظام المشتريات يدويًا (TransactionRef = 'manual-grant'). في v2، تنشئ Stripe webhooks السجلات تلقائيًا (TransactionRef = معرف Stripe PaymentIntent). يُقفَّل PaidAmount وقت الشراء وهو غير متأثر بتغييرات الأسعار المستقبلية.",
+      loginThemePurchaseNote:
+        "يُعيَّن IsRefunded وRefundedAt من نظام الفوترة عند أحداث الاسترداد. الاسترداد لا يزيل المظهر تلقائيًا من المستأجر — إلغاء وصول المظهر عملية منفصلة تتولاها طبقة الاشتراك/الوصول.",
+      tenantThemeFavoriteTitle: "كيان TenantThemeFavorite",
+      tenantThemeFavoriteIntro:
+        "TenantThemeFavorite كيان إشارة خفيف الوزن — يُعلّم مسؤول مظهرًا كمفضل في السوق. يستخدم Entity (وليس AuditableEntity) لأن عمليات المفضلة بيانات تفضيل مستخدم مؤقتة لا تحتاج مسار تدقيق كامل.",
+      themeApplyLogTitle: "كيان ThemeApplyLog",
+      themeApplyLogIntro:
+        "ThemeApplyLog سجل تحليلات وتدقيق للإضافة فقط يُنشأ عند كل مرة يطبق فيها مسؤول مظهرًا على مسودة صفحة تسجيل دخول المستأجر. ThemeSlug غير مُعيَّن للكفاءة التحليلية. يُحدَّث WasPublished بشكل غير متزامن عند نشر المستأجر، مما يتيح تحليلات اعتماد المظهر مقابل تقييمه.",
+      workspaceTitle: "كيان Workspace",
+      workspaceIntro:
+        "Workspace هو حاوية التنقل العليا في تخطيط Nexus ذي السكة المزدوجة في SCRIPE. تعرض السكة الأولية أيقونات مساحة العمل؛ النقر على إحداها يبدّل السكة الثانوية إلى شجرة قائمة مساحة العمل تلك. تُزرع مساحات العمل النظامية بواسطة IModuleMenuProvider عند بدء التشغيل (مزامنة ذكية بواسطة Key). حقل Key معرّف مستقر غير قابل للتغيير — تغييره يكسر جميع مراجع FK في MenuItem.",
+      adminWorkspacePinTitle: "كيان AdminWorkspacePin",
+      adminWorkspacePinIntro:
+        "يخزن AdminWorkspacePin مساحات العمل المثبتة للمسؤول في السكة الأولية. الدبابيس محددة النطاق بالسياق: دبابيس المستوى الأساسي (TenantId = null) تظهر عندما لا يختار المسؤول مستأجرًا؛ الدبابيس على مستوى المستأجر (TenantId = GUID) تظهر عند تفعيل ذلك المستأجر. هذا الكيان لا يستخدم الحذف الناعم عمدًا — إلغاء التثبيت يحذف الصف نهائيًا (الدبابيس بيانات تفضيلات مؤقتة وليست بيانات أعمال).",
+      adminWorkspacePinNote:
+        "يستخدم AdminWorkspacePin طريقة مصنع (AdminWorkspacePin.Create) وضابطات خاصة لفرض الثوابت. يعمل التثبيت التلقائي الأولي عبر BootstrapAdminPinsCommand عند أول جلب لمساحات العمل.",
+      dashboardPresetTitle: "كيان DashboardPreset",
+      dashboardPresetIntro:
+        "يخزن DashboardPreset لقطة DashboardThemeJson كاملة يمكن تطبيقها على لوحة تحكم أي مستأجر. الإعدادات المسبقة النظامية (IsSystem = true) مُزرعة ومتاحة لجميع المستأجرين؛ الإعدادات المسبقة التي ينشئها المسؤولون محددة النطاق بالمستأجر. تطبيق إعداد مسبق يستبدل DashboardThemeJson للمستأجر بالكامل — هذا تطبيق قائم على اللقطات لا على التصحيح.",
+    },
+    identityAccessControlDeep: {
+      title: "التعمق في التحكم بالوصول",
+      description:
+        "توثيق على مستوى الكيان لـ AdminRole (تقاطع تعيين الأدوار مع نطاق المستأجر وانتهاء الصلاحية) وAdminUserGroup (عضوية المجموعة) وUserGroupRestriction (قيود الحقول التراكمية لأعضاء المجموعة).",
+      intro:
+        "يُبنى نظام التحكم بالوصول في SCRIPE على ثلاثة كيانات تقاطع/قيود. يربط AdminRole مسؤولًا بدور، اختياريًا محدد النطاق بمستأجر معين مع تاريخ انتهاء اختياري. يربط AdminUserGroup مسؤولًا بمجموعة مستخدمين، منحًا جميع الأدوار التي ترثها المجموعة. يعرّف UserGroupRestriction قيودًا على مستوى الحقول تُطبَّق بشكل تراكمي (UNION) على استجابات API لجميع أعضاء المجموعة.",
+      adminRoleTitle: "كيان AdminRole",
+      adminRoleIntro:
+        "AdminRole هو كيان التقاطع بين Admin وRole. يمكّن نطاق TenantId مسؤولًا واحدًا من امتلاك أدوار مختلفة عبر مستأجرين مختلفين. InheritToChildren يتتالى الدور لجميع المستأجرين الفرعيين في التسلسل الهرمي. ExpiresAt يتيح منح الدور محدود الوقت للمقاولين أو الوصول المؤقت.",
+      adminRoleNote:
+        "سجلات AdminRole منتهية الصلاحية (ExpiresAt < UtcNow) تُعامَل كغير نشطة بواسطة خط أنابيب AuthorizationBehavior دون الحاجة للحذف. مهمة يومية تزيل السجلات منتهية الصلاحية بعد فترة سماح. يُحتفظ بـ AssignedBy جنبًا إلى جنب مع AuditableEntity.CreatedBy للتتبع الصريح في تقارير تدقيق الأذونات.",
+      adminUserGroupTitle: "كيان AdminUserGroup",
+      adminUserGroupIntro:
+        "AdminUserGroup هو تقاطع العضوية بين Admin وUserGroup. يرث المسؤول جميع الأدوار المعينة لمجموعة عبر سجلات RolePermission. تبسّط المجموعات إدارة الأدوار الجماعية — بدلًا من تعيين الأدوار بشكل فردي، عيّنها لمجموعة وأضف المسؤولين إليها. AdminUserGroup قابل للتدقيق عبر AuditableEntity.",
+      adminUserGroupNote:
+        "وراثة الدور عبر المجموعات تراكمية: الأذونات الفعلية للمسؤول هي UNION لتعيينات AdminRole المباشرة وجميع الأدوار الموروثة عبر كل مجموعة ينتمي إليها. إزالة مسؤول من مجموعة تلغي فورًا الأذونات الموروثة من المجموعة.",
+      userGroupRestrictionTitle: "كيان UserGroupRestriction",
+      userGroupRestrictionIntro:
+        "يعرّف UserGroupRestriction قيودًا على بيانات مستوى الحقول لمجموعة مستخدمين. عندما ينتمي مسؤول لمجموعة بقيود، تُلغى الحقول المدرجة في استجابات API لذلك المورد. القيود تراكمية — قيود المجموعة UNION مع قيود مستوى الدور، لا تتجاوزها أو تقللها. هذا يعني الانتماء لمزيد من المجموعات يمكن فقط زيادة القيود وليس تقليلها.",
+      userGroupRestrictionWarning:
+        "تُطبَّق قيود الحقول من جانب الخادم في سلوك خط أنابيب FieldProjection — هي ليست ميزة واجهة مستخدم من جانب العميل. ومع ذلك، القيود تُلغي فقط قيم الحقول في الاستجابات؛ لا تمنع عمليات الإنشاء/التحديث على تلك الحقول. استخدم أذونات الدور للتحكم في وصول الكتابة، وUserGroupRestriction للتحكم في رؤية القراءة.",
+      restrictionFlowTitle: "تدفق تقييم القيود",
+      restrictionFlowIntro:
+        "عندما يُقدم مسؤول طلب API لمورد مقيَّد، يُقيّم SCRIPE جميع القيود المعمول بها ويطبقها كـ UNION على حمولة الاستجابة.",
+      restrictionFlowNote:
+        "تقييم القيود كسول — يعمل عند كل طلب، وليس عند تسجيل الدخول. هذا يعني إضافة قيود لمجموعة تسري فورًا في استدعاء API التالي دون الحاجة لتحديث الجلسة. تضمن استراتيجية دمج UNION أن القيود تتراكم فقط — المسؤول الذي ينتمي لمجموعتين بقيود متداخلة يرى كلا مجموعتي القيود مطبَّقتين.",
+    },
     userSubscriptions: {
       title: "اشتراكات المستخدمين",
       description:
@@ -1408,6 +1589,155 @@ export const ar = {
       "ep.cancel": "إلغاء اشتراك مستخدم نشط",
       "ep.mySubscription": "الحصول على اشتراك المستخدم الحالي المُصادق عليه",
       "ep.myFeatures": "الحصول على قاموس وصول ميزات المستخدم الحالي",
+    },
+    stripeConnect: {
+      title: "Stripe Connect",
+      description:
+        "تقسيم مدفوعات السوق عبر Stripe Connect Express — حسابات المستأجرين، سلسلة حل معدل العمولة، إدخالات دفتر الأستاذ، فوترة العمولات، استرداد الترقيات، والتنبيهات التشغيلية.",
+      intro:
+        "يتيح Stripe Connect نموذج تقسيم مدفوعات السوق في SCRIPE. عندما يعالج مستأجر مدفوعة مستخدم، تقوم المنصة تلقائياً بخصم عمولة عبر application_fee_amount من Stripe وتوجيه الصافي إلى حساب Stripe Express الخاص بالمستأجر.",
+      whatIsTitle: "ما هو Stripe Connect؟",
+      whatIsIntro:
+        "Stripe Connect هو بنية تحتية للمدفوعات متعددة الأطراف من Stripe. في SCRIPE، يدعم سوق B2B2C: يبيع المستأجرون الخطط لمستخدميهم، ويوجه Stripe المدفوعات، ويخصم محرك عمولات SCRIPE رسوم المنصة تلقائياً.",
+      architectureTitle: "بنية تقسيم المدفوعات",
+      architectureIntro:
+        "كل مدفوعة مستخدم تتدفق عبر Stripe، الذي يقسمها فوراً بين المستأجر والمنصة بناءً على معدل العمولة المحدد.",
+      accountEntityTitle: "كيان TenantStripeAccount",
+      accountEntityIntro:
+        "يوجد صف TenantStripeAccount واحد لكل مستأجر. يتتبع معرف حساب Stripe، دورة حياة الإعداد، إمكانية الرسوم/المدفوعات، تجاوز معدل العمولة، وإحصائيات المدفوعات التراكمية.",
+      onboardingTitle: "دورة حياة حالة الإعداد",
+      onboardingIntro:
+        "تمر حسابات المستأجرين بعملية التحقق من الهوية KYC المُدارة من Stripe قبل أن تتمكن من قبول الرسوم أو استلام المدفوعات.",
+      commissionTitle: "سلسلة حل معدل العمولة",
+      commissionIntro:
+        "يتم حل معدل العمولة الفعلي من الأكثر تحديداً إلى الأكثر عمومية. تفوز أول قيمة غير فارغة في السلسلة.",
+      commChain1: "تجاوز لكل مستأجر — يحدده مسؤول المنصة في لوحة إدارة Stripe Connect.",
+      commChain2: "معدل لكل إصدار — مكوَّن على كيان Edition عبر حقل ConnectCommissionRate.",
+      commChain3: "إعداد افتراضي على مستوى المنصة — مخزن في صف النمط الفردي ConnectPlatformSettings.",
+      commChain4: "احتياطي مُشفر — 10% — يُستخدم فقط إذا كان صف النمط الفردي مفقوداً.",
+      settingsTitle: "ConnectPlatformSettings (نمط فردي)",
+      settingsIntro:
+        "يخزن صف واحد (المعرف: 00000001-0000-0000-0000-000000000001) الإعدادات الافتراضية للمنصة. الوصول دائماً عبر ConnectPlatformSettings.SingletonId.",
+      settingsSingletonNote:
+        "يستخدم ConnectPlatformSettings نمط النمط الفردي: يوجد دائماً صف واحد بالضبط، يُعرَّف بثابت SingletonId المعروف. تعرض واجهة المسؤول هذا كنموذج إعدادات قابل للتعديل.",
+      ledgerTitle: "دفتر الأستاذ والفوترة",
+      ledgerIntro:
+        "ثلاثة كيانات تشكل نظام محاسبة العمولات. لمدفوعات Stripe Connect، يتم تحصيل العمولات فوراً. للبوابات غير Connect، يتم تتبعها في CommissionLedgerEntry وفوترتها شهرياً أو عند الحد.",
+      invoiceTriggerTitle: "مشغلات فاتورة العمولة",
+      invoiceTriggerIntro:
+        "يتم إنشاء صفوف CommissionInvoice بواحد من ثلاثة مشغلات، قابلة للتكوين في ConnectPlatformSettings.",
+      promoTitle: "استرداد الترقيات (تطبيق FirstTimeOnly)",
+      promoIntro:
+        "يسجل PromotionRedemption كل استخدام لرمز ترقية عند تفعيل التسجيل. لأن SCRIPE ينشئ Stripe Customer جديد لكل تسجيل، تخزن SCRIPE تجزئة SHA-256 لبريد المشترك الإلكتروني لتطبيق ترقيات FirstTimeOnly محلياً.",
+      promoNote:
+        "يتم الحذف الصارم لصفوف PromotionRedemption بعد 12 شهراً. لا تُخزن عناوين البريد الإلكتروني الخام — فقط تجزئة SHA-256 بالتنسيق السداسي العشري.",
+      alertsTitle: "التنبيهات التشغيلية",
+      alertsIntro:
+        "OperationalAlert هو جدول للرسائل الميتة للأحداث التي تتطلب مراجعة بشرية. كل تنبيه يطلق أيضاً بريداً إلكترونياً للعمليات عبر صندوق الصادر.",
+      configTitle: "التكوين",
+      configIntro:
+        "يتطلب Stripe Connect مفتاحَي سر للـ webhook: مفتاح webhook القياسي لأحداث اشتراك SaaS، ومفتاح Connect webhook لأحداث مستوى الحساب.",
+      endpointsTitle: "نقاط نهاية API",
+      endpointsIntro:
+        "نقاط نهاية إدارة Connect مقيدة بأدوار المسؤول الفائق. روابط الإعداد الموجهة للمستأجر تتولد لكل مستأجر وتكون للاستخدام مرة واحدة.",
+      "ep.create": "تسجيل حساب Stripe Connect Express جديد لمستأجر",
+      "ep.get": "الحصول على حالة حساب Stripe وتفاصيل الإعداد لمستأجر",
+      "ep.onboardingLink": "إنشاء رابط إعداد Stripe Connect أحادي الاستخدام لمستأجر",
+      "ep.ledger": "عرض إدخالات دفتر أستاذ العمولة (قابل للتصفية حسب المستأجر والحالة والبوابة)",
+      "ep.invoices": "عرض فواتير العمولة (قابل للتصفية حسب المستأجر والحالة والمشغل)",
+      "ep.invoiceGenerate": "تشغيل إنشاء فاتورة عمولة يدوياً لمستأجر",
+      "ep.settings": "الحصول على النمط الفردي ConnectPlatformSettings",
+      "ep.settingsUpdate": "تحديث الإعدادات الافتراضية للمنصة (معدل العمولة، تأخير المدفوعات، الحد)",
+      "ep.alerts": "عرض جميع التنبيهات التشغيلية (قابل للتصفية حسب النوع والحالة والخطورة)",
+      "ep.alertResolve": "الإقرار بتنبيه تشغيلي أو حله مع ملاحظة حل",
+    },
+    signupCustomization: {
+      title: "تخصيص التسجيل",
+      description:
+        "محرك الذكاء لتسجيل الخدمة الذاتية — أسئلة إعداد قابلة للتكوين مع منطق التفريع وشروط الرؤية على مستوى الخيار وقواعد توصية تعريفية تربط إجابات المستخدمين بالإصدار المناسب.",
+      intro:
+        "نظام تخصيص التسجيل هو محرك الذكاء في SCRIPE لتدفق التسجيل الذاتي. يحدد مسؤولو المنصة شجرة أسئلة، يحمل كل خيار إجابة وزن إشارة، وتربط قواعد التوصية التعريفية أنماط الإجابات بإصدارات محددة.",
+      whatIsTitle: "ما هو محرك الذكاء؟",
+      whatIsIntro:
+        "محرك الذكاء هو نظام التوصية الذي يدعم التسجيل الذاتي في SCRIPE. بدلاً من عرض جدول تسعير ثابت، يجيب المستخدمون على استبيان قصير للإعداد، ويطابق المحرك إجاباتهم مع قواعد التوصية ويقدم توصية إصدار مخصصة.",
+      flowTitle: "نظرة عامة على تدفق التسجيل",
+      flowIntro: "تدفق التسجيل الكامل من اختيار الفئة حتى التوصية.",
+      questionTitle: "كيان OnboardingQuestion",
+      questionIntro:
+        "يمثل كل OnboardingQuestion خطوة واحدة في تدفق الإعداد. يمكن أن تكون الأسئلة عالمية أو مقيدة بـ EditionCategory. يدعم التفريع على مستوى السؤال عبر DependsOnQuestionKey + DependsOnAnswerValue.",
+      optionTitle: "كيان OnboardingAnswerOption",
+      optionIntro:
+        "كل OnboardingAnswerOption هو خيار إجابة قابل للاختيار للسؤال. تحمل الخيارات إشارات تسجيل نقاط (SignalWeight) لمحرك التوصية وتعزيزات صلة اختيارية (RelevanceBoost).",
+      conditionTitle: "شروط رؤية على مستوى الخيار",
+      conditionIntro:
+        "تتيح OnboardingAnswerOptionCondition التحكم الدقيق في رؤية الخيارات الفردية من جانب العميل بناءً على إجابات سابقة.",
+      conditionNote:
+        "يتم تقييم الشروط من جانب العميل فقط. يخزن MatchValuesRaw المجموعة كسلسلة مفصولة بفاصلة لإمكانية نقل قاعدة البيانات عبر SQL Server وOracle وPostgreSQL.",
+      sessionAnswerTitle: "كيان SignupSessionAnswer",
+      sessionAnswerIntro:
+        "يحتفظ SignupSessionAnswer بإجابة كل مستخدم أثناء تسجيل جاري. يستخدم SignupSessionRef (سلسلة نصية عادية) بدلاً من FK إلى كيان SignupSession لتجنب اقتران المودلات.",
+      sessionAnswerTip:
+        "يتيح SignupSessionAnswer استئناف الجلسة: إذا أغلق المستخدم المتصفح في منتصف التدفق، يمكن إعادة تحميل إجاباته عند العودة عبر SignupSessionRef.",
+      ruleTitle: "كيان RecommendationRule",
+      ruleIntro:
+        "قواعد التوصية هي محرك المطابقة التعريفي. تحدد كل قاعدة محمول ConditionJson وإصداراً مستهدفاً وScoreBonus. تتراكم القواعد النقاط لكل إصدار مرشح — الإصدار الأعلى نقاطاً يفوز.",
+      scoringTitle: "خوارزمية التسجيل",
+      scoringIntro:
+        "يقيّم محرك التوصية جميع القواعد النشطة، يجمع النقاط، ويعيد الإصدار الأعلى نقاطاً مع السبب من أعلى قاعدة مطابقة أولوية.",
+      endpointsTitle: "نقاط نهاية API",
+      endpointsIntro:
+        "نقاط نهاية إدارة الأسئلة/القواعد تتطلب إذن entitlements.manage. نقاط نهاية التدفق والإجابات عامة — لا يلزم المصادقة أثناء التسجيل.",
+      "ep.questions": "عرض جميع أسئلة الإعداد مع خياراتها وشروطها",
+      "ep.createQuestion": "إنشاء سؤال إعداد جديد مع خيارات الإجابات",
+      "ep.updateQuestion": "تحديث سؤال موجود (التسمية، التلميح، ترتيب الفرز، التفريع)",
+      "ep.deleteQuestion": "حذف سؤال إعداد غير نظامي",
+      "ep.flow": "الحصول على تدفق الإعداد الكامل لفئة محددة (عام — يُستخدم أثناء التسجيل)",
+      "ep.submitAnswers": "إرسال إجابات لخطوة جلسة تسجيل (عام)",
+      "ep.recommend": "الحصول على توصية الإصدار بناءً على الإجابات المقدمة (عام)",
+      "ep.rules": "عرض جميع قواعد التوصية",
+      "ep.createRule": "إنشاء أو upsert قاعدة توصية بواسطة slug اسم مستقر",
+    },
+    platformManagement: {
+      title: "إدارة المنصة",
+      description:
+        "عدادات حصص آمنة للتزامن مع التطبيق المجمّع، لقطات موارد التجربة، ودفتر أستاذ العمولة غير Connect لعمولات بوابة PayPal وPaymob.",
+      intro:
+        "تغطي إدارة المنصة البنية التحتية التشغيلية التي تحافظ على اتساق منصة SCRIPE متعددة المستأجرين عدداً: عدادات الحصص التي تمنع الإفراط في توفير الموارد، لقطات التجربة التي تتيح تطبيق التخفيض بدقة، ودفتر أستاذ العمولة الذي يتتبع إيرادات المنصة من بوابات الدفع غير Stripe Connect.",
+      whatIsTitle: "ما هي إدارة المنصة؟",
+      whatIsIntro:
+        "إدارة المنصة هي مجموعة كيانات النطاق المسؤولة عن تطبيق حدود موارد المستأجر (الحصص)، والتقاط حالة الموارد في بداية التجربة، وتتبع عمولات المنصة من مدفوعات بوابات PayPal وPaymob.",
+      quotaTitle: "كيان QuotaCounter",
+      quotaIntro:
+        "يتتبع QuotaCounter استخدام الموارد لكل مستأجر مع دعم اختياري للتطبيق المجمّع. يوجد صف واحد لكل مستأجر لكل نوع مورد (المسؤول، الدور، المستأجر الفرعي، مجموعة المستخدمين). يمنع نمط الحجز حالات السباق تحت طلبات الإنشاء المتزامنة.",
+      reservationTitle: "نمط الحجز الذري",
+      reservationIntro:
+        "نمط الحجز هو بروتوكول ثلاثي المراحل يمنع الإفراط في توفير الحصص حتى في ظل التزامن العالي.",
+      reservationNote:
+        "يستخدم TryReserveSlotAsync زيادة ذرية على مستوى قاعدة البيانات للحقل Reserved. عند الفشل، الاستراتيجية fail-open للحفاظ على التوفر — يُحرر الحجز ويُسمح بالإنشاء مع تسجيل تحذير.",
+      pooledTitle: "أوضاع تطبيق الحصص",
+      pooledIntro:
+        "يدعم QuotaCounter وضعَي تطبيق يتحكم بهما PoolRootTenantId. التطبيق لكل مستأجر هو الافتراضي؛ التطبيق المجمّع يتيح مشاركة الموارد عبر هرمية المستأجر.",
+      trialSnapshotTitle: "كيان TrialSnapshot",
+      trialSnapshotIntro:
+        "يلتقط TrialSnapshot أعداد الموارد (المسؤول، الدور، المستأجر الفرعي، مجموعة المستخدمين) في اللحظة التي يبدأ فيها اشتراك التجربة. عند انتهاء التجربة، يقارن النظام الأعداد الحالية بالـ snapshot لتحديد ما إذا كان المستأجر قد وفّر موارد تتجاوز حدود الإصدار الأساسي.",
+      trialSnapshotTip:
+        "يتيح TrialSnapshot فحص أمان تخفيض التجربة: إذا نما AdminCount من 2 (لقطة) إلى 8 (حالي) والإصدار بعد التجربة يسمح بـ 5 فقط، يمكن للنظام تشغيل إجراء OverflowPolicy.",
+      ledgerEntryTitle: "كيان CommissionLedgerEntry",
+      ledgerEntryIntro:
+        "يسجل CommissionLedgerEntry العمولات من مدفوعات بوابة غير Connect (PayPal, Paymob). لمدفوعات Stripe Connect، يتم تحصيل العمولات فوراً عبر application_fee_amount — هذا الكيان فقط لتدفقات البوابة التي تتطلب تحصيل عمولات مؤجلة.",
+      revenueTitle: "تكامل تحليلات الإيرادات",
+      revenueIntro:
+        "يغذي دفتر أستاذ العمولة مباشرةً وحدة تحليلات الإيرادات للتقارير المالية على مستوى المنصة.",
+      endpointsTitle: "نقاط نهاية API",
+      endpointsIntro:
+        "نقاط نهاية إدارة المنصة مقيدة بأدوار المسؤول الفائق. بيانات الحصص للقراءة فقط للمسؤولين القياسيين.",
+      "ep.quotaList": "عرض جميع عدادات الحصص (قابل للتصفية حسب المستأجر ونوع المورد)",
+      "ep.quotaGet": "الحصول على عداد الحصة لمستأجر ونوع مورد محدد",
+      "ep.quotaReset": "إعادة تعيين عدادات الحصص لمستأجر (استخدم بحذر — يمسح Reserved ويُعيد تعيين Used)",
+      "ep.trialSnapshot": "الحصول على لقطة التجربة لاشتراك (يستخدمه تطبيق التخفيض)",
+      "ep.ledger": "عرض إدخالات دفتر أستاذ العمولة (قابل للتصفية حسب المستأجر والبوابة والحالة)",
+      "ep.waive": "إعفاء إدخال دفتر أستاذ عمولة مع ملاحظة مسؤول",
+      "ep.dashboard": "الحصول على مؤشرات KPI للوحة إدارة المنصة (إجمالي العمولات، استخدام الحصص، لقطات التجربة)",
     },
   },
 };

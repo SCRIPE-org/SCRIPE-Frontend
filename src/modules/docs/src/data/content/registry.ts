@@ -71,6 +71,11 @@ import "./modules/entitlements/user-subscriptions";
 // Modules (Revenue Analytics — Phase 11)
 import "./modules/entitlements/revenue-analytics";
 
+// Modules (Stripe Connect, Signup Customization, Platform Management)
+import "./modules/entitlements/stripe-connect";
+import "./modules/entitlements/signup-customization";
+import "./modules/entitlements/platform-management";
+
 // Modules (Plugins — Phase 15)
 import "./modules/plugins/plugins-overview";
 import "./modules/plugins/plugins-sdk";
@@ -82,6 +87,7 @@ import "./modules/compliance/compliance-consent";
 import "./modules/compliance/compliance-retention";
 import "./modules/compliance/compliance-inventory";
 import "./modules/compliance/compliance-reports";
+import "./modules/compliance/compliance-regulation-profiles";
 
 // New Technical Modules
 import "./modules/audit-logs";
@@ -89,6 +95,14 @@ import "./modules/security-monitoring";
 import "./modules/webhooks";
 import "./modules/marketplace";
 import "./modules/ecosystem-recycle-bin";
+
+// Modules (Identity — Entity Deep Dives)
+import "./modules/identity/auth-sessions";
+import "./modules/identity/menu-system";
+import "./modules/identity/tenant-config";
+import "./modules/identity/themes-workspace";
+import "./modules/identity/access-control-deep";
+
 
 // Security
 import "./security/overview";
