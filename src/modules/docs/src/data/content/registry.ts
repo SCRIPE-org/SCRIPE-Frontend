@@ -99,7 +99,8 @@ import "./modules/audit-logs";
 import "./modules/security-monitoring";
 import "./modules/webhooks";
 
-// Modules (Marketplace — Phase 16)
+// Modules (Marketplace — legacy slug + Phase 16 entity pages)
+import "./modules/marketplace"; // keeps 'modules/marketplace' slug alive for nav/CLI
 import "./modules/marketplace/marketplace-overview";
 import "./modules/marketplace/app-listings";
 import "./modules/marketplace/developer-portal";
