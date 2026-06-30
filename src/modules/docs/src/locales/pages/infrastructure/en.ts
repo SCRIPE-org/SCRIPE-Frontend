@@ -219,18 +219,18 @@ export const en = {
       description:
         "YARP reverse proxy gateway, module system, IIS deployment, and Kestrel configuration.",
       intro:
-        "SCRIPE uses YARP (Yet Another Reverse Proxy) as an API gateway that routes requests to backend modules. The MODULE_NAME environment variable controls which modules are active, enabling monolith, microservice, or hybrid deployment.",
+        "Current backend code is modular-monolith ready and has explicit server roles. Gateway mode is an explicit MODULE_NAME=Gateway role with YARP routes from ServiceDiscovery. True independently deployed microservices are still partial because distributed event delivery is not implemented yet.",
       yarpTitle: "YARP Gateway",
       yarpIntro:
-        "YARP routes incoming API requests to the appropriate backend module based on URL path prefix matching. The gateway handles SSL termination, request buffering, and load balancing.",
+        "YARP is registered only when Architecture:Mode=Microservice, MODULE_NAME=Gateway, and ServiceDiscovery has services. Gateway exposes no business controllers; it proxies to configured backend roles.",
       moduleTitle: "Module System",
       moduleIntro:
-        "The MODULE_NAME environment variable determines which backend modules are loaded at startup. Setting it to 'all' loads all modules as a monolith. Setting it to a specific module name (e.g., 'identity') loads only that module for microservice deployment.",
+        "MODULE_NAME now represents a server role, not always a pure module. Empty MODULE_NAME loads the full modular monolith. Identity/Auth are composite roles that load Identity plus Entitlements for signup. Gateway loads no business modules.",
       modesTitle: "Deployment Modes",
       monolithTitle: "Monolith Mode",
-      microservicesTitle: "Microservices Mode",
+      microservicesTitle: "Server Roles / Future Microservices",
       portNote:
-        "Each module instance listens on a different port in microservices mode. The YARP gateway routes to the correct port based on the module name.",
+        "Do not claim true microservices readiness until RabbitMQ/distributed event delivery replaces the current in-process fallback and startup tests prove the topology.",
       iisTitle: "IIS Deployment",
       iisStep1Title: "1. Publish the Application",
       iisStep1Desc: "Run dotnet publish to create the deployment package with all dependencies.",

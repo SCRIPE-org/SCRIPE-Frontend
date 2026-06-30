@@ -30,59 +30,32 @@ const sections: DocSection[] = [
         type: "success",
         description: "Auth, Users, Roles",
       },
-      { id: "inventory", label: "Inventory Module", type: "warning", description: "(Future)" },
-      { id: "hr", label: "HR Module", type: "danger", description: "(Future)" },
+      { id: "entitlements", label: "Entitlements Role", type: "warning", description: "Platform billing + feature gating" },
+      { id: "compliance", label: "Compliance Role", type: "info", description: "Governance APIs" },
     ],
     connections: [
       { from: "client", to: "gateway" },
       { from: "gateway", to: "identity", label: "/api/v1/auth/*" },
-      { from: "gateway", to: "inventory", label: "/api/v1/inventory/*" },
-      { from: "gateway", to: "hr", label: "/api/v1/hr/*" },
+      { from: "gateway", to: "entitlements", label: "/api/v1/entitlements/*" },
+      { from: "gateway", to: "compliance", label: "/api/v1/compliance/*" },
     ],
   },
   {
     type: "code",
     language: "json",
-    filename: "appsettings.json — YARP Route Configuration",
+    filename: "appsettings.json - Gateway server role inputs",
     code: `{
-  "ReverseProxy": {
-    "Routes": {
-      "identity-route": {
-        "ClusterId": "identity",
-        "Match": { "Path": "/api/v1/{**catch-all}" },
-        "Transforms": [
-          { "PathPattern": "/api/v1/{**catch-all}" }
-        ]
-      },
-      "hangfire-route": {
-        "ClusterId": "identity",
-        "Match": { "Path": "/hangfire/{**catch-all}" }
-      },
-      "hubs-route": {
-        "ClusterId": "identity",
-        "Match": { "Path": "/hubs/{**catch-all}" }
-      }
-    },
-    "Clusters": {
-      "identity": {
-        "Destinations": {
-          "primary": { "Address": "https://localhost:7001" },
-          "secondary": { "Address": "https://localhost:7002" }
-        },
-        "LoadBalancingPolicy": "RoundRobin",
-        "HealthCheck": {
-          "Active": {
-            "Enabled": true,
-            "Interval": "00:00:30",
-            "Timeout": "00:00:10",
-            "Path": "/health"
-          }
-        }
-      }
+  "Architecture": { "Mode": "Microservice" },
+  "ServiceDiscovery": {
+    "Services": {
+      "Identity": "http://localhost:5001",
+      "Entitlements": "http://localhost:5004",
+      "Compliance": "http://localhost:5005",
+      "Plugins": "http://localhost:5006",
+      "Marketplace": "http://localhost:5007"
     }
   }
-}`,
-  },
+}`,  },
 
   // ─── Module System ────────────────────────────────────────
   {
@@ -95,32 +68,24 @@ const sections: DocSection[] = [
   {
     type: "code",
     language: "csharp",
-    filename: "Conditional Module Loading via Environment Variable",
-    code: `// Program.cs — Module registration
-var moduleName = Environment.GetEnvironmentVariable("MODULE_NAME") ?? "all";
+    filename: "ModuleRegistration.cs - server role loading",
+    code: `var rawModuleName = Environment.GetEnvironmentVariable("MODULE_NAME") ?? "";
+var moduleName = new DynamicModuleName(rawModuleName, builder.Configuration);
+var isMonolith = string.IsNullOrEmpty(rawModuleName);
 
-switch (moduleName.ToLower())
+// Empty MODULE_NAME loads all modules.
+// MODULE_NAME=Identity or Auth is a server role; it may load Identity + Entitlements services.
+// MODULE_NAME=Gateway loads no business modules and is YARP-only.
+if (isMonolith || moduleName.Equals("Identity", StringComparison.OrdinalIgnoreCase))
 {
-    case "identity":
-        builder.Services.AddIdentityModule(configuration);
-        break;
-    case "inventory":
-        builder.Services.AddInventoryModule(configuration);
-        break;
-    case "all":
-    default:
-        builder.Services.AddIdentityModule(configuration);
-        builder.Services.AddInventoryModule(configuration);
-        break;
+    builder.Services.AddIdentityModule(builder.Configuration, builder.Environment);
 }
 
-// ModuleControllerFeatureProvider filters controllers per module
-builder.Services.AddControllers()
-    .ConfigureApplicationPartManager(manager =>
-        manager.FeatureProviders.Add(
-            new ModuleControllerFeatureProvider(moduleName)));`,
-    highlightLines: [2, 4, 21, 22, 23, 24],
-  },
+if (isMonolith || moduleName.Equals("Entitlements", StringComparison.OrdinalIgnoreCase))
+{
+    builder.Services.AddEntitlementsModule(builder.Configuration);
+}`,
+    highlightLines: [1, 2, 5, 6, 7],  },
 
   // ─── Deployment Modes ─────────────────────────────────────
   {
@@ -136,24 +101,24 @@ builder.Services.AddControllers()
         titleKey: "infrastructure.gatewayDeployment.monolithTitle",
         variant: "positive",
         items: [
-          "MODULE_NAME=all (all modules in one process)",
+          "MODULE_NAME is empty (all modules in one process)",
           "Single database connection string",
           "No YARP gateway needed",
           "Simpler deployment (1 process)",
           "Shared appsettings.json",
-          "Direct method calls between modules",
+          "In-process mediator/domain event handlers",
         ],
       },
       {
         titleKey: "infrastructure.gatewayDeployment.microserviceTitle",
         variant: "neutral",
         items: [
-          "MODULE_NAME=identity (one module per process)",
+          "MODULE_NAME=Identity/Auth is a composed server role, not a pure microservice",
           "Per-module database",
           "YARP gateway routes to each service",
           "Independent scaling per module",
           "Per-service configuration",
-          "HTTP/gRPC between services",
+          "True distributed service-to-service flow is future work until the event bus is real",
         ],
       },
     ],

@@ -221,13 +221,15 @@ export const ru = {
       intro: "Как SCRIPE развертывается и маршрутизирует трафик в производственной среде.",
       yarpTitle: "Шлюз YARP (API Gateway)",
       yarpIntro:
-        "Маршрутизирует API-запросы к нужным бэкенд-модулям, обрабатывает SSL и буферизацию.",
+        "YARP is registered only when Architecture:Mode=Microservice, MODULE_NAME=Gateway, and ServiceDiscovery has services. Gateway exposes no business controllers; it proxies to configured backend roles.",
       moduleTitle: "Система модулей",
-      moduleIntro: "Переменная MODULE_NAME контролирует запуск: монолит, микросервис или шлюз.",
+      moduleIntro:
+        "MODULE_NAME now represents a server role, not always a pure module. Empty MODULE_NAME loads the full modular monolith. Identity/Auth are composite roles that load Identity plus Entitlements for signup. Gateway loads no business modules.",
       modesTitle: "Режимы развертывания",
       monolithTitle: "Режим монолита",
-      microservicesTitle: "Режим микросервисов",
-      portNote: "В режиме микросервисов каждый модуль слушает свой уникальный сетевой порт.",
+      microservicesTitle: "Server Roles / Future Microservices",
+      portNote:
+        "Do not claim true microservices readiness until RabbitMQ/distributed event delivery replaces the current in-process fallback and startup tests prove the topology.",
       iisTitle: "Развертывание в IIS (Windows Server)",
       iisStep1Title: "1. Публикация приложения",
       iisStep1Desc: "Запустите dotnet publish.",

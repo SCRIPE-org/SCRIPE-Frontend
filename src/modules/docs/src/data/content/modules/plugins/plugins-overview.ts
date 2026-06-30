@@ -12,7 +12,28 @@ const sections: DocSection[] = [
     contentKey: "modules.plugins.overview.infoContent",
   },
 
-  // ─── What Is the Plugin System ──────────────────────────────
+    {
+    type: "table",
+    headers: ["Claim", "Current Code Reality", "Documentation Rule"],
+    rows: [
+      [
+        "Tier 2 plugin sandbox",
+        "Gateway, scoped auth, rate limiting, execution logs, iframe bridge, and key-value data boundaries",
+        "Do not describe as process or container isolation",
+      ],
+      [
+        "Tier 1 plugins",
+        "Trusted in-process extensions",
+        "Only install trusted or certified code",
+      ],
+      [
+        "Marketplace plugins",
+        "Infrastructure exists but production safety depends on review, isolation, billing, and payout hardening",
+        "Mark as partial or postponed for production commerce",
+      ],
+    ],
+  },
+// ─── What Is the Plugin System ──────────────────────────────
   {
     type: "heading",
     level: 2,

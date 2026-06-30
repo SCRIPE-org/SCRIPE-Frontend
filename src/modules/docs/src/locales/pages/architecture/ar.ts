@@ -20,7 +20,7 @@ export const ar = {
         "تستخدم الواجهة الأمامية نمط (View/ViewModel) المتوافق مع مبادئ SOLID حيث تكون المشاهد (Views) مجرد واجهة مستخدم نقية (بدون حالة أو منطق) وتحتوي ViewModels على جميع منطق الأعمال. يفصل نمط الموصل (Connector) توجيه Next.js (مكونات الخادم) عن منطق التطبيق (مكونات العميل).",
       moduleBoundariesTitle: "حدود الوحدات",
       moduleBoundariesIntro:
-        "الوحدات عبارة عن جزر معزولة. لا يمكنها الاستيراد من بعضها البعض. هذا يتيح التطوير المستقل، وحصر الأعطال، والقدرة على استخراج الوحدات إلى مستودعات منفصلة.",
+        "Modules have strict code boundaries. This supports future extraction, but extraction is not the same as proven production microservices readiness.",
       withBoundaries: "مع حدود الوحدات",
       withoutBoundaries: "بدون حدود الوحدات",
       communicationPatternsTitle: "التواصل عبر الوحدات",
@@ -105,7 +105,7 @@ export const ar = {
       frontendModuleTitle: "قالب وحدة الواجهة الأمامية",
       registryTitle: "سجل الوحدات",
       registryIntro:
-        "يتتبع سجل الوحدات جميع الوحدات النشطة في وقت التشغيل. تتم تعبئته أثناء بدء تشغيل التطبيق عندما يتم حل وتسجيل تطبيق IModuleRegistration الخاص بكل وحدة.",
+        "The current backend modules verified in code are Identity, Entitlements, Compliance, Plugins, and Marketplace, plus host controller labels such as Auth, System, Communication, Media, and Customization. CRM, HRMS, Inventory, Finance, Documents, Workflow, and Service Management are future modules, not current backend modules.",
       communicationTitle: "أنماط التواصل عبر الوحدات",
       pattern1Title: "النمط 1: التنقل عبر URL",
       pattern1Content: "انتقل إلى صفحة وحدة أخرى عبر روابط URL القياسية. لا حاجة للاستيراد.",
@@ -114,7 +114,7 @@ export const ar = {
         "قم بتخزين معرف (ID) كيان الوحدة الخارجية فقط. لا تقم أبداً بتضمين الكيان بالكامل.",
       pattern3Title: "النمط 3: ناقل الأحداث الأساسي (Core Event Bus)",
       pattern3Content:
-        "نشر الأحداث والاشتراك فيها من خلال ناقل أحداث مشترك في @core/. نمط مستقبلي - لم يتم تنفيذه بعد.",
+        "Domain events currently dispatch in-process. RabbitMQ is a placeholder fallback, so do not use this as proof of true distributed microservices.",
       boundaryWarning:
         "حدود الوحدة هي قانون مطلق. إذا كنت بحاجة إلى مشاركة الكود بين الوحدات، يجب وضعه في @core/. أي استيراد من @modules/{other}/ هو انتهاك وسيتم اكتشافه أثناء مراجعة الكود.",
     },

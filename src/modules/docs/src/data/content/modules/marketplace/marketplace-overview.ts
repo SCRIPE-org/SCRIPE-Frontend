@@ -10,6 +10,32 @@ const sections: DocSection[] = [
     titleKey: "modules.marketplaceOverview.infoTitle",
     contentKey: "modules.marketplaceOverview.infoContent",
   },
+  {
+    type: "table",
+    headers: ["Marketplace Area", "Current Status", "Truth Boundary"],
+    rows: [
+      [
+        "Listings, categories, developer profiles, submissions, and reviews",
+        "Backend entities and APIs exist",
+        "Operationally useful but still needs production hardening",
+      ],
+      [
+        "Purchases and pricing",
+        "Backend model exists",
+        "Do not claim complete production commerce without payment and payout verification",
+      ],
+      [
+        "Developer payouts",
+        "Simulated payout handler still exists",
+        "Not production-ready settlement",
+      ],
+      [
+        "Plugin ecosystem",
+        "Depends on Plugins module",
+        "No claim of arbitrary-code sandboxing",
+      ],
+    ],
+  },
 
   // ─── Feature Grid ────────────────────────────────────────────
   {

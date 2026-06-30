@@ -8,7 +8,38 @@ const sections: DocSection[] = [
     contentKey: "modules.entitlementsOverview.intro",
   },
 
-  // ─── What is Entitlements ──────────────────────────────────
+    {
+    type: "table",
+    headers: ["Current Reality", "Status", "Boundary"],
+    rows: [
+      [
+        "SCRIPE platform features, editions, tenant subscriptions, and quotas",
+        "Current",
+        "Keep in Entitlements",
+      ],
+      [
+        "Platform invoices and payment transactions",
+        "Current",
+        "Platform billing only: SCRIPE billing tenants",
+      ],
+      [
+        "Platform leads and lead activities",
+        "Fenced",
+        "Move to Platform Sales or CRM when that module exists",
+      ],
+      [
+        "Tenant plans, user subscriptions, and tenant payment gateways",
+        "Fenced",
+        "Do not treat as final Catalog or Finance Lite architecture",
+      ],
+      [
+        "Tenant customer invoices, receipts, refunds, balances, and taxes",
+        "Missing",
+        "Build later in Finance Lite, not by reusing platform billing entities",
+      ],
+    ],
+  },
+// ─── What is Entitlements ──────────────────────────────────
   {
     type: "heading",
     level: 2,

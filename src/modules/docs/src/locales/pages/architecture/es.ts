@@ -20,7 +20,7 @@ export const es = {
         "El frontend utiliza un patrón SOLID View/ViewModel donde las Vistas son UI pura (sin estado ni lógica) y los ViewModels contienen toda la lógica de negocio. El patrón conector separa el enrutamiento de Next.js (Server Components) de la lógica de la aplicación (Client Components).",
       moduleBoundariesTitle: "Límites de los Módulos",
       moduleBoundariesIntro:
-        "Los módulos son islas aisladas. No pueden importar dependencias entre sí. Esto permite un desarrollo independiente, contención de fallos y la capacidad de extraer módulos a repositorios separados.",
+        "Modules have strict code boundaries. This supports future extraction, but extraction is not the same as proven production microservices readiness.",
       withBoundaries: "Con Límites de Módulo",
       withoutBoundaries: "Sin Límites de Módulo",
       communicationPatternsTitle: "Comunicación entre Módulos",
@@ -105,7 +105,7 @@ export const es = {
       frontendModuleTitle: "Plantilla de Módulo Frontend",
       registryTitle: "Registro de Módulos",
       registryIntro:
-        "El registro de módulos rastrea todos los módulos activos en tiempo de ejecución. Se popula durante el inicio de la aplicación cuando se resuelve y registra la implementación IModuleRegistration de cada módulo.",
+        "The current backend modules verified in code are Identity, Entitlements, Compliance, Plugins, and Marketplace, plus host controller labels such as Auth, System, Communication, Media, and Customization. CRM, HRMS, Inventory, Finance, Documents, Workflow, and Service Management are future modules, not current backend modules.",
       communicationTitle: "Patrones de Comunicación entre Módulos",
       pattern1Title: "Patrón 1: Navegación por URL",
       pattern1Content:
@@ -115,7 +115,7 @@ export const es = {
         "Almacenar solo el ID de la entidad del módulo externo. Nunca incrustar la entidad completa.",
       pattern3Title: "Patrón 3: Bus de Eventos Central (Core Event Bus)",
       pattern3Content:
-        "Publicar y suscribirse a eventos a través de un bus de eventos compartido en @core/. (Patrón futuro, aún no implementado).",
+        "Domain events currently dispatch in-process. RabbitMQ is a placeholder fallback, so do not use this as proof of true distributed microservices.",
       boundaryWarning:
         "Los límites de los módulos son ley absoluta. Si necesitas compartir código entre módulos, DEBE ir en @core/. Cualquier importación desde @modules/{other}/ es una violación y será rechazada en la revisión de código.",
     },

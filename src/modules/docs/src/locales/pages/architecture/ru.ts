@@ -20,7 +20,7 @@ export const ru = {
         "Во фронтенде используется паттерн SOLID View/ViewModel, где Views (представления) — это чистый UI (без состояния и логики), а ViewModels содержат всю бизнес-логику. Паттерн коннектора отделяет маршрутизацию Next.js (Server Components) от логики приложения (Client Components).",
       moduleBoundariesTitle: "Границы модулей",
       moduleBoundariesIntro:
-        "Модули — это изолированные острова. Они не могут импортировать друг друга. Это позволяет осуществлять независимую разработку, изолировать сбои и извлекать модули в отдельные репозитории.",
+        "Modules have strict code boundaries. This supports future extraction, but extraction is not the same as proven production microservices readiness.",
       withBoundaries: "С границами модулей",
       withoutBoundaries: "Без границ модулей",
       communicationPatternsTitle: "Кросс-модульная коммуникация",
@@ -105,7 +105,7 @@ export const ru = {
       frontendModuleTitle: "Шаблон фронтенд-модуля",
       registryTitle: "Реестр модулей",
       registryIntro:
-        "Реестр модулей отслеживает все активные модули во время выполнения. Он заполняется при запуске приложения, когда разрешается и регистрируется реализация IModuleRegistration каждого модуля.",
+        "The current backend modules verified in code are Identity, Entitlements, Compliance, Plugins, and Marketplace, plus host controller labels such as Auth, System, Communication, Media, and Customization. CRM, HRMS, Inventory, Finance, Documents, Workflow, and Service Management are future modules, not current backend modules.",
       communicationTitle: "Паттерны кросс-модульной коммуникации",
       pattern1Title: "Паттерн 1: URL-навигация",
       pattern1Content:
@@ -115,7 +115,7 @@ export const ru = {
         "Храните только ID сущности внешнего модуля. Никогда не встраивайте сущность целиком.",
       pattern3Title: "Паттерн 3: Core Event Bus",
       pattern3Content:
-        "Публикация и подписка на события через общую шину событий в @core/. Будущий паттерн — еще не реализован.",
+        "Domain events currently dispatch in-process. RabbitMQ is a placeholder fallback, so do not use this as proof of true distributed microservices.",
       boundaryWarning:
         "Границы модулей — абсолютный закон. Если вам нужно поделиться кодом между модулями, он ДОЛЖЕН быть размещен в @core/. Любой импорт из @modules/{other}/ является нарушением и будет отклонен при код-ревью.",
     },

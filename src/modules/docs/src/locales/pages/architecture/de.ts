@@ -20,7 +20,7 @@ export const de = {
         "Das Frontend verwendet ein SOLID View/ViewModel-Muster, bei dem Views reine Benutzeroberflächen sind (kein State, keine Logik) und ViewModels die gesamte Geschäftslogik enthalten. Das Connector-Muster trennt das Next.js-Routing (Server Components) von der Anwendungslogik (Client Components).",
       moduleBoundariesTitle: "Modulgrenzen",
       moduleBoundariesIntro:
-        "Module sind isolierte Inseln. Sie können nicht voneinander importieren. Dies ermöglicht unabhängige Entwicklung, isolierte Fehler und die Möglichkeit, Module in separate Repositories auszulagern.",
+        "Modules have strict code boundaries. This supports future extraction, but extraction is not the same as proven production microservices readiness.",
       withBoundaries: "Mit Modulgrenzen",
       withoutBoundaries: "Ohne Modulgrenzen",
       communicationPatternsTitle: "Modulübergreifende Kommunikation",
@@ -105,7 +105,7 @@ export const de = {
       frontendModuleTitle: "Frontend-Modul Template",
       registryTitle: "Modul-Registry",
       registryIntro:
-        "Die Modul-Registry verfolgt alle aktiven Module zur Laufzeit. Sie wird während des Anwendungsstarts gefüllt, wenn die IModuleRegistration-Implementierung jedes Moduls aufgelöst und registriert wird.",
+        "The current backend modules verified in code are Identity, Entitlements, Compliance, Plugins, and Marketplace, plus host controller labels such as Auth, System, Communication, Media, and Customization. CRM, HRMS, Inventory, Finance, Documents, Workflow, and Service Management are future modules, not current backend modules.",
       communicationTitle: "Modulübergreifende Kommunikationsmuster",
       pattern1Title: "Muster 1: URL-Navigation",
       pattern1Content:
@@ -115,7 +115,7 @@ export const de = {
         "Speichern Sie nur die Entitäts-ID des fremden Moduls. Betten Sie niemals die gesamte Entität ein.",
       pattern3Title: "Muster 3: Core Event Bus",
       pattern3Content:
-        "Veröffentlichen und Abonnieren von Ereignissen über einen gemeinsamen Event-Bus in @core/. (Zukünftiges Muster).",
+        "Domain events currently dispatch in-process. RabbitMQ is a placeholder fallback, so do not use this as proof of true distributed microservices.",
       boundaryWarning:
         "Modulgrenzen sind absolut verbindlich. Wenn Sie Code zwischen Modulen teilen müssen, MUSS dieser in @core/ abgelegt werden. Jeder Import aus @modules/{other}/ ist ein Verstoß und wird beim Code-Review abgelehnt.",
     },

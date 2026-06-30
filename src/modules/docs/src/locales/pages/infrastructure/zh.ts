@@ -207,13 +207,16 @@ export const zh = {
       description: "YARP 反向代理、模块分离技术、IIS 部署以及 Linux Kestrel 启动指南。",
       intro: "SCRIPE 面向生产环境的灵活部署之道。",
       yarpTitle: "YARP API 网关",
-      yarpIntro: "路由中心：负责流量分发、SSL 卸载以及针对微服务端口的代理与负载均衡。",
+      yarpIntro:
+        "YARP is registered only when Architecture:Mode=Microservice, MODULE_NAME=Gateway, and ServiceDiscovery has services. Gateway exposes no business controllers; it proxies to configured backend roles.",
       moduleTitle: "模块控制系统",
-      moduleIntro: "环境变量直接控制编译包是否只加载指定业务逻辑以降低内存。",
+      moduleIntro:
+        "MODULE_NAME now represents a server role, not always a pure module. Empty MODULE_NAME loads the full modular monolith. Identity/Auth are composite roles that load Identity plus Entitlements for signup. Gateway loads no business modules.",
       modesTitle: "多形态部署模式",
       monolithTitle: "单体模式 (Monolith)",
-      microservicesTitle: "微服务模式 (Microservices)",
-      portNote: "微服务运行时会在独立的端口唤醒，再由代理接管入口映射。",
+      microservicesTitle: "Server Roles / Future Microservices",
+      portNote:
+        "Do not claim true microservices readiness until RabbitMQ/distributed event delivery replaces the current in-process fallback and startup tests prove the topology.",
       iisTitle: "IIS (Windows Server) 部署指南",
       iisStep1Title: "1. 产出发布包",
       iisStep1Desc: "使用 dotnet publish 产生独立二进制运行库。",

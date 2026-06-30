@@ -3,8 +3,38 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
   { type: "paragraph", contentKey: "commercial.deploymentModes.intro" },
-
-  // ─── Mode Comparison ────────────────────────────────────
+  {
+    type: "table",
+    headers: ["Deployment Claim", "Current Backend Reality", "Do Not Overclaim"],
+    rows: [
+      [
+        "Monolith / modular monolith",
+        "Supported: one host loads the verified backend modules together",
+        "Safe current default",
+      ],
+      [
+        "Server roles",
+        "Supported in code for Gateway, Identity/Auth composite, Entitlements, Compliance, Plugins, and Marketplace",
+        "A server role is not automatically a pure microservice",
+      ],
+      [
+        "Gateway",
+        "YARP maps only when Architecture:Mode=Microservice, MODULE_NAME=Gateway, and ServiceDiscovery has services",
+        "Do not claim business APIs run inside the Gateway host",
+      ],
+      [
+        "True microservices",
+        "Partial: process roles exist, but cross-process events/outbox/inbox are not proven as distributed runtime",
+        "Do not sell as fully microservices-ready yet",
+      ],
+      [
+        "CRM, HR, Inventory, Finance",
+        "Future modules, not current backend modules",
+        "Do not present them as installed today",
+      ],
+    ],
+  },
+// ─── Mode Comparison ────────────────────────────────────
   {
     type: "heading",
     level: 2,
@@ -81,7 +111,7 @@ const sections: DocSection[] = [
 │          Single Process              │
 │                                      │
 │  ┌──────────┐  ┌──────────┐         │
-│  │ Identity │  │    HR    │  ...    │
+│  │ Identity │  │    Entitlements    │  ...    │
 │  └──────────┘  └──────────┘         │
 │                                      │
 │  ┌──────────────────────────────┐   │
@@ -105,11 +135,11 @@ const sections: DocSection[] = [
     code: `┌──────────────────────────────────────────────┐
 │              API Gateway (YARP)               │
 │          Route /api/identity → svc1           │
-│          Route /api/hr       → svc2           │
+│          Route /api/entitlements       → svc2           │
 └────────┬──────────┬──────────┬───────────────┘
          │          │          │
     ┌────▼────┐ ┌───▼────┐ ┌──▼──────┐
-    │Identity │ │   HR   │ │Inventory│
+    │Identity │ │   Entitlements   │ │Compliance│
     │ Service │ │Service │ │ Service │
     └────┬────┘ └───┬────┘ └──┬──────┘
          │          │          │
@@ -135,7 +165,7 @@ const sections: DocSection[] = [
 └────────┬──────────┬──────────┬──────────┬───────────┘
          │          │          │          │
     ┌────▼────┐ ┌───▼────┐ ┌──▼──────┐ ┌▼────────┐
-    │Identity │ │   HR   │ │Inventory│ │ Finance │
+    │Identity │ │   Entitlements   │ │Compliance│ │ Plugins │
     │ Service │ │Service │ │ Service │ │ Service │
     └────┬────┘ └───┬────┘ └──┬──────┘ └┬────────┘
          │          │          │          │

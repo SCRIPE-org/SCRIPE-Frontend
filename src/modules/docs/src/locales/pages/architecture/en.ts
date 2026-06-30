@@ -20,7 +20,7 @@ export const en = {
         "The frontend uses a SOLID View/ViewModel pattern where Views are pure UI (no state, no logic) and ViewModels contain all business logic. The connector pattern separates Next.js routing (Server Components) from application logic (Client Components).",
       moduleBoundariesTitle: "Module Boundaries",
       moduleBoundariesIntro:
-        "Modules are isolated islands. They cannot import from each other. This enables independent development, isolated failures, and the ability to extract modules to separate repositories.",
+        "Modules have strict code boundaries. This supports future extraction, but extraction is not the same as proven production microservices readiness.",
       withBoundaries: " With Module Boundaries",
       withoutBoundaries: " Without Module Boundaries",
       communicationPatternsTitle: "Cross-Module Communication",
@@ -95,7 +95,7 @@ export const en = {
       description:
         "Module isolation rules, backend/frontend templates, module registry, and cross-module communication.",
       intro:
-        "SCRIPE uses a strict module system where each module is an isolated island with clear boundaries. Modules cannot import from each other  they communicate only through URLs, shared IDs, or the core event bus. This ensures independence, testability, and the ability to extract modules to separate repositories.",
+        "SCRIPE uses a modular-monolith backend today. Modules are separated in code and can be loaded by server role, but true independent microservices require distributed messaging that is not implemented yet.",
       isolationRulesTitle: "Module Isolation Rules",
       allowedImportsTitle: " Allowed Imports",
       forbiddenImportsTitle: " Forbidden Imports",
@@ -105,7 +105,7 @@ export const en = {
       frontendModuleTitle: "Frontend Module Template",
       registryTitle: "Module Registry",
       registryIntro:
-        "The module registry tracks all active modules at runtime. It is populated during application startup when each module's IModuleRegistration implementation is resolved and registered.",
+        "The current backend modules verified in code are Identity, Entitlements, Compliance, Plugins, and Marketplace, plus host controller labels such as Auth, System, Communication, Media, and Customization. CRM, HRMS, Inventory, Finance, Documents, Workflow, and Service Management are future modules, not current backend modules.",
       communicationTitle: "Cross-Module Communication Patterns",
       pattern1Title: "Pattern 1: URL Navigation",
       pattern1Content:
@@ -114,7 +114,7 @@ export const en = {
       pattern2Content: "Store only the foreign module's entity ID. Never embed the whole entity.",
       pattern3Title: "Pattern 3: Core Event Bus",
       pattern3Content:
-        "Publish and subscribe to events through a shared event bus in @core/. Future pattern  not yet implemented.",
+        "Domain events currently dispatch in-process. RabbitMQ is a placeholder fallback, so do not use this as proof of true distributed microservices.",
       boundaryWarning:
         "Module boundaries are absolute law. If you need to share code between modules, it MUST go in @core/. Any import from @modules/{other}/ is a violation and will be caught in code review.",
     },

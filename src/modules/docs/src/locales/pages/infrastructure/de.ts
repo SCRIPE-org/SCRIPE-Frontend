@@ -213,13 +213,16 @@ export const de = {
       description: "YARP-Proxy, Modulsystem, IIS und Kestrel.",
       intro: "Routet Anfragen und ermöglicht den flexiblen Betrieb.",
       yarpTitle: "YARP Gateway",
-      yarpIntro: "Das Gateway übernimmt SSL, Lastverteilung und Routing.",
+      yarpIntro:
+        "YARP is registered only when Architecture:Mode=Microservice, MODULE_NAME=Gateway, and ServiceDiscovery has services. Gateway exposes no business controllers; it proxies to configured backend roles.",
       moduleTitle: "Modulsystem beim Start",
-      moduleIntro: "Gesteuert über die MODULE_NAME Umgebungsvariable.",
+      moduleIntro:
+        "MODULE_NAME now represents a server role, not always a pure module. Empty MODULE_NAME loads the full modular monolith. Identity/Auth are composite roles that load Identity plus Entitlements for signup. Gateway loads no business modules.",
       modesTitle: "Deployment-Modi",
       monolithTitle: "Monolith-Modus",
-      microservicesTitle: "Microservices-Modus",
-      portNote: "Jeder Service lauscht im Microservice-Modus auf einem anderen Port.",
+      microservicesTitle: "Server Roles / Future Microservices",
+      portNote:
+        "Do not claim true microservices readiness until RabbitMQ/distributed event delivery replaces the current in-process fallback and startup tests prove the topology.",
       iisTitle: "IIS Deployment",
       iisStep1Title: "1. Applikation veröffentlichen",
       iisStep1Desc: "Führen Sie dotnet publish aus.",

@@ -193,13 +193,16 @@ export const ar = {
       description: "البوابة العكسية لـ YARP وتحديثات الوحدات للنشر على الخوادم.",
       intro: "مرونة في التشغيل تضمن نشر سهل في IIS وغيرها كخدمات منفصلة أو مدمجة.",
       yarpTitle: "بوابة YARP",
-      yarpIntro: "توجه الطلبات بسلاسة نحو الواجهة المقصودة (Module).",
+      yarpIntro:
+        "YARP is registered only when Architecture:Mode=Microservice, MODULE_NAME=Gateway, and ServiceDiscovery has services. Gateway exposes no business controllers; it proxies to configured backend roles.",
       moduleTitle: "نظام الوحدات للتشغيل",
-      moduleIntro: "متغير MODULE_NAME يفصل بين تشغيل التطبيق كوحدة مدمجة أو منفصلة.",
+      moduleIntro:
+        "MODULE_NAME now represents a server role, not always a pure module. Empty MODULE_NAME loads the full modular monolith. Identity/Auth are composite roles that load Identity plus Entitlements for signup. Gateway loads no business modules.",
       modesTitle: "أنماط النشر",
       monolithTitle: "وضع Monolith (النظام المتجانس)",
-      microservicesTitle: "وضع Microservices (الخدمات المصغرة)",
-      portNote: "تستمع كل واجهة إلى منفذ مخصص عبر البوابة.",
+      microservicesTitle: "Server Roles / Future Microservices",
+      portNote:
+        "Do not claim true microservices readiness until RabbitMQ/distributed event delivery replaces the current in-process fallback and startup tests prove the topology.",
       iisTitle: "النشر في IIS",
       iisStep1Title: "1. نشر التطبيق",
       iisStep1Desc: "تشغيل أمر dotnet publish لنشر الملفات.",

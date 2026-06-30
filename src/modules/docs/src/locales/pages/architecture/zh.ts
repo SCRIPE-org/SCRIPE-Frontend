@@ -19,7 +19,7 @@ export const zh = {
         "前端使用 SOLID View/ViewModel 模式，其中视图 (View) 是纯 UI（无状态、无逻辑），而视图模型 (ViewModel) 包含所有业务逻辑。连接器模式将 Next.js 路由（服务端组件）与应用逻辑（客户端组件）分离。",
       moduleBoundariesTitle: "模块边界",
       moduleBoundariesIntro:
-        "模块是孤立的岛屿。它们不能相互导入代码。这实现了独立开发、隔离故障，以及将模块提取到独立仓库的能力。",
+        "Modules have strict code boundaries. This supports future extraction, but extraction is not the same as proven production microservices readiness.",
       withBoundaries: "有模块边界",
       withoutBoundaries: "无模块边界",
       communicationPatternsTitle: "跨模块通信",
@@ -100,14 +100,15 @@ export const zh = {
       frontendModuleTitle: "前端模块模板",
       registryTitle: "模块注册表",
       registryIntro:
-        "模块注册表在运行时跟踪所有活动模块。它在应用程序启动时，当解析并注册每个模块的 IModuleRegistration 实现时被填充。",
+        "The current backend modules verified in code are Identity, Entitlements, Compliance, Plugins, and Marketplace, plus host controller labels such as Auth, System, Communication, Media, and Customization. CRM, HRMS, Inventory, Finance, Documents, Workflow, and Service Management are future modules, not current backend modules.",
       communicationTitle: "跨模块通信模式",
       pattern1Title: "模式 1: URL 导航",
       pattern1Content: "通过标准的 URL 链接导航到另一个模块的页面。不需要导入。",
       pattern2Title: "模式 2: 仅共享 ID",
       pattern2Content: "仅存储外部模块实体的 ID。切勿嵌套整个实体。",
       pattern3Title: "模式 3: 核心事件总线",
-      pattern3Content: "通过 @core/ 中共享的事件总线发布和订阅事件。未来的模式 —— 尚未实现。",
+      pattern3Content:
+        "Domain events currently dispatch in-process. RabbitMQ is a placeholder fallback, so do not use this as proof of true distributed microservices.",
       boundaryWarning:
         "模块边界是绝对的铁律。如果需要在模块之间共享代码，它必须放在 @core/ 中。任何从 @modules/{other}/ 的导入都是违规行为，将在代码审查中被拦截。",
     },

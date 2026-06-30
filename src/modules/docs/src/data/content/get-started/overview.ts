@@ -97,10 +97,10 @@ const sections: DocSection[] = [
     headers: ["Environment Variable", "Mode", "What Loads", "Use Case"],
     rows: [
       ["(empty / unset)", "Monolith", "All modules register", "Development, small deployments"],
-      ["MODULE_NAME=Gateway", "Gateway", "YARP proxy only, no modules", "Microservice router"],
-      ["MODULE_NAME=Identity", "Microservice", "Identity module only", "Independent scaling"],
-      ["MODULE_NAME=Inventory", "Microservice", "Inventory module only", "Independent scaling"],
-      ["MODULE_NAME=Orders", "Microservice", "Orders module only", "Independent scaling"],
+      ["MODULE_NAME=Gateway", "Gateway role", "YARP proxy only, no business controllers", "Edge routing when ServiceDiscovery is configured"],
+      ["MODULE_NAME=Identity", "Composite server role", "Identity + Entitlements services, Auth/signup controllers", "Auth and self-service signup host"],
+      ["MODULE_NAME=Entitlements", "Server role", "Entitlements services and controllers", "Platform billing and feature control"],
+      ["MODULE_NAME=Compliance", "Server role", "Compliance services and controllers", "Compliance API host"],
     ],
   },
   {
@@ -111,12 +111,9 @@ const sections: DocSection[] = [
 var isMonolith = string.IsNullOrEmpty(moduleName);
 var isGateway = moduleName.Equals("Gateway", StringComparison.OrdinalIgnoreCase);
 
-// Gate each module behind a simple check:
-if (isMonolith || moduleName.Equals("Identity", StringComparison.OrdinalIgnoreCase))
-{
-    handlerAssemblies.Add(typeof(Identity.Application.DependencyInjection));
-    builder.Services.AddIdentityModule(builder.Configuration);
-}`,
+// MODULE_NAME is resolved as a server role.
+// Identity/Auth roles intentionally load Identity + Entitlements for signup.
+// Gateway loads no business modules and only maps YARP when ServiceDiscovery exists.`,
     highlightLines: [1, 2, 3],
   },
   {

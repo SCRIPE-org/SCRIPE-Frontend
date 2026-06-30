@@ -227,15 +227,15 @@ export const es = {
         "Cubre cómo las piezas compiladas del Monolito Modular convergen y cómo se despliegan en el mundo real.",
       yarpTitle: "Gateway API con YARP",
       yarpIntro:
-        "El portero de la API que dirige todo el tráfico y resuelve en qué instancia reside el módulo, terminando los certificados SSL.",
+        "YARP is registered only when Architecture:Mode=Microservice, MODULE_NAME=Gateway, and ServiceDiscovery has services. Gateway exposes no business controllers; it proxies to configured backend roles.",
       moduleTitle: "Sistema de Módulos (Runtime)",
       moduleIntro:
-        "El núcleo que en base a un string (MODULE_NAME) determina si debe correr pesado o liviano en la RAM.",
+        "MODULE_NAME now represents a server role, not always a pure module. Empty MODULE_NAME loads the full modular monolith. Identity/Auth are composite roles that load Identity plus Entitlements for signup. Gateway loads no business modules.",
       modesTitle: "Modos de Operación y Despliegue",
       monolithTitle: "Modo Monolítico",
-      microservicesTitle: "Modo de Microservicios Distribuidos",
+      microservicesTitle: "Server Roles / Future Microservices",
       portNote:
-        "El enrutamiento sabe direccionar los puertos del local host dinámicamente entre el Proxy y el servicio que los arranca.",
+        "Do not claim true microservices readiness until RabbitMQ/distributed event delivery replaces the current in-process fallback and startup tests prove the topology.",
       iisTitle: "Despliegue a Producción (IIS / Windows Server)",
       iisStep1Title: "1. Publicar los Archivos Binarios",
       iisStep1Desc: "Correr el dotnet publish con la configuración final en Release.",

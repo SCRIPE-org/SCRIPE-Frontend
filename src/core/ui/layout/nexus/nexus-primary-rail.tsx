@@ -46,6 +46,7 @@ import { useWorkspaceTransitionContext } from "./nexus-layout";
 import { useNexusPalette } from "./_parts/nexus-theme-utils";
 import { toast } from "@core/ui/use-toast";
 import { startRoutingProgress } from "@core/ui/routing-progress-bar";
+import { usePermissions } from "@core/providers/permission-provider";
 import {
   BackButton,
   Divider,
@@ -60,17 +61,38 @@ interface NexusPrimaryRailProps {
   onOpenAppLauncher?: () => void;
 }
 
-// ── Helper to find the first leaf route with a valid href ─────────────────────
-function findFirstLeafRoute(item: MenuItem): string | null {
-  if (item.href) return item.href;
-  if (item.children && item.children.length > 0) {
-    const sorted = [...item.children].sort((a, b) => a.order - b.order);
-    for (const child of sorted) {
-      const route = findFirstLeafRoute(child);
-      if (route) return route;
+// ── Helper to find the first leaf route with a valid href and permission ──────
+function findFirstLeafRoute(item: MenuItem, canAccessPage: (path: string) => boolean): string | null {
+  // First try to find a route the user has permission to access
+  const findAccessible = (curr: MenuItem): string | null => {
+    if (curr.href && canAccessPage(curr.href)) return curr.href;
+    if (curr.children && curr.children.length > 0) {
+      const sorted = [...curr.children].sort((a, b) => a.order - b.order);
+      for (const child of sorted) {
+        const route = findAccessible(child);
+        if (route) return route;
+      }
     }
-  }
-  return null;
+    return null;
+  };
+
+  const accessibleRoute = findAccessible(item);
+  if (accessibleRoute) return accessibleRoute;
+
+  // Fallback to absolute first leaf route if none are accessible
+  const findAny = (curr: MenuItem): string | null => {
+    if (curr.href) return curr.href;
+    if (curr.children && curr.children.length > 0) {
+      const sorted = [...curr.children].sort((a, b) => a.order - b.order);
+      for (const child of sorted) {
+        const route = findAny(child);
+        if (route) return route;
+      }
+    }
+    return null;
+  };
+
+  return findAny(item);
 }
 
 // ── Primary Rail ──────────────────────────────────────────────────────────────
@@ -80,6 +102,7 @@ export function NexusPrimaryRail({
   onOpenAppLauncher,
 }: NexusPrimaryRailProps) {
   const router = useRouter();
+  const { canAccessPage } = usePermissions();
   const { logoUrl: tenantLogoUrl } = useTenantBranding();
   const {
     activeWorkspace,
@@ -106,13 +129,13 @@ export function NexusPrimaryRail({
         onTogglePanel();
       }
       // Auto nav to first page of that menu item
-      const firstRoute = findFirstLeafRoute(item);
+      const firstRoute = findFirstLeafRoute(item, canAccessPage);
       if (firstRoute) {
         startRoutingProgress();
         router.push(firstRoute);
       }
     },
-    [setActiveRootItemId, isPanelCollapsed, onTogglePanel, router]
+    [setActiveRootItemId, isPanelCollapsed, onTogglePanel, router, canAccessPage]
   );
 
   // ── Handle module workspace click → full workspace transition ────────────

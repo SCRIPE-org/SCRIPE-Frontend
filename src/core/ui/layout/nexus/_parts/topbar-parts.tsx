@@ -19,6 +19,7 @@ import { useWorkspace } from "@core/providers/workspace-provider";
 import { useWorkspaceTransitionContext } from "../nexus-layout";
 import { cn } from "@core/common/utils";
 import type { MenuItem } from "@core/navigation";
+import { usePermissions } from "@core/providers/permission-provider";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -61,16 +62,37 @@ export interface TopbarBreadcrumbsProps {
   displayPageName: string;
 }
 
-function findFirstLeafRoute(item: MenuItem): string | null {
-  if (item.href) return item.href;
-  if (item.children && item.children.length > 0) {
-    const sorted = [...item.children].sort((a, b) => a.order - b.order);
-    for (const child of sorted) {
-      const route = findFirstLeafRoute(child);
-      if (route) return route;
+function findFirstLeafRoute(item: MenuItem, canAccessPage: (path: string) => boolean): string | null {
+  // First try to find a route the user has permission to access
+  const findAccessible = (curr: MenuItem): string | null => {
+    if (curr.href && canAccessPage(curr.href)) return curr.href;
+    if (curr.children && curr.children.length > 0) {
+      const sorted = [...curr.children].sort((a, b) => a.order - b.order);
+      for (const child of sorted) {
+        const route = findAccessible(child);
+        if (route) return route;
+      }
     }
-  }
-  return null;
+    return null;
+  };
+
+  const accessibleRoute = findAccessible(item);
+  if (accessibleRoute) return accessibleRoute;
+
+  // Fallback to absolute first leaf route if none are accessible
+  const findAny = (curr: MenuItem): string | null => {
+    if (curr.href) return curr.href;
+    if (curr.children && curr.children.length > 0) {
+      const sorted = [...curr.children].sort((a, b) => a.order - b.order);
+      for (const child of sorted) {
+        const route = findAny(child);
+        if (route) return route;
+      }
+    }
+    return null;
+  };
+
+  return findAny(item);
 }
 
 export function TopbarBreadcrumbs({
@@ -84,6 +106,7 @@ export function TopbarBreadcrumbs({
     useWorkspace();
   const { switchWorkspace } = useWorkspaceTransitionContext();
   const { language } = useI18n();
+  const { canAccessPage } = usePermissions();
   const router = useRouter();
   const tenantCode = useAppStore((s) => s.tenantCode);
 
@@ -205,7 +228,7 @@ export function TopbarBreadcrumbs({
             <button
               type="button"
               onClick={() => {
-                const route = findFirstLeafRoute(activeRootItem);
+                const route = findFirstLeafRoute(activeRootItem, canAccessPage);
                 if (route) {
                   startRoutingProgress();
                   router.push(route);
@@ -251,7 +274,7 @@ export function TopbarBreadcrumbs({
                         if (!isActive) {
                           setActiveRootItemId(item.id);
                         }
-                        const route = findFirstLeafRoute(item);
+                        const route = findFirstLeafRoute(item, canAccessPage);
                         if (route) {
                           startRoutingProgress();
                           router.push(route);

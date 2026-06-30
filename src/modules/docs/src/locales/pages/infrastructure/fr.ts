@@ -226,15 +226,15 @@ export const fr = {
         "Explication de la façon dont le Monolithe Modulaire est réparti sur les serveurs physiques et exposé au monde extérieur.",
       yarpTitle: "Passerelle YARP (API Gateway)",
       yarpIntro:
-        "Agit comme un pare-feu et un routeur qui transmet de manière intelligente la requête API au bon sous-module.",
+        "YARP is registered only when Architecture:Mode=Microservice, MODULE_NAME=Gateway, and ServiceDiscovery has services. Gateway exposes no business controllers; it proxies to configured backend roles.",
       moduleTitle: "Système de Modules",
       moduleIntro:
-        "La variable MODULE_NAME allège la charge de RAM en indiquant au binaire de ne charger en mémoire que le code de son microservice attribué.",
+        "MODULE_NAME now represents a server role, not always a pure module. Empty MODULE_NAME loads the full modular monolith. Identity/Auth are composite roles that load Identity plus Entitlements for signup. Gateway loads no business modules.",
       modesTitle: "Modes de Déploiement",
       monolithTitle: "Mode Monolithe",
-      microservicesTitle: "Mode Microservices",
+      microservicesTitle: "Server Roles / Future Microservices",
       portNote:
-        "Sous le mode Microservices, chaque sous-réseau utilise une écoute de port dédiée pour l'acheminement des requêtes réseau.",
+        "Do not claim true microservices readiness until RabbitMQ/distributed event delivery replaces the current in-process fallback and startup tests prove the topology.",
       iisTitle: "Déploiement sous IIS (Windows Server)",
       iisStep1Title: "1. Publier l'Application",
       iisStep1Desc: "Générez la distribution finale via la commande dotnet publish.",
