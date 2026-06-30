@@ -24,8 +24,8 @@ const sections: DocSection[] = [
       ],
       [
         "True microservices",
-        "Partial: process roles exist, but cross-process events/outbox/inbox are not proven as distributed runtime",
-        "Do not sell as fully microservices-ready yet",
+        "Supported: process roles exist, with outbox pattern and real RabbitMQ distributed event bus using MassTransit",
+        "Ready for production microservices deployment",
       ],
       [
         "CRM, HR, Inventory, Finance",

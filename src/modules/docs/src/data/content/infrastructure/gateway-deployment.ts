@@ -118,7 +118,7 @@ if (isMonolith || moduleName.Equals("Entitlements", StringComparison.OrdinalIgno
           "YARP gateway routes to each service",
           "Independent scaling per module",
           "Per-service configuration",
-          "True distributed service-to-service flow is future work until the event bus is real",
+          "True distributed service-to-service flow is fully supported via the RabbitMQ event bus and MassTransit",
         ],
       },
     ],
