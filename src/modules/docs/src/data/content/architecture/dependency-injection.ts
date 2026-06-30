@@ -258,7 +258,6 @@ public class ServiceDiscoveryOptions
         "Scoped",
         "Enqueue/schedule background jobs",
       ],
-      ["IFeatureFlagService", "FeatureFlagService", "Scoped", "Feature flag evaluation"],
       ["IIdEncryptionService", "IdEncryptionService", "Singleton", "External ID obfuscation"],
       ["IDataScopeService", "DataScopeService", "Scoped", "Tenant data scoping"],
       ["ICurrentUser", "CurrentUserService", "Scoped", "JWT claims extraction"],
