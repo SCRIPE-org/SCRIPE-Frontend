@@ -394,7 +394,7 @@ export const ar = {
       tblDbR5C2: "⚙️ للتطوير فقط",
       tblDbR5C3: "للتطوير المحلي والاختبار",
     },
-  
+
     pricingShowcase: {
       title: "خطط الأسعار",
       description: "أسعار بسيطة وشفافة مصممة للشركات الناشئة والمتقدمة على حد سواء.",
@@ -405,15 +405,22 @@ export const ar = {
       personaSelectorInvestor: "أنا مستثمر",
       personaSelectorCofounder: "أريد أن أكون مؤسسًا مشاركًا",
       personaSelectorPartner: "أريد أن أكون شريكًا",
-      personaSelectorInvestorDesc: "تعرف على عائد الاستثمار لنمو SaaS وجولات التمويل ومقاييس توقعات التوسع.",
-      personaSelectorCofounderDesc: "استكشف استراتيجيتنا التأسيسية وأدوارنا ومسارنا للشراكة المباشرة.",
-      personaSelectorPartnerDesc: "شاهد كيف يقوم متكاملو الأنظمة والاستشاريون والمطورون بتوسيع حصة إيرادات SaaS.",
-      personaSelectorInvestorBenefit1: "متوسط عائد استثمار بنسبة 250% على مدى 3 سنوات من مقاييس التوسع المتوقعة.",
-      personaSelectorInvestorBenefit2: "رؤية كاملة لمعدلات الإيرادات المتكررة السنوية والشهرية ومعدلات توقف المستخدمين عن الخدمة.",
-      personaSelectorInvestorBenefit3: "فرصة الاستحواذ على سوق برمجيات تخطيط موارد المؤسسات التأسيسية.",
+      personaSelectorInvestorDesc:
+        "تعرف على عائد الاستثمار لنمو SaaS وجولات التمويل ومقاييس توقعات التوسع.",
+      personaSelectorCofounderDesc:
+        "استكشف استراتيجيتنا التأسيسية وأدوارنا ومسارنا للشراكة المباشرة.",
+      personaSelectorPartnerDesc:
+        "شاهد كيف يقوم متكاملو الأنظمة والاستشاريون والمطورون بتوسيع حصة إيرادات SaaS.",
+      personaSelectorInvestorBenefit1:
+        "متوسط عائد استثمار بنسبة 250% على مدى 3 سنوات من مقاييس التوسع المتوقعة.",
+      personaSelectorInvestorBenefit2:
+        "رؤية كاملة لمعدلات الإيرادات المتكررة السنوية والشهرية ومعدلات توقف المستخدمين عن الخدمة.",
+      personaSelectorInvestorBenefit3:
+        "فرصة الاستحواذ على سوق برمجيات تخطيط موارد المؤسسات التأسيسية.",
       personaSelectorCofounderBenefit1: "حصة ملكية مباشرة وحقوق تصويت على قرارات المنصة.",
       personaSelectorCofounderBenefit2: "الملكية على مسارات البنية التحتية الأكثر نظافة ووحداتية.",
-      personaSelectorCofounderBenefit3: "توجيه استراتيجيات الذهاب إلى السوق العالمية وتكامل القنوات.",
+      personaSelectorCofounderBenefit3:
+        "توجيه استراتيجيات الذهاب إلى السوق العالمية وتكامل القنوات.",
       personaSelectorPartnerBenefit1: "حصة إيرادات متكررة سخية بنسبة 30% لمبيعات القنوات.",
       personaSelectorPartnerBenefit2: "دعم مخصص للمطورين وحقوق العلامة البيضاء.",
       personaSelectorPartnerBenefit3: "شهادة تقنية وإدراج رسمي في السوق.",
@@ -430,7 +437,8 @@ export const ar = {
     partnerJourney: {
       title: "برنامج الشركاء",
       description: "قم ببناء وتكامل وتنمية عملك كشريك رسمي لقنوات SCRIPE.",
-      intro: "انضم إلى شبكتنا العالمية من متكاملي الأنظمة والاستشاريين الذين يقدمون حلولاً عالية القيمة.",
+      intro:
+        "انضم إلى شبكتنا العالمية من متكاملي الأنظمة والاستشاريين الذين يقدمون حلولاً عالية القيمة.",
     },
   },
 };

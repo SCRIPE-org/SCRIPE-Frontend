@@ -211,20 +211,24 @@ export function RouteGuard({ children }: RouteGuardProps) {
         }
 
         if (!canAccessPage(pathname)) {
-          appLogger.debug("[RouteGuard] Access denied by permission system — checking for alternative workspace pages");
+          appLogger.debug(
+            "[RouteGuard] Access denied by permission system — checking for alternative workspace pages"
+          );
           const workspaceRouteMap = useNavigationStore.getState().workspaceRouteMap;
           let currentWorkspaceKey: string | null = null;
           for (const [wsKey, routes] of Object.entries(workspaceRouteMap)) {
-            if (routes.includes(pathname) || routes.some(r => pathname.startsWith(r + "/"))) {
+            if (routes.includes(pathname) || routes.some((r) => pathname.startsWith(r + "/"))) {
               currentWorkspaceKey = wsKey;
               break;
             }
           }
           if (currentWorkspaceKey) {
             const workspaceRoutes = workspaceRouteMap[currentWorkspaceKey] || [];
-            const accessibleRoute = workspaceRoutes.find(r => canAccessPage(r));
+            const accessibleRoute = workspaceRoutes.find((r) => canAccessPage(r));
             if (accessibleRoute) {
-              appLogger.debug(`[RouteGuard] Redirecting to alternative accessible workspace route: ${accessibleRoute}`);
+              appLogger.debug(
+                `[RouteGuard] Redirecting to alternative accessible workspace route: ${accessibleRoute}`
+              );
               hasRedirected.current = true;
               router.replace(accessibleRoute);
               return;
@@ -255,20 +259,24 @@ export function RouteGuard({ children }: RouteGuardProps) {
         }
 
         if (!hasRouteAccess(pathname)) {
-          appLogger.debug("[RouteGuard] Access denied by navigation store — checking for alternative workspace pages");
+          appLogger.debug(
+            "[RouteGuard] Access denied by navigation store — checking for alternative workspace pages"
+          );
           const workspaceRouteMap = useNavigationStore.getState().workspaceRouteMap;
           let currentWorkspaceKey: string | null = null;
           for (const [wsKey, routes] of Object.entries(workspaceRouteMap)) {
-            if (routes.includes(pathname) || routes.some(r => pathname.startsWith(r + "/"))) {
+            if (routes.includes(pathname) || routes.some((r) => pathname.startsWith(r + "/"))) {
               currentWorkspaceKey = wsKey;
               break;
             }
           }
           if (currentWorkspaceKey) {
             const workspaceRoutes = workspaceRouteMap[currentWorkspaceKey] || [];
-            const accessibleRoute = workspaceRoutes.find(r => canAccessPage(r));
+            const accessibleRoute = workspaceRoutes.find((r) => canAccessPage(r));
             if (accessibleRoute) {
-              appLogger.debug(`[RouteGuard] Redirecting to alternative accessible workspace route: ${accessibleRoute}`);
+              appLogger.debug(
+                `[RouteGuard] Redirecting to alternative accessible workspace route: ${accessibleRoute}`
+              );
               hasRedirected.current = true;
               router.replace(accessibleRoute);
               return;

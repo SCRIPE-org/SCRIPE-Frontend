@@ -51,15 +51,18 @@ export function DocContent({ sections }: DocContentProps) {
             const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
               e.preventDefault();
               const url = `${window.location.origin}${window.location.pathname}#${id}`;
-              navigator.clipboard.writeText(url).then(() => {
-                window.history.pushState(null, "", `#${id}`);
-                const element = document.getElementById(id);
-                if (element) {
-                  element.scrollIntoView({ behavior: "smooth" });
-                }
-              }).catch((err) => {
-                console.error("Failed to copy anchor link: ", err);
-              });
+              navigator.clipboard
+                .writeText(url)
+                .then(() => {
+                  window.history.pushState(null, "", `#${id}`);
+                  const element = document.getElementById(id);
+                  if (element) {
+                    element.scrollIntoView({ behavior: "smooth" });
+                  }
+                })
+                .catch((err) => {
+                  console.error("Failed to copy anchor link: ", err);
+                });
             };
 
             return (
@@ -68,7 +71,7 @@ export function DocContent({ sections }: DocContentProps) {
                 <a
                   href={`#${id}`}
                   onClick={handleAnchorClick}
-                  className="docs-heading-anchor-link ml-2 opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
+                  className="docs-heading-anchor-link ml-2 opacity-0 transition-opacity focus:opacity-100 group-hover:opacity-100"
                   aria-label={`Link to ${t(section.titleKey)}`}
                 >
                   <svg
@@ -81,7 +84,7 @@ export function DocContent({ sections }: DocContentProps) {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="inline-block text-muted-foreground hover:text-primary transition-colors"
+                    className="inline-block text-muted-foreground transition-colors hover:text-primary"
                   >
                     <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                     <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
@@ -213,21 +216,11 @@ export function DocContent({ sections }: DocContentProps) {
 
           case "interactive-terminal":
             return (
-              <InteractiveTerminal
-                key={key}
-                tabs={section.tabs}
-                titleKey={section.titleKey}
-              />
+              <InteractiveTerminal key={key} tabs={section.tabs} titleKey={section.titleKey} />
             );
 
           case "file-explorer":
-            return (
-              <FileExplorer
-                key={key}
-                moduleName={section.moduleName}
-                files={section.files}
-              />
-            );
+            return <FileExplorer key={key} moduleName={section.moduleName} files={section.files} />;
 
           case "interactive-diagram":
             return (
@@ -243,13 +236,7 @@ export function DocContent({ sections }: DocContentProps) {
             return <BilingualGlossary key={key} terms={section.terms} />;
 
           case "compatibility-matrix":
-            return (
-              <CompatibilityMatrix
-                key={key}
-                headers={section.headers}
-                rows={section.rows}
-              />
-            );
+            return <CompatibilityMatrix key={key} headers={section.headers} rows={section.rows} />;
 
           case "pipeline-simulator":
             return (
@@ -265,24 +252,14 @@ export function DocContent({ sections }: DocContentProps) {
 
           case "schema-visualizer":
             return (
-              <SchemaVisualizer
-                key={key}
-                tables={section.tables}
-                titleKey={section.titleKey}
-              />
+              <SchemaVisualizer key={key} tables={section.tables} titleKey={section.titleKey} />
             );
 
           case "cli-simulator":
             return <CliSimulator key={key} titleKey={section.titleKey} />;
 
           case "lifecycle-tracer":
-            return (
-              <LifecycleTracer
-                key={key}
-                steps={section.steps}
-                titleKey={section.titleKey}
-              />
-            );
+            return <LifecycleTracer key={key} steps={section.steps} titleKey={section.titleKey} />;
 
           case "persona-selector":
             return <PersonaSelector key={key} />;

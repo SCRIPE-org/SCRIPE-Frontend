@@ -144,6 +144,10 @@ registerPage({
   category: "modules",
   order: 4,
   sections,
-  relatedSlugs: ["modules/security-monitoring", "modules/ecosystem-recycle-bin", "architecture/cqrs-pipeline"],
+  relatedSlugs: [
+    "modules/security-monitoring",
+    "modules/ecosystem-recycle-bin",
+    "architecture/cqrs-pipeline",
+  ],
   lastUpdated: "2026-06-28",
 });

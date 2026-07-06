@@ -359,7 +359,7 @@
 
 /* ─── Page Title ──────────────────────────────────────────────────────── */
 .docs-page-title {
-  font-family: var(--font-display, 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif);
+  font-family: var(--font-display, "Plus Jakarta Sans", "Inter", system-ui, sans-serif);
   font-size: 2.25em;
   font-weight: 800;
   color: hsl(var(--foreground));
@@ -377,7 +377,7 @@
 
 /* ─── Section Headings ────────────────────────────────────────────────── */
 .docs-h2 {
-  font-family: var(--font-display, 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif);
+  font-family: var(--font-display, "Plus Jakarta Sans", "Inter", system-ui, sans-serif);
   font-size: 1.625em;
   font-weight: 700;
   color: hsl(var(--foreground));
@@ -390,7 +390,7 @@
 }
 
 .docs-h3 {
-  font-family: var(--font-display, 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif);
+  font-family: var(--font-display, "Plus Jakarta Sans", "Inter", system-ui, sans-serif);
   font-size: 1.375em;
   font-weight: 600;
   color: hsl(var(--foreground));
@@ -401,7 +401,7 @@
 }
 
 .docs-h4 {
-  font-family: var(--font-display, 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif);
+  font-family: var(--font-display, "Plus Jakarta Sans", "Inter", system-ui, sans-serif);
   font-size: 1.125em;
   font-weight: 600;
   color: hsl(var(--foreground));
@@ -461,14 +461,14 @@
 }
 
 .docs-code-filename {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
   font-size: 0.775rem;
   color: oklch(0.72 0.015 265);
   font-weight: 500;
 }
 
 .docs-code-lang {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
   font-size: 0.7rem;
   font-weight: 600;
   color: oklch(0.65 0.22 265);
@@ -534,7 +534,7 @@
 }
 
 .docs-code-pre code {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
   font-size: inherit;
   line-height: inherit;
   color: oklch(0.88 0.01 265);
@@ -545,16 +545,37 @@
 }
 
 /* Syntax highlighting — always dark background */
-.docs-code-pre .token-keyword  { color: #c678dd; }
-.docs-code-pre .token-string   { color: #98c379; }
-.docs-code-pre .token-number   { color: #d19a66; }
-.docs-code-pre .token-comment  { color: #5c6370; font-style: italic; }
-.docs-code-pre .token-type     { color: #e5c07b; }
-.docs-code-pre .token-function { color: #61afef; }
-.docs-code-pre .token-operator { color: #56b6c2; }
-.docs-code-pre .token-punctuation { color: #abb2bf; }
-.docs-code-pre .token-decorator  { color: #e06c75; }
-.docs-code-pre .token-property   { color: #e06c75; }
+.docs-code-pre .token-keyword {
+  color: #c678dd;
+}
+.docs-code-pre .token-string {
+  color: #98c379;
+}
+.docs-code-pre .token-number {
+  color: #d19a66;
+}
+.docs-code-pre .token-comment {
+  color: #5c6370;
+  font-style: italic;
+}
+.docs-code-pre .token-type {
+  color: #e5c07b;
+}
+.docs-code-pre .token-function {
+  color: #61afef;
+}
+.docs-code-pre .token-operator {
+  color: #56b6c2;
+}
+.docs-code-pre .token-punctuation {
+  color: #abb2bf;
+}
+.docs-code-pre .token-decorator {
+  color: #e06c75;
+}
+.docs-code-pre .token-property {
+  color: #e06c75;
+}
 
 .docs-code-line-highlight {
   background: oklch(0.65 0.22 265 / 0.1);
@@ -565,7 +586,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .docs-code-copy { transition: none; }
+  .docs-code-copy {
+    transition: none;
+  }
 }
 
 /* ─── Tab Group ───────────────────────────────────────────────────────── */
@@ -1833,9 +1856,15 @@
   height: 10px;
   border-radius: 50%;
 }
-.dot-red { background: #ef4444; }
-.dot-yellow { background: #f59e0b; }
-.dot-green { background: #10b981; }
+.dot-red {
+  background: #ef4444;
+}
+.dot-yellow {
+  background: #f59e0b;
+}
+.dot-green {
+  background: #10b981;
+}
 
 .docs-terminal-tabs {
   display: flex;
@@ -1932,7 +1961,9 @@
   border-radius: 12px;
   padding: 1.25rem;
   cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+  transition:
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.2s ease;
   position: relative;
   overflow: hidden;
 }
@@ -2024,7 +2055,8 @@
   border-collapse: collapse;
   font-size: 0.85rem;
 }
-.docs-matrix-table th, .docs-matrix-table td {
+.docs-matrix-table th,
+.docs-matrix-table td {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--border);
   text-align: left;
@@ -2120,9 +2152,18 @@
 }
 
 @keyframes pulse-glow {
-  0% { transform: scale(0.9); opacity: 0.6; }
-  50% { transform: scale(1.4); opacity: 1; }
-  100% { transform: scale(0.9); opacity: 0.6; }
+  0% {
+    transform: scale(0.9);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0.6;
+  }
 }
 
 /* Config Builder & Schema cells */
@@ -2168,7 +2209,12 @@
 
 /* Sidebar Collapse Transition */
 .docs-sidebar {
-  transition: width 0.2s ease-in-out, min-width 0.2s ease-in-out, opacity 0.2s ease-in-out, padding 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  transition:
+    width 0.2s ease-in-out,
+    min-width 0.2s ease-in-out,
+    opacity 0.2s ease-in-out,
+    padding 0.2s ease-in-out,
+    border-color 0.2s ease-in-out;
 }
 
 .docs-wrapper.sidebar-collapsed .docs-sidebar {
@@ -2202,7 +2248,9 @@
   color: hsl(var(--muted-foreground));
   border-radius: 4px;
   cursor: pointer;
-  transition: color 0.15s, background-color 0.15s;
+  transition:
+    color 0.15s,
+    background-color 0.15s;
 }
 
 .reader-toolbar-btn:hover {
@@ -2240,6 +2288,3 @@
 .docs-heading-anchor-link svg {
   display: block;
 }
-
-
-

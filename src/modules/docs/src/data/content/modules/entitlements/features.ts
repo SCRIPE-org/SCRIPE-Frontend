@@ -34,7 +34,11 @@ const sections: DocSection[] = [
       ["SortOrder", "int", "Display order in the feature list"],
       ["IsVisibleInUI", "bool", "If false, hidden from edition management UI (internal-only)"],
       ["IsSystem", "bool", "System features are read-only (seeded, cannot be deleted via API)"],
-      ["IsMarketingOnly", "bool", "If true, shown on pricing cards but not enforced by runtime checks"],
+      [
+        "IsMarketingOnly",
+        "bool",
+        "If true, shown on pricing cards but not enforced by runtime checks",
+      ],
       ["CreatedAt", "DateTime", "When the feature was created"],
       ["UpdatedAt", "DateTime?", "Last modification timestamp"],
     ],

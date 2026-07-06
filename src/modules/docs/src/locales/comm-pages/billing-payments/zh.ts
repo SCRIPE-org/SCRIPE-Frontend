@@ -1,3 +1,3 @@
 export const zh = {
-  "Billing & Payments": "账单与支付"
+  "Billing & Payments": "账单与支付",
 };

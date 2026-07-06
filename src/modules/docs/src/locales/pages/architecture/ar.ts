@@ -596,4 +596,3 @@ export const ar = {
     },
   },
 };
-

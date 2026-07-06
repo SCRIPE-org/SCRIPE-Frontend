@@ -8,10 +8,7 @@ interface TerminalTabProps {
 
 export function TerminalTab({ label, isActive, onClick }: TerminalTabProps) {
   return (
-    <button
-      className={`docs-terminal-tab ${isActive ? "active" : ""}`}
-      onClick={onClick}
-    >
+    <button className={`docs-terminal-tab ${isActive ? "active" : ""}`} onClick={onClick}>
       {label}
     </button>
   );

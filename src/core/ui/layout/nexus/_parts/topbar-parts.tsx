@@ -62,7 +62,10 @@ export interface TopbarBreadcrumbsProps {
   displayPageName: string;
 }
 
-function findFirstLeafRoute(item: MenuItem, canAccessPage: (path: string) => boolean): string | null {
+function findFirstLeafRoute(
+  item: MenuItem,
+  canAccessPage: (path: string) => boolean
+): string | null {
   // First try to find a route the user has permission to access
   const findAccessible = (curr: MenuItem): string | null => {
     if (curr.href && canAccessPage(curr.href)) return curr.href;

@@ -1,3 +1,3 @@
 export const zh = {
-  "Tenant Plans": "租户计划"
+  "Tenant Plans": "租户计划",
 };

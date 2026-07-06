@@ -80,9 +80,17 @@ public class OutboxInterceptor : SaveChangesInterceptor
     nodes: [
       { id: "n1", label: "Handler: Entity.Create() + entity.AddDomainEvent()", type: "default" },
       { id: "n2", label: "IUnitOfWork.SaveChangesAsync()", type: "primary" },
-      { id: "n3", label: "OutboxInterceptor: Capture domain events into OutboxMessage records", type: "info" },
+      {
+        id: "n3",
+        label: "OutboxInterceptor: Capture domain events into OutboxMessage records",
+        type: "info",
+      },
       { id: "n4", label: "DB Transaction Commits", type: "success" },
-      { id: "n5", label: "OutboxProcessor (every 30s): Fetch unprocessed messages", type: "default" },
+      {
+        id: "n5",
+        label: "OutboxProcessor (every 30s): Fetch unprocessed messages",
+        type: "default",
+      },
       { id: "n6", label: "IMediator.Publish(domainEvent)", type: "default" },
       { id: "n7", label: "INotificationHandlers execute", type: "success" },
       { id: "n8", label: "Mark OutboxMessage.ProcessedAt = UtcNow", type: "success" },

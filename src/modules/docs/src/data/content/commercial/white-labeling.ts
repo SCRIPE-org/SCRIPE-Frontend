@@ -224,6 +224,10 @@ registerPage({
   category: "commercial-enterprise",
   order: 11,
   sections,
-  relatedSlugs: ["commercial/login-customizer", "commercial/message-templates", "commercial/multi-tenancy"],
+  relatedSlugs: [
+    "commercial/login-customizer",
+    "commercial/message-templates",
+    "commercial/multi-tenancy",
+  ],
   lastUpdated: "2026-06-28",
 });

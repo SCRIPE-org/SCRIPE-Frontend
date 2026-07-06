@@ -24,10 +24,22 @@ const sections: DocSection[] = [
     rows: [
       ["AdminId", "Guid", "FK → Admin receiving the role assignment"],
       ["RoleId", "Guid", "FK → Role being assigned"],
-      ["TenantId", "Guid?", "Tenant scope for this assignment. null = platform-level role. GUID = tenant-scoped role (admin only has this role when operating within that tenant)"],
-      ["InheritToChildren", "bool", "When true, this role assignment cascades to child tenants in a tenant hierarchy"],
+      [
+        "TenantId",
+        "Guid?",
+        "Tenant scope for this assignment. null = platform-level role. GUID = tenant-scoped role (admin only has this role when operating within that tenant)",
+      ],
+      [
+        "InheritToChildren",
+        "bool",
+        "When true, this role assignment cascades to child tenants in a tenant hierarchy",
+      ],
       ["ExpiresAt", "DateTime?", "Optional expiry for time-limited role grants. null = permanent"],
-      ["AssignedBy", "Guid?", "The admin who created this assignment (kept alongside AuditableEntity.CreatedBy for explicit tracking)"],
+      [
+        "AssignedBy",
+        "Guid?",
+        "The admin who created this assignment (kept alongside AuditableEntity.CreatedBy for explicit tracking)",
+      ],
     ],
   },
   {
@@ -96,8 +108,16 @@ const sections: DocSection[] = [
     headers: ["Field", "Type", "Notes"],
     rows: [
       ["UserGroupId", "Guid", "FK → UserGroup that owns this restriction"],
-      ["PermissionCode", "string (max 100)", "Permission resource code (e.g., 'admins', 'users', 'employees'). Matched case-insensitively during restriction merging"],
-      ["RestrictedFieldsJson", "string (max 2000)", "JSON array of field names to restrict (e.g., ['salary','ssn','bankAccount']). These fields are nullified in API responses for group members"],
+      [
+        "PermissionCode",
+        "string (max 100)",
+        "Permission resource code (e.g., 'admins', 'users', 'employees'). Matched case-insensitively during restriction merging",
+      ],
+      [
+        "RestrictedFieldsJson",
+        "string (max 2000)",
+        "JSON array of field names to restrict (e.g., ['salary','ssn','bankAccount']). These fields are nullified in API responses for group members",
+      ],
     ],
   },
   {

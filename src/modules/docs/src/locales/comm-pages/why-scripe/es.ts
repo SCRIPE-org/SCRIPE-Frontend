@@ -595,7 +595,7 @@ export const es = {
       tblEcoR8C2: "Redis + En Memoria",
       tblEcoR8C3: "Listo para producción",
     },
-  
+
     businessClientJourneys: {
       title: "Viajes de Clientes Comerciales",
       description: "Descubra cÃ³mo las empresas escalan sus espacios de trabajo con SCRIPE.",

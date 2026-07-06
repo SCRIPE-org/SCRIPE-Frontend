@@ -1,3 +1,3 @@
 export const fr = {
-  "Tenant Plans": "Plans Locataires"
+  "Tenant Plans": "Plans Locataires",
 };

@@ -62,7 +62,10 @@ interface NexusPrimaryRailProps {
 }
 
 // ── Helper to find the first leaf route with a valid href and permission ──────
-function findFirstLeafRoute(item: MenuItem, canAccessPage: (path: string) => boolean): string | null {
+function findFirstLeafRoute(
+  item: MenuItem,
+  canAccessPage: (path: string) => boolean
+): string | null {
   // First try to find a route the user has permission to access
   const findAccessible = (curr: MenuItem): string | null => {
     if (curr.href && canAccessPage(curr.href)) return curr.href;

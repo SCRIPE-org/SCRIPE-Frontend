@@ -1,3 +1,3 @@
 export const ru = {
-  "Billing & Payments": "Биллинг и платежи"
+  "Billing & Payments": "Биллинг и платежи",
 };

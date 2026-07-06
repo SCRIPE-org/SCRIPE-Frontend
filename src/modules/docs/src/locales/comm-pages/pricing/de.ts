@@ -399,7 +399,7 @@ export const de = {
       tblDbR5C2: "⚙️ Nur Dev",
       tblDbR5C3: "Für lokale Entwicklung und Tests",
     },
-  
+
     pricingShowcase: {
       title: "Preise",
       description: "Einfache, transparente Preise fÃ¼r jedes Unternehmen.",
@@ -410,18 +410,27 @@ export const de = {
       personaSelectorInvestor: "Ich bin ein Investor",
       personaSelectorCofounder: "Ich möchte Mitgründer werden",
       personaSelectorPartner: "Ich möchte Partner werden",
-      personaSelectorInvestorDesc: "Erfahren Sie mehr über unseren SaaS-Wachstums-ROI und Finanzierungsrunden.",
-      personaSelectorCofounderDesc: "Entdecken Sie unsere Strategie, Rollen und den Weg zur Partnerschaft.",
+      personaSelectorInvestorDesc:
+        "Erfahren Sie mehr über unseren SaaS-Wachstums-ROI und Finanzierungsrunden.",
+      personaSelectorCofounderDesc:
+        "Entdecken Sie unsere Strategie, Rollen und den Weg zur Partnerschaft.",
       personaSelectorPartnerDesc: "Sehen Sie, wie Partner ihren SaaS-Umsatzanteil skalieren.",
-      personaSelectorInvestorBenefit1: "250 % durchschnittlicher ROI über 3 Jahre prognostizierte Skalierungskennzahlen.",
-      personaSelectorInvestorBenefit2: "Vollständige Sichtbarkeit der ARR-, MRR- und Benutzerabwanderungsraten.",
+      personaSelectorInvestorBenefit1:
+        "250 % durchschnittlicher ROI über 3 Jahre prognostizierte Skalierungskennzahlen.",
+      personaSelectorInvestorBenefit2:
+        "Vollständige Sichtbarkeit der ARR-, MRR- und Benutzerabwanderungsraten.",
       personaSelectorInvestorBenefit3: "Grundlegende Marktchancen für ERP-Software.",
-      personaSelectorCofounderBenefit1: "Direkte Beteiligung und Stimmrechte bei Plattformentscheidungen.",
-      personaSelectorCofounderBenefit2: "Eigentum an zentralen modularen saubersten Architekturpfaden.",
-      personaSelectorCofounderBenefit3: "Steuerung der globalen Markteinführungs- und Kanalintegrationen.",
-      personaSelectorPartnerBenefit1: "Großzügiger wiederkehrender Umsatzanteil von 30 % für den Kanalvertrieb.",
+      personaSelectorCofounderBenefit1:
+        "Direkte Beteiligung und Stimmrechte bei Plattformentscheidungen.",
+      personaSelectorCofounderBenefit2:
+        "Eigentum an zentralen modularen saubersten Architekturpfaden.",
+      personaSelectorCofounderBenefit3:
+        "Steuerung der globalen Markteinführungs- und Kanalintegrationen.",
+      personaSelectorPartnerBenefit1:
+        "Großzügiger wiederkehrender Umsatzanteil von 30 % für den Kanalvertrieb.",
       personaSelectorPartnerBenefit2: "Dedizierter Entwicklersupport und White-Label-Rechte.",
-      personaSelectorPartnerBenefit3: "Technische Zertifizierung und offizieller Marktplatzeintrag.",
+      personaSelectorPartnerBenefit3:
+        "Technische Zertifizierung und offizieller Marktplatzeintrag.",
       personaSelectorLearnMore: "Mehr erfahren",
       title: "Investoren-Portal",
       description: "SaaS-Wachstums-ROI und PartnerschaftsmÃ¶glichkeiten.",

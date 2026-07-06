@@ -19,9 +19,7 @@ export function SchemaColumnRow({ column }: SchemaColumnRowProps) {
         </span>
       </td>
       <td className="docs-schema-cell-type">{column.type}</td>
-      <td className="docs-schema-cell-nullable">
-        {column.nullable ? "NULL" : "NOT NULL"}
-      </td>
+      <td className="docs-schema-cell-nullable">{column.nullable ? "NULL" : "NOT NULL"}</td>
       <td className="docs-schema-cell-notes">{t(column.notesKey)}</td>
     </tr>
   );

@@ -90,21 +90,21 @@ export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
             className="docs-content transition-all duration-200"
             style={{
               fontSize: `${fontSize}px`,
-              maxWidth: wideLayout ? "1200px" : "800px"
+              maxWidth: wideLayout ? "1200px" : "800px",
             }}
           >
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
               <DocsBreadcrumb
                 slug={slug}
                 categoryTitleKey={vm.categoryInfo.titleKey}
                 pageTitleKey={page.titleKey}
               />
-              
+
               {/* Reader Toolbar */}
-              <div className="reader-toolbar flex items-center gap-2 px-3 py-1.5 bg-muted/40 border border-border/40 rounded-lg text-sm select-none">
+              <div className="reader-toolbar flex select-none items-center gap-2 rounded-lg border border-border/40 bg-muted/40 px-3 py-1.5 text-sm">
                 <button
                   onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                  className={`reader-toolbar-btn p-1 rounded text-muted-foreground hover:text-foreground transition-colors ${sidebarCollapsed ? "bg-primary/10 text-primary" : "hover:bg-muted"}`}
+                  className={`reader-toolbar-btn rounded p-1 text-muted-foreground transition-colors hover:text-foreground ${sidebarCollapsed ? "bg-primary/10 text-primary" : "hover:bg-muted"}`}
                   title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
                   aria-label="Toggle Sidebar"
                 >
@@ -124,35 +124,35 @@ export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
                   </svg>
                 </button>
 
-                <div className="reader-toolbar-divider w-px h-4 bg-border/60 mx-1" />
+                <div className="reader-toolbar-divider mx-1 h-4 w-px bg-border/60" />
 
                 <button
                   onClick={() => setFontSize(14)}
-                  className={`reader-toolbar-btn px-2 py-0.5 rounded transition-colors ${fontSize === 14 ? "bg-primary text-primary-foreground font-bold" : "hover:bg-muted text-muted-foreground hover:text-foreground"}`}
+                  className={`reader-toolbar-btn rounded px-2 py-0.5 transition-colors ${fontSize === 14 ? "bg-primary font-bold text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
                   title="Small Font Size"
                 >
                   A-
                 </button>
                 <button
                   onClick={() => setFontSize(16)}
-                  className={`reader-toolbar-btn px-2 py-0.5 rounded transition-colors ${fontSize === 16 ? "bg-primary text-primary-foreground font-bold" : "hover:bg-muted text-muted-foreground hover:text-foreground"}`}
+                  className={`reader-toolbar-btn rounded px-2 py-0.5 transition-colors ${fontSize === 16 ? "bg-primary font-bold text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
                   title="Medium Font Size"
                 >
                   A
                 </button>
                 <button
                   onClick={() => setFontSize(18)}
-                  className={`reader-toolbar-btn px-2 py-0.5 rounded transition-colors ${fontSize === 18 ? "bg-primary text-primary-foreground font-bold" : "hover:bg-muted text-muted-foreground hover:text-foreground"}`}
+                  className={`reader-toolbar-btn rounded px-2 py-0.5 transition-colors ${fontSize === 18 ? "bg-primary font-bold text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
                   title="Large Font Size"
                 >
                   A+
                 </button>
 
-                <div className="reader-toolbar-divider w-px h-4 bg-border/60 mx-1" />
+                <div className="reader-toolbar-divider mx-1 h-4 w-px bg-border/60" />
 
                 <button
                   onClick={() => setWideLayout(!wideLayout)}
-                  className={`reader-toolbar-btn px-2 py-0.5 rounded transition-colors ${wideLayout ? "bg-primary text-primary-foreground font-bold" : "hover:bg-muted text-muted-foreground hover:text-foreground"}`}
+                  className={`reader-toolbar-btn rounded px-2 py-0.5 transition-colors ${wideLayout ? "bg-primary font-bold text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
                   title="Toggle Wide Layout"
                 >
                   {wideLayout ? "Compact" : "Wide"}

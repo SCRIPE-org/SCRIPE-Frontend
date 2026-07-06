@@ -11,12 +11,21 @@ interface PipelineSimulatorProps {
 
 const pipelineBehaviors = [
   { name: "UnhandledException", log: "Init global error boundaries. Request monitoring active." },
-  { name: "Validation", log: "Validating incoming payload... FluentValidation checks ok (0 errors)." },
-  { name: "Authorization", log: "Authorizing user principal... RBAC permission requirements validated." },
-  { name: "FeatureCheck", log: "Gating entitlements... Subscription active, tenant quota check ok." },
+  {
+    name: "Validation",
+    log: "Validating incoming payload... FluentValidation checks ok (0 errors).",
+  },
+  {
+    name: "Authorization",
+    log: "Authorizing user principal... RBAC permission requirements validated.",
+  },
+  {
+    name: "FeatureCheck",
+    log: "Gating entitlements... Subscription active, tenant quota check ok.",
+  },
   { name: "Caching", log: "Reading Redis cache key... Cache miss. Forwarding request to handler." },
   { name: "Audit", log: "Logging mutation transaction details. Audit log prepared." },
-  { name: "Handler", log: "Executing request handler logic. Database transactions complete." }
+  { name: "Handler", log: "Executing request handler logic. Database transactions complete." },
 ];
 
 export function PipelineSimulator({ titleKey, samplePayloadKey }: PipelineSimulatorProps) {
@@ -50,9 +59,13 @@ export function PipelineSimulator({ titleKey, samplePayloadKey }: PipelineSimula
     if (isRunning && activeStep >= 0 && activeStep < pipelineBehaviors.length) {
       const current = pipelineBehaviors[activeStep];
       logsTimeout = setTimeout(() => {
-        setLogs((prev) => [...prev, `[AstraFlow] Entering ${current.name}Behavior...`, ` -> ${current.log}`]);
+        setLogs((prev) => [
+          ...prev,
+          `[AstraFlow] Entering ${current.name}Behavior...`,
+          ` -> ${current.log}`,
+        ]);
       }, 0);
-      
+
       intervalRef.current = setTimeout(() => {
         setActiveStep((prev) => prev + 1);
       }, 1500);
@@ -75,11 +88,17 @@ export function PipelineSimulator({ titleKey, samplePayloadKey }: PipelineSimula
 
   return (
     <div className="docs-pipeline-container" style={{ marginBottom: "2.5rem" }}>
-      <div className="docs-pipeline-title" style={{ fontSize: "1.1rem", fontWeight: "700", marginBottom: "1rem" }}>
+      <div
+        className="docs-pipeline-title"
+        style={{ fontSize: "1.1rem", fontWeight: "700", marginBottom: "1rem" }}
+      >
         {t(titleKey)}
       </div>
 
-      <div className="docs-pipeline-steps" style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+      <div
+        className="docs-pipeline-steps"
+        style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
+      >
         {pipelineBehaviors.map((step, idx) => (
           <PipelineNodeItem
             key={idx}
@@ -92,7 +111,10 @@ export function PipelineSimulator({ titleKey, samplePayloadKey }: PipelineSimula
         ))}
       </div>
 
-      <div className="docs-pipeline-controls" style={{ display: "flex", gap: "1rem", marginTop: "1.5rem", marginBottom: "1.5rem" }}>
+      <div
+        className="docs-pipeline-controls"
+        style={{ display: "flex", gap: "1rem", marginTop: "1.5rem", marginBottom: "1.5rem" }}
+      >
         <button
           className="docs-pipeline-btn docs-pipeline-btn-primary"
           onClick={startSimulator}
@@ -120,9 +142,23 @@ export function PipelineSimulator({ titleKey, samplePayloadKey }: PipelineSimula
             Console output logs
           </span>
         </div>
-        <div className="docs-terminal-body" style={{ minHeight: "120px", height: "160px", overflowY: "auto" }}>
+        <div
+          className="docs-terminal-body"
+          style={{ minHeight: "120px", height: "160px", overflowY: "auto" }}
+        >
           {logs.map((log, i) => (
-            <div key={i} className="docs-terminal-output" style={{ fontSize: "0.8rem", color: log.startsWith(" [AstraFlow]") ? "var(--docs-purple-primary)" : log.startsWith(" -> ") ? "#e4e4e7" : "#10b981" }}>
+            <div
+              key={i}
+              className="docs-terminal-output"
+              style={{
+                fontSize: "0.8rem",
+                color: log.startsWith(" [AstraFlow]")
+                  ? "var(--docs-purple-primary)"
+                  : log.startsWith(" -> ")
+                    ? "#e4e4e7"
+                    : "#10b981",
+              }}
+            >
               {log}
             </div>
           ))}

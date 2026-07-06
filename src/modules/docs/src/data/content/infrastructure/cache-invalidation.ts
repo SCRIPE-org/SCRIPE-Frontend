@@ -40,9 +40,17 @@ const sections: DocSection[] = [
     headers: ["Pattern", "Example Key", "Use Case"],
     rows: [
       ["{EntityType}:{TenantId}:{Id}", "Admin:ten_abc123:adm_xyz789", "Single entity GET by ID"],
-      ["{EntityType}:{TenantId}:list:{PageHash}", "Admin:ten_abc123:list:p1s20", "Paginated list query"],
+      [
+        "{EntityType}:{TenantId}:list:{PageHash}",
+        "Admin:ten_abc123:list:p1s20",
+        "Paginated list query",
+      ],
       ["{EntityType}:", "Admin:", "Broad invalidation prefix — all Admin cache for all tenants"],
-      ["{EntityType}:{TenantId}:", "Admin:ten_abc123:", "Tenant-scoped invalidation — one tenant's Admin cache"],
+      [
+        "{EntityType}:{TenantId}:",
+        "Admin:ten_abc123:",
+        "Tenant-scoped invalidation — one tenant's Admin cache",
+      ],
     ],
   },
 

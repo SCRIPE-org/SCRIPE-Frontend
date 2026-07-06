@@ -21,7 +21,7 @@ const mockCommands = [
   "scripe lint",
   "scripe format",
   "scripe info",
-  "scripe doctor"
+  "scripe doctor",
 ];
 
 const mockOutputs: Record<string, string[]> = {
@@ -30,25 +30,25 @@ const mockOutputs: Record<string, string[]> = {
     "[Backend] Restoring dependencies...",
     "[Frontend] pnpm dev server running on http://localhost:3000",
     "[Backend] API listening on https://localhost:5001",
-    "✨ System ready. Access client portal at http://localhost:3000."
+    "✨ System ready. Access client portal at http://localhost:3000.",
   ],
   "scripe dev backend": [
     "⚡ Starting .NET Web Host API in dev mode...",
     "info: Microsoft.Hosting.Lifetime[14]",
     "      Now listening on: https://localhost:5001",
     "info: Microsoft.Hosting.Lifetime[0]",
-    "      Application started. Press Ctrl+C to shut down."
+    "      Application started. Press Ctrl+C to shut down.",
   ],
   "scripe dev frontend": [
     "⚡ Starting Next.js Dev Server...",
     "▲ Next.js 16.2.9 (Turbopack) compiler running...",
-    "✓ Compiled successfully in 1.4s (http://localhost:3000)"
+    "✓ Compiled successfully in 1.4s (http://localhost:3000)",
   ],
   "scripe build all": [
     "⚡ Building clean backend + frontend assets...",
     "[dotnet] restore and build complete. (0 errors)",
     "[pnpm] next production static build compiled successfully in 41s.",
-    "📦 All builds succeeded."
+    "📦 All builds succeeded.",
   ],
   "scripe build backend": [
     "⚡ Restoring .NET NuGet packages...",
@@ -57,26 +57,26 @@ const mockOutputs: Record<string, string[]> = {
     "  SCRIPE.Application -> bin/Debug/net10.0/SCRIPE.Application.dll",
     "  SCRIPE.Infrastructure -> bin/Debug/net10.0/SCRIPE.Infrastructure.dll",
     "  API -> bin/Debug/net10.0/API.dll",
-    "✨ Build succeeded with 0 warnings or errors."
+    "✨ Build succeeded with 0 warnings or errors.",
   ],
   "scripe build frontend": [
     "⚡ Triggering Next.js production bundler...",
     "▲ Next.js 16.2.9 (Turbopack)",
     "✓ Compiled successfully in 34.5s",
     "Running TypeScript... finished in 28.2s.",
-    "Generating static HTML layout pages... done."
+    "Generating static HTML layout pages... done.",
   ],
   "scripe db update --all": [
     "🔍 Detecting migration differences across modules...",
     "[Identity] SQL Server Migration 'AddRowVersion' applied successfully.",
     "[Entitlements] SQL Server Migration 'AddTrialPeriod' applied successfully.",
-    "✅ Database tables up to date."
+    "✅ Database tables up to date.",
   ],
   "scripe db seed": [
     "🌱 Seeding data context objects...",
     "[IdentitySeeder] Default administrative role created.",
     "[PermissionSeeder] Synchronized 146 permissions.",
-    "🌱 Dev seed data populated successfully."
+    "🌱 Dev seed data populated successfully.",
   ],
   "scripe check": [
     "⚡ Running full pre-push pipeline validation gate...",
@@ -85,18 +85,18 @@ const mockOutputs: Record<string, string[]> = {
     "🔍 Dotnet formats: Pass.",
     "🔍 Backend test suite: 124 tests passed (0 failures).",
     "🔍 Frontend coverage check: 85% coverage (Pass).",
-    "🎉 Validation succeeded! Ready to commit/push."
+    "🎉 Validation succeeded! Ready to commit/push.",
   ],
   "scripe lint": [
     "🔍 ESLint verification check...",
     "[Frontend] No lint issues detected in 452 files.",
-    "[Backend] dotnet format check completed - 0 formatting errors."
+    "[Backend] dotnet format check completed - 0 formatting errors.",
   ],
   "scripe format": [
     "🎨 Formatting files via Prettier and dotnet format...",
     "[prettier] reformatted 14 files.",
     "[dotnet] formatted 3 file paths.",
-    "✨ Workspace code layout stylized."
+    "✨ Workspace code layout stylized.",
   ],
   "scripe info": [
     "📋 Platform Dashboard Info:",
@@ -104,7 +104,7 @@ const mockOutputs: Record<string, string[]> = {
     "  Dotnet SDK: 10.0.100",
     "  Node Engine: v22.11.0",
     "  Package Manager: pnpm v11.6.0",
-    "  Monorepo modules: Identity, Entitlements, Compliance, Customizer"
+    "  Monorepo modules: Identity, Entitlements, Compliance, Customizer",
   ],
   "scripe doctor": [
     "🔍 Running prerequisite medical check...",
@@ -113,8 +113,8 @@ const mockOutputs: Record<string, string[]> = {
     "  Pnpm Engine: OK (v11.6.0)",
     "  Docker Compose: OK",
     "  Redis Local Host: Connected (port 6379)",
-    "🎉 All system requirements met. You are ready to develop!"
-  ]
+    "🎉 All system requirements met. You are ready to develop!",
+  ],
 };
 
 export function CliSimulator({ titleKey }: CliSimulatorProps) {
@@ -124,15 +124,22 @@ export function CliSimulator({ titleKey }: CliSimulatorProps) {
 
   const runCommand = (cmd: string) => {
     setActiveCmd(cmd);
-    setLogs(["$ " + cmd, "Executing...", ...(mockOutputs[cmd] || ["Command not found in simulator."])]);
+    setLogs([
+      "$ " + cmd,
+      "Executing...",
+      ...(mockOutputs[cmd] || ["Command not found in simulator."]),
+    ]);
   };
 
   return (
     <div className="docs-terminal-container" style={{ marginBottom: "2.5rem" }}>
-      <div className="docs-pipeline-title" style={{ fontSize: "1.1rem", fontWeight: "700", marginBottom: "0.75rem" }}>
+      <div
+        className="docs-pipeline-title"
+        style={{ fontSize: "1.1rem", fontWeight: "700", marginBottom: "0.75rem" }}
+      >
         {t(titleKey)}
       </div>
-      
+
       <div style={{ marginBottom: "1rem" }}>
         <CliCommandInput commands={mockCommands} onSelectCommand={runCommand} />
       </div>
@@ -148,13 +155,28 @@ export function CliSimulator({ titleKey }: CliSimulatorProps) {
             CLI Playground Screen
           </span>
         </div>
-        <div className="docs-terminal-body" style={{ minHeight: "160px", overflowY: "auto", background: "#08070b" }}>
+        <div
+          className="docs-terminal-body"
+          style={{ minHeight: "160px", overflowY: "auto", background: "#08070b" }}
+        >
           <div className="docs-terminal-line">
             <span className="prompt">$</span> <span className="cmd">{activeCmd}</span>
           </div>
           <div style={{ marginTop: "0.75rem" }}>
             {logs.map((log, i) => (
-              <div key={i} className="docs-terminal-output" style={{ fontSize: "0.8rem", color: log.startsWith("✨") || log.startsWith("🎉") || log.startsWith("✅") ? "#10b981" : log.startsWith("$ ") ? "var(--docs-purple-primary)" : "#a1a1aa" }}>
+              <div
+                key={i}
+                className="docs-terminal-output"
+                style={{
+                  fontSize: "0.8rem",
+                  color:
+                    log.startsWith("✨") || log.startsWith("🎉") || log.startsWith("✅")
+                      ? "#10b981"
+                      : log.startsWith("$ ")
+                        ? "var(--docs-purple-primary)"
+                        : "#a1a1aa",
+                }}
+              >
                 {log}
               </div>
             ))}

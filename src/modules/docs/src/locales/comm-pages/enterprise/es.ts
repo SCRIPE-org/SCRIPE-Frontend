@@ -321,7 +321,7 @@ export const es = {
       templatesTitle: "Localización Profunda del Backend",
       title: "Internacionalización (i18n) Empresarial Global",
     },
-  
+
     whiteLabeling: {
       title: "Marca Blanca",
       description: "Personalice el espacio SCRIPE con su propia marca.",

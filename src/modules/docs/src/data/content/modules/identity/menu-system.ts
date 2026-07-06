@@ -29,13 +29,41 @@ const sections: DocSection[] = [
       ["Icon", "string? (max 100)", "Lucide icon name for the menu item"],
       ["Order", "int", "Display order in the parent group (ascending)"],
       ["ParentMenuItemId", "Guid?", "Self-referencing FK for hierarchical menus"],
-      ["Resource", "string? (max 100)", "Permission resource key (e.g., 'admins') — resolves to {resource}.view, {resource}.create, etc."],
-      ["TenantScopeJson", "string? (max 2000)", "JSON array of tenant IDs to restrict visibility. null = visible to all tenants"],
-      ["RequiresPlatformContext", "bool", "When true, only visible to system admins with no tenant drilled into"],
-      ["RequiresTenantContext", "bool", "When true, only visible when the admin has a tenant context (own tenant or drill-down)"],
-      ["FeatureFlag", "string? (max 100)", "Optional feature flag dependency — hides the item if the flag is off"],
-      ["WorkspaceId", "Guid?", "FK → Workspace. Links item to a specific workspace in the Nexus dual-rail layout. null = all workspaces"],
-      ["IsSystem", "bool (default true)", "true = seeded by IModuleMenuProvider (auto-refreshed on startup, admin-only fields preserved). false = SuperAdmin-created (never auto-modified)"],
+      [
+        "Resource",
+        "string? (max 100)",
+        "Permission resource key (e.g., 'admins') — resolves to {resource}.view, {resource}.create, etc.",
+      ],
+      [
+        "TenantScopeJson",
+        "string? (max 2000)",
+        "JSON array of tenant IDs to restrict visibility. null = visible to all tenants",
+      ],
+      [
+        "RequiresPlatformContext",
+        "bool",
+        "When true, only visible to system admins with no tenant drilled into",
+      ],
+      [
+        "RequiresTenantContext",
+        "bool",
+        "When true, only visible when the admin has a tenant context (own tenant or drill-down)",
+      ],
+      [
+        "FeatureFlag",
+        "string? (max 100)",
+        "Optional feature flag dependency — hides the item if the flag is off",
+      ],
+      [
+        "WorkspaceId",
+        "Guid?",
+        "FK → Workspace. Links item to a specific workspace in the Nexus dual-rail layout. null = all workspaces",
+      ],
+      [
+        "IsSystem",
+        "bool (default true)",
+        "true = seeded by IModuleMenuProvider (auto-refreshed on startup, admin-only fields preserved). false = SuperAdmin-created (never auto-modified)",
+      ],
     ],
   },
   {
@@ -90,7 +118,11 @@ const sections: DocSection[] = [
     rows: [
       ["RoleId", "Guid", "FK → Role"],
       ["MenuItemId", "Guid", "FK → MenuItem"],
-      ["IsVisible", "bool", "Explicit visibility: true = show, false = hide. If no record exists for this pair, visibility is auto-inherited from permission"],
+      [
+        "IsVisible",
+        "bool",
+        "Explicit visibility: true = show, false = hide. If no record exists for this pair, visibility is auto-inherited from permission",
+      ],
     ],
   },
   {
@@ -141,13 +173,33 @@ const sections: DocSection[] = [
     rows: [
       ["MenuItemId", "Guid", "FK → the base MenuItem being overridden"],
       ["TenantId", "Guid?", "Owning tenant. Required for Tenant scope. Null for User scope"],
-      ["AdminId", "Guid?", "Admin who created the override. Set only for User scope (personal). Null for Tenant scope"],
+      [
+        "AdminId",
+        "Guid?",
+        "Admin who created the override. Set only for User scope (personal). Null for Tenant scope",
+      ],
       ["Scope", "MenuOverrideScope", "User = personal | Tenant = organization-wide"],
-      ["NameEnOverride", "string? (max 200)", "Override English name. Null = use base MenuItem.NameEn"],
-      ["NameArOverride", "string? (max 200)", "Override Arabic name. Null = use base MenuItem.NameAr"],
+      [
+        "NameEnOverride",
+        "string? (max 200)",
+        "Override English name. Null = use base MenuItem.NameEn",
+      ],
+      [
+        "NameArOverride",
+        "string? (max 200)",
+        "Override Arabic name. Null = use base MenuItem.NameAr",
+      ],
       ["OrderOverride", "int?", "Override display order. Null = use base MenuItem.Order"],
-      ["ParentMenuItemIdOverride", "Guid?", "Override parent item — enables per-tenant menu restructuring"],
-      ["IsHidden", "bool", "When true, hides this item for the scope. Overrides all other visibility rules"],
+      [
+        "ParentMenuItemIdOverride",
+        "Guid?",
+        "Override parent item — enables per-tenant menu restructuring",
+      ],
+      [
+        "IsHidden",
+        "bool",
+        "When true, hides this item for the scope. Overrides all other visibility rules",
+      ],
     ],
   },
 
@@ -193,9 +245,6 @@ registerPage({
   category: "modules",
   order: 61,
   sections,
-  relatedSlugs: [
-    "features/menu-system",
-    "modules/identity/auth-sessions",
-  ],
+  relatedSlugs: ["features/menu-system", "modules/identity/auth-sessions"],
   lastUpdated: "2026-06-29",
 });

@@ -1,3 +1,3 @@
 export const fr = {
-  "User Subscriptions": "Abonnements Utilisateurs"
+  "User Subscriptions": "Abonnements Utilisateurs",
 };

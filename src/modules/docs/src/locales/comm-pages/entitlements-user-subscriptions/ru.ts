@@ -1,3 +1,3 @@
 export const ru = {
-  "User Subscriptions": "Подписки пользователей"
+  "User Subscriptions": "Подписки пользователей",
 };

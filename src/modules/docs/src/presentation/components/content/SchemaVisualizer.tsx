@@ -18,7 +18,10 @@ export function SchemaVisualizer({ tables, titleKey }: SchemaVisualizerProps) {
 
   return (
     <div className="docs-schema-container" style={{ marginBottom: "2.5rem" }}>
-      <div className="docs-schema-title" style={{ fontSize: "1.1rem", fontWeight: "700", marginBottom: "1rem" }}>
+      <div
+        className="docs-schema-title"
+        style={{ fontSize: "1.1rem", fontWeight: "700", marginBottom: "1rem" }}
+      >
         {t(titleKey)}
       </div>
       <div className="docs-explorer-layout" style={{ height: "360px" }}>

@@ -33,9 +33,9 @@ function CommercialFooter() {
     {
       title: "Why SCRIPE",
       links: [
-        { href: "/commercial/why-scripe-overview",   label: "Overview" },
+        { href: "/commercial/why-scripe-overview", label: "Overview" },
         { href: "/commercial/competitive-advantages", label: "Competitive Edge" },
-        { href: "/commercial/target-industries",      label: "Industries" },
+        { href: "/commercial/target-industries", label: "Industries" },
         { href: "/commercial/business-client-journeys", label: "Client Journeys" },
       ],
     },
@@ -43,18 +43,18 @@ function CommercialFooter() {
       title: "Platform",
       links: [
         { href: "/commercial/platform-architecture", label: "Architecture" },
-        { href: "/commercial/module-catalog",         label: "Module Catalog" },
-        { href: "/commercial/technology-stack",       label: "Tech Stack" },
-        { href: "/commercial/deployment-modes",       label: "Deployment" },
+        { href: "/commercial/module-catalog", label: "Module Catalog" },
+        { href: "/commercial/technology-stack", label: "Tech Stack" },
+        { href: "/commercial/deployment-modes", label: "Deployment" },
       ],
     },
     {
       title: "Commercial",
       links: [
-        { href: "/commercial/pricing-showcase",   label: "Pricing" },
-        { href: "/commercial/investor-overview",  label: "Investors" },
-        { href: "/commercial/partner-program",    label: "Partners" },
-        { href: "/commercial/roi-calculator",     label: "ROI Calculator" },
+        { href: "/commercial/pricing-showcase", label: "Pricing" },
+        { href: "/commercial/investor-overview", label: "Investors" },
+        { href: "/commercial/partner-program", label: "Partners" },
+        { href: "/commercial/roi-calculator", label: "ROI Calculator" },
       ],
     },
   ];
@@ -65,12 +65,21 @@ function CommercialFooter() {
         <div className="com-footer-grid">
           {/* Brand column */}
           <div className="com-footer-brand">
-            <Link href="/commercial" className="com-footer-logo" aria-label="SCRIPE Commercial home">
-              <img src="/app-logo.png" alt="SCRIPE" style={{ width: 24, height: 24, objectFit: "contain" }} />
+            <Link
+              href="/commercial"
+              className="com-footer-logo"
+              aria-label="SCRIPE Commercial home"
+            >
+              <img
+                src="/app-logo.png"
+                alt="SCRIPE"
+                style={{ width: 24, height: 24, objectFit: "contain" }}
+              />
               <span>SCRIPE</span>
             </Link>
             <p className="com-footer-tagline">
-              Enterprise-grade modular SaaS platform. B2B2C subscription infrastructure built for scale.
+              Enterprise-grade modular SaaS platform. B2B2C subscription infrastructure built for
+              scale.
             </p>
           </div>
 
@@ -136,7 +145,11 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
           <div className="com-404" role="main">
             <h1>404</h1>
             <p>Page not found: /commercial/{slug.replace("commercial/", "")}</p>
-            <Link href="/commercial" className="com-btn com-btn--ghost" style={{ marginTop: "1rem" }}>
+            <Link
+              href="/commercial"
+              className="com-btn com-btn--ghost"
+              style={{ marginTop: "1rem" }}
+            >
               Back to Commercial Home
             </Link>
           </div>

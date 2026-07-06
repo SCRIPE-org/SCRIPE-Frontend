@@ -35,12 +35,21 @@ export function FileExplorer({ moduleName, files }: FileExplorerProps) {
             <h3 style={{ fontSize: "1.1rem", fontWeight: "700", marginBottom: "0.5rem" }}>
               {files[activeIdx].name}
             </h3>
-            <p style={{ fontSize: "0.85rem", color: "hsl(var(--muted-foreground))", lineHeight: "1.6" }}>
+            <p
+              style={{
+                fontSize: "0.85rem",
+                color: "hsl(var(--muted-foreground))",
+                lineHeight: "1.6",
+              }}
+            >
               {t(files[activeIdx].descriptionKey)}
             </p>
           </div>
         ) : (
-          <p className="docs-explorer-empty" style={{ fontSize: "0.85rem", color: "hsl(var(--muted-foreground))" }}>
+          <p
+            className="docs-explorer-empty"
+            style={{ fontSize: "0.85rem", color: "hsl(var(--muted-foreground))" }}
+          >
             Select a file to view guidelines...
           </p>
         )}

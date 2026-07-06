@@ -15,7 +15,7 @@ const actorColors = {
   repository: "#f59e0b",
   controller: "#10b981",
   handler: "#ec4899",
-  database: "#8b5cf6"
+  database: "#8b5cf6",
 };
 
 export function LifecycleStepItem({ step, isActive, onClick }: LifecycleStepItemProps) {
@@ -32,11 +32,20 @@ export function LifecycleStepItem({ step, isActive, onClick }: LifecycleStepItem
         padding: "0.75rem 1rem",
         borderRadius: "8px",
         cursor: "pointer",
-        transition: "all 0.2s ease"
+        transition: "all 0.2s ease",
       }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.25rem" }}>
-        <span style={{ fontSize: "0.65rem", fontWeight: "bold", textTransform: "uppercase", color }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "0.25rem",
+        }}
+      >
+        <span
+          style={{ fontSize: "0.65rem", fontWeight: "bold", textTransform: "uppercase", color }}
+        >
           {step.actor}
         </span>
         <span style={{ fontSize: "0.65rem", color: "hsl(var(--muted-foreground))" }}>

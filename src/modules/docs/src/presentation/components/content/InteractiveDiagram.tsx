@@ -18,7 +18,10 @@ export function InteractiveDiagram({ nodes, connections, titleKey }: Interactive
   return (
     <div className="docs-diagram-container" style={{ marginBottom: "2rem" }}>
       {titleKey && <div className="docs-diagram-title">{t(titleKey)}</div>}
-      <div className="docs-diagram-flow" style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+      <div
+        className="docs-diagram-flow"
+        style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}
+      >
         {nodes.map((node, idx) => {
           const conn = connections.find((c) => c.from === node.id);
           return (
@@ -29,10 +32,18 @@ export function InteractiveDiagram({ nodes, connections, titleKey }: Interactive
                 onClick={() => setActiveNode(node)}
               />
               {conn && (
-                <div className="docs-diagram-arrow-container" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                  <span className="arrow" style={{ color: "var(--docs-purple-primary)" }}>→</span>
+                <div
+                  className="docs-diagram-arrow-container"
+                  style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+                >
+                  <span className="arrow" style={{ color: "var(--docs-purple-primary)" }}>
+                    →
+                  </span>
                   {conn.labelKey && (
-                    <span className="arrow-lbl" style={{ fontSize: "0.65rem", color: "hsl(var(--muted-foreground))" }}>
+                    <span
+                      className="arrow-lbl"
+                      style={{ fontSize: "0.65rem", color: "hsl(var(--muted-foreground))" }}
+                    >
                       {t(conn.labelKey)}
                     </span>
                   )}
@@ -43,7 +54,15 @@ export function InteractiveDiagram({ nodes, connections, titleKey }: Interactive
         })}
       </div>
       {activeNode && (
-        <div className="docs-diagram-detail" style={{ marginTop: "1rem", padding: "1rem", background: "var(--bg-primary)", borderRadius: "8px" }}>
+        <div
+          className="docs-diagram-detail"
+          style={{
+            marginTop: "1rem",
+            padding: "1rem",
+            background: "var(--bg-primary)",
+            borderRadius: "8px",
+          }}
+        >
           <p style={{ fontSize: "0.85rem", lineHeight: "1.6" }}>{t(activeNode.descriptionKey)}</p>
         </div>
       )}

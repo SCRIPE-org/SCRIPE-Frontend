@@ -27,12 +27,28 @@ const sections: DocSection[] = [
     headers: ["Field", "Type", "Description"],
     rows: [
       ["TenantId", "Guid", "The tenant this counter belongs to."],
-      ["ResourceType", "string (max 50)", "Resource being tracked: \"admin\", \"role\", \"subtenant\", \"usergroup\"."],
+      [
+        "ResourceType",
+        "string (max 50)",
+        'Resource being tracked: "admin", "role", "subtenant", "usergroup".',
+      ],
       ["Used", "int", "Number of confirmed resources (actual count after commit)."],
-      ["Reserved", "int", "Number of in-flight reservations (being created but not yet committed)."],
+      [
+        "Reserved",
+        "int",
+        "Number of in-flight reservations (being created but not yet committed).",
+      ],
       ["Max", "int", "Maximum allowed for this tenant. -1 = unlimited."],
-      ["PoolRootTenantId", "Guid?", "Links to the root tenant of a pooled quota. Null = no pooling (per-tenant limit only). When set, the SUM of (Used + Reserved) across all counters sharing this root must not exceed PoolMax."],
-      ["PoolMax", "int", "Maximum for the entire pool. Only meaningful on the root counter row. -1 = unlimited."],
+      [
+        "PoolRootTenantId",
+        "Guid?",
+        "Links to the root tenant of a pooled quota. Null = no pooling (per-tenant limit only). When set, the SUM of (Used + Reserved) across all counters sharing this root must not exceed PoolMax.",
+      ],
+      [
+        "PoolMax",
+        "int",
+        "Maximum for the entire pool. Only meaningful on the root counter row. -1 = unlimited.",
+      ],
     ],
   },
 
@@ -77,8 +93,14 @@ const sections: DocSection[] = [
     type: "table",
     headers: ["Mode", "Enforcement"],
     rows: [
-      ["Per-Tenant (PoolRootTenantId = null)", "Each tenant is enforced independently: (Used + Reserved) < Max."],
-      ["Pooled (PoolRootTenantId set)", "SUM(Used + Reserved) across all rows sharing the same PoolRootTenantId must not exceed PoolMax (stored on the root's counter row)."],
+      [
+        "Per-Tenant (PoolRootTenantId = null)",
+        "Each tenant is enforced independently: (Used + Reserved) < Max.",
+      ],
+      [
+        "Pooled (PoolRootTenantId set)",
+        "SUM(Used + Reserved) across all rows sharing the same PoolRootTenantId must not exceed PoolMax (stored on the root's counter row).",
+      ],
     ],
   },
 
@@ -124,15 +146,47 @@ const sections: DocSection[] = [
       ["TenantId", "Guid", "The tenant whose user made the payment."],
       ["UserSubscriptionId", "Guid", "The UserSubscription that generated this commission."],
       ["PaymentTransactionId", "Guid?", "FK to the PaymentTransaction for this user payment."],
-      ["CommissionInvoiceId", "Guid?", "FK to CommissionInvoice once invoiced. Null while Unbilled."],
-      ["Gateway", "PaymentGatewayType", "Which gateway processed the payment (PayPal or Paymob). Not used for Stripe Connect — those use application_fee_amount directly."],
-      ["GatewayTransactionId", "string (max 255)", "Gateway-specific transaction ID for reconciliation and deduplication."],
-      ["GrossAmount", "decimal (18,2)", "Full amount paid by the user (arrived in the tenant's account)."],
-      ["CommissionRate", "decimal (5,4)", "Commission rate applied at the time of payment (e.g. 0.10 = 10%)."],
+      [
+        "CommissionInvoiceId",
+        "Guid?",
+        "FK to CommissionInvoice once invoiced. Null while Unbilled.",
+      ],
+      [
+        "Gateway",
+        "PaymentGatewayType",
+        "Which gateway processed the payment (PayPal or Paymob). Not used for Stripe Connect — those use application_fee_amount directly.",
+      ],
+      [
+        "GatewayTransactionId",
+        "string (max 255)",
+        "Gateway-specific transaction ID for reconciliation and deduplication.",
+      ],
+      [
+        "GrossAmount",
+        "decimal (18,2)",
+        "Full amount paid by the user (arrived in the tenant's account).",
+      ],
+      [
+        "CommissionRate",
+        "decimal (5,4)",
+        "Commission rate applied at the time of payment (e.g. 0.10 = 10%).",
+      ],
       ["CommissionAmount", "decimal (18,2)", "Platform commission = GrossAmount × CommissionRate."],
-      ["Currency", "Currency enum", "ISO 4217 currency code. Should match the tenant's billing currency."],
-      ["Status", "CommissionLedgerStatus", "Lifecycle: Unbilled → Invoiced → Paid / Waived / WriteOff."],
-      ["Notes", "string? (max 1000)", "Admin notes — used when waiving or writing off a commission."],
+      [
+        "Currency",
+        "Currency enum",
+        "ISO 4217 currency code. Should match the tenant's billing currency.",
+      ],
+      [
+        "Status",
+        "CommissionLedgerStatus",
+        "Lifecycle: Unbilled → Invoiced → Paid / Waived / WriteOff.",
+      ],
+      [
+        "Notes",
+        "string? (max 1000)",
+        "Admin notes — used when waiving or writing off a commission.",
+      ],
     ],
   },
 
@@ -148,8 +202,14 @@ const sections: DocSection[] = [
     type: "table",
     headers: ["Metric", "Source"],
     rows: [
-      ["Total commission collected", "SUM(CommissionLedgerEntry.CommissionAmount) WHERE Status = Paid"],
-      ["Unbilled commission exposure", "SUM(CommissionLedgerEntry.CommissionAmount) WHERE Status = Unbilled"],
+      [
+        "Total commission collected",
+        "SUM(CommissionLedgerEntry.CommissionAmount) WHERE Status = Paid",
+      ],
+      [
+        "Unbilled commission exposure",
+        "SUM(CommissionLedgerEntry.CommissionAmount) WHERE Status = Unbilled",
+      ],
       ["Tenant payout totals", "TenantStripeAccount.TotalPayoutsAmount"],
       ["Trial resource usage", "TrialSnapshot compared to current QuotaCounter.Used at expiry"],
     ],

@@ -6,17 +6,20 @@ import { useDocsI18n } from "../providers/DocsI18nProvider";
 
 type Persona = "investor" | "cofounder" | "partner";
 
-const PERSONA_DATA: Record<Persona, {
-  emoji: string;
-  tabKey: string;
-  titleKey: string;
-  subtitleKey: string;
-  metrics: Array<{ value: string; labelKey: string }>;
-  bullets: string[];
-  ctaLabel: string;
-  ctaHref: string;
-  color: string;
-}> = {
+const PERSONA_DATA: Record<
+  Persona,
+  {
+    emoji: string;
+    tabKey: string;
+    titleKey: string;
+    subtitleKey: string;
+    metrics: Array<{ value: string; labelKey: string }>;
+    bullets: string[];
+    ctaLabel: string;
+    ctaHref: string;
+    color: string;
+  }
+> = {
   investor: {
     emoji: "💼",
     tabKey: "commercial.investorOverview.personaSelectorInvestor",
@@ -101,7 +104,11 @@ export function InvestorLandingView() {
             key={p}
             className={`inv-picker-btn ${persona === p ? "inv-picker-btn--active" : ""}`}
             onClick={() => setPersona(p)}
-            style={persona === p ? { "--btn-color": PERSONA_DATA[p].color } as React.CSSProperties : undefined}
+            style={
+              persona === p
+                ? ({ "--btn-color": PERSONA_DATA[p].color } as React.CSSProperties)
+                : undefined
+            }
           >
             <span className="mr-1 ltr:mr-1 rtl:ml-1">{PERSONA_DATA[p].emoji}</span>
             <span>{t(PERSONA_DATA[p].tabKey)}</span>
@@ -110,7 +117,11 @@ export function InvestorLandingView() {
       </div>
 
       {/* Persona Detail Panel */}
-      <div className="inv-panel" key={persona} style={{ "--panel-color": data.color } as React.CSSProperties}>
+      <div
+        className="inv-panel"
+        key={persona}
+        style={{ "--panel-color": data.color } as React.CSSProperties}
+      >
         <div className="inv-panel-left">
           <h2 className="inv-panel-title">{t(data.titleKey)}</h2>
           <p className="inv-panel-sub">{t(data.subtitleKey)}</p>
@@ -137,7 +148,9 @@ export function InvestorLandingView() {
 
           <Link href={data.ctaHref} className="inv-cta-btn">
             <span>{t(data.ctaLabel)}</span>
-            <span className="ml-1 ltr:ml-1 rtl:mr-1" aria-hidden="true">→</span>
+            <span className="ml-1 ltr:ml-1 rtl:mr-1" aria-hidden="true">
+              →
+            </span>
           </Link>
         </div>
       </div>

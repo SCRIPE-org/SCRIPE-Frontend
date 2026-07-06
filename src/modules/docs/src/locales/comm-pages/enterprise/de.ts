@@ -320,7 +320,7 @@ export const de = {
       templatesTitle: "Tiefgreifende Backend-Lokalisierung",
       title: "Globale Enterprise i18n",
     },
-  
+
     whiteLabeling: {
       title: "White-Labeling",
       description: "PrÃ¤sentieren Sie den Arbeitsbereich with Ihrer eigenen Marke.",

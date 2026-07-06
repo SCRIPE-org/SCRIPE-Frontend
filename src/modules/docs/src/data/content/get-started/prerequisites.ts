@@ -69,7 +69,7 @@ const sections: DocSection[] = [
       {
         titleKey: "getStarted.prerequisites.step2Title",
         contentKey: "getStarted.prerequisites.step2Content",
-        code: "git clone https://github.com/seifmoustafa/SCRIPE.git\ncd SCRIPE\ngit submodule update --init --recursive",
+        code: "git clone https://github.com/SCRIPE-org/SCRIPE.git\ncd SCRIPE\ngit submodule update --init --recursive",
         codeLanguage: "bash",
         codeFilename: "Clone with submodules",
       },

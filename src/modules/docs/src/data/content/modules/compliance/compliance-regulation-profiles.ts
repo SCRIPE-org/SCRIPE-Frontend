@@ -26,14 +26,42 @@ const sections: DocSection[] = [
     type: "table",
     headers: ["Field", "Type", "Description"],
     rows: [
-      ["Code", "string (max 20)", "Short code identifier, e.g. \"GDPR\", \"CCPA\", \"LGPD\", \"PDPA\"."],
-      ["Name", "string (max 200)", "Full regulation name, e.g. \"General Data Protection Regulation\"."],
-      ["Jurisdiction", "string? (max 50)", "Region/country code, e.g. \"EU\", \"US-CA\", \"BR\", \"TH\". Null if global."],
-      ["DsrDeadlineDays", "int", "Legal deadline for DSR response in days. Default 30 (GDPR). CCPA = 45."],
-      ["DefaultRetentionJson", "string?", "JSON map of default retention periods per category (days). -1 = indefinite. e.g. {\"UserProfile\": 1095}."],
-      ["ReferenceUrl", "string? (max 500)", "URL to the official regulation text or summary page shown in the compliance dashboard."],
-      ["CurrentConsentVersion", "string? (max 50)", "Semantic version of the active consent text (e.g. \"1.0\", \"2.1\"). Changing this triggers re-consent for all active consents (GDPR Art. 7)."],
-      ["IsActive", "bool", "Whether this profile is available for tenants to select. Inactive profiles are hidden from the compliance UI."],
+      ["Code", "string (max 20)", 'Short code identifier, e.g. "GDPR", "CCPA", "LGPD", "PDPA".'],
+      [
+        "Name",
+        "string (max 200)",
+        'Full regulation name, e.g. "General Data Protection Regulation".',
+      ],
+      [
+        "Jurisdiction",
+        "string? (max 50)",
+        'Region/country code, e.g. "EU", "US-CA", "BR", "TH". Null if global.',
+      ],
+      [
+        "DsrDeadlineDays",
+        "int",
+        "Legal deadline for DSR response in days. Default 30 (GDPR). CCPA = 45.",
+      ],
+      [
+        "DefaultRetentionJson",
+        "string?",
+        'JSON map of default retention periods per category (days). -1 = indefinite. e.g. {"UserProfile": 1095}.',
+      ],
+      [
+        "ReferenceUrl",
+        "string? (max 500)",
+        "URL to the official regulation text or summary page shown in the compliance dashboard.",
+      ],
+      [
+        "CurrentConsentVersion",
+        "string? (max 50)",
+        'Semantic version of the active consent text (e.g. "1.0", "2.1"). Changing this triggers re-consent for all active consents (GDPR Art. 7).',
+      ],
+      [
+        "IsActive",
+        "bool",
+        "Whether this profile is available for tenants to select. Inactive profiles are hidden from the compliance UI.",
+      ],
     ],
   },
 

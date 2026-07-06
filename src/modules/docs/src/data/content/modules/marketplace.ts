@@ -14,7 +14,8 @@ const sections: DocSection[] = [
   },
   {
     type: "paragraph",
-    contentKey: "The Marketplace module allows tenants to browse, purchase, and install extensions. Built-in hooks auto-register new routes, add permissions dynamically, and load custom widgets into workspace sidebars without code deployments.",
+    contentKey:
+      "The Marketplace module allows tenants to browse, purchase, and install extensions. Built-in hooks auto-register new routes, add permissions dynamically, and load custom widgets into workspace sidebars without code deployments.",
   },
 ];
 

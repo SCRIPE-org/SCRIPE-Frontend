@@ -318,44 +318,59 @@ export const en = {
       templatesTitle: "Deep Backend Localization",
       title: "Global Enterprise i18n",
     },
-  
+
     whiteLabeling: {
       title: "White-Labeling",
-      description: "Serve your own customers under your own brand — custom domain, logo, colors, and email. Powered invisibly by SCRIPE.",
-      intro: "Your brand, your customers, powered by SCRIPE. With SCRIPE's white-label capabilities, your customers log in, navigate, and interact with a platform that looks and feels 100% yours. Your logo. Your colors. Your domain. Your email address. SCRIPE works silently in the background so you can deliver a premium branded experience without building it from scratch.",
+      description:
+        "Serve your own customers under your own brand — custom domain, logo, colors, and email. Powered invisibly by SCRIPE.",
+      intro:
+        "Your brand, your customers, powered by SCRIPE. With SCRIPE's white-label capabilities, your customers log in, navigate, and interact with a platform that looks and feels 100% yours. Your logo. Your colors. Your domain. Your email address. SCRIPE works silently in the background so you can deliver a premium branded experience without building it from scratch.",
       // ─── Capabilities
       capabilitiesTitle: "What White-Labeling Gives You",
-      capabilitiesContent: "Every element your customers see can be customized to match your brand identity. From the moment they land on your login page to every email they receive, your brand is front and center.",
+      capabilitiesContent:
+        "Every element your customers see can be customized to match your brand identity. From the moment they land on your login page to every email they receive, your brand is front and center.",
       featDomain: "Custom Domain",
-      featDomainDesc: "Your customers access the platform at your own domain — for example, app.yourcompany.com. No SCRIPE branding in the URL.",
+      featDomainDesc:
+        "Your customers access the platform at your own domain — for example, app.yourcompany.com. No SCRIPE branding in the URL.",
       featLogo: "Logo and Brand Identity",
-      featLogoDesc: "Display your company logo throughout the workspace, login page, and all communications. Full color and light/dark mode variants supported.",
+      featLogoDesc:
+        "Display your company logo throughout the workspace, login page, and all communications. Full color and light/dark mode variants supported.",
       featColors: "Your Brand Colors",
-      featColorsDesc: "Set your primary brand colors and the entire workspace theme updates instantly. Buttons, highlights, and accents all follow your identity.",
+      featColorsDesc:
+        "Set your primary brand colors and the entire workspace theme updates instantly. Buttons, highlights, and accents all follow your identity.",
       featEmail: "Branded Email Domain",
-      featEmailDesc: "All system emails — welcome messages, password resets, notifications — arrive from your own email domain, not SCRIPE's.",
+      featEmailDesc:
+        "All system emails — welcome messages, password resets, notifications — arrive from your own email domain, not SCRIPE's.",
       featLogin: "Custom Login Page",
-      featLoginDesc: "Design your own login and registration experience with your branding, imagery, and welcome messages. First impressions matter.",
+      featLoginDesc:
+        "Design your own login and registration experience with your branding, imagery, and welcome messages. First impressions matter.",
       featMobile: "Mobile-Ready Experience",
-      featMobileDesc: "Your branded workspace is fully responsive across all devices. Your customers get a consistent branded experience on desktop, tablet, and mobile.",
+      featMobileDesc:
+        "Your branded workspace is fully responsive across all devices. Your customers get a consistent branded experience on desktop, tablet, and mobile.",
       featMultiLang: "Multi-Language Support",
-      featMultiLangDesc: "Serve your customers in their language. Your branded workspace supports multiple languages including full right-to-left layouts for Arabic.",
+      featMultiLangDesc:
+        "Serve your customers in their language. Your branded workspace supports multiple languages including full right-to-left layouts for Arabic.",
       featNotifications: "Branded Notifications",
-      featNotificationsDesc: "Real-time notifications, alerts, and system messages all appear under your brand. Your customers never see SCRIPE mentioned.",
+      featNotificationsDesc:
+        "Real-time notifications, alerts, and system messages all appear under your brand. Your customers never see SCRIPE mentioned.",
       featDocs: "Customizable Help Content",
-      featDocsDesc: "Add your own help text, onboarding messages, and welcome guides so the experience truly belongs to your brand.",
+      featDocsDesc:
+        "Add your own help text, onboarding messages, and welcome guides so the experience truly belongs to your brand.",
       // ─── Customer Journey
       journeyTitle: "Your Customers Never See SCRIPE",
-      journeyContent: "The entire customer experience is seamlessly branded as yours from start to finish. Here is what your customers experience:",
+      journeyContent:
+        "The entire customer experience is seamlessly branded as yours from start to finish. Here is what your customers experience:",
       journeyItem1: "They visit your domain — for example, portal.yourcompany.com",
       journeyItem2: "They see your logo and brand colors on the login page",
       journeyItem3: "They receive a welcome email from your email address",
       journeyItem4: "They use the workspace with your branding throughout every page",
       journeyItem5: "All notifications, reports, and exports carry your brand name",
-      journeyTip: "Enterprise clients often use white-labeling to launch entire SaaS products on top of SCRIPE — serving thousands of their own customers under their own brand, with zero in-house infrastructure to manage.",
+      journeyTip:
+        "Enterprise clients often use white-labeling to launch entire SaaS products on top of SCRIPE — serving thousands of their own customers under their own brand, with zero in-house infrastructure to manage.",
       // ─── Use Cases
       useCasesTitle: "Real-World Use Cases",
-      useCasesContent: "White-labeling is not just cosmetic. It enables businesses to launch full-featured products and portals powered by SCRIPE's infrastructure, under their own name.",
+      useCasesContent:
+        "White-labeling is not just cosmetic. It enables businesses to launch full-featured products and portals powered by SCRIPE's infrastructure, under their own name.",
       tblCaseH1: "Business",
       tblCaseH2: "How They Use SCRIPE White-Labeling",
       tblCaseH3: "What Their Customers See",
@@ -373,10 +388,12 @@ export const en = {
       tblCaseR4C3: "A branded client portal at clients.financialfirm.com",
       // ─── Getting Started
       gettingStartedTitle: "Getting Started with White-Labeling",
-      gettingStartedContent: "Activating white-label for your workspace takes just a few steps. No technical expertise required — everything is managed through your workspace settings.",
+      gettingStartedContent:
+        "Activating white-label for your workspace takes just a few steps. No technical expertise required — everything is managed through your workspace settings.",
       // ─── Comparison
       comparisonTitle: "White-Label vs Standard Subscription",
-      comparisonContent: "Not sure if white-labeling is right for you? Here is a clear comparison of what changes between a standard subscription and a white-label setup.",
+      comparisonContent:
+        "Not sure if white-labeling is right for you? Here is a clear comparison of what changes between a standard subscription and a white-label setup.",
       tblCompH1: "Feature",
       tblCompH2: "Standard Subscription",
       tblCompH3: "White-Label (Enterprise)",
@@ -399,15 +416,19 @@ export const en = {
       tblCompR6C2: "Visible in UI and emails",
       tblCompR6C3: "Hidden — your brand only",
       // ─── CTA
-      ctaTip: "Ready to launch your own branded platform? Contact our team to activate white-labeling for your workspace. Most setups are live within one business day.",
+      ctaTip:
+        "Ready to launch your own branded platform? Contact our team to activate white-labeling for your workspace. Most setups are live within one business day.",
     },
     slaGuarantees: {
       title: "SLA and Guarantees",
-      description: "Binding uptime commitments, support response times, incident priorities, and service credits — backing every SCRIPE subscription with real accountability.",
-      intro: "We back your trust with real commitments. Every SCRIPE subscription includes a contractually binding Service Level Agreement. We don't just promise reliability — we put it in writing, with measurable targets, transparent incident tracking, and automatic service credits when we fall short.",
+      description:
+        "Binding uptime commitments, support response times, incident priorities, and service credits — backing every SCRIPE subscription with real accountability.",
+      intro:
+        "We back your trust with real commitments. Every SCRIPE subscription includes a contractually binding Service Level Agreement. We don't just promise reliability — we put it in writing, with measurable targets, transparent incident tracking, and automatic service credits when we fall short.",
       // ─── Uptime
       uptimeTitle: "Uptime Guarantees by Plan",
-      uptimeContent: "SCRIPE maintains a high-availability infrastructure designed to keep your workspace online around the clock. Our uptime commitments vary by plan and are measured monthly.",
+      uptimeContent:
+        "SCRIPE maintains a high-availability infrastructure designed to keep your workspace online around the clock. Our uptime commitments vary by plan and are measured monthly.",
       tblUptimeH1: "Plan",
       tblUptimeH2: "Monthly Uptime Guarantee",
       tblUptimeH3: "Maximum Allowed Downtime per Month",
@@ -426,22 +447,30 @@ export const en = {
       tblUptimeR3C4: "Monthly rolling average, custom SLA available",
       // ─── Support
       supportTitle: "Support Response Times",
-      supportContent: "Our support team is available across multiple channels. Response time targets depend on your plan and the channel you use to reach us.",
+      supportContent:
+        "Our support team is available across multiple channels. Response time targets depend on your plan and the channel you use to reach us.",
       supportEmail: "Email Support",
-      supportEmailDesc: "Available on all plans. We respond within 24 business hours on Starter, 8 hours on Growth, and 4 hours on Enterprise.",
+      supportEmailDesc:
+        "Available on all plans. We respond within 24 business hours on Starter, 8 hours on Growth, and 4 hours on Enterprise.",
       supportChat: "Live Chat Support",
-      supportChatDesc: "Available on Growth and Enterprise plans. Response within 4 hours during business hours, with extended coverage on Enterprise.",
+      supportChatDesc:
+        "Available on Growth and Enterprise plans. Response within 4 hours during business hours, with extended coverage on Enterprise.",
       supportPhone: "Phone and Video Support",
-      supportPhoneDesc: "Available on Enterprise plans. Direct access to a support engineer within 1 hour for critical issues.",
+      supportPhoneDesc:
+        "Available on Enterprise plans. Direct access to a support engineer within 1 hour for critical issues.",
       supportDedicatedCsm: "Dedicated Customer Success Manager",
-      supportDedicatedCsmDesc: "Enterprise subscribers receive a named Customer Success Manager who knows your workspace, your team, and your goals.",
+      supportDedicatedCsmDesc:
+        "Enterprise subscribers receive a named Customer Success Manager who knows your workspace, your team, and your goals.",
       support247: "24/7 Emergency Coverage",
-      support247Desc: "Enterprise plans include around-the-clock emergency response for P1 incidents. Your business never stops — neither does our support.",
+      support247Desc:
+        "Enterprise plans include around-the-clock emergency response for P1 incidents. Your business never stops — neither does our support.",
       supportEscalation: "Guaranteed Escalation Path",
-      supportEscalationDesc: "Every ticket has a guaranteed escalation path to a senior engineer. No tickets ever fall through the cracks or get stuck in a queue.",
+      supportEscalationDesc:
+        "Every ticket has a guaranteed escalation path to a senior engineer. No tickets ever fall through the cracks or get stuck in a queue.",
       // ─── Incidents
       incidentTitle: "Incident Classification and Response Times",
-      incidentContent: "We classify all incidents by their impact on your business so that the right resources are deployed immediately. Every incident is acknowledged, tracked, and resolved with clear communication throughout.",
+      incidentContent:
+        "We classify all incidents by their impact on your business so that the right resources are deployed immediately. Every incident is acknowledged, tracked, and resolved with clear communication throughout.",
       tblIncH1: "Priority",
       tblIncH2: "Description",
       tblIncH3: "Example",
@@ -469,14 +498,20 @@ export const en = {
       tblIncR4C5: "Next planned release",
       // ─── Maintenance
       maintenanceTitle: "Planned Maintenance Windows",
-      maintenanceContent: "We schedule all planned maintenance activities during low-traffic periods and notify your workspace administrators in advance. Planned maintenance does not count against your uptime SLA.",
-      maintItem1: "Planned maintenance is typically scheduled between 2:00 AM and 5:00 AM in your configured timezone",
-      maintItem2: "Your workspace administrators receive at least 72 hours advance notice via email and in-app notification",
-      maintItem3: "Emergency maintenance may occur with shorter notice but will always include real-time status updates",
-      maintItem4: "Our public status page is updated in real time during any maintenance or incident period",
+      maintenanceContent:
+        "We schedule all planned maintenance activities during low-traffic periods and notify your workspace administrators in advance. Planned maintenance does not count against your uptime SLA.",
+      maintItem1:
+        "Planned maintenance is typically scheduled between 2:00 AM and 5:00 AM in your configured timezone",
+      maintItem2:
+        "Your workspace administrators receive at least 72 hours advance notice via email and in-app notification",
+      maintItem3:
+        "Emergency maintenance may occur with shorter notice but will always include real-time status updates",
+      maintItem4:
+        "Our public status page is updated in real time during any maintenance or incident period",
       // ─── Credits
       creditsTitle: "Service Credits for SLA Violations",
-      creditsContent: "If we fall below our committed uptime in any calendar month, you are entitled to service credits automatically applied to your next billing cycle. No need to file a complaint — we track it and apply it.",
+      creditsContent:
+        "If we fall below our committed uptime in any calendar month, you are entitled to service credits automatically applied to your next billing cycle. No need to file a complaint — we track it and apply it.",
       tblCreditH1: "Monthly Uptime Achieved",
       tblCreditH2: "Service Credit (Growth)",
       tblCreditH3: "Service Credit (Enterprise)",
@@ -492,59 +527,87 @@ export const en = {
       // ─── Commitment
       commitmentTitle: "Our Commitment to Transparency",
       commitTransparency: "Real-Time Status Page",
-      commitTransparencyDesc: "Our public status page shows live system health for every service component. Bookmark it and always know what is happening.",
+      commitTransparencyDesc:
+        "Our public status page shows live system health for every service component. Bookmark it and always know what is happening.",
       commitStatusPage: "Historical Uptime Reports",
-      commitStatusPageDesc: "We publish monthly uptime reports for all plans. You can see exactly how we performed against our commitments at any time.",
+      commitStatusPageDesc:
+        "We publish monthly uptime reports for all plans. You can see exactly how we performed against our commitments at any time.",
       commitNotifications: "Proactive Incident Alerts",
-      commitNotificationsDesc: "Your workspace administrators are notified the moment an incident is detected — before you even notice something is wrong.",
+      commitNotificationsDesc:
+        "Your workspace administrators are notified the moment an incident is detected — before you even notice something is wrong.",
       commitReview: "Quarterly Business Reviews",
-      commitReviewDesc: "Enterprise clients receive quarterly reviews covering uptime performance, incident history, and upcoming improvements to our infrastructure.",
+      commitReviewDesc:
+        "Enterprise clients receive quarterly reviews covering uptime performance, incident history, and upcoming improvements to our infrastructure.",
       // ─── Tips
-      upgradeTip: "Enterprise plans include custom SLA terms with higher uptime guarantees, dedicated infrastructure, and priority incident response. Contact our team to discuss your requirements.",
-      contactNote: "Need a custom SLA for regulated industries or mission-critical operations? Our enterprise team can tailor a Service Level Agreement to match your specific business and compliance needs.",
+      upgradeTip:
+        "Enterprise plans include custom SLA terms with higher uptime guarantees, dedicated infrastructure, and priority incident response. Contact our team to discuss your requirements.",
+      contactNote:
+        "Need a custom SLA for regulated industries or mission-critical operations? Our enterprise team can tailor a Service Level Agreement to match your specific business and compliance needs.",
     },
     tenantIsolation: {
       title: "Data Isolation",
-      description: "Your business data is completely isolated from every other company on SCRIPE. Understand exactly what that means and why it matters for your business.",
-      intro: "Your data is yours — completely isolated. When your business subscribes to SCRIPE, your workspace is its own secure environment. No other company can see your data, your team, or your settings — ever. This page explains exactly how that isolation works and what it means for your business.",
+      description:
+        "Your business data is completely isolated from every other company on SCRIPE. Understand exactly what that means and why it matters for your business.",
+      intro:
+        "Your data is yours — completely isolated. When your business subscribes to SCRIPE, your workspace is its own secure environment. No other company can see your data, your team, or your settings — ever. This page explains exactly how that isolation works and what it means for your business.",
       // ─── What It Means
       whatItMeansTitle: "What Isolation Means for Your Business",
-      whatItMeansContent: "Think of your SCRIPE workspace as a private, locked office. Other businesses on SCRIPE have their own offices. Even though you are all in the same building, no one can walk into your office or see what is on your desk. Your data never mixes with another company's data — by design, not just by policy.",
+      whatItMeansContent:
+        "Think of your SCRIPE workspace as a private, locked office. Other businesses on SCRIPE have their own offices. Even though you are all in the same building, no one can walk into your office or see what is on your desk. Your data never mixes with another company's data — by design, not just by policy.",
       isolUserData: "Team and User Data",
-      isolUserDataDesc: "Your team members, their profiles, roles, and permissions exist only within your workspace. No other company can see your staff list.",
+      isolUserDataDesc:
+        "Your team members, their profiles, roles, and permissions exist only within your workspace. No other company can see your staff list.",
       isolFiles: "Files and Documents",
-      isolFilesDesc: "Any file your team uploads — documents, images, reports — is stored in your isolated space and never accessible to other businesses.",
+      isolFilesDesc:
+        "Any file your team uploads — documents, images, reports — is stored in your isolated space and never accessible to other businesses.",
       isolSettings: "Workspace Settings",
-      isolSettingsDesc: "Your configurations, preferences, integrations, and customizations are private to your workspace. No other company shares or sees your settings.",
+      isolSettingsDesc:
+        "Your configurations, preferences, integrations, and customizations are private to your workspace. No other company shares or sees your settings.",
       isolNotifications: "Notifications",
-      isolNotificationsDesc: "Alerts, reminders, and system notifications are generated exclusively for your workspace. You only ever see activity relevant to your business.",
+      isolNotificationsDesc:
+        "Alerts, reminders, and system notifications are generated exclusively for your workspace. You only ever see activity relevant to your business.",
       isolAuditLogs: "Audit Logs",
-      isolAuditLogsDesc: "Every action taken in your workspace is logged in your private audit trail. These records are yours alone and cannot be accessed by other businesses.",
+      isolAuditLogsDesc:
+        "Every action taken in your workspace is logged in your private audit trail. These records are yours alone and cannot be accessed by other businesses.",
       isolPermissions: "Roles and Permissions",
-      isolPermissionsDesc: "Your team's access levels, custom roles, and permission configurations are entirely private to your workspace.",
+      isolPermissionsDesc:
+        "Your team's access levels, custom roles, and permission configurations are entirely private to your workspace.",
       // ─── Diagram
       diagramTitle: "Two Businesses, Zero Data Overlap",
-      diagramContent: "No matter how many businesses subscribe to SCRIPE, each workspace is completely separated. The diagram below illustrates how two different companies on SCRIPE have entirely independent data spaces that never intersect.",
+      diagramContent:
+        "No matter how many businesses subscribe to SCRIPE, each workspace is completely separated. The diagram below illustrates how two different companies on SCRIPE have entirely independent data spaces that never intersect.",
       // ─── Zero Trust
       zeroTrustTitle: "Zero-Trust by Design",
-      zeroTrustContent: "SCRIPE was built from the ground up with the principle that no workspace should be able to access another — under any circumstances. This is not just a policy decision; it is an architectural guarantee enforced at every layer of the platform.",
-      zeroTrustItem1: "Every request your team makes is automatically scoped to your workspace only — the platform physically cannot return data from another business",
-      zeroTrustItem2: "User identity tokens are cryptographically tied to your workspace, preventing any lateral movement between businesses",
-      zeroTrustItem3: "Even SCRIPE's own support staff access your workspace only with your explicit approval and full audit logging",
-      zeroTrustItem4: "All data is encrypted at rest and in transit — even within SCRIPE's own infrastructure",
-      zeroTrustItem5: "Isolation is enforced at the database query level, not just at the application layer — making it mathematically impossible to mix workspaces",
-      zeroTrustTip: "Many businesses ask us: what if a bug in SCRIPE causes my data to appear in another workspace? The answer is: it cannot happen. Isolation is enforced at the database layer, not just in code, so a bug in the application cannot bypass it.",
+      zeroTrustContent:
+        "SCRIPE was built from the ground up with the principle that no workspace should be able to access another — under any circumstances. This is not just a policy decision; it is an architectural guarantee enforced at every layer of the platform.",
+      zeroTrustItem1:
+        "Every request your team makes is automatically scoped to your workspace only — the platform physically cannot return data from another business",
+      zeroTrustItem2:
+        "User identity tokens are cryptographically tied to your workspace, preventing any lateral movement between businesses",
+      zeroTrustItem3:
+        "Even SCRIPE's own support staff access your workspace only with your explicit approval and full audit logging",
+      zeroTrustItem4:
+        "All data is encrypted at rest and in transit — even within SCRIPE's own infrastructure",
+      zeroTrustItem5:
+        "Isolation is enforced at the database query level, not just at the application layer — making it mathematically impossible to mix workspaces",
+      zeroTrustTip:
+        "Many businesses ask us: what if a bug in SCRIPE causes my data to appear in another workspace? The answer is: it cannot happen. Isolation is enforced at the database layer, not just in code, so a bug in the application cannot bypass it.",
       // ─── Compliance
       complianceTitle: "Compliance and Audit Readiness",
-      complianceContent: "SCRIPE's isolation model supports your compliance obligations. Whether you need to demonstrate GDPR readiness, pass a security audit, or provide data residency guarantees to your customers, SCRIPE provides the evidence and controls you need.",
+      complianceContent:
+        "SCRIPE's isolation model supports your compliance obligations. Whether you need to demonstrate GDPR readiness, pass a security audit, or provide data residency guarantees to your customers, SCRIPE provides the evidence and controls you need.",
       complianceGdpr: "GDPR and Privacy Compliance",
-      complianceGdprDesc: "Your customer data is isolated and can be deleted or exported on request, supporting your GDPR obligations as a data controller.",
+      complianceGdprDesc:
+        "Your customer data is isolated and can be deleted or exported on request, supporting your GDPR obligations as a data controller.",
       complianceAuditTrail: "Immutable Audit Trail",
-      complianceAuditTrailDesc: "Every action in your workspace is permanently logged with timestamps, user details, and what changed. Ideal for regulatory audits and internal governance.",
+      complianceAuditTrailDesc:
+        "Every action in your workspace is permanently logged with timestamps, user details, and what changed. Ideal for regulatory audits and internal governance.",
       complianceEncryption: "Encryption at Rest and in Transit",
-      complianceEncryptionDesc: "All data stored in your workspace is encrypted at rest. All data moving between your team and SCRIPE is encrypted in transit using modern TLS protocols.",
+      complianceEncryptionDesc:
+        "All data stored in your workspace is encrypted at rest. All data moving between your team and SCRIPE is encrypted in transit using modern TLS protocols.",
       complianceDataResidency: "Data Residency Options",
-      complianceDataResidencyDesc: "Enterprise plans offer data residency selection so your data stays within your required geographic region — supporting local data sovereignty laws.",
+      complianceDataResidencyDesc:
+        "Enterprise plans offer data residency selection so your data stays within your required geographic region — supporting local data sovereignty laws.",
       tblCompH1: "Compliance Area",
       tblCompH2: "What SCRIPE Provides",
       tblCompH3: "Who It Helps",
@@ -562,12 +625,17 @@ export const en = {
       tblCompR4C3: "Businesses with local data sovereignty requirements",
       // ─── FAQ
       faqTitle: "Frequently Asked Questions",
-      faqItem1: "Can SCRIPE employees access my data? Only when you explicitly grant permission, and every access is permanently logged in your audit trail.",
-      faqItem2: "What happens to my data if I cancel my subscription? Your data is retained for 30 days after cancellation so you can export it, then permanently deleted.",
-      faqItem3: "Can I get a copy of all my data? Yes. Enterprise plans include a full data export feature. Contact our team to request a complete data export at any time.",
-      faqItem4: "Is my data stored separately from other companies or in the same database? Your data is logically isolated and cryptographically separated. Enterprise plans offer dedicated database options for complete physical separation.",
+      faqItem1:
+        "Can SCRIPE employees access my data? Only when you explicitly grant permission, and every access is permanently logged in your audit trail.",
+      faqItem2:
+        "What happens to my data if I cancel my subscription? Your data is retained for 30 days after cancellation so you can export it, then permanently deleted.",
+      faqItem3:
+        "Can I get a copy of all my data? Yes. Enterprise plans include a full data export feature. Contact our team to request a complete data export at any time.",
+      faqItem4:
+        "Is my data stored separately from other companies or in the same database? Your data is logically isolated and cryptographically separated. Enterprise plans offer dedicated database options for complete physical separation.",
       // ─── Assurance
-      assuranceNote: "We understand that data trust is non-negotiable. If you have specific compliance requirements, security questionnaires, or need to discuss our isolation architecture with your IT or legal team, contact us — we are happy to provide detailed documentation and respond to security assessments.",
+      assuranceNote:
+        "We understand that data trust is non-negotiable. If you have specific compliance requirements, security questionnaires, or need to discuss our isolation architecture with your IT or legal team, contact us — we are happy to provide detailed documentation and respond to security assessments.",
     },
   },
 };

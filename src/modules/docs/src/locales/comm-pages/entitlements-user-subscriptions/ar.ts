@@ -1,3 +1,3 @@
 export const ar = {
-  "User Subscriptions": "اشتراكات المستخدمين"
+  "User Subscriptions": "اشتراكات المستخدمين",
 };

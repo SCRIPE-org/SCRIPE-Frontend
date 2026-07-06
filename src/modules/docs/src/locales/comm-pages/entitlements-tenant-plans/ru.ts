@@ -1,3 +1,3 @@
 export const ru = {
-  "Tenant Plans": "Тарифные планы арендаторов"
+  "Tenant Plans": "Тарифные планы арендаторов",
 };

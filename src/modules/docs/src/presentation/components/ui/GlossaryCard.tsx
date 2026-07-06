@@ -13,10 +13,7 @@ export function GlossaryCard({ term }: GlossaryCardProps) {
   const [showEnglish, setShowEnglish] = useState(true);
 
   return (
-    <div
-      className="docs-glossary-card"
-      onClick={() => setShowEnglish(!showEnglish)}
-    >
+    <div className="docs-glossary-card" onClick={() => setShowEnglish(!showEnglish)}>
       <div className="docs-glossary-header">
         <span className="docs-term-en">{term.termEn}</span>
         <span className="docs-term-ar">{term.termAr}</span>

@@ -284,7 +284,8 @@ export const fr = {
       intro:
         "La CLI Node.js propriétaire de SCRIPE résout le problème de répétition inhérent aux architectures propres. Elle conçoit des modules full-stack complets qui traversent de React à SQL.",
       commandsTitle: "Commandes de Scaffolding de Base",
-      commandsIntro: "Les opérations pivots qui prodscripeent le volume principal de la base de code.",
+      commandsIntro:
+        "Les opérations pivots qui prodscripeent le volume principal de la base de code.",
       newModuleTitle: "Génération de Modules : new-module",
       newModuleIntro:
         "Crée des partitions logiques isolées DDD en Backend (Application, Domain, Infrastructure) et le squelette en Frontend simultanément.",

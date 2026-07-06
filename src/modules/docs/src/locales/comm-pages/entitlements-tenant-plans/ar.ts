@@ -1,3 +1,3 @@
 export const ar = {
-  "Tenant Plans": "خطط المستأجرين"
+  "Tenant Plans": "خطط المستأجرين",
 };

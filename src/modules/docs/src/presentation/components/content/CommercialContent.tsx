@@ -15,13 +15,16 @@ interface CommercialContentProps {
 }
 
 // Signal data per category — right-column hero card
-const CATEGORY_SIGNALS: Record<string, {
-  label: string;
-  value: string;
-  detail: string;
-  bars: number[];
-  tag: string;
-}> = {
+const CATEGORY_SIGNALS: Record<
+  string,
+  {
+    label: string;
+    value: string;
+    detail: string;
+    bars: number[];
+    tag: string;
+  }
+> = {
   "commercial-why-scripe": {
     label: "Market motion",
     value: "B2B2C",
@@ -121,9 +124,7 @@ export function CommercialContent({
                 {categoryInfo ? t(categoryInfo.titleKey) : "Commercial"}
               </span>
               <span className="com-page-hero-tag">Decision memo</span>
-              {lastUpdated && (
-                <span className="com-page-hero-tag">Updated {lastUpdated}</span>
-              )}
+              {lastUpdated && <span className="com-page-hero-tag">Updated {lastUpdated}</span>}
             </motion.div>
 
             {/* Title */}
@@ -192,10 +193,7 @@ export function CommercialContent({
             <span>On this page</span>
             <nav aria-label="Table of contents">
               {headings.slice(0, 10).map((heading) => {
-                const id =
-                  heading.id ||
-                  heading.titleKey.split(".").pop() ||
-                  heading.titleKey;
+                const id = heading.id || heading.titleKey.split(".").pop() || heading.titleKey;
                 return (
                   <a key={id} href={`#${id}`}>
                     {t(heading.titleKey)}

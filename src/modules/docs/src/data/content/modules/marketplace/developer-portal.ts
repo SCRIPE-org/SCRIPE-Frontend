@@ -24,7 +24,11 @@ const sections: DocSection[] = [
       ["SupportEmail", "string", "Email address for support inquiries from app users"],
       ["Bio", "string", "Developer biography / description shown on the developer page"],
       ["IsVerified", "bool", "Whether the developer has been verified by platform admins"],
-      ["StripeConnectAccountId", "string", "Stripe Connect account ID for receiving marketplace payouts"],
+      [
+        "StripeConnectAccountId",
+        "string",
+        "Stripe Connect account ID for receiving marketplace payouts",
+      ],
     ],
   },
   {
@@ -48,9 +52,21 @@ const sections: DocSection[] = [
       ["Id", "Guid", "Primary key"],
       ["AppListingId", "Guid", "FK to the app listing this submission belongs to"],
       ["PluginVersionId", "Guid", "FK to the specific plugin version being submitted for review"],
-      ["Status", "SubmissionStatus", "Current status in the review pipeline (Submitted, InAutomatedScan, InManualReview, Approved, Rejected)"],
-      ["SubmittedAt", "DateTime", "UTC timestamp when the developer submitted this version for review"],
-      ["ReviewedAt", "DateTime?", "UTC timestamp when an admin completed the review (null if still pending)"],
+      [
+        "Status",
+        "SubmissionStatus",
+        "Current status in the review pipeline (Submitted, InAutomatedScan, InManualReview, Approved, Rejected)",
+      ],
+      [
+        "SubmittedAt",
+        "DateTime",
+        "UTC timestamp when the developer submitted this version for review",
+      ],
+      [
+        "ReviewedAt",
+        "DateTime?",
+        "UTC timestamp when an admin completed the review (null if still pending)",
+      ],
     ],
   },
 
@@ -69,11 +85,15 @@ const sections: DocSection[] = [
       ["Id", "Guid", "Primary key"],
       ["DeveloperProfileId", "Guid", "FK to the developer receiving this payout"],
       ["Amount", "decimal", "Total payout amount after platform commission deduction"],
-      ["Currency", "string", "ISO 4217 currency code (e.g. \"USD\")"],
+      ["Currency", "string", 'ISO 4217 currency code (e.g. "USD")'],
       ["PeriodStart", "DateTime", "Start date of the payout period (inclusive)"],
       ["PeriodEnd", "DateTime", "End date of the payout period (inclusive)"],
       ["Status", "PayoutStatus", "Current payout status (Pending, Processing, Paid, Failed)"],
-      ["StripeTransferId", "string", "Stripe Transfer ID for reconciliation (empty until transfer is initiated)"],
+      [
+        "StripeTransferId",
+        "string",
+        "Stripe Transfer ID for reconciliation (empty until transfer is initiated)",
+      ],
     ],
   },
 

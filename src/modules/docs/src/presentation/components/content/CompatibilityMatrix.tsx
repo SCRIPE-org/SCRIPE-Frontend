@@ -12,7 +12,10 @@ interface CompatibilityMatrixProps {
 export function CompatibilityMatrix({ headers, rows }: CompatibilityMatrixProps) {
   const { t } = useDocsI18n();
   return (
-    <div className="docs-matrix-table-container" style={{ overflowX: "auto", marginBottom: "2rem" }}>
+    <div
+      className="docs-matrix-table-container"
+      style={{ overflowX: "auto", marginBottom: "2rem" }}
+    >
       <table className="docs-matrix-table">
         <thead>
           <tr>
@@ -25,7 +28,9 @@ export function CompatibilityMatrix({ headers, rows }: CompatibilityMatrixProps)
         <tbody>
           {rows.map((row, ri) => (
             <tr key={ri}>
-              <td><strong>{t(row.nameKey)}</strong></td>
+              <td>
+                <strong>{t(row.nameKey)}</strong>
+              </td>
               {row.cells.map((cell, ci) => (
                 <td key={ci}>
                   <MatrixCellBadge cell={cell} />

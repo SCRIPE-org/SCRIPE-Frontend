@@ -38,8 +38,7 @@ export const en = {
       title: "Subscription Plans",
       trialTip:
         "All plans start with a 30-day free trial. No credit card required. Our onboarding team will configure your workspace within 48 hours.",
-      typesIntro:
-        "Choose the plan that fits your current business size and scale up as you grow.",
+      typesIntro: "Choose the plan that fits your current business size and scale up as you grow.",
       typesTitle: "Our Subscription Plans",
       plansTitle: "Our Subscription Tiers",
       plansIntro:
@@ -441,169 +440,233 @@ export const en = {
       tblDbR5C2: "⚙️ Dev only",
       tblDbR5C3: "For local development and testing",
     },
-  
+
     pricingShowcase: {
       title: "Subscription Plans",
-      description: "Simple, transparent subscription pricing designed for businesses of all sizes — from 50-person teams to global enterprises.",
-      intro: "SCRIPE is a subscription platform. Choose the plan that fits your current team size, module requirements, and support expectations. Every plan includes access to the same battle-tested infrastructure — multi-tenancy, RBAC, audit trails, and real-time capabilities are included in all tiers. You scale your plan as your business grows.",
+      description:
+        "Simple, transparent subscription pricing designed for businesses of all sizes — from 50-person teams to global enterprises.",
+      intro:
+        "SCRIPE is a subscription platform. Choose the plan that fits your current team size, module requirements, and support expectations. Every plan includes access to the same battle-tested infrastructure — multi-tenancy, RBAC, audit trails, and real-time capabilities are included in all tiers. You scale your plan as your business grows.",
 
       // Tiers overview
       tiersTitle: "Subscription Tiers",
-      tiersIntro: "SCRIPE offers four subscription tiers, each designed for a specific business scale and operational profile. All tiers share the same core infrastructure — what differs is the user limit, module catalog depth, branding scope, support SLA, and compliance tooling.",
+      tiersIntro:
+        "SCRIPE offers four subscription tiers, each designed for a specific business scale and operational profile. All tiers share the same core infrastructure — what differs is the user limit, module catalog depth, branding scope, support SLA, and compliance tooling.",
 
       // Starter
       starterTitle: "Starter — Up to 50 Users",
-      starterContent: "The Starter plan is designed for lean teams that need to move fast. Subscribe online, configure your workspace in under an hour, and get your team operational with up to 3 core modules. Ideal for small businesses, early-stage startups, and internal tools teams who want enterprise-grade architecture without enterprise-grade complexity.",
+      starterContent:
+        "The Starter plan is designed for lean teams that need to move fast. Subscribe online, configure your workspace in under an hour, and get your team operational with up to 3 core modules. Ideal for small businesses, early-stage startups, and internal tools teams who want enterprise-grade architecture without enterprise-grade complexity.",
       starterUsers: "Up to 50 Users",
-      starterUsersDesc: "Supports up to 50 active user accounts. Ideal for small teams, single-department workspaces, or pilot deployments before scaling.",
+      starterUsersDesc:
+        "Supports up to 50 active user accounts. Ideal for small teams, single-department workspaces, or pilot deployments before scaling.",
       starterModules: "3 Core Modules",
-      starterModulesDesc: "Choose any 3 modules from the SCRIPE catalog — Identity, HR, Inventory, Finance, CRM, and more. Additional modules available as add-ons.",
+      starterModulesDesc:
+        "Choose any 3 modules from the SCRIPE catalog — Identity, HR, Inventory, Finance, CRM, and more. Additional modules available as add-ons.",
       starterSupport: "Basic Support",
-      starterSupportDesc: "Community forum access, email support with 48-hour response time, and comprehensive self-service documentation portal.",
+      starterSupportDesc:
+        "Community forum access, email support with 48-hour response time, and comprehensive self-service documentation portal.",
 
       // Growth
       growthTitle: "Growth — Up to 200 Users",
-      growthContent: "The Growth plan removes the barriers that hold fast-scaling teams back. Access up to 10 modules, configure custom branding for your workspace, set up your own domain, and receive priority support with guaranteed 24-hour response. Built for businesses that have found product-market fit and are scaling their operations.",
+      growthContent:
+        "The Growth plan removes the barriers that hold fast-scaling teams back. Access up to 10 modules, configure custom branding for your workspace, set up your own domain, and receive priority support with guaranteed 24-hour response. Built for businesses that have found product-market fit and are scaling their operations.",
       growthUsers: "Up to 200 Users",
-      growthUsersDesc: "Scale your team to 200 active users with full role management, bulk user import, and department-level access control.",
+      growthUsersDesc:
+        "Scale your team to 200 active users with full role management, bulk user import, and department-level access control.",
       growthModules: "10 Modules",
-      growthModulesDesc: "Activate up to 10 modules from the full SCRIPE catalog. Mix and match business modules to match your operational workflow.",
+      growthModulesDesc:
+        "Activate up to 10 modules from the full SCRIPE catalog. Mix and match business modules to match your operational workflow.",
       growthSupport: "Priority Support (24h SLA)",
-      growthSupportDesc: "Guaranteed 24-hour response from the SCRIPE engineering team. Priority bug routing and monthly architecture review calls.",
+      growthSupportDesc:
+        "Guaranteed 24-hour response from the SCRIPE engineering team. Priority bug routing and monthly architecture review calls.",
       growthBranding: "Custom Branding",
-      growthBrandingDesc: "Upload your logo, configure your color theme, and customize email templates. Your team sees your brand, not the SCRIPE default.",
+      growthBrandingDesc:
+        "Upload your logo, configure your color theme, and customize email templates. Your team sees your brand, not the SCRIPE default.",
       growthAnalytics: "Advanced Analytics",
-      growthAnalyticsDesc: "Module-level usage dashboards, user activity reports, and export-to-CSV capabilities for your business operations data.",
+      growthAnalyticsDesc:
+        "Module-level usage dashboards, user activity reports, and export-to-CSV capabilities for your business operations data.",
       growthDomain: "Custom Domain",
-      growthDomainDesc: "Map your own domain to your SCRIPE workspace. DNS verification is automated and SSL certificates are provisioned automatically.",
+      growthDomainDesc:
+        "Map your own domain to your SCRIPE workspace. DNS verification is automated and SSL certificates are provisioned automatically.",
 
       // Enterprise
       enterpriseTitle: "Enterprise — Unlimited Users",
-      enterpriseContent: "The Enterprise plan is built for organizations that cannot compromise on scale, security, or compliance. Unlimited users, all modules, a dedicated support engineer, a 99.9% uptime SLA, and the option to deploy SCRIPE entirely on your own infrastructure. Enterprise clients receive a dedicated Slack channel with direct access to the SCRIPE architecture team.",
+      enterpriseContent:
+        "The Enterprise plan is built for organizations that cannot compromise on scale, security, or compliance. Unlimited users, all modules, a dedicated support engineer, a 99.9% uptime SLA, and the option to deploy SCRIPE entirely on your own infrastructure. Enterprise clients receive a dedicated Slack channel with direct access to the SCRIPE architecture team.",
       enterpriseUsers: "Unlimited Users",
-      enterpriseUsersDesc: "No user cap. Scale to tens of thousands of users with multi-department tenant hierarchies and inherited role structures.",
+      enterpriseUsersDesc:
+        "No user cap. Scale to tens of thousands of users with multi-department tenant hierarchies and inherited role structures.",
       enterpriseModules: "All Modules",
-      enterpriseModulesDesc: "Full access to every module in the SCRIPE catalog. Plus early access to modules in beta and the ability to request priority development of custom modules.",
+      enterpriseModulesDesc:
+        "Full access to every module in the SCRIPE catalog. Plus early access to modules in beta and the ability to request priority development of custom modules.",
       enterpriseSupport: "Dedicated Support (4h SLA)",
-      enterpriseSupportDesc: "Dedicated support engineer assigned to your account. 4-hour SLA for critical issues, direct Slack channel, and monthly architecture reviews.",
+      enterpriseSupportDesc:
+        "Dedicated support engineer assigned to your account. 4-hour SLA for critical issues, direct Slack channel, and monthly architecture reviews.",
       enterpriseSLA: "99.9% Uptime SLA",
-      enterpriseSLADesc: "Contractually guaranteed 99.9% uptime with automatic credits if the SLA is not met. Includes disaster recovery planning and failover configuration.",
+      enterpriseSLADesc:
+        "Contractually guaranteed 99.9% uptime with automatic credits if the SLA is not met. Includes disaster recovery planning and failover configuration.",
       enterpriseOnPrem: "On-Premise Option",
-      enterpriseOnPremDesc: "Deploy SCRIPE entirely within your own data center or private cloud. No external dependencies. Full air-gapped operation supported.",
+      enterpriseOnPremDesc:
+        "Deploy SCRIPE entirely within your own data center or private cloud. No external dependencies. Full air-gapped operation supported.",
       enterpriseCompliance: "Compliance Suite",
-      enterpriseComplianceDesc: "GDPR, SOX, and HIPAA-ready audit infrastructure. Compliance reports, data subject request workflows, and data retention policies are all included.",
+      enterpriseComplianceDesc:
+        "GDPR, SOX, and HIPAA-ready audit infrastructure. Compliance reports, data subject request workflows, and data retention policies are all included.",
 
       // White-label
       whiteLabelTitle: "White-Label — Full Reseller Deployment",
-      whiteLabelContent: "The White-Label plan is for businesses that want to offer SCRIPE-powered services under their own brand. You deploy SCRIPE as your product — your customers never see the SCRIPE name. Custom domain, complete branding control, reseller pricing rights, and dedicated custom development support. Ideal for system integrators, ISVs, and B2B2C operators.",
+      whiteLabelContent:
+        "The White-Label plan is for businesses that want to offer SCRIPE-powered services under their own brand. You deploy SCRIPE as your product — your customers never see the SCRIPE name. Custom domain, complete branding control, reseller pricing rights, and dedicated custom development support. Ideal for system integrators, ISVs, and B2B2C operators.",
       wlBranding: "Complete White-Label Branding",
-      wlBrandingDesc: "Every element of the platform reflects your brand. Logo, colors, typography, email domain, login page, mobile app splash screen — all fully customizable.",
+      wlBrandingDesc:
+        "Every element of the platform reflects your brand. Logo, colors, typography, email domain, login page, mobile app splash screen — all fully customizable.",
       wlDomain: "Own Domain Mandatory",
-      wlDomainDesc: "Your customers access the platform exclusively through your domain. SCRIPE is invisible in all URLs, emails, and API responses.",
+      wlDomainDesc:
+        "Your customers access the platform exclusively through your domain. SCRIPE is invisible in all URLs, emails, and API responses.",
       wlReseller: "Reseller Pricing Rights",
-      wlResellerDesc: "Set your own subscription prices for your end customers. Earn margin on top of your SCRIPE subscription cost. Revenue share program available for qualified partners.",
+      wlResellerDesc:
+        "Set your own subscription prices for your end customers. Earn margin on top of your SCRIPE subscription cost. Revenue share program available for qualified partners.",
       wlCustomDev: "Custom Development",
-      wlCustomDevDesc: "Dedicated custom development hours included in your White-Label subscription. Add entirely new modules, build bespoke features, or integrate third-party systems.",
+      wlCustomDevDesc:
+        "Dedicated custom development hours included in your White-Label subscription. Add entirely new modules, build bespoke features, or integrate third-party systems.",
 
       // Comparison table
       comparisonTitle: "Plan Feature Comparison",
-      comparisonIntro: "The table below provides a side-by-side comparison of all four subscription tiers. Use it to identify which plan best matches your user volume, compliance requirements, and branding needs.",
+      comparisonIntro:
+        "The table below provides a side-by-side comparison of all four subscription tiers. Use it to identify which plan best matches your user volume, compliance requirements, and branding needs.",
 
       // FAQ
       faqTitle: "Pricing Frequently Asked Questions",
-      faqIntro: "Common questions from prospective SCRIPE subscribers about pricing, billing, upgrades, and plan features.",
+      faqIntro:
+        "Common questions from prospective SCRIPE subscribers about pricing, billing, upgrades, and plan features.",
       faq1Q: "Can I change my plan at any time?",
-      faq1A: "Yes. You can upgrade your subscription at any time and the change takes effect immediately, with billing pro-rated for the remainder of your current period. Downgrades take effect at the start of your next billing cycle. There are no penalties for changing plans.",
+      faq1A:
+        "Yes. You can upgrade your subscription at any time and the change takes effect immediately, with billing pro-rated for the remainder of your current period. Downgrades take effect at the start of your next billing cycle. There are no penalties for changing plans.",
       faq2Q: "Is pricing per user or per workspace?",
-      faq2A: "SCRIPE pricing is per workspace (subscription), not per seat. The user limit in each plan (50, 200, Unlimited) refers to active user accounts in your workspace. You are not charged for individual seats on top of your subscription fee.",
+      faq2A:
+        "SCRIPE pricing is per workspace (subscription), not per seat. The user limit in each plan (50, 200, Unlimited) refers to active user accounts in your workspace. You are not charged for individual seats on top of your subscription fee.",
       faq3Q: "What happens if I exceed my user limit?",
-      faq3A: "If your workspace reaches the user limit for your current plan, you will be prompted to upgrade to the next tier. Existing users are never locked out — only new user creation is paused until you upgrade or remove inactive users.",
+      faq3A:
+        "If your workspace reaches the user limit for your current plan, you will be prompted to upgrade to the next tier. Existing users are never locked out — only new user creation is paused until you upgrade or remove inactive users.",
       faq4Q: "Is there a free trial?",
-      faq4A: "SCRIPE offers a 30-day trial on the Growth plan at no cost. No credit card is required to start. You will have full access to 10 modules, custom branding, and priority support during your trial period. Contact the team to extend the trial if you need more time for your evaluation.",
+      faq4A:
+        "SCRIPE offers a 30-day trial on the Growth plan at no cost. No credit card is required to start. You will have full access to 10 modules, custom branding, and priority support during your trial period. Contact the team to extend the trial if you need more time for your evaluation.",
       faq5Q: "Are there discounts for annual billing or non-profits?",
-      faq5A: "Annual billing subscriptions receive a 20% discount compared to monthly billing across all plans. Educational institutions and non-profit organizations are eligible for additional discounts — contact the SCRIPE sales team with your organizational details.",
+      faq5A:
+        "Annual billing subscriptions receive a 20% discount compared to monthly billing across all plans. Educational institutions and non-profit organizations are eligible for additional discounts — contact the SCRIPE sales team with your organizational details.",
 
       // CTA
-      ctaTip: "Ready to subscribe? Start your 30-day free trial on the Growth plan — no credit card required. Or contact the SCRIPE sales team to discuss Enterprise or White-Label pricing for your specific requirements.",
+      ctaTip:
+        "Ready to subscribe? Start your 30-day free trial on the Growth plan — no credit card required. Or contact the SCRIPE sales team to discuss Enterprise or White-Label pricing for your specific requirements.",
     },
     investorOverview: {
       title: "Investor Portal",
-      description: "Market opportunity, revenue model, competitive moat, and investment thesis for SCRIPE — the only B2B2C SaaS platform with this level of architectural quality.",
-      intro: "SCRIPE is a B2B SaaS platform that businesses subscribe to for powering their enterprise operations and managing their own customers. This investor portal presents the market opportunity, revenue model, competitive differentiation, and strategic investment thesis for SCRIPE. Whether you are a potential investor, co-founder, or strategic partner, this page gives you the quantitative and qualitative case for why SCRIPE is positioned to capture a significant share of the $307 billion global B2B SaaS market.",
+      description:
+        "Market opportunity, revenue model, competitive moat, and investment thesis for SCRIPE — the only B2B2C SaaS platform with this level of architectural quality.",
+      intro:
+        "SCRIPE is a B2B SaaS platform that businesses subscribe to for powering their enterprise operations and managing their own customers. This investor portal presents the market opportunity, revenue model, competitive differentiation, and strategic investment thesis for SCRIPE. Whether you are a potential investor, co-founder, or strategic partner, this page gives you the quantitative and qualitative case for why SCRIPE is positioned to capture a significant share of the $307 billion global B2B SaaS market.",
 
       // Market Opportunity
       marketTitle: "Market Opportunity",
-      marketContent: "The global B2B SaaS market is growing at 18.7% CAGR and is projected to reach $500 billion by 2030. Within this, the enterprise platform and ERP modernization segment — where businesses subscribe to software to run their operations — represents a $28 billion addressable market. SCRIPE specifically targets the underserved mid-market segment: businesses too large for simple SaaS tools, but too cost-conscious to invest in traditional ERP implementations costing $500K and up.",
+      marketContent:
+        "The global B2B SaaS market is growing at 18.7% CAGR and is projected to reach $500 billion by 2030. Within this, the enterprise platform and ERP modernization segment — where businesses subscribe to software to run their operations — represents a $28 billion addressable market. SCRIPE specifically targets the underserved mid-market segment: businesses too large for simple SaaS tools, but too cost-conscious to invest in traditional ERP implementations costing $500K and up.",
       marketTam: "$307B Global TAM",
-      marketTamDesc: "The total addressable market for B2B SaaS platforms globally, growing at 18.7% CAGR through 2030. SCRIPE targets the mid-market and enterprise segments.",
+      marketTamDesc:
+        "The total addressable market for B2B SaaS platforms globally, growing at 18.7% CAGR through 2030. SCRIPE targets the mid-market and enterprise segments.",
       marketTiming: "Perfect Market Timing",
-      marketTimingDesc: "Post-pandemic digital transformation has accelerated enterprise SaaS adoption. SMBs and mid-market companies are replacing legacy systems at an unprecedented rate.",
+      marketTimingDesc:
+        "Post-pandemic digital transformation has accelerated enterprise SaaS adoption. SMBs and mid-market companies are replacing legacy systems at an unprecedented rate.",
       marketMENA: "MENA First-Mover Advantage",
-      marketMENADesc: "The MENA SaaS market is a $6.8B opportunity with very few native Arabic-first enterprise platforms. SCRIPE has full RTL and bilingual support built in from day one.",
+      marketMENADesc:
+        "The MENA SaaS market is a $6.8B opportunity with very few native Arabic-first enterprise platforms. SCRIPE has full RTL and bilingual support built in from day one.",
 
       // Revenue Model
       revenueTitle: "Revenue Model",
-      revenueContent: "SCRIPE operates a multi-stream recurring revenue model designed to compound as the customer base grows. The primary driver is subscription recurring revenue, supplemented by high-margin enterprise contracts, marketplace revenue share, and professional services. This combination creates predictable ARR with multiple growth levers.",
+      revenueContent:
+        "SCRIPE operates a multi-stream recurring revenue model designed to compound as the customer base grows. The primary driver is subscription recurring revenue, supplemented by high-margin enterprise contracts, marketplace revenue share, and professional services. This combination creates predictable ARR with multiple growth levers.",
       revSubscription: "Subscription ARR",
-      revSubscriptionDesc: "Monthly and annual recurring subscriptions across Starter, Growth, Enterprise, and White-Label tiers. Net Revenue Retention target: 120%+ through expansion and upsell.",
+      revSubscriptionDesc:
+        "Monthly and annual recurring subscriptions across Starter, Growth, Enterprise, and White-Label tiers. Net Revenue Retention target: 120%+ through expansion and upsell.",
       revEnterprise: "Enterprise Contracts",
-      revEnterpriseDesc: "Annual enterprise contracts averaging $180K ARR per customer, including implementation support, SLA guarantees, and custom development hours.",
+      revEnterpriseDesc:
+        "Annual enterprise contracts averaging $180K ARR per customer, including implementation support, SLA guarantees, and custom development hours.",
       revMarketplace: "Marketplace Revenue Share",
-      revMarketplaceDesc: "SCRIPE earns 30% of revenue from third-party modules and plugins sold through the platform marketplace. This is zero-cost revenue that scales with partner activity.",
+      revMarketplaceDesc:
+        "SCRIPE earns 30% of revenue from third-party modules and plugins sold through the platform marketplace. This is zero-cost revenue that scales with partner activity.",
       revPartner: "Partner & Reseller Program",
-      revPartnerDesc: "Certified partners and system integrators pay a platform fee and generate revenue through White-Label deployments and client implementation services.",
+      revPartnerDesc:
+        "Certified partners and system integrators pay a platform fee and generate revenue through White-Label deployments and client implementation services.",
 
       // Competitive Moat
       moatTitle: "Competitive Moat",
-      moatContent: "SCRIPE's competitive moat is not a single feature — it is the combination of architectural quality, B2B2C capability, and developer experience that would take a competitor 3+ years to replicate. The platform is built on principles (Clean Architecture, DDD, CQRS) that large enterprises and their security teams trust, combined with the subscription SaaS delivery model that makes procurement simple.",
+      moatContent:
+        "SCRIPE's competitive moat is not a single feature — it is the combination of architectural quality, B2B2C capability, and developer experience that would take a competitor 3+ years to replicate. The platform is built on principles (Clean Architecture, DDD, CQRS) that large enterprises and their security teams trust, combined with the subscription SaaS delivery model that makes procurement simple.",
       moatArchitecture: "Uncompromising Architecture",
-      moatArchitectureDesc: "Clean Architecture + DDD + CQRS enforced at every layer. This is not boilerplate — it is mathematically validated structural integrity that enterprise CTOs can trust.",
+      moatArchitectureDesc:
+        "Clean Architecture + DDD + CQRS enforced at every layer. This is not boilerplate — it is mathematically validated structural integrity that enterprise CTOs can trust.",
       moatB2B2C: "B2B2C Subscription Engine",
-      moatB2B2CDesc: "The only platform where businesses can subscribe to SCRIPE and immediately start managing their own customers with full white-label, billing, and entitlements support.",
+      moatB2B2CDesc:
+        "The only platform where businesses can subscribe to SCRIPE and immediately start managing their own customers with full white-label, billing, and entitlements support.",
       moatCLI: "Developer Velocity CLI",
-      moatCLIDesc: "The scripe-cli generates complete full-stack vertical slices in under a second. This 10x developer velocity is a structural competitive advantage that compounds over time.",
+      moatCLIDesc:
+        "The scripe-cli generates complete full-stack vertical slices in under a second. This 10x developer velocity is a structural competitive advantage that compounds over time.",
       moatRTL: "Native Arabic RTL Support",
-      moatRTLDesc: "Full Right-to-Left layout system with native Arabic localization built into the core framework. The MENA market has no comparable enterprise platform.",
+      moatRTLDesc:
+        "Full Right-to-Left layout system with native Arabic localization built into the core framework. The MENA market has no comparable enterprise platform.",
       moatMultiDB: "Zero Database Lock-in",
-      moatMultiDBDesc: "Switch between SQL Server, Oracle, and PostgreSQL with a configuration change. No other enterprise platform offers this level of database provider independence.",
+      moatMultiDBDesc:
+        "Switch between SQL Server, Oracle, and PostgreSQL with a configuration change. No other enterprise platform offers this level of database provider independence.",
       moatSecurity: "8-Layer Security Pipeline",
-      moatSecurityDesc: "Transport, rate limiting, JWT, RBAC, CSRF, anti-replay, field-level projection, and audit trail — all enforced automatically by the AstraFlow pipeline.",
+      moatSecurityDesc:
+        "Transport, rate limiting, JWT, RBAC, CSRF, anti-replay, field-level projection, and audit trail — all enforced automatically by the AstraFlow pipeline.",
 
       // Competitive Landscape
       landscapeTitle: "Competitive Landscape",
 
       // Investment Thesis
       thesisTitle: "Investment Thesis",
-      thesisContent: "The investment case for SCRIPE rests on six compounding growth drivers that create a defensible market position with strong network effects as the platform and marketplace grow.",
+      thesisContent:
+        "The investment case for SCRIPE rests on six compounding growth drivers that create a defensible market position with strong network effects as the platform and marketplace grow.",
 
       // Team & Vision
       teamTitle: "Team & Vision",
-      teamContent: "SCRIPE is built by a team with deep enterprise software experience and a clear technical vision: eliminate the concept of technical debt from enterprise software by providing an architectural foundation so structurally sound that it absorbs decades of feature development without degradation. The team combines engineering excellence with commercial go-to-market capability.",
+      teamContent:
+        "SCRIPE is built by a team with deep enterprise software experience and a clear technical vision: eliminate the concept of technical debt from enterprise software by providing an architectural foundation so structurally sound that it absorbs decades of feature development without degradation. The team combines engineering excellence with commercial go-to-market capability.",
       teamEngineering: "Engineering Excellence",
-      teamEngineeringDesc: "Core team with 10+ years of enterprise .NET and TypeScript experience. Architects of the AstraFlow pipeline, multi-provider database system, and SCRIPE CLI tooling.",
+      teamEngineeringDesc:
+        "Core team with 10+ years of enterprise .NET and TypeScript experience. Architects of the AstraFlow pipeline, multi-provider database system, and SCRIPE CLI tooling.",
       teamProduct: "Product Vision",
-      teamProductDesc: "Product strategy focused on developer experience, enterprise compliance, and the MENA market. Roadmap driven by enterprise customer requirements and competitive intelligence.",
+      teamProductDesc:
+        "Product strategy focused on developer experience, enterprise compliance, and the MENA market. Roadmap driven by enterprise customer requirements and competitive intelligence.",
       teamGTM: "Go-to-Market",
-      teamGTMDesc: "Direct enterprise sales, partner channel program, and self-service growth motion. MENA-first expansion with global enterprise as the subsequent target.",
+      teamGTMDesc:
+        "Direct enterprise sales, partner channel program, and self-service growth motion. MENA-first expansion with global enterprise as the subsequent target.",
 
       // CTA
       ctaTitle: "Schedule an Investor Call",
-      ctaContent: "We welcome conversations with investors, co-founders, and strategic partners who understand the enterprise SaaS market and share our conviction in the SCRIPE architectural vision. We are available for product demos, data room access, and technical deep-dives with your engineering due diligence team.",
-      ctaTip: "To schedule an investor call or request access to the SCRIPE data room, reach out to the founding team at investors@scripe.dev. We respond to all inquiries within 48 hours.",
+      ctaContent:
+        "We welcome conversations with investors, co-founders, and strategic partners who understand the enterprise SaaS market and share our conviction in the SCRIPE architectural vision. We are available for product demos, data room access, and technical deep-dives with your engineering due diligence team.",
+      ctaTip:
+        "To schedule an investor call or request access to the SCRIPE data room, reach out to the founding team at investors@scripe.dev. We respond to all inquiries within 48 hours.",
 
       // Keep legacy persona selector keys for backwards compatibility
       personaSelectorQuestion: "What is your primary interest?",
       personaSelectorInvestor: "I am an Investor",
       personaSelectorCofounder: "I want to be a Co-founder",
       personaSelectorPartner: "I want to be a Partner",
-      personaSelectorInvestorDesc: "Learn about our SaaS growth ROI, funding rounds, and scaling projection metrics.",
-      personaSelectorCofounderDesc: "Explore our foundational strategy, roles, and pathway to direct partnership.",
-      personaSelectorPartnerDesc: "See how system integrators, consultants, and developers scale B2B SaaS revenue share.",
+      personaSelectorInvestorDesc:
+        "Learn about our SaaS growth ROI, funding rounds, and scaling projection metrics.",
+      personaSelectorCofounderDesc:
+        "Explore our foundational strategy, roles, and pathway to direct partnership.",
+      personaSelectorPartnerDesc:
+        "See how system integrators, consultants, and developers scale B2B SaaS revenue share.",
       personaSelectorInvestorBenefit1: "250% average ROI over 3 years projected scaling metrics.",
       personaSelectorInvestorBenefit2: "Complete visibility into ARR, MRR, and user churn rates.",
       personaSelectorInvestorBenefit3: "Foundational ERP software market capture opportunity.",
-      personaSelectorCofounderBenefit1: "Direct equity stake and voting rights on platform decisions.",
-      personaSelectorCofounderBenefit2: "Ownership over core modular cleanest architecture pathways.",
+      personaSelectorCofounderBenefit1:
+        "Direct equity stake and voting rights on platform decisions.",
+      personaSelectorCofounderBenefit2:
+        "Ownership over core modular cleanest architecture pathways.",
       personaSelectorCofounderBenefit3: "Steer global go-to-market and channel integrations.",
       personaSelectorPartnerBenefit1: "Generous 30% recurring revenue share for channel sales.",
       personaSelectorPartnerBenefit2: "Dedicated developer support and white-label rights.",
@@ -672,12 +735,9 @@ export const en = {
       benefitsTitle: "What You Receive as a Co-Founder",
       benefitsContent:
         "Beyond equity and authority, SCRIPE co-founders receive a complete support system to succeed — because when you win, SCRIPE wins.",
-      benefit1:
-        "Meaningful founding equity with standard 4-year vesting and 1-year cliff",
-      benefit2:
-        "Co-founder title with verifiable, public attribution in all company materials",
-      benefit3:
-        "Direct involvement in all fundraising rounds and investor conversations",
+      benefit1: "Meaningful founding equity with standard 4-year vesting and 1-year cliff",
+      benefit2: "Co-founder title with verifiable, public attribution in all company materials",
+      benefit3: "Direct involvement in all fundraising rounds and investor conversations",
       benefit4: "Salary from first institutional funding round",
       benefit5:
         "Access to the SCRIPE technical team, codebase understanding, and full product context",

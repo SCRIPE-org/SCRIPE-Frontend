@@ -6,7 +6,17 @@ export const metadata: Metadata = {
   title: "SCRIPE — B2B2C SaaS Platform for Growing Businesses",
   description:
     "Discover what SCRIPE offers: multi-tenant workspaces, subscription management, enterprise security, white-labeling, marketplace integrations, and everything your business needs to scale.",
-  keywords: ["scripe", "b2b2c", "saas", "enterprise", "multi-tenant", "pricing", "security", "white-label", "marketplace"],
+  keywords: [
+    "scripe",
+    "b2b2c",
+    "saas",
+    "enterprise",
+    "multi-tenant",
+    "pricing",
+    "security",
+    "white-label",
+    "marketplace",
+  ],
 };
 
 /**

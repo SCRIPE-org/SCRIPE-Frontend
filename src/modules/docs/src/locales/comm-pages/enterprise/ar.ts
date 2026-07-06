@@ -316,7 +316,7 @@ export const ar = {
       templatesTitle: "تعريب عميق للواجهة الخلفية (Backend)",
       title: "العولمة (i18n) للمؤسسات",
     },
-  
+
     whiteLabeling: {
       title: "العلامة التجارية البيضاء",
       description: "أعد تسمية مساحة عمل SCRIPE بهويتك وشعاراتك ونطاقاتك المخصصة.",

@@ -404,7 +404,7 @@ export const es = {
       tblDbR5C2: "⚙️ Solo Desarrollo",
       tblDbR5C3: "Para desarrollo local y pruebas",
     },
-  
+
     pricingShowcase: {
       title: "Precios",
       description: "Precios sencillos y transparentes para todos.",
@@ -415,17 +415,28 @@ export const es = {
       personaSelectorInvestor: "Soy un Inversor",
       personaSelectorCofounder: "Quiero ser Cofundador",
       personaSelectorPartner: "Quiero ser Socio",
-      personaSelectorInvestorDesc: "Conozca nuestro ROI de crecimiento SaaS, rondas de financiación y métricas.",
-      personaSelectorCofounderDesc: "Explore nuestra estrategia fundacional, roles y camino hacia la asociación.",
-      personaSelectorPartnerDesc: "Vea cómo los socios escalan su participación en los ingresos de SaaS.",
-      personaSelectorInvestorBenefit1: "ROI promedio del 250% en 3 años métricas de escala proyectadas.",
-      personaSelectorInvestorBenefit2: "Visibilidad completa de las tasas de ARR, MRR y deserción de usuarios.",
-      personaSelectorInvestorBenefit3: "Oportunidad fundacional de captación del mercado de software ERP.",
-      personaSelectorCofounderBenefit1: "Participación directa en el capital y derecho a voto en las decisiones.",
-      personaSelectorCofounderBenefit2: "Propiedad sobre las rutas de arquitectura limpia y modular central.",
-      personaSelectorCofounderBenefit3: "Dirigir las integraciones de canales y salida al mercado global.",
-      personaSelectorPartnerBenefit1: "Generosa participación del 30% en ingresos recurrentes por ventas.",
-      personaSelectorPartnerBenefit2: "Soporte dedicado al desarrollador y derechos de marca blanca.",
+      personaSelectorInvestorDesc:
+        "Conozca nuestro ROI de crecimiento SaaS, rondas de financiación y métricas.",
+      personaSelectorCofounderDesc:
+        "Explore nuestra estrategia fundacional, roles y camino hacia la asociación.",
+      personaSelectorPartnerDesc:
+        "Vea cómo los socios escalan su participación en los ingresos de SaaS.",
+      personaSelectorInvestorBenefit1:
+        "ROI promedio del 250% en 3 años métricas de escala proyectadas.",
+      personaSelectorInvestorBenefit2:
+        "Visibilidad completa de las tasas de ARR, MRR y deserción de usuarios.",
+      personaSelectorInvestorBenefit3:
+        "Oportunidad fundacional de captación del mercado de software ERP.",
+      personaSelectorCofounderBenefit1:
+        "Participación directa en el capital y derecho a voto en las decisiones.",
+      personaSelectorCofounderBenefit2:
+        "Propiedad sobre las rutas de arquitectura limpia y modular central.",
+      personaSelectorCofounderBenefit3:
+        "Dirigir las integraciones de canales y salida al mercado global.",
+      personaSelectorPartnerBenefit1:
+        "Generosa participación del 30% en ingresos recurrentes por ventas.",
+      personaSelectorPartnerBenefit2:
+        "Soporte dedicado al desarrollador y derechos de marca blanca.",
       personaSelectorPartnerBenefit3: "Certificación técnica y listado oficial en el mercado.",
       personaSelectorLearnMore: "Saber más",
       title: "Portal de Inversores",

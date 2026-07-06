@@ -1,3 +1,3 @@
 export const ar = {
-  "Billing & Payments": "الفواتير والمدفوعات"
+  "Billing & Payments": "الفواتير والمدفوعات",
 };

@@ -126,9 +126,7 @@ function useCountUp(target: string, duration = 1800) {
           // easeOutExpo
           const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
           const current = num * eased;
-          const formatted = isFloat
-            ? current.toFixed(1)
-            : Math.floor(current).toLocaleString();
+          const formatted = isFloat ? current.toFixed(1) : Math.floor(current).toLocaleString();
           setDisplay(`${formatted}${suffix}`);
           if (progress < 1) requestAnimationFrame(tick);
         };
@@ -145,25 +143,16 @@ function useCountUp(target: string, duration = 1800) {
 }
 
 /* ── Stat card subcomponent ──────────────────────────────────────────── */
-function StatCard({
-  value,
-  labelKey,
-  index,
-}: {
-  value: string;
-  labelKey: string;
-  index: number;
-}) {
+function StatCard({ value, labelKey, index }: { value: string; labelKey: string; index: number }) {
   const { t } = useDocsI18n();
   const { display, ref } = useCountUp(value, 1800 + index * 150);
 
   return (
-    <article
-      className="com-stat-card com-reveal"
-      style={{ "--i": index } as CSSProperties}
-    >
+    <article className="com-stat-card com-reveal" style={{ "--i": index } as CSSProperties}>
       <span className="com-stat-index">{String(index + 1).padStart(2, "0")}</span>
-      <span className="com-stat-value" ref={ref}>{display}</span>
+      <span className="com-stat-value" ref={ref}>
+        {display}
+      </span>
       <p className="com-stat-label">{t(labelKey)}</p>
     </article>
   );

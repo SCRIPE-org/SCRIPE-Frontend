@@ -210,6 +210,10 @@ registerPage({
   category: "commercial-why-scripe",
   order: 12,
   sections,
-  relatedSlugs: ["commercial/why-scripe-overview", "commercial/enterprise-addons", "commercial/module-catalog"],
+  relatedSlugs: [
+    "commercial/why-scripe-overview",
+    "commercial/enterprise-addons",
+    "commercial/module-catalog",
+  ],
   lastUpdated: "2026-06-28",
 });

@@ -10,31 +10,94 @@ const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 /* ── Icons ────────────────────────────────────────────────────────────── */
 const ICONS = [
-  <svg key="mod" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
-    <rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
+  <svg
+    key="mod"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.75"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="3" y="3" width="7" height="7" rx="1" />
+    <rect x="14" y="3" width="7" height="7" rx="1" />
+    <rect x="14" y="14" width="7" height="7" rx="1" />
+    <rect x="3" y="14" width="7" height="7" rx="1" />
   </svg>,
-  <svg key="shield" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-    <path d="m9 12 2 2 4-4"/>
+  <svg
+    key="shield"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.75"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    <path d="m9 12 2 2 4-4" />
   </svg>,
-  <svg key="rocket" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/>
-    <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>
+  <svg
+    key="rocket"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.75"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+    <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
   </svg>,
-  <svg key="globe" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10"/>
-    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
-    <path d="M2 12h20"/>
+  <svg
+    key="globe"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.75"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+    <path d="M2 12h20" />
   </svg>,
-  <svg key="chart" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+  <svg
+    key="chart"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.75"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M3 3v18h18" />
+    <path d="m19 9-5 5-4-4-3 3" />
   </svg>,
-  <svg key="users" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-    <circle cx="9" cy="7" r="4"/>
-    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+  <svg
+    key="users"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.75"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
   </svg>,
 ];
 
@@ -68,16 +131,74 @@ const BAR_DATA = [
 
 /* Code snippet for wide code cell */
 const CODE_LINES = [
-  { ln: "1", parts: [{ type: "keyword", text: "public sealed class " }, { type: "fn", text: "CreateTenantHandler" }] },
+  {
+    ln: "1",
+    parts: [
+      { type: "keyword", text: "public sealed class " },
+      { type: "fn", text: "CreateTenantHandler" },
+    ],
+  },
   { ln: "2", parts: [{ type: "comment", text: "  // IAutoRegisteredJob + Clean Arch" }] },
-  { ln: "3", parts: [{ type: "keyword", text: "  public async " }, { type: "type", text: "Task" }, { type: "normal", text: "<" }, { type: "type", text: "Result" }, { type: "normal", text: "<" }, { type: "type", text: "Guid" }, { type: "normal", text: ">>" }] },
-  { ln: "4", parts: [{ type: "fn", text: "  Handle" }, { type: "normal", text: "(" }, { type: "type", text: "CreateTenantCommand" }, { type: "normal", text: " cmd)" }] },
+  {
+    ln: "3",
+    parts: [
+      { type: "keyword", text: "  public async " },
+      { type: "type", text: "Task" },
+      { type: "normal", text: "<" },
+      { type: "type", text: "Result" },
+      { type: "normal", text: "<" },
+      { type: "type", text: "Guid" },
+      { type: "normal", text: ">>" },
+    ],
+  },
+  {
+    ln: "4",
+    parts: [
+      { type: "fn", text: "  Handle" },
+      { type: "normal", text: "(" },
+      { type: "type", text: "CreateTenantCommand" },
+      { type: "normal", text: " cmd)" },
+    ],
+  },
   { ln: "5", parts: [{ type: "keyword", text: "  {" }] },
-  { ln: "6", parts: [{ type: "keyword", text: "    var " }, { type: "normal", text: "tenant = " }, { type: "fn", text: "Tenant.Create" }, { type: "normal", text: "(cmd.Name);" }] },
-  { ln: "7", parts: [{ type: "keyword", text: "    await " }, { type: "normal", text: "_repo." }, { type: "fn", text: "AddAsync" }, { type: "normal", text: "(tenant);" }] },
-  { ln: "8", parts: [{ type: "keyword", text: "    await " }, { type: "normal", text: "_uow." }, { type: "fn", text: "SaveChangesAsync" }, { type: "normal", text: "();" }] },
-  { ln: "9", parts: [{ type: "keyword", text: "    return " }, { type: "type", text: "Result" }, { type: "normal", text: "<" }, { type: "type", text: "Guid" }, { type: "normal", text: ">.Success(tenant.Id);" }] },
-  { ln:"10", parts: [{ type: "keyword", text: "  }" }] },
+  {
+    ln: "6",
+    parts: [
+      { type: "keyword", text: "    var " },
+      { type: "normal", text: "tenant = " },
+      { type: "fn", text: "Tenant.Create" },
+      { type: "normal", text: "(cmd.Name);" },
+    ],
+  },
+  {
+    ln: "7",
+    parts: [
+      { type: "keyword", text: "    await " },
+      { type: "normal", text: "_repo." },
+      { type: "fn", text: "AddAsync" },
+      { type: "normal", text: "(tenant);" },
+    ],
+  },
+  {
+    ln: "8",
+    parts: [
+      { type: "keyword", text: "    await " },
+      { type: "normal", text: "_uow." },
+      { type: "fn", text: "SaveChangesAsync" },
+      { type: "normal", text: "();" },
+    ],
+  },
+  {
+    ln: "9",
+    parts: [
+      { type: "keyword", text: "    return " },
+      { type: "type", text: "Result" },
+      { type: "normal", text: "<" },
+      { type: "type", text: "Guid" },
+      { type: "normal", text: ">.Success(tenant.Id);" },
+    ],
+  },
+  { ln: "10", parts: [{ type: "keyword", text: "  }" }] },
 ];
 
 /* Size layout:
@@ -184,11 +305,7 @@ function BentoCell({
       ) : (
         <div className="com-bento-bars" aria-hidden="true">
           {bars.map((h, bi) => (
-            <div
-              key={bi}
-              className="com-bento-bar"
-              style={{ height: `${h}%` }}
-            />
+            <div key={bi} className="com-bento-bar" style={{ height: `${h}%` }} />
           ))}
         </div>
       )}
@@ -204,15 +321,22 @@ export function ValuePropsBlock({ section }: { section: ValuePropsBlockSection }
     <section className="com-values" aria-labelledby="commercial-values-title">
       {/* Section header */}
       <div className="com-values-head com-reveal">
-        <span className="com-values-head-eyebrow" aria-hidden="true">Platform proof</span>
+        <span className="com-values-head-eyebrow" aria-hidden="true">
+          Platform proof
+        </span>
         <h2 id="commercial-values-title" className="com-values-head-title">
-          {t(section.titleKey).split(" ").map((word, i, arr) =>
-            i >= arr.length - 2 ? (
-              <mark key={i}>{word}{i < arr.length - 1 ? " " : ""}</mark>
-            ) : (
-              <span key={i}>{word} </span>
-            )
-          )}
+          {t(section.titleKey)
+            .split(" ")
+            .map((word, i, arr) =>
+              i >= arr.length - 2 ? (
+                <mark key={i}>
+                  {word}
+                  {i < arr.length - 1 ? " " : ""}
+                </mark>
+              ) : (
+                <span key={i}>{word} </span>
+              )
+            )}
         </h2>
       </div>
 

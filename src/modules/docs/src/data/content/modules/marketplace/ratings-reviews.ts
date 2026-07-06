@@ -22,7 +22,7 @@ const sections: DocSection[] = [
       ["TenantId", "Guid", "Tenant that the reviewing user belongs to"],
       ["UserId", "Guid", "User who authored this review"],
       ["Rating", "int", "Star rating from 1 (worst) to 5 (best)"],
-      ["Title", "string", "Headline / title of the review (e.g. \"Great plugin!\")"],
+      ["Title", "string", 'Headline / title of the review (e.g. "Great plugin!")'],
       ["Content", "string", "Detailed review text body"],
     ],
   },
@@ -64,8 +64,16 @@ const sections: DocSection[] = [
     rows: [
       ["Id", "Guid", "Primary key"],
       ["AppSubmissionId", "Guid", "FK to the submission being reviewed"],
-      ["AssignedToUserId", "Guid?", "Admin user ID assigned to review this submission (null = unassigned)"],
-      ["Status", "ReviewTaskStatus", "Current status (Pending, InProgress, Approved, Rejected, Escalated)"],
+      [
+        "AssignedToUserId",
+        "Guid?",
+        "Admin user ID assigned to review this submission (null = unassigned)",
+      ],
+      [
+        "Status",
+        "ReviewTaskStatus",
+        "Current status (Pending, InProgress, Approved, Rejected, Escalated)",
+      ],
       ["Feedback", "string", "Reviewer's feedback message sent to the developer"],
     ],
   },

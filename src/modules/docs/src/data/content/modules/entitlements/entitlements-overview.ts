@@ -8,7 +8,7 @@ const sections: DocSection[] = [
     contentKey: "modules.entitlementsOverview.intro",
   },
 
-    {
+  {
     type: "table",
     headers: ["Current Reality", "Status", "Boundary"],
     rows: [
@@ -39,7 +39,7 @@ const sections: DocSection[] = [
       ],
     ],
   },
-// ─── What is Entitlements ──────────────────────────────────
+  // ─── What is Entitlements ──────────────────────────────────
   {
     type: "heading",
     level: 2,

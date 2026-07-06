@@ -145,6 +145,10 @@ registerPage({
   category: "modules",
   order: 6,
   sections,
-  relatedSlugs: ["modules/security-monitoring", "modules/marketplace", "architecture/domain-events"],
+  relatedSlugs: [
+    "modules/security-monitoring",
+    "modules/marketplace",
+    "architecture/domain-events",
+  ],
   lastUpdated: "2026-06-28",
 });

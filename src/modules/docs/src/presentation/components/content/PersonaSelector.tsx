@@ -118,9 +118,7 @@ export function PersonaSelector() {
                   <strong>{t(content.title)}</strong>
                   <small>{content.label}</small>
                 </span>
-                <span className="com-persona-tab-num">
-                  {String(idx + 1).padStart(2, "0")}
-                </span>
+                <span className="com-persona-tab-num">{String(idx + 1).padStart(2, "0")}</span>
               </button>
             );
           })}
@@ -181,9 +179,18 @@ export function PersonaSelector() {
                 style={{ "--accent": PERSONA_COLORS[selected] } as CSSProperties}
               >
                 {t("commercial.investorOverview.personaSelectorLearnMore")}
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M5 12h14" />
+                  <path d="m12 5 7 7-7 7" />
                 </svg>
               </a>
             </div>

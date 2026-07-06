@@ -460,4 +460,3 @@ export const ar = {
     },
   },
 };
-

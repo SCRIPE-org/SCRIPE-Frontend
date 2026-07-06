@@ -11,28 +11,65 @@ import type { LandingHeroBlockSection } from "../../../domain/entities/DocSectio
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const PLATFORM_MODULES = [
-  { id: "identity",     icon: "ID", name: "Identity",     val: "2.4k",   color: "oklch(0.72 0.22 296)" },
-  { id: "tenants",      icon: "TN", name: "Tenants",      val: "148",    color: "oklch(0.84 0.155 213)" },
-  { id: "billing",      icon: "BI", name: "Billing",      val: "$84k",   color: "oklch(0.79 0.17 160)" },
-  { id: "marketplace",  icon: "MK", name: "Marketplace",  val: "23",     color: "oklch(0.82 0.155 80)" },
-  { id: "docs",         icon: "DC", name: "Docs",         val: "v3.5",   color: "oklch(0.65 0.22 20)" },
-  { id: "entitlement",  icon: "EN", name: "Entitlements", val: "Active", color: "oklch(0.72 0.22 296)" },
+  { id: "identity", icon: "ID", name: "Identity", val: "2.4k", color: "oklch(0.72 0.22 296)" },
+  { id: "tenants", icon: "TN", name: "Tenants", val: "148", color: "oklch(0.84 0.155 213)" },
+  { id: "billing", icon: "BI", name: "Billing", val: "$84k", color: "oklch(0.79 0.17 160)" },
+  { id: "marketplace", icon: "MK", name: "Marketplace", val: "23", color: "oklch(0.82 0.155 80)" },
+  { id: "docs", icon: "DC", name: "Docs", val: "v3.5", color: "oklch(0.65 0.22 20)" },
+  {
+    id: "entitlement",
+    icon: "EN",
+    name: "Entitlements",
+    val: "Active",
+    color: "oklch(0.72 0.22 296)",
+  },
 ] as const;
 
 const MARQUEE_ITEMS = [
-  ".NET 10", "Next.js 16", "Multi-Tenant", "CQRS", "Clean Architecture",
-  "99.9% SLA", "SOC 2 Type II", "GDPR", "Redis", "Hangfire",
-  "Entity Framework", "Stripe", "OpenTelemetry", "Docker", "PostgreSQL",
-  ".NET 10", "Next.js 16", "Multi-Tenant", "CQRS", "Clean Architecture",
-  "99.9% SLA", "SOC 2 Type II", "GDPR", "Redis", "Hangfire",
-  "Entity Framework", "Stripe", "OpenTelemetry", "Docker", "PostgreSQL",
+  ".NET 10",
+  "Next.js 16",
+  "Multi-Tenant",
+  "CQRS",
+  "Clean Architecture",
+  "99.9% SLA",
+  "SOC 2 Type II",
+  "GDPR",
+  "Redis",
+  "Hangfire",
+  "Entity Framework",
+  "Stripe",
+  "OpenTelemetry",
+  "Docker",
+  "PostgreSQL",
+  ".NET 10",
+  "Next.js 16",
+  "Multi-Tenant",
+  "CQRS",
+  "Clean Architecture",
+  "99.9% SLA",
+  "SOC 2 Type II",
+  "GDPR",
+  "Redis",
+  "Hangfire",
+  "Entity Framework",
+  "Stripe",
+  "OpenTelemetry",
+  "Docker",
+  "PostgreSQL",
 ];
 
 const SPARK_POINTS = [
-  { x: 0, y: 48 }, { x: 30, y: 40 }, { x: 60, y: 44 },
-  { x: 90, y: 30 }, { x: 120, y: 36 }, { x: 150, y: 22 },
-  { x: 180, y: 26 }, { x: 210, y: 14 }, { x: 240, y: 18 },
-  { x: 270, y: 8 },  { x: 300, y: 10 },
+  { x: 0, y: 48 },
+  { x: 30, y: 40 },
+  { x: 60, y: 44 },
+  { x: 90, y: 30 },
+  { x: 120, y: 36 },
+  { x: 150, y: 22 },
+  { x: 180, y: 26 },
+  { x: 210, y: 14 },
+  { x: 240, y: 18 },
+  { x: 270, y: 8 },
+  { x: 300, y: 10 },
 ];
 
 function buildSparkPath(pts: typeof SPARK_POINTS): string {
@@ -52,15 +89,32 @@ function buildSparkArea(pts: typeof SPARK_POINTS): string {
 
 /* ── Icons ─────────────────────────────────────────────────────────────── */
 const ArrowIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M5 12h14" />
+    <path d="m12 5 7 7-7 7" />
   </svg>
 );
 
 const CheckIcon = () => (
-  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="11"
+    height="11"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <polyline points="20 6 9 17 4 12" />
   </svg>
 );
@@ -79,7 +133,7 @@ const stagger: Variants = {
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 22, filter: "blur(7px)" },
-  show:   { opacity: 1, y: 0,  filter: "blur(0px)", transition: { duration: 0.65, ease: EASE } },
+  show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.65, ease: EASE } },
 };
 
 /* ── Word split helper ─────────────────────────────────────────────────── */
@@ -118,11 +172,20 @@ function SplitWords({ text, gradient }: { text: string; gradient?: boolean }) {
   );
 }
 
-
 /* ── Floating stat badge ───────────────────────────────────────────────── */
 function FloatBadge({
-  value, label, color, delay = 0, style
-}: { value: string; label: string; color: string; delay?: number; style?: CSSProperties }) {
+  value,
+  label,
+  color,
+  delay = 0,
+  style,
+}: {
+  value: string;
+  label: string;
+  color: string;
+  delay?: number;
+  style?: CSSProperties;
+}) {
   return (
     <motion.div
       className="com-float-badge"
@@ -132,7 +195,9 @@ function FloatBadge({
       style={style}
     >
       <span className="com-float-badge-dot" style={{ background: color }} />
-      <span className="com-float-badge-val" style={{ color }}>{value}</span>
+      <span className="com-float-badge-val" style={{ color }}>
+        {value}
+      </span>
       <span className="com-float-badge-label">{label}</span>
     </motion.div>
   );
@@ -149,7 +214,7 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const copyY = useTransform(scrollYProgress, [0, 1], [0, -60]);
   const cardY = useTransform(scrollYProgress, [0, 1], [0, -30]);
-  const bgY   = useTransform(scrollYProgress, [0, 1], [0, 80]);
+  const bgY = useTransform(scrollYProgress, [0, 1], [0, 80]);
 
   useEffect(() => {
     setMounted(true);
@@ -159,7 +224,7 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
     const onMove = (e: MouseEvent) => {
       const r = card.getBoundingClientRect();
       const x = (e.clientX - r.left) / r.width - 0.5;
-      const y = (e.clientY - r.top)  / r.height - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
       card.style.transition = "transform 80ms linear";
       card.style.transform = `perspective(1400px) rotateY(${x * 12 - 4}deg) rotateX(${-y * 9 + 2}deg) translateY(-6px)`;
     };
@@ -186,7 +251,6 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
           HERO SECTION
       ════════════════════════════════════════════════════════════════ */}
       <section className="com-hero" ref={heroRef} aria-labelledby="commercial-hero-title">
-
         {/* Background layers */}
         <motion.div className="com-hero-bg" style={{ y: bgY }} aria-hidden="true" />
         <div className="com-hero-grid" aria-hidden="true" />
@@ -197,7 +261,6 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
         <div className="com-hero-orb-ring com-hero-orb-ring--2" aria-hidden="true" />
 
         <div className="com-hero-inner">
-
           {/* ── Left: Copy ─────────────────────────────────────────────── */}
           <motion.div
             className="com-hero-copy"
@@ -214,11 +277,7 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
             </motion.div>
 
             {/* Main headline */}
-            <motion.h1
-              id="commercial-hero-title"
-              className="com-hero-title"
-              variants={stagger}
-            >
+            <motion.h1 id="commercial-hero-title" className="com-hero-title" variants={stagger}>
               <SplitWords text={t(section.title1Key)} gradient={false} />
               {section.title2Key && (
                 <>
@@ -235,7 +294,10 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
 
             {/* CTAs */}
             <motion.div className="com-hero-ctas" variants={fadeUp}>
-              <Link href={section.primaryCtaHref} className="com-btn com-btn--primary com-btn--hero">
+              <Link
+                href={section.primaryCtaHref}
+                className="com-btn com-btn--primary com-btn--hero"
+              >
                 {t(section.primaryCtaKey)}
                 <ArrowIcon />
               </Link>
@@ -258,11 +320,15 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
             </motion.div>
 
             {/* Stat row */}
-            <motion.div className="com-hero-stats" variants={fadeUp} aria-label="Platform statistics">
+            <motion.div
+              className="com-hero-stats"
+              variants={fadeUp}
+              aria-label="Platform statistics"
+            >
               {[
                 { val: "2,400+", label: "Active users" },
-                { val: "$84k",   label: "MRR tracked" },
-                { val: "148",    label: "Live tenants" },
+                { val: "$84k", label: "MRR tracked" },
+                { val: "148", label: "Live tenants" },
               ].map((s) => (
                 <div key={s.label} className="com-hero-stat">
                   <strong>{s.val}</strong>
@@ -277,15 +343,25 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
             className="com-hero-product"
             style={{ y: cardY }}
             initial={{ opacity: 0, y: 48, filter: "blur(16px)" }}
-            animate={{ opacity: 1, y: 0,  filter: "blur(0px)"  }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{ duration: 1.1, ease: EASE, delay: 0.2 }}
             aria-hidden="true"
           >
             {/* Floating mini badges */}
-            <FloatBadge value="+12.4%" label="MRR growth" color="oklch(0.79 0.17 160)"
-              delay={0.9} style={{ position: "absolute", top: "-18px", right: "12%", zIndex: 3 }} />
-            <FloatBadge value="6 active" label="Modules" color="oklch(0.72 0.22 296)"
-              delay={1.1} style={{ position: "absolute", bottom: "40px", left: "-20px", zIndex: 3 }} />
+            <FloatBadge
+              value="+12.4%"
+              label="MRR growth"
+              color="oklch(0.79 0.17 160)"
+              delay={0.9}
+              style={{ position: "absolute", top: "-18px", right: "12%", zIndex: 3 }}
+            />
+            <FloatBadge
+              value="6 active"
+              label="Modules"
+              color="oklch(0.72 0.22 296)"
+              delay={1.1}
+              style={{ position: "absolute", bottom: "40px", left: "-20px", zIndex: 3 }}
+            />
 
             <div className="com-product-card" ref={cardRef}>
               {/* Window chrome */}
@@ -319,10 +395,14 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
                         border: `1px solid color-mix(in oklch, ${mod.color} 30%, transparent)`,
                       }}
                     >
-                      <span style={{ color: mod.color, fontSize: "0.6rem", fontWeight: 900 }}>{mod.icon}</span>
+                      <span style={{ color: mod.color, fontSize: "0.6rem", fontWeight: 900 }}>
+                        {mod.icon}
+                      </span>
                     </div>
                     <span className="com-product-module-name">{mod.name}</span>
-                    <span className="com-product-module-val" style={{ color: mod.color }}>{mod.val}</span>
+                    <span className="com-product-module-val" style={{ color: mod.color }}>
+                      {mod.val}
+                    </span>
                   </motion.div>
                 ))}
               </div>
@@ -337,15 +417,19 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
                   </span>
                 </div>
                 {mounted && (
-                  <svg className="com-product-sparkline" viewBox="0 0 300 52"
-                    preserveAspectRatio="none" aria-hidden="true">
+                  <svg
+                    className="com-product-sparkline"
+                    viewBox="0 0 300 52"
+                    preserveAspectRatio="none"
+                    aria-hidden="true"
+                  >
                     <defs>
                       <linearGradient id="sparkG" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%"   stopColor="oklch(0.84 0.155 213)" />
+                        <stop offset="0%" stopColor="oklch(0.84 0.155 213)" />
                         <stop offset="100%" stopColor="oklch(0.72 0.22 296)" />
                       </linearGradient>
                       <linearGradient id="sparkA" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%"   stopColor="oklch(0.72 0.22 296)" stopOpacity="0.28" />
+                        <stop offset="0%" stopColor="oklch(0.72 0.22 296)" stopOpacity="0.28" />
                         <stop offset="100%" stopColor="oklch(0.72 0.22 296)" stopOpacity="0" />
                       </linearGradient>
                     </defs>
@@ -361,16 +445,12 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
               {/* Card footer */}
               <div className="com-product-footer">
                 <span className="com-product-footer-modules">
-                  <span className="com-product-footer-dot" />
-                  6 modules active
+                  <span className="com-product-footer-dot" />6 modules active
                 </span>
-                <span className="com-product-footer-growth">
-                  ↑ +12% this week
-                </span>
+                <span className="com-product-footer-growth">↑ +12% this week</span>
               </div>
             </div>
           </motion.div>
-
         </div>
 
         {/* Scroll indicator */}
@@ -383,7 +463,6 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
         >
           <div className="com-hero-scroll-line" />
         </motion.div>
-
       </section>
 
       {/* ════════════════════════════════════════════════════════════════

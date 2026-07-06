@@ -142,7 +142,8 @@ export const fr = {
       compScripeI1: "Architecture évolutive : Monolithe Modulaire → API Gateway → Microservices",
       compScripeI2: "Base de code unique, trois modes de déploiement dynamiques",
       compScripeI3: "Capacités des modules mathématiquement imposées à la compilation",
-      compScripeI4: "Extrayez n'importe quel module vers un service séparé sans une seule réécriture",
+      compScripeI4:
+        "Extrayez n'importe quel module vers un service séparé sans une seule réécriture",
       compScripeI5:
         "Infrastructure de base partagée immaculée se multipliant à travers tous les modules",
       compTradI1: "Forcé de choisir entre monolithe OU microservices dès le départ",
@@ -593,10 +594,11 @@ export const fr = {
       tblEcoR8C2: "Redis + En Mémoire",
       tblEcoR8C3: "Prêt pour la production",
     },
-  
+
     businessClientJourneys: {
       title: "Parcours des Clients Professionnels",
-      description: "DÃ©couvrez comment les entreprises font Ã©voluer leurs espaces de travail avec SCRIPE.",
+      description:
+        "DÃ©couvrez comment les entreprises font Ã©voluer leurs espaces de travail avec SCRIPE.",
       intro: "SCRIPE propose des parcours adaptÃ©s aux entreprises de toutes tailles.",
     },
     workspaceTours: {

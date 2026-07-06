@@ -204,6 +204,10 @@ registerPage({
   category: "architecture",
   order: 5,
   sections,
-  relatedSlugs: ["architecture/overview", "architecture/module-collaboration", "architecture/cqrs-pipeline"],
+  relatedSlugs: [
+    "architecture/overview",
+    "architecture/module-collaboration",
+    "architecture/cqrs-pipeline",
+  ],
   lastUpdated: "2026-06-28",
 });

@@ -119,8 +119,20 @@ const sections: DocSection[] = [
       ["Tenant Management", "Sub-module", "✅ (via Identity)", "✅", "Multi-tenant administration"],
       ["Docs", "Feature", "—", "✅", "Documentation portal"],
       ["Home", "Feature", "—", "✅", "Landing page"],
-      ["Inventory", "Future", "Not present", "Not present", "Future module; not available in backend today"],
-      ["CRM / HRMS / Finance", "Future", "Not present", "Not present", "Do not claim as current modules until backend code exists"],
+      [
+        "Inventory",
+        "Future",
+        "Not present",
+        "Not present",
+        "Future module; not available in backend today",
+      ],
+      [
+        "CRM / HRMS / Finance",
+        "Future",
+        "Not present",
+        "Not present",
+        "Do not claim as current modules until backend code exists",
+      ],
     ],
   },
   {

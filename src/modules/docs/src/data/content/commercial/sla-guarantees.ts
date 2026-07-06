@@ -244,6 +244,10 @@ registerPage({
   category: "commercial-enterprise",
   order: 12,
   sections,
-  relatedSlugs: ["commercial/enterprise-addons", "commercial/tenant-isolation", "commercial/support-plans"],
+  relatedSlugs: [
+    "commercial/enterprise-addons",
+    "commercial/tenant-isolation",
+    "commercial/support-plans",
+  ],
   lastUpdated: "2026-06-28",
 });

@@ -1,3 +1,3 @@
 export const fr = {
-  "Billing & Payments": "Facturation & Paiements"
+  "Billing & Payments": "Facturation & Paiements",
 };

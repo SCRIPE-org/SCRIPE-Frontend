@@ -38,7 +38,11 @@ const sections: DocSection[] = [
     type: "table",
     headers: ["Metric", "Value", "Source / Context"],
     rows: [
-      ["Global B2B SaaS Market Size (2025)", "$307 billion", "Gartner Enterprise Software Forecast"],
+      [
+        "Global B2B SaaS Market Size (2025)",
+        "$307 billion",
+        "Gartner Enterprise Software Forecast",
+      ],
       ["CAGR (2024–2030)", "18.7%", "Grand View Research"],
       ["Enterprise Workflow Automation TAM", "$28 billion", "Forrester B2B Platform Report"],
       ["MENA SaaS Market Size (2025)", "$6.8 billion", "IDC Middle East SaaS Report"],
@@ -85,7 +89,11 @@ const sections: DocSection[] = [
     type: "table",
     headers: ["Revenue Stream", "Model", "Projected Contribution (Year 3)"],
     rows: [
-      ["Subscription Tiers (Starter / Growth / Enterprise)", "Monthly/Annual Recurring Revenue", "55%"],
+      [
+        "Subscription Tiers (Starter / Growth / Enterprise)",
+        "Monthly/Annual Recurring Revenue",
+        "55%",
+      ],
       ["Enterprise Custom Contracts", "Annual contract + implementation fee", "25%"],
       ["Marketplace Revenue Share", "30% of partner plugin sales", "10%"],
       ["Training & Certification", "Per-seat online programs", "5%"],
@@ -149,11 +157,31 @@ const sections: DocSection[] = [
     type: "table",
     headers: ["Competitor Type", "Their Weakness", "SCRIPE Advantage"],
     rows: [
-      ["Traditional ERP (SAP, Oracle)", "Rigid, expensive, 18-month implementations", "Full source code, deploy in days, no per-seat fees"],
-      ["Low-code platforms (Mendix, OutSystems)", "Cannot handle enterprise-grade clean architecture", "Full code ownership, no runtime lock-in"],
-      ["Generic SaaS starters (boilerplates)", "No B2B2C model, no multi-tenant hierarchy", "Purpose-built B2B2C with hierarchical tenancy"],
-      ["Custom-built platforms", "12–18 months + $300K+ to reach SCRIPE's baseline", "Day 1 production readiness"],
-      ["Open-source ERPs (Odoo, ERPNext)", "No SaaS subscription model, poor developer UX", "Modern TypeScript + .NET 10, CLI-first DX"],
+      [
+        "Traditional ERP (SAP, Oracle)",
+        "Rigid, expensive, 18-month implementations",
+        "Full source code, deploy in days, no per-seat fees",
+      ],
+      [
+        "Low-code platforms (Mendix, OutSystems)",
+        "Cannot handle enterprise-grade clean architecture",
+        "Full code ownership, no runtime lock-in",
+      ],
+      [
+        "Generic SaaS starters (boilerplates)",
+        "No B2B2C model, no multi-tenant hierarchy",
+        "Purpose-built B2B2C with hierarchical tenancy",
+      ],
+      [
+        "Custom-built platforms",
+        "12–18 months + $300K+ to reach SCRIPE's baseline",
+        "Day 1 production readiness",
+      ],
+      [
+        "Open-source ERPs (Odoo, ERPNext)",
+        "No SaaS subscription model, poor developer UX",
+        "Modern TypeScript + .NET 10, CLI-first DX",
+      ],
     ],
   },
 
@@ -231,6 +259,10 @@ registerPage({
   category: "commercial-pricing",
   order: 11,
   sections,
-  relatedSlugs: ["commercial/roi-analysis", "commercial/pricing-showcase", "commercial/competitive-advantages"],
+  relatedSlugs: [
+    "commercial/roi-analysis",
+    "commercial/pricing-showcase",
+    "commercial/competitive-advantages",
+  ],
   lastUpdated: "2026-06-28",
 });

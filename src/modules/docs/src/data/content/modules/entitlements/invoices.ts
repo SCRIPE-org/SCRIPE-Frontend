@@ -18,9 +18,17 @@ const sections: DocSection[] = [
     rows: [
       ["Id", "Guid", "Primary key"],
       ["TenantId", "Guid", "Tenant this invoice belongs to"],
-      ["SubscriptionId", "Guid?", "Linked TenantSubscription (nullable for manual/one-off invoices)"],
+      [
+        "SubscriptionId",
+        "Guid?",
+        "Linked TenantSubscription (nullable for manual/one-off invoices)",
+      ],
       ["InvoiceNumber", "string(50)", "Human-readable auto-generated (e.g. INV-2026-00001)"],
-      ["SequenceNumber", "int", "Auto-incrementing DB sequence for atomic InvoiceNumber generation"],
+      [
+        "SequenceNumber",
+        "int",
+        "Auto-incrementing DB sequence for atomic InvoiceNumber generation",
+      ],
       ["Currency", "Currency", "ISO currency code (USD, EUR, SAR, etc.)"],
       ["SubTotal", "decimal(18,2)", "Pre-discount amount (sum of line items)"],
       ["DiscountAmount", "decimal(18,2)", "Promotion discount applied"],
@@ -29,7 +37,11 @@ const sections: DocSection[] = [
       ["Status", "InvoiceStatus", "Draft | Pending | Paid | Void | Refunded"],
       ["DueDate", "DateTime?", "Payment due date (null = immediate)"],
       ["PaidAt", "DateTime?", "When the invoice was paid"],
-      ["BillingCycle", "BillingCycle", "The billing cycle this invoice covers (Monthly, Yearly, etc.)"],
+      [
+        "BillingCycle",
+        "BillingCycle",
+        "The billing cycle this invoice covers (Monthly, Yearly, etc.)",
+      ],
       ["StripeInvoiceId", "string?", "Stripe invoice ID for reconciliation (in_xxx)"],
       ["StripePaymentIntentId", "string?", "Stripe payment intent ID for tracking (pi_xxx)"],
       ["PdfUrl", "string?", "URL/path to the generated PDF invoice"],

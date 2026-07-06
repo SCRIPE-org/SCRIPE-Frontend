@@ -58,7 +58,9 @@ export function useWorkspaceActions() {
           : wsGroup?.homeRoute;
 
         if (contextRoute && !canAccessPage(contextRoute)) {
-          appLogger.debug(`[WorkspaceActions] User cannot access configured homeRoute: ${contextRoute}. Finding alternative...`);
+          appLogger.debug(
+            `[WorkspaceActions] User cannot access configured homeRoute: ${contextRoute}. Finding alternative...`
+          );
           contextRoute = undefined;
         }
 

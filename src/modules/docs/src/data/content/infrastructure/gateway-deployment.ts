@@ -30,7 +30,12 @@ const sections: DocSection[] = [
         type: "success",
         description: "Auth, Users, Roles",
       },
-      { id: "entitlements", label: "Entitlements Role", type: "warning", description: "Platform billing + feature gating" },
+      {
+        id: "entitlements",
+        label: "Entitlements Role",
+        type: "warning",
+        description: "Platform billing + feature gating",
+      },
       { id: "compliance", label: "Compliance Role", type: "info", description: "Governance APIs" },
     ],
     connections: [
@@ -55,7 +60,8 @@ const sections: DocSection[] = [
       "Marketplace": "http://localhost:5007"
     }
   }
-}`,  },
+}`,
+  },
 
   // ─── Module System ────────────────────────────────────────
   {
@@ -85,7 +91,8 @@ if (isMonolith || moduleName.Equals("Entitlements", StringComparison.OrdinalIgno
 {
     builder.Services.AddEntitlementsModule(builder.Configuration);
 }`,
-    highlightLines: [1, 2, 5, 6, 7],  },
+    highlightLines: [1, 2, 5, 6, 7],
+  },
 
   // ─── Deployment Modes ─────────────────────────────────────
   {

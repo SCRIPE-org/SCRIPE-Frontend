@@ -583,70 +583,96 @@ export const en = {
       tblEcoR8C2: "Redis + In-Memory",
       tblEcoR8C3: "Production-ready",
     },
-  
+
     businessClientJourneys: {
       title: "Business Client Journeys",
-      description: "Discover how small businesses, enterprises, and B2B2C operators build and scale their workspaces on the SCRIPE platform.",
-      intro: "Every business has a unique growth story. SCRIPE is built to serve all of them — from a 50-person team onboarding in minutes, to a 10,000-employee enterprise with complex departmental hierarchies, to a telecom operator managing millions of their own end customers through a fully white-labeled SCRIPE workspace. This page walks through three distinct client journeys, showing exactly how each type of business subscribes, configures, and scales on SCRIPE.",
+      description:
+        "Discover how small businesses, enterprises, and B2B2C operators build and scale their workspaces on the SCRIPE platform.",
+      intro:
+        "Every business has a unique growth story. SCRIPE is built to serve all of them — from a 50-person team onboarding in minutes, to a 10,000-employee enterprise with complex departmental hierarchies, to a telecom operator managing millions of their own end customers through a fully white-labeled SCRIPE workspace. This page walks through three distinct client journeys, showing exactly how each type of business subscribes, configures, and scales on SCRIPE.",
 
       // Journey 1: Small Business
       j1Title: "Journey 1: Small Business (50–200 Employees)",
-      j1Intro: "Small and medium businesses subscribe to SCRIPE via self-service and are operational within hours — no implementation consultants, no lengthy onboarding. The platform auto-provisions a workspace, guides the admin through module selection, and enables team invitations in a single flow. Within a day, the entire team can be onboarded, roles assigned, and core modules running in production.",
+      j1Intro:
+        "Small and medium businesses subscribe to SCRIPE via self-service and are operational within hours — no implementation consultants, no lengthy onboarding. The platform auto-provisions a workspace, guides the admin through module selection, and enables team invitations in a single flow. Within a day, the entire team can be onboarded, roles assigned, and core modules running in production.",
       j1SelfService: "Self-Service Signup",
-      j1SelfServiceDesc: "Subscribe to SCRIPE online, receive instant workspace provisioning, and complete first-time setup through an intuitive guided wizard.",
+      j1SelfServiceDesc:
+        "Subscribe to SCRIPE online, receive instant workspace provisioning, and complete first-time setup through an intuitive guided wizard.",
       j1TeamSetup: "Team Workspace",
-      j1TeamSetupDesc: "Import your team via CSV or invite by email. Bulk role assignment and department grouping is available out of the box.",
+      j1TeamSetupDesc:
+        "Import your team via CSV or invite by email. Bulk role assignment and department grouping is available out of the box.",
       j1Roles: "Role Assignment",
-      j1RolesDesc: "Choose from pre-built roles (Admin, Manager, Staff, Viewer) or create custom roles with granular permission controls.",
+      j1RolesDesc:
+        "Choose from pre-built roles (Admin, Manager, Staff, Viewer) or create custom roles with granular permission controls.",
       j1Modules: "Module Configuration",
-      j1ModulesDesc: "Select up to 3 core modules from the SCRIPE catalog. Enable or disable features within each module with a single toggle.",
+      j1ModulesDesc:
+        "Select up to 3 core modules from the SCRIPE catalog. Enable or disable features within each module with a single toggle.",
       j1Analytics: "Built-in Analytics",
-      j1AnalyticsDesc: "Real-time dashboards showing user activity, module usage, and team productivity metrics — no additional BI tooling needed.",
+      j1AnalyticsDesc:
+        "Real-time dashboards showing user activity, module usage, and team productivity metrics — no additional BI tooling needed.",
       j1Support: "Standard Support",
-      j1SupportDesc: "Email-based support with 48-hour response SLA, guided help docs, and access to the SCRIPE community Discord.",
+      j1SupportDesc:
+        "Email-based support with 48-hour response SLA, guided help docs, and access to the SCRIPE community Discord.",
 
       // Journey 2: Enterprise
       j2Title: "Journey 2: Enterprise (500+ Employees)",
-      j2Intro: "Large enterprises require infrastructure that matches their organizational complexity. SCRIPE supports multi-department tenant hierarchies where each department can have its own branding, modules, and permissions, while still being centrally governed. Enterprise clients typically integrate with their existing SSO provider (Azure AD, Okta, SAML 2.0), enforce advanced RBAC at the field level, and require forensic audit trails for compliance.",
+      j2Intro:
+        "Large enterprises require infrastructure that matches their organizational complexity. SCRIPE supports multi-department tenant hierarchies where each department can have its own branding, modules, and permissions, while still being centrally governed. Enterprise clients typically integrate with their existing SSO provider (Azure AD, Okta, SAML 2.0), enforce advanced RBAC at the field level, and require forensic audit trails for compliance.",
       j2Hierarchy: "Multi-Department Hierarchy",
-      j2HierarchyDesc: "Model your entire org chart in SCRIPE. Parent tenants govern child departments with inherited settings and permission delegation.",
+      j2HierarchyDesc:
+        "Model your entire org chart in SCRIPE. Parent tenants govern child departments with inherited settings and permission delegation.",
       j2Branding: "Per-Department Branding",
-      j2BrandingDesc: "Each department or business unit can have its own logo, color scheme, email templates, and custom domain — all managed from a central admin.",
+      j2BrandingDesc:
+        "Each department or business unit can have its own logo, color scheme, email templates, and custom domain — all managed from a central admin.",
       j2SSO: "SSO Integration",
-      j2SSODesc: "Integrate with Azure Active Directory, Okta, Google Workspace, or any SAML 2.0 / OIDC provider. Users log in with corporate credentials.",
+      j2SSODesc:
+        "Integrate with Azure Active Directory, Okta, Google Workspace, or any SAML 2.0 / OIDC provider. Users log in with corporate credentials.",
       j2RBAC: "Advanced RBAC",
-      j2RBACDesc: "Fine-grained role-based access control with field-level restrictions. Define who can see, edit, or export specific data columns.",
+      j2RBACDesc:
+        "Fine-grained role-based access control with field-level restrictions. Define who can see, edit, or export specific data columns.",
       j2MultiRegion: "Multi-Region Deployment",
-      j2MultiRegionDesc: "Deploy SCRIPE across multiple geographic regions to meet data residency requirements. Each region can run a fully isolated instance.",
+      j2MultiRegionDesc:
+        "Deploy SCRIPE across multiple geographic regions to meet data residency requirements. Each region can run a fully isolated instance.",
       j2Audit: "Forensic Audit Trail",
-      j2AuditDesc: "4-source audit pipeline capturing HTTP requests, entity changes, security events, and business operations — all in real-time.",
+      j2AuditDesc:
+        "4-source audit pipeline capturing HTTP requests, entity changes, security events, and business operations — all in real-time.",
 
       // Journey 3: B2B2C Operator
       j3Title: "Journey 3: B2B2C Operator (Managing Your Own Customers)",
-      j3Intro: "The most powerful SCRIPE use case is the B2B2C model. In this journey, your business subscribes to SCRIPE and uses it as the operational backbone for managing your own customers. Think of a telecom company managing subscriber accounts, a fintech firm managing client portfolios, or a healthcare provider managing patient records — all through a fully white-labeled SCRIPE workspace that their end customers experience as a completely branded product.",
+      j3Intro:
+        "The most powerful SCRIPE use case is the B2B2C model. In this journey, your business subscribes to SCRIPE and uses it as the operational backbone for managing your own customers. Think of a telecom company managing subscriber accounts, a fintech firm managing client portfolios, or a healthcare provider managing patient records — all through a fully white-labeled SCRIPE workspace that their end customers experience as a completely branded product.",
       j3CustomerMgmt: "End-Customer Management",
-      j3CustomerMgmtDesc: "Your customers become tenants or users within your SCRIPE workspace. Full lifecycle management: onboard, suspend, upgrade, and offboard customers at scale.",
+      j3CustomerMgmtDesc:
+        "Your customers become tenants or users within your SCRIPE workspace. Full lifecycle management: onboard, suspend, upgrade, and offboard customers at scale.",
       j3WhiteLabel: "Full White-Label Experience",
-      j3WhiteLabelDesc: "Your customers see only your brand. Custom domain, logo, color scheme, email templates, and login page — SCRIPE is completely invisible to end users.",
+      j3WhiteLabelDesc:
+        "Your customers see only your brand. Custom domain, logo, color scheme, email templates, and login page — SCRIPE is completely invisible to end users.",
       j3Billing: "Customer Billing & Subscriptions",
-      j3BillingDesc: "Manage your own subscription tiers for your customers using SCRIPE's Entitlements module. Define what features each of your plans includes.",
+      j3BillingDesc:
+        "Manage your own subscription tiers for your customers using SCRIPE's Entitlements module. Define what features each of your plans includes.",
       j3Notifications: "Customer Notifications",
-      j3NotificationsDesc: "Branded email and in-app notifications flow from your domain. Use the Scriban template engine for rich bilingual customer communications.",
+      j3NotificationsDesc:
+        "Branded email and in-app notifications flow from your domain. Use the Scriban template engine for rich bilingual customer communications.",
       j3Telemetry: "Operator Analytics",
-      j3TelemetryDesc: "Monitor which of your customers are most active, which features they use, and where they need support — with tenant-scoped telemetry dashboards.",
+      j3TelemetryDesc:
+        "Monitor which of your customers are most active, which features they use, and where they need support — with tenant-scoped telemetry dashboards.",
       j3API: "Embedded API & SDK",
-      j3APIDesc: "Expose SCRIPE functionality to your own frontend or mobile app via REST APIs. Build completely custom customer experiences on top of the SCRIPE engine.",
+      j3APIDesc:
+        "Expose SCRIPE functionality to your own frontend or mobile app via REST APIs. Build completely custom customer experiences on top of the SCRIPE engine.",
 
       // Comparison table section
       comparisonTitle: "Tier Capability Comparison",
-      comparisonIntro: "The table below summarizes what each business client type gets from their SCRIPE subscription. All tiers use the same production-grade infrastructure — only the feature scope, user limits, and support levels differ.",
+      comparisonIntro:
+        "The table below summarizes what each business client type gets from their SCRIPE subscription. All tiers use the same production-grade infrastructure — only the feature scope, user limits, and support levels differ.",
 
       // Onboarding flowchart
       flowTitle: "Standard Onboarding Journey",
-      flowIntro: "Regardless of company size, all SCRIPE business clients follow the same core onboarding journey. The steps are designed to be self-service for small businesses and guided by the SCRIPE onboarding team for enterprise and B2B2C operators.",
+      flowIntro:
+        "Regardless of company size, all SCRIPE business clients follow the same core onboarding journey. The steps are designed to be self-service for small businesses and guided by the SCRIPE onboarding team for enterprise and B2B2C operators.",
 
       // Closing tip
-      closingTip: "Not sure which journey fits your business? Book a 30-minute discovery call with the SCRIPE team. We will map your organizational structure, compliance requirements, and growth trajectory to the optimal subscription tier — at no cost.",
+      closingTip:
+        "Not sure which journey fits your business? Book a 30-minute discovery call with the SCRIPE team. We will map your organizational structure, compliance requirements, and growth trajectory to the optimal subscription tier — at no cost.",
     },
     workspaceTours: {
       title: "Workspace Tours",
@@ -730,64 +756,82 @@ export const en = {
     },
     marketplaceShowcase: {
       title: "Module Marketplace",
-      description: "Expand your SCRIPE workspace instantly with pre-built business modules. Browse, install, and go live in minutes — no setup required.",
-      intro: "Expand your SCRIPE workspace instantly with one-click modules. Think of the SCRIPE Marketplace as an app store built specifically for your business workspace. Need HR and payroll? Click install. Need a CRM? Click install. Every module is pre-built, tested, and ready to go — live in your workspace within minutes, not months.",
+      description:
+        "Expand your SCRIPE workspace instantly with pre-built business modules. Browse, install, and go live in minutes — no setup required.",
+      intro:
+        "Expand your SCRIPE workspace instantly with one-click modules. Think of the SCRIPE Marketplace as an app store built specifically for your business workspace. Need HR and payroll? Click install. Need a CRM? Click install. Every module is pre-built, tested, and ready to go — live in your workspace within minutes, not months.",
       // ─── What Is It
       whatIsTitle: "What Is the Module Marketplace?",
-      whatIsContent: "The Module Marketplace is a curated collection of pre-built business modules you can add to your SCRIPE subscription. Each module is a fully functional business capability that integrates directly into your workspace. Your team gets access immediately after installation, with no complex setup or waiting period.",
+      whatIsContent:
+        "The Module Marketplace is a curated collection of pre-built business modules you can add to your SCRIPE subscription. Each module is a fully functional business capability that integrates directly into your workspace. Your team gets access immediately after installation, with no complex setup or waiting period.",
       featCategories: "Organized by Business Category",
-      featCategoriesDesc: "Modules are grouped into clear categories — HR, Finance, Customer Management, and more — so you can find exactly what your business needs quickly.",
+      featCategoriesDesc:
+        "Modules are grouped into clear categories — HR, Finance, Customer Management, and more — so you can find exactly what your business needs quickly.",
       featOneClick: "One-Click Installation",
-      featOneClickDesc: "Find a module you need, click Install, and it is live in your workspace. Your team can start using it immediately. No downtime, no migration, no risk.",
+      featOneClickDesc:
+        "Find a module you need, click Install, and it is live in your workspace. Your team can start using it immediately. No downtime, no migration, no risk.",
       featSandbox: "Safe and Isolated",
-      featSandboxDesc: "Every module runs in your isolated workspace. Adding a new module never affects your existing data or other modules. You can try and remove modules with confidence.",
+      featSandboxDesc:
+        "Every module runs in your isolated workspace. Adding a new module never affects your existing data or other modules. You can try and remove modules with confidence.",
       featPartners: "Marketplace Partners",
-      featPartnersDesc: "Modules are built by SCRIPE and trusted third-party partners who have passed our review and quality standards. Every module is verified before it appears in the Marketplace.",
+      featPartnersDesc:
+        "Modules are built by SCRIPE and trusted third-party partners who have passed our review and quality standards. Every module is verified before it appears in the Marketplace.",
       // ─── Catalog
       catalogTitle: "Popular Business Modules",
-      catalogContent: "Here is a sample of the modules available in the Marketplace. New modules are added regularly by SCRIPE and our partner network.",
+      catalogContent:
+        "Here is a sample of the modules available in the Marketplace. New modules are added regularly by SCRIPE and our partner network.",
       tblCatH1: "Module",
       tblCatH2: "Category",
       tblCatH3: "What It Does for Your Business",
       tblCatH4: "Availability",
       tblCatR1C1: "HR and Payroll",
       tblCatR1C2: "Human Resources",
-      tblCatR1C3: "Manage your team, track attendance, run payroll, and handle employee records — all in one place",
+      tblCatR1C3:
+        "Manage your team, track attendance, run payroll, and handle employee records — all in one place",
       tblCatR1C4: "Included in Growth and Enterprise",
       tblCatR2C1: "CRM",
       tblCatR2C2: "Customer Management",
-      tblCatR2C3: "Track leads, manage customer relationships, and monitor your sales pipeline from your workspace",
+      tblCatR2C3:
+        "Track leads, manage customer relationships, and monitor your sales pipeline from your workspace",
       tblCatR2C4: "Premium add-on",
       tblCatR3C1: "Inventory Management",
       tblCatR3C2: "Operations",
-      tblCatR3C3: "Monitor stock levels, manage suppliers, and automate reorder alerts across all your locations",
+      tblCatR3C3:
+        "Monitor stock levels, manage suppliers, and automate reorder alerts across all your locations",
       tblCatR3C4: "Premium add-on",
       tblCatR4C1: "Finance and Accounting",
       tblCatR4C2: "Finance",
-      tblCatR4C3: "Handle invoicing, expense tracking, and financial reporting without leaving your workspace",
+      tblCatR4C3:
+        "Handle invoicing, expense tracking, and financial reporting without leaving your workspace",
       tblCatR4C4: "Premium add-on",
       tblCatR5C1: "Project Management",
       tblCatR5C2: "Productivity",
-      tblCatR5C3: "Plan projects, assign tasks, track progress, and meet deadlines with your team in one workspace",
+      tblCatR5C3:
+        "Plan projects, assign tasks, track progress, and meet deadlines with your team in one workspace",
       tblCatR5C4: "Included in all plans",
       tblCatR6C1: "Customer Support",
       tblCatR6C2: "Customer Service",
-      tblCatR6C3: "Handle support tickets, manage a knowledge base, and monitor team response times",
+      tblCatR6C3:
+        "Handle support tickets, manage a knowledge base, and monitor team response times",
       tblCatR6C4: "Premium add-on",
       tblCatR7C1: "Analytics and Reporting",
       tblCatR7C2: "Business Intelligence",
-      tblCatR7C3: "Build custom dashboards, schedule reports, and get insights on your business performance",
+      tblCatR7C3:
+        "Build custom dashboards, schedule reports, and get insights on your business performance",
       tblCatR7C4: "Included in Growth and Enterprise",
       tblCatR8C1: "E-Learning",
       tblCatR8C2: "Training and Education",
-      tblCatR8C3: "Create courses, track training completion, and certify your team or your customers",
+      tblCatR8C3:
+        "Create courses, track training completion, and certify your team or your customers",
       tblCatR8C4: "Premium add-on",
       // ─── How It Works
       howItWorksTitle: "How Module Installation Works",
-      howItWorksContent: "Installing a module takes minutes, not days. Here is the complete journey from discovery to your team using a new capability.",
+      howItWorksContent:
+        "Installing a module takes minutes, not days. Here is the complete journey from discovery to your team using a new capability.",
       // ─── Pricing
       pricingTitle: "Module Pricing and Availability",
-      pricingContent: "Some modules are included in your subscription plan at no extra cost. Others are available as premium add-ons with straightforward per-workspace pricing.",
+      pricingContent:
+        "Some modules are included in your subscription plan at no extra cost. Others are available as premium add-ons with straightforward per-workspace pricing.",
       tblPricingH1: "Module Type",
       tblPricingH2: "What Is Included",
       tblPricingH3: "Pricing",
@@ -802,32 +846,47 @@ export const en = {
       tblPricingR3C3: "Pricing set by the partner, shown before installation",
       // ─── FAQ
       faqTitle: "Frequently Asked Questions",
-      faqItem1: "Can I remove a module after installing it? Yes. You can uninstall any module at any time. Your data is preserved and can be exported before removal.",
-      faqItem2: "Will installing a new module slow down my workspace? No. Modules are isolated and do not affect the performance of your existing workspace or other installed modules.",
-      faqItem3: "How often are new modules added? New modules are added regularly. You will see new additions highlighted in your Marketplace with a New badge.",
-      faqItem4: "Can my business partner with SCRIPE to publish a module? Yes. We offer a Marketplace Partner program for businesses and teams who want to build and distribute modules to SCRIPE subscribers. Contact our partnerships team to learn more.",
-      faqItem5: "What happens to my data if I switch plans and a module is no longer included? You will be notified in advance and given the option to keep the module as a paid add-on or export your data before it is deactivated.",
+      faqItem1:
+        "Can I remove a module after installing it? Yes. You can uninstall any module at any time. Your data is preserved and can be exported before removal.",
+      faqItem2:
+        "Will installing a new module slow down my workspace? No. Modules are isolated and do not affect the performance of your existing workspace or other installed modules.",
+      faqItem3:
+        "How often are new modules added? New modules are added regularly. You will see new additions highlighted in your Marketplace with a New badge.",
+      faqItem4:
+        "Can my business partner with SCRIPE to publish a module? Yes. We offer a Marketplace Partner program for businesses and teams who want to build and distribute modules to SCRIPE subscribers. Contact our partnerships team to learn more.",
+      faqItem5:
+        "What happens to my data if I switch plans and a module is no longer included? You will be notified in advance and given the option to keep the module as a paid add-on or export your data before it is deactivated.",
       // ─── Tips
-      browseTip: "Not sure which modules your business needs? Start with the core modules included in your plan, then explore premium modules as your team grows. You can always add more later.",
-      partnerNote: "Interested in becoming a Marketplace Partner and listing your business tools for SCRIPE subscribers? Contact our partnerships team at partners@scripe.com to start the conversation.",
+      browseTip:
+        "Not sure which modules your business needs? Start with the core modules included in your plan, then explore premium modules as your team grows. You can always add more later.",
+      partnerNote:
+        "Interested in becoming a Marketplace Partner and listing your business tools for SCRIPE subscribers? Contact our partnerships team at partners@scripe.com to start the conversation.",
     },
     partnerJourney: {
       title: "Partner Program",
-      description: "Become a SCRIPE Partner and build your business by reselling, integrating, or white-labeling the SCRIPE platform.",
-      intro: "Become a SCRIPE Partner and build your business by reselling, integrating, or white-labeling the SCRIPE platform. Our partner ecosystem is designed for consultancies, ISVs, system integrators, and businesses who want to deliver SCRIPE-powered solutions to their own clients.",
+      description:
+        "Become a SCRIPE Partner and build your business by reselling, integrating, or white-labeling the SCRIPE platform.",
+      intro:
+        "Become a SCRIPE Partner and build your business by reselling, integrating, or white-labeling the SCRIPE platform. Our partner ecosystem is designed for consultancies, ISVs, system integrators, and businesses who want to deliver SCRIPE-powered solutions to their own clients.",
       overviewTitle: "Partner Program Overview",
       typeResellerTitle: "Reseller Partner",
-      typeResellerDesc: "Resell SCRIPE subscriptions to your clients and earn a 30% commission on every subscription you bring in. No technical integration required — just sell.",
+      typeResellerDesc:
+        "Resell SCRIPE subscriptions to your clients and earn a 30% commission on every subscription you bring in. No technical integration required — just sell.",
       typeTechTitle: "Technology Partner",
-      typeTechDesc: "Build integrations, extensions, or custom modules that extend the SCRIPE platform. List your solution in the SCRIPE Marketplace and reach thousands of business subscribers.",
+      typeTechDesc:
+        "Build integrations, extensions, or custom modules that extend the SCRIPE platform. List your solution in the SCRIPE Marketplace and reach thousands of business subscribers.",
       typeWhiteLabelTitle: "White-Label Partner",
-      typeWhiteLabelDesc: "Deploy SCRIPE under your own brand and serve your own customers. Your clients never see the SCRIPE name — they experience your product, powered by our infrastructure.",
+      typeWhiteLabelDesc:
+        "Deploy SCRIPE under your own brand and serve your own customers. Your clients never see the SCRIPE name — they experience your product, powered by our infrastructure.",
       resellerTitle: "Reseller Partners",
-      resellerContent: "Reseller Partners recommend and sell SCRIPE subscriptions on behalf of their clients. You earn a 30% recurring commission on every subscription brought in through your referral. Commissions are paid monthly and increase as your portfolio of clients grows. SCRIPE provides co-branded sales materials, product training, and dedicated partner support to help you close deals confidently.",
+      resellerContent:
+        "Reseller Partners recommend and sell SCRIPE subscriptions on behalf of their clients. You earn a 30% recurring commission on every subscription brought in through your referral. Commissions are paid monthly and increase as your portfolio of clients grows. SCRIPE provides co-branded sales materials, product training, and dedicated partner support to help you close deals confidently.",
       techTitle: "Technology Partners",
-      techContent: "Technology Partners are Independent Software Vendors (ISVs) and development teams who build integrations, modules, or plugins that run on or connect to the SCRIPE platform. Technology Partners can list their solutions in the SCRIPE Marketplace, gaining direct access to SCRIPE's growing subscriber base. SCRIPE provides a dedicated sandbox environment, API documentation, and a partner developer channel for integration support.",
+      techContent:
+        "Technology Partners are Independent Software Vendors (ISVs) and development teams who build integrations, modules, or plugins that run on or connect to the SCRIPE platform. Technology Partners can list their solutions in the SCRIPE Marketplace, gaining direct access to SCRIPE's growing subscriber base. SCRIPE provides a dedicated sandbox environment, API documentation, and a partner developer channel for integration support.",
       whiteLabelTitle: "White-Label Partners",
-      whiteLabelContent: "White-Label Partners are businesses that want to offer their own clients a fully branded platform experience — powered by SCRIPE under the hood. Your customers log in to your domain, see your logo, and experience your brand identity. SCRIPE provides the entire infrastructure: user management, multi-tenancy, billing, audit logs, and real-time operations. You focus on growing your customer base while SCRIPE handles the platform.",
+      whiteLabelContent:
+        "White-Label Partners are businesses that want to offer their own clients a fully branded platform experience — powered by SCRIPE under the hood. Your customers log in to your domain, see your logo, and experience your brand identity. SCRIPE provides the entire infrastructure: user management, multi-tenancy, billing, audit logs, and real-time operations. You focus on growing your customer base while SCRIPE handles the platform.",
       benefitsTitle: "Partner Benefits",
       tblBenefitH1: "Benefit",
       tblBenefitH2: "Reseller",
@@ -858,41 +917,52 @@ export const en = {
       tblBenefitR6C3: "Prioritized roadmap input",
       tblBenefitR6C4: "Dedicated development hours",
       howToTitle: "How to Become a Partner",
-      applyTip: "Ready to partner with SCRIPE? Fill in the partner application form and our partnership team will contact you within 2 business days.",
+      applyTip:
+        "Ready to partner with SCRIPE? Fill in the partner application form and our partnership team will contact you within 2 business days.",
     },
     landing: {
       kicker: "The B2B2C SaaS Platform",
       heroTitle1: "The Platform That Runs",
       heroTitle2: "Your Entire Business",
-      heroSubtitle: "SCRIPE gives businesses a complete, white-labeled SaaS workspace — user management, roles, modules, billing, and integrations — all in one subscription.",
+      heroSubtitle:
+        "SCRIPE gives businesses a complete, white-labeled SaaS workspace — user management, roles, modules, billing, and integrations — all in one subscription.",
       ctaPrimary: "View Pricing",
       ctaSecondary: "See the Platform",
       ctaInvestor: "Investor Overview",
       personaTitle: "Who Is SCRIPE For?",
       personaSub: "Choose your role to explore what SCRIPE means for you.",
       personaBusiness: "For Business Owners",
-      personaBusinessDesc: "Manage your team, customers, and operations from one fully branded workspace. Subscribe and launch in 48 hours.",
+      personaBusinessDesc:
+        "Manage your team, customers, and operations from one fully branded workspace. Subscribe and launch in 48 hours.",
       personaInvestor: "For Investors",
-      personaInvestorDesc: "Discover the market opportunity, revenue model, and competitive moat behind the only B2B2C SaaS platform of its kind.",
+      personaInvestorDesc:
+        "Discover the market opportunity, revenue model, and competitive moat behind the only B2B2C SaaS platform of its kind.",
       personaPartner: "For Partners",
-      personaPartnerDesc: "Become a reseller or technology partner. White-label SCRIPE under your own brand and serve your own market.",
+      personaPartnerDesc:
+        "Become a reseller or technology partner. White-label SCRIPE under your own brand and serve your own market.",
       statModel: "Business Model",
       statModules: "Modules Available",
       statDb: "Database Support",
       statLang: "Languages",
       valueTitle: "Built for Real Business Needs",
       val1Title: "Modular by Design",
-      val1Desc: "Add only the modules your business needs. Start with core user management and grow into CRM, HR, Finance, and more.",
+      val1Desc:
+        "Add only the modules your business needs. Start with core user management and grow into CRM, HR, Finance, and more.",
       val2Title: "Enterprise Security",
-      val2Desc: "8-layer security architecture with full audit trails, RBAC, field-level encryption, and compliance-ready data isolation.",
+      val2Desc:
+        "8-layer security architecture with full audit trails, RBAC, field-level encryption, and compliance-ready data isolation.",
       val3Title: "Launch in 48 Hours",
-      val3Desc: "Self-service signup with guided onboarding. Our team configures your workspace and you're live before the week is over.",
+      val3Desc:
+        "Self-service signup with guided onboarding. Our team configures your workspace and you're live before the week is over.",
       val4Title: "Multilingual & RTL",
-      val4Desc: "7 languages including Arabic with full RTL layout support. Your workspace speaks your customers' language.",
+      val4Desc:
+        "7 languages including Arabic with full RTL layout support. Your workspace speaks your customers' language.",
       val5Title: "Real-Time Operations",
-      val5Desc: "Live dashboards, instant notifications, and real-time audit feeds powered by SignalR WebSockets.",
+      val5Desc:
+        "Live dashboards, instant notifications, and real-time audit feeds powered by SignalR WebSockets.",
       val6Title: "White-Label Ready",
-      val6Desc: "Serve your own customers under your own brand. Custom domain, logo, colors, and email templates included.",
+      val6Desc:
+        "Serve your own customers under your own brand. Custom domain, logo, colors, and email templates included.",
       footerCtaTitle: "Ready to Transform Your Business?",
       footerCtaSub: "Join the growing network of businesses powered by SCRIPE.",
     },

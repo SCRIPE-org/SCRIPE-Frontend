@@ -1,3 +1,3 @@
 export const de = {
-  "Billing & Payments": "Abrechnung & Zahlungen"
+  "Billing & Payments": "Abrechnung & Zahlungen",
 };

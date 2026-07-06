@@ -402,7 +402,7 @@ export const fr = {
       tblDbR5C2: "⚙️ Dev uniquement",
       tblDbR5C3: "Pour le développement local et les tests",
     },
-  
+
     pricingShowcase: {
       title: "Tarifs",
       description: "Des tarifs simples et transparents pour tous.",
@@ -413,18 +413,29 @@ export const fr = {
       personaSelectorInvestor: "Je suis un Investisseur",
       personaSelectorCofounder: "Je veux être Co-fondateur",
       personaSelectorPartner: "Je veux être Partenaire",
-      personaSelectorInvestorDesc: "Découvrez notre ROI, nos levées de fonds et nos mesures de croissance.",
-      personaSelectorCofounderDesc: "Explorez notre stratégie, nos rôles et notre parcours de partenariat.",
-      personaSelectorPartnerDesc: "Découvrez comment nos partenaires développent leurs revenus SaaS.",
-      personaSelectorInvestorBenefit1: "ROI moyen de 250% sur 3 ans projeté pour les métriques de croissance.",
-      personaSelectorInvestorBenefit2: "Visibilité complète sur les taux d'ARR, de MRR et de désabonnement des utilisateurs.",
-      personaSelectorInvestorBenefit3: "Opportunité de capture du marché des logiciels ERP d'entreprise de base.",
-      personaSelectorCofounderBenefit1: "Participation directe au capital et droit de vote sur les décisions de la plateforme.",
-      personaSelectorCofounderBenefit2: "Propriété des voies d'architecture propre modulaire de base.",
-      personaSelectorCofounderBenefit3: "Piloter l'intégration des canaux et la mise sur le marché mondial.",
-      personaSelectorPartnerBenefit1: "Partage généreux de 30% des revenus récurrents pour les ventes indirectes.",
+      personaSelectorInvestorDesc:
+        "Découvrez notre ROI, nos levées de fonds et nos mesures de croissance.",
+      personaSelectorCofounderDesc:
+        "Explorez notre stratégie, nos rôles et notre parcours de partenariat.",
+      personaSelectorPartnerDesc:
+        "Découvrez comment nos partenaires développent leurs revenus SaaS.",
+      personaSelectorInvestorBenefit1:
+        "ROI moyen de 250% sur 3 ans projeté pour les métriques de croissance.",
+      personaSelectorInvestorBenefit2:
+        "Visibilité complète sur les taux d'ARR, de MRR et de désabonnement des utilisateurs.",
+      personaSelectorInvestorBenefit3:
+        "Opportunité de capture du marché des logiciels ERP d'entreprise de base.",
+      personaSelectorCofounderBenefit1:
+        "Participation directe au capital et droit de vote sur les décisions de la plateforme.",
+      personaSelectorCofounderBenefit2:
+        "Propriété des voies d'architecture propre modulaire de base.",
+      personaSelectorCofounderBenefit3:
+        "Piloter l'intégration des canaux et la mise sur le marché mondial.",
+      personaSelectorPartnerBenefit1:
+        "Partage généreux de 30% des revenus récurrents pour les ventes indirectes.",
       personaSelectorPartnerBenefit2: "Support dédié aux développeurs et droits de marque blanche.",
-      personaSelectorPartnerBenefit3: "Certification technique et référencement officiel sur le marché.",
+      personaSelectorPartnerBenefit3:
+        "Certification technique et référencement officiel sur le marché.",
       personaSelectorLearnMore: "En savoir plus",
       title: "Portail des Investisseurs",
       description: "Retour sur investissement SaaS et opportunitÃ©s de partenariat.",

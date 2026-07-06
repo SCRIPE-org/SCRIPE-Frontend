@@ -17,9 +17,7 @@ export function CliCommandInput({ commands, onSelectCommand }: CliCommandInputPr
       setSuggestions([]);
       return;
     }
-    const filtered = commands.filter((c) =>
-      c.toLowerCase().includes(text.toLowerCase())
-    );
+    const filtered = commands.filter((c) => c.toLowerCase().includes(text.toLowerCase()));
     setSuggestions(filtered);
   };
 
@@ -37,7 +35,7 @@ export function CliCommandInput({ commands, onSelectCommand }: CliCommandInputPr
           border: "1px solid var(--border)",
           borderRadius: "6px",
           fontSize: "0.8rem",
-          color: "var(--text-primary)"
+          color: "var(--text-primary)",
         }}
       />
       {suggestions.length > 0 && (
@@ -55,7 +53,7 @@ export function CliCommandInput({ commands, onSelectCommand }: CliCommandInputPr
             zIndex: 10,
             margin: "4px 0 0 0",
             padding: "0.25rem 0",
-            listStyle: "none"
+            listStyle: "none",
           }}
         >
           {suggestions.map((s, idx) => (
@@ -71,7 +69,7 @@ export function CliCommandInput({ commands, onSelectCommand }: CliCommandInputPr
                 fontSize: "0.75rem",
                 cursor: "pointer",
                 transition: "background 0.15s ease",
-                color: "var(--text-primary)"
+                color: "var(--text-primary)",
               }}
               onMouseEnter={(e) => (e.currentTarget.style.background = "var(--bg-tertiary)")}
               onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}

@@ -587,7 +587,7 @@ export const de = {
       tblEcoR8C2: "Redis + In-Memory",
       tblEcoR8C3: "Produktionsreif",
     },
-  
+
     businessClientJourneys: {
       title: "GeschÃ¤ftskunden-Reisen",
       description: "Erfahren Sie, wie Unternehmen ihre Arbeitsbereiche mit SCRIPE skalieren.",

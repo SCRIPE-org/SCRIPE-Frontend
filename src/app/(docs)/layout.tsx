@@ -6,7 +6,17 @@ export const metadata: Metadata = {
   title: "Technical Documentation | SCRIPE Platform",
   description:
     "Comprehensive technical documentation for the SCRIPE B2B2C SaaS Platform — Backend (.NET 10), Frontend (Next.js 16), CLI, and modular architecture guides.",
-  keywords: ["scripe", "documentation", "b2b2c", "saas", "cqrs", ".net", "next.js", "modular monolith", "clean architecture"],
+  keywords: [
+    "scripe",
+    "documentation",
+    "b2b2c",
+    "saas",
+    "cqrs",
+    ".net",
+    "next.js",
+    "modular monolith",
+    "clean architecture",
+  ],
 };
 
 /**

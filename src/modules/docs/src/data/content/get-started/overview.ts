@@ -97,10 +97,30 @@ const sections: DocSection[] = [
     headers: ["Environment Variable", "Mode", "What Loads", "Use Case"],
     rows: [
       ["(empty / unset)", "Monolith", "All modules register", "Development, small deployments"],
-      ["MODULE_NAME=Gateway", "Gateway role", "YARP proxy only, no business controllers", "Edge routing when ServiceDiscovery is configured"],
-      ["MODULE_NAME=Identity", "Composite server role", "Identity + Entitlements services, Auth/signup controllers", "Auth and self-service signup host"],
-      ["MODULE_NAME=Entitlements", "Server role", "Entitlements services and controllers", "Platform billing and feature control"],
-      ["MODULE_NAME=Compliance", "Server role", "Compliance services and controllers", "Compliance API host"],
+      [
+        "MODULE_NAME=Gateway",
+        "Gateway role",
+        "YARP proxy only, no business controllers",
+        "Edge routing when ServiceDiscovery is configured",
+      ],
+      [
+        "MODULE_NAME=Identity",
+        "Composite server role",
+        "Identity + Entitlements services, Auth/signup controllers",
+        "Auth and self-service signup host",
+      ],
+      [
+        "MODULE_NAME=Entitlements",
+        "Server role",
+        "Entitlements services and controllers",
+        "Platform billing and feature control",
+      ],
+      [
+        "MODULE_NAME=Compliance",
+        "Server role",
+        "Compliance services and controllers",
+        "Compliance API host",
+      ],
     ],
   },
   {

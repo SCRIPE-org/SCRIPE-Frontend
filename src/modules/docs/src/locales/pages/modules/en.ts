@@ -889,8 +889,10 @@ export const en = {
         "ep.list": "List all regulation profiles configured for the platform",
         "ep.get": "Get a specific regulation profile by ID",
         "ep.create": "Create a new custom regulation profile",
-        "ep.update": "Update an existing regulation profile (DSR deadline, consent version, retention defaults)",
-        "ep.delete": "Soft-delete a custom regulation profile (system-seeded profiles cannot be deleted)",
+        "ep.update":
+          "Update an existing regulation profile (DSR deadline, consent version, retention defaults)",
+        "ep.delete":
+          "Soft-delete a custom regulation profile (system-seeded profiles cannot be deleted)",
         bestPracticesTitle: "Best Practices",
         bestPracticesTip:
           "Always bump CurrentConsentVersion when your privacy policy changes materially. This triggers the automated re-consent flow and provides a legally defensible audit trail of when users re-acknowledged the updated policy.",
@@ -1589,7 +1591,8 @@ export const en = {
       commissionIntro:
         "The effective commission rate is resolved from most-specific to most-general. The first non-null value in the chain wins.",
       commChain1: "Per-tenant override — set by platform admin in the Stripe Connect admin panel.",
-      commChain2: "Per-edition rate — configured on the Edition entity via ConnectCommissionRate field.",
+      commChain2:
+        "Per-edition rate — configured on the Edition entity via ConnectCommissionRate field.",
       commChain3: "Platform-wide default — stored in the ConnectPlatformSettings singleton row.",
       commChain4: "Hardcoded safety fallback — 10% — only used if the singleton row is missing.",
       settingsTitle: "ConnectPlatformSettings (Singleton)",
@@ -1624,7 +1627,8 @@ export const en = {
       "ep.invoices": "List commission invoices (filterable by tenant, status, trigger)",
       "ep.invoiceGenerate": "Manually trigger commission invoice generation for a tenant",
       "ep.settings": "Get the ConnectPlatformSettings singleton",
-      "ep.settingsUpdate": "Update platform-wide Connect defaults (commission rate, payout delay, threshold)",
+      "ep.settingsUpdate":
+        "Update platform-wide Connect defaults (commission rate, payout delay, threshold)",
       "ep.alerts": "List all operational alerts (filterable by type, status, severity)",
       "ep.alertResolve": "Acknowledge or resolve an operational alert with a resolution note",
     },
@@ -1638,8 +1642,7 @@ export const en = {
       whatIsIntro:
         "The Intelligence Engine is the recommendation system behind SCRIPE's self-service signup. Instead of presenting a static pricing table, users answer a short onboarding questionnaire. The engine matches their answers against RecommendationRules and presents a personalized edition recommendation with a localized reason. Administrators configure questions, options, and rules without code changes.",
       flowTitle: "Signup Flow Overview",
-      flowIntro:
-        "The full signup flow from category selection through recommendation.",
+      flowIntro: "The full signup flow from category selection through recommendation.",
       questionTitle: "OnboardingQuestion Entity",
       questionIntro:
         "Each OnboardingQuestion represents a single step in the onboarding flow. Questions can be global (shown to all users) or scoped to an EditionCategory. Question-level branching is supported via DependsOnQuestionKey + DependsOnAnswerValue.",
@@ -1650,12 +1653,12 @@ export const en = {
       conditionIntro:
         "OnboardingAnswerOptionCondition enables fine-grained client-side visibility control at the individual option level. Unlike question-level branching (which shows/hides entire questions), option conditions show/hide specific answer choices based on earlier answers.",
       conditionNote:
-        "Condition evaluation happens client-side only. The backend stores and returns conditions in the onboarding-flow payload — no server-side filtering is applied. MatchValuesRaw stores the set as a comma-delimited string (e.g. \"2-10,11-50\") for DB portability across SQL Server, Oracle, and PostgreSQL without provider-specific JSON columns.",
+        'Condition evaluation happens client-side only. The backend stores and returns conditions in the onboarding-flow payload — no server-side filtering is applied. MatchValuesRaw stores the set as a comma-delimited string (e.g. "2-10,11-50") for DB portability across SQL Server, Oracle, and PostgreSQL without provider-specific JSON columns.',
       sessionAnswerTitle: "SignupSessionAnswer Entity",
       sessionAnswerIntro:
         "SignupSessionAnswer persists each user's answer during an in-progress signup. It deliberately uses SignupSessionRef (a plain string) instead of a FK to the SignupSession entity to avoid cross-module coupling — the Entitlements module never imports Identity session types.",
       sessionAnswerTip:
-        "SignupSessionAnswer enables session resume: if a user closes the browser mid-flow, their answers can be reloaded on return via the SignupSessionRef. The ValueJson field stores both single-select (\"\\\"solo\\\"\") and multi-select (\"[\\\"compliance\\\",\\\"scale\\\"]\") answers in a uniform format.",
+        'SignupSessionAnswer enables session resume: if a user closes the browser mid-flow, their answers can be reloaded on return via the SignupSessionRef. The ValueJson field stores both single-select ("\\"solo\\"") and multi-select ("[\\"compliance\\",\\"scale\\"]") answers in a uniform format.',
       ruleTitle: "RecommendationRule Entity",
       ruleIntro:
         "RecommendationRules are the declarative matching engine. Each rule defines a ConditionJson predicate, a target edition (by tier level or specific ID), and a ScoreBonus. Rules evaluated in Priority order accumulate scores per candidate edition — the highest-scoring edition wins.",
@@ -1711,11 +1714,14 @@ export const en = {
         "Platform management endpoints are restricted to super-admin roles. Quota data is read-only for standard platform admins.",
       "ep.quotaList": "List all quota counters (filterable by tenant, resource type)",
       "ep.quotaGet": "Get the quota counter for a specific tenant and resource type",
-      "ep.quotaReset": "Reset quota counters for a tenant (use with caution — clears Reserved and resets Used)",
-      "ep.trialSnapshot": "Get the trial snapshot for a subscription (used by downgrade enforcement)",
+      "ep.quotaReset":
+        "Reset quota counters for a tenant (use with caution — clears Reserved and resets Used)",
+      "ep.trialSnapshot":
+        "Get the trial snapshot for a subscription (used by downgrade enforcement)",
       "ep.ledger": "List commission ledger entries (filterable by tenant, gateway, status)",
       "ep.waive": "Waive a commission ledger entry with an admin note",
-      "ep.dashboard": "Get platform management dashboard KPIs (total commissions, quota utilization, trial snapshots)",
+      "ep.dashboard":
+        "Get platform management dashboard KPIs (total commissions, quota utilization, trial snapshots)",
     },
 
     // ─── Marketplace Module (Phase 16) ────────────────────────────
@@ -1752,7 +1758,7 @@ export const en = {
         "The Marketplace module contains 13 domain entities across five functional areas: listings, developer portal, purchases, analytics, and reviews.",
       categoryTitle: "AppCategory Entity",
       categoryIntro:
-        "Represents a marketplace category used to organize app listings (e.g. \"Productivity\", \"Analytics\", \"Communication\"). Supports bilingual names (EN/AR) and a URL-safe slug for routing.",
+        'Represents a marketplace category used to organize app listings (e.g. "Productivity", "Analytics", "Communication"). Supports bilingual names (EN/AR) and a URL-safe slug for routing.',
       mappingTitle: "AppCategoryMapping Entity",
       mappingIntro:
         "Join entity implementing the many-to-many relationship between AppListing and AppCategory. An app can belong to multiple categories, and a category can contain multiple apps.",
@@ -1919,5 +1925,3 @@ export const en = {
     },
   },
 };
-
-

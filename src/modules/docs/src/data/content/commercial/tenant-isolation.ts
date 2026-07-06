@@ -201,6 +201,10 @@ registerPage({
   category: "commercial-enterprise",
   order: 13,
   sections,
-  relatedSlugs: ["commercial/multi-tenancy", "commercial/sla-guarantees", "commercial/data-protection"],
+  relatedSlugs: [
+    "commercial/multi-tenancy",
+    "commercial/sla-guarantees",
+    "commercial/data-protection",
+  ],
   lastUpdated: "2026-06-28",
 });

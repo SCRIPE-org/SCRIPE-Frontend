@@ -34,7 +34,7 @@ const sections: DocSection[] = [
       ],
     ],
   },
-// ─── Mode Comparison ────────────────────────────────────
+  // ─── Mode Comparison ────────────────────────────────────
   {
     type: "heading",
     level: 2,

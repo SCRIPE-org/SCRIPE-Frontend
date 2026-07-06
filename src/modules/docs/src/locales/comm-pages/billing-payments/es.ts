@@ -1,3 +1,3 @@
 export const es = {
-  "Billing & Payments": "Facturación y Pagos"
+  "Billing & Payments": "Facturación y Pagos",
 };
