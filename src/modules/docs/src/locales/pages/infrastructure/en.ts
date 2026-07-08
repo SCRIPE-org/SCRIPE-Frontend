@@ -519,5 +519,68 @@ export const en = {
       idempotencyTip:
         "The OutboxProcessor guarantees at-least-once delivery, not exactly-once. The exactly-once semantic comes from idempotent event handlers. Always design handlers to be safe to run twice. This is especially important for Entitlements' SubscriptionChangedEvent handler that syncs permissions — double-syncing is safe (idempotent), double-charging would not be.",
     },
+
+    // ─── Communication Module ─────────────────────────────────
+    communication: {
+      title: "Communication Module",
+      description:
+        "Horizontal message delivery service — email, SMS, in-app notifications, templates, delivery audit, and channel configuration for all modules.",
+      intro:
+        "The Communication module owns ALL message delivery in SCRIPE. Every module (Identity, Entitlements, Compliance, etc.) dispatches messages through IMessageDispatcher — never directly via SMTP or Twilio. This isolation means channel providers can be swapped, rate limits enforced, and all delivery attempts audited in one place.",
+      architectureTitle: "Architecture",
+      architectureIntro:
+        "Identity and other modules call IMessageDispatcher (in Core.Application). The Communication module implements this interface via SendEmailCommandHandler / SendSmsCommandHandler. The handler renders the template (Scriban engine), selects the provider (SMTP in Prod, console log in Dev), persists a SentMessageLog, and tracks delivery attempts for retry.",
+      templatesTitle: "Message Templates",
+      templatesIntro:
+        "Templates are versioned, multi-channel records (Email / SMS / InApp / Push / WhatsApp). Each template has a draft → published lifecycle. The Scriban engine renders templates with typed model bindings — no raw string concatenation. System templates (welcome, password-reset, OTP) are seeded at startup and cannot be deleted.",
+      jobsTitle: "Background Jobs",
+      jobsIntro:
+        "MessageRetryJob runs every 5 minutes to retry failed deliveries (exponential backoff: 5s → 30s → 5min, max 3 retries). CommunicationSoftDeleteCleanupJob runs nightly at 3 AM to permanently purge soft-deleted records older than 30 days. Both jobs implement IAutoRegisteredJob and are provider-agnostic (Native / Hangfire / Quartz).",
+      permissionsTitle: "Permissions",
+      permissionsContent:
+        "communication.templates.view/create/update/delete | communication.send.email/sms/notification/bulk | communication.logs.view | communication.preferences.manage | communication.channels.configure | communication.export",
+    },
+
+    // ─── Integrations Module ──────────────────────────────────
+    integrations: {
+      title: "Integrations Module",
+      description:
+        "Machine-to-machine integration layer — outgoing webhooks with HMAC-SHA256 signing, API key management, event routing, and delivery audit.",
+      intro:
+        "The Integrations module owns all machine-to-machine integration concerns. Outgoing webhooks notify external systems when SCRIPE events occur. API keys allow external systems to call SCRIPE APIs without OAuth. The module is fully isolated — webhook configuration never bleeds into Identity or Entitlements.",
+      webhooksTitle: "Webhook System",
+      webhooksIntro:
+        "WebhookSubscription (in Core.Domain) stores the endpoint URL, subscribed event types (JSON array), and HMAC-SHA256 signing secret. On every domain event, the WebhookDispatcher finds active subscriptions matching the event type and dispatches an HTTP POST with X-SCRIPE-Signature-256 header. Failures are logged in WebhookDeliveryLog and retried with exponential backoff. Secret rotation is supported — PreviousSecret remains valid for 24 hours after rotation.",
+      apiKeysTitle: "API Key Management",
+      apiKeysIntro:
+        "API keys are tenant-scoped with comma-separated permission scopes. Key values are NEVER stored — only a bcrypt hash (KeyHash) is persisted after generation. The prefix (first 8 chars) allows key identification without exposing the secret. Keys can have an optional ExpiresAt and can be revoked instantly via RevokedAt.",
+      securityTitle: "Security",
+      securityContent:
+        "All webhook payloads are signed with HMAC-SHA256 using the subscription secret. Receivers MUST validate the X-SCRIPE-Signature-256 header before processing. API keys use bcrypt hashing (OWASP recommendation). Webhook URLs must be HTTPS in production. A circuit breaker disables subscriptions after 10 consecutive failures to prevent hammering unreachable endpoints.",
+      permissionsTitle: "Permissions",
+      permissionsContent:
+        "integrations.connections.view/create/update/delete | integrations.apikeys.view/create/revoke | integrations.webhooks.view/create/update/delete | integrations.events.view | integrations.export",
+    },
+
+    // ─── Media Module ─────────────────────────────────────────
+    media: {
+      title: "Media Module",
+      description:
+        "Raw binary file storage — chunked upload, download sessions, temporary access grants, storage quota enforcement, and provider abstraction.",
+      intro:
+        "The Media module owns raw binary file storage. It provides chunked upload for large files, temporary download links (MediaAccessGrant), folder organization, and storage quota checks against Entitlements. Media is NOT Documents — it owns the binary. Documents (Phase 4) will consume Media for storage while owning business semantics (versioning, approval, expiry).",
+      chunkedUploadTitle: "Chunked Upload",
+      chunkedUploadIntro:
+        "Large files are uploaded in chunks via StartUploadSessionCommand (creates a MediaUploadSession) followed by repeated UploadChunkCommand calls. The session tracks total chunks, received chunks, and completion state. On final chunk, the file is assembled, hash-verified, and a MediaFile record is created. Upload sessions expire after 24 hours of inactivity.",
+      accessGrantsTitle: "Temporary Access Grants",
+      accessGrantsIntro:
+        "MediaAccessGrant generates time-limited download URLs without exposing raw storage credentials. The DownloadsController validates the grant token, checks expiry, and streams the file. Grants can be single-use or multi-use with configurable TTL. This pattern separates authentication (who can generate a grant) from access (anyone with the token within TTL).",
+      quotasTitle: "Storage Quotas",
+      quotasContent:
+        "Upload requests check the tenant's Media.StorageQuotaGb feature gate in Entitlements before accepting a file. The quota check is performed in the command handler via IFeatureChecker — the Media module never reads Entitlements tables directly. Quota overages return a structured error that the frontend displays as a storage upgrade prompt.",
+      permissionsTitle: "Permissions",
+      permissionsContent:
+        "media.files.view/upload/delete | media.folders.create/update/delete | media.access.grant | media.admin | media.export",
+    },
   },
 };

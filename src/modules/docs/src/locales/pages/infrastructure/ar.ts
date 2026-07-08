@@ -1,4 +1,4 @@
-// FILE-EXCEPTION: file length
+﻿// FILE-EXCEPTION: file length
 /**
  * Docs page locale — AR
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -457,6 +457,51 @@ export const ar = {
         "OutboxMessage.Id (GUID مولّد عند وقت الحدث) هو مفتاح الثبات. يجب أن يكون كل INotificationHandler الذي يعالج الأحداث المُرسَلة عبر الـ outbox ثابتًا — تحقق مما إذا كانت العملية قد طُبّقت بالفعل قبل إعادة تطبيقها. في الممارسة العملية، معظم المعالجات ثابتة بطبيعتها (مثل كتابة قيمة كُتبت بالفعل لا يكون لها تأثير إضافي). للعمليات غير الثابتة (مثل إرسال بريد إلكتروني)، خزّن OutboxMessageId في جدول processed-events وتخطّاها إذا كانت موجودة.",
       idempotencyTip:
         "يضمن OutboxProcessor التسليم مرة واحدة على الأقل، وليس مرة واحدة بالضبط. تأتي الدلالة الدقيقة من معالجات الأحداث الثابتة. دائمًا صمّم المعالجات لتكون آمنة للتشغيل مرتين. هذا مهم بشكل خاص لمعالج SubscriptionChangedEvent الخاص بـ Entitlements الذي يزامن الأذونات — المزامنة المزدوجة آمنة (ثابتة)، بينما الشحن المزدوج لن يكون كذلك.",
+    },
+
+    // ─── وحدة الاتصالات ───────────────────────────────────────────
+    communication: {
+      title: "وحدة الاتصالات",
+      description: "خدمة تسليم الرسائل الأفقية — البريد الإلكتروني والرسائل القصيرة والإشعارات والقوالب وسجلات التسليم لجميع الوحدات.",
+      intro: "تمتلك وحدة الاتصالات جميع عمليات تسليم الرسائل في SCRIPE. ترسل كل وحدة الرسائل عبر IMessageDispatcher وليس مباشرةً عبر SMTP أو Twilio.",
+      architectureTitle: "الهيكلة",
+      architectureIntro: "تستدعي Identity والوحدات الأخرى IMessageDispatcher في Core.Application. تنفّذ وحدة الاتصالات هذه الواجهة عبر SendEmailCommandHandler وSendSmsCommandHandler.",
+      templatesTitle: "قوالب الرسائل",
+      templatesIntro: "القوالب سجلات متعددة الإصدارات والقنوات (Email/SMS/InApp/Push). لكل قالب دورة حياة مسودة → منشورة. تعرض القوالب باستخدام Scriban مع روابط نموذج مكتوبة بالكامل.",
+      jobsTitle: "الوظائف الخلفية",
+      jobsIntro: "تعيد MessageRetryJob محاولة التسليم كل 5 دقائق. CommunicationSoftDeleteCleanupJob يعمل كل ليلة الساعة 3 صباحًا لحذف السجلات المحذوفة بشكل مؤقت والأقدم من 30 يومًا.",
+      permissionsTitle: "الصلاحيات",
+      permissionsContent: "communication.templates.view/create/update/delete | communication.send.email/sms/notification/bulk | communication.logs.view | communication.preferences.manage | communication.channels.configure | communication.export",
+    },
+
+    // ─── وحدة التكاملات ──────────────────────────────────────────
+    integrations: {
+      title: "وحدة التكاملات",
+      description: "طبقة التكامل بين الآلات — ويبهوك خارجية مع HMAC-SHA256 وإدارة مفاتيح API وتوجيه الأحداث.",
+      intro: "تمتلك وحدة التكاملات جميع اهتمامات التكامل بين الآلات. تقوم الويبهوك الخارجية بإخطار الأنظمة الخارجية عند حدوث أحداث SCRIPE. تتيح مفاتيح API للأنظمة الخارجية الاتصال بـ SCRIPE بدون OAuth.",
+      webhooksTitle: "نظام الويبهوك",
+      webhooksIntro: "يخزّن WebhookSubscription عنوان URL وأنواع الأحداث وسر التوقيع HMAC-SHA256. عند كل حدث نطاقي يبحث WebhookDispatcher عن الاشتراكات النشطة ويرسل HTTP POST بخطأة X-SCRIPE-Signature-256.",
+      apiKeysTitle: "إدارة مفاتيح API",
+      apiKeysIntro: "مفاتيح API ذات نطاق خاص بالمستأجر مع صلاحيات مفصولة بفواصل. قيم المفاتيح لا تُخزّن أبدًا — يُخزّن فقط التجزئة المشفرة (KeyHash) بعد التوليد.",
+      securityTitle: "الأمان",
+      securityContent: "جميع حمولات الويبهوك موقّعة بـ HMAC-SHA256. يجب على المستقبلين التحقق من التوقيع قبل المعالجة. مفاتيح API تستخدم bcrypt. دائرة التوقف تعطّل الاشتراكات بعد 10 إخفاقات متتالية.",
+      permissionsTitle: "الصلاحيات",
+      permissionsContent: "integrations.connections.view/create/update/delete | integrations.apikeys.view/create/revoke | integrations.webhooks.view/create/update/delete | integrations.events.view | integrations.export",
+    },
+
+    // ─── وحدة الوسائط ─────────────────────────────────────────────
+    media: {
+      title: "وحدة الوسائط",
+      description: "تخزين الملفات الثنائية — رفع مجزّأ وجلسات تنزيل وتصاريح الوصول وتطبيق حصص التخزين.",
+      intro: "تمتلك وحدة الوسائط تخزين الملفات الثنائية. توفر رفعًا مجزّأً للملفات الكبيرة وروابط تنزيل مؤقتة (MediaAccessGrant) وتنظيمًا هرميًا وفحص حصّ التخزين.",
+      chunkedUploadTitle: "الرفع المجزّأ",
+      chunkedUploadIntro: "تُرفع الملفات الكبيرة على شكل أجزاء عبر StartUploadSessionCommand (ينشئ MediaUploadSession) ثم طلبات UploadChunkCommand متكررة. عند اكتمال الجزء الأخير يُجمّع الملف ويُتحقق منه.",
+      accessGrantsTitle: "تصاريح الوصول المؤقتة",
+      accessGrantsIntro: "ينشئ MediaAccessGrant روابط تنزيل محدودة المدة دون كشف بيانات التخزين. يتحقّق DownloadsController من رمز التصريح وانتهاء صلاحيته ثم يبثّ الملف ثالًا.",
+      quotasTitle: "حصص التخزين",
+      quotasContent: "تتحقّق طلبات الرفع من حصة Media.StorageQuotaGb للمستأجر في Entitlements عبر IFeatureChecker.",
+      permissionsTitle: "الصلاحيات",
+      permissionsContent: "media.files.view/upload/delete | media.folders.create/update/delete | media.access.grant | media.admin | media.export",
     },
   },
 };

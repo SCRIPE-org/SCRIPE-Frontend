@@ -14,7 +14,9 @@
 // ── Module permission imports ─────────────────────────────────────────────────
 import { IDENTITY_PERMISSIONS } from "@modules/identity/permission-constants";
 import { ENTITLEMENTS_PERMISSIONS } from "@modules/entitlements/permission-constants";
-import { MESSAGING_PERMISSIONS } from "@modules/messaging/permission-constants";
+import { COMMUNICATION_PERMISSIONS } from "@modules/communication/permission-constants";
+import { INTEGRATIONS_PERMISSIONS } from "@modules/integrations/permission-constants";
+import { MEDIA_PERMISSIONS } from "@modules/media/permission-constants";
 import { CUSTOMIZATION_PERMISSIONS } from "@modules/customization/permission-constants";
 import { MONITORING_PERMISSIONS } from "@modules/monitoring/permission-constants";
 import { ECOSYSTEM_PERMISSIONS } from "@modules/ecosystem/permission-constants";
@@ -26,7 +28,9 @@ import { MARKETPLACE_PERMISSIONS } from "@modules/marketplace/permission-constan
 export {
   IDENTITY_PERMISSIONS,
   ENTITLEMENTS_PERMISSIONS,
-  MESSAGING_PERMISSIONS,
+  COMMUNICATION_PERMISSIONS,
+  INTEGRATIONS_PERMISSIONS,
+  MEDIA_PERMISSIONS,
   CUSTOMIZATION_PERMISSIONS,
   MONITORING_PERMISSIONS,
   ECOSYSTEM_PERMISSIONS,
@@ -161,7 +165,9 @@ export function hasAllPermissions(
 export const SYSTEM_PERMISSIONS = {
   ...IDENTITY_PERMISSIONS,
   ...ENTITLEMENTS_PERMISSIONS,
-  ...MESSAGING_PERMISSIONS,
+  ...COMMUNICATION_PERMISSIONS,
+  ...INTEGRATIONS_PERMISSIONS,
+  ...MEDIA_PERMISSIONS,
   ...CUSTOMIZATION_PERMISSIONS,
   ...MONITORING_PERMISSIONS,
   ...ECOSYSTEM_PERMISSIONS,
@@ -251,14 +257,17 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/my-stripe-account": [SYSTEM_PERMISSIONS.TENANT_STRIPE_CONNECT_VIEW],
   "/entitlements/transactions": [SYSTEM_PERMISSIONS.TRANSACTIONS_VIEW],
 
-  // Messaging & Webhooks
-  "/messaging/email-composer": [SYSTEM_PERMISSIONS.EMAILS_VIEW],
-  "/messaging/notifications": [SYSTEM_PERMISSIONS.NOTIFICATIONS_VIEW],
-  "/messaging/templates": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_VIEW],
-  "/messaging/templates/new": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_CREATE],
-  "/messaging/templates/[id]/edit": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_UPDATE],
-  "/messaging/webhooks": [SYSTEM_PERMISSIONS.WEBHOOKS_VIEW],
-  "/messaging/webhooks/[id]": [SYSTEM_PERMISSIONS.WEBHOOKS_VIEW],
+  // Communication & Integrations
+  "/communication/message-composer": [SYSTEM_PERMISSIONS.EMAILS_VIEW],
+  "/communication/notifications": [SYSTEM_PERMISSIONS.NOTIFICATIONS_VIEW],
+  "/communication/templates": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_VIEW],
+  "/communication/templates/new": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_CREATE],
+  "/communication/templates/[id]/edit": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_UPDATE],
+  "/integrations/webhooks": [SYSTEM_PERMISSIONS.WEBHOOKS_VIEW],
+  "/integrations/webhooks/[id]": [SYSTEM_PERMISSIONS.WEBHOOKS_VIEW],
+
+  // Media
+  "/media": [SYSTEM_PERMISSIONS.MEDIA_VIEW],
 
   // Ecosystem
   "/recycle-bin": [SYSTEM_PERMISSIONS.RECYCLE_BIN_VIEW],

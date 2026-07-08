@@ -1,4 +1,4 @@
-// FILE-EXCEPTION: file length
+﻿// FILE-EXCEPTION: file length
 /**
  * Docs page locale — DE
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
@@ -441,5 +441,51 @@ export const de = {
       drWarning:
         "Kritisch: Testen Sie Ihre Disaster-Recovery-Prozeduren vierteljährlich. Ein Backup, das nie wiederhergestellt wurde, ist kein Backup — es ist eine Hoffnung.",
     },
+
+    // --- Communication Module ---
+    communication: {
+      title: "Kommunikationsmodul",
+      description: "Horizontaler Nachrichtenversanddienst — E-Mail, SMS, In-App-Benachrichtigungen, Vorlagen und Lieferprotokoll für alle Module.",
+      intro: "Das Kommunikationsmodul besitzt ALLE Nachrichtenversandvorgänge in SCRIPE. Jedes Modul sendet Nachrichten über IMessageDispatcher, niemals direkt über SMTP oder Twilio.",
+      architectureTitle: "Architektur",
+      architectureIntro: "Identity und andere Module rufen IMessageDispatcher in Core.Application auf. Das Kommunikationsmodul implementiert diese Schnittstelle über SendEmailCommandHandler / SendSmsCommandHandler.",
+      templatesTitle: "Nachrichtenvorlagen",
+      templatesIntro: "Vorlagen sind versionierte, mehrkanalige Datensätze (E-Mail/SMS/InApp/Push). Jede Vorlage hat einen Entwurf → veröffentlicht-Lebenszyklus. Templates werden mit Scriban gerendert.",
+      jobsTitle: "Hintergrundjobs",
+      jobsIntro: "MessageRetryJob versucht alle 5 Minuten eine erneute Zustellung. CommunicationSoftDeleteCleanupJob läuft täglich um 3 Uhr morgens.",
+      permissionsTitle: "Berechtigungen",
+      permissionsContent: "communication.templates.view/create/update/delete | communication.send.email/sms/notification/bulk | communication.logs.view",
+    },
+
+    // --- Integrations Module ---
+    integrations: {
+      title: "Integrationsmodul",
+      description: "Maschine-zu-Maschine-Integrationsschicht — ausgehende Webhooks mit HMAC-SHA256-Signierung, API-Schlüsselverwaltung.",
+      intro: "Das Integrationsmodul besitzt alle Maschine-zu-Maschine-Integrationsbelange. Ausgehende Webhooks benachrichtigen externe Systeme bei SCRIPE-Ereignissen.",
+      webhooksTitle: "Webhook-System",
+      webhooksIntro: "WebhookSubscription speichert die Endpunkt-URL, abonnierte Ereignistypen und das HMAC-SHA256-Signierschlüssel.",
+      apiKeysTitle: "API-Schlüsselverwaltung",
+      apiKeysIntro: "API-Schlüssel sind mandantenspezifisch mit kommagetrennte Berechtigungsscopes. Schlüsselwerte werden NIEMALS gespeichert — nur ein bcrypt-Hash (KeyHash).",
+      securityTitle: "Sicherheit",
+      securityContent: "Alle Webhook-Payloads sind mit HMAC-SHA256 signiert. Ein Trennschalter deaktiviert Abonnements nach 10 aufeinanderfolgenden Fehlern.",
+      permissionsTitle: "Berechtigungen",
+      permissionsContent: "integrations.connections.view/create/update/delete | integrations.apikeys.view/create/revoke | integrations.webhooks.view/create/update/delete",
+    },
+
+    // --- Media Module ---
+    media: {
+      title: "Medienmodul",
+      description: "Binäre Dateispeicherung — segmentierter Upload, Download-Sitzungen, temporäre Zugriffsgewährungen, Speicherkontingent-Durchsetzung.",
+      intro: "Das Medienmodul besitzt die binäre Dateispeicherung und bietet segmentierten Upload für große Dateien und temporäre Download-Links (MediaAccessGrant).",
+      chunkedUploadTitle: "Segmentierter Upload",
+      chunkedUploadIntro: "Große Dateien werden in Segmenten über StartUploadSessionCommand (erstellt MediaUploadSession) gefolgt von UploadChunkCommand-Aufrufen hochgeladen.",
+      accessGrantsTitle: "Temporäre Zugriffsgewährungen",
+      accessGrantsIntro: "MediaAccessGrant erzeugt zeitbegrenzte Download-URLs ohne Offenlegung der Speicher-Anmeldeinformationen.",
+      quotasTitle: "Speicherkontingente",
+      quotasContent: "Upload-Anfragen prüfen das Media.StorageQuotaGb-Feature-Gate des Mandanten in Entitlements über IFeatureChecker.",
+      permissionsTitle: "Berechtigungen",
+      permissionsContent: "media.files.view/upload/delete | media.folders.create/update/delete | media.access.grant | media.admin | media.export",
+    },
   },
 };
+
