@@ -55,7 +55,8 @@ export const en = {
 
     // Modals
     plainKeyLabel: "Your New API Key Token",
-    plainKeyWarning: "Keep this key secret. Anyone with access can invoke the APIs with its permissions.",
+    plainKeyWarning: "Keep this key secret.",
+    plainKeyDesc: "Anyone with access can invoke the APIs with its permissions.",
     close: "Close",
 
     // Status mapping

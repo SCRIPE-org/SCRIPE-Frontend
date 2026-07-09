@@ -12,11 +12,11 @@ import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useQuery } from "@tanstack/react-query";
 import { useAppStore } from "@core/store/useAppStore";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { ApiKey, CreateApiKeyRequest } from "../../domain/entities/ApiKey";
-import { useEnhancedToast } from "@/core/hooks/use-enhanced-toast";
 
 // Query keys for caching
 export const apiKeyKeys = {
@@ -175,8 +175,8 @@ export function useApiKeysViewModel() {
         await apiKeyRepository.revoke(id);
       },
       permissions: {
-        canCreate: "apikeys:create",
-        canDelete: "apikeys:delete",
+        canCreate: "apikeys.create",
+        canDelete: "apikeys.delete",
       },
     }),
     [t, isAr, apiKeyRepository, permissions]
