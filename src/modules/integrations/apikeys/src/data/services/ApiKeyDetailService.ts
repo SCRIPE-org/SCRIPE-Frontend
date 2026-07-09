@@ -39,4 +39,8 @@ export class ApiKeyDetailService implements IApiKeyDetailService {
     );
     return this.api.get(url);
   }
+
+  async deletePermanently(id: string): Promise<void> {
+    await this.api.delete(API_ENDPOINTS.API_KEYS.DELETE_PERMANENT(id));
+  }
 }

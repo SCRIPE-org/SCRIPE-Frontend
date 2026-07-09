@@ -18,5 +18,6 @@ export const INTEGRATIONS_ENDPOINTS = {
     STATS: (id: string) => `${V1}/integrations/apikeys/${id}/stats`,
     CHART_DATA: (id: string) => `${V1}/integrations/apikeys/${id}/chart-data`,
     ACTIVITY: (id: string) => `${V1}/integrations/apikeys/${id}/activity`,
+    DELETE_PERMANENT: (id: string) => `${V1}/integrations/apikeys/${id}/permanent`,
   },
 };

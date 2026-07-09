@@ -29,4 +29,5 @@ export interface IApiKeyDetailService {
   getStats(id: string): Promise<ApiKeyStatsData>;
   getChartData(id: string, params: ChartParams): Promise<ApiKeyChartDataPoint[]>;
   getActivity(id: string, params: ActivityParams): Promise<{ items: ApiKeyActivityEntry[]; totalCount: number }>;
+  deletePermanently(id: string): Promise<void>;
 }

@@ -41,13 +41,7 @@ export default function ApiKeyDetailView() {
 
   // --- Permanent Delete Mutation ---
   const deleteMutation = useMutation({
-    mutationFn: () => integrationsContainer.apiKeyDetailRepository.getById(id) // Placeholder for actual delete (will implement delete in task 13)
-      .then(() => {
-        // We will call the delete endpoint from task 13 here
-        return fetch(`/api/v1/integrations/apikeys/${id}`, { method: "DELETE" }).then(res => {
-          if (!res.ok) throw new Error("Deletion failed");
-        });
-      }),
+    mutationFn: () => integrationsContainer.apiKeyDetailRepository.deletePermanently(id),
     onSuccess: () => {
       toast.success({ title: t("apikeys.deleteToast.successMsg") || "API key permanently deleted." });
       qc.invalidateQueries({ queryKey: ["apikeys"] });

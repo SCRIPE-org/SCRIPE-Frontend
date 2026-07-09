@@ -40,4 +40,8 @@ export class ApiKeyDetailRepository {
       totalCount: result.totalCount,
     };
   }
+
+  async deletePermanently(id: string): Promise<void> {
+    await this.service.deletePermanently(id);
+  }
 }
