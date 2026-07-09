@@ -122,7 +122,7 @@ export function ApiKeyChartSection({ data, isLoading, onRangeChange }: ApiKeyCha
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
                 <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                <Tooltip contentStyle={{ fontSize: 12 }} formatter={(v: number) => [`${v.toFixed(1)} ms`, "Avg Response"]} />
+                <Tooltip contentStyle={{ fontSize: 12 }} formatter={(v: any) => [v !== undefined ? `${Number(v).toFixed(1)} ms` : "—", "Avg Response"]} />
                 <Area type="monotone" dataKey="avgResponseTimeMs" stroke="#8b5cf6" fill="url(#responseGrad)" strokeWidth={2} name="Avg Response (ms)" />
               </AreaChart>
             )}

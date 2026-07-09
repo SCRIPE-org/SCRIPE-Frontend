@@ -27,7 +27,7 @@ export class ApiKeyDetailService implements IApiKeyDetailService {
   async getChartData(id: string, params: ChartParams): Promise<ApiKeyChartDataPointDto[]> {
     const url = buildUrl(
       API_ENDPOINTS.API_KEYS.CHART_DATA(id),
-      params as Record<string, string | number | boolean | null | undefined>
+      params as unknown as Record<string, string | number | boolean | null | undefined>
     );
     return this.api.get(url);
   }
@@ -35,7 +35,7 @@ export class ApiKeyDetailService implements IApiKeyDetailService {
   async getActivity(id: string, params: ActivityParams): Promise<{ items: ApiKeyActivityEntryDto[]; totalCount: number }> {
     const url = buildUrl(
       API_ENDPOINTS.API_KEYS.ACTIVITY(id),
-      params as Record<string, string | number | boolean | null | undefined>
+      params as unknown as Record<string, string | number | boolean | null | undefined>
     );
     return this.api.get(url);
   }
