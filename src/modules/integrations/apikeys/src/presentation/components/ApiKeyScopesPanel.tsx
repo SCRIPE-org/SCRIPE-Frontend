@@ -144,7 +144,7 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
                     return (
                       <div
                         key={p.code}
-                        className={`flex items-start space-x-3.5 space-x-reverse p-2 rounded-md hover:bg-muted/40 transition-colors border ${
+                        className={`flex items-start gap-x-3.5 p-2 rounded-md hover:bg-muted/40 transition-colors border ${
                           isChecked
                             ? "border-primary/20 bg-primary/5 dark:bg-primary/10"
                             : "border-transparent"
