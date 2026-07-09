@@ -5,8 +5,9 @@ import { Button } from "@core/ui/button";
 import { ArrowLeft, RotateCcw, Ban, Copy, Check } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { ApiKeyDetail } from "../../domain/entities/ApiKeyDetail";
 import { useI18n } from "@core/providers/i18n-provider";
+import { formatDateTimeUtc } from "@core/common/utils";
+import type { ApiKeyDetail } from "../../domain/entities/ApiKeyDetail";
 
 interface ApiKeyHeroBandProps {
   detail: ApiKeyDetail;
@@ -78,7 +79,7 @@ export function ApiKeyHeroBand({ detail, isRotating, onRotate, onRevoke }: ApiKe
           {detail.lastUsedAt && (
             <span className="text-xs text-muted-foreground hidden md:block">
               {t("apikeys.lastUsed") || "Last used"}{" "}
-              {new Date(detail.lastUsedAt).toLocaleString()}
+              {formatDateTimeUtc(detail.lastUsedAt)} (UTC)
             </span>
           )}
         </div>

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import type { ApiKeyChartDataPoint } from "../../domain/entities/ApiKeyChartData";
 import { useI18n } from "@core/providers/i18n-provider";
-import { format } from "date-fns";
+import { formatTimeUtc, formatDateUtc } from "@core/common/utils";
 
 type ChartView = "volume" | "errors" | "response";
 type RangePreset = "24h" | "7d" | "30d";
@@ -28,7 +28,7 @@ export function ApiKeyChartSection({ data, isLoading, onRangeChange }: ApiKeyCha
 
   const formatted = data.map(d => ({
     ...d,
-    label: d.period ? format(new Date(d.period), range === "24h" ? "HH:mm" : "MMM d") : "",
+    label: d.period ? (range === "24h" ? formatTimeUtc(d.period) : formatDateUtc(d.period)) : "",
     errorRate: d.totalHits > 0 ? Math.round((d.failureHits / d.totalHits) * 100) : 0,
   }));
 

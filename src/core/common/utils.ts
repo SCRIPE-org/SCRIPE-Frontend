@@ -373,3 +373,62 @@ export function getTableHoverEffectClasses(
       return "";
   }
 }
+
+/**
+ * Safely parses a date string, guaranteeing it is treated as UTC if no timezone is specified.
+ */
+export function parseUtcDate(date: string | Date | null | undefined): Date | null {
+  if (date === null || date === undefined || date === "") return null;
+  if (date instanceof Date) return isNaN(date.getTime()) ? null : date;
+  
+  let s = date.trim();
+  // If it's a date-time string without timezone offset, append 'Z' to treat as UTC
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(s) && !s.endsWith("Z") && !s.includes("+") && !s.includes("-", 10)) {
+    s += "Z";
+  }
+  
+  const dateObj = new Date(s);
+  return isNaN(dateObj.getTime()) ? null : dateObj;
+}
+
+/**
+ * Formats a date in UTC as "YYYY-MM-DD HH:mm:ss"
+ */
+export function formatDateTimeUtc(date: string | Date | null | undefined): string {
+  const parsed = parseUtcDate(date);
+  if (!parsed) return "-";
+  
+  const year = parsed.getUTCFullYear();
+  const month = String(parsed.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(parsed.getUTCDate()).padStart(2, "0");
+  const hours = String(parsed.getUTCHours()).padStart(2, "0");
+  const minutes = String(parsed.getUTCMinutes()).padStart(2, "0");
+  const seconds = String(parsed.getUTCSeconds()).padStart(2, "0");
+  
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+/**
+ * Formats a date in UTC as "HH:mm"
+ */
+export function formatTimeUtc(date: string | Date | null | undefined): string {
+  const parsed = parseUtcDate(date);
+  if (!parsed) return "";
+  
+  const hours = String(parsed.getUTCHours()).padStart(2, "0");
+  const minutes = String(parsed.getUTCMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
+
+/**
+ * Formats a date in UTC as "MMM d" (e.g., "Jul 9")
+ */
+export function formatDateUtc(date: string | Date | null | undefined): string {
+  const parsed = parseUtcDate(date);
+  if (!parsed) return "";
+  
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const month = months[parsed.getUTCMonth()];
+  const day = parsed.getUTCDate();
+  return `${month} ${day}`;
+}

@@ -14,7 +14,7 @@ import { Search, ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import type { ApiKeyActivityEntry } from "../../domain/entities/ApiKeyActivity";
 import { getStatusCodeColor } from "../../domain/entities/ApiKeyActivity";
 import { useI18n } from "@core/providers/i18n-provider";
-import { format } from "date-fns";
+import { formatDateTimeUtc } from "@core/common/utils";
 
 interface ApiKeyActivityLogProps {
   activity: { items: ApiKeyActivityEntry[]; totalCount: number } | undefined;
@@ -165,7 +165,7 @@ export function ApiKeyActivityLog({
                     <TableCell className="text-right tabular-nums">{log.responseTimeMs} ms</TableCell>
                     <TableCell className="truncate select-all">{log.ipAddress || "—"}</TableCell>
                     <TableCell className="text-muted-foreground">
-                      {format(new Date(log.requestedAt), "yyyy-MM-dd HH:mm:ss")}
+                      {formatDateTimeUtc(log.requestedAt)}
                     </TableCell>
                   </TableRow>
                 ))
