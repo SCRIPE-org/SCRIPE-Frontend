@@ -10,6 +10,7 @@ export const ar = {
     scopes: "الصلاحيات / النطاقات",
     scopesPlaceholder: "اختر نطاقات هذا المفتاح",
     selectScopes: "اختر النطاقات",
+    more: "إضافي",
     statusLabel: "الحالة",
     createdAt: "تاريخ الإنشاء",
     expiresAt: "تاريخ انتهاء الصلاحية",
@@ -37,14 +38,18 @@ export const ar = {
     availableScopes: "الصلاحيات المتاحة",
     allScopes: "جميع الصلاحيات",
     noScopesSelected: "يرجى تحديد صلاحية واحدة على الأقل",
+    scopesSearch: "البحث في الصلاحيات...",
+    scopesDescription: "نطاقات وصلاحيات المفتاح",
 
     // Actions & Buttons
     create: "إنشاء مفتاح API",
     generate: "إنشاء",
+    viewDetails: "عرض التفاصيل",
     revoke: "إلغاء المفتاح",
     revoking: "جاري الإلغاء...",
     copyKey: "نسخ المفتاح",
     copied: "تم النسخ!",
+    copiedDesc: "تم نسخ رمز مفتاح API إلى الحافظة الخاصة بك.",
 
     // Success Messages
     created: "تم إنشاء مفتاح API بنجاح",

@@ -10,6 +10,7 @@ export const en = {
     scopes: "Permissions / Scopes",
     scopesPlaceholder: "Select scopes for this key",
     selectScopes: "Select Scopes",
+    more: "more",
     statusLabel: "Status",
     createdAt: "Created At",
     expiresAt: "Expires At",
@@ -37,14 +38,18 @@ export const en = {
     availableScopes: "Available Permissions",
     allScopes: "All Scopes",
     noScopesSelected: "Please select at least one permission scope",
+    scopesSearch: "Search scopes...",
+    scopesDescription: "Key permissions scopes",
 
     // Actions & Buttons
     create: "Generate API Key",
     generate: "Generate",
+    viewDetails: "View Details",
     revoke: "Revoke Key",
     revoking: "Revoking...",
     copyKey: "Copy Key",
     copied: "Copied!",
+    copiedDesc: "The API key token has been copied to your clipboard.",
 
     // Success Messages
     created: "API Key Generated Successfully",
