@@ -65,7 +65,7 @@ export function ApiKeyActivityLog({
   const totalPages = Math.max(Math.ceil(totalCount / pageSize), 1);
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden">
+    <Card className="flex flex-col overflow-hidden min-h-[220px]">
       <CardHeader className="pb-3 border-b flex flex-row items-center justify-between flex-wrap gap-3">
         <CardTitle className="text-sm font-semibold">
           {t("apikeys.activity.title") || "Real-time Access Logs"}
@@ -125,7 +125,7 @@ export function ApiKeyActivityLog({
         </div>
 
         {/* Table Area */}
-        <div className="flex-1 overflow-auto max-h-[300px]">
+        <div className="flex-1 overflow-auto min-h-[120px] max-h-[400px]">
           <Table>
             <TableHeader className="sticky top-0 bg-background z-10">
               <TableRow>

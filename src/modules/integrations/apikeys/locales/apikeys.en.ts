@@ -140,6 +140,12 @@ export const en = {
       noPermissions: "No permissions found",
     },
 
+    // --- Quickstart Onboarding ---
+    quickstart: {
+      title: "Developer Quick Start & API Integration",
+      desc: "Get started by making your first API call. Copy the code snippets below to configure your client integrations.",
+    },
+
     // --- Activity Log ---
     activity: {
       title: "Real-time Access Logs",

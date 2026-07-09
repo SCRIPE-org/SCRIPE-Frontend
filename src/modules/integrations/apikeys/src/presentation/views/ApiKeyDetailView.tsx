@@ -14,6 +14,7 @@ import { ApiKeyScopesPanel } from "../components/ApiKeyScopesPanel";
 import { ApiKeyActivityLog } from "../components/ApiKeyActivityLog";
 import { ApiKeyDangerZone } from "../components/ApiKeyDangerZone";
 import { RotateKeyDialog } from "../components/RotateKeyDialog";
+import { ApiKeyQuickStart } from "../components/ApiKeyQuickStart";
 
 export default function ApiKeyDetailView() {
   const params = useParams();
@@ -87,7 +88,7 @@ export default function ApiKeyDetailView() {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden bg-background">
+    <div className="flex-1 flex flex-col bg-background pb-12">
       <ApiKeyHeroBand
         detail={vm.detail}
         isRotating={vm.isRotating}
@@ -95,7 +96,7 @@ export default function ApiKeyDetailView() {
         onRevoke={revokeMutation.mutate}
       />
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      <div className="p-6 space-y-6">
         {vm.stats && (
           <ApiKeyStatsCards stats={vm.stats} isLoading={vm.isStatsLoading} />
         )}
@@ -103,11 +104,15 @@ export default function ApiKeyDetailView() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Area */}
           <div className="lg:col-span-2 space-y-6">
-            <ApiKeyChartSection
-              data={vm.chartData}
-              isLoading={vm.isChartLoading}
-              onRangeChange={vm.handleChartRangeChange}
-            />
+            {vm.stats && vm.stats.totalHits === 0 ? (
+              <ApiKeyQuickStart detail={vm.detail} />
+            ) : (
+              <ApiKeyChartSection
+                data={vm.chartData}
+                isLoading={vm.isChartLoading}
+                onRangeChange={vm.handleChartRangeChange}
+              />
+            )}
 
             <ApiKeyActivityLog
               activity={vm.activity}

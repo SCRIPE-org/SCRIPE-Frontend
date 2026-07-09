@@ -86,8 +86,8 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
   }, {});
 
   return (
-    <form onSubmit={handleSubmit} className="h-full flex flex-col">
-      <Card className="flex-1 flex flex-col h-full overflow-hidden">
+    <form onSubmit={handleSubmit} className="flex flex-col">
+      <Card className="flex flex-col overflow-hidden">
         <CardHeader className="pb-3 border-b">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <CardTitle className="text-sm font-semibold">
@@ -114,7 +114,7 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
             />
           </div>
         </CardHeader>
-        <CardContent className="flex-1 overflow-y-auto p-6 space-y-6 max-h-[380px]">
+        <CardContent className="flex-1 overflow-y-auto p-6 space-y-6 max-h-[540px]">
           {isLoading ? (
             <div className="space-y-4 py-4 animate-pulse">
               <div className="h-4 bg-muted rounded w-1/4" />
@@ -134,7 +134,7 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
                 <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {groupName}
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 border rounded-lg p-3 bg-muted/10">
+                <div className="grid grid-cols-1 gap-2 border rounded-lg p-3 bg-muted/10">
                   {items.map(p => {
                     const isChecked = selectedScopes.includes(p.code);
                     const label = isAr
