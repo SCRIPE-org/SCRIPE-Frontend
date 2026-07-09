@@ -78,6 +78,10 @@ export function useApiKeysViewModel() {
           const requestBody: CreateApiKeyRequest = {
             ...data,
             scopes: Array.isArray(data.scopes) ? data.scopes.join(",") : data.scopes,
+            rateLimitPerMinute: data.rateLimitPerMinute ? parseInt(data.rateLimitPerMinute, 10) : null,
+            monthlyQuota: data.monthlyQuota ? parseInt(data.monthlyQuota, 10) : null,
+            description: data.description || "",
+            ipWhitelist: data.ipWhitelist || null,
           };
           const result = await apiKeyRepository.create(requestBody);
           setGeneratedKey(result.plainTextKey);
@@ -164,11 +168,43 @@ export function useApiKeysViewModel() {
             { label: t("apikeys.expirations.days365") || "1 Year", value: "365" },
           ],
         },
+        {
+          name: "description",
+          label: t("apikeys.settings.desc") || "Description",
+          type: "textarea" as const,
+          placeholder: t("apikeys.settings.descPlaceholder") || "Explain what this integration key is used for...",
+          required: false,
+        },
+        {
+          name: "rateLimitPerMinute",
+          label: t("apikeys.settings.rateLimit") || "Rate Limit (hits/min)",
+          type: "number" as const,
+          placeholder: "e.g. 100",
+          required: false,
+        },
+        {
+          name: "monthlyQuota",
+          label: t("apikeys.settings.quota") || "Monthly Quota (total hits)",
+          type: "number" as const,
+          placeholder: "e.g. 50000 (leave blank for unlimited)",
+          required: false,
+        },
+        {
+          name: "ipWhitelist",
+          label: t("apikeys.settings.whitelist") || "IP Whitelist (comma-separated)",
+          type: "text" as const,
+          placeholder: "e.g. 192.168.1.1, 10.0.0.0/24",
+          required: false,
+        },
       ],
       createInitialValues: {
         name: "",
         scopes: [],
         expiryDays: null,
+        description: "",
+        rateLimitPerMinute: null,
+        monthlyQuota: null,
+        ipWhitelist: "",
       },
       getItemDisplayName: (item: ApiKey) => item.name || item.prefix,
       deleteService: async (id: string) => {

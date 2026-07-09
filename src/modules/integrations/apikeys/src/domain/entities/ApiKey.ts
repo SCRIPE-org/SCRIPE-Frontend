@@ -75,6 +75,10 @@ export interface CreateApiKeyRequest {
   name: string;
   scopes: string;
   expiryDays: number | null;
+  description?: string;
+  rateLimitPerMinute?: number | null;
+  monthlyQuota?: number | null;
+  ipWhitelist?: string;
 }
 
 export interface CreateApiKeyResult {
