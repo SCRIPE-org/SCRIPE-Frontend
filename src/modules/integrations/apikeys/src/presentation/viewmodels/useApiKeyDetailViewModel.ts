@@ -29,11 +29,11 @@ export function useApiKeyDetailViewModel(keyId: string) {
   });
 
   // --- Chart Data ---
-  const [chartParams, setChartParams] = useState<ChartParams>({
+  const [chartParams, setChartParams] = useState<ChartParams>(() => ({
     granularity: "hourly",
     startDate: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
     endDate: new Date().toISOString(),
-  });
+  }));
 
   const chartQuery = useQuery({
     queryKey: ["apikey-chart", keyId, chartParams],

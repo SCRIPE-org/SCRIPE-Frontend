@@ -91,14 +91,14 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
         <CardHeader className="pb-3 border-b">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <CardTitle className="text-sm font-semibold">
-              {t("apikeys.scopes.title") || "API Scopes / Permissions"}
+              {t("apikeys.scopesPanel.title") || "API Scopes / Permissions"}
             </CardTitle>
             <div className="flex items-center gap-2">
               <Button type="button" variant="outline" size="sm" onClick={handleSelectAll} disabled={!detail.isActive}>
-                {t("apikeys.scopes.selectAll") || "Select All"}
+                {t("apikeys.scopesPanel.selectAll") || "Select All"}
               </Button>
               <Button type="button" variant="outline" size="sm" onClick={handleDeselectAll} disabled={!detail.isActive}>
-                {t("apikeys.scopes.deselectAll") || "Clear All"}
+                {t("apikeys.scopesPanel.deselectAll") || "Clear All"}
               </Button>
             </div>
           </div>
@@ -106,7 +106,7 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder={t("apikeys.scopes.searchPlaceholder") || "Search permissions..."}
+              placeholder={t("apikeys.scopesPanel.searchPlaceholder") || "Search permissions..."}
               className="pl-9 h-9"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
@@ -126,7 +126,7 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
             </div>
           ) : Object.keys(groups).length === 0 ? (
             <div className="py-8 text-center text-sm text-muted-foreground">
-              {t("apikeys.scopes.noPermissions") || "No permissions found"}
+              {t("apikeys.scopesPanel.noPermissions") || "No permissions found"}
             </div>
           ) : (
             Object.entries(groups).map(([groupName, items]) => (

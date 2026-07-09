@@ -16,6 +16,9 @@ export const ar = {
     revokedAt: "تاريخ الإلغاء",
     neverExpires: "لا ينتهي أبداً",
     untitled: "مفتاح API بدون عنوان",
+    backToList: "مفاتيح API",
+    lastUsed: "آخر استخدام",
+    rotateKey: "تدوير المفتاح",
 
     // Expiry Options
     expiration: "مدة الصلاحية",
@@ -64,6 +67,106 @@ export const ar = {
       active: "نشط",
       revoked: "ملغي",
       expired: "منتهي",
+    },
+
+    // --- Stats ---
+    stats: {
+      totalHits: "إجمالي الطلبات",
+      thisMinute: "هذه الدقيقة",
+      successRate: "نسبة النجاح",
+      successful: "ناجحة",
+      failed: "فاشلة",
+      monthlyQuota: "الحصة الشهرية",
+      noLimit: "لا يوجد حد شهري",
+      avgResponse: "متوسط الاستجابة",
+      rateLimit: "حد الطلبات",
+      perMin: "/دقيقة",
+    },
+
+    // --- Chart ---
+    chart: {
+      title: "نشاط الطلبات",
+      view: {
+        volume: "الحجم",
+        errors: "الأخطاء",
+        response: "زمن الاستجابة",
+      },
+      noData: "لا توجد بيانات لهذه الفترة",
+    },
+
+    // --- Danger Zone ---
+    dangerZone: {
+      title: "منطقة الخطر",
+      revokeTitle: "إلغاء هذا المفتاح",
+      revokeDesc: "يلغي صلاحية هذا المفتاح فوراً. جميع الطلبات التي تستخدمه ستعود برمز 401. يمكن التراجع عن هذا بالتواصل مع الدعم.",
+      deleteTitle: "حذف هذا المفتاح نهائياً",
+      deleteDesc: "يحذف المفتاح وجميع سجلات الاستخدام والإحصائيات المرتبطة به. لا يمكن التراجع عن هذا الإجراء.",
+      deleteBtn: "حذف نهائي",
+      deleteConfirmTitle: "حذف مفتاح API نهائياً؟",
+      deleteConfirmDesc: "سيؤدي هذا إلى حذف المفتاح وجميع سجلاته نهائياً. اكتب اسم المفتاح للتأكيد.",
+      typeToConfirm: "اكتب اسم المفتاح للتأكيد",
+    },
+
+    // --- Rotate Dialog ---
+    rotate: {
+      successTitle: "تم تدوير مفتاح API بنجاح",
+      successDesc: "يرجى نسخ مفتاحك السري الجديد الآن. لن يتم عرضه مرة أخرى!",
+    },
+
+    // --- Settings Panel ---
+    settings: {
+      title: "إعدادات التهيئة",
+      name: "اسم المفتاح",
+      rateLimit: "حد الطلبات (طلب/دقيقة)",
+      desc: "الوصف",
+      descPlaceholder: "اشرح في ماذا يُستخدم هذا المفتاح...",
+      quota: "الحصة الشهرية (إجمالي الطلبات)",
+      resetDay: "يوم إعادة ضبط الحصة (1-28)",
+      alert: "عتبة التنبيه (%)",
+      whitelist: "القائمة البيضاء لعناوين IP (مفصولة بفاصلة)",
+    },
+
+    // --- Scopes Panel ---
+    scopesPanel: {
+      title: "صلاحيات ومجالات الوصول",
+      selectAll: "تحديد الكل",
+      deselectAll: "إلغاء تحديد الكل",
+      searchPlaceholder: "بحث في الصلاحيات...",
+      noPermissions: "لم يتم العثور على صلاحيات",
+    },
+
+    // --- Activity Log ---
+    activity: {
+      title: "سجلات الوصول الفورية",
+      searchPlaceholder: "تصفية حسب نقطة النهاية...",
+      statusPlaceholder: "رمز الحالة",
+      method: "الأسلوب",
+      endpoint: "نقطة النهاية",
+      status: "الحالة",
+      duration: "زمن الاستجابة",
+      ip: "عنوان IP",
+      time: "الوقت (UTC)",
+      noLogs: "لم يتم تسجيل أي طلبات لهذا المفتاح بعد",
+      showing: "إجمالي السجلات",
+    },
+
+    // --- Error Views ---
+    error: {
+      notFound: "مفتاح API غير موجود أو تم رفض الوصول.",
+    },
+
+    // --- Toast Alerts ---
+    revokeToast: {
+      successMsg: "تم إلغاء مفتاح API بنجاح.",
+      errorMsg: "فشل إلغاء مفتاح API.",
+    },
+    deleteToast: {
+      successMsg: "تم حذف مفتاح API نهائياً.",
+      errorMsg: "فشل حذف مفتاح API نهائياً.",
+    },
+    updateToast: {
+      successScopes: "تم تحديث صلاحيات مفتاح API بنجاح.",
+      successSettings: "تم تحديث إعدادات مفتاح API بنجاح.",
     },
   },
 };

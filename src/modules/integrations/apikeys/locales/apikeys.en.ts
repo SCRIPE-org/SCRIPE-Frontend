@@ -16,6 +16,9 @@ export const en = {
     revokedAt: "Revoked At",
     neverExpires: "Never Expires",
     untitled: "Untitled API Key",
+    backToList: "API Keys",
+    lastUsed: "Last used",
+    rotateKey: "Rotate Key",
 
     // Expiry Options
     expiration: "Expiration",
@@ -64,6 +67,106 @@ export const en = {
       active: "Active",
       revoked: "Revoked",
       expired: "Expired",
+    },
+
+    // --- Stats ---
+    stats: {
+      totalHits: "Total Hits",
+      thisMinute: "this minute",
+      successRate: "Success Rate",
+      successful: "successful",
+      failed: "failed",
+      monthlyQuota: "Monthly Quota",
+      noLimit: "No monthly limit set",
+      avgResponse: "Avg Response",
+      rateLimit: "Rate limit",
+      perMin: "/min",
+    },
+
+    // --- Chart ---
+    chart: {
+      title: "Request Activity",
+      view: {
+        volume: "Volume",
+        errors: "Errors",
+        response: "Response Time",
+      },
+      noData: "No data for this period",
+    },
+
+    // --- Danger Zone ---
+    dangerZone: {
+      title: "Danger Zone",
+      revokeTitle: "Revoke this key",
+      revokeDesc: "Immediately invalidates this key. All requests using it will return 401. This can be undone by contacting support.",
+      deleteTitle: "Permanently delete this key",
+      deleteDesc: "Deletes the key and ALL associated usage logs and stats. This CANNOT be undone.",
+      deleteBtn: "Delete",
+      deleteConfirmTitle: "Permanently Delete API Key?",
+      deleteConfirmDesc: "This will delete the key and all its logs permanently. Type the key name to confirm.",
+      typeToConfirm: "Type key name to confirm",
+    },
+
+    // --- Rotate Dialog ---
+    rotate: {
+      successTitle: "API Key Rotated Successfully",
+      successDesc: "Please copy your new secret key now. It won't be shown again!",
+    },
+
+    // --- Settings Panel ---
+    settings: {
+      title: "Configuration Settings",
+      name: "Key Name",
+      rateLimit: "Rate Limit (hits/min)",
+      desc: "Description",
+      descPlaceholder: "Explain what this integration key is used for...",
+      quota: "Monthly Quota (total hits)",
+      resetDay: "Quota Reset Day (1-28)",
+      alert: "Alert Threshold (%)",
+      whitelist: "IP Whitelist (comma-separated)",
+    },
+
+    // --- Scopes Panel ---
+    scopesPanel: {
+      title: "API Scopes / Permissions",
+      selectAll: "Select All",
+      deselectAll: "Clear All",
+      searchPlaceholder: "Search permissions...",
+      noPermissions: "No permissions found",
+    },
+
+    // --- Activity Log ---
+    activity: {
+      title: "Real-time Access Logs",
+      searchPlaceholder: "Filter by endpoint...",
+      statusPlaceholder: "Status Code",
+      method: "Method",
+      endpoint: "Endpoint",
+      status: "Status",
+      duration: "Latency",
+      ip: "IP Address",
+      time: "Time (UTC)",
+      noLogs: "No requests logged for this key yet",
+      showing: "Total records",
+    },
+
+    // --- Error Views ---
+    error: {
+      notFound: "API Key not found or access denied.",
+    },
+
+    // --- Toast Alerts ---
+    revokeToast: {
+      successMsg: "API key successfully revoked.",
+      errorMsg: "Failed to revoke API key.",
+    },
+    deleteToast: {
+      successMsg: "API key permanently deleted.",
+      errorMsg: "Failed to permanently delete API key.",
+    },
+    updateToast: {
+      successScopes: "API key scopes updated successfully.",
+      successSettings: "API key settings updated successfully.",
     },
   },
 };

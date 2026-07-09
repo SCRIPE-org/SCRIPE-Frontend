@@ -30,12 +30,12 @@ export default function ApiKeyDetailView() {
   const revokeMutation = useMutation({
     mutationFn: () => integrationsContainer.apiKeyRepository.revoke(id),
     onSuccess: () => {
-      toast.success({ title: t("apikeys.revoke.successMsg") || "API key successfully revoked." });
+      toast.success({ title: t("apikeys.revokeToast.successMsg") || "API key successfully revoked." });
       qc.invalidateQueries({ queryKey: ["apikey-detail", id] });
       qc.invalidateQueries({ queryKey: ["apikeys"] });
     },
     onError: (err: any) => {
-      toast.error({ title: err.message || t("apikeys.revoke.errorMsg") || "Failed to revoke API key." });
+      toast.error({ title: err.message || t("apikeys.revokeToast.errorMsg") || "Failed to revoke API key." });
     },
   });
 
@@ -49,12 +49,12 @@ export default function ApiKeyDetailView() {
         });
       }),
     onSuccess: () => {
-      toast.success({ title: t("apikeys.delete.successMsg") || "API key permanently deleted." });
+      toast.success({ title: t("apikeys.deleteToast.successMsg") || "API key permanently deleted." });
       qc.invalidateQueries({ queryKey: ["apikeys"] });
       router.push("/integrations/apikeys");
     },
     onError: (err: any) => {
-      toast.error({ title: err.message || t("apikeys.delete.errorMsg") || "Failed to permanently delete API key." });
+      toast.error({ title: err.message || t("apikeys.deleteToast.errorMsg") || "Failed to permanently delete API key." });
     },
   });
 
@@ -84,12 +84,12 @@ export default function ApiKeyDetailView() {
 
   const handleUpdateScopes = (scopes: string) => {
     vm.update({ scopes });
-    toast.success({ title: t("apikeys.update.successScopes") || "API key scopes updated successfully." });
+    toast.success({ title: t("apikeys.updateToast.successScopes") || "API key scopes updated successfully." });
   };
 
   const handleUpdateSettings = (req: any) => {
     vm.update(req);
-    toast.success({ title: t("apikeys.update.successSettings") || "API key settings updated successfully." });
+    toast.success({ title: t("apikeys.updateToast.successSettings") || "API key settings updated successfully." });
   };
 
   return (
