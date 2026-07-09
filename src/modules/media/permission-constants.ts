@@ -4,7 +4,8 @@
  * Covers: Media Library Uploads and Folder Management
  */
 export const MEDIA_PERMISSIONS = {
-  MEDIA_VIEW: "media.view",
-  MEDIA_CREATE: "media.create",
-  MEDIA_DELETE: "media.delete",
+  MEDIA_VIEW: "medias.view",
+  MEDIA_CREATE: "medias.create",
+  MEDIA_UPDATE: "medias.update",
+  MEDIA_DELETE: "medias.delete",
 } as const;

@@ -265,6 +265,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/communication/templates/[id]/edit": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_UPDATE],
   "/integrations/webhooks": [SYSTEM_PERMISSIONS.WEBHOOKS_VIEW],
   "/integrations/webhooks/[id]": [SYSTEM_PERMISSIONS.WEBHOOKS_VIEW],
+  "/integrations/apikeys": [SYSTEM_PERMISSIONS.API_KEYS_VIEW],
 
   // Media
   "/media": [SYSTEM_PERMISSIONS.MEDIA_VIEW],

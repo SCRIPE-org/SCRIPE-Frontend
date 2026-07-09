@@ -102,7 +102,7 @@ export function MessageTemplatesView() {
             description: data.description || "",
             imported: "true",
           });
-          router.push(`/messaging/templates/new?${params.toString()}`);
+          router.push(`/communication/templates/new?${params.toString()}`);
         } catch {
           success({ title: "Invalid template file" });
         }
@@ -116,12 +116,12 @@ export function MessageTemplatesView() {
 
   // Navigate to full-page form instead of opening modal
   const handleCreateClick = useCallback(() => {
-    router.push("/messaging/templates/new");
+    router.push("/communication/templates/new");
   }, [router]);
 
   const handleEdit = useCallback(
     (item: MessageTemplate) => {
-      router.push(`/messaging/templates/${item.id}/edit`);
+      router.push(`/communication/templates/${item.id}/edit`);
     },
     [router]
   );

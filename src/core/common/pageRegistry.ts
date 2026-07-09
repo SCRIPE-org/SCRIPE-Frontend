@@ -132,7 +132,7 @@ export const PAGE_REGISTRY: PageDefinition[] = [
     category: "settings",
   },
   {
-    href: "/messaging/webhooks",
+    href: "/integrations/webhooks",
     labelEn: "Webhooks",
     labelAr: "الويب هوك",
     icon: "Webhook",

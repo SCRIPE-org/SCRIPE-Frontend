@@ -624,7 +624,7 @@ export function useEmailComposerViewModel() {
           subject: email.subject,
           body: email.body,
         });
-        router.push(`/messaging/templates/create?${params.toString()}`);
+        router.push(`/communication/templates/create?${params.toString()}`);
       },
       [router]
     ),

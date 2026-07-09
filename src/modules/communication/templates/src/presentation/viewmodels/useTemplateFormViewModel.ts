@@ -157,7 +157,7 @@ export function useTemplateFormViewModel() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
       success({ title: t("messaging.templates.createSuccess") || "Template created" });
-      router.push("/messaging/templates");
+      router.push("/communication/templates");
     },
     onError: () => {
       toastError({ title: t("messaging.templates.createError") || "Failed to create template" });
@@ -170,7 +170,7 @@ export function useTemplateFormViewModel() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
       success({ title: t("messaging.templates.updateSuccess") || "Template updated" });
-      router.push("/messaging/templates");
+      router.push("/communication/templates");
     },
     onError: () => {
       toastError({ title: t("messaging.templates.updateError") || "Failed to update template" });
@@ -214,7 +214,7 @@ export function useTemplateFormViewModel() {
 
   // ─── Navigation ──────────────────────────────────────────
   const handleCancel = useCallback(() => {
-    router.push("/messaging/templates");
+    router.push("/communication/templates");
   }, [router]);
 
   // ─── Channel & Language Options ──────────────────────────

@@ -37,16 +37,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useState, useCallback } from "react";
 import { format } from "date-fns";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@core/ui/alert-dialog";
+import { DeleteWebhookDialog } from "../components/DeleteWebhookDialog";
 import { TestPingButton } from "../components/TestPingButton";
 import { WebhookStatsCards } from "../components/WebhookStatsCards";
 import { DeliveryLogTable } from "../components/DeliveryLogTable";
@@ -109,7 +100,7 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
             t("webhooks.notFoundDesc") ||
             "The requested webhook could not be found."}
         </p>
-        <Button variant="outline" onClick={() => router.push("/messaging/webhooks")}>
+        <Button variant="outline" onClick={() => router.push("/integrations/webhooks")}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           {t("common.back") || "Back"}
         </Button>
@@ -129,7 +120,7 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
             variant="ghost"
             size="icon"
             className="mt-1 shrink-0"
-            onClick={() => router.push("/messaging/webhooks")}
+            onClick={() => router.push("/integrations/webhooks")}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -402,31 +393,14 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
       />
 
       {/* ─── Delete Confirmation ─────────────────────────────── */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t("webhooks.deleteConfirmTitle") || "Delete Webhook"}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("webhooks.deleteConfirmDesc") ||
-                "This will permanently delete this webhook subscription and all its delivery logs. This action cannot be undone."}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel") || "Cancel"}</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-red-600 hover:bg-red-700"
-              onClick={() => {
-                vm.remove();
-                setDeleteDialogOpen(false);
-              }}
-            >
-              {t("common.delete") || "Delete"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteWebhookDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={() => {
+          vm.remove();
+          setDeleteDialogOpen(false);
+        }}
+      />
     </div>
   );
 }

@@ -96,6 +96,7 @@ import {
 // ─── Communication & Integrations ───────────────────────
 import { en as communicationEn, ar as communicationAr } from "@modules/communication/core/locales";
 import { en as webhooksEn, ar as webhooksAr } from "@modules/integrations/webhooks/locales";
+import { en as apikeysEn, ar as apikeysAr } from "@modules/integrations/apikeys/locales";
 
 // ─── Ecosystem ─────────────────────────────────────────
 import { en as recycleBinEn, ar as recycleBinAr } from "@modules/ecosystem/recycle-bin/locales";
@@ -218,6 +219,7 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   // Communication & Integrations
   communicationEn,
   webhooksEn,
+  apikeysEn,
   // Ecosystem
   recycleBinEn,
   // Profile
@@ -295,6 +297,7 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   // Communication & Integrations
   communicationAr,
   webhooksAr,
+  apikeysAr,
   // Ecosystem
   recycleBinAr,
   // Profile

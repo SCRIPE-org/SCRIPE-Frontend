@@ -173,11 +173,11 @@ export function HubTopBar({ onSearchClick, onAppLauncherClick }: HubTopBarProps)
         <Grid3x3 size={16} strokeWidth={1.75} />
       </button>
 
-      {/* Notifications → navigate to /messaging/notifications */}
+      {/* Notifications → navigate to /communication/notifications */}
       <button
         type="button"
         aria-label="Notifications"
-        onClick={() => router.push("/messaging/notifications")}
+        onClick={() => router.push("/communication/notifications")}
         style={{
           position: "relative",
           display: "inline-flex",

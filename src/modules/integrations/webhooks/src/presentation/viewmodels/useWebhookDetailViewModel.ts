@@ -196,7 +196,7 @@ export function useWebhookDetailViewModel(webhookId: string) {
         title: t("webhooks.deleted") || "Webhook Deleted",
         description: t("webhooks.deletedDesc") || "Webhook removed.",
       });
-      router.push("/messaging/webhooks");
+      router.push("/integrations/webhooks");
     },
     onError: (err: Error) => {
       toastError({

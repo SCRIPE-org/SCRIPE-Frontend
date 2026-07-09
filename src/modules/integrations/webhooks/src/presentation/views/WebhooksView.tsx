@@ -196,7 +196,7 @@ export function WebhooksView() {
         {
           label: tFn("common.view") || "View Details",
           onClick: (item: WebhookSubscriptionListItem) =>
-            router.push(`/messaging/webhooks/${item.id}`),
+            router.push(`/integrations/webhooks/${item.id}`),
           variant: "ghost" as const,
           icon: <Eye className="h-4 w-4" />,
         },
