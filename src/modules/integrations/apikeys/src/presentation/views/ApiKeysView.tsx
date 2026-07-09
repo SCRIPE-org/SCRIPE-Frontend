@@ -104,7 +104,7 @@ export function ApiKeysView() {
                   <Badge
                     key={scope}
                     variant="secondary"
-                    className="text-[10px] py-0 px-1.5 font-mono bg-violet-50 text-violet-700 dark:bg-violet-950/20 dark:text-violet-300 border border-violet-100 dark:border-violet-800 shrink-0"
+                    className="text-[10px] py-0.5 px-2 font-mono bg-violet-50 text-violet-700 border border-violet-200/60 dark:bg-violet-500/10 dark:text-violet-300 dark:border-violet-500/30 shrink-0"
                   >
                     {scope}
                   </Badge>
@@ -114,7 +114,7 @@ export function ApiKeysView() {
                     <PopoverTrigger asChild>
                       <Badge
                         variant="outline"
-                        className="text-[10px] py-0 px-1.5 font-mono cursor-pointer hover:bg-violet-100 dark:hover:bg-violet-950 bg-violet-50/30 text-violet-600 border-violet-200 shrink-0"
+                        className="text-[10px] py-0.5 px-2 font-mono cursor-pointer bg-violet-100/50 text-violet-800 border border-violet-200 hover:bg-violet-100 dark:bg-violet-500/20 dark:text-violet-200 dark:border-violet-500/40 dark:hover:bg-violet-500/30 shrink-0"
                       >
                         +{extraCount} {t("apikeys.more") || "more"}
                       </Badge>
@@ -128,7 +128,7 @@ export function ApiKeysView() {
                           <Badge
                             key={scope}
                             variant="secondary"
-                            className="text-[10px] py-0 px-1 font-mono bg-violet-50 text-violet-700 dark:bg-violet-950/20 dark:text-violet-300 border border-violet-100 dark:border-violet-800"
+                            className="text-[10px] py-0.5 px-2 font-mono bg-violet-50 text-violet-700 border border-violet-200/60 dark:bg-violet-500/10 dark:text-violet-300 dark:border-violet-500/30"
                           >
                             {scope}
                           </Badge>
