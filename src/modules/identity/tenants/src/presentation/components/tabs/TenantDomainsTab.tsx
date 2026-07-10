@@ -29,7 +29,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { Skeleton } from "@core/ui/skeleton";
-import { cn } from "@core/common/utils";
+import { cn, formatDateUtc } from "@core/common/utils";
 import { useTenantDomainsViewModel } from "../../viewmodels/useTenantDomainsViewModel";
 import type { TenantDomainJson } from "../../../domain/interfaces/ITenantService";
 
@@ -270,7 +270,7 @@ function DomainCard({
             </div>
             <p className="mt-0.5 text-xs text-muted-foreground">
               {domain.isVerified
-                ? `${t("tenant.domainsVerified")} ${domain.verifiedAt ? new Date(domain.verifiedAt).toLocaleDateString() : ""}`
+                ? `${t("tenant.domainsVerified")} ${domain.verifiedAt ? formatDateUtc(domain.verifiedAt) : ""}`
                 : t("tenant.domainsPendingVerification")}
             </p>
           </div>

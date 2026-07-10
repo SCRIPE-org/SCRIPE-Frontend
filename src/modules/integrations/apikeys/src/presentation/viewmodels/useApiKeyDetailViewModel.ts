@@ -94,6 +94,10 @@ export function useApiKeyDetailViewModel(keyId: string) {
     setActivityParams(prev => ({ ...prev, ...filters, page: 1 }));
   }, []);
 
+  const handleActivitySortChange = useCallback((sortBy: string, sortDesc: boolean) => {
+    setActivityParams(prev => ({ ...prev, sortBy, sortDesc, page: 1 }));
+  }, []);
+
   return {
     // Data
     detail: detailQuery.data,
@@ -120,6 +124,7 @@ export function useApiKeyDetailViewModel(keyId: string) {
     handleChartRangeChange,
     handleActivityPageChange,
     handleActivityFilterChange,
+    handleActivitySortChange,
     // Clear rotated key after dialog is closed
     clearRotatedKey: () => setRotatedKey(null),
   };

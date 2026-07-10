@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { AppWindow, Loader2, KeyRound, Pencil, Trash2, Check, Copy } from "lucide-react";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 import type { CrudAction } from "@core/crud/components/generic-crud-view";
 
 /**
@@ -358,7 +358,7 @@ export function useOAuthAppsViewModel() {
         label: t("common.createdAt") || "Created",
         render: (_val: unknown, item: OAuthAppListItem) => (
           <span className="text-sm text-muted-foreground">
-            {item.createdAt ? format(new Date(item.createdAt), "MMM d, yyyy") : "—"}
+            {item.createdAt ? formatUtc(item.createdAt, "MMM d, yyyy") : "—"}
           </span>
         ),
       },

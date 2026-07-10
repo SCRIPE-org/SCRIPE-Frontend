@@ -20,6 +20,8 @@ export interface ActivityParams {
   statusCode?: number;
   startDate?: string;
   endDate?: string;
+  sortBy?: string;
+  sortDesc?: boolean;
 }
 
 export interface IApiKeyDetailService {

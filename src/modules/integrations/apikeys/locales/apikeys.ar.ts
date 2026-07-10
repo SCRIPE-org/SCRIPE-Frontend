@@ -81,6 +81,7 @@ export const ar = {
       successRate: "نسبة النجاح",
       successful: "ناجحة",
       failed: "فاشلة",
+      blocked: "محجوبة",
       monthlyQuota: "الحصة الشهرية",
       noLimit: "لا يوجد حد شهري",
       avgResponse: "متوسط الاستجابة",

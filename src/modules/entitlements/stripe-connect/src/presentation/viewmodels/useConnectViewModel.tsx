@@ -14,6 +14,7 @@ import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import type { ConnectAccountListItem } from "../../domain/entities/ConnectAccount";
 import { ExternalLink, RefreshCw, Pencil, Eye } from "lucide-react";
+import { formatDateUtc } from "@core/common/utils";
 
 const QUERY_KEY = ["entitlements", "stripe-connect", "accounts"];
 
@@ -225,7 +226,7 @@ export function useConnectViewModel() {
         {
           key: "createdAt",
           label: t("common.createdAt") || "Created At",
-          render: (val: string) => new Date(val).toLocaleDateString(),
+          render: (val: string) => formatDateUtc(val),
         },
       ],
       getActions: (

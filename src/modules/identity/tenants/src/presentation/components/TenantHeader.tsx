@@ -40,7 +40,7 @@ import {
 } from "lucide-react";
 import type { Tenant } from "../../domain/entities/Tenant";
 import { TenantDeleteDialog } from "./TenantDeleteDialog";
-import { cn } from "@core/common/utils";
+import { cn, formatDateUtc } from "@core/common/utils";
 import { useTenantHeaderViewModel, TenantStatus } from "../viewmodels/useTenantHeaderViewModel";
 
 // ============================================
@@ -352,7 +352,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                 </span>
                 {tenant.editionEndDate && (
                   <span>
-                    {t("tenant.endDate")}: {new Date(tenant.editionEndDate).toLocaleDateString()}
+                    {t("tenant.endDate")}: {formatDateUtc(tenant.editionEndDate)}
                   </span>
                 )}
               </div>

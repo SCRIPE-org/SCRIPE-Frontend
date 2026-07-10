@@ -20,6 +20,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { useAccountSetupViewModel } from "../viewmodels/useAccountSetupViewModel";
+import { formatDateTimeUtc } from "@core/common/utils";
 import {
   SetupLoadingView,
   SetupInvalidView,
@@ -206,7 +207,7 @@ export function SetupAccountView() {
 
           {vm.tokenData?.expiresAt && (
             <p className="text-center text-xs text-muted-foreground">
-              {t("auth.accountSetup.expiresOn")} {new Date(vm.tokenData.expiresAt).toLocaleString()}
+              {t("auth.accountSetup.expiresOn")} {formatDateTimeUtc(vm.tokenData.expiresAt)}
             </p>
           )}
         </CardContent>

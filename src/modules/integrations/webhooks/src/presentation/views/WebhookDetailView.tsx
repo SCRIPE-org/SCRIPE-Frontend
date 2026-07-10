@@ -36,7 +36,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useCallback } from "react";
-import { format } from "date-fns";
+import { formatDateTimeUtc, formatDateUtc } from "@core/common/utils";
 import { DeleteWebhookDialog } from "../components/DeleteWebhookDialog";
 import { TestPingButton } from "../components/TestPingButton";
 import { WebhookStatsCards } from "../components/WebhookStatsCards";
@@ -150,7 +150,7 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
             <div className="flex items-center gap-3 text-xs text-muted-foreground">
               <span>
                 {t("common.created") || "Created"}{" "}
-                {format(new Date(webhook.createdAt), "MMM d, yyyy 'at' HH:mm")}
+                {formatDateTimeUtc(webhook.createdAt)}
               </span>
               {webhook.lastDeliveryAt && (
                 <>
@@ -158,7 +158,7 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
                   <span className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
                     {t("webhooks.lastDelivery") || "Last delivery"}{" "}
-                    {format(new Date(webhook.lastDeliveryAt), "MMM d, HH:mm")}
+                    {formatDateUtc(webhook.lastDeliveryAt)}
                   </span>
                 </>
               )}

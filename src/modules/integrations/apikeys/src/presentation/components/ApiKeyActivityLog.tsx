@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
@@ -10,7 +10,7 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from "@core/ui/select";
-import { Search, ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ChevronUp, ChevronDown, RefreshCw } from "lucide-react";
 import type { ApiKeyActivityEntry } from "../../domain/entities/ApiKeyActivity";
 import { getStatusCodeColor } from "../../domain/entities/ApiKeyActivity";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -21,8 +21,11 @@ interface ApiKeyActivityLogProps {
   isLoading: boolean;
   page: number;
   pageSize: number;
+  sortBy: string | undefined;
+  sortDesc: boolean;
   onPageChange: (page: number) => void;
   onFilterChange: (filters: { endpoint?: string; method?: string; statusCode?: number }) => void;
+  onSortChange: (sortBy: string, sortDesc: boolean) => void;
   onRefresh: () => void;
 }
 
@@ -31,8 +34,11 @@ export function ApiKeyActivityLog({
   isLoading,
   page,
   pageSize,
+  sortBy,
+  sortDesc,
   onPageChange,
   onFilterChange,
+  onSortChange,
   onRefresh,
 }: ApiKeyActivityLogProps) {
   const { t } = useI18n();
@@ -40,6 +46,11 @@ export function ApiKeyActivityLog({
   const [endpointInput, setEndpointInput] = useState("");
   const [method, setMethod] = useState("all");
   const [statusInput, setStatusInput] = useState("");
+  const [jumpPageVal, setJumpPageVal] = useState(page.toString());
+
+  useEffect(() => {
+    setJumpPageVal(page.toString());
+  }, [page]);
 
   const handleApplyFilters = () => {
     onFilterChange({
@@ -63,6 +74,44 @@ export function ApiKeyActivityLog({
   const totalCount = activity?.totalCount ?? 0;
   const items = activity?.items ?? [];
   const totalPages = Math.max(Math.ceil(totalCount / pageSize), 1);
+
+  const handleJumpPageSubmit = () => {
+    const parsed = parseInt(jumpPageVal);
+    if (!isNaN(parsed) && parsed >= 1 && parsed <= totalPages) {
+      if (parsed !== page) {
+        onPageChange(parsed);
+      }
+    } else {
+      setJumpPageVal(page.toString());
+    }
+  };
+
+  const renderSortableHeader = (field: string, label: string, widthClass?: string, alignment: "left" | "right" = "left") => {
+    const isCurrent = sortBy === field;
+    return (
+      <TableHead
+        className={`cursor-pointer hover:bg-muted/30 select-none group transition-colors ${widthClass ?? ""} ${alignment === "right" ? "text-right" : ""}`}
+        onClick={() => {
+          if (isCurrent) {
+            onSortChange(field, !sortDesc);
+          } else {
+            onSortChange(field, true);
+          }
+        }}
+      >
+        <span className={`inline-flex items-center gap-1.5 ${alignment === "right" ? "justify-end w-full" : ""}`}>
+          {label}
+          <span className={`transition-opacity duration-200 ${isCurrent ? "opacity-100" : "opacity-0 group-hover:opacity-50"}`}>
+            {isCurrent && !sortDesc ? (
+              <ChevronUp className="h-3 w-3" />
+            ) : (
+              <ChevronDown className="h-3 w-3" />
+            )}
+          </span>
+        </span>
+      </TableHead>
+    );
+  };
 
   return (
     <Card className="flex flex-col overflow-hidden min-h-[220px]">
@@ -129,12 +178,12 @@ export function ApiKeyActivityLog({
           <Table>
             <TableHeader className="sticky top-0 bg-background z-10">
               <TableRow>
-                <TableHead className="w-[80px]">{t("apikeys.activity.method") || "Method"}</TableHead>
-                <TableHead>{t("apikeys.activity.endpoint") || "Endpoint"}</TableHead>
-                <TableHead className="w-[100px]">{t("apikeys.activity.status") || "Status"}</TableHead>
-                <TableHead className="w-[100px] text-right">{t("apikeys.activity.duration") || "Latency"}</TableHead>
+                {renderSortableHeader("method", t("apikeys.activity.method") || "Method", "w-[100px]")}
+                {renderSortableHeader("endpoint", t("apikeys.activity.endpoint") || "Endpoint")}
+                {renderSortableHeader("status", t("apikeys.activity.status") || "Status", "w-[120px]")}
+                {renderSortableHeader("latency", t("apikeys.activity.duration") || "Latency", "w-[120px]", "right")}
                 <TableHead className="w-[150px]">{t("apikeys.activity.ip") || "IP Address"}</TableHead>
-                <TableHead className="w-[180px]">{t("apikeys.activity.time") || "Time (UTC)"}</TableHead>
+                {renderSortableHeader("time", t("apikeys.activity.time") || "Time (UTC)", "w-[180px]")}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -184,22 +233,58 @@ export function ApiKeyActivityLog({
               variant="outline"
               size="icon"
               className="h-8 w-8"
+              onClick={() => onPageChange(1)}
+              disabled={page <= 1 || isLoading}
+              title="First Page"
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
               onClick={() => onPageChange(page - 1)}
               disabled={page <= 1 || isLoading}
+              title="Previous Page"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <span className="text-xs font-medium font-mono">
-              {page} / {totalPages}
-            </span>
+            
+            <div className="flex items-center gap-1.5 mx-2 text-xs font-medium">
+              <span>{t("common.page") || "Page"}</span>
+              <Input
+                type="number"
+                min={1}
+                max={totalPages}
+                className="w-12 h-8 text-center p-1 font-mono text-xs [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                value={jumpPageVal}
+                onChange={e => setJumpPageVal(e.target.value)}
+                onBlur={handleJumpPageSubmit}
+                onKeyDown={e => e.key === "Enter" && handleJumpPageSubmit()}
+                disabled={isLoading}
+              />
+              <span className="text-muted-foreground">/ {totalPages}</span>
+            </div>
+
             <Button
               variant="outline"
               size="icon"
               className="h-8 w-8"
               onClick={() => onPageChange(page + 1)}
               disabled={page >= totalPages || isLoading}
+              title="Next Page"
             >
               <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => onPageChange(totalPages)}
+              disabled={page >= totalPages || isLoading}
+              title="Last Page"
+            >
+              <ChevronsRight className="h-4 w-4" />
             </Button>
           </div>
         </div>

@@ -5,7 +5,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Settings, Shield, Calendar, Eye, EyeOff, Sparkles, CheckCircle2 } from "lucide-react";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 import type { TenantPlan } from "../../domain/entities/TenantPlan";
 import { InfoRow, FlagRow, type TFn } from "./shared-helpers";
 
@@ -57,12 +57,12 @@ export function GeneralTab({ plan, t }: GeneralTabProps) {
           />
           <InfoRow
             label={t("common.createdAt") || "Created"}
-            value={plan.createdAt ? format(new Date(plan.createdAt), "PPp") : "—"}
+            value={plan.createdAt ? formatUtc(plan.createdAt, "PPp") : "—"}
           />
           {plan.updatedAt && (
             <InfoRow
               label={t("common.updatedAt") || "Updated"}
-              value={format(new Date(plan.updatedAt), "PPp")}
+              value={formatUtc(plan.updatedAt, "PPp")}
             />
           )}
         </CardContent>

@@ -27,7 +27,7 @@ import {
   DialogDescription,
 } from "@core/ui/dialog";
 import { Pencil, Trash2, Eye, Rocket, Archive, Settings2, Columns } from "lucide-react";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useRouter } from "next/navigation";
 
@@ -163,7 +163,7 @@ export function TenantPlansView() {
         {
           key: "createdAt",
           label: t("common.createdAt") || "Created",
-          render: (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "-"),
+          render: (value: string) => (value ? formatUtc(value, "MMM d, yyyy") : "-"),
         },
       ],
       getItemDisplayName: (plan: TenantPlan) => plan.name,

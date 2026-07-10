@@ -7,6 +7,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { PluginHealthBadge } from "./PluginHealthBadge";
 import { PluginStatusBadge } from "./PluginStatusBadge";
 import type { PluginInstallation } from "../../domain/entities/PluginInstallation";
+import { formatDateUtc } from "@core/common/utils";
 
 interface InstalledPluginRowProps {
   installation: PluginInstallation;
@@ -43,7 +44,7 @@ export function InstalledPluginRow({
           <p className="text-sm font-medium">{displayName}</p>
           <p className="text-xs text-muted-foreground">{installation.pluginKey}</p>
           <p className="text-xs text-muted-foreground">
-            {t("plugins.installedAt", { date: installation.installedAt.toLocaleDateString() })}
+            {t("plugins.installedAt", { date: formatDateUtc(installation.installedAt.toISOString()) })}
           </p>
         </div>
       </div>

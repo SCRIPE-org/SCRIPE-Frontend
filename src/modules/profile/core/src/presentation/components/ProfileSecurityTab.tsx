@@ -1,7 +1,7 @@
 // FILE-EXCEPTION: file length
 import React, { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { cn } from "@core/common/utils";
+import { cn, formatDateUtc } from "@core/common/utils";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
@@ -389,7 +389,7 @@ export function ProfileSecurityTab({
                     </p>
                     <p className="mt-0.5 text-[10px] text-muted-foreground">
                       IP: {device.ipAddress} · {t("auth.passkey.createdAt")}{" "}
-                      {device.createdAt.toLocaleDateString()}
+                      {device.createdAt ? formatDateUtc(device.createdAt) : "-"}
                     </p>
                   </div>
                 </div>

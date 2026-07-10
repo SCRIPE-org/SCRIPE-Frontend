@@ -2,6 +2,7 @@
 
 import { Card, CardContent } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
+import { formatDateUtc } from "@core/common/utils";
 import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
 
 interface DsrDetailMetadataProps {
@@ -39,7 +40,7 @@ export function DsrDetailMetadata({ dsr, t, statusMeta, typeMeta }: DsrDetailMet
         <CardContent className="flex flex-col justify-center p-4">
           <p className="mb-1 text-xs text-muted-foreground">{t("compliance.columns.deadline")}</p>
           <p className="text-sm font-medium">
-            {dsr.deadline.toLocaleDateString()}
+            {formatDateUtc(dsr.deadline)}
             {dsr.daysRemaining > 0 && (
               <span className="ms-2 text-xs text-muted-foreground">
                 ({dsr.daysRemaining} {t("compliance.remaining")})

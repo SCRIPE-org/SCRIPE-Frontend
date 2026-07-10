@@ -6,6 +6,7 @@
  * Shows full audit log entry details including old/new JSON values diff.
  */
 import { useI18n } from "@core/providers/i18n-provider";
+import { formatDateTimeUtc } from "@core/common/utils";
 import {
   Dialog,
   DialogContent,
@@ -120,7 +121,7 @@ export function AuditDetailDialog({ open, onClose, data, isLoading }: Props) {
               <DetailRow
                 icon={Clock}
                 label={t("audit.detail.timestamp")}
-                value={new Date(data.timestamp).toLocaleString()}
+                value={formatDateTimeUtc(data.timestamp)}
               />
               <DetailRow
                 icon={User}

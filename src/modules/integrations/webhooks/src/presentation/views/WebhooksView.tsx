@@ -15,7 +15,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { WebhookStatusBadge } from "../components/WebhookStatusBadge";
 import { Eye, Trash2, ToggleLeft, Globe, Zap } from "lucide-react";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 import { useRouter } from "next/navigation";
 import { WebhookForm } from "../components/WebhookForm";
 import { WebhookHealthDashboard } from "../components/WebhookHealthDashboard";
@@ -175,7 +175,7 @@ export function WebhooksView() {
           label: t("webhooks.lastDelivery") || "Last Delivery",
           render: (_val: unknown, item: WebhookSubscriptionListItem) => (
             <span className="text-sm text-muted-foreground">
-              {item.lastDeliveryAt ? format(new Date(item.lastDeliveryAt), "MMM d, HH:mm") : "—"}
+              {item.lastDeliveryAt ? formatUtc(item.lastDeliveryAt, "MMM d, HH:mm") : "—"}
             </span>
           ),
         },

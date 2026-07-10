@@ -8,6 +8,7 @@ import { Skeleton } from "@core/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Receipt, Filter, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { formatDateUtc } from "@core/common/utils";
 import type { Commission } from "../../../domain/entities/ConnectAccount";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -26,14 +27,8 @@ export interface PayoutsFilter {
 const fmt = (cents: number, currency = "USD") =>
   new Intl.NumberFormat("en-US", { style: "currency", currency }).format(cents / 100);
 
-const fmtDate = (s: string) =>
-  new Date(s).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+const fmtDate = (s: string) => formatDateUtc(s);
+
 
 const STATUS_COLORS: Record<string, string> = {
   Collected: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",

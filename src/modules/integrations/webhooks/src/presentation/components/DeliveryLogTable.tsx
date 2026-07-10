@@ -26,7 +26,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 import { DeliveryStatusBadge } from "./DeliveryStatusBadge";
 
 interface DeliveryLogTableProps {
@@ -215,7 +215,7 @@ export function DeliveryLogTable({
                         </span>
                       </TableCell>
                       <TableCell className="whitespace-nowrap text-muted-foreground">
-                        {format(new Date(log.createdAt), "MMM d, HH:mm:ss")}
+                        {formatUtc(log.createdAt, "MMM d, HH:mm:ss")}
                       </TableCell>
                     </TableRow>
 
@@ -239,7 +239,7 @@ export function DeliveryLogTable({
                                   <Clock className="h-3 w-3" />
                                   <span>
                                     Next retry:{" "}
-                                    {format(new Date(log.nextRetryAt), "MMM d, HH:mm:ss")}
+                                    {formatUtc(log.nextRetryAt, "MMM d, HH:mm:ss")}
                                   </span>
                                 </div>
                               )}

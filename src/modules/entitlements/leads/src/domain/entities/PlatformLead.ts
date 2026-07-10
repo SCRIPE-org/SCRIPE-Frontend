@@ -22,6 +22,7 @@ function relativeTime(isoDate: string): string {
       day: "2-digit",
       month: "short",
       year: "numeric",
+      timeZone: "UTC",
     });
   if (days >= 1) return `${days}d ago`;
   if (hours >= 1) return `${hours}h ago`;
@@ -148,7 +149,7 @@ export interface PlatformLeadData {
   status: LeadStatus;
   source: LeadSource;
   requestedAt: string;
-  updatedAt: string;
+  modifiedAt?: string;
   convertedAt?: string;
   convertedToTenantId?: string;
   assignedToAdminId?: string;
@@ -196,8 +197,8 @@ export class PlatformLead {
   get requestedAt(): string {
     return this.data.requestedAt;
   }
-  get updatedAt(): string {
-    return this.data.updatedAt;
+  get modifiedAt(): string | undefined {
+    return this.data.modifiedAt;
   }
   get convertedAt(): string | undefined {
     return this.data.convertedAt;

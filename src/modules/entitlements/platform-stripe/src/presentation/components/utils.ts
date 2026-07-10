@@ -2,6 +2,8 @@
  * Shared utility functions for Platform Stripe components.
  */
 
+import { formatDateTimeUtc } from "@core/common/utils";
+
 /** Format Stripe amounts (in cents) to currency display */
 export function formatStripeCurrency(amountCents: number, currency: string): string {
   const amount = amountCents / 100;
@@ -18,15 +20,5 @@ export function formatStripeCurrency(amountCents: number, currency: string): str
 
 /** Format date strings for display */
 export function formatDate(dateStr: string): string {
-  try {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } catch {
-    return dateStr;
-  }
+  return formatDateTimeUtc(dateStr) || dateStr;
 }

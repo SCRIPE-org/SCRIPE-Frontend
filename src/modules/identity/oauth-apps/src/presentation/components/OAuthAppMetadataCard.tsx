@@ -4,7 +4,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Card } from "@core/ui/card";
 import { Clock } from "lucide-react";
-import { format } from "date-fns";
+import { formatDateTimeUtc } from "@core/common/utils";
 
 interface OAuthAppMetadataCardProps {
   createdAt?: string | null;
@@ -33,7 +33,7 @@ export function OAuthAppMetadataCard({
         <div className="flex justify-between border-b border-border/40 pb-1.5">
           <span className="text-muted-foreground">{t("common.createdAt") || "Created"}:</span>
           <span className="font-medium text-foreground">
-            {createdAt ? format(new Date(createdAt), "MMM d, yyyy HH:mm") : "—"}
+            {createdAt ? formatDateTimeUtc(createdAt) : "—"}
           </span>
         </div>
         <div className="flex justify-between border-b border-border/40 pb-1.5">
@@ -41,7 +41,7 @@ export function OAuthAppMetadataCard({
             {t("common.modifiedAt") || "Last modified"}:
           </span>
           <span className="font-medium text-foreground">
-            {modifiedAt ? format(new Date(modifiedAt), "MMM d, yyyy HH:mm") : "—"}
+            {modifiedAt ? formatDateTimeUtc(modifiedAt) : "—"}
           </span>
         </div>
         {tenantId && (

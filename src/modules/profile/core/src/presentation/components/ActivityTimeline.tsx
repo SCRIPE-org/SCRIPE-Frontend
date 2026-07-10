@@ -4,7 +4,7 @@
  * ActivityTimeline — Grouped security event timeline
  */
 import { useI18n } from "@core/providers/i18n-provider";
-import { cn } from "@core/common/utils";
+import { cn, formatTimeUtc } from "@core/common/utils";
 import {
   CheckCircle2,
   XCircle,
@@ -107,10 +107,7 @@ export function ActivityTimeline({ groupedEntries }: ActivityTimelineProps) {
                           )}
                         </div>
                         <span className="whitespace-nowrap text-xs text-muted-foreground">
-                          {entry.timestamp.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                          {formatTimeUtc(entry.timestamp)}
                         </span>
                       </div>
                     </div>

@@ -41,6 +41,7 @@ export class ApiKeyDetailMapper {
       totalHits: dto.totalHits ?? 0,
       totalSuccessHits: dto.totalSuccessHits ?? 0,
       totalFailureHits: dto.totalFailureHits ?? 0,
+      blockedHits: dto.blockedHits ?? 0,
       successRatePercent: dto.successRatePercent ?? 0,
       avgResponseTimeMs: dto.avgResponseTimeMs ?? 0,
       lastUsedAt: dto.lastUsedAt ?? null,

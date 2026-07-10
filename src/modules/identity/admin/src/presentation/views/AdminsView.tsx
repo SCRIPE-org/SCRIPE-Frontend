@@ -32,7 +32,7 @@ import {
   Users,
   Mail,
 } from "lucide-react";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 import { ResetPasswordDialog } from "../components/AdminRoleDialogs";
 import { ManageRolesDialog } from "../components/ManageRolesDialog";
 import { AdminTransferDialog } from "../components/AdminTransferDialog";
@@ -236,7 +236,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         {
           key: "createdAt",
           label: t("admin.createdAt") || "Created",
-          render: (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "-"),
+          render: (value: string) => (value ? formatUtc(value, "MMM d, yyyy") : "-"),
         },
       ],
       // Spread configBase with defaults to satisfy required fields

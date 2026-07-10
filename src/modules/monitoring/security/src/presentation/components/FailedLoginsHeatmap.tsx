@@ -19,6 +19,7 @@ import {
 } from "@core/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { ShieldAlert } from "lucide-react";
+import { formatDateUtc } from "@core/common/utils";
 
 interface HeatmapPoint {
   date: string;
@@ -56,7 +57,7 @@ export const FailedLoginsHeatmap = memo(function FailedLoginsHeatmap({
   const chartData = useMemo(
     () =>
       data.map((d) => ({
-        date: new Date(d.date).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
+        date: formatDateUtc(d.date),
         failed: d.failed,
       })),
     [data]

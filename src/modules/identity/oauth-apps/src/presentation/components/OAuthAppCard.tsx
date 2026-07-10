@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import Image from "next/image";
+import { formatDateUtc } from "@core/common/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -144,7 +145,7 @@ export function OAuthAppCard({
             <div className="flex items-center gap-3 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Clock className="h-3.5 w-3.5" />
-                {item.createdAt ? format(new Date(item.createdAt), "MMM d, yyyy") : "—"}
+                {item.createdAt ? formatDateUtc(item.createdAt) : "—"}
               </span>
               <Badge
                 variant="outline"

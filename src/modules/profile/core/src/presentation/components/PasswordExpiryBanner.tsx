@@ -5,7 +5,7 @@
  */
 import { useI18n } from "@core/providers/i18n-provider";
 import { AlertTriangle } from "lucide-react";
-import { cn } from "@core/common/utils";
+import { cn, formatDateUtc } from "@core/common/utils";
 
 interface PasswordExpiryBannerProps {
   isExpired: boolean;
@@ -46,7 +46,7 @@ export function PasswordExpiryBanner({
         </p>
         {passwordLastChanged && (
           <p className="mt-0.5 text-xs opacity-80">
-            {t("profile.security.lastChanged")}: {passwordLastChanged.toLocaleDateString()}
+            {t("profile.security.lastChanged")}: {formatDateUtc(passwordLastChanged)}
           </p>
         )}
       </div>

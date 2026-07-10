@@ -19,6 +19,7 @@ import {
 } from "@core/ui/chart";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { TrendingUp } from "lucide-react";
+import { formatDateUtc } from "@core/common/utils";
 import type { ComparisonDataPoint } from "../../domain/entities/AnalyticsEntities";
 
 interface Props {
@@ -58,7 +59,7 @@ export const LoginComparisonChart = memo(function LoginComparisonChart({
   const chartData = useMemo(
     () =>
       data.map((d) => ({
-        date: new Date(d.date).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
+        date: formatDateUtc(d.date),
         successful: d.successCount,
         failed: d.failedCount,
       })),

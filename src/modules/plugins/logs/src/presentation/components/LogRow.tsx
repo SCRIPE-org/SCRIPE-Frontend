@@ -2,6 +2,7 @@
 
 import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
+import { formatDateTimeUtc } from "@core/common/utils";
 import type { PluginExecutionLog } from "../../domain/entities/PluginExecutionLog";
 
 interface LogRowProps {
@@ -28,7 +29,7 @@ export function LogRow({ log }: LogRowProps) {
       <div className="ms-4 flex shrink-0 items-center gap-4">
         <span className="text-xs text-muted-foreground">{log.durationMs}ms</span>
         <span className="hidden text-xs text-muted-foreground sm:block">
-          {log.executedAt.toLocaleTimeString()} {log.executedAt.toLocaleDateString()}
+          {formatDateTimeUtc(log.executedAt)}
         </span>
       </div>
     </div>

@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { SectionState } from "@core/ui/section-state";
 import { Activity } from "lucide-react";
+import { formatTimeUtc } from "@core/common/utils";
 import type { RecentChange } from "@modules/monitoring/dashboard/src/domain/entities/DashboardEntities";
 
 interface Props {
@@ -69,10 +70,7 @@ export const RecentActivityFeed = memo(function RecentActivityFeed({
                   </div>
                 </div>
                 <time className="shrink-0 whitespace-nowrap text-xs tabular-nums text-muted-foreground">
-                  {new Date(event.timestamp).toLocaleTimeString(undefined, {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                  {formatTimeUtc(event.timestamp)}
                 </time>
               </li>
             ))}

@@ -64,6 +64,7 @@ export function StripeAccountKpis({
       year: "numeric",
       month: "short",
       day: "numeric",
+      timeZone: "UTC",
     }).format(new Date(dateStr));
   };
 

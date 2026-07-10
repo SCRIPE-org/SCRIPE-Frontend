@@ -32,7 +32,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core
 import { Loader2, Trash2, Pencil, Shield, Layers, DollarSign } from "lucide-react";
 import { Textarea } from "@core/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 /* ============================================
@@ -277,7 +277,7 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
                       {o.reason || "—"}
                     </TableCell>
                     <TableCell className="text-sm">
-                      {format(new Date(o.createdAt), "MMM d, yyyy")}
+                      {formatUtc(o.createdAt, "MMM d, yyyy")}
                     </TableCell>
                     <TableCell>
                       {o.costAmountUsd != null && o.costAmountUsd > 0 ? (

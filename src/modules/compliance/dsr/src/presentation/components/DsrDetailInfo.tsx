@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Info } from "lucide-react";
+import { formatDateTimeUtc } from "@core/common/utils";
 import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
 
 interface DsrDetailInfoProps {
@@ -32,14 +33,14 @@ export function DsrDetailInfo({ dsr, t }: DsrDetailInfoProps) {
         <div>
           <p className="text-sm font-medium">{t("compliance.submittedAt")}</p>
           <p className="text-sm text-muted-foreground">
-            {new Date(dsr.submittedAt).toLocaleString()}
+            {formatDateTimeUtc(dsr.submittedAt)}
           </p>
         </div>
         {dsr.completedAt && (
           <div>
             <p className="text-sm font-medium">{t("compliance.completedAt")}</p>
             <p className="text-sm text-muted-foreground">
-              {new Date(dsr.completedAt).toLocaleString()}
+              {formatDateTimeUtc(dsr.completedAt)}
             </p>
           </div>
         )}

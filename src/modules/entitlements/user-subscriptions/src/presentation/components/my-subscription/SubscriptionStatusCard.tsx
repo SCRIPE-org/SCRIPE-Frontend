@@ -6,6 +6,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Crown, Calendar, CreditCard, Timer } from "lucide-react";
+import { formatDateUtc } from "@core/common/utils";
 import type { UserSubscription } from "../../../domain/entities/UserSubscription";
 
 interface SubscriptionStatusCardProps {
@@ -39,11 +40,7 @@ export function SubscriptionStatusCard({ subscription, t, language }: Subscripti
 
   const formatDate = (dateStr: string | undefined) => {
     if (!dateStr) return "—";
-    return new Date(dateStr).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    return formatDateUtc(dateStr);
   };
 
   return (

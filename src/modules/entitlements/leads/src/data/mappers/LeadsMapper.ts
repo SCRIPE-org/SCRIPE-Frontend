@@ -36,7 +36,7 @@ export class LeadsMapper {
       status: (dto.status as LeadStatus) ?? "New",
       source: (dto.source as LeadSource) ?? "Website",
       requestedAt: dto.requestedAt ?? new Date().toISOString(),
-      updatedAt: dto.updatedAt ?? new Date().toISOString(),
+      modifiedAt: dto.modifiedAt,
       convertedAt: dto.convertedAt,
       convertedToTenantId: dto.convertedToTenantId,
       assignedToAdminId: dto.assignedToAdminId,

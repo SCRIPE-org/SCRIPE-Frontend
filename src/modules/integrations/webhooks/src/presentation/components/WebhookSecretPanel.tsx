@@ -30,7 +30,7 @@ import {
   AlertDialogTitle,
 } from "@core/ui/alert-dialog";
 import { Eye, EyeOff, Copy, Check, RefreshCw, Shield, Clock, Info } from "lucide-react";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 
 interface WebhookSecretPanelProps {
@@ -173,7 +173,7 @@ export function WebhookSecretPanel({
               <p className="flex-1 text-xs text-blue-700 dark:text-blue-300">
                 {t("webhooks.previousSecretActive") || "Previous secret is still valid until"}{" "}
                 <strong>
-                  {format(new Date(previousSecretExpiresAt), "MMM d, yyyy 'at' HH:mm")}
+                  {formatUtc(previousSecretExpiresAt, "MMM d, yyyy 'at' HH:mm")}
                 </strong>
               </p>
               <Badge

@@ -97,7 +97,24 @@ export function ApiKeyChartSection({ data, isLoading, onRangeChange }: ApiKeyCha
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
                 <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                <Tooltip contentStyle={{ fontSize: 12 }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--popover))",
+                    borderColor: "hsl(var(--border))",
+                    borderRadius: "calc(var(--radius) - 2px)",
+                    color: "hsl(var(--popover-foreground))",
+                    fontSize: "12px",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)"
+                  }}
+                  itemStyle={{
+                    color: "hsl(var(--popover-foreground))"
+                  }}
+                  labelStyle={{
+                    color: "hsl(var(--muted-foreground))",
+                    fontWeight: "600",
+                    marginBottom: "4px"
+                  }}
+                />
                 <Legend iconSize={10} wrapperStyle={{ fontSize: 11 }} />
                 <Area type="monotone" dataKey="successHits" stroke="#10b981" fill="url(#successGrad)" strokeWidth={2} name="Success" />
                 <Area type="monotone" dataKey="failureHits" stroke="#ef4444" fill="url(#failureGrad)" strokeWidth={2} name="Errors" />
@@ -107,7 +124,24 @@ export function ApiKeyChartSection({ data, isLoading, onRangeChange }: ApiKeyCha
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
                 <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                <Tooltip contentStyle={{ fontSize: 12 }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--popover))",
+                    borderColor: "hsl(var(--border))",
+                    borderRadius: "calc(var(--radius) - 2px)",
+                    color: "hsl(var(--popover-foreground))",
+                    fontSize: "12px",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)"
+                  }}
+                  itemStyle={{
+                    color: "hsl(var(--popover-foreground))"
+                  }}
+                  labelStyle={{
+                    color: "hsl(var(--muted-foreground))",
+                    fontWeight: "600",
+                    marginBottom: "4px"
+                  }}
+                />
                 <Legend iconSize={10} wrapperStyle={{ fontSize: 11 }} />
                 <Bar dataKey="errorRate" fill="#f59e0b" name="Error Rate %" radius={[3, 3, 0, 0]} />
               </BarChart>
@@ -122,7 +156,25 @@ export function ApiKeyChartSection({ data, isLoading, onRangeChange }: ApiKeyCha
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
                 <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                <Tooltip contentStyle={{ fontSize: 12 }} formatter={(v: any) => [v !== undefined ? `${Number(v).toFixed(1)} ms` : "—", "Avg Response"]} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--popover))",
+                    borderColor: "hsl(var(--border))",
+                    borderRadius: "calc(var(--radius) - 2px)",
+                    color: "hsl(var(--popover-foreground))",
+                    fontSize: "12px",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)"
+                  }}
+                  itemStyle={{
+                    color: "hsl(var(--popover-foreground))"
+                  }}
+                  labelStyle={{
+                    color: "hsl(var(--muted-foreground))",
+                    fontWeight: "600",
+                    marginBottom: "4px"
+                  }}
+                  formatter={(v: any) => [v !== undefined ? `${Number(v).toFixed(1)} ms` : "—", "Avg Response"]}
+                />
                 <Area type="monotone" dataKey="avgResponseTimeMs" stroke="#8b5cf6" fill="url(#responseGrad)" strokeWidth={2} name="Avg Response (ms)" />
               </AreaChart>
             )}

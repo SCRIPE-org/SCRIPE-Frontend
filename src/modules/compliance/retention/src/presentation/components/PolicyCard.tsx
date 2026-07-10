@@ -8,6 +8,7 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent } from "@core/ui/card";
 import { usePermission } from "@core/hooks/use-permission";
+import { formatDateUtc } from "@core/common/utils";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useAppStore } from "@/core/store/useAppStore";
 
@@ -125,14 +126,14 @@ export function PolicyCard({ policy, onEdit }: PolicyCardProps) {
               <Clock className="h-3 w-3" />
               {t("compliance.nextEvaluation")}:{" "}
               <span className="ms-1 font-medium text-foreground">
-                {policy.nextEvaluationAt.toLocaleDateString()}
+                {policy.nextEvaluationAt ? formatDateUtc(policy.nextEvaluationAt) : "—"}
               </span>
             </span>
             {policy.lastExecutionAt && (
               <span>
                 {t("compliance.executionHistory")}:{" "}
                 <span className="font-medium text-foreground">
-                  {policy.lastExecutionAt.toLocaleDateString()}
+                  {policy.lastExecutionAt ? formatDateUtc(policy.lastExecutionAt) : "—"}
                 </span>
               </span>
             )}

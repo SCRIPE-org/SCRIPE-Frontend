@@ -10,7 +10,7 @@ import { useMemo } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { Badge } from "@core/ui/badge";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 import type { Feature } from "../../domain/entities/Feature";
 
 const VALUE_TYPE_COLORS: Record<string, "default" | "secondary" | "outline"> = {
@@ -89,7 +89,7 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
         {
           key: "createdAt",
           label: t("common.createdAt"),
-          render: (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "-"),
+          render: (value: string) => (value ? formatUtc(value, "MMM d, yyyy") : "-"),
         },
       ],
 

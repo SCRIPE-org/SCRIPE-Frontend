@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@core/ui/switch";
 import { Input } from "@core/ui/input";
 import { Calendar, Clock, Download, FileText, Mail, Save, Settings2 } from "lucide-react";
+import { formatDateUtc } from "@core/common/utils";
 import type {
   ReportPreference,
   UpdateReportPreferenceRequest,
@@ -303,13 +304,7 @@ export function ReportsTab({
               <p className="text-xs text-muted-foreground">
                 {t("entitlements.analytics.reports.lastSent")}:{" "}
                 <span className="font-semibold">
-                  {new Date(preference.lastSentAt).toLocaleDateString(undefined, {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                  {formatDateUtc(preference.lastSentAt)}
                 </span>
               </p>
             </div>

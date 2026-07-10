@@ -14,6 +14,7 @@ import type { UsersEntity } from "../../domain/entities/UsersEntity";
 import { useUsersViewModel } from "../viewmodels/useUsersViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { formatDateUtc } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
 import { Unlock, UserCheck, UserX } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
@@ -123,7 +124,7 @@ export function UsersView() {
           label: t("users.columns.createdAt") || "Joined",
           render: (_val: unknown, user: UsersEntity) => (
             <span className="text-sm text-muted-foreground">
-              {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "—"}
+              {user.createdAt ? formatDateUtc(user.createdAt) : "—"}
             </span>
           ),
         },

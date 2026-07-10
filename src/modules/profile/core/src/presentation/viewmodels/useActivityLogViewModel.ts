@@ -38,6 +38,7 @@ export function useActivityLogViewModel() {
         year: "numeric",
         month: "long",
         day: "numeric",
+        timeZone: "UTC",
       });
       if (!groups[dateKey]) groups[dateKey] = [];
       groups[dateKey].push(entry);

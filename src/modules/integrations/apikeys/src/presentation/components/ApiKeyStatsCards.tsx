@@ -82,6 +82,12 @@ export function ApiKeyStatsCards({ stats, isLoading }: ApiKeyStatsCardsProps) {
           <span>
             {stats.totalSuccessHits.toLocaleString()} {t("apikeys.stats.successful") || "successful"} /{" "}
             {stats.totalFailureHits.toLocaleString()} {t("apikeys.stats.failed") || "failed"}
+            {stats.blockedHits > 0 && (
+              <span className="text-destructive font-medium block sm:inline mt-0.5 sm:mt-0">
+                {" "}
+                ({stats.blockedHits.toLocaleString()} {t("apikeys.stats.blocked") || "blocked"})
+              </span>
+            )}
           </span>
         }
       />

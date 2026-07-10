@@ -12,7 +12,7 @@ import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { UserSubscription } from "../../domain/entities/UserSubscription";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 import {
   User,
   Mail,
@@ -87,7 +87,7 @@ function SectionCard({
 function formatDate(value?: string): string {
   if (!value) return "—";
   try {
-    return format(new Date(value), "PPP");
+    return formatUtc(value, "PPP");
   } catch {
     return value;
   }
@@ -96,7 +96,7 @@ function formatDate(value?: string): string {
 function formatDateTime(value?: string): string {
   if (!value) return "—";
   try {
-    return format(new Date(value), "PPPp");
+    return formatUtc(value, "PPPp");
   } catch {
     return value;
   }

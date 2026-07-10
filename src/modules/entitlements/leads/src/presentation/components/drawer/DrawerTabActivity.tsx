@@ -4,6 +4,7 @@ import { Button } from "@core/ui/button";
 import { Textarea } from "@core/ui/textarea";
 import { StickyNote, Activity, Loader2, CheckCheck } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { formatDateTimeUtc } from "@core/common/utils";
 import type { LeadActivity } from "../../../domain/entities/PlatformLead";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
@@ -109,13 +110,7 @@ export function DrawerTabActivity({
                   </p>
                 )}
                 <p className="mt-1 text-[10px] text-zinc-600">
-                  {new Date(entry.occurredAt).toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                  {formatDateTimeUtc(entry.occurredAt)}
                   {entry.actorName
                     ? ` · ${t("leads.activity.by", { actor: entry.actorName })}`
                     : ` · ${t("leads.activity.system")}`}

@@ -13,6 +13,7 @@ import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import { ChevronLeft, ChevronRight, FileText, CheckCircle2, XCircle, Eye } from "lucide-react";
+import { formatDateTimeUtc } from "@core/common/utils";
 import type { AuditLogPage } from "../../domain/entities/AuditEntities";
 
 interface Props {
@@ -103,7 +104,7 @@ export const AuditLogTable = memo(function AuditLogTable({
               aria-label={log.eventType + " - " + (log.username ?? "")}
             >
               <TableCell className="text-xs tabular-nums text-muted-foreground">
-                {new Date(log.timestamp).toLocaleString()}
+                {formatDateTimeUtc(log.timestamp)}
               </TableCell>
               <TableCell>
                 <Badge variant="outline" className="font-mono text-xs">

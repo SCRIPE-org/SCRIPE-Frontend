@@ -3,6 +3,7 @@
 import { Button } from "@core/ui/button";
 import { Mail, Send } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { formatDateTimeUtc } from "@core/common/utils";
 import type { LeadCommunicationLog } from "../../../domain/entities/PlatformLead";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
@@ -64,13 +65,7 @@ export function DrawerTabComms({
                 <p className="truncate text-xs font-semibold text-zinc-300">{log.subject}</p>
                 <p className="mt-0.5 text-[10px] text-zinc-500">
                   {t("leads.email.sentBy")} {log.sentByAdminName} ·{" "}
-                  {log.sentAt.toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                  {formatDateTimeUtc(log.sentAt)}
                 </p>
                 {log.isFailed && (
                   <span className="mt-1 inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-[10px] font-medium text-red-400">

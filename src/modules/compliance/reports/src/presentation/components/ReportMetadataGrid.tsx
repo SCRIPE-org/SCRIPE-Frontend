@@ -5,6 +5,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent } from "@core/ui/card";
 import { Calendar, CheckCircle2 } from "lucide-react";
 import { ComplianceReport } from "../../domain/entities/ComplianceReport";
+import { formatUtc } from "@core/common/utils";
 
 interface ReportMetadataGridProps {
   report: ComplianceReport;
@@ -22,17 +23,17 @@ export function ReportMetadataGrid({ report }: ReportMetadataGridProps) {
   const items = [
     {
       label: t("compliance.periodStart"),
-      value: report.periodStart?.toLocaleDateString() ?? "—",
+      value: formatUtc(report.periodStart, "MMM d, yyyy") || "—",
       icon: <Calendar className="h-3.5 w-3.5" />,
     },
     {
       label: t("compliance.periodEnd"),
-      value: report.periodEnd?.toLocaleDateString() ?? "—",
+      value: formatUtc(report.periodEnd, "MMM d, yyyy") || "—",
       icon: <Calendar className="h-3.5 w-3.5" />,
     },
     {
       label: t("compliance.period"),
-      value: report.generatedAt?.toLocaleDateString() ?? "—",
+      value: formatUtc(report.generatedAt, "MMM d, yyyy") || "—",
       icon: <CheckCircle2 className="h-3.5 w-3.5" />,
     },
   ];

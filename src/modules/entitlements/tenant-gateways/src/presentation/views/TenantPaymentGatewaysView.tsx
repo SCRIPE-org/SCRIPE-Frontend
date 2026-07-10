@@ -50,6 +50,7 @@ import {
   AVAILABLE_GATEWAYS,
 } from "../viewmodels/useTenantGatewaysViewModel";
 import type { TenantGateway } from "../../domain/entities/TenantGateway";
+import { formatDateTimeUtc } from "@core/common/utils";
 
 const ICON_MAP: Record<string, React.ElementType> = {
   CreditCard,
@@ -301,7 +302,7 @@ function GatewayCard({
         {gateway.lastVerifiedAt && (
           <p className="text-xs text-muted-foreground">
             {t("entitlements.tenantGateways.lastVerified")}:{" "}
-            {new Date(gateway.lastVerifiedAt).toLocaleString()}
+            {formatDateTimeUtc(gateway.lastVerifiedAt)}
           </p>
         )}
 

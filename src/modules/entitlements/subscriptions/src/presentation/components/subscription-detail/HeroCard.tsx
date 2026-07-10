@@ -7,8 +7,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { format, formatDistanceToNow } from "date-fns";
-import { cn } from "@core/common/utils";
+import { formatDistanceToNow } from "date-fns";
+import { cn, formatUtc } from "@core/common/utils";
 import { Card, CardContent, CardHeader } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { CalendarDays, Crown, DollarSign, Infinity, Tag, Timer } from "lucide-react";
@@ -103,10 +103,10 @@ export function HeroCard({ sub, vm, t }: HeroCardProps) {
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <CalendarDays className="h-4 w-4" />
             <span>
-              {sub.startDate ? format(new Date(sub.startDate), "MMM d, yyyy") : "—"}
+              {sub.startDate ? formatUtc(sub.startDate, "MMM d, yyyy") : "—"}
               {" → "}
               {sub.endDate ? (
-                format(new Date(sub.endDate), "MMM d, yyyy")
+                formatUtc(sub.endDate, "MMM d, yyyy")
               ) : (
                 <span className="inline-flex items-center gap-1">
                   <Infinity className="h-3.5 w-3.5" />

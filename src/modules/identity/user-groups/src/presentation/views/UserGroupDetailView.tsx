@@ -17,7 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { Button } from "@core/ui/button";
 import { Users, Shield, Lock, ArrowLeft, Trash2, Plus, Settings, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 import { AddMembersDialog } from "../components/AddMembersDialog";
 import { SetRolesDialog } from "../components/SetRolesDialog";
 import { SetRestrictionsDialog } from "../components/SetRestrictionsDialog";
@@ -104,7 +104,7 @@ export function UserGroupDetailView({ groupId }: Props) {
           </div>
         </div>
         <div className="text-xs text-muted-foreground">
-          {t("common.createdAt") || "Created"}: {format(new Date(group.createdAt), "PPp")}
+          {t("common.createdAt") || "Created"}: {formatUtc(group.createdAt, "PPp")}
         </div>
       </div>
 

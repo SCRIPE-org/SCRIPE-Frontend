@@ -14,7 +14,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import type { Edition } from "../../domain/entities/Edition";
 import { Badge } from "@core/ui/badge";
 import { Pencil, Trash2, Eye, Settings2, Columns } from "lucide-react";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 /**
@@ -106,7 +106,7 @@ export function EditionsView() {
         {
           key: "createdAt",
           label: t("common.createdAt") || "Created",
-          render: (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "-"),
+          render: (value: string) => (value ? formatUtc(value, "MMM d, yyyy") : "-"),
         },
       ],
       getItemDisplayName: (edition: Edition) => edition.getDisplayName(language),

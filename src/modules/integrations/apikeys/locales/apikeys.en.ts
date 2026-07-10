@@ -81,6 +81,7 @@ export const en = {
       successRate: "Success Rate",
       successful: "successful",
       failed: "failed",
+      blocked: "blocked",
       monthlyQuota: "Monthly Quota",
       noLimit: "No monthly limit set",
       avgResponse: "Avg Response",

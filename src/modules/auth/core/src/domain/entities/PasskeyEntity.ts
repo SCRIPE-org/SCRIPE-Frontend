@@ -5,6 +5,8 @@
  * Used in the presentation layer — never expose DTOs directly.
  */
 
+import { formatDateUtc } from "@core/common/utils";
+
 export interface PasskeyData {
   id: string;
   deviceName: string;
@@ -57,13 +59,13 @@ export class PasskeyEntity {
 
   /** Formatted creation date for display. */
   get displayCreatedDate(): string {
-    return new Date(this.data.createdAt).toLocaleDateString();
+    return formatDateUtc(this.data.createdAt);
   }
 
   /** Formatted last used date for display, or null if never used. */
   get displayLastUsedDate(): string | null {
     if (!this.data.lastUsedAt) return null;
-    return new Date(this.data.lastUsedAt).toLocaleDateString();
+    return formatDateUtc(this.data.lastUsedAt);
   }
 
   /** Immutable update — returns a new PasskeyEntity with merged updates. */

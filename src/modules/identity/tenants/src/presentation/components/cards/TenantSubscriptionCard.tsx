@@ -39,6 +39,7 @@ import {
 } from "@core/ui/dialog";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { parseLocalizedNumber } from "@core/utils/number-parser";
+import { formatDateUtc, formatDateTimeUtc } from "@core/common/utils";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import { Skeleton } from "@core/ui/skeleton";
 import { Input } from "@core/ui/input";
@@ -100,11 +101,7 @@ function getStatusLabel(status: string, t: (key: string) => string): string {
 
 function formatDate(dateStr?: string) {
   if (!dateStr) return "—";
-  return new Date(dateStr).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+  return formatDateUtc(dateStr);
 }
 
 // ── Billing Cycle Options (dynamically filtered by edition capabilities) ──
@@ -558,7 +555,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                   {" ("}
                   {vm.downgradedFromType}
                   {")"}
-                  {vm.downgradedAt && <> — {new Date(vm.downgradedAt).toLocaleDateString()}</>}
+                  {vm.downgradedAt && <> — {formatDateUtc(vm.downgradedAt)}</>}
                 </span>
               </div>
               <Button
@@ -597,7 +594,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                     )}
                     {previousRefundedSub.refundedAt && (
                       <span className="ml-1 text-xs text-muted-foreground">
-                        — {new Date(previousRefundedSub.refundedAt).toLocaleDateString()}
+                        — {formatDateUtc(previousRefundedSub.refundedAt)}
                       </span>
                     )}
                   </span>
@@ -641,7 +638,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                     )}
                     {subscription.refundedAt && (
                       <span className="ml-1 text-xs text-muted-foreground">
-                        — {new Date(subscription.refundedAt).toLocaleDateString()}
+                        — {formatDateUtc(subscription.refundedAt)}
                       </span>
                     )}
                   </span>
@@ -1728,7 +1725,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                   {vm.downgradedAt && (
                     <p className="text-xs text-muted-foreground">
                       {t("tenant.downgradedOn") || "Downgraded on"}:{" "}
-                      {new Date(vm.downgradedAt).toLocaleDateString()}
+                      {formatDateUtc(vm.downgradedAt)}
                     </p>
                   )}
                 </div>

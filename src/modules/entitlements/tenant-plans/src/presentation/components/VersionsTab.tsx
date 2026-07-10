@@ -24,7 +24,7 @@ import {
   DialogDescription,
 } from "@core/ui/dialog";
 import { GitBranch, Clock, User, Rocket, ChevronDown, ChevronUp, Code2 } from "lucide-react";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 import type { TenantPlan, TenantPlanVersionData } from "../../domain/entities/TenantPlan";
 import type { TFn } from "./shared-helpers";
 
@@ -105,8 +105,8 @@ function VersionCard({
             <span className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
               {version.publishedAt
-                ? format(new Date(version.publishedAt), "PPp")
-                : format(new Date(version.createdAt), "PPp")}
+                ? formatUtc(version.publishedAt, "PPp")
+                : formatUtc(version.createdAt, "PPp")}
             </span>
             {version.publishedBy && (
               <span className="flex items-center gap-1">

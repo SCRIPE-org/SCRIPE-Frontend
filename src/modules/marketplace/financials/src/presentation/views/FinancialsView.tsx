@@ -8,6 +8,7 @@ import { Button } from "@core/ui/button";
 import { Card, CardContent } from "@core/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { DollarSign, Play } from "lucide-react";
+import { formatDateUtc } from "@core/common/utils";
 
 /**
  * Presentation UI component rendering the financials view.
@@ -63,7 +64,7 @@ export function FinancialsView() {
                     <div className="text-right">
                       <p className="text-sm font-semibold text-green-600">{p.amountLabel}</p>
                       <p className="text-xs text-muted-foreground">
-                        {new Date(p.purchasedAt).toLocaleDateString()}
+                        {formatDateUtc(p.purchasedAt)}
                       </p>
                     </div>
                   </CardContent>
@@ -94,8 +95,8 @@ export function FinancialsView() {
                         </Badge>
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        {new Date(payout.periodStart).toLocaleDateString()} —{" "}
-                        {new Date(payout.periodEnd).toLocaleDateString()}
+                        {formatDateUtc(payout.periodStart)} —{" "}
+                        {formatDateUtc(payout.periodEnd)}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
@@ -138,7 +139,7 @@ function buildMonthlyRevenueData(purchases: AppPurchase[]): RevenueDataPoint[] {
   return Object.entries(buckets)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([key, revenue]) => ({
-      label: new Date(key).toLocaleDateString("en-US", { month: "short", year: "2-digit" }),
+      label: formatDateUtc(key),
       revenue,
     }));
 }

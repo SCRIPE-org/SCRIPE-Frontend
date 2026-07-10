@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { format } from "date-fns";
 import type { HoverEffectType, HoverEffectIntensity } from "@core/providers/settings-provider";
 
 export function cn(...inputs: ClassValue[]) {
@@ -13,15 +14,15 @@ export function formatDate(date: string | Date | null | undefined, locale: strin
       return "-";
     }
 
-    const dateObj = typeof date === "string" ? new Date(date) : date;
-    if (isNaN(dateObj.getTime())) {
+    const dateObj = parseUtcDate(date);
+    if (!dateObj) {
       return "-";
     }
 
-    // Always use dd/mm/yyyy format for both Arabic and English
-    const day = dateObj.getDate().toString().padStart(2, "0");
-    const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
-    const year = dateObj.getFullYear();
+    // Always use dd/mm/yyyy format — UTC values to match server time
+    const day = dateObj.getUTCDate().toString().padStart(2, "0");
+    const month = (dateObj.getUTCMonth() + 1).toString().padStart(2, "0");
+    const year = dateObj.getUTCFullYear();
 
     return `${day}/${month}/${year}`;
   } catch (error) {
@@ -36,17 +37,17 @@ export function formatDateTime(date: string | Date | null | undefined, locale: s
       return "-";
     }
 
-    const dateObj = typeof date === "string" ? new Date(date) : date;
-    if (isNaN(dateObj.getTime())) {
+    const dateObj = parseUtcDate(date);
+    if (!dateObj) {
       return "-";
     }
 
-    // Always use dd/mm/yyyy HH:MM format for both Arabic and English
-    const day = dateObj.getDate().toString().padStart(2, "0");
-    const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
-    const year = dateObj.getFullYear();
-    const hours = dateObj.getHours().toString().padStart(2, "0");
-    const minutes = dateObj.getMinutes().toString().padStart(2, "0");
+    // Always use dd/mm/yyyy HH:MM format — UTC values to match server time
+    const day = dateObj.getUTCDate().toString().padStart(2, "0");
+    const month = (dateObj.getUTCMonth() + 1).toString().padStart(2, "0");
+    const year = dateObj.getUTCFullYear();
+    const hours = dateObj.getUTCHours().toString().padStart(2, "0");
+    const minutes = dateObj.getUTCMinutes().toString().padStart(2, "0");
 
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   } catch (error) {
@@ -431,4 +432,21 @@ export function formatDateUtc(date: string | Date | null | undefined): string {
   const month = months[parsed.getUTCMonth()];
   const day = parsed.getUTCDate();
   return `${month} ${day}`;
+}
+
+/**
+ * Formats a date in UTC using any date-fns format pattern.
+ *
+ * date-fns `format(new Date(x), pattern)` renders in the browser's local
+ * timezone, which shifts server (UTC) timestamps by the client's offset.
+ * This helper renders the UTC wall-clock instead, so the displayed value
+ * always matches the backend/server (UTC) clock, while preserving the exact
+ * date-fns pattern (e.g. "MMM d, yyyy", "PPp", "MMM d, HH:mm:ss").
+ */
+export function formatUtc(date: string | Date | null | undefined, pattern: string): string {
+  const parsed = parseUtcDate(date);
+  if (!parsed) return "";
+  // Shift the epoch so date-fns' local getters read the UTC wall-clock values.
+  const utcAsLocal = new Date(parsed.getTime() + parsed.getTimezoneOffset() * 60000);
+  return format(utcAsLocal, pattern);
 }

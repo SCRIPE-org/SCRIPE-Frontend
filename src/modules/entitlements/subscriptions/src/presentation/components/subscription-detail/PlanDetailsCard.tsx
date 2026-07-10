@@ -4,10 +4,10 @@
  * Shows edition name, subscription type, expiry behavior,
  * fallback edition, and date information.
  */
-import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Separator } from "@core/ui/separator";
+import { formatUtc } from "@core/common/utils";
 import { CalendarDays, Clock, Crown, Package, RefreshCcw, Shield, Sparkles } from "lucide-react";
 import { TYPE_VARIANTS, TYPE_KEY_MAP } from "../../constants";
 import { InfoRow } from "./InfoRow";
@@ -84,13 +84,13 @@ export function PlanDetailsCard({ sub, t }: PlanDetailsCardProps) {
         <InfoRow
           icon={<CalendarDays className="h-3.5 w-3.5" />}
           label={t("entSubscriptions.startDate") || "Start Date"}
-          value={sub.startDate ? format(new Date(sub.startDate), "MMM d, yyyy") : "—"}
+          value={sub.startDate ? formatUtc(sub.startDate, "MMM d, yyyy") : "—"}
         />
         <Separator />
         <InfoRow
           icon={<Clock className="h-3.5 w-3.5" />}
           label={t("common.createdAt") || "Created"}
-          value={sub.createdAt ? format(new Date(sub.createdAt), "MMM d, yyyy") : "—"}
+          value={sub.createdAt ? formatUtc(sub.createdAt, "MMM d, yyyy") : "—"}
           muted
         />
       </CardContent>

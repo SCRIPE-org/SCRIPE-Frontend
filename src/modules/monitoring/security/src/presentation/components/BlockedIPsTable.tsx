@@ -13,6 +13,7 @@ import { Badge } from "@core/ui/badge";
 import { SectionState } from "@core/ui/section-state";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import { Shield } from "lucide-react";
+import { formatDateTimeUtc } from "@core/common/utils";
 import type { BlockedIP } from "../../domain/entities/SecurityEntities";
 
 interface Props {
@@ -77,7 +78,7 @@ export const BlockedIPsTable = memo(function BlockedIPsTable({
                     </Badge>
                   </TableCell>
                   <TableCell className="text-sm tabular-nums text-muted-foreground">
-                    {new Date(ip.latestAttempt).toLocaleString()}
+                    {formatDateTimeUtc(ip.latestAttempt)}
                   </TableCell>
                   <TableCell className="text-center">
                     <Badge variant={ip.failedCount >= 5 ? "destructive" : "outline"}>

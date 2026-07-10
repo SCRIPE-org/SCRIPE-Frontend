@@ -23,7 +23,7 @@ function formatCurrency(value: number): string {
 function formatMonth(iso: string): string {
   if (!iso) return "";
   const d = new Date(iso);
-  return d.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
+  return d.toLocaleDateString("en-US", { month: "short", year: "2-digit", timeZone: "UTC" });
 }
 
 /**

@@ -33,6 +33,7 @@ import { GenericSelect } from "@core/crud/components/generic-select";
 import { usePermission } from "@core/hooks/use-permission";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useAppStore } from "@/core/store/useAppStore";
+import { formatUtc } from "@core/common/utils";
 
 // ── Report type metadata ───────────────────────────────────────────────────────
 
@@ -234,15 +235,15 @@ function ReportCard({ report }: { report: ComplianceReport }) {
               {(report.periodStart || report.periodEnd) && (
                 <div className="mt-1.5 flex items-center gap-1 text-xs text-muted-foreground">
                   <Calendar className="h-3 w-3" />
-                  {report.periodStart?.toLocaleDateString()} –{" "}
-                  {report.periodEnd?.toLocaleDateString()}
+                  {formatUtc(report.periodStart, "MMM d, yyyy")} –{" "}
+                  {formatUtc(report.periodEnd, "MMM d, yyyy")}
                 </div>
               )}
               {report.generatedAt && (
                 <p className="mt-1 text-xs text-muted-foreground">
                   {t("compliance.period")}:{" "}
                   <span className="font-medium text-foreground">
-                    {report.generatedAt.toLocaleDateString()}
+                    {formatUtc(report.generatedAt, "MMM d, yyyy")}
                   </span>
                 </p>
               )}

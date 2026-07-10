@@ -145,6 +145,7 @@ export class PluginDefinition {
   }
   get createdAtDisplay() {
     return this.createdAt.toLocaleDateString(undefined, {
+      timeZone: "UTC",
       year: "numeric",
       month: "short",
       day: "numeric",

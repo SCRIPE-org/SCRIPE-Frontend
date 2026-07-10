@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 import { useEditionDetailViewModel } from "../viewmodels/useEditionDetailViewModel";
 
 interface EditionOverviewViewProps {
@@ -237,7 +237,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
         <StatCard
           icon={Clock}
           label={t("common.createdAt") || "Created"}
-          value={edition.createdAt ? format(new Date(edition.createdAt), "MMM d, yyyy") : "—"}
+          value={edition.createdAt ? formatUtc(edition.createdAt, "MMM d, yyyy") : "—"}
           accent="bg-zinc-600"
         />
       </div>

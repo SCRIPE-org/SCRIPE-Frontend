@@ -8,6 +8,7 @@
 import { memo } from "react";
 import type { SecurityEventSummary } from "../../domain/entities/DashboardEntities";
 import { useI18n } from "@core/providers/i18n-provider";
+import { formatDateTimeUtc } from "@core/common/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { SectionState } from "@core/ui/section-state";
 import { Badge } from "@core/ui/badge";
@@ -88,7 +89,7 @@ export const SecurityEventsSection = memo(function SecurityEventsSection({
                       <p className="text-sm font-medium">{event.eventType}</p>
                       {event.latestOccurrence && (
                         <p className="text-[10px] text-muted-foreground">
-                          Last: {new Date(event.latestOccurrence).toLocaleString()}
+                          Last: {formatDateTimeUtc(event.latestOccurrence)}
                         </p>
                       )}
                     </div>

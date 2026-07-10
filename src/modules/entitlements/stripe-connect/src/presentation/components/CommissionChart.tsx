@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import type { CommissionTrendPoint } from "../../domain/entities/ConnectAccount";
 import type { TrendPeriod } from "../viewmodels/useCommissionDashboardViewModel";
+import { formatDateUtc } from "@core/common/utils";
 
 interface CommissionChartProps {
   trends: CommissionTrendPoint[];
@@ -56,7 +57,7 @@ export function CommissionChart({
   t,
 }: CommissionChartProps) {
   const chartData = trends.map((point) => ({
-    date: new Date(point.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    date: formatDateUtc(point.date),
     amount: point.amount,
     count: point.count,
   }));

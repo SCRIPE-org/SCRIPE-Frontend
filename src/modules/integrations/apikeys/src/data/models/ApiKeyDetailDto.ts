@@ -33,6 +33,7 @@ export interface ApiKeyStatsDto {
   totalHits: number;
   totalSuccessHits: number;
   totalFailureHits: number;
+  blockedHits: number;
   successRatePercent: number;
   avgResponseTimeMs: number;
   lastUsedAt: string | null;

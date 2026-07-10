@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { History, ArrowRight } from "lucide-react";
+import { formatDateTimeUtc } from "@core/common/utils";
 import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
 
 interface DsrDetailTimelineProps {
@@ -44,7 +45,7 @@ export function DsrDetailTimeline({ dsr, t, statusMetaMap }: DsrDetailTimelinePr
                     {t(fromMeta.labelKey)} <ArrowRight className="h-3 w-3" /> {t(toMeta.labelKey)}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {new Date(history.occurredAt).toLocaleString()}
+                    {formatDateTimeUtc(history.occurredAt)}
                   </p>
                   {history.notes && (
                     <p className="mt-1 text-sm text-muted-foreground">{history.notes}</p>

@@ -18,7 +18,7 @@ import {
 import { MoreHorizontal, Download, Mail, Loader2, FileDown } from "lucide-react";
 import type { InvoiceListItem } from "../../domain/entities/Invoice";
 import { CurrencyDisplayToggle } from "@core/ui/currency-display-toggle";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 
 const STATUS_VARIANTS: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   Draft: "secondary",
@@ -108,17 +108,17 @@ export function InvoiceListView() {
         {
           key: "dueDate",
           label: t("billing.columns.dueDate"),
-          render: (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "—"),
+          render: (value: string) => (value ? formatUtc(value, "MMM d, yyyy") : "—"),
         },
         {
           key: "paidAt",
           label: t("billing.columns.paidAt"),
-          render: (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "—"),
+          render: (value: string) => (value ? formatUtc(value, "MMM d, yyyy") : "—"),
         },
         {
           key: "createdAt",
           label: t("common.createdAt"),
-          render: (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "—"),
+          render: (value: string) => (value ? formatUtc(value, "MMM d, yyyy") : "—"),
         },
       ],
 

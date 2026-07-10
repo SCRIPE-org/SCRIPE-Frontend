@@ -33,7 +33,7 @@ export interface PlatformLeadResponseModel {
   status: string;
   source: string;
   requestedAt: string;
-  updatedAt: string;
+  modifiedAt?: string;
   convertedAt?: string;
   convertedToTenantId?: string;
   assignedToAdminId?: string;

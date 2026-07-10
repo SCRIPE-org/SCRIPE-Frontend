@@ -7,6 +7,7 @@
  */
 import { memo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { formatDateTimeUtc } from "@core/common/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
@@ -101,7 +102,7 @@ export const SecurityTimeline = memo(function SecurityTimeline({
                         )}
                       </div>
                       <p className="mt-0.5 text-xs tabular-nums text-muted-foreground">
-                        {new Date(event.timestamp).toLocaleString()}
+                        {formatDateTimeUtc(event.timestamp)}
                       </p>
                     </div>
                     <Badge

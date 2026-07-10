@@ -18,7 +18,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import type { UserSubscription } from "../../domain/entities/UserSubscription";
 import { Badge } from "@core/ui/badge";
 import { Eye, XCircle, RefreshCw, User, Mail, ArrowLeftRight } from "lucide-react";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { SubscriptionDetailModal } from "../components/SubscriptionDetailModal";
 
@@ -107,13 +107,13 @@ export function UserSubscriptionsView() {
         {
           key: "startedAt",
           label: t("entitlements.userSubscriptions.startedAt") || "Started",
-          render: (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "-"),
+          render: (value: string) => (value ? formatUtc(value, "MMM d, yyyy") : "-"),
         },
         {
           key: "expiresAt",
           label: t("entitlements.userSubscriptions.expiresAt") || "Expires",
           render: (value: string | undefined) =>
-            value ? format(new Date(value), "MMM d, yyyy") : "∞",
+            value ? formatUtc(value, "MMM d, yyyy") : "∞",
         },
         {
           key: "daysRemaining",
@@ -130,7 +130,7 @@ export function UserSubscriptionsView() {
         {
           key: "createdAt",
           label: t("common.createdAt") || "Assigned",
-          render: (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "-"),
+          render: (value: string) => (value ? formatUtc(value, "MMM d, yyyy") : "-"),
         },
       ],
       createFields: [

@@ -8,6 +8,7 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import { Search, ArrowRight, Tag } from "lucide-react";
+import { formatDateUtc } from "@core/common/utils";
 
 interface SubscriptionItem {
   id: string;
@@ -295,19 +296,11 @@ export function SubscriptionsDataTable({
                           <span className="text-[10px] text-muted-foreground/70">/mo</span>
                         </TableCell>
                         <TableCell className="text-start text-xs font-semibold tabular-nums text-muted-foreground">
-                          {new Date(sub.startDate).toLocaleDateString(undefined, {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          })}
+                          {formatDateUtc(sub.startDate)}
                         </TableCell>
                         <TableCell className="text-start text-xs font-semibold tabular-nums text-muted-foreground">
                           {sub.endDate
-                            ? new Date(sub.endDate).toLocaleDateString(undefined, {
-                                year: "numeric",
-                                month: "short",
-                                day: "numeric",
-                              })
+                            ? formatDateUtc(sub.endDate)
                             : "∞"}
                         </TableCell>
                         <TableCell className="text-right">

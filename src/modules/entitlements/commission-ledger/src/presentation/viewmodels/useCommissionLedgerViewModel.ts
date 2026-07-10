@@ -8,6 +8,7 @@ import type { CrudColumn } from "@core/crud/components/generic-crud-view";
 import { CommissionLedgerEntry } from "../../domain/entities/CommissionLedgerEntry";
 import { CommissionInvoice } from "../../domain/entities/CommissionInvoice";
 import { useI18n } from "@core/providers/i18n-provider";
+import { formatDateTimeUtc, formatDateUtc } from "@core/common/utils";
 
 /**
  * React hook/ViewModel orchestrating state and data flows for commission ledger view model.
@@ -112,7 +113,7 @@ export function useCommissionLedgerViewModel() {
     {
       key: "createdAt",
       label: t("entitlements.commissionLedger.date") || "Date",
-      render: (value) => new Date(value as string).toLocaleString(),
+      render: (value) => formatDateTimeUtc(value as string),
     },
   ];
 
@@ -125,7 +126,7 @@ export function useCommissionLedgerViewModel() {
       key: "periodStart",
       label: t("entitlements.commissionLedger.period") || "Period",
       render: (value, item) =>
-        `${new Date(value).toLocaleDateString()} - ${new Date(item.periodEnd).toLocaleDateString()}`,
+        `${formatDateUtc(value)} - ${formatDateUtc(item.periodEnd)}`,
     },
     {
       key: "totalCommission",

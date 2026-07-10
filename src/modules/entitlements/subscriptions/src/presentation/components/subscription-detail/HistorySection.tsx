@@ -6,7 +6,7 @@
  * Only shown when tenant has more than 1 subscription record.
  */
 import { format } from "date-fns";
-import { cn } from "@core/common/utils";
+import { cn, formatDateUtc } from "@core/common/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Clock } from "lucide-react";
@@ -67,8 +67,8 @@ export function HistorySection({ items, currentId, t }: HistorySectionProps) {
                       </Badge>
                     </div>
                     <span className="text-xs text-muted-foreground">
-                      {item.startDate ? format(new Date(item.startDate), "MMM d, yyyy") : "—"}
-                      {item.endDate ? ` → ${format(new Date(item.endDate), "MMM d, yyyy")}` : ""}
+                      {item.startDate ? formatDateUtc(item.startDate) : "—"}
+                      {item.endDate ? ` → ${formatDateUtc(item.endDate)}` : ""}
                     </span>
                   </div>
                 </div>

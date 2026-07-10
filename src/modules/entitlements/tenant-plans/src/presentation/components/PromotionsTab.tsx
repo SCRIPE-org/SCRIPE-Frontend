@@ -33,6 +33,7 @@ import type {
   UpdatePromotionRequest,
 } from "../../domain/entities/TenantPlanRequests";
 import type { TFn } from "./shared-helpers";
+import { formatUtc } from "@core/common/utils";
 
 interface PromotionsTabProps {
   planId: string;
@@ -105,7 +106,7 @@ function PromoRow({
               <span>·</span>
               <span>
                 {t("entitlements.promotions.expires") || "Expires"}{" "}
-                {new Date(promo.expiresAt).toLocaleDateString()}
+                {formatUtc(promo.expiresAt, "MMM d, yyyy")}
               </span>
             </>
           )}

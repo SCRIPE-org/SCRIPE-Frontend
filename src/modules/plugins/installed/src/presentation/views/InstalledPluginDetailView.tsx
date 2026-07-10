@@ -20,6 +20,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { PluginHealthBadge } from "../components/PluginHealthBadge";
 import { PluginStatusBadge } from "../components/PluginStatusBadge";
 import { useInstalledPluginDetailViewModel } from "../viewmodels/useInstalledPluginDetailViewModel";
+import { formatUtc, formatDateTimeUtc } from "@core/common/utils";
 
 interface InstalledPluginDetailViewProps {
   /** The PluginInstallation ID from the route segment [installationId]. */
@@ -145,7 +146,7 @@ export function InstalledPluginDetailView({ installationId }: InstalledPluginDet
               <dt className="mb-1 text-xs text-muted-foreground">
                 {t("plugins.installedAtLabel")}
               </dt>
-              <dd className="font-medium">{installation.installedAt.toLocaleDateString()}</dd>
+              <dd className="font-medium">{formatUtc(installation.installedAt, "MMM d, yyyy")}</dd>
             </div>
             <div>
               <dt className="mb-1 text-xs text-muted-foreground">{t("plugins.healthCheck")}</dt>
@@ -170,7 +171,7 @@ export function InstalledPluginDetailView({ installationId }: InstalledPluginDet
               <div>
                 <dt className="mb-1 text-xs text-muted-foreground">{t("plugins.lastChecked")}</dt>
                 <dd className="text-xs font-medium">
-                  {installation.lastHealthCheckAt.toLocaleString()}
+                  {formatDateTimeUtc(installation.lastHealthCheckAt)}
                 </dd>
               </div>
             )}

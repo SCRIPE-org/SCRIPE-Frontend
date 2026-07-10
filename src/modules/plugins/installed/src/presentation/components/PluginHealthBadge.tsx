@@ -3,6 +3,7 @@
 import { CheckCircle, XCircle, Clock } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { useI18n } from "@core/providers/i18n-provider";
+import { formatDateTimeUtc } from "@core/common/utils";
 
 interface PluginHealthBadgeProps {
   passing: boolean;
@@ -21,7 +22,7 @@ export function PluginHealthBadge({ passing, lastCheckedAt, className }: PluginH
   const color = passing ? "text-green-500" : "text-destructive";
 
   const lastChecked = lastCheckedAt
-    ? t("plugins.lastChecked", { time: lastCheckedAt.toLocaleString() })
+    ? t("plugins.lastChecked", { time: formatDateTimeUtc(lastCheckedAt.toISOString()) })
     : t("plugins.healthUnknown");
 
   return (

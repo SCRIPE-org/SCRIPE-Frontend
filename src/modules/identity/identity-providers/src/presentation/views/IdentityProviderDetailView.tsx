@@ -42,7 +42,7 @@ import {
   FileJson,
   AlertCircle,
 } from "lucide-react";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -433,7 +433,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                     </span>
                     <span className="font-medium">
                       {vm.provider?.createdAt
-                        ? format(new Date(vm.provider.createdAt), "MMM d, yyyy HH:mm")
+                        ? formatUtc(vm.provider.createdAt, "MMM d, yyyy HH:mm")
                         : "—"}
                     </span>
                   </div>
@@ -443,7 +443,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                     </span>
                     <span className="font-medium">
                       {vm.provider?.modifiedAt
-                        ? format(new Date(vm.provider.modifiedAt), "MMM d, yyyy HH:mm")
+                        ? formatUtc(vm.provider.modifiedAt, "MMM d, yyyy HH:mm")
                         : "—"}
                     </span>
                   </div>

@@ -12,6 +12,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { DatePicker } from "@core/ui/date-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { formatDateUtc } from "@core/common/utils";
 import {
   Loader2,
   Rocket,
@@ -115,7 +116,7 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-muted-foreground">
-                      {new Date(v.createdAt).toLocaleDateString()}
+                      {formatDateUtc(v.createdAt)}
                     </span>
 
                     {/* Publish button (Draft only) */}

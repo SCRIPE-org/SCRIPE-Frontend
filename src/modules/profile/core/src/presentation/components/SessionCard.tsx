@@ -5,7 +5,7 @@
  */
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
-import { cn } from "@core/common/utils";
+import { cn, formatDateUtc } from "@core/common/utils";
 import { Monitor, Smartphone, Globe, X } from "lucide-react";
 import type { ActiveSession } from "../../../src/domain/entities/ActiveSession";
 
@@ -167,11 +167,11 @@ export function SessionCard({ session, onRevoke, isRevoking }: SessionCardProps)
               )}
               <span className="text-muted-foreground/40">·</span>
               <span>
-                {t("profile.sessions.signedIn")}: {session.createdAt.toLocaleDateString()}
+                {t("profile.sessions.signedIn")}: {formatDateUtc(session.createdAt)}
               </span>
             </div>
             <p className="text-xs text-muted-foreground/80">
-              {t("profile.sessions.expires")}: {session.expiresAt.toLocaleDateString()}
+              {t("profile.sessions.expires")}: {formatDateUtc(session.expiresAt)}
             </p>
           </div>
         </div>

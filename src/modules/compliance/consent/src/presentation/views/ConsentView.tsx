@@ -28,6 +28,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { usePermission } from "@core/hooks/use-permission";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useAppStore } from "@/core/store/useAppStore";
+import { formatDateUtc } from "@core/common/utils";
 
 // ── Consent Card ──────────────────────────────────────────────────────────────
 
@@ -84,7 +85,7 @@ function ConsentCard({
               <p className="mt-1.5 text-xs text-muted-foreground">
                 {t("compliance.lastUpdated")}{" "}
                 <span className="font-medium text-foreground">
-                  {consent.lastUpdatedAt.toLocaleDateString()}
+                  {formatDateUtc(consent.lastUpdatedAt)}
                 </span>
                 {" · "}
                 {t("compliance.consentVersion")}{" "}

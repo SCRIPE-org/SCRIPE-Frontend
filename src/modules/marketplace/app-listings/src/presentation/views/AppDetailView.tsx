@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useAppDetailViewModel } from "../viewmodels/useAppDetailViewModel";
+import { formatUtc } from "@core/common/utils";
 import type { AppReview } from "@modules/marketplace";
 
 interface AppDetailViewProps {
@@ -268,7 +269,7 @@ export function AppDetailView({ id }: AppDetailViewProps) {
                 <div className="flex justify-between">
                   <dt>Published</dt>
                   <dd className="font-medium text-foreground">
-                    {new Date(listing.publishedAt).toLocaleDateString()}
+                    {formatUtc(listing.publishedAt, "MMM d, yyyy")}
                   </dd>
                 </div>
               )}
@@ -347,7 +348,7 @@ export function AppDetailView({ id }: AppDetailViewProps) {
                 <div>
                   <dt className="mb-1 text-xs text-muted-foreground">Created</dt>
                   <dd className="font-medium">
-                    {new Date(listing.createdAt).toLocaleDateString()}
+                    {formatUtc(listing.createdAt, "MMM d, yyyy")}
                   </dd>
                 </div>
               </dl>
@@ -392,7 +393,7 @@ function ReviewCard({ review, onDelete, isDeleting }: ReviewCardProps) {
           <p className="mt-0.5 line-clamp-3 text-xs text-muted-foreground">{review.body}</p>
         )}
         <p className="mt-1 text-xs text-muted-foreground/60">
-          {review.tenantName} · {new Date(review.createdAt).toLocaleDateString()}
+          {review.tenantName} · {formatUtc(review.createdAt, "MMM d, yyyy")}
         </p>
       </div>
 

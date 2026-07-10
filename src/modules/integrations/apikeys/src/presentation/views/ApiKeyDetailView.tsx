@@ -119,8 +119,11 @@ export default function ApiKeyDetailView() {
               isLoading={vm.isActivityLoading}
               page={vm.activityParams.page}
               pageSize={vm.activityParams.pageSize ?? 50}
+              sortBy={vm.activityParams.sortBy}
+              sortDesc={vm.activityParams.sortDesc ?? true}
               onPageChange={vm.handleActivityPageChange}
               onFilterChange={vm.handleActivityFilterChange}
+              onSortChange={vm.handleActivitySortChange}
               onRefresh={() => qc.invalidateQueries({ queryKey: ["apikey-activity", id] })}
             />
           </div>

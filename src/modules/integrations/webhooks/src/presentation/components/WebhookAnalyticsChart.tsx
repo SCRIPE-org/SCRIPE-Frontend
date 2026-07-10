@@ -19,7 +19,7 @@ import {
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid } from "recharts";
 import type { WebhookAnalytics } from "../../domain/entities/Webhook";
 import { BarChart3, TrendingUp, Clock, Skull, RefreshCw } from "lucide-react";
-import { format, parseISO } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 
 interface WebhookAnalyticsChartProps {
   analytics: WebhookAnalytics | null;
@@ -172,7 +172,7 @@ export function WebhookAnalyticsChart({ analytics, isLoading }: WebhookAnalytics
                   tickMargin={8}
                   tickFormatter={(value) => {
                     try {
-                      return format(parseISO(value), "MMM d");
+                      return formatUtc(value, "MMM d");
                     } catch {
                       return value;
                     }
@@ -184,7 +184,7 @@ export function WebhookAnalyticsChart({ analytics, isLoading }: WebhookAnalytics
                     <ChartTooltipContent
                       labelFormatter={(value: string | number) => {
                         try {
-                          return format(parseISO(value as string), "MMM d, yyyy");
+                          return formatUtc(value as string, "MMM d, yyyy");
                         } catch {
                           return value as string;
                         }

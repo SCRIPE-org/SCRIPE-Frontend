@@ -2,6 +2,7 @@ export interface ApiKeyStatsData {
   totalHits: number;
   totalSuccessHits: number;
   totalFailureHits: number;
+  blockedHits: number;
   successRatePercent: number;
   avgResponseTimeMs: number;
   lastUsedAt: string | null;
@@ -20,6 +21,7 @@ export class ApiKeyStats {
   get totalHits() { return this.data.totalHits; }
   get totalSuccessHits() { return this.data.totalSuccessHits; }
   get totalFailureHits() { return this.data.totalFailureHits; }
+  get blockedHits() { return this.data.blockedHits; }
   get successRatePercent() { return this.data.successRatePercent; }
   get avgResponseTimeMs() { return this.data.avgResponseTimeMs; }
   get lastUsedAt() { return this.data.lastUsedAt; }

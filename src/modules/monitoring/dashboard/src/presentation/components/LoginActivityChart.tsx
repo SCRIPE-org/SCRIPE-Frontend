@@ -19,6 +19,7 @@ import {
 } from "@core/ui/chart";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { TrendingUp } from "lucide-react";
+import { formatDateUtc } from "@core/common/utils";
 
 interface Props {
   data: LoginActivityPoint[];
@@ -61,7 +62,7 @@ export const LoginActivityChart = memo(function LoginActivityChart({
   const chartData = useMemo(
     () =>
       data.map((point) => ({
-        date: new Date(point.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+        date: formatDateUtc(point.date),
         successCount: point.successCount,
         failedCount: point.failedCount,
       })),

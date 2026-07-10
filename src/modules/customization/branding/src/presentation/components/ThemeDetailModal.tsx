@@ -22,7 +22,7 @@
 
 import { useState, useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { cn } from "@/core/common/utils";
+import { cn, formatDateUtc } from "@/core/common/utils";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
@@ -407,7 +407,7 @@ export function ThemeDetailModal({
                       <InfoItem
                         icon={<Calendar className="h-3.5 w-3.5" />}
                         label={t(`${D}.info.published`)}
-                        value={new Date(theme.publishedAt).toLocaleDateString()}
+                        value={formatDateUtc(theme.publishedAt)}
                       />
                     )}
                   </div>

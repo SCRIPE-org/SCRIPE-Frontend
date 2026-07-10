@@ -20,11 +20,11 @@ import {
   ShieldCheck,
   ShieldAlert,
 } from "lucide-react";
-import { format } from "date-fns";
 
 // Generic CRUD imports
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
+import { formatUtc } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
 
@@ -91,7 +91,7 @@ export function TenantUserGroupsTab({ tenantId, tenantName }: TenantUserGroupsTa
                       </Badge>
                     )
                   : col.key === "createdAt"
-                    ? (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "-")
+                    ? (value: string) => (value ? formatUtc(value, "MMM d, yyyy") : "-")
                     : undefined,
     })),
     createFields: vm.createFields,

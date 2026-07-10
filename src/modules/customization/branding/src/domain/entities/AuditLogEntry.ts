@@ -7,6 +7,8 @@
  * @module customization/domain
  */
 
+import { formatDateTimeUtc } from "@core/common/utils";
+
 export interface AuditLogEntryProps {
   versionNumber: number;
   changeType: string;
@@ -56,7 +58,7 @@ export class AuditLogEntry {
 
   /** Get formatted date string */
   get formattedDate(): string {
-    return new Date(this.props.changedAt).toLocaleString();
+    return formatDateTimeUtc(this.props.changedAt);
   }
 
   /** Get raw props */

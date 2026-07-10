@@ -18,7 +18,7 @@ import {
   AlertCircle,
   Timer,
 } from "lucide-react";
-import { resolveFileUrl } from "@core/common/utils";
+import { resolveFileUrl, formatTimeUtc } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -327,7 +327,7 @@ export function WorkspaceCard({
       aria-expanded={state === "passwordRequired" ? isExpanded : undefined}
       aria-label={`${ws.tenantName}${
         state === "locked"
-          ? ` — Locked${ws.lockedUntil ? ` until ${new Date(ws.lockedUntil).toLocaleTimeString()}` : ""}`
+          ? ` — Locked${ws.lockedUntil ? ` until ${formatTimeUtc(ws.lockedUntil)}` : ""}`
           : state === "passwordRequired"
             ? " — Password required"
             : state === "disabled"

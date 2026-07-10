@@ -25,8 +25,7 @@ import {
   Clock,
   Search,
 } from "lucide-react";
-import { format } from "date-fns";
-import { cn } from "@core/common/utils";
+import { cn, formatUtc } from "@core/common/utils";
 import type { SentEmail } from "../../domain/entities/Email";
 
 // ─── Props ──────────────────────────────────────────────────
@@ -358,7 +357,7 @@ export function HistorySection(vm: HistorySectionProps) {
 
                         {/* Sent At */}
                         <TableCell className="text-sm text-muted-foreground">
-                          {email.sentAt ? format(new Date(email.sentAt), "MMM d, yyyy HH:mm") : "-"}
+                          {email.sentAt ? formatUtc(email.sentAt, "MMM d, yyyy HH:mm") : "-"}
                         </TableCell>
 
                         {/* Quick Actions */}

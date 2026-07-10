@@ -15,8 +15,7 @@ import type {
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Copy, Eye, Pencil, Trash2, Download, Upload, BarChart3 } from "lucide-react";
-import { format } from "date-fns";
-import { cn } from "@core/common/utils";
+import { cn, formatUtc } from "@core/common/utils";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
 // ─── Category Colors ────────────────────────────────────────
@@ -186,7 +185,7 @@ export function MessageTemplatesView() {
               <span className="font-medium">{value ?? 0}</span>
               {item.lastUsedAt && (
                 <span className="text-xs text-muted-foreground">
-                  · {format(new Date(item.lastUsedAt), "MMM d")}
+                  · {formatUtc(item.lastUsedAt, "MMM d")}
                 </span>
               )}
             </div>
@@ -204,7 +203,7 @@ export function MessageTemplatesView() {
         {
           key: "createdAt",
           label: t("common.createdAt") || "Created",
-          render: (value: string) => (value ? format(new Date(value), "MMM d, yyyy") : "-"),
+          render: (value: string) => (value ? formatUtc(value, "MMM d, yyyy") : "-"),
         },
       ],
       getActions: (_vm: any, _t: any, handleDelete?: any): CrudAction<MessageTemplate>[] => [

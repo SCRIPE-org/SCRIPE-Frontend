@@ -17,6 +17,7 @@ import { DatePicker } from "@core/ui/date-picker";
 import { Card, CardContent } from "@core/ui/card";
 import { Switch } from "@core/ui/switch";
 import { Label } from "@core/ui/label";
+import { formatDateUtc } from "@core/common/utils";
 import {
   Dialog,
   DialogContent,
@@ -527,10 +528,10 @@ function PromotionCard({
             {(promo.validFrom || promo.validUntil) && (
               <p className="text-[11px] text-muted-foreground">
                 {promo.validFrom &&
-                  `${t("common.from") || "From"}: ${new Date(promo.validFrom).toLocaleDateString()}`}
+                  `${t("common.from") || "From"}: ${formatDateUtc(promo.validFrom)}`}
                 {promo.validFrom && promo.validUntil && " — "}
                 {promo.validUntil &&
-                  `${t("common.to") || "To"}: ${new Date(promo.validUntil).toLocaleDateString()}`}
+                  `${t("common.to") || "To"}: ${formatDateUtc(promo.validUntil)}`}
               </p>
             )}
           </div>

@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Pencil, Trash2, Zap, Shield, Users, Fingerprint } from "lucide-react";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 
 /**
  * Exported constant defining parameters and fields for identity provider keys configurations.
@@ -380,7 +380,7 @@ export function useIdentityProvidersViewModel() {
         label: t("common.createdAt") || "Created",
         render: (_val: unknown, item: IdentityProviderListItem) => (
           <span className="text-sm text-muted-foreground">
-            {item.createdAt ? format(new Date(item.createdAt), "MMM d, yyyy") : "—"}
+            {item.createdAt ? formatUtc(item.createdAt, "MMM d, yyyy") : "—"}
           </span>
         ),
       },

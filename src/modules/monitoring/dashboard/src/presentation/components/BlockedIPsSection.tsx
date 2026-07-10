@@ -8,6 +8,7 @@
 import { memo } from "react";
 import type { BlockedIPSummary } from "../../domain/entities/DashboardEntities";
 import { useI18n } from "@core/providers/i18n-provider";
+import { formatDateTimeUtc } from "@core/common/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { SectionState } from "@core/ui/section-state";
 import { Badge } from "@core/ui/badge";
@@ -83,7 +84,7 @@ export const BlockedIPsSection = memo(function BlockedIPsSection({
                   </TableCell>
                   <TableCell className="text-muted-foreground">{ip.lastUsername ?? "—"}</TableCell>
                   <TableCell className="text-sm tabular-nums text-muted-foreground">
-                    {new Date(ip.latestAttempt).toLocaleString()}
+                    {formatDateTimeUtc(ip.latestAttempt)}
                   </TableCell>
                 </TableRow>
               ))}

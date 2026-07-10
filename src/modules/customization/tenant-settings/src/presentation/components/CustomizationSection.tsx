@@ -1,6 +1,7 @@
 // FILE-EXCEPTION: file length
 "use client";
 import { useI18n } from "@core/providers/i18n-provider";
+import { formatDateTimeUtc } from "@core/common/utils";
 
 import { useCustomizationViewModel } from "../viewmodels/useCustomizationViewModel";
 import { Button } from "@core/ui/button";
@@ -155,7 +156,7 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
                           {entry.changedByAdminName || "—"}
                         </td>
                         <td className="p-3 text-muted-foreground">
-                          {new Date(entry.changedAt).toLocaleString()}
+                          {formatDateTimeUtc(entry.changedAt)}
                         </td>
                         <td className="p-3 text-end">
                           <Button

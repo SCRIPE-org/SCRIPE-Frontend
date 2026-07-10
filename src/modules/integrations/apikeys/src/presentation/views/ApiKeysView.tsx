@@ -19,7 +19,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
 import { GeneratedKeyDialog } from "../components/GeneratedKeyDialog";
 import { ApiKey } from "../../domain/entities/ApiKey";
 import { Key, Trash2, Eye } from "lucide-react";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 
 export function ApiKeysView() {
   useModuleLocales(() => import("../../../locales"), "apikeys");
@@ -146,7 +146,7 @@ export function ApiKeysView() {
           label: t("apikeys.createdAt") || "Created At",
           render: (_val: unknown, item: ApiKey) => (
             <span className="text-xs text-muted-foreground font-mono">
-              {item.createdAt ? format(new Date(item.createdAt), "MMM d, yyyy") : "—"}
+              {item.createdAt ? formatUtc(item.createdAt, "MMM d, yyyy") : "—"}
             </span>
           ),
         },
@@ -156,7 +156,7 @@ export function ApiKeysView() {
           render: (_val: unknown, item: ApiKey) => (
             <span className="text-xs text-muted-foreground font-mono">
               {item.expiresAt ? (
-                format(new Date(item.expiresAt), "MMM d, yyyy")
+                formatUtc(item.expiresAt, "MMM d, yyyy")
               ) : (
                 <span className="text-emerald-600 dark:text-emerald-400 font-normal font-sans">
                   {t("apikeys.neverExpires") || "Never Expires"}

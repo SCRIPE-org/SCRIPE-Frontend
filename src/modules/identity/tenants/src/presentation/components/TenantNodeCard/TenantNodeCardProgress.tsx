@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { cn } from "@core/common/utils";
+import { cn, formatDateUtc } from "@core/common/utils";
 import type { TenantTreeNode } from "../../../domain/entities/Tenant";
 import type { TenantStatus } from "./TenantNodeCardHeader";
 
@@ -39,7 +39,7 @@ export function TenantNodeCardProgress({
             </span>
             {node.editionEndDate && (
               <span>
-                {t("tenant.endDate")}: {new Date(node.editionEndDate).toLocaleDateString()}
+                {t("tenant.endDate")}: {formatDateUtc(node.editionEndDate)}
               </span>
             )}
           </div>

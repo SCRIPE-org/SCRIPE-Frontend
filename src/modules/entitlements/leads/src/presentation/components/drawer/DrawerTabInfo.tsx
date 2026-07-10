@@ -14,6 +14,7 @@ import {
   CheckCheck,
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { formatDateTimeUtc } from "@core/common/utils";
 import type { PlatformLead, LeadStatus } from "../../../domain/entities/PlatformLead";
 import { SectionCard, InfoRow } from "./DrawerShared";
 import { DrawerStatusSection } from "./DrawerStatusSection";
@@ -107,7 +108,7 @@ export function DrawerTabInfo({
           <InfoRow
             icon={Clock}
             label={t("leads.drawer.contact.submitted")}
-            value={`${lead.relativeCreatedAt} · ${new Date(lead.requestedAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}`}
+            value={`${lead.relativeCreatedAt} · ${formatDateTimeUtc(lead.requestedAt)}`}
           />
         </div>
       </SectionCard>
@@ -201,13 +202,7 @@ export function DrawerTabInfo({
             {t("leads.drawer.conversion.converted")}
           </p>
           <p className="mt-0.5 text-xs text-zinc-400">
-            {new Date(lead.convertedAt).toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "long",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+            {formatDateTimeUtc(lead.convertedAt)}
           </p>
         </SectionCard>
       )}

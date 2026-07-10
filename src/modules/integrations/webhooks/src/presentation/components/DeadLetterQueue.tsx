@@ -36,7 +36,7 @@ import {
   AlertTriangle,
   Inbox,
 } from "lucide-react";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 
 interface DeadLetterQueueProps {
   logs: WebhookDeliveryLog[];
@@ -202,7 +202,7 @@ export function DeadLetterQueue({
                         </TableCell>
                         <TableCell>
                           <span className="text-xs text-muted-foreground">
-                            {format(new Date(log.createdAt), "MMM d, HH:mm")}
+                            {formatUtc(log.createdAt, "MMM d, HH:mm")}
                           </span>
                         </TableCell>
                         <TableCell className="text-center">
