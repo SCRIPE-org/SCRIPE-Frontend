@@ -30,6 +30,7 @@ import type { IApiService } from "../interfaces/api.interface";
 const ENV_MAP: Record<string, string | undefined> = {
   IDENTITY: process.env.NEXT_PUBLIC_IDENTITY_API_URL,
   // ── Add new modules below this line ──
+      HRMS: process.env.NEXT_PUBLIC_HRMS_API_URL,
       PARTYKERNEL: process.env.NEXT_PUBLIC_PARTYKERNEL_API_URL,
       ORGANIZATIONCORE: process.env.NEXT_PUBLIC_ORGANIZATIONCORE_API_URL,
       MEDIA: process.env.NEXT_PUBLIC_MEDIA_API_URL,

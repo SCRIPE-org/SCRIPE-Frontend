@@ -176,6 +176,8 @@ import {
 
 import { en as partyKernelEn, ar as partyKernelAr } from "@modules/party-kernel/core/locales";
 
+import { en as hrmsEn, ar as hrmsAr } from "@modules/hrms/core/locales";
+
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, unknown> = deepMerge(
   {},
@@ -254,6 +256,7 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   mktFinancialsEn
   */
   partyKernelEn,
+  hrmsEn,
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -333,4 +336,5 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   mktFinancialsAr
   */
   partyKernelAr,
+  hrmsAr,
 );

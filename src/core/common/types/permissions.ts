@@ -25,6 +25,7 @@ import { PLUGINS_PERMISSIONS } from "@modules/plugins/permission-constants";
 import { MARKETPLACE_PERMISSIONS } from "@modules/marketplace/permission-constants";
 
 import { PARTY_KERNEL_PERMISSIONS } from "@modules/party-kernel/permission-constants";
+import { HRMS_PERMISSIONS } from "@modules/hrms/permission-constants";
 // ── Re-export individual module permissions for direct access ─────────────────
 export {
   IDENTITY_PERMISSIONS,
@@ -39,6 +40,7 @@ export {
   PLUGINS_PERMISSIONS,
   MARKETPLACE_PERMISSIONS,
   PARTY_KERNEL_PERMISSIONS,
+  HRMS_PERMISSIONS,
 };
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -177,6 +179,7 @@ export const SYSTEM_PERMISSIONS = {
   ...PLUGINS_PERMISSIONS,
   ...MARKETPLACE_PERMISSIONS,
   ...PARTY_KERNEL_PERMISSIONS,
+  ...HRMS_PERMISSIONS,
 } as const;
 
 // ── Page permission mapping ───────────────────────────────────────────────────
@@ -360,4 +363,28 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // MergeCandidate Feature
   "/party-kernel/merge-candidates": [SYSTEM_PERMISSIONS.MERGE_CANDIDATE_VIEW],
+
+  // Hrms Module
+  "/hrms": [SYSTEM_PERMISSIONS.STAFF_MEMBER_VIEW],
+
+  // StaffMember Feature
+  "/hrms/staff-members": [SYSTEM_PERMISSIONS.STAFF_MEMBER_VIEW],
+
+  // EmploymentRecord Feature
+  "/hrms/employment-records": [SYSTEM_PERMISSIONS.EMPLOYMENT_RECORD_VIEW],
+
+  // StaffAssignment Feature
+  "/hrms/staff-assignments": [SYSTEM_PERMISSIONS.STAFF_ASSIGNMENT_VIEW],
+
+  // StaffCompetency Feature
+  "/hrms/staff-competencies": [SYSTEM_PERMISSIONS.STAFF_COMPETENCY_VIEW],
+
+  // Qualification Feature
+  "/hrms/qualifications": [SYSTEM_PERMISSIONS.QUALIFICATION_VIEW],
+
+  // Certification Feature
+  "/hrms/certifications": [SYSTEM_PERMISSIONS.CERTIFICATION_VIEW],
+
+  // StaffAvailability Feature
+  "/hrms/staff-availabilities": [SYSTEM_PERMISSIONS.STAFF_AVAILABILITY_VIEW],
 };
