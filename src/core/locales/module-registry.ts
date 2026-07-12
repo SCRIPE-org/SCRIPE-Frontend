@@ -174,6 +174,8 @@ import {
 } from "@modules/marketplace/financials/locales";
 */
 
+import { en as partyKernelEn, ar as partyKernelAr } from "@modules/party-kernel/core/locales";
+
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, unknown> = deepMerge(
   {},
@@ -241,7 +243,7 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   compRetentionEn,
   compInventoryEn,
   compReportsEn,
-  compRegulationsEn
+  compRegulationsEn,
   /*
   // Marketplace (6 sub-modules, all merge into "marketplace" key)
   mktListingsEn,
@@ -251,6 +253,7 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   mktReviewsEn,
   mktFinancialsEn
   */
+  partyKernelEn,
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -319,7 +322,7 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   compRetentionAr,
   compInventoryAr,
   compReportsAr,
-  compRegulationsAr
+  compRegulationsAr,
   /*
   // Marketplace (6 sub-modules, all merge into "marketplace" key)
   mktListingsAr,
@@ -329,4 +332,5 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   mktReviewsAr,
   mktFinancialsAr
   */
+  partyKernelAr,
 );

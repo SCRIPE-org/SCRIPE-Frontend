@@ -24,6 +24,7 @@ import { COMPLIANCE_PERMISSIONS } from "@modules/compliance/permission-constants
 import { PLUGINS_PERMISSIONS } from "@modules/plugins/permission-constants";
 import { MARKETPLACE_PERMISSIONS } from "@modules/marketplace/permission-constants";
 
+import { PARTY_KERNEL_PERMISSIONS } from "@modules/party-kernel/permission-constants";
 // ── Re-export individual module permissions for direct access ─────────────────
 export {
   IDENTITY_PERMISSIONS,
@@ -37,6 +38,7 @@ export {
   COMPLIANCE_PERMISSIONS,
   PLUGINS_PERMISSIONS,
   MARKETPLACE_PERMISSIONS,
+  PARTY_KERNEL_PERMISSIONS,
 };
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -174,6 +176,7 @@ export const SYSTEM_PERMISSIONS = {
   ...COMPLIANCE_PERMISSIONS,
   ...PLUGINS_PERMISSIONS,
   ...MARKETPLACE_PERMISSIONS,
+  ...PARTY_KERNEL_PERMISSIONS,
 } as const;
 
 // ── Page permission mapping ───────────────────────────────────────────────────
@@ -333,4 +336,28 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/marketplace/my-submissions": [SYSTEM_PERMISSIONS.APP_SUBMISSIONS_VIEW],
   "/marketplace/my-earnings": [SYSTEM_PERMISSIONS.APP_PURCHASES_VIEW],
   */
+
+  // PartyKernel Module
+  "/party-kernel": [SYSTEM_PERMISSIONS.PARTY_VIEW],
+
+  // Party Feature
+  "/party-kernel/parties": [SYSTEM_PERMISSIONS.PARTY_VIEW],
+
+  // PartyPerson Feature
+  "/party-kernel/party-people": [SYSTEM_PERMISSIONS.PARTY_PERSON_VIEW],
+
+  // PartyOrganization Feature
+  "/party-kernel/party-organizations": [SYSTEM_PERMISSIONS.PARTY_ORGANIZATION_VIEW],
+
+  // PartyRole Feature
+  "/party-kernel/party-roles": [SYSTEM_PERMISSIONS.PARTY_ROLE_VIEW],
+
+  // PartyRelationship Feature
+  "/party-kernel/party-relationships": [SYSTEM_PERMISSIONS.PARTY_RELATIONSHIP_VIEW],
+
+  // ContactPoint Feature
+  "/party-kernel/contact-points": [SYSTEM_PERMISSIONS.CONTACT_POINT_VIEW],
+
+  // MergeCandidate Feature
+  "/party-kernel/merge-candidates": [SYSTEM_PERMISSIONS.MERGE_CANDIDATE_VIEW],
 };
