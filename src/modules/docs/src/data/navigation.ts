@@ -662,6 +662,21 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
+      // ── Custom Fields Module (Wave 2A / 2A-09) ─────────────────
+      {
+        id: "mod-custom-fields",
+        titleKey: "nav.customFields",
+        icon: "layout-grid",
+        order: 2.5,
+        children: [
+          {
+            id: "mod-cf-overview",
+            titleKey: "modules.customFields.overview.title",
+            slug: "modules/custom-fields-overview",
+            order: 1,
+          },
+        ],
+      },
       // ── Plugin System (Phase 15) ───────────────────────────────
       {
         id: "mod-plugins",

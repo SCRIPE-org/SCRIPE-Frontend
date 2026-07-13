@@ -5,6 +5,48 @@
  */
 export const en = {
   modules: {
+    customFields: {
+      overview: {
+        title: "Custom Fields Module",
+        description:
+          "Tenant-configurable custom field definitions attached to any registered entity type by stable key — no schema changes, no cross-module coupling.",
+        intro:
+          "The Custom Fields module lets each tenant extend the platform's records with their own typed fields — for example a 'shirt size' on a person or a 'preferred foot' on a player — without any database migration or code change. Field definitions are tenant-scoped and attach to a host entity through the cross-module Entity-Type Registry rather than a foreign key, so the module never couples to another module's schema.",
+        infoTitle: "Design Principle",
+        infoContent:
+          "Custom fields are attached by stable entity-type key (e.g. \"party.person\"), validated against the Entity-Type Registry, not by a database foreign key. This keeps the module fully decoupled and safe to evolve independently.",
+        whatIsTitle: "What Are Custom Fields?",
+        whatIsIntro:
+          "A custom field is a tenant-defined extension to an existing entity. Each definition carries a machine key (unique per tenant and entity type), bilingual labels, a value type, an optional required flag, an optional list of allowed options for Select fields, and a sort order. Values are stored typed rather than in an untyped JSON blob.",
+        featureTenant: "Tenant-Scoped",
+        featureTenantDesc:
+          "Every definition is owned by a tenant and isolated by the global tenant query filter. System-level (shared) definitions are supported for platform operators.",
+        featureRegistry: "Registry-Validated Attachment",
+        featureRegistryDesc:
+          "Fields attach to a host entity via its canonical entity-type key, validated against the cross-module Entity-Type Registry — never via a foreign key.",
+        featureTyped: "Typed Values",
+        featureTypedDesc:
+          "Each field declares a value type (Text, Number, Boolean, Date, or Select), avoiding an untyped metadata blob and enabling proper validation.",
+        featureIsolation: "Immutable Keys",
+        featureIsolationDesc:
+          "The entity-type key and machine key are immutable after creation so already-stored values remain addressable; only display and behaviour metadata can be edited.",
+        valueTypesTitle: "Value Types",
+        valueTypesIntro:
+          "Supported value types are Text, Number, Boolean, Date, and Select. Select fields carry a newline-separated list of allowed options; non-Select fields must not carry options. The API enforces this on both create and update.",
+        modelTitle: "Data Model",
+        modelIntro:
+          "A CustomField carries: EntityTypeKey (registered), Key (machine key, unique per tenant + entity type), LabelEn / LabelAr, ValueType, IsRequired, Options (Select only), SortOrder, and IsActive. Uniqueness is enforced per (TenantId, EntityTypeKey, Key).",
+        isolationTitle: "Tenant Isolation",
+        isolationIntro:
+          "Reads run under the module's global tenant filter, so a tenant only sees its own definitions plus shared system-level ones. Create stamps the current tenant automatically. Update and Delete enforce an ownership guard so a tenant admin can never modify or remove a shared or another tenant's definition.",
+        isolationWarnTitle: "System-Level Fields",
+        isolationWarnContent:
+          "Definitions with no tenant are treated as shared/global and are visible to every tenant. Only system principals (no tenant context) may modify or delete them; tenant-scoped admins are blocked by the ownership guard.",
+        permsTitle: "Permissions",
+        permsIntro:
+          "The module owns the resource custom-fields with the standard CRUD actions: custom-fields.view, custom-fields.create, custom-fields.update, and custom-fields.delete.",
+      },
+    },
     entitlementsOverview: {
       title: "Entitlements Overview",
       description:

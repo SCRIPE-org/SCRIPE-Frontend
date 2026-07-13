@@ -77,5 +77,6 @@ export const ar = {
     commercialEntitlements: "الصلاحيات",
     compliance: "الامتثال",
     commercialCompliance: "الامتثال",
+    customFields: "الحقول المخصصة",
   },
 };

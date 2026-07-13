@@ -178,6 +178,8 @@ import { en as partyKernelEn, ar as partyKernelAr } from "@modules/party-kernel/
 
 import { en as hrmsEn, ar as hrmsAr } from "@modules/hrms/core/locales";
 
+import { en as customFieldsEn, ar as customFieldsAr } from "@modules/custom-fields/custom-field/locales";
+
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, unknown> = deepMerge(
   {},
@@ -257,6 +259,7 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   */
   partyKernelEn,
   hrmsEn,
+  customFieldsEn,
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -337,4 +340,5 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   */
   partyKernelAr,
   hrmsAr,
+  customFieldsAr,
 );

@@ -79,5 +79,6 @@ export const en = {
     commercialCompliance: "Compliance",
     plugins: "Plugin System",
     commercialPlugins: "Plugin System",
+    customFields: "Custom Fields",
   },
 };

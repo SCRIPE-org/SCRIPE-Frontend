@@ -94,6 +94,9 @@ import "./modules/compliance/compliance-inventory";
 import "./modules/compliance/compliance-reports";
 import "./modules/compliance/compliance-regulation-profiles";
 
+// Modules (Custom Fields — Wave 2A / 2A-09)
+import "./modules/custom-fields/custom-fields-overview";
+
 // New Technical Modules
 import "./modules/audit-logs";
 import "./modules/security-monitoring";
