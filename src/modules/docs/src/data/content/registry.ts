@@ -100,6 +100,9 @@ import "./modules/custom-fields/custom-fields-overview";
 // Modules (WorkManagement — Wave 2A / 2A-10)
 import "./modules/work-management/work-management-overview";
 
+// Modules (Analytics — Wave 2A / 2A-11)
+import "./modules/analytics/analytics-overview";
+
 // New Technical Modules
 import "./modules/audit-logs";
 import "./modules/security-monitoring";

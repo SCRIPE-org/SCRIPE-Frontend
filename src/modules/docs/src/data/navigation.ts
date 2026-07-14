@@ -692,6 +692,21 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
+      // ── Analytics Module (Wave 2A / 2A-11) ─────────────────────
+      {
+        id: "mod-analytics",
+        titleKey: "nav.analytics",
+        icon: "bar-chart",
+        order: 2.7,
+        children: [
+          {
+            id: "mod-analytics-overview",
+            titleKey: "modules.analytics.overview.title",
+            slug: "modules/analytics-overview",
+            order: 1,
+          },
+        ],
+      },
       // ── Plugin System (Phase 15) ───────────────────────────────
       {
         id: "mod-plugins",

@@ -81,5 +81,6 @@ export const en = {
     commercialPlugins: "Plugin System",
     customFields: "Custom Fields",
     workManagement: "Work Management",
+    analytics: "Analytics",
   },
 };

@@ -5,6 +5,45 @@
  */
 export const en = {
   modules: {
+    analytics: {
+      overview: {
+        title: "Analytics Event Foundation",
+        description:
+          "An internal, tenant-scoped, append-only metric-event store with an initial daily operational projection. Other modules record events in-process; operators read the stream and its rollup.",
+        intro:
+          "The Analytics Event Foundation is the shared kernel that every product module records operational metric-events into. It is internal infrastructure: modules call the in-process IAnalyticsRecorder to append a metric-event (for example a booking created, an enrollment confirmed, a session completed), and the foundation persists it to a tenant-scoped, append-only event stream and folds it into a daily operational projection. It is deliberately not a user-facing CRUD module — events are never edited or deleted through the UI.",
+        infoTitle: "Design Principle",
+        infoContent:
+          "Analytics events are append-only facts. They are written once by the module that owns the action, referenced polymorphically by a registered entity-type key rather than a foreign key, and never mutated afterwards. Downstream analytics (Facility, Academy, and Football reporting) build on this same event stream.",
+        whatIsTitle: "What Is the Event Foundation?",
+        whatIsIntro:
+          "A metric-event is a single recorded fact carrying an event name, the source module, an optional subject entity (by registered entity-type key plus id), an occurrence timestamp (UTC), an optional numeric value, and an optional idempotency key. Events are stored verbatim; a daily projection aggregates count and summed value per tenant, event name, and calendar day for fast operational reads.",
+        featureAppendOnly: "Append-Only",
+        featureAppendOnlyDesc:
+          "Events are immutable facts written once by the owning module and never edited or deleted through the UI, so the stream is a trustworthy audit of what happened.",
+        featureTenant: "Tenant-Scoped",
+        featureTenantDesc:
+          "Every event and projection row is owned by a tenant and isolated by the global tenant query filter; cross-tenant reads are never implicit.",
+        featureProjection: "Operational Projection",
+        featureProjectionDesc:
+          "Each recorded event is folded into a daily rollup (count and summed value per tenant, event name, and day) so dashboards read aggregates without scanning the raw stream.",
+        featureIdempotent: "Idempotent Recording",
+        featureIdempotentDesc:
+          "An optional idempotency key (unique per tenant) makes re-delivered events safe: a repeat record returns the existing event instead of double-counting.",
+        modelTitle: "Data Model",
+        modelIntro:
+          "AnalyticsEvent carries: tenant id, event name, source module, optional subject entity-type key (registered) and subject id, occurrence timestamp (UTC), optional numeric value, optional idempotency key. AnalyticsDailyMetric carries: tenant id, event name, bucket date (UTC day), occurrence count, and summed value. The projection is keyed uniquely per (tenant, event name, bucket date).",
+        recorderTitle: "Recording Events",
+        recorderIntro:
+          "Modules depend on IAnalyticsRecorder and call it in-process inside their own transaction boundary. The recorder validates the optional subject entity-type key against the cross-module Entity-Type Registry, stamps the current tenant, appends the event, and folds the daily projection in a single unit of work.",
+        isolationTitle: "Tenant Isolation",
+        isolationIntro:
+          "Both the event stream and the daily projection are tenant-aware and filtered by the global tenant query filter. The idempotency uniqueness and the projection rollup keys are all scoped by tenant id, so no tenant can read or affect another tenant's metrics.",
+        permsTitle: "Permissions",
+        permsIntro:
+          "Because events are recorded in-process rather than by users, the module owns a single view-only permission — analytics-events.view — for the operator-facing read surface (the event stream and its daily projection). It deliberately does not expose the standard create/update/delete permission set.",
+      },
+    },
     customFields: {
       overview: {
         title: "Custom Fields Module",

@@ -79,5 +79,6 @@ export const ar = {
     commercialCompliance: "الامتثال",
     customFields: "الحقول المخصصة",
     workManagement: "إدارة العمل",
+    analytics: "التحليلات",
   },
 };
