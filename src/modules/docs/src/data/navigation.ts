@@ -677,6 +677,21 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
+      // ── Work Management Module (Wave 2A / 2A-10) ───────────────
+      {
+        id: "mod-work-management",
+        titleKey: "nav.workManagement",
+        icon: "layers",
+        order: 2.6,
+        children: [
+          {
+            id: "mod-wm-overview",
+            titleKey: "modules.workManagement.overview.title",
+            slug: "modules/work-management-overview",
+            order: 1,
+          },
+        ],
+      },
       // ── Plugin System (Phase 15) ───────────────────────────────
       {
         id: "mod-plugins",

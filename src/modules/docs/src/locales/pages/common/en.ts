@@ -80,5 +80,6 @@ export const en = {
     plugins: "Plugin System",
     commercialPlugins: "Plugin System",
     customFields: "Custom Fields",
+    workManagement: "Work Management",
   },
 };

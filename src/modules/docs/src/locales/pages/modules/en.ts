@@ -47,6 +47,42 @@ export const en = {
           "The module owns the resource custom-fields with the standard CRUD actions: custom-fields.view, custom-fields.create, custom-fields.update, and custom-fields.delete.",
       },
     },
+    workManagement: {
+      overview: {
+        title: "Work Management Module",
+        description:
+          "Tenant-scoped work items (tasks) that any module can attach to one of its entities by stable entity-type key — polymorphic, never coupled by a foreign key.",
+        intro:
+          "The Work Management module provides a generic, tenant-scoped unit of work — a task — that any other module can attach to one of its own records. A work item references its owner polymorphically through the cross-module Entity-Type Registry (a stable key such as \"party.person\" or \"hrms.staff-member\") plus the owner's id, never a database foreign key, so Work Management stays fully decoupled from every other module's schema.",
+        infoTitle: "Design Principle",
+        infoContent:
+          "A work item points at its owning entity by stable entity-type key plus id, validated against the Entity-Type Registry — not by a foreign key. The assignee is an Identity actor id reference, also not an FK. This keeps the module independent and safe to evolve.",
+        whatIsTitle: "What Is a Work Item?",
+        whatIsIntro:
+          "A work item is a task carrying a title, an optional description, a lifecycle status (To Do, In Progress, Blocked, Done, Cancelled), a priority (Low, Normal, High, Critical), an optional due date, an optional polymorphic owner (entity-type key + id), an optional assignee actor id, and a completion timestamp stamped when it reaches a terminal status. Every work item is owned by a tenant and isolated by the global tenant query filter.",
+        featurePolymorphic: "Polymorphic Ownership",
+        featurePolymorphicDesc:
+          "A task attaches to any registered host entity via its canonical entity-type key and id — validated against the Entity-Type Registry, never a cross-module foreign key.",
+        featureTenant: "Tenant-Scoped",
+        featureTenantDesc:
+          "Every work item is owned by a tenant and isolated by the module's global tenant query filter; create stamps the current tenant automatically.",
+        featureStatus: "Lifecycle Status",
+        featureStatusDesc:
+          "Work items move through Todo → InProgress → Blocked and reach a terminal Done or Cancelled, which stamps the completion timestamp.",
+        featureAssignee: "Actor Assignment",
+        featureAssigneeDesc:
+          "A task can be assigned to an Identity actor by id reference (not a foreign key), or left unassigned.",
+        modelTitle: "Data Model",
+        modelIntro:
+          "A WorkItem carries: Title, Description, Status, Priority, DueAt (UTC), OwnerEntityTypeKey (registered) + OwnerEntityId for polymorphic attachment, AssignedToId (actor id), CompletedAt, IsActive, and standard audit timestamps. There are no cross-module foreign keys.",
+        isolationTitle: "Tenant Isolation",
+        isolationIntro:
+          "Reads run under the module's global tenant filter, so a tenant only sees its own work items. Create stamps the current tenant automatically, and mutations are scoped to the caller's tenant, so one tenant can never read or modify another tenant's tasks.",
+        permsTitle: "Permissions",
+        permsIntro:
+          "The module owns the resource work-items with the standard CRUD actions: work-items.view, work-items.create, work-items.update, and work-items.delete.",
+      },
+    },
     entitlementsOverview: {
       title: "Entitlements Overview",
       description:

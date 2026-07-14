@@ -97,6 +97,9 @@ import "./modules/compliance/compliance-regulation-profiles";
 // Modules (Custom Fields — Wave 2A / 2A-09)
 import "./modules/custom-fields/custom-fields-overview";
 
+// Modules (WorkManagement — Wave 2A / 2A-10)
+import "./modules/work-management/work-management-overview";
+
 // New Technical Modules
 import "./modules/audit-logs";
 import "./modules/security-monitoring";
