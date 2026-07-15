@@ -1,13 +1,13 @@
 export const en = {
   hrms: {
-    title: "Hrms",
-    description: "Manage Hrms",
-    addNew: "Add Hrms",
-    editTitle: "Edit Hrms",
-    deleteTitle: "Delete Hrms",
-    deleteConfirm: "Are you sure you want to delete this hrms?",
-    noItems: "No hrms found",
-    searchPlaceholder: "Search hrms...",
+    title: "Staff Management",
+    description: "Manage your organisation's staff profiles and HR records",
+    addNew: "Add Staff Member",
+    editTitle: "Edit Staff Member",
+    deleteTitle: "Delete Staff Member",
+    deleteConfirm: "Are you sure you want to delete this staff member?",
+    noItems: "No staff members found",
+    searchPlaceholder: "Search staff members...",
     columns: {
       name: "Name",
       status: "Status",
@@ -16,12 +16,12 @@ export const en = {
     },
     form: {
       name: "Name",
-      namePlaceholder: "Enter hrms name",
+      namePlaceholder: "Enter staff member name",
     },
     toast: {
-      created: "Hrms created successfully",
-      updated: "Hrms updated successfully",
-      deleted: "Hrms deleted successfully",
+      created: "Staff member created successfully",
+      updated: "Staff member updated successfully",
+      deleted: "Staff member deleted successfully",
       error: "An error occurred",
     },
   },

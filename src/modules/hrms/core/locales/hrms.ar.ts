@@ -1,13 +1,13 @@
 export const ar = {
   hrms: {
-    title: "Hrms",
-    description: "إدارة Hrms",
-    addNew: "إضافة Hrms",
-    editTitle: "تعديل Hrms",
-    deleteTitle: "حذف Hrms",
-    deleteConfirm: "هل أنت متأكد من حذف هذا العنصر؟",
-    noItems: "لا توجد عناصر",
-    searchPlaceholder: "بحث...",
+    title: "إدارة الموارد البشرية",
+    description: "إدارة ملفات الموظفين وسجلات الموارد البشرية في مؤسستك",
+    addNew: "إضافة موظف",
+    editTitle: "تعديل الموظف",
+    deleteTitle: "حذف الموظف",
+    deleteConfirm: "هل أنت متأكد من رغبتك في حذف هذا الموظف؟",
+    noItems: "لا يوجد موظفون",
+    searchPlaceholder: "البحث عن موظف...",
     columns: {
       name: "الاسم",
       status: "الحالة",
@@ -16,13 +16,13 @@ export const ar = {
     },
     form: {
       name: "الاسم",
-      namePlaceholder: "أدخل الاسم",
+      namePlaceholder: "أدخل اسم الموظف",
     },
     toast: {
-      created: "تم الإنشاء بنجاح",
-      updated: "تم التحديث بنجاح",
-      deleted: "تم الحذف بنجاح",
-      error: "حدث خطأ",
+      created: "تم إنشاء الموظف بنجاح",
+      updated: "تم تحديث الموظف بنجاح",
+      deleted: "تم حذف الموظف بنجاح",
+      error: "حدث خطأ ما",
     },
   },
 };
