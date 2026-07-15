@@ -6,83 +6,42 @@
  * recorded in-process by IAnalyticsRecorder from other modules (2B+).
  *
  * What this view shows:
- *   - The append-only metric-event stream (GET /api/v1/analytics/events)
- *   - A daily operational projection summary (GET /api/v1/analytics/daily-metrics)
+ *   - The append-only metric-event stream (via AnalyticsEventViewModel)
  *
  * Permission: analytics-events.view (single read-only permission, no create/edit/delete)
  *
  * Note: The event stream will be empty until a producing module (2B Facility,
  * 2C Academy, 2D Football Intelligence) emits its first event via IAnalyticsRecorder.
- * The store, projection, recorder contract, and read API are the Wave 2A deliverable.
  */
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
-import { getModuleApiService } from "@core/services/api-factory";
-
-interface AnalyticsEventResponse {
-  id: string;
-  eventName: string;
-  sourceModule: string;
-  occurredAt: string;
-  subjectEntityTypeKey?: string;
-  subjectEntityId?: string;
-  associatedNumericValue?: number;
-  tenantId?: string;
-}
-
-interface PagedResult<T> {
-  items: T[];
-  totalCount: number;
-  page: number;
-  pageSize: number;
-}
+import React from "react";
+import { useAnalyticsEventViewModel } from "../../presentation/viewmodels/useAnalyticsEventViewModel";
+import { useI18n } from "@core/providers/i18n-provider";
 
 export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStreamView() {
-  const [events, setEvents] = useState<AnalyticsEventResponse[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { t, direction } = useI18n();
+  const {
+    events,
+    totalCount,
+    page,
+    setPage,
+    loading,
+    error,
+    pageSize,
+  } = useAnalyticsEventViewModel();
 
-  const pageSize = 20;
-
-  const fetchEvents = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const api = getModuleApiService("ANALYTICS");
-      const url = `/api/v1/analytics/events?page=${page}&pageSize=${pageSize}`;
-      const data = await api.get<PagedResult<AnalyticsEventResponse>>(url);
-      setEvents(data.items ?? []);
-      setTotalCount(data.totalCount ?? 0);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to load analytics events";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  }, [page]);
-
-  useEffect(() => {
-    fetchEvents();
-  }, [fetchEvents]);
+  const isRtl = direction === "rtl";
 
   return (
-    <div style={{ padding: "1.5rem" }}>
+    <div style={{ padding: "1.5rem", direction: direction }}>
       {/* Header */}
       <div style={{ marginBottom: "1.5rem" }}>
         <h1 style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: "0.5rem" }}>
-          Analytics Event Stream
+          {t("analyticsEvents.title")}
         </h1>
         <p style={{ color: "#6b7280", fontSize: "0.875rem" }}>
-          Read-only metric-event stream recorded by the Analytics Event Foundation (Wave 2A).
-          Events are written in-process by other modules via{" "}
-          <code style={{ backgroundColor: "#f3f4f6", padding: "0.1rem 0.3rem", borderRadius: "0.25rem" }}>
-            IAnalyticsRecorder
-          </code>{" "}
-          — they cannot be created, edited, or deleted here. The stream will populate as
-          later waves (2B Facility, 2C Academy, 2D Football Intelligence) emit events.
+          {t("analyticsEvents.description")}
         </p>
       </div>
 
@@ -100,19 +59,19 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
       >
         <div>
           <span style={{ fontSize: "0.75rem", color: "#6b7280", textTransform: "uppercase" }}>
-            Total Events
+            {t("analyticsEvents.totalEvents")}
           </span>
           <div style={{ fontSize: "1.5rem", fontWeight: 700 }}>{totalCount}</div>
         </div>
         <div style={{ borderLeft: "1px solid #e5e7eb", margin: "0 0.5rem" }} />
         <div>
           <span style={{ fontSize: "0.75rem", color: "#6b7280", textTransform: "uppercase" }}>
-            Status
+            {t("analyticsEvents.statusLabel")}
           </span>
           <div style={{ fontSize: "0.875rem", fontWeight: 500, color: totalCount === 0 ? "#9ca3af" : "#059669" }}>
             {totalCount === 0
-              ? "Awaiting producing modules (Wave 2B+)"
-              : "Active — events recorded"}
+              ? t("analyticsEvents.awaitingModules")
+              : t("analyticsEvents.activeStatus")}
           </div>
         </div>
       </div>
@@ -136,7 +95,7 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
       {/* Loading */}
       {loading && (
         <div style={{ textAlign: "center", padding: "2rem", color: "#6b7280" }}>
-          Loading event stream…
+          {t("analyticsEvents.loading")}
         </div>
       )}
 
@@ -154,16 +113,10 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
         >
           <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>📊</div>
           <h3 style={{ fontSize: "1rem", fontWeight: 600, marginBottom: "0.5rem", color: "#374151" }}>
-            No analytics events yet
+            {t("analyticsEvents.emptyTitle")}
           </h3>
           <p style={{ fontSize: "0.875rem" }}>
-            The Analytics Event Store is ready and running. Events will appear here once
-            Wave 2B (Facility &amp; Booking), 2C (Academy), or 2D (Football Intelligence)
-            modules begin recording metric events via{" "}
-            <code style={{ backgroundColor: "#e5e7eb", padding: "0.1rem 0.3rem", borderRadius: "0.25rem" }}>
-              IAnalyticsRecorder
-            </code>
-            .
+            {t("analyticsEvents.emptyDescription")}
           </p>
           <div style={{ marginTop: "1.5rem", fontSize: "0.75rem", color: "#9ca3af" }}>
             Verification: run{" "}
@@ -184,30 +137,29 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
                 width: "100%",
                 borderCollapse: "collapse",
                 fontSize: "0.875rem",
+                textAlign: isRtl ? "right" : "left",
               }}
             >
               <thead>
-                <tr style={{ backgroundColor: "#f3f4f6", textAlign: "left" }}>
-                  {[
-                    "Event Name",
-                    "Source Module",
-                    "Occurred At",
-                    "Subject Type",
-                    "Subject ID",
-                    "Numeric Value",
-                  ].map((h) => (
-                    <th
-                      key={h}
-                      style={{
-                        padding: "0.75rem 1rem",
-                        fontWeight: 600,
-                        color: "#374151",
-                        borderBottom: "1px solid #e5e7eb",
-                      }}
-                    >
-                      {h}
-                    </th>
-                  ))}
+                <tr style={{ backgroundColor: "#f3f4f6" }}>
+                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "#374151", borderBottom: "1px solid #e5e7eb" }}>
+                    {t("analyticsEvents.columns.name")}
+                  </th>
+                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "#374151", borderBottom: "1px solid #e5e7eb" }}>
+                    {t("analyticsEvents.columns.module")}
+                  </th>
+                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "#374151", borderBottom: "1px solid #e5e7eb" }}>
+                    {t("analyticsEvents.columns.occurredAt")}
+                  </th>
+                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "#374151", borderBottom: "1px solid #e5e7eb" }}>
+                    {t("analyticsEvents.columns.subjectType")}
+                  </th>
+                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "#374151", borderBottom: "1px solid #e5e7eb" }}>
+                    {t("analyticsEvents.columns.subjectId")}
+                  </th>
+                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "#374151", borderBottom: "1px solid #e5e7eb" }}>
+                    {t("analyticsEvents.columns.numericValue")}
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -235,7 +187,7 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
                       {ev.subjectEntityId ? ev.subjectEntityId.slice(0, 8) + "…" : "—"}
                     </td>
                     <td style={{ padding: "0.75rem 1rem", color: "#6b7280" }}>
-                      {ev.associatedNumericValue !== undefined
+                      {ev.associatedNumericValue !== undefined && ev.associatedNumericValue !== null
                         ? ev.associatedNumericValue
                         : "—"}
                     </td>
