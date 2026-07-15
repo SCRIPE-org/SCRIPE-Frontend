@@ -244,7 +244,7 @@ export function MySubscriptionView() {
               <span className="text-sm text-muted-foreground">
                 {t("entitlements.mySubscription.totalAmount") || "Total Amount"}
               </span>
-              <span className="bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-xl font-bold text-transparent">
+              <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
                 {formatCurrency(sub.totalAmount, sub.currency)}
               </span>
             </div>

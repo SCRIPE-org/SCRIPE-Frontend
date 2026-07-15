@@ -30,7 +30,8 @@ import { useSettings } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
 import type { PaginationInfo } from "@core/common/pagination";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useCallback, useMemo, memo } from "react";
+import { useCallback, useMemo, memo, useEffect } from "react";
+import { Users, Sliders, ListTodo, Activity, ShieldCheck, Key, FileText } from "lucide-react";
 import { appLogger } from "@core/common/logger";
 import { usePermission } from "@core/hooks/use-permission";
 import { usePermissions } from "@core/hooks/use-permissions";
@@ -634,6 +635,57 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   // Determine if Add button should be shown
   const showAddButton = !config?.hideAddButton && effectivePermissions.canCreate;
 
+  const getPageIcon = () => {
+    const res = config?.resource?.toLowerCase() || "";
+    const lowerTitle = title.toLowerCase();
+    
+    if (res.includes("staff") || res.includes("hrms") || lowerTitle.includes("staff") || lowerTitle.includes("hrms")) {
+      return <Users className="h-6 w-6 text-violet-500 dark:text-violet-400" />;
+    }
+    if (res.includes("party") || lowerTitle.includes("party") || lowerTitle.includes("parties")) {
+      return <Users className="h-6 w-6 text-emerald-500 dark:text-emerald-400" />;
+    }
+    if (res.includes("work") || res.includes("task") || lowerTitle.includes("work") || lowerTitle.includes("task") || lowerTitle.includes("todo")) {
+      return <ListTodo className="h-6 w-6 text-sky-500 dark:text-sky-400" />;
+    }
+    if (res.includes("custom") || lowerTitle.includes("custom") || lowerTitle.includes("field")) {
+      return <Sliders className="h-6 w-6 text-amber-500 dark:text-amber-400" />;
+    }
+    if (res.includes("analytics") || lowerTitle.includes("analytics") || lowerTitle.includes("metric") || lowerTitle.includes("event")) {
+      return <Activity className="h-6 w-6 text-rose-500 dark:text-rose-400" />;
+    }
+    if (res.includes("compliance") || lowerTitle.includes("compliance") || lowerTitle.includes("consent") || lowerTitle.includes("gdpr")) {
+      return <ShieldCheck className="h-6 w-6 text-teal-500 dark:text-teal-400" />;
+    }
+    if (res.includes("entitlement") || lowerTitle.includes("entitlement") || lowerTitle.includes("quota") || lowerTitle.includes("plan") || lowerTitle.includes("billing")) {
+      return <Key className="h-6 w-6 text-indigo-500 dark:text-indigo-400" />;
+    }
+    return <FileText className="h-6 w-6 text-slate-500 dark:text-slate-400" />;
+  };
+
+  // Keyboard shortcut listener for power users (Alex)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Focus search input: Cmd/Ctrl + K or Alt + S
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        search?.inputRef?.current?.focus();
+      }
+      // Open add modal: Alt + N (only if allowed)
+      if (e.altKey && e.key.toLowerCase() === "n" && showAddButton) {
+        e.preventDefault();
+        handleCreateClick();
+      }
+      // Refresh list: Alt + R
+      if (e.altKey && e.key.toLowerCase() === "r") {
+        e.preventDefault();
+        viewModel.refresh();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [search, showAddButton, handleCreateClick, viewModel]);
+
   const getSpacingClasses = () => {
     switch (settings.spacingSize) {
       case "compact":
@@ -692,9 +744,14 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   return (
     <div className={getSpacingClasses()}>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-          {subtitle && <p className="text-muted-foreground">{subtitle}</p>}
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-background shadow-sm border border-border">
+            {getPageIcon()}
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+            {subtitle && <p className="text-muted-foreground">{subtitle}</p>}
+          </div>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
           {config?.customActions
