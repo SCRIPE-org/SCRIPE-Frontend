@@ -1,4 +1,4 @@
-import { CommercialPageConnector } from "@/modules/docs/src/presentation/views/CommercialPageConnector";
+import { CommercialPageConnector } from "@modules/docs/src/presentation/views/CommercialPageConnector";
 
 interface Props {
   params: Promise<{ slug: string[] }>;

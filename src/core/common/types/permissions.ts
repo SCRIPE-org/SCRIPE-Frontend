@@ -26,6 +26,9 @@ import { MARKETPLACE_PERMISSIONS } from "@modules/marketplace/permission-constan
 
 import { PARTY_KERNEL_PERMISSIONS } from "@modules/party-kernel/permission-constants";
 import { HRMS_PERMISSIONS } from "@modules/hrms/permission-constants";
+import { WORK_MANAGEMENT_PERMISSIONS } from "@modules/work-management/permission-constants";
+import { CUSTOM_FIELDS_PERMISSIONS } from "@modules/custom-fields/permission-constants";
+
 // ── Re-export individual module permissions for direct access ─────────────────
 export {
   IDENTITY_PERMISSIONS,
@@ -41,6 +44,8 @@ export {
   MARKETPLACE_PERMISSIONS,
   PARTY_KERNEL_PERMISSIONS,
   HRMS_PERMISSIONS,
+  WORK_MANAGEMENT_PERMISSIONS,
+  CUSTOM_FIELDS_PERMISSIONS,
 };
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -180,6 +185,8 @@ export const SYSTEM_PERMISSIONS = {
   ...MARKETPLACE_PERMISSIONS,
   ...PARTY_KERNEL_PERMISSIONS,
   ...HRMS_PERMISSIONS,
+  ...WORK_MANAGEMENT_PERMISSIONS,
+  ...CUSTOM_FIELDS_PERMISSIONS,
 } as const;
 
 // ── Page permission mapping ───────────────────────────────────────────────────
@@ -272,8 +279,6 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/integrations/webhooks": [SYSTEM_PERMISSIONS.WEBHOOKS_VIEW],
   "/integrations/webhooks/[id]": [SYSTEM_PERMISSIONS.WEBHOOKS_VIEW],
   "/integrations/apikeys": [SYSTEM_PERMISSIONS.API_KEYS_VIEW],
-
-  // Media
   "/media": [SYSTEM_PERMISSIONS.MEDIA_VIEW],
 
   // Ecosystem
@@ -306,11 +311,10 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/compliance/dsr/[id]": [SYSTEM_PERMISSIONS.COMPLIANCE_DSR_VIEW],
   "/compliance/consent": [SYSTEM_PERMISSIONS.COMPLIANCE_CONSENT_VIEW],
   "/compliance/retention": [SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_VIEW],
-  "/compliance/inventory": [SYSTEM_PERMISSIONS.COMPLIANCE_DATA_INVENTORY_VIEW],
+  "/compliance/data-inventory": [SYSTEM_PERMISSIONS.COMPLIANCE_DATA_INVENTORY_VIEW],
   "/compliance/reports": [SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_VIEW],
   "/compliance/reports/[id]": [SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_VIEW],
 
-  /*
   // Plugins Module
   "/plugins": [SYSTEM_PERMISSIONS.PLUGINS_CATALOG_VIEW],
   "/plugins/catalog": [SYSTEM_PERMISSIONS.PLUGINS_CATALOG_VIEW],
@@ -324,6 +328,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // Marketplace Module
   "/marketplace": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
+  "/marketplace/[id]": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
   "/marketplace/catalog": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
   "/marketplace/catalog/[id]": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
   "/marketplace/categories": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
@@ -338,7 +343,6 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/marketplace/my-profile": [SYSTEM_PERMISSIONS.DEVELOPER_PROFILES_VIEW],
   "/marketplace/my-submissions": [SYSTEM_PERMISSIONS.APP_SUBMISSIONS_VIEW],
   "/marketplace/my-earnings": [SYSTEM_PERMISSIONS.APP_PURCHASES_VIEW],
-  */
 
   // PartyKernel Module
   "/party-kernel": [SYSTEM_PERMISSIONS.PARTY_VIEW],
@@ -387,4 +391,48 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // StaffAvailability Feature
   "/hrms/staff-availabilities": [SYSTEM_PERMISSIONS.STAFF_AVAILABILITY_VIEW],
+
+  // Work Items Module
+  "/work-items": [SYSTEM_PERMISSIONS.WORK_ITEM_VIEW],
+
+  // Custom Fields Module
+  "/custom-fields": [SYSTEM_PERMISSIONS.CUSTOM_FIELD_VIEW],
+
+  // Analytics & Dashboard Events
+  "/analytics/events": [SYSTEM_PERMISSIONS.ANALYTICS_VIEW],
+  "/dashboard-preview": [SYSTEM_PERMISSIONS.DASHBOARD_VIEW],
+
+  // Dynamic Integrations details
+  "/integrations/apikeys/[id]": [SYSTEM_PERMISSIONS.API_KEYS_VIEW],
+
+  // Billing & Entitlements Details
+  "/entitlements/tenant-plans/[id]/edit": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
+  "/entitlements/tenant-plans/create": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
+  "/entitlements/editions/create": [SYSTEM_PERMISSIONS.EDITIONS_CREATE],
+  "/entitlements/editions/[id]/edit": [SYSTEM_PERMISSIONS.EDITIONS_UPDATE],
+  "/entitlements/editions/[id]/overview": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
+  "/entitlements/edition-categories": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
+  "/entitlements/onboarding/rules": [SYSTEM_PERMISSIONS.ONBOARDING_QUESTIONS_VIEW],
+
+  // Studio Customization Preview
+  "/studio-preview": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
+
+  // Public / Hub / Auth endpoints (No permission required, but mapped so RouteGuard bypasses successfully)
+  "/activate-workspace": [],
+  "/hub": [],
+  "/docs": [],
+  "/docs/[...slug]": [],
+  "/commercial": [],
+  "/commercial/[...slug]": [],
+  "/forgot-password": [],
+  "/magic-link": [],
+  "/reset-password": [],
+  "/setup-account": [],
+  "/signup": [],
+  "/signup/complete": [],
+  "/signup/finalize": [],
+  "/sso/callback": [],
+  "/sso/saml/callback": [],
+  "/not-authorized": [],
+  "/qr-approve": [],
 };
