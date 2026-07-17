@@ -4,17 +4,15 @@
  * Dropdown to switch the global display currency.
  * Three modes: Native (original), Session (just this time), Always (persisted).
  *
- * Fetches live exchange rates from backend GET /v1/currency/rates.
- * Rates are cached in Zustand store after first fetch.
+ * Live exchange rates are managed via useCurrencyRates hook.
  */
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCurrencyPreference } from "@core/store/useCurrencyPreference";
 import { useConvertedAmount } from "@core/hooks/useConvertedAmount";
-import { getCoreContainer } from "@core/di";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { useCurrencyRates } from "@core/hooks/useCurrencyRates";
 import { Button } from "@core/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
 import { Separator } from "@core/ui/separator";
@@ -33,21 +31,6 @@ const DISPLAY_CURRENCIES = [
   { code: "INR", flag: "🇮🇳", name: "Indian Rupee" },
 ] as const;
 
-/**
- * Fallback rates used ONLY if the backend API is unreachable.
- * These are never shown as the primary source — backend is always tried first.
- */
-const FALLBACK_RATES: Record<string, number> = {
-  USD: 1,
-  EUR: 0.92,
-  GBP: 0.79,
-  SAR: 3.75,
-  AED: 3.67,
-  EGP: 50.5,
-  TRY: 32.5,
-  INR: 83.5,
-};
-
 interface CurrencyDisplayToggleProps {
   className?: string;
 }
@@ -57,63 +40,15 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
   const {
     displayCurrency,
     displayMode,
-    exchangeRates,
     setDisplayCurrency,
     resetToNative,
-    setRates,
-    setLoadingRates,
     isLoadingRates,
   } = useCurrencyPreference();
 
   const { isConverting } = useConvertedAmount();
+  const { fetchRates, fetchError } = useCurrencyRates();
   const [alwaysChecked, setAlwaysChecked] = useState(displayMode === "always");
   const [open, setOpen] = useState(false);
-  const [fetchError, setFetchError] = useState(false);
-
-  // ── Fetch rates from backend API ──────────────────────────────
-  const fetchRatesFromBackend = useCallback(
-    async (force = false) => {
-      // Skip if already loaded and not forcing refresh
-      if (exchangeRates && !force) return;
-
-      setLoadingRates(true);
-      setFetchError(false);
-
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
-        const url = API_ENDPOINTS.ENTITLEMENTS.CURRENCY.RATES("USD");
-        const token = getCoreContainer().apiService.getAuthToken();
-        const response = await fetch(`${apiUrl}${url}`, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch rates: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        // Backend returns { USD: 1, EUR: 0.92, ... } as decimals
-        const rates: Record<string, number> = {};
-        for (const [key, value] of Object.entries(data)) {
-          rates[key] = Number(value);
-        }
-
-        setRates(rates, "USD");
-      } catch {
-        // Fallback to static rates if backend is unreachable
-        setFetchError(true);
-        if (!exchangeRates) {
-          setRates(FALLBACK_RATES, "USD");
-        }
-      }
-    },
-    [exchangeRates, setLoadingRates, setRates]
-  );
 
   function handleSelectCurrency(code: string) {
     const mode: "session" | "always" = alwaysChecked ? "always" : "session";
@@ -134,7 +69,7 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
       open={open}
       onOpenChange={(o) => {
         setOpen(o);
-        if (o) fetchRatesFromBackend();
+        if (o) fetchRates();
       }}
     >
       <PopoverTrigger asChild>
@@ -232,7 +167,7 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
           </p>
           <button
             type="button"
-            onClick={() => fetchRatesFromBackend(true)}
+            onClick={() => fetchRates(true)}
             className="text-muted-foreground/50 transition-colors hover:text-muted-foreground"
             title={t("currency.refreshRates") || "Refresh rates"}
           >

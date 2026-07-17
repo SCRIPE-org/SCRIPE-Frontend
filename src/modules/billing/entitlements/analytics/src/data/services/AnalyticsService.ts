@@ -2,9 +2,9 @@
  * Analytics Service — HTTP API calls only.
  * Implements IAnalyticsService contract.
  */
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { IAnalyticsService } from "../../domain/interfaces/IAnalyticsService";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import type {
   AnalyticsOverviewModel,
   MrrMovementResponseModel,
@@ -16,6 +16,7 @@ import type {
   ReportPreferenceModel,
   UpdateReportPreferenceRequestModel,
 } from "../models/AnalyticsModels";
+import { ANALYTICS_ENDPOINTS } from "./analytics.endpoints";
 
 /** Convert months count to from/to ISO date strings */
 function monthsToDateRange(months?: number): { from?: string; to?: string } {
@@ -39,21 +40,21 @@ export class AnalyticsService implements IAnalyticsService {
   async getOverview(months?: number): Promise<AnalyticsOverviewModel> {
     const range = monthsToDateRange(months);
     return this.api.get<AnalyticsOverviewModel>(
-      buildUrl(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.OVERVIEW, range)
+      buildUrl(ANALYTICS_ENDPOINTS.OVERVIEW, range)
     );
   }
 
   async getMrrMovement(months?: number): Promise<MrrMovementResponseModel> {
     const range = monthsToDateRange(months);
     return this.api.get<MrrMovementResponseModel>(
-      buildUrl(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.MRR_MOVEMENT, range)
+      buildUrl(ANALYTICS_ENDPOINTS.MRR_MOVEMENT, range)
     );
   }
 
   async getCohortAnalysis(months?: number): Promise<CohortAnalysisResponseModel> {
     const range = monthsToDateRange(months);
     return this.api.get<CohortAnalysisResponseModel>(
-      buildUrl(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.COHORT, {
+      buildUrl(ANALYTICS_ENDPOINTS.COHORT, {
         cohortStart: range.from,
         cohortEnd: range.to,
       })
@@ -61,12 +62,12 @@ export class AnalyticsService implements IAnalyticsService {
   }
 
   async getLtvByEdition(): Promise<LtvResponseModel> {
-    return this.api.get<LtvResponseModel>(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.LTV);
+    return this.api.get<LtvResponseModel>(ANALYTICS_ENDPOINTS.LTV);
   }
 
   async getForecast(months?: number): Promise<RevenueForecastResponseModel> {
     return this.api.get<RevenueForecastResponseModel>(
-      buildUrl(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.FORECAST, {
+      buildUrl(ANALYTICS_ENDPOINTS.FORECAST, {
         forecastMonths: months ?? 6,
       })
     );
@@ -81,7 +82,7 @@ export class AnalyticsService implements IAnalyticsService {
     maxScore?: number
   ): Promise<TenantHealthScoresResponseModel> {
     return this.api.get<TenantHealthScoresResponseModel>(
-      buildUrl(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.HEALTH_SCORES, {
+      buildUrl(ANALYTICS_ENDPOINTS.HEALTH_SCORES, {
         page,
         pageSize,
         sortBy,
@@ -94,18 +95,18 @@ export class AnalyticsService implements IAnalyticsService {
 
   async getHealthById(tenantId: string): Promise<TenantHealthDetailModel> {
     return this.api.get<TenantHealthDetailModel>(
-      API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.HEALTH_BY_ID(tenantId)
+      ANALYTICS_ENDPOINTS.HEALTH_BY_ID(tenantId)
     );
   }
 
   async getReportPreferences(): Promise<ReportPreferenceModel> {
     return this.api.get<ReportPreferenceModel>(
-      API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.REPORT_PREFERENCES
+      ANALYTICS_ENDPOINTS.REPORT_PREFERENCES
     );
   }
 
   async updateReportPreferences(data: UpdateReportPreferenceRequestModel): Promise<void> {
-    await this.api.put(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.REPORT_PREFERENCES, data);
+    await this.api.put(ANALYTICS_ENDPOINTS.REPORT_PREFERENCES, data);
   }
 
   async exportAnalytics(data: {
@@ -118,7 +119,7 @@ export class AnalyticsService implements IAnalyticsService {
     includeHealth: boolean;
     includeForecast: boolean;
   }): Promise<Blob> {
-    return this.api.postBlob(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.EXPORT, data);
+    return this.api.postBlob(ANALYTICS_ENDPOINTS.EXPORT, data);
   }
 
   async generateReport(data: {
@@ -127,6 +128,6 @@ export class AnalyticsService implements IAnalyticsService {
     tenantId?: string;
     currency: string;
   }): Promise<Blob> {
-    return this.api.postBlob(API_ENDPOINTS.ENTITLEMENTS.ANALYTICS.GENERATE_REPORT, data);
+    return this.api.postBlob(ANALYTICS_ENDPOINTS.GENERATE_REPORT, data);
   }
 }

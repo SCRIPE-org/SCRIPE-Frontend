@@ -1,7 +1,7 @@
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type { ICatalogService } from "../../domain/interfaces/ICatalogService";
 import type { PluginCatalogItemModel, InstallPluginRequest } from "../models/CatalogModels";
+import { CATALOG_ENDPOINTS } from "./catalog.endpoints";
 
 /**
  * Http API network service for catalog.
@@ -12,11 +12,11 @@ export class CatalogService implements ICatalogService {
 
   getCatalog(tenantId: string): Promise<PluginCatalogItemModel[]> {
     return this.api.get<PluginCatalogItemModel[]>(
-      `${API_ENDPOINTS.PLUGINS.CATALOG}?tenantId=${tenantId}`
+      `${CATALOG_ENDPOINTS.CATALOG}?tenantId=${tenantId}`
     );
   }
 
   install(request: InstallPluginRequest): Promise<string> {
-    return this.api.post<string>(API_ENDPOINTS.PLUGINS.INSTALL, request);
+    return this.api.post<string>(CATALOG_ENDPOINTS.INSTALL, request);
   }
 }

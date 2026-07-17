@@ -6,10 +6,11 @@
  *
  * @module notification-sender/data
  */
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import type { INotificationSenderService } from "../../domain/interfaces/INotificationSenderService";
 import type { NotificationTargetJson, SendNotificationJson } from "../models/NotificationModel";
+import { NOTIFICATION_SENDER_ENDPOINTS } from "./notification-sender.endpoints";
 
 /**
  * Http API network service for notification sender.
@@ -19,11 +20,11 @@ export class NotificationSenderService implements INotificationSenderService {
   constructor(private readonly api: IApiService) {}
 
   async searchTargets(query: string): Promise<NotificationTargetJson[]> {
-    const url = buildUrl(API_ENDPOINTS.NOTIFICATIONS_SENDER.SEARCH_TARGETS, { search: query });
+    const url = buildUrl(NOTIFICATION_SENDER_ENDPOINTS.SEARCH_TARGETS, { search: query });
     return this.api.get<NotificationTargetJson[]>(url);
   }
 
   async send(data: SendNotificationJson): Promise<void> {
-    await this.api.post(API_ENDPOINTS.NOTIFICATIONS_SENDER.SEND, data);
+    await this.api.post(NOTIFICATION_SENDER_ENDPOINTS.SEND, data);
   }
 }

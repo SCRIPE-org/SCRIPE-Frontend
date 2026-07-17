@@ -1,9 +1,10 @@
 /**
  * RecommendationRule Service — API calls only
  *
- * Uses centralized API_ENDPOINTS for all endpoint paths.
+ * Uses local RECOMMENDATION_RULE_ENDPOINTS for all endpoint paths.
  * Returns raw DTOs (models) — never domain entities.
  */
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { IRecommendationRuleService } from "../../domain/interfaces/IRecommendationRuleService";
 import type {
@@ -11,11 +12,11 @@ import type {
   RecommendationRuleDetailModel,
 } from "../models/RecommendationRuleModels";
 import type { PaginationParams } from "@core/interfaces/common.interface";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type {
   CreateRecommendationRuleRequest,
   UpdateRecommendationRuleRequest,
 } from "../../domain/entities/RecommendationRuleRequests";
+import { RECOMMENDATION_RULES_ENDPOINTS } from "./recommendation-rules.endpoints";
 
 /**
  * Http API network service for recommendation rule.
@@ -25,31 +26,29 @@ export class RecommendationRuleService implements IRecommendationRuleService {
   constructor(private readonly api: IApiService) {}
 
   async getAll(params: PaginationParams): Promise<PagedRecommendationRulesModel> {
-    return this.api.get<PagedRecommendationRulesModel>(
-      API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_RULES.LIST,
-      {
-        page: params.page,
-        pageSize: params.pageSize,
-        search: params.search || undefined,
-      }
-    );
+    const url = buildUrl(RECOMMENDATION_RULES_ENDPOINTS.LIST, {
+      page: params.page,
+      pageSize: params.pageSize,
+      search: params.search || undefined,
+    });
+    return this.api.get<PagedRecommendationRulesModel>(url);
   }
 
   async getById(id: string): Promise<RecommendationRuleDetailModel> {
     return this.api.get<RecommendationRuleDetailModel>(
-      API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_RULES.BY_ID(id)
+      RECOMMENDATION_RULES_ENDPOINTS.BY_ID(id)
     );
   }
 
   async create(data: CreateRecommendationRuleRequest): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_RULES.CREATE, data);
+    return this.api.post<{ id: string }>(RECOMMENDATION_RULES_ENDPOINTS.CREATE, data);
   }
 
   async update(id: string, data: UpdateRecommendationRuleRequest): Promise<void> {
-    await this.api.put(API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_RULES.UPDATE(id), data);
+    await this.api.put(RECOMMENDATION_RULES_ENDPOINTS.UPDATE(id), data);
   }
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_RULES.DELETE(id));
+    await this.api.delete(RECOMMENDATION_RULES_ENDPOINTS.DELETE(id));
   }
 }

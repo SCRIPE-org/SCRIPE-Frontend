@@ -5,7 +5,6 @@
  *
  * @module auth/account-setup
  */
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type {
   ActivateAccountRequest,
   ActivateAccountResponse,
@@ -13,6 +12,7 @@ import type {
   ValidateTokenResponse,
 } from "../../../../core/domain/interfaces/IAccountSetupService";
 import type { IPublicApiService } from "@core/interfaces/public-api.interface";
+import { ACCOUNT_SETUP_ENDPOINTS } from "./account-setup.endpoints";
 
 /**
  * Re-exports type definitions representing account setup request and response contracts
@@ -28,10 +28,10 @@ export class AccountSetupService implements IAccountSetupService {
   constructor(private readonly api: IPublicApiService) {}
 
   async validateToken(token: string): Promise<ValidateTokenResponse> {
-    return this.api.get<ValidateTokenResponse>(API_ENDPOINTS.ACCOUNT_SETUP.VALIDATE_TOKEN(token));
+    return this.api.get<ValidateTokenResponse>(ACCOUNT_SETUP_ENDPOINTS.VALIDATE_TOKEN(token));
   }
 
   async activateAccount(request: ActivateAccountRequest): Promise<ActivateAccountResponse> {
-    return this.api.post<ActivateAccountResponse>(API_ENDPOINTS.ACCOUNT_SETUP.ACTIVATE, request);
+    return this.api.post<ActivateAccountResponse>(ACCOUNT_SETUP_ENDPOINTS.ACTIVATE, request);
   }
 }

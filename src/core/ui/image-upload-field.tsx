@@ -19,7 +19,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { Upload, Link2, Trash2, ImageIcon, Loader2, Check, X } from "lucide-react";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { SYSTEM_ENDPOINTS } from "@core/config/api-endpoints";
 import { getCoreContainer } from "@core/di";
 
 // ─── Props ──────────────────────────────────────────────────────
@@ -116,7 +116,7 @@ export function ImageUploadField({
       const formData = new FormData();
       formData.append("file", file);
       const api = getCoreContainer().apiService;
-      const result = await api.post<{ url: string }>(API_ENDPOINTS.UPLOADS.IMAGE, formData);
+      const result = await api.post<{ url: string }>(SYSTEM_ENDPOINTS.UPLOADS.IMAGE, formData);
       // Append cache-buster so browser fetches the new image (not a stale cached one)
       const resolved = resolveFileUrl(result.url);
       const cacheBusted = resolved.includes("?")

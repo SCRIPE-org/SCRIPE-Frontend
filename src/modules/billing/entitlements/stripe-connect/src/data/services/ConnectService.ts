@@ -2,7 +2,7 @@
  * Stripe Connect Service — API calls only, no business logic.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { IConnectService } from "../../domain/interfaces/IConnectService";
 import type {
   ConnectAccountResponseModel,
@@ -16,6 +16,7 @@ import type {
   PagedResultModel,
   TenantTransactionsResponseModel,
 } from "../models/ConnectModels";
+import { STRIPE_CONNECT_ENDPOINTS } from "./stripe-connect.endpoints";
 
 /**
  * Http API network service for connect.
@@ -28,7 +29,7 @@ export class ConnectService implements IConnectService {
 
   async getAccount(tenantId: string): Promise<ConnectAccountResponseModel> {
     return this.api.get<ConnectAccountResponseModel>(
-      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.ACCOUNTS.BY_ID(tenantId)
+      STRIPE_CONNECT_ENDPOINTS.ACCOUNTS.BY_ID(tenantId)
     );
   }
 
@@ -38,7 +39,7 @@ export class ConnectService implements IConnectService {
     search?: string;
     status?: string;
   }): Promise<PagedResultModel<ConnectAccountListResponseModel>> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.ACCOUNTS.LIST, {
+    const url = buildUrl(STRIPE_CONNECT_ENDPOINTS.ACCOUNTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
@@ -49,14 +50,14 @@ export class ConnectService implements IConnectService {
 
   async createAccount(tenantId: string): Promise<ConnectAccountResultModel> {
     return this.api.post<ConnectAccountResultModel>(
-      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.ACCOUNTS.CREATE,
+      STRIPE_CONNECT_ENDPOINTS.ACCOUNTS.CREATE,
       { tenantId }
     );
   }
 
   async searchEligibleTenants(search?: string): Promise<EligibleTenantItemModel[]> {
     const url = buildUrl(
-      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.ACCOUNTS.ELIGIBLE_TENANTS,
+      STRIPE_CONNECT_ENDPOINTS.ACCOUNTS.ELIGIBLE_TENANTS,
       search ? { search } : {}
     );
     return this.api.get<EligibleTenantItemModel[]>(url);
@@ -64,20 +65,20 @@ export class ConnectService implements IConnectService {
 
   async refreshOnboardingLink(tenantId: string): Promise<{ onboardingUrl: string }> {
     return this.api.post<{ onboardingUrl: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.ACCOUNTS.REFRESH_LINK(tenantId),
+      STRIPE_CONNECT_ENDPOINTS.ACCOUNTS.REFRESH_LINK(tenantId),
       {}
     );
   }
 
   async getDashboardLink(tenantId: string): Promise<{ dashboardUrl: string }> {
     return this.api.get<{ dashboardUrl: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.ACCOUNTS.DASHBOARD_LINK(tenantId)
+      STRIPE_CONNECT_ENDPOINTS.ACCOUNTS.DASHBOARD_LINK(tenantId)
     );
   }
 
   async updateCommissionRate(tenantId: string, rate: number | null): Promise<void> {
     await this.api.put(
-      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.ACCOUNTS.COMMISSION_RATE(tenantId),
+      STRIPE_CONNECT_ENDPOINTS.ACCOUNTS.COMMISSION_RATE(tenantId),
       { rate }
     );
   }
@@ -86,27 +87,27 @@ export class ConnectService implements IConnectService {
 
   async getTenantStatus(): Promise<ConnectAccountResponseModel> {
     return this.api.get<ConnectAccountResponseModel>(
-      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.TENANT_STRIPE_CONNECT.STATUS
+      STRIPE_CONNECT_ENDPOINTS.TENANT_STRIPE_CONNECT.STATUS
     );
   }
 
   async tenantOnboard(): Promise<ConnectAccountResultModel> {
     return this.api.post<ConnectAccountResultModel>(
-      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.TENANT_STRIPE_CONNECT.ONBOARD,
+      STRIPE_CONNECT_ENDPOINTS.TENANT_STRIPE_CONNECT.ONBOARD,
       {}
     );
   }
 
   async tenantRefreshLink(): Promise<{ onboardingUrl: string }> {
     return this.api.post<{ onboardingUrl: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.TENANT_STRIPE_CONNECT.REFRESH_LINK,
+      STRIPE_CONNECT_ENDPOINTS.TENANT_STRIPE_CONNECT.REFRESH_LINK,
       {}
     );
   }
 
   async tenantDashboard(): Promise<{ dashboardUrl: string }> {
     return this.api.post<{ dashboardUrl: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.TENANT_STRIPE_CONNECT.DASHBOARD_LINK,
+      STRIPE_CONNECT_ENDPOINTS.TENANT_STRIPE_CONNECT.DASHBOARD_LINK,
       {}
     );
   }
@@ -120,7 +121,7 @@ export class ConnectService implements IConnectService {
     fromDate?: string;
     toDate?: string;
   }): Promise<PagedResultModel<CommissionResponseModel>> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.COMMISSIONS.LIST, {
+    const url = buildUrl(STRIPE_CONNECT_ENDPOINTS.COMMISSIONS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       status: params.status,
@@ -141,7 +142,7 @@ export class ConnectService implements IConnectService {
     }
   ): Promise<PagedResultModel<CommissionResponseModel>> {
     const url = buildUrl(
-      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.COMMISSIONS.BY_TENANT(tenantId),
+      STRIPE_CONNECT_ENDPOINTS.COMMISSIONS.BY_TENANT(tenantId),
       {
         page: params.page,
         pageSize: params.pageSize,
@@ -155,12 +156,12 @@ export class ConnectService implements IConnectService {
 
   async getDashboard(): Promise<CommissionDashboardResponseModel> {
     return this.api.get<CommissionDashboardResponseModel>(
-      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.COMMISSIONS.DASHBOARD
+      STRIPE_CONNECT_ENDPOINTS.COMMISSIONS.DASHBOARD
     );
   }
 
   async getTrends(days: number, tenantId?: string): Promise<CommissionTrendPointModel[]> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.COMMISSIONS.TRENDS, {
+    const url = buildUrl(STRIPE_CONNECT_ENDPOINTS.COMMISSIONS.TRENDS, {
       days,
       tenantId,
     });
@@ -168,7 +169,7 @@ export class ConnectService implements IConnectService {
   }
 
   async getTopTenants(top: number, fromDate?: string): Promise<TopTenantResponseModel[]> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.COMMISSIONS.TOP_TENANTS, {
+    const url = buildUrl(STRIPE_CONNECT_ENDPOINTS.COMMISSIONS.TOP_TENANTS, {
       top,
       fromDate,
     });
@@ -186,7 +187,7 @@ export class ConnectService implements IConnectService {
     toDate?: string;
   }): Promise<TenantTransactionsResponseModel> {
     const url = buildUrl(
-      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.TENANT_STRIPE_CONNECT.TRANSACTIONS,
+      STRIPE_CONNECT_ENDPOINTS.TENANT_STRIPE_CONNECT.TRANSACTIONS,
       {
         page: params.page,
         pageSize: params.pageSize,
@@ -201,7 +202,7 @@ export class ConnectService implements IConnectService {
 
   async syncMyAccount(): Promise<ConnectAccountResponseModel> {
     return this.api.post<ConnectAccountResponseModel>(
-      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.TENANT_STRIPE_CONNECT.SYNC,
+      STRIPE_CONNECT_ENDPOINTS.TENANT_STRIPE_CONNECT.SYNC,
       {}
     );
   }

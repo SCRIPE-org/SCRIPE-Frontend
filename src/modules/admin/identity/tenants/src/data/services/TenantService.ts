@@ -8,7 +8,7 @@
  * @module tenants/data
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import {
   TenantModel,
   TenantTreeNodeModel,
@@ -37,6 +37,7 @@ import type {
   PagedEditionResult,
   DowngradeImpactReport,
 } from "../models/TenantSubscription";
+import { TENANTS_ENDPOINTS } from "./tenants.endpoints";
 
 /**
  * Http API network service for tenant.
@@ -46,7 +47,7 @@ export class TenantService implements ITenantService {
   constructor(private readonly api: IApiService) {}
 
   async getAll(params: ServiceTenantListParams): Promise<TenantListResult> {
-    const url = buildUrl(API_ENDPOINTS.TENANTS.LIST, {
+    const url = buildUrl(TENANTS_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
@@ -67,12 +68,12 @@ export class TenantService implements ITenantService {
   }
 
   async getTree(): Promise<TenantTreeNodeModel[]> {
-    const jsonList = await this.api.get<TenantTreeNodeJson[]>(API_ENDPOINTS.TENANTS.TREE);
+    const jsonList = await this.api.get<TenantTreeNodeJson[]>(TENANTS_ENDPOINTS.TREE);
     return jsonList.map((json) => TenantTreeNodeModel.fromJson(json));
   }
 
   async getMyChildren(params?: ServiceTenantListParams): Promise<TenantTreeListResult> {
-    const url = buildUrl(API_ENDPOINTS.TENANTS.MY_CHILDREN, {
+    const url = buildUrl(TENANTS_ENDPOINTS.MY_CHILDREN, {
       page: params?.page,
       pageSize: params?.pageSize,
       search: params?.search,
@@ -95,45 +96,45 @@ export class TenantService implements ITenantService {
    * System admins get a "System" pseudo-tenant (null ID)
    */
   async getMyTenantAndChildren(search?: string): Promise<TenantTreeNodeModel[]> {
-    const url = buildUrl(API_ENDPOINTS.TENANTS.MY_TENANT_AND_CHILDREN, { search });
+    const url = buildUrl(TENANTS_ENDPOINTS.MY_TENANT_AND_CHILDREN, { search });
     const jsonList = await this.api.get<TenantTreeNodeJson[]>(url);
     return jsonList.map((json) => TenantTreeNodeModel.fromJson(json));
   }
 
   async getChildren(parentId: string): Promise<TenantTreeNodeModel[]> {
     const jsonList = await this.api.get<TenantTreeNodeJson[]>(
-      API_ENDPOINTS.TENANTS.CHILDREN(parentId)
+      TENANTS_ENDPOINTS.CHILDREN(parentId)
     );
     return jsonList.map((json) => TenantTreeNodeModel.fromJson(json));
   }
 
   async getById(id: string): Promise<TenantModel> {
-    const json = await this.api.get<TenantJson>(API_ENDPOINTS.TENANTS.BY_ID(id));
+    const json = await this.api.get<TenantJson>(TENANTS_ENDPOINTS.BY_ID(id));
     return TenantModel.fromJson(json);
   }
 
   async create(json: CreateTenantJson): Promise<CreateTenantResultJson> {
-    return this.api.post<CreateTenantResultJson>(API_ENDPOINTS.TENANTS.CREATE, json);
+    return this.api.post<CreateTenantResultJson>(TENANTS_ENDPOINTS.CREATE, json);
   }
 
   async update(id: string, json: UpdateTenantJson): Promise<void> {
-    await this.api.put(API_ENDPOINTS.TENANTS.UPDATE(id), json);
+    await this.api.put(TENANTS_ENDPOINTS.UPDATE(id), json);
   }
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.TENANTS.DELETE(id));
+    await this.api.delete(TENANTS_ENDPOINTS.DELETE(id));
   }
 
   async getStats(id: string): Promise<TenantStats> {
-    return this.api.get<TenantStats>(API_ENDPOINTS.TENANTS.STATS(id));
+    return this.api.get<TenantStats>(TENANTS_ENDPOINTS.STATS(id));
   }
 
   async getDescendantCount(id: string): Promise<number> {
-    return this.api.get<number>(`${API_ENDPOINTS.TENANTS.BY_ID(id)}/descendant-count`);
+    return this.api.get<number>(`${TENANTS_ENDPOINTS.BY_ID(id)}/descendant-count`);
   }
 
   async getCreationPermissions(parentId?: string, search?: string): Promise<PermissionModel[]> {
-    const url = buildUrl(API_ENDPOINTS.TENANTS.CREATION_PERMISSIONS, {
+    const url = buildUrl(TENANTS_ENDPOINTS.CREATION_PERMISSIONS, {
       parentId,
       search,
     });
@@ -142,7 +143,7 @@ export class TenantService implements ITenantService {
   }
 
   async getTenantPermissions(tenantId: string, search?: string): Promise<PermissionModel[]> {
-    const url = buildUrl(API_ENDPOINTS.TENANTS.PERMISSIONS(tenantId), {
+    const url = buildUrl(TENANTS_ENDPOINTS.PERMISSIONS(tenantId), {
       search,
     });
     const jsonList = await this.api.get<PermissionJson[]>(url);
@@ -154,12 +155,12 @@ export class TenantService implements ITenantService {
     tenantId: string,
     search?: string
   ): Promise<PermissionModuleGroupJson[]> {
-    const url = buildUrl(API_ENDPOINTS.TENANTS.PERMISSIONS_GROUPED(tenantId), { search });
+    const url = buildUrl(TENANTS_ENDPOINTS.PERMISSIONS_GROUPED(tenantId), { search });
     return this.api.get(url);
   }
 
   async updateTenantPermissions(tenantId: string, permissionIds: string[]): Promise<void> {
-    await this.api.put(API_ENDPOINTS.TENANTS.PERMISSIONS(tenantId), { permissionIds });
+    await this.api.put(TENANTS_ENDPOINTS.PERMISSIONS(tenantId), { permissionIds });
   }
 
   async toggleStatus(id: string, isActive: boolean): Promise<void> {
@@ -174,7 +175,7 @@ export class TenantService implements ITenantService {
       isActive: isActive,
     };
 
-    await this.api.put(API_ENDPOINTS.TENANTS.UPDATE(id), payload);
+    await this.api.put(TENANTS_ENDPOINTS.UPDATE(id), payload);
   }
 
   setTenantContext(tenantId: string | null): void {
@@ -182,11 +183,11 @@ export class TenantService implements ITenantService {
   }
 
   async getSettings(tenantId: string): Promise<TenantSettingsModel> {
-    return this.api.get<TenantSettingsModel>(API_ENDPOINTS.TENANTS.SETTINGS(tenantId));
+    return this.api.get<TenantSettingsModel>(TENANTS_ENDPOINTS.SETTINGS(tenantId));
   }
 
   async updateSettings(tenantId: string, request: UpdateTenantSettingsRequest): Promise<void> {
-    await this.api.put(API_ENDPOINTS.TENANTS.SETTINGS(tenantId), request);
+    await this.api.put(TENANTS_ENDPOINTS.SETTINGS(tenantId), request);
   }
 
   async uploadLogo(tenantId: string, file: File): Promise<{ url: string }> {
@@ -196,7 +197,7 @@ export class TenantService implements ITenantService {
     // NOTE: When sending FormData, let the browser set Content-Type header (it adds boundary)
     // ApiService should handle FormData correctly or allow overriding headers
     return this.api.post<{ url: string }>(
-      `${API_ENDPOINTS.TENANTS.BY_ID(tenantId)}/logo`,
+      `${TENANTS_ENDPOINTS.BY_ID(tenantId)}/logo`,
       formData
       // Assuming ApiService supports a way to handle FormData implicitly or explicitly.
       // If strictly JSON, we might need a specific handling.
@@ -209,7 +210,7 @@ export class TenantService implements ITenantService {
     pageSize: number = 100,
     search?: string
   ): Promise<PagedEditionResult> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.LIST, {
+    const url = buildUrl(TENANTS_ENDPOINTS.ENTITLEMENTS.EDITIONS.LIST, {
       page,
       pageSize,
       search,
@@ -235,7 +236,7 @@ export class TenantService implements ITenantService {
       firstTimeOnly: boolean;
     }>
   > {
-    return this.api.get(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.PROMOTIONS(editionId));
+    return this.api.get(TENANTS_ENDPOINTS.ENTITLEMENTS.EDITIONS.PROMOTIONS(editionId));
   }
 
   async validatePromoCode(
@@ -249,7 +250,7 @@ export class TenantService implements ITenantService {
     discountType?: string;
     discountValue?: number;
   }> {
-    return this.api.post(API_ENDPOINTS.ENTITLEMENTS.EDITIONS.VALIDATE_PROMO_CODE(editionId), {
+    return this.api.post(TENANTS_ENDPOINTS.ENTITLEMENTS.EDITIONS.VALIDATE_PROMO_CODE(editionId), {
       promoCode,
     });
   }
@@ -264,7 +265,7 @@ export class TenantService implements ITenantService {
     promotionId?: string
   ): Promise<{ id: string }> {
     return this.api.post<{ id: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.ASSIGN(tenantId),
+      TENANTS_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.ASSIGN(tenantId),
       { editionId, type, endDate, currency: currency || "USD", promoCode, promotionId }
     );
   }
@@ -277,7 +278,7 @@ export class TenantService implements ITenantService {
     promoCode?: string,
     promotionId?: string
   ): Promise<void> {
-    await this.api.put(API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE(tenantId), {
+    await this.api.put(TENANTS_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE(tenantId), {
       editionId,
       type,
       currency,
@@ -288,7 +289,7 @@ export class TenantService implements ITenantService {
 
   async renewSubscription(tenantId: string, type: string): Promise<string> {
     const res = await this.api.post<{ message: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RENEW(tenantId),
+      TENANTS_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RENEW(tenantId),
       { type }
     );
     return res?.message || "";
@@ -296,7 +297,7 @@ export class TenantService implements ITenantService {
 
   async convertTrial(tenantId: string, type: string): Promise<string> {
     const res = await this.api.post<{ message: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CONVERT(tenantId),
+      TENANTS_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CONVERT(tenantId),
       { type }
     );
     return res?.message || "";
@@ -310,7 +311,7 @@ export class TenantService implements ITenantService {
     customRefundAmount?: number
   ): Promise<string> {
     const res = await this.api.post<{ message: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.SUSPEND(tenantId),
+      TENANTS_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.SUSPEND(tenantId),
       {
         reason,
         useFallback: useFallback ?? false,
@@ -323,7 +324,7 @@ export class TenantService implements ITenantService {
 
   async resumeSubscription(tenantId: string, type?: string): Promise<string> {
     const res = await this.api.post<{ message: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RESUME(tenantId),
+      TENANTS_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RESUME(tenantId),
       type ? { type } : {}
     );
     return res?.message || "";
@@ -337,7 +338,7 @@ export class TenantService implements ITenantService {
     customRefundAmount?: number
   ): Promise<string> {
     const res = await this.api.post<{ message: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CANCEL(tenantId),
+      TENANTS_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CANCEL(tenantId),
       {
         reason,
         useFallback: useFallback ?? false,
@@ -349,12 +350,12 @@ export class TenantService implements ITenantService {
   }
 
   async resyncPermissions(tenantId: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RESYNC(tenantId), {});
+    await this.api.post(TENANTS_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RESYNC(tenantId), {});
   }
 
   async getTenantSubscriptions(tenantId: string): Promise<SubscriptionModel[]> {
     return this.api.get<SubscriptionModel[]>(
-      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.LIST_BY_TENANT(tenantId)
+      TENANTS_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.LIST_BY_TENANT(tenantId)
     );
   }
 
@@ -379,12 +380,12 @@ export class TenantService implements ITenantService {
         valueType: string;
         source: string;
       }>
-    >(API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.RESOLVED(tenantId));
+    >(TENANTS_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.RESOLVED(tenantId));
   }
 
   async changeCurrency(tenantId: string, currency: string): Promise<string> {
     const res = await this.api.post<{ message: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE_CURRENCY(tenantId),
+      TENANTS_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE_CURRENCY(tenantId),
       { currency }
     );
     return res?.message || "";
@@ -395,13 +396,13 @@ export class TenantService implements ITenantService {
     targetEditionId: string
   ): Promise<DowngradeImpactReport> {
     return this.api.get<DowngradeImpactReport>(
-      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.DOWNGRADE_IMPACT(tenantId, targetEditionId)
+      TENANTS_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.DOWNGRADE_IMPACT(tenantId, targetEditionId)
     );
   }
 
   async previewPrice(editionId: string, currency: string, type: string): Promise<number> {
     return this.api.get<number>(
-      API_ENDPOINTS.ENTITLEMENTS.PRICING.PREVIEW(editionId, currency, type)
+      TENANTS_ENDPOINTS.ENTITLEMENTS.PRICING.PREVIEW(editionId, currency, type)
     );
   }
 
@@ -410,22 +411,22 @@ export class TenantService implements ITenantService {
   async getDomains(
     tenantId: string
   ): Promise<import("../../domain/interfaces/ITenantService").TenantDomainsResponse> {
-    return this.api.get(API_ENDPOINTS.TENANTS.DOMAINS(tenantId));
+    return this.api.get(TENANTS_ENDPOINTS.DOMAINS(tenantId));
   }
 
   async addDomain(tenantId: string, domain: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.TENANTS.DOMAINS(tenantId), { domain });
+    await this.api.post(TENANTS_ENDPOINTS.DOMAINS(tenantId), { domain });
   }
 
   async verifyDomain(tenantId: string, domainId: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.TENANTS.DOMAIN_VERIFY(tenantId, domainId), {});
+    await this.api.post(TENANTS_ENDPOINTS.DOMAIN_VERIFY(tenantId, domainId), {});
   }
 
   async setDomainPrimary(tenantId: string, domainId: string): Promise<void> {
-    await this.api.put(API_ENDPOINTS.TENANTS.DOMAIN_PRIMARY(tenantId, domainId), {});
+    await this.api.put(TENANTS_ENDPOINTS.DOMAIN_PRIMARY(tenantId, domainId), {});
   }
 
   async removeDomain(tenantId: string, domainId: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.TENANTS.DOMAIN_BY_ID(tenantId, domainId));
+    await this.api.delete(TENANTS_ENDPOINTS.DOMAIN_BY_ID(tenantId, domainId));
   }
 }

@@ -1,5 +1,5 @@
-import { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
+import type { IApiService } from "@core/interfaces/api.interface";
 import {
   CommissionLedgerEntryModel,
   CommissionInvoiceModel,
@@ -7,6 +7,7 @@ import {
 } from "../models/CommissionModels";
 import type { ICommissionLedgerService } from "../../domain/interfaces/ICommissionLedgerService";
 import type { CommissionListParams } from "../../domain/interfaces/ICommissionLedgerRepository";
+import { COMMISSION_LEDGER_ENDPOINTS } from "./commission-ledger.endpoints";
 
 /**
  * Http API network service for commission ledger.
@@ -18,7 +19,7 @@ export class CommissionLedgerService implements ICommissionLedgerService {
   async getLedgers(
     params: CommissionListParams
   ): Promise<PagedResultModel<CommissionLedgerEntryModel>> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.COMMISSION_LEDGER.LIST, params);
+    const url = buildUrl(COMMISSION_LEDGER_ENDPOINTS.LEDGER_LIST, params);
     return this.api.get<PagedResultModel<CommissionLedgerEntryModel>>(url);
   }
 
@@ -26,7 +27,7 @@ export class CommissionLedgerService implements ICommissionLedgerService {
     params: CommissionListParams
   ): Promise<PagedResultModel<CommissionInvoiceModel>> {
     const url = buildUrl(
-      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.COMMISSION_INVOICES.LIST,
+      COMMISSION_LEDGER_ENDPOINTS.INVOICE_LIST,
       params
     );
     return this.api.get<PagedResultModel<CommissionInvoiceModel>>(url);
@@ -34,14 +35,14 @@ export class CommissionLedgerService implements ICommissionLedgerService {
 
   async retryCharge(invoiceId: string): Promise<void> {
     await this.api.post(
-      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.COMMISSION_INVOICES.RETRY_CHARGE(invoiceId),
+      COMMISSION_LEDGER_ENDPOINTS.RETRY_CHARGE(invoiceId),
       {}
     );
   }
 
   async waiveInvoice(invoiceId: string, notes: string): Promise<void> {
     await this.api.post(
-      API_ENDPOINTS.ENTITLEMENTS.STRIPE_CONNECT.COMMISSION_INVOICES.WAIVE(invoiceId),
+      COMMISSION_LEDGER_ENDPOINTS.WAIVE(invoiceId),
       { notes }
     );
   }

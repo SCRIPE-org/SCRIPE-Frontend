@@ -5,7 +5,7 @@
  * Returns Models (DTOs) - Repository uses Mapper to convert to Entities.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import {
   HrmsModel,
   type HrmsJson,
@@ -15,14 +15,13 @@ import type {
   IHrmsService,
   HrmsListResult,
 } from "../../domain/interfaces/IHrmsService";
-
-const BASE_URL = "/v1/Hrms";
+import { HRMS_ENDPOINTS } from "./hrms.endpoints";
 
 export class HrmsService implements IHrmsService {
   constructor(private readonly api: IApiService) {}
 
   async getAll(params: { page: number; pageSize: number; search?: string }): Promise<HrmsListResult> {
-    const url = buildUrl(BASE_URL, {
+    const url = buildUrl(HRMS_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
@@ -42,19 +41,19 @@ export class HrmsService implements IHrmsService {
   }
 
   async getById(id: string): Promise<HrmsModel> {
-    const json = await this.api.get<HrmsJson>(`${BASE_URL}/${id}`);
+    const json = await this.api.get<HrmsJson>(HRMS_ENDPOINTS.BY_ID(id));
     return HrmsModel.fromJson(json);
   }
 
   async create(data: Record<string, unknown>): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(BASE_URL, data);
+    return this.api.post<{ id: string }>(HRMS_ENDPOINTS.CREATE, data);
   }
 
   async update(id: string, data: Record<string, unknown>): Promise<void> {
-    await this.api.put(`${BASE_URL}/${id}`, data);
+    await this.api.put(HRMS_ENDPOINTS.UPDATE(id), data);
   }
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(`${BASE_URL}/${id}`);
+    await this.api.delete(HRMS_ENDPOINTS.DELETE(id));
   }
 }

@@ -12,7 +12,7 @@ import { usePathname } from "next/navigation";
 import { useTenantAnalyticsViewModel } from "../viewmodels/useTenantAnalyticsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { TenantMetricsCards } from "../components/TenantMetricsCards";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { ANALYTICS_ENDPOINTS } from "../../data/services/analytics.endpoints";
 import { Button } from "@core/ui/button";
 import { BarChart3, FileDown, Settings2 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
@@ -112,11 +112,10 @@ export function TenantAnalyticsView() {
         />
       </div>
 
-      {/* Export Dialog */}
       <ReportExportDialog
         open={exportOpen}
         onClose={() => setExportOpen(false)}
-        endpoint={API_ENDPOINTS.DASHBOARD.EXPORT_ANALYTICS}
+        endpoint={ANALYTICS_ENDPOINTS.EXPORT_ANALYTICS}
         titleKey="export.analytics.title"
         descriptionKey="export.analytics.description"
       />

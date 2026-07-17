@@ -9,7 +9,7 @@
  */
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { TENANTS_ENDPOINTS } from "@core/config/api-endpoints";
 import { getModuleApiService } from "@core/services/api-factory";
 import { resolveFileUrl } from "@core/common/utils";
 import { BRAND } from "@core/config/branding";
@@ -117,7 +117,7 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
     async function fetchBranding() {
       try {
         const api = getModuleApiService("IDENTITY");
-        const data = await api.get<TenantBrandingData>(API_ENDPOINTS.TENANTS.MY_BRANDING);
+        const data = await api.get<TenantBrandingData>(TENANTS_ENDPOINTS.TENANTS.MY_BRANDING);
 
         if (!cancelled && data) {
           setBranding(data);

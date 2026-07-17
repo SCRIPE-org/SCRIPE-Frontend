@@ -3,11 +3,12 @@
  * Implements IReportService, uses IApiService.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { IReportService, ReportParams } from "../../domain/interfaces/IReportService";
 import type { ReportModel } from "../models/ReportModels";
 import type { PagedResult } from "@core/interfaces/common.interface";
 import type { GenerateReportRequest } from "../../domain/entities/ComplianceReport";
+import { REPORTS_ENDPOINTS } from "./reports.endpoints";
 
 /**
  * Http API network service for report.
@@ -17,7 +18,7 @@ export class ReportService implements IReportService {
   constructor(private readonly api: IApiService) {}
 
   getAll(params: ReportParams): Promise<PagedResult<ReportModel>> {
-    const url = buildUrl(API_ENDPOINTS.COMPLIANCE.REPORTS, {
+    const url = buildUrl(REPORTS_ENDPOINTS.REPORTS, {
       page: params.page ?? 1,
       pageSize: params.pageSize ?? 20,
     });
@@ -25,14 +26,14 @@ export class ReportService implements IReportService {
   }
 
   generate(data: GenerateReportRequest): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(API_ENDPOINTS.COMPLIANCE.GENERATE_REPORT, data);
+    return this.api.post<{ id: string }>(REPORTS_ENDPOINTS.GENERATE_REPORT, data);
   }
 
   getById(id: string): Promise<ReportModel> {
-    return this.api.get<ReportModel>(`${API_ENDPOINTS.COMPLIANCE.REPORTS}/${id}`);
+    return this.api.get<ReportModel>(`${REPORTS_ENDPOINTS.REPORTS}/${id}`);
   }
 
   download(id: string, format: string = "csv"): Promise<Blob> {
-    return this.api.getBlob(`${API_ENDPOINTS.COMPLIANCE.REPORTS}/${id}/download?format=${format}`);
+    return this.api.getBlob(`${REPORTS_ENDPOINTS.REPORTS}/${id}/download?format=${format}`);
   }
 }

@@ -12,7 +12,7 @@ import { usePathname } from "next/navigation";
 import { useSecurityDashboardViewModel } from "../viewmodels/useSecurityDashboardViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { ThreatSummaryCards } from "../components/ThreatSummaryCards";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { SECURITY_ENDPOINTS } from "../../data/services/security.endpoints";
 import { Button } from "@core/ui/button";
 import { Shield, FileDown, Settings2 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
@@ -124,11 +124,10 @@ export function SecurityDashboardView() {
         cardClasses={cardClasses}
       />
 
-      {/* Export Dialog */}
       <ReportExportDialog
         open={exportOpen}
         onClose={() => setExportOpen(false)}
-        endpoint={API_ENDPOINTS.DASHBOARD.EXPORT_SECURITY}
+        endpoint={SECURITY_ENDPOINTS.EXPORT_SECURITY}
         titleKey="export.security.title"
         descriptionKey="export.security.description"
       />

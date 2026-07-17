@@ -5,8 +5,9 @@
  * Returns raw DTOs — Repository maps to domain entities.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { IAuditService } from "../../domain/interfaces/IAuditService";
+import { AUDIT_ENDPOINTS } from "./audit.endpoints";
 import type {
   AuditLogPage,
   AuditLogDetail,
@@ -24,7 +25,7 @@ export class AuditService implements IAuditService {
   constructor(private readonly api: IApiService) {}
 
   async getLogs(params?: AuditFilterParams): Promise<AuditLogPage> {
-    const url = buildUrl(API_ENDPOINTS.AUDIT.LOGS, {
+    const url = buildUrl(AUDIT_ENDPOINTS.LOGS, {
       page: params?.page,
       pageSize: params?.pageSize,
       eventType: params?.eventType,
@@ -40,24 +41,24 @@ export class AuditService implements IAuditService {
   }
 
   async getLogDetail(id: string): Promise<AuditLogDetail> {
-    return this.api.get<AuditLogDetail>(API_ENDPOINTS.AUDIT.LOG_DETAIL(id));
+    return this.api.get<AuditLogDetail>(AUDIT_ENDPOINTS.LOG_DETAIL(id));
   }
 
   async getAnalytics(): Promise<AuditAnalyticsSummary> {
-    return this.api.get<AuditAnalyticsSummary>(API_ENDPOINTS.AUDIT.ANALYTICS);
+    return this.api.get<AuditAnalyticsSummary>(AUDIT_ENDPOINTS.ANALYTICS);
   }
 
   async getTopUsers(): Promise<TopAuditUser[]> {
-    return this.api.get<TopAuditUser[]>(API_ENDPOINTS.AUDIT.TOP_USERS);
+    return this.api.get<TopAuditUser[]>(AUDIT_ENDPOINTS.TOP_USERS);
   }
 
   async getComplianceReport(framework: string): Promise<ComplianceReport> {
-    const url = buildUrl(API_ENDPOINTS.AUDIT.COMPLIANCE_REPORT, { framework });
+    const url = buildUrl(AUDIT_ENDPOINTS.COMPLIANCE_REPORT, { framework });
     return this.api.get<ComplianceReport>(url);
   }
 
   async exportLogs(format: string, params?: AuditFilterParams): Promise<Blob> {
-    const url = buildUrl(API_ENDPOINTS.AUDIT.EXPORT, {
+    const url = buildUrl(AUDIT_ENDPOINTS.EXPORT, {
       format,
       ...params,
     });

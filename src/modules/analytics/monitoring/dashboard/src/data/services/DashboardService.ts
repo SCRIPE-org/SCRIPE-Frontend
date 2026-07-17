@@ -5,7 +5,8 @@
  * Audit, security, and analytics calls moved to their own services.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
+import { DASHBOARD_ENDPOINTS } from "./dashboard.endpoints";
 import type {
   DashboardSummary,
   LoginActivityPoint,
@@ -21,21 +22,21 @@ export class DashboardService {
   constructor(private readonly api: IApiService) {}
 
   async getSummary(): Promise<DashboardSummary> {
-    return this.api.get<DashboardSummary>(API_ENDPOINTS.DASHBOARD.SUMMARY);
+    return this.api.get<DashboardSummary>(DASHBOARD_ENDPOINTS.SUMMARY);
   }
 
   async getLoginActivity(days: number = 30): Promise<LoginActivityPoint[]> {
-    const url = buildUrl(API_ENDPOINTS.DASHBOARD.LOGIN_ACTIVITY, { days });
+    const url = buildUrl(DASHBOARD_ENDPOINTS.LOGIN_ACTIVITY, { days });
     return this.api.get<LoginActivityPoint[]>(url);
   }
 
   async getRecentChanges(limit: number = 10): Promise<RecentChange[]> {
-    const url = buildUrl(API_ENDPOINTS.DASHBOARD.RECENT_CHANGES, { limit });
+    const url = buildUrl(DASHBOARD_ENDPOINTS.RECENT_CHANGES, { limit });
     return this.api.get<RecentChange[]>(url);
   }
 
   async getEventDistribution(days: number = 30): Promise<EventTypeCount[]> {
-    const url = buildUrl(API_ENDPOINTS.DASHBOARD.EVENT_DISTRIBUTION, { days });
+    const url = buildUrl(DASHBOARD_ENDPOINTS.EVENT_DISTRIBUTION, { days });
     return this.api.get<EventTypeCount[]>(url);
   }
 }

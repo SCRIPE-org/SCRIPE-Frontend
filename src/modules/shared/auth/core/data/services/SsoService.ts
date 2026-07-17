@@ -1,7 +1,8 @@
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { ISsoService } from "../interfaces/ISsoService";
 import type { IPublicApiService } from "@core/interfaces/public-api.interface";
 import type { SsoCallbackResultDto, SsoChallengeDto, SsoProviderDto } from "../models/SsoModels";
+import { AUTH_CORE_ENDPOINTS } from "./auth-core.endpoints";
 
 export class SsoService implements ISsoService {
   constructor(private readonly api: IPublicApiService) {}
@@ -10,7 +11,7 @@ export class SsoService implements ISsoService {
     tenantId?: string | null;
     mode?: string | null;
   }): Promise<SsoProviderDto[]> {
-    const url = buildUrl(API_ENDPOINTS.AUTH.OIDC.ADMIN_PROVIDERS, {
+    const url = buildUrl(AUTH_CORE_ENDPOINTS.OIDC.ADMIN_PROVIDERS, {
       tenantId: params.tenantId ?? undefined,
       mode: params.tenantId ? (params.mode ?? undefined) : undefined,
     });
@@ -22,7 +23,7 @@ export class SsoService implements ISsoService {
     providerId: string;
     redirectUri?: string;
   }): Promise<SsoChallengeDto> {
-    return this.api.post<SsoChallengeDto>(API_ENDPOINTS.AUTH.OIDC.CHALLENGE, params);
+    return this.api.post<SsoChallengeDto>(AUTH_CORE_ENDPOINTS.OIDC.CHALLENGE, params);
   }
 
   completeOidcCallback(params: {
@@ -32,7 +33,7 @@ export class SsoService implements ISsoService {
     state: string;
     redirectUri?: string;
   }): Promise<SsoCallbackResultDto> {
-    return this.api.post<SsoCallbackResultDto>(API_ENDPOINTS.AUTH.OIDC.CALLBACK, params);
+    return this.api.post<SsoCallbackResultDto>(AUTH_CORE_ENDPOINTS.OIDC.CALLBACK, params);
   }
 
   completeWorkspaceSelection(params: {
@@ -40,17 +41,17 @@ export class SsoService implements ISsoService {
     tenantId: string;
   }): Promise<SsoCallbackResultDto> {
     return this.api.post<SsoCallbackResultDto>(
-      API_ENDPOINTS.AUTH.OIDC.COMPLETE_WORKSPACE_SELECTION,
+      AUTH_CORE_ENDPOINTS.OIDC.COMPLETE_WORKSPACE_SELECTION,
       params
     );
   }
 
   buildSamlLoginUrl(params: { providerId: string; redirectUri?: string }): string {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-    const query = new URLSearchParams({ providerId: params.providerId });
-    if (params.redirectUri) {
-      query.set("redirectUri", params.redirectUri);
-    }
-    return `${backendUrl}${API_ENDPOINTS.AUTH.SAML.LOGIN}?${query.toString()}`;
+    const url = buildUrl(AUTH_CORE_ENDPOINTS.SAML.LOGIN, {
+      providerId: params.providerId,
+      redirectUri: params.redirectUri || undefined,
+    });
+    return `${backendUrl}${url}`;
   }
 }

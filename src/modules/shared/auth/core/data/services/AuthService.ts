@@ -18,10 +18,10 @@ import {
   type Verify2FAResponseJson,
 } from "../models/TwoFactorModels";
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { ALLOWED_OIDC_PARAMS } from "@core/config/oidc-keys";
 import type { IAuthService } from "../../domain/interfaces/IAuthService";
 import type { DiscoverWorkspacesResponseDto } from "../models/WorkspaceModels";
+import { AUTH_CORE_ENDPOINTS } from "./auth-core.endpoints";
 
 const allowedOidcParams = new Set<string>(ALLOWED_OIDC_PARAMS);
 
@@ -30,7 +30,7 @@ export class AuthService implements IAuthService {
 
   async login(request: LoginRequestModel): Promise<LoginResponseModel> {
     const json = await this.api.postPublic<LoginResponseJson>(
-      API_ENDPOINTS.AUTH.LOGIN,
+      AUTH_CORE_ENDPOINTS.LOGIN,
       request.toJson()
     );
     return LoginResponseModel.fromJson(json);
@@ -38,7 +38,7 @@ export class AuthService implements IAuthService {
 
   async verify2FA(request: Verify2FARequestModel): Promise<Verify2FAResponseModel> {
     const json = await this.api.postPublic<Verify2FAResponseJson>(
-      API_ENDPOINTS.AUTH.TWO_FA.VERIFY,
+      AUTH_CORE_ENDPOINTS.TWO_FA.VERIFY,
       request.toJson()
     );
     return Verify2FAResponseModel.fromJson(json);
@@ -49,7 +49,7 @@ export class AuthService implements IAuthService {
    * Backend CookieAuthMiddleware reads the refresh token from the cookie.
    */
   async logout(): Promise<void> {
-    await this.api.post(API_ENDPOINTS.AUTH.LOGOUT, {});
+    await this.api.post(AUTH_CORE_ENDPOINTS.LOGOUT, {});
   }
 
   /**
@@ -57,17 +57,17 @@ export class AuthService implements IAuthService {
    * Backend CookieAuthMiddleware injects the refresh token into the request body.
    */
   async refreshToken(): Promise<LoginResponseModel> {
-    const json = await this.api.postPublic<LoginResponseJson>(API_ENDPOINTS.AUTH.REFRESH, {});
+    const json = await this.api.postPublic<LoginResponseJson>(AUTH_CORE_ENDPOINTS.REFRESH, {});
     return LoginResponseModel.fromJson(json);
   }
 
   async getMe<T>(): Promise<T> {
-    return this.api.get<T>(API_ENDPOINTS.AUTH.ME);
+    return this.api.get<T>(AUTH_CORE_ENDPOINTS.ME);
   }
 
   async discoverWorkspaces(email: string): Promise<DiscoverWorkspacesResponseDto> {
     return this.api.postPublic<DiscoverWorkspacesResponseDto>(
-      API_ENDPOINTS.AUTH.DISCOVER_WORKSPACES,
+      AUTH_CORE_ENDPOINTS.DISCOVER_WORKSPACES,
       { email: email.trim() }
     );
   }
@@ -78,7 +78,7 @@ export class AuthService implements IAuthService {
    */
   async impersonate(adminId: string): Promise<LoginResponseModel> {
     const json = await this.api.post<LoginResponseJson>(
-      API_ENDPOINTS.AUTH.IMPERSONATE(adminId),
+      AUTH_CORE_ENDPOINTS.IMPERSONATE(adminId),
       {}
     );
     return LoginResponseModel.fromJson(json);
@@ -89,7 +89,7 @@ export class AuthService implements IAuthService {
    * Returns original admin's access token.
    */
   async stopImpersonation(): Promise<LoginResponseModel> {
-    const json = await this.api.post<LoginResponseJson>(API_ENDPOINTS.AUTH.STOP_IMPERSONATION, {});
+    const json = await this.api.post<LoginResponseJson>(AUTH_CORE_ENDPOINTS.STOP_IMPERSONATION, {});
     return LoginResponseModel.fromJson(json);
   }
 
@@ -103,7 +103,7 @@ export class AuthService implements IAuthService {
   ): { action: string; params: Record<string, string> } {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
     const baseHost = backendUrl.replace(/\/api$/, "");
-    const action = `${baseHost}${API_ENDPOINTS.AUTH.OIDC.AUTHORIZE}`;
+    const action = `${baseHost}${AUTH_CORE_ENDPOINTS.OIDC.AUTHORIZE}`;
 
     const params: Record<string, string> = {};
     searchParams.forEach((value, key) => {
@@ -127,7 +127,7 @@ export class AuthService implements IAuthService {
     email: string;
     displayName?: string;
   }): Promise<void> {
-    await this.api.post(API_ENDPOINTS.PROFILE.LINK_EXTERNAL_LOGIN, data);
+    await this.api.post(AUTH_CORE_ENDPOINTS.PROFILE.LINK_EXTERNAL_LOGIN, data);
   }
 
   /**
@@ -135,7 +135,7 @@ export class AuthService implements IAuthService {
    * Always resolves (enumeration-safe) — never reveals account existence.
    */
   async requestMagicLink(email: string, tenantId?: string): Promise<{ sent: boolean }> {
-    return this.api.postPublic<{ sent: boolean }>(API_ENDPOINTS.AUTH.MAGIC_LINK.REQUEST, {
+    return this.api.postPublic<{ sent: boolean }>(AUTH_CORE_ENDPOINTS.MAGIC_LINK.REQUEST, {
       email: email.trim(),
       tenantId: tenantId ?? null,
     });
@@ -151,7 +151,7 @@ export class AuthService implements IAuthService {
     deviceInfo?: string
   ): Promise<LoginResponseModel> {
     const json = await this.api.postPublic<LoginResponseJson>(
-      API_ENDPOINTS.AUTH.MAGIC_LINK.VERIFY,
+      AUTH_CORE_ENDPOINTS.MAGIC_LINK.VERIFY,
       { token, tenantId: tenantId ?? null, deviceInfo: deviceInfo ?? null }
     );
     return LoginResponseModel.fromJson(json);
@@ -168,7 +168,7 @@ export class AuthService implements IAuthService {
     return this.api.postPublic<{
       challengeId: string;
       options: PublicKeyCredentialRequestOptions;
-    }>(API_ENDPOINTS.AUTH.PASSKEY.AUTH_BEGIN, {});
+    }>(AUTH_CORE_ENDPOINTS.PASSKEY.AUTH_BEGIN, {});
   }
 
   /**
@@ -209,7 +209,7 @@ export class AuthService implements IAuthService {
     };
 
     return this.api.postPublic<{ accessToken: string; refreshToken: string }>(
-      API_ENDPOINTS.AUTH.PASSKEY.AUTH_VERIFY,
+      AUTH_CORE_ENDPOINTS.PASSKEY.AUTH_VERIFY,
       backendRequest
     );
   }
@@ -220,7 +220,7 @@ export class AuthService implements IAuthService {
     phoneNumber: string
   ): Promise<{ sent: boolean; retryAfterSeconds: number }> {
     return this.api.postPublic<{ sent: boolean; retryAfterSeconds: number }>(
-      API_ENDPOINTS.AUTH.PHONE_OTP.REQUEST,
+      AUTH_CORE_ENDPOINTS.PHONE_OTP.REQUEST,
       { phoneNumber }
     );
   }
@@ -249,7 +249,7 @@ export class AuthService implements IAuthService {
     mustChangePassword?: boolean;
     defaultRedirectPath?: string;
   }> {
-    return this.api.postPublic(API_ENDPOINTS.AUTH.PHONE_OTP.VERIFY, { phoneNumber, code });
+    return this.api.postPublic(AUTH_CORE_ENDPOINTS.PHONE_OTP.VERIFY, { phoneNumber, code });
   }
 
   // ── QR Cross-Device Sign-In ─────────────────────────────────────────────────
@@ -263,7 +263,7 @@ export class AuthService implements IAuthService {
       sessionId: string;
       qrUrl: string;
       expiresAt: string;
-    }>(API_ENDPOINTS.AUTH.QR_LOGIN.CREATE_SESSION, {});
+    }>(AUTH_CORE_ENDPOINTS.QR_LOGIN.CREATE_SESSION, {});
 
     return {
       sessionId: res.sessionId,
@@ -281,14 +281,14 @@ export class AuthService implements IAuthService {
       status: "pending" | "scanned" | "approved" | "expired";
       accessToken?: string;
       refreshToken?: string;
-    }>(API_ENDPOINTS.AUTH.QR_LOGIN.SESSION_STATUS(sessionId));
+    }>(AUTH_CORE_ENDPOINTS.QR_LOGIN.SESSION_STATUS(sessionId));
   }
 
   async approveQrSignIn(sessionId: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.AUTH.QR_LOGIN.APPROVE, { sessionId });
+    await this.api.post(AUTH_CORE_ENDPOINTS.QR_LOGIN.APPROVE, { sessionId });
   }
 
   async rejectQrSignIn(sessionId: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.AUTH.QR_LOGIN.REJECT, { sessionId });
+    await this.api.post(AUTH_CORE_ENDPOINTS.QR_LOGIN.REJECT, { sessionId });
   }
 }

@@ -6,8 +6,8 @@
  *
  * @module email-composer/data
  */
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import type {
   IEmailService,
   ServiceSentHistoryParams,
@@ -20,6 +20,7 @@ import type {
   SendManualEmailJson,
   AttachmentUploadResultJson,
 } from "../models/EmailModel";
+import { EMAIL_ENDPOINTS } from "./email.endpoints";
 
 /**
  * Http API network service for email.
@@ -29,34 +30,34 @@ export class EmailService implements IEmailService {
   constructor(private readonly api: IApiService) {}
 
   async searchRecipients(query: string): Promise<EmailRecipientJson[]> {
-    const url = buildUrl(API_ENDPOINTS.EMAILS.SEARCH_RECIPIENTS, { search: query });
+    const url = buildUrl(EMAIL_ENDPOINTS.SEARCH_RECIPIENTS, { search: query });
     return this.api.get<EmailRecipientJson[]>(url);
   }
 
   async send(data: SendManualEmailJson): Promise<void> {
-    await this.api.post(API_ENDPOINTS.EMAILS.SEND, data);
+    await this.api.post(EMAIL_ENDPOINTS.SEND, data);
   }
 
   async getSentHistory(params: ServiceSentHistoryParams): Promise<SentEmailListResponseJson> {
     const url = buildUrl(
-      API_ENDPOINTS.EMAILS.SENT_HISTORY,
+      EMAIL_ENDPOINTS.SENT_HISTORY,
       params as unknown as Record<string, string | number | boolean | null | undefined>
     );
     return this.api.get(url);
   }
 
   async cancelEmail(id: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.EMAILS.CANCEL(id));
+    await this.api.delete(EMAIL_ENDPOINTS.CANCEL(id));
   }
 
   async resendEmail(id: string): Promise<{ id: string }> {
-    return this.api.post(API_ENDPOINTS.EMAILS.RESEND(id), {});
+    return this.api.post(EMAIL_ENDPOINTS.RESEND(id), {});
   }
 
   async getEmailTemplates(
     params: ServiceEmailTemplateListParams
   ): Promise<EmailTemplateListResponseJson> {
-    const url = buildUrl(API_ENDPOINTS.MESSAGE_TEMPLATES.LIST, {
+    const url = buildUrl(EMAIL_ENDPOINTS.MESSAGE_TEMPLATES_LIST, {
       ...params,
       channel: "Email",
     } as unknown as Record<string, string | number | boolean | null | undefined>);
@@ -66,6 +67,6 @@ export class EmailService implements IEmailService {
   async uploadAttachment(file: File): Promise<AttachmentUploadResultJson> {
     const formData = new FormData();
     formData.append("file", file);
-    return this.api.post(API_ENDPOINTS.EMAILS.UPLOAD_ATTACHMENT, formData);
+    return this.api.post(EMAIL_ENDPOINTS.UPLOAD_ATTACHMENT, formData);
   }
 }

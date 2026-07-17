@@ -2,11 +2,12 @@
  * Billing Service — API calls only, no business logic.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type {
   IBillingService,
   GatewayListResponseModel,
 } from "../../domain/interfaces/IBillingService";
+import { BILLING_ENDPOINTS } from "./billing.endpoints";
 import type {
   InvoiceResponseModel,
   InvoiceListResponseModel,
@@ -34,7 +35,7 @@ export class BillingService implements IBillingService {
     pageSize: number;
     status?: string;
   }): Promise<PagedResultModel<InvoiceListResponseModel>> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.BILLING.INVOICES.LIST, {
+    const url = buildUrl(BILLING_ENDPOINTS.INVOICES.LIST, {
       tenantId: params.tenantId,
       page: params.page,
       pageSize: params.pageSize,
@@ -45,7 +46,7 @@ export class BillingService implements IBillingService {
 
   async getInvoiceById(id: string): Promise<InvoiceResponseModel> {
     return this.api.get<InvoiceResponseModel>(
-      API_ENDPOINTS.ENTITLEMENTS.BILLING.INVOICES.BY_ID(id)
+      BILLING_ENDPOINTS.INVOICES.BY_ID(id)
     );
   }
 
@@ -54,7 +55,7 @@ export class BillingService implements IBillingService {
     page: number;
     pageSize: number;
   }): Promise<PagedResultModel<PaymentTransactionModel>> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.BILLING.INVOICES.TRANSACTIONS, {
+    const url = buildUrl(BILLING_ENDPOINTS.INVOICES.TRANSACTIONS, {
       tenantId: params.tenantId,
       page: params.page,
       pageSize: params.pageSize,
@@ -80,7 +81,7 @@ export class BillingService implements IBillingService {
     }
   ): Promise<CheckoutSessionResponseModel> {
     return this.api.post<CheckoutSessionResponseModel>(
-      API_ENDPOINTS.ENTITLEMENTS.BILLING.CHECKOUT(tenantId),
+      BILLING_ENDPOINTS.CHECKOUT(tenantId),
       data
     );
   }
@@ -90,13 +91,13 @@ export class BillingService implements IBillingService {
     returnUrl: string
   ): Promise<BillingPortalResponseModel> {
     return this.api.post<BillingPortalResponseModel>(
-      API_ENDPOINTS.ENTITLEMENTS.BILLING.PORTAL(tenantId),
+      BILLING_ENDPOINTS.PORTAL(tenantId),
       { returnUrl }
     );
   }
 
   async cancelGatewaySubscription(tenantId: string, immediately: boolean): Promise<void> {
-    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.BILLING.CANCEL_GATEWAY(tenantId), {
+    await this.api.post(BILLING_ENDPOINTS.CANCEL_GATEWAY(tenantId), {
       immediately,
     });
   }
@@ -104,7 +105,7 @@ export class BillingService implements IBillingService {
   // ── Dashboard & Revenue ──
 
   async getDashboard(params?: { currency?: string }): Promise<BillingDashboardResponseModel> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.BILLING.DASHBOARD, {
+    const url = buildUrl(BILLING_ENDPOINTS.DASHBOARD, {
       currency: params?.currency,
     });
     return this.api.get<BillingDashboardResponseModel>(url);
@@ -115,7 +116,7 @@ export class BillingService implements IBillingService {
     data: CreatePaymentLinkRequestModel
   ): Promise<PaymentLinkResponseModel> {
     return this.api.post<PaymentLinkResponseModel>(
-      API_ENDPOINTS.ENTITLEMENTS.BILLING.PAYMENT_LINK(tenantId),
+      BILLING_ENDPOINTS.PAYMENT_LINK(tenantId),
       data
     );
   }
@@ -123,29 +124,29 @@ export class BillingService implements IBillingService {
   // ── PDF Download ──
 
   async downloadInvoicePdf(invoiceId: string): Promise<Blob> {
-    return this.api.getBlob(API_ENDPOINTS.ENTITLEMENTS.BILLING.INVOICES.PDF(invoiceId));
+    return this.api.getBlob(BILLING_ENDPOINTS.INVOICES.PDF(invoiceId));
   }
 
   // ── Email ──
 
   async sendInvoiceEmail(invoiceId: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.BILLING.INVOICES.SEND_EMAIL(invoiceId), {});
+    await this.api.post(BILLING_ENDPOINTS.INVOICES.SEND_EMAIL(invoiceId), {});
   }
 
   // ── Payment Gateway Management ──
 
   async getGateways(): Promise<GatewayListResponseModel> {
-    return this.api.get<GatewayListResponseModel>(API_ENDPOINTS.ENTITLEMENTS.BILLING.GATEWAYS.BASE);
+    return this.api.get<GatewayListResponseModel>(BILLING_ENDPOINTS.GATEWAYS.BASE);
   }
 
   async testGatewayConnection(gateway: string): Promise<{ success: boolean; message: string }> {
-    return this.api.post(API_ENDPOINTS.ENTITLEMENTS.BILLING.GATEWAYS.TEST_CONNECTION(gateway), {});
+    return this.api.post(BILLING_ENDPOINTS.GATEWAYS.TEST_CONNECTION(gateway), {});
   }
 
   async toggleGatewayStatus(
     gateway: string,
     enabled: boolean
   ): Promise<{ success: boolean; message: string; enabled: boolean }> {
-    return this.api.post(API_ENDPOINTS.ENTITLEMENTS.BILLING.GATEWAYS.TOGGLE(gateway), { enabled });
+    return this.api.post(BILLING_ENDPOINTS.GATEWAYS.TOGGLE(gateway), { enabled });
   }
 }

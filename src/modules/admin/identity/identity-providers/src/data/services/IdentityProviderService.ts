@@ -7,7 +7,7 @@
  * @module identity-providers/data
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type {
   IIdentityProviderService,
   ServiceIdentityProviderListParams,
@@ -19,6 +19,7 @@ import type {
   UpdateIdentityProviderJson,
   TestConnectionResultJson,
 } from "../models/IdentityProviderModel";
+import { IDENTITY_PROVIDERS_ENDPOINTS } from "./identity-providers.endpoints";
 
 /**
  * Http API network service for identity provider.
@@ -31,29 +32,29 @@ export class IdentityProviderService implements IIdentityProviderService {
     params: ServiceIdentityProviderListParams
   ): Promise<IdentityProviderListResponseJson> {
     const url = buildUrl(
-      API_ENDPOINTS.IDENTITY_PROVIDERS.LIST,
+      IDENTITY_PROVIDERS_ENDPOINTS.LIST,
       params as unknown as Record<string, string | number | boolean | null | undefined>
     );
     return this.api.get(url);
   }
 
   async getById(id: string): Promise<IdentityProviderJson> {
-    return this.api.get(API_ENDPOINTS.IDENTITY_PROVIDERS.BY_ID(id));
+    return this.api.get(IDENTITY_PROVIDERS_ENDPOINTS.BY_ID(id));
   }
 
   async create(data: CreateIdentityProviderJson): Promise<{ id: string }> {
-    return this.api.post(API_ENDPOINTS.IDENTITY_PROVIDERS.CREATE, data);
+    return this.api.post(IDENTITY_PROVIDERS_ENDPOINTS.CREATE, data);
   }
 
   async update(id: string, data: UpdateIdentityProviderJson): Promise<void> {
-    await this.api.put(API_ENDPOINTS.IDENTITY_PROVIDERS.UPDATE(id), data);
+    await this.api.put(IDENTITY_PROVIDERS_ENDPOINTS.UPDATE(id), data);
   }
 
   async remove(id: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.IDENTITY_PROVIDERS.DELETE(id));
+    await this.api.delete(IDENTITY_PROVIDERS_ENDPOINTS.DELETE(id));
   }
 
   async testConnection(id: string): Promise<TestConnectionResultJson> {
-    return this.api.post(API_ENDPOINTS.IDENTITY_PROVIDERS.TEST(id), {});
+    return this.api.post(IDENTITY_PROVIDERS_ENDPOINTS.TEST(id), {});
   }
 }

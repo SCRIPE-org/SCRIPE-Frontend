@@ -12,7 +12,7 @@
  * @module permissions/data
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import {
   PermissionModel,
   type PermissionJson,
@@ -22,6 +22,7 @@ import {
 } from "../models/PermissionModel";
 import type { IPermissionService } from "../../domain/interfaces/IPermissionService";
 import type { PermissionListParams } from "../../domain/interfaces/IPermissionRepository";
+import { PERMISSIONS_ENDPOINTS } from "./permissions.endpoints";
 
 /**
  * Http API network service for permission.
@@ -31,7 +32,7 @@ export class PermissionService implements IPermissionService {
   constructor(private readonly api: IApiService) {}
 
   async getAll(params?: PermissionListParams): Promise<PermissionModel[]> {
-    const url = buildUrl(API_ENDPOINTS.PERMISSIONS.LIST, {
+    const url = buildUrl(PERMISSIONS_ENDPOINTS.LIST, {
       category: params?.category,
       search: params?.search,
     });
@@ -40,7 +41,7 @@ export class PermissionService implements IPermissionService {
   }
 
   async getMyPermissions(params?: PermissionListParams): Promise<PermissionModel[]> {
-    const url = buildUrl(API_ENDPOINTS.PERMISSIONS.MY, {
+    const url = buildUrl(PERMISSIONS_ENDPOINTS.MY, {
       category: params?.category,
       search: params?.search,
     });
@@ -49,7 +50,7 @@ export class PermissionService implements IPermissionService {
   }
 
   async getForTenant(tenantId: string, params?: PermissionListParams): Promise<PermissionModel[]> {
-    const url = buildUrl(API_ENDPOINTS.TENANTS.PERMISSIONS(tenantId), {
+    const url = buildUrl(PERMISSIONS_ENDPOINTS.TENANTS.PERMISSIONS(tenantId), {
       search: params?.search,
     });
     const jsonList = await this.api.get<PermissionJson[]>(url);
@@ -57,16 +58,16 @@ export class PermissionService implements IPermissionService {
   }
 
   async getById(id: string): Promise<PermissionModel> {
-    const json = await this.api.get<PermissionJson>(API_ENDPOINTS.PERMISSIONS.BY_ID(id));
+    const json = await this.api.get<PermissionJson>(PERMISSIONS_ENDPOINTS.BY_ID(id));
     return PermissionModel.fromJson(json);
   }
 
   async getCategories(): Promise<string[]> {
-    return this.api.get<string[]>(API_ENDPOINTS.PERMISSIONS.CATEGORIES);
+    return this.api.get<string[]>(PERMISSIONS_ENDPOINTS.CATEGORIES);
   }
 
   async getGrouped(search?: string): Promise<PermissionModuleGroupJson[]> {
-    const url = buildUrl(API_ENDPOINTS.PERMISSIONS.GROUPED, { search });
+    const url = buildUrl(PERMISSIONS_ENDPOINTS.GROUPED, { search });
     return this.api.get<PermissionModuleGroupJson[]>(url);
   }
 
@@ -74,19 +75,19 @@ export class PermissionService implements IPermissionService {
     tenantId: string,
     search?: string
   ): Promise<PermissionModuleGroupJson[]> {
-    const url = buildUrl(API_ENDPOINTS.TENANTS.PERMISSIONS_GROUPED(tenantId), { search });
+    const url = buildUrl(PERMISSIONS_ENDPOINTS.TENANTS.PERMISSIONS_GROUPED(tenantId), { search });
     return this.api.get<PermissionModuleGroupJson[]>(url);
   }
 
   async create(json: CreatePermissionJson): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(API_ENDPOINTS.PERMISSIONS.CREATE, json);
+    return this.api.post<{ id: string }>(PERMISSIONS_ENDPOINTS.CREATE, json);
   }
 
   async update(id: string, json: UpdatePermissionJson): Promise<void> {
-    await this.api.put(API_ENDPOINTS.PERMISSIONS.UPDATE(id), json);
+    await this.api.put(PERMISSIONS_ENDPOINTS.UPDATE(id), json);
   }
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.PERMISSIONS.DELETE(id));
+    await this.api.delete(PERMISSIONS_ENDPOINTS.DELETE(id));
   }
 }

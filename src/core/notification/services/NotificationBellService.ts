@@ -2,10 +2,10 @@
  * Notification Bell — Service Layer
  *
  * Wraps IApiService for notification bell API calls.
- * Uses centralized API_ENDPOINTS — no raw URLs.
+ * Uses local COMMUNICATION_ENDPOINTS — no raw URLs.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { COMMUNICATION_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
 import type { NotificationListResponse, UnreadCountResponse } from "../entities/NotificationItem";
 
 export interface INotificationBellService {
@@ -28,7 +28,7 @@ export class NotificationBellService implements INotificationBellService {
     pageSize?: number;
     isRead?: boolean;
   }): Promise<NotificationListResponse> {
-    const url = buildUrl(API_ENDPOINTS.NOTIFICATIONS.LIST, {
+    const url = buildUrl(COMMUNICATION_ENDPOINTS.NOTIFICATIONS.LIST, {
       page: params?.page,
       pageSize: params?.pageSize,
       isRead: params?.isRead,
@@ -37,18 +37,18 @@ export class NotificationBellService implements INotificationBellService {
   }
 
   async getUnreadCount(): Promise<UnreadCountResponse> {
-    return this.api.get<UnreadCountResponse>(API_ENDPOINTS.NOTIFICATIONS.UNREAD_COUNT);
+    return this.api.get<UnreadCountResponse>(COMMUNICATION_ENDPOINTS.NOTIFICATIONS.UNREAD_COUNT);
   }
 
   async markAsRead(id: string): Promise<void> {
-    await this.api.patch(API_ENDPOINTS.NOTIFICATIONS.MARK_READ(id), {});
+    await this.api.patch(COMMUNICATION_ENDPOINTS.NOTIFICATIONS.MARK_READ(id), {});
   }
 
   async markAllAsRead(): Promise<void> {
-    await this.api.patch(API_ENDPOINTS.NOTIFICATIONS.MARK_ALL_READ, {});
+    await this.api.patch(COMMUNICATION_ENDPOINTS.NOTIFICATIONS.MARK_ALL_READ, {});
   }
 
   async deleteNotification(id: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.NOTIFICATIONS.DELETE(id));
+    await this.api.delete(COMMUNICATION_ENDPOINTS.NOTIFICATIONS.DELETE(id));
   }
 }

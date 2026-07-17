@@ -4,8 +4,8 @@
  * Handles all API calls for the CustomFields module.
  * Returns Models (DTOs) - Repository uses Mapper to convert to Entities.
  */
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { IApiService } from "@core/interfaces/api.interface";
-import { buildUrl, CUSTOMFIELDS_ENDPOINTS } from "@core/config/api-endpoints";
 import {
   CustomFieldModel,
   type CustomFieldJson,
@@ -15,8 +15,7 @@ import type {
   ICustomFieldService,
   CustomFieldListResult,
 } from "../../domain/interfaces/ICustomFieldService";
-
-const BASE_URL = CUSTOMFIELDS_ENDPOINTS.CUSTOM_FIELDS.LIST;
+import { CUSTOM_FIELD_ENDPOINTS } from "./custom-field.endpoints";
 
 export class CustomFieldService implements ICustomFieldService {
   constructor(private readonly api: IApiService) {}
@@ -27,7 +26,7 @@ export class CustomFieldService implements ICustomFieldService {
     search?: string;
     entityTypeKey?: string;
   }): Promise<CustomFieldListResult> {
-    const url = buildUrl(BASE_URL, {
+    const url = buildUrl(CUSTOM_FIELD_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
@@ -48,19 +47,19 @@ export class CustomFieldService implements ICustomFieldService {
   }
 
   async getById(id: string): Promise<CustomFieldModel> {
-    const json = await this.api.get<CustomFieldJson>(`${BASE_URL}/${id}`);
+    const json = await this.api.get<CustomFieldJson>(CUSTOM_FIELD_ENDPOINTS.BY_ID(id));
     return CustomFieldModel.fromJson(json);
   }
 
   async create(data: Record<string, unknown>): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(BASE_URL, data);
+    return this.api.post<{ id: string }>(CUSTOM_FIELD_ENDPOINTS.CREATE, data);
   }
 
   async update(id: string, data: Record<string, unknown>): Promise<void> {
-    await this.api.put(`${BASE_URL}/${id}`, data);
+    await this.api.put(CUSTOM_FIELD_ENDPOINTS.UPDATE(id), data);
   }
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(`${BASE_URL}/${id}`);
+    await this.api.delete(CUSTOM_FIELD_ENDPOINTS.DELETE(id));
   }
 }

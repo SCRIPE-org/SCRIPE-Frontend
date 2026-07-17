@@ -4,7 +4,7 @@ import type {
   UpdateTenantSettingsRequest,
 } from "../models/TenantSettingsModel";
 import type { ITenantSettingsService } from "../../domain/interfaces/ITenantSettingsService";
-import { API_ENDPOINTS } from "@/core/config/api-endpoints";
+import { TENANT_SETTINGS_ENDPOINTS } from "./tenant-settings.endpoints";
 
 /**
  * TenantSettingsService - API wrapper
@@ -17,13 +17,13 @@ export class TenantSettingsService implements ITenantSettingsService {
    * Get the current user's tenant settings
    */
   async getMySettings(): Promise<TenantSettingsModel> {
-    return this.apiService.get<TenantSettingsModel>(API_ENDPOINTS.TENANTS.MY_SETTINGS);
+    return this.apiService.get<TenantSettingsModel>(TENANT_SETTINGS_ENDPOINTS.MY_SETTINGS);
   }
 
   /**
    * Update the current user's tenant settings
    */
   async updateMySettings(request: UpdateTenantSettingsRequest): Promise<void> {
-    await this.apiService.put(API_ENDPOINTS.TENANTS.MY_SETTINGS, request);
+    await this.apiService.put(TENANT_SETTINGS_ENDPOINTS.MY_SETTINGS, request);
   }
 }

@@ -1,3 +1,4 @@
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { IProfileService } from "../../domain/interfaces/IProfileService";
 import type { AdminProfile } from "../../domain/entities/AdminProfile";
@@ -10,6 +11,7 @@ import type {
   ChangePasswordRequest,
   Enable2FAResult,
 } from "../../domain/interfaces/IProfileRepository";
+import { PROFILE_ENDPOINTS } from "./profile.endpoints";
 
 /**
  * Http API network service for profile.
@@ -19,70 +21,69 @@ export class ProfileService implements IProfileService {
   constructor(private readonly api: IApiService) {}
 
   async getProfile(): Promise<AdminProfile> {
-    return this.api.get<AdminProfile>("/api/v1/profile");
+    return this.api.get<AdminProfile>(PROFILE_ENDPOINTS.LEGACY.ME);
   }
 
   async updateProfile(data: UpdateProfileRequest): Promise<AdminProfile> {
-    return this.api.put<AdminProfile>("/api/v1/profile", data);
+    return this.api.put<AdminProfile>(PROFILE_ENDPOINTS.LEGACY.ME, data);
   }
 
   async uploadAvatar(file: File): Promise<{ profileImageUrl: string }> {
     const formData = new FormData();
     formData.append("file", file);
-    return this.api.post<{ profileImageUrl: string }>("/api/v1/profile/avatar", formData);
+    return this.api.post<{ profileImageUrl: string }>(PROFILE_ENDPOINTS.LEGACY.AVATAR, formData);
   }
 
   async removeAvatar(): Promise<void> {
-    return this.api.delete<void>("/api/v1/profile/avatar");
+    return this.api.delete<void>(PROFILE_ENDPOINTS.LEGACY.AVATAR);
   }
 
   async changePassword(data: ChangePasswordRequest): Promise<void> {
-    return this.api.post<void>("/api/v1/profile/change-password", data);
+    return this.api.post<void>(PROFILE_ENDPOINTS.LEGACY.CHANGE_PASSWORD, data);
   }
 
   async getSessions(): Promise<ActiveSession[]> {
-    return this.api.get<ActiveSession[]>("/api/v1/profile/sessions");
+    return this.api.get<ActiveSession[]>(PROFILE_ENDPOINTS.LEGACY.SESSIONS);
   }
 
   async revokeSession(tokenId: string): Promise<void> {
-    return this.api.delete<void>(`/api/v1/profile/sessions/${tokenId}`);
+    return this.api.delete<void>(PROFILE_ENDPOINTS.LEGACY.REVOKE_SESSION(tokenId));
   }
 
   async revokeAllSessions(): Promise<{ revokedCount: number }> {
-    return this.api.delete<{ revokedCount: number }>("/api/v1/profile/sessions");
+    return this.api.delete<{ revokedCount: number }>(PROFILE_ENDPOINTS.LEGACY.SESSIONS);
   }
 
   async enable2FA(): Promise<Enable2FAResult> {
-    return this.api.post<Enable2FAResult>("/api/v1/profile/2fa/enable", {});
+    return this.api.post<Enable2FAResult>(PROFILE_ENDPOINTS.TWO_FA.ENABLE, {});
   }
 
   async confirm2FA(code: string): Promise<void> {
-    return this.api.post<void>("/api/v1/profile/2fa/confirm", { code });
+    return this.api.post<void>(PROFILE_ENDPOINTS.TWO_FA.CONFIRM, { code });
   }
 
   async disable2FA(password: string, twoFactorCode: string): Promise<void> {
-    return this.api.post<void>("/api/v1/profile/2fa/disable", { password, twoFactorCode });
+    return this.api.post<void>(PROFILE_ENDPOINTS.TWO_FA.DISABLE, { password, twoFactorCode });
   }
 
   async regenerateBackupCodes(twoFactorCode: string): Promise<string[]> {
-    return this.api.post<string[]>("/api/v1/profile/2fa/backup-codes", { twoFactorCode });
+    return this.api.post<string[]>(PROFILE_ENDPOINTS.LEGACY.BACKUP_CODES, { twoFactorCode });
   }
 
   async getSecurityLog(page: number = 1, pageSize: number = 10): Promise<SecurityLogEntry[]> {
-    return this.api.get<SecurityLogEntry[]>(
-      `/api/v1/profile/security-log?page=${page}&pageSize=${pageSize}`
-    );
+    const url = buildUrl(PROFILE_ENDPOINTS.LEGACY.SECURITY_LOG, { page, pageSize });
+    return this.api.get<SecurityLogEntry[]>(url);
   }
 
   async getExternalLogins(): Promise<ExternalLogin[]> {
-    return this.api.get<ExternalLogin[]>("/api/v1/profile/external-logins");
+    return this.api.get<ExternalLogin[]>(PROFILE_ENDPOINTS.LEGACY.EXTERNAL_LOGINS);
   }
 
   async linkExternalLogin(data: LinkExternalLoginDto): Promise<ExternalLogin> {
-    return this.api.post<ExternalLogin>("/api/v1/profile/external-logins", data);
+    return this.api.post<ExternalLogin>(PROFILE_ENDPOINTS.LEGACY.EXTERNAL_LOGINS, data);
   }
 
   async unlinkExternalLogin(externalLoginId: string): Promise<void> {
-    return this.api.delete<void>(`/api/v1/profile/external-logins/${externalLoginId}`);
+    return this.api.delete<void>(PROFILE_ENDPOINTS.LEGACY.UNLINK_EXTERNAL_LOGIN(externalLoginId));
   }
 }

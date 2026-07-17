@@ -5,8 +5,9 @@
  * Makes API calls via IApiService and transforms DTOs to entities via ProfileMapper.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import { useAppStore } from "@core/store/useAppStore";
+import { PROFILE_ENDPOINTS } from "../services/profile.endpoints";
 import type {
   IProfileRepository,
   UpdateProfileRequest,
@@ -36,12 +37,12 @@ export class ProfileRepository implements IProfileRepository {
   // ── Profile ──────────────────────────────────────────
 
   async getProfile(): Promise<AdminProfile> {
-    const dto = await this.api.get<AdminProfileDto>(API_ENDPOINTS.PROFILE.ME);
+    const dto = await this.api.get<AdminProfileDto>(PROFILE_ENDPOINTS.ME);
     return ProfileMapper.toAdminProfile(dto);
   }
 
   async updateProfile(data: UpdateProfileRequest): Promise<AdminProfile> {
-    const dto = await this.api.put<AdminProfileDto>(API_ENDPOINTS.PROFILE.UPDATE_ME, data);
+    const dto = await this.api.put<AdminProfileDto>(PROFILE_ENDPOINTS.UPDATE_ME, data);
     return ProfileMapper.toAdminProfile(dto);
   }
 
@@ -51,14 +52,14 @@ export class ProfileRepository implements IProfileRepository {
     const formData = new FormData();
     formData.append("image", file);
     const response = await this.api.post<{ imageUrl: string }>(
-      API_ENDPOINTS.PROFILE.AVATAR,
+      PROFILE_ENDPOINTS.AVATAR,
       formData
     );
     return { profileImageUrl: response.imageUrl };
   }
 
   async removeAvatar(): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.PROFILE.AVATAR);
+    await this.api.delete(PROFILE_ENDPOINTS.AVATAR);
   }
 
   // ── Password ─────────────────────────────────────────
@@ -69,7 +70,7 @@ export class ProfileRepository implements IProfileRepository {
     const adminId = useAppStore.getState().user?.id;
     if (!adminId) throw new Error("User not authenticated");
 
-    await this.api.post(API_ENDPOINTS.ADMINS.CHANGE_PASSWORD(adminId), {
+    await this.api.post(PROFILE_ENDPOINTS.CHANGE_PASSWORD(adminId), {
       currentPassword: data.currentPassword,
       newPassword: data.newPassword,
       twoFactorCode: data.twoFactorCode,
@@ -79,23 +80,23 @@ export class ProfileRepository implements IProfileRepository {
   // ── Sessions ─────────────────────────────────────────
 
   async getSessions(): Promise<ActiveSession[]> {
-    const dtos = await this.api.get<ActiveSessionDto[]>(API_ENDPOINTS.PROFILE.SESSIONS);
+    const dtos = await this.api.get<ActiveSessionDto[]>(PROFILE_ENDPOINTS.SESSIONS);
     return ProfileMapper.toActiveSessions(dtos);
   }
 
   async revokeSession(tokenId: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.PROFILE.REVOKE_SESSION(tokenId));
+    await this.api.delete(PROFILE_ENDPOINTS.REVOKE_SESSION(tokenId));
   }
 
   async revokeAllSessions(): Promise<{ revokedCount: number }> {
-    return await this.api.post<{ revokedCount: number }>(API_ENDPOINTS.PROFILE.REVOKE_ALL_SESSIONS);
+    return await this.api.post<{ revokedCount: number }>(PROFILE_ENDPOINTS.REVOKE_ALL_SESSIONS);
   }
 
   // ── 2FA Backup Codes ─────────────────────────────────
 
   async regenerateBackupCodes(twoFactorCode: string): Promise<string[]> {
     const result = await this.api.post<{ backupCodes: string[] }>(
-      API_ENDPOINTS.PROFILE.BACKUP_CODES_REGENERATE,
+      PROFILE_ENDPOINTS.BACKUP_CODES_REGENERATE,
       { username: "", password: "", code: twoFactorCode }
     );
     return result.backupCodes;
@@ -108,21 +109,21 @@ export class ProfileRepository implements IProfileRepository {
     manualEntryKey: string;
     backupCodes: string[];
   }> {
-    return await this.api.post<Enable2FAResultDto>(API_ENDPOINTS.AUTH.TWO_FA.ENABLE);
+    return await this.api.post<Enable2FAResultDto>(PROFILE_ENDPOINTS.TWO_FA.ENABLE);
   }
 
   async confirm2FA(code: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.AUTH.TWO_FA.CONFIRM, { code });
+    await this.api.post(PROFILE_ENDPOINTS.TWO_FA.CONFIRM, { code });
   }
 
   async disable2FA(password: string, twoFactorCode: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.AUTH.TWO_FA.DISABLE, { password, twoFactorCode });
+    await this.api.post(PROFILE_ENDPOINTS.TWO_FA.DISABLE, { password, twoFactorCode });
   }
 
   // ── Security Log ─────────────────────────────────────
 
   async getSecurityLog(page: number = 1, pageSize: number = 50): Promise<SecurityLogEntry[]> {
-    const url = buildUrl(API_ENDPOINTS.PROFILE.SECURITY_LOG, {
+    const url = buildUrl(PROFILE_ENDPOINTS.SECURITY_LOG, {
       page,
       pageSize,
     });
@@ -133,19 +134,19 @@ export class ProfileRepository implements IProfileRepository {
   // ── External Logins ──────────────────────────────────
 
   async getExternalLogins(): Promise<ExternalLogin[]> {
-    const dtos = await this.api.get<ExternalLoginDto[]>(API_ENDPOINTS.PROFILE.EXTERNAL_LOGINS);
+    const dtos = await this.api.get<ExternalLoginDto[]>(PROFILE_ENDPOINTS.EXTERNAL_LOGINS);
     return ProfileMapper.toExternalLogins(dtos);
   }
 
   async linkExternalLogin(data: LinkExternalLoginDto): Promise<ExternalLogin> {
     const dto = await this.api.post<ExternalLoginDto>(
-      API_ENDPOINTS.PROFILE.LINK_EXTERNAL_LOGIN,
+      PROFILE_ENDPOINTS.LINK_EXTERNAL_LOGIN,
       data
     );
     return ProfileMapper.toExternalLogin(dto);
   }
 
   async unlinkExternalLogin(externalLoginId: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.PROFILE.UNLINK_EXTERNAL_LOGIN(externalLoginId));
+    await this.api.delete(PROFILE_ENDPOINTS.UNLINK_EXTERNAL_LOGIN(externalLoginId));
   }
 }

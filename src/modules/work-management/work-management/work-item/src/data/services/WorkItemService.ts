@@ -1,8 +1,8 @@
 /**
  * WorkItem Service — handles all API calls for the WorkManagement module.
  */
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { IApiService } from "@core/interfaces/api.interface";
-import { buildUrl, WORKMANAGEMENT_ENDPOINTS } from "@core/config/api-endpoints";
 import {
   WorkItemModel,
   type WorkItemJson,
@@ -12,8 +12,7 @@ import type {
   IWorkItemService,
   WorkItemListResult,
 } from "../../domain/interfaces/IWorkItemService";
-
-const BASE_URL = WORKMANAGEMENT_ENDPOINTS.WORK_ITEMS.LIST;
+import { WORK_ITEM_ENDPOINTS } from "./work-item.endpoints";
 
 export class WorkItemService implements IWorkItemService {
   constructor(private readonly api: IApiService) {}
@@ -24,7 +23,7 @@ export class WorkItemService implements IWorkItemService {
     search?: string;
     ownerEntityTypeKey?: string;
   }): Promise<WorkItemListResult> {
-    const url = buildUrl(BASE_URL, {
+    const url = buildUrl(WORK_ITEM_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
@@ -45,19 +44,19 @@ export class WorkItemService implements IWorkItemService {
   }
 
   async getById(id: string): Promise<WorkItemModel> {
-    const json = await this.api.get<WorkItemJson>(`${BASE_URL}/${id}`);
+    const json = await this.api.get<WorkItemJson>(WORK_ITEM_ENDPOINTS.BY_ID(id));
     return WorkItemModel.fromJson(json);
   }
 
   async create(data: Record<string, unknown>): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(BASE_URL, data);
+    return this.api.post<{ id: string }>(WORK_ITEM_ENDPOINTS.CREATE, data);
   }
 
   async update(id: string, data: Record<string, unknown>): Promise<void> {
-    await this.api.put(`${BASE_URL}/${id}`, data);
+    await this.api.put(WORK_ITEM_ENDPOINTS.UPDATE(id), data);
   }
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(`${BASE_URL}/${id}`);
+    await this.api.delete(WORK_ITEM_ENDPOINTS.DELETE(id));
   }
 }

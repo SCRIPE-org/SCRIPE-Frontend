@@ -1,5 +1,5 @@
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { IOnboardingQuestionService } from "../../domain/interfaces/IOnboardingQuestionService";
 import type {
   PagedOnboardingQuestionsModel,
@@ -12,6 +12,7 @@ import type {
   UpdateOnboardingQuestionRequest,
   AnswerOptionRequest,
 } from "../../domain/entities/OnboardingQuestionRequests";
+import { ONBOARDING_QUESTIONS_ENDPOINTS } from "./onboarding-questions.endpoints";
 
 /**
  * Http API network service for onboarding question.
@@ -21,47 +22,46 @@ export class OnboardingQuestionService implements IOnboardingQuestionService {
   constructor(private readonly api: IApiService) {}
 
   async getAll(params: OnboardingQuestionsListParams): Promise<PagedOnboardingQuestionsModel> {
-    const qs = new URLSearchParams();
-    qs.set("page", String(params.page ?? 1));
-    qs.set("pageSize", String(params.pageSize ?? 20));
-    if (params.search) qs.set("search", params.search);
-    if (params.categoryId) qs.set("categoryId", params.categoryId);
-    if (params.includeInactive) qs.set("includeInactive", "true");
-    return this.api.get<PagedOnboardingQuestionsModel>(
-      `${API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_QUESTIONS.LIST}?${qs.toString()}`
-    );
+    const url = buildUrl(ONBOARDING_QUESTIONS_ENDPOINTS.QUESTIONS.LIST, {
+      page: params.page ?? 1,
+      pageSize: params.pageSize ?? 20,
+      search: params.search || undefined,
+      categoryId: params.categoryId || undefined,
+      includeInactive: params.includeInactive ? "true" : undefined,
+    });
+    return this.api.get<PagedOnboardingQuestionsModel>(url);
   }
 
   async getById(id: string): Promise<OnboardingQuestionDetailModel> {
     return this.api.get<OnboardingQuestionDetailModel>(
-      API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_QUESTIONS.BY_ID(id)
+      ONBOARDING_QUESTIONS_ENDPOINTS.QUESTIONS.BY_ID(id)
     );
   }
 
   async create(request: CreateOnboardingQuestionRequest): Promise<{ id: string }> {
     return this.api.post<{ id: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_QUESTIONS.CREATE,
+      ONBOARDING_QUESTIONS_ENDPOINTS.QUESTIONS.CREATE,
       request
     );
   }
 
   async update(id: string, request: UpdateOnboardingQuestionRequest): Promise<void> {
-    await this.api.put(API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_QUESTIONS.UPDATE(id), request);
+    await this.api.put(ONBOARDING_QUESTIONS_ENDPOINTS.QUESTIONS.UPDATE(id), request);
   }
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_QUESTIONS.DELETE(id));
+    await this.api.delete(ONBOARDING_QUESTIONS_ENDPOINTS.QUESTIONS.DELETE(id));
   }
 
   async listOptions(questionId: string): Promise<AnswerOptionModel[]> {
     return this.api.get<AnswerOptionModel[]>(
-      API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_ANSWER_OPTIONS.LIST(questionId)
+      ONBOARDING_QUESTIONS_ENDPOINTS.OPTIONS.LIST(questionId)
     );
   }
 
   async createOption(questionId: string, request: AnswerOptionRequest): Promise<{ id: string }> {
     return this.api.post<{ id: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_ANSWER_OPTIONS.CREATE(questionId),
+      ONBOARDING_QUESTIONS_ENDPOINTS.OPTIONS.CREATE(questionId),
       request
     );
   }
@@ -72,19 +72,19 @@ export class OnboardingQuestionService implements IOnboardingQuestionService {
     request: AnswerOptionRequest
   ): Promise<void> {
     await this.api.put(
-      API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_ANSWER_OPTIONS.UPDATE(questionId, optionId),
+      ONBOARDING_QUESTIONS_ENDPOINTS.OPTIONS.UPDATE(questionId, optionId),
       request
     );
   }
 
   async deleteOption(questionId: string, optionId: string): Promise<void> {
     await this.api.delete(
-      API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_ANSWER_OPTIONS.DELETE(questionId, optionId)
+      ONBOARDING_QUESTIONS_ENDPOINTS.OPTIONS.DELETE(questionId, optionId)
     );
   }
 
   async reorderOptions(questionId: string, orderedIds: string[]): Promise<void> {
-    await this.api.put(API_ENDPOINTS.ENTITLEMENTS.ONBOARDING_ANSWER_OPTIONS.REORDER(questionId), {
+    await this.api.put(ONBOARDING_QUESTIONS_ENDPOINTS.OPTIONS.REORDER(questionId), {
       orderedOptionIds: orderedIds,
     });
   }

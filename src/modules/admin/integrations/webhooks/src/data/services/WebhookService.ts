@@ -7,7 +7,7 @@
  * @module webhooks/data
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type {
   IWebhookService,
   ServiceWebhookListParams,
@@ -25,6 +25,7 @@ import type {
   CreateWebhookJson,
   UpdateWebhookJson,
 } from "../models/WebhookModel";
+import { WEBHOOKS_ENDPOINTS } from "./webhooks.endpoints";
 
 /**
  * Http API network service for webhook.
@@ -37,38 +38,38 @@ export class WebhookService implements IWebhookService {
 
   async getAll(params: ServiceWebhookListParams): Promise<WebhookListResponseJson> {
     const url = buildUrl(
-      API_ENDPOINTS.WEBHOOKS.LIST,
+      WEBHOOKS_ENDPOINTS.LIST,
       params as unknown as Record<string, string | number | boolean | null | undefined>
     );
     return this.api.get(url);
   }
 
   async getById(id: string): Promise<WebhookSubscriptionJson> {
-    return this.api.get(API_ENDPOINTS.WEBHOOKS.BY_ID(id));
+    return this.api.get(WEBHOOKS_ENDPOINTS.BY_ID(id));
   }
 
   async create(data: CreateWebhookJson): Promise<WebhookSubscriptionJson> {
-    return this.api.post(API_ENDPOINTS.WEBHOOKS.CREATE, data);
+    return this.api.post(WEBHOOKS_ENDPOINTS.CREATE, data);
   }
 
   async update(id: string, data: UpdateWebhookJson): Promise<void> {
-    await this.api.put(API_ENDPOINTS.WEBHOOKS.UPDATE(id), data);
+    await this.api.put(WEBHOOKS_ENDPOINTS.UPDATE(id), data);
   }
 
   async remove(id: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.WEBHOOKS.DELETE(id));
+    await this.api.delete(WEBHOOKS_ENDPOINTS.DELETE(id));
   }
 
   async toggle(id: string): Promise<void> {
-    await this.api.patch(API_ENDPOINTS.WEBHOOKS.TOGGLE(id), {});
+    await this.api.patch(WEBHOOKS_ENDPOINTS.TOGGLE(id), {});
   }
 
   async rotateSecret(id: string): Promise<WebhookSubscriptionJson> {
-    return this.api.post(API_ENDPOINTS.WEBHOOKS.ROTATE_SECRET(id), {});
+    return this.api.post(WEBHOOKS_ENDPOINTS.ROTATE_SECRET(id), {});
   }
 
   async test(id: string): Promise<WebhookTestResultJson> {
-    return this.api.post(API_ENDPOINTS.WEBHOOKS.TEST(id), {});
+    return this.api.post(WEBHOOKS_ENDPOINTS.TEST(id), {});
   }
 
   // ─── Delivery Logs ────────────────────────────────
@@ -77,12 +78,12 @@ export class WebhookService implements IWebhookService {
     params: ServiceDeliveryLogParams
   ): Promise<WebhookDeliveryLogListResponseJson> {
     const { subscriptionId, ...rest } = params;
-    const url = buildUrl(API_ENDPOINTS.WEBHOOKS.DELIVERY_LOGS(subscriptionId), rest);
+    const url = buildUrl(WEBHOOKS_ENDPOINTS.DELIVERY_LOGS(subscriptionId), rest);
     return this.api.get(url);
   }
 
   async getAvailableEvents(): Promise<WebhookEventTypeJson[]> {
-    return this.api.get(API_ENDPOINTS.WEBHOOKS.EVENTS);
+    return this.api.get(WEBHOOKS_ENDPOINTS.EVENTS);
   }
 
   async getDeliveryStats(subscriptionId: string): Promise<{
@@ -94,7 +95,7 @@ export class WebhookService implements IWebhookService {
   }> {
     // Stats are embedded in the subscription detail response
     const detail = await this.api.get<WebhookSubscriptionJson>(
-      API_ENDPOINTS.WEBHOOKS.BY_ID(subscriptionId)
+      WEBHOOKS_ENDPOINTS.BY_ID(subscriptionId)
     );
     return {
       totalDeliveries: detail.totalDeliveries,
@@ -108,12 +109,12 @@ export class WebhookService implements IWebhookService {
   // ─── Analytics & Health ───────────────────────────
 
   async getAnalytics(subscriptionId: string, days: number = 30): Promise<WebhookAnalyticsJson> {
-    const url = buildUrl(API_ENDPOINTS.WEBHOOKS.ANALYTICS(subscriptionId), { days });
+    const url = buildUrl(WEBHOOKS_ENDPOINTS.ANALYTICS(subscriptionId), { days });
     return this.api.get(url);
   }
 
   async getHealthSummary(): Promise<WebhookHealthSummaryJson> {
-    return this.api.get(API_ENDPOINTS.WEBHOOKS.HEALTH);
+    return this.api.get(WEBHOOKS_ENDPOINTS.HEALTH);
   }
 
   // ─── Dead Letter Queue ────────────────────────────
@@ -122,21 +123,21 @@ export class WebhookService implements IWebhookService {
     params: ServiceDeadLetterParams
   ): Promise<WebhookDeliveryLogListResponseJson> {
     const { subscriptionId, ...rest } = params;
-    const url = buildUrl(API_ENDPOINTS.WEBHOOKS.DEAD_LETTERS(subscriptionId), rest);
+    const url = buildUrl(WEBHOOKS_ENDPOINTS.DEAD_LETTERS(subscriptionId), rest);
     return this.api.get(url);
   }
 
   async replayDeadLetter(logId: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.WEBHOOKS.REPLAY_DEAD_LETTER(logId), {});
+    await this.api.post(WEBHOOKS_ENDPOINTS.REPLAY_DEAD_LETTER(logId), {});
   }
 
   async replayAllDeadLetters(subscriptionId: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.WEBHOOKS.REPLAY_ALL_DEAD_LETTERS(subscriptionId), {});
+    await this.api.post(WEBHOOKS_ENDPOINTS.REPLAY_ALL_DEAD_LETTERS(subscriptionId), {});
   }
 
   // ─── Bulk Operations ──────────────────────────────
 
   async bulkToggle(isActive: boolean): Promise<void> {
-    await this.api.post(API_ENDPOINTS.WEBHOOKS.BULK_TOGGLE, { isActive });
+    await this.api.post(WEBHOOKS_ENDPOINTS.BULK_TOGGLE, { isActive });
   }
 }

@@ -1,7 +1,7 @@
 /**
  * Feature Service — API calls only
  *
- * Uses centralized API_ENDPOINTS for all endpoint paths.
+ * Uses local FEATURES_ENDPOINTS for all endpoint paths.
  * Returns raw DTOs (models) — never domain entities.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
@@ -12,7 +12,7 @@ import type {
   FeatureModuleGroupModel,
 } from "../models/FeatureModels";
 import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { FEATURES_ENDPOINTS } from "./features.endpoints";
 import type {
   CreateFeatureRequest,
   UpdateFeatureRequest,
@@ -26,7 +26,7 @@ export class FeatureService implements IFeatureService {
   constructor(private readonly api: IApiService) {}
 
   async getAll(params: PaginationParams): Promise<PagedResult<FeatureModel>> {
-    return this.api.get<PagedResult<FeatureModel>>(API_ENDPOINTS.ENTITLEMENTS.FEATURES.LIST, {
+    return this.api.get<PagedResult<FeatureModel>>(FEATURES_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search || undefined,
@@ -34,24 +34,24 @@ export class FeatureService implements IFeatureService {
   }
 
   async getById(id: string): Promise<FeatureModel> {
-    return this.api.get<FeatureModel>(API_ENDPOINTS.ENTITLEMENTS.FEATURES.BY_ID(id));
+    return this.api.get<FeatureModel>(FEATURES_ENDPOINTS.BY_ID(id));
   }
 
   async create(data: CreateFeatureRequest): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.FEATURES.CREATE, data);
+    return this.api.post<{ id: string }>(FEATURES_ENDPOINTS.CREATE, data);
   }
 
   async update(id: string, data: UpdateFeatureRequest): Promise<void> {
-    await this.api.put(API_ENDPOINTS.ENTITLEMENTS.FEATURES.UPDATE(id), data);
+    await this.api.put(FEATURES_ENDPOINTS.UPDATE(id), data);
   }
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.FEATURES.DELETE(id));
+    await this.api.delete(FEATURES_ENDPOINTS.DELETE(id));
   }
 
   async getTenantResolvedFeatures(tenantId: string): Promise<TenantEffectiveFeatureModel[]> {
     return this.api.get<TenantEffectiveFeatureModel[]>(
-      API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.RESOLVED(tenantId)
+      FEATURES_ENDPOINTS.TENANT_RESOLVED(tenantId)
     );
   }
 
@@ -59,7 +59,7 @@ export class FeatureService implements IFeatureService {
     const params: Record<string, string> = {};
     if (tenantId) params.tenantId = tenantId;
     return this.api.get<TenantEffectiveFeatureModel[]>(
-      API_ENDPOINTS.ENTITLEMENTS.FEATURES.EFFECTIVE,
+      FEATURES_ENDPOINTS.EFFECTIVE,
       params
     );
   }
@@ -68,7 +68,7 @@ export class FeatureService implements IFeatureService {
     const params: Record<string, string> = {};
     if (search) params.search = search;
     return this.api.get<FeatureModuleGroupModel[]>(
-      API_ENDPOINTS.ENTITLEMENTS.FEATURES.GROUPED,
+      FEATURES_ENDPOINTS.GROUPED,
       params
     );
   }

@@ -1,12 +1,12 @@
 /**
  * Feature Override Service — API calls only
  *
- * Implements IOverrideService. Uses centralized API_ENDPOINTS.
+ * Implements IOverrideService. Uses local OVERRIDES_ENDPOINTS.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { IOverrideService } from "../../domain/interfaces/IOverrideService";
 import type { FeatureOverrideModel, ResolvedFeatureModel } from "../models/OverrideModels";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { OVERRIDES_ENDPOINTS } from "./overrides.endpoints";
 
 /**
  * Http API network service for override.
@@ -17,13 +17,13 @@ export class OverrideService implements IOverrideService {
 
   async getOverrides(tenantId: string): Promise<FeatureOverrideModel[]> {
     return this.api.get<FeatureOverrideModel[]>(
-      API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.OVERRIDES(tenantId)
+      OVERRIDES_ENDPOINTS.OVERRIDES(tenantId)
     );
   }
 
   async getResolved(tenantId: string): Promise<ResolvedFeatureModel[]> {
     return this.api.get<ResolvedFeatureModel[]>(
-      API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.RESOLVED(tenantId)
+      OVERRIDES_ENDPOINTS.RESOLVED(tenantId)
     );
   }
 
@@ -33,25 +33,25 @@ export class OverrideService implements IOverrideService {
     data: { value: string; reason?: string }
   ): Promise<{ id: string }> {
     return this.api.put<{ id: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.SET_OVERRIDE(tenantId, featureId),
+      OVERRIDES_ENDPOINTS.SET_OVERRIDE(tenantId, featureId),
       data
     );
   }
 
   async removeOverride(tenantId: string, featureId: string): Promise<void> {
     await this.api.delete(
-      API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURES.REMOVE_OVERRIDE(tenantId, featureId)
+      OVERRIDES_ENDPOINTS.REMOVE_OVERRIDE(tenantId, featureId)
     );
   }
 
   async setOverrideCost(overrideId: string, amountUsd: number, reason?: string): Promise<void> {
-    await this.api.put(API_ENDPOINTS.ENTITLEMENTS.PRICING.OVERRIDE_COST_SET(overrideId), {
+    await this.api.put(OVERRIDES_ENDPOINTS.OVERRIDE_COST_SET(overrideId), {
       amountUsd,
       reason,
     });
   }
 
   async removeOverrideCost(overrideId: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.PRICING.OVERRIDE_COST_REMOVE(overrideId));
+    await this.api.delete(OVERRIDES_ENDPOINTS.OVERRIDE_COST_REMOVE(overrideId));
   }
 }

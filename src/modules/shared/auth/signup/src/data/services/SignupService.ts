@@ -9,8 +9,9 @@
 
 import type { IPublicApiService } from "@core/interfaces/public-api.interface";
 import type { IApiService } from "@core/interfaces/api.interface";
-import { AUTH_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { ISignupService } from "../interfaces/ISignupService";
+import { SIGNUP_ENDPOINTS } from "./signup.endpoints";
 import type {
   PublicEditionDto,
   PublicCategoryDto,
@@ -52,13 +53,13 @@ export class SignupService implements ISignupService {
    * Cached 10 min client-side by TanStack Query in the orchestrator ViewModel.
    */
   async getPricingContext(): Promise<PricingContextDto> {
-    return this.api.get<PricingContextDto>(AUTH_ENDPOINTS.AUTH.SIGNUP.PRICING_CONTEXT);
+    return this.api.get<PricingContextDto>(SIGNUP_ENDPOINTS.PRICING_CONTEXT);
   }
 
   async getCategories(currency: string | undefined, lang: string): Promise<PublicCategoryDto[]> {
     const params: Record<string, string> = { lang };
     if (currency) params.currency = currency;
-    const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.GET_CATEGORIES, params);
+    const url = buildUrl(SIGNUP_ENDPOINTS.GET_CATEGORIES, params);
     return this.api.get<PublicCategoryDto[]>(url);
   }
 
@@ -70,7 +71,7 @@ export class SignupService implements ISignupService {
     const params: Record<string, string> = { lang };
     if (currency) params.currency = currency;
     if (categoryKey) params.categoryId = categoryKey;
-    const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.GET_EDITIONS, params);
+    const url = buildUrl(SIGNUP_ENDPOINTS.GET_EDITIONS, params);
     return this.api.get<PublicEditionDto[]>(url);
   }
 
@@ -87,20 +88,20 @@ export class SignupService implements ISignupService {
     if (params.priorities) query.priorities = params.priorities;
     if (params.currency) query.currency = params.currency;
     if (params.lang) query.lang = params.lang;
-    const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.RECOMMENDATION, query);
+    const url = buildUrl(SIGNUP_ENDPOINTS.RECOMMENDATION, query);
     return this.api.get<RecommendationDto>(url);
   }
 
   async sendOtp(email: string): Promise<SendOtpDto> {
-    return this.api.post<SendOtpDto>(AUTH_ENDPOINTS.AUTH.SIGNUP.SEND_OTP, { email });
+    return this.api.post<SendOtpDto>(SIGNUP_ENDPOINTS.SEND_OTP, { email });
   }
 
   async verifyOtp(email: string, code: string): Promise<VerifyOtpDto> {
-    return this.api.post<VerifyOtpDto>(AUTH_ENDPOINTS.AUTH.SIGNUP.VERIFY_OTP, { email, code });
+    return this.api.post<VerifyOtpDto>(SIGNUP_ENDPOINTS.VERIFY_OTP, { email, code });
   }
 
   async checkSubdomain(subdomain: string): Promise<SubdomainCheckDto> {
-    const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.CHECK_SUBDOMAIN, { subdomain });
+    const url = buildUrl(SIGNUP_ENDPOINTS.CHECK_SUBDOMAIN, { subdomain });
     return this.api.get<SubdomainCheckDto>(url);
   }
 
@@ -117,36 +118,36 @@ export class SignupService implements ISignupService {
       primaryPriority: data.primaryPriority,
     };
     return this.api.post<void>(
-      AUTH_ENDPOINTS.AUTH.SIGNUP.CONTACT_SALES,
+      SIGNUP_ENDPOINTS.CONTACT_SALES,
       body as unknown as Record<string, unknown>
     );
   }
 
   async register(data: RegisterPayload): Promise<RegisterDto> {
     return this.api.post<RegisterDto>(
-      AUTH_ENDPOINTS.AUTH.SIGNUP.REGISTER,
+      SIGNUP_ENDPOINTS.REGISTER,
       data as unknown as Record<string, unknown>
     );
   }
 
   async getStatus(ref: string): Promise<SignupStatusDto> {
-    const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.STATUS, { ref });
+    const url = buildUrl(SIGNUP_ENDPOINTS.STATUS, { ref });
     return this.api.get<SignupStatusDto>(url);
   }
 
   async getCheckoutStatus(sessionId: string): Promise<SignupCheckoutStatusDto> {
-    const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.CHECKOUT_STATUS, { sessionId });
+    const url = buildUrl(SIGNUP_ENDPOINTS.CHECKOUT_STATUS, { sessionId });
     return this.api.get<SignupCheckoutStatusDto>(url);
   }
 
   async completeSession(signupRef: string): Promise<CompleteSessionDto> {
-    return this.api.post<CompleteSessionDto>(AUTH_ENDPOINTS.AUTH.SIGNUP.COMPLETE_SESSION, {
+    return this.api.post<CompleteSessionDto>(SIGNUP_ENDPOINTS.COMPLETE_SESSION, {
       signupRef,
     });
   }
 
   async abandon(signupRef: string): Promise<void> {
-    return this.api.post<void>(AUTH_ENDPOINTS.AUTH.SIGNUP.ABANDON, { signupRef });
+    return this.api.post<void>(SIGNUP_ENDPOINTS.ABANDON, { signupRef });
   }
 
   async resume(
@@ -154,7 +155,7 @@ export class SignupService implements ISignupService {
   ): Promise<import("../models/SignupModels").ResumeSessionDto | null> {
     try {
       return await this.api.post<import("../models/SignupModels").ResumeSessionDto>(
-        AUTH_ENDPOINTS.AUTH.SIGNUP.RESUME,
+        SIGNUP_ENDPOINTS.RESUME,
         { resumeToken: signupRef }
       );
     } catch {
@@ -169,7 +170,7 @@ export class SignupService implements ISignupService {
     currency: string;
   }): Promise<import("../models/SignupModels").ChangePlanResultDto> {
     return this.api.post<import("../models/SignupModels").ChangePlanResultDto>(
-      AUTH_ENDPOINTS.AUTH.SIGNUP.CHANGE_PLAN,
+      SIGNUP_ENDPOINTS.CHANGE_PLAN,
       {
         signupRef: payload.signupRef,
         newEditionId: payload.newEditionId,
@@ -192,7 +193,7 @@ export class SignupService implements ISignupService {
       full: true,
     };
     if (params.category) query.category = params.category;
-    const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.ONBOARDING_FLOW, query);
+    const url = buildUrl(SIGNUP_ENDPOINTS.ONBOARDING_FLOW, query);
     return this.api.get<OnboardingFlowDto>(url);
   }
 
@@ -202,7 +203,7 @@ export class SignupService implements ISignupService {
    * interceptor; the explicit ?lang= wins server-side when supplied.
    */
   async getWelcomeContent(lang: string): Promise<SignupWelcomeContentDto> {
-    const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.ONBOARDING_WELCOME_CONTENT, { lang });
+    const url = buildUrl(SIGNUP_ENDPOINTS.ONBOARDING_WELCOME_CONTENT, { lang });
     return this.api.get<SignupWelcomeContentDto>(url);
   }
 
@@ -229,8 +230,8 @@ export class SignupService implements ISignupService {
     }
     const query = search.toString();
     const url = query
-      ? `${AUTH_ENDPOINTS.AUTH.SIGNUP.ONBOARDING_RECOMMENDATION}?${query}`
-      : AUTH_ENDPOINTS.AUTH.SIGNUP.ONBOARDING_RECOMMENDATION;
+      ? `${SIGNUP_ENDPOINTS.ONBOARDING_RECOMMENDATION}?${query}`
+      : SIGNUP_ENDPOINTS.ONBOARDING_RECOMMENDATION;
     return this.api.get<OnboardingRecommendationDto>(url);
   }
 
@@ -239,7 +240,7 @@ export class SignupService implements ISignupService {
     answers: string;
     lang: string;
   }): Promise<OnboardingRecommendationDto> {
-    const url = buildUrl(AUTH_ENDPOINTS.AUTH.SIGNUP.ONBOARDING_RECOMMENDATION, {
+    const url = buildUrl(SIGNUP_ENDPOINTS.ONBOARDING_RECOMMENDATION, {
       category: params.category,
       answers: params.answers,
       lang: params.lang,
@@ -252,6 +253,6 @@ export class SignupService implements ISignupService {
     questionKey: string;
     values: string[];
   }): Promise<void> {
-    await this.api.post<void>(AUTH_ENDPOINTS.AUTH.SIGNUP.ONBOARDING_ANSWER, params);
+    await this.api.post<void>(SIGNUP_ENDPOINTS.ONBOARDING_ANSWER, params);
   }
 }

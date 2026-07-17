@@ -5,7 +5,7 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { PlatformStripeDashboardModel } from "../models/PlatformStripeModels";
 import type { IPlatformStripeService } from "../../domain/interfaces/IPlatformStripeService";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { PLATFORM_STRIPE_ENDPOINTS } from "./platform-stripe.endpoints";
 
 /**
  * Http API network service for platform stripe.
@@ -16,7 +16,7 @@ export class PlatformStripeService implements IPlatformStripeService {
 
   async getDashboard(): Promise<PlatformStripeDashboardModel> {
     return this.api.get<PlatformStripeDashboardModel>(
-      API_ENDPOINTS.ENTITLEMENTS.PLATFORM_STRIPE.DASHBOARD
+      PLATFORM_STRIPE_ENDPOINTS.DASHBOARD
     );
   }
 }

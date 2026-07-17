@@ -8,7 +8,7 @@ import type {
   SubscriptionListModel,
   GlobalSubscriptionModel,
 } from "../models/SubscriptionModels";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { SUBSCRIPTION_ENDPOINTS } from "./subscription.endpoints";
 
 /**
  * Http API network service for subscription.
@@ -21,23 +21,23 @@ export class SubscriptionService implements ISubscriptionService {
 
   async getAll(): Promise<GlobalSubscriptionModel[]> {
     return this.api.get<GlobalSubscriptionModel[]>(
-      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.LIST_ALL
+      SUBSCRIPTION_ENDPOINTS.LIST_ALL
     );
   }
 
   async getByTenant(tenantId: string): Promise<SubscriptionListModel[]> {
     return this.api.get<SubscriptionListModel[]>(
-      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.LIST_BY_TENANT(tenantId)
+      SUBSCRIPTION_ENDPOINTS.LIST_BY_TENANT(tenantId)
     );
   }
 
   async getById(id: string): Promise<SubscriptionModel> {
-    return this.api.get<SubscriptionModel>(API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.GET_BY_ID(id));
+    return this.api.get<SubscriptionModel>(SUBSCRIPTION_ENDPOINTS.GET_BY_ID(id));
   }
 
   async getMyTenantSubscription(): Promise<SubscriptionModel | null> {
     try {
-      return await this.api.get<SubscriptionModel>(API_ENDPOINTS.ENTITLEMENTS.MY_SUBSCRIPTION.GET);
+      return await this.api.get<SubscriptionModel>(SUBSCRIPTION_ENDPOINTS.GET_MY_SUBSCRIPTION);
     } catch {
       // 204 No Content → null
       return null;
@@ -60,7 +60,7 @@ export class SubscriptionService implements ISubscriptionService {
     }
   ): Promise<{ id: string }> {
     return this.api.post<{ id: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.ASSIGN(tenantId),
+      SUBSCRIPTION_ENDPOINTS.ASSIGN(tenantId),
       data
     );
   }
@@ -76,15 +76,15 @@ export class SubscriptionService implements ISubscriptionService {
       promotionId?: string;
     }
   ): Promise<void> {
-    await this.api.put(API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE(tenantId), data);
+    await this.api.put(SUBSCRIPTION_ENDPOINTS.CHANGE(tenantId), data);
   }
 
   async renew(tenantId: string, type: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RENEW(tenantId), { type });
+    await this.api.post(SUBSCRIPTION_ENDPOINTS.RENEW(tenantId), { type });
   }
 
   async convertTrial(tenantId: string, type: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CONVERT(tenantId), { type });
+    await this.api.post(SUBSCRIPTION_ENDPOINTS.CONVERT(tenantId), { type });
   }
 
   async suspend(
@@ -94,7 +94,7 @@ export class SubscriptionService implements ISubscriptionService {
     refundType: string = "None",
     customRefundAmount?: number
   ): Promise<void> {
-    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.SUSPEND(tenantId), {
+    await this.api.post(SUBSCRIPTION_ENDPOINTS.SUSPEND(tenantId), {
       reason,
       useFallback,
       refundType,
@@ -104,7 +104,7 @@ export class SubscriptionService implements ISubscriptionService {
 
   async resume(tenantId: string, type?: string): Promise<void> {
     await this.api.post(
-      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RESUME(tenantId),
+      SUBSCRIPTION_ENDPOINTS.RESUME(tenantId),
       type ? { type } : {}
     );
   }
@@ -116,7 +116,7 @@ export class SubscriptionService implements ISubscriptionService {
     refundType: string = "None",
     customRefundAmount?: number
   ): Promise<void> {
-    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CANCEL(tenantId), {
+    await this.api.post(SUBSCRIPTION_ENDPOINTS.CANCEL(tenantId), {
       reason,
       useFallback,
       refundType,
@@ -125,15 +125,15 @@ export class SubscriptionService implements ISubscriptionService {
   }
 
   async resync(tenantId: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RESYNC(tenantId), {});
+    await this.api.post(SUBSCRIPTION_ENDPOINTS.RESYNC(tenantId), {});
   }
 
   async revoke(id: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.REVOKE(id));
+    await this.api.delete(SUBSCRIPTION_ENDPOINTS.REVOKE(id));
   }
 
   async changeCurrency(tenantId: string, currency: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.CHANGE_CURRENCY(tenantId), {
+    await this.api.post(SUBSCRIPTION_ENDPOINTS.CHANGE_CURRENCY(tenantId), {
       currency,
     });
   }
@@ -152,7 +152,7 @@ export class SubscriptionService implements ISubscriptionService {
     }[];
   }> {
     return this.api.get(
-      API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.DOWNGRADE_IMPACT(tenantId, targetEditionId)
+      SUBSCRIPTION_ENDPOINTS.DOWNGRADE_IMPACT(tenantId, targetEditionId)
     );
   }
 
@@ -171,7 +171,7 @@ export class SubscriptionService implements ISubscriptionService {
     const ext = params.format === "excel" ? "xlsx" : params.format === "csv" ? "csv" : "pdf";
     const filename = `subscriptions-export.${ext}`;
 
-    const endpointPath = API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.EXPORT(
+    const endpointPath = SUBSCRIPTION_ENDPOINTS.EXPORT(
       params.format,
       params.statusFilter,
       params.typeFilter,
@@ -189,7 +189,7 @@ export class SubscriptionService implements ISubscriptionService {
   // ── Receipt (blob download — backend-generated PDF) ──
 
   async downloadReceipt(tenantId: string): Promise<{ blob: Blob; filename: string }> {
-    const endpointPath = API_ENDPOINTS.ENTITLEMENTS.SUBSCRIPTIONS.RECEIPT(tenantId);
+    const endpointPath = SUBSCRIPTION_ENDPOINTS.RECEIPT(tenantId);
     const blob = await this.api.getBlob(endpointPath);
     const filename = `subscription-receipt.pdf`;
     return { blob, filename };

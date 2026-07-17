@@ -22,7 +22,8 @@ import type {
   UpdatePromotionRequest,
 } from "../../domain/entities/TenantPlanRequests";
 import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
+import { TENANT_PLANS_ENDPOINTS } from "./tenant-plans.endpoints";
 
 /**
  * Http API network service for tenant plan.
@@ -33,7 +34,7 @@ export class TenantPlanService implements ITenantPlanService {
 
   // ── Plans ──
   async getAll(params: PaginationParams): Promise<PagedResult<TenantPlanListModel>> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLANS.LIST, {
+    const url = buildUrl(TENANT_PLANS_ENDPOINTS.TENANT_PLANS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search || undefined,
@@ -42,36 +43,36 @@ export class TenantPlanService implements ITenantPlanService {
   }
 
   async getById(id: string): Promise<TenantPlanModel> {
-    return this.api.get<TenantPlanModel>(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLANS.BY_ID(id));
+    return this.api.get<TenantPlanModel>(TENANT_PLANS_ENDPOINTS.TENANT_PLANS.BY_ID(id));
   }
 
   async create(data: CreateTenantPlanRequest): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLANS.CREATE, data);
+    return this.api.post<{ id: string }>(TENANT_PLANS_ENDPOINTS.TENANT_PLANS.CREATE, data);
   }
 
   async update(id: string, data: UpdateTenantPlanRequest): Promise<void> {
-    await this.api.put(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLANS.UPDATE(id), data);
+    await this.api.put(TENANT_PLANS_ENDPOINTS.TENANT_PLANS.UPDATE(id), data);
   }
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLANS.DELETE(id));
+    await this.api.delete(TENANT_PLANS_ENDPOINTS.TENANT_PLANS.DELETE(id));
   }
 
   async publish(id: string, changeNotes?: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLANS.PUBLISH(id), {
+    await this.api.post(TENANT_PLANS_ENDPOINTS.TENANT_PLANS.PUBLISH(id), {
       changeNotes: changeNotes ?? null,
     });
   }
 
   async archive(id: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLANS.ARCHIVE(id), {});
+    await this.api.post(TENANT_PLANS_ENDPOINTS.TENANT_PLANS.ARCHIVE(id), {});
   }
 
   // ── Feature Definitions ──
   async getFeatureDefinitions(
     params: PaginationParams & { category?: string }
   ): Promise<PagedResult<TenantFeatureDefinitionListModel>> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURE_DEFINITIONS.LIST, {
+    const url = buildUrl(TENANT_PLANS_ENDPOINTS.TENANT_FEATURE_DEFINITIONS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search || undefined,
@@ -82,7 +83,7 @@ export class TenantPlanService implements ITenantPlanService {
 
   async getActiveFeatureDefinitions(): Promise<TenantFeatureDefinitionListModel[]> {
     return this.api.get<TenantFeatureDefinitionListModel[]>(
-      API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURE_DEFINITIONS.ACTIVE
+      TENANT_PLANS_ENDPOINTS.TENANT_FEATURE_DEFINITIONS.ACTIVE
     );
   }
 
@@ -90,35 +91,35 @@ export class TenantPlanService implements ITenantPlanService {
     import("../models/TenantPlanModels").TenantFeatureDefinitionCategoryGroupModel[]
   > {
     // GET /tenant-feature-definitions/active/grouped — backend already groups by category
-    return this.api.get(API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURE_DEFINITIONS.ACTIVE_GROUPED);
+    return this.api.get(TENANT_PLANS_ENDPOINTS.TENANT_FEATURE_DEFINITIONS.ACTIVE_GROUPED);
   }
 
   async getFeatureDefinitionById(id: string): Promise<TenantFeatureDefinitionModel> {
     return this.api.get<TenantFeatureDefinitionModel>(
-      API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURE_DEFINITIONS.BY_ID(id)
+      TENANT_PLANS_ENDPOINTS.TENANT_FEATURE_DEFINITIONS.BY_ID(id)
     );
   }
 
   async createFeatureDefinition(data: CreateFeatureDefinitionRequest): Promise<{ id: string }> {
     return this.api.post<{ id: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURE_DEFINITIONS.CREATE,
+      TENANT_PLANS_ENDPOINTS.TENANT_FEATURE_DEFINITIONS.CREATE,
       data
     );
   }
 
   async updateFeatureDefinition(id: string, data: UpdateFeatureDefinitionRequest): Promise<void> {
-    await this.api.put(API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURE_DEFINITIONS.UPDATE(id), data);
+    await this.api.put(TENANT_PLANS_ENDPOINTS.TENANT_FEATURE_DEFINITIONS.UPDATE(id), data);
   }
 
   async deleteFeatureDefinition(id: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.TENANT_FEATURE_DEFINITIONS.DELETE(id));
+    await this.api.delete(TENANT_PLANS_ENDPOINTS.TENANT_FEATURE_DEFINITIONS.DELETE(id));
   }
 
   // ── Promotions ──
   async getPromotions(
     params: PaginationParams & { planId?: string }
   ): Promise<PagedResult<TenantPlanPromotionListModel>> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLAN_PROMOTIONS.LIST, {
+    const url = buildUrl(TENANT_PLANS_ENDPOINTS.TENANT_PLAN_PROMOTIONS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search || undefined,
@@ -129,17 +130,17 @@ export class TenantPlanService implements ITenantPlanService {
 
   async createPromotion(data: CreatePromotionRequest): Promise<{ id: string }> {
     return this.api.post<{ id: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.TENANT_PLAN_PROMOTIONS.CREATE,
+      TENANT_PLANS_ENDPOINTS.TENANT_PLAN_PROMOTIONS.CREATE,
       data
     );
   }
 
   async updatePromotion(id: string, data: UpdatePromotionRequest): Promise<void> {
-    await this.api.put(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLAN_PROMOTIONS.UPDATE(id), data);
+    await this.api.put(TENANT_PLANS_ENDPOINTS.TENANT_PLAN_PROMOTIONS.UPDATE(id), data);
   }
 
   async deletePromotion(id: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.ENTITLEMENTS.TENANT_PLAN_PROMOTIONS.DELETE(id));
+    await this.api.delete(TENANT_PLANS_ENDPOINTS.TENANT_PLAN_PROMOTIONS.DELETE(id));
   }
 
   async validatePromoCode(
@@ -147,7 +148,7 @@ export class TenantPlanService implements ITenantPlanService {
     planId?: string
   ): Promise<{ isValid: boolean; message?: string }> {
     return this.api.post<{ isValid: boolean; message?: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.TENANT_PLAN_PROMOTIONS.VALIDATE,
+      TENANT_PLANS_ENDPOINTS.TENANT_PLAN_PROMOTIONS.VALIDATE,
       { code, tenantPlanId: planId ?? null }
     );
   }

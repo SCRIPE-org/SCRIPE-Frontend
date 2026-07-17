@@ -6,11 +6,12 @@
  * All domain mapping happens in ReviewsRepository.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { MARKETPLACE_ENDPOINTS } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type {
   IReviewsService,
   PaginatedReviewsResponse,
 } from "../../domain/interfaces/IReviewsService";
+import { REVIEWS_ENDPOINTS } from "./reviews.endpoints";
 
 /**
  * Http API network service for reviews.
@@ -25,18 +26,16 @@ export class ReviewsService implements IReviewsService {
     pageSize: number;
     appListingId?: string;
   }): Promise<PaginatedReviewsResponse> {
-    const q = new URLSearchParams({
-      page: String(params.page),
-      pageSize: String(params.pageSize),
-      ...(params.appListingId && { appListingId: params.appListingId }),
+    const url = buildUrl(REVIEWS_ENDPOINTS.REVIEWS, {
+      page: params.page,
+      pageSize: params.pageSize,
+      appListingId: params.appListingId || undefined,
     });
-    return this.api.get<PaginatedReviewsResponse>(
-      `${MARKETPLACE_ENDPOINTS.MARKETPLACE.REVIEWS}?${q}`
-    );
+    return this.api.get<PaginatedReviewsResponse>(url);
   }
 
   /** Moderate (delete) a review. */
   async delete(id: string): Promise<void> {
-    await this.api.delete(MARKETPLACE_ENDPOINTS.MARKETPLACE.REVIEW_BY_ID(id));
+    await this.api.delete(REVIEWS_ENDPOINTS.REVIEW_BY_ID(id));
   }
 }

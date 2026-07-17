@@ -6,7 +6,7 @@
  * All domain mapping happens in FinancialsRepository.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { MARKETPLACE_ENDPOINTS } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type {
   IFinancialsService,
   PaginatedFinancialsResponse,
@@ -14,6 +14,7 @@ import type {
   PayoutDto,
   CreatePurchasePayload,
 } from "../../domain/interfaces/IFinancialsService";
+import { FINANCIALS_ENDPOINTS } from "./financials.endpoints";
 
 /**
  * Http API network service for financials.
@@ -28,19 +29,17 @@ export class FinancialsService implements IFinancialsService {
     pageSize: number;
     tenantId?: string;
   }): Promise<PaginatedFinancialsResponse<PurchaseDto>> {
-    const q = new URLSearchParams({
-      page: String(params.page),
-      pageSize: String(params.pageSize),
-      ...(params.tenantId && { tenantId: params.tenantId }),
+    const url = buildUrl(FINANCIALS_ENDPOINTS.PURCHASES, {
+      page: params.page,
+      pageSize: params.pageSize,
+      tenantId: params.tenantId || undefined,
     });
-    return this.api.get<PaginatedFinancialsResponse<PurchaseDto>>(
-      `${MARKETPLACE_ENDPOINTS.MARKETPLACE.PURCHASES}?${q}`
-    );
+    return this.api.get<PaginatedFinancialsResponse<PurchaseDto>>(url);
   }
 
   /** Initiate an app purchase. */
   async createPurchase(payload: CreatePurchasePayload): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(MARKETPLACE_ENDPOINTS.MARKETPLACE.PURCHASES, payload);
+    return this.api.post<{ id: string }>(FINANCIALS_ENDPOINTS.PURCHASES, payload);
   }
 
   /** Fetch paginated developer payouts. */
@@ -49,19 +48,17 @@ export class FinancialsService implements IFinancialsService {
     page: number;
     pageSize: number;
   }): Promise<PaginatedFinancialsResponse<PayoutDto>> {
-    const q = new URLSearchParams({
+    const url = buildUrl(FINANCIALS_ENDPOINTS.PAYOUTS, {
       developerProfileId: params.developerProfileId,
-      page: String(params.page),
-      pageSize: String(params.pageSize),
+      page: params.page,
+      pageSize: params.pageSize,
     });
-    return this.api.get<PaginatedFinancialsResponse<PayoutDto>>(
-      `${MARKETPLACE_ENDPOINTS.MARKETPLACE.PAYOUTS}?${q}`
-    );
+    return this.api.get<PaginatedFinancialsResponse<PayoutDto>>(url);
   }
 
   /** Process (disburse) a pending developer payout. */
   async processPayout(id: string, externalReference?: string): Promise<void> {
-    await this.api.post(MARKETPLACE_ENDPOINTS.MARKETPLACE.PAYOUT_PROCESS(id), {
+    await this.api.post(FINANCIALS_ENDPOINTS.PAYOUT_PROCESS(id), {
       externalReference: externalReference ?? null,
     });
   }

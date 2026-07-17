@@ -5,8 +5,9 @@
  * Uses the Dashboard controller endpoints since analytics is a view over dashboard data.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { IAnalyticsService } from "../../domain/interfaces/IAnalyticsService";
+import { ANALYTICS_ENDPOINTS } from "./analytics.endpoints";
 import type {
   AnalyticsSummary,
   DistributionData,
@@ -21,16 +22,16 @@ export class AnalyticsService implements IAnalyticsService {
   constructor(private readonly api: IApiService) {}
 
   async getSummary(): Promise<AnalyticsSummary> {
-    return this.api.get<AnalyticsSummary>(API_ENDPOINTS.DASHBOARD.SUMMARY);
+    return this.api.get<AnalyticsSummary>(ANALYTICS_ENDPOINTS.SUMMARY);
   }
 
   async getEventDistribution(days: number = 30): Promise<DistributionData[]> {
-    const url = buildUrl(API_ENDPOINTS.DASHBOARD.EVENT_DISTRIBUTION, { days });
+    const url = buildUrl(ANALYTICS_ENDPOINTS.EVENT_DISTRIBUTION, { days });
     return this.api.get<DistributionData[]>(url);
   }
 
   async getLoginActivity(days: number = 30): Promise<ComparisonDataPoint[]> {
-    const url = buildUrl(API_ENDPOINTS.DASHBOARD.LOGIN_ACTIVITY, { days });
+    const url = buildUrl(ANALYTICS_ENDPOINTS.LOGIN_ACTIVITY, { days });
     return this.api.get<ComparisonDataPoint[]>(url);
   }
 }

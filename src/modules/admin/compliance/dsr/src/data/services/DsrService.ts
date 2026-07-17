@@ -3,7 +3,7 @@
  * Implements IDsrService, uses IApiService.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { IDsrService } from "../../domain/interfaces/IDsrService";
 import type { DsrModel } from "../models/DsrModels";
 import type { PagedResult } from "@core/interfaces/common.interface";
@@ -12,6 +12,7 @@ import type {
   SubmitDsrRequest,
   ReviewDsrRequest,
 } from "../../domain/entities/DsrRequests";
+import { DSR_ENDPOINTS } from "./dsr.endpoints";
 
 /**
  * Http API network service for dsr.
@@ -21,7 +22,7 @@ export class DsrService implements IDsrService {
   constructor(private readonly api: IApiService) {}
 
   getAll(params: DsrListParams): Promise<PagedResult<DsrModel>> {
-    const url = buildUrl(API_ENDPOINTS.COMPLIANCE.DSR_LIST, {
+    const url = buildUrl(DSR_ENDPOINTS.DSR_LIST, {
       page: params.page ?? 1,
       pageSize: params.pageSize ?? 20,
       ...(params.status && { status: params.status }),
@@ -32,26 +33,26 @@ export class DsrService implements IDsrService {
   }
 
   getById(id: string): Promise<DsrModel> {
-    return this.api.get<DsrModel>(API_ENDPOINTS.COMPLIANCE.DSR_BY_ID(id));
+    return this.api.get<DsrModel>(DSR_ENDPOINTS.DSR_BY_ID(id));
   }
 
   submit(data: SubmitDsrRequest): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(API_ENDPOINTS.COMPLIANCE.DSR_SUBMIT, data);
+    return this.api.post<{ id: string }>(DSR_ENDPOINTS.DSR_SUBMIT, data);
   }
 
   review(id: string, data: ReviewDsrRequest): Promise<void> {
-    return this.api.post<void>(API_ENDPOINTS.COMPLIANCE.DSR_REVIEW(id), data);
+    return this.api.post<void>(DSR_ENDPOINTS.DSR_REVIEW(id), data);
   }
 
   cancel(id: string): Promise<void> {
-    return this.api.post<void>(API_ENDPOINTS.COMPLIANCE.DSR_CANCEL(id), {});
+    return this.api.post<void>(DSR_ENDPOINTS.DSR_CANCEL(id), {});
   }
 
   confirmErasure(id: string): Promise<void> {
-    return this.api.post<void>(API_ENDPOINTS.COMPLIANCE.DSR_CONFIRM_ERASURE(id), {});
+    return this.api.post<void>(DSR_ENDPOINTS.DSR_CONFIRM_ERASURE(id), {});
   }
 
   downloadExport(id: string): Promise<Blob> {
-    return this.api.getBlob(API_ENDPOINTS.COMPLIANCE.DSR_DOWNLOAD(id));
+    return this.api.getBlob(DSR_ENDPOINTS.DSR_DOWNLOAD(id));
   }
 }

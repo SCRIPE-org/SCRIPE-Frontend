@@ -7,13 +7,14 @@
  * @module customization/data
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { ThemeBundleDto, ThemeBundlePagedResult } from "../models/ThemeBundleTypes";
 import type {
   IThemeBundleService,
   BundleListParams,
   SaveBundlePayload,
 } from "../../domain/interfaces/IThemeBundleService";
+import { BRANDING_ENDPOINTS } from "./branding.endpoints";
 
 /**
  * Http API network service for theme bundle.
@@ -23,7 +24,7 @@ export class ThemeBundleService implements IThemeBundleService {
   constructor(private readonly api: IApiService) {}
 
   async getBundles(params: BundleListParams): Promise<ThemeBundlePagedResult> {
-    const url = buildUrl(API_ENDPOINTS.BUNDLES.LIST, {
+    const url = buildUrl(BRANDING_ENDPOINTS.BUNDLES.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search || undefined,
@@ -35,22 +36,22 @@ export class ThemeBundleService implements IThemeBundleService {
   }
 
   async getFeatured(): Promise<ThemeBundleDto[]> {
-    return this.api.get<ThemeBundleDto[]>(API_ENDPOINTS.BUNDLES.FEATURED);
+    return this.api.get<ThemeBundleDto[]>(BRANDING_ENDPOINTS.BUNDLES.FEATURED);
   }
 
   async getBySlug(slug: string): Promise<ThemeBundleDto> {
-    return this.api.get<ThemeBundleDto>(API_ENDPOINTS.BUNDLES.BY_SLUG(slug));
+    return this.api.get<ThemeBundleDto>(BRANDING_ENDPOINTS.BUNDLES.BY_SLUG(slug));
   }
 
   async apply(slug: string, mergeWithCurrent: boolean): Promise<void> {
-    await this.api.post(API_ENDPOINTS.BUNDLES.APPLY(slug), { mergeWithCurrent });
+    await this.api.post(BRANDING_ENDPOINTS.BUNDLES.APPLY(slug), { mergeWithCurrent });
   }
 
   async toggleFavorite(slug: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.BUNDLES.FAVORITE(slug), {});
+    await this.api.post(BRANDING_ENDPOINTS.BUNDLES.FAVORITE(slug), {});
   }
 
   async saveCurrentAsBundle(data: SaveBundlePayload): Promise<ThemeBundleDto> {
-    return this.api.post<ThemeBundleDto>(API_ENDPOINTS.BUNDLES.SAVE, data);
+    return this.api.post<ThemeBundleDto>(BRANDING_ENDPOINTS.BUNDLES.SAVE, data);
   }
 }

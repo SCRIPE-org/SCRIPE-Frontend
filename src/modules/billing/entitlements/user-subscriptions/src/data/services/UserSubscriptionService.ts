@@ -15,7 +15,8 @@ import type {
 } from "../models/UserSubscriptionModels";
 import type { CreateUserSubscriptionRequest } from "../../domain/entities/UserSubscriptionRequests";
 import type { PagedResult, PaginationParams } from "@core/interfaces/common.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
+import { USER_SUBSCRIPTIONS_ENDPOINTS } from "./user-subscriptions.endpoints";
 
 /**
  * Http API network service for user subscription.
@@ -27,7 +28,7 @@ export class UserSubscriptionService implements IUserSubscriptionService {
   async getAll(
     params: PaginationParams & { planId?: string; status?: string }
   ): Promise<PagedResult<UserSubscriptionListModel>> {
-    const url = buildUrl(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.LIST, {
+    const url = buildUrl(USER_SUBSCRIPTIONS_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search || undefined,
@@ -39,14 +40,14 @@ export class UserSubscriptionService implements IUserSubscriptionService {
 
   async getById(id: string): Promise<UserSubscriptionModel> {
     return this.api.get<UserSubscriptionModel>(
-      API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.BY_ID(id)
+      USER_SUBSCRIPTIONS_ENDPOINTS.BY_ID(id)
     );
   }
 
   async getMySubscription(): Promise<UserSubscriptionModel | null> {
     try {
       return await this.api.get<UserSubscriptionModel>(
-        API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.ME
+        USER_SUBSCRIPTIONS_ENDPOINTS.ME
       );
     } catch {
       // 204 No Content → null
@@ -56,17 +57,17 @@ export class UserSubscriptionService implements IUserSubscriptionService {
 
   async create(data: CreateUserSubscriptionRequest): Promise<{ id: string }> {
     return this.api.post<{ id: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.CREATE,
+      USER_SUBSCRIPTIONS_ENDPOINTS.CREATE,
       data
     );
   }
 
   async cancel(id: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.CANCEL(id), {});
+    await this.api.post(USER_SUBSCRIPTIONS_ENDPOINTS.CANCEL(id), {});
   }
 
   async renew(id: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.RENEW(id), {});
+    await this.api.post(USER_SUBSCRIPTIONS_ENDPOINTS.RENEW(id), {});
   }
 
   async changePlan(
@@ -74,7 +75,7 @@ export class UserSubscriptionService implements IUserSubscriptionService {
     data: { newTenantPlanId: string; billingCycle: string; reason?: string }
   ): Promise<{ id: string }> {
     return this.api.post<{ id: string }>(
-      API_ENDPOINTS.ENTITLEMENTS.USER_SUBSCRIPTIONS.CHANGE_PLAN(id),
+      USER_SUBSCRIPTIONS_ENDPOINTS.CHANGE_PLAN(id),
       data
     );
   }
@@ -85,7 +86,7 @@ export class UserSubscriptionService implements IUserSubscriptionService {
    * plus display name and email.
    */
   async searchUsers(query: string): Promise<UserSearchDto[]> {
-    const url = buildUrl(API_ENDPOINTS.USERS.LIST, {
+    const url = buildUrl(USER_SUBSCRIPTIONS_ENDPOINTS.USERS_LIST, {
       search: query,
       page: 1,
       pageSize: 20,

@@ -28,7 +28,7 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useAppStore } from "@core/store/useAppStore";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { TENANTS_ENDPOINTS } from "@core/config/api-endpoints";
 import { getModuleApiService } from "@core/services/api-factory";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { appLogger } from "@core/common/logger";
@@ -36,7 +36,7 @@ import { appLogger } from "@core/common/logger";
 // ── Constants ──
 const DEBOUNCE_MS = 2000;
 const MAX_PAYLOAD_BYTES = 8000; // 8KB soft limit (column is 10KB)
-const SAVE_ENDPOINT = API_ENDPOINTS.TENANTS.ADMIN_PREFERENCES;
+const SAVE_ENDPOINT = TENANTS_ENDPOINTS.TENANTS.ADMIN_PREFERENCES;
 
 // ── Types ──
 interface AdminSettingsPayload {

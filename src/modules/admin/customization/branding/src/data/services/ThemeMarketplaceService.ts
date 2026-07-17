@@ -7,7 +7,7 @@
  * @module customization/data
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type {
   ThemeCardDto,
   ThemeDetailDto,
@@ -18,6 +18,7 @@ import type {
   ThemeListParams,
   UpsertThemePayload,
 } from "../../domain/interfaces/IThemeMarketplaceService";
+import { BRANDING_ENDPOINTS } from "./branding.endpoints";
 
 /**
  * Http API network service for theme marketplace.
@@ -27,7 +28,7 @@ export class ThemeMarketplaceService implements IThemeMarketplaceService {
   constructor(private readonly api: IApiService) {}
 
   async getThemes(params: ThemeListParams): Promise<ThemePagedResult> {
-    const url = buildUrl(API_ENDPOINTS.THEMES.LIST, {
+    const url = buildUrl(BRANDING_ENDPOINTS.THEMES.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search || undefined,
@@ -43,11 +44,11 @@ export class ThemeMarketplaceService implements IThemeMarketplaceService {
   }
 
   async getFeatured(): Promise<ThemeCardDto[]> {
-    return this.api.get<ThemeCardDto[]>(API_ENDPOINTS.THEMES.FEATURED);
+    return this.api.get<ThemeCardDto[]>(BRANDING_ENDPOINTS.THEMES.FEATURED);
   }
 
   async getFavorites(params: { page: number; pageSize: number }): Promise<ThemePagedResult> {
-    const url = buildUrl(API_ENDPOINTS.THEMES.FAVORITES, {
+    const url = buildUrl(BRANDING_ENDPOINTS.THEMES.FAVORITES, {
       page: params.page,
       pageSize: params.pageSize,
     });
@@ -55,46 +56,46 @@ export class ThemeMarketplaceService implements IThemeMarketplaceService {
   }
 
   async getBySlug(slug: string): Promise<ThemeDetailDto> {
-    return this.api.get<ThemeDetailDto>(API_ENDPOINTS.THEMES.BY_SLUG(slug));
+    return this.api.get<ThemeDetailDto>(BRANDING_ENDPOINTS.THEMES.BY_SLUG(slug));
   }
 
   async apply(slug: string, mergeWithCurrent: boolean): Promise<void> {
-    await this.api.post(API_ENDPOINTS.THEMES.APPLY(slug), { mergeWithCurrent });
+    await this.api.post(BRANDING_ENDPOINTS.THEMES.APPLY(slug), { mergeWithCurrent });
   }
 
   async toggleFavorite(slug: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.THEMES.FAVORITE(slug), {});
+    await this.api.post(BRANDING_ENDPOINTS.THEMES.FAVORITE(slug), {});
   }
 
   // ─── CRUD (system admin) ──────────────────────────────
 
   async create(data: UpsertThemePayload): Promise<ThemeDetailDto> {
-    return this.api.post<ThemeDetailDto>(API_ENDPOINTS.THEMES.CREATE, data);
+    return this.api.post<ThemeDetailDto>(BRANDING_ENDPOINTS.THEMES.CREATE, data);
   }
 
   async update(slug: string, data: UpsertThemePayload): Promise<void> {
-    await this.api.put(API_ENDPOINTS.THEMES.UPDATE(slug), data);
+    await this.api.put(BRANDING_ENDPOINTS.THEMES.UPDATE(slug), data);
   }
 
   async delete(slug: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.THEMES.DELETE(slug));
+    await this.api.delete(BRANDING_ENDPOINTS.THEMES.DELETE(slug));
   }
 
   async duplicate(slug: string, newSlug: string, newName: string): Promise<ThemeDetailDto> {
-    return this.api.post<ThemeDetailDto>(API_ENDPOINTS.THEMES.DUPLICATE(slug), {
+    return this.api.post<ThemeDetailDto>(BRANDING_ENDPOINTS.THEMES.DUPLICATE(slug), {
       newSlug,
       newName,
     });
   }
 
   async deprecate(slug: string, notice?: string, replacedBySlug?: string): Promise<void> {
-    await this.api.post(API_ENDPOINTS.THEMES.DEPRECATE(slug), {
+    await this.api.post(BRANDING_ENDPOINTS.THEMES.DEPRECATE(slug), {
       deprecationNotice: notice,
       replacedBySlug,
     });
   }
 
   async reorder(slugToDisplayOrder: Record<string, number>): Promise<void> {
-    await this.api.put(API_ENDPOINTS.THEMES.REORDER, { slugToDisplayOrder });
+    await this.api.put(BRANDING_ENDPOINTS.THEMES.REORDER, { slugToDisplayOrder });
   }
 }

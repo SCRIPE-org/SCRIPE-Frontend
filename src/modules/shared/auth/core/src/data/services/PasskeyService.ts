@@ -1,5 +1,4 @@
 import type { IApiService } from "@core/interfaces/api.interface";
-import { AUTH_ENDPOINTS } from "@core/config/api-endpoints";
 import type {
   IPasskeyService,
   PasskeyListResponseDto,
@@ -8,6 +7,7 @@ import type {
   PasskeyCompleteRegistrationRequestDto,
   PasskeyRenameRequestDto,
 } from "../../domain/interfaces/IPasskeyService";
+import { AUTH_CORE_ENDPOINTS } from "../../../data/services/auth-core.endpoints";
 
 /**
  * PasskeyService — HTTP calls to the Passkey/WebAuthn API.
@@ -19,13 +19,13 @@ export class PasskeyService implements IPasskeyService {
   constructor(private readonly api: IApiService) {}
 
   async getAll(): Promise<PasskeyListResponseDto> {
-    const items = await this.api.get<PasskeyResponseDto[]>(AUTH_ENDPOINTS.AUTH.PASSKEY.LIST);
+    const items = await this.api.get<PasskeyResponseDto[]>(AUTH_CORE_ENDPOINTS.PASSKEY.LIST);
     return { items: items ?? [] };
   }
 
   async beginRegistration(): Promise<PasskeyRegistrationOptionsResponseDto> {
     return this.api.post<PasskeyRegistrationOptionsResponseDto>(
-      AUTH_ENDPOINTS.AUTH.PASSKEY.REGISTER_BEGIN,
+      AUTH_CORE_ENDPOINTS.PASSKEY.REGISTER_BEGIN,
       {}
     );
   }
@@ -40,17 +40,17 @@ export class PasskeyService implements IPasskeyService {
       transports: null,
     };
     return this.api.post<PasskeyResponseDto>(
-      AUTH_ENDPOINTS.AUTH.PASSKEY.REGISTER_VERIFY,
+      AUTH_CORE_ENDPOINTS.PASSKEY.REGISTER_VERIFY,
       backendBody as any
     );
   }
 
   async rename(id: string, request: PasskeyRenameRequestDto): Promise<void> {
     // PATCH or PUT to rename — use the list endpoint with ID
-    await this.api.put(`${AUTH_ENDPOINTS.AUTH.PASSKEY.LIST}/${id}/name`, request);
+    await this.api.put(`${AUTH_CORE_ENDPOINTS.PASSKEY.LIST}/${id}/name`, request);
   }
 
   async delete(id: string): Promise<void> {
-    await this.api.delete(AUTH_ENDPOINTS.AUTH.PASSKEY.DELETE(id));
+    await this.api.delete(AUTH_CORE_ENDPOINTS.PASSKEY.DELETE(id));
   }
 }

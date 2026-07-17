@@ -3,9 +3,9 @@
  * Implements IDashboardService, uses IApiService.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import type { IDashboardService } from "../../domain/interfaces/IDashboardService";
 import type { DashboardModel } from "../models/DashboardModels";
+import { DASHBOARD_ENDPOINTS } from "./dashboard.endpoints";
 
 /**
  * Http API network service for dashboard.
@@ -15,6 +15,6 @@ export class DashboardService implements IDashboardService {
   constructor(private readonly api: IApiService) {}
 
   getDashboard(): Promise<DashboardModel> {
-    return this.api.get<DashboardModel>(API_ENDPOINTS.COMPLIANCE.DASHBOARD);
+    return this.api.get<DashboardModel>(DASHBOARD_ENDPOINTS.DASHBOARD);
   }
 }

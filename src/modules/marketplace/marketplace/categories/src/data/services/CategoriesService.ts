@@ -6,13 +6,13 @@
  * All domain mapping happens in CategoriesRepository.
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { MARKETPLACE_ENDPOINTS } from "@core/config/api-endpoints";
 import type {
   ICategoriesService,
   CategoryDto,
   CreateCategoryPayload,
   UpdateCategoryPayload,
 } from "../../domain/interfaces/ICategoriesService";
+import { CATEGORIES_ENDPOINTS } from "./categories.endpoints";
 
 /**
  * Http API network service for categories.
@@ -23,26 +23,26 @@ export class CategoriesService implements ICategoriesService {
 
   /** Fetch all marketplace categories. */
   async getAll(): Promise<CategoryDto[]> {
-    return this.api.get<CategoryDto[]>(MARKETPLACE_ENDPOINTS.MARKETPLACE.CATEGORIES);
+    return this.api.get<CategoryDto[]>(CATEGORIES_ENDPOINTS.CATEGORIES);
   }
 
   /** Fetch a single category by ID. */
   async getById(id: string): Promise<CategoryDto> {
-    return this.api.get<CategoryDto>(MARKETPLACE_ENDPOINTS.MARKETPLACE.CATEGORY_BY_ID(id));
+    return this.api.get<CategoryDto>(CATEGORIES_ENDPOINTS.CATEGORY_BY_ID(id));
   }
 
   /** Create a new category. */
   async create(payload: CreateCategoryPayload): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(MARKETPLACE_ENDPOINTS.MARKETPLACE.CATEGORIES, payload);
+    return this.api.post<{ id: string }>(CATEGORIES_ENDPOINTS.CATEGORIES, payload);
   }
 
   /** Update an existing category. */
   async update(id: string, payload: UpdateCategoryPayload): Promise<void> {
-    await this.api.put(MARKETPLACE_ENDPOINTS.MARKETPLACE.CATEGORY_BY_ID(id), payload);
+    await this.api.put(CATEGORIES_ENDPOINTS.CATEGORY_BY_ID(id), payload);
   }
 
   /** Delete a category. */
   async delete(id: string): Promise<void> {
-    await this.api.delete(MARKETPLACE_ENDPOINTS.MARKETPLACE.CATEGORY_BY_ID(id));
+    await this.api.delete(CATEGORIES_ENDPOINTS.CATEGORY_BY_ID(id));
   }
 }

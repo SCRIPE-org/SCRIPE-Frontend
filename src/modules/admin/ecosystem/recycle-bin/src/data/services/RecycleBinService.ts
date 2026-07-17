@@ -6,13 +6,14 @@
  *
  * @module recycle-bin/data
  */
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
 import { DeletedItemModel, type DeletedItemsResponseJson } from "../models/DeletedItemModel";
 import type {
   IRecycleBinService,
   DeletedItemsListResult,
 } from "../../domain/interfaces/IRecycleBinService";
+import { RECYCLE_BIN_ENDPOINTS } from "./recycle-bin.endpoints";
 
 /**
  * Http API network service for recycle bin.
@@ -22,7 +23,7 @@ export class RecycleBinService implements IRecycleBinService {
   constructor(private readonly api: IApiService) {}
 
   async getAll(): Promise<DeletedItemsListResult> {
-    const response = await this.api.get<DeletedItemsResponseJson>(API_ENDPOINTS.RECYCLE_BIN.LIST);
+    const response = await this.api.get<DeletedItemsResponseJson>(RECYCLE_BIN_ENDPOINTS.LIST);
 
     return {
       tenants: (response.tenants ?? []).map((json) => DeletedItemModel.fromJson(json)),
@@ -35,15 +36,17 @@ export class RecycleBinService implements IRecycleBinService {
   }
 
   async restore(entityType: string, id: string, restoreAdmins?: boolean): Promise<void> {
-    const query = restoreAdmins ? "?restoreAdmins=true" : "";
-    await this.api.post(`${API_ENDPOINTS.RECYCLE_BIN.RESTORE(entityType, id)}${query}`, {});
+    const url = buildUrl(RECYCLE_BIN_ENDPOINTS.RESTORE(entityType, id), {
+      restoreAdmins: restoreAdmins ? "true" : undefined,
+    });
+    await this.api.post(url, {});
   }
 
   async bulkRestore(
     items: { entityType: string; id: string; restoreAdmins?: boolean }[]
   ): Promise<number> {
     const response = await this.api.post<{ restoredCount: number }>(
-      API_ENDPOINTS.RECYCLE_BIN.BULK_RESTORE,
+      RECYCLE_BIN_ENDPOINTS.BULK_RESTORE,
       items.map((i) => ({ entityType: i.entityType, id: i.id, restoreAdmins: i.restoreAdmins }))
     );
     return response.restoredCount;

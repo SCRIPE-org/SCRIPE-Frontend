@@ -7,7 +7,7 @@
  * @module user-groups/data
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS, buildUrl } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import {
   UserGroupModel,
   type UserGroupJson,
@@ -20,6 +20,7 @@ import type {
   SetGroupRolesRequest,
   SetGroupRestrictionsRequest,
 } from "../../domain/entities/UserGroupRequests";
+import { USER_GROUPS_ENDPOINTS } from "./user-groups.endpoints";
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for user group service list params.
@@ -53,7 +54,7 @@ export class UserGroupService {
   constructor(private readonly api: IApiService) {}
 
   async getAll(params: UserGroupServiceListParams): Promise<UserGroupListResult> {
-    const url = buildUrl(API_ENDPOINTS.USER_GROUPS.LIST, {
+    const url = buildUrl(USER_GROUPS_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
@@ -77,7 +78,7 @@ export class UserGroupService {
   async getMyTenantGroups(
     params: Omit<UserGroupServiceListParams, "tenantId">
   ): Promise<UserGroupListResult> {
-    const url = buildUrl(API_ENDPOINTS.USER_GROUPS.MY_TENANT_GROUPS, {
+    const url = buildUrl(USER_GROUPS_ENDPOINTS.MY_TENANT_GROUPS, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
@@ -98,33 +99,33 @@ export class UserGroupService {
   }
 
   async getById(id: string): Promise<UserGroupModel> {
-    const json = await this.api.get<UserGroupJson>(API_ENDPOINTS.USER_GROUPS.BY_ID(id));
+    const json = await this.api.get<UserGroupJson>(USER_GROUPS_ENDPOINTS.BY_ID(id));
     return UserGroupModel.fromJson(json);
   }
 
   async getByTenantId(tenantId: string): Promise<UserGroupModel[]> {
-    const json = await this.api.get<UserGroupJson[]>(API_ENDPOINTS.USER_GROUPS.BY_TENANT(tenantId));
+    const json = await this.api.get<UserGroupJson[]>(USER_GROUPS_ENDPOINTS.BY_TENANT(tenantId));
     return json.map((j) => UserGroupModel.fromJson(j));
   }
 
   async create(request: CreateUserGroupRequest): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(API_ENDPOINTS.USER_GROUPS.CREATE, request);
+    return this.api.post<{ id: string }>(USER_GROUPS_ENDPOINTS.CREATE, request);
   }
 
   async createForMyTenant(
     request: Omit<CreateUserGroupRequest, "tenantId">
   ): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(API_ENDPOINTS.USER_GROUPS.CREATE_FOR_MY_TENANT, request);
+    return this.api.post<{ id: string }>(USER_GROUPS_ENDPOINTS.CREATE_FOR_MY_TENANT, request);
   }
 
   async update(id: string, request: UpdateUserGroupRequest): Promise<void> {
-    await this.api.put(API_ENDPOINTS.USER_GROUPS.UPDATE(id), request);
+    await this.api.put(USER_GROUPS_ENDPOINTS.UPDATE(id), request);
   }
 
   async delete(id: string, cascadeAdmins?: boolean): Promise<void> {
     const url = cascadeAdmins
-      ? `${API_ENDPOINTS.USER_GROUPS.DELETE(id)}?cascadeAdmins=true`
-      : API_ENDPOINTS.USER_GROUPS.DELETE(id);
+      ? `${USER_GROUPS_ENDPOINTS.DELETE(id)}?cascadeAdmins=true`
+      : USER_GROUPS_ENDPOINTS.DELETE(id);
     await this.api.delete(url);
   }
 
@@ -135,30 +136,30 @@ export class UserGroupService {
     // The single toggle status was previously done via an implicit Bulk Update.
     // So we'll hit the bulk endpoint passing this single ID
     const url = isActive
-      ? API_ENDPOINTS.USER_GROUPS.BULK.ACTIVATE
-      : API_ENDPOINTS.USER_GROUPS.BULK.DEACTIVATE;
+      ? USER_GROUPS_ENDPOINTS.BULK.ACTIVATE
+      : USER_GROUPS_ENDPOINTS.BULK.DEACTIVATE;
     await this.api.post(url, { ids: [id], cascadeAdmins });
   }
 
   async addMembers(groupId: string, request: AddMembersRequest): Promise<void> {
-    await this.api.post(API_ENDPOINTS.USER_GROUPS.ADD_MEMBERS(groupId), request);
+    await this.api.post(USER_GROUPS_ENDPOINTS.ADD_MEMBERS(groupId), request);
   }
 
   async removeMember(groupId: string, adminId: string): Promise<void> {
-    await this.api.delete(API_ENDPOINTS.USER_GROUPS.REMOVE_MEMBER(groupId, adminId));
+    await this.api.delete(USER_GROUPS_ENDPOINTS.REMOVE_MEMBER(groupId, adminId));
   }
 
   async setRoles(groupId: string, request: SetGroupRolesRequest): Promise<void> {
-    await this.api.put(API_ENDPOINTS.USER_GROUPS.SET_ROLES(groupId), request);
+    await this.api.put(USER_GROUPS_ENDPOINTS.SET_ROLES(groupId), request);
   }
 
   async setRestrictions(groupId: string, request: SetGroupRestrictionsRequest): Promise<void> {
-    await this.api.put(API_ENDPOINTS.USER_GROUPS.SET_RESTRICTIONS(groupId), request);
+    await this.api.put(USER_GROUPS_ENDPOINTS.SET_RESTRICTIONS(groupId), request);
   }
 
   async bulkActivate(ids: string[], cascadeAdmins?: boolean): Promise<number> {
     const response = await this.api.post<{ affectedRows?: number } | number>(
-      API_ENDPOINTS.USER_GROUPS.BULK.ACTIVATE,
+      USER_GROUPS_ENDPOINTS.BULK.ACTIVATE,
       { ids, cascadeAdmins }
     );
     if (typeof response === "number") return response;
@@ -167,7 +168,7 @@ export class UserGroupService {
 
   async bulkDeactivate(ids: string[], cascadeAdmins?: boolean): Promise<number> {
     const response = await this.api.post<{ affectedRows?: number } | number>(
-      API_ENDPOINTS.USER_GROUPS.BULK.DEACTIVATE,
+      USER_GROUPS_ENDPOINTS.BULK.DEACTIVATE,
       { ids, cascadeAdmins }
     );
     if (typeof response === "number") return response;
@@ -176,7 +177,7 @@ export class UserGroupService {
 
   async bulkDelete(ids: string[], cascadeAdmins?: boolean): Promise<number> {
     const response = await this.api.post<{ affectedRows?: number } | number>(
-      API_ENDPOINTS.USER_GROUPS.BULK.DELETE,
+      USER_GROUPS_ENDPOINTS.BULK.DELETE,
       { ids, cascadeAdmins }
     );
     if (typeof response === "number") return response;

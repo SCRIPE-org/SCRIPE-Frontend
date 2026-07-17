@@ -18,7 +18,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { Upload, Link2, Video, Loader2, Check, X } from "lucide-react";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { SYSTEM_ENDPOINTS } from "@core/config/api-endpoints";
 import { getCoreContainer } from "@core/di";
 
 // ─── Props ──────────────────────────────────────────────────────
@@ -88,7 +88,7 @@ export function VideoUploadField({
         const formData = new FormData();
         formData.append("file", file);
         const response = await apiService.post<{ url: string }>(
-          API_ENDPOINTS.UPLOADS.VIDEO,
+          SYSTEM_ENDPOINTS.UPLOADS.VIDEO,
           formData
         );
         // Resolve relative path to full backend URL + cache-buster (same as ImageUploadField)
