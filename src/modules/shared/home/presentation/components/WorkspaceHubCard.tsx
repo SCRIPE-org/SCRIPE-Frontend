@@ -28,6 +28,7 @@ export interface WorkspaceHubCardProps {
   language: string;
   lastAccessed: string | null;
   onClick: () => void;
+  lockReason?: string;
 }
 
 export function WorkspaceHubCard({
@@ -41,6 +42,7 @@ export function WorkspaceHubCard({
   language,
   lastAccessed,
   onClick,
+  lockReason,
 }: WorkspaceHubCardProps) {
   const { t } = useI18n();
   const name = language === "ar" ? nameAr || nameEn : nameEn || nameAr;
@@ -77,7 +79,9 @@ export function WorkspaceHubCard({
               <Lock className="h-5 w-5 text-muted-foreground" />
             </div>
             <span className="text-xs font-medium text-muted-foreground">
-              {t("workspaceHub.upgradeBadge")}
+              {lockReason === "TenantContextRequired"
+                ? t("workspaceHub.needsTenant")
+                : t("workspaceHub.upgradeBadge")}
             </span>
           </div>
         </div>

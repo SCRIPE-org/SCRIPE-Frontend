@@ -31,6 +31,7 @@ import { useWorkspaceTransition } from "@core/ui/layout/nexus/use-workspace-tran
 
 import { Loader2, Star } from "lucide-react";
 import type { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
+import { useToast } from "@core/hooks/use-toast";
 
 import { HubHero } from "../components/HubHero";
 import { HubSearch } from "../components/HubSearch";
@@ -51,6 +52,7 @@ export function WorkspaceHubView() {
   const [searchQuery, setSearchQuery] = useState("");
   const [pinLoadingKeys, setPinLoadingKeys] = useState<Set<string>>(new Set());
   const hubActivity = useHubActivity();
+  const { toast } = useToast();
 
   // ── Hub identity: no workspace is active on the Hub page ──────────────────
   useEffect(() => {
@@ -159,10 +161,29 @@ export function WorkspaceHubView() {
   // ── Tile click handler ────────────────────────────────────────────────────
   const handleTileClick = useCallback(
     (ws: WorkspaceGroup) => {
-      if (ws.isLocked) return; // locked — no action for now
+      if (ws.isLocked) {
+        if (ws.lockReason === "TenantContextRequired") {
+          toast({
+            title: language === "ar" ? "يتطلب سياق مستأجر" : "Tenant Context Required",
+            description: language === "ar"
+              ? "الرجاء تحديد مستأجر أولاً من إدارة المستأجرين للوصول إلى هذه الوحدة."
+              : "Please select a tenant from Tenant Management to access this module.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: language === "ar" ? "ترقية مطلوبة" : "Subscription Required",
+            description: language === "ar"
+              ? "هذه الميزة غير متوفرة في خطتك الحالية. يرجى التواصل مع الدعم للترقية."
+              : "This workspace requires a higher subscription. Contact support to upgrade.",
+            variant: "default",
+          });
+        }
+        return;
+      }
       switchWorkspace(ws.workspaceKey);
     },
-    [switchWorkspace]
+    [switchWorkspace, toast, language]
   );
 
   // ── Helper: get localized name ─────────────────────────────────────────────
@@ -373,7 +394,11 @@ export function WorkspaceHubView() {
                       itemLabel=""
                       size="lg"
                       onClick={() => handleTileClick(ws)}
-                      upgradeBadgeText={t("workspaceHub.upgradeBadge")}
+                      upgradeBadgeText={
+                        ws.lockReason === "TenantContextRequired"
+                          ? t("workspaceHub.needsTenant")
+                          : t("workspaceHub.upgradeBadge")
+                      }
                     />
                   ))}
               </div>

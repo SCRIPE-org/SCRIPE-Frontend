@@ -73,6 +73,8 @@ export interface WorkspaceGroupData {
    * Used by the Workspace Hub to show item counts on workspace cards.
    */
   accessibleItemCount: number;
+  /** Reason why this workspace is locked. */
+  lockReason?: string;
 }
 
 // ── Rich domain class ─────────────────────────────────────────────────────────
@@ -102,6 +104,8 @@ export class WorkspaceGroup {
   public readonly contextScope: "Both" | "PlatformOnly" | "TenantOnly";
   /** Number of accessible menu items for this workspace (for Hub card stats). */
   public readonly accessibleItemCount: number;
+  /** Reason why this workspace is locked (e.g. "None", "SubscriptionRequired", "TenantContextRequired"). */
+  public readonly lockReason: string;
 
   constructor(data: WorkspaceGroupData) {
     this.workspaceId = data.workspaceId;
@@ -121,6 +125,7 @@ export class WorkspaceGroup {
     this.pinSortOrder = data.pinSortOrder ?? null;
     this.contextScope = data.contextScope ?? "Both";
     this.accessibleItemCount = data.accessibleItemCount ?? 0;
+    this.lockReason = data.lockReason ?? "None";
   }
 
   // ── Computed helpers ────────────────────────────────────────────────────────
@@ -192,6 +197,7 @@ export class WorkspaceGroup {
       pinSortOrder: this.pinSortOrder,
       contextScope: this.contextScope,
       accessibleItemCount: this.accessibleItemCount,
+      lockReason: this.lockReason,
     };
   }
 }
