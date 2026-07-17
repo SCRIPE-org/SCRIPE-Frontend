@@ -16,7 +16,7 @@ export const ar = {
       module: "الوحدة",
       modulePlaceholder: "مثال: Identity, Communication",
       isSystem: "ميزة نظام",
-      marketingOnly: "النوع",
+      marketingOnly: "للتسويق فقط",
       boolean: "منطقي",
       numeric: "رقمي",
       string: "نصي",

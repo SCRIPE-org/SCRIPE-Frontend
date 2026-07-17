@@ -21,6 +21,7 @@ import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { toast } from "@core/ui/use-toast";
 import { startRoutingProgress } from "@core/ui/routing-progress-bar";
+import { Button } from "@core/ui/button";
 
 import {
   Search,
@@ -771,21 +772,20 @@ function UpgradeDialog({
         </p>
 
         <div className="flex gap-3">
-          <button
-            type="button"
+          <Button
+            variant="outline"
             onClick={onClose}
-            className="flex-1 rounded-[10px] border border-border bg-transparent text-sm font-medium text-muted-foreground transition-colors duration-150 hover:bg-accent"
-            style={{ padding: "10px 0", cursor: "pointer" }}
+            className="flex-1 rounded-[10px] text-sm font-medium text-muted-foreground transition-colors duration-150 hover:bg-accent"
+            style={{ padding: "10px 0" }}
           >
             {language === "ar" ? "إلغاء" : "Cancel"}
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
             onClick={onUpgrade}
-            className="flex-1 rounded-[10px] border-none text-sm font-semibold text-white"
+            className="flex-1 rounded-[10px] text-sm font-semibold text-white hover:opacity-90"
             style={{
               padding: "10px 0",
-              cursor: "pointer",
+              border: "none",
               background: isNeedsTenant
                 ? "linear-gradient(135deg, hsl(210 90% 50%), hsl(220 88% 46%))"
                 : "linear-gradient(135deg, hsl(38 92% 50%), hsl(28 90% 48%))",
@@ -801,7 +801,7 @@ function UpgradeDialog({
               : language === "ar"
                 ? "ترقية الآن"
                 : "Upgrade Plan"}
-          </button>
+          </Button>
         </div>
       </div>
     </>
