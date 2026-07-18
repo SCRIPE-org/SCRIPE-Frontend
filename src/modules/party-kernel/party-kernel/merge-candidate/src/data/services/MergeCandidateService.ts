@@ -5,7 +5,8 @@
 * Returns Models (DTOs) - Repository uses Mapper to convert to Entities.
 */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { buildUrl, PARTYKERNEL_ENDPOINTS } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
+import { PARTYKERNEL_ENDPOINTS } from "@modules/party-kernel/core/src/data/services/party-kernel.endpoints";
 import {
 MergeCandidateModel,
 type MergeCandidateJson,

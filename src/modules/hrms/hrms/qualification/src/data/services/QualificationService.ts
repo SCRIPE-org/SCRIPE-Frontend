@@ -5,7 +5,8 @@
 * Returns Models (DTOs) - Repository uses Mapper to convert to Entities.
 */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { buildUrl, HRMS_ENDPOINTS } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
+import { QUALIFICATION_ENDPOINTS } from "./qualification.endpoints";
 import {
 QualificationModel,
 type QualificationJson,
@@ -16,7 +17,7 @@ IQualificationService,
 QualificationListResult,
 } from "../../domain/interfaces/IQualificationService";
 
-const BASE_URL = HRMS_ENDPOINTS.QUALIFICATIONS.LIST;
+const BASE_URL = QUALIFICATION_ENDPOINTS.LIST;
 
 export class QualificationService implements IQualificationService {
 constructor(private readonly api: IApiService) {}

@@ -5,7 +5,8 @@
 * Returns Models (DTOs) - Repository uses Mapper to convert to Entities.
 */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { buildUrl, HRMS_ENDPOINTS } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
+import { EMPLOYMENT_RECORD_ENDPOINTS } from "./employment-record.endpoints";
 import {
 EmploymentRecordModel,
 type EmploymentRecordJson,
@@ -16,7 +17,7 @@ IEmploymentRecordService,
 EmploymentRecordListResult,
 } from "../../domain/interfaces/IEmploymentRecordService";
 
-const BASE_URL = HRMS_ENDPOINTS.EMPLOYMENT_RECORDS.LIST;
+const BASE_URL = EMPLOYMENT_RECORD_ENDPOINTS.LIST;
 
 export class EmploymentRecordService implements IEmploymentRecordService {
 constructor(private readonly api: IApiService) {}

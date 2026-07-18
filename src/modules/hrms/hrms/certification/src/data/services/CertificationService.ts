@@ -5,7 +5,8 @@
 * Returns Models (DTOs) - Repository uses Mapper to convert to Entities.
 */
 import type { IApiService } from "@core/interfaces/api.interface";
-import { buildUrl, HRMS_ENDPOINTS } from "@core/config/api-endpoints";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
+import { CERTIFICATION_ENDPOINTS } from "./certification.endpoints";
 import {
 CertificationModel,
 type CertificationJson,
@@ -16,7 +17,7 @@ ICertificationService,
 CertificationListResult,
 } from "../../domain/interfaces/ICertificationService";
 
-const BASE_URL = HRMS_ENDPOINTS.CERTIFICATIONS.LIST;
+const BASE_URL = CERTIFICATION_ENDPOINTS.LIST;
 
 export class CertificationService implements ICertificationService {
 constructor(private readonly api: IApiService) {}

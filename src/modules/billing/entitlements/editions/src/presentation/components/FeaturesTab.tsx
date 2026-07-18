@@ -157,7 +157,11 @@ export function FeaturesTab({
           size="sm"
           onClick={() => {
             const allCollapsed = Object.values(collapsedModules).every((v) => v);
-            allCollapsed ? expandAll() : collapseAll();
+            if (allCollapsed) {
+              expandAll();
+            } else {
+              collapseAll();
+            }
           }}
         >
           <ChevronsUpDown className="me-1 h-4 w-4" />
@@ -517,7 +521,10 @@ function FeatureControl({
   if (enumOptions) {
     return (
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="h-8 w-44">
+        <SelectTrigger
+          className="h-8 w-44"
+          aria-label={featureName ?? t("entitlements.features.valueType")}
+        >
           <SelectValue placeholder="Select..." />
         </SelectTrigger>
         <SelectContent>
@@ -534,6 +541,7 @@ function FeatureControl({
   if (valueType === "Boolean") {
     return (
       <Switch
+        aria-label={featureName ?? t("entitlements.features.valueType")}
         checked={value === "true"}
         onCheckedChange={(checked) => onChange(checked ? "true" : "false")}
       />
@@ -543,17 +551,19 @@ function FeatureControl({
   if (valueType === "Numeric") {
     return (
       <Input
+        aria-label={featureName ?? t("entitlements.features.valueType")}
         type="number"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="h-8 w-24 text-right"
-        min={0}
+        min={-1}
       />
     );
   }
 
   return (
     <Input
+      aria-label={featureName ?? t("entitlements.features.valueType")}
       type="text"
       value={value}
       onChange={(e) => onChange(e.target.value)}

@@ -1,22 +1,27 @@
-/**
- * BooleanIndicator — Renders a check or X icon for boolean values.
- *
- * Reusable across comparison table rows for billing controls, trial settings, and features.
- */
+"use client";
+
+import { useI18n } from "@core/providers/i18n-provider";
 import { Check, X } from "lucide-react";
 
 interface BooleanIndicatorProps {
   value: boolean;
 }
 
-/**
- * Presentation UI component rendering the boolean indicator.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
- */
+/** Provides both a visual icon and an equivalent localized text alternative. */
 export function BooleanIndicator({ value }: BooleanIndicatorProps) {
-  return value ? (
-    <Check className="h-4 w-4 text-emerald-500" />
-  ) : (
-    <X className="h-4 w-4 text-muted-foreground/40" />
+  const { t } = useI18n();
+  const label = value
+    ? t("entitlements.editions.comparison.included") || "Included"
+    : t("entitlements.editions.comparison.notIncluded") || "Not included";
+
+  return (
+    <span title={label}>
+      <span className="sr-only">{label}</span>
+      {value ? (
+        <Check aria-hidden="true" className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+      ) : (
+        <X aria-hidden="true" className="h-4 w-4 text-muted-foreground/60" />
+      )}
+    </span>
   );
 }

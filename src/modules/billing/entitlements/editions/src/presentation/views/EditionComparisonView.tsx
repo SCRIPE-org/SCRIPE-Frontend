@@ -15,7 +15,15 @@
 import { useRef, useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
-import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from "@core/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableCell,
+} from "@core/ui/table";
 import { Card, CardContent } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Eye, Sparkles, ChevronDown, ChevronUp, LayoutList, Loader2 } from "lucide-react";
@@ -31,6 +39,12 @@ import {
   CategorySectionHeader,
 } from "../components/comparison";
 import { EditionPricingCard } from "../components/comparison/EditionPricingCard";
+import {
+  formatComparisonMessage,
+  getLocalizedCycleName,
+  getLocalizedCyclePeriod,
+  type ComparisonTranslator,
+} from "../components/comparison/comparisonFormatting";
 
 // ─── Billing Cycle Toggle ───────────────────────────────────────────────────
 function BillingCycleToggle({
@@ -38,45 +52,53 @@ function BillingCycleToggle({
   selected,
   onChange,
   savingsPercents,
-  editions,
+  t,
 }: {
   cycles: BillingCycle[];
   selected: BillingCycle;
-  onChange: (c: BillingCycle) => void;
+  onChange: (cycle: BillingCycle) => void;
   savingsPercents: number[];
-  editions: Edition[];
+  t: ComparisonTranslator;
 }) {
   if (cycles.length <= 1) return null;
 
-  // Find max savings across all editions (to display on Yearly button)
-  const maxYearlySavings = Math.max(...savingsPercents.filter((s) => s > 0));
+  const maxYearlySavings = Math.max(0, ...savingsPercents.filter((saving) => saving > 0));
 
   return (
-    <div className="flex items-center justify-center">
+    <fieldset className="flex items-center justify-center">
+      <legend className="sr-only">
+        {t("entitlements.editions.comparison.billingCycle") || "Billing cycle"}
+      </legend>
       <div className="inline-flex gap-0.5 border border-border bg-muted/30 p-0.5">
         {cycles.map((cycle) => {
           const isActive = selected === cycle;
           return (
-            <button
+            <Button
+              type="button"
+              variant={isActive ? "outline" : "ghost"}
+              aria-pressed={isActive}
               key={cycle}
               onClick={() => onChange(cycle)}
-              className={`relative flex items-center gap-2 px-5 py-2 text-sm font-semibold transition-all duration-150 ${
+              className={`relative flex items-center gap-2 px-5 py-2 text-sm font-semibold transition-all duration-150 motion-reduce:transition-none ${
                 isActive
                   ? "border border-border bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:bg-background/50 hover:text-foreground"
               } `}
             >
-              {cycle}
+              {getLocalizedCycleName(cycle, t)}
               {cycle === "Yearly" && maxYearlySavings > 0 && (
-                <span className="bg-green-100 px-1.5 py-0.5 text-[10px] font-bold leading-none text-green-600 dark:bg-green-950/40 dark:text-green-400">
-                  SAVE {maxYearlySavings}%
+                <span className="bg-green-100 px-1.5 py-0.5 text-[10px] font-bold leading-none text-green-700 dark:bg-green-950/40 dark:text-green-300">
+                  {formatComparisonMessage(
+                    t("entitlements.editions.comparison.savePercent") || "Save {percent}%",
+                    { percent: maxYearlySavings }
+                  )}
                 </span>
               )}
-            </button>
+            </Button>
           );
         })}
       </div>
-    </div>
+    </fieldset>
   );
 }
 
@@ -86,11 +108,13 @@ function MatrixCell({
   valueType,
   isHighlighted,
   displayLabel,
+  language,
 }: {
   value: string | undefined;
   valueType: string;
   isHighlighted: boolean;
   displayLabel?: string;
+  language: string;
 }) {
   const cls = `text-center py-3.5 px-3 ${isHighlighted ? "bg-primary/5" : ""}`;
 
@@ -128,7 +152,7 @@ function MatrixCell({
             ) : num === 0 ? (
               <span className="text-muted-foreground/50">—</span>
             ) : (
-              num.toLocaleString()
+              num.toLocaleString(language === "ar" ? "ar-EG" : "en-US")
             )}
           </span>
           {displayLabel && num !== 0 && (
@@ -156,22 +180,24 @@ function MatrixCell({
 }
 
 // ─── Loading Skeleton ───────────────────────────────────────────────────────
-function LoadingState() {
+function LoadingState({ t }: { t: ComparisonTranslator }) {
   return (
-    <div className="space-y-8">
+    <div className="space-y-8" role="status" aria-live="polite">
       {/* Cycle toggle skeleton */}
       <div className="flex justify-center">
-        <div className="h-10 w-72 animate-pulse border border-border bg-muted/30" />
+        <div className="h-10 w-72 animate-pulse border border-border bg-muted/30 motion-reduce:animate-none" />
       </div>
       {/* Cards skeleton */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-96 animate-pulse border border-border/40 bg-muted/20" />
+          <div key={i} className="h-96 animate-pulse border border-border/40 bg-muted/20 motion-reduce:animate-none" />
         ))}
       </div>
       <div className="flex items-center justify-center gap-2 py-4 text-muted-foreground">
-        <Loader2 className="h-4 w-4 animate-spin" />
-        <span className="text-sm">Loading edition data…</span>
+        <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin motion-reduce:animate-none" />
+        <span className="text-sm">
+          {t("entitlements.editions.comparison.loading") || "Loading edition data…"}
+        </span>
       </div>
     </div>
   );
@@ -193,13 +219,14 @@ function FeatureCategoryBlock({
   recommendedEditionId: string;
   colSpan: number;
   language: string;
-  t: (key: string) => string;
+  t: ComparisonTranslator;
 }) {
   return (
     <>
       <CategorySectionHeader
         label={t(`entitlements.editions.comparison.category${category}`) || category}
         colSpan={colSpan}
+        category={category}
       />
       {rows.map((row: FeatureRow) => {
         const featureLabel =
@@ -208,9 +235,9 @@ function FeatureCategoryBlock({
             : row.displayNameEn || row.featureName;
         return (
           <TableRow key={row.featureName} className="group transition-colors hover:bg-muted/30">
-            <TableCell className="sticky left-0 bg-background py-3.5 text-sm font-medium transition-colors group-hover:bg-muted/30">
+            <TableHead scope="row" className="sticky start-0 bg-background py-3.5 text-sm font-medium text-foreground transition-colors group-hover:bg-muted/30">
               {featureLabel}
-            </TableCell>
+            </TableHead>
             {editions.map((ed: Edition) => {
               // Resolve per-edition display label for current language
               const labelOverride = row.displayLabels[ed.id];
@@ -228,6 +255,7 @@ function FeatureCategoryBlock({
                   displayLabel={resolvedLabel}
                 />
               );
+                  language={language}
             })}
           </TableRow>
         );
@@ -261,13 +289,13 @@ export function EditionComparisonView() {
     savingsPercents,
   } = useEditionComparisonViewModel();
 
-  if (isLoading) return <LoadingState />;
+  if (isLoading) return <LoadingState t={t} />;
 
   if (isEmpty) {
     return (
       <Card>
         <CardContent className="py-16 text-center">
-          <Sparkles className="mx-auto mb-3 h-10 w-10 text-muted-foreground/30" />
+          <Sparkles aria-hidden="true" className="mx-auto mb-3 h-10 w-10 text-muted-foreground/30" />
           <p className="text-muted-foreground">
             {t("entitlements.editions.noEditions") || "No active editions to compare."}
           </p>
@@ -312,7 +340,6 @@ export function EditionComparisonView() {
           selected={selectedCycle}
           onChange={setSelectedCycle}
           savingsPercents={savingsPercents}
-          editions={editions}
         />
 
         {/* ── Pricing Cards Grid ── */}

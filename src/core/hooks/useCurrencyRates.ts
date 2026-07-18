@@ -1,7 +1,11 @@
 import { useCallback, useState } from "react";
 import { getCoreContainer } from "@core/di";
 import { useCurrencyPreference } from "@core/store/useCurrencyPreference";
-import { ENTITLEMENTS_ENDPOINTS } from "@core/config/api-endpoints";
+import { V1 } from "@/core/config/api-endpoints/_shared";
+
+const CURRENCY_ENDPOINTS = {
+  RATES: (baseCurrency: string = "USD") => `${V1}/currency/rates?baseCurrency=${baseCurrency}`,
+} as const;
 
 const FALLBACK_RATES: Record<string, number> = {
   USD: 1,
@@ -33,7 +37,7 @@ export function useCurrencyRates() {
 
       try {
         const api = getCoreContainer().apiService;
-        const url = ENTITLEMENTS_ENDPOINTS.ENTITLEMENTS.CURRENCY.RATES("USD");
+        const url = CURRENCY_ENDPOINTS.RATES("USD");
         const data = await api.get<Record<string, number>>(url);
 
         const rates: Record<string, number> = {};

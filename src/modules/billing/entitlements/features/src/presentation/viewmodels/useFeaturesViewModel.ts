@@ -1,12 +1,8 @@
 /**
  * Features ViewModel
  *
- * Context-aware: detects whether the viewer is a system admin or tenant admin.
- * - System admin (no tenant context, no drill-down): shows global feature catalog (CRUD)
- * - Tenant admin / super admin drill-down / impersonation: shows tenant's effective features (read-only)
- *
- * Uses useTenantContext() for reactive drill-down detection — the hook updates
- * immediately when drill-down enters or exits, unlike raw sessionStorage reads.
+ * Context-aware: system administrators manage the complete feature catalog;
+ * tenant contexts see their resolved, read-only feature values.
  */
 "use client";
 
@@ -23,42 +19,25 @@ import type {
 } from "../../domain/entities/FeatureRequests";
 
 /**
- * React hook/ViewModel orchestrating state and data flows for features view model.
- * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
+ * Fetches the complete catalog through the repository's bounded auto-pagination.
+ * The catalog view can therefore apply accurate client-side filters and metrics
+ * without bypassing the repository/service layers.
  */
-export function useFeaturesViewModel() {
+export function useFeatureCatalogViewModel(enabled: boolean) {
   const { featureRepository } = entitlementsContainer;
 
-  // ── Detect context ──
-  // System admin = tenantId is null (from JWT); tenant admin = tenantId is set
-  const userTenantId = useAppStore((s) => s.user?.tenantId);
-
-  // Reactive drill-down context (updates when entering/exiting tenant world)
-  const { isInTenantWorld } = useTenantContext();
-
-  // System catalog mode: system admin (tenantId == null) with NO drill-down context
-  // - userTenantId: null for system admins, set for tenant admins / impersonation
-  // - isInTenantWorld: set when super admin drills into a tenant
-  const isSystemCatalogMode = !userTenantId && !isInTenantWorld;
-
-  // ── CATALOG MODE: Global feature catalog with full CRUD ──
-  // Only enabled for system admins — tenant admins never fire this API call
-  const catalogVm = useCrudViewModel<Feature, CreateFeatureRequest, UpdateFeatureRequest>(
-    ["entitlements", "features"],
+  return useCrudViewModel<Feature, CreateFeatureRequest, UpdateFeatureRequest>(
+    ["entitlements", "features", "catalog-all"],
     {
-      getAll: async (params) => {
-        const res = await featureRepository.getAll({
-          page: params.page,
-          pageSize: params.pageSize,
-          search: params.search,
-        });
+      getAll: async () => {
+        const items = await featureRepository.getAllFeatures();
         return {
-          items: res.items || [],
+          items,
           pagination: {
-            itemsCount: res.totalCount,
-            pageSize: params.pageSize,
-            page: params.page,
-            pagesCount: res.totalPages,
+            itemsCount: items.length,
+            pageSize: Math.max(items.length, 1),
+            page: 1,
+            pagesCount: items.length > 0 ? 1 : 0,
           },
         };
       },
@@ -74,11 +53,29 @@ export function useFeaturesViewModel() {
         await featureRepository.delete(id);
       },
     },
-    { enabled: isSystemCatalogMode }
+    { enabled, initialPageSize: 100 }
   );
+}
 
-  // ── EFFECTIVE MODE: Tenant's resolved features ──
-  // Key includes isInTenantWorld so it refetches when entering/exiting drill-down
+export type FeatureCatalogViewModel = Omit<
+  ReturnType<typeof useFeatureCatalogViewModel>,
+  "searchInputRef"
+>;
+
+/**
+ * React hook/ViewModel orchestrating state and data flows for the features page.
+ */
+export function useFeaturesViewModel() {
+  const { featureRepository } = entitlementsContainer;
+
+  // System admins have no tenant in their JWT. Drill-down/impersonation moves
+  // them into the effective tenant view and must disable the catalog request.
+  const userTenantId = useAppStore((state) => state.user?.tenantId);
+  const { isInTenantWorld } = useTenantContext();
+  const isSystemCatalogMode = !userTenantId && !isInTenantWorld;
+
+  const catalogVm = useFeatureCatalogViewModel(isSystemCatalogMode);
+
   const effectiveQuery = useQuery<TenantEffectiveFeature[]>({
     queryKey: ["entitlements", "effective-features", userTenantId ?? "self", isInTenantWorld],
     queryFn: () => featureRepository.getEffective(),
@@ -86,13 +83,8 @@ export function useFeaturesViewModel() {
   });
 
   return {
-    // Mode flag
     isSystemCatalogMode,
-
-    // Catalog mode data (for GenericCrudView)
     catalogVm: isSystemCatalogMode ? catalogVm : undefined,
-
-    // Effective mode data
     effectiveFeatures: effectiveQuery.data ?? [],
     isLoadingEffective: effectiveQuery.isLoading,
     effectiveError: effectiveQuery.error,

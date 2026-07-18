@@ -1,4 +1,4 @@
-import { V1 } from "./_shared";
+import { V1 } from "@/core/config/api-endpoints/_shared";
 
 export const PARTYKERNEL_ENDPOINTS = {
   PARTIES: {
@@ -50,4 +50,4 @@ export const PARTYKERNEL_ENDPOINTS = {
     UPDATE: (id: string) => `${V1}/MergeCandidates/${id}`,
     DELETE: (id: string) => `${V1}/MergeCandidates/${id}`,
   },
-};
+} as const;
