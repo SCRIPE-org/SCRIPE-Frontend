@@ -148,11 +148,14 @@ export function SsoProviderButtons({
         <div
           className="mb-3 rounded-xl px-4 py-3"
           style={{
-            background: "rgba(248,113,113,.10)",
-            border: "1px solid rgba(248,113,113,.30)",
+            background: "var(--sx-error-bg, rgba(248,113,113,.10))",
+            border: "1px solid var(--sx-error-border, rgba(248,113,113,.30))",
           }}
         >
-          <p className="text-center text-[13px] font-medium" style={{ color: "#FCA5A5" }}>
+          <p
+            className="text-center text-[13px] font-medium"
+            style={{ color: "var(--sx-error-text, #FCA5A5)" }}
+          >
             {error.startsWith("auth.") ? t(error as string) : error}
           </p>
         </div>

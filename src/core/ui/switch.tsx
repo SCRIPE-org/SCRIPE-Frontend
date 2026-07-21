@@ -285,12 +285,15 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
             root: cn(
               baseStyles,
               "h-7 w-14 rounded-full border-0 relative overflow-hidden backdrop-blur-sm",
-              "data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-purple-500/30 data-[state=checked]:via-pink-500/30 data-[state=checked]:to-blue-500/30",
-              "data-[state=checked]:shadow-[0_0_30px_rgba(168,85,247,0.4),0_0_60px_rgba(236,72,153,0.3)]",
-              "data-[state=unchecked]:bg-gradient-to-r data-[state=unchecked]:from-gray-400 data-[state=unchecked]:to-gray-500 dark:data-[state=unchecked]:from-gray-700 dark:data-[state=unchecked]:to-gray-600",
+              // Keeps the aurora character, but the hue is the tenant's own
+              // primary rather than a pinned purple/pink — a decorative skin
+              // should still belong to the brand that switched it on.
+              "data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-primary/30 data-[state=checked]:via-primary/20 data-[state=checked]:to-accent/30",
+              "data-[state=checked]:shadow-[0_0_30px_hsl(var(--primary)/0.4),0_0_60px_hsl(var(--primary)/0.25)]",
+              "data-[state=unchecked]:bg-gradient-to-r data-[state=unchecked]:from-input data-[state=unchecked]:to-muted",
               "before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:pointer-events-none before:animate-pulse",
-              "after:absolute after:inset-0 after:rounded-full after:bg-gradient-to-45 after:from-purple-400/20 after:via-transparent after:to-pink-400/20 after:pointer-events-none after:animate-spin after:duration-1000",
-              "hover:shadow-[0_0_40px_rgba(168,85,247,0.5)] transform hover:scale-110 active:scale-95",
+              "after:absolute after:inset-0 after:rounded-full after:bg-gradient-to-45 after:from-primary/20 after:via-transparent after:to-accent/20 after:pointer-events-none after:animate-spin after:duration-1000",
+              "hover:shadow-[0_0_40px_hsl(var(--primary)/0.5)] transform hover:scale-110 active:scale-95",
               "transition-all duration-700 ease-out",
               className
             ),
@@ -334,9 +337,11 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
             root: cn(
               baseStyles,
               "h-8 w-16 rounded-full border-0 relative overflow-hidden backdrop-blur-sm",
-              "data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-indigo-900/80 data-[state=checked]:via-purple-900/80 data-[state=checked]:to-pink-900/80",
-              "data-[state=checked]:shadow-[0_0_30px_rgba(99,102,241,0.5),0_0_60px_rgba(147,51,234,0.3),inset_0_0_30px_rgba(236,72,153,0.2)]",
-              "data-[state=unchecked]:bg-gradient-to-r data-[state=unchecked]:from-slate-800 data-[state=unchecked]:to-slate-900 dark:data-[state=unchecked]:from-slate-900 dark:data-[state=unchecked]:to-black",
+              // Deep-space character preserved; the light in it is the
+              // tenant's primary, not a fixed indigo/purple/pink triad.
+              "data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-primary/70 data-[state=checked]:via-primary/85 data-[state=checked]:to-accent/70",
+              "data-[state=checked]:shadow-[0_0_30px_hsl(var(--primary)/0.5),0_0_60px_hsl(var(--primary)/0.3),inset_0_0_30px_hsl(var(--primary)/0.2)]",
+              "data-[state=unchecked]:bg-gradient-to-r data-[state=unchecked]:from-muted data-[state=unchecked]:to-input",
               "before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:pointer-events-none before:animate-pulse",
               "after:absolute after:top-1 after:left-2 after:h-1 after:w-1 after:bg-white/80 after:rounded-full after:pointer-events-none after:animate-ping",
               "hover:shadow-[0_0_40px_rgba(99,102,241,0.6)] transform hover:scale-110 active:scale-95",
@@ -387,7 +392,9 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
               baseStyles,
               "h-6 w-11 rounded-full border-2 border-transparent backdrop-blur-sm",
               "data-[state=checked]:bg-primary data-[state=checked]:shadow-inner data-[state=checked]:shadow-primary/20",
-              "data-[state=unchecked]:bg-gray-400 dark:data-[state=unchecked]:bg-gray-600",
+              // Off-state reads from the theme rather than a pinned grey, so it
+              // stays legible on every background the tenant can choose.
+              "data-[state=unchecked]:bg-input dark:data-[state=unchecked]:bg-muted",
               "hover:shadow-md hover:shadow-primary/5 transform hover:scale-[1.02] active:scale-[0.98]",
               "relative overflow-hidden",
               "before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-r before:from-white/15 before:to-transparent before:pointer-events-none",

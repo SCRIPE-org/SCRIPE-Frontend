@@ -14,15 +14,18 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         outline: "text-foreground border-border",
-        // Status variants
-        success: "border-transparent bg-green-500 text-white hover:bg-green-600",
-        error: "border-transparent bg-red-500 text-white hover:bg-red-600",
-        warning: "border-transparent bg-yellow-500 text-white hover:bg-yellow-600",
-        info: "border-transparent bg-blue-500 text-white hover:bg-blue-600",
-        pending: "border-transparent bg-orange-500 text-white hover:bg-orange-600",
+        // Status variants — semantic tokens, so they follow the theme and the
+        // tenant's palette instead of pinning a fixed Tailwind shade. Each
+        // token pair is contrast-checked against its own theme surface.
+        success: "border-transparent bg-success text-success-foreground hover:bg-success/85",
+        error:
+          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/85",
+        warning: "border-transparent bg-warning text-warning-foreground hover:bg-warning/85",
+        info: "border-transparent bg-info text-info-foreground hover:bg-info/85",
+        pending: "border-transparent bg-warning text-warning-foreground hover:bg-warning/85",
         // Active/Inactive variants
-        active: "border-transparent bg-green-500 text-white hover:bg-green-600",
-        inactive: "border-transparent bg-gray-500 text-white hover:bg-gray-600",
+        active: "border-transparent bg-success text-success-foreground hover:bg-success/85",
+        inactive: "border-transparent bg-muted text-muted-foreground hover:bg-muted/85",
       },
       badgeStyle: {
         default: "rounded-full border border-border",

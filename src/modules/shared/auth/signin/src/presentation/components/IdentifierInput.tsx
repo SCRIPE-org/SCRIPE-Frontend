@@ -46,7 +46,10 @@ export function IdentifierInput({ value, onChange, disabled, hasError, t }: Iden
         }}
         placeholder={t("auth.usernamePlaceholder")}
         disabled={disabled}
-        autoComplete="username email"
+        // "username email" is not a valid autocomplete value: both are
+        // field-name tokens and only one is allowed, so browsers discard the
+        // whole attribute and credential autofill stops working entirely.
+        autoComplete="username"
         autoFocus
       />
     </div>

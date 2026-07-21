@@ -115,9 +115,9 @@ export function CredentialsForm({
           className="sx-shake flex items-start gap-2.5 rounded-xl p-3.5"
           role="alert"
           style={{
-            background: "rgba(248,113,113,.10)",
-            border: "1px solid rgba(248,113,113,.30)",
-            color: "#FCA5A5",
+            background: "var(--sx-error-bg, rgba(248,113,113,.10))",
+            border: "1px solid var(--sx-error-border, rgba(248,113,113,.30))",
+            color: "var(--sx-error-text, #FCA5A5)",
           }}
           {...(errorAnnounce ? { "aria-live": "assertive" as const, "aria-atomic": "true" } : {})}
         >

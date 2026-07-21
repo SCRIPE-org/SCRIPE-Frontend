@@ -114,6 +114,10 @@
   --sx-chip-border: rgba(255, 255, 255, 0.08);
   --sx-chip-border-active: rgba(168, 85, 247, 0.55);
   --sx-success-dot: #10b981;
+  /* error alert — dark card values */
+  --sx-error-bg: rgba(248, 113, 113, 0.1);
+  --sx-error-border: rgba(248, 113, 113, 0.3);
+  --sx-error-text: #fca5a5;
   /* field tokens — exact values from design spec */
   --sx-field-bg: rgba(255, 255, 255, 0.03);
   --sx-field-bg-focus: rgba(124, 58, 237, 0.06);
@@ -168,6 +172,12 @@
   --sx-chip-border: rgba(76, 29, 149, 0.1);
   --sx-chip-border-active: #7c3aed;
   --sx-success-dot: #059669;
+  /* error alert — light card. #fca5a5 was picked for the dark card and never
+     re-checked here, where it lands near 1.9:1 and a failed-login message is
+     effectively invisible. #b42318 measures 6.57:1 on white. */
+  --sx-error-bg: rgba(180, 35, 24, 0.08);
+  --sx-error-border: rgba(180, 35, 24, 0.25);
+  --sx-error-text: #b42318;
   /* field tokens — light theme */
   --sx-field-bg: rgba(124, 58, 237, 0.04);
   --sx-field-bg-focus: rgba(124, 58, 237, 0.08);

@@ -73,7 +73,11 @@ export function CredentialsPasswordInput({
           }}
           onClick={onToggleShowPassword}
           disabled={disabled}
-          tabIndex={-1}
+          // Reachable by keyboard: a sighted keyboard user and a screen-reader
+          // user both need to verify what they typed before submitting, and
+          // this is the only control that lets them (WCAG 2.1.1, Level A).
+          aria-pressed={showPassword}
+          aria-controls="password"
           aria-label={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
         >
           {showPassword ? (
