@@ -18,7 +18,6 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableHead,
   TableHeader,
   TableRow,
@@ -42,7 +41,6 @@ import { EditionPricingCard } from "../components/comparison/EditionPricingCard"
 import {
   formatComparisonMessage,
   getLocalizedCycleName,
-  getLocalizedCyclePeriod,
   type ComparisonTranslator,
 } from "../components/comparison/comparisonFormatting";
 
@@ -253,9 +251,9 @@ function FeatureCategoryBlock({
                   valueType={row.valueType}
                   isHighlighted={ed.id === recommendedEditionId}
                   displayLabel={resolvedLabel}
+                  language={language}
                 />
               );
-                  language={language}
             })}
           </TableRow>
         );
@@ -340,6 +338,7 @@ export function EditionComparisonView() {
           selected={selectedCycle}
           onChange={setSelectedCycle}
           savingsPercents={savingsPercents}
+          t={t}
         />
 
         {/* ── Pricing Cards Grid ── */}
