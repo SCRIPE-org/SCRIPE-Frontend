@@ -3776,3 +3776,330 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
     font-size: 0.6875rem !important;
   }
 }
+
+/* ============================================================================
+   SCRIPE / EDGE DESIGN SYSTEM
+   ----------------------------------------------------------------------------
+   Derived from the SCRIPE mark: a matte extruded solid whose light collects on
+   its edges and discharges cyan at exactly one terminal edge.
+
+   Four laws:
+     1. Surfaces are matte      — no gradient fills or glow at rest
+     2. Edges carry the light   — focus / selection / active state light an edge
+     3. Cyan discharges once    — one emitting element per screen
+     4. Depth is extrusion      — lit top edge + hard offset drop, never a halo
+
+   ADDITIVE AND SCOPED. Surface tokens apply only under [data-layout="scripe"],
+   so every existing layout (nexus included) is byte-for-byte unaffected.
+   ============================================================================ */
+
+/* ── Semantic status tokens (GLOBAL, additive) ──────────────────────────────
+   Root cause of ~340 hardcoded palette colours across 60 view files was that
+   only `destructive` was ever tokenised, so every view invented its own green.
+   HSL triplets to match the existing shadcn token convention.
+   All values measured >= 4.5:1 against their own theme's card surface. */
+:root {
+  --success: 160 64% 52%;
+  --success-foreground: 0 0% 100%;
+  --warning: 43 96% 56%;
+  --warning-foreground: 240 10% 4%;
+  --info: 213 94% 68%;
+  --info-foreground: 240 10% 4%;
+}
+:root:not(.dark) {
+  --success: 152 78% 27%; /* #0f7a45 — 5.40:1 on white */
+  --success-foreground: 0 0% 100%;
+  --warning: 39 100% 27%; /* #8a5a00 — 5.93:1 on white */
+  --warning-foreground: 0 0% 100%;
+  --info: 226 75% 48%; /* #1d4ed8 */
+  --info-foreground: 0 0% 100%;
+}
+
+/* ── EDGE surfaces — scoped to the scripe shell ─────────────────────────── */
+:root[data-layout="scripe"] {
+  /* dark is the mark's native ground */
+  --sx-void: #07070c;
+  --sx-sub: #0c0c13;
+  --sx-slab: #111119;
+  --sx-slab-hi: #181822;
+  --sx-slab-top: rgba(255, 255, 255, 0.055);
+  --sx-edge: rgba(255, 255, 255, 0.075);
+  --sx-edge-hi: rgba(255, 255, 255, 0.14);
+  --sx-grid: rgba(255, 255, 255, 0.045);
+  --sx-ink: #f2f0fa;
+  --sx-ink-2: #b3adc6;
+  --sx-ink-3: #8f89a5;
+
+  /* accent-as-text and accent-as-fill have OPPOSITE contrast duties and
+     therefore cannot be one token. Both derive from the live workspace hue,
+     which WorkspaceProvider writes to <html> from Workspace.ColorHue. */
+  --sx-accent: oklch(0.68 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
+  --sx-accent-fill: oklch(0.52 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
+  --sx-on-fill: #ffffff;
+  --sx-accent-wash: oklch(0.68 var(--workspace-chroma, 0.18) var(--workspace-hue, 262) / 0.14);
+  --sx-emit: oklch(0.82 0.13 calc(var(--workspace-hue, 262) + 78));
+  --sx-emit-wash: oklch(0.82 0.13 calc(var(--workspace-hue, 262) + 78) / 0.12);
+
+  --sx-drop:
+    0 1px 0 var(--sx-slab-top), 0 12px 32px -12px rgba(0, 0, 0, 0.9);
+
+  /* geometry — carried over from nexus so muscle memory survives */
+  --sx-rail-w: 64px;
+  --sx-panel-w: 240px;
+  --sx-topbar-h: 56px;
+
+  /* dials */
+  --sx-radius: 8px;
+  --sx-unit: 4px;
+  --sx-motion: 1;
+  --sx-t: calc(160ms * var(--sx-motion));
+  --sx-t2: calc(130ms * var(--sx-motion));
+  --sx-t3: calc(280ms * var(--sx-motion));
+}
+
+:root[data-layout="scripe"]:not(.dark) {
+  --sx-void: #f6f5fa;
+  --sx-sub: #eeecf5;
+  --sx-slab: #ffffff;
+  --sx-slab-hi: #faf9fe;
+  --sx-slab-top: rgba(255, 255, 255, 1);
+  --sx-edge: rgba(23, 19, 31, 0.11);
+  --sx-edge-hi: rgba(23, 19, 31, 0.2);
+  --sx-grid: rgba(23, 19, 31, 0.07);
+  --sx-ink: #14101c;
+  --sx-ink-2: #4d4664;
+  --sx-ink-3: #635b79;
+  --sx-accent: oklch(0.55 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
+  --sx-accent-fill: oklch(0.52 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
+  --sx-accent-wash: oklch(0.55 var(--workspace-chroma, 0.18) var(--workspace-hue, 262) / 0.1);
+  --sx-emit: oklch(0.52 0.12 calc(var(--workspace-hue, 262) + 78));
+  --sx-emit-wash: oklch(0.52 0.12 calc(var(--workspace-hue, 262) + 78) / 0.1);
+  --sx-drop:
+    0 1px 0 rgba(255, 255, 255, 1), 0 10px 28px -14px rgba(23, 19, 31, 0.28);
+}
+
+/* ── One focus law for the whole shell ──────────────────────────────────── */
+:root[data-layout="scripe"] .sx-shell :focus-visible {
+  outline: 2px solid var(--sx-emit);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+:root[data-layout="scripe"] .sx-shell ::selection {
+  background: var(--sx-accent-wash);
+  color: var(--sx-ink);
+}
+
+/* ── Motion primitives ──────────────────────────────────────────────────── */
+@keyframes sxRowIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sxPinPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-layout="scripe"] {
+    --sx-motion: 0;
+  }
+  :root[data-layout="scripe"] .sx-shell *,
+  :root[data-layout="scripe"] .sx-shell *::before,
+  :root[data-layout="scripe"] .sx-shell *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ── EDGE shell components ──────────────────────────────────────────────────
+   Every rule is scoped under .sx-shell so it can never leak into another
+   layout. All colours are tokens; no isDark branch exists in the TSX. */
+.sx-shell .sx-content {
+  padding: 16px 20px 40px;
+  background:
+    radial-gradient(
+      90% 42% at 50% -12%,
+      color-mix(in srgb, var(--sx-accent) 7%, transparent),
+      transparent 70%
+    ),
+    var(--sx-void);
+}
+
+/* rail + panel share one interaction law: matte at rest, edge lights on state */
+.sx-shell .sx-rail-btn {
+  color: var(--sx-ink-3);
+  cursor: pointer;
+  background: none;
+  transition:
+    color var(--sx-t),
+    background var(--sx-t),
+    border-color var(--sx-t);
+}
+.sx-shell .sx-rail-btn:hover {
+  color: var(--sx-ink);
+  background: var(--sx-slab);
+}
+.sx-shell .sx-rail-btn--active {
+  color: var(--sx-emit);
+  background: var(--sx-slab);
+  border-color: var(--sx-edge) !important;
+  box-shadow: 0 1px 0 var(--sx-slab-top);
+}
+
+/* the sliding edge light — one emitting element, law 3 */
+.sx-shell .sx-rail-indicator {
+  position: absolute;
+  inset-inline-start: 2px;
+  top: 0;
+  width: 2px;
+  height: 22px;
+  border-radius: 2px;
+  background: var(--sx-emit);
+  box-shadow: 0 0 10px var(--sx-emit);
+  transition: transform var(--sx-t3) cubic-bezier(0.3, 0.9, 0.3, 1);
+  pointer-events: none;
+}
+
+.sx-shell .sx-pin {
+  cursor: pointer;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.6rem;
+  font-weight: 700;
+  transition:
+    transform var(--sx-t2),
+    filter var(--sx-t2);
+}
+.sx-shell .sx-pin:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.15);
+}
+.sx-shell .sx-pin--active::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 12px;
+  border: 2px solid color-mix(in srgb, var(--sx-emit) 60%, transparent);
+  animation: sxPinPulse 2.2s ease-in-out infinite;
+}
+.sx-shell .sx-pin-back {
+  position: absolute;
+  inset-block-end: -3px;
+  inset-inline-end: -3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: var(--sx-slab);
+  border: 1px solid var(--sx-edge);
+  color: var(--sx-ink-2);
+}
+[dir="rtl"] .sx-shell .sx-pin-back svg {
+  transform: scaleX(-1);
+}
+
+.sx-shell .sx-nav-group {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sx-ink-3);
+  padding: 14px 8px 6px;
+}
+.sx-shell .sx-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: calc(var(--sx-unit) * 1.75) 9px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  color: var(--sx-ink-2);
+  font-size: 0.845rem;
+  font-weight: 500;
+  text-align: start;
+  transition:
+    color var(--sx-t),
+    background var(--sx-t);
+}
+.sx-shell .sx-nav-item:hover {
+  background: var(--sx-slab);
+  color: var(--sx-ink);
+}
+.sx-shell .sx-nav-item--active {
+  background: var(--sx-slab);
+  color: var(--sx-ink);
+  border-color: var(--sx-edge);
+  box-shadow: 0 1px 0 var(--sx-slab-top);
+}
+.sx-shell .sx-nav-item--active svg {
+  color: var(--sx-emit);
+}
+.sx-shell .sx-nav-item--static {
+  color: var(--sx-ink-3);
+  cursor: default;
+}
+
+.sx-shell .sx-icon-btn {
+  color: var(--sx-ink-3);
+  cursor: pointer;
+  transition:
+    color var(--sx-t2),
+    background var(--sx-t2);
+}
+.sx-shell .sx-icon-btn:hover {
+  color: var(--sx-ink);
+  background: var(--sx-sub);
+}
+
+.sx-shell .sx-search-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  background: var(--sx-sub);
+  border: 1px solid var(--sx-edge);
+  border-radius: 7px;
+  color: var(--sx-ink-3);
+  font-size: 0.8rem;
+  padding: 7px 10px;
+  transition:
+    border-color var(--sx-t),
+    color var(--sx-t);
+}
+.sx-shell .sx-search-btn:hover {
+  border-color: var(--sx-edge-hi);
+  color: var(--sx-ink-2);
+}
+.sx-shell .sx-kbd {
+  margin-inline-start: auto;
+  font-size: 0.64rem;
+  font-weight: 600;
+  color: var(--sx-ink-3);
+  border: 1px solid var(--sx-edge);
+  border-radius: 4px;
+  padding: 2px 5px;
+  background: var(--sx-slab);
+}
+
+/* scrollbars — one system inside the shell */
+.sx-shell *::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.sx-shell *::-webkit-scrollbar-thumb {
+  background: var(--sx-edge-hi);
+  border-radius: 4px;
+}
+.sx-shell *::-webkit-scrollbar-track {
+  background: transparent;
+}

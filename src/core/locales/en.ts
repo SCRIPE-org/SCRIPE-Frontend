@@ -23,6 +23,14 @@ export const en = {
       "If you need access to this resource, please contact your system administrator or submit a request through the proper channels. Include details about what you're trying to access and why you need it.",
   },
   nav: {
+    // Scripe (EDGE) shell landmarks
+    primary: "Primary",
+    secondary: "Sections",
+    breadcrumb: "Breadcrumb",
+    appLauncher: "App launcher",
+    togglePanel: "Toggle panel",
+    backTo: "Back to",
+    search: "Search or jump…",
     dashboard: "Dashboard",
     demo: "Demo",
     tree: "Tree",

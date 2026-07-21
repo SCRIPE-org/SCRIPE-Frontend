@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useCallback, useMemo } from "react";
+import { createContext, useContext, useCallback, useEffect, useMemo } from "react";
 import type React from "react";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import type { WorkspaceGroup, MenuItem } from "@core/navigation";
@@ -92,6 +92,28 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
 
   // ── Accent color ──
   const accentColor = useMemo(() => getAccentColor(activeWorkspace), [activeWorkspace]);
+
+  // ── Publish the workspace accent as CSS custom properties ──
+  // Workspace.ColorHue / ColorChroma are OKLCH components already; writing them
+  // to <html> lets stylesheets derive every accent shade in CSS instead of each
+  // consumer concatenating alpha onto a colour string (`${accent}22`), which
+  // produces invalid CSS for the oklch() values this field actually holds.
+  // Additive: only rules that opt in (the scripe shell) read these.
+  useEffect(() => {
+    const root = document.documentElement;
+    const hue = activeWorkspace?.colorHue;
+    const chroma = activeWorkspace?.colorChroma;
+    if (typeof hue === "number" && Number.isFinite(hue)) {
+      root.style.setProperty("--workspace-hue", String(hue));
+    } else {
+      root.style.removeProperty("--workspace-hue");
+    }
+    if (typeof chroma === "number" && Number.isFinite(chroma)) {
+      root.style.setProperty("--workspace-chroma", String(chroma));
+    } else {
+      root.style.removeProperty("--workspace-chroma");
+    }
+  }, [activeWorkspace]);
 
   // ── isModuleMode ──
   const isModuleMode = useMemo(

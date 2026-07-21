@@ -24,6 +24,9 @@ import { resolveFileUrl } from "@core/common/utils";
 // Nexus is the default layoutTemplate (defaults.ts), so it must be statically
 // imported to avoid a flash of empty content while dynamic() downloads the chunk.
 import { NexusLayout } from "@core/ui/layout/nexus/nexus-layout";
+// EDGE shell — statically imported for the same reason as Nexus: it is a
+// candidate default, and a lazy chunk would flash empty content on first paint.
+import { ScripeLayout } from "@core/ui/layout/scripe/scripe-layout";
 import { useIsFetching } from "@tanstack/react-query";
 
 // ── Layout chunk loading shimmer ────────────────────────────────────────────
@@ -568,7 +571,12 @@ function DashboardLayoutContent({
 
   // ── Compute layout content (rendered below the tenant banner) ──
   const renderLayout = () => {
-    // ── Nexus: dual-rail workspace layout (highest priority — checked first) ──
+    // ── Scripe (EDGE): token-native shell — checked first ──
+    if (layoutTemplate === "scripe") {
+      return <ScripeLayout>{children}</ScripeLayout>;
+    }
+
+    // ── Nexus: dual-rail workspace layout ──
     if (layoutTemplate === "nexus") {
       return <NexusLayout>{children}</NexusLayout>;
     }
@@ -774,8 +782,9 @@ function DashboardLayoutContent({
     return <NexusLayout>{children}</NexusLayout>;
   }; // end renderLayout
 
-  // Nexus needs a flex-column wrapper so the banners flow above it
-  if (layoutTemplate === "nexus") {
+  // Nexus and Scripe are fixed-viewport shells: they need a flex-column
+  // wrapper so the banners flow above them inside a non-scrolling page.
+  if (layoutTemplate === "nexus" || layoutTemplate === "scripe") {
     return (
       <>
         {showWelcomeOverlay && <LoginWelcomeLoader />}

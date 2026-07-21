@@ -176,7 +176,10 @@ export type LayoutTemplate =
   | "crm"
   | "terminal"
   // Nexus — Dual-rail workspace layout (system default)
-  | "nexus";
+  | "nexus"
+  /** EDGE shell — the SCRIPE design system made literal. Token-native, one
+   *  emitting element per screen, accent driven by the active workspace hue. */
+  | "scripe";
 
 // ── Component Styles ──────────────────────────────────────
 
