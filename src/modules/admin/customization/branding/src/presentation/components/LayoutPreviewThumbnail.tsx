@@ -260,7 +260,7 @@ export function LayoutPreviewThumbnail({
         <div
           className="absolute inset-0"
           style={{
-            background: `linear-gradient(135deg, ${accentColor}22, transparent 60%)`,
+            background: `linear-gradient(135deg, color-mix(in oklch, ${accentColor} 13%, transparent), transparent 60%)`,
           }}
         />
       )}

@@ -458,7 +458,7 @@ function ModuleWorkspaceButton({
   const lockedLabel = language === "ar" ? `${label} (مقفل)` : `${label} (Locked)`;
 
   const bgColor = (() => {
-    if (isActive) return `${accentColor}22`;
+    if (isActive) return `color-mix(in oklch, ${accentColor} 13%, transparent)`;
     if (hovered) return isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)";
     return "transparent";
   })();
@@ -470,7 +470,7 @@ function ModuleWorkspaceButton({
   })();
 
   const borderColor = (() => {
-    if (isActive) return `${accentColor}55`;
+    if (isActive) return `color-mix(in oklch, ${accentColor} 33%, transparent)`;
     if (hovered) return isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)";
     return "transparent";
   })();
@@ -506,7 +506,7 @@ function ModuleWorkspaceButton({
                   : "rgba(100,115,145,0.35)"
                 : iconColor,
               margin: "4px 0",
-              boxShadow: isActive ? `0 4px 16px ${accentColor}25` : "none",
+              boxShadow: isActive ? `0 4px 16px color-mix(in oklch, ${accentColor} 15%, transparent)` : "none",
               opacity: isLocked ? 0.55 : 1,
               transition: "all 200ms cubic-bezier(0.4, 0, 0.2, 1)",
             }}
@@ -518,7 +518,7 @@ function ModuleWorkspaceButton({
                   position: "absolute",
                   inset: -2,
                   borderRadius: 14,
-                  border: `2px solid ${accentColor}40`,
+                  border: `2px solid color-mix(in oklch, ${accentColor} 25%, transparent)`,
                   pointerEvents: "none",
                   animation: "pulse 2s ease-in-out infinite",
                 }}

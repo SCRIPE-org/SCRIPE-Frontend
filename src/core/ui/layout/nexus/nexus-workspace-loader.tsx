@@ -139,7 +139,7 @@ export function NexusWorkspaceLoader({
               position: "absolute",
               inset: -16,
               borderRadius: "50%",
-              background: `radial-gradient(circle, ${accent}30 0%, transparent 70%)`,
+              background: `radial-gradient(circle, color-mix(in oklch, ${accent} 19%, transparent) 0%, transparent 70%)`,
               animation: "nexus-loader-pulse 1.6s ease-in-out infinite",
             }}
           />
@@ -149,8 +149,8 @@ export function NexusWorkspaceLoader({
               width: 80,
               height: 80,
               borderRadius: "50%",
-              background: `linear-gradient(135deg, ${accent}22, ${accent}44)`,
-              border: `2px solid ${accent}60`,
+              background: `linear-gradient(135deg, color-mix(in oklch, ${accent} 13%, transparent), color-mix(in oklch, ${accent} 27%, transparent))`,
+              border: `2px solid color-mix(in oklch, ${accent} 38%, transparent)`,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -158,7 +158,7 @@ export function NexusWorkspaceLoader({
               fontWeight: 700,
               color: accent,
               letterSpacing: "-1px",
-              boxShadow: `0 0 40px ${accent}30, inset 0 1px 0 ${accent}40`,
+              boxShadow: `0 0 40px color-mix(in oklch, ${accent} 19%, transparent), inset 0 1px 0 color-mix(in oklch, ${accent} 25%, transparent)`,
               position: "relative",
               zIndex: 1,
             }}
@@ -207,10 +207,10 @@ export function NexusWorkspaceLoader({
             style={{
               height: "100%",
               borderRadius: 99,
-              background: `linear-gradient(90deg, ${accent}99, ${accent})`,
+              background: `linear-gradient(90deg, color-mix(in oklch, ${accent} 60%, transparent), ${accent})`,
               width: barWidth,
               transition: `width ${barDuration} cubic-bezier(0.4, 0, 0.2, 1)`,
-              boxShadow: `0 0 8px ${accent}80`,
+              boxShadow: `0 0 8px color-mix(in oklch, ${accent} 50%, transparent)`,
             }}
           />
         </div>

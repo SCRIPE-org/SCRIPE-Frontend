@@ -83,11 +83,11 @@ export function RootItemButton({
               flexShrink: 0,
               borderRadius: 12,
               cursor: "pointer",
-              border: isActive ? `1px solid ${accentColor}33` : "1px solid transparent",
+              border: isActive ? `1px solid color-mix(in oklch, ${accentColor} 20%, transparent)` : "1px solid transparent",
               background: bgColor,
               color: iconColor,
               margin: "4px 0",
-              boxShadow: isActive ? `0 4px 12px ${accentColor}15` : "none",
+              boxShadow: isActive ? `0 4px 12px color-mix(in oklch, ${accentColor} 8%, transparent)` : "none",
             }}
           >
             <span
@@ -293,7 +293,7 @@ export function PrimaryRailLogo({
         marginBottom: isModuleMode ? 12 : 20,
         boxShadow: tenantLogoUrl
           ? "none"
-          : `0 6px 20px ${accent}50, 0 2px 8px ${accent}30, inset 0 1px 0 rgba(255,255,255,0.2)`,
+          : `0 6px 20px color-mix(in oklch, ${accent} 31%, transparent), 0 2px 8px color-mix(in oklch, ${accent} 19%, transparent), inset 0 1px 0 rgba(255,255,255,0.2)`,
         overflow: "hidden",
         flexShrink: 0,
       }}

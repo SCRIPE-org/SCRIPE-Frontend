@@ -87,7 +87,7 @@ export function NexusTransitionOverlay() {
       )}
       style={{
         background: color
-          ? `radial-gradient(ellipse 80% 60% at 5% 50%, ${color}cc 0%, ${color}44 50%, transparent 100%)`
+          ? `radial-gradient(ellipse 80% 60% at 5% 50%, color-mix(in oklch, ${color} 80%, transparent) 0%, color-mix(in oklch, ${color} 27%, transparent) 50%, transparent 100%)`
           : undefined,
         backdropFilter: phase === "holding" ? "blur(2px)" : undefined,
       }}

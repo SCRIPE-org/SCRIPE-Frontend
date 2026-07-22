@@ -53,7 +53,7 @@ function LoginWelcomeLoader() {
   const accent = accentColor ?? (isDark ? "#7C6FD4" : "#6258c4");
 
   const avatarUrl = user ? resolveFileUrl(user.profileImageUrl) || undefined : undefined;
-  const avatarGradient = `linear-gradient(135deg, ${accent}CC 0%, ${isDark ? "#3B2FA3" : "#2D2580"} 100%)`;
+  const avatarGradient = `linear-gradient(135deg, color-mix(in oklch, ${accent} 80%, transparent) 0%, ${isDark ? "#3B2FA3" : "#2D2580"} 100%)`;
 
   const getInitials = () => {
     if (!user) return "U";

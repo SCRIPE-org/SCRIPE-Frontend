@@ -52,7 +52,7 @@ export function UserProfileDropdown({
   const avatarUrl = resolveFileUrl(user.profileImageUrl) || undefined;
 
   // Avatar gradient that matches the Nexus accent colour
-  const avatarGradient = `linear-gradient(135deg, ${accent}CC 0%, ${isDark ? "#3B2FA3" : "#2D2580"} 100%)`;
+  const avatarGradient = `linear-gradient(135deg, color-mix(in oklch, ${accent} 80%, transparent) 0%, ${isDark ? "#3B2FA3" : "#2D2580"} 100%)`;
 
   const getInitials = () => {
     const firstName = user.firstName || "";
