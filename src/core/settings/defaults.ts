@@ -23,9 +23,13 @@ export const defaultSettings: Settings = {
   backgroundMode: "preset",
   gradientStartColor: "",
   gradientEndColor: "",
-  // The EDGE shell is the platform default. Nexus stays selectable in
-  // Settings → Layouts → Workspace for tenants who prefer it.
-  layoutTemplate: "scripe",
+  // Nexus is the platform default. `scripe` (the EDGE shell) was briefly the
+  // default and was reverted: it shipped without an app launcher, ignored the
+  // whole settings provider, and hid locked workspaces instead of offering the
+  // upgrade path. It stays selectable in Settings → Layouts → Workspace, and
+  // becomes the default again only once it reaches parity with nexus and a
+  // human has actually used it.
+  layoutTemplate: "nexus",
   cardStyle: "default",
   animationLevel: "moderate",
   fontSize: "medium",
