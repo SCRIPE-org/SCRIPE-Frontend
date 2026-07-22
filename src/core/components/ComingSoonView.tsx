@@ -39,7 +39,7 @@ export function ComingSoonView({
         </div>
         <Badge
           variant="outline"
-          className="gap-1.5 border-amber-500/30 bg-amber-500/5 text-amber-600 dark:text-amber-400"
+          className="gap-1.5 border-warning/30 bg-warning/5 text-warning"
         >
           <Clock className="h-3 w-3" />
           {t("common.comingSoon") || "Coming Soon"}
@@ -53,7 +53,7 @@ export function ComingSoonView({
             <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 ring-1 ring-primary/10">
               <Icon className="h-10 w-10 text-primary/60" />
             </div>
-            <div className="absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full bg-amber-500 text-white shadow-lg">
+            <div className="absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full bg-warning text-warning-foreground shadow-lg">
               <Sparkles className="h-4 w-4" />
             </div>
           </div>
@@ -68,7 +68,7 @@ export function ComingSoonView({
                 key={key}
                 className="flex items-start gap-3 rounded-lg border border-border/50 bg-muted/30 px-4 py-3"
               >
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-success" />
                 <span className="text-sm text-foreground/80">{t(localeKey)}</span>
               </div>
             ))}

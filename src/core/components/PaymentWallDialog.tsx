@@ -63,8 +63,8 @@ export function PaymentWallDialog() {
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
         <DialogHeader className="items-center text-center">
-          <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-100 dark:bg-amber-900/30">
-            <ShieldAlert className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+          <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-2xl bg-warning/10">
+            <ShieldAlert className="h-8 w-8 text-warning" />
           </div>
           <DialogTitle className="text-xl">
             {t("subscription.paymentWall.title") || "Payment Required"}
@@ -82,7 +82,7 @@ export function PaymentWallDialog() {
 
         <div className="flex flex-col gap-3 rounded-lg border bg-muted/50 p-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <CreditCard className="h-4 w-4 text-amber-600" />
+            <CreditCard className="h-4 w-4 text-warning" />
             <span>
               {t("subscription.paymentWall.contactAdmin") ||
                 "Contact your system administrator to generate a payment link."}
