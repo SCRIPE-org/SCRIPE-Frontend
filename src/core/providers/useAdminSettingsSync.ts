@@ -119,7 +119,40 @@ export function useAdminSettingsSync() {
       const response = await api.get<{ adminSettingsJson: string | null }>(SAVE_ENDPOINT);
 
       if (response?.adminSettingsJson) {
-        const serverSettings = response.adminSettingsJson;
+        let serverSettings = response.adminSettingsJson;
+
+        // ── One-time nexus → scripe default migration ──
+        //
+        // Changing defaults.ts only affects accounts that have never expressed a
+        // layout preference, because mergeSettings resolves
+        // `{ ...defaults, ...tenant, ...adminOverrides }` and a stored value
+        // therefore always wins. Every stored "nexus" predates the existence of
+        // the scripe shell, so it is inherited state rather than a considered
+        // choice, and clearing it is what actually moves an existing account
+        // onto the new platform default.
+        //
+        // Deliberately narrow: it only ever removes the key when the value is
+        // exactly "nexus", it never touches any other setting, and it records
+        // that it has run — so an admin who afterwards picks nexus on purpose
+        // keeps it. The cleaned settings are written straight back to the
+        // server, otherwise the old value would simply return on next login.
+        if (!localStorage.getItem(STORAGE_KEYS.LAYOUT_DEFAULT_MIGRATED)) {
+          try {
+            const parsed = JSON.parse(serverSettings) as Record<string, unknown>;
+            if (parsed.layoutTemplate === "nexus") {
+              delete parsed.layoutTemplate;
+              serverSettings = JSON.stringify(parsed);
+              await api.put<void>(SAVE_ENDPOINT, { adminSettingsJson: serverSettings });
+              appLogger.info("Migrated stored layout from nexus to the platform default");
+            }
+          } catch (migrationErr) {
+            // Non-fatal — the account simply stays on its stored layout.
+            appLogger.warn("Layout default migration skipped", migrationErr);
+          } finally {
+            localStorage.setItem(STORAGE_KEYS.LAYOUT_DEFAULT_MIGRATED, "1");
+          }
+        }
+
         const cachedSettings = localStorage.getItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
 
         // Silent reconcile: only update if server differs from cache

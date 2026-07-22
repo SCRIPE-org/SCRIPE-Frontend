@@ -119,7 +119,9 @@ export interface DashboardThemeSettings {
  */
 export const DEFAULT_DASHBOARD_SETTINGS: DashboardThemeSettings = {
   // Layout & Structure
-  layoutTemplate: "modern",
+  // Matches the platform default in core/settings/defaults.ts, so a new studio
+  // draft starts from what a tenant actually gets rather than from "modern".
+  layoutTemplate: "scripe",
   sidebarPosition: "left",
   sidebarStyle: "default",
   headerStyle: "default",

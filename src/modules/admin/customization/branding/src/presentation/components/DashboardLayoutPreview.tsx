@@ -19,6 +19,7 @@ import { LayoutDashboard, Monitor, Tablet, Smartphone, RefreshCw } from "lucide-
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@/core/common/utils";
 import type { DashboardThemeSettings } from "../../domain/entities/StudioDraft";
+import { defaultSettings } from "@core/settings/defaults";
 
 interface Props {
   settings: DashboardThemeSettings;
@@ -27,10 +28,11 @@ interface Props {
 /** Map DashboardThemeSettings → Settings provider keys (pass all through) */
 function mapToSettingsKeys(ds: DashboardThemeSettings): Record<string, unknown> {
   // Pass all settings through — SettingsProvider handles defaults for any missing keys.
-  // Only override layoutTemplate to ensure a valid default.
+  // Only override layoutTemplate to ensure a valid default — the platform
+  // default, not an arbitrary one, so the preview matches reality.
   return {
     ...ds,
-    layoutTemplate: ds.layoutTemplate || "modern",
+    layoutTemplate: ds.layoutTemplate || defaultSettings.layoutTemplate,
   };
 }
 

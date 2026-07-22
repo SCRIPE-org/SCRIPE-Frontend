@@ -50,6 +50,12 @@ export const STORAGE_KEYS = {
   PREF_LANG: "scr_pref_lang",
   PREF_SIDEBAR_COLLAPSED: "scr_pref_sidebar",
   PREF_DASHBOARD_SETTINGS: "scr_pref_dash",
+  /**
+   * One-time marker for the nexus → scripe default migration.
+   * Set once the stale layout has been cleared for this account, so the
+   * migration can never fight a deliberate later choice of nexus.
+   */
+  LAYOUT_DEFAULT_MIGRATED: "scr_layout_default_migrated_v1",
 
   // ── Builder ────────────────────────────────────────────────────────────────
   BUILDER_TEMPLATES: "scr_builder_tpl",

@@ -777,8 +777,11 @@ function DashboardLayoutContent({
       );
     }
 
-    // ── Default: Nexus Layout (fallback for any unknown/invalid layout value) ──
-    // Nexus is the system default (defaults.ts: layoutTemplate: "nexus").
+    // ── Fallback for any unknown or invalid layout value ──
+    // The platform default is `scripe` (defaults.ts). Nexus remains the
+    // last-resort fallback here on purpose: it is the frozen shell, so if a
+    // stored value is corrupt or names a layout that no longer exists, the user
+    // still lands somewhere known-good rather than on a shell under active work.
     return <NexusLayout>{children}</NexusLayout>;
   }; // end renderLayout
 
