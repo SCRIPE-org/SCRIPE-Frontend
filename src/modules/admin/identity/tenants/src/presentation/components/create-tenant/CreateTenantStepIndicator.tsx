@@ -69,7 +69,7 @@ export function CreateTenantStepIndicator({
                 className={cn(
                   "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-300",
                   isActive && "bg-primary text-primary-foreground shadow-md",
-                  isCompleted && !isActive && "bg-green-500/15 text-green-600",
+                  isCompleted && !isActive && "bg-success/15 text-success",
                   !isActive && !isCompleted && "bg-muted text-muted-foreground"
                 )}
               >
@@ -104,7 +104,7 @@ export function CreateTenantStepIndicator({
                 <div
                   className={cn(
                     "h-px flex-1 transition-colors duration-500",
-                    step.id < currentStep ? "bg-green-500/50" : "bg-border/50"
+                    step.id < currentStep ? "bg-success/50" : "bg-border/50"
                   )}
                 />
               </div>

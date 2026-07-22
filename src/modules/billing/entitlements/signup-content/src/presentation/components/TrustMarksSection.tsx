@@ -25,18 +25,18 @@ export function TrustMarksSection({ vm }: TrustMarksSectionProps) {
     vm.isSavingTrustMark || vm.isDeletingTrustMark || vm.isReorderingTrustMarks;
 
   return (
-    <Card className="border-zinc-800 bg-zinc-900">
+    <Card className="border-border bg-card">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-base text-white">
-            <Star className="h-4 w-4 text-indigo-400" />
+          <CardTitle className="flex items-center gap-2 text-base text-foreground">
+            <Star className="h-4 w-4 text-info" />
             {t("signupContent.trustMarks.title")}
           </CardTitle>
           <Button
             size="sm"
             onClick={vm.handleOpenAddTrustMark}
             disabled={isTrustMarkBusy}
-            className="h-7 gap-1.5 bg-indigo-600 px-3 text-xs text-white hover:bg-indigo-500"
+            className="h-7 gap-1.5 bg-info px-3 text-xs text-info-foreground hover:bg-info/90"
           >
             <Plus className="h-3 w-3" />
             {t("signupContent.trustMarks.add")}
@@ -45,7 +45,7 @@ export function TrustMarksSection({ vm }: TrustMarksSectionProps) {
       </CardHeader>
       <CardContent>
         {marks.length === 0 ? (
-          <p className="py-4 text-center text-sm text-zinc-600">
+          <p className="py-4 text-center text-sm text-muted-foreground">
             {t("signupContent.trustMarks.empty")}
           </p>
         ) : (
@@ -53,7 +53,7 @@ export function TrustMarksSection({ vm }: TrustMarksSectionProps) {
             {marks.map((mark, idx) => (
               <div
                 key={mark.id}
-                className="flex items-center gap-3 rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-2.5 transition-colors hover:border-zinc-700"
+                className="flex items-center gap-3 rounded-lg border border-border bg-background px-4 py-2.5 transition-colors hover:border-border/90"
               >
                 <div className="flex flex-col gap-0.5">
                   <Button
@@ -61,7 +61,7 @@ export function TrustMarksSection({ vm }: TrustMarksSectionProps) {
                     disabled={idx === 0 || isTrustMarkBusy}
                     variant="ghost"
                     size="icon"
-                    className="h-5 w-5 text-zinc-600 hover:bg-zinc-800 hover:text-zinc-300 disabled:opacity-30"
+                    className="h-5 w-5 text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-30"
                     aria-label={t("signupContent.trustMarks.reorder")}
                   >
                     <ChevronUp className="h-3 w-3" />
@@ -71,7 +71,7 @@ export function TrustMarksSection({ vm }: TrustMarksSectionProps) {
                     disabled={idx === marks.length - 1 || isTrustMarkBusy}
                     variant="ghost"
                     size="icon"
-                    className="h-5 w-5 text-zinc-600 hover:bg-zinc-800 hover:text-zinc-300 disabled:opacity-30"
+                    className="h-5 w-5 text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-30"
                     aria-label={t("signupContent.trustMarks.reorder")}
                   >
                     <ChevronDown className="h-3 w-3" />
@@ -79,23 +79,23 @@ export function TrustMarksSection({ vm }: TrustMarksSectionProps) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="truncate font-medium text-white">{mark.labelEn}</span>
-                    <span className="text-zinc-600">/</span>
-                    <span className="truncate text-zinc-400" dir="rtl">
+                    <span className="truncate font-medium text-foreground">{mark.labelEn}</span>
+                    <span className="text-muted-foreground">/</span>
+                    <span className="truncate text-muted-foreground" dir="rtl">
                       {mark.labelAr}
                     </span>
                   </div>
                   <div className="mt-0.5 flex items-center gap-2">
                     <Badge
                       variant="outline"
-                      className="border-zinc-700 px-1.5 py-0 text-[10px] text-zinc-500"
+                      className="border-border px-1.5 py-0 text-[10px] text-muted-foreground"
                     >
                       {mark.kind}
                     </Badge>
                     {mark.isRealData && (
                       <Badge
                         variant="outline"
-                        className="border-emerald-700/40 px-1.5 py-0 text-[10px] text-emerald-500"
+                        className="border-success/40 px-1.5 py-0 text-[10px] text-success"
                       >
                         {t("signupContent.trustMarks.isRealData")}
                       </Badge>
@@ -108,7 +108,7 @@ export function TrustMarksSection({ vm }: TrustMarksSectionProps) {
                     disabled={isTrustMarkBusy}
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-zinc-500 hover:bg-zinc-800 hover:text-white"
+                    className="h-8 w-8 text-muted-foreground hover:bg-muted hover:text-foreground"
                     aria-label={t("signupContent.trustMarks.edit")}
                   >
                     <Pencil className="h-3.5 w-3.5" />
@@ -118,7 +118,7 @@ export function TrustMarksSection({ vm }: TrustMarksSectionProps) {
                     disabled={isTrustMarkBusy}
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-zinc-400 hover:bg-red-950 hover:text-red-300 disabled:opacity-50"
+                    className="h-8 w-8 text-muted-foreground hover:bg-destructive hover:text-destructive disabled:opacity-50"
                     aria-label={t("signupContent.trustMarks.delete")}
                   >
                     <Trash2 className="h-3.5 w-3.5" />

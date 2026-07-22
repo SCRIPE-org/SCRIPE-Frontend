@@ -157,7 +157,7 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
         label: tFn("common.delete") || "Delete",
         onClick: (item: Role) => handleDeleteFn?.(item),
         variant: "ghost",
-        className: "text-red-600 hover:text-red-700",
+        className: "text-destructive hover:text-destructive/90",
         icon: <Trash2 className="h-4 w-4" />,
       },
     ],

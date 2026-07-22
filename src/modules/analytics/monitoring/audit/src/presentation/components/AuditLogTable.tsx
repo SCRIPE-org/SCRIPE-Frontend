@@ -127,12 +127,12 @@ export const AuditLogTable = memo(function AuditLogTable({
               <TableCell className="text-center">
                 {log.isSuccess ? (
                   <CheckCircle2
-                    className="mx-auto h-4 w-4 text-green-500"
+                    className="mx-auto h-4 w-4 text-success"
                     aria-label={t("audit.filters.success")}
                   />
                 ) : (
                   <XCircle
-                    className="mx-auto h-4 w-4 text-red-500"
+                    className="mx-auto h-4 w-4 text-destructive"
                     aria-label={t("audit.filters.failed")}
                   />
                 )}

@@ -600,8 +600,8 @@ function MockDashboardContent() {
       value: "2,847",
       change: "+12.5%",
       positive: true,
-      color: "text-blue-500",
-      bg: "bg-blue-500/10",
+      color: "text-info",
+      bg: "bg-info/10",
     },
     {
       icon: DollarSign,
@@ -609,8 +609,8 @@ function MockDashboardContent() {
       value: "$48.2K",
       change: "+8.1%",
       positive: true,
-      color: "text-emerald-500",
-      bg: "bg-emerald-500/10",
+      color: "text-success",
+      bg: "bg-success/10",
     },
     {
       icon: Activity,
@@ -618,8 +618,8 @@ function MockDashboardContent() {
       value: "342",
       change: "-2.4%",
       positive: false,
-      color: "text-amber-500",
-      bg: "bg-amber-500/10",
+      color: "text-warning",
+      bg: "bg-warning/10",
     },
     {
       icon: Eye,
@@ -627,8 +627,8 @@ function MockDashboardContent() {
       value: "12.4K",
       change: "+23.7%",
       positive: true,
-      color: "text-violet-500",
-      bg: "bg-violet-500/10",
+      color: "text-primary",
+      bg: "bg-primary/10",
     },
   ];
 
@@ -698,7 +698,7 @@ function MockDashboardContent() {
               <div
                 className={cn(
                   "mt-1 flex items-center gap-1 text-xs",
-                  stat.positive ? "text-emerald-500" : "text-rose-500"
+                  stat.positive ? "text-success" : "text-destructive"
                 )}
               >
                 <TrendingUp className={cn("h-3 w-3", !stat.positive && "rotate-180")} />
@@ -837,9 +837,9 @@ function MockDashboardContent() {
                       className={cn(
                         "rounded-full px-2 py-0.5 text-xs",
                         row.status === "Active"
-                          ? "bg-emerald-500/10 text-emerald-500"
+                          ? "bg-success/10 text-success"
                           : row.status === "Pending"
-                            ? "bg-amber-500/10 text-amber-500"
+                            ? "bg-warning/10 text-warning"
                             : "bg-muted text-muted-foreground"
                       )}
                     >

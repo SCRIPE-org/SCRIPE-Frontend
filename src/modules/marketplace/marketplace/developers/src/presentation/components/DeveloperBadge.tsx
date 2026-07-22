@@ -43,7 +43,7 @@ export function DeveloperBadge({
           <Tooltip>
             <TooltipTrigger asChild>
               <span
-                className="inline-flex cursor-default items-center gap-0.5 text-xs font-medium text-blue-600 dark:text-blue-400"
+                className="inline-flex cursor-default items-center gap-0.5 text-xs font-medium text-info"
                 aria-label="Verified developer"
               >
                 <ShieldCheck className="size-3.5" />
@@ -51,7 +51,7 @@ export function DeveloperBadge({
             </TooltipTrigger>
             <TooltipContent side="top" className="text-xs">
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="size-3.5 text-green-500" />
+                <CheckCircle2 className="size-3.5 text-success" />
                 Verified Developer
               </div>
             </TooltipContent>

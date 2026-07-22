@@ -30,7 +30,7 @@ export function RegulationCard({ regulation, onEdit }: RegulationCardProps) {
       <CardHeader className="border-b bg-muted/20 pb-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-indigo-500/10 p-2 text-indigo-600">
+            <div className="rounded-lg bg-info/10 p-2 text-info">
               <Scale className="h-5 w-5" />
             </div>
             <div>
@@ -85,13 +85,13 @@ export function RegulationCard({ regulation, onEdit }: RegulationCardProps) {
             {regulation.purposes.map((p: any) => (
               <div key={p.id} className="flex items-start gap-2 text-sm">
                 <Shield
-                  className={`mt-0.5 h-4 w-4 shrink-0 ${p.isRequired ? "text-red-500" : "text-emerald-500"}`}
+                  className={`mt-0.5 h-4 w-4 shrink-0 ${p.isRequired ? "text-destructive" : "text-success"}`}
                 />
                 <div>
                   <p className="font-medium">
                     {p.name}
                     {p.isRequired && (
-                      <span className="ms-2 text-[10px] uppercase tracking-wider text-red-500">
+                      <span className="ms-2 text-[10px] uppercase tracking-wider text-destructive">
                         {t("compliance.regulations.required")}
                       </span>
                     )}
@@ -109,7 +109,7 @@ export function RegulationCard({ regulation, onEdit }: RegulationCardProps) {
             href={regulation.referenceUrl}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center text-xs font-medium text-blue-600 hover:underline"
+            className="inline-flex items-center text-xs font-medium text-info hover:underline"
           >
             {t("compliance.regulations.viewOfficialDocs")}
             <ExternalLink className="ms-1 h-3 w-3" />

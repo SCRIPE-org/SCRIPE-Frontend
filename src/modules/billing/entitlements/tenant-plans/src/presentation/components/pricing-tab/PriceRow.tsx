@@ -83,7 +83,7 @@ export function PriceRow({ price, currency, onUpdate, onRemove, t }: PriceRowPro
 
       {/* Preview + Delete */}
       <div className="flex shrink-0 items-center gap-2">
-        <span className="text-lg font-semibold tabular-nums text-emerald-600 dark:text-emerald-400">
+        <span className="text-lg font-semibold tabular-nums text-success">
           {formatAmount(price.amount, currency)}
         </span>
         <Button

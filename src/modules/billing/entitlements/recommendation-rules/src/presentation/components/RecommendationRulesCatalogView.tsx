@@ -13,10 +13,10 @@ import { Badge } from "@core/ui/badge";
 import type { RecommendationRule } from "../../domain/entities/RecommendationRule";
 
 const TIER_BADGE_COLORS: Record<number, string> = {
-  0: "bg-gray-100 text-gray-700",
-  1: "bg-blue-100 text-blue-800",
-  2: "bg-purple-100 text-purple-800",
-  3: "bg-amber-100 text-amber-800",
+  0: "bg-muted text-foreground",
+  1: "bg-info/10 text-info",
+  2: "bg-primary/10 text-primary",
+  3: "bg-warning/10 text-warning",
 };
 
 interface RecommendationRulesCatalogViewProps {
@@ -62,7 +62,7 @@ export function RecommendationRulesCatalogView({ vm, t }: RecommendationRulesCat
             const level = value as number | undefined;
             if (level === undefined || level === null)
               return <span className="text-muted-foreground">—</span>;
-            const colorClass = TIER_BADGE_COLORS[level] ?? "bg-gray-100 text-gray-700";
+            const colorClass = TIER_BADGE_COLORS[level] ?? "bg-muted text-foreground";
             const tempRule = new (class {
               getTierLabel() {
                 switch (level) {
@@ -104,7 +104,7 @@ export function RecommendationRulesCatalogView({ vm, t }: RecommendationRulesCat
           label: t("entitlements.onboarding.rules.isSystem") || "System",
           render: (value: unknown) =>
             value ? (
-              <Badge variant="outline" className="border-purple-500 text-purple-600">
+              <Badge variant="outline" className="border-primary text-primary">
                 System
               </Badge>
             ) : null,

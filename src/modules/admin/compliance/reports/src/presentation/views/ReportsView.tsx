@@ -164,11 +164,9 @@ function GenerateReportDialog({
             />
           </div>
         </div>
-        <div className="flex items-start gap-2 rounded-lg border border-blue-500/20 bg-blue-500/5 p-3">
-          <Clock className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
-          <p className="text-xs text-blue-600 dark:text-blue-400">
-            {t("compliance.reportQueuedInfo")}
-          </p>
+        <div className="flex items-start gap-2 rounded-lg border border-info/20 bg-info/5 p-3">
+          <Clock className="mt-0.5 h-4 w-4 shrink-0 text-info" />
+          <p className="text-xs text-info">{t("compliance.reportQueuedInfo")}</p>
         </div>
         <div className="flex justify-end gap-2 border-t pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
@@ -204,14 +202,14 @@ function ReportCard({ report }: { report: ComplianceReport }) {
 
   return (
     <Card
-      className={`cursor-pointer border transition-all hover:shadow-md ${report.isReady ? "border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-green-500/5" : "border-border/50"}`}
+      className={`cursor-pointer border transition-all hover:shadow-md ${report.isReady ? "border-success/20 bg-gradient-to-br from-success/5 to-success/5" : "border-border/50"}`}
       onClick={() => router.push(`/compliance/reports/${report.id}`)}
     >
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
             <div
-              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${report.isReady ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "border-border/50 bg-muted/50 text-muted-foreground"}`}
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${report.isReady ? "border-success/30 bg-success/10 text-success" : "border-border/50 bg-muted/50 text-muted-foreground"}`}
             >
               {report.isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -330,8 +328,8 @@ export function ReportsView() {
             <BackIcon className="h-4 w-4" />
           </Button>
           <div className="flex items-center gap-3">
-            <div className="rounded-xl border border-indigo-500/20 bg-gradient-to-br from-indigo-500/15 to-blue-500/10 p-2.5 shadow-sm">
-              <BarChart3 className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+            <div className="rounded-xl border border-info/20 bg-gradient-to-br from-info/15 to-info/10 p-2.5 shadow-sm">
+              <BarChart3 className="h-5 w-5 text-info" />
             </div>
             <div>
               <h2 className="text-2xl font-bold tracking-tight">{t("compliance.reportsTitle")}</h2>
@@ -341,8 +339,8 @@ export function ReportsView() {
                 {pendingCount > 0 && (
                   <>
                     {" · "}
-                    <span className="font-medium text-amber-500">{pendingCount}</span>{" "}
-                    <span className="text-amber-500">{t("compliance.reportPending")}</span>
+                    <span className="font-medium text-warning">{pendingCount}</span>{" "}
+                    <span className="text-warning">{t("compliance.reportPending")}</span>
                   </>
                 )}
               </p>
@@ -393,8 +391,8 @@ export function ReportsView() {
       ) : reports.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="mb-4 rounded-xl border border-indigo-500/20 bg-indigo-500/10 p-4">
-              <BarChart3 className="h-8 w-8 text-indigo-500" />
+            <div className="mb-4 rounded-xl border border-info/20 bg-info/10 p-4">
+              <BarChart3 className="h-8 w-8 text-info" />
             </div>
             <p className="font-semibold">{t("compliance.noReports")}</p>
             <p className="mt-1 text-sm text-muted-foreground">{t("compliance.noReportsDesc")}</p>

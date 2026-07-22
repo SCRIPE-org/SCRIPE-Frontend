@@ -130,7 +130,7 @@ function GatewayCard({
                 {isDefault && (
                   <Badge
                     variant="secondary"
-                    className="gap-1 border-amber-500/30 bg-amber-500/10 text-xs text-amber-600 dark:text-amber-400"
+                    className="gap-1 border-warning/30 bg-warning/10 text-xs text-warning"
                   >
                     <Crown className="h-3 w-3" />
                     {t("billing.gateways.default")}
@@ -146,7 +146,7 @@ function GatewayCard({
             variant={gw.enabled ? "default" : "secondary"}
             className={`text-xs ${
               gw.enabled
-                ? "border-emerald-500/30 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                ? "border-success/30 bg-success/15 text-success"
                 : "bg-muted text-muted-foreground"
             }`}
           >
@@ -191,7 +191,7 @@ function GatewayCard({
         <div className="flex gap-4 text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
             {gw.supportsRecurring ? (
-              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+              <CheckCircle2 className="h-3.5 w-3.5 text-success" />
             ) : (
               <XCircle className="h-3.5 w-3.5 text-muted-foreground/50" />
             )}
@@ -199,7 +199,7 @@ function GatewayCard({
           </div>
           <div className="flex items-center gap-1">
             {gw.supportsBillingPortal ? (
-              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+              <CheckCircle2 className="h-3.5 w-3.5 text-success" />
             ) : (
               <XCircle className="h-3.5 w-3.5 text-muted-foreground/50" />
             )}
@@ -306,11 +306,11 @@ export function PaymentGatewaySettingsView() {
       {!vm.isLoading && (
         <div className="flex items-center gap-4">
           <Badge variant="outline" className="gap-1.5 px-3 py-1.5 text-sm">
-            <Crown className="h-3.5 w-3.5 text-amber-500" />
+            <Crown className="h-3.5 w-3.5 text-warning" />
             {t("billing.gateways.defaultGateway")}: <strong>{vm.defaultGateway}</strong>
           </Badge>
           <Badge variant="outline" className="gap-1.5 px-3 py-1.5 text-sm">
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+            <CheckCircle2 className="h-3.5 w-3.5 text-success" />
             {vm.enabledCount} / {vm.totalCount} {t("billing.gateways.enabled")}
           </Badge>
         </div>
@@ -342,9 +342,9 @@ export function PaymentGatewaySettingsView() {
 
       {/* Config Note */}
       {!vm.isLoading && (
-        <Card className="border-blue-500/20 bg-blue-500/5">
+        <Card className="border-info/20 bg-info/5">
           <CardContent className="flex items-start gap-3 p-4">
-            <Info className="mt-0.5 h-5 w-5 shrink-0 text-blue-500" />
+            <Info className="mt-0.5 h-5 w-5 shrink-0 text-info" />
             <p className="text-sm leading-relaxed text-muted-foreground">
               {t("billing.gateways.configNote")}
             </p>

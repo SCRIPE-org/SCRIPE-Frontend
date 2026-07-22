@@ -34,7 +34,7 @@ export function GeneralSection({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Settings2 className="h-5 w-5 text-blue-500" />
+          <Settings2 className="h-5 w-5 text-info" />
           {t("oauthApps.generalSection") || "General"}
         </CardTitle>
         <CardDescription>
@@ -46,7 +46,7 @@ export function GeneralSection({
         <div className="space-y-2">
           <Label htmlFor="oauth-name">
             {t("oauthApps.displayName") || "Application Name"}{" "}
-            <span className="text-red-500">*</span>
+            <span className="text-destructive">*</span>
           </Label>
           <Input
             id="oauth-name"
@@ -72,7 +72,7 @@ export function GeneralSection({
         {isCreateMode && (
           <div className="space-y-2">
             <Label>
-              {t("oauthApps.clientType") || "Client Type"} <span className="text-red-500">*</span>
+              {t("oauthApps.clientType") || "Client Type"} <span className="text-destructive">*</span>
             </Label>
             <GenericSelect
               value={form.clientType}

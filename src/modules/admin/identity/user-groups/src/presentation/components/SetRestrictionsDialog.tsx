@@ -179,7 +179,7 @@ export function SetRestrictionsDialog({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-7 w-7 p-0 text-red-600 hover:text-red-700"
+                    className="h-7 w-7 p-0 text-destructive hover:text-destructive/90"
                     onClick={() => removeRestriction(rIndex)}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -193,7 +193,7 @@ export function SetRestrictionsDialog({
                       {field}
                       <button
                         onClick={() => removeField(rIndex, field)}
-                        className="ml-1 hover:text-red-600"
+                        className="ml-1 hover:text-destructive"
                       >
                         <X className="h-3 w-3" />
                       </button>

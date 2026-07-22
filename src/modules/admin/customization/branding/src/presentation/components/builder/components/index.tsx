@@ -555,8 +555,8 @@ export function BuilderCustomHtml({
 }) {
   if (!content && !css) {
     return (
-      <div className="w-full rounded-lg border border-dashed border-amber-500/30 bg-amber-500/5 p-4">
-        <p className="text-xs text-amber-600">Custom HTML Block</p>
+      <div className="w-full rounded-lg border border-dashed border-warning/30 bg-warning/5 p-4">
+        <p className="text-xs text-warning">Custom HTML Block</p>
         <p className="mt-1 text-[10px] text-muted-foreground">
           Edit HTML &amp; CSS in the properties panel using the code editor.
         </p>
@@ -587,8 +587,8 @@ export function BuilderVideoBg({
 }) {
   if (!src) {
     return (
-      <div className="flex h-full min-h-[200px] w-full items-center justify-center rounded-lg border border-dashed border-violet-500/30 bg-gradient-to-br from-violet-500/10 to-blue-500/10">
-        <p className="text-xs text-violet-500">Video Background — Set a URL to preview</p>
+      <div className="flex h-full min-h-[200px] w-full items-center justify-center rounded-lg border border-dashed border-primary/30 bg-gradient-to-br from-primary/10 to-info/10">
+        <p className="text-xs text-primary">Video Background — Set a URL to preview</p>
       </div>
     );
   }

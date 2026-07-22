@@ -27,11 +27,11 @@ export function FeatureValueBadge({
     const isTrue = value.toLowerCase() === "true";
     return isTrue ? (
       <CheckCircle
-        className={`mx-auto h-4 w-4 ${isEffective ? "text-green-500" : "text-muted-foreground"}`}
+        className={`mx-auto h-4 w-4 ${isEffective ? "text-success" : "text-muted-foreground"}`}
       />
     ) : (
       <XCircle
-        className={`mx-auto h-4 w-4 ${isEffective ? "text-red-500" : "text-muted-foreground"}`}
+        className={`mx-auto h-4 w-4 ${isEffective ? "text-destructive" : "text-muted-foreground"}`}
       />
     );
   }

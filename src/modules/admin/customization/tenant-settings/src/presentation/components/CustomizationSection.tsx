@@ -64,9 +64,9 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
 
       {/* ── Unpublished Draft Indicator ────────────── */}
       {settings.draftBrandingJson && (
-        <Card className="border-amber-500/30 bg-amber-500/5">
+        <Card className="border-warning/30 bg-warning/5">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+            <CardTitle className="flex items-center gap-2 text-warning">
               <Paintbrush className="h-5 w-5" />
               {c("draftPending") || "Unpublished Draft"}
             </CardTitle>
@@ -83,7 +83,7 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
               asChild
               variant="outline"
               size="sm"
-              className="gap-2 border-amber-500/30 text-amber-600 hover:bg-amber-500/10 dark:text-amber-400"
+              className="gap-2 border-warning/30 text-warning hover:bg-warning/10"
             >
               <Link href="/customizer">
                 <Paintbrush className="h-4 w-4" />
@@ -141,11 +141,11 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
                             variant={entry.changeType === "publish" ? "default" : "secondary"}
                             className={
                               entry.changeType === "rollback"
-                                ? "bg-blue-500"
+                                ? "bg-info"
                                 : entry.changeType === "draft-discard"
-                                  ? "bg-orange-500"
+                                  ? "bg-warning"
                                   : entry.changeType.includes("safe-mode")
-                                    ? "bg-purple-500"
+                                    ? "bg-primary"
                                     : ""
                             }
                           >
@@ -275,7 +275,7 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
               size="sm"
               className={
                 vm.isSaveSuccess
-                  ? "pointer-events-none bg-green-600 transition-colors duration-300 hover:bg-green-600"
+                  ? "pointer-events-none bg-success transition-colors duration-300 hover:bg-success"
                   : "transition-colors duration-300"
               }
             >

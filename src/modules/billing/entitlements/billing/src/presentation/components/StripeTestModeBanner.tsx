@@ -28,7 +28,7 @@ export function StripeTestModeBanner() {
   if (!isStripeTestMode || dismissed) return null;
 
   return (
-    <Alert className="relative border-amber-500/30 bg-amber-500/10 text-amber-800 dark:text-amber-300 [&>svg]:text-amber-600 dark:[&>svg]:text-amber-400">
+    <Alert className="relative border-warning/30 bg-warning/10 text-warning [&>svg]:text-warning">
       <AlertTriangle className="h-4 w-4" />
       <AlertTitle>{t("billing.testMode.label") || "Stripe Test Mode"}</AlertTitle>
       <AlertDescription>
@@ -39,7 +39,7 @@ export function StripeTestModeBanner() {
         variant="ghost"
         size="icon"
         onClick={() => setDismissed(true)}
-        className="absolute end-2 top-2 h-7 w-7 opacity-60 hover:bg-amber-500/20 hover:opacity-100"
+        className="absolute end-2 top-2 h-7 w-7 opacity-60 hover:bg-warning/20 hover:opacity-100"
         aria-label="Dismiss"
       >
         <X className="h-3.5 w-3.5" />

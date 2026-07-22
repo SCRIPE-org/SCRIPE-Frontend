@@ -75,21 +75,21 @@ export function IdentityProviderCard({
   > = {
     oidc: {
       label: "OIDC",
-      bg: "bg-blue-500/10 dark:bg-blue-500/15",
-      text: "text-blue-600 dark:text-blue-400",
-      border: "border-blue-500/20",
+      bg: "bg-info/10",
+      text: "text-info",
+      border: "border-info/20",
     },
     oauth2: {
       label: "OAuth 2.0",
-      bg: "bg-emerald-500/10 dark:bg-emerald-500/15",
-      text: "text-emerald-600 dark:text-emerald-400",
-      border: "border-emerald-500/20",
+      bg: "bg-success/10",
+      text: "text-success",
+      border: "border-success/20",
     },
     saml: {
       label: "SAML 2.0",
-      bg: "bg-amber-500/10 dark:bg-amber-500/15",
-      text: "text-amber-600 dark:text-amber-400",
-      border: "border-amber-500/20",
+      bg: "bg-warning/10",
+      text: "text-warning",
+      border: "border-warning/20",
     },
   };
 
@@ -164,7 +164,7 @@ export function IdentityProviderCard({
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => setShowDeleteDialog(true)}
-                className="cursor-pointer gap-2 text-red-600 hover:text-red-700 focus:text-red-600 dark:text-red-400"
+                className="cursor-pointer gap-2 text-destructive hover:text-destructive focus:text-destructive"
               >
                 <Trash2 className="h-4 w-4" />
                 {t("common.delete") || "Delete"}
@@ -187,7 +187,7 @@ export function IdentityProviderCard({
           {item.enabledForAdmins && (
             <Badge
               variant="outline"
-              className="h-5 gap-1 border-violet-200 bg-violet-50 text-[10px] font-medium text-violet-700 dark:border-violet-800/30 dark:bg-violet-900/10 dark:text-violet-400"
+              className="h-5 gap-1 border-primary/30 bg-primary/10 text-[10px] font-medium text-primary"
             >
               <Shield className="h-3 w-3" />
               {t("identityProviders.badgeAdmin")}
@@ -198,7 +198,7 @@ export function IdentityProviderCard({
           {item.enabledForUsers && (
             <Badge
               variant="outline"
-              className="h-5 gap-1 border-sky-200 bg-sky-50 text-[10px] font-medium text-sky-700 dark:border-sky-800/30 dark:bg-sky-900/10 dark:text-sky-400"
+              className="h-5 gap-1 border-info/30 bg-info/10 text-[10px] font-medium text-info"
             >
               <Users className="h-3 w-3" />
               {t("identityProviders.badgeUser")}
@@ -222,7 +222,7 @@ export function IdentityProviderCard({
             {isTesting ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
             ) : (
-              <Zap className="h-3.5 w-3.5 text-amber-500 group-hover:animate-pulse" />
+              <Zap className="h-3.5 w-3.5 text-warning group-hover:animate-pulse" />
             )}
             {t("identityProviders.testConnection") || "Test Connection"}
           </Button>
@@ -261,7 +261,7 @@ export function IdentityProviderCard({
                 onDelete(item);
                 setShowDeleteDialog(false);
               }}
-              className="bg-red-600 text-white hover:bg-red-700"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {t("common.delete") || "Delete"}
             </AlertDialogAction>

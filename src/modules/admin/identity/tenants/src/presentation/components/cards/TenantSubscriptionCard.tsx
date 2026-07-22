@@ -417,8 +417,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
           {/* ── Pricing Info / Free Plan Banner ── */}
           {subscription.type === "Free" ||
           (subscription.type === "Lifetime" && subscription.totalAmount === 0) ? (
-            <div className="flex items-center gap-3 rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-4 text-emerald-800 dark:text-emerald-400">
-              <Gift className="h-5 w-5 shrink-0 animate-pulse text-emerald-500" />
+            <div className="flex items-center gap-3 rounded-lg border border-success/20 bg-success/5 p-4 text-success">
+              <Gift className="h-5 w-5 shrink-0 animate-pulse text-success" />
               <div>
                 <p className="text-sm font-semibold">{t("tenant.freePlanTitle") || "Free Plan"}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">
@@ -465,8 +465,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                       <p
                         className={`text-sm font-bold ${
                           (subscription.adjustmentAmount ?? 0) < 0
-                            ? "text-emerald-600 dark:text-emerald-400"
-                            : "text-amber-600 dark:text-amber-400"
+                            ? "text-success"
+                            : "text-warning"
                         }`}
                       >
                         {(subscription.adjustmentAmount ?? 0) > 0 ? "+" : ""}
@@ -491,7 +491,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                       </p>
                       <Badge
                         variant="secondary"
-                        className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
+                        className="bg-success/10 text-success"
                       >
                         🏷️ {subscription.appliedPromotionName}
                         {subscription.promotionDiscount != null &&
@@ -546,7 +546,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
 
           {/* ── Downgraded Banner ── */}
           {vm.isDowngraded && (
-            <div className="flex items-center justify-between gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-sm text-amber-700 dark:text-amber-400">
+            <div className="flex items-center justify-between gap-2 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm text-warning">
               <div className="flex items-center gap-2">
                 <ArrowDownCircle className="h-4 w-4 shrink-0" />
                 <span>
@@ -577,8 +577,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             previousRefundedSub.refundType &&
             previousRefundedSub.refundType !== "None" &&
             (previousRefundedSub.refundAmount ?? 0) > 0 && (
-              <div className="space-y-1 rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3">
-                <div className="flex items-center gap-2 text-sm font-medium text-emerald-700 dark:text-emerald-400">
+              <div className="space-y-1 rounded-lg border border-success/30 bg-success/5 p-3">
+                <div className="flex items-center gap-2 text-sm font-medium text-success">
                   <DollarSign className="h-4 w-4 shrink-0" />
                   <span>
                     {previousRefundedSub.refundType === "Full"
@@ -624,8 +624,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
           {subscription.refundType &&
             subscription.refundType !== "None" &&
             (subscription.refundAmount ?? 0) > 0 && (
-              <div className="rounded-lg border border-orange-500/30 bg-orange-500/5 p-3">
-                <div className="flex items-center gap-2 text-sm font-medium text-orange-700 dark:text-orange-400">
+              <div className="rounded-lg border border-warning/30 bg-warning/5 p-3">
+                <div className="flex items-center gap-2 text-sm font-medium text-warning">
                   <DollarSign className="h-4 w-4 shrink-0" />
                   <span>
                     {subscription.refundType === "Full"
@@ -653,7 +653,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
 
           {/* ── Past Due Banner ── */}
           {vm.isPastDue && (
-            <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-sm text-amber-700 dark:text-amber-400">
+            <div className="flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm text-warning">
               <AlertTriangle className="h-4 w-4 shrink-0" />
               <span>
                 {t("tenant.pastDueBanner") ||
@@ -712,7 +712,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
 
           {/* ── Fallback Info Badge ── */}
           {vm.hasFallback && !vm.isCanceled && !vm.isExpired && (
-            <div className="flex items-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 text-sm text-blue-700 dark:text-blue-400">
+            <div className="flex items-center gap-2 rounded-lg border border-info/30 bg-info/5 p-3 text-sm text-info">
               <ArrowDownCircle className="h-4 w-4 shrink-0" />
               <span>
                 {vm.subscription?.type === "Lifetime"
@@ -731,7 +731,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
 
           {/* ── M-3: PendingPayment Warning Banner ── */}
           {vm.isPendingPayment && (
-            <div className="flex items-center justify-between gap-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-sm text-amber-700 dark:text-amber-400">
+            <div className="flex items-center justify-between gap-2 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm text-warning">
               <div className="flex items-center gap-2">
                 <CreditCard className="h-4 w-4 shrink-0" />
                 <span>
@@ -795,7 +795,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
               <Button
                 variant="outline"
                 size="sm"
-                className="text-orange-600 hover:text-orange-700"
+                className="text-warning hover:text-warning/90"
                 onClick={() => {
                   setSuspendReason("");
                   setSuspendOpen(true);
@@ -1058,12 +1058,12 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                   </div>
                 )}
                 {!isLoadingPrice && previewAmount !== null && previewAmount >= 0 && (
-                  <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3">
+                  <div className="rounded-lg border border-success/30 bg-success/5 p-3">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-medium text-muted-foreground">
                         {t("tenant.totalAmount") || "Total Amount"}
                       </span>
-                      <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+                      <span className="text-lg font-bold text-success">
                         {previewAmount === 0
                           ? t("tenant.typeLabel.free") || "Free"
                           : formatDisplay(previewAmount, subscription?.currency || "USD")}
@@ -1226,7 +1226,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
-            <div className="flex items-center gap-2 rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-3 text-sm text-yellow-700 dark:text-yellow-400">
+            <div className="flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm text-warning">
               <AlertTriangle className="h-4 w-4 shrink-0" />
               <span>
                 {t("tenant.trialOnceWarning") ||
@@ -1313,7 +1313,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             )}
             {/* Admin deactivation warning */}
             {!useFallbackOnSuspend || !vm.hasFallback ? (
-              <div className="flex items-center gap-2 rounded-lg border border-orange-500/30 bg-orange-500/5 p-3 text-sm text-orange-700 dark:text-orange-400">
+              <div className="flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/5 p-3 text-sm text-warning">
                 <AlertTriangle className="h-4 w-4 shrink-0" />
                 <span>
                   {t("tenant.suspendAdminWarning") ||
@@ -1321,7 +1321,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                 </span>
               </div>
             ) : (
-              <div className="flex items-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 text-sm text-blue-700 dark:text-blue-400">
+              <div className="flex items-center gap-2 rounded-lg border border-info/30 bg-info/5 p-3 text-sm text-info">
                 <ArrowDownCircle className="h-4 w-4 shrink-0" />
                 <span>
                   {t("tenant.downgradeKeepActive") ||
@@ -1382,7 +1382,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                     <p className="text-xs text-muted-foreground">
                       {t("tenant.fullRefundDesc") || "Return the full subscription amount."}
                       {subscription?.totalAmount != null && subscription.totalAmount > 0 && (
-                        <span className="ml-1 font-semibold text-emerald-600 dark:text-emerald-400">
+                        <span className="ml-1 font-semibold text-success">
                           (
                           {formatDisplay(subscription.totalAmount, subscription?.currency || "USD")}
                           )
@@ -1535,7 +1535,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                 </span>
               </div>
             ) : (
-              <div className="flex items-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 text-sm text-blue-700 dark:text-blue-400">
+              <div className="flex items-center gap-2 rounded-lg border border-info/30 bg-info/5 p-3 text-sm text-info">
                 <ArrowDownCircle className="h-4 w-4 shrink-0" />
                 <span>
                   {t("tenant.cancelDowngradeKeepActive") ||
@@ -1591,7 +1591,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                     <p className="text-xs text-muted-foreground">
                       {t("tenant.fullRefundDesc") || "Return the full subscription amount."}
                       {subscription?.totalAmount != null && subscription.totalAmount > 0 && (
-                        <span className="ml-1 font-semibold text-emerald-600 dark:text-emerald-400">
+                        <span className="ml-1 font-semibold text-success">
                           (
                           {formatDisplay(subscription.totalAmount, subscription?.currency || "USD")}
                           )
@@ -1745,7 +1745,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                 </div>
 
                 {/* Info Banner */}
-                <div className="flex items-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 text-sm text-blue-700 dark:text-blue-400">
+                <div className="flex items-center gap-2 rounded-lg border border-info/30 bg-info/5 p-3 text-sm text-info">
                   <RotateCcw className="h-4 w-4 shrink-0" />
                   <span>
                     {t("tenant.restoreInfo") ||
@@ -1756,7 +1756,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             ) : (
               /* ── RESUME FROM SUSPEND ── */
               <>
-                <div className="flex items-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 text-sm text-blue-700 dark:text-blue-400">
+                <div className="flex items-center gap-2 rounded-lg border border-info/30 bg-info/5 p-3 text-sm text-info">
                   <Play className="h-4 w-4 shrink-0" />
                   <span>
                     {t("tenant.resumeAdminWarning") ||
@@ -1844,7 +1844,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                 placeholder={t("tenant.selectCurrency") || "Select currency"}
               />
             </div>
-            <div className="flex items-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/5 p-3 text-sm text-blue-700 dark:text-blue-400">
+            <div className="flex items-center gap-2 rounded-lg border border-info/30 bg-info/5 p-3 text-sm text-info">
               <DollarSign className="h-4 w-4 shrink-0" />
               <span>
                 {t("tenant.changeCurrencyInfo") ||

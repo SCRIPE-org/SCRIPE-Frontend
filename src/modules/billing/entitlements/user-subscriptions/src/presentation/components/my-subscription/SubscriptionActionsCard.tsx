@@ -76,7 +76,7 @@ export function SubscriptionActionsCard({
 
           {subscription.isCancelled && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <AlertTriangle className="h-4 w-4 text-amber-500" />
+              <AlertTriangle className="h-4 w-4 text-warning" />
               {t("entitlements.mySubscription.alreadyCancelled") ||
                 "This subscription has been cancelled."}
             </div>

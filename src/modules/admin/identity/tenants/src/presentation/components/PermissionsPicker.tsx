@@ -345,7 +345,7 @@ export function PermissionsPicker({
         {/* Selected summary */}
         {value.length > 0 && (
           <div className="flex items-center gap-2 border-t pt-2 text-sm">
-            <Check className="h-4 w-4 text-green-600" />
+            <Check className="h-4 w-4 text-success" />
             <span className="text-muted-foreground">
               {t("tenant.permissionsSelected", { count: value.length }) ||
                 `${value.length} permissions selected`}

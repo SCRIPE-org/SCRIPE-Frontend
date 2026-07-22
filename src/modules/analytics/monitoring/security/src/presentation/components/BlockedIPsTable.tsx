@@ -40,7 +40,7 @@ export const BlockedIPsTable = memo(function BlockedIPsTable({
     <Card className={cardClasses}>
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
-          <Shield className="h-4 w-4 text-orange-500" aria-hidden="true" />
+          <Shield className="h-4 w-4 text-warning" aria-hidden="true" />
           <CardTitle className="text-base">{t("security.blockedIPs.title")}</CardTitle>
         </div>
         <CardDescription>{t("security.blockedIPs.description")}</CardDescription>

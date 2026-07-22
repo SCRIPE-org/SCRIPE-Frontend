@@ -21,11 +21,11 @@ export function DowngradeNotice({ sub, t }: DowngradeNoticeProps) {
   if (!sub.isDowngraded) return null;
 
   return (
-    <Card className="border-amber-500/30 bg-amber-500/5">
+    <Card className="border-warning/30 bg-warning/5">
       <CardContent className="flex items-center gap-3 py-4">
-        <AlertTriangle className="h-5 w-5 shrink-0 text-amber-500" />
+        <AlertTriangle className="h-5 w-5 shrink-0 text-warning" />
         <div className="text-sm">
-          <span className="font-medium text-amber-600 dark:text-amber-400">
+          <span className="font-medium text-warning">
             {t("entSubscriptions.downgraded")}
           </span>
           {sub.downgradedFromEditionName && (

@@ -82,8 +82,8 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
     <div className="space-y-6">
       {/* Header */}
       <div className="mb-2 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10">
-          <CreditCard className="h-5 w-5 text-amber-500" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warning/10">
+          <CreditCard className="h-5 w-5 text-warning" />
         </div>
         <div>
           <h2 className="text-lg font-semibold">{t("tenant.stepPlan") || "Plan & Billing"}</h2>
@@ -112,12 +112,12 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
 
       {/* Free Edition Banner — shown when selected edition has no billing cycles */}
       {vm.form.editionId && isFreeEdition && (
-        <div className="flex items-start gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-4 duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10">
-            <ShieldCheck className="h-5 w-5 text-emerald-500" />
+        <div className="flex items-start gap-3 rounded-xl border border-success/30 bg-success/5 p-4 duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-success/10">
+            <ShieldCheck className="h-5 w-5 text-success" />
           </div>
           <div>
-            <p className="text-sm font-medium text-emerald-700 dark:text-emerald-400">
+            <p className="text-sm font-medium text-success">
               {t("tenant.freeEditionSelected") || "Free Edition — No Billing Required"}
             </p>
             <p className="mt-0.5 text-xs text-muted-foreground">
@@ -221,9 +221,9 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
       {/* Skip Payment Toggle — only shown for paid plans with enabled subscription types */}
       {vm.form.editionId && !isFreeEdition && subscriptionTypeOptions.length > 0 && (
         <div className="duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
-          <div className="flex items-center justify-between rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
+          <div className="flex items-center justify-between rounded-xl border border-warning/30 bg-warning/5 p-4">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
+              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
               <div>
                 <p className="text-sm font-medium">{t("tenant.skipPayment") || "Skip Payment"}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">
@@ -446,7 +446,7 @@ function SummaryRow({
   return (
     <div className="flex items-center justify-between text-sm">
       <span className="text-muted-foreground">{label}</span>
-      <span className={highlight ? "font-medium text-amber-500" : "font-medium"}>{value}</span>
+      <span className={highlight ? "font-medium text-warning" : "font-medium"}>{value}</span>
     </div>
   );
 }

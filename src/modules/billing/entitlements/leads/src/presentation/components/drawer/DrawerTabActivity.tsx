@@ -40,8 +40,8 @@ export function DrawerTabActivity({
     <div className="space-y-4 p-4">
       {/* Quick note */}
       {onAddNote && (
-        <div className="space-y-2 rounded-xl border border-zinc-800/50 bg-zinc-900/40 p-4">
-          <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+        <div className="space-y-2 rounded-xl border border-border/50 bg-card/40 p-4">
+          <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
             <StickyNote className="h-3.5 w-3.5" />
             {t("leads.note.sectionTitle")}
           </p>
@@ -50,14 +50,14 @@ export function DrawerTabActivity({
             onChange={(e) => onQuickNoteChange(e.target.value)}
             placeholder={t("leads.note.placeholder")}
             rows={3}
-            className="resize-none border-zinc-700 bg-zinc-950 text-sm text-white placeholder:text-zinc-600"
+            className="resize-none border-border bg-background text-sm text-foreground placeholder:text-muted-foreground"
             disabled={isAddingNote}
           />
           <Button
             onClick={onAddNote}
             disabled={!quickNote.trim() || isAddingNote}
             size="sm"
-            className="h-8 w-full bg-amber-600/90 text-xs font-semibold text-white hover:bg-amber-500 disabled:opacity-40"
+            className="h-8 w-full bg-warning/90 text-xs font-semibold text-warning-foreground hover:bg-warning disabled:opacity-40"
           >
             {isAddingNote ? (
               <>
@@ -66,7 +66,7 @@ export function DrawerTabActivity({
               </>
             ) : quickNoteSaved ? (
               <>
-                <CheckCheck className="mr-1.5 h-3.5 w-3.5 text-emerald-400" />
+                <CheckCheck className="mr-1.5 h-3.5 w-3.5 text-success" />
                 {t("leads.note.saved")}
               </>
             ) : (
@@ -77,8 +77,8 @@ export function DrawerTabActivity({
       )}
 
       {/* Activity timeline */}
-      <div className="rounded-xl border border-zinc-800/50 bg-zinc-900/40 p-4">
-        <p className="mb-3 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+      <div className="rounded-xl border border-border/50 bg-card/40 p-4">
+        <p className="mb-3 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
           <Activity className="h-3.5 w-3.5" />
           {t("leads.activity.title")}
         </p>
@@ -86,30 +86,30 @@ export function DrawerTabActivity({
           <div className="animate-pulse space-y-3">
             {[1, 2, 3].map((i) => (
               <div key={i} className="flex gap-3">
-                <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-zinc-800" />
+                <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-muted" />
                 <div className="flex-1 space-y-1">
-                  <div className="h-3 w-32 rounded bg-zinc-800" />
-                  <div className="h-2.5 w-20 rounded bg-zinc-800" />
+                  <div className="h-3 w-32 rounded bg-muted" />
+                  <div className="h-2.5 w-20 rounded bg-muted" />
                 </div>
               </div>
             ))}
           </div>
         ) : !activity || activity.length === 0 ? (
-          <p className="text-xs text-zinc-500">{t("leads.activity.empty")}</p>
+          <p className="text-xs text-muted-foreground">{t("leads.activity.empty")}</p>
         ) : (
-          <ol className="relative space-y-5 border-s border-zinc-800">
+          <ol className="relative space-y-5 border-s border-border">
             {activity.map((entry) => (
               <li key={entry.id} className="relative ps-6">
-                <div className="absolute left-0 top-1 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-indigo-500 ring-4 ring-zinc-950" />
-                <p className="text-xs font-semibold text-zinc-300">
+                <div className="absolute left-0 top-1 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-info ring-4 ring-background" />
+                <p className="text-xs font-semibold text-foreground">
                   {entry.summary || t(`leads.activity.types.${entry.type}`)}
                 </p>
                 {entry.note && (
-                  <p className="mt-0.5 text-xs italic leading-relaxed text-zinc-500">
+                  <p className="mt-0.5 text-xs italic leading-relaxed text-muted-foreground">
                     {entry.note}
                   </p>
                 )}
-                <p className="mt-1 text-[10px] text-zinc-600">
+                <p className="mt-1 text-[10px] text-muted-foreground">
                   {formatDateTimeUtc(entry.occurredAt)}
                   {entry.actorName
                     ? ` · ${t("leads.activity.by", { actor: entry.actorName })}`

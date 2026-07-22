@@ -65,13 +65,13 @@ export function IdentityProvidersView() {
       {/* ─── Premium Header Card ────────────────────────────────── */}
       <div className="relative overflow-hidden rounded-xl border border-border/80 bg-card/45 p-6 shadow-sm backdrop-blur-md">
         {/* Glow backdrop decoration */}
-        <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-purple-500/10 blur-[80px]" />
-        <div className="absolute -bottom-20 -left-20 h-48 w-48 rounded-full bg-indigo-500/10 blur-[80px]" />
+        <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-primary/10 blur-[80px]" />
+        <div className="absolute -bottom-20 -left-20 h-48 w-48 rounded-full bg-info/10 blur-[80px]" />
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
             <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground">
-              <ShieldCheck className="h-7 w-7 text-purple-600 dark:text-purple-400" />
+              <ShieldCheck className="h-7 w-7 text-primary" />
               {t("identityProviders.title") || "SSO Identity Providers"}
             </h1>
             <p className="max-w-xl text-xs text-muted-foreground">
@@ -137,8 +137,8 @@ export function IdentityProvidersView() {
       {/* ─── Loading State ─────────────────────────────────────── */}
       {vm.loading ? (
         <div className="flex min-h-[300px] flex-col items-center justify-center gap-3">
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-purple-500/20 bg-purple-500/10 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
-            <Loader2 className="h-6 w-6 animate-spin text-purple-500" />
+          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
+            <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </div>
           <p className="text-xs text-muted-foreground">
             {t("common.loading") || "Loading SSO settings..."}

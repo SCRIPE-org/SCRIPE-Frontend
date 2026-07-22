@@ -123,9 +123,9 @@ function PermissionRow({
         <div className="flex-1">
           <p className="flex items-center gap-2 text-sm font-medium">
             {permission.getLocalizedName(language)}
-            {isSelected && <CheckCircle2 className="h-3 w-3 text-green-500" />}
+            {isSelected && <CheckCircle2 className="h-3 w-3 text-success" />}
             {hasCustomConfig && (
-              <span className="rounded-full border border-blue-200 bg-blue-100 px-1.5 py-0.5 text-[10px] text-blue-700">
+              <span className="rounded-full border border-info/30 bg-info/10 px-1.5 py-0.5 text-[10px] text-info">
                 Custom
               </span>
             )}
@@ -140,7 +140,7 @@ function PermissionRow({
           <Button
             variant="ghost"
             size="icon"
-            className={`h-8 w-8 ${hasCustomConfig ? "bg-blue-50 text-blue-600" : "text-muted-foreground"}`}
+            className={`h-8 w-8 ${hasCustomConfig ? "bg-info/10 text-info" : "text-muted-foreground"}`}
             onClick={() => setShowConfig(true)}
           >
             <Settings className="h-4 w-4" />

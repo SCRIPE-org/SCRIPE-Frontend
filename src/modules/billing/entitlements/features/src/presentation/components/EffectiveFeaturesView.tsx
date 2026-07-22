@@ -115,7 +115,7 @@ export function EffectiveFeaturesView({
                     </TableCell>
                     <TableCell className="text-center">
                       {feature.hasOverride ? (
-                        <Badge variant="outline" className="border-amber-500 text-amber-600">
+                        <Badge variant="outline" className="border-warning text-warning">
                           <ArrowUpDown className="mr-1 h-3 w-3" />
                           {feature.overrideValue}
                         </Badge>

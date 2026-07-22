@@ -133,8 +133,8 @@ export function DefinitionsView() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="rounded-xl border border-violet-500/20 bg-violet-500/10 p-2.5">
-            <Code2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
+          <div className="rounded-xl border border-primary/20 bg-primary/10 p-2.5">
+            <Code2 className="h-5 w-5 text-primary" />
           </div>
           <div>
             <h2 className="text-2xl font-bold tracking-tight">{t("plugins.defTitle")}</h2>
@@ -158,26 +158,26 @@ export function DefinitionsView() {
         <StatCard
           label={t("plugins.defStatTotal")}
           value={stats.total}
-          icon={<Code2 className="h-5 w-5 text-violet-600 dark:text-violet-400" />}
-          color="from-violet-500/10 to-purple-500/10 border-violet-500/20"
+          icon={<Code2 className="h-5 w-5 text-primary" />}
+          color="from-primary/10 to-primary/10 border-primary/20"
         />
         <StatCard
           label={t("plugins.defStatPublished")}
           value={stats.published}
-          icon={<CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />}
-          color="from-emerald-500/10 to-green-500/10 border-emerald-500/20"
+          icon={<CheckCircle2 className="h-5 w-5 text-success" />}
+          color="from-success/10 to-success/10 border-success/20"
         />
         <StatCard
           label={t("plugins.defStatDraft")}
           value={stats.draft}
-          icon={<Clock className="h-5 w-5 text-amber-600 dark:text-amber-400" />}
-          color="from-amber-500/10 to-yellow-500/10 border-amber-500/20"
+          icon={<Clock className="h-5 w-5 text-warning" />}
+          color="from-warning/10 to-warning/10 border-warning/20"
         />
         <StatCard
           label={t("plugins.defStatDeprecated")}
           value={stats.deprecated}
-          icon={<AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />}
-          color="from-red-500/10 to-rose-500/10 border-red-500/20"
+          icon={<AlertTriangle className="h-5 w-5 text-destructive" />}
+          color="from-destructive/10 to-destructive/10 border-destructive/20"
         />
       </div>
 
@@ -263,7 +263,7 @@ export function DefinitionsView() {
                               id={`def-publish-${def.id}`}
                               variant="ghost"
                               size="icon"
-                              className="h-7 w-7 text-emerald-600 hover:text-emerald-700"
+                              className="h-7 w-7 text-success hover:text-success/80"
                               disabled={isPublishing}
                               onClick={() => publish(def.id)}
                               title={t("plugins.defPublish")}
@@ -277,7 +277,7 @@ export function DefinitionsView() {
                               id={`def-deprecate-${def.id}`}
                               variant="ghost"
                               size="icon"
-                              className="h-7 w-7 text-amber-600 hover:text-amber-700"
+                              className="h-7 w-7 text-warning hover:text-warning/80"
                               disabled={isDeprecating}
                               onClick={() => deprecate(def.id)}
                               title={t("plugins.defDeprecate")}

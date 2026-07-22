@@ -67,11 +67,11 @@ export function CascadeStatusDialog({
       size="md"
     >
       <div className="space-y-4 py-2">
-        <div className="rounded-md border border-amber-500/20 bg-amber-500/10 p-4">
+        <div className="rounded-md border border-warning/20 bg-warning/10 p-4">
           <div className="flex gap-3">
-            <AlertTriangle className="h-5 w-5 text-amber-500" />
+            <AlertTriangle className="h-5 w-5 text-warning" />
             <div className="space-y-1">
-              <p className="text-sm font-medium text-amber-500">
+              <p className="text-sm font-medium text-warning">
                 {t("userGroups.cascadeStatusWarning") ||
                   `Warning: This action can affect assigned admins.`}
               </p>

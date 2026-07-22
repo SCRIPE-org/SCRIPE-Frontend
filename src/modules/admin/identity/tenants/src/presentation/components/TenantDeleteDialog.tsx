@@ -64,8 +64,8 @@ export function TenantDeleteDialog({
         </div>
       ) : hasDescendants ? (
         canCascadeDelete ? (
-          <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900 dark:bg-yellow-950">
-            <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+          <div className="rounded-lg border border-warning/30 bg-warning/10 p-4">
+            <p className="text-sm font-medium text-warning">
               {t("tenant.hasDescendants") || `This tenant has ${descendantCount} descendant(s).`}
             </p>
             <div className="mt-3 flex items-center gap-2">
@@ -74,17 +74,17 @@ export function TenantDeleteDialog({
                 checked={cascadeChildren}
                 onCheckedChange={(checked) => setCascadeChildren(checked === true)}
               />
-              <label htmlFor="cascade" className="text-sm text-yellow-700 dark:text-yellow-300">
+              <label htmlFor="cascade" className="text-sm text-warning">
                 {t("tenant.cascadeDelete") ||
                   "Delete all descendants (admins and roles will also be deleted)"}
               </label>
             </div>
           </div>
         ) : (
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900 dark:bg-red-950">
+          <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-4">
             <div className="flex items-center gap-2">
-              <ShieldAlert className="h-5 w-5 text-red-600 dark:text-red-400" />
-              <p className="text-sm font-medium text-red-800 dark:text-red-200">
+              <ShieldAlert className="h-5 w-5 text-destructive" />
+              <p className="text-sm font-medium text-destructive">
                 {t("tenant.cascadeDeleteNotPermitted") ||
                   `This tenant has ${descendantCount} descendant(s). You do not have permission to cascade delete.`}
               </p>

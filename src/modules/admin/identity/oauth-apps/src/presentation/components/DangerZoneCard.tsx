@@ -29,12 +29,12 @@ export function DangerZoneCard({ isDeleting, onDelete }: DangerZoneCardProps) {
   const { t } = useI18n();
 
   return (
-    <Card className="space-y-3 border border-red-200 bg-red-50/30 p-4 dark:border-red-900/50 dark:bg-red-950/10">
+    <Card className="space-y-3 border border-destructive/30 bg-destructive/5 p-4">
       <div>
-        <h3 className="text-sm font-semibold text-red-700 dark:text-red-400">
+        <h3 className="text-sm font-semibold text-destructive">
           {t("common.dangerZone") || "Danger Zone"}
         </h3>
-        <p className="mt-1 text-xs leading-normal text-red-600/80 dark:text-red-400/70">
+        <p className="mt-1 text-xs leading-normal text-destructive/80">
           {t("oauthApps.deleteWarning") ||
             "Deleting this application will revoke all tokens and break existing integrations. This cannot be undone."}
         </p>
@@ -60,7 +60,7 @@ export function DangerZoneCard({ isDeleting, onDelete }: DangerZoneCardProps) {
             <AlertDialogCancel>{t("common.cancel") || "Cancel"}</AlertDialogCancel>
             <AlertDialogAction
               onClick={onDelete}
-              className="bg-red-600 font-semibold text-white hover:bg-red-700"
+              className="bg-destructive font-semibold text-destructive-foreground hover:bg-destructive/90"
             >
               {t("common.delete") || "Delete"}
             </AlertDialogAction>

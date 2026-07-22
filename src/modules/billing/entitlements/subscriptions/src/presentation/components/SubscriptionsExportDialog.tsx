@@ -106,24 +106,24 @@ export function SubscriptionsExportDialog({
       icon: <FileText className="h-8 w-8" />,
       label: te("formatCsv"),
       description: te("formatCsvDesc"),
-      color: "text-emerald-500",
-      borderActive: "border-emerald-500 bg-emerald-500/10",
+      color: "text-success",
+      borderActive: "border-success bg-success/10",
     },
     {
       value: "excel",
       icon: <FileSpreadsheet className="h-8 w-8" />,
       label: te("formatXlsx"),
       description: te("formatXlsxDesc"),
-      color: "text-blue-500",
-      borderActive: "border-blue-500 bg-blue-500/10",
+      color: "text-info",
+      borderActive: "border-info bg-info/10",
     },
     {
       value: "pdf",
       icon: <FileDown className="h-8 w-8" />,
       label: te("formatPdf"),
       description: te("formatPdfDesc"),
-      color: "text-red-500",
-      borderActive: "border-red-500 bg-red-500/10",
+      color: "text-destructive",
+      borderActive: "border-destructive bg-destructive/10",
     },
   ];
 
@@ -357,7 +357,7 @@ export function SubscriptionsExportDialog({
 
         {/* Success */}
         {success && (
-          <div className="flex items-center gap-2 rounded-md bg-emerald-500/10 p-3 text-sm text-emerald-600">
+          <div className="flex items-center gap-2 rounded-md bg-success/10 p-3 text-sm text-success">
             <CheckCircle className="h-4 w-4 shrink-0" />
             {te("success")}
           </div>

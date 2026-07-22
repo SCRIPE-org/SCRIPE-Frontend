@@ -32,13 +32,13 @@ const eventIconMap: Record<string, typeof Activity> = {
 };
 
 const eventColorMap: Record<string, string> = {
-  Create: "bg-green-500/10 text-green-500",
-  Update: "bg-blue-500/10 text-blue-500",
-  Delete: "bg-red-500/10 text-red-500",
-  RoleAssigned: "bg-violet-500/10 text-violet-500",
-  RoleUnassigned: "bg-orange-500/10 text-orange-500",
-  PermissionGranted: "bg-emerald-500/10 text-emerald-500",
-  PermissionRevoked: "bg-rose-500/10 text-rose-500",
+  Create: "bg-success/10 text-success",
+  Update: "bg-info/10 text-info",
+  Delete: "bg-destructive/10 text-destructive",
+  RoleAssigned: "bg-primary/10 text-primary",
+  RoleUnassigned: "bg-warning/10 text-warning",
+  PermissionGranted: "bg-success/10 text-success",
+  PermissionRevoked: "bg-destructive/10 text-destructive",
 };
 
 function formatTimeAgo(
@@ -95,7 +95,7 @@ export const RecentChangesSection = memo(function RecentChangesSection({
               {items.map((change) => {
                 const Icon = eventIconMap[change.eventType] ?? Activity;
                 const colorClass =
-                  eventColorMap[change.eventType] ?? "bg-gray-500/10 text-gray-500";
+                  eventColorMap[change.eventType] ?? "bg-muted text-muted-foreground";
                 return (
                   <div
                     key={change.id}

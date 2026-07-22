@@ -35,14 +35,14 @@ export function DrawerActionBar({
   if (lead.isConverted) return null;
 
   return (
-    <div className="shrink-0 border-t border-zinc-800/60 bg-zinc-950/95 px-4 py-3 backdrop-blur-sm">
+    <div className="shrink-0 border-t border-border/60 bg-background/95 px-4 py-3 backdrop-blur-sm">
       <div className="flex flex-wrap gap-2">
         {onConvert && (
           <Button
             id="drawer-convert-btn"
             size="sm"
             onClick={() => onConvert(lead.id)}
-            className="h-8 min-w-[100px] flex-1 gap-1.5 bg-emerald-700/80 text-xs font-semibold text-emerald-100 hover:bg-emerald-600"
+            className="h-8 min-w-[100px] flex-1 gap-1.5 bg-success/80 text-xs font-semibold text-success hover:bg-success"
           >
             <ArrowRightCircle className="h-3.5 w-3.5" />
             {t("leads.actions.convert")}
@@ -54,7 +54,7 @@ export function DrawerActionBar({
             size="sm"
             variant="outline"
             onClick={() => onAssign(lead.id)}
-            className="h-8 min-w-[80px] flex-1 gap-1.5 border-indigo-700 text-xs text-indigo-400 hover:bg-indigo-900/20"
+            className="h-8 min-w-[80px] flex-1 gap-1.5 border-info text-xs text-info hover:bg-info/20"
           >
             <UserPlus className="h-3.5 w-3.5" />
             {t("leads.actions.assign")}
@@ -66,7 +66,7 @@ export function DrawerActionBar({
             size="sm"
             variant="outline"
             onClick={onSendEmail}
-            className="h-8 min-w-[80px] flex-1 gap-1.5 border-violet-700 text-xs text-violet-400 hover:bg-violet-900/20"
+            className="h-8 min-w-[80px] flex-1 gap-1.5 border-primary text-xs text-primary hover:bg-primary/20"
           >
             <Send className="h-3.5 w-3.5" />
             {t("leads.email.send")}
@@ -79,7 +79,7 @@ export function DrawerActionBar({
             variant="outline"
             onClick={onCloseConfirm}
             disabled={isDeletingLead}
-            className="h-8 gap-1.5 border-zinc-700 text-xs text-zinc-500 hover:border-red-900 hover:bg-red-900/10 hover:text-red-400"
+            className="h-8 gap-1.5 border-border text-xs text-muted-foreground hover:border-destructive hover:bg-destructive/10 hover:text-destructive"
           >
             {isDeletingLead ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />

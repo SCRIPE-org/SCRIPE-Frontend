@@ -164,8 +164,8 @@ function CapabilityBadge({ enabled, label }: { enabled: boolean; label: string }
     <div
       className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium ${
         enabled
-          ? "border border-emerald-500/20 bg-emerald-500/10 text-emerald-600"
-          : "border border-red-500/20 bg-red-500/10 text-red-500"
+          ? "border border-success/20 bg-success/10 text-success"
+          : "border border-destructive/20 bg-destructive/10 text-destructive"
       }`}
     >
       {enabled ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}

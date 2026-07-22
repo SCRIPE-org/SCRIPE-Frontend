@@ -6,10 +6,10 @@ import type { DsrRequestType } from "../../domain/entities/DataSubjectRequest";
 // ── Request Type Badge ────────────────────────────────────────────────────────
 
 const TYPE_COLORS: Record<string, string> = {
-  Export: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
-  Erasure: "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20",
-  Rectification: "bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20",
-  Restriction: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+  Export: "bg-info/10 text-info border-info/20",
+  Erasure: "bg-destructive/10 text-destructive border-destructive/20",
+  Rectification: "bg-primary/10 text-primary border-primary/20",
+  Restriction: "bg-warning/10 text-warning border-warning/20",
 };
 
 const TYPE_ICONS: Record<string, React.ReactNode> = {

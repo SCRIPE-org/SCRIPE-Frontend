@@ -60,7 +60,7 @@ export function RevenueChart({
     return last - first;
   }, [data]);
 
-  const trendColor = trend >= 0 ? "text-green-600" : "text-destructive";
+  const trendColor = trend >= 0 ? "text-success" : "text-destructive";
 
   if (data.length === 0) {
     return (

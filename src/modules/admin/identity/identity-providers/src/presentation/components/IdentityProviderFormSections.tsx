@@ -50,7 +50,7 @@ export function GeneralSection({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Settings2 className="h-5 w-5 text-blue-500" />
+          <Settings2 className="h-5 w-5 text-info" />
           {t("identityProviders.generalSection") || "General"}
         </CardTitle>
         <CardDescription>
@@ -63,7 +63,7 @@ export function GeneralSection({
           <div className="space-y-2">
             <Label htmlFor="idp-name">
               {t("identityProviders.name") || "Provider Name"}{" "}
-              <span className="text-red-500">*</span>
+              <span className="text-destructive">*</span>
             </Label>
             <Input
               id="idp-name"
@@ -88,7 +88,7 @@ export function GeneralSection({
           {/* Slug */}
           <div className="space-y-2">
             <Label htmlFor="idp-slug">
-              {t("identityProviders.slug") || "Slug"} <span className="text-red-500">*</span>
+              {t("identityProviders.slug") || "Slug"} <span className="text-destructive">*</span>
             </Label>
             <Input
               id="idp-slug"
@@ -106,7 +106,7 @@ export function GeneralSection({
           <div className="space-y-2">
             <Label>
               {t("identityProviders.protocol") || "Protocol"}{" "}
-              <span className="text-red-500">*</span>
+              <span className="text-destructive">*</span>
             </Label>
             <GenericSelect
               value={form.protocol}
@@ -165,7 +165,7 @@ export function OidcConfigSection({ form, updateField }: FormSectionProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Globe className="h-5 w-5 text-emerald-500" />
+          <Globe className="h-5 w-5 text-success" />
           {t("identityProviders.oidcSection") || "OIDC Configuration"}
         </CardTitle>
         <CardDescription>
@@ -270,7 +270,7 @@ export function Oauth2ConfigSection({ form, updateField }: FormSectionProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Globe className="h-5 w-5 text-indigo-500" />
+          <Globe className="h-5 w-5 text-info" />
           {t("identityProviders.oauth2Section") || "OAuth 2.0 Configuration"}
         </CardTitle>
         <CardDescription>
@@ -377,7 +377,7 @@ export function ExplicitEndpointsSection({ form, updateField }: FormSectionProps
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Link2 className="h-5 w-5 text-teal-500" />
+          <Link2 className="h-5 w-5 text-info" />
           {t("identityProviders.endpointsSection") || "Explicit Endpoints"}
         </CardTitle>
         <CardDescription>
@@ -439,7 +439,7 @@ export function SamlConfigSection({ form, updateField }: FormSectionProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Globe className="h-5 w-5 text-orange-500" />
+          <Globe className="h-5 w-5 text-warning" />
           {t("identityProviders.samlSection") || "SAML Configuration"}
         </CardTitle>
         <CardDescription>
@@ -503,7 +503,7 @@ export function AppearanceSection({ form, updateField }: FormSectionProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Palette className="h-5 w-5 text-purple-500" />
+          <Palette className="h-5 w-5 text-primary" />
           {t("identityProviders.appearanceSection") || "Appearance"}
         </CardTitle>
         <CardDescription>
@@ -749,7 +749,7 @@ export function AccessControlSection({ form, updateField }: FormSectionProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Shield className="h-5 w-5 text-amber-500" />
+          <Shield className="h-5 w-5 text-warning" />
           {t("identityProviders.accessSection") || "Access Control"}
         </CardTitle>
         <CardDescription>
@@ -800,7 +800,7 @@ export function AccessControlSection({ form, updateField }: FormSectionProps) {
           {form.enabledForAdmins && (
             <Badge
               variant="outline"
-              className="bg-violet-50 text-xs text-violet-700 dark:bg-violet-900/20 dark:text-violet-400"
+              className="bg-primary/10 text-xs text-primary"
             >
               {t("identityProviders.badgeAdmin")}
             </Badge>
@@ -808,7 +808,7 @@ export function AccessControlSection({ form, updateField }: FormSectionProps) {
           {form.enabledForUsers && (
             <Badge
               variant="outline"
-              className="bg-sky-50 text-xs text-sky-700 dark:bg-sky-900/20 dark:text-sky-400"
+              className="bg-info/10 text-xs text-info"
             >
               {t("identityProviders.badgeUser")}
             </Badge>
@@ -843,7 +843,7 @@ export function ClaimMappingsSection({ form, updateField }: FormSectionProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <FileJson className="h-5 w-5 text-cyan-500" />
+          <FileJson className="h-5 w-5 text-info" />
           {t("identityProviders.claimMappingsSection") || "Claim Mappings"}
         </CardTitle>
         <CardDescription>
@@ -861,7 +861,7 @@ export function ClaimMappingsSection({ form, updateField }: FormSectionProps) {
           className="min-h-[160px] resize-y font-mono text-sm"
         />
         {!isValidJson && form.claimMappingJson.trim() !== "" && (
-          <p className="text-xs text-red-500">
+          <p className="text-xs text-destructive">
             {t("identityProviders.invalidJson") || "Invalid JSON format"}
           </p>
         )}

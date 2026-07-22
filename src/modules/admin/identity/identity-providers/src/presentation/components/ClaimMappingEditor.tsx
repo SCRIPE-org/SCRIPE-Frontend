@@ -150,7 +150,7 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
       {/* Selector Header Bar */}
       <div className="flex items-center justify-between border-b pb-2">
         <Label className="flex items-center gap-1.5 text-sm font-semibold tracking-tight">
-          <Sparkles className="h-4 w-4 text-purple-500" />
+          <Sparkles className="h-4 w-4 text-primary" />
           {t("identityProviders.claimMappings") || "Claim Mappings"}
         </Label>
 
@@ -269,7 +269,7 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
                           variant="ghost"
                           size="icon"
                           onClick={() => removeMappingRow(idx)}
-                          className="h-8 w-8 text-muted-foreground hover:text-red-600 dark:hover:text-red-400"
+                          className="h-8 w-8 text-muted-foreground hover:text-destructive"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -303,12 +303,12 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
             value={jsonText}
             onChange={(e) => handleJsonChange(e.target.value)}
             placeholder='{ "email": "email", "firstName": "given_name" }'
-            className="min-h-[180px] resize-y border bg-[#1e1e1e] p-3 font-mono text-xs leading-relaxed text-emerald-400 focus-visible:ring-purple-500/50 dark:text-emerald-300"
+            className="min-h-[180px] resize-y border bg-[#1e1e1e] p-3 font-mono text-xs leading-relaxed text-emerald-400 focus-visible:ring-primary/50 dark:text-emerald-300"
           />
 
           {jsonError && (
-            <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50/50 p-2.5 text-xs text-red-700 dark:border-red-900/50 dark:bg-red-950/10 dark:text-red-400">
-              <AlertCircle className="h-4 w-4 shrink-0 text-red-500" />
+            <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2.5 text-xs text-destructive">
+              <AlertCircle className="h-4 w-4 shrink-0 text-destructive" />
               <span>
                 {t("identityProviders.invalidJson") || "Invalid Format"}: {jsonError}
               </span>

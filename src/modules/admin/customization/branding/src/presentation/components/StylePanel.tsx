@@ -208,7 +208,7 @@ function BgControls({
           {copyFromLightUrl && (
             <button
               onClick={() => updateDraft(f("bgImageUrl"), copyFromLightUrl as any)}
-              className="flex h-7 w-full items-center justify-center gap-1.5 rounded-md border border-amber-500/40 bg-amber-500/10 text-[10px] font-medium text-amber-600 transition-all hover:bg-amber-500/20 dark:text-amber-400"
+              className="flex h-7 w-full items-center justify-center gap-1.5 rounded-md border border-warning/40 bg-warning/10 text-[10px] font-medium text-warning transition-all hover:bg-warning/20"
             >
               ☀️ {t("studio.background.useLight") || "Use light image"}
             </button>

@@ -190,7 +190,7 @@ export function useDsrViewModel() {
           sortable: true,
           render: (_val, dsr) => (
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500/10 to-indigo-500/10 text-sm font-semibold text-blue-600 dark:text-blue-400">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-info/10 to-info/10 text-sm font-semibold text-info">
                 {dsr.subjectEmail.charAt(0).toUpperCase()}
               </div>
               <div>

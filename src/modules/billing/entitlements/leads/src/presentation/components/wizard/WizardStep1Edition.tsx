@@ -84,19 +84,19 @@ export function WizardStep1Edition({
   return (
     <div className="space-y-4">
       {lead && (
-        <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/20 px-4 py-3">
-          <p className="text-sm font-semibold text-white">{lead.companyName}</p>
-          <p className="text-xs text-zinc-400">
+        <div className="rounded-xl border border-border/80 bg-card/20 px-4 py-3">
+          <p className="text-sm font-semibold text-foreground">{lead.companyName}</p>
+          <p className="text-xs text-muted-foreground">
             {lead.contactName} · {lead.email}
           </p>
           {lead.editionKey && (
-            <div className="mt-2 flex items-center gap-1.5 text-xs text-zinc-400">
+            <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
               <span>
                 {t("leads.convertWizard.requestedPlan", { defaultValue: "Requested plan:" })}
               </span>
               <Badge
                 variant="secondary"
-                className="border-indigo-500/20 bg-indigo-500/10 px-2 py-0.5 text-xs text-indigo-300"
+                className="border-info/20 bg-info/10 px-2 py-0.5 text-xs text-info"
               >
                 {lead.editionKey}
               </Badge>
@@ -114,27 +114,27 @@ export function WizardStep1Edition({
       {!isLoading && editions.length > 0 && (
         <div className="space-y-3">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="text"
               placeholder={t("leads.convertWizard.searchEditionsPlaceholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-9 border-zinc-800 bg-zinc-950 pl-9 text-sm text-white placeholder:text-zinc-500 focus-visible:ring-indigo-500"
+              className="h-9 border-border bg-background pl-9 text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-info"
             />
           </div>
 
           {/* Category Selector Tabs */}
           {categories.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 border-b border-zinc-800/40 pb-2">
+            <div className="flex flex-wrap gap-1.5 border-b border-border/40 pb-2">
               <button
                 type="button"
                 onClick={() => setSelectedCategory("all")}
                 className={[
                   "rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-150",
                   selectedCategory === "all"
-                    ? "bg-indigo-600 text-white shadow-sm shadow-indigo-600/20"
-                    : "border border-zinc-800/80 bg-zinc-900/40 text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200",
+                    ? "bg-info text-info-foreground shadow-sm shadow-info/20"
+                    : "border border-border/80 bg-card/40 text-muted-foreground hover:bg-muted/40 hover:text-foreground",
                 ].join(" ")}
               >
                 {t("leads.convertWizard.allPlans")}
@@ -153,8 +153,8 @@ export function WizardStep1Edition({
                     className={[
                       "rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-150",
                       isSelected
-                        ? "bg-indigo-600 text-white shadow-sm shadow-indigo-600/20"
-                        : "border border-zinc-800/80 bg-zinc-900/40 text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200",
+                        ? "bg-info text-info-foreground shadow-sm shadow-info/20"
+                        : "border border-border/80 bg-card/40 text-muted-foreground hover:bg-muted/40 hover:text-foreground",
                     ].join(" ")}
                   >
                     {label}
@@ -199,9 +199,9 @@ export function WizardStep1Edition({
             });
             return (
               <div key={catKey} className="space-y-2.5">
-                <div className="flex items-center gap-2 border-b border-zinc-800/40 pb-1.5">
-                  <FolderOpen className="h-3.5 w-3.5 text-zinc-500" />
-                  <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                <div className="flex items-center gap-2 border-b border-border/40 pb-1.5">
+                  <FolderOpen className="h-3.5 w-3.5 text-muted-foreground" />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     {groupTitle}
                   </span>
                 </div>
@@ -216,14 +216,14 @@ export function WizardStep1Edition({
                         className={[
                           "group w-full rounded-xl border px-4 py-3 text-left transition-all duration-150",
                           isSelected
-                            ? "border-indigo-500 bg-indigo-500/5 ring-1 ring-indigo-500"
-                            : "border-zinc-800 bg-zinc-950/40 hover:border-indigo-500/40 hover:bg-zinc-900/40",
+                            ? "border-info bg-info/5 ring-1 ring-info"
+                            : "border-border bg-background/40 hover:border-info/40 hover:bg-card/40",
                         ].join(" ")}
                       >
                         <div className="flex items-center justify-between gap-3">
                           <div className="min-w-0 flex-1">
                             <div className="flex flex-wrap items-center gap-2">
-                              <span className="text-sm font-semibold text-white transition-colors group-hover:text-indigo-400">
+                              <span className="text-sm font-semibold text-foreground transition-colors group-hover:text-info">
                                 {language === "ar" && edition.displayNameAr
                                   ? edition.displayNameAr
                                   : edition.displayNameEn}
@@ -231,22 +231,22 @@ export function WizardStep1Edition({
                               {edition.isFeatured && (
                                 <Badge
                                   variant="secondary"
-                                  className="h-4 gap-0.5 border-amber-500/20 bg-amber-500/10 px-1.5 text-[9px] text-amber-400"
+                                  className="h-4 gap-0.5 border-warning/20 bg-warning/10 px-1.5 text-[9px] text-warning"
                                 >
-                                  <Star className="h-2 w-2 fill-amber-400 text-amber-400" />
+                                  <Star className="h-2 w-2 fill-warning text-warning" />
                                   {t("leads.convertWizard.featuredBadge")}
                                 </Badge>
                               )}
                               {edition.isContactSalesOnly && (
                                 <Badge
                                   variant="outline"
-                                  className="h-4 border-amber-500/30 bg-amber-500/5 px-1.5 text-[9px] font-semibold text-amber-400"
+                                  className="h-4 border-warning/30 bg-warning/5 px-1.5 text-[9px] font-semibold text-warning"
                                 >
                                   {t("leads.convertWizard.contactSalesBadge")}
                                 </Badge>
                               )}
                             </div>
-                            <div className="mt-1 flex items-center gap-3 text-[11px] text-zinc-400">
+                            <div className="mt-1 flex items-center gap-3 text-[11px] text-muted-foreground">
                               <span>
                                 {t("leads.convertWizard.featureCount", {
                                   count: edition.featureCount,
@@ -257,22 +257,22 @@ export function WizardStep1Edition({
                           <div className="shrink-0 text-right">
                             {edition.isContactSalesOnly ? (
                               <div className="flex flex-col items-end">
-                                <span className="text-xs font-semibold text-amber-400">
+                                <span className="text-xs font-semibold text-warning">
                                   {t("leads.convertWizard.customDeal")}
                                 </span>
-                                <span className="text-[10px] text-zinc-500">
+                                <span className="text-[10px] text-muted-foreground">
                                   {t("leads.convertWizard.negotiationRequired")}
                                 </span>
                               </div>
                             ) : (
                               <div className="flex flex-col items-end">
                                 {edition.monthlyPrice != null ? (
-                                  <span className="text-sm font-semibold text-white">
+                                  <span className="text-sm font-semibold text-foreground">
                                     ${edition.monthlyPrice.toLocaleString()}
-                                    <span className="text-xs font-normal text-zinc-500">/mo</span>
+                                    <span className="text-xs font-normal text-muted-foreground">/mo</span>
                                   </span>
                                 ) : (
-                                  <span className="text-xs font-semibold text-emerald-400">
+                                  <span className="text-xs font-semibold text-success">
                                     Free
                                   </span>
                                 )}

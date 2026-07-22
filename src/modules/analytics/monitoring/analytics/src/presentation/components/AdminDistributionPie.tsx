@@ -62,7 +62,7 @@ export const AdminDistributionPie = memo(function AdminDistributionPie({
     <Card className={cardClasses}>
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
-          <PieChartIcon className="h-4 w-4 text-violet-500" aria-hidden="true" />
+          <PieChartIcon className="h-4 w-4 text-primary" aria-hidden="true" />
           <CardTitle className="text-base">{t("tenantAnalytics.distribution.title")}</CardTitle>
         </div>
         <CardDescription>{t("tenantAnalytics.distribution.description")}</CardDescription>

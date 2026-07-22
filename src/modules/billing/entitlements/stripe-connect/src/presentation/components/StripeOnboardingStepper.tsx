@@ -20,27 +20,27 @@ import {
 const STATUS_CONFIG = {
   Complete: {
     icon: CheckCircle2,
-    color: "text-emerald-500",
-    bgGradient: "from-emerald-500/10 to-emerald-600/5",
+    color: "text-success",
+    bgGradient: "from-success/10 to-success/5",
     badgeClass:
-      "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800",
-    ringClass: "ring-emerald-500/20",
+      "bg-success/10 text-success border-success/30",
+    ringClass: "ring-success/20",
   },
   Pending: {
     icon: Clock,
-    color: "text-amber-500",
-    bgGradient: "from-amber-500/10 to-amber-600/5",
+    color: "text-warning",
+    bgGradient: "from-warning/10 to-warning/5",
     badgeClass:
-      "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800",
-    ringClass: "ring-amber-500/20",
+      "bg-warning/10 text-warning border-warning/30",
+    ringClass: "ring-warning/20",
   },
   Restricted: {
     icon: AlertTriangle,
-    color: "text-red-500",
-    bgGradient: "from-red-500/10 to-red-600/5",
+    color: "text-destructive",
+    bgGradient: "from-destructive/10 to-destructive/5",
     badgeClass:
-      "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800",
-    ringClass: "ring-red-500/20",
+      "bg-destructive/10 text-destructive border-destructive/30",
+    ringClass: "ring-destructive/20",
   },
 } as const;
 
@@ -140,14 +140,14 @@ export function StripeOnboardingStepper({
                   <div
                     className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${
                       done
-                        ? "border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/20"
+                        ? "border-success/30 bg-success/10"
                         : "border-muted-foreground/10 bg-muted/50"
                     }`}
                   >
                     {done ? (
-                      <CheckCircle2 className="h-4.5 w-4.5 text-emerald-600 dark:text-emerald-400" />
+                      <CheckCircle2 className="h-4.5 w-4.5 text-success" />
                     ) : (
-                      <Icon className="h-4.5 w-4.5 text-muted-foreground/85 transition-colors group-hover:text-violet-600" />
+                      <Icon className="h-4.5 w-4.5 text-muted-foreground/85 transition-colors group-hover:text-primary" />
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
@@ -162,7 +162,7 @@ export function StripeOnboardingStepper({
                   {done && (
                     <Badge
                       variant="outline"
-                      className="border-emerald-200 bg-emerald-50/70 text-xs font-medium text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/10 dark:text-emerald-400"
+                      className="border-success/30 bg-success/10 text-xs font-medium text-success"
                     >
                       {t("common.complete") || "Complete"}
                     </Badge>
@@ -176,14 +176,14 @@ export function StripeOnboardingStepper({
 
       {/* Restricted Warning */}
       {account.onboardingStatus === "Restricted" && (
-        <div className="rounded-lg border border-red-200 bg-red-50/70 p-4 transition-all duration-200 dark:border-red-900/30 dark:bg-red-950/10">
+        <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 transition-all duration-200">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400" />
+            <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-destructive" />
             <div>
-              <h4 className="text-sm font-bold text-red-800 dark:text-red-300">
+              <h4 className="text-sm font-bold text-destructive">
                 {t("entitlements.stripeConnect.actionRequired") || "Action Required"}
               </h4>
-              <p className="mt-1 text-xs leading-relaxed text-red-700/95 dark:text-red-400/90">
+              <p className="mt-1 text-xs leading-relaxed text-destructive/95">
                 {t("entitlements.tenantConnect.restrictedDesc") ||
                   "Stripe requires additional information to verify your identity. Please complete the verification to continue."}
               </p>
@@ -197,7 +197,7 @@ export function StripeOnboardingStepper({
         <Button
           onClick={onOnboard}
           disabled={isOnboarding}
-          className="gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/10 transition-all hover:from-violet-700 hover:to-indigo-700"
+          className="gap-2 bg-gradient-to-r from-primary to-info text-primary-foreground shadow-lg shadow-primary/10 transition-all hover:from-primary/90 hover:to-info/90"
         >
           {isOnboarding ? (
             <RefreshCw className="h-4 w-4 animate-spin" />

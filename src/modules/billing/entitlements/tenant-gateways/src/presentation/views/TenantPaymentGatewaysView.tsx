@@ -241,10 +241,10 @@ function GatewayCard({
       <div
         className={`absolute left-0 right-0 top-0 h-1 ${
           gateway.isVerified && gateway.isEnabled
-            ? "bg-emerald-500"
+            ? "bg-success"
             : !gateway.isEnabled
               ? "bg-muted-foreground/30"
-              : "bg-amber-500"
+              : "bg-warning"
         }`}
       />
 
@@ -283,7 +283,7 @@ function GatewayCard({
             }
             className={`gap-1 ${
               gateway.isVerified && gateway.isEnabled
-                ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                ? "border-success/20 bg-success/10 text-success"
                 : ""
             }`}
           >
@@ -344,7 +344,7 @@ function GatewayCard({
                 variant="ghost"
                 size="sm"
                 onClick={onDelete}
-                className="gap-1.5 text-destructive hover:text-destructive"
+                className="gap-1.5 text-destructive hover:text-destructive/80"
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>

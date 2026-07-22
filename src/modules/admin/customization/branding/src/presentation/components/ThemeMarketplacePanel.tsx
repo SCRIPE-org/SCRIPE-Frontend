@@ -389,7 +389,7 @@ function ThemeCard({
         className={cn(
           "group flex cursor-pointer items-center gap-3 rounded-lg border p-2.5 transition-all",
           isPreviewing
-            ? "border-violet-500/50 bg-violet-500/5 ring-1 ring-violet-500/20"
+            ? "border-primary/50 bg-primary/5 ring-1 ring-primary/20"
             : theme.isApplied
               ? "border-primary/40 bg-primary/5"
               : "border-border hover:border-primary/30 hover:bg-muted/30",
@@ -407,7 +407,7 @@ function ThemeCard({
           <div className="flex items-center gap-1.5">
             <span className="truncate text-xs font-medium text-foreground">{theme.name}</span>
             {theme.isNew && (
-              <span className="flex items-center gap-0.5 text-[9px] text-amber-500">
+              <span className="flex items-center gap-0.5 text-[9px] text-warning">
                 <Sparkles className="h-2.5 w-2.5" />
                 {t("studio.marketplace.new") || "New"}
               </span>
@@ -436,7 +436,7 @@ function ThemeCard({
             <Heart
               className={cn(
                 "h-3 w-3",
-                theme.isFavorited ? "fill-red-500 text-red-500" : "text-muted-foreground"
+                theme.isFavorited ? "fill-destructive text-destructive" : "text-muted-foreground"
               )}
             />
           </button>
@@ -449,7 +449,7 @@ function ThemeCard({
             className={cn(
               "flex h-6 w-6 items-center justify-center rounded transition-colors",
               isPreviewing
-                ? "bg-violet-500/20 text-violet-600"
+                ? "bg-primary/20 text-primary"
                 : "text-muted-foreground hover:bg-muted"
             )}
           >
@@ -469,7 +469,7 @@ function ThemeCard({
           ) : theme.isBuyable ? (
             <button
               disabled
-              className="flex h-6 cursor-not-allowed items-center gap-0.5 rounded border border-violet-300 px-2 text-[10px] text-violet-600 opacity-80"
+              className="flex h-6 cursor-not-allowed items-center gap-0.5 rounded border border-primary/40 px-2 text-[10px] text-primary opacity-80"
             >
               <ShoppingCart className="h-2.5 w-2.5" />
               {theme.price ? `$${theme.price.toFixed(0)}` : t("studio.marketplace.buy") || "Buy"}
@@ -488,7 +488,7 @@ function ThemeCard({
       className={cn(
         "group relative flex cursor-pointer flex-col overflow-hidden rounded-lg border transition-all",
         isPreviewing
-          ? "border-violet-500/50 ring-1 ring-violet-500/20"
+          ? "border-primary/50 ring-1 ring-primary/20"
           : theme.isApplied
             ? "border-primary/40 ring-1 ring-primary/20"
             : "border-border hover:border-primary/30",
@@ -506,7 +506,7 @@ function ThemeCard({
         {/* Badges */}
         <div className="absolute left-1.5 top-1.5 flex gap-1">
           {theme.isNew && (
-            <span className="flex items-center gap-0.5 rounded-full bg-amber-500 px-1.5 py-0.5 text-[9px] font-bold text-white">
+            <span className="flex items-center gap-0.5 rounded-full bg-warning px-1.5 py-0.5 text-[9px] font-bold text-warning-foreground">
               <Sparkles className="h-2.5 w-2.5" /> NEW
             </span>
           )}
@@ -516,7 +516,7 @@ function ThemeCard({
             </span>
           )}
           {isPreviewing && (
-            <span className="flex items-center gap-0.5 rounded-full bg-violet-500 px-1.5 py-0.5 text-[9px] font-bold text-white">
+            <span className="flex items-center gap-0.5 rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-bold text-primary-foreground">
               <Eye className="h-2.5 w-2.5" /> {t("studio.marketplace.preview") || "Preview"}
             </span>
           )}
@@ -539,7 +539,7 @@ function ThemeCard({
           <Heart
             className={cn(
               "h-3 w-3",
-              theme.isFavorited ? "fill-red-500 text-red-500" : "text-white"
+              theme.isFavorited ? "fill-destructive text-destructive" : "text-white"
             )}
           />
         </button>
@@ -623,7 +623,7 @@ function ThemeCard({
               className={cn(
                 "flex h-6 flex-1 items-center justify-center gap-1 rounded border text-[9px] transition-colors",
                 isPreviewing
-                  ? "border-violet-400 bg-violet-500/10 text-violet-600"
+                  ? "border-primary bg-primary/10 text-primary"
                   : "border-border text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
@@ -646,14 +646,14 @@ function ThemeCard({
             ) : theme.isBuyable ? (
               <button
                 disabled
-                className="flex h-6 flex-1 cursor-not-allowed items-center justify-center gap-1 rounded border border-violet-300 text-[9px] text-violet-600 opacity-80"
+                className="flex h-6 flex-1 cursor-not-allowed items-center justify-center gap-1 rounded border border-primary/40 text-[9px] text-primary opacity-80"
                 title="Contact your system administrator to purchase this theme"
               >
                 <ShoppingCart className="h-3 w-3" />
                 {theme.price ? `$${theme.price.toFixed(0)}` : t("studio.marketplace.buy") || "Buy"}
               </button>
             ) : (
-              <div className="flex h-6 flex-1 items-center justify-center gap-1 rounded border border-amber-300/50 bg-amber-500/5 text-[9px] text-amber-600">
+              <div className="flex h-6 flex-1 items-center justify-center gap-1 rounded border border-warning/50 bg-warning/5 text-[9px] text-warning">
                 <Lock className="h-3 w-3" /> {t("studio.marketplace.upgrade") || "Upgrade"}
               </div>
             )}

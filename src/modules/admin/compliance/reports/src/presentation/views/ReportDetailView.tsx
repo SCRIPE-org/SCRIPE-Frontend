@@ -69,8 +69,8 @@ export function ReportDetailView({ id }: { id: string }) {
           <BackIcon className="h-4 w-4" />
         </Button>
         <div className="flex items-center gap-3">
-          <div className="rounded-xl border border-indigo-500/20 bg-gradient-to-br from-indigo-500/15 to-blue-500/10 p-2.5">
-            <BarChart3 className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+          <div className="rounded-xl border border-info/20 bg-gradient-to-br from-info/15 to-info/10 p-2.5">
+            <BarChart3 className="h-5 w-5 text-info" />
           </div>
           <div>
             <h2 className="text-2xl font-bold tracking-tight">{t("compliance.reportsTitle")}</h2>
@@ -109,13 +109,11 @@ export function ReportDetailView({ id }: { id: string }) {
           />
 
           {/* MVP Info banner */}
-          <Card className="border-indigo-500/20 bg-indigo-500/5">
+          <Card className="border-info/20 bg-info/5">
             <CardContent className="flex items-start gap-3 p-4">
-              <FileText className="mt-0.5 h-4 w-4 shrink-0 text-indigo-500" />
+              <FileText className="mt-0.5 h-4 w-4 shrink-0 text-info" />
               <div>
-                <p className="text-sm font-medium text-indigo-700 dark:text-indigo-400">
-                  {t("compliance.mvpExportTitle")}
-                </p>
+                <p className="text-sm font-medium text-info">{t("compliance.mvpExportTitle")}</p>
                 <p className="text-sm text-muted-foreground">{t("compliance.mvpExportDesc")}</p>
               </div>
             </CardContent>
@@ -126,13 +124,11 @@ export function ReportDetailView({ id }: { id: string }) {
 
           {/* Pending info banner */}
           {report.isPending && (
-            <Card className="border-blue-500/20 bg-blue-500/5">
+            <Card className="border-info/20 bg-info/5">
               <CardContent className="flex items-start gap-3 p-4">
-                <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-blue-500" />
+                <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-info" />
                 <div>
-                  <p className="font-medium text-blue-600 dark:text-blue-400">
-                    {t("compliance.reportQueuedInfo")}
-                  </p>
+                  <p className="font-medium text-info">{t("compliance.reportQueuedInfo")}</p>
                   <p className="text-sm text-muted-foreground">
                     {t("compliance.reportQueuedDesc")}
                   </p>

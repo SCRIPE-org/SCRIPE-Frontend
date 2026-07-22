@@ -33,19 +33,19 @@ import { type PlatformLeadListItem, type LeadStatus } from "../../domain/entitie
 const ALL_STATUSES: LeadStatus[] = ["New", "Contacted", "Qualified", "Converted", "Closed"];
 
 const STATUS_STYLES: Record<LeadStatus, string> = {
-  New: "bg-blue-500/15 text-blue-300 border-blue-500/30",
-  Contacted: "bg-amber-500/15 text-amber-300 border-amber-500/30",
-  Qualified: "bg-violet-500/15 text-violet-300 border-violet-500/30",
-  Converted: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-  Closed: "bg-zinc-500/15 text-zinc-400 border-zinc-500/30",
+  New: "bg-info/15 text-info border-info/30",
+  Contacted: "bg-warning/15 text-warning border-warning/30",
+  Qualified: "bg-primary/15 text-primary border-primary/30",
+  Converted: "bg-success/15 text-success border-success/30",
+  Closed: "bg-muted-foreground/15 text-muted-foreground border-border/30",
 };
 
 const STATUS_DOTS: Record<LeadStatus, string> = {
-  New: "bg-blue-400",
-  Contacted: "bg-amber-400",
-  Qualified: "bg-violet-400",
-  Converted: "bg-emerald-400",
-  Closed: "bg-zinc-500",
+  New: "bg-info",
+  Contacted: "bg-warning",
+  Qualified: "bg-primary",
+  Converted: "bg-success",
+  Closed: "bg-muted-foreground",
 };
 
 /** Converts 'enterprise-pro' → 'Enterprise Pro' */
@@ -92,7 +92,7 @@ export function LeadsView() {
       label: t("leads.columns.company"),
       render: (_, lead) => (
         <div className="h-full w-full cursor-pointer" onClick={() => vm.handleOpenDrawer(lead.id)}>
-          <p className="truncate font-medium text-white transition-colors group-hover:text-indigo-300">
+          <p className="truncate font-medium text-foreground transition-colors group-hover:text-info">
             {lead.companyName}
           </p>
           {lead.discoveryTagKeys.length > 0 && (
@@ -100,7 +100,7 @@ export function LeadsView() {
               {lead.discoveryTagKeys.map(({ key, raw }) => (
                 <span
                   key={key}
-                  className="inline-flex items-center rounded border border-violet-500/20 bg-violet-500/10 px-1.5 py-0.5 text-[10px] text-violet-400"
+                  className="inline-flex items-center rounded border border-primary/20 bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary"
                 >
                   {raw ? key : t(key)}
                 </span>
@@ -115,8 +115,8 @@ export function LeadsView() {
       label: t("leads.columns.contact"),
       render: (_, lead) => (
         <div className="h-full w-full cursor-pointer" onClick={() => vm.handleOpenDrawer(lead.id)}>
-          <p className="truncate text-zinc-300">{lead.contactName}</p>
-          <p className="mt-0.5 truncate text-xs text-zinc-500">{lead.email}</p>
+          <p className="truncate text-foreground">{lead.contactName}</p>
+          <p className="mt-0.5 truncate text-xs text-muted-foreground">{lead.email}</p>
         </div>
       ),
     },
@@ -126,11 +126,11 @@ export function LeadsView() {
       render: (_, lead) => (
         <div className="h-full w-full cursor-pointer" onClick={() => vm.handleOpenDrawer(lead.id)}>
           {lead.editionKey ? (
-            <span className="rounded-sm bg-zinc-700/60 px-1.5 py-0.5 text-xs font-medium text-zinc-300">
+            <span className="rounded-sm bg-muted/60 px-1.5 py-0.5 text-xs font-medium text-foreground">
               {humanizeEditionKey(lead.editionKey)}
             </span>
           ) : (
-            <span className="text-zinc-600">—</span>
+            <span className="text-muted-foreground">—</span>
           )}
         </div>
       ),
@@ -154,8 +154,8 @@ export function LeadsView() {
       label: t("leads.columns.created"),
       render: (_, lead) => (
         <div className="h-full w-full cursor-pointer" onClick={() => vm.handleOpenDrawer(lead.id)}>
-          <p className="text-xs text-zinc-500">{lead.relativeCreatedAt}</p>
-          <p className="mt-0.5 text-[10px] text-zinc-600">{t(lead.sourceKey)}</p>
+          <p className="text-xs text-muted-foreground">{lead.relativeCreatedAt}</p>
+          <p className="mt-0.5 text-[10px] text-muted-foreground">{t(lead.sourceKey)}</p>
         </div>
       ),
     },
@@ -187,8 +187,8 @@ export function LeadsView() {
       {/* ── Page Header ── */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-white">{t("leads.title")}</h1>
-          <p className="mt-1 text-sm text-zinc-400">
+          <h1 className="text-2xl font-semibold text-foreground">{t("leads.title")}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             {t("leads.subtitle")} &mdash; {t("leads.totalCount", { count: String(vm.totalCount) })}
           </p>
         </div>
@@ -198,25 +198,25 @@ export function LeadsView() {
           {/* <StatPill
             label={t("leads.statsBar.new")}
             value={vm.stats.new}
-            accent="border-blue-500/30 text-blue-400"
+            accent="border-info/30 text-info"
           />
           <StatPill
             label={t("leads.statsBar.qualified")}
             value={vm.stats.qualified}
-            accent="border-violet-500/30 text-violet-400"
+            accent="border-primary/30 text-primary"
           />
           <StatPill
             label={t("leads.statsBar.converted")}
             value={vm.stats.converted}
-            accent="border-emerald-500/30 text-emerald-400"
+            accent="border-success/30 text-success"
           /> */}
           {/* View toggle */}
-          <div className="flex items-center rounded-md border border-zinc-700 bg-zinc-900 p-0.5">
+          <div className="flex items-center rounded-md border border-border bg-card p-0.5">
             <Button
               onClick={() => setViewMode("table")}
               variant="ghost"
               size="icon"
-              className={`h-7 w-8 transition-colors ${viewMode === "table" ? "bg-zinc-700 text-white" : "text-zinc-500 hover:text-zinc-300"}`}
+              className={`h-7 w-8 transition-colors ${viewMode === "table" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"}`}
               aria-label={t("leads.actions.tableView")}
             >
               <Table2 className="h-3.5 w-3.5" />
@@ -225,7 +225,7 @@ export function LeadsView() {
               onClick={() => setViewMode("kanban")}
               variant="ghost"
               size="icon"
-              className={`h-7 w-8 transition-colors ${viewMode === "kanban" ? "bg-zinc-700 text-white" : "text-zinc-500 hover:text-zinc-300"}`}
+              className={`h-7 w-8 transition-colors ${viewMode === "kanban" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"}`}
               aria-label={t("leads.actions.kanbanView")}
             >
               <LayoutGrid className="h-3.5 w-3.5" />
@@ -237,7 +237,7 @@ export function LeadsView() {
               id="leads-create-btn"
               onClick={vm.handleOpenCreateDialog}
               size="sm"
-              className="ms-2 h-8 bg-indigo-600 px-3 text-xs text-white hover:bg-indigo-500"
+              className="ms-2 h-8 bg-info px-3 text-xs text-info-foreground hover:bg-info/90"
             >
               {t("leads.createButton")}
             </Button>
@@ -252,7 +252,7 @@ export function LeadsView() {
           placeholder={t("leads.searchPlaceholder")}
           value={vm.search}
           onChange={(e) => vm.handleSearchChange(e.target.value)}
-          className="w-72 border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-500"
+          className="w-72 border-border bg-card text-foreground placeholder:text-muted-foreground"
         />
         <Select
           value={vm.statusFilter ?? "all"}
@@ -262,11 +262,11 @@ export function LeadsView() {
         >
           <SelectTrigger
             id="leads-status-filter"
-            className="w-44 border-zinc-700 bg-zinc-900 text-white"
+            className="w-44 border-border bg-card text-foreground"
           >
             <SelectValue placeholder={t("leads.allStatuses")} />
           </SelectTrigger>
-          <SelectContent className="border-zinc-700 bg-zinc-900">
+          <SelectContent className="border-border bg-card">
             <SelectItem value="all">{t("leads.allStatuses")}</SelectItem>
             {ALL_STATUSES.map((s) => (
               <SelectItem key={s} value={s}>
@@ -282,7 +282,7 @@ export function LeadsView() {
 
       {/* ── Table / Kanban ── */}
       {vm.isError ? (
-        <div className="rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+        <div className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {t("leads.loadError")}
         </div>
       ) : viewMode === "kanban" ? (
@@ -296,7 +296,7 @@ export function LeadsView() {
           />
           {vm.totalPages > 1 && (
             <div className="flex items-center justify-end gap-2">
-              <span className="text-xs text-zinc-500">
+              <span className="text-xs text-muted-foreground">
                 {t("leads.pagination.page", {
                   page: String(vm.page),
                   total: String(vm.totalPages),
@@ -308,7 +308,7 @@ export function LeadsView() {
                 size="sm"
                 disabled={vm.page <= 1 || vm.isLoading}
                 onClick={() => vm.handlePageChange(vm.page - 1)}
-                className="h-8 border-zinc-700 bg-zinc-900 text-xs text-zinc-300 hover:bg-zinc-800"
+                className="h-8 border-border bg-card text-xs text-foreground hover:bg-muted"
               >
                 {t("leads.pagination.previous")}
               </Button>
@@ -318,7 +318,7 @@ export function LeadsView() {
                 size="sm"
                 disabled={vm.page >= vm.totalPages || vm.isLoading}
                 onClick={() => vm.handlePageChange(vm.page + 1)}
-                className="h-8 border-zinc-700 bg-zinc-900 text-xs text-zinc-300 hover:bg-zinc-800"
+                className="h-8 border-border bg-card text-xs text-foreground hover:bg-muted"
               >
                 {t("leads.pagination.next")}
               </Button>
@@ -407,14 +407,14 @@ export function LeadsView() {
         open={vm.isBulkConfirmOpen}
         onOpenChange={(o) => !o && vm.handleCancelBulkConfirm()}
       >
-        <AlertDialogContent className="border-zinc-800 bg-zinc-950">
+        <AlertDialogContent className="border-border bg-background">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-white">
+            <AlertDialogTitle className="text-foreground">
               {vm.bulkConfirmAction === "close"
                 ? t("leads.bulk.confirmCloseTitle", { count: String(vm.selectedCount) })
                 : t("leads.bulk.confirmDeleteTitle", { count: String(vm.selectedCount) })}
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-zinc-400">
+            <AlertDialogDescription className="text-muted-foreground">
               {vm.bulkConfirmAction === "close"
                 ? t("leads.bulk.confirmCloseDesc")
                 : t("leads.bulk.confirmDeleteDesc")}
@@ -422,7 +422,7 @@ export function LeadsView() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel
-              className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+              className="border-border text-foreground hover:bg-muted"
               disabled={isAnyBulkPending}
             >
               {t("leads.bulk.cancel")}
@@ -433,8 +433,8 @@ export function LeadsView() {
               disabled={isAnyBulkPending}
               className={
                 vm.bulkConfirmAction === "delete"
-                  ? "bg-red-600 text-white hover:bg-red-500"
-                  : "bg-amber-600 text-white hover:bg-amber-500"
+                  ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  : "bg-warning text-warning-foreground hover:bg-warning/90"
               }
             >
               {isAnyBulkPending

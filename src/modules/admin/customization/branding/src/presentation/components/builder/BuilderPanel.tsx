@@ -410,18 +410,18 @@ export function BuilderPanel({
 
       {/* Responsive Validation Warnings */}
       {overlapWarnings.length > 0 && (
-        <div className="space-y-1.5 rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-2.5">
-          <div className="flex items-center gap-1.5 text-yellow-600 dark:text-yellow-400">
+        <div className="space-y-1.5 rounded-lg border border-warning/30 bg-warning/5 p-2.5">
+          <div className="flex items-center gap-1.5 text-warning">
             <AlertTriangle className="h-3.5 w-3.5" />
             <span className="text-xs font-semibold">
               {t("studio.builder.validationWarnings") || "Layout Warnings"}
             </span>
-            <Badge variant="outline" className="ml-auto h-4 border-yellow-500/30 px-1 text-[10px]">
+            <Badge variant="outline" className="ml-auto h-4 border-warning/30 px-1 text-[10px]">
               {overlapWarnings.length}
             </Badge>
           </div>
           {overlapWarnings.map((w, i) => (
-            <p key={i} className="pl-5 text-[10px] text-yellow-600/80 dark:text-yellow-400/80">
+            <p key={i} className="pl-5 text-[10px] text-warning/80">
               {w}
             </p>
           ))}

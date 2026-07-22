@@ -74,19 +74,19 @@ const MODES: { id: ScheduleMode; label: string; desc: string; icon: React.ReactN
     id: "now",
     label: "Send Now",
     desc: "Deliver immediately",
-    icon: <Zap className="h-5 w-5 text-emerald-500" />,
+    icon: <Zap className="h-5 w-5 text-success" />,
   },
   {
     id: "scheduled",
     label: "Schedule",
     desc: "Pick a date & time",
-    icon: <CalendarClock className="h-5 w-5 text-blue-500" />,
+    icon: <CalendarClock className="h-5 w-5 text-info" />,
   },
   {
     id: "recurring",
     label: "Recurring",
     desc: "Repeat automatically",
-    icon: <Timer className="h-5 w-5 text-purple-500" />,
+    icon: <Timer className="h-5 w-5 text-primary" />,
   },
 ];
 
@@ -179,9 +179,9 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
               </Select>
             </div>
             {value.scheduledDate && value.scheduledTime && (
-              <div className="flex items-center gap-2 rounded-md border border-blue-200 bg-blue-50 p-2 dark:border-blue-800 dark:bg-blue-950/20">
-                <Clock className="h-4 w-4 shrink-0 text-blue-500" />
-                <span className="text-xs text-blue-700 dark:text-blue-300">
+              <div className="flex items-center gap-2 rounded-md border border-info/30 bg-info/10 p-2">
+                <Clock className="h-4 w-4 shrink-0 text-info" />
+                <span className="text-xs text-info">
                   Will send on <strong>{value.scheduledDate}</strong> at{" "}
                   <strong>{value.scheduledTime}</strong> ({value.timezone || "UTC"})
                 </span>
@@ -296,9 +296,9 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
               />
             </div>
 
-            <div className="flex items-center gap-2 rounded-md border border-purple-200 bg-purple-50 p-2 dark:border-purple-800 dark:bg-purple-950/20">
-              <Timer className="h-4 w-4 shrink-0 text-purple-500" />
-              <span className="text-xs text-purple-700 dark:text-purple-300">
+            <div className="flex items-center gap-2 rounded-md border border-primary/30 bg-primary/10 p-2">
+              <Timer className="h-4 w-4 shrink-0 text-primary" />
+              <span className="text-xs text-primary">
                 Sends{" "}
                 <strong>
                   {value.recurring?.frequency === "daily"

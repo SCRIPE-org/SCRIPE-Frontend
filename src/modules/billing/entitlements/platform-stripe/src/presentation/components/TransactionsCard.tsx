@@ -24,14 +24,14 @@ export function TransactionsCard({ transactions, paymentsLink }: TransactionsCar
   const { t } = useI18n();
 
   const txTypeLabels: Record<string, { label: string; color: string }> = {
-    charge: { label: t("entitlements.platformStripe.txCharge"), color: "text-emerald-500" },
-    payment: { label: t("entitlements.platformStripe.txPayment"), color: "text-emerald-500" },
-    refund: { label: t("entitlements.platformStripe.txRefund"), color: "text-red-500" },
-    transfer: { label: t("entitlements.platformStripe.txTransfer"), color: "text-blue-500" },
-    payout: { label: t("entitlements.platformStripe.txPayout"), color: "text-violet-500" },
-    adjustment: { label: t("entitlements.platformStripe.txAdjustment"), color: "text-amber-500" },
-    stripe_fee: { label: t("entitlements.platformStripe.txStripeFee"), color: "text-gray-400" },
-    application_fee: { label: t("entitlements.platformStripe.txAppFee"), color: "text-indigo-500" },
+    charge: { label: t("entitlements.platformStripe.txCharge"), color: "text-success" },
+    payment: { label: t("entitlements.platformStripe.txPayment"), color: "text-success" },
+    refund: { label: t("entitlements.platformStripe.txRefund"), color: "text-destructive" },
+    transfer: { label: t("entitlements.platformStripe.txTransfer"), color: "text-info" },
+    payout: { label: t("entitlements.platformStripe.txPayout"), color: "text-primary" },
+    adjustment: { label: t("entitlements.platformStripe.txAdjustment"), color: "text-warning" },
+    stripe_fee: { label: t("entitlements.platformStripe.txStripeFee"), color: "text-muted-foreground" },
+    application_fee: { label: t("entitlements.platformStripe.txAppFee"), color: "text-info" },
   };
 
   return (
@@ -70,12 +70,12 @@ export function TransactionsCard({ transactions, paymentsLink }: TransactionsCar
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <div
-                      className={`rounded-lg p-1.5 ${tx.isPositive ? "bg-emerald-500/10" : "bg-red-500/10"}`}
+                      className={`rounded-lg p-1.5 ${tx.isPositive ? "bg-success/10" : "bg-destructive/10"}`}
                     >
                       {tx.isPositive ? (
-                        <ArrowDownRight className="h-3.5 w-3.5 text-emerald-500" />
+                        <ArrowDownRight className="h-3.5 w-3.5 text-success" />
                       ) : (
-                        <ArrowUpRight className="h-3.5 w-3.5 text-red-500" />
+                        <ArrowUpRight className="h-3.5 w-3.5 text-destructive" />
                       )}
                     </div>
                     <div className="min-w-0">
@@ -94,7 +94,7 @@ export function TransactionsCard({ transactions, paymentsLink }: TransactionsCar
                   </div>
                   <div className="shrink-0 text-right">
                     <p
-                      className={`text-sm font-semibold ${tx.isPositive ? "text-emerald-600" : "text-red-500"}`}
+                      className={`text-sm font-semibold ${tx.isPositive ? "text-success" : "text-destructive"}`}
                     >
                       {tx.isPositive ? "+" : ""}
                       {formatStripeCurrency(tx.amount, tx.currency)}

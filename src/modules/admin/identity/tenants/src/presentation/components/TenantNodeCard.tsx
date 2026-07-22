@@ -74,9 +74,9 @@ function getProgressPercentage(endDate?: string): number {
 function getProgressColor(days: number | null): string {
   if (days === null) return "bg-primary";
   if (days <= 0) return "bg-destructive";
-  if (days <= 7) return "bg-red-500";
-  if (days <= 30) return "bg-amber-500";
-  return "bg-emerald-500";
+  if (days <= 7) return "bg-destructive";
+  if (days <= 30) return "bg-warning";
+  return "bg-success";
 }
 
 const statusConfig: Record<
@@ -90,29 +90,29 @@ const statusConfig: Record<
   }
 > = {
   active: {
-    borderColor: "border-emerald-500/30 dark:border-emerald-500/20",
-    iconBg: "bg-emerald-500/10 text-emerald-500",
+    borderColor: "border-success/30",
+    iconBg: "bg-success/10 text-success",
     badgeVariant: "success",
     badgeClass: "",
     Icon: Building2,
   },
   suspended: {
-    borderColor: "border-amber-500/30 dark:border-amber-500/20",
-    iconBg: "bg-amber-500/10 text-amber-500",
+    borderColor: "border-warning/30",
+    iconBg: "bg-warning/10 text-warning",
     badgeVariant: "outline",
-    badgeClass: "border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400",
+    badgeClass: "border-warning/50 bg-warning/10 text-warning",
     Icon: Pause,
   },
   canceled: {
-    borderColor: "border-red-500/30 dark:border-red-500/20",
-    iconBg: "bg-red-500/10 text-red-500",
+    borderColor: "border-destructive/30",
+    iconBg: "bg-destructive/10 text-destructive",
     badgeVariant: "destructive",
     badgeClass: "",
     Icon: Ban,
   },
   expired: {
-    borderColor: "border-orange-500/30 dark:border-orange-500/20",
-    iconBg: "bg-orange-500/10 text-orange-500",
+    borderColor: "border-warning/30",
+    iconBg: "bg-warning/10 text-warning",
     badgeVariant: "destructive",
     badgeClass: "",
     Icon: XCircle,

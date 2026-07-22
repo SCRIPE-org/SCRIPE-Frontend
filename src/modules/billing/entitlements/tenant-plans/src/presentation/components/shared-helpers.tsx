@@ -76,9 +76,9 @@ export function FlagRow({
         <span>{label}</span>
       </div>
       {value ? (
-        <CheckCircle2 className="h-4 w-4 text-green-500" />
+        <CheckCircle2 className="h-4 w-4 text-success" />
       ) : (
-        <XCircle className="h-4 w-4 text-red-400/60" />
+        <XCircle className="h-4 w-4 text-destructive/60" />
       )}
     </div>
   );

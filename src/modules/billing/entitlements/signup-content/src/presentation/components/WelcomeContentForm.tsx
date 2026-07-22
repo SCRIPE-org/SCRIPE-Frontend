@@ -79,8 +79,8 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
       {/* Headline */}
       <div>
         <div className="mb-2 flex items-center gap-1.5">
-          <Globe className="h-3.5 w-3.5 text-zinc-500" />
-          <span className="text-xs font-medium text-zinc-400">
+          <Globe className="h-3.5 w-3.5 text-muted-foreground" />
+          <span className="text-xs font-medium text-muted-foreground">
             {t("signupContent.welcome.headlineEn")}
           </span>
         </div>
@@ -89,10 +89,10 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
             <Input
               placeholder={t("signupContent.welcome.placeholderEn")}
               {...register("headlineEn")}
-              className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+              className="border-border bg-card text-foreground placeholder:text-muted-foreground"
             />
             {errors.headlineEn && (
-              <p className="mt-1 text-xs text-red-400">{errors.headlineEn.message}</p>
+              <p className="mt-1 text-xs text-destructive">{errors.headlineEn.message}</p>
             )}
           </div>
           <div>
@@ -100,10 +100,10 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
               placeholder={t("signupContent.welcome.placeholderAr")}
               dir="rtl"
               {...register("headlineAr")}
-              className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+              className="border-border bg-card text-foreground placeholder:text-muted-foreground"
             />
             {errors.headlineAr && (
-              <p className="mt-1 text-xs text-red-400" dir="rtl">
+              <p className="mt-1 text-xs text-destructive" dir="rtl">
                 {errors.headlineAr.message}
               </p>
             )}
@@ -114,8 +114,8 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
       {/* Subcopy */}
       <div>
         <div className="mb-2 flex items-center gap-1.5">
-          <Globe className="h-3.5 w-3.5 text-zinc-500" />
-          <span className="text-xs font-medium text-zinc-400">
+          <Globe className="h-3.5 w-3.5 text-muted-foreground" />
+          <span className="text-xs font-medium text-muted-foreground">
             {t("signupContent.welcome.subcopyEn")}
           </span>
         </div>
@@ -124,10 +124,10 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
             <Textarea
               placeholder={t("signupContent.welcome.placeholderEn")}
               {...register("subcopyEn")}
-              className="min-h-[80px] border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+              className="min-h-[80px] border-border bg-card text-foreground placeholder:text-muted-foreground"
             />
             {errors.subcopyEn && (
-              <p className="mt-1 text-xs text-red-400">{errors.subcopyEn.message}</p>
+              <p className="mt-1 text-xs text-destructive">{errors.subcopyEn.message}</p>
             )}
           </div>
           <div>
@@ -135,10 +135,10 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
               placeholder={t("signupContent.welcome.placeholderAr")}
               dir="rtl"
               {...register("subcopyAr")}
-              className="min-h-[80px] border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+              className="min-h-[80px] border-border bg-card text-foreground placeholder:text-muted-foreground"
             />
             {errors.subcopyAr && (
-              <p className="mt-1 text-xs text-red-400" dir="rtl">
+              <p className="mt-1 text-xs text-destructive" dir="rtl">
                 {errors.subcopyAr.message}
               </p>
             )}
@@ -149,8 +149,8 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
       {/* CTA Label */}
       <div>
         <div className="mb-2 flex items-center gap-1.5">
-          <Globe className="h-3.5 w-3.5 text-zinc-500" />
-          <span className="text-xs font-medium text-zinc-400">
+          <Globe className="h-3.5 w-3.5 text-muted-foreground" />
+          <span className="text-xs font-medium text-muted-foreground">
             {t("signupContent.welcome.ctaEn")}
           </span>
         </div>
@@ -159,10 +159,10 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
             <Input
               placeholder={t("signupContent.welcome.placeholderEn")}
               {...register("ctaLabelEn")}
-              className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+              className="border-border bg-card text-foreground placeholder:text-muted-foreground"
             />
             {errors.ctaLabelEn && (
-              <p className="mt-1 text-xs text-red-400">{errors.ctaLabelEn.message}</p>
+              <p className="mt-1 text-xs text-destructive">{errors.ctaLabelEn.message}</p>
             )}
           </div>
           <div>
@@ -170,10 +170,10 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
               placeholder={t("signupContent.welcome.placeholderAr")}
               dir="rtl"
               {...register("ctaLabelAr")}
-              className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+              className="border-border bg-card text-foreground placeholder:text-muted-foreground"
             />
             {errors.ctaLabelAr && (
-              <p className="mt-1 text-xs text-red-400" dir="rtl">
+              <p className="mt-1 text-xs text-destructive" dir="rtl">
                 {errors.ctaLabelAr.message}
               </p>
             )}
@@ -184,8 +184,8 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
       {/* Trusted By */}
       <div>
         <div className="mb-2 flex items-center gap-1.5">
-          <Globe className="h-3.5 w-3.5 text-zinc-500" />
-          <span className="text-xs font-medium text-zinc-400">
+          <Globe className="h-3.5 w-3.5 text-muted-foreground" />
+          <span className="text-xs font-medium text-muted-foreground">
             {t("signupContent.welcome.trustedByCount")}
           </span>
         </div>
@@ -195,20 +195,20 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
               type="number"
               placeholder={t("signupContent.welcome.countPlaceholder")}
               {...register("trustedByCount", { valueAsNumber: true })}
-              className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+              className="border-border bg-card text-foreground placeholder:text-muted-foreground"
             />
             {errors.trustedByCount && (
-              <p className="mt-1 text-xs text-red-400">{errors.trustedByCount.message}</p>
+              <p className="mt-1 text-xs text-destructive">{errors.trustedByCount.message}</p>
             )}
           </div>
           <div>
             <Input
               placeholder={t("signupContent.welcome.trustedByLabelEnPlaceholder")}
               {...register("trustedByLabelEn")}
-              className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+              className="border-border bg-card text-foreground placeholder:text-muted-foreground"
             />
             {errors.trustedByLabelEn && (
-              <p className="mt-1 text-xs text-red-400">{errors.trustedByLabelEn.message}</p>
+              <p className="mt-1 text-xs text-destructive">{errors.trustedByLabelEn.message}</p>
             )}
           </div>
           <div>
@@ -216,10 +216,10 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
               placeholder={t("signupContent.welcome.trustedByLabelArPlaceholder")}
               dir="rtl"
               {...register("trustedByLabelAr")}
-              className="border-zinc-700 bg-zinc-900 text-white placeholder:text-zinc-600"
+              className="border-border bg-card text-foreground placeholder:text-muted-foreground"
             />
             {errors.trustedByLabelAr && (
-              <p className="mt-1 text-xs text-red-400" dir="rtl">
+              <p className="mt-1 text-xs text-destructive" dir="rtl">
                 {errors.trustedByLabelAr.message}
               </p>
             )}
@@ -231,7 +231,7 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
         <Button
           type="submit"
           disabled={isSaving}
-          className="bg-indigo-600 text-white hover:bg-indigo-500"
+          className="bg-info text-info-foreground hover:bg-info/90"
         >
           {isSaving ? t("signupContent.welcome.saving") : t("signupContent.welcome.save")}
         </Button>

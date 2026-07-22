@@ -20,7 +20,7 @@ export function SignupContentView() {
   if (vm.isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <p className="text-sm text-zinc-500">{t("signupContent.loading")}</p>
+        <p className="text-sm text-muted-foreground">{t("signupContent.loading")}</p>
       </div>
     );
   }
@@ -28,7 +28,7 @@ export function SignupContentView() {
   if (vm.error) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <p className="text-sm text-red-400">{t("signupContent.error.load")}</p>
+        <p className="text-sm text-destructive">{t("signupContent.error.load")}</p>
       </div>
     );
   }
@@ -37,18 +37,18 @@ export function SignupContentView() {
     <div className="space-y-6">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-semibold text-white">{t("signupContent.title")}</h1>
-        <p className="mt-1 text-sm text-zinc-400">{t("signupContent.subtitle")}</p>
+        <h1 className="text-2xl font-semibold text-foreground">{t("signupContent.title")}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{t("signupContent.subtitle")}</p>
       </div>
 
       {/* Section A: Content Mode */}
       <ContentModeSection vm={vm} />
 
       {/* Section B: Welcome Content */}
-      <Card className="border-zinc-800 bg-zinc-900">
+      <Card className="border-border bg-card">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base text-white">
-            <Star className="h-4 w-4 text-indigo-400" />
+          <CardTitle className="flex items-center gap-2 text-base text-foreground">
+            <Star className="h-4 w-4 text-info" />
             {t("signupContent.welcome.title")}
           </CardTitle>
         </CardHeader>

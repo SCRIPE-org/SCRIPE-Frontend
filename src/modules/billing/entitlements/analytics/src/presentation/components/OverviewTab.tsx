@@ -68,9 +68,9 @@ function KpiCard({
   const trendColor =
     change !== undefined
       ? change > 0
-        ? "text-emerald-500"
+        ? "text-success"
         : change < 0
-          ? "text-red-500"
+          ? "text-destructive"
           : "text-muted-foreground"
       : "";
 
@@ -96,9 +96,9 @@ function KpiCard({
                 <div
                   className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${
                     change > 0
-                      ? "bg-emerald-500/10 text-emerald-600"
+                      ? "bg-success/10 text-success"
                       : change < 0
-                        ? "bg-red-500/10 text-red-600"
+                        ? "bg-destructive/10 text-destructive"
                         : "bg-muted text-muted-foreground"
                   }`}
                 >
@@ -133,16 +133,16 @@ export function OverviewTab({ overview }: OverviewTabProps) {
       value: formatCurrency(overview.totalMrr, overview.currency),
       change: overview.mrrChangePercent,
       icon: DollarSign,
-      gradient: "from-emerald-500 to-teal-600",
-      iconBg: "from-emerald-500 to-teal-600",
+      gradient: "from-success to-success/70",
+      iconBg: "from-success to-success/70",
       large: true,
     },
     {
       title: t("entitlements.analytics.kpi.arr"),
       value: formatCurrency(overview.totalArr, overview.currency),
       icon: TrendingUp,
-      gradient: "from-blue-500 to-indigo-600",
-      iconBg: "from-blue-500 to-indigo-600",
+      gradient: "from-info to-info/70",
+      iconBg: "from-info to-info/70",
       large: true,
     },
     {
@@ -153,15 +153,15 @@ export function OverviewTab({ overview }: OverviewTabProps) {
           ? t("entitlements.analytics.kpi.newCount", { count: String(overview.newSubscriptions) })
           : undefined,
       icon: Users,
-      gradient: "from-violet-500 to-purple-600",
-      iconBg: "from-violet-500 to-purple-600",
+      gradient: "from-primary to-primary/70",
+      iconBg: "from-primary to-primary/70",
     },
     {
       title: t("entitlements.analytics.kpi.arpu"),
       value: formatCurrency(overview.arpu, overview.currency),
       icon: BarChart3,
-      gradient: "from-amber-500 to-orange-600",
-      iconBg: "from-amber-500 to-orange-600",
+      gradient: "from-warning to-warning/70",
+      iconBg: "from-warning to-warning/70",
     },
     {
       title: t("entitlements.analytics.kpi.nrr"),
@@ -169,33 +169,33 @@ export function OverviewTab({ overview }: OverviewTabProps) {
       icon: RefreshCw,
       gradient:
         overview.netRevenueRetention >= 100
-          ? "from-emerald-500 to-green-600"
-          : "from-red-500 to-rose-600",
+          ? "from-success to-success/70"
+          : "from-destructive to-destructive/70",
       iconBg:
         overview.netRevenueRetention >= 100
-          ? "from-emerald-500 to-green-600"
-          : "from-red-500 to-rose-600",
+          ? "from-success to-success/70"
+          : "from-destructive to-destructive/70",
     },
     {
       title: t("entitlements.analytics.kpi.trialConversion"),
       value: `${overview.trialConversionRate.toFixed(1)}%`,
       icon: Percent,
-      gradient: "from-cyan-500 to-sky-600",
-      iconBg: "from-cyan-500 to-sky-600",
+      gradient: "from-info to-info/70",
+      iconBg: "from-info to-info/70",
     },
     {
       title: t("entitlements.analytics.kpi.churn"),
       value: overview.churnedSubscriptions.toLocaleString(),
       icon: TrendingDown,
-      gradient: "from-red-500 to-rose-600",
-      iconBg: "from-red-500 to-rose-600",
+      gradient: "from-destructive to-destructive/70",
+      iconBg: "from-destructive to-destructive/70",
     },
     {
       title: t("entitlements.analytics.kpi.revenue"),
       value: formatCurrency(overview.totalRevenue, overview.currency),
       icon: Activity,
-      gradient: "from-fuchsia-500 to-pink-600",
-      iconBg: "from-fuchsia-500 to-pink-600",
+      gradient: "from-primary to-primary/70",
+      iconBg: "from-primary to-primary/70",
     },
   ];
 

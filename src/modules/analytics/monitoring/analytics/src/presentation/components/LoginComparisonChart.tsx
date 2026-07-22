@@ -70,7 +70,7 @@ export const LoginComparisonChart = memo(function LoginComparisonChart({
     <Card className={cardClasses}>
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
-          <TrendingUp className="h-4 w-4 text-blue-500" aria-hidden="true" />
+          <TrendingUp className="h-4 w-4 text-info" aria-hidden="true" />
           <CardTitle className="text-base">{t("tenantAnalytics.comparison.title")}</CardTitle>
         </div>
         <CardDescription>{t("tenantAnalytics.comparison.description")}</CardDescription>

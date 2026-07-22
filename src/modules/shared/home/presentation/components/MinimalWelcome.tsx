@@ -19,8 +19,8 @@ export function MinimalWelcome() {
   return (
     <Card className="border-dashed">
       <CardHeader className="pb-2 text-center">
-        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/10">
-          <ShieldCheck className="h-6 w-6 text-emerald-500" />
+        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-success/10">
+          <ShieldCheck className="h-6 w-6 text-success" />
         </div>
         <CardTitle className="text-lg">{t("overview.minimal.title")}</CardTitle>
         <CardDescription>{t("overview.minimal.description")}</CardDescription>

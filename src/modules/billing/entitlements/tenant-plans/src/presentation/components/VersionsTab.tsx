@@ -189,7 +189,7 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
                 size="sm"
                 onClick={() => setIsPublishOpen(true)}
                 loading={isPublishing}
-                className="bg-green-600 text-white hover:bg-green-700"
+                className="bg-success text-success-foreground hover:bg-success/90"
               >
                 {!isPublishing && <Rocket className="me-1 h-4 w-4" />}
                 {t("entitlements.tenantPlans.publish") || "Publish New Version"}
@@ -229,14 +229,14 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Rocket className="h-4 w-4 text-green-600" />
+              <Rocket className="h-4 w-4 text-success" />
               {t("entitlements.tenantPlans.publish") || "Publish New Version"}
             </DialogTitle>
             <DialogDescription>
               {t("entitlements.tenantPlans.publishDesc") ||
                 "This will create an immutable snapshot of the current features and pricing."}
               {plan.hasActiveSubscribers && (
-                <span className="mt-1 block font-medium text-amber-600">
+                <span className="mt-1 block font-medium text-warning">
                   ⚠ {plan.activeSubscriberCount}{" "}
                   {t("entitlements.tenantPlans.subscribers") ||
                     "active subscriber(s) will be grandfathered to the current terms."}
@@ -288,7 +288,7 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
             <Button
               onClick={handlePublish}
               loading={isPublishing}
-              className="min-w-[120px] bg-green-600 text-white hover:bg-green-700"
+              className="min-w-[120px] bg-success text-success-foreground hover:bg-success/90"
             >
               {t("entitlements.tenantPlans.publish") || "Publish"}
             </Button>

@@ -196,7 +196,7 @@ export function TenantPlanComparisonView() {
                   className="rounded-full px-6 data-[state=on]:bg-background data-[state=on]:shadow-sm"
                 >
                   {t("entitlements.tenantPlans.allowYearly") || "Yearly"}
-                  <span className="ml-2 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-500">
+                  <span className="ml-2 rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-bold uppercase text-success">
                     Save ~20%
                   </span>
                 </ToggleGroupItem>
@@ -344,7 +344,7 @@ export function TenantPlanComparisonView() {
                         ) : plan.isContactSalesOnly ? (
                           <span className="text-sm text-muted-foreground">{priceAmount}</span>
                         ) : !plan.hasPrices ? (
-                          <span className="font-bold text-emerald-400">{priceAmount}</span>
+                          <span className="font-bold text-success">{priceAmount}</span>
                         ) : (
                           <span>
                             {priceAmount}

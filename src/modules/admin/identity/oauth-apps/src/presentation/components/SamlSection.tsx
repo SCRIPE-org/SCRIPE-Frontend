@@ -24,7 +24,7 @@ export function SamlSection({ form, updateField }: SamlSectionProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <ShieldCheck className="h-5 w-5 text-indigo-500" />
+          <ShieldCheck className="h-5 w-5 text-info" />
           {t("oauthApps.samlSection") || "SAML Configuration"}
         </CardTitle>
         <CardDescription>

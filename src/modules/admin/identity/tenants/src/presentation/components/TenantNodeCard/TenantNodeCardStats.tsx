@@ -29,28 +29,28 @@ export function TenantNodeCardStats({ stats, statsLoading, t }: TenantNodeCardSt
       label: t("tenant.statsAdmins"),
       value: stats?.adminsCount,
       icon: Users,
-      color: "text-blue-500",
+      color: "text-info",
     },
     {
       key: "roles",
       label: t("tenant.statsRoles"),
       value: stats?.rolesCount,
       icon: Shield,
-      color: "text-purple-500",
+      color: "text-primary",
     },
     {
       key: "children",
       label: t("tenant.statsSubTenants"),
       value: stats?.subTenantsCount,
       icon: Building2,
-      color: "text-emerald-500",
+      color: "text-success",
     },
     {
       key: "permissions",
       label: t("tenant.statsPermissions"),
       value: stats?.permissionsCount,
       icon: Key,
-      color: "text-amber-500",
+      color: "text-warning",
     },
   ];
 

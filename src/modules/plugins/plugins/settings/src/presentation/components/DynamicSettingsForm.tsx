@@ -158,7 +158,7 @@ export function DynamicSettingsForm({
       {/* Form footer */}
       <div className="flex items-center justify-between">
         {isDirty ? (
-          <Badge variant="outline" className="border-amber-400 text-xs text-amber-500">
+          <Badge variant="outline" className="border-warning text-xs text-warning">
             Unsaved changes
           </Badge>
         ) : (

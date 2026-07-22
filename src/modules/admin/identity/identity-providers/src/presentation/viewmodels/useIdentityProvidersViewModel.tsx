@@ -307,16 +307,15 @@ export function useIdentityProvidersViewModel() {
           const protocolConfig: Record<string, { label: string; className: string }> = {
             oidc: {
               label: "OIDC",
-              className: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+              className: "bg-info/10 text-info",
             },
             oauth2: {
               label: "OAuth2",
-              className:
-                "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400",
+              className: "bg-success/10 text-success",
             },
             saml: {
               label: "SAML",
-              className: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400",
+              className: "bg-warning/10 text-warning",
             },
           };
           const cfg = protocolConfig[item.protocol] ?? {
@@ -338,7 +337,7 @@ export function useIdentityProvidersViewModel() {
             {item.enabledForAdmins && (
               <Badge
                 variant="outline"
-                className="gap-1 border-violet-200 bg-violet-50 text-xs text-violet-700 dark:border-violet-800 dark:bg-violet-900/20 dark:text-violet-400"
+                className="gap-1 border-primary/30 bg-primary/10 text-xs text-primary"
               >
                 <Shield className="h-3 w-3" />
                 Admin
@@ -347,7 +346,7 @@ export function useIdentityProvidersViewModel() {
             {item.enabledForUsers && (
               <Badge
                 variant="outline"
-                className="gap-1 border-sky-200 bg-sky-50 text-xs text-sky-700 dark:border-sky-800 dark:bg-sky-900/20 dark:text-sky-400"
+                className="gap-1 border-info/30 bg-info/10 text-xs text-info"
               >
                 <Users className="h-3 w-3" />
                 User
@@ -367,8 +366,8 @@ export function useIdentityProvidersViewModel() {
             variant={item.isActive ? "default" : "secondary"}
             className={`text-xs ${
               item.isActive
-                ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
-                : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                ? "bg-success/10 text-success"
+                : "bg-muted text-muted-foreground"
             }`}
           >
             {item.isActive ? t("common.active") || "Active" : t("common.inactive") || "Inactive"}
@@ -426,7 +425,7 @@ export function useIdentityProvidersViewModel() {
         label: tFn("common.delete") || "Delete",
         onClick: (item: IdentityProviderListItem) => handleDeleteFn?.(item),
         variant: "ghost" as const,
-        className: "text-red-600 hover:text-red-700",
+        className: "text-destructive hover:text-destructive/90",
         icon: <Trash2 className="h-4 w-4" />,
         confirmTitle: tFn("identityProviders.deleteConfirmTitle") || "Delete Identity Provider",
         confirmDescription:

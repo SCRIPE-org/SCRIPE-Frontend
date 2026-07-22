@@ -132,8 +132,8 @@ export const PricingTab = memo(function PricingTab({
         <Card className="overflow-hidden">
           <CardHeader className="py-3">
             <div className="flex items-center gap-2">
-              <div className="rounded-lg bg-emerald-500/10 p-1.5">
-                <DollarSign className="h-4 w-4 text-emerald-500" />
+              <div className="rounded-lg bg-success/10 p-1.5">
+                <DollarSign className="h-4 w-4 text-success" />
               </div>
               <CardTitle className="text-sm font-medium">
                 {t("entitlements.pricing.basePricing")}
@@ -212,7 +212,7 @@ export const PricingTab = memo(function PricingTab({
                   usdSavings > 0 && (
                     <Badge
                       variant="outline"
-                      className="h-5 border-emerald-500/30 bg-emerald-500/5 px-1.5 py-0 text-[10px] text-emerald-600 dark:text-emerald-400"
+                      className="h-5 border-success/30 bg-success/5 px-1.5 py-0 text-[10px] text-success"
                     >
                       <TrendingDown className="me-0.5 h-2.5 w-2.5" />
                       {t("entitlements.pricing.save")} {usdSavings}%
@@ -250,7 +250,7 @@ export const PricingTab = memo(function PricingTab({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-6 px-2 text-[10px] text-emerald-600 hover:bg-emerald-500/10 hover:text-emerald-700"
+                      className="h-6 px-2 text-[10px] text-success hover:bg-success/10 hover:text-success/80"
                       onClick={vm.applyDiscountToYearly}
                     >
                       <Zap className="me-0.5 h-2.5 w-2.5" />
@@ -262,9 +262,9 @@ export const PricingTab = memo(function PricingTab({
             )}
 
             {/* Info banner */}
-            <div className="mt-2 flex items-start gap-2 rounded-lg border border-blue-500/10 bg-blue-500/5 p-2.5">
-              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-500" />
-              <p className="text-[11px] leading-relaxed text-blue-600 dark:text-blue-400">
+            <div className="mt-2 flex items-start gap-2 rounded-lg border border-info/10 bg-info/5 p-2.5">
+              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-info" />
+              <p className="text-[11px] leading-relaxed text-info">
                 {t("entitlements.pricing.autoConvertInfo")}
               </p>
             </div>
@@ -301,7 +301,7 @@ export const PricingTab = memo(function PricingTab({
               ) : (
                 <Badge
                   variant="outline"
-                  className="h-5 border-purple-500/30 bg-purple-500/5 px-1.5 py-0 text-[10px] text-purple-600 dark:text-purple-400"
+                  className="h-5 border-primary/30 bg-primary/5 px-1.5 py-0 text-[10px] text-primary"
                 >
                   {t("entitlements.pricing.oneTime")}
                 </Badge>
@@ -317,8 +317,8 @@ export const PricingTab = memo(function PricingTab({
           <CardHeader className="py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="rounded-lg bg-violet-500/10 p-1.5">
-                  <Globe className="h-4 w-4 text-violet-500" />
+                <div className="rounded-lg bg-primary/10 p-1.5">
+                  <Globe className="h-4 w-4 text-primary" />
                 </div>
                 <CardTitle className="text-sm font-medium">
                   {t("entitlements.pricing.currencyOverrides")}
@@ -434,7 +434,7 @@ export const PricingTab = memo(function PricingTab({
                           {savings > 0 && (
                             <Badge
                               variant="outline"
-                              className="h-5 shrink-0 border-emerald-500/30 bg-emerald-500/5 px-1.5 py-0 text-[10px] text-emerald-600 dark:text-emerald-400"
+                              className="h-5 shrink-0 border-success/30 bg-success/5 px-1.5 py-0 text-[10px] text-success"
                             >
                               <TrendingDown className="me-0.5 h-2.5 w-2.5" />
                               {savings}%
@@ -473,8 +473,8 @@ export const PricingTab = memo(function PricingTab({
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="rounded-lg bg-amber-500/10 p-1.5">
-                    <Coins className="h-4 w-4 text-amber-500" />
+                  <div className="rounded-lg bg-warning/10 p-1.5">
+                    <Coins className="h-4 w-4 text-warning" />
                   </div>
                   <CardTitle className="text-sm font-medium">
                     {t("entitlements.pricing.livePreview")}
@@ -526,7 +526,7 @@ export const PricingTab = memo(function PricingTab({
                             variant={row.source === "explicit" ? "default" : "outline"}
                             className={`h-4 px-1.5 py-0 text-[9px] ${
                               row.source === "auto"
-                                ? "border-blue-500/30 bg-blue-500/5 text-blue-600 dark:text-blue-400"
+                                ? "border-info/30 bg-info/5 text-info"
                                 : ""
                             }`}
                           >
@@ -552,7 +552,7 @@ export const PricingTab = memo(function PricingTab({
             <div className="mx-auto max-w-screen-xl px-4 py-3 sm:px-6">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex min-w-0 items-center gap-3">
-                  <div className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-amber-500" />
+                  <div className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-warning" />
                   <div className="min-w-0">
                     <p className="text-sm font-medium">
                       {t("entitlements.pricing.unsavedChanges")}
@@ -694,14 +694,14 @@ export const PricingTab = memo(function PricingTab({
       <Dialog open={showApplyDialog} onOpenChange={setShowApplyDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+            <DialogTitle className="flex items-center gap-2 text-warning">
               <Bolt className="h-5 w-5" />
               {t("entitlements.pricing.applyNowTitle")}
             </DialogTitle>
             <DialogDescription>{t("entitlements.pricing.applyNowDesc")}</DialogDescription>
           </DialogHeader>
-          <div className="flex items-center gap-2 rounded-md border border-amber-500/20 bg-amber-500/5 p-2.5 text-xs text-muted-foreground">
-            <Bolt className="h-3.5 w-3.5 shrink-0 text-amber-500" />
+          <div className="flex items-center gap-2 rounded-md border border-warning/20 bg-warning/5 p-2.5 text-xs text-muted-foreground">
+            <Bolt className="h-3.5 w-3.5 shrink-0 text-warning" />
             <span>{t("entitlements.pricing.applyWarning")}</span>
           </div>
           <DialogFooter>

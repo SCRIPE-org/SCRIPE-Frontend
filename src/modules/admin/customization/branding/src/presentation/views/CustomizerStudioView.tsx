@@ -296,7 +296,7 @@ export function CustomizerStudioView() {
     <div className="flex h-screen flex-col overflow-hidden bg-background">
       {/* System Defaults Banner */}
       {vm.mode === "system" && (
-        <div className="flex items-center gap-2 bg-violet-600 px-4 py-2 text-sm font-medium text-white">
+        <div className="flex items-center gap-2 bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">
           <Building2 className="h-4 w-4" />
           <span>
             {t("studio.systemDefaultsBanner") ||
@@ -307,7 +307,7 @@ export function CustomizerStudioView() {
 
       {/* Tenant Drilldown Banner */}
       {vm.mode === "tenant" && vm.targetTenantName && (
-        <div className="flex items-center gap-2 bg-cyan-600 px-4 py-2 text-sm font-medium text-white">
+        <div className="flex items-center gap-2 bg-info px-4 py-2 text-sm font-medium text-info-foreground">
           <Building2 className="h-4 w-4" />
           <span>
             {t("studio.customizingTenant") || "Customizing:"} {vm.targetTenantName}
@@ -342,7 +342,7 @@ export function CustomizerStudioView() {
 
       {/* Builder Mode Indicator */}
       {isBuilderMode && (
-        <div className="flex items-center gap-2 border-b border-primary/20 bg-gradient-to-r from-indigo-500/10 via-primary/5 to-indigo-500/10 px-4 py-1.5">
+        <div className="flex items-center gap-2 border-b border-primary/20 bg-gradient-to-r from-info/10 via-primary/5 to-info/10 px-4 py-1.5">
           <LayoutGrid className="h-3.5 w-3.5 text-primary" />
           <span className="text-xs font-medium text-primary">
             {t("studio.builder.modeActive") || "Builder Mode"} —{" "}

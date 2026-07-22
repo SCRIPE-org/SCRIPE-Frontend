@@ -157,7 +157,7 @@ export function EditionPricingCard({
               <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground">{cycleDescription}</span>
                 {selectedCycle === "Yearly" && savingsPercent > 0 && (
-                  <span className="bg-green-50 px-1.5 py-0.5 text-xs font-semibold text-green-700 dark:bg-green-950/30 dark:text-green-300">
+                  <span className="bg-success/10 px-1.5 py-0.5 text-xs font-semibold text-success">
                     {formatMessage(
                       t("entitlements.editions.comparison.savePercent") || "Save {percent}%",
                       { percent: savingsPercent }

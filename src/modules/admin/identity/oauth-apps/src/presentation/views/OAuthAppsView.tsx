@@ -62,7 +62,7 @@ export function OAuthAppsView() {
             </h1>
             <Badge
               variant="outline"
-              className="gap-1 border-purple-500/20 bg-purple-500/5 font-semibold text-purple-600 dark:text-purple-400"
+              className="gap-1 border-primary/20 bg-primary/5 font-semibold text-primary"
             >
               <ShieldCheck className="h-3.5 w-3.5" />
               OIDC Server
@@ -76,7 +76,7 @@ export function OAuthAppsView() {
 
         <Button
           onClick={handleCreate}
-          className="self-start bg-gradient-to-r from-purple-600 to-indigo-600 font-semibold text-white shadow hover:opacity-95 sm:self-center"
+          className="self-start bg-gradient-to-r from-primary to-info font-semibold text-primary-foreground shadow hover:opacity-95 sm:self-center"
         >
           <Plus className="me-1.5 h-4 w-4" />
           {t("oauthApps.createTitle") || "Register Application"}
@@ -106,15 +106,15 @@ export function OAuthAppsView() {
           ))}
         </div>
       ) : vm.error ? (
-        <Card className="border border-red-500/20 bg-red-500/5 p-6 text-center">
-          <p className="text-sm font-medium text-red-600">
+        <Card className="border border-destructive/20 bg-destructive/5 p-6 text-center">
+          <p className="text-sm font-medium text-destructive">
             {t("common.error") || "Error"}: {vm.error}
           </p>
         </Card>
       ) : vm.items.length === 0 ? (
         <Card className="flex flex-col items-center justify-center rounded-2xl border border-dashed bg-muted/5 p-12 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-purple-500/20 bg-purple-500/10 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
-            <AppWindow className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-primary/20 bg-primary/10 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
+            <AppWindow className="h-8 w-8 text-primary" />
           </div>
           <h3 className="text-lg font-bold tracking-tight text-foreground">
             {t("oauthApps.emptyTitle") || "No OAuth applications found"}
@@ -125,7 +125,7 @@ export function OAuthAppsView() {
           </p>
           <Button
             onClick={handleCreate}
-            className="mt-6 bg-gradient-to-r from-purple-600 to-indigo-600 font-semibold text-white shadow hover:opacity-95"
+            className="mt-6 bg-gradient-to-r from-primary to-info font-semibold text-primary-foreground shadow hover:opacity-95"
           >
             <Plus className="me-1.5 h-4 w-4" />
             {t("oauthApps.createTitle") || "Register Application"}

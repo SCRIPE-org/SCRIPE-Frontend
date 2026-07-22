@@ -247,7 +247,7 @@ export function CustomizePanel({
               {isHidden ? (
                 <EyeOff className="h-4 w-4 text-destructive" />
               ) : (
-                <Eye className="h-4 w-4 text-emerald-500" />
+                <Eye className="h-4 w-4 text-success" />
               )}
               <span className="text-sm">
                 {isHidden ? t("menus.itemHidden") || "Hidden" : t("menus.itemVisible") || "Visible"}

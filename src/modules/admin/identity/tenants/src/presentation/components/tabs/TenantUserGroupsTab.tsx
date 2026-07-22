@@ -84,7 +84,7 @@ export function TenantUserGroupsTab({ tenantId, tenantName }: TenantUserGroupsTa
                   ? (value: number) => (
                       <Badge
                         variant="outline"
-                        className="flex w-fit items-center gap-1 border-purple-200 bg-purple-500/10 text-purple-600"
+                        className="flex w-fit items-center gap-1 border-primary/30 bg-primary/10 text-primary"
                       >
                         <Shield className="h-3 w-3" />
                         {value}
@@ -131,7 +131,7 @@ export function TenantUserGroupsTab({ tenantId, tenantName }: TenantUserGroupsTa
         label: tFn("common.delete") || "Delete",
         onClick: (item: UserGroupListItem) => vm.triggerDelete([item.id]),
         variant: "ghost",
-        className: "text-red-600 hover:text-red-700",
+        className: "text-destructive hover:text-destructive/90",
         icon: <Trash2 className="h-4 w-4" />,
         requiredPermission: "user_groups.delete",
       },

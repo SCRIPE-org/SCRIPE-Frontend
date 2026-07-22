@@ -42,12 +42,12 @@ export function AnalyticsView() {
   return (
     <div className="space-y-5">
       {/* ── Page Header ── */}
-      <div className="relative overflow-hidden rounded-xl border border-border/40 bg-gradient-to-br from-card via-card to-emerald-500/[0.03] p-5 shadow-sm">
-        <div className="absolute -right-24 -top-24 h-48 w-48 rounded-full bg-emerald-500/[0.07] blur-3xl" />
-        <div className="absolute -bottom-16 -left-16 h-32 w-32 rounded-full bg-blue-500/[0.05] blur-2xl" />
+      <div className="relative overflow-hidden rounded-xl border border-border/40 bg-gradient-to-br from-card via-card to-success/[0.03] p-5 shadow-sm">
+        <div className="absolute -right-24 -top-24 h-48 w-48 rounded-full bg-success/[0.07] blur-3xl" />
+        <div className="absolute -bottom-16 -left-16 h-32 w-32 rounded-full bg-info/[0.05] blur-2xl" />
         <div className="relative flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/20">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-success to-success/70 text-success-foreground shadow-lg shadow-success/20">
               <BarChart3 className="h-5 w-5" />
             </div>
             <div>

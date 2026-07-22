@@ -57,9 +57,9 @@ export function useTenantHeaderViewModel({ tenant, onUpdate }: UseTenantHeaderVi
   const progressColor = (() => {
     if (daysLeft === null) return "bg-primary";
     if (daysLeft <= 0) return "bg-destructive";
-    if (daysLeft <= 7) return "bg-red-500";
-    if (daysLeft <= 30) return "bg-amber-500";
-    return "bg-emerald-500";
+    if (daysLeft <= 7) return "bg-destructive";
+    if (daysLeft <= 30) return "bg-warning";
+    return "bg-success";
   })();
 
   // Permissions

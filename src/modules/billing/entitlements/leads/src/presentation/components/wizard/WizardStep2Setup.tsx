@@ -55,7 +55,7 @@ export function WizardStep2Setup({
                 : edition.displayNameEn}
             </span>
             {edition.isContactSalesOnly && (
-              <span className="ml-2 text-xs text-amber-600 dark:text-amber-500">
+              <span className="ml-2 text-xs text-warning">
                 {t("leads.convertWizard.customPricingRequired")}
               </span>
             )}
@@ -135,7 +135,7 @@ export function WizardStep2Setup({
       <div className="space-y-3 rounded-xl border border-border bg-muted/30 px-4 py-3.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <BadgeDollarSign className="h-4 w-4 shrink-0 text-amber-500" />
+            <BadgeDollarSign className="h-4 w-4 shrink-0 text-warning" />
             <div>
               <p className="text-sm font-medium leading-none">
                 {t("leads.convertDialog.negotiatedPrice.toggle")}
@@ -148,7 +148,7 @@ export function WizardStep2Setup({
             </div>
           </div>
           {edition?.isContactSalesOnly ? (
-            <span className="rounded border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-amber-400">
+            <span className="rounded border border-warning/20 bg-warning/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-warning">
               {t("leads.convertWizard.required")}
             </span>
           ) : (
@@ -185,7 +185,7 @@ export function WizardStep2Setup({
               </div>
               {amountError && <p className="text-xs text-destructive">{amountError}</p>}
             </div>
-            <p className="flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400">
+            <p className="flex items-center gap-1.5 text-xs text-warning">
               <AlertCircle className="h-3.5 w-3.5 shrink-0" />
               {t("leads.convertDialog.negotiatedPrice.warning")}
             </p>

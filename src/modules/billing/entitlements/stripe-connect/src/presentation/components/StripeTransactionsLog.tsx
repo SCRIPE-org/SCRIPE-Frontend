@@ -35,13 +35,13 @@ const TXN_TYPE_OPTIONS = [
 
 const TXN_STATUS_STYLES: Record<string, string> = {
   Pending:
-    "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800",
+    "bg-warning/10 text-warning border-warning/30",
   Collected:
-    "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800",
+    "bg-success/10 text-success border-success/30",
   Refunded:
-    "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800",
+    "bg-destructive/10 text-destructive border-destructive/30",
   PartiallyRefunded:
-    "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 border-orange-200 dark:border-orange-800",
+    "bg-warning/10 text-warning border-warning/30",
 };
 
 interface StripeTransactionsLogProps {
@@ -108,25 +108,25 @@ export function StripeTransactionsLog({
       {summary && (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <KpiCard
-            icon={<ArrowUpRight className="h-4 w-4 text-emerald-500" />}
+            icon={<ArrowUpRight className="h-4 w-4 text-success" />}
             label={t("entitlements.tenantConnect.txn.grossRevenue") || "Gross Revenue"}
             value={formatCurrency(summary.totalGrossRevenue, summary.currency)}
             sublabel={`${summary.totalTransactions} ${t("entitlements.tenantConnect.transactions") || "transactions"}`}
           />
           <KpiCard
-            icon={<Zap className="h-4 w-4 text-violet-500" />}
+            icon={<Zap className="h-4 w-4 text-primary" />}
             label={t("entitlements.tenantConnect.txn.platformFees") || "Platform Fees"}
             value={formatCurrency(summary.totalPlatformFees, summary.currency)}
             sublabel={t("entitlements.tenantConnect.txn.deducted") || "deducted by platform"}
           />
           <KpiCard
-            icon={<Banknote className="h-4 w-4 text-blue-500" />}
+            icon={<Banknote className="h-4 w-4 text-info" />}
             label={t("entitlements.tenantConnect.txn.netRevenue") || "Net Revenue"}
             value={formatCurrency(summary.totalNetRevenue, summary.currency)}
             sublabel={t("entitlements.tenantConnect.txn.yourEarnings") || "your earnings"}
           />
           <KpiCard
-            icon={<ArrowDownLeft className="h-4 w-4 text-red-500" />}
+            icon={<ArrowDownLeft className="h-4 w-4 text-destructive" />}
             label={t("entitlements.tenantConnect.txn.refunded") || "Refunded"}
             value={formatCurrency(summary.totalRefunded, summary.currency)}
             sublabel={`${summary.refundCount} ${t("entitlements.tenantConnect.txn.refunds") || "refunds"}`}
@@ -257,9 +257,9 @@ export function StripeTransactionsLog({
                         <td className="px-4 py-3.5">
                           <div className="flex items-center gap-1.5">
                             {txn.type === "Payment" ? (
-                              <ArrowUpRight className="h-3.5 w-3.5 text-emerald-500" />
+                              <ArrowUpRight className="h-3.5 w-3.5 text-success" />
                             ) : (
-                              <ArrowDownLeft className="h-3.5 w-3.5 text-red-500" />
+                              <ArrowDownLeft className="h-3.5 w-3.5 text-destructive" />
                             )}
                             <span className="text-xs font-bold text-foreground/80">{txn.type}</span>
                           </div>
@@ -285,7 +285,7 @@ export function StripeTransactionsLog({
                         </td>
                         <td className="px-4 py-3.5 text-right text-xs font-semibold tabular-nums">
                           {txn.refundedAmount != null && txn.refundedAmount > 0 ? (
-                            <span className="font-bold text-red-600 dark:text-red-400">
+                            <span className="font-bold text-destructive">
                               −{formatCurrency(txn.refundedAmount, txn.currency)}
                             </span>
                           ) : (

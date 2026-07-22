@@ -746,6 +746,10 @@ export const ar = {
         industryDesc: "تخطيطات مخصصة لسير عمل متخصص",
       },
       options: {
+        scripe: {
+          name: "سكرايب",
+          description: "نظام تصميم SCRIPE — اللون يتبع مساحة عملك",
+        },
         nexus: {
           name: "نيكسوس",
           description: "شريط جانبي تقليدي مع منطقة محتوى",

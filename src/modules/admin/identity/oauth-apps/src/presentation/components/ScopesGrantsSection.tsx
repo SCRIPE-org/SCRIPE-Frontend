@@ -48,7 +48,7 @@ export function ScopesGrantsSection({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Tag className="h-5 w-5 text-purple-500" />
+          <Tag className="h-5 w-5 text-primary" />
           {t("oauthApps.scopesGrantsSection") || "Scopes & Grant Types"}
         </CardTitle>
         <CardDescription>
@@ -67,8 +67,8 @@ export function ScopesGrantsSection({
                 variant={currentScopes.includes(scope) ? "default" : "outline"}
                 className={`cursor-pointer text-xs transition-all ${
                   currentScopes.includes(scope)
-                    ? "bg-blue-600 text-white hover:bg-blue-700"
-                    : "hover:bg-blue-50 dark:hover:bg-blue-950/30"
+                    ? "bg-info text-info-foreground hover:bg-info/90"
+                    : "hover:bg-info/10"
                 }`}
                 onClick={() => toggleScope(scope)}
               >
@@ -98,8 +98,8 @@ export function ScopesGrantsSection({
                 variant={currentGrants.includes(grant) ? "default" : "outline"}
                 className={`cursor-pointer text-xs transition-all ${
                   currentGrants.includes(grant)
-                    ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                    : "hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+                    ? "bg-success text-success-foreground hover:bg-success/90"
+                    : "hover:bg-success/10"
                 }`}
                 onClick={() => toggleGrant(grant)}
               >

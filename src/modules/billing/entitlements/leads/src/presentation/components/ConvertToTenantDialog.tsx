@@ -75,8 +75,8 @@ export function ConvertToTenantWizard({
         {/* ── Header ── */}
         <DialogHeader className="shrink-0 border-b border-border px-6 pb-4 pt-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-950">
-              <Building2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-success/10">
+              <Building2 className="h-5 w-5 text-success" />
             </div>
             <div>
               <DialogTitle className="text-base font-semibold">
@@ -103,7 +103,7 @@ export function ConvertToTenantWizard({
                       className={[
                         "flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-semibold transition-all duration-200",
                         isDone
-                          ? "border-emerald-500 bg-emerald-500 text-white"
+                          ? "border-success bg-success text-success-foreground"
                           : isActive
                             ? "border-primary bg-primary text-primary-foreground"
                             : "border-border bg-background text-muted-foreground",
@@ -121,7 +121,7 @@ export function ConvertToTenantWizard({
                     <div
                       className={[
                         "mx-1 mb-4 h-0.5 w-12 flex-1 transition-all duration-300",
-                        vm.step > s.id ? "bg-emerald-500" : "bg-border",
+                        vm.step > s.id ? "bg-success" : "bg-border",
                       ].join(" ")}
                     />
                   )}
@@ -132,7 +132,7 @@ export function ConvertToTenantWizard({
 
           {/* Override count badge (Step 3) */}
           {vm.step === 3 && vm.overrideCount > 0 && (
-            <Badge variant="secondary" className="mt-2 w-fit text-amber-600">
+            <Badge variant="secondary" className="mt-2 w-fit text-warning">
               {t("leads.convertWizard.overrideCount", { count: vm.overrideCount })}
             </Badge>
           )}
@@ -217,7 +217,7 @@ export function ConvertToTenantWizard({
                 type="button"
                 onClick={vm.handleSubmit}
                 disabled={isConverting}
-                className="gap-2 bg-emerald-600 text-white hover:bg-emerald-700"
+                className="gap-2 bg-success text-success-foreground hover:bg-success/90"
               >
                 {isConverting ? (
                   <>

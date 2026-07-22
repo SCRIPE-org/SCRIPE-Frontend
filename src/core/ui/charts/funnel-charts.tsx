@@ -9,15 +9,13 @@ const FunnelChart = ({ data, colors, title, description }: any) => {
   const maxValue = Math.max(...data.map((item: any) => item.value));
 
   return (
-    <Card className="w-full border-slate-700 bg-gradient-to-br from-slate-900 to-slate-800 shadow-2xl">
+    <Card className="w-full border-border bg-gradient-to-br from-card to-muted shadow-2xl">
       <CardHeader className="pb-6">
-        <CardTitle className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-2xl font-bold text-transparent text-white">
-          {title}
-        </CardTitle>
-        <CardDescription className="text-base text-slate-300">{description}</CardDescription>
+        <CardTitle className="text-2xl font-bold text-foreground">{title}</CardTitle>
+        <CardDescription className="text-base text-muted-foreground">{description}</CardDescription>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 p-6 shadow-inner">
+        <div className="rounded-xl bg-gradient-to-br from-muted to-card p-6 shadow-inner">
           <div className="space-y-2">
             {data.map((item: any, index: number) => {
               const width = (item.value / maxValue) * 100;

@@ -106,7 +106,7 @@ export function BrandingPanel({ draft, updateDraft }: BrandingPanelProps) {
       ) : (
         /* Info note for non-split layouts */
         <div className="flex items-start gap-2 rounded-lg border border-border/50 bg-muted/30 p-3">
-          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-500" />
+          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-info" />
           <p className="text-[10px] leading-relaxed text-muted-foreground">
             {t("studio.branding.noPanelNote")}
           </p>

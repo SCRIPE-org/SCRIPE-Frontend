@@ -160,13 +160,22 @@ function RoutingProgressBarInner() {
       <div
         style={{
           height: "100%",
-          width: `${progress}%`,
-          // Vibrant violet-purple-indigo gradient that fits perfectly with B2B SaaS aesthetics
+          // Scaled rather than resized: this bar animates on every navigation,
+          // and width changes force layout on each frame while a transform is
+          // composited. transform-origin follows the reading direction so the
+          // bar fills from the side the user starts reading on.
+          width: "100%",
+          transform: `scaleX(${progress / 100})`,
+          transformOrigin: "var(--rpb-origin, left) center",
+          // Sweeps through the live workspace hue. This bar sits above every
+          // page, so a fixed violet made the one piece of global chrome the
+          // only thing on screen that ignored the tenant's palette.
           background:
-            "linear-gradient(90deg, oklch(0.6 0.18 290) 0%, oklch(0.55 0.18 275) 50%, oklch(0.65 0.18 310) 100%)",
-          // Premium glowing dropshadow effect
-          boxShadow: "0 1px 10px oklch(0.6 0.18 290 / 0.6), 0 0 4px oklch(0.6 0.18 290 / 0.4)",
-          transition: "width 200ms ease-out",
+            "linear-gradient(90deg, oklch(0.60 var(--workspace-chroma, 0.18) var(--workspace-hue, 262)) 0%, oklch(0.55 var(--workspace-chroma, 0.18) calc(var(--workspace-hue, 262) - 15)) 50%, oklch(0.66 var(--workspace-chroma, 0.18) calc(var(--workspace-hue, 262) + 20)) 100%)",
+          boxShadow:
+            "0 1px 10px oklch(0.60 var(--workspace-chroma, 0.18) var(--workspace-hue, 262) / 0.6), 0 0 4px oklch(0.60 var(--workspace-chroma, 0.18) var(--workspace-hue, 262) / 0.4)",
+          transition: "transform 200ms ease-out",
+          willChange: "transform",
         }}
       />
     </div>

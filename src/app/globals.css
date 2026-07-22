@@ -4113,3 +4113,11 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 .sx-shell *::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* Routing progress bar fills from the side the user starts reading on. */
+:root {
+  --rpb-origin: left;
+}
+[dir="rtl"] {
+  --rpb-origin: right;
+}

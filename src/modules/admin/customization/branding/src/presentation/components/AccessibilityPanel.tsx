@@ -127,10 +127,10 @@ const SEVERITY_CONFIG: Record<
   CheckSeverity,
   { icon: typeof CheckCircle2; className: string; bgClass: string }
 > = {
-  pass: { icon: CheckCircle2, className: "text-emerald-500", bgClass: "bg-emerald-500/10" },
-  warn: { icon: AlertTriangle, className: "text-amber-500", bgClass: "bg-amber-500/10" },
-  fail: { icon: XCircle, className: "text-red-500", bgClass: "bg-red-500/10" },
-  info: { icon: Info, className: "text-blue-500", bgClass: "bg-blue-500/10" },
+  pass: { icon: CheckCircle2, className: "text-success", bgClass: "bg-success/10" },
+  warn: { icon: AlertTriangle, className: "text-warning", bgClass: "bg-warning/10" },
+  fail: { icon: XCircle, className: "text-destructive", bgClass: "bg-destructive/10" },
+  info: { icon: Info, className: "text-info", bgClass: "bg-info/10" },
 };
 
 const CATEGORY_CONFIG: Record<
@@ -283,7 +283,7 @@ export function AccessibilityPanel({
     summary.total > 0 ? Math.round(((summary.pass + summary.info) / summary.total) * 100) : 100;
 
   const scoreColor =
-    summary.fail > 0 ? "text-red-500" : summary.warn > 0 ? "text-amber-500" : "text-emerald-500";
+    summary.fail > 0 ? "text-destructive" : summary.warn > 0 ? "text-warning" : "text-success";
 
   const handleAutoFix = (fix: Partial<StudioDraft>) => {
     batchUpdateDraft(fix);
@@ -440,7 +440,7 @@ export function AccessibilityPanel({
           <button
             key="reset"
             type="button"
-            className="col-span-2 flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/5 px-2.5 py-2 text-left transition-all hover:border-red-500/50 hover:bg-red-500/10 active:scale-[0.97]"
+            className="col-span-2 flex items-center gap-1.5 rounded-lg border border-destructive/30 bg-destructive/5 px-2.5 py-2 text-left transition-all hover:border-destructive/50 hover:bg-destructive/10 active:scale-[0.97]"
             onClick={() =>
               batchUpdateDraft({
                 a11yFocusRingEnabled: true,
@@ -479,7 +479,7 @@ export function AccessibilityPanel({
             }
           >
             <span className="text-sm">↩</span>
-            <span className="text-[10px] font-medium leading-tight text-red-500">
+            <span className="text-[10px] font-medium leading-tight text-destructive">
               {t("studio.a11y.profiles.resetAll")}
             </span>
           </button>

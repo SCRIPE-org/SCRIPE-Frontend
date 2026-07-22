@@ -85,7 +85,7 @@ function BillingCycleToggle({
             >
               {getLocalizedCycleName(cycle, t)}
               {cycle === "Yearly" && maxYearlySavings > 0 && (
-                <span className="bg-green-100 px-1.5 py-0.5 text-[10px] font-bold leading-none text-green-700 dark:bg-green-950/40 dark:text-green-300">
+                <span className="bg-success/10 px-1.5 py-0.5 text-[10px] font-bold leading-none text-success">
                   {formatComparisonMessage(
                     t("entitlements.editions.comparison.savePercent") || "Save {percent}%",
                     { percent: maxYearlySavings }
@@ -422,7 +422,7 @@ export function EditionComparisonView() {
                         {info?.isContactSales ? (
                           <span className="text-sm text-muted-foreground">Custom</span>
                         ) : info?.isFree || info?.price === 0 ? (
-                          <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                          <span className="font-bold text-success">
                             Free
                           </span>
                         ) : info?.price !== undefined ? (

@@ -127,8 +127,8 @@ export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
         {/* ─────── TOOLBAR ─────── */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="rounded-lg bg-emerald-500/10 p-1.5">
-              <DollarSign className="h-4 w-4 text-emerald-500" />
+            <div className="rounded-lg bg-success/10 p-1.5">
+              <DollarSign className="h-4 w-4 text-success" />
             </div>
             <h2 className="text-lg font-semibold">
               {t("entitlements.tenantPlans.tabPricing") || "Pricing"}
@@ -142,7 +142,7 @@ export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
             {hasChanges && (
               <Badge
                 variant="outline"
-                className="border-amber-500/30 bg-amber-500/5 text-xs text-amber-600"
+                className="border-warning/30 bg-warning/5 text-xs text-warning"
               >
                 {t("common.unsavedChanges") || "Unsaved Changes"}
               </Badge>
@@ -189,7 +189,7 @@ export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
               {usdSavings > 0 && (
                 <Badge
                   variant="outline"
-                  className="border-emerald-500/30 bg-emerald-500/5 text-[10px] text-emerald-600 dark:text-emerald-400"
+                  className="border-success/30 bg-success/5 text-[10px] text-success"
                 >
                   <TrendingDown className="me-0.5 h-2.5 w-2.5" />
                   {t("entitlements.tenantPlans.yearlySave") || "Save"} {usdSavings}%
@@ -199,9 +199,9 @@ export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Info Banner */}
-            <div className="flex items-start gap-2 rounded-lg border border-blue-500/10 bg-blue-500/5 p-2.5">
-              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-500" />
-              <p className="text-[11px] leading-relaxed text-blue-600 dark:text-blue-400">
+            <div className="flex items-start gap-2 rounded-lg border border-info/10 bg-info/5 p-2.5">
+              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-info" />
+              <p className="text-[11px] leading-relaxed text-info">
                 {t("entitlements.tenantPlans.basePricingInfo") ||
                   "USD is the anchor currency. All other currencies auto-calculate from exchange rates unless explicitly overridden."}
               </p>
@@ -281,10 +281,10 @@ export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
 
             {/* Yearly Discount Calculator */}
             {plan.allowMonthly && plan.allowYearly && usdMonthly > 0 && (
-              <div className="flex items-center gap-3 rounded-lg border border-emerald-500/10 bg-emerald-500/5 p-3">
-                <Percent className="h-4 w-4 shrink-0 text-emerald-600" />
+              <div className="flex items-center gap-3 rounded-lg border border-success/10 bg-success/5 p-3">
+                <Percent className="h-4 w-4 shrink-0 text-success" />
                 <div className="flex min-w-0 flex-1 items-center gap-2">
-                  <span className="whitespace-nowrap text-xs text-emerald-700 dark:text-emerald-400">
+                  <span className="whitespace-nowrap text-xs text-success">
                     {t("entitlements.tenantPlans.yearlyDiscount") || "Yearly Discount:"}
                   </span>
                   <Input
@@ -295,9 +295,9 @@ export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
                     min={0}
                     max={90}
                   />
-                  <span className="text-xs text-emerald-700 dark:text-emerald-400">%</span>
-                  <ArrowRight className="h-3 w-3 text-emerald-600" />
-                  <span className="text-xs font-semibold tabular-nums text-emerald-700 dark:text-emerald-400">
+                  <span className="text-xs text-success">%</span>
+                  <ArrowRight className="h-3 w-3 text-success" />
+                  <span className="text-xs font-semibold tabular-nums text-success">
                     ${suggestedYearly.toFixed(2)}/yr
                   </span>
                 </div>
@@ -305,7 +305,7 @@ export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
                   variant="outline"
                   size="sm"
                   onClick={applyDiscountToYearly}
-                  className="h-7 shrink-0 border-emerald-500/30 text-xs text-emerald-700 hover:bg-emerald-500/10"
+                  className="h-7 shrink-0 border-success/30 text-xs text-success hover:bg-success/10"
                 >
                   <Zap className="me-1 h-3 w-3" />
                   {t("entitlements.tenantPlans.applyDiscount") || "Apply"}
@@ -383,7 +383,7 @@ export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
                           {savings > 0 && (
                             <Badge
                               variant="outline"
-                              className="h-5 border-emerald-500/30 bg-emerald-500/5 px-1.5 py-0 text-[10px] text-emerald-600 dark:text-emerald-400"
+                              className="h-5 border-success/30 bg-success/5 px-1.5 py-0 text-[10px] text-success"
                             >
                               <TrendingDown className="me-0.5 h-2.5 w-2.5" />
                               {t("entitlements.tenantPlans.yearlySave") || "Save"} {savings}%
@@ -510,9 +510,9 @@ export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="mb-4 flex items-start gap-2 rounded-lg border border-violet-500/10 bg-violet-500/5 p-2.5">
-                <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-violet-500" />
-                <p className="text-[11px] leading-relaxed text-violet-600 dark:text-violet-400">
+              <div className="mb-4 flex items-start gap-2 rounded-lg border border-primary/10 bg-primary/5 p-2.5">
+                <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                <p className="text-[11px] leading-relaxed text-primary">
                   {t("entitlements.tenantPlans.previewInfo") ||
                     "This preview shows what your users would pay in each currency. 'Auto' prices are converted from USD via live exchange rates."}
                 </p>

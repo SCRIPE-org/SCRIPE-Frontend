@@ -139,7 +139,7 @@ export function HeroCard({ sub, vm, t }: HeroCardProps) {
               <Tag className="me-1 h-3 w-3" />
               {sub.appliedPromoCode}
               {sub.promotionDiscount != null && sub.promotionDiscount > 0 && (
-                <span className="ms-1 text-emerald-600">-{sub.promotionDiscount}%</span>
+                <span className="ms-1 text-success">-{sub.promotionDiscount}%</span>
               )}
             </Badge>
           )}

@@ -22,7 +22,7 @@ export function BrandingSection({ form, updateField }: BrandingSectionProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <ImageIcon className="h-5 w-5 text-pink-500" />
+          <ImageIcon className="h-5 w-5 text-primary" />
           {t("oauthApps.brandingSection") || "Branding"}
         </CardTitle>
         <CardDescription>

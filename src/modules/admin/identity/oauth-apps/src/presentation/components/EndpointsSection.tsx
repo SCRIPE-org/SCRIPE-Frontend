@@ -37,7 +37,7 @@ export function EndpointsSection({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Link2 className="h-5 w-5 text-emerald-500" />
+          <Link2 className="h-5 w-5 text-success" />
           {t("oauthApps.endpointsSection") || "Endpoints"}
         </CardTitle>
         <CardDescription>
@@ -48,7 +48,7 @@ export function EndpointsSection({
         {/* Redirect URIs */}
         <div className="space-y-2">
           <Label>
-            {t("oauthApps.redirectUris") || "Redirect URIs"} <span className="text-red-500">*</span>
+            {t("oauthApps.redirectUris") || "Redirect URIs"} <span className="text-destructive">*</span>
           </Label>
           <div className="space-y-2">
             {form.redirectUris.map((uri, index) => (
@@ -63,7 +63,7 @@ export function EndpointsSection({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 shrink-0 text-red-500 hover:text-red-600"
+                    className="h-8 w-8 shrink-0 text-destructive hover:text-destructive/90"
                     onClick={() => removeRedirectUri(index)}
                   >
                     <X className="h-4 w-4" />
@@ -93,7 +93,7 @@ export function EndpointsSection({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 shrink-0 text-red-500 hover:text-red-600"
+                  className="h-8 w-8 shrink-0 text-destructive hover:text-destructive/90"
                   onClick={() => removePostLogoutUri(index)}
                 >
                   <X className="h-4 w-4" />

@@ -152,7 +152,7 @@ export function InstalledPluginDetailView({ installationId }: InstalledPluginDet
               <dt className="mb-1 text-xs text-muted-foreground">{t("plugins.healthCheck")}</dt>
               <dd className="flex items-center gap-1 font-medium">
                 {installation.healthCheckPassing ? (
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  <CheckCircle2 className="h-4 w-4 text-success" />
                 ) : (
                   <XCircle className="h-4 w-4 text-destructive" />
                 )}

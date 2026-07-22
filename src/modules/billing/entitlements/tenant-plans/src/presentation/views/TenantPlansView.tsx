@@ -106,7 +106,7 @@ export function TenantPlansView() {
           key: "pricing",
           label: t("entitlements.tenantPlans.pricing") || "Starting Price",
           render: (_val: unknown, plan: TenantPlan) => (
-            <span className="text-sm font-medium tabular-nums text-emerald-600 dark:text-emerald-400">
+            <span className="text-sm font-medium tabular-nums text-success">
               {plan.formattedStartingPrice}
             </span>
           ),
@@ -200,7 +200,7 @@ export function TenantPlansView() {
           label: tFn("entitlements.tenantPlans.publish") || "Publish",
           onClick: (item: TenantPlan) => setConfirmAction({ type: "publish", plan: item }),
           variant: "ghost" as const,
-          className: "text-green-600 hover:text-green-700",
+          className: "text-success hover:text-success/80",
           icon: <Rocket className="h-4 w-4" />,
           show: (item: TenantPlan) => item.isDraft,
         },
@@ -208,7 +208,7 @@ export function TenantPlansView() {
           label: tFn("entitlements.tenantPlans.archive") || "Archive",
           onClick: (item: TenantPlan) => setConfirmAction({ type: "archive", plan: item }),
           variant: "ghost" as const,
-          className: "text-amber-600 hover:text-amber-700",
+          className: "text-warning hover:text-warning/80",
           icon: <Archive className="h-4 w-4" />,
           show: (item: TenantPlan) => item.isPublished,
         },
@@ -216,7 +216,7 @@ export function TenantPlansView() {
           label: tFn("common.delete") || "Delete",
           onClick: (item: TenantPlan) => handleDeleteFn?.(item),
           variant: "ghost" as const,
-          className: "text-red-600 hover:text-red-700",
+          className: "text-destructive hover:text-destructive/80",
           icon: <Trash2 className="h-4 w-4" />,
           show: (item: TenantPlan) => item.isDraft && !item.hasActiveSubscribers,
         },
@@ -237,12 +237,12 @@ export function TenantPlansView() {
             <DialogTitle className="flex items-center gap-2">
               {confirmAction?.type === "publish" ? (
                 <>
-                  <Rocket className="h-4 w-4 text-green-600" />{" "}
+                  <Rocket className="h-4 w-4 text-success" />{" "}
                   {t("entitlements.tenantPlans.publish") || "Publish"}
                 </>
               ) : (
                 <>
-                  <Archive className="h-4 w-4 text-amber-600" />{" "}
+                  <Archive className="h-4 w-4 text-warning" />{" "}
                   {t("entitlements.tenantPlans.archive") || "Archive"}
                 </>
               )}
@@ -267,8 +267,8 @@ export function TenantPlansView() {
               loading={vm.isPublishing || vm.isArchiving}
               className={
                 confirmAction?.type === "publish"
-                  ? "bg-green-600 text-white hover:bg-green-700"
-                  : "bg-amber-600 text-white hover:bg-amber-700"
+                  ? "bg-success text-success-foreground hover:bg-success/90"
+                  : "bg-warning text-warning-foreground hover:bg-warning/90"
               }
             >
               {confirmAction?.type === "publish"

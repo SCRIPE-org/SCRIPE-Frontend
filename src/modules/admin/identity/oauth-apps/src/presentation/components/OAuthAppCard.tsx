@@ -68,12 +68,12 @@ export function OAuthAppCard({
   const { t } = useI18n();
 
   return (
-    <Card className="group relative overflow-hidden border border-border/80 bg-card/45 backdrop-blur-md transition-all duration-300 hover:scale-[1.005] hover:border-purple-500/30 hover:shadow-[0_4px_20px_rgba(168,85,247,0.03)]">
+    <Card className="group relative overflow-hidden border border-border/80 bg-card/45 backdrop-blur-md transition-all duration-300 hover:scale-[1.005] hover:border-primary/30 hover:shadow-[0_4px_20px_rgba(168,85,247,0.03)]">
       <CardContent className="p-5">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
           {/* Left Side: Brand Logo, Name & Description */}
           <div className="flex flex-1 items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border bg-muted/40 p-2 transition-all group-hover:border-purple-500/20 group-hover:bg-purple-500/5">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border bg-muted/40 p-2 transition-all group-hover:border-primary/20 group-hover:bg-primary/5">
               {item.logoUri ? (
                 <Image
                   src={item.logoUri}
@@ -84,7 +84,7 @@ export function OAuthAppCard({
                   unoptimized // Bypasses Next.js domain restrictions for arbitrary external URLs
                 />
               ) : (
-                <AppWindow className="h-6 w-6 text-muted-foreground transition-colors group-hover:text-purple-500" />
+                <AppWindow className="h-6 w-6 text-muted-foreground transition-colors group-hover:text-primary" />
               )}
             </div>
             <div className="space-y-1">
@@ -101,7 +101,7 @@ export function OAuthAppCard({
                 {!item.isActive && (
                   <Badge
                     variant="secondary"
-                    className="bg-red-100 px-1.5 py-0 text-[10px] text-red-800 dark:bg-red-950/30 dark:text-red-400"
+                    className="bg-destructive/10 px-1.5 py-0 text-[10px] text-destructive"
                   >
                     Inactive
                   </Badge>
@@ -136,7 +136,7 @@ export function OAuthAppCard({
                 }}
               >
                 {copiedField === `clientId-${item.id}` ? (
-                  <Check className="h-3.5 w-3.5 text-emerald-500" />
+                  <Check className="h-3.5 w-3.5 text-success" />
                 ) : (
                   <Copy className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground" />
                 )}
@@ -151,8 +151,8 @@ export function OAuthAppCard({
                 variant="outline"
                 className={`px-1.5 py-0 text-[10px] ${
                   item.requirePkce
-                    ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-600 dark:text-emerald-400"
-                    : "border-gray-500/20 bg-gray-500/5 text-gray-500"
+                    ? "border-success/20 bg-success/5 text-success"
+                    : "border-border bg-muted/40 text-muted-foreground"
                 }`}
               >
                 PKCE: {item.requirePkce ? "Required" : "Optional"}
@@ -198,7 +198,7 @@ export function OAuthAppCard({
                     <AlertDialogCancel>{t("common.cancel") || "Cancel"}</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={() => onRegenerateSecret(item.id)}
-                      className="bg-purple-600 text-white hover:bg-purple-700"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90"
                     >
                       {t("oauthApps.regenerate") || "Regenerate"}
                     </AlertDialogAction>
@@ -212,7 +212,7 @@ export function OAuthAppCard({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/20"
+                  className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
                   title="Delete application"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -232,7 +232,7 @@ export function OAuthAppCard({
                   <AlertDialogCancel>{t("common.cancel") || "Cancel"}</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={() => onDelete(item.id)}
-                    className="bg-red-600 text-white hover:bg-red-700"
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   >
                     {t("common.delete") || "Delete"}
                   </AlertDialogAction>
@@ -243,7 +243,7 @@ export function OAuthAppCard({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-muted-foreground hover:bg-purple-500/5 hover:text-purple-600"
+              className="h-8 w-8 text-muted-foreground hover:bg-primary/5 hover:text-primary"
               onClick={() => onEdit(item.id)}
             >
               <ChevronRight className="h-5 w-5" />

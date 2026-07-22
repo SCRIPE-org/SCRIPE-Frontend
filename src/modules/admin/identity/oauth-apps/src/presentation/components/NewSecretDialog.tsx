@@ -41,7 +41,7 @@ export function NewSecretDialog({
       <DialogContent className="border border-border bg-card/90 backdrop-blur-xl sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 font-bold text-foreground">
-            <KeyRound className="h-5 w-5 text-purple-500" />
+            <KeyRound className="h-5 w-5 text-primary" />
             {t("oauthApps.newSecret") || "New Client Secret"}
           </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground">
@@ -66,7 +66,7 @@ export function NewSecretDialog({
                   onClick={() => copyToClipboard(generatedSecret.clientId, "dialog-clientId")}
                 >
                   {copiedField === "dialog-clientId" ? (
-                    <Check className="h-4 w-4 text-emerald-500" />
+                    <Check className="h-4 w-4 text-success" />
                   ) : (
                     <Copy className="h-4 w-4" />
                   )}
@@ -78,7 +78,7 @@ export function NewSecretDialog({
                 {t("oauthApps.clientSecret") || "Client Secret"}
               </label>
               <div className="mt-1 flex items-center gap-2">
-                <code className="flex-1 break-all rounded border border-purple-500/20 bg-purple-500/5 p-2.5 font-mono text-xs text-purple-700 dark:text-purple-400">
+                <code className="flex-1 break-all rounded border border-primary/20 bg-primary/5 p-2.5 font-mono text-xs text-primary">
                   {generatedSecret.secret}
                 </code>
                 <Button
@@ -88,7 +88,7 @@ export function NewSecretDialog({
                   onClick={() => copyToClipboard(generatedSecret.secret, "dialog-secret")}
                 >
                   {copiedField === "dialog-secret" ? (
-                    <Check className="h-4 w-4 text-emerald-500" />
+                    <Check className="h-4 w-4 text-success" />
                   ) : (
                     <Copy className="h-4 w-4" />
                   )}

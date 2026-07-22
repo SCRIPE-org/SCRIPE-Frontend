@@ -44,8 +44,8 @@ export function OAuthAppDetailView({ appId }: Props) {
     return (
       <div className="flex min-h-[450px] items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="relative flex h-12 w-12 items-center justify-center rounded-xl border border-purple-500/20 bg-purple-500/10 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
-            <Loader2 className="h-6 w-6 animate-spin text-purple-500" />
+          <div className="relative flex h-12 w-12 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
+            <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </div>
           <p className="text-xs text-muted-foreground">
             {t("common.loading") || "Loading details..."}
@@ -59,10 +59,10 @@ export function OAuthAppDetailView({ appId }: Props) {
   if (vm.fetchError) {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center gap-4">
-        <div className="rounded-full border border-red-500/20 bg-red-500/10 p-3 text-red-500">
+        <div className="rounded-full border border-destructive/20 bg-destructive/10 p-3 text-destructive">
           <AlertCircle className="h-8 w-8" />
         </div>
-        <p className="text-sm font-medium text-red-600">
+        <p className="text-sm font-medium text-destructive">
           {t("common.error") || "Error"}: {(vm.fetchError as Error).message}
         </p>
         <Button variant="outline" size="sm" onClick={vm.goBack}>
@@ -87,7 +87,7 @@ export function OAuthAppDetailView({ appId }: Props) {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-purple-500/20 bg-purple-500/5 p-1.5 shadow-[0_0_15px_rgba(168,85,247,0.03)]">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/5 p-1.5 shadow-[0_0_15px_rgba(168,85,247,0.03)]">
               {vm.form.logoUri ? (
                 <Image
                   src={vm.form.logoUri}
@@ -98,7 +98,7 @@ export function OAuthAppDetailView({ appId }: Props) {
                   unoptimized
                 />
               ) : (
-                <AppWindow className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                <AppWindow className="h-6 w-6 text-primary" />
               )}
             </div>
             <div>
@@ -124,7 +124,7 @@ export function OAuthAppDetailView({ appId }: Props) {
                   {!vm.form.isActive && (
                     <Badge
                       variant="secondary"
-                      className="bg-red-100 px-1.5 py-0 text-[10px] text-red-800 dark:bg-red-950/30 dark:text-red-400"
+                      className="bg-destructive/10 px-1.5 py-0 text-[10px] text-destructive"
                     >
                       Inactive
                     </Badge>
@@ -142,7 +142,7 @@ export function OAuthAppDetailView({ appId }: Props) {
               disabled={!vm.isDirty}
               loading={vm.isSaving}
               size="sm"
-              className="bg-gradient-to-r from-purple-600 to-indigo-600 font-semibold text-white shadow hover:opacity-95"
+              className="bg-gradient-to-r from-primary to-info font-semibold text-primary-foreground shadow hover:opacity-95"
             >
               {!vm.isSaving && <Save className="me-1.5 h-4 w-4" />}
               {t("common.save") || "Save Changes"}
@@ -153,8 +153,8 @@ export function OAuthAppDetailView({ appId }: Props) {
 
       {/* Dirty indicator */}
       {vm.isDirty && !vm.isCreateMode && (
-        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-600 duration-200 animate-in fade-in dark:border-amber-800/80 dark:bg-amber-950/20 dark:text-amber-400">
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />
+        <div className="flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-xs text-warning duration-200 animate-in fade-in">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-warning" />
           {t("common.unsavedChanges") ||
             "You have unsaved changes in your workspace. Remember to save."}
         </div>

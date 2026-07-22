@@ -23,29 +23,29 @@ export const ALL_STATUSES: LeadStatus[] = ["New", "Contacted", "Qualified", "Con
  */
 export const STATUS_STYLES: Record<LeadStatus, { badge: string; dot: string; ring: string }> = {
   New: {
-    badge: "bg-blue-500/15 text-blue-300 border-blue-500/30",
-    dot: "bg-blue-400",
-    ring: "ring-blue-500/30",
+    badge: "bg-info/15 text-info border-info/30",
+    dot: "bg-info",
+    ring: "ring-info/30",
   },
   Contacted: {
-    badge: "bg-amber-500/15 text-amber-300 border-amber-500/30",
-    dot: "bg-amber-400",
-    ring: "ring-amber-500/30",
+    badge: "bg-warning/15 text-warning border-warning/30",
+    dot: "bg-warning",
+    ring: "ring-warning/30",
   },
   Qualified: {
-    badge: "bg-violet-500/15 text-violet-300 border-violet-500/30",
-    dot: "bg-violet-400",
-    ring: "ring-violet-500/30",
+    badge: "bg-primary/15 text-primary border-primary/30",
+    dot: "bg-primary",
+    ring: "ring-primary/30",
   },
   Converted: {
-    badge: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-    dot: "bg-emerald-400",
-    ring: "ring-emerald-500/30",
+    badge: "bg-success/15 text-success border-success/30",
+    dot: "bg-success",
+    ring: "ring-success/30",
   },
   Closed: {
-    badge: "bg-zinc-500/15 text-zinc-400 border-zinc-500/30",
-    dot: "bg-zinc-500",
-    ring: "ring-zinc-500/30",
+    badge: "bg-muted-foreground/15 text-muted-foreground border-border/30",
+    dot: "bg-muted-foreground",
+    ring: "ring-border/30",
   },
 };
 
@@ -67,9 +67,9 @@ export function CopyButton({ value }: { value: string }) {
       }}
       variant="ghost"
       size="icon"
-      className="h-5 w-5 shrink-0 text-zinc-600 hover:text-zinc-300"
+      className="h-5 w-5 shrink-0 text-muted-foreground hover:text-foreground"
     >
-      {copied ? <CheckCheck className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
+      {copied ? <CheckCheck className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}
     </Button>
   );
 }
@@ -95,13 +95,13 @@ export function InfoRow({
 }) {
   return (
     <div className="flex items-start gap-3 py-1">
-      <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-zinc-500" />
+      <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
       <div className="min-w-0 flex-1">
-        <p className="mb-0.5 text-[10px] font-medium uppercase tracking-wider text-zinc-600">
+        <p className="mb-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
           {label}
         </p>
         <div className="flex items-center gap-1.5">
-          <span className={`truncate text-sm text-zinc-200 ${mono ? "font-mono" : ""}`}>
+          <span className={`truncate text-sm text-foreground ${mono ? "font-mono" : ""}`}>
             {value}
           </span>
           {copyable && <CopyButton value={copyable} />}
@@ -129,10 +129,10 @@ export function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`rounded-xl border p-4 ${accent ?? "border-zinc-800/50 bg-zinc-900/40"}`}>
+    <div className={`rounded-xl border p-4 ${accent ?? "border-border/50 bg-card/40"}`}>
       <div className="mb-3 flex items-center gap-2">
-        <Icon className="h-3.5 w-3.5 text-zinc-500" />
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+        <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
           {title}
         </span>
       </div>
@@ -151,10 +151,10 @@ export function SkeletonPanel() {
   return (
     <div className="animate-pulse space-y-4 p-6">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="space-y-2 rounded-xl border border-zinc-800/50 bg-zinc-900/40 p-4">
-          <div className="h-2.5 w-24 rounded-full bg-zinc-800" />
-          <div className="h-4 w-40 rounded-full bg-zinc-800" />
-          <div className="h-4 w-32 rounded-full bg-zinc-800" />
+        <div key={i} className="space-y-2 rounded-xl border border-border/50 bg-card/40 p-4">
+          <div className="h-2.5 w-24 rounded-full bg-muted" />
+          <div className="h-4 w-40 rounded-full bg-muted" />
+          <div className="h-4 w-32 rounded-full bg-muted" />
         </div>
       ))}
     </div>

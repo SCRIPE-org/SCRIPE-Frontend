@@ -37,7 +37,7 @@ export const BlockedIPsSection = memo(function BlockedIPsSection({
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Globe className="h-5 w-5 text-red-500" />
+          <Globe className="h-5 w-5 text-destructive" />
           <div>
             <CardTitle>{t("dashboard.blockedIPs.title")}</CardTitle>
             <CardDescription>{t("dashboard.blockedIPs.description")}</CardDescription>

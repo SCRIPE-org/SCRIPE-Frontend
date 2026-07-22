@@ -242,22 +242,22 @@ export function LeadDetailDrawer({
       >
         <SheetContent
           side="right"
-          className="flex w-full max-w-[700px] flex-col overflow-hidden border-s border-zinc-800 bg-zinc-950 p-0"
+          className="flex w-full max-w-[700px] flex-col overflow-hidden border-s border-border bg-background p-0"
         >
           <SheetTitle className="sr-only">{t("leads.drawer.title")}</SheetTitle>
           <SheetDescription className="sr-only">{t("leads.drawer.description")}</SheetDescription>
           {/* ── Sticky header ── */}
-          <div className="shrink-0 border-b border-zinc-800/60 bg-zinc-950/95 px-6 py-5 backdrop-blur-sm">
+          <div className="shrink-0 border-b border-border/60 bg-background/95 px-6 py-5 backdrop-blur-sm">
             {isLoading ? (
               <div className="animate-pulse space-y-2">
-                <div className="h-5 w-48 rounded-full bg-zinc-800" />
-                <div className="h-3.5 w-32 rounded-full bg-zinc-800" />
+                <div className="h-5 w-48 rounded-full bg-muted" />
+                <div className="h-3.5 w-32 rounded-full bg-muted" />
               </div>
             ) : lead ? (
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-3">
-                    <h2 className="truncate text-[17px] font-semibold leading-tight text-white">
+                    <h2 className="truncate text-[17px] font-semibold leading-tight text-foreground">
                       {lead.companyName}
                     </h2>
                     <span
@@ -269,15 +269,15 @@ export function LeadDetailDrawer({
                       {t(`leads.status.${lead.status}`)}
                     </span>
                   </div>
-                  <p className="mt-1 truncate text-sm text-zinc-400">{lead.contactName}</p>
+                  <p className="mt-1 truncate text-sm text-muted-foreground">{lead.contactName}</p>
                   <div className="mt-2 flex flex-wrap items-center gap-3">
                     {resolvedEditionName && (
-                      <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 px-2.5 py-0.5 text-[11px] font-medium text-violet-300">
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-[11px] font-medium text-primary">
                         🎯 {resolvedEditionName} {t("leads.panel.editionSuffix")}
                       </span>
                     )}
                     {lead.assignedAdminName && (
-                      <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-800/60 px-2.5 py-0.5 text-[11px] text-zinc-400">
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/60 px-2.5 py-0.5 text-[11px] text-muted-foreground">
                         <UserPlus className="h-3 w-3" />
                         {lead.assignedAdminName}
                       </span>
@@ -295,34 +295,34 @@ export function LeadDetailDrawer({
               onValueChange={(v) => setActiveTab(v as "info" | "activity" | "comms")}
               className="flex flex-1 flex-col overflow-hidden"
             >
-              <TabsList className="h-10 shrink-0 justify-start gap-0 rounded-none border-b border-zinc-800 bg-zinc-950 p-0 px-6">
+              <TabsList className="h-10 shrink-0 justify-start gap-0 rounded-none border-b border-border bg-background p-0 px-6">
                 <TabsTrigger
                   value="info"
-                  className="rounded-none border-b-2 border-transparent px-4 py-2 text-xs font-semibold text-zinc-400 data-[state=active]:border-indigo-500 data-[state=active]:bg-transparent data-[state=active]:text-white"
+                  className="rounded-none border-b-2 border-transparent px-4 py-2 text-xs font-semibold text-muted-foreground data-[state=active]:border-info data-[state=active]:bg-transparent data-[state=active]:text-foreground"
                 >
                   <Info className="mr-1.5 h-3.5 w-3.5" />
                   {t("leads.panel.tabs.info")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="activity"
-                  className="rounded-none border-b-2 border-transparent px-4 py-2 text-xs font-semibold text-zinc-400 data-[state=active]:border-indigo-500 data-[state=active]:bg-transparent data-[state=active]:text-white"
+                  className="rounded-none border-b-2 border-transparent px-4 py-2 text-xs font-semibold text-muted-foreground data-[state=active]:border-info data-[state=active]:bg-transparent data-[state=active]:text-foreground"
                 >
                   <Activity className="mr-1.5 h-3.5 w-3.5" />
                   {t("leads.panel.tabs.activity")}
                   {activity && activity.length > 0 && (
-                    <span className="ml-1.5 rounded-full bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-400">
+                    <span className="ml-1.5 rounded-full bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
                       {activity.length}
                     </span>
                   )}
                 </TabsTrigger>
                 <TabsTrigger
                   value="comms"
-                  className="rounded-none border-b-2 border-transparent px-4 py-2 text-xs font-semibold text-zinc-400 data-[state=active]:border-indigo-500 data-[state=active]:bg-transparent data-[state=active]:text-white"
+                  className="rounded-none border-b-2 border-transparent px-4 py-2 text-xs font-semibold text-muted-foreground data-[state=active]:border-info data-[state=active]:bg-transparent data-[state=active]:text-foreground"
                 >
                   <Send className="mr-1.5 h-3.5 w-3.5" />
                   {t("leads.panel.tabs.communications")}
                   {communicationLogs && communicationLogs.length > 0 && (
-                    <span className="ml-1.5 rounded-full bg-violet-900/60 px-1.5 py-0.5 text-[10px] text-violet-300">
+                    <span className="ml-1.5 rounded-full bg-primary/60 px-1.5 py-0.5 text-[10px] text-primary">
                       {communicationLogs.length}
                     </span>
                   )}
@@ -393,7 +393,7 @@ export function LeadDetailDrawer({
           {isLoading && <SkeletonPanel />}
 
           {!isLoading && !lead && (
-            <div className="flex flex-1 items-center justify-center text-sm text-zinc-500">
+            <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
               {t("leads.drawer.notFound")}
             </div>
           )}
@@ -402,17 +402,17 @@ export function LeadDetailDrawer({
 
       {/* ── Close lead confirmation ── */}
       <AlertDialog open={closeConfirmOpen} onOpenChange={setCloseConfirmOpen}>
-        <AlertDialogContent className="border-zinc-800 bg-zinc-950">
+        <AlertDialogContent className="border-border bg-background">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-white">
+            <AlertDialogTitle className="text-foreground">
               {t("leads.actions.closeConfirmTitle")}
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-zinc-400">
+            <AlertDialogDescription className="text-muted-foreground">
               {t("leads.actions.closeConfirmDesc")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="border-zinc-700 bg-transparent text-zinc-400 hover:bg-zinc-800">
+            <AlertDialogCancel className="border-border bg-transparent text-muted-foreground hover:bg-muted">
               {t("leads.actions.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
@@ -422,7 +422,7 @@ export function LeadDetailDrawer({
                   await onDelete!(lead.id);
                 }
               }}
-              className="bg-red-700 text-white hover:bg-red-600"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {t("leads.actions.closeConfirm")}
             </AlertDialogAction>

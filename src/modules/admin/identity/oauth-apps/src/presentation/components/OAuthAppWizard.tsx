@@ -84,7 +84,7 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
             {i > 0 && (
               <div
                 className={`mx-2 h-0.5 flex-1 ${
-                  currentStep >= s.id ? "bg-purple-600 dark:bg-purple-500" : "bg-muted"
+                  currentStep >= s.id ? "bg-primary" : "bg-muted"
                 }`}
               />
             )}
@@ -92,9 +92,9 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
               <div
                 className={`flex h-7 w-7 items-center justify-center rounded-full border font-mono transition-all duration-200 ${
                   currentStep === s.id
-                    ? "border-purple-600 bg-purple-600 text-white shadow-[0_0_10px_rgba(168,85,247,0.3)] dark:border-purple-500 dark:bg-purple-500"
+                    ? "border-primary bg-primary text-primary-foreground shadow-[0_0_10px_rgba(168,85,247,0.3)]"
                     : currentStep > s.id
-                      ? "border-purple-600/30 bg-purple-600/10 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400"
+                      ? "border-primary/30 bg-primary/10 text-primary"
                       : "border-transparent bg-muted text-muted-foreground"
                 }`}
               >
@@ -103,7 +103,7 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
               <span
                 className={
                   currentStep === s.id
-                    ? "font-bold text-purple-600 dark:text-purple-400"
+                    ? "font-bold text-primary"
                     : "font-normal text-muted-foreground"
                 }
               >
@@ -184,7 +184,7 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
             onClick={() => setCurrentStep((prev) => prev + 1)}
             disabled={currentStep === 2 && !vm.form.displayName.trim()}
             size="sm"
-            className="bg-purple-600 text-white hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600"
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
           >
             {t("common.next") || "Next"}
             <ArrowRight className="ms-1.5 h-4 w-4" />
@@ -195,7 +195,7 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
             loading={vm.isSaving}
             disabled={!vm.form.displayName.trim()}
             size="sm"
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 font-semibold text-white shadow hover:opacity-95"
+            className="bg-gradient-to-r from-primary to-info font-semibold text-primary-foreground shadow hover:opacity-95"
           >
             {!vm.isSaving && <Save className="me-1.5 h-4 w-4" />}
             {t("oauthApps.createButton") || "Create Application"}

@@ -61,9 +61,9 @@ export function CallbackUrlCard({ protocol, providerId }: Props) {
   const isSaml = protocol === "saml";
 
   return (
-    <Card className="border border-indigo-500/20 bg-indigo-500/5 shadow-sm dark:bg-indigo-950/10">
+    <Card className="border border-info/20 bg-info/5 shadow-sm">
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-1.5 text-sm font-semibold tracking-tight text-indigo-700 dark:text-indigo-400">
+        <CardTitle className="flex items-center gap-1.5 text-sm font-semibold tracking-tight text-info">
           <Link2 className="h-4.5 w-4.5" />
           {t("identityProviders.callbackUrlTitle") || "Redirect Settings"}
         </CardTitle>
@@ -94,7 +94,7 @@ export function CallbackUrlCard({ protocol, providerId }: Props) {
                 className="h-8 w-8 p-0"
               >
                 {copiedType === "standard" ? (
-                  <Check className="h-4 w-4 text-emerald-500" />
+                  <Check className="h-4 w-4 text-success" />
                 ) : (
                   <Copy className="h-4 w-4" />
                 )}
@@ -124,7 +124,7 @@ export function CallbackUrlCard({ protocol, providerId }: Props) {
                 className="h-8 w-8 p-0"
               >
                 {copiedType === "saml" ? (
-                  <Check className="h-4 w-4 text-emerald-500" />
+                  <Check className="h-4 w-4 text-success" />
                 ) : (
                   <Copy className="h-4 w-4" />
                 )}
@@ -134,7 +134,7 @@ export function CallbackUrlCard({ protocol, providerId }: Props) {
         )}
 
         <div className="flex items-start gap-1.5 text-[10px] text-muted-foreground">
-          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-indigo-500" />
+          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-info" />
           <p className="leading-relaxed">
             {t("identityProviders.callbackUrlHelp") ||
               "Most identity providers require this URL to exactly match. Make sure the protocol (http/https) matches your deployment environment."}

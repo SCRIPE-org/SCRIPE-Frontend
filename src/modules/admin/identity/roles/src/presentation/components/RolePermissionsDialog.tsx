@@ -418,7 +418,7 @@ function PermissionItem({ permission, vm }: PermissionItemProps) {
             {isChecked && hasCustomConfig && (
               <Badge
                 variant="outline"
-                className="h-4 border-blue-200 bg-blue-50 px-1 text-[10px] text-blue-700"
+                className="h-4 border-info/30 bg-info/10 px-1 text-[10px] text-info"
               >
                 Custom
               </Badge>

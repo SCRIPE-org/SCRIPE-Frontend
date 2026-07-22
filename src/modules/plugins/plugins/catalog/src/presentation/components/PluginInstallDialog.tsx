@@ -110,7 +110,7 @@ export function PluginInstallDialog({
 
         {!plugin.isTier2 && (
           <div className="flex items-start gap-2 rounded-lg border bg-muted/50 p-3">
-            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
             <p className="text-xs text-muted-foreground">{t("plugins.dialogTier1Warning")}</p>
           </div>
         )}

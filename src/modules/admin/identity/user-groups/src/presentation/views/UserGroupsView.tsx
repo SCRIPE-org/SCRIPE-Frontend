@@ -98,7 +98,7 @@ export function UserGroupsView() {
           label: t("userGroups.members") || "Members",
           render: (_val: unknown, item: UserGroupListItem) => (
             <div className="flex items-center gap-1.5">
-              <Users className="h-3.5 w-3.5 text-blue-500" />
+              <Users className="h-3.5 w-3.5 text-info" />
               <Badge variant="outline" className="text-xs">
                 {item.memberCount}
               </Badge>
@@ -110,7 +110,7 @@ export function UserGroupsView() {
           label: t("userGroups.roles") || "Roles",
           render: (_val: unknown, item: UserGroupListItem) => (
             <div className="flex items-center gap-1.5">
-              <Shield className="h-3.5 w-3.5 text-purple-500" />
+              <Shield className="h-3.5 w-3.5 text-primary" />
               <Badge variant="outline" className="text-xs">
                 {item.roleCount}
               </Badge>
@@ -163,7 +163,7 @@ export function UserGroupsView() {
           label: tFn("common.delete") || "Delete",
           onClick: (item: UserGroupListItem) => triggerDelete([item.id]),
           variant: "ghost" as const,
-          className: "text-red-600 hover:text-red-700",
+          className: "text-destructive hover:text-destructive/90",
           icon: <Trash2 className="h-4 w-4" />,
           requiredPermission: "user_groups.delete",
         },

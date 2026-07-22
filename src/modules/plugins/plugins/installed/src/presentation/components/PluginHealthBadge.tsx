@@ -19,7 +19,7 @@ export function PluginHealthBadge({ passing, lastCheckedAt, className }: PluginH
   const { t } = useI18n();
   const label = passing ? t("plugins.healthy") : t("plugins.unhealthy");
   const Icon = passing ? CheckCircle : XCircle;
-  const color = passing ? "text-green-500" : "text-destructive";
+  const color = passing ? "text-success" : "text-destructive";
 
   const lastChecked = lastCheckedAt
     ? t("plugins.lastChecked", { time: formatDateTimeUtc(lastCheckedAt.toISOString()) })

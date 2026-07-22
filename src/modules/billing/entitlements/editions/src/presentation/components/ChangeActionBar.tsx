@@ -67,7 +67,7 @@ export function ChangeActionBar({
             <div className="flex items-center justify-between gap-4">
               {/* Left: change indicator */}
               <div className="flex min-w-0 items-center gap-3">
-                <div className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-amber-500" />
+                <div className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-warning" />
                 <div className="min-w-0">
                   <p className="text-sm font-medium">{t("entitlements.editions.pendingChanges")}</p>
                   <p className="text-xs text-muted-foreground">
@@ -160,7 +160,7 @@ export function ChangeActionBar({
       <Dialog open={showDirectApplyDialog} onOpenChange={setShowDirectApplyDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+            <DialogTitle className="flex items-center gap-2 text-warning">
               <Bolt className="h-5 w-5" />
               {t("entitlements.editions.directApplyConfirmTitle")}
             </DialogTitle>
@@ -168,8 +168,8 @@ export function ChangeActionBar({
               {t("entitlements.editions.directApplyConfirmDesc")}
             </DialogDescription>
           </DialogHeader>
-          <div className="flex items-center gap-2 rounded-md border border-amber-500/20 bg-amber-500/5 p-2.5 text-xs text-muted-foreground">
-            <Bolt className="h-3.5 w-3.5 shrink-0 text-amber-500" />
+          <div className="flex items-center gap-2 rounded-md border border-warning/20 bg-warning/5 p-2.5 text-xs text-muted-foreground">
+            <Bolt className="h-3.5 w-3.5 shrink-0 text-warning" />
             <span>{t("entitlements.editions.pendingChangesCount", { count: modifiedCount })}</span>
           </div>
           <DialogFooter>

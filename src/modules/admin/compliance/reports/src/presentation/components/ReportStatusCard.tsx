@@ -33,18 +33,18 @@ import type { ExportFormat } from "../viewmodels/useReportDetailViewModel";
 const STATUS_META: Record<string, { labelKey: string; icon: React.ReactNode; cls: string }> = {
   Ready: {
     labelKey: "compliance.status.ready",
-    icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />,
-    cls: "bg-emerald-500",
+    icon: <CheckCircle2 className="h-4 w-4 text-success" />,
+    cls: "bg-success",
   },
   Pending: {
     labelKey: "compliance.status.pending",
-    icon: <Clock className="h-4 w-4 text-amber-500" />,
-    cls: "bg-amber-500",
+    icon: <Clock className="h-4 w-4 text-warning" />,
+    cls: "bg-warning",
   },
   Generating: {
     labelKey: "compliance.status.generating",
-    icon: <Loader2 className="h-4 w-4 animate-spin text-blue-500" />,
-    cls: "bg-blue-500",
+    icon: <Loader2 className="h-4 w-4 animate-spin text-info" />,
+    cls: "bg-info",
   },
   Failed: {
     labelKey: "compliance.status.failed",
@@ -118,11 +118,11 @@ export function ReportStatusCard({
     FORMAT_OPTIONS.find((f) => f.value === downloadFormat) ?? FORMAT_OPTIONS[0];
 
   const cardBorderClass = report.isReady
-    ? "border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-green-500/5"
+    ? "border-success/20 bg-gradient-to-br from-success/5 to-success/5"
     : "border-border/50";
 
   const iconWrapperClass = report.isReady
-    ? "border-emerald-500/30 bg-emerald-500/10"
+    ? "border-success/30 bg-success/10"
     : "border-border/50 bg-muted/50";
 
   return (
@@ -190,7 +190,7 @@ export function ReportStatusCard({
                       <div
                         className={`flex h-8 w-8 items-center justify-center rounded-lg border ${
                           downloadFormat === opt.value
-                            ? "border-indigo-500/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                            ? "border-info/30 bg-info/10 text-info"
                             : "border-border/50 bg-muted/30 text-muted-foreground"
                         }`}
                       >
@@ -201,7 +201,7 @@ export function ReportStatusCard({
                         <span className="text-xs text-muted-foreground">{t(opt.descKey)}</span>
                       </div>
                       {downloadFormat === opt.value && (
-                        <CheckCircle2 className="ms-auto h-4 w-4 text-indigo-500" />
+                        <CheckCircle2 className="ms-auto h-4 w-4 text-info" />
                       )}
                     </DropdownMenuItem>
                   ))}

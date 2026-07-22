@@ -33,20 +33,20 @@ export function ProtocolSelectionSection({ protocol, onChange }: ProtocolSelecti
           onClick={() => onChange("oidc")}
           className={`group relative cursor-pointer rounded-xl border p-5 transition-all duration-200 hover:shadow-md ${
             protocol === "oidc"
-              ? "border-purple-500 bg-purple-500/5 shadow-[0_0_15px_rgba(168,85,247,0.08)] dark:bg-purple-950/10"
-              : "border-border bg-card hover:border-purple-500/40"
+              ? "border-primary bg-primary/5 shadow-[0_0_15px_rgba(168,85,247,0.08)]"
+              : "border-border bg-card hover:border-primary/40"
           }`}
         >
           {protocol === "oidc" && (
-            <div className="scale-in absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-purple-600 text-white duration-200 animate-in">
+            <div className="scale-in absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground duration-200 animate-in">
               <Check className="h-3.5 w-3.5 stroke-[3]" />
             </div>
           )}
           <div
             className={`mb-3.5 w-fit rounded-lg p-2.5 ${
               protocol === "oidc"
-                ? "bg-purple-500/20 text-purple-600 dark:text-purple-400"
-                : "bg-muted text-muted-foreground transition-colors group-hover:bg-purple-500/10 group-hover:text-purple-500"
+                ? "bg-primary/20 text-primary"
+                : "bg-muted text-muted-foreground transition-colors group-hover:bg-primary/10 group-hover:text-primary"
             }`}
           >
             <Globe className="h-6 w-6" />
@@ -63,20 +63,20 @@ export function ProtocolSelectionSection({ protocol, onChange }: ProtocolSelecti
           onClick={() => onChange("saml")}
           className={`group relative cursor-pointer rounded-xl border p-5 transition-all duration-200 hover:shadow-md ${
             protocol === "saml"
-              ? "border-indigo-500 bg-indigo-500/5 shadow-[0_0_15px_rgba(99,102,241,0.08)] dark:bg-indigo-950/10"
-              : "border-border bg-card hover:border-indigo-500/40"
+              ? "border-info bg-info/5 shadow-[0_0_15px_rgba(99,102,241,0.08)]"
+              : "border-border bg-card hover:border-info/40"
           }`}
         >
           {protocol === "saml" && (
-            <div className="scale-in absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-white duration-200 animate-in">
+            <div className="scale-in absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-info text-info-foreground duration-200 animate-in">
               <Check className="h-3.5 w-3.5 stroke-[3]" />
             </div>
           )}
           <div
             className={`mb-3.5 w-fit rounded-lg p-2.5 ${
               protocol === "saml"
-                ? "bg-indigo-500/20 text-indigo-600 dark:text-indigo-400"
-                : "bg-muted text-muted-foreground transition-colors group-hover:bg-indigo-500/10 group-hover:text-indigo-500"
+                ? "bg-info/20 text-info"
+                : "bg-muted text-muted-foreground transition-colors group-hover:bg-info/10 group-hover:text-info"
             }`}
           >
             <Lock className="h-6 w-6" />

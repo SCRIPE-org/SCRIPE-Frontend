@@ -18,7 +18,7 @@ export function BooleanIndicator({ value }: BooleanIndicatorProps) {
     <span title={label}>
       <span className="sr-only">{label}</span>
       {value ? (
-        <Check aria-hidden="true" className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+        <Check aria-hidden="true" className="h-4 w-4 text-success" />
       ) : (
         <X aria-hidden="true" className="h-4 w-4 text-muted-foreground/60" />
       )}

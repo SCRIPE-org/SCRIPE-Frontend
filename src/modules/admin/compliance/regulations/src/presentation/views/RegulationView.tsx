@@ -105,8 +105,8 @@ export function RegulationView() {
             <BackIcon className="h-4 w-4" />
           </Button>
           <div className="flex items-center gap-3">
-            <div className="rounded-xl border border-indigo-500/20 bg-gradient-to-br from-indigo-500/15 to-blue-500/10 p-2.5 shadow-sm">
-              <BookOpen className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+            <div className="rounded-xl border border-info/20 bg-gradient-to-br from-info/15 to-info/10 p-2.5 shadow-sm">
+              <BookOpen className="h-5 w-5 text-info" />
             </div>
             <div>
               <h2 className="text-2xl font-bold tracking-tight">

@@ -78,8 +78,8 @@ export function PayoutsCard({ payouts, payoutsLink }: PayoutsCardProps) {
                   className="flex items-center justify-between rounded-lg bg-muted/30 p-3 transition-colors hover:bg-muted/50"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="rounded-lg bg-violet-500/10 p-1.5">
-                      <Landmark className="h-3.5 w-3.5 text-violet-500" />
+                    <div className="rounded-lg bg-primary/10 p-1.5">
+                      <Landmark className="h-3.5 w-3.5 text-primary" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">

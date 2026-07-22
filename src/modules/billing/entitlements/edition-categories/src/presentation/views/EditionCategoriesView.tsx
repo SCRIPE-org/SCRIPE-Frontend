@@ -121,7 +121,7 @@ export function EditionCategoriesView() {
           label: tFn("common.delete") || "Delete",
           onClick: (item: EditionCategory) => handleDeleteFn?.(item),
           variant: "ghost" as const,
-          className: "text-red-600 hover:text-red-700",
+          className: "text-destructive hover:text-destructive/80",
           icon: <Trash2 className="h-4 w-4" />,
         },
       ],

@@ -33,11 +33,11 @@ interface VersionsTabProps {
 
 // Status badge color mapping
 const STATUS_COLORS: Record<string, string> = {
-  Draft: "bg-slate-500/10 text-slate-600 border-slate-500/30",
-  Pending: "bg-amber-500/10 text-amber-600 border-amber-500/30",
-  Rolling: "bg-blue-500/10 text-blue-600 border-blue-500/30",
-  Completed: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
-  Canceled: "bg-red-500/10 text-red-600 border-red-500/30",
+  Draft: "bg-muted-foreground/10 text-muted-foreground border-border/30",
+  Pending: "bg-warning/10 text-warning border-warning/30",
+  Rolling: "bg-info/10 text-info border-info/30",
+  Completed: "bg-success/10 text-success border-success/30",
+  Canceled: "bg-destructive/10 text-destructive border-destructive/30",
 };
 
 const STATUS_ICONS: Record<string, React.ReactNode> = {
@@ -231,7 +231,7 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                     <div className="flex gap-2">
                       <Button
                         size="sm"
-                        className="h-8 gap-1 bg-emerald-600 text-xs text-white opacity-90 hover:bg-emerald-700 hover:opacity-100"
+                        className="h-8 gap-1 bg-success text-xs text-success-foreground opacity-90 hover:bg-success/90 hover:opacity-100"
                         onClick={() => vm.publishMutation.mutate(v.id)}
                         disabled={!vm.canPublish}
                         loading={vm.publishMutation.isPending}

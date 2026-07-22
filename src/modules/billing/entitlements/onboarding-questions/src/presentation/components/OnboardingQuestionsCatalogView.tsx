@@ -69,7 +69,7 @@ export function OnboardingQuestionsCatalogView({
           label: t("entitlements.onboarding.questions.isSystem") || "System",
           render: (value: unknown) =>
             value ? (
-              <Badge variant="outline" className="border-purple-500 text-purple-600">
+              <Badge variant="outline" className="border-primary text-primary">
                 System
               </Badge>
             ) : null,
@@ -150,7 +150,7 @@ export function OnboardingQuestionsCatalogView({
         <button
           onClick={() => setOptionsTarget({ id: item.id, label: item.getLabel(language) })}
           title="Edit answer options"
-          className="rounded p-1.5 text-violet-400/70 transition-colors hover:bg-violet-500/10 hover:text-violet-300"
+          className="rounded p-1.5 text-primary/70 transition-colors hover:bg-primary/10 hover:text-primary"
         >
           <SlidersHorizontal className="h-3.5 w-3.5" />
         </button>

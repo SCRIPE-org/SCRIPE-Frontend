@@ -3,10 +3,10 @@
 // ── SLA Progress Bar ──────────────────────────────────────────────────────────
 
 const SLA_BG: Record<string, string> = {
-  green: "bg-emerald-500",
-  yellow: "bg-amber-500",
-  orange: "bg-orange-500",
-  red: "bg-red-500",
+  green: "bg-success",
+  yellow: "bg-warning",
+  orange: "bg-warning",
+  red: "bg-destructive",
 };
 
 interface DsrSlaCellProps {

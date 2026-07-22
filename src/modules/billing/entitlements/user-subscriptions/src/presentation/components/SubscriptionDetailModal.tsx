@@ -152,13 +152,13 @@ export function SubscriptionDetailModal({
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             {sub.isAutoRenew && (
-              <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+              <div className="flex items-center gap-1 text-success">
                 <RefreshCw className="h-3.5 w-3.5" />
                 <span>{t("entitlements.userSubscriptions.autoRenew")}</span>
               </div>
             )}
             {sub.isExpiringSoon && (
-              <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
+              <div className="flex items-center gap-1 text-warning">
                 <AlertTriangle className="h-3.5 w-3.5" />
                 <span>{sub.daysRemaining}d</span>
               </div>
@@ -240,7 +240,7 @@ export function SubscriptionDetailModal({
                   ? formatDate(sub.expiresAt)
                   : t("entitlements.userSubscriptions.detailLifetime")
               }
-              valueColor={sub.isExpiringSoon ? "text-amber-600 dark:text-amber-400" : undefined}
+              valueColor={sub.isExpiringSoon ? "text-warning" : undefined}
             />
             {sub.trialEndsAt && (
               <InfoRow
@@ -254,7 +254,7 @@ export function SubscriptionDetailModal({
                 icon={XCircle}
                 label={t("entitlements.userSubscriptions.detailCancelledAt")}
                 value={formatDateTime(sub.cancelledAt)}
-                valueColor="text-red-600 dark:text-red-400"
+                valueColor="text-destructive"
               />
             )}
             {sub.gracePeriodEndsAt && (
@@ -262,7 +262,7 @@ export function SubscriptionDetailModal({
                 icon={AlertTriangle}
                 label={t("entitlements.userSubscriptions.detailGracePeriod")}
                 value={formatDate(sub.gracePeriodEndsAt)}
-                valueColor="text-amber-600 dark:text-amber-400"
+                valueColor="text-warning"
               />
             )}
             <InfoRow
@@ -341,7 +341,7 @@ export function SubscriptionDetailModal({
                   icon={Percent}
                   label={t("entitlements.userSubscriptions.detailDiscountAmount")}
                   value={
-                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                    <span className="font-semibold text-success">
                       -{sub.formattedDiscount}
                     </span>
                   }

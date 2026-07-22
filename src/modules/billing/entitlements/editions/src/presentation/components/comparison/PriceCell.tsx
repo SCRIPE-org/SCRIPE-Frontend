@@ -33,7 +33,7 @@ export function PriceCell({ price, freeLabel, isRecommended }: PriceCellProps) {
         isRecommended && "border-x-2 border-primary/20 bg-primary/5"
       )}
     >
-      <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{formatted}</span>
+      <span className="text-lg font-bold text-success">{formatted}</span>
       {price ? <span className="block text-xs text-muted-foreground">/mo</span> : null}
     </TableCell>
   );

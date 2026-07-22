@@ -48,31 +48,31 @@ const statusConfig: Record<
     color: string;
   }
 > = {
-  Active: { label: "Active", variant: "default", icon: CheckCircle2, color: "text-emerald-500" },
-  Trialing: { label: "Trial", variant: "secondary", icon: Clock, color: "text-amber-500" },
+  Active: { label: "Active", variant: "default", icon: CheckCircle2, color: "text-success" },
+  Trialing: { label: "Trial", variant: "secondary", icon: Clock, color: "text-warning" },
   PendingPayment: {
     label: "Pending Payment",
     variant: "outline",
     icon: AlertCircle,
-    color: "text-yellow-500",
+    color: "text-warning",
   },
-  Suspended: { label: "Suspended", variant: "destructive", icon: XCircle, color: "text-red-500" },
-  Canceled: { label: "Canceled", variant: "destructive", icon: XCircle, color: "text-red-400" },
-  Expired: { label: "Expired", variant: "outline", icon: Clock, color: "text-gray-400" },
+  Suspended: { label: "Suspended", variant: "destructive", icon: XCircle, color: "text-destructive" },
+  Canceled: { label: "Canceled", variant: "destructive", icon: XCircle, color: "text-destructive" },
+  Expired: { label: "Expired", variant: "outline", icon: Clock, color: "text-muted-foreground" },
   PastDue: {
     label: "Past Due",
     variant: "destructive",
     icon: AlertCircle,
-    color: "text-orange-500",
+    color: "text-warning",
   },
 };
 
 // ── Type badge config ──
 const typeConfig: Record<string, { label: string; icon: React.ElementType; gradient: string }> = {
-  Lifetime: { label: "Lifetime", icon: Crown, gradient: "from-amber-500 to-yellow-600" },
-  Monthly: { label: "Monthly", icon: Calendar, gradient: "from-blue-500 to-indigo-600" },
-  Yearly: { label: "Yearly", icon: TrendingUp, gradient: "from-violet-500 to-purple-600" },
-  Trial: { label: "Free Trial", icon: Zap, gradient: "from-emerald-500 to-teal-600" },
+  Lifetime: { label: "Lifetime", icon: Crown, gradient: "from-warning to-warning/70" },
+  Monthly: { label: "Monthly", icon: Calendar, gradient: "from-info to-info/70" },
+  Yearly: { label: "Yearly", icon: TrendingUp, gradient: "from-primary to-primary/70" },
+  Trial: { label: "Free Trial", icon: Zap, gradient: "from-success to-success/70" },
 };
 
 function formatDate(dateStr?: string, language?: string): string {
@@ -124,7 +124,7 @@ export function MySubscriptionView() {
     return (
       <div className="mx-auto flex max-w-md flex-col items-center justify-center gap-6 py-20 text-center">
         <div className="relative">
-          <div className="absolute inset-0 animate-pulse rounded-full bg-gradient-to-r from-violet-500/20 to-pink-500/20 blur-2xl" />
+          <div className="absolute inset-0 animate-pulse rounded-full bg-gradient-to-r from-primary/20 to-primary/20 blur-2xl" />
           <div className="relative rounded-full border border-border/50 bg-gradient-to-br from-muted/50 to-muted p-6">
             <Crown className="h-12 w-12 text-muted-foreground" />
           </div>
@@ -244,7 +244,7 @@ export function MySubscriptionView() {
               <span className="text-sm text-muted-foreground">
                 {t("entitlements.mySubscription.totalAmount") || "Total Amount"}
               </span>
-              <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+              <span className="text-xl font-bold text-success">
                 {formatCurrency(sub.totalAmount, sub.currency)}
               </span>
             </div>

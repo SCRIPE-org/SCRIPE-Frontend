@@ -38,15 +38,13 @@ const TimelineChart = ({ data, colors, title, description }: any) => {
   };
 
   return (
-    <Card className="hover:shadow-3xl w-full border-slate-700 bg-gradient-to-br from-slate-900 to-slate-800 shadow-2xl transition-all duration-300">
+    <Card className="hover:shadow-3xl w-full border-border bg-gradient-to-br from-card to-muted shadow-2xl transition-all duration-300">
       <CardHeader className="pb-6">
-        <CardTitle className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-2xl font-bold text-transparent text-white">
-          {title}
-        </CardTitle>
-        <CardDescription className="text-base text-slate-300">{description}</CardDescription>
-        <div className="mt-4 flex items-center gap-4 text-sm text-slate-400">
+        <CardTitle className="text-2xl font-bold text-foreground">{title}</CardTitle>
+        <CardDescription className="text-base text-muted-foreground">{description}</CardDescription>
+        <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-full bg-green-500"></div>
+            <div className="h-3 w-3 rounded-full bg-success"></div>
             <span>
               Completed:{" "}
               {
@@ -58,7 +56,7 @@ const TimelineChart = ({ data, colors, title, description }: any) => {
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
+            <div className="h-3 w-3 rounded-full bg-warning"></div>
             <span>
               In Progress:{" "}
               {
@@ -70,7 +68,7 @@ const TimelineChart = ({ data, colors, title, description }: any) => {
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-full bg-gray-500"></div>
+            <div className="h-3 w-3 rounded-full bg-muted-foreground"></div>
             <span>
               Pending:{" "}
               {
@@ -84,10 +82,10 @@ const TimelineChart = ({ data, colors, title, description }: any) => {
         </div>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 p-6 shadow-inner">
+        <div className="rounded-xl bg-gradient-to-br from-muted to-card p-6 shadow-inner">
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute bottom-0 left-8 top-0 w-0.5 bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500"></div>
+            <div className="absolute bottom-0 left-8 top-0 w-0.5 bg-gradient-to-b from-info via-primary to-primary/60"></div>
 
             <div className="space-y-8">
               {data.map((item: any, index: number) => {
@@ -99,7 +97,7 @@ const TimelineChart = ({ data, colors, title, description }: any) => {
                   <div key={index} className="group relative flex items-start">
                     {/* Timeline dot */}
                     <div
-                      className={`absolute left-6 z-10 h-4 w-4 rounded-full border-4 border-white shadow-lg transition-all duration-300 group-hover:scale-125 group-hover:shadow-xl ${
+                      className={`absolute left-6 z-10 h-4 w-4 rounded-full border-4 border-card shadow-lg transition-all duration-300 group-hover:scale-125 group-hover:shadow-xl ${
                         isCompleted ? "animate-pulse" : ""
                       }`}
                       style={{ backgroundColor: statusColor }}
@@ -115,13 +113,13 @@ const TimelineChart = ({ data, colors, title, description }: any) => {
 
                     {/* Content */}
                     <div className="ml-16 flex-1">
-                      <div className="rounded-lg border border-slate-600/50 bg-slate-700/50 p-4 transition-all duration-300 hover:border-slate-500 hover:bg-slate-700/70 group-hover:scale-[1.02] group-hover:shadow-lg">
+                      <div className="rounded-lg border border-border/50 bg-muted/50 p-4 transition-all duration-300 hover:border-border hover:bg-muted/70 group-hover:scale-[1.02] group-hover:shadow-lg">
                         <div className="mb-2 flex items-center justify-between">
-                          <h3 className="text-lg font-semibold text-white transition-colors duration-200 group-hover:text-blue-300">
+                          <h3 className="text-lg font-semibold text-foreground transition-colors duration-200 group-hover:text-info">
                             {item.title}
                           </h3>
                           <div className="flex items-center gap-2">
-                            <span className="rounded bg-slate-600/50 px-2 py-1 text-sm text-slate-300">
+                            <span className="rounded bg-muted/50 px-2 py-1 text-sm text-muted-foreground">
                               {item.date}
                             </span>
                             <div
@@ -130,7 +128,7 @@ const TimelineChart = ({ data, colors, title, description }: any) => {
                             ></div>
                           </div>
                         </div>
-                        <p className="mb-3 text-sm text-slate-300 transition-colors duration-200 group-hover:text-slate-200">
+                        <p className="mb-3 text-sm text-muted-foreground transition-colors duration-200 group-hover:text-foreground">
                           {item.description}
                         </p>
                         <div className="flex items-center justify-between">
@@ -139,11 +137,11 @@ const TimelineChart = ({ data, colors, title, description }: any) => {
                               className="h-3 w-3 rounded-full"
                               style={{ backgroundColor: statusColor }}
                             ></div>
-                            <span className="text-xs font-medium text-slate-400">
+                            <span className="text-xs font-medium text-muted-foreground">
                               {item.status}
                             </span>
                           </div>
-                          <div className="rounded bg-slate-600/30 px-2 py-1 text-xs text-slate-400">
+                          <div className="rounded bg-muted/30 px-2 py-1 text-xs text-muted-foreground">
                             Duration: {item.duration}
                           </div>
                         </div>
@@ -152,13 +150,13 @@ const TimelineChart = ({ data, colors, title, description }: any) => {
                         {item.status.toLowerCase().includes("progress") ||
                           (item.status.includes("تقدم") && (
                             <div className="mt-3">
-                              <div className="h-1.5 w-full rounded-full bg-slate-600">
+                              <div className="h-1.5 w-full rounded-full bg-muted">
                                 <div
-                                  className="h-1.5 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 transition-all duration-1000"
+                                  className="h-1.5 rounded-full bg-warning transition-all duration-1000"
                                   style={{ width: `${((index * 13) % 40) + 30}%` }}
                                 ></div>
                               </div>
-                              <div className="mt-1 text-xs text-slate-400">
+                              <div className="mt-1 text-xs text-muted-foreground">
                                 Progress: {Math.round(((index * 13) % 40) + 30)}%
                               </div>
                             </div>
@@ -172,15 +170,15 @@ const TimelineChart = ({ data, colors, title, description }: any) => {
           </div>
 
           {/* Timeline summary */}
-          <div className="mt-8 rounded-lg border border-slate-600/50 bg-slate-700/30 p-4">
-            <div className="mb-2 text-sm text-slate-300">Timeline Summary:</div>
+          <div className="mt-8 rounded-lg border border-border/50 bg-muted/30 p-4">
+            <div className="mb-2 text-sm text-muted-foreground">Timeline Summary:</div>
             <div className="grid grid-cols-2 gap-4 text-xs md:grid-cols-4">
               <div className="text-center">
-                <div className="font-bold text-green-400">{data.length}</div>
-                <div className="text-slate-400">Total Items</div>
+                <div className="font-bold text-success">{data.length}</div>
+                <div className="text-muted-foreground">Total Items</div>
               </div>
               <div className="text-center">
-                <div className="font-bold text-blue-400">
+                <div className="font-bold text-info">
                   {
                     data.filter(
                       (item: any) =>
@@ -189,10 +187,10 @@ const TimelineChart = ({ data, colors, title, description }: any) => {
                     ).length
                   }
                 </div>
-                <div className="text-slate-400">Completed</div>
+                <div className="text-muted-foreground">Completed</div>
               </div>
               <div className="text-center">
-                <div className="font-bold text-yellow-400">
+                <div className="font-bold text-warning">
                   {
                     data.filter(
                       (item: any) =>
@@ -201,10 +199,10 @@ const TimelineChart = ({ data, colors, title, description }: any) => {
                     ).length
                   }
                 </div>
-                <div className="text-slate-400">In Progress</div>
+                <div className="text-muted-foreground">In Progress</div>
               </div>
               <div className="text-center">
-                <div className="font-bold text-gray-400">
+                <div className="font-bold text-muted-foreground">
                   {
                     data.filter(
                       (item: any) =>
@@ -213,7 +211,7 @@ const TimelineChart = ({ data, colors, title, description }: any) => {
                     ).length
                   }
                 </div>
-                <div className="text-slate-400">Pending</div>
+                <div className="text-muted-foreground">Pending</div>
               </div>
             </div>
           </div>

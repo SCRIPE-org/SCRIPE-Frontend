@@ -137,11 +137,9 @@ export function SubmitDsrModal({
         </div>
 
         {form.requestType === "Erasure" && (
-          <div className="flex items-start gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3">
-            <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-500" />
-            <p className="text-xs text-red-600 dark:text-red-400">
-              {t("compliance.erasureGateWarning")}
-            </p>
+          <div className="flex items-start gap-2 rounded-lg border border-destructive/20 bg-destructive/10 p-3">
+            <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-destructive" />
+            <p className="text-xs text-destructive">{t("compliance.erasureGateWarning")}</p>
           </div>
         )}
 

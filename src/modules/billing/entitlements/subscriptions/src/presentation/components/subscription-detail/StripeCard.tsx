@@ -35,8 +35,8 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
       <Card className="border-dashed border-border/50">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-500/10">
-              <CreditCard className="h-4 w-4 text-zinc-500" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted-foreground/10">
+              <CreditCard className="h-4 w-4 text-muted-foreground" />
             </div>
             <CardTitle className="text-sm font-semibold">
               {t("entSubscriptions.paymentGateway") || "Payment Gateway"}
@@ -64,8 +64,8 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
     <Card className="border-border/50">
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10">
-            <CreditCard className="h-4 w-4 text-violet-500" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+            <CreditCard className="h-4 w-4 text-primary" />
           </div>
           <CardTitle className="text-sm font-semibold">
             {sub.paymentGateway || t("entSubscriptions.paymentGateway") || "Payment Gateway"}

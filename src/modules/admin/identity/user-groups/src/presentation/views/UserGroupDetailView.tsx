@@ -175,7 +175,7 @@ export function UserGroupDetailView({ groupId }: Props) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-red-600 hover:text-red-700"
+                        className="text-destructive hover:text-destructive/90"
                         disabled={isRemovingMember}
                         onClick={() => removeMember(member.adminId)}
                       >
@@ -218,7 +218,7 @@ export function UserGroupDetailView({ groupId }: Props) {
                       className="flex items-center justify-between rounded-lg border p-3"
                     >
                       <div className="flex items-center gap-3">
-                        <Shield className="h-5 w-5 text-purple-500" />
+                        <Shield className="h-5 w-5 text-primary" />
                         <div>
                           <p className="text-sm font-medium">
                             {language === "ar" ? role.nameAr : role.nameEn}

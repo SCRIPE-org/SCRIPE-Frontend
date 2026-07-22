@@ -101,14 +101,14 @@ export function AccountStatusCard({
       {/* Restricted warning */}
       {isRestricted && (
         <CardContent className="pt-0">
-          <div className="rounded-md border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/10">
+          <div className="rounded-md border border-destructive/30 bg-destructive/10 p-4">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400" />
+              <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-destructive" />
               <div>
-                <p className="text-sm font-semibold text-red-800 dark:text-red-300">
+                <p className="text-sm font-semibold text-destructive">
                   {t("entitlements.stripeConnect.actionRequired") || "Action Required"}
                 </p>
-                <p className="mt-1 text-sm text-red-700 dark:text-red-400">
+                <p className="mt-1 text-sm text-destructive">
                   {t("entitlements.stripeConnect.actionRequiredDesc") ||
                     "Stripe needs more information. Open Stripe Dashboard to resolve."}
                 </p>

@@ -102,8 +102,8 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-cyan-500/10 p-2">
-            <Globe className="h-5 w-5 text-cyan-500" />
+          <div className="rounded-lg bg-info/10 p-2">
+            <Globe className="h-5 w-5 text-info" />
           </div>
           <div>
             <h3 className="text-lg font-semibold">{t("tenant.domainsTitle")}</h3>
@@ -125,7 +125,7 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
 
       {/* Add Domain Form */}
       {showAddForm && (
-        <div className="space-y-3 rounded-xl border border-cyan-500/20 bg-cyan-500/5 p-4">
+        <div className="space-y-3 rounded-xl border border-info/20 bg-info/5 p-4">
           <p className="text-sm font-medium">{t("tenant.domainsAddCustom")}</p>
           <div className="flex gap-2">
             <Input
@@ -232,7 +232,7 @@ function DomainCard({
       className={cn(
         "group rounded-xl border bg-card p-4 transition-all duration-200",
         "hover:border-border/80 hover:shadow-md",
-        domain.isPrimary && "border-cyan-500/30 bg-cyan-500/5"
+        domain.isPrimary && "border-info/30 bg-info/5"
       )}
     >
       <div className="flex items-center justify-between">
@@ -241,13 +241,13 @@ function DomainCard({
           <div
             className={cn(
               "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
-              domain.isVerified ? "bg-emerald-500/10" : "bg-amber-500/10"
+              domain.isVerified ? "bg-success/10" : "bg-warning/10"
             )}
           >
             {domain.isVerified ? (
-              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+              <CheckCircle2 className="h-4 w-4 text-success" />
             ) : (
-              <Clock className="h-4 w-4 text-amber-500" />
+              <Clock className="h-4 w-4 text-warning" />
             )}
           </div>
 
@@ -257,7 +257,7 @@ function DomainCard({
               {domain.isPrimary && (
                 <Badge
                   variant="outline"
-                  className="border-cyan-500/30 px-1.5 text-[10px] text-cyan-500"
+                  className="border-info/30 px-1.5 text-[10px] text-info"
                 >
                   <Star className="mr-0.5 h-3 w-3" /> {t("tenant.domainsPrimary")}
                 </Badge>
@@ -334,8 +334,8 @@ function DomainCard({
 
       {/* DNS Instructions for unverified custom domains */}
       {!domain.isVerified && domain.type === "custom" && domain.verificationToken && (
-        <div className="mt-3 space-y-2 rounded-lg border border-amber-500/10 bg-amber-500/5 p-3 text-xs">
-          <p className="font-medium text-amber-600">{t("tenant.domainsDnsRequired")}</p>
+        <div className="mt-3 space-y-2 rounded-lg border border-warning/10 bg-warning/5 p-3 text-xs">
+          <p className="font-medium text-warning">{t("tenant.domainsDnsRequired")}</p>
 
           {/* Step 1: CNAME record */}
           <div className="space-y-1">

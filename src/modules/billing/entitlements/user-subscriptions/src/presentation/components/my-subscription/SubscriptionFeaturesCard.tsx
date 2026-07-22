@@ -33,13 +33,13 @@ export function SubscriptionFeaturesCard({
     switch (feat.valueType) {
       case "Boolean":
         return feat.value === "true" ? (
-          <Check className="h-4 w-4 text-emerald-500" />
+          <Check className="h-4 w-4 text-success" />
         ) : (
           <X className="h-4 w-4 text-muted-foreground" />
         );
       case "Numeric": {
         const num = parseInt(feat.value);
-        if (num === -1) return <Infinity className="h-4 w-4 text-blue-500" />;
+        if (num === -1) return <Infinity className="h-4 w-4 text-info" />;
         return (
           <Badge variant="secondary" className="tabular-nums">
             {num.toLocaleString()}

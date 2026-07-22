@@ -184,15 +184,15 @@ export function useConnectViewModel() {
             const map: Record<string, { label: string; className: string }> = {
               Complete: {
                 label: val,
-                className: "bg-green-500/20 text-green-400 border border-green-500/30",
+                className: "bg-success/20 text-success border border-success/30",
               },
               Pending: {
                 label: val,
-                className: "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30",
+                className: "bg-warning/20 text-warning border border-warning/30",
               },
               Restricted: {
                 label: val,
-                className: "bg-red-500/20 text-red-400 border border-red-500/30",
+                className: "bg-destructive/20 text-destructive border border-destructive/30",
               },
             };
             const style = map[val] ?? {

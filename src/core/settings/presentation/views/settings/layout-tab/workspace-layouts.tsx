@@ -8,6 +8,7 @@ import {
   SplitSquareHorizontal,
   Mail,
   Columns2,
+  Layers,
 } from "lucide-react";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -191,6 +192,59 @@ function WorkspacePreview({ variant }: { variant: string }) {
     );
   }
 
+  if (variant === "scripe") {
+    // Preview shows the shell's own physics: matte surfaces, and exactly one
+    // element emitting — the active rail glyph and its edge light.
+    return (
+      <div className="flex aspect-[16/10] w-full overflow-hidden rounded-md border border-border bg-[#07070c]">
+        {/* Icon rail */}
+        <div className="relative flex w-[8%] flex-col items-center gap-1 border-e border-white/10 bg-[#0c0c13] p-1 pt-1.5">
+          <div
+            className="h-2 w-2 rounded-[2px]"
+            style={{ background: "oklch(0.68 0.18 var(--workspace-hue, 262))" }}
+          />
+          <div className="mt-1 space-y-1">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="h-2 w-2 rounded-[2px] bg-white/20"
+                style={
+                  i === 1
+                    ? {
+                        background: "oklch(0.82 0.13 calc(var(--workspace-hue, 262) + 78))",
+                        boxShadow: "0 0 5px oklch(0.82 0.13 calc(var(--workspace-hue, 262) + 78))",
+                      }
+                    : undefined
+                }
+              />
+            ))}
+          </div>
+        </div>
+        {/* Navigation panel */}
+        <div className="w-[22%] space-y-1 border-e border-white/10 bg-[#0c0c13] p-1 pt-1.5">
+          {[65, 50, 55, 45].map((w, i) => (
+            <div
+              key={i}
+              className="h-0.5 rounded-full"
+              style={{
+                width: `${w}%`,
+                background: i === 0 ? "rgba(242,240,250,0.85)" : "rgba(242,240,250,0.22)",
+              }}
+            />
+          ))}
+        </div>
+        {/* Content field with the KPI strip's lit top edge */}
+        <div className="flex-1 p-1.5">
+          <div className="mb-1 h-1 w-2/3 rounded-full bg-white/70" />
+          <div
+            className="mt-1.5 h-3 w-full rounded-[2px] border border-white/10 bg-[#111119]"
+            style={{ borderTopColor: "oklch(0.68 0.18 var(--workspace-hue, 262) / 0.55)" }}
+          />
+        </div>
+      </div>
+    );
+  }
+
   if (variant === "nexus") {
     return (
       <div className="flex aspect-[16/10] w-full overflow-hidden rounded-md border border-slate-200/50 bg-white dark:border-slate-700/50 dark:bg-slate-900">
@@ -237,7 +291,9 @@ function WorkspacePreview({ variant }: { variant: string }) {
 // Layout Data
 // ────────────────────────────────────────────
 const workspaceLayouts: LayoutOption[] = [
-  // Nexus is first — it's the system default
+  // Scripe (EDGE) leads: the design system made literal, and the accent follows
+  // the active workspace hue rather than a fixed palette.
+  { value: "scripe", icon: Layers, preview: <WorkspacePreview variant="scripe" /> },
   { value: "nexus", icon: Columns2, preview: <WorkspacePreview variant="nexus" /> },
   { value: "hub", icon: LayoutDashboard, preview: <WorkspacePreview variant="hub" /> },
   { value: "wizard", icon: Footprints, preview: <WorkspacePreview variant="wizard" /> },

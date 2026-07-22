@@ -82,12 +82,12 @@ export function RoleDeleteDialog({
           <Loader2 className="h-6 w-6 animate-spin" />
         </div>
       ) : hasAdmins ? (
-        <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900 dark:bg-yellow-950">
-          <div className="flex items-center gap-2 text-sm font-medium text-yellow-800 dark:text-yellow-200">
+        <div className="rounded-lg border border-warning/30 bg-warning/10 p-4">
+          <div className="flex items-center gap-2 text-sm font-medium text-warning">
             <Users className="h-4 w-4" />
             {t("role.hasAdmins") || `This role is assigned to ${adminCount} admin(s).`}
           </div>
-          <p className="mt-1 text-sm text-yellow-700 dark:text-yellow-300">
+          <p className="mt-1 text-sm text-warning">
             {t("role.selectFallback") ||
               "Select a fallback role to transfer these admins before deletion:"}
           </p>

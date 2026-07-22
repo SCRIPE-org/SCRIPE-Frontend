@@ -84,7 +84,7 @@ function RecipientSearchInput({
               variant={r.type === "custom" ? "outline" : "secondary"}
               className={cn(
                 "gap-1",
-                r.type === "custom" && "border-blue-500/50 text-blue-600 dark:text-blue-400"
+                r.type === "custom" && "border-info/50 text-info"
               )}
             >
               {r.type === "custom" && <Mail className="h-3 w-3" />}
@@ -150,10 +150,10 @@ function RecipientSearchInput({
                   }
                 }}
               >
-                <Mail className="h-4 w-4 text-blue-500" />
+                <Mail className="h-4 w-4 text-info" />
                 <span>
                   Send to{" "}
-                  <strong className="text-blue-600 dark:text-blue-400">{search.trim()}</strong>
+                  <strong className="text-info">{search.trim()}</strong>
                 </span>
               </button>
             ) : (

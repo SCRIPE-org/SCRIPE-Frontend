@@ -54,16 +54,16 @@ export function IdentityProviderStatsBar({ items }: Props) {
       </Card>
 
       {/* Active vs Inactive */}
-      <Card className="relative overflow-hidden border-border/80 bg-card/65 backdrop-blur-md transition-all hover:border-emerald-500/20 hover:shadow-md">
+      <Card className="relative overflow-hidden border-border/80 bg-card/65 backdrop-blur-md transition-all hover:border-success/20 hover:shadow-md">
         <div className="absolute right-0 top-0 p-3 opacity-10">
-          <Activity className="h-12 w-12 text-emerald-500" />
+          <Activity className="h-12 w-12 text-success" />
         </div>
         <CardContent className="p-4">
           <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             {t("identityProviders.statsActive") || "Active Status"}
           </p>
           <div className="mt-1 flex items-baseline gap-2">
-            <span className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
+            <span className="text-2xl font-bold tracking-tight text-success">
               {active}
             </span>
             <span className="text-xs text-muted-foreground">
@@ -74,9 +74,9 @@ export function IdentityProviderStatsBar({ items }: Props) {
       </Card>
 
       {/* Protocols */}
-      <Card className="relative overflow-hidden border-border/80 bg-card/65 backdrop-blur-md transition-all hover:border-indigo-500/20 hover:shadow-md">
+      <Card className="relative overflow-hidden border-border/80 bg-card/65 backdrop-blur-md transition-all hover:border-info/20 hover:shadow-md">
         <div className="absolute right-0 top-0 p-3 opacity-10">
-          <Radio className="h-12 w-12 text-indigo-500" />
+          <Radio className="h-12 w-12 text-info" />
         </div>
         <CardContent className="p-4">
           <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -84,17 +84,17 @@ export function IdentityProviderStatsBar({ items }: Props) {
           </p>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             {oidcCount > 0 && (
-              <span className="inline-flex items-center rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-semibold text-blue-700 dark:bg-blue-900/20 dark:text-blue-400">
+              <span className="inline-flex items-center rounded bg-info/10 px-1.5 py-0.5 text-[10px] font-semibold text-info">
                 OIDC: {oidcCount}
               </span>
             )}
             {oauth2Count > 0 && (
-              <span className="inline-flex items-center rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400">
+              <span className="inline-flex items-center rounded bg-success/10 px-1.5 py-0.5 text-[10px] font-semibold text-success">
                 OAuth2: {oauth2Count}
               </span>
             )}
             {samlCount > 0 && (
-              <span className="inline-flex items-center rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700 dark:bg-amber-900/20 dark:text-amber-400">
+              <span className="inline-flex items-center rounded bg-warning/10 px-1.5 py-0.5 text-[10px] font-semibold text-warning">
                 SAML: {samlCount}
               </span>
             )}
@@ -104,9 +104,9 @@ export function IdentityProviderStatsBar({ items }: Props) {
       </Card>
 
       {/* Scopes */}
-      <Card className="relative overflow-hidden border-border/80 bg-card/65 backdrop-blur-md transition-all hover:border-violet-500/20 hover:shadow-md">
+      <Card className="relative overflow-hidden border-border/80 bg-card/65 backdrop-blur-md transition-all hover:border-primary/20 hover:shadow-md">
         <div className="absolute right-0 top-0 p-3 opacity-10">
-          <Shield className="h-12 w-12 text-violet-500" />
+          <Shield className="h-12 w-12 text-primary" />
         </div>
         <CardContent className="p-4">
           <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -114,12 +114,12 @@ export function IdentityProviderStatsBar({ items }: Props) {
           </p>
           <div className="mt-1.5 flex gap-2">
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Shield className="h-3 w-3 text-violet-500" />
+              <Shield className="h-3 w-3 text-primary" />
               {t("identityProviders.statsAdmins")}{" "}
               <strong className="font-semibold text-foreground">{adminCount}</strong>
             </span>
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Users className="h-3 w-3 text-sky-500" />
+              <Users className="h-3 w-3 text-info" />
               {t("identityProviders.statsUsers")}{" "}
               <strong className="font-semibold text-foreground">{userCount}</strong>
             </span>

@@ -116,14 +116,14 @@ export function PublishBar({
 
         {/* Theme Preview Banner */}
         {isPreviewingTheme && (
-          <div className="flex items-center gap-1.5 rounded-full bg-violet-500/10 px-2.5 py-0.5">
-            <Eye className="h-2.5 w-2.5 text-violet-500" />
-            <span className="text-[10px] font-medium text-violet-600 dark:text-violet-400">
+          <div className="flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-0.5">
+            <Eye className="h-2.5 w-2.5 text-primary" />
+            <span className="text-[10px] font-medium text-primary">
               {t("studio.previewMode") || "Theme Preview"}
             </span>
             <button
               onClick={onExitPreview}
-              className="ml-1 text-[10px] text-violet-600 underline hover:text-violet-800"
+              className="ml-1 text-[10px] text-primary underline hover:text-primary/80"
             >
               {t("studio.exitPreview") || "Exit"}
             </button>
@@ -132,16 +132,16 @@ export function PublishBar({
 
         {/* Draft status indicator */}
         {!isPreviewingTheme && isDirty ? (
-          <div className="flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-0.5">
-            <Circle className="h-1.5 w-1.5 fill-amber-500 text-amber-500" />
-            <span className="text-[10px] font-medium text-amber-600 dark:text-amber-400">
+          <div className="flex items-center gap-1.5 rounded-full bg-warning/10 px-2.5 py-0.5">
+            <Circle className="h-1.5 w-1.5 fill-warning text-warning" />
+            <span className="text-[10px] font-medium text-warning">
               {t("studio.unsavedChanges")}
             </span>
           </div>
         ) : !isPreviewingTheme && lastSavedAt ? (
-          <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5">
-            <Check className="h-2.5 w-2.5 text-emerald-500" />
-            <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
+          <div className="flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-0.5">
+            <Check className="h-2.5 w-2.5 text-success" />
+            <span className="text-[10px] font-medium text-success">
               {t("studio.saved") || "Saved"} {formatTime(lastSavedAt)}
             </span>
           </div>

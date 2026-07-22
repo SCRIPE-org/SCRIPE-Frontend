@@ -174,7 +174,7 @@ export function FeatureDefinitionFormView({
           <div className="space-y-2">
             <Label htmlFor="fd-key" className="flex items-center gap-1.5">
               {t("entitlements.featureDefinitions.key") || "Feature Key"}
-              <span className="text-red-500">*</span>
+              <span className="text-destructive">*</span>
             </Label>
             <Input
               id="fd-key"
@@ -184,14 +184,14 @@ export function FeatureDefinitionFormView({
                 t("entitlements.featureDefinitions.keyPlaceholder") || "e.g. max_projects"
               }
               disabled={isEditMode || isViewMode}
-              className={errors.key ? "border-red-500" : ""}
+              className={errors.key ? "border-destructive" : ""}
             />
             <p className="text-xs text-muted-foreground">
               {t("entitlements.featureDefinitions.keyHint") ||
                 "Unique identifier. Cannot be changed after creation."}
             </p>
             {errors.key && (
-              <p className="flex items-center gap-1 text-xs text-red-500">
+              <p className="flex items-center gap-1 text-xs text-destructive">
                 <AlertCircle className="h-3 w-3" /> {errors.key}
               </p>
             )}
@@ -238,8 +238,8 @@ export function FeatureDefinitionFormView({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10">
-              <Sparkles className="h-4 w-4 text-violet-500" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+              <Sparkles className="h-4 w-4 text-primary" />
             </div>
             {t("entitlements.featureDefinitions.sectionConfig") || "Value Configuration"}
           </CardTitle>
@@ -253,7 +253,7 @@ export function FeatureDefinitionFormView({
           <div className="relative space-y-3">
             <Label className="flex items-center gap-1.5">
               {t("entitlements.featureDefinitions.valueType") || "Value Type"}
-              <span className="text-red-500">*</span>
+              <span className="text-destructive">*</span>
             </Label>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
               {valueTypeOptions.map((option) => (
@@ -290,7 +290,7 @@ export function FeatureDefinitionFormView({
               ))}
             </div>
             {errors.valueType && (
-              <p className="flex items-center gap-1 text-xs text-red-500">
+              <p className="flex items-center gap-1 text-xs text-destructive">
                 <AlertCircle className="h-3 w-3" /> {errors.valueType}
               </p>
             )}
@@ -322,8 +322,8 @@ export function FeatureDefinitionFormView({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10">
-              <FolderOpen className="h-4 w-4 text-amber-500" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-warning/10">
+              <FolderOpen className="h-4 w-4 text-warning" />
             </div>
             {t("entitlements.featureDefinitions.sectionOrganization") || "Organization"}
           </CardTitle>
@@ -393,8 +393,8 @@ export function FeatureDefinitionFormView({
       <Card>
         <CardContent className="flex items-center justify-between py-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10">
-              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-success/10">
+              <CheckCircle2 className="h-4 w-4 text-success" />
             </div>
             <div>
               <p className="text-sm font-medium">{t("common.active") || "Active"}</p>

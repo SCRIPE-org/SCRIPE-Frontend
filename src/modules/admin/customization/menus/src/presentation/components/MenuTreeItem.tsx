@@ -222,11 +222,11 @@ export function MenuTreeItem({
 
     switch (dropTarget.position) {
       case "before":
-        return "before:absolute before:top-0 before:inset-x-0 before:h-[3px] before:bg-blue-500 before:rounded-full before:z-10";
+        return "before:absolute before:top-0 before:inset-x-0 before:h-[3px] before:bg-info before:rounded-full before:z-10";
       case "after":
-        return "after:absolute after:bottom-0 after:inset-x-0 after:h-[3px] after:bg-blue-500 after:rounded-full after:z-10";
+        return "after:absolute after:bottom-0 after:inset-x-0 after:h-[3px] after:bg-info after:rounded-full after:z-10";
       case "inside":
-        return "ring-2 ring-blue-500 ring-inset bg-blue-500/10";
+        return "ring-2 ring-info ring-inset bg-info/10";
       default:
         return "";
     }

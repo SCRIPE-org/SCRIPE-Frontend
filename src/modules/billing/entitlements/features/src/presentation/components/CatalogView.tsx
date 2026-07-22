@@ -225,25 +225,25 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
         label: t("entitlements.features.totalFeatures"),
         value: vm.items.length,
         icon: Boxes,
-        accent: "from-violet-500/20 to-violet-500/5 text-violet-600 dark:text-violet-300",
+        accent: "from-primary/20 to-primary/5 text-primary",
       },
       {
         label: t("entitlements.features.totalModules"),
         value: new Set(vm.items.map((feature) => feature.module)).size,
         icon: Layers3,
-        accent: "from-sky-500/20 to-sky-500/5 text-sky-600 dark:text-sky-300",
+        accent: "from-info/20 to-info/5 text-info",
       },
       {
         label: t("entitlements.features.enforcedFeatures"),
         value: vm.items.filter((feature) => !feature.isMarketingOnly).length,
         icon: ShieldCheck,
-        accent: "from-emerald-500/20 to-emerald-500/5 text-emerald-600 dark:text-emerald-300",
+        accent: "from-success/20 to-success/5 text-success",
       },
       {
         label: t("entitlements.features.marketingFeatures"),
         value: vm.items.filter((feature) => feature.isMarketingOnly).length,
         icon: Megaphone,
-        accent: "from-amber-500/20 to-amber-500/5 text-amber-600 dark:text-amber-300",
+        accent: "from-warning/20 to-warning/5 text-warning",
       },
     ],
     [t, vm.items]
@@ -449,7 +449,7 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
                           size="icon"
                           onClick={() => setPendingDelete(feature)}
                           aria-label={`${t("entitlements.features.deleteConfirmTitle")}: ${feature.getDisplayName(language)}`}
-                          className="text-destructive hover:text-destructive"
+                          className="text-destructive hover:text-destructive/80"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

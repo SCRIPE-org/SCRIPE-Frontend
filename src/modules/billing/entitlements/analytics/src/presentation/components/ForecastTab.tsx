@@ -92,7 +92,7 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
                         {/* Confidence interval background */}
                         {isProjected && (
                           <div
-                            className="absolute h-full rounded-lg border-l border-r border-blue-500/20 bg-blue-500/10"
+                            className="absolute h-full rounded-lg border-l border-r border-info/20 bg-info/10"
                             style={{
                               left: `${lowerWidth}%`,
                               width: `${Math.max(upperWidth - lowerWidth, 1)}%`,
@@ -103,8 +103,8 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
                         <div
                           className={`absolute h-full rounded-lg transition-all duration-700 ease-out ${
                             isProjected
-                              ? "bg-gradient-to-r from-blue-500/60 to-indigo-500/40"
-                              : "bg-gradient-to-r from-emerald-500/60 to-teal-500/40"
+                              ? "bg-gradient-to-r from-info/60 to-info/40"
+                              : "bg-gradient-to-r from-success/60 to-success/40"
                           }`}
                           style={{ width: `${Math.max(projWidth, 3)}%` }}
                         />
@@ -126,10 +126,10 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
                         <span
                           className={`w-10 text-right text-[10px] font-semibold ${
                             point.confidence >= 80
-                              ? "text-emerald-600"
+                              ? "text-success"
                               : point.confidence >= 50
-                                ? "text-amber-600"
-                                : "text-rose-600"
+                                ? "text-warning"
+                                : "text-destructive"
                           }`}
                         >
                           {point.confidence.toFixed(0)}%
@@ -149,15 +149,15 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
       {/* Legend */}
       <div className="flex items-center gap-5 text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5">
-          <div className="h-3 w-4 rounded bg-gradient-to-r from-emerald-500/60 to-teal-500/40" />
+          <div className="h-3 w-4 rounded bg-gradient-to-r from-success/60 to-success/40" />
           <span className="font-medium">{t("entitlements.analytics.forecast.historical")}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="h-3 w-4 rounded bg-gradient-to-r from-blue-500/60 to-indigo-500/40" />
+          <div className="h-3 w-4 rounded bg-gradient-to-r from-info/60 to-info/40" />
           <span className="font-medium">{t("entitlements.analytics.forecast.projected")}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="h-3 w-4 rounded border border-blue-500/20 bg-blue-500/10" />
+          <div className="h-3 w-4 rounded border border-info/20 bg-info/10" />
           <span className="font-medium">{t("entitlements.analytics.forecast.confidence")}</span>
         </div>
       </div>

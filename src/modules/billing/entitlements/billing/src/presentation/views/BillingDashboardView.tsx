@@ -51,17 +51,17 @@ interface StatCardProps {
 }
 
 const VARIANT_CARD_STYLES: Record<string, string> = {
-  default: "from-blue-500/10 to-indigo-500/10 border-blue-500/20",
-  success: "from-emerald-500/10 to-green-500/10 border-emerald-500/20",
-  warning: "from-amber-500/10 to-yellow-500/10 border-amber-500/20",
-  danger: "from-red-500/10 to-rose-500/10 border-red-500/20",
+  default: "from-info/10 to-info/10 border-info/20",
+  success: "from-success/10 to-success/10 border-success/20",
+  warning: "from-warning/10 to-warning/10 border-warning/20",
+  danger: "from-destructive/10 to-destructive/10 border-destructive/20",
 };
 
 const VARIANT_ICON_STYLES: Record<string, string> = {
-  default: "text-blue-600 dark:text-blue-400",
-  success: "text-emerald-600 dark:text-emerald-400",
-  warning: "text-amber-600 dark:text-amber-400",
-  danger: "text-red-600 dark:text-red-400",
+  default: "text-info",
+  success: "text-success",
+  warning: "text-warning",
+  danger: "text-destructive",
 };
 
 function StatCard({ title, tooltip, value, icon, variant = "default", suffix }: StatCardProps) {
@@ -142,7 +142,7 @@ function RevenueTrendCard({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-blue-500" />
+          <TrendingUp className="h-5 w-5 text-info" />
           {title}
         </CardTitle>
         <CardDescription>{description}</CardDescription>
@@ -205,7 +205,7 @@ function EditionBreakdownChart({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <BarChart3 className="h-5 w-5 text-purple-500" />
+          <BarChart3 className="h-5 w-5 text-primary" />
           {title}
         </CardTitle>
       </CardHeader>

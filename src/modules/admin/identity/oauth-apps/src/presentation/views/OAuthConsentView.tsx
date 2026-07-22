@@ -90,7 +90,7 @@ export function OAuthConsentView() {
             <ul className="space-y-3">
               {vm.requestedScopes.map((s) => (
                 <li key={s} className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-500" />
+                  <CheckCircle2 className="h-5 w-5 shrink-0 text-success" />
                   <div>
                     <p className="text-sm font-medium leading-none text-foreground">
                       {s === "openid"

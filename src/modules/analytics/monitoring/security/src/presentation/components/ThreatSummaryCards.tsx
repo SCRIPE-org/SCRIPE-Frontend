@@ -32,26 +32,26 @@ const THREAT_ICONS: Record<
 > = {
   LoginFailed: {
     icon: ShieldAlert,
-    color: "text-red-500",
-    bgColor: "bg-red-500/10",
+    color: "text-destructive",
+    bgColor: "bg-destructive/10",
     labelKey: "security.threats.failedLogins",
   },
   AccountLocked: {
     icon: Lock,
-    color: "text-orange-500",
-    bgColor: "bg-orange-500/10",
+    color: "text-warning",
+    bgColor: "bg-warning/10",
     labelKey: "security.threats.accountLockouts",
   },
   AccessDenied: {
     icon: Ban,
-    color: "text-yellow-500",
-    bgColor: "bg-yellow-500/10",
+    color: "text-warning",
+    bgColor: "bg-warning/10",
     labelKey: "security.threats.accessDenied",
   },
   PrivilegeEscalation: {
     icon: KeyRound,
-    color: "text-violet-500",
-    bgColor: "bg-violet-500/10",
+    color: "text-primary",
+    bgColor: "bg-primary/10",
     labelKey: "security.threats.privilegeEscalation",
   },
 };
@@ -115,8 +115,8 @@ export const ThreatSummaryCards = memo(function ThreatSummaryCards({
       {data.map((threat) => {
         const config = THREAT_ICONS[threat.type] ?? {
           icon: ShieldAlert,
-          color: "text-gray-500",
-          bgColor: "bg-gray-500/10",
+          color: "text-muted-foreground",
+          bgColor: "bg-muted",
           labelKey: threat.type,
         };
         const Icon = config.icon;

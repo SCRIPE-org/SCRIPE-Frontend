@@ -77,14 +77,14 @@ export function WizardStep4Confirm({ lead, edition, setup, overrideCount }: Wiza
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 dark:border-emerald-900 dark:bg-emerald-950/30">
+      <div className="rounded-xl border border-success/30 bg-success/10 px-5 py-4">
         <div className="flex items-center gap-3">
-          <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+          <CheckCircle2 className="h-5 w-5 shrink-0 text-success" />
           <div>
-            <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">
+            <p className="text-sm font-semibold text-success">
               {t("leads.convertWizard.readyToConvert", { defaultValue: "Ready to convert" })}
             </p>
-            <p className="mt-0.5 text-xs text-emerald-700 dark:text-emerald-400">
+            <p className="mt-0.5 text-xs text-success">
               {t("leads.convertWizard.step4Desc")}
             </p>
           </div>

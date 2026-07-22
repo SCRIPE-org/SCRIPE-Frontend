@@ -40,33 +40,33 @@ import { DsrErasureState } from "../components/DsrErasureState";
 const STATUS_META: Record<string, { labelKey: string; icon: React.ReactNode; cls: string }> = {
   Pending: {
     labelKey: "compliance.statusLabels.pending",
-    icon: <Clock className="h-4 w-4 text-amber-500" />,
-    cls: "border-amber-500/20 bg-amber-500/10 text-amber-600",
+    icon: <Clock className="h-4 w-4 text-warning" />,
+    cls: "border-warning/20 bg-warning/10 text-warning",
   },
   InReview: {
     labelKey: "compliance.statusLabels.inReview",
-    icon: <Info className="h-4 w-4 text-blue-500" />,
-    cls: "border-blue-500/20 bg-blue-500/10 text-blue-600",
+    icon: <Info className="h-4 w-4 text-info" />,
+    cls: "border-info/20 bg-info/10 text-info",
   },
   Approved: {
     labelKey: "compliance.statusLabels.approved",
-    icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />,
-    cls: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600",
+    icon: <CheckCircle2 className="h-4 w-4 text-success" />,
+    cls: "border-success/20 bg-success/10 text-success",
   },
   Processing: {
     labelKey: "compliance.statusLabels.processing",
-    icon: <Loader2 className="h-4 w-4 animate-spin text-indigo-500" />,
-    cls: "border-indigo-500/20 bg-indigo-500/10 text-indigo-600",
+    icon: <Loader2 className="h-4 w-4 animate-spin text-info" />,
+    cls: "border-info/20 bg-info/10 text-info",
   },
   PartiallyCompleted: {
     labelKey: "compliance.statusLabels.partiallyCompleted",
-    icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />,
-    cls: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600",
+    icon: <CheckCircle2 className="h-4 w-4 text-success" />,
+    cls: "border-success/20 bg-success/10 text-success",
   },
   Completed: {
     labelKey: "compliance.statusLabels.completed",
-    icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />,
-    cls: "border-emerald-500/20 bg-emerald-500/10 text-emerald-600",
+    icon: <CheckCircle2 className="h-4 w-4 text-success" />,
+    cls: "border-success/20 bg-success/10 text-success",
   },
   Rejected: {
     labelKey: "compliance.statusLabels.rejected",
@@ -82,10 +82,10 @@ const STATUS_META: Record<string, { labelKey: string; icon: React.ReactNode; cls
 
 // ── Type Meta ────────────────────────────────────────────────────────────────
 const TYPE_META: Record<string, { labelKey: string; color: string }> = {
-  Export: { labelKey: "compliance.requestTypes.export", color: "text-blue-500" },
+  Export: { labelKey: "compliance.requestTypes.export", color: "text-info" },
   Erasure: { labelKey: "compliance.requestTypes.erasure", color: "text-destructive" },
-  Rectification: { labelKey: "compliance.requestTypes.rectification", color: "text-amber-500" },
-  Restriction: { labelKey: "compliance.requestTypes.restriction", color: "text-indigo-500" },
+  Rectification: { labelKey: "compliance.requestTypes.rectification", color: "text-warning" },
+  Restriction: { labelKey: "compliance.requestTypes.restriction", color: "text-primary" },
 };
 
 /**
@@ -131,8 +131,8 @@ export function DsrDetailView({ id }: { id: string }) {
             <BackIcon className="h-4 w-4" />
           </Button>
           <div className="flex items-center gap-3">
-            <div className="rounded-xl border border-indigo-500/20 bg-gradient-to-br from-indigo-500/15 to-blue-500/10 p-2.5">
-              <User className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+            <div className="rounded-xl border border-info/20 bg-gradient-to-br from-info/15 to-info/10 p-2.5">
+              <User className="h-5 w-5 text-info" />
             </div>
             <div>
               <h2 className="text-2xl font-bold tracking-tight">

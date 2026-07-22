@@ -67,8 +67,8 @@ export function WizardStepPricing({ form, prices, onPriceChange }: WizardStepPri
   if (isFreeEdition) {
     return (
       <div className="flex flex-col items-center justify-center space-y-4 py-16">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500/10">
-          <Gift className="h-8 w-8 text-emerald-500" />
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-success/10">
+          <Gift className="h-8 w-8 text-success" />
         </div>
         <h3 className="text-lg font-bold text-foreground">
           {t("entitlements.editions.wizard.freeTierTitle") || "Free Tier — No Pricing Needed"}
@@ -83,8 +83,8 @@ export function WizardStepPricing({ form, prices, onPriceChange }: WizardStepPri
 
   if (cycles.length === 0) {
     return (
-      <div className="space-y-2 border border-dashed border-amber-500/30 bg-amber-500/5 p-8 text-center">
-        <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
+      <div className="space-y-2 border border-dashed border-warning/30 bg-warning/5 p-8 text-center">
+        <p className="text-sm font-medium text-warning">
           {t("entitlements.editions.wizard.noBillingCycles") ||
             "No billing cycles enabled. Go back and enable at least one."}
         </p>

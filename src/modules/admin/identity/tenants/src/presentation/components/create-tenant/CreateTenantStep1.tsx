@@ -128,10 +128,10 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
       </div>
 
       {vm.form.parentId && (
-        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2 dark:border-amber-800/40 dark:bg-amber-950/20">
-          <GitBranch className="h-4 w-4 shrink-0 text-amber-600" />
+        <div className="flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2">
+          <GitBranch className="h-4 w-4 shrink-0 text-warning" />
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-medium text-amber-700 dark:text-amber-400">
+            <p className="text-xs font-medium text-warning">
               {t("tenant.creatingAsChild") || "Creating as child tenant"}
             </p>
             <p className="truncate font-mono text-xs text-muted-foreground">{vm.form.parentId}</p>

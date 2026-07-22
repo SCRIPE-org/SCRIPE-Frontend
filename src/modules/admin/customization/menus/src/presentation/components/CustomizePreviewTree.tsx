@@ -298,7 +298,7 @@ function PreviewTreeNode({
         {node.hasOverride && (
           <Badge
             variant="outline"
-            className="shrink-0 border-0 bg-emerald-100 px-1 py-0 text-[8px] font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+            className="shrink-0 border-0 bg-success/15 px-1 py-0 text-[8px] font-medium text-success"
           >
             <Sparkles className="mr-0.5 h-2 w-2" />
             {nameChanged || orderChanged

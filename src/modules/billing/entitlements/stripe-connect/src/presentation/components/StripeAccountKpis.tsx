@@ -71,12 +71,12 @@ export function StripeAccountKpis({
   return (
     <div className="space-y-6">
       {/* Success Banner */}
-      <Card className="overflow-hidden shadow-sm ring-1 ring-emerald-500/20 transition-shadow hover:shadow-md">
-        <div className="bg-gradient-to-r from-emerald-500/10 to-emerald-600/5 px-6 py-5">
+      <Card className="overflow-hidden shadow-sm ring-1 ring-success/20 transition-shadow hover:shadow-md">
+        <div className="bg-gradient-to-r from-success/10 to-success/5 px-6 py-5">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-emerald-100 p-2.5 dark:bg-emerald-900/30">
-                <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              <div className="rounded-lg bg-success/10 p-2.5">
+                <CheckCircle2 className="h-5 w-5 text-success" />
               </div>
               <div>
                 <h2 className="text-lg font-semibold tracking-tight text-foreground/95">
@@ -102,7 +102,7 @@ export function StripeAccountKpis({
               <Button
                 onClick={onOpenDashboard}
                 disabled={isOpeningDashboard}
-                className="gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/15 transition-all hover:scale-[1.01] hover:from-violet-700 hover:to-indigo-700 active:scale-95"
+                className="gap-2 bg-gradient-to-r from-primary to-info text-primary-foreground shadow-lg shadow-primary/15 transition-all hover:scale-[1.01] hover:from-primary/90 hover:to-info/90 active:scale-95"
               >
                 {isOpeningDashboard ? (
                   <RefreshCw className="h-4 w-4 animate-spin" />
@@ -119,19 +119,19 @@ export function StripeAccountKpis({
       {/* KPI Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
-          icon={<Banknote className="h-4.5 w-4.5 text-blue-600 dark:text-blue-400" />}
+          icon={<Banknote className="h-4.5 w-4.5 text-info" />}
           label={t("entitlements.tenantConnect.totalPayouts") || "Total Payouts"}
           value={formatCurrency(account.totalPayoutsAmount)}
           sublabel={`${account.totalPayoutsCount} ${t("entitlements.tenantConnect.transactions") || "transactions"}`}
         />
         <KpiCard
-          icon={<Zap className="h-4.5 w-4.5 text-violet-600 dark:text-violet-400" />}
+          icon={<Zap className="h-4.5 w-4.5 text-primary" />}
           label={t("entitlements.tenantConnect.commissionRate") || "Platform Fee"}
           value={`${(account.effectiveCommissionRate * 100).toFixed(1)}%`}
           sublabel={t("entitlements.tenantConnect.perTransaction") || "per transaction"}
         />
         <KpiCard
-          icon={<Calendar className="h-4.5 w-4.5 text-amber-600 dark:text-amber-400" />}
+          icon={<Calendar className="h-4.5 w-4.5 text-warning" />}
           label={t("entitlements.tenantConnect.payoutSchedule") || "Payout Schedule"}
           value={
             account.payoutDelayDays === 0
@@ -141,7 +141,7 @@ export function StripeAccountKpis({
           sublabel={t("entitlements.tenantConnect.afterPayment") || "after payment"}
         />
         <KpiCard
-          icon={<Calendar className="h-4.5 w-4.5 text-emerald-600 dark:text-emerald-400" />}
+          icon={<Calendar className="h-4.5 w-4.5 text-success" />}
           label={t("entitlements.tenantConnect.lastPayout") || "Last Payout"}
           value={formatDate(account.lastPayoutAt)}
           sublabel={
@@ -179,7 +179,7 @@ export function StripeAccountKpis({
               value={account.country || "—"}
             />
             <DetailRow
-              icon={<CheckCircle2 className="h-4 w-4 text-emerald-500" />}
+              icon={<CheckCircle2 className="h-4 w-4 text-success" />}
               label={t("entitlements.tenantConnect.verifiedAt") || "Verified At"}
               value={formatDate(account.onboardingCompletedAt)}
             />
@@ -271,15 +271,15 @@ function CapabilityBadge({
       <span className="text-sm font-semibold text-foreground/90">{label}</span>
       <div className="flex items-center gap-2">
         {enabled ? (
-          <CheckCircle2 className="h-4.5 w-4.5 text-emerald-500" />
+          <CheckCircle2 className="h-4.5 w-4.5 text-success" />
         ) : (
-          <Clock className="h-4.5 w-4.5 text-amber-500" />
+          <Clock className="h-4.5 w-4.5 text-warning" />
         )}
         <span
           className={`text-sm font-bold ${
             enabled
-              ? "text-emerald-600 dark:text-emerald-400"
-              : "text-amber-600 dark:text-amber-400"
+              ? "text-success"
+              : "text-warning"
           }`}
         >
           {enabled ? t("common.active") || "Active" : t("common.pending") || "Pending"}

@@ -193,7 +193,7 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
       {/* Safe Mode — Core Switch */}
       <div className="flex items-center justify-between rounded-xl border border-border p-3">
         <div className="flex items-center gap-2">
-          <Shield className="h-4 w-4 text-amber-500" />
+          <Shield className="h-4 w-4 text-warning" />
           <div>
             <p className="text-xs font-medium text-foreground">{t("studio.advanced.safeMode")}</p>
             <p className="text-[10px] text-muted-foreground">{t("studio.advanced.safeModeDesc")}</p>
@@ -205,7 +205,7 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
       {/* Accessibility Info */}
       <div className="space-y-2 rounded-xl border border-border p-3">
         <div className="flex items-center gap-2">
-          <Accessibility className="h-4 w-4 text-blue-500" />
+          <Accessibility className="h-4 w-4 text-info" />
           <p className="text-xs font-medium text-foreground">
             {t("studio.advanced.accessibility")}
           </p>
@@ -236,7 +236,7 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
       {/* RTL Info */}
       <div className="rounded-xl border border-border p-3">
         <div className="flex items-center gap-2">
-          <Languages className="h-4 w-4 text-green-500" />
+          <Languages className="h-4 w-4 text-success" />
           <div>
             <p className="text-xs font-medium text-foreground">{t("studio.advanced.rtl")}</p>
             <p className="text-[10px] text-muted-foreground">{t("studio.advanced.rtlDesc")}</p>
@@ -247,7 +247,7 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
       {/* Export / Import */}
       <div className="space-y-2 rounded-xl border border-border p-3">
         <div className="flex items-center gap-2">
-          <Code className="h-4 w-4 text-purple-500" />
+          <Code className="h-4 w-4 text-primary" />
           <p className="text-xs font-medium text-foreground">{t("studio.advanced.exportImport")}</p>
         </div>
         <p className="text-[10px] text-muted-foreground">{t("studio.advanced.exportImportDesc")}</p>
@@ -342,11 +342,11 @@ function ContrastCheck({ label, fg, bg }: { label: string; fg: string; bg: strin
           />
         </div>
         <span
-          className={`font-mono text-[10px] font-bold ${passAAA ? "text-green-500" : passAA ? "text-amber-500" : "text-red-500"}`}
+          className={`font-mono text-[10px] font-bold ${passAAA ? "text-success" : passAA ? "text-warning" : "text-destructive"}`}
         >
           {ratio.toFixed(1)}:1
         </span>
-        <span className={`text-[9px] font-bold ${passAA ? "text-green-500" : "text-red-500"}`}>
+        <span className={`text-[9px] font-bold ${passAA ? "text-success" : "text-destructive"}`}>
           {passAAA ? "AAA" : passAA ? "AA" : "FAIL"}
         </span>
       </div>

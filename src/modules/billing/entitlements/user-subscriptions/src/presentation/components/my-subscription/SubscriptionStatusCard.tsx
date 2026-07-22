@@ -30,12 +30,12 @@ export function SubscriptionStatusCard({ subscription, t, language }: Subscripti
   };
 
   const statusColors: Record<string, string> = {
-    Active: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
-    Trial: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-    Cancelled: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
-    Expired: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400",
-    PastDue: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-    Free: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+    Active: "bg-success/10 text-success",
+    Trial: "bg-info/10 text-info",
+    Cancelled: "bg-destructive/10 text-destructive",
+    Expired: "bg-muted text-foreground",
+    PastDue: "bg-warning/10 text-warning",
+    Free: "bg-success/10 text-success",
   };
 
   const formatDate = (dateStr: string | undefined) => {
@@ -48,10 +48,10 @@ export function SubscriptionStatusCard({ subscription, t, language }: Subscripti
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
-            <Crown className="h-5 w-5 text-amber-500" />
+            <Crown className="h-5 w-5 text-warning" />
             {subscription.planName}
           </CardTitle>
-          <Badge className={statusColors[subscription.status] ?? "bg-gray-100"}>
+          <Badge className={statusColors[subscription.status] ?? "bg-muted"}>
             {statusLabels[subscription.status] ?? subscription.status}
           </Badge>
         </div>
@@ -100,7 +100,7 @@ export function SubscriptionStatusCard({ subscription, t, language }: Subscripti
 
         {/* Days remaining warning */}
         {subscription.isExpiringSoon && subscription.daysRemaining != null && (
-          <div className="mt-4 flex items-center gap-2 rounded-md bg-amber-50 px-3 py-2 text-amber-700 dark:bg-amber-900/10 dark:text-amber-400">
+          <div className="mt-4 flex items-center gap-2 rounded-md bg-warning/10 px-3 py-2 text-warning">
             <Timer className="h-4 w-4" />
             <span className="text-sm">
               {t("entitlements.mySubscription.expiringSoon") ||
@@ -111,7 +111,7 @@ export function SubscriptionStatusCard({ subscription, t, language }: Subscripti
 
         {/* Trial info */}
         {subscription.hasTrial && subscription.trialEndsAt && (
-          <div className="mt-4 flex items-center gap-2 rounded-md bg-blue-50 px-3 py-2 text-blue-700 dark:bg-blue-900/10 dark:text-blue-400">
+          <div className="mt-4 flex items-center gap-2 rounded-md bg-info/10 px-3 py-2 text-info">
             <Timer className="h-4 w-4" />
             <span className="text-sm">
               {t("entitlements.mySubscription.trialEnds") || "Trial ends"}:{" "}

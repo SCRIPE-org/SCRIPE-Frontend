@@ -8,7 +8,6 @@ import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
 import { useNotificationViewModel } from "./useNotificationViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useTheme } from "next-themes";
 import ReactDOM from "react-dom";
 
 interface NotificationBellProps {
@@ -26,8 +25,6 @@ interface NotificationBellProps {
 export function NotificationBell({ iconClassName = "h-5 w-5", className }: NotificationBellProps) {
   const vm = useNotificationViewModel();
   const { t, direction } = useI18n();
-  const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
   const isRTL = direction === "rtl";
 
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -101,13 +98,17 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
     };
   }, [vm.isOpen, vm.close, recalcPosition]);
 
-  // ── Panel colours ───────────────────────────────────────────────────────────
-  const panelBg = isDark ? "#111827" : "#ffffff";
-  const panelBorder = isDark ? "#1f2937" : "#e5e7eb";
-  const headerBorderColor = isDark ? "#1f2937" : "#f3f4f6";
-  const unreadBg = isDark ? "rgba(99,91,196,0.08)" : "rgba(99,91,196,0.04)";
-  const hoverBg = isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)";
-  const badgeBg = isDark ? "#7C6FD4" : "#6258c4";
+  // ── Panel colours (semantic tokens — they resolve per theme on their own) ───
+  const panelBg = "hsl(var(--popover))";
+  const panelBorder = "hsl(var(--border))";
+  const headerBorderColor = "hsl(var(--border))";
+  const unreadBg = "hsl(var(--primary) / 0.08)";
+  const hoverBg = "hsl(var(--accent))";
+  const badgeBg = "hsl(var(--primary))";
+  const badgeGlow = "hsl(var(--primary) / 0.38)";
+  const strongText = "hsl(var(--popover-foreground))";
+  const mutedText = "hsl(var(--muted-foreground))";
+  const faintText = "hsl(var(--muted-foreground) / 0.5)";
 
   const dropdownPanel = vm.isOpen ? (
     <div
@@ -117,9 +118,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
         background: panelBg,
         border: `1px solid ${panelBorder}`,
         borderRadius: 14,
-        boxShadow: isDark
-          ? "0 20px 60px rgba(0,0,0,0.6), 0 4px 16px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05) inset"
-          : "0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06)",
+        boxShadow: "0 20px 60px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.1)",
         overflow: "hidden",
         backdropFilter: "blur(24px)",
         WebkitBackdropFilter: "blur(24px)",
@@ -141,14 +140,14 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
             style={{
               fontSize: 14,
               fontWeight: 700,
-              color: isDark ? "#f1f5f9" : "#0f172a",
+              color: strongText,
               margin: 0,
             }}
           >
             {t("notifications.title") || "Notifications"}
           </h3>
           {vm.unreadCount > 0 && (
-            <p style={{ fontSize: 11, color: isDark ? "#6b7280" : "#9ca3af", margin: "2px 0 0" }}>
+            <p style={{ fontSize: 11, color: mutedText, margin: "2px 0 0" }}>
               {vm.unreadCount} unread
             </p>
           )}
@@ -171,9 +170,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
               transition: "background 150ms",
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.background = isDark
-                ? "rgba(124,111,212,0.12)"
-                : "rgba(98,88,196,0.08)";
+              (e.currentTarget as HTMLElement).style.background = "hsl(var(--primary) / 0.12)";
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLElement).style.background = "transparent";
@@ -193,17 +190,14 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
               size={20}
               style={{
                 animation: "spin 1s linear infinite",
-                color: isDark ? "#6b7280" : "#9ca3af",
+                color: mutedText,
               }}
             />
           </div>
         ) : vm.notifications.length === 0 ? (
           <div style={{ padding: "32px 16px", textAlign: "center" }}>
-            <Bell
-              size={28}
-              style={{ color: isDark ? "#374151" : "#d1d5db", margin: "0 auto 8px" }}
-            />
-            <p style={{ fontSize: 13, color: isDark ? "#6b7280" : "#9ca3af", margin: 0 }}>
+            <Bell size={28} style={{ color: faintText, margin: "0 auto 8px" }} />
+            <p style={{ fontSize: 13, color: mutedText, margin: 0 }}>
               {t("notifications.empty") || "No notifications yet"}
             </p>
           </div>
@@ -239,7 +233,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
               {/* Indicator */}
               <div style={{ paddingTop: 3, flexShrink: 0 }}>
                 {n.isRead ? (
-                  <Check size={12} style={{ color: isDark ? "#374151" : "#d1d5db" }} />
+                  <Check size={12} style={{ color: faintText }} />
                 ) : (
                   <div
                     style={{
@@ -247,7 +241,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
                       height: 8,
                       borderRadius: "50%",
                       background: badgeBg,
-                      boxShadow: `0 0 6px ${badgeBg}60`,
+                      boxShadow: `0 0 6px ${badgeGlow}`,
                     }}
                   />
                 )}
@@ -259,13 +253,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
                   style={{
                     fontSize: 13,
                     fontWeight: n.isRead ? 400 : 600,
-                    color: isDark
-                      ? n.isRead
-                        ? "#9ca3af"
-                        : "#f1f5f9"
-                      : n.isRead
-                        ? "#6b7280"
-                        : "#111827",
+                    color: n.isRead ? mutedText : strongText,
                     whiteSpace: "nowrap",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -277,7 +265,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
                 <p
                   style={{
                     fontSize: 12,
-                    color: isDark ? "#6b7280" : "#9ca3af",
+                    color: mutedText,
                     margin: "3px 0 4px",
                     display: "-webkit-box",
                     WebkitLineClamp: 2,
@@ -288,12 +276,10 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
                   {n.body}
                 </p>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <time style={{ fontSize: 10, color: isDark ? "#4b5563" : "#d1d5db" }}>
+                  <time style={{ fontSize: 10, color: faintText }}>
                     {formatTimeAgo(n.createdAt)}
                   </time>
-                  {n.actionUrl && (
-                    <ExternalLink size={10} style={{ color: isDark ? "#4b5563" : "#d1d5db" }} />
-                  )}
+                  {n.actionUrl && <ExternalLink size={10} style={{ color: faintText }} />}
                 </div>
               </div>
             </button>
@@ -327,7 +313,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
               boxShadow: `0 0 8px ${badgeBg}60`,
               fontSize: 9,
               fontWeight: 700,
-              color: "#fff",
+              color: "hsl(var(--primary-foreground))",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",

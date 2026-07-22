@@ -160,7 +160,7 @@ const LAYOUT_THUMBNAILS: Record<LoginLayout, React.ReactNode> = {
     </div>
   ),
   immersive: (
-    <div className="relative flex h-full w-full items-center justify-center rounded-sm bg-gradient-to-br from-violet-500/20 via-primary/20 to-cyan-500/20">
+    <div className="relative flex h-full w-full items-center justify-center rounded-sm bg-gradient-to-br from-primary/20 via-primary/20 to-info/20">
       <div className="absolute inset-0 rounded-sm bg-black/40" />
       <div className="relative z-10 flex flex-col items-center gap-0.5 rounded-md bg-background/70 p-1.5 backdrop-blur-sm">
         <div className="h-1 w-4 rounded-full bg-foreground/40" />
@@ -345,8 +345,8 @@ export function LayoutPanel({
 
       {/* Builder mode hint */}
       {canvasMode === "builder" && (
-        <div className="rounded-lg border border-violet-500/20 bg-violet-500/5 px-3 py-2">
-          <p className="text-xs text-violet-600 dark:text-violet-400">
+        <div className="rounded-lg border border-primary/20 bg-primary/5 px-3 py-2">
+          <p className="text-xs text-primary">
             {t("studio.builder.activeHint") ||
               "Builder mode active — use the Builder tab to arrange components"}
           </p>
@@ -354,9 +354,9 @@ export function LayoutPanel({
       )}
       {/* Page context indicator */}
       {activeAuthPage && activeAuthPage !== "login" && (
-        <div className="flex items-center gap-2 rounded-lg border border-blue-500/20 bg-blue-500/5 px-3 py-2">
-          <div className="h-1.5 w-1.5 rounded-full bg-blue-500" />
-          <span className="text-xs text-blue-600 dark:text-blue-400">
+        <div className="flex items-center gap-2 rounded-lg border border-info/20 bg-info/5 px-3 py-2">
+          <div className="h-1.5 w-1.5 rounded-full bg-info" />
+          <span className="text-xs text-info">
             {t(
               `studio.page.${activeAuthPage === "forgot-password" ? "forgotPassword" : activeAuthPage === "reset-password" ? "resetPassword" : activeAuthPage === "verify-email" ? "verifyEmail" : activeAuthPage}`
             ) || activeAuthPage}

@@ -588,9 +588,9 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
 
       {/* Inline Setup Guide for selected template */}
       {activeTemplate && activeTemplate.setupSteps && (
-        <Card className="border border-purple-500/20 bg-purple-500/5 shadow-sm duration-200 animate-in fade-in slide-in-from-top-1 dark:bg-purple-950/10">
+        <Card className="border border-primary/20 bg-primary/5 shadow-sm duration-200 animate-in fade-in slide-in-from-top-1">
           <CardContent className="space-y-3 p-4">
-            <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-purple-700 dark:text-purple-400">
+            <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
               <HelpCircle className="h-4 w-4" />
               {t("identityProviders.setupGuide", { name: activeTemplate.name })}
             </h4>
@@ -603,7 +603,7 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
                     key={idx}
                     className="flex items-start gap-2.5 leading-relaxed text-muted-foreground"
                   >
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/10 text-[10px] font-bold text-purple-700 dark:text-purple-400">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
                       {idx + 1}
                     </span>
                     <p className="mt-0.5">{localizedStep}</p>

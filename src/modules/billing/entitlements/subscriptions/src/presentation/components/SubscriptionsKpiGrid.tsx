@@ -53,16 +53,16 @@ export function SubscriptionsKpiGrid({
       {/* Financial Metrics */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* MRR */}
-        <Card className="relative overflow-hidden border-emerald-200/50 transition-all duration-300 hover:shadow-md dark:border-emerald-800/30">
-          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-bl from-emerald-500/10 to-transparent" />
+        <Card className="relative overflow-hidden border-success/30 transition-all duration-300 hover:shadow-md">
+          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-bl from-success/10 to-transparent" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               {t("dashboard.kpi.totalMrr") || "Monthly Recurring Revenue"}
             </CardTitle>
-            <DollarSign className="h-4.5 w-4.5 text-emerald-600 dark:text-emerald-400" />
+            <DollarSign className="h-4.5 w-4.5 text-success" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-extrabold tabular-nums text-emerald-700 dark:text-emerald-400">
+            <div className="text-2xl font-extrabold tabular-nums text-success">
               {formatDisplay(kpis.totalMrr, "USD")}
             </div>
             <p className="mt-1 text-xs font-medium text-muted-foreground">
@@ -72,16 +72,16 @@ export function SubscriptionsKpiGrid({
         </Card>
 
         {/* Gross Revenue */}
-        <Card className="relative overflow-hidden border-blue-200/50 transition-all duration-300 hover:shadow-md dark:border-blue-800/30">
-          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-bl from-blue-500/10 to-transparent" />
+        <Card className="relative overflow-hidden border-info/30 transition-all duration-300 hover:shadow-md">
+          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-bl from-info/10 to-transparent" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               {t("dashboard.kpi.totalRevenue") || "Gross Revenue"}
             </CardTitle>
-            <TrendingUp className="h-4.5 w-4.5 text-blue-600 dark:text-blue-400" />
+            <TrendingUp className="h-4.5 w-4.5 text-info" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-extrabold tabular-nums text-blue-700 dark:text-blue-400">
+            <div className="text-2xl font-extrabold tabular-nums text-info">
               {formatDisplay(kpis.totalRevenue, "USD")}
             </div>
             <p className="mt-1 text-xs font-medium text-muted-foreground">
@@ -91,16 +91,16 @@ export function SubscriptionsKpiGrid({
         </Card>
 
         {/* Total Refunded */}
-        <Card className="relative overflow-hidden border-red-200/50 transition-all duration-300 hover:shadow-md dark:border-red-800/30">
-          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-bl from-red-500/10 to-transparent" />
+        <Card className="relative overflow-hidden border-destructive/30 transition-all duration-300 hover:shadow-md">
+          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-bl from-destructive/10 to-transparent" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               {t("dashboard.kpi.totalRefunded") || "Total Refunded"}
             </CardTitle>
-            <XCircle className="h-4.5 w-4.5 text-red-500" />
+            <XCircle className="h-4.5 w-4.5 text-destructive" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-extrabold tabular-nums text-red-600 dark:text-red-400">
+            <div className="text-2xl font-extrabold tabular-nums text-destructive">
               {formatDisplay(kpis.totalRefunded, "USD")}
             </div>
             <p className="mt-1 text-xs font-medium text-muted-foreground">
@@ -110,16 +110,16 @@ export function SubscriptionsKpiGrid({
         </Card>
 
         {/* Net Revenue */}
-        <Card className="relative overflow-hidden border-violet-200/50 transition-all duration-300 hover:shadow-md dark:border-violet-800/30">
-          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-bl from-violet-500/10 to-transparent" />
+        <Card className="relative overflow-hidden border-primary/30 transition-all duration-300 hover:shadow-md">
+          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-bl from-primary/10 to-transparent" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               {t("dashboard.kpi.netRevenue") || "Net Revenue"}
             </CardTitle>
-            <BarChart3 className="h-4.5 w-4.5 text-violet-600 dark:text-violet-400" />
+            <BarChart3 className="h-4.5 w-4.5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-extrabold tabular-nums text-violet-700 dark:text-violet-400">
+            <div className="text-2xl font-extrabold tabular-nums text-primary">
               {formatDisplay(kpis.netRevenue, "USD")}
             </div>
             <p className="mt-1 text-xs font-medium text-muted-foreground">
@@ -135,8 +135,8 @@ export function SubscriptionsKpiGrid({
         <Card
           className={`group cursor-pointer transition-all duration-300 hover:shadow-md ${
             statusFilter === "Active"
-              ? "border-emerald-500 bg-emerald-50/10 ring-2 ring-emerald-500/20"
-              : "hover:border-emerald-300 dark:hover:border-emerald-700"
+              ? "border-success bg-success/10 ring-2 ring-success/20"
+              : "hover:border-success/30"
           }`}
           onClick={() => setStatusFilter(statusFilter === "Active" ? "all" : "Active")}
         >
@@ -144,7 +144,7 @@ export function SubscriptionsKpiGrid({
             <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               {t("entSubscriptions.activeCount") || "Active"}
             </CardTitle>
-            <CreditCard className="h-4.5 w-4.5 text-emerald-500" />
+            <CreditCard className="h-4.5 w-4.5 text-success" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-extrabold tabular-nums tracking-tight text-foreground">
@@ -160,8 +160,8 @@ export function SubscriptionsKpiGrid({
         <Card
           className={`group cursor-pointer transition-all duration-300 hover:shadow-md ${
             statusFilter === "Trialing"
-              ? "border-blue-500 bg-blue-50/10 ring-2 ring-blue-500/20"
-              : "hover:border-blue-300 dark:hover:border-blue-700"
+              ? "border-info bg-info/10 ring-2 ring-info/20"
+              : "hover:border-info/30"
           }`}
           onClick={() => setStatusFilter(statusFilter === "Trialing" ? "all" : "Trialing")}
         >
@@ -169,7 +169,7 @@ export function SubscriptionsKpiGrid({
             <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               {t("entSubscriptions.trialCount") || "Trialing"}
             </CardTitle>
-            <Clock className="h-4.5 w-4.5 text-blue-500" />
+            <Clock className="h-4.5 w-4.5 text-info" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-extrabold tabular-nums tracking-tight text-foreground">
@@ -185,8 +185,8 @@ export function SubscriptionsKpiGrid({
         <Card
           className={`group cursor-pointer transition-all duration-300 hover:shadow-md ${
             statusFilter === "Suspended"
-              ? "border-amber-500 bg-amber-50/10 ring-2 ring-amber-500/20"
-              : "hover:border-amber-300 dark:hover:border-amber-700"
+              ? "border-warning bg-warning/10 ring-2 ring-warning/20"
+              : "hover:border-warning/30"
           }`}
           onClick={() => setStatusFilter(statusFilter === "Suspended" ? "all" : "Suspended")}
         >
@@ -194,7 +194,7 @@ export function SubscriptionsKpiGrid({
             <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               {t("dashboard.kpi.suspendedCount") || "Suspended"}
             </CardTitle>
-            <Pause className="h-4.5 w-4.5 text-amber-500" />
+            <Pause className="h-4.5 w-4.5 text-warning" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-extrabold tabular-nums tracking-tight text-foreground">
@@ -210,8 +210,8 @@ export function SubscriptionsKpiGrid({
         <Card
           className={`group cursor-pointer transition-all duration-300 hover:shadow-md ${
             statusFilter === "Canceled"
-              ? "border-red-500 bg-red-50/10 ring-2 ring-red-500/20"
-              : "hover:border-red-300 dark:hover:border-red-700"
+              ? "border-destructive bg-destructive/10 ring-2 ring-destructive/20"
+              : "hover:border-destructive/30"
           }`}
           onClick={() => setStatusFilter(statusFilter === "Canceled" ? "all" : "Canceled")}
         >
@@ -219,7 +219,7 @@ export function SubscriptionsKpiGrid({
             <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               {t("dashboard.kpi.canceledCount") || "Canceled"}
             </CardTitle>
-            <XCircle className="h-4.5 w-4.5 text-red-500" />
+            <XCircle className="h-4.5 w-4.5 text-destructive" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-extrabold tabular-nums tracking-tight text-foreground">
@@ -235,16 +235,16 @@ export function SubscriptionsKpiGrid({
       {/* Business Health KPIs */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* ARPU */}
-        <Card className="relative overflow-hidden border-cyan-200/50 transition-all duration-300 hover:shadow-md dark:border-cyan-800/30">
-          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-bl from-cyan-500/10 to-transparent" />
+        <Card className="relative overflow-hidden border-info/30 transition-all duration-300 hover:shadow-md">
+          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-bl from-info/10 to-transparent" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               {t("dashboard.kpi.arpu") || "ARPU"}
             </CardTitle>
-            <UserCheck className="h-4.5 w-4.5 text-cyan-600 dark:text-cyan-400" />
+            <UserCheck className="h-4.5 w-4.5 text-info" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-extrabold tabular-nums text-cyan-700 dark:text-cyan-400">
+            <div className="text-2xl font-extrabold tabular-nums text-info">
               {formatDisplay(kpis.arpu, "USD")}
             </div>
             <p className="mt-1 text-xs font-medium text-muted-foreground">
@@ -257,13 +257,13 @@ export function SubscriptionsKpiGrid({
         <Card
           className={`relative overflow-hidden transition-all duration-300 hover:shadow-md ${
             kpis.churnRate > 10
-              ? "border-red-300/70 dark:border-red-700/50"
+              ? "border-destructive/30"
               : kpis.churnRate > 5
-                ? "border-amber-200/50 dark:border-amber-800/30"
-                : "border-teal-200/50 dark:border-teal-800/30"
+                ? "border-warning/30"
+                : "border-success/30"
           }`}
         >
-          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-bl from-amber-500/10 to-transparent" />
+          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-bl from-warning/10 to-transparent" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               {t("dashboard.kpi.churnRate") || "Churn Rate"}
@@ -271,10 +271,10 @@ export function SubscriptionsKpiGrid({
             <Percent
               className={`h-4.5 w-4.5 ${
                 kpis.churnRate > 10
-                  ? "text-red-500"
+                  ? "text-destructive"
                   : kpis.churnRate > 5
-                    ? "text-amber-500"
-                    : "text-teal-500"
+                    ? "text-warning"
+                    : "text-success"
               }`}
             />
           </CardHeader>
@@ -282,10 +282,10 @@ export function SubscriptionsKpiGrid({
             <div
               className={`text-2xl font-extrabold tabular-nums ${
                 kpis.churnRate > 10
-                  ? "text-red-600 dark:text-red-400"
+                  ? "text-destructive"
                   : kpis.churnRate > 5
-                    ? "text-amber-600 dark:text-amber-400"
-                    : "text-teal-700 dark:text-teal-400"
+                    ? "text-warning"
+                    : "text-success"
               }`}
             >
               {kpis.churnRate}%
@@ -297,13 +297,13 @@ export function SubscriptionsKpiGrid({
         </Card>
 
         {/* Upcoming Renewals */}
-        <Card className="relative overflow-hidden border-indigo-200/50 transition-all duration-300 hover:shadow-md dark:border-indigo-800/30">
-          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-bl from-indigo-500/10 to-transparent" />
+        <Card className="relative overflow-hidden border-info/30 transition-all duration-300 hover:shadow-md">
+          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-bl from-info/10 to-transparent" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               {t("dashboard.kpi.renewals") || "Upcoming Renewals"}
             </CardTitle>
-            <CalendarClock className="h-4.5 w-4.5 text-indigo-500 dark:text-indigo-400" />
+            <CalendarClock className="h-4.5 w-4.5 text-info" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-extrabold tabular-nums tracking-tight text-foreground">
@@ -316,16 +316,16 @@ export function SubscriptionsKpiGrid({
         </Card>
 
         {/* Promo Discount */}
-        <Card className="relative overflow-hidden border-pink-200/50 transition-all duration-300 hover:shadow-md dark:border-pink-800/30">
-          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-bl from-pink-500/10 to-transparent" />
+        <Card className="relative overflow-hidden border-primary/30 transition-all duration-300 hover:shadow-md">
+          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-bl from-primary/10 to-transparent" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               {t("dashboard.kpi.promoDiscount") || "Active Discounts"}
             </CardTitle>
-            <Tag className="h-4.5 w-4.5 text-pink-500" />
+            <Tag className="h-4.5 w-4.5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-extrabold tabular-nums text-pink-700 dark:text-pink-400">
+            <div className="text-2xl font-extrabold tabular-nums text-primary">
               {formatDisplay(kpis.totalPromoDiscount, "USD")}
             </div>
             <p className="mt-1 text-xs font-medium text-muted-foreground">

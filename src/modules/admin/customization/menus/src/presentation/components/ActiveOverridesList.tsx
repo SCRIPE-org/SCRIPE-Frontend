@@ -94,7 +94,7 @@ export function ActiveOverridesList({
                   {entry.override.nameEnOverride && (
                     <Badge
                       variant="outline"
-                      className="gap-0.5 border-0 bg-blue-100 px-1.5 py-0 text-[9px] text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                      className="gap-0.5 border-0 bg-info/15 px-1.5 py-0 text-[9px] text-info"
                     >
                       <Pencil className="h-2 w-2" />
                       {t("menus.badgeRenamed")}
@@ -103,7 +103,7 @@ export function ActiveOverridesList({
                   {entry.override.orderOverride != null && (
                     <Badge
                       variant="outline"
-                      className="gap-0.5 border-0 bg-purple-100 px-1.5 py-0 text-[9px] text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
+                      className="gap-0.5 border-0 bg-primary/15 px-1.5 py-0 text-[9px] text-primary"
                     >
                       <ArrowUpDown className="h-2 w-2" />
                       {t("menus.badgeReordered")}
@@ -112,7 +112,7 @@ export function ActiveOverridesList({
                   {entry.override.parentMenuItemIdOverride && (
                     <Badge
                       variant="outline"
-                      className="gap-0.5 border-0 bg-emerald-100 px-1.5 py-0 text-[9px] text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+                      className="gap-0.5 border-0 bg-success/15 px-1.5 py-0 text-[9px] text-success"
                     >
                       <FolderInput className="h-2 w-2" />
                       {t("menus.badgeMoved")}
@@ -121,7 +121,7 @@ export function ActiveOverridesList({
                   {entry.override.isHidden && (
                     <Badge
                       variant="outline"
-                      className="gap-0.5 border-0 bg-red-100 px-1.5 py-0 text-[9px] text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                      className="gap-0.5 border-0 bg-destructive/15 px-1.5 py-0 text-[9px] text-destructive"
                     >
                       <EyeOff className="h-2 w-2" />
                       {t("menus.badgeHidden")}

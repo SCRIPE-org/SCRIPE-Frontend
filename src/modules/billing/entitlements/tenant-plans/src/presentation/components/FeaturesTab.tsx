@@ -155,7 +155,7 @@ export function FeaturesTab({
           {hasChanges && (
             <Badge
               variant="outline"
-              className="border-amber-500/30 bg-amber-500/5 text-xs text-amber-600"
+              className="border-warning/30 bg-warning/5 text-xs text-warning"
             >
               {t("common.unsavedChanges") || "Unsaved Changes"}
             </Badge>

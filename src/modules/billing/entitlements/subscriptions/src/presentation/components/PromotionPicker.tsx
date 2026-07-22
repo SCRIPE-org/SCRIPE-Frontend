@@ -104,9 +104,9 @@ export function PromotionPicker({
 
       {/* Discount preview */}
       {selectedPromotion && (
-        <div className="flex items-center gap-2 rounded-md border border-green-200 bg-green-50 p-2 dark:border-green-800 dark:bg-green-950/30">
-          <Tag className="h-4 w-4 text-green-600" />
-          <span className="text-sm text-green-700 dark:text-green-400">
+        <div className="flex items-center gap-2 rounded-md border border-success/30 bg-success/10 p-2">
+          <Tag className="h-4 w-4 text-success" />
+          <span className="text-sm text-success">
             {selectedPromotion.name} —{" "}
             {selectedPromotion.type === "Percentage"
               ? `${selectedPromotion.discountValue}% off`

@@ -34,8 +34,8 @@ export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
   return (
     <div className="space-y-6">
       <div className="mb-2 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10">
-          <UserPlus className="h-5 w-5 text-blue-500" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-info/10">
+          <UserPlus className="h-5 w-5 text-info" />
         </div>
         <div>
           <h2 className="text-lg font-semibold">
@@ -49,8 +49,8 @@ export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
       </div>
 
       {/* Info callout */}
-      <div className="flex items-start gap-3 rounded-xl border border-blue-500/20 bg-blue-500/5 p-4">
-        <Shield className="mt-0.5 h-5 w-5 shrink-0 text-blue-500" />
+      <div className="flex items-start gap-3 rounded-xl border border-info/20 bg-info/5 p-4">
+        <Shield className="mt-0.5 h-5 w-5 shrink-0 text-info" />
         <div className="text-sm text-muted-foreground">
           <p className="mb-1 font-medium text-foreground">
             {t("tenant.secureOnboarding") || "Secure Onboarding"}

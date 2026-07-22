@@ -113,7 +113,7 @@ export function DashboardLayoutPreview({ settings }: Props) {
           <span className="rounded bg-primary/10 px-1.5 py-0.5 font-mono text-[10px] font-medium text-primary">
             {settings.layoutTemplate || "modern"}
           </span>
-          {!isReady && <span className="animate-pulse text-[10px] text-amber-500">Loading...</span>}
+          {!isReady && <span className="animate-pulse text-[10px] text-warning">Loading...</span>}
         </div>
 
         <div className="flex items-center gap-1.5">

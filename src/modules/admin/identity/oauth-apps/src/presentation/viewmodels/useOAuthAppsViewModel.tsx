@@ -304,7 +304,7 @@ export function useOAuthAppsViewModel() {
               }}
             >
               {copiedField === `clientId-${item.id}` ? (
-                <Check className="h-3 w-3 text-emerald-500" />
+                <Check className="h-3 w-3 text-success" />
               ) : (
                 <Copy className="h-3 w-3 text-muted-foreground" />
               )}
@@ -329,8 +329,8 @@ export function useOAuthAppsViewModel() {
             variant={item.requirePkce ? "default" : "secondary"}
             className={`text-xs ${
               item.requirePkce
-                ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
-                : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                ? "bg-success/10 text-success"
+                : "bg-muted text-muted-foreground"
             }`}
           >
             {item.requirePkce ? "On" : "Off"}
@@ -345,8 +345,8 @@ export function useOAuthAppsViewModel() {
             variant={item.isActive ? "default" : "secondary"}
             className={`text-xs ${
               item.isActive
-                ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
-                : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                ? "bg-success/10 text-success"
+                : "bg-muted text-muted-foreground"
             }`}
           >
             {item.isActive ? t("common.active") || "Active" : t("common.inactive") || "Inactive"}
@@ -399,7 +399,7 @@ export function useOAuthAppsViewModel() {
         label: tFn("common.delete") || "Delete",
         onClick: (item: OAuthAppListItem) => handleDeleteFn?.(item),
         variant: "ghost" as const,
-        className: "text-red-600 hover:text-red-700",
+        className: "text-destructive hover:text-destructive/90",
         icon: <Trash2 className="h-4 w-4" />,
         requiredPermission: "oauth_apps.delete",
         confirmTitle: tFn("oauthApps.deleteConfirmTitle") || "Delete OAuth Application",

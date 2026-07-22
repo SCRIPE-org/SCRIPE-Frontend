@@ -35,13 +35,13 @@ export function StripeConnectHero({ onOnboard, isOnboarding }: StripeConnectHero
   return (
     <div className="space-y-6">
       {/* Hero CTA Card */}
-      <Card className="overflow-hidden border-2 border-dashed shadow-sm transition-all hover:border-violet-300 dark:hover:border-violet-800">
+      <Card className="overflow-hidden border-2 border-dashed shadow-sm transition-all hover:border-primary/30">
         <div className="relative">
           {/* Decorative background gradient */}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-indigo-500/5 dark:from-violet-500/10 dark:to-indigo-500/10" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-info/5" />
           <CardContent className="relative flex flex-col items-center justify-center space-y-5 py-16 text-center">
-            <div className="rounded-2xl bg-gradient-to-br from-violet-500/10 to-indigo-500/10 p-5 ring-1 ring-violet-500/10 dark:from-violet-500/20 dark:to-indigo-500/20">
-              <CreditCard className="h-10 w-10 text-violet-600 dark:text-violet-400" />
+            <div className="rounded-2xl bg-gradient-to-br from-primary/10 to-info/10 p-5 ring-1 ring-primary/10">
+              <CreditCard className="h-10 w-10 text-primary" />
             </div>
             <div className="space-y-2">
               <h2 className="text-2xl font-bold tracking-tight">
@@ -54,7 +54,7 @@ export function StripeConnectHero({ onOnboard, isOnboarding }: StripeConnectHero
             </div>
             <Button
               size="lg"
-              className="mt-2 gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/20 transition-all duration-300 hover:scale-[1.02] hover:from-violet-700 hover:to-indigo-700 active:scale-95"
+              className="mt-2 gap-2 bg-gradient-to-r from-primary to-info text-primary-foreground shadow-lg shadow-primary/20 transition-all duration-300 hover:scale-[1.02] hover:from-primary/90 hover:to-info/90 active:scale-95"
               onClick={onOnboard}
               disabled={isOnboarding}
             >
@@ -81,8 +81,8 @@ export function StripeConnectHero({ onOnboard, isOnboarding }: StripeConnectHero
             >
               <CardContent className="p-5">
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 rounded-lg bg-muted/60 p-2.5 transition-colors group-hover:bg-violet-50 dark:group-hover:bg-violet-900/20">
-                    <Icon className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-violet-600 dark:group-hover:text-violet-400" />
+                  <div className="flex-shrink-0 rounded-lg bg-muted/60 p-2.5 transition-colors group-hover:bg-primary/10 dark:group-hover:bg-primary/20">
+                    <Icon className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary dark:group-hover:text-primary" />
                   </div>
                   <div className="min-w-0">
                     <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -104,7 +104,7 @@ export function StripeConnectHero({ onOnboard, isOnboarding }: StripeConnectHero
 
       {/* Security Note */}
       <div className="flex items-start gap-3 rounded-lg border bg-muted/40 px-4 py-3.5 text-sm transition-colors hover:bg-muted/60">
-        <Shield className="mt-0.5 h-4 w-4 flex-shrink-0 text-violet-600 dark:text-violet-400" />
+        <Shield className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
         <p className="text-xs leading-relaxed text-muted-foreground">
           {t("entitlements.tenantConnect.securityNote") ||
             "Your information is securely processed by Stripe. SCRIPE never sees or stores your bank account details."}

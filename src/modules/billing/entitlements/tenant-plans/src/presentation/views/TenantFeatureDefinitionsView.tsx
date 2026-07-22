@@ -84,7 +84,7 @@ export function TenantFeatureDefinitionsView() {
           label: tFn("common.delete") || "Delete",
           onClick: handleDelete as (item: TenantFeatureDefinition) => void,
           variant: "ghost" as const,
-          className: "text-red-600 hover:text-red-700",
+          className: "text-destructive hover:text-destructive/80",
           icon: <Trash2 className="h-4 w-4" />,
           show: (item: TenantFeatureDefinition) => (item.planUsageCount ?? 0) === 0,
         },

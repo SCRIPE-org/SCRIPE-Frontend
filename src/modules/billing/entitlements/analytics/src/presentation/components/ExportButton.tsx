@@ -79,7 +79,7 @@ export function ExportButton({ onExport, disabled }: ExportButtonProps) {
           disabled={loading === "csv"}
           className="gap-2"
         >
-          <FileText className="h-4 w-4 text-emerald-500" />
+          <FileText className="h-4 w-4 text-success" />
           {t("entitlements.analytics.export.csv")}
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -87,7 +87,7 @@ export function ExportButton({ onExport, disabled }: ExportButtonProps) {
           disabled={loading === "xlsx"}
           className="gap-2"
         >
-          <FileSpreadsheet className="h-4 w-4 text-blue-500" />
+          <FileSpreadsheet className="h-4 w-4 text-info" />
           {t("entitlements.analytics.export.excel")}
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -95,7 +95,7 @@ export function ExportButton({ onExport, disabled }: ExportButtonProps) {
           disabled={loading === "pdf"}
           className="gap-2"
         >
-          <File className="h-4 w-4 text-red-500" />
+          <File className="h-4 w-4 text-destructive" />
           {t("entitlements.analytics.export.pdf")}
         </DropdownMenuItem>
       </DropdownMenuContent>

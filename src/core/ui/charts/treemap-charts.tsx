@@ -11,13 +11,11 @@ const TreemapChart = ({ data, colors, title, description }: any) => {
   const minValue = Math.min(...data.map((item: any) => item.value));
 
   return (
-    <Card className="hover:shadow-3xl w-full border-slate-700 bg-gradient-to-br from-slate-900 to-slate-800 shadow-2xl transition-all duration-300">
+    <Card className="hover:shadow-3xl w-full border-border bg-gradient-to-br from-card to-muted shadow-2xl transition-all duration-300">
       <CardHeader className="pb-6">
-        <CardTitle className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-2xl font-bold text-transparent text-white">
-          {title}
-        </CardTitle>
-        <CardDescription className="text-base text-slate-300">{description}</CardDescription>
-        <div className="mt-4 flex items-center gap-4 text-sm text-slate-400">
+        <CardTitle className="text-2xl font-bold text-foreground">{title}</CardTitle>
+        <CardDescription className="text-base text-muted-foreground">{description}</CardDescription>
+        <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <div className="h-3 w-3 rounded" style={{ backgroundColor: colors[0] }}></div>
             <span>Min: {minValue}</span>
@@ -30,13 +28,13 @@ const TreemapChart = ({ data, colors, title, description }: any) => {
             <span>Max: {maxValue}</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded bg-slate-600"></div>
+            <div className="h-3 w-3 rounded bg-muted"></div>
             <span>Total: {totalValue}</span>
           </div>
         </div>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 p-6 shadow-inner">
+        <div className="rounded-xl bg-gradient-to-br from-muted to-card p-6 shadow-inner">
           <div className="grid h-80 grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
             {data.map((item: any, index: number) => {
               const percentage = (item.value / totalValue) * 100;
@@ -91,11 +89,11 @@ const TreemapChart = ({ data, colors, title, description }: any) => {
 
           {/* Legend */}
           <div className="mt-6 flex items-center justify-center gap-2">
-            <span className="text-xs text-slate-400">Size represents value:</span>
+            <span className="text-xs text-muted-foreground">Size represents value:</span>
             {colors.slice(0, 5).map((color: string, index: number) => (
               <div
                 key={index}
-                className="h-4 w-4 rounded-sm border border-slate-600"
+                className="h-4 w-4 rounded-sm border border-border"
                 style={{ backgroundColor: color }}
                 title={`${Math.round((index / 4) * 100)}% intensity`}
               ></div>

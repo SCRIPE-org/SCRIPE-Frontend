@@ -116,7 +116,7 @@ export function FeaturesTab({
               {overflowPolicyChanged && (
                 <Badge
                   variant="outline"
-                  className="h-4 border-amber-500/30 bg-amber-500/5 text-[10px] text-amber-600"
+                  className="h-4 border-warning/30 bg-warning/5 text-[10px] text-warning"
                 >
                   {t("common.modified") || "Modified"}
                 </Badge>
@@ -248,13 +248,13 @@ export function FeaturesTab({
                                   </span>
                                   {isModified && (
                                     <span
-                                      className="inline-block h-1.5 w-1.5 rounded-full bg-amber-500"
+                                      className="inline-block h-1.5 w-1.5 rounded-full bg-warning"
                                       title={t("common.modified") || "Modified"}
                                     />
                                   )}
                                   {isLabelModified && (
                                     <span
-                                      className="inline-block h-1.5 w-1.5 rounded-full bg-blue-500"
+                                      className="inline-block h-1.5 w-1.5 rounded-full bg-info"
                                       title="Marketing label modified"
                                     />
                                   )}
@@ -323,11 +323,11 @@ export function FeaturesTab({
                                   highlight.highlightOrder !==
                                     (serverHighlight?.highlightOrder ?? 0);
                                 return (
-                                  <div className="mb-3 rounded-lg border border-blue-200/50 bg-blue-50/30 px-4 py-3 dark:border-blue-800/30 dark:bg-blue-950/20">
+                                  <div className="mb-3 rounded-lg border border-info/30 bg-info/10 px-4 py-3">
                                     {/* ── Marketing Label ── */}
                                     <div className="mb-2 flex items-center gap-1.5">
-                                      <Tag className="h-3.5 w-3.5 text-blue-500" />
-                                      <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+                                      <Tag className="h-3.5 w-3.5 text-info" />
+                                      <span className="text-xs font-semibold uppercase tracking-wider text-info">
                                         Marketing Display Label
                                       </span>
                                       <span className="text-xs text-muted-foreground">
@@ -399,14 +399,14 @@ export function FeaturesTab({
                                     )}
 
                                     {/* ── Highlight ── */}
-                                    <div className="mt-3 border-t border-blue-200/50 pt-3 dark:border-blue-800/30">
+                                    <div className="mt-3 border-t border-info/30 pt-3">
                                       <div className="mb-2 flex items-center gap-1.5">
-                                        <Star className="h-3.5 w-3.5 text-amber-500" />
-                                        <span className="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                                        <Star className="h-3.5 w-3.5 text-warning" />
+                                        <span className="text-xs font-semibold uppercase tracking-wider text-warning">
                                           Plan Card Highlight
                                         </span>
                                         {isHighlightModified && (
-                                          <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-500" />
+                                          <span className="inline-block h-1.5 w-1.5 rounded-full bg-warning" />
                                         )}
                                       </div>
                                       <div className="flex items-center gap-4">

@@ -16,22 +16,22 @@ const CATEGORY_META: Record<string, { labelKey: string; icon: React.ReactNode; c
   PersonalData: {
     labelKey: "compliance.categories.personalData",
     icon: <ShieldAlert className="h-4 w-4" />,
-    cls: "border-blue-500/20 bg-gradient-to-br from-blue-500/10 to-indigo-500/5 text-blue-600 dark:text-blue-400",
+    cls: "border-info/20 bg-gradient-to-br from-info/10 to-info/5 text-info",
   },
   FinancialData: {
     labelKey: "compliance.categories.financialData",
     icon: <Archive className="h-4 w-4" />,
-    cls: "border-violet-500/20 bg-gradient-to-br from-violet-500/10 to-purple-500/5 text-violet-600 dark:text-violet-400",
+    cls: "border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5 text-primary",
   },
   AuditLogs: {
     labelKey: "compliance.categories.auditLogs",
     icon: <Clock className="h-4 w-4" />,
-    cls: "border-amber-500/20 bg-gradient-to-br from-amber-500/10 to-yellow-500/5 text-amber-600 dark:text-amber-400",
+    cls: "border-warning/20 bg-gradient-to-br from-warning/10 to-warning/5 text-warning",
   },
   MarketingData: {
     labelKey: "compliance.categories.marketingData",
     icon: <CheckCircle2 className="h-4 w-4" />,
-    cls: "border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-green-500/5 text-emerald-600 dark:text-emerald-400",
+    cls: "border-success/20 bg-gradient-to-br from-success/10 to-success/5 text-success",
   },
 };
 

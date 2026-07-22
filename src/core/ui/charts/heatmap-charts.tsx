@@ -10,13 +10,11 @@ const HeatmapChart = ({ data, xLabels, yLabels, colors, title, description }: an
   const minValue = Math.min(...data.flat());
 
   return (
-    <Card className="hover:shadow-3xl w-full border-slate-700 bg-gradient-to-br from-slate-900 to-slate-800 shadow-2xl transition-all duration-300">
+    <Card className="hover:shadow-3xl w-full border-border bg-gradient-to-br from-card to-muted shadow-2xl transition-all duration-300">
       <CardHeader className="pb-6">
-        <CardTitle className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-2xl font-bold text-transparent text-white">
-          {title}
-        </CardTitle>
-        <CardDescription className="text-base text-slate-300">{description}</CardDescription>
-        <div className="mt-4 flex items-center gap-4 text-sm text-slate-400">
+        <CardTitle className="text-2xl font-bold text-foreground">{title}</CardTitle>
+        <CardDescription className="text-base text-muted-foreground">{description}</CardDescription>
+        <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <div className="h-3 w-3 rounded" style={{ backgroundColor: colors[0] }}></div>
             <span>Min: {minValue}</span>
@@ -31,7 +29,7 @@ const HeatmapChart = ({ data, xLabels, yLabels, colors, title, description }: an
         </div>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 p-6 shadow-inner">
+        <div className="rounded-xl bg-gradient-to-br from-muted to-card p-6 shadow-inner">
           <div
             className="grid gap-1"
             style={{ gridTemplateColumns: `repeat(${xLabels.length + 1}, 1fr)` }}
@@ -43,7 +41,7 @@ const HeatmapChart = ({ data, xLabels, yLabels, colors, title, description }: an
             {xLabels.map((label: string, index: number) => (
               <div
                 key={index}
-                className="py-2 text-center text-xs font-medium text-slate-300 transition-colors duration-200 hover:text-white"
+                className="py-2 text-center text-xs font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
               >
                 {label}
               </div>
@@ -53,7 +51,7 @@ const HeatmapChart = ({ data, xLabels, yLabels, colors, title, description }: an
             {yLabels.map((yLabel: string, yIndex: number) => (
               <React.Fragment key={yIndex}>
                 {/* Y Label */}
-                <div className="flex items-center justify-end pr-2 text-right text-xs font-medium text-slate-300 transition-colors duration-200 hover:text-white">
+                <div className="flex items-center justify-end pr-2 text-right text-xs font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground">
                   {yLabel}
                 </div>
 
@@ -100,11 +98,11 @@ const HeatmapChart = ({ data, xLabels, yLabels, colors, title, description }: an
 
           {/* Legend */}
           <div className="mt-6 flex items-center justify-center gap-2">
-            <span className="text-xs text-slate-400">Intensity:</span>
+            <span className="text-xs text-muted-foreground">Intensity:</span>
             {colors.map((color: string, index: number) => (
               <div
                 key={index}
-                className="h-4 w-4 rounded-sm border border-slate-600"
+                className="h-4 w-4 rounded-sm border border-border"
                 style={{ backgroundColor: color }}
                 title={`${Math.round((index / (colors.length - 1)) * 100)}% intensity`}
               ></div>

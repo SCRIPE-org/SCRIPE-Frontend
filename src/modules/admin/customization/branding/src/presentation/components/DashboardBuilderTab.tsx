@@ -1008,9 +1008,9 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
   return (
     <div className="space-y-0">
       {/* Info banner */}
-      <div className="mb-3 flex items-start gap-2 rounded-lg border border-blue-500/20 bg-blue-500/5 p-3">
-        <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-500" />
-        <p className="text-[10px] leading-relaxed text-blue-600 dark:text-blue-400">
+      <div className="mb-3 flex items-start gap-2 rounded-lg border border-info/20 bg-info/5 p-3">
+        <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-info" />
+        <p className="text-[10px] leading-relaxed text-info">
           {t("studio.dashboard.info")}
         </p>
       </div>
@@ -1772,9 +1772,9 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
         isOpen={openSections.has(9)}
         onToggle={() => toggleSection(9)}
       >
-        <div className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 p-2.5">
-          <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500" />
-          <p className="text-[10px] leading-relaxed text-amber-600 dark:text-amber-400">
+        <div className="flex items-start gap-2 rounded-lg border border-warning/20 bg-warning/5 p-2.5">
+          <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
+          <p className="text-[10px] leading-relaxed text-warning">
             {t("studio.dashboard.overrideInfo")}
           </p>
         </div>

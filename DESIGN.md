@@ -101,3 +101,112 @@ Light: `ink #1A1133`, `inkMuted #4B4566`, `inkFaint #8B82A8`, `inkGhost #C8C2DC`
 - **Desktop (> 1024px):** full **asymmetric split** layout; plan cards in up to **4 columns**.
 
 Every layout must hold in **RTL** (Arabic): mirrored alignment, mirrored motion direction, no clipped or overflowing text.
+
+---
+
+# EDGE — the application design system
+
+> **Scope:** the authenticated application (the `scripe` layout). The Aurora
+> Refined section above continues to govern signup/onboarding.
+> **Source of truth for tokens:** the `SCRIPE / EDGE DESIGN SYSTEM` block at the
+> foot of `src/app/globals.css`. Never invent a colour; read a token.
+
+## Where it comes from
+
+The mark is a matte extruded solid. Its faces are dark, all of its light
+collects on the bevels, and it discharges cyan at exactly one place — the
+terminal edge. That is a complete interface specification, and these are its
+four laws:
+
+1. **Surfaces are matte.** No gradient fills, no glass, no glow on a resting
+   element. A card at rest is a flat slab with a hairline edge.
+2. **Edges carry the light.** Focus, selection and active navigation are all
+   expressed by an edge lighting up — the same physical event, everywhere.
+3. **Cyan discharges once.** One emitting element per screen: the thing that is
+   live right now. If two things glow, neither reads.
+4. **Depth is extrusion.** A lit top edge plus a hard offset drop — never a soft
+   blur halo pretending to be elevation.
+
+## Accent: the workspace owns it
+
+`Workspace.ColorHue` (OKLCH hue, 0–360) and `ColorChroma` (0–0.4) already exist
+on the backend. `WorkspaceProvider` publishes them to `<html>` as
+`--workspace-hue` / `--workspace-chroma`, and every accent shade derives from
+them in CSS:
+
+```css
+--sx-accent:      oklch(0.68 var(--workspace-chroma) var(--workspace-hue));
+--sx-accent-fill: oklch(0.52 var(--workspace-chroma) var(--workspace-hue));
+--sx-emit:        oklch(0.82 0.13 calc(var(--workspace-hue) + 78));
+```
+
+Switching workspace therefore re-tints the entire interface with no
+per-component colour logic anywhere.
+
+**`--sx-accent` and `--sx-accent-fill` are deliberately two tokens.**
+Accent-as-text must beat the dark ground; accent-as-fill must beat the white
+label sitting on top of it. Those are opposite requirements and cannot be one
+value.
+
+**Never build alpha by string concatenation.** `` `${accent}22` `` is invalid CSS
+for an `oklch()` value and browsers drop the whole declaration silently. Use
+`oklch(... / 0.14)` or `color-mix()`.
+
+## Semantic status tokens
+
+`--success`, `--warning`, `--info` (with `-foreground` pairs) sit alongside
+`--destructive` in `globals.css` and are exposed through Tailwind as
+`bg-success`, `text-warning`, `border-info`, etc.
+
+They exist because their absence was the root cause of roughly 340 raw palette
+colours across 60 view files: `destructive` was the only tokenised status, so
+every view invented its own green.
+
+**A semantic token already resolves per theme.** When replacing a
+`text-emerald-600 dark:text-emerald-400` pair, delete the `dark:` variant — do
+not carry it over.
+
+## Contrast
+
+Every token pair is measured, not asserted. Body text ≥ 4.5:1, large text and
+non-text UI ≥ 3:1, in both themes. Notable values:
+
+| Pair | Dark | Light |
+|---|---|---|
+| ink / void | 17.8:1 | 17.3:1 |
+| ink-3 / slab (muted) | 5.63:1 | 6.36:1 |
+| success / slab | 9.77:1 | 5.40:1 |
+| warning / slab | 11.25:1 | 5.93:1 |
+| white / accent-fill | 5.28:1 | 5.70:1 |
+
+## Shell
+
+Geometry is inherited from nexus on purpose — 64px rail, 240px panel, 56px
+topbar — so a tenant switching layouts keeps their spatial muscle memory. What
+changes is the skin.
+
+- **Identity appears once.** Avatar and notifications live at the foot of the
+  rail; the topbar carries only context (breadcrumbs, search, page actions).
+  Theme and language switchers belong in the account menu.
+- **The pin zone.** Inside a module workspace the admin workspace auto-pins at
+  the top of the pin zone as the way back, shown only when the user can reach
+  it and not user-removable. User pins follow in the backend's `pinSortOrder` —
+  the pin endpoint is authoritative and the client never computes order.
+- **One focus law.** `2px solid var(--sx-emit)` at `2px` offset, everywhere.
+
+## Components
+
+`stat-card`, `page-header` and `empty-state` are in `@core/ui`. Reach for them
+before writing a KPI, a page heading or a "nothing here" state — each of those
+had been re-implemented up to ten times with incompatible props.
+
+`EmptyState` takes an action slot because an empty state that only says "no
+data" wastes the moment the user is most willing to act.
+
+## Bans
+
+- Building colour alpha through string concatenation (see above).
+- `dark:` variants on a semantic token.
+- Animating `width`/`height` for progress or reveal — use `transform`.
+- A second place for user identity in the shell.
+- Any new `isDark ? "#hex" : "#hex"` ternary. The token layer already knows.

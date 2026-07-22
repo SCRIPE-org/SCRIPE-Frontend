@@ -138,7 +138,7 @@ export function SSOButtonPreview({ name, iconUrl, buttonColor, buttonLabel }: Pr
   return (
     <div className="space-y-5">
       <Label className="flex items-center gap-1.5 text-sm font-semibold tracking-tight">
-        <Monitor className="h-4 w-4 text-purple-500" />
+        <Monitor className="h-4 w-4 text-primary" />
         {t("identityProviders.buttonPreview") || "Login Button Preview"}
       </Label>
 

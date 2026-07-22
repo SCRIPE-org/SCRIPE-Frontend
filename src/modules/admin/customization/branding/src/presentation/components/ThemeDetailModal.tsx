@@ -163,7 +163,7 @@ export function ThemeDetailModal({
                   <DialogTitle className="text-xl font-bold">{theme.name}</DialogTitle>
                   {theme.isFeatured && <Star className="h-4 w-4 fill-amber-500 text-amber-500" />}
                   {theme.isNew && (
-                    <Badge className="border-emerald-500/20 bg-emerald-500/10 text-[10px] text-emerald-600">
+                    <Badge className="border-success/20 bg-success/10 text-[10px] text-success">
                       <Sparkles className="mr-0.5 h-3 w-3" />
                       {t("studio.gallery.card.new")}
                     </Badge>
@@ -572,7 +572,7 @@ export function ThemeDetailModal({
               className="gap-1.5"
               onClick={() => onToggleFavorite?.(theme.slug)}
             >
-              <Heart className={cn("h-4 w-4", theme.isFavorited && "fill-red-500 text-red-500")} />
+              <Heart className={cn("h-4 w-4", theme.isFavorited && "fill-destructive text-destructive")} />
               {theme.isFavorited ? t(`${D}.actions.unfavorite`) : t(`${D}.actions.favorite`)}
             </Button>
           </div>

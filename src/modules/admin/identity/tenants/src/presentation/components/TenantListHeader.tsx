@@ -85,21 +85,21 @@ export function TenantListHeader({
       key: "active",
       label: t("tenant.active"),
       value: stats.active,
-      className: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
+      className: "bg-success/10 text-success border-success/20",
       icon: CheckCircle2,
     },
     {
       key: "suspended",
       label: t("tenant.suspended"),
       value: stats.suspended,
-      className: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+      className: "bg-warning/10 text-warning border-warning/20",
       icon: Pause,
     },
     {
       key: "canceled",
       label: t("tenant.canceled"),
       value: stats.canceled,
-      className: "bg-red-500/10 text-red-500 border-red-500/20",
+      className: "bg-destructive/10 text-destructive border-destructive/20",
       icon: Ban,
     },
   ];
@@ -110,7 +110,7 @@ export function TenantListHeader({
       key: "expired",
       label: t("tenant.expired"),
       value: stats.expired,
-      className: "bg-orange-500/10 text-orange-500 border-orange-500/20",
+      className: "bg-warning/10 text-warning border-warning/20",
       icon: XCircle,
     });
   }

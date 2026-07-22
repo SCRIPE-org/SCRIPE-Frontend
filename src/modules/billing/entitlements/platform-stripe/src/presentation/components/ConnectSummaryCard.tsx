@@ -43,19 +43,19 @@ export function ConnectSummaryCard({ connectSummary }: ConnectSummaryCardProps) 
             label={t("entitlements.platformStripe.active")}
             value={connectSummary.activeAccounts}
             icon={CheckCircle2}
-            color="text-emerald-500"
+            color="text-success"
           />
           <StatBlock
             label={t("entitlements.platformStripe.pending")}
             value={connectSummary.pendingOnboarding}
             icon={Clock}
-            color="text-amber-500"
+            color="text-warning"
           />
           <StatBlock
             label={t("entitlements.platformStripe.disabled")}
             value={connectSummary.disabledAccounts}
             icon={XCircle}
-            color="text-red-500"
+            color="text-destructive"
           />
         </div>
 
@@ -64,23 +64,23 @@ export function ConnectSummaryCard({ connectSummary }: ConnectSummaryCardProps) 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="flex items-center justify-between rounded-lg bg-muted/50 p-3">
             <div className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-emerald-500" />
+              <TrendingUp className="h-4 w-4 text-success" />
               <span className="text-sm text-muted-foreground">
                 {t("entitlements.platformStripe.totalCommissionsEarned")}
               </span>
             </div>
-            <span className="font-bold text-emerald-600">
+            <span className="font-bold text-success">
               ${connectSummary.totalCommissionsEarned.toFixed(2)}
             </span>
           </div>
           <div className="flex items-center justify-between rounded-lg bg-muted/50 p-3">
             <div className="flex items-center gap-2">
-              <Percent className="h-4 w-4 text-amber-500" />
+              <Percent className="h-4 w-4 text-warning" />
               <span className="text-sm text-muted-foreground">
                 {t("entitlements.platformStripe.commissionsPending")}
               </span>
             </div>
-            <span className="font-bold text-amber-600">
+            <span className="font-bold text-warning">
               ${connectSummary.totalCommissionsPending.toFixed(2)}
             </span>
           </div>

@@ -40,7 +40,7 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
         <h1 style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: "0.5rem" }}>
           {t("analyticsEvents.title")}
         </h1>
-        <p style={{ color: "#6b7280", fontSize: "0.875rem" }}>
+        <p style={{ color: "hsl(var(--muted-foreground))", fontSize: "0.875rem" }}>
           {t("analyticsEvents.description")}
         </p>
       </div>
@@ -52,23 +52,23 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
           gap: "1rem",
           marginBottom: "1.5rem",
           padding: "1rem",
-          backgroundColor: "#f9fafb",
+          backgroundColor: "hsl(var(--muted))",
           borderRadius: "0.5rem",
-          border: "1px solid #e5e7eb",
+          border: "1px solid hsl(var(--border))",
         }}
       >
         <div>
-          <span style={{ fontSize: "0.75rem", color: "#6b7280", textTransform: "uppercase" }}>
+          <span style={{ fontSize: "0.75rem", color: "hsl(var(--muted-foreground))", textTransform: "uppercase" }}>
             {t("analyticsEvents.totalEvents")}
           </span>
           <div style={{ fontSize: "1.5rem", fontWeight: 700 }}>{totalCount}</div>
         </div>
-        <div style={{ borderLeft: "1px solid #e5e7eb", margin: "0 0.5rem" }} />
+        <div style={{ borderLeft: "1px solid hsl(var(--border))", margin: "0 0.5rem" }} />
         <div>
-          <span style={{ fontSize: "0.75rem", color: "#6b7280", textTransform: "uppercase" }}>
+          <span style={{ fontSize: "0.75rem", color: "hsl(var(--muted-foreground))", textTransform: "uppercase" }}>
             {t("analyticsEvents.statusLabel")}
           </span>
-          <div style={{ fontSize: "0.875rem", fontWeight: 500, color: totalCount === 0 ? "#9ca3af" : "#059669" }}>
+          <div style={{ fontSize: "0.875rem", fontWeight: 500, color: totalCount === 0 ? "hsl(var(--muted-foreground))" : "hsl(var(--success))" }}>
             {totalCount === 0
               ? t("analyticsEvents.awaitingModules")
               : t("analyticsEvents.activeStatus")}
@@ -81,10 +81,10 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
         <div
           style={{
             padding: "1rem",
-            backgroundColor: "#fef2f2",
-            border: "1px solid #fecaca",
+            backgroundColor: "hsl(var(--destructive) / 0.1)",
+            border: "1px solid hsl(var(--destructive) / 0.3)",
             borderRadius: "0.5rem",
-            color: "#dc2626",
+            color: "hsl(var(--destructive))",
             marginBottom: "1rem",
           }}
         >
@@ -94,7 +94,7 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
 
       {/* Loading */}
       {loading && (
-        <div style={{ textAlign: "center", padding: "2rem", color: "#6b7280" }}>
+        <div style={{ textAlign: "center", padding: "2rem", color: "hsl(var(--muted-foreground))" }}>
           {t("analyticsEvents.loading")}
         </div>
       )}
@@ -105,22 +105,22 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
           style={{
             textAlign: "center",
             padding: "3rem",
-            backgroundColor: "#f9fafb",
+            backgroundColor: "hsl(var(--muted))",
             borderRadius: "0.5rem",
-            border: "1px dashed #d1d5db",
-            color: "#6b7280",
+            border: "1px dashed hsl(var(--border))",
+            color: "hsl(var(--muted-foreground))",
           }}
         >
           <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>📊</div>
-          <h3 style={{ fontSize: "1rem", fontWeight: 600, marginBottom: "0.5rem", color: "#374151" }}>
+          <h3 style={{ fontSize: "1rem", fontWeight: 600, marginBottom: "0.5rem", color: "hsl(var(--foreground))" }}>
             {t("analyticsEvents.emptyTitle")}
           </h3>
           <p style={{ fontSize: "0.875rem" }}>
             {t("analyticsEvents.emptyDescription")}
           </p>
-          <div style={{ marginTop: "1.5rem", fontSize: "0.75rem", color: "#9ca3af" }}>
+          <div style={{ marginTop: "1.5rem", fontSize: "0.75rem", color: "hsl(var(--muted-foreground))" }}>
             Verification: run{" "}
-            <code style={{ backgroundColor: "#e5e7eb", padding: "0.1rem 0.3rem", borderRadius: "0.25rem" }}>
+            <code style={{ backgroundColor: "hsl(var(--muted))", padding: "0.1rem 0.3rem", borderRadius: "0.25rem" }}>
               scripe test backend
             </code>{" "}
             → Analytics.Application.Tests 9/9 confirm store + projection + idempotency are working.
@@ -141,23 +141,23 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
               }}
             >
               <thead>
-                <tr style={{ backgroundColor: "#f3f4f6" }}>
-                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "#374151", borderBottom: "1px solid #e5e7eb" }}>
+                <tr style={{ backgroundColor: "hsl(var(--muted))" }}>
+                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "hsl(var(--foreground))", borderBottom: "1px solid hsl(var(--border))" }}>
                     {t("analyticsEvents.columns.name")}
                   </th>
-                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "#374151", borderBottom: "1px solid #e5e7eb" }}>
+                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "hsl(var(--foreground))", borderBottom: "1px solid hsl(var(--border))" }}>
                     {t("analyticsEvents.columns.module")}
                   </th>
-                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "#374151", borderBottom: "1px solid #e5e7eb" }}>
+                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "hsl(var(--foreground))", borderBottom: "1px solid hsl(var(--border))" }}>
                     {t("analyticsEvents.columns.occurredAt")}
                   </th>
-                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "#374151", borderBottom: "1px solid #e5e7eb" }}>
+                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "hsl(var(--foreground))", borderBottom: "1px solid hsl(var(--border))" }}>
                     {t("analyticsEvents.columns.subjectType")}
                   </th>
-                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "#374151", borderBottom: "1px solid #e5e7eb" }}>
+                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "hsl(var(--foreground))", borderBottom: "1px solid hsl(var(--border))" }}>
                     {t("analyticsEvents.columns.subjectId")}
                   </th>
-                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "#374151", borderBottom: "1px solid #e5e7eb" }}>
+                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "hsl(var(--foreground))", borderBottom: "1px solid hsl(var(--border))" }}>
                     {t("analyticsEvents.columns.numericValue")}
                   </th>
                 </tr>
@@ -166,27 +166,27 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
                 {events.map((ev) => (
                   <tr
                     key={ev.id}
-                    style={{ borderBottom: "1px solid #f3f4f6" }}
+                    style={{ borderBottom: "1px solid hsl(var(--border))" }}
                   >
                     <td style={{ padding: "0.75rem 1rem", fontWeight: 500 }}>{ev.eventName}</td>
-                    <td style={{ padding: "0.75rem 1rem", color: "#6b7280" }}>{ev.sourceModule}</td>
-                    <td style={{ padding: "0.75rem 1rem", color: "#6b7280" }}>
+                    <td style={{ padding: "0.75rem 1rem", color: "hsl(var(--muted-foreground))" }}>{ev.sourceModule}</td>
+                    <td style={{ padding: "0.75rem 1rem", color: "hsl(var(--muted-foreground))" }}>
                       {new Date(ev.occurredAt).toLocaleString()}
                     </td>
-                    <td style={{ padding: "0.75rem 1rem", color: "#6b7280" }}>
+                    <td style={{ padding: "0.75rem 1rem", color: "hsl(var(--muted-foreground))" }}>
                       {ev.subjectEntityTypeKey ?? "—"}
                     </td>
                     <td
                       style={{
                         padding: "0.75rem 1rem",
-                        color: "#6b7280",
+                        color: "hsl(var(--muted-foreground))",
                         fontFamily: "monospace",
                         fontSize: "0.75rem",
                       }}
                     >
                       {ev.subjectEntityId ? ev.subjectEntityId.slice(0, 8) + "…" : "—"}
                     </td>
-                    <td style={{ padding: "0.75rem 1rem", color: "#6b7280" }}>
+                    <td style={{ padding: "0.75rem 1rem", color: "hsl(var(--muted-foreground))" }}>
                       {ev.associatedNumericValue !== undefined && ev.associatedNumericValue !== null
                         ? ev.associatedNumericValue
                         : "—"}
@@ -205,7 +205,7 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
               alignItems: "center",
               marginTop: "1rem",
               fontSize: "0.875rem",
-              color: "#6b7280",
+              color: "hsl(var(--muted-foreground))",
             }}
           >
             <span>
@@ -218,7 +218,7 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
                 disabled={page === 1}
                 style={{
                   padding: "0.375rem 0.75rem",
-                  border: "1px solid #d1d5db",
+                  border: "1px solid hsl(var(--border))",
                   borderRadius: "0.375rem",
                   cursor: page === 1 ? "not-allowed" : "pointer",
                   opacity: page === 1 ? 0.5 : 1,
@@ -231,7 +231,7 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
                 disabled={page * pageSize >= totalCount}
                 style={{
                   padding: "0.375rem 0.75rem",
-                  border: "1px solid #d1d5db",
+                  border: "1px solid hsl(var(--border))",
                   borderRadius: "0.375rem",
                   cursor: page * pageSize >= totalCount ? "not-allowed" : "pointer",
                   opacity: page * pageSize >= totalCount ? 0.5 : 1,

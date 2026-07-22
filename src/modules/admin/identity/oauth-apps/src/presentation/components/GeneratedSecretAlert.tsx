@@ -32,10 +32,10 @@ export function GeneratedSecretAlert({
   const { t } = useI18n();
 
   return (
-    <div className="space-y-3 rounded-xl border border-green-200 bg-green-50/80 p-4 duration-300 animate-in fade-in dark:border-green-900/50 dark:bg-green-950/20">
+    <div className="space-y-3 rounded-xl border border-success/30 bg-success/10 p-4 duration-300 animate-in fade-in">
       <div className="flex items-center justify-between">
-        <h3 className="flex items-center gap-2 text-sm font-semibold text-green-800 dark:text-green-400">
-          <KeyRound className="h-4.5 w-4.5 text-green-600 dark:text-green-400" />
+        <h3 className="flex items-center gap-2 text-sm font-semibold text-success">
+          <KeyRound className="h-4.5 w-4.5 text-success" />
           {t("oauthApps.newSecretGenerated") || "New Secret Generated"}
         </h3>
         <Button
@@ -49,7 +49,7 @@ export function GeneratedSecretAlert({
             : t("common.dismiss") || "Dismiss"}
         </Button>
       </div>
-      <p className="text-xs text-green-700 dark:text-green-400/80">
+      <p className="text-xs text-success">
         {t("oauthApps.secretCopyWarning") || "Copy this secret now — it will not be shown again!"}
       </p>
       <div className="flex items-center gap-2 rounded-lg border bg-white/80 p-2 backdrop-blur-sm dark:bg-black/30">
@@ -61,7 +61,7 @@ export function GeneratedSecretAlert({
           onClick={() => copyToClipboard(generatedSecret.secret, "secret")}
         >
           {copiedField === "secret" ? (
-            <Check className="h-4 w-4 text-emerald-500" />
+            <Check className="h-4 w-4 text-success" />
           ) : (
             <Copy className="h-4 w-4" />
           )}

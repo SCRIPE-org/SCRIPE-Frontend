@@ -14,11 +14,11 @@ interface LeadsKanbanViewProps {
 }
 
 const COLUMNS: { status: LeadStatus; accent: string; dot: string }[] = [
-  { status: "New", accent: "border-blue-500/30 text-blue-400", dot: "bg-blue-400" },
-  { status: "Contacted", accent: "border-amber-500/30 text-amber-400", dot: "bg-amber-400" },
-  { status: "Qualified", accent: "border-violet-500/30 text-violet-400", dot: "bg-violet-400" },
-  { status: "Converted", accent: "border-emerald-500/30 text-emerald-400", dot: "bg-emerald-400" },
-  { status: "Closed", accent: "border-zinc-600/40 text-zinc-500", dot: "bg-zinc-600" },
+  { status: "New", accent: "border-info/30 text-info", dot: "bg-info" },
+  { status: "Contacted", accent: "border-warning/30 text-warning", dot: "bg-warning" },
+  { status: "Qualified", accent: "border-primary/30 text-primary", dot: "bg-primary" },
+  { status: "Converted", accent: "border-success/30 text-success", dot: "bg-success" },
+  { status: "Closed", accent: "border-border/40 text-muted-foreground", dot: "bg-muted-foreground" },
 ];
 
 const SKELETON_HEIGHTS = [72, 88, 64, 96, 80];
@@ -65,7 +65,7 @@ export function LeadsKanbanView({
         return (
           <div
             key={status}
-            className={`flex min-h-[400px] flex-col gap-2 rounded-md transition-colors ${dropStatus === status ? "bg-zinc-900/50" : ""}`}
+            className={`flex min-h-[400px] flex-col gap-2 rounded-md transition-colors ${dropStatus === status ? "bg-card/50" : ""}`}
             onDragOver={(event) => {
               if (!draggedLead || draggedLead.status === status || isMoving) return;
               event.preventDefault();
@@ -77,7 +77,7 @@ export function LeadsKanbanView({
           >
             {/* Column header */}
             <div
-              className={`flex items-center justify-between rounded-md border px-2.5 py-2 ${accent.replace("text-", "border-")} bg-zinc-900/60`}
+              className={`flex items-center justify-between rounded-md border px-2.5 py-2 ${accent.replace("text-", "border-")} bg-card/60`}
             >
               <div className="flex items-center gap-2">
                 <span className={`h-2 w-2 rounded-full ${dot}`} />
@@ -85,7 +85,7 @@ export function LeadsKanbanView({
                   {t(`leads.status.${status}`)}
                 </span>
               </div>
-              <span className="rounded-full bg-zinc-800 px-2 py-0.5 text-[10px] text-zinc-400">
+              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
                 {isLoading ? "—" : col.length}
               </span>
             </div>
@@ -96,13 +96,13 @@ export function LeadsKanbanView({
                 SKELETON_HEIGHTS.map((h, i) => (
                   <div
                     key={i}
-                    className="animate-pulse rounded-lg border border-zinc-800 bg-zinc-900/60"
+                    className="animate-pulse rounded-lg border border-border bg-card/60"
                     style={{ height: h }}
                   />
                 ))
               ) : col.length === 0 ? (
-                <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed border-zinc-800 px-3 py-6">
-                  <p className="text-center text-[11px] text-zinc-600">{t("leads.empty")}</p>
+                <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed border-border px-3 py-6">
+                  <p className="text-center text-[11px] text-muted-foreground">{t("leads.empty")}</p>
                 </div>
               ) : (
                 col.map((lead) => (

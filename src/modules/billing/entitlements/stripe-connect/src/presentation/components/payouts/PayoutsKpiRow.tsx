@@ -14,8 +14,8 @@ const fmt = (cents: number) =>
 
 type Accent = "green" | "red" | "default";
 const ACCENT_CLASS: Record<Accent, string> = {
-  green: "text-emerald-500",
-  red: "text-red-500",
+  green: "text-success",
+  red: "text-destructive",
   default: "text-primary",
 };
 

@@ -49,7 +49,7 @@ export function DevelopersView() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <span className="truncate text-sm font-medium">{dev.displayName}</span>
-                    {dev.isVerified && <ShieldCheck className="size-3.5 shrink-0 text-blue-500" />}
+                    {dev.isVerified && <ShieldCheck className="size-3.5 shrink-0 text-info" />}
                   </div>
                   <p className="truncate text-xs text-muted-foreground">{dev.contactEmail}</p>
                 </div>
@@ -58,7 +58,7 @@ export function DevelopersView() {
                 </Badge>
               </CardHeader>
               <CardContent className="flex items-center justify-between pt-0">
-                <span className="text-sm font-semibold text-green-600">{dev.revenueLabel}</span>
+                <span className="text-sm font-semibold text-success">{dev.revenueLabel}</span>
                 {!dev.isVerified && (
                   <Button
                     size="sm"

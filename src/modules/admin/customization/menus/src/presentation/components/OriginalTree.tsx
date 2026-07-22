@@ -168,8 +168,8 @@ function OriginalTreeNode({
             className={cn(
               "shrink-0 border-0 px-1 py-0 text-[8px] font-medium",
               isHidden
-                ? "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400"
-                : "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
+                ? "bg-destructive/15 text-destructive"
+                : "bg-warning/15 text-warning"
             )}
           >
             {isHidden ? (

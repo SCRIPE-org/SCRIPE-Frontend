@@ -42,7 +42,7 @@ export const RecentActivityFeed = memo(function RecentActivityFeed({
     <Card>
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
-          <Activity className="h-4 w-4 text-blue-500" aria-hidden="true" />
+          <Activity className="h-4 w-4 text-info" aria-hidden="true" />
           <CardTitle className="text-base">{t("overview.recentActivity")}</CardTitle>
         </div>
       </CardHeader>
@@ -62,7 +62,7 @@ export const RecentActivityFeed = memo(function RecentActivityFeed({
               <li key={event.id} className="group flex items-center justify-between gap-2">
                 <div className="flex min-w-0 items-center gap-3">
                   <div
-                    className={`h-2 w-2 shrink-0 rounded-full ${event.isSuccess ? "bg-emerald-500" : "bg-red-500"}`}
+                    className={`h-2 w-2 shrink-0 rounded-full ${event.isSuccess ? "bg-success" : "bg-destructive"}`}
                     aria-hidden="true"
                   />
                   <div className="min-w-0">

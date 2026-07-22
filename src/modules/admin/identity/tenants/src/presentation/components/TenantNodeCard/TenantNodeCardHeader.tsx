@@ -97,7 +97,7 @@ export function TenantNodeCardHeader({
         {node.subscriptionStatus === "PendingPayment" && (
           <Badge
             variant="outline"
-            className="gap-1 border-amber-500/50 bg-amber-500/10 text-xs text-amber-600 dark:text-amber-400"
+            className="gap-1 border-warning/50 bg-warning/10 text-xs text-warning"
           >
             <CreditCard className="h-3 w-3" />
             Pending Payment
@@ -111,9 +111,9 @@ export function TenantNodeCardHeader({
             className={cn(
               "gap-1 text-xs",
               daysLeft <= 7
-                ? "border-red-500/50 text-red-500"
+                ? "border-destructive/50 text-destructive"
                 : daysLeft <= 30
-                  ? "border-amber-500/50 text-amber-500"
+                  ? "border-warning/50 text-warning"
                   : "border-muted-foreground/30 text-muted-foreground"
             )}
           >

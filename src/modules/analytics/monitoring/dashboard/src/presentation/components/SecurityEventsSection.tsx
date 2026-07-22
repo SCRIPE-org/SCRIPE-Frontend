@@ -23,16 +23,16 @@ interface Props {
 
 const eventConfig: Record<string, { icon: typeof AlertTriangle; color: string; bgColor: string }> =
   {
-    LoginFailed: { icon: AlertTriangle, color: "text-amber-500", bgColor: "bg-amber-500/10" },
-    AccountLocked: { icon: Lock, color: "text-red-500", bgColor: "bg-red-500/10" },
-    AccessDenied: { icon: Ban, color: "text-orange-500", bgColor: "bg-orange-500/10" },
+    LoginFailed: { icon: AlertTriangle, color: "text-warning", bgColor: "bg-warning/10" },
+    AccountLocked: { icon: Lock, color: "text-destructive", bgColor: "bg-destructive/10" },
+    AccessDenied: { icon: Ban, color: "text-warning", bgColor: "bg-warning/10" },
     PrivilegeEscalationAttempt: {
       icon: ShieldX,
-      color: "text-rose-500",
-      bgColor: "bg-rose-500/10",
+      color: "text-destructive",
+      bgColor: "bg-destructive/10",
     },
-    SessionRevoked: { icon: LogOut, color: "text-violet-500", bgColor: "bg-violet-500/10" },
-    PasswordReset: { icon: KeyRound, color: "text-blue-500", bgColor: "bg-blue-500/10" },
+    SessionRevoked: { icon: LogOut, color: "text-primary", bgColor: "bg-primary/10" },
+    PasswordReset: { icon: KeyRound, color: "text-info", bgColor: "bg-info/10" },
   };
 
 /**
@@ -72,8 +72,8 @@ export const SecurityEventsSection = memo(function SecurityEventsSection({
             {data.map((event) => {
               const config = eventConfig[event.eventType] ?? {
                 icon: AlertTriangle,
-                color: "text-gray-500",
-                bgColor: "bg-gray-500/10",
+                color: "text-muted-foreground",
+                bgColor: "bg-muted",
               };
               const Icon = config.icon;
               return (

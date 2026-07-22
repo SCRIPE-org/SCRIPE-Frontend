@@ -22,35 +22,35 @@ interface HealthTabProps {
 function getRiskBadge(score: TenantHealthScore, t: (key: string) => string) {
   if (score.riskLevel === "Healthy") {
     return (
-      <Badge className="gap-1 border-emerald-500/20 bg-emerald-500/10 text-[10px] font-semibold text-emerald-600">
+      <Badge className="gap-1 border-success/20 bg-success/10 text-[10px] font-semibold text-success">
         <ShieldCheck className="h-3 w-3" /> {t("entitlements.analytics.health.riskHealthy")}
       </Badge>
     );
   }
   if (score.riskLevel === "Moderate") {
     return (
-      <Badge className="gap-1 border-amber-500/20 bg-amber-500/10 text-[10px] font-semibold text-amber-600">
+      <Badge className="gap-1 border-warning/20 bg-warning/10 text-[10px] font-semibold text-warning">
         <AlertTriangle className="h-3 w-3" /> {t("entitlements.analytics.health.riskModerate")}
       </Badge>
     );
   }
   return (
-    <Badge className="gap-1 border-rose-500/20 bg-rose-500/10 text-[10px] font-semibold text-rose-600">
+    <Badge className="gap-1 border-destructive/20 bg-destructive/10 text-[10px] font-semibold text-destructive">
       <Heart className="h-3 w-3" /> {t("entitlements.analytics.health.riskAtRisk")}
     </Badge>
   );
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 70) return "text-emerald-600";
-  if (score >= 40) return "text-amber-600";
-  return "text-rose-600";
+  if (score >= 70) return "text-success";
+  if (score >= 40) return "text-warning";
+  return "text-destructive";
 }
 
 function getScoreBarColor(score: number): string {
-  if (score >= 70) return "bg-gradient-to-r from-emerald-500 to-emerald-400";
-  if (score >= 40) return "bg-gradient-to-r from-amber-500 to-amber-400";
-  return "bg-gradient-to-r from-rose-500 to-rose-400";
+  if (score >= 70) return "bg-gradient-to-r from-success to-success/70";
+  if (score >= 40) return "bg-gradient-to-r from-warning to-warning/70";
+  return "bg-gradient-to-r from-destructive to-destructive/70";
 }
 
 function formatCurrency(value: number): string {
@@ -78,24 +78,24 @@ export function HealthTab({ healthData, page, pageSize, onPageChange }: HealthTa
 
       {/* Summary Cards */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] p-3 text-center">
-          <ShieldCheck className="mx-auto mb-1 h-5 w-5 text-emerald-500" />
-          <p className="text-xl font-bold text-emerald-600">{healthyCount}</p>
-          <p className="text-[10px] font-semibold uppercase text-emerald-600/70">
+        <div className="rounded-xl border border-success/20 bg-success/[0.04] p-3 text-center">
+          <ShieldCheck className="mx-auto mb-1 h-5 w-5 text-success" />
+          <p className="text-xl font-bold text-success">{healthyCount}</p>
+          <p className="text-[10px] font-semibold uppercase text-success/70">
             {t("entitlements.analytics.health.riskHealthy")}
           </p>
         </div>
-        <div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.04] p-3 text-center">
-          <AlertTriangle className="mx-auto mb-1 h-5 w-5 text-amber-500" />
-          <p className="text-xl font-bold text-amber-600">{moderateCount}</p>
-          <p className="text-[10px] font-semibold uppercase text-amber-600/70">
+        <div className="rounded-xl border border-warning/20 bg-warning/[0.04] p-3 text-center">
+          <AlertTriangle className="mx-auto mb-1 h-5 w-5 text-warning" />
+          <p className="text-xl font-bold text-warning">{moderateCount}</p>
+          <p className="text-[10px] font-semibold uppercase text-warning/70">
             {t("entitlements.analytics.health.riskModerate")}
           </p>
         </div>
-        <div className="rounded-xl border border-rose-500/20 bg-rose-500/[0.04] p-3 text-center">
-          <Heart className="mx-auto mb-1 h-5 w-5 text-rose-500" />
-          <p className="text-xl font-bold text-rose-600">{atRiskCount}</p>
-          <p className="text-[10px] font-semibold uppercase text-rose-600/70">
+        <div className="rounded-xl border border-destructive/20 bg-destructive/[0.04] p-3 text-center">
+          <Heart className="mx-auto mb-1 h-5 w-5 text-destructive" />
+          <p className="text-xl font-bold text-destructive">{atRiskCount}</p>
+          <p className="text-[10px] font-semibold uppercase text-destructive/70">
             {t("entitlements.analytics.health.riskAtRisk")}
           </p>
         </div>
@@ -162,9 +162,9 @@ export function HealthTab({ healthData, page, pageSize, onPageChange }: HealthTa
                       <span
                         className={`inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-xs font-semibold ${
                           tenant.scoreChange > 0
-                            ? "bg-emerald-500/10 text-emerald-600"
+                            ? "bg-success/10 text-success"
                             : tenant.scoreChange < 0
-                              ? "bg-rose-500/10 text-rose-600"
+                              ? "bg-destructive/10 text-destructive"
                               : "text-muted-foreground"
                         }`}
                       >

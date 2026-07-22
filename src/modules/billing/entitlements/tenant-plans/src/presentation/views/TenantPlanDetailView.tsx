@@ -161,7 +161,7 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
               onClick={() => vm.archivePlan()}
               disabled={isBusy}
               loading={vm.isArchiving}
-              className="border-amber-300 text-amber-600 hover:bg-amber-50"
+              className="border-warning/30 text-warning hover:bg-warning/10"
             >
               {!vm.isArchiving && <Archive className="me-1 h-4 w-4" />}
               {t("entitlements.tenantPlans.archive") || "Archive"}

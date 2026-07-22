@@ -119,8 +119,8 @@ export function SendLeadEmailDialog({
       <DialogContent className="sm:max-w-[560px]">
         <DialogHeader>
           <div className="mb-1 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/30">
-              <Mail className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-info/10">
+              <Mail className="h-5 w-5 text-info" />
             </div>
             <div>
               <DialogTitle>{t("leads.email.dialogTitle")}</DialogTitle>
@@ -196,7 +196,7 @@ export function SendLeadEmailDialog({
             <Button
               type="submit"
               disabled={isSending || !isValid}
-              className="gap-2 bg-indigo-600 text-white hover:bg-indigo-700"
+              className="gap-2 bg-info text-info-foreground hover:bg-info/90"
             >
               {isSending ? (
                 <>

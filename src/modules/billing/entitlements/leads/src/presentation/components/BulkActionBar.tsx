@@ -52,7 +52,7 @@ export function BulkActionBar({
           size="sm"
           disabled={isLoading}
           onClick={onClose}
-          className="h-8 bg-amber-600 px-3 text-xs font-medium text-white hover:bg-amber-500"
+          className="h-8 bg-warning px-3 text-xs font-medium text-warning-foreground hover:bg-warning/90"
         >
           {isLoading
             ? t("leads.bulk.closing")

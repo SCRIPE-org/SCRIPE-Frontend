@@ -134,9 +134,9 @@ export function AssignDialog({ vm, editionsVm }: SubscriptionEditionDialogProps)
                 "Activates the subscription without payment processing. Use for demos or manual billing."}
             </p>
             {vm.skipPayment && (
-              <div className="ms-6 flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 p-2 dark:border-amber-800 dark:bg-amber-950/30">
-                <Shield className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
-                <span className="text-xs text-amber-700 dark:text-amber-400">
+              <div className="ms-6 flex items-start gap-2 rounded-md border border-warning/30 bg-warning/10 p-2">
+                <Shield className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
+                <span className="text-xs text-warning">
                   {t("entSubscriptions.skipPaymentWarning") ||
                     "This subscription will not auto-renew. No Stripe customer is created. Use manual invoicing for future billing."}
                 </span>

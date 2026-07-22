@@ -55,14 +55,14 @@ export function FinancialsView() {
                 <Card key={p.id}>
                   <CardContent className="flex items-center gap-4 p-4">
                     <div className="rounded-lg bg-muted p-2">
-                      <DollarSign className="size-4 text-green-500" />
+                      <DollarSign className="size-4 text-success" />
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-medium">{p.appName}</p>
                       <p className="text-xs text-muted-foreground">{p.tenantName}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-semibold text-green-600">{p.amountLabel}</p>
+                      <p className="text-sm font-semibold text-success">{p.amountLabel}</p>
                       <p className="text-xs text-muted-foreground">
                         {formatDateUtc(p.purchasedAt)}
                       </p>

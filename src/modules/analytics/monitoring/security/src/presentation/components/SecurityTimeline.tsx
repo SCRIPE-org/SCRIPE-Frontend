@@ -24,14 +24,14 @@ interface Props {
 }
 
 const EVENT_ICONS: Record<string, { icon: typeof Shield; color: string }> = {
-  LoginSuccess: { icon: LogIn, color: "text-green-500" },
-  LoginFailed: { icon: LogOut, color: "text-red-500" },
-  AccountLocked: { icon: Lock, color: "text-orange-500" },
-  AccountUnlocked: { icon: Unlock, color: "text-blue-500" },
-  AccessDenied: { icon: UserX, color: "text-yellow-500" },
-  PasswordReset: { icon: Key, color: "text-violet-500" },
-  PermissionGranted: { icon: Shield, color: "text-emerald-500" },
-  PermissionRevoked: { icon: AlertTriangle, color: "text-rose-500" },
+  LoginSuccess: { icon: LogIn, color: "text-success" },
+  LoginFailed: { icon: LogOut, color: "text-destructive" },
+  AccountLocked: { icon: Lock, color: "text-warning" },
+  AccountUnlocked: { icon: Unlock, color: "text-info" },
+  AccessDenied: { icon: UserX, color: "text-warning" },
+  PasswordReset: { icon: Key, color: "text-primary" },
+  PermissionGranted: { icon: Shield, color: "text-success" },
+  PermissionRevoked: { icon: AlertTriangle, color: "text-destructive" },
 };
 
 /**
@@ -50,7 +50,7 @@ export const SecurityTimeline = memo(function SecurityTimeline({
     <Card className={cardClasses}>
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
-          <Shield className="h-4 w-4 text-blue-500" aria-hidden="true" />
+          <Shield className="h-4 w-4 text-info" aria-hidden="true" />
           <CardTitle className="text-base">{t("security.timeline.title")}</CardTitle>
         </div>
         <CardDescription>{t("security.timeline.description")}</CardDescription>
@@ -81,7 +81,7 @@ export const SecurityTimeline = memo(function SecurityTimeline({
               {data.map((event) => {
                 const config = EVENT_ICONS[event.eventType] ?? {
                   icon: Shield,
-                  color: "text-gray-500",
+                  color: "text-muted-foreground",
                 };
                 const Icon = config.icon;
 

@@ -92,27 +92,27 @@ export function CheckoutDialog({ vm }: SubscriptionDialogProps) {
           <div
             className={`flex items-center gap-2 rounded-lg border px-3 py-2 ${
               countdown.isExpired
-                ? "border-red-500/30 bg-red-500/10"
+                ? "border-destructive/30 bg-destructive/10"
                 : countdown.isUrgent
-                  ? "border-amber-500/30 bg-amber-500/10"
+                  ? "border-warning/30 bg-warning/10"
                   : "border-border bg-muted/50"
             }`}
           >
             <Clock
               className={`h-4 w-4 shrink-0 ${
                 countdown.isExpired
-                  ? "text-red-500"
+                  ? "text-destructive"
                   : countdown.isUrgent
-                    ? "text-amber-500"
+                    ? "text-warning"
                     : "text-muted-foreground"
               }`}
             />
             <span
               className={`font-mono text-sm tabular-nums ${
                 countdown.isExpired
-                  ? "text-red-600 dark:text-red-400"
+                  ? "text-destructive"
                   : countdown.isUrgent
-                    ? "text-amber-600 dark:text-amber-400"
+                    ? "text-warning"
                     : "text-muted-foreground"
               }`}
             >
@@ -124,9 +124,9 @@ export function CheckoutDialog({ vm }: SubscriptionDialogProps) {
 
           {/* Email sent indicator */}
           {vm.checkoutEmailSent && (
-            <div className="flex items-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 px-3 py-2">
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-green-500" />
-              <span className="text-sm text-green-700 dark:text-green-400">
+            <div className="flex items-center gap-2 rounded-lg border border-success/30 bg-success/10 px-3 py-2">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
+              <span className="text-sm text-success">
                 {t("billing.dialogs.emailSent") ||
                   "Payment link has been emailed to the tenant admin."}
               </span>

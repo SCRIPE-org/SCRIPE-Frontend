@@ -145,7 +145,7 @@ export function BundleDetailModal({
                       {t(`studio.bundles.layerDesc.${layer}`)}
                     </p>
                   </div>
-                  <Check className="ml-auto h-4 w-4 flex-shrink-0 text-emerald-500" />
+                  <Check className="ml-auto h-4 w-4 flex-shrink-0 text-success" />
                 </div>
               );
             })}
@@ -212,7 +212,7 @@ export function BundleDetailModal({
             variant="ghost"
             size="sm"
             onClick={() => onToggleFavorite(bundle.slug)}
-            className={cn(bundle.isFavorited && "text-rose-500")}
+            className={cn(bundle.isFavorited && "text-destructive")}
           >
             <Heart className={cn("mr-1.5 h-4 w-4", bundle.isFavorited && "fill-current")} />
             {bundle.isFavorited

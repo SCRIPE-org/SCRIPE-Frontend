@@ -23,7 +23,7 @@ export function TokenConfigSection({ form, updateField }: TokenConfigSectionProp
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Timer className="h-5 w-5 text-cyan-500" />
+          <Timer className="h-5 w-5 text-info" />
           {t("oauthApps.tokenSection") || "Token Configuration"}
         </CardTitle>
         <CardDescription>

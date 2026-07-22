@@ -50,18 +50,18 @@ import { useTenantHeaderViewModel, TenantStatus } from "../viewmodels/useTenantH
 type LocalTenantStatus = TenantStatus;
 
 const statusBorderGradient: Record<LocalTenantStatus, string> = {
-  active: "from-emerald-500 via-primary to-emerald-500",
-  suspended: "from-amber-500 via-amber-400 to-amber-500",
-  canceled: "from-red-500 via-red-400 to-red-500",
-  expired: "from-orange-500 via-orange-400 to-orange-500",
+  active: "from-success via-primary to-success",
+  suspended: "from-warning via-warning/80 to-warning",
+  canceled: "from-destructive via-destructive/80 to-destructive",
+  expired: "from-warning via-warning/80 to-warning",
   inactive: "from-muted-foreground/40 via-muted-foreground/20 to-muted-foreground/40",
 };
 
 const statusIconBg: Record<LocalTenantStatus, string> = {
-  active: "from-primary/20 to-emerald-500/10 border-primary/20",
-  suspended: "from-amber-500/20 to-amber-500/5 border-amber-500/20",
-  canceled: "from-red-500/20 to-red-500/5 border-red-500/20",
-  expired: "from-orange-500/20 to-orange-500/5 border-orange-500/20",
+  active: "from-primary/20 to-success/10 border-primary/20",
+  suspended: "from-warning/20 to-warning/5 border-warning/20",
+  canceled: "from-destructive/20 to-destructive/5 border-destructive/20",
+  expired: "from-warning/20 to-warning/5 border-warning/20",
   inactive: "from-muted to-muted/50 border-border",
 };
 
@@ -143,7 +143,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
         className={cn(
           "gap-1 text-xs",
           status === "suspended" &&
-            "border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+            "border-warning/50 bg-warning/10 text-warning"
         )}
       >
         {StatusIcon && <StatusIcon className="h-3 w-3" />}
@@ -159,13 +159,13 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
         <div
           dir={direction}
           className={cn(
-            "flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4",
+            "flex items-center gap-3 rounded-xl border border-warning/30 bg-warning/5 p-4",
             "mb-4"
           )}
         >
-          <AlertTriangle className="h-5 w-5 shrink-0 text-amber-500" />
+          <AlertTriangle className="h-5 w-5 shrink-0 text-warning" />
           <div className="flex-1 text-sm">
-            <p className="font-medium text-amber-500">{t("tenant.suspendedBanner")}</p>
+            <p className="font-medium text-warning">{t("tenant.suspendedBanner")}</p>
             {(tenant as any).suspensionReason && (
               <p className="mt-0.5 text-muted-foreground">{(tenant as any).suspensionReason}</p>
             )}
@@ -174,7 +174,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
             <Button
               size="sm"
               variant="outline"
-              className="shrink-0 border-emerald-500/50 text-emerald-500 hover:bg-emerald-500/10"
+              className="shrink-0 border-success/50 text-success hover:bg-success/10"
               disabled
             >
               <Play className="me-1.5 h-4 w-4" />
@@ -187,11 +187,11 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
       {status === "canceled" && (
         <div
           dir={direction}
-          className="mb-4 flex items-center gap-3 rounded-xl border border-red-500/30 bg-red-500/5 p-4"
+          className="mb-4 flex items-center gap-3 rounded-xl border border-destructive/30 bg-destructive/5 p-4"
         >
-          <Ban className="h-5 w-5 shrink-0 text-red-500" />
+          <Ban className="h-5 w-5 shrink-0 text-destructive" />
           <div className="flex-1 text-sm">
-            <p className="font-medium text-red-500">{t("tenant.canceledBanner")}</p>
+            <p className="font-medium text-destructive">{t("tenant.canceledBanner")}</p>
             {(tenant as any).suspensionReason && (
               <p className="mt-0.5 text-muted-foreground">{(tenant as any).suspensionReason}</p>
             )}
@@ -202,11 +202,11 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
       {status === "expired" && (
         <div
           dir={direction}
-          className="mb-4 flex items-center gap-3 rounded-xl border border-orange-500/30 bg-orange-500/5 p-4"
+          className="mb-4 flex items-center gap-3 rounded-xl border border-warning/30 bg-warning/5 p-4"
         >
-          <XCircle className="h-5 w-5 shrink-0 text-orange-500" />
+          <XCircle className="h-5 w-5 shrink-0 text-warning" />
           <div className="flex-1 text-sm">
-            <p className="font-medium text-orange-500">{t("tenant.expiredBanner")}</p>
+            <p className="font-medium text-warning">{t("tenant.expiredBanner")}</p>
           </div>
         </div>
       )}
@@ -282,9 +282,9 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                       className={cn(
                         "gap-1 text-xs",
                         daysLeft <= 7
-                          ? "border-red-500/50 text-red-500"
+                          ? "border-destructive/50 text-destructive"
                           : daysLeft <= 30
-                            ? "border-amber-500/50 text-amber-500"
+                            ? "border-warning/50 text-warning"
                             : "border-muted-foreground/30 text-muted-foreground"
                       )}
                     >

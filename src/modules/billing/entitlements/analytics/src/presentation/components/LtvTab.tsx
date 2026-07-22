@@ -110,7 +110,7 @@ export function LtvTab({ ltvData }: LtvTabProps) {
                   </div>
                   <div className="h-3 overflow-hidden rounded-full bg-muted/30">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-1000 ease-out"
+                      className="h-full rounded-full bg-gradient-to-r from-success to-success/70 transition-all duration-1000 ease-out"
                       style={{ width: `${barWidth}%` }}
                     />
                   </div>

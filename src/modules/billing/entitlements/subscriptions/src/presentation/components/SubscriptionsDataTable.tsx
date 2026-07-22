@@ -44,28 +44,28 @@ interface SubscriptionsDataTableProps {
 
 const STATUS_COLORS: Record<string, string> = {
   Active:
-    "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800",
+    "bg-success/10 text-success border-success/30",
   Trialing:
-    "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400 border-blue-200 dark:border-blue-800",
+    "bg-info/10 text-info border-info/30",
   Suspended:
-    "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400 border-amber-200 dark:border-amber-800",
+    "bg-warning/10 text-warning border-warning/30",
   Canceled:
-    "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400 border-red-200 dark:border-red-800",
+    "bg-destructive/10 text-destructive border-destructive/30",
   Expired:
-    "bg-gray-100 text-gray-700 dark:bg-gray-950 dark:text-gray-400 border-gray-200 dark:border-gray-800",
+    "bg-muted text-foreground border-border",
   GracePeriod:
-    "bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-400 border-orange-200 dark:border-orange-800",
+    "bg-warning/10 text-warning border-warning/30",
 };
 
 const TYPE_COLORS: Record<string, string> = {
   Monthly:
-    "bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-400 border-violet-200 dark:border-violet-800",
+    "bg-primary/10 text-primary border-primary/30",
   Yearly:
-    "bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800",
+    "bg-info/10 text-info border-info/30",
   Lifetime:
-    "bg-pink-100 text-pink-700 dark:bg-pink-950 dark:text-pink-400 border-pink-200 dark:border-pink-800",
+    "bg-primary/10 text-primary border-primary/30",
   Trial:
-    "bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-400 border-sky-200 dark:border-sky-800",
+    "bg-info/10 text-info border-info/30",
 };
 
 /**
@@ -243,7 +243,7 @@ export function SubscriptionsDataTable({
                               {sub.editionName}
                             </span>
                             {sub.isDowngraded && (
-                              <span className="text-[10px] font-bold text-amber-600">
+                              <span className="text-[10px] font-bold text-warning">
                                 {t("tenant.downgrade") || "Downgraded"}
                               </span>
                             )}
@@ -277,12 +277,12 @@ export function SubscriptionsDataTable({
                             <div className="flex flex-col gap-0.5">
                               <Badge
                                 variant="outline"
-                                className="w-fit border-emerald-200 bg-emerald-100 text-[10px] font-extrabold text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-400"
+                                className="w-fit border-success/30 bg-success/10 text-[10px] font-extrabold text-success"
                               >
                                 🏷️ {sub.appliedPromoCode}
                               </Badge>
                               {sub.promotionDiscount != null && sub.promotionDiscount > 0 && (
-                                <span className="text-[10px] font-bold text-emerald-600">
+                                <span className="text-[10px] font-bold text-success">
                                   −{formatDisplay(sub.promotionDiscount, sub.currency)}
                                 </span>
                               )}
@@ -335,7 +335,7 @@ export function SubscriptionsDataTable({
         </span>
         <div className="flex items-center gap-4">
           {totalPromoDiscount > 0 && (
-            <span className="flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400">
+            <span className="flex items-center gap-1 font-semibold text-success">
               <Tag className="h-3 w-3" />
               {t("dashboard.footer.promoDiscount") || "Promo discounts"}:{" "}
               {formatDisplay(totalPromoDiscount, "USD")}

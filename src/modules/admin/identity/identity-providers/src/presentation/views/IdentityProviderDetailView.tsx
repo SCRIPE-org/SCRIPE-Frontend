@@ -76,8 +76,8 @@ export function IdentityProviderDetailView({ providerId }: Props) {
     return (
       <div className="flex min-h-[450px] items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="relative flex h-12 w-12 items-center justify-center rounded-xl border border-purple-500/20 bg-purple-500/10 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
-            <Loader2 className="h-6 w-6 animate-spin text-purple-500" />
+          <div className="relative flex h-12 w-12 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
+            <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </div>
           <p className="text-xs text-muted-foreground">
             {t("common.loading") || "Loading details..."}
@@ -91,10 +91,10 @@ export function IdentityProviderDetailView({ providerId }: Props) {
   if (vm.fetchError) {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center gap-4">
-        <div className="rounded-full border border-red-500/20 bg-red-500/10 p-3 text-red-500">
+        <div className="rounded-full border border-destructive/20 bg-destructive/10 p-3 text-destructive">
           <AlertCircle className="h-8 w-8" />
         </div>
-        <p className="text-sm font-medium text-red-600">
+        <p className="text-sm font-medium text-destructive">
           {t("common.error") || "Error"}: {(vm.fetchError as Error).message}
         </p>
         <Button variant="outline" size="sm" onClick={vm.goBack}>
@@ -137,14 +137,14 @@ export function IdentityProviderDetailView({ providerId }: Props) {
               <span
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${
                   createStep >= 1
-                    ? "bg-purple-600 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]"
+                    ? "bg-primary text-primary-foreground shadow-[0_0_12px_rgba(168,85,247,0.4)]"
                     : "border border-border bg-muted text-muted-foreground"
                 }`}
               >
                 1
               </span>
               <span
-                className={`text-[10px] font-bold uppercase tracking-wider ${createStep === 1 ? "text-purple-600 dark:text-purple-400" : "text-muted-foreground"}`}
+                className={`text-[10px] font-bold uppercase tracking-wider ${createStep === 1 ? "text-primary" : "text-muted-foreground"}`}
               >
                 {t("identityProviders.stepSelectTemplate")}
               </span>
@@ -153,7 +153,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
             {/* Line 1 */}
             <div className="relative mx-4 h-0.5 flex-1 bg-border">
               <div
-                className="absolute left-0 top-0 h-full bg-purple-500 transition-all duration-500"
+                className="absolute left-0 top-0 h-full bg-primary transition-all duration-500"
                 style={{ width: createStep > 1 ? "100%" : "0%" }}
               />
             </div>
@@ -163,14 +163,14 @@ export function IdentityProviderDetailView({ providerId }: Props) {
               <span
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${
                   createStep >= 2
-                    ? "bg-purple-600 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]"
+                    ? "bg-primary text-primary-foreground shadow-[0_0_12px_rgba(168,85,247,0.4)]"
                     : "border border-border bg-muted text-muted-foreground"
                 }`}
               >
                 2
               </span>
               <span
-                className={`text-[10px] font-bold uppercase tracking-wider ${createStep === 2 ? "text-purple-600 dark:text-purple-400" : "text-muted-foreground"}`}
+                className={`text-[10px] font-bold uppercase tracking-wider ${createStep === 2 ? "text-primary" : "text-muted-foreground"}`}
               >
                 {t("identityProviders.stepConnectionSettings")}
               </span>
@@ -179,7 +179,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
             {/* Line 2 */}
             <div className="relative mx-4 h-0.5 flex-1 bg-border">
               <div
-                className="absolute left-0 top-0 h-full bg-purple-500 transition-all duration-500"
+                className="absolute left-0 top-0 h-full bg-primary transition-all duration-500"
                 style={{ width: createStep > 2 ? "100%" : "0%" }}
               />
             </div>
@@ -189,14 +189,14 @@ export function IdentityProviderDetailView({ providerId }: Props) {
               <span
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${
                   createStep >= 3
-                    ? "bg-purple-600 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]"
+                    ? "bg-primary text-primary-foreground shadow-[0_0_12px_rgba(168,85,247,0.4)]"
                     : "border border-border bg-muted text-muted-foreground"
                 }`}
               >
                 3
               </span>
               <span
-                className={`text-[10px] font-bold uppercase tracking-wider ${createStep === 3 ? "text-purple-600 dark:text-purple-400" : "text-muted-foreground"}`}
+                className={`text-[10px] font-bold uppercase tracking-wider ${createStep === 3 ? "text-primary" : "text-muted-foreground"}`}
               >
                 {t("identityProviders.stepAppearanceClaims")}
               </span>
@@ -356,7 +356,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
         <div className="flex items-center gap-2 self-end sm:self-center">
           {/* Test Connection */}
           <Button variant="outline" size="sm" onClick={vm.testConnection} loading={vm.isTesting}>
-            {!vm.isTesting && <Zap className="me-1.5 h-4 w-4 text-amber-500" />}
+            {!vm.isTesting && <Zap className="me-1.5 h-4 w-4 text-warning" />}
             {t("identityProviders.testConnection") || "Test Connection"}
           </Button>
 
@@ -376,8 +376,8 @@ export function IdentityProviderDetailView({ providerId }: Props) {
 
       {/* Dirty indicator warning */}
       {vm.isDirty && (
-        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-600 duration-200 animate-in fade-in dark:border-amber-800 dark:bg-amber-950/20 dark:text-amber-400">
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />
+        <div className="flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-xs text-warning duration-200 animate-in fade-in">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-warning" />
           {t("common.unsavedChanges") ||
             "You have unsaved changes in your workspace. Remember to save."}
         </div>
@@ -501,13 +501,13 @@ export function IdentityProviderDetailView({ providerId }: Props) {
             <AccessControlSection {...sectionProps} />
 
             {/* Danger Zone */}
-            <Card className="border border-red-200 bg-red-50/50 p-6 dark:border-red-900/50 dark:bg-red-950/10">
+            <Card className="border border-destructive/30 bg-destructive/5 p-6">
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-sm font-semibold text-red-700 dark:text-red-400">
+                  <h3 className="text-sm font-semibold text-destructive">
                     {t("common.dangerZone") || "Danger Zone"}
                   </h3>
-                  <p className="mt-1 text-xs text-red-600/80 dark:text-red-400/70">
+                  <p className="mt-1 text-xs text-destructive/80">
                     {t("identityProviders.deleteWarning") ||
                       "Deleting this provider will permanently remove it. Users who signed in via this provider will lose SSO access and authentication credentials."}
                   </p>
@@ -534,7 +534,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                       <AlertDialogCancel>{t("common.cancel") || "Cancel"}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={vm.deleteProvider}
-                        className="bg-red-600 text-white hover:bg-red-700"
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                       >
                         {t("common.delete") || "Delete"}
                       </AlertDialogAction>

@@ -113,8 +113,8 @@ export function RevenueTab({ mrrData, months, onMonthsChange }: RevenueTabProps)
                         <div
                           className={`h-full rounded-lg transition-all duration-700 ease-out ${
                             isGrowth
-                              ? "bg-gradient-to-r from-emerald-500/70 to-emerald-400/50"
-                              : "bg-gradient-to-r from-rose-500/70 to-rose-400/50"
+                              ? "bg-gradient-to-r from-success/70 to-success/50"
+                              : "bg-gradient-to-r from-destructive/70 to-destructive/50"
                           }`}
                           style={{ width: `${Math.max(barWidth, 3)}%` }}
                         />
@@ -125,8 +125,8 @@ export function RevenueTab({ mrrData, months, onMonthsChange }: RevenueTabProps)
                           <span
                             className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${
                               isGrowth
-                                ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
-                                : "bg-rose-500/10 text-rose-700 dark:text-rose-400"
+                                ? "bg-success/10 text-success"
+                                : "bg-destructive/10 text-destructive"
                             }`}
                           >
                             {isGrowth ? "+" : ""}
@@ -139,31 +139,31 @@ export function RevenueTab({ mrrData, months, onMonthsChange }: RevenueTabProps)
                     {/* Breakdown on hover */}
                     <div className="ml-[76px] hidden flex-wrap gap-1.5 pb-2 duration-200 animate-in fade-in-0 group-hover:flex">
                       {movement.mrrNew > 0 && (
-                        <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-600">
+                        <span className="rounded-full border border-success/20 bg-success/10 px-2 py-0.5 text-[10px] font-medium text-success">
                           +{formatCurrency(movement.mrrNew)}{" "}
                           {t("entitlements.analytics.revenue.new")}
                         </span>
                       )}
                       {movement.mrrExpansion > 0 && (
-                        <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 text-[10px] font-medium text-blue-600">
+                        <span className="rounded-full border border-info/20 bg-info/10 px-2 py-0.5 text-[10px] font-medium text-info">
                           +{formatCurrency(movement.mrrExpansion)}{" "}
                           {t("entitlements.analytics.revenue.expansion")}
                         </span>
                       )}
                       {movement.mrrChurn > 0 && (
-                        <span className="rounded-full border border-rose-500/20 bg-rose-500/10 px-2 py-0.5 text-[10px] font-medium text-rose-600">
+                        <span className="rounded-full border border-destructive/20 bg-destructive/10 px-2 py-0.5 text-[10px] font-medium text-destructive">
                           -{formatCurrency(movement.mrrChurn)}{" "}
                           {t("entitlements.analytics.revenue.churn")}
                         </span>
                       )}
                       {movement.mrrContraction > 0 && (
-                        <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-600">
+                        <span className="rounded-full border border-warning/20 bg-warning/10 px-2 py-0.5 text-[10px] font-medium text-warning">
                           -{formatCurrency(movement.mrrContraction)}{" "}
                           {t("entitlements.analytics.revenue.contraction")}
                         </span>
                       )}
                       {movement.mrrReactivation > 0 && (
-                        <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-2 py-0.5 text-[10px] font-medium text-violet-600">
+                        <span className="rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
                           +{formatCurrency(movement.mrrReactivation)}{" "}
                           {t("entitlements.analytics.revenue.reactivation")}
                         </span>
@@ -204,12 +204,12 @@ function SummaryCard({
       </p>
       <div className="flex items-center justify-center gap-1">
         {positive ? (
-          <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
+          <TrendingUp className="h-3.5 w-3.5 text-success" />
         ) : (
-          <TrendingDown className="h-3.5 w-3.5 text-rose-500" />
+          <TrendingDown className="h-3.5 w-3.5 text-destructive" />
         )}
         <span
-          className={`text-sm font-bold ${positive ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}
+          className={`text-sm font-bold ${positive ? "text-success" : "text-destructive"}`}
         >
           {formatCurrency(Math.abs(value))}
         </span>

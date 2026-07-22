@@ -87,31 +87,31 @@ function CustomerLogoDialogForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-2">
       <div className="space-y-1">
-        <Label className="text-xs text-zinc-400">{t("signupContent.customerLogos.key")}</Label>
-        <Input {...register("key")} className="border-zinc-700 bg-zinc-900 text-white" />
-        {errors.key && <p className="text-xs text-red-400">{errors.key.message}</p>}
+        <Label className="text-xs text-muted-foreground">{t("signupContent.customerLogos.key")}</Label>
+        <Input {...register("key")} className="border-border bg-card text-foreground" />
+        {errors.key && <p className="text-xs text-destructive">{errors.key.message}</p>}
       </div>
       <div className="space-y-1">
-        <Label className="text-xs text-zinc-400">{t("signupContent.customerLogos.name")}</Label>
-        <Input {...register("name")} className="border-zinc-700 bg-zinc-900 text-white" />
-        {errors.name && <p className="text-xs text-red-400">{errors.name.message}</p>}
+        <Label className="text-xs text-muted-foreground">{t("signupContent.customerLogos.name")}</Label>
+        <Input {...register("name")} className="border-border bg-card text-foreground" />
+        {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
       </div>
       <div className="space-y-1">
-        <Label className="text-xs text-zinc-400">{t("signupContent.customerLogos.assetUrl")}</Label>
-        <Input {...register("assetUrl")} className="border-zinc-700 bg-zinc-900 text-white" />
-        {errors.assetUrl && <p className="text-xs text-red-400">{errors.assetUrl.message}</p>}
+        <Label className="text-xs text-muted-foreground">{t("signupContent.customerLogos.assetUrl")}</Label>
+        <Input {...register("assetUrl")} className="border-border bg-card text-foreground" />
+        {errors.assetUrl && <p className="text-xs text-destructive">{errors.assetUrl.message}</p>}
       </div>
       <div className="space-y-1">
-        <Label className="text-xs text-zinc-400">{t("signupContent.trustMarks.sortOrder")}</Label>
+        <Label className="text-xs text-muted-foreground">{t("signupContent.trustMarks.sortOrder")}</Label>
         <Input
           type="number"
           {...register("sortOrder", { valueAsNumber: true })}
-          className="border-zinc-700 bg-zinc-900 text-white"
+          className="border-border bg-card text-foreground"
         />
-        {errors.sortOrder && <p className="text-xs text-red-400">{errors.sortOrder.message}</p>}
+        {errors.sortOrder && <p className="text-xs text-destructive">{errors.sortOrder.message}</p>}
       </div>
       <div className="flex items-center justify-between">
-        <Label className="text-xs text-zinc-400">
+        <Label className="text-xs text-muted-foreground">
           {t("signupContent.customerLogos.isRealData")}
         </Label>
         <Switch
@@ -124,14 +124,14 @@ function CustomerLogoDialogForm({
           type="button"
           variant="ghost"
           onClick={onClose}
-          className="text-zinc-400 hover:text-white"
+          className="text-muted-foreground hover:text-foreground"
         >
           {t("signupContent.customerLogos.cancel")}
         </Button>
         <Button
           type="submit"
           disabled={isSaving}
-          className="bg-indigo-600 text-white hover:bg-indigo-500"
+          className="bg-info text-info-foreground hover:bg-info/90"
         >
           {isSaving
             ? t("signupContent.customerLogos.saving")
@@ -160,9 +160,9 @@ export function CustomerLogoDialog({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="border-zinc-800 bg-zinc-950 sm:max-w-md">
+      <DialogContent className="border-border bg-background sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-white">{title}</DialogTitle>
+          <DialogTitle className="text-foreground">{title}</DialogTitle>
         </DialogHeader>
         <CustomerLogoDialogForm
           key={`${editing?.id ?? "new"}:${open ? "open" : "closed"}`}

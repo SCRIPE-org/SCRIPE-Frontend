@@ -42,9 +42,9 @@ interface PromotionsTabProps {
 
 // ── Discount type icon helper ──
 function DiscountIcon({ type }: { type: string }) {
-  if (type === "Percentage") return <Percent className="h-3.5 w-3.5 text-blue-500" />;
-  if (type === "FixedAmount") return <DollarSign className="h-3.5 w-3.5 text-green-500" />;
-  return <Gift className="h-3.5 w-3.5 text-purple-500" />;
+  if (type === "Percentage") return <Percent className="h-3.5 w-3.5 text-info" />;
+  if (type === "FixedAmount") return <DollarSign className="h-3.5 w-3.5 text-success" />;
+  return <Gift className="h-3.5 w-3.5 text-primary" />;
 }
 
 // ── Promo row ──
@@ -123,7 +123,7 @@ function PromoRow({
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 text-destructive hover:text-destructive"
+          className="h-8 w-8 text-destructive hover:text-destructive/80"
           onClick={() => onDelete(promo.id)}
           loading={isDeleting}
         >

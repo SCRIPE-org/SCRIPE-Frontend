@@ -131,7 +131,7 @@ export function TemplateLivePreview({ body, subject }: TemplateLivePreviewProps)
       {/* Preview container */}
       <div className="flex justify-center">
         <div
-          className="overflow-hidden rounded-lg border bg-white transition-all duration-300 dark:bg-zinc-900"
+          className="overflow-hidden rounded-lg border bg-card transition-all duration-300"
           style={{ width: selectedDevice.width, maxWidth: "100%" }}
         >
           {debouncedBody ? (

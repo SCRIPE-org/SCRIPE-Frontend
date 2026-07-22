@@ -31,10 +31,10 @@ const fmtDate = (s: string) => formatDateUtc(s);
 
 
 const STATUS_COLORS: Record<string, string> = {
-  Collected: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
-  Pending: "bg-amber-100   text-amber-700   dark:bg-amber-900/30   dark:text-amber-400",
-  Refunded: "bg-red-100     text-red-700     dark:bg-red-900/30     dark:text-red-400",
-  Failed: "bg-red-100     text-red-700     dark:bg-red-900/30     dark:text-red-400",
+  Collected: "bg-success/10 text-success",
+  Pending: "bg-warning/10   text-warning",
+  Refunded: "bg-destructive/10     text-destructive",
+  Failed: "bg-destructive/10     text-destructive",
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -204,10 +204,10 @@ function CommissionTable({ commissions }: { commissions: Commission[] }) {
             <TableCell className="text-right font-medium tabular-nums">
               {fmt(c.grossAmount, c.currency)}
             </TableCell>
-            <TableCell className="text-right tabular-nums text-red-500">
+            <TableCell className="text-right tabular-nums text-destructive">
               −{fmt(c.commissionAmount, c.currency)}
             </TableCell>
-            <TableCell className="text-right font-semibold tabular-nums text-emerald-500">
+            <TableCell className="text-right font-semibold tabular-nums text-success">
               {fmt(c.netAmount, c.currency)}
             </TableCell>
             <TableCell className="text-xs tabular-nums text-muted-foreground">

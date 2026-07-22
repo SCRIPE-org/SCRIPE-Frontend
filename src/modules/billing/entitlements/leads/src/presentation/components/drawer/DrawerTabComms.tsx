@@ -34,15 +34,15 @@ export function DrawerTabComms({
       {canSendEmail && (
         <Button
           onClick={onOpenEmailDialog}
-          className="h-9 w-full gap-2 bg-violet-600 text-sm font-semibold text-white hover:bg-violet-500"
+          className="h-9 w-full gap-2 bg-primary text-sm font-semibold text-primary-foreground hover:bg-primary/90"
         >
           <Send className="h-4 w-4" />
           {t("leads.email.send")}
         </Button>
       )}
 
-      <div className="rounded-xl border border-zinc-800/50 bg-zinc-900/40 p-4">
-        <p className="mb-3 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+      <div className="rounded-xl border border-border/50 bg-card/40 p-4">
+        <p className="mb-3 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
           <Mail className="h-3.5 w-3.5" />
           {t("leads.email.communicationsTitle")}
         </p>
@@ -50,25 +50,25 @@ export function DrawerTabComms({
           <div className="animate-pulse space-y-3">
             {[1, 2].map((i) => (
               <div key={i} className="space-y-1">
-                <div className="h-3 w-40 rounded bg-zinc-800" />
-                <div className="h-2.5 w-24 rounded bg-zinc-800" />
+                <div className="h-3 w-40 rounded bg-muted" />
+                <div className="h-2.5 w-24 rounded bg-muted" />
               </div>
             ))}
           </div>
         ) : !communicationLogs || communicationLogs.length === 0 ? (
-          <p className="text-xs text-zinc-500">{t("leads.email.noEmailsSent")}</p>
+          <p className="text-xs text-muted-foreground">{t("leads.email.noEmailsSent")}</p>
         ) : (
-          <ol className="relative space-y-4 border-s border-violet-800/40 ps-4">
+          <ol className="relative space-y-4 border-s border-primary/40 ps-4">
             {communicationLogs.map((log) => (
               <li key={log.id}>
-                <div className="absolute -start-[5px] mt-1 h-2.5 w-2.5 rounded-full bg-violet-500 ring-2 ring-zinc-950" />
-                <p className="truncate text-xs font-semibold text-zinc-300">{log.subject}</p>
-                <p className="mt-0.5 text-[10px] text-zinc-500">
+                <div className="absolute -start-[5px] mt-1 h-2.5 w-2.5 rounded-full bg-primary ring-2 ring-background" />
+                <p className="truncate text-xs font-semibold text-foreground">{log.subject}</p>
+                <p className="mt-0.5 text-[10px] text-muted-foreground">
                   {t("leads.email.sentBy")} {log.sentByAdminName} ·{" "}
                   {formatDateTimeUtc(log.sentAt)}
                 </p>
                 {log.isFailed && (
-                  <span className="mt-1 inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-[10px] font-medium text-red-400">
+                  <span className="mt-1 inline-flex items-center rounded-full bg-destructive/10 px-2 py-0.5 text-[10px] font-medium text-destructive">
                     {t("leads.email.failed")}
                   </span>
                 )}

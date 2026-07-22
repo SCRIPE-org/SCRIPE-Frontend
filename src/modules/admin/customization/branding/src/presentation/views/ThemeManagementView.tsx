@@ -58,7 +58,7 @@ function TierBadge({
     return (
       <Badge
         variant="outline"
-        className="border-emerald-500/20 bg-emerald-500/10 text-[10px] font-semibold text-emerald-600"
+        className="border-success/20 bg-success/10 text-[10px] font-semibold text-success"
       >
         <Sparkles className="mr-0.5 h-3 w-3" />
         {t(`${T}.tier.free`)}
@@ -69,7 +69,7 @@ function TierBadge({
     return (
       <Badge
         variant="outline"
-        className="border-violet-500/20 bg-violet-500/10 text-[10px] font-semibold text-violet-600"
+        className="border-primary/20 bg-primary/10 text-[10px] font-semibold text-primary"
       >
         <Crown className="mr-0.5 h-3 w-3" />
         {t(`${T}.tier.premium`)}
@@ -85,7 +85,7 @@ function TierBadge({
   return (
     <Badge
       variant="outline"
-      className="border-blue-500/20 bg-blue-500/10 text-[10px] font-semibold text-blue-600"
+      className="border-info/20 bg-info/10 text-[10px] font-semibold text-info"
     >
       <Crown className="mr-0.5 h-3 w-3" />
       {tierMap[minTierLevel] || t(`${T}.tier.tierN`, { n: minTierLevel })}
@@ -101,7 +101,7 @@ function FeatureBadges({ theme }: { theme: ThemeCard }) {
       {theme.hasDarkMode && (
         <Badge
           variant="outline"
-          className="h-4 border-slate-300/40 bg-slate-800/10 px-1.5 py-0 text-[9px] text-slate-600"
+          className="h-4 border-border bg-muted px-1.5 py-0 text-[9px] text-muted-foreground"
         >
           <Moon className="mr-0.5 h-2.5 w-2.5" />
           {t(`${T}.features.dark`)}
@@ -110,7 +110,7 @@ function FeatureBadges({ theme }: { theme: ThemeCard }) {
       {theme.hasAccessibilityPreset && (
         <Badge
           variant="outline"
-          className="h-4 border-blue-300/40 bg-blue-500/10 px-1.5 py-0 text-[9px] text-blue-600"
+          className="h-4 border-info/40 bg-info/10 px-1.5 py-0 text-[9px] text-info"
         >
           <Accessibility className="mr-0.5 h-2.5 w-2.5" />
           {t(`${T}.features.a11y`)}
@@ -119,7 +119,7 @@ function FeatureBadges({ theme }: { theme: ThemeCard }) {
       {theme.hasContentBlocks && (
         <Badge
           variant="outline"
-          className="h-4 border-purple-300/40 bg-purple-500/10 px-1.5 py-0 text-[9px] text-purple-600"
+          className="h-4 border-primary/40 bg-primary/10 px-1.5 py-0 text-[9px] text-primary"
         >
           <Blocks className="mr-0.5 h-2.5 w-2.5" />
           {t(`${T}.features.blocks`)}
@@ -171,7 +171,7 @@ export function ThemeManagementView() {
                   {item.isNew && (
                     <Badge
                       variant="outline"
-                      className="h-3.5 border-green-500/30 bg-green-500/10 px-1 py-0 text-[9px] text-green-600"
+                      className="h-3.5 border-success/30 bg-success/10 px-1 py-0 text-[9px] text-success"
                     >
                       {t(`${T}.new`)}
                     </Badge>
@@ -179,7 +179,7 @@ export function ThemeManagementView() {
                   {item.isDeprecated && (
                     <Badge
                       variant="outline"
-                      className="h-3.5 border-red-500/30 bg-red-500/10 px-1 py-0 text-[9px] text-red-600"
+                      className="h-3.5 border-destructive/30 bg-destructive/10 px-1 py-0 text-[9px] text-destructive"
                     >
                       {t(`${T}.deprecated`)}
                     </Badge>
@@ -243,7 +243,7 @@ export function ThemeManagementView() {
             <Badge
               variant={item.isSystem ? "default" : "outline"}
               className={`text-[10px] ${
-                item.isSystem ? "bg-indigo-600 text-white hover:bg-indigo-700" : ""
+                item.isSystem ? "bg-info text-info-foreground hover:bg-info/90" : ""
               }`}
             >
               {item.isSystem ? t(`${T}.type.system`) : t(`${T}.type.custom`)}
@@ -287,7 +287,7 @@ export function ThemeManagementView() {
           label: tFn("common.delete") || t("common.delete"),
           onClick: (item: ThemeCard) => handleDeleteFn?.(item),
           variant: "ghost" as const,
-          className: "text-red-600 hover:text-red-700",
+          className: "text-destructive hover:text-destructive/80",
           icon: <Trash2 className="h-4 w-4" />,
           requiredPermission: "themes:delete",
           confirmTitle: t(`${T}.confirm.deleteTitle`),
@@ -314,29 +314,29 @@ export function ThemeManagementView() {
           icon={<Sparkles className="h-5 w-5" />}
           label={t(`${T}.stats.free`)}
           value={statistics.free}
-          color="text-emerald-600"
-          bgColor="bg-emerald-500/10"
+          color="text-success"
+          bgColor="bg-success/10"
         />
         <StatCard
           icon={<Star className="h-5 w-5" />}
           label={t(`${T}.stats.featured`)}
           value={statistics.featured}
-          color="text-amber-600"
-          bgColor="bg-amber-500/10"
+          color="text-warning"
+          bgColor="bg-warning/10"
         />
         <StatCard
           icon={<TrendingUp className="h-5 w-5" />}
           label={t(`${T}.stats.system`)}
           value={statistics.system}
-          color="text-indigo-600"
-          bgColor="bg-indigo-500/10"
+          color="text-info"
+          bgColor="bg-info/10"
         />
         <StatCard
           icon={<Archive className="h-5 w-5" />}
           label={t(`${T}.stats.deprecated`)}
           value={statistics.deprecated}
-          color="text-red-600"
-          bgColor="bg-red-500/10"
+          color="text-destructive"
+          bgColor="bg-destructive/10"
         />
       </div>
 

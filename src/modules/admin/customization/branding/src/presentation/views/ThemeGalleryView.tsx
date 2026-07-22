@@ -75,7 +75,7 @@ export function ThemeGalleryView() {
         {/* Decorative background orbs */}
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
-          <div className="absolute -bottom-10 -left-10 h-48 w-48 rounded-full bg-violet-500/5 blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 h-48 w-48 rounded-full bg-primary/5 blur-3xl" />
         </div>
         <div className="relative px-8 py-10 text-center">
           <div className="mb-3 flex items-center justify-center gap-2">
@@ -424,7 +424,7 @@ function GalleryThemeCard({
         "group relative flex flex-col overflow-hidden rounded-xl border transition-all duration-300",
         "hover:-translate-y-0.5 hover:shadow-lg",
         isPreviewing
-          ? "border-violet-500/50 shadow-violet-500/5 ring-2 ring-violet-500/20"
+          ? "border-primary/50 shadow-primary/5 ring-2 ring-primary/20"
           : theme.isApplied
             ? "border-primary/40 shadow-primary/5 ring-1 ring-primary/20"
             : "border-border/60 hover:border-primary/30",
@@ -455,19 +455,19 @@ function GalleryThemeCard({
         {/* Top-left badges */}
         <div className="absolute left-2 top-2 flex gap-1.5">
           {theme.isFeatured && (
-            <Badge className="h-5 gap-0.5 border-0 bg-amber-500 px-1.5 py-0 text-[9px] text-white shadow-sm">
-              <Star className="h-2.5 w-2.5 fill-white" />
+            <Badge className="h-5 gap-0.5 border-0 bg-warning px-1.5 py-0 text-[9px] text-warning-foreground shadow-sm">
+              <Star className="h-2.5 w-2.5 fill-warning-foreground" />
               {t(`${G}.card.featured`)}
             </Badge>
           )}
           {theme.isNew && (
-            <Badge className="h-5 gap-0.5 border-0 bg-emerald-500 px-1.5 py-0 text-[9px] text-white shadow-sm">
+            <Badge className="h-5 gap-0.5 border-0 bg-success px-1.5 py-0 text-[9px] text-success-foreground shadow-sm">
               <Sparkles className="h-2.5 w-2.5" />
               {t(`${G}.card.new`)}
             </Badge>
           )}
           {isPreviewing && (
-            <Badge className="h-5 gap-0.5 border-0 bg-violet-500 px-1.5 py-0 text-[9px] text-white shadow-sm">
+            <Badge className="h-5 gap-0.5 border-0 bg-primary px-1.5 py-0 text-[9px] text-primary-foreground shadow-sm">
               <Eye className="h-2.5 w-2.5" />
               {t(`${G}.card.preview`)}
             </Badge>
@@ -495,7 +495,7 @@ function GalleryThemeCard({
           <Heart
             className={cn(
               "h-3.5 w-3.5 transition-colors",
-              theme.isFavorited ? "fill-red-500 text-red-500" : "text-white"
+              theme.isFavorited ? "fill-destructive text-destructive" : "text-white"
             )}
           />
         </button>
@@ -616,7 +616,7 @@ function GalleryThemeCard({
               size="sm"
               className={cn(
                 "h-8 flex-1 gap-1.5 text-xs",
-                isPreviewing && "bg-violet-500 text-white hover:bg-violet-600"
+                isPreviewing && "bg-primary text-primary-foreground hover:bg-primary/90"
               )}
               onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
@@ -645,7 +645,7 @@ function GalleryThemeCard({
                 variant="outline"
                 size="sm"
                 disabled
-                className="h-8 flex-1 gap-1.5 border-violet-300 text-xs text-violet-600"
+                className="h-8 flex-1 gap-1.5 border-primary/40 text-xs text-primary"
               >
                 <ShoppingCart className="h-3.5 w-3.5" />
                 {theme.price ? `$${theme.price.toFixed(0)}` : t(`${G}.card.buy`)}
@@ -655,7 +655,7 @@ function GalleryThemeCard({
                 variant="outline"
                 size="sm"
                 disabled
-                className="h-8 flex-1 gap-1.5 border-amber-300/50 text-xs text-amber-600"
+                className="h-8 flex-1 gap-1.5 border-warning/50 text-xs text-warning"
               >
                 <Lock className="h-3.5 w-3.5" />
                 {t(`${G}.card.upgrade`)}
@@ -674,7 +674,7 @@ function PricingBadge({ theme }: { theme: ThemeCard }) {
   const { t } = useI18n();
   if (theme.isFree) {
     return (
-      <Badge className="shrink-0 border-emerald-500/20 bg-emerald-500/10 text-[10px] font-semibold text-emerald-600">
+      <Badge className="shrink-0 border-success/20 bg-success/10 text-[10px] font-semibold text-success">
         <Sparkles className="mr-0.5 h-3 w-3" />
         {t("studio.marketplace.free")}
       </Badge>
@@ -682,28 +682,28 @@ function PricingBadge({ theme }: { theme: ThemeCard }) {
   }
   if (theme.isIncluded) {
     return (
-      <Badge className="shrink-0 border-blue-500/20 bg-blue-500/10 text-[10px] font-semibold text-blue-600">
+      <Badge className="shrink-0 border-info/20 bg-info/10 text-[10px] font-semibold text-info">
         {t("studio.marketplace.included")}
       </Badge>
     );
   }
   if (theme.isPurchased) {
     return (
-      <Badge className="shrink-0 border-violet-500/20 bg-violet-500/10 text-[10px] font-semibold text-violet-600">
+      <Badge className="shrink-0 border-primary/20 bg-primary/10 text-[10px] font-semibold text-primary">
         {t("studio.marketplace.purchased")}
       </Badge>
     );
   }
   if (theme.isBuyable) {
     return (
-      <Badge className="shrink-0 border-violet-500/20 bg-violet-500/10 text-[10px] font-semibold text-violet-600">
+      <Badge className="shrink-0 border-primary/20 bg-primary/10 text-[10px] font-semibold text-primary">
         <Crown className="mr-0.5 h-3 w-3" />
         {theme.price ? `$${theme.price.toFixed(0)}` : t(`${G}.card.buy`)}
       </Badge>
     );
   }
   return (
-    <Badge className="shrink-0 border-amber-500/20 bg-amber-500/10 text-[10px] font-semibold text-amber-600">
+    <Badge className="shrink-0 border-warning/20 bg-warning/10 text-[10px] font-semibold text-warning">
       <Lock className="mr-0.5 h-3 w-3" />
       {t(`${G}.card.locked`)}
     </Badge>

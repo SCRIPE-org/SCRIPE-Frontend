@@ -45,7 +45,7 @@ export function ClientCredentialsCard({
     <Card className="border border-border/80 bg-card/45 backdrop-blur-md">
       <CardContent className="space-y-4 p-5">
         <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-          <KeyRound className="h-4 w-4 text-purple-500" />
+          <KeyRound className="h-4 w-4 text-primary" />
           {t("oauthApps.credentialsSection") || "Client Credentials"}
         </h3>
 
@@ -67,7 +67,7 @@ export function ClientCredentialsCard({
               onClick={() => copyToClipboard(clientId, "clientId")}
             >
               {copiedField === "clientId" ? (
-                <Check className="h-4 w-4 text-emerald-500" />
+                <Check className="h-4 w-4 text-success" />
               ) : (
                 <Copy className="h-4 w-4 text-muted-foreground" />
               )}
@@ -111,7 +111,7 @@ export function ClientCredentialsCard({
                   <AlertDialogCancel>{t("common.cancel") || "Cancel"}</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={onRegenerate}
-                    className="bg-purple-600 text-white hover:bg-purple-700"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90"
                   >
                     {t("oauthApps.regenerate") || "Regenerate"}
                   </AlertDialogAction>

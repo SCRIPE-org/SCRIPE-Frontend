@@ -265,7 +265,7 @@ export function BundleCard({
         {/* Pricing badge */}
         {!bundle.isFree && (
           <div className="absolute bottom-2.5 left-2.5">
-            <Badge className="border-0 bg-amber-500/90 text-[10px] text-white">PRO</Badge>
+            <Badge className="border-0 bg-warning/90 text-[10px] text-warning-foreground">PRO</Badge>
           </div>
         )}
       </button>
@@ -347,8 +347,8 @@ export function BundleCard({
               className={cn(
                 "flex h-7 w-7 items-center justify-center rounded-md transition-colors",
                 bundle.isFavorited
-                  ? "bg-rose-500/10 text-rose-500"
-                  : "text-muted-foreground hover:bg-rose-500/10 hover:text-rose-500"
+                  ? "bg-destructive/10 text-destructive"
+                  : "text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
               )}
             >
               <Heart className={cn("h-3.5 w-3.5", bundle.isFavorited && "fill-current")} />

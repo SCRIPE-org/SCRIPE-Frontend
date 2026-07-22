@@ -30,8 +30,8 @@ export function CreateTenantSuccess({ vm, t, direction }: CreateTenantSuccessPro
   return (
     <div className="mx-auto max-w-lg px-4 py-12" dir={direction}>
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-green-500/10 duration-500 animate-in zoom-in-50">
-          <CheckCircle2 className="h-8 w-8 text-green-500" />
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-success/10 duration-500 animate-in zoom-in-50">
+          <CheckCircle2 className="h-8 w-8 text-success" />
         </div>
         <h1 className="text-2xl font-bold delay-100 duration-500 animate-in fade-in-0 slide-in-from-bottom-2">
           {t("tenant.created") || "Tenant Created Successfully!"}

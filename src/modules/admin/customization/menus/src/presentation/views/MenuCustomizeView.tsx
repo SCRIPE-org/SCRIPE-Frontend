@@ -214,7 +214,7 @@ export function MenuCustomizeView() {
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <Sparkles className="h-4 w-4 text-emerald-500" />
+                  <Sparkles className="h-4 w-4 text-success" />
                   {t("menus.effectiveTree") ?? "Effective Preview"}
                 </CardTitle>
                 <p className="text-xs text-muted-foreground">

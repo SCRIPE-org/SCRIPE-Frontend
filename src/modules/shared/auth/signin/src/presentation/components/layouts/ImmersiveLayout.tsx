@@ -25,7 +25,7 @@ export function ImmersiveLayout({
 }: LoginLayoutProps) {
   return (
     <div
-      // `login-page` is the scope every global auth accessibility rule is
+      // "login-page" is the scope every global auth accessibility rule is
       // written under; this was the only one of the 23 layouts missing it, so
       // those rules silently did nothing here.
       className={`login-page relative flex min-h-screen w-full ${BG_STYLE} font-sans selection:bg-primary/20`}

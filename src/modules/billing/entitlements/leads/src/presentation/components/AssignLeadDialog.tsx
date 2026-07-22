@@ -94,8 +94,8 @@ export function AssignLeadDialog({
       <DialogContent className="sm:max-w-[440px]">
         <DialogHeader>
           <div className="mb-1 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/30">
-              <UserPlus className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-info/10">
+              <UserPlus className="h-5 w-5 text-info" />
             </div>
             <div>
               <DialogTitle>{t("leads.assignDialog.title")}</DialogTitle>
@@ -112,7 +112,7 @@ export function AssignLeadDialog({
                 {lead.contactName} - {lead.email}
               </p>
               {isCurrentlyAssigned && (
-                <p className="mt-1 text-xs text-amber-500">
+                <p className="mt-1 text-xs text-warning">
                   {t("leads.assignDialog.currentlyAssigned")}
                 </p>
               )}
@@ -129,7 +129,7 @@ export function AssignLeadDialog({
               onKeyDown={(e) => e.key === "Enter" && setUnassign((value) => !value)}
               className={`flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-colors ${
                 unassign
-                  ? "border-amber-500/60 bg-amber-500/10 text-amber-400"
+                  ? "border-warning/60 bg-warning/10 text-warning"
                   : "border-border bg-muted/30 text-muted-foreground hover:bg-muted/60"
               }`}
             >
@@ -187,8 +187,8 @@ export function AssignLeadDialog({
               disabled={isAssigning || (!unassign && !adminId.trim())}
               className={`gap-2 ${
                 unassign
-                  ? "bg-amber-600 text-white hover:bg-amber-700"
-                  : "bg-indigo-600 text-white hover:bg-indigo-700"
+                  ? "bg-warning text-warning-foreground hover:bg-warning/90"
+                  : "bg-info text-info-foreground hover:bg-info/90"
               }`}
             >
               {isAssigning ? (

@@ -79,14 +79,14 @@ export function WidgetStatsCard({ props }: { props: Record<string, unknown> }) {
         <p className="text-2xl font-bold tracking-tight">{value}</p>
         {trend && (
           <div className="mt-1 flex items-center gap-1">
-            {dir === "up" && <ArrowUpRight className="h-3 w-3 text-emerald-500" />}
-            {dir === "down" && <ArrowDownRight className="h-3 w-3 text-red-500" />}
+            {dir === "up" && <ArrowUpRight className="h-3 w-3 text-success" />}
+            {dir === "down" && <ArrowDownRight className="h-3 w-3 text-destructive" />}
             {dir === "neutral" && <Minus className="h-3 w-3 text-muted-foreground" />}
             <span
               className={cn(
                 "text-xs font-medium",
-                dir === "up" && "text-emerald-500",
-                dir === "down" && "text-red-500",
+                dir === "up" && "text-success",
+                dir === "down" && "text-destructive",
                 dir === "neutral" && "text-muted-foreground"
               )}
             >
@@ -175,9 +175,9 @@ export function WidgetDataTable({ props }: { props: Record<string, unknown> }) {
                   <span
                     className={cn(
                       "rounded-full px-2 py-0.5 text-[10px] font-medium",
-                      row.status === "Active" && "bg-emerald-500/10 text-emerald-500",
-                      row.status === "Pending" && "bg-amber-500/10 text-amber-500",
-                      row.status === "Inactive" && "bg-red-500/10 text-red-500"
+                      row.status === "Active" && "bg-success/10 text-success",
+                      row.status === "Pending" && "bg-warning/10 text-warning",
+                      row.status === "Inactive" && "bg-destructive/10 text-destructive"
                     )}
                   >
                     {row.status}
@@ -229,15 +229,15 @@ export function WidgetActivityFeed({ props }: { props: Record<string, unknown> }
   const items = [
     {
       icon: CheckCircle2,
-      color: "text-emerald-500",
+      color: "text-success",
       text: "User login successful",
       time: "2m ago",
     },
-    { icon: AlertTriangle, color: "text-amber-500", text: "Failed login attempt", time: "5m ago" },
+    { icon: AlertTriangle, color: "text-warning", text: "Failed login attempt", time: "5m ago" },
     { icon: Users, color: "text-primary", text: "New admin created", time: "12m ago" },
-    { icon: Shield, color: "text-blue-500", text: "Permissions updated", time: "30m ago" },
+    { icon: Shield, color: "text-info", text: "Permissions updated", time: "30m ago" },
     { icon: Clock, color: "text-muted-foreground", text: "Session expired", time: "1h ago" },
-    { icon: Info, color: "text-cyan-500", text: "System backup complete", time: "2h ago" },
+    { icon: Info, color: "text-info", text: "System backup complete", time: "2h ago" },
   ].slice(0, maxItems);
 
   return (
@@ -368,9 +368,9 @@ export function WidgetAnnouncement({ props }: { props: Record<string, unknown> }
   const variant = (props.variant as string) || "info";
 
   const variants: Record<string, { bg: string; border: string; icon: React.ElementType }> = {
-    info: { bg: "bg-blue-500/5", border: "border-blue-500/20", icon: Info },
-    success: { bg: "bg-emerald-500/5", border: "border-emerald-500/20", icon: CheckCircle2 },
-    warning: { bg: "bg-amber-500/5", border: "border-amber-500/20", icon: AlertTriangle },
+    info: { bg: "bg-info/5", border: "border-info/20", icon: Info },
+    success: { bg: "bg-success/5", border: "border-success/20", icon: CheckCircle2 },
+    warning: { bg: "bg-warning/5", border: "border-warning/20", icon: AlertTriangle },
   };
   const v = variants[variant] || variants.info;
 

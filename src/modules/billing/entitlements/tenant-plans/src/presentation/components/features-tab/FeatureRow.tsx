@@ -50,14 +50,14 @@ export function FeatureRow({
           {isNew && (
             <Badge
               variant="default"
-              className="h-4 border-green-200 bg-green-100 text-[10px] text-green-700"
+              className="h-4 border-success/30 bg-success/10 text-[10px] text-success"
             >
               {t("common.new") || "New"}
             </Badge>
           )}
           {isModified && !isNew && (
             <span
-              className="inline-block h-1.5 w-1.5 rounded-full bg-amber-500"
+              className="inline-block h-1.5 w-1.5 rounded-full bg-warning"
               title={t("common.modified") || "Modified"}
             />
           )}

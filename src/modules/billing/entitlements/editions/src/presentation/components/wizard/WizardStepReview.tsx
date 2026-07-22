@@ -189,7 +189,7 @@ export function WizardStepReview({ form, prices }: WizardStepReviewProps) {
                 key={key}
                 label={`${currency} — ${cycle}`}
                 value={
-                  <span className="font-semibold tabular-nums text-emerald-600 dark:text-emerald-400">
+                  <span className="font-semibold tabular-nums text-success">
                     {val}
                   </span>
                 }

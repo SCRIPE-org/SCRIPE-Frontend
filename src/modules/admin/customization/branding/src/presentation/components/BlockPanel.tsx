@@ -288,7 +288,7 @@ export function BlockPanel({
     <div className="space-y-3">
       <p className="text-xs text-muted-foreground">{t("studio.blocks.description")}</p>
       {!hasSidebar && (
-        <div className="flex items-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[10px] text-amber-600 dark:text-amber-400">
+        <div className="flex items-center gap-1.5 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-[10px] text-warning">
           <AlertTriangle className="h-3 w-3 shrink-0" />
           {t("studio.blocks.noSidebarWarning")}
         </div>
@@ -317,7 +317,7 @@ export function BlockPanel({
                 )}
               </div>
               {isFull && (
-                <span className="text-[9px] font-medium text-amber-500">
+                <span className="text-[9px] font-medium text-warning">
                   {t("studio.blocks.full")}
                 </span>
               )}

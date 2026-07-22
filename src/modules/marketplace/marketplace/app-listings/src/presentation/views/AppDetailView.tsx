@@ -249,7 +249,7 @@ export function AppDetailView({ id }: AppDetailViewProps) {
               </p>
             )}
             {listing.pricingModel === "Free" && (
-              <div className="flex items-center gap-1.5 text-xs font-medium text-green-600">
+              <div className="flex items-center gap-1.5 text-xs font-medium text-success">
                 <CheckCircle2 className="size-3.5" /> No cost to install
               </div>
             )}

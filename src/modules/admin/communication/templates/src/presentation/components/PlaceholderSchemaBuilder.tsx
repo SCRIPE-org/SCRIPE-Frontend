@@ -201,7 +201,7 @@ export function PlaceholderSchemaBuilder({
                 "Add fields to define your template\u0027s schema"}
             </p>
             {bodyVarKeys.size > 0 && (
-              <div className="mt-3 flex items-center justify-center gap-1.5 text-amber-500">
+              <div className="mt-3 flex items-center justify-center gap-1.5 text-warning">
                 <Sparkles className="h-3.5 w-3.5" />
                 <span className="text-xs">
                   {bodyVarKeys.size}{" "}
@@ -220,7 +220,7 @@ export function PlaceholderSchemaBuilder({
                 key={field.id}
                 className={cn(
                   "rounded-lg border transition-all",
-                  isOrphaned && "border-amber-500/50 bg-amber-500/5",
+                  isOrphaned && "border-warning/50 bg-warning/5",
                   expandedId === field.id ? "border-accent bg-accent/20" : "hover:border-primary/30"
                 )}
               >
@@ -253,7 +253,7 @@ export function PlaceholderSchemaBuilder({
                   </div>
                   {isOrphaned && (
                     <span title="Not used in template body">
-                      <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-amber-500" />
+                      <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-warning" />
                     </span>
                   )}
                   <Badge variant="secondary" className="shrink-0 gap-1 px-1.5 py-0 text-[10px]">
@@ -267,7 +267,7 @@ export function PlaceholderSchemaBuilder({
                 {expandedId === field.id && (
                   <div className="space-y-3 border-t px-3 pb-3 pt-3">
                     {isOrphaned && (
-                      <div className="flex items-center gap-2 rounded bg-amber-500/10 p-2 text-xs text-amber-500">
+                      <div className="flex items-center gap-2 rounded bg-warning/10 p-2 text-xs text-warning">
                         <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
                         <span>
                           {t("messaging.templates.orphanedVar") ||

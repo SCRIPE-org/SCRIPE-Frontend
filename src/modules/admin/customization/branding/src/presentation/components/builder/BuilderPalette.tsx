@@ -188,9 +188,9 @@ function DraggablePaletteItem({
       </div>
       {/* Badges */}
       {!isSuperAdmin && requiredEdition != null && (
-        <Lock className="h-3 w-3 shrink-0 text-amber-500" />
+        <Lock className="h-3 w-3 shrink-0 text-warning" />
       )}
-      {singleton && isUsed && <Check className="h-3 w-3 shrink-0 text-green-500" />}
+      {singleton && isUsed && <Check className="h-3 w-3 shrink-0 text-success" />}
       {!isDisabled && (
         <button
           onClick={(e) => {
@@ -255,7 +255,7 @@ export function BuilderPalette({ components, onQuickAdd, activeAuthPage }: Build
                   {t(group.labelKey) || group.id}
                 </span>
                 {usedCount > 0 && (
-                  <span className="rounded-full bg-green-500/10 px-1.5 py-0.5 text-[9px] font-medium text-green-500">
+                  <span className="rounded-full bg-success/10 px-1.5 py-0.5 text-[9px] font-medium text-success">
                     {usedCount} used
                   </span>
                 )}

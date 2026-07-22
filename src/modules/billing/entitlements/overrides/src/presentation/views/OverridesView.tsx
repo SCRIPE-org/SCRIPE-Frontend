@@ -223,13 +223,13 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
           <CardDescription>{t("entitlements.overrides.description")}</CardDescription>
         </div>
         {totalCostUsd > 0 && (
-          <div className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/5 px-3 py-2">
-            <DollarSign className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+          <div className="flex items-center gap-2 rounded-lg border border-success/30 bg-success/5 px-3 py-2">
+            <DollarSign className="h-4 w-4 text-success" />
             <div className="text-sm">
               <span className="text-muted-foreground">
                 {t("entitlements.overrides.totalCost") || "Total Override Cost"}:
               </span>{" "}
-              <span className="font-bold text-emerald-600 dark:text-emerald-400">
+              <span className="font-bold text-success">
                 ${totalCostUsd.toFixed(2)} USD
               </span>
             </div>
@@ -282,7 +282,7 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
                     <TableCell>
                       {o.costAmountUsd != null && o.costAmountUsd > 0 ? (
                         <div>
-                          <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                          <span className="font-bold text-success">
                             ${o.costAmountUsd.toFixed(2)}
                           </span>
                           {o.costReason && (

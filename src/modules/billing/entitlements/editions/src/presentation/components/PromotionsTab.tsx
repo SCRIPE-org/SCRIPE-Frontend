@@ -452,12 +452,12 @@ function PromotionCard({
                 </Badge>
               )}
               {promo.hasReachedLimit && (
-                <Badge variant="outline" className="border-amber-500/30 text-[10px] text-amber-600">
+                <Badge variant="outline" className="border-warning/30 text-[10px] text-warning">
                   {t("entitlements.promotions.limitReached") || "Limit Reached"}
                 </Badge>
               )}
               {promo.data.firstTimeOnly && (
-                <Badge variant="outline" className="border-blue-500/30 text-[10px] text-blue-600">
+                <Badge variant="outline" className="border-info/30 text-[10px] text-info">
                   <ShieldCheck className="me-0.5 h-3 w-3" />
                   {t("entitlements.promotions.firstTimeOnly") || "First-Time Only"}
                 </Badge>
@@ -545,7 +545,7 @@ function PromotionCard({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-destructive hover:text-destructive"
+              className="h-8 w-8 text-destructive hover:text-destructive/80"
               onClick={onDelete}
               disabled={isDeleting}
             >

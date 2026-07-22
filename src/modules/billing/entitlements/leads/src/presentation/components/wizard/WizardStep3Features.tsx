@@ -43,14 +43,14 @@ export function WizardStep3Features({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 dark:border-blue-900 dark:bg-blue-950/30">
+      <div className="rounded-lg border border-info/30 bg-info/10 px-4 py-3">
         <div className="flex items-start gap-2.5">
-          <Info className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
+          <Info className="mt-0.5 h-4 w-4 shrink-0 text-info" />
           <div>
-            <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
+            <p className="text-sm font-medium text-info">
               {t("leads.convertWizard.defaultsPreloaded")}
             </p>
-            <p className="mt-0.5 text-xs text-blue-600 dark:text-blue-400">
+            <p className="mt-0.5 text-xs text-info">
               {t("leads.convertWizard.defaultsPreloadedDesc", {
                 edition:
                   (language === "ar" && edition?.displayNameAr
@@ -127,7 +127,7 @@ export function WizardStep3Features({
                             {isChanged && (
                               <Badge
                                 variant="secondary"
-                                className="h-4 px-1.5 text-[10px] text-amber-600"
+                                className="h-4 px-1.5 text-[10px] text-warning"
                               >
                                 {t("leads.convertWizard.override")}
                               </Badge>

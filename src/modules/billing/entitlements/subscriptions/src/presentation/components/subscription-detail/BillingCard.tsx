@@ -44,8 +44,8 @@ export function BillingCard({ sub, t }: BillingCardProps) {
     <Card className="border-border/50">
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10">
-            <Receipt className="h-4 w-4 text-emerald-500" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-success/10">
+            <Receipt className="h-4 w-4 text-success" />
           </div>
           <CardTitle className="text-sm font-semibold">Billing</CardTitle>
         </div>
@@ -58,7 +58,7 @@ export function BillingCard({ sub, t }: BillingCardProps) {
             formattedTotal ? (
               <span className="font-semibold tabular-nums">{formattedTotal}</span>
             ) : (
-              <Badge variant="outline" className="text-[11px] text-emerald-600">
+              <Badge variant="outline" className="text-[11px] text-success">
                 Free
               </Badge>
             )
@@ -113,7 +113,7 @@ export function BillingCard({ sub, t }: BillingCardProps) {
                   <Badge variant="outline" className="border-primary/30 text-[11px] text-primary">
                     {sub.appliedPromoCode}
                   </Badge>
-                  <span className="text-xs font-medium text-emerald-600">
+                  <span className="text-xs font-medium text-success">
                     -{sub.promotionDiscount}%
                   </span>
                 </div>

@@ -51,7 +51,7 @@ function ConsentCard({
     <Card
       className={`group overflow-hidden border transition-all hover:shadow-md ${
         consent.isGranted
-          ? "border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-green-500/5"
+          ? "border-success/20 bg-gradient-to-br from-success/5 to-success/5"
           : "border-border/50 bg-card/60"
       }`}
     >
@@ -61,7 +61,7 @@ function ConsentCard({
             <div
               className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${
                 consent.isGranted
-                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                  ? "border-success/30 bg-success/10 text-success"
                   : "border-muted bg-muted/50 text-muted-foreground"
               }`}
             >
@@ -96,7 +96,7 @@ function ConsentCard({
           <div className="flex shrink-0 items-center gap-2">
             <Badge
               variant={consent.isGranted ? "default" : "secondary"}
-              className={`${consent.isGranted ? "bg-emerald-500 hover:bg-emerald-500/80" : ""}`}
+              className={`${consent.isGranted ? "bg-success text-success-foreground hover:bg-success/80" : ""}`}
             >
               {consent.isGranted ? t("compliance.granted") : t("compliance.withdrawn")}
             </Badge>
@@ -116,7 +116,7 @@ function ConsentCard({
                 <Button
                   id={`consent-grant-${consent.purposeId}`}
                   size="sm"
-                  className="h-7 bg-emerald-600 text-xs hover:bg-emerald-700"
+                  className="h-7 bg-success text-xs text-success-foreground hover:bg-success/90"
                   disabled={isActing}
                   onClick={() => onRecord(consent.purposeId, "Granted")}
                 >
@@ -243,8 +243,8 @@ export function ConsentView() {
             <BackIcon className="h-4 w-4" />
           </Button>
           <div className="flex items-center gap-3">
-            <div className="rounded-xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/15 to-green-500/10 p-2.5 shadow-sm">
-              <ShieldCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+            <div className="rounded-xl border border-success/20 bg-gradient-to-br from-success/15 to-success/10 p-2.5 shadow-sm">
+              <ShieldCheck className="h-5 w-5 text-success" />
             </div>
             <div>
               <h2 className="text-2xl font-bold tracking-tight">{t("compliance.consentTitle")}</h2>
@@ -290,7 +290,7 @@ export function ConsentView() {
                   label: t("compliance.granted"),
                   value: grantedCount,
                   icon: <CheckCircle2 className="h-4 w-4" />,
-                  cls: "border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-green-500/5 text-emerald-600 dark:text-emerald-400",
+                  cls: "border-success/20 bg-gradient-to-br from-success/10 to-success/5 text-success",
                 },
                 {
                   label: t("compliance.withdrawn"),
@@ -302,7 +302,7 @@ export function ConsentView() {
                   label: t("compliance.reConsentRequired"),
                   value: reConsentCount,
                   icon: <Bell className="h-4 w-4" />,
-                  cls: "border-amber-500/20 bg-gradient-to-br from-amber-500/10 to-yellow-500/5 text-amber-600 dark:text-amber-400",
+                  cls: "border-warning/20 bg-gradient-to-br from-warning/10 to-warning/5 text-warning",
                 },
               ].map((s) => (
                 <Card key={s.label} className={`border ${s.cls}`}>
@@ -340,8 +340,8 @@ export function ConsentView() {
           ) : consents.length === 0 ? (
             <Card className="border-dashed">
               <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                <div className="mb-4 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4">
-                  <BarChart3 className="h-8 w-8 text-emerald-500" />
+                <div className="mb-4 rounded-xl border border-success/20 bg-success/10 p-4">
+                  <BarChart3 className="h-8 w-8 text-success" />
                 </div>
                 <p className="font-semibold">{t("compliance.noConsents")}</p>
                 <p className="mt-1 text-sm text-muted-foreground">
@@ -404,7 +404,7 @@ export function ConsentView() {
                     <CardTitle>{t("compliance.subjectsRequiringReConsent")}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold text-amber-600">
+                    <div className="text-3xl font-bold text-warning">
                       {analytics.subjectsRequiringReConsent}
                     </div>
                   </CardContent>
@@ -422,7 +422,7 @@ export function ConsentView() {
                         </div>
                         <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
                           <div
-                            className="h-full bg-emerald-500 transition-all duration-500"
+                            className="h-full bg-success transition-all duration-500"
                             style={{ width: `${rate}%` }}
                           />
                         </div>

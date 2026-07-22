@@ -21,10 +21,10 @@ interface AppListingsStatsProps {
  */
 export function AppListingsStats({ stats, isLoading }: AppListingsStatsProps) {
   const cards = [
-    { label: "Total Listings", value: stats.total, icon: Package, color: "text-blue-500" },
-    { label: "Published", value: stats.published, icon: Globe, color: "text-green-500" },
-    { label: "Featured", value: stats.featured, icon: Star, color: "text-yellow-500" },
-    { label: "Drafts", value: stats.drafts, icon: FileEdit, color: "text-slate-500" },
+    { label: "Total Listings", value: stats.total, icon: Package, color: "text-info" },
+    { label: "Published", value: stats.published, icon: Globe, color: "text-success" },
+    { label: "Featured", value: stats.featured, icon: Star, color: "text-warning" },
+    { label: "Drafts", value: stats.drafts, icon: FileEdit, color: "text-muted-foreground" },
   ];
 
   return (

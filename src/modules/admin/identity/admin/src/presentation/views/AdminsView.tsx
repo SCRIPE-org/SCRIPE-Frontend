@@ -154,9 +154,9 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                     <TooltipTrigger asChild>
                       <span>
                         {admin.isSuperAdmin ? (
-                          <Crown className="h-4 w-4 text-amber-500" />
+                          <Crown className="h-4 w-4 text-warning" />
                         ) : (
-                          <Shield className="h-4 w-4 text-blue-500" />
+                          <Shield className="h-4 w-4 text-info" />
                         )}
                       </span>
                     </TooltipTrigger>
@@ -326,7 +326,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             label: tFn("admin.resetPassword") || "Reset Password",
             onClick: (item: Admin) => handleOpenResetPassword(item),
             variant: "ghost" as const,
-            className: "text-orange-600 hover:text-orange-700",
+            className: "text-warning hover:text-warning/90",
             icon: <Settings className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_RESET_PASSWORD,
             show: (item: Admin) =>
@@ -359,7 +359,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             label: tFn("common.delete") || "Delete",
             onClick: (item: Admin) => handleDeleteFn?.(item),
             variant: "ghost" as const,
-            className: "text-red-600 hover:text-red-700",
+            className: "text-destructive hover:text-destructive/90",
             icon: <Trash2 className="h-4 w-4" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_DELETE,
             // Cannot delete protected admin ever

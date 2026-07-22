@@ -67,25 +67,25 @@ const STATUS_CONFIG: Record<
     label: "Sent",
     variant: "success" as const,
     icon: CheckCircle2,
-    color: "text-emerald-500",
+    color: "text-success",
   },
   Failed: {
     label: "Failed",
     variant: "destructive" as const,
     icon: AlertTriangle,
-    color: "text-red-500",
+    color: "text-destructive",
   },
   Pending: {
     label: "Pending",
     variant: "secondary" as const,
     icon: Clock,
-    color: "text-amber-500",
+    color: "text-warning",
   },
   Cancelled: {
     label: "Cancelled",
     variant: "outline" as const,
     icon: Clock,
-    color: "text-gray-400",
+    color: "text-muted-foreground",
   },
 };
 
@@ -171,7 +171,7 @@ function ExpandedEmailRow({
                           className="inline-flex items-center gap-1.5 rounded-md border bg-muted/50 px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
                           title={fileName}
                         >
-                          <FileText className="h-3.5 w-3.5 shrink-0 text-blue-500" />
+                          <FileText className="h-3.5 w-3.5 shrink-0 text-info" />
                           <span className="max-w-[200px] truncate">{fileName}</span>
                         </a>
                       );
@@ -370,7 +370,7 @@ export function HistorySection(vm: HistorySectionProps) {
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-7 w-7 text-blue-500 hover:bg-blue-500/10 hover:text-blue-600"
+                                className="h-7 w-7 text-info hover:bg-info/10 hover:text-info"
                                 onClick={() => vm.onResend!(email)}
                                 title="Retry"
                               >

@@ -25,22 +25,22 @@ export function BalanceCards({ balance }: BalanceCardsProps) {
         title={t("entitlements.platformStripe.balanceAvailable")}
         amounts={balance.available}
         icon={CheckCircle2}
-        gradient="from-emerald-500 to-teal-600"
-        iconColor="text-emerald-500"
+        gradient="from-success to-success/70"
+        iconColor="text-success"
       />
       <BalanceCard
         title={t("entitlements.platformStripe.balancePending")}
         amounts={balance.pending}
         icon={Clock}
-        gradient="from-amber-500 to-yellow-600"
-        iconColor="text-amber-500"
+        gradient="from-warning to-warning/70"
+        iconColor="text-warning"
       />
       <BalanceCard
         title={t("entitlements.platformStripe.balanceConnectReserved")}
         amounts={balance.connectReserved}
         icon={Shield}
-        gradient="from-violet-500 to-purple-600"
-        iconColor="text-violet-500"
+        gradient="from-primary to-primary/70"
+        iconColor="text-primary"
       />
     </div>
   );

@@ -23,10 +23,10 @@ export function ContentModeSection({ vm }: ContentModeSectionProps) {
   const isLive = mode === "Live";
 
   return (
-    <Card className="border-zinc-800 bg-zinc-900">
+    <Card className="border-border bg-card">
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-base text-white">
-          <Shield className="h-4 w-4 text-indigo-400" />
+        <CardTitle className="flex items-center gap-2 text-base text-foreground">
+          <Shield className="h-4 w-4 text-info" />
           {t("signupContent.mode.title")}
         </CardTitle>
       </CardHeader>
@@ -38,32 +38,32 @@ export function ContentModeSection({ vm }: ContentModeSectionProps) {
                 variant="outline"
                 className={
                   isLive
-                    ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
-                    : "border-amber-500/40 bg-amber-500/10 text-amber-400"
+                    ? "border-success/40 bg-success/10 text-success"
+                    : "border-warning/40 bg-warning/10 text-warning"
                 }
               >
                 {isLive ? t("signupContent.mode.live") : t("signupContent.mode.seeded")}
               </Badge>
             </div>
-            <p className="text-sm text-zinc-400">
+            <p className="text-sm text-muted-foreground">
               {isLive ? t("signupContent.mode.liveDesc") : t("signupContent.mode.seededDesc")}
             </p>
             {isLive && (
-              <div className="mt-2 flex items-start gap-2 rounded-md border border-amber-500/20 bg-amber-500/5 px-3 py-2">
-                <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-400" />
-                <p className="text-xs text-amber-300">{t("signupContent.mode.liveWarning")}</p>
+              <div className="mt-2 flex items-start gap-2 rounded-md border border-warning/20 bg-warning/5 px-3 py-2">
+                <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
+                <p className="text-xs text-warning">{t("signupContent.mode.liveWarning")}</p>
               </div>
             )}
           </div>
           <div className="flex shrink-0 flex-col items-end gap-1.5">
             <div className="flex items-center gap-3">
-              <span className="text-xs text-zinc-500">{t("signupContent.mode.seeded")}</span>
+              <span className="text-xs text-muted-foreground">{t("signupContent.mode.seeded")}</span>
               <Switch
                 checked={isLive}
                 disabled={vm.isSettingMode}
                 onCheckedChange={(checked) => vm.handleSetMode(checked ? "Live" : "Seeded")}
               />
-              <span className="text-xs text-zinc-500">{t("signupContent.mode.live")}</span>
+              <span className="text-xs text-muted-foreground">{t("signupContent.mode.live")}</span>
             </div>
           </div>
         </div>

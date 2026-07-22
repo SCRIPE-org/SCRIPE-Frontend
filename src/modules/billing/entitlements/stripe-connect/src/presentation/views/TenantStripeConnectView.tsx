@@ -42,10 +42,10 @@ export function TenantStripeConnectView() {
   if (vm.isError) {
     return (
       <div className="mx-auto max-w-4xl p-4 sm:p-6">
-        <Card className="border-red-200 shadow-sm dark:border-red-800">
+        <Card className="border-destructive/30 shadow-sm">
           <CardContent className="flex flex-col items-center justify-center space-y-4 py-16 text-center">
-            <div className="rounded-2xl bg-red-50 p-5 dark:bg-red-900/20">
-              <AlertTriangle className="h-10 w-10 text-red-500" />
+            <div className="rounded-2xl bg-destructive/10 p-5">
+              <AlertTriangle className="h-10 w-10 text-destructive" />
             </div>
             <div className="space-y-2">
               <h2 className="text-xl font-bold">
@@ -76,8 +76,8 @@ export function TenantStripeConnectView() {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="flex items-center gap-2.5 text-2xl font-bold tracking-tight">
-            <div className="rounded-xl bg-gradient-to-br from-violet-500/10 to-indigo-500/10 p-2 dark:from-violet-500/20 dark:to-indigo-500/20">
-              <CreditCard className="h-5 w-5 text-violet-600 dark:text-violet-400" />
+            <div className="rounded-xl bg-gradient-to-br from-primary/10 to-info/10 p-2">
+              <CreditCard className="h-5 w-5 text-primary" />
             </div>
             {t("entitlements.tenantConnect.pageTitle") || "Payment Account"}
           </h1>
@@ -89,7 +89,7 @@ export function TenantStripeConnectView() {
         {vm.account?.isComplete && (
           <Badge
             variant="outline"
-            className="border-emerald-200 bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
+            className="border-success/30 bg-success/10 px-3 py-1 text-xs font-semibold text-success"
           >
             <CheckCircle2 className="mr-1 inline h-3 w-3" />
             {t("entitlements.tenantConnect.verified") || "Verified"}

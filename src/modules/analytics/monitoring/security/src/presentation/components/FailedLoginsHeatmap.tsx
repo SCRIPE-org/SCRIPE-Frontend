@@ -67,7 +67,7 @@ export const FailedLoginsHeatmap = memo(function FailedLoginsHeatmap({
     <Card className={cardClasses}>
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
-          <ShieldAlert className="h-4 w-4 text-red-500" aria-hidden="true" />
+          <ShieldAlert className="h-4 w-4 text-destructive" aria-hidden="true" />
           <CardTitle className="text-base">{t("security.failedLogins.title")}</CardTitle>
         </div>
         <CardDescription>{t("security.failedLogins.description")}</CardDescription>

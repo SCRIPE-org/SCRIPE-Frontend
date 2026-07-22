@@ -165,7 +165,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
               {edition.isSystem && (
                 <Badge
                   variant="outline"
-                  className="border-amber-500/50 font-mono text-xs text-amber-600 dark:text-amber-400"
+                  className="border-warning/50 font-mono text-xs text-warning"
                 >
                   SYSTEM
                 </Badge>
@@ -211,13 +211,13 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
           icon={Layers}
           label={t("entitlements.editions.wizard.tierLevel") || "Tier Level"}
           value={edition.tierLevel}
-          accent="bg-violet-600"
+          accent="bg-primary"
         />
         <StatCard
           icon={Zap}
           label={t("entitlements.editions.wizard.featureCountLabel") || "Features"}
           value={edition.featureCount}
-          accent="bg-blue-600"
+          accent="bg-info"
         />
         <StatCard
           icon={Users}
@@ -232,13 +232,13 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
               edition.maxActiveSubscriptions
             )
           }
-          accent="bg-emerald-600"
+          accent="bg-success"
         />
         <StatCard
           icon={Clock}
           label={t("common.createdAt") || "Created"}
           value={edition.createdAt ? formatUtc(edition.createdAt, "MMM d, yyyy") : "—"}
-          accent="bg-zinc-600"
+          accent="bg-muted-foreground"
         />
       </div>
 
@@ -495,7 +495,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
                         return (
                           <td key={cycle} className="px-5 py-3.5">
                             {price !== undefined ? (
-                              <span className="font-semibold tabular-nums text-emerald-600 dark:text-emerald-400">
+                              <span className="font-semibold tabular-nums text-success">
                                 {price.toFixed(2)}{" "}
                                 <span className="text-xs font-normal text-muted-foreground">
                                   {suffix}
@@ -519,7 +519,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
       {edition.prices.length === 0 && edition.isFreeEdition && (
         <Card className="border shadow-none">
           <CardContent className="py-8 text-center">
-            <DollarSign className="mx-auto mb-3 h-8 w-8 text-emerald-500" />
+            <DollarSign className="mx-auto mb-3 h-8 w-8 text-success" />
             <p className="text-sm font-medium text-foreground">
               {t("entitlements.editions.wizard.freeTierTitle") || "Free Tier"}
             </p>

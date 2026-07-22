@@ -157,7 +157,7 @@ export function TenantPlanPricingCard({
                 className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${
                   hl.isUnlimited
                     ? "bg-primary/15 text-primary"
-                    : "bg-emerald-500/15 text-emerald-500"
+                    : "bg-success/15 text-success"
                 }`}
               >
                 {hl.isUnlimited ? (

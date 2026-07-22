@@ -135,7 +135,7 @@ export function CommissionRateConfig({
               variant="outline"
               onClick={handleClear}
               disabled={isSaving}
-              className="text-destructive hover:text-destructive"
+              className="text-destructive hover:text-destructive/80"
             >
               {t("entitlements.stripeConnect.commissionRateCleared")}
             </Button>

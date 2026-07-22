@@ -104,8 +104,8 @@ export function RetentionView() {
             <BackIcon className="h-4 w-4" />
           </Button>
           <div className="flex items-center gap-3">
-            <div className="rounded-xl border border-violet-500/20 bg-gradient-to-br from-violet-500/15 to-purple-500/10 p-2.5 shadow-sm">
-              <Clock className="h-5 w-5 text-violet-600 dark:text-violet-400" />
+            <div className="rounded-xl border border-primary/20 bg-gradient-to-br from-primary/15 to-primary/10 p-2.5 shadow-sm">
+              <Clock className="h-5 w-5 text-primary" />
             </div>
             <div>
               <h2 className="text-2xl font-bold tracking-tight">
@@ -161,8 +161,8 @@ export function RetentionView() {
       ) : policies.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="mb-4 rounded-xl border border-violet-500/20 bg-violet-500/10 p-4">
-              <Clock className="h-8 w-8 text-violet-500" />
+            <div className="mb-4 rounded-xl border border-primary/20 bg-primary/10 p-4">
+              <Clock className="h-8 w-8 text-primary" />
             </div>
             <p className="font-semibold">{t("compliance.noPolicies")}</p>
           </CardContent>

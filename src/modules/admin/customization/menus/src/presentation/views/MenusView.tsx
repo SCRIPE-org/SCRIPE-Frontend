@@ -359,7 +359,7 @@ export function MenusView() {
                   "mt-3 rounded-lg border-2 border-dashed px-3 py-4",
                   "text-center text-sm text-muted-foreground",
                   "transition-all duration-200",
-                  "hover:border-blue-500 hover:bg-blue-500/5 hover:text-blue-500"
+                  "hover:border-info hover:bg-info/5 hover:text-info"
                 )}
               >
                 <ArrowDownToLine className="mr-2 inline-block h-4 w-4" />

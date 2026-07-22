@@ -126,7 +126,7 @@ export function ReportsTab({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-success border-t-transparent" />
       </div>
     );
   }
@@ -135,11 +135,11 @@ export function ReportsTab({
     <div className="grid gap-6 md:grid-cols-2">
       {/* Left: Scheduled Report Settings */}
       <Card className="overflow-hidden border border-border/30 shadow-sm">
-        <div className="h-0.5 bg-gradient-to-r from-emerald-500 to-teal-600" />
+        <div className="h-0.5 bg-gradient-to-r from-success to-success/70" />
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500/20 to-teal-600/20">
-              <Settings2 className="h-4 w-4 text-emerald-600" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-success/20 to-success/20">
+              <Settings2 className="h-4 w-4 text-success" />
             </div>
             {t("entitlements.analytics.reports.scheduleTitle")}
           </CardTitle>
@@ -253,7 +253,7 @@ export function ReportsTab({
           <Button
             onClick={handleSave}
             loading={isSaving}
-            className="mt-4 w-full gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/20 hover:from-emerald-600 hover:to-teal-700"
+            className="mt-4 w-full gap-2 bg-gradient-to-r from-success to-success/70 text-success-foreground shadow-lg shadow-success/20 hover:from-success/90 hover:to-success"
           >
             <Save className="h-4 w-4" />
             {t("entitlements.analytics.reports.savePreferences")}
@@ -263,11 +263,11 @@ export function ReportsTab({
 
       {/* Right: On-Demand Report Generation */}
       <Card className="overflow-hidden border border-border/30 shadow-sm">
-        <div className="h-0.5 bg-gradient-to-r from-blue-500 to-indigo-600" />
+        <div className="h-0.5 bg-gradient-to-r from-info to-info/70" />
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500/20 to-indigo-600/20">
-              <FileText className="h-4 w-4 text-blue-600" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-info/20 to-info/20">
+              <FileText className="h-4 w-4 text-info" />
             </div>
             {t("entitlements.analytics.reports.generateTitle")}
           </CardTitle>
@@ -278,9 +278,9 @@ export function ReportsTab({
         <CardContent className="space-y-6">
           <div className="flex flex-col items-center gap-5 py-8">
             <div className="relative">
-              <div className="absolute inset-0 animate-pulse rounded-full bg-blue-500/20 blur-xl" />
-              <div className="relative rounded-full border border-blue-500/20 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 p-6">
-                <Download className="h-12 w-12 text-blue-500" />
+              <div className="absolute inset-0 animate-pulse rounded-full bg-info/20 blur-xl" />
+              <div className="relative rounded-full border border-info/20 bg-gradient-to-br from-info/10 to-info/10 p-6">
+                <Download className="h-12 w-12 text-info" />
               </div>
             </div>
             <p className="max-w-xs text-center text-sm text-muted-foreground">
@@ -290,7 +290,7 @@ export function ReportsTab({
               onClick={handleGenerateReport}
               loading={isGenerating}
               variant="outline"
-              className="gap-2 border-blue-500/30 hover:border-blue-500/50 hover:bg-blue-500/5"
+              className="gap-2 border-info/30 hover:border-info/50 hover:bg-info/5"
               size="lg"
             >
               <Calendar className="h-4 w-4" />

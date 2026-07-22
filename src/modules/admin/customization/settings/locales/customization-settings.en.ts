@@ -28,6 +28,10 @@ export const en = {
         industryDesc: "Domain-specific layouts for specialized workflows",
       },
       options: {
+        scripe: {
+          name: "Scripe",
+          description: "The SCRIPE design system — accent follows your workspace",
+        },
         nexus: {
           name: "Nexus",
           description: "Auto-expanding sidebar with sleek hover effects",

@@ -25,16 +25,16 @@ import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 // ── Stat Card ─────────────────────────────────────────────────────────────────
 
 const VARIANT_CARD: Record<string, string> = {
-  default: "from-blue-500/10 to-indigo-500/10 border-blue-500/20",
-  success: "from-emerald-500/10 to-green-500/10 border-emerald-500/20",
-  warning: "from-amber-500/10 to-yellow-500/10 border-amber-500/20",
-  danger: "from-red-500/10 to-rose-500/10 border-red-500/20",
+  default: "from-info/10 to-info/10 border-info/20",
+  success: "from-success/10 to-success/10 border-success/20",
+  warning: "from-warning/10 to-warning/10 border-warning/20",
+  danger: "from-destructive/10 to-destructive/10 border-destructive/20",
 };
 const VARIANT_ICON: Record<string, string> = {
-  default: "text-blue-600 dark:text-blue-400",
-  success: "text-emerald-600 dark:text-emerald-400",
-  warning: "text-amber-600 dark:text-amber-400",
-  danger: "text-red-600 dark:text-red-400",
+  default: "text-info",
+  success: "text-success",
+  warning: "text-warning",
+  danger: "text-destructive",
 };
 
 interface StatCardProps {
@@ -105,8 +105,8 @@ export function ComplianceDashboardView() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-2.5">
-            <Shield className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+          <div className="rounded-xl border border-success/20 bg-success/10 p-2.5">
+            <Shield className="h-5 w-5 text-success" />
           </div>
           <div>
             <h2 className="text-2xl font-bold tracking-tight">{t("compliance.title")}</h2>
@@ -243,8 +243,8 @@ export function ComplianceDashboardView() {
                 className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
               >
                 <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-blue-500/10 p-1.5">
-                    <Globe className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  <div className="rounded-lg bg-info/10 p-1.5">
+                    <Globe className="h-4 w-4 text-info" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold">{r.code}</p>

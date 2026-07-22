@@ -84,12 +84,12 @@ export function TenantSettingsTab({
 
       {/* ── Security Card ── */}
       <div className="overflow-hidden rounded-xl border border-border/50 bg-card">
-        <div className="h-1 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500" />
+        <div className="h-1 bg-gradient-to-r from-warning via-warning/80 to-warning" />
         <div className="p-5">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10">
-                <Shield className="h-4 w-4 text-amber-500" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-warning/10">
+                <Shield className="h-4 w-4 text-warning" />
               </div>
               <div>
                 <h4 className="text-sm font-semibold">
@@ -169,12 +169,12 @@ export function TenantSettingsTab({
 
       {/* ── Branding Card ── */}
       <div className="overflow-hidden rounded-xl border border-border/50 bg-card">
-        <div className="h-1 bg-gradient-to-r from-purple-500 via-purple-400 to-purple-500" />
+        <div className="h-1 bg-gradient-to-r from-primary via-primary/80 to-primary" />
         <div className="p-5">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-500/10">
-                <Palette className="h-4 w-4 text-purple-500" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                <Palette className="h-4 w-4 text-primary" />
               </div>
               <div>
                 <h4 className="text-sm font-semibold">
@@ -275,12 +275,12 @@ export function TenantSettingsTab({
 
       {/* ── Audit Card ── */}
       <div className="overflow-hidden rounded-xl border border-border/50 bg-card">
-        <div className="h-1 bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-500" />
+        <div className="h-1 bg-gradient-to-r from-success via-success/80 to-success" />
         <div className="p-5">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10">
-                <ClipboardList className="h-4 w-4 text-emerald-500" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-success/10">
+                <ClipboardList className="h-4 w-4 text-success" />
               </div>
               <div>
                 <h4 className="text-sm font-semibold">
@@ -306,7 +306,7 @@ export function TenantSettingsTab({
               className={cn(
                 "gap-1",
                 settings.auditEnabled
-                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-500"
+                  ? "border-success/30 bg-success/10 text-success"
                   : ""
               )}
             >
@@ -346,11 +346,11 @@ function RequirementBadge({ satisfied, label }: { satisfied: boolean; label: str
       variant="outline"
       className={cn(
         "gap-1 text-xs",
-        satisfied ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-500" : "opacity-50"
+        satisfied ? "border-success/30 bg-success/5 text-success" : "opacity-50"
       )}
     >
       {satisfied ? (
-        <Check className="h-3 w-3 text-emerald-500" />
+        <Check className="h-3 w-3 text-success" />
       ) : (
         <X className="h-3 w-3 text-muted-foreground" />
       )}

@@ -37,7 +37,7 @@ export function IdpMetadataSection() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Info className="h-5 w-5 text-indigo-500" />
+          <Info className="h-5 w-5 text-info" />
           {t("oauthApps.idpMetadataTitle") || "Identity Provider (IdP) Metadata"}
         </CardTitle>
         <CardDescription>
@@ -64,7 +64,7 @@ export function IdpMetadataSection() {
               className="shrink-0"
             >
               {copiedField === "idpEntityId" ? (
-                <Check className="h-3.5 w-3.5 text-green-500" />
+                <Check className="h-3.5 w-3.5 text-success" />
               ) : (
                 <Copy className="h-3.5 w-3.5" />
               )}
@@ -90,7 +90,7 @@ export function IdpMetadataSection() {
               className="shrink-0"
             >
               {copiedField === "ssoUrl" ? (
-                <Check className="h-3.5 w-3.5 text-green-500" />
+                <Check className="h-3.5 w-3.5 text-success" />
               ) : (
                 <Copy className="h-3.5 w-3.5" />
               )}
@@ -116,7 +116,7 @@ export function IdpMetadataSection() {
               className="shrink-0"
             >
               {copiedField === "metadataUrl" ? (
-                <Check className="h-3.5 w-3.5 text-green-500" />
+                <Check className="h-3.5 w-3.5 text-success" />
               ) : (
                 <Copy className="h-3.5 w-3.5" />
               )}

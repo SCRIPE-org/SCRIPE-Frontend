@@ -75,7 +75,7 @@ export function DrawerTabInfo({
     <div className="space-y-3 p-4">
       {/* Contact */}
       <SectionCard title={t("leads.drawer.sections.contact")} icon={Mail}>
-        <div className="space-y-1 divide-y divide-zinc-800/40">
+        <div className="space-y-1 divide-y divide-border/40">
           <InfoRow
             icon={Mail}
             label={t("leads.drawer.contact.email")}
@@ -94,7 +94,7 @@ export function DrawerTabInfo({
               icon={Phone}
               label={t("leads.drawer.contact.phone")}
               value={
-                <span className="text-xs italic text-zinc-600">
+                <span className="text-xs italic text-muted-foreground">
                   {t("leads.drawer.contact.phoneMissing")}
                 </span>
               }
@@ -118,24 +118,24 @@ export function DrawerTabInfo({
         <SectionCard
           title={t("leads.drawer.sections.discovery")}
           icon={Zap}
-          accent="border-violet-500/20 bg-violet-500/5"
+          accent="border-primary/20 bg-primary/5"
         >
           <div className="space-y-3">
             {di?.businessTypeKey && (
               <div className="flex items-center gap-3">
-                <Building2 className="h-3.5 w-3.5 shrink-0 text-violet-400/70" />
+                <Building2 className="h-3.5 w-3.5 shrink-0 text-primary/70" />
                 <div>
-                  <p className="text-[10px] text-zinc-500">{t("leads.discovery.industry")}</p>
-                  <p className="text-sm font-medium text-violet-200">{t(di.businessTypeKey)}</p>
+                  <p className="text-[10px] text-muted-foreground">{t("leads.discovery.industry")}</p>
+                  <p className="text-sm font-medium text-primary">{t(di.businessTypeKey)}</p>
                 </div>
               </div>
             )}
             {di?.teamSizeKey && (
               <div className="flex items-center gap-3">
-                <Users className="h-3.5 w-3.5 shrink-0 text-violet-400/70" />
+                <Users className="h-3.5 w-3.5 shrink-0 text-primary/70" />
                 <div>
-                  <p className="text-[10px] text-zinc-500">{t("leads.discovery.teamSize")}</p>
-                  <p className="text-sm font-medium text-violet-200">
+                  <p className="text-[10px] text-muted-foreground">{t("leads.discovery.teamSize")}</p>
+                  <p className="text-sm font-medium text-primary">
                     {t(di.teamSizeKey)} {t("leads.discovery.teamSizeSuffix")}
                   </p>
                 </div>
@@ -143,9 +143,9 @@ export function DrawerTabInfo({
             )}
             {di?.priority && (
               <div className="flex items-start gap-3">
-                <Tag className="mt-1 h-3.5 w-3.5 shrink-0 text-violet-400/70" />
+                <Tag className="mt-1 h-3.5 w-3.5 shrink-0 text-primary/70" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] text-zinc-500">{t("leads.discovery.priority")}</p>
+                  <p className="text-[10px] text-muted-foreground">{t("leads.discovery.priority")}</p>
                   <div className="mt-1 flex flex-wrap gap-1.5">
                     {di.priority.split(",").map((p) => {
                       const clean = p
@@ -155,7 +155,7 @@ export function DrawerTabInfo({
                       return (
                         <span
                           key={p}
-                          className="inline-flex items-center rounded bg-violet-500/10 px-2 py-0.5 text-[11px] font-medium text-violet-300 ring-1 ring-inset ring-violet-500/20"
+                          className="inline-flex items-center rounded bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary ring-1 ring-inset ring-primary/20"
                         >
                           {clean}
                         </span>
@@ -172,7 +172,7 @@ export function DrawerTabInfo({
       {/* Message */}
       {lead.message && (
         <SectionCard title={t("leads.drawer.sections.message")} icon={MessageSquare}>
-          <p className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-300">
+          <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
             {lead.message}
           </p>
         </SectionCard>
@@ -183,9 +183,9 @@ export function DrawerTabInfo({
         <SectionCard
           title={t("leads.drawer.sections.salesNotes")}
           icon={StickyNote}
-          accent="border-amber-500/20 bg-amber-500/5"
+          accent="border-warning/20 bg-warning/5"
         >
-          <p className="whitespace-pre-wrap text-sm leading-relaxed text-amber-200/80">
+          <p className="whitespace-pre-wrap text-sm leading-relaxed text-warning/80">
             {lead.notes}
           </p>
         </SectionCard>
@@ -196,12 +196,12 @@ export function DrawerTabInfo({
         <SectionCard
           title={t("leads.drawer.sections.conversion")}
           icon={CheckCheck}
-          accent="border-emerald-500/20 bg-emerald-500/5"
+          accent="border-success/20 bg-success/5"
         >
-          <p className="text-sm font-semibold text-emerald-300">
+          <p className="text-sm font-semibold text-success">
             {t("leads.drawer.conversion.converted")}
           </p>
-          <p className="mt-0.5 text-xs text-zinc-400">
+          <p className="mt-0.5 text-xs text-muted-foreground">
             {formatDateTimeUtc(lead.convertedAt)}
           </p>
         </SectionCard>
