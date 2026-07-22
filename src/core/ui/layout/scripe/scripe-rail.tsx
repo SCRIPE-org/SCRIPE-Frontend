@@ -33,11 +33,17 @@ interface ScripeRailProps {
   identitySlot?: React.ReactNode;
 }
 
-/** Workspace tile tint derived from the workspace's own OKLCH hue. */
-function hueTint(ws: WorkspaceGroup, alpha: number): string {
-  const hue = ws.colorHue ?? 262;
-  const chroma = ws.colorChroma ?? 0.18;
-  return `oklch(0.68 ${chroma} ${hue} / ${alpha})`;
+/**
+ * Publish a pin's own OKLCH hue/chroma to CSS and let the stylesheet pick the
+ * lightness, because the right lightness is a function of the THEME, not of the
+ * workspace. Resolving the whole colour here hardcoded the dark-theme value and
+ * dropped the abbreviations to 2.1:1 on the light rail.
+ */
+function hueVars(ws: WorkspaceGroup): React.CSSProperties {
+  return {
+    "--pin-h": String(ws.colorHue ?? 262),
+    "--pin-c": String(ws.colorChroma ?? 0.18),
+  } as React.CSSProperties;
 }
 
 /**
@@ -55,7 +61,8 @@ export function ScripeRail({ onLauncherOpen, identitySlot }: ScripeRailProps) {
     setActiveWorkspace,
     isModuleMode,
   } = useWorkspace();
-  const { language, t } = useI18n();
+  const { language, direction, t } = useI18n();
+  const isRTL = direction === "rtl";
 
   const listRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLSpanElement>(null);
@@ -105,11 +112,11 @@ export function ScripeRail({ onLauncherOpen, identitySlot }: ScripeRailProps) {
     <TooltipProvider delayDuration={300}>
       <nav
         aria-label={t("nav.primary") || "Primary"}
-        className="sx-rail flex h-full flex-col items-center gap-1.5 py-3"
+        className="sx-rail flex h-full flex-col items-center gap-1.5 overflow-hidden py-3"
         style={{
-          width: "var(--sx-rail-w)",
-          background: "var(--sx-sub)",
-          borderInlineEnd: "1px solid var(--sx-edge)",
+          width: "var(--edge-rail-w)",
+          background: "var(--edge-sub)",
+          borderInlineEnd: "1px solid var(--edge-line)",
         }}
       >
         {/* ── Mark ── */}
@@ -151,7 +158,12 @@ export function ScripeRail({ onLauncherOpen, identitySlot }: ScripeRailProps) {
         </Tooltip>
 
         {/* ── Root navigation ── */}
-        <div ref={listRef} className="relative flex w-full flex-col items-center gap-1.5">
+        {/* Scrolls on its own so a workspace with many root items can never
+            push the pin zone or the identity cluster past the fold. */}
+        <div
+          ref={listRef}
+          className="sx-rail-scroll relative flex w-full min-h-0 flex-col items-center gap-1.5 overflow-y-auto"
+        >
           <span
             ref={indicatorRef}
             aria-hidden="true"
@@ -190,7 +202,7 @@ export function ScripeRail({ onLauncherOpen, identitySlot }: ScripeRailProps) {
             <span
               aria-hidden="true"
               className="my-2 block h-px w-6 shrink-0"
-              style={{ background: "var(--sx-edge)" }}
+              style={{ background: "var(--edge-line)" }}
             />
             <div className="flex flex-col items-center gap-1.5">
               {showBackToAdmin && adminWorkspace && (
@@ -201,13 +213,13 @@ export function ScripeRail({ onLauncherOpen, identitySlot }: ScripeRailProps) {
                       onClick={() => setActiveWorkspace(adminWorkspace.workspaceKey, true)}
                       aria-label={`${t("nav.backTo") || "Back to"} ${wsLabel(adminWorkspace)}`}
                       className="sx-pin relative grid h-[38px] w-[38px] place-items-center rounded-[9px] border"
-                      style={{
-                        background: hueTint(adminWorkspace, 0.15),
-                        borderColor: hueTint(adminWorkspace, 0.45),
-                        color: hueTint(adminWorkspace, 1),
-                      }}
+                      style={hueVars(adminWorkspace)}
                     >
                       {adminWorkspace.abbreviation}
+                      {/* "Back" is a direction, so the glyph mirrors with the
+                          script — see the [dir="rtl"] .sx-pin-back rule. Unlike
+                          the ON/OFF switch, where right means true in both
+                          locales by product decision. */}
                       <span className="sx-pin-back grid place-items-center" aria-hidden="true">
                         <CornerUpLeft size={9} />
                       </span>
@@ -233,11 +245,7 @@ export function ScripeRail({ onLauncherOpen, identitySlot }: ScripeRailProps) {
                           "sx-pin relative grid h-[38px] w-[38px] place-items-center rounded-[9px] border",
                           isActive && "sx-pin--active"
                         )}
-                        style={{
-                          background: hueTint(ws, 0.15),
-                          borderColor: hueTint(ws, 0.45),
-                          color: hueTint(ws, 1),
-                        }}
+                        style={hueVars(ws)}
                       >
                         {ws.abbreviation}
                       </button>

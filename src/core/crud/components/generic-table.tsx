@@ -306,7 +306,7 @@ function GenericTableInner<T extends Record<string, any>>({
       case "neon":
         return cn(
           "bg-background/95 backdrop-blur-sm border-primary/30",
-          "shadow-[0_0_20px_rgba(var(--primary),0.3)]",
+          "shadow-[0_0_20px_hsl(var(--primary)/0.3)]",
           "before:absolute before:inset-0 before:bg-gradient-to-br before:from-primary/10 before:to-transparent before:pointer-events-none"
         );
       case "gradient":
@@ -323,7 +323,7 @@ function GenericTableInner<T extends Record<string, any>>({
         );
       case "cyberpunk":
         return cn(
-          "bg-background/95 border-primary shadow-[0_0_30px_rgba(var(--primary),0.4)]",
+          "bg-background/95 border-primary shadow-[0_0_30px_hsl(var(--primary)/0.4)]",
           "before:absolute before:top-0 before:left-0 before:h-0.5 before:w-full before:bg-gradient-to-r before:from-transparent before:via-primary before:to-transparent before:pointer-events-none"
         );
       case "luxury":
@@ -381,10 +381,10 @@ function GenericTableInner<T extends Record<string, any>>({
       case "neon":
         return cn(
           baseClasses,
-          "rounded-xl border-2 border-primary/30 bg-background shadow-[0_0_30px_rgba(var(--primary),0.3)]",
+          "rounded-xl border-2 border-primary/30 bg-background shadow-[0_0_30px_hsl(var(--primary)/0.3)]",
           "dark:bg-black/95",
           "before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-primary/10 before:to-transparent before:pointer-events-none",
-          "after:absolute after:inset-0 after:rounded-xl after:shadow-[inset_0_0_20px_rgba(var(--primary),0.1)] after:pointer-events-none",
+          "after:absolute after:inset-0 after:rounded-xl after:shadow-[inset_0_0_20px_hsl(var(--primary)/0.1)] after:pointer-events-none",
           "relative"
         );
       case "gradient":
@@ -406,7 +406,7 @@ function GenericTableInner<T extends Record<string, any>>({
       case "cyberpunk":
         return cn(
           baseClasses,
-          "rounded-none border-2 border-primary bg-background shadow-[0_0_50px_rgba(var(--primary),0.4)]",
+          "rounded-none border-2 border-primary bg-background shadow-[0_0_50px_hsl(var(--primary)/0.4)]",
           "dark:bg-black/95",
           "before:absolute before:top-0 before:left-0 before:h-0.5 before:w-full before:bg-gradient-to-r before:from-transparent before:via-primary before:to-transparent",
           "after:absolute after:bottom-0 after:right-0 after:h-full after:w-0.5 after:bg-gradient-to-t after:from-transparent after:via-primary after:to-transparent",
@@ -544,7 +544,7 @@ function GenericTableInner<T extends Record<string, any>>({
         break;
       case "neon":
         styleClasses +=
-          " hover:bg-primary/10 hover:shadow-[0_0_20px_rgba(var(--primary),0.2)] dark:hover:bg-primary/5";
+          " hover:bg-primary/10 hover:shadow-[0_0_20px_hsl(var(--primary)/0.2)] dark:hover:bg-primary/5";
         break;
       case "gradient":
         styleClasses +=
@@ -556,7 +556,7 @@ function GenericTableInner<T extends Record<string, any>>({
         break;
       case "cyberpunk":
         styleClasses +=
-          " hover:bg-primary/10 hover:border-primary/50 hover:shadow-[0_0_15px_rgba(var(--primary),0.3)] hover:text-primary";
+          " hover:bg-primary/10 hover:border-primary/50 hover:shadow-[0_0_15px_hsl(var(--primary)/0.3)] hover:text-primary";
         break;
       case "luxury":
         styleClasses +=
@@ -579,7 +579,7 @@ function GenericTableInner<T extends Record<string, any>>({
           break;
         case "neon":
           styleClasses +=
-            " bg-primary/20 border-primary/50 shadow-[0_0_25px_rgba(var(--primary),0.4)]";
+            " bg-primary/20 border-primary/50 shadow-[0_0_25px_hsl(var(--primary)/0.4)]";
           break;
         case "gradient":
           styleClasses +=
@@ -587,11 +587,11 @@ function GenericTableInner<T extends Record<string, any>>({
           break;
         case "neumorphism":
           styleClasses +=
-            " shadow-[inset_8px_8px_16px_rgba(var(--primary),0.1),inset_-8px_-8px_16px_rgba(var(--primary),0.05)]";
+            " shadow-[inset_8px_8px_16px_hsl(var(--primary)/0.1),inset_-8px_-8px_16px_hsl(var(--primary)/0.05)]";
           break;
         case "cyberpunk":
           styleClasses +=
-            " bg-primary/20 border-primary text-primary shadow-[0_0_20px_rgba(var(--primary),0.5)]";
+            " bg-primary/20 border-primary text-primary shadow-[0_0_20px_hsl(var(--primary)/0.5)]";
           break;
         case "luxury":
           styleClasses +=
@@ -658,8 +658,8 @@ function GenericTableInner<T extends Record<string, any>>({
           heightClass,
           "bg-background border-b-2 border-primary/50 text-primary font-bold",
           "dark:bg-black/95",
-          "shadow-[0_0_15px_rgba(var(--primary),0.3)]",
-          hasHoverEffect && "hover:border-primary hover:shadow-[0_0_25px_rgba(var(--primary),0.4)]"
+          "shadow-[0_0_15px_hsl(var(--primary)/0.3)]",
+          hasHoverEffect && "hover:border-primary hover:shadow-[0_0_25px_hsl(var(--primary)/0.4)]"
         );
       case "gradient":
         return cn(
@@ -685,8 +685,8 @@ function GenericTableInner<T extends Record<string, any>>({
           heightClass,
           "bg-background border-b-2 border-primary/60 text-primary font-bold",
           "dark:bg-black/95",
-          "shadow-[0_0_20px_rgba(var(--primary),0.4)]",
-          hasHoverEffect && "hover:border-primary hover:shadow-[0_0_30px_rgba(var(--primary),0.5)]"
+          "shadow-[0_0_20px_hsl(var(--primary)/0.4)]",
+          hasHoverEffect && "hover:border-primary hover:shadow-[0_0_30px_hsl(var(--primary)/0.5)]"
         );
       case "luxury":
         return cn(
@@ -759,11 +759,11 @@ function GenericTableInner<T extends Record<string, any>>({
         return cn(
           baseClasses,
           hoverClasses,
-          "bg-background border-2 border-primary/30 shadow-[0_0_20px_rgba(var(--primary),0.3)] rounded-xl",
+          "bg-background border-2 border-primary/30 shadow-[0_0_20px_hsl(var(--primary)/0.3)] rounded-xl",
           "dark:bg-black/95",
           settings.hoverEffectType !== "none" &&
             settings.hoverEffectIntensity !== "none" &&
-            "hover:border-primary/50 hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] hover:bg-primary/5"
+            "hover:border-primary/50 hover:shadow-[0_0_30px_hsl(var(--primary)/0.5)] hover:bg-primary/5"
         );
       case "gradient":
         return cn(
@@ -789,13 +789,13 @@ function GenericTableInner<T extends Record<string, any>>({
         return cn(
           baseClasses,
           hoverClasses,
-          "bg-background border-2 border-primary rounded-none shadow-[0_0_25px_rgba(var(--primary),0.4)]",
+          "bg-background border-2 border-primary rounded-none shadow-[0_0_25px_hsl(var(--primary)/0.4)]",
           "dark:bg-black/95",
           "before:absolute before:top-0 before:left-0 before:h-0.5 before:w-full before:bg-gradient-to-r before:from-transparent before:via-primary before:to-transparent",
           "relative",
           settings.hoverEffectType !== "none" &&
             settings.hoverEffectIntensity !== "none" &&
-            "hover:bg-primary/10 hover:shadow-[0_0_40px_rgba(var(--primary),0.6)]"
+            "hover:bg-primary/10 hover:shadow-[0_0_40px_hsl(var(--primary)/0.6)]"
         );
       case "luxury":
         return cn(

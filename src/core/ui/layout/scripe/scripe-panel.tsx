@@ -18,14 +18,14 @@ import { cn } from "@core/common/utils";
 import { DynamicIcon } from "@core/ui/layout/nexus/_parts/primary-rail-parts";
 import type { MenuItem } from "@core/navigation";
 
-interface ScripePanelProps {
-  collapsed?: boolean;
-}
-
 /**
  * Presentation UI component rendering the secondary navigation panel.
+ *
+ * Mounting is the parent's decision — the shell renders this either as a grid
+ * column or, below the breakpoint, inside an overlay. There is deliberately no
+ * `collapsed` prop: one component, one job.
  */
-export function ScripePanel({ collapsed = false }: ScripePanelProps) {
+export function ScripePanel() {
   const { activeWorkspace, activeRootItem } = useWorkspace();
   const { language, t } = useI18n();
   const pathname = usePathname();
@@ -34,10 +34,6 @@ export function ScripePanel({ collapsed = false }: ScripePanelProps) {
     language === "ar" ? item.nameAr || item.nameEn : item.nameEn || item.nameAr;
 
   const items: MenuItem[] = activeRootItem?.children ?? [];
-
-  if (collapsed) {
-    return null;
-  }
 
   const renderLeaf = (item: MenuItem) => {
     const href = item.href && item.href !== "#" ? item.href : null;
@@ -71,26 +67,27 @@ export function ScripePanel({ collapsed = false }: ScripePanelProps) {
 
   return (
     <nav
+      id="scripe-panel"
       aria-label={t("nav.secondary") || "Sections"}
       className="sx-panel flex h-full flex-col overflow-y-auto px-2.5 py-3.5"
       style={{
-        width: "var(--sx-panel-w)",
-        background: "var(--sx-sub)",
-        borderInlineEnd: "1px solid var(--sx-edge)",
+        width: "var(--edge-panel-w)",
+        background: "var(--edge-sub)",
+        borderInlineEnd: "1px solid var(--edge-line)",
       }}
     >
       {/* Workspace identity card */}
       {activeWorkspace && (
         <div
           className="mb-2 flex items-center gap-2.5 px-2 pb-3.5"
-          style={{ borderBlockEnd: "1px solid var(--sx-edge)" }}
+          style={{ borderBlockEnd: "1px solid var(--edge-line)" }}
         >
           <span
             className="grid h-[26px] w-[26px] shrink-0 place-items-center rounded-[7px] text-[0.62rem] font-bold"
             style={{
-              background: "var(--sx-accent-wash)",
-              border: "1px solid var(--sx-accent)",
-              color: "var(--sx-accent)",
+              background: "var(--edge-accent-wash)",
+              border: "1px solid var(--edge-accent)",
+              color: "var(--edge-accent)",
             }}
           >
             {activeWorkspace.abbreviation}
@@ -98,14 +95,14 @@ export function ScripePanel({ collapsed = false }: ScripePanelProps) {
           <span className="min-w-0">
             <span
               className="block truncate text-[0.84rem] font-bold leading-tight"
-              style={{ color: "var(--sx-ink)" }}
+              style={{ color: "var(--edge-ink)" }}
             >
               {language === "ar"
                 ? activeWorkspace.workspaceNameAr || activeWorkspace.workspaceNameEn
                 : activeWorkspace.workspaceNameEn || activeWorkspace.workspaceNameAr}
             </span>
             {activeRootItem && (
-              <span className="block truncate text-[0.68rem]" style={{ color: "var(--sx-ink-3)" }}>
+              <span className="block truncate text-[0.68rem]" style={{ color: "var(--edge-ink-3)" }}>
                 {label(activeRootItem)}
               </span>
             )}

@@ -215,7 +215,10 @@ const ChartTooltipContent = React.forwardRef<HTMLDivElement, any>(
                           {itemConfig?.label || item.name}
                         </span>
                       </div>
-                      {item.value && (
+                      {/* `!= null`, not truthiness: a genuine 0 is data, and
+                          the truthy guard silently rendered a labelled row
+                          with no number for it. */}
+                      {item.value != null && (
                         <span className="font-mono font-medium tabular-nums text-foreground">
                           {item.value.toLocaleString()}
                         </span>

@@ -16,7 +16,7 @@ import { ChevronRight, Search, PanelLeft } from "lucide-react";
 interface ScripeTopbarProps {
   onSearchOpen: () => void;
   onPanelToggle: () => void;
-  panelCollapsed: boolean;
+  panelOpen: boolean;
 }
 
 /**
@@ -25,7 +25,7 @@ interface ScripeTopbarProps {
 export function ScripeTopbar({
   onSearchOpen,
   onPanelToggle,
-  panelCollapsed,
+  panelOpen,
 }: ScripeTopbarProps) {
   const { activeWorkspace, activeRootItem } = useWorkspace();
   const { language, direction, t } = useI18n();
@@ -44,16 +44,17 @@ export function ScripeTopbar({
     <header
       className="sx-topbar flex shrink-0 items-center gap-2.5 px-4"
       style={{
-        height: "var(--sx-topbar-h)",
-        background: "var(--sx-void)",
-        borderBlockEnd: "1px solid var(--sx-edge)",
+        height: "var(--edge-topbar-h)",
+        background: "var(--edge-void)",
+        borderBlockEnd: "1px solid var(--edge-line)",
       }}
     >
       <button
         type="button"
         onClick={onPanelToggle}
         aria-label={t("nav.togglePanel") || "Toggle panel"}
-        aria-expanded={!panelCollapsed}
+        aria-expanded={panelOpen}
+        aria-controls="scripe-panel"
         className="sx-icon-btn grid h-8 w-8 place-items-center rounded-md"
       >
         <PanelLeft size={15} style={{ transform: isRTL ? "scaleX(-1)" : undefined }} />
@@ -62,7 +63,7 @@ export function ScripeTopbar({
       <nav
         aria-label={t("nav.breadcrumb") || "Breadcrumb"}
         className="flex min-w-0 items-center gap-1.5 text-[0.8rem]"
-        style={{ color: "var(--sx-ink-3)" }}
+        style={{ color: "var(--edge-ink-3)" }}
       >
         {workspaceName && <span className="truncate">{workspaceName}</span>}
         {workspaceName && activeRootItem && (
@@ -74,7 +75,7 @@ export function ScripeTopbar({
           />
         )}
         {activeRootItem && (
-          <span className="truncate font-semibold" style={{ color: "var(--sx-ink)" }}>
+          <span className="truncate font-semibold" style={{ color: "var(--edge-ink)" }}>
             {label(activeRootItem)}
           </span>
         )}

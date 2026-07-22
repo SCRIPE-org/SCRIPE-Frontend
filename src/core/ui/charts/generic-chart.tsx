@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 import { Chart, registerables, ChartOptions, ChartData } from "chart.js";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Button } from "@core/ui/button";
@@ -99,6 +100,7 @@ export function GenericChart({
   ariaLabel,
   ariaDescription,
 }: GenericChartProps) {
+  const { resolvedTheme } = useTheme();
   const chartRef = useRef<Chart | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const filterRef = useRef<HTMLDivElement>(null);
@@ -151,6 +153,18 @@ export function GenericChart({
     setVisibleDatasets(new Array(data.datasets?.length || 0).fill(!allVisible));
   };
 
+  // Chart.js takes literal colour strings, not CSS variables, so the tokens are
+  // resolved here and the chart is rebuilt when the theme changes. The previous
+  // hardcoded rgba(255,255,255,·) made every axis label invisible in light mode.
+  const readToken = (name: string, alpha?: number) => {
+    if (typeof window === "undefined") return "hsl(0 0% 50%)";
+    const triplet = getComputedStyle(document.documentElement)
+      .getPropertyValue(name)
+      .trim();
+    if (!triplet) return "hsl(0 0% 50%)";
+    return alpha == null ? `hsl(${triplet})` : `hsl(${triplet} / ${alpha})`;
+  };
+
   useEffect(() => {
     if (canvasRef.current) {
       const ctx = canvasRef.current.getContext("2d");
@@ -180,10 +194,10 @@ export function GenericChart({
                 },
               },
               tooltip: {
-                backgroundColor: "rgba(0, 0, 0, 0.8)",
-                titleColor: "white",
-                bodyColor: "white",
-                borderColor: "rgba(255, 255, 255, 0.1)",
+                backgroundColor: readToken("--popover"),
+                titleColor: readToken("--popover-foreground"),
+                bodyColor: readToken("--popover-foreground"),
+                borderColor: readToken("--border"),
                 borderWidth: 1,
                 cornerRadius: 8,
                 displayColors: true,
@@ -196,10 +210,10 @@ export function GenericChart({
                 : {
                     x: {
                       grid: {
-                        color: "rgba(255, 255, 255, 0.1)",
+                        color: readToken("--border", 0.5),
                       },
                       ticks: {
-                        color: "rgba(255, 255, 255, 0.7)",
+                        color: readToken("--muted-foreground"),
                         font: {
                           size: 11,
                         },
@@ -207,10 +221,10 @@ export function GenericChart({
                     },
                     y: {
                       grid: {
-                        color: "rgba(255, 255, 255, 0.1)",
+                        color: readToken("--border", 0.5),
                       },
                       ticks: {
-                        color: "rgba(255, 255, 255, 0.7)",
+                        color: readToken("--muted-foreground"),
                         font: {
                           size: 11,
                         },
@@ -252,7 +266,9 @@ export function GenericChart({
         chartRef.current.destroy();
       }
     };
-  }, [filteredData, options, type]);
+    // resolvedTheme is a real dependency: the colours above are read from the
+    // computed token values, which change when the theme does.
+  }, [filteredData, options, type, resolvedTheme]);
 
   const handleExport = () => {
     if (chartRef.current) {
@@ -349,7 +365,15 @@ export function GenericChart({
             width: typeof width === "number" ? `${width}px` : width,
           }}
         >
-          <canvas ref={canvasRef} className="h-full w-full" />
+          {/* ariaLabel/ariaDescription were declared and destructured but
+              never reached the DOM — the canvas was unlabelled to a reader. */}
+          <canvas
+            ref={canvasRef}
+            className="h-full w-full"
+            role="img"
+            aria-label={ariaLabel}
+            aria-description={ariaDescription}
+          />
         </div>
       </CardContent>
     </Card>

@@ -15,15 +15,16 @@ import { PieChart as PieChartIcon } from "lucide-react";
 import type { DistributionData } from "../../domain/entities/AnalyticsEntities";
 import { ChartTooltip } from "@core/ui/chart";
 
+// The five --chart-* tokens, matching every other module chart. The previous
+// eight hardcoded hexes were identical in both themes and ignored tenant
+// theming entirely; the series repeat past five rather than reintroduce
+// colours the token layer does not define.
 const COLORS = [
-  "#3b82f6",
-  "#10b981",
-  "#f59e0b",
-  "#ef4444",
-  "#8b5cf6",
-  "#ec4899",
-  "#06b6d4",
-  "#84cc16",
+  "hsl(var(--chart-1))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
 ];
 
 interface Props {

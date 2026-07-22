@@ -29,6 +29,7 @@ export const en = {
     breadcrumb: "Breadcrumb",
     appLauncher: "App launcher",
     togglePanel: "Toggle panel",
+    skipToContent: "Skip to content",
     backTo: "Back to",
     search: "Search or jump…",
     dashboard: "Dashboard",

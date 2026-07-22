@@ -85,19 +85,19 @@ export interface MenuTreeItemProps {
 /* -------------------------------------------------------------------------- */
 
 const LEVEL_COLORS = [
-  "border-l-blue-500",
-  "border-l-emerald-500",
-  "border-l-amber-500",
-  "border-l-purple-500",
-  "border-l-pink-500",
+  "border-s-[hsl(var(--chart-1))]",
+  "border-s-[hsl(var(--chart-2))]",
+  "border-s-[hsl(var(--chart-3))]",
+  "border-s-[hsl(var(--chart-4))]",
+  "border-s-[hsl(var(--chart-5))]",
 ];
 
 const LEVEL_BG_COLORS = [
-  "bg-blue-500/5",
-  "bg-emerald-500/5",
-  "bg-amber-500/5",
-  "bg-purple-500/5",
-  "bg-pink-500/5",
+  "bg-[hsl(var(--chart-1)/0.05)]",
+  "bg-[hsl(var(--chart-2)/0.05)]",
+  "bg-[hsl(var(--chart-3)/0.05)]",
+  "bg-[hsl(var(--chart-4)/0.05)]",
+  "bg-[hsl(var(--chart-5)/0.05)]",
 ];
 
 /* -------------------------------------------------------------------------- */
@@ -247,8 +247,8 @@ export function MenuTreeItem({
         className={cn(
           "group relative flex items-center gap-2 rounded-lg px-3 py-2.5",
           "transition-all duration-150 hover:bg-muted/50",
-          "border-l-2",
-          node.isActive ? levelColor : "border-l-muted/40",
+          "border-s-2",
+          node.isActive ? levelColor : "border-s-muted/40",
           !node.isActive && "opacity-60",
           depth > 0 && levelBg,
           getDropIndicatorStyles()

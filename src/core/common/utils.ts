@@ -199,19 +199,19 @@ export function getHoverEffectClasses(
         case "small":
           return cn(
             baseTransition,
-            "hover:shadow-[0_0_8px_rgba(var(--primary),0.3)]",
+            "hover:shadow-[0_0_8px_hsl(var(--primary)/0.3)]",
             "hover:border-primary/50"
           );
         case "medium":
           return cn(
             baseTransition,
-            "hover:shadow-[0_0_15px_rgba(var(--primary),0.5)]",
+            "hover:shadow-[0_0_15px_hsl(var(--primary)/0.5)]",
             "hover:border-primary/50"
           );
         case "strong":
           return cn(
             baseTransition,
-            "hover:shadow-[0_0_25px_rgba(var(--primary),0.7)]",
+            "hover:shadow-[0_0_25px_hsl(var(--primary)/0.7)]",
             "hover:border-primary/50"
           );
         default:
@@ -316,19 +316,19 @@ export function getTableHoverEffectClasses(
         case "small":
           return cn(
             baseTransition,
-            "hover:shadow-[0_0_8px_rgba(var(--primary),0.3)]",
+            "hover:shadow-[0_0_8px_hsl(var(--primary)/0.3)]",
             "hover:border-primary/50"
           );
         case "medium":
           return cn(
             baseTransition,
-            "hover:shadow-[0_0_15px_rgba(var(--primary),0.5)]",
+            "hover:shadow-[0_0_15px_hsl(var(--primary)/0.5)]",
             "hover:border-primary/50"
           );
         case "strong":
           return cn(
             baseTransition,
-            "hover:shadow-[0_0_25px_rgba(var(--primary),0.7)]",
+            "hover:shadow-[0_0_25px_hsl(var(--primary)/0.7)]",
             "hover:border-primary/50"
           );
         default:

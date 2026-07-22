@@ -43,7 +43,10 @@
   --muted-foreground: 240 3.8% 46.1%;
   --accent: 240 4.8% 95.9%;
   --accent-foreground: 240 5.9% 10%;
-  --destructive: 0 84.2% 60.2%;
+  /* Serves BOTH duties: readable as text on white (6.47:1) and dark enough that
+     the near-white foreground on top of it also passes (6.4:1). The stock
+     shadcn 0 84.2% 60.2% failed both at 3.76:1. */
+  --destructive: 0 72% 42%;
   --destructive-foreground: 0 0% 98%;
   --border: 240 5.9% 90%;
   --input: 240 5.9% 90%;
@@ -630,8 +633,13 @@ html {
   --muted-foreground: 240 5% 64.9%;
   --accent: 240 3.7% 15.9%;
   --accent-foreground: 0 0% 98%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 0% 98%;
+  /* The stock shadcn dark destructive (0 62.8% 30.6%) is a FILL colour, but the
+     codebase uses `text-destructive` in 606 places — at 1.99:1 on the dark card
+     that error text was effectively invisible. Inverting the duty pair fixes
+     both: bright enough to read as text (6.04:1), with a near-black foreground
+     when used as a fill (6.03:1). */
+  --destructive: 0 84% 65%;
+  --destructive-foreground: 240 10% 4%;
   --border: 240 3.7% 15.9%;
   --input: 240 3.7% 15.9%;
   --ring: 262 83% 58%;
@@ -3810,7 +3818,10 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
    All values measured >= 4.5:1 against their own theme's card surface. */
 :root {
   --success: 160 64% 52%;
-  --success-foreground: 0 0% 100%;
+  /* Near-black, not white: this mint is bright, and white on it is 1.91:1.
+     The light theme below re-declares white, which is correct on its darker
+     green (5.32:1). Same token, opposite answer per theme. */
+  --success-foreground: 240 10% 4%;
   --warning: 43 96% 56%;
   --warning-foreground: 240 10% 4%;
   /* Fourth step of the severity ramp. Some scales genuinely need
@@ -3835,75 +3846,78 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 /* ── EDGE surfaces — scoped to the scripe shell ─────────────────────────── */
 :root[data-layout="scripe"] {
   /* dark is the mark's native ground */
-  --sx-void: #07070c;
-  --sx-sub: #0c0c13;
-  --sx-slab: #111119;
-  --sx-slab-hi: #181822;
-  --sx-slab-top: rgba(255, 255, 255, 0.055);
-  --sx-edge: rgba(255, 255, 255, 0.075);
-  --sx-edge-hi: rgba(255, 255, 255, 0.14);
-  --sx-grid: rgba(255, 255, 255, 0.045);
-  --sx-ink: #f2f0fa;
-  --sx-ink-2: #b3adc6;
-  --sx-ink-3: #8f89a5;
+  --edge-void: #07070c;
+  --edge-sub: #0c0c13;
+  --edge-slab: #111119;
+  --edge-slab-hi: #181822;
+  --edge-slab-top: rgba(255, 255, 255, 0.055);
+  --edge-line: rgba(255, 255, 255, 0.075);
+  --edge-line-hi: rgba(255, 255, 255, 0.14);
+  --edge-grid: rgba(255, 255, 255, 0.045);
+  --edge-ink: #f2f0fa;
+  --edge-ink-2: #b3adc6;
+  --edge-ink-3: #8f89a5;
 
   /* accent-as-text and accent-as-fill have OPPOSITE contrast duties and
      therefore cannot be one token. Both derive from the live workspace hue,
      which WorkspaceProvider writes to <html> from Workspace.ColorHue. */
-  --sx-accent: oklch(0.68 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
-  --sx-accent-fill: oklch(0.52 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
-  --sx-on-fill: #ffffff;
-  --sx-accent-wash: oklch(0.68 var(--workspace-chroma, 0.18) var(--workspace-hue, 262) / 0.14);
-  --sx-emit: oklch(0.82 0.13 calc(var(--workspace-hue, 262) + 78));
-  --sx-emit-wash: oklch(0.82 0.13 calc(var(--workspace-hue, 262) + 78) / 0.12);
+  --edge-accent: oklch(0.68 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
+  --edge-accent-fill: oklch(0.5 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
+  --edge-on-fill: #ffffff;
+  --edge-accent-wash: oklch(0.68 var(--workspace-chroma, 0.18) var(--workspace-hue, 262) / 0.14);
+  --edge-emit: oklch(0.82 0.13 calc(var(--workspace-hue, 262) + 78));
+  --edge-emit-wash: oklch(0.82 0.13 calc(var(--workspace-hue, 262) + 78) / 0.12);
 
-  --sx-drop:
-    0 1px 0 var(--sx-slab-top), 0 12px 32px -12px rgba(0, 0, 0, 0.9);
+  --edge-drop:
+    0 1px 0 var(--edge-slab-top), 0 12px 32px -12px rgba(0, 0, 0, 0.9);
 
   /* geometry — carried over from nexus so muscle memory survives */
-  --sx-rail-w: 64px;
-  --sx-panel-w: 240px;
-  --sx-topbar-h: 56px;
+  --edge-rail-w: 64px;
+  --edge-panel-w: 240px;
+  --edge-topbar-h: 56px;
 
   /* dials */
-  --sx-radius: 8px;
-  --sx-unit: 4px;
-  --sx-motion: 1;
-  --sx-t: calc(160ms * var(--sx-motion));
-  --sx-t2: calc(130ms * var(--sx-motion));
-  --sx-t3: calc(280ms * var(--sx-motion));
+  --edge-radius: 8px;
+  --edge-unit: 4px;
+  --edge-motion: 1;
+  --edge-t: calc(160ms * var(--edge-motion));
+  --edge-t2: calc(130ms * var(--edge-motion));
+  --edge-t3: calc(280ms * var(--edge-motion));
 }
 
 :root[data-layout="scripe"]:not(.dark) {
-  --sx-void: #f6f5fa;
-  --sx-sub: #eeecf5;
-  --sx-slab: #ffffff;
-  --sx-slab-hi: #faf9fe;
-  --sx-slab-top: rgba(255, 255, 255, 1);
-  --sx-edge: rgba(23, 19, 31, 0.11);
-  --sx-edge-hi: rgba(23, 19, 31, 0.2);
-  --sx-grid: rgba(23, 19, 31, 0.07);
-  --sx-ink: #14101c;
-  --sx-ink-2: #4d4664;
-  --sx-ink-3: #635b79;
-  --sx-accent: oklch(0.55 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
-  --sx-accent-fill: oklch(0.52 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
-  --sx-accent-wash: oklch(0.55 var(--workspace-chroma, 0.18) var(--workspace-hue, 262) / 0.1);
-  --sx-emit: oklch(0.52 0.12 calc(var(--workspace-hue, 262) + 78));
-  --sx-emit-wash: oklch(0.52 0.12 calc(var(--workspace-hue, 262) + 78) / 0.1);
-  --sx-drop:
+  --edge-void: #f6f5fa;
+  --edge-sub: #eeecf5;
+  --edge-slab: #ffffff;
+  --edge-slab-hi: #faf9fe;
+  --edge-slab-top: rgba(255, 255, 255, 1);
+  --edge-line: rgba(23, 19, 31, 0.11);
+  --edge-line-hi: rgba(23, 19, 31, 0.2);
+  --edge-grid: rgba(23, 19, 31, 0.07);
+  --edge-ink: #14101c;
+  --edge-ink-2: #4d4664;
+  --edge-ink-3: #635b79;
+  /* 0.46, not 0.55: accent-as-text has to clear 4.5:1 against the PANEL
+     (--edge-sub #eeecf5), not just against white. At 0.55 a cyan or green
+     workspace landed at 4.15:1; 0.46 holds 4.89:1 across all 24 hues. */
+  --edge-accent: oklch(0.46 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
+  --edge-accent-fill: oklch(0.5 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
+  --edge-accent-wash: oklch(0.46 var(--workspace-chroma, 0.18) var(--workspace-hue, 262) / 0.1);
+  --edge-emit: oklch(0.52 0.12 calc(var(--workspace-hue, 262) + 78));
+  --edge-emit-wash: oklch(0.52 0.12 calc(var(--workspace-hue, 262) + 78) / 0.1);
+  --edge-drop:
     0 1px 0 rgba(255, 255, 255, 1), 0 10px 28px -14px rgba(23, 19, 31, 0.28);
 }
 
 /* ── One focus law for the whole shell ──────────────────────────────────── */
 :root[data-layout="scripe"] .sx-shell :focus-visible {
-  outline: 2px solid var(--sx-emit);
+  outline: 2px solid var(--edge-emit);
   outline-offset: 2px;
   border-radius: 4px;
 }
 :root[data-layout="scripe"] .sx-shell ::selection {
-  background: var(--sx-accent-wash);
-  color: var(--sx-ink);
+  background: var(--edge-accent-wash);
+  color: var(--edge-ink);
 }
 
 /* ── Motion primitives ──────────────────────────────────────────────────── */
@@ -3929,7 +3943,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 
 @media (prefers-reduced-motion: reduce) {
   :root[data-layout="scripe"] {
-    --sx-motion: 0;
+    --edge-motion: 0;
   }
   :root[data-layout="scripe"] .sx-shell *,
   :root[data-layout="scripe"] .sx-shell *::before,
@@ -3948,31 +3962,31 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   background:
     radial-gradient(
       90% 42% at 50% -12%,
-      color-mix(in srgb, var(--sx-accent) 7%, transparent),
+      color-mix(in srgb, var(--edge-accent) 7%, transparent),
       transparent 70%
     ),
-    var(--sx-void);
+    var(--edge-void);
 }
 
 /* rail + panel share one interaction law: matte at rest, edge lights on state */
 .sx-shell .sx-rail-btn {
-  color: var(--sx-ink-3);
+  color: var(--edge-ink-3);
   cursor: pointer;
   background: none;
   transition:
-    color var(--sx-t),
-    background var(--sx-t),
-    border-color var(--sx-t);
+    color var(--edge-t),
+    background var(--edge-t),
+    border-color var(--edge-t);
 }
 .sx-shell .sx-rail-btn:hover {
-  color: var(--sx-ink);
-  background: var(--sx-slab);
+  color: var(--edge-ink);
+  background: var(--edge-slab);
 }
 .sx-shell .sx-rail-btn--active {
-  color: var(--sx-emit);
-  background: var(--sx-slab);
-  border-color: var(--sx-edge) !important;
-  box-shadow: 0 1px 0 var(--sx-slab-top);
+  color: var(--edge-emit);
+  background: var(--edge-slab);
+  border-color: var(--edge-line) !important;
+  box-shadow: 0 1px 0 var(--edge-slab-top);
 }
 
 /* the sliding edge light — one emitting element, law 3 */
@@ -3983,9 +3997,9 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   width: 2px;
   height: 22px;
   border-radius: 2px;
-  background: var(--sx-emit);
-  box-shadow: 0 0 10px var(--sx-emit);
-  transition: transform var(--sx-t3) cubic-bezier(0.3, 0.9, 0.3, 1);
+  background: var(--edge-emit);
+  box-shadow: 0 0 10px var(--edge-emit);
+  transition: transform var(--edge-t3) cubic-bezier(0.3, 0.9, 0.3, 1);
   pointer-events: none;
 }
 
@@ -3994,9 +4008,19 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.6rem;
   font-weight: 700;
+  /* --pin-h / --pin-c come from the workspace; --pin-l is the theme's job.
+     0.68 is the worst-case-safe lightness on the dark rail (5.95:1 across all
+     hues at chroma 0.18); the light rail needs 0.46 or darker. */
+  --pin-l: 0.68;
+  background: oklch(var(--pin-l) var(--pin-c) var(--pin-h) / 0.15);
+  border-color: oklch(var(--pin-l) var(--pin-c) var(--pin-h) / 0.45);
+  color: oklch(var(--pin-l) var(--pin-c) var(--pin-h));
   transition:
-    transform var(--sx-t2),
-    filter var(--sx-t2);
+    transform var(--edge-t2),
+    filter var(--edge-t2);
+}
+:root[data-layout="scripe"]:not(.dark) .sx-shell .sx-pin {
+  --pin-l: 0.46;
 }
 .sx-shell .sx-pin:hover {
   transform: translateY(-1px);
@@ -4007,7 +4031,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   position: absolute;
   inset: -4px;
   border-radius: 12px;
-  border: 2px solid color-mix(in srgb, var(--sx-emit) 60%, transparent);
+  border: 2px solid color-mix(in srgb, var(--edge-emit) 60%, transparent);
   animation: sxPinPulse 2.2s ease-in-out infinite;
 }
 .sx-shell .sx-pin-back {
@@ -4017,9 +4041,9 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   width: 14px;
   height: 14px;
   border-radius: 4px;
-  background: var(--sx-slab);
-  border: 1px solid var(--sx-edge);
-  color: var(--sx-ink-2);
+  background: var(--edge-slab);
+  border: 1px solid var(--edge-line);
+  color: var(--edge-ink-2);
 }
 [dir="rtl"] .sx-shell .sx-pin-back svg {
   transform: scaleX(-1);
@@ -4030,52 +4054,52 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--sx-ink-3);
+  color: var(--edge-ink-3);
   padding: 14px 8px 6px;
 }
 .sx-shell .sx-nav-item {
   display: flex;
   align-items: center;
   gap: 9px;
-  padding: calc(var(--sx-unit) * 1.75) 9px;
+  padding: calc(var(--edge-unit) * 1.75) 9px;
   border-radius: 6px;
   border: 1px solid transparent;
-  color: var(--sx-ink-2);
+  color: var(--edge-ink-2);
   font-size: 0.845rem;
   font-weight: 500;
   text-align: start;
   transition:
-    color var(--sx-t),
-    background var(--sx-t);
+    color var(--edge-t),
+    background var(--edge-t);
 }
 .sx-shell .sx-nav-item:hover {
-  background: var(--sx-slab);
-  color: var(--sx-ink);
+  background: var(--edge-slab);
+  color: var(--edge-ink);
 }
 .sx-shell .sx-nav-item--active {
-  background: var(--sx-slab);
-  color: var(--sx-ink);
-  border-color: var(--sx-edge);
-  box-shadow: 0 1px 0 var(--sx-slab-top);
+  background: var(--edge-slab);
+  color: var(--edge-ink);
+  border-color: var(--edge-line);
+  box-shadow: 0 1px 0 var(--edge-slab-top);
 }
 .sx-shell .sx-nav-item--active svg {
-  color: var(--sx-emit);
+  color: var(--edge-emit);
 }
 .sx-shell .sx-nav-item--static {
-  color: var(--sx-ink-3);
+  color: var(--edge-ink-3);
   cursor: default;
 }
 
 .sx-shell .sx-icon-btn {
-  color: var(--sx-ink-3);
+  color: var(--edge-ink-3);
   cursor: pointer;
   transition:
-    color var(--sx-t2),
-    background var(--sx-t2);
+    color var(--edge-t2),
+    background var(--edge-t2);
 }
 .sx-shell .sx-icon-btn:hover {
-  color: var(--sx-ink);
-  background: var(--sx-sub);
+  color: var(--edge-ink);
+  background: var(--edge-sub);
 }
 
 .sx-shell .sx-search-btn {
@@ -4083,29 +4107,29 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  background: var(--sx-sub);
-  border: 1px solid var(--sx-edge);
+  background: var(--edge-sub);
+  border: 1px solid var(--edge-line);
   border-radius: 7px;
-  color: var(--sx-ink-3);
+  color: var(--edge-ink-3);
   font-size: 0.8rem;
   padding: 7px 10px;
   transition:
-    border-color var(--sx-t),
-    color var(--sx-t);
+    border-color var(--edge-t),
+    color var(--edge-t);
 }
 .sx-shell .sx-search-btn:hover {
-  border-color: var(--sx-edge-hi);
-  color: var(--sx-ink-2);
+  border-color: var(--edge-line-hi);
+  color: var(--edge-ink-2);
 }
 .sx-shell .sx-kbd {
   margin-inline-start: auto;
   font-size: 0.64rem;
   font-weight: 600;
-  color: var(--sx-ink-3);
-  border: 1px solid var(--sx-edge);
+  color: var(--edge-ink-3);
+  border: 1px solid var(--edge-line);
   border-radius: 4px;
   padding: 2px 5px;
-  background: var(--sx-slab);
+  background: var(--edge-slab);
 }
 
 /* scrollbars — one system inside the shell */
@@ -4114,7 +4138,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   height: 8px;
 }
 .sx-shell *::-webkit-scrollbar-thumb {
-  background: var(--sx-edge-hi);
+  background: var(--edge-line-hi);
   border-radius: 4px;
 }
 .sx-shell *::-webkit-scrollbar-track {
@@ -4127,4 +4151,84 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 }
 [dir="rtl"] {
   --rpb-origin: right;
+}
+
+/* ── Skip link — the first tab stop in the shell ─────────────────────────────
+   Present in the DOM at all times so screen readers announce it; visible only
+   on focus, which is the one moment a sighted keyboard user needs it. */
+.sx-shell .sx-skip {
+  position: absolute;
+  z-index: 60;
+  inset-block-start: 8px;
+  inset-inline-start: 8px;
+  padding: 8px 14px;
+  border-radius: var(--edge-radius);
+  background: var(--edge-slab);
+  color: var(--edge-ink);
+  border: 1px solid var(--edge-line-hi);
+  box-shadow: var(--edge-drop);
+  font-size: 0.82rem;
+  font-weight: 600;
+  transform: translateY(calc(-100% - 16px));
+  transition: transform var(--edge-t) ease-out;
+}
+.sx-shell .sx-skip:focus-visible {
+  transform: none;
+}
+
+/* ── Panel as an overlay below the breakpoint ───────────────────────────────
+   Under ~900px there is no room for a 240px column: taking one would leave the
+   content field a few dozen pixels wide. The panel lifts out of the grid and
+   sits over the content instead, dismissed by the scrim or Escape. */
+.sx-shell .sx-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: rgb(0 0 0 / 0.5);
+  border: 0;
+  cursor: default;
+}
+.sx-shell .sx-panel-overlay {
+  position: absolute;
+  z-index: 45;
+  inset-block: 0;
+  inset-inline-start: var(--edge-rail-w);
+  width: var(--edge-panel-w);
+  max-width: calc(100vw - var(--edge-rail-w));
+  box-shadow: var(--edge-drop);
+  animation: sxPanelIn calc(180ms * var(--edge-motion)) ease-out;
+}
+@keyframes sxPanelIn {
+  from {
+    opacity: 0;
+    transform: translateX(calc(-8px * var(--edge-motion)));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+[dir="rtl"] .sx-shell .sx-panel-overlay {
+  animation-name: sxPanelInRtl;
+}
+@keyframes sxPanelInRtl {
+  from {
+    opacity: 0;
+    transform: translateX(calc(8px * var(--edge-motion)));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The rail's own scroller stays invisible — an 8px bar inside a 64px rail
+   would eat an eighth of it. The overflow is still scrollable by wheel,
+   trackpad, touch and keyboard. */
+.sx-shell .sx-rail-scroll {
+  scrollbar-width: none;
+}
+.sx-shell .sx-rail-scroll::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }

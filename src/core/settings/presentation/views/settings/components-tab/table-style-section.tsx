@@ -26,7 +26,7 @@ function TablePreview({ style, t }: { style: string; t: (key: string) => string 
       ),
       neon: cn(
         b,
-        "rounded-xl border-2 border-primary/30 bg-background shadow-[0_0_30px_rgba(var(--primary),0.3)] dark:bg-black/95"
+        "rounded-xl border-2 border-primary/30 bg-background shadow-[0_0_30px_hsl(var(--primary)/0.3)] dark:bg-black/95"
       ),
       gradient: cn(
         b,
@@ -38,7 +38,7 @@ function TablePreview({ style, t }: { style: string; t: (key: string) => string 
       ),
       cyberpunk: cn(
         b,
-        "rounded-none border-2 border-primary bg-background shadow-[0_0_50px_rgba(var(--primary),0.4)] dark:bg-black/95"
+        "rounded-none border-2 border-primary bg-background shadow-[0_0_50px_hsl(var(--primary)/0.4)] dark:bg-black/95"
       ),
       luxury: cn(
         b,

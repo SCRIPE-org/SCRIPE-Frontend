@@ -135,15 +135,23 @@ on the backend. `WorkspaceProvider` publishes them to `<html>` as
 them in CSS:
 
 ```css
---sx-accent:      oklch(0.68 var(--workspace-chroma) var(--workspace-hue));
---sx-accent-fill: oklch(0.52 var(--workspace-chroma) var(--workspace-hue));
---sx-emit:        oklch(0.82 0.13 calc(var(--workspace-hue) + 78));
+--edge-accent:      oklch(0.68 var(--workspace-chroma) var(--workspace-hue));
+--edge-accent-fill: oklch(0.52 var(--workspace-chroma) var(--workspace-hue));
+--edge-emit:        oklch(0.82 0.13 calc(var(--workspace-hue) + 78));
 ```
 
 Switching workspace therefore re-tints the entire interface with no
 per-component colour logic anywhere.
 
-**`--sx-accent` and `--sx-accent-fill` are deliberately two tokens.**
+**Every EDGE custom property is prefixed `--edge-`, and nothing else in the
+codebase may use that prefix.** The signup/auth system owns `--sx-*`, and EDGE
+originally shared it — which meant `:root[data-layout="scripe"] { --sx-accent }`
+(specificity 0,2,0) silently overrode the Vault `:root { --sx-accent }` (0,1,0)
+and re-coloured the sign-in page for anyone on the scripe layout. Two design
+systems, one namespace, one winner. The CSS *class* prefix stays `.sx-` because
+classes never cascade across systems this way; only the custom properties moved.
+
+**`--edge-accent` and `--edge-accent-fill` are deliberately two tokens.**
 Accent-as-text must beat the dark ground; accent-as-fill must beat the white
 label sitting on top of it. Those are opposite requirements and cannot be one
 value.
@@ -178,13 +186,33 @@ use it as "a slightly different amber".
 Every token pair is measured, not asserted. Body text ≥ 4.5:1, large text and
 non-text UI ≥ 3:1, in both themes. Notable values:
 
+Accent rows are the **worst case across all 24 hues** at chroma 0.18, not a
+sample of the default violet — the workspace picks the hue, so the guarantee has
+to hold for every hue it can pick. Cyan (~190°) is the binding constraint on
+fill, and it is what forced `--edge-accent-fill` to 0.50 and the light
+`--edge-accent` to 0.46.
+
 | Pair | Dark | Light |
 |---|---|---|
-| ink / void | 17.8:1 | 17.3:1 |
+| ink / void | 17.82:1 | 17.28:1 |
 | ink-3 / slab (muted) | 5.63:1 | 6.36:1 |
-| success / slab | 9.77:1 | 5.40:1 |
-| warning / slab | 11.25:1 | 5.93:1 |
-| white / accent-fill | 5.28:1 | 5.70:1 |
+| ink-3 / sub (panel) | 5.84:1 | 5.43:1 |
+| accent-as-text / panel, worst hue | 6.18:1 | 4.89:1 |
+| white / accent-fill, worst hue | 4.84:1 | 4.84:1 |
+| success / card | 10.39:1 | 5.35:1 |
+| warning / card | 11.78:1 | 5.96:1 |
+| warning-strong / card | 8.79:1 | 6.81:1 |
+| destructive / card | 6.04:1 | 6.47:1 |
+| destructive-fg / destructive | 6.03:1 | 6.19:1 |
+| success-fg / success | 10.38:1 | 5.35:1 |
+
+**`--destructive` and `--success-foreground` are retuned from stock shadcn.**
+The stock dark `--destructive` (`0 62.8% 30.6%`) is a fill colour, but this
+codebase uses `text-destructive` in 606 places, where it rendered at **1.99:1**
+— error text you could not read. Both themes now carry a value that satisfies
+the text duty *and* the fill duty at once, verified against all 33 card surfaces
+the theme system can produce. Likewise `--success-foreground` was white on a
+bright mint at 1.91:1; in dark it is near-black.
 
 ## Shell
 
@@ -192,9 +220,19 @@ Geometry is inherited from nexus on purpose — 64px rail, 240px panel, 56px
 topbar — so a tenant switching layouts keeps their spatial muscle memory. What
 changes is the skin.
 
-- **Identity appears once.** Avatar and notifications live at the foot of the
-  rail; the topbar carries only context (breadcrumbs, search, page actions).
-  Theme and language switchers belong in the account menu.
+- **Identity appears once.** Avatar, notifications, theme and language all live
+  in one cluster at the foot of the rail; the topbar carries only context
+  (breadcrumbs, search, page actions). Theme and language are preferences about
+  the user, not about the page — putting them with the user is what lets the
+  topbar stay context-only without losing the controls entirely.
+- **The panel takes a column only when there is room for one.** Below
+  `SCRIPE_PANEL_BREAKPOINT` (900px) it lifts out of the grid and overlays the
+  content with a scrim, dismissed by the scrim or Escape. A 240px column on a
+  360px phone leaves the content field ~56px wide, so "collapse it and let the
+  user re-open it" is not a mobile answer — re-opening is what breaks.
+- **The rail scrolls its own nav list.** A workspace with many root items must
+  never push the pin zone or the identity cluster past the fold.
+- **The skip link is the first tab stop.** Always in the DOM, visible on focus.
 - **The pin zone.** Inside a module workspace the admin workspace auto-pins at
   the top of the pin zone as the way back, shown only when the user can reach
   it and not user-removable. User pins follow in the backend's `pinSortOrder` —
@@ -206,6 +244,11 @@ changes is the skin.
 `stat-card`, `page-header` and `empty-state` are in `@core/ui`. Reach for them
 before writing a KPI, a page heading or a "nothing here" state — each of those
 had been re-implemented up to ten times with incompatible props.
+
+**Status: available, adoption pending.** They currently have no callers. The
+props are a union of the ten local variants they replace, so adoption is a
+per-view swap, but it is a real migration and has not been done — do not read
+this section as a description of the codebase today.
 
 `EmptyState` takes an action slot because an empty state that only says "no
 data" wastes the moment the user is most willing to act.

@@ -88,7 +88,7 @@ export default function NotAuthorizedView() {
                 }}
                 variant="default"
                 size="lg"
-                className="group relative z-30 w-full cursor-pointer transition-all duration-300 hover:shadow-[0_0_15px_rgba(var(--destructive),0.5)]"
+                className="group relative z-30 w-full cursor-pointer transition-all duration-300 hover:shadow-[0_0_15px_hsl(var(--destructive)/0.5)]"
                 type="button"
               >
                 {language == "en" ? (

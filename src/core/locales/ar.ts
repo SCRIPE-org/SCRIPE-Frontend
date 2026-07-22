@@ -29,6 +29,7 @@ export const ar = {
     breadcrumb: "مسار التنقل",
     appLauncher: "مشغّل التطبيقات",
     togglePanel: "طيّ اللوحة",
+    skipToContent: "تخطٍّ إلى المحتوى",
     backTo: "العودة إلى",
     search: "ابحث أو انتقل…",
     dashboard: "لوحة التحكم",
