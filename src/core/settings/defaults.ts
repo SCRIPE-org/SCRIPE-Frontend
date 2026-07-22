@@ -7,10 +7,14 @@
 import type { Settings } from "./types";
 
 export const defaultSettings: Settings = {
-  colorTheme: "scripe",
+  // Pre-EDGE colour defaults, restored at the product owner's request when the
+  // scripe/EDGE design pass was reverted. The "scripe" colour and background
+  // themes still exist as selectable options; they are just no longer the
+  // platform default.
+  colorTheme: "blue",
   secondaryColorTheme: "indigo",
-  lightBackgroundTheme: "scripe",
-  darkBackgroundTheme: "scripe",
+  lightBackgroundTheme: "default",
+  darkBackgroundTheme: "slate",
   shadowIntensity: "moderate",
   gradientDirection: "to-br",
   lightGradientTheme: "none",
