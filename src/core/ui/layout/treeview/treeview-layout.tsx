@@ -91,7 +91,7 @@ function TreeNode({
         {Icon ? (
           <Icon className="h-4 w-4 shrink-0" />
         ) : hasChildren ? (
-          <Folder className="h-4 w-4 shrink-0 text-amber-500" />
+          <Folder className="h-4 w-4 shrink-0 text-warning" />
         ) : (
           <FileText className="h-4 w-4 shrink-0" />
         )}

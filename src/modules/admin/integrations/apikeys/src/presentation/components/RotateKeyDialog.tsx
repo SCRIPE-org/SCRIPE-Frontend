@@ -27,7 +27,7 @@ export function RotateKeyDialog({ rotatedKey, onClose }: RotateKeyDialogProps) {
     <Dialog open={!!rotatedKey} onOpenChange={open => { if (!open) onClose(); }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-950/30 text-amber-600 mb-2">
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-warning/15 text-warning mb-2">
             <ShieldAlert className="h-5 w-5" />
           </div>
           <DialogTitle className="text-center">
@@ -41,7 +41,7 @@ export function RotateKeyDialog({ rotatedKey, onClose }: RotateKeyDialogProps) {
         <div className="flex items-center space-x-2 border rounded-lg p-3 bg-muted/30 font-mono text-xs overflow-x-auto select-all">
           <code className="flex-1 select-all break-all">{rotatedKey?.plainTextKey}</code>
           <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-foreground shrink-0" onClick={handleCopy}>
-            {copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
+            {copied ? <Check className="h-4 w-4 text-success" /> : <Copy className="h-4 w-4" />}
           </Button>
         </div>
 

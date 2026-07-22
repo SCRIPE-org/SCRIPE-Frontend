@@ -113,7 +113,7 @@ export function OAuthAppsView() {
         </Card>
       ) : vm.items.length === 0 ? (
         <Card className="flex flex-col items-center justify-center rounded-2xl border border-dashed bg-muted/5 p-12 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-primary/20 bg-primary/10 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-primary/20 bg-primary/10 shadow-[0_0_15px_hsl(var(--primary)/0.1)]">
             <AppWindow className="h-8 w-8 text-primary" />
           </div>
           <h3 className="text-lg font-bold tracking-tight text-foreground">

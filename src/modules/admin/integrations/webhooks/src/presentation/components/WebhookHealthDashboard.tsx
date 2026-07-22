@@ -43,8 +43,8 @@ export function WebhookHealthDashboard({ summary, isLoading }: WebhookHealthDash
       value: `${summary.activeEndpoints}`,
       sub: `${summary.disabledEndpoints} disabled`,
       icon: Radio,
-      color: "text-blue-600 dark:text-blue-400",
-      bg: "bg-blue-50 dark:bg-blue-950/30",
+      color: "text-info",
+      bg: "bg-info/10",
     },
     {
       label: t("webhooks.health.successRate") || "Success Rate",
@@ -53,24 +53,24 @@ export function WebhookHealthDashboard({ summary, isLoading }: WebhookHealthDash
       icon: TrendingUp,
       color:
         summary.systemSuccessRate >= 95
-          ? "text-emerald-600 dark:text-emerald-400"
+          ? "text-success"
           : summary.systemSuccessRate >= 80
-            ? "text-amber-600 dark:text-amber-400"
-            : "text-red-600 dark:text-red-400",
+            ? "text-warning"
+            : "text-destructive",
       bg:
         summary.systemSuccessRate >= 95
-          ? "bg-emerald-50 dark:bg-emerald-950/30"
+          ? "bg-success/10"
           : summary.systemSuccessRate >= 80
-            ? "bg-amber-50 dark:bg-amber-950/30"
-            : "bg-red-50 dark:bg-red-950/30",
+            ? "bg-warning/10"
+            : "bg-destructive/10",
     },
     {
       label: t("webhooks.health.last24h") || "Last 24h",
       value: summary.last24hTotal.toLocaleString(),
       sub: `${summary.last24hDelivered} ✓ · ${summary.last24hFailed} ✗`,
       icon: Activity,
-      color: "text-violet-600 dark:text-violet-400",
-      bg: "bg-violet-50 dark:bg-violet-950/30",
+      color: "text-primary",
+      bg: "bg-primary/10",
     },
     {
       label: t("webhooks.health.deadLettered") || "Dead Letters",
@@ -80,14 +80,8 @@ export function WebhookHealthDashboard({ summary, isLoading }: WebhookHealthDash
           ? t("webhooks.health.needsAttention") || "Needs attention"
           : t("webhooks.health.allClear") || "All clear",
       icon: Skull,
-      color:
-        summary.totalDeadLettered > 0
-          ? "text-red-600 dark:text-red-400"
-          : "text-emerald-600 dark:text-emerald-400",
-      bg:
-        summary.totalDeadLettered > 0
-          ? "bg-red-50 dark:bg-red-950/30"
-          : "bg-emerald-50 dark:bg-emerald-950/30",
+      color: summary.totalDeadLettered > 0 ? "text-destructive" : "text-success",
+      bg: summary.totalDeadLettered > 0 ? "bg-destructive/10" : "bg-success/10",
     },
     {
       label: t("webhooks.health.retrying") || "Retrying",
@@ -97,14 +91,8 @@ export function WebhookHealthDashboard({ summary, isLoading }: WebhookHealthDash
           ? `~${summary.avgLatencyMs.toFixed(0)}ms avg`
           : t("webhooks.health.idle") || "Idle",
       icon: RefreshCw,
-      color:
-        summary.totalRetrying > 0
-          ? "text-amber-600 dark:text-amber-400"
-          : "text-zinc-500 dark:text-zinc-400",
-      bg:
-        summary.totalRetrying > 0
-          ? "bg-amber-50 dark:bg-amber-950/30"
-          : "bg-zinc-50 dark:bg-zinc-800/30",
+      color: summary.totalRetrying > 0 ? "text-warning" : "text-muted-foreground",
+      bg: summary.totalRetrying > 0 ? "bg-warning/10" : "bg-muted",
     },
   ];
 
@@ -112,9 +100,9 @@ export function WebhookHealthDashboard({ summary, isLoading }: WebhookHealthDash
     <div className="space-y-2">
       {/* Alert banner for auto-disabled endpoints */}
       {summary.autoDisabledEndpoints > 0 && (
-        <div className="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/20">
-          <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
-          <p className="text-sm text-amber-800 dark:text-amber-300">
+        <div className="flex items-center gap-3 rounded-xl border border-warning/30 bg-warning/10 p-3">
+          <AlertTriangle className="h-4 w-4 shrink-0 text-warning" />
+          <p className="text-sm text-warning">
             <span className="font-medium">{summary.autoDisabledEndpoints}</span>{" "}
             {summary.autoDisabledEndpoints === 1
               ? t("webhooks.health.endpointAutoDisabled") ||

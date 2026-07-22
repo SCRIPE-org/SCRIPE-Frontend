@@ -483,37 +483,30 @@ function getNodeStyling(
 
     case "organic":
       return cn(
-        "bg-gradient-to-br from-green-50/50 via-background to-blue-50/50",
-        "dark:from-green-950/20 dark:via-background dark:to-blue-950/20",
-        "border border-green-200/30 dark:border-green-800/30",
-        "hover:border-green-300/50 dark:hover:border-green-700/50",
-        "hover:from-green-100/60 hover:via-background/95 hover:to-blue-100/60",
-        "dark:hover:from-green-900/30 dark:hover:via-background/95 dark:hover:to-blue-900/30",
+        "bg-gradient-to-br from-success/10 via-background to-info/10",
+        "border border-success/30",
+        "hover:border-success/50",
+        "hover:from-success/20 hover:via-background/95 hover:to-info/20",
         density.pad,
         "rounded-2xl",
         "shadow-sm hover:shadow-md",
         baseTransition,
         "transform hover:rotate-1 hover:scale-[1.01]",
         level === 0 ? "font-semibold" : "font-medium",
-        hasChildren && isOpen
-          ? "from-green-100/80 via-background/90 to-blue-100/80 dark:from-green-900/40 dark:via-background/90 dark:to-blue-900/40"
-          : ""
+        hasChildren && isOpen ? "from-success/25 via-background/90 to-info/25" : ""
       );
 
     case "corporate":
       return cn(
-        "bg-slate-50/50 dark:bg-slate-900/50",
-        "border-l-4 border-l-blue-600 border-y border-r border-slate-200 dark:border-slate-700",
-        "hover:bg-slate-100/60 dark:hover:bg-slate-800/60",
-        "hover:border-l-blue-500 hover:border-y-blue-200 hover:border-r-blue-200",
-        "dark:hover:border-y-blue-800 dark:hover:border-r-blue-800",
+        "bg-muted/50",
+        "border-l-4 border-l-info border-y border-r border-border",
+        "hover:bg-muted/70",
+        "hover:border-l-info/80 hover:border-y-info/30 hover:border-r-info/30",
         density.pad,
         "rounded-r-md",
         baseTransition,
-        level === 0
-          ? "font-bold text-slate-900 dark:text-slate-100 border-l-8"
-          : "font-medium text-slate-700 dark:text-slate-300",
-        hasChildren && isOpen ? "bg-blue-50/60 dark:bg-blue-950/30 border-l-blue-500" : ""
+        level === 0 ? "font-bold text-foreground border-l-8" : "font-medium text-muted-foreground",
+        hasChildren && isOpen ? "bg-info/10 border-l-info/80" : ""
       );
 
     case "cards":

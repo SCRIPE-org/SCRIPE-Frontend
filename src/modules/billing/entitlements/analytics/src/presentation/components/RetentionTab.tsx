@@ -17,14 +17,14 @@ function formatMonth(iso: string): string {
 }
 
 function getHeatmapStyle(rate: number): { bg: string; text: string } {
-  if (rate >= 90) return { bg: "bg-emerald-500", text: "text-white" };
-  if (rate >= 75) return { bg: "bg-emerald-400", text: "text-white" };
-  if (rate >= 60) return { bg: "bg-emerald-300", text: "text-emerald-900" };
-  if (rate >= 45) return { bg: "bg-teal-200", text: "text-teal-900" };
-  if (rate >= 30) return { bg: "bg-amber-200", text: "text-amber-900" };
-  if (rate >= 15) return { bg: "bg-orange-300", text: "text-orange-900" };
-  if (rate > 0) return { bg: "bg-rose-300", text: "text-rose-900" };
-  return { bg: "bg-rose-400", text: "text-white" };
+  if (rate >= 90) return { bg: "bg-success", text: "text-success-foreground" };
+  if (rate >= 75) return { bg: "bg-success/80", text: "text-success-foreground" };
+  if (rate >= 60) return { bg: "bg-success/60", text: "text-foreground" };
+  if (rate >= 45) return { bg: "bg-success/35", text: "text-foreground" };
+  if (rate >= 30) return { bg: "bg-warning/40", text: "text-foreground" };
+  if (rate >= 15) return { bg: "bg-warning-strong/45", text: "text-foreground" };
+  if (rate > 0) return { bg: "bg-destructive/40", text: "text-foreground" };
+  return { bg: "bg-destructive/60", text: "text-destructive-foreground" };
 }
 
 /**
@@ -112,13 +112,13 @@ export function RetentionTab({ cohortData }: RetentionTabProps) {
         <span className="font-semibold">{t("entitlements.analytics.retention.legend")}:</span>
         <div className="flex items-center gap-2">
           {[
-            { label: "0%", bg: "bg-rose-400" },
-            { label: "15%", bg: "bg-orange-300" },
-            { label: "30%", bg: "bg-amber-200" },
-            { label: "45%", bg: "bg-teal-200" },
-            { label: "60%", bg: "bg-emerald-300" },
-            { label: "75%", bg: "bg-emerald-400" },
-            { label: "90%+", bg: "bg-emerald-500" },
+            { label: "0%", bg: "bg-destructive/60" },
+            { label: "15%", bg: "bg-warning-strong/45" },
+            { label: "30%", bg: "bg-warning/40" },
+            { label: "45%", bg: "bg-success/35" },
+            { label: "60%", bg: "bg-success/60" },
+            { label: "75%", bg: "bg-success/80" },
+            { label: "90%+", bg: "bg-success" },
           ].map((step) => (
             <div key={step.label} className="flex items-center gap-1">
               <div className={`h-3 w-4 rounded ${step.bg}`} />

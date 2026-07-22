@@ -54,26 +54,26 @@ const CATEGORY_CONFIG: Record<
   recipient: {
     label: "Recipient",
     icon: <User className="h-3.5 w-3.5" />,
-    color: "text-blue-500",
-    bgColor: "bg-blue-500/10",
+    color: "text-info",
+    bgColor: "bg-info/10",
   },
   company: {
     label: "Company",
     icon: <Building2 className="h-3.5 w-3.5" />,
-    color: "text-emerald-500",
-    bgColor: "bg-emerald-500/10",
+    color: "text-success",
+    bgColor: "bg-success/10",
   },
   system: {
     label: "System",
     icon: <Settings className="h-3.5 w-3.5" />,
-    color: "text-purple-500",
-    bgColor: "bg-purple-500/10",
+    color: "text-primary",
+    bgColor: "bg-primary/10",
   },
   template: {
     label: "Template",
     icon: <FileText className="h-3.5 w-3.5" />,
-    color: "text-amber-500",
-    bgColor: "bg-amber-500/10",
+    color: "text-warning",
+    bgColor: "bg-warning/10",
   },
 };
 
@@ -373,7 +373,7 @@ export function VariableValuesPanel({
               className={cn(
                 "h-5 gap-1 text-[10px]",
                 allFilled &&
-                  "border-emerald-500/30 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                  "border-success/30 bg-success/15 text-success"
               )}
             >
               {allFilled ? (
@@ -462,9 +462,9 @@ export function VariableValuesPanel({
                                 </SelectContent>
                               </Select>
                               {hasValue ? (
-                                <CheckCircle2 className="h-3 w-3 text-emerald-500" />
+                                <CheckCircle2 className="h-3 w-3 text-success" />
                               ) : (
-                                <AlertCircle className="h-3 w-3 text-amber-400" />
+                                <AlertCircle className="h-3 w-3 text-warning" />
                               )}
                             </div>
                           </div>

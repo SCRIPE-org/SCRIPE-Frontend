@@ -58,8 +58,7 @@ export function TenantContextBanner() {
           // Use relative (in-flow) — NOT sticky — so Nexus flex layout can
           // correctly calculate remaining height without overlap.
           "relative z-10 flex w-full flex-shrink-0 items-center justify-center gap-3 border-b px-4 py-2",
-          "border-red-300 bg-red-100 text-red-800",
-          "dark:border-red-800 dark:bg-red-950/60 dark:text-red-200"
+          "border-destructive/30 bg-destructive/10 text-destructive"
         )}
       >
         <UserCheck className="h-4 w-4 flex-shrink-0" />
@@ -83,8 +82,7 @@ export function TenantContextBanner() {
           // Use relative (in-flow) — NOT sticky — so Nexus flex layout can
           // correctly calculate remaining height without overlap.
           "relative z-10 flex w-full flex-shrink-0 items-center justify-center gap-3 border-b px-4 py-2",
-          "border-blue-300 bg-blue-100 text-blue-800",
-          "dark:border-blue-800 dark:bg-blue-950/60 dark:text-blue-200"
+          "border-info/30 bg-info/10 text-info"
         )}
       >
         <Building2 className="h-4 w-4 flex-shrink-0" />
@@ -97,7 +95,7 @@ export function TenantContextBanner() {
         <Button
           variant="outline"
           size="sm"
-          className="h-7 border-blue-300 text-xs hover:bg-blue-200 dark:border-blue-700 dark:hover:bg-blue-800"
+          className="h-7 border-info/30 text-xs hover:bg-info/20"
           onClick={() => {
             exitTenantWorld();
             router.push("/tenants");

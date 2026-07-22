@@ -20,13 +20,13 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
 // ─── Category Colors ────────────────────────────────────────
 const CATEGORY_COLORS: Record<TemplateCategory, { bg: string; text: string }> = {
-  transactional: { bg: "bg-blue-500/15", text: "text-blue-600 dark:text-blue-400" },
-  marketing: { bg: "bg-pink-500/15", text: "text-pink-600 dark:text-pink-400" },
-  notification: { bg: "bg-purple-500/15", text: "text-purple-600 dark:text-purple-400" },
-  onboarding: { bg: "bg-emerald-500/15", text: "text-emerald-600 dark:text-emerald-400" },
-  security: { bg: "bg-red-500/15", text: "text-red-600 dark:text-red-400" },
-  billing: { bg: "bg-amber-500/15", text: "text-amber-600 dark:text-amber-400" },
-  custom: { bg: "bg-gray-500/15", text: "text-gray-600 dark:text-gray-400" },
+  transactional: { bg: "bg-info/15", text: "text-info" },
+  marketing: { bg: "bg-primary/15", text: "text-primary" },
+  notification: { bg: "bg-primary/15", text: "text-primary" },
+  onboarding: { bg: "bg-success/15", text: "text-success" },
+  security: { bg: "bg-destructive/15", text: "text-destructive" },
+  billing: { bg: "bg-warning/15", text: "text-warning" },
+  custom: { bg: "bg-muted", text: "text-muted-foreground" },
 };
 
 /**

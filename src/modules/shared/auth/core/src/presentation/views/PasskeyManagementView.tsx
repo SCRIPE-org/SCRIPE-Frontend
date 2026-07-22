@@ -66,11 +66,11 @@ export function PasskeyManagementView() {
           <div
             className="flex h-10 w-10 items-center justify-center rounded-xl"
             style={{
-              background: "rgba(239,68,68,0.1)",
-              border: "1px solid rgba(239,68,68,0.2)",
+              background: "hsl(var(--destructive) / 0.1)",
+              border: "1px solid hsl(var(--destructive) / 0.2)",
             }}
           >
-            <AlertTriangle className="h-5 w-5 text-red-500" />
+            <AlertTriangle className="h-5 w-5 text-destructive" />
           </div>
           <div>
             <h3
@@ -168,9 +168,9 @@ export function PasskeyManagementView() {
                 <div
                   className="rounded-lg border px-3 py-2 text-sm"
                   style={{
-                    borderColor: "rgba(239,68,68,0.2)",
-                    background: "rgba(239,68,68,0.05)",
-                    color: "#EF4444",
+                    borderColor: "hsl(var(--destructive) / 0.2)",
+                    background: "hsl(var(--destructive) / 0.05)",
+                    color: "hsl(var(--destructive))",
                   }}
                 >
                   {vm.registrationError}
@@ -225,9 +225,9 @@ export function PasskeyManagementView() {
         <div
           className="rounded-xl border px-4 py-3 text-sm"
           style={{
-            borderColor: "rgba(239,68,68,0.2)",
-            background: "rgba(239,68,68,0.05)",
-            color: "#EF4444",
+            borderColor: "hsl(var(--destructive) / 0.2)",
+            background: "hsl(var(--destructive) / 0.05)",
+            color: "hsl(var(--destructive))",
           }}
           role="alert"
         >
@@ -283,15 +283,17 @@ export function PasskeyManagementView() {
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
                 style={{
                   background: passkey.isDiscoverable
-                    ? "rgba(34,197,94,0.1)"
+                    ? "hsl(var(--success) / 0.1)"
                     : "rgba(168,85,247,0.1)",
-                  border: `1px solid ${passkey.isDiscoverable ? "rgba(34,197,94,0.2)" : "rgba(168,85,247,0.2)"}`,
+                  border: `1px solid ${passkey.isDiscoverable ? "hsl(var(--success) / 0.2)" : "rgba(168,85,247,0.2)"}`,
                 }}
               >
                 <Fingerprint
                   className="h-4 w-4"
                   style={{
-                    color: passkey.isDiscoverable ? "#22C55E" : "var(--sx-accent, #A855F7)",
+                    color: passkey.isDiscoverable
+                      ? "hsl(var(--success))"
+                      : "var(--sx-accent, #A855F7)",
                   }}
                 />
               </div>
@@ -318,7 +320,7 @@ export function PasskeyManagementView() {
                       disabled={vm.isRenaming}
                       className="h-7 w-7 p-0"
                     >
-                      <Check className="h-3.5 w-3.5 text-green-500" />
+                      <Check className="h-3.5 w-3.5 text-success" />
                     </Button>
                     <Button
                       variant="ghost"
@@ -326,7 +328,7 @@ export function PasskeyManagementView() {
                       onClick={vm.cancelRename}
                       className="h-7 w-7 p-0"
                     >
-                      <X className="h-3.5 w-3.5 text-red-500" />
+                      <X className="h-3.5 w-3.5 text-destructive" />
                     </Button>
                   </div>
                 ) : (
@@ -352,8 +354,8 @@ export function PasskeyManagementView() {
                         <span
                           className="ml-1 rounded px-1.5 py-0.5 text-[10px] font-medium"
                           style={{
-                            background: "rgba(234,179,8,0.1)",
-                            color: "#EAB308",
+                            background: "hsl(var(--warning) / 0.1)",
+                            color: "hsl(var(--warning))",
                           }}
                         >
                           {t("auth.passkey.neverUsed") || "Never used"}
@@ -383,7 +385,7 @@ export function PasskeyManagementView() {
                     className="h-8 w-8 p-0"
                     title={t("auth.passkey.delete") || "Delete"}
                   >
-                    <Trash2 className="h-3.5 w-3.5 text-red-500" />
+                    <Trash2 className="h-3.5 w-3.5 text-destructive" />
                   </Button>
                 </div>
               )}

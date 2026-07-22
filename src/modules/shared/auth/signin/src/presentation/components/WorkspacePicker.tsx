@@ -154,7 +154,7 @@ export function WorkspacePicker({
                             </span>
                           )}
                           {!ws.isActivated && (
-                            <span className="flex items-center gap-1 rounded bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-600 dark:text-amber-400">
+                            <span className="flex items-center gap-1 rounded bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-warning">
                               <Clock size={10} aria-hidden />
                               {t("auth.workspacePicker.setupPending") || "Setup pending"}
                             </span>

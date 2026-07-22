@@ -443,13 +443,13 @@ export function EditionGatedControl({
       <div className="pointer-events-none select-none opacity-30 blur-[1px]">{children}</div>
       {/* Upgrade overlay */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-amber-300/30 bg-amber-50/90 px-6 py-4 shadow-lg backdrop-blur-sm dark:border-amber-600/30 dark:bg-amber-950/90">
-          <Lock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-          <span className="text-sm font-semibold text-amber-800 dark:text-amber-200">
+        <div className="flex flex-col items-center gap-2 rounded-xl border border-warning/30 bg-warning/10 px-6 py-4 shadow-lg backdrop-blur-sm">
+          <Lock className="h-5 w-5 text-warning" />
+          <span className="text-sm font-semibold text-warning">
             {requiredEdition ? `${requiredEdition} Edition Required` : "Upgrade Required"}
           </span>
           {upgradePrompt && (
-            <span className="text-center text-xs text-amber-600 dark:text-amber-400">
+            <span className="text-center text-xs text-warning">
               {upgradePrompt}
             </span>
           )}

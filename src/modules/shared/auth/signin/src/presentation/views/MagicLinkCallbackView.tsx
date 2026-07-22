@@ -59,8 +59,8 @@ export function MagicLinkCallbackView() {
 
           {vm.state === "success" && (
             <div className="sx-pop flex flex-col items-center gap-5">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10">
-                <CheckCircle className="h-7 w-7 text-emerald-500" aria-hidden="true" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-success/10">
+                <CheckCircle className="h-7 w-7 text-success" aria-hidden="true" />
               </div>
               <div className="space-y-1">
                 <h1 className="text-xl font-semibold" style={{ color: "var(--sx-text)" }}>
@@ -75,8 +75,8 @@ export function MagicLinkCallbackView() {
 
           {vm.state === "error" && (
             <div className="flex flex-col items-center gap-6">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10">
-                <AlertTriangle className="h-7 w-7 text-amber-500" aria-hidden="true" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-warning/10">
+                <AlertTriangle className="h-7 w-7 text-warning" aria-hidden="true" />
               </div>
               <div className="space-y-1.5">
                 <h1 className="text-xl font-semibold" style={{ color: "var(--sx-text)" }}>

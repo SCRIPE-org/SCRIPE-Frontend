@@ -26,26 +26,22 @@ const STATUS_CONFIG: Record<
   Pending: {
     label: "Pending",
     icon: Clock,
-    className:
-      "bg-zinc-50 text-zinc-600 border-zinc-200 dark:bg-zinc-800/30 dark:text-zinc-400 dark:border-zinc-700",
+    className: "bg-muted text-muted-foreground border-border",
   },
   Delivered: {
     label: "Delivered",
     icon: CheckCircle2,
-    className:
-      "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800",
+    className: "bg-success/10 text-success border-success/30",
   },
   Retrying: {
     label: "Retrying",
     icon: RefreshCw,
-    className:
-      "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800",
+    className: "bg-warning/10 text-warning border-warning/30",
   },
   DeadLettered: {
     label: "Dead Letter",
     icon: Skull,
-    className:
-      "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800",
+    className: "bg-destructive/10 text-destructive border-destructive/30",
   },
 };
 

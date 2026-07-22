@@ -1009,8 +1009,8 @@ function ComponentSpecificProps({
                   className={cn(
                     "text-lg transition-colors",
                     star <= ((props.rating as number) || 0)
-                      ? "text-amber-400"
-                      : "text-muted-foreground/30 hover:text-amber-300"
+                      ? "text-warning"
+                      : "text-muted-foreground/30 hover:text-warning/70"
                   )}
                 >
                   ★

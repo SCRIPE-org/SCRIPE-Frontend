@@ -24,14 +24,14 @@ export function SuccessStep({ vm }: SuccessStepProps) {
       <div
         className="flex h-16 w-16 items-center justify-center rounded-2xl"
         style={{
-          background: "rgba(16,185,129,0.12)",
-          border: "1px solid rgba(16,185,129,0.25)",
+          background: "hsl(var(--success) / 0.12)",
+          border: "1px solid hsl(var(--success) / 0.25)",
         }}
       >
         {vm.method === "magic-link" ? (
-          <Mail className="h-7 w-7 text-emerald-500" aria-hidden="true" />
+          <Mail className="h-7 w-7 text-success" aria-hidden="true" />
         ) : (
-          <CheckCircle className="h-7 w-7 text-emerald-500" aria-hidden="true" />
+          <CheckCircle className="h-7 w-7 text-success" aria-hidden="true" />
         )}
       </div>
       <div className="space-y-1.5">

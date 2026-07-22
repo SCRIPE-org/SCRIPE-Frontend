@@ -41,7 +41,7 @@ export function TestPingButton({ onTest, isTesting, testResult, onDismiss }: Tes
           loading={isTesting}
           className="gap-1.5"
         >
-          {!isTesting && <Zap className="h-4 w-4 text-amber-500" />}
+          {!isTesting && <Zap className="h-4 w-4 text-warning" />}
           {isTesting
             ? t("webhooks.testing") || "Testing..."
             : t("webhooks.testPing") || "Test Ping"}
@@ -53,9 +53,9 @@ export function TestPingButton({ onTest, isTesting, testResult, onDismiss }: Tes
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               {testResult.isSuccess ? (
-                <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                <CheckCircle2 className="h-5 w-5 text-success" />
               ) : (
-                <XCircle className="h-5 w-5 text-red-500" />
+                <XCircle className="h-5 w-5 text-destructive" />
               )}
               <span className="text-sm font-semibold">
                 {testResult.isSuccess
@@ -73,8 +73,8 @@ export function TestPingButton({ onTest, isTesting, testResult, onDismiss }: Tes
                   variant="outline"
                   className={`mt-0.5 font-mono text-xs ${
                     testResult.statusCode >= 200 && testResult.statusCode < 300
-                      ? "text-emerald-700 dark:text-emerald-400"
-                      : "text-red-700 dark:text-red-400"
+                      ? "text-success"
+                      : "text-destructive"
                   }`}
                 >
                   {testResult.statusCode}
@@ -96,7 +96,7 @@ export function TestPingButton({ onTest, isTesting, testResult, onDismiss }: Tes
                 <p className="mb-1 text-xs text-muted-foreground">
                   {t("webhooks.errorMessage") || "Error"}
                 </p>
-                <pre className="overflow-x-auto rounded border border-red-200 bg-red-50 p-2 text-xs dark:border-red-800 dark:bg-red-950/20">
+                <pre className="overflow-x-auto rounded border border-destructive/30 bg-destructive/10 p-2 text-xs">
                   {testResult.errorMessage}
                 </pre>
               </div>

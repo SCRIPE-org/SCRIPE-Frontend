@@ -3813,6 +3813,11 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   --success-foreground: 0 0% 100%;
   --warning: 43 96% 56%;
   --warning-foreground: 240 10% 4%;
+  /* Fourth step of the severity ramp. Some scales genuinely need
+     ok -> warn -> high -> critical; without this, amber and orange both
+     collapse into `warning` and a four-step ramp silently becomes three. */
+  --warning-strong: 27 96% 61%;
+  --warning-strong-foreground: 240 10% 4%;
   --info: 213 94% 68%;
   --info-foreground: 240 10% 4%;
 }
@@ -3821,6 +3826,8 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   --success-foreground: 0 0% 100%;
   --warning: 39 100% 27%; /* #8a5a00 — 5.93:1 on white */
   --warning-foreground: 0 0% 100%;
+  --warning-strong: 17 88% 34%; /* #a3320f — 6.6:1 on white */
+  --warning-strong-foreground: 0 0% 100%;
   --info: 226 75% 48%; /* #1d4ed8 */
   --info-foreground: 0 0% 100%;
 }

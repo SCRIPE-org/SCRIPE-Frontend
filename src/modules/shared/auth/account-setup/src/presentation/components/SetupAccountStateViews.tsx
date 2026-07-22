@@ -72,10 +72,10 @@ export function SetupSuccessView({ tokenData }: StateViewProps) {
   const { t } = useI18n();
   const router = useRouter();
   return (
-    <Card className="w-full max-w-md border-green-500/30 shadow-xl">
+    <Card className="w-full max-w-md border-success/30 shadow-xl">
       <CardContent className="flex flex-col items-center justify-center gap-4 py-12">
-        <div className="rounded-full bg-green-500/10 p-4">
-          <CheckCircle2 className="h-10 w-10 text-green-500" />
+        <div className="rounded-full bg-success/10 p-4">
+          <CheckCircle2 className="h-10 w-10 text-success" />
         </div>
         <h2 className="text-xl font-semibold text-foreground">
           {t("auth.accountSetup.successTitle")}
@@ -131,7 +131,7 @@ export function SetupErrorView({ errorMessage, onRetry }: StateViewProps) {
 export function PasswordCheck({ label, ok }: { label: string; ok: boolean }) {
   return (
     <div
-      className={`flex items-center gap-1.5 ${ok ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}`}
+      className={`flex items-center gap-1.5 ${ok ? "text-success" : "text-muted-foreground"}`}
     >
       {ok ? (
         <CheckCircle2 className="h-3 w-3" />

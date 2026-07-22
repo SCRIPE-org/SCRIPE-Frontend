@@ -93,7 +93,7 @@ export function RecycleBinView() {
               return (
                 <Badge
                   variant="destructive"
-                  className="border-orange-500/20 bg-orange-500/15 text-xs text-orange-600 hover:bg-orange-500/20"
+                  className="border-warning-strong/20 bg-warning-strong/15 text-xs text-warning-strong hover:bg-warning-strong/20"
                 >
                   {t("recycleBin.daysLeft", { days })}
                 </Badge>

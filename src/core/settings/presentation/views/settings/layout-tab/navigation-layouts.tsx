@@ -12,26 +12,26 @@ import { LayoutCategorySection, type LayoutOption } from "./shared";
 function NavigationPreview({ variant }: { variant: string }) {
   if (variant === "bottombar") {
     return (
-      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-slate-200/50 bg-white dark:border-slate-700/50 dark:bg-slate-900">
-        <div className="flex h-[10%] items-center border-b border-slate-200 bg-slate-50 px-2 dark:border-slate-700 dark:bg-slate-800">
+      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-border bg-card">
+        <div className="flex h-[10%] items-center border-b border-border bg-muted/50 px-2">
           <div className="h-2 w-2 rounded-full bg-primary" />
           <div className="flex-1" />
-          <div className="h-1 w-3 rounded-full bg-slate-300 dark:bg-slate-600" />
+          <div className="h-1 w-3 rounded-full bg-muted-foreground/30" />
         </div>
         <div className="flex-1 p-2">
-          <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-slate-200 dark:bg-slate-800" />
-          <div className="h-1 w-1/2 rounded-full bg-slate-100 dark:bg-slate-800/50" />
+          <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-muted-foreground/20" />
+          <div className="h-1 w-1/2 rounded-full bg-muted" />
         </div>
-        <div className="flex h-[16%] items-center justify-around border-t border-slate-200 bg-white px-4 dark:border-slate-700 dark:bg-slate-800">
+        <div className="flex h-[16%] items-center justify-around border-t border-border bg-card px-4">
           {[false, true, false, false, false].map((active, i) => (
             <div key={i} className="flex flex-col items-center gap-0.5">
               <div
                 className={cn(
                   "h-2 w-2 rounded",
-                  active ? "bg-primary" : "bg-slate-300 dark:bg-slate-600"
+                  active ? "bg-primary" : "bg-muted-foreground/30"
                 )}
               />
-              <div className="h-0.5 w-2 rounded-full bg-slate-200 dark:bg-slate-700" />
+              <div className="h-0.5 w-2 rounded-full bg-muted-foreground/20" />
             </div>
           ))}
         </div>
@@ -41,27 +41,27 @@ function NavigationPreview({ variant }: { variant: string }) {
 
   if (variant === "megamenu") {
     return (
-      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-slate-200/50 bg-white dark:border-slate-700/50 dark:bg-slate-900">
-        <div className="flex h-[12%] items-center gap-1 border-b border-slate-200 bg-slate-50 px-2 dark:border-slate-700 dark:bg-slate-800">
+      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-border bg-card">
+        <div className="flex h-[12%] items-center gap-1 border-b border-border bg-muted/50 px-2">
           <div className="h-2 w-2 rounded-full bg-primary" />
           <div className="flex-1" />
-          <div className="h-1 w-3 rounded-full bg-slate-300 dark:bg-slate-600" />
-          <div className="h-1 w-2 rounded-full bg-slate-300 dark:bg-slate-600" />
+          <div className="h-1 w-3 rounded-full bg-muted-foreground/30" />
+          <div className="h-1 w-2 rounded-full bg-muted-foreground/30" />
         </div>
-        <div className="h-[30%] border-b border-slate-200 bg-slate-50/80 p-1.5 dark:border-slate-700 dark:bg-slate-800/80">
+        <div className="h-[30%] border-b border-border bg-muted/50 p-1.5">
           <div className="grid h-full grid-cols-3 gap-1">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="space-y-0.5 rounded bg-white p-1 dark:bg-slate-700">
-                <div className="h-0.5 w-2/3 rounded-full bg-slate-400 dark:bg-slate-500" />
-                <div className="h-0.5 w-full rounded-full bg-slate-200 dark:bg-slate-600" />
-                <div className="h-0.5 w-4/5 rounded-full bg-slate-200 dark:bg-slate-600" />
+              <div key={i} className="space-y-0.5 rounded bg-card p-1">
+                <div className="h-0.5 w-2/3 rounded-full bg-muted-foreground/50" />
+                <div className="h-0.5 w-full rounded-full bg-muted-foreground/20" />
+                <div className="h-0.5 w-4/5 rounded-full bg-muted-foreground/20" />
               </div>
             ))}
           </div>
         </div>
         <div className="flex-1 p-2">
-          <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-slate-200 dark:bg-slate-800" />
-          <div className="h-1 w-1/2 rounded-full bg-slate-100 dark:bg-slate-800/50" />
+          <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-muted-foreground/20" />
+          <div className="h-1 w-1/2 rounded-full bg-muted" />
         </div>
       </div>
     );
@@ -69,21 +69,21 @@ function NavigationPreview({ variant }: { variant: string }) {
 
   if (variant === "breadcrumb") {
     return (
-      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-slate-200/50 bg-white dark:border-slate-700/50 dark:bg-slate-900">
-        <div className="flex h-[12%] items-center border-b border-slate-200 bg-slate-50 px-2 dark:border-slate-700 dark:bg-slate-800">
+      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-border bg-card">
+        <div className="flex h-[12%] items-center border-b border-border bg-muted/50 px-2">
           <div className="h-2 w-2 rounded-full bg-primary" />
           <div className="flex-1" />
         </div>
-        <div className="flex h-[10%] items-center gap-1 border-b border-slate-200 bg-white px-2 dark:border-slate-700 dark:bg-slate-800/50">
+        <div className="flex h-[10%] items-center gap-1 border-b border-border bg-card px-2">
           <div className="h-0.5 w-3 rounded-full bg-primary/40" />
-          <div className="h-0.5 w-1 rounded-full bg-slate-300" />
+          <div className="h-0.5 w-1 rounded-full bg-muted-foreground/30" />
           <div className="h-0.5 w-4 rounded-full bg-primary/40" />
-          <div className="h-0.5 w-1 rounded-full bg-slate-300" />
+          <div className="h-0.5 w-1 rounded-full bg-muted-foreground/30" />
           <div className="h-0.5 w-3 rounded-full bg-foreground/60" />
         </div>
         <div className="flex-1 p-2">
-          <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-slate-200 dark:bg-slate-800" />
-          <div className="h-1 w-1/2 rounded-full bg-slate-100 dark:bg-slate-800/50" />
+          <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-muted-foreground/20" />
+          <div className="h-1 w-1/2 rounded-full bg-muted" />
         </div>
       </div>
     );
@@ -91,36 +91,36 @@ function NavigationPreview({ variant }: { variant: string }) {
 
   if (variant === "ribbon") {
     return (
-      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-slate-200/50 bg-white dark:border-slate-700/50 dark:bg-slate-900">
-        <div className="flex h-[8%] items-end gap-1 bg-slate-50 px-2 dark:bg-slate-800">
+      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-border bg-card">
+        <div className="flex h-[8%] items-end gap-1 bg-muted/50 px-2">
           {[true, false, false].map((a, i) => (
             <div
               key={i}
               className={cn(
                 "h-[70%] w-5 rounded-t-sm",
-                a ? "bg-white dark:bg-slate-900" : "bg-slate-200 dark:bg-slate-700"
+                a ? "bg-card" : "bg-muted-foreground/20"
               )}
             />
           ))}
         </div>
-        <div className="flex h-[18%] items-center gap-1 border-b border-slate-200 bg-white px-1.5 dark:border-slate-700 dark:bg-slate-800/50">
+        <div className="flex h-[18%] items-center gap-1 border-b border-border bg-card px-1.5">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="flex flex-col items-center gap-0.5">
-              <div className="h-2 w-2 rounded bg-slate-200 dark:bg-slate-700" />
-              <div className="h-0.5 w-3 rounded-full bg-slate-300 dark:bg-slate-600" />
+              <div className="h-2 w-2 rounded bg-muted-foreground/20" />
+              <div className="h-0.5 w-3 rounded-full bg-muted-foreground/30" />
             </div>
           ))}
-          <div className="mx-0.5 h-3/4 w-px bg-slate-200 dark:bg-slate-700" />
+          <div className="mx-0.5 h-3/4 w-px bg-muted-foreground/20" />
           {[5, 6].map((i) => (
             <div key={i} className="flex flex-col items-center gap-0.5">
-              <div className="h-2 w-2 rounded bg-slate-200 dark:bg-slate-700" />
-              <div className="h-0.5 w-3 rounded-full bg-slate-300 dark:bg-slate-600" />
+              <div className="h-2 w-2 rounded bg-muted-foreground/20" />
+              <div className="h-0.5 w-3 rounded-full bg-muted-foreground/30" />
             </div>
           ))}
         </div>
         <div className="flex-1 p-2">
-          <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-slate-200 dark:bg-slate-800" />
-          <div className="h-1 w-1/2 rounded-full bg-slate-100 dark:bg-slate-800/50" />
+          <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-muted-foreground/20" />
+          <div className="h-1 w-1/2 rounded-full bg-muted" />
         </div>
       </div>
     );
@@ -128,12 +128,12 @@ function NavigationPreview({ variant }: { variant: string }) {
 
   if (variant === "treeview") {
     return (
-      <div className="flex aspect-[16/10] w-full overflow-hidden rounded-md border border-slate-200/50 bg-white dark:border-slate-700/50 dark:bg-slate-900">
-        <div className="w-[25%] border-r border-slate-200 bg-slate-50 p-1.5 pt-2 dark:border-slate-700 dark:bg-slate-800">
+      <div className="flex aspect-[16/10] w-full overflow-hidden rounded-md border border-border bg-card">
+        <div className="w-[25%] border-r border-border bg-muted/50 p-1.5 pt-2">
           <div className="space-y-1">
             <div className="flex items-center gap-0.5">
-              <div className="h-1 w-1 rounded-sm bg-slate-400" />
-              <div className="h-0.5 w-6 rounded-full bg-slate-400 dark:bg-slate-500" />
+              <div className="h-1 w-1 rounded-sm bg-muted-foreground/50" />
+              <div className="h-0.5 w-6 rounded-full bg-muted-foreground/50" />
             </div>
             <div className="ms-2 space-y-1">
               <div className="flex items-center gap-0.5">
@@ -141,19 +141,19 @@ function NavigationPreview({ variant }: { variant: string }) {
                 <div className="h-0.5 w-5 rounded-full bg-primary/60" />
               </div>
               <div className="flex items-center gap-0.5">
-                <div className="h-1 w-1 rounded-sm bg-slate-300 dark:bg-slate-600" />
-                <div className="h-0.5 w-4 rounded-full bg-slate-300 dark:bg-slate-600" />
+                <div className="h-1 w-1 rounded-sm bg-muted-foreground/30" />
+                <div className="h-0.5 w-4 rounded-full bg-muted-foreground/30" />
               </div>
             </div>
             <div className="flex items-center gap-0.5">
-              <div className="h-1 w-1 rounded-sm bg-slate-400" />
-              <div className="h-0.5 w-5 rounded-full bg-slate-400 dark:bg-slate-500" />
+              <div className="h-1 w-1 rounded-sm bg-muted-foreground/50" />
+              <div className="h-0.5 w-5 rounded-full bg-muted-foreground/50" />
             </div>
           </div>
         </div>
         <div className="flex-1 p-2">
-          <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-slate-200 dark:bg-slate-800" />
-          <div className="h-1 w-1/2 rounded-full bg-slate-100 dark:bg-slate-800/50" />
+          <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-muted-foreground/20" />
+          <div className="h-1 w-1/2 rounded-full bg-muted" />
         </div>
       </div>
     );
@@ -161,9 +161,9 @@ function NavigationPreview({ variant }: { variant: string }) {
 
   if (variant === "overlay") {
     return (
-      <div className="relative flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-slate-200/50 bg-white dark:border-slate-700/50 dark:bg-slate-900">
-        <div className="flex h-[12%] items-center border-b border-slate-200 bg-slate-50 px-2 dark:border-slate-700 dark:bg-slate-800">
-          <div className="h-2 w-2 rounded bg-slate-300 dark:bg-slate-600" />
+      <div className="relative flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-border bg-card">
+        <div className="flex h-[12%] items-center border-b border-border bg-muted/50 px-2">
+          <div className="h-2 w-2 rounded bg-muted-foreground/30" />
           <div className="flex-1" />
         </div>
         <div className="absolute inset-0 flex items-center justify-center bg-slate-900/80">

@@ -34,7 +34,7 @@ export function DeleteWebhookDialog({ open, onOpenChange, onConfirm }: DeleteWeb
         <AlertDialogFooter>
           <AlertDialogCancel>{t("common.cancel") || "Cancel"}</AlertDialogCancel>
           <AlertDialogAction
-            className="bg-red-600 hover:bg-red-700"
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             onClick={onConfirm}
           >
             {t("common.delete") || "Delete"}

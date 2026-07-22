@@ -191,12 +191,12 @@ export function SettingsView() {
         {settings.overrideControl.allowAdminOverride &&
           settings.overrideControl.allowedPaths &&
           settings.overrideControl.allowedPaths.length > 0 && (
-            <Alert className="border-amber-300/40 bg-amber-50/50 dark:border-amber-600/30 dark:bg-amber-950/20">
-              <ShieldAlert className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-              <AlertTitle className="text-amber-700 dark:text-amber-300">
+            <Alert className="border-warning/40 bg-warning/10">
+              <ShieldAlert className="h-4 w-4 text-warning" />
+              <AlertTitle className="text-warning">
                 {t("customizer.dashboard.overridePaths")}
               </AlertTitle>
-              <AlertDescription className="text-sm text-amber-600/80 dark:text-amber-400/80">
+              <AlertDescription className="text-sm text-warning/80">
                 {t("customizer.dashboard.overridePathsDesc")}
               </AlertDescription>
             </Alert>

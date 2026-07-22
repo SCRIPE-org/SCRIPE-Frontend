@@ -72,20 +72,19 @@ export function WebhooksView() {
                 labelKey: "webhooks.scope.platformOnly",
                 fallback: "Platform Only",
                 variant: "default",
-                className: "bg-blue-600 hover:bg-blue-700 text-white",
+                className: "bg-info hover:bg-info/90 text-info-foreground",
               },
               all_tenants: {
                 labelKey: "webhooks.scope.allTenants",
                 fallback: "All Tenants",
                 variant: "default",
-                className: "bg-purple-600 hover:bg-purple-700 text-white",
+                className: "bg-primary hover:bg-primary/90 text-primary-foreground",
               },
               tenant_with_children: {
                 labelKey: "webhooks.scope.tenantWithChildren",
                 fallback: "Tenant + Children",
                 variant: "secondary",
-                className:
-                  "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300",
+                className: "bg-info/15 text-info",
               },
               tenant_only: {
                 labelKey: "webhooks.scope.tenantOnly",
@@ -130,7 +129,7 @@ export function WebhooksView() {
                 : t("webhooks.eventCountPlural", { count }) || `${count} events`;
             return (
               <div className="flex items-center gap-1.5">
-                <Zap className="h-3.5 w-3.5 text-amber-500" />
+                <Zap className="h-3.5 w-3.5 text-warning" />
                 <Badge variant="outline" className="text-xs font-medium">
                   {label}
                 </Badge>
@@ -154,13 +153,13 @@ export function WebhooksView() {
             }
             const rate = item.successRate;
             const color =
-              rate >= 95 ? "text-emerald-600" : rate >= 80 ? "text-amber-600" : "text-red-600";
+              rate >= 95 ? "text-success" : rate >= 80 ? "text-warning" : "text-destructive";
             return (
               <div className="flex items-center gap-2">
                 <div className="h-1.5 w-16 overflow-hidden rounded-full bg-muted">
                   <div
                     className={`h-full rounded-full ${
-                      rate >= 95 ? "bg-emerald-500" : rate >= 80 ? "bg-amber-500" : "bg-red-500"
+                      rate >= 95 ? "bg-success" : rate >= 80 ? "bg-warning" : "bg-destructive"
                     }`}
                     style={{ width: `${Math.min(rate, 100)}%` }}
                   />
@@ -211,7 +210,7 @@ export function WebhooksView() {
           label: tFn("common.delete") || "Delete",
           onClick: (item: WebhookSubscriptionListItem) => handleDeleteFn?.(item),
           variant: "ghost" as const,
-          className: "text-red-600 hover:text-red-700",
+          className: "text-destructive hover:text-destructive/90",
           icon: <Trash2 className="h-4 w-4" />,
           requiredPermission: "webhooks:delete",
           confirmTitle: tFn("webhooks.deleteConfirmTitle") || "Delete Webhook",

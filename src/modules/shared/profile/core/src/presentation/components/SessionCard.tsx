@@ -117,7 +117,7 @@ export function SessionCard({ session, onRevoke, isRevoking }: SessionCardProps)
       className={cn(
         "rounded-xl border p-4 transition-colors",
         session.isCurrent
-          ? "border-emerald-500/20 bg-emerald-500/5"
+          ? "border-success/20 bg-success/5"
           : "border-border/40 bg-card hover:border-border"
       )}
     >
@@ -127,7 +127,7 @@ export function SessionCard({ session, onRevoke, isRevoking }: SessionCardProps)
             className={cn(
               "rounded-lg p-2",
               session.isCurrent
-                ? "bg-emerald-500/10 text-emerald-400"
+                ? "bg-success/10 text-success"
                 : "bg-muted text-muted-foreground"
             )}
           >
@@ -137,7 +137,7 @@ export function SessionCard({ session, onRevoke, isRevoking }: SessionCardProps)
             <div className="flex items-center gap-2">
               <h4 className="text-sm font-medium text-foreground">{details.title}</h4>
               {session.isCurrent && (
-                <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                <span className="rounded-full border border-success/20 bg-success/10 px-2 py-0.5 text-[10px] font-bold text-success">
                   {t("profile.sessions.current")}
                 </span>
               )}

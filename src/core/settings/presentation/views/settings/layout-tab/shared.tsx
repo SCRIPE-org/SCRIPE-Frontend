@@ -56,7 +56,7 @@ export function LayoutCard({
       <div
         className={cn(
           "mb-3 overflow-hidden rounded-lg transition-all duration-300",
-          "ring-1 ring-slate-200/50 dark:ring-slate-700/50",
+          "ring-1 ring-border",
           isSelected && "ring-primary/30"
         )}
       >

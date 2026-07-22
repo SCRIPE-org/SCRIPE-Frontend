@@ -92,7 +92,7 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
               <div
                 className={`flex h-7 w-7 items-center justify-center rounded-full border font-mono transition-all duration-200 ${
                   currentStep === s.id
-                    ? "border-primary bg-primary text-primary-foreground shadow-[0_0_10px_rgba(168,85,247,0.3)]"
+                    ? "border-primary bg-primary text-primary-foreground shadow-[0_0_10px_hsl(var(--primary)/0.3)]"
                     : currentStep > s.id
                       ? "border-primary/30 bg-primary/10 text-primary"
                       : "border-transparent bg-muted text-muted-foreground"

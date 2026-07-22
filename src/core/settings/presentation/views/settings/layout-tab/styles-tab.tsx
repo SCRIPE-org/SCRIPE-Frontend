@@ -21,7 +21,7 @@ export function StylesTab() {
       name: t("cardStyle.glass"),
       class: "bg-white/10 backdrop-blur border border-white/20",
     },
-    { value: "solid", name: t("cardStyle.solid"), class: "bg-gray-100 border-0" },
+    { value: "solid", name: t("cardStyle.solid"), class: "bg-muted border-0" },
     { value: "bordered", name: t("cardStyle.bordered"), class: "border-2 bg-card" },
     {
       value: "elevated",

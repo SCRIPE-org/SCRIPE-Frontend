@@ -74,44 +74,38 @@ export function WebhookAnalyticsChart({ analytics, isLoading }: WebhookAnalytics
       icon: TrendingUp,
       color:
         analytics.successRate >= 95
-          ? "text-emerald-600 dark:text-emerald-400"
+          ? "text-success"
           : analytics.successRate >= 80
-            ? "text-amber-600 dark:text-amber-400"
-            : "text-red-600 dark:text-red-400",
+            ? "text-warning"
+            : "text-destructive",
       bg:
         analytics.successRate >= 95
-          ? "bg-emerald-50 dark:bg-emerald-950/30"
+          ? "bg-success/10"
           : analytics.successRate >= 80
-            ? "bg-amber-50 dark:bg-amber-950/30"
-            : "bg-red-50 dark:bg-red-950/30",
+            ? "bg-warning/10"
+            : "bg-destructive/10",
     },
     {
       label: t("webhooks.analytics.avgLatency") || "Avg Latency",
       value: analytics.avgLatencyMs > 0 ? `${analytics.avgLatencyMs.toFixed(0)}ms` : "—",
       icon: Clock,
-      color: "text-blue-600 dark:text-blue-400",
-      bg: "bg-blue-50 dark:bg-blue-950/30",
+      color: "text-info",
+      bg: "bg-info/10",
     },
     {
       label: t("webhooks.analytics.p95Latency") || "P95 Latency",
       value: analytics.p95LatencyMs > 0 ? `${analytics.p95LatencyMs.toFixed(0)}ms` : "—",
       icon: BarChart3,
-      color: "text-violet-600 dark:text-violet-400",
-      bg: "bg-violet-50 dark:bg-violet-950/30",
+      color: "text-primary",
+      bg: "bg-primary/10",
     },
     {
       label: t("webhooks.analytics.deadLettered") || "Dead Lettered",
       value: analytics.deadLetteredCount.toLocaleString(),
       sub: analytics.retryingCount > 0 ? `${analytics.retryingCount} retrying` : undefined,
       icon: analytics.deadLetteredCount > 0 ? Skull : RefreshCw,
-      color:
-        analytics.deadLetteredCount > 0
-          ? "text-red-600 dark:text-red-400"
-          : "text-zinc-500 dark:text-zinc-400",
-      bg:
-        analytics.deadLetteredCount > 0
-          ? "bg-red-50 dark:bg-red-950/30"
-          : "bg-zinc-50 dark:bg-zinc-800/30",
+      color: analytics.deadLetteredCount > 0 ? "text-destructive" : "text-muted-foreground",
+      bg: analytics.deadLetteredCount > 0 ? "bg-destructive/10" : "bg-muted",
     },
   ];
 

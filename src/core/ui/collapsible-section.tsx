@@ -72,7 +72,7 @@ export function CollapsibleSection({
         {count != null && (
           <span className="shrink-0 text-[9px] tabular-nums text-muted-foreground/60">{count}</span>
         )}
-        {isLocked && <Lock className="h-3 w-3 shrink-0 text-amber-500" />}
+        {isLocked && <Lock className="h-3 w-3 shrink-0 text-warning" />}
         <Arrow className="h-3 w-3 shrink-0 text-muted-foreground" />
       </button>
       {isOpen && <div className="space-y-3 px-0.5 pb-3">{children}</div>}

@@ -90,7 +90,7 @@ export function NavigationHeader({
         "header-shadow fixed left-0 right-0 top-0 z-30 h-16 border-b px-6",
         animationClass,
         cardStyle === "glass"
-          ? "border-white/10 bg-white/5 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 dark:shadow-[0_8px_32px_0_rgba(255,255,255,0.1)]"
+          ? "border-border/50 bg-foreground/5 shadow-[0_8px_32px_0_hsl(var(--foreground)/0.15)] backdrop-blur-xl"
           : cardStyle === "solid"
             ? "border-border bg-card backdrop-blur-sm"
             : cardStyle === "bordered"

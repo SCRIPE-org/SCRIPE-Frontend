@@ -640,27 +640,27 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     const lowerTitle = title.toLowerCase();
     
     if (res.includes("staff") || res.includes("hrms") || lowerTitle.includes("staff") || lowerTitle.includes("hrms")) {
-      return <Users className="h-6 w-6 text-violet-500 dark:text-violet-400" />;
+      return <Users className="h-6 w-6 text-primary" />;
     }
     if (res.includes("party") || lowerTitle.includes("party") || lowerTitle.includes("parties")) {
-      return <Users className="h-6 w-6 text-emerald-500 dark:text-emerald-400" />;
+      return <Users className="h-6 w-6 text-success" />;
     }
     if (res.includes("work") || res.includes("task") || lowerTitle.includes("work") || lowerTitle.includes("task") || lowerTitle.includes("todo")) {
-      return <ListTodo className="h-6 w-6 text-sky-500 dark:text-sky-400" />;
+      return <ListTodo className="h-6 w-6 text-info" />;
     }
     if (res.includes("custom") || lowerTitle.includes("custom") || lowerTitle.includes("field")) {
-      return <Sliders className="h-6 w-6 text-amber-500 dark:text-amber-400" />;
+      return <Sliders className="h-6 w-6 text-warning" />;
     }
     if (res.includes("analytics") || lowerTitle.includes("analytics") || lowerTitle.includes("metric") || lowerTitle.includes("event")) {
-      return <Activity className="h-6 w-6 text-rose-500 dark:text-rose-400" />;
+      return <Activity className="h-6 w-6 text-destructive" />;
     }
     if (res.includes("compliance") || lowerTitle.includes("compliance") || lowerTitle.includes("consent") || lowerTitle.includes("gdpr")) {
-      return <ShieldCheck className="h-6 w-6 text-teal-500 dark:text-teal-400" />;
+      return <ShieldCheck className="h-6 w-6 text-success" />;
     }
     if (res.includes("entitlement") || lowerTitle.includes("entitlement") || lowerTitle.includes("quota") || lowerTitle.includes("plan") || lowerTitle.includes("billing")) {
-      return <Key className="h-6 w-6 text-indigo-500 dark:text-indigo-400" />;
+      return <Key className="h-6 w-6 text-info" />;
     }
-    return <FileText className="h-6 w-6 text-slate-500 dark:text-slate-400" />;
+    return <FileText className="h-6 w-6 text-muted-foreground" />;
   };
 
   // Keyboard shortcut listener for power users (Alex)

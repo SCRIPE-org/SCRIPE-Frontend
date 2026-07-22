@@ -74,7 +74,7 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
             <div
               className={cn(
                 "h-full transition-all duration-300 ease-in-out",
-                strength < 50 ? "bg-red-500" : strength < 75 ? "bg-yellow-500" : "bg-green-500"
+                strength < 50 ? "bg-destructive" : strength < 75 ? "bg-warning" : "bg-success"
               )}
               style={{ width: `${strength}%` }}
             />

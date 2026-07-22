@@ -206,7 +206,7 @@ export function ImageUploadField({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 shrink-0 text-red-500 hover:text-red-600"
+            className="h-8 w-8 shrink-0 text-destructive hover:text-destructive/80"
             onClick={handleRemove}
             disabled={disabled || isUploading}
           >

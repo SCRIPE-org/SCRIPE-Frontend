@@ -60,7 +60,7 @@ export function GlassmorphismLayout({ children }: GlassmorphismLayoutProps) {
       {/* ── Animated Gradient Mesh Background ── */}
       <div className="fixed inset-0 -z-10">
         {/* Base gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 via-blue-500/15 to-teal-500/20 dark:from-violet-900/30 dark:via-blue-900/20 dark:to-teal-900/30" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-info/15 to-success/20" />
         {/* Moving orbs */}
         <div
           className="absolute h-[500px] w-[500px] rounded-full opacity-30 blur-3xl dark:opacity-20"

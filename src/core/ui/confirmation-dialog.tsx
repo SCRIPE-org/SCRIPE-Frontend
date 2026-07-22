@@ -37,28 +37,28 @@ export interface ConfirmationDialogProps {
 const variantConfig = {
   destructive: {
     icon: Trash2,
-    iconColor: "text-red-500",
+    iconColor: "text-destructive",
     confirmVariant: "destructive" as const,
     title: "Delete Item",
     description: "Are you sure you want to delete this item? This action cannot be undone.",
   },
   warning: {
     icon: AlertTriangle,
-    iconColor: "text-yellow-500",
+    iconColor: "text-warning",
     confirmVariant: "default" as const,
     title: "Warning",
     description: "Please confirm this action.",
   },
   info: {
     icon: Info,
-    iconColor: "text-blue-500",
+    iconColor: "text-info",
     confirmVariant: "default" as const,
     title: "Information",
     description: "Please confirm this action.",
   },
   default: {
     icon: CheckCircle,
-    iconColor: "text-green-500",
+    iconColor: "text-success",
     confirmVariant: "default" as const,
     title: "Confirm Action",
     description: "Are you sure you want to proceed?",

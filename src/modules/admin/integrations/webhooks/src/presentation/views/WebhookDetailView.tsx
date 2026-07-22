@@ -140,7 +140,7 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
               </code>
               <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleCopyUrl}>
                 {copiedUrl ? (
-                  <Check className="h-3 w-3 text-emerald-500" />
+                  <Check className="h-3 w-3 text-success" />
                 ) : (
                   <Copy className="h-3 w-3" />
                 )}
@@ -177,7 +177,7 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
 
           <Button variant="outline" size="sm" onClick={vm.toggle} disabled={vm.isToggling}>
             {webhook.isActive ? (
-              <ToggleRight className="mr-1.5 h-4 w-4 text-emerald-500" />
+              <ToggleRight className="mr-1.5 h-4 w-4 text-success" />
             ) : (
               <ToggleLeft className="mr-1.5 h-4 w-4" />
             )}
@@ -194,7 +194,7 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
           <Button
             variant="outline"
             size="sm"
-            className="text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950/20"
+            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
             onClick={() => setDeleteDialogOpen(true)}
           >
             <Trash2 className="mr-1.5 h-4 w-4" />
@@ -205,13 +205,13 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
 
       {/* ─── Auto-disabled Warning ───────────────────────────── */}
       {isAutoDisabled && (
-        <div className="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950/20">
-          <AlertTriangle className="h-5 w-5 shrink-0 text-amber-600" />
+        <div className="flex items-center gap-3 rounded-xl border border-warning/30 bg-warning/10 p-4">
+          <AlertTriangle className="h-5 w-5 shrink-0 text-warning" />
           <div className="text-sm">
-            <p className="font-medium text-amber-800 dark:text-amber-300">
+            <p className="font-medium text-warning">
               {t("webhooks.autoDisabledTitle") || "Webhook Auto-Disabled"}
             </p>
-            <p className="text-amber-700 dark:text-amber-400">
+            <p className="text-warning">
               {t("webhooks.autoDisabledGeneric") ||
                 "This webhook was automatically disabled due to consecutive delivery failures. Click 'Activate' to re-enable."}
             </p>
@@ -256,7 +256,7 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <Zap className="h-4 w-4 text-amber-500" />
+                  <Zap className="h-4 w-4 text-warning" />
                   {t("webhooks.subscribedEvents") || "Subscribed Events"}
                 </CardTitle>
                 <CardDescription>
@@ -268,7 +268,7 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
                   {webhook.events.map((event) => (
                     <div key={event} className="flex flex-col items-start gap-0.5">
                       <Badge variant="outline" className="gap-1.5 px-2.5 py-1 text-xs">
-                        <Zap className="h-2.5 w-2.5 text-amber-500" />
+                        <Zap className="h-2.5 w-2.5 text-warning" />
                         {(t(`webhooks.eventNames.${event}`) || event) as string}
                       </Badge>
                       <span className="px-1 font-mono text-[10px] text-muted-foreground">
@@ -310,7 +310,7 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
                     </p>
                     <p
                       className={`text-sm font-medium ${
-                        webhook.consecutiveFailures > 0 ? "text-amber-600" : "text-emerald-600"
+                        webhook.consecutiveFailures > 0 ? "text-warning" : "text-success"
                       }`}
                     >
                       {webhook.consecutiveFailures}

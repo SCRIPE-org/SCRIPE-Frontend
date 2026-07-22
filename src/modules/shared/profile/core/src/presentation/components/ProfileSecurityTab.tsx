@@ -108,16 +108,16 @@ export function ProfileSecurityTab({
   return (
     <div className="space-y-6">
       {/* Passkeys Block */}
-      <div className="rounded-xl border border-border/80 bg-card/45 p-6 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-violet-500/20">
+      <div className="rounded-xl border border-border/80 bg-card/45 p-6 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-primary/20">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex gap-4">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-purple-500/30 bg-purple-500/10 text-purple-400">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-primary/30 bg-primary/10 text-primary">
               <Fingerprint className="h-5 w-5" />
             </div>
             <div>
               <h3 className="flex items-center gap-2 text-base font-bold text-foreground">
                 {t("profile.security.passkeys.sectionTitle")}
-                <span className="rounded-full border border-violet-500/35 bg-violet-500/10 px-2 py-0.5 text-[10px] font-bold text-violet-600 dark:text-violet-300">
+                <span className="rounded-full border border-primary/35 bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
                   {t("profile.security.passkeys.recommended")}
                 </span>
               </h3>
@@ -129,7 +129,7 @@ export function ProfileSecurityTab({
           <Button
             variant="outline"
             size="sm"
-            className="gap-1.5 self-start border-border text-foreground hover:bg-violet-600/10"
+            className="gap-1.5 self-start border-border text-foreground hover:bg-primary/10"
             onClick={() => {
               setNewPasskeyName("");
               setShowPasskeyRegister(true);
@@ -144,7 +144,7 @@ export function ProfileSecurityTab({
         {/* Passkeys List */}
         <div className="mt-5 space-y-2.5">
           {!passkeyVm.isWebAuthnSupported && (
-            <div className="flex items-start gap-2.5 rounded-xl border border-amber-500/15 bg-amber-500/5 p-4 text-xs text-amber-300">
+            <div className="flex items-start gap-2.5 rounded-xl border border-warning/15 bg-warning/5 p-4 text-xs text-warning">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
               <div>
                 <strong>{t("profile.security.passkeys.biometricNotSupported")}</strong>{" "}
@@ -171,10 +171,10 @@ export function ProfileSecurityTab({
             passkeyVm.passkeys.map((key) => (
               <div
                 key={key.id}
-                className="group flex items-center justify-between gap-4 rounded-xl border border-border/60 bg-muted/40 px-4 py-3 transition-all duration-200 hover:border-violet-500/20"
+                className="group flex items-center justify-between gap-4 rounded-xl border border-border/60 bg-muted/40 px-4 py-3 transition-all duration-200 hover:border-primary/20"
               >
                 <div className="flex min-w-0 items-center gap-3">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-md shadow-emerald-500/50" />
+                  <span className="h-2 w-2 rounded-full bg-success shadow-md shadow-success/50" />
                   <div className="min-w-0">
                     {passkeyVm.renamingId === key.id ? (
                       <div className="flex items-center gap-2">
@@ -191,7 +191,7 @@ export function ProfileSecurityTab({
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 w-8 p-0 text-emerald-400"
+                          className="h-8 w-8 p-0 text-success"
                           onClick={passkeyVm.confirmRename}
                         >
                           <Check className="h-4 w-4" />
@@ -199,7 +199,7 @@ export function ProfileSecurityTab({
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-8 w-8 p-0 text-rose-400"
+                          className="h-8 w-8 p-0 text-destructive"
                           onClick={passkeyVm.cancelRename}
                         >
                           <X className="h-4 w-4" />
@@ -234,7 +234,7 @@ export function ProfileSecurityTab({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-8 w-8 p-0 text-rose-400 hover:bg-rose-500/10 hover:text-rose-300"
+                      className="h-8 w-8 p-0 text-destructive hover:bg-destructive/10 hover:text-destructive"
                       onClick={() => setDeletePasskeyConfirmId(key.id)}
                       title={t("auth.passkey.delete") || "Delete"}
                     >
@@ -248,15 +248,15 @@ export function ProfileSecurityTab({
       </div>
 
       {/* Authenticator App (2FA) Block */}
-      <div className="rounded-xl border border-border/80 bg-card/45 p-6 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-violet-500/20">
+      <div className="rounded-xl border border-border/80 bg-card/45 p-6 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-primary/20">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex gap-4">
             <div
               className={cn(
                 "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border",
                 profile.isTwoFactorEnabled
-                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                  : "border-slate-500/30 bg-slate-500/10 text-slate-500 dark:text-slate-400"
+                  ? "border-success/30 bg-success/10 text-success"
+                  : "border-border bg-muted text-muted-foreground"
               )}
             >
               <ShieldCheck className="h-5 w-5" />
@@ -268,8 +268,8 @@ export function ProfileSecurityTab({
                   className={cn(
                     "rounded-full border px-2 py-0.5 text-[10px] font-bold",
                     profile.isTwoFactorEnabled
-                      ? "border-emerald-500/35 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
-                      : "border-slate-500/35 bg-slate-500/10 text-slate-700 dark:text-slate-300"
+                      ? "border-success/35 bg-success/10 text-success"
+                      : "border-border bg-muted text-muted-foreground"
                   )}
                 >
                   {profile.isTwoFactorEnabled
@@ -286,7 +286,7 @@ export function ProfileSecurityTab({
             <Button
               variant="outline"
               size="sm"
-              className="self-start border-rose-500/20 bg-rose-500/5 text-rose-400 hover:border-rose-500/30 hover:bg-rose-500/10"
+              className="self-start border-destructive/20 bg-destructive/5 text-destructive hover:border-destructive/30 hover:bg-destructive/10"
               onClick={() => securityVm.setShowDisableDialog(true)}
             >
               {t("profile.security.totp.disable")}
@@ -295,7 +295,7 @@ export function ProfileSecurityTab({
             <Button
               variant="outline"
               size="sm"
-              className="gap-1.5 self-start border-emerald-500/20 bg-emerald-500/5 text-emerald-400 hover:border-emerald-500/30 hover:bg-emerald-500/10"
+              className="gap-1.5 self-start border-success/20 bg-success/5 text-success hover:border-success/30 hover:bg-success/10"
               onClick={securityVm.openSetupDialog}
               loading={securityVm.isEnabling2FA}
             >
@@ -314,7 +314,7 @@ export function ProfileSecurityTab({
                     cx="8"
                     cy="8"
                     r="6"
-                    className="animate-totp-timer fill-none stroke-emerald-400 stroke-[1.5]"
+                    className="animate-totp-timer fill-none stroke-success stroke-[1.5]"
                     strokeDasharray="37.7"
                     strokeDashoffset="9.4"
                   />
@@ -338,17 +338,17 @@ export function ProfileSecurityTab({
       </div>
 
       {/* Cross-Device QR Sign-in Block */}
-      <div className="rounded-xl border border-border/80 bg-card/45 p-6 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-violet-500/20">
+      <div className="rounded-xl border border-border/80 bg-card/45 p-6 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-primary/20">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex gap-4">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-violet-500/30 bg-violet-500/10 text-violet-400">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-primary/30 bg-primary/10 text-primary">
               <QrCode className="h-5 w-5" />
             </div>
             <div>
               <h3 className="flex items-center gap-2 text-base font-bold text-foreground">
                 {t("profile.security.qr.title")}
                 {linkedMobileDevices.length > 0 && (
-                  <span className="rounded-full border border-violet-500/35 bg-violet-500/10 px-2 py-0.5 text-[10px] font-bold text-violet-600 dark:text-violet-300">
+                  <span className="rounded-full border border-primary/35 bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
                     {t("profile.security.qr.paired")}
                   </span>
                 )}
@@ -378,11 +378,11 @@ export function ProfileSecurityTab({
             linkedMobileDevices.map((device) => (
               <div
                 key={device.tokenId}
-                className="flex items-center justify-between gap-4 rounded-xl border border-border/60 bg-muted/40 px-4 py-3 transition-all duration-200 hover:border-violet-500/20"
+                className="flex items-center justify-between gap-4 rounded-xl border border-border/60 bg-muted/40 px-4 py-3 transition-all duration-200 hover:border-primary/20"
               >
                 <div className="flex items-center gap-3">
-                  <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500 shadow-md shadow-emerald-500/50" />
-                  <Smartphone className="h-4 w-4 text-purple-500 dark:text-purple-400" />
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-success shadow-md shadow-success/50" />
+                  <Smartphone className="h-4 w-4 text-primary" />
                   <div>
                     <p className="text-xs font-bold text-foreground">
                       {device.deviceInfo} ({t("profile.security.qr.paired")})
@@ -396,7 +396,7 @@ export function ProfileSecurityTab({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-7 border-rose-500/15 bg-rose-500/5 text-rose-400 hover:border-rose-500/30 hover:bg-rose-500/10"
+                  className="h-7 border-destructive/15 bg-destructive/5 text-destructive hover:border-destructive/30 hover:bg-destructive/10"
                   onClick={() => sessionsVm.revokeSession(device.tokenId)}
                   loading={sessionsVm.isRevoking}
                 >
@@ -409,10 +409,10 @@ export function ProfileSecurityTab({
       </div>
 
       {/* Password update trigger card */}
-      <div className="rounded-xl border border-border/80 bg-card/45 p-6 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-violet-500/20">
+      <div className="rounded-xl border border-border/80 bg-card/45 p-6 shadow-sm backdrop-blur-md transition-all duration-200 hover:border-primary/20">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex gap-4">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-500/30 bg-slate-500/10 text-slate-500 dark:text-slate-400">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border bg-muted text-muted-foreground">
               <KeyRound className="h-5 w-5" />
             </div>
             <div>
@@ -462,7 +462,7 @@ export function ProfileSecurityTab({
               />
             </div>
             {passkeyVm.registrationError && (
-              <div className="rounded-lg border border-rose-500/15 bg-rose-500/5 p-3 text-xs text-rose-400">
+              <div className="rounded-lg border border-destructive/15 bg-destructive/5 p-3 text-xs text-destructive">
                 {passkeyVm.registrationError}
               </div>
             )}
@@ -479,7 +479,7 @@ export function ProfileSecurityTab({
               {t("common.cancel")}
             </Button>
             <Button
-              className="bg-violet-600 text-white hover:bg-violet-500"
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
               disabled={!newPasskeyName.trim() || passkeyVm.isRegistering}
               onClick={async () => {
                 const success = await passkeyVm.registerPasskey(newPasskeyName.trim());
@@ -597,7 +597,7 @@ export function ProfileSecurityTab({
         <DialogContent className="border-border bg-background text-foreground sm:max-w-md">
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <QrCode className="h-5 w-5 text-violet-500" />
+              <QrCode className="h-5 w-5 text-primary" />
               <DialogTitle>{t("profile.security.qr.modalTitle")}</DialogTitle>
             </div>
             <DialogDescription className="text-muted-foreground">
@@ -613,7 +613,7 @@ export function ProfileSecurityTab({
           </div>
           <DialogFooter>
             <Button
-              className="w-full bg-violet-600 text-white hover:bg-violet-500"
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
               onClick={() => setShowLinkDevice(false)}
             >
               {t("profile.security.qr.modalCta")}

@@ -137,7 +137,7 @@ export function IdentityProvidersView() {
       {/* ─── Loading State ─────────────────────────────────────── */}
       {vm.loading ? (
         <div className="flex min-h-[300px] flex-col items-center justify-center gap-3">
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
+          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 shadow-[0_0_15px_hsl(var(--primary)/0.1)]">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </div>
           <p className="text-xs text-muted-foreground">

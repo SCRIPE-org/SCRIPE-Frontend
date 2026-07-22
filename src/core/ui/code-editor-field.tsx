@@ -480,7 +480,7 @@ export function CodeEditorField({
     <div className={cn("space-y-1.5", className)}>
       {/* Label */}
       {label && <span className="text-[10px] font-medium text-muted-foreground">{label}</span>}
-      {description && <p className="text-[9px] text-amber-500/80">{description}</p>}
+      {description && <p className="text-[9px] text-warning/80">{description}</p>}
 
       {/* Tab Selector (inline) */}
       {tabs.length > 1 && (

@@ -126,10 +126,10 @@ export function ProfileSettingsView() {
           <div className="flex items-center gap-5">
             {/* Animated Gradient Border Avatar */}
             <div className="group relative flex h-20 w-20 items-center justify-center">
-              <div className="animate-spin-slow absolute inset-0 rounded-full bg-gradient-to-r from-violet-600 via-pink-500 to-emerald-500 p-[3px]">
-                <div className="h-full w-full rounded-full bg-slate-950" />
+              <div className="animate-spin-slow absolute inset-0 rounded-full bg-gradient-to-r from-primary via-primary/60 to-success p-[3px]">
+                <div className="h-full w-full rounded-full bg-card" />
               </div>
-              <div className="relative z-10 flex h-[70px] w-[70px] items-center justify-center overflow-hidden rounded-full border border-white/5 bg-gradient-to-br from-violet-500/20 to-pink-500/20 text-2xl font-bold text-white">
+              <div className="relative z-10 flex h-[70px] w-[70px] items-center justify-center overflow-hidden rounded-full border border-white/5 bg-gradient-to-br from-primary/20 to-primary/10 text-2xl font-bold text-foreground">
                 {profile.profileImageUrl && !imageError ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img

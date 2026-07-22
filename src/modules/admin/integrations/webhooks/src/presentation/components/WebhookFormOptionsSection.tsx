@@ -24,7 +24,7 @@ export function WebhookFormOptionsSection({ vm }: WebhookFormOptionsSectionProps
         <AccordionItem value="options" className="rounded-xl border px-1">
           <AccordionTrigger className="gap-2.5 px-3 py-3 text-sm hover:no-underline">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-400">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <Settings2 className="h-4 w-4" />
               </div>
               <div className="text-start">

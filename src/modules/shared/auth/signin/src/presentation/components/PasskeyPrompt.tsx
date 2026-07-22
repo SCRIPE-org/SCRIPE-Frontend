@@ -34,8 +34,8 @@ export function PasskeyPrompt({ onSuccess, onBack, isRTL, tenantId }: PasskeyPro
         <div
           className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl"
           style={{
-            background: "rgba(239,68,68,0.1)",
-            border: "1px solid rgba(239,68,68,0.2)",
+            background: "hsl(var(--destructive) / 0.1)",
+            border: "1px solid hsl(var(--destructive) / 0.2)",
           }}
         >
           <svg
@@ -43,7 +43,7 @@ export function PasskeyPrompt({ onSuccess, onBack, isRTL, tenantId }: PasskeyPro
             height="28"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#EF4444"
+            stroke="hsl(var(--destructive))"
             strokeWidth="2"
           >
             <circle cx="12" cy="12" r="10" />

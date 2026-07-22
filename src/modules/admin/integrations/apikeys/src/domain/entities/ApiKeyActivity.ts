@@ -17,8 +17,8 @@ export function getStatusCodeGroup(statusCode: number): "2xx" | "3xx" | "4xx" | 
 }
 
 export function getStatusCodeColor(statusCode: number): string {
-  if (statusCode >= 200 && statusCode < 300) return "text-green-600 bg-green-50 dark:bg-green-950/30 dark:text-green-400";
-  if (statusCode >= 300 && statusCode < 400) return "text-yellow-600 bg-yellow-50 dark:bg-yellow-950/30 dark:text-yellow-400";
-  if (statusCode >= 400 && statusCode < 500) return "text-orange-600 bg-orange-50 dark:bg-orange-950/30 dark:text-orange-400";
-  return "text-red-600 bg-red-50 dark:bg-red-950/30 dark:text-red-400";
+  if (statusCode >= 200 && statusCode < 300) return "text-success bg-success/10";
+  if (statusCode >= 300 && statusCode < 400) return "text-warning bg-warning/10";
+  if (statusCode >= 400 && statusCode < 500) return "text-warning-strong bg-warning-strong/10";
+  return "text-destructive bg-destructive/10";
 }

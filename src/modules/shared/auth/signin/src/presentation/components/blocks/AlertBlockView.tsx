@@ -3,9 +3,9 @@
 import type { AlertBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 
 const VARIANT_CLASS = {
-  info: "border-sky-500/30 bg-sky-500/10 text-sky-900 dark:text-sky-100",
-  warning: "border-amber-500/30 bg-amber-500/10 text-amber-900 dark:text-amber-100",
-  success: "border-emerald-500/30 bg-emerald-500/10 text-emerald-900 dark:text-emerald-100",
+  info: "border-info/30 bg-info/10 text-info",
+  warning: "border-warning/30 bg-warning/10 text-warning",
+  success: "border-success/30 bg-success/10 text-success",
   error: "border-destructive/30 bg-destructive/10 text-destructive",
 };
 

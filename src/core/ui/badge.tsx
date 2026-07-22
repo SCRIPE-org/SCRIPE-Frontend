@@ -22,7 +22,8 @@ const badgeVariants = cva(
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/85",
         warning: "border-transparent bg-warning text-warning-foreground hover:bg-warning/85",
         info: "border-transparent bg-info text-info-foreground hover:bg-info/85",
-        pending: "border-transparent bg-warning text-warning-foreground hover:bg-warning/85",
+        pending:
+          "border-transparent bg-warning-strong text-warning-strong-foreground hover:bg-warning-strong/85",
         // Active/Inactive variants
         active: "border-transparent bg-success text-success-foreground hover:bg-success/85",
         inactive: "border-transparent bg-muted text-muted-foreground hover:bg-muted/85",
@@ -41,367 +42,342 @@ const badgeVariants = cva(
       },
     },
     compoundVariants: [
+      // Status hues below are sourced from semantic tokens only. Each named
+      // style keeps its own structural signature (fill weight, tint ladder,
+      // gradient direction, glow radius) so the styles stay distinguishable;
+      // only the hue source changed. Tokens resolve per theme, so the old
+      // `dark:` re-pins are gone.
+      //
+      // Tint ladder shared by the translucent styles:
+      //   glass  (10%) < modern (15%) < pill/square (20%)
+
       // DEFAULT STYLE - Solid filled badges
       {
         variant: ["success", "active"],
         badgeStyle: "default",
-        class: "bg-green-500 text-white hover:bg-green-600 border-green-500",
+        class: "bg-success text-success-foreground hover:bg-success/85 border-success",
       },
       {
         variant: "error",
         badgeStyle: "default",
-        class: "bg-red-500 text-white hover:bg-red-600 border-red-500",
+        class:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/85 border-destructive",
       },
       {
         variant: "warning",
         badgeStyle: "default",
-        class: "bg-yellow-500 text-white hover:bg-yellow-600 border-yellow-500",
+        class: "bg-warning text-warning-foreground hover:bg-warning/85 border-warning",
       },
       {
         variant: "info",
         badgeStyle: "default",
-        class: "bg-blue-500 text-white hover:bg-blue-600 border-blue-500",
+        class: "bg-info text-info-foreground hover:bg-info/85 border-info",
       },
       {
         variant: "pending",
         badgeStyle: "default",
-        class: "bg-orange-500 text-white hover:bg-orange-600 border-orange-500",
+        class:
+          "bg-warning-strong text-warning-strong-foreground hover:bg-warning-strong/85 border-warning-strong",
       },
       {
         variant: "inactive",
         badgeStyle: "default",
-        class: "bg-gray-500 text-white hover:bg-gray-600 border-gray-500",
+        class: "bg-muted text-muted-foreground hover:bg-muted/85 border-border",
       },
 
       // MODERN STYLE - Subtle backgrounds with colored borders
       {
         variant: ["success", "active"],
         badgeStyle: "modern",
-        class:
-          "bg-green-50/80 text-green-700 border-green-200/50 dark:bg-green-900/10 dark:text-green-400 dark:border-green-700/20",
+        class: "bg-success/15 text-success border-success/25",
       },
       {
         variant: "error",
         badgeStyle: "modern",
-        class:
-          "bg-red-50/80 text-red-700 border-red-200/50 dark:bg-red-900/10 dark:text-red-400 dark:border-red-700/20",
+        class: "bg-destructive/15 text-destructive border-destructive/25",
       },
       {
         variant: "warning",
         badgeStyle: "modern",
-        class:
-          "bg-yellow-50/80 text-yellow-700 border-yellow-200/50 dark:bg-yellow-900/10 dark:text-yellow-400 dark:border-yellow-700/20",
+        class: "bg-warning/15 text-warning border-warning/25",
       },
       {
         variant: "info",
         badgeStyle: "modern",
-        class:
-          "bg-blue-50/80 text-blue-700 border-blue-200/50 dark:bg-blue-900/10 dark:text-blue-400 dark:border-blue-700/20",
+        class: "bg-info/15 text-info border-info/25",
       },
       {
         variant: "pending",
         badgeStyle: "modern",
-        class:
-          "bg-orange-50/80 text-orange-700 border-orange-200/50 dark:bg-orange-900/10 dark:text-orange-400 dark:border-orange-700/20",
+        class: "bg-warning-strong/15 text-warning-strong border-warning-strong/25",
       },
       {
         variant: "inactive",
         badgeStyle: "modern",
-        class:
-          "bg-gray-50/80 text-gray-700 border-gray-200/50 dark:bg-gray-900/10 dark:text-gray-400 dark:border-gray-700/20",
+        class: "bg-muted/60 text-muted-foreground border-border/50",
       },
 
       // GLASS STYLE - Transparent with colored backgrounds and borders
       {
         variant: ["success", "active"],
         badgeStyle: "glass",
-        class:
-          "bg-green-500/10 text-green-600 border-green-500/20 dark:bg-green-400/10 dark:text-green-400 dark:border-green-400/20",
+        class: "bg-success/10 text-success border-success/20",
       },
       {
         variant: "error",
         badgeStyle: "glass",
-        class:
-          "bg-red-500/10 text-red-600 border-red-500/20 dark:bg-red-400/10 dark:text-red-400 dark:border-red-400/20",
+        class: "bg-destructive/10 text-destructive border-destructive/20",
       },
       {
         variant: "warning",
         badgeStyle: "glass",
-        class:
-          "bg-yellow-500/10 text-yellow-600 border-yellow-500/20 dark:bg-yellow-400/10 dark:text-yellow-400 dark:border-yellow-400/20",
+        class: "bg-warning/10 text-warning border-warning/20",
       },
       {
         variant: "info",
         badgeStyle: "glass",
-        class:
-          "bg-blue-500/10 text-blue-600 border-blue-500/20 dark:bg-blue-400/10 dark:text-blue-400 dark:border-blue-400/20",
+        class: "bg-info/10 text-info border-info/20",
       },
       {
         variant: "pending",
         badgeStyle: "glass",
-        class:
-          "bg-orange-500/10 text-orange-600 border-orange-500/20 dark:bg-orange-400/10 dark:text-orange-400 dark:border-orange-400/20",
+        class: "bg-warning-strong/10 text-warning-strong border-warning-strong/20",
       },
       {
         variant: "inactive",
         badgeStyle: "glass",
-        class:
-          "bg-gray-500/10 text-gray-600 border-gray-500/20 dark:bg-gray-400/10 dark:text-gray-400 dark:border-gray-400/20",
+        class: "bg-muted/40 text-muted-foreground border-border/40",
       },
 
-      // NEON STYLE - Dark backgrounds with colored text and glowing shadows
+      // NEON STYLE - Deep tinted plate, bright hue, glowing shadow
       {
         variant: ["success", "active"],
         badgeStyle: "neon",
         class:
-          "bg-green-950 text-green-400 border-green-400/50 shadow-[0_0_10px_rgba(34,197,94,0.3)] dark:bg-green-950/50 dark:shadow-[0_0_15px_rgba(34,197,94,0.4)]",
+          "bg-success/15 text-success border-success/60 shadow-[0_0_12px_hsl(var(--success)/0.35)]",
       },
       {
         variant: "error",
         badgeStyle: "neon",
         class:
-          "bg-red-950 text-red-400 border-red-400/50 shadow-[0_0_10px_rgba(239,68,68,0.3)] dark:bg-red-950/50 dark:shadow-[0_0_15px_rgba(239,68,68,0.4)]",
+          "bg-destructive/15 text-destructive border-destructive/60 shadow-[0_0_12px_hsl(var(--destructive)/0.35)]",
       },
       {
         variant: "warning",
         badgeStyle: "neon",
         class:
-          "bg-yellow-950 text-yellow-400 border-yellow-400/50 shadow-[0_0_10px_rgba(234,179,8,0.3)] dark:bg-yellow-950/50 dark:shadow-[0_0_15px_rgba(234,179,8,0.4)]",
+          "bg-warning/15 text-warning border-warning/60 shadow-[0_0_12px_hsl(var(--warning)/0.35)]",
       },
       {
         variant: "info",
         badgeStyle: "neon",
-        class:
-          "bg-blue-950 text-blue-400 border-blue-400/50 shadow-[0_0_10px_rgba(59,130,246,0.3)] dark:bg-blue-950/50 dark:shadow-[0_0_15px_rgba(59,130,246,0.4)]",
+        class: "bg-info/15 text-info border-info/60 shadow-[0_0_12px_hsl(var(--info)/0.35)]",
       },
       {
         variant: "pending",
         badgeStyle: "neon",
         class:
-          "bg-orange-950 text-orange-400 border-orange-400/50 shadow-[0_0_10px_rgba(249,115,22,0.3)] dark:bg-orange-950/50 dark:shadow-[0_0_15px_rgba(249,115,22,0.4)]",
+          "bg-warning-strong/15 text-warning-strong border-warning-strong/60 shadow-[0_0_12px_hsl(var(--warning-strong)/0.35)]",
       },
       {
         variant: "inactive",
         badgeStyle: "neon",
         class:
-          "bg-gray-950 text-gray-400 border-gray-400/50 shadow-[0_0_10px_rgba(107,114,128,0.3)] dark:bg-gray-950/50 dark:shadow-[0_0_15px_rgba(107,114,128,0.4)]",
+          "bg-muted/50 text-muted-foreground border-muted-foreground/50 shadow-[0_0_12px_hsl(var(--muted-foreground)/0.35)]",
       },
 
       // GRADIENT STYLE - Gradient backgrounds
       {
         variant: ["success", "active"],
         badgeStyle: "gradient",
-        class:
-          "bg-gradient-to-r from-green-500 to-emerald-500 text-white dark:from-green-600 dark:to-emerald-600",
+        class: "bg-gradient-to-r from-success to-success/70 text-success-foreground",
       },
       {
         variant: "error",
         badgeStyle: "gradient",
-        class:
-          "bg-gradient-to-r from-red-500 to-rose-500 text-white dark:from-red-600 dark:to-rose-600",
+        class: "bg-gradient-to-r from-destructive to-destructive/70 text-destructive-foreground",
       },
       {
         variant: "warning",
         badgeStyle: "gradient",
-        class:
-          "bg-gradient-to-r from-yellow-500 to-amber-500 text-white dark:from-yellow-600 dark:to-amber-600",
+        class: "bg-gradient-to-r from-warning to-warning/70 text-warning-foreground",
       },
       {
         variant: "info",
         badgeStyle: "gradient",
-        class:
-          "bg-gradient-to-r from-blue-500 to-cyan-500 text-white dark:from-blue-600 dark:to-cyan-600",
+        class: "bg-gradient-to-r from-info to-info/70 text-info-foreground",
       },
       {
+        // The one gradient that spans two real severity steps, matching the
+        // original orange→amber ramp.
         variant: "pending",
         badgeStyle: "gradient",
-        class:
-          "bg-gradient-to-r from-orange-500 to-amber-500 text-white dark:from-orange-600 dark:to-amber-600",
+        class: "bg-gradient-to-r from-warning-strong to-warning text-warning-strong-foreground",
       },
       {
         variant: "inactive",
         badgeStyle: "gradient",
-        class:
-          "bg-gradient-to-r from-gray-500 to-slate-500 text-white dark:from-gray-600 dark:to-slate-600",
+        class: "bg-gradient-to-r from-muted to-muted/70 text-muted-foreground",
       },
 
       // OUTLINED STYLE - Transparent backgrounds with colored borders
       {
         variant: ["success", "active"],
         badgeStyle: "outlined",
-        class:
-          "bg-transparent text-green-600 border-green-500 dark:text-green-400 dark:border-green-400",
+        class: "bg-transparent text-success border-success",
       },
       {
         variant: "error",
         badgeStyle: "outlined",
-        class: "bg-transparent text-red-600 border-red-500 dark:text-red-400 dark:border-red-400",
+        class: "bg-transparent text-destructive border-destructive",
       },
       {
         variant: "warning",
         badgeStyle: "outlined",
-        class:
-          "bg-transparent text-yellow-600 border-yellow-500 dark:text-yellow-400 dark:border-yellow-400",
+        class: "bg-transparent text-warning border-warning",
       },
       {
         variant: "info",
         badgeStyle: "outlined",
-        class:
-          "bg-transparent text-blue-600 border-blue-500 dark:text-blue-400 dark:border-blue-400",
+        class: "bg-transparent text-info border-info",
       },
       {
         variant: "pending",
         badgeStyle: "outlined",
-        class:
-          "bg-transparent text-orange-600 border-orange-500 dark:text-orange-400 dark:border-orange-400",
+        class: "bg-transparent text-warning-strong border-warning-strong",
       },
       {
         variant: "inactive",
         badgeStyle: "outlined",
-        class:
-          "bg-transparent text-gray-600 border-gray-500 dark:text-gray-400 dark:border-gray-400",
+        class: "bg-transparent text-muted-foreground border-muted-foreground",
       },
 
       // FILLED STYLE - Solid backgrounds (same as default)
       {
         variant: ["success", "active"],
         badgeStyle: "filled",
-        class: "bg-green-500 text-white border-green-500 dark:bg-green-600 dark:border-green-600",
+        class: "bg-success text-success-foreground border-success",
       },
       {
         variant: "error",
         badgeStyle: "filled",
-        class: "bg-red-500 text-white border-red-500 dark:bg-red-600 dark:border-red-600",
+        class: "bg-destructive text-destructive-foreground border-destructive",
       },
       {
         variant: "warning",
         badgeStyle: "filled",
-        class:
-          "bg-yellow-500 text-white border-yellow-500 dark:bg-yellow-600 dark:border-yellow-600",
+        class: "bg-warning text-warning-foreground border-warning",
       },
       {
         variant: "info",
         badgeStyle: "filled",
-        class: "bg-blue-500 text-white border-blue-500 dark:bg-blue-600 dark:border-blue-600",
+        class: "bg-info text-info-foreground border-info",
       },
       {
         variant: "pending",
         badgeStyle: "filled",
-        class:
-          "bg-orange-500 text-white border-orange-500 dark:bg-orange-600 dark:border-orange-600",
+        class: "bg-warning-strong text-warning-strong-foreground border-warning-strong",
       },
       {
         variant: "inactive",
         badgeStyle: "filled",
-        class: "bg-gray-500 text-white border-gray-500 dark:bg-gray-600 dark:border-gray-600",
+        class: "bg-muted text-muted-foreground border-border",
       },
 
       // MINIMAL STYLE - No backgrounds, just colored text
       {
         variant: ["success", "active"],
         badgeStyle: "minimal",
-        class: "bg-transparent text-green-600 dark:text-green-400",
+        class: "bg-transparent text-success",
       },
       {
         variant: "error",
         badgeStyle: "minimal",
-        class: "bg-transparent text-red-600 dark:text-red-400",
+        class: "bg-transparent text-destructive",
       },
       {
         variant: "warning",
         badgeStyle: "minimal",
-        class: "bg-transparent text-yellow-600 dark:text-yellow-400",
+        class: "bg-transparent text-warning",
       },
       {
         variant: "info",
         badgeStyle: "minimal",
-        class: "bg-transparent text-blue-600 dark:text-blue-400",
+        class: "bg-transparent text-info",
       },
       {
         variant: "pending",
         badgeStyle: "minimal",
-        class: "bg-transparent text-orange-600 dark:text-orange-400",
+        class: "bg-transparent text-warning-strong",
       },
       {
         variant: "inactive",
         badgeStyle: "minimal",
-        class: "bg-transparent text-gray-600 dark:text-gray-400",
+        class: "bg-transparent text-muted-foreground",
       },
 
       // PILL STYLE - Rounded with subtle backgrounds
       {
         variant: ["success", "active"],
         badgeStyle: "pill",
-        class:
-          "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800/30",
+        class: "bg-success/20 text-success border-success/30",
       },
       {
         variant: "error",
         badgeStyle: "pill",
-        class:
-          "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800/30",
+        class: "bg-destructive/20 text-destructive border-destructive/30",
       },
       {
         variant: "warning",
         badgeStyle: "pill",
-        class:
-          "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-400 dark:border-yellow-800/30",
+        class: "bg-warning/20 text-warning border-warning/30",
       },
       {
         variant: "info",
         badgeStyle: "pill",
-        class:
-          "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/30",
+        class: "bg-info/20 text-info border-info/30",
       },
       {
         variant: "pending",
         badgeStyle: "pill",
-        class:
-          "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800/30",
+        class: "bg-warning-strong/20 text-warning-strong border-warning-strong/30",
       },
       {
         variant: "inactive",
         badgeStyle: "pill",
-        class:
-          "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-400 dark:border-gray-800/30",
+        class: "bg-muted text-muted-foreground border-border",
       },
 
       // SQUARE STYLE - Sharp corners with subtle backgrounds
       {
         variant: ["success", "active"],
         badgeStyle: "square",
-        class:
-          "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800/30",
+        class: "bg-success/20 text-success border-success/30",
       },
       {
         variant: "error",
         badgeStyle: "square",
-        class:
-          "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800/30",
+        class: "bg-destructive/20 text-destructive border-destructive/30",
       },
       {
         variant: "warning",
         badgeStyle: "square",
-        class:
-          "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-400 dark:border-yellow-800/30",
+        class: "bg-warning/20 text-warning border-warning/30",
       },
       {
         variant: "info",
         badgeStyle: "square",
-        class:
-          "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/30",
+        class: "bg-info/20 text-info border-info/30",
       },
       {
         variant: "pending",
         badgeStyle: "square",
-        class:
-          "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800/30",
+        class: "bg-warning-strong/20 text-warning-strong border-warning-strong/30",
       },
       {
         variant: "inactive",
         badgeStyle: "square",
-        class:
-          "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-400 dark:border-gray-800/30",
+        class: "bg-muted text-muted-foreground border-border",
       },
     ],
     defaultVariants: {

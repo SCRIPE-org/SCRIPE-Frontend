@@ -19,18 +19,18 @@ import {
 import type { SecurityLogEntry } from "../../../src/domain/entities/SecurityLogEntry";
 
 const eventConfig: Record<string, { icon: typeof CheckCircle2; color: string }> = {
-  Login: { icon: CheckCircle2, color: "text-emerald-500" },
-  LoginFailed: { icon: XCircle, color: "text-red-500" },
-  PasswordChanged: { icon: RefreshCw, color: "text-blue-500" },
-  TwoFactorEnabled: { icon: Shield, color: "text-indigo-500" },
-  TwoFactorVerified: { icon: Shield, color: "text-indigo-500" },
-  TwoFactorDisabled: { icon: Shield, color: "text-amber-500" },
-  SessionRevoked: { icon: Key, color: "text-amber-500" },
-  AllSessionsRevoked: { icon: Key, color: "text-amber-500" },
-  ProfileUpdated: { icon: FileEdit, color: "text-sky-500" },
-  AccountLocked: { icon: Lock, color: "text-red-500" },
-  BackupCodesRegenerated: { icon: Shield, color: "text-purple-500" },
-  Logout: { icon: LogOut, color: "text-gray-500" },
+  Login: { icon: CheckCircle2, color: "text-success" },
+  LoginFailed: { icon: XCircle, color: "text-destructive" },
+  PasswordChanged: { icon: RefreshCw, color: "text-info" },
+  TwoFactorEnabled: { icon: Shield, color: "text-info" },
+  TwoFactorVerified: { icon: Shield, color: "text-info" },
+  TwoFactorDisabled: { icon: Shield, color: "text-warning" },
+  SessionRevoked: { icon: Key, color: "text-warning" },
+  AllSessionsRevoked: { icon: Key, color: "text-warning" },
+  ProfileUpdated: { icon: FileEdit, color: "text-info" },
+  AccountLocked: { icon: Lock, color: "text-destructive" },
+  BackupCodesRegenerated: { icon: Shield, color: "text-primary" },
+  Logout: { icon: LogOut, color: "text-muted-foreground" },
 };
 
 function getConfig(eventType: string) {

@@ -60,8 +60,8 @@ export function SsoCallbackContent({
 
         {state === "success" && (
           <div className="flex flex-col items-center gap-6 text-center">
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-emerald-500/10">
-              <CheckCircle className="h-10 w-10 text-emerald-500" />
+            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-success/10">
+              <CheckCircle className="h-10 w-10 text-success" />
             </div>
             <div>
               <h2 className="text-xl font-semibold text-foreground">
@@ -74,8 +74,8 @@ export function SsoCallbackContent({
 
         {state === "no_linked_account" && (
           <div className="flex flex-col items-center gap-6 text-center">
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-amber-500/10">
-              <UserX className="h-10 w-10 text-amber-500" />
+            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-warning/10">
+              <UserX className="h-10 w-10 text-warning" />
             </div>
             <div>
               <h2 className="text-xl font-semibold text-foreground">{errorInfo?.title}</h2>

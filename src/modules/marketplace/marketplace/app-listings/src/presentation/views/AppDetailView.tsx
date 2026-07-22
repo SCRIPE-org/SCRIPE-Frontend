@@ -124,7 +124,7 @@ export function AppDetailView({ id }: AppDetailViewProps) {
             {Array.from({ length: 5 }).map((_, i) => (
               <Star
                 key={i}
-                className={`size-4 ${i < Math.round(listing.averageRating) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/30"}`}
+                className={`size-4 ${i < Math.round(listing.averageRating) ? "fill-warning text-warning" : "text-muted-foreground/30"}`}
               />
             ))}
             <span className="ml-1 text-sm font-medium">{listing.ratingLabel}</span>
@@ -382,7 +382,7 @@ function ReviewCard({ review, onDelete, isDeleting }: ReviewCardProps) {
         {Array.from({ length: 5 }).map((_, i) => (
           <Star
             key={i}
-            className={`size-3.5 ${i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/30"}`}
+            className={`size-3.5 ${i < review.rating ? "fill-warning text-warning" : "text-muted-foreground/30"}`}
           />
         ))}
       </div>

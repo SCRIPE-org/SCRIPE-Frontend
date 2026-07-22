@@ -190,7 +190,7 @@ export function getIconClasses(style: IconStyle, size: "sm" | "md" = "md"): stri
 export function getSidebarBgClass(cardStyle: CardStyle, direction: "ltr" | "rtl"): string {
   const bg =
     cardStyle === "glass"
-      ? "bg-white/5 dark:bg-white/5 backdrop-blur-xl border-white/10 dark:border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] dark:shadow-[0_8px_32px_0_rgba(255,255,255,0.1)]"
+      ? "bg-foreground/5 backdrop-blur-xl border-border/50 shadow-[0_8px_32px_0_hsl(var(--foreground)/0.15)]"
       : cardStyle === "solid"
         ? "bg-card border-border backdrop-blur-sm"
         : cardStyle === "bordered"
@@ -204,7 +204,7 @@ export function getSidebarBgClass(cardStyle: CardStyle, direction: "ltr" | "rtl"
 export function getPanelBgClass(cardStyle: CardStyle, direction: "ltr" | "rtl"): string {
   const bg =
     cardStyle === "glass"
-      ? "bg-white/5 dark:bg-white/5 backdrop-blur-xl border-white/10 dark:border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] dark:shadow-[0_8px_32px_0_rgba(255,255,255,0.1)]"
+      ? "bg-foreground/5 backdrop-blur-xl border-border/50 shadow-[0_8px_32px_0_hsl(var(--foreground)/0.15)]"
       : cardStyle === "solid"
         ? "bg-card border-border backdrop-blur-sm"
         : cardStyle === "bordered"

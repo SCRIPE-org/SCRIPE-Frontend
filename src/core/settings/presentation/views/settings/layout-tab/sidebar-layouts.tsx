@@ -21,23 +21,23 @@ function SidebarPreview({ variant }: { variant: string }) {
   // ── Minimal: topbar-only, no sidebar at all ──
   if (variant === "minimal") {
     return (
-      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-slate-200/50 bg-slate-100 dark:border-slate-700/50 dark:bg-slate-900">
-        <div className="flex h-[16%] items-center gap-2 border-b border-slate-200 bg-white px-2 dark:border-slate-700 dark:bg-slate-800">
+      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-border bg-muted">
+        <div className="flex h-[16%] items-center gap-2 border-b border-border bg-card px-2">
           <div className="h-2 w-2 rounded-full bg-primary" />
           <div className="flex flex-1 gap-1">
             {[18, 14, 16, 12].map((w, i) => (
               <div
                 key={i}
-                className="h-1 rounded-full bg-slate-300 dark:bg-slate-600"
+                className="h-1 rounded-full bg-muted-foreground/30"
                 style={{ width: `${w}%` }}
               />
             ))}
           </div>
         </div>
         <div className="flex-1 p-3">
-          <div className="mb-2 h-1.5 w-3/4 rounded-full bg-slate-300 dark:bg-slate-700" />
-          <div className="mb-2 h-1.5 w-1/2 rounded-full bg-slate-200 dark:bg-slate-800" />
-          <div className="h-1 w-2/3 rounded-full bg-slate-200/60 dark:bg-slate-800/60" />
+          <div className="mb-2 h-1.5 w-3/4 rounded-full bg-muted-foreground/30" />
+          <div className="mb-2 h-1.5 w-1/2 rounded-full bg-muted-foreground/20" />
+          <div className="h-1 w-2/3 rounded-full bg-muted-foreground/10" />
         </div>
       </div>
     );
@@ -46,19 +46,19 @@ function SidebarPreview({ variant }: { variant: string }) {
   // ── Floating: dashed ghost sidebar ──
   if (variant === "floating") {
     return (
-      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-slate-200/50 bg-slate-100 dark:border-slate-700/50 dark:bg-slate-900">
-        <div className="flex h-[14%] items-center gap-1 border-b border-slate-200 bg-white px-2 dark:border-slate-700 dark:bg-slate-800">
-          <div className="h-2 w-2.5 rounded-sm bg-slate-400 dark:bg-slate-500" />
+      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-border bg-muted">
+        <div className="flex h-[14%] items-center gap-1 border-b border-border bg-card px-2">
+          <div className="h-2 w-2.5 rounded-sm bg-muted-foreground/50" />
           <div className="flex-1" />
-          <div className="h-1 w-3 rounded-full bg-slate-300 dark:bg-slate-600" />
+          <div className="h-1 w-3 rounded-full bg-muted-foreground/30" />
         </div>
         <div className="relative flex flex-1">
-          <div className="mx-1 my-1 flex w-[24%] items-center justify-center rounded-lg border border-dashed border-slate-300 dark:border-slate-600">
-            <div className="h-1 w-1 rounded-full bg-slate-400 dark:bg-slate-500" />
+          <div className="mx-1 my-1 flex w-[24%] items-center justify-center rounded-lg border border-dashed border-muted-foreground/30">
+            <div className="h-1 w-1 rounded-full bg-muted-foreground/50" />
           </div>
           <div className="flex-1 p-2">
-            <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-slate-300 dark:bg-slate-700" />
-            <div className="h-1.5 w-1/2 rounded-full bg-slate-200 dark:bg-slate-800" />
+            <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-muted-foreground/30" />
+            <div className="h-1.5 w-1/2 rounded-full bg-muted-foreground/20" />
           </div>
         </div>
       </div>
@@ -68,7 +68,7 @@ function SidebarPreview({ variant }: { variant: string }) {
   // ── Modern: icon rail + expandable panel ──
   if (variant === "modern") {
     return (
-      <div className="flex aspect-[16/10] w-full overflow-hidden rounded-md border border-slate-200/50 bg-slate-100 dark:border-slate-700/50 dark:bg-slate-900">
+      <div className="flex aspect-[16/10] w-full overflow-hidden rounded-md border border-border bg-muted">
         <div className="flex w-[8%] flex-col items-center gap-1 rounded-l-md bg-gradient-to-b from-slate-700 to-slate-800 pt-2">
           {[false, true, false, false].map((active, i) => (
             <div
@@ -77,22 +77,22 @@ function SidebarPreview({ variant }: { variant: string }) {
             />
           ))}
         </div>
-        <div className="w-[18%] border-r border-slate-200 bg-slate-50 p-1 pt-2 dark:border-slate-700 dark:bg-slate-800/80">
+        <div className="w-[18%] border-r border-border bg-muted/50 p-1 pt-2">
           <div className="space-y-1">
             {[65, 50, 55].map((w, i) => (
               <div
                 key={i}
-                className="h-1 rounded-full bg-slate-300/60 dark:bg-slate-600"
+                className="h-1 rounded-full bg-muted-foreground/20"
                 style={{ width: `${w}%` }}
               />
             ))}
           </div>
         </div>
         <div className="flex flex-1 flex-col">
-          <div className="h-[14%] border-b border-slate-200/50 bg-white dark:border-slate-700/50 dark:bg-slate-900" />
+          <div className="h-[14%] border-b border-border bg-card" />
           <div className="flex-1 p-2">
-            <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-slate-300 dark:bg-slate-700" />
-            <div className="h-1.5 w-1/2 rounded-full bg-slate-200 dark:bg-slate-800" />
+            <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-muted-foreground/30" />
+            <div className="h-1.5 w-1/2 rounded-full bg-muted-foreground/20" />
           </div>
         </div>
       </div>
@@ -106,8 +106,8 @@ function SidebarPreview({ variant }: { variant: string }) {
   > = {
     classic: {
       sidebar:
-        "w-[26%] bg-slate-200 dark:bg-slate-700 border-r border-slate-300 dark:border-slate-600 rounded-l-md",
-      header: "h-[12%] bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700",
+        "w-[26%] bg-muted-foreground/20 border-r border-muted-foreground/30 rounded-l-md",
+      header: "h-[12%] bg-card border-b border-border",
       sidebarContent: (
         <div className="mt-2 space-y-1 p-1.5">
           <div className="mb-1.5 h-1.5 rounded border border-white/10 bg-white/30" />
@@ -118,19 +118,19 @@ function SidebarPreview({ variant }: { variant: string }) {
       ),
     },
     compact: {
-      sidebar: "w-[16%] bg-slate-200 dark:bg-slate-700 rounded-l-md",
-      header: "h-[10%] bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700",
+      sidebar: "w-[16%] bg-muted-foreground/20 rounded-l-md",
+      header: "h-[10%] bg-card border-b border-border",
     },
     elegant: {
       sidebar:
         "w-[24%] bg-gradient-to-b from-indigo-900/90 to-violet-900/90 rounded-l-md mx-0.5 my-0.5 rounded-lg",
-      header: "h-[14%] bg-white/80 dark:bg-slate-800/80",
+      header: "h-[14%] bg-card/80",
     },
     navigation: {
       sidebar: "w-[10%] bg-slate-800 rounded-l-md",
-      header: "h-[14%] bg-white dark:bg-slate-900",
+      header: "h-[14%] bg-card",
       extra: (
-        <div className="w-[18%] border-r border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800" />
+        <div className="w-[18%] border-r border-border bg-muted/50" />
       ),
     },
   };
@@ -138,7 +138,7 @@ function SidebarPreview({ variant }: { variant: string }) {
   const c = configs[variant] || configs.classic;
 
   return (
-    <div className="flex aspect-[16/10] w-full overflow-hidden rounded-md border border-slate-200/50 bg-slate-100 dark:border-slate-700/50 dark:bg-slate-900">
+    <div className="flex aspect-[16/10] w-full overflow-hidden rounded-md border border-border bg-muted">
       <div className={cn(c.sidebar)}>
         {c.sidebarContent || (
           <div className="mt-3 space-y-1 p-1.5">
@@ -156,8 +156,8 @@ function SidebarPreview({ variant }: { variant: string }) {
       <div className="flex flex-1 flex-col">
         <div className={cn(c.header)} />
         <div className="flex-1 p-2">
-          <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-slate-300 dark:bg-slate-700" />
-          <div className="h-1.5 w-1/2 rounded-full bg-slate-200 dark:bg-slate-800" />
+          <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-muted-foreground/30" />
+          <div className="h-1.5 w-1/2 rounded-full bg-muted-foreground/20" />
         </div>
       </div>
     </div>

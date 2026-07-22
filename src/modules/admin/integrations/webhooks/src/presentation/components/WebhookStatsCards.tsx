@@ -26,22 +26,22 @@ export function WebhookStatsCards({ webhook }: WebhookStatsCardsProps) {
       label: t("webhooks.stats.total") || "Total Deliveries",
       value: webhook.totalDeliveries.toLocaleString(),
       icon: Send,
-      color: "text-blue-600 dark:text-blue-400",
-      bg: "bg-blue-50 dark:bg-blue-950/30",
+      color: "text-info",
+      bg: "bg-info/10",
     },
     {
       label: t("webhooks.stats.successful") || "Successful",
       value: webhook.successfulDeliveries.toLocaleString(),
       icon: CheckCircle2,
-      color: "text-emerald-600 dark:text-emerald-400",
-      bg: "bg-emerald-50 dark:bg-emerald-950/30",
+      color: "text-success",
+      bg: "bg-success/10",
     },
     {
       label: t("webhooks.stats.failed") || "Failed",
       value: webhook.failedDeliveries.toLocaleString(),
       icon: XCircle,
-      color: "text-red-600 dark:text-red-400",
-      bg: "bg-red-50 dark:bg-red-950/30",
+      color: "text-destructive",
+      bg: "bg-destructive/10",
     },
     {
       label: t("webhooks.stats.successRate") || "Success Rate",
@@ -49,16 +49,16 @@ export function WebhookStatsCards({ webhook }: WebhookStatsCardsProps) {
       icon: TrendingUp,
       color:
         webhook.successRate >= 95
-          ? "text-emerald-600 dark:text-emerald-400"
+          ? "text-success"
           : webhook.successRate >= 80
-            ? "text-amber-600 dark:text-amber-400"
-            : "text-red-600 dark:text-red-400",
+            ? "text-warning"
+            : "text-destructive",
       bg:
         webhook.successRate >= 95
-          ? "bg-emerald-50 dark:bg-emerald-950/30"
+          ? "bg-success/10"
           : webhook.successRate >= 80
-            ? "bg-amber-50 dark:bg-amber-950/30"
-            : "bg-red-50 dark:bg-red-950/30",
+            ? "bg-warning/10"
+            : "bg-destructive/10",
     },
   ];
 

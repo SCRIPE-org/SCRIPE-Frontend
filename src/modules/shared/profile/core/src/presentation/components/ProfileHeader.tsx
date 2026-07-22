@@ -41,7 +41,7 @@ export function ProfileHeader({ profile, isLoading }: ProfileHeaderProps) {
     <div className="flex flex-col items-center gap-3 p-4">
       <Avatar className="h-20 w-20 border-2 border-primary/20 shadow-lg">
         {avatarSrc && <AvatarImage src={avatarSrc} alt={fullName} />}
-        <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-xl font-semibold text-white">
+        <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-xl font-semibold text-primary-foreground">
           {initials}
         </AvatarFallback>
       </Avatar>

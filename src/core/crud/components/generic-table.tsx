@@ -328,9 +328,8 @@ function GenericTableInner<T extends Record<string, any>>({
         );
       case "luxury":
         return cn(
-          "bg-gradient-to-br from-amber-50/80 to-amber-100/60 border-amber-200/40",
-          "dark:from-amber-900/30 dark:to-amber-800/20 dark:border-amber-400/30",
-          "shadow-2xl shadow-amber-500/20"
+          "bg-gradient-to-br from-warning/10 to-warning/20 border-warning/30",
+          "shadow-2xl shadow-warning/20"
         );
       case "matrix":
         return cn(
@@ -416,8 +415,7 @@ function GenericTableInner<T extends Record<string, any>>({
       case "luxury":
         return cn(
           baseClasses,
-          "rounded-2xl border border-amber-200/30 bg-gradient-to-br from-amber-50/50 to-amber-100/30 shadow-2xl",
-          "dark:from-amber-900/20 dark:to-amber-800/10 dark:border-amber-400/20"
+          "rounded-2xl border border-warning/25 bg-gradient-to-br from-warning/10 to-warning/5 shadow-2xl"
         );
       case "matrix":
         return cn(
@@ -504,10 +502,8 @@ function GenericTableInner<T extends Record<string, any>>({
         break;
       case "luxury":
         styleClasses = cn(
-          "border-b border-amber-200/20 bg-gradient-to-r from-amber-50/20 to-transparent",
-          "dark:border-amber-400/20 dark:from-amber-900/10",
-          index % 2 === 0 &&
-            "from-amber-100/30 to-amber-50/10 dark:from-amber-900/20 dark:to-amber-800/10"
+          "border-b border-warning/20 bg-gradient-to-r from-warning/10 to-transparent",
+          index % 2 === 0 && "from-warning/20 to-warning/5"
         );
         break;
       case "matrix":
@@ -564,7 +560,7 @@ function GenericTableInner<T extends Record<string, any>>({
         break;
       case "luxury":
         styleClasses +=
-          " hover:from-amber-100/30 hover:to-amber-50/20 hover:shadow-lg hover:shadow-amber-200/20 dark:hover:from-amber-800/20";
+          " hover:from-warning/20 hover:to-warning/10 hover:shadow-lg hover:shadow-warning/20";
         break;
       case "matrix":
         styleClasses += " hover:bg-primary/10 hover:border-primary/50";
@@ -599,7 +595,7 @@ function GenericTableInner<T extends Record<string, any>>({
           break;
         case "luxury":
           styleClasses +=
-            " from-amber-200/40 to-amber-100/30 border-amber-300/40 shadow-lg shadow-amber-200/30";
+            " from-warning/30 to-warning/20 border-warning/40 shadow-lg shadow-warning/30";
           break;
         case "matrix":
           styleClasses +=
@@ -696,12 +692,9 @@ function GenericTableInner<T extends Record<string, any>>({
         return cn(
           baseClasses,
           heightClass,
-          "bg-gradient-to-r from-amber-100/50 via-amber-50/30 to-amber-100/50 border-b border-amber-300/40",
-          "dark:from-amber-900/30 dark:via-amber-800/20 dark:to-amber-900/30 dark:border-amber-400/30",
-          "text-amber-900 dark:text-amber-100 font-bold shadow-lg shadow-amber-200/20",
-          hasHoverEffect && "hover:from-amber-200/60 hover:via-amber-100/40 hover:to-amber-200/60",
-          hasHoverEffect &&
-            "dark:hover:from-amber-800/40 dark:hover:via-amber-700/30 dark:hover:to-amber-800/40"
+          "bg-gradient-to-r from-warning/20 via-warning/10 to-warning/20 border-b border-warning/40",
+          "text-foreground font-bold shadow-lg shadow-warning/20",
+          hasHoverEffect && "hover:from-warning/30 hover:via-warning/20 hover:to-warning/30"
         );
       case "matrix":
         return cn(
@@ -808,32 +801,28 @@ function GenericTableInner<T extends Record<string, any>>({
         return cn(
           baseClasses,
           hoverClasses,
-          "bg-gradient-to-br from-amber-50/50 to-amber-100/30 border border-amber-200/30 shadow-2xl rounded-2xl",
-          "dark:from-amber-900/20 dark:to-amber-800/10 dark:border-amber-400/20",
+          "bg-gradient-to-br from-warning/10 to-warning/5 border border-warning/25 shadow-2xl rounded-2xl",
           settings.hoverEffectType !== "none" &&
             settings.hoverEffectIntensity !== "none" &&
-            "hover:from-amber-100/60 hover:to-amber-50/40 hover:shadow-3xl hover:shadow-amber-200/30",
-          "dark:hover:from-amber-800/30 dark:hover:to-amber-700/20"
+            "hover:from-warning/20 hover:to-warning/10 hover:shadow-3xl hover:shadow-warning/30"
         );
       case "matrix":
         return cn(
           baseClasses,
           hoverClasses,
-          "bg-background border-2 border-green-400/40 shadow-[0_0_20px_rgba(34,197,94,0.4)] rounded-lg",
-          "dark:bg-black/98 dark:border-green-400/50",
+          "bg-background border-2 border-success/40 shadow-[0_0_20px_hsl(var(--success)/0.4)] rounded-lg",
           settings.hoverEffectType !== "none" &&
             settings.hoverEffectIntensity !== "none" &&
-            "hover:border-green-400/60 hover:shadow-[0_0_30px_rgba(34,197,94,0.6)] hover:bg-green-400/5"
+            "hover:border-success/60 hover:shadow-[0_0_30px_hsl(var(--success)/0.6)] hover:bg-success/5"
         );
       case "diamond":
         return cn(
           baseClasses,
           hoverClasses,
-          "bg-gradient-to-br from-violet-50/40 via-pink-50/30 to-blue-50/40 border-2 border-violet-300/50 shadow-[0_0_25px_rgba(139,92,246,0.4)] rounded-2xl",
-          "dark:from-violet-900/30 dark:via-pink-900/20 dark:to-blue-900/30 dark:border-violet-400/40",
+          "bg-gradient-to-br from-primary/15 via-accent/10 to-info/15 border-2 border-primary/50 shadow-[0_0_25px_hsl(var(--primary)/0.4)] rounded-2xl",
           settings.hoverEffectType !== "none" &&
             settings.hoverEffectIntensity !== "none" &&
-            "hover:from-violet-100/50 hover:via-pink-100/40 hover:to-blue-100/50 hover:shadow-[0_0_35px_rgba(139,92,246,0.6)]"
+            "hover:from-primary/25 hover:via-accent/20 hover:to-info/25 hover:shadow-[0_0_35px_hsl(var(--primary)/0.6)]"
         );
       case "striped":
         return cn(

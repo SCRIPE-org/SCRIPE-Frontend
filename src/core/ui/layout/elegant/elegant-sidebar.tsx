@@ -60,8 +60,8 @@ export function ElegantSidebar({ open, onOpenChange }: ElegantSidebarProps) {
             className={cn(
               "flex h-10 w-10 items-center justify-center rounded-xl",
               "bg-gradient-to-br from-primary to-primary/80",
-              "shadow-[0_0_20px_rgba(var(--primary-rgb,59,130,246),0.3)]",
-              "transition-shadow duration-500 hover:shadow-[0_0_30px_rgba(var(--primary-rgb,59,130,246),0.5)]"
+              "shadow-[0_0_20px_hsl(var(--primary)/0.3)]",
+              "transition-shadow duration-500 hover:shadow-[0_0_30px_hsl(var(--primary)/0.5)]"
             )}
           >
             <Logo size="sm" className="text-primary-foreground" />

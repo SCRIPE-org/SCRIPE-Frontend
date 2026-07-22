@@ -32,7 +32,7 @@ export function PasswordExpiryBanner({
         "flex items-center gap-3 rounded-xl border p-4",
         isExpired
           ? "border-destructive/20 bg-destructive/10 text-destructive"
-          : "border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-400"
+          : "border-warning/20 bg-warning/10 text-warning"
       )}
     >
       <AlertTriangle className="h-5 w-5 flex-shrink-0" />

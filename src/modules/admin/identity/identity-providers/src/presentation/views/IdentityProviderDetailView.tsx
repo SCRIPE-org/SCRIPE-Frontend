@@ -76,7 +76,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
     return (
       <div className="flex min-h-[450px] items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="relative flex h-12 w-12 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
+          <div className="relative flex h-12 w-12 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 shadow-[0_0_15px_hsl(var(--primary)/0.1)]">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </div>
           <p className="text-xs text-muted-foreground">
@@ -137,7 +137,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
               <span
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${
                   createStep >= 1
-                    ? "bg-primary text-primary-foreground shadow-[0_0_12px_rgba(168,85,247,0.4)]"
+                    ? "bg-primary text-primary-foreground shadow-[0_0_12px_hsl(var(--primary)/0.4)]"
                     : "border border-border bg-muted text-muted-foreground"
                 }`}
               >
@@ -163,7 +163,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
               <span
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${
                   createStep >= 2
-                    ? "bg-primary text-primary-foreground shadow-[0_0_12px_rgba(168,85,247,0.4)]"
+                    ? "bg-primary text-primary-foreground shadow-[0_0_12px_hsl(var(--primary)/0.4)]"
                     : "border border-border bg-muted text-muted-foreground"
                 }`}
               >
@@ -189,7 +189,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
               <span
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${
                   createStep >= 3
-                    ? "bg-primary text-primary-foreground shadow-[0_0_12px_rgba(168,85,247,0.4)]"
+                    ? "bg-primary text-primary-foreground shadow-[0_0_12px_hsl(var(--primary)/0.4)]"
                     : "border border-border bg-muted text-muted-foreground"
                 }`}
               >

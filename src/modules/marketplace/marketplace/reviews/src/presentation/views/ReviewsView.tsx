@@ -41,7 +41,7 @@ export function ReviewsView() {
                       {review.stars.map((s, i) => (
                         <Star
                           key={i}
-                          className={`size-3 ${s === "full" ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"}`}
+                          className={`size-3 ${s === "full" ? "fill-warning text-warning" : "text-muted-foreground"}`}
                         />
                       ))}
                     </div>

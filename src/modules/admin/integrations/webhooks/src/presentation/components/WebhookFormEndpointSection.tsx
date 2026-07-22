@@ -30,7 +30,7 @@ export function WebhookFormEndpointSection({ vm }: WebhookFormEndpointSectionPro
   return (
     <section className="space-y-5">
       <div className="flex items-center gap-2.5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-info/10 text-info">
           <Globe className="h-4 w-4" />
         </div>
         <div>
@@ -47,7 +47,7 @@ export function WebhookFormEndpointSection({ vm }: WebhookFormEndpointSectionPro
       <div className="space-y-2">
         <Label htmlFor="webhook-url" className="text-sm font-medium">
           {t("webhooks.url") || "Endpoint URL"}
-          <span className="ml-0.5 text-red-500">*</span>
+          <span className="ml-0.5 text-destructive">*</span>
         </Label>
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
@@ -60,20 +60,20 @@ export function WebhookFormEndpointSection({ vm }: WebhookFormEndpointSectionPro
             onChange={(e) => vm.setUrl(e.target.value)}
             className={`ps-9 font-mono text-sm ${
               vm.urlError
-                ? "border-red-300 focus-visible:ring-red-500"
+                ? "border-destructive/50 focus-visible:ring-destructive"
                 : vm.url && !vm.urlError
-                  ? "border-emerald-300 focus-visible:ring-emerald-500"
+                  ? "border-success/50 focus-visible:ring-success"
                   : ""
             }`}
           />
           {vm.url && !vm.urlError && (
             <div className="pointer-events-none absolute inset-y-0 end-0 flex items-center pe-3">
-              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+              <CheckCircle2 className="h-4 w-4 text-success" />
             </div>
           )}
         </div>
         {vm.urlError && (
-          <p className="mt-1 flex items-center gap-1.5 text-xs text-red-600">
+          <p className="mt-1 flex items-center gap-1.5 text-xs text-destructive">
             <AlertCircle className="h-3 w-3 shrink-0" />
             {vm.urlError}
           </p>

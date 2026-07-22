@@ -12,7 +12,12 @@ interface StrengthBarProps {
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function StrengthBar({ strength, labels }: StrengthBarProps) {
-  const colors = ["rgb(239,68,68)", "rgb(249,115,22)", "rgb(234,179,8)", "rgb(34,197,94)"];
+  const colors = [
+    "hsl(var(--destructive))",
+    "hsl(var(--warning-strong))",
+    "hsl(var(--warning))",
+    "hsl(var(--success))",
+  ];
   return (
     <div className="space-y-1">
       <div className="flex gap-1">

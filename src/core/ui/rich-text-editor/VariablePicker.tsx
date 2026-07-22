@@ -64,22 +64,22 @@ const CATEGORY_CONFIG: Record<
   recipient: {
     label: "Recipient",
     icon: <User className="h-3.5 w-3.5" />,
-    color: "text-blue-500",
+    color: "text-info",
   },
   company: {
     label: "Company",
     icon: <Building2 className="h-3.5 w-3.5" />,
-    color: "text-emerald-500",
+    color: "text-success",
   },
   system: {
     label: "System",
     icon: <Settings className="h-3.5 w-3.5" />,
-    color: "text-purple-500",
+    color: "text-primary",
   },
   template: {
     label: "Template",
     icon: <FileText className="h-3.5 w-3.5" />,
-    color: "text-amber-500",
+    color: "text-warning",
   },
 };
 

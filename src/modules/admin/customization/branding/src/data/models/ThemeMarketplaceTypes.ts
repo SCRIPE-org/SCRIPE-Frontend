@@ -84,17 +84,17 @@ export const PRICING_BADGES: Record<
 > = {
   Free: {
     label: "Free",
-    color: "bg-emerald-500/10 text-emerald-600",
+    color: "bg-success/10 text-success",
     icon: "sparkles",
   },
   EditionGated: {
     label: "Included",
-    color: "bg-blue-500/10 text-blue-600",
+    color: "bg-info/10 text-info",
     icon: "crown",
   },
   StandaloneOnly: {
     label: "Premium",
-    color: "bg-violet-500/10 text-violet-600",
+    color: "bg-primary/10 text-primary",
     icon: "shopping-cart",
   },
 };
@@ -106,22 +106,22 @@ export function getThemeBadge(theme: ThemeCardDto): {
   variant: "free" | "included" | "locked" | "purchased" | "buyable";
 } {
   if (theme.pricingType === "Free") {
-    return { label: "✨ Free", color: "bg-emerald-500/10 text-emerald-600", variant: "free" };
+    return { label: "✨ Free", color: "bg-success/10 text-success", variant: "free" };
   }
 
   if (theme.isPurchased) {
-    return { label: "✅ Purchased", color: "bg-green-500/10 text-green-600", variant: "purchased" };
+    return { label: "✅ Purchased", color: "bg-success/10 text-success", variant: "purchased" };
   }
 
   if (theme.isIncluded) {
-    return { label: "✅ Included", color: "bg-blue-500/10 text-blue-600", variant: "included" };
+    return { label: "✅ Included", color: "bg-info/10 text-info", variant: "included" };
   }
 
   if (theme.pricingType === "StandaloneOnly") {
     const priceLabel = theme.price ? `$${theme.price.toFixed(2)}` : "Premium";
     return {
       label: `💰 ${priceLabel}`,
-      color: "bg-violet-500/10 text-violet-600",
+      color: "bg-primary/10 text-primary",
       variant: "buyable",
     };
   }
@@ -130,14 +130,14 @@ export function getThemeBadge(theme: ThemeCardDto): {
   if (theme.isBuyable && theme.price) {
     return {
       label: `🔒 Upgrade or $${theme.price.toFixed(2)}`,
-      color: "bg-amber-500/10 text-amber-600",
+      color: "bg-warning/10 text-warning",
       variant: "locked",
     };
   }
 
   return {
     label: "🔒 Upgrade to unlock",
-    color: "bg-amber-500/10 text-amber-600",
+    color: "bg-warning/10 text-warning",
     variant: "locked",
   };
 }

@@ -138,8 +138,8 @@ export function ResetPasswordView() {
           </div>
           <div className="sx-screen w-full rounded-[20px] p-8 text-center sm:p-9" style={cardStyle}>
             <div className="flex flex-col items-center gap-6">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10">
-                <AlertTriangle className="h-7 w-7 text-amber-500" aria-hidden="true" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-warning/10">
+                <AlertTriangle className="h-7 w-7 text-warning" aria-hidden="true" />
               </div>
               <div className="space-y-1.5">
                 <h2
@@ -196,8 +196,8 @@ export function ResetPasswordView() {
         <div className="relative z-[1] flex w-full max-w-[480px] flex-1 flex-col items-center justify-center px-5 py-24">
           <div className="sx-screen w-full rounded-[20px] p-8 sm:p-9" style={cardStyle}>
             <div className="sx-pop flex flex-col items-center gap-6 text-center">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10">
-                <CheckCircle className="h-7 w-7 text-emerald-500" aria-hidden="true" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-success/10">
+                <CheckCircle className="h-7 w-7 text-success" aria-hidden="true" />
               </div>
               <div className="space-y-1.5">
                 <h2

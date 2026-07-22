@@ -24,7 +24,7 @@ export function IdentityProviderEmptyState({ onCreateClick }: Props) {
   return (
     <div className="flex min-h-[400px] flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-card/30 p-8 text-center backdrop-blur-sm">
       {/* Icon frame with purple outer glow */}
-      <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/10 bg-primary/5 shadow-[0_0_25px_rgba(168,85,247,0.15)]">
+      <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/10 bg-primary/5 shadow-[0_0_25px_hsl(var(--primary)/0.15)]">
         <Fingerprint className="h-8 w-8 text-primary" />
         <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-success text-success-foreground shadow">
           <Plus className="h-3 w-3" strokeWidth={3} />

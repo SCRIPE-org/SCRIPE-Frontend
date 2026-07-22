@@ -166,7 +166,7 @@ export function ThemeManagementView() {
                 <div className="flex items-center gap-1.5">
                   <span className="truncate text-sm font-semibold">{item.name}</span>
                   {item.isFeatured && (
-                    <Star className="h-3.5 w-3.5 shrink-0 fill-amber-500 text-amber-500" />
+                    <Star className="h-3.5 w-3.5 shrink-0 fill-warning text-warning" />
                   )}
                   {item.isNew && (
                     <Badge

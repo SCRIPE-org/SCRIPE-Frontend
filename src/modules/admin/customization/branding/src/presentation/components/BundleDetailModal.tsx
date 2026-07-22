@@ -104,7 +104,7 @@ export function BundleDetailModal({
                 <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
                   {t(typeConfig.labelKey)}
                 </Badge>
-                {bundle.isFeatured && <Star className="h-3 w-3 fill-amber-500 text-amber-500" />}
+                {bundle.isFeatured && <Star className="h-3 w-3 fill-warning text-warning" />}
                 <span>v{bundle.version}</span>
                 <span>•</span>
                 <span>{bundle.authorName}</span>

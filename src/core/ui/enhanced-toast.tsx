@@ -84,32 +84,28 @@ const toastVariants = cva(
       {
         variant: "default",
         design: "classic",
-        class:
-          "rounded-lg border-2 border-gray-200 bg-white p-4 shadow-md dark:border-gray-700 dark:bg-gray-800 text-gray-900 dark:text-gray-100",
+        class: "rounded-lg border-2 border-border bg-card p-4 shadow-md text-foreground",
       },
       {
         variant: "success",
         design: "classic",
-        class:
-          "rounded-lg border-2 border-emerald-200 bg-emerald-50 p-4 shadow-md dark:border-emerald-700 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-200",
+        class: "rounded-lg border-2 border-success/40 bg-success/10 p-4 shadow-md text-success",
       },
       {
         variant: "destructive",
         design: "classic",
         class:
-          "rounded-lg border-2 border-red-200 bg-red-50 p-4 shadow-md dark:border-red-700 dark:bg-red-900/20 text-red-800 dark:text-red-200",
+          "rounded-lg border-2 border-destructive/40 bg-destructive/10 p-4 shadow-md text-destructive",
       },
       {
         variant: "warning",
         design: "classic",
-        class:
-          "rounded-lg border-2 border-amber-200 bg-amber-50 p-4 shadow-md dark:border-amber-700 dark:bg-amber-900/20 text-amber-800 dark:text-amber-200",
+        class: "rounded-lg border-2 border-warning/40 bg-warning/10 p-4 shadow-md text-warning",
       },
       {
         variant: "info",
         design: "classic",
-        class:
-          "rounded-lg border-2 border-blue-200 bg-blue-50 p-4 shadow-md dark:border-blue-700 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200",
+        class: "rounded-lg border-2 border-info/40 bg-info/10 p-4 shadow-md text-info",
       },
 
       // Neon Design Variants
@@ -117,60 +113,58 @@ const toastVariants = cva(
         variant: "default",
         design: "neon",
         class:
-          "rounded-xl bg-gray-900/90 p-4 text-gray-100 shadow-[0_0_20px_rgba(156,163,175,0.5)] ring-1 ring-gray-400/50",
+          "rounded-xl bg-muted/90 p-4 text-foreground shadow-[0_0_20px_hsl(var(--muted-foreground)/0.5)] ring-1 ring-border",
       },
       {
         variant: "success",
         design: "neon",
         class:
-          "rounded-xl bg-black/90 p-4 text-green-400 shadow-[0_0_30px_rgba(34,197,94,0.8)] ring-2 ring-green-400/50",
+          "rounded-xl bg-background/90 p-4 text-success shadow-[0_0_30px_hsl(var(--success)/0.8)] ring-2 ring-success/50",
       },
       {
         variant: "destructive",
         design: "neon",
         class:
-          "rounded-xl bg-black/90 p-4 text-red-400 shadow-[0_0_30px_rgba(239,68,68,0.8)] ring-2 ring-red-400/50",
+          "rounded-xl bg-background/90 p-4 text-destructive shadow-[0_0_30px_hsl(var(--destructive)/0.8)] ring-2 ring-destructive/50",
       },
       {
         variant: "warning",
         design: "neon",
         class:
-          "rounded-xl bg-black/90 p-4 text-yellow-400 shadow-[0_0_30px_rgba(234,179,8,0.8)] ring-2 ring-yellow-400/50",
+          "rounded-xl bg-background/90 p-4 text-warning shadow-[0_0_30px_hsl(var(--warning)/0.8)] ring-2 ring-warning/50",
       },
       {
         variant: "info",
         design: "neon",
         class:
-          "rounded-xl bg-black/90 p-4 text-cyan-400 shadow-[0_0_30px_rgba(6,182,212,0.8)] ring-2 ring-cyan-400/50",
+          "rounded-xl bg-background/90 p-4 text-info shadow-[0_0_30px_hsl(var(--info)/0.8)] ring-2 ring-info/50",
       },
 
       // Glassmorphism Design Variants
       {
         variant: "default",
         design: "glassmorphism",
-        class: "rounded-2xl bg-white/10 p-4 text-gray-800 dark:text-gray-200",
+        class: "rounded-2xl bg-white/10 p-4 text-foreground",
       },
       {
         variant: "success",
         design: "glassmorphism",
-        class:
-          "rounded-2xl bg-emerald-500/20 p-4 text-emerald-900 dark:text-emerald-100 border-emerald-300/30",
+        class: "rounded-2xl bg-success/20 p-4 text-success border-success/30",
       },
       {
         variant: "destructive",
         design: "glassmorphism",
-        class: "rounded-2xl bg-red-500/20 p-4 text-red-900 dark:text-red-100 border-red-300/30",
+        class: "rounded-2xl bg-destructive/20 p-4 text-destructive border-destructive/30",
       },
       {
         variant: "warning",
         design: "glassmorphism",
-        class:
-          "rounded-2xl bg-amber-500/20 p-4 text-amber-900 dark:text-amber-100 border-amber-300/30",
+        class: "rounded-2xl bg-warning/20 p-4 text-warning border-warning/30",
       },
       {
         variant: "info",
         design: "glassmorphism",
-        class: "rounded-2xl bg-blue-500/20 p-4 text-blue-900 dark:text-blue-100 border-blue-300/30",
+        class: "rounded-2xl bg-info/20 p-4 text-info border-info/30",
       },
 
       // Neumorphism Design Variants
@@ -178,31 +172,31 @@ const toastVariants = cva(
         variant: "default",
         design: "neumorphism",
         class:
-          "rounded-2xl bg-gray-100 p-4 text-gray-800 shadow-[inset_-2px_-2px_6px_rgba(255,255,255,0.7),inset_2px_2px_6px_rgba(0,0,0,0.1)] dark:bg-gray-800 dark:text-gray-200 dark:shadow-[inset_-2px_-2px_6px_rgba(255,255,255,0.1),inset_2px_2px_6px_rgba(0,0,0,0.3)]",
+          "rounded-2xl bg-muted p-4 text-foreground shadow-[inset_-2px_-2px_6px_rgba(255,255,255,0.7),inset_2px_2px_6px_rgba(0,0,0,0.1)] dark:shadow-[inset_-2px_-2px_6px_rgba(255,255,255,0.1),inset_2px_2px_6px_rgba(0,0,0,0.3)]",
       },
       {
         variant: "success",
         design: "neumorphism",
         class:
-          "rounded-2xl bg-emerald-100 p-4 text-emerald-800 shadow-[inset_-2px_-2px_6px_rgba(16,185,129,0.2),inset_2px_2px_6px_rgba(5,150,105,0.3)] dark:bg-emerald-900/30 dark:text-emerald-200",
+          "rounded-2xl bg-success/15 p-4 text-success shadow-[inset_-2px_-2px_6px_hsl(var(--success)/0.2),inset_2px_2px_6px_hsl(var(--success)/0.3)]",
       },
       {
         variant: "destructive",
         design: "neumorphism",
         class:
-          "rounded-2xl bg-red-100 p-4 text-red-800 shadow-[inset_-2px_-2px_6px_rgba(239,68,68,0.2),inset_2px_2px_6px_rgba(220,38,38,0.3)] dark:bg-red-900/30 dark:text-red-200",
+          "rounded-2xl bg-destructive/15 p-4 text-destructive shadow-[inset_-2px_-2px_6px_hsl(var(--destructive)/0.2),inset_2px_2px_6px_hsl(var(--destructive)/0.3)]",
       },
       {
         variant: "warning",
         design: "neumorphism",
         class:
-          "rounded-2xl bg-amber-100 p-4 text-amber-800 shadow-[inset_-2px_-2px_6px_rgba(245,158,11,0.2),inset_2px_2px_6px_rgba(217,119,6,0.3)] dark:bg-amber-900/30 dark:text-amber-200",
+          "rounded-2xl bg-warning/15 p-4 text-warning shadow-[inset_-2px_-2px_6px_hsl(var(--warning)/0.2),inset_2px_2px_6px_hsl(var(--warning)/0.3)]",
       },
       {
         variant: "info",
         design: "neumorphism",
         class:
-          "rounded-2xl bg-blue-100 p-4 text-blue-800 shadow-[inset_-2px_-2px_6px_rgba(59,130,246,0.2),inset_2px_2px_6px_rgba(37,99,235,0.3)] dark:bg-blue-900/30 dark:text-blue-200",
+          "rounded-2xl bg-info/15 p-4 text-info shadow-[inset_-2px_-2px_6px_hsl(var(--info)/0.2),inset_2px_2px_6px_hsl(var(--info)/0.3)]",
       },
 
       // Aurora Design Variants
@@ -210,31 +204,31 @@ const toastVariants = cva(
         variant: "default",
         design: "aurora",
         class:
-          "rounded-2xl bg-gradient-to-br from-gray-600 via-gray-700 to-gray-800 p-4 text-white",
+          "rounded-2xl bg-gradient-to-br from-muted-foreground via-muted-foreground/80 to-foreground p-4 text-background",
       },
       {
         variant: "success",
         design: "aurora",
         class:
-          "rounded-2xl bg-gradient-to-br from-emerald-400 via-teal-500 to-green-600 p-4 text-white animate-gradient-x",
+          "rounded-2xl bg-gradient-to-br from-success/80 via-success to-success/70 p-4 text-success-foreground animate-gradient-x",
       },
       {
         variant: "destructive",
         design: "aurora",
         class:
-          "rounded-2xl bg-gradient-to-br from-red-400 via-pink-500 to-rose-600 p-4 text-white animate-gradient-x",
+          "rounded-2xl bg-gradient-to-br from-destructive/80 via-destructive to-destructive/70 p-4 text-destructive-foreground animate-gradient-x",
       },
       {
         variant: "warning",
         design: "aurora",
         class:
-          "rounded-2xl bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 p-4 text-white animate-gradient-x",
+          "rounded-2xl bg-gradient-to-br from-warning/80 via-warning to-warning/70 p-4 text-warning-foreground animate-gradient-x",
       },
       {
         variant: "info",
         design: "aurora",
         class:
-          "rounded-2xl bg-gradient-to-br from-blue-400 via-purple-500 to-indigo-600 p-4 text-white animate-gradient-x",
+          "rounded-2xl bg-gradient-to-br from-info/80 via-info to-info/70 p-4 text-info-foreground animate-gradient-x",
       },
 
       // Cosmic Design Variants
@@ -242,31 +236,31 @@ const toastVariants = cva(
         variant: "default",
         design: "cosmic",
         class:
-          "rounded-2xl bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 text-white",
+          "rounded-2xl bg-gradient-to-br from-foreground via-primary to-foreground p-4 text-background",
       },
       {
         variant: "success",
         design: "cosmic",
         class:
-          "rounded-2xl bg-gradient-to-br from-emerald-900 via-green-800 to-teal-900 p-4 text-emerald-100",
+          "rounded-2xl bg-gradient-to-br from-success via-primary to-success p-4 text-success-foreground",
       },
       {
         variant: "destructive",
         design: "cosmic",
         class:
-          "rounded-2xl bg-gradient-to-br from-red-900 via-rose-800 to-pink-900 p-4 text-red-100",
+          "rounded-2xl bg-gradient-to-br from-destructive via-primary to-destructive p-4 text-destructive-foreground",
       },
       {
         variant: "warning",
         design: "cosmic",
         class:
-          "rounded-2xl bg-gradient-to-br from-amber-900 via-orange-800 to-yellow-900 p-4 text-amber-100",
+          "rounded-2xl bg-gradient-to-br from-warning via-primary to-warning p-4 text-warning-foreground",
       },
       {
         variant: "info",
         design: "cosmic",
         class:
-          "rounded-2xl bg-gradient-to-br from-blue-900 via-indigo-800 to-purple-900 p-4 text-blue-100",
+          "rounded-2xl bg-gradient-to-br from-info via-primary to-info p-4 text-info-foreground",
       },
 
       // Minimal Design Variants
@@ -278,26 +272,22 @@ const toastVariants = cva(
       {
         variant: "success",
         design: "minimal",
-        class:
-          "rounded border-green-200 bg-green-50 text-green-900 dark:border-green-800 dark:bg-green-900/20 dark:text-green-100 p-4",
+        class: "rounded border-success/30 bg-success/10 text-success p-4",
       },
       {
         variant: "destructive",
         design: "minimal",
-        class:
-          "rounded border-red-200 bg-red-50 text-red-900 dark:border-red-800 dark:bg-red-900/20 dark:text-red-100 p-4",
+        class: "rounded border-destructive/30 bg-destructive/10 text-destructive p-4",
       },
       {
         variant: "warning",
         design: "minimal",
-        class:
-          "rounded border-yellow-200 bg-yellow-50 text-yellow-900 dark:border-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-100 p-4",
+        class: "rounded border-warning/30 bg-warning/10 text-warning p-4",
       },
       {
         variant: "info",
         design: "minimal",
-        class:
-          "rounded border-blue-200 bg-blue-50 text-blue-900 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-100 p-4",
+        class: "rounded border-info/30 bg-info/10 text-info p-4",
       },
 
       // Modern Design Variants
@@ -310,52 +300,56 @@ const toastVariants = cva(
         variant: "success",
         design: "modern",
         class:
-          "rounded-lg border-green-300/50 bg-green-100/90 backdrop-blur-sm text-green-800 dark:bg-green-900/30 dark:text-green-200 p-4 shadow-lg",
+          "rounded-lg border-success/50 bg-success/15 backdrop-blur-sm text-success p-4 shadow-lg",
       },
       {
         variant: "destructive",
         design: "modern",
         class:
-          "rounded-lg border-red-300/50 bg-red-100/90 backdrop-blur-sm text-red-800 dark:bg-red-900/30 dark:text-red-200 p-4 shadow-lg",
+          "rounded-lg border-destructive/50 bg-destructive/15 backdrop-blur-sm text-destructive p-4 shadow-lg",
       },
       {
         variant: "warning",
         design: "modern",
         class:
-          "rounded-lg border-yellow-300/50 bg-yellow-100/90 backdrop-blur-sm text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200 p-4 shadow-lg",
+          "rounded-lg border-warning/50 bg-warning/15 backdrop-blur-sm text-warning p-4 shadow-lg",
       },
       {
         variant: "info",
         design: "modern",
-        class:
-          "rounded-lg border-blue-300/50 bg-blue-100/90 backdrop-blur-sm text-blue-800 dark:bg-blue-900/30 dark:text-blue-200 p-4 shadow-lg",
+        class: "rounded-lg border-info/50 bg-info/15 backdrop-blur-sm text-info p-4 shadow-lg",
       },
 
       // Gradient Design Variants
       {
         variant: "default",
         design: "gradient",
-        class: "rounded-lg bg-gradient-to-r from-gray-500 to-gray-600 text-white p-4 shadow-xl",
+        class:
+          "rounded-lg bg-gradient-to-r from-muted-foreground to-foreground text-background p-4 shadow-xl",
       },
       {
         variant: "success",
         design: "gradient",
-        class: "rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 text-white p-4 shadow-xl",
+        class:
+          "rounded-lg bg-gradient-to-r from-success to-success/80 text-success-foreground p-4 shadow-xl",
       },
       {
         variant: "destructive",
         design: "gradient",
-        class: "rounded-lg bg-gradient-to-r from-red-500 to-rose-500 text-white p-4 shadow-xl",
+        class:
+          "rounded-lg bg-gradient-to-r from-destructive to-destructive/80 text-destructive-foreground p-4 shadow-xl",
       },
       {
         variant: "warning",
         design: "gradient",
-        class: "rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-4 shadow-xl",
+        class:
+          "rounded-lg bg-gradient-to-r from-warning to-warning/80 text-warning-foreground p-4 shadow-xl",
       },
       {
         variant: "info",
         design: "gradient",
-        class: "rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-4 shadow-xl",
+        class:
+          "rounded-lg bg-gradient-to-r from-info to-info/80 text-info-foreground p-4 shadow-xl",
       },
 
       // Outlined Design Variants
@@ -363,31 +357,30 @@ const toastVariants = cva(
         variant: "default",
         design: "outlined",
         class:
-          "rounded-lg border-2 border-gray-300 bg-transparent backdrop-blur-sm text-gray-700 dark:border-gray-600 dark:text-gray-300 p-4",
+          "rounded-lg border-2 border-border bg-transparent backdrop-blur-sm text-muted-foreground p-4",
       },
       {
         variant: "success",
         design: "outlined",
         class:
-          "rounded-lg border-2 border-green-500 bg-transparent backdrop-blur-sm text-green-700 dark:text-green-300 p-4",
+          "rounded-lg border-2 border-success bg-transparent backdrop-blur-sm text-success p-4",
       },
       {
         variant: "destructive",
         design: "outlined",
         class:
-          "rounded-lg border-2 border-red-500 bg-transparent backdrop-blur-sm text-red-700 dark:text-red-300 p-4",
+          "rounded-lg border-2 border-destructive bg-transparent backdrop-blur-sm text-destructive p-4",
       },
       {
         variant: "warning",
         design: "outlined",
         class:
-          "rounded-lg border-2 border-yellow-500 bg-transparent backdrop-blur-sm text-yellow-700 dark:text-yellow-300 p-4",
+          "rounded-lg border-2 border-warning bg-transparent backdrop-blur-sm text-warning p-4",
       },
       {
         variant: "info",
         design: "outlined",
-        class:
-          "rounded-lg border-2 border-blue-500 bg-transparent backdrop-blur-sm text-blue-700 dark:text-blue-300 p-4",
+        class: "rounded-lg border-2 border-info bg-transparent backdrop-blur-sm text-info p-4",
       },
     ],
     defaultVariants: {
@@ -444,7 +437,7 @@ const ToastClose = React.forwardRef<
   <ToastPrimitives.Close
     ref={ref}
     className={cn(
-      "absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600",
+      "absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-destructive-foreground/70 group-[.destructive]:hover:text-destructive-foreground group-[.destructive]:focus:ring-destructive-foreground/50 group-[.destructive]:focus:ring-offset-destructive",
       className
     )}
     toast-close=""

@@ -56,11 +56,11 @@ export function CascadeRestoreDialog({
     >
       <div className="space-y-4 py-2">
         <Alert>
-          <Info className="h-4 w-4 text-blue-500" />
-          <AlertTitle className="text-blue-500">
+          <Info className="h-4 w-4 text-info" />
+          <AlertTitle className="text-info">
             {t("userGroups.restoreAdminsTitle") || "Restore Associated Admins"}
           </AlertTitle>
-          <AlertDescription className="text-blue-600/90 dark:text-blue-400">
+          <AlertDescription className="text-info/90">
             {t("userGroups.restoreAdminsDesc") ||
               "This user group may have administrators associated with it that were deleted when the group was deleted. You can choose to restore them along with the group."}
           </AlertDescription>

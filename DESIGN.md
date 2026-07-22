@@ -166,6 +166,13 @@ every view invented its own green.
 `text-emerald-600 dark:text-emerald-400` pair, delete the `dark:` variant — do
 not carry it over.
 
+`--warning-strong` is the fourth step of the severity ramp
+(`success → warning → warning-strong → destructive`). It exists because some
+scales genuinely need four steps — an SLA gauge, a quota meter — and without it
+amber and orange both collapse into `warning`, silently turning a four-step
+ramp into three. Reach for it only when a scale really has four levels; do not
+use it as "a slightly different amber".
+
 ## Contrast
 
 Every token pair is measured, not asserted. Body text ≥ 4.5:1, large text and

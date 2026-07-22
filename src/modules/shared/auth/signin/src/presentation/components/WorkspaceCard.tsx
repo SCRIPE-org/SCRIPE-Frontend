@@ -103,8 +103,8 @@ export function WorkspaceCard({
   const stateColors: Record<WorkspaceCardState, string> = {
     unlocked: "border-border bg-card hover:border-primary/40 hover:bg-muted/40 hover:shadow-sm",
     passwordRequired: isExpanded
-      ? "border-amber-400/60 bg-amber-50/40 dark:border-amber-500/40 dark:bg-amber-900/10"
-      : "border-border/60 bg-muted/10 hover:border-amber-400/40 hover:bg-amber-50/20",
+      ? "border-warning/50 bg-warning/10"
+      : "border-border/60 bg-muted/10 hover:border-warning/40 hover:bg-warning/5",
     locked: "border-border/40 bg-muted/20 opacity-70",
     disabled: "border-border/30 bg-muted/10 opacity-50",
     setupPending: "border-border/40 bg-muted/20 opacity-60",
@@ -145,7 +145,7 @@ export function WorkspaceCard({
     switch (state) {
       case "locked":
         return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-red-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-600 dark:text-red-400">
+          <span className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-destructive">
             <Timer className="h-2.5 w-2.5" aria-hidden />
             {t("auth.workspaceSelection.locked") || "Locked"}
             {ws.lockedUntil && ` · ${formatLockoutTime(ws.lockedUntil)}`}
@@ -153,7 +153,7 @@ export function WorkspaceCard({
         );
       case "passwordRequired":
         return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400">
+          <span className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-warning">
             <Lock className="h-2.5 w-2.5" aria-hidden />
             {t("auth.workspaceSelection.passwordRequired") || "Password required"}
           </span>
@@ -167,7 +167,7 @@ export function WorkspaceCard({
         );
       case "setupPending":
         return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400">
+          <span className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-warning">
             <Clock className="h-2.5 w-2.5" aria-hidden />
             {t("auth.workspaceSelection.setupPending") || "Setup pending"}
           </span>
@@ -286,9 +286,9 @@ export function WorkspaceCard({
         );
       case "passwordRequired":
         return isExpanded ? (
-          <LockOpen className="h-4 w-4 text-amber-500" aria-hidden />
+          <LockOpen className="h-4 w-4 text-warning" aria-hidden />
         ) : (
-          <Lock className="h-4 w-4 text-amber-400/80" aria-hidden />
+          <Lock className="h-4 w-4 text-warning/80" aria-hidden />
         );
       default:
         return null;

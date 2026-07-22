@@ -95,7 +95,7 @@ export function TenantPlanPricingCard({
     <div
       className={`relative flex flex-col overflow-hidden rounded-xl border transition-all duration-300 ${
         isRecommended
-          ? "border-primary/50 bg-card shadow-[0_0_0_1px_rgba(var(--primary),0.3),0_8px_40px_rgba(var(--primary),0.15)]"
+          ? "border-primary/50 bg-card shadow-[0_0_0_1px_hsl(var(--primary)/0.3),0_8px_40px_hsl(var(--primary)/0.15)]"
           : "border-border/60 bg-card/80 hover:border-border hover:shadow-lg"
       } `}
     >

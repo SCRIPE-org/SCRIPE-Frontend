@@ -5,7 +5,7 @@
 const SLA_BG: Record<string, string> = {
   green: "bg-success",
   yellow: "bg-warning",
-  orange: "bg-warning",
+  orange: "bg-warning-strong",
   red: "bg-destructive",
 };
 

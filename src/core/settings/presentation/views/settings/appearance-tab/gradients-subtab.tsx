@@ -74,8 +74,8 @@ export function GradientsSubtab() {
     <div className="space-y-6">
       {/* Mode hint */}
       {!isGradientMode && (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/30">
-          <p className="text-sm text-amber-700 dark:text-amber-300">
+        <div className="rounded-lg border border-warning/30 bg-warning/10 p-3">
+          <p className="text-sm text-warning">
             ⚠️ {t("settings.gradientWarning")}
           </p>
           <button

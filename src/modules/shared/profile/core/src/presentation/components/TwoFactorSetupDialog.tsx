@@ -159,7 +159,7 @@ export function TwoFactorSetupDialog({
                     onClick={handleCopyKey}
                   >
                     {copiedKey ? (
-                      <Check className="h-3.5 w-3.5 text-emerald-500" />
+                      <Check className="h-3.5 w-3.5 text-success" />
                     ) : (
                       <Copy className="h-3.5 w-3.5" />
                     )}
@@ -265,7 +265,7 @@ export function TwoFactorSetupDialog({
           <>
             <DialogHeader>
               <div className="flex items-center gap-2">
-                <KeyRound className="h-5 w-5 text-emerald-500" />
+                <KeyRound className="h-5 w-5 text-success" />
                 <DialogTitle>{t("profile.security.twoFactor.setup.backupTitle")}</DialogTitle>
               </div>
               <DialogDescription>

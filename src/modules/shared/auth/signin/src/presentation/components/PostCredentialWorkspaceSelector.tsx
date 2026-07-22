@@ -79,15 +79,15 @@ export function PostCredentialWorkspaceSelector({
         <div className="mb-2 flex items-center gap-2">
           {unlockedCount > 0 ? (
             <>
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" aria-hidden />
-              <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-success" aria-hidden />
+              <p className="text-sm font-medium text-success">
                 {t("auth.workspaceSelection.credentialsVerified") || "Credentials verified"}
               </p>
             </>
           ) : (
             <>
-              <Lock className="h-4 w-4 shrink-0 text-amber-500" aria-hidden />
-              <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
+              <Lock className="h-4 w-4 shrink-0 text-warning" aria-hidden />
+              <p className="text-sm font-medium text-warning">
                 {t("auth.workspaceSelection.enterPasswordForWorkspace") ||
                   "Enter the password for a workspace to sign in"}
               </p>

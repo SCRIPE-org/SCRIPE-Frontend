@@ -38,7 +38,7 @@ export function GeneratedKeyDialog({ generatedKey, onClose }: GeneratedKeyDialog
     <Dialog open={!!generatedKey} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 mb-2">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-success/15 text-success mb-2">
             <Lock className="h-6 w-6" />
           </div>
           <DialogTitle className="text-center">{t("apikeys.created") || "API Key Generated"}</DialogTitle>
@@ -49,7 +49,7 @@ export function GeneratedKeyDialog({ generatedKey, onClose }: GeneratedKeyDialog
         </DialogHeader>
 
         {/* Secure Display Pane */}
-        <div className="mt-4 p-4 rounded-lg bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-900/50 flex gap-3 text-sm text-yellow-800 dark:text-yellow-300">
+        <div className="mt-4 p-4 rounded-lg bg-warning/10 border border-warning/30 flex gap-3 text-sm text-warning">
           <AlertTriangle className="h-5 w-5 shrink-0" />
           <div>
             <p className="font-semibold">{t("apikeys.plainKeyWarning") || "Keep this key secret."}</p>
@@ -74,7 +74,7 @@ export function GeneratedKeyDialog({ generatedKey, onClose }: GeneratedKeyDialog
           </div>
           <Button type="button" size="sm" className="px-3" onClick={handleCopy}>
             <span className="sr-only">Copy</span>
-            {copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
+            {copied ? <Check className="h-4 w-4 text-success" /> : <Copy className="h-4 w-4" />}
           </Button>
         </div>
 

@@ -87,7 +87,7 @@ export function BackupCodesDialog({
 
         {!codes ? (
           <>
-            <div className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 p-3 text-sm text-amber-700 dark:text-amber-400">
+            <div className="flex items-start gap-2 rounded-lg border border-warning/20 bg-warning/10 p-3 text-sm text-warning">
               <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" />
               <span>{t("profile.security.backupCodes.warning")}</span>
             </div>
@@ -131,7 +131,7 @@ export function BackupCodesDialog({
               ))}
             </div>
 
-            <div className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400">
+            <div className="flex items-start gap-2 rounded-lg border border-warning/20 bg-warning/10 p-3 text-xs text-warning">
               <AlertTriangle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
               <span>{t("profile.security.backupCodes.saveWarning")}</span>
             </div>
@@ -139,7 +139,7 @@ export function BackupCodesDialog({
             <div className="flex gap-2">
               <Button variant="outline" size="sm" onClick={handleCopy} className="flex-1">
                 {copied ? (
-                  <CheckCircle2 className="me-2 h-4 w-4 text-emerald-500" />
+                  <CheckCircle2 className="me-2 h-4 w-4 text-success" />
                 ) : (
                   <Copy className="me-2 h-4 w-4" />
                 )}

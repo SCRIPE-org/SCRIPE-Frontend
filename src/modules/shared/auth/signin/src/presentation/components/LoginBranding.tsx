@@ -125,7 +125,7 @@ export function LoginBranding({
           backgroundColor: branding?.secondaryColor ? `${branding.secondaryColor}0D` : undefined,
         }}
       >
-        {!branding?.secondaryColor && <div className="h-full w-full rounded-full bg-blue-500/5" />}
+        {!branding?.secondaryColor && <div className="h-full w-full rounded-full bg-info/5" />}
       </div>
 
       {/* Subtle Grid overlay */}

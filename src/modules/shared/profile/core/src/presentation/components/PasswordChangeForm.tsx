@@ -124,7 +124,7 @@ export function PasswordChangeForm({
                 key={item.label}
                 className={cn(
                   "flex items-center gap-1 text-xs transition-colors",
-                  item.met ? "text-emerald-600" : "text-muted-foreground"
+                  item.met ? "text-success" : "text-muted-foreground"
                 )}
               >
                 {item.met ? "✓" : "○"} {item.label}
@@ -167,7 +167,7 @@ export function PasswordChangeForm({
       {submitError && <p className="text-sm text-destructive">{submitError}</p>}
 
       {success && (
-        <div className="flex items-center gap-2 text-sm text-emerald-600">
+        <div className="flex items-center gap-2 text-sm text-success">
           <CheckCircle2 className="h-4 w-4" />
           {t("profile.security.passwordChanged")}
         </div>

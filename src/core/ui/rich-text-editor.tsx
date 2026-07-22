@@ -439,7 +439,7 @@ export function RichTextEditor({
         <div className="flex items-center justify-between">
           <span>{charCount} characters</span>
           <span className="flex items-center gap-2">
-            {isActive && <span className="text-green-600">● Active</span>}
+            {isActive && <span className="text-success">● Active</span>}
             <span>Rich Text Editor</span>
           </span>
         </div>

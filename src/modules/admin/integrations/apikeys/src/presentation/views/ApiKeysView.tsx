@@ -42,10 +42,10 @@ export function ApiKeysView() {
           sortable: true,
           render: (_val: unknown, item: ApiKey) => (
             <div className="flex items-center gap-2">
-              <Key className="h-4 w-4 text-violet-500 shrink-0" />
+              <Key className="h-4 w-4 text-primary shrink-0" />
               <span
                 onClick={() => router.push(`/integrations/apikeys/${item.id}`)}
-                className="font-semibold text-sm cursor-pointer hover:text-violet-600 hover:underline"
+                className="font-semibold text-sm cursor-pointer hover:text-primary hover:underline"
               >
                 {item.name || t("apikeys.untitled")}
               </span>
@@ -71,13 +71,13 @@ export function ApiKeysView() {
 
             if (status === "active") {
               variant = "default";
-              className = "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 hover:bg-emerald-100";
+              className = "bg-success/15 text-success hover:bg-success/15";
             } else if (status === "expired") {
               variant = "outline";
-              className = "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 hover:bg-amber-100 border-amber-300";
+              className = "bg-warning/15 text-warning hover:bg-warning/15 border-warning/40";
             } else {
               variant = "destructive";
-              className = "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 hover:bg-red-100";
+              className = "bg-destructive/15 text-destructive hover:bg-destructive/15";
             }
 
             return (
@@ -104,7 +104,7 @@ export function ApiKeysView() {
                   <Badge
                     key={scope}
                     variant="secondary"
-                    className="text-[10px] py-0.5 px-2 font-mono bg-violet-50 text-violet-700 border border-violet-200/60 dark:bg-violet-500/10 dark:text-violet-300 dark:border-violet-500/30 shrink-0"
+                    className="text-[10px] py-0.5 px-2 font-mono bg-primary/10 text-primary border border-primary/25 shrink-0"
                   >
                     {scope}
                   </Badge>
@@ -114,7 +114,7 @@ export function ApiKeysView() {
                     <PopoverTrigger asChild>
                       <Badge
                         variant="outline"
-                        className="text-[10px] py-0.5 px-2 font-mono cursor-pointer bg-violet-100/50 text-violet-800 border border-violet-200 hover:bg-violet-100 dark:bg-violet-500/20 dark:text-violet-200 dark:border-violet-500/40 dark:hover:bg-violet-500/30 shrink-0"
+                        className="text-[10px] py-0.5 px-2 font-mono cursor-pointer bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25 shrink-0"
                       >
                         +{extraCount} {t("apikeys.more") || "more"}
                       </Badge>
@@ -128,7 +128,7 @@ export function ApiKeysView() {
                           <Badge
                             key={scope}
                             variant="secondary"
-                            className="text-[10px] py-0.5 px-2 font-mono bg-violet-50 text-violet-700 border border-violet-200/60 dark:bg-violet-500/10 dark:text-violet-300 dark:border-violet-500/30"
+                            className="text-[10px] py-0.5 px-2 font-mono bg-primary/10 text-primary border border-primary/25"
                           >
                             {scope}
                           </Badge>
@@ -158,7 +158,7 @@ export function ApiKeysView() {
               {item.expiresAt ? (
                 formatUtc(item.expiresAt, "MMM d, yyyy")
               ) : (
-                <span className="text-emerald-600 dark:text-emerald-400 font-normal font-sans">
+                <span className="text-success font-normal font-sans">
                   {t("apikeys.neverExpires") || "Never Expires"}
                 </span>
               )}
@@ -187,7 +187,7 @@ export function ApiKeysView() {
           label: tFn("apikeys.revoke") || "Revoke Key",
           onClick: (item: ApiKey) => handleDeleteFn?.(item),
           variant: "ghost" as const,
-          className: "text-red-600 hover:text-red-700",
+          className: "text-destructive hover:text-destructive/90",
           icon: <Trash2 className="h-4 w-4" />,
           requiredPermission: "apikeys.delete",
           confirmTitle: tFn("apikeys.revokeConfirmTitle") || "Revoke API Key",

@@ -40,13 +40,13 @@ export function TwoFactorStatus({
     <div
       className={cn(
         "rounded-xl border p-5 transition-colors",
-        isEnabled ? "border-emerald-500/20 bg-emerald-500/5" : "border-border/40 bg-muted/30"
+        isEnabled ? "border-success/20 bg-success/5" : "border-border/40 bg-muted/30"
       )}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           {isEnabled ? (
-            <ShieldCheck className="h-6 w-6 flex-shrink-0 text-emerald-500" />
+            <ShieldCheck className="h-6 w-6 flex-shrink-0 text-success" />
           ) : (
             <ShieldX className="h-6 w-6 flex-shrink-0 text-muted-foreground" />
           )}
@@ -102,9 +102,9 @@ export function TwoFactorStatus({
               className={cn(
                 "h-full rounded-full transition-all duration-500",
                 percentage > 50
-                  ? "bg-emerald-500"
+                  ? "bg-success"
                   : percentage > 20
-                    ? "bg-amber-500"
+                    ? "bg-warning"
                     : "bg-destructive"
               )}
               style={{ width: `${percentage}%` }}

@@ -54,8 +54,8 @@ export function ForceChangePasswordView() {
         {/* Header Card */}
         <div className="rounded-2xl border border-border/60 bg-card/80 p-8 shadow-xl backdrop-blur-sm">
           <div className="mb-6 flex flex-col items-center text-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/10 ring-2 ring-amber-500/20">
-              <ShieldAlert className="h-8 w-8 text-amber-500" />
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-warning/10 ring-2 ring-warning/20">
+              <ShieldAlert className="h-8 w-8 text-warning" />
             </div>
             <h1 className="text-2xl font-bold tracking-tight">
               {t("profile.security.changePassword")}
@@ -117,7 +117,7 @@ export function ForceChangePasswordView() {
                       key={item.label}
                       className={cn(
                         "flex items-center gap-1 text-xs transition-colors",
-                        item.met ? "text-emerald-600" : "text-muted-foreground"
+                        item.met ? "text-success" : "text-muted-foreground"
                       )}
                     >
                       {item.met ? "✓" : "○"} {item.label}

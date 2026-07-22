@@ -95,7 +95,7 @@ export function UserCard({
               config.statusDot
             )}
           >
-            <div className="h-full w-full animate-pulse rounded-full bg-gradient-to-br from-green-400 to-green-600" />
+            <div className="h-full w-full animate-pulse rounded-full bg-gradient-to-br from-success/80 to-success" />
           </div>
         )}
       </div>

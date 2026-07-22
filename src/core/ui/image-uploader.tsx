@@ -299,8 +299,8 @@ export function ImageUploader({
               </Button>
             )}
             <div className="absolute left-3 top-3 z-20 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-              <div className="rounded-full bg-green-500/90 p-1.5 shadow-lg backdrop-blur-sm">
-                <CheckCircle2 className="h-4 w-4 text-white" />
+              <div className="rounded-full bg-success/90 p-1.5 shadow-lg backdrop-blur-sm">
+                <CheckCircle2 className="h-4 w-4 text-success-foreground" />
               </div>
             </div>
           </div>

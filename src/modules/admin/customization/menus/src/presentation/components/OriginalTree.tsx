@@ -132,7 +132,7 @@ function OriginalTreeNode({
             ? "border-l-primary bg-primary/10 ring-1 ring-primary/20"
             : "border-l-transparent hover:bg-muted/50",
           // Override indicator (amber for modified, red for hidden)
-          hasOverride && !isSelected && (isHidden ? "border-l-red-500" : "border-l-amber-500")
+          hasOverride && !isSelected && (isHidden ? "border-l-destructive" : "border-l-warning")
         )}
         style={{ marginInlineStart: depth * 18 }}
       >

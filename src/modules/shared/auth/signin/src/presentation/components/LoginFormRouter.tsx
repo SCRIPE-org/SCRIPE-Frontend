@@ -69,7 +69,7 @@ export function LoginFormRouter({
       {/* Safe-mode notice */}
       {safeModeActive && (
         <div
-          className="mb-6 flex items-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-[13px] text-amber-600 dark:text-amber-400"
+          className="mb-6 flex items-center gap-2 rounded-xl border border-warning/30 bg-warning/10 px-4 py-3 text-[13px] text-warning"
           role="alert"
         >
           <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />

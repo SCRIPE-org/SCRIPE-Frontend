@@ -119,12 +119,9 @@ function TablePreview({ style, t }: { style: string; t: (key: string) => string 
                 <span
                   className={cn(
                     "rounded px-1.5 py-0.5 text-[10px] font-medium",
-                    row.status === "active" &&
-                      "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-                    row.status === "pending" &&
-                      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-                    row.status === "inactive" &&
-                      "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                    row.status === "active" && "bg-success/15 text-success",
+                    row.status === "pending" && "bg-warning/15 text-warning",
+                    row.status === "inactive" && "bg-destructive/15 text-destructive"
                   )}
                 >
                   {t(`settings.sampleTable.${row.status}`)}

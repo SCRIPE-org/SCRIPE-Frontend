@@ -69,9 +69,9 @@ export function StudioPreview({
         {deviceSize === "desktop" && (
           <div className="flex h-8 items-center gap-1.5 border-b border-border bg-muted/40 px-3">
             <div className="flex gap-1">
-              <div className="h-2.5 w-2.5 rounded-full bg-red-400/60" />
-              <div className="h-2.5 w-2.5 rounded-full bg-amber-400/60" />
-              <div className="h-2.5 w-2.5 rounded-full bg-green-400/60" />
+              <div className="h-2.5 w-2.5 rounded-full bg-destructive/60" />
+              <div className="h-2.5 w-2.5 rounded-full bg-warning/60" />
+              <div className="h-2.5 w-2.5 rounded-full bg-success/60" />
             </div>
             <div className="mx-8 flex-1">
               <div className="mx-auto flex h-5 w-full max-w-sm items-center justify-center rounded-md bg-muted/60">

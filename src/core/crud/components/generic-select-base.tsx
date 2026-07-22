@@ -42,14 +42,14 @@ export function getGenericSelectStyles(
       return {
         trigger: cn(
           baseClasses,
-          "rounded-xl border border-gray-200/60 dark:border-gray-700/60 bg-white/80 dark:bg-gray-800/80 backdrop-blur-2xl px-5 py-3 transition-all duration-400 hover:bg-white/90 dark:hover:bg-gray-800/90 hover:border-gray-300/70 dark:hover:border-gray-600/70 hover:shadow-2xl hover:shadow-primary/15 focus:border-primary/60 focus:ring-4 focus:ring-primary/15 text-gray-900 dark:text-gray-100 cursor-pointer relative",
+          "rounded-xl border border-border/60 bg-card/80 backdrop-blur-2xl px-5 py-3 transition-all duration-400 hover:bg-card/90 hover:border-border hover:shadow-2xl hover:shadow-primary/15 focus:border-primary/60 focus:ring-4 focus:ring-primary/15 text-foreground cursor-pointer relative",
           "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none before:rounded-xl",
           "after:absolute after:inset-0 after:bg-gradient-to-tl after:from-primary/10 after:to-transparent after:pointer-events-none after:rounded-xl",
           directionClasses
         ),
         dropdown:
-          "rounded-xl border border-gray-200/60 dark:border-gray-700/60 bg-white/95 dark:bg-gray-800/95 backdrop-blur-2xl shadow-2xl shadow-primary/15 text-gray-900 dark:text-gray-100",
-        chip: "bg-white/70 dark:bg-gray-700/70 text-gray-900 dark:text-gray-100 border border-gray-200/50 dark:border-gray-600/50 hover:bg-white/80 dark:hover:bg-gray-600/80 backdrop-blur-sm shadow-xl hover:scale-110 transition-all duration-300",
+          "rounded-xl border border-border/60 bg-card/95 backdrop-blur-2xl shadow-2xl shadow-primary/15 text-foreground",
+        chip: "bg-card/70 text-foreground border border-border/50 hover:bg-card/80 backdrop-blur-sm shadow-xl hover:scale-110 transition-all duration-300",
       };
 
     case "outlined":
@@ -286,7 +286,7 @@ export function getGenericSelectStyles(
       return {
         trigger: cn(
           baseClasses,
-          "rounded-lg border border-slate-200/50 dark:border-slate-600/50 bg-gradient-to-br from-slate-50/80 via-white/60 to-slate-100/80 dark:from-slate-800/80 dark:via-slate-700/60 dark:to-slate-900/80 px-5 py-3 transition-all duration-400 hover:from-slate-100/90 hover:via-white/80 hover:to-slate-200/90 dark:hover:from-slate-700/90 dark:hover:via-slate-600/80 dark:hover:to-slate-800/90 hover:shadow-xl hover:shadow-slate-500/25 hover:scale-[1.01] focus:ring-4 focus:ring-slate-500/30 text-slate-900 dark:text-slate-100 cursor-pointer backdrop-blur-sm relative",
+          "rounded-lg border border-border/50 bg-gradient-to-br from-muted/80 via-card/60 to-muted/80 px-5 py-3 transition-all duration-400 hover:from-muted/90 hover:via-card/80 hover:to-muted/90 hover:shadow-xl hover:shadow-muted-foreground/25 hover:scale-[1.01] focus:ring-4 focus:ring-ring/30 text-foreground cursor-pointer backdrop-blur-sm relative",
           "before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/30 before:to-transparent before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-800",
           "after:absolute after:top-1 after:left-1 after:right-1 after:h-[1px] after:bg-gradient-to-r after:from-transparent after:via-white/60 after:to-transparent",
           disabled && "cursor-not-allowed opacity-50",
@@ -294,8 +294,8 @@ export function getGenericSelectStyles(
           className
         ),
         dropdown:
-          "rounded-lg border border-slate-200/50 dark:border-slate-600/50 bg-gradient-to-br from-slate-50/90 via-white/80 to-slate-100/90 dark:from-slate-800/90 dark:via-slate-700/80 dark:to-slate-900/90 shadow-2xl shadow-slate-500/20 backdrop-blur-sm",
-        chip: "bg-gradient-to-r from-slate-100/80 to-white/80 dark:from-slate-800/60 dark:to-slate-700/60 text-slate-900 dark:text-slate-100 border border-slate-300/50 dark:border-slate-600/50 hover:from-slate-200/90 hover:to-slate-100/90 dark:hover:from-slate-700/70 dark:hover:to-slate-600/70 shadow-lg hover:scale-110 transition-all duration-300",
+          "rounded-lg border border-border/50 bg-gradient-to-br from-muted/90 via-card/80 to-muted/90 shadow-2xl shadow-muted-foreground/20 backdrop-blur-sm",
+        chip: "bg-gradient-to-r from-muted/80 to-card/80 text-foreground border border-border/50 hover:from-muted/90 hover:to-muted/70 shadow-lg hover:scale-110 transition-all duration-300",
       };
 
     case "plasma":

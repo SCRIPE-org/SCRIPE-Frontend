@@ -75,7 +75,7 @@ export function AppListingCard({
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span className="font-medium text-foreground">{listing.pricingLabel}</span>
           <div className="flex items-center gap-1">
-            <Star className="size-3 fill-yellow-400 text-yellow-400" />
+            <Star className="size-3 fill-warning text-warning" />
             <span>{listing.ratingLabel}</span>
             <span className="text-muted-foreground/60">({listing.reviewCount})</span>
           </div>

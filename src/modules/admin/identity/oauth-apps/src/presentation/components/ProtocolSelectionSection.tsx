@@ -33,7 +33,7 @@ export function ProtocolSelectionSection({ protocol, onChange }: ProtocolSelecti
           onClick={() => onChange("oidc")}
           className={`group relative cursor-pointer rounded-xl border p-5 transition-all duration-200 hover:shadow-md ${
             protocol === "oidc"
-              ? "border-primary bg-primary/5 shadow-[0_0_15px_rgba(168,85,247,0.08)]"
+              ? "border-primary bg-primary/5 shadow-[0_0_15px_hsl(var(--primary)/0.08)]"
               : "border-border bg-card hover:border-primary/40"
           }`}
         >
@@ -63,7 +63,7 @@ export function ProtocolSelectionSection({ protocol, onChange }: ProtocolSelecti
           onClick={() => onChange("saml")}
           className={`group relative cursor-pointer rounded-xl border p-5 transition-all duration-200 hover:shadow-md ${
             protocol === "saml"
-              ? "border-info bg-info/5 shadow-[0_0_15px_rgba(99,102,241,0.08)]"
+              ? "border-info bg-info/5 shadow-[0_0_15px_hsl(var(--info)/0.08)]"
               : "border-border bg-card hover:border-info/40"
           }`}
         >

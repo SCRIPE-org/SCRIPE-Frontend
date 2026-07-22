@@ -25,13 +25,13 @@ export function WebhookFormEventsSection({ vm }: WebhookFormEventsSectionProps) 
     <section className="space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-warning/10 text-warning">
             <Zap className="h-4 w-4" />
           </div>
           <div>
             <h3 className="text-sm font-semibold">
               {t("webhooks.form.eventsSection") || "Event Subscriptions"}
-              <span className="ml-0.5 text-red-500">*</span>
+              <span className="ml-0.5 text-destructive">*</span>
             </h3>
             <p className="text-xs text-muted-foreground">
               {t("webhooks.form.eventsSectionDesc") ||
@@ -150,7 +150,7 @@ export function WebhookFormEventsSection({ vm }: WebhookFormEventsSectionProps) 
       )}
 
       {vm.eventsError && (
-        <p className="flex items-center gap-1.5 text-xs text-red-600">
+        <p className="flex items-center gap-1.5 text-xs text-destructive">
           <AlertCircle className="h-3 w-3 shrink-0" />
           {vm.eventsError}
         </p>

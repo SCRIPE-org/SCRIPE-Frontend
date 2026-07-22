@@ -69,7 +69,7 @@ export default function ApiKeyDetailView() {
   if (vm.detailError || !vm.detail) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4">
-        <div className="text-red-500 font-semibold">{t("apikeys.error.notFound") || "API Key not found or access denied."}</div>
+        <div className="text-destructive font-semibold">{t("apikeys.error.notFound") || "API Key not found or access denied."}</div>
         <button onClick={() => router.push("/integrations/apikeys")} className="text-sm underline">
           {t("apikeys.backToList") || "Back to API Keys"}
         </button>

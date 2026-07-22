@@ -26,7 +26,7 @@ export function WebhookStatusBadge({ isActive, isAutoDisabled = false }: Webhook
     return (
       <Badge
         variant="outline"
-        className="gap-1 border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-400"
+        className="gap-1 border-warning/30 bg-warning/10 text-warning"
       >
         <AlertTriangle className="h-3 w-3" />
         {t("webhooks.status.autoDisabled") || "Auto-disabled"}
@@ -38,7 +38,7 @@ export function WebhookStatusBadge({ isActive, isAutoDisabled = false }: Webhook
     return (
       <Badge
         variant="outline"
-        className="gap-1 border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-400"
+        className="gap-1 border-success/30 bg-success/10 text-success"
       >
         <CheckCircle2 className="h-3 w-3" />
         {t("webhooks.status.active") || "Active"}
@@ -49,7 +49,7 @@ export function WebhookStatusBadge({ isActive, isAutoDisabled = false }: Webhook
   return (
     <Badge
       variant="outline"
-      className="gap-1 border-zinc-200 bg-zinc-50 text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800/30 dark:text-zinc-400"
+      className="gap-1 border-border bg-muted text-muted-foreground"
     >
       <XCircle className="h-3 w-3" />
       {t("webhooks.status.inactive") || "Inactive"}

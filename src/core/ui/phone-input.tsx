@@ -309,7 +309,7 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
             <span
               className={cn(
                 "font-mono transition-colors duration-150",
-                enteredLength === expectedLength && "font-semibold text-emerald-500"
+                enteredLength === expectedLength && "font-semibold text-success"
               )}
             >
               {enteredLength}/{expectedLength} {t("components.phoneInput.digits")}

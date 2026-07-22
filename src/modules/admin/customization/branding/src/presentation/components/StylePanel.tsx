@@ -441,7 +441,7 @@ export function StylePanel({
         )}
 
         {/* ═══════════════ ☀️ LIGHT THEME ═══════════════ */}
-        <div className="space-y-3 rounded-lg border border-border/60 bg-gradient-to-b from-amber-50/30 to-transparent p-3 dark:from-amber-950/10">
+        <div className="space-y-3 rounded-lg border border-border/60 bg-gradient-to-b from-warning/10 to-transparent p-3">
           <h4 className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             <span>☀️</span> {t("studio.appearance.lightTheme")}
           </h4>
@@ -553,7 +553,7 @@ export function StylePanel({
         </div>
 
         {/* ═══════════════ 🌙 DARK THEME ═══════════════ */}
-        <div className="space-y-3 rounded-lg border border-border/60 bg-gradient-to-b from-indigo-950/20 to-transparent p-3 dark:from-indigo-950/30">
+        <div className="space-y-3 rounded-lg border border-border/60 bg-gradient-to-b from-info/10 to-transparent p-3">
           <h4 className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             <span>🌙</span> {t("studio.appearance.darkTheme")}
           </h4>

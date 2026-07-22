@@ -49,13 +49,13 @@ export interface AttachmentUploaderProps {
 
 // ─── Helpers ────────────────────────────────────────────────
 function getFileIcon(type: string) {
-  if (type.startsWith("image/")) return <ImageIcon className="h-4 w-4 text-blue-500" />;
-  if (type.startsWith("video/")) return <Video className="h-4 w-4 text-purple-500" />;
-  if (type.includes("pdf")) return <FileText className="h-4 w-4 text-red-500" />;
+  if (type.startsWith("image/")) return <ImageIcon className="h-4 w-4 text-info" />;
+  if (type.startsWith("video/")) return <Video className="h-4 w-4 text-primary" />;
+  if (type.includes("pdf")) return <FileText className="h-4 w-4 text-destructive" />;
   if (type.includes("zip") || type.includes("rar") || type.includes("tar"))
-    return <FileArchive className="h-4 w-4 text-amber-500" />;
+    return <FileArchive className="h-4 w-4 text-warning" />;
   if (type.includes("sheet") || type.includes("csv") || type.includes("excel"))
-    return <FileSpreadsheet className="h-4 w-4 text-emerald-500" />;
+    return <FileSpreadsheet className="h-4 w-4 text-success" />;
   return <File className="h-4 w-4 text-muted-foreground" />;
 }
 

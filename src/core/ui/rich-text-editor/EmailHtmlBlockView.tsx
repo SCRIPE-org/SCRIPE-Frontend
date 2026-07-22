@@ -106,7 +106,7 @@ export function EmailHtmlBlockView({ node, deleteNode, selected }: NodeViewProps
       </div>
 
       {/* Preview iframe */}
-      <div className="rounded-b-md bg-white p-2 dark:bg-zinc-900">
+      <div className="rounded-b-md bg-background p-2">
         <iframe
           srcDoc={iframeSrcDoc}
           sandbox="allow-same-origin"

@@ -201,7 +201,7 @@ export function BuilderCanvas({
             className={cn(
               "relative overflow-hidden rounded-xl border-2 border-dashed transition-all",
               isOver
-                ? "border-primary/50 bg-primary/[0.02] shadow-[inset_0_0_40px_rgba(var(--primary-rgb,59,130,246),0.05)]"
+                ? "border-primary/50 bg-primary/[0.02] shadow-[inset_0_0_40px_hsl(var(--primary)/0.05)]"
                 : "border-border/40 bg-muted/10"
             )}
             onClick={(e) => {

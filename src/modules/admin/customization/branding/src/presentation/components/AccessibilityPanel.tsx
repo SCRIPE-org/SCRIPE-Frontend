@@ -137,10 +137,10 @@ const CATEGORY_CONFIG: Record<
   CheckCategory,
   { icon: typeof Eye; labelKey: string; color: string }
 > = {
-  contrast: { icon: Eye, labelKey: "studio.a11y.category.contrast", color: "text-violet-500" },
-  target: { icon: Target, labelKey: "studio.a11y.category.target", color: "text-cyan-500" },
-  overlay: { icon: Layers, labelKey: "studio.a11y.category.overlay", color: "text-amber-500" },
-  motion: { icon: Zap, labelKey: "studio.a11y.category.motion", color: "text-blue-500" },
+  contrast: { icon: Eye, labelKey: "studio.a11y.category.contrast", color: "text-primary" },
+  target: { icon: Target, labelKey: "studio.a11y.category.target", color: "text-info" },
+  overlay: { icon: Layers, labelKey: "studio.a11y.category.overlay", color: "text-warning" },
+  motion: { icon: Zap, labelKey: "studio.a11y.category.motion", color: "text-info" },
 };
 
 // ── Color Swatch ──────────────────────────────────────
@@ -493,7 +493,7 @@ export function AccessibilityPanel({
         icon={Focus}
         title={t("studio.a11y.settings.focusKeyboard")}
         subtitle={t("studio.a11y.settings.focusKeyboardDesc")}
-        color="text-cyan-500"
+        color="text-info"
       >
         <SettingRow
           label={t("studio.a11y.settings.focusRing")}
@@ -567,7 +567,7 @@ export function AccessibilityPanel({
         icon={MonitorSpeaker}
         title={t("studio.a11y.settings.screenReader")}
         subtitle={t("studio.a11y.settings.screenReaderDesc")}
-        color="text-violet-500"
+        color="text-primary"
       >
         <SettingRow
           label={t("studio.a11y.settings.ariaLandmarks")}
@@ -618,7 +618,7 @@ export function AccessibilityPanel({
         icon={Paintbrush}
         title={t("studio.a11y.settings.contrastColors")}
         subtitle={t("studio.a11y.settings.contrastColorsDesc")}
-        color="text-amber-500"
+        color="text-warning"
       >
         <SettingRow
           label={t("studio.a11y.settings.highContrast")}
@@ -676,7 +676,7 @@ export function AccessibilityPanel({
         icon={Type}
         title={t("studio.a11y.settings.typography")}
         subtitle={t("studio.a11y.settings.typographyDesc")}
-        color="text-pink-500"
+        color="text-primary"
       >
         <SliderInput
           label={t("studio.a11y.settings.minFontSize")}
@@ -758,7 +758,7 @@ export function AccessibilityPanel({
         icon={MousePointer2}
         title={t("studio.a11y.settings.cursorReading")}
         subtitle={t("studio.a11y.settings.cursorReadingDesc")}
-        color="text-teal-500"
+        color="text-success"
         defaultOpen={false}
       >
         <SettingRow
@@ -804,7 +804,7 @@ export function AccessibilityPanel({
         icon={Zap}
         title={t("studio.a11y.settings.motion")}
         subtitle={t("studio.a11y.settings.motionDesc")}
-        color="text-blue-500"
+        color="text-info"
         defaultOpen={false}
       >
         <SettingRow label={t("studio.a11y.settings.reducedMotion")}>
@@ -858,7 +858,7 @@ export function AccessibilityPanel({
         icon={ImageOff}
         title={t("studio.a11y.settings.contentMedia")}
         subtitle={t("studio.a11y.settings.contentMediaDesc")}
-        color="text-orange-500"
+        color="text-warning-strong"
         defaultOpen={false}
       >
         <SettingRow
@@ -886,7 +886,7 @@ export function AccessibilityPanel({
         icon={Hand}
         title={t("studio.a11y.settings.touchTargets")}
         subtitle={t("studio.a11y.settings.touchTargetsDesc")}
-        color="text-rose-500"
+        color="text-destructive"
         defaultOpen={false}
       >
         <SettingRow
@@ -914,7 +914,7 @@ export function AccessibilityPanel({
         icon={ScanEye}
         title={t("studio.a11y.audit.title")}
         subtitle={t("studio.a11y.audit.subtitle")}
-        color="text-emerald-500"
+        color="text-success"
       >
         {(["contrast", "target", "overlay", "motion"] as CheckCategory[]).map((category) => (
           <CategorySection

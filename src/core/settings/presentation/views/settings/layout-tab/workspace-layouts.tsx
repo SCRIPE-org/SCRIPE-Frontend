@@ -21,21 +21,21 @@ import { LayoutCategorySection, type LayoutOption } from "./shared";
 function WorkspacePreview({ variant }: { variant: string }) {
   if (variant === "hub") {
     return (
-      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-slate-200/50 bg-slate-100 dark:border-slate-700/50 dark:bg-slate-900">
-        <div className="flex h-[12%] items-center border-b border-slate-200 bg-white px-2 dark:border-slate-700 dark:bg-slate-800">
+      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-border bg-muted">
+        <div className="flex h-[12%] items-center border-b border-border bg-card px-2">
           <div className="h-2 w-2 rounded-full bg-primary" />
           <div className="flex-1" />
-          <div className="h-1 w-3 rounded-full bg-slate-300 dark:bg-slate-600" />
+          <div className="h-1 w-3 rounded-full bg-muted-foreground/30" />
         </div>
         <div className="flex-1 p-1.5">
           <div className="grid h-full grid-cols-3 gap-1">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
                 key={i}
-                className="flex flex-col items-center justify-center gap-0.5 rounded border border-slate-200 bg-white p-1 dark:border-slate-700 dark:bg-slate-800"
+                className="flex flex-col items-center justify-center gap-0.5 rounded border border-border bg-card p-1"
               >
                 <div className="h-2 w-2 rounded bg-primary/20" />
-                <div className="h-0.5 w-4 rounded-full bg-slate-300 dark:bg-slate-600" />
+                <div className="h-0.5 w-4 rounded-full bg-muted-foreground/30" />
               </div>
             ))}
           </div>
@@ -46,8 +46,8 @@ function WorkspacePreview({ variant }: { variant: string }) {
 
   if (variant === "wizard") {
     return (
-      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-slate-200/50 bg-white dark:border-slate-700/50 dark:bg-slate-900">
-        <div className="flex h-[12%] items-center border-b border-slate-200 bg-slate-50 px-2 dark:border-slate-700 dark:bg-slate-800">
+      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-border bg-card">
+        <div className="flex h-[12%] items-center border-b border-border bg-muted/50 px-2">
           <div className="h-2 w-2 rounded-full bg-primary" />
         </div>
         <div className="flex h-[14%] items-center justify-center gap-1 px-3">
@@ -56,14 +56,14 @@ function WorkspacePreview({ variant }: { variant: string }) {
               <div
                 className={cn(
                   "h-2 w-2 rounded-full",
-                  done ? "bg-primary" : "bg-slate-300 dark:bg-slate-600"
+                  done ? "bg-primary" : "bg-muted-foreground/30"
                 )}
               />
               {i < 3 && (
                 <div
                   className={cn(
                     "h-0.5 w-3",
-                    done ? "bg-primary/40" : "bg-slate-200 dark:bg-slate-700"
+                    done ? "bg-primary/40" : "bg-muted-foreground/20"
                   )}
                 />
               )}
@@ -71,8 +71,8 @@ function WorkspacePreview({ variant }: { variant: string }) {
           ))}
         </div>
         <div className="flex-1 p-2">
-          <div className="mb-1.5 h-1.5 w-2/3 rounded-full bg-slate-200 dark:bg-slate-800" />
-          <div className="h-1 w-1/2 rounded-full bg-slate-100 dark:bg-slate-800/50" />
+          <div className="mb-1.5 h-1.5 w-2/3 rounded-full bg-muted-foreground/20" />
+          <div className="h-1 w-1/2 rounded-full bg-muted" />
         </div>
       </div>
     );
@@ -80,21 +80,21 @@ function WorkspacePreview({ variant }: { variant: string }) {
 
   if (variant === "shelf") {
     return (
-      <div className="relative flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-slate-200/50 bg-white dark:border-slate-700/50 dark:bg-slate-900">
-        <div className="flex h-[12%] items-center border-b border-slate-200 bg-slate-50 px-2 dark:border-slate-700 dark:bg-slate-800">
+      <div className="relative flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-border bg-card">
+        <div className="flex h-[12%] items-center border-b border-border bg-muted/50 px-2">
           <div className="h-2 w-2 rounded-full bg-primary" />
         </div>
         <div className="flex-1 p-2">
-          <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-slate-200 dark:bg-slate-800" />
-          <div className="h-1 w-1/2 rounded-full bg-slate-100 dark:bg-slate-800/50" />
+          <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-muted-foreground/20" />
+          <div className="h-1 w-1/2 rounded-full bg-muted" />
         </div>
-        <div className="h-[35%] rounded-t-xl border-t border-slate-200 bg-slate-100 p-1.5 dark:border-slate-700 dark:bg-slate-800">
-          <div className="mx-auto mb-1 h-0.5 w-6 rounded-full bg-slate-400 dark:bg-slate-500" />
+        <div className="h-[35%] rounded-t-xl border-t border-border bg-muted p-1.5">
+          <div className="mx-auto mb-1 h-0.5 w-6 rounded-full bg-muted-foreground/50" />
           <div className="grid grid-cols-4 gap-0.5">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="flex flex-col items-center gap-0.5">
-                <div className="h-2 w-2 rounded bg-slate-300 dark:bg-slate-600" />
-                <div className="h-0.5 w-3 rounded-full bg-slate-200 dark:bg-slate-700" />
+                <div className="h-2 w-2 rounded bg-muted-foreground/30" />
+                <div className="h-0.5 w-3 rounded-full bg-muted-foreground/20" />
               </div>
             ))}
           </div>
@@ -105,28 +105,28 @@ function WorkspacePreview({ variant }: { variant: string }) {
 
   if (variant === "collapseheader") {
     return (
-      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-slate-200/50 bg-white dark:border-slate-700/50 dark:bg-slate-900">
-        <div className="flex h-[6%] items-center border-b border-slate-200/50 bg-slate-50 px-2 opacity-40 dark:border-slate-700/50 dark:bg-slate-800">
-          <div className="h-1 w-2 rounded bg-slate-300" />
+      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-border bg-card">
+        <div className="flex h-[6%] items-center border-b border-border bg-muted/50 px-2 opacity-40">
+          <div className="h-1 w-2 rounded bg-muted-foreground/30" />
         </div>
-        <div className="flex h-[10%] items-end gap-1 border-b border-slate-200 bg-white px-2 dark:border-slate-700 dark:bg-slate-800">
+        <div className="flex h-[10%] items-end gap-1 border-b border-border bg-card px-2">
           {[true, false, false].map((a, i) => (
             <div key={i} className={cn("h-[70%] w-4", a ? "border-b-2 border-primary" : "")} />
           ))}
         </div>
         <div className="flex flex-1 p-2">
-          <div className="w-[22%] space-y-1 border-e border-slate-200 pe-1 pt-1 dark:border-slate-700">
+          <div className="w-[22%] space-y-1 border-e border-border pe-1 pt-1">
             {[70, 55, 60].map((w, i) => (
               <div
                 key={i}
-                className="h-0.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                className="h-0.5 rounded-full bg-muted-foreground/30"
                 style={{ width: `${w}%` }}
               />
             ))}
           </div>
           <div className="flex-1 ps-2">
-            <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-slate-200 dark:bg-slate-800" />
-            <div className="h-1 w-1/2 rounded-full bg-slate-100 dark:bg-slate-800/50" />
+            <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-muted-foreground/20" />
+            <div className="h-1 w-1/2 rounded-full bg-muted" />
           </div>
         </div>
       </div>
@@ -135,28 +135,28 @@ function WorkspacePreview({ variant }: { variant: string }) {
 
   if (variant === "splitpane") {
     return (
-      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-slate-200/50 bg-white dark:border-slate-700/50 dark:bg-slate-900">
-        <div className="flex h-[10%] items-center border-b border-slate-200 bg-slate-50 px-2 dark:border-slate-700 dark:bg-slate-800">
+      <div className="flex aspect-[16/10] w-full flex-col overflow-hidden rounded-md border border-border bg-card">
+        <div className="flex h-[10%] items-center border-b border-border bg-muted/50 px-2">
           <div className="h-2 w-2 rounded-full bg-primary" />
         </div>
         <div className="flex flex-1">
-          <div className="w-[20%] space-y-0.5 border-e border-slate-200 bg-slate-50 p-1 pt-1.5 dark:border-slate-700 dark:bg-slate-800">
+          <div className="w-[20%] space-y-0.5 border-e border-border bg-muted/50 p-1 pt-1.5">
             {[65, 50, 55].map((w, i) => (
               <div
                 key={i}
-                className="h-0.5 rounded-full bg-slate-300 dark:bg-slate-600"
+                className="h-0.5 rounded-full bg-muted-foreground/30"
                 style={{ width: `${w}%` }}
               />
             ))}
           </div>
           <div className="flex flex-1 flex-col">
             <div className="flex-1 p-1.5">
-              <div className="mb-1 h-1 w-2/3 rounded-full bg-slate-200 dark:bg-slate-800" />
-              <div className="h-1 w-1/2 rounded-full bg-slate-100 dark:bg-slate-800/50" />
+              <div className="mb-1 h-1 w-2/3 rounded-full bg-muted-foreground/20" />
+              <div className="h-1 w-1/2 rounded-full bg-muted" />
             </div>
-            <div className="h-[30%] border-t border-slate-200 bg-slate-50 p-1 dark:border-slate-700 dark:bg-slate-800">
-              <div className="mb-0.5 h-0.5 w-1/2 rounded-full bg-slate-300 dark:bg-slate-600" />
-              <div className="h-0.5 w-1/3 rounded-full bg-slate-200 dark:bg-slate-700" />
+            <div className="h-[30%] border-t border-border bg-muted/50 p-1">
+              <div className="mb-0.5 h-0.5 w-1/2 rounded-full bg-muted-foreground/30" />
+              <div className="h-0.5 w-1/3 rounded-full bg-muted-foreground/20" />
             </div>
           </div>
         </div>
@@ -166,27 +166,27 @@ function WorkspacePreview({ variant }: { variant: string }) {
 
   if (variant === "inbox") {
     return (
-      <div className="flex aspect-[16/10] w-full overflow-hidden rounded-md border border-slate-200/50 bg-white dark:border-slate-700/50 dark:bg-slate-900">
-        <div className="w-[18%] space-y-0.5 border-e border-slate-200 bg-slate-100 p-1 pt-2 dark:border-slate-700 dark:bg-slate-800">
+      <div className="flex aspect-[16/10] w-full overflow-hidden rounded-md border border-border bg-card">
+        <div className="w-[18%] space-y-0.5 border-e border-border bg-muted p-1 pt-2">
           {[60, 50, 55, 45].map((w, i) => (
             <div
               key={i}
-              className="h-0.5 rounded-full bg-slate-300 dark:bg-slate-600"
+              className="h-0.5 rounded-full bg-muted-foreground/30"
               style={{ width: `${w}%` }}
             />
           ))}
         </div>
-        <div className="w-[30%] space-y-1 border-e border-slate-200 bg-slate-50 p-1 pt-2 dark:border-slate-700 dark:bg-slate-800/50">
+        <div className="w-[30%] space-y-1 border-e border-border bg-muted/50 p-1 pt-2">
           {[1, 2, 3].map((i) => (
             <div key={i} className={cn("rounded p-0.5", i === 1 ? "bg-primary/10" : "")}>
-              <div className="mb-0.5 h-0.5 w-3/4 rounded-full bg-slate-400 dark:bg-slate-500" />
-              <div className="h-0.5 w-full rounded-full bg-slate-200 dark:bg-slate-700" />
+              <div className="mb-0.5 h-0.5 w-3/4 rounded-full bg-muted-foreground/50" />
+              <div className="h-0.5 w-full rounded-full bg-muted-foreground/20" />
             </div>
           ))}
         </div>
         <div className="flex-1 p-2">
-          <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-slate-200 dark:bg-slate-800" />
-          <div className="h-1 w-1/2 rounded-full bg-slate-100 dark:bg-slate-800/50" />
+          <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-muted-foreground/20" />
+          <div className="h-1 w-1/2 rounded-full bg-muted" />
         </div>
       </div>
     );
@@ -247,22 +247,22 @@ function WorkspacePreview({ variant }: { variant: string }) {
 
   if (variant === "nexus") {
     return (
-      <div className="flex aspect-[16/10] w-full overflow-hidden rounded-md border border-slate-200/50 bg-white dark:border-slate-700/50 dark:bg-slate-900">
+      <div className="flex aspect-[16/10] w-full overflow-hidden rounded-md border border-border bg-card">
         {/* Primary rail: narrow icon strip */}
-        <div className="flex w-[8%] flex-col items-center gap-1 border-e border-slate-200 bg-slate-900 p-1 pt-1.5 dark:border-slate-700">
+        <div className="flex w-[8%] flex-col items-center gap-1 border-e border-border bg-slate-900 p-1 pt-1.5">
           <div className="h-2 w-2 rounded-full bg-primary" />
           <div className="mt-1 space-y-1">
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="h-2 w-2 rounded bg-slate-600 dark:bg-slate-600"
+                className="h-2 w-2 rounded bg-slate-600"
                 style={{ opacity: i === 1 ? 1 : 0.4 }}
               />
             ))}
           </div>
         </div>
         {/* Secondary rail: panel sidebar */}
-        <div className="w-[22%] space-y-0.5 border-e border-slate-200 bg-slate-800 p-1 pt-1.5 dark:border-slate-700">
+        <div className="w-[22%] space-y-0.5 border-e border-border bg-slate-800 p-1 pt-1.5">
           {[65, 50, 55, 45, 60].map((w, i) => (
             <div
               key={i}
@@ -277,8 +277,8 @@ function WorkspacePreview({ variant }: { variant: string }) {
         </div>
         {/* Content area */}
         <div className="flex-1 p-1.5">
-          <div className="mb-1 h-1 w-2/3 rounded-full bg-slate-200 dark:bg-slate-800" />
-          <div className="h-0.5 w-1/2 rounded-full bg-slate-100 dark:bg-slate-800/50" />
+          <div className="mb-1 h-1 w-2/3 rounded-full bg-muted-foreground/20" />
+          <div className="h-0.5 w-1/2 rounded-full bg-muted" />
         </div>
       </div>
     );

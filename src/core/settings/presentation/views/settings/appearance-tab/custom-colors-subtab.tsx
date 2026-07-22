@@ -97,8 +97,8 @@ export function CustomColorsSubtab() {
   return (
     <div className="space-y-4">
       {settings.backgroundMode !== "custom" && (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/30">
-          <p className="text-sm text-amber-700 dark:text-amber-300">
+        <div className="rounded-lg border border-warning/30 bg-warning/10 p-3">
+          <p className="text-sm text-warning">
             ⚠️ {t("settings.customBgWarning")}
           </p>
           <button

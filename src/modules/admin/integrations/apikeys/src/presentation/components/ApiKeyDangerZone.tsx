@@ -34,7 +34,7 @@ export function ApiKeyDangerZone({ detail, onRevoke, onDeletePermanently, isRevo
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Revoke */}
-        <div className="flex items-start justify-between gap-4 rounded-lg border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/20 p-4">
+        <div className="flex items-start justify-between gap-4 rounded-lg border border-warning/30 bg-warning/10 p-4">
           <div>
             <p className="text-sm font-medium">{t("apikeys.dangerZone.revokeTitle") || "Revoke this key"}</p>
             <p className="text-xs text-muted-foreground mt-0.5">
@@ -43,7 +43,7 @@ export function ApiKeyDangerZone({ detail, onRevoke, onDeletePermanently, isRevo
           </div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="outline" size="sm" className="shrink-0 border-amber-400 text-amber-700 hover:bg-amber-100" disabled={!detail.isActive || isRevoking}>
+              <Button variant="outline" size="sm" className="shrink-0 border-warning/40 text-warning hover:bg-warning/15" disabled={!detail.isActive || isRevoking}>
                 <Ban className="h-3.5 w-3.5 mr-1.5" />
                 {t("apikeys.revoke") || "Revoke"}
               </Button>
@@ -55,7 +55,7 @@ export function ApiKeyDangerZone({ detail, onRevoke, onDeletePermanently, isRevo
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>{t("common.cancel") || "Cancel"}</AlertDialogCancel>
-                <AlertDialogAction onClick={onRevoke} className="bg-amber-600 hover:bg-amber-700">
+                <AlertDialogAction onClick={onRevoke} className="bg-warning text-warning-foreground hover:bg-warning/90">
                   {t("apikeys.revoke") || "Revoke Key"}
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -64,9 +64,9 @@ export function ApiKeyDangerZone({ detail, onRevoke, onDeletePermanently, isRevo
         </div>
 
         {/* Permanent Delete */}
-        <div className="flex items-start justify-between gap-4 rounded-lg border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/20 p-4">
+        <div className="flex items-start justify-between gap-4 rounded-lg border border-destructive/30 bg-destructive/10 p-4">
           <div>
-            <p className="text-sm font-medium text-red-700 dark:text-red-400">
+            <p className="text-sm font-medium text-destructive">
               {t("apikeys.dangerZone.deleteTitle") || "Permanently delete this key"}
             </p>
             <p className="text-xs text-muted-foreground mt-0.5">

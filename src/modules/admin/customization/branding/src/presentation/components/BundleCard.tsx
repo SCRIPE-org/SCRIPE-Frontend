@@ -151,7 +151,7 @@ export function BundleCard({
           <div className="flex items-center gap-1.5">
             <h4 className="truncate text-xs font-semibold text-foreground">{bundle.name}</h4>
             {bundle.isFeatured && (
-              <Star className="h-3 w-3 shrink-0 fill-amber-400 text-amber-400" />
+              <Star className="h-3 w-3 shrink-0 fill-warning text-warning" />
             )}
           </div>
 
@@ -245,7 +245,7 @@ export function BundleCard({
         {/* Featured star */}
         {bundle.isFeatured && !bundle.isApplied && (
           <div className="absolute right-2.5 top-2.5">
-            <Star className="h-5 w-5 fill-amber-400 text-amber-400 drop-shadow-lg" />
+            <Star className="h-5 w-5 fill-warning text-warning drop-shadow-lg" />
           </div>
         )}
 

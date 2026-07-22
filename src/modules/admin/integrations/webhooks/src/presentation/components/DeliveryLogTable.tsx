@@ -151,7 +151,7 @@ export function DeliveryLogTable({
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1.5">
-                          <Zap className="h-3 w-3 shrink-0 text-amber-500" />
+                          <Zap className="h-3 w-3 shrink-0 text-warning" />
                           <span className="text-sm font-medium">
                             {(t(`webhooks.eventNames.${log.eventType}`) || log.eventType) as string}
                           </span>
@@ -166,7 +166,7 @@ export function DeliveryLogTable({
                         ) : log.isSuccess ? (
                           <Badge
                             variant="outline"
-                            className="gap-1 border-emerald-200 bg-emerald-50 text-xs text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-400"
+                            className="gap-1 border-success/30 bg-success/10 text-xs text-success"
                           >
                             <CheckCircle2 className="h-3 w-3" />
                             {t("webhooks.status.success") || "Success"}
@@ -174,7 +174,7 @@ export function DeliveryLogTable({
                         ) : (
                           <Badge
                             variant="outline"
-                            className="gap-1 border-red-200 bg-red-50 text-xs text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400"
+                            className="gap-1 border-destructive/30 bg-destructive/10 text-xs text-destructive"
                           >
                             <XCircle className="h-3 w-3" />
                             {t("webhooks.status.failed") || "Failed"}
@@ -186,10 +186,10 @@ export function DeliveryLogTable({
                           variant="outline"
                           className={`font-mono text-xs ${
                             log.httpStatusCode >= 200 && log.httpStatusCode < 300
-                              ? "text-emerald-700 dark:text-emerald-400"
+                              ? "text-success"
                               : log.httpStatusCode >= 400
-                                ? "text-red-700 dark:text-red-400"
-                                : "text-amber-700 dark:text-amber-400"
+                                ? "text-destructive"
+                                : "text-warning"
                           }`}
                         >
                           {log.httpStatusCode}
@@ -205,10 +205,10 @@ export function DeliveryLogTable({
                         <span
                           className={`font-medium ${
                             log.latencyMs < 500
-                              ? "text-emerald-600 dark:text-emerald-400"
+                              ? "text-success"
                               : log.latencyMs < 2000
-                                ? "text-amber-600 dark:text-amber-400"
-                                : "text-red-600 dark:text-red-400"
+                                ? "text-warning"
+                                : "text-destructive"
                           }`}
                         >
                           {log.latencyMs.toFixed(0)}ms
@@ -248,10 +248,10 @@ export function DeliveryLogTable({
                             {/* Error message */}
                             {log.errorMessage && (
                               <div>
-                                <p className="mb-1 text-xs font-medium text-red-600 dark:text-red-400">
+                                <p className="mb-1 text-xs font-medium text-destructive">
                                   {t("webhooks.errorMessage") || "Error"}
                                 </p>
-                                <pre className="max-h-40 overflow-y-auto whitespace-pre-wrap break-all rounded-lg border border-red-200 bg-red-50 p-3 text-xs dark:border-red-800 dark:bg-red-950/20">
+                                <pre className="max-h-40 overflow-y-auto whitespace-pre-wrap break-all rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs">
                                   {log.errorMessage}
                                 </pre>
                               </div>

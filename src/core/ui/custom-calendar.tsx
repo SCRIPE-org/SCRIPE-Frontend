@@ -178,8 +178,8 @@ export function CustomCalendar({
       case "dark":
         return cn(
           baseStyles,
-          "bg-slate-900 border-slate-700 shadow-2xl",
-          "ring-1 ring-slate-600/50",
+          "bg-card border-border shadow-2xl",
+          "ring-1 ring-border/50",
           borderRadiusClass
         );
       default:
@@ -198,7 +198,7 @@ export function CustomCalendar({
       case "minimal":
         return "p-3 border-b border-border";
       case "dark":
-        return "p-4 bg-slate-800 border-b border-slate-700";
+        return "p-4 bg-muted border-b border-border";
       default:
         return "p-4 border-b border-border";
     }
@@ -229,7 +229,10 @@ export function CustomCalendar({
           case "minimal":
             return cn(baseStyles, "bg-primary text-primary-foreground rounded-md font-medium");
           case "dark":
-            return cn(baseStyles, "bg-blue-600 text-white rounded-lg shadow-md font-semibold");
+            return cn(
+              baseStyles,
+              "bg-info text-info-foreground rounded-lg shadow-md font-semibold"
+            );
           default:
             return cn(baseStyles, "bg-primary text-primary-foreground rounded-md");
         }
@@ -255,7 +258,7 @@ export function CustomCalendar({
           case "minimal":
             return cn(baseStyles, "bg-muted text-primary rounded-md font-medium");
           case "dark":
-            return cn(baseStyles, "bg-blue-900/50 text-blue-300 rounded-lg font-semibold");
+            return cn(baseStyles, "bg-info/20 text-info rounded-lg font-semibold");
           default:
             return cn(baseStyles, "bg-muted text-primary rounded-md");
         }
@@ -284,7 +287,10 @@ export function CustomCalendar({
         case "minimal":
           return cn(baseStyles, "text-foreground hover:bg-muted rounded-md");
         case "dark":
-          return cn(baseStyles, "text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg");
+          return cn(
+            baseStyles,
+            "text-muted-foreground hover:bg-muted hover:text-foreground rounded-lg"
+          );
         default:
           return cn(baseStyles, "text-foreground hover:bg-muted rounded-md");
       }
@@ -317,7 +323,7 @@ export function CustomCalendar({
       case "dark":
         return cn(
           baseStyles,
-          "border-slate-600 rounded-lg focus:border-blue-500 bg-slate-800 text-slate-200"
+          "border-border rounded-lg focus:border-info bg-muted text-foreground"
         );
       default:
         return cn(baseStyles, "border-border rounded-md focus:border-primary");

@@ -3,9 +3,9 @@
 import type { BadgeBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 
 const VARIANT_CLASS = {
-  success: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
-  warning: "bg-amber-500/10 text-amber-700 dark:text-amber-300",
-  info: "bg-sky-500/10 text-sky-700 dark:text-sky-300",
+  success: "bg-success/10 text-success",
+  warning: "bg-warning/10 text-warning",
+  info: "bg-info/10 text-info",
   neutral: "bg-muted text-muted-foreground",
   premium: "bg-primary/10 text-primary",
 };

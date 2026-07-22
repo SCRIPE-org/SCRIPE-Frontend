@@ -125,7 +125,7 @@ export function NewPasswordStep({ vm, totalSteps }: NewPasswordStepProps) {
             <p
               className="text-[12px]"
               style={{
-                color: vm.passwordsMatch ? "rgb(34,197,94)" : "hsl(var(--destructive))",
+                color: vm.passwordsMatch ? "hsl(var(--success))" : "hsl(var(--destructive))",
               }}
             >
               {vm.passwordsMatch ? t("auth.passwordsMatch") : t("auth.passwordsDoNotMatch")}

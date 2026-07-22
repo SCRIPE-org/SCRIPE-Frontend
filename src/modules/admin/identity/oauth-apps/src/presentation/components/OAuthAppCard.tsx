@@ -68,7 +68,7 @@ export function OAuthAppCard({
   const { t } = useI18n();
 
   return (
-    <Card className="group relative overflow-hidden border border-border/80 bg-card/45 backdrop-blur-md transition-all duration-300 hover:scale-[1.005] hover:border-primary/30 hover:shadow-[0_4px_20px_rgba(168,85,247,0.03)]">
+    <Card className="group relative overflow-hidden border border-border/80 bg-card/45 backdrop-blur-md transition-all duration-300 hover:scale-[1.005] hover:border-primary/30 hover:shadow-[0_4px_20px_hsl(var(--primary)/0.03)]">
       <CardContent className="p-5">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
           {/* Left Side: Brand Logo, Name & Description */}

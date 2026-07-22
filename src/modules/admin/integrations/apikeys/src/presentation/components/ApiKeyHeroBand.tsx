@@ -17,15 +17,15 @@ interface ApiKeyHeroBandProps {
 }
 
 const STATUS_COLORS = {
-  active: "bg-emerald-500/10 text-emerald-600 border-emerald-200 dark:text-emerald-400",
-  revoked: "bg-red-500/10 text-red-600 border-red-200 dark:text-red-400",
-  expired: "bg-amber-500/10 text-amber-600 border-amber-200 dark:text-amber-400",
+  active: "bg-success/10 text-success border-success/25",
+  revoked: "bg-destructive/10 text-destructive border-destructive/25",
+  expired: "bg-warning/10 text-warning border-warning/25",
 };
 
 const STATUS_DOT = {
-  active: "bg-emerald-500",
-  revoked: "bg-red-500",
-  expired: "bg-amber-500",
+  active: "bg-success",
+  revoked: "bg-destructive",
+  expired: "bg-warning",
 };
 
 export function ApiKeyHeroBand({ detail, isRotating, onRotate, onRevoke }: ApiKeyHeroBandProps) {
@@ -67,7 +67,7 @@ export function ApiKeyHeroBand({ detail, isRotating, onRotate, onRevoke }: ApiKe
               className="ml-1 text-muted-foreground hover:text-foreground transition-colors"
               title="Copy prefix"
             >
-              {copied ? <Check className="h-3 w-3 text-emerald-500" /> : <Copy className="h-3 w-3" />}
+              {copied ? <Check className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}
             </button>
           </div>
 

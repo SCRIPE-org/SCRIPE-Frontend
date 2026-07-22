@@ -161,7 +161,7 @@ export function ThemeDetailModal({
               <div>
                 <div className="flex items-center gap-2">
                   <DialogTitle className="text-xl font-bold">{theme.name}</DialogTitle>
-                  {theme.isFeatured && <Star className="h-4 w-4 fill-amber-500 text-amber-500" />}
+                  {theme.isFeatured && <Star className="h-4 w-4 fill-warning text-warning" />}
                   {theme.isNew && (
                     <Badge className="border-success/20 bg-success/10 text-[10px] text-success">
                       <Sparkles className="mr-0.5 h-3 w-3" />

@@ -147,9 +147,9 @@ export function PreviewDialog({ open, onOpenChange, result, isLoading }: Preview
                 {/* Simulated device bar */}
                 <div className="flex items-center gap-1.5 border-b bg-gray-50 px-3 py-2">
                   <div className="flex gap-1">
-                    <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
-                    <span className="h-2.5 w-2.5 rounded-full bg-yellow-400" />
-                    <span className="h-2.5 w-2.5 rounded-full bg-green-400" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-destructive" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-warning" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-success" />
                   </div>
                   <div className="flex-1 text-center">
                     <span className="font-mono text-[10px] text-gray-400">

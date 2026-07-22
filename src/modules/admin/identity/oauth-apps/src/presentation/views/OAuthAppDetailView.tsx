@@ -44,7 +44,7 @@ export function OAuthAppDetailView({ appId }: Props) {
     return (
       <div className="flex min-h-[450px] items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="relative flex h-12 w-12 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
+          <div className="relative flex h-12 w-12 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 shadow-[0_0_15px_hsl(var(--primary)/0.1)]">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </div>
           <p className="text-xs text-muted-foreground">
@@ -87,7 +87,7 @@ export function OAuthAppDetailView({ appId }: Props) {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/5 p-1.5 shadow-[0_0_15px_rgba(168,85,247,0.03)]">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/5 p-1.5 shadow-[0_0_15px_hsl(var(--primary)/0.03)]">
               {vm.form.logoUri ? (
                 <Image
                   src={vm.form.logoUri}

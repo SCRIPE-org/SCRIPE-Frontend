@@ -208,24 +208,24 @@ function GenericModalInner({
       case "glass":
         sizeClasses = "w-[85vw] max-w-2xl max-h-[80vh]";
         styleClasses =
-          "bg-background/20 backdrop-blur-2xl border-2 border-blue-500/30 shadow-[0_0_50px_rgba(59,130,246,0.2)] rounded-3xl";
+          "bg-background/20 backdrop-blur-2xl border-2 border-info/30 shadow-[0_0_50px_hsl(var(--info)/0.2)] rounded-3xl";
         break;
       case "floating":
         // Compact floating with theme-aware colors
         sizeClasses = "w-[70vw] max-w-sm max-h-[60vh]";
         styleClasses =
-          "bg-background border border-purple-500/30 shadow-[0_30px_60px_-12px_rgba(168,85,247,0.3)] rounded-2xl transform rotate-1";
+          "bg-background border border-primary/30 shadow-[0_30px_60px_-12px_hsl(var(--primary)/0.3)] rounded-2xl transform rotate-1";
         break;
       case "card":
         // Wide card with proper contrast
         sizeClasses = "w-[95vw] max-w-4xl max-h-[85vh]";
-        styleClasses = "bg-background border-4 border-emerald-500/40 shadow-2xl rounded-xl";
+        styleClasses = "bg-background border-4 border-success/40 shadow-2xl rounded-xl";
         break;
       case "overlay":
         // Full screen with inverted theme colors
         sizeClasses = "w-[98vw] h-[95vh] max-w-none max-h-none";
         styleClasses =
-          "bg-muted/95 border-2 border-orange-500/50 shadow-[0_0_100px_rgba(251,146,60,0.3)] rounded-none";
+          "bg-muted/95 border-2 border-warning/50 shadow-[0_0_100px_hsl(var(--warning)/0.3)] rounded-none";
         break;
       default:
         // Default modal with responsive sizing

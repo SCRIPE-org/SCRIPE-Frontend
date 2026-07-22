@@ -53,16 +53,16 @@ export function ApiKeyStatsCards({ stats, isLoading }: ApiKeyStatsCardsProps) {
   }
 
   const successColor = stats.successRateColor === "green"
-    ? "bg-emerald-500/10 text-emerald-600"
+    ? "bg-success/10 text-success"
     : stats.successRateColor === "yellow"
-      ? "bg-amber-500/10 text-amber-600"
-      : "bg-red-500/10 text-red-600";
+      ? "bg-warning/10 text-warning"
+      : "bg-destructive/10 text-destructive";
 
   const quotaColor = stats.quotaStatusColor === "green"
-    ? "bg-emerald-500/10 text-emerald-600"
+    ? "bg-success/10 text-success"
     : stats.quotaStatusColor === "yellow"
-      ? "bg-amber-500/10 text-amber-600"
-      : "bg-red-500/10 text-red-600";
+      ? "bg-warning/10 text-warning"
+      : "bg-destructive/10 text-destructive";
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -70,7 +70,7 @@ export function ApiKeyStatsCards({ stats, isLoading }: ApiKeyStatsCardsProps) {
         label={t("apikeys.stats.totalHits") || "Total Hits"}
         value={stats.totalHits.toLocaleString()}
         icon={Zap}
-        colorClass="bg-blue-500/10 text-blue-600"
+        colorClass="bg-info/10 text-info"
         sub={<span>{stats.currentMinuteHits} {t("apikeys.stats.thisMinute") || "this minute"}</span>}
       />
       <StatCard
@@ -106,8 +106,8 @@ export function ApiKeyStatsCards({ stats, isLoading }: ApiKeyStatsCardsProps) {
               <div className="flex-1 h-1 rounded-full bg-muted overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all ${
-                    stats.quotaStatusColor === "red" ? "bg-red-500" :
-                    stats.quotaStatusColor === "yellow" ? "bg-amber-500" : "bg-emerald-500"
+                    stats.quotaStatusColor === "red" ? "bg-destructive" :
+                    stats.quotaStatusColor === "yellow" ? "bg-warning" : "bg-success"
                   }`}
                   style={{ width: `${Math.min(stats.monthlyQuotaUsedPercent, 100)}%` }}
                 />
@@ -121,7 +121,7 @@ export function ApiKeyStatsCards({ stats, isLoading }: ApiKeyStatsCardsProps) {
         label={t("apikeys.stats.avgResponse") || "Avg Response"}
         value={`${stats.avgResponseTimeMs.toFixed(1)} ms`}
         icon={Clock}
-        colorClass="bg-purple-500/10 text-purple-600"
+        colorClass="bg-primary/10 text-primary"
         sub={
           <span>
             {t("apikeys.stats.rateLimit") || "Rate limit"}: {stats.currentMinuteHits}/{stats.effectiveRateLimitPerMinute} {t("apikeys.stats.perMin") || "/min"}

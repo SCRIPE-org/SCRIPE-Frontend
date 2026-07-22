@@ -85,7 +85,7 @@ export function ProfessionalChartsTab() {
   return (
     <div className="space-y-6">
       <div className="space-y-4 text-center">
-        <h1 className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-3xl font-bold text-transparent">
+        <h1 className="bg-gradient-to-r from-info to-primary bg-clip-text text-3xl font-bold text-transparent">
           Professional Charts Collection
         </h1>
         <p className="mx-auto max-w-4xl text-xl text-muted-foreground">
@@ -94,19 +94,19 @@ export function ProfessionalChartsTab() {
         </p>
         <div className="flex justify-center gap-4 text-sm text-muted-foreground">
           <span className="flex items-center gap-1">
-            <div className="h-2 w-2 rounded-full bg-blue-500"></div>
+            <div className="h-2 w-2 rounded-full bg-info"></div>
             {chartTypes.length} Chart Types
           </span>
           <span className="flex items-center gap-1">
-            <div className="h-2 w-2 rounded-full bg-green-500"></div>
+            <div className="h-2 w-2 rounded-full bg-success"></div>
             100+ Chart Variants
           </span>
           <span className="flex items-center gap-1">
-            <div className="h-2 w-2 rounded-full bg-purple-500"></div>
+            <div className="h-2 w-2 rounded-full bg-primary"></div>
             Interactive & Responsive
           </span>
           <span className="flex items-center gap-1">
-            <div className="h-2 w-2 rounded-full bg-orange-500"></div>
+            <div className="h-2 w-2 rounded-full bg-warning-strong"></div>
             Professional Grade
           </span>
         </div>
@@ -121,7 +121,7 @@ export function ProfessionalChartsTab() {
 
       <div className="min-h-[600px]">{renderChartComponent()}</div>
 
-      <div className="mt-12 rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 p-8 dark:from-blue-950 dark:to-purple-950">
+      <div className="mt-12 rounded-lg bg-gradient-to-r from-info/10 to-primary/10 p-8">
         <div className="space-y-4 text-center">
           <h3 className="text-2xl font-bold">Chart Capabilities</h3>
           <p className="mx-auto max-w-3xl text-muted-foreground">
@@ -130,20 +130,20 @@ export function ProfessionalChartsTab() {
           </p>
 
           <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-            <div className="rounded-lg bg-white p-4 text-center shadow-sm dark:bg-gray-800">
-              <div className="text-2xl font-bold text-blue-600">{chartTypes.length}</div>
+            <div className="rounded-lg bg-card p-4 text-center shadow-sm">
+              <div className="text-2xl font-bold text-info">{chartTypes.length}</div>
               <div className="text-sm text-muted-foreground">Chart Types</div>
             </div>
-            <div className="rounded-lg bg-white p-4 text-center shadow-sm dark:bg-gray-800">
-              <div className="text-2xl font-bold text-green-600">100+</div>
+            <div className="rounded-lg bg-card p-4 text-center shadow-sm">
+              <div className="text-2xl font-bold text-success">100+</div>
               <div className="text-sm text-muted-foreground">Chart Variants</div>
             </div>
-            <div className="rounded-lg bg-white p-4 text-center shadow-sm dark:bg-gray-800">
-              <div className="text-2xl font-bold text-purple-600">3</div>
+            <div className="rounded-lg bg-card p-4 text-center shadow-sm">
+              <div className="text-2xl font-bold text-primary">3</div>
               <div className="text-sm text-muted-foreground">Export Formats</div>
             </div>
-            <div className="rounded-lg bg-white p-4 text-center shadow-sm dark:bg-gray-800">
-              <div className="text-2xl font-bold text-orange-600">∞</div>
+            <div className="rounded-lg bg-card p-4 text-center shadow-sm">
+              <div className="text-2xl font-bold text-warning-strong">∞</div>
               <div className="text-sm text-muted-foreground">Customizable</div>
             </div>
           </div>

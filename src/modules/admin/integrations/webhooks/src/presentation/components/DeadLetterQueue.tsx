@@ -79,7 +79,7 @@ export function DeadLetterQueue({
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
         <div>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Skull className="h-4 w-4 text-red-500" />
+            <Skull className="h-4 w-4 text-destructive" />
             {t("webhooks.deadLetters.title") || "Dead Letter Queue"}
             {totalCount > 0 && (
               <Badge variant="destructive" className="ml-1 h-5 min-w-[20px] px-1.5 text-xs">
@@ -98,7 +98,7 @@ export function DeadLetterQueue({
           <Button
             variant="outline"
             size="sm"
-            className="gap-1.5 border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-700 dark:text-amber-400 dark:hover:bg-amber-950/30"
+            className="gap-1.5 border-warning/40 text-warning hover:bg-warning/10"
             onClick={() => setReplayAllDialogOpen(true)}
             disabled={isReplayingAll}
           >
@@ -123,10 +123,10 @@ export function DeadLetterQueue({
         {/* Empty state */}
         {!isLoading && logs.length === 0 && (
           <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-            <div className="mb-3 rounded-full bg-emerald-50 p-4 dark:bg-emerald-950/30">
-              <Inbox className="h-8 w-8 text-emerald-500" />
+            <div className="mb-3 rounded-full bg-success/10 p-4">
+              <Inbox className="h-8 w-8 text-success" />
             </div>
-            <p className="text-sm font-medium text-emerald-700 dark:text-emerald-400">
+            <p className="text-sm font-medium text-success">
               {t("webhooks.deadLetters.empty") || "No dead letters"}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
@@ -142,7 +142,7 @@ export function DeadLetterQueue({
             <div className="mx-4 mb-4 rounded-md border">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-red-50/50 hover:bg-red-50/50 dark:bg-red-950/10 dark:hover:bg-red-950/10">
+                  <TableRow className="bg-destructive/5 hover:bg-destructive/5">
                     <TableHead className="w-8" />
                     <TableHead>{t("webhooks.eventType") || "Event"}</TableHead>
                     <TableHead>{t("webhooks.httpCode") || "HTTP"}</TableHead>
@@ -170,7 +170,7 @@ export function DeadLetterQueue({
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1.5">
-                            <Zap className="h-3 w-3 shrink-0 text-amber-500" />
+                            <Zap className="h-3 w-3 shrink-0 text-warning" />
                             <span className="text-sm font-medium">
                               {
                                 (t(`webhooks.eventNames.${log.eventType}`) ||
@@ -185,7 +185,7 @@ export function DeadLetterQueue({
                         <TableCell>
                           <Badge
                             variant="outline"
-                            className="border-red-200 bg-red-50 font-mono text-xs text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400"
+                            className="border-destructive/30 bg-destructive/10 font-mono text-xs text-destructive"
                           >
                             {log.httpStatusCode || "N/A"}
                           </Badge>
@@ -196,7 +196,7 @@ export function DeadLetterQueue({
                           </span>
                         </TableCell>
                         <TableCell>
-                          <span className="block max-w-[200px] truncate text-sm text-red-600 dark:text-red-400">
+                          <span className="block max-w-[200px] truncate text-sm text-destructive">
                             {log.errorMessage || "—"}
                           </span>
                         </TableCell>
@@ -209,7 +209,7 @@ export function DeadLetterQueue({
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-7 gap-1 text-xs text-amber-700 hover:bg-amber-50 hover:text-amber-800 dark:text-amber-400 dark:hover:bg-amber-950/30"
+                            className="h-7 gap-1 text-xs text-warning hover:bg-warning/10 hover:text-warning"
                             onClick={(e) => {
                               e.stopPropagation();
                               onReplay(log.id);
@@ -233,7 +233,7 @@ export function DeadLetterQueue({
                                   <p className="mb-1.5 text-xs font-medium text-muted-foreground">
                                     {t("webhooks.payload") || "Payload"}
                                   </p>
-                                  <pre className="max-h-[200px] overflow-x-auto overflow-y-auto rounded-lg bg-zinc-950 p-3 text-xs text-zinc-300">
+                                  <pre className="max-h-[200px] overflow-x-auto overflow-y-auto rounded-lg bg-muted p-3 text-xs text-foreground">
                                     {(() => {
                                       try {
                                         return JSON.stringify(JSON.parse(log.payloadJson), null, 2);
@@ -249,7 +249,7 @@ export function DeadLetterQueue({
                                   <p className="mb-1.5 text-xs font-medium text-muted-foreground">
                                     {t("webhooks.responseOrError") || "Response / Error"}
                                   </p>
-                                  <pre className="max-h-[200px] overflow-x-auto overflow-y-auto rounded-lg bg-zinc-950 p-3 text-xs text-red-400">
+                                  <pre className="max-h-[200px] overflow-x-auto overflow-y-auto rounded-lg bg-muted p-3 text-xs text-destructive">
                                     {log.errorMessage || log.responseBody || "No response captured"}
                                   </pre>
                                 </div>
@@ -309,7 +309,7 @@ export function DeadLetterQueue({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-amber-600" />
+              <AlertTriangle className="h-5 w-5 text-warning" />
               {t("webhooks.deadLetters.replayAllTitle") || "Replay All Dead Letters"}
             </AlertDialogTitle>
             <AlertDialogDescription>
@@ -322,7 +322,7 @@ export function DeadLetterQueue({
           <AlertDialogFooter>
             <AlertDialogCancel>{t("common.cancel") || "Cancel"}</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-amber-600 hover:bg-amber-700"
+              className="bg-warning text-warning-foreground hover:bg-warning/90"
               onClick={() => {
                 onReplayAll();
                 setReplayAllDialogOpen(false);

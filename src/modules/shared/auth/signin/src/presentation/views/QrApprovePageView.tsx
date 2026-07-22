@@ -77,7 +77,7 @@ function QrApproveLoadingState() {
       <div className="flex gap-3">
         <div
           className="h-12 flex-1 animate-pulse rounded-xl"
-          style={{ background: "rgba(239,68,68,0.1)" }}
+          style={{ background: "hsl(var(--destructive) / 0.1)" }}
         />
         <div
           className="h-12 flex-1 animate-pulse rounded-xl"

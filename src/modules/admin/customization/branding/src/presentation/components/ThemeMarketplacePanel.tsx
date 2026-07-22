@@ -511,7 +511,7 @@ function ThemeCard({
             </span>
           )}
           {theme.isFeatured && !theme.isNew && (
-            <span className="flex items-center gap-0.5 rounded-full bg-white/90 px-1.5 py-0.5 text-[9px] font-bold text-gray-900">
+            <span className="flex items-center gap-0.5 rounded-full bg-background/90 px-1.5 py-0.5 text-[9px] font-bold text-foreground">
               <Crown className="h-2.5 w-2.5" /> ★
             </span>
           )}

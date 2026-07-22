@@ -1215,7 +1215,7 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                             ? level === 0
                               ? "border border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10 shadow-sm hover:border-primary/30 hover:from-primary/10 hover:to-primary/15"
                               : level === 1
-                                ? "border border-blue-500/20 bg-gradient-to-r from-blue-500/5 to-blue-500/10 hover:border-blue-500/30 hover:from-blue-500/10 hover:to-blue-500/15"
+                                ? "border border-info/20 bg-gradient-to-r from-info/5 to-info/10 hover:border-info/30 hover:from-info/10 hover:to-info/15"
                                 : "border border-border/50 bg-gradient-to-r from-muted/30 to-muted/50 hover:border-border/70 hover:from-muted/50 hover:to-muted/70"
                             : "hover:bg-accent hover:text-accent-foreground",
                           isSelected &&
@@ -1280,7 +1280,7 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                               className={cn(
                                 "font-medium transition-colors",
                                 isTreeSelect && level === 0 && "font-semibold text-primary",
-                                isTreeSelect && level === 1 && "font-medium text-blue-600",
+                                isTreeSelect && level === 1 && "font-medium text-info",
                                 isTreeSelect && level > 1 && "text-foreground"
                               )}
                             >

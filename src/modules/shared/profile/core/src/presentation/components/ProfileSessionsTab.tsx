@@ -38,7 +38,7 @@ export function ProfileSessionsTab({ sessionsVm }: ProfileSessionsTabProps) {
             <Button
               variant="outline"
               size="sm"
-              className="border-rose-500/25 bg-rose-500/5 text-rose-400 hover:border-rose-500/30 hover:bg-rose-500/10"
+              className="border-destructive/25 bg-destructive/5 text-destructive hover:border-destructive/30 hover:bg-destructive/10"
               onClick={() => sessionsVm.revokeAllSessions()}
               loading={sessionsVm.isRevokingAll}
             >

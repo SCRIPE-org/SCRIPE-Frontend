@@ -22,7 +22,7 @@ export function NavigationSidebar({ open, onOpenChange }: NavigationSidebarProps
         dir={direction}
         className={cn(
           "navigation-sidebar fixed inset-y-0 z-50 w-72",
-          "border-r border-slate-800 bg-slate-950",
+          "border-r border-sidebar-border bg-sidebar",
           "transform transition-transform duration-300 ease-in-out lg:translate-x-0",
           direction === "rtl" ? "right-0" : "left-0",
           open ? "translate-x-0" : direction === "rtl" ? "translate-x-full" : "-translate-x-full"
@@ -30,13 +30,13 @@ export function NavigationSidebar({ open, onOpenChange }: NavigationSidebarProps
       >
         <div className="flex h-full flex-col">
           {/* Logo Section */}
-          <div className="flex items-center gap-3 border-b border-slate-800 px-6 py-6">
+          <div className="flex items-center gap-3 border-b border-sidebar-border px-6 py-6">
             <Logo className="h-8 w-8" />
             <div className="min-w-0 flex-1">
-              <h1 className="break-words text-lg font-semibold leading-tight text-white">
+              <h1 className="break-words text-lg font-semibold leading-tight text-sidebar-foreground">
                 {t("app.tagline")}
               </h1>
-              <p className="text-sm text-slate-400">{t("nav.dashboard")}</p>
+              <p className="text-sm text-sidebar-foreground/60">{t("nav.dashboard")}</p>
             </div>
           </div>
 
@@ -50,11 +50,16 @@ export function NavigationSidebar({ open, onOpenChange }: NavigationSidebarProps
           />
 
           {/* User Section */}
-          <div className="space-y-3 border-t border-slate-800 p-4">
-            <UserCard size="sm" showStatus showRole className="border-slate-700 bg-slate-800/50" />
+          <div className="space-y-3 border-t border-sidebar-border p-4">
+            <UserCard
+              size="sm"
+              showStatus
+              showRole
+              className="border-sidebar-border bg-sidebar-accent/50"
+            />
             <Button
               variant="ghost"
-              className="w-full justify-start gap-3 text-slate-300 hover:bg-slate-800/50 hover:text-white"
+              className="w-full justify-start gap-3 text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
               asChild
             >
               <Link href="/dashboard/settings">
@@ -62,7 +67,7 @@ export function NavigationSidebar({ open, onOpenChange }: NavigationSidebarProps
                 {t("nav.settings")}
               </Link>
             </Button>
-            <LogoutButton className="w-full justify-start text-slate-300 hover:bg-slate-800/50 hover:text-white" />
+            <LogoutButton className="w-full justify-start text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground" />
           </div>
         </div>
       </div>

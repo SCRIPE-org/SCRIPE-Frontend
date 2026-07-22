@@ -80,7 +80,7 @@ export function WebhookSecretPanel({
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-info/10 text-info">
                 <Shield className="h-4 w-4" />
               </div>
               <div>
@@ -142,7 +142,7 @@ export function WebhookSecretPanel({
                     <TooltipTrigger asChild>
                       <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleCopy}>
                         {copied ? (
-                          <Check className="h-3.5 w-3.5 text-emerald-500" />
+                          <Check className="h-3.5 w-3.5 text-success" />
                         ) : (
                           <Copy className="h-3.5 w-3.5 text-muted-foreground" />
                         )}
@@ -168,9 +168,9 @@ export function WebhookSecretPanel({
 
           {/* Previous secret grace period */}
           {hasPreviousSecret && previousSecretExpiresAt && (
-            <div className="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2.5 dark:border-blue-800 dark:bg-blue-950/20">
-              <Clock className="h-4 w-4 shrink-0 text-blue-500" />
-              <p className="flex-1 text-xs text-blue-700 dark:text-blue-300">
+            <div className="flex items-center gap-2 rounded-lg border border-info/30 bg-info/10 px-3 py-2.5">
+              <Clock className="h-4 w-4 shrink-0 text-info" />
+              <p className="flex-1 text-xs text-info">
                 {t("webhooks.previousSecretActive") || "Previous secret is still valid until"}{" "}
                 <strong>
                   {formatUtc(previousSecretExpiresAt, "MMM d, yyyy 'at' HH:mm")}
@@ -178,7 +178,7 @@ export function WebhookSecretPanel({
               </p>
               <Badge
                 variant="outline"
-                className="shrink-0 border-blue-300 bg-blue-100 text-xs dark:border-blue-700 dark:bg-blue-900/30"
+                className="shrink-0 border-info/40 bg-info/15 text-xs"
               >
                 {t("webhooks.gracePeriod") || "Grace Period"}
               </Badge>

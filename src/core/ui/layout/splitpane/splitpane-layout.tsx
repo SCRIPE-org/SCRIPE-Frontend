@@ -169,7 +169,7 @@ export function SplitPaneLayout({ children }: SplitPaneLayoutProps) {
                     {t("common.ready") || "System ready"}
                   </p>
                   <p>
-                    <span className="text-green-500">[ok]</span>{" "}
+                    <span className="text-success">[ok]</span>{" "}
                     {t("common.connected") || "Connected"}
                   </p>
                 </div>

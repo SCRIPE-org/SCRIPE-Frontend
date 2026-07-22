@@ -111,7 +111,7 @@ export function AvatarUpload({
             {displayUrl && !imageError && (
               <AvatarImage src={displayUrl} alt="Profile" onError={() => setImageError(true)} />
             )}
-            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-2xl font-semibold text-white">
+            <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-2xl font-semibold text-primary-foreground">
               {initials}
             </AvatarFallback>
           </Avatar>

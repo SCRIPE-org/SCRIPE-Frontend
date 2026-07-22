@@ -31,9 +31,9 @@ function formatCurrency(value: number, currency = "USD"): string {
 
 const RANK_ICONS = [Crown, Medal, Award];
 const RANK_COLORS = [
-  "from-amber-400 to-yellow-500",
-  "from-slate-300 to-slate-400",
-  "from-orange-400 to-amber-600",
+  "from-warning to-warning/70 text-warning-foreground",
+  "from-muted-foreground/60 to-muted-foreground/80 text-background",
+  "from-warning-strong to-warning-strong/70 text-warning-strong-foreground",
 ];
 
 /**
@@ -72,10 +72,10 @@ export function LtvTab({ ltvData }: LtvTabProps) {
               <div
                 className={`h-0.5 bg-gradient-to-r ${
                   idx === 0
-                    ? "from-amber-400 to-yellow-500"
+                    ? "from-warning to-warning/70"
                     : idx === 1
-                      ? "from-slate-300 to-slate-400"
-                      : "from-emerald-400 to-teal-500"
+                      ? "from-muted-foreground/60 to-muted-foreground/80"
+                      : "from-success to-success/70"
                 }`}
               />
               <CardHeader className="pb-2">
@@ -83,7 +83,7 @@ export function LtvTab({ ltvData }: LtvTabProps) {
                   <div className="flex items-center gap-2">
                     {RankIcon && (
                       <div
-                        className={`flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-br ${rankColor} text-white`}
+                        className={`flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-br ${rankColor}`}
                       >
                         <RankIcon className="h-3.5 w-3.5" />
                       </div>

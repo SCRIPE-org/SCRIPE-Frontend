@@ -94,7 +94,7 @@ export function ModalStyleSection() {
                 <div className="space-y-2">
                   <h4 className="font-semibold">{style.name}</h4>
                   <p className="text-sm text-muted-foreground">{style.description}</p>
-                  <div className="relative h-12 rounded bg-gray-100">
+                  <div className="relative h-12 rounded bg-muted">
                     {modalPreviewMap[style.value]}
                   </div>
                 </div>
