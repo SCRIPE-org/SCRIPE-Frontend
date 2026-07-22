@@ -475,8 +475,98 @@ export function DashboardPreviewShell() {
     <Layout>{content}</Layout>
   );
 
+  /**
+   * Static preview of the two workspace shells (scripe / nexus).
+   *
+   * The real ScripeLayout and NexusLayout cannot be mounted here. This page sits
+   * under (auth) with no auth guard so that the Customizer can embed it in an
+   * iframe, which means there is no session: the shells' identity cluster mounts
+   * the notification bell and the account menu, and their navigation comes from
+   * the workspace provider, which is empty in this context.
+   *
+   * So the preview reproduces the chrome instead — real geometry (64px rail,
+   * 240px panel, 56px topbar) and real tokens, with the accent following the
+   * same --workspace-hue the live shell uses. It previews appearance, which is
+   * what the Customizer is for; the content area is the same mock content every
+   * other layout preview shows.
+   *
+   * Before this existed, "scripe" and "nexus" both fell through to the switch's
+   * default branch and silently previewed NavigationLayout — a different layout
+   * altogether, which made the Customizer actively misleading.
+   */
+  const workspaceShellPreview = (variant: "scripe" | "nexus") => {
+    const isEdge = variant === "scripe";
+    const surface = isEdge ? "var(--edge-sub, hsl(var(--muted)))" : "hsl(var(--card))";
+    const edge = isEdge ? "var(--edge-line, hsl(var(--border)))" : "hsl(var(--border))";
+    const accent = isEdge
+      ? "var(--edge-accent, hsl(var(--primary)))"
+      : "hsl(var(--primary))";
+
+    return (
+      <div
+        className="flex h-full w-full overflow-hidden"
+        style={{ background: isEdge ? "var(--edge-void, hsl(var(--background)))" : undefined }}
+      >
+        {/* Rail */}
+        <div
+          className="flex shrink-0 flex-col items-center gap-2 py-3"
+          style={{ width: 64, background: surface, borderInlineEnd: `1px solid ${edge}` }}
+        >
+          <div className="h-7 w-7 rounded-md" style={{ background: accent, opacity: 0.9 }} />
+          <div className="my-1 h-px w-6" style={{ background: edge }} />
+          {[0, 1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="h-9 w-9 rounded-[9px]"
+              style={{
+                background: i === 0 ? `color-mix(in oklch, ${accent} 16%, transparent)` : "transparent",
+                border: `1px solid ${i === 0 ? accent : "transparent"}`,
+              }}
+            />
+          ))}
+          <div className="mt-auto h-8 w-8 rounded-full" style={{ background: edge }} />
+        </div>
+
+        {/* Panel */}
+        <div
+          className="flex shrink-0 flex-col gap-1.5 p-3"
+          style={{ width: 240, background: surface, borderInlineEnd: `1px solid ${edge}` }}
+        >
+          <div className="mb-2 flex items-center gap-2 pb-3" style={{ borderBlockEnd: `1px solid ${edge}` }}>
+            <div className="h-6 w-6 rounded-[7px]" style={{ border: `1px solid ${accent}` }} />
+            <div className="h-2.5 w-24 rounded" style={{ background: edge }} />
+          </div>
+          {[0, 1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="h-7 rounded-md"
+              style={{
+                background: i === 1 ? `color-mix(in oklch, ${accent} 12%, transparent)` : "transparent",
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Topbar + content */}
+        <div className="flex min-w-0 flex-1 flex-col">
+          <div
+            className="flex shrink-0 items-center gap-2 px-4"
+            style={{ height: 56, borderBlockEnd: `1px solid ${edge}` }}
+          >
+            <div className="h-2.5 w-32 rounded" style={{ background: edge }} />
+          </div>
+          <div className="flex-1 overflow-auto">{content}</div>
+        </div>
+      </div>
+    );
+  };
+
   const renderLayout = () => {
     switch (layoutTemplate) {
+      case "scripe":
+        return workspaceShellPreview("scripe");
+      case "nexus":
+        return workspaceShellPreview("nexus");
       case "classic":
         return withSidebar(ClassicLayout);
       case "compact":
