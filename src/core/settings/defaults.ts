@@ -23,7 +23,9 @@ export const defaultSettings: Settings = {
   backgroundMode: "preset",
   gradientStartColor: "",
   gradientEndColor: "",
-  layoutTemplate: "nexus",
+  // The EDGE shell is the platform default. Nexus stays selectable in
+  // Settings → Layouts → Workspace for tenants who prefer it.
+  layoutTemplate: "scripe",
   cardStyle: "default",
   animationLevel: "moderate",
   fontSize: "medium",

@@ -1441,6 +1441,10 @@ export const en = {
       },
     },
     heatmap: {
+      min: "Min: {value}",
+      max: "Max: {value}",
+      intensityPercent: "{percent}% intensity",
+      intensityLabel: "Intensity:",
       title: "Title",
       description: "Description",
       basic: {
@@ -1474,6 +1478,10 @@ export const en = {
       value: "Value",
     },
     treemap: {
+      total: "Total: {value}",
+      ofTotal: "{percent}% of total",
+      rank: "Rank #{rank}",
+      sizeLegend: "Size represents value:",
       title: "Title",
       description: "Description",
       basic: {

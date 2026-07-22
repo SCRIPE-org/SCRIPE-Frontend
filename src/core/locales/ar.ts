@@ -664,6 +664,10 @@ export const ar = {
       },
     },
     heatmap: {
+      min: "الأدنى: {value}",
+      max: "الأعلى: {value}",
+      intensityPercent: "الكثافة {percent}%",
+      intensityLabel: "الكثافة:",
       title: "خرائط الحرارة",
       description: "تصور الأنماط والبيانات الهرمية مع خرائط الحرارة",
       basic: {
@@ -697,6 +701,10 @@ export const ar = {
       value: "[مفقود] Value",
     },
     treemap: {
+      total: "الإجمالي: {value}",
+      ofTotal: "{percent}% من الإجمالي",
+      rank: "الترتيب #{rank}",
+      sizeLegend: "الحجم يمثل القيمة:",
       title: "خرائط الشجرة",
       description: "تصور البيانات الهرمية مع المستطيلات المتداخلة",
       basic: {

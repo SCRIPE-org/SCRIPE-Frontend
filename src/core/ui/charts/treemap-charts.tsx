@@ -3,9 +3,16 @@
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { useI18n } from "@core/providers/i18n-provider";
+import { ChartPoint } from "./chart-tooltip";
 
-// Simple treemap component using CSS Grid
+/**
+ * Treemap on a CSS grid.
+ *
+ * Each tile is a `ChartPoint`, so its figures survive touch, keyboard and a
+ * screen reader — the previous CSS-`:hover` overlay reached none of them.
+ */
 const TreemapChart = ({ data, colors, title, description }: any) => {
+  const { t } = useI18n();
   const totalValue = data.reduce((sum: number, item: any) => sum + item.value, 0);
   const maxValue = Math.max(...data.map((item: any) => item.value));
   const minValue = Math.min(...data.map((item: any) => item.value));
@@ -18,18 +25,18 @@ const TreemapChart = ({ data, colors, title, description }: any) => {
         <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <div className="h-3 w-3 rounded" style={{ backgroundColor: colors[0] }}></div>
-            <span>Min: {minValue}</span>
+            <span>{t("charts.heatmap.min", { value: minValue })}</span>
           </div>
           <div className="flex items-center gap-2">
             <div
               className="h-3 w-3 rounded"
               style={{ backgroundColor: colors[colors.length - 1] }}
             ></div>
-            <span>Max: {maxValue}</span>
+            <span>{t("charts.heatmap.max", { value: maxValue })}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="h-3 w-3 rounded bg-muted"></div>
-            <span>Total: {totalValue}</span>
+            <span>{t("charts.treemap.total", { value: totalValue })}</span>
           </div>
         </div>
       </CardHeader>
@@ -44,52 +51,58 @@ const TreemapChart = ({ data, colors, title, description }: any) => {
               const backgroundColor = colors[colorIndex] || colors[colors.length - 1];
 
               return (
-                <div
+                <ChartPoint
                   key={index}
-                  className="group relative cursor-pointer transition-all duration-300 hover:z-10 hover:scale-105 hover:shadow-lg"
+                  label={`${item.label}: ${item.value} (${percentage.toFixed(1)}%)`}
+                  content={
+                    <span className="block text-center">
+                      <span className="block text-xl font-bold tabular-nums">{item.value}</span>
+                      <span className="block text-sm">{item.label}</span>
+                      <span className="block text-xs opacity-75">
+                        {t("charts.treemap.ofTotal", { percent: percentage.toFixed(1) })}
+                      </span>
+                      <span className="mt-1 block text-xs opacity-75">
+                        {t("charts.treemap.rank", { rank: index + 1 })}
+                      </span>
+                    </span>
+                  }
+                  className="group relative w-full transition-transform duration-300 hover:z-10 hover:scale-105 focus-visible:z-10 focus-visible:scale-105"
                   style={{
                     gridColumn: `span ${gridSpan}`,
                     gridRow: `span ${gridSpan}`,
                     backgroundColor: backgroundColor,
                     borderRadius: "8px",
                     minHeight: "60px",
-                    boxShadow: intensity > 0.7 ? "0 0 15px rgba(255, 255, 255, 0.2)" : "none",
                   }}
                 >
-                  <div className="absolute inset-0 flex flex-col justify-between p-3">
-                    <div className="truncate text-sm font-semibold text-white transition-colors duration-200 group-hover:text-yellow-200">
-                      {item.label}
-                    </div>
-                    <div className="text-lg font-bold text-white transition-colors duration-200 group-hover:text-yellow-100">
-                      {item.value}
-                    </div>
-                    <div className="text-xs text-white/80 transition-colors duration-200 group-hover:text-white/90">
+                  {/* The tile fill is caller-supplied, so the label contrasts
+                      against the fill with literal white rather than a theme
+                      token. The old yellow hover tints are gone: the tooltip
+                      now carries the detail, so the tile does not need to
+                      recolour itself to signal interactivity. */}
+                  <span className="flex h-full w-full flex-col justify-between p-3 text-white">
+                    <span className="block truncate text-sm font-semibold">{item.label}</span>
+                    <span className="block text-lg font-bold tabular-nums">{item.value}</span>
+                    <span className="block text-xs text-white/80 tabular-nums">
                       {percentage.toFixed(1)}%
-                    </div>
-                  </div>
-
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/30 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <div className="rounded-lg bg-black/50 p-3 text-center text-white">
-                      <div className="mb-1 text-xl font-bold">{item.value}</div>
-                      <div className="mb-1 text-sm">{item.label}</div>
-                      <div className="text-xs opacity-75">{percentage.toFixed(1)}% of total</div>
-                      <div className="mt-1 text-xs opacity-75">Rank: #{index + 1}</div>
-                    </div>
-                  </div>
+                    </span>
+                  </span>
 
                   {/* Corner indicator for large items */}
                   {percentage > 15 && (
-                    <div className="absolute right-1 top-1 h-2 w-2 rounded-full bg-white/30"></div>
+                    <span
+                      aria-hidden="true"
+                      className="absolute end-1 top-1 h-2 w-2 rounded-full bg-white/30"
+                    />
                   )}
-                </div>
+                </ChartPoint>
               );
             })}
           </div>
 
           {/* Legend */}
           <div className="mt-6 flex items-center justify-center gap-2">
-            <span className="text-xs text-muted-foreground">Size represents value:</span>
+            <span className="text-xs text-muted-foreground">{t("charts.treemap.sizeLegend")}</span>
             {colors.slice(0, 5).map((color: string, index: number) => (
               <div
                 key={index}

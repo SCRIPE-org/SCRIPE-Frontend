@@ -32,6 +32,7 @@ import { TENANTS_ENDPOINTS } from "@core/config/api-endpoints";
 import { getModuleApiService } from "@core/services/api-factory";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { appLogger } from "@core/common/logger";
+import { defaultSettings } from "@core/settings/defaults";
 
 // ── Constants ──
 const DEBOUNCE_MS = 2000;
@@ -134,9 +135,14 @@ export function useAdminSettingsSync() {
               layoutChanged = cached.layoutTemplate !== server.layoutTemplate;
             } else {
               // First login / fresh device: compare default layout vs server layout.
-              // Without this, the UI would render with the default ("nexus") layout
-              // and then visibly flash to the server's layout (e.g. "classic").
-              layoutChanged = server.layoutTemplate != null && server.layoutTemplate !== "nexus";
+              // Without this, the UI would render with the default layout and then
+              // visibly flash to the server's layout (e.g. "classic").
+              // Read the default rather than naming it: this used to hardcode
+              // "nexus", so moving the platform default would silently make every
+              // fresh device claim the layout had changed when it had not.
+              layoutChanged =
+                server.layoutTemplate != null &&
+                server.layoutTemplate !== defaultSettings.layoutTemplate;
             }
           } catch {
             // Non-fatal: if parse fails, treat as no layout change

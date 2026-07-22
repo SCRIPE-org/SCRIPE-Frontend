@@ -3,9 +3,17 @@
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { useI18n } from "@core/providers/i18n-provider";
+import { ChartPoint } from "./chart-tooltip";
 
-// Simple heatmap component using CSS Grid
+/**
+ * Heatmap on a CSS grid.
+ *
+ * Each cell is a `ChartPoint`, so its value is reachable by mouse, touch,
+ * keyboard and screen reader — it was previously a bare `<div title="…">`
+ * with a CSS-hover overlay, which meant none of those except mouse.
+ */
 const HeatmapChart = ({ data, xLabels, yLabels, colors, title, description }: any) => {
+  const { t } = useI18n();
   const maxValue = Math.max(...data.flat());
   const minValue = Math.min(...data.flat());
 
@@ -17,14 +25,14 @@ const HeatmapChart = ({ data, xLabels, yLabels, colors, title, description }: an
         <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <div className="h-3 w-3 rounded" style={{ backgroundColor: colors[0] }}></div>
-            <span>Min: {minValue}</span>
+            <span>{t("charts.heatmap.min", { value: minValue })}</span>
           </div>
           <div className="flex items-center gap-2">
             <div
               className="h-3 w-3 rounded"
               style={{ backgroundColor: colors[colors.length - 1] }}
             ></div>
-            <span>Max: {maxValue}</span>
+            <span>{t("charts.heatmap.max", { value: maxValue })}</span>
           </div>
         </div>
       </CardHeader>
@@ -57,39 +65,42 @@ const HeatmapChart = ({ data, xLabels, yLabels, colors, title, description }: an
 
                 {/* Data Cells */}
                 {data[yIndex].map((value: number, xIndex: number) => {
-                  const intensity = (value - minValue) / (maxValue - minValue);
+                  // Guard the degenerate all-equal series, where max === min
+                  // would otherwise divide by zero and yield NaN.
+                  const span = maxValue - minValue;
+                  const intensity = span === 0 ? 1 : (value - minValue) / span;
                   const colorIndex = Math.floor(intensity * (colors.length - 1));
                   const backgroundColor = colors[colorIndex] || colors[colors.length - 1];
 
                   return (
-                    <div
+                    <ChartPoint
                       key={`${yIndex}-${xIndex}`}
-                      className="group relative flex aspect-square cursor-pointer items-center justify-center rounded-sm text-xs font-medium transition-all duration-300 hover:z-10 hover:scale-110"
+                      label={`${yLabel} — ${xLabels[xIndex]}: ${value}`}
+                      content={
+                        <span className="block text-center">
+                          <span className="block text-sm font-bold tabular-nums">{value}</span>
+                          <span className="block text-xs">
+                            {yLabel} — {xLabels[xIndex]}
+                          </span>
+                          <span className="block text-xs opacity-75">
+                            {t("charts.heatmap.intensityPercent", {
+                              percent: (intensity * 100).toFixed(1),
+                            })}
+                          </span>
+                        </span>
+                      }
+                      className="flex aspect-square items-center justify-center rounded-sm text-xs font-medium transition-transform duration-300 hover:z-10 hover:scale-110 focus-visible:z-10 focus-visible:scale-110"
                       style={{
-                        backgroundColor: backgroundColor,
+                        backgroundColor,
+                        // Literal black/white is correct here: the cell fill is
+                        // caller-supplied and arbitrary, so the label has to
+                        // auto-contrast against it rather than against a theme.
                         color: intensity > 0.5 ? "#ffffff" : "#000000",
                         minHeight: "40px",
-                        boxShadow: intensity > 0.7 ? "0 0 10px rgba(255, 255, 255, 0.3)" : "none",
                       }}
-                      title={`${yLabel} - ${xLabels[xIndex]}: ${value}`}
                     >
-                      <span className="transition-transform duration-200 group-hover:scale-110">
-                        {value}
-                      </span>
-
-                      {/* Hover overlay */}
-                      <div className="absolute inset-0 flex items-center justify-center rounded-sm bg-black/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                        <div className="rounded bg-black/50 p-2 text-center text-white">
-                          <div className="text-sm font-bold">{value}</div>
-                          <div className="text-xs">
-                            {yLabel} - {xLabels[xIndex]}
-                          </div>
-                          <div className="text-xs opacity-75">
-                            {(intensity * 100).toFixed(1)}% intensity
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                      <span className="tabular-nums">{value}</span>
+                    </ChartPoint>
                   );
                 })}
               </React.Fragment>
@@ -98,7 +109,7 @@ const HeatmapChart = ({ data, xLabels, yLabels, colors, title, description }: an
 
           {/* Legend */}
           <div className="mt-6 flex items-center justify-center gap-2">
-            <span className="text-xs text-muted-foreground">Intensity:</span>
+            <span className="text-xs text-muted-foreground">{t("charts.heatmap.intensityLabel")}</span>
             {colors.map((color: string, index: number) => (
               <div
                 key={index}
