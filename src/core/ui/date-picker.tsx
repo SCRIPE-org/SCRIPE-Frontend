@@ -693,7 +693,9 @@ export function DatePicker({
             aria-modal="true"
             aria-label={t("common.calendarDialog") || "Calendar"}
             className={cn(
-              "pointer-events-auto fixed z-[2147483647] rounded-lg border bg-background shadow-lg",
+              // z-dropdown, not the 32-bit integer ceiling. A popover that outranks every
+              // possible layer wins against dialogs and toasts too, which is never right.
+              "pointer-events-auto fixed z-dropdown rounded-lg border bg-background shadow-lg",
               calendarPosition.placement === "top-start"
                 ? "rounded-b-none border-b-0"
                 : "rounded-t-none border-t-0"

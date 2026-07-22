@@ -4232,3 +4232,16 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   width: 0;
   height: 0;
 }
+
+/* ── Modal scrim ─────────────────────────────────────────────────────────────
+   A dialog needs the page behind it pushed back, and EDGE does that by taking
+   light away rather than by blurring: law 1 is "surfaces are matte", and a
+   backdrop-filter is the single most expensive thing you can put under a
+   modal on a low-end device. Defined globally so every layout gets it, not
+   only the scripe shell. */
+:root {
+  --scrim: oklch(0.13 0.01 285 / 0.62);
+}
+:root:not(.dark) {
+  --scrim: oklch(0.21 0.02 285 / 0.42);
+}

@@ -16,7 +16,11 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
+      // z-toast (1100) sits ABOVE z-modal (1000). At z-[100] a toast fired while a
+      // dialog was open — saving inside a modal, the most common case there is —
+      // rendered behind it and was never seen. `sm:end-0` keeps it on the correct
+      // side in RTL.
+      "fixed top-0 z-toast flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:end-0 sm:top-auto sm:flex-col md:max-w-[420px]",
       className
     )}
     {...props}

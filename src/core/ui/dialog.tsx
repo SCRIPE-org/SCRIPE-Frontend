@@ -6,12 +6,6 @@ import { X } from "lucide-react";
 
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
-import {
-  MODAL_Z_INDEX,
-  OVERLAY_Z_INDEX,
-  OVERLAY_BACKDROP_BLUR_PX,
-  OVERLAY_BACKDROP_BRIGHTNESS,
-} from "@core/ui/modal-tokens";
 
 const Dialog = DialogPrimitive.Root;
 
@@ -27,15 +21,19 @@ const DialogOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
+    // The scrim pushes the page back by taking light away, not by blurring it.
+    // This previously applied backdrop-blur twice — once through Tailwind and
+    // once through an inline style added to survive purging — which is the
+    // single most expensive thing to put under a modal on a low-end device,
+    // and an explicit ban in DESIGN.md ("no glassmorphism as default").
+    //
+    // The z-index is the named `overlay` step, not a template literal: Tailwind
+    // scans source text, so `z-[${OVERLAY_Z_INDEX}]` was never a real class and
+    // the `!z-[999]` below was a patch for a class that never existed.
     className={cn(
-      `fixed inset-0 z-[${OVERLAY_Z_INDEX}] bg-black/70 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 supports-[backdrop-filter]:backdrop-blur-2xl supports-[backdrop-filter]:backdrop-brightness-50`,
+      "fixed inset-0 z-overlay bg-scrim data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
     )}
-    style={{
-      // Force backdrop blur even if Tailwind utility is purged/not active
-      backdropFilter: `blur(${OVERLAY_BACKDROP_BLUR_PX}px) brightness(${OVERLAY_BACKDROP_BRIGHTNESS})`,
-      WebkitBackdropFilter: `blur(${OVERLAY_BACKDROP_BLUR_PX}px) brightness(${OVERLAY_BACKDROP_BRIGHTNESS})`,
-    }}
     {...props}
   />
 ));
@@ -53,18 +51,18 @@ const DialogContent = React.forwardRef<
 
   const getPositionClasses = () => {
     if (isDrawer) {
-      return `fixed right-0 top-[50%] translate-y-[-50%] z-[${MODAL_Z_INDEX}] grid gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right`;
+      return `fixed inset-inline-end-0 top-[50%] translate-y-[-50%] z-modal grid gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right`;
     }
-    return `fixed left-[50%] top-[50%] z-[${MODAL_Z_INDEX}] grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg`;
+    return `fixed left-[50%] top-[50%] z-modal grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg`;
   };
 
   return (
     <DialogPortal>
-      <DialogOverlay className="!z-[999]" />
+      <DialogOverlay />
       <DialogPrimitive.Content
         ref={ref}
         dir={dir ?? direction}
-        className={cn(getPositionClasses(), "!z-[1000]", className)}
+        className={cn(getPositionClasses(), className)}
         onOpenAutoFocus={(e) => {
           // Prevent auto focus to allow dropdown inputs to work
           e.preventDefault();

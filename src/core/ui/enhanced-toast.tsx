@@ -16,7 +16,10 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
+      // Same fix as toast.tsx, and this is the viewport that matters: enhanced-toast
+      // is the toast system 100 files actually use, so at z-[100] most of the
+      // product's toasts were invisible behind any open dialog.
+      "fixed top-0 z-toast flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:end-0 sm:top-auto sm:flex-col md:max-w-[420px]",
       className
     )}
     {...props}
