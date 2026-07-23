@@ -29,10 +29,16 @@ import {
   DropdownMenuSeparator,
 } from "@core/ui/dropdown-menu";
 
+// Every colour below reads the --nx- token layer (theme resolves in CSS).
+// Shared focus treatment — keyboard focus gets the accent ring, mouse focus stays quiet.
+const FOCUS_RING =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nx-accent";
+
 // ── Breadcrumbs ──────────────────────────────────────────────────────────────
-export function BreadcrumbSep({ isRTL, isDark }: { isRTL: boolean; isDark: boolean }) {
+export function BreadcrumbSep({ isRTL }: { isRTL: boolean }) {
   return (
     <svg
+      aria-hidden="true"
       width="12"
       height="12"
       viewBox="0 0 24 24"
@@ -40,7 +46,8 @@ export function BreadcrumbSep({ isRTL, isDark }: { isRTL: boolean; isDark: boole
       style={{
         flexShrink: 0,
         transform: isRTL ? "scaleX(-1)" : undefined,
-        color: isDark ? "#334155" : "#CBD5E1",
+        // Decorative separator — dimmer than ink-3 on purpose
+        color: "color-mix(in oklch, var(--nx-ink-3, hsl(var(--muted-foreground))) 55%, transparent)",
       }}
     >
       <path
@@ -56,7 +63,6 @@ export function BreadcrumbSep({ isRTL, isDark }: { isRTL: boolean; isDark: boole
 
 export interface TopbarBreadcrumbsProps {
   isRTL: boolean;
-  isDark: boolean;
   workspaceName: string;
   activeRootName?: string | null;
   displayPageName: string;
@@ -100,7 +106,6 @@ function findFirstLeafRoute(
 
 export function TopbarBreadcrumbs({
   isRTL,
-  isDark,
   workspaceName,
   activeRootName,
   displayPageName,
@@ -147,11 +152,10 @@ export function TopbarBreadcrumbs({
             startRoutingProgress();
             router.push(homeRoute);
           }}
-          className="cursor-pointer rounded-md px-1.5 py-0.5 font-medium transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none"
-          style={{
-            color: isDark ? "#A0AEC0" : "#718096",
-            whiteSpace: "nowrap",
-          }}
+          className={cn(
+            "cursor-pointer whitespace-nowrap rounded-md px-1.5 py-0.5 font-medium text-nx-ink-3 transition-all duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+            FOCUS_RING
+          )}
         >
           {workspaceName}
         </button>
@@ -159,19 +163,19 @@ export function TopbarBreadcrumbs({
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-md transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none"
-              style={{
-                color: isDark ? "#A0AEC0" : "#718096",
-              }}
+              className={cn(
+                "flex h-5 w-5 cursor-pointer items-center justify-center rounded-md text-nx-ink-3 transition-all duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                FOCUS_RING
+              )}
             >
               <ChevronDown size={12} className="opacity-60" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="start"
-            className="w-56 border-border/40 bg-popover/95 backdrop-blur-md"
+            className="w-56 border-nx-line bg-nx-surface backdrop-blur-md"
           >
-            <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
               {language === "ar" ? "مساحات العمل" : "Workspaces"}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -181,7 +185,9 @@ export function TopbarBreadcrumbs({
                 language === "ar"
                   ? ws.workspaceNameAr || ws.workspaceNameEn
                   : ws.workspaceNameEn || ws.workspaceNameAr;
-              const wsAccent = ws.accentColor || (isDark ? "#9B8FE0" : "#6258c4");
+              // Each row carries its OWN workspace colour — the active-workspace
+              // token would paint every chip the same. Alpha via color-mix only.
+              const wsAccent = ws.accentColor || "var(--nx-accent, hsl(var(--primary)))";
 
               return (
                 <DropdownMenuItem
@@ -193,8 +199,8 @@ export function TopbarBreadcrumbs({
                   }}
                   disabled={ws.isLocked}
                   className={cn(
-                    "flex cursor-pointer items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors",
-                    isActive && "bg-accent/40 font-semibold text-accent-foreground"
+                    "flex cursor-pointer items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors duration-nx-micro",
+                    isActive && "bg-nx-accent-wash font-semibold text-nx-accent"
                   )}
                 >
                   <div
@@ -202,8 +208,8 @@ export function TopbarBreadcrumbs({
                       width: 20,
                       height: 20,
                       borderRadius: 6,
-                      background: `${wsAccent}22`,
-                      border: `1px solid ${wsAccent}40`,
+                      background: `color-mix(in oklch, ${wsAccent} 13%, transparent)`,
+                      border: `1px solid color-mix(in oklch, ${wsAccent} 30%, transparent)`,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -215,7 +221,7 @@ export function TopbarBreadcrumbs({
                     {ws.abbreviation ?? ws.workspaceKey.slice(0, 2).toUpperCase()}
                   </div>
                   <span className="flex-1 truncate">{wsLabel}</span>
-                  {ws.isLocked && <span className="text-[10px] text-yellow-600">🔒</span>}
+                  {ws.isLocked && <span className="text-[10px] text-warning">🔒</span>}
                 </DropdownMenuItem>
               );
             })}
@@ -226,7 +232,7 @@ export function TopbarBreadcrumbs({
       {/* ── Level 2: Root Active Group ── */}
       {activeRootName && activeRootItem && (
         <>
-          <BreadcrumbSep isRTL={isRTL} isDark={isDark} />
+          <BreadcrumbSep isRTL={isRTL} />
           <div className="flex shrink-0 items-center gap-0.5">
             <button
               type="button"
@@ -237,11 +243,10 @@ export function TopbarBreadcrumbs({
                   router.push(route);
                 }
               }}
-              className="cursor-pointer rounded-md px-1.5 py-0.5 font-medium transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none"
-              style={{
-                color: isDark ? "#CBD5E1" : "#475569",
-                whiteSpace: "nowrap",
-              }}
+              className={cn(
+                "cursor-pointer whitespace-nowrap rounded-md px-1.5 py-0.5 font-medium text-nx-ink-2 transition-all duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                FOCUS_RING
+              )}
             >
               {activeRootName}
             </button>
@@ -249,19 +254,19 @@ export function TopbarBreadcrumbs({
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-md transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none"
-                  style={{
-                    color: isDark ? "#CBD5E1" : "#475569",
-                  }}
+                  className={cn(
+                    "flex h-5 w-5 cursor-pointer items-center justify-center rounded-md text-nx-ink-2 transition-all duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                    FOCUS_RING
+                  )}
                 >
                   <ChevronDown size={12} className="opacity-60" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="start"
-                className="w-52 border-border/40 bg-popover/95 backdrop-blur-md"
+                className="w-52 border-nx-line bg-nx-surface backdrop-blur-md"
               >
-                <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
                   {language === "ar" ? "الأقسام" : "Sections"}
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -284,8 +289,8 @@ export function TopbarBreadcrumbs({
                         }
                       }}
                       className={cn(
-                        "flex cursor-pointer items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors",
-                        isActive && "bg-accent/40 font-semibold text-accent-foreground"
+                        "flex cursor-pointer items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors duration-nx-micro",
+                        isActive && "bg-nx-accent-wash font-semibold text-nx-accent"
                       )}
                     >
                       <span className="flex-1 truncate">{label}</span>
@@ -301,11 +306,10 @@ export function TopbarBreadcrumbs({
       {/* ── Level 3: Active Page / Entity Name ── */}
       {displayPageName && (
         <>
-          <BreadcrumbSep isRTL={isRTL} isDark={isDark} />
+          <BreadcrumbSep isRTL={isRTL} />
           <span
-            className="px-1.5 py-0.5 font-semibold duration-200 animate-in fade-in slide-in-from-bottom-1"
+            className="px-1.5 py-0.5 font-semibold text-nx-ink animate-in fade-in duration-nx-standard"
             style={{
-              color: isDark ? "#F8FAFC" : "#0F172A",
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -323,7 +327,6 @@ export function TopbarBreadcrumbs({
 // ── Panel Toggle Button ───────────────────────────────────────────────────────
 export interface TopbarPanelToggleProps {
   isRTL: boolean;
-  isDark: boolean;
   isPanelCollapsed?: boolean;
   onToggle: () => void;
   ariaLabel: string;
@@ -331,7 +334,6 @@ export interface TopbarPanelToggleProps {
 
 export function TopbarPanelToggle({
   isRTL,
-  isDark,
   isPanelCollapsed,
   onToggle,
   ariaLabel,
@@ -359,21 +361,13 @@ export function TopbarPanelToggle({
             type="button"
             onClick={onToggle}
             aria-label={ariaLabel}
-            style={{
-              width: 34,
-              height: 34,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 9,
-              cursor: "pointer",
-              color: isDark ? "#AFA9EC" : "#6258c4",
-              border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.07)",
-              background: isDark ? "rgba(255,255,255,0.03)" : "rgba(98,88,196,0.04)",
-              flexShrink: 0,
-              transition: "all 200ms ease",
-            }}
-            className="hover:scale-105 hover:bg-accent/60 hover:text-accent-foreground active:scale-95"
+            className={cn(
+              "flex h-[34px] w-[34px] shrink-0 cursor-pointer items-center justify-center rounded-[9px]",
+              "border border-nx-line bg-transparent text-nx-accent",
+              "transition-all duration-nx-micro ease-nx-enter",
+              "hover:scale-105 hover:bg-nx-raised active:scale-95 motion-reduce:transform-none",
+              FOCUS_RING
+            )}
           >
             {renderPanelIcon()}
           </button>
@@ -388,57 +382,46 @@ export function TopbarPanelToggle({
 
 // ── Context Pill ──────────────────────────────────────────────────────────────
 export interface TopbarContextPillProps {
-  isDark: boolean;
   isModuleMode: boolean;
-  resolvedAccent: string;
   tenantName: string;
 }
 
-export function TopbarContextPill({
-  isDark,
-  isModuleMode,
-  resolvedAccent,
-  tenantName,
-}: TopbarContextPillProps) {
+export function TopbarContextPill({ isModuleMode, tenantName }: TopbarContextPillProps) {
   return (
     <div
+      className="hidden items-center sm:flex"
       style={{
-        display: "flex",
-        alignItems: "center",
         gap: 6,
         padding: "4px 12px",
         borderRadius: 20,
-        background: isModuleMode
-          ? `${resolvedAccent}15`
-          : isDark
-            ? "rgba(255,255,255,0.03)"
-            : "rgba(0,0,0,0.03)",
+        background: isModuleMode ? "var(--nx-accent-wash, hsl(var(--primary) / 0.1))" : "transparent",
         border: `1px solid ${
           isModuleMode
-            ? `${resolvedAccent}40`
-            : isDark
-              ? "rgba(255,255,255,0.08)"
-              : "rgba(0,0,0,0.05)"
+            ? "color-mix(in oklch, var(--nx-accent, hsl(var(--primary))) 30%, transparent)"
+            : "var(--nx-line, hsl(var(--border)))"
         }`,
         fontSize: 11,
         fontWeight: 600,
-        color: isModuleMode ? resolvedAccent : isDark ? "#E2E8F0" : "#334155",
+        color: isModuleMode
+          ? "var(--nx-accent, hsl(var(--primary)))"
+          : "var(--nx-ink-2, hsl(var(--muted-foreground)))",
         cursor: "default",
         flexShrink: 0,
-        transition: "all 300ms ease",
+        transition:
+          "background var(--nx-t-standard, 200ms) ease, border-color var(--nx-t-standard, 200ms) ease, color var(--nx-t-standard, 200ms) ease",
         letterSpacing: "0.4px",
         whiteSpace: "nowrap",
       }}
-      className="hidden sm:flex"
     >
+      {/* Live-context dot — the logo's cyan ("now"), no glow: the primary
+          rail's active root item owns the one glow on this screen */}
       <div
         style={{
           width: 6,
           height: 6,
           borderRadius: "50%",
-          background: resolvedAccent,
+          background: "var(--nx-secondary, hsl(var(--info)))",
           flexShrink: 0,
-          boxShadow: `0 0 8px ${resolvedAccent}`,
         }}
       />
       <span>{tenantName}</span>
@@ -448,34 +431,27 @@ export function TopbarContextPill({
 
 // ── Search Button ─────────────────────────────────────────────────────────────
 export interface TopbarSearchButtonProps {
-  isRTL: boolean;
-  isDark: boolean;
   onOpenSearch?: () => void;
   placeholder: string;
 }
 
-export function TopbarSearchButton({
-  isRTL,
-  isDark,
-  onOpenSearch,
-  placeholder,
-}: TopbarSearchButtonProps) {
+export function TopbarSearchButton({ onOpenSearch, placeholder }: TopbarSearchButtonProps) {
   return (
     <button
       onClick={onOpenSearch}
-      className="group hidden transition-all duration-200 hover:scale-[1.02] active:scale-95 md:flex"
+      className={cn(
+        "group hidden items-center transition-all duration-nx-micro ease-nx-enter md:flex",
+        "hover:scale-[1.02] active:scale-95 motion-reduce:transform-none",
+        "text-nx-ink-3",
+        FOCUS_RING
+      )}
       style={{
-        alignItems: "center",
         gap: 8,
-        background: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
-        border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.07)",
-        boxShadow: isDark
-          ? "inset 0 1px 0 rgba(255,255,255,0.04)"
-          : "inset 0 1px 0 rgba(255,255,255,0.5)",
+        background: "color-mix(in oklch, var(--nx-surface, hsl(var(--card))) 70%, transparent)",
+        border: "1px solid var(--nx-line, hsl(var(--border)))",
         borderRadius: 9,
         padding: "0 12px",
         height: 33,
-        color: isDark ? "#94A3B8" : "#64748B",
         fontSize: "12px",
         fontWeight: 500,
         minWidth: 160,
@@ -484,12 +460,12 @@ export function TopbarSearchButton({
     >
       <Search
         size={13}
-        className="transition-colors group-hover:text-foreground"
+        className="transition-colors duration-nx-micro group-hover:text-nx-ink"
         style={{ flexShrink: 0 }}
       />
       <span
         style={{ flex: 1, userSelect: "none", textAlign: "start" }}
-        className="transition-colors group-hover:text-foreground"
+        className="transition-colors duration-nx-micro group-hover:text-nx-ink"
       >
         {placeholder}
       </span>
@@ -497,11 +473,11 @@ export function TopbarSearchButton({
         style={{
           fontSize: "10px",
           fontWeight: 600,
-          background: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)",
-          border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)",
+          background: "var(--nx-raised, hsl(var(--muted)))",
+          border: "1px solid var(--nx-line, hsl(var(--border)))",
           borderRadius: 4,
           padding: "2px 6px",
-          color: isDark ? "#CBD5E1" : "#475569",
+          color: "var(--nx-ink-2, hsl(var(--muted-foreground)))",
           letterSpacing: "0.3px",
         }}
       >
@@ -513,12 +489,11 @@ export function TopbarSearchButton({
 
 // ── Home Button ───────────────────────────────────────────────────────────────
 export interface TopbarHomeButtonProps {
-  isDark: boolean;
   ariaLabel: string;
   onClick: () => void;
 }
 
-export function TopbarHomeButton({ isDark, ariaLabel, onClick }: TopbarHomeButtonProps) {
+export function TopbarHomeButton({ ariaLabel, onClick }: TopbarHomeButtonProps) {
   return (
     <TooltipProvider delayDuration={50}>
       <Tooltip>
@@ -527,21 +502,13 @@ export function TopbarHomeButton({ isDark, ariaLabel, onClick }: TopbarHomeButto
             type="button"
             onClick={onClick}
             aria-label={ariaLabel}
-            style={{
-              width: 33,
-              height: 33,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 9,
-              cursor: "pointer",
-              color: isDark ? "#94A3B8" : "#64748B",
-              border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.07)",
-              background: "transparent",
-              flexShrink: 0,
-              transition: "all 200ms ease",
-            }}
-            className="hover:scale-105 hover:bg-secondary hover:text-foreground active:scale-95"
+            className={cn(
+              "flex h-[33px] w-[33px] shrink-0 cursor-pointer items-center justify-center rounded-[9px]",
+              "border border-nx-line bg-transparent text-nx-ink-2",
+              "transition-all duration-nx-micro ease-nx-enter",
+              "hover:scale-105 hover:bg-nx-raised hover:text-nx-ink active:scale-95 motion-reduce:transform-none",
+              FOCUS_RING
+            )}
           >
             <Home size={15} strokeWidth={2} />
           </button>
@@ -560,7 +527,7 @@ export function TopbarMobileControls() {
     <div className="flex items-center gap-3 lg:hidden">
       <NotificationBell
         iconClassName="h-[16px] w-[16px]"
-        className="h-[33px] w-[33px] rounded-[9px] text-muted-foreground transition-all hover:bg-secondary hover:text-foreground"
+        className="h-[33px] w-[33px] rounded-[9px] text-nx-ink-3 transition-all duration-nx-micro hover:bg-nx-raised hover:text-nx-ink"
       />
       <UserProfileDropdown variant="compact" showName={false} />
     </div>

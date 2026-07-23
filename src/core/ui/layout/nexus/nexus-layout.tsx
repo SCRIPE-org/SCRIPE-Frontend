@@ -3,7 +3,8 @@
 /**
  * NexusLayout
  *
- * Dual-rail layout with premium glassmorphism and animations.
+ * Dual-rail layout on the --nx- token layer: violet-cast near-black ground,
+ * hairline edges, light collected on the active thing.
  *
  * ┌─────────────────────────────────────────────────────────────┐
  * │  TenantContextBanner (fixed, full-width, z-[70])            │
@@ -104,7 +105,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
 
   return (
     <WorkspaceTransitionContext.Provider value={{ switchWorkspace, goBackWorkspace }}>
-      {/* ── Hub Mode: Full-screen dark app launcher ──────────────────────── */}
+      {/* ── Hub Mode: Full-screen app launcher on the nexus ground ────────── */}
       {isHubPage ? (
         <div
           className={cn(direction === "rtl" ? "rtl" : "ltr")}
@@ -116,9 +117,8 @@ export function NexusLayout({ children }: NexusLayoutProps) {
             width: "100%",
             overflow: "hidden",
             position: "relative",
-            background: "#0A0E1A",
-            color: "#e6e9f5",
-            fontFamily: "'Inter', system-ui, sans-serif",
+            background: "var(--nx-ground, hsl(var(--background)))",
+            color: "var(--nx-ink, hsl(var(--foreground)))",
           }}
         >
           {/* Workspace transition overlay still works in hub mode */}
@@ -130,17 +130,18 @@ export function NexusLayout({ children }: NexusLayoutProps) {
             accentColor={loaderState.accentColor}
           />
 
-          {/* Ambient page-level glow */}
+          {/* Ambient page-level washes — accent + the logo's cyan, sub-glow
+              strength so the launcher's active card keeps the one real glow */}
           <div
             aria-hidden
             style={{
               position: "absolute",
               top: -200,
-              left: "20%",
+              insetInlineStart: "20%",
               width: 700,
               height: 600,
               background:
-                "radial-gradient(closest-side, rgba(94,145,255,0.10), rgba(94,145,255,0) 70%)",
+                "radial-gradient(closest-side, color-mix(in oklch, var(--nx-accent, hsl(var(--primary))) 10%, transparent), transparent 70%)",
               filter: "blur(20px)",
               pointerEvents: "none",
             }}
@@ -150,11 +151,11 @@ export function NexusLayout({ children }: NexusLayoutProps) {
             style={{
               position: "absolute",
               top: -100,
-              right: -100,
+              insetInlineEnd: -100,
               width: 480,
               height: 480,
               background:
-                "radial-gradient(closest-side, rgba(154,77,219,0.08), rgba(154,77,219,0) 70%)",
+                "radial-gradient(closest-side, color-mix(in oklch, var(--nx-secondary, hsl(var(--info))) 8%, transparent), transparent 70%)",
               filter: "blur(20px)",
               pointerEvents: "none",
             }}
@@ -171,7 +172,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
               overflowY: "auto",
               overflowX: "hidden",
               scrollbarWidth: "thin",
-              scrollbarColor: "rgba(255,255,255,0.1) transparent",
+              scrollbarColor: "var(--nx-line, hsl(var(--border))) transparent",
             }}
           >
             {children}
@@ -183,7 +184,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
       ) : (
         /* ── Normal Nexus Layout: Dual-rail with sidebar ──────────────── */
         <div
-          className={cn("bg-background text-foreground", direction === "rtl" ? "rtl" : "ltr")}
+          className={cn("bg-nx-ground text-nx-ink", direction === "rtl" ? "rtl" : "ltr")}
           style={
             {
               display: "flex",
@@ -232,7 +233,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
                 flex: 1,
                 flexDirection: "column",
                 overflow: "hidden",
-                background: "hsl(var(--background))",
+                background: "var(--nx-ground, hsl(var(--background)))",
               }}
             >
               <NexusTopbar
@@ -248,15 +249,16 @@ export function NexusLayout({ children }: NexusLayoutProps) {
                   overflowY: "auto",
                   overflowX: "hidden",
                   padding: "16px 20px",
-                  background: "hsl(var(--background))",
+                  background: "var(--nx-ground, hsl(var(--background)))",
                   scrollbarWidth: "thin",
-                  scrollbarColor: "hsl(var(--border)) transparent",
+                  scrollbarColor: "var(--nx-line, hsl(var(--border))) transparent",
+                  // Routing dim — opacity only. A blur() here repaints the whole
+                  // scroll field on every navigation; the crossfade is the effect.
                   opacity: isNavigating ? 0.35 : 1,
-                  filter: isNavigating ? "blur(1px)" : "none",
-                  transition: "opacity 150ms ease-out, filter 150ms ease-out",
+                  transition: "opacity var(--nx-t-micro, 140ms) ease-out",
                 }}
               >
-                <div className="duration-500 animate-in fade-in">{children}</div>
+                <div className="animate-in fade-in duration-nx-standard">{children}</div>
               </main>
             </div>
           </div>

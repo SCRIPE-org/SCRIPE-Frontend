@@ -93,6 +93,30 @@ module.exports = {
         // The modal scrim. Previously every overlay hardcoded bg-black/70 and
         // then layered a backdrop-blur on top, which EDGE law 1 bans outright.
         scrim: "var(--scrim)",
+        // ── NEXUS shell tokens ─────────────────────────────────────────────
+        // Defined in globals.css under :root[data-layout="nexus"] (plus the
+        // pre-stamp :root:not([data-layout]) arm) and resolved per theme
+        // there. Same contract as `edge` above: these hold COMPLETE colour
+        // values (#hex / rgba() / oklch()), so no hsl() wrapper — wrapping
+        // would silently drop the declaration. Fallbacks keep stray usage
+        // under other layouts rendering something sane rather than
+        // transparent. Contrast floors live in the globals.css block header.
+        nx: {
+          ground: "var(--nx-ground, hsl(var(--background)))",
+          surface: "var(--nx-surface, hsl(var(--card)))",
+          raised: "var(--nx-raised, hsl(var(--muted)))",
+          "raised-2": "var(--nx-raised-2, hsl(var(--accent)))",
+          line: "var(--nx-line, hsl(var(--border)))",
+          "line-hi": "var(--nx-line-hi, hsl(var(--border)))",
+          ink: "var(--nx-ink, hsl(var(--foreground)))",
+          "ink-2": "var(--nx-ink-2, hsl(var(--muted-foreground)))",
+          "ink-3": "var(--nx-ink-3, hsl(var(--muted-foreground)))",
+          accent: "var(--nx-accent, hsl(var(--primary)))",
+          "accent-fill": "var(--nx-accent-fill, hsl(var(--primary)))",
+          "accent-wash": "var(--nx-accent-wash, hsl(var(--primary) / 0.1))",
+          "on-fill": "var(--nx-on-fill, hsl(var(--primary-foreground)))",
+          secondary: "var(--nx-secondary, hsl(var(--info)))",
+        },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
@@ -132,9 +156,20 @@ module.exports = {
         500: "500ms",
         700: "700ms",
         1000: "1000ms",
+        // Nexus motion scale — micro 140ms, standard 200ms, panel 300ms.
+        // Exit runs at ~2/3 of the enter duration (pair with ease-nx-exit).
+        "nx-micro": "var(--nx-t-micro, 140ms)",
+        "nx-standard": "var(--nx-t-standard, 200ms)",
+        "nx-panel": "var(--nx-t-panel, 300ms)",
       },
       transitionTimingFunction: {
         "smooth-out": "cubic-bezier(0.32, 0.72, 0, 1)",
+        "nx-enter": "var(--nx-ease-enter, cubic-bezier(0.23, 1, 0.32, 1))",
+        "nx-exit": "var(--nx-ease-exit, cubic-bezier(0.3, 0, 0.8, 0.15))",
+      },
+      boxShadow: {
+        // The nexus signature glow — at most ONE element per screen wears it.
+        "nx-glow": "var(--nx-glow, 0 0 0 0 transparent)",
       },
       borderRadius: {
         lg: "var(--radius)",

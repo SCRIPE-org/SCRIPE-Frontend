@@ -4,18 +4,26 @@
  * NexusAppLauncher — Waffle-menu overlay (⊞ button)
  *
  * Licensing fixes applied:
- *  1. Safe accentColor opacity via withOpacity() — no string.replace() fragility
+ *  1. Token-safe accent alpha via color-mix(in oklch, …) — works for hex,
+ *     hsl(), oklch() AND var() accents; no string concatenation anywhere
  *  2. Admin cards correctly show "active" badge when that workspace is current
- *  3. useTheme() for dark-mode consistency with the rest of the nav system
+ *  3. Colour reads --nx-* / status tokens — theme resolves in CSS, no isDark
  *  4. aria-modal="true" on the main launcher panel
  *  5. Focus trap inside launcher and upgrade dialog (keyboard accessibility)
  *  6. Backend-authoritative licensing: ws.isLocked from API, no hardcoded mocks
  *  7. router.push() instead of window.location.href (no full-page reload)
+ *  8. Locked cards are keyboard-focusable — the upgrade dialog is the upsell
+ *     and tabIndex={-1} made it unreachable without a mouse
+ *  9. Enter/exit rebuilt: backdrop crossfades; the panel scales 0.95→1 with
+ *     opacity from its bottom inline-start corner (the ⊞ trigger's side) —
+ *     no keyframe slide from an edge. Exit runs at ~2/3 duration on the exit
+ *     easing; reduced motion keeps the crossfade and drops the scale.
+ * 10. Semantic z ladder (blur < overlay < modal) — the old raw 80/90/100/110
+ *     stack collided with the tenant banner's z-70 neighbourhood
  */
 
 import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -35,7 +43,7 @@ import {
   PinOff,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
-import { DynamicIcon } from "./_parts/primary-rail-parts";
+import { DynamicIcon, NX_FOCUS_RING } from "./_parts/primary-rail-parts";
 import { useWorkspaceTransitionContext } from "./nexus-layout";
 
 // Active workspace is filtered out of the grid entirely — you are already there.
@@ -45,20 +53,6 @@ type WorkspaceStatus = "available" | "locked" | "coming-soon";
 interface NexusAppLauncherProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
-
-// ── Issue 1 Fix: Safe opacity helper ────────────────────────────────────────
-// Avoids string.replace(")",...) which breaks for hsl(var(--primary)) etc.
-function withOpacity(color: string, alpha: number): string {
-  const pct = Math.round(alpha * 100);
-  // oklch(L C H) → oklch(L C H / XX%)
-  if (color.startsWith("oklch(")) return color.slice(0, -1) + ` / ${pct}%)`;
-  // hsl(X Y Z) → hsl(X Y Z / XX%)
-  if (color.startsWith("hsl(")) return color.slice(0, -1) + ` / ${pct}%)`;
-  // hex fallback: append two-digit alpha
-  return `${color}${Math.round(alpha * 255)
-    .toString(16)
-    .padStart(2, "0")}`;
 }
 
 // ── Status derivation ─ backend-authoritative ───────────────────────────────
@@ -107,22 +101,49 @@ function useFocusTrap(containerRef: React.RefObject<HTMLElement | null>, active:
   }, [active, containerRef]);
 }
 
+// ── Issue 9: enter/exit lifecycle ───────────────────────────────────────────
+// "closed" → unmounted. "pre" → mounted one frame in the hidden pose so the
+// transition has a starting point. "open" → resting pose. "closing" → hidden
+// pose again while the exit transition plays, then unmount.
+type LauncherPhase = "closed" | "pre" | "open" | "closing";
+// Exit visual duration is --nx-t-micro (140ms ≈ 2/3 of standard); unmount a
+// beat later so the transition is never clipped.
+const EXIT_UNMOUNT_MS = 170;
+
 // ── Main Component ───────────────────────────────────────────────────────────
 export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) {
   const { workspaceGroups, activeWorkspace, togglePin } = useWorkspace();
   const { language, direction, t } = useI18n();
-  const { resolvedTheme } = useTheme();
   const { switchWorkspace } = useWorkspaceTransitionContext();
   const router = useRouter();
 
   const [search, setSearch] = useState("");
   const [upgradeTarget, setUpgradeTarget] = useState<string | null>(null);
   const [pinningKey, setPinningKey] = useState<string | null>(null); // loading state for pin toggle
+  const [phase, setPhase] = useState<LauncherPhase>("closed");
   const searchRef = useRef<HTMLInputElement>(null);
   const launcherRef = useRef<HTMLDivElement>(null);
 
   const isRTL = direction === "rtl";
-  const isDark = resolvedTheme === "dark";
+
+  // Drive the phase machine from the `open` prop
+  useEffect(() => {
+    if (open) {
+      setPhase("pre");
+      // Double rAF: guarantee the hidden pose paints before the transition runs
+      let raf2 = 0;
+      const raf1 = requestAnimationFrame(() => {
+        raf2 = requestAnimationFrame(() => setPhase("open"));
+      });
+      return () => {
+        cancelAnimationFrame(raf1);
+        cancelAnimationFrame(raf2);
+      };
+    }
+    setPhase((p) => (p === "closed" ? "closed" : "closing"));
+    const timer = window.setTimeout(() => setPhase("closed"), EXIT_UNMOUNT_MS);
+    return () => window.clearTimeout(timer);
+  }, [open]);
 
   // Focus search on open, clear state
   useEffect(() => {
@@ -241,43 +262,52 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
   // Issue 5: Focus trap — active when launcher is open and no upgrade dialog shown
   useFocusTrap(launcherRef, open && !upgradeTarget);
 
-  if (!open) return null;
+  // Stay mounted through the exit transition, then release the DOM
+  if (!open && phase === "closed") return null;
+
+  const visible = open && phase === "open";
 
   return (
     <>
-      {/* ── Backdrop ─────────────────────────────────────────────────────── */}
+      {/* ── Backdrop — crossfade only, 140ms ─────────────────────────────── */}
       <div
-        className="fixed inset-0 z-[80]"
+        className={cn(
+          "fixed inset-0 z-blur bg-scrim transition-opacity duration-nx-micro",
+          visible ? "opacity-100 ease-nx-enter" : "opacity-0 ease-nx-exit",
+          !open && "pointer-events-none"
+        )}
         onClick={() => onOpenChange(false)}
         style={{
-          background: isDark ? "rgba(0,0,0,0.6)" : "rgba(0,0,0,0.4)",
           backdropFilter: "blur(6px)",
           WebkitBackdropFilter: "blur(6px)",
         }}
       />
 
       {/* ── Launcher Panel ───────────────────────────────────────────────── */}
+      {/* Scales 0.95→1 from its bottom inline-start corner — the ⊞ trigger
+          lives at the bottom of the primary rail, so growth reads as coming
+          from it. Centering is class-composed (-translate-*) so it shares one
+          transform with the scale instead of fighting an inline style. */}
       <div
         ref={launcherRef}
         role="dialog"
         aria-modal="true"
         aria-label={language === "ar" ? "مشغّل التطبيقات" : "App Launcher"}
         className={cn(
-          "fixed z-[90] flex flex-col duration-200 animate-in fade-in zoom-in-95",
-          isRTL ? "rtl" : "ltr"
+          "fixed left-1/2 top-1/2 z-overlay flex -translate-x-1/2 -translate-y-1/2 flex-col transition-[transform,opacity]",
+          isRTL ? "rtl origin-bottom-right" : "ltr origin-bottom-left",
+          visible
+            ? "scale-100 opacity-100 duration-nx-standard ease-nx-enter"
+            : "scale-95 opacity-0 duration-nx-micro ease-nx-exit motion-reduce:scale-100",
+          !open && "pointer-events-none"
         )}
         style={{
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
           width: "min(700px, 92vw)",
           maxHeight: "min(640px, 86vh)",
           borderRadius: 20,
-          background: "hsl(var(--background))",
-          border: "1px solid hsl(var(--border))",
-          boxShadow: isDark
-            ? "0 30px 70px rgba(0,0,0,0.5), 0 0 0 1px hsl(var(--border))"
-            : "0 20px 60px rgba(0,0,0,0.18), 0 0 0 1px hsl(var(--border))",
+          background: "var(--nx-surface)",
+          border: "1px solid var(--nx-line-hi)",
+          boxShadow: "0 32px 80px -16px var(--scrim)",
           overflow: "hidden",
         }}
       >
@@ -285,7 +315,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
         <div
           style={{
             padding: "20px 24px 16px",
-            borderBottom: "1px solid hsl(var(--border))",
+            borderBottom: "1px solid var(--nx-line)",
             flexShrink: 0,
           }}
         >
@@ -296,16 +326,16 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
                 style={{
                   width: 36,
                   height: 36,
-                  background: "hsl(var(--primary) / 0.1)",
+                  background: "var(--nx-accent-wash)",
                 }}
               >
-                <LayoutGrid size={18} className="text-primary" />
+                <LayoutGrid size={18} className="text-nx-accent" />
               </div>
               <div>
-                <h2 className="font-semibold text-foreground" style={{ fontSize: 15, margin: 0 }}>
+                <h2 className="font-semibold text-nx-ink" style={{ fontSize: 15, margin: 0 }}>
                   {language === "ar" ? "مشغّل التطبيقات" : "App Launcher"}
                 </h2>
-                <p className="text-muted-foreground" style={{ fontSize: 12, margin: 0 }}>
+                <p className="text-nx-ink-2" style={{ fontSize: 12, margin: 0 }}>
                   {language === "ar"
                     ? "تنقل بين مساحات العمل والوحدات"
                     : "Switch between workspaces and modules"}
@@ -315,7 +345,10 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
             <button
               type="button"
               onClick={() => onOpenChange(false)}
-              className="flex items-center justify-center rounded-lg text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
+              className={cn(
+                "flex items-center justify-center rounded-lg text-nx-ink-2 transition-colors duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                NX_FOCUS_RING
+              )}
               style={{
                 width: 32,
                 height: 32,
@@ -329,26 +362,27 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
             </button>
           </div>
 
-          {/* Search input */}
+          {/* Search input — the ring lives on the container (focus-within):
+              a text input always shows focus, not just keyboard focus */}
           <div
-            className="flex items-center gap-2 rounded-[10px] border border-border bg-muted/50 px-3"
+            className="flex items-center gap-2 rounded-[10px] border border-nx-line bg-nx-raised px-3 transition-colors duration-nx-micro focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-nx-accent"
             style={{ height: 40 }}
           >
-            <Search size={15} className="shrink-0 text-muted-foreground" />
+            <Search size={15} className="shrink-0 text-nx-ink-3" />
             <input
               ref={searchRef}
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={language === "ar" ? "ابحث عن وحدة..." : "Search workspaces..."}
-              className="flex-1 border-none bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+              className="flex-1 border-none bg-transparent text-sm text-nx-ink outline-none placeholder:text-nx-ink-3"
               style={{ direction: isRTL ? "rtl" : "ltr" }}
             />
             {search && (
               <button
                 type="button"
                 onClick={() => setSearch("")}
-                className="cursor-pointer text-muted-foreground hover:text-foreground"
+                className={cn("cursor-pointer text-nx-ink-3 hover:text-nx-ink", NX_FOCUS_RING)}
                 style={{ background: "none", border: "none", padding: 0, display: "flex" }}
               >
                 <X size={13} />
@@ -433,7 +467,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
           {/* Empty state */}
           {filteredWorkspaces.length === 0 && (
             <div
-              className="flex flex-col items-center justify-center py-14 text-muted-foreground"
+              className="flex flex-col items-center justify-center py-14 text-nx-ink-3"
               aria-live="polite"
             >
               <Search size={32} className="mb-3 opacity-40" />
@@ -449,28 +483,28 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
           className="flex flex-wrap items-center gap-4"
           style={{
             padding: "10px 24px 14px",
-            borderTop: "1px solid hsl(var(--border))",
+            borderTop: "1px solid var(--nx-line)",
             flexShrink: 0,
           }}
         >
           <LegendItem
             icon={<Check size={9} />}
-            colorClass="text-emerald-500"
+            colorClass="text-success"
             label={language === "ar" ? "نشط" : "Active"}
           />
           <LegendItem
             icon={<Pin size={9} />}
-            colorClass="text-primary"
+            colorClass="text-nx-accent"
             label={language === "ar" ? "مثبّت" : "Pinned"}
           />
           <LegendItem
             icon={<Lock size={9} />}
-            colorClass="text-amber-500"
+            colorClass="text-warning"
             label={language === "ar" ? "مقفل" : "Locked"}
           />
           <LegendItem
             icon={<Clock size={9} />}
-            colorClass="text-muted-foreground"
+            colorClass="text-nx-ink-3"
             label={language === "ar" ? "قريباً" : "Coming Soon"}
           />
         </div>
@@ -485,7 +519,6 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
               ?.getLocalizedName(language) ?? upgradeTarget
           }
           language={language}
-          isDark={isDark}
           // Bug 7 fix: platform admins (no tenant context) see a locked module
           // because modules require a tenant to be active — show "Select a Tenant"
           // rather than the misleading "Upgrade your plan" copy.
@@ -509,7 +542,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
 function SectionLabel({ label }: { label: string }) {
   return (
     <p
-      className="font-semibold uppercase tracking-widest text-muted-foreground"
+      className="font-semibold uppercase tracking-widest text-nx-ink-3"
       style={{ fontSize: 10, letterSpacing: "0.1em", margin: "0 0 10px" }}
     >
       {label}
@@ -528,7 +561,7 @@ function LegendItem({
   label: string;
 }) {
   return (
-    <div className="flex items-center gap-1.5 text-muted-foreground" style={{ fontSize: 11 }}>
+    <div className="flex items-center gap-1.5 text-nx-ink-3" style={{ fontSize: 11 }}>
       <span className={cn("flex", colorClass)}>{icon}</span>
       {label}
     </div>
@@ -558,7 +591,7 @@ function WorkspaceCard({
   onTogglePin?: (e: React.MouseEvent) => void;
 }) {
   const [hovered, setHovered] = useState(false);
-  const color = accentColor || "hsl(var(--primary))";
+  const color = accentColor || "var(--nx-accent)";
   const isLocked = status === "locked";
   const isComingSoon = status === "coming-soon";
   const isDisabled = isLocked || isComingSoon;
@@ -566,10 +599,13 @@ function WorkspaceCard({
   return (
     <div
       role="button"
-      tabIndex={isDisabled ? -1 : 0}
+      // Issue 8: locked cards stay in the tab order — clicking OR keying one
+      // opens the upgrade dialog, and that upsell must be keyboard-reachable.
+      // Only coming-soon (a true no-op) leaves the tab order.
+      tabIndex={isComingSoon ? -1 : 0}
       onClick={onClick}
       onKeyDown={(e) => {
-        if (isDisabled) return;
+        if (isComingSoon) return;
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           onClick();
@@ -578,28 +614,32 @@ function WorkspaceCard({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       aria-pressed={isActive}
-      aria-disabled={isDisabled}
+      aria-disabled={isComingSoon}
       className={cn(
-        "group relative flex flex-col items-center gap-2 rounded-[14px] outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
-        isComingSoon ? "cursor-default" : "cursor-pointer"
+        "group relative flex flex-col items-center gap-2 rounded-[14px] transition-all duration-nx-micro ease-nx-enter motion-reduce:transform-none",
+        NX_FOCUS_RING,
+        isComingSoon ? "cursor-default" : "cursor-pointer",
+        // Hover = border brightens + 1px lift, nothing louder
+        hovered && !isDisabled && "-translate-y-px"
       )}
       style={{
         padding: "16px 10px 14px",
-        // Issue 1: use withOpacity() — safe for oklch(), hsl(), hsl(var()), hex
+        // Issue 1: color-mix() — token-safe alpha for hex/hsl/oklch/var()
         border: isActive
-          ? `1.5px solid ${withOpacity(color, 0.4)}`
-          : "1.5px solid hsl(var(--border))",
-        background: isActive
-          ? withOpacity(color, 0.08)
+          ? `1.5px solid color-mix(in oklch, ${color} 40%, transparent)`
           : hovered && !isDisabled
-            ? "hsl(var(--accent))"
+            ? "1.5px solid var(--nx-line-hi)"
+            : "1.5px solid var(--nx-line)",
+        background: isActive
+          ? `color-mix(in oklch, ${color} 8%, transparent)`
+          : hovered && !isDisabled
+            ? "var(--nx-raised)"
             : "transparent",
         opacity: isComingSoon ? 0.55 : 1,
-        transform: hovered && !isDisabled ? "translateY(-2px)" : "none",
-        boxShadow: hovered && !isDisabled ? "0 8px 24px rgba(0,0,0,0.1)" : "none",
       }}
     >
-      {/* Pin toggle button — appears on hover (top-left corner) */}
+      {/* Pin toggle — reveals on hover AND keyboard focus-within; always
+          visible on coarse pointers, where there is no hover to reveal it */}
       {onTogglePin && !isLocked && !isComingSoon && (
         <button
           type="button"
@@ -608,18 +648,21 @@ function WorkspaceCard({
           disabled={isPinLoading}
           aria-label={isPinned ? "Unpin workspace" : "Pin workspace"}
           className={cn(
-            "absolute flex items-center justify-center rounded-md transition-all duration-150",
-            "opacity-0 group-hover:opacity-100",
-            isPinned ? "opacity-100" : ""
+            "absolute flex items-center justify-center rounded-md transition-all duration-nx-micro",
+            "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 [@media(pointer:coarse)]:opacity-100",
+            isPinned ? "opacity-100" : "",
+            NX_FOCUS_RING
           )}
           style={{
             top: 5,
             insetInlineStart: 5,
             width: 20,
             height: 20,
-            background: isPinned ? "hsl(var(--primary) / 0.15)" : "hsl(var(--muted))",
-            border: isPinned ? "1px solid hsl(var(--primary) / 0.3)" : "1px solid transparent",
-            color: isPinned ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
+            background: isPinned ? "var(--nx-accent-wash)" : "var(--nx-raised-2)",
+            border: isPinned
+              ? "1px solid color-mix(in oklch, var(--nx-accent) 30%, transparent)"
+              : "1px solid transparent",
+            color: isPinned ? "var(--nx-accent)" : "var(--nx-ink-2)",
             cursor: isPinLoading ? "wait" : "pointer",
           }}
         >
@@ -638,16 +681,17 @@ function WorkspaceCard({
             borderRadius: 5,
             fontSize: 9,
             fontWeight: 700,
+            // Measured global status tokens — read, never redefined here
             background: isLocked
-              ? "hsl(38 92% 50% / 0.12)"
+              ? "hsl(var(--warning) / 0.12)"
               : isComingSoon
-                ? "hsl(var(--muted))"
-                : "hsl(142 76% 36% / 0.12)",
+                ? "var(--nx-raised-2)"
+                : "hsl(var(--success) / 0.12)",
             color: isLocked
-              ? "hsl(38 92% 40%)"
+              ? "hsl(var(--warning))"
               : isComingSoon
-                ? "hsl(var(--muted-foreground))"
-                : "hsl(142 76% 36%)",
+                ? "var(--nx-ink-3)"
+                : "hsl(var(--success))",
           }}
         >
           {isLocked ? <Lock size={8} /> : isComingSoon ? <Clock size={8} /> : <Check size={8} />}
@@ -656,14 +700,18 @@ function WorkspaceCard({
 
       {/* Icon container */}
       <div
-        className="flex items-center justify-center rounded-xl transition-transform duration-200"
+        className={cn(
+          "flex items-center justify-center rounded-xl transition-transform duration-nx-micro motion-reduce:transform-none",
+          hovered && !isDisabled ? "scale-[1.08]" : "scale-100"
+        )}
         style={{
           width: 42,
           height: 42,
-          // Issue 1: withOpacity() safe for all color formats
-          background: isDisabled ? "hsl(var(--muted))" : withOpacity(color, 0.12),
-          color: isDisabled ? "hsl(var(--muted-foreground))" : color,
-          transform: hovered && !isDisabled ? "scale(1.08)" : "scale(1)",
+          // Issue 1: color-mix() safe for all colour formats including var()
+          background: isDisabled
+            ? "var(--nx-raised)"
+            : `color-mix(in oklch, ${color} 12%, transparent)`,
+          color: isDisabled ? "var(--nx-ink-3)" : color,
         }}
       >
         <DynamicIcon name={icon} size={20} />
@@ -675,11 +723,7 @@ function WorkspaceCard({
         style={{
           fontSize: 11,
           fontWeight: 500,
-          color: isActive
-            ? color
-            : isDisabled
-              ? "hsl(var(--muted-foreground))"
-              : "hsl(var(--foreground) / 0.8)",
+          color: isActive ? color : isDisabled ? "var(--nx-ink-3)" : "var(--nx-ink-2)",
         }}
       >
         {name}
@@ -692,14 +736,12 @@ function WorkspaceCard({
 function UpgradeDialog({
   workspaceName,
   language,
-  isDark,
   isNeedsTenant,
   onClose,
   onUpgrade,
 }: {
   workspaceName: string;
   language: string;
-  isDark: boolean; // Issue 3: consistent theme
   /** True when the module is locked only because no tenant context is active.
    *  Changes the dialog copy to "Select a Tenant" instead of "Upgrade Plan". */
   isNeedsTenant: boolean;
@@ -711,27 +753,31 @@ function UpgradeDialog({
   useFocusTrap(dialogRef, true);
   return (
     <>
-      {/* Scrim on top of launcher */}
+      {/* Scrim on top of launcher — same z-modal level, painted before the
+          dialog in DOM order so the dialog wins */}
       <div
-        className="fixed inset-0 z-[100]"
-        style={{ background: "rgba(0,0,0,0.4)" }}
+        className="fixed inset-0 z-modal bg-scrim animate-in fade-in duration-nx-micro"
         onClick={onClose}
       />
+      {/* The --tw-enter-translate vars keep the animate-in `from` frame
+          centered (translate(-50%,-50%)); without them the keyframe drops the
+          inline centering and the dialog slides in from a corner. Reduced
+          motion zeroes the scale and keeps the fade. */}
       <div
         ref={dialogRef}
         role="alertdialog"
         aria-modal="true"
         aria-label={language === "ar" ? "ترقية مطلوبة" : "Upgrade Required"}
-        className="fixed z-[110] duration-150 animate-in fade-in zoom-in-95"
+        className="fixed z-modal animate-in fade-in zoom-in-95 duration-nx-standard ease-nx-enter [--tw-enter-translate-x:-50%] [--tw-enter-translate-y:-50%] motion-reduce:[--tw-enter-scale:1]"
         style={{
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: "min(400px, 90vw)",
           borderRadius: 18,
-          background: "hsl(var(--background))",
-          border: "1px solid hsl(var(--border))",
-          boxShadow: isDark ? "0 30px 60px rgba(0,0,0,0.5)" : "0 20px 50px rgba(0,0,0,0.2)",
+          background: "var(--nx-surface)",
+          border: "1px solid var(--nx-line-hi)",
+          boxShadow: "0 24px 60px -12px var(--scrim)",
           padding: "28px 28px 24px",
           textAlign: "center",
         }}
@@ -742,13 +788,13 @@ function UpgradeDialog({
           style={{
             width: 56,
             height: 56,
-            background: "hsl(38 92% 50% / 0.1)",
+            background: "hsl(var(--warning) / 0.1)",
           }}
         >
-          <ArrowUpCircle size={28} className="text-amber-500" />
+          <ArrowUpCircle size={28} className="text-warning" />
         </div>
 
-        <h3 className="mb-2 font-bold text-foreground" style={{ fontSize: 17, margin: "0 0 8px" }}>
+        <h3 className="mb-2 font-bold text-nx-ink" style={{ fontSize: 17, margin: "0 0 8px" }}>
           {isNeedsTenant
             ? language === "ar"
               ? "اختر مستأجراً"
@@ -759,7 +805,7 @@ function UpgradeDialog({
         </h3>
 
         <p
-          className="text-muted-foreground"
+          className="text-nx-ink-2"
           style={{ fontSize: 13, lineHeight: 1.55, margin: "0 0 24px" }}
         >
           {isNeedsTenant
@@ -775,23 +821,24 @@ function UpgradeDialog({
           <Button
             variant="outline"
             onClick={onClose}
-            className="flex-1 rounded-[10px] text-sm font-medium text-muted-foreground transition-colors duration-150 hover:bg-accent"
+            className="flex-1 rounded-[10px] text-sm font-medium text-nx-ink-2 transition-colors duration-nx-micro hover:bg-nx-raised hover:text-nx-ink"
             style={{ padding: "10px 0" }}
           >
             {language === "ar" ? "إلغاء" : "Cancel"}
           </Button>
           <Button
             onClick={onUpgrade}
-            className="flex-1 rounded-[10px] text-sm font-semibold text-white hover:opacity-90"
+            className="flex-1 rounded-[10px] text-sm font-semibold hover:opacity-90"
             style={{
               padding: "10px 0",
               border: "none",
-              background: isNeedsTenant
-                ? "linear-gradient(135deg, hsl(210 90% 50%), hsl(220 88% 46%))"
-                : "linear-gradient(135deg, hsl(38 92% 50%), hsl(28 90% 48%))",
+              // Measured status fills with their own measured foregrounds —
+              // info for "go pick a tenant", warning for "upgrade your plan"
+              background: isNeedsTenant ? "hsl(var(--info))" : "hsl(var(--warning))",
+              color: isNeedsTenant ? "hsl(var(--info-foreground))" : "hsl(var(--warning-foreground))",
               boxShadow: isNeedsTenant
-                ? "0 4px 14px hsl(210 90% 50% / 0.35)"
-                : "0 4px 14px hsl(38 92% 50% / 0.35)",
+                ? "0 4px 14px hsl(var(--info) / 0.35)"
+                : "0 4px 14px hsl(var(--warning) / 0.35)",
             }}
           >
             {isNeedsTenant

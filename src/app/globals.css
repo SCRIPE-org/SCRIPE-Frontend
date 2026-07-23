@@ -2670,8 +2670,10 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
    Hidden by default, 3px translucent on hover
    ======================================== */
 .nexus-rail-scroll::-webkit-scrollbar {
+  /* No width transition: browsers do not animate scrollbar pseudo-elements,
+     and animating width is banned anyway — the 0→3px hover reveal is a
+     discrete swap by design. */
   width: 0px;
-  transition: width 0.3s ease;
 }
 .nexus-rail-scroll:hover::-webkit-scrollbar {
   width: 3px;
@@ -4244,4 +4246,124 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 }
 :root:not(.dark) {
   --scrim: oklch(0.21 0.02 285 / 0.42);
+}
+
+/* ============================================================================
+   NEXUS SHELL TOKENS (--nx-*)
+   ----------------------------------------------------------------------------
+   The brand as read from the real mark (public/app-logo.png): near-black
+   ground, luminous violet→cyan edge light, glass depth. Dark-native. The
+   interface speaks it as deep violet-cast near-black surfaces, hairline
+   edges, and light that collects on the ACTIVE thing. ONE glowing element
+   per screen maximum — --nx-glow is the signature, not the wallpaper.
+
+   SCOPE — two selector arms, no plain :root:
+     :root[data-layout="nexus"]   the stamped state. dom-applicator.ts writes
+                                  data-layout onto <html> (DATA_ATTR_MAP L18,
+                                  applySettingsToDOM L113-155).
+     :root:not([data-layout])     the pre-stamp state ONLY. The stamp happens
+                                  inside a requestAnimationFrame after client
+                                  mount and nothing stamps it server-side, so
+                                  the nexus shell (the DEFAULT layout,
+                                  settings/defaults.ts L36) paints at least
+                                  one frame before the attribute exists.
+                                  This arm covers that frame without leaking
+                                  a single token into scripe/modern/etc.,
+                                  which always carry their own stamp value.
+   Dark values are the default; light lives under :not(.dark) — the same
+   inversion the global status tokens (L3835) and EDGE (L3888) already use.
+
+   NAMESPACE: --nx- only. --sx- and --edge- are taken; a past prefix
+   collision silently recoloured the sign-in page.
+
+   ACCENT is workspace-owned: it derives from --workspace-hue/--workspace-chroma
+   (written to <html> by workspace-provider.tsx L102-116); violet 262 is only
+   the DEFAULT hue. SECONDARY is the logo's cyan (hue 192) — "live/now" only.
+   STATUS colours are NOT defined here: nexus READS the global measured
+   --success/--warning/--warning-strong/--info/--destructive tokens (L3819).
+
+   CONTRAST FLOORS — WCAG-computed this session, 24/24 checks PASS.
+   Do not re-derive; these are the numbers.
+     DARK  (surfaces #0C0B12 / #15131D / #1B1926 / #221F30):
+       --nx-ink    #EFEDF6  15.7:1 on ground
+       --nx-ink-2  #ACA7BF   8.1:1
+       --nx-ink-3  #8A849C  ≥4.7:1 on ALL four surfaces
+       accent text oklch L0.68: worst workspace hue 5.40:1
+     LIGHT (surfaces #F7F6FB / #FFFFFF / #F1EFF8 / #E9E6F4):
+       --nx-ink    #17141F
+       --nx-ink-2  #4D4763
+       --nx-ink-3  #655F7A  ≥4.85:1 on ALL surfaces
+       accent text oklch L0.46: worst workspace hue 5.33:1
+     FILL (both themes) oklch L0.50 + white label: worst hue 4.84:1
+     SECONDARY (hue 192, chroma 0.13) follows the same lightness law, so it
+     inherits the worst-hue floors above by construction.
+
+   MOTION: micro / standard / panel. Enter easing cubic-bezier(0.23,1,0.32,1);
+   exit cubic-bezier(0.3,0,0.8,0.15) at ~2/3 of the enter duration. Overlays
+   scale 0.95→1 from their trigger origin — nothing slides in from an edge.
+   Reduced motion strips position/scale movement and keeps crossfades.
+   ============================================================================ */
+:root[data-layout="nexus"],
+:root:not([data-layout]) {
+  /* surfaces — dark is the mark's native ground */
+  --nx-ground: #0c0b12;
+  --nx-surface: #15131d;
+  --nx-raised: #1b1926; /* raised surfaces AND hover states */
+  --nx-raised-2: #221f30; /* the extra step above raised */
+
+  /* ink */
+  --nx-ink: #efedf6;
+  --nx-ink-2: #aca7bf;
+  --nx-ink-3: #8a849c;
+
+  /* hairlines */
+  --nx-line: rgba(235, 232, 255, 0.09);
+  --nx-line-hi: rgba(235, 232, 255, 0.16);
+
+  /* accent — text and fill have opposite contrast duties: two tokens.
+     Alpha via the slash channel, never string concatenation. */
+  --nx-accent: oklch(0.68 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
+  --nx-accent-fill: oklch(0.5 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
+  --nx-on-fill: #ffffff;
+  --nx-accent-wash: oklch(0.68 var(--workspace-chroma, 0.18) var(--workspace-hue, 262) / 0.13);
+
+  /* secondary — the logo's cyan; "live/now" only, never decoration */
+  --nx-secondary: oklch(0.68 0.13 192);
+
+  /* the signature glow — at most ONE element per screen wears this */
+  --nx-glow: 0 0 18px -2px color-mix(in oklch, var(--nx-accent) 50%, transparent);
+
+  /* motion */
+  --nx-t-micro: 140ms;
+  --nx-t-standard: 200ms;
+  --nx-t-panel: 300ms;
+  --nx-ease-enter: cubic-bezier(0.23, 1, 0.32, 1);
+  --nx-ease-exit: cubic-bezier(0.3, 0, 0.8, 0.15);
+}
+
+:root[data-layout="nexus"]:not(.dark),
+:root:not([data-layout]):not(.dark) {
+  --nx-ground: #f7f6fb;
+  --nx-surface: #ffffff;
+  --nx-raised: #f1eff8; /* hover tint in light — darker than surface by design */
+  --nx-raised-2: #e9e6f4;
+
+  --nx-ink: #17141f;
+  --nx-ink-2: #4d4763;
+  --nx-ink-3: #655f7a;
+
+  --nx-line: rgba(23, 17, 40, 0.11);
+  --nx-line-hi: rgba(23, 17, 40, 0.2);
+
+  /* L0.46, not a naive inversion: accent-as-text must clear its floor on
+     every nx surface across all workspace hues (5.33:1 worst hue). Fill and
+     --nx-on-fill are theme-invariant and inherit from the dark block. */
+  --nx-accent: oklch(0.46 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
+  --nx-accent-wash: oklch(0.46 var(--workspace-chroma, 0.18) var(--workspace-hue, 262) / 0.1);
+
+  --nx-secondary: oklch(0.46 0.13 192);
+
+  /* softer on light ground — a glow over white reads as smudge at dark-mode
+     strength */
+  --nx-glow: 0 0 18px -2px color-mix(in oklch, var(--nx-accent) 32%, transparent);
 }

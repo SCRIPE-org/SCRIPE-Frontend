@@ -5,22 +5,32 @@
  *
  * A full-screen overlay that appears when a user switches workspaces (e.g.
  * entering the CRM module). It:
- *   1. Sweeps in with the workspace accent color
+ *   1. Sweeps in with the workspace accent
  *   2. Shows the module icon + name + a progress bar
  *   3. Exits once the navigation settles
  *
  * Controlled externally via the `show` prop so the parent can
  * drive mount/unmount timing around router.push().
+ *
+ * Colours come from the --nx- token layer. The `accentColor` prop is kept in
+ * the interface for API stability (the transition hook still supplies it) but
+ * is no longer consumed for styling — the workspace hue vars on <html> drive
+ * --nx-accent, so the tokens already carry the launching workspace's colour.
+ *
+ * The icon badge is the ONE glowing element on this screen; the progress bar
+ * animates transform only, with its origin following reading direction.
  */
 
 import React, { useEffect, useRef, useState } from "react";
-import { useTheme } from "next-themes";
+import { useI18n } from "@core/providers/i18n-provider";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { useNexusReducedMotion } from "./nexus-transition";
 
 interface NexusWorkspaceLoaderProps {
   show: boolean;
   workspaceName?: string;
   workspaceAbbr?: string;
+  /** Legacy accent passthrough — kept for API stability, no longer styles anything. */
   accentColor?: string | null;
   /** Called after the exit animation finishes so the parent can clean up */
   onExited?: () => void;
@@ -32,23 +42,20 @@ const ENTER_MS = 180;
 const MIN_VISIBLE_MS = 250; // minimum time to show the loader (UX feel)
 const EXIT_MS = 200;
 
+/** Accent token with a shadcn fallback so a stray mount outside nexus still renders. */
+const ACCENT = "var(--nx-accent, hsl(var(--primary)))";
+
 export function NexusWorkspaceLoader({
   show,
   workspaceName = "Loading…",
   workspaceAbbr,
-  accentColor,
   onExited,
 }: NexusWorkspaceLoaderProps) {
-  const { resolvedTheme } = useTheme();
+  const { direction } = useI18n();
+  const reducedMotion = useNexusReducedMotion();
   const [phase, setPhase] = useState<Phase>("idle");
-  const [mounted, setMounted] = useState(false);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
-  // Theme
-  useEffect(() => setMounted(true), []);
-  const isDark = resolvedTheme === "dark";
-
-  const accent = accentColor ?? (isDark ? "oklch(0.65 0.18 262)" : "oklch(0.55 0.18 262)");
   const abbr = workspaceAbbr ?? workspaceName.slice(0, 2).toUpperCase();
 
   // Clear all pending timers
@@ -83,10 +90,9 @@ export function NexusWorkspaceLoader({
   }, [show]);
 
   if (phase === "idle") return null;
-  if (!mounted) return null;
 
-  // ── Progress bar width based on phase ────────────────────────────────────
-  const barWidth = phase === "entering" ? "30%" : phase === "visible" ? "75%" : "100%";
+  // ── Progress bar — transform-only, origin follows reading direction ───────
+  const barScale = phase === "entering" ? 0.3 : phase === "visible" ? 0.75 : 1;
   const barDuration =
     phase === "entering"
       ? `${ENTER_MS}ms`
@@ -95,28 +101,26 @@ export function NexusWorkspaceLoader({
         : `${EXIT_MS}ms`;
 
   const opacity = phase === "exiting" ? 0 : 1;
-  const scale = phase === "entering" ? 0.96 : 1;
+  const scale = phase === "entering" && !reducedMotion ? 0.96 : 1;
 
   return (
     <div
       aria-live="polite"
       aria-label={`Loading ${workspaceName}`}
+      className="fixed inset-0 z-modal flex flex-col items-center justify-center"
       style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 9998,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column",
         gap: 24,
-        // Background — dark glass
-        background: isDark ? "rgba(8, 10, 20, 0.92)" : "rgba(248, 250, 252, 0.94)",
+        // Background — near-opaque ground glass
+        background: "color-mix(in oklch, var(--nx-ground, hsl(var(--background))) 93%, transparent)",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
-        // Transition
+        // Transition — opacity crossfade stays even under reduced motion
         opacity,
-        transition: `opacity ${phase === "exiting" ? EXIT_MS : ENTER_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+        transition: `opacity ${phase === "exiting" ? EXIT_MS : ENTER_MS}ms ${
+          phase === "exiting"
+            ? "var(--nx-ease-exit, cubic-bezier(0.3, 0, 0.8, 0.15))"
+            : "var(--nx-ease-enter, cubic-bezier(0.23, 1, 0.32, 1))"
+        }`,
         pointerEvents: phase === "exiting" ? "none" : "all",
       }}
     >
@@ -124,7 +128,9 @@ export function NexusWorkspaceLoader({
       <div
         style={{
           transform: `scale(${scale})`,
-          transition: `transform ${ENTER_MS}ms cubic-bezier(0.34, 1.56, 0.64, 1)`,
+          transition: reducedMotion
+            ? "none"
+            : `transform ${ENTER_MS}ms var(--nx-ease-enter, cubic-bezier(0.23, 1, 0.32, 1))`,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -133,34 +139,35 @@ export function NexusWorkspaceLoader({
       >
         {/* Glow ring + icon */}
         <div style={{ position: "relative" }}>
-          {/* Outer glow */}
+          {/* Outer pulse halo — static under reduced motion */}
           <div
             style={{
               position: "absolute",
               inset: -16,
               borderRadius: "50%",
-              background: `radial-gradient(circle, color-mix(in oklch, ${accent} 19%, transparent) 0%, transparent 70%)`,
-              animation: "nexus-loader-pulse 1.6s ease-in-out infinite",
+              background: `radial-gradient(circle, color-mix(in oklch, ${ACCENT} 19%, transparent) 0%, transparent 70%)`,
+              animation: reducedMotion ? "none" : "nexus-loader-pulse 1.6s ease-in-out infinite",
+              opacity: reducedMotion ? 0.6 : undefined,
             }}
           />
-          {/* Icon circle */}
+          {/* Icon circle — the one glowing element on this screen.
+              z-raised lifts it above its absolutely-positioned pulse halo. */}
           <div
+            className="relative z-raised"
             style={{
               width: 80,
               height: 80,
               borderRadius: "50%",
-              background: `linear-gradient(135deg, color-mix(in oklch, ${accent} 13%, transparent), color-mix(in oklch, ${accent} 27%, transparent))`,
-              border: `2px solid color-mix(in oklch, ${accent} 38%, transparent)`,
+              background: `linear-gradient(135deg, color-mix(in oklch, ${ACCENT} 13%, transparent), color-mix(in oklch, ${ACCENT} 27%, transparent))`,
+              border: `2px solid color-mix(in oklch, ${ACCENT} 38%, transparent)`,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               fontSize: 28,
               fontWeight: 700,
-              color: accent,
+              color: ACCENT,
               letterSpacing: "-1px",
-              boxShadow: `0 0 40px color-mix(in oklch, ${accent} 19%, transparent), inset 0 1px 0 color-mix(in oklch, ${accent} 25%, transparent)`,
-              position: "relative",
-              zIndex: 1,
+              boxShadow: `var(--nx-glow, 0 0 0 0 transparent), inset 0 1px 0 color-mix(in oklch, ${ACCENT} 25%, transparent)`,
             }}
           >
             {abbr}
@@ -173,7 +180,7 @@ export function NexusWorkspaceLoader({
             style={{
               fontSize: 13,
               fontWeight: 500,
-              color: isDark ? "rgba(255,255,255,0.4)" : "rgba(15,23,42,0.4)",
+              color: "var(--nx-ink-3, hsl(var(--muted-foreground)))",
               letterSpacing: "2px",
               textTransform: "uppercase",
               marginBottom: 6,
@@ -185,7 +192,7 @@ export function NexusWorkspaceLoader({
             style={{
               fontSize: 22,
               fontWeight: 700,
-              color: isDark ? "#F8FAFC" : "#0F172A",
+              color: "var(--nx-ink, hsl(var(--foreground)))",
               letterSpacing: "-0.5px",
             }}
           >
@@ -199,18 +206,22 @@ export function NexusWorkspaceLoader({
             width: 200,
             height: 3,
             borderRadius: 99,
-            background: isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)",
+            background: "var(--nx-line, hsl(var(--border)))",
             overflow: "hidden",
           }}
         >
           <div
             style={{
               height: "100%",
+              width: "100%",
               borderRadius: 99,
-              background: `linear-gradient(90deg, color-mix(in oklch, ${accent} 60%, transparent), ${accent})`,
-              width: barWidth,
-              transition: `width ${barDuration} cubic-bezier(0.4, 0, 0.2, 1)`,
-              boxShadow: `0 0 8px color-mix(in oklch, ${accent} 50%, transparent)`,
+              background: `linear-gradient(${direction === "rtl" ? "270deg" : "90deg"}, color-mix(in oklch, ${ACCENT} 60%, transparent), ${ACCENT})`,
+              transform: `scaleX(${barScale})`,
+              transformOrigin: direction === "rtl" ? "100% 50%" : "0% 50%",
+              // Reduced motion: the bar snaps between steps instead of gliding
+              transition: reducedMotion
+                ? "none"
+                : `transform ${barDuration} var(--nx-ease-enter, cubic-bezier(0.23, 1, 0.32, 1))`,
             }}
           />
         </div>
@@ -226,10 +237,6 @@ export function NexusWorkspaceLoader({
         @keyframes nexus-loader-pulse {
           0%, 100% { opacity: 0.5; transform: scale(1); }
           50%       { opacity: 1;   transform: scale(1.12); }
-        }
-        @keyframes nexus-loader-bounce {
-          0%, 80%, 100% { transform: scale(1);   opacity: 0.4; }
-          40%            { transform: scale(1.5); opacity: 1;   }
         }
       `}</style>
     </div>

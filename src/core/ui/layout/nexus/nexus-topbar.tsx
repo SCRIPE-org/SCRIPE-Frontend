@@ -1,28 +1,26 @@
 "use client";
 
-/* eslint-disable react-hooks/set-state-in-effect */
-
 /**
  * NexusTopbar
  *
- * Premium 56px header for the Nexus Dual-Rail Layout.
+ * 56px header for the Nexus Dual-Rail Layout, on the --nx- token layer.
  * - Panel toggle uses the same custom SVG icons as navigation-header.tsx (PanelMenuIcon / PanelCollapseIcon)
  * - Breadcrumbs are RTL-aware (flex-row-reverse + mirrored chevron)
- * - Background tinted from active workspace accent + settings card style
+ * - Background derived from --nx-surface + settings card style (glass/solid/default)
  * - Home button shown whenever pathname !== "/"
  * - Search palette trigger
+ *
+ * Colour resolves in CSS per theme — no resolvedTheme reads, no hydration
+ * placeholder needed.
  */
 
-import { useState, useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { usePathname, useRouter } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
-import { useTheme } from "next-themes";
 import { BRAND } from "@core/config/branding";
-import { useNexusPalette } from "./_parts/nexus-theme-utils";
 import {
   TopbarBreadcrumbs,
   TopbarContextPill,
@@ -48,22 +46,14 @@ export function NexusTopbar({
   isPanelCollapsed,
 }: NexusTopbarProps) {
   const { direction, language, t } = useI18n();
-  const { accentColor, activeWorkspace, activeRootItem, isModuleMode } = useWorkspace();
+  const { activeWorkspace, activeRootItem, isModuleMode } = useWorkspace();
   const { cardStyle } = useSettings();
   const pathname = usePathname();
   const router = useRouter();
   const user = useAppStore((s) => s.user);
   const tenantCode = useAppStore((s) => s.tenantCode);
-  const { resolvedTheme } = useTheme();
-
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
 
   const isRTL = direction === "rtl";
-  const { isDark, accent: resolvedAccent } = useNexusPalette(
-    resolvedTheme === "dark",
-    accentColor || "#6258c4"
-  );
 
   // ── Breadcrumb segments ───────────────────────────────────────────────────
   const breadcrumbOverride = useNavigationStore((s) => s.breadcrumbOverride);
@@ -132,24 +122,24 @@ export function NexusTopbar({
       ? `${user.firstName} ${user?.lastName ?? ""}`.trim()
       : (BRAND?.name ?? "Platform"));
 
-  // ── Background — derived from cardStyle setting ───────────────────────────
+  // ── Background — derived from cardStyle setting, surface token only ───────
   const bgStyle = (() => {
     if (cardStyle === "glass") {
       return {
-        background: isDark ? "rgba(10, 15, 28, 0.55)" : "rgba(255, 255, 255, 0.72)",
+        background: "color-mix(in oklch, var(--nx-surface, hsl(var(--card))) 62%, transparent)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
       };
     }
     if (cardStyle === "solid") {
       return {
-        background: isDark ? "hsl(var(--card))" : "hsl(var(--card))",
+        background: "var(--nx-surface, hsl(var(--card)))",
         backdropFilter: "none",
       };
     }
     // Default — subtle glass
     return {
-      background: isDark ? "rgba(10, 15, 28, 0.4)" : "rgba(255, 255, 255, 0.6)",
+      background: "color-mix(in oklch, var(--nx-surface, hsl(var(--card))) 50%, transparent)",
       backdropFilter: "blur(12px)",
       WebkitBackdropFilter: "blur(12px)",
     };
@@ -165,23 +155,20 @@ export function NexusTopbar({
   const isOnHome =
     pathname === workspaceHomeRoute || (workspaceHomeRoute === "/" && pathname === "/");
 
-  if (!mounted) return <header data-nexus-topbar="" style={{ height: 56, flexShrink: 0 }} />;
-
   return (
     <header
       data-nexus-topbar=""
+      className="relative z-raised"
       style={{
         height: 56,
         minHeight: 56,
         flexShrink: 0,
-        borderBottom: isDark ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(0,0,0,0.05)",
+        borderBottom: "1px solid var(--nx-line, hsl(var(--border)))",
         display: "flex",
         alignItems: "center",
         paddingInlineStart: 20,
         paddingInlineEnd: 12,
         gap: 12,
-        zIndex: 30,
-        position: "relative",
         direction: isRTL ? "rtl" : "ltr",
         ...bgStyle,
       }}
@@ -189,7 +176,6 @@ export function NexusTopbar({
       {/* Mobile hamburger / Desktop Panel Toggle */}
       <TopbarPanelToggle
         isRTL={isRTL}
-        isDark={isDark}
         isPanelCollapsed={isPanelCollapsed}
         ariaLabel={t("navigation.togglePanel") || "Toggle navigation"}
         onToggle={() => {
@@ -204,7 +190,6 @@ export function NexusTopbar({
       {/* Breadcrumbs */}
       <TopbarBreadcrumbs
         isRTL={isRTL}
-        isDark={isDark}
         workspaceName={workspaceName}
         activeRootName={activeRootName}
         displayPageName={displayPageName}
@@ -219,23 +204,15 @@ export function NexusTopbar({
           flexShrink: 0,
         }}
       >
-        <TopbarContextPill
-          isDark={isDark}
-          isModuleMode={isModuleMode}
-          resolvedAccent={resolvedAccent}
-          tenantName={tenantName}
-        />
+        <TopbarContextPill isModuleMode={isModuleMode} tenantName={tenantName} />
 
         <TopbarSearchButton
-          isRTL={isRTL}
-          isDark={isDark}
           onOpenSearch={onOpenSearch}
           placeholder={t("navigation.searchPlaceholder") || "Search anything…"}
         />
 
         {!isOnHome && (
           <TopbarHomeButton
-            isDark={isDark}
             ariaLabel={language === "ar" ? "الصفحة الرئيسية" : "Go to Home"}
             onClick={() => {
               startRoutingProgress();
@@ -245,8 +222,8 @@ export function NexusTopbar({
         )}
 
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <ThemeSwitcher buttonClassName="h-[33px] w-[33px] text-muted-foreground hover:text-foreground hover:bg-secondary rounded-[9px] transition-all" />
-          <LanguageSwitcher buttonClassName="h-[33px] w-[46px] text-muted-foreground hover:text-foreground hover:bg-secondary rounded-[9px] transition-all" />
+          <ThemeSwitcher buttonClassName="h-[33px] w-[33px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-[9px] transition-all duration-nx-micro" />
+          <LanguageSwitcher buttonClassName="h-[33px] w-[46px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-[9px] transition-all duration-nx-micro" />
         </div>
 
         <TopbarMobileControls />

@@ -1,21 +1,37 @@
-export function useNexusPalette(isDark: boolean, accentColor: string) {
-  // Use slightly lighter/different shades for the secondary rail to create depth
-  // between primary (darkest) and secondary (slightly less dark/blurrier)
+/**
+ * Nexus palette — token-backed.
+ *
+ * Every entry resolves to a --nx-* custom property from globals.css, where
+ * light/dark is decided by the CSS cascade (`:root[data-layout="nexus"]` +
+ * its `:not(.dark)` arm). Components therefore never branch on the theme:
+ * the same style object is correct in both. Contrast floors for these
+ * tokens are WCAG-measured and documented in the globals.css block header —
+ * do not re-derive them here.
+ *
+ * The `isDark` / `accentColor` parameters are kept only for call-site
+ * compatibility (topbar + both rails still pass them); neither influences
+ * the returned colours any more. `accent` is deliberately `var(--nx-accent)`
+ * rather than the raw workspace colour string: --nx-accent applies the
+ * verified lightness law (L0.68 dark / L0.46 light) to the workspace hue,
+ * so accent-as-text always clears its contrast floor.
+ */
+export function useNexusPalette(isDark: boolean, _accentColor?: string) {
   return {
-    railBg: isDark ? "rgba(14, 20, 36, 0.65)" : "rgba(248, 250, 252, 0.75)",
-    railBorder: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)",
-    headerLabel: isDark ? "rgba(255, 255, 255, 0.45)" : "rgba(15, 23, 42, 0.45)",
-    headerTitle: isDark ? "#F8FAFC" : "#0F172A",
-    dotDefault: isDark ? "rgba(255, 255, 255, 0.2)" : "rgba(15, 23, 42, 0.2)",
-    dotActive: accentColor,
-    itemBgActive: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(15, 23, 42, 0.06)",
-    itemBgHover: isDark ? "rgba(255, 255, 255, 0.04)" : "rgba(15, 23, 42, 0.03)",
-    textActive: isDark ? "#F8FAFC" : "#0F172A",
-    textMuted: isDark ? "#94A3B8" : "#64748B",
-    scrollbarTrack: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(15, 23, 42, 0.05)",
-    chevronColor: isDark ? "rgba(255, 255, 255, 0.3)" : "rgba(15, 23, 42, 0.3)",
-    groupLabelColor: isDark ? "rgba(255, 255, 255, 0.4)" : "rgba(15, 23, 42, 0.4)",
+    /* translucent surface — the secondary rail sits behind a backdrop blur */
+    railBg: "color-mix(in oklch, var(--nx-surface) 75%, transparent)",
+    railBorder: "var(--nx-line)",
+    headerLabel: "var(--nx-ink-3)",
+    headerTitle: "var(--nx-ink)",
+    dotDefault: "var(--nx-line-hi)",
+    dotActive: "var(--nx-accent)",
+    itemBgActive: "var(--nx-raised-2)",
+    itemBgHover: "var(--nx-raised)",
+    textActive: "var(--nx-ink)",
+    textMuted: "var(--nx-ink-2)",
+    scrollbarTrack: "var(--nx-line)",
+    chevronColor: "var(--nx-ink-3)",
+    groupLabelColor: "var(--nx-ink-3)",
     isDark,
-    accent: accentColor,
+    accent: "var(--nx-accent)",
   };
 }
