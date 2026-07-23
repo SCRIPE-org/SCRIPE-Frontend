@@ -1,7 +1,10 @@
 /**
  * Settings Defaults
  *
- * Default values for all 61 settings. Single source of truth.
+ * Default values for every setting. Single source of truth.
+ * Wave C culled the dead fields (header/sidebar styles, custom colours,
+ * toast icons/duration, compact mode) — the merge-engine migration drops
+ * their stored copies.
  */
 
 import type { Settings } from "./types";
@@ -19,10 +22,6 @@ export const defaultSettings: Settings = {
   gradientDirection: "to-br",
   lightGradientTheme: "none",
   darkGradientTheme: "none",
-  customPrimaryColor: "",
-  customSecondaryColor: "",
-  customLightBgColor: "",
-  customDarkBgColor: "",
   activePalette: "",
   backgroundMode: "preset",
   gradientStartColor: "",
@@ -39,9 +38,6 @@ export const defaultSettings: Settings = {
   fontSize: "medium",
   showDetailPanel: true,
   borderRadius: "default",
-  sidebarPosition: "left",
-  headerStyle: "default",
-  sidebarStyle: "default",
   buttonStyle: "default",
   navigationStyle: "default",
   spacingSize: "default",
@@ -57,7 +53,6 @@ export const defaultSettings: Settings = {
   showBreadcrumbs: true,
   showUserAvatar: true,
   showNotifications: false,
-  compactMode: false,
   highContrast: false,
   reducedMotion: false,
   stickyHeader: true,
@@ -69,16 +64,19 @@ export const defaultSettings: Settings = {
   loadingStyle: "spinner",
   tooltipStyle: "default",
   modalStyle: "default",
-  treeStyle: "modern",
-  datePickerStyle: "modern",
-  calendarStyle: "modern",
+  // "modern" was a retired skin for all three — the Wave C4 collapse kept
+  // lines/cards for the tree and default/elegant for the date picker and
+  // calendar, so the platform defaults are now survivor values.
+  treeStyle: "lines",
+  datePickerStyle: "default",
+  calendarStyle: "default",
   selectStyle: "default",
-  switchStyle: "modern",
+  // "modern" was a retired switch skin — the Wave A collapse kept
+  // default/ios/android, so the platform default is now a survivor value.
+  switchStyle: "default",
   checkboxStyle: "default",
   radioStyle: "default",
   toastStyle: "classic",
-  showToastIcons: true,
-  toastDuration: 1000,
   hoverEffectType: "elevate",
   hoverEffectIntensity: "none",
 };

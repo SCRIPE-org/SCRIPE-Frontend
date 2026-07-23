@@ -14,6 +14,33 @@ import { Check, Sparkles, Shield, ImageIcon, Type } from "lucide-react";
 import { Logo } from "@core/ui/logo";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
+/**
+ * Wave C: pickers now list only the surviving variants. toastStyle collapsed
+ * to classic/minimal/modern and switchStyle to default/ios/android (the
+ * merge-engine migration maps stored legacy values onto these survivors).
+ * The toast auto-dismiss duration picker was removed with its culled field.
+ * Picker cards
+ * are real focusable controls (buttons, or keyboard-operable cards where the
+ * preview embeds interactive primitives that must not nest inside a button).
+ */
+
+/** Shared classes for selectable picker cards — focus law + transform motion. */
+const pickerCardClass = (isSelected: boolean) =>
+  cn(
+    "relative cursor-pointer rounded-lg border-2 p-4 text-start transition-transform duration-nx-micro hover:scale-[1.02] motion-reduce:transition-none motion-reduce:hover:scale-100 focus-visible:outline-none focus-visible:shadow-nx-focus",
+    isSelected
+      ? "border-primary ring-2 ring-primary/20"
+      : "border-muted hover:border-muted-foreground/50"
+  );
+
+/** Keyboard activation for role="button" cards (Enter / Space). */
+const cardKeyHandler = (activate: () => void) => (e: React.KeyboardEvent) => {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    activate();
+  }
+};
+
 export function TypographyTab() {
   const { t } = useI18n();
   const settings = useSettings();
@@ -100,14 +127,10 @@ export function TypographyTab() {
         <CardContent>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
             {fontSizes.map((size) => (
-              <div
+              <button
                 key={size.value}
-                className={cn(
-                  "relative cursor-pointer rounded-lg border-2 p-4 transition-all hover:scale-105",
-                  settings.fontSize === size.value
-                    ? "border-primary ring-2 ring-primary/20"
-                    : "border-muted hover:border-muted-foreground/50"
-                )}
+                type="button"
+                className={pickerCardClass(settings.fontSize === size.value)}
                 onClick={() => settings.setFontSize(size.value as any)}
               >
                 <div className="space-y-2">
@@ -118,11 +141,11 @@ export function TypographyTab() {
                   <p className="text-xs text-muted-foreground">{size.description}</p>
                 </div>
                 {settings.fontSize === size.value && (
-                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+                  <div className="absolute -end-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
-              </div>
+              </button>
             ))}
           </div>
         </CardContent>
@@ -137,26 +160,21 @@ export function TypographyTab() {
         <CardContent>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
             {borderRadiusOptions.map((radius) => (
-              <div
+              <button
                 key={radius.value}
-                className={cn(
-                  "relative cursor-pointer border-2 p-4 transition-all hover:scale-105",
-                  radius.class,
-                  settings.borderRadius === radius.value
-                    ? "border-primary ring-2 ring-primary/20"
-                    : "border-muted hover:border-muted-foreground/50"
-                )}
+                type="button"
+                className={cn(pickerCardClass(settings.borderRadius === radius.value), radius.class)}
                 onClick={() => settings.setBorderRadius(radius.value as any)}
               >
-                <div className={cn("h-8 bg-muted", radius.class)}></div>
-                <p className="mt-2 text-center text-sm font-medium">{radius.name}</p>
-                <p className="text-center text-xs text-muted-foreground">{radius.px}</p>
+                <div className={cn("h-8 w-full bg-muted", radius.class)}></div>
+                <p className="mt-2 w-full text-center text-sm font-medium">{radius.name}</p>
+                <p className="w-full text-center text-xs text-muted-foreground">{radius.px}</p>
                 {settings.borderRadius === radius.value && (
-                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+                  <div className="absolute -end-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
-              </div>
+              </button>
             ))}
           </div>
         </CardContent>
@@ -171,26 +189,21 @@ export function TypographyTab() {
         <CardContent>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             {spacingOptions.map((spacing) => (
-              <div
+              <button
                 key={spacing.value}
-                className={cn(
-                  "relative cursor-pointer rounded-lg border-2 transition-all hover:scale-105",
-                  spacing.spacing,
-                  settings.spacingSize === spacing.value
-                    ? "border-primary ring-2 ring-primary/20"
-                    : "border-muted hover:border-muted-foreground/50"
-                )}
+                type="button"
+                className={cn(pickerCardClass(settings.spacingSize === spacing.value), spacing.spacing)}
                 onClick={() => settings.setSpacingSize(spacing.value as any)}
               >
-                <div className="h-4 rounded bg-muted"></div>
-                <div className="h-4 rounded bg-muted"></div>
-                <p className="text-center text-sm font-medium">{spacing.name}</p>
+                <div className="h-4 w-full rounded bg-muted"></div>
+                <div className="h-4 w-full rounded bg-muted"></div>
+                <p className="w-full text-center text-sm font-medium">{spacing.name}</p>
                 {settings.spacingSize === spacing.value && (
-                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+                  <div className="absolute -end-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
-              </div>
+              </button>
             ))}
           </div>
         </CardContent>
@@ -213,28 +226,24 @@ export function TypographyTab() {
                 { value: "image", name: t("logoType.image"), icon: ImageIcon },
                 { value: "custom", name: t("logoType.customText"), icon: Type },
               ].map((type) => (
-                <div
+                <button
                   key={type.value}
-                  className={cn(
-                    "relative cursor-pointer rounded-lg border-2 p-4 transition-all hover:scale-105",
-                    settings.logoType === type.value
-                      ? "border-primary ring-2 ring-primary/20"
-                      : "border-muted hover:border-muted-foreground/50"
-                  )}
+                  type="button"
+                  className={pickerCardClass(settings.logoType === type.value)}
                   onClick={() => settings.setLogoType(type.value as any)}
                 >
-                  <div className="space-y-2">
+                  <div className="w-full space-y-2">
                     <div className="flex justify-center">
                       <type.icon className="h-8 w-8" />
                     </div>
                     <p className="text-center text-sm font-medium">{type.name}</p>
                   </div>
                   {settings.logoType === type.value && (
-                    <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+                    <div className="absolute -end-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                       <Check className="h-3 w-3 text-primary-foreground" />
                     </div>
                   )}
-                </div>
+                </button>
               ))}
             </div>
           </div>
@@ -252,28 +261,24 @@ export function TypographyTab() {
                 { value: "lg", name: t("settings.logo.sizeOptions.lg"), size: "h-8 w-8" },
                 { value: "xl", name: t("settings.logo.sizeOptions.xl"), size: "h-10 w-10" },
               ].map((size) => (
-                <div
+                <button
                   key={size.value}
-                  className={cn(
-                    "relative cursor-pointer rounded-lg border-2 p-4 transition-all hover:scale-105",
-                    settings.logoSize === size.value
-                      ? "border-primary ring-2 ring-primary/20"
-                      : "border-muted hover:border-muted-foreground/50"
-                  )}
+                  type="button"
+                  className={pickerCardClass(settings.logoSize === size.value)}
                   onClick={() => settings.setLogoSize(size.value as any)}
                 >
-                  <div className="space-y-2">
+                  <div className="w-full space-y-2">
                     <div className="flex justify-center">
                       <Sparkles className={cn(size.size)} />
                     </div>
                     <p className="text-center text-xs font-medium">{size.name}</p>
                   </div>
                   {settings.logoSize === size.value && (
-                    <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+                    <div className="absolute -end-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                       <Check className="h-3 w-3 text-primary-foreground" />
                     </div>
                   )}
-                </div>
+                </button>
               ))}
             </div>
           </div>
@@ -306,17 +311,13 @@ export function TypographyTab() {
                   description: t("settings.logo.animationOptions.fancy.description"),
                 },
               ].map((animation) => (
-                <div
+                <button
                   key={animation.value}
-                  className={cn(
-                    "relative cursor-pointer rounded-lg border-2 p-4 transition-all hover:scale-105",
-                    settings.logoAnimation === animation.value
-                      ? "border-primary ring-2 ring-primary/20"
-                      : "border-muted hover:border-muted-foreground/50"
-                  )}
+                  type="button"
+                  className={pickerCardClass(settings.logoAnimation === animation.value)}
                   onClick={() => settings.setLogoAnimation(animation.value as any)}
                 >
-                  <div className="space-y-2">
+                  <div className="w-full space-y-2">
                     <div className="flex justify-center">
                       <Sparkles
                         className={cn(
@@ -333,11 +334,11 @@ export function TypographyTab() {
                     </p>
                   </div>
                   {settings.logoAnimation === animation.value && (
-                    <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+                    <div className="absolute -end-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                       <Check className="h-3 w-3 text-primary-foreground" />
                     </div>
                   )}
-                </div>
+                </button>
               ))}
             </div>
           </div>
@@ -390,10 +391,13 @@ export function TypographyTab() {
           <CardDescription>{t("settings.toast.description")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Toast Design */}
+          {/* Toast Design — surviving designs only; the toast component itself
+              collapses stored legacy names onto these three. Cards stay divs
+              (role="button") because the live Toast previews render list items
+              that must not nest inside a native button. */}
           <div className="space-y-3">
             <Label className="text-sm font-semibold">{t("settings.toast.designLabel")}</Label>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               {[
                 {
                   value: "classic",
@@ -410,51 +414,15 @@ export function TypographyTab() {
                   name: t("settings.toast.designOptions.modern.name"),
                   description: t("settings.toast.designOptions.modern.description"),
                 },
-                {
-                  value: "gradient",
-                  name: t("settings.toast.designOptions.gradient.name"),
-                  description: t("settings.toast.designOptions.gradient.description"),
-                },
-                {
-                  value: "outlined",
-                  name: t("settings.toast.designOptions.outlined.name"),
-                  description: t("settings.toast.designOptions.outlined.description"),
-                },
-                {
-                  value: "neon",
-                  name: t("settings.toast.designOptions.neon.name"),
-                  description: t("settings.toast.designOptions.neon.description"),
-                },
-                {
-                  value: "glassmorphism",
-                  name: t("settings.toast.designOptions.glassmorphism.name"),
-                  description: t("settings.toast.designOptions.glassmorphism.description"),
-                },
-                {
-                  value: "neumorphism",
-                  name: t("settings.toast.designOptions.neumorphism.name"),
-                  description: t("settings.toast.designOptions.neumorphism.description"),
-                },
-                {
-                  value: "aurora",
-                  name: t("settings.toast.designOptions.aurora.name"),
-                  description: t("settings.toast.designOptions.aurora.description"),
-                },
-                {
-                  value: "cosmic",
-                  name: t("settings.toast.designOptions.cosmic.name"),
-                  description: t("settings.toast.designOptions.cosmic.description"),
-                },
               ].map((design) => (
                 <div
                   key={design.value}
-                  className={cn(
-                    "relative cursor-pointer rounded-lg border-2 p-4 transition-all hover:scale-105",
-                    settings.toastStyle === design.value
-                      ? "border-primary ring-2 ring-primary/20"
-                      : "border-muted hover:border-muted-foreground/50"
-                  )}
-                  onClick={() => settings.setToastStyle(design.value as any)}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={settings.toastStyle === design.value}
+                  className={pickerCardClass(settings.toastStyle === design.value)}
+                  onClick={() => settings.setToastStyle(design.value as ToastStyle)}
+                  onKeyDown={cardKeyHandler(() => settings.setToastStyle(design.value as ToastStyle))}
                 >
                   <div className="space-y-4">
                     <div className="text-center">
@@ -462,8 +430,8 @@ export function TypographyTab() {
                       <p className="text-xs text-muted-foreground">{design.description}</p>
                     </div>
 
-                    {/* Toast Preview */}
-                    <div className="flex flex-col items-center space-y-2">
+                    {/* Toast Preview — inert: purely decorative */}
+                    <div inert className="flex flex-col items-center space-y-2">
                       {/* Success State Preview */}
                       <div className="w-full">
                         <ToastProvider>
@@ -502,66 +470,12 @@ export function TypographyTab() {
                     </div>
                   </div>
                   {settings.toastStyle === design.value && (
-                    <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+                    <div className="absolute -end-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                       <Check className="h-3 w-3 text-primary-foreground" />
                     </div>
                   )}
                 </div>
               ))}
-            </div>
-          </div>
-
-          <Separator />
-
-          {/* Toast Options */}
-          <div className="space-y-4">
-            <div className="space-y-3">
-              <Label className="text-sm font-semibold">{t("settings.toast.durationLabel")}</Label>
-              <div className="grid grid-cols-4 gap-4">
-                {[
-                  {
-                    value: 1000,
-                    name: t("settings.toast.durationOptions.quick.name"),
-                    description: t("settings.toast.durationOptions.quick.description"),
-                  },
-                  {
-                    value: 3000,
-                    name: t("settings.toast.durationOptions.normal.name"),
-                    description: t("settings.toast.durationOptions.normal.description"),
-                  },
-                  {
-                    value: 5000,
-                    name: t("settings.toast.durationOptions.long.name"),
-                    description: t("settings.toast.durationOptions.long.description"),
-                  },
-                  {
-                    value: 10000,
-                    name: t("settings.toast.durationOptions.extended.name"),
-                    description: t("settings.toast.durationOptions.extended.description"),
-                  },
-                ].map((duration) => (
-                  <div
-                    key={duration.value}
-                    className={cn(
-                      "relative cursor-pointer rounded-lg border-2 p-3 transition-all hover:scale-105",
-                      settings.toastDuration === duration.value
-                        ? "border-primary ring-2 ring-primary/20"
-                        : "border-muted hover:border-muted-foreground/50"
-                    )}
-                    onClick={() => settings.setToastDuration?.(duration.value)}
-                  >
-                    <div className="space-y-1 text-center">
-                      <p className="text-lg font-bold">{duration.name}</p>
-                      <p className="text-xs text-muted-foreground">{duration.description}</p>
-                    </div>
-                    {settings.toastDuration === duration.value && (
-                      <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
-                        <Check className="h-3 w-3 text-primary-foreground" />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
 
@@ -629,7 +543,9 @@ export function TypographyTab() {
         </CardContent>
       </Card>
 
-      {/* Switch Styles */}
+      {/* Switch Styles — surviving skins only (Wave A collapse); the Switch
+          component maps stored legacy skins onto these. Cards stay divs
+          (role="button") because the previews embed live Switch buttons. */}
       <Card>
         <CardHeader>
           <CardTitle>{t("settings.switchStyle.title")}</CardTitle>
@@ -644,11 +560,6 @@ export function TypographyTab() {
                 description: t("settings.switchStyle.options.default.description"),
               },
               {
-                value: "modern",
-                name: t("settings.switchStyle.options.modern.title"),
-                description: t("settings.switchStyle.options.modern.description"),
-              },
-              {
                 value: "ios",
                 name: t("settings.switchStyle.options.ios.title"),
                 description: t("settings.switchStyle.options.ios.description"),
@@ -658,71 +569,15 @@ export function TypographyTab() {
                 name: t("settings.switchStyle.options.android.title"),
                 description: t("settings.switchStyle.options.android.description"),
               },
-              {
-                value: "toggle",
-                name: t("settings.switchStyle.options.toggle.title"),
-                description: t("settings.switchStyle.options.toggle.description"),
-              },
-              {
-                value: "slider",
-                name: t("settings.switchStyle.options.slider.title"),
-                description: t("settings.switchStyle.options.slider.description"),
-              },
-              {
-                value: "neon",
-                name: t("settings.switchStyle.options.neon.title"),
-                description: t("settings.switchStyle.options.neon.description"),
-              },
-              {
-                value: "neumorphism",
-                name: t("settings.switchStyle.options.neumorphism.title"),
-                description: t("settings.switchStyle.options.neumorphism.description"),
-              },
-              {
-                value: "liquid",
-                name: t("settings.switchStyle.options.liquid.title"),
-                description: t("settings.switchStyle.options.liquid.description"),
-              },
-              {
-                value: "cyberpunk",
-                name: t("settings.switchStyle.options.cyberpunk.title"),
-                description: t("settings.switchStyle.options.cyberpunk.description"),
-              },
-              {
-                value: "glassmorphism",
-                name: t("settings.switchStyle.options.glassmorphism.title"),
-                description: t("settings.switchStyle.options.glassmorphism.description"),
-              },
-              {
-                value: "aurora",
-                name: t("settings.switchStyle.options.aurora.title"),
-                description: t("settings.switchStyle.options.aurora.description"),
-              },
-              {
-                value: "matrix",
-                name: t("settings.switchStyle.options.matrix.title"),
-                description: t("settings.switchStyle.options.matrix.description"),
-              },
-              {
-                value: "cosmic",
-                name: t("settings.switchStyle.options.cosmic.title"),
-                description: t("settings.switchStyle.options.cosmic.description"),
-              },
-              {
-                value: "retro",
-                name: t("settings.switchStyle.options.retro.title"),
-                description: t("settings.switchStyle.options.retro.description"),
-              },
             ].map((style) => (
               <div
                 key={style.value}
-                className={cn(
-                  "relative cursor-pointer rounded-lg border-2 p-4 transition-all hover:scale-105",
-                  settings.switchStyle === style.value
-                    ? "border-primary ring-2 ring-primary/20"
-                    : "border-muted hover:border-muted-foreground/50"
-                )}
+                role="button"
+                tabIndex={0}
+                aria-pressed={settings.switchStyle === style.value}
+                className={pickerCardClass(settings.switchStyle === style.value)}
                 onClick={() => settings.setSwitchStyle(style.value as any)}
+                onKeyDown={cardKeyHandler(() => settings.setSwitchStyle(style.value as any))}
               >
                 <div className="space-y-4">
                   <div className="text-center">
@@ -730,8 +585,8 @@ export function TypographyTab() {
                     <p className="text-xs text-muted-foreground">{style.description}</p>
                   </div>
 
-                  {/* Switch Preview */}
-                  <div className="flex flex-col items-center space-y-3">
+                  {/* Switch Preview — inert: purely decorative */}
+                  <div inert className="flex flex-col items-center space-y-3">
                     {/* OFF State Preview */}
                     <div className="flex items-center space-x-3">
                       <span className="text-xs text-muted-foreground">
@@ -764,7 +619,7 @@ export function TypographyTab() {
                   </div>
                 </div>
                 {settings.switchStyle === style.value && (
-                  <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+                  <div className="absolute -end-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}

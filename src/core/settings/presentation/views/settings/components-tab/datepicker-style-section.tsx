@@ -6,6 +6,12 @@ import { StyleCardPicker, type StyleOption } from "@core/settings/components/sha
 import { CalendarDays } from "lucide-react";
 import { cn } from "@core/common/utils";
 
+/**
+ * Wave C: only the surviving datepicker styles are offered — "default" (the
+ * nexus token treatment) and "elegant" (the accent take), matching the
+ * DatePickerVariant collapse in @core/ui/date-picker. The component resolves
+ * every stored legacy style onto these survivors.
+ */
 export function DatePickerStyleSection() {
   const { t } = useI18n();
   const settings = useSettings();
@@ -18,42 +24,10 @@ export function DatePickerStyleSection() {
       previewClass: "bg-background border border-border rounded-md",
     },
     {
-      value: "modern",
-      name: t("settings.datePickerStyle.options.modern.name"),
-      description: t("settings.datePickerStyle.options.modern.description"),
-      previewClass:
-        "bg-gradient-to-r from-background to-muted/20 border border-border/50 rounded-md shadow-sm",
-    },
-    {
-      value: "glass",
-      name: t("settings.datePickerStyle.options.glass.name"),
-      description: t("settings.datePickerStyle.options.glass.description"),
-      previewClass: "bg-background/60 backdrop-blur-sm border border-white/20 rounded-md shadow-lg",
-    },
-    {
-      value: "outlined",
-      name: t("settings.datePickerStyle.options.outlined.name"),
-      description: t("settings.datePickerStyle.options.outlined.description"),
-      previewClass: "bg-transparent border-2 border-border rounded-md",
-    },
-    {
-      value: "filled",
-      name: t("settings.datePickerStyle.options.filled.name"),
-      description: t("settings.datePickerStyle.options.filled.description"),
-      previewClass: "bg-muted/50 border border-transparent rounded-md",
-    },
-    {
-      value: "minimal",
-      name: t("settings.datePickerStyle.options.minimal.name"),
-      description: t("settings.datePickerStyle.options.minimal.description"),
-      previewClass: "bg-transparent border-b-2 border-border rounded-none",
-    },
-    {
       value: "elegant",
       name: t("settings.datePickerStyle.options.elegant.name"),
       description: t("settings.datePickerStyle.options.elegant.description"),
-      previewClass:
-        "bg-gradient-to-br from-background via-background to-muted/10 border border-border/30 rounded-md shadow-sm",
+      previewClass: "bg-background border border-primary/50 rounded-md",
     },
   ];
 
@@ -64,7 +38,7 @@ export function DatePickerStyleSection() {
       options={datePickerStyles}
       selected={settings.datePickerStyle}
       onSelect={(v) => settings.setDatePickerStyle(v as any)}
-      gridClassName="grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+      gridClassName="grid-cols-1 md:grid-cols-2"
       renderPreview={(option) => (
         <div className="space-y-2">
           <div

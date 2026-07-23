@@ -9,6 +9,12 @@ export function IconStyleSection() {
   const { t } = useI18n();
   const settings = useSettings();
 
+  // Wave C: iconStyle is only honoured by the navigation layout — hide the
+  // picker everywhere else instead of offering a dead knob.
+  if (settings.layoutTemplate !== "navigation") {
+    return null;
+  }
+
   const iconStyles: StyleOption[] = [
     {
       value: "outline",

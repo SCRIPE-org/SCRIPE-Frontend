@@ -150,7 +150,6 @@ export function NavigationLayout({
         getAnimationClass(),
         getFontSizeClass(),
         direction === "rtl" ? "rtl" : "ltr",
-        settings.compactMode === true && "compact-mode",
         settings.highContrast === true && "high-contrast",
         settings.reducedMotion === true && "reduce-motion"
       )}

@@ -48,10 +48,12 @@ const LIGHT_GRADIENTS: { value: LightGradientTheme; from: string; to: string }[]
   { value: "golden-hour", from: "bg-amber-100", to: "bg-orange-100" },
 ];
 
+// Wave C: the retired emerald-violet preset is no longer offered; a stored
+// value keeps applying (the theme still exists in CSS) but cannot be
+// re-selected.
 const DARK_GRADIENTS: { value: DarkGradientTheme; from: string; to: string }[] = [
   { value: "none", from: "bg-gray-900", to: "bg-gray-800" },
   { value: "midnight-blue", from: "bg-blue-950", to: "bg-indigo-900" },
-  { value: "aurora", from: "bg-emerald-950", to: "bg-violet-900" },
   { value: "deep-space", from: "bg-slate-950", to: "bg-purple-950" },
   { value: "ember", from: "bg-red-950", to: "bg-orange-900" },
   { value: "twilight", from: "bg-purple-950", to: "bg-pink-900" },

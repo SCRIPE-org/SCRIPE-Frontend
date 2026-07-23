@@ -7,7 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core
 import GenericSelect from "@core/crud/components/generic-select";
 import { cn } from "@core/common/utils";
 
-/** Select/multi-select style showcase — all 19 design variants */
+/** Select/multi-select style showcase — the 18 surviving design variants
+ *  (Wave C removed the retired soft-embossed demo) */
 export function SelectStyleSection() {
   const { t } = useI18n();
   const settings = useSettings();
@@ -112,15 +113,6 @@ export function SelectStyleSection() {
         { value: "uiDesign", label: t("components.multiSelect.categories.ux.uiDesign") },
         { value: "uxResearch", label: t("components.multiSelect.categories.ux.uxResearch") },
         { value: "userTesting", label: t("components.multiSelect.categories.ux.userTesting") },
-      ],
-    },
-    {
-      style: "neumorphism",
-      label: t("settings.selectStyle.options.neumorphism"),
-      options: [
-        { value: "ios", label: t("components.multiSelect.categories.mobile.ios") },
-        { value: "android", label: t("components.multiSelect.categories.mobile.android") },
-        { value: "reactNative", label: t("components.multiSelect.categories.mobile.reactNative") },
       ],
     },
     {

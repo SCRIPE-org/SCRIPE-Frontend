@@ -58,7 +58,9 @@ export function LayoutTab() {
     { key: "workspace", label: t("settings.layoutTemplate.categories.workspace") },
     { key: "advanced", label: t("settings.layoutTemplate.categories.advanced") },
     { key: "industry", label: t("settings.layoutTemplate.categories.industry") },
-    { key: "styles", label: t("settings.headerStyle.title") || "Styles" },
+    // Wave C: header/sidebar style pickers were culled; card style is the
+    // surviving content of this sub-tab, so it lends the label.
+    { key: "styles", label: t("settings.cardStyle.title") || "Styles" },
   ];
 
   return (

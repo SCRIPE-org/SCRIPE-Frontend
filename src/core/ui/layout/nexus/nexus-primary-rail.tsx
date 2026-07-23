@@ -35,6 +35,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useSettings } from "@core/providers/settings-provider";
 import type { MenuItem } from "@core/navigation";
 import { NotificationBell } from "@core/ui/notification";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
@@ -118,6 +119,7 @@ export function NexusPrimaryRail({
     workspaceGroups,
   } = useWorkspace();
   const { language, direction } = useI18n();
+  const { showNotifications } = useSettings();
   const { switchWorkspace, goBackWorkspace } = useWorkspaceTransitionContext();
 
   const isRTL = direction === "rtl";
@@ -397,12 +399,15 @@ export function NexusPrimaryRail({
 
           <Divider />
 
-          <div className="group relative flex w-full items-center justify-center">
-            <NotificationBell
-              iconClassName="h-[20px] w-[20px]"
-              className="h-[44px] w-[44px] rounded-[12px] border border-transparent text-nx-ink-2 transition-all duration-nx-standard ease-nx-enter hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink"
-            />
-          </div>
+          {/* Bell honours the showNotifications setting like every other layout */}
+          {showNotifications && (
+            <div className="group relative flex w-full items-center justify-center">
+              <NotificationBell
+                iconClassName="h-[20px] w-[20px]"
+                className="h-[44px] w-[44px] rounded-[12px] border border-transparent text-nx-ink-2 transition-all duration-nx-standard ease-nx-enter hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink"
+              />
+            </div>
+          )}
 
           <div className="group relative mt-1 flex w-full items-center justify-center">
             <UserProfileDropdown

@@ -4,6 +4,13 @@
  * Pure function that applies Settings to the document root element.
  * Writes data-attributes and CSS custom properties.
  * Extracted so it can be tested independently and reused by DashboardPreviewShell.
+ *
+ * Wave C contract: every attribute written here has a consumer — a CSS
+ * selector in globals.css or a declared downstream reader (data-table-style
+ * and the hover-effect pair are consumed by the Wave-D container work).
+ * Attribute writes with no CSS and no JS reader were dropped (data-logo-*,
+ * data-form/loading/tooltip/modal/tree-style, data-checkbox/radio-design,
+ * data-sticky-header, data-font-size) along with the culled fields' writes.
  */
 
 import type { Settings } from "./types";
@@ -18,11 +25,7 @@ const DATA_ATTR_MAP: Partial<Record<keyof Settings, string>> = {
   layoutTemplate: "data-layout",
   cardStyle: "data-card-style",
   animationLevel: "data-animation",
-  fontSize: "data-font-size",
   borderRadius: "data-radius",
-  sidebarPosition: "data-sidebar-position",
-  headerStyle: "data-header-style",
-  sidebarStyle: "data-sidebar-style",
   buttonStyle: "data-button-style",
   navigationStyle: "data-navigation-style",
   spacingSize: "data-spacing",
@@ -31,20 +34,8 @@ const DATA_ATTR_MAP: Partial<Record<keyof Settings, string>> = {
   tableStyle: "data-table-style",
   badgeStyle: "data-badge-style",
   avatarStyle: "data-avatar-style",
-  logoType: "data-logo-type",
-  logoAnimation: "data-logo-animation",
-  logoSize: "data-logo-size",
-  compactMode: "data-compact-mode",
   highContrast: "data-high-contrast",
   reducedMotion: "data-reduced-motion",
-  stickyHeader: "data-sticky-header",
-  formStyle: "data-form-style",
-  loadingStyle: "data-loading-style",
-  tooltipStyle: "data-tooltip-style",
-  modalStyle: "data-modal-style",
-  treeStyle: "data-tree-style",
-  checkboxStyle: "data-checkbox-design",
-  radioStyle: "data-radio-design",
   hoverEffectType: "data-hover-effect-type",
   hoverEffectIntensity: "data-hover-effect-intensity",
   secondaryColorTheme: "data-secondary-theme",
@@ -53,17 +44,11 @@ const DATA_ATTR_MAP: Partial<Record<keyof Settings, string>> = {
   darkGradientTheme: "data-dark-gradient",
 };
 
-// ── CSS custom property mapping ───────────────────────────
-
-const CSS_VAR_MAP: Partial<Record<keyof Settings, string>> = {
-  customPrimaryColor: "--custom-primary",
-  customSecondaryColor: "--custom-secondary",
-  customLightBgColor: "--custom-light-bg",
-  customDarkBgColor: "--custom-dark-bg",
-};
-
 // ── Computed CSS values ───────────────────────────────────
 
+// The ONE font-size mechanism: html { font-size: var(--font-size-base) } in
+// globals.css. All six FontSize values land here; the three former
+// :root[data-font-size] px rules that fought this var are deleted.
 const FONT_SIZE_MAP: Record<string, string> = {
   xs: "13px",
   small: "14px",
@@ -73,6 +58,8 @@ const FONT_SIZE_MAP: Record<string, string> = {
   xl: "22px",
 };
 
+// The ONE --spacing-unit writer. The compact-mode CSS rule that competed
+// with it died with the culled flag — "compact" here covers that use.
 const SPACING_MAP: Record<string, string> = {
   compact: "0.5rem",
   default: "1rem",
@@ -122,14 +109,7 @@ export function applySettingsToDOM(settings: Settings): void {
       root.setAttribute(attr, typeof value === "boolean" ? value.toString() : String(value));
     }
 
-    // 2. CSS custom properties (conditional set/remove)
-    for (const [key, prop] of Object.entries(CSS_VAR_MAP)) {
-      const value = settings[key as keyof Settings] as string;
-      if (value) root.style.setProperty(prop, value);
-      else root.style.removeProperty(prop);
-    }
-
-    // 3. Background mode
+    // 2. Background mode ("custom" was culled — preset and gradient remain)
     const bgMode = settings.backgroundMode || "preset";
     root.setAttribute("data-bg-mode", bgMode);
     root.style.removeProperty("--bg-override");
@@ -139,12 +119,11 @@ export function applySettingsToDOM(settings: Settings): void {
       const start = settings.gradientStartColor || "#3b82f6";
       const end = settings.gradientEndColor || "#8b5cf6";
       root.style.setProperty("--bg-override", `linear-gradient(${angle}, ${start}, ${end})`);
-    } else if (bgMode === "custom") {
-      // Custom colors are handled by --custom-light-bg / --custom-dark-bg above
     }
 
-    // 4. Computed CSS values
-    root.style.setProperty("--font-size-base", FONT_SIZE_MAP[settings.fontSize] || "18px");
+    // 3. Computed CSS values (unknown stored values fall back to the
+    //    platform-default value of each map)
+    root.style.setProperty("--font-size-base", FONT_SIZE_MAP[settings.fontSize] || "16px");
     root.style.setProperty("--spacing-unit", SPACING_MAP[settings.spacingSize] || "1rem");
     root.style.setProperty("--border-radius", BORDER_RADIUS_MAP[settings.borderRadius] || "0.5rem");
     root.style.setProperty(

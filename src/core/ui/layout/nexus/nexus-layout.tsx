@@ -28,6 +28,7 @@ import { NexusSearchPalette } from "./nexus-search-palette";
 import { NexusAppLauncher } from "./nexus-app-launcher";
 import { useWorkspaceTransition } from "./use-workspace-transition";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useSettings } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
 import { usePathname } from "next/navigation";
 import {
@@ -35,6 +36,7 @@ import {
   NEXUS_PRIMARY_RAIL_W,
   NEXUS_TOPBAR_H,
 } from "./_parts/nexus-layout-constants";
+import { NexusFooter } from "./_parts/nexus-footer";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { HubTopBar } from "@modules/home";
 
@@ -61,6 +63,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [appLauncherOpen, setAppLauncherOpen] = useState(false);
   const { direction } = useI18n();
+  const { showFooter, collapsibleSidebar } = useSettings();
   const pathname = usePathname();
   const activeWorkspaceKey = useNavigationStore((s) => s.activeWorkspaceKey);
   const workspaceGroups = useNavigationStore((s) => s.workspaceGroups);
@@ -83,7 +86,14 @@ export function NexusLayout({ children }: NexusLayoutProps) {
 
   const openMobile = useCallback(() => setMobileMenuOpen(true), []);
   const closeMobile = useCallback(() => setMobileMenuOpen(false), []);
-  const togglePanel = useCallback(() => setIsPanelCollapsed((prev) => !prev), []);
+  // collapsibleSidebar=false pins the panel open: the toggle goes inert and any
+  // previously collapsed state is ignored (the raw flag is kept so re-enabling
+  // the setting restores the user's last choice).
+  const togglePanel = useCallback(() => {
+    if (!collapsibleSidebar) return;
+    setIsPanelCollapsed((prev) => !prev);
+  }, [collapsibleSidebar]);
+  const effectivePanelCollapsed = collapsibleSidebar && isPanelCollapsed;
 
   // Workspace transition (loader + navigation)
   const { loaderState, switchWorkspace, goBackWorkspace } = useWorkspaceTransition();
@@ -195,7 +205,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
               overflow: "hidden",
               position: "relative",
               "--nexus-primary-w": `${NEXUS_PRIMARY_RAIL_W}px`,
-              "--nexus-panel-w": isPanelCollapsed ? "0px" : `${NEXUS_PANEL_W}px`,
+              "--nexus-panel-w": effectivePanelCollapsed ? "0px" : `${NEXUS_PANEL_W}px`,
               "--nexus-topbar-h": `${NEXUS_TOPBAR_H}px`,
             } as React.CSSProperties
           }
@@ -219,13 +229,13 @@ export function NexusLayout({ children }: NexusLayoutProps) {
           >
             <NexusPrimaryRail
               onTogglePanel={togglePanel}
-              isPanelCollapsed={isPanelCollapsed}
+              isPanelCollapsed={effectivePanelCollapsed}
               onOpenAppLauncher={() => setAppLauncherOpen(true)}
             />
             <NexusSecondaryRail
               mobileOpen={mobileMenuOpen}
               onMobileClose={closeMobile}
-              isCollapsed={isPanelCollapsed}
+              isCollapsed={effectivePanelCollapsed}
             />
             <div
               style={{
@@ -236,30 +246,45 @@ export function NexusLayout({ children }: NexusLayoutProps) {
                 background: "var(--nx-ground, hsl(var(--background)))",
               }}
             >
-              <NexusTopbar
-                onMobileMenuOpen={openMobile}
-                onTogglePanel={togglePanel}
-                onOpenSearch={() => setSearchOpen(true)}
-                isPanelCollapsed={isPanelCollapsed}
-              />
-              <main
-                id="nexus-content"
+              {/* Scroll region — the topbar rides INSIDE it so the stickyHeader
+                  setting is real behaviour: sticky pins it to the top edge,
+                  non-sticky lets it scroll away with the page. */}
+              <div
                 style={{
+                  display: "flex",
                   flex: 1,
+                  minHeight: 0,
+                  flexDirection: "column",
                   overflowY: "auto",
                   overflowX: "hidden",
-                  padding: "16px 20px",
-                  background: "var(--nx-ground, hsl(var(--background)))",
                   scrollbarWidth: "thin",
                   scrollbarColor: "var(--nx-line, hsl(var(--border))) transparent",
-                  // Routing dim — opacity only. A blur() here repaints the whole
-                  // scroll field on every navigation; the crossfade is the effect.
-                  opacity: isNavigating ? 0.35 : 1,
-                  transition: "opacity var(--nx-t-micro, 140ms) ease-out",
                 }}
               >
-                <div className="animate-in fade-in duration-nx-standard">{children}</div>
-              </main>
+                <NexusTopbar
+                  onMobileMenuOpen={openMobile}
+                  onTogglePanel={togglePanel}
+                  onOpenSearch={() => setSearchOpen(true)}
+                  isPanelCollapsed={effectivePanelCollapsed}
+                />
+                <main
+                  id="nexus-content"
+                  style={{
+                    // Grow to fill short pages so the footer sits on the bottom
+                    // edge; never shrink, so long pages scroll past it.
+                    flex: "1 0 auto",
+                    padding: "16px 20px",
+                    background: "var(--nx-ground, hsl(var(--background)))",
+                    // Routing dim — opacity only. A blur() here repaints the whole
+                    // scroll field on every navigation; the crossfade is the effect.
+                    opacity: isNavigating ? 0.35 : 1,
+                    transition: "opacity var(--nx-t-micro, 140ms) ease-out",
+                  }}
+                >
+                  <div className="animate-in fade-in duration-nx-standard">{children}</div>
+                </main>
+                {showFooter && <NexusFooter />}
+              </div>
             </div>
           </div>
 

@@ -54,7 +54,6 @@ export function ClassicLayout({ children, sidebarOpen, onSidebarOpenChange }: Cl
         "min-h-screen bg-background",
         styles.getAnimationClass(),
         direction === "rtl" ? "rtl" : "ltr",
-        settings.compactMode === true && "compact-mode",
         settings.highContrast === true && "high-contrast",
         settings.reducedMotion === true && "reduce-motion"
       )}

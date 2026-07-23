@@ -10,6 +10,12 @@
  * - Home button shown whenever pathname !== "/"
  * - Search palette trigger
  *
+ * Settings behaviour (the topbar rides inside the layout's scroll region):
+ * - stickyHeader: sticky pins it to the top edge; off lets it scroll away
+ * - showBreadcrumbs: swaps the breadcrumb trail for a plain spacer
+ * - showNotifications: gates the mobile-controls notification bell
+ * - collapsibleSidebar: off hides the desktop panel toggle (mobile keeps its hamburger)
+ *
  * Colour resolves in CSS per theme — no resolvedTheme reads, no hydration
  * placeholder needed.
  */
@@ -21,6 +27,7 @@ import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { usePathname, useRouter } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { BRAND } from "@core/config/branding";
+import { cn } from "@core/common/utils";
 import {
   TopbarBreadcrumbs,
   TopbarContextPill,
@@ -47,7 +54,8 @@ export function NexusTopbar({
 }: NexusTopbarProps) {
   const { direction, language, t } = useI18n();
   const { activeWorkspace, activeRootItem, isModuleMode } = useWorkspace();
-  const { cardStyle } = useSettings();
+  const { cardStyle, showBreadcrumbs, showNotifications, stickyHeader, collapsibleSidebar } =
+    useSettings();
   const pathname = usePathname();
   const router = useRouter();
   const user = useAppStore((s) => s.user);
@@ -158,7 +166,10 @@ export function NexusTopbar({
   return (
     <header
       data-nexus-topbar=""
-      className="relative z-raised"
+      // Sticky pins the bar to the scroll region's top edge; z-sticky keeps
+      // passing content (z-raised and below) under the glass. Non-sticky just
+      // flows — it scrolls away with the page.
+      className={cn(stickyHeader ? "sticky top-0 z-sticky" : "relative z-raised")}
       style={{
         height: 56,
         minHeight: 56,
@@ -177,6 +188,7 @@ export function NexusTopbar({
       <TopbarPanelToggle
         isRTL={isRTL}
         isPanelCollapsed={isPanelCollapsed}
+        collapsible={collapsibleSidebar}
         ariaLabel={t("navigation.togglePanel") || "Toggle navigation"}
         onToggle={() => {
           if (typeof window !== "undefined" && window.innerWidth < 1024) {
@@ -187,13 +199,18 @@ export function NexusTopbar({
         }}
       />
 
-      {/* Breadcrumbs */}
-      <TopbarBreadcrumbs
-        isRTL={isRTL}
-        workspaceName={workspaceName}
-        activeRootName={activeRootName}
-        displayPageName={displayPageName}
-      />
+      {/* Breadcrumbs — the spacer keeps the right-side controls parked at the
+          inline end when the trail is switched off */}
+      {showBreadcrumbs ? (
+        <TopbarBreadcrumbs
+          isRTL={isRTL}
+          workspaceName={workspaceName}
+          activeRootName={activeRootName}
+          displayPageName={displayPageName}
+        />
+      ) : (
+        <div aria-hidden style={{ flex: 1, minWidth: 0 }} />
+      )}
 
       {/* Right-side controls */}
       <div
@@ -226,7 +243,7 @@ export function NexusTopbar({
           <LanguageSwitcher buttonClassName="h-[33px] w-[46px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-[9px] transition-all duration-nx-micro" />
         </div>
 
-        <TopbarMobileControls />
+        <TopbarMobileControls showNotifications={showNotifications} />
       </div>
     </header>
   );

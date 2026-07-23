@@ -328,6 +328,9 @@ export function TopbarBreadcrumbs({
 export interface TopbarPanelToggleProps {
   isRTL: boolean;
   isPanelCollapsed?: boolean;
+  /** collapsibleSidebar setting — false hides the desktop toggle (the panel is
+   *  pinned open) while the same button keeps working as the mobile hamburger. */
+  collapsible?: boolean;
   onToggle: () => void;
   ariaLabel: string;
 }
@@ -335,6 +338,7 @@ export interface TopbarPanelToggleProps {
 export function TopbarPanelToggle({
   isRTL,
   isPanelCollapsed,
+  collapsible = true,
   onToggle,
   ariaLabel,
 }: TopbarPanelToggleProps) {
@@ -366,6 +370,9 @@ export function TopbarPanelToggle({
               "border border-nx-line bg-transparent text-nx-accent",
               "transition-all duration-nx-micro ease-nx-enter",
               "hover:scale-105 hover:bg-nx-raised active:scale-95 motion-reduce:transform-none",
+              // Non-collapsible panel: desktop toggle would be a dead button, so
+              // it hides at lg while the mobile hamburger (<1024px) stays live.
+              !collapsible && "lg:hidden",
               FOCUS_RING
             )}
           >
@@ -522,13 +529,20 @@ export function TopbarHomeButton({ ariaLabel, onClick }: TopbarHomeButtonProps) 
 }
 
 // ── Mobile Controls ───────────────────────────────────────────────────────────
-export function TopbarMobileControls() {
+export interface TopbarMobileControlsProps {
+  /** showNotifications setting — gates the bell, the profile stays put. */
+  showNotifications?: boolean;
+}
+
+export function TopbarMobileControls({ showNotifications = true }: TopbarMobileControlsProps) {
   return (
     <div className="flex items-center gap-3 lg:hidden">
-      <NotificationBell
-        iconClassName="h-[16px] w-[16px]"
-        className="h-[33px] w-[33px] rounded-[9px] text-nx-ink-3 transition-all duration-nx-micro hover:bg-nx-raised hover:text-nx-ink"
-      />
+      {showNotifications && (
+        <NotificationBell
+          iconClassName="h-[16px] w-[16px]"
+          className="h-[33px] w-[33px] rounded-[9px] text-nx-ink-3 transition-all duration-nx-micro hover:bg-nx-raised hover:text-nx-ink"
+        />
+      )}
       <UserProfileDropdown variant="compact" showName={false} />
     </div>
   );

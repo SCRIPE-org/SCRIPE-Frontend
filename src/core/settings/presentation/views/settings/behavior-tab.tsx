@@ -9,6 +9,10 @@ import { SettingToggle, SettingSection } from "@core/settings/components/shared"
  *
  * REFACTORED: Uses SettingToggle shared primitive (was 224 lines of repeating
  * Switch + Label + Separator patterns, now ~85 lines via data-driven rendering).
+ *
+ * Wave C: the compact-mode toggle was removed with its culled field — the
+ * class it toggled had zero CSS rules, and the merge-engine migration drops
+ * any stored copy.
  */
 
 interface BehaviorSetting {
@@ -51,13 +55,6 @@ export function BehaviorTab() {
       descKey: "settings.behavior.logo.description",
       getValue: () => settings.showLogo,
       setValue: settings.setShowLogo,
-    },
-    {
-      key: "compact",
-      labelKey: "settings.behavior.compact.label",
-      descKey: "settings.behavior.compact.description",
-      getValue: () => settings.compactMode,
-      setValue: settings.setCompactMode,
     },
     {
       key: "contrast",

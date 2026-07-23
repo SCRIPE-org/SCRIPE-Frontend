@@ -75,7 +75,9 @@ export type DarkBackgroundTheme =
   | "volcanic";
 
 export type ShadowIntensity = "none" | "subtle" | "moderate" | "strong";
-export type BackgroundMode = "preset" | "gradient" | "custom";
+// "custom" retired in Wave C: nothing consumed the custom colour vars. Stored
+// "custom" values resolve to "preset" via the merge-engine migration.
+export type BackgroundMode = "preset" | "gradient";
 
 // ── Gradient Themes ───────────────────────────────────────
 
@@ -189,10 +191,7 @@ export type AnimationSpeed = "slow" | "normal" | "fast";
 export type Theme = "light" | "dark" | "system";
 export type FontSize = "xs" | "small" | "medium" | "default" | "large" | "xl";
 export type BorderRadius = "none" | "small" | "default" | "large" | "full";
-export type SidebarPosition = "left" | "right";
 
-export type HeaderStyle = "default" | "compact" | "elevated" | "transparent";
-export type SidebarStyle = "default" | "compact" | "floating" | "minimal";
 export type ButtonStyle =
   | "default"
   | "small-round"
@@ -434,6 +433,13 @@ export type HoverEffectType =
 export type HoverEffectIntensity = "none" | "small" | "medium" | "strong";
 
 // ── Settings Interface ────────────────────────────────────
+//
+// Wave C cull: the header/sidebar style + position fields, the four custom
+// colour fields, the toast icon/duration pair, and the compact-mode flag were
+// removed — each had zero behavioural readers (no CSS selector, no live
+// component). Stored copies of culled fields are dropped by the merge-engine
+// migration (see its cull list), so stale persisted JSON still deserialises
+// cleanly.
 
 export interface Settings {
   // Color and theme
@@ -445,10 +451,6 @@ export interface Settings {
   gradientDirection: GradientDirection;
   lightGradientTheme: LightGradientTheme;
   darkGradientTheme: DarkGradientTheme;
-  customPrimaryColor: string;
-  customSecondaryColor: string;
-  customLightBgColor: string;
-  customDarkBgColor: string;
   activePalette: string;
   backgroundMode: BackgroundMode;
   gradientStartColor: string;
@@ -459,11 +461,8 @@ export interface Settings {
   fontSize: FontSize;
   showDetailPanel: boolean;
   borderRadius: BorderRadius;
-  sidebarPosition: SidebarPosition;
 
   // Component styles
-  headerStyle: HeaderStyle;
-  sidebarStyle: SidebarStyle;
   buttonStyle: ButtonStyle;
   navigationStyle: NavigationStyle;
   spacingSize: SpacingSize;
@@ -483,7 +482,6 @@ export interface Settings {
   showBreadcrumbs: boolean;
   showUserAvatar: boolean;
   showNotifications: boolean;
-  compactMode: boolean;
   highContrast: boolean;
   reducedMotion: boolean;
   stickyHeader: boolean;
@@ -507,8 +505,6 @@ export interface Settings {
 
   // Toast
   toastStyle: ToastStyle;
-  showToastIcons: boolean;
-  toastDuration: number;
 
   // Hover effects
   hoverEffectType: HoverEffectType;

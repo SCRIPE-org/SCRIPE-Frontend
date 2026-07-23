@@ -9,6 +9,12 @@ export function NavigationStyleSection() {
   const { t } = useI18n();
   const settings = useSettings();
 
+  // Wave C: navigationStyle is only honoured by the navigation layout's top
+  // strip — hide the picker everywhere else instead of offering a dead knob.
+  if (settings.layoutTemplate !== "navigation") {
+    return null;
+  }
+
   const previewMap: Record<string, ReactNode> = {
     pills: (
       <div className="flex gap-1">

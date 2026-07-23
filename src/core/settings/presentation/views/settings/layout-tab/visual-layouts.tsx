@@ -1,34 +1,18 @@
 "use client";
 
-import { Aperture, Orbit, Zap, Clock3, Waves } from "lucide-react";
+import { Orbit, Zap, Clock3 } from "lucide-react";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { LayoutCategorySection, type LayoutOption } from "./shared";
+
+// Wave C: the retired wallpaper-effect layouts were removed from this picker;
+// a stored value keeps deserialising (the LayoutTemplate union is untouched)
+// but cannot be re-selected.
 
 // ────────────────────────────────────────────
 // Previews
 // ────────────────────────────────────────────
 function VisualPreview({ variant }: { variant: string }) {
-  if (variant === "glassmorphism") {
-    return (
-      <div className="relative flex aspect-[16/10] w-full overflow-hidden rounded-md border border-slate-200/50 dark:border-slate-700/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-violet-400/40 via-fuchsia-400/30 to-cyan-400/40" />
-        <div className="relative w-[24%] space-y-1 border-r border-white/20 bg-white/15 p-1 pt-3 backdrop-blur-sm">
-          {[70, 55, 45].map((w, i) => (
-            <div key={i} className="h-1 rounded-full bg-white/30" style={{ width: `${w}%` }} />
-          ))}
-        </div>
-        <div className="relative flex flex-1 flex-col">
-          <div className="h-[14%] border-b border-white/15 bg-white/10 backdrop-blur-sm" />
-          <div className="flex-1 p-2">
-            <div className="mb-1.5 h-1.5 w-3/4 rounded-full bg-white/25" />
-            <div className="h-1.5 w-1/2 rounded-full bg-white/15" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (variant === "galaxy") {
     return (
       <div
@@ -138,27 +122,6 @@ function VisualPreview({ variant }: { variant: string }) {
     );
   }
 
-  if (variant === "aurora") {
-    return (
-      <div className="flex aspect-[16/10] w-full overflow-hidden rounded-md border border-slate-200/50 bg-slate-100 dark:border-slate-700/50 dark:bg-slate-900">
-        <div className="w-[24%] space-y-1 bg-gradient-to-b from-purple-500/60 via-blue-500/50 to-teal-500/60 p-1 pt-3">
-          {[70, 55, 45].map((w, i) => (
-            <div key={i} className="h-1 rounded-full bg-white/30" style={{ width: `${w}%` }} />
-          ))}
-        </div>
-        <div className="flex flex-1 flex-col">
-          <div className="h-[14%] border-b border-slate-200 bg-white/60 dark:border-slate-700 dark:bg-slate-800/80" />
-          <div className="flex-1 p-2">
-            <div className="mb-1.5 h-4 rounded-lg bg-gradient-to-r from-purple-200/30 to-blue-200/30 p-1 ring-1 ring-purple-400/20 dark:from-purple-900/20 dark:to-blue-900/20">
-              <div className="h-1 w-3/4 rounded-full bg-slate-400/40" />
-            </div>
-            <div className="h-1.5 w-1/2 rounded-full bg-slate-200 dark:bg-slate-800" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return null;
 }
 
@@ -166,11 +129,9 @@ function VisualPreview({ variant }: { variant: string }) {
 // Layout Data
 // ────────────────────────────────────────────
 const visualLayouts: LayoutOption[] = [
-  { value: "glassmorphism", icon: Aperture, preview: <VisualPreview variant="glassmorphism" /> },
   { value: "galaxy", icon: Orbit, preview: <VisualPreview variant="galaxy" /> },
   { value: "neon", icon: Zap, preview: <VisualPreview variant="neon" /> },
   { value: "retro", icon: Clock3, preview: <VisualPreview variant="retro" /> },
-  { value: "aurora", icon: Waves, preview: <VisualPreview variant="aurora" /> },
 ];
 
 export const VISUAL_LAYOUT_VALUES = visualLayouts.map((l) => l.value);

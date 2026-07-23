@@ -7,10 +7,15 @@
  *   Layer 4: Admin overrides (from AdminSettingsJson, filtered by allowed paths)
  *
  * Gap #10: Includes version-based stale cache detection.
+ *
+ * Wave C: every raw layer now passes through migrateStoredSettings before it
+ * merges — culled/unknown fields are dropped and retired variant values map
+ * to their survivors, so a stale persisted blob can never crash the merge or
+ * leak a dead field into runtime Settings.
  */
 
 import type { Settings } from "./types";
-import { defaultSettings } from "./defaults";
+import { defaultSettings, SETTINGS_KEYS } from "./defaults";
 
 // ── Types ─────────────────────────────────────────────────
 
@@ -41,6 +46,127 @@ export const DEFAULT_OVERRIDE_CONTROL: OverrideControl = {
   isSettingLocked: () => false,
 };
 
+// ── Legacy Stored-Value Migration ─────────────────────────
+//
+// Persisted settings blobs (tenant PREF_DASHBOARD_SETTINGS, cached admin
+// DASHBOARD_SETTINGS, user-imported exports) can predate the Wave A–C
+// collapses. Two normalisations keep them loading cleanly:
+//
+//   1. DROP unknown fields — anything not in SETTINGS_KEYS is discarded.
+//      This covers the Wave C culls (headerStyle, sidebarStyle,
+//      sidebarPosition, customPrimaryColor, customSecondaryColor,
+//      customLightBgColor, customDarkBgColor, showToastIcons, toastDuration,
+//      compactMode) and any future cull for free.
+//   2. MAP retired variant values to their survivors — mirrors of the
+//      component-level fallbacks published by Wave A (checkbox/radio/switch),
+//      Wave B (loadingStyle in loading-spinner.tsx, toastStyle in
+//      enhanced-toast.tsx), and the backgroundMode "custom" cull.
+
+/** Per-field nearest-survivor maps for retired variant values. */
+const LEGACY_VALUE_MAP: Partial<Record<keyof Settings, Record<string, string>>> = {
+  // Wave B2 — 12 loader variants collapsed to spinner/dots/pulse
+  loadingStyle: {
+    bars: "dots",
+    wave: "dots",
+    matrix: "dots",
+    orbit: "spinner",
+    gradient: "spinner",
+    helix: "spinner",
+    ripple: "pulse",
+    quantum: "pulse",
+    morphing: "pulse",
+  },
+  // Wave B1 — 10 toast designs collapsed to classic/minimal/modern
+  toastStyle: {
+    neon: "modern",
+    glassmorphism: "modern",
+    aurora: "modern",
+    cosmic: "modern",
+    gradient: "modern",
+    neumorphism: "classic",
+    outlined: "minimal",
+  },
+  // Wave C — the "custom" background mode died with its colour fields
+  backgroundMode: { custom: "preset" },
+  // Wave C4 — 12 tree skins collapsed to lines/cards (mirrors
+  // resolveTreeVariant in tree-view.tsx): the retired skins were card panels
+  // with different wallpaper, so they read nearest to "cards"; "minimal" was
+  // pixel-identical to "lines" bar a dashed connector.
+  treeStyle: {
+    minimal: "lines",
+    bubble: "cards",
+    modern: "cards",
+    glass: "cards",
+    elegant: "cards",
+    professional: "cards",
+    gradient: "cards",
+    neon: "cards",
+    organic: "cards",
+    corporate: "cards",
+  },
+  // Wave C4 — 7 date-picker skins collapsed to default/elegant (mirrors
+  // resolveDatePickerVariant in date-picker.tsx)
+  datePickerStyle: {
+    modern: "default",
+    glass: "default",
+    outlined: "default",
+    filled: "default",
+    minimal: "default",
+  },
+  // Wave C4 — 6 calendar skins collapsed to default/elegant (mirrors
+  // resolveCalendarVariant in custom-calendar.tsx)
+  calendarStyle: {
+    modern: "default",
+    glass: "default",
+    minimal: "default",
+    dark: "default",
+  },
+};
+
+/**
+ * Fields whose value must be one of the listed survivors; anything else maps
+ * through LEGACY_VALUE_MAP first and then falls back to the field's default.
+ * Wave A collapsed checkbox/radio to default/minimal and switch to
+ * default/ios/android — every other retired skin reads nearest to "default".
+ */
+const SURVIVOR_VALUES: Partial<Record<keyof Settings, readonly string[]>> = {
+  loadingStyle: ["spinner", "dots", "pulse"],
+  toastStyle: ["classic", "minimal", "modern"],
+  checkboxStyle: ["default", "minimal"],
+  radioStyle: ["default", "minimal"],
+  switchStyle: ["default", "ios", "android"],
+  backgroundMode: ["preset", "gradient"],
+  treeStyle: ["lines", "cards"],
+  datePickerStyle: ["default", "elegant"],
+  calendarStyle: ["default", "elegant"],
+};
+
+const KNOWN_KEYS = new Set<string>(SETTINGS_KEYS);
+
+/**
+ * Normalise one raw persisted settings blob. Pure — safe to unit-test with
+ * any JSON shape. Unknown fields are dropped; retired variant values resolve
+ * to survivors; everything else passes through untouched.
+ */
+export function migrateStoredSettings(raw: Record<string, unknown>): Partial<Settings> {
+  const migrated: Record<string, unknown> = {};
+
+  for (const [key, value] of Object.entries(raw)) {
+    if (!KNOWN_KEYS.has(key)) continue; // culled or foreign field — drop
+
+    const survivors = SURVIVOR_VALUES[key as keyof Settings];
+    if (survivors && typeof value === "string" && !survivors.includes(value)) {
+      const mapped = LEGACY_VALUE_MAP[key as keyof Settings]?.[value];
+      migrated[key] = mapped ?? defaultSettings[key as keyof Settings];
+      continue;
+    }
+
+    migrated[key] = value;
+  }
+
+  return migrated as Partial<Settings>;
+}
+
 // ── Merge Function ────────────────────────────────────────
 
 /**
@@ -53,19 +179,11 @@ export function mergeSettings(input: MergeInput): MergeResult {
   let allowedPaths: string[] | null = null;
   let tenantVersion = 0;
 
-  // Layer 3: Tenant defaults
+  // Layer 3: Tenant defaults (meta keys read from the raw blob, settings
+  // fields normalised through the migration)
   if (input.tenantRaw) {
-    const {
-      theme,
-      language,
-      sidebarCollapsed,
-      _schemaVersion,
-      _allowAdminOverride,
-      _allowedAdminPaths,
-      _settingsVersion,
-      ...dashboardSettings
-    } = input.tenantRaw;
-    tenantDefaults = dashboardSettings as Partial<Settings>;
+    const { _allowAdminOverride, _allowedAdminPaths, _settingsVersion } = input.tenantRaw;
+    tenantDefaults = migrateStoredSettings(input.tenantRaw);
     tenantVersion = (_settingsVersion as number) ?? 0;
     if (_allowAdminOverride !== undefined) allowAdminOverride = _allowAdminOverride as boolean;
     if (_allowedAdminPaths) allowedPaths = _allowedAdminPaths as string[];
@@ -77,6 +195,7 @@ export function mergeSettings(input: MergeInput): MergeResult {
 
   if (allowAdminOverride && input.adminRaw) {
     const adminBasedOnVersion = (input.adminRaw._basedOnVersion as number) ?? 0;
+    const adminMigrated = migrateStoredSettings(input.adminRaw) as Record<string, unknown>;
 
     if (tenantVersion > adminBasedOnVersion) {
       // Gap #10: Tenant settings are newer — admin cache is stale
@@ -84,13 +203,13 @@ export function mergeSettings(input: MergeInput): MergeResult {
     } else if (allowedPaths && allowedPaths.length > 0) {
       // FILTERED: only whitelisted paths can override
       for (const path of allowedPaths) {
-        if (path in input.adminRaw) {
-          (adminOverrides as Record<string, unknown>)[path] = input.adminRaw[path];
+        if (path in adminMigrated) {
+          (adminOverrides as Record<string, unknown>)[path] = adminMigrated[path];
         }
       }
     } else {
       // No path filter = all overrides allowed
-      adminOverrides = input.adminRaw as Partial<Settings>;
+      adminOverrides = adminMigrated as Partial<Settings>;
     }
   }
 

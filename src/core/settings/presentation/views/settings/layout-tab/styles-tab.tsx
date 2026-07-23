@@ -9,6 +9,12 @@ import { cn } from "@core/common/utils";
 
 // ────────────────────────────────────────────
 // Styles Sub-Tab
+//
+// Wave C: the header-style and sidebar-style pickers were removed with their
+// culled fields — no CSS selector or live component ever read them; the
+// merge-engine migration drops any stored copies. Card style remains the one
+// live style here, and the dual-layout detail-panel toggle stays scoped to
+// the layout that honours it.
 // ────────────────────────────────────────────
 export function StylesTab() {
   const { t } = useI18n();
@@ -32,7 +38,7 @@ export function StylesTab() {
 
   return (
     <div className="space-y-6">
-      {/* ── Dual Layout Options ── */}
+      {/* ── Dual Layout Options — only the dual layout renders this panel ── */}
       {settings.layoutTemplate === "dual" && (
         <Card>
           <CardHeader>
@@ -56,102 +62,6 @@ export function StylesTab() {
         </Card>
       )}
 
-      {/* ── Header Styles ── */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("settings.headerStyle.title")}</CardTitle>
-          <CardDescription>{t("settings.headerStyle.description")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-            {(["default", "compact", "elevated", "transparent"] as const).map((style) => (
-              <div
-                key={style}
-                className={cn(
-                  "relative cursor-pointer rounded-xl border-2 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md",
-                  settings.headerStyle === style
-                    ? "border-primary bg-primary/[0.03] ring-2 ring-primary/20"
-                    : "border-border hover:border-primary/40"
-                )}
-                onClick={() => settings.setHeaderStyle(style)}
-              >
-                <div className="space-y-2">
-                  <h4 className="text-sm font-semibold">
-                    {t(`settings.headerStyle.options.${style}.name`)}
-                  </h4>
-                  <p className="text-xs text-muted-foreground">
-                    {t(`settings.headerStyle.options.${style}.description`)}
-                  </p>
-                  <div
-                    className={cn(
-                      "h-8 rounded-md bg-muted transition-all",
-                      style === "compact" && "h-6",
-                      style === "elevated" && "shadow-md",
-                      style === "transparent" && "border border-muted bg-transparent"
-                    )}
-                  />
-                </div>
-                {settings.headerStyle === style && (
-                  <div className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary shadow-lg">
-                    <Check className="h-3 w-3 text-primary-foreground" />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* ── Sidebar Styles ── */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("settings.sidebarStyle.title")}</CardTitle>
-          <CardDescription>{t("settings.sidebarStyle.description")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-            {(["default", "compact", "floating", "minimal"] as const).map((style) => (
-              <div
-                key={style}
-                className={cn(
-                  "relative cursor-pointer rounded-xl border-2 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md",
-                  settings.sidebarStyle === style
-                    ? "border-primary bg-primary/[0.03] ring-2 ring-primary/20"
-                    : "border-border hover:border-primary/40"
-                )}
-                onClick={() => settings.setSidebarStyle(style)}
-              >
-                <div className="space-y-2">
-                  <h4 className="text-sm font-semibold">
-                    {t(`settings.sidebarStyle.options.${style}.name`)}
-                  </h4>
-                  <p className="text-xs text-muted-foreground">
-                    {t(`settings.sidebarStyle.options.${style}.description`)}
-                  </p>
-                  <div className="flex gap-1">
-                    <div
-                      className={cn(
-                        "h-8 rounded bg-muted",
-                        style === "compact" && "w-8",
-                        style === "floating" && "w-12 rounded-lg shadow-md",
-                        style === "minimal" && "w-10 border border-muted bg-transparent",
-                        style === "default" && "w-12"
-                      )}
-                    />
-                    <div className="h-8 flex-1 rounded bg-muted/50" />
-                  </div>
-                </div>
-                {settings.sidebarStyle === style && (
-                  <div className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary shadow-lg">
-                    <Check className="h-3 w-3 text-primary-foreground" />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
       {/* ── Card Styles ── */}
       <Card>
         <CardHeader>
@@ -161,17 +71,18 @@ export function StylesTab() {
         <CardContent>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
             {cardStyles.map((style) => (
-              <div
+              <button
                 key={style.value}
+                type="button"
                 className={cn(
-                  "relative cursor-pointer rounded-xl border-2 p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md",
+                  "relative cursor-pointer rounded-xl border-2 p-4 text-start transition-transform duration-nx-micro hover:-translate-y-0.5 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-none focus-visible:shadow-nx-focus",
                   settings.cardStyle === style.value
                     ? "border-primary bg-primary/[0.03] ring-2 ring-primary/20"
                     : "border-border hover:border-primary/40"
                 )}
                 onClick={() => settings.setCardStyle(style.value as any)}
               >
-                <div className="space-y-3">
+                <div className="w-full space-y-3">
                   <div className={cn("h-12 rounded-md p-2", style.class)}>
                     <div className="mb-1 h-2 rounded bg-current opacity-20" />
                     <div className="h-2 w-2/3 rounded bg-current opacity-20" />
@@ -179,11 +90,11 @@ export function StylesTab() {
                   <p className="text-center text-sm font-medium">{style.name}</p>
                 </div>
                 {settings.cardStyle === style.value && (
-                  <div className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary shadow-lg">
+                  <div className="absolute -end-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary shadow-lg">
                     <Check className="h-3 w-3 text-primary-foreground" />
                   </div>
                 )}
-              </div>
+              </button>
             ))}
           </div>
         </CardContent>

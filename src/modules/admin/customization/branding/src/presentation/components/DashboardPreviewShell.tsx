@@ -402,9 +402,6 @@ export function DashboardPreviewShell() {
       root.setAttribute("data-animation", mergedSettings.animationLevel);
       root.setAttribute("data-font-size", mergedSettings.fontSize);
       root.setAttribute("data-radius", mergedSettings.borderRadius);
-      root.setAttribute("data-sidebar-position", mergedSettings.sidebarPosition);
-      root.setAttribute("data-header-style", mergedSettings.headerStyle);
-      root.setAttribute("data-sidebar-style", mergedSettings.sidebarStyle);
       root.setAttribute("data-button-style", mergedSettings.buttonStyle);
       root.setAttribute("data-navigation-style", mergedSettings.navigationStyle);
       root.setAttribute("data-spacing", mergedSettings.spacingSize);
@@ -417,7 +414,6 @@ export function DashboardPreviewShell() {
       root.setAttribute("data-gradient-dir", mergedSettings.gradientDirection);
       root.setAttribute("data-light-gradient", mergedSettings.lightGradientTheme);
       root.setAttribute("data-dark-gradient", mergedSettings.darkGradientTheme);
-      root.setAttribute("data-compact-mode", mergedSettings.compactMode.toString());
       root.setAttribute("data-form-style", mergedSettings.formStyle);
       root.setAttribute("data-loading-style", mergedSettings.loadingStyle);
       root.setAttribute("data-tooltip-style", mergedSettings.tooltipStyle);

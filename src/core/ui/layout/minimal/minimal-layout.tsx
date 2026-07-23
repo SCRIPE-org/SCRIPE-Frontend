@@ -32,7 +32,6 @@ export function MinimalLayout({ children }: MinimalLayoutProps) {
         "min-h-screen bg-background",
         styles.getAnimationClass(),
         direction === "rtl" ? "rtl" : "ltr",
-        settings.compactMode === true && "compact-mode",
         settings.highContrast === true && "high-contrast",
         settings.reducedMotion === true && "reduce-motion"
       )}

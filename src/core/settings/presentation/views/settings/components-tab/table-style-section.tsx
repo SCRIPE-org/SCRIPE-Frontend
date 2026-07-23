@@ -32,10 +32,6 @@ function TablePreview({ style, t }: { style: string; t: (key: string) => string 
         b,
         "rounded-2xl border-0 bg-gradient-to-br from-primary/20 via-background to-primary/10 shadow-2xl"
       ),
-      neumorphism: cn(
-        b,
-        "rounded-3xl border-0 bg-background shadow-[20px_20px_40px_rgba(0,0,0,0.1),-20px_-20px_40px_rgba(255,255,255,0.1)] dark:shadow-[20px_20px_40px_rgba(0,0,0,0.3),-20px_-20px_40px_rgba(255,255,255,0.05)]"
-      ),
       cyberpunk: cn(
         b,
         "rounded-none border-2 border-primary bg-background shadow-[0_0_50px_hsl(var(--primary)/0.4)] dark:bg-black/95"
@@ -64,7 +60,6 @@ function TablePreview({ style, t }: { style: string; t: (key: string) => string 
       glass: "bg-white/10 border-b border-white/20 backdrop-blur-sm",
       neon: "bg-primary/10 border-b border-primary/30",
       gradient: "bg-gradient-to-r from-primary/10 to-primary/15 border-b border-primary/20",
-      neumorphism: "bg-background/80 border-b border-border/40",
       cyberpunk: "bg-primary/10 border-b border-primary/40",
       luxury: "bg-amber-100/40 border-b border-amber-200/30 dark:bg-amber-900/20",
       matrix: "bg-primary/10 border-b border-primary/30",
@@ -82,7 +77,6 @@ function TablePreview({ style, t }: { style: string; t: (key: string) => string 
       neon: "bg-primary/5 border-b border-primary/20 hover:bg-primary/10",
       gradient:
         "bg-gradient-to-r from-primary/5 to-primary/10 border-b border-primary/10 hover:from-primary/10 hover:to-primary/15",
-      neumorphism: "bg-background/30 border-b border-border/20 hover:bg-background/50",
       cyberpunk: "bg-primary/5 border-b border-primary/30 hover:bg-primary/10",
       luxury:
         "bg-amber-50/20 border-b border-amber-200/20 dark:bg-amber-900/10 hover:bg-amber-50/30",
@@ -176,11 +170,6 @@ export function TableStyleSection() {
       description: t("settings.tableStyle.options.gradient.description"),
     },
     {
-      value: "neumorphism",
-      name: t("settings.tableStyle.options.neumorphism.title"),
-      description: t("settings.tableStyle.options.neumorphism.description"),
-    },
-    {
       value: "cyberpunk",
       name: t("settings.tableStyle.options.cyberpunk.title"),
       description: t("settings.tableStyle.options.cyberpunk.description"),
@@ -226,15 +215,26 @@ export function TableStyleSection() {
       <CardContent>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {tableStyles.map((style) => (
+            // role="button" card: the preview embeds a real <table>, which
+            // must not nest inside a native button element.
             <div
               key={style.value}
+              role="button"
+              tabIndex={0}
+              aria-pressed={settings.tableStyle === style.value}
               className={cn(
-                "relative cursor-pointer rounded-lg border-2 p-4 transition-all hover:scale-105",
+                "relative cursor-pointer rounded-lg border-2 p-4 transition-transform duration-nx-micro hover:scale-[1.02] motion-reduce:transition-none motion-reduce:hover:scale-100 focus-visible:outline-none focus-visible:shadow-nx-focus",
                 settings.tableStyle === style.value
                   ? "border-primary ring-2 ring-primary/20"
                   : "border-muted hover:border-muted-foreground/50"
               )}
               onClick={() => settings.setTableStyle(style.value as any)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  settings.setTableStyle(style.value as any);
+                }
+              }}
             >
               <div className="space-y-4">
                 <div className="text-center">

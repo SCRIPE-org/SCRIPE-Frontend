@@ -24,9 +24,6 @@ export type {
   Theme,
   FontSize,
   BorderRadius,
-  SidebarPosition,
-  HeaderStyle,
-  SidebarStyle,
   ButtonStyle,
   NavigationStyle,
   SpacingSize,
@@ -69,7 +66,7 @@ export {
 
 // Merge engine
 export type { OverrideControl, MergeInput, MergeResult } from "./merge-engine";
-export { mergeSettings, DEFAULT_OVERRIDE_CONTROL } from "./merge-engine";
+export { mergeSettings, migrateStoredSettings, DEFAULT_OVERRIDE_CONTROL } from "./merge-engine";
 
 // DOM applicator
 export { applySettingsToDOM } from "./dom-applicator";

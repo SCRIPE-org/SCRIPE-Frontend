@@ -9,21 +9,23 @@
  *
  * Sub-components:
  *   - ButtonStyleSection: button radius styles (8 options)
- *   - TreeStyleSection: tree/org hierarchy styles (12 options w/ previews)
- *   - NavigationStyleSection: navigation menu styles (4 options w/ previews)
- *   - DatePickerStyleSection: datepicker visual styles (7 options)
- *   - CalendarStyleSection: calendar popup styles (6 options)
- *   - IconStyleSection: icon rendering styles (4 options)
+ *   - TreeStyleSection: tree/org hierarchy styles (2 surviving options w/ previews)
+ *   - NavigationStyleSection: navigation menu styles (4 options; renders only
+ *     for the navigation layout — the one shell that honours it)
+ *   - DatePickerStyleSection: datepicker visual styles (2 surviving options)
+ *   - CalendarStyleSection: calendar popup styles (2 surviving options)
+ *   - IconStyleSection: icon rendering styles (4 options; renders only for
+ *     the navigation layout)
  *   - InputStyleSection: input field styles (4 options)
- *   - TableStyleSection: data table styles (12 options w/ previews)
+ *   - TableStyleSection: data table styles (11 options w/ previews)
  *   - HoverEffectsSection: hover type + intensity + preview
  *   - BadgeStyleSection: badge pill styles (10 options w/ preview)
  *   - AvatarStyleSection: avatar shape styles (4 options)
  *   - FormStyleSection: form layout styles (11 options w/ previews)
- *   - LoadingStyleSection: loading animation styles (12 options w/ animated previews)
+ *   - LoadingStyleSection: loading animation styles (3 surviving options w/ animated previews)
  *   - TooltipStyleSection: tooltip styles (8 options w/ live tooltip preview)
  *   - ModalStyleSection: modal styles (8 options w/ previews + test buttons)
- *   - SelectStyleSection: unified select component showcase (19 style demos)
+ *   - SelectStyleSection: unified select component showcase (18 style demos)
  */
 
 import { ButtonStyleSection } from "./components-tab/button-style-section";

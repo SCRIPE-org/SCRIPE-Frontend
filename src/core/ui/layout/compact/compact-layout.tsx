@@ -54,7 +54,6 @@ export function CompactLayout({ children, sidebarOpen, onSidebarOpenChange }: Co
         "min-h-screen bg-background",
         styles.getAnimationClass(),
         direction === "rtl" ? "rtl" : "ltr",
-        settings.compactMode === true && "compact-mode",
         settings.highContrast === true && "high-contrast",
         settings.reducedMotion === true && "reduce-motion"
       )}

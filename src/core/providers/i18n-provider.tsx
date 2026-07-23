@@ -10,7 +10,6 @@ import {
   useMemo,
   useRef,
 } from "react";
-import { useSettings } from "@core/providers/settings-provider";
 import { ar as coreAr } from "@core/locales/ar";
 import { en as coreEn } from "@core/locales/en";
 import { allModulesEn, allModulesAr } from "@core/locales/module-registry";
@@ -83,7 +82,6 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     return "en";
   });
   const [, forceUpdate] = useState(0);
-  const { setSidebarPosition } = useSettings();
 
   const direction: Direction = language === "ar" ? "rtl" : "ltr";
 

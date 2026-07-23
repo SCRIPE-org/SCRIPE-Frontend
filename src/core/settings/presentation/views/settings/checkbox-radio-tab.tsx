@@ -11,6 +11,34 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import type { CheckboxStyle, RadioStyle } from "@core/providers/settings-provider";
 
+/**
+ * Wave C: the checkbox and radio pickers list only the surviving control
+ * surfaces from the Wave A collapse — default and minimal. The checkbox/radio
+ * components resolve every stored legacy value onto these survivors, and the
+ * merge-engine migration rewrites persisted settings the same way.
+ *
+ * Gallery cards are keyboard-operable (role="button") rather than native
+ * buttons because each preview embeds a live Radix control that must not nest
+ * inside a button element.
+ */
+
+/** Shared classes for selectable picker cards — focus law + hover elevation. */
+const galleryCardClass = (isSelected: boolean) =>
+  cn(
+    "cursor-pointer rounded-lg border p-3 text-start transition-shadow duration-nx-micro hover:shadow-md motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+    isSelected
+      ? "border-primary bg-primary/5 shadow-sm"
+      : "border-border bg-card hover:border-primary/50"
+  );
+
+/** Keyboard activation for role="button" cards (Enter / Space). */
+const cardKeyHandler = (activate: () => void) => (e: React.KeyboardEvent) => {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    activate();
+  }
+};
+
 function CheckboxPreview({ design, t }: { design: CheckboxStyle; t: (key: string) => string }) {
   return (
     <div className="flex items-center space-x-2 rounded border bg-card/50 p-2">
@@ -52,7 +80,6 @@ export function CheckboxRadioTab() {
     value: CheckboxStyle;
     name: string;
     description: string;
-    category: string;
   }> = [
     {
       value: "default",
@@ -60,145 +87,11 @@ export function CheckboxRadioTab() {
       description:
         t("settings.inputs.checkbox.designOptions.default.description") ||
         "Standard checkbox design",
-      category: "Basic",
-    },
-    {
-      value: "modern",
-      name: t("settings.inputs.checkbox.designOptions.modern.name"),
-      description: t("settings.inputs.checkbox.designOptions.modern.description"),
-      category: "Basic",
     },
     {
       value: "minimal",
       name: t("settings.inputs.checkbox.designOptions.minimal.name"),
       description: t("settings.inputs.checkbox.designOptions.minimal.description"),
-      category: "Basic",
-    },
-    {
-      value: "elegant",
-      name: t("settings.inputs.checkbox.designOptions.elegant.name"),
-      description: t("settings.inputs.checkbox.designOptions.elegant.description"),
-      category: "Basic",
-    },
-    {
-      value: "glass",
-      name: t("settings.inputs.checkbox.designOptions.glass.name"),
-      description: t("settings.inputs.checkbox.designOptions.glass.description"),
-      category: "Advanced",
-    },
-    {
-      value: "neumorphism",
-      name: t("settings.inputs.checkbox.designOptions.neumorphism.name"),
-      description: t("settings.inputs.checkbox.designOptions.neumorphism.description"),
-      category: "Advanced",
-    },
-    {
-      value: "gradient",
-      name: t("settings.inputs.checkbox.designOptions.gradient.name"),
-      description: t("settings.inputs.checkbox.designOptions.gradient.description"),
-      category: "Advanced",
-    },
-    {
-      value: "neon",
-      name: t("settings.inputs.checkbox.designOptions.neon.name"),
-      description: t("settings.inputs.checkbox.designOptions.neon.description"),
-      category: "Futuristic",
-    },
-    {
-      value: "cyberpunk",
-      name: t("settings.inputs.checkbox.designOptions.cyberpunk.name"),
-      description: t("settings.inputs.checkbox.designOptions.cyberpunk.description"),
-      category: "Futuristic",
-    },
-    {
-      value: "matrix",
-      name: t("settings.inputs.checkbox.designOptions.matrix.name"),
-      description: t("settings.inputs.checkbox.designOptions.matrix.description"),
-      category: "Futuristic",
-    },
-    {
-      value: "luxury",
-      name: t("settings.inputs.checkbox.designOptions.luxury.name"),
-      description: t("settings.inputs.checkbox.designOptions.luxury.description"),
-      category: "Premium",
-    },
-    {
-      value: "aurora",
-      name: t("settings.inputs.checkbox.designOptions.aurora.name"),
-      description: t("settings.inputs.checkbox.designOptions.aurora.description"),
-      category: "Premium",
-    },
-    {
-      value: "cosmic",
-      name: t("settings.inputs.checkbox.designOptions.cosmic.name"),
-      description: t("settings.inputs.checkbox.designOptions.cosmic.description"),
-      category: "Premium",
-    },
-    {
-      value: "organic",
-      name: t("settings.inputs.checkbox.designOptions.organic.name"),
-      description: t("settings.inputs.checkbox.designOptions.organic.description"),
-      category: "Themed",
-    },
-    {
-      value: "retro",
-      name: t("settings.inputs.checkbox.designOptions.retro.name"),
-      description: t("settings.inputs.checkbox.designOptions.retro.description"),
-      category: "Themed",
-    },
-    {
-      value: "diamond",
-      name: t("settings.inputs.checkbox.designOptions.diamond.name"),
-      description: t("settings.inputs.checkbox.designOptions.diamond.description"),
-      category: "Unique",
-    },
-    {
-      value: "liquid",
-      name: t("settings.inputs.checkbox.designOptions.liquid.name"),
-      description: t("settings.inputs.checkbox.designOptions.liquid.description"),
-      category: "Unique",
-    },
-    {
-      value: "crystal",
-      name: t("settings.inputs.checkbox.designOptions.crystal.name"),
-      description: t("settings.inputs.checkbox.designOptions.crystal.description"),
-      category: "Unique",
-    },
-    {
-      value: "plasma",
-      name: t("settings.inputs.checkbox.designOptions.plasma.name"),
-      description: t("settings.inputs.checkbox.designOptions.plasma.description"),
-      category: "Unique",
-    },
-    {
-      value: "quantum",
-      name: t("settings.inputs.checkbox.designOptions.quantum.name"),
-      description: t("settings.inputs.checkbox.designOptions.quantum.description"),
-      category: "Unique",
-    },
-    {
-      value: "holographic",
-      name: t("settings.inputs.checkbox.designOptions.holographic.name"),
-      description: t("settings.inputs.checkbox.designOptions.holographic.description"),
-      category: "Unique",
-    },
-    {
-      value: "stellar",
-      name: t("settings.inputs.checkbox.designOptions.stellar.name"),
-      description: t("settings.inputs.checkbox.designOptions.stellar.description"),
-      category: "Unique",
-    },
-    {
-      value: "vortex",
-      name: t("settings.inputs.checkbox.designOptions.vortex.name"),
-      description: t("settings.inputs.checkbox.designOptions.vortex.description"),
-      category: "Unique",
-    },
-    {
-      value: "phoenix",
-      name: t("settings.inputs.checkbox.designOptions.phoenix.name"),
-      description: t("settings.inputs.checkbox.designOptions.phoenix.description"),
-      category: "Unique",
     },
   ];
 
@@ -206,7 +99,6 @@ export function CheckboxRadioTab() {
     value: RadioStyle;
     name: string;
     description: string;
-    category: string;
   }> = [
     {
       value: "default",
@@ -214,169 +106,13 @@ export function CheckboxRadioTab() {
       description:
         t("settings.inputs.radio.designOptions.default.description") ||
         "Standard radio button design",
-      category: "Basic",
-    },
-    {
-      value: "modern",
-      name: t("settings.inputs.radio.designOptions.modern.name"),
-      description: t("settings.inputs.radio.designOptions.modern.description"),
-      category: "Basic",
     },
     {
       value: "minimal",
       name: t("settings.inputs.radio.designOptions.minimal.name"),
       description: t("settings.inputs.radio.designOptions.minimal.description"),
-      category: "Basic",
-    },
-    {
-      value: "elegant",
-      name: t("settings.inputs.radio.designOptions.elegant.name"),
-      description: t("settings.inputs.radio.designOptions.elegant.description"),
-      category: "Basic",
-    },
-    {
-      value: "glass",
-      name: t("settings.inputs.radio.designOptions.glass.name"),
-      description: t("settings.inputs.radio.designOptions.glass.description"),
-      category: "Advanced",
-    },
-    {
-      value: "neumorphism",
-      name: t("settings.inputs.radio.designOptions.neumorphism.name"),
-      description: t("settings.inputs.radio.designOptions.neumorphism.description"),
-      category: "Advanced",
-    },
-    {
-      value: "gradient",
-      name: t("settings.inputs.radio.designOptions.gradient.name"),
-      description: t("settings.inputs.radio.designOptions.gradient.description"),
-      category: "Advanced",
-    },
-    {
-      value: "neon",
-      name: t("settings.inputs.radio.designOptions.neon.name"),
-      description: t("settings.inputs.radio.designOptions.neon.description"),
-      category: "Futuristic",
-    },
-    {
-      value: "cyberpunk",
-      name: t("settings.inputs.radio.designOptions.cyberpunk.name"),
-      description: t("settings.inputs.radio.designOptions.cyberpunk.description"),
-      category: "Futuristic",
-    },
-    {
-      value: "matrix",
-      name: t("settings.inputs.radio.designOptions.matrix.name"),
-      description: t("settings.inputs.radio.designOptions.matrix.description"),
-      category: "Futuristic",
-    },
-    {
-      value: "luxury",
-      name: t("settings.inputs.radio.designOptions.luxury.name"),
-      description: t("settings.inputs.radio.designOptions.luxury.description"),
-      category: "Premium",
-    },
-    {
-      value: "aurora",
-      name: t("settings.inputs.radio.designOptions.aurora.name"),
-      description: t("settings.inputs.radio.designOptions.aurora.description"),
-      category: "Premium",
-    },
-    {
-      value: "cosmic",
-      name: t("settings.inputs.radio.designOptions.cosmic.name"),
-      description: t("settings.inputs.radio.designOptions.cosmic.description"),
-      category: "Premium",
-    },
-    {
-      value: "organic",
-      name: t("settings.inputs.radio.designOptions.organic.name"),
-      description: t("settings.inputs.radio.designOptions.organic.description"),
-      category: "Themed",
-    },
-    {
-      value: "retro",
-      name: t("settings.inputs.radio.designOptions.retro.name"),
-      description: t("settings.inputs.radio.designOptions.retro.description"),
-      category: "Themed",
-    },
-    {
-      value: "diamond",
-      name: t("settings.inputs.radio.designOptions.diamond.name"),
-      description: t("settings.inputs.radio.designOptions.diamond.description"),
-      category: "Unique",
-    },
-    {
-      value: "liquid",
-      name: t("settings.inputs.radio.designOptions.liquid.name"),
-      description: t("settings.inputs.radio.designOptions.liquid.description"),
-      category: "Unique",
-    },
-    {
-      value: "crystal",
-      name: t("settings.inputs.radio.designOptions.crystal.name"),
-      description: t("settings.inputs.radio.designOptions.crystal.description"),
-      category: "Unique",
-    },
-    {
-      value: "plasma",
-      name: t("settings.inputs.radio.designOptions.plasma.name"),
-      description: t("settings.inputs.radio.designOptions.plasma.description"),
-      category: "Unique",
-    },
-    {
-      value: "quantum",
-      name: t("settings.inputs.radio.designOptions.quantum.name"),
-      description: t("settings.inputs.radio.designOptions.quantum.description"),
-      category: "Unique",
-    },
-    {
-      value: "holographic",
-      name: t("settings.inputs.radio.designOptions.holographic.name"),
-      description: t("settings.inputs.radio.designOptions.holographic.description"),
-      category: "Unique",
-    },
-    {
-      value: "stellar",
-      name: t("settings.inputs.radio.designOptions.stellar.name"),
-      description: t("settings.inputs.radio.designOptions.stellar.description"),
-      category: "Unique",
-    },
-    {
-      value: "vortex",
-      name: t("settings.inputs.radio.designOptions.vortex.name"),
-      description: t("settings.inputs.radio.designOptions.vortex.description"),
-      category: "Unique",
-    },
-    {
-      value: "phoenix",
-      name: t("settings.inputs.radio.designOptions.phoenix.name"),
-      description: t("settings.inputs.radio.designOptions.phoenix.description"),
-      category: "Unique",
     },
   ];
-
-  const groupedCheckboxStyles = checkboxStyles.reduce(
-    (acc, style) => {
-      if (!acc[style.category]) {
-        acc[style.category] = [];
-      }
-      acc[style.category].push(style);
-      return acc;
-    },
-    {} as Record<string, typeof checkboxStyles>
-  );
-
-  const groupedRadioStyles = radioStyles.reduce(
-    (acc, style) => {
-      if (!acc[style.category]) {
-        acc[style.category] = [];
-      }
-      acc[style.category].push(style);
-      return acc;
-    },
-    {} as Record<string, typeof radioStyles>
-  );
 
   return (
     <div className="space-y-6">
@@ -419,38 +155,33 @@ export function CheckboxRadioTab() {
           {/* Style Gallery */}
           <div className="space-y-4">
             <Label className="text-sm font-medium">{t("settings.inputs.checkbox.title")}</Label>
-            {Object.entries(groupedCheckboxStyles).map(([category, styles]) => (
-              <div key={category} className="space-y-3">
-                <h4 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                  {category}
-                </h4>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {styles.map((style) => (
-                    <div
-                      key={style.value}
-                      className={cn(
-                        "cursor-pointer rounded-lg border p-3 transition-all hover:shadow-md",
-                        settings.checkboxStyle === style.value
-                          ? "border-primary bg-primary/5 shadow-sm"
-                          : "border-border bg-card hover:border-primary/50"
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {checkboxStyles.map((style) => (
+                <div
+                  key={style.value}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={settings.checkboxStyle === style.value}
+                  className={galleryCardClass(settings.checkboxStyle === style.value)}
+                  onClick={() => settings.setCheckboxStyle(style.value)}
+                  onKeyDown={cardKeyHandler(() => settings.setCheckboxStyle(style.value))}
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">{style.name}</span>
+                      {settings.checkboxStyle === style.value && (
+                        <div className="h-2 w-2 rounded-full bg-primary" />
                       )}
-                      onClick={() => settings.setCheckboxStyle(style.value)}
-                    >
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">{style.name}</span>
-                          {settings.checkboxStyle === style.value && (
-                            <div className="h-2 w-2 rounded-full bg-primary" />
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground">{style.description}</p>
-                        <CheckboxPreview design={style.value} t={t} />
-                      </div>
                     </div>
-                  ))}
+                    <p className="text-xs text-muted-foreground">{style.description}</p>
+                    {/* inert: the embedded control is purely decorative */}
+                    <div inert>
+                      <CheckboxPreview design={style.value} t={t} />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -496,38 +227,33 @@ export function CheckboxRadioTab() {
           {/* Style Gallery */}
           <div className="space-y-4">
             <Label className="text-sm font-medium">{t("settings.inputs.radio.title")}</Label>
-            {Object.entries(groupedRadioStyles).map(([category, styles]) => (
-              <div key={category} className="space-y-3">
-                <h4 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                  {category}
-                </h4>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {styles.map((style) => (
-                    <div
-                      key={style.value}
-                      className={cn(
-                        "cursor-pointer rounded-lg border p-3 transition-all hover:shadow-md",
-                        settings.radioStyle === style.value
-                          ? "border-primary bg-primary/5 shadow-sm"
-                          : "border-border bg-card hover:border-primary/50"
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {radioStyles.map((style) => (
+                <div
+                  key={style.value}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={settings.radioStyle === style.value}
+                  className={galleryCardClass(settings.radioStyle === style.value)}
+                  onClick={() => settings.setRadioStyle(style.value)}
+                  onKeyDown={cardKeyHandler(() => settings.setRadioStyle(style.value))}
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">{style.name}</span>
+                      {settings.radioStyle === style.value && (
+                        <div className="h-2 w-2 rounded-full bg-primary" />
                       )}
-                      onClick={() => settings.setRadioStyle(style.value)}
-                    >
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">{style.name}</span>
-                          {settings.radioStyle === style.value && (
-                            <div className="h-2 w-2 rounded-full bg-primary" />
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground">{style.description}</p>
-                        <RadioPreview design={style.value} t={t} />
-                      </div>
                     </div>
-                  ))}
+                    <p className="text-xs text-muted-foreground">{style.description}</p>
+                    {/* inert: the embedded control is purely decorative */}
+                    <div inert>
+                      <RadioPreview design={style.value} t={t} />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </CardContent>
       </Card>

@@ -2108,18 +2108,11 @@ html {
 
 /* ========================================
    FONT SIZES
+   One mechanism only: the settings applicator writes --font-size-base
+   (all six values) and `html { font-size: var(--font-size-base) }` above
+   applies it. The old attribute-keyed px rules that overrode the var for
+   three of the six values are gone (Wave C).
    ======================================== */
-:root[data-font-size="small"] {
-  font-size: 14px;
-}
-
-:root[data-font-size="default"] {
-  font-size: 16px;
-}
-
-:root[data-font-size="large"] {
-  font-size: 18px;
-}
 
 /* ========================================
    BORDER RADIUS
@@ -2171,27 +2164,25 @@ html {
 
 /* ========================================
    BACKGROUND MODE OVERRIDE
-   When data-bg-mode is "gradient" or "custom" and --bg-override is set,
-   override body background and make layout wrapper divs transparent.
+   When data-bg-mode is "gradient" and --bg-override is set, override body
+   background and make layout wrapper divs transparent. The "custom" mode
+   died in Wave C (its colour fields had no consumers).
    ======================================== */
 
 /* Override body background when bg-override is active */
-html[data-bg-mode="gradient"] body,
-html[data-bg-mode="custom"] body {
+html[data-bg-mode="gradient"] body {
   background: var(--bg-override, inherit) !important;
   background-attachment: fixed !important;
   min-height: 100vh !important;
 }
 
 /* Make top-level layout wrapper divs transparent so body bg shows through */
-html[data-bg-mode="gradient"] body > div > div,
-html[data-bg-mode="custom"] body > div > div {
+html[data-bg-mode="gradient"] body > div > div {
   background-color: transparent !important;
 }
 
 /* Also handle deeper layout wrapper divs (some layouts nest an extra level) */
-html[data-bg-mode="gradient"] body > div > div > div.min-h-screen,
-html[data-bg-mode="custom"] body > div > div > div.min-h-screen {
+html[data-bg-mode="gradient"] body > div > div > div.min-h-screen {
   background-color: transparent !important;
 }
 
@@ -2540,12 +2531,119 @@ html[data-reduced-motion="true"] *::after {
   transition: none !important;
 }
 
+/* High contrast — token-level overrides, not a whole-page filter (the old
+   contrast()/saturate() filter distorted every colour including the measured
+   status and nx tokens). Secondary inks step up to the primary ink and
+   hairlines step up to their strong weight, so contrast rises everywhere
+   without re-deriving a single colour. */
 html[data-high-contrast="true"] {
-  filter: contrast(1.25) saturate(1.2);
+  --border: var(--foreground);
+  --input: var(--foreground);
+  --muted-foreground: var(--foreground);
+  --nx-line: var(--nx-line-hi);
+  --nx-ink-2: var(--nx-ink);
+  --nx-ink-3: var(--nx-ink);
 }
 
-html[data-compact-mode="true"] {
-  --spacing-unit: 0.5rem;
+/* The compact-mode attribute rule that also wrote --spacing-unit is gone
+   (Wave C): the flag was culled — spacingSize="compact" sets the same
+   0.5rem via the settings applicator, which was always the winning writer
+   anyway (inline style beats a stylesheet rule). */
+
+/* ========================================
+   HOVER EFFECTS (settings-driven)
+   [data-hover-effect-type] × [data-hover-effect-intensity] on <html>.
+   Intensity sets the magnitudes; type picks the treatment. With intensity
+   "none" the magnitude vars are unset, every var() below turns invalid at
+   computed-value time, and the declarations fall back to their initial
+   values — that IS the off switch. The per-component getHoverEffectClasses
+   JS maps retire in Wave D once card/table read these instead.
+   ======================================== */
+html[data-hover-effect-intensity="small"] {
+  --hover-lift: -2px;
+  --hover-scale: 1.005;
+  --hover-tilt: 0.5deg;
+  --hover-slide: 2px;
+  --hover-shadow: var(--nx-shadow-sm);
+  --hover-glow: 0 0 10px -2px color-mix(in oklch, var(--nx-accent) 35%, transparent);
+}
+
+html[data-hover-effect-intensity="medium"] {
+  --hover-lift: -4px;
+  --hover-scale: 1.015;
+  --hover-tilt: 1deg;
+  --hover-slide: 4px;
+  --hover-shadow: var(--nx-shadow-popover);
+  --hover-glow: 0 0 14px -2px color-mix(in oklch, var(--nx-accent) 45%, transparent);
+}
+
+html[data-hover-effect-intensity="strong"] {
+  --hover-lift: -6px;
+  --hover-scale: 1.03;
+  --hover-tilt: 2deg;
+  --hover-slide: 6px;
+  --hover-shadow: var(--nx-shadow-popover);
+  --hover-glow: var(--nx-glow);
+}
+
+/* Cards — transform + shadow, at the standard motion step */
+html[data-hover-effect-type]:not([data-hover-effect-type="none"]) .card {
+  transition:
+    transform var(--nx-t-standard) var(--nx-ease-enter),
+    box-shadow var(--nx-t-standard) var(--nx-ease-enter),
+    border-color var(--nx-t-standard) var(--nx-ease-enter);
+}
+
+html[data-hover-effect-type="elevate"] .card:hover {
+  transform: translateY(var(--hover-lift));
+  box-shadow: var(--hover-shadow);
+}
+
+html[data-hover-effect-type="scale"] .card:hover {
+  transform: scale(var(--hover-scale));
+}
+
+html[data-hover-effect-type="glow"] .card:hover,
+html[data-hover-effect-type="shimmer"] .card:hover {
+  box-shadow: var(--hover-glow);
+  border-color: var(--nx-accent);
+}
+
+html[data-hover-effect-type="rotate"] .card:hover {
+  transform: rotate(var(--hover-tilt));
+}
+
+html[data-hover-effect-type="slide"] .card:hover {
+  transform: translate(var(--hover-slide), var(--hover-lift));
+}
+
+html[dir="rtl"][data-hover-effect-type="slide"] .card:hover {
+  transform: translate(calc(var(--hover-slide) * -1), var(--hover-lift));
+}
+
+/* Tables — depth only; transforms would break row layout and sticky columns */
+html[data-hover-effect-type]:not([data-hover-effect-type="none"]) table tbody tr {
+  transition: box-shadow var(--nx-t-standard) var(--nx-ease-enter);
+}
+
+html[data-hover-effect-type="elevate"] table tbody tr:hover,
+html[data-hover-effect-type="scale"] table tbody tr:hover,
+html[data-hover-effect-type="slide"] table tbody tr:hover,
+html[data-hover-effect-type="rotate"] table tbody tr:hover {
+  box-shadow: var(--hover-shadow);
+}
+
+html[data-hover-effect-type="glow"] table tbody tr:hover,
+html[data-hover-effect-type="shimmer"] table tbody tr:hover {
+  box-shadow: var(--hover-glow);
+}
+
+/* Reduced motion: keep the depth/edge feedback, strip the movement.
+   (html[data-reduced-motion="true"] above already kills the transitions.) */
+@media (prefers-reduced-motion: reduce) {
+  html[data-hover-effect-type] .card:hover {
+    transform: none;
+  }
 }
 
 /* ========================================

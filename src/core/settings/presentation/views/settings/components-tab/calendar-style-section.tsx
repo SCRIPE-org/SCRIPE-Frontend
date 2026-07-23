@@ -25,6 +25,10 @@ export function CalendarStyleSection() {
     year: new Intl.NumberFormat(language).format(2024),
   });
 
+  // Wave C: only the surviving calendar skins are offered — "default" and
+  // "elegant", matching the CalendarVariant collapse in
+  // @core/ui/custom-calendar. The component resolves stored legacy skins onto
+  // these survivors.
   const calendarStyles: StyleOption[] = [
     {
       value: "default",
@@ -32,29 +36,9 @@ export function CalendarStyleSection() {
       description: t("settings.calendarStyle.options.default.description"),
     },
     {
-      value: "modern",
-      name: t("settings.calendarStyle.options.modern.name"),
-      description: t("settings.calendarStyle.options.modern.description"),
-    },
-    {
-      value: "glass",
-      name: t("settings.calendarStyle.options.glass.name"),
-      description: t("settings.calendarStyle.options.glass.description"),
-    },
-    {
       value: "elegant",
       name: t("settings.calendarStyle.options.elegant.name"),
       description: t("settings.calendarStyle.options.elegant.description"),
-    },
-    {
-      value: "minimal",
-      name: t("settings.calendarStyle.options.minimal.name"),
-      description: t("settings.calendarStyle.options.minimal.description"),
-    },
-    {
-      value: "dark",
-      name: t("settings.calendarStyle.options.dark.name"),
-      description: t("settings.calendarStyle.options.dark.description"),
     },
   ];
 
@@ -65,7 +49,7 @@ export function CalendarStyleSection() {
       options={calendarStyles}
       selected={settings.calendarStyle}
       onSelect={(v) => settings.setCalendarStyle(v as any)}
-      gridClassName="grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+      gridClassName="grid-cols-1 md:grid-cols-2"
       renderPreview={() => (
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs">

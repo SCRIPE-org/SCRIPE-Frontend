@@ -23,19 +23,31 @@ import { Checkbox } from "@core/ui/checkbox";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 
-export type TreeVariant =
-  | "lines"
-  | "cards"
-  | "minimal"
-  | "bubble"
-  | "modern"
-  | "glass"
-  | "elegant"
-  | "professional"
-  | "gradient"
-  | "neon"
-  | "organic"
-  | "corporate";
+// Wave C collapse: 12 tree skins reduce to the two honest structures — "lines"
+// (connector hierarchy) and "cards" (stacked panels). The retired skins were
+// card panels with different wallpaper, so they all read nearest to "cards";
+// "minimal" was pixel-identical to "lines" bar a dashed connector.
+export type TreeVariant = "lines" | "cards";
+
+const LEGACY_TREE_VARIANT: Partial<Record<string, TreeVariant>> = {
+  minimal: "lines",
+  bubble: "cards",
+  modern: "cards",
+  glass: "cards",
+  elegant: "cards",
+  professional: "cards",
+  gradient: "cards",
+  neon: "cards",
+  organic: "cards",
+  corporate: "cards",
+};
+
+// Stored settings can hold values the map no longer knows; unknowns fall back
+// to "lines" so first paint is always a styled tree.
+export const resolveTreeVariant = (value: string | null | undefined): TreeVariant => {
+  if (value === "lines" || value === "cards") return value;
+  return (value && LEGACY_TREE_VARIANT[value]) || "lines";
+};
 
 export interface TreeAction {
   label: string;
@@ -108,7 +120,7 @@ function NodeActions<T>({
                 a.variant === "destructive" && "text-destructive focus:text-destructive"
               )}
             >
-              {a.icon && <span className="mr-2 shrink-0 rtl:ml-2 rtl:mr-0">{a.icon}</span>}
+              {a.icon && <span className="me-2 shrink-0">{a.icon}</span>}
               {a.label}
             </DropdownMenuItem>
           ))}
@@ -143,13 +155,13 @@ export function TreeView<T>({
   disabled = false,
   expandOnCardClick = false, // Default to false for backward compatibility
 }: TreeViewProps<T>) {
-  const { direction, language, t } = useI18n();
+  const { direction, t } = useI18n();
   const settings = useSettings();
 
-  const computedVariant: TreeVariant = useMemo(() => {
-    if (variant) return variant;
-    return settings.treeStyle;
-  }, [variant, settings.treeStyle]);
+  const computedVariant: TreeVariant = useMemo(
+    () => resolveTreeVariant(variant ?? settings.treeStyle),
+    [variant, settings.treeStyle]
+  );
 
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [isAllExpanded, setIsAllExpanded] = useState<boolean>(defaultExpanded);
@@ -193,64 +205,142 @@ export function TreeView<T>({
     });
   };
 
-  const expandAll = () => {
-    setExpanded((prev) => {
-      const all: Record<string, boolean> = {};
-      // Get all node IDs from the current data
-      const getAllIds = (nodes: T[]): string[] => {
-        const ids: string[] = [];
-        nodes.forEach((node) => {
-          ids.push(getId(node));
-          const children = getChildren(node) ?? [];
-          if (children.length > 0) {
-            ids.push(...getAllIds(children));
-          }
-        });
-        return ids;
-      };
-
-      const allIds = getAllIds(data);
-      allIds.forEach((id) => (all[id] = true));
-      onExpandChange?.(allIds);
-      return all;
+  const getAllIds = (nodes: T[]): string[] => {
+    const ids: string[] = [];
+    nodes.forEach((node) => {
+      ids.push(getId(node));
+      const children = getChildren(node) ?? [];
+      if (children.length > 0) {
+        ids.push(...getAllIds(children));
+      }
     });
+    return ids;
+  };
+
+  const expandAll = () => {
+    const all: Record<string, boolean> = {};
+    const allIds = getAllIds(data);
+    allIds.forEach((id) => (all[id] = true));
+    onExpandChange?.(allIds);
+    setExpanded(all);
     setIsAllExpanded(true);
   };
 
   const collapseAll = () => {
-    setExpanded((prev) => {
-      const all: Record<string, boolean> = {};
-      // Get all node IDs from the current data
-      const getAllIds = (nodes: T[]): string[] => {
-        const ids: string[] = [];
-        nodes.forEach((node) => {
-          ids.push(getId(node));
-          const children = getChildren(node) ?? [];
-          if (children.length > 0) {
-            ids.push(...getAllIds(children));
-          }
-        });
-        return ids;
-      };
-
-      const allIds = getAllIds(data);
-      allIds.forEach((id) => (all[id] = false));
-      onExpandChange?.([]);
-      return all;
-    });
+    const all: Record<string, boolean> = {};
+    getAllIds(data).forEach((id) => (all[id] = false));
+    onExpandChange?.([]);
+    setExpanded(all);
     setIsAllExpanded(false);
+  };
+
+  // ── Selection logic ─────────────────────────────────────
+  // Lives at the TreeView level so every walk starts from the ROOT data.
+  // The old per-level copy searched only the current subtree, so selecting a
+  // node deeper than level 1 never found (or auto-selected) its ancestors.
+
+  const findNodeByValue = (nodes: T[], targetValue: string): T | null => {
+    if (!getValueToSend) return null;
+    for (const node of nodes) {
+      if (getValueToSend(node) === targetValue) return node;
+      const found = findNodeByValue(getChildren(node) ?? [], targetValue);
+      if (found) return found;
+    }
+    return null;
+  };
+
+  const getAllChildrenValues = (node: T): string[] => {
+    const children = getChildren(node) ?? [];
+    const values: string[] = [];
+
+    children.forEach((child) => {
+      if (getValueToSend) {
+        values.push(getValueToSend(child));
+        values.push(...getAllChildrenValues(child));
+      }
+    });
+
+    return values;
+  };
+
+  const getAllParentValues = (targetValue: string): string[] => {
+    const parents: string[] = [];
+
+    const findParents = (nodes: T[], currentParents: string[]): boolean => {
+      for (const node of nodes) {
+        if (!getValueToSend) return false;
+        const nodeVal = getValueToSend(node);
+        const children = getChildren(node) ?? [];
+
+        if (children.some((child) => getValueToSend(child) === targetValue)) {
+          parents.push(...currentParents, nodeVal);
+          return true;
+        }
+
+        if (findParents(children, [...currentParents, nodeVal])) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    findParents(data, []);
+    return parents;
+  };
+
+  const isNodeIndeterminate = (node: T): boolean => {
+    const children = getChildren(node) ?? [];
+    if (children.length === 0 || !getValueToSend) return false;
+
+    const nodeValue = getValueToSend(node);
+    if (selectedValues.includes(nodeValue)) return false;
+
+    const childrenValues = getAllChildrenValues(node);
+    return childrenValues.some((childValue) => selectedValues.includes(childValue));
+  };
+
+  const handleSelectionChange = (nodeValue: string, checked: boolean) => {
+    if (!onSelectionChange || !getValueToSend) return;
+
+    const node = findNodeByValue(data, nodeValue);
+    if (!node) return;
+
+    let newSelection = [...selectedValues];
+
+    if (checked) {
+      // Add the node
+      if (!newSelection.includes(nodeValue)) {
+        newSelection.push(nodeValue);
+      }
+
+      // Auto-select all parents (walked from the root, so any depth works)
+      getAllParentValues(nodeValue).forEach((parentValue) => {
+        if (!newSelection.includes(parentValue)) {
+          newSelection.push(parentValue);
+        }
+      });
+    } else {
+      // Remove the node
+      newSelection = newSelection.filter((val) => val !== nodeValue);
+
+      // Remove all children
+      const childrenValues = getAllChildrenValues(node);
+      newSelection = newSelection.filter((val) => !childrenValues.includes(val));
+    }
+
+    onSelectionChange(newSelection);
   };
 
   const density = useMemo(() => {
     switch (settings.spacingSize) {
       case "compact":
-        return { pad: "p-2", childPad: "pl-4 rtl:pl-0 rtl:pr-4" };
+        return { pad: "p-2", childPad: "ps-4" };
       case "spacious":
-        return { pad: "p-4", childPad: "pl-8 rtl:pl-0 rtl:pr-8" };
+        return { pad: "p-4", childPad: "ps-8" };
       case "comfortable":
-        return { pad: "p-3", childPad: "pl-6 rtl:pl-0 rtl:pr-6" };
+        return { pad: "p-3", childPad: "ps-6" };
       default:
-        return { pad: "p-3", childPad: "pl-6 rtl:pl-0 rtl:pr-6" };
+        return { pad: "p-3", childPad: "ps-6" };
     }
   }, [settings.spacingSize]);
 
@@ -315,9 +405,12 @@ export function TreeView<T>({
       <div className={cn("space-y-4", className)}>
         {headerComponent}
         <div className="space-y-3">
-          <div className="h-9 w-56 animate-pulse rounded-md bg-muted/50" />
+          <div className="h-9 w-56 animate-pulse rounded-md bg-muted/50 motion-reduce:animate-none" />
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-10 animate-pulse rounded-md bg-muted/30" />
+            <div
+              key={i}
+              className="h-10 animate-pulse rounded-md bg-muted/30 motion-reduce:animate-none"
+            />
           ))}
         </div>
         {footerComponent}
@@ -360,7 +453,8 @@ export function TreeView<T>({
           cardStyle={settings.cardStyle}
           selectable={selectable}
           selectedValues={selectedValues}
-          onSelectionChange={onSelectionChange}
+          onSelect={handleSelectionChange}
+          isNodeIndeterminate={isNodeIndeterminate}
           getValueToSend={getValueToSend}
           disabled={disabled}
           expandOnCardClick={expandOnCardClick}
@@ -372,183 +466,34 @@ export function TreeView<T>({
   );
 }
 
-// Professional node styling function for all tree variants
+// Node styling for the two surviving tree structures
 function getNodeStyling(
   variant: TreeVariant,
   level: number,
   density: { pad: string; childPad: string },
   radius: string,
   shadow: string,
-  cardStyle: string,
-  hasChildren: boolean,
-  isOpen: boolean
+  cardStyle: string
 ) {
-  const baseTransition = "transition-all duration-300 ease-in-out";
-  const hoverScale = "hover:scale-[1.02] active:scale-[0.98]";
-
-  switch (variant) {
-    case "modern":
-      return cn(
-        "bg-gradient-to-r from-background via-background/95 to-background/90",
-        "border border-border/50 hover:border-primary/30",
-        "backdrop-blur-sm",
-        density.pad,
-        radius,
-        shadow,
-        baseTransition,
-        hoverScale,
-        "hover:shadow-lg hover:shadow-primary/10",
-        level === 0 ? "font-semibold text-foreground" : "font-medium text-muted-foreground",
-        hasChildren && isOpen ? "bg-primary/5 border-primary/20" : ""
-      );
-
-    case "glass":
-      return cn(
-        "bg-white/10 dark:bg-white/5 backdrop-blur-md",
-        "border border-white/20 dark:border-white/10",
-        "hover:bg-white/20 dark:hover:bg-white/10",
-        "hover:border-white/30 dark:hover:border-white/20",
-        density.pad,
-        "rounded-xl",
-        "shadow-lg shadow-black/5 dark:shadow-black/20",
-        baseTransition,
-        hoverScale,
-        level === 0 ? "font-semibold" : "font-medium",
-        hasChildren && isOpen ? "bg-primary/10 border-primary/30" : ""
-      );
-
-    case "elegant":
-      return cn(
-        "bg-gradient-to-br from-background via-background/98 to-muted/30",
-        "border-l-4 border-l-primary/60 border-y border-r border-border/30",
-        "hover:border-l-primary hover:border-y-primary/20 hover:border-r-primary/20",
-        "hover:bg-gradient-to-br hover:from-primary/5 hover:via-background/95 hover:to-primary/10",
-        density.pad,
-        "rounded-r-lg",
-        "shadow-sm hover:shadow-md",
-        baseTransition,
-        level === 0 ? "font-bold text-foreground" : "font-medium text-muted-foreground",
-        hasChildren && isOpen
-          ? "bg-gradient-to-br from-primary/10 via-background/90 to-primary/20"
-          : ""
-      );
-
-    case "professional":
-      return cn(
-        "bg-card border border-border",
-        "hover:bg-muted/50 hover:border-primary/40",
-        "hover:shadow-sm",
-        density.pad,
-        "rounded-md",
-        baseTransition,
-        "relative overflow-hidden",
-        "before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-primary/5 before:to-transparent",
-        "before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-700",
-        level === 0 ? "font-semibold border-l-4 border-l-primary/60" : "font-medium",
-        hasChildren && isOpen ? "bg-primary/5 border-primary/30" : ""
-      );
-
-    case "gradient":
-      return cn(
-        "bg-gradient-to-r from-primary/10 via-background to-secondary/10",
-        "hover:from-primary/20 hover:via-background/95 hover:to-secondary/20",
-        "border border-transparent hover:border-primary/20",
-        "backdrop-blur-sm",
-        density.pad,
-        radius,
-        "shadow-md hover:shadow-lg",
-        baseTransition,
-        hoverScale,
-        level === 0
-          ? "font-bold bg-gradient-to-r from-primary/20 via-background to-secondary/20"
-          : "font-medium",
-        hasChildren && isOpen ? "from-primary/30 via-background/90 to-secondary/30" : ""
-      );
-
-    case "neon":
-      return cn(
-        "bg-background/90 backdrop-blur-sm",
-        "border border-primary/30 hover:border-primary/60",
-        "hover:bg-primary/5",
-        "hover:shadow-lg hover:shadow-primary/20",
-        "hover:glow-primary",
-        density.pad,
-        "rounded-lg",
-        baseTransition,
-        hoverScale,
-        level === 0 ? "font-bold text-primary shadow-sm shadow-primary/10" : "font-medium",
-        hasChildren && isOpen ? "bg-primary/10 border-primary/50 shadow-md shadow-primary/20" : "",
-        "relative before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-r before:from-transparent before:via-primary/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:pointer-events-none"
-      );
-
-    case "organic":
-      return cn(
-        "bg-gradient-to-br from-success/10 via-background to-info/10",
-        "border border-success/30",
-        "hover:border-success/50",
-        "hover:from-success/20 hover:via-background/95 hover:to-info/20",
-        density.pad,
-        "rounded-2xl",
-        "shadow-sm hover:shadow-md",
-        baseTransition,
-        "transform hover:rotate-1 hover:scale-[1.01]",
-        level === 0 ? "font-semibold" : "font-medium",
-        hasChildren && isOpen ? "from-success/25 via-background/90 to-info/25" : ""
-      );
-
-    case "corporate":
-      return cn(
-        "bg-muted/50",
-        "border-l-4 border-l-info border-y border-r border-border",
-        "hover:bg-muted/70",
-        "hover:border-l-info/80 hover:border-y-info/30 hover:border-r-info/30",
-        density.pad,
-        "rounded-r-md",
-        baseTransition,
-        level === 0 ? "font-bold text-foreground border-l-8" : "font-medium text-muted-foreground",
-        hasChildren && isOpen ? "bg-info/10 border-l-info/80" : ""
-      );
-
-    case "cards":
-      return cn(
-        "bg-card border",
-        density.pad,
-        radius,
-        shadow,
-        "hover:bg-muted/50 transition-colors",
-        cardStyle === "glass" ? "bg-white/10 backdrop-blur border-white/20" : "",
-        cardStyle === "bordered" ? "border-2" : "",
-        cardStyle === "elevated" ? "shadow-xl" : ""
-      );
-
-    case "bubble":
-      return cn(
-        "inline-flex items-center gap-2",
-        "bg-gradient-to-r from-primary/10 via-primary/5 to-transparent",
-        "text-primary border border-primary/20",
-        "px-3 py-2",
-        "rounded-full",
-        "hover:from-primary/15 hover:via-primary/10",
-        "transition-colors"
-      );
-
-    case "minimal":
-      return cn(
-        "bg-card border hover:bg-muted/40 transition-colors",
-        density.pad,
-        radius,
-        level === 0 ? "font-semibold" : "font-normal"
-      );
-
-    case "lines":
-    default:
-      return cn(
-        "bg-card border hover:bg-muted/40 transition-colors",
-        density.pad,
-        radius,
-        level === 0 ? "font-semibold" : "font-normal"
-      );
+  if (variant === "cards") {
+    return cn(
+      "bg-card border transition-colors hover:bg-muted/50",
+      density.pad,
+      radius,
+      shadow,
+      cardStyle === "glass" ? "bg-card/60 backdrop-blur" : "",
+      cardStyle === "bordered" ? "border-2" : "",
+      cardStyle === "elevated" ? "shadow-xl" : ""
+    );
   }
+
+  // lines
+  return cn(
+    "bg-card border transition-colors hover:bg-muted/40",
+    density.pad,
+    radius,
+    level === 0 ? "font-semibold" : "font-normal"
+  );
 }
 
 function TreeList<T>({
@@ -568,7 +513,8 @@ function TreeList<T>({
   cardStyle,
   selectable = false,
   selectedValues = [],
-  onSelectionChange,
+  onSelect,
+  isNodeIndeterminate,
   getValueToSend,
   disabled = false,
   expandOnCardClick = false,
@@ -589,154 +535,109 @@ function TreeList<T>({
   cardStyle: string;
   selectable?: boolean;
   selectedValues?: string[];
-  onSelectionChange?: (selectedValues: string[]) => void;
+  onSelect?: (nodeValue: string, checked: boolean) => void;
+  isNodeIndeterminate?: (node: T) => boolean;
   getValueToSend?: (node: T) => string;
   disabled?: boolean;
   expandOnCardClick?: boolean;
 }) {
-  const connectorLine =
-    "border-muted-foreground/20 " +
-    (variant === "lines"
-      ? "border-solid"
-      : variant === "minimal"
-        ? "border-dashed"
-        : "border-solid");
+  // Cheap ARIA-tree keyboard support: Up/Down move between the visible rows
+  // (collapsed children are unmounted, so the DOM order IS the visible order),
+  // the inline-end arrow expands, the inline-start arrow collapses, and
+  // Enter/Space toggles selection (or expansion when not selectable).
+  const handleRowKeyDown = (
+    e: React.KeyboardEvent<HTMLDivElement>,
+    node: T,
+    id: string,
+    hasChildren: boolean,
+    isOpen: boolean
+  ) => {
+    if (disabled) return;
+    const expandKey = direction === "rtl" ? "ArrowLeft" : "ArrowRight";
+    const collapseKey = direction === "rtl" ? "ArrowRight" : "ArrowLeft";
+    const row = e.currentTarget;
 
-  // Selection logic helpers
-  const isNodeSelected = (nodeValue: string) => {
-    return selectedValues.includes(nodeValue);
-  };
-
-  const getAllChildrenValues = (node: T): string[] => {
-    const children = getChildren(node) ?? [];
-    const values: string[] = [];
-
-    children.forEach((child) => {
-      if (getValueToSend) {
-        values.push(getValueToSend(child));
-        values.push(...getAllChildrenValues(child));
-      }
-    });
-
-    return values;
-  };
-
-  const getAllParentValues = (nodeValue: string, allNodes: T[]): string[] => {
-    const parents: string[] = [];
-
-    const findParents = (
-      nodes: T[],
-      targetValue: string,
-      currentParents: string[] = []
-    ): boolean => {
-      for (const node of nodes) {
-        if (!getValueToSend) return false;
-        const nodeVal = getValueToSend(node);
-        const children = getChildren(node) ?? [];
-
-        if (children.some((child) => getValueToSend(child) === targetValue)) {
-          parents.push(...currentParents, nodeVal);
-          return true;
-        }
-
-        if (findParents(children, targetValue, [...currentParents, nodeVal])) {
-          return true;
-        }
-      }
-      return false;
+    const moveFocus = (offset: number) => {
+      const tree = row.closest('[role="tree"]');
+      if (!tree) return;
+      const rows = Array.from(tree.querySelectorAll<HTMLElement>('[role="treeitem"]'));
+      rows[rows.indexOf(row) + offset]?.focus();
     };
 
-    findParents(allNodes, nodeValue);
-    return parents;
-  };
-
-  const isNodeIndeterminate = (node: T) => {
-    const children = getChildren(node) ?? [];
-    if (children.length === 0 || !getValueToSend) return false;
-
-    const nodeValue = getValueToSend(node);
-    if (selectedValues.includes(nodeValue)) return false;
-
-    const childrenValues = getAllChildrenValues(node);
-    return childrenValues.some((childValue) => selectedValues.includes(childValue));
-  };
-
-  const handleSelectionChange = (nodeValue: string, checked: boolean) => {
-    if (!onSelectionChange || !getValueToSend) return;
-
-    const node = nodes.find((n) => getValueToSend(n) === nodeValue);
-    if (!node) return;
-
-    let newSelection = [...selectedValues];
-
-    if (checked) {
-      // Add the node
-      if (!newSelection.includes(nodeValue)) {
-        newSelection.push(nodeValue);
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      moveFocus(1);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      moveFocus(-1);
+    } else if (e.key === expandKey) {
+      e.preventDefault();
+      if (hasChildren && !isOpen) onToggle(id);
+      else if (hasChildren && isOpen) moveFocus(1);
+    } else if (e.key === collapseKey) {
+      e.preventDefault();
+      if (hasChildren && isOpen) onToggle(id);
+    } else if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      if (selectable && getValueToSend && onSelect) {
+        const nodeValue = getValueToSend(node);
+        onSelect(nodeValue, !selectedValues.includes(nodeValue));
+      } else if (hasChildren) {
+        onToggle(id);
       }
-
-      // Auto-select all parents
-      const parentValues = getAllParentValues(nodeValue, nodes);
-      parentValues.forEach((parentValue) => {
-        if (!newSelection.includes(parentValue)) {
-          newSelection.push(parentValue);
-        }
-      });
-    } else {
-      // Remove the node
-      newSelection = newSelection.filter((val) => val !== nodeValue);
-
-      // Remove all children
-      const childrenValues = getAllChildrenValues(node);
-      newSelection = newSelection.filter((val) => !childrenValues.includes(val));
     }
-
-    onSelectionChange(newSelection);
   };
 
   return (
-    <ul className={cn("m-0 list-none p-0", variant === "lines" && level > 0 ? "relative" : "")}>
-      {nodes.map((node) => {
+    <ul
+      role={level === 0 ? "tree" : "group"}
+      className={cn("m-0 list-none p-0", variant === "lines" && level > 0 ? "relative" : "")}
+    >
+      {nodes.map((node, index) => {
         const id = getId(node);
         const label = getLabel(node);
         const nodeValue = getValueToSend ? getValueToSend(node) : "";
         const children = getChildren(node) ?? [];
         const hasChildren = children.length > 0;
         const isOpen = expanded[id];
-        const selected = selectable && getValueToSend ? isNodeSelected(nodeValue) : false;
-        const indeterminate = selectable && getValueToSend ? isNodeIndeterminate(node) : false;
+        const selected =
+          selectable && getValueToSend ? selectedValues.includes(nodeValue) : false;
+        const indeterminate =
+          selectable && getValueToSend ? (isNodeIndeterminate?.(node) ?? false) : false;
 
-        const nodeBase = getNodeStyling(
-          variant,
-          level,
-          density,
-          radius,
-          shadow,
-          cardStyle,
-          hasChildren,
-          isOpen
-        );
+        const nodeBase = getNodeStyling(variant, level, density, radius, shadow, cardStyle);
 
         return (
-          <li key={id} className={cn("group relative", variant === "cards" && "mb-2")}>
-            {/* Node row */}
+          <li key={id} role="none" className={cn("group relative", variant === "cards" && "mb-2")}>
+            {/* Node row — the focusable treeitem */}
             <div
+              role="treeitem"
+              aria-level={level + 1}
+              aria-expanded={hasChildren ? isOpen : undefined}
+              aria-selected={selectable ? selected : undefined}
+              // Static roving tabindex: Tab lands on the first root row; the
+              // arrow keys move focus from there.
+              tabIndex={level === 0 && index === 0 ? 0 : -1}
+              onKeyDown={(e) => handleRowKeyDown(e, node, id, hasChildren, isOpen)}
               className={cn(
                 "flex items-center gap-2",
-                variant === "bubble" ? "" : "rounded-md",
+                "rounded-md",
                 nodeBase,
+                "focus-visible:outline-none focus-visible:shadow-nx-focus",
                 expandOnCardClick && hasChildren && !disabled ? "cursor-pointer" : ""
               )}
-              onClick={(e) => {
+              onClick={() => {
                 // Handle card click expansion if enabled and node has children
                 if (expandOnCardClick && hasChildren && !disabled) {
                   onToggle(id);
                 }
               }}
             >
-              {/* Toggle */}
+              {/* Toggle — out of the tab order; the treeitem row carries the
+                  keyboard interaction and the aria-expanded state */}
               <button
                 type="button"
+                tabIndex={-1}
                 className={cn(
                   "flex h-7 w-7 items-center justify-center rounded transition-colors hover:bg-muted",
                   !hasChildren && "cursor-default opacity-60",
@@ -755,7 +656,7 @@ function TreeList<T>({
                   isOpen ? (
                     <ChevronDown className="h-4 w-4 text-primary" />
                   ) : (
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    <ChevronRight className="h-4 w-4 text-muted-foreground rtl:rotate-180" />
                   )
                 ) : (
                   <Circle className="h-3 w-3 opacity-40" />
@@ -768,18 +669,14 @@ function TreeList<T>({
                   className={cn(
                     "flex min-h-[32px] min-w-[32px] items-center justify-center rounded-md p-2",
                     disabled
-                      ? "!cursor-not-allowed !opacity-60"
+                      ? "cursor-not-allowed opacity-60"
                       : "cursor-pointer transition-colors hover:bg-muted/50"
                   )}
                   onClick={(e) => {
                     e.stopPropagation();
                     if (!disabled) {
-                      handleSelectionChange(nodeValue, !selected);
+                      onSelect?.(nodeValue, !selected);
                     }
-                  }}
-                  style={{
-                    cursor: disabled ? "not-allowed !important" : "pointer",
-                    opacity: disabled ? "0.6 !important" : "1",
                   }}
                 >
                   <Checkbox
@@ -791,18 +688,13 @@ function TreeList<T>({
                       }
                     }}
                     onCheckedChange={(checked) =>
-                      !disabled && handleSelectionChange(nodeValue, checked === true)
+                      !disabled && onSelect?.(nodeValue, checked === true)
                     }
                     className={cn(
                       "data-[state=checked]:border-primary data-[state=checked]:bg-primary",
-                      disabled ? "!cursor-not-allowed !opacity-50" : "",
                       "pointer-events-none"
                     )}
-                    style={{
-                      cursor: disabled ? "not-allowed !important" : "default",
-                      opacity: disabled ? "0.5 !important" : "1",
-                      pointerEvents: "none",
-                    }}
+                    tabIndex={-1}
                   />
                 </div>
               )}
@@ -818,7 +710,7 @@ function TreeList<T>({
                 onClick={(e) => {
                   if (selectable && getValueToSend && !disabled) {
                     e.stopPropagation();
-                    handleSelectionChange(nodeValue, !selected);
+                    onSelect?.(nodeValue, !selected);
                   }
                 }}
               >
@@ -841,8 +733,8 @@ function TreeList<T>({
                   {label}
                 </span>
                 {level === 0 && hasChildren && (
-                  <span className="ml-2 inline-flex items-center text-xs text-muted-foreground rtl:ml-0 rtl:mr-2">
-                    <GitBranch className="mr-1 h-3 w-3 rtl:ml-1 rtl:mr-0" />
+                  <span className="ms-2 inline-flex items-center text-xs text-muted-foreground">
+                    <GitBranch className="me-1 h-3 w-3" />
                     {children.length}
                   </span>
                 )}
@@ -852,348 +744,42 @@ function TreeList<T>({
               {actions && <NodeActions node={node} actions={actions} direction={direction} />}
             </div>
 
-            {/* Children */}
-            {/* Lines variant with connectors */}
-            {variant === "lines" && hasChildren && isOpen && (
-              <div className={cn("relative", "mt-1")}>
-                <div
-                  className={cn(
-                    "ml-6 rtl:ml-0 rtl:mr-6",
-                    "border-l rtl:border-l-0 rtl:border-r",
-                    connectorLine
-                  )}
-                >
-                  <div className={cn("pl-4 rtl:pl-0 rtl:pr-4", density.childPad)}>
-                    <TreeList<T>
-                      nodes={children}
-                      variant={variant}
-                      getId={getId}
-                      getLabel={getLabel}
-                      getChildren={getChildren}
-                      expanded={expanded}
-                      onToggle={onToggle}
-                      direction={direction}
-                      actions={actions}
-                      level={level + 1}
-                      density={density}
-                      radius={radius}
-                      shadow={shadow}
-                      cardStyle={cardStyle}
-                      selectable={selectable}
-                      selectedValues={selectedValues}
-                      onSelectionChange={onSelectionChange}
-                      getValueToSend={getValueToSend}
-                      disabled={disabled}
-                      expandOnCardClick={expandOnCardClick}
-                    />
-                  </div>
+            {/* Children — ONE recursive call site for both variants. The old
+                per-variant copies drifted (the gradient copy dropped the
+                disabled/expandOnCardClick props); a single call site cannot. */}
+            {hasChildren && isOpen && (
+              <div
+                className={
+                  variant === "lines"
+                    ? "ms-6 mt-1 border-s border-solid border-muted-foreground/20"
+                    : "mt-2 space-y-2 ps-8"
+                }
+              >
+                <div className={variant === "lines" ? density.childPad : undefined}>
+                  <TreeList<T>
+                    nodes={children}
+                    variant={variant}
+                    getId={getId}
+                    getLabel={getLabel}
+                    getChildren={getChildren}
+                    expanded={expanded}
+                    onToggle={onToggle}
+                    direction={direction}
+                    actions={actions}
+                    level={level + 1}
+                    density={density}
+                    radius={radius}
+                    shadow={shadow}
+                    cardStyle={cardStyle}
+                    selectable={selectable}
+                    selectedValues={selectedValues}
+                    onSelect={onSelect}
+                    isNodeIndeterminate={isNodeIndeterminate}
+                    getValueToSend={getValueToSend}
+                    disabled={disabled}
+                    expandOnCardClick={expandOnCardClick}
+                  />
                 </div>
-              </div>
-            )}
-
-            {/* Cards variant: indented, stacked */}
-            {variant === "cards" && hasChildren && isOpen && (
-              <div className={cn("mt-2 space-y-2", "pl-8 rtl:pl-0 rtl:pr-8")}>
-                <TreeList<T>
-                  nodes={children}
-                  variant={variant}
-                  getId={getId}
-                  getLabel={getLabel}
-                  getChildren={getChildren}
-                  expanded={expanded}
-                  onToggle={onToggle}
-                  direction={direction}
-                  actions={actions}
-                  level={level + 1}
-                  density={density}
-                  radius={radius}
-                  shadow={shadow}
-                  cardStyle={cardStyle}
-                  selectable={selectable}
-                  selectedValues={selectedValues}
-                  onSelectionChange={onSelectionChange}
-                  getValueToSend={getValueToSend}
-                  disabled={disabled}
-                  expandOnCardClick={expandOnCardClick}
-                />
-              </div>
-            )}
-
-            {/* Minimal: light indent, dashed connectors */}
-            {variant === "minimal" && hasChildren && isOpen && (
-              <div className={cn("mt-1", "pl-6 rtl:pl-0 rtl:pr-6")}>
-                <TreeList<T>
-                  nodes={children}
-                  variant={variant}
-                  getId={getId}
-                  getLabel={getLabel}
-                  getChildren={getChildren}
-                  expanded={expanded}
-                  onToggle={onToggle}
-                  direction={direction}
-                  actions={actions}
-                  level={level + 1}
-                  density={density}
-                  radius={radius}
-                  shadow={shadow}
-                  cardStyle={cardStyle}
-                  selectable={selectable}
-                  selectedValues={selectedValues}
-                  onSelectionChange={onSelectionChange}
-                  getValueToSend={getValueToSend}
-                  disabled={disabled}
-                  expandOnCardClick={expandOnCardClick}
-                />
-              </div>
-            )}
-
-            {/* Bubble: inline chip-like children wrapping */}
-            {variant === "bubble" && hasChildren && isOpen && (
-              <div className={cn("mt-2 flex flex-wrap gap-2", "pl-8 rtl:pl-0 rtl:pr-8")}>
-                <TreeList<T>
-                  nodes={children}
-                  variant={variant}
-                  getId={getId}
-                  getLabel={getLabel}
-                  getChildren={getChildren}
-                  expanded={expanded}
-                  onToggle={onToggle}
-                  direction={direction}
-                  actions={actions}
-                  level={level + 1}
-                  density={density}
-                  radius={radius}
-                  shadow={shadow}
-                  cardStyle={cardStyle}
-                  selectable={selectable}
-                  selectedValues={selectedValues}
-                  onSelectionChange={onSelectionChange}
-                  getValueToSend={getValueToSend}
-                  disabled={disabled}
-                  expandOnCardClick={expandOnCardClick}
-                />
-              </div>
-            )}
-
-            {/* Modern: smooth indented with subtle connectors */}
-            {variant === "modern" && hasChildren && isOpen && (
-              <div className={cn("mt-3 space-y-1", "pl-8 rtl:pl-0 rtl:pr-8")}>
-                <TreeList<T>
-                  nodes={children}
-                  variant={variant}
-                  getId={getId}
-                  getLabel={getLabel}
-                  getChildren={getChildren}
-                  expanded={expanded}
-                  onToggle={onToggle}
-                  direction={direction}
-                  actions={actions}
-                  level={level + 1}
-                  density={density}
-                  radius={radius}
-                  shadow={shadow}
-                  cardStyle={cardStyle}
-                  selectable={selectable}
-                  selectedValues={selectedValues}
-                  onSelectionChange={onSelectionChange}
-                  getValueToSend={getValueToSend}
-                  disabled={disabled}
-                  expandOnCardClick={expandOnCardClick}
-                />
-              </div>
-            )}
-
-            {/* Glass: floating glass panels */}
-            {variant === "glass" && hasChildren && isOpen && (
-              <div className={cn("mt-4 space-y-3", "pl-6 rtl:pl-0 rtl:pr-6")}>
-                <TreeList<T>
-                  nodes={children}
-                  variant={variant}
-                  getId={getId}
-                  getLabel={getLabel}
-                  getChildren={getChildren}
-                  expanded={expanded}
-                  onToggle={onToggle}
-                  direction={direction}
-                  actions={actions}
-                  level={level + 1}
-                  density={density}
-                  radius={radius}
-                  shadow={shadow}
-                  cardStyle={cardStyle}
-                  selectable={selectable}
-                  selectedValues={selectedValues}
-                  onSelectionChange={onSelectionChange}
-                  getValueToSend={getValueToSend}
-                  disabled={disabled}
-                  expandOnCardClick={expandOnCardClick}
-                />
-              </div>
-            )}
-
-            {/* Elegant: sophisticated left-border hierarchy */}
-            {variant === "elegant" && hasChildren && isOpen && (
-              <div className={cn("mt-2 space-y-1", "pl-6 rtl:pl-0 rtl:pr-6")}>
-                <TreeList<T>
-                  nodes={children}
-                  variant={variant}
-                  getId={getId}
-                  getLabel={getLabel}
-                  getChildren={getChildren}
-                  expanded={expanded}
-                  onToggle={onToggle}
-                  direction={direction}
-                  actions={actions}
-                  level={level + 1}
-                  density={density}
-                  radius={radius}
-                  shadow={shadow}
-                  cardStyle={cardStyle}
-                  selectable={selectable}
-                  selectedValues={selectedValues}
-                  onSelectionChange={onSelectionChange}
-                  getValueToSend={getValueToSend}
-                  disabled={disabled}
-                  expandOnCardClick={expandOnCardClick}
-                />
-              </div>
-            )}
-
-            {/* Professional: clean business hierarchy */}
-            {variant === "professional" && hasChildren && isOpen && (
-              <div className={cn("mt-2 space-y-1", "pl-8 rtl:pl-0 rtl:pr-8")}>
-                <TreeList<T>
-                  nodes={children}
-                  variant={variant}
-                  getId={getId}
-                  getLabel={getLabel}
-                  getChildren={getChildren}
-                  expanded={expanded}
-                  onToggle={onToggle}
-                  direction={direction}
-                  actions={actions}
-                  level={level + 1}
-                  density={density}
-                  radius={radius}
-                  shadow={shadow}
-                  cardStyle={cardStyle}
-                  selectable={selectable}
-                  selectedValues={selectedValues}
-                  onSelectionChange={onSelectionChange}
-                  getValueToSend={getValueToSend}
-                  disabled={disabled}
-                  expandOnCardClick={expandOnCardClick}
-                />
-              </div>
-            )}
-
-            {/* Gradient: colorful flowing hierarchy */}
-            {variant === "gradient" && hasChildren && isOpen && (
-              <div className={cn("mt-3 space-y-2", "pl-8 rtl:pl-0 rtl:pr-8")}>
-                <TreeList<T>
-                  nodes={children}
-                  variant={variant}
-                  getId={getId}
-                  getLabel={getLabel}
-                  getChildren={getChildren}
-                  expanded={expanded}
-                  onToggle={onToggle}
-                  direction={direction}
-                  actions={actions}
-                  level={level + 1}
-                  density={density}
-                  radius={radius}
-                  shadow={shadow}
-                  cardStyle={cardStyle}
-                  selectable={selectable}
-                  selectedValues={selectedValues}
-                  onSelectionChange={onSelectionChange}
-                  getValueToSend={getValueToSend}
-                />
-              </div>
-            )}
-
-            {/* Neon: glowing cyber hierarchy */}
-            {variant === "neon" && hasChildren && isOpen && (
-              <div className={cn("mt-3 space-y-2", "pl-8 rtl:pl-0 rtl:pr-8")}>
-                <TreeList<T>
-                  nodes={children}
-                  variant={variant}
-                  getId={getId}
-                  getLabel={getLabel}
-                  getChildren={getChildren}
-                  expanded={expanded}
-                  onToggle={onToggle}
-                  direction={direction}
-                  actions={actions}
-                  level={level + 1}
-                  density={density}
-                  radius={radius}
-                  shadow={shadow}
-                  cardStyle={cardStyle}
-                  selectable={selectable}
-                  selectedValues={selectedValues}
-                  onSelectionChange={onSelectionChange}
-                  getValueToSend={getValueToSend}
-                  disabled={disabled}
-                  expandOnCardClick={expandOnCardClick}
-                />
-              </div>
-            )}
-
-            {/* Organic: natural flowing hierarchy */}
-            {variant === "organic" && hasChildren && isOpen && (
-              <div className={cn("mt-4 space-y-3", "pl-10 rtl:pl-0 rtl:pr-10")}>
-                <TreeList<T>
-                  nodes={children}
-                  variant={variant}
-                  getId={getId}
-                  getLabel={getLabel}
-                  getChildren={getChildren}
-                  expanded={expanded}
-                  onToggle={onToggle}
-                  direction={direction}
-                  actions={actions}
-                  level={level + 1}
-                  density={density}
-                  radius={radius}
-                  shadow={shadow}
-                  cardStyle={cardStyle}
-                  selectable={selectable}
-                  selectedValues={selectedValues}
-                  onSelectionChange={onSelectionChange}
-                  getValueToSend={getValueToSend}
-                  disabled={disabled}
-                  expandOnCardClick={expandOnCardClick}
-                />
-              </div>
-            )}
-
-            {/* Corporate: formal business hierarchy */}
-            {variant === "corporate" && hasChildren && isOpen && (
-              <div className={cn("mt-2 space-y-1", "pl-6 rtl:pl-0 rtl:pr-6")}>
-                <TreeList<T>
-                  nodes={children}
-                  variant={variant}
-                  getId={getId}
-                  getLabel={getLabel}
-                  getChildren={getChildren}
-                  expanded={expanded}
-                  onToggle={onToggle}
-                  direction={direction}
-                  actions={actions}
-                  level={level + 1}
-                  density={density}
-                  radius={radius}
-                  shadow={shadow}
-                  cardStyle={cardStyle}
-                  selectable={selectable}
-                  selectedValues={selectedValues}
-                  onSelectionChange={onSelectionChange}
-                  getValueToSend={getValueToSend}
-                  disabled={disabled}
-                  expandOnCardClick={expandOnCardClick}
-                />
               </div>
             )}
           </li>

@@ -1,7 +1,6 @@
 // Shared Layout Infrastructure — Barrel Export
 // All shared components used across the 12 layout variants
 
-export { LayoutWrapper } from "./layout-wrapper";
 export { NavRenderer } from "./nav-renderer";
 export type { NavRendererProps, NavVariant } from "./nav-renderer";
 export { UserCard } from "./user-card";
