@@ -4,7 +4,16 @@ import { useAppListingsViewModel } from "../viewmodels/useAppListingsViewModel";
 import { AppListingCard } from "../components/AppListingCard";
 import { AppListingsStats } from "../components/AppListingsStats";
 import { AppListingsToolbar } from "../components/AppListingsToolbar";
-import { AppListingsPagination } from "../components/AppListingsPagination";
+import { EmptyState } from "@core/ui/empty-state";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@core/ui/pagination";
+import { cn } from "@core/common/utils";
+import { Package } from "lucide-react";
 
 /**
  * AppListingsView
@@ -18,10 +27,12 @@ import { AppListingsPagination } from "../components/AppListingsPagination";
  *   ├─ AppListingsStats      (summary cards)
  *   ├─ AppListingsToolbar    (search + filters)
  *   ├─ AppListingCard[]      (list items)
- *   └─ AppListingsPagination (page controls)
+ *   └─ Pagination            (core page controls)
  */
 export function AppListingsView() {
   const vm = useAppListingsViewModel();
+
+  const { page, totalPages, totalCount } = vm.pagination;
 
   return (
     <div className="flex flex-col gap-6 p-6">
@@ -48,10 +59,11 @@ export function AppListingsView() {
           ))}
         </div>
       ) : vm.listings.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
-          <p className="text-lg font-medium">No listings found</p>
-          <p className="text-sm">Try adjusting your filters</p>
-        </div>
+        <EmptyState
+          icon={Package}
+          title="No listings found"
+          description="Try adjusting your filters"
+        />
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {vm.listings.map((listing) => (
@@ -69,13 +81,49 @@ export function AppListingsView() {
         </div>
       )}
 
-      {/* Pagination */}
-      <AppListingsPagination
-        page={vm.pagination.page}
-        totalPages={vm.pagination.totalPages}
-        totalCount={vm.pagination.totalCount}
-        onPageChange={vm.setPage}
-      />
+      {/* Pagination — composed from the core pagination primitives */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between px-1">
+          <p className="text-sm text-muted-foreground">
+            {totalCount} listing{totalCount !== 1 ? "s" : ""} total
+          </p>
+          <div className="flex items-center gap-2">
+            <Pagination className="mx-0 w-auto justify-end">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    aria-disabled={page <= 1 || undefined}
+                    tabIndex={page <= 1 ? -1 : undefined}
+                    className={cn("h-8", page <= 1 && "pointer-events-none opacity-50")}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      vm.setPage(page - 1);
+                    }}
+                  />
+                </PaginationItem>
+                <PaginationItem>
+                  <span className="px-2 text-sm font-medium tabular-nums">
+                    {page} / {totalPages}
+                  </span>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    aria-disabled={page >= totalPages || undefined}
+                    tabIndex={page >= totalPages ? -1 : undefined}
+                    className={cn("h-8", page >= totalPages && "pointer-events-none opacity-50")}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      vm.setPage(page + 1);
+                    }}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

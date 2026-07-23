@@ -27,7 +27,8 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useWorkspaceTransition } from "@core/ui/layout/nexus/use-workspace-transition";
 
-import { Loader2, Star } from "lucide-react";
+import { Loader2, Star, SearchX, LayoutGrid } from "lucide-react";
+import { EmptyState } from "@core/ui/empty-state";
 import type { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
 
 import { HubHero } from "../components/HubHero";
@@ -178,13 +179,14 @@ export function WorkspaceHubView() {
   if (isLoading) {
     return (
       <div
-        style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}
+        role="status"
+        aria-label={t("common.loading")}
+        className="flex h-[60vh] items-center justify-center"
       >
         <Loader2
-          size={32}
-          style={{ animation: "spin 1s linear infinite", color: "rgba(230,233,245,0.5)" }}
+          className="h-8 w-8 animate-spin text-nx-ink-3 motion-reduce:animate-none"
+          aria-hidden="true"
         />
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
@@ -193,13 +195,14 @@ export function WorkspaceHubView() {
   if (allUnlocked.length === 1 && lockedWorkspaces.length === 0 && !hasAutoRedirected.current) {
     return (
       <div
-        style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}
+        role="status"
+        aria-label={t("common.loading")}
+        className="flex h-[60vh] items-center justify-center"
       >
         <Loader2
-          size={32}
-          style={{ animation: "spin 1s linear infinite", color: "rgba(230,233,245,0.5)" }}
+          className="h-8 w-8 animate-spin text-nx-ink-3 motion-reduce:animate-none"
+          aria-hidden="true"
         />
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
@@ -216,62 +219,42 @@ export function WorkspaceHubView() {
     filteredLocked.length > 0;
 
   return (
-    <main
-      style={{
-        position: "relative",
-        maxWidth: 1280,
-        margin: "0 auto",
-        padding: "0 40px 56px",
-        fontFamily: "'Inter', system-ui, sans-serif",
-        color: "#e6e9f5",
-      }}
-    >
+    <main className="relative mx-auto max-w-7xl px-10 pb-14 text-nx-ink">
       <HubHero />
 
-      <div style={{ height: 8 }} />
+      <div className="h-2" />
       <HubSearch value={searchQuery} onChange={setSearchQuery} />
-      <div style={{ height: 32 }} />
+      <div className="h-8" />
 
       {/* Main content + side panel */}
-      <div style={{ display: "flex", gap: 40, alignItems: "flex-start" }}>
+      <div className="flex items-start gap-10">
         {/* Left column — grids */}
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div className="min-w-0 flex-1">
           {/* Pinned strip */}
           {filteredPinned.length > 0 && !searchQuery && (
-            <section style={{ marginBottom: 32 }}>
+            <section className="mb-8">
               <HubSectionHeader
                 icon={
-                  <span
-                    style={{
-                      display: "inline-flex",
-                      color: "#FFC25E",
-                      filter: "drop-shadow(0 0 8px rgba(255,194,94,0.35))",
-                    }}
-                  >
+                  <span className="inline-flex text-warning">
                     <Star size={13} fill="currentColor" strokeWidth={0} />
                   </span>
                 }
                 title={t("workspaceHub.sections.pinned")}
-                subtitle={`${filteredPinned.length} ${filteredPinned.length === 1 ? "app" : "apps"}`}
+                subtitle={
+                  filteredPinned.length === 1
+                    ? t("workspaceHub.pinned.apps_one")
+                    : t("workspaceHub.pinned.apps_other", { count: filteredPinned.length })
+                }
                 action={
                   <button
                     type="button"
-                    style={{
-                      fontSize: 12,
-                      fontWeight: 500,
-                      color: "rgba(230,233,245,0.55)",
-                      background: "transparent",
-                      border: "none",
-                      cursor: "pointer",
-                      padding: 0,
-                      fontFamily: "inherit",
-                    }}
+                    className="cursor-pointer rounded-nx-sm border-0 bg-transparent p-0 text-xs font-medium text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
                   >
                     {t("workspaceHub.pinned.manage")}
                   </button>
                 }
               />
-              <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+              <div className="flex flex-wrap gap-3.5">
                 {filteredPinned.map((ws) => (
                   <HubModuleTile
                     key={ws.workspaceKey}
@@ -295,12 +278,14 @@ export function WorkspaceHubView() {
 
           {/* Modules grid */}
           {filteredModules.length > 0 && (
-            <section style={{ marginBottom: 36 }}>
+            <section className="mb-9">
               <HubSectionHeader
                 title={t("workspaceHub.sections.modules")}
                 subtitle={
                   searchQuery
-                    ? `${filteredModules.length} results`
+                    ? filteredModules.length === 1
+                      ? t("workspaceHub.items.one")
+                      : t("workspaceHub.items.other", { count: filteredModules.length })
                     : t("workspaceHub.modules.licensed", {
                         count: licensedCount,
                         total: totalModules,
@@ -308,18 +293,7 @@ export function WorkspaceHubView() {
                 }
                 action={
                   !searchQuery ? (
-                    <span
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 500,
-                        letterSpacing: "0.04em",
-                        color: "rgba(230,233,245,0.5)",
-                        padding: "4px 10px",
-                        borderRadius: 999,
-                        border: "1px solid rgba(255,255,255,0.06)",
-                        background: "rgba(255,255,255,0.025)",
-                      }}
-                    >
+                    <span className="rounded-full border border-nx-line bg-nx-hover px-2.5 py-1 text-[11px] font-medium tracking-wide text-nx-ink-3">
                       {t("workspaceHub.modules.sortLabel")}
                     </span>
                   ) : undefined
@@ -376,7 +350,7 @@ export function WorkspaceHubView() {
 
           {/* Administration grid */}
           {filteredAdmin.length > 0 && (
-            <section style={{ marginBottom: 32 }}>
+            <section className="mb-8">
               <HubSectionHeader
                 title={t("workspaceHub.sections.administration")}
                 subtitle={t("workspaceHub.admin.subtitle")}
@@ -410,18 +384,14 @@ export function WorkspaceHubView() {
             </section>
           )}
 
-          {/* No results */}
+          {/* No results — the shared empty anatomy */}
           {searchQuery && !hasAnyResults && (
-            <div
-              style={{
-                textAlign: "center",
-                padding: "48px 0",
-                color: "rgba(230,233,245,0.45)",
-                fontSize: 14,
-              }}
-            >
-              {t("workspaceHub.noResults")}
-            </div>
+            <EmptyState icon={SearchX} title={t("workspaceHub.noResults")} />
+          )}
+
+          {/* Nothing licensed at all — same anatomy, page size */}
+          {!searchQuery && workspaceGroups.length === 0 && (
+            <EmptyState size="lg" icon={LayoutGrid} title={t("workspaceHub.emptyState")} />
           )}
         </div>
 
@@ -456,6 +426,9 @@ export function WorkspaceHubView() {
         .nx-hub-mesh-a { animation: nx-hub-mesh-a-kf 14s ease-in-out infinite; }
         .nx-hub-mesh-b { animation: nx-hub-mesh-b-kf 18s ease-in-out infinite; }
         .nx-hub-mesh-c { animation: nx-hub-mesh-c-kf 16s ease-in-out infinite; }
+        @media (prefers-reduced-motion: reduce) {
+          .nx-hub-mesh-a, .nx-hub-mesh-b, .nx-hub-mesh-c { animation: none; }
+        }
       `}</style>
     </main>
   );

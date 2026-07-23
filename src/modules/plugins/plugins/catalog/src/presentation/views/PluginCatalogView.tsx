@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { useAppStore } from "@core/store/useAppStore";
 import { useCatalogViewModel } from "../viewmodels/useCatalogViewModel";
-import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
-import { AlertTriangle, Store, RefreshCw } from "lucide-react";
+import { ErrorMessage } from "@core/ui/error-message";
+import { EmptyState } from "@core/ui/empty-state";
+import { Store } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { PluginCard } from "../components/PluginCard";
 import { PluginInstallDialog } from "../components/PluginInstallDialog";
@@ -51,24 +52,16 @@ export function PluginCatalogView() {
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center gap-4 py-20">
-        <AlertTriangle className="h-10 w-10 text-destructive" />
-        <p className="text-sm text-muted-foreground">{t("plugins.catalogError")}</p>
-        <Button variant="outline" size="sm" onClick={() => refetch()}>
-          <RefreshCw className="me-2 h-4 w-4" />
-          {t("plugins.retry")}
-        </Button>
-      </div>
+      <ErrorMessage
+        message={t("plugins.catalogError")}
+        onRetry={() => refetch()}
+        className="py-20"
+      />
     );
   }
 
   if (plugins.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center gap-3 py-20">
-        <Store className="h-10 w-10 text-muted-foreground" />
-        <p className="text-sm text-muted-foreground">{t("plugins.catalogEmpty")}</p>
-      </div>
-    );
+    return <EmptyState size="lg" icon={Store} title={t("plugins.catalogEmpty")} className="m-6" />;
   }
 
   return (

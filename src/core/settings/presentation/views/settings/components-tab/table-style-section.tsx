@@ -6,7 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core
 import { Check } from "lucide-react";
 import { cn } from "@core/common/utils";
 
-// Table preview component with all style variants
+// Table preview — the real generic-table structure in miniature: the
+// attribute on the root, the frame as the first `> div` hop. The SAME
+// [data-table-style] CSS in globals.css styles this preview, so it can never
+// drift from the tables it advertises. The three per-variant class maps that
+// used to hand-paint twelve skins here are gone with them.
 function TablePreview({ style, t }: { style: string; t: (key: string) => string }) {
   const sampleData = [
     { id: "1", name: t("settings.sampleTable.data.john"), role: "admin", status: "active" },
@@ -14,117 +18,47 @@ function TablePreview({ style, t }: { style: string; t: (key: string) => string 
     { id: "3", name: t("settings.sampleTable.data.bob"), role: "editor", status: "inactive" },
   ];
 
-  const getTableClasses = () => {
-    const b = "overflow-hidden transition-all duration-300 w-full";
-    const map: Record<string, string> = {
-      striped: cn(b, "rounded-lg border bg-card"),
-      bordered: cn(b, "rounded-lg border-2 border-border bg-card"),
-      minimal: cn(b, "rounded-none border-0 bg-transparent"),
-      glass: cn(
-        b,
-        "rounded-2xl border border-white/20 bg-white/10 backdrop-blur-xl shadow-2xl dark:bg-black/20 dark:border-white/10"
-      ),
-      neon: cn(
-        b,
-        "rounded-xl border-2 border-primary/30 bg-background shadow-[0_0_30px_hsl(var(--primary)/0.3)] dark:bg-black/95"
-      ),
-      gradient: cn(
-        b,
-        "rounded-2xl border-0 bg-gradient-to-br from-primary/20 via-background to-primary/10 shadow-2xl"
-      ),
-      cyberpunk: cn(
-        b,
-        "rounded-none border-2 border-primary bg-background shadow-[0_0_50px_hsl(var(--primary)/0.4)] dark:bg-black/95"
-      ),
-      luxury: cn(
-        b,
-        "rounded-2xl border border-amber-200/30 bg-gradient-to-br from-amber-50/50 to-amber-100/30 shadow-2xl dark:from-amber-900/20 dark:to-amber-800/10 dark:border-amber-400/20"
-      ),
-      matrix: cn(
-        b,
-        "rounded-none border-2 border-primary/30 bg-background shadow-[0_0_30px_hsl(var(--primary)/0.4)] dark:bg-black/95"
-      ),
-      diamond: cn(
-        b,
-        "rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/10 via-primary/5 to-primary/15 shadow-[0_0_40px_hsl(var(--primary)/0.3)] backdrop-blur-xl"
-      ),
-    };
-    return map[style] ?? cn(b, "rounded-lg border bg-card shadow-sm");
-  };
-
-  const getHeaderClasses = () => {
-    const map: Record<string, string> = {
-      striped: "bg-muted/50 border-b-2 border-border",
-      bordered: "bg-muted/40 border-b-2 border-border",
-      minimal: "bg-transparent border-b border-border/50",
-      glass: "bg-white/10 border-b border-white/20 backdrop-blur-sm",
-      neon: "bg-primary/10 border-b border-primary/30",
-      gradient: "bg-gradient-to-r from-primary/10 to-primary/15 border-b border-primary/20",
-      cyberpunk: "bg-primary/10 border-b border-primary/40",
-      luxury: "bg-amber-100/40 border-b border-amber-200/30 dark:bg-amber-900/20",
-      matrix: "bg-primary/10 border-b border-primary/30",
-      diamond: "bg-primary/10 border-b border-primary/30",
-    };
-    return map[style] ?? "bg-muted/40 border-b border-border";
-  };
-
-  const getRowClasses = (index: number) => {
-    const map: Record<string, string> = {
-      striped: index % 2 === 0 ? "bg-muted/20 hover:bg-muted/30" : "bg-card hover:bg-muted/20",
-      bordered: "border-b bg-card hover:bg-muted/20",
-      minimal: "border-b border-border/30 bg-transparent hover:bg-muted/10",
-      glass: "bg-white/5 border-b border-white/10 backdrop-blur-sm hover:bg-white/10",
-      neon: "bg-primary/5 border-b border-primary/20 hover:bg-primary/10",
-      gradient:
-        "bg-gradient-to-r from-primary/5 to-primary/10 border-b border-primary/10 hover:from-primary/10 hover:to-primary/15",
-      cyberpunk: "bg-primary/5 border-b border-primary/30 hover:bg-primary/10",
-      luxury:
-        "bg-amber-50/20 border-b border-amber-200/20 dark:bg-amber-900/10 hover:bg-amber-50/30",
-      matrix: "bg-primary/5 border-b border-primary/20 hover:bg-primary/10",
-      diamond: "bg-primary/5 border-b border-primary/20 hover:bg-primary/10",
-    };
-    return map[style] ?? "bg-card border-b hover:bg-muted/20";
-  };
-
   return (
-    <div className={getTableClasses()}>
-      <table className="w-full text-xs">
-        <thead>
-          <tr className={cn("font-medium text-muted-foreground", getHeaderClasses())}>
-            <th className="px-2 py-1.5 text-left font-semibold">
-              {t("settings.sampleTable.name")}
-            </th>
-            <th className="px-2 py-1.5 text-left font-semibold">
-              {t("settings.sampleTable.role")}
-            </th>
-            <th className="px-2 py-1.5 text-left font-semibold">
-              {t("settings.sampleTable.status")}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {sampleData.map((row, index) => (
-            <tr key={row.id} className={getRowClasses(index)}>
-              <td className="px-2 py-1.5 font-medium">{row.name}</td>
-              <td className="px-2 py-1.5 text-muted-foreground">
-                {t(`settings.sampleTable.roles.${row.role}`)}
-              </td>
-              <td className="px-2 py-1.5">
-                <span
-                  className={cn(
-                    "rounded px-1.5 py-0.5 text-[10px] font-medium",
-                    row.status === "active" && "bg-success/15 text-success",
-                    row.status === "pending" && "bg-warning/15 text-warning",
-                    row.status === "inactive" && "bg-destructive/15 text-destructive"
-                  )}
-                >
-                  {t(`settings.sampleTable.${row.status}`)}
-                </span>
-              </td>
+    <div data-table-style={style} className="w-full">
+      <div className="w-full overflow-hidden rounded-nx-lg border border-nx-line bg-nx-surface">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="border-b border-nx-line-hi bg-nx-hover text-nx-ink-2">
+              <th className="px-3 py-2.5 text-start font-semibold">
+                {t("settings.sampleTable.name")}
+              </th>
+              <th className="px-3 py-2.5 text-start font-semibold">
+                {t("settings.sampleTable.role")}
+              </th>
+              <th className="px-3 py-2.5 text-start font-semibold">
+                {t("settings.sampleTable.status")}
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {sampleData.map((row) => (
+              <tr key={row.id} className="border-b border-nx-line last:border-0">
+                <td className="px-3 py-2.5 font-medium text-nx-ink">{row.name}</td>
+                <td className="px-3 py-2.5 text-nx-ink-3">
+                  {t(`settings.sampleTable.roles.${row.role}`)}
+                </td>
+                <td className="px-3 py-2.5">
+                  <span
+                    className={cn(
+                      "rounded px-1.5 py-0.5 text-[10px] font-medium",
+                      row.status === "active" && "bg-success/15 text-success",
+                      row.status === "pending" && "bg-warning/15 text-warning",
+                      row.status === "inactive" && "bg-destructive/15 text-destructive"
+                    )}
+                  >
+                    {t(`settings.sampleTable.${row.status}`)}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
@@ -133,6 +67,8 @@ export function TableStyleSection() {
   const { t } = useI18n();
   const settings = useSettings();
 
+  // The five survivors. The seven retired skins still render — globals.css
+  // aliases each to its nearest survivor — they just stop being offered.
   const tableStyles = [
     {
       value: "default",
@@ -155,39 +91,12 @@ export function TableStyleSection() {
       description: t("settings.tableStyle.options.minimal.description"),
     },
     {
-      value: "glass",
-      name: t("settings.tableStyle.options.glass.title"),
-      description: t("settings.tableStyle.options.glass.description"),
-    },
-    {
-      value: "neon",
-      name: t("settings.tableStyle.options.neon.title"),
-      description: t("settings.tableStyle.options.neon.description"),
-    },
-    {
-      value: "gradient",
-      name: t("settings.tableStyle.options.gradient.title"),
-      description: t("settings.tableStyle.options.gradient.description"),
-    },
-    {
-      value: "cyberpunk",
-      name: t("settings.tableStyle.options.cyberpunk.title"),
-      description: t("settings.tableStyle.options.cyberpunk.description"),
-    },
-    {
-      value: "luxury",
-      name: t("settings.tableStyle.options.luxury.title"),
-      description: t("settings.tableStyle.options.luxury.description"),
-    },
-    {
-      value: "matrix",
-      name: t("settings.tableStyle.options.matrix.title"),
-      description: t("settings.tableStyle.options.matrix.description"),
-    },
-    {
-      value: "diamond",
-      name: t("settings.tableStyle.options.diamond.title"),
-      description: t("settings.tableStyle.options.diamond.description"),
+      // No tableStyle.options.compact key exists and locales are frozen this
+      // wave, so the card reuses the spacing option's "Compact" and the form
+      // style's "Tighter spacing" line — both say exactly what this skin does.
+      value: "compact",
+      name: t("settings.spacing.options.compact"),
+      description: t("settings.formStyle.options.compact.description"),
     },
   ];
 
@@ -246,7 +155,7 @@ export function TableStyleSection() {
                 </div>
               </div>
               {settings.tableStyle === style.value && (
-                <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+                <div className="absolute -end-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
                   <Check className="h-3 w-3 text-primary-foreground" />
                 </div>
               )}

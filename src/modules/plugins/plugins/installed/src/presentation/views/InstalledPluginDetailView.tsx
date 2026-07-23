@@ -7,15 +7,9 @@ import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
 import { Card, CardContent, CardHeader } from "@core/ui/card";
 import { Separator } from "@core/ui/separator";
-import {
-  AlertTriangle,
-  ArrowLeft,
-  Settings,
-  Activity,
-  Puzzle,
-  CheckCircle2,
-  XCircle,
-} from "lucide-react";
+import { ArrowLeft, Settings, Activity, Puzzle, CheckCircle2, XCircle } from "lucide-react";
+import { ErrorMessage } from "@core/ui/error-message";
+import { EmptyState } from "@core/ui/empty-state";
 import { useI18n } from "@core/providers/i18n-provider";
 import { PluginHealthBadge } from "../components/PluginHealthBadge";
 import { PluginStatusBadge } from "../components/PluginStatusBadge";
@@ -61,13 +55,11 @@ export function InstalledPluginDetailView({ installationId }: InstalledPluginDet
   // ── Error state ─────────────────────────────────────────────────────────────
   if (isError || !installation) {
     return (
-      <div className="flex flex-col items-center justify-center gap-4 py-24">
-        <AlertTriangle className="h-10 w-10 text-destructive" />
-        <p className="text-sm text-muted-foreground">{t("plugins.installedError")}</p>
-        <Button variant="outline" size="sm" onClick={() => refetch()}>
-          {t("plugins.retry")}
-        </Button>
-      </div>
+      <ErrorMessage
+        message={t("plugins.installedError")}
+        onRetry={() => refetch()}
+        className="py-24"
+      />
     );
   }
 
@@ -188,11 +180,11 @@ export function InstalledPluginDetailView({ installationId }: InstalledPluginDet
           className="min-h-[500px] rounded-xl border"
         />
       ) : (
-        <Card className="flex flex-col items-center justify-center gap-3 py-16 text-muted-foreground">
-          <Puzzle className="h-10 w-10" />
-          <p className="text-sm">{t("plugins.noFrontendUrl")}</p>
-          <p className="text-xs">{t("plugins.noFrontendUrlHint")}</p>
-        </Card>
+        <EmptyState
+          icon={Puzzle}
+          title={t("plugins.noFrontendUrl")}
+          description={t("plugins.noFrontendUrlHint")}
+        />
       )}
     </div>
   );

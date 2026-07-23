@@ -12,8 +12,17 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
-import { ChevronLeft, ChevronRight, FileText, CheckCircle2, XCircle, Eye } from "lucide-react";
-import { formatDateTimeUtc } from "@core/common/utils";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@core/ui/pagination";
+import { ErrorMessage } from "@core/ui/error-message";
+import { EmptyState } from "@core/ui/empty-state";
+import { FileText, CheckCircle2, XCircle, Eye } from "lucide-react";
+import { cn, formatDateTimeUtc } from "@core/common/utils";
 import type { AuditLogPage } from "../../domain/entities/AuditEntities";
 
 interface Props {
@@ -36,7 +45,7 @@ export const AuditLogTable = memo(function AuditLogTable({
   onRowClick,
   onPageChange,
 }: Props) {
-  const { t, language } = useI18n();
+  const { t } = useI18n();
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent, id: string) => {
@@ -60,21 +69,16 @@ export const AuditLogTable = memo(function AuditLogTable({
 
   if (error) {
     return (
-      <div className="flex h-[300px] flex-col items-center justify-center gap-3 text-muted-foreground">
-        <XCircle className="h-8 w-8 opacity-40" aria-hidden="true" />
-        <p className="text-sm">{t("common.error")}</p>
-        <Button variant="outline" size="sm" onClick={onRetry}>
-          {t("common.retry")}
-        </Button>
+      <div className="flex min-h-[300px] flex-col justify-center">
+        <ErrorMessage size="sm" message={t("common.error")} onRetry={onRetry} />
       </div>
     );
   }
 
   if (!data || data.items.length === 0) {
     return (
-      <div className="flex h-[300px] flex-col items-center justify-center gap-2 text-muted-foreground">
-        <FileText className="h-10 w-10 opacity-30" aria-hidden="true" />
-        <p className="text-sm font-medium">{t("audit.results.noResults")}</p>
+      <div className="flex min-h-[300px] flex-col justify-center">
+        <EmptyState size="sm" bare icon={FileText} title={t("audit.results.noResults")} />
       </div>
     );
   }
@@ -153,40 +157,41 @@ export const AuditLogTable = memo(function AuditLogTable({
         </TableBody>
       </Table>
 
-      {/* Pagination */}
+      {/* Pagination — composed from the core pagination primitives, which
+          already flip their chevrons for RTL */}
       {data.totalPages > 1 && (
         <div className="mt-4 flex items-center justify-between border-t pt-4">
           <span className="text-sm tabular-nums text-muted-foreground">
             {t("common.page")} {data.pageNumber} {t("common.of")} {data.totalPages}
           </span>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={!data.hasPreviousPage}
-              onClick={() => onPageChange(data.pageNumber - 1)}
-              aria-label={t("common.previous")}
-            >
-              {language === "ar" ? (
-                <ChevronRight className="h-4 w-4" />
-              ) : (
-                <ChevronLeft className="h-4 w-4" />
-              )}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={!data.hasNextPage}
-              onClick={() => onPageChange(data.pageNumber + 1)}
-              aria-label={t("common.next")}
-            >
-              {language === "ar" ? (
-                <ChevronLeft className="h-4 w-4" />
-              ) : (
-                <ChevronRight className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
+          <Pagination className="mx-0 w-auto justify-end">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  aria-disabled={!data.hasPreviousPage || undefined}
+                  tabIndex={!data.hasPreviousPage ? -1 : undefined}
+                  className={cn("h-8", !data.hasPreviousPage && "pointer-events-none opacity-50")}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onPageChange(data.pageNumber - 1);
+                  }}
+                />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  aria-disabled={!data.hasNextPage || undefined}
+                  tabIndex={!data.hasNextPage ? -1 : undefined}
+                  className={cn("h-8", !data.hasNextPage && "pointer-events-none opacity-50")}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onPageChange(data.pageNumber + 1);
+                  }}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       )}
     </div>

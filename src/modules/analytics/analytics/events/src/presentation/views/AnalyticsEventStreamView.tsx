@@ -18,6 +18,18 @@
 import React from "react";
 import { useAnalyticsEventViewModel } from "../../presentation/viewmodels/useAnalyticsEventViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
+import { StatCard } from "@core/ui/stat-card";
+import { EmptyState } from "@core/ui/empty-state";
+import { ErrorMessage } from "@core/ui/error-message";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@core/ui/pagination";
+import { cn } from "@core/common/utils";
+import { BarChart3, Activity } from "lucide-react";
 
 export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStreamView() {
   const { t, direction } = useI18n();
@@ -45,52 +57,28 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
         </p>
       </div>
 
-      {/* Stats bar */}
-      <div
-        style={{
-          display: "flex",
-          gap: "1rem",
-          marginBottom: "1.5rem",
-          padding: "1rem",
-          backgroundColor: "hsl(var(--muted))",
-          borderRadius: "0.5rem",
-          border: "1px solid hsl(var(--border))",
-        }}
-      >
-        <div>
-          <span style={{ fontSize: "0.75rem", color: "hsl(var(--muted-foreground))", textTransform: "uppercase" }}>
-            {t("analyticsEvents.totalEvents")}
-          </span>
-          <div style={{ fontSize: "1.5rem", fontWeight: 700 }}>{totalCount}</div>
-        </div>
-        <div style={{ borderLeft: "1px solid hsl(var(--border))", margin: "0 0.5rem" }} />
-        <div>
-          <span style={{ fontSize: "0.75rem", color: "hsl(var(--muted-foreground))", textTransform: "uppercase" }}>
-            {t("analyticsEvents.statusLabel")}
-          </span>
-          <div style={{ fontSize: "0.875rem", fontWeight: 500, color: totalCount === 0 ? "hsl(var(--muted-foreground))" : "hsl(var(--success))" }}>
-            {totalCount === 0
+      {/* Stats bar — the shared StatCard anatomy instead of a bespoke strip */}
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <StatCard
+          label={t("analyticsEvents.totalEvents")}
+          value={totalCount.toLocaleString()}
+          icon={BarChart3}
+          tone="info"
+        />
+        <StatCard
+          label={t("analyticsEvents.statusLabel")}
+          value={
+            totalCount === 0
               ? t("analyticsEvents.awaitingModules")
-              : t("analyticsEvents.activeStatus")}
-          </div>
-        </div>
+              : t("analyticsEvents.activeStatus")
+          }
+          icon={Activity}
+          tone={totalCount === 0 ? "neutral" : "success"}
+        />
       </div>
 
-      {/* Error */}
-      {error && (
-        <div
-          style={{
-            padding: "1rem",
-            backgroundColor: "hsl(var(--destructive) / 0.1)",
-            border: "1px solid hsl(var(--destructive) / 0.3)",
-            borderRadius: "0.5rem",
-            color: "hsl(var(--destructive))",
-            marginBottom: "1rem",
-          }}
-        >
-          {error}
-        </div>
-      )}
+      {/* Error — the shared error anatomy */}
+      {error && <ErrorMessage size="sm" message={error} className="mb-4" />}
 
       {/* Loading */}
       {loading && (
@@ -99,33 +87,21 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
         </div>
       )}
 
-      {/* Empty state */}
+      {/* Empty state — the shared EmptyState anatomy; the operator
+          verification hint rides the action slot */}
       {!loading && !error && events.length === 0 && (
-        <div
-          style={{
-            textAlign: "center",
-            padding: "3rem",
-            backgroundColor: "hsl(var(--muted))",
-            borderRadius: "0.5rem",
-            border: "1px dashed hsl(var(--border))",
-            color: "hsl(var(--muted-foreground))",
-          }}
-        >
-          <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>📊</div>
-          <h3 style={{ fontSize: "1rem", fontWeight: 600, marginBottom: "0.5rem", color: "hsl(var(--foreground))" }}>
-            {t("analyticsEvents.emptyTitle")}
-          </h3>
-          <p style={{ fontSize: "0.875rem" }}>
-            {t("analyticsEvents.emptyDescription")}
-          </p>
-          <div style={{ marginTop: "1.5rem", fontSize: "0.75rem", color: "hsl(var(--muted-foreground))" }}>
-            Verification: run{" "}
-            <code style={{ backgroundColor: "hsl(var(--muted))", padding: "0.1rem 0.3rem", borderRadius: "0.25rem" }}>
-              scripe test backend
-            </code>{" "}
-            → Analytics.Application.Tests 9/9 confirm store + projection + idempotency are working.
-          </div>
-        </div>
+        <EmptyState
+          icon={BarChart3}
+          title={t("analyticsEvents.emptyTitle")}
+          description={t("analyticsEvents.emptyDescription")}
+          action={
+            <p className="max-w-[60ch] text-xs text-muted-foreground">
+              Verification: run{" "}
+              <code className="rounded bg-muted px-1 py-0.5">scripe test backend</code> →
+              Analytics.Application.Tests 9/9 confirm store + projection + idempotency are working.
+            </p>
+          }
+        />
       )}
 
       {/* Event table */}
@@ -197,49 +173,43 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
             </table>
           </div>
 
-          {/* Pagination */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginTop: "1rem",
-              fontSize: "0.875rem",
-              color: "hsl(var(--muted-foreground))",
-            }}
-          >
-            <span>
+          {/* Pagination — composed from the core pagination primitives */}
+          <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
+            <span className="tabular-nums">
               Showing {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalCount)} of{" "}
               {totalCount} events
             </span>
-            <div style={{ display: "flex", gap: "0.5rem" }}>
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                style={{
-                  padding: "0.375rem 0.75rem",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: "0.375rem",
-                  cursor: page === 1 ? "not-allowed" : "pointer",
-                  opacity: page === 1 ? 0.5 : 1,
-                }}
-              >
-                Previous
-              </button>
-              <button
-                onClick={() => setPage((p) => p + 1)}
-                disabled={page * pageSize >= totalCount}
-                style={{
-                  padding: "0.375rem 0.75rem",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: "0.375rem",
-                  cursor: page * pageSize >= totalCount ? "not-allowed" : "pointer",
-                  opacity: page * pageSize >= totalCount ? 0.5 : 1,
-                }}
-              >
-                Next
-              </button>
-            </div>
+            <Pagination className="mx-0 w-auto justify-end">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    aria-disabled={page === 1 || undefined}
+                    tabIndex={page === 1 ? -1 : undefined}
+                    className={cn("h-8", page === 1 && "pointer-events-none opacity-50")}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setPage((p) => Math.max(1, p - 1));
+                    }}
+                  />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    aria-disabled={page * pageSize >= totalCount || undefined}
+                    tabIndex={page * pageSize >= totalCount ? -1 : undefined}
+                    className={cn(
+                      "h-8",
+                      page * pageSize >= totalCount && "pointer-events-none opacity-50"
+                    )}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setPage((p) => p + 1);
+                    }}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </div>
         </>
       )}

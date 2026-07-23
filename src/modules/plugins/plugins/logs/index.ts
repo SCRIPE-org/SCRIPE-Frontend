@@ -1,6 +1,5 @@
 export { PluginLogsView } from "./src/presentation/views/PluginLogsView";
 export { LogRow } from "./src/presentation/components/LogRow";
-export { LogsPagination } from "./src/presentation/components/LogsPagination";
 export { useLogsViewModel } from "./src/presentation/viewmodels/useLogsViewModel";
 export { PluginExecutionLog } from "./src/domain/entities/PluginExecutionLog";
 export type { ILogsRepository } from "./src/domain/interfaces/ILogsRepository";

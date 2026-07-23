@@ -3,10 +3,19 @@
 import { useLogsViewModel } from "../viewmodels/useLogsViewModel";
 import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
-import { AlertTriangle, RefreshCw, Activity } from "lucide-react";
+import { ErrorMessage } from "@core/ui/error-message";
+import { EmptyState } from "@core/ui/empty-state";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@core/ui/pagination";
+import { RefreshCw, Activity } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { cn } from "@core/common/utils";
 import { LogRow } from "../components/LogRow";
-import { LogsPagination } from "../components/LogsPagination";
 
 interface PluginLogsViewProps {
   installationId: string;
@@ -33,24 +42,12 @@ export function PluginLogsView({ installationId }: PluginLogsViewProps) {
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center gap-4 py-16">
-        <AlertTriangle className="h-8 w-8 text-destructive" />
-        <p className="text-sm text-muted-foreground">{t("plugins.logsError")}</p>
-        <Button variant="outline" size="sm" onClick={() => refetch()}>
-          <RefreshCw className="me-2 h-4 w-4" />
-          {t("plugins.retry")}
-        </Button>
-      </div>
+      <ErrorMessage message={t("plugins.logsError")} onRetry={() => refetch()} className="py-16" />
     );
   }
 
   if (logs.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center gap-3 py-16 text-muted-foreground">
-        <Activity className="h-10 w-10" />
-        <p className="text-sm">{t("plugins.logsEmpty")}</p>
-      </div>
-    );
+    return <EmptyState icon={Activity} title={t("plugins.logsEmpty")} className="my-6" />;
   }
 
   return (
@@ -70,7 +67,44 @@ export function PluginLogsView({ installationId }: PluginLogsViewProps) {
         ))}
       </div>
 
-      <LogsPagination page={page} totalPages={totalPages} onPageChange={goToPage} />
+      {/* Pagination — composed from the core pagination primitives */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-3 border-t p-4">
+          <Pagination className="mx-0 w-auto">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  aria-disabled={page === 1 || undefined}
+                  tabIndex={page === 1 ? -1 : undefined}
+                  className={cn("h-8", page === 1 && "pointer-events-none opacity-50")}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    goToPage(page - 1);
+                  }}
+                />
+              </PaginationItem>
+              <PaginationItem>
+                <span className="px-2 text-xs tabular-nums text-muted-foreground">
+                  {t("plugins.logsPage", { page: String(page), total: String(totalPages) })}
+                </span>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  aria-disabled={page === totalPages || undefined}
+                  tabIndex={page === totalPages ? -1 : undefined}
+                  className={cn("h-8", page === totalPages && "pointer-events-none opacity-50")}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    goToPage(page + 1);
+                  }}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
     </div>
   );
 }

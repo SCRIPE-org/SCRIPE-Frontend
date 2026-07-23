@@ -4529,3 +4529,116 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   --nx-shadow-popover: 0 8px 24px -8px rgb(23 17 40 / 0.16), 0 2px 8px -2px rgb(23 17 40 / 0.08);
   --nx-shadow-modal: 0 24px 64px -16px rgb(23 17 40 / 0.24), 0 8px 24px -8px rgb(23 17 40 / 0.12);
 }
+
+/* ============================================================================
+   TABLE STYLES — [data-table-style] (settings-driven)
+   ----------------------------------------------------------------------------
+   Wave D left generic-table emitting data-table-style on its root with no CSS
+   reading it, so all twelve legacy values rendered identically. This section
+   is the missing consumer. Five survivors:
+
+     default  — the component's own utility classes; no rules here by design
+     striped  — even-row ink wash one step quieter than --nx-hover
+     bordered — interior column hairlines; the frame steps up to line-hi
+     minimal  — the frame chrome goes transparent; only hairlines remain
+     compact  — cell density re-derived from the existing --spacing-unit
+
+   The retired skins alias their nearest survivor by sharing its block
+   (glass → minimal; neon, cyberpunk → bordered; gradient, luxury, matrix →
+   striped; neumorphism, diamond → default by absence), so a stale persisted
+   value keeps rendering sanely — the merge engine does not yet gate
+   tableStyle behind a survivor list; that migration is its own work.
+
+   SCOPE — every selector's first hop is `> div` off the attribute holder.
+   <html> also carries data-table-style (dom-applicator), but html's only
+   element children are head/body, so these rules can only fire from a
+   component root that re-declares the attribute — generic-table always does,
+   and the settings preview mirrors the same structure. That keeps raw
+   <table> primitives elsewhere unstyled and lets overrideTableStyle win by
+   construction. Colours are nx tokens only; edges are logical
+   (border-inline-*); the skins are static — no motion is added, so no
+   reduced-motion branch is owed here. */
+
+/* striped — the wash sits below the 5% --nx-hover step so row hover still
+   reads. Hovered and selected rows are excluded: the component's own hover
+   tint and the --nx-accent-wash selection stay the louder statements. */
+:is(
+    [data-table-style="striped"],
+    [data-table-style="gradient"],
+    [data-table-style="luxury"],
+    [data-table-style="matrix"]
+  )
+  > div
+  table
+  tbody
+  tr:nth-child(even):not(:hover):not([data-state="selected"]) {
+  background-color: color-mix(in srgb, var(--nx-ink) 3%, transparent);
+}
+
+/* bordered — the frame and the pagination band step up to line-hi. The rule
+   also lands on the borderless wrappers (search, mobile cards), where a
+   border-color with no border-width paints nothing. */
+:is(
+    [data-table-style="bordered"],
+    [data-table-style="neon"],
+    [data-table-style="cyberpunk"]
+  )
+  > div {
+  border-color: var(--nx-line-hi);
+}
+
+/* bordered — interior column hairlines. Collapsed table borders merge the
+   cell's inline-end line with the sticky actions column's stronger border-s
+   (line-hi wins) instead of doubling it. */
+:is(
+    [data-table-style="bordered"],
+    [data-table-style="neon"],
+    [data-table-style="cyberpunk"]
+  )
+  > div
+  table
+  :is(th, td):not(:last-child) {
+  border-inline-end: 1px solid var(--nx-line);
+}
+
+/* minimal — the frame, header band and pagination band drop their chrome;
+   rows keep their hairlines. Mobile cards keep their slabs: a borderless
+   card stack is unreadable, so only the wrappers go quiet. */
+:is([data-table-style="minimal"], [data-table-style="glass"]) > div {
+  border-color: transparent;
+  background-color: transparent;
+}
+
+:is([data-table-style="minimal"], [data-table-style="glass"]) > div table thead tr {
+  background-color: transparent;
+}
+
+/* minimal — the sticky actions cells must stay opaque or scrolled columns
+   read straight through them; with the surface slab gone they sit on the
+   ground token instead. (.sticky is the same stable utility hook the hover
+   section relies on with .card.) */
+:is([data-table-style="minimal"], [data-table-style="glass"]) > div table :is(th, td).sticky {
+  background-color: var(--nx-ground);
+}
+
+/* compact — density re-derived from --spacing-unit so it tracks the spacing
+   setting instead of fighting it: 6px/8px cell padding at the default 1rem
+   unit against the component's 16px. */
+[data-table-style="compact"] > div table :is(th, td) {
+  padding-block: calc(var(--spacing-unit) * 0.375);
+  padding-inline: calc(var(--spacing-unit) * 0.5);
+}
+
+/* compact — release the header row's fixed height ladder (h-10/12/14) so the
+   tightened padding actually shrinks the band; block-size wins the slot over
+   the utility's height on specificity. */
+[data-table-style="compact"] > div table th {
+  block-size: auto;
+}
+
+/* compact — the mobile cards and the pagination band tighten with the same
+   unit. The desktop frame's inner padding is an inline style and correctly
+   ignores this rule. */
+[data-table-style="compact"] > div > div {
+  padding: calc(var(--spacing-unit) * 0.5);
+}

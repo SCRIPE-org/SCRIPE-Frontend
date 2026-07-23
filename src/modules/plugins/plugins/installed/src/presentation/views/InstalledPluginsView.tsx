@@ -2,9 +2,10 @@
 
 import { useAppStore } from "@core/store/useAppStore";
 import { useInstalledViewModel } from "../viewmodels/useInstalledViewModel";
-import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
-import { AlertTriangle, PackageCheck, RefreshCw } from "lucide-react";
+import { ErrorMessage } from "@core/ui/error-message";
+import { EmptyState } from "@core/ui/empty-state";
+import { PackageCheck } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { InstalledPluginRow } from "../components/InstalledPluginRow";
 
@@ -40,23 +41,17 @@ export function InstalledPluginsView() {
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center gap-4 py-20">
-        <AlertTriangle className="h-10 w-10 text-destructive" />
-        <p className="text-sm text-muted-foreground">{t("plugins.installedError")}</p>
-        <Button variant="outline" size="sm" onClick={() => refetch()}>
-          <RefreshCw className="me-2 h-4 w-4" />
-          {t("plugins.retry")}
-        </Button>
-      </div>
+      <ErrorMessage
+        message={t("plugins.installedError")}
+        onRetry={() => refetch()}
+        className="py-20"
+      />
     );
   }
 
   if (installations.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 py-20">
-        <PackageCheck className="h-10 w-10 text-muted-foreground" />
-        <p className="text-sm text-muted-foreground">{t("plugins.installedEmpty")}</p>
-      </div>
+      <EmptyState size="lg" icon={PackageCheck} title={t("plugins.installedEmpty")} className="m-6" />
     );
   }
 

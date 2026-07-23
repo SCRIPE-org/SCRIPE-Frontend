@@ -5,6 +5,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Skeleton } from "@core/ui/skeleton";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
+import { EmptyState } from "@core/ui/empty-state";
 import Link from "next/link";
 import { usePluginExecutionLogsViewModel } from "../viewmodels/usePluginExecutionLogsViewModel";
 
@@ -30,10 +31,7 @@ export function PluginExecutionLogsView() {
 
   if (!installations || installations.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 py-20">
-        <ScrollText className="h-10 w-10 text-muted-foreground" />
-        <p className="text-sm text-muted-foreground">{t("plugins.logsEmpty")}</p>
-      </div>
+      <EmptyState size="lg" icon={ScrollText} title={t("plugins.logsEmpty")} className="m-6" />
     );
   }
 

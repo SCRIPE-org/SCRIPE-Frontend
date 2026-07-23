@@ -3,8 +3,39 @@
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
+import { GenericForm, type FieldConfig } from "@core/ui/forms/generic-form";
 import { Check } from "lucide-react";
 import { cn } from "@core/common/utils";
+
+// Live regression canary for the GenericForm container layer: consecutive
+// fields sharing a `section` render as one titled, hairline-ruled group, and
+// any `colSpan` in a group switches it to the two-column grid. If grouping or
+// the grid regresses, this preview shows it immediately.
+const CANARY_FIELDS: FieldConfig[] = [
+  { name: "firstName", label: "Name", type: "text", placeholder: "John", section: "Profile", colSpan: 1 },
+  { name: "lastName", label: "Last name", type: "text", placeholder: "Doe", section: "Profile", colSpan: 1 },
+  {
+    name: "email",
+    label: "Email",
+    type: "email",
+    placeholder: "john@example.com",
+    section: "Profile",
+    colSpan: 2,
+  },
+  {
+    name: "role",
+    label: "Role",
+    type: "select",
+    section: "Details",
+    colSpan: 1,
+    options: [
+      { value: "admin", label: "Admin" },
+      { value: "member", label: "Member" },
+    ],
+  },
+  { name: "active", label: "Active", type: "switch", section: "Details", colSpan: 1 },
+  { name: "notes", label: "Notes", type: "textarea", rows: 3, section: "Details", colSpan: 2 },
+];
 
 function FormPreview({ style, isSelected }: { style: string; isSelected?: boolean }) {
   const containerMap: Record<string, string> = {
@@ -138,6 +169,7 @@ export function FormStyleSection() {
   ];
 
   return (
+    <>
     <Card>
       <CardHeader>
         <CardTitle>{t("settings.formStyle.title")}</CardTitle>
@@ -178,5 +210,23 @@ export function FormStyleSection() {
         </div>
       </CardContent>
     </Card>
+
+    {/* Live GenericForm canary — the real container component rendering a
+        sectioned two-column layout, so the section grouping and colSpan grid
+        contracts stay permanently exercised on this page */}
+    <Card>
+      <CardHeader>
+        <CardTitle>{t("settings.formStyle.title")}</CardTitle>
+        <CardDescription>{t("settings.formStyle.description")}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <GenericForm
+          fields={CANARY_FIELDS}
+          onSubmit={async () => {}}
+          onCancel={() => {}}
+        />
+      </CardContent>
+    </Card>
+    </>
   );
 }

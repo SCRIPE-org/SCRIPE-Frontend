@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader } from "@core/ui/card";
 import { Separator } from "@core/ui/separator";
 import { Skeleton } from "@core/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
+import { EmptyState } from "@core/ui/empty-state";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -302,10 +303,7 @@ export function AppDetailView({ id }: AppDetailViewProps) {
               ))}
             </div>
           ) : vm.reviews.length === 0 ? (
-            <div className="flex flex-col items-center justify-center gap-2 py-12 text-muted-foreground">
-              <MessageSquare className="size-8" />
-              <p className="text-sm">No reviews yet.</p>
-            </div>
+            <EmptyState icon={MessageSquare} title="No reviews yet." />
           ) : (
             <div className="flex flex-col gap-3">
               {vm.reviews.map((review: AppReview) => (

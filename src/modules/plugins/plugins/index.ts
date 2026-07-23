@@ -18,7 +18,7 @@ export { DefinitionsView } from "./definitions";
 // ── Sub-module components (used by app routes / other modules) ──────────────
 export { PluginCard, PluginInstallDialog } from "./catalog";
 export { PluginHealthBadge, PluginStatusBadge, InstalledPluginRow } from "./installed";
-export { LogRow, LogsPagination } from "./logs";
+export { LogRow } from "./logs";
 export { DynamicSettingsForm } from "./settings";
 export type { PluginSettingsSchema, JsonSchemaField, SettingsValues } from "./settings";
 

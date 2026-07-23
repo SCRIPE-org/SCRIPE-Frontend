@@ -4,12 +4,15 @@
  * Quick Stats Strip
  *
  * Compact row of 4 KPI cards showing key system numbers.
+ * Composes the core StatCard so the overview never draws a number itself —
+ * loading renders StatCard's built-in skeleton (layout-stable), while
+ * SectionState keeps the shared error anatomy and retry affordance.
  */
 import { memo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Card, CardContent } from "@core/ui/card";
 import { SectionState } from "@core/ui/section-state";
-import { Users, Building2, Shield, LogIn } from "lucide-react";
+import { StatCard, type StatTone } from "@core/ui/stat-card";
+import { Users, Building2, Shield, LogIn, type LucideIcon } from "lucide-react";
 import type { DashboardSummary } from "@modules/monitoring/dashboard/src/domain/entities/DashboardEntities";
 
 interface Props {
@@ -19,12 +22,11 @@ interface Props {
   onRetry?: () => void;
 }
 
-interface StatCardData {
+interface StatEntry {
   label: string;
   value: number;
-  icon: typeof Users;
-  color: string;
-  bgColor: string;
+  icon: LucideIcon;
+  tone: StatTone;
 }
 
 export const QuickStatsStrip = memo(function QuickStatsStrip({
@@ -35,65 +37,48 @@ export const QuickStatsStrip = memo(function QuickStatsStrip({
 }: Props) {
   const { t } = useI18n();
 
-  const stats: StatCardData[] = [
+  const stats: StatEntry[] = [
     {
       label: t("overview.stats.totalAdmins"),
       value: data?.totalAdmins ?? 0,
       icon: Shield,
-      color: "text-info",
-      bgColor: "bg-info/10",
+      tone: "info",
     },
     {
       label: t("overview.stats.activeUsers"),
       value: data?.activeUsers ?? 0,
       icon: Users,
-      color: "text-success",
-      bgColor: "bg-success/10",
+      tone: "success",
     },
     {
       label: t("overview.stats.activeTenants"),
       value: data?.activeTenants ?? 0,
       icon: Building2,
-      color: "text-primary",
-      bgColor: "bg-primary/10",
+      tone: "neutral",
     },
     {
       label: t("overview.stats.loginsToday"),
       value: data?.loginsToday ?? 0,
       icon: LogIn,
-      color: "text-warning",
-      bgColor: "bg-warning/10",
+      tone: "warning",
     },
   ];
 
   return (
-    <SectionState
-      isLoading={isLoading}
-      error={error}
-      onRetry={onRetry}
-      skeletonType="cards"
-      height={100}
-    >
+    // isLoading stays false here on purpose: loading is drawn by the StatCards
+    // themselves so the skeleton matches the rendered anatomy exactly.
+    <SectionState isLoading={false} error={error} onRetry={onRetry} height={100}>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        {stats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <Card
-              key={stat.label}
-              className="relative overflow-hidden transition-shadow hover:shadow-md"
-            >
-              <CardContent className="flex items-center gap-4 p-4">
-                <div className={`rounded-xl p-2.5 ${stat.bgColor}`}>
-                  <Icon className={`h-5 w-5 ${stat.color}`} aria-hidden="true" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-2xl font-bold tabular-nums">{stat.value.toLocaleString()}</p>
-                  <p className="truncate text-xs text-muted-foreground">{stat.label}</p>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+        {stats.map((stat) => (
+          <StatCard
+            key={stat.label}
+            label={stat.label}
+            value={stat.value.toLocaleString()}
+            icon={stat.icon}
+            tone={stat.tone}
+            isLoading={isLoading}
+          />
+        ))}
       </div>
     </SectionState>
   );

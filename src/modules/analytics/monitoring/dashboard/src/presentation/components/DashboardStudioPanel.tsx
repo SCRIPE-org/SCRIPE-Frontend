@@ -8,28 +8,31 @@
  *   - Tab 2 "Builder" — Drag-and-drop dashboard layout builder
  *
  * All changes are reflected instantly via draft state in useDashboardTheme.
+ *
+ * The panel rides the DetailSheet container (see LeadDetailDrawer for the
+ * reference composition): the container owns the overlay surface, width
+ * presets and the logical side="end" default; this file only fills the
+ * header / tab-bar / body / footer slots. The Builder tab asks for the wide
+ * ("xl") preset, the Visual tab for the narrow ("sm") one.
  */
 "use client";
 import { useI18n } from "@core/providers/i18n-provider";
-import { cn } from "@core/common/utils";
 
 import React, { useState } from "react";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-  SheetFooter,
-} from "@core/ui/sheet";
+  DetailSheet,
+  DetailSheetHeader,
+  DetailSheetTabBar,
+  DetailSheetBody,
+  DetailSheetFooter,
+} from "@core/ui/detail-sheet";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
 import { Switch } from "@core/ui/switch";
 import { Separator } from "@core/ui/separator";
-import { ScrollArea } from "@core/ui/scroll-area";
 import { Badge } from "@core/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
+import { Tabs, TabsContent, TabsTrigger } from "@core/ui/tabs";
 import {
   Save,
   RotateCcw,
@@ -131,45 +134,48 @@ export function DashboardStudioPanel({
   const { t } = useI18n();
   const [activeTab, setActiveTab] = useState<string>("visual");
   return (
-    <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
-      <SheetContent
-        side="right"
-        className={cn(
-          "flex flex-col p-0 transition-all",
-          activeTab === "builder" ? "w-[700px] sm:w-[780px]" : "w-[400px] sm:w-[420px]"
-        )}
+    <DetailSheet
+      open={open}
+      onOpenChange={(v) => !v && onClose()}
+      width={activeTab === "builder" ? "xl" : "sm"}
+      title={t("dashboard.studio.title") || "Dashboard Studio"}
+      description={
+        t("dashboard.studio.description") ||
+        "Customize the appearance and layout of your dashboard."
+      }
+    >
+      {/* ── Pinned header ── */}
+      <DetailSheetHeader>
+        <h2 className="flex items-center gap-2 text-lg font-semibold leading-tight text-nx-ink">
+          <Palette className="h-5 w-5 text-primary" />
+          {t("dashboard.studio.title") || "Dashboard Studio"}
+        </h2>
+        <p className="mt-1 text-sm text-nx-ink-2">
+          {t("dashboard.studio.description") ||
+            "Customize the appearance and layout of your dashboard."}
+        </p>
+      </DetailSheetHeader>
+
+      {/* ── Tabs ── */}
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="flex flex-1 flex-col overflow-hidden"
       >
-        <SheetHeader className="px-6 pb-2 pt-6">
-          <SheetTitle className="flex items-center gap-2">
-            <Palette className="h-5 w-5 text-primary" />
-            {t("dashboard.studio.title") || "Dashboard Studio"}
-          </SheetTitle>
-          <SheetDescription>
-            {t("dashboard.studio.description") ||
-              "Customize the appearance and layout of your dashboard."}
-          </SheetDescription>
-        </SheetHeader>
+        <DetailSheetTabBar>
+          <TabsTrigger value="visual" className="gap-1.5 text-xs">
+            <Palette className="h-3.5 w-3.5" />
+            {t("dashboard.studio.tabVisual") || "Visual"}
+          </TabsTrigger>
+          <TabsTrigger value="builder" className="gap-1.5 text-xs">
+            <Blocks className="h-3.5 w-3.5" />
+            {t("dashboard.studio.tabBuilder") || "Builder"}
+          </TabsTrigger>
+        </DetailSheetTabBar>
 
-        <div className="flex flex-1 flex-col overflow-hidden">
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="flex flex-1 flex-col overflow-hidden"
-          >
-            <TabsList className="mx-6 mt-2 grid w-auto grid-cols-2">
-              <TabsTrigger value="visual" className="gap-1.5 text-xs">
-                <Palette className="h-3.5 w-3.5" />
-                {t("dashboard.studio.tabVisual") || "Visual"}
-              </TabsTrigger>
-              <TabsTrigger value="builder" className="gap-1.5 text-xs">
-                <Blocks className="h-3.5 w-3.5" />
-                {t("dashboard.studio.tabBuilder") || "Builder"}
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="visual" className="mt-0 flex-1 overflow-hidden">
-              <ScrollArea className="h-full px-6">
-                <div className="space-y-6 pb-6 pt-3">
+        <DetailSheetBody>
+          <TabsContent value="visual" className="mt-0">
+            <div className="space-y-6 px-6 pb-6 pt-3">
                   {/* ── Greeting ── */}
                   <StudioSection
                     icon={MessageSquare}
@@ -436,35 +442,32 @@ export function DashboardStudioPanel({
                       />
                     </div>
                   </StudioSection>
-                </div>
-              </ScrollArea>
-            </TabsContent>
+            </div>
+          </TabsContent>
 
-            <TabsContent value="builder" className="mt-0 flex-1 overflow-hidden">
-              <div className="h-full">
-                <DashboardBuilderPanel
-                  initialCanvas={draft.builderCanvas}
-                  onCanvasChange={onBuilderCanvasChange}
-                />
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
+          <TabsContent value="builder" className="mt-0 h-full">
+            <DashboardBuilderPanel
+              initialCanvas={draft.builderCanvas}
+              onCanvasChange={onBuilderCanvasChange}
+            />
+          </TabsContent>
+        </DetailSheetBody>
+      </Tabs>
 
-        <SheetFooter className="gap-2 border-t px-6 py-4">
-          <Button variant="ghost" size="sm" onClick={onReset} className="mr-auto gap-1.5">
-            <RotateCcw className="h-3.5 w-3.5" />
-            {t("dashboard.studio.resetDefaults") || "Reset"}
-          </Button>
-          <Button variant="outline" size="sm" onClick={onDiscard}>
-            {t("common.cancel") || "Cancel"}
-          </Button>
-          <Button size="sm" onClick={onSave} loading={isSaving} className="gap-1.5">
-            {!isSaving && <Save className="h-3.5 w-3.5" />}
-            {t("dashboard.studio.save") || "Save Theme"}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+      {/* ── Pinned action bar ── */}
+      <DetailSheetFooter className="flex items-center gap-2">
+        <Button variant="ghost" size="sm" onClick={onReset} className="me-auto gap-1.5">
+          <RotateCcw className="h-3.5 w-3.5" />
+          {t("dashboard.studio.resetDefaults") || "Reset"}
+        </Button>
+        <Button variant="outline" size="sm" onClick={onDiscard}>
+          {t("common.cancel") || "Cancel"}
+        </Button>
+        <Button size="sm" onClick={onSave} loading={isSaving} className="gap-1.5">
+          {!isSaving && <Save className="h-3.5 w-3.5" />}
+          {t("dashboard.studio.save") || "Save Theme"}
+        </Button>
+      </DetailSheetFooter>
+    </DetailSheet>
   );
 }

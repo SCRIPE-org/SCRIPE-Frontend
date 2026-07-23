@@ -4,6 +4,7 @@ import { useReviewsViewModel } from "../viewmodels/useReviewsViewModel";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardHeader } from "@core/ui/card";
+import { EmptyState } from "@core/ui/empty-state";
 import { Star, Trash2 } from "lucide-react";
 
 /**
@@ -26,9 +27,7 @@ export function ReviewsView() {
           ))}
         </div>
       ) : vm.reviews.length === 0 ? (
-        <div className="flex items-center justify-center py-24 text-muted-foreground">
-          No reviews yet
-        </div>
+        <EmptyState size="lg" icon={Star} title="No reviews yet" />
       ) : (
         <div className="flex flex-col gap-3">
           {vm.reviews.map((review) => (

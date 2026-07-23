@@ -6,12 +6,17 @@
  *
  * Displays key performance indicators in a responsive card grid.
  * Wrapped in React.memo since props change infrequently.
+ *
+ * Every figure renders through the shared StatCard, so the dashboard KPIs
+ * carry the same anatomy, skeleton and tones as every other stat surface.
+ * The M9 theme props (cardClasses/gridClasses) keep flowing through — the
+ * grid stays themable, the card anatomy does not.
  */
 import { memo } from "react";
 import type { DashboardSummary } from "../../domain/entities/DashboardEntities";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
-import { Skeleton } from "@core/ui/skeleton";
+import { StatCard, type StatTone } from "@core/ui/stat-card";
+import { ErrorMessage } from "@core/ui/error-message";
 import {
   Users,
   ShieldCheck,
@@ -39,8 +44,7 @@ interface Props {
 interface KpiItem {
   key: keyof DashboardSummary;
   icon: typeof ShieldCheck;
-  color: string;
-  bgColor: string;
+  tone: StatTone;
   labelKey: string;
   secondaryKey?: keyof DashboardSummary;
   secondaryLabel?: string;
@@ -51,8 +55,7 @@ const kpiConfig: KpiItem[] = [
   {
     key: "totalAdmins",
     icon: ShieldCheck,
-    color: "text-info",
-    bgColor: "bg-info/10",
+    tone: "info",
     labelKey: "dashboard.kpi.totalAdmins",
     secondaryKey: "activeAdmins",
     secondaryLabel: "dashboard.kpi.active",
@@ -60,8 +63,7 @@ const kpiConfig: KpiItem[] = [
   {
     key: "totalUsers",
     icon: Users,
-    color: "text-success",
-    bgColor: "bg-success/10",
+    tone: "success",
     labelKey: "dashboard.kpi.totalUsers",
     secondaryKey: "activeUsers",
     secondaryLabel: "dashboard.kpi.active",
@@ -69,51 +71,44 @@ const kpiConfig: KpiItem[] = [
   {
     key: "totalTenants",
     icon: Building2,
-    color: "text-primary",
-    bgColor: "bg-primary/10",
+    tone: "info",
     labelKey: "dashboard.kpi.totalTenants",
   },
   {
     key: "totalRoles",
     icon: KeyRound,
-    color: "text-warning",
-    bgColor: "bg-warning/10",
+    tone: "warning",
     labelKey: "dashboard.kpi.totalRoles",
   },
   {
     key: "loginsToday",
     icon: LogIn,
-    color: "text-success",
-    bgColor: "bg-success/10",
+    tone: "success",
     labelKey: "dashboard.kpi.loginsToday",
   },
   {
     key: "failedLogins24h",
     icon: ShieldAlert,
-    color: "text-destructive",
-    bgColor: "bg-destructive/10",
+    tone: "danger",
     labelKey: "dashboard.kpi.failedLogins",
   },
   {
     key: "totalMrrUsd",
     icon: DollarSign,
-    color: "text-success",
-    bgColor: "bg-success/10",
+    tone: "success",
     labelKey: "dashboard.kpi.totalMrr",
     format: "currency",
   },
   {
     key: "totalActiveSubscriptions",
     icon: CreditCard,
-    color: "text-info",
-    bgColor: "bg-info/10",
+    tone: "info",
     labelKey: "dashboard.kpi.activeSubscriptions",
   },
   {
     key: "trialSubscriptions",
     icon: Clock,
-    color: "text-warning",
-    bgColor: "bg-warning/10",
+    tone: "warning",
     labelKey: "dashboard.kpi.trialSubscriptions",
   },
 ];
@@ -137,78 +132,48 @@ export const KPICardsSection = memo(function KPICardsSection({
   if (isLoading) {
     return (
       <div className={gridClass} role="status" aria-label={t("common.loading")}>
-        {kpiConfig.map((_, i) => (
-          <Card key={i}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-4 w-4 rounded" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-8 w-16" />
-              <Skeleton className="mt-1 h-3 w-12" />
-            </CardContent>
-          </Card>
+        {kpiConfig.map((kpi) => (
+          <StatCard key={kpi.key} isLoading label="" value="" className={cardClasses} />
         ))}
       </div>
     );
   }
 
   if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center gap-3 rounded-lg border p-8 text-muted-foreground">
-        <p className="text-sm">{t("common.error")}</p>
-        {onRetry && (
-          <button onClick={onRetry} className="text-sm text-primary hover:underline">
-            {t("common.retry")}
-          </button>
-        )}
-      </div>
-    );
+    return <ErrorMessage size="sm" message={t("common.error")} onRetry={onRetry} />;
   }
 
   return (
     <div className={gridClass} aria-live="polite">
       {kpiConfig.map((kpi) => {
-        const Icon = kpi.icon;
         const value = data?.[kpi.key] ?? 0;
         const secondary = kpi.secondaryKey ? data?.[kpi.secondaryKey] : undefined;
+        // The former inline italic conversion note rides the StatCard tooltip
+        // affordance instead of a bespoke text line.
+        const conversionTip =
+          kpi.format === "currency" && isConverting
+            ? getConversionTooltip(Number(value), "USD") || undefined
+            : undefined;
 
         return (
-          <Card
+          <StatCard
             key={kpi.key}
-            className={`group relative overflow-hidden transition-shadow hover:shadow-md ${cardClasses || ""}`}
-          >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {t(kpi.labelKey)}
-              </CardTitle>
-              <div
-                className={`rounded-lg p-2 ${kpi.bgColor} transition-transform group-hover:scale-110`}
-              >
-                <Icon className={`h-4 w-4 ${kpi.color}`} aria-hidden="true" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold tabular-nums">
-                {kpi.format === "currency"
-                  ? formatDisplay(Number(value), "USD")
-                  : Number(value).toLocaleString()}
-              </div>
-              {kpi.format === "currency" &&
-                isConverting &&
-                (() => {
-                  const tip = getConversionTooltip(Number(value), "USD");
-                  return tip ? (
-                    <p className="mt-0.5 text-[10px] italic text-muted-foreground/60">{tip}</p>
-                  ) : null;
-                })()}
-              {secondary !== undefined && kpi.secondaryLabel && (
-                <p className="mt-1 text-xs tabular-nums text-muted-foreground">
-                  {secondary} {t(kpi.secondaryLabel)}
-                </p>
-              )}
-            </CardContent>
-          </Card>
+            label={t(kpi.labelKey)}
+            value={
+              kpi.format === "currency"
+                ? formatDisplay(Number(value), "USD")
+                : Number(value).toLocaleString()
+            }
+            icon={kpi.icon}
+            tone={kpi.tone}
+            tooltip={conversionTip}
+            subtitle={
+              secondary !== undefined && kpi.secondaryLabel
+                ? `${Number(secondary).toLocaleString()} ${t(kpi.secondaryLabel)}`
+                : undefined
+            }
+            className={cardClasses}
+          />
         );
       })}
     </div>

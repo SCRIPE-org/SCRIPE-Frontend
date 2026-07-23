@@ -5,6 +5,7 @@ import { CategoryFormDialog } from "../components/CategoryFormDialog";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader } from "@core/ui/card";
+import { EmptyState } from "@core/ui/empty-state";
 import { Trash2, Tag, Plus, Pencil } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
@@ -43,13 +44,20 @@ export function CategoriesView() {
           ))}
         </div>
       ) : vm.categories.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
-          <Tag className="mb-3 h-10 w-10 text-muted-foreground/40" />
-          <p className="text-lg font-medium">{t("marketplace.categoriesEmpty")}</p>
-          <p className="mt-1 text-sm">
-            {t("marketplace.categoriesEmptyHint") || "Create your first category to get started."}
-          </p>
-        </div>
+        <EmptyState
+          size="lg"
+          icon={Tag}
+          title={t("marketplace.categoriesEmpty")}
+          description={
+            t("marketplace.categoriesEmptyHint") || "Create your first category to get started."
+          }
+          action={
+            <Button size="sm" onClick={vm.openCreateForm}>
+              <Plus className="me-2 h-4 w-4" />
+              {t("marketplace.categoryCreate") || "New Category"}
+            </Button>
+          }
+        />
       ) : (
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
           {vm.categories.map((cat) => {

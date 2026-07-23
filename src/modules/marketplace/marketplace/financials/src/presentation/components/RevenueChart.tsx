@@ -11,7 +11,8 @@ import {
   AreaChart,
 } from "recharts";
 import { Card, CardContent, CardHeader } from "@core/ui/card";
-import { TrendingUp } from "lucide-react";
+import { EmptyState } from "@core/ui/empty-state";
+import { TrendingUp, BarChart3 } from "lucide-react";
 
 /** A single data point for the revenue chart. */
 export interface RevenueDataPoint {
@@ -69,9 +70,7 @@ export function RevenueChart({
           <h3 className="text-base font-semibold">{title}</h3>
         </CardHeader>
         <CardContent>
-          <div className="flex h-32 items-center justify-center text-sm text-muted-foreground">
-            No revenue data available.
-          </div>
+          <EmptyState size="sm" bare icon={BarChart3} title="No revenue data available." />
         </CardContent>
       </Card>
     );

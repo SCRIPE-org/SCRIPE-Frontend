@@ -4,7 +4,8 @@ import { useSubmissionsViewModel } from "../viewmodels/useSubmissionsViewModel";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader } from "@core/ui/card";
-import { CheckCircle, XCircle, RefreshCw } from "lucide-react";
+import { EmptyState } from "@core/ui/empty-state";
+import { CheckCircle, XCircle, RefreshCw, Inbox } from "lucide-react";
 
 /**
  * Presentation UI component rendering the submissions view.
@@ -40,9 +41,7 @@ export function SubmissionsView() {
           ))}
         </div>
       ) : vm.submissions.length === 0 ? (
-        <div className="flex flex-col items-center py-24 text-muted-foreground">
-          <p className="text-lg font-medium">No submissions</p>
-        </div>
+        <EmptyState size="lg" icon={Inbox} title="No submissions" />
       ) : (
         <div className="flex flex-col gap-3">
           {vm.submissions.map((sub) => (

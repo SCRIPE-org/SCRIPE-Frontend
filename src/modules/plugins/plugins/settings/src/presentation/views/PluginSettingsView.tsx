@@ -4,7 +4,9 @@ import { useSettingsViewModel } from "../viewmodels/useSettingsViewModel";
 import { useAppStore } from "@core/store/useAppStore";
 import { PluginFrame } from "@core/plugins/plugin-sdk/PluginFrame";
 import { Skeleton } from "@core/ui/skeleton";
-import { AlertTriangle, Settings } from "lucide-react";
+import { ErrorMessage } from "@core/ui/error-message";
+import { EmptyState } from "@core/ui/empty-state";
+import { Settings } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 
 interface PluginSettingsViewProps {
@@ -27,21 +29,11 @@ export function PluginSettingsView({ installationId }: PluginSettingsViewProps) 
   }
 
   if (isError || !installation) {
-    return (
-      <div className="flex items-center gap-2 p-6 text-destructive">
-        <AlertTriangle className="h-5 w-5" />
-        <span className="text-sm">{t("plugins.settingsError")}</span>
-      </div>
-    );
+    return <ErrorMessage size="sm" message={t("plugins.settingsError")} className="p-6" />;
   }
 
   if (!installation.frontendUrl) {
-    return (
-      <div className="flex flex-col items-center justify-center gap-3 py-16 text-muted-foreground">
-        <Settings className="h-10 w-10" />
-        <p className="text-sm">{t("plugins.settingsNoUi")}</p>
-      </div>
-    );
+    return <EmptyState icon={Settings} title={t("plugins.settingsNoUi")} className="m-6" />;
   }
 
   return (

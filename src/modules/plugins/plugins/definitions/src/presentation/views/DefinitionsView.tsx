@@ -22,6 +22,9 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
 import { Separator } from "@core/ui/separator";
+import { StatCard } from "@core/ui/stat-card";
+import { EmptyState } from "@core/ui/empty-state";
+import { ErrorMessage } from "@core/ui/error-message";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import type { PluginDefinition } from "@modules/plugins/core";
@@ -53,31 +56,6 @@ function DefinitionsSkeleton() {
       </div>
       <Skeleton className="h-[400px] rounded-xl" />
     </div>
-  );
-}
-
-// ── Stat Card ─────────────────────────────────────────────────────────────────
-
-interface StatCardProps {
-  label: string;
-  value: number;
-  icon: React.ReactNode;
-  color: string;
-}
-
-function StatCard({ label, value, icon, color }: StatCardProps) {
-  return (
-    <Card className={`border bg-gradient-to-br ${color}`}>
-      <CardContent className="flex items-center gap-4 p-5">
-        <div className="rounded-xl bg-background/80 p-3 shadow-sm">{icon}</div>
-        <div className="min-w-0 flex-1">
-          <CardDescription className="text-xs font-medium uppercase tracking-wider">
-            {label}
-          </CardDescription>
-          <CardTitle className="mt-1 text-2xl font-bold tracking-tight">{value}</CardTitle>
-        </div>
-      </CardContent>
-    </Card>
   );
 }
 
@@ -117,14 +95,11 @@ export function DefinitionsView() {
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
-        <AlertTriangle className="h-10 w-10 text-destructive" />
-        <p className="text-sm text-muted-foreground">{t("plugins.definitionsError")}</p>
-        <Button variant="outline" size="sm" onClick={() => refetch()}>
-          <RefreshCw className="me-2 h-4 w-4" />
-          {t("common.retry")}
-        </Button>
-      </div>
+      <ErrorMessage
+        message={t("plugins.definitionsError")}
+        onRetry={() => refetch()}
+        className="py-20"
+      />
     );
   }
 
@@ -153,31 +128,31 @@ export function DefinitionsView() {
         </div>
       </div>
 
-      {/* Stats */}
+      {/* Stats — the shared StatCard anatomy */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <StatCard
           label={t("plugins.defStatTotal")}
-          value={stats.total}
-          icon={<Code2 className="h-5 w-5 text-primary" />}
-          color="from-primary/10 to-primary/10 border-primary/20"
+          value={stats.total.toLocaleString()}
+          icon={Code2}
+          tone="info"
         />
         <StatCard
           label={t("plugins.defStatPublished")}
-          value={stats.published}
-          icon={<CheckCircle2 className="h-5 w-5 text-success" />}
-          color="from-success/10 to-success/10 border-success/20"
+          value={stats.published.toLocaleString()}
+          icon={CheckCircle2}
+          tone="success"
         />
         <StatCard
           label={t("plugins.defStatDraft")}
-          value={stats.draft}
-          icon={<Clock className="h-5 w-5 text-warning" />}
-          color="from-warning/10 to-warning/10 border-warning/20"
+          value={stats.draft.toLocaleString()}
+          icon={Clock}
+          tone="warning"
         />
         <StatCard
           label={t("plugins.defStatDeprecated")}
-          value={stats.deprecated}
-          icon={<AlertTriangle className="h-5 w-5 text-destructive" />}
-          color="from-destructive/10 to-destructive/10 border-destructive/20"
+          value={stats.deprecated.toLocaleString()}
+          icon={AlertTriangle}
+          tone="danger"
         />
       </div>
 
@@ -191,11 +166,18 @@ export function DefinitionsView() {
         </CardHeader>
         <CardContent className="p-0">
           {definitions.length === 0 ? (
-            <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-              <Globe className="h-10 w-10 text-muted-foreground/40" />
-              <p className="text-sm font-medium">{t("plugins.defEmpty")}</p>
-              <p className="text-xs text-muted-foreground">{t("plugins.defEmptyHint")}</p>
-            </div>
+            <EmptyState
+              bare
+              icon={Globe}
+              title={t("plugins.defEmpty")}
+              description={t("plugins.defEmptyHint")}
+              action={
+                <Button size="sm" onClick={openCreateForm}>
+                  <Plus className="me-2 h-4 w-4" />
+                  {t("plugins.defNew")}
+                </Button>
+              }
+            />
           ) : (
             <Table>
               <TableHeader>

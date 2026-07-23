@@ -7,7 +7,9 @@
  * - 3-stop 135° gradient derived from workspace colorHue/chroma
  * - 20px border-radius, 18px padding (lg) / 14px (md)
  * - Hover: -4px translateY lift, glow shadow at 0.45 opacity, icon 1.08× scale
- * - Easing: cubic-bezier(0.16, 1, 0.3, 1) 280ms
+ * - Motion: nx standard duration/easing, with the reduced-motion path
+ * - Focus: the shared nx lit-edge ring (:focus-visible only — hover stays
+ *   a pointer affordance, keyboard gets the ring)
  * - Inner effects: top-right highlight orb, bottom-left vignette, noise grain
  * - Pin star: filled ⭐ top-right
  * - Locked: frosted overlay + lock circle + amber "Upgrade" pill
@@ -15,6 +17,7 @@
 
 import React, { useState, useCallback } from "react";
 import { Star, Lock } from "lucide-react";
+import { cn } from "@core/common/utils";
 import { DynamicIcon } from "@core/ui/layout/nexus/_parts/primary-rail-parts";
 
 // ── Gradient helpers ──────────────────────────────────────────────────────────
@@ -25,26 +28,18 @@ function deriveGradient(hue: number, chroma: number): string {
   return `linear-gradient(135deg, oklch(0.72 ${c} ${hue}) 0%, oklch(0.55 ${c} ${hue}) 55%, oklch(0.38 ${c} ${hue}) 100%)`;
 }
 
-/** Derive an RGB glow color string for box-shadow from OKLCH. */
-function deriveGlowRgb(hue: number): string {
-  // Convert oklch hue to rough RGB for box-shadow rgba()
-  // This is an approximation — works well enough for glow effects
-  const h = hue * (Math.PI / 180);
-  const r = Math.round(128 + 80 * Math.cos(h));
-  const g = Math.round(128 + 80 * Math.cos(h - 2.094));
-  const b = Math.round(128 + 80 * Math.cos(h + 2.094));
-  return `${r}, ${g}, ${b}`;
-}
-
-/** Muted admin gradient for workspaces without custom colors. */
-const ADMIN_GRADIENTS: Record<string, { grad: string; glow: string }> = {
+/** Muted admin gradient for workspaces without custom colors. The glow hue and
+ *  chroma feed the same OKLCH shadow derivation the custom tiles use. */
+const ADMIN_GRADIENTS: Record<string, { grad: string; glowHue: number; glowChroma: number }> = {
   admin: {
     grad: "linear-gradient(135deg, #3A4156 0%, #2A2F44 55%, #161A2A 100%)",
-    glow: "58, 65, 86",
+    glowHue: 265,
+    glowChroma: 0.03,
   },
   _default: {
     grad: "linear-gradient(135deg, #3B4661 0%, #283455 55%, #131A2E 100%)",
-    glow: "59, 70, 97",
+    glowHue: 262,
+    glowChroma: 0.05,
   },
 };
 
@@ -115,20 +110,24 @@ export function HubModuleTile({
   const hasCustomColor = colorHue !== null;
   const chroma = colorChroma ?? 0.18;
   const hue = colorHue ?? 270;
+  const adminEntry = ADMIN_GRADIENTS[name.toLowerCase()] ?? ADMIN_GRADIENTS._default;
 
-  const gradient = hasCustomColor
-    ? deriveGradient(hue, chroma)
-    : (ADMIN_GRADIENTS[name.toLowerCase()] ?? ADMIN_GRADIENTS._default).grad;
+  const gradient = hasCustomColor ? deriveGradient(hue, chroma) : adminEntry.grad;
+  const glowHue = hasCustomColor ? hue : adminEntry.glowHue;
+  const glowChroma = hasCustomColor ? Math.min(chroma, 0.35) : adminEntry.glowChroma;
 
-  const glowRgb = hasCustomColor
-    ? deriveGlowRgb(hue)
-    : (ADMIN_GRADIENTS[name.toLowerCase()] ?? ADMIN_GRADIENTS._default).glow;
-
-  // Hover state
+  // Hover state — pointer only; keyboard focus gets the lit-edge ring instead.
   const isHover = hover && !isLocked;
-  const lift = isHover ? -4 : 0;
-  const glowOpacity = isHover ? 0.45 : 0.18;
+  const glow = `oklch(0.62 ${glowChroma} ${glowHue} / ${isHover ? 0.45 : 0.18})`;
   const innerShine = isHover ? 0.32 : 0.18;
+
+  // The shadow lives in a CSS variable so the class ladder stays in charge:
+  // shadow-[var(--hub-tile-shadow)] draws the glow, focus-visible:shadow-nx-focus
+  // replaces it with the shared ring. Locked tiles fall back to the calm token
+  // shadow instead of a glow.
+  const tileShadow = isLocked
+    ? "var(--nx-shadow-sm)"
+    : `0 ${isHover ? 22 : 10}px ${isHover ? 44 : 24}px -${isHover ? 8 : 12}px ${glow}, inset 0 1px 0 oklch(1 0 0 / ${innerShine})`;
 
   const handleClick = useCallback(() => {
     if (!isLocked || onClick) onClick();
@@ -140,37 +139,27 @@ export function HubModuleTile({
       onClick={handleClick}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      onFocus={() => setHover(true)}
-      onBlur={() => setHover(false)}
       aria-disabled={isLocked}
-      style={{
-        position: "relative",
-        width: dims.w,
-        height: dims.h,
-        padding: dims.pad,
-        borderRadius: 20,
-        border: "none",
-        cursor: isLocked ? "not-allowed" : "pointer",
-        background: gradient,
-        color: "#fff",
-        textAlign: "start",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        transform: `translateY(${lift}px)`,
-        transition:
-          "transform 280ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 280ms cubic-bezier(0.16, 1, 0.3, 1), filter 240ms ease",
-        boxShadow: isLocked
-          ? "0 6px 18px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06)"
-          : `0 ${isHover ? 22 : 10}px ${isHover ? 44 : 24}px -${isHover ? 8 : 12}px rgba(${glowRgb}, ${glowOpacity}),
-             0 2px 0 rgba(255,255,255,0.05) inset,
-             inset 0 1px 0 rgba(255,255,255, ${innerShine})`,
-        filter: isLocked ? "saturate(0.25) brightness(0.85)" : "none",
-        overflow: "hidden",
-        font: "inherit",
-        outline: "none",
-        fontFamily: "'Inter', system-ui, sans-serif",
-      }}
+      className={cn(
+        "group relative flex flex-col justify-between overflow-hidden border-0 text-start",
+        "shadow-[var(--hub-tile-shadow)] transition-[transform,box-shadow] duration-nx-standard ease-nx-enter",
+        "outline-none focus-visible:shadow-nx-focus",
+        "motion-reduce:transform-none motion-reduce:transition-none",
+        isLocked ? "cursor-not-allowed" : "cursor-pointer hover:-translate-y-1"
+      )}
+      style={
+        {
+          width: dims.w,
+          height: dims.h,
+          padding: dims.pad,
+          borderRadius: 20,
+          background: gradient,
+          color: "#fff",
+          filter: isLocked ? "saturate(0.25) brightness(0.85)" : "none",
+          font: "inherit",
+          "--hub-tile-shadow": tileShadow,
+        } as React.CSSProperties
+      }
     >
       {/* Top-right highlight orb */}
       <div
@@ -220,6 +209,7 @@ export function HubModuleTile({
           }}
           disabled={isPinLoading}
           aria-label="Unpin"
+          className="rounded-nx-sm focus-visible:outline-none focus-visible:shadow-nx-focus"
           style={{
             position: "absolute",
             top: 12,
@@ -237,7 +227,7 @@ export function HubModuleTile({
         </button>
       )}
 
-      {/* Unpin star on hover (when not pinned) */}
+      {/* Unpin star on hover (when not pinned) — keyboard focus reveals it too */}
       {!isPinned && !isLocked && onTogglePin && (
         <button
           type="button"
@@ -247,6 +237,7 @@ export function HubModuleTile({
           }}
           disabled={isPinLoading}
           aria-label="Pin"
+          className="rounded-nx-sm opacity-0 transition-opacity duration-nx-micro ease-nx-enter group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
           style={{
             position: "absolute",
             top: 12,
@@ -257,8 +248,6 @@ export function HubModuleTile({
             cursor: isPinLoading ? "wait" : "pointer",
             padding: 0,
             zIndex: 2,
-            opacity: hover ? 1 : 0,
-            transition: "opacity 200ms ease",
           }}
         >
           <Star size={13} strokeWidth={1.75} />
@@ -267,15 +256,12 @@ export function HubModuleTile({
 
       {/* Icon chip */}
       <div
-        style={{
-          position: "relative",
-          display: "flex",
-          alignItems: "flex-start",
-          color: "#fff",
-          transform: isHover ? "scale(1.08)" : "scale(1)",
-          transformOrigin: "top start",
-          transition: "transform 280ms cubic-bezier(0.16, 1, 0.3, 1)",
-        }}
+        className={cn(
+          "relative flex origin-top items-start",
+          !isLocked &&
+            "transition-transform duration-nx-standard ease-nx-enter group-hover:scale-[1.08] motion-reduce:transform-none motion-reduce:transition-none"
+        )}
+        style={{ color: "#fff" }}
       >
         <div
           style={{

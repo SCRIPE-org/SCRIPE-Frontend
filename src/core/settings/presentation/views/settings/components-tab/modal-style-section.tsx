@@ -13,6 +13,10 @@ export function ModalStyleSection() {
   const { t } = useI18n();
   const settings = useSettings();
   const [testModalOpen, setTestModalOpen] = useState<string | null>(null);
+  // Exercises GenericModal's revived `size` prop: undefined keeps the
+  // settings-derived (modalStyle) footprint, an explicit sm/lg must win over
+  // it. This preview is the permanent regression canary for that contract.
+  const [previewSize, setPreviewSize] = useState<"sm" | "lg" | undefined>(undefined);
 
   const modalStyles = [
     {
@@ -138,6 +142,31 @@ export function ModalStyleSection() {
               </div>
             ))}
           </div>
+          {/* Size override toggle — undefined = the modalStyle footprint,
+              "sm"/"lg" = the explicit size ladder that must out-rank it */}
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant={previewSize === undefined ? "default" : "outline"}
+              size="sm"
+              onClick={() => setPreviewSize(undefined)}
+            >
+              {t("settings.modalStyle.options.default.name")}
+            </Button>
+            <Button
+              variant={previewSize === "sm" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setPreviewSize("sm")}
+            >
+              sm
+            </Button>
+            <Button
+              variant={previewSize === "lg" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setPreviewSize("lg")}
+            >
+              lg
+            </Button>
+          </div>
           <div className="text-xs text-muted-foreground">
             {t("settings.modalStyle.testInstructions")}
           </div>
@@ -149,6 +178,7 @@ export function ModalStyleSection() {
         open={testModalOpen !== null}
         onOpenChange={(open) => !open && setTestModalOpen(null)}
         title={t("settings.modalStyle.previewTitle", { style: previewStyleName || "" })}
+        size={previewSize}
       >
         <div className="space-y-4">
           <div className="text-sm text-muted-foreground">
