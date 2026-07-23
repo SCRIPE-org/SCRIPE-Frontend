@@ -12,11 +12,11 @@ import { useIdentityProvidersViewModel } from "../viewmodels/useIdentityProvider
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { IdentityProviderStatsBar } from "../components/IdentityProviderStatsBar";
-import { IdentityProviderEmptyState } from "../components/IdentityProviderEmptyState";
 import { IdentityProviderCard } from "../components/IdentityProviderCard";
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
-import { Plus, Search, Loader2, ShieldCheck } from "lucide-react";
+import { EmptyState } from "@core/ui/empty-state";
+import { Plus, Search, Loader2, ShieldCheck, Fingerprint } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 /**
@@ -162,7 +162,21 @@ export function IdentityProvidersView() {
               ))}
             </div>
           ) : (
-            <IdentityProviderEmptyState onCreateClick={handleCreateClick} />
+            <EmptyState
+              icon={Fingerprint}
+              size="lg"
+              title={t("identityProviders.emptyTitle") || "No Identity Providers"}
+              description={
+                t("identityProviders.emptyDesc") ||
+                "Configure Single Sign-On (SSO) using OpenID Connect (OIDC), OAuth 2.0, or SAML 2.0 to let users log in with external credentials."
+              }
+              action={
+                <Button onClick={handleCreateClick} className="gap-1.5">
+                  <Plus className="h-4 w-4" strokeWidth={2.5} />
+                  {t("identityProviders.createButton") || "Add Identity Provider"}
+                </Button>
+              }
+            />
           )}
         </>
       )}

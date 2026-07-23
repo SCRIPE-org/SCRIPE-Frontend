@@ -26,7 +26,13 @@ import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { GenericForm, type FieldConfig } from "@core/ui/forms/generic-form";
 import { Input } from "@core/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@core/ui/sheet";
+import {
+  DetailSheet,
+  DetailSheetHeader,
+  DetailSheetBody,
+} from "@core/ui/detail-sheet";
+import { StatCard } from "@core/ui/stat-card";
+import { EmptyState } from "@core/ui/empty-state";
 import { Skeleton } from "@core/ui/skeleton";
 import { Switch } from "@core/ui/switch";
 import { usePermission } from "@core/hooks/use-permission";
@@ -225,25 +231,25 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
         label: t("entitlements.features.totalFeatures"),
         value: vm.items.length,
         icon: Boxes,
-        accent: "from-primary/20 to-primary/5 text-primary",
+        tone: "neutral" as const,
       },
       {
         label: t("entitlements.features.totalModules"),
         value: new Set(vm.items.map((feature) => feature.module)).size,
         icon: Layers3,
-        accent: "from-info/20 to-info/5 text-info",
+        tone: "info" as const,
       },
       {
         label: t("entitlements.features.enforcedFeatures"),
         value: vm.items.filter((feature) => !feature.isMarketingOnly).length,
         icon: ShieldCheck,
-        accent: "from-success/20 to-success/5 text-success",
+        tone: "success" as const,
       },
       {
         label: t("entitlements.features.marketingFeatures"),
         value: vm.items.filter((feature) => feature.isMarketingOnly).length,
         icon: Megaphone,
-        accent: "from-warning/20 to-warning/5 text-warning",
+        tone: "warning" as const,
       },
     ],
     [t, vm.items]
@@ -302,20 +308,8 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
       </section>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map(({ label, value, icon: Icon, accent }) => (
-          <Card key={label} className="overflow-hidden border-border/70 shadow-sm">
-            <CardContent className="flex items-center justify-between p-5">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  {label}
-                </p>
-                <p className="mt-1 text-2xl font-semibold tabular-nums">{value}</p>
-              </div>
-              <div className={cn("rounded-2xl bg-gradient-to-br p-3", accent)}>
-                <Icon className="h-5 w-5" />
-              </div>
-            </CardContent>
-          </Card>
+        {stats.map(({ label, value, icon, tone }) => (
+          <StatCard key={label} label={label} value={value} icon={icon} tone={tone} />
         ))}
       </section>
 
@@ -394,13 +388,11 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
               {vm.error}
             </div>
           ) : filteredFeatures.length === 0 ? (
-            <div className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-dashed bg-muted/20 p-8 text-center">
-              <Search className="mb-3 h-8 w-8 text-muted-foreground" />
-              <p className="font-medium">{t("entitlements.features.noFeatures")}</p>
-              <p className="mt-1 max-w-md text-sm text-muted-foreground">
-                {t("entitlements.features.noFeaturesHint")}
-              </p>
-            </div>
+            <EmptyState
+              icon={Search}
+              title={t("entitlements.features.noFeatures")}
+              description={t("entitlements.features.noFeaturesHint")}
+            />
           ) : (
             <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
               {filteredFeatures.map((feature) => (
@@ -492,36 +484,38 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
         </CardContent>
       </Card>
 
-      <Sheet
+      <DetailSheet
         open={drawerOpen}
         onOpenChange={(open) => {
           if (!open) closeDrawer();
         }}
+        title={activeFeature ? t("entitlements.features.edit") : t("entitlements.features.create")}
+        description={
+          activeFeature
+            ? t("entitlements.features.editDesc")
+            : t("entitlements.features.createDesc")
+        }
+        width="md"
       >
-        <SheetContent
-          side={language === "ar" ? "left" : "right"}
-          className="w-full overflow-y-auto sm:max-w-xl"
-        >
-          <SheetHeader className="pe-8">
-            <SheetTitle>
-              {activeFeature ? t("entitlements.features.edit") : t("entitlements.features.create")}
-            </SheetTitle>
-            <SheetDescription>
-              {activeFeature
-                ? t("entitlements.features.editDesc")
-                : t("entitlements.features.createDesc")}
-            </SheetDescription>
-          </SheetHeader>
-          <div className="mt-6">
-            <GenericForm
-              key={activeFeature?.id ?? "create-feature"}
-              fields={formFields}
-              onSubmit={handleSubmit}
-              onCancel={closeDrawer}
-            />
-          </div>
-        </SheetContent>
-      </Sheet>
+        <DetailSheetHeader className="pe-12">
+          <h2 className="text-lg font-semibold text-nx-ink">
+            {activeFeature ? t("entitlements.features.edit") : t("entitlements.features.create")}
+          </h2>
+          <p className="mt-1 text-sm text-nx-ink-2">
+            {activeFeature
+              ? t("entitlements.features.editDesc")
+              : t("entitlements.features.createDesc")}
+          </p>
+        </DetailSheetHeader>
+        <DetailSheetBody className="px-6 py-5">
+          <GenericForm
+            key={activeFeature?.id ?? "create-feature"}
+            fields={formFields}
+            onSubmit={handleSubmit}
+            onCancel={closeDrawer}
+          />
+        </DetailSheetBody>
+      </DetailSheet>
 
       <ConfirmationDialog
         open={pendingDelete !== null}

@@ -11,6 +11,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { BarChart3, TrendingUp, Users, DollarSign, Activity, Heart, FileText } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
+import { EmptyState as CoreEmptyState } from "@core/ui/empty-state";
 import { OverviewTab } from "../components/OverviewTab";
 import { RevenueTab } from "../components/RevenueTab";
 import { RetentionTab } from "../components/RetentionTab";
@@ -190,22 +191,19 @@ function TabSkeleton() {
   );
 }
 
-/** Empty state with helpful messaging */
+/** Empty state with helpful messaging — thin adopter over the core EmptyState;
+ *  the analytics "hint" chip rides the action slot. */
 function EmptyState({ t }: { t: (key: string) => string }) {
   return (
-    <div className="flex flex-col items-center justify-center py-12 text-center">
-      <div className="mb-3 rounded-full bg-muted/50 p-5">
-        <BarChart3 className="h-8 w-8 text-muted-foreground/50" />
-      </div>
-      <h3 className="mb-1 text-base font-semibold text-muted-foreground">
-        {t("entitlements.analytics.empty.title")}
-      </h3>
-      <p className="max-w-md text-sm text-muted-foreground/70">
-        {t("entitlements.analytics.empty.description")}
-      </p>
-      <p className="mt-2 rounded-lg bg-muted/30 px-3 py-1.5 text-xs text-muted-foreground/50">
-        {t("entitlements.analytics.empty.hint")}
-      </p>
-    </div>
+    <CoreEmptyState
+      icon={BarChart3}
+      title={t("entitlements.analytics.empty.title")}
+      description={t("entitlements.analytics.empty.description")}
+      action={
+        <span className="rounded-nx-md bg-nx-hover px-3 py-1.5 text-xs text-nx-ink-3">
+          {t("entitlements.analytics.empty.hint")}
+        </span>
+      }
+    />
   );
 }

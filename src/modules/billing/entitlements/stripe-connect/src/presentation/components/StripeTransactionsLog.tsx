@@ -3,6 +3,7 @@
 
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
+import { StatCard } from "@core/ui/stat-card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
@@ -107,29 +108,33 @@ export function StripeTransactionsLog({
       {/* Financial Summary KPIs */}
       {summary && (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <KpiCard
-            icon={<ArrowUpRight className="h-4 w-4 text-success" />}
+          <StatCard
+            icon={ArrowUpRight}
+            tone="success"
             label={t("entitlements.tenantConnect.txn.grossRevenue") || "Gross Revenue"}
             value={formatCurrency(summary.totalGrossRevenue, summary.currency)}
-            sublabel={`${summary.totalTransactions} ${t("entitlements.tenantConnect.transactions") || "transactions"}`}
+            subtitle={`${summary.totalTransactions} ${t("entitlements.tenantConnect.transactions") || "transactions"}`}
           />
-          <KpiCard
-            icon={<Zap className="h-4 w-4 text-primary" />}
+          <StatCard
+            icon={Zap}
+            tone="neutral"
             label={t("entitlements.tenantConnect.txn.platformFees") || "Platform Fees"}
             value={formatCurrency(summary.totalPlatformFees, summary.currency)}
-            sublabel={t("entitlements.tenantConnect.txn.deducted") || "deducted by platform"}
+            subtitle={t("entitlements.tenantConnect.txn.deducted") || "deducted by platform"}
           />
-          <KpiCard
-            icon={<Banknote className="h-4 w-4 text-info" />}
+          <StatCard
+            icon={Banknote}
+            tone="info"
             label={t("entitlements.tenantConnect.txn.netRevenue") || "Net Revenue"}
             value={formatCurrency(summary.totalNetRevenue, summary.currency)}
-            sublabel={t("entitlements.tenantConnect.txn.yourEarnings") || "your earnings"}
+            subtitle={t("entitlements.tenantConnect.txn.yourEarnings") || "your earnings"}
           />
-          <KpiCard
-            icon={<ArrowDownLeft className="h-4 w-4 text-destructive" />}
+          <StatCard
+            icon={ArrowDownLeft}
+            tone="danger"
             label={t("entitlements.tenantConnect.txn.refunded") || "Refunded"}
             value={formatCurrency(summary.totalRefunded, summary.currency)}
-            sublabel={`${summary.refundCount} ${t("entitlements.tenantConnect.txn.refunds") || "refunds"}`}
+            subtitle={`${summary.refundCount} ${t("entitlements.tenantConnect.txn.refunds") || "refunds"}`}
           />
         </div>
       )}
@@ -342,33 +347,3 @@ export function StripeTransactionsLog({
   );
 }
 
-// ── Local helper ─────────────────────────────────────────────────────────────
-
-function KpiCard({
-  icon,
-  label,
-  value,
-  sublabel,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  sublabel?: string;
-}) {
-  return (
-    <Card className="transition-all duration-300 hover:shadow-md">
-      <CardContent className="p-4">
-        <div className="mb-1.5 flex items-center gap-2 text-muted-foreground/90">
-          {icon}
-          <span className="text-xs font-semibold uppercase tracking-wider">{label}</span>
-        </div>
-        <p className="text-lg font-extrabold tabular-nums tracking-tight text-foreground">
-          {value}
-        </p>
-        {sublabel && (
-          <p className="mt-0.5 text-xs font-semibold text-muted-foreground/75">{sublabel}</p>
-        )}
-      </CardContent>
-    </Card>
-  );
-}

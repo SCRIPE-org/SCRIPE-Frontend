@@ -7,6 +7,7 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useRegulationViewModel } from "../viewmodels/useRegulationViewModel";
 import { Button } from "@core/ui/button";
 import { Card, CardContent } from "@core/ui/card";
+import { EmptyState } from "@core/ui/empty-state";
 import { Skeleton } from "@core/ui/skeleton";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericForm } from "@core/ui/forms/generic-form";
@@ -151,12 +152,7 @@ export function RegulationView() {
           </CardContent>
         </Card>
       ) : regulations.length === 0 ? (
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <BookOpen className="mb-4 h-10 w-10 text-muted-foreground opacity-50" />
-            <p className="font-semibold">{t("compliance.regulations.noRegulations")}</p>
-          </CardContent>
-        </Card>
+        <EmptyState icon={BookOpen} title={t("compliance.regulations.noRegulations")} />
       ) : (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {regulations.map((reg) => (

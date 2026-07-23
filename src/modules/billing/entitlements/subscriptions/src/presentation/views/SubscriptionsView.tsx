@@ -19,7 +19,8 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useBreadcrumbOverride } from "@core/hooks/use-breadcrumb-override";
 import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
-import { ArrowLeft } from "lucide-react";
+import { EmptyState } from "@core/ui/empty-state";
+import { ArrowLeft, Package, Zap } from "lucide-react";
 
 // ── Sub-components ──
 import {
@@ -28,7 +29,6 @@ import {
   BillingCard,
   StripeCard,
   HistorySection,
-  EmptyState,
   DowngradeNotice,
 } from "../components/subscription-detail";
 
@@ -127,7 +127,17 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
           )}
         </>
       ) : (
-        <EmptyState vm={vm} t={t} />
+        <EmptyState
+          icon={Package}
+          title={t("entSubscriptions.noSubscriptions") || "No Active Subscription"}
+          description={t("entSubscriptions.assignDesc") || "Assign a subscription plan to get started."}
+          action={
+            <Button size="lg" className="gap-2" onClick={() => vm.setShowAssignDialog(true)}>
+              <Zap className="h-5 w-5" />
+              {t("entSubscriptions.assign") || "Assign Edition"}
+            </Button>
+          }
+        />
       )}
 
       {/* ── Dialogs ── */}

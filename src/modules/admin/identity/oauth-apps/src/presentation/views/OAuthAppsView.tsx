@@ -14,6 +14,15 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Input } from "@core/ui/input";
 import { Card, CardContent } from "@core/ui/card";
+import { EmptyState } from "@core/ui/empty-state";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+} from "@core/ui/pagination";
+import { cn } from "@core/common/utils";
 import { useRouter } from "next/navigation";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { OAuthAppCard, OAuthAppItem } from "../components/OAuthAppCard";
@@ -112,25 +121,21 @@ export function OAuthAppsView() {
           </p>
         </Card>
       ) : vm.items.length === 0 ? (
-        <Card className="flex flex-col items-center justify-center rounded-2xl border border-dashed bg-muted/5 p-12 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-primary/20 bg-primary/10 shadow-[0_0_15px_hsl(var(--primary)/0.1)]">
-            <AppWindow className="h-8 w-8 text-primary" />
-          </div>
-          <h3 className="text-lg font-bold tracking-tight text-foreground">
-            {t("oauthApps.emptyTitle") || "No OAuth applications found"}
-          </h3>
-          <p className="mt-1.5 max-w-sm text-xs text-muted-foreground">
-            {t("oauthApps.emptyDesc") ||
-              "Get started by registering a new application to enable secure third-party login via SCRIPE identity services."}
-          </p>
-          <Button
-            onClick={handleCreate}
-            className="mt-6 bg-gradient-to-r from-primary to-info font-semibold text-primary-foreground shadow hover:opacity-95"
-          >
-            <Plus className="me-1.5 h-4 w-4" />
-            {t("oauthApps.createTitle") || "Register Application"}
-          </Button>
-        </Card>
+        <EmptyState
+          icon={AppWindow}
+          size="lg"
+          title={t("oauthApps.emptyTitle") || "No OAuth applications found"}
+          description={
+            t("oauthApps.emptyDesc") ||
+            "Get started by registering a new application to enable secure third-party login via SCRIPE identity services."
+          }
+          action={
+            <Button onClick={handleCreate}>
+              <Plus className="me-1.5 h-4 w-4" />
+              {t("oauthApps.createTitle") || "Register Application"}
+            </Button>
+          }
+        />
       ) : (
         <div className="space-y-4">
           {vm.items.map((item) => (
@@ -147,29 +152,45 @@ export function OAuthAppsView() {
         </div>
       )}
 
-      {/* ─── Pagination Controls ─── */}
+      {/* ─── Pagination Controls — composed from the core pagination
+          primitives, which already flip their chevrons for RTL ─── */}
       {!vm.loading && vm.pagination.pagesCount > 1 && (
-        <div className="flex items-center justify-end gap-2 pt-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => vm.changePage(vm.page - 1)}
-            disabled={vm.page === 1}
-          >
-            {t("common.previous") || "Previous"}
-          </Button>
-          <span className="text-xs text-muted-foreground">
-            {vm.page} / {vm.pagination.pagesCount}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => vm.changePage(vm.page + 1)}
-            disabled={vm.page === vm.pagination.pagesCount}
-          >
-            {t("common.next") || "Next"}
-          </Button>
-        </div>
+        <Pagination className="mx-0 w-auto justify-end pt-4">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                aria-disabled={vm.page === 1 || undefined}
+                tabIndex={vm.page === 1 ? -1 : undefined}
+                className={cn("h-8", vm.page === 1 && "pointer-events-none opacity-50")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  vm.changePage(vm.page - 1);
+                }}
+              />
+            </PaginationItem>
+            <PaginationItem>
+              <span className="px-3 text-xs tabular-nums text-muted-foreground">
+                {vm.page} / {vm.pagination.pagesCount}
+              </span>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                aria-disabled={vm.page === vm.pagination.pagesCount || undefined}
+                tabIndex={vm.page === vm.pagination.pagesCount ? -1 : undefined}
+                className={cn(
+                  "h-8",
+                  vm.page === vm.pagination.pagesCount && "pointer-events-none opacity-50"
+                )}
+                onClick={(e) => {
+                  e.preventDefault();
+                  vm.changePage(vm.page + 1);
+                }}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       )}
 
       {/* ─── Secret Display Dialog ─── */}

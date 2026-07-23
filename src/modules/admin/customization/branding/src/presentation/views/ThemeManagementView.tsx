@@ -22,6 +22,7 @@ import { useThemeManagementViewModel } from "../viewmodels/useThemeManagementVie
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Badge } from "@core/ui/badge";
+import { StatCard } from "@core/ui/stat-card";
 import {
   Eye,
   Copy,
@@ -303,73 +304,30 @@ export function ThemeManagementView() {
     <div className="space-y-6">
       {/* ── Statistics Cards ── */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        <StatCard icon={Palette} tone="neutral" label={t(`${T}.stats.total`)} value={statistics.total} />
+        <StatCard icon={Sparkles} tone="success" label={t(`${T}.stats.free`)} value={statistics.free} />
         <StatCard
-          icon={<Palette className="h-5 w-5" />}
-          label={t(`${T}.stats.total`)}
-          value={statistics.total}
-          color="text-primary"
-          bgColor="bg-primary/10"
-        />
-        <StatCard
-          icon={<Sparkles className="h-5 w-5" />}
-          label={t(`${T}.stats.free`)}
-          value={statistics.free}
-          color="text-success"
-          bgColor="bg-success/10"
-        />
-        <StatCard
-          icon={<Star className="h-5 w-5" />}
+          icon={Star}
+          tone="warning"
           label={t(`${T}.stats.featured`)}
           value={statistics.featured}
-          color="text-warning"
-          bgColor="bg-warning/10"
         />
         <StatCard
-          icon={<TrendingUp className="h-5 w-5" />}
+          icon={TrendingUp}
+          tone="info"
           label={t(`${T}.stats.system`)}
           value={statistics.system}
-          color="text-info"
-          bgColor="bg-info/10"
         />
         <StatCard
-          icon={<Archive className="h-5 w-5" />}
+          icon={Archive}
+          tone="danger"
           label={t(`${T}.stats.deprecated`)}
           value={statistics.deprecated}
-          color="text-destructive"
-          bgColor="bg-destructive/10"
         />
       </div>
 
       {/* ── CRUD Table ── */}
       <GenericCrudView viewModel={vm} config={config} />
-    </div>
-  );
-}
-
-/** Stat card component */
-function StatCard({
-  icon,
-  label,
-  value,
-  color,
-  bgColor,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: number;
-  color: string;
-  bgColor: string;
-}) {
-  const { t } = useI18n();
-  return (
-    <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-card p-4 shadow-sm transition-all hover:shadow-md">
-      <div className={`h-10 w-10 rounded-lg ${bgColor} flex items-center justify-center ${color}`}>
-        {icon}
-      </div>
-      <div>
-        <p className="text-2xl font-bold tracking-tight">{value}</p>
-        <p className="text-xs text-muted-foreground">{label}</p>
-      </div>
     </div>
   );
 }

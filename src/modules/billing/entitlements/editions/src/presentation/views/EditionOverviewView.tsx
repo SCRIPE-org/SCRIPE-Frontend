@@ -11,6 +11,8 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { StatCard } from "@core/ui/stat-card";
+import { EmptyState } from "@core/ui/empty-state";
 import {
   ArrowLeft,
   Settings2,
@@ -36,35 +38,6 @@ import { useEditionDetailViewModel } from "../viewmodels/useEditionDetailViewMod
 
 interface EditionOverviewViewProps {
   editionId: string;
-}
-
-/* ── Helper: Stat Card ── */
-function StatCard({
-  icon: Icon,
-  label,
-  value,
-  accent,
-}: {
-  icon: React.ElementType;
-  label: string;
-  value: React.ReactNode;
-  accent?: string;
-}) {
-  return (
-    <div className="space-y-2 border border-border bg-card p-4 transition-colors hover:bg-muted/20">
-      <div className="flex items-center gap-2">
-        <div
-          className={`flex h-7 w-7 items-center justify-center rounded-md ${accent || "bg-primary/10"}`}
-        >
-          <Icon className={`h-3.5 w-3.5 ${accent ? "text-white" : "text-primary"}`} />
-        </div>
-        <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          {label}
-        </span>
-      </div>
-      <div className="text-lg font-bold tabular-nums text-foreground">{value}</div>
-    </div>
-  );
 }
 
 /* ── Helper: Info Row ── */
@@ -211,13 +184,13 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
           icon={Layers}
           label={t("entitlements.editions.wizard.tierLevel") || "Tier Level"}
           value={edition.tierLevel}
-          accent="bg-primary"
+          tone="neutral"
         />
         <StatCard
           icon={Zap}
           label={t("entitlements.editions.wizard.featureCountLabel") || "Features"}
           value={edition.featureCount}
-          accent="bg-info"
+          tone="info"
         />
         <StatCard
           icon={Users}
@@ -232,13 +205,13 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
               edition.maxActiveSubscriptions
             )
           }
-          accent="bg-success"
+          tone="success"
         />
         <StatCard
           icon={Clock}
           label={t("common.createdAt") || "Created"}
           value={edition.createdAt ? formatUtc(edition.createdAt, "MMM d, yyyy") : "—"}
-          accent="bg-muted-foreground"
+          tone="neutral"
         />
       </div>
 
@@ -517,17 +490,13 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
       )}
 
       {edition.prices.length === 0 && edition.isFreeEdition && (
-        <Card className="border shadow-none">
-          <CardContent className="py-8 text-center">
-            <DollarSign className="mx-auto mb-3 h-8 w-8 text-success" />
-            <p className="text-sm font-medium text-foreground">
-              {t("entitlements.editions.wizard.freeTierTitle") || "Free Tier"}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {t("entitlements.editions.wizard.noPricingConfigured") || "No pricing configured."}
-            </p>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={DollarSign}
+          title={t("entitlements.editions.wizard.freeTierTitle") || "Free Tier"}
+          description={
+            t("entitlements.editions.wizard.noPricingConfigured") || "No pricing configured."
+          }
+        />
       )}
 
       {/* ── Badges ── */}

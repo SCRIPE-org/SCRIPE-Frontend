@@ -24,6 +24,7 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent } from "@core/ui/card";
+import { EmptyState } from "@core/ui/empty-state";
 import { Skeleton } from "@core/ui/skeleton";
 import { Label } from "@core/ui/label";
 import { DatePicker } from "@core/ui/date-picker";
@@ -389,21 +390,19 @@ export function ReportsView() {
           </CardContent>
         </Card>
       ) : reports.length === 0 ? (
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="mb-4 rounded-xl border border-info/20 bg-info/10 p-4">
-              <BarChart3 className="h-8 w-8 text-info" />
-            </div>
-            <p className="font-semibold">{t("compliance.noReports")}</p>
-            <p className="mt-1 text-sm text-muted-foreground">{t("compliance.noReportsDesc")}</p>
-            {canGenerate && (
-              <Button className="mt-4" size="sm" onClick={() => setGenerateOpen(true)}>
+        <EmptyState
+          icon={BarChart3}
+          title={t("compliance.noReports")}
+          description={t("compliance.noReportsDesc")}
+          action={
+            canGenerate ? (
+              <Button size="sm" onClick={() => setGenerateOpen(true)}>
                 <Plus className="me-2 h-4 w-4" />
                 {t("compliance.generateReport")}
               </Button>
-            )}
-          </CardContent>
-        </Card>
+            ) : undefined
+          }
+        />
       ) : (
         <div className="space-y-3">
           {reports.map((report: ComplianceReport) => (

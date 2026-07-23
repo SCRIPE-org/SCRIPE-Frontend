@@ -14,6 +14,7 @@ import React from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
+import { EmptyState } from "@core/ui/empty-state";
 import { Plus, Inbox } from "lucide-react";
 
 import { TenantNodeCard } from "../TenantNodeCard";
@@ -68,13 +69,11 @@ export function SubTenantsTab({ parentId, parentName, parentCode }: SubTenantsTa
 
       {/* Children cards */}
       {vm.childNodes.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/50 py-12 text-center">
-          <div className="mb-3 rounded-full bg-muted/50 p-3">
-            <Inbox className="h-8 w-8 text-muted-foreground" />
-          </div>
-          <p className="text-sm font-medium">{t("tenant.noTenantsFound")}</p>
-          <p className="mt-1 text-xs text-muted-foreground">{t("tenant.noTenantsDescription")}</p>
-        </div>
+        <EmptyState
+          icon={Inbox}
+          title={t("tenant.noTenantsFound")}
+          description={t("tenant.noTenantsDescription")}
+        />
       ) : (
         <div className="space-y-0">
           {vm.childNodes.map((node) => (

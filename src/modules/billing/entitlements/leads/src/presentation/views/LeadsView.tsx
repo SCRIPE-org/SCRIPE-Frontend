@@ -13,7 +13,16 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { GenericTable, type Column } from "@core/crud/components/generic-table";
-import { LayoutGrid, Table2 } from "lucide-react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@core/ui/pagination";
+import { EmptyState } from "@core/ui/empty-state";
+import { cn } from "@core/common/utils";
+import { Inbox, LayoutGrid, Table2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -295,33 +304,47 @@ export function LeadsView() {
             isMoving={vm.isUpdatingStatus || !canUpdateLead}
           />
           {vm.totalPages > 1 && (
-            <div className="flex items-center justify-end gap-2">
-              <span className="text-xs text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-end gap-3">
+              <span className="text-xs text-nx-ink-3">
                 {t("leads.pagination.page", {
                   page: String(vm.page),
                   total: String(vm.totalPages),
                 })}
               </span>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={vm.page <= 1 || vm.isLoading}
-                onClick={() => vm.handlePageChange(vm.page - 1)}
-                className="h-8 border-border bg-card text-xs text-foreground hover:bg-muted"
-              >
-                {t("leads.pagination.previous")}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={vm.page >= vm.totalPages || vm.isLoading}
-                onClick={() => vm.handlePageChange(vm.page + 1)}
-                className="h-8 border-border bg-card text-xs text-foreground hover:bg-muted"
-              >
-                {t("leads.pagination.next")}
-              </Button>
+              <Pagination className="mx-0 w-auto justify-end">
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      aria-disabled={vm.page <= 1 || vm.isLoading || undefined}
+                      tabIndex={vm.page <= 1 || vm.isLoading ? -1 : undefined}
+                      className={cn(
+                        "h-8",
+                        (vm.page <= 1 || vm.isLoading) && "pointer-events-none opacity-50"
+                      )}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        vm.handlePageChange(vm.page - 1);
+                      }}
+                    />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      aria-disabled={vm.page >= vm.totalPages || vm.isLoading || undefined}
+                      tabIndex={vm.page >= vm.totalPages || vm.isLoading ? -1 : undefined}
+                      className={cn(
+                        "h-8",
+                        (vm.page >= vm.totalPages || vm.isLoading) && "pointer-events-none opacity-50"
+                      )}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        vm.handlePageChange(vm.page + 1);
+                      }}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             </div>
           )}
         </div>
@@ -341,7 +364,7 @@ export function LeadsView() {
             pagesCount: vm.totalPages,
             onPageChange: vm.handlePageChange,
           }}
-          emptyMessage={t("leads.empty")}
+          emptyMessage={<EmptyState bare icon={Inbox} title={t("leads.empty")} />}
         />
       )}
 

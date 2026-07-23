@@ -3,6 +3,7 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Button } from "@core/ui/button";
+import { StatCard } from "@core/ui/stat-card";
 import {
   CheckCircle2,
   Clock,
@@ -118,34 +119,38 @@ export function StripeAccountKpis({
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <KpiCard
-          icon={<Banknote className="h-4.5 w-4.5 text-info" />}
+        <StatCard
+          icon={Banknote}
+          tone="info"
           label={t("entitlements.tenantConnect.totalPayouts") || "Total Payouts"}
           value={formatCurrency(account.totalPayoutsAmount)}
-          sublabel={`${account.totalPayoutsCount} ${t("entitlements.tenantConnect.transactions") || "transactions"}`}
+          subtitle={`${account.totalPayoutsCount} ${t("entitlements.tenantConnect.transactions") || "transactions"}`}
         />
-        <KpiCard
-          icon={<Zap className="h-4.5 w-4.5 text-primary" />}
+        <StatCard
+          icon={Zap}
+          tone="neutral"
           label={t("entitlements.tenantConnect.commissionRate") || "Platform Fee"}
           value={`${(account.effectiveCommissionRate * 100).toFixed(1)}%`}
-          sublabel={t("entitlements.tenantConnect.perTransaction") || "per transaction"}
+          subtitle={t("entitlements.tenantConnect.perTransaction") || "per transaction"}
         />
-        <KpiCard
-          icon={<Calendar className="h-4.5 w-4.5 text-warning" />}
+        <StatCard
+          icon={Calendar}
+          tone="warning"
           label={t("entitlements.tenantConnect.payoutSchedule") || "Payout Schedule"}
           value={
             account.payoutDelayDays === 0
               ? t("entitlements.tenantConnect.instant") || "Instant"
               : `${account.payoutDelayDays} ${t("entitlements.tenantConnect.days") || "days"}`
           }
-          sublabel={t("entitlements.tenantConnect.afterPayment") || "after payment"}
+          subtitle={t("entitlements.tenantConnect.afterPayment") || "after payment"}
         />
-        <KpiCard
-          icon={<Calendar className="h-4.5 w-4.5 text-success" />}
+        <StatCard
+          icon={Calendar}
+          tone="success"
           label={t("entitlements.tenantConnect.lastPayout") || "Last Payout"}
           value={formatDate(account.lastPayoutAt)}
-          sublabel={
-            account.lastPayoutAt ? "" : t("entitlements.tenantConnect.noPayout") || "No payouts yet"
+          subtitle={
+            account.lastPayoutAt ? undefined : t("entitlements.tenantConnect.noPayout") || "No payouts yet"
           }
         />
       </div>
@@ -205,35 +210,6 @@ export function StripeAccountKpis({
 }
 
 // ── Local Helpers ────────────────────────────────────────────────────────────
-
-function KpiCard({
-  icon,
-  label,
-  value,
-  sublabel,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  sublabel?: string;
-}) {
-  return (
-    <Card className="transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
-      <CardContent className="p-5">
-        <div className="mb-2 flex items-center gap-2 text-muted-foreground/90">
-          {icon}
-          <span className="text-xs font-semibold uppercase tracking-wider">{label}</span>
-        </div>
-        <p className="text-2xl font-extrabold tabular-nums tracking-tight text-foreground">
-          {value}
-        </p>
-        {sublabel && (
-          <p className="mt-1 text-xs font-medium text-muted-foreground/80">{sublabel}</p>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
 
 function DetailRow({
   icon,

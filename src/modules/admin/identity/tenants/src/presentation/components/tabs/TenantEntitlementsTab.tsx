@@ -14,19 +14,18 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useTenantEntitlementsViewModel } from "../../viewmodels/useTenantEntitlementsViewModel";
-import {
-  Loader2,
-  CheckCircle2,
-  Crown,
-  Shield,
-  Settings2,
-  Search,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { Loader2, CheckCircle2, Crown, Shield, Settings2, Search } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
+import { EmptyState } from "@core/ui/empty-state";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+} from "@core/ui/pagination";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { cn } from "@core/common/utils";
 import { TenantSubscriptionCard } from "../cards/TenantSubscriptionCard";
@@ -233,36 +232,53 @@ function FeaturesGrid({ tenantId }: { tenantId: string }) {
           );
         })}
         {filtered.length === 0 && (
-          <div className="col-span-full rounded-xl border-2 border-dashed py-8 text-center text-muted-foreground">
-            {search ? t("common.noResults") : t("common.noData")}
-          </div>
+          <EmptyState
+            icon={Search}
+            size="sm"
+            className="col-span-full"
+            title={search ? t("common.noResults") : t("common.noData")}
+          />
         )}
       </div>
 
-      {/* Pagination */}
+      {/* Pagination — composed from the core pagination primitives, which
+          already flip their chevrons for RTL */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between border-t border-border/50 pt-4">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm tabular-nums text-muted-foreground">
             {t("common.page") || "Page"} {safeCurrentPage} / {totalPages}
           </p>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={safeCurrentPage <= 1}
-              className="inline-flex h-8 items-center justify-center rounded-lg border border-input bg-background px-3 text-sm font-medium shadow-sm transition-colors hover:bg-accent disabled:opacity-50"
-            >
-              {isRtl ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-              <span className="ms-1">{t("common.previous") || "Previous"}</span>
-            </button>
-            <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={safeCurrentPage >= totalPages}
-              className="inline-flex h-8 items-center justify-center rounded-lg border border-input bg-background px-3 text-sm font-medium shadow-sm transition-colors hover:bg-accent disabled:opacity-50"
-            >
-              <span className="me-1">{t("common.next") || "Next"}</span>
-              {isRtl ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-            </button>
-          </div>
+          <Pagination className="mx-0 w-auto justify-end">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  aria-disabled={safeCurrentPage <= 1 || undefined}
+                  tabIndex={safeCurrentPage <= 1 ? -1 : undefined}
+                  className={cn("h-8", safeCurrentPage <= 1 && "pointer-events-none opacity-50")}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setPage((p) => Math.max(1, p - 1));
+                  }}
+                />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  aria-disabled={safeCurrentPage >= totalPages || undefined}
+                  tabIndex={safeCurrentPage >= totalPages ? -1 : undefined}
+                  className={cn(
+                    "h-8",
+                    safeCurrentPage >= totalPages && "pointer-events-none opacity-50"
+                  )}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setPage((p) => Math.min(totalPages, p + 1));
+                  }}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       )}
     </div>

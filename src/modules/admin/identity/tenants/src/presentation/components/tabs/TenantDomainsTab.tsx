@@ -16,6 +16,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
+import { EmptyState } from "@core/ui/empty-state";
 import {
   Globe,
   Plus,
@@ -177,13 +178,12 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
           {vm.customDomains.length > 0 && `(${vm.customDomains.length})`}
         </p>
         {vm.customDomains.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-muted-foreground/20 p-8 text-center">
-            <Globe className="mx-auto mb-2 h-8 w-8 text-muted-foreground/30" />
-            <p className="text-sm text-muted-foreground">{t("tenant.domainsNoCustom")}</p>
-            <p className="mt-1 text-xs text-muted-foreground/70">
-              {t("tenant.domainsNoCustomHint")}
-            </p>
-          </div>
+          <EmptyState
+            icon={Globe}
+            size="sm"
+            title={t("tenant.domainsNoCustom")}
+            description={t("tenant.domainsNoCustomHint")}
+          />
         ) : (
           vm.customDomains.map((d) => (
             <DomainCard

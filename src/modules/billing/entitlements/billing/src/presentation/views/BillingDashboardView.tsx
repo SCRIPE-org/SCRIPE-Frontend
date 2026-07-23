@@ -17,9 +17,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core
 import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
 import { Button } from "@core/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { Separator } from "@core/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
+import { StatCard } from "@core/ui/stat-card";
+import { EmptyState } from "@core/ui/empty-state";
 import * as ChartPrimitives from "@core/ui/chart";
 
 const { ChartContainer, ChartTooltip, ChartTooltipContent } = ChartPrimitives;
@@ -39,68 +40,6 @@ import {
 // ─────────────────────────────────────────────────────────────
 // Sub-Components (all use @core/ui/* exclusively)
 // ─────────────────────────────────────────────────────────────
-
-/** KPI stat card using Card from @core/ui */
-interface StatCardProps {
-  title: string;
-  tooltip?: string;
-  value: string | number;
-  icon: React.ReactNode;
-  variant?: "default" | "success" | "warning" | "danger";
-  suffix?: string;
-}
-
-const VARIANT_CARD_STYLES: Record<string, string> = {
-  default: "from-info/10 to-info/10 border-info/20",
-  success: "from-success/10 to-success/10 border-success/20",
-  warning: "from-warning/10 to-warning/10 border-warning/20",
-  danger: "from-destructive/10 to-destructive/10 border-destructive/20",
-};
-
-const VARIANT_ICON_STYLES: Record<string, string> = {
-  default: "text-info",
-  success: "text-success",
-  warning: "text-warning",
-  danger: "text-destructive",
-};
-
-function StatCard({ title, tooltip, value, icon, variant = "default", suffix }: StatCardProps) {
-  const card = (
-    <Card
-      className={`bg-gradient-to-br ${VARIANT_CARD_STYLES[variant]} border transition-all hover:shadow-md`}
-    >
-      <CardContent className="flex items-center gap-4 p-5">
-        <div
-          className={`rounded-xl bg-background/80 p-3 shadow-sm ${VARIANT_ICON_STYLES[variant]}`}
-        >
-          {icon}
-        </div>
-        <div className="min-w-0 flex-1">
-          <CardDescription className="text-xs font-medium uppercase tracking-wider">
-            {title}
-          </CardDescription>
-          <CardTitle className="mt-1 text-2xl font-bold tracking-tight">
-            {value}
-            {suffix && (
-              <span className="ms-1 text-sm font-normal text-muted-foreground">{suffix}</span>
-            )}
-          </CardTitle>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
-  if (!tooltip) return card;
-
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>{card}</TooltipTrigger>
-        <TooltipContent>{tooltip}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-}
 
 /** Loading skeleton uses Skeleton from @core/ui */
 function DashboardSkeleton() {
@@ -327,18 +266,16 @@ export function BillingDashboardView() {
   // ── Error / empty state ──
   if (isError || !dashboard) {
     return (
-      <Card className="border-dashed">
-        <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-          <AlertTriangle className="mb-4 h-12 w-12 text-muted-foreground" />
-          <CardTitle className="text-lg text-muted-foreground">
-            {t("billing.dashboard.noData")}
-          </CardTitle>
-          <Button variant="outline" className="mt-4" onClick={() => refetch()}>
+      <EmptyState
+        icon={AlertTriangle}
+        title={t("billing.dashboard.noData")}
+        action={
+          <Button variant="outline" onClick={() => refetch()}>
             <RefreshCw className="me-2 h-4 w-4" />
             {t("common.retry")}
           </Button>
-        </CardContent>
-      </Card>
+        }
+      />
     );
   }
 
@@ -365,63 +302,63 @@ export function BillingDashboardView() {
       {/* ── Financial KPIs ── */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title={t("billing.dashboard.mrr")}
+          label={t("billing.dashboard.mrr")}
           tooltip={t("billing.dashboard.mrrFull")}
           value={formatCurrency(dashboard.mrr)}
-          icon={<DollarSign className="h-5 w-5" />}
-          variant="success"
+          icon={DollarSign}
+          tone="success"
           suffix={t("billing.dashboard.perMonth")}
         />
         <StatCard
-          title={t("billing.dashboard.arr")}
+          label={t("billing.dashboard.arr")}
           tooltip={t("billing.dashboard.arrFull")}
           value={formatCurrency(dashboard.arr)}
-          icon={<TrendingUp className="h-5 w-5" />}
-          variant="default"
+          icon={TrendingUp}
+          tone="info"
         />
         <StatCard
-          title={t("billing.dashboard.totalRevenue")}
+          label={t("billing.dashboard.totalRevenue")}
           value={formatCurrency(dashboard.totalRevenue)}
-          icon={<Layers className="h-5 w-5" />}
-          variant="default"
+          icon={Layers}
+          tone="info"
         />
         <StatCard
-          title={t("billing.dashboard.churnRate")}
+          label={t("billing.dashboard.churnRate")}
           value={`${dashboard.churnRate.toFixed(1)}%`}
-          icon={<AlertTriangle className="h-5 w-5" />}
-          variant={churnVariant}
+          icon={AlertTriangle}
+          tone={churnVariant}
         />
       </div>
 
       {/* ── Operational KPIs ── */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title={t("billing.dashboard.activeSubscriptions")}
+          label={t("billing.dashboard.activeSubscriptions")}
           value={dashboard.activeSubscriptions}
-          icon={<Users className="h-5 w-5" />}
-          variant="success"
+          icon={Users}
+          tone="success"
         />
         <StatCard
-          title={t("billing.dashboard.trialSubscriptions")}
+          label={t("billing.dashboard.trialSubscriptions")}
           value={dashboard.trialSubscriptions}
-          icon={<Activity className="h-5 w-5" />}
-          variant="warning"
+          icon={Activity}
+          tone="warning"
         />
         <StatCard
-          title={t("billing.dashboard.cancelledLast30Days")}
+          label={t("billing.dashboard.cancelledLast30Days")}
           value={dashboard.cancelledLast30Days}
-          icon={<AlertTriangle className="h-5 w-5" />}
-          variant={dashboard.cancelledLast30Days > 0 ? "danger" : "success"}
+          icon={AlertTriangle}
+          tone={dashboard.cancelledLast30Days > 0 ? "danger" : "success"}
         />
         <StatCard
-          title={t("billing.dashboard.churnRate")}
+          label={t("billing.dashboard.churnRate")}
           value={
             dashboard.churnRate <= 2
               ? t("billing.dashboard.healthy")
               : t("billing.dashboard.atRisk")
           }
-          icon={<BarChart3 className="h-5 w-5" />}
-          variant={churnVariant}
+          icon={BarChart3}
+          tone={churnVariant}
         />
       </div>
 

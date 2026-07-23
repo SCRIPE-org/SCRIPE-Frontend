@@ -21,6 +21,7 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
+import { EmptyState } from "@core/ui/empty-state";
 import { Skeleton } from "@core/ui/skeleton";
 import { toast } from "@core/hooks/use-enhanced-toast";
 import { GenericModal } from "@core/crud/components/generic-modal";
@@ -338,17 +339,11 @@ export function ConsentView() {
               </CardContent>
             </Card>
           ) : consents.length === 0 ? (
-            <Card className="border-dashed">
-              <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                <div className="mb-4 rounded-xl border border-success/20 bg-success/10 p-4">
-                  <BarChart3 className="h-8 w-8 text-success" />
-                </div>
-                <p className="font-semibold">{t("compliance.noConsents")}</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {t("compliance.noConsentsDesc")}
-                </p>
-              </CardContent>
-            </Card>
+            <EmptyState
+              icon={BarChart3}
+              title={t("compliance.noConsents")}
+              description={t("compliance.noConsentsDesc")}
+            />
           ) : (
             <div className="space-y-3">
               <Card className="border-border/40">

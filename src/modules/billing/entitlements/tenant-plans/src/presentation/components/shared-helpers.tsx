@@ -5,7 +5,6 @@
 "use client";
 
 import React from "react";
-import { Card, CardContent } from "@core/ui/card";
 import { CheckCircle2, XCircle } from "lucide-react";
 
 // ── Types ──
@@ -14,32 +13,8 @@ import { CheckCircle2, XCircle } from "lucide-react";
  */
 export type TFn = (key: string) => string;
 
-// ── Stat Card ──
-/**
- * Presentation UI component rendering the stat card.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
- */
-export function StatCard({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <Card>
-      <CardContent className="p-4">
-        <div className="mb-1 flex items-center gap-2 text-muted-foreground">
-          {icon}
-          <span className="text-xs font-medium">{label}</span>
-        </div>
-        <p className="text-lg font-semibold tabular-nums">{value}</p>
-      </CardContent>
-    </Card>
-  );
-}
+// The plan quick-stat KPI now renders through the core StatCard
+// (@core/ui/stat-card); TenantPlanDetailView adopts it directly.
 
 // ── Info Row (label: value) ──
 /**

@@ -38,7 +38,7 @@ import { FeaturesTab } from "../components/FeaturesTab";
 import { PricingTab } from "../components/PricingTab";
 import { VersionsTab } from "../components/VersionsTab";
 import { PromotionsTab } from "../components/PromotionsTab";
-import { StatCard } from "../components/shared-helpers";
+import { StatCard } from "@core/ui/stat-card";
 
 interface TenantPlanDetailViewProps {
   planId: string;
@@ -173,22 +173,22 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
       {/* ─────── QUICK STATS ─────── */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <StatCard
-          icon={<DollarSign className="h-4 w-4" />}
+          icon={DollarSign}
           label={t("entitlements.tenantPlans.pricing") || "Starting Price"}
           value={plan.formattedStartingPrice}
         />
         <StatCard
-          icon={<Users className="h-4 w-4" />}
+          icon={Users}
           label={t("entitlements.tenantPlans.subscribers") || "Subscribers"}
           value={String(plan.activeSubscriberCount)}
         />
         <StatCard
-          icon={<Calendar className="h-4 w-4" />}
+          icon={Calendar}
           label={t("entitlements.tenantPlans.billingCycles") || "Cycles"}
           value={plan.supportedCycles.join(", ") || "—"}
         />
         <StatCard
-          icon={<GitBranch className="h-4 w-4" />}
+          icon={GitBranch}
           label={t("entitlements.tenantPlans.tabVersions") || "Version"}
           value={`v${plan.currentVersion}`}
         />

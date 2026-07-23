@@ -10,6 +10,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Button } from "@core/ui/button";
 import { Card, CardContent } from "@core/ui/card";
+import { EmptyState } from "@core/ui/empty-state";
 import { Skeleton } from "@core/ui/skeleton";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericForm } from "@core/ui/forms/generic-form";
@@ -159,14 +160,7 @@ export function RetentionView() {
           </CardContent>
         </Card>
       ) : policies.length === 0 ? (
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="mb-4 rounded-xl border border-primary/20 bg-primary/10 p-4">
-              <Clock className="h-8 w-8 text-primary" />
-            </div>
-            <p className="font-semibold">{t("compliance.noPolicies")}</p>
-          </CardContent>
-        </Card>
+        <EmptyState icon={Clock} title={t("compliance.noPolicies")} />
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {policies.map((policy: RetentionPolicy) => (

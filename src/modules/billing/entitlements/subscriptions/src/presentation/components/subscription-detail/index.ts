@@ -7,7 +7,8 @@ export { PlanDetailsCard } from "./PlanDetailsCard";
 export { BillingCard } from "./BillingCard";
 export { StripeCard } from "./StripeCard";
 export { HistorySection } from "./HistorySection";
-export { EmptyState } from "./EmptyState";
+// EmptyState clone removed — the no-subscription state now composes the core
+// EmptyState (@core/ui/empty-state) directly in SubscriptionsView.
 export { DowngradeNotice } from "./DowngradeNotice";
 export { InfoRow } from "./InfoRow";
 export { STATUS_STYLES, DEFAULT_STATUS_STYLE } from "./status-styles";

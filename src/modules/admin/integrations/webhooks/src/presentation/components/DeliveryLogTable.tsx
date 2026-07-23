@@ -15,18 +15,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import type { WebhookDeliveryLog } from "../../domain/entities/Webhook";
+import { CheckCircle2, XCircle, ChevronDown, ChevronUp, Clock, Zap, Filter } from "lucide-react";
 import {
-  CheckCircle2,
-  XCircle,
-  ChevronDown,
-  ChevronUp,
-  Clock,
-  Zap,
-  Filter,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
-import { formatUtc } from "@core/common/utils";
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+} from "@core/ui/pagination";
+import { formatUtc, cn } from "@core/common/utils";
 import { DeliveryStatusBadge } from "./DeliveryStatusBadge";
 
 interface DeliveryLogTableProps {
@@ -307,32 +304,41 @@ export function DeliveryLogTable({
           </div>
         )}
 
-        {/* Pagination */}
+        {/* Pagination — composed from the core pagination primitives, which
+            already flip their chevrons for RTL */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between border-t px-4 py-3">
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs tabular-nums text-muted-foreground">
               {t("common.page") || "Page"} {page} / {totalPages}
             </p>
-            <div className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                disabled={page <= 1}
-                onClick={() => onPageChange(page - 1)}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                disabled={page >= totalPages}
-                onClick={() => onPageChange(page + 1)}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
+            <Pagination className="mx-0 w-auto justify-end">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    aria-disabled={page <= 1 || undefined}
+                    tabIndex={page <= 1 ? -1 : undefined}
+                    className={cn("h-8", page <= 1 && "pointer-events-none opacity-50")}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onPageChange(page - 1);
+                    }}
+                  />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    aria-disabled={page >= totalPages || undefined}
+                    tabIndex={page >= totalPages ? -1 : undefined}
+                    className={cn("h-8", page >= totalPages && "pointer-events-none opacity-50")}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onPageChange(page + 1);
+                    }}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </div>
         )}
       </CardContent>

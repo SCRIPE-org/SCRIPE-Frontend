@@ -2,11 +2,13 @@
  * WebhookStatsCards
  *
  * KPI cards showing Total / Successful / Failed deliveries + Success Rate.
+ * Composes the core StatCard — the single KPI surface — so tone maps to
+ * semantic tokens and reads correctly in both themes and any tenant palette.
  */
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";
-import { Card, CardContent } from "@core/ui/card";
+import { StatCard, type StatTone } from "@core/ui/stat-card";
 import type { WebhookSubscription } from "../../domain/entities/Webhook";
 import { Send, CheckCircle2, XCircle, TrendingUp } from "lucide-react";
 
@@ -21,63 +23,46 @@ interface WebhookStatsCardsProps {
 export function WebhookStatsCards({ webhook }: WebhookStatsCardsProps) {
   const { t } = useI18n();
 
-  const stats = [
+  const rateTone: StatTone =
+    webhook.successRate >= 95 ? "success" : webhook.successRate >= 80 ? "warning" : "danger";
+
+  const stats: { label: string; value: string; icon: typeof Send; tone: StatTone }[] = [
     {
       label: t("webhooks.stats.total") || "Total Deliveries",
       value: webhook.totalDeliveries.toLocaleString(),
       icon: Send,
-      color: "text-info",
-      bg: "bg-info/10",
+      tone: "info",
     },
     {
       label: t("webhooks.stats.successful") || "Successful",
       value: webhook.successfulDeliveries.toLocaleString(),
       icon: CheckCircle2,
-      color: "text-success",
-      bg: "bg-success/10",
+      tone: "success",
     },
     {
       label: t("webhooks.stats.failed") || "Failed",
       value: webhook.failedDeliveries.toLocaleString(),
       icon: XCircle,
-      color: "text-destructive",
-      bg: "bg-destructive/10",
+      tone: "danger",
     },
     {
       label: t("webhooks.stats.successRate") || "Success Rate",
       value: webhook.totalDeliveries > 0 ? `${webhook.successRate.toFixed(1)}%` : "—",
       icon: TrendingUp,
-      color:
-        webhook.successRate >= 95
-          ? "text-success"
-          : webhook.successRate >= 80
-            ? "text-warning"
-            : "text-destructive",
-      bg:
-        webhook.successRate >= 95
-          ? "bg-success/10"
-          : webhook.successRate >= 80
-            ? "bg-warning/10"
-            : "bg-destructive/10",
+      tone: rateTone,
     },
   ];
 
   return (
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
       {stats.map((stat) => (
-        <Card key={stat.label} className="overflow-hidden">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className={`rounded-xl p-2.5 ${stat.bg}`}>
-                <stat.icon className={`h-5 w-5 ${stat.color}`} />
-              </div>
-              <div className="min-w-0">
-                <p className="text-2xl font-bold tracking-tight">{stat.value}</p>
-                <p className="truncate text-xs text-muted-foreground">{stat.label}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <StatCard
+          key={stat.label}
+          label={stat.label}
+          value={stat.value}
+          icon={stat.icon}
+          tone={stat.tone}
+        />
       ))}
     </div>
   );

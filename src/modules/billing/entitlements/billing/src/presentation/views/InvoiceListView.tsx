@@ -20,13 +20,19 @@ import type { InvoiceListItem } from "../../domain/entities/Invoice";
 import { CurrencyDisplayToggle } from "@core/ui/currency-display-toggle";
 import { formatUtc } from "@core/common/utils";
 
-const STATUS_VARIANTS: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+// Invoice lifecycle states mapped onto the nx Badge semantic tones — paid reads
+// success, overdue destructive, pending on the warning-strong "pending" chip;
+// draft/void stay neutral, refunded is informational.
+const STATUS_VARIANTS: Record<
+  string,
+  "success" | "warning" | "pending" | "destructive" | "info" | "secondary" | "inactive"
+> = {
   Draft: "secondary",
-  Pending: "outline",
-  Paid: "default",
+  Pending: "pending",
+  Paid: "success",
   Overdue: "destructive",
-  Void: "secondary",
-  Refunded: "outline",
+  Void: "inactive",
+  Refunded: "info",
 };
 
 /**
@@ -80,15 +86,19 @@ export function InvoiceListView() {
         {
           key: "total",
           label: t("billing.columns.total"),
+          // Money column: tabular figures so the digits column-align down the
+          // list (the numeric treatment the nexus table variant carries).
           render: (value: number, item: InvoiceListItem) => {
+            let formatted: string;
             try {
-              return new Intl.NumberFormat("en-US", {
+              formatted = new Intl.NumberFormat("en-US", {
                 style: "currency",
                 currency: item.currency?.toUpperCase() ?? "USD",
               }).format(value);
             } catch {
-              return `${item.currency} ${value.toFixed(2)}`;
+              formatted = `${item.currency} ${value.toFixed(2)}`;
             }
+            return <span className="tabular-nums">{formatted}</span>;
           },
         },
         {

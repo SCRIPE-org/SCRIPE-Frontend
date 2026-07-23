@@ -25,18 +25,16 @@ import {
   AlertDialogTitle,
 } from "@core/ui/alert-dialog";
 import type { WebhookDeliveryLog } from "../../domain/entities/Webhook";
+import { Skull, RotateCcw, ChevronDown, ChevronUp, Zap, AlertTriangle, Inbox } from "lucide-react";
 import {
-  Skull,
-  RotateCcw,
-  ChevronDown,
-  ChevronUp,
-  ChevronLeft,
-  ChevronRight,
-  Zap,
-  AlertTriangle,
-  Inbox,
-} from "lucide-react";
-import { formatUtc } from "@core/common/utils";
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+} from "@core/ui/pagination";
+import { formatUtc, cn } from "@core/common/utils";
+import { EmptyState } from "@core/ui/empty-state";
 
 interface DeadLetterQueueProps {
   logs: WebhookDeliveryLog[];
@@ -122,18 +120,15 @@ export function DeadLetterQueue({
 
         {/* Empty state */}
         {!isLoading && logs.length === 0 && (
-          <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-            <div className="mb-3 rounded-full bg-success/10 p-4">
-              <Inbox className="h-8 w-8 text-success" />
-            </div>
-            <p className="text-sm font-medium text-success">
-              {t("webhooks.deadLetters.empty") || "No dead letters"}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {t("webhooks.deadLetters.emptyDesc") ||
-                "All deliveries are being processed successfully."}
-            </p>
-          </div>
+          <EmptyState
+            bare
+            icon={Inbox}
+            title={t("webhooks.deadLetters.empty") || "No dead letters"}
+            description={
+              t("webhooks.deadLetters.emptyDesc") ||
+              "All deliveries are being processed successfully."
+            }
+          />
         )}
 
         {/* Table */}
@@ -272,32 +267,41 @@ export function DeadLetterQueue({
               </Table>
             </div>
 
-            {/* Pagination */}
+            {/* Pagination — composed from the core pagination primitives, which
+                already flip their chevrons for RTL */}
             {totalPages > 1 && (
               <div className="flex items-center justify-between px-4 pb-4">
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs tabular-nums text-muted-foreground">
                   Page {page} of {totalPages} · {totalCount} total
                 </p>
-                <div className="flex items-center gap-1">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-7 w-7"
-                    disabled={page <= 1}
-                    onClick={() => onPageChange(page - 1)}
-                  >
-                    <ChevronLeft className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-7 w-7"
-                    disabled={page >= totalPages}
-                    onClick={() => onPageChange(page + 1)}
-                  >
-                    <ChevronRight className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
+                <Pagination className="mx-0 w-auto justify-end">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious
+                        href="#"
+                        aria-disabled={page <= 1 || undefined}
+                        tabIndex={page <= 1 ? -1 : undefined}
+                        className={cn("h-7", page <= 1 && "pointer-events-none opacity-50")}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onPageChange(page - 1);
+                        }}
+                      />
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationNext
+                        href="#"
+                        aria-disabled={page >= totalPages || undefined}
+                        tabIndex={page >= totalPages ? -1 : undefined}
+                        className={cn("h-7", page >= totalPages && "pointer-events-none opacity-50")}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onPageChange(page + 1);
+                        }}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
               </div>
             )}
           </>

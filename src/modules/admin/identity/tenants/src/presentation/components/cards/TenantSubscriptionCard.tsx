@@ -4,6 +4,7 @@
 import { useState, useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
+import { EmptyState } from "@core/ui/empty-state";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import {
@@ -39,7 +40,7 @@ import {
 } from "@core/ui/dialog";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { parseLocalizedNumber } from "@core/utils/number-parser";
-import { formatDateUtc, formatDateTimeUtc } from "@core/common/utils";
+import { formatDateUtc } from "@core/common/utils";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import { Skeleton } from "@core/ui/skeleton";
 import { Input } from "@core/ui/input";
@@ -302,12 +303,11 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
   if (!subscription) {
     return (
       <>
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center gap-3 py-10 text-center text-muted-foreground">
-            <div className="rounded-full bg-muted p-3">
-              <CreditCard className="h-6 w-6 opacity-50" />
-            </div>
-            <p className="text-sm">{t("tenant.noSubscription") || "No active subscription"}</p>
+        <EmptyState
+          icon={CreditCard}
+          size="sm"
+          title={t("tenant.noSubscription") || "No active subscription"}
+          action={
             <Button
               variant="outline"
               size="sm"
@@ -319,8 +319,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             >
               {t("tenant.assignPlan") || "Assign Plan"}
             </Button>
-          </CardContent>
-        </Card>
+          }
+        />
         {renderChangePlanDialog()}
       </>
     );
