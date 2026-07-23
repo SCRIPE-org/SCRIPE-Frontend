@@ -17,7 +17,7 @@ import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Palette, Sparkles } from "lucide-react";
-import { useToast } from "@core/ui/use-toast";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
 interface SaveAsThemeModalProps {
   isOpen: boolean;
@@ -69,7 +69,7 @@ export function SaveAsThemeModal({
   onSaveTheme,
 }: SaveAsThemeModalProps) {
   const { t } = useI18n();
-  const { toast } = useToast();
+  const { toast } = useEnhancedToast();
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");

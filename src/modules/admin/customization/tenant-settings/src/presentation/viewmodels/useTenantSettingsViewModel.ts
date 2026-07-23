@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useToast } from "@core/hooks/use-toast";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { customizationContainer } from "@modules/customization/di";
 import type { TenantSettings } from "../../domain/entities/TenantSettings";
@@ -23,7 +23,7 @@ export const tenantSettingsKeys = {
  */
 export function useTenantSettingsViewModel() {
   const { t } = useI18n();
-  const { toast } = useToast();
+  const { toast } = useEnhancedToast();
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState<TenantSettings | null>(null);
 

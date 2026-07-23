@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { complianceContainer } from "@modules/compliance/di";
 import { useI18n } from "@core/providers/i18n-provider";
-import { toast } from "@core/ui/use-toast";
+import { toast } from "@core/hooks/use-enhanced-toast";
 import type { ComplianceReport } from "../../domain/entities/ComplianceReport";
 
 /**

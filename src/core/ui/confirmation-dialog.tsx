@@ -34,31 +34,34 @@ export interface ConfirmationDialogProps {
   disableConfirm?: boolean;
 }
 
+// The chip tint pairs the nx status alias for the glyph with a slash-alpha
+// wash of the same measured status token underneath — nothing re-derived,
+// and both flip with the theme through the vars they read.
 const variantConfig = {
   destructive: {
     icon: Trash2,
-    iconColor: "text-destructive",
+    chipClass: "bg-destructive/10 text-nx-danger",
     confirmVariant: "destructive" as const,
     title: "Delete Item",
     description: "Are you sure you want to delete this item? This action cannot be undone.",
   },
   warning: {
     icon: AlertTriangle,
-    iconColor: "text-warning",
+    chipClass: "bg-warning/10 text-nx-warning",
     confirmVariant: "default" as const,
     title: "Warning",
     description: "Please confirm this action.",
   },
   info: {
     icon: Info,
-    iconColor: "text-info",
+    chipClass: "bg-info/10 text-nx-info",
     confirmVariant: "default" as const,
     title: "Information",
     description: "Please confirm this action.",
   },
   default: {
     icon: CheckCircle,
-    iconColor: "text-success",
+    chipClass: "bg-success/10 text-nx-success",
     confirmVariant: "default" as const,
     title: "Confirm Action",
     description: "Are you sure you want to proceed?",
@@ -102,13 +105,18 @@ export function ConfirmationDialog({
         <AlertDialogHeader>
           <div className="flex items-center gap-3">
             {icon || (
-              <div className={cn("flex-shrink-0", config.iconColor)}>
-                <IconComponent className="h-6 w-6" />
+              <div
+                className={cn(
+                  "flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-control",
+                  config.chipClass
+                )}
+              >
+                <IconComponent className="h-5 w-5" />
               </div>
             )}
-            <AlertDialogTitle className="text-left">{title || config.title}</AlertDialogTitle>
+            <AlertDialogTitle className="text-start">{title || config.title}</AlertDialogTitle>
           </div>
-          <AlertDialogDescription className="mt-2 text-left">
+          <AlertDialogDescription className="mt-2 text-start">
             {description || config.description}
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -116,7 +124,8 @@ export function ConfirmationDialog({
         {/* Custom children content */}
         {children && <div className="py-2">{children}</div>}
 
-        <AlertDialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-2">
+        {/* Layout and gap now come from AlertDialogFooter itself. */}
+        <AlertDialogFooter>
           <AlertDialogCancel asChild>
             <Button variant="outline" onClick={handleCancel} disabled={isLoading}>
               {cancelText}

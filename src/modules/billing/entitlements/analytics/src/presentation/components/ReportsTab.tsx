@@ -6,7 +6,7 @@
  */
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useToast } from "@core/ui/use-toast";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
@@ -42,7 +42,7 @@ export function ReportsTab({
   isGenerating,
 }: ReportsTabProps) {
   const { t } = useI18n();
-  const { toast } = useToast();
+  const { toast } = useEnhancedToast();
 
   const [cadence, setCadence] = useState(preference?.cadence ?? "None");
   const [email, setEmail] = useState(preference?.email ?? "");

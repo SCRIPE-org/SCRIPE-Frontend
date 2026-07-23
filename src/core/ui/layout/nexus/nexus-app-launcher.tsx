@@ -27,7 +27,7 @@ import { useRouter } from "next/navigation";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { useI18n } from "@core/providers/i18n-provider";
-import { toast } from "@core/ui/use-toast";
+import { toast } from "@core/hooks/use-enhanced-toast";
 import { startRoutingProgress } from "@core/ui/routing-progress-bar";
 import { Button } from "@core/ui/button";
 

@@ -1,12 +1,60 @@
 "use client";
 
+/**
+ * The nexus chart foundation (Recharts).
+ *
+ * Recharts through this file is PRIMARY for all new chart work — module
+ * surfaces compose ChartContainer/ChartTooltipContent directly. The
+ * Chart.js wrapper in ./charts/generic-chart.tsx is LEGACY: kept working,
+ * not extended.
+ *
+ * Colour comes from the global `--chart-1..8` categorical tokens
+ * (globals.css defines both themes; the slot ORDER is the CVD-safety
+ * mechanism). Consumers read slots through `chartColor` / `chartPalette` /
+ * `CHART_TOKEN_PALETTE` below instead of passing raw hex — colour follows
+ * the entity's fixed slot, never its rank in the current dataset.
+ */
+
 import * as React from "react";
 import * as RechartsPrimitive from "recharts";
 
 import { cn } from "@core/common/utils";
 
-// Format: { THEME_NAME: CSS_SELECTOR }
+// Format: { THEME_NAME: CSS_SELECTOR }. Dark mode is the `.dark` class on
+// <html> (next-themes runs with attribute="class"); the `data-theme`
+// attribute carries the COLOUR theme and coexists with `.dark`
+// (`.dark[data-theme=…]` in globals.css), so ChartStyle's dark rules fire
+// under every data-theme value.
 const THEMES = { light: "", dark: ".dark" } as const;
+
+/**
+ * Fixed, ordered reads over the global `--chart-1..8` tokens. These are
+ * var() reads, not resolved literals, so SVG-rendered charts (Recharts)
+ * follow theme flips with zero JS. Chart.js call sites cannot use these —
+ * canvas needs resolved colours; see ./charts/generic-chart.tsx.
+ */
+export const CHART_TOKEN_PALETTE = [
+  "hsl(var(--chart-1))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
+  "hsl(var(--chart-6))",
+  "hsl(var(--chart-7))",
+  "hsl(var(--chart-8))",
+] as const;
+
+/** Colour for a 1-based palette slot. Slots beyond 8 wrap around. */
+export function chartColor(slot: number): string {
+  const size = CHART_TOKEN_PALETTE.length;
+  const index = (((Math.trunc(slot) - 1) % size) + size) % size;
+  return CHART_TOKEN_PALETTE[index];
+}
+
+/** The first `count` slot colours, wrapping — for mapping over series. */
+export function chartPalette(count: number): string[] {
+  return Array.from({ length: count }, (_, i) => chartColor(i + 1));
+}
 
 export type ChartConfig = {
   [k in string]: {

@@ -43,6 +43,9 @@ export interface StatCardProps {
   tone?: StatTone;
   /** Period-over-period change; sign decides the arrow and colour. */
   trend?: { value: number; label?: string };
+  /** Flips trend colouring for figures where a fall is good news (churn,
+      errors, cost) — the arrow still follows the sign, only the tone flips. */
+  invertTrend?: boolean;
   /** Renders an info affordance carrying this explanation. */
   tooltip?: string;
   /** Makes the whole card activatable. */
@@ -62,6 +65,7 @@ export function StatCard({
   icon: Icon,
   tone = "neutral",
   trend,
+  invertTrend = false,
   tooltip,
   onClick,
   isLoading = false,
@@ -72,9 +76,12 @@ export function StatCard({
       <Card className={className}>
         <CardContent className="flex items-center gap-4 p-4">
           <Skeleton className="h-10 w-10 shrink-0 rounded-xl" />
-          <div className="min-w-0 flex-1 space-y-2">
-            <Skeleton className="h-3 w-24" />
-            <Skeleton className="h-6 w-16" />
+          {/* Mirrors the rendered anatomy exactly — a 16px label line and a
+              32px value line — so swapping skeleton for data never shifts
+              the layout. */}
+          <div className="min-w-0 flex-1">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="mt-1 h-7 w-16" />
           </div>
         </CardContent>
       </Card>
@@ -83,6 +90,8 @@ export function StatCard({
 
   const isInteractive = typeof onClick === "function";
   const TrendIcon = trend && trend.value < 0 ? ArrowDownRight : ArrowUpRight;
+  // Zero counts as good news in both polarities.
+  const trendIsGood = trend ? (invertTrend ? trend.value <= 0 : trend.value >= 0) : false;
 
   const body = (
     <CardContent className="flex items-center gap-4 p-4">
@@ -117,7 +126,7 @@ export function StatCard({
               <span
                 className={cn(
                   "inline-flex items-center gap-0.5 font-semibold tabular-nums",
-                  trend.value < 0 ? "text-destructive" : "text-success"
+                  trendIsGood ? "text-success" : "text-destructive"
                 )}
               >
                 <TrendIcon className="h-3 w-3" aria-hidden="true" />
@@ -147,8 +156,10 @@ export function StatCard({
         }
       }}
       className={cn(
-        "cursor-pointer transition-shadow hover:shadow-md",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        // Light collects on the active thing: hover is a hairline lift, not a
+        // shadow bloom; focus is the shared nx lit-edge ring.
+        "cursor-pointer transition-[border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+        "hover:border-nx-line-hi focus-visible:outline-none focus-visible:shadow-nx-focus",
         className
       )}
     >

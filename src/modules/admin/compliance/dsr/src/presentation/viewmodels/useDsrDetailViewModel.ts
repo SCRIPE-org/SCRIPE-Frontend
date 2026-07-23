@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { complianceContainer } from "@modules/compliance/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@/core/store/useAppStore";
-import { toast } from "@core/ui/use-toast";
+import { toast } from "@core/hooks/use-enhanced-toast";
 import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
 
 /**

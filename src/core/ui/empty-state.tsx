@@ -55,14 +55,16 @@ export function EmptyState({
       className={cn(
         "flex flex-col items-center justify-center px-6 text-center",
         s.wrap,
-        !bare && "rounded-lg border border-dashed border-border bg-muted/20",
+        // --nx-hover is the 5% ink tint that layers over any nx surface — the
+        // faintest legal wash, which is all an empty container should carry.
+        !bare && "rounded-nx-lg border border-dashed border-nx-line bg-nx-hover",
         className
       )}
     >
       {Icon && (
         <div
           className={cn(
-            "mb-3 grid place-items-center rounded-xl border border-border bg-muted text-muted-foreground",
+            "mb-3 grid place-items-center rounded-nx-md border border-nx-line bg-nx-raised text-nx-ink-3",
             s.glyph
           )}
           aria-hidden="true"
@@ -71,10 +73,10 @@ export function EmptyState({
         </div>
       )}
 
-      <h3 className={cn("font-semibold text-foreground", s.title)}>{title}</h3>
+      <h3 className={cn("font-semibold text-nx-ink", s.title)}>{title}</h3>
 
       {description && (
-        <p className="mt-1 max-w-[42ch] text-sm text-muted-foreground">{description}</p>
+        <p className="mt-1 max-w-[42ch] text-sm text-nx-ink-2">{description}</p>
       )}
 
       {(action || secondaryAction) && (

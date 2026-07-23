@@ -30,8 +30,11 @@ const DialogOverlay = React.forwardRef<
     // The z-index is the named `overlay` step, not a template literal: Tailwind
     // scans source text, so `z-[${OVERLAY_Z_INDEX}]` was never a real class and
     // the `!z-[999]` below was a patch for a class that never existed.
+    //
+    // Fades ride the token pair — 200ms enter, ~2/3 exit — and a fade is the
+    // one movement reduced motion keeps, so no motion-safe split is needed.
     className={cn(
-      "fixed inset-0 z-overlay bg-scrim data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-overlay bg-scrim duration-nx-standard ease-nx-enter data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
     )}
     {...props}
@@ -39,22 +42,60 @@ const DialogOverlay = React.forwardRef<
 ));
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
+interface DialogContentProps
+  extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {
+  /**
+   * "drawer" pins the panel to the inline-end edge and slides it in from
+   * there. Consumers used to smuggle this in through className (right-edge
+   * plus important-translate positional overrides) and the component sniffed
+   * the strings back out — an explicit variant replaces that contract, and
+   * the slide follows the writing direction instead of being welded to the
+   * right edge.
+   */
+  variant?: "default" | "drawer";
+}
+
+// One overlay-surface recipe for the whole modal family (alert-dialog mirrors
+// it 1:1): nx popover surface behind a hairline, the modal step of the shadow
+// ladder, the large radius token. Motion is the token pair — 200ms standard
+// enter, micro (~2/3) exit.
+const dialogSurfaceClasses =
+  "gap-4 border-nx-line bg-nx-popover p-6 text-nx-ink shadow-nx-modal";
+const dialogMotionClasses =
+  "duration-nx-standard ease-nx-enter data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0";
+
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, dir, ...props }, ref) => {
+  DialogContentProps
+>(({ className, children, dir, variant = "default", ...props }, ref) => {
   const { direction } = useI18n();
   const isRtl = (dir || direction) === "rtl";
 
-  // Check if this is a drawer style modal
-  const isDrawer = className?.includes("right-0") && className?.includes("!translate-x-0");
-
-  const getPositionClasses = () => {
-    if (isDrawer) {
-      return `fixed inset-inline-end-0 top-[50%] translate-y-[-50%] z-modal grid gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right`;
-    }
-    return `fixed left-[50%] top-[50%] z-modal grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg`;
-  };
+  const positionClasses =
+    variant === "drawer"
+      ? cn(
+          "fixed inset-y-0 end-0 z-modal grid w-full max-w-lg rounded-s-nx-lg border-s",
+          dialogSurfaceClasses,
+          dialogMotionClasses,
+          // tailwindcss-animate slides are physical, so the logical end edge
+          // resolves against the live direction here. motion-safe keeps only
+          // the crossfade under reduced motion.
+          isRtl
+            ? "motion-safe:data-[state=open]:slide-in-from-left motion-safe:data-[state=closed]:slide-out-to-left"
+            : "motion-safe:data-[state=open]:slide-in-from-right motion-safe:data-[state=closed]:slide-out-to-right"
+        )
+      : cn(
+          "fixed left-[50%] top-[50%] z-modal grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] border sm:rounded-nx-lg",
+          dialogSurfaceClasses,
+          dialogMotionClasses,
+          // The 1/2 and 48% "slides" are the centering, not decoration: while
+          // a tailwindcss-animate animation runs, its keyframe transform
+          // replaces the translate utilities above, so the counter-translate
+          // must ride inside the animation vars. They stay outside motion-safe
+          // on purpose — dropping them under reduced motion would make the
+          // panel jump to the corner, not calm down. Only the zoom is motion.
+          "motion-safe:data-[state=open]:zoom-in-95 motion-safe:data-[state=closed]:zoom-out-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]"
+        );
 
   return (
     <DialogPortal>
@@ -62,7 +103,7 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         dir={dir ?? direction}
-        className={cn(getPositionClasses(), className)}
+        className={cn(positionClasses, className)}
         onOpenAutoFocus={(e) => {
           // Prevent auto focus to allow dropdown inputs to work
           e.preventDefault();
@@ -122,12 +163,9 @@ const DialogContent = React.forwardRef<
         {...props}
       >
         {children}
-        <DialogPrimitive.Close
-          className={cn(
-            "absolute top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground",
-            isRtl ? "left-4" : "right-4"
-          )}
-        >
+        {/* end-4 replaces the old isRtl left/right ternary; focus is the nx
+            lit-edge treatment on :focus-visible, not an offset ring halo. */}
+        <DialogPrimitive.Close className="absolute end-4 top-4 rounded-nx-sm opacity-70 transition-opacity duration-nx-micro hover:opacity-100 focus-visible:outline-none focus-visible:shadow-nx-focus disabled:pointer-events-none data-[state=open]:bg-nx-hover data-[state=open]:text-nx-ink-2">
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>
         </DialogPrimitive.Close>
@@ -137,38 +175,20 @@ const DialogContent = React.forwardRef<
 });
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
-const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
-  const { direction } = useI18n();
-  const isRtl = direction === "rtl";
-
-  return (
-    <div
-      className={cn(
-        "flex flex-col space-y-1.5 text-center",
-        isRtl ? "sm:text-right" : "sm:text-left",
-        className
-      )}
-      {...props}
-    />
-  );
-};
+const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  // text-start is direction-aware by itself — the old isRtl ternary re-derived
+  // what the logical property already knows.
+  <div className={cn("flex flex-col space-y-1.5 text-center sm:text-start", className)} {...props} />
+);
 DialogHeader.displayName = "DialogHeader";
 
-const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
-  const { direction } = useI18n();
-  const isRtl = direction === "rtl";
-
-  return (
-    <div
-      className={cn(
-        "flex flex-col-reverse sm:flex-row sm:justify-end",
-        isRtl ? "sm:space-x-2 sm:space-x-reverse" : "sm:space-x-2",
-        className
-      )}
-      {...props}
-    />
-  );
-};
+const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  // gap works in both axes and both directions — no space-x-reverse bookkeeping.
+  <div
+    className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
+    {...props}
+  />
+);
 DialogFooter.displayName = "DialogFooter";
 
 const DialogTitle = React.forwardRef<
@@ -189,7 +209,7 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn("text-sm text-nx-ink-2", className)}
     {...props}
   />
 ));

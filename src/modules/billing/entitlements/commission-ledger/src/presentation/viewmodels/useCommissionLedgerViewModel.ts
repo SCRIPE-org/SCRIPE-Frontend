@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useToast } from "@core/hooks/use-toast";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { CrudColumn } from "@core/crud/components/generic-crud-view";
 import { CommissionLedgerEntry } from "../../domain/entities/CommissionLedgerEntry";
@@ -16,7 +16,7 @@ import { formatDateTimeUtc, formatDateUtc } from "@core/common/utils";
  */
 export function useCommissionLedgerViewModel() {
   const { t } = useI18n();
-  const { toast } = useToast();
+  const { toast } = useEnhancedToast();
   const queryClient = useQueryClient();
 
   const { commissionLedgerRepository } = entitlementsContainer;

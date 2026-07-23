@@ -18,7 +18,7 @@ import type {
   AssignableAdmin,
 } from "../../domain/interfaces/ILeadsRepository";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useToast } from "@core/ui/use-toast";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
 // ── Query key factory (stable, typed) ─────────────────────────────────────────
 
@@ -39,7 +39,7 @@ export function useLeadsViewModel() {
   const { leadsRepository } = entitlementsContainer;
   const queryClient = useQueryClient();
   const { t } = useI18n();
-  const { toast } = useToast();
+  const { toast } = useEnhancedToast();
 
   // ── Filters & Pagination ──────────────────────────────────────────────────
   const [page, setPage] = useState(1);

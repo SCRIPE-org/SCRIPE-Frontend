@@ -20,6 +20,19 @@ export interface PageHeaderMeta {
   value: React.ReactNode;
 }
 
+// One literal class per entry count — Tailwind only ships classes it can see,
+// so the column count cannot be interpolated. Five and six split across two
+// even rows on small screens before going single-row on large ones; anything
+// past six wraps in fours.
+const META_COLS: Record<number, string> = {
+  1: "sm:grid-cols-1",
+  2: "sm:grid-cols-2",
+  3: "sm:grid-cols-3",
+  4: "sm:grid-cols-4",
+  5: "sm:grid-cols-3 lg:grid-cols-5",
+  6: "sm:grid-cols-3 lg:grid-cols-6",
+};
+
 export interface PageHeaderProps {
   title: React.ReactNode;
   description?: React.ReactNode;
@@ -32,6 +45,8 @@ export interface PageHeaderProps {
   meta?: PageHeaderMeta[];
   /** Breadcrumb or back-link slot rendered above the title. */
   eyebrow?: React.ReactNode;
+  /** Tab row on the header's bottom edge — pass a <Tabs>/<TabsList>. */
+  tabs?: React.ReactNode;
   children?: React.ReactNode;
   className?: string;
 }
@@ -47,6 +62,7 @@ export function PageHeader({
   actions,
   meta,
   eyebrow,
+  tabs,
   children,
   className,
 }: PageHeaderProps) {
@@ -57,7 +73,7 @@ export function PageHeader({
       <div className="flex flex-wrap items-start gap-4">
         {Icon && (
           <div
-            className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-primary/20 bg-primary/10 text-primary"
+            className="grid h-12 w-12 shrink-0 place-items-center rounded-nx-md border border-nx-line bg-nx-accent-wash text-nx-accent"
             aria-hidden="true"
           >
             <Icon className="h-5 w-5" />
@@ -66,29 +82,43 @@ export function PageHeader({
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2.5">
-            <h1 className="truncate text-xl font-bold tracking-tight">{title}</h1>
+            <h1 className="truncate text-xl font-bold tracking-tight text-nx-ink">{title}</h1>
             {badges}
           </div>
-          {description && (
-            <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-          )}
+          {description && <p className="mt-1 text-sm text-nx-ink-2">{description}</p>}
         </div>
 
         {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
       </div>
 
       {meta && meta.length > 0 && (
-        <dl className="grid grid-cols-2 overflow-hidden rounded-lg border border-border bg-muted/40 sm:grid-cols-4">
-          {meta.map((entry) => (
-            <div key={entry.label} className="border-border p-3 [&+&]:border-s">
-              <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground">
-                {entry.label}
-              </dt>
-              <dd className="mt-0.5 truncate text-sm font-semibold tabular-nums">{entry.value}</dd>
-            </div>
-          ))}
-        </dl>
+        <div className="overflow-hidden rounded-nx-md border border-nx-line bg-nx-surface">
+          {/* Every cell draws its own start/top hairline; the -1px offsets
+              tuck the first row's and first column's lines under the container
+              border, so any entry count — 3, 5, wrapped rows — rules itself
+              correctly. The old [&+&]:border-s put a stray hairline at the
+              start of every wrapped row. */}
+          <dl
+            className={cn(
+              "-ms-px -mt-px grid grid-cols-2",
+              META_COLS[meta.length] ?? "sm:grid-cols-4"
+            )}
+          >
+            {meta.map((entry) => (
+              <div key={entry.label} className="border-s border-t border-nx-line p-3">
+                <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-nx-ink-3">
+                  {entry.label}
+                </dt>
+                <dd className="mt-0.5 truncate text-sm font-semibold tabular-nums text-nx-ink">
+                  {entry.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       )}
+
+      {tabs && <div className="overflow-x-auto">{tabs}</div>}
 
       {children}
     </header>

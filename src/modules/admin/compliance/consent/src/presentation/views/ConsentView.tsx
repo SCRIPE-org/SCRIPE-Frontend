@@ -22,7 +22,7 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
-import { toast } from "@core/ui/use-toast";
+import { toast } from "@core/hooks/use-enhanced-toast";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { usePermission } from "@core/hooks/use-permission";

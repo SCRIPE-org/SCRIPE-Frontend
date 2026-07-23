@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { container } from "@modules/profile/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { getComponent } from "@core/common/component-registry";
-import { useToast } from "@core/hooks/use-toast";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
 /**
  * Exported constant defining parameters and fields for external login keys configurations.
@@ -21,7 +21,7 @@ export function useExternalLoginsViewModel() {
   const repo = container.profileRepository;
   const { t } = useI18n();
   const queryClient = useQueryClient();
-  const { toast } = useToast();
+  const { toast } = useEnhancedToast();
 
   // Re-use the hook dynamically from global registry to avoid cross-module references
   const useSsoProvidersHook = getComponent("useSsoProviders")!;

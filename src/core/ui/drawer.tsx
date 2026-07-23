@@ -25,7 +25,11 @@ const DrawerOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Overlay
     ref={ref}
-    className={cn("fixed inset-0 z-50 bg-black/80", className)}
+    // The token scrim on the named overlay step — same system as every other
+    // modal scrim (the hand-mixed black wash and its hardcoded stack number
+    // predate both). vaul drives the fade itself, tracking the drag, so no
+    // animate classes here.
+    className={cn("fixed inset-0 z-overlay bg-scrim", className)}
     {...props}
   />
 ));
@@ -39,13 +43,18 @@ const DrawerContent = React.forwardRef<
     <DrawerOverlay />
     <DrawerPrimitive.Content
       ref={ref}
+      // The dialog family surface — nx popover surface behind a hairline,
+      // detached corners on the large radius token, z-modal. Motion stays
+      // vaul's: it follows the finger, which no token duration should fight.
       className={cn(
-        "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background",
+        "fixed inset-x-0 bottom-0 z-modal mt-24 flex h-auto flex-col rounded-t-nx-lg border border-nx-line bg-nx-popover text-nx-ink",
         className
       )}
       {...props}
     >
-      <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
+      {/* The grab handle is a strong-hairline pill — an affordance, not ink,
+          so it reads a step brighter than the edges without becoming text. */}
+      <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-nx-line-hi" />
       {children}
     </DrawerPrimitive.Content>
   </DrawerPortal>
@@ -53,7 +62,7 @@ const DrawerContent = React.forwardRef<
 DrawerContent.displayName = "DrawerContent";
 
 const DrawerHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("grid gap-1.5 p-4 text-center sm:text-left", className)} {...props} />
+  <div className={cn("grid gap-1.5 p-4 text-center sm:text-start", className)} {...props} />
 );
 DrawerHeader.displayName = "DrawerHeader";
 
@@ -80,7 +89,7 @@ const DrawerDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Description
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn("text-sm text-nx-ink-2", className)}
     {...props}
   />
 ));

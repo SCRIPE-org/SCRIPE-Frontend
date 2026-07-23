@@ -27,7 +27,7 @@ import { Card, CardContent } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 import { Label } from "@core/ui/label";
 import { DatePicker } from "@core/ui/date-picker";
-import { toast } from "@core/ui/use-toast";
+import { toast } from "@core/hooks/use-enhanced-toast";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { usePermission } from "@core/hooks/use-permission";

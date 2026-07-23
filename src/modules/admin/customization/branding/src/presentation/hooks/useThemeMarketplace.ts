@@ -16,7 +16,7 @@ import { customizationContainer } from "@modules/customization/di";
 import type { ThemeCard } from "../../domain/entities/ThemeCard";
 import type { ThemeDetail } from "../../domain/entities/ThemeDetail";
 import type { ThemeFilterState } from "../../domain/types/ThemeTypes";
-import { useToast } from "@core/ui/use-toast";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
 interface UseThemeMarketplaceReturn {
   // Data
@@ -71,7 +71,7 @@ const DEFAULT_FILTERS: ThemeFilterState = {
  */
 export function useThemeMarketplace(): UseThemeMarketplaceReturn {
   const { themeMarketplaceRepository } = customizationContainer;
-  const { toast } = useToast();
+  const { toast } = useEnhancedToast();
 
   // Data
   const [themes, setThemes] = useState<ThemeCard[]>([]);

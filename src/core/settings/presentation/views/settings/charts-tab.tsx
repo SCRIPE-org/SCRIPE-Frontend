@@ -1,153 +1,229 @@
 "use client";
 
-import React, { useState } from "react";
-import { ResponsiveTabs } from "@core/ui/responsive-tabs";
+/**
+ * Settings → Charts: an honest preview of the real chart foundation.
+ *
+ * The previous incarnation was a twelve-file, ~3,800-line Chart.js demo
+ * gallery (Professional*Charts) with 246 colour literals that no product
+ * surface imported. This tab now renders what modules actually ship: the
+ * Recharts foundation from `@core/ui/chart` drawing the global --chart-1..8
+ * tokens — so the preview IS the palette, in both themes, under every
+ * workspace accent.
+ *
+ * The export keeps its historical name: SettingsView lazy-imports
+ * `ProfessionalChartsTab`, and that file belongs to another slot.
+ */
+
+import React from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import {
-  TrendingUp,
-  BarChart3,
-  PieChart,
-  Dot,
-  Radar,
-  Activity,
-  Layers,
-  Target,
-  Zap,
-  Sparkles,
-  Clock,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+  CHART_TOKEN_PALETTE,
+  chartColor,
+  type ChartConfig,
+} from "@core/ui/chart";
+import {
+  Area,
+  AreaChart,
+  Bar,
   BarChart,
-} from "lucide-react";
+  CartesianGrid,
+  Cell,
+  Pie,
+  PieChart,
+  XAxis,
+} from "recharts";
 
-// Import chart components
-import { ProfessionalLineCharts } from "@core/ui/charts/line-charts";
-import { ProfessionalAreaCharts } from "@core/ui/charts/area-charts";
-import { ProfessionalBarCharts } from "@core/ui/charts/bar-charts";
-import { ProfessionalPieCharts } from "@core/ui/charts/pie-charts";
-import { ProfessionalScatterCharts } from "@core/ui/charts/scatter-charts";
-import { ProfessionalRadarCharts } from "@core/ui/charts/radar-charts";
-import { ProfessionalMixedCharts } from "@core/ui/charts/mixed-charts";
-import { ProfessionalHeatmapCharts } from "@core/ui/charts/heatmap-charts";
-import { ProfessionalTreemapCharts } from "@core/ui/charts/treemap-charts";
-import { ProfessionalTimelineCharts } from "@core/ui/charts/timeline-charts";
-import { ProfessionalFunnelCharts } from "@core/ui/charts/funnel-charts";
-import { ProfessionalGaugeCharts } from "@core/ui/charts/gauge-charts";
-
-const chartTypes = [
-  { id: "line", label: "Line Charts", icon: <TrendingUp className="h-4 w-4" /> },
-  { id: "area", label: "Area Charts", icon: <BarChart3 className="h-4 w-4" /> },
-  { id: "bar", label: "Bar Charts", icon: <BarChart className="h-4 w-4" /> },
-  { id: "pie", label: "Pie Charts", icon: <PieChart className="h-4 w-4" /> },
-  { id: "scatter", label: "Scatter Charts", icon: <Dot className="h-4 w-4" /> },
-  { id: "radar", label: "Radar Charts", icon: <Radar className="h-4 w-4" /> },
-  { id: "mixed", label: "Mixed Charts", icon: <Layers className="h-4 w-4" /> },
-  { id: "heatmap", label: "Heatmap Charts", icon: <Activity className="h-4 w-4" /> },
-  { id: "treemap", label: "Treemap Charts", icon: <Target className="h-4 w-4" /> },
-  { id: "timeline", label: "Timeline Charts", icon: <Clock className="h-4 w-4" /> },
-  { id: "funnel", label: "Funnel Charts", icon: <Zap className="h-4 w-4" /> },
-  { id: "gauge", label: "Gauge Charts", icon: <Sparkles className="h-4 w-4" /> },
+/* Sample series — quarter and device labels come from the existing
+   charts.common.* keys, so the preview is localized without new strings. */
+const QUARTER_KEYS = ["q1", "q2", "q3", "q4"] as const;
+const TREND_VALUES = [
+  { revenue: 186, profit: 80 },
+  { revenue: 305, profit: 137 },
+  { revenue: 237, profit: 96 },
+  { revenue: 341, profit: 172 },
+];
+const BAR_VALUES = [
+  { sales: 214, users: 140 },
+  { sales: 305, users: 200 },
+  { sales: 262, users: 180 },
+  { sales: 390, users: 260 },
+];
+const DEVICE_SLICES = [
+  { key: "desktop", value: 46 },
+  { key: "mobile", value: 38 },
+  { key: "tablet", value: 11 },
+  { key: "other", value: 5 },
 ];
 
 export function ProfessionalChartsTab() {
   const { t } = useI18n();
-  const [activeChartType, setActiveChartType] = useState("line");
 
-  const renderChartComponent = () => {
-    switch (activeChartType) {
-      case "line":
-        return <ProfessionalLineCharts />;
-      case "area":
-        return <ProfessionalAreaCharts />;
-      case "bar":
-        return <ProfessionalBarCharts />;
-      case "pie":
-        return <ProfessionalPieCharts />;
-      case "scatter":
-        return <ProfessionalScatterCharts />;
-      case "radar":
-        return <ProfessionalRadarCharts />;
-      case "mixed":
-        return <ProfessionalMixedCharts />;
-      case "heatmap":
-        return <ProfessionalHeatmapCharts />;
-      case "treemap":
-        return <ProfessionalTreemapCharts />;
-      case "timeline":
-        return <ProfessionalTimelineCharts />;
-      case "funnel":
-        return <ProfessionalFunnelCharts />;
-      case "gauge":
-        return <ProfessionalGaugeCharts />;
-      default:
-        return <ProfessionalLineCharts />;
-    }
-  };
+  // Same inline read the auth surfaces use; a preference change mid-session
+  // re-resolves on the next render.
+  const reducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const trendData = QUARTER_KEYS.map((key, index) => ({
+    quarter: t(`charts.common.${key}`),
+    ...TREND_VALUES[index],
+  }));
+  const trendConfig = {
+    revenue: { label: t("charts.common.revenue"), color: chartColor(1) },
+    profit: { label: t("charts.common.profit"), color: chartColor(2) },
+  } satisfies ChartConfig;
+
+  const barData = QUARTER_KEYS.map((key, index) => ({
+    quarter: t(`charts.common.${key}`),
+    ...BAR_VALUES[index],
+  }));
+  const barConfig = {
+    sales: { label: t("charts.common.sales"), color: chartColor(3) },
+    users: { label: t("charts.common.users"), color: chartColor(4) },
+  } satisfies ChartConfig;
+
+  const deviceData = DEVICE_SLICES.map((slice, index) => ({
+    name: t(`charts.common.${slice.key}`),
+    value: slice.value,
+    fill: chartColor(index + 1),
+  }));
+  const deviceConfig = deviceData.reduce<ChartConfig>((config, slice) => {
+    config[slice.name] = { label: slice.name, color: slice.fill };
+    return config;
+  }, {});
 
   return (
     <div className="space-y-6">
-      <div className="space-y-4 text-center">
-        <h1 className="bg-gradient-to-r from-info to-primary bg-clip-text text-3xl font-bold text-transparent">
-          Professional Charts Collection
-        </h1>
-        <p className="mx-auto max-w-4xl text-xl text-muted-foreground">
-          Enterprise-grade chart components with professional styling, smooth animations, and
-          comprehensive interactivity
-        </p>
-        <div className="flex justify-center gap-4 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <div className="h-2 w-2 rounded-full bg-info"></div>
-            {chartTypes.length} Chart Types
-          </span>
-          <span className="flex items-center gap-1">
-            <div className="h-2 w-2 rounded-full bg-success"></div>
-            100+ Chart Variants
-          </span>
-          <span className="flex items-center gap-1">
-            <div className="h-2 w-2 rounded-full bg-primary"></div>
-            Interactive & Responsive
-          </span>
-          <span className="flex items-center gap-1">
-            <div className="h-2 w-2 rounded-full bg-warning-strong"></div>
-            Professional Grade
-          </span>
-        </div>
-      </div>
-
-      <ResponsiveTabs
-        tabs={chartTypes}
-        activeTab={activeChartType}
-        onTabChange={setActiveChartType}
-        className="mb-8"
-      />
-
-      <div className="min-h-[600px]">{renderChartComponent()}</div>
-
-      <div className="mt-12 rounded-lg bg-gradient-to-r from-info/10 to-primary/10 p-8">
-        <div className="space-y-4 text-center">
-          <h3 className="text-2xl font-bold">Chart Capabilities</h3>
-          <p className="mx-auto max-w-3xl text-muted-foreground">
-            Our professional chart collection provides enterprise-grade visualization capabilities
-            perfect for complex business data analysis, reporting, and decision-making.
-          </p>
-
-          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-            <div className="rounded-lg bg-card p-4 text-center shadow-sm">
-              <div className="text-2xl font-bold text-info">{chartTypes.length}</div>
-              <div className="text-sm text-muted-foreground">Chart Types</div>
-            </div>
-            <div className="rounded-lg bg-card p-4 text-center shadow-sm">
-              <div className="text-2xl font-bold text-success">100+</div>
-              <div className="text-sm text-muted-foreground">Chart Variants</div>
-            </div>
-            <div className="rounded-lg bg-card p-4 text-center shadow-sm">
-              <div className="text-2xl font-bold text-primary">3</div>
-              <div className="text-sm text-muted-foreground">Export Formats</div>
-            </div>
-            <div className="rounded-lg bg-card p-4 text-center shadow-sm">
-              <div className="text-2xl font-bold text-warning-strong">∞</div>
-              <div className="text-sm text-muted-foreground">Customizable</div>
-            </div>
+      {/* The palette itself — the eight fixed --chart-N slots. Slot order is
+          the CVD-safety mechanism (see globals.css), so the swatches carry
+          their slot number. */}
+      <Card>
+        <CardHeader>
+          <CardTitle>{t("settings.tabs.charts")}</CardTitle>
+          <CardDescription>
+            <code className="font-mono text-xs">--chart-1 … --chart-8</code>
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-3">
+            {CHART_TOKEN_PALETTE.map((color, index) => (
+              <div key={color} className="flex flex-col items-center gap-1">
+                <div
+                  className="h-9 w-9 rounded-md border border-border"
+                  style={{ backgroundColor: color }}
+                />
+                <span className="font-mono text-[10px] tabular-nums text-muted-foreground">
+                  {index + 1}
+                </span>
+              </div>
+            ))}
           </div>
-        </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("settings.charts.area.title")}</CardTitle>
+            <CardDescription>{t("settings.charts.area.description")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={trendConfig} className="h-[220px] w-full">
+              <AreaChart data={trendData}>
+                <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                <XAxis dataKey="quarter" tickLine={false} axisLine={false} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <ChartLegend content={<ChartLegendContent />} />
+                <Area
+                  dataKey="revenue"
+                  type="monotone"
+                  stroke="var(--color-revenue)"
+                  fill="var(--color-revenue)"
+                  fillOpacity={0.2}
+                  strokeWidth={2}
+                  isAnimationActive={!reducedMotion}
+                  animationDuration={200}
+                />
+                <Area
+                  dataKey="profit"
+                  type="monotone"
+                  stroke="var(--color-profit)"
+                  fill="var(--color-profit)"
+                  fillOpacity={0.2}
+                  strokeWidth={2}
+                  isAnimationActive={!reducedMotion}
+                  animationDuration={200}
+                />
+              </AreaChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("settings.charts.bar.title")}</CardTitle>
+            <CardDescription>{t("settings.charts.bar.description")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={barConfig} className="h-[220px] w-full">
+              <BarChart data={barData}>
+                <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                <XAxis dataKey="quarter" tickLine={false} axisLine={false} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <ChartLegend content={<ChartLegendContent />} />
+                <Bar
+                  dataKey="sales"
+                  fill="var(--color-sales)"
+                  radius={[4, 4, 0, 0]}
+                  isAnimationActive={!reducedMotion}
+                  animationDuration={200}
+                />
+                <Bar
+                  dataKey="users"
+                  fill="var(--color-users)"
+                  radius={[4, 4, 0, 0]}
+                  isAnimationActive={!reducedMotion}
+                  animationDuration={200}
+                />
+              </BarChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("settings.charts.pie.donut.title")}</CardTitle>
+            <CardDescription>{t("charts.common.deviceUsage")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={deviceConfig} className="h-[220px] w-full">
+              <PieChart>
+                <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                <Pie
+                  data={deviceData}
+                  dataKey="value"
+                  nameKey="name"
+                  innerRadius={55}
+                  outerRadius={85}
+                  paddingAngle={2}
+                  isAnimationActive={!reducedMotion}
+                  animationDuration={200}
+                >
+                  {deviceData.map((entry) => (
+                    <Cell key={entry.name} fill={entry.fill} />
+                  ))}
+                </Pie>
+                <ChartLegend content={<ChartLegendContent nameKey="name" />} />
+              </PieChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

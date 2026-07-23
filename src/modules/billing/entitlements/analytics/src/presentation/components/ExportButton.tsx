@@ -6,7 +6,7 @@
  */
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useToast } from "@core/ui/use-toast";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { Button } from "@core/ui/button";
 import {
   DropdownMenu,
@@ -33,7 +33,7 @@ const FORMAT_LABELS: Record<string, string> = {
  */
 export function ExportButton({ onExport, disabled }: ExportButtonProps) {
   const { t } = useI18n();
-  const { toast } = useToast();
+  const { toast } = useEnhancedToast();
   const [loading, setLoading] = useState<string | null>(null);
 
   const handleExport = async (format: string) => {

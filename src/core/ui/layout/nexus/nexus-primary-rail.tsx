@@ -46,7 +46,7 @@ import { useTenantBranding } from "@core/providers/tenant-branding-provider";
 import { useRouter } from "next/navigation";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useWorkspaceTransitionContext } from "./nexus-layout";
-import { toast } from "@core/ui/use-toast";
+import { toast } from "@core/hooks/use-enhanced-toast";
 import { startRoutingProgress } from "@core/ui/routing-progress-bar";
 import { usePermissions } from "@core/providers/permission-provider";
 import {

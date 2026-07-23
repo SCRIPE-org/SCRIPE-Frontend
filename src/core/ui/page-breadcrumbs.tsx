@@ -97,7 +97,7 @@ export function PageBreadcrumbs({
   return (
     <div className="flex items-center gap-4">
       {showBackButton && (
-        <Button variant="ghost" size="icon" onClick={handleBack} className="hover:bg-muted">
+        <Button variant="ghost" size="icon" onClick={handleBack}>
           {direction === "rtl" ? (
             <ArrowRight className="h-5 w-5" />
           ) : (

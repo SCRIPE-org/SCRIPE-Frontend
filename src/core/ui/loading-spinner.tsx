@@ -1,337 +1,161 @@
 "use client";
+
+/**
+ * LoadingSpinner — THE loader
+ *
+ * One loading indicator for the whole product: a hairline ring with an accent
+ * arc, a 3-dot stagger, or a breathing pulse. The old twelve-variant switch is
+ * gone — nine of its variants were visually broken (transition-delay classes
+ * misread as animation-delay, delay utilities that do not exist in Tailwind,
+ * keyframes that were never defined, an invalid alpha on currentColor) and
+ * none of them belonged to the nexus look.
+ *
+ * The `inline` size renders with currentColor so it inherits the button ink —
+ * Button and ~50 other call sites depend on it; that API is unchanged.
+ */
+
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
+import type { LoadingStyle } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
 
+type LoaderVariant = "spinner" | "dots" | "pulse";
+
+// The Settings loadingStyle values, collapsed onto the three honest loaders.
+// Each legacy stored value falls back to its nearest survivor; the
+// LoadingStyle type itself is untouched, so stored settings keep
+// deserialising. Unknown values fall through to "spinner" at the lookup.
+const LEGACY_STYLE: Record<LoadingStyle, LoaderVariant> = {
+  spinner: "spinner",
+  dots: "dots",
+  bars: "dots",
+  pulse: "pulse",
+  wave: "dots",
+  orbit: "spinner",
+  ripple: "pulse",
+  gradient: "spinner",
+  matrix: "dots",
+  helix: "spinner",
+  quantum: "pulse",
+  morphing: "pulse",
+};
+
+type SpinnerSize = "sm" | "md" | "lg" | "inline";
+
+const RING: Record<SpinnerSize, string> = {
+  sm: "h-6 w-6",
+  md: "h-10 w-10",
+  lg: "h-14 w-14",
+  inline: "h-4 w-4",
+};
+
+const DOT: Record<SpinnerSize, string> = {
+  sm: "h-1.5 w-1.5",
+  md: "h-2 w-2",
+  lg: "h-2.5 w-2.5",
+  inline: "h-1 w-1",
+};
+
+// Stagger for the nx-dot keyframes (1s cycle) — inline animation-delay, not
+// Tailwind delay-* classes: delay-* sets transition-delay, which was the
+// original bug.
+const DOT_DELAYS = [0, 160, 320] as const;
+
 interface LoadingSpinnerProps {
-  size?: "sm" | "md" | "lg" | "inline";
+  size?: SpinnerSize;
   showText?: boolean;
+  /** Opt-in full-viewport centring (the old hardcoded default). */
+  fullHeight?: boolean;
   className?: string;
 }
 
-export function LoadingSpinner({ size = "md", showText = true, className }: LoadingSpinnerProps) {
+export function LoadingSpinner({
+  size = "md",
+  showText = true,
+  fullHeight = false,
+  className,
+}: LoadingSpinnerProps) {
   const { t } = useI18n();
   const settings = useSettings();
 
-  const getSizeClasses = () => {
-    switch (size) {
-      case "sm":
-        return "w-8 h-8";
-      case "lg":
-        return "w-24 h-24";
-      case "inline":
-        return "w-4 h-4";
-      default:
-        return "w-16 h-16";
-    }
-  };
+  const variant: LoaderVariant = LEGACY_STYLE[settings.loadingStyle] ?? "spinner";
+  // Inline rides currentColor so it reads the button ink; blocks wear the
+  // workspace accent — the loader is the active thing on the screen.
+  const inline = size === "inline";
 
-  const getLoadingComponent = () => {
-    const sizeClasses = getSizeClasses();
-
-    switch (settings.loadingStyle) {
+  const loader = (() => {
+    switch (variant) {
       case "dots":
-        if (size === "inline") {
-          return (
-            <div className="flex space-x-0.5">
-              <div className="h-1 w-1 animate-bounce rounded-full bg-current"></div>
-              <div className="h-1 w-1 animate-bounce rounded-full bg-current delay-100"></div>
-              <div className="h-1 w-1 animate-bounce rounded-full bg-current delay-200"></div>
-            </div>
-          );
-        }
         return (
-          <div className="flex space-x-1">
-            <div className="h-3 w-3 animate-bounce rounded-full bg-primary"></div>
-            <div className="h-3 w-3 animate-bounce rounded-full bg-primary delay-100"></div>
-            <div className="h-3 w-3 animate-bounce rounded-full bg-primary delay-200"></div>
-          </div>
-        );
-      case "bars":
-        if (size === "inline") {
-          return (
-            <div className="flex space-x-0.5">
-              <div className="h-4 w-0.5 animate-pulse bg-current"></div>
-              <div className="h-4 w-0.5 animate-pulse bg-current delay-100"></div>
-              <div className="h-4 w-0.5 animate-pulse bg-current delay-200"></div>
-            </div>
-          );
-        }
-        return (
-          <div className="flex space-x-1">
-            <div className="h-8 w-1 animate-pulse bg-primary"></div>
-            <div className="h-8 w-1 animate-pulse bg-primary delay-100"></div>
-            <div className="h-8 w-1 animate-pulse bg-primary delay-200"></div>
-            <div className="h-8 w-1 animate-pulse bg-primary delay-300"></div>
-          </div>
+          <span className={cn("flex items-center", inline ? "gap-0.5" : "gap-1")} aria-hidden="true">
+            {DOT_DELAYS.map((delay) => (
+              <span
+                key={delay}
+                className={cn(
+                  "rounded-full motion-safe:animate-nx-dot",
+                  DOT[size],
+                  inline ? "bg-current" : "bg-nx-accent"
+                )}
+                style={{ animationDelay: `${delay}ms` }}
+              />
+            ))}
+          </span>
         );
       case "pulse":
-        if (size === "inline") {
-          return <div className="h-4 w-4 animate-pulse rounded bg-current"></div>;
-        }
-        return <div className={cn(sizeClasses, "animate-pulse rounded bg-primary")}></div>;
-      case "wave":
-        if (size === "inline") {
+        if (inline) {
           return (
-            <div className="flex items-end space-x-0.5">
-              <div className="h-2 w-0.5 animate-pulse rounded-full bg-current"></div>
-              <div className="h-3 w-0.5 animate-pulse rounded-full bg-current delay-75"></div>
-              <div className="h-4 w-0.5 animate-pulse rounded-full bg-current delay-150"></div>
-              <div className="delay-225 h-3 w-0.5 animate-pulse rounded-full bg-current"></div>
-              <div className="h-2 w-0.5 animate-pulse rounded-full bg-current delay-300"></div>
-            </div>
+            <span
+              className="h-3 w-3 rounded-full bg-current opacity-60 motion-safe:animate-pulse"
+              aria-hidden="true"
+            />
           );
         }
+        // Static accent wash ring, breathing accent core — opacity only.
         return (
-          <div className="flex items-end space-x-1">
-            <div className="h-4 w-2 animate-pulse rounded-full bg-primary"></div>
-            <div className="h-6 w-2 animate-pulse rounded-full bg-primary delay-75"></div>
-            <div className="h-8 w-2 animate-pulse rounded-full bg-primary delay-150"></div>
-            <div className="delay-225 h-6 w-2 animate-pulse rounded-full bg-primary"></div>
-            <div className="h-4 w-2 animate-pulse rounded-full bg-primary delay-300"></div>
-          </div>
+          <span
+            className={cn("grid place-items-center rounded-full bg-nx-accent-wash", RING[size])}
+            aria-hidden="true"
+          >
+            <span className="h-1/2 w-1/2 rounded-full bg-nx-accent motion-safe:animate-pulse" />
+          </span>
         );
-      case "orbit":
-        if (size === "inline") {
-          return (
-            <div className="relative h-4 w-4">
-              <div className="border-current/20 absolute inset-0 rounded-full border"></div>
-              <div className="absolute left-1/2 top-0 -ml-0.5 -mt-0.5 h-1 w-1 origin-[0_8px] animate-spin rounded-full bg-current"></div>
-            </div>
-          );
-        }
+      default: // spinner — hairline track, accent arc
         return (
-          <div className="relative">
-            <div className={cn(sizeClasses, "rounded-full border-2 border-primary/20")}></div>
-            <div
+          <span className={cn("relative inline-block", RING[size])} aria-hidden="true">
+            <span
               className={cn(
-                "absolute left-1/2 top-0 -ml-1 -mt-1 h-2 w-2 animate-spin rounded-full bg-primary",
-                size === "sm"
-                  ? "origin-[0_16px]"
-                  : size === "lg"
-                    ? "origin-[0_48px]"
-                    : "origin-[0_32px]"
+                "absolute inset-0 rounded-full border-2",
+                inline ? "border-current opacity-20" : "border-nx-line"
               )}
-            ></div>
-          </div>
-        );
-      case "ripple":
-        if (size === "inline") {
-          return (
-            <div className="relative h-4 w-4">
-              <div className="absolute inset-0 animate-ping rounded-full border border-current"></div>
-              <div className="absolute inset-0 animate-ping rounded-full border border-current delay-150"></div>
-            </div>
-          );
-        }
-        return (
-          <div className="relative">
-            <div
-              className={cn(sizeClasses, "animate-ping rounded-full border-2 border-primary")}
-            ></div>
-            <div
+            />
+            <span
               className={cn(
-                "absolute left-0 top-0",
-                sizeClasses,
-                "animate-ping rounded-full border-2 border-primary delay-150"
+                "absolute inset-0 rounded-full border-2 border-transparent motion-safe:animate-spin",
+                inline ? "border-t-current" : "border-t-nx-accent"
               )}
-            ></div>
-          </div>
-        );
-      case "gradient":
-        if (size === "inline") {
-          return (
-            <div className="relative h-4 w-4">
-              <div className="absolute inset-0 animate-spin rounded-full bg-gradient-to-r from-primary via-primary/50 to-transparent"></div>
-            </div>
-          );
-        }
-        return (
-          <div className="relative">
-            <div
-              className={cn(
-                sizeClasses,
-                "animate-spin rounded-full bg-gradient-to-r from-primary via-primary/50 to-transparent"
-              )}
-            ></div>
-          </div>
-        );
-      case "matrix":
-        if (size === "inline") {
-          return (
-            <div className="flex space-x-0.5">
-              <div className="h-3 w-0.5 animate-pulse bg-primary opacity-100"></div>
-              <div className="h-4 w-0.5 animate-pulse bg-primary opacity-75 delay-75"></div>
-              <div className="h-2 w-0.5 animate-pulse bg-primary opacity-50 delay-150"></div>
-              <div className="delay-225 h-3 w-0.5 animate-pulse bg-primary opacity-75"></div>
-              <div className="h-4 w-0.5 animate-pulse bg-primary opacity-100 delay-300"></div>
-            </div>
-          );
-        }
-        return (
-          <div className="grid grid-cols-4 gap-1">
-            <div className="h-6 w-2 animate-pulse bg-primary opacity-100"></div>
-            <div className="h-8 w-2 animate-pulse bg-primary opacity-75 delay-100"></div>
-            <div className="h-4 w-2 animate-pulse bg-primary opacity-50 delay-200"></div>
-            <div className="h-7 w-2 animate-pulse bg-primary opacity-75 delay-300"></div>
-            <div className="h-5 w-2 animate-pulse bg-primary opacity-60 delay-75"></div>
-            <div className="delay-175 h-8 w-2 animate-pulse bg-primary opacity-90"></div>
-            <div className="delay-250 h-6 w-2 animate-pulse bg-primary opacity-70"></div>
-            <div className="delay-325 h-4 w-2 animate-pulse bg-primary opacity-80"></div>
-          </div>
-        );
-      case "helix":
-        if (size === "inline") {
-          return (
-            <div className="relative h-4 w-4">
-              <div className="absolute inset-0">
-                <div
-                  className="absolute h-1 w-1 origin-center animate-spin rounded-full bg-primary"
-                  style={{
-                    animation: "spin 1s linear infinite, helixMove 2s ease-in-out infinite",
-                  }}
-                ></div>
-                <div
-                  className="absolute h-1 w-1 origin-center animate-spin rounded-full bg-primary/70 delay-500"
-                  style={{
-                    animation:
-                      "spin 1s linear infinite reverse, helixMove 2s ease-in-out infinite reverse",
-                  }}
-                ></div>
-              </div>
-            </div>
-          );
-        }
-        return (
-          <div className="relative">
-            <div className={cn(sizeClasses, "flex items-center justify-center")}>
-              <div className="relative h-full w-full">
-                <div
-                  className="absolute h-3 w-3 animate-spin rounded-full bg-primary"
-                  style={{
-                    animation: "spin 1.5s linear infinite, helixMove 3s ease-in-out infinite",
-                    left: "50%",
-                    top: "50%",
-                    transform: "translate(-50%, -50%)",
-                  }}
-                ></div>
-                <div
-                  className="absolute h-2 w-2 animate-spin rounded-full bg-primary/70"
-                  style={{
-                    animation:
-                      "spin 1.5s linear infinite reverse, helixMove 3s ease-in-out infinite reverse",
-                    left: "50%",
-                    top: "50%",
-                    transform: "translate(-50%, -50%)",
-                  }}
-                ></div>
-                <div
-                  className="absolute h-1 w-1 animate-spin rounded-full bg-primary/50"
-                  style={{
-                    animation: "spin 1.5s linear infinite, helixMove 3s ease-in-out infinite",
-                    left: "50%",
-                    top: "50%",
-                    transform: "translate(-50%, -50%)",
-                  }}
-                ></div>
-              </div>
-            </div>
-          </div>
-        );
-      case "quantum":
-        if (size === "inline") {
-          return (
-            <div className="relative h-4 w-4">
-              <div className="absolute inset-0 animate-pulse rounded-full border border-primary/30"></div>
-              <div className="absolute inset-1 animate-pulse rounded-full border border-primary/50 delay-150"></div>
-              <div className="absolute inset-2 animate-pulse rounded-full bg-primary delay-300"></div>
-            </div>
-          );
-        }
-        return (
-          <div className="relative">
-            <div className={cn(sizeClasses, "relative")}>
-              <div className="absolute inset-0 animate-pulse rounded-full border-2 border-primary/20"></div>
-              <div className="absolute inset-2 animate-pulse rounded-full border-2 border-primary/40 delay-200"></div>
-              <div className="delay-400 absolute inset-4 animate-pulse rounded-full border-2 border-primary/60"></div>
-              <div className="delay-600 absolute inset-6 animate-pulse rounded-full bg-primary"></div>
-              <div className="absolute left-1/2 top-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 transform animate-ping rounded-full bg-primary"></div>
-            </div>
-          </div>
-        );
-      case "morphing":
-        if (size === "inline") {
-          return (
-            <div className="relative h-4 w-4">
-              <div
-                className="absolute inset-0 animate-pulse rounded-full bg-primary"
-                style={{
-                  animation: "morphShape 2s ease-in-out infinite",
-                }}
-              ></div>
-            </div>
-          );
-        }
-        return (
-          <div className="relative">
-            <div className={cn(sizeClasses, "relative")}>
-              <div
-                className="absolute inset-0 animate-pulse bg-primary"
-                style={{
-                  animation: "morphShape 3s ease-in-out infinite",
-                  borderRadius: "50%",
-                }}
-              ></div>
-              <div
-                className="absolute inset-2 animate-pulse bg-primary/70"
-                style={{
-                  animation: "morphShape 3s ease-in-out infinite reverse",
-                  borderRadius: "20%",
-                }}
-              ></div>
-              <div
-                className="absolute inset-4 animate-pulse bg-primary/40"
-                style={{
-                  animation: "morphShape 3s ease-in-out infinite",
-                  borderRadius: "10%",
-                }}
-              ></div>
-            </div>
-          </div>
-        );
-      default: // spinner
-        if (size === "inline") {
-          return (
-            <div className="relative">
-              <div className="border-current/20 h-4 w-4 rounded-full border-2"></div>
-              <div className="absolute left-0 top-0 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
-            </div>
-          );
-        }
-        return (
-          <div className="relative">
-            <div className={cn(sizeClasses, "rounded-full border-4 border-primary/20")}></div>
-            <div
-              className={cn(
-                "absolute left-0 top-0",
-                sizeClasses,
-                "animate-spin rounded-full border-4 border-primary border-t-transparent"
-              )}
-            ></div>
-          </div>
+            />
+          </span>
         );
     }
-  };
+  })();
 
-  if (size === "inline") {
-    return <div className={cn("inline-flex items-center", className)}>{getLoadingComponent()}</div>;
+  if (inline) {
+    return <div className={cn("inline-flex items-center", className)}>{loader}</div>;
   }
 
   return (
-    <div className={cn("flex min-h-[60vh] items-center justify-center", className)}>
-      <div className="flex flex-col items-center space-y-4">
-        {getLoadingComponent()}
-        {showText && <p className="font-medium text-muted-foreground">{t("common.loading")}</p>}
+    <div
+      role="status"
+      aria-label={t("common.loading")}
+      className={cn(
+        "flex items-center justify-center py-6",
+        fullHeight && "min-h-[60vh]",
+        className
+      )}
+    >
+      <div className="flex flex-col items-center gap-3">
+        {loader}
+        {showText && <p className="text-sm font-medium text-nx-ink-2">{t("common.loading")}</p>}
       </div>
     </div>
   );

@@ -11,7 +11,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
-import { toast } from "sonner";
+import { toast } from "@core/hooks/use-enhanced-toast";
 import type { TenantDomainJson } from "../../domain/interfaces/ITenantService";
 
 /**

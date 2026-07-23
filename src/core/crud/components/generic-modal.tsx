@@ -200,10 +200,11 @@ function GenericModalInner({
         styleClasses = "sm:rounded-lg";
         break;
       case "drawer":
-        // Drawer from right side - responsive width
+        // Drawer from the inline-end edge - responsive width. Position, slide
+        // and radius come from DialogContent's explicit variant="drawer" (see
+        // below); the old !important overrides existed only to fight the
+        // centered layout from outside.
         sizeClasses = "w-full h-[95vh] max-w-md sm:max-w-lg md:max-w-xl max-h-none";
-        styleClasses =
-          "!translate-x-0 !translate-y-0 !left-auto !top-0 right-0 rounded-l-lg rounded-r-none";
         break;
       case "glass":
         sizeClasses = "w-[85vw] max-w-2xl max-h-[80vh]";
@@ -311,7 +312,10 @@ function GenericModalInner({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} modal={false}>
-      <DialogContent className={cn(getModalClasses())}>
+      <DialogContent
+        variant={settings.modalStyle === "drawer" ? "drawer" : "default"}
+        className={cn(getModalClasses())}
+      >
         {showHeader && (
           <DialogHeader className={cn(getHeaderPadding(), "shrink-0 border-b", headerClassName)}>
             <DialogTitle className={cn("font-semibold", getTitleSize())}>{title}</DialogTitle>

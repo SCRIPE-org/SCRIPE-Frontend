@@ -6,6 +6,10 @@
  * Shared component for consistent loading, error, and empty states across all
  * dashboard sections. Eliminates boilerplate in every section component.
  *
+ * The error branch renders ErrorMessage and the empty branch renders
+ * EmptyState, both at their compact size — a failed or empty section shows
+ * the exact same anatomy as a failed or empty page, just smaller.
+ *
  * @example
  * <SectionState isLoading={isLoading} error={error} onRetry={refetch} isEmpty={data.length === 0}>
  *   <MyChart data={data} />
@@ -14,8 +18,9 @@
 import { memo, type ReactNode } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Skeleton } from "@core/ui/skeleton";
-import { Button } from "@core/ui/button";
-import { AlertCircle, InboxIcon } from "lucide-react";
+import { ErrorMessage } from "@core/ui/error-message";
+import { EmptyState } from "@core/ui/empty-state";
+import { InboxIcon, type LucideIcon } from "lucide-react";
 
 interface SectionStateProps {
   /** Content to render when loaded and not empty */
@@ -74,7 +79,7 @@ export const SectionState = memo(function SectionState({
           aria-label={t("common.loading")}
         >
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="space-y-2 rounded-lg border p-4">
+            <div key={i} className="space-y-2 rounded-nx-md border border-nx-line p-4">
               <Skeleton className="h-4 w-20" />
               <Skeleton className="h-8 w-16" />
             </div>
@@ -88,34 +93,24 @@ export const SectionState = memo(function SectionState({
     );
   }
 
-  // ── Error ───────────────────────────────────────────────────────
+  // ── Error — the shared error anatomy, compact ───────────────────
   if (error) {
     return (
-      <div
-        className="flex flex-col items-center justify-center gap-3 text-muted-foreground"
-        style={{ height }}
-        role="alert"
-      >
-        <AlertCircle className="h-8 w-8 opacity-40" aria-hidden="true" />
-        <p className="text-sm">{t("common.error")}</p>
-        {onRetry && (
-          <Button variant="outline" size="sm" onClick={onRetry}>
-            {t("common.retry")}
-          </Button>
-        )}
+      <div className="flex flex-col justify-center" style={{ minHeight: height }}>
+        <ErrorMessage size="sm" message={t("common.error")} onRetry={onRetry} />
       </div>
     );
   }
 
-  // ── Empty ───────────────────────────────────────────────────────
+  // ── Empty — the shared empty anatomy, compact ───────────────────
   if (isEmpty) {
+    // emptyIcon predates EmptyState and arrives as a ReactNode; EmptyState
+    // wants a component. The adapter renders the caller's node verbatim
+    // (its own classes included) so the legacy prop keeps working.
+    const Icon = emptyIcon ? ((() => <>{emptyIcon}</>) as unknown as LucideIcon) : InboxIcon;
     return (
-      <div
-        className="flex flex-col items-center justify-center gap-2 text-muted-foreground"
-        style={{ height }}
-      >
-        {emptyIcon ?? <InboxIcon className="h-10 w-10 opacity-30" aria-hidden="true" />}
-        <p className="text-sm font-medium">{emptyMessage ?? t("common.noData")}</p>
+      <div className="flex flex-col justify-center" style={{ minHeight: height }}>
+        <EmptyState size="sm" bare icon={Icon} title={emptyMessage ?? t("common.noData")} />
       </div>
     );
   }

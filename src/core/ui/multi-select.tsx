@@ -1,11 +1,21 @@
 "use client";
 
 import * as React from "react";
-import { X } from "lucide-react";
-import { Badge } from "@/core/ui/badge";
-import { Command, CommandGroup, CommandItem, CommandList } from "@/core/ui/command";
-import { Command as CommandPrimitive } from "cmdk";
-import { appLogger } from "../common/logger";
+import { Check, ChevronsUpDown, X } from "lucide-react";
+
+import { Badge } from "@core/ui/badge";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@core/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
+import { cn } from "@core/common/utils";
+import { useI18n } from "@core/providers/i18n-provider";
+import { appLogger } from "@core/common/logger";
 
 type Option = {
   label: string;
@@ -18,9 +28,16 @@ interface MultiSelectProps {
   onChange: (selected: string[]) => void;
   placeholder?: string;
   className?: string;
+  /** Server-backed search; when present, cmdk's local filtering is disabled. */
   onSearch?: (query: string) => Promise<Option[]>;
+  disabled?: boolean;
 }
 
+// Rebuilt on Popover + Command: the option list is PORTALED (PopoverContent
+// carries z-popover on the semantic ladder — the old inline dropdown clipped
+// under overflow ancestors and pinned a raw z-10), searchable through
+// CommandInput, and keyboard-navigable through cmdk. The trigger wears the
+// shared field surface; focus lights the edge exactly like Input.
 export function MultiSelect({
   options: initialOptions,
   selected,
@@ -28,8 +45,9 @@ export function MultiSelect({
   placeholder = "Select options...",
   className,
   onSearch,
+  disabled = false,
 }: MultiSelectProps) {
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const { t } = useI18n();
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
   const [internalOptions, setInternalOptions] = React.useState<Option[]>(initialOptions);
@@ -39,113 +57,144 @@ export function MultiSelect({
     setInternalOptions(initialOptions);
   }, [initialOptions]);
 
+  // Server search rides a 300ms debounce; local filtering stays cmdk's job.
   React.useEffect(() => {
-    if (onSearch) {
-      const timer = setTimeout(async () => {
-        setIsLoading(true);
-        try {
-          const results = await onSearch(inputValue);
-          setInternalOptions(results);
-        } catch (error) {
-          appLogger.error("Search failed", error);
-        } finally {
-          setIsLoading(false);
-        }
-      }, 300);
-      return () => clearTimeout(timer);
-    }
+    if (!onSearch) return;
+    const timer = setTimeout(async () => {
+      setIsLoading(true);
+      try {
+        const results = await onSearch(inputValue);
+        setInternalOptions(results);
+      } catch (error) {
+        appLogger.error("Search failed", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
   }, [inputValue, onSearch]);
 
   const handleUnselect = (value: string) => {
     onChange(selected.filter((s) => s !== value));
   };
 
-  const handleKeyDown = React.useCallback(
-    (e: React.KeyboardEvent<HTMLDivElement>) => {
-      const input = inputRef.current;
-      if (input) {
-        if (e.key === "Delete" || e.key === "Backspace") {
-          if (input.value === "" && selected.length > 0) {
-            onChange(selected.slice(0, -1));
-          }
-        }
-        if (e.key === "Escape") {
-          input.blur();
-        }
-      }
-    },
-    [selected, onChange]
-  );
+  const handleToggle = (value: string) => {
+    if (selected.includes(value)) {
+      handleUnselect(value);
+    } else {
+      onChange([...selected, value]);
+      setInputValue("");
+    }
+  };
 
-  const selectables = internalOptions.filter((option) => !selected.includes(option.value));
+  // Chips must keep their labels even when a server-search page no longer
+  // contains the selected value.
+  const labelFor = (value: string) =>
+    internalOptions.find((o) => o.value === value)?.label ??
+    initialOptions.find((o) => o.value === value)?.label ??
+    value;
 
   return (
-    <Command
-      onKeyDown={handleKeyDown}
-      className={`overflow-visible bg-transparent ${className}`}
-      shouldFilter={!onSearch} // Disable local filtering if server search is active
-    >
-      <div className="group rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
-        <div className="flex flex-wrap gap-1">
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        {/* A div, not a button: the chip remove controls inside are real
+            buttons and nesting them would be invalid markup. The div carries
+            the combobox role, its own key handling, and the disabled
+            treatment (unfocusable + pointer-events off) instead. */}
+        <div
+          role="combobox"
+          aria-expanded={open}
+          aria-haspopup="listbox"
+          aria-disabled={disabled || undefined}
+          tabIndex={disabled ? -1 : 0}
+          onKeyDown={(e) => {
+            if (disabled) return;
+            if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
+              e.preventDefault();
+              setOpen(true);
+            }
+          }}
+          className={cn(
+            // The shared field surface: sunken ground behind a hairline;
+            // focus (and the open state — the field stays the active thing
+            // while its list is up) lights the edge like Input.
+            "flex min-h-10 w-full cursor-pointer flex-wrap items-center gap-1 rounded-nx-control border border-nx-line bg-nx-ground px-3 py-2 text-sm text-nx-ink transition-[border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
+            open && "border-nx-accent shadow-nx-focus",
+            disabled && "pointer-events-none opacity-50",
+            className
+          )}
+        >
           {selected.map((value) => {
-            const option = internalOptions.find((o) => o.value === value) || {
-              label: value,
-              value,
-            }; // Fallback for pre-selected
+            const label = labelFor(value);
             return (
-              <Badge key={value} variant="secondary">
-                {option.label}
+              <Badge key={value} variant="secondary" className="gap-1">
+                {label}
                 <button
-                  className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleUnselect(value);
-                    }
-                  }}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
+                  type="button"
+                  aria-label={`${t("common.remove")} ${label}`}
+                  className="rounded-full text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
+                  onClick={(e) => {
+                    // Removing a chip must not toggle the popover.
                     e.stopPropagation();
+                    handleUnselect(value);
                   }}
-                  onClick={() => handleUnselect(value)}
+                  onKeyDown={(e) => e.stopPropagation()}
                 >
-                  <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                  <X className="h-3 w-3" aria-hidden="true" />
                 </button>
               </Badge>
             );
           })}
-          <CommandPrimitive.Input
-            ref={inputRef}
+          {selected.length === 0 && <span className="text-nx-ink-3">{placeholder}</span>}
+          <ChevronsUpDown className="ms-auto h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
+        </div>
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        className="w-[var(--radix-popover-trigger-width)] min-w-40 p-0"
+      >
+        <Command shouldFilter={!onSearch}>
+          <CommandInput
             value={inputValue}
             onValueChange={setInputValue}
-            onBlur={() => setOpen(false)}
-            onFocus={() => setOpen(true)}
-            placeholder={selected.length === 0 ? placeholder : undefined} // Only show placeholder if empty
-            className="ml-2 flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
+            placeholder={t("common.search")}
+            onKeyDown={(e) => {
+              // Backspace on an empty query removes the last chip — the same
+              // affordance the old inline build had.
+              if (e.key === "Backspace" && inputValue === "" && selected.length > 0) {
+                onChange(selected.slice(0, -1));
+              }
+            }}
           />
-        </div>
-      </div>
-      <div className="relative mt-2">
-        {open && selectables.length > 0 ? (
-          <div className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
-            <CommandList>
-              <CommandGroup className="h-full max-h-60 overflow-auto">
-                {selectables.map((option) => (
+          <CommandList>
+            <CommandEmpty>
+              {isLoading ? t("common.searching") : t("common.noResults")}
+            </CommandEmpty>
+            <CommandGroup>
+              {internalOptions.map((option) => {
+                const isSelected = selected.includes(option.value);
+                return (
                   <CommandItem
                     key={option.value}
-                    onSelect={() => {
-                      setInputValue("");
-                      onChange([...selected, option.value]);
-                    }}
+                    value={option.label}
+                    onSelect={() => handleToggle(option.value)}
                     className="cursor-pointer"
                   >
-                    {option.label}
+                    <span className="flex-1 truncate">{option.label}</span>
+                    <Check
+                      className={cn(
+                        "h-4 w-4 shrink-0 text-nx-accent",
+                        isSelected ? "opacity-100" : "opacity-0"
+                      )}
+                      aria-hidden="true"
+                    />
                   </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </div>
-        ) : null}
-      </div>
-    </Command>
+                );
+              })}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 }

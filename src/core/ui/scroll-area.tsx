@@ -20,6 +20,10 @@ function getDocumentDir(): "ltr" | "rtl" {
  * Fix: we wrap children in a `<div dir="...">` that re-applies the actual
  * document direction (read from `<html dir="...">`), so children respect
  * the intended RTL/LTR ordering.
+ *
+ * The same resolved direction is also passed to the Radix Root so the
+ * scrollbar itself lands on the correct side under RTL (Radix reads dir
+ * from context/prop, never from the DOM).
  */
 const ScrollArea = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Root>,
@@ -48,6 +52,7 @@ const ScrollArea = React.forwardRef<
   return (
     <ScrollAreaPrimitive.Root
       ref={ref}
+      dir={docDir}
       className={cn("relative overflow-hidden", className)}
       {...props}
     >

@@ -9,7 +9,7 @@ import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useSettings } from "@core/providers/settings-provider";
-import { useToast } from "@core/hooks/use-toast";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { Download, Upload, Save, RotateCcw, Lock, ShieldAlert } from "lucide-react";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
@@ -69,7 +69,7 @@ export function SettingsView() {
   );
   const { t } = useI18n();
   const settings = useSettings();
-  const { toast } = useToast();
+  const { toast } = useEnhancedToast();
   const [activeTab, setActiveTab] = useState("appearance");
 
   const handleExportSettings = () => {

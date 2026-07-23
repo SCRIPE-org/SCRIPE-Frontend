@@ -31,7 +31,7 @@ import { useWorkspaceTransition } from "@core/ui/layout/nexus/use-workspace-tran
 
 import { Loader2, Star } from "lucide-react";
 import type { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
-import { useToast } from "@core/hooks/use-toast";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
 import { HubHero } from "../components/HubHero";
 import { HubSearch } from "../components/HubSearch";
@@ -52,7 +52,7 @@ export function WorkspaceHubView() {
   const [searchQuery, setSearchQuery] = useState("");
   const [pinLoadingKeys, setPinLoadingKeys] = useState<Set<string>>(new Set());
   const hubActivity = useHubActivity();
-  const { toast } = useToast();
+  const { toast } = useEnhancedToast();
 
   // ── Hub identity: no workspace is active on the Hub page ──────────────────
   useEffect(() => {

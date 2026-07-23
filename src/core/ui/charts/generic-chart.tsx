@@ -1,8 +1,19 @@
 "use client";
 
+/**
+ * GenericChart — the LEGACY Chart.js wrapper.
+ *
+ * New chart work composes the Recharts foundation in `@core/ui/chart`
+ * (ChartContainer + the chartColor/--chart-1..8 palette helpers); this
+ * wrapper stays only for canvas-rendered Chart.js call sites. Chart.js
+ * paints to <canvas>, so CSS var() reads never reach it — every colour in
+ * this file is resolved from the computed token values at call time and
+ * re-resolved when the theme flips.
+ */
+
 import React, { useRef, useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { Chart, registerables, ChartOptions, ChartData } from "chart.js";
+import { Chart, registerables, ChartConfiguration, ChartOptions, ChartData } from "chart.js";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Checkbox } from "@core/ui/checkbox";
@@ -12,6 +23,19 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@core/ui/co
 
 // Register all Chart.js components
 Chart.register(...registerables);
+
+/* Canvas needs literal colour strings, so this resolves an HSL-triplet
+   token from the computed styles at call time. The SSR fallback is a
+   neutral mid grey; real values arrive on the first client render. Alpha
+   goes through the hsl slash channel, never string concatenation. */
+const FALLBACK_TRIPLET = "0 0% 50%";
+
+const readToken = (name: string, alpha?: number) => {
+  if (typeof window === "undefined") return `hsl(${FALLBACK_TRIPLET})`;
+  const triplet =
+    getComputedStyle(document.documentElement).getPropertyValue(name).trim() || FALLBACK_TRIPLET;
+  return alpha == null ? `hsl(${triplet})` : `hsl(${triplet} / ${alpha})`;
+};
 
 export interface GenericChartProps {
   title: string;
@@ -153,122 +177,136 @@ export function GenericChart({
     setVisibleDatasets(new Array(data.datasets?.length || 0).fill(!allVisible));
   };
 
-  // Chart.js takes literal colour strings, not CSS variables, so the tokens are
-  // resolved here and the chart is rebuilt when the theme changes. The previous
-  // hardcoded rgba(255,255,255,·) made every axis label invisible in light mode.
-  const readToken = (name: string, alpha?: number) => {
-    if (typeof window === "undefined") return "hsl(0 0% 50%)";
-    const triplet = getComputedStyle(document.documentElement)
-      .getPropertyValue(name)
-      .trim();
-    if (!triplet) return "hsl(0 0% 50%)";
-    return alpha == null ? `hsl(${triplet})` : `hsl(${triplet} / ${alpha})`;
-  };
-
   useEffect(() => {
-    if (canvasRef.current) {
-      const ctx = canvasRef.current.getContext("2d");
-      if (ctx) {
-        // Destroy existing chart
-        if (chartRef.current) {
-          chartRef.current.destroy();
-        }
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-        // Create new chart with Generic styling
-        chartRef.current = new Chart(ctx, {
-          type,
-          data: filteredData,
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                position: "top" as const,
-                labels: {
-                  usePointStyle: true,
-                  padding: 20,
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // Entry animation: ~300ms, and none at all under reduced motion. The
+    // previous 2000ms easeInOutQuart replayed on every rebuild and read as
+    // the chart re-drawing itself rather than settling.
+    const resolvedAnimation = (prefersReducedMotion || animation === false
+      ? false
+      : {
+          duration: 300,
+          easing: "easeOutQuart",
+          ...(typeof animation === "object" ? animation : {}),
+        }) as ChartOptions["animation"];
+
+    // The colours below are resolved from the computed token values, which
+    // change when the theme does — resolvedTheme is a real dependency. The
+    // previous hardcoded rgba(255,255,255,·) made every axis label invisible
+    // in light mode.
+    const chartOptions: ChartOptions = {
+      responsive,
+      maintainAspectRatio,
+      plugins: {
+        legend: {
+          position: "top" as const,
+          labels: {
+            usePointStyle: true,
+            padding: 20,
+            font: {
+              size: 12,
+              weight: "bold" as const,
+            },
+          },
+        },
+        tooltip: {
+          backgroundColor: readToken("--popover"),
+          titleColor: readToken("--popover-foreground"),
+          bodyColor: readToken("--popover-foreground"),
+          borderColor: readToken("--border"),
+          borderWidth: 1,
+          cornerRadius: 8,
+          displayColors: true,
+          padding: 12,
+        },
+      },
+      scales:
+        type === "pie" || type === "doughnut"
+          ? {}
+          : {
+              x: {
+                grid: {
+                  color: readToken("--border", 0.5),
+                },
+                ticks: {
+                  color: readToken("--muted-foreground"),
                   font: {
-                    size: 12,
-                    weight: "bold" as const,
+                    size: 11,
                   },
                 },
               },
-              tooltip: {
-                backgroundColor: readToken("--popover"),
-                titleColor: readToken("--popover-foreground"),
-                bodyColor: readToken("--popover-foreground"),
-                borderColor: readToken("--border"),
-                borderWidth: 1,
-                cornerRadius: 8,
-                displayColors: true,
-                padding: 12,
-              },
-            },
-            scales:
-              type === "pie" || type === "doughnut"
-                ? {}
-                : {
-                    x: {
-                      grid: {
-                        color: readToken("--border", 0.5),
-                      },
-                      ticks: {
-                        color: readToken("--muted-foreground"),
-                        font: {
-                          size: 11,
-                        },
-                      },
-                    },
-                    y: {
-                      grid: {
-                        color: readToken("--border", 0.5),
-                      },
-                      ticks: {
-                        color: readToken("--muted-foreground"),
-                        font: {
-                          size: 11,
-                        },
-                      },
-                    },
+              y: {
+                grid: {
+                  color: readToken("--border", 0.5),
+                },
+                ticks: {
+                  color: readToken("--muted-foreground"),
+                  font: {
+                    size: 11,
                   },
-            elements: {
-              point: {
-                radius: 4,
-                hoverRadius: 6,
-                borderWidth: 2,
-                hoverBorderWidth: 3,
-              },
-              line: {
-                borderWidth: 3,
-                tension: 0.4,
-              },
-              bar: {
-                borderRadius: 4,
-                borderSkipped: false,
+                },
               },
             },
-            animation: {
-              duration: 2000,
-              easing: "easeInOutQuart",
-            },
-            interaction: {
-              intersect: false,
-              mode: "index",
-            },
-            ...options,
-          },
-        });
-      }
+      elements: {
+        point: {
+          radius: 4,
+          hoverRadius: 6,
+          borderWidth: 2,
+          hoverBorderWidth: 3,
+        },
+        line: {
+          borderWidth: 3,
+          tension: 0.4,
+        },
+        bar: {
+          borderRadius: 4,
+          borderSkipped: false,
+        },
+      },
+      animation: resolvedAnimation,
+      interaction: {
+        intersect: false,
+        mode: "index",
+      },
+      ...options,
+    };
+
+    // Theme flips and data changes go through chart.update(): the canvas
+    // stays alive and Chart.js animates the delta. The old destroy/new on
+    // every change blanked the chart and replayed the entry animation.
+    // Only a chart-type switch pays the destroy/recreate cost — Chart.js
+    // cannot morph type in place.
+    const existing = chartRef.current;
+    if (existing && (existing.config as { type?: string }).type === type) {
+      existing.data = filteredData;
+      existing.options = chartOptions;
+      existing.update(prefersReducedMotion ? "none" : undefined);
+      return;
     }
 
+    existing?.destroy();
+    chartRef.current = new Chart(ctx, {
+      type,
+      data: filteredData,
+      options: chartOptions,
+    } as ChartConfiguration);
+  }, [filteredData, options, type, animation, responsive, maintainAspectRatio, resolvedTheme]);
+
+  // Destroy only on unmount — the update path above reuses the instance.
+  useEffect(() => {
     return () => {
-      if (chartRef.current) {
-        chartRef.current.destroy();
-      }
+      chartRef.current?.destroy();
+      chartRef.current = null;
     };
-    // resolvedTheme is a real dependency: the colours above are read from the
-    // computed token values, which change when the theme does.
-  }, [filteredData, options, type, resolvedTheme]);
+  }, []);
 
   const handleExport = () => {
     if (chartRef.current) {
@@ -304,7 +342,7 @@ export function GenericChart({
                 </CollapsibleTrigger>
                 <CollapsibleContent
                   ref={filterRef}
-                  className="absolute right-0 top-12 z-50 w-64 rounded-lg border bg-background p-4 shadow-lg"
+                  className="absolute end-0 top-12 z-popover w-64 rounded-lg border bg-background p-4 shadow-lg"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
@@ -320,7 +358,7 @@ export function GenericChart({
                     </div>
                     <div className="space-y-2">
                       {data.datasets.map((dataset: any, index: number) => (
-                        <div key={index} className="flex items-center space-x-2">
+                        <div key={index} className="flex items-center gap-2">
                           <Checkbox
                             id={`dataset-${index}`}
                             checked={visibleDatasets[index]}
@@ -380,38 +418,22 @@ export function GenericChart({
   );
 }
 
-// Generic color palettes
+/* Categorical palette — reads over the global --chart-1..8 tokens, the same
+   slots the Recharts foundation exposes as CHART_TOKEN_PALETTE in
+   @core/ui/chart. The getters resolve at read time (browser only), so a
+   theme flip re-reads fresh values. The demo-era hex/gradient/monochrome
+   sets died with their only consumers, the settings showcase demos. */
+const CHART_SLOT_COUNT = 8;
+
 export const GENERIC_COLORS = {
-  primary: [
-    "#3B82F6", // Blue
-    "#10B981", // Emerald
-    "#F59E0B", // Amber
-    "#EF4444", // Red
-    "#8B5CF6", // Violet
-    "#06B6D4", // Cyan
-    "#84CC16", // Lime
-    "#F97316", // Orange
-  ],
-  gradient: [
-    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-    "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-    "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
-    "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
-    "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
-    "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
-    "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
-  ],
-  monochrome: [
-    "#1F2937", // Gray 800
-    "#374151", // Gray 700
-    "#4B5563", // Gray 600
-    "#6B7280", // Gray 500
-    "#9CA3AF", // Gray 400
-    "#D1D5DB", // Gray 300
-    "#E5E7EB", // Gray 200
-    "#F3F4F6", // Gray 100
-  ],
+  /** Solid series colours for slots 1..8, resolved to literal hsl() strings. */
+  get primary(): string[] {
+    return Array.from({ length: CHART_SLOT_COUNT }, (_, i) => readToken(`--chart-${i + 1}`));
+  },
+  /** The same slots at 25% alpha — soft fills for area/bar backgrounds. */
+  get soft(): string[] {
+    return Array.from({ length: CHART_SLOT_COUNT }, (_, i) => readToken(`--chart-${i + 1}`, 0.25));
+  },
 };
 
 // Utility functions for creating Generic chart data

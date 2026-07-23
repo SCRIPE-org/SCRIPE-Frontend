@@ -58,7 +58,7 @@ vi.mock("@core/providers/i18n-provider", () => ({
 }));
 
 // Mock toast
-vi.mock("@core/ui/use-toast", () => ({
+vi.mock("@core/hooks/use-enhanced-toast", () => ({
   toast: mockToast,
 }));
 

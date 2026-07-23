@@ -8,12 +8,16 @@ import {
   ToastViewport,
 } from "@core/ui/enhanced-toast";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useI18n } from "@core/providers/i18n-provider";
 
 export function EnhancedToaster() {
   const { toasts } = useEnhancedToast();
+  const { direction } = useI18n();
 
   return (
-    <ToastProvider>
+    // The viewport sits at the inline END (sm:end-0), so the dismiss swipe must
+    // follow it: right in LTR, left in RTL — Radix only speaks physical sides.
+    <ToastProvider swipeDirection={direction === "rtl" ? "left" : "right"}>
       {toasts.map(function ({
         id,
         title,

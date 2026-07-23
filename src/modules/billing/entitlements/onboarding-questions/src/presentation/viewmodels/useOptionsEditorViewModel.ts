@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { AnswerOptionRequest } from "../../domain/entities/OnboardingQuestionRequests";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useToast } from "@core/ui/use-toast";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
 /**
  * React hook/ViewModel orchestrating state and data flows for options editor view model.
@@ -15,7 +15,7 @@ export function useOptionsEditorViewModel(questionId: string | null) {
   const repo = entitlementsContainer.onboardingQuestionRepository;
   const key = ["entitlements", "onboarding-options", questionId];
   const { t } = useI18n();
-  const { toast } = useToast();
+  const { toast } = useEnhancedToast();
 
   const optionsQuery = useQuery({
     queryKey: key,

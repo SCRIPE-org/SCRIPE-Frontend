@@ -10,7 +10,7 @@
  */
 import { useState, useCallback, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast } from "@core/hooks/use-enhanced-toast";
 import { customizationContainer } from "@modules/customization/di";
 import type { ThemeBundle } from "../../domain/entities/ThemeBundle";
 import { BUNDLE_TYPE_CONFIG } from "../../domain/entities/ThemeBundle";

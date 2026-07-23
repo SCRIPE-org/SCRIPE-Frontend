@@ -29,6 +29,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { Skeleton } from "@core/ui/skeleton";
+import { toast } from "@core/hooks/use-enhanced-toast";
 import { cn, formatDateUtc } from "@core/common/utils";
 import { useTenantDomainsViewModel } from "../../viewmodels/useTenantDomainsViewModel";
 import type { TenantDomainJson } from "../../../domain/interfaces/ITenantService";
@@ -68,7 +69,7 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     // toast handled inline — simple utility, not worth routing through VM
-    import("sonner").then(({ toast }) => toast.success(t("tenant.domainsCopied")));
+    toast.success(t("tenant.domainsCopied"));
   };
 
   // ─── Loading / Error ────────────────────────────────────
