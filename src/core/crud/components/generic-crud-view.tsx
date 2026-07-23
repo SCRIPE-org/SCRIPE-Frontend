@@ -23,6 +23,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialo
 import { GenericForm, FieldConfig } from "@core/ui/forms/generic-form";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { ErrorMessage } from "@core/ui/error-message";
+import { EmptyState } from "@core/ui/empty-state";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { useEnhancedDelete } from "@core/hooks/use-enhanced-delete";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
@@ -31,7 +32,7 @@ import { cn } from "@core/common/utils";
 import type { PaginationInfo } from "@core/common/pagination";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCallback, useMemo, memo, useEffect } from "react";
-import { Users, Sliders, ListTodo, Activity, ShieldCheck, Key, FileText } from "lucide-react";
+import { Users, Sliders, ListTodo, Activity, ShieldCheck, Key, FileText, Inbox } from "lucide-react";
 import { appLogger } from "@core/common/logger";
 import { usePermission } from "@core/hooks/use-permission";
 import { usePermissions } from "@core/hooks/use-permissions";
@@ -640,27 +641,27 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     const lowerTitle = title.toLowerCase();
     
     if (res.includes("staff") || res.includes("hrms") || lowerTitle.includes("staff") || lowerTitle.includes("hrms")) {
-      return <Users className="h-6 w-6 text-primary" />;
+      return <Users className="h-6 w-6 text-nx-accent" />;
     }
     if (res.includes("party") || lowerTitle.includes("party") || lowerTitle.includes("parties")) {
-      return <Users className="h-6 w-6 text-success" />;
+      return <Users className="h-6 w-6 text-nx-success" />;
     }
     if (res.includes("work") || res.includes("task") || lowerTitle.includes("work") || lowerTitle.includes("task") || lowerTitle.includes("todo")) {
-      return <ListTodo className="h-6 w-6 text-info" />;
+      return <ListTodo className="h-6 w-6 text-nx-info" />;
     }
     if (res.includes("custom") || lowerTitle.includes("custom") || lowerTitle.includes("field")) {
-      return <Sliders className="h-6 w-6 text-warning" />;
+      return <Sliders className="h-6 w-6 text-nx-warning" />;
     }
     if (res.includes("analytics") || lowerTitle.includes("analytics") || lowerTitle.includes("metric") || lowerTitle.includes("event")) {
-      return <Activity className="h-6 w-6 text-destructive" />;
+      return <Activity className="h-6 w-6 text-nx-danger" />;
     }
     if (res.includes("compliance") || lowerTitle.includes("compliance") || lowerTitle.includes("consent") || lowerTitle.includes("gdpr")) {
-      return <ShieldCheck className="h-6 w-6 text-success" />;
+      return <ShieldCheck className="h-6 w-6 text-nx-success" />;
     }
     if (res.includes("entitlement") || lowerTitle.includes("entitlement") || lowerTitle.includes("quota") || lowerTitle.includes("plan") || lowerTitle.includes("billing")) {
-      return <Key className="h-6 w-6 text-info" />;
+      return <Key className="h-6 w-6 text-nx-info" />;
     }
-    return <FileText className="h-6 w-6 text-muted-foreground" />;
+    return <FileText className="h-6 w-6 text-nx-ink-3" />;
   };
 
   // Keyboard shortcut listener for power users (Alex)
@@ -686,41 +687,6 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [search, showAddButton, handleCreateClick, viewModel]);
 
-  const getSpacingClasses = () => {
-    switch (settings.spacingSize) {
-      case "compact":
-        return "space-y-3";
-      case "comfortable":
-        return "space-y-8";
-      case "spacious":
-        return "space-y-12";
-      default:
-        return "space-y-6";
-    }
-  };
-
-  const getCardClasses = () => {
-    // Don't apply hover effects to Card when it contains a table
-    // Table rows will handle their own hover effects with shadows
-    // Add strong bottom shadow that extends below pagination
-    const base = "transition-none relative";
-    // Strong shadow at bottom - extends below the card
-    const bottomShadow =
-      "shadow-[0_12px_32px_rgba(0,0,0,0.2)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.5)]";
-    switch (settings.cardStyle) {
-      case "glass":
-        return cn(base, "bg-white/10 backdrop-blur border-white/20", bottomShadow);
-      case "solid":
-        return cn(base, "bg-muted border-0", bottomShadow);
-      case "bordered":
-        return cn(base, "border-2", bottomShadow);
-      case "elevated":
-        return cn(base, "shadow-lg border-0", bottomShadow);
-      default:
-        return cn(base, "border-0", bottomShadow);
-    }
-  };
-
   const getButtonSize = () => {
     switch (settings.spacingSize) {
       case "compact":
@@ -742,15 +708,17 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   }
 
   return (
-    <div className={getSpacingClasses()}>
+    // The settings-driven rhythm rides the ONE --spacing-unit the applicator
+    // writes — the per-size space-y switch collapsed into it.
+    <div className="flex flex-col" style={{ gap: "calc(var(--spacing-unit) * 1.5)" }}>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-background shadow-sm border border-border">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-nx-md border border-nx-line bg-nx-surface shadow-nx-sm">
             {getPageIcon()}
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-            {subtitle && <p className="text-muted-foreground">{subtitle}</p>}
+            <h1 className="text-2xl font-bold tracking-tight text-nx-ink">{title}</h1>
+            {subtitle && <p className="text-nx-ink-2">{subtitle}</p>}
           </div>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
@@ -768,7 +736,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 loading={action.loading}
                 disabled={action.disabled}
               >
-                {!action.loading && action.icon && <span className="mr-2">{action.icon}</span>}
+                {!action.loading && action.icon && <span className="me-2">{action.icon}</span>}
                 {action.label}
               </Button>
             ))}
@@ -794,7 +762,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                       className="flex-1 sm:flex-none"
                       disabled={!enabled}
                     >
-                      {action.icon && <span className="mr-2">{action.icon}</span>}
+                      {action.icon && <span className="me-2">{action.icon}</span>}
                       {action.label.replace("{count}", viewModel.selectedItems.length.toString())}
                     </Button>
                   );
@@ -856,6 +824,11 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         onSearch={search?.onChange}
         searchValue={search?.value}
         searchInputRef={search?.inputRef}
+        // The empty branch routes through the core EmptyState, so every CRUD
+        // list inherits the nexus empty anatomy. `bare` because the table
+        // container already draws the surface; customTableProps can still
+        // override the node below.
+        emptyMessage={<EmptyState bare icon={Inbox} title={t("common.noData")} />}
         stickyActions={config?.stickyActions}
         renderActions={
           config?.renderActions ? (row) => config.renderActions?.(row as T) : undefined

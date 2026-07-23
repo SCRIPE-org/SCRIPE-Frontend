@@ -152,6 +152,9 @@ export interface FieldConfig {
   requiredPermissions?: PermissionCode[];
   // Helper/description text (shown below the field)
   description?: string;
+  // Section layout (absent on every field = current flat single-column behaviour)
+  section?: string; // Title of the hairline-ruled group; consecutive fields with the same section are grouped
+  colSpan?: 1 | 2; // Width in the two-column section grid; any colSpan in a group switches it to sm:grid-cols-2
 }
 
 /**
@@ -504,14 +507,14 @@ export function GenericForm({
       case "minimal":
         return cn(
           baseInputClasses,
-          "border-0 border-b-2 rounded-none bg-transparent focus:border-primary"
+          "border-0 border-b rounded-none bg-transparent focus:border-primary"
         );
       case "card":
         return cn(baseInputClasses, "rounded-lg bg-muted/30 border-muted");
       case "neon":
         return cn(
           baseInputClasses,
-          "rounded-xl border-2 border-cyan-400/50 bg-black/50 text-cyan-100 placeholder:text-cyan-400/60 focus:border-cyan-400 focus:shadow-lg focus:shadow-cyan-400/20"
+          "rounded-xl border border-cyan-400/50 bg-black/50 text-cyan-100 placeholder:text-cyan-400/60 focus:border-cyan-400 focus:shadow-lg focus:shadow-cyan-400/20"
         );
       case "elegant":
         return cn(
@@ -521,17 +524,44 @@ export function GenericForm({
       case "organic":
         return cn(
           baseInputClasses,
-          "rounded-full border-2 border-green-300 dark:border-green-600 bg-green-50 dark:bg-green-900/20 focus:border-green-500 focus:bg-green-100 dark:focus:bg-green-900/30"
+          "rounded-full border border-green-300 dark:border-green-600 bg-green-50 dark:bg-green-900/20 focus:border-green-500 focus:bg-green-100 dark:focus:bg-green-900/30"
         );
       case "retro":
         return cn(
           baseInputClasses,
-          "rounded border-2 border-orange-400 dark:border-orange-500 bg-orange-50 dark:bg-orange-900/20 focus:border-orange-600 shadow-sm"
+          "rounded border border-orange-400 dark:border-orange-500 bg-orange-50 dark:bg-orange-900/20 focus:border-orange-600 shadow-sm"
         );
       default:
         return cn(baseInputClasses);
     }
   };
+
+  // Visibility and permission rules are unchanged; they run before section grouping
+  const visibleFields = fields.filter((field) => {
+    // Check visibility function
+    if (field.isVisible && !field.isVisible(formData)) return false;
+    // Check permissions
+    if (field.requiredPermission && !hasPermission(field.requiredPermission)) return false;
+    if (
+      field.requiredPermissions &&
+      field.requiredPermissions.length > 0 &&
+      !hasAnyPermission(field.requiredPermissions)
+    )
+      return false;
+    return true;
+  });
+
+  // Consecutive fields sharing a `section` render as one titled, hairline-ruled group.
+  // Runs with neither section nor colSpan keep the flat single-column flow untouched.
+  const fieldGroups: { section?: string; fields: FieldConfig[] }[] = [];
+  visibleFields.forEach((field) => {
+    const last = fieldGroups[fieldGroups.length - 1];
+    if (last && last.section === field.section) {
+      last.fields.push(field);
+    } else {
+      fieldGroups.push({ section: field.section, fields: [field] });
+    }
+  });
 
   return (
     <div
@@ -539,21 +569,10 @@ export function GenericForm({
       dir={direction}
     >
       <form onSubmit={handleSubmit} className={getFormSpacing()}>
-        {fields
-          .filter((field) => {
-            // Check visibility function
-            if (field.isVisible && !field.isVisible(formData)) return false;
-            // Check permissions
-            if (field.requiredPermission && !hasPermission(field.requiredPermission)) return false;
-            if (
-              field.requiredPermissions &&
-              field.requiredPermissions.length > 0 &&
-              !hasAnyPermission(field.requiredPermissions)
-            )
-              return false;
-            return true;
-          })
-          .map((field) =>
+        {fieldGroups.map((group, groupIndex) => {
+          // The two-column grid engages only when a grouped field opts in via colSpan
+          const gridded = group.fields.some((f) => f.colSpan !== undefined && f.type !== "hidden");
+          const renderedFields = group.fields.map((field) =>
             field.type === "hidden" ? (
               <input
                 key={field.name}
@@ -562,7 +581,13 @@ export function GenericForm({
                 value={formData[field.name] || ""}
               />
             ) : (
-              <div key={field.name} className={getFieldSpacing()}>
+              <div
+                key={field.name}
+                className={cn(
+                  getFieldSpacing(),
+                  gridded && field.colSpan === 2 && "sm:col-span-2"
+                )}
+              >
                 {field.type !== "switch" && (
                   <Label
                     htmlFor={field.name}
@@ -701,8 +726,11 @@ export function GenericForm({
                     value={formData[field.name] || ""}
                     onChange={(value) => handleChange(field.name, value)}
                     placeholder={field.placeholder}
-                    disabled={field.disabled}
-                    minHeight={field.rows ? field.rows * 20 : 200}
+                    // TipTap editor exposes readOnly (not disabled); honour both the
+                    // per-field flag and the form-level read-only mode
+                    readOnly={field.disabled || readOnly}
+                    // px string — the editor feeds this into a CSS custom property
+                    minHeight={field.rows ? `${field.rows * 20}px` : "200px"}
                     className={cn(direction === "rtl" ? "text-right" : "text-left")}
                   />
                 ) : field.type === "switch" ? (
@@ -909,7 +937,36 @@ export function GenericForm({
                 )}
               </div>
             )
-          )}
+          );
+
+          // Position-based key: a legacy flat form is always one group ("flat:0"),
+          // so reconciliation stays identical to the pre-section render
+          const groupKey = `${group.section ?? "flat"}:${groupIndex}`;
+
+          // Absent section and colSpan = exactly the legacy flat single-column flow
+          if (!group.section && !gridded) {
+            return <React.Fragment key={groupKey}>{renderedFields}</React.Fragment>;
+          }
+
+          return (
+            <section key={groupKey} className="space-y-3">
+              {group.section && (
+                <h3 className="border-b border-nx-line pb-2 text-sm font-medium text-nx-ink">
+                  {group.section}
+                </h3>
+              )}
+              <div
+                className={
+                  gridded
+                    ? cn("grid grid-cols-1 items-start sm:grid-cols-2", getGridGap())
+                    : getFormSpacing()
+                }
+              >
+                {renderedFields}
+              </div>
+            </section>
+          );
+        })}
 
         <Separator />
 

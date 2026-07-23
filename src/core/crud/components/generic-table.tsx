@@ -51,7 +51,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
-import { MoreHorizontal, ArrowUpDown, Search, Loader2 } from "lucide-react";
+import {
+  // The file exports its own `Pagination` config interface, so the nav
+  // primitive comes in under an alias.
+  Pagination as PaginationNav,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@core/ui/pagination";
+import { MoreHorizontal, ChevronsLeft, ChevronsRight, Search, Loader2 } from "lucide-react";
 import GenericSelect from "./generic-select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
@@ -130,7 +141,8 @@ interface GenericTableProps<T> {
   selectedItems?: string[];
   onSelectionChange?: (selected: string[]) => void;
   searchPlaceholder?: string;
-  emptyMessage?: string;
+  /** Empty content — a plain string or a full node (e.g. an EmptyState). */
+  emptyMessage?: React.ReactNode;
   onSearch?: (term: string) => void;
   searchValue?: string;
   searchInputRef?: React.RefObject<HTMLInputElement | null>;
@@ -157,11 +169,11 @@ interface GenericTableProps<T> {
  * @param props.selectedItems - Array of selected item IDs
  * @param props.onSelectionChange - Callback when selection changes
  * @param props.searchPlaceholder - Placeholder text for search input
- * @param props.emptyMessage - Message to show when no data
+ * @param props.emptyMessage - Content to show when no data
  * @param props.onSearch - Callback for search functionality
  * @param props.searchValue - Current search value
  * @param props.searchInputRef - Ref for the search input
- * @param props.overrideTableStyle - Override the default table style
+ * @param props.overrideTableStyle - Override the settings-driven table style
  * @param props.stickyActions - Enable sticky actions column (default: true)
  * @returns JSX element representing the table
  */
@@ -195,6 +207,11 @@ function GenericTableInner<T extends Record<string, any>>({
   const actionsColumnRef = useRef<HTMLTableCellElement>(null);
   const [showLeftShadow, setShowLeftShadow] = useState(false);
   const [showRightShadow, setShowRightShadow] = useState(false);
+
+  // The ONE tableStyle read. The twelve variants no longer fan out into class
+  // math here — the style rides a single [data-table-style] attribute on the
+  // root, and the Wave-C-consolidated CSS keys the variant looks off it.
+  const tableStyle = overrideTableStyle || settings.tableStyle;
 
   // Sync from parent only when the parent's value changes to something
   // different from what we last emitted (i.e. an external/programmatic reset).
@@ -292,597 +309,59 @@ function GenericTableInner<T extends Record<string, any>>({
     return 0;
   });
 
-  // Get sticky actions classes based on current table style
-  const getStickyActionsClasses = () => {
-    const currentStyle = overrideTableStyle || settings.tableStyle;
-
-    switch (currentStyle) {
-      case "glass":
-        return cn(
-          "bg-white/20 backdrop-blur-xl border-white/20",
-          "dark:bg-black/30 dark:border-white/10",
-          "shadow-2xl shadow-black/10"
-        );
-      case "neon":
-        return cn(
-          "bg-background/95 backdrop-blur-sm border-primary/30",
-          "shadow-[0_0_20px_hsl(var(--primary)/0.3)]",
-          "before:absolute before:inset-0 before:bg-gradient-to-br before:from-primary/10 before:to-transparent before:pointer-events-none"
-        );
-      case "gradient":
-        return cn(
-          "bg-gradient-to-br from-primary/20 via-background/95 to-primary/10",
-          "backdrop-blur-sm shadow-2xl",
-          "before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/10 before:to-transparent before:pointer-events-none"
-        );
-      case "neumorphism":
-        return cn(
-          "bg-background shadow-[20px_20px_40px_rgba(0,0,0,0.1),-20px_-20px_40px_rgba(255,255,255,0.1)]",
-          "dark:shadow-[20px_20px_40px_rgba(0,0,0,0.3),-20px_-20px_40px_rgba(255,255,255,0.05)]",
-          "before:absolute before:inset-[2px] before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none"
-        );
-      case "cyberpunk":
-        return cn(
-          "bg-background/95 border-primary shadow-[0_0_30px_hsl(var(--primary)/0.4)]",
-          "before:absolute before:top-0 before:left-0 before:h-0.5 before:w-full before:bg-gradient-to-r before:from-transparent before:via-primary before:to-transparent before:pointer-events-none"
-        );
-      case "luxury":
-        return cn(
-          "bg-gradient-to-br from-warning/10 to-warning/20 border-warning/30",
-          "shadow-2xl shadow-warning/20"
-        );
-      case "matrix":
-        return cn(
-          "bg-background/95 border-primary/30 shadow-[0_0_20px_hsl(var(--primary)/0.4)]",
-          "backdrop-blur-sm",
-          "before:absolute before:inset-0 before:bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary)/0.1)_50%,transparent_100%)] before:pointer-events-none"
-        );
-      case "diamond":
-        return cn(
-          "bg-gradient-to-br from-primary/15 via-primary/10 to-primary/20 border-primary/40",
-          "shadow-[0_0_30px_hsl(var(--primary)/0.3)] backdrop-blur-xl",
-          "before:absolute before:inset-0 before:bg-[conic-gradient(from_0deg,transparent_0%,hsl(var(--primary)/0.1)_25%,hsl(var(--primary)/0.15)_50%,hsl(var(--primary)/0.1)_75%,transparent_100%)] before:animate-spin before:pointer-events-none"
-        );
-      case "minimal":
-        return cn("bg-background/90 backdrop-blur-sm border-border/50", "shadow-sm");
-      case "striped":
-      case "bordered":
-      case "default":
-      default:
-        return cn(
-          "bg-background/95 backdrop-blur-md border-border",
-          "shadow-lg shadow-black/5 dark:shadow-black/20"
-        );
-    }
-  };
-
-  // Get table style classes based on settings or override
-  const getTableContainerClasses = () => {
-    const hasHoverEffect =
-      settings.hoverEffectType !== "none" && settings.hoverEffectIntensity !== "none";
-    const baseClasses = cn("overflow-visible", hasHoverEffect && "transition-all duration-300");
-    const currentStyle = overrideTableStyle || settings.tableStyle;
-
-    switch (currentStyle) {
-      case "striped":
-        return cn(baseClasses, "rounded-lg border bg-card");
-      case "bordered":
-        return cn(baseClasses, "rounded-lg border-2 border-border bg-card");
-      case "minimal":
-        return cn(baseClasses, "rounded-none border-0 bg-transparent");
-      case "glass":
-        return cn(
-          baseClasses,
-          "rounded-2xl border border-white/20 bg-white/10 backdrop-blur-xl shadow-2xl",
-          "dark:bg-black/20 dark:border-white/10",
-          "before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none",
-          "relative"
-        );
-      case "neon":
-        return cn(
-          baseClasses,
-          "rounded-xl border-2 border-primary/30 bg-background shadow-[0_0_30px_hsl(var(--primary)/0.3)]",
-          "dark:bg-black/95",
-          "before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-primary/10 before:to-transparent before:pointer-events-none",
-          "after:absolute after:inset-0 after:rounded-xl after:shadow-[inset_0_0_20px_hsl(var(--primary)/0.1)] after:pointer-events-none",
-          "relative"
-        );
-      case "gradient":
-        return cn(
-          baseClasses,
-          "rounded-2xl border-0 bg-gradient-to-br from-primary/20 via-background to-primary/10 shadow-2xl",
-          "before:absolute before:inset-[1px] before:rounded-2xl before:bg-gradient-to-br before:from-background/95 before:to-background/90 before:backdrop-blur-sm",
-          "after:absolute after:inset-0 after:rounded-2xl after:bg-gradient-to-br after:from-white/10 after:to-transparent after:pointer-events-none",
-          "relative"
-        );
-      case "neumorphism":
-        return cn(
-          baseClasses,
-          "rounded-3xl border-0 bg-background",
-          "shadow-[20px_20px_40px_rgba(0,0,0,0.1),-20px_-20px_40px_rgba(255,255,255,0.1)]",
-          "dark:shadow-[20px_20px_40px_rgba(0,0,0,0.3),-20px_-20px_40px_rgba(255,255,255,0.05)]",
-          "before:absolute before:inset-[2px] before:rounded-3xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none"
-        );
-      case "cyberpunk":
-        return cn(
-          baseClasses,
-          "rounded-none border-2 border-primary bg-background shadow-[0_0_50px_hsl(var(--primary)/0.4)]",
-          "dark:bg-black/95",
-          "before:absolute before:top-0 before:left-0 before:h-0.5 before:w-full before:bg-gradient-to-r before:from-transparent before:via-primary before:to-transparent",
-          "after:absolute after:bottom-0 after:right-0 after:h-full after:w-0.5 after:bg-gradient-to-t after:from-transparent after:via-primary after:to-transparent",
-          "relative"
-        );
-      case "luxury":
-        return cn(
-          baseClasses,
-          "rounded-2xl border border-warning/25 bg-gradient-to-br from-warning/10 to-warning/5 shadow-2xl"
-        );
-      case "matrix":
-        return cn(
-          baseClasses,
-          "rounded-none border-2 border-primary/30 bg-background shadow-[0_0_30px_hsl(var(--primary)/0.4)]",
-          "dark:bg-black/95",
-          "backdrop-blur-sm relative overflow-hidden",
-          "before:absolute before:inset-0 before:bg-[linear-gradient(90deg,transparent_0%,hsl(var(--primary)/0.1)_50%,transparent_100%)]",
-          "dark:border-primary/40"
-        );
-      case "diamond":
-        return cn(
-          baseClasses,
-          "rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-primary/10 via-primary/5 to-primary/15",
-          "shadow-[0_0_40px_hsl(var(--primary)/0.3)] backdrop-blur-xl relative overflow-hidden",
-          "before:absolute before:inset-0 before:bg-[conic-gradient(from_0deg,transparent_0%,hsl(var(--primary)/0.1)_25%,hsl(var(--primary)/0.15)_50%,hsl(var(--primary)/0.1)_75%,transparent_100%)] before:animate-spin",
-          "dark:from-primary/20 dark:via-primary/10 dark:to-primary/25 dark:border-primary/30"
-        );
-      default:
-        return cn(baseClasses, "rounded-lg border bg-card shadow-sm");
-    }
-  };
-
-  const getRowClasses = (index: number, isSelected: boolean = false) => {
+  // Rows deliberately pass a className so TableRow's preserved
+  // className-override contract hands hover control back to this component —
+  // the settings-driven treatment below stays the single source of truth for
+  // row hover, exactly as before. Variant looks (striped zebra, glass wash…)
+  // come from the root [data-table-style] attribute via CSS, not from here.
+  const getRowClasses = () => {
     // ALWAYS apply hover effects to table rows, regardless of global settings
-    // Table rows should always show shadows and hover effects
-    const baseClasses = cn(
-      "border-b-2 border-border/70 relative",
-      "transition-all duration-300",
-      "hover:bg-muted/50" // Always show background change on hover
-    );
-    // Get hover classes for tables - shadows only, no transforms
-    // ALWAYS apply shadows based on global settings, or use default if none
     const effectType = settings.hoverEffectType === "none" ? "elevate" : settings.hoverEffectType;
     const intensity =
       settings.hoverEffectIntensity === "none" ? "medium" : settings.hoverEffectIntensity;
-    const hoverClasses = getTableHoverEffectClasses(effectType, intensity);
-    const currentStyle = overrideTableStyle || settings.tableStyle;
-
-    let styleClasses = "";
-    switch (currentStyle) {
-      case "striped":
-        styleClasses = index % 2 === 0 ? "bg-muted/30" : "bg-card";
-        break;
-      case "bordered":
-        styleClasses = "border-b-2 bg-card";
-        break;
-      case "minimal":
-        styleClasses = "border-b-2 border-border/60 bg-transparent";
-        break;
-      case "glass":
-        styleClasses = cn(
-          "border-b border-white/10 bg-white/5 backdrop-blur-sm",
-          "dark:border-white/5 dark:bg-black/10",
-          index % 2 === 0 && "bg-white/10 dark:bg-black/20"
-        );
-        break;
-      case "neon":
-        styleClasses = cn(
-          "border-b border-primary/20 bg-background",
-          "dark:bg-black/70",
-          index % 2 === 0 && "bg-primary/5 dark:bg-primary/5"
-        );
-        break;
-      case "gradient":
-        styleClasses = cn(
-          "border-b border-primary/10 bg-gradient-to-r from-transparent via-primary/5 to-transparent",
-          index % 2 === 0 && "from-primary/5 via-primary/10 to-primary/5"
-        );
-        break;
-      case "neumorphism":
-        styleClasses = cn(
-          "border-b-2 border-border/50 bg-background",
-          index % 2 === 0 &&
-            "shadow-[inset_2px_2px_4px_rgba(0,0,0,0.05),inset_-2px_-2px_4px_rgba(255,255,255,0.05)]"
-        );
-        break;
-      case "cyberpunk":
-        styleClasses = cn(
-          "border-b border-primary/30 bg-background",
-          "dark:bg-black/90",
-          index % 2 === 0 && "bg-primary/5 border-primary/20"
-        );
-        break;
-      case "luxury":
-        styleClasses = cn(
-          "border-b border-warning/20 bg-gradient-to-r from-warning/10 to-transparent",
-          index % 2 === 0 && "from-warning/20 to-warning/5"
-        );
-        break;
-      case "matrix":
-        styleClasses = cn(
-          "border-b border-primary/30 bg-background",
-          "dark:bg-black/95",
-          "text-primary font-mono text-sm",
-          index % 2 === 0 && "bg-primary/5 border-primary/20"
-        );
-        break;
-      case "diamond":
-        styleClasses = cn(
-          "border-b border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/15",
-          "text-primary",
-          "dark:from-primary/10 dark:via-primary/5 dark:to-primary/15 dark:text-primary dark:border-primary/20",
-          index % 2 === 0 &&
-            "from-primary/15 via-primary/10 to-primary/20 dark:from-primary/15 dark:via-primary/10 dark:to-primary/20"
-        );
-        break;
-      default:
-        styleClasses = "border-b-2 border-border/70 bg-card";
-    }
-
-    // ALWAYS add hover effects to table rows, regardless of global settings
-    // Table row hover effects should override everything
-    switch (currentStyle) {
-      case "striped":
-        styleClasses += index % 2 === 0 ? " hover:bg-muted/50" : " hover:bg-muted/30";
-        break;
-      case "bordered":
-        styleClasses += " hover:bg-muted/30";
-        break;
-      case "minimal":
-        styleClasses += " hover:bg-muted/20";
-        break;
-      case "glass":
-        styleClasses += " hover:bg-white/10 dark:hover:bg-black/20";
-        break;
-      case "neon":
-        styleClasses +=
-          " hover:bg-primary/10 hover:shadow-[0_0_20px_hsl(var(--primary)/0.2)] dark:hover:bg-primary/5";
-        break;
-      case "gradient":
-        styleClasses +=
-          " hover:from-primary/10 hover:via-primary/15 hover:to-primary/10 hover:shadow-lg";
-        break;
-      case "neumorphism":
-        styleClasses +=
-          " hover:shadow-[inset_5px_5px_10px_rgba(0,0,0,0.1),inset_-5px_-5px_10px_rgba(255,255,255,0.1)] dark:hover:shadow-[inset_5px_5px_10px_rgba(0,0,0,0.2),inset_-5px_-5px_10px_rgba(255,255,255,0.05)]";
-        break;
-      case "cyberpunk":
-        styleClasses +=
-          " hover:bg-primary/10 hover:border-primary/50 hover:shadow-[0_0_15px_hsl(var(--primary)/0.3)] hover:text-primary";
-        break;
-      case "luxury":
-        styleClasses +=
-          " hover:from-warning/20 hover:to-warning/10 hover:shadow-lg hover:shadow-warning/20";
-        break;
-      case "matrix":
-        styleClasses += " hover:bg-primary/10 hover:border-primary/50";
-        break;
-      case "diamond":
-        styleClasses += " hover:from-primary/20 hover:via-primary/15 hover:to-primary/25";
-        break;
-      default:
-        styleClasses += " hover:bg-muted/30";
-    }
-
-    if (isSelected) {
-      switch (currentStyle) {
-        case "glass":
-          styleClasses += " bg-primary/20 border-primary/30 backdrop-blur-md";
-          break;
-        case "neon":
-          styleClasses +=
-            " bg-primary/20 border-primary/50 shadow-[0_0_25px_hsl(var(--primary)/0.4)]";
-          break;
-        case "gradient":
-          styleClasses +=
-            " from-primary/20 via-primary/30 to-primary/20 shadow-lg shadow-primary/20";
-          break;
-        case "neumorphism":
-          styleClasses +=
-            " shadow-[inset_8px_8px_16px_hsl(var(--primary)/0.1),inset_-8px_-8px_16px_hsl(var(--primary)/0.05)]";
-          break;
-        case "cyberpunk":
-          styleClasses +=
-            " bg-primary/20 border-primary text-primary shadow-[0_0_20px_hsl(var(--primary)/0.5)]";
-          break;
-        case "luxury":
-          styleClasses +=
-            " from-warning/30 to-warning/20 border-warning/40 shadow-lg shadow-warning/30";
-          break;
-        case "matrix":
-          styleClasses +=
-            " bg-primary/20 border-primary/50 text-primary shadow-[0_0_20px_hsl(var(--primary)/0.4)]";
-          break;
-        case "diamond":
-          styleClasses +=
-            " from-primary/25 via-primary/20 to-primary/30 border-primary/40 shadow-lg shadow-primary/30";
-          break;
-        default:
-          styleClasses += " bg-primary/10 border-primary/20";
-      }
-    }
-
-    return cn(baseClasses, hoverClasses, styleClasses);
-  };
-
-  const getHeaderClasses = () => {
-    const hasHoverEffect =
-      settings.hoverEffectType !== "none" && settings.hoverEffectIntensity !== "none";
-    const baseClasses = cn(
-      "font-semibold text-foreground",
-      hasHoverEffect && "transition-all duration-300"
+    return cn(
+      "relative border-b border-nx-line transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none",
+      "data-[state=selected]:bg-nx-accent-wash",
+      // Shadows only, no transforms — collapsed table rows can't float.
+      getTableHoverEffectClasses(effectType, intensity)
     );
-    const currentStyle = overrideTableStyle || settings.tableStyle;
-
-    let heightClass = "";
-    switch (settings.spacingSize) {
-      case "compact":
-        heightClass = "h-10";
-        break;
-      case "comfortable":
-        heightClass = "h-14";
-        break;
-      case "spacious":
-        heightClass = "h-16";
-        break;
-      default:
-        heightClass = "h-12";
-    }
-
-    switch (currentStyle) {
-      case "striped":
-        return cn(baseClasses, heightClass, "bg-muted/70 border-b-2");
-      case "bordered":
-        return cn(baseClasses, heightClass, "bg-muted/50 border-b-2");
-      case "minimal":
-        return cn(baseClasses, heightClass, "bg-transparent border-b");
-      case "glass":
-        return cn(
-          baseClasses,
-          heightClass,
-          "bg-white/20 border-b border-white/30 backdrop-blur-md text-foreground font-bold",
-          "dark:bg-black/30 dark:border-white/20",
-          hasHoverEffect && "hover:bg-white/30 dark:hover:bg-black/40"
-        );
-      case "neon":
-        return cn(
-          baseClasses,
-          heightClass,
-          "bg-background border-b-2 border-primary/50 text-primary font-bold",
-          "dark:bg-black/95",
-          "shadow-[0_0_15px_hsl(var(--primary)/0.3)]",
-          hasHoverEffect && "hover:border-primary hover:shadow-[0_0_25px_hsl(var(--primary)/0.4)]"
-        );
-      case "gradient":
-        return cn(
-          baseClasses,
-          heightClass,
-          "bg-gradient-to-r from-primary/30 via-primary/20 to-primary/30 border-b border-primary/30",
-          "text-foreground font-bold shadow-lg",
-          hasHoverEffect && "hover:from-primary/40 hover:via-primary/30 hover:to-primary/40"
-        );
-      case "neumorphism":
-        return cn(
-          baseClasses,
-          heightClass,
-          "bg-background border-b-0 font-bold",
-          "shadow-[8px_8px_16px_rgba(0,0,0,0.1),-8px_-8px_16px_rgba(255,255,255,0.1)]",
-          "dark:shadow-[8px_8px_16px_rgba(0,0,0,0.2),-8px_-8px_16px_rgba(255,255,255,0.05)]",
-          hasHoverEffect &&
-            "hover:shadow-[12px_12px_24px_rgba(0,0,0,0.15),-12px_-12px_24px_rgba(255,255,255,0.15)]"
-        );
-      case "cyberpunk":
-        return cn(
-          baseClasses,
-          heightClass,
-          "bg-background border-b-2 border-primary/60 text-primary font-bold",
-          "dark:bg-black/95",
-          "shadow-[0_0_20px_hsl(var(--primary)/0.4)]",
-          hasHoverEffect && "hover:border-primary hover:shadow-[0_0_30px_hsl(var(--primary)/0.5)]"
-        );
-      case "luxury":
-        return cn(
-          baseClasses,
-          heightClass,
-          "bg-gradient-to-r from-warning/20 via-warning/10 to-warning/20 border-b border-warning/40",
-          "text-foreground font-bold shadow-lg shadow-warning/20",
-          hasHoverEffect && "hover:from-warning/30 hover:via-warning/20 hover:to-warning/30"
-        );
-      case "matrix":
-        return cn(
-          baseClasses,
-          heightClass,
-          "bg-background border-b-2 border-primary/60 text-primary font-bold uppercase tracking-widest",
-          "dark:bg-black/98",
-          "shadow-[0_0_15px_hsl(var(--primary)/0.4)] font-mono text-sm",
-          "dark:border-primary/70 dark:text-primary"
-        );
-      case "diamond":
-        return cn(
-          baseClasses,
-          heightClass,
-          "bg-gradient-to-r from-primary/20 via-primary/10 to-primary/25 border-b-2 border-primary/50",
-          "text-primary font-bold shadow-lg shadow-primary/30",
-          "dark:from-primary/25 dark:via-primary/15 dark:to-primary/30 dark:border-primary/40"
-        );
-      default:
-        return cn(baseClasses, heightClass, "bg-muted/50 border-b");
-    }
   };
 
-  const getCellPadding = () => {
-    switch (settings.spacingSize) {
-      case "compact":
-        return "px-3 py-2";
-      case "comfortable":
-        return "px-6 py-4";
-      case "spacious":
-        return "px-8 py-6";
-      default:
-        return "px-4 py-3";
-    }
-  };
-
-  const getCardClasses = () => {
-    const hasHoverEffect =
-      settings.hoverEffectType !== "none" && settings.hoverEffectIntensity !== "none";
-    const baseClasses = cn(
-      "border rounded-lg p-4 space-y-3",
-      hasHoverEffect && "transition-all duration-300"
+  // Mobile card — one quiet nx surface; the variant skin rides the root
+  // [data-table-style] attribute, the hover treatment rides the settings.
+  const getCardClasses = () =>
+    cn(
+      "space-y-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4",
+      getHoverEffectClasses(settings.hoverEffectType, settings.hoverEffectIntensity)
     );
-    const hoverClasses = getHoverEffectClasses(
-      settings.hoverEffectType,
-      settings.hoverEffectIntensity
-    );
-    const currentStyle = overrideTableStyle || settings.tableStyle;
 
-    switch (currentStyle) {
-      case "glass":
-        return cn(
-          baseClasses,
-          hoverClasses,
-          "bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl",
-          "dark:bg-black/20 dark:border-white/10",
-          settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:bg-white/15 dark:hover:bg-black/30 hover:shadow-3xl"
-        );
-      case "neon":
-        return cn(
-          baseClasses,
-          hoverClasses,
-          "bg-background border-2 border-primary/30 shadow-[0_0_20px_hsl(var(--primary)/0.3)] rounded-xl",
-          "dark:bg-black/95",
-          settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:border-primary/50 hover:shadow-[0_0_30px_hsl(var(--primary)/0.5)] hover:bg-primary/5"
-        );
-      case "gradient":
-        return cn(
-          baseClasses,
-          hoverClasses,
-          "bg-gradient-to-br from-primary/20 via-background to-primary/10 border-0 shadow-2xl rounded-2xl",
-          settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:from-primary/30 hover:via-background hover:to-primary/20 hover:shadow-3xl"
-        );
-      case "neumorphism":
-        return cn(
-          baseClasses,
-          hoverClasses,
-          "bg-background border-0 rounded-3xl",
-          "shadow-[15px_15px_30px_rgba(0,0,0,0.1),-15px_-15px_30px_rgba(255,255,255,0.1)]",
-          "dark:shadow-[15px_15px_30px_rgba(0,0,0,0.3),-15px_-15px_30px_rgba(255,255,255,0.05)]",
-          settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:shadow-[20px_20px_40px_rgba(0,0,0,0.15),-20px_-20px_40px_rgba(255,255,255,0.15)]"
-        );
-      case "cyberpunk":
-        return cn(
-          baseClasses,
-          hoverClasses,
-          "bg-background border-2 border-primary rounded-none shadow-[0_0_25px_hsl(var(--primary)/0.4)]",
-          "dark:bg-black/95",
-          "before:absolute before:top-0 before:left-0 before:h-0.5 before:w-full before:bg-gradient-to-r before:from-transparent before:via-primary before:to-transparent",
-          "relative",
-          settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:bg-primary/10 hover:shadow-[0_0_40px_hsl(var(--primary)/0.6)]"
-        );
-      case "luxury":
-        return cn(
-          baseClasses,
-          hoverClasses,
-          "bg-gradient-to-br from-warning/10 to-warning/5 border border-warning/25 shadow-2xl rounded-2xl",
-          settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:from-warning/20 hover:to-warning/10 hover:shadow-3xl hover:shadow-warning/30"
-        );
-      case "matrix":
-        return cn(
-          baseClasses,
-          hoverClasses,
-          "bg-background border-2 border-success/40 shadow-[0_0_20px_hsl(var(--success)/0.4)] rounded-lg",
-          settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:border-success/60 hover:shadow-[0_0_30px_hsl(var(--success)/0.6)] hover:bg-success/5"
-        );
-      case "diamond":
-        return cn(
-          baseClasses,
-          hoverClasses,
-          "bg-gradient-to-br from-primary/15 via-accent/10 to-info/15 border-2 border-primary/50 shadow-[0_0_25px_hsl(var(--primary)/0.4)] rounded-2xl",
-          settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:from-primary/25 hover:via-accent/20 hover:to-info/25 hover:shadow-[0_0_35px_hsl(var(--primary)/0.6)]"
-        );
-      case "striped":
-        return cn(
-          baseClasses,
-          hoverClasses,
-          "bg-card border",
-          settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:shadow-lg"
-        );
-      case "bordered":
-        return cn(
-          baseClasses,
-          hoverClasses,
-          "bg-card border-2",
-          settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:shadow-lg"
-        );
-      case "minimal":
-        return cn(
-          baseClasses,
-          hoverClasses,
-          "bg-transparent border-0",
-          settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:bg-muted/20"
-        );
-      default:
-        return cn(
-          baseClasses,
-          hoverClasses,
-          "bg-card",
-          settings.hoverEffectType !== "none" &&
-            settings.hoverEffectIntensity !== "none" &&
-            "hover:shadow-lg"
-        );
-    }
-  };
+  // Sticky actions column — opaque surface so scrolling columns vanish under
+  // it, a hairline start edge instead of the old painted rails.
+  const stickyActionsClasses = "sticky end-0 z-raised border-s border-nx-line-hi bg-nx-surface";
 
   if (loading) {
     return (
       <div className="space-y-3">
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="h-16 animate-pulse rounded-lg bg-muted/50" />
+          <div
+            key={i}
+            className="h-16 animate-pulse rounded-nx-md bg-nx-raised motion-reduce:animate-none"
+          />
         ))}
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-table-style={tableStyle}>
       {/* Search Bar - Only show if search functionality is enabled */}
       {onSearch !== undefined && (
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground rtl:left-auto rtl:right-3" />
+          <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3" />
           <Input
             ref={searchInputRef}
             placeholder={placeholder}
-            className="pl-10 rtl:pl-4 rtl:pr-10"
+            className="ps-10"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -892,17 +371,17 @@ function GenericTableInner<T extends Record<string, any>>({
       {/* Mobile Cards View */}
       <div className="block space-y-4 md:hidden">
         {sortedData.length === 0 ? (
-          <div className="py-12 text-center text-muted-foreground">{empty}</div>
+          <div className="py-12 text-center text-nx-ink-3">{empty}</div>
         ) : (
           sortedData.map((row, index) => {
             const isSelected = selectable && selectedItems.includes(row.id);
             return (
               <div
                 key={index}
-                className={cn(getCardClasses(), isSelected && "ring-2 ring-primary")}
+                className={cn(getCardClasses(), isSelected && "ring-2 ring-nx-accent")}
               >
                 {selectable && (
-                  <div className="flex items-center space-x-2 border-b pb-2 rtl:space-x-reverse">
+                  <div className="flex items-center gap-2 border-b border-nx-line pb-2">
                     <Checkbox
                       checked={isSelected}
                       onCheckedChange={(checked) => {
@@ -914,32 +393,16 @@ function GenericTableInner<T extends Record<string, any>>({
                         }
                       }}
                     />
-                    <span className="text-sm text-muted-foreground">{t("table.select")}</span>
+                    <span className="text-sm text-nx-ink-3">{t("table.select")}</span>
                   </div>
                 )}
                 {columns.map((column) => (
-                  <div key={String(column.key)} className="flex items-center justify-between">
-                    <span
-                      className={cn(
-                        "font-medium text-muted-foreground",
-                        settings.fontSize === "small"
-                          ? "text-xs"
-                          : settings.fontSize === "large"
-                            ? "text-base"
-                            : "text-sm"
-                      )}
-                    >
-                      {column.label}:
-                    </span>
-                    <span
-                      className={cn(
-                        settings.fontSize === "small"
-                          ? "text-xs"
-                          : settings.fontSize === "large"
-                            ? "text-base"
-                            : "text-sm"
-                      )}
-                    >
+                  <div
+                    key={String(column.key)}
+                    className="flex items-center justify-between gap-2"
+                  >
+                    <span className="text-sm font-medium text-nx-ink-2">{column.label}:</span>
+                    <span className="text-sm text-nx-ink">
                       {column.render
                         ? column.render(row[column.key], row)
                         : String(row[column.key])}
@@ -947,32 +410,17 @@ function GenericTableInner<T extends Record<string, any>>({
                   </div>
                 ))}
                 {((actions && actions.length > 0) || renderActions) && (
-                  <div className="flex justify-end border-t border-border/50 pt-2">
+                  <div className="flex justify-end border-t border-nx-line pt-2">
                     {renderActions ? (
                       renderActions(row)
                     ) : (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className={cn(
-                              "transition-all duration-200",
-                              "hover:scale-105 hover:bg-primary/10 hover:shadow-md",
-                              "focus:ring-2 focus:ring-primary/20 active:scale-95"
-                            )}
-                          >
-                            <MoreHorizontal className="h-4 w-4 transition-colors duration-200" />
+                          <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          align="end"
-                          className={cn(
-                            "min-w-[160px] border-border/50 shadow-xl",
-                            "bg-background/95 backdrop-blur-md",
-                            "duration-200 animate-in slide-in-from-top-2"
-                          )}
-                        >
+                        <DropdownMenuContent align="end" className="min-w-[160px]">
                           {actions &&
                             actions
                               .filter((action) => !action.show || action.show(row))
@@ -986,25 +434,15 @@ function GenericTableInner<T extends Record<string, any>>({
                                   disabled={action.loading || action.disabled?.(row)}
                                   title={action.tooltip}
                                   className={cn(
-                                    "transition-all duration-200",
-                                    action.loading || action.disabled?.(row)
-                                      ? "cursor-not-allowed opacity-50"
-                                      : "cursor-pointer hover:bg-primary/10 hover:shadow-sm",
-                                    action.variant === "destructive"
-                                      ? "text-destructive hover:bg-destructive/10 focus:text-destructive"
-                                      : !(action.loading || action.disabled?.(row)) &&
-                                          "hover:text-primary",
+                                    action.variant === "destructive" &&
+                                      "text-nx-danger focus:text-nx-danger",
                                     action.className
                                   )}
                                 >
                                   {action.loading ? (
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin rtl:ml-2 rtl:mr-0" />
+                                    <Loader2 className="me-2 h-4 w-4 animate-spin motion-reduce:animate-none" />
                                   ) : (
-                                    action.icon && (
-                                      <span className="mr-2 transition-transform duration-200 group-hover:scale-110 rtl:ml-2 rtl:mr-0">
-                                        {action.icon}
-                                      </span>
-                                    )
+                                    action.icon && <span className="me-2">{action.icon}</span>
                                   )}
                                   <span className="font-medium">{action.label}</span>
                                 </DropdownMenuItem>
@@ -1021,14 +459,15 @@ function GenericTableInner<T extends Record<string, any>>({
       </div>
 
       {/* Desktop Table View */}
-      <div className={cn("hidden md:block", getTableContainerClasses())} ref={tableRef}>
+      <div
+        className="hidden overflow-visible rounded-nx-lg border border-nx-line bg-nx-surface md:block"
+        ref={tableRef}
+      >
         <div
           className="relative"
           style={{
-            paddingTop: "12px",
-            paddingBottom: "12px",
-            paddingLeft: "8px",
-            paddingRight: "8px",
+            paddingBlock: "calc(var(--spacing-unit) * 0.75)",
+            paddingInline: "calc(var(--spacing-unit) * 0.5)",
           }}
         >
           <div className="overflow-x-auto">
@@ -1036,139 +475,80 @@ function GenericTableInner<T extends Record<string, any>>({
             {showLeftShadow && (
               <div
                 className={cn(
-                  "pointer-events-none absolute bottom-0 top-0 z-10 w-4",
+                  "pointer-events-none absolute inset-y-0 z-raised w-4",
                   direction === "rtl"
-                    ? "right-0 bg-gradient-to-l from-background/80 to-transparent"
-                    : "left-0 bg-gradient-to-r from-background/80 to-transparent"
+                    ? "right-0 bg-gradient-to-l from-nx-surface to-transparent"
+                    : "left-0 bg-gradient-to-r from-nx-surface to-transparent"
                 )}
               />
             )}
             {showRightShadow && (
               <div
                 className={cn(
-                  "pointer-events-none absolute bottom-0 top-0 z-10 w-4",
+                  "pointer-events-none absolute inset-y-0 z-raised w-4",
                   direction === "rtl"
-                    ? "left-0 bg-gradient-to-r from-background/80 to-transparent"
-                    : "right-0 bg-gradient-to-l from-background/80 to-transparent"
+                    ? "left-0 bg-gradient-to-r from-nx-surface to-transparent"
+                    : "right-0 bg-gradient-to-l from-nx-surface to-transparent"
                 )}
               />
             )}
             <Table>
               <TableHeader>
-                <TableRow className={getHeaderClasses()}>
+                {/* Header row passes a className, so TableRow's minimal base
+                    applies — no hover wash on the header band. */}
+                <TableRow className="border-b border-nx-line-hi bg-nx-hover">
                   {selectable && (
-                    <TableHead className={cn("w-12", getCellPadding(), "relative")}>
-                      <div
-                        className={cn(
-                          "absolute inset-0 flex items-center",
-                          direction === "rtl" ? "right-4" : "left-4"
-                        )}
-                      >
-                        <Checkbox
-                          checked={
-                            selectedItems.length === sortedData.length && sortedData.length > 0
+                    <TableHead className="w-12">
+                      <Checkbox
+                        checked={
+                          selectedItems.length === sortedData.length && sortedData.length > 0
+                        }
+                        onCheckedChange={(checked) => {
+                          if (onSelectionChange) {
+                            const newSelected = checked ? sortedData.map((row) => row.id) : [];
+                            onSelectionChange(newSelected);
                           }
-                          onCheckedChange={(checked) => {
-                            if (onSelectionChange) {
-                              const newSelected = checked ? sortedData.map((row) => row.id) : [];
-                              onSelectionChange(newSelected);
-                            }
-                          }}
-                        />
-                      </div>
+                        }}
+                      />
                     </TableHead>
                   )}
-                  {columns.map((column, columnIndex) => (
+                  {columns.map((column) => (
                     <TableHead
                       key={String(column.key)}
+                      sortable={column.sortable}
+                      sortDirection={
+                        column.sortable && sortColumn === column.key ? sortDirection : null
+                      }
+                      onClick={column.sortable ? () => handleSort(column.key) : undefined}
+                      onKeyDown={
+                        column.sortable
+                          ? (e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                handleSort(column.key);
+                              }
+                            }
+                          : undefined
+                      }
+                      tabIndex={column.sortable ? 0 : undefined}
                       className={cn(
-                        "font-semibold text-foreground",
-                        getCellPadding(),
-                        direction === "rtl" ? "text-right" : "text-left",
+                        "whitespace-nowrap",
                         column.width && `w-${column.width}`,
-                        settings.fontSize === "small"
-                          ? "text-xs"
-                          : settings.fontSize === "large"
-                            ? "text-base"
-                            : "text-sm",
-                        // Add borders to all columns - every column gets a border on the right side
-                        cn(
-                          direction === "rtl" &&
-                            cn(
-                              columnIndex === 0 && "border-l-2 border-l-border/60",
-                              columnIndex > 0 && "border-l-2 border-l-border/60"
-                            ),
-                          direction !== "rtl" &&
-                            cn(
-                              columnIndex === 0 && "border-r-2 border-r-border/60",
-                              columnIndex > 0 && "border-r-2 border-r-border/60"
-                            )
-                        ),
-                        // Add border to the last column before actions when sticky actions are enabled
-                        stickyActions &&
-                          actions &&
-                          actions.length > 0 &&
-                          columnIndex === columns.length - 1 &&
-                          cn(
-                            direction === "rtl" && "border-l-4 border-l-primary/50",
-                            direction !== "rtl" && "border-r-4 border-r-primary/50"
-                          )
+                        // Same lit-edge focus treatment TableRow uses — the th
+                        // itself is the sort control, so it must take focus.
+                        column.sortable &&
+                          "focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-nx-accent"
                       )}
                     >
-                      {column.sortable ? (
-                        <Button
-                          variant="ghost"
-                          onClick={() => handleSort(column.key)}
-                          className={cn(
-                            "h-auto p-0 font-semibold hover:bg-transparent",
-                            direction === "rtl" ? "justify-end" : "justify-start"
-                          )}
-                        >
-                          {column.label}
-                          <ArrowUpDown
-                            className={cn("h-4 w-4", direction === "rtl" ? "mr-2" : "ml-2")}
-                          />
-                        </Button>
-                      ) : (
-                        column.label
-                      )}
+                      {column.label}
                     </TableHead>
                   ))}
                   {((actions && actions.length > 0) || renderActions) && (
                     <TableHead
                       ref={actionsColumnRef}
-                      className={cn(
-                        "w-16 transition-all duration-300 ease-in-out",
-                        getCellPadding(),
-                        direction === "rtl" ? "text-right" : "text-left",
-                        stickyActions &&
-                          cn(
-                            getStickyActionsClasses(),
-                            "relative z-20 overflow-hidden",
-                            "hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30",
-                            "before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-primary/5 before:to-transparent",
-                            "before:translate-x-[-100%] before:transition-transform before:duration-700 hover:before:translate-x-[100%]",
-                            "border-b-4 border-b-primary/70"
-                          ),
-                        direction === "rtl" &&
-                          stickyActions &&
-                          "border-r-4 border-r-primary/60 shadow-[-6px_0_12px_rgba(0,0,0,0.2)]",
-                        direction !== "rtl" &&
-                          stickyActions &&
-                          "border-l-4 border-l-primary/60 shadow-[6px_0_12px_rgba(0,0,0,0.2)]"
-                      )}
-                      style={
-                        stickyActions
-                          ? {
-                              position: "sticky",
-                              [direction === "rtl" ? "left" : "right"]: "0px",
-                            }
-                          : undefined
-                      }
+                      className={cn("w-16", stickyActions && stickyActionsClasses)}
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-foreground">{t("table.actions")}</span>
-                      </div>
+                      {t("table.actions")}
                     </TableHead>
                   )}
                 </TableRow>
@@ -1182,7 +562,7 @@ function GenericTableInner<T extends Record<string, any>>({
                         ((actions && actions.length > 0) || renderActions ? 1 : 0) +
                         (selectable ? 1 : 0)
                       }
-                      className="h-32 text-center text-muted-foreground"
+                      className="h-32 text-center text-nx-ink-3"
                     >
                       {empty}
                     </TableCell>
@@ -1191,65 +571,24 @@ function GenericTableInner<T extends Record<string, any>>({
                   sortedData.map((row, index) => {
                     const isSelected = selectable && selectedItems.includes(row.id);
                     return (
-                      <TableRow key={index} className={getRowClasses(index, isSelected)}>
+                      <TableRow key={index} selected={isSelected} className={getRowClasses()}>
                         {selectable && (
-                          <TableCell className={cn(getCellPadding(), "relative")}>
-                            <div
-                              className={cn(
-                                "absolute inset-0 flex items-center",
-                                direction === "rtl" ? "right-4" : "left-4"
-                              )}
-                            >
-                              <Checkbox
-                                checked={isSelected}
-                                onCheckedChange={(checked) => {
-                                  if (onSelectionChange) {
-                                    const newSelected = checked
-                                      ? [...selectedItems, row.id]
-                                      : selectedItems.filter((id) => id !== row.id);
-                                    onSelectionChange(newSelected);
-                                  }
-                                }}
-                              />
-                            </div>
+                          <TableCell className="w-12">
+                            <Checkbox
+                              checked={isSelected}
+                              onCheckedChange={(checked) => {
+                                if (onSelectionChange) {
+                                  const newSelected = checked
+                                    ? [...selectedItems, row.id]
+                                    : selectedItems.filter((id) => id !== row.id);
+                                  onSelectionChange(newSelected);
+                                }
+                              }}
+                            />
                           </TableCell>
                         )}
-                        {columns.map((column, columnIndex) => (
-                          <TableCell
-                            key={String(column.key)}
-                            className={cn(
-                              "align-middle",
-                              getCellPadding(),
-                              direction === "rtl" ? "text-right" : "text-left",
-                              settings.fontSize === "small"
-                                ? "text-xs"
-                                : settings.fontSize === "large"
-                                  ? "text-base"
-                                  : "text-sm",
-                              // Add borders to all columns - every column gets a border on the right side
-                              cn(
-                                direction === "rtl" &&
-                                  cn(
-                                    columnIndex === 0 && "border-l-2 border-l-border/60",
-                                    columnIndex > 0 && "border-l-2 border-l-border/60"
-                                  ),
-                                direction !== "rtl" &&
-                                  cn(
-                                    columnIndex === 0 && "border-r-2 border-r-border/60",
-                                    columnIndex > 0 && "border-r-2 border-r-border/60"
-                                  )
-                              ),
-                              // Add border to the last column before actions when sticky actions are enabled
-                              stickyActions &&
-                                actions &&
-                                actions.length > 0 &&
-                                columnIndex === columns.length - 1 &&
-                                cn(
-                                  direction === "rtl" && "border-l-4 border-l-primary/50",
-                                  direction !== "rtl" && "border-r-4 border-r-primary/50"
-                                )
-                            )}
-                          >
+                        {columns.map((column) => (
+                          <TableCell key={String(column.key)}>
                             {column.render
                               ? column.render(row[column.key], row)
                               : String(row[column.key])}
@@ -1257,34 +596,7 @@ function GenericTableInner<T extends Record<string, any>>({
                         ))}
                         {((actions && actions.length > 0) || renderActions) && (
                           <TableCell
-                            className={cn(
-                              getCellPadding(),
-                              "transition-all duration-300 ease-in-out",
-                              stickyActions &&
-                                cn(
-                                  getStickyActionsClasses(),
-                                  "relative z-20 overflow-hidden",
-                                  "hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30",
-                                  "before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-primary/5 before:to-transparent",
-                                  "before:translate-x-[-100%] before:transition-transform before:duration-700 hover:before:translate-x-[100%]",
-                                  "border-b-4 border-b-primary/60",
-                                  index === 0 && "border-t-4 border-t-primary/70"
-                                ),
-                              direction === "rtl" &&
-                                stickyActions &&
-                                "border-r-4 border-r-primary/60 shadow-[-6px_0_12px_rgba(0,0,0,0.2)]",
-                              direction !== "rtl" &&
-                                stickyActions &&
-                                "border-l-4 border-l-primary/60 shadow-[6px_0_12px_rgba(0,0,0,0.2)]"
-                            )}
-                            style={
-                              stickyActions
-                                ? {
-                                    position: "sticky",
-                                    [direction === "rtl" ? "left" : "right"]: "0px",
-                                  }
-                                : undefined
-                            }
+                            className={cn(stickyActions && stickyActionsClasses)}
                             ref={index === 0 ? actionsColumnRef : undefined}
                           >
                             {renderActions ? (
@@ -1293,25 +605,13 @@ function GenericTableInner<T extends Record<string, any>>({
                               <div className="flex items-center justify-center">
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
-                                    <Button
-                                      variant="ghost"
-                                      className={cn(
-                                        "h-8 w-8 p-0 transition-all duration-200",
-                                        "hover:scale-105 hover:bg-primary/10 hover:shadow-md",
-                                        "focus:ring-2 focus:ring-primary/20 active:scale-95",
-                                        stickyActions && "hover:bg-primary/15 hover:shadow-lg"
-                                      )}
-                                    >
-                                      <MoreHorizontal className="h-4 w-4 transition-colors duration-200" />
+                                    <Button variant="ghost" className="h-8 w-8 p-0">
+                                      <MoreHorizontal className="h-4 w-4" />
                                     </Button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent
                                     align={direction === "rtl" ? "start" : "end"}
-                                    className={cn(
-                                      "min-w-[160px] border-border/50 shadow-xl",
-                                      "bg-background/95 backdrop-blur-md",
-                                      "duration-200 animate-in slide-in-from-top-2"
-                                    )}
+                                    className="min-w-[160px]"
                                   >
                                     {actions &&
                                       actions
@@ -1326,24 +626,16 @@ function GenericTableInner<T extends Record<string, any>>({
                                             disabled={action.loading || action.disabled?.(row)}
                                             title={action.tooltip}
                                             className={cn(
-                                              "transition-all duration-200",
-                                              action.loading || action.disabled?.(row)
-                                                ? "cursor-not-allowed opacity-50"
-                                                : "cursor-pointer hover:bg-primary/10 hover:shadow-sm",
-                                              action.variant === "destructive"
-                                                ? "text-destructive hover:bg-destructive/10 focus:text-destructive"
-                                                : !(action.loading || action.disabled?.(row)) &&
-                                                    "hover:text-primary",
+                                              action.variant === "destructive" &&
+                                                "text-nx-danger focus:text-nx-danger",
                                               action.className
                                             )}
                                           >
                                             {action.loading ? (
-                                              <Loader2 className="mr-2 h-4 w-4 animate-spin rtl:ml-2 rtl:mr-0" />
+                                              <Loader2 className="me-2 h-4 w-4 animate-spin motion-reduce:animate-none" />
                                             ) : (
                                               action.icon && (
-                                                <span className="mr-2 transition-transform duration-200 group-hover:scale-110 rtl:ml-2 rtl:mr-0">
-                                                  {action.icon}
-                                                </span>
+                                                <span className="me-2">{action.icon}</span>
                                               )
                                             )}
                                             <span className="font-medium">{action.label}</span>
@@ -1365,22 +657,13 @@ function GenericTableInner<T extends Record<string, any>>({
         </div>
       </div>
 
-      {/* Professional Pagination */}
+      {/* Pagination — composed from the core pagination primitives */}
       {pagination && (
-        <div className="border-t bg-background/50 backdrop-blur-sm">
+        <div className="rounded-nx-lg border border-nx-line bg-nx-surface">
           <div className="flex flex-col gap-4 p-4 lg:flex-row lg:items-center lg:justify-between">
             {/* Results Info */}
-            <div className="flex items-center gap-4">
-              <p
-                className={cn(
-                  "font-medium text-muted-foreground",
-                  settings.fontSize === "small"
-                    ? "text-xs"
-                    : settings.fontSize === "large"
-                      ? "text-base"
-                      : "text-sm"
-                )}
-              >
+            <div className="flex flex-wrap items-center gap-4">
+              <p className="text-sm font-medium text-nx-ink-2">
                 {(() => {
                   const start = (pagination.currentPage - 1) * pagination.pageSize + 1;
                   const end = Math.min(
@@ -1396,7 +679,7 @@ function GenericTableInner<T extends Record<string, any>>({
               {/* Page Size Selector */}
               {pagination.onPageSizeChange && (
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">{t("table.show")}:</span>
+                  <span className="text-sm text-nx-ink-3">{t("table.show")}:</span>
                   <GenericSelect
                     type="single"
                     options={[10, 25, 50, 100].map((size) => ({
@@ -1410,54 +693,57 @@ function GenericTableInner<T extends Record<string, any>>({
                     className="h-8 w-auto min-w-[100px] max-w-[120px] text-center font-medium"
                     allowClear={false}
                   />
-                  <span className="text-sm text-muted-foreground">{t("table.perPage")}</span>
+                  <span className="text-sm text-nx-ink-3">{t("table.perPage")}</span>
                 </div>
               )}
             </div>
 
-            {/* Advanced Pagination Controls */}
+            {/* Page navigation */}
             {pagination.pagesCount > 1 && (
-              <div className="flex items-center gap-2">
-                {/* First Page */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => pagination.onPageChange(1)}
-                  disabled={pagination.currentPage === 1}
-                  className={cn("h-8 w-8 p-0", direction === "rtl" && "rotate-180")}
-                  title={t("table.firstPage")}
-                >
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-                    />
-                  </svg>
-                </Button>
+              <PaginationNav className="mx-0 w-auto justify-end">
+                <PaginationContent className="flex-wrap">
+                  {/* First Page */}
+                  <PaginationItem>
+                    <PaginationLink
+                      href="#"
+                      aria-label={t("table.firstPage")}
+                      aria-disabled={pagination.currentPage === 1 || undefined}
+                      tabIndex={pagination.currentPage === 1 ? -1 : undefined}
+                      className={cn(
+                        "h-8 w-8",
+                        pagination.currentPage === 1 && "pointer-events-none opacity-50"
+                      )}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        pagination.onPageChange(1);
+                      }}
+                    >
+                      {direction === "rtl" ? (
+                        <ChevronsRight className="h-4 w-4" />
+                      ) : (
+                        <ChevronsLeft className="h-4 w-4" />
+                      )}
+                    </PaginationLink>
+                  </PaginationItem>
 
-                {/* Previous Page */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => pagination.onPageChange(pagination.currentPage - 1)}
-                  disabled={pagination.currentPage === 1}
-                  className={cn("h-8 w-8 p-0", direction === "rtl" && "rotate-180")}
-                  title={t("table.previousPage")}
-                >
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 19l-7-7 7-7"
+                  {/* Previous Page */}
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      aria-disabled={pagination.currentPage === 1 || undefined}
+                      tabIndex={pagination.currentPage === 1 ? -1 : undefined}
+                      className={cn(
+                        "h-8",
+                        pagination.currentPage === 1 && "pointer-events-none opacity-50"
+                      )}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        pagination.onPageChange(pagination.currentPage - 1);
+                      }}
                     />
-                  </svg>
-                </Button>
+                  </PaginationItem>
 
-                {/* Page Numbers with Smart Truncation */}
-                <div className="flex items-center gap-1">
+                  {/* Page Numbers with Smart Truncation */}
                   {(() => {
                     const current = pagination.currentPage;
                     const total = pagination.pagesCount;
@@ -1493,97 +779,99 @@ function GenericTableInner<T extends Record<string, any>>({
                     return pages.map((page, index) => {
                       if (page === "...") {
                         return (
-                          <span
-                            key={`ellipsis-${index}`}
-                            className="px-2 py-1 text-muted-foreground"
-                          >
-                            ...
-                          </span>
+                          <PaginationItem key={`ellipsis-${index}`}>
+                            <PaginationEllipsis className="h-8 w-8" />
+                          </PaginationItem>
                         );
                       }
 
                       const pageNum = page as number;
-                      const isActive = pageNum === current;
 
                       return (
-                        <Button
-                          key={pageNum}
-                          variant={isActive ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => pagination.onPageChange(pageNum)}
-                          className={cn(
-                            "h-8 w-8 p-0",
-                            isActive && "bg-primary text-primary-foreground shadow-sm"
-                          )}
-                        >
-                          {pageNum}
-                        </Button>
+                        <PaginationItem key={pageNum}>
+                          <PaginationLink
+                            href="#"
+                            isActive={pageNum === current}
+                            className="h-8 w-8"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              pagination.onPageChange(pageNum);
+                            }}
+                          >
+                            {pageNum}
+                          </PaginationLink>
+                        </PaginationItem>
                       );
                     });
                   })()}
-                </div>
 
-                {/* Next Page */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => pagination.onPageChange(pagination.currentPage + 1)}
-                  disabled={pagination.currentPage === pagination.pagesCount}
-                  className={cn("h-8 w-8 p-0", direction === "rtl" && "rotate-180")}
-                  title={t("table.nextPage")}
-                >
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
+                  {/* Next Page */}
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      aria-disabled={pagination.currentPage === pagination.pagesCount || undefined}
+                      tabIndex={pagination.currentPage === pagination.pagesCount ? -1 : undefined}
+                      className={cn(
+                        "h-8",
+                        pagination.currentPage === pagination.pagesCount &&
+                          "pointer-events-none opacity-50"
+                      )}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        pagination.onPageChange(pagination.currentPage + 1);
+                      }}
                     />
-                  </svg>
-                </Button>
+                  </PaginationItem>
 
-                {/* Last Page */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => pagination.onPageChange(pagination.pagesCount)}
-                  disabled={pagination.currentPage === pagination.pagesCount}
-                  className={cn("h-8 w-8 p-0", direction === "rtl" && "rotate-180")}
-                  title={t("table.lastPage")}
-                >
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 5l7 7-7 7M5 5l7 7-7 7"
-                    />
-                  </svg>
-                </Button>
+                  {/* Last Page */}
+                  <PaginationItem>
+                    <PaginationLink
+                      href="#"
+                      aria-label={t("table.lastPage")}
+                      aria-disabled={pagination.currentPage === pagination.pagesCount || undefined}
+                      tabIndex={pagination.currentPage === pagination.pagesCount ? -1 : undefined}
+                      className={cn(
+                        "h-8 w-8",
+                        pagination.currentPage === pagination.pagesCount &&
+                          "pointer-events-none opacity-50"
+                      )}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        pagination.onPageChange(pagination.pagesCount);
+                      }}
+                    >
+                      {direction === "rtl" ? (
+                        <ChevronsLeft className="h-4 w-4" />
+                      ) : (
+                        <ChevronsRight className="h-4 w-4" />
+                      )}
+                    </PaginationLink>
+                  </PaginationItem>
 
-                {/* Page Jump Input */}
-                <div className="ml-4 flex items-center gap-2 border-l pl-4">
-                  <span className="whitespace-nowrap text-sm text-muted-foreground">
-                    {t("table.goToPage")}:
-                  </span>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={pagination.pagesCount}
-                    className="h-8 w-16 text-center"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        const value = parseInt((e.target as HTMLInputElement).value);
-                        if (value >= 1 && value <= pagination.pagesCount) {
-                          pagination.onPageChange(value);
-                          (e.target as HTMLInputElement).value = "";
+                  {/* Page Jump Input */}
+                  <PaginationItem className="ms-2 flex items-center gap-2 border-s border-nx-line ps-3">
+                    <span className="whitespace-nowrap text-sm text-nx-ink-3">
+                      {t("table.goToPage")}:
+                    </span>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={pagination.pagesCount}
+                      className="h-8 w-16 text-center"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          const value = parseInt((e.target as HTMLInputElement).value);
+                          if (value >= 1 && value <= pagination.pagesCount) {
+                            pagination.onPageChange(value);
+                            (e.target as HTMLInputElement).value = "";
+                          }
                         }
-                      }
-                    }}
-                    placeholder={String(pagination.currentPage)}
-                  />
-                </div>
-              </div>
+                      }}
+                      placeholder={String(pagination.currentPage)}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </PaginationNav>
             )}
           </div>
         </div>
