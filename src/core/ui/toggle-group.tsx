@@ -2,27 +2,54 @@
 
 import * as React from "react";
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
-import { type VariantProps } from "class-variance-authority";
+import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@core/common/utils";
 import { toggleVariants } from "@core/ui/toggle";
 
-const ToggleGroupContext = React.createContext<VariantProps<typeof toggleVariants>>({
+// Two presets. "default" is the loose row of independent toggles. "segmented"
+// is the segmented control: one hairline shell that owns the radius, divider
+// hairlines between the items, and the lit-edge on-state from toggleVariants
+// marking the active segment. The preset travels to the items through the
+// same context that already carries variant/size.
+const toggleGroupVariants = cva("flex items-center justify-center", {
+  variants: {
+    preset: {
+      default: "gap-1",
+      // The [data-state] child selector strips the items' own radius with
+      // class+attribute specificity — a bare rounded-none on the item would
+      // tie with rounded-nx-control and lose to stylesheet order (twMerge
+      // does not know the nx radius scale).
+      segmented:
+        "gap-0 overflow-hidden rounded-nx-control border border-nx-line [&>[data-state]]:rounded-none",
+    },
+  },
+  defaultVariants: {
+    preset: "default",
+  },
+});
+
+type ToggleGroupContextValue = VariantProps<typeof toggleVariants> &
+  VariantProps<typeof toggleGroupVariants>;
+
+const ToggleGroupContext = React.createContext<ToggleGroupContextValue>({
   size: "default",
   variant: "default",
+  preset: "default",
 });
 
 const ToggleGroup = React.forwardRef<
   React.ElementRef<typeof ToggleGroupPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> &
-    VariantProps<typeof toggleVariants>
->(({ className, variant, size, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> & ToggleGroupContextValue
+>(({ className, variant, size, preset, children, ...props }, ref) => (
   <ToggleGroupPrimitive.Root
     ref={ref}
-    className={cn("flex items-center justify-center gap-1", className)}
+    className={cn(toggleGroupVariants({ preset }), className)}
     {...props}
   >
-    <ToggleGroupContext.Provider value={{ variant, size }}>{children}</ToggleGroupContext.Provider>
+    <ToggleGroupContext.Provider value={{ variant, size, preset }}>
+      {children}
+    </ToggleGroupContext.Provider>
   </ToggleGroupPrimitive.Root>
 ));
 
@@ -43,6 +70,10 @@ const ToggleGroupItem = React.forwardRef<
           variant: context.variant || variant,
           size: context.size || size,
         }),
+        // Inside the segmented shell (which strips the item radius — see the
+        // preset above) the item draws a start-edge divider hairline, skipped
+        // on the first item where the shell border already covers that edge.
+        context.preset === "segmented" && "border-s border-s-nx-line first:border-s-transparent",
         className
       )}
       {...props}

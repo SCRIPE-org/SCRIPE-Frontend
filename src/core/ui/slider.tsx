@@ -14,10 +14,13 @@ const Slider = React.forwardRef<
     className={cn("relative flex w-full touch-none select-none items-center", className)}
     {...props}
   >
-    <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary">
-      <SliderPrimitive.Range className="absolute h-full bg-primary" />
+    {/* the channel sits sunken on --nx-ground behind an inset hairline */}
+    <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-nx-ground shadow-[inset_0_0_0_1px_var(--nx-line)]">
+      {/* accent fill with a faint on-fill light along the top inner edge */}
+      <SliderPrimitive.Range className="absolute h-full bg-nx-accent-fill shadow-[inset_0_1px_0_0_color-mix(in_srgb,var(--nx-on-fill)_25%,transparent)]" />
     </SliderPrimitive.Track>
-    <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50" />
+    {/* raised thumb behind a strong hairline; the drag press stays at 1.05 */}
+    <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full border border-nx-line-hi bg-nx-raised-2 shadow-nx-sm transition-[transform,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none active:scale-105 motion-reduce:active:scale-100 focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus disabled:pointer-events-none disabled:opacity-50" />
   </SliderPrimitive.Root>
 ));
 Slider.displayName = SliderPrimitive.Root.displayName;

@@ -116,6 +116,17 @@ module.exports = {
           "accent-wash": "var(--nx-accent-wash, hsl(var(--primary) / 0.1))",
           "on-fill": "var(--nx-on-fill, hsl(var(--primary-foreground)))",
           secondary: "var(--nx-secondary, hsl(var(--info)))",
+          // Wave A extensions — defined globally in globals.css since the
+          // token re-scope, so the fallbacks are belt-and-braces only.
+          popover: "var(--nx-popover, hsl(var(--popover)))",
+          hover: "var(--nx-hover, hsl(var(--accent)))",
+          scrim: "var(--nx-scrim, var(--scrim))",
+          // Status aliases of the global measured tokens — nexus never
+          // re-derives status colours.
+          danger: "var(--nx-danger, hsl(var(--destructive)))",
+          warning: "var(--nx-warning, hsl(var(--warning)))",
+          info: "var(--nx-info, hsl(var(--info)))",
+          success: "var(--nx-success, hsl(var(--success)))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
@@ -170,11 +181,21 @@ module.exports = {
       boxShadow: {
         // The nexus signature glow — at most ONE element per screen wears it.
         "nx-glow": "var(--nx-glow, 0 0 0 0 transparent)",
+        // Depth ladder + the lit-edge focus ring (Wave A).
+        "nx-sm": "var(--nx-shadow-sm, 0 1px 2px rgb(0 0 0 / 0.2))",
+        "nx-popover": "var(--nx-shadow-popover, 0 8px 24px -8px rgb(0 0 0 / 0.4))",
+        "nx-modal": "var(--nx-shadow-modal, 0 24px 64px -16px rgb(0 0 0 / 0.5))",
+        "nx-focus": "var(--nx-focus, 0 0 0 3px hsl(var(--ring) / 0.25))",
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        // The nx radius ladder — primitives reach for these, never --radius.
+        "nx-sm": "var(--nx-radius-sm, 6px)",
+        "nx-control": "var(--nx-radius-control, 8px)",
+        "nx-md": "var(--nx-radius-md, 10px)",
+        "nx-lg": "var(--nx-radius-lg, 14px)",
       },
       keyframes: {
         "accordion-down": {
@@ -185,10 +206,25 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        // Fake input caret (OTP slots and the like) — opacity only.
+        "caret-blink": {
+          "0%,70%,100%": { opacity: "1" },
+          "20%,50%": { opacity: "0" },
+        },
+        // One dot of the 3-dot loader — transform+opacity only. Stagger the
+        // three dots with animation-delay in the markup.
+        "nx-dot": {
+          "0%, 80%, 100%": { opacity: "0.25", transform: "translateY(0)" },
+          "40%": { opacity: "1", transform: "translateY(-25%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        // Consumers must pair these with a motion-reduce: path
+        // (e.g. motion-reduce:animate-none) — no animation ships without one.
+        "caret-blink": "caret-blink 1.2s ease-out infinite",
+        "nx-dot": "nx-dot 1s ease-in-out infinite",
       },
       // One semantic stacking order for the whole app, low → high.
       //
@@ -207,6 +243,9 @@ module.exports = {
         header: "100",
         sticky: "200",
         dropdown: "900",
+        // Popovers open from inside dropdowns occasionally (filter builders),
+        // never the other way round — so popover sits one step above.
+        popover: "950",
         blur: "998",
         overlay: "999",
         modal: "1000",

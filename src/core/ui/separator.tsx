@@ -12,7 +12,10 @@ const Separator = React.forwardRef<
   const settings = useSettings();
 
   const getSeparatorClasses = () => {
-    const baseClasses = "shrink-0 bg-border";
+    // Hairline token, not the shadcn border colour: separators are the
+    // quietest line in the system. Baked margins stay — callers depend on
+    // them for rhythm.
+    const baseClasses = "shrink-0 bg-nx-line";
 
     if (orientation === "horizontal") {
       return cn(

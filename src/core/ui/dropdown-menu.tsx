@@ -33,7 +33,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
     <DropdownMenuPrimitive.SubTrigger
       ref={ref}
       className={cn(
-        "flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+        "flex cursor-default select-none items-center gap-2 rounded-nx-sm px-2 py-1.5 text-sm outline-none focus:bg-nx-hover focus:text-nx-ink data-[state=open]:bg-nx-hover data-[state=open]:text-nx-ink [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
         inset && "ps-8",
         className
       )}
@@ -53,7 +53,12 @@ const DropdownMenuSubContent = React.forwardRef<
   <DropdownMenuPrimitive.SubContent
     ref={ref}
     className={cn(
-      "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+      // A menu is a dropdown; the old hardcoded z-index predated the semantic
+      // ladder, so a menu opened inside a modal (z-modal) rendered behind it.
+      "z-dropdown min-w-[8rem] overflow-hidden rounded-nx-md border border-nx-line bg-nx-popover p-1 text-nx-ink shadow-nx-popover",
+      // 140ms fade + 0.98 scale from the trigger origin; reduced motion keeps
+      // the crossfade and drops the scale.
+      "origin-[--radix-dropdown-menu-content-transform-origin] duration-nx-micro ease-nx-enter data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-safe:data-[state=open]:zoom-in-[0.98] data-[state=closed]:animate-out data-[state=closed]:ease-nx-exit data-[state=closed]:fade-out-0 motion-safe:data-[state=closed]:zoom-out-[0.98]",
       className
     )}
     {...props}
@@ -74,7 +79,13 @@ const DropdownMenuContent = React.forwardRef<
           ref={ref}
           sideOffset={sideOffset}
           className={cn(
-            "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+            // A menu is a dropdown; the old hardcoded z-index predated the
+            // semantic ladder, so a menu opened inside a modal (z-modal)
+            // rendered behind it.
+            "z-dropdown min-w-[8rem] overflow-hidden rounded-nx-md border border-nx-line bg-nx-popover p-1 text-nx-ink shadow-nx-popover",
+            // 140ms fade + 0.98 scale from the trigger origin; reduced motion
+            // keeps the crossfade and drops the scale.
+            "origin-[--radix-dropdown-menu-content-transform-origin] duration-nx-micro ease-nx-enter data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-safe:data-[state=open]:zoom-in-[0.98] data-[state=closed]:animate-out data-[state=closed]:ease-nx-exit data-[state=closed]:fade-out-0 motion-safe:data-[state=closed]:zoom-out-[0.98]",
             className
           )}
           {...props}
@@ -94,7 +105,7 @@ const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+      "relative flex cursor-default select-none items-center gap-2 rounded-nx-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-nx-hover focus:text-nx-ink data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
       inset && "ps-8",
       className
     )}
@@ -110,7 +121,10 @@ const DropdownMenuCheckboxItem = React.forwardRef<
   <DropdownMenuPrimitive.CheckboxItem
     ref={ref}
     className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pe-2 ps-8 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "relative flex cursor-default select-none items-center rounded-nx-sm py-1.5 pe-2 ps-8 text-sm outline-none transition-colors focus:bg-nx-hover focus:text-nx-ink data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      // Checked wears the lit edge: a 2px inline-start accent bar, never a
+      // filled row.
+      "before:absolute before:inset-y-1 before:start-0 before:w-0.5 before:rounded-full data-[state=checked]:before:bg-nx-accent",
       className
     )}
     checked={checked}
@@ -133,7 +147,10 @@ const DropdownMenuRadioItem = React.forwardRef<
   <DropdownMenuPrimitive.RadioItem
     ref={ref}
     className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pe-2 ps-8 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "relative flex cursor-default select-none items-center rounded-nx-sm py-1.5 pe-2 ps-8 text-sm outline-none transition-colors focus:bg-nx-hover focus:text-nx-ink data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      // Checked wears the lit edge: a 2px inline-start accent bar, never a
+      // filled row.
+      "before:absolute before:inset-y-1 before:start-0 before:w-0.5 before:rounded-full data-[state=checked]:before:bg-nx-accent",
       className
     )}
     {...props}
@@ -168,7 +185,7 @@ const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
     ref={ref}
-    className={cn("-mx-1 my-1 h-px bg-muted", className)}
+    className={cn("-mx-1 my-1 h-px bg-nx-line", className)}
     {...props}
   />
 ));
@@ -176,7 +193,7 @@ DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName;
 
 const DropdownMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => {
   return (
-    <span className={cn("ms-auto text-xs tracking-widest opacity-60", className)} {...props} />
+    <span className={cn("ms-auto text-xs tracking-widest text-nx-ink-3", className)} {...props} />
   );
 };
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut";

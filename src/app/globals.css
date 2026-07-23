@@ -63,12 +63,25 @@
   --sidebar-border: 240 5.9% 90%;
   --sidebar-ring: 262 83% 58%;
 
-  /* Chart colors (used by Recharts via shadcn ChartContainer) */
-  --chart-1: 221 83% 53%;
-  --chart-2: 142 71% 45%;
-  --chart-3: 38 92% 50%;
-  --chart-4: 280 65% 60%;
-  --chart-5: 0 84% 60%;
+  /* Chart colors (used by Recharts via shadcn ChartContainer).
+     Categorical, FIXED slot order — colour follows the entity, never its
+     rank, so a filtered-down series keeps its slot. The order is the
+     CVD-safety mechanism: candidate orderings were run through the dataviz
+     six-checks validator against this theme's white card surface and only a
+     passing order kept (adjacent-pair CVD ΔE >= 7.2, normal-vision >= 19.6,
+     lightness-separated so adjacent series survive colour-vision deficiency).
+     Slots 1/2/5 keep their historic hue families (blue / green / red) because
+     module charts read chart-2 as "success" and chart-5 as "failed".
+     Slots 2, 7 and 8 sit below 3:1 on white — charts using them must carry
+     visible direct labels or a table view. */
+  --chart-1: 213 68% 50%; /* blue    #2a78d6 */
+  --chart-2: 159 73% 40%; /* green   #1baf7a */
+  --chart-3: 17 82% 56%; /* orange  #eb6834 */
+  --chart-4: 249 48% 44%; /* violet  #4a3aa7 */
+  --chart-5: 0 73% 59%; /* red     #e34948 */
+  --chart-6: 120 100% 26%; /* deep green #008300 */
+  --chart-7: 337 70% 70%; /* magenta #e87ba4 */
+  --chart-8: 41 100% 46%; /* yellow  #eda100 */
 
   /* Shadow colors */
   --shadow-primary: 262 83% 58%;
@@ -653,12 +666,18 @@ html {
   --sidebar-border: 240 3.7% 15.9%;
   --sidebar-ring: 262 83% 58%;
 
-  /* Chart colors (dark mode — brighter/more saturated for visibility) */
-  --chart-1: 217 91% 60%;
-  --chart-2: 160 60% 45%;
-  --chart-3: 43 96% 56%;
-  --chart-4: 270 70% 65%;
-  --chart-5: 0 72% 51%;
+  /* Chart colors (dark — the SAME eight hues re-stepped for the dark
+     surface, not an automatic flip; slot order matches the light block).
+     Validated (dataviz six-checks) against the dark nx surface #15131D:
+     all 8 clear 3:1, adjacent-pair CVD ΔE >= 8.6, normal-vision >= 19.3. */
+  --chart-1: 213 77% 56%; /* blue    #3987e5 */
+  --chart-2: 159 73% 36%; /* green   #199e70 */
+  --chart-3: 17 70% 50%; /* orange  #d95926 */
+  --chart-4: 247 69% 72%; /* violet  #9085e9 */
+  --chart-5: 0 72% 65%; /* red     #e66767 */
+  --chart-6: 120 100% 26%; /* deep green #008300 */
+  --chart-7: 338 61% 58%; /* magenta #d55181 */
+  --chart-8: 40 100% 39%; /* yellow  #c98500 */
 
   /* Nexus workspace OKLCH — dark mode overrides */
   --ws-accent: oklch(0.72 var(--workspace-chroma) var(--workspace-hue));
@@ -1819,10 +1838,12 @@ html {
 
 /* ========================================
    MODERATE — Progress Bar Fill
-   Progress indicators animate their width
+   The shadcn Progress indicator moves via transform: translateX, so that is
+   the property to ease — transitioning width would thrash layout and never
+   match the actual movement.
    ======================================== */
 :root[data-animation="moderate"] [role="progressbar"] > div {
-  transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
 }
 
 /* ========================================
@@ -2850,7 +2871,8 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   animation: sxShake 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 .sx-pop {
-  animation: sxPop 0.22s cubic-bezier(0.22, 1.2, 0.36, 1) both;
+  /* exponential deceleration — no overshoot; matches the nx enter curve */
+  animation: sxPop 0.22s cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 .sx-rise {
   animation: sxRise 0.48s cubic-bezier(0.22, 0.61, 0.36, 1) both;
@@ -3076,7 +3098,8 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   animation: sxRise 500ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 .sx-pop {
-  animation: sxPop 350ms cubic-bezier(0.22, 1.2, 0.36, 1) both;
+  /* exponential deceleration — no overshoot; matches the nx enter curve */
+  animation: sxPop 350ms cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 .sx-check {
   stroke-dasharray: 24;
@@ -4257,21 +4280,18 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
    edges, and light that collects on the ACTIVE thing. ONE glowing element
    per screen maximum — --nx-glow is the signature, not the wallpaper.
 
-   SCOPE — two selector arms, no plain :root:
-     :root[data-layout="nexus"]   the stamped state. dom-applicator.ts writes
-                                  data-layout onto <html> (DATA_ATTR_MAP L18,
-                                  applySettingsToDOM L113-155).
-     :root:not([data-layout])     the pre-stamp state ONLY. The stamp happens
-                                  inside a requestAnimationFrame after client
-                                  mount and nothing stamps it server-side, so
-                                  the nexus shell (the DEFAULT layout,
-                                  settings/defaults.ts L36) paints at least
-                                  one frame before the attribute exists.
-                                  This arm covers that frame without leaking
-                                  a single token into scripe/modern/etc.,
-                                  which always carry their own stamp value.
-   Dark values are the default; light lives under :not(.dark) — the same
-   inversion the global status tokens (L3835) and EDGE (L3888) already use.
+   SCOPE — GLOBAL (Wave A re-scope). Wave 1 scoped these to
+   :root[data-layout="nexus"] plus :root:not([data-layout]) because only the
+   nexus shell consumed them. Wave A moves consumption into the src/core/ui
+   primitives, which render under EVERY selectable layout (modern, classic,
+   galaxy, …) — under the old scope the tokens were UNDEFINED there, so every
+   token-backed declaration on a primitive would silently resolve to its
+   fallback or to nothing. Token DEFINITIONS therefore live on :root (dark
+   values default) with light overrides on :root:not(.dark) — the exact
+   pattern of the global status tokens and --scrim above. Values and the
+   contrast table below are UNCHANGED by the re-scope. Nexus shell-specific
+   RULES (not tokens) stay scoped to their shell; nothing else defines
+   --nx-*, so no collision is possible.
 
    NAMESPACE: --nx- only. --sx- and --edge- are taken; a past prefix
    collision silently recoloured the sign-in page.
@@ -4303,8 +4323,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
    scale 0.95→1 from their trigger origin — nothing slides in from an edge.
    Reduced motion strips position/scale movement and keeps crossfades.
    ============================================================================ */
-:root[data-layout="nexus"],
-:root:not([data-layout]) {
+:root {
   /* surfaces — dark is the mark's native ground */
   --nx-ground: #0c0b12;
   --nx-surface: #15131d;
@@ -4339,10 +4358,44 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   --nx-t-panel: 300ms;
   --nx-ease-enter: cubic-bezier(0.23, 1, 0.32, 1);
   --nx-ease-exit: cubic-bezier(0.3, 0, 0.8, 0.15);
+
+  /* ── Wave A extensions ──────────────────────────────────────────────────
+     Consumed by the core/ui primitives; same scope and theming rules as the
+     Wave-1 tokens above. */
+
+  /* geometry — one radius ladder for every primitive */
+  --nx-radius-sm: 6px; /* chips, badges, inner elements */
+  --nx-radius-control: 8px; /* inputs, buttons, selects */
+  --nx-radius-md: 10px; /* popovers, dropdown panels */
+  --nx-radius-lg: 14px; /* cards, dialogs */
+
+  /* overlay surface + depth ladder */
+  --nx-popover: var(--nx-raised);
+  --nx-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
+  --nx-shadow-popover: 0 8px 24px -8px rgb(0 0 0 / 0.6), 0 2px 8px -2px rgb(0 0 0 / 0.4);
+  --nx-shadow-modal: 0 24px 64px -16px rgb(0 0 0 / 0.7), 0 8px 24px -8px rgb(0 0 0 / 0.5);
+
+  /* the modal scrim — alias of the global --scrim; ONE scrim system */
+  --nx-scrim: var(--scrim);
+
+  /* hover tint — layers over any nx surface; reads the ink so it flips with
+     the theme by itself */
+  --nx-hover: color-mix(in srgb, var(--nx-ink) 5%, transparent);
+
+  /* focus — the lit edge: 1px inner accent line plus a soft accent wash
+     ring. Reads --nx-accent, so it follows the workspace hue and theme. */
+  --nx-focus: inset 0 0 0 1px var(--nx-accent), 0 0 0 3px var(--nx-accent-wash);
+
+  /* status — aliases of the global measured status tokens; nexus never
+     re-derives status colours. COMPLETE colours (hsl-wrapped), like every
+     other --nx- token. They flip with the theme through the vars they read. */
+  --nx-danger: hsl(var(--destructive));
+  --nx-warning: hsl(var(--warning));
+  --nx-info: hsl(var(--info));
+  --nx-success: hsl(var(--success));
 }
 
-:root[data-layout="nexus"]:not(.dark),
-:root:not([data-layout]):not(.dark) {
+:root:not(.dark) {
   --nx-ground: #f7f6fb;
   --nx-surface: #ffffff;
   --nx-raised: #f1eff8; /* hover tint in light — darker than surface by design */
@@ -4366,4 +4419,15 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   /* softer on light ground — a glow over white reads as smudge at dark-mode
      strength */
   --nx-glow: 0 0 18px -2px color-mix(in oklch, var(--nx-accent) 32%, transparent);
+
+  /* ── Wave A extensions — light overrides ────────────────────────────────
+     Radius, scrim, hover, focus and status aliases need no override: they
+     read vars that flip themselves. Popover cannot reuse --nx-raised here
+     because raised is the light HOVER tint; popovers stay on white. Shadows
+     go violet-cast and much softer — dark-strength black on white reads as
+     dirt. */
+  --nx-popover: var(--nx-surface);
+  --nx-shadow-sm: 0 1px 2px rgb(23 17 40 / 0.08);
+  --nx-shadow-popover: 0 8px 24px -8px rgb(23 17 40 / 0.16), 0 2px 8px -2px rgb(23 17 40 / 0.08);
+  --nx-shadow-modal: 0 24px 64px -16px rgb(23 17 40 / 0.24), 0 8px 24px -8px rgb(23 17 40 / 0.12);
 }

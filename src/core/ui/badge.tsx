@@ -3,42 +3,50 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { useSettings } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
 
+// The house badge is the nexus tint chip: a 13-15% fill of its own hue behind
+// a same-hue hairline, hue-strength text. Badges are non-interactive spans,
+// so there are no hover classes anywhere in this file; the transition only
+// smooths dynamic status flips. Focus (for the rare focusable composition)
+// is :focus-visible with the --nx-focus lit-edge ring.
 const badgeVariants = cva(
-  "badge inline-flex items-center font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 px-2.5 py-0.5 text-xs",
+  "badge inline-flex items-center font-semibold transition-colors duration-nx-standard motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus px-2.5 py-0.5 text-xs",
   {
     variants: {
       variant: {
-        default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
-        secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground border-border",
-        // Status variants — semantic tokens, so they follow the theme and the
-        // tenant's palette instead of pinning a fixed Tailwind shade. Each
-        // token pair is contrast-checked against its own theme surface.
-        success: "border-transparent bg-success text-success-foreground hover:bg-success/85",
-        error:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/85",
-        warning: "border-transparent bg-warning text-warning-foreground hover:bg-warning/85",
-        info: "border-transparent bg-info text-info-foreground hover:bg-info/85",
-        pending:
-          "border-transparent bg-warning-strong text-warning-strong-foreground hover:bg-warning-strong/85",
+        // The workspace accent chip — wash fill, accent text, same-hue
+        // hairline. The wash + accent tokens flip with the theme themselves.
+        default:
+          "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent",
+        secondary: "border-nx-line bg-nx-raised text-nx-ink-2",
+        destructive: "border-destructive/30 bg-destructive/15 text-destructive",
+        outline: "border-nx-line-hi bg-transparent text-nx-ink",
+        // Status variants — the global measured status tokens (which the
+        // --nx- status vars alias); the hsl-triplet form keeps the slash-
+        // alpha tint ladder working. Same tint treatment as default:
+        // 15% fill, 30% hairline, hue-strength text.
+        success: "border-success/30 bg-success/15 text-success",
+        error: "border-destructive/30 bg-destructive/15 text-destructive",
+        warning: "border-warning/30 bg-warning/15 text-warning",
+        info: "border-info/30 bg-info/15 text-info",
+        pending: "border-warning-strong/30 bg-warning-strong/15 text-warning-strong",
         // Active/Inactive variants
-        active: "border-transparent bg-success text-success-foreground hover:bg-success/85",
-        inactive: "border-transparent bg-muted text-muted-foreground hover:bg-muted/85",
+        active: "border-success/30 bg-success/15 text-success",
+        inactive: "border-nx-line bg-nx-raised text-nx-ink-3",
       },
       badgeStyle: {
-        default: "rounded-full border border-border",
-        modern: "rounded-lg border border-border/50 backdrop-blur-sm shadow-sm hover:shadow-md",
-        glass: "rounded-xl border border-border/30 backdrop-blur-md shadow-lg hover:shadow-xl",
-        neon: "rounded-md border border-primary/40 shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:shadow-xl",
+        // The default style adds only shape — border width and the nx-sm-ish
+        // pill radius. Colour (fill, text, hairline) comes straight from the
+        // variant rows above, so no per-variant compound block is needed.
+        default: "rounded-full border",
+        modern: "rounded-lg border border-nx-line backdrop-blur-sm shadow-nx-sm",
+        glass: "rounded-xl border border-nx-line backdrop-blur-md shadow-lg",
+        neon: "rounded-md border border-primary/40 shadow-lg shadow-primary/20",
         gradient: "rounded-full border-0 shadow-lg",
-        outlined: "rounded-lg border-2 border-primary/50 hover:border-primary/70",
-        filled: "rounded-md border-0 shadow-md hover:shadow-lg",
+        outlined: "rounded-lg border-2 border-primary/50",
+        filled: "rounded-md border-0 shadow-md",
         minimal: "rounded-none border-0",
-        pill: "rounded-full border border-border hover:shadow-md",
-        square: "rounded-sm border border-border hover:shadow-sm",
+        pill: "rounded-full border border-nx-line",
+        square: "rounded-sm border border-nx-line",
       },
     },
     compoundVariants: [
@@ -49,41 +57,7 @@ const badgeVariants = cva(
       // `dark:` re-pins are gone.
       //
       // Tint ladder shared by the translucent styles:
-      //   glass  (10%) < modern (15%) < pill/square (20%)
-
-      // DEFAULT STYLE - Solid filled badges
-      {
-        variant: ["success", "active"],
-        badgeStyle: "default",
-        class: "bg-success text-success-foreground hover:bg-success/85 border-success",
-      },
-      {
-        variant: "error",
-        badgeStyle: "default",
-        class:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/85 border-destructive",
-      },
-      {
-        variant: "warning",
-        badgeStyle: "default",
-        class: "bg-warning text-warning-foreground hover:bg-warning/85 border-warning",
-      },
-      {
-        variant: "info",
-        badgeStyle: "default",
-        class: "bg-info text-info-foreground hover:bg-info/85 border-info",
-      },
-      {
-        variant: "pending",
-        badgeStyle: "default",
-        class:
-          "bg-warning-strong text-warning-strong-foreground hover:bg-warning-strong/85 border-warning-strong",
-      },
-      {
-        variant: "inactive",
-        badgeStyle: "default",
-        class: "bg-muted text-muted-foreground hover:bg-muted/85 border-border",
-      },
+      //   glass  (10%) < default/modern (15%) < pill/square (20%)
 
       // MODERN STYLE - Subtle backgrounds with colored borders
       {
@@ -252,7 +226,8 @@ const badgeVariants = cva(
         class: "bg-transparent text-muted-foreground border-muted-foreground",
       },
 
-      // FILLED STYLE - Solid backgrounds (same as default)
+      // FILLED STYLE - Solid backgrounds (the loud option, kept as a named
+      // style now that the default is the tint chip)
       {
         variant: ["success", "active"],
         badgeStyle: "filled",
@@ -387,6 +362,28 @@ const badgeVariants = cva(
   }
 );
 
+// Stored settings can hold legacy values the variant map no longer knows;
+// cva would silently apply NO style for those, so unknowns fall back to
+// default here. The stored-value migration itself is Wave C's job.
+const KNOWN_BADGE_STYLES = [
+  "default",
+  "modern",
+  "glass",
+  "neon",
+  "gradient",
+  "outlined",
+  "filled",
+  "minimal",
+  "pill",
+  "square",
+] as const;
+type KnownBadgeStyle = (typeof KNOWN_BADGE_STYLES)[number];
+
+const resolveBadgeStyle = (value: string | undefined | null): KnownBadgeStyle =>
+  (KNOWN_BADGE_STYLES as readonly string[]).includes(value ?? "")
+    ? (value as KnownBadgeStyle)
+    : "default";
+
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLSpanElement>, VariantProps<typeof badgeVariants> {}
 
@@ -398,7 +395,7 @@ function Badge({ className, variant, ...props }: BadgeProps) {
       className={cn(
         badgeVariants({
           variant,
-          badgeStyle: settings.badgeStyle,
+          badgeStyle: resolveBadgeStyle(settings.badgeStyle),
           className,
         })
       )}
