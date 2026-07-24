@@ -383,12 +383,12 @@ export function NexusPrimaryRail({
                   aria-label={language === "ar" ? "مشغّل التطبيقات" : "App Launcher"}
                   onClick={onOpenAppLauncher}
                   className={cn(
-                    "flex items-center justify-center rounded-[12px] border border-transparent text-nx-ink-2 transition-all duration-nx-standard ease-nx-enter hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink",
+                    "flex items-center justify-center rounded-nx-md border border-transparent text-nx-ink-2 transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink motion-reduce:transition-none",
                     NX_FOCUS_RING
                   )}
                   style={{ width: 44, height: 44 }}
                 >
-                  <LayoutGrid size={20} />
+                  <LayoutGrid size={20} aria-hidden="true" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side={isRTL ? "left" : "right"} sideOffset={16}>
@@ -415,7 +415,7 @@ export function NexusPrimaryRail({
                   <div className="flex items-center justify-center">
                     <NotificationBell
                       iconClassName="h-[20px] w-[20px]"
-                      className="h-[44px] w-[44px] rounded-[12px] border border-transparent text-nx-ink-2 transition-all duration-nx-standard ease-nx-enter hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink"
+                      className="h-[44px] w-[44px] rounded-nx-md border border-transparent text-nx-ink-2 transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink motion-reduce:transition-none"
                     />
                   </div>
                 </TooltipTrigger>
@@ -502,14 +502,20 @@ function ModuleWorkspaceButton({
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           className={cn(
-            "group relative flex items-center justify-center transition-all duration-nx-standard ease-nx-enter",
+            "group relative flex items-center justify-center transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+            // An active pin is the only lit thing when it renders (the rail
+            // filters the active workspace out of pins, so in practice at most
+            // one glow ever exists on screen). It lives in a class, not inline:
+            // an inline box-shadow beat the focus ring, so an active pin showed
+            // no keyboard focus at all.
+            isActive && "shadow-nx-glow",
             NX_FOCUS_RING
           )}
           style={{
             width: 44,
             height: 44,
             flexShrink: 0,
-            borderRadius: 12,
+            borderRadius: "var(--nx-radius-md)",
             cursor: isLocked ? "not-allowed" : "pointer",
             border: `1.5px solid ${isLocked ? "var(--nx-line)" : borderColor}`,
             background: isLocked
@@ -517,10 +523,6 @@ function ModuleWorkspaceButton({
               : bgColor,
             color: isLocked ? "var(--nx-ink-3)" : iconColor,
             margin: "4px 0",
-            // An active pin is the only lit thing when it renders (the rail
-            // filters the active workspace out of pins, so in practice at most
-            // one glow ever exists on screen).
-            boxShadow: isActive ? "var(--nx-glow)" : "none",
             opacity: isLocked ? 0.55 : 1,
           }}
         >
@@ -539,7 +541,7 @@ function ModuleWorkspaceButton({
               style={{
                 position: "absolute",
                 inset: -2,
-                borderRadius: 14,
+                borderRadius: "var(--nx-radius-lg)",
                 border: `2px solid color-mix(in oklch, ${accentColor} 25%, transparent)`,
                 pointerEvents: "none",
               }}
@@ -568,14 +570,7 @@ function ModuleWorkspaceButton({
               🔒
             </div>
           )}
-          <span
-            className={cn(
-              "transition-transform duration-nx-micro motion-reduce:transform-none",
-              hovered && !isActive && !isLocked ? "scale-110" : "scale-100"
-            )}
-          >
-            <DynamicIcon name={icon} size={20} />
-          </span>
+          <DynamicIcon name={icon} size={20} />
         </button>
       </TooltipTrigger>
       <TooltipContent side={isRTL ? "left" : "right"} sideOffset={16}>

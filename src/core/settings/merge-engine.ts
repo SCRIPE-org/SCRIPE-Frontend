@@ -62,6 +62,48 @@ export const DEFAULT_OVERRIDE_CONTROL: OverrideControl = {
 //      Wave B (loadingStyle in loading-spinner.tsx, toastStyle in
 //      enhanced-toast.tsx), and the backgroundMode "custom" cull.
 
+/**
+ * The 26 retired select skins.
+ *
+ * `SelectStyle` collapsed to the single member "default" when the ~460-line
+ * skin switch in generic-select-base.tsx was deleted. The union is checked
+ * against PERSISTED values, so a tenant blob holding "cyberpunk" would hit a
+ * value the type no longer contains — which is exactly the class of change
+ * that breaks a live user rather than a build.
+ *
+ * These are enumerated rather than left to the field-default fallthrough
+ * (the shortcut layoutTemplate takes) because the list IS the audit trail of
+ * what was removed, and it lets the round-trip be asserted name by name.
+ */
+const RETIRED_SELECT_STYLES = [
+  "modern",
+  "glass",
+  "outlined",
+  "filled",
+  "minimal",
+  "elegant",
+  "professional",
+  "neon",
+  "gradient",
+  "neumorphism",
+  "cyberpunk",
+  "luxury",
+  "aurora",
+  "matrix",
+  "diamond",
+  "holographic",
+  "cosmic",
+  "liquid",
+  "crystal",
+  "plasma",
+  "quantum",
+  "nebula",
+  "prism",
+  "stellar",
+  "vortex",
+  "phoenix",
+] as const;
+
 /** Per-field nearest-survivor maps for retired variant values. */
 const LEGACY_VALUE_MAP: Partial<Record<keyof Settings, Record<string, string>>> = {
   // Wave B2 — 12 loader variants collapsed to spinner/dots/pulse
@@ -121,6 +163,10 @@ const LEGACY_VALUE_MAP: Partial<Record<keyof Settings, Record<string, string>>> 
     minimal: "default",
     dark: "default",
   },
+  // 26 select skins collapsed to the one token surface. There is no "nearest"
+  // survivor to pick between: every retired skin was the same control wearing
+  // different wallpaper, so they all read to "default".
+  selectStyle: Object.fromEntries(RETIRED_SELECT_STYLES.map((style) => [style, "default"])),
 };
 
 /**
@@ -145,6 +191,8 @@ const SURVIVOR_VALUES: Partial<Record<keyof Settings, readonly string[]>> = {
   // default below, which is "nexus", so a user with any stored layoutTemplate
   // resolves to nexus with no error.
   layoutTemplate: ["nexus"],
+  // The select's union is a single member now; anything else is legacy.
+  selectStyle: ["default"],
 };
 
 const KNOWN_KEYS = new Set<string>(SETTINGS_KEYS);

@@ -1,16 +1,20 @@
 "use client";
 
 import React from "react";
-import { ChevronDown, X, Search, Check, Loader2, ChevronRight } from "lucide-react";
+import { ChevronDown, X, Search, Check, ChevronRight, SearchX } from "lucide-react";
 import { createPortal } from "react-dom";
 import { cn } from "@core/common/utils";
-import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
+import { EmptyState } from "@core/ui/empty-state";
+import { Input } from "@core/ui/input";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import {
-  getGenericSelectStyles as getGenericSelectStyles,
+  getGenericSelectStyles,
   ResponsiveChip,
+  SELECT_ITEM,
+  SELECT_ITEM_DISABLED,
+  SELECT_ITEM_SELECTED,
 } from "./generic-select-base";
-import type { SelectStyle } from "@core/providers/settings-provider";
 import { appLogger } from "@core/common/logger";
 
 export interface GenericSelectOption {
@@ -38,7 +42,6 @@ export interface GenericSelectProps {
   placeholder?: string;
   disabled?: boolean;
   className?: string;
-  design?: SelectStyle;
 
   // Select type configuration
   type?: "single" | "searchable" | "multi" | "tree";
@@ -83,7 +86,6 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
       placeholder,
       disabled = false,
       className,
-      design,
       type = "single",
       searchable = false,
       searchPlaceholder,
@@ -108,11 +110,11 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
     },
     ref
   ) => {
-    const { selectStyle } = useSettings();
     const { direction, t } = useI18n();
 
-    // Use the design prop if provided, otherwise fall back to global selectStyle
-    const effectiveDesign = design || selectStyle;
+    // The combobox has to name the popup it controls; the popup lives in a
+    // portal, so the id is the only link between them.
+    const listboxId = `${React.useId()}-listbox`;
 
     // Determine if this is a multi-select based on type or value array
     const isMultiSelect = type === "multi" || Array.isArray(value);
@@ -667,7 +669,7 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
     }, [isOpen, isSearchable]);
 
     // Get Generic styling
-    const styles = getGenericSelectStyles(effectiveDesign, direction, disabled, className);
+    const styles = getGenericSelectStyles(disabled, className);
 
     // Handle selection
     const handleSelect = (optionValue: string) => {
@@ -806,11 +808,13 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
               <div className="flex items-center gap-1 overflow-hidden text-sm">
                 {parentPath.length > 0 && (
                   <>
-                    <span className="truncate text-xs text-muted-foreground">
+                    <span className="truncate text-xs text-nx-ink-3">
                       {parentPath.join(" ‹ ")}
                     </span>
 
-                    <span className="flex-shrink-0 text-xs text-muted-foreground">›</span>
+                    <span aria-hidden="true" className="flex-shrink-0 text-xs text-nx-ink-3">
+                      ›
+                    </span>
                   </>
                 )}
                 <span className="truncate font-medium">{selectedItem}</span>
@@ -819,11 +823,13 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
           } else {
             return (
               <div className="flex items-center gap-1 overflow-hidden text-sm">
-                <span className="truncate text-xs text-muted-foreground">
+                <span className="truncate text-xs text-nx-ink-3">
                   {path.slice(0, -1).join(" › ")}
                 </span>
                 {path.length > 1 && (
-                  <span className="flex-shrink-0 text-xs text-muted-foreground">›</span>
+                  <span aria-hidden="true" className="flex-shrink-0 text-xs text-nx-ink-3">
+                    ›
+                  </span>
                 )}
                 <span className="truncate font-medium">{path[path.length - 1]}</span>
               </div>
@@ -927,11 +933,11 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
               }
             }
           }}
-          className={cn(
-            styles.trigger,
-            // When open, suppress parent focus visuals so it doesn't look like parent is focused
-            isOpen && isSearchable && "outline-none ring-0 focus-within:ring-0 focus:ring-0"
-          )}
+          // No "suppress the trigger's focus ring while the panel is open"
+          // override any more: the ring is `focus-visible:shadow-nx-focus`, and
+          // a searchable trigger drops to tabIndex -1 the moment it opens, so
+          // it cannot be focus-visible while the search input holds focus.
+          className={styles.trigger}
           onClick={handleToggle}
           onMouseDownCapture={(e) => {
             // Stop focus from landing on the trigger when using searchable selects
@@ -965,21 +971,28 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
               }
             }
           }}
+          // A combobox that only answers the mouse is a combobox half the
+          // product cannot reach. Enter/Space open it, Escape closes it — the
+          // same contract Radix gives every other overlay here.
+          onKeyDown={(event) => {
+            if (disabled) return;
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              handleToggle();
+            } else if (event.key === "Escape" && isOpen) {
+              event.preventDefault();
+              setIsOpen(false);
+              setSearchQuery("");
+            }
+          }}
           role="combobox"
           aria-expanded={isOpen}
           aria-haspopup="listbox"
+          aria-controls={listboxId}
+          aria-disabled={disabled || undefined}
           tabIndex={disabled ? -1 : isOpen && isSearchable ? -1 : 0}
-          style={{
-            // Visually merge trigger with dropdown so borders don't overlap
-            borderBottomLeftRadius: isOpen && !shouldShowAboveRef.current ? 0 : undefined,
-            borderBottomRightRadius: isOpen && !shouldShowAboveRef.current ? 0 : undefined,
-            borderTopLeftRadius: isOpen && shouldShowAboveRef.current ? 0 : undefined,
-            borderTopRightRadius: isOpen && shouldShowAboveRef.current ? 0 : undefined,
-            borderBottom: isOpen && !shouldShowAboveRef.current ? ("none" as const) : undefined,
-            borderTop: isOpen && shouldShowAboveRef.current ? ("none" as const) : undefined,
-          }}
         >
-          <div className="flex min-h-[1.5rem] flex-1 flex-wrap items-center gap-1 overflow-hidden">
+          <div className="flex min-h-6 flex-1 flex-wrap items-center gap-1 overflow-hidden">
             {isMultiSelect && selectedOptions.length > 0 ? (
               selectedOptions.length <= maxSelectedDisplay ? (
                 // Show individual chips for small selections
@@ -1007,13 +1020,12 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                         onValueChange(currentValues.filter((v) => v !== option.value));
                       }}
                       className={styles.chip}
-                      direction={direction}
                     />
                   );
                 })
               ) : (
                 // Show summary text for large selections with responsive handling
-                <span className="max-w-full truncate text-sm text-muted-foreground">
+                <span className="max-w-full truncate text-sm text-nx-ink-2">
                   {`${selectedOptions.length} ${defaultSelectedText}`}
                 </span>
               )
@@ -1021,7 +1033,9 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
               <span
                 className={cn(
                   "max-w-full truncate text-sm",
-                  selectedOptions.length === 0 ? "text-muted-foreground" : "text-foreground"
+                  // The placeholder is absent data, so it takes the hint ink;
+                  // a real value takes body ink. Never one ink at two opacities.
+                  selectedOptions.length === 0 ? "text-nx-ink-3" : "text-nx-ink"
                 )}
               >
                 {getDisplayText()}
@@ -1033,6 +1047,7 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
             {allowClear && !disabled && selectedOptions.length > 0 && (
               <button
                 type="button"
+                aria-label={t("common.clearSelection")}
                 onClick={(e) => {
                   e.stopPropagation();
                   if (isMultiSelect) {
@@ -1041,15 +1056,21 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                     onValueChange?.("");
                   }
                 }}
-                className="flex h-4 w-4 items-center justify-center rounded-full hover:bg-muted"
+                className={cn(
+                  "flex h-5 w-5 items-center justify-center rounded-full text-nx-ink-3",
+                  "transition-[color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                  "hover:bg-nx-hover hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
+                )}
               >
-                <X className="h-3 w-3" />
+                <X className="h-3 w-3" aria-hidden="true" />
               </button>
             )}
             <ChevronDown
+              aria-hidden="true"
               className={cn(
-                "h-4 w-4 transition-transform duration-200",
-                isOpen && "rotate-180 transform"
+                "h-4 w-4 flex-shrink-0 text-nx-ink-3",
+                "transition-transform duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                isOpen && "rotate-180"
               )}
             />
           </div>
@@ -1063,8 +1084,13 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
               data-dropdown-portal="true"
               data-searchable-select="true"
               className={cn(
-                "pointer-events-auto fixed z-[2147483647] min-w-[8rem] overflow-hidden shadow-lg",
-                styles.dropdown
+                "pointer-events-auto fixed z-dropdown min-w-32 overflow-hidden",
+                // A crossfade only. The panel used to also travel 6px and to
+                // zero out two of its own corners so it looked welded to the
+                // trigger — geometry the radius ladder does not contain, and
+                // movement reduced motion could not switch off.
+                "transition-opacity duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+                styles.panel
               )}
               onMouseDownCapture={(e) => {
                 // Keep interactions inside dropdown from bubbling to document/trigger
@@ -1077,43 +1103,26 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                 left: dropdownPosition.left,
                 width: dropdownPosition.width,
                 maxHeight: dropdownPosition.maxHeight,
-                transform: `translateZ(0) translateY(${
-                  animateOpen ? 0 : shouldShowAboveRef.current ? 6 : -6
-                }px)`,
-                willChange: "transform, opacity", // Optimize for frequent position changes
                 opacity: animateOpen ? 1 : 0,
-                transition:
-                  "transform 120ms cubic-bezier(.2,.8,.2,1), opacity 120ms cubic-bezier(.2,.8,.2,1)",
-                // Make dropdown visually attach to the trigger field
-                borderTopLeftRadius: shouldShowAboveRef.current ? undefined : 0,
-                borderTopRightRadius: shouldShowAboveRef.current ? undefined : 0,
-                borderBottomLeftRadius: shouldShowAboveRef.current ? 0 : undefined,
-                borderBottomRightRadius: shouldShowAboveRef.current ? 0 : undefined,
-                borderTopWidth: shouldShowAboveRef.current ? 1 : 0,
-                borderBottomWidth: shouldShowAboveRef.current ? 0 : 1,
               }}
             >
               {/* Search input for searchable types */}
               {isSearchable && (
-                <div className="border-b border-border/50 p-2">
+                <div className="border-b border-nx-line p-2">
                   <div className="relative">
                     <Search
-                      className={cn(
-                        "absolute top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground",
-                        direction === "rtl" ? "right-3" : "left-3"
-                      )}
+                      aria-hidden="true"
+                      className="pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3 start-3"
                     />
                     {showLoading && (
-                      <Loader2
-                        className={cn(
-                          "absolute top-1/2 h-4 w-4 -translate-y-1/2 transform animate-spin text-muted-foreground",
-                          direction === "rtl" ? "left-3" : "right-3"
-                        )}
-                      />
+                      <span className="absolute top-1/2 -translate-y-1/2 text-nx-ink-3 end-3">
+                        <LoadingSpinner size="inline" showText={false} />
+                      </span>
                     )}
-                    <input
+                    <Input
                       ref={searchInputRef}
                       type="text"
+                      aria-label={t("select.searchLabel")}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onMouseDownCapture={(e) => e.stopPropagation()}
@@ -1136,10 +1145,10 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                       onFocus={() => setIsOpen(true)}
                       autoComplete="off"
                       placeholder={defaultSearchPlaceholder}
-                      className={cn(
-                        "w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-                        direction === "rtl" ? "pl-3 pr-10 text-right" : "pl-10 pr-3 text-left"
-                      )}
+                      // The glyph rails are logical, so the same two classes
+                      // hold in both writing directions; `text-start` comes
+                      // from the field surface itself.
+                      className="ps-10 pe-10 text-start"
                       dir={direction}
                     />
                   </div>
@@ -1148,19 +1157,27 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
 
               {/* Multi-select batch operations */}
               {isMultiSelect && displayOptions.length > 0 && (
-                <div className="flex gap-2 border-b border-border/50 p-2">
+                <div className="flex items-center gap-2 border-b border-nx-line p-2">
                   <button
                     type="button"
                     onClick={handleSelectAll}
-                    className="text-xs font-medium text-primary hover:text-primary/80"
+                    className={cn(
+                      "rounded-nx-sm px-1 text-xs font-medium text-nx-accent",
+                      "transition-[color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                      "hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
+                    )}
                   >
                     {defaultSelectAllText}
                   </button>
-                  <span className="text-xs text-muted-foreground">|</span>
+                  <span aria-hidden="true" className="h-3 w-px bg-nx-line-hi" />
                   <button
                     type="button"
                     onClick={handleClearAll}
-                    className="text-xs font-medium text-muted-foreground hover:text-foreground"
+                    className={cn(
+                      "rounded-nx-sm px-1 text-xs font-medium text-nx-ink-2",
+                      "transition-[color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                      "hover:bg-nx-hover hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
+                    )}
                   >
                     {defaultClearAllText}
                   </button>
@@ -1169,7 +1186,11 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
 
               {/* Options list with dynamic scrollable height */}
               <div
-                className="scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent overflow-y-auto p-1"
+                id={listboxId}
+                role="listbox"
+                aria-label={t("select.optionsLabel")}
+                aria-multiselectable={isMultiSelect || undefined}
+                className="overflow-y-auto p-1"
                 onWheel={(e) => {
                   // Prevent wheel events from propagating to the dialog,
                   // which would otherwise capture them and block scrolling.
@@ -1183,16 +1204,12 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                 }}
               >
                 {showLoading ? (
-                  <div className="flex items-center justify-center py-6">
-                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                    <span className="ml-2 text-sm text-muted-foreground">
-                      {defaultSearchingText}
-                    </span>
+                  <div className="flex items-center justify-center gap-2 py-6">
+                    <LoadingSpinner size="sm" showText={false} />
+                    <span className="text-sm text-nx-ink-2">{defaultSearchingText}</span>
                   </div>
                 ) : displayOptions.length === 0 ? (
-                  <div className="py-6 text-center text-sm text-muted-foreground">
-                    {defaultNoResultsText}
-                  </div>
+                  <EmptyState bare size="sm" icon={SearchX} title={defaultNoResultsText} />
                 ) : (
                   displayOptions.map((option) => {
                     // Check if selected - use uniqueKey if available for deduplication
@@ -1207,93 +1224,98 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                     const level = option.level || 0;
 
                     return (
+                      // One row skin for every depth. Tree levels used to be
+                      // colour-coded (accent slab, info slab, muted slab), which
+                      // spent three hues on information the indent already
+                      // carries — and left level 3+ reading as an error state.
+                      // Depth is now indentation and the disclosure glyph;
+                      // colour is reserved for selection.
                       <div
                         key={option.value}
+                        role="option"
+                        aria-selected={isSelected}
+                        aria-disabled={option.disabled || undefined}
+                        tabIndex={-1}
+                        onKeyDown={(event) => {
+                          if (option.disabled) return;
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            handleSelect(option.value);
+                          }
+                        }}
                         className={cn(
-                          "group relative my-0.5 flex cursor-pointer select-none items-center rounded-lg py-2.5 text-sm outline-none transition-all duration-200",
-                          isTreeSelect
-                            ? level === 0
-                              ? "border border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10 shadow-sm hover:border-primary/30 hover:from-primary/10 hover:to-primary/15"
-                              : level === 1
-                                ? "border border-info/20 bg-gradient-to-r from-info/5 to-info/10 hover:border-info/30 hover:from-info/10 hover:to-info/15"
-                                : "border border-border/50 bg-gradient-to-r from-muted/30 to-muted/50 hover:border-border/70 hover:from-muted/50 hover:to-muted/70"
-                            : "hover:bg-accent hover:text-accent-foreground",
-                          isSelected &&
-                            (isTreeSelect
-                              ? "border-primary/40 bg-primary/10 shadow-md ring-2 ring-primary/50"
-                              : "bg-accent text-accent-foreground"),
-                          option.disabled && "pointer-events-none opacity-50",
-                          direction === "rtl" ? "text-right" : "text-left"
+                          SELECT_ITEM,
+                          "my-0.5 cursor-pointer",
+                          isSelected && SELECT_ITEM_SELECTED,
+                          option.disabled && SELECT_ITEM_DISABLED
                         )}
                         style={{
-                          paddingLeft: isTreeSelect ? `${12 + level * 20}px` : "12px",
-                          paddingRight: isTreeSelect ? "12px" : "12px",
-                          marginLeft: isTreeSelect ? `${level * 4}px` : "0px",
+                          // Logical, so the indent grows from the reading edge
+                          // in Arabic instead of piling up on the wrong side.
+                          paddingInlineStart: isTreeSelect ? `${12 + level * 20}px` : undefined,
+                          marginInlineStart: isTreeSelect ? `${level * 4}px` : undefined,
                         }}
                       >
-                        {/* Tree expand/collapse button with enhanced design */}
+                        {/* Tree expand/collapse control */}
                         {isTreeSelect && (
                           <button
                             type="button"
+                            aria-label={t(
+                              isExpanded ? "select.collapseGroup" : "select.expandGroup",
+                              { label: option.label }
+                            )}
+                            aria-expanded={hasChildren ? isExpanded : undefined}
+                            disabled={!hasChildren}
                             className={cn(
-                              "flex h-6 w-6 items-center justify-center rounded-full transition-all duration-200",
-                              hasChildren
-                                ? "border border-transparent hover:border-primary/30 hover:bg-primary/20 hover:shadow-sm"
-                                : "opacity-30",
-                              direction === "rtl" ? "ml-2" : "mr-2"
+                              "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-nx-ink-3",
+                              "transition-[color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                              "hover:bg-nx-hover hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus",
+                              "disabled:pointer-events-none disabled:invisible"
                             )}
                             onClick={(e) => {
                               e.stopPropagation();
                               toggleExpanded(option.value);
                             }}
                           >
-                            {hasChildren ? (
-                              <ChevronRight
-                                className={cn(
-                                  "h-4 w-4 text-primary transition-all duration-300",
-                                  isExpanded && "rotate-90 text-primary/80"
-                                )}
-                              />
-                            ) : (
-                              <div className="h-4 w-4 rounded-full bg-muted/50" />
-                            )}
+                            <ChevronRight
+                              aria-hidden="true"
+                              className={cn(
+                                "h-4 w-4",
+                                "transition-transform duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                                // Collapsed points along the reading direction;
+                                // expanded points down in both directions.
+                                isExpanded ? "rotate-90" : "rtl:rotate-180"
+                              )}
+                            />
                           </button>
                         )}
 
                         {/* Option content */}
                         <div
-                          className="flex flex-1 items-center"
+                          className="flex min-w-0 flex-1 items-center gap-2"
                           onClick={() => !option.disabled && handleSelect(option.value)}
                         >
                           {option.icon && (
-                            <span
-                              className={cn(
-                                "flex h-4 w-4 items-center justify-center",
-                                direction === "rtl" ? "ml-2" : "mr-2"
-                              )}
-                            >
+                            <span className="flex h-4 w-4 flex-shrink-0 items-center justify-center">
                               {option.icon}
                             </span>
                           )}
-                          <div className="flex-1">
+                          <div className="min-w-0 flex-1">
                             <div
                               className={cn(
-                                "font-medium transition-colors",
-                                isTreeSelect && level === 0 && "font-semibold text-primary",
-                                isTreeSelect && level === 1 && "font-medium text-info",
-                                isTreeSelect && level > 1 && "text-foreground"
+                                isTreeSelect && level === 0 ? "font-semibold" : "font-medium"
                               )}
                             >
                               {option.label}
                             </div>
                             {option.description && (
-                              <div className="mt-0.5 text-xs text-muted-foreground">
+                              <div className="mt-0.5 text-xs text-nx-ink-3">
                                 {option.description}
                               </div>
                             )}
                             {/* Show breadcrumb path for tree items on hover with RTL support */}
                             {isTreeSelect && level > 0 && (
-                              <div className="mt-1 text-xs text-muted-foreground/70 opacity-0 transition-opacity group-hover:opacity-100">
+                              <div className="mt-1 text-xs text-nx-ink-3 opacity-0 transition-opacity duration-nx-micro ease-nx-enter group-hover:opacity-100 motion-reduce:transition-none">
                                 {direction === "rtl"
                                   ? getNodePath(option.value, treeData || options)
                                       .reverse()
@@ -1303,14 +1325,10 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                             )}
                           </div>
                           {isSelected && (
-                            <div
-                              className={cn(
-                                "flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm",
-                                direction === "rtl" ? "mr-2" : "ml-2"
-                              )}
-                            >
-                              <Check className="h-3 w-3" />
-                            </div>
+                            <Check
+                              aria-hidden="true"
+                              className="h-4 w-4 flex-shrink-0 text-nx-accent"
+                            />
                           )}
                         </div>
                       </div>

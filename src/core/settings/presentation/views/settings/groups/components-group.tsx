@@ -3,7 +3,7 @@
 /**
  * Components — one row per part of the interface.
  *
- * Seventeen rows, each a single question ("what shape are my buttons?"), each
+ * Sixteen rows, each a single question ("what shape are my buttons?"), each
  * answered by an option strip. Where a component is cheap to mount, every
  * option chip renders THAT component already wearing its style — a real
  * Button, a real Input, a real Checkbox — via `Preview`, which nests a
@@ -31,7 +31,6 @@ import type {
   LoadingStyle,
   ModalStyle,
   RadioStyle,
-  SelectStyle,
   SwitchStyle,
   TableStyle,
   ToastStyle,
@@ -107,26 +106,12 @@ const BUTTON_STYLES: { value: ButtonStyle; key: string }[] = [
 
 const INPUT_STYLES: InputStyle[] = ["default", "rounded", "underlined", "filled"];
 
-const SELECT_STYLES: SelectStyle[] = [
-  "default",
-  "modern",
-  "glass",
-  "outlined",
-  "filled",
-  "minimal",
-  "elegant",
-  "professional",
-  "neon",
-  "gradient",
-  "cyberpunk",
-  "luxury",
-  "quantum",
-  "nebula",
-  "prism",
-  "stellar",
-  "vortex",
-  "phoenix",
-];
+// There is no SELECT_STYLES catalogue any more, and no select row: the 26
+// invented skins collapsed to a single token surface, so the question this row
+// used to ask ("which of eighteen wallpapers should a dropdown wear?") has
+// exactly one answer. A control offering one option is not a setting. The
+// `selectStyle` FIELD survives so stored blobs keep deserialising — the
+// merge-engine migration normalises every retired name onto it.
 
 // The five survivors. The seven retired skins still render — globals.css
 // aliases each to its nearest survivor — they just stop being offered.
@@ -241,15 +226,6 @@ export function ComponentsGroup() {
             <Input placeholder={t("settings.preview.input.placeholder")} />
           </Preview>
         ),
-      })),
-    [t]
-  );
-
-  const selectOptions = useMemo<ChoiceOption<SelectStyle>[]>(
-    () =>
-      SELECT_STYLES.map((value) => ({
-        value,
-        label: t(`settings.selectStyle.options.${value}`),
       })),
     [t]
   );
@@ -475,17 +451,6 @@ export function ComponentsGroup() {
           options={inputOptions}
           settingKey="inputStyle"
           gridClassName="sm:grid-cols-2 lg:grid-cols-4"
-        />
-      </Row>
-
-      <Row row={ROW["select-style"]}>
-        <Choice
-          row={ROW["select-style"]}
-          value={settings.selectStyle}
-          onSelect={(value) => settings.setSelectStyle(value)}
-          options={selectOptions}
-          settingKey="selectStyle"
-          density="chip"
         />
       </Row>
 

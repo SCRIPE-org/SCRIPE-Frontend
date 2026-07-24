@@ -7,7 +7,7 @@
  * their stored copies.
  */
 
-import type { Settings } from "./types";
+import type { ColorTheme, Settings } from "./types";
 
 export const defaultSettings: Settings = {
   // Pre-EDGE colour defaults, restored at the product owner's request when the
@@ -76,6 +76,9 @@ export const defaultSettings: Settings = {
   treeStyle: "lines",
   datePickerStyle: "default",
   calendarStyle: "default",
+  // The only member SelectStyle still has: the 26 invented skins collapsed to
+  // one token surface. Stored copies of the retired names normalise here via
+  // the merge-engine migration.
   selectStyle: "default",
   // "modern" was a retired switch skin — the Wave A collapse kept
   // default/ios/android, so the platform default is now a survivor value.
@@ -89,3 +92,75 @@ export const defaultSettings: Settings = {
 
 /** All setting keys — derived from defaultSettings for runtime iteration */
 export const SETTINGS_KEYS = Object.keys(defaultSettings) as (keyof Settings)[];
+
+// ── Colour-theme swatches ─────────────────────────────────
+
+export interface ColorThemeSwatch {
+  id: ColorTheme;
+  /** OKLCH hue angle, degrees. */
+  hue: number;
+  /** OKLCH chroma. */
+  chroma: number;
+}
+
+/**
+ * The 23 colour themes as OKLCH hue/chroma pairs — the two numbers the accent
+ * is actually made of.
+ *
+ * WHY NOT A HEX OR A TAILWIND CLASS: the picker used to draw each option with
+ * a Tailwind palette utility — a second, unrelated palette standing in for the
+ * accent. The swatch therefore promised a colour the product could not
+ * produce, and it drifted the moment either side moved. These pairs are read
+ * out of the same `--primary` values `globals.css` assigns to each
+ * `:root[data-theme="…"]`, converted to OKLCH, so the swatch and the accent
+ * are the same colour by construction.
+ *
+ * HOW TO RENDER IT: feed the pair into the accent's own lightness law and let
+ * CSS mix the colour — no colour value crosses the JS/CSS boundary:
+ *
+ *   <button
+ *     style={{ "--sw-h": swatch.hue, "--sw-c": swatch.chroma }}
+ *     aria-label={t(`settings.colors.${swatch.id}`)}
+ *   >
+ *     <span style={{ background: "oklch(0.68 var(--sw-c) var(--sw-h))" }} />
+ *   </button>
+ *
+ * Both custom properties are `@property`-registered in globals.css (L41-51),
+ * so they animate rather than snap when the theme changes.
+ *
+ * The fixed L of 0.68 is `--nx-accent`'s dark-theme lightness, not a choice
+ * made here: it is what makes yellow read as amber-gold and slate/zinc/stone
+ * read as near-greys. The swatch shows the accent you get, not the colour the
+ * name suggests.
+ *
+ * ORDER IS THE PICKER'S ORDER and the element shape is a contract — the
+ * appearance picker consumes this list directly. Do not rename either field.
+ */
+export const COLOR_THEME_SWATCHES: ColorThemeSwatch[] = [
+  { id: "scripe", hue: 293, chroma: 0.245 },
+  // "purple" is the one id with no `:root[data-theme]` rule of its own, so it
+  // has no --primary to convert; the pair below is the colour the picker has
+  // always drawn for it. See the escalation on the missing CSS block.
+  { id: "purple", hue: 304, chroma: 0.233 },
+  { id: "blue", hue: 263, chroma: 0.215 },
+  { id: "green", hue: 149, chroma: 0.192 },
+  { id: "orange", hue: 47, chroma: 0.189 },
+  { id: "red", hue: 22, chroma: 0.166 },
+  { id: "teal", hue: 182, chroma: 0.123 },
+  { id: "pink", hue: 354, chroma: 0.213 },
+  { id: "indigo", hue: 277, chroma: 0.204 },
+  { id: "cyan", hue: 213, chroma: 0.126 },
+  { id: "amber", hue: 71, chroma: 0.165 },
+  { id: "yellow", hue: 92, chroma: 0.173 },
+  { id: "lime", hue: 131, chroma: 0.204 },
+  { id: "emerald", hue: 162, chroma: 0.148 },
+  { id: "sky", hue: 238, chroma: 0.148 },
+  { id: "violet", hue: 292, chroma: 0.221 },
+  { id: "fuchsia", hue: 322, chroma: 0.257 },
+  { id: "rose", hue: 17, chroma: 0.216 },
+  { id: "slate", hue: 257, chroma: 0.052 },
+  { id: "zinc", hue: 286, chroma: 0.014 },
+  { id: "stone", hue: 58, chroma: 0.011 },
+  { id: "gold", hue: 81, chroma: 0.158 },
+  { id: "coral", hue: 40, chroma: 0.164 },
+];

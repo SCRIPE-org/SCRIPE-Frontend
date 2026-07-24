@@ -11,8 +11,9 @@ import { useWorkspaceTransitionContext } from "../nexus-layout";
 // parts never see isDark or a JS palette object.
 // Active leaf = accent text + inline-start edge light. NO glow here: the
 // primary rail's active root item owns the one glow per screen.
-const FOCUS_RING =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-nx-accent";
+// One ring token for the whole product — --nx-focus already carries the inset
+// accent edge these rows want, so the rail no longer draws its own.
+const FOCUS_RING = "focus-visible:outline-none focus-visible:shadow-nx-focus";
 
 export function cleanPath(p: string | undefined | null): string {
   if (!p) return "";
@@ -89,7 +90,7 @@ export function NavItem({
     paddingBlock: 8,
     paddingInlineStart: 12 + indent,
     paddingInlineEnd: 10,
-    borderRadius: 8,
+    borderRadius: "var(--nx-radius-control)",
     cursor: "pointer",
     textDecoration: "none",
     background: isActive
@@ -148,13 +149,17 @@ export function NavItem({
         >
           <div
             style={dotStyle}
-            className="transition-all duration-nx-standard ease-nx-enter motion-reduce:transition-none"
+            className="transition-[background-color,transform] duration-nx-standard ease-nx-enter motion-reduce:transition-none"
           />
-          <span style={labelStyle} className="transition-colors duration-nx-micro">
+          <span
+            style={labelStyle}
+            className="transition-colors duration-nx-micro motion-reduce:transition-none"
+          >
             {label}
           </span>
           <ChevronRight
             size={14}
+            aria-hidden="true"
             className="transition-transform duration-nx-standard ease-nx-enter motion-reduce:transition-none"
             style={{
               color: "var(--nx-ink-3, hsl(var(--muted-foreground)))",
@@ -225,13 +230,17 @@ export function NavItem({
         >
           <div
             style={dotStyle}
-            className="transition-all duration-nx-standard ease-nx-enter motion-reduce:transition-none"
+            className="transition-[background-color,transform] duration-nx-standard ease-nx-enter motion-reduce:transition-none"
           />
-          <span style={labelStyle} className="transition-colors duration-nx-micro">
+          <span
+            style={labelStyle}
+            className="transition-colors duration-nx-micro motion-reduce:transition-none"
+          >
             {label}
           </span>
           <ArrowRightLeft
             size={12}
+            aria-hidden="true"
             style={{ color: "var(--nx-ink-3, hsl(var(--muted-foreground)))", flexShrink: 0 }}
           />
         </div>
@@ -252,9 +261,12 @@ export function NavItem({
       >
         <div
           style={dotStyle}
-          className="transition-all duration-nx-standard ease-nx-enter motion-reduce:transition-none"
+          className="transition-[background-color,transform] duration-nx-standard ease-nx-enter motion-reduce:transition-none"
         />
-        <span style={labelStyle} className="transition-colors duration-nx-micro">
+        <span
+          style={labelStyle}
+          className="transition-colors duration-nx-micro motion-reduce:transition-none"
+        >
           {label}
         </span>
 
@@ -269,8 +281,8 @@ export function NavItem({
               width: 3,
               borderStartStartRadius: 0,
               borderEndStartRadius: 0,
-              borderStartEndRadius: 4,
-              borderEndEndRadius: 4,
+              borderStartEndRadius: "var(--nx-radius-sm)",
+              borderEndEndRadius: "var(--nx-radius-sm)",
               background: "var(--nx-accent, hsl(var(--primary)))",
             }}
           />

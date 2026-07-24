@@ -17,10 +17,10 @@ import { cn } from "@core/common/utils";
 // ── Focus law ─────────────────────────────────────────────────────────────────
 // Every interactive element in the nexus shell wears this instead of a bare
 // `outline-none`: invisible keyboard focus is an a11y defect, not a style.
-// 2px accent outline, 2px offset — visible on every nx surface (accent text
-// clears ≥5.3:1 on all of them, see the globals.css contrast table).
-export const NX_FOCUS_RING =
-  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nx-accent";
+// One token — --nx-focus — draws the whole ring (a 1px inset accent edge plus a
+// 3px accent-wash halo), so the rail cannot drift from the rest of the product
+// the way a hand-picked outline width/offset pair already had.
+export const NX_FOCUS_RING = "focus-visible:outline-none focus-visible:shadow-nx-focus";
 
 // ── Icon resolver ─────────────────────────────────────────────────────────────
 export function DynamicIcon({ name, size = 18 }: { name: string; size?: number }) {
@@ -80,14 +80,16 @@ export function RootItemButton({ item, isActive, isRTL, language, onClick }: Roo
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           className={cn(
-            "group relative flex items-center justify-center transition-all duration-nx-standard ease-nx-enter",
+            // Scoped property list. Transitioning every property also animated
+            // width/height/margin, so each rail reflow became a 200ms slide.
+            "group relative flex items-center justify-center transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
             NX_FOCUS_RING
           )}
           style={{
             width: 44,
             height: 44,
             flexShrink: 0,
-            borderRadius: 12,
+            borderRadius: "var(--nx-radius-md)",
             cursor: "pointer",
             border: isActive
               ? "1px solid color-mix(in oklch, var(--nx-accent) 25%, transparent)"
@@ -97,14 +99,7 @@ export function RootItemButton({ item, isActive, isRTL, language, onClick }: Roo
             margin: "4px 0",
           }}
         >
-          <span
-            className={cn(
-              "transition-transform duration-nx-micro motion-reduce:transform-none",
-              hovered && !isActive ? "scale-110" : "scale-100"
-            )}
-          >
-            <DynamicIcon name={item.icon} size={20} />
-          </span>
+          <DynamicIcon name={item.icon} size={20} />
         </button>
       </TooltipTrigger>
       <TooltipContent side={isRTL ? "left" : "right"} sideOffset={16}>
@@ -136,14 +131,14 @@ export function BackButton({ isRTL, label, onClick }: BackButtonProps) {
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           className={cn(
-            "group relative flex items-center justify-center transition-all duration-nx-standard ease-nx-enter",
+            "group relative flex items-center justify-center transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
             NX_FOCUS_RING
           )}
           style={{
             width: 44,
             height: 44,
             flexShrink: 0,
-            borderRadius: 12,
+            borderRadius: "var(--nx-radius-md)",
             cursor: "pointer",
             border: "1px solid transparent",
             background: hovered ? "var(--nx-raised)" : "transparent",
@@ -151,18 +146,13 @@ export function BackButton({ isRTL, label, onClick }: BackButtonProps) {
             marginBottom: 8,
           }}
         >
-          <span
-            className={cn(
-              "transition-transform duration-nx-micro motion-reduce:transform-none",
-              hovered ? (isRTL ? "translate-x-1" : "-translate-x-1") : "translate-x-0"
-            )}
-          >
-            {isRTL ? (
-              <ArrowRight width={20} height={20} strokeWidth={2} />
-            ) : (
-              <ArrowLeft width={20} height={20} strokeWidth={2} />
-            )}
-          </span>
+          {/* The glyph used to slide toward the inline start on hover. Hover in
+              this system is colour and hairline — nothing moves. */}
+          {isRTL ? (
+            <ArrowRight width={20} height={20} strokeWidth={2} />
+          ) : (
+            <ArrowLeft width={20} height={20} strokeWidth={2} />
+          )}
         </button>
       </TooltipTrigger>
       <TooltipContent side={isRTL ? "left" : "right"} sideOffset={16}>
@@ -203,14 +193,14 @@ export function TogglePanelButton({ isRTL, label, isCollapsed, onClick }: Toggle
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           className={cn(
-            "group relative flex items-center justify-center transition-all duration-nx-standard ease-nx-enter",
+            "group relative flex items-center justify-center transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
             NX_FOCUS_RING
           )}
           style={{
             width: 44,
             height: 44,
             flexShrink: 0,
-            borderRadius: 12,
+            borderRadius: "var(--nx-radius-md)",
             cursor: "pointer",
             border: "1px solid transparent",
             background: hovered ? "var(--nx-raised)" : "transparent",
@@ -218,14 +208,7 @@ export function TogglePanelButton({ isRTL, label, isCollapsed, onClick }: Toggle
             marginBottom: 8,
           }}
         >
-          <span
-            className={cn(
-              "transition-transform duration-nx-micro motion-reduce:transform-none",
-              hovered ? "scale-110" : "scale-100"
-            )}
-          >
-            <Icon width={20} height={20} strokeWidth={2} />
-          </span>
+          <Icon width={20} height={20} strokeWidth={2} />
         </button>
       </TooltipTrigger>
       <TooltipContent side={isRTL ? "left" : "right"} sideOffset={16}>
@@ -243,7 +226,6 @@ export function Divider() {
         width: 32,
         height: 1,
         background: "var(--nx-line)",
-        borderRadius: 1,
         margin: "12px 0",
         flexShrink: 0,
       }}
@@ -268,22 +250,23 @@ export function PrimaryRailLogo({
   return (
     <div
       className={cn(
-        "flex shrink-0 cursor-pointer items-center justify-center transition-all duration-nx-panel ease-nx-enter hover:scale-105 motion-reduce:hover:scale-100",
+        "flex shrink-0 cursor-pointer items-center justify-center transition-[color,background-color,border-color,box-shadow] duration-nx-panel ease-nx-enter motion-reduce:transition-none",
         NX_FOCUS_RING
       )}
       style={{
         width: 48,
         height: 48,
-        borderRadius: 14,
+        borderRadius: "var(--nx-radius-lg)",
         // accent (L0.68/0.46) into accent-fill (L0.50) — a token gradient that
         // deepens naturally in both themes instead of a hardcoded indigo pair
         background: tenantLogoUrl
           ? "transparent"
           : "linear-gradient(135deg, var(--nx-accent) 0%, var(--nx-accent-fill) 100%)",
         marginBottom: isModuleMode ? 12 : 20,
-        boxShadow: tenantLogoUrl
-          ? "none"
-          : "0 6px 20px color-mix(in oklch, var(--nx-accent) 22%, transparent), inset 0 1px 0 color-mix(in oklch, var(--nx-on-fill) 20%, transparent)",
+        // No resting shadow. The hand-rolled `0 6px 20px accent` bloom read as a
+        // second glow next to the ActiveIndicator (the screen gets one), and as
+        // an inline style it also out-specified the focus ring, so the mark was
+        // unfocusable-looking under the keyboard.
         overflow: "hidden",
         flexShrink: 0,
       }}
@@ -303,7 +286,12 @@ export function PrimaryRailLogo({
         <img
           src={tenantLogoUrl}
           alt="Logo"
-          style={{ width: 48, height: 48, objectFit: "contain", borderRadius: 14 }}
+          style={{
+            width: 48,
+            height: 48,
+            objectFit: "contain",
+            borderRadius: "var(--nx-radius-lg)",
+          }}
           onError={(e) => {
             e.currentTarget.style.display = "none";
           }}
@@ -317,7 +305,6 @@ export function PrimaryRailLogo({
             lineHeight: 1,
             userSelect: "none",
             letterSpacing: "-0.5px",
-            textShadow: "0 1px 4px rgba(0,0,0,0.3)",
           }}
         >
           N
@@ -344,7 +331,10 @@ export function ActiveIndicator({
 }: ActiveIndicatorProps) {
   return (
     <div
-      className="z-raised transition-all duration-nx-panel ease-nx-enter motion-reduce:transition-none"
+      // Scoped to the three properties this element actually moves. Animating
+      // every property also interpolated its width, height and background on
+      // each workspace accent change.
+      className="z-raised transition-[top,opacity,transform] duration-nx-panel ease-nx-enter motion-reduce:transition-none"
       style={{
         position: "absolute",
         insetInlineStart: 0,
@@ -354,8 +344,8 @@ export function ActiveIndicator({
         background: indicatorColor,
         borderStartStartRadius: 0,
         borderEndStartRadius: 0,
-        borderStartEndRadius: 4,
-        borderEndEndRadius: 4,
+        borderStartEndRadius: "var(--nx-radius-sm)",
+        borderEndEndRadius: "var(--nx-radius-sm)",
         opacity: indicatorVisible ? 1 : 0,
         transform: indicatorVisible ? "scaleY(1)" : "scaleY(0.3)",
         boxShadow: "var(--nx-glow)",

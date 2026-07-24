@@ -3,23 +3,38 @@
 /**
  * NexusAppLauncher — Waffle-menu overlay (⊞ button)
  *
- * Licensing fixes applied:
+ * Behaviour that must not regress:
  *  1. Token-safe accent alpha via color-mix(in oklch, …) — works for hex,
- *     hsl(), oklch() AND var() accents; no string concatenation anywhere
- *  2. Admin cards correctly show "active" badge when that workspace is current
- *  3. Colour reads --nx-* / status tokens — theme resolves in CSS, no isDark
- *  4. aria-modal="true" on the main launcher panel
- *  5. Focus trap inside launcher and upgrade dialog (keyboard accessibility)
- *  6. Backend-authoritative licensing: ws.isLocked from API, no hardcoded mocks
- *  7. router.push() instead of window.location.href (no full-page reload)
- *  8. Locked cards are keyboard-focusable — the upgrade dialog is the upsell
+ *     hsl(), oklch() AND var() accents; no string concatenation anywhere. The
+ *     per-card colour is the workspace's OWN backend-supplied accent: in the
+ *     launcher you are looking at workspaces you are not in, so their identity
+ *     colour is information, not decoration. It falls back to --nx-accent.
+ *  2. Backend-authoritative licensing: ws.isLocked from API, no hardcoded mocks
+ *  3. router.push() instead of window.location.href (no full-page reload)
+ *  4. Locked cards are keyboard-focusable — the upgrade dialog is the upsell
  *     and tabIndex={-1} made it unreachable without a mouse
- *  9. Enter/exit rebuilt: backdrop crossfades; the panel scales 0.95→1 with
- *     opacity from its bottom inline-start corner (the ⊞ trigger's side) —
- *     no keyframe slide from an edge. Exit runs at ~2/3 duration on the exit
- *     easing; reduced motion keeps the crossfade and drops the scale.
- * 10. Semantic z ladder (blur < overlay < modal) — the old raw 80/90/100/110
+ *  5. Focus trap inside the launcher panel (the upgrade dialog now gets Radix's)
+ *  6. Enter/exit: backdrop crossfades; the panel scales 0.95→1 with opacity
+ *     from its bottom inline-start corner (the ⊞ trigger's side) — no keyframe
+ *     slide from an edge. Exit runs at ~2/3 duration on the exit easing;
+ *     reduced motion keeps the crossfade and drops the scale.
+ *  7. Semantic z ladder (blur < overlay < modal) — the old raw 80/90/100/110
  *     stack collided with the tenant banner's z-70 neighbourhood
+ *
+ * Design corrections in this pass:
+ *  - Every string moved to the shell locale pack. The file used to carry its
+ *    copy as inline `language === "ar" ? … : …` ternaries, which is two
+ *    languages inside a JSX expression: `aria-label="Close"` and the pin
+ *    toggle's name had already fallen out of that pattern in English only.
+ *  - The upgrade prompt was a hand-built role="alertdialog" with its own
+ *    scrim, its own focus trap and two hsl() fills of its own. It is now an
+ *    AlertDialog, so it inherits the family's scrim, motion, footer order and
+ *    focus behaviour, and the CTA is simply the primary button.
+ *  - The search field is the Input primitive; it was a raw <input> wearing a
+ *    hand-rolled focus-within ring.
+ *  - Cards no longer lift on hover and their icon no longer scales: hover is
+ *    colour and hairline, nothing floats. The 6px backdrop blur is gone — the
+ *    scrim pushes the page back by taking light away.
  */
 
 import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
@@ -30,6 +45,18 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { toast } from "@core/hooks/use-enhanced-toast";
 import { startRoutingProgress } from "@core/ui/routing-progress-bar";
 import { Button } from "@core/ui/button";
+import { Input } from "@core/ui/input";
+import { EmptyState } from "@core/ui/empty-state";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@core/ui/alert-dialog";
 
 import {
   Search,
@@ -63,7 +90,7 @@ function deriveWorkspaceStatus(ws: { workspaceKey: string; isLocked: boolean }):
   return "available";
 }
 
-// ── Issue 5 Fix: Focus trap utility ─────────────────────────────────────────
+// ── Focus trap utility ──────────────────────────────────────────────────────
 function useFocusTrap(containerRef: React.RefObject<HTMLElement | null>, active: boolean) {
   useEffect(() => {
     if (!active || !containerRef.current) return;
@@ -101,7 +128,7 @@ function useFocusTrap(containerRef: React.RefObject<HTMLElement | null>, active:
   }, [active, containerRef]);
 }
 
-// ── Issue 9: enter/exit lifecycle ───────────────────────────────────────────
+// ── Enter/exit lifecycle ────────────────────────────────────────────────────
 // "closed" → unmounted. "pre" → mounted one frame in the hidden pose so the
 // transition has a starting point. "open" → resting pose. "closing" → hidden
 // pose again while the exit transition plays, then unmount.
@@ -109,6 +136,10 @@ type LauncherPhase = "closed" | "pre" | "open" | "closing";
 // Exit visual duration is --nx-t-micro (140ms ≈ 2/3 of standard); unmount a
 // beat later so the transition is never clipped.
 const EXIT_UNMOUNT_MS = 170;
+
+// Card geometry is shared by every workspace tile so a locked card and an
+// available one are the same object in two states, never two components.
+const CARD_GRID = "grid gap-2.5 grid-cols-[repeat(auto-fill,minmax(120px,1fr))]";
 
 // ── Main Component ───────────────────────────────────────────────────────────
 export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) {
@@ -123,6 +154,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
   const [phase, setPhase] = useState<LauncherPhase>("closed");
   const searchRef = useRef<HTMLInputElement>(null);
   const launcherRef = useRef<HTMLDivElement>(null);
+  const titleId = React.useId();
 
   const isRTL = direction === "rtl";
 
@@ -259,7 +291,8 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
     [togglePin, pinningKey]
   );
 
-  // Issue 5: Focus trap — active when launcher is open and no upgrade dialog shown
+  // Focus trap — active when launcher is open and no upgrade dialog shown
+  // (the AlertDialog brings Radix's own trap when it is).
   useFocusTrap(launcherRef, open && !upgradeTarget);
 
   // Stay mounted through the exit transition, then release the DOM
@@ -269,18 +302,15 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
 
   return (
     <>
-      {/* ── Backdrop — crossfade only, 140ms ─────────────────────────────── */}
+      {/* ── Backdrop — crossfade only, 140ms. No backdrop-filter: the scrim
+          pushes the page back by taking light away, not by blurring it. ── */}
       <div
         className={cn(
-          "fixed inset-0 z-blur bg-scrim transition-opacity duration-nx-micro",
+          "fixed inset-0 z-blur bg-scrim transition-opacity duration-nx-micro motion-reduce:transition-none",
           visible ? "opacity-100 ease-nx-enter" : "opacity-0 ease-nx-exit",
           !open && "pointer-events-none"
         )}
         onClick={() => onOpenChange(false)}
-        style={{
-          backdropFilter: "blur(6px)",
-          WebkitBackdropFilter: "blur(6px)",
-        }}
       />
 
       {/* ── Launcher Panel ───────────────────────────────────────────────── */}
@@ -292,9 +322,11 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
         ref={launcherRef}
         role="dialog"
         aria-modal="true"
-        aria-label={language === "ar" ? "مشغّل التطبيقات" : "App Launcher"}
+        aria-labelledby={titleId}
         className={cn(
-          "fixed left-1/2 top-1/2 z-overlay flex -translate-x-1/2 -translate-y-1/2 flex-col transition-[transform,opacity]",
+          "fixed left-1/2 top-1/2 z-overlay flex -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden",
+          "rounded-nx-lg border border-nx-line-hi bg-nx-popover shadow-nx-modal",
+          "transition-[transform,opacity] motion-reduce:transition-none",
           isRTL ? "rtl origin-bottom-right" : "ltr origin-bottom-left",
           visible
             ? "scale-100 opacity-100 duration-nx-standard ease-nx-enter"
@@ -304,109 +336,75 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
         style={{
           width: "min(700px, 92vw)",
           maxHeight: "min(640px, 86vh)",
-          borderRadius: 20,
-          background: "var(--nx-surface)",
-          border: "1px solid var(--nx-line-hi)",
-          boxShadow: "0 32px 80px -16px var(--scrim)",
-          overflow: "hidden",
         }}
       >
         {/* Header */}
-        <div
-          style={{
-            padding: "20px 24px 16px",
-            borderBottom: "1px solid var(--nx-line)",
-            flexShrink: 0,
-          }}
-        >
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div
-                className="flex items-center justify-center rounded-[10px]"
-                style={{
-                  width: 36,
-                  height: 36,
-                  background: "var(--nx-accent-wash)",
-                }}
-              >
-                <LayoutGrid size={18} className="text-nx-accent" />
-              </div>
-              <div>
-                <h2 className="font-semibold text-nx-ink" style={{ fontSize: 15, margin: 0 }}>
-                  {language === "ar" ? "مشغّل التطبيقات" : "App Launcher"}
-                </h2>
-                <p className="text-nx-ink-2" style={{ fontSize: 12, margin: 0 }}>
-                  {language === "ar"
-                    ? "تنقل بين مساحات العمل والوحدات"
-                    : "Switch between workspaces and modules"}
-                </p>
-              </div>
+        <div className="flex-shrink-0 border-b border-nx-line px-6 pb-4 pt-5">
+          <div className="mb-4 flex items-center gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-md bg-nx-accent-wash">
+              <LayoutGrid className="h-5 w-5 text-nx-accent" aria-hidden="true" />
             </div>
-            <button
+            <div className="min-w-0">
+              <h2
+                id={titleId}
+                className="text-lg font-semibold leading-tight tracking-tight text-nx-ink"
+              >
+                {t("shell.launcher.title")}
+              </h2>
+              <p className="text-sm leading-relaxed text-nx-ink-2">
+                {t("shell.launcher.description")}
+              </p>
+            </div>
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={() => onOpenChange(false)}
-              className={cn(
-                "flex items-center justify-center rounded-lg text-nx-ink-2 transition-colors duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
-                NX_FOCUS_RING
-              )}
-              style={{
-                width: 32,
-                height: 32,
-                border: "none",
-                cursor: "pointer",
-                background: "transparent",
-              }}
-              aria-label="Close"
+              className="ms-auto h-8 w-8 shrink-0"
+              aria-label={t("common.close")}
             >
-              <X size={16} />
-            </button>
+              <X className="h-4 w-4" aria-hidden="true" />
+            </Button>
           </div>
 
-          {/* Search input — the ring lives on the container (focus-within):
-              a text input always shows focus, not just keyboard focus */}
-          <div
-            className="flex items-center gap-2 rounded-[10px] border border-nx-line bg-nx-raised px-3 transition-colors duration-nx-micro focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-nx-accent"
-            style={{ height: 40 }}
-          >
-            <Search size={15} className="shrink-0 text-nx-ink-3" />
-            <input
+          {/* Search — the Input primitive owns rest/hover/focus/invalid; the
+              glyph and the clear control ride in its inline padding. */}
+          <div className="relative">
+            <Search
+              className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
+              aria-hidden="true"
+            />
+            <Input
               ref={searchRef}
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder={language === "ar" ? "ابحث عن وحدة..." : "Search workspaces..."}
-              className="flex-1 border-none bg-transparent text-sm text-nx-ink outline-none placeholder:text-nx-ink-3"
-              style={{ direction: isRTL ? "rtl" : "ltr" }}
+              placeholder={t("shell.launcher.searchPlaceholder")}
+              aria-label={t("shell.launcher.searchPlaceholder")}
+              className="ps-9 pe-11"
             />
             {search && (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => setSearch("")}
-                className={cn("cursor-pointer text-nx-ink-3 hover:text-nx-ink", NX_FOCUS_RING)}
-                style={{ background: "none", border: "none", padding: 0, display: "flex" }}
+                className="absolute end-1 top-1 h-8 w-8"
+                aria-label={t("shell.launcher.clearSearch")}
               >
-                <X size={13} />
-              </button>
+                <X className="h-3.5 w-3.5" aria-hidden="true" />
+              </Button>
             )}
           </div>
         </div>
 
         {/* ── Content grid ─────────────────────────────────────────────── */}
-        <div
-          className="nexus-custom-scrollbar"
-          style={{ flex: 1, overflowY: "auto", padding: "16px 24px 20px" }}
-        >
+        <div className="nexus-custom-scrollbar flex-1 overflow-y-auto px-6 pb-5 pt-4">
           {/* Admin workspaces */}
           {adminItems.length > 0 && (
             <section className="mb-6">
-              <SectionLabel label={language === "ar" ? "الإدارة" : "Administration"} />
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
-                  gap: 10,
-                }}
-              >
+              <SectionLabel label={t("shell.launcher.sections.administration")} />
+              <div className={CARD_GRID}>
                 {adminItems.map((ws) => {
                   const status = deriveWorkspaceStatus(ws);
                   return (
@@ -433,14 +431,8 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
           {/* Module workspaces — always rendered; backend controls isLocked per workspace */}
           {moduleItems.length > 0 && (
             <section>
-              <SectionLabel label={language === "ar" ? "الوحدات" : "Modules"} />
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
-                  gap: 10,
-                }}
-              >
+              <SectionLabel label={t("shell.launcher.sections.modules")} />
+              <div className={CARD_GRID}>
                 {moduleItems.map((ws) => {
                   const status = deriveWorkspaceStatus(ws);
                   return (
@@ -464,48 +456,42 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
             </section>
           )}
 
-          {/* Empty state */}
+          {/* Empty state — no action slot: the only move left is editing the
+              search, and its clear control is already one tab away. */}
           {filteredWorkspaces.length === 0 && (
-            <div
-              className="flex flex-col items-center justify-center py-14 text-nx-ink-3"
-              aria-live="polite"
-            >
-              <Search size={32} className="mb-3 opacity-40" />
-              <p className="text-sm">
-                {language === "ar" ? "لا توجد نتائج" : "No workspaces found"}
-              </p>
+            <div aria-live="polite">
+              <EmptyState
+                bare
+                icon={Search}
+                size="md"
+                title={t("shell.launcher.empty.title")}
+                description={t("shell.launcher.empty.description")}
+              />
             </div>
           )}
         </div>
 
         {/* ── Legend footer ─────────────────────────────────────────────── */}
-        <div
-          className="flex flex-wrap items-center gap-4"
-          style={{
-            padding: "10px 24px 14px",
-            borderTop: "1px solid var(--nx-line)",
-            flexShrink: 0,
-          }}
-        >
+        <div className="flex flex-shrink-0 flex-wrap items-center gap-4 border-t border-nx-line px-6 pb-3.5 pt-2.5">
           <LegendItem
-            icon={<Check size={9} />}
+            icon={<Check className="h-2.5 w-2.5" aria-hidden="true" />}
             colorClass="text-success"
-            label={language === "ar" ? "نشط" : "Active"}
+            label={t("shell.launcher.legend.active")}
           />
           <LegendItem
-            icon={<Pin size={9} />}
+            icon={<Pin className="h-2.5 w-2.5" aria-hidden="true" />}
             colorClass="text-nx-accent"
-            label={language === "ar" ? "مثبّت" : "Pinned"}
+            label={t("shell.launcher.legend.pinned")}
           />
           <LegendItem
-            icon={<Lock size={9} />}
+            icon={<Lock className="h-2.5 w-2.5" aria-hidden="true" />}
             colorClass="text-warning"
-            label={language === "ar" ? "مقفل" : "Locked"}
+            label={t("shell.launcher.legend.locked")}
           />
           <LegendItem
-            icon={<Clock size={9} />}
+            icon={<Clock className="h-2.5 w-2.5" aria-hidden="true" />}
             colorClass="text-nx-ink-3"
-            label={language === "ar" ? "قريباً" : "Coming Soon"}
+            label={t("shell.launcher.legend.comingSoon")}
           />
         </div>
       </div>
@@ -518,9 +504,8 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
               .find((ws) => ws.workspaceKey === upgradeTarget)
               ?.getLocalizedName(language) ?? upgradeTarget
           }
-          language={language}
-          // Bug 7 fix: platform admins (no tenant context) see a locked module
-          // because modules require a tenant to be active — show "Select a Tenant"
+          // Platform admins (no tenant context) see a locked module because
+          // modules require a tenant to be active — show "Select a Tenant"
           // rather than the misleading "Upgrade your plan" copy.
           isNeedsTenant={!hasTenantContext}
           onClose={() => setUpgradeTarget(null)}
@@ -541,10 +526,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
 // ── Section Label ─────────────────────────────────────────────────────────────
 function SectionLabel({ label }: { label: string }) {
   return (
-    <p
-      className="font-semibold uppercase tracking-widest text-nx-ink-3"
-      style={{ fontSize: 10, letterSpacing: "0.1em", margin: "0 0 10px" }}
-    >
+    <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
       {label}
     </p>
   );
@@ -561,7 +543,7 @@ function LegendItem({
   label: string;
 }) {
   return (
-    <div className="flex items-center gap-1.5 text-nx-ink-3" style={{ fontSize: 11 }}>
+    <div className="flex items-center gap-1.5 text-xs text-nx-ink-3">
       <span className={cn("flex", colorClass)}>{icon}</span>
       {label}
     </div>
@@ -590,7 +572,7 @@ function WorkspaceCard({
   onClick: () => void;
   onTogglePin?: (e: React.MouseEvent) => void;
 }) {
-  const [hovered, setHovered] = useState(false);
+  const { t } = useI18n();
   const color = accentColor || "var(--nx-accent)";
   const isLocked = status === "locked";
   const isComingSoon = status === "coming-soon";
@@ -599,9 +581,9 @@ function WorkspaceCard({
   return (
     <div
       role="button"
-      // Issue 8: locked cards stay in the tab order — clicking OR keying one
-      // opens the upgrade dialog, and that upsell must be keyboard-reachable.
-      // Only coming-soon (a true no-op) leaves the tab order.
+      // Locked cards stay in the tab order — clicking OR keying one opens the
+      // upgrade dialog, and that upsell must be keyboard-reachable. Only
+      // coming-soon (a true no-op) leaves the tab order.
       tabIndex={isComingSoon ? -1 : 0}
       onClick={onClick}
       onKeyDown={(e) => {
@@ -611,32 +593,20 @@ function WorkspaceCard({
           onClick();
         }
       }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
       aria-pressed={isActive}
       aria-disabled={isComingSoon}
       className={cn(
-        "group relative flex flex-col items-center gap-2 rounded-[14px] transition-all duration-nx-micro ease-nx-enter motion-reduce:transform-none",
+        "group relative flex flex-col items-center gap-2 rounded-nx-md border px-2.5 pb-3.5 pt-4",
+        "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
         NX_FOCUS_RING,
         isComingSoon ? "cursor-default" : "cursor-pointer",
-        // Hover = border brightens + 1px lift, nothing louder
-        hovered && !isDisabled && "-translate-y-px"
+        // Hover brightens the hairline and steps the fill. Nothing lifts.
+        isActive
+          ? "border-nx-accent bg-nx-accent-wash"
+          : isDisabled
+            ? "border-nx-line bg-nx-raised"
+            : "border-nx-line bg-transparent hover:border-nx-line-hi hover:bg-nx-raised"
       )}
-      style={{
-        padding: "16px 10px 14px",
-        // Issue 1: color-mix() — token-safe alpha for hex/hsl/oklch/var()
-        border: isActive
-          ? `1.5px solid color-mix(in oklch, ${color} 40%, transparent)`
-          : hovered && !isDisabled
-            ? "1.5px solid var(--nx-line-hi)"
-            : "1.5px solid var(--nx-line)",
-        background: isActive
-          ? `color-mix(in oklch, ${color} 8%, transparent)`
-          : hovered && !isDisabled
-            ? "var(--nx-raised)"
-            : "transparent",
-        opacity: isComingSoon ? 0.55 : 1,
-      }}
     >
       {/* Pin toggle — reveals on hover AND keyboard focus-within; always
           visible on coarse pointers, where there is no hover to reveal it */}
@@ -646,85 +616,75 @@ function WorkspaceCard({
           onClick={onTogglePin}
           onKeyDown={(e) => e.stopPropagation()}
           disabled={isPinLoading}
-          aria-label={isPinned ? "Unpin workspace" : "Pin workspace"}
+          aria-label={isPinned ? t("shell.launcher.unpin") : t("shell.launcher.pin")}
           className={cn(
-            "absolute flex items-center justify-center rounded-md transition-all duration-nx-micro",
+            "absolute top-1 flex h-5 w-5 items-center justify-center rounded-nx-sm border",
+            "transition-opacity duration-nx-micro motion-reduce:transition-none",
+            "start-1 disabled:cursor-wait",
             "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 [@media(pointer:coarse)]:opacity-100",
-            isPinned ? "opacity-100" : "",
+            isPinned
+              ? "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent opacity-100"
+              : "border-transparent bg-nx-raised-2 text-nx-ink-2",
             NX_FOCUS_RING
           )}
-          style={{
-            top: 5,
-            insetInlineStart: 5,
-            width: 20,
-            height: 20,
-            background: isPinned ? "var(--nx-accent-wash)" : "var(--nx-raised-2)",
-            border: isPinned
-              ? "1px solid color-mix(in oklch, var(--nx-accent) 30%, transparent)"
-              : "1px solid transparent",
-            color: isPinned ? "var(--nx-accent)" : "var(--nx-ink-2)",
-            cursor: isPinLoading ? "wait" : "pointer",
-          }}
         >
-          {isPinned ? <PinOff size={10} /> : <Pin size={10} />}
+          {isPinned ? (
+            <PinOff className="h-2.5 w-2.5" aria-hidden="true" />
+          ) : (
+            <Pin className="h-2.5 w-2.5" aria-hidden="true" />
+          )}
         </button>
       )}
 
-      {/* Status badge — only for active, locked, coming-soon */}
+      {/* Status badge — only for active, locked, coming-soon. The glyph is
+          decorative: the accessible name is the legend plus the card label. */}
       {(isActive || isLocked || isComingSoon) && (
         <div
-          className="absolute flex items-center gap-0.5"
-          style={{
-            top: 5,
-            insetInlineEnd: 5,
-            padding: "2px 5px",
-            borderRadius: 5,
-            fontSize: 9,
-            fontWeight: 700,
+          className={cn(
+            "absolute end-1 top-1 flex items-center rounded-nx-sm px-1 py-0.5",
             // Measured global status tokens — read, never redefined here
-            background: isLocked
-              ? "hsl(var(--warning) / 0.12)"
+            isLocked
+              ? "bg-warning/10 text-warning"
               : isComingSoon
-                ? "var(--nx-raised-2)"
-                : "hsl(var(--success) / 0.12)",
-            color: isLocked
-              ? "hsl(var(--warning))"
-              : isComingSoon
-                ? "var(--nx-ink-3)"
-                : "hsl(var(--success))",
-          }}
+                ? "bg-nx-raised-2 text-nx-ink-3"
+                : "bg-success/10 text-success"
+          )}
         >
-          {isLocked ? <Lock size={8} /> : isComingSoon ? <Clock size={8} /> : <Check size={8} />}
+          {isLocked ? (
+            <Lock className="h-2 w-2" aria-hidden="true" />
+          ) : isComingSoon ? (
+            <Clock className="h-2 w-2" aria-hidden="true" />
+          ) : (
+            <Check className="h-2 w-2" aria-hidden="true" />
+          )}
         </div>
       )}
 
-      {/* Icon container */}
+      {/* Icon container — the workspace's own accent, mixed token-safely so a
+          hex, an hsl(), an oklch() or a var() all tint identically. */}
       <div
         className={cn(
-          "flex items-center justify-center rounded-xl transition-transform duration-nx-micro motion-reduce:transform-none",
-          hovered && !isDisabled ? "scale-[1.08]" : "scale-100"
+          "flex h-10 w-10 items-center justify-center rounded-nx-md",
+          isDisabled && "bg-nx-raised text-nx-ink-3"
         )}
-        style={{
-          width: 42,
-          height: 42,
-          // Issue 1: color-mix() safe for all colour formats including var()
-          background: isDisabled
-            ? "var(--nx-raised)"
-            : `color-mix(in oklch, ${color} 12%, transparent)`,
-          color: isDisabled ? "var(--nx-ink-3)" : color,
-        }}
+        style={
+          isDisabled
+            ? undefined
+            : {
+                background: `color-mix(in oklch, ${color} 12%, transparent)`,
+                color,
+              }
+        }
       >
         <DynamicIcon name={icon} size={20} />
       </div>
 
       {/* Name */}
       <span
-        className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-center leading-tight"
-        style={{
-          fontSize: 11,
-          fontWeight: 500,
-          color: isActive ? color : isDisabled ? "var(--nx-ink-3)" : "var(--nx-ink-2)",
-        }}
+        className={cn(
+          "max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-xs font-medium leading-tight",
+          isActive ? "text-nx-accent" : isDisabled ? "text-nx-ink-3" : "text-nx-ink-2"
+        )}
       >
         {name}
       </span>
@@ -735,122 +695,62 @@ function WorkspaceCard({
 // ── Upgrade Dialog ────────────────────────────────────────────────────────────
 function UpgradeDialog({
   workspaceName,
-  language,
   isNeedsTenant,
   onClose,
   onUpgrade,
 }: {
   workspaceName: string;
-  language: string;
   /** True when the module is locked only because no tenant context is active.
    *  Changes the dialog copy to "Select a Tenant" instead of "Upgrade Plan". */
   isNeedsTenant: boolean;
   onClose: () => void;
   onUpgrade: () => void;
 }) {
-  // Issue 5: Focus trap inside upgrade dialog
-  const dialogRef = useRef<HTMLDivElement>(null);
-  useFocusTrap(dialogRef, true);
+  const { t } = useI18n();
+
+  // Keys are spelled out rather than composed from a namespace variable so a
+  // locale audit can grep them.
+  const copy = isNeedsTenant
+    ? {
+        title: t("shell.launcher.selectTenant.title"),
+        description: t("shell.launcher.selectTenant.description", { name: workspaceName }),
+        cta: t("shell.launcher.selectTenant.cta"),
+      }
+    : {
+        title: t("shell.launcher.upgrade.title"),
+        description: t("shell.launcher.upgrade.description", { name: workspaceName }),
+        cta: t("shell.launcher.upgrade.cta"),
+      };
+
   return (
-    <>
-      {/* Scrim on top of launcher — same z-modal level, painted before the
-          dialog in DOM order so the dialog wins */}
-      <div
-        className="fixed inset-0 z-modal bg-scrim animate-in fade-in duration-nx-micro"
-        onClick={onClose}
-      />
-      {/* The --tw-enter-translate vars keep the animate-in `from` frame
-          centered (translate(-50%,-50%)); without them the keyframe drops the
-          inline centering and the dialog slides in from a corner. Reduced
-          motion zeroes the scale and keeps the fade. */}
-      <div
-        ref={dialogRef}
-        role="alertdialog"
-        aria-modal="true"
-        aria-label={language === "ar" ? "ترقية مطلوبة" : "Upgrade Required"}
-        className="fixed z-modal animate-in fade-in zoom-in-95 duration-nx-standard ease-nx-enter [--tw-enter-translate-x:-50%] [--tw-enter-translate-y:-50%] motion-reduce:[--tw-enter-scale:1]"
-        style={{
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "min(400px, 90vw)",
-          borderRadius: 18,
-          background: "var(--nx-surface)",
-          border: "1px solid var(--nx-line-hi)",
-          boxShadow: "0 24px 60px -12px var(--scrim)",
-          padding: "28px 28px 24px",
-          textAlign: "center",
-        }}
-      >
-        {/* Icon */}
-        <div
-          className="mx-auto mb-4 flex items-center justify-center rounded-2xl"
-          style={{
-            width: 56,
-            height: 56,
-            background: "hsl(var(--warning) / 0.1)",
-          }}
-        >
-          <ArrowUpCircle size={28} className="text-warning" />
-        </div>
-
-        <h3 className="mb-2 font-bold text-nx-ink" style={{ fontSize: 17, margin: "0 0 8px" }}>
-          {isNeedsTenant
-            ? language === "ar"
-              ? "اختر مستأجراً"
-              : "Select a Tenant"
-            : language === "ar"
-              ? "ترقية مطلوبة"
-              : "Upgrade Required"}
-        </h3>
-
-        <p
-          className="text-nx-ink-2"
-          style={{ fontSize: 13, lineHeight: 1.55, margin: "0 0 24px" }}
-        >
-          {isNeedsTenant
-            ? language === "ar"
-              ? `وحدة "${workspaceName}" تتطلب سياق مستأجر. انتقل إلى قائمة المستأجرين وادخل إلى مستأجر أولاً.`
-              : `"${workspaceName}" requires a tenant context. Go to the Tenants list and drill into a tenant first.`
-            : language === "ar"
-              ? `وحدة "${workspaceName}" غير مضمّنة في خطتك الحالية. قم بالترقية لفتح هذه الوحدة.`
-              : `"${workspaceName}" is not included in your current plan. Upgrade your plan to unlock this module.`}
-        </p>
-
-        <div className="flex gap-3">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            className="flex-1 rounded-[10px] text-sm font-medium text-nx-ink-2 transition-colors duration-nx-micro hover:bg-nx-raised hover:text-nx-ink"
-            style={{ padding: "10px 0" }}
+    <AlertDialog
+      open
+      onOpenChange={(next) => {
+        if (!next) onClose();
+      }}
+    >
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          {/* Severity speaks through glyph + hairline + wash; the copy below
+              keeps neutral ink. */}
+          <div
+            className={cn(
+              "flex h-12 w-12 items-center justify-center rounded-nx-md border",
+              isNeedsTenant
+                ? "border-info/30 bg-info/10 text-info"
+                : "border-warning/30 bg-warning/10 text-warning"
+            )}
           >
-            {language === "ar" ? "إلغاء" : "Cancel"}
-          </Button>
-          <Button
-            onClick={onUpgrade}
-            className="flex-1 rounded-[10px] text-sm font-semibold hover:opacity-90"
-            style={{
-              padding: "10px 0",
-              border: "none",
-              // Measured status fills with their own measured foregrounds —
-              // info for "go pick a tenant", warning for "upgrade your plan"
-              background: isNeedsTenant ? "hsl(var(--info))" : "hsl(var(--warning))",
-              color: isNeedsTenant ? "hsl(var(--info-foreground))" : "hsl(var(--warning-foreground))",
-              boxShadow: isNeedsTenant
-                ? "0 4px 14px hsl(var(--info) / 0.35)"
-                : "0 4px 14px hsl(var(--warning) / 0.35)",
-            }}
-          >
-            {isNeedsTenant
-              ? language === "ar"
-                ? "انتقل إلى المستأجرين"
-                : "Go to Tenants"
-              : language === "ar"
-                ? "ترقية الآن"
-                : "Upgrade Plan"}
-          </Button>
-        </div>
-      </div>
-    </>
+            <ArrowUpCircle className="h-6 w-6" aria-hidden="true" />
+          </div>
+          <AlertDialogTitle>{copy.title}</AlertDialogTitle>
+          <AlertDialogDescription>{copy.description}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+          <AlertDialogAction onClick={onUpgrade}>{copy.cta}</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

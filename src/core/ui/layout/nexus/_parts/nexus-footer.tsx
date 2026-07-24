@@ -34,22 +34,21 @@ export function NexusFooter() {
       }}
     >
       <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-        © {year} {appName}. {t("common.all_rights_reserved") || "All rights reserved."}
+        {/* Both keys ship EN and AR, so the old `|| "English literal"` guards
+            were unreachable copy that only ever hid a missing translation. */}
+        © {year} {appName}. {t("common.all_rights_reserved")}
       </span>
       <span
+        className="rounded-full border border-nx-line bg-nx-raised text-nx-ink-2"
         style={{
           flexShrink: 0,
           padding: "2px 8px",
-          borderRadius: 999,
-          border: "1px solid var(--nx-line, hsl(var(--border)))",
-          background: "var(--nx-raised, hsl(var(--muted)))",
           fontSize: 10,
           fontWeight: 600,
           letterSpacing: "0.3px",
-          color: "var(--nx-ink-2, hsl(var(--muted-foreground)))",
         }}
       >
-        {t("app.version") || "v1.0.0"}
+        {t("app.version")}
       </span>
     </footer>
   );

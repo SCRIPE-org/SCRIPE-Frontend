@@ -7,7 +7,7 @@
  * hairline edges, light collected on the active thing.
  *
  * ┌─────────────────────────────────────────────────────────────┐
- * │  TenantContextBanner (fixed, full-width, z-[70])            │
+ * │  TenantContextBanner (full-width, owned by dashboard-layout) │
  * ├──────┬─────────┬──────────────────────────────────────────  │
  * │ 64px │  240px  │  Topbar (56px)                             │
  * │  PRI │  PANEL  │  ──────────────────────────────────────── │

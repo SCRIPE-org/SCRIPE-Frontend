@@ -313,14 +313,10 @@ export const SETTING_ROWS: SettingRowMeta[] = [
     subject: "input",
     terms: ["inputStyle"],
   },
-  {
-    id: "select-style",
-    group: "components",
-    titleKey: "settings.selectStyle.title",
-    descKey: "settings.selectStyle.description",
-    subject: "select",
-    terms: ["selectStyle", "dropdown"],
-  },
+  // No "select-style" row: SelectStyle collapsed to a single member when the
+  // 26 invented skins were deleted, and a picker with one option is not a
+  // setting. The "select" StageSubject stays — the Stage still shows a real
+  // select, it is just no longer driven by a row of its own.
   {
     id: "table-style",
     group: "components",

@@ -12,8 +12,8 @@ import { TenantContextBanner } from "@core/ui/layout/shared/tenant-context-banne
 import { GracePeriodBanner } from "@core/components/GracePeriodBanner";
 import { PaymentWallDialog } from "@core/components/PaymentWallDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { useAppStore } from "@core/store/useAppStore";
-import { useWorkspace } from "@core/providers/workspace-provider";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { resolveFileUrl } from "@core/common/utils";
@@ -25,17 +25,16 @@ import { resolveFileUrl } from "@core/common/utils";
 import { NexusLayout } from "@core/ui/layout/nexus/nexus-layout";
 import { useIsFetching } from "@tanstack/react-query";
 
-// ── Content gate shimmer ────────────────────────────────────────────────────
+// ── Content gate fallback ───────────────────────────────────────────────────
 // Shown on page refresh while the settings/branding/routes gates settle (see
 // shouldBlockContent below). Fresh logins get the richer welcome loader
-// instead. Lightweight pulse so the refresh path never flashes a blank frame.
-function LayoutLoadingShimmer() {
+// instead. This used to be a hand-built shimmer — a pulsing block above a
+// spinning block — which is two idle animations standing in for the one
+// loader the system already owns.
+function LayoutLoadingFallback() {
   return (
-    <div className="flex h-screen items-center justify-center bg-background">
-      <div className="flex animate-pulse flex-col items-center gap-3">
-        <div className="h-10 w-10 animate-spin rounded-full bg-muted" />
-        <div className="h-4 w-32 rounded bg-muted" />
-      </div>
+    <div className="flex h-screen items-center justify-center bg-nx-ground">
+      <LoadingSpinner />
     </div>
   );
 }
@@ -43,13 +42,8 @@ function LayoutLoadingShimmer() {
 function LoginWelcomeLoader() {
   const user = useAppStore((state) => state.user);
   const { t } = useI18n();
-  const { accentColor } = useWorkspace();
-  // Theme resolves in CSS via the --nx- token layer, not a JS isDark branch:
-  // --nx-accent/--nx-accent-fill already carry the correct light/dark value.
-  const accent = accentColor ?? "var(--nx-accent)";
 
   const avatarUrl = user ? resolveFileUrl(user.profileImageUrl) || undefined : undefined;
-  const avatarGradient = `linear-gradient(135deg, color-mix(in oklch, ${accent} 80%, transparent) 0%, var(--nx-accent-fill) 100%)`;
 
   const getInitials = () => {
     if (!user) return "U";
@@ -64,89 +58,43 @@ function LoginWelcomeLoader() {
     if (!user) return t("common.user");
     const firstName = user.firstName || "";
     const lastName = user.lastName || "";
-    return `${firstName} ${lastName}`.trim() || user.username || "User";
+    return `${firstName} ${lastName}`.trim() || user.username || t("common.user");
   };
 
   const nameForWelcome = user?.firstName || user?.username || t("common.user");
 
   return (
-    <div className="fixed inset-0 z-[9999] flex h-screen w-screen select-none flex-col items-center justify-center overflow-hidden bg-background">
-      <style>{`
-        @keyframes indeterminate-progress {
-          0% { left: -33%; width: 33%; }
-          50% { left: 33%; width: 50%; }
-          100% { left: 100%; width: 33%; }
-        }
-        .animate-indeterminate {
-          animation: indeterminate-progress 1.6s infinite ease-in-out;
-        }
-      `}</style>
+    <div className="fixed inset-0 z-modal flex h-screen w-screen select-none flex-col items-center justify-center overflow-hidden bg-nx-ground">
+      {/* Welcome card. The ambient accent wash and the injected keyframe bar
+          that used to live here were a second design system: a stylesheet
+          smuggled into a component, an indeterminate bar the user could not
+          tell apart from a stalled request, and a page-wide glow that spent
+          the signature on wallpaper. The card is now structure — a hairline
+          on a surface step — and the one lit thing is the avatar. */}
+      <div className="mx-4 flex w-full max-w-sm flex-col items-center justify-center rounded-nx-lg border border-nx-line bg-nx-surface p-8 shadow-nx-modal duration-nx-standard ease-nx-enter animate-in fade-in">
+        <Avatar className="h-24 w-24 border-2 border-nx-accent shadow-nx-glow">
+          {avatarUrl && <AvatarImage src={avatarUrl} alt={getDisplayName()} />}
+          <AvatarFallback
+            delayMs={600}
+            className="bg-nx-accent-fill text-3xl font-bold text-nx-on-fill duration-nx-standard ease-nx-enter animate-in fade-in"
+          >
+            {getInitials()}
+          </AvatarFallback>
+        </Avatar>
 
-      {/* Background ambient glow */}
-      <div
-        className="absolute h-96 w-96 rounded-full opacity-[0.08] blur-[100px] transition-all duration-1000"
-        style={{
-          background: accent,
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-        }}
-      />
-
-      {/* Glassmorphic Welcome Card */}
-      <div className="relative z-10 mx-4 flex w-full max-w-sm flex-col items-center justify-center rounded-2xl border border-border/40 bg-card/40 p-8 shadow-2xl backdrop-blur-md duration-500 animate-in fade-in">
-        {/* Avatar Ring glow — one-shot entrance, not an idle loop. It fires
-            once when the welcome card mounts and then sits still; a glow
-            that breathes forever behind a static avatar is decoration, not
-            a loading signal (the shimmer above and the progress bar below
-            are the real loading indicators on this screen). */}
-        <div className="relative flex items-center justify-center">
-          <div
-            className="absolute -inset-2 rounded-full opacity-35 blur-sm duration-nx-panel ease-nx-enter animate-in fade-in zoom-in-95 motion-reduce:zoom-in-100"
-            style={{
-              background: `radial-gradient(circle, ${accent} 0%, transparent 80%)`,
-            }}
-          />
-          <div
-            className="absolute -inset-1.5 rounded-full opacity-55"
-            style={{
-              border: `2px solid ${accent}`,
-            }}
-          />
-          <Avatar className="relative h-24 w-24 border-4 border-background shadow-xl">
-            {avatarUrl && <AvatarImage src={avatarUrl} alt={getDisplayName()} />}
-            <AvatarFallback
-              delayMs={600}
-              style={{ background: avatarGradient }}
-              className="text-3xl font-bold text-white duration-300 animate-in fade-in"
-            >
-              {getInitials()}
-            </AvatarFallback>
-          </Avatar>
-        </div>
-
-        {/* Text Details */}
-        <h2 className="mt-6 text-center text-2xl font-extrabold tracking-tight text-foreground">
+        <h2 className="mt-6 text-balance text-center text-xl font-bold leading-tight tracking-tight text-nx-ink">
           {getDisplayName()}
         </h2>
 
-        <p className="mt-3 text-center text-base font-semibold text-muted-foreground">
+        <p className="mt-3 text-pretty text-center text-sm leading-relaxed text-nx-ink-2">
           {t("common.welcomeBack", { name: nameForWelcome })}
         </p>
 
-        <p className="mt-1 text-center text-xs text-muted-foreground/75">
+        <p className="mt-1 text-center text-xs leading-relaxed text-nx-ink-3">
           {t("common.gettingReady")}
         </p>
 
-        {/* Premium Loading Progress Bar */}
-        <div className="relative mt-8 h-1 w-48 overflow-hidden rounded-full bg-muted">
-          <div
-            className="animate-indeterminate absolute bottom-0 left-0 top-0 rounded-full"
-            style={{
-              background: accent,
-            }}
-          />
-        </div>
+        <LoadingSpinner size="sm" showText={false} className="mt-4 py-0" />
       </div>
     </div>
   );
@@ -192,7 +140,8 @@ function DashboardLayoutContent({
   const settings = useSettings();
   const { isLoading: isBrandingLoading } = useTenantBranding();
   const [sidebarOpen, setSidebarOpen] = useState(settings.collapsibleSidebar ? false : true);
-  const { direction } = useI18n();
+  // No useI18n() here: this component renders no copy of its own and NexusLayout
+  // reads the direction itself, so the subscription was a re-render for nothing.
   const { collapsibleSidebar } = settings;
 
   // Sync sidebar when collapsibleSidebar setting changes
@@ -312,8 +261,8 @@ function DashboardLayoutContent({
   }, [isFreshLogin, showWelcomeOverlay]);
 
   if (shouldBlockContent) {
-    // Fresh login → premium welcome card; Page refresh → lightweight shimmer
-    return isFreshLogin ? <LoginWelcomeLoader /> : <LayoutLoadingShimmer />;
+    // Fresh login → welcome card; Page refresh → the shared loader
+    return isFreshLogin ? <LoginWelcomeLoader /> : <LayoutLoadingFallback />;
   }
 
   // ── Compute layout content (rendered below the tenant banner) ──

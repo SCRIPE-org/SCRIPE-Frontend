@@ -59,12 +59,6 @@ const REDUCED_MS = 140;
 const VEIL_OPACITY_CLASS = "opacity-60";
 
 /**
- * The veil colour: the shell's own ground, with a shadcn fallback for any
- * mount outside the nexus token scope. Flat — never a gradient.
- */
-const VEIL = "var(--nx-ground, hsl(var(--background)))";
-
-/**
  * Shared reduced-motion gate for the nexus shell.
  *
  * True when either the OS asks for reduced motion (prefers-reduced-motion) or
@@ -172,8 +166,15 @@ export function NexusTransitionOverlay() {
         // z-toast: the veil is transient and non-interactive, and has to paint
         // above the z-modal workspace loader while it runs.
         "pointer-events-none fixed inset-0 z-toast",
+        // Flat fill from the bridge. No gradient, no origin, no
+        // reading-direction mirror — there is no longer anything directional
+        // to mirror.
+        "bg-nx-ground",
         // Opacity is the only animated property — no transform, no filter, no
-        // gradient position. Nothing expands, so nothing radiates.
+        // gradient position. Nothing expands, so nothing radiates. There is
+        // deliberately no motion-reduce:transition-none here: a crossfade is
+        // the one movement reduced motion keeps, so the preference shortens
+        // the dip (below) instead of snapping the veil on and off.
         "transition-opacity",
         lit ? VEIL_OPACITY_CLASS : "opacity-0",
         // Ease-OUT in both directions. The exit curve (ease-nx-exit) is an
@@ -181,11 +182,6 @@ export function NexusTransitionOverlay() {
         // we are removing. A symmetrical ease-out reads as a calm dip.
         reducedMotion ? "duration-nx-micro ease-nx-enter" : "duration-nx-standard ease-nx-enter"
       )}
-      style={{
-        // Flat fill. No gradient, no origin, no reading-direction mirror —
-        // there is no longer anything directional to mirror.
-        backgroundColor: VEIL,
-      }}
     />
   );
 }

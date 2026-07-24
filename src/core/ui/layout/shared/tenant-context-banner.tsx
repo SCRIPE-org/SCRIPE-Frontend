@@ -17,12 +17,26 @@ import { cn } from "@core/common/utils";
  * CSS variable set on <html>.
  *
  * Shows either:
- *  - An impersonation warning (red) with a Stop button
- *  - A tenant drilldown indicator (blue) with an Exit button
+ *  - An impersonation warning with a Stop button
+ *  - A tenant drilldown indicator with an Exit button
  *  - Nothing when neither state is active
+ *
+ * Severity speaks through the glyph, the hairline and the wash — the copy stays
+ * neutral ink. The banner used to tint its own text with the status hue, which
+ * puts red type on a red wash and makes the one line the user must read the
+ * least readable thing on the page.
  */
+
+/** Relative (in-flow), NOT sticky, so the Nexus flex layout can calculate the
+ *  remaining height without overlapping the banner. */
+const BANNER_SHELL =
+  "relative z-raised flex w-full shrink-0 items-center justify-center gap-3 border-b px-4 py-2 text-nx-ink";
+
+/** 32px keeps the control on the hit-target floor inside a 2-unit-tall strip. */
+const BANNER_ACTION = "h-8 text-xs";
+
 export function TenantContextBanner() {
-  const { t, direction } = useI18n();
+  const { t } = useI18n();
   const { currentTenant, exitTenantWorld } = useTenantContext();
   const { isImpersonating, stopImpersonation } = useImpersonation();
   const router = useRouter();
@@ -54,20 +68,20 @@ export function TenantContextBanner() {
     return (
       <div
         ref={bannerRef}
-        className={cn(
-          // Use relative (in-flow) — NOT sticky — so Nexus flex layout can
-          // correctly calculate remaining height without overlap.
-          "relative z-10 flex w-full flex-shrink-0 items-center justify-center gap-3 border-b px-4 py-2",
-          "border-destructive/30 bg-destructive/10 text-destructive"
-        )}
+        role="status"
+        className={cn(BANNER_SHELL, "border-destructive/30 bg-destructive/10")}
       >
-        <UserCheck className="h-4 w-4 flex-shrink-0" />
-        <span className="text-sm font-medium">
-          {t("admin.impersonating") || "Impersonating User"}
-        </span>
-        <Button variant="destructive" size="sm" className="h-7 text-xs" onClick={stopImpersonation}>
-          <X className={cn("h-3 w-3", direction === "rtl" ? "ml-1" : "mr-1")} />
-          {t("common.stop") || "Stop"}
+        <UserCheck className="h-4 w-4 shrink-0 text-destructive" aria-hidden="true" />
+        <span className="text-sm font-medium">{t("chrome.tenantBanner.impersonating")}</span>
+        <Button
+          variant="destructive"
+          size="sm"
+          className={BANNER_ACTION}
+          aria-label={t("chrome.tenantBanner.stopImpersonation")}
+          onClick={stopImpersonation}
+        >
+          <X className="me-1 h-3 w-3" aria-hidden="true" />
+          {t("common.stop")}
         </Button>
       </div>
     );
@@ -76,33 +90,26 @@ export function TenantContextBanner() {
   // ── Tenant Drilldown Banner ──
   if (activeTenantId && currentTenant) {
     return (
-      <div
-        ref={bannerRef}
-        className={cn(
-          // Use relative (in-flow) — NOT sticky — so Nexus flex layout can
-          // correctly calculate remaining height without overlap.
-          "relative z-10 flex w-full flex-shrink-0 items-center justify-center gap-3 border-b px-4 py-2",
-          "border-info/30 bg-info/10 text-info"
-        )}
-      >
-        <Building2 className="h-4 w-4 flex-shrink-0" />
+      <div ref={bannerRef} role="status" className={cn(BANNER_SHELL, "border-info/30 bg-info/10")}>
+        <Building2 className="h-4 w-4 shrink-0 text-info" aria-hidden="true" />
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold uppercase opacity-70">
-            {t("tenant.context") || "Tenant Context"}
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+            {t("chrome.tenantBanner.tenantContext")}
           </span>
-          <span className="text-sm font-bold">{currentTenant.name}</span>
+          <span className="text-sm font-semibold">{currentTenant.name}</span>
         </div>
         <Button
           variant="outline"
           size="sm"
-          className="h-7 border-info/30 text-xs hover:bg-info/20"
+          className={BANNER_ACTION}
+          aria-label={t("chrome.tenantBanner.exitTenantContext")}
           onClick={() => {
             exitTenantWorld();
             router.push("/tenants");
           }}
         >
-          <X className={cn("h-3 w-3", direction === "rtl" ? "ml-1" : "mr-1")} />
-          {t("common.exit") || "Exit"}
+          <X className="me-1 h-3 w-3" aria-hidden="true" />
+          {t("common.exit")}
         </Button>
       </div>
     );

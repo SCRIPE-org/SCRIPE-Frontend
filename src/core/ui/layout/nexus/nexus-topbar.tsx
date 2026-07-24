@@ -131,6 +131,10 @@ export function NexusTopbar({
       : (BRAND?.name ?? "Platform"));
 
   // ── Background — derived from cardStyle setting, surface token only ───────
+  // Glass is the ONE opt-in frosted surface in this system, so it keeps its
+  // blur. The default branch used to be "subtle glass" — a frost nobody asked
+  // for, applied to the bar every page scrolls under. Default and solid are the
+  // same thing now: an opaque surface step behind a hairline.
   const bgStyle = (() => {
     if (cardStyle === "glass") {
       return {
@@ -139,17 +143,9 @@ export function NexusTopbar({
         WebkitBackdropFilter: "blur(16px)",
       };
     }
-    if (cardStyle === "solid") {
-      return {
-        background: "var(--nx-surface, hsl(var(--card)))",
-        backdropFilter: "none",
-      };
-    }
-    // Default — subtle glass
     return {
-      background: "color-mix(in oklch, var(--nx-surface, hsl(var(--card))) 50%, transparent)",
-      backdropFilter: "blur(12px)",
-      WebkitBackdropFilter: "blur(12px)",
+      background: "var(--nx-surface, hsl(var(--card)))",
+      backdropFilter: "none",
     };
   })();
 
@@ -189,7 +185,7 @@ export function NexusTopbar({
         isRTL={isRTL}
         isPanelCollapsed={isPanelCollapsed}
         collapsible={collapsibleSidebar}
-        ariaLabel={t("navigation.togglePanel") || "Toggle navigation"}
+        ariaLabel={t("navigation.togglePanel")}
         onToggle={() => {
           if (typeof window !== "undefined" && window.innerWidth < 1024) {
             onMobileMenuOpen();
@@ -225,7 +221,7 @@ export function NexusTopbar({
 
         <TopbarSearchButton
           onOpenSearch={onOpenSearch}
-          placeholder={t("navigation.searchPlaceholder") || "Search anything…"}
+          placeholder={t("navigation.searchPlaceholder")}
         />
 
         {!isOnHome && (
@@ -239,8 +235,8 @@ export function NexusTopbar({
         )}
 
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <ThemeSwitcher buttonClassName="h-[33px] w-[33px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-[9px] transition-all duration-nx-micro" />
-          <LanguageSwitcher buttonClassName="h-[33px] w-[46px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-[9px] transition-all duration-nx-micro" />
+          <ThemeSwitcher buttonClassName="h-[33px] w-[33px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
+          <LanguageSwitcher buttonClassName="h-[33px] w-[46px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
         </div>
 
         <TopbarMobileControls showNotifications={showNotifications} />

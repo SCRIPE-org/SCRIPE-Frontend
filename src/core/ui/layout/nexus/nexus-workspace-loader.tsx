@@ -3,27 +3,42 @@
 /**
  * NexusWorkspaceLoader
  *
- * A full-screen overlay that appears when a user switches workspaces (e.g.
- * entering the CRM module). It:
- *   1. Sweeps in with the workspace accent
- *   2. Shows the module icon + name + a progress bar
- *   3. Exits once the navigation settles
+ * The full-screen wait when a user switches workspaces. It is the one place in
+ * the product where somebody stares at a screen with nothing else on it, so it
+ * has to read as deliberate — "we are opening Academy" — rather than as a
+ * stall.
  *
- * Controlled externally via the `show` prop so the parent can
- * drive mount/unmount timing around router.push().
+ * Deliberate means: name the destination. The abbreviation badge, the
+ * "Launching" label and the workspace name are the content; the loader itself
+ * is the shared LoadingSpinner, sized down. That label used to be a bare
+ * English string, which meant the Arabic build's most exposed screen was the
+ * one screen that shipped untranslated.
+ *
+ * WHAT WAS REMOVED, AND WHY
+ *  - An injected stylesheet carrying a nexus-loader-pulse keyframe, driving a
+ *    halo that breathed forever behind the badge. A stylesheet smuggled into a
+ *    component is a second, invisible design system, and an infinite idle
+ *    animation is indistinguishable from a hung request.
+ *  - A hand-rolled progress bar whose fill was derived from the component's own
+ *    phase, not from anything the network was doing. Invented progress is worse
+ *    than no progress; the sanctioned loader says "working" honestly.
+ *  - A 20px backdrop-filter over the entire viewport — the most expensive thing
+ *    in the sequence, and a visual effect rather than motion. The veil is now a
+ *    flat sheet of the shell's own ground.
  *
  * Colours come from the --nx- token layer. The `accentColor` prop is kept in
  * the interface for API stability (the transition hook still supplies it) but
- * is no longer consumed for styling — the workspace hue vars on <html> drive
+ * is not consumed for styling — the workspace hue vars on <html> drive
  * --nx-accent, so the tokens already carry the launching workspace's colour.
  *
- * The icon badge is the ONE glowing element on this screen; the progress bar
- * animates transform only, with its origin following reading direction.
+ * The badge is the ONE element on this screen wearing --nx-glow. That is the
+ * whole budget, spent on the thing the user is waiting for.
  */
 
 import React, { useEffect, useRef, useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { cn } from "@core/common/utils";
 import { useNexusReducedMotion } from "./nexus-transition";
 
 interface NexusWorkspaceLoaderProps {
@@ -39,24 +54,24 @@ interface NexusWorkspaceLoaderProps {
 type Phase = "idle" | "entering" | "visible" | "exiting";
 
 const ENTER_MS = 180;
-const MIN_VISIBLE_MS = 250; // minimum time to show the loader (UX feel)
 const EXIT_MS = 200;
-
-/** Accent token with a shadcn fallback so a stray mount outside nexus still renders. */
-const ACCENT = "var(--nx-accent, hsl(var(--primary)))";
 
 export function NexusWorkspaceLoader({
   show,
-  workspaceName = "Loading…",
+  workspaceName,
   workspaceAbbr,
   onExited,
 }: NexusWorkspaceLoaderProps) {
-  const { direction } = useI18n();
+  const { t } = useI18n();
   const reducedMotion = useNexusReducedMotion();
   const [phase, setPhase] = useState<Phase>("idle");
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
-  const abbr = workspaceAbbr ?? workspaceName.slice(0, 2).toUpperCase();
+  // A workspace switch always has a name; the fallback covers the mount that
+  // happens before the target resolves, and it is translated like everything
+  // else the user can read.
+  const displayName = workspaceName ?? t("common.loading");
+  const abbr = workspaceAbbr ?? displayName.slice(0, 2).toUpperCase();
 
   // Clear all pending timers
   const clearAll = () => {
@@ -91,154 +106,52 @@ export function NexusWorkspaceLoader({
 
   if (phase === "idle") return null;
 
-  // ── Progress bar — transform-only, origin follows reading direction ───────
-  const barScale = phase === "entering" ? 0.3 : phase === "visible" ? 0.75 : 1;
-  const barDuration =
-    phase === "entering"
-      ? `${ENTER_MS}ms`
-      : phase === "visible"
-        ? `${MIN_VISIBLE_MS}ms`
-        : `${EXIT_MS}ms`;
-
-  const opacity = phase === "exiting" ? 0 : 1;
+  const isExiting = phase === "exiting";
+  // Reduced motion keeps the crossfade and drops the settle.
   const scale = phase === "entering" && !reducedMotion ? 0.96 : 1;
 
   return (
     <div
+      role="status"
+      aria-busy={!isExiting}
       aria-live="polite"
-      aria-label={`Loading ${workspaceName}`}
-      className="fixed inset-0 z-modal flex flex-col items-center justify-center"
-      style={{
-        gap: 24,
-        // Background — near-opaque ground glass
-        background: "color-mix(in oklch, var(--nx-ground, hsl(var(--background))) 93%, transparent)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-        // Transition — opacity crossfade stays even under reduced motion
-        opacity,
-        transition: `opacity ${phase === "exiting" ? EXIT_MS : ENTER_MS}ms ${
-          phase === "exiting"
-            ? "var(--nx-ease-exit, cubic-bezier(0.3, 0, 0.8, 0.15))"
-            : "var(--nx-ease-enter, cubic-bezier(0.23, 1, 0.32, 1))"
-        }`,
-        pointerEvents: phase === "exiting" ? "none" : "all",
-      }}
+      aria-label={t("shell.workspaceLoader.launchingNamed", { name: displayName })}
+      className={cn(
+        "fixed inset-0 z-modal flex flex-col items-center justify-center bg-nx-ground",
+        "transition-opacity motion-reduce:transition-none",
+        isExiting
+          ? "pointer-events-none opacity-0 duration-nx-standard ease-nx-exit"
+          : "opacity-100 duration-nx-standard ease-nx-enter"
+      )}
     >
-      {/* ── Module icon badge ── */}
       <div
-        style={{
-          transform: `scale(${scale})`,
-          transition: reducedMotion
-            ? "none"
-            : `transform ${ENTER_MS}ms var(--nx-ease-enter, cubic-bezier(0.23, 1, 0.32, 1))`,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 20,
-        }}
+        className="flex flex-col items-center gap-5 transition-transform duration-nx-standard ease-nx-enter motion-reduce:transition-none"
+        style={{ transform: `scale(${scale})` }}
       >
-        {/* Glow ring + icon */}
-        <div style={{ position: "relative" }}>
-          {/* Outer pulse halo — static under reduced motion */}
-          <div
-            style={{
-              position: "absolute",
-              inset: -16,
-              borderRadius: "50%",
-              background: `radial-gradient(circle, color-mix(in oklch, ${ACCENT} 19%, transparent) 0%, transparent 70%)`,
-              animation: reducedMotion ? "none" : "nexus-loader-pulse 1.6s ease-in-out infinite",
-              opacity: reducedMotion ? 0.6 : undefined,
-            }}
-          />
-          {/* Icon circle — the one glowing element on this screen.
-              z-raised lifts it above its absolutely-positioned pulse halo. */}
-          <div
-            className="relative z-raised"
-            style={{
-              width: 80,
-              height: 80,
-              borderRadius: "50%",
-              background: `linear-gradient(135deg, color-mix(in oklch, ${ACCENT} 13%, transparent), color-mix(in oklch, ${ACCENT} 27%, transparent))`,
-              border: `2px solid color-mix(in oklch, ${ACCENT} 38%, transparent)`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 28,
-              fontWeight: 700,
-              color: ACCENT,
-              letterSpacing: "-1px",
-              boxShadow: `var(--nx-glow, 0 0 0 0 transparent), inset 0 1px 0 color-mix(in oklch, ${ACCENT} 25%, transparent)`,
-            }}
-          >
-            {abbr}
-          </div>
-        </div>
-
-        {/* Workspace name */}
-        <div style={{ textAlign: "center" }}>
-          <div
-            style={{
-              fontSize: 13,
-              fontWeight: 500,
-              color: "var(--nx-ink-3, hsl(var(--muted-foreground)))",
-              letterSpacing: "2px",
-              textTransform: "uppercase",
-              marginBottom: 6,
-            }}
-          >
-            Launching
-          </div>
-          <div
-            style={{
-              fontSize: 22,
-              fontWeight: 700,
-              color: "var(--nx-ink, hsl(var(--foreground)))",
-              letterSpacing: "-0.5px",
-            }}
-          >
-            {workspaceName}
-          </div>
-        </div>
-
-        {/* Progress track */}
+        {/* Destination badge — the single lit element on the screen */}
         <div
-          style={{
-            width: 200,
-            height: 3,
-            borderRadius: 99,
-            background: "var(--nx-line, hsl(var(--border)))",
-            overflow: "hidden",
-          }}
+          aria-hidden="true"
+          className="flex h-20 w-20 items-center justify-center rounded-full border border-nx-accent bg-nx-accent-wash text-2xl font-semibold tracking-tight text-nx-accent shadow-nx-glow"
         >
-          <div
-            style={{
-              height: "100%",
-              width: "100%",
-              borderRadius: 99,
-              background: `linear-gradient(${direction === "rtl" ? "270deg" : "90deg"}, color-mix(in oklch, ${ACCENT} 60%, transparent), ${ACCENT})`,
-              transform: `scaleX(${barScale})`,
-              transformOrigin: direction === "rtl" ? "100% 50%" : "0% 50%",
-              // Reduced motion: the bar snaps between steps instead of gliding
-              transition: reducedMotion
-                ? "none"
-                : `transform ${barDuration} var(--nx-ease-enter, cubic-bezier(0.23, 1, 0.32, 1))`,
-            }}
-          />
+          {abbr}
         </div>
 
-        {/* Branded loading animation */}
-        <div className="flex items-center justify-center">
-          <LoadingSpinner size="sm" showText={false} className="min-h-0" />
+        <div className="flex flex-col items-center gap-1.5 text-center">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+            {t("shell.workspaceLoader.launching")}
+          </span>
+          <span className="text-balance text-xl font-bold leading-tight tracking-tight text-nx-ink">
+            {displayName}
+          </span>
         </div>
+
+        {/* aria-hidden: the overlay above is already the live region for this
+            wait, and LoadingSpinner carries its own role="status". Two nested
+            status regions announce the same wait twice. */}
+        <span aria-hidden="true">
+          <LoadingSpinner size="sm" showText={false} className="min-h-0 py-0" />
+        </span>
       </div>
-
-      {/* Keyframes injected via a style tag */}
-      <style>{`
-        @keyframes nexus-loader-pulse {
-          0%, 100% { opacity: 0.5; transform: scale(1); }
-          50%       { opacity: 1;   transform: scale(1.12); }
-        }
-      `}</style>
     </div>
   );
 }

@@ -258,34 +258,12 @@ export type DatePickerStyle =
   | "elegant";
 export type CalendarStyle = "default" | "modern" | "glass" | "elegant" | "minimal" | "dark";
 
-export type SelectStyle =
-  | "default"
-  | "modern"
-  | "glass"
-  | "outlined"
-  | "filled"
-  | "minimal"
-  | "elegant"
-  | "professional"
-  | "neon"
-  | "gradient"
-  | "neumorphism"
-  | "cyberpunk"
-  | "luxury"
-  | "aurora"
-  | "matrix"
-  | "diamond"
-  | "holographic"
-  | "cosmic"
-  | "liquid"
-  | "crystal"
-  | "plasma"
-  | "quantum"
-  | "nebula"
-  | "prism"
-  | "stellar"
-  | "vortex"
-  | "phoenix";
+// Twenty-six invented skins collapsed to one token surface — the select now
+// renders the same field language as Input, which is the whole point of a
+// design system. This union is checked against PERSISTED values, so every
+// retired name is normalised to "default" by the merge-engine migration
+// (RETIRED_SELECT_STYLES) before it can reach a merge.
+export type SelectStyle = "default";
 
 export type SwitchStyle =
   | "default"

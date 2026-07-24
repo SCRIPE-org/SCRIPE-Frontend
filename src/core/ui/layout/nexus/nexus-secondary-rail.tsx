@@ -72,9 +72,10 @@ export function NexusSecondaryRail({
     opacity: effectiveCollapsed ? 0 : 1,
     height: "100%",
     minHeight: 0, // critical: allows flex child to scroll
-    background: "color-mix(in oklch, var(--nx-surface, hsl(var(--card))) 65%, transparent)",
-    backdropFilter: "blur(20px)",
-    WebkitBackdropFilter: "blur(20px)",
+    // An opaque surface step behind a hairline. The 65%-transparent slab needed
+    // a 20px backdrop blur to stay legible, and that blur repainted the whole
+    // rail on every content scroll behind it.
+    background: "var(--nx-surface, hsl(var(--card)))",
     borderInlineEnd: effectiveCollapsed ? "none" : "1px solid var(--nx-line, hsl(var(--border)))",
     display: "flex",
     flexDirection: "column",
@@ -118,14 +119,11 @@ export function NexusSecondaryRail({
       {/* Mobile overlay */}
       {mobileOpen && !effectiveCollapsed && (
         <>
+          {/* The scrim pushes the page back by taking light away — that is the
+              whole mechanism, so it carries no blur. */}
           <div
-            className="fixed inset-0 z-overlay lg:hidden"
-            style={{
-              background: "var(--scrim)",
-              backdropFilter: "blur(8px)",
-              WebkitBackdropFilter: "blur(8px)",
-              transition: "opacity var(--nx-t-panel, 300ms) ease",
-            }}
+            className="fixed inset-0 z-overlay bg-scrim lg:hidden"
+            style={{ transition: "opacity var(--nx-t-panel, 300ms) ease" }}
             onClick={onMobileClose}
             aria-hidden
           />
@@ -134,10 +132,9 @@ export function NexusSecondaryRail({
             style={{
               insetInlineStart: 64, // Logical property matching primary rail mobile width
               width: 260,
-              background:
-                "color-mix(in oklch, var(--nx-surface, hsl(var(--card))) 92%, transparent)",
-              backdropFilter: "blur(24px)",
-              WebkitBackdropFilter: "blur(24px)",
+              // Floating panel → the popover surface, opaque. It read as glass
+              // only because it was 92% of a surface behind a 24px blur.
+              background: "var(--nx-popover, hsl(var(--card)))",
               borderInlineEnd: "1px solid var(--nx-line, hsl(var(--border)))", // Logical property
             }}
           >
