@@ -5,8 +5,10 @@
  * NAVIGATION PATH UTILITIES — Single Source of Truth
  * ============================================================================
  *
- * All active-state logic centralised here.  Every sidebar / header component
- * imports these instead of defining its own copy.
+ * All active-state logic centralised here. After the one-shell collapse these
+ * live in shared/ (they are shell-agnostic path helpers, never layout markup):
+ * the nexus rails/topbar and the shared sidebar/nav-renderer all import them
+ * instead of defining their own copy.
  *
  * RULES:
  *   1. Leaf items use EXACT match  (pathname === href)

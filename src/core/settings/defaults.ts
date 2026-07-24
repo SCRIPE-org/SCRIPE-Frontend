@@ -26,12 +26,12 @@ export const defaultSettings: Settings = {
   backgroundMode: "preset",
   gradientStartColor: "",
   gradientEndColor: "",
-  // Nexus is the platform default. `scripe` (the EDGE shell) was briefly the
-  // default and was reverted: it shipped without an app launcher, ignored the
-  // whole settings provider, and hid locked workspaces instead of offering the
-  // upgrade path. It stays selectable in Settings → Layouts → Workspace, and
-  // becomes the default again only once it reaches parity with nexus and a
-  // human has actually used it.
+  // Nexus is the platform default and, since Wave G, the only shell. The
+  // multi-layout system (the reverted `scripe`/EDGE shell plus ~50 others) was
+  // retired: nexus is the single workspace shell governed entirely by the
+  // settings provider tokens/attributes. Any stored non-nexus layoutTemplate is
+  // normalised to "nexus" by the merge-engine migration, so no existing user
+  // breaks.
   layoutTemplate: "nexus",
   cardStyle: "default",
   animationLevel: "moderate",

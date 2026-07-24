@@ -10,12 +10,8 @@
  * Sub-components:
  *   - ButtonStyleSection: button radius styles (8 options)
  *   - TreeStyleSection: tree/org hierarchy styles (2 surviving options w/ previews)
- *   - NavigationStyleSection: navigation menu styles (4 options; renders only
- *     for the navigation layout — the one shell that honours it)
  *   - DatePickerStyleSection: datepicker visual styles (2 surviving options)
  *   - CalendarStyleSection: calendar popup styles (2 surviving options)
- *   - IconStyleSection: icon rendering styles (4 options; renders only for
- *     the navigation layout)
  *   - InputStyleSection: input field styles (4 options)
  *   - TableStyleSection: data table styles (11 options w/ previews)
  *   - HoverEffectsSection: hover type + intensity + preview
@@ -26,14 +22,18 @@
  *   - TooltipStyleSection: tooltip styles (8 options w/ live tooltip preview)
  *   - ModalStyleSection: modal styles (8 options w/ previews + test buttons)
  *   - SelectStyleSection: unified select component showcase (18 style demos)
+ *
+ * Wave G: NavigationStyleSection and IconStyleSection were retired. Both knobs
+ * (navigationStyle, iconStyle) were only ever honoured by the navigation
+ * layout, which was removed in the one-shell collapse to nexus. With no
+ * rendering surface left to read them, their pickers were dead UI, so they were
+ * deleted rather than left rendering nothing.
  */
 
 import { ButtonStyleSection } from "./components-tab/button-style-section";
 import { TreeStyleSection } from "./components-tab/tree-style-section";
-import { NavigationStyleSection } from "./components-tab/navigation-style-section";
 import { DatePickerStyleSection } from "./components-tab/datepicker-style-section";
 import { CalendarStyleSection } from "./components-tab/calendar-style-section";
-import { IconStyleSection } from "./components-tab/icon-style-section";
 import { InputStyleSection } from "./components-tab/input-style-section";
 import { TableStyleSection } from "./components-tab/table-style-section";
 import { HoverEffectsSection } from "./components-tab/hover-effects-section";
@@ -50,10 +50,8 @@ export function ComponentsTab() {
     <>
       <ButtonStyleSection />
       <TreeStyleSection />
-      <NavigationStyleSection />
       <DatePickerStyleSection />
       <CalendarStyleSection />
-      <IconStyleSection />
       <InputStyleSection />
       <TableStyleSection />
       <HoverEffectsSection />

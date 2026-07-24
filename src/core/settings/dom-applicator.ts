@@ -22,7 +22,8 @@ const DATA_ATTR_MAP: Partial<Record<keyof Settings, string>> = {
   lightBackgroundTheme: "data-light-bg-theme",
   darkBackgroundTheme: "data-dark-bg-theme",
   shadowIntensity: "data-shadow",
-  layoutTemplate: "data-layout",
+  // layoutTemplate is intentionally NOT mapped here — data-layout is written
+  // unconditionally as "nexus" below (belt-and-suspenders, see applySettingsToDOM).
   cardStyle: "data-card-style",
   animationLevel: "data-animation",
   borderRadius: "data-radius",
@@ -108,6 +109,13 @@ export function applySettingsToDOM(settings: Settings): void {
       const value = settings[key as keyof Settings];
       root.setAttribute(attr, typeof value === "boolean" ? value.toString() : String(value));
     }
+
+    // 1b. Layout is now nexus-only. The multi-layout system was retired, so
+    //     data-layout is written unconditionally as "nexus" rather than echoing
+    //     settings.layoutTemplate — even a corrupt stored value that somehow
+    //     bypassed the merge-engine migration lands on the one real shell. The
+    //     --nx- tokens are global, so this is defence in depth.
+    root.setAttribute("data-layout", "nexus");
 
     // 2. Background mode ("custom" was culled — preset and gradient remain)
     const bgMode = settings.backgroundMode || "preset";

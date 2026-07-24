@@ -9,7 +9,7 @@ import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@core/ui/collapsible";
 import { isNavigationItemActive, type NavigationItem } from "@core/config/navigation";
-import { isMatchWithFallback } from "@core/ui/layout/navigation/nav-utils";
+import { isMatchWithFallback } from "./nav-utils";
 import { useDynamicNavigation } from "@core/ui/navigation/dynamic-navigation";
 
 // ---------------------------------------------------------------------------

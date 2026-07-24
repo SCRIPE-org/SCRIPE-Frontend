@@ -11,7 +11,7 @@ import {
   PanelMenuIconRTL,
   PanelCollapseIcon,
   PanelCollapseIconRTL,
-} from "@core/ui/layout/navigation/nav-icons";
+} from "@core/ui/layout/shared/nav-icons";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";

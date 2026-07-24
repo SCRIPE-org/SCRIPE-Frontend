@@ -123,65 +123,11 @@ export type DarkGradientTheme =
 
 // ── Layout ────────────────────────────────────────────────
 
-export type LayoutTemplate =
-  | "modern"
-  | "minimal"
-  | "classic"
-  | "compact"
-  | "floating"
-  | "elegant"
-  | "navigation"
-  | "tabbed"
-  | "dual"
-  | "command"
-  | "stacked"
-  | "hud"
-  | "dock"
-  | "executive"
-  | "magazine"
-  | "spotlight"
-  | "glassmorphism"
-  | "galaxy"
-  | "neon"
-  | "retro"
-  | "aurora"
-  | "rail"
-  | "newspaper"
-  | "cinema"
-  | "vault"
-  // Batch 1 — Navigation Innovations
-  | "bottombar"
-  | "megamenu"
-  | "breadcrumb"
-  | "ribbon"
-  | "treeview"
-  | "overlay"
-  // Batch 2 — Multi-Zone / Pro
-  | "hub"
-  | "wizard"
-  | "shelf"
-  | "collapseheader"
-  | "splitpane"
-  | "inbox"
-  // Batch 3 — More Pro Patterns
-  | "dualheader"
-  | "topside"
-  | "focus"
-  | "multipanel"
-  | "kanban"
-  | "bento"
-  // Batch 4 — Industry-Specific
-  | "chat"
-  | "map"
-  | "feed"
-  | "calendar"
-  | "crm"
-  | "terminal"
-  // Nexus — Dual-rail workspace layout (system default)
-  | "nexus"
-  /** EDGE shell — the SCRIPE design system made literal. Token-native, one
-   *  emitting element per screen, accent driven by the active workspace hue. */
-  | "scripe";
+// The multi-layout system was retired in favour of a single shell (nexus)
+// governed entirely by the settings provider tokens/attributes. Stored values
+// naming any of the old layouts are normalised to "nexus" by the merge-engine
+// migration, so this union stays a single member with no runtime breakage.
+export type LayoutTemplate = "nexus";
 
 // ── Component Styles ──────────────────────────────────────
 

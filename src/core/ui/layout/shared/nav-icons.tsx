@@ -4,11 +4,13 @@ import { cn } from "@core/common/utils";
 
 /**
  * ============================================================================
- * CUSTOM NAV ICONS — Extracted SVG panel toggle icons
+ * CUSTOM NAV ICONS — Panel toggle icons
  * ============================================================================
  *
- * These icons were originally inline in navigation-header.tsx (40+ lines).
- * Extracted here for reusability, testability, and clean component boundaries.
+ * SVG panel-toggle glyphs that survived the one-shell collapse as shared
+ * infrastructure: the nexus topbar consumes them to render its panel
+ * open/collapse affordances (LTR + RTL). Kept as standalone components for
+ * reusability and testability rather than inlined at each call site.
  * ============================================================================
  */
 

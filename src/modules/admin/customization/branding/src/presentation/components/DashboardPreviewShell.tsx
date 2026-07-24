@@ -1,11 +1,10 @@
-// FILE-EXCEPTION: file length
 // UI-EXCEPTION: compact studio layout
 /**
- * DashboardPreviewShell — Isolated dashboard layout preview for Customizer Studio.
+ * DashboardPreviewShell — Isolated dashboard shell preview for Customizer Studio.
  *
  * KEY ARCHITECTURE: Mirrors LoginPreviewShell pattern exactly.
  * - Has ZERO auth logic (no tokens, no API calls)
- * - Renders the REAL layout components (ClassicLayout, ModernLayout, etc.)
+ * - Previews the single nexus shell chrome (the product's one shell)
  * - Wrapped in its own SettingsProvider so settings changes apply instantly
  * - Design settings are injected via postMessage from the studio iframe parent
  * - Shows mock dashboard content (stat cards, charts, tables)
@@ -36,247 +35,6 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
-
-// ── Import REAL layout components ──
-import { NavigationLayout } from "@core/ui/layout/navigation/navigation-layout";
-import dynamic from "next/dynamic";
-
-const ClassicLayout = dynamic(
-  () =>
-    import("@core/ui/layout/classic/classic-layout").then((m) => ({ default: m.ClassicLayout })),
-  { ssr: false }
-);
-const CompactLayout = dynamic(
-  () =>
-    import("@core/ui/layout/compact/compact-layout").then((m) => ({ default: m.CompactLayout })),
-  { ssr: false }
-);
-const ElegantLayout = dynamic(
-  () =>
-    import("@core/ui/layout/elegant/elegant-layout").then((m) => ({ default: m.ElegantLayout })),
-  { ssr: false }
-);
-const FloatingLayout = dynamic(
-  () =>
-    import("@core/ui/layout/floating/floating-layout").then((m) => ({ default: m.FloatingLayout })),
-  { ssr: false }
-);
-const ModernLayout = dynamic(
-  () => import("@core/ui/layout/modern/modern-layout").then((m) => ({ default: m.ModernLayout })),
-  { ssr: false }
-);
-const MinimalLayout = dynamic(
-  () =>
-    import("@core/ui/layout/minimal/minimal-layout").then((m) => ({ default: m.MinimalLayout })),
-  { ssr: false }
-);
-const TabbedLayout = dynamic(
-  () => import("@core/ui/layout/tabbed/tabbed-layout").then((m) => ({ default: m.TabbedLayout })),
-  { ssr: false }
-);
-const DualLayout = dynamic(
-  () => import("@core/ui/layout/dual/dual-layout").then((m) => ({ default: m.DualLayout })),
-  { ssr: false }
-);
-const CommandLayout = dynamic(
-  () =>
-    import("@core/ui/layout/command/command-layout").then((m) => ({ default: m.CommandLayout })),
-  { ssr: false }
-);
-const StackedLayout = dynamic(
-  () =>
-    import("@core/ui/layout/stacked/stacked-layout").then((m) => ({ default: m.StackedLayout })),
-  { ssr: false }
-);
-const HUDLayout = dynamic(
-  () => import("@core/ui/layout/hud/hud-layout").then((m) => ({ default: m.HUDLayout })),
-  { ssr: false }
-);
-const DockLayout = dynamic(
-  () => import("@core/ui/layout/dock/dock-layout").then((m) => ({ default: m.DockLayout })),
-  { ssr: false }
-);
-const ExecutiveLayout = dynamic(
-  () =>
-    import("@core/ui/layout/executive/executive-layout").then((m) => ({
-      default: m.ExecutiveLayout,
-    })),
-  { ssr: false }
-);
-const MagazineLayout = dynamic(
-  () =>
-    import("@core/ui/layout/magazine/magazine-layout").then((m) => ({ default: m.MagazineLayout })),
-  { ssr: false }
-);
-const SpotlightLayout = dynamic(
-  () =>
-    import("@core/ui/layout/spotlight/spotlight-layout").then((m) => ({
-      default: m.SpotlightLayout,
-    })),
-  { ssr: false }
-);
-const GlassmorphismLayout = dynamic(
-  () =>
-    import("@core/ui/layout/glassmorphism/glassmorphism-layout").then((m) => ({
-      default: m.GlassmorphismLayout,
-    })),
-  { ssr: false }
-);
-const GalaxyLayout = dynamic(
-  () => import("@core/ui/layout/galaxy/galaxy-layout").then((m) => ({ default: m.GalaxyLayout })),
-  { ssr: false }
-);
-const NeonLayout = dynamic(
-  () => import("@core/ui/layout/neon/neon-layout").then((m) => ({ default: m.NeonLayout })),
-  { ssr: false }
-);
-const RetroLayout = dynamic(
-  () => import("@core/ui/layout/retro/retro-layout").then((m) => ({ default: m.RetroLayout })),
-  { ssr: false }
-);
-const AuroraLayout = dynamic(
-  () => import("@core/ui/layout/aurora/aurora-layout").then((m) => ({ default: m.AuroraLayout })),
-  { ssr: false }
-);
-const RailLayout = dynamic(
-  () => import("@core/ui/layout/rail/rail-layout").then((m) => ({ default: m.RailLayout })),
-  { ssr: false }
-);
-const NewspaperLayout = dynamic(
-  () =>
-    import("@core/ui/layout/newspaper/newspaper-layout").then((m) => ({
-      default: m.NewspaperLayout,
-    })),
-  { ssr: false }
-);
-const CinemaLayout = dynamic(
-  () => import("@core/ui/layout/cinema/cinema-layout").then((m) => ({ default: m.CinemaLayout })),
-  { ssr: false }
-);
-const VaultLayout = dynamic(
-  () => import("@core/ui/layout/vault/vault-layout").then((m) => ({ default: m.VaultLayout })),
-  { ssr: false }
-);
-const BottomBarLayout = dynamic(
-  () =>
-    import("@core/ui/layout/bottombar/bottombar-layout").then((m) => ({
-      default: m.BottomBarLayout,
-    })),
-  { ssr: false }
-);
-const MegaMenuLayout = dynamic(
-  () =>
-    import("@core/ui/layout/megamenu/megamenu-layout").then((m) => ({ default: m.MegaMenuLayout })),
-  { ssr: false }
-);
-const BreadcrumbLayout = dynamic(
-  () =>
-    import("@core/ui/layout/breadcrumb/breadcrumb-layout").then((m) => ({
-      default: m.BreadcrumbLayout,
-    })),
-  { ssr: false }
-);
-const RibbonLayout = dynamic(
-  () => import("@core/ui/layout/ribbon/ribbon-layout").then((m) => ({ default: m.RibbonLayout })),
-  { ssr: false }
-);
-const TreeViewLayout = dynamic(
-  () =>
-    import("@core/ui/layout/treeview/treeview-layout").then((m) => ({ default: m.TreeViewLayout })),
-  { ssr: false }
-);
-const OverlayLayout = dynamic(
-  () =>
-    import("@core/ui/layout/overlay/overlay-layout").then((m) => ({ default: m.OverlayLayout })),
-  { ssr: false }
-);
-const HubLayout = dynamic(
-  () => import("@core/ui/layout/hub/hub-layout").then((m) => ({ default: m.HubLayout })),
-  { ssr: false }
-);
-const WizardLayout = dynamic(
-  () => import("@core/ui/layout/wizard/wizard-layout").then((m) => ({ default: m.WizardLayout })),
-  { ssr: false }
-);
-const ShelfLayout = dynamic(
-  () => import("@core/ui/layout/shelf/shelf-layout").then((m) => ({ default: m.ShelfLayout })),
-  { ssr: false }
-);
-const CollapseHeaderLayout = dynamic(
-  () =>
-    import("@core/ui/layout/collapseheader/collapseheader-layout").then((m) => ({
-      default: m.CollapseHeaderLayout,
-    })),
-  { ssr: false }
-);
-const SplitPaneLayout = dynamic(
-  () =>
-    import("@core/ui/layout/splitpane/splitpane-layout").then((m) => ({
-      default: m.SplitPaneLayout,
-    })),
-  { ssr: false }
-);
-const InboxLayout = dynamic(
-  () => import("@core/ui/layout/inbox/inbox-layout").then((m) => ({ default: m.InboxLayout })),
-  { ssr: false }
-);
-const DualHeaderLayout = dynamic(
-  () =>
-    import("@core/ui/layout/dualheader/dualheader-layout").then((m) => ({
-      default: m.DualHeaderLayout,
-    })),
-  { ssr: false }
-);
-const TopSideLayout = dynamic(
-  () =>
-    import("@core/ui/layout/topside/topside-layout").then((m) => ({ default: m.TopSideLayout })),
-  { ssr: false }
-);
-const FocusLayout = dynamic(
-  () => import("@core/ui/layout/focus/focus-layout").then((m) => ({ default: m.FocusLayout })),
-  { ssr: false }
-);
-const MultiPanelLayout = dynamic(
-  () =>
-    import("@core/ui/layout/multipanel/multipanel-layout").then((m) => ({
-      default: m.MultiPanelLayout,
-    })),
-  { ssr: false }
-);
-const KanbanLayout = dynamic(
-  () => import("@core/ui/layout/kanban/kanban-layout").then((m) => ({ default: m.KanbanLayout })),
-  { ssr: false }
-);
-const BentoLayout = dynamic(
-  () => import("@core/ui/layout/bento/bento-layout").then((m) => ({ default: m.BentoLayout })),
-  { ssr: false }
-);
-const ChatLayout = dynamic(
-  () => import("@core/ui/layout/chat/chat-layout").then((m) => ({ default: m.ChatLayout })),
-  { ssr: false }
-);
-const MapLayout = dynamic(
-  () => import("@core/ui/layout/map/map-layout").then((m) => ({ default: m.MapLayout })),
-  { ssr: false }
-);
-const FeedLayout = dynamic(
-  () => import("@core/ui/layout/feed/feed-layout").then((m) => ({ default: m.FeedLayout })),
-  { ssr: false }
-);
-const CalendarLayout = dynamic(
-  () =>
-    import("@core/ui/layout/calendar/calendar-layout").then((m) => ({ default: m.CalendarLayout })),
-  { ssr: false }
-);
-const CRMLayout = dynamic(
-  () => import("@core/ui/layout/crm/crm-layout").then((m) => ({ default: m.CRMLayout })),
-  { ssr: false }
-);
-const TerminalLayout = dynamic(
-  () =>
-    import("@core/ui/layout/terminal/terminal-layout").then((m) => ({ default: m.TerminalLayout })),
-  { ssr: false }
-);
 
 // ── Valid settings keys whitelist (security hardening) ──
 const VALID_SETTINGS_KEYS = new Set([
@@ -355,7 +113,6 @@ export function DashboardPreviewShell() {
   // No localStorage writes, no events, no auto-save triggers.
   // The parent window's SettingsProvider is completely unaffected.
   const [previewOverrides, setPreviewOverrides] = useState<Partial<Settings>>({});
-  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   // Merge defaults with whatever the studio has sent via postMessage
   const mergedSettings = useMemo<Settings>(
@@ -451,228 +208,91 @@ export function DashboardPreviewShell() {
     return () => window.removeEventListener("message", handler);
   }, []);
 
-  // Render the correct layout, wrapped in an isolated SettingsContext
-  const layoutTemplate = mergedSettings.layoutTemplate;
-  const content = <MockDashboardContent />;
-
-  const withSidebar = (
-    Layout: React.ComponentType<{
-      children: React.ReactNode;
-      sidebarOpen: boolean;
-      onSidebarOpenChange: (open: boolean) => void;
-    }>
-  ) => (
-    <Layout sidebarOpen={sidebarOpen} onSidebarOpenChange={setSidebarOpen}>
-      {content}
-    </Layout>
-  );
-
-  const withoutSidebar = (Layout: React.ComponentType<{ children: React.ReactNode }>) => (
-    <Layout>{content}</Layout>
-  );
-
   /**
-   * Static preview of the two workspace shells (scripe / nexus).
+   * Static preview of the single nexus shell.
    *
-   * The real ScripeLayout and NexusLayout cannot be mounted here. This page sits
-   * under (auth) with no auth guard so that the Customizer can embed it in an
-   * iframe, which means there is no session: the shells' identity cluster mounts
-   * the notification bell and the account menu, and their navigation comes from
-   * the workspace provider, which is empty in this context.
+   * The real NexusLayout cannot be mounted here. This page sits under (auth)
+   * with no auth guard so that the Customizer can embed it in an iframe, which
+   * means there is no session: the shell's identity cluster mounts the
+   * notification bell and the account menu, and its navigation comes from the
+   * workspace provider, which is empty in this context.
    *
    * So the preview reproduces the chrome instead — real geometry (64px rail,
-   * 240px panel, 56px topbar) and real tokens, with the accent following the
-   * same --workspace-hue the live shell uses. It previews appearance, which is
-   * what the Customizer is for; the content area is the same mock content every
-   * other layout preview shows.
-   *
-   * Before this existed, "scripe" and "nexus" both fell through to the switch's
-   * default branch and silently previewed NavigationLayout — a different layout
-   * altogether, which made the Customizer actively misleading.
+   * 240px panel, 56px topbar) and real semantic tokens, with the accent
+   * following the shell's primary. It previews appearance, which is what the
+   * Customizer is for; the content area is the same mock content the shell
+   * would host.
    */
-  const workspaceShellPreview = (variant: "scripe" | "nexus") => {
-    const isEdge = variant === "scripe";
-    const surface = isEdge ? "var(--edge-sub, hsl(var(--muted)))" : "hsl(var(--card))";
-    const edge = isEdge ? "var(--edge-line, hsl(var(--border)))" : "hsl(var(--border))";
-    const accent = isEdge
-      ? "var(--edge-accent, hsl(var(--primary)))"
-      : "hsl(var(--primary))";
+  const surface = "hsl(var(--card))";
+  const edge = "hsl(var(--border))";
+  const accent = "hsl(var(--primary))";
+  const content = <MockDashboardContent />;
 
-    return (
+  const nexusShellPreview = (
+    <div className="flex h-full w-full overflow-hidden">
+      {/* Rail */}
       <div
-        className="flex h-full w-full overflow-hidden"
-        style={{ background: isEdge ? "var(--edge-void, hsl(var(--background)))" : undefined }}
+        className="flex shrink-0 flex-col items-center gap-2 py-3"
+        style={{ width: 64, background: surface, borderInlineEnd: `1px solid ${edge}` }}
       >
-        {/* Rail */}
-        <div
-          className="flex shrink-0 flex-col items-center gap-2 py-3"
-          style={{ width: 64, background: surface, borderInlineEnd: `1px solid ${edge}` }}
-        >
-          <div className="h-7 w-7 rounded-md" style={{ background: accent, opacity: 0.9 }} />
-          <div className="my-1 h-px w-6" style={{ background: edge }} />
-          {[0, 1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="h-9 w-9 rounded-[9px]"
-              style={{
-                background: i === 0 ? `color-mix(in oklch, ${accent} 16%, transparent)` : "transparent",
-                border: `1px solid ${i === 0 ? accent : "transparent"}`,
-              }}
-            />
-          ))}
-          <div className="mt-auto h-8 w-8 rounded-full" style={{ background: edge }} />
-        </div>
-
-        {/* Panel */}
-        <div
-          className="flex shrink-0 flex-col gap-1.5 p-3"
-          style={{ width: 240, background: surface, borderInlineEnd: `1px solid ${edge}` }}
-        >
-          <div className="mb-2 flex items-center gap-2 pb-3" style={{ borderBlockEnd: `1px solid ${edge}` }}>
-            <div className="h-6 w-6 rounded-[7px]" style={{ border: `1px solid ${accent}` }} />
-            <div className="h-2.5 w-24 rounded" style={{ background: edge }} />
-          </div>
-          {[0, 1, 2, 3, 4].map((i) => (
-            <div
-              key={i}
-              className="h-7 rounded-md"
-              style={{
-                background: i === 1 ? `color-mix(in oklch, ${accent} 12%, transparent)` : "transparent",
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Topbar + content */}
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="h-7 w-7 rounded-md" style={{ background: accent, opacity: 0.9 }} />
+        <div className="my-1 h-px w-6" style={{ background: edge }} />
+        {[0, 1, 2, 3].map((i) => (
           <div
-            className="flex shrink-0 items-center gap-2 px-4"
-            style={{ height: 56, borderBlockEnd: `1px solid ${edge}` }}
-          >
-            <div className="h-2.5 w-32 rounded" style={{ background: edge }} />
-          </div>
-          <div className="flex-1 overflow-auto">{content}</div>
-        </div>
+            key={i}
+            className="h-9 w-9 rounded-[9px]"
+            style={{
+              background:
+                i === 0 ? `color-mix(in oklch, ${accent} 16%, transparent)` : "transparent",
+              border: `1px solid ${i === 0 ? accent : "transparent"}`,
+            }}
+          />
+        ))}
+        <div className="mt-auto h-8 w-8 rounded-full" style={{ background: edge }} />
       </div>
-    );
-  };
 
-  const renderLayout = () => {
-    switch (layoutTemplate) {
-      case "scripe":
-        return workspaceShellPreview("scripe");
-      case "nexus":
-        return workspaceShellPreview("nexus");
-      case "classic":
-        return withSidebar(ClassicLayout);
-      case "compact":
-        return withSidebar(CompactLayout);
-      case "elegant":
-        return withSidebar(ElegantLayout);
-      case "floating":
-        return withSidebar(FloatingLayout);
-      case "modern":
-        return withSidebar(ModernLayout);
-      case "tabbed":
-        return withSidebar(TabbedLayout);
-      case "dual":
-        return withSidebar(DualLayout);
-      case "minimal":
-        return withoutSidebar(MinimalLayout);
-      case "command":
-        return withoutSidebar(CommandLayout);
-      case "stacked":
-        return withoutSidebar(StackedLayout);
-      case "hud":
-        return withoutSidebar(HUDLayout);
-      case "dock":
-        return withoutSidebar(DockLayout);
-      case "executive":
-        return withoutSidebar(ExecutiveLayout);
-      case "magazine":
-        return withoutSidebar(MagazineLayout);
-      case "spotlight":
-        return withoutSidebar(SpotlightLayout);
-      case "glassmorphism":
-        return withoutSidebar(GlassmorphismLayout);
-      case "galaxy":
-        return withoutSidebar(GalaxyLayout);
-      case "neon":
-        return withoutSidebar(NeonLayout);
-      case "retro":
-        return withoutSidebar(RetroLayout);
-      case "aurora":
-        return withoutSidebar(AuroraLayout);
-      case "rail":
-        return withoutSidebar(RailLayout);
-      case "newspaper":
-        return withoutSidebar(NewspaperLayout);
-      case "cinema":
-        return withoutSidebar(CinemaLayout);
-      case "vault":
-        return withoutSidebar(VaultLayout);
-      case "bottombar":
-        return withoutSidebar(BottomBarLayout);
-      case "megamenu":
-        return withoutSidebar(MegaMenuLayout);
-      case "breadcrumb":
-        return withoutSidebar(BreadcrumbLayout);
-      case "ribbon":
-        return withoutSidebar(RibbonLayout);
-      case "treeview":
-        return withoutSidebar(TreeViewLayout);
-      case "overlay":
-        return withoutSidebar(OverlayLayout);
-      case "hub":
-        return withoutSidebar(HubLayout);
-      case "wizard":
-        return withoutSidebar(WizardLayout);
-      case "shelf":
-        return withoutSidebar(ShelfLayout);
-      case "collapseheader":
-        return withoutSidebar(CollapseHeaderLayout);
-      case "splitpane":
-        return withoutSidebar(SplitPaneLayout);
-      case "inbox":
-        return withoutSidebar(InboxLayout);
-      case "dualheader":
-        return withoutSidebar(DualHeaderLayout);
-      case "topside":
-        return withoutSidebar(TopSideLayout);
-      case "focus":
-        return withoutSidebar(FocusLayout);
-      case "multipanel":
-        return withoutSidebar(MultiPanelLayout);
-      case "kanban":
-        return withoutSidebar(KanbanLayout);
-      case "bento":
-        return withoutSidebar(BentoLayout);
-      case "chat":
-        return withoutSidebar(ChatLayout);
-      case "map":
-        return withoutSidebar(MapLayout);
-      case "feed":
-        return withoutSidebar(FeedLayout);
-      case "calendar":
-        return withoutSidebar(CalendarLayout);
-      case "crm":
-        return withoutSidebar(CRMLayout);
-      case "terminal":
-        return withoutSidebar(TerminalLayout);
-      default:
-        return (
-          <NavigationLayout sidebarOpen={sidebarOpen} onSidebarOpenChange={setSidebarOpen}>
-            {content}
-          </NavigationLayout>
-        );
-    }
-  };
+      {/* Panel */}
+      <div
+        className="flex shrink-0 flex-col gap-1.5 p-3"
+        style={{ width: 240, background: surface, borderInlineEnd: `1px solid ${edge}` }}
+      >
+        <div
+          className="mb-2 flex items-center gap-2 pb-3"
+          style={{ borderBlockEnd: `1px solid ${edge}` }}
+        >
+          <div className="h-6 w-6 rounded-[7px]" style={{ border: `1px solid ${accent}` }} />
+          <div className="h-2.5 w-24 rounded" style={{ background: edge }} />
+        </div>
+        {[0, 1, 2, 3, 4].map((i) => (
+          <div
+            key={i}
+            className="h-7 rounded-md"
+            style={{
+              background:
+                i === 1 ? `color-mix(in oklch, ${accent} 12%, transparent)` : "transparent",
+            }}
+          />
+        ))}
+      </div>
 
-  // Wrap in isolated SettingsContext — layout components inside read from THIS
-  // provider, not the global one from AppProvider. Zero localStorage interaction.
+      {/* Topbar + content */}
+      <div className="flex min-w-0 flex-1 flex-col">
+        <div
+          className="flex shrink-0 items-center gap-2 px-4"
+          style={{ height: 56, borderBlockEnd: `1px solid ${edge}` }}
+        >
+          <div className="h-2.5 w-32 rounded" style={{ background: edge }} />
+        </div>
+        <div className="flex-1 overflow-auto">{content}</div>
+      </div>
+    </div>
+  );
+
+  // Wrap in isolated SettingsContext — content inside reads from THIS provider,
+  // not the global one from AppProvider. Zero localStorage interaction.
   return (
     <SettingsContext.Provider value={previewContextValue}>
-      {renderLayout()}
+      {nexusShellPreview}
     </SettingsContext.Provider>
   );
 }

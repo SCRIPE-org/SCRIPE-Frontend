@@ -2,7 +2,6 @@
 
 import { Check } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
-import { Switch } from "@core/ui/switch";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
@@ -12,9 +11,12 @@ import { cn } from "@core/common/utils";
 //
 // Wave C: the header-style and sidebar-style pickers were removed with their
 // culled fields — no CSS selector or live component ever read them; the
-// merge-engine migration drops any stored copies. Card style remains the one
-// live style here, and the dual-layout detail-panel toggle stays scoped to
-// the layout that honours it.
+// merge-engine migration drops any stored copies.
+//
+// Wave G: the dual-layout detail-panel toggle was dropped with the layout
+// picker — the "dual" shell no longer exists (the product collapsed to the
+// single nexus shell), so its gate could never fire. Card style is now the
+// sole live style control here.
 // ────────────────────────────────────────────
 export function StylesTab() {
   const { t } = useI18n();
@@ -38,30 +40,6 @@ export function StylesTab() {
 
   return (
     <div className="space-y-6">
-      {/* ── Dual Layout Options — only the dual layout renders this panel ── */}
-      {settings.layoutTemplate === "dual" && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("settings.dualLayout.title")}</CardTitle>
-            <CardDescription>{t("settings.dualLayout.description")}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between rounded-lg border p-4">
-              <div className="space-y-0.5">
-                <label className="text-sm font-medium">{t("settings.dualLayout.showPanel")}</label>
-                <p className="text-xs text-muted-foreground">
-                  {t("settings.dualLayout.showPanelDesc")}
-                </p>
-              </div>
-              <Switch
-                checked={settings.showDetailPanel}
-                onCheckedChange={settings.setShowDetailPanel}
-              />
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {/* ── Card Styles ── */}
       <Card>
         <CardHeader>

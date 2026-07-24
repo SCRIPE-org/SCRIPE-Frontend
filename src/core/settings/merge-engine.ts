@@ -139,6 +139,12 @@ const SURVIVOR_VALUES: Partial<Record<keyof Settings, readonly string[]>> = {
   treeStyle: ["lines", "cards"],
   datePickerStyle: ["default", "elegant"],
   calendarStyle: ["default", "elegant"],
+  // Wave G — the multi-layout system was retired; nexus is the only shell.
+  // No per-value LEGACY_VALUE_MAP entry is needed: every retired layout name
+  // ("modern", "scripe", "classic", … ~50 in all) falls through to the field
+  // default below, which is "nexus", so a user with any stored layoutTemplate
+  // resolves to nexus with no error.
+  layoutTemplate: ["nexus"],
 };
 
 const KNOWN_KEYS = new Set<string>(SETTINGS_KEYS);
