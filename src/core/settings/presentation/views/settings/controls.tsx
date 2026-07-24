@@ -324,7 +324,7 @@ export function ToggleRow({
   return (
     <div
       id={anchor}
-      className="flex scroll-mt-24 items-start justify-between gap-6 py-5"
+      className="flex scroll-mt-24 items-start justify-between gap-6 py-5 first:pt-1"
       onPointerEnter={() => aimAt(row.subject)}
       onPointerLeave={release}
       onFocus={() => aimAt(row.subject)}

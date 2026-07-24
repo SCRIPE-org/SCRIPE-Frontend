@@ -37,6 +37,12 @@ import { ButtonDesigner } from "./ButtonDesigner";
 import { SocialBlock } from "./SocialBlock";
 
 // ─── Color Presets ──────────────────────────────────────────
+// COLOUR EXCEPTION — these are literal hex by design, not app chrome. They
+// are the text-color / highlight-color swatches offered while editing the
+// user's document CONTENT (email/template body), the same role the palette
+// in ColorPickerField.tsx plays for CTA buttons. --nx- tokens encode this
+// app's own single workspace hue; they cannot stand in for a general
+// "pick any of these 16/8 colors for your text" palette.
 const PRESET_COLORS = [
   "#000000",
   "#374151",
@@ -101,7 +107,7 @@ export function EditorToolbar({
   );
 
   return (
-    <div className="flex flex-wrap items-center gap-0.5 border-b bg-muted/30 p-1.5">
+    <div className="flex flex-wrap items-center gap-0.5 border-b border-nx-line bg-nx-raised p-1.5">
       {/* Text Style */}
       <HeadingDropdown editor={editor} />
       <Separator orientation="vertical" className="mx-0.5 h-6" />

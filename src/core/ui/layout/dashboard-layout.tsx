@@ -13,7 +13,6 @@ import { GracePeriodBanner } from "@core/components/GracePeriodBanner";
 import { PaymentWallDialog } from "@core/components/PaymentWallDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { useAppStore } from "@core/store/useAppStore";
-import { useTheme } from "next-themes";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
@@ -44,13 +43,13 @@ function LayoutLoadingShimmer() {
 function LoginWelcomeLoader() {
   const user = useAppStore((state) => state.user);
   const { t } = useI18n();
-  const { resolvedTheme } = useTheme();
   const { accentColor } = useWorkspace();
-  const isDark = resolvedTheme === "dark";
-  const accent = accentColor ?? (isDark ? "#7C6FD4" : "#6258c4");
+  // Theme resolves in CSS via the --nx- token layer, not a JS isDark branch:
+  // --nx-accent/--nx-accent-fill already carry the correct light/dark value.
+  const accent = accentColor ?? "var(--nx-accent)";
 
   const avatarUrl = user ? resolveFileUrl(user.profileImageUrl) || undefined : undefined;
-  const avatarGradient = `linear-gradient(135deg, color-mix(in oklch, ${accent} 80%, transparent) 0%, ${isDark ? "#3B2FA3" : "#2D2580"} 100%)`;
+  const avatarGradient = `linear-gradient(135deg, color-mix(in oklch, ${accent} 80%, transparent) 0%, var(--nx-accent-fill) 100%)`;
 
   const getInitials = () => {
     if (!user) return "U";
@@ -96,10 +95,14 @@ function LoginWelcomeLoader() {
 
       {/* Glassmorphic Welcome Card */}
       <div className="relative z-10 mx-4 flex w-full max-w-sm flex-col items-center justify-center rounded-2xl border border-border/40 bg-card/40 p-8 shadow-2xl backdrop-blur-md duration-500 animate-in fade-in">
-        {/* Avatar Ring with pulsing glow */}
+        {/* Avatar Ring glow — one-shot entrance, not an idle loop. It fires
+            once when the welcome card mounts and then sits still; a glow
+            that breathes forever behind a static avatar is decoration, not
+            a loading signal (the shimmer above and the progress bar below
+            are the real loading indicators on this screen). */}
         <div className="relative flex items-center justify-center">
           <div
-            className="absolute -inset-2 animate-pulse rounded-full opacity-35 blur-sm"
+            className="absolute -inset-2 rounded-full opacity-35 blur-sm duration-nx-panel ease-nx-enter animate-in fade-in zoom-in-95 motion-reduce:zoom-in-100"
             style={{
               background: `radial-gradient(circle, ${accent} 0%, transparent 80%)`,
             }}

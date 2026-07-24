@@ -15,7 +15,13 @@ export interface ColorPickerFieldProps {
   className?: string;
 }
 
-// ─── Default Brand Presets ──────────────────────────────────
+// ─── Default Content-Color Presets ──────────────────────────
+// COLOUR EXCEPTION — this palette is deliberately literal hex. It is not the
+// app's own chrome: it is a general-purpose picker for colors the user
+// applies to THEIR content (button fills, text colors inside an authored
+// email/template). --nx- tokens encode this app's one workspace hue; they
+// have no meaning as "a red, a teal, a slate" swatch set for someone else's
+// design. Do not remap these to --nx- tokens.
 const DEFAULT_PRESETS = [
   "#3b82f6",
   "#6366f1",
@@ -64,13 +70,13 @@ export function ColorPickerField({
         <PopoverTrigger asChild>
           <button
             type="button"
-            className="flex w-full items-center gap-2 rounded-md border px-3 py-2 text-left transition-colors hover:bg-accent/50"
+            className="flex min-h-9 w-full items-center gap-2 rounded-nx-control border border-nx-line px-3 py-2 text-left transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi hover:bg-nx-hover focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus"
           >
             <span
-              className="h-5 w-5 shrink-0 rounded-sm border border-border"
+              className="h-5 w-5 shrink-0 rounded-nx-sm border border-nx-line"
               style={{ backgroundColor: value }}
             />
-            <span className="font-mono text-sm text-muted-foreground">{value}</span>
+            <span className="font-mono text-sm text-nx-ink-2">{value}</span>
           </button>
         </PopoverTrigger>
         <PopoverContent className="w-56 p-3" align="start">
@@ -82,10 +88,10 @@ export function ColorPickerField({
                   key={c}
                   type="button"
                   className={cn(
-                    "h-5 w-5 rounded-sm border transition-transform hover:scale-125",
+                    "h-5 w-5 rounded-nx-sm border transition-transform duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:scale-125 active:scale-100",
                     value === c
-                      ? "border-primary ring-2 ring-primary ring-offset-1"
-                      : "border-border"
+                      ? "border-nx-accent ring-2 ring-[var(--nx-accent)] ring-offset-1 ring-offset-[var(--nx-popover)]"
+                      : "border-nx-line"
                   )}
                   style={{ backgroundColor: c }}
                   onClick={() => onChange(c)}
@@ -96,7 +102,7 @@ export function ColorPickerField({
 
             {/* Custom Hex */}
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-muted-foreground">#</span>
+              <span className="text-xs text-nx-ink-3">#</span>
               <Input
                 value={customHex.replace("#", "")}
                 onChange={(e) => setCustomHex(e.target.value)}
@@ -112,7 +118,7 @@ export function ColorPickerField({
               />
               {customHex && (
                 <span
-                  className="h-5 w-5 shrink-0 rounded-sm border border-border"
+                  className="h-5 w-5 shrink-0 rounded-nx-sm border border-nx-line"
                   style={{
                     backgroundColor: customHex.startsWith("#") ? customHex : `#${customHex}`,
                   }}

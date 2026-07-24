@@ -95,7 +95,11 @@ export function UserCard({
               config.statusDot
             )}
           >
-            <div className="h-full w-full animate-pulse rounded-full bg-gradient-to-br from-success/80 to-success" />
+            {/* Solid "online" dot — no idle pulse. It used to breathe forever
+                at rest, which reads as a loading spinner even though nothing
+                is loading. A status indicator states a fact; it doesn't need
+                to keep moving to prove it's alive. */}
+            <div className="h-full w-full rounded-full bg-gradient-to-br from-success/80 to-success" />
           </div>
         )}
       </div>

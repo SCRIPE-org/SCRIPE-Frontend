@@ -3,12 +3,18 @@ export const en = {
     title: "Profile Settings",
     subtitle:
       "Unified user account controls featuring WebAuthn, active session revocation, and security audit logs.",
+    loadError: {
+      title: "Couldn't load your profile",
+      description:
+        "Something went wrong while fetching your account details. Please try again.",
+    },
     nav: {
       general: "General",
       security: "Security",
       sessions: "Sessions",
       activity: "Activity",
       notifications: "Notifications",
+      needsAttention: "Needs attention",
     },
     avatar: {
       clickOrDrag: "Click or drag to upload a new photo",
@@ -140,6 +146,9 @@ export const en = {
         paired: "PAIRED",
         link: "Link New Device",
         unlink: "Unlink",
+        unlinkConfirmTitle: "Unlink this device?",
+        unlinkConfirmDesc:
+          "This mobile device will no longer be able to sign you in via QR code. You can pair it again at any time.",
         pairedMobileDesc:
           "No active mobile app sessions. Log in on the SCRIPE mobile app to link your device.",
         modalTitle: "Pair Mobile App",
@@ -160,6 +169,10 @@ export const en = {
         modalTitle: "Change Account Password",
         modalDesc: "Update your administrator security password. Requires your current password.",
       },
+      connectedAccounts: {
+        title: "Connected Accounts",
+        desc: "Sign in faster by linking external identity providers to this account.",
+      },
     },
     sessions: {
       title: "Active Sessions",
@@ -173,6 +186,11 @@ export const en = {
       expires: "Expires",
       revoke: "Revoke",
       revokeAll: "Revoke All Other Sessions",
+      revokeConfirmTitle: "Revoke this session?",
+      revokeConfirmDesc: "This device will be signed out immediately and will need to log in again.",
+      revokeAllConfirmTitle: "Revoke all other sessions?",
+      revokeAllConfirmDesc:
+        "Every other device currently signed in to your account will be logged out immediately. This device stays signed in.",
       noOther: "No other active sessions",
       noEntries: "No active sessions found.",
       securityTip:

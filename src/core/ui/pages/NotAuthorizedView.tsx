@@ -44,15 +44,18 @@ export default function NotAuthorizedView() {
           <div className="pointer-events-none absolute bottom-0 left-0 h-24 w-24 rounded-full bg-primary/5 blur-2xl" />
 
           <CardHeader className="relative">
-            {/* Icon with animated glow */}
+            {/* Icon with static glow */}
             <div className="relative mx-auto mb-4">
               <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-destructive/20 to-destructive/10">
-                <div className="pointer-events-none absolute inset-0 animate-pulse rounded-full bg-destructive/20" />
+                {/* Static glow — this used to "animate-pulse" forever behind a
+                    static icon, decoration with no functional purpose. A
+                    still blurred wash reads just as intentional. */}
+                <div className="pointer-events-none absolute inset-0 rounded-full bg-destructive/20" />
                 <Shield className="relative z-10 h-12 w-12 text-destructive" />
               </div>
             </div>
 
-            <CardTitle className="bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-3xl font-bold text-transparent">
+            <CardTitle className="text-3xl font-bold text-foreground">
               {t("notAuthorized.title")}
             </CardTitle>
 

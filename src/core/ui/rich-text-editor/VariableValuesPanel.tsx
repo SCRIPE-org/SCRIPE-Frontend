@@ -51,29 +51,32 @@ const CATEGORY_CONFIG: Record<
   VariableCategory,
   { label: string; icon: React.ReactNode; color: string; bgColor: string }
 > = {
+  // Status-family colors read the nx-namespaced aliases (nx-info/success/
+  // warning), not the bare shadcn tokens — nexus surfaces never re-derive
+  // status colors, they alias the same measured ones (see tailwind.config.js).
   recipient: {
     label: "Recipient",
     icon: <User className="h-3.5 w-3.5" />,
-    color: "text-info",
-    bgColor: "bg-info/10",
+    color: "text-nx-info",
+    bgColor: "bg-nx-info/10",
   },
   company: {
     label: "Company",
     icon: <Building2 className="h-3.5 w-3.5" />,
-    color: "text-success",
-    bgColor: "bg-success/10",
+    color: "text-nx-success",
+    bgColor: "bg-nx-success/10",
   },
   system: {
     label: "System",
     icon: <Settings className="h-3.5 w-3.5" />,
-    color: "text-primary",
-    bgColor: "bg-primary/10",
+    color: "text-nx-accent",
+    bgColor: "bg-nx-accent-wash",
   },
   template: {
     label: "Template",
     icon: <FileText className="h-3.5 w-3.5" />,
-    color: "text-warning",
-    bgColor: "bg-warning/10",
+    color: "text-nx-warning",
+    bgColor: "bg-nx-warning/10",
   },
 };
 
@@ -191,6 +194,11 @@ function VariableInput({
       );
 
     case "color":
+      // COLOUR EXCEPTION — the "#3b82f6" fallbacks are literal by necessity:
+      // a native <input type="color"> requires a real hex string as its
+      // value attribute (a CSS custom property is not a valid color-input
+      // value), and the variable itself holds arbitrary CONTENT data (a
+      // template field value), not this app's chrome.
       return (
         <div className="flex items-center gap-2">
           <Input
@@ -372,8 +380,7 @@ export function VariableValuesPanel({
               variant={allFilled ? "default" : "secondary"}
               className={cn(
                 "h-5 gap-1 text-[10px]",
-                allFilled &&
-                  "border-success/30 bg-success/15 text-success"
+                allFilled && "border-nx-success/30 bg-nx-success/15 text-nx-success"
               )}
             >
               {allFilled ? (
@@ -398,7 +405,7 @@ export function VariableValuesPanel({
       </CardHeader>
       <CardContent className="min-h-0 flex-1 overflow-y-auto pt-0">
         {totalVars === 0 ? (
-          <div className="py-8 text-center text-sm text-muted-foreground">
+          <div className="py-8 text-center text-sm text-nx-ink-3">
             <FileText className="mx-auto mb-2 h-8 w-8 opacity-30" />
             <p>No variables detected in the template</p>
             <p className="mt-1 text-xs">
@@ -420,7 +427,7 @@ export function VariableValuesPanel({
                   {/* Category Header */}
                   <div
                     className={cn(
-                      "mb-2 flex items-center gap-1.5 rounded-md px-2 py-1.5",
+                      "mb-2 flex items-center gap-1.5 rounded-nx-sm px-2 py-1.5",
                       config.bgColor
                     )}
                   >
@@ -462,9 +469,9 @@ export function VariableValuesPanel({
                                 </SelectContent>
                               </Select>
                               {hasValue ? (
-                                <CheckCircle2 className="h-3 w-3 text-success" />
+                                <CheckCircle2 className="h-3 w-3 text-nx-success" />
                               ) : (
-                                <AlertCircle className="h-3 w-3 text-warning" />
+                                <AlertCircle className="h-3 w-3 text-nx-warning" />
                               )}
                             </div>
                           </div>

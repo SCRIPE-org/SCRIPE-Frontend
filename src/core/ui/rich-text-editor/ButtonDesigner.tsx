@@ -41,6 +41,16 @@ const DEFAULT_CONFIG: ButtonConfig = {
   fontSize: 16,
 };
 
+// COLOUR EXCEPTION — bgColor/textColor above (and CTA_SHADOW below) are
+// deliberately literal. This designer emits raw inline-styled HTML for a
+// TRANSACTIONAL EMAIL, rendered by third-party mail clients that do not
+// evaluate our app's CSS (custom properties like var(--nx-accent) are
+// unsupported/stripped in Outlook, Gmail, Apple Mail). The literal values
+// here are just a sensible starting color for the CTA the user is
+// designing, not this app's own chrome — they must stay literal so the
+// live preview below stays byte-for-byte identical to the exported HTML.
+const CTA_SHADOW = "0 4px 14px 0 rgba(0,0,0,0.15)";
+
 // ─── Main Component ─────────────────────────────────────────
 export function ButtonDesigner({ onInsert }: ButtonDesignerProps) {
   const [open, setOpen] = useState(false);
@@ -53,7 +63,7 @@ export function ButtonDesigner({ onInsert }: ButtonDesignerProps) {
   // Generate email-safe TABLE-based button HTML (works in Outlook, Gmail, Apple Mail)
   const generateHtml = (): string => {
     const widthStyle = config.fullWidth ? "width:100%;" : "";
-    const shadowStyle = config.shadow ? "box-shadow:0 4px 14px 0 rgba(0,0,0,0.15);" : "";
+    const shadowStyle = config.shadow ? `box-shadow:${CTA_SHADOW};` : "";
 
     return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:8px auto;border-collapse:collapse;${widthStyle}"><tr><td align="center" style="background:${config.bgColor};border-radius:${config.borderRadius}px;padding:${config.paddingY}px ${config.paddingX}px;${shadowStyle}"><a href="${config.url}" target="_blank" rel="noopener noreferrer" style="color:${config.textColor};font-size:${config.fontSize}px;font-weight:600;text-decoration:none;display:inline-block;line-height:1.4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">${config.text || "Click Here"}</a></td></tr></table>`;
   };
@@ -86,8 +96,9 @@ export function ButtonDesigner({ onInsert }: ButtonDesignerProps) {
         <div className="max-h-[70vh] space-y-4 overflow-y-auto overscroll-contain p-4">
           <h4 className="text-sm font-semibold">CTA Button Designer</h4>
 
-          {/* Live Preview */}
-          <div className="flex justify-center rounded-lg border bg-muted/20 p-4">
+          {/* Live Preview — mirrors generateHtml() byte-for-byte, including
+              the literal colors/shadow (see COLOUR EXCEPTION above) */}
+          <div className="flex justify-center rounded-nx-md border border-nx-line bg-nx-ground p-4">
             <a
               href="#"
               onClick={(e) => e.preventDefault()}
@@ -103,7 +114,7 @@ export function ButtonDesigner({ onInsert }: ButtonDesignerProps) {
                 textAlign: "center",
                 lineHeight: 1.4,
                 width: config.fullWidth ? "100%" : "auto",
-                boxShadow: config.shadow ? "0 4px 14px 0 rgba(0,0,0,0.15)" : "none",
+                boxShadow: config.shadow ? CTA_SHADOW : "none",
               }}
             >
               {config.text || "Click Here"}
@@ -148,7 +159,7 @@ export function ButtonDesigner({ onInsert }: ButtonDesignerProps) {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-xs">Border Radius</Label>
-              <span className="text-xs text-muted-foreground">{config.borderRadius}px</span>
+              <span className="text-xs text-nx-ink-3">{config.borderRadius}px</span>
             </div>
             <Slider
               value={[config.borderRadius]}
@@ -163,7 +174,7 @@ export function ButtonDesigner({ onInsert }: ButtonDesignerProps) {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-xs">Font Size</Label>
-              <span className="text-xs text-muted-foreground">{config.fontSize}px</span>
+              <span className="text-xs text-nx-ink-3">{config.fontSize}px</span>
             </div>
             <Slider
               value={[config.fontSize]}

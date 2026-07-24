@@ -1,5 +1,6 @@
 import React from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@core/ui/card";
 import { AvatarUpload } from "./AvatarUpload";
 import { ProfileInfoForm } from "./ProfileInfoForm";
 import type { AdminProfile } from "../../domain/entities/AdminProfile";
@@ -42,35 +43,40 @@ export function ProfileGeneralTab({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-border/80 bg-card/45 p-5 shadow-sm backdrop-blur-md">
-        <h3 className="mb-4 text-base font-bold text-foreground">
-          {t("profile.general.profilePicture")}
-        </h3>
-        <AvatarUpload
-          currentImageUrl={profile.profileImageUrl}
-          initials={initials}
-          previewUrl={avatarVm.previewUrl}
-          onFileSelect={avatarVm.handleFileSelect}
-          onUpload={avatarVm.upload}
-          onRemove={avatarVm.remove}
-          isUploading={avatarVm.isUploading}
-          isRemoving={avatarVm.isRemoving}
-          error={avatarVm.uploadError}
-        />
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>{t("profile.general.profilePicture")}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <AvatarUpload
+            currentImageUrl={profile.profileImageUrl}
+            initials={initials}
+            previewUrl={avatarVm.previewUrl}
+            onFileSelect={avatarVm.handleFileSelect}
+            onUpload={avatarVm.upload}
+            onRemove={avatarVm.remove}
+            isUploading={avatarVm.isUploading}
+            isRemoving={avatarVm.isRemoving}
+            error={avatarVm.uploadError}
+          />
+        </CardContent>
+      </Card>
 
-      <div className="rounded-xl border border-border/80 bg-card/45 p-5 shadow-sm backdrop-blur-md">
-        <h3 className="mb-4 text-base font-bold text-foreground">
-          {t("profile.general.personalInfo")}
-        </h3>
-        <ProfileInfoForm
-          profile={profile}
-          onSubmit={profileVm.updateProfile}
-          isSubmitting={profileVm.isUpdating}
-          submitError={profileVm.updateError}
-          success={profileVm.profileSuccess}
-        />
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>{t("profile.general.personalInfo")}</CardTitle>
+          <CardDescription>{t("profile.general.description")}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ProfileInfoForm
+            profile={profile}
+            onSubmit={profileVm.updateProfile}
+            isSubmitting={profileVm.isUpdating}
+            submitError={profileVm.updateError}
+            success={profileVm.profileSuccess}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }

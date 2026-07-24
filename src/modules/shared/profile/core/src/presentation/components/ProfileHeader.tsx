@@ -1,31 +1,40 @@
 "use client";
 
 /**
- * ProfileHeader — Sidebar header with avatar, name, and role
+ * ProfileHeader — Identity card for the profile sidebar
  *
- * Shows above the navigation in the profile sidebar.
+ * The one place on the page that answers "whose settings am I looking at":
+ * avatar, name, username and role. Everything else on the page is a verb
+ * (change this, revoke that) — this is the noun they all apply to, so it
+ * stays visible above the section switcher on every tab.
  */
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { Badge } from "@core/ui/badge";
+import { Skeleton } from "@core/ui/skeleton";
+import { cn, resolveFileUrl } from "@core/common/utils";
 import type { AdminProfile } from "../../../src/domain/entities/AdminProfile";
-import { resolveFileUrl } from "@core/common/utils";
 
 interface ProfileHeaderProps {
   profile: AdminProfile | undefined;
   isLoading: boolean;
+  /** Optional supplementary content rendered under the role badge — e.g. a
+   *  compact security-posture indicator. Kept out of this component's own
+   *  business so it stays a plain identity card. */
+  meta?: React.ReactNode;
+  className?: string;
 }
 
 /**
  * Presentation UI component rendering the profile header.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
-export function ProfileHeader({ profile, isLoading }: ProfileHeaderProps) {
+export function ProfileHeader({ profile, isLoading, meta, className }: ProfileHeaderProps) {
   if (isLoading || !profile) {
     return (
-      <div className="flex animate-pulse flex-col items-center gap-3 p-4">
-        <div className="h-20 w-20 rounded-full bg-muted" />
-        <div className="h-4 w-28 rounded bg-muted" />
-        <div className="h-3 w-20 rounded bg-muted" />
+      <div className={cn("flex flex-col items-center gap-3 p-4 text-center", className)}>
+        <Skeleton shape="circle" className="h-20 w-20" aria-label="Loading profile" />
+        <Skeleton shape="text" className="h-4 w-28" />
+        <Skeleton shape="text" className="h-3 w-20" />
       </div>
     );
   }
@@ -34,26 +43,27 @@ export function ProfileHeader({ profile, isLoading }: ProfileHeaderProps) {
     `${(profile.firstName?.[0] ?? "").toUpperCase()}${(profile.lastName?.[0] ?? "").toUpperCase()}` ||
     "U";
   const fullName = `${profile.firstName} ${profile.lastName}`.trim() || profile.username;
-
   const avatarSrc = resolveFileUrl(profile.profileImageUrl) || null;
 
   return (
-    <div className="flex flex-col items-center gap-3 p-4">
-      <Avatar className="h-20 w-20 border-2 border-primary/20 shadow-lg">
+    <div className={cn("flex flex-col items-center gap-3 p-4 text-center", className)}>
+      <Avatar size="lg" className="h-20 w-20 text-2xl shadow-nx-sm">
         {avatarSrc && <AvatarImage src={avatarSrc} alt={fullName} />}
-        <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-xl font-semibold text-primary-foreground">
+        <AvatarFallback className="bg-nx-accent-wash font-semibold text-nx-accent">
           {initials}
         </AvatarFallback>
       </Avatar>
 
-      <div className="text-center">
-        <h3 className="text-sm font-semibold">{fullName}</h3>
-        <p className="text-xs text-muted-foreground">@{profile.username}</p>
+      <div>
+        <h3 className="text-sm font-semibold text-nx-ink">{fullName}</h3>
+        <p className="text-xs text-nx-ink-2">@{profile.username}</p>
       </div>
 
       <Badge variant="secondary" className="text-xs">
         {profile.adminTypeName || profile.roles?.[0]?.roleName || "Admin"}
       </Badge>
+
+      {meta}
     </div>
   );
 }

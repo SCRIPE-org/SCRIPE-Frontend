@@ -122,8 +122,8 @@ export function ProfileInfoForm({
         <div className="space-y-2">
           <Label htmlFor="email">{t("profile.fields.email") || "Email Address"}</Label>
           <div className="relative">
-            <Input id="email" value={profile.email} disabled className="bg-muted/50 pe-10" />
-            <Lock className="absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input id="email" value={profile.email} disabled className="bg-nx-raised pe-10" />
+            <Lock className="absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3" />
           </div>
         </div>
 
@@ -131,17 +131,17 @@ export function ProfileInfoForm({
         <div className="space-y-2">
           <Label htmlFor="username">{t("profile.fields.username")}</Label>
           <div className="relative">
-            <Input id="username" value={profile.username} disabled className="bg-muted/50 pe-10" />
-            <Lock className="absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input id="username" value={profile.username} disabled className="bg-nx-raised pe-10" />
+            <Lock className="absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3" />
           </div>
-          <p className="text-xs text-muted-foreground">{t("profile.fields.usernameHint")}</p>
+          <p className="text-xs text-nx-ink-2">{t("profile.fields.usernameHint")}</p>
         </div>
       </div>
 
-      {/* Role info badge */}
-      <div className="flex items-center gap-4 rounded-lg border border-border/40 bg-muted/30 p-3 text-sm text-muted-foreground">
+      {/* Role info strip */}
+      <div className="flex items-center gap-4 rounded-nx-control border border-nx-line bg-nx-raised p-3 text-sm text-nx-ink-2">
         <span>
-          <strong>{t("profile.fields.role")}:</strong>{" "}
+          <strong className="text-nx-ink">{t("profile.fields.role")}:</strong>{" "}
           {profile.adminTypeName || profile.roles?.[0]?.roleName || "Admin"}
         </span>
       </div>

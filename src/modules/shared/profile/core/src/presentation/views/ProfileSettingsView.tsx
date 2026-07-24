@@ -18,13 +18,18 @@ import { useSessionsViewModel } from "../viewmodels/useSessionsViewModel";
 import { useActivityLogViewModel } from "../viewmodels/useActivityLogViewModel";
 import { getComponent } from "@core/common/component-registry";
 
+import { ProfileHeader } from "../components/ProfileHeader";
+import { ProfileNav } from "../components/ProfileNav";
 import { ProfileGeneralTab } from "../components/ProfileGeneralTab";
 import { ProfileSecurityTab } from "../components/ProfileSecurityTab";
 import { ProfileSessionsTab } from "../components/ProfileSessionsTab";
 import { ProfileActivityTab } from "../components/ProfileActivityTab";
 
-import { cn, resolveFileUrl } from "@core/common/utils";
-import { User, Shield, Monitor, ListTodo } from "lucide-react";
+import { Card, CardContent } from "@core/ui/card";
+import { Button } from "@core/ui/button";
+import { Tabs, TabsContent } from "@core/ui/tabs";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { AlertTriangle, RefreshCw } from "lucide-react";
 
 type ActiveTab = "general" | "security" | "sessions" | "activity";
 
@@ -36,17 +41,9 @@ type ActiveTab = "general" | "security" | "sessions" | "activity";
 export function ProfileSettingsView() {
   const { t } = useI18n();
   const [activeTab, setActiveTab] = useState<ActiveTab>("general");
-  const [imageError, setImageError] = useState(false);
 
   // ViewModels
   const profileVm = useProfilePageViewModel();
-
-  const imageUrl = profileVm.profile?.profileImageUrl;
-  const [prevImageUrl, setPrevImageUrl] = useState(imageUrl);
-  if (imageUrl !== prevImageUrl) {
-    setPrevImageUrl(imageUrl);
-    setImageError(false);
-  }
   const avatarVm = useAvatarViewModel();
   const securityVm = useSecurityViewModel();
   const sessionsVm = useSessionsViewModel();
@@ -73,15 +70,29 @@ export function ProfileSettingsView() {
     }));
   const passkeyVm = usePasskeyManagementViewModelHook();
 
-  if (profileVm.isLoading || !profileVm.profile) {
+  // ── Loading state ──────────────────────────────────────────────
+  if (profileVm.isLoading) {
+    return <LoadingSpinner fullHeight />;
+  }
+
+  // ── Error / unavailable state — never leave the user on a spinner
+  // that will never resolve. ─────────────────────────────────────
+  if (!profileVm.profile) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <span
-          className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-primary/30 border-t-primary"
-          role="status"
-        >
-          <span className="sr-only">Loading...</span>
-        </span>
+      <div className="mx-auto flex max-w-5xl flex-col items-center gap-4 px-4 py-16 text-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full border border-destructive/30 bg-destructive/10 text-destructive">
+          <AlertTriangle className="h-6 w-6" />
+        </div>
+        <div>
+          <h2 className="text-base font-semibold text-nx-ink">{t("profile.loadError.title")}</h2>
+          <p className="mt-1 text-sm text-nx-ink-2">
+            {profileVm.error || t("profile.loadError.description")}
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={() => profileVm.refetch()}>
+          <RefreshCw className="me-2 h-4 w-4" />
+          {t("common.retry")}
+        </Button>
       </div>
     );
   }
@@ -111,155 +122,92 @@ export function ProfileSettingsView() {
   if (passkeyVm.passkeys?.length > 0) securityScore += 30; // Passkey configured
   securityScore = Math.min(securityScore, 100);
 
+  // Draws attention on the nav when there is a real, actionable security gap
+  // — never a decorative badge, only a signal that something needs doing.
+  const securityNeedsAttention =
+    !profile.isTwoFactorEnabled ||
+    profile.isPasswordExpired ||
+    (profile.daysUntilPasswordExpiry !== null && profile.daysUntilPasswordExpiry <= 14);
+
   return (
-    <div className="relative mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Page Header */}
-      <div className="mb-8 border-b border-border pb-5">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("profile.title")}</h1>
-        <p className="mt-1 text-xs text-muted-foreground">{t("profile.subtitle")}</p>
+      <div className="mb-8 border-b border-nx-line pb-5">
+        <h1 className="text-2xl font-bold tracking-tight text-nx-ink">{t("profile.title")}</h1>
+        <p className="mt-1 text-xs text-nx-ink-2">{t("profile.subtitle")}</p>
       </div>
 
-      {/* Main Glassmorphic Container Card */}
-      <div className="relative overflow-hidden rounded-xl border border-border/80 bg-card/45 shadow-sm backdrop-blur-md">
-        {/* User Quick Info Banner */}
-        <div className="flex flex-col gap-6 border-b border-border/60 bg-muted/20 p-6 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-5">
-            {/* Animated Gradient Border Avatar */}
-            <div className="group relative flex h-20 w-20 items-center justify-center">
-              <div className="animate-spin-slow absolute inset-0 rounded-full bg-gradient-to-r from-primary via-primary/60 to-success p-[3px]">
-                <div className="h-full w-full rounded-full bg-card" />
-              </div>
-              <div className="relative z-10 flex h-[70px] w-[70px] items-center justify-center overflow-hidden rounded-full border border-white/5 bg-gradient-to-br from-primary/20 to-primary/10 text-2xl font-bold text-foreground">
-                {profile.profileImageUrl && !imageError ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={resolveFileUrl(profile.profileImageUrl)}
-                    alt="Profile"
-                    className="h-full w-full object-cover"
-                    onError={() => setImageError(true)}
-                  />
-                ) : (
-                  initials
-                )}
-              </div>
-            </div>
-
-            <div>
-              <h2 className="flex items-center gap-2 text-xl font-bold text-foreground">
-                {profile.firstName} {profile.lastName}
-                <span className="rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-primary">
-                  {profile.adminTypeName || t("profile.fields.role")}
-                </span>
-              </h2>
-              <p className="mt-0.5 text-sm text-muted-foreground">{profile.username}</p>
-            </div>
-          </div>
-
-          {/* Security Score Widget */}
-          <div className="flex items-center gap-3 self-start rounded-xl border border-border/60 bg-muted/40 p-3 transition-colors hover:bg-muted/60 sm:self-center">
-            <div className="text-right">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
-                {t("profile.general.securityStrength")}
-              </p>
-              <p className="mt-0.5 text-base font-extrabold text-foreground">
-                {t("profile.general.securePercent", { score: securityScore })}
-              </p>
-            </div>
-            {/* Circular Progress */}
-            <div className="relative h-10 w-10">
-              <svg className="h-full w-full -rotate-90">
-                <circle cx="20" cy="20" r="16" className="fill-none stroke-border/40 stroke-[3]" />
-                <circle
-                  cx="20"
-                  cy="20"
-                  r="16"
-                  className="fill-none stroke-primary stroke-[3] transition-all duration-500"
-                  strokeDasharray="100.5"
-                  strokeDashoffset={100.5 - securityScore}
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as ActiveTab)}>
+        <div className="flex flex-col gap-6 md:flex-row md:items-start">
+          {/* Sidebar: identity + section switcher */}
+          <div className="md:sticky md:top-6 md:w-64 md:shrink-0">
+            <Card>
+              <CardContent className="flex flex-col gap-5 p-4">
+                <ProfileHeader
+                  profile={profile}
+                  isLoading={false}
+                  meta={
+                    <div className="flex w-full items-center justify-between rounded-nx-control border border-nx-line bg-nx-raised px-3 py-2 text-xs">
+                      <span className="font-medium text-nx-ink-2">
+                        {t("profile.general.securityStrength")}
+                      </span>
+                      <span className="font-bold text-nx-ink">
+                        {t("profile.general.securePercent", { score: securityScore })}
+                      </span>
+                    </div>
+                  }
                 />
-              </svg>
-            </div>
+                <ProfileNav
+                  securityNeedsAttention={securityNeedsAttention}
+                  sessionsCount={sessionsVm.sessions?.length}
+                />
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Active panel */}
+          <div className="min-w-0 flex-1">
+            <TabsContent
+              value="general"
+              className="mt-0 motion-safe:data-[state=active]:animate-in motion-safe:data-[state=active]:fade-in-0 motion-safe:data-[state=active]:duration-nx-standard motion-safe:data-[state=active]:ease-nx-enter"
+            >
+              <ProfileGeneralTab
+                profile={profile}
+                initials={initials}
+                avatarVm={avatarVm}
+                profileVm={profileVm}
+              />
+            </TabsContent>
+
+            <TabsContent
+              value="security"
+              className="mt-0 motion-safe:data-[state=active]:animate-in motion-safe:data-[state=active]:fade-in-0 motion-safe:data-[state=active]:duration-nx-standard motion-safe:data-[state=active]:ease-nx-enter"
+            >
+              <ProfileSecurityTab
+                profile={profile}
+                linkedMobileDevices={linkedMobileDevices}
+                sessionsVm={sessionsVm}
+                securityVm={securityVm}
+                passkeyVm={passkeyVm}
+              />
+            </TabsContent>
+
+            <TabsContent
+              value="sessions"
+              className="mt-0 motion-safe:data-[state=active]:animate-in motion-safe:data-[state=active]:fade-in-0 motion-safe:data-[state=active]:duration-nx-standard motion-safe:data-[state=active]:ease-nx-enter"
+            >
+              <ProfileSessionsTab sessionsVm={sessionsVm} />
+            </TabsContent>
+
+            <TabsContent
+              value="activity"
+              className="mt-0 motion-safe:data-[state=active]:animate-in motion-safe:data-[state=active]:fade-in-0 motion-safe:data-[state=active]:duration-nx-standard motion-safe:data-[state=active]:ease-nx-enter"
+            >
+              <ProfileActivityTab activityVm={activityVm} />
+            </TabsContent>
           </div>
         </div>
-
-        {/* Tab Navigation Menu */}
-        <div className="flex flex-wrap gap-2 border-b border-border/60 bg-muted/40 p-4">
-          <button
-            onClick={() => setActiveTab("general")}
-            className={cn(
-              "flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold outline-none transition-all duration-200",
-              activeTab === "general"
-                ? "border border-primary/25 bg-primary/10 text-primary shadow-sm"
-                : "border border-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
-            )}
-          >
-            <User className="h-4 w-4" />
-            {t("profile.nav.general")}
-          </button>
-          <button
-            onClick={() => setActiveTab("security")}
-            className={cn(
-              "flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold outline-none transition-all duration-200",
-              activeTab === "security"
-                ? "border border-primary/25 bg-primary/10 text-primary shadow-sm"
-                : "border border-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
-            )}
-          >
-            <Shield className="h-4 w-4" />
-            {t("profile.nav.security")}
-          </button>
-          <button
-            onClick={() => setActiveTab("sessions")}
-            className={cn(
-              "flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold outline-none transition-all duration-200",
-              activeTab === "sessions"
-                ? "border border-primary/25 bg-primary/10 text-primary shadow-sm"
-                : "border border-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
-            )}
-          >
-            <Monitor className="h-4 w-4" />
-            {t("profile.nav.sessions")}
-          </button>
-          <button
-            onClick={() => setActiveTab("activity")}
-            className={cn(
-              "flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold outline-none transition-all duration-200",
-              activeTab === "activity"
-                ? "border border-primary/25 bg-primary/10 text-primary shadow-sm"
-                : "border border-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
-            )}
-          >
-            <ListTodo className="h-4 w-4" />
-            {t("profile.nav.activity")}
-          </button>
-        </div>
-
-        {/* Tab Contents */}
-        <div className="p-6">
-          {activeTab === "general" && (
-            <ProfileGeneralTab
-              profile={profile}
-              initials={initials}
-              avatarVm={avatarVm}
-              profileVm={profileVm}
-            />
-          )}
-
-          {activeTab === "security" && (
-            <ProfileSecurityTab
-              profile={profile}
-              linkedMobileDevices={linkedMobileDevices}
-              sessionsVm={sessionsVm}
-              securityVm={securityVm}
-              passkeyVm={passkeyVm}
-            />
-          )}
-
-          {activeTab === "sessions" && <ProfileSessionsTab sessionsVm={sessionsVm} />}
-
-          {activeTab === "activity" && <ProfileActivityTab activityVm={activityVm} />}
-        </div>
-      </div>
+      </Tabs>
     </div>
   );
 }
