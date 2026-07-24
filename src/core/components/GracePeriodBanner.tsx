@@ -3,15 +3,48 @@
 import { useAppStore } from "@core/store/useAppStore";
 import { useI18n } from "@core/providers/i18n-provider";
 import { AlertTriangle, Clock, ShieldAlert } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { cn } from "@core/common/utils";
 
 /**
  * GracePeriodBanner — Shows a top-of-page banner when the tenant's subscription
  * is in a grace period (PastDue). Severity escalates by phase:
- * - Warning (0-50%): yellow banner
- * - Reduced (50-80%): orange banner, read-only mode
- * - Fallback (80-100%): red banner, limited features
+ * - Warning (0-50%): the amber step
+ * - Reduced (50-80%): the warning-strong step, read-only mode
+ * - Fallback (80-100%): the destructive step, limited features
+ *
+ * Severity speaks through the glyph, the hairline and the wash — three cues,
+ * only one of which is colour. The copy itself stays on neutral ink: amber
+ * sentences on an amber wash are the least readable form this warning can take,
+ * and the phase escalation was invisible to anyone reading it in greyscale.
  */
+const PHASES: Record<
+  string,
+  { icon: LucideIcon; surface: string; glyph: string; titleKey: string; descKey: string }
+> = {
+  Warning: {
+    icon: Clock,
+    surface: "border-warning/30 bg-warning/10",
+    glyph: "text-warning",
+    titleKey: "subscription.grace.warningTitle",
+    descKey: "subscription.grace.warningDesc",
+  },
+  Reduced: {
+    icon: AlertTriangle,
+    surface: "border-warning-strong/30 bg-warning-strong/10",
+    glyph: "text-warning-strong",
+    titleKey: "subscription.grace.reducedTitle",
+    descKey: "subscription.grace.reducedDesc",
+  },
+  Fallback: {
+    icon: ShieldAlert,
+    surface: "border-destructive/30 bg-destructive/10",
+    glyph: "text-destructive",
+    titleKey: "subscription.grace.fallbackTitle",
+    descKey: "subscription.grace.fallbackDesc",
+  },
+};
+
 export function GracePeriodBanner() {
   const { t } = useI18n();
   const subscriptionStatus = useAppStore((s) => s.subscriptionStatus);
@@ -25,62 +58,24 @@ export function GracePeriodBanner() {
   // Only show for PastDue with a grace phase
   if (subscriptionStatus !== "PastDue" || !gracePhase) return null;
 
-  const phaseConfig: Record<
-    string,
-    {
-      icon: React.ReactNode;
-      bgClass: string;
-      textClass: string;
-      borderClass: string;
-      titleKey: string;
-      descKey: string;
-    }
-  > = {
-    Warning: {
-      icon: <Clock className="h-4 w-4 shrink-0" />,
-      bgClass: "bg-warning/10",
-      textClass: "text-warning",
-      borderClass: "border-warning/30",
-      titleKey: "subscription.grace.warningTitle",
-      descKey: "subscription.grace.warningDesc",
-    },
-    Reduced: {
-      icon: <AlertTriangle className="h-4 w-4 shrink-0" />,
-      bgClass: "bg-warning-strong/10",
-      textClass: "text-warning-strong",
-      borderClass: "border-warning-strong/30",
-      titleKey: "subscription.grace.reducedTitle",
-      descKey: "subscription.grace.reducedDesc",
-    },
-    Fallback: {
-      icon: <ShieldAlert className="h-4 w-4 shrink-0" />,
-      bgClass: "bg-destructive/10",
-      textClass: "text-destructive",
-      borderClass: "border-destructive/30",
-      titleKey: "subscription.grace.fallbackTitle",
-      descKey: "subscription.grace.fallbackDesc",
-    },
-  };
+  const phase = PHASES[gracePhase];
+  if (!phase) return null;
 
-  const config = phaseConfig[gracePhase];
-  if (!config) return null;
+  const Icon = phase.icon;
 
   return (
     <div
+      role="status"
       className={cn(
-        "flex items-center gap-3 border-b px-4 py-2.5 text-sm",
-        config.bgClass,
-        config.textClass,
-        config.borderClass
+        "flex items-center gap-3 border-b px-4 py-2.5 text-sm text-nx-ink",
+        phase.surface
       )}
     >
-      {config.icon}
+      <Icon className={cn("h-4 w-4 shrink-0", phase.glyph)} aria-hidden="true" />
       <div className="flex min-w-0 flex-col gap-0.5 sm:flex-row sm:items-center sm:gap-2">
-        <span className="whitespace-nowrap font-semibold">
-          {t(config.titleKey) || config.titleKey}
-        </span>
-        <span className="truncate text-xs opacity-80 sm:text-sm">
-          {(t(config.descKey) || config.descKey).replace("{edition}", editionName || "")}
+        <span className="whitespace-nowrap font-semibold">{t(phase.titleKey)}</span>
+        <span className="truncate text-xs text-nx-ink-2 sm:text-sm">
+          {t(phase.descKey, { edition: editionName || "" })}
         </span>
       </div>
     </div>

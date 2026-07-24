@@ -4,18 +4,25 @@
 
 import { formatDateTimeUtc } from "@core/common/utils";
 
-/** Format Stripe amounts (in cents) to currency display */
-export function formatStripeCurrency(amountCents: number, currency: string): string {
-  const amount = amountCents / 100;
+/** Format an amount already in major units (Connect commissions arrive this way) */
+export function formatMajorCurrency(amount: number, currency: string): string {
+  const code = currency.toUpperCase();
   try {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: currency.toUpperCase(),
+      currency: code,
       minimumFractionDigits: 2,
     }).format(amount);
   } catch {
-    return `${amount.toFixed(2)} ${currency.toUpperCase()}`;
+    // An unknown ISO code throws rather than degrading, and a Stripe account
+    // can hold balances in codes Intl does not carry.
+    return `${amount.toFixed(2)} ${code}`;
   }
+}
+
+/** Format Stripe amounts (in cents) to currency display */
+export function formatStripeCurrency(amountCents: number, currency: string): string {
+  return formatMajorCurrency(amountCents / 100, currency);
 }
 
 /** Format date strings for display */

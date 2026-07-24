@@ -5,26 +5,32 @@
 
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
+import { DetailRow } from "@core/ui/detail-row";
 import { Separator } from "@core/ui/separator";
+import { StatCard } from "@core/ui/stat-card";
 import { Users, CheckCircle2, Clock, XCircle, TrendingUp, Percent } from "lucide-react";
 import { PlatformConnectSummary } from "../../domain/entities/PlatformStripeDashboard";
+import { formatMajorCurrency } from "./utils";
 
 interface ConnectSummaryCardProps {
   connectSummary: PlatformConnectSummary;
+  /** Currency the commission totals are denominated in. */
+  currency: string;
 }
 
 /**
  * Presentation UI component rendering the connect summary card.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
-export function ConnectSummaryCard({ connectSummary }: ConnectSummaryCardProps) {
+export function ConnectSummaryCard({ connectSummary, currency }: ConnectSummaryCardProps) {
   const { t } = useI18n();
+  const code = currency || "usd";
 
   return (
-    <Card className="shadow-md">
+    <Card>
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2">
-          <Users className="h-4 w-4 text-[#635bff]" />
+          <Users className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
           <CardTitle className="text-base">
             {t("entitlements.platformStripe.connectAccounts")}
           </CardTitle>
@@ -33,81 +39,46 @@ export function ConnectSummaryCard({ connectSummary }: ConnectSummaryCardProps) 
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <StatBlock
+          <StatCard
             label={t("entitlements.platformStripe.total")}
-            value={connectSummary.totalAccounts}
+            value={connectSummary.totalAccounts.toLocaleString()}
             icon={Users}
-            color="text-[#635bff]"
           />
-          <StatBlock
+          <StatCard
             label={t("entitlements.platformStripe.active")}
-            value={connectSummary.activeAccounts}
+            value={connectSummary.activeAccounts.toLocaleString()}
             icon={CheckCircle2}
-            color="text-success"
+            tone="success"
           />
-          <StatBlock
+          <StatCard
             label={t("entitlements.platformStripe.pending")}
-            value={connectSummary.pendingOnboarding}
+            value={connectSummary.pendingOnboarding.toLocaleString()}
             icon={Clock}
-            color="text-warning"
+            tone="warning"
           />
-          <StatBlock
+          <StatCard
             label={t("entitlements.platformStripe.disabled")}
-            value={connectSummary.disabledAccounts}
+            value={connectSummary.disabledAccounts.toLocaleString()}
             icon={XCircle}
-            color="text-destructive"
+            tone="danger"
           />
         </div>
 
         <Separator className="my-4" />
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="flex items-center justify-between rounded-lg bg-muted/50 p-3">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-success" />
-              <span className="text-sm text-muted-foreground">
-                {t("entitlements.platformStripe.totalCommissionsEarned")}
-              </span>
-            </div>
-            <span className="font-bold text-success">
-              ${connectSummary.totalCommissionsEarned.toFixed(2)}
-            </span>
-          </div>
-          <div className="flex items-center justify-between rounded-lg bg-muted/50 p-3">
-            <div className="flex items-center gap-2">
-              <Percent className="h-4 w-4 text-warning" />
-              <span className="text-sm text-muted-foreground">
-                {t("entitlements.platformStripe.commissionsPending")}
-              </span>
-            </div>
-            <span className="font-bold text-warning">
-              ${connectSummary.totalCommissionsPending.toFixed(2)}
-            </span>
-          </div>
+        <div className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+          <DetailRow
+            icon={TrendingUp}
+            label={t("entitlements.platformStripe.totalCommissionsEarned")}
+            value={formatMajorCurrency(connectSummary.totalCommissionsEarned, code)}
+          />
+          <DetailRow
+            icon={Percent}
+            label={t("entitlements.platformStripe.commissionsPending")}
+            value={formatMajorCurrency(connectSummary.totalCommissionsPending, code)}
+          />
         </div>
       </CardContent>
     </Card>
-  );
-}
-
-// ── Private Subcomponent ──
-
-function StatBlock({
-  label,
-  value,
-  icon: Icon,
-  color,
-}: {
-  label: string;
-  value: number;
-  icon: React.ElementType;
-  color: string;
-}) {
-  return (
-    <div className="rounded-lg bg-muted/30 p-3 text-center">
-      <Icon className={`mx-auto mb-1.5 h-5 w-5 ${color}`} />
-      <p className="text-2xl font-bold">{value}</p>
-      <p className="text-xs text-muted-foreground">{label}</p>
-    </div>
   );
 }

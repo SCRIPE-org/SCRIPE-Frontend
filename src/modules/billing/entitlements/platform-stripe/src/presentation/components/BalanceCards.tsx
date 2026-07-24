@@ -3,44 +3,47 @@
  */
 "use client";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Card, CardContent } from "@core/ui/card";
+import { StatCard, type StatTone } from "@core/ui/stat-card";
 import { CheckCircle2, Clock, Shield } from "lucide-react";
-import { PlatformBalance } from "../../domain/entities/PlatformStripeDashboard";
-import { formatStripeCurrency } from "./utils";
+import type { LucideIcon } from "lucide-react";
+import { BalanceAmount, PlatformBalance } from "../../domain/entities/PlatformStripeDashboard";
+import { formatMajorCurrency, formatStripeCurrency } from "./utils";
 
 interface BalanceCardsProps {
   balance: PlatformBalance;
+  /** Currency a zero balance is reported in — the account's own default. */
+  defaultCurrency: string;
 }
 
 /**
  * Presentation UI component rendering the balance cards.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
-export function BalanceCards({ balance }: BalanceCardsProps) {
+export function BalanceCards({ balance, defaultCurrency }: BalanceCardsProps) {
   const { t } = useI18n();
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-      <BalanceCard
-        title={t("entitlements.platformStripe.balanceAvailable")}
+      <BalanceStat
+        label={t("entitlements.platformStripe.balanceAvailable")}
         amounts={balance.available}
         icon={CheckCircle2}
-        gradient="from-success to-success/70"
-        iconColor="text-success"
+        tone="success"
+        defaultCurrency={defaultCurrency}
       />
-      <BalanceCard
-        title={t("entitlements.platformStripe.balancePending")}
+      <BalanceStat
+        label={t("entitlements.platformStripe.balancePending")}
         amounts={balance.pending}
         icon={Clock}
-        gradient="from-warning to-warning/70"
-        iconColor="text-warning"
+        tone="warning"
+        defaultCurrency={defaultCurrency}
       />
-      <BalanceCard
-        title={t("entitlements.platformStripe.balanceConnectReserved")}
+      <BalanceStat
+        label={t("entitlements.platformStripe.balanceConnectReserved")}
         amounts={balance.connectReserved}
         icon={Shield}
-        gradient="from-primary to-primary/70"
-        iconColor="text-primary"
+        tone="info"
+        defaultCurrency={defaultCurrency}
       />
     </div>
   );
@@ -48,39 +51,39 @@ export function BalanceCards({ balance }: BalanceCardsProps) {
 
 // ── Private Subcomponent ──
 
-function BalanceCard({
-  title,
+function BalanceStat({
+  label,
   amounts,
-  icon: Icon,
-  gradient,
-  iconColor,
+  icon,
+  tone,
+  defaultCurrency,
 }: {
-  title: string;
-  amounts: { currency: string; amount: number }[];
-  icon: React.ElementType;
-  gradient: string;
-  iconColor: string;
+  label: string;
+  amounts: BalanceAmount[];
+  icon: LucideIcon;
+  tone: StatTone;
+  defaultCurrency: string;
 }) {
+  // A platform can settle in several currencies at once. The account's own
+  // currency leads as the figure; the rest ride the subtitle rather than
+  // stacking three heroes in one card.
+  const [primary, ...rest] = amounts;
+
   return (
-    <Card className="relative overflow-hidden shadow-md transition-shadow duration-300 hover:shadow-lg">
-      <div className={`absolute left-0 right-0 top-0 h-0.5 bg-gradient-to-r ${gradient}`} />
-      <CardContent className="p-5">
-        <div className="mb-3 flex items-center justify-between">
-          <span className="text-sm font-medium text-muted-foreground">{title}</span>
-          <Icon className={`h-4 w-4 ${iconColor}`} />
-        </div>
-        {amounts.length === 0 ? (
-          <p className="text-2xl font-bold">$0.00</p>
-        ) : (
-          <div className="space-y-1">
-            {amounts.map((b, i) => (
-              <p key={i} className="text-2xl font-bold tracking-tight">
-                {formatStripeCurrency(b.amount, b.currency)}
-              </p>
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+    <StatCard
+      label={label}
+      value={
+        primary
+          ? formatStripeCurrency(primary.amount, primary.currency)
+          : formatMajorCurrency(0, defaultCurrency || "usd")
+      }
+      subtitle={
+        rest.length > 0
+          ? rest.map((b) => formatStripeCurrency(b.amount, b.currency)).join(" · ")
+          : undefined
+      }
+      icon={icon}
+      tone={tone}
+    />
   );
 }

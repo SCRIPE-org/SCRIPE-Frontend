@@ -62,7 +62,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@core/ui/pagination";
-import { MoreHorizontal, ChevronsLeft, ChevronsRight, Search, Loader2 } from "lucide-react";
+import { MoreHorizontal, ChevronsLeft, ChevronsRight, Search } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { Skeleton } from "@core/ui/skeleton";
 import GenericSelect from "./generic-select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
@@ -340,13 +342,12 @@ function GenericTableInner<T extends Record<string, any>>({
   const stickyActionsClasses = "sticky end-0 z-raised border-s border-nx-line-hi bg-nx-surface";
 
   if (loading) {
+    // The shared placeholder primitive, in the row silhouette — the region
+    // announces the load, so the blocks themselves stay decorative.
     return (
-      <div className="space-y-3">
+      <div className="space-y-3" role="status" aria-busy="true" aria-label={t("common.loading")}>
         {[...Array(5)].map((_, i) => (
-          <div
-            key={i}
-            className="h-16 animate-pulse rounded-nx-md bg-nx-raised motion-reduce:animate-none"
-          />
+          <Skeleton key={i} className="h-16" />
         ))}
       </div>
     );
@@ -357,10 +358,14 @@ function GenericTableInner<T extends Record<string, any>>({
       {/* Search Bar - Only show if search functionality is enabled */}
       {onSearch !== undefined && (
         <div className="relative">
-          <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3" />
+          <Search
+            className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
+            aria-hidden="true"
+          />
           <Input
             ref={searchInputRef}
             placeholder={placeholder}
+            aria-label={placeholder}
             className="ps-10"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -378,7 +383,12 @@ function GenericTableInner<T extends Record<string, any>>({
             return (
               <div
                 key={index}
-                className={cn(getCardClasses(), isSelected && "ring-2 ring-nx-accent")}
+                // Selection speaks the same language as a selected table row:
+                // the accent wash behind an accent hairline, no second ring.
+                className={cn(
+                  getCardClasses(),
+                  isSelected && "border-nx-accent bg-nx-accent-wash"
+                )}
               >
                 {selectable && (
                   <div className="flex items-center gap-2 border-b border-nx-line pb-2">
@@ -416,8 +426,8 @@ function GenericTableInner<T extends Record<string, any>>({
                     ) : (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
-                            <MoreHorizontal className="h-4 w-4" />
+                          <Button variant="ghost" size="sm" aria-label={t("table.actions")}>
+                            <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="min-w-[160px]">
@@ -440,9 +450,13 @@ function GenericTableInner<T extends Record<string, any>>({
                                   )}
                                 >
                                   {action.loading ? (
-                                    <Loader2 className="me-2 h-4 w-4 animate-spin motion-reduce:animate-none" />
+                                    <LoadingSpinner size="inline" className="me-2" />
                                   ) : (
-                                    action.icon && <span className="me-2">{action.icon}</span>
+                                    action.icon && (
+                                      <span className="me-2" aria-hidden="true">
+                                        {action.icon}
+                                      </span>
+                                    )
                                   )}
                                   <span className="font-medium">{action.label}</span>
                                 </DropdownMenuItem>
@@ -471,24 +485,24 @@ function GenericTableInner<T extends Record<string, any>>({
           }}
         >
           <div className="overflow-x-auto">
-            {/* Scroll Shadow Overlays */}
+            {/* Scroll shadows. The edges are logical; only the gradient
+                direction stays physical, because Tailwind has no logical
+                gradient axis — so it resolves against the live direction. */}
             {showLeftShadow && (
               <div
+                aria-hidden="true"
                 className={cn(
-                  "pointer-events-none absolute inset-y-0 z-raised w-4",
-                  direction === "rtl"
-                    ? "right-0 bg-gradient-to-l from-nx-surface to-transparent"
-                    : "left-0 bg-gradient-to-r from-nx-surface to-transparent"
+                  "pointer-events-none absolute inset-y-0 start-0 z-raised w-4 from-nx-surface to-transparent",
+                  direction === "rtl" ? "bg-gradient-to-l" : "bg-gradient-to-r"
                 )}
               />
             )}
             {showRightShadow && (
               <div
+                aria-hidden="true"
                 className={cn(
-                  "pointer-events-none absolute inset-y-0 z-raised w-4",
-                  direction === "rtl"
-                    ? "left-0 bg-gradient-to-r from-nx-surface to-transparent"
-                    : "right-0 bg-gradient-to-l from-nx-surface to-transparent"
+                  "pointer-events-none absolute inset-y-0 end-0 z-raised w-4 from-nx-surface to-transparent",
+                  direction === "rtl" ? "bg-gradient-to-r" : "bg-gradient-to-l"
                 )}
               />
             )}
@@ -605,8 +619,12 @@ function GenericTableInner<T extends Record<string, any>>({
                               <div className="flex items-center justify-center">
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" className="h-8 w-8 p-0">
-                                      <MoreHorizontal className="h-4 w-4" />
+                                    <Button
+                                      variant="ghost"
+                                      className="h-8 w-8 p-0"
+                                      aria-label={t("table.actions")}
+                                    >
+                                      <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
                                     </Button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent
@@ -632,10 +650,12 @@ function GenericTableInner<T extends Record<string, any>>({
                                             )}
                                           >
                                             {action.loading ? (
-                                              <Loader2 className="me-2 h-4 w-4 animate-spin motion-reduce:animate-none" />
+                                              <LoadingSpinner size="inline" className="me-2" />
                                             ) : (
                                               action.icon && (
-                                                <span className="me-2">{action.icon}</span>
+                                                <span className="me-2" aria-hidden="true">
+                                                  {action.icon}
+                                                </span>
                                               )
                                             )}
                                             <span className="font-medium">{action.label}</span>
@@ -709,19 +729,18 @@ function GenericTableInner<T extends Record<string, any>>({
                       aria-label={t("table.firstPage")}
                       aria-disabled={pagination.currentPage === 1 || undefined}
                       tabIndex={pagination.currentPage === 1 ? -1 : undefined}
-                      className={cn(
-                        "h-8 w-8",
-                        pagination.currentPage === 1 && "pointer-events-none opacity-50"
-                      )}
+                      // Bounds states are the primitive's aria-disabled skin —
+                      // dedicated ink, not an opacity veil.
+                      className="h-8 w-8"
                       onClick={(e) => {
                         e.preventDefault();
                         pagination.onPageChange(1);
                       }}
                     >
                       {direction === "rtl" ? (
-                        <ChevronsRight className="h-4 w-4" />
+                        <ChevronsRight className="h-4 w-4" aria-hidden="true" />
                       ) : (
-                        <ChevronsLeft className="h-4 w-4" />
+                        <ChevronsLeft className="h-4 w-4" aria-hidden="true" />
                       )}
                     </PaginationLink>
                   </PaginationItem>
@@ -732,10 +751,7 @@ function GenericTableInner<T extends Record<string, any>>({
                       href="#"
                       aria-disabled={pagination.currentPage === 1 || undefined}
                       tabIndex={pagination.currentPage === 1 ? -1 : undefined}
-                      className={cn(
-                        "h-8",
-                        pagination.currentPage === 1 && "pointer-events-none opacity-50"
-                      )}
+                      className="h-8"
                       onClick={(e) => {
                         e.preventDefault();
                         pagination.onPageChange(pagination.currentPage - 1);
@@ -811,11 +827,7 @@ function GenericTableInner<T extends Record<string, any>>({
                       href="#"
                       aria-disabled={pagination.currentPage === pagination.pagesCount || undefined}
                       tabIndex={pagination.currentPage === pagination.pagesCount ? -1 : undefined}
-                      className={cn(
-                        "h-8",
-                        pagination.currentPage === pagination.pagesCount &&
-                          "pointer-events-none opacity-50"
-                      )}
+                      className="h-8"
                       onClick={(e) => {
                         e.preventDefault();
                         pagination.onPageChange(pagination.currentPage + 1);
@@ -830,20 +842,16 @@ function GenericTableInner<T extends Record<string, any>>({
                       aria-label={t("table.lastPage")}
                       aria-disabled={pagination.currentPage === pagination.pagesCount || undefined}
                       tabIndex={pagination.currentPage === pagination.pagesCount ? -1 : undefined}
-                      className={cn(
-                        "h-8 w-8",
-                        pagination.currentPage === pagination.pagesCount &&
-                          "pointer-events-none opacity-50"
-                      )}
+                      className="h-8 w-8"
                       onClick={(e) => {
                         e.preventDefault();
                         pagination.onPageChange(pagination.pagesCount);
                       }}
                     >
                       {direction === "rtl" ? (
-                        <ChevronsLeft className="h-4 w-4" />
+                        <ChevronsLeft className="h-4 w-4" aria-hidden="true" />
                       ) : (
-                        <ChevronsRight className="h-4 w-4" />
+                        <ChevronsRight className="h-4 w-4" aria-hidden="true" />
                       )}
                     </PaginationLink>
                   </PaginationItem>
@@ -857,6 +865,7 @@ function GenericTableInner<T extends Record<string, any>>({
                       type="number"
                       min={1}
                       max={pagination.pagesCount}
+                      aria-label={t("table.goToPage")}
                       className="h-8 w-16 text-center"
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {

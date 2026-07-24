@@ -3,14 +3,14 @@ export const ar = {
     platformStripe: {
       title: "لوحة تحكم Stripe للمنصة",
       description: "عرض مباشر لحساب Stripe الخاص بالمنصة",
-      refresh: "تحديث",
       openStripe: "فتح Stripe",
-      errorTitle: "تعذر تحميل بيانات Stripe",
-      errorDescription: "تحقق من إعدادات مفتاح API الخاص بـ Stripe وحاول مرة أخرى.",
-      retry: "إعادة المحاولة",
+      opensInNewTab: "يفتح في تبويب جديد",
+      errorMessage:
+        "تعذر تحميل بيانات Stripe. تحقق من إعدادات مفتاح API الخاص بـ Stripe وحاول مرة أخرى.",
 
       // معلومات الحساب
       stripeAccount: "حساب Stripe",
+      accountId: "معرّف الحساب",
       email: "البريد الإلكتروني",
       country: "الدولة",
       currency: "العملة",
@@ -19,6 +19,14 @@ export const ar = {
       charges: "الرسوم",
       payouts: "التحويلات",
       detailsSubmitted: "تم تقديم التفاصيل",
+      enabled: "مفعّل",
+
+      // الدعم
+      supportInfo: "الدعم",
+      supportInfoDescription: "كيف يتواصل العملاء مع هذا الحساب",
+      supportEmail: "بريد الدعم",
+      supportPhone: "هاتف الدعم",
+      supportUrl: "صفحة الدعم",
 
       // الرصيد
       balanceAvailable: "المتاح",
@@ -51,10 +59,22 @@ export const ar = {
       txStripeFee: "رسوم Stripe",
       txAppFee: "رسوم التطبيق",
 
+      // حالة المعاملة
+      txStatusAvailable: "متاح",
+      txStatusPending: "قيد الانتظار",
+
       // التحويلات
       recentPayouts: "التحويلات الأخيرة",
       noPayouts: "لا توجد تحويلات حديثة",
       arrival: "الوصول",
+      created: "تاريخ الإنشاء",
+      payoutStatusPaid: "مدفوع",
+      payoutStatusPending: "قيد الانتظار",
+      payoutStatusInTransit: "قيد التحويل",
+      payoutStatusCanceled: "ملغى",
+      payoutStatusFailed: "فشل",
+      payoutMethodStandard: "قياسي",
+      payoutMethodInstant: "فوري",
 
       // الروابط السريعة
       quickLinks: "الروابط السريعة",

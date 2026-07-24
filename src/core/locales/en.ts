@@ -1,4 +1,9 @@
-export const en = {
+import { deepMerge } from "@core/utils/deep-merge";
+import { en as packsEn } from "./packs";
+
+// The historical shared block. Surfaces are being drained out of it into
+// locale packs one at a time; until a surface has moved, its keys stay here.
+const shared = {
   sso: {
     externalLogins: "External Logins",
     externalLoginsDescription: "Link third-party accounts to sign in securely without a password.",
@@ -1981,3 +1986,8 @@ export const en = {
     togglePanel: "Toggle panel",
   },
 };
+
+// Packs merge OVER the historical block, so a surface that has moved into a
+// pack wins over whatever stale copy of the same key is still sitting above.
+// Eager, at module scope, so the dictionary is whole on the first render.
+export const en = deepMerge(shared, packsEn);

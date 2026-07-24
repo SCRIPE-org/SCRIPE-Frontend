@@ -5,8 +5,10 @@
 
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
-import { Badge } from "@core/ui/badge";
+import { Badge, type BadgeProps } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
+import { DetailRow } from "@core/ui/detail-row";
+import { SectionState } from "@core/ui/section-state";
 import {
   Landmark,
   ExternalLink,
@@ -19,15 +21,43 @@ import {
 import { formatStripeCurrency, formatDate } from "./utils";
 import { PlatformPayout } from "../../domain/entities/PlatformStripeDashboard";
 
-const payoutStatusConfig: Record<
+// Status drives the chip's hue AND its glyph, so a payout that failed still
+// reads as failed in greyscale. The label key is resolved at render because the
+// dictionary is only available inside the component.
+const PAYOUT_STATUS: Record<
   string,
-  { variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ElementType }
+  { variant: BadgeProps["variant"]; icon: React.ElementType; labelKey: string }
 > = {
-  paid: { variant: "default", icon: CheckCircle2 },
-  pending: { variant: "secondary", icon: Clock },
-  in_transit: { variant: "outline", icon: ArrowUpRight },
-  canceled: { variant: "destructive", icon: XCircle },
-  failed: { variant: "destructive", icon: AlertCircle },
+  paid: {
+    variant: "success",
+    icon: CheckCircle2,
+    labelKey: "entitlements.platformStripe.payoutStatusPaid",
+  },
+  pending: {
+    variant: "warning",
+    icon: Clock,
+    labelKey: "entitlements.platformStripe.payoutStatusPending",
+  },
+  in_transit: {
+    variant: "info",
+    icon: ArrowUpRight,
+    labelKey: "entitlements.platformStripe.payoutStatusInTransit",
+  },
+  canceled: {
+    variant: "destructive",
+    icon: XCircle,
+    labelKey: "entitlements.platformStripe.payoutStatusCanceled",
+  },
+  failed: {
+    variant: "destructive",
+    icon: AlertCircle,
+    labelKey: "entitlements.platformStripe.payoutStatusFailed",
+  },
+};
+
+const PAYOUT_METHOD_KEYS: Record<string, string> = {
+  standard: "entitlements.platformStripe.payoutMethodStandard",
+  instant: "entitlements.platformStripe.payoutMethodInstant",
 };
 
 interface PayoutsCardProps {
@@ -43,69 +73,74 @@ export function PayoutsCard({ payouts, payoutsLink }: PayoutsCardProps) {
   const { t } = useI18n();
 
   return (
-    <Card className="shadow-md">
+    <Card>
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Landmark className="h-4 w-4 text-[#635bff]" />
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-2">
+            <Landmark className="h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
             <CardTitle className="text-base">
               {t("entitlements.platformStripe.recentPayouts")}
             </CardTitle>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="gap-1 text-xs"
-            onClick={() => window.open(payoutsLink, "_blank")}
-          >
-            {t("entitlements.platformStripe.viewAll")} <ExternalLink className="h-3 w-3" />
+          <Button asChild variant="ghost" size="sm" className="shrink-0 gap-1">
+            <a href={payoutsLink} target="_blank" rel="noopener noreferrer">
+              {t("entitlements.platformStripe.viewAll")}
+              <ExternalLink className="h-3 w-3" aria-hidden="true" />
+              <span className="sr-only">{t("entitlements.platformStripe.opensInNewTab")}</span>
+            </a>
           </Button>
         </div>
       </CardHeader>
       <CardContent>
-        {payouts.length === 0 ? (
-          <p className="py-6 text-center text-sm text-muted-foreground">
-            {t("entitlements.platformStripe.noPayouts")}
-          </p>
-        ) : (
+        <SectionState
+          // The view gates the whole page on loading, so by the time this card
+          // renders its data has already landed.
+          isLoading={false}
+          isEmpty={payouts.length === 0}
+          emptyMessage={t("entitlements.platformStripe.noPayouts")}
+          height={160}
+        >
           <div className="space-y-2">
             {payouts.map((po) => {
-              const poStatus = payoutStatusConfig[po.status] ?? payoutStatusConfig.pending;
-              const PoIcon = poStatus.icon;
+              const status = PAYOUT_STATUS[po.status] ?? PAYOUT_STATUS.pending;
+              const StatusIcon = status.icon;
+              const methodKey = PAYOUT_METHOD_KEYS[po.method];
               return (
                 <div
                   key={po.id}
-                  className="flex items-center justify-between rounded-lg bg-muted/30 p-3 transition-colors hover:bg-muted/50"
+                  className="rounded-nx-md border border-nx-line bg-nx-raised p-3"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-lg bg-primary/10 p-1.5">
-                      <Landmark className="h-3.5 w-3.5 text-primary" />
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex min-w-0 flex-wrap items-center gap-2">
+                      <Badge variant={status.variant}>
+                        <StatusIcon className="h-3 w-3" aria-hidden="true" />
+                        {t(status.labelKey)}
+                      </Badge>
+                      {po.method && (
+                        <span className="truncate text-xs text-nx-ink-3">
+                          {methodKey ? t(methodKey) : po.method}
+                        </span>
+                      )}
                     </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant={poStatus.variant} className="gap-1 px-1.5 py-0 text-[10px]">
-                          <PoIcon className="h-3 w-3" />
-                          {po.status}
-                        </Badge>
-                        {po.method && (
-                          <span className="text-[10px] text-muted-foreground">{po.method}</span>
-                        )}
-                      </div>
-                      <p className="mt-0.5 text-xs text-muted-foreground">
-                        {po.hasArrivalDate
-                          ? `${t("entitlements.platformStripe.arrival")}: ${formatDate(po.arrivalDate)}`
-                          : formatDate(po.created)}
-                      </p>
-                    </div>
+                    <span className="shrink-0 text-sm font-semibold tabular-nums text-nx-ink">
+                      {formatStripeCurrency(po.amount, po.currency)}
+                    </span>
                   </div>
-                  <span className="text-sm font-semibold">
-                    {formatStripeCurrency(po.amount, po.currency)}
-                  </span>
+
+                  <DetailRow
+                    className="mt-2"
+                    label={
+                      po.hasArrivalDate
+                        ? t("entitlements.platformStripe.arrival")
+                        : t("entitlements.platformStripe.created")
+                    }
+                    value={formatDate(po.hasArrivalDate ? po.arrivalDate : po.created)}
+                  />
                 </div>
               );
             })}
           </div>
-        )}
+        </SectionState>
       </CardContent>
     </Card>
   );

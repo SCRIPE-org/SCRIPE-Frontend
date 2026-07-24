@@ -5,16 +5,20 @@
 
 import type { PlatformAccount } from "../../domain/entities/PlatformStripeDashboard";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Card, CardContent } from "@core/ui/card";
+import { Badge } from "@core/ui/badge";
+import { StripeMark } from "@core/ui/brand-icons";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
+import { DetailRow } from "@core/ui/detail-row";
 import {
   Building2,
-  Mail,
-  Globe,
-  DollarSign,
-  CreditCard,
   CheckCircle2,
-  XCircle,
+  CreditCard,
+  DollarSign,
+  Globe,
+  Hash,
+  Mail,
   Phone,
+  XCircle,
 } from "lucide-react";
 
 interface AccountHeroCardProps {
@@ -30,65 +34,26 @@ export function AccountHeroCard({ account }: AccountHeroCardProps) {
 
   return (
     <>
-      <Card className="relative overflow-hidden border-0 shadow-xl">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#635bff]/5 to-[#635bff]/10" />
-        <div className="absolute left-0 right-0 top-0 h-1 bg-gradient-to-r from-[#635bff] to-[#80e9ff]" />
-
-        <CardContent className="relative p-6 sm:p-8">
-          <div className="flex flex-col gap-6 lg:flex-row">
-            {/* Left: Identity */}
-            <div className="flex-1 space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-xl bg-gradient-to-br from-[#635bff] to-[#80e9ff] p-3 shadow-lg">
-                  <Building2 className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold">{account.displayName}</h2>
-                  <p className="font-mono text-sm text-muted-foreground">{account.accountId}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {account.email && (
-                  <InfoChip
-                    icon={Mail}
-                    label={t("entitlements.platformStripe.email")}
-                    value={account.email}
-                  />
-                )}
-                {account.country && (
-                  <InfoChip
-                    icon={Globe}
-                    label={t("entitlements.platformStripe.country")}
-                    value={account.country.toUpperCase()}
-                  />
-                )}
-                {account.defaultCurrency && (
-                  <InfoChip
-                    icon={DollarSign}
-                    label={t("entitlements.platformStripe.currency")}
-                    value={account.defaultCurrency.toUpperCase()}
-                  />
-                )}
-                {account.businessType && (
-                  <InfoChip
-                    icon={Building2}
-                    label={t("entitlements.platformStripe.businessType")}
-                    value={account.businessType}
-                  />
-                )}
-                {account.statementDescriptor && (
-                  <InfoChip
-                    icon={CreditCard}
-                    label={t("entitlements.platformStripe.statementDescriptor")}
-                    value={account.statementDescriptor}
-                  />
-                )}
-              </div>
+      <Card>
+        <CardHeader>
+          <div className="flex flex-wrap items-start gap-4">
+            {/* The account belongs to Stripe, so the tile carries Stripe's own
+                mark on a neutral step rather than the workspace accent. */}
+            <div
+              className="grid h-12 w-12 shrink-0 place-items-center rounded-nx-md border border-nx-line bg-nx-raised"
+              aria-hidden="true"
+            >
+              <StripeMark className="h-6 w-6" />
             </div>
 
-            {/* Right: Capabilities */}
-            <div className="flex flex-wrap gap-2 lg:flex-col lg:items-end lg:justify-center">
+            <div className="min-w-0 flex-1">
+              <CardTitle className="truncate">
+                {account.businessName || t("entitlements.platformStripe.stripeAccount")}
+              </CardTitle>
+              <CardDescription>{t("entitlements.platformStripe.description")}</CardDescription>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 ms-auto">
               <CapabilityBadge
                 enabled={account.chargesEnabled}
                 label={t("entitlements.platformStripe.charges")}
@@ -103,33 +68,105 @@ export function AccountHeroCard({ account }: AccountHeroCardProps) {
               />
             </div>
           </div>
+        </CardHeader>
+
+        <CardContent>
+          <div className="grid gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+            <DetailRow
+              icon={Hash}
+              label={t("entitlements.platformStripe.accountId")}
+              value={account.accountId}
+              mono
+              copyable={account.accountId}
+            />
+            {account.email && (
+              <DetailRow
+                icon={Mail}
+                label={t("entitlements.platformStripe.email")}
+                value={account.email}
+                copyable={account.email}
+              />
+            )}
+            {account.country && (
+              <DetailRow
+                icon={Globe}
+                label={t("entitlements.platformStripe.country")}
+                value={account.country.toUpperCase()}
+              />
+            )}
+            {account.defaultCurrency && (
+              <DetailRow
+                icon={DollarSign}
+                label={t("entitlements.platformStripe.currency")}
+                value={account.defaultCurrency.toUpperCase()}
+              />
+            )}
+            {account.businessType && (
+              <DetailRow
+                icon={Building2}
+                label={t("entitlements.platformStripe.businessType")}
+                value={account.businessType}
+              />
+            )}
+            {account.statementDescriptor && (
+              <DetailRow
+                icon={CreditCard}
+                label={t("entitlements.platformStripe.statementDescriptor")}
+                value={account.statementDescriptor}
+              />
+            )}
+          </div>
         </CardContent>
       </Card>
 
-      {/* Support Info */}
       {account.hasSupportInfo && (
-        <Card className="border-dashed shadow-sm">
-          <CardContent className="flex flex-wrap gap-4 p-4 text-sm text-muted-foreground">
-            {account.supportEmail && (
-              <span className="flex items-center gap-1.5">
-                <Mail className="h-3.5 w-3.5" /> {account.supportEmail}
-              </span>
-            )}
-            {account.supportPhone && (
-              <span className="flex items-center gap-1.5">
-                <Phone className="h-3.5 w-3.5" /> {account.supportPhone}
-              </span>
-            )}
-            {account.supportUrl && (
-              <a
-                href={account.supportUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 transition-colors hover:text-foreground"
-              >
-                <Globe className="h-3.5 w-3.5" /> {account.supportUrl}
-              </a>
-            )}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">
+              {t("entitlements.platformStripe.supportInfo")}
+            </CardTitle>
+            <CardDescription>
+              {t("entitlements.platformStripe.supportInfoDescription")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+              {account.supportEmail && (
+                <DetailRow
+                  icon={Mail}
+                  label={t("entitlements.platformStripe.supportEmail")}
+                  value={account.supportEmail}
+                  copyable={account.supportEmail}
+                />
+              )}
+              {account.supportPhone && (
+                <DetailRow
+                  icon={Phone}
+                  label={t("entitlements.platformStripe.supportPhone")}
+                  value={account.supportPhone}
+                  copyable={account.supportPhone}
+                />
+              )}
+              {account.supportUrl && (
+                <DetailRow
+                  icon={Globe}
+                  label={t("entitlements.platformStripe.supportUrl")}
+                  value={
+                    <a
+                      href={account.supportUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded-nx-sm text-nx-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:shadow-nx-focus"
+                    >
+                      {account.supportUrl}
+                      <span className="sr-only">
+                        {t("entitlements.platformStripe.opensInNewTab")}
+                      </span>
+                    </a>
+                  }
+                />
+              )}
+            </div>
           </CardContent>
         </Card>
       )}
@@ -139,37 +176,24 @@ export function AccountHeroCard({ account }: AccountHeroCardProps) {
 
 // ── Private Subcomponents ──
 
-function InfoChip({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: React.ElementType;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex items-center gap-2 rounded-lg bg-muted/30 p-2 text-sm">
-      <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-      <div className="min-w-0">
-        <p className="text-[10px] leading-none text-muted-foreground">{label}</p>
-        <p className="truncate font-medium">{value}</p>
-      </div>
-    </div>
-  );
-}
-
 function CapabilityBadge({ enabled, label }: { enabled: boolean; label: string }) {
+  const { t } = useI18n();
+
+  // Colour alone cannot carry "charges are off", so the state ships as text the
+  // glyph merely echoes.
   return (
-    <div
-      className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium ${
-        enabled
-          ? "border border-success/20 bg-success/10 text-success"
-          : "border border-destructive/20 bg-destructive/10 text-destructive"
-      }`}
-    >
-      {enabled ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
+    <Badge variant={enabled ? "success" : "destructive"}>
+      {enabled ? (
+        <CheckCircle2 className="h-3 w-3" aria-hidden="true" />
+      ) : (
+        <XCircle className="h-3 w-3" aria-hidden="true" />
+      )}
       {label}
-    </div>
+      <span className="sr-only">
+        {enabled
+          ? t("entitlements.platformStripe.enabled")
+          : t("entitlements.platformStripe.disabled")}
+      </span>
+    </Badge>
   );
 }

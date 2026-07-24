@@ -3,8 +3,8 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import { Button } from "@core/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
-import { AlertTriangle, RefreshCw, Home } from "lucide-react";
+import { ErrorMessage } from "@core/ui/error-message";
+import { Home } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { handleError } from "@core/common/error-handler";
@@ -61,7 +61,15 @@ interface ErrorFallbackProps {
   onReset?: () => void;
 }
 
-function ErrorFallback({ error, onReset }: ErrorFallbackProps) {
+/**
+ * The whole-app crash screen. It is a function component so it can reach
+ * useI18n — the class above cannot, and this screen is the last thing a user
+ * sees before they give up, so it has to be in their language.
+ *
+ * It shares ErrorMessage's anatomy with every other failure in the product
+ * (glyph tile, sentence, retry); Home sits below as the quieter escape.
+ */
+export function ErrorFallback({ error, onReset }: ErrorFallbackProps) {
   const router = useRouter();
   const { t } = useI18n();
 
@@ -76,43 +84,25 @@ function ErrorFallback({ error, onReset }: ErrorFallbackProps) {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
-            <AlertTriangle className="h-6 w-6 text-destructive" />
-          </div>
-          <CardTitle className="text-xl font-semibold">{t("errors.boundary.title")}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-center text-sm text-muted-foreground">
-            {t("errors.boundary.description")}
-          </p>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-nx-ground p-4">
+      <ErrorMessage message={t("errors.boundary.description")} onRetry={handleRetry} />
 
-          {process.env.NODE_ENV === "development" && error && (
-            <details className="mt-4">
-              <summary className="cursor-pointer text-sm font-medium text-muted-foreground">
-                {t("errors.boundary.details")}
-              </summary>
-              <pre className="mt-2 overflow-auto rounded-md bg-muted p-3 text-xs">
-                {error.message}
-                {error.stack && `\n\n${error.stack}`}
-              </pre>
-            </details>
-          )}
+      {process.env.NODE_ENV === "development" && error && (
+        <details className="mt-2 w-full max-w-md">
+          <summary className="cursor-pointer rounded-nx-sm text-sm font-medium text-nx-ink-2 focus-visible:outline-none focus-visible:shadow-nx-focus">
+            {t("errors.boundary.details")}
+          </summary>
+          <pre className="mt-2 overflow-auto rounded-nx-sm bg-nx-raised p-3 text-xs text-nx-ink-2">
+            {error.message}
+            {error.stack && `\n\n${error.stack}`}
+          </pre>
+        </details>
+      )}
 
-          <div className="flex gap-2">
-            <Button onClick={handleRetry} className="flex-1" variant="outline">
-              <RefreshCw className="mr-2 h-4 w-4" />
-              {t("errors.boundary.retry")}
-            </Button>
-            <Button onClick={handleGoHome} className="flex-1">
-              <Home className="mr-2 h-4 w-4" />
-              {t("errors.boundary.home")}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <Button variant="ghost" size="sm" onClick={handleGoHome} className="mt-3">
+        <Home className="me-2 h-4 w-4" aria-hidden="true" />
+        {t("errors.boundary.home")}
+      </Button>
     </div>
   );
 }

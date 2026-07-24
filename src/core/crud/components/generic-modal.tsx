@@ -11,6 +11,7 @@ import {
   DialogPortal,
 } from "@core/ui/dialog";
 import { ScrollArea } from "@core/ui/scroll-area";
+import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
 
@@ -57,6 +58,7 @@ function GenericModalInner({
   headerClassName,
   contentClassName,
 }: GenericModalProps) {
+  const { t } = useI18n();
   const settings = useSettings();
 
   // The scrim swallows pointer interaction by existing, but wheel and touch
@@ -172,7 +174,7 @@ function GenericModalInner({
             <DialogTitle>{title}</DialogTitle>
             {showDescription && (
               <DialogDescription className="mt-1">
-                {description || "Please fill out the form below."}
+                {description || t("crud.modal.formDescription")}
               </DialogDescription>
             )}
           </DialogHeader>

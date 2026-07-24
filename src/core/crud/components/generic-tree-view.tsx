@@ -8,8 +8,15 @@ import { GenericModal } from "./generic-modal";
 import GenericSelect from "./generic-select";
 import {} from // Pagination imports removed in favor of direct standard UI buttons
 "@core/ui/pagination";
-import { Plus } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Plus,
+} from "lucide-react";
 import { cn } from "@core/common/utils";
+import { PageHeader } from "@core/ui/page-header";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { TreeViewModel, TreeNode } from "@core/hooks/use-tree-view-model";
@@ -162,19 +169,28 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
 
   // Remove interfering focus management - let natural input behavior work
 
+  // A chevron that means "previous/next page" points at the direction of
+  // travel, so it resolves against the live writing direction rather than
+  // being rotated 180° in place.
+  const isRtl = direction === "rtl";
+  const FirstPageIcon = isRtl ? ChevronsRight : ChevronsLeft;
+  const PrevPageIcon = isRtl ? ChevronRight : ChevronLeft;
+  const NextPageIcon = isRtl ? ChevronLeft : ChevronRight;
+  const LastPageIcon = isRtl ? ChevronsLeft : ChevronsRight;
+
   const toolbar = !vm.config.selectable ? (
     <div className="flex items-center gap-2">
       {showAddButton && (
         <Button size="sm" onClick={() => vm.openAddChild(null)}>
-          <Plus className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
+          <Plus className="me-2 h-4 w-4" aria-hidden="true" />
           {t("common.add")}
         </Button>
       )}
       {/* Advanced Pagination Controls from GenericCrudView / GenericTable */}
       <div className="hidden items-center gap-2 md:flex">
         {/* Page Size Selector */}
-        <div className="flex items-center gap-2 border-r pr-4 rtl:border-l rtl:border-r-0 rtl:pl-4 rtl:pr-0">
-          <span className="text-sm text-muted-foreground">{t("table.show")}:</span>
+        <div className="flex items-center gap-2 border-e border-nx-line pe-4">
+          <span className="text-sm text-nx-ink-3">{t("table.show")}:</span>
           <GenericSelect
             type="single"
             options={[5, 10, 25, 50, 100].map((size) => ({
@@ -188,7 +204,7 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
             className="h-8 w-auto min-w-[70px] max-w-[90px] text-center font-medium"
             allowClear={false}
           />
-          <span className="text-sm text-muted-foreground">{t("table.perPage")}</span>
+          <span className="text-sm text-nx-ink-3">{t("table.perPage")}</span>
         </div>
 
         {vm.pagination.pagesCount > 1 && (
@@ -199,17 +215,10 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
               size="sm"
               onClick={() => vm.changePage(1)}
               disabled={vm.pagination.page === 1}
-              className={cn("h-8 w-8 p-0", direction === "rtl" && "rotate-180")}
-              title={t("table.firstPage") || "First Page"}
+              className="h-8 w-8 p-0"
+              aria-label={t("table.firstPage")}
             >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-                />
-              </svg>
+              <FirstPageIcon className="h-4 w-4" aria-hidden="true" />
             </Button>
 
             {/* Previous Page */}
@@ -218,17 +227,10 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
               size="sm"
               onClick={() => vm.changePage(Math.max(1, vm.pagination.page - 1))}
               disabled={vm.pagination.page === 1}
-              className={cn("h-8 w-8 p-0", direction === "rtl" && "rotate-180")}
-              title={t("table.previousPage") || "Previous Page"}
+              className="h-8 w-8 p-0"
+              aria-label={t("table.previousPage")}
             >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
+              <PrevPageIcon className="h-4 w-4" aria-hidden="true" />
             </Button>
 
             {/* Page Numbers with Smart Truncation */}
@@ -261,7 +263,11 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
                 return pages.map((page, index) => {
                   if (page === "...") {
                     return (
-                      <span key={`ellipsis-${index}`} className="px-2 py-1 text-muted-foreground">
+                      <span
+                        key={`ellipsis-${index}`}
+                        aria-hidden="true"
+                        className="px-2 py-1 text-nx-ink-3"
+                      >
                         ...
                       </span>
                     );
@@ -271,13 +277,13 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
                   return (
                     <Button
                       key={pageNum}
+                      // The primary variant already IS the current-page
+                      // treatment; the old fill+shadow override fought it.
                       variant={isActive ? "default" : "outline"}
                       size="sm"
                       onClick={() => vm.changePage(pageNum)}
-                      className={cn(
-                        "h-8 w-8 p-0",
-                        isActive && "bg-primary text-primary-foreground shadow-sm"
-                      )}
+                      aria-current={isActive ? "page" : undefined}
+                      className="h-8 w-8 p-0"
                     >
                       {pageNum}
                     </Button>
@@ -294,17 +300,10 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
                 vm.changePage(Math.min(vm.pagination.pagesCount, vm.pagination.page + 1))
               }
               disabled={vm.pagination.page === vm.pagination.pagesCount}
-              className={cn("h-8 w-8 p-0", direction === "rtl" && "rotate-180")}
-              title={t("table.nextPage") || "Next Page"}
+              className="h-8 w-8 p-0"
+              aria-label={t("table.nextPage")}
             >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
+              <NextPageIcon className="h-4 w-4" aria-hidden="true" />
             </Button>
 
             {/* Last Page */}
@@ -313,17 +312,10 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
               size="sm"
               onClick={() => vm.changePage(vm.pagination.pagesCount)}
               disabled={vm.pagination.page === vm.pagination.pagesCount}
-              className={cn("h-8 w-8 p-0", direction === "rtl" && "rotate-180")}
-              title={t("table.lastPage") || "Last Page"}
+              className="h-8 w-8 p-0"
+              aria-label={t("table.lastPage")}
             >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 5l7 7-7 7M5 5l7 7-7 7"
-                />
-              </svg>
+              <LastPageIcon className="h-4 w-4" aria-hidden="true" />
             </Button>
           </div>
         )}
@@ -333,10 +325,9 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
 
   return (
     <main className={cn("space-y-4", className)}>
-      <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold">{title}</h1>
-        <p className="text-muted-foreground">{subtitle}</p>
-      </header>
+      {/* Same header as every list and record page — the tree is a view of a
+          resource, not a different kind of screen. */}
+      <PageHeader className="mb-0" title={title} description={subtitle} />
 
       <TreeView<T>
         data={vm.tree}
@@ -360,7 +351,7 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
                 // Add Child - requires create permission
                 if (effectivePermissions.canCreate) {
                   actions.push({
-                    label: t("common.add_child") ?? "Add child",
+                    label: t("common.add_child"),
                     onClick: () => vm.openAddChild(n),
                     disabled: vm.loading,
                   });
@@ -434,16 +425,13 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
             }
             // Don't handle opening - let the view model control that
           }}
-          title={
-            vm.editing
-              ? `${t("common.edit")} ${vm.config.itemTypeName}`
-              : `${t("common.add")} ${vm.config.itemTypeName}`
-          }
-          description={
-            vm.editing
-              ? `Edit the ${vm.config.itemTypeName?.toLowerCase() ?? "item"} details below.`
-              : `Add a new ${vm.config.itemTypeName?.toLowerCase() ?? "item"} below.`
-          }
+          title={t(vm.editing ? "crud.modal.editTitle" : "crud.modal.createTitle", {
+            entity: vm.config.itemTypeName ?? t("common.item"),
+          })}
+          description={t(
+            vm.editing ? "crud.modal.editDescription" : "crud.modal.createDescription",
+            { entity: vm.config.itemTypeName ?? t("common.item") }
+          )}
         >
           <GenericForm
             fields={renderFormFields(vm.formValues, vm.setFormValues, vm.editing, vm.parentForNew)}
@@ -464,10 +452,9 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
           open={vm.showConfirmation}
           onOpenChange={(open) => !open && vm.cancelDelete()}
           title={t("common.confirmDelete")}
-          description={`${t("common.deleteConfirmation").replace(
-            "{itemType}",
-            vm.deleteOptions.itemType || t("common.item")
-          )} "${vm.deleteOptions.itemName}". ${t("common.deleteWarning")}`}
+          description={`${t("crud.confirm.deleteItem", {
+            name: vm.deleteOptions.itemName ?? t("common.item"),
+          })} ${t("common.deleteWarning")}`}
           confirmText={vm.isDeleting ? t("common.deleting") : t("common.delete")}
           cancelText={t("common.cancel")}
           variant="destructive"

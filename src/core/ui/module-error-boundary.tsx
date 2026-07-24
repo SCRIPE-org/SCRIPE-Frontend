@@ -2,12 +2,20 @@
 
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { Button } from "@core/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
-import { AlertTriangle, RefreshCw, Home } from "lucide-react";
+import { ErrorMessage } from "@core/ui/error-message";
+import { Home } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 import { appLogger } from "../common/logger";
 
 interface ModuleErrorBoundaryProps {
   children: ReactNode;
+  /**
+   * Translation key naming the guarded section, e.g. "identity.admins".
+   * A key rather than a display string: the fallback resolves it through t(),
+   * so the crash screen speaks the reader's language. An unregistered key
+   * resolves to itself, which is why legacy display-string call sites still
+   * render something sensible.
+   */
   moduleName?: string;
   fallback?: ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
@@ -18,6 +26,53 @@ interface ModuleErrorBoundaryState {
   error: Error | null;
 }
 
+interface ModuleErrorFallbackProps {
+  moduleName?: string;
+  error?: Error | null;
+  onRetry: () => void;
+}
+
+/**
+ * The rendered crash screen, split out of the class on purpose: a class
+ * component cannot call useI18n, which is why every boundary in this app used
+ * to announce itself in untranslated English regardless of the active language.
+ */
+export function ModuleErrorFallback({ moduleName, error, onRetry }: ModuleErrorFallbackProps) {
+  const { t } = useI18n();
+  const moduleLabel = moduleName ? t(moduleName) : t("errors.module.unnamed");
+
+  const handleGoHome = (): void => {
+    // A full document load, not a router push — the tree we are escaping is
+    // the one that just threw, and a soft navigation would keep it mounted.
+    window.location.href = "/";
+  };
+
+  return (
+    <div className="flex min-h-[400px] flex-col items-center justify-center p-4">
+      <ErrorMessage
+        message={t("errors.module.description", { module: moduleLabel })}
+        onRetry={onRetry}
+      />
+
+      {process.env.NODE_ENV === "development" && error && (
+        <details className="mt-2 w-full max-w-md">
+          <summary className="cursor-pointer rounded-nx-sm text-sm font-medium text-nx-ink-2 focus-visible:outline-none focus-visible:shadow-nx-focus">
+            {t("errors.boundary.details")}
+          </summary>
+          <pre className="mt-2 overflow-auto rounded-nx-sm bg-nx-raised p-3 text-xs text-nx-ink-2">
+            {error.message}
+          </pre>
+        </details>
+      )}
+
+      <Button variant="ghost" size="sm" onClick={handleGoHome} className="mt-3">
+        <Home className="me-2 h-4 w-4" aria-hidden="true" />
+        {t("errors.boundary.home")}
+      </Button>
+    </div>
+  );
+}
+
 /**
  * ModuleErrorBoundary
  *
@@ -25,8 +80,8 @@ interface ModuleErrorBoundaryState {
  * Prevents a single module's error from crashing the entire app.
  *
  * @example
- * <ModuleErrorBoundary moduleName="Products">
- *   <ProductView />
+ * <ModuleErrorBoundary moduleName="identity.admins">
+ *   <AdminsView />
  * </ModuleErrorBoundary>
  */
 export class ModuleErrorBoundary extends Component<
@@ -55,10 +110,6 @@ export class ModuleErrorBoundary extends Component<
     this.setState({ hasError: false, error: null });
   };
 
-  handleGoHome = (): void => {
-    window.location.href = "/";
-  };
-
   render(): ReactNode {
     if (this.state.hasError) {
       // Custom fallback if provided
@@ -66,40 +117,12 @@ export class ModuleErrorBoundary extends Component<
         return this.props.fallback;
       }
 
-      // Default error UI
       return (
-        <div className="flex min-h-[400px] items-center justify-center p-4">
-          <Card className="w-full max-w-md">
-            <CardHeader className="text-center">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
-                <AlertTriangle className="h-6 w-6 text-destructive" />
-              </div>
-              <CardTitle className="text-lg">
-                {this.props.moduleName ? `${this.props.moduleName} Error` : "Something went wrong"}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-center text-sm text-muted-foreground">
-                An error occurred while loading this section.
-                {process.env.NODE_ENV === "development" && this.state.error && (
-                  <span className="mt-2 block font-mono text-xs text-destructive">
-                    {this.state.error.message}
-                  </span>
-                )}
-              </p>
-              <div className="flex justify-center gap-2">
-                <Button variant="outline" size="sm" onClick={this.handleRetry} className="gap-2">
-                  <RefreshCw className="h-4 w-4" />
-                  Retry
-                </Button>
-                <Button variant="default" size="sm" onClick={this.handleGoHome} className="gap-2">
-                  <Home className="h-4 w-4" />
-                  Go Home
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <ModuleErrorFallback
+          moduleName={this.props.moduleName}
+          error={this.state.error}
+          onRetry={this.handleRetry}
+        />
       );
     }
 
@@ -113,7 +136,7 @@ export class ModuleErrorBoundary extends Component<
  * Wraps a component with ModuleErrorBoundary.
  *
  * @example
- * export default withModuleErrorBoundary(ProductView, "Products");
+ * export default withModuleErrorBoundary(AdminsView, "identity.admins");
  */
 export function withModuleErrorBoundary<P extends object>(
   WrappedComponent: React.ComponentType<P>,

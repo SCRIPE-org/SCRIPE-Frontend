@@ -17,6 +17,7 @@ import {
   Activity,
   Building2,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { PlatformStripeLinks } from "../../domain/entities/PlatformStripeDashboard";
 
 interface QuickLinksCardProps {
@@ -31,10 +32,10 @@ export function QuickLinksCard({ links }: QuickLinksCardProps) {
   const { t } = useI18n();
 
   return (
-    <Card className="shadow-md">
+    <Card>
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2">
-          <ExternalLink className="h-4 w-4 text-[#635bff]" />
+          <ExternalLink className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
           <CardTitle className="text-base">{t("entitlements.platformStripe.quickLinks")}</CardTitle>
         </div>
         <CardDescription>{t("entitlements.platformStripe.quickLinksDescription")}</CardDescription>
@@ -89,23 +90,22 @@ export function QuickLinksCard({ links }: QuickLinksCardProps) {
 
 // ── Private Subcomponent ──
 
-function QuickLink({
-  icon: Icon,
-  label,
-  href,
-}: {
-  icon: React.ElementType;
-  label: string;
-  href: string;
-}) {
+function QuickLink({ icon: Icon, label, href }: { icon: LucideIcon; label: string; href: string }) {
+  const { t } = useI18n();
+
+  // A real anchor rather than a scripted window.open: these are navigations, so
+  // they should be middle-clickable, copyable and announced as links.
   return (
-    <button
-      onClick={() => window.open(href, "_blank")}
-      className="group flex items-center gap-2 rounded-lg border border-border/50 p-3 text-sm font-medium transition-all duration-200 hover:border-[#635bff]/30 hover:bg-[#635bff]/5"
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center gap-2 rounded-nx-md border border-nx-line bg-nx-surface p-3 text-sm font-medium text-nx-ink transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
     >
-      <Icon className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-[#635bff]" />
-      <span>{label}</span>
-      <ExternalLink className="ml-auto h-3 w-3 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
-    </button>
+      <Icon className="h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
+      <span className="min-w-0 truncate">{label}</span>
+      <ExternalLink className="h-3 w-3 shrink-0 text-nx-ink-3 ms-auto" aria-hidden="true" />
+      <span className="sr-only">{t("entitlements.platformStripe.opensInNewTab")}</span>
+    </a>
   );
 }

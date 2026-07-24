@@ -24,6 +24,7 @@ import { GenericForm, FieldConfig } from "@core/ui/forms/generic-form";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { ErrorMessage } from "@core/ui/error-message";
 import { EmptyState } from "@core/ui/empty-state";
+import { PageHeader } from "@core/ui/page-header";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { useEnhancedDelete } from "@core/hooks/use-enhanced-delete";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
@@ -33,6 +34,7 @@ import type { PaginationInfo } from "@core/common/pagination";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCallback, useMemo, memo, useEffect } from "react";
 import { Users, Sliders, ListTodo, Activity, ShieldCheck, Key, FileText, Inbox } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { appLogger } from "@core/common/logger";
 import { usePermission } from "@core/hooks/use-permission";
 import { usePermissions } from "@core/hooks/use-permissions";
@@ -351,8 +353,8 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     async (item: T) => {
       const itemDisplayName = config?.getItemDisplayName
         ? config.getItemDisplayName(item)
-        : (item as any).name || "Item";
-      const itemType = config?.itemTypeKey ? t(config.itemTypeKey) : "Item";
+        : (item as any).name || t("common.item");
+      const itemType = config?.itemTypeKey ? t(config.itemTypeKey) : t("common.item");
       const id = typeof item === "string" ? item : (item as any).id;
 
       await deleteSystem.confirmDelete(
@@ -371,7 +373,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           itemName: itemDisplayName,
           itemType: itemType,
           confirmTitle: t("common.confirmDelete"),
-          confirmDescription: t("common.deleteConfirmation").replace("{name}", itemDisplayName),
+          confirmDescription: t("crud.confirm.deleteItem", { name: itemDisplayName }),
         }
       );
     },
@@ -389,12 +391,15 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
 
       if (action.requiresConfirmation || action.confirmTitle || action.confirmDescription) {
         await deleteSystem.confirmDelete(execute, {
-          itemName: `${selectedIds.length} items`,
-          itemType: config?.itemTypeKey ? t(config.itemTypeKey) : "Items",
+          itemName: t("crud.confirm.selectionLabel", { count: selectedIds.length }),
+          itemType: config?.itemTypeKey ? t(config.itemTypeKey) : t("common.items"),
           confirmTitle: action.confirmTitle || action.label,
           confirmDescription:
             action.confirmDescription ||
-            `Are you sure you want to ${action.label.toLowerCase()} ${selectedIds.length} items?`,
+            t("crud.confirm.bulkAction", {
+              action: action.label.toLowerCase(),
+              count: selectedIds.length,
+            }),
         });
       } else {
         await execute();
@@ -413,11 +418,12 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
 
       if (action.confirmTitle || action.confirmDescription) {
         await deleteSystem.confirmDelete(execute, {
-          itemName: "all items",
-          itemType: config?.itemTypeKey ? t(config.itemTypeKey) : "Items",
+          itemName: t("crud.confirm.allItems"),
+          itemType: config?.itemTypeKey ? t(config.itemTypeKey) : t("common.items"),
           confirmTitle: action.confirmTitle || action.label,
           confirmDescription:
-            action.confirmDescription || `Are you sure you want to ${action.label.toLowerCase()}?`,
+            action.confirmDescription ||
+            t("crud.confirm.globalAction", { action: action.label.toLowerCase() }),
         });
       } else {
         await execute();
@@ -441,11 +447,14 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           },
           {
             itemName: itemDisplayName,
-            itemType: config?.itemTypeKey ? t(config.itemTypeKey) : "Item",
+            itemType: config?.itemTypeKey ? t(config.itemTypeKey) : t("common.item"),
             confirmTitle: action.confirmTitle || action.label,
             confirmDescription:
               action.confirmDescription?.replace("{name}", itemDisplayName) ||
-              `Are you sure you want to ${action.label.toLowerCase()} ${itemDisplayName}?`,
+              t("crud.confirm.itemAction", {
+                action: action.label.toLowerCase(),
+                name: itemDisplayName,
+              }),
             variant: action.confirmVariant || "default",
             confirmButtonText: action.confirmButtonText,
           }
@@ -475,6 +484,9 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   const title = (config?.titleKey ? t(config.titleKey) : propTitle) || "";
   const subtitle =
     config?.customSubtitle || (config?.subtitleKey ? t(config.subtitleKey) : propSubtitle) || "";
+  // The modal copy names ONE record, so it prefers the singular item type a
+  // module declares and only falls back to the (usually plural) page title.
+  const entity = config?.itemTypeKey ? t(config.itemTypeKey) : title;
   const allColumns = config?.columns || propColumns || [];
 
   // === Layer 1: Explicit restricted fields from /me response ===
@@ -636,32 +648,36 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   // Determine if Add button should be shown
   const showAddButton = !config?.hideAddButton && effectivePermissions.canCreate;
 
-  const getPageIcon = () => {
+  // The glyph only — PageHeader owns the tile, its size and its single accent
+  // hue. The per-resource colours this used to hand out (success for parties,
+  // danger for analytics…) gave each list page an accent found nowhere else in
+  // the product, which is the incoherence the shared header exists to end.
+  const getPageIcon = (): LucideIcon => {
     const res = config?.resource?.toLowerCase() || "";
     const lowerTitle = title.toLowerCase();
-    
+
     if (res.includes("staff") || res.includes("hrms") || lowerTitle.includes("staff") || lowerTitle.includes("hrms")) {
-      return <Users className="h-6 w-6 text-nx-accent" />;
+      return Users;
     }
     if (res.includes("party") || lowerTitle.includes("party") || lowerTitle.includes("parties")) {
-      return <Users className="h-6 w-6 text-nx-success" />;
+      return Users;
     }
     if (res.includes("work") || res.includes("task") || lowerTitle.includes("work") || lowerTitle.includes("task") || lowerTitle.includes("todo")) {
-      return <ListTodo className="h-6 w-6 text-nx-info" />;
+      return ListTodo;
     }
     if (res.includes("custom") || lowerTitle.includes("custom") || lowerTitle.includes("field")) {
-      return <Sliders className="h-6 w-6 text-nx-warning" />;
+      return Sliders;
     }
     if (res.includes("analytics") || lowerTitle.includes("analytics") || lowerTitle.includes("metric") || lowerTitle.includes("event")) {
-      return <Activity className="h-6 w-6 text-nx-danger" />;
+      return Activity;
     }
     if (res.includes("compliance") || lowerTitle.includes("compliance") || lowerTitle.includes("consent") || lowerTitle.includes("gdpr")) {
-      return <ShieldCheck className="h-6 w-6 text-nx-success" />;
+      return ShieldCheck;
     }
     if (res.includes("entitlement") || lowerTitle.includes("entitlement") || lowerTitle.includes("quota") || lowerTitle.includes("plan") || lowerTitle.includes("billing")) {
-      return <Key className="h-6 w-6 text-nx-info" />;
+      return Key;
     }
-    return <FileText className="h-6 w-6 text-nx-ink-3" />;
+    return FileText;
   };
 
   // Keyboard shortcut listener for power users (Alex)
@@ -711,38 +727,41 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     // The settings-driven rhythm rides the ONE --spacing-unit the applicator
     // writes — the per-size space-y switch collapsed into it.
     <div className="flex flex-col" style={{ gap: "calc(var(--spacing-unit) * 1.5)" }}>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-nx-md border border-nx-line bg-nx-surface shadow-nx-sm">
-            {getPageIcon()}
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-nx-ink">{title}</h1>
-            {subtitle && <p className="text-nx-ink-2">{subtitle}</p>}
-          </div>
-        </div>
-        <div className="flex flex-col gap-2 sm:flex-row">
-          {config?.customActions
-            ?.filter(
-              (action) => !action.requiredPermission || hasPermission(action.requiredPermission)
-            )
-            .map((action, index) => (
-              <Button
-                key={index}
-                onClick={action.onClick}
-                variant={action.variant || "default"}
-                size={getButtonSize()}
-                className={cn("flex-1 sm:flex-none", action.className)}
-                loading={action.loading}
-                disabled={action.disabled}
-              >
-                {!action.loading && action.icon && <span className="me-2">{action.icon}</span>}
-                {action.label}
-              </Button>
-            ))}
-          {config?.enableBulkActions === true && viewModel.selectedItems.length > 0 && (
-            <div className="mt-2 flex flex-col gap-2 sm:mt-0 sm:flex-row">
-              {config?.bulkActions
+      {/* The one page header. It owns the icon tile, the h1 and the description
+          measure; the action cluster rides its actions slot, so a list page and
+          a record page open identically. */}
+      <PageHeader
+        className="mb-0"
+        icon={getPageIcon()}
+        title={title}
+        description={subtitle}
+        actions={
+          <>
+            {config?.customActions
+              ?.filter(
+                (action) => !action.requiredPermission || hasPermission(action.requiredPermission)
+              )
+              .map((action, index) => (
+                <Button
+                  key={index}
+                  onClick={action.onClick}
+                  variant={action.variant || "default"}
+                  size={getButtonSize()}
+                  className={cn("flex-1 sm:flex-none", action.className)}
+                  loading={action.loading}
+                  disabled={action.disabled}
+                >
+                  {!action.loading && action.icon && (
+                    <span className="me-2" aria-hidden="true">
+                      {action.icon}
+                    </span>
+                  )}
+                  {action.label}
+                </Button>
+              ))}
+            {config?.enableBulkActions === true &&
+              viewModel.selectedItems.length > 0 &&
+              config?.bulkActions
                 ?.filter(
                   (action) => !action.requiredPermission || hasPermission(action.requiredPermission)
                 )
@@ -762,11 +781,16 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                       className="flex-1 sm:flex-none"
                       disabled={!enabled}
                     >
-                      {action.icon && <span className="me-2">{action.icon}</span>}
+                      {action.icon && (
+                        <span className="me-2" aria-hidden="true">
+                          {action.icon}
+                        </span>
+                      )}
                       {action.label.replace("{count}", viewModel.selectedItems.length.toString())}
                     </Button>
                   );
                 })}
+            {config?.enableBulkActions === true && viewModel.selectedItems.length > 0 && (
               <Button
                 onClick={() => viewModel.setSelectedItems([])}
                 variant="outline"
@@ -775,32 +799,35 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
               >
                 {t("common.clearSelection")}
               </Button>
-            </div>
-          )}
-          {(!config || config.enableBulkActions !== true || viewModel.selectedItems.length === 0) &&
-            !config?.hideActionButtons && (
-              <>
-                <Button
-                  onClick={viewModel.refresh}
-                  variant="outline"
-                  size={getButtonSize()}
-                  className="flex-1 bg-transparent sm:flex-none"
-                >
-                  {t("common.refresh")}
-                </Button>
-                {showAddButton && (
-                  <Button
-                    onClick={handleCreateClick}
-                    className="gradient-primary flex-1 sm:flex-none"
-                    size={getButtonSize()}
-                  >
-                    {t("common.add")}
-                  </Button>
-                )}
-              </>
             )}
-        </div>
-      </div>
+            {(!config ||
+              config.enableBulkActions !== true ||
+              viewModel.selectedItems.length === 0) &&
+              !config?.hideActionButtons && (
+                <>
+                  <Button
+                    onClick={viewModel.refresh}
+                    variant="outline"
+                    size={getButtonSize()}
+                    className="flex-1 sm:flex-none"
+                  >
+                    {t("common.refresh")}
+                  </Button>
+                  {/* No className: the primary variant IS the primary treatment. */}
+                  {showAddButton && (
+                    <Button
+                      onClick={handleCreateClick}
+                      className="flex-1 sm:flex-none"
+                      size={getButtonSize()}
+                    >
+                      {t("common.add")}
+                    </Button>
+                  )}
+                </>
+              )}
+          </>
+        }
+      />
 
       {/* Custom header content */}
       {config?.customHeaderContent && <div className="mb-6">{config.customHeaderContent}</div>}
@@ -843,8 +870,8 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       <GenericModal
         open={viewModel.isCreateModalOpen}
         onOpenChange={viewModel.setIsCreateModalOpen}
-        title={`${t("common.add")} ${title}`}
-        description={`Add a new ${title.toLowerCase()} below.`}
+        title={t("crud.modal.createTitle", { entity: title })}
+        description={t("crud.modal.createDescription", { entity })}
         formKey={`create-form-${JSON.stringify(
           createFields?.map((f) => f.name).sort()
         )}-${config?.formKey || 0}`}
@@ -866,8 +893,8 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             viewModel.closeEditModal();
           }
         }}
-        title={`${t("common.edit")} ${title}`}
-        description={`Edit the ${title.toLowerCase()} details below.`}
+        title={t("crud.modal.editTitle", { entity: title })}
+        description={t("crud.modal.editDescription", { entity })}
         formKey={`edit-form-${
           viewModel.editingItem?.id || "new"
         }-${JSON.stringify(editFields?.map((f) => f.name).sort())}-${config?.formKey || 0}`}
@@ -900,7 +927,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{`${t("common.view")} ${title}`}</DialogTitle>
+            <DialogTitle>{t("crud.modal.viewTitle", { entity: title })}</DialogTitle>
           </DialogHeader>
           <GenericForm
             fields={editFields || createFields || []}

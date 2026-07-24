@@ -3,14 +3,14 @@ export const en = {
     platformStripe: {
       title: "Platform Stripe Dashboard",
       description: "Real-time mirror of your Stripe platform account",
-      refresh: "Refresh",
       openStripe: "Open Stripe",
-      errorTitle: "Unable to load Stripe data",
-      errorDescription: "Check your Stripe API key configuration and try again.",
-      retry: "Retry",
+      opensInNewTab: "Opens in a new tab",
+      errorMessage:
+        "Unable to load Stripe data. Check your Stripe API key configuration and try again.",
 
       // Account info
       stripeAccount: "Stripe Account",
+      accountId: "Account ID",
       email: "Email",
       country: "Country",
       currency: "Currency",
@@ -19,6 +19,14 @@ export const en = {
       charges: "Charges",
       payouts: "Payouts",
       detailsSubmitted: "Details Submitted",
+      enabled: "Enabled",
+
+      // Support
+      supportInfo: "Support",
+      supportInfoDescription: "How customers reach this account",
+      supportEmail: "Support email",
+      supportPhone: "Support phone",
+      supportUrl: "Support page",
 
       // Balance
       balanceAvailable: "Available",
@@ -51,10 +59,22 @@ export const en = {
       txStripeFee: "Stripe Fee",
       txAppFee: "App Fee",
 
+      // Transaction status
+      txStatusAvailable: "Available",
+      txStatusPending: "Pending",
+
       // Payouts
       recentPayouts: "Recent Payouts",
       noPayouts: "No recent payouts",
       arrival: "Arrival",
+      created: "Created",
+      payoutStatusPaid: "Paid",
+      payoutStatusPending: "Pending",
+      payoutStatusInTransit: "In Transit",
+      payoutStatusCanceled: "Canceled",
+      payoutStatusFailed: "Failed",
+      payoutMethodStandard: "Standard",
+      payoutMethodInstant: "Instant",
 
       // Quick Links
       quickLinks: "Quick Links",
