@@ -548,7 +548,7 @@ export const PricingTab = memo(function PricingTab({
       {/* â•â•â•â•â•â•â• STICKY SAVE BAR â•â•â•â•â•â•â• */}
       {vm.isDirty && (
         <div className="fixed inset-x-0 bottom-0 z-50">
-          <div className="border-t bg-background/95 shadow-[0_-4px_20px_rgba(0,0,0,0.15)] backdrop-blur-md">
+          <div className="border-t bg-background/95 shadow-nx-bar-top backdrop-blur-md">
             <div className="mx-auto max-w-screen-xl px-4 py-3 sm:px-6">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex min-w-0 items-center gap-3">

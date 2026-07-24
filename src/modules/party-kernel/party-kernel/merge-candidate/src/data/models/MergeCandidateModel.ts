@@ -15,6 +15,7 @@
       duplicatePartyId: string;
       status: string;
       reason: string;
+      matchScore?: number;
       createdAt: string;
       modifiedAt?: string;
       }
@@ -46,6 +47,7 @@
       public readonly reason: string,
       public readonly createdAt: string,
       public readonly modifiedAt?: string,
+      public readonly matchScore?: number,
       ) {}
 
       /**
@@ -60,6 +62,7 @@
       json.reason,
       json.createdAt,
       json.modifiedAt,
+      json.matchScore,
       );
       }
 
@@ -75,6 +78,7 @@
       reason: this.reason,
       createdAt: this.createdAt,
       modifiedAt: this.modifiedAt,
+      matchScore: this.matchScore,
       };
       }
       }

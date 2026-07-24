@@ -31,7 +31,8 @@ import {
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { ThemeBundle, BundleLayer } from "../../domain/entities/ThemeBundle";
-import { BUNDLE_TYPE_CONFIG, LAYER_INFO } from "../../domain/entities/ThemeBundle";
+import { BUNDLE_TYPE_CONFIG } from "../../domain/entities/ThemeBundle";
+import { LAYER_INFO } from "../constants/layerDisplay";
 import { LayoutPreviewThumbnail } from "./LayoutPreviewThumbnail";
 
 interface BundleCardProps {

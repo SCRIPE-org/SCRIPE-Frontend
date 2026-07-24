@@ -13,6 +13,8 @@ primaryPartyId: string;
 duplicatePartyId: string;
 status: string;
 reason: string;
+/** Confidence score (0-1) that the two parties are the same entity. */
+matchScore?: number;
 createdAt: string;
 modifiedAt?: string;
 }
@@ -41,6 +43,10 @@ return this.data.status;
 
 get reason(): string {
 return this.data.reason;
+}
+
+get matchScore(): number | undefined {
+return this.data.matchScore;
 }
 
 get createdAt(): string {

@@ -11,6 +11,7 @@ export const en = {
     columns: {
       primaryPartyId: "Primary Party ID",
       duplicatePartyId: "Duplicate Party ID",
+      matchScore: "Match Confidence",
       status: "Status",
       reason: "Reason",
       createdAt: "Created",

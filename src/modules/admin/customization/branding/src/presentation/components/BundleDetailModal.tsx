@@ -39,7 +39,8 @@ import {
 import { useI18n } from "@core/providers/i18n-provider";
 import { useState } from "react";
 import type { ThemeBundle, BundleLayer } from "../../domain/entities/ThemeBundle";
-import { BUNDLE_TYPE_CONFIG, LAYER_INFO } from "../../domain/entities/ThemeBundle";
+import { BUNDLE_TYPE_CONFIG } from "../../domain/entities/ThemeBundle";
+import { LAYER_INFO } from "../constants/layerDisplay";
 
 interface BundleDetailModalProps {
   bundle: ThemeBundle | null;

@@ -20,6 +20,7 @@ status: model.status,
 reason: model.reason,
 createdAt: model.createdAt,
 modifiedAt: model.modifiedAt,
+matchScore: model.matchScore,
 };
 return new MergeCandidate(data);
 }
@@ -36,6 +37,7 @@ entity.status,
 entity.reason,
 entity.createdAt,
 entity.modifiedAt,
+entity.matchScore,
 );
 }
 

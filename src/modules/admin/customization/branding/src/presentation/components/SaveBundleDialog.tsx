@@ -35,11 +35,11 @@ import {
 import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
-  LAYER_INFO,
   BUNDLE_TYPE_CONFIG,
   type BundleLayer,
   type BundleType,
 } from "../../domain/entities/ThemeBundle";
+import { LAYER_INFO } from "../constants/layerDisplay";
 import type { SaveBundlePayload } from "../../domain/interfaces/IThemeBundleService";
 
 interface SaveBundleDialogProps {

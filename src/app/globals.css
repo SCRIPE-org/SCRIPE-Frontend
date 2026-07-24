@@ -4203,6 +4203,8 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   --nx-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
   --nx-shadow-popover: 0 8px 24px -8px rgb(0 0 0 / 0.6), 0 2px 8px -2px rgb(0 0 0 / 0.4);
   --nx-shadow-modal: 0 24px 64px -16px rgb(0 0 0 / 0.7), 0 8px 24px -8px rgb(0 0 0 / 0.5);
+  /* upward-facing: sticky bottom bars (action bars, comparison trays) */
+  --nx-shadow-bar-top: 0 -8px 24px -8px rgb(0 0 0 / 0.6), 0 -2px 8px -2px rgb(0 0 0 / 0.4);
 
   /* the modal scrim — alias of the global --scrim; ONE scrim system */
   --nx-scrim: var(--scrim);
@@ -4262,6 +4264,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   --nx-shadow-sm: 0 1px 2px rgb(18 18 24 / 0.08);
   --nx-shadow-popover: 0 8px 24px -8px rgb(18 18 24 / 0.16), 0 2px 8px -2px rgb(18 18 24 / 0.08);
   --nx-shadow-modal: 0 24px 64px -16px rgb(18 18 24 / 0.24), 0 8px 24px -8px rgb(18 18 24 / 0.12);
+  --nx-shadow-bar-top: 0 -8px 24px -8px rgb(18 18 24 / 0.16), 0 -2px 8px -2px rgb(18 18 24 / 0.08);
 }
 
 /* ============================================================================

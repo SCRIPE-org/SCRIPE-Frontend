@@ -73,6 +73,19 @@ export const MergeCandidateListView = React.memo(function MergeCandidateListView
         ),
       },
       {
+        key: "matchScore",
+        label: t("mergeCandidate.columns.matchScore"),
+        sortable: true,
+        render: (value: number | undefined) =>
+          value === undefined ? (
+            "-"
+          ) : (
+            <Badge variant={value >= 0.9 ? "active" : value >= 0.7 ? "pending" : "secondary"}>
+              {Math.round(value * 100)}%
+            </Badge>
+          ),
+      },
+      {
         key: "status",
         label: t("mergeCandidate.columns.status"),
         sortable: true,

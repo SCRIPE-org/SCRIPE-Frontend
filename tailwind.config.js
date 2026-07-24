@@ -185,6 +185,7 @@ module.exports = {
         "nx-sm": "var(--nx-shadow-sm, 0 1px 2px rgb(0 0 0 / 0.2))",
         "nx-popover": "var(--nx-shadow-popover, 0 8px 24px -8px rgb(0 0 0 / 0.4))",
         "nx-modal": "var(--nx-shadow-modal, 0 24px 64px -16px rgb(0 0 0 / 0.5))",
+        "nx-bar-top": "var(--nx-shadow-bar-top, 0 -8px 24px -8px rgb(0 0 0 / 0.4))",
         "nx-focus": "var(--nx-focus, 0 0 0 3px hsl(var(--ring) / 0.25))",
       },
       borderRadius: {

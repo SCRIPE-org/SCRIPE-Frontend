@@ -11,6 +11,7 @@ export const ar = {
     columns: {
       primaryPartyId: "معرف الطرف الأساسي",
       duplicatePartyId: "معرف الطرف المكرر",
+      matchScore: "نسبة التطابق",
       status: "الحالة",
       reason: "السبب",
       createdAt: "تاريخ الإنشاء",
