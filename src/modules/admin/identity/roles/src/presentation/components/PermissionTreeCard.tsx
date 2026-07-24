@@ -1,23 +1,28 @@
-// UI-EXCEPTION: compact studio layout
 /**
  * Permission Tree Card Component
  *
- * Displays the backend-driven Module → Category → Permission hierarchy.
- * ZERO client-side grouping — the tree comes from the backend.
+ * The permission-management surface for a role: a slim, sticky toolbar (search,
+ * bulk scope, live summary meter, expand/collapse) over a scannable per-module
+ * capability matrix. The backend-driven Module → Category → Permission hierarchy
+ * is rendered as delivered — ZERO client-side grouping — the matrix layout is the
+ * only thing derived here (see PermissionModuleMatrix).
  *
- * Consumed in: RoleDetailView (Permissions Tab)
+ * Consumed in: RoleDetailView
  * Data source: GET /roles/myTenant/available-permissions/grouped
  */
 "use client";
 
+import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
-import { Badge } from "@core/ui/badge";
-import { Search, Lock, Layers, Key, ChevronDown, ChevronRight } from "lucide-react";
+import { Progress } from "@core/ui/progress";
+import { EmptyState } from "@core/ui/empty-state";
+import { Search, Lock, KeyRound } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { BulkScopeSelect } from "./BulkScopeSelect";
-import { PermissionCategoryRow, PermissionTreeSkeleton } from "./index";
+import { PermissionModuleMatrix } from "./PermissionModuleMatrix";
+import { PermissionTreeSkeleton } from "./PermissionTreeSkeleton";
 import type { PermissionTreeProps } from "../viewmodels/useRoleDetailViewModel";
 
 /**
@@ -44,119 +49,110 @@ export function PermissionTreeCard({
 }: PermissionTreeProps) {
   const { t } = useI18n();
 
+  // Live summary — selected vs. total across what is currently loaded (so it
+  // reflects the visible set while a search filter is active).
+  const { total, selected } = useMemo(() => {
+    let tot = 0;
+    let sel = 0;
+    for (const mg of moduleGroups) {
+      for (const cat of mg.categories) {
+        for (const p of cat.permissions) {
+          tot += 1;
+          if (selectedPermissionCodes.has(p.code)) sel += 1;
+        }
+      }
+    }
+    return { total: tot, selected: sel };
+  }, [moduleGroups, selectedPermissionCodes]);
+
+  const pct = total > 0 ? (selected / total) * 100 : 0;
+  const isEmpty = !isLoading && moduleGroups.length === 0;
+
   return (
     <Card className="lg:col-span-3">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Lock className="h-5 w-5" />
-            {t("roleDetail.permissions")}
-          </CardTitle>
-          <div className="flex items-center gap-2">
-            {/* Bulk Scope Override */}
-            <div className="mr-1 flex items-center gap-2 border-r pr-3">
-              <span className="whitespace-nowrap text-xs text-muted-foreground">
-                {t("role.bulkScope") || "Bulk Scope"}:
-              </span>
-              <BulkScopeSelect
-                value={bulkScopeValue}
-                onValueChange={(val) => {
-                  setBulkScopeValue(val);
-                  if (val) onBulkScopeUpdate(val);
-                }}
-              />
-            </div>
-            <Button variant="ghost" size="sm" onClick={onExpandAll}>
+      <CardHeader className="gap-3 pb-3">
+        <CardTitle className="flex items-center gap-2 text-base">
+          <Lock className="h-4 w-4 text-nx-ink-2" />
+          {t("roleDetail.permissions")}
+        </CardTitle>
+
+        {/* ── Sticky sub-toolbar — its own row, bulk scope pulled out of the title ── */}
+        <div className="flex flex-col gap-3 md:flex-row md:items-center">
+          <div className="relative min-w-0 flex-1">
+            <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3" />
+            <Input
+              placeholder={t("roleDetail.searchPlaceholder")}
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="ps-9"
+            />
+          </div>
+
+          <BulkScopeSelect
+            value={bulkScopeValue}
+            onValueChange={(val) => {
+              setBulkScopeValue(val);
+              if (val) onBulkScopeUpdate(val);
+            }}
+          />
+        </div>
+
+        {/* ── Live progress meter + expand controls ── */}
+        <div className="flex items-center gap-3">
+          <span className="shrink-0 text-xs tabular-nums text-nx-ink-2">
+            <span className="font-medium text-nx-ink">{selected}</span> / {total}{" "}
+            {t("roles.permissions")}
+          </span>
+          <Progress value={pct} className="h-1 flex-1" aria-label={t("roleDetail.permissions")} />
+          <div className="flex shrink-0 items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onExpandAll}
+              className="h-7 px-2 text-xs text-nx-ink-2"
+            >
               {t("common.expandAll")}
             </Button>
-            <Button variant="ghost" size="sm" onClick={onCollapseAll}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onCollapseAll}
+              className="h-7 px-2 text-xs text-nx-ink-2"
+            >
               {t("common.collapseAll")}
             </Button>
           </div>
         </div>
-        <div className="relative mt-3">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder={t("roleDetail.searchPlaceholder")}
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-9"
-          />
-        </div>
       </CardHeader>
-      <CardContent>
+
+      <CardContent className="p-0">
         {isLoading ? (
           <PermissionTreeSkeleton />
+        ) : isEmpty ? (
+          <div className="p-4">
+            <EmptyState
+              icon={KeyRound}
+              title={t("common.noResults")}
+              description={t("roles.adjustSearch")}
+            />
+          </div>
         ) : (
-          <div className="space-y-3">
-            {moduleGroups.map((moduleGroup) => {
-              const moduleKey = `module:${moduleGroup.module}`;
-              // Module is expanded if its key is in expandedKeys.
-              // All modules are auto-expanded on first data load (see useRoleDetailViewModel).
-              const isModuleExpanded = expandedKeys.has(moduleKey);
-              const totalInModule = moduleGroup.categories.reduce(
-                (sum, cat) => sum + cat.permissions.length,
-                0
-              );
-              const selectedInModule = moduleGroup.categories.reduce(
-                (sum, cat) =>
-                  sum + cat.permissions.filter((p) => selectedPermissionCodes.has(p.code)).length,
-                0
-              );
-
-              return (
-                <div key={moduleGroup.module} className="overflow-hidden rounded-lg border bg-card">
-                  {/* ── Module Header ── */}
-                  <button
-                    type="button"
-                    className="flex w-full items-center gap-2.5 border-b bg-muted/30 px-4 py-2.5 text-left transition-colors hover:bg-muted/50"
-                    onClick={() => onToggleExpand(moduleKey)}
-                  >
-                    {isModuleExpanded ? (
-                      <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
-                    ) : (
-                      <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground rtl:rotate-180" />
-                    )}
-                    <Layers className="h-4 w-4 shrink-0 text-primary" />
-                    <span className="text-sm font-semibold tracking-wide">
-                      {moduleGroup.module}
-                    </span>
-                    <div className="ms-auto flex items-center gap-2">
-                      {selectedInModule > 0 && (
-                        <Badge className="text-xs">{selectedInModule} selected</Badge>
-                      )}
-                      <Badge variant="secondary" className="text-xs">
-                        {totalInModule}
-                      </Badge>
-                    </div>
-                  </button>
-
-                  {/* ── Category rows within the module ── */}
-                  {isModuleExpanded && (
-                    <div className="divide-y">
-                      {moduleGroup.categories.map((cat) => {
-                        const catKey = `cat:${moduleGroup.module}:${cat.category}`;
-                        return (
-                          <PermissionCategoryRow
-                            key={catKey}
-                            category={cat.category}
-                            permissions={cat.permissions}
-                            isExpanded={expandedKeys.has(catKey)}
-                            selectedPermissionCodes={selectedPermissionCodes}
-                            assignments={assignments}
-                            categoryIcon={<Key className="h-3.5 w-3.5" />}
-                            onToggleCategory={() => onToggleExpand(catKey)}
-                            onToggleAllInCategory={() => onToggleAllInCategory(cat.permissions)}
-                            onTogglePermission={onTogglePermission}
-                            onUpdateConfig={onUpdateConfig}
-                          />
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+          // No overflow-hidden here: it would trap the sticky module headers.
+          <div className="border-t border-nx-line">
+            {moduleGroups.map((mg) => (
+              <PermissionModuleMatrix
+                key={mg.module}
+                module={mg.module}
+                categories={mg.categories}
+                isExpanded={expandedKeys.has(`module:${mg.module}`)}
+                selectedPermissionCodes={selectedPermissionCodes}
+                assignments={assignments}
+                onToggleModule={() => onToggleExpand(`module:${mg.module}`)}
+                onTogglePermission={onTogglePermission}
+                onToggleGroup={onToggleAllInCategory}
+                onUpdateConfig={onUpdateConfig}
+              />
+            ))}
           </div>
         )}
       </CardContent>

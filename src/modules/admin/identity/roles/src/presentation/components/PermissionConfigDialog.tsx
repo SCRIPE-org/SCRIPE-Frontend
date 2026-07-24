@@ -111,7 +111,7 @@ export function PermissionConfigDialog({
           <div className="space-y-2">
             <Label className="flex items-center gap-2">
               {t("role.scopeOverride")}
-              <Info className="h-3 w-3 text-muted-foreground" />
+              <Info className="h-3 w-3 text-nx-ink-3" />
             </Label>
 
             <GenericSelect
@@ -123,7 +123,7 @@ export function PermissionConfigDialog({
               className="w-full"
             />
 
-            <p className="text-xs text-muted-foreground">{t("role.scopeHint")}</p>
+            <p className="text-xs text-nx-ink-3">{t("role.scopeHint")}</p>
           </div>
 
           {/* Restricted Fields (Custom Tag Input) */}
@@ -143,18 +143,16 @@ export function PermissionConfigDialog({
             </div>
 
             {/* Tags List */}
-            <div className="flex min-h-[2.5rem] flex-wrap gap-2 rounded-md border bg-muted/20 p-2">
+            <div className="flex min-h-[2.5rem] flex-wrap gap-2 rounded-nx-md border border-nx-line bg-nx-hover p-2">
               {restrictedFields.length === 0 && (
-                <span className="text-sm italic text-muted-foreground">
-                  {t("role.noRestrictions")}
-                </span>
+                <span className="text-sm italic text-nx-ink-3">{t("role.noRestrictions")}</span>
               )}
               {restrictedFields.map((field) => (
-                <Badge key={field} variant="secondary" className="gap-1 pr-1">
+                <Badge key={field} variant="secondary" className="gap-1 pe-1">
                   {field}
                   <button
                     onClick={() => handleRemoveField(field)}
-                    className="rounded-full p-0.5 hover:bg-muted"
+                    className="rounded-full p-0.5 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-raised motion-reduce:transition-none"
                     type="button"
                   >
                     <X className="h-3 w-3" />
@@ -162,7 +160,7 @@ export function PermissionConfigDialog({
                 </Badge>
               ))}
             </div>
-            <p className="text-xs text-muted-foreground">{t("role.restrictionHint")}</p>
+            <p className="text-xs text-nx-ink-3">{t("role.restrictionHint")}</p>
           </div>
         </div>
 

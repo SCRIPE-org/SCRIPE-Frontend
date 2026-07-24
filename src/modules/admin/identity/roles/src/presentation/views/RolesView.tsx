@@ -59,7 +59,12 @@ export function RolesView() {
       className: "font-medium",
       render: (value: unknown, role: Role) => role.getLocalizedName(language),
     },
-    { key: "code", label: t("roles.code"), sortable: true, className: "font-mono text-xs" },
+    {
+      key: "code",
+      label: t("roles.code"),
+      sortable: true,
+      className: "font-mono text-xs text-nx-ink-3",
+    },
     {
       key: "description",
       label: t("roles.descriptionCol") || t("roles.description"),
@@ -67,26 +72,40 @@ export function RolesView() {
       render: (value: unknown, role: Role) => role.getLocalizedDescription(language),
     },
     {
+      // Numeric column: right-aligned tabular figures rather than a manual
+      // centered fixed width, so priorities read as a clean column of numbers.
       key: "priority",
       label: t("roles.priority"),
       sortable: true,
-      className: "w-24 text-center",
+      className: "text-end tabular-nums",
     },
     {
       key: "groups",
       label: t("roles.groups") || "Groups",
       render: (_val: unknown, role: Role) => {
         const groups = role.getLocalizedGroups(language);
+        if (groups.length === 0) {
+          return <span className="text-nx-ink-3">-</span>;
+        }
+        // Cap at two chips + a "+N" overflow on ONE line — variable group counts
+        // no longer ripple into ragged, multi-height rows.
+        const shown = groups.slice(0, 2);
+        const overflow = groups.length - shown.length;
         return (
-          <div className="flex flex-wrap gap-1">
-            {groups.length > 0 ? (
-              groups.map((groupName, index) => (
-                <Badge key={`${index}-${groupName}`} variant="secondary" className="text-xs">
-                  {groupName}
-                </Badge>
-              ))
-            ) : (
-              <span className="text-muted-foreground">-</span>
+          <div className="flex items-center gap-1 truncate">
+            {shown.map((groupName, index) => (
+              <Badge
+                key={`${index}-${groupName}`}
+                variant="secondary"
+                className="max-w-[10rem] shrink-0 truncate text-xs"
+              >
+                {groupName}
+              </Badge>
+            ))}
+            {overflow > 0 && (
+              <Badge variant="outline" className="shrink-0 text-xs tabular-nums">
+                +{overflow}
+              </Badge>
             )}
           </div>
         );

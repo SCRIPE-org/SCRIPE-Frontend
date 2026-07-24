@@ -14,23 +14,16 @@ import { useI18n } from "@core/providers/i18n-provider";
  * live here so consumers stop hand-rolling them.
  */
 
-// Density — the Settings spacingSize mapped onto the row ladder. Unknown or
-// legacy stored values fall through to the default step; the stored-value
+// Density — two deliberate steps off the Settings spacingSize, decoupled from
+// the table skin. "compact" tightens the ladder (36px header, 8/12px cells);
+// every other value (default / comfortable / spacious) resolves to the one
+// comfortable step (44px header, 12/16px cells, ~48px rows). The stored-value
 // migration itself is Wave C's job.
-const getHeadDensity = (spacing: string | undefined) => {
-  switch (spacing) {
-    case "compact":
-      return "h-10 px-2";
-    case "comfortable":
-    case "spacious":
-      return "h-14 px-4";
-    default:
-      return "h-12 px-4";
-  }
-};
+const getHeadDensity = (spacing: string | undefined) =>
+  spacing === "compact" ? "h-9 px-3" : "h-11 px-4";
 
 const getCellDensity = (spacing: string | undefined) =>
-  spacing === "compact" ? "p-2" : "p-4";
+  spacing === "compact" ? "py-2 px-3" : "py-3 px-4";
 
 /**
  * Table component with automatic RTL/LTR support
@@ -109,17 +102,17 @@ interface TableRowProps extends React.HTMLAttributes<HTMLTableRowElement> {
 
 const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
   ({ className, selected, clickable, disabled, striped, tabIndex, ...props }, ref) => {
-    const settings = useSettings();
-    const hasHoverEffect =
-      settings.hoverEffectType !== "none" && settings.hoverEffectIntensity !== "none";
-
-    // If className is provided, it will override defaults - don't add base hover effects
-    // This allows GenericTable to fully control the hover behavior
+    // A consumer-supplied className takes full control of the row's hover and
+    // selection paint — GenericTable relies on this to hand row hover to its
+    // own settings-driven treatment, so the built-in hover steps aside. With
+    // no className the row wears the one calm default: a background-only
+    // crossfade on hover, plus the accent wash and a 2px inset accent bar on
+    // the inline-start edge when selected. The bar rides the first cell (via
+    // ltr/rtl so it stays on the leading edge) because collapsed table borders
+    // swallow a box-shadow set on the <tr> itself.
     const baseClasses = className
       ? "border-b data-[state=selected]:bg-muted" // Minimal base classes when custom className provided
-      : hasHoverEffect
-        ? "border-b border-nx-line transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover data-[state=selected]:bg-nx-accent-wash" // Default hover when enabled
-        : "border-b border-nx-line transition-none hover:bg-transparent data-[state=selected]:bg-nx-accent-wash"; // No hover when disabled
+      : "border-b border-nx-line transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover data-[state=selected]:bg-nx-accent-wash ltr:[&[data-state=selected]>td:first-child]:shadow-[inset_2px_0_0_var(--nx-accent)] rtl:[&[data-state=selected]>td:first-child]:shadow-[inset_-2px_0_0_var(--nx-accent)]";
 
     return (
       <tr
@@ -174,11 +167,15 @@ const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
         // Placed before the spread so a consumer-passed aria-sort still wins.
         aria-sort={ariaSort}
         className={cn(
-          // Using text-start instead of text-left for RTL support
-          "text-start align-middle font-medium text-nx-ink-2 [&:has([role=checkbox])]:pe-0",
+          // 13px medium label, one ink step below the body text so the header
+          // reads as chrome, not data. Sentence case — no uppercase, no
+          // tracking. text-start (not text-left) keeps it RTL-correct.
+          "text-start align-middle text-[13px] font-medium text-nx-ink-2 [&:has([role=checkbox])]:pe-0",
           getHeadDensity(settings.spacingSize),
           sortable &&
-            "cursor-pointer select-none transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none",
+            "group cursor-pointer select-none transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none",
+          // The sorted column is the lit one — its label steps up to full ink.
+          sortDirection && "text-nx-ink",
           variant === "numeric" && "text-end tabular-nums",
           className
         )}
@@ -198,7 +195,15 @@ const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
                 )}
               />
             ) : (
-              <ChevronsUpDown aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-nx-ink-3" />
+              // Sortable but unsorted — the affordance stays hidden at rest so
+              // quiet columns don't wear a chevron, and fades in only while the
+              // header is hovered or keyboard-focused. Opacity only, so it
+              // honours reduced-motion; the whole cell stays the click target,
+              // so touch and keyboard never depend on the reveal.
+              <ChevronsUpDown
+                aria-hidden="true"
+                className="h-3.5 w-3.5 shrink-0 text-nx-ink-3 opacity-0 transition-opacity duration-nx-micro ease-nx-enter group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none"
+              />
             )}
           </span>
         ) : (

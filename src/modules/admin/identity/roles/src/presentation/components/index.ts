@@ -9,7 +9,10 @@ export { RoleDetailHeader, type RoleDetailHeaderProps } from "./RoleDetailHeader
 /**
  * Exported member in the identity/roles module.
  */
-export { PermissionCategoryRow, type PermissionCategoryRowProps } from "./PermissionCategoryRow";
+export {
+  PermissionModuleMatrix,
+  type PermissionModuleMatrixProps,
+} from "./PermissionModuleMatrix";
 export { PermissionTreeSkeleton } from "./PermissionTreeSkeleton";
 export { PermissionTreeCard } from "./PermissionTreeCard";
 export { BulkScopeSelect } from "./BulkScopeSelect";

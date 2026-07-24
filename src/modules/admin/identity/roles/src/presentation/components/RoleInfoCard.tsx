@@ -47,16 +47,16 @@ export function RoleInfoCard({ role, isLoading, selectedCount, totalCount }: Rol
               value={role?.getLocalizedDescription(language)}
             />
             <div>
-              <label className="text-sm text-muted-foreground">{t("roles.priority")}</label>
+              <label className="text-sm text-nx-ink-2">{t("roles.priority")}</label>
               <div className="mt-1">
-                <Badge variant="outline">{role?.priority}</Badge>
+                <Badge variant="outline" className="tabular-nums">
+                  {role?.priority}
+                </Badge>
               </div>
             </div>
             {role?.hasGroups && (
-              <div className="border-t pt-2">
-                <label className="text-sm text-muted-foreground">
-                  {t("roles.groups") || "Groups"}
-                </label>
+              <div className="border-t border-nx-line pt-3">
+                <label className="text-sm text-nx-ink-2">{t("roles.groups") || "Groups"}</label>
                 <div className="mt-1 flex flex-wrap gap-1">
                   {role.getLocalizedGroups(language).map((groupName, i) => (
                     <Badge key={i} variant="secondary" className="text-xs">
@@ -66,11 +66,11 @@ export function RoleInfoCard({ role, isLoading, selectedCount, totalCount }: Rol
                 </div>
               </div>
             )}
-            <div className="border-t pt-2">
-              <p className="text-sm text-muted-foreground">{t("roles.selectedPermissions")}</p>
-              <p className="text-2xl font-bold">
+            <div className="border-t border-nx-line pt-3">
+              <p className="text-sm text-nx-ink-2">{t("roles.selectedPermissions")}</p>
+              <p className="mt-1 text-2xl font-bold tabular-nums text-nx-ink">
                 {selectedCount}{" "}
-                <span className="text-sm font-normal text-muted-foreground">/ {totalCount}</span>
+                <span className="text-sm font-normal text-nx-ink-3">/ {totalCount}</span>
               </p>
             </div>
           </>
@@ -91,8 +91,8 @@ function InfoField({
 }) {
   return (
     <div>
-      <label className="text-sm text-muted-foreground">{label}</label>
-      <p className={mono ? "font-mono text-sm" : "font-medium"}>{value}</p>
+      <label className="text-sm text-nx-ink-2">{label}</label>
+      <p className={mono ? "font-mono text-sm text-nx-ink" : "font-medium text-nx-ink"}>{value}</p>
     </div>
   );
 }

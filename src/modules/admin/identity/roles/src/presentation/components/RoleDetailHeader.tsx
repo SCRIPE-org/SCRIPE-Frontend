@@ -38,22 +38,22 @@ export function RoleDetailHeader({ role, isLoading, isSaving, onSave }: RoleDeta
       <PageBreadcrumbs segments={breadcrumbSegments} />
 
       {/* Title and Save Button */}
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex items-center justify-between gap-4">
+        <div className="min-w-0">
           {isLoading ? (
             <>
-              <Skeleton className="h-9 w-48" />
-              <Skeleton className="mt-1 h-5 w-32" />
+              <Skeleton className="h-8 w-48" />
+              <Skeleton className="mt-1 h-4 w-32" />
             </>
           ) : (
             <>
-              <h1 className="text-3xl font-bold">{roleName}</h1>
-              <span className="text-muted-foreground">{role?.code}</span>
+              <h1 className="truncate text-2xl font-bold tracking-tight text-nx-ink">{roleName}</h1>
+              <span className="font-mono text-sm text-nx-ink-3">{role?.code}</span>
             </>
           )}
         </div>
-        <Button onClick={onSave} loading={isSaving}>
-          {!isSaving && <Save className="mr-2 h-4 w-4" />}
+        <Button onClick={onSave} loading={isSaving} className="shrink-0">
+          {!isSaving && <Save className="me-2 h-4 w-4" />}
           {isSaving ? t("common.saving") : t("common.saveChanges")}
         </Button>
       </div>
