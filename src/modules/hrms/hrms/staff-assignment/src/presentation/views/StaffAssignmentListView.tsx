@@ -1,9 +1,9 @@
 /**
-* StaffAssignment List View
-*
-* Pure UI component for displaying StaffAssignment list with CRUD.
-* Uses GenericCrudView for standard CRUD table UI.
-*/
+ * StaffAssignment List View
+ *
+ * Pure UI component for displaying StaffAssignment list with CRUD.
+ * Uses GenericCrudView for standard CRUD table UI.
+ */
 "use client";
 
 import React from "react";
@@ -12,142 +12,148 @@ import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { useStaffAssignmentViewModel } from "../viewmodels/useStaffAssignmentViewModel";
 import type { StaffAssignment } from "../../domain/entities/StaffAssignment";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { useI18n } from "@core/providers/i18n-provider";
+import { Badge } from "@core/ui/badge";
 
 // P5.4: React.memo prevents unnecessary re-renders
 export const StaffAssignmentListView = React.memo(function StaffAssignmentListView() {
   useModuleLocales(() => import("../../../locales"), "hrms");
-const { vm } = useStaffAssignmentViewModel();
+  const { vm } = useStaffAssignmentViewModel();
+  const { t, language } = useI18n();
+  const locale = language === "ar" ? "ar-EG" : "en-US";
 
-const config: CrudConfig<StaffAssignment> = {
-      titleKey: "staffAssignment.title",
-      subtitleKey: "staffAssignment.description",
-      resource: "staff-assignments",
-      columns: [
+  const config: CrudConfig<StaffAssignment> = {
+    titleKey: "staffAssignment.title",
+    subtitleKey: "staffAssignment.description",
+    resource: "staff-assignments",
+    columns: [
       {
-      key: "staffMemberId",
-      label: "StaffMemberId",
-      sortable: true,
+        key: "staffMemberId",
+        label: t("staffAssignment.fields.staffMemberId"),
+        sortable: true,
       },
       {
-      key: "organizationUnitId",
-      label: "OrganizationUnitId",
-      sortable: true,
+        key: "organizationUnitId",
+        label: t("staffAssignment.fields.organizationUnitId"),
+        sortable: true,
       },
       {
-      key: "assignmentType",
-      label: "AssignmentType",
-      sortable: true,
+        key: "assignmentType",
+        label: t("staffAssignment.fields.assignmentType"),
+        sortable: true,
+        render: (value: string) => <Badge variant="secondary">{value}</Badge>,
       },
       {
-      key: "validFrom",
-      label: "ValidFrom",
-      render: (value: string) => value ? new Date(value).toLocaleDateString() : "-",
-      sortable: true,
+        key: "validFrom",
+        label: t("staffAssignment.fields.validFrom"),
+        render: (value: string) => (value ? new Date(value).toLocaleDateString(locale) : "-"),
+        sortable: true,
       },
       {
-      key: "validTo",
-      label: "ValidTo",
-      render: (value: string) => value ? new Date(value).toLocaleDateString() : "-",
-      sortable: true,
+        key: "validTo",
+        label: t("staffAssignment.fields.validTo"),
+        render: (value: string) => (value ? new Date(value).toLocaleDateString(locale) : "-"),
+        sortable: true,
       },
       {
-      key: "createdAt",
-      label: "Created",
-      render: (value: string) => value ? new Date(value).toLocaleDateString() : "-",
+        key: "createdAt",
+        label: t("common.createdAt"),
+        render: (value: string) => (value ? new Date(value).toLocaleDateString(locale) : "-"),
       },
-      ],
-      createFields: [
+    ],
+    createFields: [
       {
-      name: "staffMemberId",
-      label: "StaffMemberId",
-      type: "text" as const,
-      placeholder: "Enter staffMemberId",
-      required: true,
-      },
-      {
-      name: "organizationUnitId",
-      label: "OrganizationUnitId",
-      type: "text" as const,
-      placeholder: "Enter organizationUnitId",
-      required: true,
+        name: "staffMemberId",
+        label: t("staffAssignment.fields.staffMemberId"),
+        type: "text" as const,
+        placeholder: t("staffAssignment.placeholders.staffMemberId"),
+        required: true,
       },
       {
-      name: "assignmentType",
-      label: "AssignmentType",
-      type: "text" as const,
-      placeholder: "Enter assignmentType",
-      required: true,
+        name: "organizationUnitId",
+        label: t("staffAssignment.fields.organizationUnitId"),
+        type: "text" as const,
+        placeholder: t("staffAssignment.placeholders.organizationUnitId"),
+        required: true,
       },
       {
-      name: "validFrom",
-      label: "ValidFrom",
-      type: "date" as const,
-      placeholder: "Enter validFrom",
-      required: true,
+        name: "assignmentType",
+        label: t("staffAssignment.fields.assignmentType"),
+        type: "text" as const,
+        placeholder: t("staffAssignment.placeholders.assignmentType"),
+        required: true,
       },
       {
-      name: "validTo",
-      label: "ValidTo",
-      type: "date" as const,
-      placeholder: "Enter validTo",
+        name: "validFrom",
+        label: t("staffAssignment.fields.validFrom"),
+        type: "date" as const,
+        placeholder: t("staffAssignment.placeholders.validFrom"),
+        required: true,
       },
-      ],
-      editFields: [
+      {
+        name: "validTo",
+        label: t("staffAssignment.fields.validTo"),
+        type: "date" as const,
+        placeholder: t("staffAssignment.placeholders.validTo"),
+      },
+    ],
+    editFields: [
       { name: "id", type: "hidden" as const, required: true },
       {
-      name: "staffMemberId",
-      label: "StaffMemberId",
-      type: "text" as const,
-      placeholder: "Enter staffMemberId",
-      required: true,
+        name: "staffMemberId",
+        label: t("staffAssignment.fields.staffMemberId"),
+        type: "text" as const,
+        placeholder: t("staffAssignment.placeholders.staffMemberId"),
+        required: true,
       },
       {
-      name: "organizationUnitId",
-      label: "OrganizationUnitId",
-      type: "text" as const,
-      placeholder: "Enter organizationUnitId",
-      required: true,
+        name: "organizationUnitId",
+        label: t("staffAssignment.fields.organizationUnitId"),
+        type: "text" as const,
+        placeholder: t("staffAssignment.placeholders.organizationUnitId"),
+        required: true,
       },
       {
-      name: "assignmentType",
-      label: "AssignmentType",
-      type: "text" as const,
-      placeholder: "Enter assignmentType",
-      required: true,
+        name: "assignmentType",
+        label: t("staffAssignment.fields.assignmentType"),
+        type: "text" as const,
+        placeholder: t("staffAssignment.placeholders.assignmentType"),
+        required: true,
       },
       {
-      name: "validFrom",
-      label: "ValidFrom",
-      type: "date" as const,
-      placeholder: "Enter validFrom",
-      required: true,
+        name: "validFrom",
+        label: t("staffAssignment.fields.validFrom"),
+        type: "date" as const,
+        placeholder: t("staffAssignment.placeholders.validFrom"),
+        required: true,
       },
       {
-      name: "validTo",
-      label: "ValidTo",
-      type: "date" as const,
-      placeholder: "Enter validTo",
+        name: "validTo",
+        label: t("staffAssignment.fields.validTo"),
+        type: "date" as const,
+        placeholder: t("staffAssignment.placeholders.validTo"),
       },
-      ],
-      createInitialValues: {
+    ],
+    createInitialValues: {
       staffMemberId: "",
       organizationUnitId: "",
       assignmentType: "",
       validFrom: "",
-            validTo: "",
-            },
-      editInitialValues: (item: StaffAssignment) => ({
+      validTo: "",
+    },
+    editInitialValues: (item: StaffAssignment) => ({
       id: item.id,
       staffMemberId: item.staffMemberId,
       organizationUnitId: item.organizationUnitId,
       assignmentType: item.assignmentType,
       validFrom: item.validFrom,
       validTo: item.validTo,
-      }),
-      getItemDisplayName: (item: StaffAssignment) => item.staffMemberId,
-      };
+    }),
+    // StaffAssignment is a pure join between a staff member and an org unit —
+    // it has no name-shaped field of its own, so the FK remains the most
+    // identifying value available.
+    getItemDisplayName: (item: StaffAssignment) => item.staffMemberId,
+  };
 
-      return (
-      <GenericCrudView viewModel={vm} config={config} />
-      );
-      });
+  return <GenericCrudView viewModel={vm} config={config} />;
+});

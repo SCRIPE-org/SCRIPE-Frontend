@@ -8,5 +8,20 @@ export const ar = {
     deleteConfirm: "هل أنت متأكد من حذف هذا السجل؟",
     noItems: "لا توجد سجلات",
     searchPlaceholder: "بحث...",
+    columns: {
+      type: "النوع",
+      displayName: "الاسم المعروض",
+      createdAt: "تاريخ الإنشاء",
+    },
+    form: {
+      type: "النوع",
+      typePlaceholder: "اختر نوع الطرف",
+      displayName: "الاسم المعروض",
+      displayNamePlaceholder: "مثال: جين دو أو نادي أكمي الرياضي",
+    },
+    types: {
+      Person: "فرد",
+      Organization: "مؤسسة",
+    },
   },
 };

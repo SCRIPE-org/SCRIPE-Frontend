@@ -8,5 +8,40 @@ export const en = {
     deleteConfirm: "Are you sure you want to delete this custom field?",
     noItems: "No custom fields found",
     searchPlaceholder: "Search custom fields...",
+
+    // Field labels — shared between the table columns and the create/edit forms
+    fields: {
+      entityTypeKey: "Entity Type",
+      key: "Key",
+      labelEn: "Label (English)",
+      labelAr: "Label (Arabic)",
+      valueType: "Value Type",
+      options: "Options",
+      isRequired: "Required",
+      sortOrder: "Sort Order",
+      isActive: "Active",
+    },
+
+    // Form placeholders
+    placeholders: {
+      entityTypeKey: "e.g. party.person",
+      key: "e.g. shirt_size",
+      labelEn: "Enter English label",
+      labelAr: "Enter Arabic label",
+      options: "One option per line — Select fields only",
+    },
+
+    // CustomFieldValueType enum (0..4)
+    valueTypes: {
+      text: "Text",
+      number: "Number",
+      boolean: "Boolean",
+      date: "Date",
+      select: "Select",
+    },
+
+    // Required / Optional flag
+    required: "Required",
+    optional: "Optional",
   },
 };

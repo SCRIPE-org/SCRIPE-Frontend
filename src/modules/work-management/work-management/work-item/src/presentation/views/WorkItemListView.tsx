@@ -3,110 +3,200 @@
  */
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { useWorkItemViewModel } from "../viewmodels/useWorkItemViewModel";
 import type { WorkItem } from "../../domain/entities/WorkItem";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { useI18n } from "@core/providers/i18n-provider";
+import { Badge } from "@core/ui/badge";
 
-// Enums mirror the backend WorkItemStatus / WorkItemPriority.
-const STATUS_OPTIONS = [
-  { value: "0", label: "To Do" },
-  { value: "1", label: "In Progress" },
-  { value: "2", label: "Blocked" },
-  { value: "3", label: "Done" },
-  { value: "4", label: "Cancelled" },
-];
-const STATUS_LABELS: Record<number, string> = {
-  0: "To Do",
-  1: "In Progress",
-  2: "Blocked",
-  3: "Done",
-  4: "Cancelled",
+// WorkItemStatus (0..4) mapped onto the nx Badge semantic tones.
+const STATUS_VARIANTS: Record<
+  number,
+  "secondary" | "info" | "warning" | "success" | "inactive"
+> = {
+  0: "secondary", // To Do
+  1: "info", // In Progress
+  2: "warning", // Blocked
+  3: "success", // Done
+  4: "inactive", // Cancelled
 };
-const PRIORITY_OPTIONS = [
-  { value: "0", label: "Low" },
-  { value: "1", label: "Normal" },
-  { value: "2", label: "High" },
-  { value: "3", label: "Critical" },
-];
-const PRIORITY_LABELS: Record<number, string> = {
-  0: "Low",
-  1: "Normal",
-  2: "High",
-  3: "Critical",
+
+// WorkItemPriority (0..3) mapped onto the nx Badge semantic tones.
+const PRIORITY_VARIANTS: Record<number, "secondary" | "info" | "warning" | "destructive"> = {
+  0: "secondary", // Low
+  1: "info", // Normal
+  2: "warning", // High
+  3: "destructive", // Critical
 };
 
 export const WorkItemListView = React.memo(function WorkItemListView() {
   useModuleLocales(() => import("../../../locales"), "workManagement");
+  const { t, language } = useI18n();
   const { vm } = useWorkItemViewModel();
 
-  const config: CrudConfig<WorkItem> = {
-    titleKey: "workItem.title",
-    subtitleKey: "workItem.description",
-    resource: "work-items",
-    columns: [
-      { key: "title", label: "Title", sortable: true },
-      {
-        key: "status",
-        label: "Status",
-        render: (value: number) => STATUS_LABELS[value] ?? String(value),
-      },
-      {
-        key: "priority",
-        label: "Priority",
-        render: (value: number) => PRIORITY_LABELS[value] ?? String(value),
-      },
-      { key: "ownerEntityTypeKey", label: "Owner Type" },
-      {
-        key: "dueAt",
-        label: "Due",
-        render: (value: string) => (value ? new Date(value).toLocaleDateString() : "-"),
-      },
-      {
-        key: "isActive",
-        label: "Active",
-        render: (value: boolean) => (value ? "Yes" : "No"),
-      },
+  const statusOptions = useMemo(
+    () => [
+      { value: "0", label: t("workItem.statuses.toDo") },
+      { value: "1", label: t("workItem.statuses.inProgress") },
+      { value: "2", label: t("workItem.statuses.blocked") },
+      { value: "3", label: t("workItem.statuses.done") },
+      { value: "4", label: t("workItem.statuses.cancelled") },
     ],
-    createFields: [
-      { name: "title", label: "Title", type: "text" as const, required: true },
-      { name: "description", label: "Description", type: "textarea" as const, rows: 3 },
-      { name: "status", label: "Status", type: "select" as const, options: STATUS_OPTIONS, required: true },
-      { name: "priority", label: "Priority", type: "select" as const, options: PRIORITY_OPTIONS, required: true },
-      { name: "dueAt", label: "Due Date", type: "datetime-local" as const },
-      { name: "ownerEntityTypeKey", label: "Owner Entity Type Key", type: "text" as const, placeholder: "e.g. party.person" },
-    ],
-    // ownerEntityTypeKey/ownerEntityId are set-once at create (immutable owner binding).
-    editFields: [
-      { name: "id", type: "hidden" as const, required: true },
-      { name: "title", label: "Title", type: "text" as const, required: true },
-      { name: "description", label: "Description", type: "textarea" as const, rows: 3 },
-      { name: "status", label: "Status", type: "select" as const, options: STATUS_OPTIONS, required: true },
-      { name: "priority", label: "Priority", type: "select" as const, options: PRIORITY_OPTIONS, required: true },
-      { name: "dueAt", label: "Due Date", type: "datetime-local" as const },
-      { name: "isActive", label: "Active", type: "switch" as const },
-    ],
-    createInitialValues: {
-      title: "",
-      description: "",
-      status: "0",
-      priority: "1",
-      dueAt: "",
-      ownerEntityTypeKey: "",
-    },
-    editInitialValues: (item: WorkItem) => ({
-      id: item.id,
-      title: item.title,
-      description: item.description ?? "",
-      status: String(item.status),
-      priority: String(item.priority),
-      dueAt: item.dueAt ?? "",
-      isActive: item.isActive,
+    [t]
+  );
+  const statusLabels = useMemo<Record<number, string>>(
+    () => ({
+      0: t("workItem.statuses.toDo"),
+      1: t("workItem.statuses.inProgress"),
+      2: t("workItem.statuses.blocked"),
+      3: t("workItem.statuses.done"),
+      4: t("workItem.statuses.cancelled"),
     }),
-    getItemDisplayName: (item: WorkItem) => item.title,
-  };
+    [t]
+  );
+
+  const priorityOptions = useMemo(
+    () => [
+      { value: "0", label: t("workItem.priorities.low") },
+      { value: "1", label: t("workItem.priorities.normal") },
+      { value: "2", label: t("workItem.priorities.high") },
+      { value: "3", label: t("workItem.priorities.critical") },
+    ],
+    [t]
+  );
+  const priorityLabels = useMemo<Record<number, string>>(
+    () => ({
+      0: t("workItem.priorities.low"),
+      1: t("workItem.priorities.normal"),
+      2: t("workItem.priorities.high"),
+      3: t("workItem.priorities.critical"),
+    }),
+    [t]
+  );
+
+  const config: CrudConfig<WorkItem> = useMemo(
+    () => ({
+      titleKey: "workItem.title",
+      subtitleKey: "workItem.description",
+      resource: "work-items",
+      columns: [
+        { key: "title", label: t("workItem.fields.title"), sortable: true },
+        {
+          key: "status",
+          label: t("workItem.fields.status"),
+          render: (value: number) => (
+            <Badge variant={STATUS_VARIANTS[value] ?? "secondary"}>
+              {statusLabels[value] ?? String(value)}
+            </Badge>
+          ),
+        },
+        {
+          key: "priority",
+          label: t("workItem.fields.priority"),
+          render: (value: number) => (
+            <Badge variant={PRIORITY_VARIANTS[value] ?? "secondary"}>
+              {priorityLabels[value] ?? String(value)}
+            </Badge>
+          ),
+        },
+        { key: "ownerEntityTypeKey", label: t("workItem.fields.ownerEntityTypeKey") },
+        {
+          key: "dueAt",
+          label: t("workItem.fields.dueAt"),
+          render: (value: string) =>
+            value ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US") : "-",
+        },
+        {
+          key: "isActive",
+          label: t("workItem.fields.isActive"),
+          render: (value: boolean) => (
+            <Badge variant={value ? "active" : "inactive"}>
+              {value ? t("common.yes") : t("common.no")}
+            </Badge>
+          ),
+        },
+      ],
+      createFields: [
+        { name: "title", label: t("workItem.fields.title"), type: "text" as const, required: true },
+        {
+          name: "description",
+          label: t("workItem.fields.description"),
+          type: "textarea" as const,
+          rows: 3,
+        },
+        {
+          name: "status",
+          label: t("workItem.fields.status"),
+          type: "select" as const,
+          options: statusOptions,
+          required: true,
+        },
+        {
+          name: "priority",
+          label: t("workItem.fields.priority"),
+          type: "select" as const,
+          options: priorityOptions,
+          required: true,
+        },
+        { name: "dueAt", label: t("workItem.fields.dueAt"), type: "datetime-local" as const },
+        {
+          name: "ownerEntityTypeKey",
+          label: t("workItem.fields.ownerEntityTypeKey"),
+          type: "text" as const,
+          placeholder: t("workItem.placeholders.ownerEntityTypeKey"),
+        },
+      ],
+      // ownerEntityTypeKey/ownerEntityId are set-once at create (immutable owner binding).
+      editFields: [
+        { name: "id", type: "hidden" as const, required: true },
+        { name: "title", label: t("workItem.fields.title"), type: "text" as const, required: true },
+        {
+          name: "description",
+          label: t("workItem.fields.description"),
+          type: "textarea" as const,
+          rows: 3,
+        },
+        {
+          name: "status",
+          label: t("workItem.fields.status"),
+          type: "select" as const,
+          options: statusOptions,
+          required: true,
+        },
+        {
+          name: "priority",
+          label: t("workItem.fields.priority"),
+          type: "select" as const,
+          options: priorityOptions,
+          required: true,
+        },
+        { name: "dueAt", label: t("workItem.fields.dueAt"), type: "datetime-local" as const },
+        { name: "isActive", label: t("workItem.fields.isActive"), type: "switch" as const },
+      ],
+      createInitialValues: {
+        title: "",
+        description: "",
+        status: "0",
+        priority: "1",
+        dueAt: "",
+        ownerEntityTypeKey: "",
+      },
+      editInitialValues: (item: WorkItem) => ({
+        id: item.id,
+        title: item.title,
+        description: item.description ?? "",
+        status: String(item.status),
+        priority: String(item.priority),
+        dueAt: item.dueAt ?? "",
+        isActive: item.isActive,
+      }),
+      getItemDisplayName: (item: WorkItem) => item.title,
+    }),
+    [t, language, statusOptions, statusLabels, priorityOptions, priorityLabels]
+  );
 
   return <GenericCrudView viewModel={vm} config={config} />;
 });

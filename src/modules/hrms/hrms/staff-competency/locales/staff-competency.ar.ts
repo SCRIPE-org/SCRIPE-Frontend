@@ -8,5 +8,15 @@ export const ar = {
     deleteConfirm: "هل أنت متأكد من حذف هذا السجل؟",
     noItems: "لا توجد سجلات",
     searchPlaceholder: "بحث...",
+    fields: {
+      staffMemberId: "الموظف",
+      competencyName: "اسم الكفاءة",
+      level: "مستوى الإتقان",
+    },
+    placeholders: {
+      staffMemberId: "أدخل معرف الموظف",
+      competencyName: "مثال: الإسعافات الأولية، حراسة المرمى، القيادة",
+      level: "مثال: مبتدئ، متوسط، خبير",
+    },
   },
 };

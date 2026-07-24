@@ -8,5 +8,19 @@ export const ar = {
     deleteConfirm: "هل أنت متأكد من حذف هذا السجل؟",
     noItems: "لا توجد سجلات",
     searchPlaceholder: "بحث...",
+    columns: {
+      partyId: "معرف الطرف",
+      legalName: "الاسم القانوني",
+      taxId: "الرقم الضريبي",
+      createdAt: "تاريخ الإنشاء",
+    },
+    form: {
+      partyId: "معرف الطرف",
+      partyIdPlaceholder: "أدخل معرف الطرف المرتبط",
+      legalName: "الاسم القانوني",
+      legalNamePlaceholder: "مثال: شركة نادي أكمي الرياضي",
+      taxId: "الرقم الضريبي",
+      taxIdPlaceholder: "أدخل الرقم الضريبي",
+    },
   },
 };

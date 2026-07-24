@@ -1,9 +1,9 @@
 /**
-* StaffMember List View
-*
-* Pure UI component for displaying StaffMember list with CRUD.
-* Uses GenericCrudView for standard CRUD table UI.
-*/
+ * StaffMember List View
+ *
+ * Pure UI component for displaying StaffMember list with CRUD.
+ * Uses GenericCrudView for standard CRUD table UI.
+ */
 "use client";
 
 import React from "react";
@@ -12,138 +12,151 @@ import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { useStaffMemberViewModel } from "../viewmodels/useStaffMemberViewModel";
 import type { StaffMember } from "../../domain/entities/StaffMember";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { useI18n } from "@core/providers/i18n-provider";
+import { Badge } from "@core/ui/badge";
 
 // P5.4: React.memo prevents unnecessary re-renders
 export const StaffMemberListView = React.memo(function StaffMemberListView() {
   useModuleLocales(() => import("../../../locales"), "hrms");
-const { vm } = useStaffMemberViewModel();
+  const { vm } = useStaffMemberViewModel();
+  const { t, language } = useI18n();
 
-const config: CrudConfig<StaffMember> = {
-      titleKey: "staffMember.title",
-      subtitleKey: "staffMember.description",
-      resource: "staff-members",
-      columns: [
+  const config: CrudConfig<StaffMember> = {
+    titleKey: "staffMember.title",
+    subtitleKey: "staffMember.description",
+    resource: "staff-members",
+    columns: [
       {
-      key: "identityUserId",
-      label: "IdentityUserId",
-      sortable: true,
+        key: "firstName",
+        label: t("staffMember.fields.firstName"),
+        sortable: true,
       },
       {
-      key: "firstName",
-      label: "FirstName",
-      sortable: true,
+        key: "lastName",
+        label: t("staffMember.fields.lastName"),
+        sortable: true,
       },
       {
-      key: "lastName",
-      label: "LastName",
-      sortable: true,
+        key: "email",
+        label: t("staffMember.fields.email"),
+        sortable: true,
       },
       {
-      key: "email",
-      label: "Email",
-      sortable: true,
+        key: "jobTitle",
+        label: t("staffMember.fields.jobTitle"),
+        sortable: true,
       },
       {
-      key: "jobTitle",
-      label: "JobTitle",
-      sortable: true,
+        key: "isActive",
+        label: t("staffMember.fields.isActive"),
+        render: (value: boolean) => (
+          <Badge variant={value ? "active" : "inactive"}>
+            {value ? t("common.active") : t("common.inactive")}
+          </Badge>
+        ),
       },
       {
-      key: "createdAt",
-      label: "Created",
-      render: (value: string) => value ? new Date(value).toLocaleDateString() : "-",
-      },
-      ],
-      createFields: [
-      {
-      name: "identityUserId",
-      label: "IdentityUserId",
-      type: "text" as const,
-      placeholder: "Enter identityUserId",
+        key: "identityUserId",
+        label: t("staffMember.fields.identityUserId"),
+        sortable: true,
       },
       {
-      name: "firstName",
-      label: "FirstName",
-      type: "text" as const,
-      placeholder: "Enter firstName",
-      required: true,
+        key: "createdAt",
+        label: t("common.createdAt"),
+        render: (value: string) =>
+          value ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US") : "-",
+      },
+    ],
+    createFields: [
+      {
+        name: "identityUserId",
+        label: t("staffMember.fields.identityUserId"),
+        type: "text" as const,
+        placeholder: t("staffMember.placeholders.identityUserId"),
       },
       {
-      name: "lastName",
-      label: "LastName",
-      type: "text" as const,
-      placeholder: "Enter lastName",
-      required: true,
+        name: "firstName",
+        label: t("staffMember.fields.firstName"),
+        type: "text" as const,
+        placeholder: t("staffMember.placeholders.firstName"),
+        required: true,
       },
       {
-      name: "email",
-      label: "Email",
-      type: "text" as const,
-      placeholder: "Enter email",
+        name: "lastName",
+        label: t("staffMember.fields.lastName"),
+        type: "text" as const,
+        placeholder: t("staffMember.placeholders.lastName"),
+        required: true,
       },
       {
-      name: "jobTitle",
-      label: "JobTitle",
-      type: "text" as const,
-      placeholder: "Enter jobTitle",
+        name: "email",
+        label: t("staffMember.fields.email"),
+        type: "text" as const,
+        placeholder: t("staffMember.placeholders.email"),
       },
       {
-      name: "isActive",
-      label: "IsActive",
-      type: "switch" as const,
-      placeholder: "Enter isActive",
+        name: "jobTitle",
+        label: t("staffMember.fields.jobTitle"),
+        type: "text" as const,
+        placeholder: t("staffMember.placeholders.jobTitle"),
       },
-      ],
-      editFields: [
+      {
+        name: "isActive",
+        label: t("staffMember.fields.isActive"),
+        type: "switch" as const,
+        description: t("staffMember.descriptions.isActive"),
+      },
+    ],
+    editFields: [
       { name: "id", type: "hidden" as const, required: true },
       {
-      name: "identityUserId",
-      label: "IdentityUserId",
-      type: "text" as const,
-      placeholder: "Enter identityUserId",
+        name: "identityUserId",
+        label: t("staffMember.fields.identityUserId"),
+        type: "text" as const,
+        placeholder: t("staffMember.placeholders.identityUserId"),
       },
       {
-      name: "firstName",
-      label: "FirstName",
-      type: "text" as const,
-      placeholder: "Enter firstName",
-      required: true,
+        name: "firstName",
+        label: t("staffMember.fields.firstName"),
+        type: "text" as const,
+        placeholder: t("staffMember.placeholders.firstName"),
+        required: true,
       },
       {
-      name: "lastName",
-      label: "LastName",
-      type: "text" as const,
-      placeholder: "Enter lastName",
-      required: true,
+        name: "lastName",
+        label: t("staffMember.fields.lastName"),
+        type: "text" as const,
+        placeholder: t("staffMember.placeholders.lastName"),
+        required: true,
       },
       {
-      name: "email",
-      label: "Email",
-      type: "text" as const,
-      placeholder: "Enter email",
+        name: "email",
+        label: t("staffMember.fields.email"),
+        type: "text" as const,
+        placeholder: t("staffMember.placeholders.email"),
       },
       {
-      name: "jobTitle",
-      label: "JobTitle",
-      type: "text" as const,
-      placeholder: "Enter jobTitle",
+        name: "jobTitle",
+        label: t("staffMember.fields.jobTitle"),
+        type: "text" as const,
+        placeholder: t("staffMember.placeholders.jobTitle"),
       },
       {
-      name: "isActive",
-      label: "IsActive",
-      type: "switch" as const,
-      placeholder: "Enter isActive",
+        name: "isActive",
+        label: t("staffMember.fields.isActive"),
+        type: "switch" as const,
+        description: t("staffMember.descriptions.isActive"),
       },
-      ],
-      createInitialValues: {
+    ],
+    createInitialValues: {
       identityUserId: "",
       firstName: "",
       lastName: "",
       email: "",
       jobTitle: "",
       isActive: false,
-      },
-      editInitialValues: (item: StaffMember) => ({
+    },
+    editInitialValues: (item: StaffMember) => ({
       id: item.id,
       identityUserId: item.identityUserId,
       firstName: item.firstName,
@@ -151,11 +164,9 @@ const config: CrudConfig<StaffMember> = {
       email: item.email,
       jobTitle: item.jobTitle,
       isActive: item.isActive,
-      }),
-      getItemDisplayName: (item: StaffMember) => item.identityUserId,
-      };
+    }),
+    getItemDisplayName: (item: StaffMember) => `${item.firstName} ${item.lastName}`.trim(),
+  };
 
-      return (
-      <GenericCrudView viewModel={vm} config={config} />
-      );
-      });
+  return <GenericCrudView viewModel={vm} config={config} />;
+});

@@ -1,9 +1,9 @@
 /**
-* Qualification List View
-*
-* Pure UI component for displaying Qualification list with CRUD.
-* Uses GenericCrudView for standard CRUD table UI.
-*/
+ * Qualification List View
+ *
+ * Pure UI component for displaying Qualification list with CRUD.
+ * Uses GenericCrudView for standard CRUD table UI.
+ */
 "use client";
 
 import React from "react";
@@ -12,118 +12,119 @@ import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { useQualificationViewModel } from "../viewmodels/useQualificationViewModel";
 import type { Qualification } from "../../domain/entities/Qualification";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { useI18n } from "@core/providers/i18n-provider";
 
 // P5.4: React.memo prevents unnecessary re-renders
 export const QualificationListView = React.memo(function QualificationListView() {
   useModuleLocales(() => import("../../../locales"), "hrms");
-const { vm } = useQualificationViewModel();
+  const { vm } = useQualificationViewModel();
+  const { t, language } = useI18n();
+  const locale = language === "ar" ? "ar-EG" : "en-US";
 
-const config: CrudConfig<Qualification> = {
-      titleKey: "qualification.title",
-      subtitleKey: "qualification.description",
-      resource: "qualifications",
-      columns: [
+  const config: CrudConfig<Qualification> = {
+    titleKey: "qualification.title",
+    subtitleKey: "qualification.description",
+    resource: "qualifications",
+    columns: [
       {
-      key: "staffMemberId",
-      label: "StaffMemberId",
-      sortable: true,
+        key: "title",
+        label: t("qualification.fields.title"),
+        sortable: true,
       },
       {
-      key: "title",
-      label: "Title",
-      sortable: true,
+        key: "institution",
+        label: t("qualification.fields.institution"),
+        sortable: true,
       },
       {
-      key: "institution",
-      label: "Institution",
-      sortable: true,
+        key: "staffMemberId",
+        label: t("qualification.fields.staffMemberId"),
+        sortable: true,
       },
       {
-      key: "awardedOn",
-      label: "AwardedOn",
-      render: (value: string) => value ? new Date(value).toLocaleDateString() : "-",
-      sortable: true,
+        key: "awardedOn",
+        label: t("qualification.fields.awardedOn"),
+        render: (value: string) => (value ? new Date(value).toLocaleDateString(locale) : "-"),
+        sortable: true,
       },
       {
-      key: "createdAt",
-      label: "Created",
-      render: (value: string) => value ? new Date(value).toLocaleDateString() : "-",
+        key: "createdAt",
+        label: t("common.createdAt"),
+        render: (value: string) => (value ? new Date(value).toLocaleDateString(locale) : "-"),
       },
-      ],
-      createFields: [
+    ],
+    createFields: [
       {
-      name: "staffMemberId",
-      label: "StaffMemberId",
-      type: "text" as const,
-      placeholder: "Enter staffMemberId",
-      required: true,
-      },
-      {
-      name: "title",
-      label: "Title",
-      type: "text" as const,
-      placeholder: "Enter title",
-      required: true,
+        name: "staffMemberId",
+        label: t("qualification.fields.staffMemberId"),
+        type: "text" as const,
+        placeholder: t("qualification.placeholders.staffMemberId"),
+        required: true,
       },
       {
-      name: "institution",
-      label: "Institution",
-      type: "text" as const,
-      placeholder: "Enter institution",
+        name: "title",
+        label: t("qualification.fields.title"),
+        type: "text" as const,
+        placeholder: t("qualification.placeholders.title"),
+        required: true,
       },
       {
-      name: "awardedOn",
-      label: "AwardedOn",
-      type: "date" as const,
-      placeholder: "Enter awardedOn",
+        name: "institution",
+        label: t("qualification.fields.institution"),
+        type: "text" as const,
+        placeholder: t("qualification.placeholders.institution"),
       },
-      ],
-      editFields: [
+      {
+        name: "awardedOn",
+        label: t("qualification.fields.awardedOn"),
+        type: "date" as const,
+        placeholder: t("qualification.placeholders.awardedOn"),
+      },
+    ],
+    editFields: [
       { name: "id", type: "hidden" as const, required: true },
       {
-      name: "staffMemberId",
-      label: "StaffMemberId",
-      type: "text" as const,
-      placeholder: "Enter staffMemberId",
-      required: true,
+        name: "staffMemberId",
+        label: t("qualification.fields.staffMemberId"),
+        type: "text" as const,
+        placeholder: t("qualification.placeholders.staffMemberId"),
+        required: true,
       },
       {
-      name: "title",
-      label: "Title",
-      type: "text" as const,
-      placeholder: "Enter title",
-      required: true,
+        name: "title",
+        label: t("qualification.fields.title"),
+        type: "text" as const,
+        placeholder: t("qualification.placeholders.title"),
+        required: true,
       },
       {
-      name: "institution",
-      label: "Institution",
-      type: "text" as const,
-      placeholder: "Enter institution",
+        name: "institution",
+        label: t("qualification.fields.institution"),
+        type: "text" as const,
+        placeholder: t("qualification.placeholders.institution"),
       },
       {
-      name: "awardedOn",
-      label: "AwardedOn",
-      type: "date" as const,
-      placeholder: "Enter awardedOn",
+        name: "awardedOn",
+        label: t("qualification.fields.awardedOn"),
+        type: "date" as const,
+        placeholder: t("qualification.placeholders.awardedOn"),
       },
-      ],
-      createInitialValues: {
+    ],
+    createInitialValues: {
       staffMemberId: "",
       title: "",
       institution: "",
       awardedOn: "",
-            },
-      editInitialValues: (item: Qualification) => ({
+    },
+    editInitialValues: (item: Qualification) => ({
       id: item.id,
       staffMemberId: item.staffMemberId,
       title: item.title,
       institution: item.institution,
       awardedOn: item.awardedOn,
-      }),
-      getItemDisplayName: (item: Qualification) => item.staffMemberId,
-      };
+    }),
+    getItemDisplayName: (item: Qualification) => item.title,
+  };
 
-      return (
-      <GenericCrudView viewModel={vm} config={config} />
-      );
-      });
+  return <GenericCrudView viewModel={vm} config={config} />;
+});

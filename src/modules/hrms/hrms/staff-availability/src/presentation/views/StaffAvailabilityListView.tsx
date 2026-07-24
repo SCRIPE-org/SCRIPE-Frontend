@@ -1,9 +1,9 @@
 /**
-* StaffAvailability List View
-*
-* Pure UI component for displaying StaffAvailability list with CRUD.
-* Uses GenericCrudView for standard CRUD table UI.
-*/
+ * StaffAvailability List View
+ *
+ * Pure UI component for displaying StaffAvailability list with CRUD.
+ * Uses GenericCrudView for standard CRUD table UI.
+ */
 "use client";
 
 import React from "react";
@@ -12,141 +12,170 @@ import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { useStaffAvailabilityViewModel } from "../viewmodels/useStaffAvailabilityViewModel";
 import type { StaffAvailability } from "../../domain/entities/StaffAvailability";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { useI18n } from "@core/providers/i18n-provider";
+import { Badge } from "@core/ui/badge";
+
+// Formats a "HH:mm" / "HH:mm:ss" wall-clock string as a locale-aware short
+// time (e.g. "9:00 AM" / "٩:٠٠ ص") without pulling in a date-fns dependency
+// for what is just a time-of-day value with no calendar date attached.
+function formatTimeOfDay(value: string, locale: string): string {
+  if (!value) return "-";
+  const [hours, minutes] = value.split(":");
+  const parsed = new Date();
+  parsed.setHours(Number(hours) || 0, Number(minutes) || 0, 0, 0);
+  return parsed.toLocaleTimeString(locale, { hour: "numeric", minute: "2-digit" });
+}
 
 // P5.4: React.memo prevents unnecessary re-renders
 export const StaffAvailabilityListView = React.memo(function StaffAvailabilityListView() {
   useModuleLocales(() => import("../../../locales"), "hrms");
-const { vm } = useStaffAvailabilityViewModel();
+  const { vm } = useStaffAvailabilityViewModel();
+  const { t, language } = useI18n();
+  const locale = language === "ar" ? "ar-EG" : "en-US";
 
-const config: CrudConfig<StaffAvailability> = {
-      titleKey: "staffAvailability.title",
-      subtitleKey: "staffAvailability.description",
-      resource: "staff-availabilities",
-      columns: [
+  const config: CrudConfig<StaffAvailability> = {
+    titleKey: "staffAvailability.title",
+    subtitleKey: "staffAvailability.description",
+    resource: "staff-availabilities",
+    columns: [
       {
-      key: "staffMemberId",
-      label: "StaffMemberId",
-      sortable: true,
+        key: "staffMemberId",
+        label: t("staffAvailability.fields.staffMemberId"),
+        sortable: true,
       },
       {
-      key: "dayOfWeek",
-      label: "DayOfWeek",
-      sortable: true,
+        key: "dayOfWeek",
+        label: t("staffAvailability.fields.dayOfWeek"),
+        sortable: true,
+        render: (value: number) => (
+          <Badge variant="secondary">{t(`staffAvailability.days.${value}`)}</Badge>
+        ),
       },
       {
-      key: "startTime",
-      label: "StartTime",
-      sortable: true,
+        key: "startTime",
+        label: t("staffAvailability.fields.startTime"),
+        render: (value: string) => formatTimeOfDay(value, locale),
       },
       {
-      key: "endTime",
-      label: "EndTime",
-      sortable: true,
+        key: "endTime",
+        label: t("staffAvailability.fields.endTime"),
+        render: (value: string) => formatTimeOfDay(value, locale),
       },
       {
-      key: "isAvailable",
-      label: "IsAvailable",
-      render: (value: boolean) => value ? "✓" : "✗",
-      sortable: true,
+        key: "isAvailable",
+        label: t("staffAvailability.fields.isAvailable"),
+        sortable: true,
+        render: (value: boolean) => (
+          <Badge variant={value ? "active" : "inactive"}>
+            {value
+              ? t("staffAvailability.status.available")
+              : t("staffAvailability.status.unavailable")}
+          </Badge>
+        ),
       },
       {
-      key: "createdAt",
-      label: "Created",
-      render: (value: string) => value ? new Date(value).toLocaleDateString() : "-",
+        key: "createdAt",
+        label: t("common.createdAt"),
+        render: (value: string) => (value ? new Date(value).toLocaleDateString(locale) : "-"),
       },
-      ],
-      createFields: [
+    ],
+    createFields: [
       {
-      name: "staffMemberId",
-      label: "StaffMemberId",
-      type: "text" as const,
-      placeholder: "Enter staffMemberId",
-      required: true,
-      },
-      {
-      name: "dayOfWeek",
-      label: "DayOfWeek",
-      type: "number" as const,
-      placeholder: "Enter dayOfWeek",
-      required: true,
+        name: "staffMemberId",
+        label: t("staffAvailability.fields.staffMemberId"),
+        type: "text" as const,
+        placeholder: t("staffAvailability.placeholders.staffMemberId"),
+        required: true,
       },
       {
-      name: "startTime",
-      label: "StartTime",
-      type: "text" as const,
-      placeholder: "Enter startTime",
-      required: true,
+        name: "dayOfWeek",
+        label: t("staffAvailability.fields.dayOfWeek"),
+        type: "number" as const,
+        placeholder: t("staffAvailability.placeholders.dayOfWeek"),
+        min: 0,
+        max: 6,
+        required: true,
       },
       {
-      name: "endTime",
-      label: "EndTime",
-      type: "text" as const,
-      placeholder: "Enter endTime",
-      required: true,
+        name: "startTime",
+        label: t("staffAvailability.fields.startTime"),
+        type: "text" as const,
+        placeholder: t("staffAvailability.placeholders.startTime"),
+        required: true,
       },
       {
-      name: "isAvailable",
-      label: "IsAvailable",
-      type: "switch" as const,
-      placeholder: "Enter isAvailable",
+        name: "endTime",
+        label: t("staffAvailability.fields.endTime"),
+        type: "text" as const,
+        placeholder: t("staffAvailability.placeholders.endTime"),
+        required: true,
       },
-      ],
-      editFields: [
+      {
+        name: "isAvailable",
+        label: t("staffAvailability.fields.isAvailable"),
+        type: "switch" as const,
+        description: t("staffAvailability.descriptions.isAvailable"),
+      },
+    ],
+    editFields: [
       { name: "id", type: "hidden" as const, required: true },
       {
-      name: "staffMemberId",
-      label: "StaffMemberId",
-      type: "text" as const,
-      placeholder: "Enter staffMemberId",
-      required: true,
+        name: "staffMemberId",
+        label: t("staffAvailability.fields.staffMemberId"),
+        type: "text" as const,
+        placeholder: t("staffAvailability.placeholders.staffMemberId"),
+        required: true,
       },
       {
-      name: "dayOfWeek",
-      label: "DayOfWeek",
-      type: "number" as const,
-      placeholder: "Enter dayOfWeek",
-      required: true,
+        name: "dayOfWeek",
+        label: t("staffAvailability.fields.dayOfWeek"),
+        type: "number" as const,
+        placeholder: t("staffAvailability.placeholders.dayOfWeek"),
+        min: 0,
+        max: 6,
+        required: true,
       },
       {
-      name: "startTime",
-      label: "StartTime",
-      type: "text" as const,
-      placeholder: "Enter startTime",
-      required: true,
+        name: "startTime",
+        label: t("staffAvailability.fields.startTime"),
+        type: "text" as const,
+        placeholder: t("staffAvailability.placeholders.startTime"),
+        required: true,
       },
       {
-      name: "endTime",
-      label: "EndTime",
-      type: "text" as const,
-      placeholder: "Enter endTime",
-      required: true,
+        name: "endTime",
+        label: t("staffAvailability.fields.endTime"),
+        type: "text" as const,
+        placeholder: t("staffAvailability.placeholders.endTime"),
+        required: true,
       },
       {
-      name: "isAvailable",
-      label: "IsAvailable",
-      type: "switch" as const,
-      placeholder: "Enter isAvailable",
+        name: "isAvailable",
+        label: t("staffAvailability.fields.isAvailable"),
+        type: "switch" as const,
+        description: t("staffAvailability.descriptions.isAvailable"),
       },
-      ],
-      createInitialValues: {
+    ],
+    createInitialValues: {
       staffMemberId: "",
       dayOfWeek: 0,
       startTime: "",
       endTime: "",
       isAvailable: false,
-      },
-      editInitialValues: (item: StaffAvailability) => ({
+    },
+    editInitialValues: (item: StaffAvailability) => ({
       id: item.id,
       staffMemberId: item.staffMemberId,
       dayOfWeek: item.dayOfWeek,
       startTime: item.startTime,
       endTime: item.endTime,
       isAvailable: item.isAvailable,
-      }),
-      getItemDisplayName: (item: StaffAvailability) => item.staffMemberId,
-      };
+    }),
+    // StaffAvailability is a recurring schedule slot for a staff member — it
+    // has no name-shaped field of its own, so the FK remains the most
+    // identifying value available.
+    getItemDisplayName: (item: StaffAvailability) => item.staffMemberId,
+  };
 
-      return (
-      <GenericCrudView viewModel={vm} config={config} />
-      );
-      });
+  return <GenericCrudView viewModel={vm} config={config} />;
+});
