@@ -38,26 +38,30 @@ export function ComparisonBlock({ columns }: ComparisonBlockProps) {
   const { t } = useDocsI18n();
 
   return (
-    <div
+    <ul
       className="docs-comparison"
       style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}
     >
       {columns.map((col, colIdx) => {
         const config = variantConfig[col.variant];
         return (
-          <div key={colIdx} className={`docs-comparison-column ${config.className}`}>
+          <li key={colIdx} className={`docs-comparison-column ${config.className}`}>
             <div className="docs-comparison-header">
-              <span className="docs-comparison-icon">{config.icon}</span>
-              <span className="docs-comparison-title">{t(col.titleKey)}</span>
+              {/* The heading already states the verdict — the glyph is a
+                  restatement, and the list markers repeat it a third time. */}
+              <span className="docs-comparison-icon" aria-hidden="true">
+                {config.icon}
+              </span>
+              <h4 className="docs-comparison-title">{t(col.titleKey)}</h4>
             </div>
             <ul className="docs-comparison-list">
               {col.items.map((item, itemIdx) => (
                 <li key={itemIdx}>{t(item)}</li>
               ))}
             </ul>
-          </div>
+          </li>
         );
       })}
-    </div>
+    </ul>
   );
 }

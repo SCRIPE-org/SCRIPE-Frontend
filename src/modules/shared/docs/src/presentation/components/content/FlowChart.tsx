@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import type { FlowNode, FlowConnection } from "../../../domain/entities/DocSection";
 
@@ -16,12 +17,21 @@ interface FlowChartProps {
  */
 export function FlowChart({ nodes, connections, direction = "vertical", title }: FlowChartProps) {
   const { t } = useDocsI18n();
+  const captionId = useId();
   // Build ordered sequence from connections
   const orderedNodes = getOrderedNodes(nodes, connections);
 
   return (
-    <div className="docs-flowchart">
-      {title && <div className="docs-flowchart-title">{t(title)}</div>}
+    <figure
+      className="docs-flowchart"
+      aria-labelledby={title ? captionId : undefined}
+      aria-label={title ? undefined : t("common.flowDiagram")}
+    >
+      {title && (
+        <figcaption id={captionId} className="docs-flowchart-title">
+          {t(title)}
+        </figcaption>
+      )}
 
       <div className={direction === "vertical" ? "docs-flow-vertical" : "docs-flow-horizontal"}>
         {orderedNodes.map((node, idx) => {
@@ -30,45 +40,46 @@ export function FlowChart({ nodes, connections, direction = "vertical", title }:
             idx < orderedNodes.length - 1
               ? connections.find((c) => c.from === node.id && c.to === orderedNodes[idx + 1]?.id)
               : undefined;
+          const description = node.descriptionKey ? t(node.descriptionKey) : node.description;
 
           return (
             <div key={node.id} style={{ display: "contents" }}>
-              <div
-                className="docs-flow-node"
-                data-type={node.type || "default"}
-                title={node.descriptionKey ? t(node.descriptionKey) : node.description}
-              >
+              {/* The description rides in an assistive-only span rather than a
+                  title attribute: title is a mouse tooltip, not a name a
+                  keyboard or screen-reader user ever reaches. */}
+              <div className="docs-flow-node" data-type={node.type || "default"}>
                 {t(node.labelKey || node.label || node.id)}
+                {description && <span className="docs-sr-only"> — {description}</span>}
               </div>
 
               {conn &&
                 idx < orderedNodes.length - 1 &&
                 (direction === "vertical" ? (
                   <div className="docs-flow-connector docs-flow-connector-vertical">
-                    <div className="docs-flow-connector-line" />
+                    <div className="docs-flow-connector-line" aria-hidden="true" />
                     {(conn.labelKey || conn.label) && (
                       <span className="docs-flow-connector-label">
                         {t(conn.labelKey || conn.label || "")}
                       </span>
                     )}
-                    <div className="docs-flow-connector-arrow" />
+                    <div className="docs-flow-connector-arrow" aria-hidden="true" />
                   </div>
                 ) : (
                   <div className="docs-flow-connector docs-flow-connector-horizontal">
-                    <div className="docs-flow-connector-h-line" />
+                    <div className="docs-flow-connector-h-line" aria-hidden="true" />
                     {(conn.labelKey || conn.label) && (
                       <span className="docs-flow-connector-label">
                         {t(conn.labelKey || conn.label || "")}
                       </span>
                     )}
-                    <div className="docs-flow-connector-h-arrow" />
+                    <div className="docs-flow-connector-h-arrow" aria-hidden="true" />
                   </div>
                 ))}
             </div>
           );
         })}
       </div>
-    </div>
+    </figure>
   );
 }
 

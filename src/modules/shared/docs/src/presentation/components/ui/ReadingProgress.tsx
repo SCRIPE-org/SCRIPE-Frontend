@@ -22,8 +22,11 @@ export function ReadingProgress() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Decorative: it restates scroll position, which assistive tech already
+  // reports. Exposing it as a progressbar would announce a percentage on
+  // every scroll tick and drown out the page.
   return (
-    <div className="docs-reading-progress">
+    <div className="docs-reading-progress" aria-hidden="true">
       <div className="docs-reading-progress-bar" style={{ width: `${progress}%` }} />
     </div>
   );

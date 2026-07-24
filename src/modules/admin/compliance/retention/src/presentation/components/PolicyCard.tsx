@@ -1,37 +1,42 @@
 "use client";
 
-import React from "react";
-import { ShieldAlert, CheckCircle2, Clock, Archive, Pencil } from "lucide-react";
+import { ShieldAlert, CheckCircle2, Clock, Archive, Pencil, type LucideIcon } from "lucide-react";
 import type { RetentionPolicy } from "../../domain/entities/RetentionPolicy";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import { Card, CardContent } from "@core/ui/card";
+import { Card, CardContent, CardHeader } from "@core/ui/card";
+import { DetailRow } from "@core/ui/detail-row";
 import { usePermission } from "@core/hooks/use-permission";
 import { formatDateUtc } from "@core/common/utils";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useAppStore } from "@/core/store/useAppStore";
 
-const CATEGORY_META: Record<string, { labelKey: string; icon: React.ReactNode; cls: string }> = {
+// Category identity is carried by the icon tile only. The card itself stays a
+// neutral surface: four differently-tinted card slabs in one grid read as four
+// severities, which is not what a data category is.
+const CATEGORY_META: Record<string, { labelKey: string; icon: LucideIcon; tile: string }> = {
   PersonalData: {
     labelKey: "compliance.categories.personalData",
-    icon: <ShieldAlert className="h-4 w-4" />,
-    cls: "border-info/20 bg-gradient-to-br from-info/10 to-info/5 text-info",
+    icon: ShieldAlert,
+    tile: "border-info/30 bg-info/10 text-info",
   },
   FinancialData: {
     labelKey: "compliance.categories.financialData",
-    icon: <Archive className="h-4 w-4" />,
-    cls: "border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5 text-primary",
+    icon: Archive,
+    // --nx-accent is a complete colour, so its hairline tint is a color-mix
+    // rather than slash-alpha, exactly as badge.tsx does it.
+    tile: "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent",
   },
   AuditLogs: {
     labelKey: "compliance.categories.auditLogs",
-    icon: <Clock className="h-4 w-4" />,
-    cls: "border-warning/20 bg-gradient-to-br from-warning/10 to-warning/5 text-warning",
+    icon: Clock,
+    tile: "border-warning/30 bg-warning/10 text-warning",
   },
   MarketingData: {
     labelKey: "compliance.categories.marketingData",
-    icon: <CheckCircle2 className="h-4 w-4" />,
-    cls: "border-success/20 bg-gradient-to-br from-success/10 to-success/5 text-success",
+    icon: CheckCircle2,
+    tile: "border-success/30 bg-success/10 text-success",
   },
 };
 
@@ -50,92 +55,79 @@ export interface PolicyCardProps {
 export function PolicyCard({ policy, onEdit }: PolicyCardProps) {
   const { t } = useI18n();
   const meta = CATEGORY_META[policy.category] ?? CATEGORY_META.PersonalData;
+  const CategoryIcon = meta.icon;
   const { tenantCode } = useAppStore();
   const hasPermission = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_MANAGE);
   const canUpdate = hasPermission && !!tenantCode;
 
   return (
-    <Card
-      className={`border transition-all hover:shadow-md ${!policy.isActive ? "opacity-60" : ""} ${meta.cls.split(" ").slice(0, 2).join(" ")}`}
-    >
-      <CardContent className="p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-start gap-3">
+    <Card>
+      <CardHeader>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="flex min-w-0 items-start gap-3">
             <div
-              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${meta.cls}`}
+              className={`grid h-10 w-10 shrink-0 place-items-center rounded-nx-md border ${meta.tile}`}
+              aria-hidden="true"
             >
-              {meta.icon}
+              <CategoryIcon className="h-4 w-4" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold">{t(meta.labelKey)}</p>
-                <Badge
-                  variant={policy.isActive ? "default" : "secondary"}
-                  className="h-5 px-1.5 text-[10px]"
-                >
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-sm font-semibold text-nx-ink">{t(meta.labelKey)}</p>
+                <Badge variant={policy.isActive ? "active" : "inactive"}>
                   {policy.isActive ? t("compliance.active") : t("compliance.inactive")}
                 </Badge>
               </div>
-              <p className="mt-0.5 font-mono text-xs text-muted-foreground">{policy.category}</p>
+              <p className="mt-0.5 truncate font-mono text-xs text-nx-ink-3">{policy.category}</p>
             </div>
           </div>
           {canUpdate && (
-            <div className="flex shrink-0 gap-2">
-              <Button
-                id={`retention-edit-${policy.id}`}
-                variant="outline"
-                size="sm"
-                className="h-7 text-xs"
-                onClick={() => onEdit(policy)}
-              >
-                <Pencil className="me-1.5 h-3 w-3" />
-                {t("compliance.updatePolicy")}
-              </Button>
-            </div>
+            <Button
+              id={`retention-edit-${policy.id}`}
+              variant="outline"
+              size="sm"
+              onClick={() => onEdit(policy)}
+            >
+              <Pencil className="me-1.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              {t("compliance.updatePolicy")}
+            </Button>
           )}
         </div>
+      </CardHeader>
 
-        <div className="mt-4 grid grid-cols-3 gap-3 rounded-lg border border-border/30 bg-background/60 p-3">
-          <div className="text-center">
-            <p className="text-lg font-bold tabular-nums">{policy.retentionDays}</p>
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
-              {t("compliance.retentionDays")}
-            </p>
-          </div>
-          <div className="border-x border-border/30 text-center">
-            <p className="text-lg font-bold tabular-nums">{policy.retentionYears}y</p>
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
-              {t("compliance.retentionCategory")}
-            </p>
-          </div>
-          <div className="text-center">
-            <p className="text-lg font-bold tabular-nums">
-              {policy.expiryAction === "Delete"
-                ? t("compliance.delete")
-                : t("compliance.anonymize")}
-            </p>
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
-              {t("compliance.expiryAction")}
-            </p>
-          </div>
+      <CardContent className="space-y-3">
+        <div className="grid grid-cols-3 gap-3 rounded-nx-md border border-nx-line bg-nx-raised p-3">
+          <DetailRow
+            layout="stacked"
+            label={t("compliance.retentionDays")}
+            value={policy.retentionDays.toLocaleString()}
+          />
+          <DetailRow
+            layout="stacked"
+            label={t("compliance.retentionYears")}
+            value={policy.retentionYears}
+          />
+          <DetailRow
+            layout="stacked"
+            label={t("compliance.expiryAction")}
+            value={
+              policy.expiryAction === "Delete" ? t("compliance.delete") : t("compliance.anonymize")
+            }
+          />
         </div>
 
         {policy.nextEvaluationAt && (
-          <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              {t("compliance.nextEvaluation")}:{" "}
-              <span className="ms-1 font-medium text-foreground">
-                {policy.nextEvaluationAt ? formatDateUtc(policy.nextEvaluationAt) : "—"}
-              </span>
-            </span>
+          <div className="space-y-1.5">
+            <DetailRow
+              icon={Clock}
+              label={t("compliance.nextEvaluation")}
+              value={formatDateUtc(policy.nextEvaluationAt)}
+            />
             {policy.lastExecutionAt && (
-              <span>
-                {t("compliance.executionHistory")}:{" "}
-                <span className="font-medium text-foreground">
-                  {policy.lastExecutionAt ? formatDateUtc(policy.lastExecutionAt) : "—"}
-                </span>
-              </span>
+              <DetailRow
+                label={t("compliance.lastExecution")}
+                value={formatDateUtc(policy.lastExecutionAt)}
+              />
             )}
           </div>
         )}

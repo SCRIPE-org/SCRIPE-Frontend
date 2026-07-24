@@ -1,15 +1,41 @@
 /* ========================================================================
    DOCUMENTATION PORTAL — Premium Styles
-   Isolated CSS for the docs module. Uses the app's CSS variables for theming.
+   Isolated CSS for the docs module.
+
+   Colour, radius, depth and motion come from the nx token ladder declared in
+   src/app/globals.css. The portal used to mix three incompatible systems —
+   shadcn aliases, raw oklch/hex literals, and six custom properties in the
+   --bg- and --text- families that were never declared anywhere and therefore
+   resolved to nothing, leaving parts of the surface with no background and no
+   ink colour.
+   One ladder now: --nx-ground/-surface/-raised/-raised-2 for surfaces,
+   --nx-ink/-2/-3 for ink, --nx-line/-line-hi for hairlines, --nx-accent for
+   the accent, the measured --nx-danger/-warning/-info/-success aliases for
+   status, and the global --chart-* slots for the categorical syntax palette.
    ======================================================================== */
+
+/* ─── Assistive-text utility ──────────────────────────────────────────────
+   The portal renders outside the app shell, so Tailwind's sr-only is not
+   guaranteed to be in scope here. */
+.docs-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 
 /* ─── Layout ──────────────────────────────────────────────────────────── */
 .docs-root {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: hsl(var(--background));
-  color: hsl(var(--foreground));
+  background: var(--nx-ground);
+  color: var(--nx-ink);
 }
 
 .docs-wrapper {
@@ -29,11 +55,11 @@
   align-items: center;
   gap: 1rem;
   padding: 0.75rem 1.5rem;
-  background: hsl(var(--background) / 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid hsl(var(--border));
-  transition: background 0.2s;
+  /* Opaque, not translucent+blurred: a sticky bar that lets the page bleed
+     through drops the ink below its measured contrast floor. */
+  background: var(--nx-surface);
+  border-bottom: 1px solid var(--nx-line);
+  transition: background-color var(--nx-t-standard) var(--nx-ease-enter);
 }
 
 .docs-header-logo {
@@ -42,7 +68,7 @@
   gap: 0.5rem;
   font-weight: 700;
   font-size: 1.125rem;
-  color: hsl(var(--foreground));
+  color: var(--nx-ink);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -50,7 +76,7 @@
 .docs-header-logo-img {
   height: 46px;
   width: auto;
-  border-radius: 6px;
+  border-radius: var(--nx-radius-sm);
   object-fit: contain;
 }
 
@@ -61,34 +87,35 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.875rem;
-  background: hsl(var(--muted));
-  border: 1px solid hsl(var(--border));
-  border-radius: var(--radius);
-  color: hsl(var(--muted-foreground));
+  background: var(--nx-ground);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-control);
+  color: var(--nx-ink-3);
   font-size: 0.875rem;
   cursor: pointer;
   transition:
-    border-color 0.15s,
-    box-shadow 0.15s;
+    border-color var(--nx-t-micro) var(--nx-ease-enter),
+    box-shadow var(--nx-t-micro) var(--nx-ease-enter);
 }
 
 .docs-search-trigger:hover {
-  border-color: hsl(var(--primary) / 0.5);
+  border-color: var(--nx-line-hi);
 }
 
 .docs-search-trigger:focus-visible {
   outline: none;
-  border-color: hsl(var(--primary));
-  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+  border-color: var(--nx-accent);
+  box-shadow: var(--nx-focus);
 }
 
 .docs-search-shortcut {
   margin-inline-start: auto;
   font-size: 0.75rem;
   padding: 0.125rem 0.375rem;
-  background: hsl(var(--background));
-  border: 1px solid hsl(var(--border));
-  border-radius: 4px;
+  background: var(--nx-raised-2);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-sm);
+  color: var(--nx-ink-3);
   font-family: monospace;
 }
 
@@ -105,40 +132,40 @@
   align-items: center;
   gap: 0.375rem;
   padding: 0.375rem 0.75rem;
-  border-radius: 999px;
-  border: 1px solid hsl(var(--border));
+  border-radius: 9999px;
+  border: 1px solid var(--nx-line);
   background: transparent;
-  color: hsl(var(--muted-foreground));
+  color: var(--nx-ink-2);
   font-size: 0.8rem;
   font-weight: 500;
   text-decoration: none;
   white-space: nowrap;
-  transition: all 0.2s ease;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
 }
 
 .docs-commercial-link:hover {
-  border-color: hsl(var(--primary) / 0.5);
-  color: hsl(var(--primary));
-  background: hsl(var(--primary) / 0.05);
-  box-shadow: 0 0 12px hsl(var(--primary) / 0.1);
+  border-color: color-mix(in srgb, var(--nx-accent) 40%, transparent);
+  color: var(--nx-accent);
+  background: var(--nx-accent-wash);
+}
+
+.docs-commercial-link:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 
 .docs-commercial-link svg {
   flex-shrink: 0;
-  opacity: 0.7;
-  transition: opacity 0.15s;
-}
-
-.docs-commercial-link:hover svg {
-  opacity: 1;
 }
 
 /* ─── Reading Progress ────────────────────────────────────────────────── */
 .docs-reading-progress {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  inset-block-start: 0;
+  inset-inline: 0;
   height: 3px;
   z-index: 50;
   background: transparent;
@@ -146,9 +173,9 @@
 
 .docs-reading-progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary) / 0.7));
-  transition: width 0.1s linear;
-  border-radius: 0 2px 2px 0;
+  background: var(--nx-accent);
+  border-start-end-radius: var(--nx-radius-sm);
+  border-end-end-radius: var(--nx-radius-sm);
 }
 
 /* ─── Sidebar ─────────────────────────────────────────────────────────── */
@@ -160,10 +187,10 @@
   height: calc(100vh - 53px);
   overflow-y: auto;
   padding: 1rem 0;
-  border-inline-end: 1px solid hsl(var(--border));
-  background: hsl(var(--muted) / 0.3);
+  border-inline-end: 1px solid var(--nx-line);
+  background: var(--nx-surface);
   scrollbar-width: thin;
-  scrollbar-color: hsl(var(--border)) transparent;
+  scrollbar-color: var(--nx-line-hi) transparent;
 }
 
 .docs-sidebar::-webkit-scrollbar {
@@ -175,8 +202,8 @@
 }
 
 .docs-sidebar::-webkit-scrollbar-thumb {
-  background: hsl(var(--border));
-  border-radius: 4px;
+  background: var(--nx-line-hi);
+  border-radius: var(--nx-radius-sm);
 }
 
 .docs-sidebar-category {
@@ -191,22 +218,28 @@
   padding: 0.5rem 1rem;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: hsl(var(--foreground));
+  color: var(--nx-ink);
   text-transform: uppercase;
   letter-spacing: 0.025em;
   border: none;
   background: transparent;
   cursor: pointer;
-  transition: color 0.15s;
+  transition: color var(--nx-t-micro) var(--nx-ease-enter);
   text-align: start;
 }
 
 .docs-sidebar-category-btn:hover {
-  color: hsl(var(--primary));
+  color: var(--nx-accent);
+}
+
+.docs-sidebar-category-btn:focus-visible {
+  outline: none;
+  border-radius: var(--nx-radius-sm);
+  box-shadow: var(--nx-focus);
 }
 
 .docs-sidebar-category-btn svg {
-  transition: transform 0.2s;
+  transition: transform var(--nx-t-micro) var(--nx-ease-enter);
 }
 
 .docs-sidebar-category-btn[data-expanded="true"] svg {
@@ -219,33 +252,40 @@
 
 .docs-sidebar-items {
   overflow: hidden;
-  transition: max-height 0.3s ease-in-out;
+  /* Disclosure height — the one layout property the motion policy allows to
+     animate, and only on an accordion. */
+  transition: max-height var(--nx-t-panel) var(--nx-ease-enter);
 }
 
 .docs-sidebar-item {
   display: block;
-  padding: 0.375rem 1rem 0.375rem 2.5rem;
+  padding-block: 0.375rem;
+  padding-inline: 2.5rem 1rem;
   font-size: 0.8125rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--nx-ink-2);
   text-decoration: none;
   border-inline-start: 2px solid transparent;
-  transition: all 0.15s;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
   line-height: 1.5;
 }
 
-[dir="rtl"] .docs-sidebar-item {
-  padding: 0.375rem 2.5rem 0.375rem 1rem;
+.docs-sidebar-item:hover {
+  color: var(--nx-ink);
+  background: var(--nx-hover);
 }
 
-.docs-sidebar-item:hover {
-  color: hsl(var(--foreground));
-  background: hsl(var(--muted) / 0.5);
+.docs-sidebar-item:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 
 .docs-sidebar-item[data-active="true"] {
-  color: hsl(var(--primary));
-  background: hsl(var(--primary) / 0.08);
-  border-inline-start-color: hsl(var(--primary));
+  color: var(--nx-accent);
+  background: var(--nx-accent-wash);
+  border-inline-start-color: var(--nx-accent);
   font-weight: 500;
 }
 
@@ -259,29 +299,32 @@
   align-items: center;
   gap: 0.5rem;
   width: 100%;
-  padding: 0.375rem 1rem 0.375rem 2rem;
+  padding-block: 0.375rem;
+  padding-inline: 2rem 1rem;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: hsl(var(--muted-foreground));
+  color: var(--nx-ink-2);
   border: none;
   background: transparent;
   cursor: pointer;
-  transition: color 0.15s;
+  transition: color var(--nx-t-micro) var(--nx-ease-enter);
   text-align: start;
   letter-spacing: 0.01em;
 }
 
-[dir="rtl"] .docs-sidebar-subgroup-btn {
-  padding: 0.375rem 2rem 0.375rem 1rem;
+.docs-sidebar-subgroup-btn:hover {
+  color: var(--nx-accent);
 }
 
-.docs-sidebar-subgroup-btn:hover {
-  color: hsl(var(--primary));
+.docs-sidebar-subgroup-btn:focus-visible {
+  outline: none;
+  border-radius: var(--nx-radius-sm);
+  box-shadow: var(--nx-focus);
 }
 
 .docs-sidebar-subgroup-btn svg {
   flex-shrink: 0;
-  transition: transform 0.2s;
+  transition: transform var(--nx-t-micro) var(--nx-ease-enter);
 }
 
 .docs-sidebar-subgroup-btn svg:last-child {
@@ -298,7 +341,7 @@
 
 .docs-sidebar-subgroup-items {
   overflow: hidden;
-  transition: max-height 0.25s ease-in-out;
+  transition: max-height var(--nx-t-panel) var(--nx-ease-enter);
 }
 
 .docs-sidebar-item--nested {
@@ -321,9 +364,10 @@
   flex: 1;
   min-width: 0;
   padding: 2rem 2.5rem;
-  /* max-width controlled by the reader toolbar inline style via TechnicalDocsView.tsx */
+  /* max-width controlled by the reader toolbar inline style via TechnicalDocsView.tsx.
+     Not transitioned: the reader-width control re-flows the whole article, and
+     animating a layout property reflows it on every frame for no visual gain. */
   max-width: 800px; /* default when no style override — this is the "compact" starting value */
-  transition: max-width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ─── Breadcrumb ──────────────────────────────────────────────────────── */
@@ -332,28 +376,34 @@
   align-items: center;
   gap: 0.375rem;
   font-size: 0.8125rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--nx-ink-2);
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
 }
 
 .docs-breadcrumb a {
-  color: hsl(var(--muted-foreground));
+  color: var(--nx-ink-2);
   text-decoration: none;
-  transition: color 0.15s;
+  transition: color var(--nx-t-micro) var(--nx-ease-enter);
 }
 
 .docs-breadcrumb a:hover {
-  color: hsl(var(--primary));
+  color: var(--nx-accent);
+}
+
+.docs-breadcrumb a:focus-visible {
+  outline: none;
+  border-radius: var(--nx-radius-sm);
+  box-shadow: var(--nx-focus);
 }
 
 .docs-breadcrumb-separator {
-  color: hsl(var(--border));
+  color: var(--nx-ink-3);
   font-size: 0.75rem;
 }
 
 .docs-breadcrumb-current {
-  color: hsl(var(--foreground));
+  color: var(--nx-ink);
   font-weight: 500;
 }
 
@@ -362,17 +412,19 @@
   font-family: var(--font-display, "Plus Jakarta Sans", "Inter", system-ui, sans-serif);
   font-size: 2.25em;
   font-weight: 800;
-  color: hsl(var(--foreground));
+  color: var(--nx-ink);
   line-height: 1.2;
   margin-bottom: 0.75rem;
   letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 
 .docs-page-description {
   font-size: 1.125em;
-  color: hsl(var(--muted-foreground));
+  color: var(--nx-ink-2);
   line-height: 1.625;
   margin-bottom: 2.5rem;
+  text-wrap: pretty;
 }
 
 /* ─── Section Headings ────────────────────────────────────────────────── */
@@ -380,35 +432,38 @@
   font-family: var(--font-display, "Plus Jakarta Sans", "Inter", system-ui, sans-serif);
   font-size: 1.625em;
   font-weight: 700;
-  color: hsl(var(--foreground));
+  color: var(--nx-ink);
   margin-top: 3rem;
   margin-bottom: 1.25rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid hsl(var(--border));
+  border-bottom: 1px solid var(--nx-line);
   scroll-margin-top: 80px;
   letter-spacing: -0.025em;
+  text-wrap: balance;
 }
 
 .docs-h3 {
   font-family: var(--font-display, "Plus Jakarta Sans", "Inter", system-ui, sans-serif);
   font-size: 1.375em;
   font-weight: 600;
-  color: hsl(var(--foreground));
+  color: var(--nx-ink);
   margin-top: 2.5rem;
   margin-bottom: 1rem;
   scroll-margin-top: 80px;
   letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
 .docs-h4 {
   font-family: var(--font-display, "Plus Jakarta Sans", "Inter", system-ui, sans-serif);
   font-size: 1.125em;
   font-weight: 600;
-  color: hsl(var(--foreground));
+  color: var(--nx-ink);
   margin-top: 2rem;
   margin-bottom: 0.75rem;
   scroll-margin-top: 80px;
   letter-spacing: -0.015em;
+  text-wrap: balance;
 }
 
 .docs-heading-anchor {
@@ -416,39 +471,53 @@
   text-decoration: none;
 }
 
-.docs-heading-anchor:hover .docs-heading-hash {
+.docs-heading-anchor:hover .docs-heading-hash,
+.docs-heading-anchor:focus-visible .docs-heading-hash {
   opacity: 1;
+}
+
+.docs-heading-anchor:focus-visible {
+  outline: none;
+  border-radius: var(--nx-radius-sm);
+  box-shadow: var(--nx-focus);
 }
 
 .docs-heading-hash {
   opacity: 0;
-  color: hsl(var(--primary));
+  color: var(--nx-accent);
   margin-inline-start: 0.375rem;
   font-weight: 400;
-  transition: opacity 0.15s;
+  transition: opacity var(--nx-t-micro) var(--nx-ease-enter);
 }
 
 /* ─── Paragraph ───────────────────────────────────────────────────────── */
 .docs-paragraph {
   font-size: 0.9375em;
   line-height: 1.75;
-  color: hsl(var(--foreground) / 0.9);
+  /* Body ink is a ladder step, never the heading ink dimmed by an alpha —
+     an un-measured opacity is exactly how a contrast floor gets lost. */
+  color: var(--nx-ink);
   margin-bottom: 1.25rem;
+  text-wrap: pretty;
 }
 
-/* ── Code Blocks — Elevated ─────────────────────── */
+/* ── Code Blocks ────────────────────────────────────────────────────────
+   The block used to be pinned to a hand-mixed dark oklch surface with a
+   One Dark hex palette on top, so it stayed dark while the rest of the
+   portal followed the theme. It now sits on the surface ladder and reads
+   its syntax hues from the global --chart-* slots, which are measured in
+   both themes. */
 .docs-code-block {
   margin: 2rem 0;
-  border: 1px solid oklch(0.24 0.02 265);
-  border-radius: 12px;
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-lg);
   overflow: hidden;
-  background: oklch(0.09 0.015 265);
-  box-shadow: 0 4px 20px oklch(0 0 0 / 0.25);
-  transition: border-color 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--nx-surface);
+  transition: border-color var(--nx-t-micro) var(--nx-ease-enter);
 }
 
 .docs-code-block:hover {
-  border-color: oklch(0.32 0.03 265);
+  border-color: var(--nx-line-hi);
 }
 
 .docs-code-header {
@@ -456,14 +525,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 1.25rem;
-  background: oklch(0.12 0.02 265);
-  border-bottom: 1px solid oklch(0.18 0.02 265);
+  background: var(--nx-raised);
+  border-bottom: 1px solid var(--nx-line);
 }
 
 .docs-code-filename {
   font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
   font-size: 0.775rem;
-  color: oklch(0.72 0.015 265);
+  color: var(--nx-ink-2);
   font-weight: 500;
 }
 
@@ -471,7 +540,7 @@
   font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
   font-size: 0.7rem;
   font-weight: 600;
-  color: oklch(0.65 0.22 265);
+  color: var(--nx-ink-3);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -483,26 +552,33 @@
   padding: 0.35rem 0.75rem;
   font-size: 0.75rem;
   font-weight: 500;
-  color: oklch(0.65 0.015 265);
-  background: oklch(0.16 0.02 265 / 0.4);
-  border: 1px solid oklch(0.24 0.02 265);
-  border-radius: 8px;
+  color: var(--nx-ink-2);
+  background: var(--nx-raised-2);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-control);
   cursor: pointer;
-  transition: all 120ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
   font-family: inherit;
   line-height: 1;
 }
 
 .docs-code-copy:hover {
-  color: oklch(0.92 0.01 265);
-  border-color: oklch(0.4 0.03 265);
-  background: oklch(0.2 0.02 265);
+  color: var(--nx-ink);
+  border-color: var(--nx-line-hi);
+}
+
+.docs-code-copy:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 
 .docs-code-copy[data-copied="true"] {
-  color: oklch(0.72 0.17 158);
-  border-color: oklch(0.72 0.17 158 / 0.5);
-  background: oklch(0.72 0.17 158 / 0.08);
+  color: var(--nx-success);
+  border-color: hsl(var(--success) / 0.3);
+  background: hsl(var(--success) / 0.1);
 }
 
 .docs-code-pre {
@@ -516,7 +592,14 @@
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
-  scrollbar-color: oklch(0.25 0.02 265) transparent;
+  scrollbar-color: var(--nx-line-hi) transparent;
+}
+
+/* The pre is a focusable scroll region: a keyboard user must be able to reach
+   and pan a code sample that overflows its column. */
+.docs-code-pre:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 
 .docs-code-pre::-webkit-scrollbar {
@@ -526,117 +609,146 @@
   background: transparent;
 }
 .docs-code-pre::-webkit-scrollbar-thumb {
-  background: oklch(0.25 0.02 265);
-  border-radius: 3px;
-}
-.docs-code-pre::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.35 0.03 265);
+  background: var(--nx-line-hi);
+  border-radius: var(--nx-radius-sm);
 }
 
 .docs-code-pre code {
   font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
   font-size: inherit;
   line-height: inherit;
-  color: oklch(0.88 0.01 265);
+  color: var(--nx-ink);
   white-space: pre;
   background: none;
   padding: 0;
   border-radius: 0;
 }
 
-/* Syntax highlighting — always dark background */
+/* Code is left-to-right in every locale — an RTL document must not reorder
+   its tokens. */
+.docs-code-pre,
+.docs-code-pre code {
+  direction: ltr;
+  text-align: start;
+}
+
+/* Syntax highlighting — the global categorical slots. Colour follows the
+   token KIND, so a keyword is the same hue in every snippet and in both
+   themes. Operators and punctuation are structure, not meaning: they stay on
+   quiet ink so the named tokens carry the reading. */
 .docs-code-pre .token-keyword {
-  color: #c678dd;
+  color: hsl(var(--chart-4));
 }
 .docs-code-pre .token-string {
-  color: #98c379;
+  color: hsl(var(--chart-2));
 }
 .docs-code-pre .token-number {
-  color: #d19a66;
+  color: hsl(var(--chart-3));
 }
 .docs-code-pre .token-comment {
-  color: #5c6370;
+  color: var(--nx-ink-3);
   font-style: italic;
 }
 .docs-code-pre .token-type {
-  color: #e5c07b;
+  color: hsl(var(--chart-8));
 }
 .docs-code-pre .token-function {
-  color: #61afef;
+  color: hsl(var(--chart-1));
 }
 .docs-code-pre .token-operator {
-  color: #56b6c2;
+  color: var(--nx-ink-2);
 }
 .docs-code-pre .token-punctuation {
-  color: #abb2bf;
+  color: var(--nx-ink-3);
 }
 .docs-code-pre .token-decorator {
-  color: #e06c75;
+  color: hsl(var(--chart-5));
 }
 .docs-code-pre .token-property {
-  color: #e06c75;
+  color: hsl(var(--chart-7));
 }
 
 .docs-code-line-highlight {
-  background: oklch(0.65 0.22 265 / 0.1);
+  background: var(--nx-accent-wash);
   display: block;
-  margin: 0 -1.25rem;
-  padding: 0 1.25rem;
-  border-inline-start: 3px solid oklch(0.65 0.22 265);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .docs-code-copy {
-    transition: none;
-  }
+  margin-inline: -1.25rem;
+  padding-inline: 1.25rem;
+  border-inline-start: 2px solid var(--nx-accent);
 }
 
 /* ─── Tab Group ───────────────────────────────────────────────────────── */
 .docs-tabs {
   margin-bottom: 1.5rem;
-  border-radius: var(--radius);
+  border-radius: var(--nx-radius-lg);
   overflow: hidden;
-  border: 1px solid hsl(var(--border));
+  border: 1px solid var(--nx-line);
 }
 
 .docs-tabs-header {
   display: flex;
-  background: hsl(220 13% 15%);
-  border-bottom: 1px solid hsl(220 13% 20%);
+  background: var(--nx-raised);
+  border-bottom: 1px solid var(--nx-line);
   overflow-x: auto;
 }
 
 .docs-tab-btn {
   padding: 0.5rem 1rem;
   font-size: 0.8125rem;
-  color: hsl(220 13% 55%);
+  color: var(--nx-ink-2);
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.15s;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
   font-family: "JetBrains Mono", "Fira Code", monospace;
 }
 
 .docs-tab-btn:hover {
-  color: hsl(220 13% 80%);
+  color: var(--nx-ink);
+  background: var(--nx-hover);
 }
 
-.docs-tab-btn[data-active="true"] {
-  color: hsl(var(--primary-foreground));
-  background: hsl(var(--primary) / 0.15);
-  border-bottom-color: hsl(var(--primary));
+.docs-tab-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 
-/* ─── Info Block ──────────────────────────────────────────────────────── */
+.docs-tab-btn[aria-selected="true"] {
+  color: var(--nx-accent);
+  background: var(--nx-accent-wash);
+  border-bottom-color: var(--nx-accent);
+}
+
+/* The tab group already supplies the frame; the code block inside it must not
+   draw a second one. */
+.docs-tabs [role="tabpanel"] .docs-code-block {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+/* ─── Info Block ──────────────────────────────────────────────────────────
+   Severity speaks through the glyph, the hairline and the wash. The body ink
+   stays neutral in every variant — coloured copy on a coloured wash is the
+   least readable thing a callout can do.
+
+   The seven variants map onto the measured status ladder rather than seven
+   hand-mixed hues: note is neutral (it carries no severity), tip wears the
+   workspace accent, and caution → warning → danger walk the amber-to-red ramp
+   in that order, which is what --warning-strong exists for. */
 .docs-info {
   display: flex;
   gap: 0.75rem;
   padding: 1rem 1.25rem;
   margin-bottom: 1.5rem;
-  border-radius: var(--radius);
-  border: 1px solid;
+  border-radius: var(--nx-radius-md);
+  border: 1px solid var(--nx-line);
+  background: var(--nx-raised);
+  color: var(--nx-ink);
   font-size: 0.875em;
   line-height: 1.6;
 }
@@ -646,95 +758,91 @@
   width: 20px;
   height: 20px;
   margin-top: 2px;
+  color: var(--nx-ink-2);
 }
 
-.docs-info[data-variant="note"] {
-  background: hsl(221 83% 53% / 0.06);
-  border-color: hsl(221 83% 53% / 0.2);
-  color: hsl(var(--foreground));
+.docs-info-title {
+  margin: 0 0 0.25rem;
+  font-weight: 600;
+  color: var(--nx-ink);
 }
 
-.docs-info[data-variant="note"] .docs-info-icon {
-  color: hsl(221 83% 53%);
+.docs-info-body {
+  margin: 0;
+  color: var(--nx-ink);
+  text-wrap: pretty;
 }
 
 .docs-info[data-variant="tip"] {
-  background: hsl(142 71% 45% / 0.06);
-  border-color: hsl(142 71% 45% / 0.2);
-  color: hsl(var(--foreground));
+  background: var(--nx-accent-wash);
+  border-color: color-mix(in srgb, var(--nx-accent) 30%, transparent);
 }
 
 .docs-info[data-variant="tip"] .docs-info-icon {
-  color: hsl(142 71% 45%);
+  color: var(--nx-accent);
 }
 
-.docs-info[data-variant="warning"] {
-  background: hsl(38 92% 50% / 0.06);
-  border-color: hsl(38 92% 50% / 0.2);
-  color: hsl(var(--foreground));
-}
-
-.docs-info[data-variant="warning"] .docs-info-icon {
-  color: hsl(38 92% 50%);
-}
-
-.docs-info[data-variant="danger"] {
-  background: hsl(0 84% 60% / 0.06);
-  border-color: hsl(0 84% 60% / 0.2);
-  color: hsl(var(--foreground));
-}
-
-.docs-info[data-variant="danger"] .docs-info-icon {
-  color: hsl(0 84% 60%);
-}
-
-/* ─── Info variant (blue, informational) ────────────────────── */
 .docs-info[data-variant="info"] {
-  background: hsl(199 89% 48% / 0.06);
-  border-color: hsl(199 89% 48% / 0.25);
-  color: hsl(var(--foreground));
+  background: hsl(var(--info) / 0.1);
+  border-color: hsl(var(--info) / 0.3);
 }
 
 .docs-info[data-variant="info"] .docs-info-icon {
-  color: hsl(199 89% 48%);
+  color: var(--nx-info);
 }
 
-/* ─── Success variant (emerald green, achievement) ───────────── */
 .docs-info[data-variant="success"] {
-  background: hsl(158 64% 52% / 0.06);
-  border-color: hsl(158 64% 52% / 0.25);
-  color: hsl(var(--foreground));
+  background: hsl(var(--success) / 0.1);
+  border-color: hsl(var(--success) / 0.3);
 }
 
 .docs-info[data-variant="success"] .docs-info-icon {
-  color: hsl(158 64% 52%);
+  color: var(--nx-success);
 }
 
-/* ─── Caution variant (amber, softer than warning) ───────────── */
 .docs-info[data-variant="caution"] {
-  background: hsl(43 96% 56% / 0.07);
-  border-color: hsl(43 96% 56% / 0.3);
-  color: hsl(var(--foreground));
+  background: hsl(var(--warning) / 0.1);
+  border-color: hsl(var(--warning) / 0.3);
 }
 
 .docs-info[data-variant="caution"] .docs-info-icon {
-  color: hsl(43 96% 56%);
+  color: var(--nx-warning);
+}
+
+.docs-info[data-variant="warning"] {
+  background: hsl(var(--warning-strong) / 0.1);
+  border-color: hsl(var(--warning-strong) / 0.3);
+}
+
+.docs-info[data-variant="warning"] .docs-info-icon {
+  color: hsl(var(--warning-strong));
+}
+
+.docs-info[data-variant="danger"] {
+  background: hsl(var(--destructive) / 0.1);
+  border-color: hsl(var(--destructive) / 0.3);
+}
+
+.docs-info[data-variant="danger"] .docs-info-icon {
+  color: var(--nx-danger);
 }
 
 /* ─── Flowchart ───────────────────────────────────────────────────────── */
+/* A <figure>, so the UA's inline margin has to be cleared explicitly. */
 .docs-flowchart {
-  margin-bottom: 1.5rem;
+  margin-block: 0 1.5rem;
+  margin-inline: 0;
   padding: 1.5rem;
-  background: hsl(var(--muted) / 0.3);
-  border: 1px solid hsl(var(--border));
-  border-radius: var(--radius);
+  background: var(--nx-surface);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-lg);
   overflow-x: auto;
 }
 
 .docs-flowchart-title {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: hsl(var(--muted-foreground));
+  color: var(--nx-ink-3);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 1rem;
@@ -760,64 +868,52 @@
   align-items: center;
   justify-content: center;
   padding: 0.625rem 1.25rem;
-  border-radius: var(--radius);
+  border-radius: var(--nx-radius-md);
   font-size: 0.8125rem;
   font-weight: 500;
   text-align: center;
-  border: 1.5px solid;
-  transition:
-    transform 0.15s,
-    box-shadow 0.15s;
+  border: 1px solid var(--nx-line);
+  background: var(--nx-raised);
+  color: var(--nx-ink);
   min-width: 120px;
   position: relative;
 }
 
-.docs-flow-node:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 12px hsl(var(--primary) / 0.15);
-}
-
-.docs-flow-node[data-type="default"] {
-  background: hsl(var(--background));
-  border-color: hsl(var(--border));
-  color: hsl(var(--foreground));
-}
-
 .docs-flow-node[data-type="primary"] {
-  background: hsl(var(--primary) / 0.1);
-  border-color: hsl(var(--primary) / 0.3);
-  color: hsl(var(--primary));
+  background: var(--nx-accent-wash);
+  border-color: color-mix(in srgb, var(--nx-accent) 30%, transparent);
+  color: var(--nx-accent);
 }
 
 .docs-flow-node[data-type="success"] {
-  background: hsl(142 71% 45% / 0.1);
-  border-color: hsl(142 71% 45% / 0.3);
-  color: hsl(142 71% 45%);
+  background: hsl(var(--success) / 0.1);
+  border-color: hsl(var(--success) / 0.3);
+  color: var(--nx-success);
 }
 
 .docs-flow-node[data-type="warning"] {
-  background: hsl(38 92% 50% / 0.1);
-  border-color: hsl(38 92% 50% / 0.3);
-  color: hsl(38 92% 50%);
+  background: hsl(var(--warning) / 0.1);
+  border-color: hsl(var(--warning) / 0.3);
+  color: var(--nx-warning);
 }
 
 .docs-flow-node[data-type="danger"] {
-  background: hsl(0 84% 60% / 0.1);
-  border-color: hsl(0 84% 60% / 0.3);
-  color: hsl(0 84% 60%);
+  background: hsl(var(--destructive) / 0.1);
+  border-color: hsl(var(--destructive) / 0.3);
+  color: var(--nx-danger);
 }
 
 .docs-flow-node[data-type="info"] {
-  background: hsl(221 83% 53% / 0.1);
-  border-color: hsl(221 83% 53% / 0.3);
-  color: hsl(221 83% 53%);
+  background: hsl(var(--info) / 0.1);
+  border-color: hsl(var(--info) / 0.3);
+  color: var(--nx-info);
 }
 
 .docs-flow-connector {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: hsl(var(--muted-foreground));
+  color: var(--nx-ink-3);
   position: relative;
 }
 
@@ -833,36 +929,34 @@
 .docs-flow-connector-line {
   width: 2px;
   height: 24px;
-  background: hsl(var(--border));
+  background: var(--nx-line-hi);
 }
 
 .docs-flow-connector-arrow {
   width: 0;
   height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 6px solid hsl(var(--border));
+  border-inline: 5px solid transparent;
+  border-top: 6px solid var(--nx-line-hi);
 }
 
 .docs-flow-connector-label {
   font-size: 0.6875rem;
-  color: hsl(var(--muted-foreground));
-  padding: 0 0.375rem;
+  color: var(--nx-ink-3);
+  padding-inline: 0.375rem;
   white-space: nowrap;
 }
 
 .docs-flow-connector-h-line {
   width: 24px;
   height: 2px;
-  background: hsl(var(--border));
+  background: var(--nx-line-hi);
 }
 
 .docs-flow-connector-h-arrow {
   width: 0;
   height: 0;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  border-inline-start: 6px solid hsl(var(--border));
+  border-block: 5px solid transparent;
+  border-inline-start: 6px solid var(--nx-line-hi);
 }
 
 /* ─── API Table ───────────────────────────────────────────────────────── */
@@ -871,8 +965,8 @@
   margin-bottom: 1.5rem;
   border-collapse: collapse;
   font-size: 0.8125rem;
-  border: 1px solid hsl(var(--border));
-  border-radius: var(--radius);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-md);
   overflow: hidden;
 }
 
@@ -883,14 +977,14 @@
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: hsl(var(--muted-foreground));
-  background: hsl(var(--muted) / 0.5);
-  border-bottom: 1px solid hsl(var(--border));
+  color: var(--nx-ink-2);
+  background: var(--nx-raised);
+  border-bottom: 1px solid var(--nx-line);
 }
 
 .docs-api-table td {
   padding: 0.5rem 0.875rem;
-  border-bottom: 1px solid hsl(var(--border) / 0.5);
+  border-bottom: 1px solid var(--nx-line);
   vertical-align: middle;
 }
 
@@ -899,13 +993,13 @@
 }
 
 .docs-api-table tr:hover td {
-  background: hsl(var(--muted) / 0.2);
+  background: var(--nx-hover);
 }
 
 .docs-method-badge {
   display: inline-flex;
   padding: 0.125rem 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--nx-radius-sm);
   font-size: 0.6875rem;
   font-weight: 700;
   font-family: monospace;
@@ -913,35 +1007,40 @@
   letter-spacing: 0.02em;
 }
 
+/* HTTP verbs are categorical, not severities — they come off the global chart
+   slots so the same verb reads the same everywhere, and the destructive token
+   stays reserved for things that are actually destructive. */
 .docs-method-badge[data-method="GET"] {
-  background: hsl(221 83% 53% / 0.15);
-  color: hsl(221 83% 53%);
+  background: hsl(var(--chart-1) / 0.15);
+  color: hsl(var(--chart-1));
 }
 
 .docs-method-badge[data-method="POST"] {
-  background: hsl(142 71% 45% / 0.15);
-  color: hsl(142 71% 45%);
+  background: hsl(var(--chart-2) / 0.15);
+  color: hsl(var(--chart-2));
 }
 
 .docs-method-badge[data-method="PUT"] {
-  background: hsl(38 92% 50% / 0.15);
-  color: hsl(38 92% 50%);
+  background: hsl(var(--chart-3) / 0.15);
+  color: hsl(var(--chart-3));
 }
 
 .docs-method-badge[data-method="DELETE"] {
-  background: hsl(0 84% 60% / 0.15);
-  color: hsl(0 84% 60%);
+  background: hsl(var(--chart-5) / 0.15);
+  color: hsl(var(--chart-5));
 }
 
 .docs-method-badge[data-method="PATCH"] {
-  background: hsl(280 65% 60% / 0.15);
-  color: hsl(280 65% 60%);
+  background: hsl(var(--chart-4) / 0.15);
+  color: hsl(var(--chart-4));
 }
 
 .docs-api-path {
   font-family: "JetBrains Mono", "Fira Code", monospace;
   font-size: 0.8125rem;
-  color: hsl(var(--foreground));
+  color: var(--nx-ink);
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 
 .docs-auth-badge {
@@ -949,26 +1048,29 @@
   align-items: center;
   gap: 0.25rem;
   padding: 0.125rem 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--nx-radius-sm);
   font-size: 0.6875rem;
   font-weight: 500;
 }
 
 .docs-auth-badge[data-auth="true"] {
-  background: hsl(38 92% 50% / 0.1);
-  color: hsl(38 92% 50%);
+  background: hsl(var(--warning) / 0.1);
+  color: var(--nx-warning);
 }
 
 .docs-auth-badge[data-auth="false"] {
-  background: hsl(142 71% 45% / 0.1);
-  color: hsl(142 71% 45%);
+  background: hsl(var(--success) / 0.1);
+  color: var(--nx-success);
 }
 
 /* ─── Step Guide ──────────────────────────────────────────────────────── */
 .docs-steps {
   position: relative;
-  margin-bottom: 1.5rem;
+  margin-block: 0 1.5rem;
   padding-inline-start: 2rem;
+  /* An ordered list carries the sequence for assistive tech; the numbered
+     discs are the visual restatement of the same order. */
+  list-style: none;
 }
 
 .docs-steps::before {
@@ -978,7 +1080,7 @@
   top: 0.25rem;
   bottom: 0.25rem;
   width: 2px;
-  background: hsl(var(--border));
+  background: var(--nx-line);
 }
 
 .docs-step {
@@ -996,28 +1098,31 @@
   top: 0;
   width: 1.5rem;
   height: 1.5rem;
-  border-radius: 50%;
-  background: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
+  border-radius: 9999px;
+  background: var(--nx-accent-fill);
+  color: var(--nx-on-fill);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.75em;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
   z-index: 1;
 }
 
 .docs-step-title {
   font-size: 1em;
   font-weight: 600;
-  color: hsl(var(--foreground));
+  color: var(--nx-ink);
   margin-bottom: 0.5rem;
+  text-wrap: balance;
 }
 
 .docs-step-content {
   font-size: 0.875em;
-  color: hsl(var(--foreground) / 0.8);
+  color: var(--nx-ink-2);
   line-height: 1.6;
+  text-wrap: pretty;
 }
 
 /* ─── Table ───────────────────────────────────────────────────────────── */
@@ -1032,8 +1137,8 @@
   margin-bottom: 0;
   border-collapse: collapse;
   font-size: 0.875em;
-  border: 1px solid hsl(var(--border));
-  border-radius: var(--radius);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-md);
   overflow: hidden;
   min-width: 500px;
 }
@@ -1042,14 +1147,15 @@
   padding: 0.625rem 0.875rem;
   text-align: start;
   font-weight: 600;
-  background: hsl(var(--muted) / 0.5);
-  border-bottom: 1px solid hsl(var(--border));
-  color: hsl(var(--foreground));
+  background: var(--nx-raised);
+  border-bottom: 1px solid var(--nx-line);
+  color: var(--nx-ink-2);
 }
 
 .docs-table td {
   padding: 0.5rem 0.875rem;
-  border-bottom: 1px solid hsl(var(--border) / 0.5);
+  border-bottom: 1px solid var(--nx-line);
+  color: var(--nx-ink);
 }
 
 .docs-table tr:last-child td {
@@ -1057,7 +1163,7 @@
 }
 
 .docs-table tr:hover td {
-  background: hsl(var(--muted) / 0.2);
+  background: var(--nx-hover);
 }
 
 /* ─── List ────────────────────────────────────────────────────────────── */
@@ -1069,8 +1175,9 @@
 .docs-list li {
   font-size: 0.9375em;
   line-height: 1.75;
-  color: hsl(var(--foreground) / 0.9);
+  color: var(--nx-ink);
   margin-bottom: 0.375rem;
+  text-wrap: pretty;
 }
 
 /* ─── Right TOC ───────────────────────────────────────────────────────── */
@@ -1081,7 +1188,8 @@
   min-width: 220px;
   height: calc(100vh - 53px);
   overflow-y: auto;
-  padding: 1.5rem 1rem 1.5rem 0;
+  padding-block: 1.5rem;
+  padding-inline: 0 1rem;
   scrollbar-width: none;
 }
 
@@ -1094,28 +1202,36 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: hsl(var(--foreground));
+  color: var(--nx-ink-3);
   margin-bottom: 0.75rem;
 }
 
 .docs-toc-item {
   display: block;
-  padding: 0.25rem 0 0.25rem 0.75rem;
+  padding-block: 0.25rem;
+  padding-inline: 0.75rem 0;
   font-size: 0.8125rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--nx-ink-2);
   text-decoration: none;
   border-inline-start: 2px solid transparent;
-  transition: all 0.15s;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
   line-height: 1.4;
 }
 
 .docs-toc-item:hover {
-  color: hsl(var(--foreground));
+  color: var(--nx-ink);
+}
+
+.docs-toc-item:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 
 .docs-toc-item[data-active="true"] {
-  color: hsl(var(--primary));
-  border-inline-start-color: hsl(var(--primary));
+  color: var(--nx-accent);
+  border-inline-start-color: var(--nx-accent);
   font-weight: 500;
 }
 
@@ -1131,36 +1247,43 @@
   gap: 1rem;
   margin-top: 3rem;
   padding-top: 2rem;
-  border-top: 1px solid hsl(var(--border));
+  border-top: 1px solid var(--nx-line);
 }
 
 .docs-prev-next-link {
   display: flex;
   flex-direction: column;
   padding: 1rem 1.25rem;
-  border: 1px solid hsl(var(--border));
-  border-radius: var(--radius);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-lg);
+  background: var(--nx-surface);
   text-decoration: none;
-  transition: all 0.2s;
+  transition:
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
 }
 
+/* Hover brightens the hairline. Nothing lifts. */
 .docs-prev-next-link:hover {
-  border-color: hsl(var(--primary) / 0.5);
-  background: hsl(var(--primary) / 0.03);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px hsl(var(--primary) / 0.1);
+  border-color: var(--nx-line-hi);
+  background: var(--nx-raised);
+}
+
+.docs-prev-next-link:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 
 .docs-prev-next-label {
   font-size: 0.75rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--nx-ink-3);
   margin-bottom: 0.25rem;
 }
 
 .docs-prev-next-title {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: hsl(var(--primary));
+  color: var(--nx-accent);
 }
 
 .docs-prev-next-link[data-type="next"] {
@@ -1177,24 +1300,25 @@
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: hsl(0 0% 0% / 0.5);
-  backdrop-filter: blur(4px);
+  /* One scrim system: the overlay pushes the page back by taking light away,
+     not by blurring it. */
+  background: var(--nx-scrim);
   display: flex;
   align-items: flex-start;
   justify-content: center;
   padding-top: 15vh;
-  animation: docs-fade-in 0.15s ease-out;
+  animation: docs-fade-in var(--nx-t-standard) var(--nx-ease-enter);
 }
 
 .docs-search-modal {
   width: 100%;
   max-width: 560px;
-  background: hsl(var(--background));
-  border: 1px solid hsl(var(--border));
-  border-radius: calc(var(--radius) * 1.5);
-  box-shadow: 0 20px 60px hsl(0 0% 0% / 0.3);
+  background: var(--nx-popover);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-lg);
+  box-shadow: var(--nx-shadow-modal);
   overflow: hidden;
-  animation: docs-scale-in 0.2s ease-out;
+  animation: docs-scale-in var(--nx-t-standard) var(--nx-ease-enter);
 }
 
 .docs-search-input-wrapper {
@@ -1202,7 +1326,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid hsl(var(--border));
+  border-bottom: 1px solid var(--nx-line);
 }
 
 .docs-search-input {
@@ -1210,12 +1334,12 @@
   border: none;
   background: transparent;
   font-size: 1rem;
-  color: hsl(var(--foreground));
+  color: var(--nx-ink);
   outline: none;
 }
 
 .docs-search-input::placeholder {
-  color: hsl(var(--muted-foreground));
+  color: var(--nx-ink-3);
 }
 
 .docs-search-results {
@@ -1228,31 +1352,36 @@
   display: flex;
   flex-direction: column;
   padding: 0.75rem 1rem;
-  border-radius: var(--radius);
+  border-radius: var(--nx-radius-md);
   cursor: pointer;
-  transition: background 0.1s;
+  transition: background-color var(--nx-t-micro) var(--nx-ease-enter);
 }
 
 .docs-search-result:hover,
 .docs-search-result[data-selected="true"] {
-  background: hsl(var(--primary) / 0.08);
+  background: var(--nx-accent-wash);
+}
+
+.docs-search-result:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 
 .docs-search-result-title {
   font-size: 0.875rem;
   font-weight: 500;
-  color: hsl(var(--foreground));
+  color: var(--nx-ink);
 }
 
 .docs-search-result-category {
   font-size: 0.75rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--nx-ink-3);
 }
 
 .docs-search-snippet {
   display: block;
   font-size: 0.75rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--nx-ink-2);
   line-height: 1.5;
   margin-top: 0.25rem;
   overflow: hidden;
@@ -1262,28 +1391,28 @@
 }
 
 .docs-search-highlight {
-  background: hsl(var(--primary) / 0.2);
-  color: hsl(var(--primary));
+  background: var(--nx-accent-wash);
+  color: var(--nx-accent);
   font-weight: 600;
-  border-radius: 2px;
-  padding: 0 0.125rem;
+  border-radius: var(--nx-radius-sm);
+  padding-inline: 0.125rem;
 }
 
 .docs-search-footer {
   padding: 0.625rem 1rem;
-  border-top: 1px solid hsl(var(--border));
+  border-top: 1px solid var(--nx-line);
   display: flex;
   align-items: center;
   gap: 1rem;
   font-size: 0.75rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--nx-ink-3);
 }
 
 .docs-search-footer kbd {
   padding: 0.125rem 0.375rem;
-  background: hsl(var(--muted));
-  border: 1px solid hsl(var(--border));
-  border-radius: 3px;
+  background: var(--nx-raised-2);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-sm);
   font-size: 0.6875rem;
   font-family: monospace;
 }
@@ -1292,12 +1421,15 @@
 .docs-comparison {
   display: grid;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-block: 0 1.5rem;
+  padding: 0;
+  list-style: none;
 }
 
 .docs-comparison-column {
-  border-radius: var(--radius);
-  border: 1px solid;
+  border-radius: var(--nx-radius-lg);
+  border: 1px solid var(--nx-line);
+  background: var(--nx-surface);
   overflow: hidden;
 }
 
@@ -1308,11 +1440,22 @@
   padding: 0.75rem 1rem;
   font-weight: 600;
   font-size: 0.875rem;
-  border-bottom: 1px solid;
+  color: var(--nx-ink);
+  background: var(--nx-raised);
+  border-bottom: 1px solid var(--nx-line);
+}
+
+.docs-comparison-title {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  text-wrap: balance;
 }
 
 .docs-comparison-icon {
   font-size: 1rem;
+  line-height: 1;
 }
 
 .docs-comparison-list {
@@ -1324,115 +1467,107 @@
 .docs-comparison-list li {
   font-size: 0.8125rem;
   line-height: 1.6;
-  padding: 0.25rem 0;
-  color: hsl(var(--foreground) / 0.85);
+  padding-block: 0.25rem;
+  color: var(--nx-ink);
+  text-wrap: pretty;
 }
 
+/* The marker is decorative — the column's own heading already states the
+   verdict, so it is hidden from assistive tech rather than read out as a
+   stray glyph before every item. */
 .docs-comparison-list li::before {
   margin-inline-end: 0.5rem;
+  color: var(--nx-ink-3);
+  content: "•";
 }
 
 .docs-comparison-positive {
-  border-color: hsl(142 71% 45% / 0.25);
-  background: hsl(142 71% 45% / 0.04);
+  border-color: hsl(var(--success) / 0.3);
 }
 
 .docs-comparison-positive .docs-comparison-header {
-  background: hsl(142 71% 45% / 0.08);
-  border-bottom-color: hsl(142 71% 45% / 0.15);
-  color: hsl(142 71% 45%);
+  background: hsl(var(--success) / 0.1);
+  border-bottom-color: hsl(var(--success) / 0.3);
 }
 
 .docs-comparison-positive .docs-comparison-list li::before {
   content: "✓";
-  color: hsl(142 71% 45%);
+  color: var(--nx-success);
 }
 
 .docs-comparison-negative {
-  border-color: hsl(0 84% 60% / 0.25);
-  background: hsl(0 84% 60% / 0.04);
+  border-color: hsl(var(--destructive) / 0.3);
 }
 
 .docs-comparison-negative .docs-comparison-header {
-  background: hsl(0 84% 60% / 0.08);
-  border-bottom-color: hsl(0 84% 60% / 0.15);
-  color: hsl(0 84% 60%);
+  background: hsl(var(--destructive) / 0.1);
+  border-bottom-color: hsl(var(--destructive) / 0.3);
 }
 
 .docs-comparison-negative .docs-comparison-list li::before {
   content: "✗";
-  color: hsl(0 84% 60%);
-}
-
-.docs-comparison-neutral {
-  border-color: hsl(var(--border));
-  background: hsl(var(--muted) / 0.3);
-}
-
-.docs-comparison-neutral .docs-comparison-header {
-  background: hsl(var(--muted) / 0.5);
-  border-bottom-color: hsl(var(--border));
-  color: hsl(var(--foreground));
+  color: var(--nx-danger);
 }
 
 .docs-comparison-neutral .docs-comparison-list li::before {
   content: "•";
-  color: hsl(var(--muted-foreground));
+  color: var(--nx-ink-3);
 }
 
-/* ─── Comparison: warning variant (amber caution column) ─────── */
+/* ─── Comparison: warning variant (caution column) ───────────── */
 .docs-comparison-warning {
-  border-color: hsl(38 92% 50% / 0.3);
-  background: hsl(38 92% 50% / 0.04);
+  border-color: hsl(var(--warning) / 0.3);
 }
 
 .docs-comparison-warning .docs-comparison-header {
-  background: hsl(38 92% 50% / 0.1);
-  border-bottom-color: hsl(38 92% 50% / 0.2);
-  color: hsl(38 92% 50%);
+  background: hsl(var(--warning) / 0.1);
+  border-bottom-color: hsl(var(--warning) / 0.3);
 }
 
 .docs-comparison-warning .docs-comparison-list li::before {
-  content: "⚡";
+  content: "!";
+  color: var(--nx-warning);
 }
 
-/* ─── Comparison: info variant (cyan informational column) ──── */
+/* ─── Comparison: info variant (informational column) ────────── */
 .docs-comparison-info {
-  border-color: hsl(199 89% 48% / 0.25);
-  background: hsl(199 89% 48% / 0.04);
+  border-color: hsl(var(--info) / 0.3);
 }
 
 .docs-comparison-info .docs-comparison-header {
-  background: hsl(199 89% 48% / 0.08);
-  border-bottom-color: hsl(199 89% 48% / 0.15);
-  color: hsl(199 89% 48%);
+  background: hsl(var(--info) / 0.1);
+  border-bottom-color: hsl(var(--info) / 0.3);
 }
 
 .docs-comparison-info .docs-comparison-list li::before {
-  content: "ℹ";
-  color: hsl(199 89% 48%);
+  content: "i";
+  color: var(--nx-info);
 }
 
 /* ─── Feature Grid ───────────────────────────────────────────────── */
 .docs-feature-grid {
   display: grid;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-block: 0 1.5rem;
+  padding: 0;
+  list-style: none;
 }
 
 .docs-feature-card {
   padding: 1.25rem;
-  border-radius: var(--radius);
-  border: 1px solid hsl(var(--border));
-  background: hsl(var(--background));
-  transition: all 0.2s ease;
+  border-radius: var(--nx-radius-lg);
+  border: 1px solid var(--nx-line);
+  background: var(--nx-surface);
+  transition:
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
 }
 
+/* A card is structure, not furniture: hover brightens the hairline, it does
+   not lift the slab. */
 .docs-feature-card:hover {
-  border-color: hsl(var(--primary) / 0.3);
-  background: hsl(var(--primary) / 0.03);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px hsl(var(--primary) / 0.08);
+  border-color: var(--nx-line-hi);
+  background: var(--nx-raised);
 }
 
 .docs-feature-icon {
@@ -1443,22 +1578,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: calc(var(--radius) * 0.75);
-  background: hsl(var(--primary) / 0.08);
+  border-radius: var(--nx-radius-md);
+  background: var(--nx-accent-wash);
 }
 
 .docs-feature-title {
   font-size: 0.9375em;
   font-weight: 600;
-  color: hsl(var(--foreground));
-  margin: 0 0 0.375rem 0;
+  color: var(--nx-ink);
+  margin-block: 0 0.375rem;
+  margin-inline: 0;
+  text-wrap: balance;
 }
 
 .docs-feature-description {
   font-size: 0.8125em;
-  color: hsl(var(--muted-foreground));
+  color: var(--nx-ink-2);
   line-height: 1.5;
   margin: 0;
+  text-wrap: pretty;
 }
 
 /* ─── Docs Mode Toggle ──────────────────────────────────────────── */
@@ -1466,9 +1604,9 @@
   display: flex;
   align-items: center;
   padding: 0.1875rem;
-  background: hsl(var(--muted));
-  border-radius: var(--radius);
-  border: 1px solid hsl(var(--border));
+  background: var(--nx-raised);
+  border-radius: var(--nx-radius-control);
+  border: 1px solid var(--nx-line);
   gap: 0;
 }
 
@@ -1477,22 +1615,30 @@
   font-size: 0.75rem;
   font-weight: 500;
   border: none;
-  border-radius: calc(var(--radius) - 2px);
+  border-radius: var(--nx-radius-sm);
   cursor: pointer;
-  transition: all 0.2s;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    background-color var(--nx-t-micro) var(--nx-ease-enter);
   background: transparent;
-  color: hsl(var(--muted-foreground));
+  color: var(--nx-ink-2);
   white-space: nowrap;
 }
 
 .docs-mode-btn:hover {
-  color: hsl(var(--foreground));
+  color: var(--nx-ink);
+  background: var(--nx-hover);
+}
+
+.docs-mode-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 
 .docs-mode-btn[data-active="true"] {
-  background: hsl(var(--background));
-  color: hsl(var(--primary));
-  box-shadow: 0 1px 3px hsl(0 0% 0% / 0.1);
+  background: var(--nx-surface);
+  color: var(--nx-accent);
+  box-shadow: var(--nx-shadow-sm);
   font-weight: 600;
 }
 
@@ -1519,6 +1665,9 @@
   }
 }
 
+/* The slide is a physical keyframe, so it is written once and resolved against
+   the live writing direction below — an edge-attached panel must enter from
+   the edge it is pinned to in both scripts. */
 @keyframes docs-slide-in-left {
   from {
     transform: translateX(-100%);
@@ -1527,10 +1676,6 @@
   to {
     transform: translateX(0);
   }
-}
-
-[dir="rtl"] .docs-slide-in-left {
-  animation-name: docs-slide-in-right;
 }
 
 @keyframes docs-slide-in-right {
@@ -1543,14 +1688,17 @@
   }
 }
 
+[dir="rtl"] .docs-slide-in-left {
+  animation-name: docs-slide-in-right;
+}
+
 /* ─── Mobile Nav ──────────────────────────────────────────────────────── */
 .docs-mobile-overlay {
   position: fixed;
   inset: 0;
   z-index: 50;
-  background: hsl(0 0% 0% / 0.5);
-  backdrop-filter: blur(4px);
-  animation: docs-fade-in 0.15s ease-out;
+  background: var(--nx-scrim);
+  animation: docs-fade-in var(--nx-t-standard) var(--nx-ease-enter);
 }
 
 .docs-mobile-nav {
@@ -1560,11 +1708,16 @@
   z-index: 51;
   width: 300px;
   max-width: 85vw;
-  background: hsl(var(--background));
-  border-inline-end: 1px solid hsl(var(--border));
+  background: var(--nx-popover);
+  border-inline-end: 1px solid var(--nx-line);
+  box-shadow: var(--nx-shadow-modal);
   overflow-y: auto;
-  animation: docs-slide-in-left 0.25s ease-out;
-  padding: 1rem 0;
+  animation: docs-slide-in-left var(--nx-t-panel) var(--nx-ease-enter);
+  padding-block: 1rem;
+}
+
+[dir="rtl"] .docs-mobile-nav {
+  animation-name: docs-slide-in-right;
 }
 
 .docs-mobile-close {
@@ -1576,11 +1729,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius);
-  background: hsl(var(--muted));
-  border: none;
+  border-radius: var(--nx-radius-control);
+  background: var(--nx-raised);
+  border: 1px solid var(--nx-line);
   cursor: pointer;
-  color: hsl(var(--foreground));
+  color: var(--nx-ink-2);
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
+}
+
+.docs-mobile-close:hover {
+  color: var(--nx-ink);
+  border-color: var(--nx-line-hi);
+}
+
+.docs-mobile-close:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 
 /* ─── Language Switcher ───────────────────────────────────────────────── */
@@ -1594,17 +1760,24 @@
   gap: 0.375rem;
   padding: 0.375rem 0.625rem;
   font-size: 0.8125rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--nx-ink-2);
   background: transparent;
-  border: 1px solid hsl(var(--border));
-  border-radius: var(--radius);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-control);
   cursor: pointer;
-  transition: all 0.15s;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
 }
 
 .docs-lang-btn:hover {
-  color: hsl(var(--foreground));
-  border-color: hsl(var(--primary) / 0.5);
+  color: var(--nx-ink);
+  border-color: var(--nx-line-hi);
+}
+
+.docs-lang-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 
 .docs-lang-menu {
@@ -1612,13 +1785,13 @@
   top: calc(100% + 4px);
   inset-inline-end: 0;
   min-width: 160px;
-  background: hsl(var(--background));
-  border: 1px solid hsl(var(--border));
-  border-radius: var(--radius);
-  box-shadow: 0 8px 30px hsl(0 0% 0% / 0.15);
+  background: var(--nx-popover);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-md);
+  box-shadow: var(--nx-shadow-popover);
   z-index: 60;
   padding: 0.25rem;
-  animation: docs-scale-in 0.15s ease-out;
+  animation: docs-scale-in var(--nx-t-standard) var(--nx-ease-enter);
 }
 
 .docs-lang-option {
@@ -1628,21 +1801,28 @@
   width: 100%;
   padding: 0.5rem 0.75rem;
   font-size: 0.8125rem;
-  color: hsl(var(--foreground));
+  color: var(--nx-ink);
   background: transparent;
   border: none;
-  border-radius: calc(var(--radius) - 2px);
+  border-radius: var(--nx-radius-sm);
   cursor: pointer;
-  transition: background 0.1s;
+  transition: background-color var(--nx-t-micro) var(--nx-ease-enter);
   text-align: start;
 }
 
 .docs-lang-option:hover {
-  background: hsl(var(--muted));
+  background: var(--nx-hover);
 }
 
+.docs-lang-option:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+
+.docs-lang-option[aria-checked="true"],
 .docs-lang-option[data-active="true"] {
-  color: hsl(var(--primary));
+  color: var(--nx-accent);
+  background: var(--nx-accent-wash);
   font-weight: 500;
 }
 
@@ -1653,17 +1833,24 @@
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  border-radius: var(--radius);
+  border-radius: var(--nx-radius-control);
   background: transparent;
-  border: 1px solid hsl(var(--border));
+  border: 1px solid var(--nx-line);
   cursor: pointer;
-  color: hsl(var(--muted-foreground));
-  transition: all 0.15s;
+  color: var(--nx-ink-2);
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
 }
 
 .docs-theme-btn:hover {
-  color: hsl(var(--foreground));
-  border-color: hsl(var(--primary) / 0.5);
+  color: var(--nx-ink);
+  border-color: var(--nx-line-hi);
+}
+
+.docs-theme-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 
 /* ─── Hamburger Button ────────────────────────────────────────────────── */
@@ -1673,10 +1860,16 @@
   justify-content: center;
   width: 2rem;
   height: 2rem;
+  border-radius: var(--nx-radius-control);
   background: transparent;
   border: none;
   cursor: pointer;
-  color: hsl(var(--foreground));
+  color: var(--nx-ink);
+}
+
+.docs-hamburger:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 
 /* ─── Responsive ──────────────────────────────────────────────────────── */
@@ -1810,23 +2003,16 @@
   }
 }
 
-/* --- Interactive Components Styling --- */
+/* --- Interactive Components Styling ------------------------------------
+   --docs-purple-* keeps its name because components outside this stylesheet
+   read it, but the value is no longer a fixed violet: the accent is
+   workspace-owned and follows the tenant hue and the theme. The old
+   prefers-color-scheme override is gone — theme here is class-driven
+   (next-themes writes .dark), so an OS-media override fought the toggle. */
 :root {
-  --docs-purple-primary: hsl(263 85% 64%);
-  --docs-purple-muted: hsl(263 85% 64% / 0.1);
-  --docs-purple-border: hsl(263 85% 64% / 0.25);
-  --docs-terminal-bg: #0b0a0f;
-  --docs-panel-bg: rgba(255, 255, 255, 0.4);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --docs-purple-primary: hsl(258 90% 76%);
-    --docs-purple-muted: hsl(258 90% 76% / 0.15);
-    --docs-purple-border: hsl(258 90% 76% / 0.3);
-    --docs-terminal-bg: #050408;
-    --docs-panel-bg: rgba(15, 15, 20, 0.5);
-  }
+  --docs-purple-primary: var(--nx-accent);
+  --docs-purple-muted: var(--nx-accent-wash);
+  --docs-purple-border: color-mix(in srgb, var(--nx-accent) 30%, transparent);
 }
 
 /* Terminal Simulator */
@@ -1834,18 +2020,17 @@
   margin-bottom: 2rem;
 }
 .docs-terminal-window {
-  background: var(--docs-terminal-bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  background: var(--nx-ground);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-lg);
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 .docs-terminal-header {
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--nx-raised);
   padding: 0.75rem 1rem;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--nx-line);
 }
 .docs-terminal-dots {
   display: flex;
@@ -1854,57 +2039,65 @@
 .docs-terminal-dots .dot {
   width: 10px;
   height: 10px;
-  border-radius: 50%;
+  border-radius: 9999px;
 }
-.dot-red {
-  background: #ef4444;
-}
-.dot-yellow {
-  background: #f59e0b;
-}
+
+/* The three window dots are chrome, not status — they carry no meaning and
+   must not borrow the destructive/warning/success tokens to say nothing. */
+.dot-red,
+.dot-yellow,
 .dot-green {
-  background: #10b981;
+  background: var(--nx-line-hi);
 }
 
 .docs-terminal-tabs {
   display: flex;
   gap: 0.5rem;
-  margin-left: 1.5rem;
+  margin-inline-start: 1.5rem;
 }
 .docs-terminal-tab {
   background: transparent;
   border: none;
-  color: var(--text-secondary);
+  color: var(--nx-ink-2);
   font-size: 0.75rem;
   padding: 0.25rem 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--nx-radius-sm);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    background-color var(--nx-t-micro) var(--nx-ease-enter);
 }
 .docs-terminal-tab:hover {
-  color: var(--text-primary);
-  background: var(--bg-tertiary);
+  color: var(--nx-ink);
+  background: var(--nx-hover);
+}
+.docs-terminal-tab:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 .docs-terminal-tab.active {
-  color: var(--docs-purple-primary);
-  background: var(--docs-purple-muted);
+  color: var(--nx-accent);
+  background: var(--nx-accent-wash);
 }
 .docs-terminal-body {
   padding: 1.25rem;
   font-family: monospace;
   font-size: 0.85rem;
-  color: #e4e4e7;
+  color: var(--nx-ink);
   min-height: 160px;
+  /* A shell transcript is LTR in every locale. */
+  direction: ltr;
+  text-align: start;
 }
 .docs-terminal-line .prompt {
-  color: var(--docs-purple-primary);
-  margin-right: 0.5rem;
+  color: var(--nx-accent);
+  margin-inline-end: 0.5rem;
 }
 .docs-terminal-line .cmd {
-  color: #38bdf8;
+  color: hsl(var(--chart-1));
 }
 .docs-terminal-output {
-  color: #a1a1aa;
+  color: var(--nx-ink-2);
   margin-top: 0.5rem;
 }
 
@@ -1913,16 +2106,16 @@
   display: grid;
   grid-template-columns: 240px 1fr;
   gap: 1rem;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--bg-secondary);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-lg);
+  background: var(--nx-surface);
   overflow: hidden;
   height: 320px;
   margin-bottom: 2rem;
 }
 .docs-explorer-sidebar {
-  border-right: 1px solid var(--border);
-  background: var(--bg-primary);
+  border-inline-end: 1px solid var(--nx-line);
+  background: var(--nx-ground);
   padding: 1rem;
   overflow-y: auto;
 }
@@ -1935,17 +2128,25 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.4rem 0.5rem;
-  border-radius: 6px;
+  border-radius: var(--nx-radius-sm);
   cursor: pointer;
   font-size: 0.8rem;
-  transition: background 0.15s ease;
+  color: var(--nx-ink-2);
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    background-color var(--nx-t-micro) var(--nx-ease-enter);
 }
 .docs-tree-node:hover {
-  background: var(--bg-tertiary);
+  color: var(--nx-ink);
+  background: var(--nx-hover);
+}
+.docs-tree-node:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 .docs-tree-node.active {
-  background: var(--docs-purple-muted);
-  color: var(--docs-purple-primary);
+  background: var(--nx-accent-wash);
+  color: var(--nx-accent);
 }
 
 /* Glossary Grid */
@@ -1953,81 +2154,113 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-block: 0 2rem;
+  padding: 0;
+  list-style: none;
 }
 .docs-glossary-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  background: var(--nx-surface);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-lg);
   padding: 1.25rem;
   cursor: pointer;
+  text-align: start;
+  font: inherit;
   transition:
-    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.2s ease;
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
   position: relative;
   overflow: hidden;
 }
 .docs-glossary-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px var(--docs-purple-muted);
-  border-color: var(--docs-purple-primary);
+  background: var(--nx-raised);
+  border-color: var(--nx-line-hi);
+}
+.docs-glossary-card:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 .docs-glossary-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.5rem;
+  gap: 0.75rem;
+}
+/* The flip is visual only — DOM order stays EN then AR so the reading order
+   is stable, and flex order moves the chosen term to the leading edge. */
+.docs-glossary-header[data-primary="ar"] .docs-term-en {
+  order: 1;
 }
 .docs-term-en {
   font-weight: 700;
+  color: var(--nx-ink);
 }
 .docs-term-ar {
   font-weight: 700;
-  color: var(--docs-purple-primary);
+  color: var(--nx-accent);
+}
+.docs-glossary-header[data-primary="ar"] .docs-term-ar {
+  color: var(--nx-ink);
+}
+.docs-glossary-header[data-primary="ar"] .docs-term-en {
+  color: var(--nx-accent);
 }
 .docs-glossary-desc {
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: var(--nx-ink-2);
+  margin: 0;
+  text-wrap: pretty;
 }
 .docs-glossary-indicator {
   font-size: 0.65rem;
-  color: var(--text-tertiary);
+  color: var(--nx-ink-3);
   display: block;
-  margin-top: 0.5rem;
-  text-align: right;
+  text-align: end;
 }
 
 /* Diagram styling */
 .docs-diagram-node-item {
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-control);
   padding: 0.6rem 1.2rem;
+  background: var(--nx-raised);
+  color: var(--nx-ink);
   cursor: pointer;
   font-weight: 600;
   font-size: 0.8rem;
-  transition: all 0.2s ease;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
   text-align: center;
 }
 .docs-diagram-node-item:hover {
-  border-color: var(--docs-purple-primary);
-  background: var(--docs-purple-muted);
-  transform: scale(1.02);
+  border-color: var(--nx-line-hi);
+  background: var(--nx-raised-2);
+}
+.docs-diagram-node-item:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 .docs-diagram-node-item.active {
-  border-color: var(--docs-purple-primary);
-  background: var(--docs-purple-muted);
-  box-shadow: 0 0 10px var(--docs-purple-muted);
+  border-color: var(--nx-accent);
+  background: var(--nx-accent-wash);
+  color: var(--nx-accent);
 }
 .docs-diagram-node-item.docs-node-primary {
-  border-color: var(--docs-purple-primary);
-  color: var(--docs-purple-primary);
+  border-color: color-mix(in srgb, var(--nx-accent) 30%, transparent);
+  color: var(--nx-accent);
 }
 .docs-diagram-node-item.docs-node-success {
-  border-color: var(--success);
-  color: var(--success);
+  border-color: hsl(var(--success) / 0.3);
+  color: var(--nx-success);
 }
 .docs-diagram-node-item.docs-node-warning {
-  border-color: var(--warning);
-  color: var(--warning);
+  border-color: hsl(var(--warning) / 0.3);
+  color: var(--nx-warning);
 }
 
 .docs-diagram-arrow-container {
@@ -2035,34 +2268,36 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0 0.5rem;
+  padding-inline: 0.5rem;
 }
 .docs-diagram-arrow-container .arrow {
   font-size: 1.1rem;
   font-weight: bold;
-  color: var(--docs-purple-primary);
+  color: var(--nx-ink-3);
 }
 
 /* Matrix Table */
 .docs-matrix-table-container {
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-lg);
   overflow: hidden;
-  background: var(--bg-secondary);
+  background: var(--nx-surface);
 }
 .docs-matrix-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.85rem;
+  color: var(--nx-ink);
 }
 .docs-matrix-table th,
 .docs-matrix-table td {
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border);
-  text-align: left;
+  border-bottom: 1px solid var(--nx-line);
+  text-align: start;
 }
 .docs-matrix-table th {
-  background: var(--bg-primary);
+  background: var(--nx-raised);
+  color: var(--nx-ink-2);
   font-weight: 600;
 }
 .docs-matrix-table tr:last-child td {
@@ -2072,8 +2307,9 @@
   font-size: 0.75rem;
   padding: 0.15rem 0.5rem;
   border-radius: 9999px;
-  background: var(--bg-primary);
-  border: 1px solid var(--border);
+  background: var(--nx-raised-2);
+  color: var(--nx-ink-2);
+  border: 1px solid var(--nx-line);
 }
 
 /* Pipeline Simulator */
@@ -2082,148 +2318,137 @@
   flex-direction: row;
   align-items: center;
   gap: 1rem;
-  background: var(--bg-secondary);
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
+  background: var(--nx-surface);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-control);
   padding: 0.75rem 1rem;
   width: 100%;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
   text-align: start;
 }
 .docs-pipeline-node:hover {
-  background: var(--bg-tertiary);
-  border-color: var(--docs-purple-muted);
+  background: var(--nx-raised);
+  border-color: var(--nx-line-hi);
+}
+.docs-pipeline-node:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 .docs-pipeline-node-indicator {
   width: 10px;
   height: 10px;
-  border-radius: 50%;
-  background: var(--border);
+  border-radius: 9999px;
+  background: var(--nx-line-hi);
   position: relative;
   flex-shrink: 0;
 }
 .docs-pipeline-node.active {
-  border-color: var(--docs-purple-primary);
-  background: var(--bg-primary);
-  box-shadow: 0 0 12px var(--docs-purple-muted);
+  border-color: var(--nx-accent);
+  background: var(--nx-accent-wash);
 }
-.docs-pipeline-node.active .docs-pipeline-node-indicator {
-  background: #38bdf8;
-  box-shadow: 0 0 8px #38bdf8;
-}
+/* The active stage is marked by the accent edge and fill, not by a dot that
+   breathes: nothing on this page is allowed to animate at rest. */
+.docs-pipeline-node.active .docs-pipeline-node-indicator,
 .docs-pipeline-node.active .docs-pipeline-node-indicator .light {
-  background: #38bdf8;
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  box-shadow: 0 0 8px #38bdf8;
-  animation: pulse-glow 1.5s infinite;
+  background: var(--nx-accent);
 }
 .docs-pipeline-node.completed {
-  border-color: var(--success);
+  border-color: hsl(var(--success) / 0.3);
 }
-.docs-pipeline-node.completed .docs-pipeline-node-indicator {
-  background: var(--success);
-}
+.docs-pipeline-node.completed .docs-pipeline-node-indicator,
 .docs-pipeline-node.completed .docs-pipeline-node-indicator .light {
-  background: var(--success);
+  background: var(--nx-success);
+}
+.docs-pipeline-node-indicator .light {
   display: block;
   width: 100%;
   height: 100%;
-  border-radius: 50%;
+  border-radius: 9999px;
 }
 .docs-pipeline-node-name {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--nx-ink);
 }
 .docs-pipeline-node-desc {
   font-size: 0.75rem;
-  color: var(--text-secondary);
+  color: var(--nx-ink-2);
   margin-top: 0.15rem;
 }
 .docs-pipeline-node-duration {
   font-size: 0.75rem;
-  color: var(--text-tertiary);
+  color: var(--nx-ink-3);
   font-family: monospace;
-  margin-left: auto;
-}
-
-@keyframes pulse-glow {
-  0% {
-    transform: scale(0.9);
-    opacity: 0.6;
-  }
-  50% {
-    transform: scale(1.4);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(0.9);
-    opacity: 0.6;
-  }
+  font-variant-numeric: tabular-nums;
+  margin-inline-start: auto;
 }
 
 /* Config Builder & Schema cells */
 .docs-schema-row:hover {
-  background: var(--bg-tertiary);
+  background: var(--nx-hover);
 }
 .docs-schema-cell-name {
   font-family: monospace;
   font-size: 0.8rem;
+  color: var(--nx-ink);
 }
 .docs-schema-cell-type {
   font-family: monospace;
   font-size: 0.75rem;
-  color: var(--docs-purple-primary);
+  color: var(--nx-accent);
 }
 .docs-schema-cell-nullable {
   font-size: 0.7rem;
-  color: var(--text-secondary);
+  color: var(--nx-ink-2);
 }
 .docs-schema-cell-notes {
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: var(--nx-ink-2);
 }
 
 /* CLI Autocomplete Suggestions */
 .docs-terminal-window ul {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--nx-shadow-popover);
 }
 
 /* Lifecycle Stepper Cards */
 .docs-lifecycle-step-card {
-  border: 1px solid var(--border);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--nx-line);
+  transition:
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
 }
 .docs-lifecycle-step-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px var(--docs-purple-muted);
+  border-color: var(--nx-line-hi);
+}
+.docs-lifecycle-step-card:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 .docs-lifecycle-step-card.active {
-  border-color: var(--docs-purple-primary);
-  background: var(--docs-purple-muted) !important;
+  border-color: var(--nx-accent);
+  /* The step item writes its resting background as an inline style, which
+     out-specifies this rule; the guard is scoped to the selected state only. */
+  background: var(--nx-accent-wash) !important;
 }
 
-/* Sidebar Collapse Transition */
+/* Sidebar Collapse Transition — only the non-layout properties are animated.
+   Transitioning width/padding re-flowed the whole article on every frame. */
 .docs-sidebar {
   transition:
-    width 0.2s ease-in-out,
-    min-width 0.2s ease-in-out,
-    opacity 0.2s ease-in-out,
-    padding 0.2s ease-in-out,
-    border-color 0.2s ease-in-out;
+    opacity var(--nx-t-standard) var(--nx-ease-enter),
+    border-color var(--nx-t-standard) var(--nx-ease-enter);
 }
 
 .docs-wrapper.sidebar-collapsed .docs-sidebar {
   width: 0 !important;
   min-width: 0 !important;
   opacity: 0 !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-  border-inline-end: 0px solid transparent !important;
+  padding-inline: 0 !important;
+  border-inline-end: 0 solid transparent !important;
   pointer-events: none;
   overflow: hidden;
 }
@@ -2233,9 +2458,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: hsl(var(--muted) / 0.4);
-  border: 1px solid hsl(var(--border) / 0.4);
-  border-radius: var(--radius);
+  background-color: var(--nx-raised);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-control);
   padding: 0.375rem 0.75rem;
   font-size: 0.875rem;
 }
@@ -2245,17 +2470,22 @@
   align-items: center;
   justify-content: center;
   padding: 0.25rem;
-  color: hsl(var(--muted-foreground));
-  border-radius: 4px;
+  color: var(--nx-ink-2);
+  border-radius: var(--nx-radius-sm);
   cursor: pointer;
   transition:
-    color 0.15s,
-    background-color 0.15s;
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    background-color var(--nx-t-micro) var(--nx-ease-enter);
 }
 
 .reader-toolbar-btn:hover {
-  color: hsl(var(--foreground));
-  background-color: hsl(var(--muted));
+  color: var(--nx-ink);
+  background-color: var(--nx-hover);
+}
+
+.reader-toolbar-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
 }
 
 .reader-toolbar-btn.font-size-btn {
@@ -2267,13 +2497,8 @@
 .reader-toolbar-divider {
   width: 1px;
   height: 1rem;
-  background-color: hsl(var(--border));
-  margin: 0 0.25rem;
-}
-
-/* Width Layout Transitions */
-.docs-content {
-  transition: max-width 0.2s ease-in-out;
+  background-color: var(--nx-line);
+  margin-inline: 0.25rem;
 }
 
 /* Font Size Utility and Heading Anchor hover styles */
@@ -2287,4 +2512,25 @@
 
 .docs-heading-anchor-link svg {
   display: block;
+}
+
+/* ─── Reduced motion ──────────────────────────────────────────────────────
+   The portal renders outside the settings provider, so the app's
+   data-animation guard never reaches it. Movement is stripped and state
+   changes are kept: the transition still happens, it just lands instantly. */
+@media (prefers-reduced-motion: reduce) {
+  .docs-root *,
+  .docs-root *::before,
+  .docs-root *::after,
+  .docs-search-overlay,
+  .docs-search-overlay *,
+  .docs-mobile-overlay,
+  .docs-mobile-nav,
+  .docs-mobile-nav * {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -131,17 +131,17 @@ export function RolesView() {
     createFields: [
       {
         name: "nameEn",
-        label: t("roles.nameEn") || "Name (English)",
+        label: t("roles.nameEn"),
         type: "text",
         required: true,
         placeholder: t("roles.namePlaceholder"),
       },
       {
         name: "nameAr",
-        label: t("roles.nameAr") || "Name (Arabic)",
+        label: t("roles.nameAr"),
         type: "text",
         required: true,
-        placeholder: t("roles.nameArPlaceholder") || t("roles.namePlaceholder"),
+        placeholder: t("roles.nameArPlaceholder"),
       },
       {
         name: "code",
@@ -152,15 +152,15 @@ export function RolesView() {
       },
       {
         name: "descriptionEn",
-        label: t("roles.descriptionEn") || "Description (English)",
+        label: t("roles.descriptionEn"),
         type: "textarea",
         placeholder: t("roles.descriptionPlaceholder"),
       },
       {
         name: "descriptionAr",
-        label: t("roles.descriptionAr") || "Description (Arabic)",
+        label: t("roles.descriptionAr"),
         type: "textarea",
-        placeholder: t("roles.descriptionArPlaceholder") || t("roles.descriptionPlaceholder"),
+        placeholder: t("roles.descriptionArPlaceholder"),
       },
       {
         name: "priority",
@@ -172,24 +172,24 @@ export function RolesView() {
     editFields: [
       {
         name: "nameEn",
-        label: t("roles.nameEn") || "Name (English)",
+        label: t("roles.nameEn"),
         type: "text",
         required: true,
       },
       {
         name: "nameAr",
-        label: t("roles.nameAr") || "Name (Arabic)",
+        label: t("roles.nameAr"),
         type: "text",
         required: true,
       },
       {
         name: "descriptionEn",
-        label: t("roles.descriptionEn") || "Description (English)",
+        label: t("roles.descriptionEn"),
         type: "textarea",
       },
       {
         name: "descriptionAr",
-        label: t("roles.descriptionAr") || "Description (Arabic)",
+        label: t("roles.descriptionAr"),
         type: "textarea",
       },
       {
@@ -227,7 +227,7 @@ export function RolesView() {
       },
       // Assign to Group
       {
-        label: t("userGroups.assignToGroup") || "Assign to Group",
+        label: t("userGroups.assignToGroup"),
         icon: <Users className="h-4 w-4" />,
         onClick: (role) => handleOpenAssignToGroup(role),
       },
@@ -250,7 +250,7 @@ export function RolesView() {
     enableBulkActions: true,
     bulkActions: [
       {
-        label: t("userGroups.assignToGroup") || "Assign to Group",
+        label: t("userGroups.assignToGroup"),
         icon: <Users className="h-4 w-4" />,
         onClick: async (ids: string[]) => {
           setSelectedBulkRoleIds(ids);
@@ -259,7 +259,7 @@ export function RolesView() {
         variant: "outline" as const,
       },
       {
-        label: t("common.delete") || "Delete",
+        label: t("common.delete"),
         icon: <Trash className="h-4 w-4" />,
         onClick: async (ids: string[]) => {
           await handleBulkDelete(ids);

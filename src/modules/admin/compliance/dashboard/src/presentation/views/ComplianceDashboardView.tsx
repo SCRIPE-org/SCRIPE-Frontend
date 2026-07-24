@@ -7,6 +7,7 @@ import {
   Clock,
   CheckCircle2,
   AlertTriangle,
+  ChevronLeft,
   ChevronRight,
   RefreshCw,
   Globe,
@@ -15,77 +16,21 @@ import { useDashboardViewModel } from "../viewmodels/useDashboardViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Button } from "@core/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
-import { Skeleton } from "@core/ui/skeleton";
-import { Separator } from "@core/ui/separator";
+import { PageHeader } from "@core/ui/page-header";
+import { StatCard } from "@core/ui/stat-card";
+import { EmptyState } from "@core/ui/empty-state";
+import { ErrorMessage } from "@core/ui/error-message";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 
-// ── Stat Card ─────────────────────────────────────────────────────────────────
+// A figure that has not arrived yet, rather than a zero the reader would trust.
+const NO_FIGURE = "—";
 
-const VARIANT_CARD: Record<string, string> = {
-  default: "from-info/10 to-info/10 border-info/20",
-  success: "from-success/10 to-success/10 border-success/20",
-  warning: "from-warning/10 to-warning/10 border-warning/20",
-  danger: "from-destructive/10 to-destructive/10 border-destructive/20",
-};
-const VARIANT_ICON: Record<string, string> = {
-  default: "text-info",
-  success: "text-success",
-  warning: "text-warning",
-  danger: "text-destructive",
-};
-
-interface StatCardProps {
-  title: string;
-  subtitle?: string;
-  value: string | number;
-  icon: React.ReactNode;
-  variant?: "default" | "success" | "warning" | "danger";
-  onClick?: () => void;
-}
-
-function StatCard({ title, subtitle, value, icon, variant = "default", onClick }: StatCardProps) {
-  const content = (
-    <Card
-      className={`bg-gradient-to-br ${VARIANT_CARD[variant]} border transition-all hover:shadow-md ${onClick ? "cursor-pointer" : ""}`}
-      onClick={onClick}
-    >
-      <CardContent className="flex items-center gap-4 p-5">
-        <div className={`rounded-xl bg-background/80 p-3 shadow-sm ${VARIANT_ICON[variant]}`}>
-          {icon}
-        </div>
-        <div className="min-w-0 flex-1">
-          <CardDescription className="text-xs font-medium uppercase tracking-wider">
-            {title}
-          </CardDescription>
-          <CardTitle className="mt-1 text-2xl font-bold tracking-tight">{value}</CardTitle>
-          {subtitle && <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p>}
-        </div>
-        {onClick && <ChevronRight className="h-4 w-4 flex-shrink-0 text-muted-foreground" />}
-      </CardContent>
-    </Card>
-  );
-  return content;
-}
-
-function DashboardSkeleton() {
-  return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={i} className="h-[100px] rounded-xl" />
-        ))}
-      </div>
-      <Separator />
-      <Skeleton className="h-[120px] rounded-xl" />
-      <Skeleton className="h-[200px] rounded-xl" />
-    </div>
-  );
-}
-
-// ── Main View ─────────────────────────────────────────────────────────────────
+// The KPI grid keeps its column count across loading and loaded so the page
+// never resettles when the figures land.
+const KPI_GRID = "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3";
 
 /**
  * Presentation UI component rendering the compliance dashboard view.
@@ -93,130 +38,160 @@ function DashboardSkeleton() {
  */
 export function ComplianceDashboardView() {
   useModuleLocales(() => import("../../../locales"), "compliance-dashboard");
-  const { t } = useI18n();
+  const { t, direction } = useI18n();
   const router = useRouter();
-  const { dashboard, isLoading, refetch } = useDashboardViewModel();
+  const { dashboard, isLoading, isError, refetch } = useDashboardViewModel();
   const { hasPermission } = usePermissions();
 
-  if (isLoading) return <DashboardSkeleton />;
+  // "Go to this section" — a forward chevron, so it mirrors in Arabic.
+  const ForwardIcon = direction === "rtl" ? ChevronLeft : ChevronRight;
+
+  const kpis = [
+    {
+      label: t("compliance.openDsrs"),
+      subtitle: t("compliance.openDsrsSubtitle"),
+      value: dashboard ? dashboard.openDsrCount.toLocaleString() : NO_FIGURE,
+      icon: Users,
+      tone: "info" as const,
+      href: "/compliance/dsr",
+    },
+    {
+      label: t("compliance.slaCompliance"),
+      subtitle: t("compliance.slaComplianceSubtitle"),
+      value: dashboard?.slaComplianceDisplay ?? NO_FIGURE,
+      icon: CheckCircle2,
+      tone: "success" as const,
+    },
+    {
+      label: t("compliance.overdueDsrs"),
+      subtitle: t("compliance.overdueDsrsSubtitle"),
+      value: dashboard ? dashboard.overdueDsrCount.toLocaleString() : NO_FIGURE,
+      icon: AlertTriangle,
+      tone: "danger" as const,
+      href: "/compliance/dsr",
+    },
+    {
+      label: t("compliance.consentOptIn"),
+      subtitle: t("compliance.consentOptInSubtitle"),
+      value: dashboard?.consentOptInDisplay ?? NO_FIGURE,
+      icon: CheckCircle2,
+      tone: "success" as const,
+      href: "/compliance/consent",
+    },
+    {
+      label: t("compliance.pendingDsrs"),
+      subtitle: t("compliance.pendingDsrsSubtitle"),
+      value: dashboard ? dashboard.pendingDsrCount.toLocaleString() : NO_FIGURE,
+      icon: Clock,
+      tone: "warning" as const,
+      href: "/compliance/dsr",
+    },
+    {
+      label: t("compliance.reConsentNeeded"),
+      subtitle: t("compliance.reConsentNeededSubtitle"),
+      value: dashboard ? dashboard.subjectsRequiringReConsent.toLocaleString() : NO_FIGURE,
+      icon: AlertTriangle,
+      tone: "warning" as const,
+      href: "/compliance/consent",
+    },
+  ];
+
+  const quickActions = [
+    {
+      label: t("compliance.manageDsr"),
+      href: "/compliance/dsr",
+      permission: SYSTEM_PERMISSIONS.COMPLIANCE_DSR_VIEW,
+    },
+    {
+      label: t("compliance.manageConsent"),
+      href: "/compliance/consent",
+      permission: SYSTEM_PERMISSIONS.COMPLIANCE_CONSENT_VIEW,
+    },
+    {
+      label: t("compliance.manageRetention"),
+      href: "/compliance/retention",
+      permission: SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_VIEW,
+    },
+    {
+      label: t("compliance.viewInventory"),
+      href: "/compliance/inventory",
+      permission: SYSTEM_PERMISSIONS.COMPLIANCE_DATA_INVENTORY_VIEW,
+    },
+    {
+      label: t("compliance.regulations"),
+      href: "/compliance/regulations",
+      permission: SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_VIEW,
+    },
+    {
+      label: t("compliance.viewReports"),
+      href: "/compliance/reports",
+      permission: SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_VIEW,
+    },
+  ].filter((action) => hasPermission(action.permission));
+
+  const coverage = dashboard?.regulationCoverage ?? [];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="rounded-xl border border-success/20 bg-success/10 p-2.5">
-            <Shield className="h-5 w-5 text-success" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight">{t("compliance.title")}</h2>
-            <p className="text-sm text-muted-foreground">{t("compliance.subtitle")}</p>
-          </div>
+    <div className="flex flex-col" style={{ gap: "calc(var(--spacing-unit) * 1.5)" }}>
+      <PageHeader
+        className="mb-0"
+        icon={Shield}
+        title={t("compliance.title")}
+        description={t("compliance.subtitle")}
+        actions={
+          <Button
+            id="compliance-dashboard-refresh"
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            loading={isLoading}
+          >
+            {!isLoading && <RefreshCw className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />}
+            {t("common.refresh")}
+          </Button>
+        }
+      />
+
+      {/* The figures have three states; the shortcuts below them have none —
+          they are navigation and stay usable whatever the query did. */}
+      {isError ? (
+        <ErrorMessage message={t("common.error")} onRetry={() => refetch()} />
+      ) : !isLoading && !dashboard ? (
+        <EmptyState
+          icon={Shield}
+          title={t("common.noData")}
+          description={t("compliance.subtitle")}
+          action={
+            <Button variant="outline" onClick={() => refetch()}>
+              <RefreshCw className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
+              {t("common.refresh")}
+            </Button>
+          }
+        />
+      ) : (
+        <div className={KPI_GRID}>
+          {kpis.map((kpi) => (
+            <StatCard
+              key={kpi.label}
+              label={kpi.label}
+              subtitle={kpi.subtitle}
+              value={kpi.value}
+              icon={kpi.icon}
+              tone={kpi.tone}
+              isLoading={isLoading}
+              onClick={kpi.href ? () => router.push(kpi.href) : undefined}
+            />
+          ))}
         </div>
-        <Button
-          id="compliance-dashboard-refresh"
-          variant="outline"
-          size="sm"
-          onClick={() => refetch()}
-        >
-          <RefreshCw className="me-2 h-4 w-4" />
-          {t("common.refresh")}
-        </Button>
-      </div>
+      )}
 
-      {/* KPIs */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <StatCard
-          title={t("compliance.openDsrs")}
-          subtitle={t("compliance.openDsrsSubtitle")}
-          value={dashboard?.openDsrCount ?? "—"}
-          icon={<Users className="h-5 w-5" />}
-          variant="default"
-          onClick={() => router.push("/compliance/dsr")}
-        />
-        <StatCard
-          title={t("compliance.slaCompliance")}
-          subtitle={t("compliance.slaComplianceSubtitle")}
-          value={dashboard?.slaComplianceDisplay ?? "—"}
-          icon={<CheckCircle2 className="h-5 w-5" />}
-          variant="success"
-        />
-        <StatCard
-          title={t("compliance.overdueDsrs")}
-          subtitle={t("compliance.overdueDsrsSubtitle")}
-          value={dashboard?.overdueDsrCount ?? "—"}
-          icon={<AlertTriangle className="h-5 w-5" />}
-          variant="danger"
-          onClick={() => router.push("/compliance/dsr")}
-        />
-        <StatCard
-          title={t("compliance.consentOptIn")}
-          subtitle={t("compliance.consentOptInSubtitle")}
-          value={dashboard?.consentOptInDisplay ?? "—"}
-          icon={<CheckCircle2 className="h-5 w-5" />}
-          variant="success"
-          onClick={() => router.push("/compliance/consent")}
-        />
-        <StatCard
-          title={t("compliance.pendingDsrs")}
-          subtitle={t("compliance.pendingDsrsSubtitle")}
-          value={dashboard?.pendingDsrCount ?? "—"}
-          icon={<Clock className="h-5 w-5" />}
-          variant="warning"
-          onClick={() => router.push("/compliance/dsr")}
-        />
-        <StatCard
-          title={t("compliance.reConsentNeeded")}
-          subtitle={t("compliance.reConsentNeededSubtitle")}
-          value={dashboard?.subjectsRequiringReConsent ?? "—"}
-          icon={<AlertTriangle className="h-5 w-5" />}
-          variant="warning"
-          onClick={() => router.push("/compliance/consent")}
-        />
-      </div>
-
-      <Separator />
-
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">{t("compliance.quickActions")}</CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          {[
-            {
-              label: t("compliance.manageDsr"),
-              href: "/compliance/dsr",
-              permission: SYSTEM_PERMISSIONS.COMPLIANCE_DSR_VIEW,
-            },
-            {
-              label: t("compliance.manageConsent"),
-              href: "/compliance/consent",
-              permission: SYSTEM_PERMISSIONS.COMPLIANCE_CONSENT_VIEW,
-            },
-            {
-              label: t("compliance.manageRetention"),
-              href: "/compliance/retention",
-              permission: SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_VIEW,
-            },
-            {
-              label: t("compliance.viewInventory"),
-              href: "/compliance/inventory",
-              permission: SYSTEM_PERMISSIONS.COMPLIANCE_DATA_INVENTORY_VIEW,
-            },
-            {
-              label: t("compliance.regulations"),
-              href: "/compliance/regulations",
-              permission: SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_VIEW,
-            },
-            {
-              label: t("compliance.viewReports"),
-              href: "/compliance/reports",
-              permission: SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_VIEW,
-            },
-          ]
-            .filter((action) => hasPermission(action.permission))
-            .map((action) => (
+      {quickActions.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">{t("compliance.quickActions")}</CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            {quickActions.map((action) => (
               <Button
                 key={action.href}
                 variant="outline"
@@ -224,39 +199,42 @@ export function ComplianceDashboardView() {
                 onClick={() => router.push(action.href)}
               >
                 {action.label}
-                <ChevronRight className="ms-2 h-4 w-4 flex-shrink-0" />
+                <ForwardIcon className="ms-2 h-4 w-4 shrink-0" aria-hidden="true" />
               </Button>
             ))}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
-      {/* Regulation Coverage */}
-      {(dashboard?.regulationCoverage?.length ?? 0) > 0 && (
+      {coverage.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-base">{t("compliance.regulationCoverage")}</CardTitle>
           </CardHeader>
-          <CardContent className="divide-y divide-border">
-            {dashboard!.regulationCoverage.map((r) => (
+          <CardContent className="divide-y divide-nx-line">
+            {coverage.map((regulation) => (
               <div
-                key={r.code}
-                className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
+                key={regulation.code}
+                className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
               >
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-info/10 p-1.5">
-                    <Globe className="h-4 w-4 text-info" />
+                <div className="flex min-w-0 items-center gap-3">
+                  <div
+                    className="grid h-8 w-8 shrink-0 place-items-center rounded-nx-md border border-info/30 bg-info/10 text-info"
+                    aria-hidden="true"
+                  >
+                    <Globe className="h-4 w-4" />
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold">{r.code}</p>
-                    <p className="text-xs text-muted-foreground">{r.name}</p>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-nx-ink">{regulation.code}</p>
+                    <p className="truncate text-xs text-nx-ink-2">{regulation.name}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-muted-foreground">
-                    {r.tenantsUsingCount} {t("compliance.tenants")}
+                <div className="flex shrink-0 items-center gap-3">
+                  <span className="text-xs tabular-nums text-nx-ink-3">
+                    {regulation.tenantsUsingCount.toLocaleString()} {t("compliance.tenants")}
                   </span>
-                  <Badge variant={r.isActive ? "default" : "secondary"}>
-                    {r.isActive ? t("compliance.active") : t("compliance.inactive")}
+                  <Badge variant={regulation.isActive ? "active" : "inactive"}>
+                    {regulation.isActive ? t("compliance.active") : t("compliance.inactive")}
                   </Badge>
                 </div>
               </div>

@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   RefreshCw,
-  AlertTriangle,
   ChevronLeft,
   ChevronRight,
   Plus,
@@ -13,9 +12,10 @@ import {
   Clock,
   CheckCircle2,
   FileText,
-  Loader2,
+  AlertTriangle,
   BarChart3,
   Calendar,
+  type LucideIcon,
 } from "lucide-react";
 import { useReportViewModel } from "../viewmodels/useReportViewModel";
 import type { ComplianceReport } from "../../domain/entities/ComplianceReport";
@@ -23,14 +23,19 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import { Card, CardContent } from "@core/ui/card";
+import { Card, CardHeader } from "@core/ui/card";
+import { PageHeader } from "@core/ui/page-header";
 import { EmptyState } from "@core/ui/empty-state";
+import { ErrorMessage } from "@core/ui/error-message";
 import { Skeleton } from "@core/ui/skeleton";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { Label } from "@core/ui/label";
 import { DatePicker } from "@core/ui/date-picker";
 import { toast } from "@core/hooks/use-enhanced-toast";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect } from "@core/crud/components/generic-select";
+import { overlayFooterClasses } from "@core/ui/dialog";
 import { usePermission } from "@core/hooks/use-permission";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useAppStore } from "@/core/store/useAppStore";
@@ -50,37 +55,24 @@ const REPORT_TYPES = [
   { value: "Data_Inventory", labelKey: "compliance.reportTypes.dataInventory", regulation: "CCPA" },
 ];
 
+// Status speaks through the measured semantic badge tones; "Generating" is the
+// only one that moves, and it moves through the shared loader rather than a
+// hand-spun glyph.
 const STATUS_META: Record<
   string,
   {
     labelKey: string;
-    variant: "default" | "secondary" | "outline" | "destructive";
-    icon: React.ReactNode;
+    variant: "success" | "info" | "pending" | "error";
+    icon: LucideIcon | null;
   }
 > = {
-  Ready: {
-    labelKey: "compliance.status.ready",
-    variant: "default",
-    icon: <CheckCircle2 className="h-3 w-3" />,
-  },
-  Generating: {
-    labelKey: "compliance.status.generating",
-    variant: "secondary",
-    icon: <Loader2 className="h-3 w-3 animate-spin" />,
-  },
-  Pending: {
-    labelKey: "compliance.status.pending",
-    variant: "outline",
-    icon: <Clock className="h-3 w-3" />,
-  },
-  Failed: {
-    labelKey: "compliance.status.failed",
-    variant: "destructive",
-    icon: <AlertTriangle className="h-3 w-3" />,
-  },
+  Ready: { labelKey: "compliance.status.ready", variant: "success", icon: CheckCircle2 },
+  Generating: { labelKey: "compliance.status.generating", variant: "info", icon: null },
+  Pending: { labelKey: "compliance.status.pending", variant: "pending", icon: Clock },
+  Failed: { labelKey: "compliance.status.failed", variant: "error", icon: AlertTriangle },
 };
 
-// ── Report type options for GenericSelect ──────────────────────────────────────
+const DATE_PATTERN = "MMM d, yyyy";
 
 // ── Generate Dialog ─────────────────────────────────────────────────────────
 
@@ -165,26 +157,18 @@ function GenerateReportDialog({
             />
           </div>
         </div>
-        <div className="flex items-start gap-2 rounded-lg border border-info/20 bg-info/5 p-3">
-          <Clock className="mt-0.5 h-4 w-4 shrink-0 text-info" />
-          <p className="text-xs text-info">{t("compliance.reportQueuedInfo")}</p>
-        </div>
-        <div className="flex justify-end gap-2 border-t pt-4">
+        <Alert variant="info">
+          <Clock className="h-4 w-4" aria-hidden="true" />
+          <AlertDescription>{t("compliance.reportQueuedInfo")}</AlertDescription>
+        </Alert>
+        {/* Cancel first in DOM, primary last — the shared overlay footer law. */}
+        <div className={`${overlayFooterClasses} border-t border-nx-line pt-4`}>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {t("common.cancel")}
           </Button>
-          <Button id="report-generate-confirm" onClick={handleGenerate} disabled={isGenerating}>
-            {isGenerating ? (
-              <>
-                <Loader2 className="me-2 h-4 w-4 animate-spin" />
-                {t("common.loading")}
-              </>
-            ) : (
-              <>
-                <Plus className="me-2 h-4 w-4" />
-                {t("compliance.generateReport")}
-              </>
-            )}
+          <Button id="report-generate-confirm" onClick={handleGenerate} loading={isGenerating}>
+            {!isGenerating && <Plus className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />}
+            {isGenerating ? t("common.loading") : t("compliance.generateReport")}
           </Button>
         </div>
       </div>
@@ -198,81 +182,96 @@ function ReportCard({ report }: { report: ComplianceReport }) {
   const { t } = useI18n();
   const router = useRouter();
   const meta = STATUS_META[report.status] ?? STATUS_META.Pending;
+  const StatusIcon = meta.icon;
   const typeLabelKey = REPORT_TYPES.find((r) => r.value === report.reportType)?.labelKey;
   const typeLabel = typeLabelKey ? t(typeLabelKey) : report.reportType;
+  const openDetail = () => router.push(`/compliance/reports/${report.id}`);
 
   return (
     <Card
-      className={`cursor-pointer border transition-all hover:shadow-md ${report.isReady ? "border-success/20 bg-gradient-to-br from-success/5 to-success/5" : "border-border/50"}`}
-      onClick={() => router.push(`/compliance/reports/${report.id}`)}
+      role="button"
+      tabIndex={0}
+      onClick={openDetail}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openDetail();
+        }
+      }}
+      className="cursor-pointer focus-visible:shadow-nx-focus focus-visible:outline-none active:shadow-[inset_0_0_0_1px_var(--nx-accent)]"
     >
-      <CardContent className="p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-start gap-3">
+      {/* One block, so the card's padded header slot IS the body — CardContent
+          is pt-0 by contract and would sit flush against the card's top edge. */}
+      <CardHeader>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="flex min-w-0 items-start gap-3">
             <div
-              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${report.isReady ? "border-success/30 bg-success/10 text-success" : "border-border/50 bg-muted/50 text-muted-foreground"}`}
+              className={`grid h-10 w-10 shrink-0 place-items-center rounded-nx-md border ${
+                report.isReady
+                  ? "border-success/30 bg-success/10 text-success"
+                  : "border-nx-line bg-nx-raised text-nx-ink-3"
+              }`}
+              aria-hidden="true"
             >
               {report.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <LoadingSpinner size="inline" showText={false} />
               ) : (
                 <FileText className="h-4 w-4" />
               )}
             </div>
-            <div>
-              <p className="text-sm font-semibold">{typeLabel}</p>
-              <div className="mt-1 flex items-center gap-2">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-nx-ink">{typeLabel}</p>
+              <div className="mt-1 flex flex-wrap items-center gap-2">
                 {report.regulationCode && (
-                  <Badge variant="outline" className="h-5 px-1.5 font-mono text-[10px]">
+                  <Badge variant="outline" className="font-mono">
                     {report.regulationCode}
                   </Badge>
                 )}
-                <Badge variant={meta.variant} className="h-5 gap-1 px-1.5 text-[10px]">
-                  {meta.icon}
+                <Badge variant={meta.variant}>
+                  {StatusIcon ? (
+                    <StatusIcon className="h-3 w-3" aria-hidden="true" />
+                  ) : (
+                    <LoadingSpinner size="inline" showText={false} />
+                  )}
                   {t(meta.labelKey)}
                 </Badge>
               </div>
               {(report.periodStart || report.periodEnd) && (
-                <div className="mt-1.5 flex items-center gap-1 text-xs text-muted-foreground">
-                  <Calendar className="h-3 w-3" />
-                  {formatUtc(report.periodStart, "MMM d, yyyy")} –{" "}
-                  {formatUtc(report.periodEnd, "MMM d, yyyy")}
-                </div>
+                <p className="mt-1.5 flex items-center gap-1 text-xs tabular-nums text-nx-ink-2">
+                  <Calendar className="h-3 w-3 shrink-0" aria-hidden="true" />
+                  {formatUtc(report.periodStart, DATE_PATTERN)} –{" "}
+                  {formatUtc(report.periodEnd, DATE_PATTERN)}
+                </p>
               )}
               {report.generatedAt && (
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {t("compliance.period")}:{" "}
-                  <span className="font-medium text-foreground">
-                    {formatUtc(report.generatedAt, "MMM d, yyyy")}
+                <p className="mt-1 text-xs text-nx-ink-2">
+                  {t("compliance.generatedAt")}:{" "}
+                  <span className="font-medium tabular-nums text-nx-ink">
+                    {formatUtc(report.generatedAt, DATE_PATTERN)}
                   </span>
                 </p>
               )}
             </div>
           </div>
+          {/* The row is activatable, so the controls inside it must not bubble. */}
           <div className="flex shrink-0 items-center gap-2" onClick={(e) => e.stopPropagation()}>
             {report.isReady && report.downloadUrl && (
               <Button
                 id={`report-download-${report.id}`}
                 variant="outline"
                 size="sm"
-                className="h-7 text-xs"
                 onClick={() => window.open(report.downloadUrl!, "_blank")}
               >
-                <Download className="me-1.5 h-3 w-3" />
+                <Download className="me-1.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 {t("compliance.downloadReport")}
               </Button>
             )}
-            <Button
-              id={`report-view-${report.id}`}
-              variant="ghost"
-              size="sm"
-              className="h-7 text-xs"
-              onClick={() => router.push(`/compliance/reports/${report.id}`)}
-            >
+            <Button id={`report-view-${report.id}`} variant="ghost" size="sm" onClick={openDetail}>
               {t("common.view")}
             </Button>
           </div>
         </div>
-      </CardContent>
+      </CardHeader>
     </Card>
   );
 }
@@ -315,93 +314,63 @@ export function ReportsView() {
     }
   };
 
+  const generateButton = (
+    <Button id="compliance-reports-generate" size="sm" onClick={() => setGenerateOpen(true)}>
+      <Plus className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
+      {t("compliance.generateReport")}
+    </Button>
+  );
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 shrink-0"
-            onClick={() => router.push("/compliance")}
-          >
-            <BackIcon className="h-4 w-4" />
+    <div className="flex flex-col" style={{ gap: "calc(var(--spacing-unit) * 1.5)" }}>
+      <PageHeader
+        className="mb-0"
+        icon={BarChart3}
+        title={t("compliance.reportsTitle")}
+        description={t("compliance.reportsDescription")}
+        eyebrow={
+          <Button variant="ghost" size="sm" onClick={() => router.push("/compliance")}>
+            <BackIcon className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
+            {t("common.back")}
           </Button>
-          <div className="flex items-center gap-3">
-            <div className="rounded-xl border border-info/20 bg-gradient-to-br from-info/15 to-info/10 p-2.5 shadow-sm">
-              <BarChart3 className="h-5 w-5 text-info" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight">{t("compliance.reportsTitle")}</h2>
-              <p className="text-sm text-muted-foreground">
-                <span className="font-medium text-foreground">{readyCount}</span>{" "}
-                {t("compliance.reportReady")}
-                {pendingCount > 0 && (
-                  <>
-                    {" · "}
-                    <span className="font-medium text-warning">{pendingCount}</span>{" "}
-                    <span className="text-warning">{t("compliance.reportPending")}</span>
-                  </>
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            id="compliance-reports-refresh"
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-          >
-            <RefreshCw className={`me-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-            {t("common.refresh")}
-          </Button>
-          {canGenerate && (
+        }
+        meta={[
+          { label: t("compliance.status.ready"), value: readyCount.toLocaleString() },
+          { label: t("compliance.status.pending"), value: pendingCount.toLocaleString() },
+          { label: t("common.total"), value: totalCount.toLocaleString() },
+        ]}
+        actions={
+          <>
             <Button
-              id="compliance-reports-generate"
+              id="compliance-reports-refresh"
+              variant="outline"
               size="sm"
-              onClick={() => setGenerateOpen(true)}
+              onClick={() => refetch()}
+              loading={isLoading}
             >
-              <Plus className="me-2 h-4 w-4" />
-              {t("compliance.generateReport")}
+              {!isLoading && <RefreshCw className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />}
+              {t("common.refresh")}
             </Button>
-          )}
-        </div>
-      </div>
+            {canGenerate && generateButton}
+          </>
+        }
+      />
 
       {/* Content */}
       {isLoading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-[100px] rounded-xl" />
+        <div className="space-y-3" role="status" aria-busy="true" aria-label={t("common.loading")}>
+          {Array.from({ length: 3 }).map((_, index) => (
+            <Skeleton key={index} className="h-28 w-full rounded-nx-lg" />
           ))}
         </div>
       ) : isError ? (
-        <Card className="border-destructive/20 bg-destructive/5">
-          <CardContent className="flex flex-col items-center justify-center py-14 text-center">
-            <AlertTriangle className="mb-4 h-10 w-10 text-destructive" />
-            <p className="font-semibold">{t("common.error")}</p>
-            <Button className="mt-4" variant="outline" size="sm" onClick={() => refetch()}>
-              <RefreshCw className="me-2 h-4 w-4" />
-              {t("common.refresh")}
-            </Button>
-          </CardContent>
-        </Card>
+        <ErrorMessage message={t("common.error")} onRetry={() => refetch()} />
       ) : reports.length === 0 ? (
         <EmptyState
           icon={BarChart3}
           title={t("compliance.noReports")}
           description={t("compliance.noReportsDesc")}
-          action={
-            canGenerate ? (
-              <Button size="sm" onClick={() => setGenerateOpen(true)}>
-                <Plus className="me-2 h-4 w-4" />
-                {t("compliance.generateReport")}
-              </Button>
-            ) : undefined
-          }
+          action={canGenerate ? generateButton : undefined}
         />
       ) : (
         <div className="space-y-3">

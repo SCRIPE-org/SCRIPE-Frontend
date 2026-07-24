@@ -4,12 +4,29 @@
  * Each widget renders demo/placeholder data in the builder canvas.
  * When rendered on the actual dashboard, real data is used instead.
  *
+ * These are miniature tiles laid into a 12-column canvas whose rows start at
+ * 100px, so every Card* here is handed its own compact padding: the settings-
+ * driven p-6 rhythm is correct for a page section and leaves a preview tile
+ * with no room for the data it exists to show. Same reason the titles are
+ * pinned at text-sm rather than riding CardTitle's own ladder.
+ *
  * @module dashboard/presentation/components/dashboard-builder/widgets
  */
 "use client";
 
 import React from "react";
 import { cn } from "@core/common/utils";
+import { useI18n } from "@core/providers/i18n-provider";
+import { Badge } from "@core/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@core/ui/table";
 import {
   Users,
   Activity,
@@ -56,11 +73,25 @@ function resolveIcon(name: string): React.ElementType {
   return ICON_MAP[name] || BarChart3;
 }
 
+// ── Shared preview geometry ───────────────────────────────
+// The tile ladder, written once so nine previews cannot drift apart.
+const TILE = "flex h-full flex-col";
+const TILE_HEADER = "flex-row items-center justify-between space-y-0 p-3 pb-2";
+const TILE_BODY = "flex-1 p-3 pt-0";
+const TILE_TITLE = "text-sm";
+
+// --nx-accent holds a COMPLETE colour value, so Tailwind slash-alpha is
+// silently dropped on it (badge.tsx L39 documents this); a tint of the accent
+// has to be mixed explicitly.
+const ACCENT_60 = "bg-[color:color-mix(in_srgb,var(--nx-accent)_60%,transparent)]";
+const ACCENT_35 = "bg-[color:color-mix(in_srgb,var(--nx-accent)_35%,transparent)]";
+
 // ═══════════════════════════════════════════════════════════
 // Stats Card Widget
 // ═══════════════════════════════════════════════════════════
 export function WidgetStatsCard({ props }: { props: Record<string, unknown> }) {
-  const title = (props.title as string) || "Metric";
+  const { t } = useI18n();
+  const title = (props.title as string) || t("dashboard.builder.preview.metric");
   const value = (props.value as string) || "0";
   const trend = (props.trend as string) || "";
   const dir = (props.trendDirection as string) || "neutral";
@@ -68,34 +99,39 @@ export function WidgetStatsCard({ props }: { props: Record<string, unknown> }) {
   const resolvedIconComponent = resolveIcon(iconName);
 
   return (
-    <div className="flex h-full flex-col justify-between rounded-xl border border-border bg-card p-4 shadow-sm">
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-muted-foreground">{title}</span>
-        <div className="rounded-lg bg-primary/10 p-2">
-          {React.createElement(resolvedIconComponent, { className: "h-4 w-4 text-primary" })}
+    <Card className={cn(TILE, "justify-between")}>
+      <CardHeader className={TILE_HEADER}>
+        <span className="truncate text-xs font-medium text-nx-ink-2">{title}</span>
+        <div className="shrink-0 rounded-nx-md bg-nx-accent-wash p-2">
+          {React.createElement(resolvedIconComponent, {
+            className: "h-4 w-4 text-nx-accent",
+            "aria-hidden": "true",
+          })}
         </div>
-      </div>
-      <div className="mt-2">
-        <p className="text-2xl font-bold tracking-tight">{value}</p>
+      </CardHeader>
+      <CardContent className={TILE_BODY}>
+        <p className="text-2xl font-bold tracking-tight tabular-nums text-nx-ink">{value}</p>
         {trend && (
           <div className="mt-1 flex items-center gap-1">
-            {dir === "up" && <ArrowUpRight className="h-3 w-3 text-success" />}
-            {dir === "down" && <ArrowDownRight className="h-3 w-3 text-destructive" />}
-            {dir === "neutral" && <Minus className="h-3 w-3 text-muted-foreground" />}
+            {dir === "up" && <ArrowUpRight className="h-3 w-3 text-success" aria-hidden="true" />}
+            {dir === "down" && (
+              <ArrowDownRight className="h-3 w-3 text-destructive" aria-hidden="true" />
+            )}
+            {dir === "neutral" && <Minus className="h-3 w-3 text-nx-ink-3" aria-hidden="true" />}
             <span
               className={cn(
-                "text-xs font-medium",
+                "text-xs font-medium tabular-nums",
                 dir === "up" && "text-success",
                 dir === "down" && "text-destructive",
-                dir === "neutral" && "text-muted-foreground"
+                dir === "neutral" && "text-nx-ink-3"
               )}
             >
               {trend}
             </span>
           </div>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -103,43 +139,47 @@ export function WidgetStatsCard({ props }: { props: Record<string, unknown> }) {
 // Chart Widget (Placeholder)
 // ═══════════════════════════════════════════════════════════
 export function WidgetChart({ props }: { props: Record<string, unknown> }) {
-  const title = (props.title as string) || "Chart";
+  const { t } = useI18n();
+  const title = (props.title as string) || t("dashboard.builder.widget.chart");
   const chartType = (props.chartType as string) || "line";
 
-  // Simulated bars/lines
+  // Simulated bars/lines — fixed heights, never randomised, so the preview does
+  // not reshuffle itself on every re-render.
   const bars = [40, 65, 45, 80, 55, 70, 90, 60, 75, 50, 85, 68];
 
   return (
-    <div className="flex h-full flex-col rounded-xl border border-border bg-card p-4 shadow-sm">
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold">{title}</h3>
-        <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
-      </div>
-      <div className="flex flex-1 items-end gap-1">
-        {bars.map((h, i) => (
-          <div
-            key={i}
-            className={cn(
-              "flex-1 rounded-t transition-all",
-              chartType === "line" ? "bg-primary/60" : "bg-primary/80"
-            )}
-            style={{ height: `${h}%`, minHeight: 4 }}
-          />
-        ))}
-      </div>
-      {(props.showLegend as boolean) && (
-        <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <span className="h-2 w-2 rounded-full bg-primary" />
-            Current
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="h-2 w-2 rounded-full bg-primary/30" />
-            Previous
-          </span>
+    <Card className={TILE}>
+      <CardHeader className={TILE_HEADER}>
+        <CardTitle className={TILE_TITLE}>{title}</CardTitle>
+        <MoreHorizontal className="h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
+      </CardHeader>
+      <CardContent className={cn(TILE_BODY, "flex flex-col")}>
+        <div className="flex flex-1 items-end gap-1" aria-hidden="true">
+          {bars.map((h, i) => (
+            <div
+              key={i}
+              className={cn(
+                "flex-1 rounded-t-nx-sm",
+                chartType === "line" ? ACCENT_60 : "bg-nx-accent-fill"
+              )}
+              style={{ height: `${h}%`, minHeight: 4 }}
+            />
+          ))}
         </div>
-      )}
-    </div>
+        {(props.showLegend as boolean) && (
+          <div className="mt-2 flex items-center gap-3 text-xs text-nx-ink-2">
+            <span className="flex items-center gap-1">
+              <span className="h-2 w-2 rounded-full bg-nx-accent-fill" aria-hidden="true" />
+              {t("dashboard.builder.preview.current")}
+            </span>
+            <span className="flex items-center gap-1">
+              <span className={cn("h-2 w-2 rounded-full", ACCENT_35)} aria-hidden="true" />
+              {t("dashboard.builder.preview.previous")}
+            </span>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
@@ -147,49 +187,66 @@ export function WidgetChart({ props }: { props: Record<string, unknown> }) {
 // Data Table Widget (Placeholder)
 // ═══════════════════════════════════════════════════════════
 export function WidgetDataTable({ props }: { props: Record<string, unknown> }) {
-  const title = (props.title as string) || "Data Table";
+  const { t } = useI18n();
+  const title = (props.title as string) || t("dashboard.builder.widget.dataTable");
   const maxRows = (props.maxRows as number) || 5;
+  // The status key drives both the label and the tone, so the tone switch never
+  // depends on translated text.
   const rows = Array.from({ length: Math.min(maxRows, 5) }, (_, i) => ({
-    name: `Record ${i + 1}`,
-    status: i % 3 === 0 ? "Active" : i % 3 === 1 ? "Pending" : "Inactive",
+    name: t("dashboard.builder.preview.record", { index: i + 1 }),
+    status: i % 3 === 0 ? "active" : i % 3 === 1 ? "pending" : "inactive",
     date: "2026-03-30",
   }));
 
+  const statusLabel: Record<string, string> = {
+    active: t("common.active"),
+    pending: t("common.pending"),
+    inactive: t("common.inactive"),
+  };
+
   return (
-    <div className="flex h-full flex-col rounded-xl border border-border bg-card p-4 shadow-sm">
-      <h3 className="mb-3 text-sm font-semibold">{title}</h3>
-      <div className="flex-1 overflow-hidden">
-        <table className="w-full text-xs">
-          <thead>
-            <tr className="border-b border-border/50 text-muted-foreground">
-              <th className="pb-2 text-start font-medium">Name</th>
-              <th className="pb-2 text-start font-medium">Status</th>
-              <th className="pb-2 text-end font-medium">Date</th>
-            </tr>
-          </thead>
-          <tbody>
+    <Card className={TILE}>
+      <CardHeader className={TILE_HEADER}>
+        <CardTitle className={TILE_TITLE}>{title}</CardTitle>
+      </CardHeader>
+      <CardContent className={cn(TILE_BODY, "overflow-hidden")}>
+        <Table className="text-xs">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="h-auto px-0 pb-2 text-xs">{t("common.name")}</TableHead>
+              <TableHead className="h-auto px-0 pb-2 text-xs">{t("common.status")}</TableHead>
+              <TableHead variant="numeric" className="h-auto px-0 pb-2 text-xs">
+                {t("dashboard.builder.preview.columnDate")}
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {rows.map((row, i) => (
-              <tr key={i} className="border-b border-border/20 last:border-0">
-                <td className="py-1.5 font-medium">{row.name}</td>
-                <td className="py-1.5">
-                  <span
-                    className={cn(
-                      "rounded-full px-2 py-0.5 text-[10px] font-medium",
-                      row.status === "Active" && "bg-success/10 text-success",
-                      row.status === "Pending" && "bg-warning/10 text-warning",
-                      row.status === "Inactive" && "bg-destructive/10 text-destructive"
-                    )}
+              <TableRow key={i}>
+                <TableCell className="px-0 py-1.5 font-medium">{row.name}</TableCell>
+                <TableCell className="px-0 py-1.5">
+                  <Badge
+                    variant={
+                      row.status === "active"
+                        ? "success"
+                        : row.status === "pending"
+                          ? "warning"
+                          : "error"
+                    }
+                    className="px-2 py-0 text-[10px]"
                   >
-                    {row.status}
-                  </span>
-                </td>
-                <td className="py-1.5 text-end text-muted-foreground">{row.date}</td>
-              </tr>
+                    {statusLabel[row.status]}
+                  </Badge>
+                </TableCell>
+                <TableCell variant="numeric" className="px-0 py-1.5 text-nx-ink-2">
+                  {row.date}
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -197,24 +254,37 @@ export function WidgetDataTable({ props }: { props: Record<string, unknown> }) {
 // Quick Actions Widget
 // ═══════════════════════════════════════════════════════════
 export function WidgetQuickActions({ props }: { props: Record<string, unknown> }) {
-  const actions = (props.actions as string[]) || ["Action 1", "Action 2"];
+  const { t } = useI18n();
+  const actions = (props.actions as string[]) || [
+    t("dashboard.builder.preview.action", { index: 1 }),
+    t("dashboard.builder.preview.action", { index: 2 }),
+  ];
   const columns = (props.columns as number) || 2;
 
   return (
-    <div className="flex h-full flex-col rounded-xl border border-border bg-card p-4 shadow-sm">
-      <h3 className="mb-3 text-sm font-semibold">Quick Actions</h3>
-      <div className={cn("grid flex-1 gap-2", columns === 2 ? "grid-cols-2" : "grid-cols-3")}>
-        {actions.map((action, i) => (
-          <button
-            key={i}
-            className="flex items-center justify-center gap-1.5 rounded-lg border border-border bg-muted/30 px-3 py-2.5 text-xs font-medium transition-colors hover:bg-muted"
-          >
-            <Zap className="h-3 w-3 text-primary" />
-            {action}
-          </button>
-        ))}
-      </div>
-    </div>
+    <Card className={TILE}>
+      <CardHeader className={TILE_HEADER}>
+        <CardTitle className={TILE_TITLE}>
+          {t("dashboard.builder.widget.quickActions")}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className={TILE_BODY}>
+        <div className={cn("grid h-full gap-2", columns === 2 ? "grid-cols-2" : "grid-cols-3")}>
+          {actions.map((action, i) => (
+            // A preview of a button, not a button: these carry no action, so
+            // rendering them as <button> would put dead stops in the tab order
+            // of every canvas tile.
+            <span
+              key={i}
+              className="flex items-center justify-center gap-1.5 rounded-nx-control border border-nx-line bg-nx-raised px-3 py-2.5 text-center text-xs font-medium text-nx-ink"
+            >
+              <Zap className="h-3 w-3 shrink-0 text-nx-accent" aria-hidden="true" />
+              {action}
+            </span>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -222,7 +292,8 @@ export function WidgetQuickActions({ props }: { props: Record<string, unknown> }
 // Activity Feed Widget
 // ═══════════════════════════════════════════════════════════
 export function WidgetActivityFeed({ props }: { props: Record<string, unknown> }) {
-  const title = (props.title as string) || "Recent Activity";
+  const { t } = useI18n();
+  const title = (props.title as string) || t("dashboard.builder.preview.recentActivity");
   const maxItems = (props.maxItems as number) || 6;
   const showTimestamps = (props.showTimestamps as boolean) ?? true;
 
@@ -230,33 +301,62 @@ export function WidgetActivityFeed({ props }: { props: Record<string, unknown> }
     {
       icon: CheckCircle2,
       color: "text-success",
-      text: "User login successful",
-      time: "2m ago",
+      text: t("dashboard.builder.preview.activity.loginSuccess"),
+      time: t("common.timeAgo.minutesAgo", { count: 2 }),
     },
-    { icon: AlertTriangle, color: "text-warning", text: "Failed login attempt", time: "5m ago" },
-    { icon: Users, color: "text-primary", text: "New admin created", time: "12m ago" },
-    { icon: Shield, color: "text-info", text: "Permissions updated", time: "30m ago" },
-    { icon: Clock, color: "text-muted-foreground", text: "Session expired", time: "1h ago" },
-    { icon: Info, color: "text-info", text: "System backup complete", time: "2h ago" },
+    {
+      icon: AlertTriangle,
+      color: "text-warning",
+      text: t("dashboard.builder.preview.activity.loginFailed"),
+      time: t("common.timeAgo.minutesAgo", { count: 5 }),
+    },
+    {
+      icon: Users,
+      color: "text-nx-accent",
+      text: t("dashboard.builder.preview.activity.adminCreated"),
+      time: t("common.timeAgo.minutesAgo", { count: 12 }),
+    },
+    {
+      icon: Shield,
+      color: "text-info",
+      text: t("dashboard.builder.preview.activity.permissionsUpdated"),
+      time: t("common.timeAgo.minutesAgo", { count: 30 }),
+    },
+    {
+      icon: Clock,
+      color: "text-nx-ink-3",
+      text: t("dashboard.builder.preview.activity.sessionExpired"),
+      time: t("common.timeAgo.hoursAgo", { count: 1 }),
+    },
+    {
+      icon: Info,
+      color: "text-info",
+      text: t("dashboard.builder.preview.activity.backupComplete"),
+      time: t("common.timeAgo.hoursAgo", { count: 2 }),
+    },
   ].slice(0, maxItems);
 
   return (
-    <div className="flex h-full flex-col rounded-xl border border-border bg-card p-4 shadow-sm">
-      <h3 className="mb-3 text-sm font-semibold">{title}</h3>
-      <div className="flex-1 space-y-3 overflow-hidden">
+    <Card className={TILE}>
+      <CardHeader className={TILE_HEADER}>
+        <CardTitle className={TILE_TITLE}>{title}</CardTitle>
+      </CardHeader>
+      <CardContent className={cn(TILE_BODY, "space-y-3 overflow-hidden")}>
         {items.map((item, i) => (
           <div key={i} className="flex items-start gap-2.5">
-            <div className="mt-0.5 rounded-full bg-muted p-1">
-              <item.icon className={cn("h-3 w-3", item.color)} />
+            <div className="mt-0.5 rounded-full bg-nx-raised p-1">
+              <item.icon className={cn("h-3 w-3", item.color)} aria-hidden="true" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-medium">{item.text}</p>
-              {showTimestamps && <p className="text-[10px] text-muted-foreground">{item.time}</p>}
+              <p className="truncate text-xs font-medium text-nx-ink">{item.text}</p>
+              {showTimestamps && (
+                <p className="text-[10px] tabular-nums text-nx-ink-3">{item.time}</p>
+              )}
             </div>
           </div>
         ))}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -264,50 +364,74 @@ export function WidgetActivityFeed({ props }: { props: Record<string, unknown> }
 // Calendar Widget
 // ═══════════════════════════════════════════════════════════
 export function WidgetCalendar({ props }: { props: Record<string, unknown> }) {
+  const { t } = useI18n();
   const maxEvents = (props.maxEvents as number) || 3;
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const days = [
+    t("dashboard.builder.preview.weekday.mon"),
+    t("dashboard.builder.preview.weekday.tue"),
+    t("dashboard.builder.preview.weekday.wed"),
+    t("dashboard.builder.preview.weekday.thu"),
+    t("dashboard.builder.preview.weekday.fri"),
+    t("dashboard.builder.preview.weekday.sat"),
+    t("dashboard.builder.preview.weekday.sun"),
+  ];
   const dates = Array.from({ length: 28 }, (_, i) => i + 1);
   const today = new Date().getDate();
 
   const events = [
-    { title: "Team Meeting", time: "10:00 AM" },
-    { title: "Release Review", time: "2:00 PM" },
-    { title: "Sprint Planning", time: "4:00 PM" },
+    {
+      title: t("dashboard.builder.preview.event.teamMeeting"),
+      time: t("dashboard.builder.preview.event.teamMeetingTime"),
+    },
+    {
+      title: t("dashboard.builder.preview.event.releaseReview"),
+      time: t("dashboard.builder.preview.event.releaseReviewTime"),
+    },
+    {
+      title: t("dashboard.builder.preview.event.sprintPlanning"),
+      time: t("dashboard.builder.preview.event.sprintPlanningTime"),
+    },
   ].slice(0, maxEvents);
 
   return (
-    <div className="flex h-full flex-col rounded-xl border border-border bg-card p-4 shadow-sm">
-      <h3 className="mb-3 text-sm font-semibold">Calendar</h3>
-      <div className="mb-2 grid grid-cols-7 gap-0.5 text-center">
-        {days.map((d) => (
-          <span key={d} className="text-[10px] font-medium text-muted-foreground">
-            {d}
-          </span>
-        ))}
-        {dates.map((d) => (
-          <span
-            key={d}
-            className={cn(
-              "rounded-md py-0.5 text-[10px]",
-              d === today && "bg-primary font-bold text-primary-foreground",
-              d !== today && "text-foreground/70 hover:bg-muted"
-            )}
-          >
-            {d}
-          </span>
-        ))}
-      </div>
-      {(props.showUpcoming as boolean) && events.length > 0 && (
-        <div className="mt-auto space-y-1.5 border-t border-border/50 pt-2">
-          {events.map((e, i) => (
-            <div key={i} className="flex items-center justify-between text-[10px]">
-              <span className="font-medium">{e.title}</span>
-              <span className="text-muted-foreground">{e.time}</span>
-            </div>
+    <Card className={TILE}>
+      <CardHeader className={TILE_HEADER}>
+        <CardTitle className={TILE_TITLE}>{t("dashboard.builder.widget.calendar")}</CardTitle>
+      </CardHeader>
+      <CardContent className={cn(TILE_BODY, "flex flex-col")}>
+        <div className="mb-2 grid grid-cols-7 gap-0.5 text-center">
+          {days.map((d) => (
+            <span key={d} className="text-[10px] font-medium text-nx-ink-3">
+              {d}
+            </span>
+          ))}
+          {dates.map((d) => (
+            <span
+              key={d}
+              aria-current={d === today ? "date" : undefined}
+              className={cn(
+                "rounded-nx-sm py-0.5 text-[10px] tabular-nums",
+                d === today
+                  ? "bg-nx-accent-fill font-bold text-nx-on-fill"
+                  : "text-nx-ink-2 hover:bg-nx-hover"
+              )}
+            >
+              {d}
+            </span>
           ))}
         </div>
-      )}
-    </div>
+        {(props.showUpcoming as boolean) && events.length > 0 && (
+          <div className="mt-auto space-y-1.5 border-t border-nx-line pt-2">
+            {events.map((e, i) => (
+              <div key={i} className="flex items-center justify-between gap-2 text-[10px]">
+                <span className="truncate font-medium text-nx-ink">{e.title}</span>
+                <span className="shrink-0 tabular-nums text-nx-ink-3">{e.time}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
@@ -315,46 +439,77 @@ export function WidgetCalendar({ props }: { props: Record<string, unknown> }) {
 // Notifications Widget
 // ═══════════════════════════════════════════════════════════
 export function WidgetNotifications({ props }: { props: Record<string, unknown> }) {
+  const { t } = useI18n();
   const maxItems = (props.maxItems as number) || 5;
   const items = [
-    { title: "New user registered", unread: true, time: "1m ago" },
-    { title: "Backup completed", unread: true, time: "15m ago" },
-    { title: "Certificate expiring in 7 days", unread: false, time: "1h ago" },
-    { title: "System update available", unread: false, time: "3h ago" },
-    { title: "Weekly report generated", unread: false, time: "1d ago" },
+    {
+      title: t("dashboard.builder.preview.notification.userRegistered"),
+      unread: true,
+      time: t("common.timeAgo.minutesAgo", { count: 1 }),
+    },
+    {
+      title: t("dashboard.builder.preview.notification.backupCompleted"),
+      unread: true,
+      time: t("common.timeAgo.minutesAgo", { count: 15 }),
+    },
+    {
+      title: t("dashboard.builder.preview.notification.certificateExpiring"),
+      unread: false,
+      time: t("common.timeAgo.hoursAgo", { count: 1 }),
+    },
+    {
+      title: t("dashboard.builder.preview.notification.updateAvailable"),
+      unread: false,
+      time: t("common.timeAgo.hoursAgo", { count: 3 }),
+    },
+    {
+      title: t("dashboard.builder.preview.notification.weeklyReport"),
+      unread: false,
+      time: t("common.timeAgo.daysAgo", { count: 1 }),
+    },
   ].slice(0, maxItems);
 
+  const unreadCount = items.filter((i) => i.unread).length;
+
   return (
-    <div className="flex h-full flex-col rounded-xl border border-border bg-card p-4 shadow-sm">
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold">Notifications</h3>
-        <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">
-          {items.filter((i) => i.unread).length}
-        </span>
-      </div>
-      <div className="flex-1 space-y-2 overflow-hidden">
+    <Card className={TILE}>
+      <CardHeader className={TILE_HEADER}>
+        <CardTitle className={TILE_TITLE}>
+          {t("dashboard.builder.widget.notifications")}
+        </CardTitle>
+        <Badge className="shrink-0 px-2 py-0 text-[10px]">
+          <span aria-hidden="true">{unreadCount}</span>
+          <span className="sr-only">
+            {t("dashboard.builder.preview.unreadCount", { count: unreadCount })}
+          </span>
+        </Badge>
+      </CardHeader>
+      <CardContent className={cn(TILE_BODY, "space-y-2 overflow-hidden")}>
         {items.map((item, i) => (
           <div
             key={i}
             className={cn(
-              "flex items-start gap-2 rounded-lg px-2 py-1.5 text-xs transition-colors",
-              item.unread ? "bg-primary/5" : "hover:bg-muted/30"
+              "flex items-start gap-2 rounded-nx-control px-2 py-1.5 text-xs",
+              item.unread ? "bg-nx-accent-wash" : "hover:bg-nx-hover"
             )}
           >
             <Bell
+              aria-hidden="true"
               className={cn(
                 "mt-0.5 h-3 w-3 flex-shrink-0",
-                item.unread ? "text-primary" : "text-muted-foreground"
+                item.unread ? "text-nx-accent" : "text-nx-ink-3"
               )}
             />
             <div className="min-w-0 flex-1">
-              <p className={cn("truncate", item.unread && "font-medium")}>{item.title}</p>
-              <p className="text-[10px] text-muted-foreground">{item.time}</p>
+              <p className={cn("truncate text-nx-ink", item.unread && "font-medium")}>
+                {item.title}
+              </p>
+              <p className="text-[10px] tabular-nums text-nx-ink-3">{item.time}</p>
             </div>
           </div>
         ))}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -362,26 +517,50 @@ export function WidgetNotifications({ props }: { props: Record<string, unknown> 
 // Announcement Widget
 // ═══════════════════════════════════════════════════════════
 export function WidgetAnnouncement({ props }: { props: Record<string, unknown> }) {
-  const title = (props.title as string) || "Announcement";
+  const { t } = useI18n();
+  const title = (props.title as string) || t("dashboard.builder.widget.announcement");
   const message =
-    (props.message as string) || "Welcome to the platform! Check out our latest features.";
+    (props.message as string) || t("dashboard.builder.preview.announcementMessage");
   const variant = (props.variant as string) || "info";
 
-  const variants: Record<string, { bg: string; border: string; icon: React.ElementType }> = {
-    info: { bg: "bg-info/5", border: "border-info/20", icon: Info },
-    success: { bg: "bg-success/5", border: "border-success/20", icon: CheckCircle2 },
-    warning: { bg: "bg-warning/5", border: "border-warning/20", icon: AlertTriangle },
+  // Severity speaks through the glyph and the hairline; the copy stays neutral
+  // ink, because coloured body text on a coloured wash is the least readable
+  // thing a banner can do (alert.tsx L23-26). Each tone re-states its hairline
+  // for hover, otherwise Card's own hover:border-nx-line-hi washes the severity
+  // straight out of the edge.
+  const variants: Record<
+    string,
+    { bg: string; border: string; tone: string; icon: React.ElementType }
+  > = {
+    info: {
+      bg: "bg-info/10",
+      border: "border-info/30 hover:border-info/30",
+      tone: "text-info",
+      icon: Info,
+    },
+    success: {
+      bg: "bg-success/10",
+      border: "border-success/30 hover:border-success/30",
+      tone: "text-success",
+      icon: CheckCircle2,
+    },
+    warning: {
+      bg: "bg-warning/10",
+      border: "border-warning/30 hover:border-warning/30",
+      tone: "text-warning",
+      icon: AlertTriangle,
+    },
   };
   const v = variants[variant] || variants.info;
 
   return (
-    <div className={cn("flex items-start gap-3 rounded-xl border p-4", v.bg, v.border)}>
-      <v.icon className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
-      <div className="flex-1">
-        <h3 className="text-sm font-semibold">{title}</h3>
-        <p className="mt-0.5 text-xs text-muted-foreground">{message}</p>
+    <Card className={cn("flex items-start gap-3 p-4", v.bg, v.border)}>
+      <v.icon className={cn("mt-0.5 h-5 w-5 flex-shrink-0", v.tone)} aria-hidden="true" />
+      <div className="min-w-0 flex-1">
+        <h3 className="text-sm font-semibold text-nx-ink">{title}</h3>
+        <p className="mt-0.5 text-xs text-nx-ink-2">{message}</p>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -389,25 +568,29 @@ export function WidgetAnnouncement({ props }: { props: Record<string, unknown> }
 // Custom Widget (Enterprise)
 // ═══════════════════════════════════════════════════════════
 export function WidgetCustom({ props }: { props: Record<string, unknown> }) {
-  const title = (props.title as string) || "Custom Widget";
+  const { t } = useI18n();
+  const title = (props.title as string) || t("dashboard.builder.widget.customWidget");
   const url = (props.url as string) || "";
   const height = (props.height as number) || 300;
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-      <div className="flex items-center justify-between border-b border-border px-4 py-2">
-        <h3 className="text-sm font-semibold">{title}</h3>
+    <Card className={cn(TILE, "overflow-hidden")}>
+      <CardHeader
+        className={cn(TILE_HEADER, "border-b border-nx-line px-4 py-2 pb-2")}
+      >
+        <CardTitle className={TILE_TITLE}>{title}</CardTitle>
         {url && (
           <a
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-foreground"
+            aria-label={t("dashboard.builder.preview.openCustomSource")}
+            className="shrink-0 rounded-nx-sm p-1 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
           >
-            <ExternalLink className="h-3 w-3" />
+            <ExternalLink className="h-3 w-3" aria-hidden="true" />
           </a>
         )}
-      </div>
+      </CardHeader>
       {url ? (
         <iframe
           src={url}
@@ -417,17 +600,17 @@ export function WidgetCustom({ props }: { props: Record<string, unknown> }) {
           sandbox="allow-scripts allow-same-origin"
         />
       ) : (
-        <div
-          className="flex flex-1 items-center justify-center p-4 text-xs text-muted-foreground"
+        <CardContent
+          className="flex flex-1 items-center justify-center p-4 text-xs text-nx-ink-3"
           style={{ minHeight: height }}
         >
           <div className="text-center">
-            <Code className="mx-auto mb-2 h-8 w-8 text-muted-foreground/40" />
-            <p>Configure a URL to embed custom content</p>
+            <Code className="mx-auto mb-2 h-8 w-8 text-nx-ink-3" aria-hidden="true" />
+            <p>{t("dashboard.builder.preview.customPlaceholder")}</p>
           </div>
-        </div>
+        </CardContent>
       )}
-    </div>
+    </Card>
   );
 }
 
@@ -435,6 +618,8 @@ export function WidgetCustom({ props }: { props: Record<string, unknown> }) {
 // Widget Renderer — Maps type → component
 // ═══════════════════════════════════════════════════════════
 export function WidgetRenderer({ type, props }: { type: string; props: Record<string, unknown> }) {
+  const { t } = useI18n();
+
   switch (type) {
     case "statsCard":
       return <WidgetStatsCard props={props} />;
@@ -456,7 +641,9 @@ export function WidgetRenderer({ type, props }: { type: string; props: Record<st
       return <WidgetCustom props={props} />;
     default:
       return (
-        <div className="rounded border p-4 text-xs text-muted-foreground">Unknown: {type}</div>
+        <Card className="p-4 text-xs text-nx-ink-2">
+          {t("dashboard.builder.preview.unknownWidget", { type })}
+        </Card>
       );
   }
 }

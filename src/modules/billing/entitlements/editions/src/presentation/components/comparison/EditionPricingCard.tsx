@@ -1,13 +1,20 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
+import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
+import { Badge } from "@core/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
+import { Check, Infinity, PhoneCall, Zap } from "lucide-react";
 import type { Edition } from "../../../domain/entities/Edition";
 import type {
   BillingCycle,
   PricingHighlight,
 } from "../../viewmodels/useEditionComparisonViewModel";
-import { Check, Infinity, Star, PhoneCall, Zap } from "lucide-react";
+import { formatComparisonMessage } from "./comparisonFormatting";
+import { RecommendationBadge } from "./RecommendationBadge";
+
+/** How many highlights fit before the card starts counting the rest. */
+const MAX_HIGHLIGHTS = 10;
 
 interface EditionPricingCardProps {
   edition: Edition;
@@ -20,28 +27,30 @@ interface EditionPricingCardProps {
 }
 
 function formatAmount(amount: number, language: string, currency = "USD"): string {
+  const locale = language === "ar" ? "ar-EG" : "en-US";
   try {
-    return new Intl.NumberFormat(language === "ar" ? "ar-EG" : "en-US", {
+    return new Intl.NumberFormat(locale, {
       style: "currency",
       currency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
   } catch {
-    return `$${amount}`;
+    return amount.toLocaleString(locale);
   }
 }
 
-function formatMessage(template: string, values: Record<string, string | number>): string {
-  return Object.entries(values).reduce(
-    (message, [key, value]) => message.replaceAll(`{${key}}`, String(value)),
-    template
-  );
-}
-
 /**
- * Read-only public-pricing preview. The CTA-like blocks intentionally use non-interactive
- * semantics because this admin screen previews content and cannot perform checkout actions.
+ * Read-only public-pricing preview. The CTA-like block intentionally uses
+ * non-interactive semantics because this admin screen previews content and
+ * cannot perform checkout actions; its purpose is announced to screen readers
+ * rather than hidden behind a `title`.
+ *
+ * The recommended card used to sit 2% larger than its neighbours behind a ring
+ * and two coloured drop shadows — a card that floats and grows is furniture,
+ * and the scale broke the grid's baseline on every viewport. The recommendation
+ * now reads exactly where the user is already looking: the accent hairline plus
+ * the one badge, which is the same badge the comparison column wears.
  */
 export function EditionPricingCard({
   edition,
@@ -56,190 +65,185 @@ export function EditionPricingCard({
   const displayName = edition.getDisplayName(language);
   const labels = edition.recommendationLabels;
   const primaryLabel =
-    labels[0] ??
-    (isRecommended ? t("entitlements.editions.comparison.mostPopular") || "Most Popular" : null);
+    labels[0] ?? (isRecommended ? t("entitlements.editions.comparison.mostPopular") : null);
   const titleId = `edition-card-title-${edition.id}`;
 
   const cycleLabel =
     selectedCycle === "Monthly"
-      ? t("entitlements.editions.comparison.perMonth") || "/ month"
+      ? t("entitlements.editions.comparison.perMonth")
       : selectedCycle === "Yearly"
-        ? t("entitlements.editions.comparison.perYear") || "/ year"
-        : t("entitlements.editions.comparison.oneTime") || "one-time";
+        ? t("entitlements.editions.comparison.perYear")
+        : t("entitlements.editions.comparison.oneTime");
   const cycleDescription =
     selectedCycle === "Monthly"
-      ? t("entitlements.editions.comparison.billedMonthly") || "Billed monthly"
+      ? t("entitlements.editions.comparison.billedMonthly")
       : selectedCycle === "Yearly"
-        ? t("entitlements.editions.comparison.billedAnnually") || "Billed annually"
-        : t("entitlements.editions.comparison.payOnce") || "Pay once, use forever";
+        ? t("entitlements.editions.comparison.billedAnnually")
+        : t("entitlements.editions.comparison.payOnce");
 
   const trialText = edition.trialIsFree
-    ? formatMessage(
-        t("entitlements.editions.comparison.freeTrialDays") || "{days}-day free trial",
-        { days: edition.trialDurationDays }
-      )
-    : formatMessage(
-        t("entitlements.editions.comparison.discountedTrialDays") ||
-          "{days}-day trial at {discount}% off",
-        { days: edition.trialDurationDays, discount: edition.trialDiscountPercent }
-      );
+    ? formatComparisonMessage(t("entitlements.editions.comparison.freeTrialDays"), {
+        days: edition.trialDurationDays,
+      })
+    : formatComparisonMessage(t("entitlements.editions.comparison.discountedTrialDays"), {
+        days: edition.trialDurationDays,
+        discount: edition.trialDiscountPercent,
+      });
 
   const previewCta = priceInfo.isContactSales
-    ? t("entitlements.editions.comparison.contactSales") || "Contact Sales"
+    ? t("entitlements.editions.comparison.contactSales")
     : priceInfo.isFree || priceInfo.price === 0
-      ? t("entitlements.editions.comparison.getStartedFree") || "Get Started Free"
+      ? t("entitlements.editions.comparison.getStartedFree")
       : edition.allowTrial && edition.trialDurationDays > 0
-        ? formatMessage(
-            t("entitlements.editions.comparison.startTrialDays") || "Start {days}-Day Trial",
-            { days: edition.trialDurationDays }
-          )
-        : t("entitlements.editions.comparison.getStarted") || "Get Started";
+        ? formatComparisonMessage(t("entitlements.editions.comparison.startTrialDays"), {
+            days: edition.trialDurationDays,
+          })
+        : t("entitlements.editions.comparison.getStarted");
+
+  const ctaIsPrimary = isRecommended && !priceInfo.isContactSales;
 
   return (
-    <article
+    <Card
+      role="article"
       aria-labelledby={titleId}
-      className={`relative flex h-full flex-col border bg-card transition-all duration-200 motion-reduce:transition-none ${
-        isRecommended
-          ? "scale-[1.02] border-primary shadow-lg shadow-primary/10 ring-1 ring-primary"
-          : "border-border hover:border-primary/40 hover:shadow-md"
-      } `}
+      className={cn("relative flex h-full flex-col", isRecommended && "border-nx-accent")}
     >
       {primaryLabel && (
-        <div className="absolute -top-3.5 inset-x-0 flex justify-center">
-          <span className="inline-flex items-center gap-1 bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary-foreground">
-            <Star aria-hidden="true" className="h-3 w-3" />
-            {primaryLabel}
+        // The pill straddles the card's top edge, so it needs an opaque disc
+        // behind it — the accent wash is translucent and would otherwise let
+        // the hairline run straight through the label.
+        <div className="absolute inset-x-0 -top-3 flex justify-center">
+          <span className="rounded-full bg-nx-surface">
+            <RecommendationBadge label={primaryLabel} />
           </span>
         </div>
       )}
 
-      <div className="flex flex-1 flex-col p-6 pt-8">
-        <div className="mb-4">
-          <h3 id={titleId} className="text-lg font-bold uppercase tracking-tight text-foreground">
-            {displayName}
-          </h3>
-          {edition.tagline && (
-            <p className="mt-1 text-sm text-muted-foreground">{edition.tagline}</p>
-          )}
-        </div>
+      <CardHeader>
+        <CardTitle id={titleId} className="uppercase">
+          {displayName}
+        </CardTitle>
+        {edition.tagline && <CardDescription>{edition.tagline}</CardDescription>}
+      </CardHeader>
 
-        <div className="mb-6" aria-live="polite">
+      <CardContent className="flex flex-1 flex-col gap-6">
+        <div className="flex flex-col gap-1" aria-live="polite">
           {priceInfo.isContactSales ? (
-            <div className="flex flex-col gap-1">
-              <span className="text-3xl font-black tracking-tight text-foreground">
-                {t("entitlements.editions.comparison.customPricing") || "Custom"}
+            <>
+              <span className="text-3xl font-semibold leading-none tracking-tight text-nx-ink">
+                {t("entitlements.editions.comparison.customPricing")}
               </span>
-              <span className="text-xs text-muted-foreground">
-                {t("entitlements.editions.comparison.contactForPricing") ||
-                  "Contact us for pricing"}
+              <span className="text-xs leading-relaxed text-nx-ink-3">
+                {t("entitlements.editions.comparison.contactForPricing")}
               </span>
-            </div>
+            </>
           ) : priceInfo.isFree || priceInfo.price === 0 ? (
-            <div className="flex flex-col gap-1">
+            <>
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-black tracking-tight text-foreground">$0</span>
-                <span className="text-sm font-medium text-muted-foreground">
-                  {t("entitlements.editions.comparison.perMonth") || "/ month"}
+                <span className="text-3xl font-semibold leading-none tracking-tight tabular-nums text-nx-ink">
+                  {formatAmount(0, language)}
+                </span>
+                <span className="text-sm font-medium text-nx-ink-2">
+                  {t("entitlements.editions.comparison.perMonth")}
                 </span>
               </div>
-              <span className="text-xs text-muted-foreground">
-                {t("entitlements.editions.comparison.freeForever") || "Free forever"}
+              <span className="text-xs leading-relaxed text-nx-ink-3">
+                {t("entitlements.editions.comparison.freeForever")}
               </span>
-            </div>
+            </>
           ) : priceInfo.price !== undefined ? (
-            <div className="flex flex-col gap-1">
+            <>
               <div className="flex items-baseline gap-1.5">
-                <span className="text-3xl font-black tracking-tight text-foreground">
+                <span className="text-3xl font-semibold leading-none tracking-tight tabular-nums text-nx-ink">
                   {formatAmount(priceInfo.price, language)}
                 </span>
-                <span className="text-sm font-medium text-muted-foreground">{cycleLabel}</span>
+                <span className="text-sm font-medium text-nx-ink-2">{cycleLabel}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">{cycleDescription}</span>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs leading-relaxed text-nx-ink-3">{cycleDescription}</span>
                 {selectedCycle === "Yearly" && savingsPercent > 0 && (
-                  <span className="bg-success/10 px-1.5 py-0.5 text-xs font-semibold text-success">
-                    {formatMessage(
-                      t("entitlements.editions.comparison.savePercent") || "Save {percent}%",
+                  <Badge variant="success">
+                    {formatComparisonMessage(
+                      t("entitlements.editions.comparison.savePercent"),
                       { percent: savingsPercent }
                     )}
-                  </span>
+                  </Badge>
                 )}
               </div>
-            </div>
+            </>
           ) : (
-            <div className="flex flex-col gap-1">
-              <span className="text-2xl font-black tracking-tight text-muted-foreground">—</span>
-              <span className="text-xs text-muted-foreground">
-                {formatMessage(
-                  t("entitlements.editions.comparison.billingUnavailable") ||
-                    "{cycle} billing not available",
+            <>
+              <span className="text-2xl font-semibold leading-none tracking-tight text-nx-ink-3">
+                —
+              </span>
+              <span className="text-xs leading-relaxed text-nx-ink-3">
+                {formatComparisonMessage(
+                  t("entitlements.editions.comparison.billingUnavailable"),
                   { cycle: cycleLabel }
                 )}
               </span>
-            </div>
+            </>
           )}
         </div>
 
         {edition.allowTrial && edition.trialDurationDays > 0 && (
-          <div className="mb-5 flex items-center gap-2 border border-dashed border-primary/50 bg-primary/5 px-3 py-2">
-            <Zap aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-primary" />
-            <span className="text-xs font-medium text-primary">{trialText}</span>
+          <div className="flex items-center gap-2 rounded-nx-md border border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash px-3 py-2">
+            <Zap aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-nx-accent" />
+            <span className="text-xs font-medium text-nx-accent">{trialText}</span>
           </div>
         )}
 
-        <div className="mb-6">
-          <div
-            aria-label={`${t("entitlements.editions.comparison.adminPreview") || "Admin Preview Only"}: ${previewCta}`}
-            className={`flex min-h-9 w-full items-center justify-center gap-2 border px-4 py-2 text-sm font-medium ${
-              isRecommended && !priceInfo.isContactSales
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-input bg-background text-foreground"
-            }`}
-          >
-            {priceInfo.isContactSales && <PhoneCall aria-hidden="true" className="h-4 w-4" />}
-            {previewCta}
-          </div>
+        <div
+          className={cn(
+            "flex min-h-10 w-full items-center justify-center gap-2 rounded-nx-control border px-4 py-2 text-sm font-medium",
+            ctaIsPrimary
+              ? "border-nx-accent-fill bg-nx-accent-fill text-nx-on-fill"
+              : "border-nx-line bg-nx-raised text-nx-ink"
+          )}
+        >
+          {/* The block looks like a CTA but cannot be actioned here, so the
+              preview framing is spoken rather than left to the visual context. */}
+          <span className="sr-only">{t("entitlements.editions.comparison.adminPreview")}: </span>
+          {priceInfo.isContactSales && <PhoneCall aria-hidden="true" className="h-4 w-4" />}
+          {previewCta}
         </div>
 
-        <div className="mb-5 border-t border-border" />
-
-        <div className="flex flex-1 flex-col gap-2.5">
-          {highlights.slice(0, 10).map((highlight, index) => (
+        <div className="flex flex-1 flex-col gap-2.5 border-t border-nx-line pt-5">
+          {highlights.slice(0, MAX_HIGHLIGHTS).map((highlight, index) => (
             <div key={`${highlight.label}-${index}`} className="flex items-start gap-2.5">
               {highlight.isUnlimited ? (
-                <Infinity aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                <Infinity aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-nx-accent" />
               ) : (
-                <Check aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                <Check aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-nx-accent" />
               )}
-              <span className="text-sm leading-snug text-foreground">
+              <span className="text-sm leading-snug text-nx-ink">
                 {highlight.value && highlight.value !== "Unlimited" ? (
                   <>
-                    <span className="font-semibold">{highlight.value}</span>{" "}
-                    <span className="text-muted-foreground">{highlight.label}</span>
+                    <span className="font-semibold tabular-nums">{highlight.value}</span>{" "}
+                    <span className="text-nx-ink-2">{highlight.label}</span>
                   </>
                 ) : highlight.isUnlimited ? (
                   <>
                     <span className="font-semibold">
-                      {t("entitlements.editions.comparison.unlimited") || "Unlimited"}
+                      {t("entitlements.editions.comparison.unlimited")}
                     </span>{" "}
-                    <span className="text-muted-foreground">{highlight.label}</span>
+                    <span className="text-nx-ink-2">{highlight.label}</span>
                   </>
                 ) : (
-                  <span className="text-muted-foreground">{highlight.label}</span>
+                  <span className="text-nx-ink-2">{highlight.label}</span>
                 )}
               </span>
             </div>
           ))}
-          {highlights.length > 10 && (
-            <p className="mt-1 text-xs text-muted-foreground">
-              {formatMessage(
-                t("entitlements.editions.comparison.moreFeatures") || "+ {count} more features",
-                { count: highlights.length - 10 }
-              )}
+          {highlights.length > MAX_HIGHLIGHTS && (
+            <p className="mt-1 text-xs leading-relaxed text-nx-ink-3">
+              {formatComparisonMessage(t("entitlements.editions.comparison.moreFeatures"), {
+                count: highlights.length - MAX_HIGHLIGHTS,
+              })}
             </p>
           )}
         </div>
-      </div>
-    </article>
+      </CardContent>
+    </Card>
   );
 }

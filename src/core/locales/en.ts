@@ -261,6 +261,11 @@ const shared = {
     },
   },
   common: {
+    // Spoken alternatives for the check/cross pair in a comparison matrix. The
+    // glyph is aria-hidden, so without these a screen reader hears nothing and
+    // "not included" is indistinguishable from "we have no data for this row".
+    included: "Included",
+    notIncluded: "Not included",
     welcomeBack: "Welcome back, {{name}}",
     gettingReady: "We are getting everything ready for you...",
     free: "Free",

@@ -388,6 +388,8 @@ export function CodeBlock({ code, language, filename, highlightLines }: CodeBloc
   const tokenizedLines = tokenize(code.trim(), language);
   const highlightSet = new Set(highlightLines || []);
 
+  const sampleName = filename ? `${langLabel} — ${filename}` : langLabel;
+
   return (
     <div className="docs-code-block">
       <div className="docs-code-header">
@@ -395,7 +397,13 @@ export function CodeBlock({ code, language, filename, highlightLines }: CodeBloc
           {filename && <span className="docs-code-filename">{filename}</span>}
           <span className="docs-code-lang">{langLabel}</span>
         </div>
-        <button className="docs-code-copy" data-copied={copied} onClick={handleCopy}>
+        <button
+          type="button"
+          className="docs-code-copy"
+          data-copied={copied}
+          onClick={handleCopy}
+          aria-label={t("common.copyCodeSample", { sample: sampleName })}
+        >
           {copied ? (
             <>
               <svg
@@ -405,6 +413,7 @@ export function CodeBlock({ code, language, filename, highlightLines }: CodeBloc
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
+                aria-hidden="true"
               >
                 <polyline points="20 6 9 17 4 12" />
               </svg>
@@ -419,6 +428,7 @@ export function CodeBlock({ code, language, filename, highlightLines }: CodeBloc
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
+                aria-hidden="true"
               >
                 <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
                 <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
@@ -428,7 +438,9 @@ export function CodeBlock({ code, language, filename, highlightLines }: CodeBloc
           )}
         </button>
       </div>
-      <pre className="docs-code-pre">
+      {/* A horizontally scrollable region must be reachable by keyboard, or a
+          long line is simply unreadable without a mouse. */}
+      <pre className="docs-code-pre" tabIndex={0} role="region" aria-label={sampleName}>
         <code>
           {tokenizedLines.map((lineTokens, lineIdx) => {
             const isHighlighted = highlightSet.has(lineIdx + 1);

@@ -1,19 +1,21 @@
 /**
- * RecommendationBadge — Colored pill badge for edition recommendation labels.
+ * RecommendationBadge — the "Most Popular" / "Best Value" pill on an edition.
  *
- * Uses a deterministic OKLCH color derived from a hash of the label text,
- * ensuring the same label always gets the same vibrant color.
+ * The fill used to be an OKLCH triple derived from a hash of the label text, so
+ * rewording the copy silently repainted the chip — and painted it in a hue the
+ * workspace never chose, which is the one thing an accent-owned product must
+ * not do. The pill is a reading about the plan the product is pointing at, so
+ * it now wears the workspace accent tint: wash fill, same-hue hairline, accent
+ * ink. `--nx-accent` is a complete colour rather than an HSL triplet, so its
+ * tint is written with color-mix — Tailwind drops slash-alpha on a var-valued
+ * colour.
+ *
+ * A badge is a reading, not a control: it never hovers, lifts or casts a shadow.
  */
 "use client";
 
-/** Derive a stable hue [0-360] from a string */
-function labelToHue(label: string): number {
-  let hash = 0;
-  for (let i = 0; i < label.length; i++) {
-    hash = (hash * 31 + label.charCodeAt(i)) >>> 0;
-  }
-  return hash % 360;
-}
+import { cn } from "@core/common/utils";
+import { Star } from "lucide-react";
 
 interface RecommendationBadgeProps {
   label: string;
@@ -25,21 +27,17 @@ interface RecommendationBadgeProps {
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function RecommendationBadge({ label, size = "md" }: RecommendationBadgeProps) {
-  const hue = labelToHue(label);
-  const bg = `oklch(0.35 0.18 ${hue})`;
-  const border = `oklch(0.55 0.22 ${hue})`;
-  const text = `oklch(0.92 0.12 ${hue})`;
+  const isSmall = size === "sm";
 
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full border font-semibold ${
-        size === "sm" ? "px-2 py-0.5 text-[10px]" : "px-2.5 py-1 text-xs"
-      }`}
-      style={{ backgroundColor: bg, borderColor: border, color: text }}
+      className={cn(
+        "inline-flex items-center gap-1 whitespace-nowrap rounded-full border font-semibold",
+        "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent",
+        isSmall ? "px-2 py-0.5 text-[10px]" : "px-2.5 py-1 text-xs"
+      )}
     >
-      <span aria-hidden className="text-[9px]">
-        ★
-      </span>
+      <Star aria-hidden="true" className={cn("shrink-0", isSmall ? "h-2.5 w-2.5" : "h-3 w-3")} />
       {label}
     </span>
   );

@@ -2,17 +2,28 @@
  * Role Delete Dialog
  *
  * Uses ConfirmationDialog with fallback role selection for roles with admins.
+ *
+ * The "this role still has admins" block used to hand-roll the warning skin
+ * (`border-warning/30 bg-warning/10`) and paint its body copy warning-coloured
+ * too. It is the Alert primitive now: severity speaks through the glyph, the
+ * hairline and the wash, and the sentence the operator has to read stays on
+ * neutral ink.
  */
 "use client";
 
 import { useState, useMemo } from "react";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
-import { Loader2, Users } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { Users } from "lucide-react";
 import GenericSelect, { type GenericSelectOption } from "@core/crud/components/generic-select";
 import type { Role } from "../../domain/entities/Role";
 import { useRoleDeleteViewModel } from "../viewmodels/useRoleDeleteViewModel";
 
-interface RoleDeleteDialogProps {
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for role delete dialog props.
+ */
+export interface RoleDeleteDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   role: Role | null;
@@ -55,6 +66,7 @@ export function RoleDeleteDialog({
   }, [availableRoles, language]);
 
   const hasAdmins = adminCount > 0;
+  const roleName = (language === "ar" ? role?.nameAr : role?.nameEn) ?? "";
 
   const handleConfirm = async () => {
     await onConfirm(hasAdmins ? fallbackRoleId : undefined);
@@ -66,52 +78,43 @@ export function RoleDeleteDialog({
       open={open}
       onOpenChange={onOpenChange}
       variant="destructive"
-      title={t("common.confirmDelete") || "Confirm Delete"}
-      description={
-        t("role.deleteConfirm") ||
-        `Are you sure you want to delete the role "${language === "ar" ? role?.nameAr : role?.nameEn}"?`
-      }
-      confirmText={t("common.delete") || "Delete"}
-      cancelText={t("common.cancel") || "Cancel"}
+      title={t("common.confirmDelete")}
+      // Naming the record is the whole point of a confirmation — the operator
+      // has to recognise what they are about to delete, not just that it is "a
+      // role".
+      description={t("role.deleteConfirm", { name: roleName })}
+      confirmText={t("common.delete")}
+      cancelText={t("common.cancel")}
       onConfirm={handleConfirm}
       isLoading={isDeleting || isLoading}
       disableConfirm={hasAdmins && !fallbackRoleId}
     >
       {isLoading ? (
-        <div className="flex items-center justify-center py-4" role="status">
-          <Loader2
-            className="h-5 w-5 animate-spin text-nx-ink-3 motion-reduce:animate-none"
-            aria-label={t("common.loading")}
+        <LoadingSpinner size="sm" showText={false} />
+      ) : hasAdmins ? (
+        // The banner states the blocking condition; the control that resolves it
+        // sits below rather than inside, because Alert is an assertive live
+        // region and a combobox nested in one gets re-announced on every pick.
+        <div className="space-y-3">
+          <Alert variant="warning">
+            <Users className="h-4 w-4" aria-hidden="true" />
+            <AlertTitle>{t("role.hasAdmins", { count: adminCount })}</AlertTitle>
+            <AlertDescription>{t("role.selectFallback")}</AlertDescription>
+          </Alert>
+
+          <GenericSelect
+            options={roleOptions}
+            value={fallbackRoleId}
+            // GenericSelect emits `onValueChange`; the old `onChange` was spread
+            // onto the wrapper div, so picking a fallback never reached state and
+            // the confirm button stayed disabled forever.
+            onValueChange={(value: string | string[]) => setFallbackRoleId(value as string)}
+            placeholder={t("role.selectFallbackPlaceholder")}
+            searchable
           />
         </div>
-      ) : hasAdmins ? (
-        <div className="rounded-nx-md border border-warning/30 bg-warning/10 p-4">
-          <div className="flex items-center gap-2 text-sm font-medium text-warning">
-            <Users className="h-4 w-4 shrink-0" aria-hidden="true" />
-            {t("role.hasAdmins") || `This role is assigned to ${adminCount} admin(s).`}
-          </div>
-          <p className="mt-1 text-sm text-warning">
-            {t("role.selectFallback") ||
-              "Select a fallback role to transfer these admins before deletion:"}
-          </p>
-
-          <div className="mt-3">
-            <GenericSelect
-              options={roleOptions}
-              value={fallbackRoleId}
-              // GenericSelect emits `onValueChange`; the old `onChange` was spread
-              // onto the wrapper div, so picking a fallback never reached state and
-              // the confirm button stayed disabled forever.
-              onValueChange={(value: string | string[]) => setFallbackRoleId(value as string)}
-              placeholder={t("role.selectFallbackPlaceholder") || "Select a role..."}
-              searchable
-            />
-          </div>
-        </div>
       ) : (
-        <p className="text-sm text-nx-ink-2">
-          {t("common.deleteWarning") || "This action cannot be undone."}
-        </p>
+        <p className="text-sm text-nx-ink-2">{t("common.deleteWarning")}</p>
       )}
     </ConfirmationDialog>
   );

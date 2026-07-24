@@ -1,9 +1,8 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 /**
- * EditionComparisonView — Industry-standard pricing comparison page.
+ * EditionComparisonView — the admin preview of the public pricing page.
  *
- * Layout (industry best practice — Vercel/Linear/Notion pattern):
+ * Layout:
  * 1. Global billing cycle toggle (Monthly / Yearly / Lifetime) at the top
  * 2. Pricing cards grid — prices update based on selected cycle
  * 3. Feature comparison matrix — expandable
@@ -13,6 +12,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import {
@@ -23,9 +23,13 @@ import {
   TableRow,
   TableCell,
 } from "@core/ui/table";
-import { Card, CardContent } from "@core/ui/card";
+import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { Eye, Sparkles, ChevronDown, ChevronUp, LayoutList, Loader2 } from "lucide-react";
+import { EmptyState } from "@core/ui/empty-state";
+import { MatrixCell } from "@core/ui/matrix-cell";
+import { PageHeader } from "@core/ui/page-header";
+import { Skeleton } from "@core/ui/skeleton";
+import { Eye, Sparkles, ChevronDown, ChevronUp, LayoutList } from "lucide-react";
 import type { Edition } from "../../domain/entities/Edition";
 import {
   useEditionComparisonViewModel,
@@ -33,16 +37,49 @@ import {
   type FeatureRow,
 } from "../viewmodels/useEditionComparisonViewModel";
 import {
-  BooleanIndicator,
   ComparisonColumnHeader,
   CategorySectionHeader,
+  comparisonHighlightClasses,
 } from "../components/comparison";
 import { EditionPricingCard } from "../components/comparison/EditionPricingCard";
 import {
   formatComparisonMessage,
   getLocalizedCycleName,
+  getLocalizedCyclePeriod,
   type ComparisonTranslator,
 } from "../components/comparison/comparisonFormatting";
+
+/**
+ * A TableRow that is handed a className opts out of the primitive's built-in
+ * hover, so the matrix rows restate it — one hover tint, one micro duration.
+ */
+const MATRIX_ROW =
+  "group border-b border-nx-line transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover";
+
+/**
+ * The sticky feature column needs its own opaque fill so the value cells scroll
+ * under it, which means it cannot inherit the row's translucent hover tint —
+ * it steps to the raised fill instead, the same value that tint resolves to.
+ */
+const STICKY_LABEL_COLUMN =
+  "sticky start-0 bg-nx-surface transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none group-hover:bg-nx-raised";
+
+/** Marketing sub-labels sit under the figure they qualify, never beside it. */
+const CELL_SUBLABEL = "max-w-[120px] text-center text-[10px] leading-tight";
+
+function formatPrice(amount: number, language: string, currency = "USD"): string {
+  const locale = language === "ar" ? "ar-EG" : "en-US";
+  try {
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  } catch {
+    return amount.toLocaleString(locale);
+  }
+}
 
 // ─── Billing Cycle Toggle ───────────────────────────────────────────────────
 function BillingCycleToggle({
@@ -64,10 +101,11 @@ function BillingCycleToggle({
 
   return (
     <fieldset className="flex items-center justify-center">
-      <legend className="sr-only">
-        {t("entitlements.editions.comparison.billingCycle") || "Billing cycle"}
-      </legend>
-      <div className="inline-flex gap-0.5 border border-border bg-muted/30 p-0.5">
+      <legend className="sr-only">{t("entitlements.editions.comparison.billingCycle")}</legend>
+      {/* The track is one surface step up behind a hairline; the selected
+          segment is a real outline Button, so the pressed state is the
+          system's own and never a hand-mixed fill. */}
+      <div className="inline-flex gap-0.5 rounded-nx-control border border-nx-line bg-nx-raised p-0.5">
         {cycles.map((cycle) => {
           const isActive = selected === cycle;
           return (
@@ -77,20 +115,15 @@ function BillingCycleToggle({
               aria-pressed={isActive}
               key={cycle}
               onClick={() => onChange(cycle)}
-              className={`relative flex items-center gap-2 px-5 py-2 text-sm font-semibold transition-all duration-150 motion-reduce:transition-none ${
-                isActive
-                  ? "border border-border bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:bg-background/50 hover:text-foreground"
-              } `}
+              className="gap-2"
             >
               {getLocalizedCycleName(cycle, t)}
               {cycle === "Yearly" && maxYearlySavings > 0 && (
-                <span className="bg-success/10 px-1.5 py-0.5 text-[10px] font-bold leading-none text-success">
-                  {formatComparisonMessage(
-                    t("entitlements.editions.comparison.savePercent") || "Save {percent}%",
-                    { percent: maxYearlySavings }
-                  )}
-                </span>
+                <Badge variant="success">
+                  {formatComparisonMessage(t("entitlements.editions.comparison.savePercent"), {
+                    percent: maxYearlySavings,
+                  })}
+                </Badge>
               )}
             </Button>
           );
@@ -100,39 +133,43 @@ function BillingCycleToggle({
   );
 }
 
-// ─── Matrix Cell ────────────────────────────────────────────────────────────
-function MatrixCell({
+// ─── Feature Matrix Cell ────────────────────────────────────────────────────
+/**
+ * Wraps the shared MatrixCell in the column chrome this table owns: the
+ * recommended-column band and the optional per-edition marketing sub-label.
+ * The value reading itself — boolean glyph, tabular figure, spoken em-dash for
+ * an absent value — belongs to the shared cell so every comparison surface in
+ * the product renders it identically.
+ */
+function FeatureMatrixCell({
   value,
   valueType,
   isHighlighted,
   displayLabel,
-  language,
 }: {
   value: string | undefined;
   valueType: string;
   isHighlighted: boolean;
   displayLabel?: string;
-  language: string;
 }) {
-  const cls = `text-center py-3.5 px-3 ${isHighlighted ? "bg-primary/5" : ""}`;
+  const { t } = useI18n();
+  const cellClasses = cn("text-center", isHighlighted && comparisonHighlightClasses);
 
   if (value === undefined || value === null || value === "") {
     return (
-      <TableCell className={cls}>
-        <span className="text-muted-foreground/40">—</span>
+      <TableCell className={cellClasses}>
+        <MatrixCell value={null} />
       </TableCell>
     );
   }
 
   if (valueType === "Boolean") {
     return (
-      <TableCell className={cls}>
+      <TableCell className={cellClasses}>
         <div className="flex flex-col items-center gap-1">
-          <BooleanIndicator value={value === "true"} />
+          <MatrixCell value={value === "true"} />
           {displayLabel && value === "true" && (
-            <span className="max-w-[120px] text-center text-[10px] leading-tight text-primary/70">
-              {displayLabel}
-            </span>
+            <span className={cn(CELL_SUBLABEL, "text-nx-accent")}>{displayLabel}</span>
           )}
         </div>
       </TableCell>
@@ -142,21 +179,23 @@ function MatrixCell({
   if (valueType === "Numeric") {
     const num = parseInt(value, 10);
     return (
-      <TableCell className={cls}>
+      <TableCell className={cellClasses}>
         <div className="flex flex-col items-center gap-0.5">
-          <span className="text-sm font-semibold tabular-nums">
-            {num === -1 ? (
-              <span className="font-bold text-primary">∞</span>
-            ) : num === 0 ? (
-              <span className="text-muted-foreground/50">—</span>
-            ) : (
-              num.toLocaleString(language === "ar" ? "ar-EG" : "en-US")
-            )}
-          </span>
-          {displayLabel && num !== 0 && (
-            <span className="max-w-[120px] text-center text-[10px] leading-tight text-muted-foreground">
-              {displayLabel}
+          {num === -1 ? (
+            // The infinity glyph is the reading; screen readers get the word.
+            <span className="text-sm font-semibold text-nx-accent">
+              <span aria-hidden="true">∞</span>
+              <span className="sr-only">
+                {t("entitlements.editions.comparison.unlimited")}
+              </span>
             </span>
+          ) : num === 0 ? (
+            <MatrixCell value={null} />
+          ) : (
+            <MatrixCell value={num} />
+          )}
+          {displayLabel && num !== 0 && (
+            <span className={cn(CELL_SUBLABEL, "text-nx-ink-3")}>{displayLabel}</span>
           )}
         </div>
       </TableCell>
@@ -164,38 +203,39 @@ function MatrixCell({
   }
 
   return (
-    <TableCell className={cls}>
+    <TableCell className={cellClasses}>
       {displayLabel ? (
         <div className="flex flex-col items-center gap-0.5">
-          <span className="text-sm font-medium text-primary">{displayLabel}</span>
-          <span className="text-[10px] text-muted-foreground/60">{value}</span>
+          <span className="text-sm font-medium text-nx-accent">{displayLabel}</span>
+          <span className="text-[10px] text-nx-ink-3">{value}</span>
         </div>
       ) : (
-        <span className="text-sm">{value || "—"}</span>
+        <MatrixCell value={value} />
       )}
     </TableCell>
   );
 }
 
 // ─── Loading Skeleton ───────────────────────────────────────────────────────
+/**
+ * Mirrors the real layout — one control-height toggle over a three-card grid —
+ * so nothing jumps when the editions land.
+ */
 function LoadingState({ t }: { t: ComparisonTranslator }) {
   return (
-    <div className="space-y-8" role="status" aria-live="polite">
-      {/* Cycle toggle skeleton */}
+    <div
+      className="flex flex-col gap-8"
+      role="status"
+      aria-busy="true"
+      aria-label={t("entitlements.editions.comparison.loading")}
+    >
       <div className="flex justify-center">
-        <div className="h-10 w-72 animate-pulse border border-border bg-muted/30 motion-reduce:animate-none" />
+        <Skeleton shape="control" className="w-72" />
       </div>
-      {/* Cards skeleton */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-96 animate-pulse border border-border/40 bg-muted/20 motion-reduce:animate-none" />
+        {[1, 2, 3].map((placeholder) => (
+          <Skeleton key={placeholder} className="h-96 rounded-nx-lg" />
         ))}
-      </div>
-      <div className="flex items-center justify-center gap-2 py-4 text-muted-foreground">
-        <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin motion-reduce:animate-none" />
-        <span className="text-sm">
-          {t("entitlements.editions.comparison.loading") || "Loading edition data…"}
-        </span>
       </div>
     </div>
   );
@@ -232,8 +272,11 @@ function FeatureCategoryBlock({
             ? row.displayNameAr
             : row.displayNameEn || row.featureName;
         return (
-          <TableRow key={row.featureName} className="group transition-colors hover:bg-muted/30">
-            <TableHead scope="row" className="sticky start-0 bg-background py-3.5 text-sm font-medium text-foreground transition-colors group-hover:bg-muted/30">
+          <TableRow key={row.featureName} className={MATRIX_ROW}>
+            <TableHead
+              scope="row"
+              className={cn(STICKY_LABEL_COLUMN, "text-sm font-medium text-nx-ink")}
+            >
               {featureLabel}
             </TableHead>
             {editions.map((ed: Edition) => {
@@ -245,13 +288,12 @@ function FeatureCategoryBlock({
                   : labelOverride.en || labelOverride.ar
                 : undefined;
               return (
-                <MatrixCell
+                <FeatureMatrixCell
                   key={ed.id}
                   value={row.values[ed.id]}
                   valueType={row.valueType}
                   isHighlighted={ed.id === recommendedEditionId}
                   displayLabel={resolvedLabel}
-                  language={language}
                 />
               );
             })}
@@ -291,14 +333,12 @@ export function EditionComparisonView() {
 
   if (isEmpty) {
     return (
-      <Card>
-        <CardContent className="py-16 text-center">
-          <Sparkles aria-hidden="true" className="mx-auto mb-3 h-10 w-10 text-muted-foreground/30" />
-          <p className="text-muted-foreground">
-            {t("entitlements.editions.noEditions") || "No active editions to compare."}
-          </p>
-        </CardContent>
-      </Card>
+      <EmptyState
+        icon={Sparkles}
+        title={t("entitlements.editions.comparison.emptyTitle")}
+        description={t("entitlements.editions.comparison.emptyDescription")}
+        size="lg"
+      />
     );
   }
 
@@ -306,31 +346,25 @@ export function EditionComparisonView() {
   const colSpan = colCount + 1;
   const recommendedEditionId =
     editions.find((e: Edition) => e.recommendationLabels.length > 0)?.id ?? "";
+  const selectedCycleName = getLocalizedCycleName(selectedCycle, t);
 
   return (
-    <div className="space-y-10">
+    <div className="flex flex-col gap-10">
       {/* ══════════════════════════════════════════════════
           SECTION 1 — HEADER + BILLING TOGGLE
       ══════════════════════════════════════════════════ */}
-      <section className="space-y-6">
-        {/* Header */}
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center bg-primary/10">
-              <Sparkles className="h-4 w-4 text-primary" />
-            </div>
-            <h2 className="text-xl font-bold">
-              {t("entitlements.editions.comparison.heroTitle") || "Compare Editions"}
-            </h2>
-          </div>
-          <div className="ml-10.5 flex items-center gap-1.5">
-            <Eye className="h-3.5 w-3.5 text-muted-foreground/60" />
-            <p className="text-sm text-muted-foreground">
-              {t("entitlements.editions.comparison.heroSubtitle") ||
-                "Preview of the public pricing page shown to prospective tenants"}
-            </p>
-          </div>
-        </div>
+      <section className="flex flex-col gap-6">
+        <PageHeader
+          icon={Sparkles}
+          title={t("entitlements.editions.comparison.heroTitle")}
+          description={
+            <span className="inline-flex items-center gap-1.5">
+              <Eye aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
+              {t("entitlements.editions.comparison.heroSubtitle")}
+            </span>
+          }
+          className="mb-0"
+        />
 
         {/* ── Global Billing Cycle Toggle ── */}
         <BillingCycleToggle
@@ -343,7 +377,8 @@ export function EditionComparisonView() {
 
         {/* ── Pricing Cards Grid ── */}
         <div
-          className={`grid items-start gap-6 ${
+          className={cn(
+            "grid items-start gap-6",
             colCount === 1
               ? "max-w-sm grid-cols-1"
               : colCount === 2
@@ -351,7 +386,7 @@ export function EditionComparisonView() {
                 : colCount === 3
                   ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
                   : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-          }`}
+          )}
         >
           {editions.map((ed: Edition, idx: number) => (
             <EditionPricingCard
@@ -373,127 +408,138 @@ export function EditionComparisonView() {
       {/* ══════════════════════════════════════════════════
           SECTION 2 — FEATURE COMPARISON MATRIX
       ══════════════════════════════════════════════════ */}
-      <section className="space-y-4">
-        <h2 className="text-lg font-bold">
-          {t("entitlements.editions.comparison.matrixTitle") || "Feature Comparison"}
+      <section className="flex flex-col gap-4">
+        <h2 className="text-lg font-semibold leading-tight tracking-tight text-nx-ink">
+          {t("entitlements.editions.comparison.matrixTitle")}
         </h2>
 
-        <div className="overflow-hidden border border-border shadow-sm">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-b bg-muted/40">
-                  <TableHead className="sticky left-0 z-10 w-64 bg-muted/40 font-semibold">
-                    {t("entitlements.editions.feature") || "Feature"}
-                  </TableHead>
-                  {editions.map((ed: Edition) => (
-                    <ComparisonColumnHeader
-                      key={ed.id}
-                      displayName={ed.getDisplayName(language) || ed.name}
-                      tierLevel={ed.tierLevel}
-                      badges={ed.recommendationLabels}
-                      isRecommended={ed.id === recommendedEditionId}
-                    />
-                  ))}
-                </TableRow>
-              </TableHeader>
+        {/* Table brings its own overflow container, so the panel only owns the
+            hairline and the corner radius. */}
+        <div className="overflow-hidden rounded-nx-lg border border-nx-line bg-nx-surface">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-b border-nx-line bg-nx-raised">
+                <TableHead className="sticky start-0 z-raised w-64 bg-nx-raised font-semibold text-nx-ink">
+                  {t("entitlements.editions.feature")}
+                </TableHead>
+                {editions.map((ed: Edition) => (
+                  <ComparisonColumnHeader
+                    key={ed.id}
+                    displayName={ed.getDisplayName(language) || ed.name}
+                    tierLevel={ed.tierLevel}
+                    badges={ed.recommendationLabels}
+                    isRecommended={ed.id === recommendedEditionId}
+                  />
+                ))}
+              </TableRow>
+            </TableHeader>
 
-              <TableBody>
-                {/* ── Pricing Row (shows selected cycle price) ── */}
-                <CategorySectionHeader
-                  label={t("entitlements.editions.comparison.categoryBilling") || "Billing"}
-                  colSpan={colSpan}
-                />
-                <TableRow className="transition-colors hover:bg-muted/30">
-                  <TableCell className="sticky left-0 bg-background py-3.5 text-sm font-medium">
-                    {t("entitlements.pricing.price") || "Price"}{" "}
-                    <span className="text-xs font-normal text-muted-foreground">
-                      ({selectedCycle})
-                    </span>
-                  </TableCell>
-                  {editions.map((ed: Edition, idx: number) => {
-                    const info = cyclePrices[idx];
-                    const isHL = ed.id === recommendedEditionId;
-                    return (
-                      <TableCell
-                        key={ed.id}
-                        className={`py-3.5 text-center font-bold ${isHL ? "bg-primary/5" : ""}`}
-                      >
-                        {info?.isContactSales ? (
-                          <span className="text-sm text-muted-foreground">Custom</span>
-                        ) : info?.isFree || info?.price === 0 ? (
-                          <span className="font-bold text-success">
-                            Free
-                          </span>
-                        ) : info?.price !== undefined ? (
-                          <span>
-                            ${info.price.toFixed(0)}
-                            <span className="text-xs font-normal text-muted-foreground">
-                              /
-                              {selectedCycle === "Monthly"
-                                ? "mo"
-                                : selectedCycle === "Yearly"
-                                  ? "yr"
-                                  : "once"}
-                            </span>
-                          </span>
-                        ) : (
-                          <span className="text-muted-foreground/40">—</span>
-                        )}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-
-                {/* ── Trial Row ── */}
-                <TableRow className="transition-colors hover:bg-muted/30">
-                  <TableCell className="sticky left-0 bg-background py-3.5 text-sm font-medium">
-                    {t("entitlements.editions.allowTrial") || "Free Trial"}
-                  </TableCell>
-                  {editions.map((ed: Edition) => (
+            <TableBody>
+              {/* ── Pricing Row (shows selected cycle price) ── */}
+              <CategorySectionHeader
+                label={t("entitlements.editions.comparison.categoryBilling")}
+                colSpan={colSpan}
+              />
+              <TableRow className={MATRIX_ROW}>
+                <TableCell className={cn(STICKY_LABEL_COLUMN, "text-sm font-medium text-nx-ink")}>
+                  {t("entitlements.pricing.price")}{" "}
+                  <span className="text-xs font-normal text-nx-ink-3">({selectedCycleName})</span>
+                </TableCell>
+                {editions.map((ed: Edition, idx: number) => {
+                  const info = cyclePrices[idx];
+                  const isHL = ed.id === recommendedEditionId;
+                  return (
                     <TableCell
                       key={ed.id}
-                      className={`py-3.5 text-center ${ed.id === recommendedEditionId ? "bg-primary/5" : ""}`}
+                      className={cn(
+                        "text-center font-semibold tabular-nums",
+                        isHL && comparisonHighlightClasses
+                      )}
                     >
-                      <div className="flex justify-center">
-                        {ed.allowTrial && ed.trialDurationDays > 0 ? (
-                          <span className="text-sm font-medium text-primary">
-                            {ed.trialIsFree
-                              ? `${ed.trialDurationDays}d Free`
-                              : `${ed.trialDurationDays}d ${ed.trialDiscountPercent}% off`}
+                      {info?.isContactSales ? (
+                        <span className="text-sm font-normal text-nx-ink-2">
+                          {t("entitlements.editions.comparison.customPricing")}
+                        </span>
+                      ) : info?.isFree || info?.price === 0 ? (
+                        <span className="text-success">
+                          {t("entitlements.editions.comparison.free")}
+                        </span>
+                      ) : info?.price !== undefined ? (
+                        <span className="text-nx-ink">
+                          {formatPrice(info.price, language)}
+                          <span className="text-xs font-normal text-nx-ink-3">
+                            /{getLocalizedCyclePeriod(selectedCycle, t)}
                           </span>
-                        ) : (
-                          <BooleanIndicator value={false} />
-                        )}
-                      </div>
+                        </span>
+                      ) : (
+                        <MatrixCell value={null} />
+                      )}
                     </TableCell>
-                  ))}
-                </TableRow>
+                  );
+                })}
+              </TableRow>
 
-                {/* ── Dynamic Feature Matrix (expandable) ── */}
-                {showAllFeatures &&
-                  [...categorizedFeatures.entries()].map(([category, rows]) => (
-                    <FeatureCategoryBlock
-                      key={category}
-                      category={category}
-                      rows={rows}
-                      editions={editions}
-                      recommendedEditionId={recommendedEditionId}
-                      colSpan={colSpan}
-                      language={language}
-                      t={t}
-                    />
-                  ))}
-              </TableBody>
-            </Table>
-          </div>
+              {/* ── Trial Row ── */}
+              <TableRow className={MATRIX_ROW}>
+                <TableCell className={cn(STICKY_LABEL_COLUMN, "text-sm font-medium text-nx-ink")}>
+                  {t("entitlements.editions.comparison.trialRow")}
+                </TableCell>
+                {editions.map((ed: Edition) => (
+                  <TableCell
+                    key={ed.id}
+                    className={cn(
+                      "text-center",
+                      ed.id === recommendedEditionId && comparisonHighlightClasses
+                    )}
+                  >
+                    <div className="flex justify-center">
+                      {ed.allowTrial && ed.trialDurationDays > 0 ? (
+                        <span className="text-sm font-medium tabular-nums text-nx-accent">
+                          {ed.trialIsFree
+                            ? formatComparisonMessage(
+                                t("entitlements.editions.comparison.trialDaysFree"),
+                                { days: ed.trialDurationDays }
+                              )
+                            : formatComparisonMessage(
+                                t("entitlements.editions.comparison.trialDaysDiscount"),
+                                {
+                                  days: ed.trialDurationDays,
+                                  discount: ed.trialDiscountPercent,
+                                }
+                              )}
+                        </span>
+                      ) : (
+                        <MatrixCell value={false} />
+                      )}
+                    </div>
+                  </TableCell>
+                ))}
+              </TableRow>
+
+              {/* ── Dynamic Feature Matrix (expandable) ── */}
+              {showAllFeatures &&
+                [...categorizedFeatures.entries()].map(([category, rows]) => (
+                  <FeatureCategoryBlock
+                    key={category}
+                    category={category}
+                    rows={rows}
+                    editions={editions}
+                    recommendedEditionId={recommendedEditionId}
+                    colSpan={colSpan}
+                    language={language}
+                    t={t}
+                  />
+                ))}
+            </TableBody>
+          </Table>
 
           {/* ── Expand / Collapse ── */}
           {totalFeatureCount > 0 && (
-            <div className="flex items-center justify-center border-t border-border/40 bg-muted/20 px-4 py-3">
+            <div className="flex items-center justify-center border-t border-nx-line bg-nx-raised px-4 py-3">
               <Button
                 variant="ghost"
                 size="sm"
+                aria-expanded={showAllFeatures}
                 onClick={() => {
                   setShowAllFeatures((prev) => !prev);
                   if (!showAllFeatures) {
@@ -504,15 +550,17 @@ export function EditionComparisonView() {
                 }}
                 className="gap-2 text-sm font-medium"
               >
-                <LayoutList className="h-4 w-4" />
+                <LayoutList aria-hidden="true" className="h-4 w-4" />
                 {showAllFeatures
-                  ? t("entitlements.editions.comparison.hideFeatures") || "Hide detailed features"
-                  : t("entitlements.editions.comparison.showAllFeatures") ||
-                    `Show all ${totalFeatureCount} features`}
+                  ? t("entitlements.editions.comparison.hideFeatures")
+                  : formatComparisonMessage(
+                      t("entitlements.editions.comparison.showAllFeaturesCount"),
+                      { count: totalFeatureCount }
+                    )}
                 {showAllFeatures ? (
-                  <ChevronUp className="h-4 w-4" />
+                  <ChevronUp aria-hidden="true" className="h-4 w-4" />
                 ) : (
-                  <ChevronDown className="h-4 w-4" />
+                  <ChevronDown aria-hidden="true" className="h-4 w-4" />
                 )}
               </Button>
             </div>

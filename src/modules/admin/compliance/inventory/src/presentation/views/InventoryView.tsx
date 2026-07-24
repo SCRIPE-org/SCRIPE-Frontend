@@ -13,7 +13,10 @@ import { Badge } from "@core/ui/badge";
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function InventoryView() {
-  useModuleLocales(() => import("../../../locales"), "compliance");
+  // Distinct from the retention view's key: both used "compliance", and the
+  // loader dedupes on it — whichever page mounted first marked the dictionary
+  // loaded and the other rendered raw translation keys.
+  useModuleLocales(() => import("../../../locales"), "compliance-inventory");
   const { vm, getConfigBase, t } = useInventoryViewModel();
 
   const configBase = getConfigBase();

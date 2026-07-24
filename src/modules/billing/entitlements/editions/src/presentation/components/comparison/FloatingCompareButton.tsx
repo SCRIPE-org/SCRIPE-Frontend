@@ -1,14 +1,22 @@
-// UI-EXCEPTION: compact studio layout
 /**
- * FloatingCompareButton — Sticky bottom-center button to open the full comparison table.
+ * FloatingCompareButton — bottom-centred shortcut down to the comparison table.
  *
- * Uses IntersectionObserver to auto-hide when the comparison table is scrolled into view.
- * Appears over the pricing cards section and disappears when the table is visible.
+ * An IntersectionObserver hides it once the table is on screen, so it only ever
+ * offers a jump the user cannot already make.
+ *
+ * It is the page's primary action while it is visible, so it is a real Button
+ * on the primary variant rather than a hand-cut pill: the previous version
+ * hand-mixed the primary fill, then grew on hover and shrank on press, which is
+ * the one thing a button in this system never does — press is the lit edge
+ * closing around the control, not a transform. Centring is `inset-x-0` plus a
+ * flex centre rather than a physical inset and a translate, so nothing depends
+ * on the writing direction.
  */
 "use client";
 
 import { useEffect, useState } from "react";
 import { ChevronDown, LayoutList } from "lucide-react";
+import { Button } from "@core/ui/button";
 
 interface FloatingCompareButtonProps {
   label: string;
@@ -41,15 +49,16 @@ export function FloatingCompareButton({ label, targetRef }: FloatingCompareButto
   if (!visible) return null;
 
   return (
-    <div className="pointer-events-none fixed bottom-8 left-1/2 z-50 -translate-x-1/2">
-      <button
+    <div className="pointer-events-none fixed inset-x-0 bottom-8 z-sticky flex justify-center px-4">
+      <Button
+        type="button"
         onClick={scrollToTable}
-        className="pointer-events-auto flex items-center gap-2 rounded-full border border-primary/40 bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-2xl transition-all duration-200 ease-out animate-in fade-in slide-in-from-bottom-4 hover:scale-105 active:scale-95"
+        className="pointer-events-auto gap-2 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-nx-standard motion-safe:ease-nx-enter"
       >
-        <LayoutList className="h-4 w-4" />
+        <LayoutList aria-hidden="true" className="h-4 w-4" />
         {label}
-        <ChevronDown className="h-4 w-4" />
-      </button>
+        <ChevronDown aria-hidden="true" className="h-4 w-4" />
+      </Button>
     </div>
   );
 }

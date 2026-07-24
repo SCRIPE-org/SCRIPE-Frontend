@@ -5,6 +5,19 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { TableHead } from "@core/ui/table";
 import { RecommendationBadge } from "./RecommendationBadge";
 
+/**
+ * The vertical band that marks the recommended column, header and cells alike.
+ *
+ * It is the workspace accent wash behind a same-hue hairline on both inline
+ * edges — `border-x` rather than a start/end pair, so the band reads the same
+ * in Arabic. `--nx-accent` is a complete colour, so the hairline tint is a
+ * color-mix; Tailwind silently drops slash-alpha on a var-valued colour.
+ * Exported because the body cells must draw the identical band, otherwise the
+ * column visibly steps in and out of highlight as the eye travels down it.
+ */
+export const comparisonHighlightClasses =
+  "border-x-2 border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash";
+
 interface ComparisonColumnHeaderProps {
   displayName: string;
   tierLevel: number;
@@ -28,10 +41,7 @@ export function ComparisonColumnHeader({
   return (
     <TableHead
       scope="col"
-      className={cn(
-        "min-w-[180px] text-center",
-        highlighted && "border-x-2 border-primary/20 bg-primary/5"
-      )}
+      className={cn("min-w-[180px] text-center", highlighted && comparisonHighlightClasses)}
     >
       <div className="flex flex-col items-center gap-1.5 py-1">
         {badgeList.length > 0 && (
@@ -41,9 +51,9 @@ export function ComparisonColumnHeader({
             ))}
           </div>
         )}
-        <span className="text-base font-semibold">{displayName}</span>
-        <span className="text-xs text-muted-foreground">
-          {t("entitlements.editions.comparison.tier") || "Tier"} {tierLevel}
+        <span className="text-base font-semibold text-nx-ink">{displayName}</span>
+        <span className="text-xs tabular-nums text-nx-ink-3">
+          {t("entitlements.editions.comparison.tierLevel", { level: tierLevel })}
         </span>
       </div>
     </TableHead>

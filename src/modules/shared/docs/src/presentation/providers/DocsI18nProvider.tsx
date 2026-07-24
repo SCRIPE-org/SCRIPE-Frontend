@@ -174,6 +174,31 @@ export function DocsI18nProvider({
     }
   }, []);
 
+  // ── Document direction / language / font class ───────────────
+  // Mirrors the app-wide i18n provider, which owns the same three DOM
+  // side-effects. The docs portal renders inside that provider, so both write
+  // <html dir/lang> and the body font class. Every write below is skipped when
+  // the DOM already carries the target value: two unconditional writers race on
+  // hydration and produce either a mismatch warning or a visible flash.
+  useEffect(() => {
+    if (document.documentElement.dir !== direction) {
+      document.documentElement.dir = direction;
+    }
+    if (document.documentElement.lang !== language) {
+      document.documentElement.lang = language;
+    }
+
+    const fontClass = direction === "rtl" ? "font-arabic" : "font-english";
+    const staleFontClass = direction === "rtl" ? "font-english" : "font-arabic";
+    const bodyClasses = document.body.classList;
+    if (!bodyClasses.contains(fontClass)) {
+      bodyClasses.add(fontClass);
+    }
+    if (bodyClasses.contains(staleFontClass)) {
+      bodyClasses.remove(staleFontClass);
+    }
+  }, [direction, language]);
+
   const contextValue = useMemo(
     () => ({
       language,

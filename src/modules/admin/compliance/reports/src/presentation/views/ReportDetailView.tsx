@@ -1,19 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import {
-  ArrowLeft,
-  ArrowRight,
-  BarChart3,
-  FileText,
-  Loader2,
-  AlertTriangle,
-  RefreshCw,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, BarChart3, Clock, FileText, Info } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Button } from "@core/ui/button";
-import { Card, CardContent } from "@core/ui/card";
+import { PageHeader } from "@core/ui/page-header";
+import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
+import { EmptyState } from "@core/ui/empty-state";
+import { ErrorMessage } from "@core/ui/error-message";
 import { Skeleton } from "@core/ui/skeleton";
 import { useReportDetailViewModel } from "../viewmodels/useReportDetailViewModel";
 import { ReportStatusCard } from "../components/ReportStatusCard";
@@ -35,7 +30,8 @@ const REPORT_TYPE_KEYS: Record<string, string> = {
  * ReportDetailView Component
  *
  * Renders the detail view for a specific compliance report. Handles loading,
- * error states, and aggregates subcomponents for status and metadata display.
+ * error and not-found states, and aggregates subcomponents for status and
+ * metadata display.
  */
 export function ReportDetailView({ id }: { id: string }) {
   useModuleLocales(() => import("../../../locales"), "compliance-reports");
@@ -57,48 +53,30 @@ export function ReportDetailView({ id }: { id: string }) {
   const typeLabel = report ? (typeKey ? t(typeKey) : report.reportType) : "";
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 shrink-0"
-          onClick={() => router.push("/compliance/reports")}
-        >
-          <BackIcon className="h-4 w-4" />
-        </Button>
-        <div className="flex items-center gap-3">
-          <div className="rounded-xl border border-info/20 bg-gradient-to-br from-info/15 to-info/10 p-2.5">
-            <BarChart3 className="h-5 w-5 text-info" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight">{t("compliance.reportsTitle")}</h2>
-            <p className="text-sm text-muted-foreground">{t("compliance.reportDetail")}</p>
-          </div>
-        </div>
-      </div>
+    <div className="flex flex-col" style={{ gap: "calc(var(--spacing-unit) * 1.5)" }}>
+      <PageHeader
+        className="mb-0"
+        icon={BarChart3}
+        title={typeLabel || t("compliance.reportsTitle")}
+        description={t("compliance.reportDetail")}
+        eyebrow={
+          <Button variant="ghost" size="sm" onClick={() => router.push("/compliance/reports")}>
+            <BackIcon className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
+            {t("common.back")}
+          </Button>
+        }
+      />
 
       {/* Content */}
       {isLoading ? (
-        <div className="space-y-4">
-          <Skeleton className="h-[200px] rounded-xl" />
-          <Skeleton className="h-[120px] rounded-xl" />
+        <div className="space-y-4" role="status" aria-busy="true" aria-label={t("common.loading")}>
+          <Skeleton className="h-40 w-full rounded-nx-lg" />
+          <Skeleton className="h-56 w-full rounded-nx-lg" />
         </div>
       ) : isError ? (
-        <Card className="border-destructive/20 bg-destructive/5">
-          <CardContent className="flex flex-col items-center justify-center py-14 text-center">
-            <AlertTriangle className="mb-4 h-10 w-10 text-destructive" />
-            <p className="font-semibold">{t("common.error")}</p>
-            <Button className="mt-4" variant="outline" size="sm" onClick={() => refetch()}>
-              <RefreshCw className="me-2 h-4 w-4" />
-              {t("common.refresh")}
-            </Button>
-          </CardContent>
-        </Card>
+        <ErrorMessage message={t("common.error")} onRetry={() => refetch()} />
       ) : report ? (
         <div className="space-y-4">
-          {/* Status card */}
           <ReportStatusCard
             report={report}
             typeLabel={typeLabel}
@@ -108,36 +86,38 @@ export function ReportDetailView({ id }: { id: string }) {
             downloadExport={downloadExport}
           />
 
-          {/* MVP Info banner */}
-          <Card className="border-info/20 bg-info/5">
-            <CardContent className="flex items-start gap-3 p-4">
-              <FileText className="mt-0.5 h-4 w-4 shrink-0 text-info" />
-              <div>
-                <p className="text-sm font-medium text-info">{t("compliance.mvpExportTitle")}</p>
-                <p className="text-sm text-muted-foreground">{t("compliance.mvpExportDesc")}</p>
-              </div>
-            </CardContent>
-          </Card>
+          <Alert variant="info">
+            <Info className="h-4 w-4" aria-hidden="true" />
+            <AlertTitle>{t("compliance.mvpExportTitle")}</AlertTitle>
+            <AlertDescription>{t("compliance.mvpExportDesc")}</AlertDescription>
+          </Alert>
 
-          {/* Metadata grid */}
           <ReportMetadataGrid report={report} />
 
-          {/* Pending info banner */}
           {report.isPending && (
-            <Card className="border-info/20 bg-info/5">
-              <CardContent className="flex items-start gap-3 p-4">
-                <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-info" />
-                <div>
-                  <p className="font-medium text-info">{t("compliance.reportQueuedInfo")}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {t("compliance.reportQueuedDesc")}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <Alert variant="info">
+              {/* Static: the in-flight signal belongs on the status card, which
+                  is where the work is actually being reported. A banner glyph
+                  that spins is decoration. */}
+              <Clock className="h-4 w-4" aria-hidden="true" />
+              <AlertTitle>{t("compliance.reportQueuedInfo")}</AlertTitle>
+              <AlertDescription>{t("compliance.reportQueuedDesc")}</AlertDescription>
+            </Alert>
           )}
         </div>
-      ) : null}
+      ) : (
+        <EmptyState
+          icon={FileText}
+          title={t("compliance.reportNotFound")}
+          description={t("compliance.reportNotFoundDesc")}
+          action={
+            <Button variant="outline" onClick={() => router.push("/compliance/reports")}>
+              <BackIcon className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
+              {t("common.back")}
+            </Button>
+          }
+        />
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 
 type InfoVariant = "note" | "tip" | "warning" | "danger" | "info" | "success" | "caution";
@@ -20,6 +21,7 @@ const variantIcons: Record<InfoVariant, React.ReactNode> = {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-hidden="true"
     >
       <circle cx="12" cy="12" r="10" />
       <path d="M12 16v-4" />
@@ -35,6 +37,7 @@ const variantIcons: Record<InfoVariant, React.ReactNode> = {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-hidden="true"
     >
       <path d="M12 2v1" />
       <path d="M15.5 21a1.85 1.85 0 0 1-3.5-.1V21h-1a2 2 0 0 1-2-2v-1h7v1a2 2 0 0 1-2 2Z" />
@@ -51,6 +54,7 @@ const variantIcons: Record<InfoVariant, React.ReactNode> = {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-hidden="true"
     >
       <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
       <path d="M12 9v4" />
@@ -66,6 +70,7 @@ const variantIcons: Record<InfoVariant, React.ReactNode> = {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-hidden="true"
     >
       <circle cx="12" cy="12" r="10" />
       <path d="m15 9-6 6" />
@@ -81,6 +86,7 @@ const variantIcons: Record<InfoVariant, React.ReactNode> = {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-hidden="true"
     >
       <rect x="3" y="3" width="18" height="18" rx="3" ry="3" />
       <path d="M12 8h.01" />
@@ -96,6 +102,7 @@ const variantIcons: Record<InfoVariant, React.ReactNode> = {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-hidden="true"
     >
       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
       <path d="m9 11 3 3L22 4" />
@@ -110,6 +117,7 @@ const variantIcons: Record<InfoVariant, React.ReactNode> = {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-hidden="true"
     >
       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Z" />
       <path d="M12 8v5" />
@@ -121,19 +129,25 @@ const variantIcons: Record<InfoVariant, React.ReactNode> = {
 /**
  * InfoBlock — Renders a callout/alert box with one of 7 semantic variants.
  * Supports: note, tip, warning, danger, info, success, caution.
+ *
+ * An <aside> rather than a <div>: a callout is a complementary aside to the
+ * surrounding prose, and naming it with its own heading lets a screen-reader
+ * user skip it or jump straight to it. It is deliberately NOT role="alert" —
+ * the copy is static page content, not something that just happened.
  */
 export function InfoBlock({ variant, contentKey, titleKey }: InfoBlockProps) {
   const { t } = useDocsI18n();
+  const titleId = useId();
 
   return (
-    <div className="docs-info" data-variant={variant}>
+    <aside className="docs-info" data-variant={variant} aria-labelledby={titleId}>
       {variantIcons[variant]}
       <div>
-        <strong style={{ display: "block", marginBottom: "0.25rem" }}>
+        <p id={titleId} className="docs-info-title">
           {titleKey ? t(titleKey) : t(`info.${variant}`)}
-        </strong>
-        {t(contentKey)}
+        </p>
+        <p className="docs-info-body">{t(contentKey)}</p>
       </div>
-    </div>
+    </aside>
   );
 }

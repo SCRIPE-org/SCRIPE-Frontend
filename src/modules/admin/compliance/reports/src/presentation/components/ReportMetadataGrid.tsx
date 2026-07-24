@@ -1,9 +1,9 @@
 "use client";
 
-import * as React from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Card, CardContent } from "@core/ui/card";
-import { Calendar, CheckCircle2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { DetailRow } from "@core/ui/detail-row";
+import { Calendar, CheckCircle2, Hash } from "lucide-react";
 import { ComplianceReport } from "../../domain/entities/ComplianceReport";
 import { formatUtc } from "@core/common/utils";
 
@@ -11,46 +11,55 @@ interface ReportMetadataGridProps {
   report: ComplianceReport;
 }
 
+const DATE_PATTERN = "MMM d, yyyy";
+
+// A date the report does not carry, rather than a zero the reader would trust.
+const NO_VALUE = "—";
+
 /**
  * ReportMetadataGrid Component
  *
- * Renders the grid display showing metadata fields for the compliance report,
- * specifically the period start, period end, and generation timestamp.
+ * Renders the report's identity and reporting window as label/value rows: the
+ * id, the period bounds and the generation timestamp. It was three separate
+ * cards of unlabelled figures, which read as three unrelated statistics rather
+ * than one record's metadata.
  */
 export function ReportMetadataGrid({ report }: ReportMetadataGridProps) {
   const { t } = useI18n();
 
-  const items = [
-    {
-      label: t("compliance.periodStart"),
-      value: formatUtc(report.periodStart, "MMM d, yyyy") || "—",
-      icon: <Calendar className="h-3.5 w-3.5" />,
-    },
-    {
-      label: t("compliance.periodEnd"),
-      value: formatUtc(report.periodEnd, "MMM d, yyyy") || "—",
-      icon: <Calendar className="h-3.5 w-3.5" />,
-    },
-    {
-      label: t("compliance.period"),
-      value: formatUtc(report.generatedAt, "MMM d, yyyy") || "—",
-      icon: <CheckCircle2 className="h-3.5 w-3.5" />,
-    },
-  ];
-
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-      {items.map((item) => (
-        <Card key={item.label} className="border-border/50">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              {item.icon}
-              {item.label}
-            </div>
-            <p className="mt-1 font-semibold">{item.value}</p>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">{t("compliance.reportMetadata")}</CardTitle>
+      </CardHeader>
+      <CardContent className="divide-y divide-nx-line">
+        <DetailRow
+          className="pb-3"
+          icon={Hash}
+          label={t("compliance.reportId")}
+          value={report.id}
+          mono
+          copyable={report.id}
+        />
+        <DetailRow
+          className="py-3"
+          icon={Calendar}
+          label={t("compliance.periodStart")}
+          value={formatUtc(report.periodStart, DATE_PATTERN) || NO_VALUE}
+        />
+        <DetailRow
+          className="py-3"
+          icon={Calendar}
+          label={t("compliance.periodEnd")}
+          value={formatUtc(report.periodEnd, DATE_PATTERN) || NO_VALUE}
+        />
+        <DetailRow
+          className="pt-3"
+          icon={CheckCircle2}
+          label={t("compliance.generatedAt")}
+          value={formatUtc(report.generatedAt, DATE_PATTERN) || NO_VALUE}
+        />
+      </CardContent>
+    </Card>
   );
 }

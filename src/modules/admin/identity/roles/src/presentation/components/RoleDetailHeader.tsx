@@ -1,11 +1,18 @@
 /**
  * Role Detail View Header Component
  *
- * Header with breadcrumbs, role title, and save action.
+ * The standard opening of a record page: breadcrumb eyebrow, the accent icon
+ * tile, the role's name, its code, and the save action.
+ *
+ * It used to hand-assemble that anatomy — an `h1` at `text-2xl` (two steps
+ * louder than the system's own page title), no icon tile, and its own
+ * title/actions flex row. Composing PageHeader means the role page opens
+ * exactly like every other record page in the product.
  */
-import { Save } from "lucide-react";
+import { Save, Shield } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
+import { PageHeader } from "@core/ui/page-header";
 import { PageBreadcrumbs } from "@core/ui/page-breadcrumbs";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { Role } from "../../domain/entities/Role";
@@ -29,38 +36,28 @@ export function RoleDetailHeader({ role, isLoading, isSaving, onSave }: RoleDeta
   const roleName = language === "ar" ? role?.nameAr : role?.nameEn;
   const breadcrumbSegments = [
     { label: t("roles.title"), href: "/roles" },
-    { label: isLoading ? "..." : roleName || t("roles.roleDetails") },
+    { label: isLoading ? t("common.loading") : roleName || t("roles.roleDetails") },
   ];
 
   return (
-    <div className="space-y-4">
-      {/* Breadcrumbs */}
-      <PageBreadcrumbs segments={breadcrumbSegments} />
-
-      {/* Title and Save Button */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          {isLoading ? (
-            <>
-              <Skeleton className="h-8 w-48" />
-              <Skeleton className="mt-1.5 h-4 w-32" />
-            </>
-          ) : (
-            <>
-              <h1 className="truncate text-2xl font-semibold tracking-tight text-nx-ink">
-                {roleName}
-              </h1>
-              <span className="mt-0.5 block truncate font-mono text-sm text-nx-ink-3">
-                {role?.code}
-              </span>
-            </>
-          )}
-        </div>
+    <PageHeader
+      // The detail view already owns the page rhythm in its own stack; the
+      // header's default bottom margin would double the gap under it.
+      className="mb-0"
+      icon={Shield}
+      eyebrow={<PageBreadcrumbs segments={breadcrumbSegments} />}
+      // The placeholder keeps the heading's box while the name is in flight, so
+      // the save action does not jump down the moment the record lands.
+      title={isLoading ? <Skeleton className="h-6 w-48" /> : (roleName ?? "")}
+      // The code is an identifier, and identifiers stay mono here — the list
+      // column and the info card render it the same way.
+      description={role?.code ? <span className="font-mono">{role.code}</span> : undefined}
+      actions={
         <Button onClick={onSave} loading={isSaving} disabled={isLoading} className="shrink-0">
           {!isSaving && <Save className="me-2 h-4 w-4" aria-hidden="true" />}
           {isSaving ? t("common.saving") : t("common.saveChanges")}
         </Button>
-      </div>
-    </div>
+      }
+    />
   );
 }

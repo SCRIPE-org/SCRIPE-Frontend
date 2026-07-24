@@ -1229,6 +1229,8 @@ const shared = {
     english: "الإنجليزية",
   },
   common: {
+    included: "مُضمَّن",
+    notIncluded: "غير مُضمَّن",
     welcomeBack: "مرحباً بعودتك، {{name}}",
     gettingReady: "نحن نقوم بتجهيز كل شيء من أجلك...",
     free: "مجانا",

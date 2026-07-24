@@ -1,11 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
-import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@core/ui/form";
+import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import { Share2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
@@ -31,21 +40,29 @@ interface SocialEntry {
   enabled: boolean;
 }
 
+interface SocialBlockForm {
+  iconStyle: "colored" | "mono";
+  /** Alignment inside the EMAIL, which is a physical box — not a logical one. */
+  alignment: "left" | "center" | "right";
+  shape: "circle" | "rounded";
+  entries: SocialEntry[];
+}
+
 // ─── Platform Definitions with SVG Paths ────────────────────
 // SVG paths from Simple Icons (https://simpleicons.org/) — MIT licensed
 //
-// COLOUR EXCEPTION — brandColor below is each identity provider's own mark
-// (same rule as brand-icons.tsx: Facebook blue is Facebook's, not ours;
-// re-tinting it to the workspace accent makes the icon unrecognisable).
-// MONO_ICON_COLOR is a genuine neutral, not a brand color, but it is ALSO
-// literal: both values end up as an inline background-color in HTML emailed
-// to a third-party mail client, which will not resolve var(--nx-*) custom
-// properties. The white glyph fill (fill="#ffffff") is literal for the same
-// reason and because it must stay legible against whichever of the two
-// literal circle colors is active — it cannot be currentColor. Everything
-// else — the settings panel's borders, radii, panel backgrounds — is
-// structural UI chrome and reads --nx- tokens as normal.
+// COLOUR EXCEPTION — brandColor below is each platform's own mark (same rule as
+// brand-icons.tsx: Facebook blue is Facebook's, not ours; re-tinting it to the
+// workspace accent makes the icon unrecognisable). MONO_ICON_COLOR is a genuine
+// neutral rather than a brand colour, but it is ALSO literal: both values end up
+// as an inline background-color in HTML emailed to a third-party mail client,
+// which will not resolve var(--nx-*) custom properties. The glyph fill inside
+// the generated data URI is literal white for the same reason, and because it
+// must stay legible against whichever of the two circle colours is active — it
+// cannot ride currentColor through a data URI. Everything else in this panel —
+// borders, radii, surfaces, ink — is structural chrome on --nx- tokens.
 const MONO_ICON_COLOR = "#6b7280";
+const EMAIL_GLYPH_FILL = "#ffffff";
 
 const PLATFORMS: SocialPlatform[] = [
   {
@@ -122,41 +139,48 @@ const PLATFORMS: SocialPlatform[] = [
   },
 ];
 
+const DEFAULT_FORM: SocialBlockForm = {
+  iconStyle: "colored",
+  alignment: "center",
+  shape: "circle",
+  entries: PLATFORMS.map((p) => ({ platformId: p.id, url: p.defaultUrl, enabled: false })),
+};
+
+const platformOf = (platformId: string): SocialPlatform =>
+  PLATFORMS.find((p) => p.id === platformId)!;
+
 // ─── Helper: build inline SVG data URI for email ────────────
-function buildSvgDataUri(svgPath: string, fillColor: string = "#ffffff"): string {
+function buildSvgDataUri(svgPath: string, fillColor: string = EMAIL_GLYPH_FILL): string {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${fillColor}" width="20" height="20"><path d="${svgPath}"/></svg>`;
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }
 
 // ─── Main Component ─────────────────────────────────────────
 export function SocialBlock({ onInsert }: SocialBlockProps) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
-  const [entries, setEntries] = useState<SocialEntry[]>(
-    PLATFORMS.map((p) => ({
-      platformId: p.id,
-      url: p.defaultUrl,
-      enabled: false,
-    }))
-  );
-  const [iconStyle, setIconStyle] = useState<"colored" | "mono">("colored");
-  const [alignment, setAlignment] = useState<"left" | "center" | "right">("center");
-  const [shape, setShape] = useState<"circle" | "rounded">("circle");
-
-  const updateEntry = (platformId: string, updates: Partial<SocialEntry>) => {
-    setEntries((prev) => prev.map((e) => (e.platformId === platformId ? { ...e, ...updates } : e)));
-  };
+  const form = useForm<SocialBlockForm>({ defaultValues: DEFAULT_FORM });
+  // useWatch, not form.watch(): watch() hands back a function the React
+  // Compiler cannot memoize, so the whole component drops out of compilation.
+  // The defaultValue makes every key present, which is what the cast asserts.
+  const { iconStyle, alignment, shape, entries } = useWatch({
+    control: form.control,
+    defaultValue: DEFAULT_FORM,
+  }) as SocialBlockForm;
 
   const enabledEntries = entries.filter((e) => e.enabled);
 
+  const circleColor = (platform: SocialPlatform) =>
+    iconStyle === "colored" ? platform.brandColor : platform.monoColor;
+
   // Generate email-safe TABLE-based social icons HTML
   const generateHtml = (): string => {
-    const align = alignment;
     const cells = enabledEntries
       .map((entry) => {
-        const platform = PLATFORMS.find((p) => p.id === entry.platformId)!;
-        const bgColor = iconStyle === "colored" ? platform.brandColor : platform.monoColor;
+        const platform = platformOf(entry.platformId);
+        const bgColor = circleColor(platform);
         const borderRadius = shape === "circle" ? "50%" : "6px";
-        const iconUri = buildSvgDataUri(platform.svgPath, "#ffffff");
+        const iconUri = buildSvgDataUri(platform.svgPath);
 
         return `<td style="padding:0 4px;"><a href="${entry.url}" target="_blank" rel="noopener noreferrer" title="${platform.label}" style="display:inline-block;width:36px;height:36px;border-radius:${borderRadius};background-color:${bgColor};text-align:center;line-height:36px;text-decoration:none;"><img src="${iconUri}" alt="${platform.label}" width="20" height="20" style="vertical-align:middle;border:0;"/></a></td>`;
       })
@@ -169,7 +193,7 @@ export function SocialBlock({ onInsert }: SocialBlockProps) {
     if (enabledEntries.length === 0) return;
     onInsert({
       html: generateHtml(),
-      label: `Social Links (${enabledEntries.length})`,
+      label: t("editorBlocks.social.blockLabel", { count: enabledEntries.length }),
       blockType: "social",
     });
     setOpen(false);
@@ -183,154 +207,210 @@ export function SocialBlock({ onInsert }: SocialBlockProps) {
           variant="ghost"
           size="sm"
           className="h-8 gap-1.5 px-2 text-xs font-medium"
-          title="Social Media Links"
+          aria-label={t("editorBlocks.social.triggerLabel")}
         >
-          <Share2 className="h-4 w-4" />
-          <span className="hidden sm:inline">Social</span>
+          <Share2 className="h-4 w-4" aria-hidden="true" />
+          <span className="hidden sm:inline">{t("editorBlocks.social.trigger")}</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="start" side="bottom" sideOffset={8}>
-        <div className="max-h-[70vh] space-y-4 overflow-y-auto overscroll-contain p-4">
-          <h4 className="text-sm font-semibold">Social Media Links</h4>
+      {/* PopoverContent already caps its own height against the viewport and
+          scrolls with overscroll containment — the panel does not re-cut it. */}
+      <PopoverContent className="w-80" align="start" side="bottom" sideOffset={8}>
+        <Form {...form}>
+          <div className="space-y-4">
+            <h4 className="text-sm font-semibold text-nx-ink">
+              {t("editorBlocks.social.title")}
+            </h4>
 
-          {/* Settings */}
-          <div className="grid grid-cols-3 gap-2">
-            <div className="space-y-1">
-              <Label className="text-xs">Style</Label>
-              <Select
-                value={iconStyle}
-                onValueChange={(v) => setIconStyle(v as "colored" | "mono")}
-              >
-                <SelectTrigger className="h-8 text-xs">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="colored">Colored</SelectItem>
-                  <SelectItem value="mono">Mono</SelectItem>
-                </SelectContent>
-              </Select>
+            {/* Settings */}
+            <div className="grid grid-cols-3 gap-2">
+              <FormField
+                control={form.control}
+                name="iconStyle"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-xs">{t("editorBlocks.social.style")}</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger className="h-8 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="colored">
+                          {t("editorBlocks.social.styleColored")}
+                        </SelectItem>
+                        <SelectItem value="mono">{t("editorBlocks.social.styleMono")}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="shape"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-xs">{t("editorBlocks.social.shape")}</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger className="h-8 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="circle">
+                          {t("editorBlocks.social.shapeCircle")}
+                        </SelectItem>
+                        <SelectItem value="rounded">
+                          {t("editorBlocks.social.shapeRounded")}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="alignment"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-xs">{t("editorBlocks.social.align")}</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger className="h-8 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="left">{t("editorBlocks.social.alignLeft")}</SelectItem>
+                        <SelectItem value="center">
+                          {t("editorBlocks.social.alignCenter")}
+                        </SelectItem>
+                        <SelectItem value="right">{t("editorBlocks.social.alignRight")}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-            <div className="space-y-1">
-              <Label className="text-xs">Shape</Label>
-              <Select value={shape} onValueChange={(v) => setShape(v as "circle" | "rounded")}>
-                <SelectTrigger className="h-8 text-xs">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="circle">Circle</SelectItem>
-                  <SelectItem value="rounded">Rounded</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs">Align</Label>
-              <Select
-                value={alignment}
-                onValueChange={(v) => setAlignment(v as "left" | "center" | "right")}
-              >
-                <SelectTrigger className="h-8 text-xs">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="left">Left</SelectItem>
-                  <SelectItem value="center">Center</SelectItem>
-                  <SelectItem value="right">Right</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
 
-          {/* Platform List with SVG brand icons */}
-          <div className="space-y-2">
-            {entries.map((entry) => {
-              const platform = PLATFORMS.find((p) => p.id === entry.platformId)!;
-              const bgColor = iconStyle === "colored" ? platform.brandColor : platform.monoColor;
-              return (
-                <div
-                  key={entry.platformId}
-                  className={cn(
-                    "space-y-1.5 rounded-nx-md border p-2 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                    entry.enabled
-                      ? "border-nx-accent bg-nx-accent-wash"
-                      : "border-nx-line opacity-60"
-                  )}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="flex h-7 w-7 items-center justify-center rounded-full"
-                        style={{ backgroundColor: bgColor }}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="#ffffff"
-                          className="h-4 w-4"
-                        >
-                          <path d={platform.svgPath} />
-                        </svg>
-                      </span>
-                      <span className="text-sm font-medium">{platform.label}</span>
-                    </div>
-                    <Switch
-                      checked={entry.enabled}
-                      onCheckedChange={(v) => updateEntry(entry.platformId, { enabled: v })}
-                    />
-                  </div>
-                  {entry.enabled && (
-                    <Input
-                      value={entry.url}
-                      onChange={(e) =>
-                        updateEntry(entry.platformId, {
-                          url: e.target.value,
-                        })
-                      }
-                      placeholder={platform.defaultUrl}
-                      className="h-7 text-xs"
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Preview */}
-          {enabledEntries.length > 0 && (
-            <div
-              className="rounded-nx-md border border-nx-line bg-nx-ground p-3"
-              style={{ textAlign: alignment }}
-            >
-              {enabledEntries.map((entry) => {
-                const platform = PLATFORMS.find((p) => p.id === entry.platformId)!;
-                const bgColor = iconStyle === "colored" ? platform.brandColor : platform.monoColor;
+            {/* Platform List with SVG brand icons */}
+            <div className="space-y-2">
+              {entries.map((entry, index) => {
+                const platform = platformOf(entry.platformId);
                 return (
-                  <span
+                  <div
                     key={entry.platformId}
                     className={cn(
-                      "mx-0.5 inline-flex h-9 w-9 items-center justify-center text-white",
-                      shape === "circle" ? "rounded-full" : "rounded-nx-sm"
+                      "space-y-1.5 rounded-nx-md border p-2 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                      // Off is a hairline on the panel surface, not the whole
+                      // card dimmed: an opacity wash took the brand swatch and
+                      // its label below the measured contrast floor with it.
+                      entry.enabled ? "border-nx-accent bg-nx-accent-wash" : "border-nx-line"
                     )}
-                    style={{ backgroundColor: bgColor }}
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="#ffffff"
-                      className="h-5 w-5"
-                    >
-                      <path d={platform.svgPath} />
-                    </svg>
-                  </span>
+                    <FormField
+                      control={form.control}
+                      name={`entries.${index}.enabled` as const}
+                      render={({ field }) => (
+                        <FormItem className="flex items-center justify-between gap-2 space-y-0">
+                          <FormLabel className="gap-2 text-sm font-medium text-nx-ink">
+                            <span
+                              className="flex h-7 w-7 items-center justify-center rounded-full"
+                              style={{ backgroundColor: circleColor(platform) }}
+                            >
+                              <svg
+                                viewBox="0 0 24 24"
+                                className="h-4 w-4 fill-nx-on-fill"
+                                aria-hidden="true"
+                              >
+                                <path d={platform.svgPath} />
+                              </svg>
+                            </span>
+                            {platform.label}
+                          </FormLabel>
+                          <FormControl>
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    {entry.enabled && (
+                      <FormField
+                        control={form.control}
+                        name={`entries.${index}.url` as const}
+                        render={({ field }) => (
+                          <FormItem className="space-y-1">
+                            {/* The platform name is already on screen one row
+                                up; repeating it visibly would be noise, but the
+                                field still needs a name of its own. */}
+                            <FormLabel className="sr-only">
+                              {t("editorBlocks.social.url", { platform: platform.label })}
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder={platform.defaultUrl}
+                                className="h-7 text-xs"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+                  </div>
                 );
               })}
             </div>
-          )}
 
-          {/* Insert */}
-          <Button onClick={handleInsert} className="w-full" disabled={enabledEntries.length === 0}>
-            Insert Social Links ({enabledEntries.length})
-          </Button>
-        </div>
+            {/* Preview */}
+            {enabledEntries.length > 0 && (
+              <div
+                role="group"
+                aria-label={t("editorBlocks.common.preview")}
+                className="rounded-nx-md border border-nx-line bg-nx-ground p-3"
+                style={{ textAlign: alignment }}
+              >
+                {enabledEntries.map((entry) => {
+                  const platform = platformOf(entry.platformId);
+                  return (
+                    <span
+                      key={entry.platformId}
+                      className={cn(
+                        "mx-0.5 inline-flex h-9 w-9 items-center justify-center",
+                        shape === "circle" ? "rounded-full" : "rounded-nx-sm"
+                      )}
+                      style={{ backgroundColor: circleColor(platform) }}
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        className="h-5 w-5 fill-nx-on-fill"
+                        aria-hidden="true"
+                      >
+                        <path d={platform.svgPath} />
+                      </svg>
+                    </span>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Insert */}
+            <Button
+              type="button"
+              onClick={handleInsert}
+              className="w-full"
+              disabled={enabledEntries.length === 0}
+            >
+              {t("editorBlocks.social.insert", { count: enabledEntries.length })}
+            </Button>
+          </div>
+        </Form>
       </PopoverContent>
     </Popover>
   );

@@ -40,6 +40,17 @@ import type { PermissionAssignmentJson } from "../../domain/types/PermissionType
 // flat list under the module — the two-tier model the design calls for.
 const CORE_ACTIONS = ["view", "create", "update", "delete"] as const;
 
+// The grid columns are a closed set, so their headings come from the shared
+// action vocabulary instead of a humanised backend token — "View" / "Create"
+// were reaching the Arabic build untranslated, as both the column label and the
+// select-all checkbox's accessible name.
+const CORE_ACTION_LABEL_KEYS: Record<(typeof CORE_ACTIONS)[number], string> = {
+  view: "common.view",
+  create: "common.create",
+  update: "common.update",
+  delete: "common.delete",
+};
+
 /**
  * Interface defining property specifications, keys types, and structural contract rules for permission module matrix props.
  */
@@ -69,7 +80,7 @@ function isCustomConfig(assignment?: PermissionAssignmentJson): boolean {
   return !!assignment.scopeOverride && EXPLICIT_SCOPES.has(assignment.scopeOverride);
 }
 
-/** Humanise an action / code token for a header or fallback label ("view_details" → "View details"). */
+/** Last-resort label for an action token the vocabulary does not name ("view_details" → "View details"). */
 function humanize(token: string): string {
   const spaced = token.replace(/_/g, " ").trim();
   return spaced.charAt(0).toUpperCase() + spaced.slice(1);
@@ -226,9 +237,16 @@ function MatrixTable({
   onToggleGroup,
   onUpdateConfig,
 }: MatrixTableProps) {
+  const { t } = useI18n();
+
   // Column select-all reaches every real cell in that action's column across the module.
   const columnPerms = (col: number): Permission[] =>
     rows.map((r) => r.cells[col]).filter((p): p is Permission => !!p);
+
+  const actionLabel = (action: string): string => {
+    const key = CORE_ACTION_LABEL_KEYS[action as (typeof CORE_ACTIONS)[number]];
+    return key ? t(key) : humanize(action);
+  };
 
   return (
     <table className="w-full border-collapse text-sm">
@@ -238,6 +256,7 @@ function MatrixTable({
           {coreActions.map((action, col) => {
             const perms = columnPerms(col);
             const selected = perms.filter((p) => selectedPermissionCodes.has(p.code)).length;
+            const label = actionLabel(action);
             return (
               <th key={action} scope="col" className="w-[92px] px-2 py-2 align-bottom">
                 <div className="flex flex-col items-center gap-1">
@@ -246,9 +265,9 @@ function MatrixTable({
                     selected={selected}
                     disabled={perms.length === 0}
                     onToggle={() => onToggleGroup(perms)}
-                    label={humanize(action)}
+                    label={label}
                   />
-                  <span className="text-[11px] font-medium text-nx-ink-3">{humanize(action)}</span>
+                  <span className="text-[11px] font-medium text-nx-ink-3">{label}</span>
                 </div>
               </th>
             );

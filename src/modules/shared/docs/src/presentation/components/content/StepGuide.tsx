@@ -15,12 +15,16 @@ interface StepGuideProps {
 export function StepGuide({ steps }: StepGuideProps) {
   const { t } = useDocsI18n();
 
+  // An ordered list: the sequence is the meaning here, and <ol> is what tells
+  // a screen reader "step 2 of 5" without the number disc being read as text.
   return (
-    <div className="docs-steps">
+    <ol className="docs-steps">
       {steps.map((step, idx) => (
-        <div key={idx} className="docs-step">
-          <div className="docs-step-number">{idx + 1}</div>
-          <div className="docs-step-title">{t(step.titleKey)}</div>
+        <li key={idx} className="docs-step">
+          <span className="docs-step-number" aria-hidden="true">
+            {idx + 1}
+          </span>
+          <h4 className="docs-step-title">{t(step.titleKey)}</h4>
           <div className="docs-step-content">{t(step.contentKey)}</div>
           {step.code && (
             <div style={{ marginTop: "0.75rem" }}>
@@ -31,8 +35,8 @@ export function StepGuide({ steps }: StepGuideProps) {
               />
             </div>
           )}
-        </div>
+        </li>
       ))}
-    </div>
+    </ol>
   );
 }

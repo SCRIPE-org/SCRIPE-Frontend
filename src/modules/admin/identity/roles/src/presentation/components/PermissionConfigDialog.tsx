@@ -169,7 +169,7 @@ export function PermissionConfigDialog({
                 disabled={!canAddField}
                 aria-label={t("common.add")}
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="h-4 w-4" aria-hidden="true" />
               </Button>
             </div>
 

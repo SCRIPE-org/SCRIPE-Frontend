@@ -6,18 +6,22 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useRegulationViewModel } from "../viewmodels/useRegulationViewModel";
 import { Button } from "@core/ui/button";
-import { Card, CardContent } from "@core/ui/card";
+import { PageHeader } from "@core/ui/page-header";
 import { EmptyState } from "@core/ui/empty-state";
+import { ErrorMessage } from "@core/ui/error-message";
 import { Skeleton } from "@core/ui/skeleton";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericForm } from "@core/ui/forms/generic-form";
 import { usePermission } from "@core/hooks/use-permission";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useAppStore } from "@core/store/useAppStore";
-import { ChevronLeft, ChevronRight, RefreshCw, AlertTriangle, BookOpen, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, RefreshCw, BookOpen, Plus } from "lucide-react";
 import { RegulationCard } from "../components/RegulationCard";
 
 import type { Regulation } from "../../domain/entities/Regulation";
+
+// Loading and loaded share one grid so the page does not resettle on arrival.
+const CARD_GRID = "grid grid-cols-1 gap-6 lg:grid-cols-2";
 
 /**
  * Presentation UI component rendering the regulation view.
@@ -45,7 +49,6 @@ export function RegulationView() {
     refetch,
     createRegulation,
     updateRegulation,
-    isMutating,
     getFormFields,
   } = useRegulationViewModel();
 
@@ -93,68 +96,66 @@ export function RegulationView() {
     };
   }, [modalMode, selectedRegulation]);
 
+  const activeCount = regulations.filter((regulation) => regulation.isActive).length;
+
+  const addButton = (
+    <Button onClick={openCreateModal} size="sm">
+      <Plus className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
+      {t("compliance.regulations.addRegulation")}
+    </Button>
+  );
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 shrink-0"
-            onClick={() => router.push("/compliance")}
-          >
-            <BackIcon className="h-4 w-4" />
+    <div className="flex flex-col" style={{ gap: "calc(var(--spacing-unit) * 1.5)" }}>
+      <PageHeader
+        className="mb-0"
+        icon={BookOpen}
+        title={t("compliance.regulations.title")}
+        description={t("compliance.regulations.description")}
+        eyebrow={
+          <Button variant="ghost" size="sm" onClick={() => router.push("/compliance")}>
+            <BackIcon className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
+            {t("common.back")}
           </Button>
-          <div className="flex items-center gap-3">
-            <div className="rounded-xl border border-info/20 bg-gradient-to-br from-info/15 to-info/10 p-2.5 shadow-sm">
-              <BookOpen className="h-5 w-5 text-info" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight">
-                {t("compliance.regulations.title")}
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                {t("compliance.regulations.description")}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button
-            id="compliance-regulations-refresh"
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-          >
-            <RefreshCw className={`me-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-            {t("common.refresh")}
-          </Button>
-          {canCreate && (
-            <Button onClick={openCreateModal} size="sm" className="gradient-primary">
-              <Plus className="me-2 h-4 w-4" />
-              {t("compliance.regulations.addRegulation")}
+        }
+        meta={[
+          { label: t("common.total"), value: regulations.length.toLocaleString() },
+          { label: t("compliance.regulations.active"), value: activeCount.toLocaleString() },
+        ]}
+        actions={
+          <>
+            <Button
+              id="compliance-regulations-refresh"
+              variant="outline"
+              size="sm"
+              onClick={() => refetch()}
+              loading={isLoading}
+            >
+              {!isLoading && <RefreshCw className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />}
+              {t("common.refresh")}
             </Button>
-          )}
-        </div>
-      </div>
+            {canCreate && addButton}
+          </>
+        }
+      />
 
       {isLoading ? (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-[250px] rounded-xl" />
+        <div className={CARD_GRID} role="status" aria-busy="true" aria-label={t("common.loading")}>
+          {Array.from({ length: 4 }).map((_, index) => (
+            <Skeleton key={index} className="h-64 w-full rounded-nx-lg" />
           ))}
         </div>
       ) : isError ? (
-        <Card className="border-destructive/20 bg-destructive/5">
-          <CardContent className="flex flex-col items-center justify-center py-14 text-center">
-            <AlertTriangle className="mb-4 h-10 w-10 text-destructive" />
-            <p className="font-semibold">{t("common.error")}</p>
-          </CardContent>
-        </Card>
+        <ErrorMessage message={t("compliance.regulations.loadFailed")} onRetry={() => refetch()} />
       ) : regulations.length === 0 ? (
-        <EmptyState icon={BookOpen} title={t("compliance.regulations.noRegulations")} />
+        <EmptyState
+          icon={BookOpen}
+          title={t("compliance.regulations.noRegulations")}
+          description={t("compliance.regulations.noRegulationsDesc")}
+          action={canCreate ? addButton : undefined}
+        />
       ) : (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className={CARD_GRID}>
           {regulations.map((reg) => (
             <RegulationCard
               key={reg.id}

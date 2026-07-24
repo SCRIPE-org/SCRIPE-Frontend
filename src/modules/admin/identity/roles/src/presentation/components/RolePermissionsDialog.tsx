@@ -34,7 +34,14 @@ import { PermissionModuleMatrix } from "./PermissionModuleMatrix";
 import { PermissionTreeSkeleton } from "./PermissionTreeSkeleton";
 import { BulkScopeMenu } from "./BulkScopeMenu";
 
-interface RolePermissionsDialogProps {
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for role permissions dialog props.
+ *
+ * Exported because this dialog is the shared "manage permissions" surface: it is
+ * re-exported from the identity barrel and mounted from the tenant roles tab, so
+ * a consumer needs to be able to name the shape it is passing.
+ */
+export interface RolePermissionsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   role: Role | null;

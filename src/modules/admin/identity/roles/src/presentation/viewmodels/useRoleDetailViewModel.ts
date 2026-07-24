@@ -81,10 +81,13 @@ export interface PermissionTreeProps {
  * React hook/ViewModel orchestrating state and data flows for role detail view model.
  * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
-export function useRoleDetailViewModel() {
+export function useRoleDetailViewModel(roleIdOverride?: string) {
   const { t } = useI18n();
   const params = useParams();
-  const roleId = params.id as string;
+  // The route passes the id explicitly where it can; reading the dynamic
+  // segment stays the fallback so a bare `<RoleDetailView/>` under `roles/[id]`
+  // keeps working. Both resolve to the same value on that route.
+  const roleId = roleIdOverride ?? (params.id as string);
   const queryClient = useQueryClient();
   const { success, error: toastError } = useEnhancedToast();
   const { roleRepository } = identityContainer;
