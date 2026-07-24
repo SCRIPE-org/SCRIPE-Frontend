@@ -82,7 +82,7 @@ export default function ActivateWorkspaceView() {
             />
 
             <CardHeader className="space-y-4 text-center">
-              <div className="mx-auto flex h-14 w-14 animate-pulse items-center justify-center rounded-full bg-destructive/10 text-destructive">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 text-destructive">
                 <ShieldAlert className="h-8 w-8" />
               </div>
               <div className="space-y-2">

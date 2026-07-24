@@ -109,7 +109,7 @@ export function OAuthAppsView() {
       {vm.loading ? (
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <Card key={i} className="animate-pulse border border-border/40 bg-card/10">
+            <Card key={i} className="motion-safe:animate-pulse border border-border/40 bg-card/10">
               <CardContent className="h-24 p-6" />
             </Card>
           ))}

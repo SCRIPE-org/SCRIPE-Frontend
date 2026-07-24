@@ -160,7 +160,7 @@ export function OptionsEditorDialog({
             Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={i}
-                className="h-12 animate-pulse rounded-md border border-border bg-card/60"
+                className="h-12 animate-pulse rounded-md border border-border bg-card/60 motion-reduce:animate-none"
               />
             ))
           ) : vm.options.length === 0 && mode.kind === "idle" ? (

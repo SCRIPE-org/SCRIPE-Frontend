@@ -96,7 +96,7 @@ export function LeadsKanbanView({
                 SKELETON_HEIGHTS.map((h, i) => (
                   <div
                     key={i}
-                    className="animate-pulse rounded-lg border border-border bg-card/60"
+                    className="animate-pulse rounded-lg border border-border bg-card/60 motion-reduce:animate-none"
                     style={{ height: h }}
                   />
                 ))

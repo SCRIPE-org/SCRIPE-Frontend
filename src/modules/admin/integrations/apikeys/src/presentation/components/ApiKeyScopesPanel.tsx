@@ -116,7 +116,7 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
         </CardHeader>
         <CardContent className="flex-1 overflow-y-auto p-6 space-y-6 max-h-[540px]">
           {isLoading ? (
-            <div className="space-y-4 py-4 animate-pulse">
+            <div className="space-y-4 py-4 motion-safe:animate-pulse">
               <div className="h-4 bg-muted rounded w-1/4" />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {[...Array(6)].map((_, i) => (

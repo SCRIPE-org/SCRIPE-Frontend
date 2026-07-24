@@ -182,11 +182,11 @@ function TabSkeleton() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="h-24 animate-pulse rounded-xl border border-border/20 bg-muted/40"
+            className="h-24 animate-pulse rounded-xl border border-border/20 bg-muted/40 motion-reduce:animate-none"
           />
         ))}
       </div>
-      <div className="h-48 animate-pulse rounded-xl border border-border/20 bg-muted/40" />
+      <div className="h-48 animate-pulse rounded-xl border border-border/20 bg-muted/40 motion-reduce:animate-none" />
     </div>
   );
 }

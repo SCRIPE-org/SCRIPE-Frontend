@@ -47,7 +47,7 @@ export function DrawerTabComms({
           {t("leads.email.communicationsTitle")}
         </p>
         {isLoadingComms ? (
-          <div className="animate-pulse space-y-3">
+          <div className="animate-pulse space-y-3 motion-reduce:animate-none">
             {[1, 2].map((i) => (
               <div key={i} className="space-y-1">
                 <div className="h-3 w-40 rounded bg-muted" />

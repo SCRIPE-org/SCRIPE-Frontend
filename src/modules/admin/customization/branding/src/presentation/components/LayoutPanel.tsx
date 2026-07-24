@@ -628,7 +628,7 @@ export function LayoutPanel({
               value={pageOverride.customCss || ""}
               onChange={(e) => onUpdatePageField("customCss", e.target.value)}
               placeholder=".login-card { backdrop-filter: blur(20px); }"
-              className="h-16 resize-none bg-[#1e1e1e] font-mono text-xs text-[#cccccc]"
+              className="h-16 resize-none bg-muted/30 font-mono text-xs"
               spellCheck={false}
             />
           </div>

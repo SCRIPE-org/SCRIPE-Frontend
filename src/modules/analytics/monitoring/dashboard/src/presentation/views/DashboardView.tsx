@@ -77,8 +77,8 @@ const TenantAnalyticsView = dynamic(
 
 const connectionColors = {
   connected: "bg-success",
-  connecting: "bg-warning animate-pulse",
-  reconnecting: "bg-warning animate-pulse",
+  connecting: "bg-warning motion-safe:animate-pulse",
+  reconnecting: "bg-warning motion-safe:animate-pulse",
   disconnected: "bg-destructive",
 } as const;
 

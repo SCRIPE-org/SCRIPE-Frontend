@@ -67,7 +67,7 @@ export function ChangeActionBar({
             <div className="flex items-center justify-between gap-4">
               {/* Left: change indicator */}
               <div className="flex min-w-0 items-center gap-3">
-                <div className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-warning" />
+                <div className="h-2 w-2 shrink-0 rounded-full bg-warning" />
                 <div className="min-w-0">
                   <p className="text-sm font-medium">{t("entitlements.editions.pendingChanges")}</p>
                   <p className="text-xs text-muted-foreground">

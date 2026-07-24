@@ -124,7 +124,7 @@ export function MySubscriptionView() {
     return (
       <div className="mx-auto flex max-w-md flex-col items-center justify-center gap-6 py-20 text-center">
         <div className="relative">
-          <div className="absolute inset-0 animate-pulse rounded-full bg-gradient-to-r from-primary/20 to-primary/20 blur-2xl" />
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/20 to-primary/20 blur-2xl" />
           <div className="relative rounded-full border border-border/50 bg-gradient-to-br from-muted/50 to-muted p-6">
             <Crown className="h-12 w-12 text-muted-foreground" />
           </div>

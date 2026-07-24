@@ -72,7 +72,7 @@ export function UpcomingRenewalsTimeline({
                 <div
                   className={`h-2.5 w-2.5 shrink-0 rounded-full ${
                     sub.daysLeft <= 7
-                      ? "animate-pulse bg-destructive"
+                      ? "bg-destructive"
                       : sub.daysLeft <= 14
                         ? "bg-warning"
                         : "bg-success"

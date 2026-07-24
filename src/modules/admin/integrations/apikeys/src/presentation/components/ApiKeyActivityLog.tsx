@@ -191,7 +191,7 @@ export function ApiKeyActivityLog({
                 [...Array(5)].map((_, i) => (
                   <TableRow key={i}>
                     {[...Array(6)].map((_, j) => (
-                      <TableCell key={j}><div className="h-4 bg-muted animate-pulse rounded" /></TableCell>
+                      <TableCell key={j}><div className="h-4 bg-muted motion-safe:animate-pulse rounded" /></TableCell>
                     ))}
                   </TableRow>
                 ))

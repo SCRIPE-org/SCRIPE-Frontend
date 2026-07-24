@@ -23,7 +23,7 @@ export function ReviewsView() {
       {vm.isLoading ? (
         <div className="flex flex-col gap-3">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-24 animate-pulse rounded-xl bg-muted" />
+            <div key={i} className="h-24 motion-safe:animate-pulse rounded-xl bg-muted" />
           ))}
         </div>
       ) : vm.reviews.length === 0 ? (

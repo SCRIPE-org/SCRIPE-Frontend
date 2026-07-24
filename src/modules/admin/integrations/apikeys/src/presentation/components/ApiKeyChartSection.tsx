@@ -75,7 +75,7 @@ export function ApiKeyChartSection({ data, isLoading, onRangeChange }: ApiKeyCha
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="h-48 animate-pulse bg-muted/30 rounded-lg" />
+          <div className="h-48 motion-safe:animate-pulse bg-muted/30 rounded-lg" />
         ) : formatted.length === 0 ? (
           <div className="h-48 flex items-center justify-center text-sm text-muted-foreground">
             {t("apikeys.chart.noData") || "No data for this period"}
@@ -86,12 +86,12 @@ export function ApiKeyChartSection({ data, isLoading, onRangeChange }: ApiKeyCha
               <AreaChart data={formatted} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="successGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                    <stop offset="5%" stopColor="hsl(var(--success))" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="hsl(var(--success))" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="failureGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.2} />
-                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                    <stop offset="5%" stopColor="hsl(var(--destructive))" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="hsl(var(--destructive))" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -104,7 +104,7 @@ export function ApiKeyChartSection({ data, isLoading, onRangeChange }: ApiKeyCha
                     borderRadius: "calc(var(--radius) - 2px)",
                     color: "hsl(var(--popover-foreground))",
                     fontSize: "12px",
-                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)"
+                    boxShadow: "var(--nx-shadow-popover)"
                   }}
                   itemStyle={{
                     color: "hsl(var(--popover-foreground))"
@@ -116,8 +116,8 @@ export function ApiKeyChartSection({ data, isLoading, onRangeChange }: ApiKeyCha
                   }}
                 />
                 <Legend iconSize={10} wrapperStyle={{ fontSize: 11 }} />
-                <Area type="monotone" dataKey="successHits" stroke="#10b981" fill="url(#successGrad)" strokeWidth={2} name="Success" />
-                <Area type="monotone" dataKey="failureHits" stroke="#ef4444" fill="url(#failureGrad)" strokeWidth={2} name="Errors" />
+                <Area type="monotone" dataKey="successHits" stroke="hsl(var(--success))" fill="url(#successGrad)" strokeWidth={2} name="Success" />
+                <Area type="monotone" dataKey="failureHits" stroke="hsl(var(--destructive))" fill="url(#failureGrad)" strokeWidth={2} name="Errors" />
               </AreaChart>
             ) : view === "errors" ? (
               <BarChart data={formatted} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
@@ -131,7 +131,7 @@ export function ApiKeyChartSection({ data, isLoading, onRangeChange }: ApiKeyCha
                     borderRadius: "calc(var(--radius) - 2px)",
                     color: "hsl(var(--popover-foreground))",
                     fontSize: "12px",
-                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)"
+                    boxShadow: "var(--nx-shadow-popover)"
                   }}
                   itemStyle={{
                     color: "hsl(var(--popover-foreground))"
@@ -143,14 +143,14 @@ export function ApiKeyChartSection({ data, isLoading, onRangeChange }: ApiKeyCha
                   }}
                 />
                 <Legend iconSize={10} wrapperStyle={{ fontSize: 11 }} />
-                <Bar dataKey="errorRate" fill="#f59e0b" name="Error Rate %" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="errorRate" fill="hsl(var(--warning))" name="Error Rate %" radius={[3, 3, 0, 0]} />
               </BarChart>
             ) : (
               <AreaChart data={formatted} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="responseGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.2} />
-                    <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                    <stop offset="5%" stopColor="var(--nx-accent)" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="var(--nx-accent)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -163,7 +163,7 @@ export function ApiKeyChartSection({ data, isLoading, onRangeChange }: ApiKeyCha
                     borderRadius: "calc(var(--radius) - 2px)",
                     color: "hsl(var(--popover-foreground))",
                     fontSize: "12px",
-                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)"
+                    boxShadow: "var(--nx-shadow-popover)"
                   }}
                   itemStyle={{
                     color: "hsl(var(--popover-foreground))"
@@ -175,7 +175,7 @@ export function ApiKeyChartSection({ data, isLoading, onRangeChange }: ApiKeyCha
                   }}
                   formatter={(v: any) => [v !== undefined ? `${Number(v).toFixed(1)} ms` : "—", "Avg Response"]}
                 />
-                <Area type="monotone" dataKey="avgResponseTimeMs" stroke="#8b5cf6" fill="url(#responseGrad)" strokeWidth={2} name="Avg Response (ms)" />
+                <Area type="monotone" dataKey="avgResponseTimeMs" stroke="var(--nx-accent)" fill="url(#responseGrad)" strokeWidth={2} name="Avg Response (ms)" />
               </AreaChart>
             )}
           </ResponsiveContainer>

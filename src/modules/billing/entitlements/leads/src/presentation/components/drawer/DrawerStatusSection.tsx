@@ -123,14 +123,14 @@ export function DrawerStatusSection({
               {sendEmailToggle && (
                 <div className="space-y-4 border-t border-border/80 pt-4 duration-200 animate-in fade-in slide-in-from-top-1">
                   {isFetchingPreview ? (
-                    <div className="animate-pulse space-y-3 py-2">
+                    <div className="animate-pulse space-y-3 py-2 motion-reduce:animate-none">
                       <div className="h-4 w-1/4 rounded bg-muted" />
                       <div className="h-9 w-full rounded bg-muted" />
                       <div className="h-4 w-1/3 rounded bg-muted" />
                       <div className="h-28 w-full rounded bg-muted" />
                     </div>
                   ) : (
-                    <div className="space-y-4 rounded-lg border-s-2 border-info/80 bg-background/60 p-3.5">
+                    <div className="space-y-4 rounded-lg border border-info/25 bg-background/60 p-3.5">
                       <div className="flex items-center gap-2 border-b border-border/60 pb-1.5">
                         <Mail className="h-4 w-4 text-info" />
                         <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">

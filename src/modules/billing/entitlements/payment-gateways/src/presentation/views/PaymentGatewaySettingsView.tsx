@@ -63,7 +63,7 @@ function GatewayIcon({ gateway, size = 24 }: { gateway: string; size?: number })
     case "paymob":
       return <Wallet className={iconClass} style={{ color: "#00B2FF" }} />;
     default:
-      return <CreditCard className={iconClass} style={{ color: "#6b7280" }} />;
+      return <CreditCard className={`${iconClass} text-muted-foreground`} />;
   }
 }
 
@@ -110,7 +110,7 @@ function GatewayCard({
       {/* Gradient top bar */}
       <div
         className="absolute inset-x-0 top-0 h-1"
-        style={{ background: gw.enabled ? gw.color : "#6b7280" }}
+        style={{ background: gw.enabled ? gw.color : "hsl(var(--muted-foreground))" }}
       />
 
       <CardHeader className="pb-3">
@@ -119,7 +119,7 @@ function GatewayCard({
             <div
               className="flex h-12 w-12 items-center justify-center rounded-xl"
               style={{
-                background: gw.enabled ? `${gw.color}15` : "var(--muted)",
+                background: gw.enabled ? `${gw.color}15` : "hsl(var(--muted))",
               }}
             >
               <GatewayIcon gateway={gw.icon} size={24} />

@@ -303,7 +303,7 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
             value={jsonText}
             onChange={(e) => handleJsonChange(e.target.value)}
             placeholder='{ "email": "email", "firstName": "given_name" }'
-            className="min-h-[180px] resize-y border bg-[#1e1e1e] p-3 font-mono text-xs leading-relaxed text-emerald-400 focus-visible:ring-primary/50 dark:text-emerald-300"
+            className="min-h-[180px] resize-y border bg-nx-ground p-3 font-mono text-xs leading-relaxed text-emerald-400 focus-visible:ring-primary/50 dark:text-emerald-300"
           />
 
           {jsonError && (

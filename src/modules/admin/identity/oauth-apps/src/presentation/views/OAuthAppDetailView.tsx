@@ -154,7 +154,7 @@ export function OAuthAppDetailView({ appId }: Props) {
       {/* Dirty indicator */}
       {vm.isDirty && !vm.isCreateMode && (
         <div className="flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-xs text-warning duration-200 animate-in fade-in">
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-warning" />
+          <span className="h-1.5 w-1.5 rounded-full bg-warning" />
           {t("common.unsavedChanges") ||
             "You have unsaved changes in your workspace. Remember to save."}
         </div>

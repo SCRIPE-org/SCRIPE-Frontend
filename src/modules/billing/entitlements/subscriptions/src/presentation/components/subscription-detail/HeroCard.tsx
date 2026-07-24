@@ -63,7 +63,7 @@ export function HeroCard({ sub, vm, t }: HeroCardProps) {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-2">
-                <span className={cn("h-2.5 w-2.5 animate-pulse rounded-full", style.dotColor)} />
+                <span className={cn("h-2.5 w-2.5 rounded-full", style.dotColor)} />
                 {style.icon}
               </div>
               <Badge

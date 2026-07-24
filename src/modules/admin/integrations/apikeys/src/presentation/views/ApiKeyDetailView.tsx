@@ -56,11 +56,11 @@ export default function ApiKeyDetailView() {
   if (vm.isDetailLoading) {
     return (
       <div className="flex-1 space-y-6 p-6">
-        <div className="h-10 bg-muted animate-pulse rounded-lg w-1/3" />
-        <div className="h-24 bg-muted animate-pulse rounded-lg" />
+        <div className="h-10 bg-muted motion-safe:animate-pulse rounded-lg w-1/3" />
+        <div className="h-24 bg-muted motion-safe:animate-pulse rounded-lg" />
         <div className="grid md:grid-cols-3 gap-6">
-          <div className="md:col-span-2 h-64 bg-muted animate-pulse rounded-lg" />
-          <div className="h-64 bg-muted animate-pulse rounded-lg" />
+          <div className="md:col-span-2 h-64 bg-muted motion-safe:animate-pulse rounded-lg" />
+          <div className="h-64 bg-muted motion-safe:animate-pulse rounded-lg" />
         </div>
       </div>
     );

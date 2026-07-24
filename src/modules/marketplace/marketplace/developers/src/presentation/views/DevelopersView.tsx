@@ -35,7 +35,7 @@ export function DevelopersView() {
       {vm.isLoading ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-28 animate-pulse rounded-xl bg-muted" />
+            <div key={i} className="h-28 motion-safe:animate-pulse rounded-xl bg-muted" />
           ))}
         </div>
       ) : (

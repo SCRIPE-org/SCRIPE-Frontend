@@ -45,13 +45,10 @@ export function FloatingCompareButton({ label, targetRef }: FloatingCompareButto
       <button
         onClick={scrollToTable}
         className="pointer-events-auto flex items-center gap-2 rounded-full border border-primary/40 bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-2xl transition-all duration-200 ease-out animate-in fade-in slide-in-from-bottom-4 hover:scale-105 active:scale-95"
-        style={{
-          boxShadow: "0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.08) inset",
-        }}
       >
         <LayoutList className="h-4 w-4" />
         {label}
-        <ChevronDown className="h-4 w-4 animate-bounce" />
+        <ChevronDown className="h-4 w-4" />
       </button>
     </div>
   );

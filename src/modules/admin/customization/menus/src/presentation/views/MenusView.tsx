@@ -169,7 +169,7 @@ export function MenusView() {
             {vm.totalItems} {t("menus.items")}
           </Badge>
           {vm.isReordering && (
-            <Badge variant="outline" className="animate-pulse text-primary">
+            <Badge variant="outline" className="motion-safe:animate-pulse text-primary">
               {t("menus.saving") ?? "Saving..."}
             </Badge>
           )}

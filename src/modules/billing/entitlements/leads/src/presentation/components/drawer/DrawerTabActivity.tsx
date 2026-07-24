@@ -83,7 +83,7 @@ export function DrawerTabActivity({
           {t("leads.activity.title")}
         </p>
         {isLoadingActivity ? (
-          <div className="animate-pulse space-y-3">
+          <div className="animate-pulse space-y-3 motion-reduce:animate-none">
             {[1, 2, 3].map((i) => (
               <div key={i} className="flex gap-3">
                 <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-muted" />

@@ -37,7 +37,7 @@ export function SubmissionsView() {
       {vm.isLoading ? (
         <div className="flex flex-col gap-3">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-20 animate-pulse rounded-xl bg-muted" />
+            <div key={i} className="h-20 motion-safe:animate-pulse rounded-xl bg-muted" />
           ))}
         </div>
       ) : vm.submissions.length === 0 ? (

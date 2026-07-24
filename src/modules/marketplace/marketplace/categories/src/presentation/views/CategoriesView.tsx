@@ -40,7 +40,7 @@ export function CategoriesView() {
       {vm.isLoading ? (
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="h-24 animate-pulse rounded-xl bg-muted" />
+            <div key={i} className="h-24 motion-safe:animate-pulse rounded-xl bg-muted" />
           ))}
         </div>
       ) : vm.categories.length === 0 ? (

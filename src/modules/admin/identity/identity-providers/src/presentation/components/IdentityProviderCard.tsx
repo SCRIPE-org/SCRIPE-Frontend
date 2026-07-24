@@ -222,7 +222,7 @@ export function IdentityProviderCard({
             {isTesting ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
             ) : (
-              <Zap className="h-3.5 w-3.5 text-warning group-hover:animate-pulse" />
+              <Zap className="h-3.5 w-3.5 text-warning" />
             )}
             {t("identityProviders.testConnection") || "Test Connection"}
           </Button>

@@ -46,7 +46,7 @@ export function ApiKeyStatsCards({ stats, isLoading }: ApiKeyStatsCardsProps) {
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => (
-          <Card key={i}><CardContent className="pt-5 pb-4 px-5 h-24 animate-pulse bg-muted/30" /></Card>
+          <Card key={i}><CardContent className="pt-5 pb-4 px-5 h-24 motion-safe:animate-pulse bg-muted/30" /></Card>
         ))}
       </div>
     );

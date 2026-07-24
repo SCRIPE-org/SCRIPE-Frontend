@@ -225,7 +225,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                 <Button
                   onClick={() => setCreateStep(2)}
                   disabled={!vm.selectedTemplateId}
-                  className="bg-gradient-to-r from-[#A855F7] to-[#7C3AED] font-semibold text-white shadow hover:opacity-95"
+                  className="bg-gradient-to-r from-primary to-info font-semibold text-white shadow hover:opacity-95"
                 >
                   {t("identityProviders.btnConfigureConnection")}
                 </Button>
@@ -258,7 +258,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                 <Button
                   onClick={() => setCreateStep(3)}
                   disabled={!vm.form.name || !vm.form.slug}
-                  className="bg-gradient-to-r from-[#A855F7] to-[#7C3AED] font-semibold text-white shadow hover:opacity-95"
+                  className="bg-gradient-to-r from-primary to-info font-semibold text-white shadow hover:opacity-95"
                 >
                   {t("identityProviders.btnNextCustomize")}
                 </Button>
@@ -301,7 +301,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                   onClick={vm.save}
                   loading={vm.isSaving}
                   disabled={!vm.form.name || !vm.form.slug}
-                  className="bg-gradient-to-r from-[#A855F7] via-[#7C3AED] to-[#4F46E5] font-semibold text-white shadow-lg hover:scale-[1.01] hover:opacity-95"
+                  className="bg-gradient-to-r from-primary via-primary to-info font-semibold text-white shadow-lg hover:scale-[1.01] hover:opacity-95"
                 >
                   {t("identityProviders.btnCreateAndEnable")}
                 </Button>
@@ -366,7 +366,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
             disabled={!vm.isDirty}
             loading={vm.isSaving}
             size="sm"
-            className="bg-gradient-to-r from-[#A855F7] to-[#7C3AED] font-semibold text-white shadow hover:opacity-95"
+            className="bg-gradient-to-r from-primary to-info font-semibold text-white shadow hover:opacity-95"
           >
             {!vm.isSaving && <Save className="me-1.5 h-4 w-4" />}
             {t("common.save") || "Save Changes"}
@@ -377,7 +377,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
       {/* Dirty indicator warning */}
       {vm.isDirty && (
         <div className="flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-xs text-warning duration-200 animate-in fade-in">
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-warning" />
+          <span className="h-1.5 w-1.5 rounded-full bg-warning" />
           {t("common.unsavedChanges") ||
             "You have unsaved changes in your workspace. Remember to save."}
         </div>

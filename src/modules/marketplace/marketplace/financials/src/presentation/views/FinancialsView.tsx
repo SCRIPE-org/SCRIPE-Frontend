@@ -46,7 +46,7 @@ export function FinancialsView() {
           {vm.isLoadingPurchases ? (
             <div className="flex flex-col gap-2">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-16 animate-pulse rounded-lg bg-muted" />
+                <div key={i} className="h-16 motion-safe:animate-pulse rounded-lg bg-muted" />
               ))}
             </div>
           ) : (
@@ -79,7 +79,7 @@ export function FinancialsView() {
           {vm.isLoadingPayouts ? (
             <div className="flex flex-col gap-2">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-16 animate-pulse rounded-lg bg-muted" />
+                <div key={i} className="h-16 motion-safe:animate-pulse rounded-lg bg-muted" />
               ))}
             </div>
           ) : (

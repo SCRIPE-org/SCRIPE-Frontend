@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@core/ui/switch";
 import { Input } from "@core/ui/input";
 import { Calendar, Clock, Download, FileText, Mail, Save, Settings2 } from "lucide-react";
-import { formatDateUtc } from "@core/common/utils";
+import { cn, formatDateUtc } from "@core/common/utils";
 import type {
   ReportPreference,
   UpdateReportPreferenceRequest,
@@ -278,7 +278,12 @@ export function ReportsTab({
         <CardContent className="space-y-6">
           <div className="flex flex-col items-center gap-5 py-8">
             <div className="relative">
-              <div className="absolute inset-0 animate-pulse rounded-full bg-info/20 blur-xl" />
+              <div
+                className={cn(
+                  "absolute inset-0 rounded-full bg-info/20 blur-xl",
+                  isGenerating && "animate-pulse motion-reduce:animate-none"
+                )}
+              />
               <div className="relative rounded-full border border-info/20 bg-gradient-to-br from-info/10 to-info/10 p-6">
                 <Download className="h-12 w-12 text-info" />
               </div>

@@ -259,12 +259,15 @@ export function SubscriptionsDistributionCharts({
                   <YAxis
                     type="category"
                     dataKey="edition"
-                    stroke="#888888"
+                    stroke="hsl(var(--muted-foreground))"
                     fontSize={10}
                     tickLine={false}
                     axisLine={false}
                   />
-                  <Tooltip content={renderBarTooltip} cursor={{ fill: "rgba(0, 0, 0, 0.04)" }} />
+                  <Tooltip
+                    content={renderBarTooltip}
+                    cursor={{ fill: "hsl(var(--muted-foreground) / 0.08)" }}
+                  />
                   <Bar dataKey="revenue" radius={[0, 4, 4, 0]}>
                     {revenueByEdition.slice(0, 5).map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />

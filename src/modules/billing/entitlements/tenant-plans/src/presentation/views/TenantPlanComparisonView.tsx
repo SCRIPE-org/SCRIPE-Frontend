@@ -90,7 +90,7 @@ function LoadingState() {
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="h-96 animate-pulse rounded-xl border border-border/40 bg-muted/20"
+            className="h-96 animate-pulse rounded-xl border border-border/40 bg-muted/20 motion-reduce:animate-none"
           />
         ))}
       </div>

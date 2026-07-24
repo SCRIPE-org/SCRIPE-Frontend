@@ -418,7 +418,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
           {subscription.type === "Free" ||
           (subscription.type === "Lifetime" && subscription.totalAmount === 0) ? (
             <div className="flex items-center gap-3 rounded-lg border border-success/20 bg-success/5 p-4 text-success">
-              <Gift className="h-5 w-5 shrink-0 animate-pulse text-success" />
+              <Gift className="h-5 w-5 shrink-0 text-success" />
               <div>
                 <p className="text-sm font-semibold">{t("tenant.freePlanTitle") || "Free Plan"}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">

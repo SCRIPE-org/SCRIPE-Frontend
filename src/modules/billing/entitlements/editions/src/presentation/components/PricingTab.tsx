@@ -552,7 +552,7 @@ export const PricingTab = memo(function PricingTab({
             <div className="mx-auto max-w-screen-xl px-4 py-3 sm:px-6">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex min-w-0 items-center gap-3">
-                  <div className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-warning" />
+                  <div className="h-2 w-2 shrink-0 rounded-full bg-warning" />
                   <div className="min-w-0">
                     <p className="text-sm font-medium">
                       {t("entitlements.pricing.unsavedChanges")}

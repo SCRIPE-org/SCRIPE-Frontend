@@ -149,7 +149,7 @@ export function SectionCard({
  */
 export function SkeletonPanel() {
   return (
-    <div className="animate-pulse space-y-4 p-6">
+    <div className="animate-pulse space-y-4 p-6 motion-reduce:animate-none">
       {[1, 2, 3].map((i) => (
         <div key={i} className="space-y-2 rounded-xl border border-border/50 bg-card/40 p-4">
           <div className="h-2.5 w-24 rounded-full bg-muted" />

@@ -344,12 +344,13 @@ export function BuilderCanvas({
               </div>
             )}
 
-            {/* Drop indicator overlay */}
+            {/* Drop indicator overlay — static highlight, not a looping animation:
+                isOver is a real, actively-held drag-hover state (not idle/decorative),
+                but per motion doctrine only genuine loading states may loop, so this
+                renders as a single steady highlight instead of an infinite pulse. */}
             {isOver && (
               <div className="pointer-events-none absolute inset-0 z-40 rounded-xl">
                 <div className="absolute inset-0 rounded-xl border-2 border-primary/40 bg-primary/[0.03]" />
-                {/* Animated pulse */}
-                <div className="absolute inset-0 animate-pulse rounded-xl border-2 border-primary/20" />
               </div>
             )}
           </div>

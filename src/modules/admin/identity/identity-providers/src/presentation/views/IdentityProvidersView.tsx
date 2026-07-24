@@ -82,7 +82,7 @@ export function IdentityProvidersView() {
 
           <Button
             onClick={handleCreateClick}
-            className="self-start border-0 bg-gradient-to-r from-[#A855F7] to-[#7C3AED] font-semibold text-white shadow-md transition-all duration-200 hover:opacity-95 hover:shadow-lg active:scale-95 sm:self-center"
+            className="self-start border-0 bg-gradient-to-r from-primary to-info font-semibold text-white shadow-md transition-all duration-200 hover:opacity-95 hover:shadow-lg active:scale-95 sm:self-center"
           >
             <Plus className="me-1.5 h-4 w-4" strokeWidth={2.5} />
             {t("identityProviders.createButton") || "Add Provider"}
