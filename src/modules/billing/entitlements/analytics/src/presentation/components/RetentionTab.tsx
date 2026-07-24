@@ -83,7 +83,7 @@ export function RetentionTab({ cohortData }: RetentionTabProps) {
                   return (
                     <div
                       key={bucket.monthOffset}
-                      className={`m-0.5 flex w-14 shrink-0 cursor-default items-center justify-center rounded py-2 text-center text-[10px] font-bold transition-all duration-200 hover:scale-110 hover:shadow-md ${style.bg} ${style.text}`}
+                      className={`m-0.5 flex w-14 shrink-0 cursor-default items-center justify-center rounded py-2 text-center text-[10px] font-bold transition-all duration-200 ${style.bg} ${style.text}`}
                       title={`${bucket.retainedCount} retained (${bucket.retentionRate.toFixed(1)}%)`}
                       style={{ animationDelay: `${(rowIdx * maxColumns + colIdx) * 15}ms` }}
                     >

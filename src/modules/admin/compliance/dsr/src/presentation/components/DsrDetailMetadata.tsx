@@ -1,14 +1,18 @@
 "use client";
 
 import { Card, CardContent } from "@core/ui/card";
-import { Badge } from "@core/ui/badge";
+import { Badge, type BadgeProps } from "@core/ui/badge";
 import { formatDateUtc } from "@core/common/utils";
 import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
 
 interface DsrDetailMetadataProps {
   dsr: DataSubjectRequest;
   t: (key: string) => string;
-  statusMeta: { labelKey: string; icon: React.ReactNode; cls: string };
+  statusMeta: {
+    labelKey: string;
+    icon: React.ComponentType<{ className?: string; "aria-hidden"?: React.AriaAttributes["aria-hidden"] }>;
+    variant: BadgeProps["variant"];
+  };
   typeMeta: { labelKey: string; color: string };
 }
 
@@ -19,30 +23,28 @@ interface DsrDetailMetadataProps {
 export function DsrDetailMetadata({ dsr, t, statusMeta, typeMeta }: DsrDetailMetadataProps) {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-      <Card className="border-border/50">
+      <Card>
         <CardContent className="flex flex-col justify-center p-4">
-          <p className="mb-1 text-xs text-muted-foreground">
-            {t("compliance.columns.requestType")}
-          </p>
+          <p className="mb-1 text-xs text-nx-ink-3">{t("compliance.columns.requestType")}</p>
           <div className={`font-medium ${typeMeta.color}`}>{t(typeMeta.labelKey)}</div>
         </CardContent>
       </Card>
-      <Card className="border-border/50">
+      <Card>
         <CardContent className="flex flex-col justify-center p-4">
-          <p className="mb-1 text-xs text-muted-foreground">{t("compliance.columns.status")}</p>
-          <Badge variant="outline" className={`w-fit gap-1 ${statusMeta.cls} border-0 px-2`}>
-            {statusMeta.icon}
+          <p className="mb-1 text-xs text-nx-ink-3">{t("compliance.columns.status")}</p>
+          <Badge variant={statusMeta.variant} className="w-fit gap-1 px-2">
+            <statusMeta.icon className="h-3.5 w-3.5" aria-hidden="true" />
             {t(statusMeta.labelKey)}
           </Badge>
         </CardContent>
       </Card>
-      <Card className="border-border/50">
+      <Card>
         <CardContent className="flex flex-col justify-center p-4">
-          <p className="mb-1 text-xs text-muted-foreground">{t("compliance.columns.deadline")}</p>
-          <p className="text-sm font-medium">
+          <p className="mb-1 text-xs text-nx-ink-3">{t("compliance.columns.deadline")}</p>
+          <p className="text-sm font-medium tabular-nums text-nx-ink">
             {formatDateUtc(dsr.deadline)}
             {dsr.daysRemaining > 0 && (
-              <span className="ms-2 text-xs text-muted-foreground">
+              <span className="ms-2 text-xs text-nx-ink-3">
                 ({dsr.daysRemaining} {t("compliance.remaining")})
               </span>
             )}
@@ -52,10 +54,10 @@ export function DsrDetailMetadata({ dsr, t, statusMeta, typeMeta }: DsrDetailMet
           </p>
         </CardContent>
       </Card>
-      <Card className="border-border/50">
+      <Card>
         <CardContent className="flex flex-col justify-center p-4">
-          <p className="mb-1 text-xs text-muted-foreground">{t("compliance.columns.regulation")}</p>
-          <p className="font-mono text-sm font-medium">{dsr.regulationCode}</p>
+          <p className="mb-1 text-xs text-nx-ink-3">{t("compliance.columns.regulation")}</p>
+          <p className="font-mono text-sm font-medium text-nx-ink">{dsr.regulationCode}</p>
         </CardContent>
       </Card>
     </div>

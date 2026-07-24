@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { DetailRow } from "@core/ui/detail-row";
 import { Info } from "lucide-react";
 import { formatDateTimeUtc } from "@core/common/utils";
 import type { DataSubjectRequest } from "../../domain/entities/DataSubjectRequest";
@@ -19,46 +20,36 @@ export function DsrDetailInfo({ dsr, t }: DsrDetailInfoProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
-          <Info className="h-4 w-4" />
+          <Info className="h-4 w-4" aria-hidden="true" />
           {t("compliance.details")}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div>
-          <p className="text-sm font-medium">{t("compliance.columns.subjectEmail")}</p>
-          <p className="text-sm text-muted-foreground">
-            {dsr.subjectEmail} ({dsr.subjectType})
-          </p>
-        </div>
-        <div>
-          <p className="text-sm font-medium">{t("compliance.submittedAt")}</p>
-          <p className="text-sm text-muted-foreground">
-            {formatDateTimeUtc(dsr.submittedAt)}
-          </p>
-        </div>
+        <DetailRow
+          label={t("compliance.columns.subjectEmail")}
+          value={`${dsr.subjectEmail} (${dsr.subjectType})`}
+        />
+        <DetailRow label={t("compliance.submittedAt")} value={formatDateTimeUtc(dsr.submittedAt)} />
         {dsr.completedAt && (
-          <div>
-            <p className="text-sm font-medium">{t("compliance.completedAt")}</p>
-            <p className="text-sm text-muted-foreground">
-              {formatDateTimeUtc(dsr.completedAt)}
-            </p>
-          </div>
+          <DetailRow label={t("compliance.completedAt")} value={formatDateTimeUtc(dsr.completedAt)} />
         )}
         {dsr.requesterNotes && (
-          <div>
-            <p className="text-sm font-medium">{t("compliance.requesterNotes")}</p>
-            <p className="mt-1 rounded-md bg-muted/50 p-2 text-sm text-muted-foreground">
-              {dsr.requesterNotes}
-            </p>
-          </div>
+          <DetailRow
+            layout="stacked"
+            wrap
+            label={t("compliance.requesterNotes")}
+            value={dsr.requesterNotes}
+            valueClassName="rounded-nx-sm bg-nx-raised p-2 font-normal text-nx-ink-2"
+          />
         )}
         {dsr.resolution && (
-          <div>
-            <p className="text-sm font-medium">{t("compliance.resolution")}</p>
-            <p className="mt-1 rounded-md bg-muted/50 p-2 text-sm text-muted-foreground">
-              {dsr.resolution}
-            </p>
-          </div>
+          <DetailRow
+            layout="stacked"
+            wrap
+            label={t("compliance.resolution")}
+            value={dsr.resolution}
+            valueClassName="rounded-nx-sm bg-nx-raised p-2 font-normal text-nx-ink-2"
+          />
         )}
       </CardContent>
     </Card>

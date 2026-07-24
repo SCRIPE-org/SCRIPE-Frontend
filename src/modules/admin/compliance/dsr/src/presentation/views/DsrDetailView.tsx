@@ -8,27 +8,23 @@ import {
   CheckCircle2,
   Clock,
   Download,
-  Loader2,
   AlertTriangle,
-  RefreshCw,
   Info,
   User,
+  UserX,
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Button } from "@core/ui/button";
-import { Card, CardContent } from "@core/ui/card";
+import { PageHeader } from "@core/ui/page-header";
+import { EmptyState } from "@core/ui/empty-state";
+import { ErrorMessage } from "@core/ui/error-message";
 import { Skeleton } from "@core/ui/skeleton";
-import { useDsrDetailViewModel } from "../viewmodels/useDsrDetailViewModel";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@core/ui/dialog";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Input } from "@core/ui/input";
+import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
+import type { BadgeProps } from "@core/ui/badge";
+import { useDsrDetailViewModel } from "../viewmodels/useDsrDetailViewModel";
 
 import { DsrDetailMetadata } from "../components/DsrDetailMetadata";
 import { DsrDetailInfo } from "../components/DsrDetailInfo";
@@ -36,56 +32,46 @@ import { DsrModuleExecutions } from "../components/DsrModuleExecutions";
 import { DsrDetailTimeline } from "../components/DsrDetailTimeline";
 import { DsrErasureState } from "../components/DsrErasureState";
 
+// A status icon that accepts the same shape a lucide glyph does, so the meta
+// map below can mix real icons with the one synthetic entry ("Processing")
+// that renders the shared LoadingSpinner instead of a static glyph.
+type StatusIcon = React.ComponentType<{
+  className?: string;
+  "aria-hidden"?: React.AriaAttributes["aria-hidden"];
+}>;
+
+// "Processing" is a genuinely in-flight backend job, not idle decoration, so
+// it earns the one real loader rather than a raw lucide icon with
+// `animate-spin` bolted on — that stays governed by the shared motion rule.
+function ProcessingIcon({ className }: { className?: string }) {
+  return <LoadingSpinner size="inline" showText={false} className={className} />;
+}
+
 // ── Status meta ────────────────────────────────────────────────────────────────
-const STATUS_META: Record<string, { labelKey: string; icon: React.ReactNode; cls: string }> = {
-  Pending: {
-    labelKey: "compliance.statusLabels.pending",
-    icon: <Clock className="h-4 w-4 text-warning" />,
-    cls: "border-warning/20 bg-warning/10 text-warning",
-  },
-  InReview: {
-    labelKey: "compliance.statusLabels.inReview",
-    icon: <Info className="h-4 w-4 text-info" />,
-    cls: "border-info/20 bg-info/10 text-info",
-  },
-  Approved: {
-    labelKey: "compliance.statusLabels.approved",
-    icon: <CheckCircle2 className="h-4 w-4 text-success" />,
-    cls: "border-success/20 bg-success/10 text-success",
-  },
-  Processing: {
-    labelKey: "compliance.statusLabels.processing",
-    icon: <Loader2 className="h-4 w-4 animate-spin text-info" />,
-    cls: "border-info/20 bg-info/10 text-info",
-  },
+const STATUS_META: Record<
+  string,
+  { labelKey: string; icon: StatusIcon; variant: BadgeProps["variant"] }
+> = {
+  Pending: { labelKey: "compliance.statusLabels.pending", icon: Clock, variant: "warning" },
+  InReview: { labelKey: "compliance.statusLabels.inReview", icon: Info, variant: "info" },
+  Approved: { labelKey: "compliance.statusLabels.approved", icon: CheckCircle2, variant: "success" },
+  Processing: { labelKey: "compliance.statusLabels.processing", icon: ProcessingIcon, variant: "info" },
   PartiallyCompleted: {
     labelKey: "compliance.statusLabels.partiallyCompleted",
-    icon: <CheckCircle2 className="h-4 w-4 text-success" />,
-    cls: "border-success/20 bg-success/10 text-success",
+    icon: CheckCircle2,
+    variant: "success",
   },
-  Completed: {
-    labelKey: "compliance.statusLabels.completed",
-    icon: <CheckCircle2 className="h-4 w-4 text-success" />,
-    cls: "border-success/20 bg-success/10 text-success",
-  },
-  Rejected: {
-    labelKey: "compliance.statusLabels.rejected",
-    icon: <AlertTriangle className="h-4 w-4 text-destructive" />,
-    cls: "border-destructive/20 bg-destructive/10 text-destructive",
-  },
-  Cancelled: {
-    labelKey: "compliance.statusLabels.cancelled",
-    icon: <AlertTriangle className="h-4 w-4 text-muted-foreground" />,
-    cls: "border-border/50 bg-muted/50 text-muted-foreground",
-  },
+  Completed: { labelKey: "compliance.statusLabels.completed", icon: CheckCircle2, variant: "success" },
+  Rejected: { labelKey: "compliance.statusLabels.rejected", icon: AlertTriangle, variant: "error" },
+  Cancelled: { labelKey: "compliance.statusLabels.cancelled", icon: AlertTriangle, variant: "secondary" },
 };
 
 // ── Type Meta ────────────────────────────────────────────────────────────────
 const TYPE_META: Record<string, { labelKey: string; color: string }> = {
   Export: { labelKey: "compliance.requestTypes.export", color: "text-info" },
   Erasure: { labelKey: "compliance.requestTypes.erasure", color: "text-destructive" },
-  Rectification: { labelKey: "compliance.requestTypes.rectification", color: "text-warning" },
-  Restriction: { labelKey: "compliance.requestTypes.restriction", color: "text-primary" },
+  Rectification: { labelKey: "compliance.requestTypes.rectification", color: "text-nx-accent" },
+  Restriction: { labelKey: "compliance.requestTypes.restriction", color: "text-warning" },
 };
 
 /**
@@ -118,74 +104,52 @@ export function DsrDetailView({ id }: { id: string }) {
     : null;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 shrink-0"
-            onClick={() => router.push("/compliance/dsr")}
-          >
-            <BackIcon className="h-4 w-4" />
+    <div className="flex flex-col" style={{ gap: "calc(var(--spacing-unit) * 1.5)" }}>
+      <PageHeader
+        className="mb-0"
+        icon={User}
+        title={t("compliance.dsrDetailTitle")}
+        description={dsr?.subjectEmail ?? t("common.loading")}
+        eyebrow={
+          <Button variant="ghost" size="sm" onClick={() => router.push("/compliance/dsr")}>
+            <BackIcon className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
+            {t("common.back")}
           </Button>
-          <div className="flex items-center gap-3">
-            <div className="rounded-xl border border-info/20 bg-gradient-to-br from-info/15 to-info/10 p-2.5">
-              <User className="h-5 w-5 text-info" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight">
-                {t("compliance.dsrDetailTitle")}
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                {dsr?.subjectEmail ?? t("common.loading")}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {dsr && (
-          <div className="flex items-center gap-2">
-            {dsr.canConfirmErasure && !!tenantCode && (
-              <Button variant="destructive" onClick={() => setIsConfirmingErasure(true)}>
-                <ShieldAlert className="me-2 h-4 w-4" />
-                {t("compliance.confirmErasureBtn")}
-              </Button>
-            )}
-            {dsr.canDownloadExport && !!tenantCode && (
-              <Button onClick={downloadExport} disabled={isDownloadingPending}>
-                {isDownloadingPending ? (
-                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Download className="me-2 h-4 w-4" />
-                )}
-                {t("compliance.downloadExportBtn")}
-              </Button>
-            )}
-          </div>
-        )}
-      </div>
+        }
+        actions={
+          dsr && (
+            <>
+              {dsr.canConfirmErasure && !!tenantCode && (
+                <Button variant="destructive" onClick={() => setIsConfirmingErasure(true)}>
+                  <ShieldAlert className="me-2 h-4 w-4" aria-hidden="true" />
+                  {t("compliance.confirmErasureBtn")}
+                </Button>
+              )}
+              {dsr.canDownloadExport && !!tenantCode && (
+                <Button onClick={downloadExport} disabled={isDownloadingPending} loading={isDownloadingPending}>
+                  {!isDownloadingPending && <Download className="me-2 h-4 w-4" aria-hidden="true" />}
+                  {t("compliance.downloadExportBtn")}
+                </Button>
+              )}
+            </>
+          )
+        }
+      />
 
       {isLoading ? (
-        <div className="space-y-4">
-          <Skeleton className="h-[120px] rounded-xl" />
+        <div className="space-y-6" role="status" aria-busy="true" aria-label={t("common.loading")}>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-20 rounded-nx-lg" />
+            ))}
+          </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <Skeleton className="h-[300px] rounded-xl" />
-            <Skeleton className="h-[300px] rounded-xl" />
+            <Skeleton className="h-[300px] rounded-nx-lg" />
+            <Skeleton className="h-[300px] rounded-nx-lg" />
           </div>
         </div>
       ) : isError ? (
-        <Card className="border-destructive/20 bg-destructive/5">
-          <CardContent className="flex flex-col items-center justify-center py-14 text-center">
-            <AlertTriangle className="mb-4 h-10 w-10 text-destructive" />
-            <p className="font-semibold">{t("common.error")}</p>
-            <Button className="mt-4" variant="outline" size="sm" onClick={() => refetch()}>
-              <RefreshCw className="me-2 h-4 w-4" />
-              {t("common.refresh")}
-            </Button>
-          </CardContent>
-        </Card>
+        <ErrorMessage message={t("common.error")} onRetry={() => refetch()} />
       ) : dsr && statusMeta && typeMeta ? (
         <>
           <DsrDetailMetadata dsr={dsr} t={t} statusMeta={statusMeta} typeMeta={typeMeta} />
@@ -202,41 +166,49 @@ export function DsrDetailView({ id }: { id: string }) {
             </div>
           </div>
         </>
-      ) : null}
+      ) : (
+        <EmptyState
+          icon={UserX}
+          title={t("compliance.dsrNotFound")}
+          description={t("compliance.dsrNotFoundDesc")}
+          action={
+            <Button variant="outline" onClick={() => router.push("/compliance/dsr")}>
+              <BackIcon className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
+              {t("common.back")}
+            </Button>
+          }
+        />
+      )}
 
-      <Dialog open={isConfirmingErasure} onOpenChange={setIsConfirmingErasure}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-destructive">
-              <AlertTriangle className="h-5 w-5" />
-              {t("compliance.confirmErasureDialogTitle")}
-            </DialogTitle>
-            <DialogDescription>{t("compliance.confirmErasureDialogDesc")}</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <p className="text-sm font-medium">{t("compliance.typeConfirmToContinue")}</p>
-            <Input
-              value={erasureInput}
-              onChange={(e) => setErasureInput(e.target.value)}
-              placeholder="CONFIRM"
-              autoComplete="off"
-            />
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsConfirmingErasure(false)}>
-              {t("common.cancel")}
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={confirmErasure}
-              disabled={erasureInput !== "CONFIRM" || isConfirmingPending}
-            >
-              {isConfirmingPending && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
-              {t("compliance.executeErasureBtn")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* R5 — the typed-erasure guard. Comparing against the literal word
+          CONFIRM is the safeguard itself and is frozen: it is deliberately
+          NOT localized. Translating it would let an admin type the Arabic
+          word shown on screen and silently fail a check written against the
+          English literal — or, if the check were translated too, defeat the
+          point of a fixed token an operator must consciously reproduce. */}
+      <ConfirmationDialog
+        open={isConfirmingErasure}
+        onOpenChange={setIsConfirmingErasure}
+        variant="destructive"
+        title={t("compliance.confirmErasureDialogTitle")}
+        description={t("compliance.confirmErasureDialogDesc")}
+        confirmText={t("compliance.executeErasureBtn")}
+        cancelText={t("common.cancel")}
+        onConfirm={confirmErasure}
+        isLoading={isConfirmingPending}
+        disableConfirm={erasureInput !== "CONFIRM"}
+      >
+        <div className="space-y-3">
+          <p className="text-sm font-medium text-nx-ink">{t("compliance.typeConfirmToContinue")}</p>
+          <Input
+            value={erasureInput}
+            onChange={(e) => setErasureInput(e.target.value)}
+            placeholder="CONFIRM"
+            autoComplete="off"
+            aria-label={t("compliance.typeConfirmToContinue")}
+          />
+        </div>
+      </ConfirmationDialog>
     </div>
   );
 }

@@ -18,6 +18,7 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import GenericSelect from "@core/crud/components/generic-select";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import {
@@ -103,7 +104,7 @@ export function SubscriptionsExportDialog({
   }[] = [
     {
       value: "csv",
-      icon: <FileText className="h-8 w-8" />,
+      icon: <FileText className="h-8 w-8" aria-hidden="true" />,
       label: te("formatCsv"),
       description: te("formatCsvDesc"),
       color: "text-success",
@@ -111,7 +112,7 @@ export function SubscriptionsExportDialog({
     },
     {
       value: "excel",
-      icon: <FileSpreadsheet className="h-8 w-8" />,
+      icon: <FileSpreadsheet className="h-8 w-8" aria-hidden="true" />,
       label: te("formatXlsx"),
       description: te("formatXlsxDesc"),
       color: "text-info",
@@ -119,7 +120,7 @@ export function SubscriptionsExportDialog({
     },
     {
       value: "pdf",
-      icon: <FileDown className="h-8 w-8" />,
+      icon: <FileDown className="h-8 w-8" aria-hidden="true" />,
       label: te("formatPdf"),
       description: te("formatPdfDesc"),
       color: "text-destructive",
@@ -228,8 +229,8 @@ export function SubscriptionsExportDialog({
     >
       <div className="space-y-4">
         {/* Record Count */}
-        <div className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-2 text-sm">
-          <span className="text-muted-foreground">{te("records")}</span>
+        <div className="flex items-center justify-between rounded-nx-control bg-nx-raised px-3 py-2 text-sm">
+          <span className="text-nx-ink-2">{te("records")}</span>
           <Badge variant="secondary" className="font-mono">
             {totalCount}
           </Badge>
@@ -240,17 +241,18 @@ export function SubscriptionsExportDialog({
           {FORMAT_OPTIONS.map((opt) => (
             <button
               key={opt.value}
+              type="button"
               onClick={() => setSelectedFormat(opt.value)}
               disabled={isExporting}
-              className={`flex flex-col items-center gap-1.5 rounded-lg border-2 p-3 transition-all hover:shadow-md ${
+              className={`flex flex-col items-center gap-1.5 rounded-nx-md border-2 p-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus ${
                 selectedFormat === opt.value
                   ? opt.borderActive
-                  : "border-border hover:border-muted-foreground/30"
+                  : "border-nx-line hover:border-nx-line-hi"
               } ${isExporting ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
             >
               <span className={opt.color}>{opt.icon}</span>
-              <span className="text-sm font-semibold">{opt.label}</span>
-              <span className="text-center text-[10px] leading-tight text-muted-foreground">
+              <span className="text-sm font-semibold text-nx-ink">{opt.label}</span>
+              <span className="text-center text-[10px] leading-tight text-nx-ink-3">
                 {opt.description}
               </span>
             </button>
@@ -261,8 +263,8 @@ export function SubscriptionsExportDialog({
         <div className="grid grid-cols-2 gap-3">
           {/* Date Range */}
           <div className="space-y-1.5">
-            <Label className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
-              <Calendar className="h-3 w-3" />
+            <Label className="flex items-center gap-1 text-xs">
+              <Calendar className="h-3 w-3" aria-hidden="true" />
               {te("dateRange")}
             </Label>
             <GenericSelect
@@ -278,8 +280,8 @@ export function SubscriptionsExportDialog({
 
           {/* Expiring Soon */}
           <div className="space-y-1.5">
-            <Label className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
-              <Clock className="h-3 w-3" />
+            <Label className="flex items-center gap-1 text-xs">
+              <Clock className="h-3 w-3" aria-hidden="true" />
               {te("expiringSoon")}
             </Label>
             <GenericSelect
@@ -298,7 +300,7 @@ export function SubscriptionsExportDialog({
         {datePreset === "custom" && (
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label className="text-[10px] text-muted-foreground">{te("dateFrom")}</Label>
+              <Label className="text-[10px]">{te("dateFrom")}</Label>
               <Input
                 type="date"
                 value={customDateFrom}
@@ -307,7 +309,7 @@ export function SubscriptionsExportDialog({
               />
             </div>
             <div className="space-y-1">
-              <Label className="text-[10px] text-muted-foreground">{te("dateTo")}</Label>
+              <Label className="text-[10px]">{te("dateTo")}</Label>
               <Input
                 type="date"
                 value={customDateTo}
@@ -320,7 +322,7 @@ export function SubscriptionsExportDialog({
 
         {/* Currency Selector */}
         <div className="space-y-1.5">
-          <Label className="text-xs font-medium text-muted-foreground">{te("currency")}</Label>
+          <Label className="text-xs">{te("currency")}</Label>
           <GenericSelect
             options={CURRENCY_OPTIONS}
             value={selectedCurrency}
@@ -330,13 +332,13 @@ export function SubscriptionsExportDialog({
             searchType="client"
             searchPlaceholder={t("common.search")}
           />
-          <p className="text-[10px] italic text-muted-foreground/60">{te("currencyHint")}</p>
+          <p className="text-[10px] italic text-nx-ink-3">{te("currencyHint")}</p>
         </div>
 
         {/* Active Filters Summary */}
         {activeFilters.length > 0 && (
-          <div className="space-y-1.5 rounded-md bg-muted/50 p-3">
-            <p className="text-xs font-medium text-muted-foreground">{te("appliedFilters")}</p>
+          <div className="space-y-1.5 rounded-nx-control bg-nx-raised p-3">
+            <p className="text-xs font-medium text-nx-ink-2">{te("appliedFilters")}</p>
             <div className="flex flex-wrap gap-1.5">
               {activeFilters.map((f, i) => (
                 <Badge key={i} variant="secondary" className="text-[10px]">
@@ -349,27 +351,27 @@ export function SubscriptionsExportDialog({
 
         {/* Error */}
         {error && (
-          <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-            <AlertCircle className="h-4 w-4 shrink-0" />
-            {error}
-          </div>
+          <Alert variant="destructive">
+            <AlertCircle aria-hidden="true" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
         {/* Success */}
         {success && (
-          <div className="flex items-center gap-2 rounded-md bg-success/10 p-3 text-sm text-success">
-            <CheckCircle className="h-4 w-4 shrink-0" />
-            {te("success")}
-          </div>
+          <Alert variant="success">
+            <CheckCircle aria-hidden="true" />
+            <AlertDescription>{te("success")}</AlertDescription>
+          </Alert>
         )}
 
         {/* Footer */}
-        <div className="flex justify-end gap-2 border-t pt-2">
+        <div className="flex justify-end gap-2 border-t border-nx-line pt-2">
           <Button variant="outline" onClick={onClose} disabled={isExporting}>
             {t("common.cancel")}
           </Button>
           <Button onClick={handleExport} loading={isExporting}>
-            {!isExporting && <FileDown className="mr-2 h-4 w-4" />}
+            {!isExporting && <FileDown className="me-2 h-4 w-4" aria-hidden="true" />}
             {isExporting ? te("generating") : te("download")}
           </Button>
         </div>

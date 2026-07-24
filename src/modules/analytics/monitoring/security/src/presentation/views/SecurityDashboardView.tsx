@@ -14,6 +14,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { ThreatSummaryCards } from "../components/ThreatSummaryCards";
 import { SECURITY_ENDPOINTS } from "../../data/services/security.endpoints";
 import { Button } from "@core/ui/button";
+import { PageHeader } from "@core/ui/page-header";
 import { Shield, FileDown, Settings2 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useDashboardTheme, DashboardStudioPanel } from "@modules/monitoring/core";
@@ -55,38 +56,39 @@ export function SecurityDashboardView() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-            <Shield className="h-6 w-6" />
-            {t("security.title")}
-          </h1>
-          <p className="text-muted-foreground">{t("security.subtitle")}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setExportOpen(true)}
-            className="gap-1.5"
-          >
-            <FileDown className="h-4 w-4" />
-            {t("export.button")}
-          </Button>
-          {isStandalone && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => theme.setIsStudioOpen(true)}
-              className="gap-1.5"
-            >
-              <Settings2 className="h-4 w-4" />
-              {t("dashboard.studio.openButton") || "Customize"}
-            </Button>
-          )}
-        </div>
-      </div>
+      {/* SecurityDashboardView is embedded as a tab inside DashboardView, which
+          already carries its own PageHeader — rendering this one too would
+          stack two icon-tile headers on the same screen. Only the standalone
+          /security route gets the full header. */}
+      {isStandalone && (
+        <PageHeader
+          icon={Shield}
+          title={t("security.title")}
+          description={t("security.subtitle")}
+          actions={
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setExportOpen(true)}
+                className="gap-1.5"
+              >
+                <FileDown className="h-4 w-4" aria-hidden="true" />
+                {t("export.button")}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => theme.setIsStudioOpen(true)}
+                className="gap-1.5"
+              >
+                <Settings2 className="h-4 w-4" aria-hidden="true" />
+                {t("dashboard.studio.openButton")}
+              </Button>
+            </>
+          }
+        />
+      )}
 
       {/* Threat Summary Cards */}
       <ThreatSummaryCards

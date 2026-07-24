@@ -1,7 +1,7 @@
 /**
  * Identity Providers List View
  *
- * Premium management dashboard for Single Sign-On (SSO) configuration.
+ * Management dashboard for Single Sign-On (SSO) configuration.
  * Offers rich metrics, searchable grid card layout, inline status toggling,
  * connection health checkers, and templates gallery integration.
  */
@@ -13,10 +13,12 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { IdentityProviderStatsBar } from "../components/IdentityProviderStatsBar";
 import { IdentityProviderCard } from "../components/IdentityProviderCard";
+import { PageHeader } from "@core/ui/page-header";
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
 import { EmptyState } from "@core/ui/empty-state";
-import { Plus, Search, Loader2, ShieldCheck, Fingerprint } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { Plus, Search, ShieldCheck, Fingerprint } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 /**
@@ -61,57 +63,45 @@ export function IdentityProvidersView() {
   };
 
   return (
-    <div className="space-y-6 pb-12 duration-300 animate-in fade-in">
-      {/* ─── Premium Header Card ────────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-xl border border-border/80 bg-card/45 p-6 shadow-sm backdrop-blur-md">
-        {/* Glow backdrop decoration */}
-        <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-primary/10 blur-[80px]" />
-        <div className="absolute -bottom-20 -left-20 h-48 w-48 rounded-full bg-info/10 blur-[80px]" />
-
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-1">
-            <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground">
-              <ShieldCheck className="h-7 w-7 text-primary" />
-              {t("identityProviders.title") || "SSO Identity Providers"}
-            </h1>
-            <p className="max-w-xl text-xs text-muted-foreground">
-              {t("identityProviders.description") ||
-                "Configure external Identity Providers (IdPs) to enable secure Single Sign-On (SSO) login capabilities for users and admins."}
-            </p>
-          </div>
-
-          <Button
-            onClick={handleCreateClick}
-            className="self-start border-0 bg-gradient-to-r from-primary to-info font-semibold text-white shadow-md transition-all duration-200 hover:opacity-95 hover:shadow-lg active:scale-95 sm:self-center"
-          >
-            <Plus className="me-1.5 h-4 w-4" strokeWidth={2.5} />
-            {t("identityProviders.createButton") || "Add Provider"}
+    <div className="space-y-6 pb-12 duration-nx-standard ease-nx-enter motion-reduce:transition-none animate-in fade-in">
+      {/* ─── Header ─────────────────────────────────────────────── */}
+      <PageHeader
+        icon={ShieldCheck}
+        title={t("identityProviders.title")}
+        description={t("identityProviders.description")}
+        actions={
+          <Button onClick={handleCreateClick}>
+            <Plus className="me-1.5 h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
+            {t("identityProviders.createButton")}
           </Button>
-        </div>
-      </div>
+        }
+      />
 
       {/* ─── Statistics Metrics ────────────────────────────────── */}
       <IdentityProviderStatsBar items={vm.items} />
 
       {/* ─── Controls & Search Section ───────────────────────────── */}
-      <div className="flex flex-col gap-3 border-b pb-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-3 border-b border-nx-line pb-4 md:flex-row md:items-center md:justify-between">
         {/* Search */}
         <div className="relative w-full md:max-w-xs">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Search
+            className="absolute start-3 top-2.5 h-4 w-4 text-nx-ink-3"
+            aria-hidden="true"
+          />
           <Input
             value={vm.searchValue}
             onChange={(e) => vm.handleSearchChange(e.target.value)}
-            placeholder={t("identityProviders.searchPlaceholder") || "Search identity providers..."}
-            className="h-9 pl-9"
+            placeholder={t("identityProviders.searchPlaceholder")}
+            className="h-9 ps-9"
           />
         </div>
 
         {/* Tab Filters */}
-        <div className="flex flex-wrap items-center gap-1.5 rounded-lg border bg-muted/40 p-1">
+        <div className="flex flex-wrap items-center gap-1.5 rounded-nx-control border border-nx-line bg-nx-raised p-1">
           {[
-            { id: "all", label: t("common.all") || "All" },
-            { id: "active", label: t("common.active") || "Active" },
-            { id: "inactive", label: t("common.inactive") || "Inactive" },
+            { id: "all", label: t("common.all") },
+            { id: "active", label: t("common.active") },
+            { id: "inactive", label: t("common.inactive") },
             { id: "oidc", label: "OIDC" },
             { id: "oauth2", label: "OAuth 2.0" },
             { id: "saml", label: "SAML 2.0" },
@@ -122,10 +112,10 @@ export function IdentityProvidersView() {
               variant="ghost"
               size="sm"
               onClick={() => setFilterType(tab.id)}
-              className={`h-7 rounded-md px-3 text-xs font-semibold transition-all duration-150 ${
+              className={`h-7 rounded-nx-sm px-3 text-xs font-semibold transition-[background-color,color] duration-nx-micro motion-reduce:transition-none ${
                 filterType === tab.id
-                  ? "bg-background text-foreground shadow-sm hover:bg-background"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-nx-surface text-nx-ink shadow-nx-sm hover:bg-nx-surface"
+                  : "text-nx-ink-3 hover:text-nx-ink"
               }`}
             >
               {tab.label}
@@ -136,14 +126,7 @@ export function IdentityProvidersView() {
 
       {/* ─── Loading State ─────────────────────────────────────── */}
       {vm.loading ? (
-        <div className="flex min-h-[300px] flex-col items-center justify-center gap-3">
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 shadow-[0_0_15px_hsl(var(--primary)/0.1)]">
-            <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {t("common.loading") || "Loading SSO settings..."}
-          </p>
-        </div>
+        <LoadingSpinner size="lg" fullHeight />
       ) : (
         <>
           {/* Grid Layout */}
@@ -165,15 +148,12 @@ export function IdentityProvidersView() {
             <EmptyState
               icon={Fingerprint}
               size="lg"
-              title={t("identityProviders.emptyTitle") || "No Identity Providers"}
-              description={
-                t("identityProviders.emptyDesc") ||
-                "Configure Single Sign-On (SSO) using OpenID Connect (OIDC), OAuth 2.0, or SAML 2.0 to let users log in with external credentials."
-              }
+              title={t("identityProviders.emptyTitle")}
+              description={t("identityProviders.emptyDesc")}
               action={
                 <Button onClick={handleCreateClick} className="gap-1.5">
-                  <Plus className="h-4 w-4" strokeWidth={2.5} />
-                  {t("identityProviders.createButton") || "Add Identity Provider"}
+                  <Plus className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
+                  {t("identityProviders.createButton")}
                 </Button>
               }
             />

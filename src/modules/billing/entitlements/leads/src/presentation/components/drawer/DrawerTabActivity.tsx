@@ -2,6 +2,7 @@
 
 import { Button } from "@core/ui/button";
 import { Textarea } from "@core/ui/textarea";
+import { Skeleton } from "@core/ui/skeleton";
 import { StickyNote, Activity, Loader2, CheckCheck } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { formatDateTimeUtc } from "@core/common/utils";
@@ -83,13 +84,13 @@ export function DrawerTabActivity({
           {t("leads.activity.title")}
         </p>
         {isLoadingActivity ? (
-          <div className="animate-pulse space-y-3 motion-reduce:animate-none">
+          <div className="space-y-3">
             {[1, 2, 3].map((i) => (
               <div key={i} className="flex gap-3">
-                <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-muted" />
+                <Skeleton shape="circle" className="mt-1 h-2 w-2 shrink-0" />
                 <div className="flex-1 space-y-1">
-                  <div className="h-3 w-32 rounded bg-muted" />
-                  <div className="h-2.5 w-20 rounded bg-muted" />
+                  <Skeleton shape="text" className="h-3 w-32" />
+                  <Skeleton shape="text" className="h-2.5 w-20" />
                 </div>
               </div>
             ))}
@@ -100,7 +101,7 @@ export function DrawerTabActivity({
           <ol className="relative space-y-5 border-s border-border">
             {activity.map((entry) => (
               <li key={entry.id} className="relative ps-6">
-                <div className="absolute left-0 top-1 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-info ring-4 ring-background" />
+                <div className="absolute start-0 top-1 -ms-[5px] h-2.5 w-2.5 rounded-full bg-info ring-4 ring-background" />
                 <p className="text-xs font-semibold text-foreground">
                   {entry.summary || t(`leads.activity.types.${entry.type}`)}
                 </p>

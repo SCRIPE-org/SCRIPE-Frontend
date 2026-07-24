@@ -65,7 +65,7 @@ export function ReviewDsrModal({
           />
         </div>
 
-        <div className="flex flex-wrap justify-end gap-2 border-t pt-4">
+        <div className="flex flex-wrap justify-end gap-2 border-t border-nx-line pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {t("common.cancel")}
           </Button>
@@ -73,19 +73,24 @@ export function ReviewDsrModal({
             variant="destructive"
             id="dsr-reject-btn"
             disabled={isReviewing}
+            loading={isReviewing && decision === false}
             onClick={() => handleReview(false)}
           >
-            <ThumbsDown className="me-2 h-4 w-4" />
-            {isReviewing && decision === false ? t("common.loading") : t("compliance.rejectDsr")}
+            {!(isReviewing && decision === false) && (
+              <ThumbsDown className="me-2 h-4 w-4" aria-hidden="true" />
+            )}
+            {t("compliance.rejectDsr")}
           </Button>
           <Button
             id="dsr-approve-btn"
-            className="gradient-primary"
             disabled={isReviewing}
+            loading={isReviewing && decision === true}
             onClick={() => handleReview(true)}
           >
-            <ThumbsUp className="me-2 h-4 w-4" />
-            {isReviewing && decision === true ? t("common.loading") : t("compliance.approveDsr")}
+            {!(isReviewing && decision === true) && (
+              <ThumbsUp className="me-2 h-4 w-4" aria-hidden="true" />
+            )}
+            {t("compliance.approveDsr")}
           </Button>
         </div>
       </div>

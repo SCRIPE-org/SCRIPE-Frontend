@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AlertTriangle } from "lucide-react";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -92,7 +93,7 @@ export function SubmitDsrModal({
           <Input
             id="dsr-subject-email"
             type="email"
-            placeholder="subject@example.com"
+            placeholder={t("compliance.subjectEmailPlaceholder")}
             value={form.subjectEmail}
             onChange={(e) => setForm((f) => ({ ...f, subjectEmail: e.target.value }))}
           />
@@ -137,23 +138,23 @@ export function SubmitDsrModal({
         </div>
 
         {form.requestType === "Erasure" && (
-          <div className="flex items-start gap-2 rounded-lg border border-destructive/20 bg-destructive/10 p-3">
-            <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-destructive" />
-            <p className="text-xs text-destructive">{t("compliance.erasureGateWarning")}</p>
-          </div>
+          <Alert variant="destructive">
+            <AlertTriangle aria-hidden="true" />
+            <AlertDescription>{t("compliance.erasureGateWarning")}</AlertDescription>
+          </Alert>
         )}
 
-        <div className="flex justify-end gap-2 border-t pt-4">
+        <div className="flex justify-end gap-2 border-t border-nx-line pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {t("common.cancel")}
           </Button>
           <Button
             id="dsr-submit-confirm"
-            className="gradient-primary"
             onClick={handleSubmit}
             disabled={isSubmitting || !form.subjectEmail.trim()}
+            loading={isSubmitting}
           >
-            {isSubmitting ? t("common.loading") : t("compliance.submitDsr")}
+            {t("compliance.submitDsr")}
           </Button>
         </div>
       </div>

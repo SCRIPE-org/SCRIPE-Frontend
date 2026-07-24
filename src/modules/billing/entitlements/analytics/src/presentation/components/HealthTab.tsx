@@ -6,6 +6,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@core/ui/table";
 import { ChevronLeft, ChevronRight, Heart, AlertTriangle, ShieldCheck } from "lucide-react";
 import type {
   TenantHealthScoresResponse,
@@ -114,81 +115,86 @@ export function HealthTab({ healthData, page, pageSize, onPageChange }: HealthTa
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b bg-muted/30">
-                  <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    {t("entitlements.analytics.health.tenant")}
-                  </th>
-                  <th className="px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    {t("entitlements.analytics.health.score")}
-                  </th>
-                  <th className="px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    {t("entitlements.analytics.health.change")}
-                  </th>
-                  <th className="px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    {t("entitlements.analytics.health.risk")}
-                  </th>
-                  <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    {t("entitlements.analytics.health.mrr")}
-                  </th>
-                  <th className="px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    {t("entitlements.analytics.health.engagement")}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {healthData.items.map((tenant) => (
-                  <tr
-                    key={tenant.tenantId}
-                    className="border-b transition-colors last:border-0 hover:bg-muted/5"
-                  >
-                    <td className="px-4 py-3 text-sm font-semibold">{tenant.tenantName}</td>
-                    <td className="px-4 py-3 text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        <div className="h-2.5 w-16 overflow-hidden rounded-full bg-muted/30">
-                          <div
-                            className={`h-full rounded-full transition-all duration-500 ${getScoreBarColor(tenant.healthScore)}`}
-                            style={{ width: `${tenant.healthScore}%` }}
-                          />
-                        </div>
-                        <span className={`text-xs font-bold ${getScoreColor(tenant.healthScore)}`}>
-                          {tenant.healthScore}
-                        </span>
+          <Table>
+            <TableHeader>
+              <TableRow className="border-b bg-muted/30">
+                <TableHead className="px-4 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  {t("entitlements.analytics.health.tenant")}
+                </TableHead>
+                <TableHead className="px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  {t("entitlements.analytics.health.score")}
+                </TableHead>
+                <TableHead className="px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  {t("entitlements.analytics.health.change")}
+                </TableHead>
+                <TableHead className="px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  {t("entitlements.analytics.health.risk")}
+                </TableHead>
+                <TableHead
+                  variant="numeric"
+                  className="px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+                >
+                  {t("entitlements.analytics.health.mrr")}
+                </TableHead>
+                <TableHead className="px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  {t("entitlements.analytics.health.engagement")}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {healthData.items.map((tenant) => (
+                <TableRow
+                  key={tenant.tenantId}
+                  className="border-b transition-colors last:border-0 hover:bg-muted/5"
+                >
+                  <TableCell className="px-4 py-3 text-sm font-semibold">
+                    {tenant.tenantName}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-center">
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="h-2.5 w-16 overflow-hidden rounded-full bg-muted/30">
+                        <div
+                          className={`h-full rounded-full transition-all duration-500 ${getScoreBarColor(tenant.healthScore)}`}
+                          style={{ width: `${tenant.healthScore}%` }}
+                        />
                       </div>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span
-                        className={`inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-xs font-semibold ${
-                          tenant.scoreChange > 0
-                            ? "bg-success/10 text-success"
-                            : tenant.scoreChange < 0
-                              ? "bg-destructive/10 text-destructive"
-                              : "text-muted-foreground"
-                        }`}
-                      >
-                        {tenant.scoreChange > 0 ? "+" : ""}
-                        {tenant.scoreChange.toFixed(1)}
+                      <span className={`text-xs font-bold ${getScoreColor(tenant.healthScore)}`}>
+                        {tenant.healthScore}
                       </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">{getRiskBadge(tenant, t)}</td>
-                    <td className="px-4 py-3 text-right font-mono text-xs font-semibold">
-                      {formatCurrency(tenant.mrrEnd)}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span className="text-xs">
-                        {tenant.activeUserCount}/{tenant.totalUserCount}
-                        <span className="ml-1 text-muted-foreground">
-                          ({tenant.engagementRate}%)
-                        </span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-center">
+                    <span
+                      className={`inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-xs font-semibold ${
+                        tenant.scoreChange > 0
+                          ? "bg-success/10 text-success"
+                          : tenant.scoreChange < 0
+                            ? "bg-destructive/10 text-destructive"
+                            : "text-muted-foreground"
+                      }`}
+                    >
+                      {tenant.scoreChange > 0 ? "+" : ""}
+                      {tenant.scoreChange.toFixed(1)}
+                    </span>
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-center">
+                    {getRiskBadge(tenant, t)}
+                  </TableCell>
+                  <TableCell variant="numeric" className="px-4 py-3 font-mono text-xs font-semibold">
+                    {formatCurrency(tenant.mrrEnd)}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-center">
+                    <span className="text-xs">
+                      {tenant.activeUserCount}/{tenant.totalUserCount}
+                      <span className="ms-1 text-muted-foreground">
+                        ({tenant.engagementRate}%)
                       </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    </span>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
 
           {healthData.items.length === 0 && (
             <div className="py-16 text-center text-sm text-muted-foreground">

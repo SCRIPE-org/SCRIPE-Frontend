@@ -25,6 +25,7 @@ import { DashboardStudioPanel } from "../components/DashboardStudioPanel";
 import { DASHBOARD_ENDPOINTS } from "../../data/services/dashboard.endpoints";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
+import { PageHeader } from "@core/ui/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import {
   Radio,
@@ -75,10 +76,13 @@ const TenantAnalyticsView = dynamic(
   { ssr: false }
 );
 
+// A live-status dot reads its state through colour alone — it does not pulse
+// forever, which would turn "connecting" into permanent decoration instead of
+// a transient state.
 const connectionColors = {
   connected: "bg-success",
-  connecting: "bg-warning motion-safe:animate-pulse",
-  reconnecting: "bg-warning motion-safe:animate-pulse",
+  connecting: "bg-warning",
+  reconnecting: "bg-warning",
   disconnected: "bg-destructive",
 } as const;
 
@@ -108,84 +112,77 @@ export function DashboardView() {
     const name = admin?.firstName || admin?.username || "";
     const text = config.greeting.text
       ? config.greeting.text.replace("{name}", name)
-      : `${t("dashboard.greeting") || "Welcome back"}, ${name}`;
-    const subtitle =
-      config.greeting.subtitle ||
-      t("dashboard.greetingSubtitle") ||
-      "Here's what's happening today";
+      : `${t("dashboard.greeting")}, ${name}`;
+    const subtitle = config.greeting.subtitle || t("dashboard.greetingSubtitle");
     return { text, subtitle };
   })();
 
   return (
     <div className={layoutClasses.pageSpacing} dir={direction}>
-      {/* Page Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          {resolvedGreeting ? (
-            <>
-              <h1 className="text-2xl font-bold tracking-tight">{resolvedGreeting.text}</h1>
-              <p className="text-muted-foreground">{resolvedGreeting.subtitle}</p>
-            </>
-          ) : (
-            <>
-              <h1 className="text-2xl font-bold tracking-tight">{t("dashboard.title")}</h1>
-              <p className="text-muted-foreground">{t("dashboard.subtitle")}</p>
-            </>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          <CurrencyDisplayToggle />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setExportOpen(true)}
-            className="gap-1.5"
-          >
-            <FileDown className="h-4 w-4" />
-            {t("export.button")}
-          </Button>
-          {/* Dashboard Studio Trigger */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => theme.setIsStudioOpen(true)}
-            className="gap-1.5"
-          >
-            <Settings2 className="h-4 w-4" />
-            {t("dashboard.studio.openButton") || "Customize"}
-          </Button>
-          <Badge variant="outline" className="flex items-center gap-1.5 text-xs">
-            <span className={`h-2 w-2 rounded-full ${connectionColors[connectionState]}`} />
-            <Radio className="h-3 w-3" aria-hidden="true" />
-            {t(`audit.realtime.${connectionState}`)}
-          </Badge>
-        </div>
-      </div>
-
-      {/* ── Tab Navigation ── */}
+      {/* DashboardView is the hub route itself (never embedded elsewhere), so
+          its PageHeader always renders — unlike the three tabs it embeds. */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 lg:inline-grid lg:w-auto">
-          <TabsTrigger value="overview" className="gap-1.5">
-            <LayoutDashboard className="h-4 w-4" />
-            {t("dashboard.tabs.overview") || "Overview"}
-          </TabsTrigger>
-          {hasAuditPerm && (
-            <TabsTrigger value="audit" className="gap-1.5">
-              <ScrollText className="h-4 w-4" />
-              {t("dashboard.tabs.audit") || "Audit"}
-            </TabsTrigger>
-          )}
-          {hasSecurityPerm && (
-            <TabsTrigger value="security" className="gap-1.5">
-              <Shield className="h-4 w-4" />
-              {t("dashboard.tabs.security") || "Security"}
-            </TabsTrigger>
-          )}
-          <TabsTrigger value="analytics" className="gap-1.5">
-            <BarChart3 className="h-4 w-4" />
-            {t("dashboard.tabs.analytics") || "Analytics"}
-          </TabsTrigger>
-        </TabsList>
+        <PageHeader
+          icon={LayoutDashboard}
+          title={resolvedGreeting ? resolvedGreeting.text : t("dashboard.title")}
+          description={resolvedGreeting ? resolvedGreeting.subtitle : t("dashboard.subtitle")}
+          actions={
+            <>
+              <CurrencyDisplayToggle />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setExportOpen(true)}
+                className="gap-1.5"
+              >
+                <FileDown className="h-4 w-4" aria-hidden="true" />
+                {t("export.button")}
+              </Button>
+              {/* Dashboard Studio Trigger */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => theme.setIsStudioOpen(true)}
+                className="gap-1.5"
+              >
+                <Settings2 className="h-4 w-4" aria-hidden="true" />
+                {t("dashboard.studio.openButton")}
+              </Button>
+              <Badge variant="outline" className="flex items-center gap-1.5 text-xs">
+                <span
+                  className={`h-2 w-2 rounded-full ${connectionColors[connectionState]}`}
+                  aria-hidden="true"
+                />
+                <Radio className="h-3 w-3" aria-hidden="true" />
+                {t(`audit.realtime.${connectionState}`)}
+              </Badge>
+            </>
+          }
+          tabs={
+            <TabsList className="grid w-full grid-cols-4 lg:inline-grid lg:w-auto">
+              <TabsTrigger value="overview" className="gap-1.5">
+                <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
+                {t("dashboard.tabs.overview")}
+              </TabsTrigger>
+              {hasAuditPerm && (
+                <TabsTrigger value="audit" className="gap-1.5">
+                  <ScrollText className="h-4 w-4" aria-hidden="true" />
+                  {t("dashboard.tabs.audit")}
+                </TabsTrigger>
+              )}
+              {hasSecurityPerm && (
+                <TabsTrigger value="security" className="gap-1.5">
+                  <Shield className="h-4 w-4" aria-hidden="true" />
+                  {t("dashboard.tabs.security")}
+                </TabsTrigger>
+              )}
+              <TabsTrigger value="analytics" className="gap-1.5">
+                <BarChart3 className="h-4 w-4" aria-hidden="true" />
+                {t("dashboard.tabs.analytics")}
+              </TabsTrigger>
+            </TabsList>
+          }
+        />
 
         {/* ── Overview Tab ── */}
         <TabsContent value="overview" className="mt-6 space-y-6">

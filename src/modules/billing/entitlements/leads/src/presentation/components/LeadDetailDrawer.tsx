@@ -10,6 +10,8 @@ import {
 } from "@core/ui/detail-sheet";
 import { Tabs, TabsTrigger, TabsContent } from "@core/ui/tabs";
 import { buttonVariants } from "@core/ui/button";
+import { Skeleton } from "@core/ui/skeleton";
+import { appLogger } from "@core/common/logger";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -175,7 +177,7 @@ export function LeadDetailDrawer({
         setEmailBody(htmlToPlainText(preview.bodyHtml));
         setPreviewStatus(targetStatus);
       } catch (err) {
-        console.error("Failed to fetch email preview:", err);
+        appLogger.error("Failed to fetch email preview:", err);
       } finally {
         setIsFetchingPreview(false);
       }
@@ -260,9 +262,9 @@ export function LeadDetailDrawer({
         {/* ── Pinned header ── */}
         <DetailSheetHeader>
           {isLoading ? (
-            <div className="animate-pulse space-y-2 motion-reduce:animate-none">
-              <div className="h-5 w-48 rounded-full bg-nx-raised" />
-              <div className="h-3.5 w-32 rounded-full bg-nx-raised" />
+            <div className="space-y-2">
+              <Skeleton shape="title" className="h-5 w-48 rounded-full" />
+              <Skeleton shape="text" className="h-3.5 w-32 rounded-full" />
             </div>
           ) : lead ? (
             <div className="flex items-start justify-between gap-4">

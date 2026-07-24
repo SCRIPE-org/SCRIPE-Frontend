@@ -1,22 +1,25 @@
 "use client";
 
-import { FileText, XCircle, Shield, Clock } from "lucide-react";
+import { FileText, XCircle, Shield, Clock, type LucideIcon } from "lucide-react";
+import { Badge, type BadgeProps } from "@core/ui/badge";
 import type { DsrRequestType } from "../../domain/entities/DataSubjectRequest";
 
 // ── Request Type Badge ────────────────────────────────────────────────────────
+// Composes the shared Badge rather than hand-rolling a coloured pill: the icon
+// renders in currentColor, so it inherits whichever hue the variant carries.
 
-const TYPE_COLORS: Record<string, string> = {
-  Export: "bg-info/10 text-info border-info/20",
-  Erasure: "bg-destructive/10 text-destructive border-destructive/20",
-  Rectification: "bg-primary/10 text-primary border-primary/20",
-  Restriction: "bg-warning/10 text-warning border-warning/20",
+const TYPE_VARIANT: Record<string, BadgeProps["variant"]> = {
+  Export: "info",
+  Erasure: "error",
+  Rectification: "default",
+  Restriction: "warning",
 };
 
-const TYPE_ICONS: Record<string, React.ReactNode> = {
-  Export: <FileText className="h-3.5 w-3.5" />,
-  Erasure: <XCircle className="h-3.5 w-3.5" />,
-  Rectification: <Shield className="h-3.5 w-3.5" />,
-  Restriction: <Clock className="h-3.5 w-3.5" />,
+const TYPE_ICONS: Record<string, LucideIcon> = {
+  Export: FileText,
+  Erasure: XCircle,
+  Rectification: Shield,
+  Restriction: Clock,
 };
 
 interface DsrTypeCellProps {
@@ -29,12 +32,12 @@ interface DsrTypeCellProps {
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DsrTypeCell({ requestType, label }: DsrTypeCellProps) {
+  const Icon = TYPE_ICONS[requestType];
+
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${TYPE_COLORS[requestType] ?? ""}`}
-    >
-      {TYPE_ICONS[requestType]}
+    <Badge variant={TYPE_VARIANT[requestType] ?? "secondary"} className="gap-1.5">
+      {Icon && <Icon className="h-3.5 w-3.5" aria-hidden="true" />}
       {label}
-    </span>
+    </Badge>
   );
 }

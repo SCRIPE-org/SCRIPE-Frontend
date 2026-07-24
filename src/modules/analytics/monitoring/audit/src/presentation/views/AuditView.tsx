@@ -17,6 +17,7 @@ import { AuditFilterPanel } from "../components/AuditFilterPanel";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
+import { PageHeader } from "@core/ui/page-header";
 import { FileText, Radio, Download, Settings2 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useDashboardTheme, DashboardStudioPanel } from "@modules/monitoring/core";
@@ -35,10 +36,13 @@ const AuditExportDialog = dynamic(
   { ssr: false }
 );
 
+// A live-status dot reads its state through colour alone — it does not pulse
+// forever, which would turn "connecting" into permanent decoration instead of
+// a transient state.
 const connectionColors = {
   connected: "bg-success",
-  connecting: "bg-warning motion-safe:animate-pulse",
-  reconnecting: "bg-warning motion-safe:animate-pulse",
+  connecting: "bg-warning",
+  reconnecting: "bg-warning",
   disconnected: "bg-destructive",
 } as const;
 
@@ -61,56 +65,55 @@ export function AuditView() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-            <FileText className="h-6 w-6" aria-hidden="true" />
-            {t("audit.title")}
-          </h1>
-          <p className="text-muted-foreground">{t("audit.subtitle")}</p>
-        </div>
+      {/* AuditView is embedded as a tab inside DashboardView, which already
+          carries its own PageHeader — rendering this one too would stack two
+          icon-tile headers on the same screen. Only the standalone /audit
+          route gets the full header. */}
+      {isStandalone && (
+        <PageHeader
+          icon={FileText}
+          title={t("audit.title")}
+          description={t("audit.subtitle")}
+          actions={
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setExportOpen(true)}
+                className="gap-1.5"
+              >
+                <Download className="h-4 w-4" aria-hidden="true" />
+                {t("audit.export.button")}
+              </Button>
 
-        <div className="flex items-center gap-2">
-          {/* Export Button */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setExportOpen(true)}
-            className="flex items-center gap-1.5"
-          >
-            <Download className="h-4 w-4" />
-            {t("audit.export.button")}
-          </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => theme.setIsStudioOpen(true)}
+                className="gap-1.5"
+              >
+                <Settings2 className="h-4 w-4" aria-hidden="true" />
+                {t("dashboard.studio.openButton")}
+              </Button>
 
-          {/* Customize Button (Standalone only) */}
-          {isStandalone && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => theme.setIsStudioOpen(true)}
-              className="gap-1.5"
-            >
-              <Settings2 className="h-4 w-4" />
-              {t("dashboard.studio.openButton") || "Customize"}
-            </Button>
-          )}
-
-          {/* Real-time connection status */}
-          <Badge variant="outline" className="flex items-center gap-1.5 text-xs">
-            <span
-              className={`h-2 w-2 rounded-full ${connectionColors[realtime.connectionState]}`}
-            />
-            <Radio className="h-3 w-3" aria-hidden="true" />
-            {t(`audit.realtime.${realtime.connectionState}`)}
-            {realtime.realtimeEventCount > 0 && (
-              <span className="ml-1 tabular-nums text-muted-foreground">
-                ({realtime.realtimeEventCount})
-              </span>
-            )}
-          </Badge>
-        </div>
-      </div>
+              {/* Real-time connection status */}
+              <Badge variant="outline" className="flex items-center gap-1.5 text-xs">
+                <span
+                  className={`h-2 w-2 rounded-full ${connectionColors[realtime.connectionState]}`}
+                  aria-hidden="true"
+                />
+                <Radio className="h-3 w-3" aria-hidden="true" />
+                {t(`audit.realtime.${realtime.connectionState}`)}
+                {realtime.realtimeEventCount > 0 && (
+                  <span className="ms-1 tabular-nums text-nx-ink-3">
+                    ({realtime.realtimeEventCount})
+                  </span>
+                )}
+              </Badge>
+            </>
+          }
+        />
+      )}
 
       {/* Filters */}
       <Card className={cardClasses}>
@@ -134,7 +137,7 @@ export function AuditView() {
           <div className="flex items-center justify-between">
             <CardTitle className="text-base">{t("audit.results.title")}</CardTitle>
             {vm.logs.data && (
-              <span className="text-sm tabular-nums text-muted-foreground">
+              <span className="text-sm tabular-nums text-nx-ink-2">
                 {t("audit.results.totalCount", { count: vm.logs.data.totalCount })}
               </span>
             )}

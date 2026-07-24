@@ -1,17 +1,19 @@
 /**
  * Identity Provider Card
  *
- * High-fidelity, glassmorphic card for configured SSO providers.
- * Includes inline status toggling, details, connection testing, and action menus.
+ * Card for a configured SSO provider. Includes inline status toggling,
+ * details, connection testing, and action menus.
  */
 "use client";
 
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { cn } from "@core/common/utils";
 import type { IdentityProviderListItem } from "../../domain/entities/IdentityProvider";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Switch } from "@core/ui/switch";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import {
   Shield,
   Users,
@@ -20,7 +22,6 @@ import {
   Pencil,
   Trash2,
   MoreVertical,
-  Loader2,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -65,8 +66,9 @@ export function IdentityProviderCard({
   const [isToggling, setIsToggling] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  // Parse color and resolve default if empty
-  const brandColor = item.buttonColor || "#4F46E5";
+  // A provider without its own colour renders on the workspace accent instead
+  // of a fixed hex — the accent is workspace-owned, never a fallback brand.
+  const brandColor = item.buttonColor || null;
 
   // Protocol configuration styling
   const protocolStyles: Record<
@@ -95,12 +97,12 @@ export function IdentityProviderCard({
 
   const style = protocolStyles[item.protocol] || {
     label: item.protocol.toUpperCase(),
-    bg: "bg-muted",
-    text: "text-muted-foreground",
-    border: "border-border",
+    bg: "bg-nx-raised",
+    text: "text-nx-ink-2",
+    border: "border-nx-line",
   };
 
-  const handleToggle = async (checked: boolean) => {
+  const handleToggle = async (_checked: boolean) => {
     try {
       setIsToggling(true);
       await onToggleActive(item);
@@ -111,17 +113,25 @@ export function IdentityProviderCard({
 
   return (
     <>
-      <div className="group relative flex flex-col justify-between rounded-xl border border-border/80 bg-card/65 p-5 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/20 hover:shadow-lg dark:hover:border-primary/30">
+      <div className="group relative flex flex-col justify-between rounded-nx-lg border border-nx-line bg-nx-surface p-5 transition-[border-color] duration-nx-micro motion-reduce:transition-none hover:border-nx-line-hi">
         {/* Top Header Row */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             {/* Logo container with brand-colored background ring */}
             <div
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl p-1.5 transition-all duration-300 group-hover:scale-105"
-              style={{
-                backgroundColor: `${brandColor}12`,
-                border: `1px solid ${brandColor}25`,
-              }}
+              className={cn(
+                "flex h-11 w-11 shrink-0 items-center justify-center rounded-nx-md p-1.5",
+                !brandColor &&
+                  "border border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash"
+              )}
+              style={
+                brandColor
+                  ? {
+                      backgroundColor: `${brandColor}12`,
+                      border: `1px solid ${brandColor}25`,
+                    }
+                  : undefined
+              }
             >
               {item.iconUrl ? (
                 <img
@@ -130,44 +140,53 @@ export function IdentityProviderCard({
                   className="h-6 w-6 rounded object-contain"
                 />
               ) : (
-                <Fingerprint className="h-6 w-6" style={{ color: brandColor }} />
+                <Fingerprint
+                  className={cn("h-6 w-6", !brandColor && "text-nx-accent")}
+                  style={brandColor ? { color: brandColor } : undefined}
+                  aria-hidden="true"
+                />
               )}
             </div>
             <div>
-              <h4 className="line-clamp-1 text-sm font-semibold tracking-tight text-foreground">
+              <h4 className="line-clamp-1 text-sm font-semibold tracking-tight text-nx-ink">
                 {item.name}
               </h4>
-              <p className="mt-0.5 font-mono text-[11px] text-muted-foreground">{item.slug}</p>
+              <p className="mt-0.5 font-mono text-[11px] text-nx-ink-3">{item.slug}</p>
             </div>
           </div>
 
           {/* Quick Actions Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
-                <MoreVertical className="h-4 w-4" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-nx-ink-3"
+                aria-label={t("common.actions")}
+              >
+                <MoreVertical className="h-4 w-4" aria-hidden="true" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
               <DropdownMenuItem onClick={() => onEdit(item)} className="cursor-pointer gap-2">
-                <Pencil className="h-4 w-4" />
-                {t("common.edit") || "Edit Config"}
+                <Pencil className="h-4 w-4" aria-hidden="true" />
+                {t("common.edit")}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => onTestConnection(item.id)}
                 disabled={isTesting}
                 className="cursor-pointer gap-2"
               >
-                <Zap className="h-4 w-4" />
-                {t("identityProviders.test") || "Test Connection"}
+                <Zap className="h-4 w-4" aria-hidden="true" />
+                {t("identityProviders.test")}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => setShowDeleteDialog(true)}
                 className="cursor-pointer gap-2 text-destructive hover:text-destructive focus:text-destructive"
               >
-                <Trash2 className="h-4 w-4" />
-                {t("common.delete") || "Delete"}
+                <Trash2 className="h-4 w-4" aria-hidden="true" />
+                {t("common.delete")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -187,9 +206,9 @@ export function IdentityProviderCard({
           {item.enabledForAdmins && (
             <Badge
               variant="outline"
-              className="h-5 gap-1 border-primary/30 bg-primary/10 text-[10px] font-medium text-primary"
+              className="h-5 gap-1 border-nx-accent/30 bg-nx-accent-wash text-[10px] font-medium text-nx-accent"
             >
-              <Shield className="h-3 w-3" />
+              <Shield className="h-3 w-3" aria-hidden="true" />
               {t("identityProviders.badgeAdmin")}
             </Badge>
           )}
@@ -200,14 +219,14 @@ export function IdentityProviderCard({
               variant="outline"
               className="h-5 gap-1 border-info/30 bg-info/10 text-[10px] font-medium text-info"
             >
-              <Users className="h-3 w-3" />
+              <Users className="h-3 w-3" aria-hidden="true" />
               {t("identityProviders.badgeUser")}
             </Badge>
           )}
         </div>
 
         {/* Divider */}
-        <div className="mb-4 h-px w-full bg-border/60" />
+        <div className="mb-4 h-px w-full bg-nx-line" />
 
         {/* Card Footer Controls */}
         <div className="flex items-center justify-between">
@@ -217,20 +236,20 @@ export function IdentityProviderCard({
             size="sm"
             onClick={() => onTestConnection(item.id)}
             disabled={isTesting}
-            className="h-8 gap-1.5 px-2.5 text-xs text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+            className="h-8 gap-1.5 px-2.5 text-xs text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"
           >
             {isTesting ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <LoadingSpinner size="inline" showText={false} />
             ) : (
-              <Zap className="h-3.5 w-3.5 text-warning" />
+              <Zap className="h-3.5 w-3.5 text-warning" aria-hidden="true" />
             )}
-            {t("identityProviders.testConnection") || "Test Connection"}
+            {t("identityProviders.testConnection")}
           </Button>
 
           {/* Status Toggle Switch */}
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-medium text-muted-foreground">
-              {item.isActive ? t("common.active") || "Active" : t("common.inactive") || "Inactive"}
+            <span className="text-[11px] font-medium text-nx-ink-3">
+              {item.isActive ? t("common.active") : t("common.inactive")}
             </span>
             <Switch
               checked={item.isActive}
@@ -246,16 +265,13 @@ export function IdentityProviderCard({
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t("identityProviders.deleteConfirmTitle") || "Delete Identity Provider"}
-            </AlertDialogTitle>
+            <AlertDialogTitle>{t("identityProviders.deleteConfirmTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t("identityProviders.deleteConfirmDesc") ||
-                "This will permanently remove this identity provider. Users linked via this provider will lose SSO access. This action cannot be undone."}
+              {t("identityProviders.deleteConfirmDesc")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel") || "Cancel"}</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 onDelete(item);
@@ -263,7 +279,7 @@ export function IdentityProviderCard({
               }}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {t("common.delete") || "Delete"}
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

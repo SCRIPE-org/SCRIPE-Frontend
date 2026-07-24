@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@core/ui/button";
+import { Skeleton } from "@core/ui/skeleton";
 import { Mail, Send } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { formatDateTimeUtc } from "@core/common/utils";
@@ -47,11 +48,11 @@ export function DrawerTabComms({
           {t("leads.email.communicationsTitle")}
         </p>
         {isLoadingComms ? (
-          <div className="animate-pulse space-y-3 motion-reduce:animate-none">
+          <div className="space-y-3">
             {[1, 2].map((i) => (
               <div key={i} className="space-y-1">
-                <div className="h-3 w-40 rounded bg-muted" />
-                <div className="h-2.5 w-24 rounded bg-muted" />
+                <Skeleton shape="text" className="h-3 w-40" />
+                <Skeleton shape="text" className="h-2.5 w-24" />
               </div>
             ))}
           </div>

@@ -13,6 +13,8 @@ import { Label } from "@core/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Switch } from "@core/ui/switch";
 import { Input } from "@core/ui/input";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { ErrorMessage } from "@core/ui/error-message";
 import { Calendar, Clock, Download, FileText, Mail, Save, Settings2 } from "lucide-react";
 import { cn, formatDateUtc } from "@core/common/utils";
 import type {
@@ -25,6 +27,8 @@ interface ReportsTabProps {
   onSave: (data: UpdateReportPreferenceRequest) => Promise<void>;
   onGenerateReport: () => Promise<void>;
   isLoading?: boolean;
+  error?: Error | null;
+  onRetry?: () => void;
   isSaving?: boolean;
   isGenerating?: boolean;
 }
@@ -38,6 +42,8 @@ export function ReportsTab({
   onSave,
   onGenerateReport,
   isLoading,
+  error,
+  onRetry,
   isSaving,
   isGenerating,
 }: ReportsTabProps) {
@@ -124,11 +130,11 @@ export function ReportsTab({
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-success border-t-transparent" />
-      </div>
-    );
+    return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return <ErrorMessage message={t("common.error")} onRetry={onRetry} />;
   }
 
   return (

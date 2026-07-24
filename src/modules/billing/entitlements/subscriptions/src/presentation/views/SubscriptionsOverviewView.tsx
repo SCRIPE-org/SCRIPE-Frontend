@@ -14,8 +14,10 @@ import { useSubscriptionsOverviewViewModel } from "../viewmodels/useSubscription
 import { SubscriptionsExportDialog } from "../components/SubscriptionsExportDialog";
 import { CurrencyDisplayToggle } from "@core/ui/currency-display-toggle";
 import { Button } from "@core/ui/button";
+import { PageHeader } from "@core/ui/page-header";
 import { Skeleton } from "@core/ui/skeleton";
-import { FileDown, RefreshCw } from "lucide-react";
+import { ErrorMessage } from "@core/ui/error-message";
+import { FileDown, RefreshCw, Receipt } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 import { SubscriptionsKpiGrid } from "../components/SubscriptionsKpiGrid";
@@ -36,40 +38,34 @@ export function SubscriptionsOverviewView() {
     return <LoadingSkeleton />;
   }
 
+  // A failed fetch must not render the same empty state as "you have zero
+  // subscriptions" — the two mean very different things to an admin. Gated on
+  // the unfiltered list so a stale/cached page (or a search that legitimately
+  // matches nothing) never gets replaced by the error takeover.
+  if (vm.error && vm.allSubscriptions.length === 0) {
+    return <ErrorMessage message={vm.t("common.error")} onRetry={vm.refetch} fullHeight />;
+  }
+
   return (
     <div className="space-y-6">
-      {/* ── Header ── */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">
-            {vm.t("entSubscriptions.overviewTitle") || "Subscriptions Overview"}
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {vm.t("entSubscriptions.overviewDesc") || "All active subscriptions across all tenants"}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <CurrencyDisplayToggle />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setExportOpen(true)}
-            className="gap-1.5 transition-all"
-          >
-            <FileDown className="h-3.5 w-3.5" />
-            {vm.t("entSubscriptions.export.button") || "Export"}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => vm.refetch()}
-            className="gap-1.5 transition-all"
-          >
-            <RefreshCw className="h-3.5 w-3.5" />
-            {vm.t("common.refresh") || "Refresh"}
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        icon={Receipt}
+        title={vm.t("entSubscriptions.overviewTitle")}
+        description={vm.t("entSubscriptions.overviewDesc")}
+        actions={
+          <>
+            <CurrencyDisplayToggle />
+            <Button variant="outline" size="sm" onClick={() => setExportOpen(true)} className="gap-1.5">
+              <FileDown className="h-3.5 w-3.5" aria-hidden="true" />
+              {vm.t("entSubscriptions.export.button")}
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => vm.refetch()} className="gap-1.5">
+              <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
+              {vm.t("common.refresh")}
+            </Button>
+          </>
+        }
+      />
 
       {/* KPI Cards Grid */}
       <SubscriptionsKpiGrid
@@ -130,21 +126,21 @@ function LoadingSkeleton() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <Skeleton className="h-8 w-64" />
-          <Skeleton className="mt-2 h-4 w-96" />
+          <Skeleton shape="title" className="h-8 w-64" />
+          <Skeleton shape="text" className="mt-2 w-96" />
         </div>
       </div>
       <div className="grid gap-4 md:grid-cols-4">
         {Array.from({ length: 8 }).map((_, i) => (
-          <Skeleton key={i} className="h-24 rounded-xl" />
+          <Skeleton key={i} className="h-24 rounded-nx-lg" />
         ))}
       </div>
       <div className="grid gap-4 md:grid-cols-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className="h-64 rounded-xl" />
+          <Skeleton key={i} className="h-64 rounded-nx-lg" />
         ))}
       </div>
-      <Skeleton className="h-96 rounded-xl" />
+      <Skeleton className="h-96 rounded-nx-lg" />
     </div>
   );
 }

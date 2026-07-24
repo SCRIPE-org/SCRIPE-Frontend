@@ -6,8 +6,7 @@
  */
 import { deepMerge } from "@core/utils/deep-merge";
 
-import { en as templateEn, ar as templateAr } from "./_template";
-import { en as w42En, ar as w42Ar } from "./W4-2";
+import { en as w41En, ar as w41Ar } from "./W4-1";
 
-export const en: Record<string, unknown> = deepMerge({}, templateEn, w42En);
-export const ar: Record<string, unknown> = deepMerge({}, templateAr, w42Ar);
+export const en: Record<string, unknown> = deepMerge({}, w41En);
+export const ar: Record<string, unknown> = deepMerge({}, w41Ar);

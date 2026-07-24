@@ -4,6 +4,7 @@
 import React from "react";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
+import { cn } from "@core/common/utils";
 
 interface BulkActionBarProps {
   count: number;
@@ -32,11 +33,15 @@ export function BulkActionBar({
 
   return (
     <div
-      className={`fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-2xl border border-primary/20 bg-background/95 px-5 py-3 shadow-2xl shadow-primary/10 backdrop-blur-md transition-all duration-300 ${
+      className={cn(
+        // Logical centering (mx-auto + w-fit against a full-bleed inset-x-0)
+        // replaces a physical left-1/2 + -translate-x-1/2 pair; z-sticky is the
+        // semantic ladder's slot for a floating bottom action bar.
+        "fixed inset-x-0 bottom-6 z-sticky mx-auto flex w-fit items-center gap-3 rounded-nx-lg border border-primary/20 bg-background/95 px-5 py-3 shadow-nx-modal transition-[opacity,transform] duration-nx-panel ease-nx-enter motion-reduce:transition-none motion-reduce:!transform-none",
         count > 0
           ? "pointer-events-auto translate-y-0 opacity-100"
           : "pointer-events-none translate-y-4 opacity-0"
-      }`}
+      )}
       aria-live="polite"
     >
       {/* Selection count */}

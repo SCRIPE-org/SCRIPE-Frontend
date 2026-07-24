@@ -7,6 +7,7 @@ import { Textarea } from "@core/ui/textarea";
 import { Input } from "@core/ui/input";
 import { Switch } from "@core/ui/switch";
 import { Label } from "@core/ui/label";
+import { Skeleton } from "@core/ui/skeleton";
 import { Mail, CheckCheck, ArrowRightCircle, Loader2, Info } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { PlatformLead, LeadStatus } from "../../../domain/entities/PlatformLead";
@@ -105,12 +106,10 @@ export function DrawerStatusSection({
                     htmlFor="send-email-status-change"
                     className="cursor-pointer select-none text-xs font-semibold text-foreground"
                   >
-                    {t("leads.email.sendNotificationToggle") ||
-                      "Send status notification email to lead"}
+                    {t("leads.email.sendNotificationToggle")}
                   </Label>
                   <p className="text-[10px] leading-relaxed text-muted-foreground">
-                    {t("leads.email.sendNotificationToggleDesc") ||
-                      "Send an automated status update email to the lead."}
+                    {t("leads.email.sendNotificationToggleDesc")}
                   </p>
                 </div>
                 <Switch
@@ -123,52 +122,47 @@ export function DrawerStatusSection({
               {sendEmailToggle && (
                 <div className="space-y-4 border-t border-border/80 pt-4 duration-200 animate-in fade-in slide-in-from-top-1">
                   {isFetchingPreview ? (
-                    <div className="animate-pulse space-y-3 py-2 motion-reduce:animate-none">
-                      <div className="h-4 w-1/4 rounded bg-muted" />
-                      <div className="h-9 w-full rounded bg-muted" />
-                      <div className="h-4 w-1/3 rounded bg-muted" />
-                      <div className="h-28 w-full rounded bg-muted" />
+                    <div className="space-y-3 py-2">
+                      <Skeleton shape="text" className="h-4 w-1/4" />
+                      <Skeleton shape="control" className="h-9 w-full" />
+                      <Skeleton shape="text" className="h-4 w-1/3" />
+                      <Skeleton shape="block" className="h-28 w-full rounded-nx-md" />
                     </div>
                   ) : (
                     <div className="space-y-4 rounded-lg border border-info/25 bg-background/60 p-3.5">
                       <div className="flex items-center gap-2 border-b border-border/60 pb-1.5">
-                        <Mail className="h-4 w-4 text-info" />
+                        <Mail className="h-4 w-4 text-info" aria-hidden="true" />
                         <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                          {t("leads.email.draftPreviewHeader") || "Notification Draft Preview"}
+                          {t("leads.email.draftPreviewHeader")}
                         </span>
                       </div>
 
                       <div className="space-y-1">
                         <Label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                          {t("leads.email.subject") || "Subject"}
+                          {t("leads.email.subject")}
                         </Label>
                         <Input
                           value={emailSubject}
                           onChange={(e) => onEmailSubjectChange(e.target.value)}
-                          placeholder={
-                            t("leads.email.subjectPlaceholder") || "Enter email subject..."
-                          }
+                          placeholder={t("leads.email.subjectPlaceholder")}
                           className="h-9 border-border bg-card/60 text-xs text-foreground placeholder:text-muted-foreground focus:border-border/90"
                         />
                       </div>
 
                       <div className="space-y-1">
                         <Label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                          {t("leads.email.body") || "Message Body"}
+                          {t("leads.email.body")}
                         </Label>
                         <Textarea
                           value={emailBody}
                           onChange={(e) => onEmailBodyChange(e.target.value)}
-                          placeholder={t("leads.email.bodyPlaceholder") || "Write your message..."}
+                          placeholder={t("leads.email.bodyPlaceholder")}
                           rows={6}
                           className="custom-scrollbar resize-none border-border bg-card/60 font-sans text-xs leading-relaxed text-foreground placeholder:text-muted-foreground focus:border-border/90"
                         />
                         <div className="mt-1.5 flex items-center gap-1.5 text-[9px] italic text-muted-foreground">
-                          <Info className="h-3 w-3 shrink-0 text-info/80" />
-                          <span>
-                            {t("leads.email.bodyHint") ||
-                              "The email will be formatted as paragraphs and wrapped in the branded SCRIPE template automatically."}
-                          </span>
+                          <Info className="h-3 w-3 shrink-0 text-info/80" aria-hidden="true" />
+                          <span>{t("leads.email.bodyHint")}</span>
                         </div>
                       </div>
                     </div>

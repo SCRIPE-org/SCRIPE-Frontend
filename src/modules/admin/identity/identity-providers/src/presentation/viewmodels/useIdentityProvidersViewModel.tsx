@@ -63,26 +63,24 @@ export function useIdentityProvidersViewModel() {
     create: async (data: any) => {
       const result = await identityProviderRepository.create(data);
       success({
-        title: t("identityProviders.created") || "Provider Created",
-        description:
-          t("identityProviders.createdDesc") || "Identity provider created successfully.",
+        title: t("identityProviders.created"),
+        description: t("identityProviders.createdDesc"),
       });
       return result as unknown as IdentityProviderListItem;
     },
     update: async (id: string, data: any) => {
       await identityProviderRepository.update(id, data);
       success({
-        title: t("identityProviders.updated") || "Provider Updated",
-        description:
-          t("identityProviders.updatedDesc") || "Identity provider updated successfully.",
+        title: t("identityProviders.updated"),
+        description: t("identityProviders.updatedDesc"),
       });
       return {} as IdentityProviderListItem;
     },
     delete: async (id: string) => {
       await identityProviderRepository.remove(id);
       success({
-        title: t("identityProviders.deleted") || "Provider Deleted",
-        description: t("identityProviders.deletedDesc") || "Identity provider deleted.",
+        title: t("identityProviders.deleted"),
+        description: t("identityProviders.deletedDesc"),
       });
     },
   });
@@ -93,19 +91,19 @@ export function useIdentityProvidersViewModel() {
     onSuccess: (result) => {
       if (result.isSuccess) {
         success({
-          title: t("identityProviders.testSuccess") || "Connection Successful",
-          description: result.message || "Provider is reachable.",
+          title: t("identityProviders.testSuccess"),
+          description: result.message || t("identityProviders.testSuccess"),
         });
       } else {
         toastError({
-          title: t("identityProviders.testFailed") || "Connection Failed",
-          description: result.message || "Could not reach the provider.",
+          title: t("identityProviders.testFailed"),
+          description: result.message || t("identityProviders.testFailed"),
         });
       }
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },
@@ -117,21 +115,21 @@ export function useIdentityProvidersViewModel() {
       createFields: [
         {
           name: "name",
-          label: t("identityProviders.name") || "Provider Name",
+          label: t("identityProviders.name"),
           type: "text" as const,
-          placeholder: t("identityProviders.namePlaceholder") || "e.g. Corporate Azure AD",
+          placeholder: t("identityProviders.namePlaceholder"),
           required: true,
         },
         {
           name: "slug",
-          label: t("identityProviders.slug") || "Slug",
+          label: t("identityProviders.slug"),
           type: "text" as const,
-          placeholder: t("identityProviders.slugPlaceholder") || "e.g. azure-ad",
+          placeholder: t("identityProviders.slugPlaceholder"),
           required: true,
         },
         {
           name: "protocol",
-          label: t("identityProviders.protocol") || "Protocol",
+          label: t("identityProviders.protocol"),
           type: "select" as const,
           required: true,
           options: [
@@ -142,100 +140,100 @@ export function useIdentityProvidersViewModel() {
         },
         {
           name: "authority",
-          label: t("identityProviders.authority") || "Authority URL",
+          label: t("identityProviders.authority"),
           type: "text" as const,
           placeholder: "https://login.microsoftonline.com/{tenant}/v2.0",
         },
         {
           name: "clientId",
-          label: t("identityProviders.clientId") || "Client ID",
+          label: t("identityProviders.clientId"),
           type: "text" as const,
-          placeholder: t("identityProviders.clientIdPlaceholder") || "OAuth2 client_id",
+          placeholder: t("identityProviders.clientIdPlaceholder"),
         },
         {
           name: "clientSecret",
-          label: t("identityProviders.clientSecret") || "Client Secret",
+          label: t("identityProviders.clientSecret"),
           type: "text" as const,
-          placeholder: t("identityProviders.clientSecretPlaceholder") || "OAuth2 client_secret",
+          placeholder: t("identityProviders.clientSecretPlaceholder"),
         },
         {
           name: "scopes",
-          label: t("identityProviders.scopes") || "Scopes",
+          label: t("identityProviders.scopes"),
           type: "text" as const,
           placeholder: "openid profile email",
         },
         {
           name: "enabledForAdmins",
-          label: t("identityProviders.enabledForAdmins") || "Enable for Admins",
+          label: t("identityProviders.enabledForAdmins"),
           type: "switch" as const,
         },
         {
           name: "enabledForUsers",
-          label: t("identityProviders.enabledForUsers") || "Enable for Users",
+          label: t("identityProviders.enabledForUsers"),
           type: "switch" as const,
         },
         {
           name: "buttonColor",
-          label: t("identityProviders.buttonColor") || "Button Color",
+          label: t("identityProviders.buttonColor"),
           type: "text" as const,
           placeholder: "#0078D4",
         },
         {
           name: "buttonLabel",
-          label: t("identityProviders.buttonLabel") || "Button Label",
+          label: t("identityProviders.buttonLabel"),
           type: "text" as const,
-          placeholder: t("identityProviders.buttonLabelPlaceholder") || "Sign in with ...",
+          placeholder: t("identityProviders.buttonLabelPlaceholder"),
         },
       ],
       editFields: [
         {
           name: "name",
-          label: t("identityProviders.name") || "Provider Name",
+          label: t("identityProviders.name"),
           type: "text" as const,
         },
         {
           name: "slug",
-          label: t("identityProviders.slug") || "Slug",
+          label: t("identityProviders.slug"),
           type: "text" as const,
         },
         {
           name: "authority",
-          label: t("identityProviders.authority") || "Authority URL",
+          label: t("identityProviders.authority"),
           type: "text" as const,
         },
         {
           name: "clientId",
-          label: t("identityProviders.clientId") || "Client ID",
+          label: t("identityProviders.clientId"),
           type: "text" as const,
         },
         {
           name: "clientSecret",
-          label: t("identityProviders.clientSecret") || "Client Secret (leave blank to keep)",
+          label: t("identityProviders.clientSecret"),
           type: "text" as const,
         },
         {
           name: "scopes",
-          label: t("identityProviders.scopes") || "Scopes",
+          label: t("identityProviders.scopes"),
           type: "text" as const,
         },
         {
           name: "enabledForAdmins",
-          label: t("identityProviders.enabledForAdmins") || "Enable for Admins",
+          label: t("identityProviders.enabledForAdmins"),
           type: "switch" as const,
         },
         {
           name: "enabledForUsers",
-          label: t("identityProviders.enabledForUsers") || "Enable for Users",
+          label: t("identityProviders.enabledForUsers"),
           type: "switch" as const,
         },
         {
           name: "buttonColor",
-          label: t("identityProviders.buttonColor") || "Button Color",
+          label: t("identityProviders.buttonColor"),
           type: "text" as const,
         },
         {
           name: "buttonLabel",
-          label: t("identityProviders.buttonLabel") || "Button Label",
+          label: t("identityProviders.buttonLabel"),
           type: "text" as const,
         },
       ],
@@ -284,25 +282,25 @@ export function useIdentityProvidersViewModel() {
     columns: [
       {
         key: "name",
-        label: t("identityProviders.name") || "Name",
+        label: t("identityProviders.name"),
         sortable: true,
         render: (_val: unknown, item: IdentityProviderListItem) => (
           <div className="flex items-center gap-2">
             {item.iconUrl ? (
               <img src={item.iconUrl} alt={item.name} className="h-5 w-5 rounded object-contain" />
             ) : (
-              <Fingerprint className="h-4 w-4 text-muted-foreground" />
+              <Fingerprint className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
             )}
             <div className="flex flex-col">
               <span className="text-sm font-medium">{item.name}</span>
-              <span className="font-mono text-xs text-muted-foreground">{item.slug}</span>
+              <span className="font-mono text-xs text-nx-ink-3">{item.slug}</span>
             </div>
           </div>
         ),
       },
       {
         key: "protocol",
-        label: t("identityProviders.protocol") || "Protocol",
+        label: t("identityProviders.protocol"),
         render: (_val: unknown, item: IdentityProviderListItem) => {
           const protocolConfig: Record<string, { label: string; className: string }> = {
             oidc: {
@@ -331,16 +329,16 @@ export function useIdentityProvidersViewModel() {
       },
       {
         key: "scope",
-        label: t("identityProviders.scope") || "Scope",
+        label: t("identityProviders.scope"),
         render: (_val: unknown, item: IdentityProviderListItem) => (
           <div className="flex items-center gap-1.5">
             {item.enabledForAdmins && (
               <Badge
                 variant="outline"
-                className="gap-1 border-primary/30 bg-primary/10 text-xs text-primary"
+                className="gap-1 border-nx-accent/30 bg-nx-accent-wash text-xs text-nx-accent"
               >
-                <Shield className="h-3 w-3" />
-                Admin
+                <Shield className="h-3 w-3" aria-hidden="true" />
+                {t("identityProviders.badgeAdmin")}
               </Badge>
             )}
             {item.enabledForUsers && (
@@ -348,44 +346,42 @@ export function useIdentityProvidersViewModel() {
                 variant="outline"
                 className="gap-1 border-info/30 bg-info/10 text-xs text-info"
               >
-                <Users className="h-3 w-3" />
-                User
+                <Users className="h-3 w-3" aria-hidden="true" />
+                {t("identityProviders.badgeUser")}
               </Badge>
             )}
             {!item.enabledForAdmins && !item.enabledForUsers && (
-              <span className="text-xs text-muted-foreground">None</span>
+              <span className="text-xs text-nx-ink-3">{t("identityProviders.scopeNone")}</span>
             )}
           </div>
         ),
       },
       {
         key: "isActive",
-        label: t("common.status") || "Status",
+        label: t("common.status"),
         render: (_val: unknown, item: IdentityProviderListItem) => (
           <Badge
             variant={item.isActive ? "default" : "secondary"}
             className={`text-xs ${
-              item.isActive
-                ? "bg-success/10 text-success"
-                : "bg-muted text-muted-foreground"
+              item.isActive ? "bg-success/10 text-success" : "bg-nx-raised text-nx-ink-3"
             }`}
           >
-            {item.isActive ? t("common.active") || "Active" : t("common.inactive") || "Inactive"}
+            {item.isActive ? t("common.active") : t("common.inactive")}
           </Badge>
         ),
       },
       {
         key: "createdAt",
-        label: t("common.createdAt") || "Created",
+        label: t("common.createdAt"),
         render: (_val: unknown, item: IdentityProviderListItem) => (
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-nx-ink-3">
             {item.createdAt ? formatUtc(item.createdAt, "MMM d, yyyy") : "—"}
           </span>
         ),
       },
       {
         key: "test",
-        label: t("identityProviders.testConnection") || "Test",
+        label: t("identityProviders.testConnection"),
         render: (_val: unknown, item: IdentityProviderListItem) => (
           <Button
             variant="outline"
@@ -398,9 +394,9 @@ export function useIdentityProvidersViewModel() {
             loading={testMutation.isPending && testMutation.variables === item.id}
           >
             {!(testMutation.isPending && testMutation.variables === item.id) && (
-              <Zap className="h-3 w-3" />
+              <Zap className="h-3 w-3" aria-hidden="true" />
             )}
-            {t("identityProviders.test") || "Test"}
+            {t("identityProviders.test")}
           </Button>
         ),
       },
@@ -415,22 +411,20 @@ export function useIdentityProvidersViewModel() {
       handleDeleteFn: any
     ): CrudAction<IdentityProviderListItem>[] => [
       {
-        label: tFn("common.edit") || "Edit",
+        label: tFn("common.edit"),
         onClick: (item: IdentityProviderListItem) =>
           router.push(`/settings/identity-providers/${item.id}`),
         variant: "ghost" as const,
-        icon: <Pencil className="h-4 w-4" />,
+        icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
       },
       {
-        label: tFn("common.delete") || "Delete",
+        label: tFn("common.delete"),
         onClick: (item: IdentityProviderListItem) => handleDeleteFn?.(item),
         variant: "ghost" as const,
         className: "text-destructive hover:text-destructive/90",
-        icon: <Trash2 className="h-4 w-4" />,
-        confirmTitle: tFn("identityProviders.deleteConfirmTitle") || "Delete Identity Provider",
-        confirmDescription:
-          tFn("identityProviders.deleteConfirmDesc") ||
-          "This will permanently remove this identity provider. Users linked via this provider will lose SSO access.",
+        icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
+        confirmTitle: tFn("identityProviders.deleteConfirmTitle"),
+        confirmDescription: tFn("identityProviders.deleteConfirmDesc"),
         confirmVariant: "destructive" as const,
       },
     ],

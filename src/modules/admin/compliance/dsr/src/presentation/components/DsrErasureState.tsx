@@ -17,17 +17,17 @@ export function DsrErasureState({ dsr, t }: DsrErasureStateProps) {
   if (dsr.requestType !== "Erasure" || dsr.status !== "Completed") return null;
 
   return (
-    <Card className="border-success/50 bg-success/5">
+    <Card className="border-success/40 bg-success/10">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base text-success">
-          <ShieldAlert className="h-4 w-4" />
+          <ShieldAlert className="h-4 w-4" aria-hidden="true" />
           {t("compliance.erasureCompleted")}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="mb-4 text-sm text-muted-foreground">{t("compliance.erasureDescription")}</p>
-        <div className="flex items-center gap-2 rounded-md bg-success/10 p-3 text-sm font-medium text-success">
-          <CheckCircle className="h-4 w-4" />
+        <p className="mb-4 text-sm text-nx-ink-2">{t("compliance.erasureDescription")}</p>
+        <div className="flex items-center gap-2 rounded-nx-sm bg-success/10 p-3 text-sm font-medium text-success">
+          <CheckCircle className="h-4 w-4" aria-hidden="true" />
           {t("compliance.dataAnonymized")}
         </div>
       </CardContent>

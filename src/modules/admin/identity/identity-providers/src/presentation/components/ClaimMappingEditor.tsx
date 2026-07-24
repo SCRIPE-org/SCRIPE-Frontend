@@ -18,6 +18,7 @@ import { Button } from "@core/ui/button";
 import { Textarea } from "@core/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { EmptyState } from "@core/ui/empty-state";
 import { FileJson, List, Plus, Trash2, AlertCircle, Sparkles } from "lucide-react";
 
 interface Props {
@@ -140,7 +141,7 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
       } else {
         setJsonError(t("identityProviders.jsonFlatObject"));
       }
-    } catch (err) {
+    } catch {
       setJsonError(t("identityProviders.invalidJson"));
     }
   };
@@ -148,14 +149,14 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
   return (
     <div className="space-y-4">
       {/* Selector Header Bar */}
-      <div className="flex items-center justify-between border-b pb-2">
+      <div className="flex items-center justify-between border-b border-nx-line pb-2">
         <Label className="flex items-center gap-1.5 text-sm font-semibold tracking-tight">
-          <Sparkles className="h-4 w-4 text-primary" />
-          {t("identityProviders.claimMappings") || "Claim Mappings"}
+          <Sparkles className="h-4 w-4 text-nx-accent" aria-hidden="true" />
+          {t("identityProviders.claimMappings")}
         </Label>
 
         {/* Toggle between Visual and Raw JSON */}
-        <div className="flex items-center gap-1 rounded-md border bg-muted/40 p-0.5">
+        <div className="flex items-center gap-1 rounded-nx-control border border-nx-line bg-nx-raised p-0.5">
           <Button
             type="button"
             variant="ghost"
@@ -167,12 +168,12 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
             disabled={!!jsonError}
             className={`h-7 gap-1.5 px-2.5 text-xs ${
               mode === "visual"
-                ? "bg-background text-foreground shadow-sm hover:bg-background"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-nx-surface text-nx-ink shadow-nx-sm hover:bg-nx-surface"
+                : "text-nx-ink-3 hover:text-nx-ink"
             }`}
           >
-            <List className="h-3.5 w-3.5" />
-            {t("identityProviders.visualEditor") || "Visual"}
+            <List className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("identityProviders.visualEditor")}
           </Button>
           <Button
             type="button"
@@ -181,12 +182,12 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
             onClick={() => setMode("json")}
             className={`h-7 gap-1.5 px-2.5 text-xs ${
               mode === "json"
-                ? "bg-background text-foreground shadow-sm hover:bg-background"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-nx-surface text-nx-ink shadow-nx-sm hover:bg-nx-surface"
+                : "text-nx-ink-3 hover:text-nx-ink"
             }`}
           >
-            <FileJson className="h-3.5 w-3.5" />
-            {t("identityProviders.jsonEditor") || "JSON"}
+            <FileJson className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("identityProviders.jsonEditor")}
           </Button>
         </div>
       </div>
@@ -195,34 +196,30 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
       {mode === "visual" && (
         <div className="space-y-3">
           {visualMappings.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed bg-muted/10 px-4 py-8 text-center">
-              <List className="mb-2 h-8 w-8 text-muted-foreground/60" />
-              <p className="text-xs text-muted-foreground">
-                {t("identityProviders.noMappings") || "No claim mappings configured yet."}
-              </p>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={addMappingRow}
-                className="mt-3 gap-1.5 text-xs"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                {t("identityProviders.addMapping") || "Add Claim Mapping"}
-              </Button>
-            </div>
+            <EmptyState
+              bare
+              size="sm"
+              icon={List}
+              title={t("identityProviders.noMappings")}
+              action={
+                <Button type="button" variant="outline" size="sm" onClick={addMappingRow} className="gap-1.5 text-xs">
+                  <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+                  {t("identityProviders.addMapping")}
+                </Button>
+              }
+            />
           ) : (
-            <div className="overflow-hidden rounded-lg border">
+            <div className="overflow-hidden rounded-nx-md border border-nx-line">
               <Table>
-                <TableHeader className="bg-muted/30">
+                <TableHeader>
                   <TableRow>
                     <TableHead className="w-[45%] py-2 text-xs font-semibold">
-                      {t("identityProviders.internalAttribute") || "Internal Attribute"}
+                      {t("identityProviders.internalAttribute")}
                     </TableHead>
                     <TableHead className="w-[45%] py-2 text-xs font-semibold">
-                      {t("identityProviders.externalClaimKey") || "External Claim Key"}
+                      {t("identityProviders.externalClaimKey")}
                     </TableHead>
-                    <TableHead className="w-[10%] py-2 text-right"></TableHead>
+                    <TableHead className="w-[10%] py-2 text-end"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -256,22 +253,20 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
                         <Input
                           value={row.externalClaim}
                           onChange={(e) => updateMappingRow(idx, "externalClaim", e.target.value)}
-                          placeholder={
-                            t("identityProviders.claimPlaceholder") ||
-                            "e.g. given_name or http://..."
-                          }
+                          placeholder={t("identityProviders.claimPlaceholder")}
                           className="h-9 font-mono text-xs"
                         />
                       </TableCell>
-                      <TableCell className="py-2.5 text-right">
+                      <TableCell className="py-2.5 text-end">
                         <Button
                           type="button"
                           variant="ghost"
                           size="icon"
                           onClick={() => removeMappingRow(idx)}
-                          className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                          className="h-8 w-8 text-nx-ink-3 hover:text-destructive"
+                          aria-label={t("common.delete")}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" aria-hidden="true" />
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -289,8 +284,8 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
               onClick={addMappingRow}
               className="w-full justify-center gap-1.5 text-xs"
             >
-              <Plus className="h-3.5 w-3.5" />
-              {t("identityProviders.addMapping") || "Add Claim Mapping"}
+              <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+              {t("identityProviders.addMapping")}
             </Button>
           )}
         </div>
@@ -303,14 +298,14 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
             value={jsonText}
             onChange={(e) => handleJsonChange(e.target.value)}
             placeholder='{ "email": "email", "firstName": "given_name" }'
-            className="min-h-[180px] resize-y border bg-nx-ground p-3 font-mono text-xs leading-relaxed text-emerald-400 focus-visible:ring-primary/50 dark:text-emerald-300"
+            className="min-h-[180px] resize-y bg-nx-ground p-3 font-mono text-xs leading-relaxed text-success"
           />
 
           {jsonError && (
-            <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2.5 text-xs text-destructive">
-              <AlertCircle className="h-4 w-4 shrink-0 text-destructive" />
+            <div className="flex items-center gap-2 rounded-nx-md border border-destructive/30 bg-destructive/5 p-2.5 text-xs text-destructive">
+              <AlertCircle className="h-4 w-4 shrink-0 text-destructive" aria-hidden="true" />
               <span>
-                {t("identityProviders.invalidJson") || "Invalid Format"}: {jsonError}
+                {t("identityProviders.invalidJson")}: {jsonError}
               </span>
             </div>
           )}

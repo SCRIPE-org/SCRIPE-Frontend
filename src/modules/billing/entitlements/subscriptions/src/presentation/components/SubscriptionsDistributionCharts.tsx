@@ -1,18 +1,9 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { ChartContainer, ChartTooltip, ChartTooltipContent, chartColor } from "@core/ui/chart";
 import { Users, CreditCard, BarChart3 } from "lucide-react";
-import {
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis } from "recharts";
 
 interface DistItem {
   status?: string;
@@ -38,9 +29,31 @@ interface SubscriptionsDistributionChartsProps {
   t: (key: string) => string;
 }
 
+// Fixed entity → categorical-slot assignments, so a status/type keeps the
+// same colour no matter where it currently ranks in the sorted list (the
+// slot order itself is the CVD-safety mechanism — see @core/ui/chart).
+const STATUS_SLOT: Record<string, number> = {
+  Active: 2,
+  Trialing: 1,
+  Suspended: 3,
+  Canceled: 5,
+  Expired: 6,
+  GracePeriod: 4,
+};
+
+const TYPE_SLOT: Record<string, number> = {
+  Monthly: 1,
+  Yearly: 4,
+  Lifetime: 7,
+  Trial: 8,
+  AddOn: 6,
+};
+
 /**
  * Presentation UI component rendering the subscriptions distribution charts.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ * Status/type donuts plus a revenue-by-edition bar, all through
+ * ChartContainer so chrome (axes, grids, tooltip, focus ring) is token-driven
+ * rather than hand-styled per chart.
  */
 export function SubscriptionsDistributionCharts({
   statusDistribution,
@@ -50,68 +63,50 @@ export function SubscriptionsDistributionCharts({
   formatDisplay,
   t,
 }: SubscriptionsDistributionChartsProps) {
-  // Format tooltips for pie charts
-  const renderPieTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div className="rounded-lg border bg-popover px-3 py-2 text-xs text-popover-foreground shadow-md">
-          <p className="font-bold">{data.name}</p>
-          <p className="mt-0.5 font-medium text-muted-foreground">
-            {t("common.count") || "Count"}:{" "}
-            <span className="font-bold text-foreground">{data.value}</span> ({data.percentage}%)
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
-
-  // Format tooltips for bar chart
-  const renderBarTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div className="rounded-lg border bg-popover px-3 py-2 text-xs text-popover-foreground shadow-md">
-          <p className="font-bold">{data.edition}</p>
-          <p className="mt-0.5 font-medium text-muted-foreground">
-            {t("entSubscriptions.amount") || "Revenue"}:{" "}
-            <span className="font-bold text-foreground">{formatDisplay(data.revenue, "USD")}</span>
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
-
   const statusPieData = statusDistribution.map((item) => ({
+    status: item.status,
     name: t(`tenant.statusLabel.${item.status?.toLowerCase()}`) || item.status,
     value: item.count,
     percentage: item.percentage,
-    color: item.color,
+    color: chartColor(item.status ? (STATUS_SLOT[item.status] ?? 8) : 8),
   }));
 
   const typePieData = typeDistribution.map((item) => ({
+    type: item.type,
     name: t(`tenant.typeLabel.${item.type?.toLowerCase()}`) || item.type,
     value: item.count,
     percentage: item.percentage,
-    color: item.color,
+    color: chartColor(item.type ? (TYPE_SLOT[item.type] ?? 8) : 8),
   }));
+
+  const revenueBars = revenueByEdition.slice(0, 5).map((item, index) => ({
+    ...item,
+    color: chartColor(index + 1),
+  }));
+
+  const revenueFormatter = (value: unknown, name: unknown) => (
+    <div className="flex flex-1 items-center justify-between gap-4">
+      <span className="text-nx-ink-2">{String(name)}</span>
+      <span className="font-medium tabular-nums text-nx-ink">
+        {formatDisplay(Number(value), "USD")}
+      </span>
+    </div>
+  );
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
       {/* Status Distribution */}
-      <Card className="shadow-sm">
-        <CardHeader className="border-b bg-muted/10 pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm font-bold tracking-tight text-foreground/95">
-            <Users className="h-4.5 w-4.5 text-muted-foreground" />
-            {t("dashboard.chart.statusDist") || "Status Distribution"}
+      <Card>
+        <CardHeader className="border-b border-nx-line pb-3">
+          <CardTitle className="flex items-center gap-2 text-sm tracking-tight">
+            <Users className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
+            {t("dashboard.chart.statusDist")}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="flex flex-col items-center gap-6 sm:flex-row">
             <div className="relative h-[120px] w-[120px] shrink-0">
-              <ResponsiveContainer width="100%" height="100%">
+              <ChartContainer config={{}} className="h-full w-full">
                 <PieChart>
                   <Pie
                     data={statusPieData}
@@ -121,44 +116,39 @@ export function SubscriptionsDistributionCharts({
                     outerRadius={56}
                     paddingAngle={3}
                     dataKey="value"
+                    nameKey="name"
                   >
-                    {statusPieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    {statusPieData.map((entry) => (
+                      <Cell key={entry.status ?? entry.name} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip content={renderPieTooltip} />
+                  <ChartTooltip content={<ChartTooltipContent hideLabel />} />
                 </PieChart>
-              </ResponsiveContainer>
+              </ChartContainer>
               <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-lg font-extrabold tracking-tight text-foreground">
+                <span className="text-lg font-semibold tracking-tight tabular-nums text-nx-ink">
                   {totalCount}
                 </span>
-                <span className="text-[10px] font-bold uppercase text-muted-foreground">
-                  {t("common.total") || "Total"}
+                <span className="text-[10px] font-semibold uppercase text-nx-ink-3">
+                  {t("common.total")}
                 </span>
               </div>
             </div>
 
             <div className="w-full flex-1 space-y-2.5">
-              {statusDistribution.map((item) => (
-                <div
-                  key={item.status}
-                  className="flex items-center justify-between text-xs font-semibold"
-                >
+              {statusPieData.map((item) => (
+                <div key={item.status} className="flex items-center justify-between text-xs font-medium">
                   <div className="flex items-center gap-2">
-                    <div
+                    <span
+                      aria-hidden="true"
                       className="h-2.5 w-2.5 shrink-0 rounded-full"
                       style={{ backgroundColor: item.color }}
                     />
-                    <span className="text-muted-foreground">
-                      {t(`tenant.statusLabel.${item.status?.toLowerCase()}`) || item.status}
-                    </span>
+                    <span className="text-nx-ink-2">{item.name}</span>
                   </div>
                   <div className="flex items-center gap-2 tabular-nums">
-                    <span className="text-foreground">{item.count}</span>
-                    <span className="w-12 text-right text-[10px] text-muted-foreground/80">
-                      {item.percentage}%
-                    </span>
+                    <span className="text-nx-ink">{item.value}</span>
+                    <span className="w-12 text-end text-[10px] text-nx-ink-3">{item.percentage}%</span>
                   </div>
                 </div>
               ))}
@@ -168,17 +158,17 @@ export function SubscriptionsDistributionCharts({
       </Card>
 
       {/* Type Distribution */}
-      <Card className="shadow-sm">
-        <CardHeader className="border-b bg-muted/10 pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm font-bold tracking-tight text-foreground/95">
-            <CreditCard className="h-4.5 w-4.5 text-muted-foreground" />
-            {t("dashboard.chart.typeDist") || "Type Distribution"}
+      <Card>
+        <CardHeader className="border-b border-nx-line pb-3">
+          <CardTitle className="flex items-center gap-2 text-sm tracking-tight">
+            <CreditCard className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
+            {t("dashboard.chart.typeDist")}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="flex flex-col items-center gap-6 sm:flex-row">
             <div className="relative h-[120px] w-[120px] shrink-0">
-              <ResponsiveContainer width="100%" height="100%">
+              <ChartContainer config={{}} className="h-full w-full">
                 <PieChart>
                   <Pie
                     data={typePieData}
@@ -188,44 +178,39 @@ export function SubscriptionsDistributionCharts({
                     outerRadius={56}
                     paddingAngle={3}
                     dataKey="value"
+                    nameKey="name"
                   >
-                    {typePieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    {typePieData.map((entry) => (
+                      <Cell key={entry.type ?? entry.name} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip content={renderPieTooltip} />
+                  <ChartTooltip content={<ChartTooltipContent hideLabel />} />
                 </PieChart>
-              </ResponsiveContainer>
+              </ChartContainer>
               <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-lg font-extrabold tracking-tight text-foreground">
+                <span className="text-lg font-semibold tracking-tight tabular-nums text-nx-ink">
                   {totalCount}
                 </span>
-                <span className="text-[10px] font-bold uppercase text-muted-foreground">
-                  {t("common.total") || "Total"}
+                <span className="text-[10px] font-semibold uppercase text-nx-ink-3">
+                  {t("common.total")}
                 </span>
               </div>
             </div>
 
             <div className="w-full flex-1 space-y-2.5">
-              {typeDistribution.map((item) => (
-                <div
-                  key={item.type}
-                  className="flex items-center justify-between text-xs font-semibold"
-                >
+              {typePieData.map((item) => (
+                <div key={item.type} className="flex items-center justify-between text-xs font-medium">
                   <div className="flex items-center gap-2">
-                    <div
+                    <span
+                      aria-hidden="true"
                       className="h-2.5 w-2.5 shrink-0 rounded-full"
                       style={{ backgroundColor: item.color }}
                     />
-                    <span className="text-muted-foreground">
-                      {t(`tenant.typeLabel.${item.type?.toLowerCase()}`) || item.type}
-                    </span>
+                    <span className="text-nx-ink-2">{item.name}</span>
                   </div>
                   <div className="flex items-center gap-2 tabular-nums">
-                    <span className="text-foreground">{item.count}</span>
-                    <span className="w-12 text-right text-[10px] text-muted-foreground/80">
-                      {item.percentage}%
-                    </span>
+                    <span className="text-nx-ink">{item.value}</span>
+                    <span className="w-12 text-end text-[10px] text-nx-ink-3">{item.percentage}%</span>
                   </div>
                 </div>
               ))}
@@ -235,46 +220,35 @@ export function SubscriptionsDistributionCharts({
       </Card>
 
       {/* Revenue by Edition */}
-      <Card className="shadow-sm">
-        <CardHeader className="border-b bg-muted/10 pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm font-bold tracking-tight text-foreground/95">
-            <BarChart3 className="h-4.5 w-4.5 text-muted-foreground" />
-            {t("dashboard.chart.revenueByEdition") || "Revenue by Edition"}
+      <Card>
+        <CardHeader className="border-b border-nx-line pb-3">
+          <CardTitle className="flex items-center gap-2 text-sm tracking-tight">
+            <BarChart3 className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
+            {t("dashboard.chart.revenueByEdition")}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          {revenueByEdition.length === 0 ? (
-            <div className="flex h-36 items-center justify-center text-sm font-semibold text-muted-foreground/80">
-              {t("common.noData") || "No revenue data"}
+          {revenueBars.length === 0 ? (
+            <div className="flex h-36 items-center justify-center text-sm font-medium text-nx-ink-3">
+              {t("common.noData")}
             </div>
           ) : (
             <div className="h-[140px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={revenueByEdition.slice(0, 5)}
-                  layout="vertical"
-                  margin={{ top: 5, right: 10, left: -20, bottom: 5 }}
-                >
+              <ChartContainer
+                config={{ revenue: { label: t("entSubscriptions.amount") } }}
+                className="h-full w-full"
+              >
+                <BarChart data={revenueBars} layout="vertical" margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
                   <XAxis type="number" hide />
-                  <YAxis
-                    type="category"
-                    dataKey="edition"
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={10}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <Tooltip
-                    content={renderBarTooltip}
-                    cursor={{ fill: "hsl(var(--muted-foreground) / 0.08)" }}
-                  />
+                  <YAxis type="category" dataKey="edition" fontSize={10} tickLine={false} axisLine={false} />
+                  <ChartTooltip content={<ChartTooltipContent formatter={revenueFormatter} />} />
                   <Bar dataKey="revenue" radius={[0, 4, 4, 0]}>
-                    {revenueByEdition.slice(0, 5).map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    {revenueBars.map((entry) => (
+                      <Cell key={entry.edition} fill={entry.color} />
                     ))}
                   </Bar>
                 </BarChart>
-              </ResponsiveContainer>
+              </ChartContainer>
             </div>
           )}
         </CardContent>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@core/ui/button";
+import { Skeleton } from "@core/ui/skeleton";
 import { Copy, CheckCheck } from "lucide-react";
 import type { LeadStatus } from "../../../domain/entities/PlatformLead";
 
@@ -149,12 +150,12 @@ export function SectionCard({
  */
 export function SkeletonPanel() {
   return (
-    <div className="animate-pulse space-y-4 p-6 motion-reduce:animate-none">
+    <div className="space-y-4 p-6">
       {[1, 2, 3].map((i) => (
         <div key={i} className="space-y-2 rounded-xl border border-border/50 bg-card/40 p-4">
-          <div className="h-2.5 w-24 rounded-full bg-muted" />
-          <div className="h-4 w-40 rounded-full bg-muted" />
-          <div className="h-4 w-32 rounded-full bg-muted" />
+          <Skeleton shape="text" className="h-2.5 w-24 rounded-full" />
+          <Skeleton shape="text" className="h-4 w-40 rounded-full" />
+          <Skeleton shape="text" className="h-4 w-32 rounded-full" />
         </div>
       ))}
     </div>

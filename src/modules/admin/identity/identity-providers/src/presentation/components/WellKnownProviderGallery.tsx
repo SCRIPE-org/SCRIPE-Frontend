@@ -496,12 +496,9 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
       {/* Section header */}
       <div>
         <h2 className="text-base font-semibold tracking-tight">
-          {t("identityProviders.galleryTitle") || "Choose a Provider Template"}
+          {t("identityProviders.galleryTitle")}
         </h2>
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          {t("identityProviders.gallerySubtitle") ||
-            "Select a pre-configured provider to pre-fill configuration. You can customize everything after."}
-        </p>
+        <p className="mt-0.5 text-xs text-nx-ink-3">{t("identityProviders.gallerySubtitle")}</p>
       </div>
 
       {/* Provider grid */}
@@ -523,9 +520,9 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
                   buttonColor: tpl.color,
                 });
               }}
-              className="p-4.5 group relative flex cursor-pointer flex-col items-center gap-2.5 rounded-xl border text-center transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:shadow-md active:scale-[0.97]"
+              className="group relative flex cursor-pointer flex-col items-center gap-2.5 rounded-nx-md border border-nx-line p-4 text-center transition-[border-color,background-color,box-shadow] duration-nx-micro motion-reduce:transition-none hover:border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] hover:bg-nx-accent-wash"
               style={{
-                borderColor: isSelected ? `${tpl.color}75` : "hsl(var(--border))",
+                borderColor: isSelected ? `${tpl.color}75` : undefined,
                 background: isSelected ? `${tpl.color}12` : undefined,
                 boxShadow: isSelected ? `0 0 15px ${tpl.color}20` : undefined,
               }}
@@ -534,7 +531,7 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
             >
               {/* Logo */}
               <div
-                className="flex h-11 w-11 items-center justify-center rounded-xl p-2 transition-transform group-hover:scale-105"
+                className="flex h-11 w-11 items-center justify-center rounded-nx-md p-2"
                 style={{
                   background: `${tpl.color}18`,
                   border: `1px solid ${tpl.color}30`,
@@ -549,14 +546,14 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
               </div>
 
               {/* Name */}
-              <span className="line-clamp-2 text-[11px] font-semibold leading-tight text-foreground">
+              <span className="line-clamp-2 text-[11px] font-semibold leading-tight text-nx-ink">
                 {tpl.name}
               </span>
 
               {/* Protocol badge */}
               <Badge
                 variant={protocolBadgeVariant(tpl.protocol)}
-                className="h-4.5 px-1.5 text-[8.5px] font-semibold uppercase tracking-wider"
+                className="h-4 px-1.5 text-[8.5px] font-semibold uppercase tracking-wider"
               >
                 {tpl.protocol}
               </Badge>
@@ -564,7 +561,7 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
               {/* Selected checkmark with brand background */}
               {isSelected && (
                 <div
-                  className="h-4.5 w-4.5 absolute right-2 top-2 flex items-center justify-center rounded-full shadow"
+                  className="absolute end-2 top-2 flex h-5 w-5 items-center justify-center rounded-full shadow-nx-sm"
                   style={{ background: tpl.color }}
                 >
                   <svg
@@ -588,10 +585,10 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
 
       {/* Inline Setup Guide for selected template */}
       {activeTemplate && activeTemplate.setupSteps && (
-        <Card className="border border-primary/20 bg-primary/5 shadow-sm duration-200 animate-in fade-in slide-in-from-top-1">
+        <Card className="border border-nx-accent/30 bg-nx-accent-wash duration-nx-standard ease-nx-enter motion-reduce:transition-none animate-in fade-in slide-in-from-top-1">
           <CardContent className="space-y-3 p-4">
-            <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
-              <HelpCircle className="h-4 w-4" />
+            <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-nx-accent">
+              <HelpCircle className="h-4 w-4" aria-hidden="true" />
               {t("identityProviders.setupGuide", { name: activeTemplate.name })}
             </h4>
             <ul className="space-y-2 text-xs">
@@ -599,11 +596,8 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
                 const localizedStep =
                   t(`identityProviders.gallery.${activeTemplate.id}.step${idx + 1}`) || step;
                 return (
-                  <li
-                    key={idx}
-                    className="flex items-start gap-2.5 leading-relaxed text-muted-foreground"
-                  >
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
+                  <li key={idx} className="flex items-start gap-2.5 leading-relaxed text-nx-ink-2">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-nx-accent-wash text-[10px] font-bold text-nx-accent">
                       {idx + 1}
                     </span>
                     <p className="mt-0.5">{localizedStep}</p>
@@ -617,11 +611,11 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
 
       {/* Divider */}
       <div className="flex items-center gap-3">
-        <div className="h-px flex-1 bg-border" />
-        <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-          {t("identityProviders.galleryOrCustomize") || "or configure manually below"}
+        <div className="h-px flex-1 bg-nx-line" />
+        <span className="text-xs font-semibold uppercase tracking-widest text-nx-ink-3">
+          {t("identityProviders.galleryOrCustomize")}
         </span>
-        <div className="h-px flex-1 bg-border" />
+        <div className="h-px flex-1 bg-nx-line" />
       </div>
     </div>
   );

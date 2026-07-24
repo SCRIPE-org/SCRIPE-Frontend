@@ -21,21 +21,25 @@ import type { SubmitDsrRequest, ReviewDsrRequest } from "../../domain/entities/D
 import { DsrSlaCell } from "../components/DsrSlaCell";
 import { DsrTypeCell } from "../components/DsrTypeCell";
 import { DsrDeadlineCell } from "../components/DsrDeadlineCell";
-import { Badge } from "@core/ui/badge";
+import { Badge, type BadgeProps } from "@core/ui/badge";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { DsrFilterBar } from "../components/DsrFilterBar";
 
 // ── Status badge variant mapping ──────────────────────────────────────────────
+// Mirrors the tone the detail page gives the same status (STATUS_META in
+// DsrDetailView) so a request reads with the same weight in the list and the
+// drawer rather than drifting between an accent chip here and a status hue
+// there.
 
-const STATUS_VARIANT: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
-  Completed: "default",
-  Approved: "default",
-  InReview: "secondary",
-  Processing: "secondary",
-  Pending: "outline",
-  PartiallyCompleted: "outline",
-  Rejected: "destructive",
-  Cancelled: "destructive",
+const STATUS_VARIANT: Record<string, BadgeProps["variant"]> = {
+  Pending: "warning",
+  InReview: "info",
+  Approved: "success",
+  Processing: "info",
+  PartiallyCompleted: "success",
+  Completed: "success",
+  Rejected: "error",
+  Cancelled: "secondary",
 };
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
@@ -190,12 +194,15 @@ export function useDsrViewModel() {
           sortable: true,
           render: (_val, dsr) => (
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-info/10 to-info/10 text-sm font-semibold text-info">
+              <div
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-md bg-info/10 text-sm font-semibold text-info"
+                aria-hidden="true"
+              >
                 {dsr.subjectEmail.charAt(0).toUpperCase()}
               </div>
               <div>
-                <p className="text-sm font-medium">{dsr.subjectEmail}</p>
-                <p className="text-xs text-muted-foreground">{dsr.regulationCode}</p>
+                <p className="text-sm font-medium text-nx-ink">{dsr.subjectEmail}</p>
+                <p className="text-xs text-nx-ink-3">{dsr.regulationCode}</p>
               </div>
             </div>
           ),
@@ -242,14 +249,14 @@ export function useDsrViewModel() {
       getActions: () => [
         {
           label: t("compliance.viewDetail"),
-          icon: <Eye className="h-4 w-4" />,
+          icon: <Eye className="h-4 w-4" aria-hidden="true" />,
           onClick: (dsr) => router.push(`/compliance/dsr/${dsr.id}`),
         },
         ...(canReview
           ? [
               {
                 label: `${t("compliance.approveDsr")} / ${t("compliance.rejectDsr")}`,
-                icon: <ThumbsUp className="h-4 w-4" />,
+                icon: <ThumbsUp className="h-4 w-4" aria-hidden="true" />,
                 show: (dsr: DataSubjectRequest) =>
                   dsr.status === "Pending" || dsr.status === "InReview",
                 onClick: (dsr: DataSubjectRequest) => setReviewDsr(dsr),
@@ -260,7 +267,7 @@ export function useDsrViewModel() {
           ? [
               {
                 label: t("compliance.cancelDsr"),
-                icon: <XCircle className="h-4 w-4" />,
+                icon: <XCircle className="h-4 w-4" aria-hidden="true" />,
                 variant: "destructive" as const,
                 show: (dsr: DataSubjectRequest) =>
                   dsr.status === "Pending" || dsr.status === "Approved",

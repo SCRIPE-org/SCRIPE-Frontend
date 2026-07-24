@@ -12,6 +12,7 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { BarChart3, TrendingUp, Users, DollarSign, Activity, Heart, FileText } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { EmptyState as CoreEmptyState } from "@core/ui/empty-state";
+import { ErrorMessage } from "@core/ui/error-message";
 import { OverviewTab } from "../components/OverviewTab";
 import { RevenueTab } from "../components/RevenueTab";
 import { RetentionTab } from "../components/RetentionTab";
@@ -44,11 +45,9 @@ export function AnalyticsView() {
     <div className="space-y-5">
       {/* ── Page Header ── */}
       <div className="relative overflow-hidden rounded-xl border border-border/40 bg-gradient-to-br from-card via-card to-success/[0.03] p-5 shadow-sm">
-        <div className="absolute -right-24 -top-24 h-48 w-48 rounded-full bg-success/[0.07] blur-3xl" />
-        <div className="absolute -bottom-16 -left-16 h-32 w-32 rounded-full bg-info/[0.05] blur-2xl" />
         <div className="relative flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-success to-success/70 text-success-foreground shadow-lg shadow-success/20">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-success to-success/70 text-success-foreground">
               <BarChart3 className="h-5 w-5" />
             </div>
             <div>
@@ -89,6 +88,8 @@ export function AnalyticsView() {
         <TabsContent value="overview" className="mt-4">
           {vm.overviewLoading ? (
             <TabSkeleton />
+          ) : vm.overviewError ? (
+            <ErrorMessage message={t("common.error")} onRetry={() => vm.overviewRefetch()} />
           ) : vm.overview ? (
             <OverviewTab overview={vm.overview} />
           ) : (
@@ -99,6 +100,8 @@ export function AnalyticsView() {
         <TabsContent value="revenue" className="mt-4">
           {vm.mrrLoading ? (
             <TabSkeleton />
+          ) : vm.mrrError ? (
+            <ErrorMessage message={t("common.error")} onRetry={() => vm.mrrRefetch()} />
           ) : vm.mrrMovement ? (
             <RevenueTab
               mrrData={vm.mrrMovement}
@@ -113,6 +116,8 @@ export function AnalyticsView() {
         <TabsContent value="retention" className="mt-4">
           {vm.cohortLoading ? (
             <TabSkeleton />
+          ) : vm.cohortError ? (
+            <ErrorMessage message={t("common.error")} onRetry={() => vm.cohortRefetch()} />
           ) : vm.cohort ? (
             <RetentionTab cohortData={vm.cohort} />
           ) : (
@@ -123,6 +128,8 @@ export function AnalyticsView() {
         <TabsContent value="ltv" className="mt-4">
           {vm.ltvLoading ? (
             <TabSkeleton />
+          ) : vm.ltvError ? (
+            <ErrorMessage message={t("common.error")} onRetry={() => vm.ltvRefetch()} />
           ) : vm.ltv ? (
             <LtvTab ltvData={vm.ltv} />
           ) : (
@@ -133,6 +140,8 @@ export function AnalyticsView() {
         <TabsContent value="forecast" className="mt-4">
           {vm.forecastLoading ? (
             <TabSkeleton />
+          ) : vm.forecastError ? (
+            <ErrorMessage message={t("common.error")} onRetry={() => vm.forecastRefetch()} />
           ) : vm.forecast ? (
             <ForecastTab
               forecastData={vm.forecast}
@@ -147,6 +156,8 @@ export function AnalyticsView() {
         <TabsContent value="health" className="mt-4">
           {vm.healthLoading ? (
             <TabSkeleton />
+          ) : vm.healthError ? (
+            <ErrorMessage message={t("common.error")} onRetry={() => vm.healthRefetch()} />
           ) : vm.health ? (
             <HealthTab
               healthData={vm.health}
@@ -165,6 +176,8 @@ export function AnalyticsView() {
             onSave={vm.updatePreferences}
             onGenerateReport={vm.handleGenerateReport}
             isLoading={vm.reportPreferencesLoading}
+            error={vm.reportPreferencesError}
+            onRetry={() => vm.reportPreferencesRefetch()}
             isSaving={vm.isUpdatingPreferences}
             isGenerating={vm.isGeneratingReport}
           />

@@ -24,21 +24,28 @@ import {
 } from "../../domain/entities/DashboardThemeConfig";
 
 // ── CSS class maps ──
+// The theme exposes six radius steps and four shadow steps as a tenant-facing
+// setting, but the product only has four legal radius rungs (plus none/full)
+// and three legal shadow depths. Off-ladder values here would feed straight
+// into the StatCard `className` prop (see KPICardsSection/ThreatSummaryCards/
+// TenantMetricsCards) and regress those grids silently, so every step clamps
+// onto the nearest nx rung — the top two radius steps and the deepest shadow
+// step share their neighbour's rung rather than drawing an invented one.
 
 const radiusClassMap: Record<CardRadius, string> = {
   none: "rounded-none",
-  sm: "rounded-sm",
-  md: "rounded-md",
-  lg: "rounded-lg",
-  xl: "rounded-xl",
-  "2xl": "rounded-2xl",
+  sm: "rounded-nx-sm",
+  md: "rounded-nx-control",
+  lg: "rounded-nx-md",
+  xl: "rounded-nx-lg",
+  "2xl": "rounded-nx-lg",
 };
 
 const shadowClassMap: Record<ShadowLevel, string> = {
   none: "shadow-none",
-  sm: "shadow-sm",
-  md: "shadow-md",
-  lg: "shadow-lg",
+  sm: "shadow-nx-sm",
+  md: "shadow-nx-popover",
+  lg: "shadow-nx-modal",
 };
 
 const densityGapMap: Record<LayoutDensity, string> = {
@@ -118,7 +125,7 @@ export function useDashboardTheme() {
     },
     onSuccess: () => {
       toastSuccess({
-        title: t("dashboard.studio.saveSuccess") || "Dashboard theme saved",
+        title: t("dashboard.studio.saveSuccess"),
       });
 
       // Write to localStorage for immediate apply
@@ -135,7 +142,7 @@ export function useDashboardTheme() {
     },
     onError: (error: Error) => {
       toastError({
-        title: t("dashboard.studio.saveFailed") || "Failed to save dashboard theme",
+        title: t("dashboard.studio.saveFailed"),
         description: error.message,
       });
     },

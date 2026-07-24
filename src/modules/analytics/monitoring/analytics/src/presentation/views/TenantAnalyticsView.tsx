@@ -14,6 +14,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { TenantMetricsCards } from "../components/TenantMetricsCards";
 import { ANALYTICS_ENDPOINTS } from "../../data/services/analytics.endpoints";
 import { Button } from "@core/ui/button";
+import { PageHeader } from "@core/ui/page-header";
 import { BarChart3, FileDown, Settings2 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useDashboardTheme, DashboardStudioPanel } from "@modules/monitoring/core";
@@ -52,38 +53,39 @@ export function TenantAnalyticsView() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-            <BarChart3 className="h-6 w-6" />
-            {t("tenantAnalytics.title")}
-          </h1>
-          <p className="text-muted-foreground">{t("tenantAnalytics.subtitle")}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setExportOpen(true)}
-            className="gap-1.5"
-          >
-            <FileDown className="h-4 w-4" />
-            {t("export.button")}
-          </Button>
-          {isStandalone && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => theme.setIsStudioOpen(true)}
-              className="gap-1.5"
-            >
-              <Settings2 className="h-4 w-4" />
-              {t("dashboard.studio.openButton") || "Customize"}
-            </Button>
-          )}
-        </div>
-      </div>
+      {/* TenantAnalyticsView is embedded as a tab inside DashboardView, which
+          already carries its own PageHeader — rendering this one too would
+          stack two icon-tile headers on the same screen. Only the standalone
+          /analytics route gets the full header. */}
+      {isStandalone && (
+        <PageHeader
+          icon={BarChart3}
+          title={t("tenantAnalytics.title")}
+          description={t("tenantAnalytics.subtitle")}
+          actions={
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setExportOpen(true)}
+                className="gap-1.5"
+              >
+                <FileDown className="h-4 w-4" aria-hidden="true" />
+                {t("export.button")}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => theme.setIsStudioOpen(true)}
+                className="gap-1.5"
+              >
+                <Settings2 className="h-4 w-4" aria-hidden="true" />
+                {t("dashboard.studio.openButton")}
+              </Button>
+            </>
+          }
+        />
+      )}
 
       {/* KPI Cards */}
       <TenantMetricsCards
