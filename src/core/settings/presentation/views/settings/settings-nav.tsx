@@ -1,311 +1,175 @@
 "use client";
 
 /**
- * Settings information architecture — the single registry the searchable rail,
- * the one-section content pane, and the live-preview dock all read from.
+ * The group nav and the search index.
  *
- * Wave H replaced the old 7-tab bar + nested 6-tab appearance card + 14-section
- * component scroll with a flat, grouped rail: every former sub-tab and every
- * component section is now an addressable destination you can jump straight to.
- * A group with a single destination collapses into its own leaf row; a group
- * with several expands to list them.
+ * The nav is six rows. That is the whole map — no chevrons, no nesting, no
+ * second level to remember you are inside. Each group panel is code-split, so
+ * opening Settings pulls the charts bundle only if you ask for charts.
  *
- * Section components are code-split per destination (only one renders at a
- * time), so opening Settings no longer pulls every picker — and its charts —
- * into the first paint.
+ * Search works on *controls*, not on groups: `matchRows` filters the flat row
+ * registry, and the results list names the group each hit lives in so choosing
+ * one both switches group and jumps to the control.
  */
 
 import dynamic from "next/dynamic";
 import type { ComponentType } from "react";
-import {
-  AppWindow,
-  BarChart3,
-  Blocks,
-  Calendar,
-  CalendarDays,
-  CircleUser,
-  ClipboardList,
-  ImageIcon,
-  Layers,
-  LayoutGrid,
-  ListChecks,
-  ListTree,
-  Loader,
-  type LucideIcon,
-  MessageSquare,
-  Moon,
-  MousePointer2,
-  MoveUp,
-  Palette,
-  SlidersHorizontal,
-  SquareCheck,
-  Sun,
-  Table,
-  Tag,
-  TextCursorInput,
-  Type,
-  Wand2,
-} from "lucide-react";
+import { cn } from "@core/common/utils";
+import { useI18n } from "@core/providers/i18n-provider";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
+import {
+  SETTINGS_GROUPS,
+  SETTING_ROWS,
+  type GroupId,
+  type SettingRowMeta,
+  type SettingsGroupMeta,
+} from "./settings-map";
 
-// Shared loading affordance for a code-split destination. A centred spinner
-// keeps the content column from collapsing while the chunk resolves. It is
-// handed to each dynamic() as an inline { loading: SectionLoader } literal —
-// Turbopack requires the options argument to be an object literal it can read
-// statically, so a shared options object cannot be passed by reference.
-const SectionLoader = () => (
-  <div className="flex justify-center py-12">
+// A centred spinner keeps the content column from collapsing while a group
+// chunk resolves. It is passed as an inline `{ loading: PanelLoader }` literal
+// to each dynamic() — Turbopack needs to read that options object statically,
+// so a shared options object cannot be passed by reference.
+const PanelLoader = () => (
+  <div className="flex justify-center py-16">
     <LoadingSpinner size="sm" />
   </div>
 );
 
-// ── Appearance ────────────────────────────────────────────────────────────
-const BackgroundModeSection = dynamic(
-  () => import("./appearance-tab").then((m) => ({ default: m.BackgroundModeSection })),
-  { loading: SectionLoader }
+const AppearanceGroup = dynamic(
+  () => import("./groups/appearance-group").then((m) => ({ default: m.AppearanceGroup })),
+  { loading: PanelLoader }
 );
-const ColorsSubtab = dynamic(
-  () => import("./appearance-tab/colors-subtab").then((m) => ({ default: m.ColorsSubtab })),
-  { loading: SectionLoader }
+const LayoutGroup = dynamic(
+  () => import("./groups/layout-group").then((m) => ({ default: m.LayoutGroup })),
+  { loading: PanelLoader }
 );
-const LightBackgroundsSubtab = dynamic(
-  () =>
-    import("./appearance-tab/light-backgrounds-subtab").then((m) => ({
-      default: m.LightBackgroundsSubtab,
-    })),
-  { loading: SectionLoader }
+const ComponentsGroup = dynamic(
+  () => import("./groups/components-group").then((m) => ({ default: m.ComponentsGroup })),
+  { loading: PanelLoader }
 );
-const DarkBackgroundsSubtab = dynamic(
-  () =>
-    import("./appearance-tab/dark-backgrounds-subtab").then((m) => ({
-      default: m.DarkBackgroundsSubtab,
-    })),
-  { loading: SectionLoader }
+const BrandingGroup = dynamic(
+  () => import("./groups/branding-group").then((m) => ({ default: m.BrandingGroup })),
+  { loading: PanelLoader }
 );
-const GradientsSubtab = dynamic(
-  () => import("./appearance-tab/gradients-subtab").then((m) => ({ default: m.GradientsSubtab })),
-  { loading: SectionLoader }
+const BehaviorGroup = dynamic(
+  () => import("./groups/behavior-group").then((m) => ({ default: m.BehaviorGroup })),
+  { loading: PanelLoader }
 );
-const PalettesSubtab = dynamic(
-  () => import("./appearance-tab/palettes-subtab").then((m) => ({ default: m.PalettesSubtab })),
-  { loading: SectionLoader }
-);
-const EffectsSubtab = dynamic(
-  () => import("./appearance-tab/effects-subtab").then((m) => ({ default: m.EffectsSubtab })),
-  { loading: SectionLoader }
+const ChartsGroup = dynamic(
+  () => import("./groups/charts-group").then((m) => ({ default: m.ChartsGroup })),
+  { loading: PanelLoader }
 );
 
-// ── Layout & density ──────────────────────────────────────────────────────
-const StylesTab = dynamic(
-  () => import("./layout-tab/styles-tab").then((m) => ({ default: m.StylesTab })),
-  { loading: SectionLoader }
+export const GROUP_PANELS: Record<GroupId, ComponentType> = {
+  appearance: AppearanceGroup,
+  layout: LayoutGroup,
+  components: ComponentsGroup,
+  branding: BrandingGroup,
+  behavior: BehaviorGroup,
+  charts: ChartsGroup,
+};
+
+/** How many settings each group holds — shown as a quiet count in the nav. */
+export const GROUP_COUNTS: Record<GroupId, number> = SETTING_ROWS.reduce(
+  (counts, row) => {
+    counts[row.group] += 1;
+    return counts;
+  },
+  { appearance: 0, layout: 0, components: 0, branding: 0, behavior: 0, charts: 0 } as Record<
+    GroupId,
+    number
+  >
 );
 
-// ── Components ────────────────────────────────────────────────────────────
-const ButtonStyleSection = dynamic(
-  () => import("./components-tab/button-style-section").then((m) => ({ default: m.ButtonStyleSection })),
-  { loading: SectionLoader }
-);
-const InputStyleSection = dynamic(
-  () => import("./components-tab/input-style-section").then((m) => ({ default: m.InputStyleSection })),
-  { loading: SectionLoader }
-);
-const SelectStyleSection = dynamic(
-  () => import("./components-tab/select-style-section").then((m) => ({ default: m.SelectStyleSection })),
-  { loading: SectionLoader }
-);
-const TableStyleSection = dynamic(
-  () => import("./components-tab/table-style-section").then((m) => ({ default: m.TableStyleSection })),
-  { loading: SectionLoader }
-);
-const BadgeStyleSection = dynamic(
-  () => import("./components-tab/badge-style-section").then((m) => ({ default: m.BadgeStyleSection })),
-  { loading: SectionLoader }
-);
-const AvatarStyleSection = dynamic(
-  () => import("./components-tab/avatar-style-section").then((m) => ({ default: m.AvatarStyleSection })),
-  { loading: SectionLoader }
-);
-const FormStyleSection = dynamic(
-  () => import("./components-tab/form-style-section").then((m) => ({ default: m.FormStyleSection })),
-  { loading: SectionLoader }
-);
-const TooltipStyleSection = dynamic(
-  () => import("./components-tab/tooltip-style-section").then((m) => ({ default: m.TooltipStyleSection })),
-  { loading: SectionLoader }
-);
-const ModalStyleSection = dynamic(
-  () => import("./components-tab/modal-style-section").then((m) => ({ default: m.ModalStyleSection })),
-  { loading: SectionLoader }
-);
-const TreeStyleSection = dynamic(
-  () => import("./components-tab/tree-style-section").then((m) => ({ default: m.TreeStyleSection })),
-  { loading: SectionLoader }
-);
-const DatePickerStyleSection = dynamic(
-  () => import("./components-tab/datepicker-style-section").then((m) => ({ default: m.DatePickerStyleSection })),
-  { loading: SectionLoader }
-);
-const CalendarStyleSection = dynamic(
-  () => import("./components-tab/calendar-style-section").then((m) => ({ default: m.CalendarStyleSection })),
-  { loading: SectionLoader }
-);
-const LoadingStyleSection = dynamic(
-  () => import("./components-tab/loading-style-section").then((m) => ({ default: m.LoadingStyleSection })),
-  { loading: SectionLoader }
-);
-const HoverEffectsSection = dynamic(
-  () => import("./components-tab/hover-effects-section").then((m) => ({ default: m.HoverEffectsSection })),
-  { loading: SectionLoader }
-);
+// ── Search ────────────────────────────────────────────────────────────────
 
-// ── Data & charts / typography / behaviour / checkbox+radio ───────────────
-const ProfessionalChartsTab = dynamic(
-  () => import("./charts-tab").then((m) => ({ default: m.ProfessionalChartsTab })),
-  { loading: SectionLoader }
-);
-const CheckboxRadioTab = dynamic(
-  () => import("./checkbox-radio-tab").then((m) => ({ default: m.CheckboxRadioTab })),
-  { loading: SectionLoader }
-);
-const TypographyTab = dynamic(
-  () => import("./typography-tab").then((m) => ({ default: m.TypographyTab })),
-  { loading: SectionLoader }
-);
-const BehaviorTab = dynamic(
-  () => import("./behavior-tab").then((m) => ({ default: m.BehaviorTab })),
-  { loading: SectionLoader }
-);
+export function rowLabel(row: SettingRowMeta, t: (key: string) => string): string {
+  return row.titleKey ? t(row.titleKey) : (row.title ?? row.id);
+}
+
+export function groupLabel(group: SettingsGroupMeta, t: (key: string) => string): string {
+  return t(group.titleKey);
+}
 
 /**
- * Which live surface the preview dock foregrounds for a destination. Every
- * primitive listed here reads the global settings provider, so a real instance
- * mirrors the committed selection with no bespoke wiring. `null` opts a
- * destination out of the dock entirely (pure toggles have no visual result).
+ * Match rows against a query. A row matches on its own title, its supporting
+ * line, its group's name, or any of its `terms` (the persisted field names) —
+ * so "table", "grid", "tableStyle" and "Components" all find the table row.
  */
-export type PreviewKind =
-  | "surface"
-  | "buttons"
-  | "input"
-  | "select"
-  | "table"
-  | "badge"
-  | "avatar"
-  | "form"
-  | "tooltip"
-  | "loading"
-  | "datepicker"
-  | "calendar"
-  | "charts"
-  | "checkboxRadio"
-  | "typography"
-  | null;
-
-export interface SettingsItem {
-  /** Stable destination id (also the value persisted as the active rail row). */
-  id: string;
-  /** i18n key for the rail label — reuses each section's own title key. */
-  labelKey?: string;
-  /**
-   * Literal label, used only where the owning section carries no i18n title of
-   * its own (Hover Effects is hard-coded in its section). Mirroring that literal
-   * keeps rail/section parity without minting a new locale key.
-   */
-  label?: string;
-  icon: LucideIcon;
-  /** The code-split section rendered in the content column. */
-  Component: ComponentType;
-  /** The live surface the dock shows for this destination. */
-  preview: PreviewKind;
+export function matchRows(query: string, t: (key: string) => string): SettingRowMeta[] {
+  const needle = query.trim().toLowerCase();
+  if (!needle) return [];
+  return SETTING_ROWS.filter((row) => {
+    const group = SETTINGS_GROUPS.find((entry) => entry.id === row.group);
+    const haystack = [
+      rowLabel(row, t),
+      row.descKey ? t(row.descKey) : (row.description ?? ""),
+      group ? groupLabel(group, t) : "",
+      ...(row.terms ?? []),
+    ]
+      .join(" ")
+      .toLowerCase();
+    return haystack.includes(needle);
+  });
 }
 
-export interface SettingsGroup {
-  id: string;
-  labelKey: string;
-  icon: LucideIcon;
-  items: SettingsItem[];
+// ── The nav ───────────────────────────────────────────────────────────────
+
+export function GroupNav({
+  activeId,
+  onSelect,
+}: {
+  activeId: GroupId;
+  onSelect: (id: GroupId) => void;
+}) {
+  const { t } = useI18n();
+
+  return (
+    <nav
+      aria-label={t("settings.pageTitle")}
+      className="flex gap-1 overflow-x-auto pb-1 xl:flex-col xl:overflow-visible xl:pb-0"
+    >
+      {SETTINGS_GROUPS.map((group) => {
+        const active = group.id === activeId;
+        const Icon = group.icon;
+        return (
+          <button
+            key={group.id}
+            type="button"
+            onClick={() => onSelect(group.id)}
+            aria-current={active ? "page" : undefined}
+            className={cn(
+              "relative flex shrink-0 items-center gap-2.5 rounded-nx-md px-3 py-2 text-sm outline-none",
+              "transition-[background-color,color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+              "focus-visible:shadow-nx-focus xl:w-full",
+              active
+                ? "bg-nx-accent-wash text-nx-ink"
+                : "text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
+            )}
+          >
+            {/* The lit edge: light collects on the active row only. */}
+            {active && (
+              <span
+                aria-hidden
+                className="absolute inset-y-1.5 w-0.5 rounded-full bg-nx-accent [inset-inline-start:0]"
+              />
+            )}
+            <Icon aria-hidden className="h-4 w-4 shrink-0" />
+            <span className="truncate font-medium">{groupLabel(group, t)}</span>
+            <span
+              className={cn(
+                "ms-auto hidden text-xs tabular-nums xl:inline",
+                active ? "text-nx-ink-2" : "text-nx-ink-3"
+              )}
+            >
+              {GROUP_COUNTS[group.id]}
+            </span>
+          </button>
+        );
+      })}
+    </nav>
+  );
 }
 
-export const SETTINGS_GROUPS: SettingsGroup[] = [
-  {
-    id: "appearance",
-    labelKey: "settings.tabs.appearance",
-    icon: Palette,
-    items: [
-      { id: "background", labelKey: "settings.bgMode.title", icon: ImageIcon, Component: BackgroundModeSection, preview: "surface" },
-      { id: "colors", labelKey: "settings.appearanceTabs.colors", icon: Palette, Component: ColorsSubtab, preview: "surface" },
-      { id: "light-bg", labelKey: "settings.appearanceTabs.lightBg", icon: Sun, Component: LightBackgroundsSubtab, preview: "surface" },
-      { id: "dark-bg", labelKey: "settings.appearanceTabs.darkBg", icon: Moon, Component: DarkBackgroundsSubtab, preview: "surface" },
-      { id: "gradients", labelKey: "settings.appearanceTabs.gradients", icon: Wand2, Component: GradientsSubtab, preview: "surface" },
-      { id: "palettes", labelKey: "settings.appearanceTabs.palettes", icon: Layers, Component: PalettesSubtab, preview: "surface" },
-      { id: "effects", labelKey: "settings.appearanceTabs.effects", icon: Wand2, Component: EffectsSubtab, preview: "surface" },
-    ],
-  },
-  {
-    id: "layout",
-    labelKey: "settings.tabs.layout",
-    icon: LayoutGrid,
-    items: [
-      { id: "card-style", labelKey: "settings.cardStyle.title", icon: LayoutGrid, Component: StylesTab, preview: "surface" },
-    ],
-  },
-  {
-    id: "components",
-    labelKey: "settings.tabs.components",
-    icon: Blocks,
-    items: [
-      { id: "button", labelKey: "settings.buttonStyle.title", icon: MousePointer2, Component: ButtonStyleSection, preview: "buttons" },
-      { id: "input", labelKey: "settings.inputStyle.title", icon: TextCursorInput, Component: InputStyleSection, preview: "input" },
-      { id: "select", labelKey: "settings.selectStyle.title", icon: ListChecks, Component: SelectStyleSection, preview: "select" },
-      { id: "table", labelKey: "settings.tableStyle.title", icon: Table, Component: TableStyleSection, preview: "table" },
-      { id: "badge", labelKey: "settings.badgeStyle.title", icon: Tag, Component: BadgeStyleSection, preview: "badge" },
-      { id: "avatar", labelKey: "settings.avatarStyle.title", icon: CircleUser, Component: AvatarStyleSection, preview: "avatar" },
-      { id: "form", labelKey: "settings.formStyle.title", icon: ClipboardList, Component: FormStyleSection, preview: "form" },
-      { id: "tooltip", labelKey: "settings.tooltipStyle.title", icon: MessageSquare, Component: TooltipStyleSection, preview: "tooltip" },
-      { id: "modal", labelKey: "settings.modalStyle.title", icon: AppWindow, Component: ModalStyleSection, preview: "surface" },
-      { id: "tree", labelKey: "settings.treeStyle.title", icon: ListTree, Component: TreeStyleSection, preview: "surface" },
-      { id: "datepicker", labelKey: "settings.datePickerStyle.title", icon: CalendarDays, Component: DatePickerStyleSection, preview: "datepicker" },
-      { id: "calendar", labelKey: "settings.calendarStyle.title", icon: Calendar, Component: CalendarStyleSection, preview: "calendar" },
-      { id: "loading", labelKey: "settings.loadingStyle.title", icon: Loader, Component: LoadingStyleSection, preview: "loading" },
-      { id: "hover", label: "Hover Effects", icon: MoveUp, Component: HoverEffectsSection, preview: "surface" },
-    ],
-  },
-  {
-    id: "charts",
-    labelKey: "settings.tabs.charts",
-    icon: BarChart3,
-    items: [
-      { id: "charts", labelKey: "settings.tabs.charts", icon: BarChart3, Component: ProfessionalChartsTab, preview: "charts" },
-    ],
-  },
-  {
-    id: "checkboxRadio",
-    labelKey: "settings.tabs.checkboxRadio",
-    icon: SquareCheck,
-    items: [
-      { id: "checkbox-radio", labelKey: "settings.tabs.checkboxRadio", icon: SquareCheck, Component: CheckboxRadioTab, preview: "checkboxRadio" },
-    ],
-  },
-  {
-    id: "typography",
-    labelKey: "settings.tabs.typography",
-    icon: Type,
-    items: [
-      { id: "typography", labelKey: "settings.tabs.typography", icon: Type, Component: TypographyTab, preview: "typography" },
-    ],
-  },
-  {
-    id: "behavior",
-    labelKey: "settings.tabs.behavior",
-    icon: SlidersHorizontal,
-    items: [
-      { id: "behavior", labelKey: "settings.tabs.behavior", icon: SlidersHorizontal, Component: BehaviorTab, preview: null },
-    ],
-  },
-];
-
-/** Flat lookup for the active destination (content + dock resolution). */
-export const SETTINGS_ITEMS: SettingsItem[] = SETTINGS_GROUPS.flatMap((g) => g.items);
-
-/** The first destination shown when Settings opens. */
-export const DEFAULT_SETTINGS_ITEM_ID = "colors";
+export { SETTINGS_GROUPS, SETTING_ROWS };
+export type { GroupId, SettingRowMeta, SettingsGroupMeta };

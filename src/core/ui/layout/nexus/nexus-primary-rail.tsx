@@ -399,23 +399,41 @@ export function NexusPrimaryRail({
 
           <Divider />
 
-          {/* Bell honours the showNotifications setting like every other layout */}
-          {showNotifications && (
-            <div className="group relative flex w-full items-center justify-center">
-              <NotificationBell
-                iconClassName="h-[20px] w-[20px]"
-                className="h-[44px] w-[44px] rounded-[12px] border border-transparent text-nx-ink-2 transition-all duration-nx-standard ease-nx-enter hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink"
-              />
-            </div>
-          )}
+          {/* ── Identity cluster ──────────────────────────────────────────
+              Notifications sit DIRECTLY above the profile avatar: one
+              "this is you, this is yours" group at the foot of the rail.
 
-          <div className="group relative mt-1 flex w-full items-center justify-center">
+              The bell still honours the showNotifications setting — the
+              regression that hid it for everyone was the setting's DEFAULT
+              (false in settings/defaults.ts while nothing read the flag), not
+              this wiring. Default is true now; an admin who switches it off
+              collapses the cluster to the avatar alone and the rhythm holds. */}
+          <div className="flex w-full flex-col items-center gap-2">
+            {showNotifications && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center justify-center">
+                    <NotificationBell
+                      iconClassName="h-[20px] w-[20px]"
+                      className="h-[44px] w-[44px] rounded-[12px] border border-transparent text-nx-ink-2 transition-all duration-nx-standard ease-nx-enter hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink"
+                    />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side={isRTL ? "left" : "right"} sideOffset={16}>
+                  {language === "ar" ? "الإشعارات" : "Notifications"}
+                </TooltipContent>
+              </Tooltip>
+            )}
+
+            {/* The open menu lights its own trigger (data-state=open → accent
+                edge) instead of the old scale-on-hover/press pair: light
+                collects on the active thing, transforms are noise. */}
             <UserProfileDropdown
               variant="compact"
               showName={false}
               side={isRTL ? "left" : "right"}
               align="end"
-              className="h-[40px] w-[40px] cursor-pointer rounded-full border-[1.5px] border-nx-line !p-0 shadow-sm transition-all duration-nx-micro hover:scale-105 hover:border-nx-line-hi active:scale-95 motion-reduce:hover:scale-100 motion-reduce:active:scale-100"
+              className="h-[40px] w-[40px] cursor-pointer rounded-full border-[1.5px] border-nx-line !p-0 shadow-nx-sm transition-[border-color,box-shadow,background-color] duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover motion-reduce:transition-none data-[state=open]:border-nx-accent"
             />
           </div>
         </div>
@@ -506,10 +524,18 @@ function ModuleWorkspaceButton({
             opacity: isLocked ? 0.55 : 1,
           }}
         >
-          {/* Active glow ring — pulse dies under prefers-reduced-motion */}
+          {/* Active edge ring — STATIC.
+              This carried `animate-pulse`, an unbounded 2s opacity loop that
+              ran for as long as a workspace was active, i.e. permanently. That
+              is the idle pulse the product owner reported seeing on the rail,
+              and it breaks the brand law directly: light collects on the
+              active thing, never as an idle animation. The ring itself is the
+              correct signal and stays — a lit accent edge on the active pin,
+              paired with the --nx-glow box-shadow above. Only the loop is
+              gone, so there is no longer any motion to gate on reduced-motion
+              and nothing about the active state is lost. */}
           {isActive && (
             <div
-              className="animate-pulse motion-reduce:animate-none"
               style={{
                 position: "absolute",
                 inset: -2,

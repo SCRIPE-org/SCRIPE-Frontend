@@ -6,6 +6,77 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================================
+   WORKSPACE ACCENT — REGISTERED SO THE COLOUR CAN INTERPOLATE
+   ----------------------------------------------------------------------------
+   Every accent in the product derives from --workspace-hue / --workspace-chroma,
+   which WorkspaceProvider writes to <html> as raw numbers the instant the
+   active workspace changes (workspace-provider.tsx L102-116). An UNREGISTERED
+   custom property has no type, so the cascade can only SWAP it: the entire
+   UI's accent jumped from one hue to the next in a single frame. That snap is
+   the "make the transmission of coloring smooth" defect.
+
+   @property gives the two numbers the "<number>" type, which is what makes a
+   custom property animatable at all. The transition below then interpolates
+   the NUMBERS on <html>; both inherit, so every downstream oklch() —
+   --nx-accent, --nx-accent-fill, --nx-accent-wash, --nx-glow, --nx-focus, the
+   --ws-* family, every border, fill and color-mix() built on them — recomputes
+   each frame and the whole shell sweeps to the new workspace colour together.
+
+   WHY THIS RATHER THAN TRANSITIONING THE CONSUMING PROPERTIES: CSS cannot
+   transition an unregistered custom property, so the alternative was a
+   shell-wide rule transitioning color/background-color/border-color. That
+   needs a selector broad enough to catch every accented element, and such a
+   selector also catches every hover, press, selection and theme flip — hover
+   would turn syrupy and component-level transitions would fight it. It also
+   cannot reach an accent that lives inside a box-shadow colour, an SVG fill,
+   or a color-mix() input, which is where half of this accent actually lives.
+   Registering the two source numbers is ONE rule that animates the accent and
+   nothing else. This is the approach that actually works.
+
+   initial-value mirrors the :root declarations below, so a removed/unset
+   property resolves exactly as it does today — no behaviour change when a
+   workspace carries no hue.
+   ============================================================================ */
+@property --workspace-hue {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 262;
+}
+
+@property --workspace-chroma {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0.14;
+}
+
+/* The crossfade itself, on the element the provider actually writes to.
+   Only the two accent numbers are listed, so nothing else on <html> gains a
+   transition. Custom-property substitution is not source-order dependent, so
+   the nexus motion tokens declared further down resolve here correctly. */
+:root {
+  transition:
+    --workspace-hue var(--nx-t-panel) var(--nx-ease-enter),
+    --workspace-chroma var(--nx-t-panel) var(--nx-ease-enter);
+}
+
+/* Reduced motion — the accent still changes, it just arrives instantly.
+   Both gates are honoured: the OS preference, and the in-app setting that
+   dom-applicator stamps on <html>. The global
+   `html[data-reduced-motion="true"] *` reset further down cannot do this job:
+   its descendant combinator excludes the root element itself, and the
+   interpolated value is INHERITED by descendants, so the only place that can
+   stop the sweep is :root. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    transition: none;
+  }
+}
+
+html[data-reduced-motion="true"] {
+  transition: none;
+}
+
 /* ========================================
    BASE CSS VARIABLES & THEMES
    ======================================== */
@@ -2305,16 +2376,16 @@ html[lang="ar"],
   }
 }
 
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-}
+/* WAVE I1 GATE — `@keyframes float` and its only consumer `.animate-float`
+   were removed here. It was a 3s `infinite` translateY loop with a
+   `will-change: transform` compositing layer permanently promoted behind it,
+   and it is the last idle unbounded animation that was left in this file.
+   Verified unreachable before deleting: `animate-float` appears nowhere in
+   src/ (tsx/ts/js/json/md), tailwind.config.js declares no `float` entry under
+   theme.extend.animation or .keyframes — so no utility regenerates it — and
+   the only other repo hits were compiled copies of THIS rule inside .next/.
+   The remaining `infinite` animations in this file are both `.sx-spin1`, which
+   are busy indicators on the sign-in/vault surface, not idle shell chrome. */
 
 .animate-slide-in-right {
   animation: slideInRight 0.3s ease-out;
@@ -2326,14 +2397,6 @@ html[lang="ar"],
 
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out;
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-  will-change: transform;
-  /* P4.6: GPU compositing hint */
-  contain: layout style;
-  /* P4.6: Limit layout recalc scope */
 }
 
 /* ========================================
@@ -3919,19 +3982,32 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 }
 
 /* ============================================================================
-   SCRIPE / EDGE DESIGN SYSTEM
+   GLOBAL SEMANTIC TOKENS
    ----------------------------------------------------------------------------
-   Derived from the SCRIPE mark: a matte extruded solid whose light collects on
-   its edges and discharges cyan at exactly one terminal edge.
+   Layout-agnostic tokens every shell reads: measured status colours, the
+   reading-direction origin for the routing progress bar, and the one modal
+   scrim.
 
-   Four laws:
-     1. Surfaces are matte      — no gradient fills or glow at rest
-     2. Edges carry the light   — focus / selection / active state light an edge
-     3. Cyan discharges once    — one emitting element per screen
-     4. Depth is extrusion      — lit top edge + hard offset drop, never a halo
+   WAVE I1 — DEAD CSS REMOVED. The EDGE/scripe design system used to live here:
+   the two --edge-* token blocks, ~40 .sx-shell component rules (.sx-content,
+   .sx-rail-btn, .sx-rail-indicator, .sx-pin*, .sx-nav-*, .sx-icon-btn,
+   .sx-search-btn, .sx-kbd, .sx-skip, .sx-scrim, .sx-panel-overlay,
+   .sx-rail-scroll and the shell scrollbars), the .sx-shell focus/::selection
+   law, its reduced-motion block, and the @keyframes sxRowIn / sxPinPulse /
+   sxPanelIn / sxPanelInRtl. 382 lines, none of which could match anything:
 
-   ADDITIVE AND SCOPED. Surface tokens apply only under [data-layout="scripe"],
-   so every existing layout (nexus included) is byte-for-byte unaffected.
+     - the scripe layout component tree was deleted in Wave G;
+     - `LayoutTemplate` is now the single member "nexus"
+       (src/core/settings/types.ts:130), the merge-engine normalises any
+       stored value to it, and dom-applicator writes data-layout="nexus"
+       unconditionally — so `:root[data-layout="scripe"]` cannot match;
+     - grep over src/ for every .sx-shell-family class name and for the
+       tailwind `edge-*` colour utilities returned 0 hits.
+
+   NOT removed, because they are still live: the --sx-* tokens and the
+   .sx-screen / .sx-ambient / .sx-shake / .sx-pop / .sx-rise / .sx-spin1 /
+   .sx-stagger / .vault-* rules further up — those belong to sign-in, sign-up
+   and password-reset (20 files use them), not to the scripe shell.
    ============================================================================ */
 
 /* ── Semantic status tokens (GLOBAL, additive) ──────────────────────────────
@@ -3966,308 +4042,6 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   --info-foreground: 0 0% 100%;
 }
 
-/* ── EDGE surfaces — scoped to the scripe shell ─────────────────────────── */
-:root[data-layout="scripe"] {
-  /* dark is the mark's native ground */
-  --edge-void: #07070c;
-  --edge-sub: #0c0c13;
-  --edge-slab: #111119;
-  --edge-slab-hi: #181822;
-  --edge-slab-top: rgba(255, 255, 255, 0.055);
-  --edge-line: rgba(255, 255, 255, 0.075);
-  --edge-line-hi: rgba(255, 255, 255, 0.14);
-  --edge-grid: rgba(255, 255, 255, 0.045);
-  --edge-ink: #f2f0fa;
-  --edge-ink-2: #b3adc6;
-  --edge-ink-3: #8f89a5;
-
-  /* accent-as-text and accent-as-fill have OPPOSITE contrast duties and
-     therefore cannot be one token. Both derive from the live workspace hue,
-     which WorkspaceProvider writes to <html> from Workspace.ColorHue. */
-  --edge-accent: oklch(0.68 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
-  --edge-accent-fill: oklch(0.5 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
-  --edge-on-fill: #ffffff;
-  --edge-accent-wash: oklch(0.68 var(--workspace-chroma, 0.18) var(--workspace-hue, 262) / 0.14);
-  --edge-emit: oklch(0.82 0.13 calc(var(--workspace-hue, 262) + 78));
-  --edge-emit-wash: oklch(0.82 0.13 calc(var(--workspace-hue, 262) + 78) / 0.12);
-
-  --edge-drop:
-    0 1px 0 var(--edge-slab-top), 0 12px 32px -12px rgba(0, 0, 0, 0.9);
-
-  /* geometry — carried over from nexus so muscle memory survives */
-  --edge-rail-w: 64px;
-  --edge-panel-w: 240px;
-  --edge-topbar-h: 56px;
-
-  /* dials */
-  --edge-radius: 8px;
-  --edge-unit: 4px;
-  --edge-motion: 1;
-  --edge-t: calc(160ms * var(--edge-motion));
-  --edge-t2: calc(130ms * var(--edge-motion));
-  --edge-t3: calc(280ms * var(--edge-motion));
-}
-
-:root[data-layout="scripe"]:not(.dark) {
-  --edge-void: #f6f5fa;
-  --edge-sub: #eeecf5;
-  --edge-slab: #ffffff;
-  --edge-slab-hi: #faf9fe;
-  --edge-slab-top: rgba(255, 255, 255, 1);
-  --edge-line: rgba(23, 19, 31, 0.11);
-  --edge-line-hi: rgba(23, 19, 31, 0.2);
-  --edge-grid: rgba(23, 19, 31, 0.07);
-  --edge-ink: #14101c;
-  --edge-ink-2: #4d4664;
-  --edge-ink-3: #635b79;
-  /* 0.46, not 0.55: accent-as-text has to clear 4.5:1 against the PANEL
-     (--edge-sub #eeecf5), not just against white. At 0.55 a cyan or green
-     workspace landed at 4.15:1; 0.46 holds 4.89:1 across all 24 hues. */
-  --edge-accent: oklch(0.46 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
-  --edge-accent-fill: oklch(0.5 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
-  --edge-accent-wash: oklch(0.46 var(--workspace-chroma, 0.18) var(--workspace-hue, 262) / 0.1);
-  --edge-emit: oklch(0.52 0.12 calc(var(--workspace-hue, 262) + 78));
-  --edge-emit-wash: oklch(0.52 0.12 calc(var(--workspace-hue, 262) + 78) / 0.1);
-  --edge-drop:
-    0 1px 0 rgba(255, 255, 255, 1), 0 10px 28px -14px rgba(23, 19, 31, 0.28);
-}
-
-/* ── One focus law for the whole shell ──────────────────────────────────── */
-:root[data-layout="scripe"] .sx-shell :focus-visible {
-  outline: 2px solid var(--edge-emit);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-:root[data-layout="scripe"] .sx-shell ::selection {
-  background: var(--edge-accent-wash);
-  color: var(--edge-ink);
-}
-
-/* ── Motion primitives ──────────────────────────────────────────────────── */
-@keyframes sxRowIn {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@keyframes sxPinPulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.3;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :root[data-layout="scripe"] {
-    --edge-motion: 0;
-  }
-  :root[data-layout="scripe"] .sx-shell *,
-  :root[data-layout="scripe"] .sx-shell *::before,
-  :root[data-layout="scripe"] .sx-shell *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-  }
-}
-
-/* ── EDGE shell components ──────────────────────────────────────────────────
-   Every rule is scoped under .sx-shell so it can never leak into another
-   layout. All colours are tokens; no isDark branch exists in the TSX. */
-.sx-shell .sx-content {
-  padding: 16px 20px 40px;
-  background:
-    radial-gradient(
-      90% 42% at 50% -12%,
-      color-mix(in srgb, var(--edge-accent) 7%, transparent),
-      transparent 70%
-    ),
-    var(--edge-void);
-}
-
-/* rail + panel share one interaction law: matte at rest, edge lights on state */
-.sx-shell .sx-rail-btn {
-  color: var(--edge-ink-3);
-  cursor: pointer;
-  background: none;
-  transition:
-    color var(--edge-t),
-    background var(--edge-t),
-    border-color var(--edge-t);
-}
-.sx-shell .sx-rail-btn:hover {
-  color: var(--edge-ink);
-  background: var(--edge-slab);
-}
-.sx-shell .sx-rail-btn--active {
-  color: var(--edge-emit);
-  background: var(--edge-slab);
-  border-color: var(--edge-line) !important;
-  box-shadow: 0 1px 0 var(--edge-slab-top);
-}
-
-/* the sliding edge light — one emitting element, law 3 */
-.sx-shell .sx-rail-indicator {
-  position: absolute;
-  inset-inline-start: 2px;
-  top: 0;
-  width: 2px;
-  height: 22px;
-  border-radius: 2px;
-  background: var(--edge-emit);
-  box-shadow: 0 0 10px var(--edge-emit);
-  transition: transform var(--edge-t3) cubic-bezier(0.3, 0.9, 0.3, 1);
-  pointer-events: none;
-}
-
-.sx-shell .sx-pin {
-  cursor: pointer;
-  font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 0.6rem;
-  font-weight: 700;
-  /* --pin-h / --pin-c come from the workspace; --pin-l is the theme's job.
-     0.68 is the worst-case-safe lightness on the dark rail (5.95:1 across all
-     hues at chroma 0.18); the light rail needs 0.46 or darker. */
-  --pin-l: 0.68;
-  background: oklch(var(--pin-l) var(--pin-c) var(--pin-h) / 0.15);
-  border-color: oklch(var(--pin-l) var(--pin-c) var(--pin-h) / 0.45);
-  color: oklch(var(--pin-l) var(--pin-c) var(--pin-h));
-  transition:
-    transform var(--edge-t2),
-    filter var(--edge-t2);
-}
-:root[data-layout="scripe"]:not(.dark) .sx-shell .sx-pin {
-  --pin-l: 0.46;
-}
-.sx-shell .sx-pin:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.15);
-}
-.sx-shell .sx-pin--active::after {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border-radius: 12px;
-  border: 2px solid color-mix(in srgb, var(--edge-emit) 60%, transparent);
-  animation: sxPinPulse 2.2s ease-in-out infinite;
-}
-.sx-shell .sx-pin-back {
-  position: absolute;
-  inset-block-end: -3px;
-  inset-inline-end: -3px;
-  width: 14px;
-  height: 14px;
-  border-radius: 4px;
-  background: var(--edge-slab);
-  border: 1px solid var(--edge-line);
-  color: var(--edge-ink-2);
-}
-[dir="rtl"] .sx-shell .sx-pin-back svg {
-  transform: scaleX(-1);
-}
-
-.sx-shell .sx-nav-group {
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--edge-ink-3);
-  padding: 14px 8px 6px;
-}
-.sx-shell .sx-nav-item {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: calc(var(--edge-unit) * 1.75) 9px;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  color: var(--edge-ink-2);
-  font-size: 0.845rem;
-  font-weight: 500;
-  text-align: start;
-  transition:
-    color var(--edge-t),
-    background var(--edge-t);
-}
-.sx-shell .sx-nav-item:hover {
-  background: var(--edge-slab);
-  color: var(--edge-ink);
-}
-.sx-shell .sx-nav-item--active {
-  background: var(--edge-slab);
-  color: var(--edge-ink);
-  border-color: var(--edge-line);
-  box-shadow: 0 1px 0 var(--edge-slab-top);
-}
-.sx-shell .sx-nav-item--active svg {
-  color: var(--edge-emit);
-}
-.sx-shell .sx-nav-item--static {
-  color: var(--edge-ink-3);
-  cursor: default;
-}
-
-.sx-shell .sx-icon-btn {
-  color: var(--edge-ink-3);
-  cursor: pointer;
-  transition:
-    color var(--edge-t2),
-    background var(--edge-t2);
-}
-.sx-shell .sx-icon-btn:hover {
-  color: var(--edge-ink);
-  background: var(--edge-sub);
-}
-
-.sx-shell .sx-search-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  background: var(--edge-sub);
-  border: 1px solid var(--edge-line);
-  border-radius: 7px;
-  color: var(--edge-ink-3);
-  font-size: 0.8rem;
-  padding: 7px 10px;
-  transition:
-    border-color var(--edge-t),
-    color var(--edge-t);
-}
-.sx-shell .sx-search-btn:hover {
-  border-color: var(--edge-line-hi);
-  color: var(--edge-ink-2);
-}
-.sx-shell .sx-kbd {
-  margin-inline-start: auto;
-  font-size: 0.64rem;
-  font-weight: 600;
-  color: var(--edge-ink-3);
-  border: 1px solid var(--edge-line);
-  border-radius: 4px;
-  padding: 2px 5px;
-  background: var(--edge-slab);
-}
-
-/* scrollbars — one system inside the shell */
-.sx-shell *::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-.sx-shell *::-webkit-scrollbar-thumb {
-  background: var(--edge-line-hi);
-  border-radius: 4px;
-}
-.sx-shell *::-webkit-scrollbar-track {
-  background: transparent;
-}
-
 /* Routing progress bar fills from the side the user starts reading on. */
 :root {
   --rpb-origin: left;
@@ -4276,92 +4050,11 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   --rpb-origin: right;
 }
 
-/* ── Skip link — the first tab stop in the shell ─────────────────────────────
-   Present in the DOM at all times so screen readers announce it; visible only
-   on focus, which is the one moment a sighted keyboard user needs it. */
-.sx-shell .sx-skip {
-  position: absolute;
-  z-index: 60;
-  inset-block-start: 8px;
-  inset-inline-start: 8px;
-  padding: 8px 14px;
-  border-radius: var(--edge-radius);
-  background: var(--edge-slab);
-  color: var(--edge-ink);
-  border: 1px solid var(--edge-line-hi);
-  box-shadow: var(--edge-drop);
-  font-size: 0.82rem;
-  font-weight: 600;
-  transform: translateY(calc(-100% - 16px));
-  transition: transform var(--edge-t) ease-out;
-}
-.sx-shell .sx-skip:focus-visible {
-  transform: none;
-}
-
-/* ── Panel as an overlay below the breakpoint ───────────────────────────────
-   Under ~900px there is no room for a 240px column: taking one would leave the
-   content field a few dozen pixels wide. The panel lifts out of the grid and
-   sits over the content instead, dismissed by the scrim or Escape. */
-.sx-shell .sx-scrim {
-  position: absolute;
-  inset: 0;
-  z-index: 40;
-  background: rgb(0 0 0 / 0.5);
-  border: 0;
-  cursor: default;
-}
-.sx-shell .sx-panel-overlay {
-  position: absolute;
-  z-index: 45;
-  inset-block: 0;
-  inset-inline-start: var(--edge-rail-w);
-  width: var(--edge-panel-w);
-  max-width: calc(100vw - var(--edge-rail-w));
-  box-shadow: var(--edge-drop);
-  animation: sxPanelIn calc(180ms * var(--edge-motion)) ease-out;
-}
-@keyframes sxPanelIn {
-  from {
-    opacity: 0;
-    transform: translateX(calc(-8px * var(--edge-motion)));
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-[dir="rtl"] .sx-shell .sx-panel-overlay {
-  animation-name: sxPanelInRtl;
-}
-@keyframes sxPanelInRtl {
-  from {
-    opacity: 0;
-    transform: translateX(calc(8px * var(--edge-motion)));
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* The rail's own scroller stays invisible — an 8px bar inside a 64px rail
-   would eat an eighth of it. The overflow is still scrollable by wheel,
-   trackpad, touch and keyboard. */
-.sx-shell .sx-rail-scroll {
-  scrollbar-width: none;
-}
-.sx-shell .sx-rail-scroll::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-}
-
 /* ── Modal scrim ─────────────────────────────────────────────────────────────
-   A dialog needs the page behind it pushed back, and EDGE does that by taking
-   light away rather than by blurring: law 1 is "surfaces are matte", and a
-   backdrop-filter is the single most expensive thing you can put under a
-   modal on a low-end device. Defined globally so every layout gets it, not
-   only the scripe shell. */
+   A dialog needs the page behind it pushed back, and we do that by taking
+   light away rather than by blurring: a backdrop-filter is the single most
+   expensive thing you can put under a modal on a low-end device. Defined
+   globally, aliased by --nx-scrim, so there is exactly ONE scrim system. */
 :root {
   --scrim: oklch(0.13 0.01 285 / 0.62);
 }
@@ -4374,9 +4067,23 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
    ----------------------------------------------------------------------------
    The brand as read from the real mark (public/app-logo.png): near-black
    ground, luminous violet→cyan edge light, glass depth. Dark-native. The
-   interface speaks it as deep violet-cast near-black surfaces, hairline
-   edges, and light that collects on the ACTIVE thing. ONE glowing element
-   per screen maximum — --nx-glow is the signature, not the wallpaper.
+   interface speaks it as a NEUTRAL charcoal (dark) / paper (light) ladder,
+   hairline edges, and light that collects on the ACTIVE thing. ONE glowing
+   element per screen maximum — --nx-glow is the signature, not the wallpaper.
+
+   WAVE I1 — SURFACES NEUTRALISED. The old ladder carried the brand hue in the
+   SURFACES themselves (dark #0C0B12…#221F30 at OKLCH chroma 0.015→0.032,
+   light #F7F6FB…#E9E6F4 at 0.007→0.019). At that chroma every card, panel and
+   popover read as literally purple, which is what the product owner reported.
+   The fix is a strict division of labour:
+
+     SURFACES are a considered neutral — chroma 0.004…0.008 at hue 286. That
+     is a whisper: enough for the greys to feel cut from the brand rather than
+     from a stock palette, far below the ~0.02 where the eye names a hue.
+     INK follows the surfaces (chroma ≤0.013); violet-grey text on neutral
+     charcoal is the other half of the "everything is purple" reading.
+     ACCENT stays fully chromatic and workspace-owned. The brand's violet did
+     not move — it simply stopped being the wallpaper.
 
    SCOPE — GLOBAL (Wave A re-scope). Wave 1 scoped these to
    :root[data-layout="nexus"] plus :root:not([data-layout]) because only the
@@ -4386,35 +4093,57 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
    token-backed declaration on a primitive would silently resolve to its
    fallback or to nothing. Token DEFINITIONS therefore live on :root (dark
    values default) with light overrides on :root:not(.dark) — the exact
-   pattern of the global status tokens and --scrim above. Values and the
-   contrast table below are UNCHANGED by the re-scope. Nexus shell-specific
+   pattern of the global status tokens and --scrim above. Nexus shell-specific
    RULES (not tokens) stay scoped to their shell; nothing else defines
    --nx-*, so no collision is possible.
 
-   NAMESPACE: --nx- only. --sx- and --edge- are taken; a past prefix
-   collision silently recoloured the sign-in page.
+   NAMESPACE: --nx- only. --sx- is taken by the sign-in / vault surface (still
+   live); a past prefix collision silently recoloured the sign-in page.
+   --edge- was the third prefix and is retired with the scripe shell (Wave I1)
+   — do not revive it. tailwind.config.js still maps an `edge` colour family
+   onto those now-undefined variables; every entry carries a shadcn fallback
+   and no `*-edge-*` utility is used anywhere in src/, so it resolves safely.
 
    ACCENT is workspace-owned: it derives from --workspace-hue/--workspace-chroma
    (written to <html> by workspace-provider.tsx L102-116); violet 262 is only
    the DEFAULT hue. SECONDARY is the logo's cyan (hue 192) — "live/now" only.
    STATUS colours are NOT defined here: nexus READS the global measured
-   --success/--warning/--warning-strong/--info/--destructive tokens (L3819).
+   --success/--warning/--warning-strong/--info/--destructive tokens, defined in
+   the GLOBAL SEMANTIC TOKENS block above.
 
-   CONTRAST FLOORS — WCAG-computed this session, 24/24 checks PASS.
-   Do not re-derive; these are the numbers.
-     DARK  (surfaces #0C0B12 / #15131D / #1B1926 / #221F30):
-       --nx-ink    #EFEDF6  15.7:1 on ground
-       --nx-ink-2  #ACA7BF   8.1:1
-       --nx-ink-3  #8A849C  ≥4.7:1 on ALL four surfaces
-       accent text oklch L0.68: worst workspace hue 5.40:1
-     LIGHT (surfaces #F7F6FB / #FFFFFF / #F1EFF8 / #E9E6F4):
-       --nx-ink    #17141F
-       --nx-ink-2  #4D4763
-       --nx-ink-3  #655F7A  ≥4.85:1 on ALL surfaces
-       accent text oklch L0.46: worst workspace hue 5.33:1
-     FILL (both themes) oklch L0.50 + white label: worst hue 4.84:1
-     SECONDARY (hue 192, chroma 0.13) follows the same lightness law, so it
-     inherits the worst-hue floors above by construction.
+   CONTRAST FLOORS — WCAG 2.x relative-luminance, recomputed for the Wave I1
+   values. 27/27 checks PASS. Do not re-derive; these are the numbers. Every
+   cell is the measured ratio of that ink on that surface.
+
+     DARK   ground #0B0B0E  surface #131316  raised #1A1A1E  raised-2 #202024
+            (OKLCH chroma 0.0064 / 0.0060 / 0.0077 / 0.0075 @ hue 286)
+
+              token          hex      ground surface raised raised-2   MIN
+              --nx-ink     #EEEEF2    16.98  16.03   14.99   14.03    14.03
+              --nx-ink-2   #ADADB5     8.82   8.32    7.78    7.28     7.28
+              --nx-ink-3   #8D8D95     5.97   5.63    5.27    4.93     4.93
+            accent-as-text oklch(0.68 0.18 h): worst hue 345 → 5.14:1
+
+     LIGHT  ground #F7F7FA  surface #FFFFFF  raised #F0F0F4  raised-2 #E8E8ED
+            (OKLCH chroma 0.0040 / 0 / 0.0053 / 0.0067 @ hue 286)
+
+              token          hex      ground surface raised raised-2   MIN
+              --nx-ink     #161619    16.89  18.06   15.89   14.79    14.79
+              --nx-ink-2   #4A4A51     8.22   8.79    7.73    7.20     7.20
+              --nx-ink-3   #62626A     5.65   6.04    5.32    4.95     4.95
+            accent-as-text oklch(0.46 0.18 h): worst hue 195 → 4.68:1
+
+     FILL (both themes) oklch(0.50 0.18 h) + #FFFFFF label: worst hue 180 →
+     4.84:1 — unchanged, fill and --nx-on-fill are surface-independent.
+     SECONDARY (hue 192, chroma 0.13) follows the same lightness law: worst
+     5.27:1 dark, 5.09:1 light.
+
+     NO FLOOR WAS WEAKENED. Several were raised, because the previous header
+     table overstated three of its own numbers — remeasured on the OLD hexes,
+     dark --nx-ink-3 #8A849C was 4.49:1 on #221F30 (a real FAIL against 4.5,
+     not the claimed "≥4.7"), dark accent-as-text was 5.09:1 (not 5.40) and
+     light accent-as-text was 4.65:1 (not 5.33). The new ladder clears every
+     one of those: 4.93 / 5.14 / 4.68.
 
    MOTION: micro / standard / panel. Enter easing cubic-bezier(0.23,1,0.32,1);
    exit cubic-bezier(0.3,0,0.8,0.15) at ~2/3 of the enter duration. Overlays
@@ -4422,20 +4151,22 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
    Reduced motion strips position/scale movement and keeps crossfades.
    ============================================================================ */
 :root {
-  /* surfaces — dark is the mark's native ground */
-  --nx-ground: #0c0b12;
-  --nx-surface: #15131d;
-  --nx-raised: #1b1926; /* raised surfaces AND hover states */
-  --nx-raised-2: #221f30; /* the extra step above raised */
+  /* surfaces — dark is the mark's native ground. Near-neutral charcoal: the
+     brand hue survives only as a ~0.006 chroma whisper at hue 286, so the
+     ladder reads as a considered grey and never as violet. */
+  --nx-ground: #0b0b0e;
+  --nx-surface: #131316;
+  --nx-raised: #1a1a1e; /* raised surfaces AND hover states */
+  --nx-raised-2: #202024; /* the extra step above raised */
 
-  /* ink */
-  --nx-ink: #efedf6;
-  --nx-ink-2: #aca7bf;
-  --nx-ink-3: #8a849c;
+  /* ink — same whisper of hue as the surfaces it sits on */
+  --nx-ink: #eeeef2;
+  --nx-ink-2: #adadb5;
+  --nx-ink-3: #8d8d95;
 
-  /* hairlines */
-  --nx-line: rgba(235, 232, 255, 0.09);
-  --nx-line-hi: rgba(235, 232, 255, 0.16);
+  /* hairlines — neutral white at the same alphas, not the old violet-white */
+  --nx-line: rgba(240, 240, 246, 0.09);
+  --nx-line-hi: rgba(240, 240, 246, 0.16);
 
   /* accent — text and fill have opposite contrast duties: two tokens.
      Alpha via the slash channel, never string concatenation. */
@@ -4494,17 +4225,19 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 }
 
 :root:not(.dark) {
-  --nx-ground: #f7f6fb;
+  /* near-neutral paper — the light-theme half of the same law: chroma
+     0.004…0.007 at hue 286, a whisper rather than a lavender wash */
+  --nx-ground: #f7f7fa;
   --nx-surface: #ffffff;
-  --nx-raised: #f1eff8; /* hover tint in light — darker than surface by design */
-  --nx-raised-2: #e9e6f4;
+  --nx-raised: #f0f0f4; /* hover tint in light — darker than surface by design */
+  --nx-raised-2: #e8e8ed;
 
-  --nx-ink: #17141f;
-  --nx-ink-2: #4d4763;
-  --nx-ink-3: #655f7a;
+  --nx-ink: #161619;
+  --nx-ink-2: #4a4a51;
+  --nx-ink-3: #62626a;
 
-  --nx-line: rgba(23, 17, 40, 0.11);
-  --nx-line-hi: rgba(23, 17, 40, 0.2);
+  --nx-line: rgba(18, 18, 24, 0.11);
+  --nx-line-hi: rgba(18, 18, 24, 0.2);
 
   /* L0.46, not a naive inversion: accent-as-text must clear its floor on
      every nx surface across all workspace hues (5.33:1 worst hue). Fill and
@@ -4522,12 +4255,13 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
      Radius, scrim, hover, focus and status aliases need no override: they
      read vars that flip themselves. Popover cannot reuse --nx-raised here
      because raised is the light HOVER tint; popovers stay on white. Shadows
-     go violet-cast and much softer — dark-strength black on white reads as
-     dirt. */
+     stay much softer than dark's — dark-strength black on white reads as
+     dirt — and are cast in the same near-neutral ink as the surfaces (Wave
+     I1: the old rgb(23 17 40) tint put a violet halo under every card). */
   --nx-popover: var(--nx-surface);
-  --nx-shadow-sm: 0 1px 2px rgb(23 17 40 / 0.08);
-  --nx-shadow-popover: 0 8px 24px -8px rgb(23 17 40 / 0.16), 0 2px 8px -2px rgb(23 17 40 / 0.08);
-  --nx-shadow-modal: 0 24px 64px -16px rgb(23 17 40 / 0.24), 0 8px 24px -8px rgb(23 17 40 / 0.12);
+  --nx-shadow-sm: 0 1px 2px rgb(18 18 24 / 0.08);
+  --nx-shadow-popover: 0 8px 24px -8px rgb(18 18 24 / 0.16), 0 2px 8px -2px rgb(18 18 24 / 0.08);
+  --nx-shadow-modal: 0 24px 64px -16px rgb(18 18 24 / 0.24), 0 8px 24px -8px rgb(18 18 24 / 0.12);
 }
 
 /* ============================================================================

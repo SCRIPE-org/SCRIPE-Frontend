@@ -1,6 +1,22 @@
 // UI-EXCEPTION: compact studio layout
+/**
+ * Permission Config Dialog
+ *
+ * The AUTHORITATIVE scope control of the whole permissions surface, and the only
+ * scope *field* left in it. Everything else that mentions a scope — the matrix
+ * dot, the flat-row pill, the bulk menu — either reads this value back or writes
+ * through the same `onSave` contract.
+ *
+ * Its one job is to be unmistakably about ONE permission: the code is stated in
+ * the header, and the field is captioned with what it overrides. The bulk
+ * control deliberately does not look like this.
+ *
+ * @module roles/presentation/components
+ */
+"use client";
+
 import { useState } from "react";
-import { X, Plus, Info } from "lucide-react";
+import { X, Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -11,7 +27,7 @@ import {
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
-import { GenericSelect } from "@core/crud/components/generic-select"; // Updated import
+import { GenericSelect } from "@core/crud/components/generic-select";
 import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -46,7 +62,7 @@ export function PermissionConfigDialog({
   currentAssignment,
   onSave,
 }: PermissionConfigDialogProps) {
-  const { t } = useI18n(); // Removed unused language
+  const { t } = useI18n();
 
   const [scope, setScope] = useState<string>(PermissionScopes.Default);
   const [restrictedFields, setRestrictedFields] = useState<string[]>([]);
@@ -65,12 +81,13 @@ export function PermissionConfigDialog({
     }
   }
 
+  const trimmedField = newField.trim();
+  const canAddField = trimmedField.length > 0 && !restrictedFields.includes(trimmedField);
+
   const handleAddField = () => {
-    const trimmed = newField.trim();
-    if (trimmed && !restrictedFields.includes(trimmed)) {
-      setRestrictedFields([...restrictedFields, trimmed]);
-      setNewField("");
-    }
+    if (!canAddField) return;
+    setRestrictedFields([...restrictedFields, trimmedField]);
+    setNewField("");
   };
 
   const handleRemoveField = (field: string) => {
@@ -98,68 +115,85 @@ export function PermissionConfigDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[26rem]">
         <DialogHeader>
           <DialogTitle>{t("permission.configure")}</DialogTitle>
-          <DialogDescription>
-            {permission.displayName} ({permission.code})
+          {/* The subject, stated once and unambiguously: this dialog edits THIS
+              permission, never the role as a whole. */}
+          <DialogDescription className="flex flex-wrap items-center gap-2">
+            <span className="min-w-0 truncate text-nx-ink">{permission.displayName}</span>
+            <Badge variant="secondary" className="shrink-0 font-mono text-[11px]">
+              {permission.code}
+            </Badge>
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-6 py-4">
-          {/* Scope Override using GenericSelect */}
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2">
-              {t("role.scopeOverride")}
-              <Info className="h-3 w-3 text-nx-ink-3" />
-            </Label>
-
+        <div className="grid gap-5 py-2">
+          {/* ── Scope override — the one authoritative scope field ── */}
+          <div className="space-y-1.5">
+            {/* No htmlFor: GenericSelect's trigger is a role="combobox" div, not
+                a labelable control — a for/id pair here would be a lie. */}
+            <Label>{t("role.scopeOverride")}</Label>
             <GenericSelect
               type="single"
               options={scopeOptions}
               value={scope}
               onValueChange={(val: string | string[]) => setScope(val as string)}
               placeholder={t("role.selectScope")}
-              className="w-full"
             />
-
             <p className="text-xs text-nx-ink-3">{t("role.scopeHint")}</p>
           </div>
 
-          {/* Restricted Fields (Custom Tag Input) */}
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2">{t("role.restrictedFields")}</Label>
+          {/* ── Restricted fields (tag input) ── */}
+          <div className="space-y-1.5">
+            <Label htmlFor="permission-restricted-field">{t("role.restrictedFields")}</Label>
             <div className="flex gap-2">
               <Input
+                id="permission-restricted-field"
                 value={newField}
                 onChange={(e) => setNewField(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleAddField()}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddField();
+                  }
+                }}
                 placeholder={t("role.enterField")}
                 className="flex-1"
               />
-              <Button type="button" size="icon" variant="secondary" onClick={handleAddField}>
+              <Button
+                type="button"
+                size="icon"
+                variant="secondary"
+                onClick={handleAddField}
+                disabled={!canAddField}
+                aria-label={t("common.add")}
+              >
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
 
-            {/* Tags List */}
-            <div className="flex min-h-[2.5rem] flex-wrap gap-2 rounded-nx-md border border-nx-line bg-nx-hover p-2">
-              {restrictedFields.length === 0 && (
-                <span className="text-sm italic text-nx-ink-3">{t("role.noRestrictions")}</span>
+            <ul className="flex min-h-[2.5rem] list-none flex-wrap gap-1.5 rounded-nx-md border border-nx-line bg-nx-hover p-2">
+              {restrictedFields.length === 0 ? (
+                <li className="self-center text-sm text-nx-ink-3">{t("role.noRestrictions")}</li>
+              ) : (
+                restrictedFields.map((field) => (
+                  <li key={field}>
+                    <Badge variant="secondary" className="gap-1 pe-1">
+                      <span className="truncate">{field}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveField(field)}
+                        aria-label={`${t("common.remove")} ${field}`}
+                        className="grid h-4 w-4 place-items-center rounded-full transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-raised-2 focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+                      >
+                        <X className="h-3 w-3" aria-hidden="true" />
+                      </button>
+                    </Badge>
+                  </li>
+                ))
               )}
-              {restrictedFields.map((field) => (
-                <Badge key={field} variant="secondary" className="gap-1 pe-1">
-                  {field}
-                  <button
-                    onClick={() => handleRemoveField(field)}
-                    className="rounded-full p-0.5 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-raised motion-reduce:transition-none"
-                    type="button"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </Badge>
-              ))}
-            </div>
+            </ul>
             <p className="text-xs text-nx-ink-3">{t("role.restrictionHint")}</p>
           </div>
         </div>

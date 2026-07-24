@@ -1,12 +1,19 @@
-// Settings shell surface (Wave H). The view composes the rail + one-section
-// content pane + live-preview dock from this barrel; individual section pickers
+// The settings shell surface (Wave J). SettingsView composes the group nav,
+// one group panel and the Stage from this barrel; the group panels themselves
 // are code-split through the nav registry, not re-exported here.
+export { SETTINGS_GROUPS, SETTING_ROWS, ROW, DEFAULT_GROUP_ID, rowAnchorId } from "./settings-map";
+export type { GroupId, SettingRowMeta, SettingsGroupMeta, StageSubject } from "./settings-map";
+
 export {
-  SETTINGS_GROUPS,
-  SETTINGS_ITEMS,
-  DEFAULT_SETTINGS_ITEM_ID,
+  GroupNav,
+  GROUP_PANELS,
+  GROUP_COUNTS,
+  matchRows,
+  rowLabel,
+  groupLabel,
 } from "./settings-nav";
-export type { SettingsGroup, SettingsItem, PreviewKind } from "./settings-nav";
-export { SettingsRail, itemLabel } from "./settings-rail";
-export { PreviewPanel } from "./preview-panel";
-export { BackgroundModeSection } from "./appearance-tab";
+export { StageHost, useStage } from "./stage-context";
+export type { StageAim } from "./stage-context";
+export { Stage } from "./stage";
+export { Choice, GroupPanel, Preview, Row, StageCaption, ToggleRow } from "./controls";
+export type { ChoiceOption } from "./controls";

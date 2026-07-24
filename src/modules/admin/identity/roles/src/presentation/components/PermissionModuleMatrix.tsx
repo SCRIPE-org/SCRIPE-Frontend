@@ -7,7 +7,7 @@
  * an operator can read a role's reach across every category WITHOUT expanding a
  * single node.
  *
- *   ── Module sub-header (sticky, chevron + count) ──
+ *   ── Module sub-header (sticky, chevron + count, lit edge when it carries any) ──
  *      │  category      │ View │ Create │ Update │ Delete │
  *      │  Admin mgmt    │  ☑   │   ☑    │   ☐    │   —    │
  *      └─ Additional (special actions that don't fit the grid) ─ flat rows
@@ -16,7 +16,11 @@
  * is consumed as delivered; only the presentation layout (which action becomes a
  * column, which permission falls to the flat list) is derived here.
  *
- * Consumed in: PermissionTreeCard → RoleDetailView
+ * This is the ONE permission renderer: the role detail page (PermissionTreeCard)
+ * and the tenant "Manage permissions" dialog (RolePermissionsDialog) both mount
+ * it, so a permission looks and behaves the same wherever it is edited.
+ *
+ * Consumed in: PermissionTreeCard, RolePermissionsDialog
  */
 "use client";
 
@@ -27,6 +31,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import type { Permission, PermissionCategoryGroup } from "@modules/identity/permissions";
 import { PermissionConfigDialog } from "./PermissionConfigDialog";
+import { EXPLICIT_SCOPES, scopeLabel } from "./scope-label";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
 
 // The canonical grid columns. These four actions recur across nearly every
@@ -34,11 +39,6 @@ import type { PermissionAssignmentJson } from "../../domain/types/PermissionType
 // assign_roles, bulk_*, manage_permissions, …) is "irregular" and drops to the
 // flat list under the module — the two-tier model the design calls for.
 const CORE_ACTIONS = ["view", "create", "update", "delete"] as const;
-
-// Scopes an operator explicitly picked in the config dialog. The toggle default
-// ("Tenant") is intentionally NOT in this set, so a freshly-checked permission
-// does not masquerade as a custom override.
-const EXPLICIT_SCOPES = new Set(["own", "own_tenant", "hierarchy", "all_tenants"]);
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for permission module matrix props.
@@ -146,7 +146,13 @@ export function PermissionModuleMatrix({
           "sticky top-0 z-raised flex w-full items-center gap-2.5 bg-nx-surface px-4 text-start",
           "h-11 border-b border-nx-line-hi",
           "transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none",
-          "focus-visible:outline-none focus-visible:shadow-nx-focus"
+          "focus-visible:shadow-nx-focus focus-visible:outline-none",
+          // The lit edge: a module that carries any grant wears a 2px accent bar
+          // on the reading edge, so the eye finds the live modules in one pass.
+          // `sticky` is already a positioned ancestor — adding `relative` here
+          // would win the position conflict in cn() and kill the stickiness.
+          "before:absolute before:inset-y-0 before:start-0 before:w-0.5",
+          selectedInModule > 0 && "before:bg-nx-accent"
         )}
       >
         <ChevronRight
@@ -154,9 +160,10 @@ export function PermissionModuleMatrix({
             "h-4 w-4 shrink-0 text-nx-ink-3 transition-transform duration-nx-micro ease-nx-enter motion-reduce:transition-none rtl:-scale-x-100",
             isExpanded && "rotate-90"
           )}
+          aria-hidden="true"
         />
-        <span className="text-sm font-semibold text-nx-ink-2">{module}</span>
-        <span className="ms-auto text-xs tabular-nums text-nx-ink-3">
+        <span className="truncate text-sm font-semibold text-nx-ink-2">{module}</span>
+        <span className="ms-auto shrink-0 text-xs tabular-nums text-nx-ink-3">
           <span className={cn(selectedInModule > 0 && "font-medium text-nx-accent")}>
             {selectedInModule}
           </span>{" "}
@@ -255,7 +262,7 @@ function MatrixTable({
           return (
             <tr
               key={row.category}
-              className="border-b border-nx-line last:border-b-0 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none"
+              className="border-b border-nx-line transition-colors duration-nx-micro ease-nx-enter last:border-b-0 hover:bg-nx-hover motion-reduce:transition-none"
             >
               <th scope="row" className="h-9 px-4 text-start font-normal">
                 <div className="flex items-center gap-2.5">
@@ -309,34 +316,52 @@ interface MatrixCellProps {
   onUpdateConfig?: (code: string, assignment: PermissionAssignmentJson) => void;
 }
 
-function MatrixCell({ permission, isSelected, assignment, onToggle, onUpdateConfig }: MatrixCellProps) {
+function MatrixCell({
+  permission,
+  isSelected,
+  assignment,
+  onToggle,
+  onUpdateConfig,
+}: MatrixCellProps) {
   const { t, language } = useI18n();
   const [showConfig, setShowConfig] = useState(false);
   const custom = isCustomConfig(assignment);
+  const label = `${permission.getLocalizedName(language)} — ${t("role.scopeOverride")}: ${scopeLabel(
+    t,
+    assignment?.scopeOverride
+  )}`;
 
   return (
-    <span className="inline-flex items-center justify-center gap-1.5">
+    <span className="inline-flex items-center justify-center gap-0.5">
       <Checkbox
         checked={isSelected}
         onCheckedChange={onToggle}
         aria-label={permission.getLocalizedName(language)}
       />
       {isSelected && onUpdateConfig && (
-        // Persistent, low-emphasis scope dot — reachable on touch and keyboard,
-        // never a hover reveal. Fills with the accent only when a real override exists.
+        // Persistent, low-emphasis scope affordance — reachable on touch and
+        // keyboard, never a hover reveal. The dot stays 8px so the grid keeps
+        // its rhythm; the pressable box around it is a real target.
         <button
           type="button"
           onClick={() => setShowConfig(true)}
-          title={`${t("role.scopeOverride")}: ${scopeLabel(t, assignment?.scopeOverride)}`}
-          aria-label={`${t("role.scopeOverride")}: ${scopeLabel(t, assignment?.scopeOverride)}`}
+          title={label}
+          aria-label={label}
           className={cn(
-            "h-2 w-2 shrink-0 rounded-full border transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-            "focus-visible:outline-none focus-visible:shadow-nx-focus",
-            custom
-              ? "border-nx-accent bg-nx-accent-fill"
-              : "border-nx-line hover:border-nx-line-hi"
+            "grid h-6 w-5 shrink-0 place-items-center rounded-nx-sm",
+            "transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none",
+            "focus-visible:shadow-nx-focus focus-visible:outline-none"
           )}
-        />
+        >
+          <span
+            className={cn(
+              "h-2 w-2 rounded-full border transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+              // Fills with the accent only when a real override exists.
+              custom ? "border-nx-accent bg-nx-accent-fill" : "border-nx-line"
+            )}
+            aria-hidden="true"
+          />
+        </button>
       )}
       {showConfig && (
         <PermissionConfigDialog
@@ -404,32 +429,43 @@ interface FlatPermRowProps {
   onUpdateConfig?: (code: string, assignment: PermissionAssignmentJson) => void;
 }
 
-function FlatPermRow({ permission, isSelected, assignment, onToggle, onUpdateConfig }: FlatPermRowProps) {
+function FlatPermRow({
+  permission,
+  isSelected,
+  assignment,
+  onToggle,
+  onUpdateConfig,
+}: FlatPermRowProps) {
   const { t, language } = useI18n();
   const [showConfig, setShowConfig] = useState(false);
   const custom = isCustomConfig(assignment);
 
   return (
     <div className="flex h-9 items-center gap-3 px-4 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none">
-      <Checkbox checked={isSelected} onCheckedChange={onToggle} aria-label={permission.getLocalizedName(language)} />
+      <Checkbox
+        checked={isSelected}
+        onCheckedChange={onToggle}
+        aria-label={permission.getLocalizedName(language)}
+      />
       <span className="min-w-0 flex-1 truncate text-sm text-nx-ink">
         {permission.getLocalizedName(language)}
       </span>
       {/* Code stays on the same line (mono, quiet) so rows keep one height. */}
-      <span className="hidden shrink-0 font-mono text-xs text-nx-ink-3 sm:inline" title={permission.code}>
+      <span
+        className="hidden shrink-0 font-mono text-xs text-nx-ink-3 sm:inline"
+        title={permission.code}
+      >
         {permission.code}
       </span>
-      {custom && (
-        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-nx-accent-fill" aria-hidden="true" />
-      )}
       {isSelected && onUpdateConfig && (
         <>
           <button
             type="button"
             onClick={() => setShowConfig(true)}
+            aria-label={`${permission.getLocalizedName(language)} — ${t("role.scopeOverride")}`}
             className={cn(
               "shrink-0 rounded-nx-sm border px-2 py-0.5 text-[11px] transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-              "focus-visible:outline-none focus-visible:shadow-nx-focus",
+              "focus-visible:shadow-nx-focus focus-visible:outline-none",
               custom
                 ? "border-nx-accent text-nx-accent"
                 : "border-nx-line text-nx-ink-3 hover:border-nx-line-hi hover:text-nx-ink-2"
@@ -457,24 +493,6 @@ function FlatPermRow({ permission, isSelected, assignment, onToggle, onUpdateCon
 }
 
 // ── Shared bits ──────────────────────────────────────────────────────────────
-
-/** Map a stored scope value to an existing locale label (no new keys are introduced). */
-function scopeLabel(t: (key: string) => string, scope?: string | null): string {
-  switch (scope) {
-    case "own":
-      return t("role.scopeOwn");
-    case "own_tenant":
-      return t("role.scopeOwnTenant");
-    case "hierarchy":
-      return t("role.scopeHierarchy");
-    case "all_tenants":
-      return t("role.scopeAllTenants");
-    case "Tenant":
-      return t("role.scopeTenant");
-    default:
-      return t("role.scopeDefault");
-  }
-}
 
 interface TriStateCheckboxProps {
   total: number;

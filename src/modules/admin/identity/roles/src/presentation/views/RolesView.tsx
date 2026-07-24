@@ -67,9 +67,19 @@ export function RolesView() {
     },
     {
       key: "description",
-      label: t("roles.descriptionCol") || t("roles.description"),
-      className: "hidden md:table-cell",
-      render: (value: unknown, role: Role) => role.getLocalizedDescription(language),
+      // roles.description is the PAGE subtitle; the column label is the field one.
+      label: t("roles.descriptionField"),
+      className: "hidden max-w-[28rem] truncate md:table-cell",
+      render: (value: unknown, role: Role) => {
+        const text = role.getLocalizedDescription(language);
+        return text ? (
+          <span className="block truncate text-nx-ink-2" title={text}>
+            {text}
+          </span>
+        ) : (
+          <span className="text-nx-ink-3">-</span>
+        );
+      },
     },
     {
       // Numeric column: right-aligned tabular figures rather than a manual
@@ -81,7 +91,7 @@ export function RolesView() {
     },
     {
       key: "groups",
-      label: t("roles.groups") || "Groups",
+      label: t("roles.groups"),
       render: (_val: unknown, role: Role) => {
         const groups = role.getLocalizedGroups(language);
         if (groups.length === 0) {

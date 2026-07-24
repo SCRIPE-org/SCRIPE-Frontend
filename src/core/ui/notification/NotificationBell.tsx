@@ -2,12 +2,52 @@
 
 /* eslint-disable react-hooks/set-state-in-effect */
 
-import { useEffect, useRef, useState, useCallback } from "react";
-import { Bell, Check, CheckCheck, Loader2, ExternalLink } from "lucide-react";
+/**
+ * NotificationBell — the bell and its panel.
+ *
+ * Wave I2 elevation. What changed, and why:
+ *
+ *  • COLOUR: the panel was a hand-rolled surface (`0 20px 60px rgba(0,0,0,.2)`,
+ *    a 24px backdrop blur, `hsl(var(--primary))` borrowed from the pre-nexus
+ *    palette). It now reads --nx-* tokens only — nx-popover / nx-line /
+ *    shadow-nx-popover / nx-accent — so it is the same material as every other
+ *    overlay in the shell and resolves light/dark in CSS.
+ *  • BROKEN CSS: the badge glow was `0 0 8px ${badgeBg}60` — string-concatenated
+ *    alpha onto an `hsl(...)` value, which is not a colour. It never rendered.
+ *    The badge is now a solid --nx-accent-fill chip with --nx-on-fill text
+ *    (the measured pair, ≥4.84:1 on every workspace hue).
+ *  • MOTION: the enter animation named `nexus-fade-in`, a keyframe that does
+ *    not exist in globals.css, so the panel simply popped. It now uses the
+ *    shared animate-in fade + 0.95 zoom from the trigger origin at
+ *    --nx-t-micro, with the zoom gated behind motion-safe. Nothing animates at
+ *    rest: the unread state is a static chip plus a static lit edge, never a
+ *    pulse or a ping.
+ *  • RTL: the horizontal placement branch computed the SAME value for LTR and
+ *    RTL (`rect.right - panelWidth`), so in Arabic the panel hung off the
+ *    wrong edge of its trigger. It now mirrors properly, and every row uses
+ *    logical properties.
+ *  • SCANNABILITY: the flat list is grouped by day (Intl — today / yesterday /
+ *    date, in the active language, with no new locale keys), unread rows wear
+ *    the lit inline-start edge instead of a full-row wash, timestamps use the
+ *    real common.timeAgo.* strings instead of hardcoded English, and the empty
+ *    state is designed rather than a grey line.
+ *  • A11Y: the panel is a labelled dialog, Escape closes it and returns focus
+ *    to the bell, and every row has a :focus-visible ring.
+ *
+ * Data wiring is untouched: the same view model, the same markAsRead /
+ * markAllAsRead / toggleOpen / close calls, the same actionUrl navigation, and
+ * the same portal-to-body escape from overflow-hidden parents.
+ */
+
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import type { CSSProperties } from "react";
+import { Bell, CheckCheck, ExternalLink } from "lucide-react";
 import { Button } from "@core/ui/button";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { cn } from "@core/common/utils";
 import { useNotificationViewModel } from "./useNotificationViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
+import type { NotificationItem } from "@core/notification/entities/NotificationItem";
 import ReactDOM from "react-dom";
 
 interface NotificationBellProps {
@@ -17,6 +57,72 @@ interface NotificationBellProps {
   className?: string;
 }
 
+const PANEL_WIDTH = 340;
+const PANEL_MAX_HEIGHT = 460;
+const VIEWPORT_GUTTER = 8;
+
+// ── Time helpers ──────────────────────────────────────────────────────────────
+// Both use the ACTIVE language. The relative labels come from the real
+// common.timeAgo.* strings; the day headings come from Intl, which already
+// speaks "today"/"yesterday" in every locale — so grouping costs zero new
+// locale keys and can never leak an untranslated placeholder.
+
+function intlLocale(language: string): string {
+  return language === "ar" ? "ar" : "en";
+}
+
+function startOfDay(d: Date): number {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+}
+
+function formatDayHeading(date: Date, language: string): string {
+  const locale = intlLocale(language);
+  const dayDiff = Math.round((startOfDay(date) - startOfDay(new Date())) / 86_400_000);
+
+  if (dayDiff === 0 || dayDiff === -1) {
+    return new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(dayDiff, "day");
+  }
+
+  const sameYear = date.getFullYear() === new Date().getFullYear();
+  return new Intl.DateTimeFormat(locale, {
+    day: "numeric",
+    month: "short",
+    ...(sameYear ? {} : { year: "numeric" }),
+  }).format(date);
+}
+
+function formatTimeAgo(
+  dateStr: string,
+  t: (key: string, params?: Record<string, string | number>) => string,
+  language: string
+): string {
+  const date = new Date(dateStr);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (seconds < 60) return t("common.timeAgo.justNow");
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return t("common.timeAgo.minutesAgo", { count: minutes });
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return t("common.timeAgo.hoursAgo", { count: hours });
+
+  const days = Math.floor(hours / 24);
+  if (days < 7) return t("common.timeAgo.daysAgo", { count: days });
+
+  return new Intl.DateTimeFormat(intlLocale(language), {
+    day: "numeric",
+    month: "short",
+  }).format(date);
+}
+
+interface NotificationDayGroup {
+  key: string;
+  heading: string;
+  items: NotificationItem[];
+}
+
 /**
  * NotificationBell — reusable bell icon with unread badge and smart-positioned dropdown.
  * Uses a portal so the dropdown is never clipped by overflow-hidden parents.
@@ -24,47 +130,51 @@ interface NotificationBellProps {
  */
 export function NotificationBell({ iconClassName = "h-5 w-5", className }: NotificationBellProps) {
   const vm = useNotificationViewModel();
-  const { t, direction } = useI18n();
+  const { t, language, direction } = useI18n();
   const isRTL = direction === "rtl";
 
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // Viewport-aware panel position
-  const [panelStyle, setPanelStyle] = useState<React.CSSProperties>({});
+  // Viewport-aware panel geometry. Position only — every colour, radius and
+  // shadow lives in classes.
+  const [panelStyle, setPanelStyle] = useState<CSSProperties>({});
+  const [transformOrigin, setTransformOrigin] = useState("top center");
 
   const recalcPosition = useCallback(() => {
     const btn = triggerRef.current;
     if (!btn) return;
     const rect = btn.getBoundingClientRect();
-    const panelWidth = 320;
-    const panelHeight = 420; // max estimated
     const viewport = { w: window.innerWidth, h: window.innerHeight };
+    const panelWidth = Math.min(PANEL_WIDTH, viewport.w - VIEWPORT_GUTTER * 2);
 
-    // Vertical: prefer below, flip to above if not enough space
+    // Vertical: prefer below, flip above when there is not enough room.
     const spaceBelow = viewport.h - rect.bottom;
     const spaceAbove = rect.top;
-    const openAbove = spaceBelow < panelHeight && spaceAbove > spaceBelow;
+    const openAbove = spaceBelow < PANEL_MAX_HEIGHT && spaceAbove > spaceBelow;
 
-    // Horizontal: align to inlineEnd of trigger
-    let left: number;
-    if (isRTL) {
-      // panel's right edge aligns with trigger's right edge
-      left = rect.right - panelWidth;
-    } else {
-      // panel's right edge aligns with trigger's right edge
-      left = rect.right - panelWidth;
-    }
-    // Clamp within viewport
-    left = Math.max(8, Math.min(left, viewport.w - panelWidth - 8));
+    // Horizontal: the panel's INLINE-END edge tracks the trigger's inline-end
+    // edge. In RTL the inline-end edge is the LEFT one — the old code used the
+    // LTR formula in both branches, which pushed the Arabic panel to the wrong
+    // side of its trigger.
+    let left = isRTL ? rect.left : rect.right - panelWidth;
+    left = Math.max(
+      VIEWPORT_GUTTER,
+      Math.min(left, viewport.w - panelWidth - VIEWPORT_GUTTER)
+    );
 
     setPanelStyle({
-      position: "fixed",
-      zIndex: 9999,
       width: panelWidth,
+      maxHeight: Math.min(PANEL_MAX_HEIGHT, viewport.h - VIEWPORT_GUTTER * 2),
       left,
-      ...(openAbove ? { bottom: viewport.h - rect.top + 8 } : { top: rect.bottom + 8 }),
+      ...(openAbove
+        ? { bottom: viewport.h - rect.top + VIEWPORT_GUTTER }
+        : { top: rect.bottom + VIEWPORT_GUTTER }),
     });
+    // Overlays scale from their trigger origin — nothing slides in from an edge.
+    setTransformOrigin(
+      `${openAbove ? "bottom" : "top"} ${isRTL ? "left" : "right"}`
+    );
   }, [isRTL]);
 
   const handleToggle = useCallback(() => {
@@ -73,7 +183,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
     setTimeout(recalcPosition, 0);
   }, [vm, recalcPosition]);
 
-  // Close on outside click
+  // Close on outside click / Escape; Escape returns focus to the bell.
   useEffect(() => {
     if (!vm.isOpen) return;
     recalcPosition();
@@ -88,201 +198,170 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
         vm.close();
       }
     };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        vm.close();
+        triggerRef.current?.focus();
+      }
+    };
     document.addEventListener("mousedown", handler);
+    document.addEventListener("keydown", onKeyDown);
     window.addEventListener("scroll", recalcPosition, true);
     window.addEventListener("resize", recalcPosition);
     return () => {
       document.removeEventListener("mousedown", handler);
+      document.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("scroll", recalcPosition, true);
       window.removeEventListener("resize", recalcPosition);
     };
   }, [vm.isOpen, vm.close, recalcPosition]);
 
-  // ── Panel colours (semantic tokens — they resolve per theme on their own) ───
-  const panelBg = "hsl(var(--popover))";
-  const panelBorder = "hsl(var(--border))";
-  const headerBorderColor = "hsl(var(--border))";
-  const unreadBg = "hsl(var(--primary) / 0.08)";
-  const hoverBg = "hsl(var(--accent))";
-  const badgeBg = "hsl(var(--primary))";
-  const badgeGlow = "hsl(var(--primary) / 0.38)";
-  const strongText = "hsl(var(--popover-foreground))";
-  const mutedText = "hsl(var(--muted-foreground))";
-  const faintText = "hsl(var(--muted-foreground) / 0.5)";
+  // ── Day grouping — insertion order is preserved inside each day, so the
+  //    websocket's newest-first prepend still reads newest-first. ────────────
+  const dayGroups = useMemo<NotificationDayGroup[]>(() => {
+    const groups: NotificationDayGroup[] = [];
+    const index = new Map<string, NotificationDayGroup>();
+
+    for (const item of vm.notifications) {
+      const date = new Date(item.createdAt);
+      const valid = !Number.isNaN(date.getTime());
+      const key = valid ? String(startOfDay(date)) : "undated";
+      let group = index.get(key);
+      if (!group) {
+        group = { key, heading: valid ? formatDayHeading(date, language) : "", items: [] };
+        index.set(key, group);
+        groups.push(group);
+      }
+      group.items.push(item);
+    }
+    return groups;
+  }, [vm.notifications, language]);
+
+  const hasUnread = vm.unreadCount > 0;
+  const title = t("notifications.title");
 
   const dropdownPanel = vm.isOpen ? (
     <div
       ref={panelRef}
-      style={{
-        ...panelStyle,
-        background: panelBg,
-        border: `1px solid ${panelBorder}`,
-        borderRadius: 14,
-        boxShadow: "0 20px 60px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.1)",
-        overflow: "hidden",
-        backdropFilter: "blur(24px)",
-        WebkitBackdropFilter: "blur(24px)",
-        animation: "nexus-fade-in 180ms cubic-bezier(0.16,1,0.3,1)",
-      }}
+      role="dialog"
+      aria-label={title}
+      dir={direction}
+      style={{ ...panelStyle, transformOrigin }}
+      className={cn(
+        "fixed z-dropdown flex flex-col overflow-hidden",
+        "rounded-nx-lg border border-nx-line bg-nx-popover text-nx-ink shadow-nx-popover",
+        // Fade always; the 0.95 zoom from the trigger origin only when motion
+        // is welcome.
+        "duration-nx-micro ease-nx-enter animate-in fade-in-0 motion-safe:zoom-in-95"
+      )}
     >
-      {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "16px 16px 12px",
-          borderBottom: `1px solid ${headerBorderColor}`,
-        }}
-      >
-        <div>
-          <h3
-            style={{
-              fontSize: 14,
-              fontWeight: 700,
-              color: strongText,
-              margin: 0,
-            }}
-          >
-            {t("notifications.title") || "Notifications"}
-          </h3>
-          {vm.unreadCount > 0 && (
-            <p style={{ fontSize: 11, color: mutedText, margin: "2px 0 0" }}>
-              {vm.unreadCount} unread
-            </p>
+      {/* ── Header ───────────────────────────────────────────────────────── */}
+      <div className="flex shrink-0 items-center justify-between gap-3 border-b border-nx-line px-4 py-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <h2 className="truncate text-sm font-semibold text-nx-ink">{title}</h2>
+          {hasUnread && (
+            <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-nx-accent-wash px-1.5 text-[11px] font-semibold leading-none text-nx-accent">
+              {vm.unreadCount > 99 ? "99+" : vm.unreadCount}
+            </span>
           )}
         </div>
-        {vm.unreadCount > 0 && (
+
+        {hasUnread && (
           <button
+            type="button"
             onClick={vm.markAllAsRead}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-              fontSize: 11,
-              fontWeight: 500,
-              color: badgeBg,
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              padding: "4px 8px",
-              borderRadius: 6,
-              transition: "background 150ms",
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.background = "hsl(var(--primary) / 0.12)";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.background = "transparent";
-            }}
+            className={cn(
+              "flex shrink-0 items-center gap-1.5 rounded-nx-sm px-2 py-1 text-xs font-medium text-nx-accent",
+              "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+              "hover:bg-nx-accent-wash focus-visible:outline-none focus-visible:shadow-nx-focus"
+            )}
           >
-            <CheckCheck size={12} />
-            {t("notifications.markAllRead") || "Mark all read"}
+            <CheckCheck aria-hidden="true" className="h-3.5 w-3.5" />
+            <span className="truncate">{t("notifications.markAllRead")}</span>
           </button>
         )}
       </div>
 
-      {/* List */}
-      <div style={{ maxHeight: 320, overflowY: "auto" }}>
+      {/* ── List ─────────────────────────────────────────────────────────── */}
+      <div className="nexus-custom-scrollbar min-h-0 flex-1 overflow-y-auto">
         {vm.isLoading ? (
-          <div style={{ display: "flex", justifyContent: "center", padding: "32px 0" }}>
-            <Loader2
-              size={20}
-              style={{
-                animation: "spin 1s linear infinite",
-                color: mutedText,
-              }}
-            />
-          </div>
+          <LoadingSpinner size="sm" showText={false} className="py-10" />
         ) : vm.notifications.length === 0 ? (
-          <div style={{ padding: "32px 16px", textAlign: "center" }}>
-            <Bell size={28} style={{ color: faintText, margin: "0 auto 8px" }} />
-            <p style={{ fontSize: 13, color: mutedText, margin: 0 }}>
-              {t("notifications.empty") || "No notifications yet"}
-            </p>
+          <div className="flex flex-col items-center gap-3 px-6 py-12 text-center">
+            <span
+              aria-hidden="true"
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-nx-line bg-nx-ground text-nx-ink-3"
+            >
+              <Bell className="h-5 w-5" />
+            </span>
+            <div>
+              <p className="text-sm font-medium text-nx-ink">{t("notifications.empty")}</p>
+              <p className="mt-1 text-xs text-nx-ink-3">{t("notifications.emptyDesc")}</p>
+            </div>
           </div>
         ) : (
-          vm.notifications.map((n) => (
-            <button
-              key={n.id}
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                gap: 12,
-                width: "100%",
-                textAlign: "start",
-                padding: "12px 16px",
-                cursor: "pointer",
-                border: "none",
-                background: !n.isRead ? unreadBg : "transparent",
-                transition: "background 150ms",
-                borderBottom: `1px solid ${headerBorderColor}`,
-              }}
-              onMouseEnter={(e) => {
-                if (n.isRead) (e.currentTarget as HTMLElement).style.background = hoverBg;
-              }}
-              onMouseLeave={(e) => {
-                if (n.isRead) (e.currentTarget as HTMLElement).style.background = "transparent";
-              }}
-              onClick={() => {
-                if (!n.isRead) vm.markAsRead(n.id);
-                if (n.actionUrl) window.location.href = n.actionUrl;
-                vm.close();
-              }}
-            >
-              {/* Indicator */}
-              <div style={{ paddingTop: 3, flexShrink: 0 }}>
-                {n.isRead ? (
-                  <Check size={12} style={{ color: faintText }} />
-                ) : (
-                  <div
-                    style={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: "50%",
-                      background: badgeBg,
-                      boxShadow: `0 0 6px ${badgeGlow}`,
-                    }}
-                  />
-                )}
-              </div>
+          dayGroups.map((group) => (
+            <section key={group.key} aria-label={group.heading || undefined}>
+              {group.heading && (
+                <h3 className="sticky top-0 z-raised border-b border-nx-line bg-nx-popover px-4 py-1.5 text-[11px] font-semibold capitalize text-nx-ink-3">
+                  {group.heading}
+                </h3>
+              )}
+              <ul className="divide-y divide-nx-line">
+                {group.items.map((n) => (
+                  <li key={n.id}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!n.isRead) vm.markAsRead(n.id);
+                        if (n.actionUrl) window.location.href = n.actionUrl;
+                        vm.close();
+                      }}
+                      className={cn(
+                        "group relative flex w-full items-start gap-3 px-4 py-3 text-start",
+                        "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                        "hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus",
+                        // Unread wears the lit inline-start edge — a static
+                        // affordance, never a pulse.
+                        "before:absolute before:inset-y-2 before:start-0 before:w-0.5 before:rounded-full",
+                        n.isRead ? "before:bg-transparent" : "before:bg-nx-accent"
+                      )}
+                    >
+                      {/* Fixed leading slot keeps every title on one optical
+                          column whether or not the row is unread. */}
+                      <span
+                        aria-hidden="true"
+                        className="mt-1.5 flex h-2 w-2 shrink-0 items-center justify-center"
+                      >
+                        {!n.isRead && <span className="h-2 w-2 rounded-full bg-nx-accent" />}
+                      </span>
 
-              {/* Content */}
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p
-                  style={{
-                    fontSize: 13,
-                    fontWeight: n.isRead ? 400 : 600,
-                    color: n.isRead ? mutedText : strongText,
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    margin: 0,
-                  }}
-                >
-                  {n.title}
-                </p>
-                <p
-                  style={{
-                    fontSize: 12,
-                    color: mutedText,
-                    margin: "3px 0 4px",
-                    display: "-webkit-box",
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                  }}
-                >
-                  {n.body}
-                </p>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <time style={{ fontSize: 10, color: faintText }}>
-                    {formatTimeAgo(n.createdAt)}
-                  </time>
-                  {n.actionUrl && <ExternalLink size={10} style={{ color: faintText }} />}
-                </div>
-              </div>
-            </button>
+                      <span className="min-w-0 flex-1">
+                        <span
+                          className={cn(
+                            "block truncate text-[13px] leading-tight",
+                            n.isRead ? "font-normal text-nx-ink-2" : "font-semibold text-nx-ink"
+                          )}
+                        >
+                          {n.title}
+                        </span>
+                        <span className="mt-1 line-clamp-2 block text-xs leading-snug text-nx-ink-3">
+                          {n.body}
+                        </span>
+                        <span className="mt-1.5 flex items-center gap-1.5 text-[11px] text-nx-ink-3">
+                          <time dateTime={n.createdAt}>
+                            {formatTimeAgo(n.createdAt, t, language)}
+                          </time>
+                          {n.actionUrl && (
+                            <ExternalLink aria-hidden="true" className="h-3 w-3 shrink-0" />
+                          )}
+                        </span>
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
           ))
         )}
       </div>
@@ -295,34 +374,29 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
         ref={triggerRef}
         variant="ghost"
         size="icon"
-        className={cn("relative", className)}
+        // Unread steps the bell up to full ink — the calmest possible
+        // at-a-glance signal. It sits after `className` so the state wins over
+        // the caller's resting ink; the caller's hover rule is untouched.
+        className={cn("relative", className, hasUnread && "text-nx-ink")}
         onClick={handleToggle}
-        aria-label={t("notifications.title") || "Notifications"}
+        aria-expanded={vm.isOpen}
+        aria-haspopup="dialog"
       >
-        <Bell className={iconClassName} />
-        {vm.unreadCount > 0 && (
-          <span
-            style={{
-              position: "absolute",
-              top: -2,
-              right: -2,
-              minWidth: 16,
-              height: 16,
-              borderRadius: 8,
-              background: badgeBg,
-              boxShadow: `0 0 8px ${badgeBg}60`,
-              fontSize: 9,
-              fontWeight: 700,
-              color: "hsl(var(--primary-foreground))",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "0 3px",
-              lineHeight: 1,
-            }}
-          >
-            {vm.unreadCount > 99 ? "99+" : vm.unreadCount}
-          </span>
+        <Bell aria-hidden="true" className={iconClassName} />
+        {/* The accessible name is built from content, not aria-label: an
+            aria-label would SHADOW the count, and the count is exactly the
+            part a screen-reader user needs. */}
+        <span className="sr-only">{title}</span>
+        {hasUnread && (
+          <>
+            <span className="sr-only">{vm.unreadCount}</span>
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute -end-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-nx-accent-fill px-1 text-[9px] font-bold leading-none text-nx-on-fill shadow-nx-sm"
+            >
+              {vm.unreadCount > 99 ? "99+" : vm.unreadCount}
+            </span>
+          </>
         )}
       </Button>
 
@@ -330,19 +404,4 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
       {typeof document !== "undefined" && ReactDOM.createPortal(dropdownPanel, document.body)}
     </>
   );
-}
-
-function formatTimeAgo(dateStr: string): string {
-  const now = Date.now();
-  const date = new Date(dateStr).getTime();
-  const diff = now - date;
-  const seconds = Math.floor(diff / 1000);
-  if (seconds < 60) return "just now";
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}d ago`;
-  return new Date(dateStr).toLocaleDateString();
 }

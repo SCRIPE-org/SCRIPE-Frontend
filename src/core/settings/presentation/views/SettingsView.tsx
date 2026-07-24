@@ -1,10 +1,45 @@
 "use client";
 
+/**
+ * Settings.
+ *
+ * The page is built around one question — "what do I actually want to change,
+ * and what will it look like?" — and answers it with three regions that never
+ * move:
+ *
+ *   nav      six groups, flat. No sub-tabs anywhere; a group that needed one
+ *            would be a group that was cut wrong.
+ *   controls the active group's rows, one row per thing you can change,
+ *            separated by hairlines and given room to breathe.
+ *   Stage    the persistent live preview. It never scrolls away and it shows
+ *            the REAL component the current row governs — and the option you
+ *            are merely pointing at, before you commit to it.
+ *
+ * Search runs over controls, not groups: type "table" and you get the table
+ * row, labelled with the group it lives in; choose it and the page switches
+ * group, scrolls to that exact row and marks it.
+ */
+
 import type React from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { TooltipProvider } from "@core/ui/tooltip";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Download,
+  Lock,
+  MoreHorizontal,
+  RotateCcw,
+  Save,
+  Search,
+  ShieldAlert,
+  Upload,
+} from "lucide-react";
+import { cn } from "@core/common/utils";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { useI18n } from "@core/providers/i18n-provider";
+import { useSettings } from "@core/providers/settings-provider";
+import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,29 +47,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
-import { useI18n } from "@core/providers/i18n-provider";
-import { useModuleLocales } from "@core/hooks/use-module-locales";
-import { useSettings } from "@core/providers/settings-provider";
-import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { Input } from "@core/ui/input";
+import { TooltipProvider } from "@core/ui/tooltip";
 import {
-  Download,
-  Upload,
-  Save,
-  RotateCcw,
-  Lock,
-  ShieldAlert,
-  Search,
-  MoreHorizontal,
-} from "lucide-react";
-import { STORAGE_KEYS } from "@core/config/storage-keys";
-import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
-import {
+  GROUP_PANELS,
+  GroupNav,
+  groupLabel,
+  matchRows,
+  rowLabel,
   SETTINGS_GROUPS,
-  SETTINGS_ITEMS,
-  DEFAULT_SETTINGS_ITEM_ID,
 } from "./settings/settings-nav";
-import { SettingsRail, itemLabel } from "./settings/settings-rail";
-import { PreviewPanel } from "./settings/preview-panel";
+import { DEFAULT_GROUP_ID, rowAnchorId, type GroupId } from "./settings/settings-map";
+import { Stage } from "./settings/stage";
+import { StageHost } from "./settings/stage-context";
 
 export function SettingsView() {
   useModuleLocales(
@@ -45,36 +70,79 @@ export function SettingsView() {
   const settings = useSettings();
   const { toast } = useEnhancedToast();
 
-  const [activeId, setActiveId] = useState(DEFAULT_SETTINGS_ITEM_ID);
+  const [activeGroup, setActiveGroup] = useState<GroupId>(DEFAULT_GROUP_ID);
   const [query, setQuery] = useState("");
+  /** The row a search result asked us to scroll to, once its group is mounted. */
+  const [pendingRowId, setPendingRowId] = useState<string | null>(null);
+  /** The row currently wearing the "you asked for this one" marker. */
+  const [markedRowId, setMarkedRowId] = useState<string | null>(null);
+
   const searchRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const activeItem = useMemo(
-    () => SETTINGS_ITEMS.find((it) => it.id === activeId) ?? SETTINGS_ITEMS[0],
-    [activeId]
+  const group = useMemo(
+    () => SETTINGS_GROUPS.find((entry) => entry.id === activeGroup) ?? SETTINGS_GROUPS[0],
+    [activeGroup]
   );
+  const GroupPanelComponent = GROUP_PANELS[group.id];
 
-  // Filter the rail against the query, keeping only groups that still have a
-  // matching destination. Matching a group's own label keeps all its children.
-  const filtering = query.trim().length > 0;
-  const filteredGroups = useMemo(() => {
-    if (!filtering) return SETTINGS_GROUPS;
-    const needle = query.trim().toLowerCase();
-    return SETTINGS_GROUPS.map((group) => {
-      const groupHit = t(group.labelKey).toLowerCase().includes(needle);
-      const items = groupHit
-        ? group.items
-        : group.items.filter((it) => itemLabel(it, t).toLowerCase().includes(needle));
-      return { ...group, items };
-    }).filter((group) => group.items.length > 0);
-  }, [filtering, query, t]);
+  const searching = query.trim().length > 0;
+  const results = useMemo(() => (searching ? matchRows(query, t) : []), [searching, query, t]);
 
-  // Cmd/Ctrl+K focuses the search — the "not a wall of tabs" entry point.
+  // ── Search → jump ───────────────────────────────────────────────────────
+
+  const jumpToRow = useCallback((rowId: string, groupId: GroupId) => {
+    setActiveGroup(groupId);
+    setQuery("");
+    setPendingRowId(rowId);
+  }, []);
+
+  // The target row only exists once its (code-split) group panel has mounted,
+  // so the scroll waits for the chunk rather than racing it.
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
+    if (!pendingRowId) return;
+    let frame = 0;
+    let attempts = 0;
+    const settle = () => {
+      const node = document.getElementById(rowAnchorId(pendingRowId));
+      if (node) {
+        const reduced =
+          typeof window !== "undefined" &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        node.scrollIntoView({ block: "start", behavior: reduced ? "auto" : "smooth" });
+        setMarkedRowId(pendingRowId);
+        setPendingRowId(null);
+        return;
+      }
+      if (attempts++ < 60) frame = requestAnimationFrame(settle);
+      else setPendingRowId(null);
+    };
+    frame = requestAnimationFrame(settle);
+    return () => cancelAnimationFrame(frame);
+  }, [pendingRowId]);
+
+  // "Here it is" is a hint, not state a row should re-render for: the marker
+  // is written straight onto the anchor and lifts itself off again.
+  useEffect(() => {
+    if (!markedRowId) return;
+    const node = document.getElementById(rowAnchorId(markedRowId));
+    if (!node) return;
+    node.setAttribute("data-marked", "true");
+    const timer = window.setTimeout(() => {
+      node.removeAttribute("data-marked");
+      setMarkedRowId(null);
+    }, 1600);
+    return () => {
+      window.clearTimeout(timer);
+      node.removeAttribute("data-marked");
+    };
+  }, [markedRowId]);
+
+  // Cmd/Ctrl+K puts the caret in search — the "I know what I want" entry point.
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
         searchRef.current?.focus();
         searchRef.current?.select();
       }
@@ -83,80 +151,62 @@ export function SettingsView() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Enter jumps to the first match; Escape clears the filter.
-  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      const first = filteredGroups[0]?.items[0];
-      if (first) {
-        setActiveId(first.id);
-        searchRef.current?.blur();
-      }
-    } else if (e.key === "Escape") {
+  const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && results[0]) {
+      jumpToRow(results[0].id, results[0].group);
+      searchRef.current?.blur();
+    } else if (event.key === "Escape") {
       setQuery("");
     }
   };
+
+  // ── Import / export / reset / save ──────────────────────────────────────
 
   const handleExportSettings = () => {
     const settingsJson = settings.exportSettings();
     const blob = new Blob([settingsJson], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = t("settings.exportFileName");
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = t("settings.exportFileName");
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
     URL.revokeObjectURL(url);
-    toast({
-      title: t("settings.exportSuccess"),
-      description: t("settings.exportSuccessDesc"),
-    });
+    toast({ title: t("settings.exportSuccess"), description: t("settings.exportSuccessDesc") });
   };
 
   const handleImportSettings = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const settingsJson = e.target?.result as string;
-          const success = settings.importSettings(settingsJson);
-          if (success) {
-            toast({
-              title: t("settings.importSuccess"),
-              description: t("settings.importSuccessDesc"),
-            });
-          } else {
-            throw new Error(t("settings.invalidFormat"));
-          }
-        } catch (error) {
-          toast({
-            title: t("settings.importFailed"),
-            description: t("settings.importFailedDesc"),
-            variant: "destructive",
-          });
-        }
-      };
-      reader.readAsText(file);
-    }
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (loaded) => {
+      try {
+        const settingsJson = loaded.target?.result as string;
+        const success = settings.importSettings(settingsJson);
+        if (!success) throw new Error(t("settings.invalidFormat"));
+        toast({ title: t("settings.importSuccess"), description: t("settings.importSuccessDesc") });
+      } catch {
+        toast({
+          title: t("settings.importFailed"),
+          description: t("settings.importFailedDesc"),
+          variant: "destructive",
+        });
+      }
+    };
+    reader.readAsText(file);
   };
 
   const handleResetSettings = () => {
     settings.resetSettings();
-    toast({
-      title: t("settings.resetSuccess"),
-      description: t("settings.resetSuccessDesc"),
-    });
+    toast({ title: t("settings.resetSuccess"), description: t("settings.resetSuccessDesc") });
   };
 
   const handleSaveSettings = () => {
     try {
       localStorage.setItem(STORAGE_KEYS.DASHBOARD_SETTINGS, settings.exportSettings());
-      toast({
-        title: t("settings.saveSuccess"),
-        description: t("settings.saveSuccessDesc"),
-      });
-    } catch (error) {
+      toast({ title: t("settings.saveSuccess"), description: t("settings.saveSuccessDesc") });
+    } catch {
       toast({
         title: t("settings.saveFailed"),
         description: t("settings.saveFailedDesc"),
@@ -165,42 +215,39 @@ export function SettingsView() {
     }
   };
 
-  const ActiveSection = activeItem.Component;
-  const showDock = activeItem.preview !== null;
-
   return (
     <TooltipProvider>
-      <div className="mx-auto max-w-[1440px] space-y-6 p-6">
-        {/* Slimmed header: only Save stays a primary action; the rest fold into
-            the overflow menu so the row reads as one clear next step. */}
-        <div className="flex items-start justify-between gap-4">
-          <div className="space-y-1">
-            <h1 className="text-2xl font-semibold text-nx-ink">{t("settings.pageTitle")}</h1>
-            <p className="text-sm text-nx-ink-2">{t("settings.pageSubtitle")}</p>
+      <div className="mx-auto w-full max-w-[1600px] px-6 pb-20 pt-8">
+        <header className="flex flex-wrap items-start justify-between gap-4">
+          <div className="min-w-0">
+            <h1 className="text-2xl font-semibold tracking-tight text-nx-ink">
+              {t("settings.pageTitle")}
+            </h1>
+            <p className="mt-1 text-sm text-nx-ink-3">{t("settings.pageSubtitle")}</p>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="secondary" onClick={handleSaveSettings} disabled={settings.autoSave}>
-              <Save className="mx-2 h-4 w-4" />
+              <Save aria-hidden className="me-2 h-4 w-4" />
               {t("common.save")}
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon" aria-label={t("common.more")}>
-                  <MoreHorizontal className="h-4 w-4" />
+                  <MoreHorizontal aria-hidden className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-44">
                 <DropdownMenuItem onSelect={handleExportSettings}>
-                  <Download className="me-2 h-4 w-4" />
+                  <Download aria-hidden className="me-2 h-4 w-4" />
                   {t("common.export")}
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onSelect={(e) => {
-                    e.preventDefault();
+                  onSelect={(event) => {
+                    event.preventDefault();
                     fileInputRef.current?.click();
                   }}
                 >
-                  <Upload className="me-2 h-4 w-4" />
+                  <Upload aria-hidden className="me-2 h-4 w-4" />
                   {t("common.import")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -208,7 +255,7 @@ export function SettingsView() {
                   onSelect={handleResetSettings}
                   className="text-nx-danger focus:text-nx-danger"
                 >
-                  <RotateCcw className="me-2 h-4 w-4" />
+                  <RotateCcw aria-hidden className="me-2 h-4 w-4" />
                   {t("settings.resetAll")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -222,72 +269,147 @@ export function SettingsView() {
               onChange={handleImportSettings}
             />
           </div>
-        </div>
+        </header>
 
-        {/* M11 Phase E: Override Control Banner */}
+        {/* M11 Phase E: admin override control */}
         {!settings.overrideControl.allowAdminOverride && (
-          <Alert variant="destructive" className="border-destructive/30 bg-destructive/5">
-            <Lock className="h-4 w-4" />
+          <Alert variant="destructive" className="mt-6">
+            <Lock aria-hidden className="h-4 w-4" />
             <AlertTitle>{t("customizer.dashboard.locked.allDisabled")}</AlertTitle>
-            <AlertDescription className="text-sm opacity-80">
-              {t("customizer.dashboard.overrideInfo")}
-            </AlertDescription>
+            <AlertDescription>{t("customizer.dashboard.overrideInfo")}</AlertDescription>
           </Alert>
         )}
         {settings.overrideControl.allowAdminOverride &&
           settings.overrideControl.allowedPaths &&
           settings.overrideControl.allowedPaths.length > 0 && (
-            <Alert className="border-warning/40 bg-warning/10">
-              <ShieldAlert className="h-4 w-4 text-warning" />
-              <AlertTitle className="text-warning">
-                {t("customizer.dashboard.overridePaths")}
-              </AlertTitle>
-              <AlertDescription className="text-sm text-warning/80">
-                {t("customizer.dashboard.overridePathsDesc")}
-              </AlertDescription>
+            <Alert className="mt-6 border-nx-line-hi">
+              <ShieldAlert aria-hidden className="h-4 w-4 text-nx-warning" />
+              <AlertTitle>{t("customizer.dashboard.overridePaths")}</AlertTitle>
+              <AlertDescription>{t("customizer.dashboard.overridePathsDesc")}</AlertDescription>
             </Alert>
           )}
 
-        {/* Search — filters the rail and jumps to a destination (Cmd/Ctrl+K). */}
-        <div className="relative max-w-md">
-          <Search className="pointer-events-none absolute inset-y-0 my-auto h-4 w-4 text-nx-ink-3 [inset-inline-start:0.75rem]" />
+        <div className="relative mt-7 max-w-xl">
+          <Search
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 my-auto h-4 w-4 text-nx-ink-3 [inset-inline-start:0.75rem]"
+          />
           <Input
             ref={searchRef}
+            type="search"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(event) => setQuery(event.target.value)}
             onKeyDown={handleSearchKeyDown}
             placeholder={t("common.search")}
             aria-label={t("common.search")}
-            className="ps-9 pe-14"
+            className="pe-14 ps-9"
           />
-          <kbd className="pointer-events-none absolute inset-y-0 my-auto hidden h-5 items-center rounded-nx-sm border border-nx-line px-1.5 font-mono text-[10px] text-nx-ink-3 sm:flex [inset-inline-end:0.5rem]">
+          <kbd className="pointer-events-none absolute inset-y-0 my-auto hidden h-5 items-center rounded-nx-sm border border-nx-line px-1.5 font-mono text-[0.625rem] text-nx-ink-3 [inset-inline-end:0.5rem] sm:flex">
             ⌘K
           </kbd>
         </div>
 
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-          <div className="lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:w-56 lg:shrink-0 lg:self-start lg:overflow-y-auto">
-            <SettingsRail
-              groups={filteredGroups}
-              activeId={activeId}
-              onSelect={setActiveId}
-              filtering={filtering}
-            />
-          </div>
-
-          <main className="min-w-0 flex-1">
-            <div className="mx-auto max-w-3xl">
-              <ActiveSection />
+        {/* StageHost is keyed on the group so switching groups resets the aim
+            to that group's default subject without an effect. */}
+        <StageHost key={group.id} defaultSubject={group.defaultSubject}>
+          <div className="mt-7 flex flex-col gap-8 xl:grid xl:grid-cols-[13rem_minmax(0,1fr)_23rem] xl:items-start xl:gap-10">
+            <div className="xl:sticky xl:top-6 xl:col-start-1 xl:row-start-1">
+              <GroupNav
+                activeId={activeGroup}
+                onSelect={(id) => {
+                  setActiveGroup(id);
+                  setQuery("");
+                }}
+              />
             </div>
-          </main>
 
-          {showDock && (
-            <aside className="lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:w-[360px] lg:shrink-0 lg:self-start lg:overflow-y-auto">
-              <PreviewPanel previewKind={activeItem.preview} />
+            {/* The Stage sits second in the DOM so that on narrow screens it
+                lands above the controls and stays in view while you choose;
+                on xl it is placed into the trailing column. */}
+            <aside className="sticky top-0 z-sticky xl:top-6 xl:z-base xl:col-start-3 xl:row-start-1">
+              <Stage />
             </aside>
-          )}
-        </div>
+
+            <main className="min-w-0 xl:col-start-2 xl:row-start-1">
+              {searching ? (
+                <SearchResults results={results} query={query} onPick={jumpToRow} t={t} />
+              ) : (
+                <div
+                  className={cn(
+                    "[&_[data-marked=true]]:rounded-nx-md",
+                    "[&_[data-marked=true]]:shadow-[inset_0_0_0_1px_var(--nx-accent)]",
+                    "[&_[data-marked=true]]:transition-shadow [&_[data-marked=true]]:duration-nx-standard",
+                    "[&_[data-marked=true]]:ease-nx-enter motion-reduce:[&_[data-marked=true]]:transition-none"
+                  )}
+                >
+                  <GroupPanelComponent />
+                </div>
+              )}
+            </main>
+          </div>
+        </StageHost>
       </div>
     </TooltipProvider>
+  );
+}
+
+// ── Search results ────────────────────────────────────────────────────────
+
+function SearchResults({
+  results,
+  query,
+  onPick,
+  t,
+}: {
+  results: ReturnType<typeof matchRows>;
+  query: string;
+  onPick: (rowId: string, groupId: GroupId) => void;
+  t: (key: string) => string;
+}) {
+  if (results.length === 0) {
+    return (
+      <p className="py-16 text-center text-sm text-nx-ink-3">
+        {t("common.noResults")} — “{query.trim()}”
+      </p>
+    );
+  }
+
+  // No count header: the list is the answer, and a "5 results" line above it
+  // is one more thing to read before you can act.
+  return (
+    <div>
+      <ul className="divide-y divide-nx-line">
+        {results.map((row) => {
+          const group = SETTINGS_GROUPS.find((entry) => entry.id === row.group);
+          const Icon = group?.icon;
+          return (
+            <li key={row.id}>
+              <button
+                type="button"
+                onClick={() => onPick(row.id, row.group)}
+                className={cn(
+                  "flex w-full items-start gap-3 px-2 py-4 text-start outline-none",
+                  "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                  "hover:bg-nx-hover focus-visible:shadow-nx-focus"
+                )}
+              >
+                {Icon && <Icon aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-nx-ink-3" />}
+                <span className="min-w-0">
+                  <span className="block text-[0.9375rem] font-medium text-nx-ink">
+                    {rowLabel(row, t)}
+                  </span>
+                  <span className="mt-0.5 block text-sm text-nx-ink-3">
+                    {group ? groupLabel(group, t) : ""}
+                    {row.descKey || row.description
+                      ? ` · ${row.descKey ? t(row.descKey) : row.description}`
+                      : ""}
+                  </span>
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }

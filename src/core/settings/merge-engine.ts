@@ -160,6 +160,21 @@ export function migrateStoredSettings(raw: Record<string, unknown>): Partial<Set
   for (const [key, value] of Object.entries(raw)) {
     if (!KNOWN_KEYS.has(key)) continue; // culled or foreign field — drop
 
+    // `showNotifications` shipped defaulting to FALSE while nothing in the
+    // product read it, so that inert `false` got persisted into a great many
+    // stored blobs. The moment the nexus rail started honouring the flag, those
+    // stale copies silently hid the notification bell — and because a stored
+    // value outranks the platform default, fixing defaults.ts alone only helps
+    // users with no stored settings at all.
+    //
+    // A persisted `false` therefore cannot represent a real decision: the
+    // control had no observable effect when it was written. Drop it so the
+    // (now correct) default applies. A user who genuinely wants the bell hidden
+    // toggles it off after this migration and that `false` is written against a
+    // flag the shell actually reads — it survives, because by then it is a real
+    // choice rather than an artefact.
+    if (key === "showNotifications" && value === false) continue;
+
     const survivors = SURVIVOR_VALUES[key as keyof Settings];
     if (survivors && typeof value === "string" && !survivors.includes(value)) {
       const mapped = LEGACY_VALUE_MAP[key as keyof Settings]?.[value];

@@ -78,13 +78,16 @@ export function RoleDeleteDialog({
       disableConfirm={hasAdmins && !fallbackRoleId}
     >
       {isLoading ? (
-        <div className="flex items-center justify-center py-4">
-          <Loader2 className="h-6 w-6 animate-spin" />
+        <div className="flex items-center justify-center py-4" role="status">
+          <Loader2
+            className="h-5 w-5 animate-spin text-nx-ink-3 motion-reduce:animate-none"
+            aria-label={t("common.loading")}
+          />
         </div>
       ) : hasAdmins ? (
-        <div className="rounded-lg border border-warning/30 bg-warning/10 p-4">
+        <div className="rounded-nx-md border border-warning/30 bg-warning/10 p-4">
           <div className="flex items-center gap-2 text-sm font-medium text-warning">
-            <Users className="h-4 w-4" />
+            <Users className="h-4 w-4 shrink-0" aria-hidden="true" />
             {t("role.hasAdmins") || `This role is assigned to ${adminCount} admin(s).`}
           </div>
           <p className="mt-1 text-sm text-warning">
@@ -96,14 +99,17 @@ export function RoleDeleteDialog({
             <GenericSelect
               options={roleOptions}
               value={fallbackRoleId}
-              onChange={(value: string | string[] | null) => setFallbackRoleId(value as string)}
+              // GenericSelect emits `onValueChange`; the old `onChange` was spread
+              // onto the wrapper div, so picking a fallback never reached state and
+              // the confirm button stayed disabled forever.
+              onValueChange={(value: string | string[]) => setFallbackRoleId(value as string)}
               placeholder={t("role.selectFallbackPlaceholder") || "Select a role..."}
               searchable
             />
           </div>
         </div>
       ) : (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-nx-ink-2">
           {t("common.deleteWarning") || "This action cannot be undone."}
         </p>
       )}

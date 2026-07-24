@@ -52,7 +52,13 @@ export const defaultSettings: Settings = {
   logoText: "SA",
   showBreadcrumbs: true,
   showUserAvatar: true,
-  showNotifications: false,
+  // TRUE is the platform default: the notification bell is part of the shell's
+  // identity cluster, not an opt-in. This shipped as `false` while nothing read
+  // the flag; the moment the nexus rail and topbar started honouring it, the
+  // stale default silently hid the bell for every user who had never opened
+  // Settings. The setting itself still works — turning it off hides the bell —
+  // the default is simply the visible one now.
+  showNotifications: true,
   highContrast: false,
   reducedMotion: false,
   stickyHeader: true,
