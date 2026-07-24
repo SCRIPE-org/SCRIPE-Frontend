@@ -67,7 +67,7 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
           loading={vm.isSendingPaymentLink}
         >
           <CreditCard className="h-4 w-4" />
-          {t("billing.actions.generateLink") || "Generate Link"}
+          {t("billing.actions.generateLink")}
         </Button>
         <Button
           size="sm"
@@ -78,7 +78,7 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
           loading={vm.isSendingPaymentLink}
         >
           <Zap className="h-4 w-4" />
-          {t("billing.actions.generateAndSend") || "Send Link"}
+          {t("billing.actions.generateAndSend")}
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -179,7 +179,7 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
               onClick={() => vm.setShowCurrencyDialog(true)}
             >
               <DollarSign className="me-2 h-4 w-4" />
-              {t("entSubscriptions.changeCurrency") || "Change Currency"}
+              {t("entSubscriptions.changeCurrency")}
             </DropdownMenuItem>
 
             {hasGatewayCustomer && !isFree && isStripe && (
@@ -191,7 +191,7 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
                   disabled={vm.isOpeningPortal}
                 >
                   <ExternalLink className="me-2 h-4 w-4" />
-                  {t("billing.actions.openPortal") || "Billing Portal"}
+                  {t("billing.actions.openPortal")}
                 </DropdownMenuItem>
               </>
             )}
@@ -201,8 +201,7 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
                 onClick={() => vm.setShowCancelGatewayDialog(true)}
               >
                 <XSquare className="me-2 h-4 w-4" />
-                {t("billing.actions.cancelGateway") ||
-                  `Cancel via ${sub.paymentGateway || "Gateway"}`}
+                {t("billing.actions.cancelGateway")}
               </DropdownMenuItem>
             )}
 

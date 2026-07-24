@@ -11,8 +11,8 @@ export function PayoutsLoadingSkeleton() {
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-6">
       <div className="space-y-2">
-        <Skeleton className="h-9 w-56" />
-        <Skeleton className="h-4 w-96" />
+        <Skeleton shape="title" className="h-9 w-56" />
+        <Skeleton shape="text" className="w-96" />
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
@@ -24,7 +24,7 @@ export function PayoutsLoadingSkeleton() {
           </Card>
         ))}
       </div>
-      <Skeleton className="h-64 w-full rounded-xl" />
+      <Skeleton className="h-64 w-full rounded-nx-lg" />
     </div>
   );
 }

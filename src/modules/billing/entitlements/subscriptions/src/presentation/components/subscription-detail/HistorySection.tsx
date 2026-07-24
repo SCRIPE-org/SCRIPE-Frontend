@@ -5,7 +5,6 @@
  * edition names, date ranges, and amounts.
  * Only shown when tenant has more than 1 subscription record.
  */
-import { format } from "date-fns";
 import { cn, formatDateUtc } from "@core/common/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
@@ -29,15 +28,13 @@ export function HistorySection({ items, currentId, t }: HistorySectionProps) {
   if (pastItems.length === 0) return null;
 
   return (
-    <Card className="border-border/50">
+    <Card>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-          <Clock className="h-4 w-4 text-muted-foreground" />
-          Subscription History
+          <Clock className="h-4 w-4 text-nx-ink-2" aria-hidden="true" />
+          {t("entSubscriptions.history")}
         </CardTitle>
-        <CardDescription className="text-xs">
-          Previous subscription records for this tenant
-        </CardDescription>
+        <CardDescription className="text-xs">{t("entSubscriptions.historyDesc")}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
@@ -49,13 +46,13 @@ export function HistorySection({ items, currentId, t }: HistorySectionProps) {
             return (
               <div
                 key={item.id}
-                className="flex items-center justify-between rounded-lg border border-border/50 px-4 py-3 transition-colors hover:bg-muted/30"
+                className="flex items-center justify-between rounded-nx-md border border-nx-line px-4 py-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover"
               >
                 <div className="flex items-center gap-3">
-                  <span className={cn("h-2 w-2 rounded-full", style.dotColor)} />
+                  <span className={cn("h-2 w-2 rounded-full", style.dotColor)} aria-hidden="true" />
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">{item.editionName}</span>
+                      <span className="text-sm font-medium text-nx-ink">{item.editionName}</span>
                       <Badge
                         variant={STATUS_VARIANTS[item.status] ?? "outline"}
                         className="text-[10px]"
@@ -66,14 +63,14 @@ export function HistorySection({ items, currentId, t }: HistorySectionProps) {
                         {t(`entSubscriptions.${typeKey}`) || item.type}
                       </Badge>
                     </div>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-nx-ink-2">
                       {item.startDate ? formatDateUtc(item.startDate) : "—"}
                       {item.endDate ? ` → ${formatDateUtc(item.endDate)}` : ""}
                     </span>
                   </div>
                 </div>
                 {item.totalAmount != null && item.currency && (
-                  <span className="text-sm font-medium tabular-nums text-muted-foreground">
+                  <span className="text-sm font-medium tabular-nums text-nx-ink-2">
                     {new Intl.NumberFormat("en-US", {
                       style: "currency",
                       currency: item.currency,

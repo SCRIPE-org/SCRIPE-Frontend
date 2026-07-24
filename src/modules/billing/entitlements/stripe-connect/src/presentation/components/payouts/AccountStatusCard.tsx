@@ -3,7 +3,9 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardHeader, CardTitle, CardContent } from "@core/ui/card";
 import { Button } from "@core/ui/button";
-import { CreditCard, ExternalLink, RefreshCw, LayoutDashboard, AlertTriangle } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
+import { StripeMark } from "@core/ui/brand-icons";
+import { ExternalLink, RefreshCw, LayoutDashboard, AlertTriangle } from "lucide-react";
 import type { ConnectAccount } from "../../../domain/entities/ConnectAccount";
 
 interface AccountStatusCardProps {
@@ -40,15 +42,18 @@ export function AccountStatusCard({
         <div className="flex flex-wrap items-center justify-between gap-3">
           {/* Left — account identity */}
           <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-muted p-2">
-              <CreditCard className="h-5 w-5 text-primary" />
+            <div
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-nx-md border border-nx-line bg-nx-raised"
+              aria-hidden="true"
+            >
+              <StripeMark className="h-5 w-5" />
             </div>
             <div>
               <CardTitle className="text-base">
-                {t("entitlements.stripeConnect.stripeAccount") || "Stripe Connect Account"}
+                {t("entitlements.stripeConnect.stripeAccount")}
               </CardTitle>
               {account.stripeAccountId && (
-                <p className="mt-0.5 font-mono text-xs text-muted-foreground">
+                <p className="mt-0.5 font-mono text-xs text-nx-ink-3">
                   {account.stripeAccountId}
                 </p>
               )}
@@ -61,36 +66,27 @@ export function AccountStatusCard({
               <Button
                 variant="outline"
                 size="sm"
-                className="gap-2"
                 onClick={onOpenDashboard}
-                disabled={isOpeningDashboard}
+                loading={isOpeningDashboard}
               >
-                {isOpeningDashboard ? (
-                  <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <LayoutDashboard className="h-3.5 w-3.5" />
+                {!isOpeningDashboard && (
+                  <LayoutDashboard className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
                 )}
-                {t("entitlements.stripeConnect.openStripeDashboard") || "Stripe Dashboard"}
+                {t("entitlements.stripeConnect.openStripeDashboard")}
               </Button>
             ) : (
               <>
-                <Button size="sm" className="gap-2" onClick={onOnboard} disabled={isOnboarding}>
-                  {isOnboarding ? (
-                    <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <ExternalLink className="h-3.5 w-3.5" />
+                <Button size="sm" onClick={onOnboard} loading={isOnboarding}>
+                  {!isOnboarding && (
+                    <ExternalLink className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
                   )}
-                  {t("entitlements.stripeConnect.continueOnboarding") || "Continue Setup"}
+                  {t("entitlements.stripeConnect.continueOnboarding")}
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-2"
-                  onClick={onRefreshLink}
-                  disabled={isRefreshing}
-                >
-                  <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-                  {t("entitlements.stripeConnect.refreshLink") || "Refresh Link"}
+                <Button variant="outline" size="sm" onClick={onRefreshLink} loading={isRefreshing}>
+                  {!isRefreshing && (
+                    <RefreshCw className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
+                  )}
+                  {t("entitlements.stripeConnect.refreshLink")}
                 </Button>
               </>
             )}
@@ -101,20 +97,13 @@ export function AccountStatusCard({
       {/* Restricted warning */}
       {isRestricted && (
         <CardContent className="pt-0">
-          <div className="rounded-md border border-destructive/30 bg-destructive/10 p-4">
-            <div className="flex items-start gap-3">
-              <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-destructive" />
-              <div>
-                <p className="text-sm font-semibold text-destructive">
-                  {t("entitlements.stripeConnect.actionRequired") || "Action Required"}
-                </p>
-                <p className="mt-1 text-sm text-destructive">
-                  {t("entitlements.stripeConnect.actionRequiredDesc") ||
-                    "Stripe needs more information. Open Stripe Dashboard to resolve."}
-                </p>
-              </div>
-            </div>
-          </div>
+          <Alert variant="destructive">
+            <AlertTriangle aria-hidden="true" />
+            <AlertTitle>{t("entitlements.stripeConnect.actionRequired")}</AlertTitle>
+            <AlertDescription>
+              {t("entitlements.stripeConnect.actionRequiredDesc")}
+            </AlertDescription>
+          </Alert>
         </CardContent>
       )}
     </Card>

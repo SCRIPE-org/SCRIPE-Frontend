@@ -23,16 +23,13 @@ export function PayoutsEmptyState() {
   return (
     <EmptyState
       icon={CreditCard}
-      title={t("entitlements.stripeConnect.readyToConnect") || "Ready to receive payouts?"}
-      description={
-        t("entitlements.stripeConnect.readyToConnectDesc") ||
-        "Set up your payment account to securely receive automated payouts from your sales."
-      }
+      title={t("entitlements.stripeConnect.readyToConnect")}
+      description={t("entitlements.stripeConnect.readyToConnectDesc")}
       action={
         <Button size="lg" className="gap-2" onClick={() => router.push("/my-stripe-account")}>
-          <CreditCard className="h-4 w-4" />
-          {t("entitlements.tenantConnect.getStartedBtn") || "Get Started"}
-          <ArrowRight className="ms-1 h-4 w-4" />
+          <CreditCard className="h-4 w-4" aria-hidden="true" />
+          {t("entitlements.tenantConnect.getStartedBtn")}
+          <ArrowRight className="ms-1 h-4 w-4 rtl:rotate-180" aria-hidden="true" />
         </Button>
       }
     />

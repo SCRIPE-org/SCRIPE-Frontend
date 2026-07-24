@@ -103,6 +103,8 @@ export const en = {
       statusCollected: "Collected",
       statusPending: "Pending",
       statusRefunded: "Refunded",
+      statusPartiallyRefunded: "Partially Refunded",
+      statusFailed: "Failed",
       getStarted: "Get Started",
       getStartedDesc: "This tenant has not connected a Stripe account yet.",
       readyToConnect: "Ready to Connect",
@@ -208,6 +210,9 @@ export const en = {
         empty: "No transactions found.",
         showing: "Showing",
         of: "of",
+        typePayment: "Payment",
+        typeRefund: "Refund",
+        typePartialRefund: "Partial Refund",
         col: {
           date: "Date",
           type: "Type",

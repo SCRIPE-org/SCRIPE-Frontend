@@ -74,6 +74,16 @@ export const en = {
     regenerate: "Regenerate",
     newSecretGenerated: "New Secret Generated",
     secretCopyWarning: "Copy this secret now - it will not be shown again!",
+    copyClientId: "Copy client ID",
+    copySecret: "Copy client secret",
+    // Compact chip labels
+    clientTypeConfidential: "Confidential",
+    clientTypePublic: "Public",
+    noDescription: "No description provided.",
+    oidcServerBadge: "OIDC Server",
+    pkceLabel: "PKCE",
+    pkceOptional: "Optional",
+    viewDetails: "View application details",
     // Metadata
     metadata: "Information",
     tenantScoped: "Tenant",

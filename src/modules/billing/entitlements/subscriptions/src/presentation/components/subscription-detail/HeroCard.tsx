@@ -2,7 +2,6 @@
  * HeroCard — Subscription Status Hero
  *
  * Large card at the top showing status, edition, date range, pricing.
- * Features gradient overlay matched to subscription status color.
  */
 "use client";
 
@@ -21,7 +20,7 @@ import type { useSubscriptionsViewModel } from "../../viewmodels/useSubscription
 interface HeroCardProps {
   sub: SubscriptionListItem;
   vm: ReturnType<typeof useSubscriptionsViewModel>;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, string | number>) => string;
 }
 
 /**
@@ -46,24 +45,14 @@ export function HeroCard({ sub, vm, t }: HeroCardProps) {
   }, [sub.type, t]);
 
   return (
-    <Card
-      className={cn(
-        "relative overflow-hidden border-border/50 transition-shadow duration-300",
-        `shadow-lg ${style.glow}`
-      )}
-    >
-      {/* Gradient overlay */}
-      <div
-        className={cn("pointer-events-none absolute inset-0 bg-gradient-to-br", style.gradient)}
-      />
-
-      <CardHeader className="relative pb-2">
+    <Card>
+      <CardHeader className="pb-2">
         <div className="flex items-start justify-between gap-4">
           {/* Status + Edition */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-2">
-                <span className={cn("h-2.5 w-2.5 rounded-full", style.dotColor)} />
+                <span className={cn("h-2.5 w-2.5 rounded-full", style.dotColor)} aria-hidden="true" />
                 {style.icon}
               </div>
               <Badge
@@ -85,8 +74,8 @@ export function HeroCard({ sub, vm, t }: HeroCardProps) {
             </div>
 
             <div className="flex items-center gap-2.5">
-              <Crown className="h-6 w-6 shrink-0 text-primary" />
-              <h2 className="text-2xl font-bold tracking-tight">{sub.editionName}</h2>
+              <Crown className="h-6 w-6 shrink-0 text-nx-accent" aria-hidden="true" />
+              <h2 className="text-2xl font-bold tracking-tight text-nx-ink">{sub.editionName}</h2>
             </div>
           </div>
 
@@ -97,11 +86,11 @@ export function HeroCard({ sub, vm, t }: HeroCardProps) {
         </div>
       </CardHeader>
 
-      <CardContent className="relative">
+      <CardContent>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
           {/* Date Range */}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <CalendarDays className="h-4 w-4" />
+          <div className="flex items-center gap-2 text-sm text-nx-ink-2">
+            <CalendarDays className="h-4 w-4" aria-hidden="true" />
             <span>
               {sub.startDate ? formatUtc(sub.startDate, "MMM d, yyyy") : "—"}
               {" → "}
@@ -109,7 +98,7 @@ export function HeroCard({ sub, vm, t }: HeroCardProps) {
                 formatUtc(sub.endDate, "MMM d, yyyy")
               ) : (
                 <span className="inline-flex items-center gap-1">
-                  <Infinity className="h-3.5 w-3.5" />
+                  <Infinity className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>{t("entSubscriptions.lifetime")}</span>
                 </span>
               )}
@@ -118,25 +107,34 @@ export function HeroCard({ sub, vm, t }: HeroCardProps) {
 
           {/* Time remaining */}
           {sub.endDate && new Date(sub.endDate) > new Date() && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Timer className="h-4 w-4" />
-              <span>{formatDistanceToNow(new Date(sub.endDate))} remaining</span>
+            <div className="flex items-center gap-2 text-sm text-nx-ink-2">
+              <Timer className="h-4 w-4" aria-hidden="true" />
+              <span>
+                {t("entSubscriptions.timeRemaining", {
+                  time: formatDistanceToNow(new Date(sub.endDate)),
+                })}
+              </span>
             </div>
           )}
 
           {/* Amount */}
           {formattedAmount && (
             <div className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-              <span className="text-lg font-semibold tabular-nums">{formattedAmount}</span>
-              <span className="text-xs text-muted-foreground">/ {billingCycle.toLowerCase()}</span>
+              <DollarSign className="h-4 w-4 text-nx-ink-2" aria-hidden="true" />
+              <span className="text-lg font-semibold tabular-nums text-nx-ink">
+                {formattedAmount}
+              </span>
+              <span className="text-xs text-nx-ink-2">/ {billingCycle.toLowerCase()}</span>
             </div>
           )}
 
           {/* Promo */}
           {sub.appliedPromoCode && (
-            <Badge variant="outline" className="border-primary/30 text-xs text-primary">
-              <Tag className="me-1 h-3 w-3" />
+            <Badge
+              variant="outline"
+              className="border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] text-xs text-nx-accent"
+            >
+              <Tag className="me-1 h-3 w-3" aria-hidden="true" />
               {sub.appliedPromoCode}
               {sub.promotionDiscount != null && sub.promotionDiscount > 0 && (
                 <span className="ms-1 text-success">-{sub.promotionDiscount}%</span>

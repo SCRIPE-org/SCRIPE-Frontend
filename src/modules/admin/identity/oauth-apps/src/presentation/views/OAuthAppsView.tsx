@@ -15,6 +15,9 @@ import { Badge } from "@core/ui/badge";
 import { Input } from "@core/ui/input";
 import { Card, CardContent } from "@core/ui/card";
 import { EmptyState } from "@core/ui/empty-state";
+import { ErrorMessage } from "@core/ui/error-message";
+import { Skeleton } from "@core/ui/skeleton";
+import { PageHeader } from "@core/ui/page-header";
 import {
   Pagination,
   PaginationContent,
@@ -61,46 +64,37 @@ export function OAuthAppsView() {
   };
 
   return (
-    <div className="space-y-6 pb-12 duration-300 animate-in fade-in">
-      {/* ─── Dashboard Header ─── */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold tracking-tight text-foreground">
-              {t("oauthApps.title") || "OAuth Applications"}
-            </h1>
-            <Badge
-              variant="outline"
-              className="gap-1 border-primary/20 bg-primary/5 font-semibold text-primary"
-            >
-              <ShieldCheck className="h-3.5 w-3.5" />
-              OIDC Server
-            </Badge>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {t("oauthApps.description") ||
-              "Configure third-party client applications that authorize against your SCRIPE user directory."}
-          </p>
-        </div>
-
-        <Button
-          onClick={handleCreate}
-          className="self-start bg-gradient-to-r from-primary to-info font-semibold text-primary-foreground shadow hover:opacity-95 sm:self-center"
-        >
-          <Plus className="me-1.5 h-4 w-4" />
-          {t("oauthApps.createTitle") || "Register Application"}
-        </Button>
-      </div>
+    <div className="space-y-6 pb-12 duration-nx-standard animate-in fade-in">
+      <PageHeader
+        icon={AppWindow}
+        title={t("oauthApps.title")}
+        description={t("oauthApps.description")}
+        badges={
+          <Badge variant="info" className="gap-1">
+            <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("oauthApps.oidcServerBadge")}
+          </Badge>
+        }
+        actions={
+          <Button onClick={handleCreate}>
+            <Plus className="me-1.5 h-4 w-4" aria-hidden="true" />
+            {t("oauthApps.createTitle")}
+          </Button>
+        }
+      />
 
       {/* ─── Search and Filter Toolbar ─── */}
       <div className="flex items-center gap-3">
         <div className="relative max-w-md flex-1">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Search
+            className="absolute start-3 top-2.5 h-4 w-4 text-nx-ink-3"
+            aria-hidden="true"
+          />
           <Input
-            placeholder={t("common.search") || "Search applications..."}
+            placeholder={t("common.search")}
             value={vm.searchValue}
             onChange={(e) => vm.handleSearchChange(e.target.value)}
-            className="rounded-lg border-border/80 bg-muted/20 ps-9"
+            className="ps-9"
           />
         </div>
       </div>
@@ -109,30 +103,29 @@ export function OAuthAppsView() {
       {vm.loading ? (
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <Card key={i} className="motion-safe:animate-pulse border border-border/40 bg-card/10">
-              <CardContent className="h-24 p-6" />
+            <Card key={i}>
+              <CardContent className="p-6">
+                <Skeleton shape="block" className="h-16 w-full" />
+              </CardContent>
             </Card>
           ))}
         </div>
       ) : vm.error ? (
-        <Card className="border border-destructive/20 bg-destructive/5 p-6 text-center">
-          <p className="text-sm font-medium text-destructive">
-            {t("common.error") || "Error"}: {vm.error}
-          </p>
+        <Card>
+          <CardContent className="p-6">
+            <ErrorMessage message={`${t("common.error")}: ${vm.error}`} />
+          </CardContent>
         </Card>
       ) : vm.items.length === 0 ? (
         <EmptyState
           icon={AppWindow}
           size="lg"
-          title={t("oauthApps.emptyTitle") || "No OAuth applications found"}
-          description={
-            t("oauthApps.emptyDesc") ||
-            "Get started by registering a new application to enable secure third-party login via SCRIPE identity services."
-          }
+          title={t("oauthApps.emptyTitle")}
+          description={t("oauthApps.emptyDesc")}
           action={
             <Button onClick={handleCreate}>
-              <Plus className="me-1.5 h-4 w-4" />
-              {t("oauthApps.createTitle") || "Register Application"}
+              <Plus className="me-1.5 h-4 w-4" aria-hidden="true" />
+              {t("oauthApps.createTitle")}
             </Button>
           }
         />
@@ -170,7 +163,7 @@ export function OAuthAppsView() {
               />
             </PaginationItem>
             <PaginationItem>
-              <span className="px-3 text-xs tabular-nums text-muted-foreground">
+              <span className="px-3 text-xs tabular-nums text-nx-ink-2">
                 {vm.page} / {vm.pagination.pagesCount}
               </span>
             </PaginationItem>

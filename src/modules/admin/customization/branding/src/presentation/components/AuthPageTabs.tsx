@@ -36,9 +36,9 @@ interface AuthPageTabsProps {
 export function AuthPageTabs({ activePageId, onPageChange }: AuthPageTabsProps) {
   const { t } = useI18n();
   return (
-    <div className="scrollbar-none flex items-center gap-1 overflow-x-auto border-b border-border bg-muted/30 px-4 py-1.5">
-      <span className="me-2 shrink-0 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60">
-        {t("studio.pages.label") || "Page"}
+    <div className="scrollbar-none flex items-center gap-1 overflow-x-auto border-b border-nx-line bg-nx-raised px-4 py-1.5">
+      <span className="me-2 shrink-0 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+        {t("studio.pages.label")}
       </span>
       {AUTH_PAGES.map((page) => {
         const Icon = ICON_MAP[page.icon];
@@ -46,16 +46,17 @@ export function AuthPageTabs({ activePageId, onPageChange }: AuthPageTabsProps) 
         return (
           <button
             key={page.id}
+            type="button"
             onClick={() => onPageChange(page.id)}
+            aria-pressed={isActive}
             className={cn(
-              "flex items-center gap-1.5 whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium transition-all",
+              "flex items-center gap-1.5 whitespace-nowrap rounded-nx-control px-3 py-1.5 text-xs font-medium transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
               isActive
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                ? "bg-nx-accent-fill text-nx-on-fill"
+                : "text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
             )}
-            title={t(page.labelKey) || page.id}
           >
-            {Icon && <Icon className="h-3.5 w-3.5" />}
+            {Icon && <Icon className="h-3.5 w-3.5" aria-hidden="true" />}
             <span>{t(page.labelKey) || page.id}</span>
           </button>
         );

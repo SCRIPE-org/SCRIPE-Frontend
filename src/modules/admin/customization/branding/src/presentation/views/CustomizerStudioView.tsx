@@ -32,10 +32,11 @@ import { DashboardLayoutPreview } from "../components/DashboardLayoutPreview";
 import { type CanvasComponent } from "../../domain/entities/CanvasComponent";
 import { DragOverlayItem } from "../components/builder/DraggableCanvasItem";
 import { useBuilderStore } from "../viewmodels/useBuilderStore";
-import { Loader2, Building2, LayoutGrid } from "lucide-react";
+import { Building2, LayoutGrid } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { SaveAsThemeModal } from "../components/SaveAsThemeModal";
 
 /**
@@ -222,11 +223,8 @@ export function CustomizerStudioView() {
   // Loading state -- waiting for branding query to resolve
   if (vm.isLoading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">{t("studio.loading") || "Loading..."}</p>
-        </div>
+      <div className="flex h-screen w-full items-center justify-center bg-nx-ground">
+        <LoadingSpinner size="md" />
       </div>
     );
   }
@@ -257,7 +255,7 @@ export function CustomizerStudioView() {
       {/* Right: Preview OR Builder Canvas OR Dashboard Preview */}
       {isBuilderMode ? (
         /* Full-width Builder Canvas */
-        <div className="relative flex-1 overflow-auto bg-gradient-to-br from-muted/30 via-background to-muted/20 p-6">
+        <div className="relative flex-1 overflow-auto bg-nx-ground p-6">
           <BuilderCanvas
             components={builderStore.components}
             selectedComponentId={builderStore.selectedComponentId}
@@ -275,7 +273,7 @@ export function CustomizerStudioView() {
         </div>
       ) : isDashboardMode ? (
         /* Full Dashboard Layout Preview */
-        <div className="relative flex-1 overflow-hidden bg-gradient-to-br from-muted/30 via-background to-muted/20">
+        <div className="relative flex-1 overflow-hidden bg-nx-ground">
           <DashboardLayoutPreview settings={vm.draft.dashboardSettings} />
         </div>
       ) : (
@@ -293,24 +291,21 @@ export function CustomizerStudioView() {
   );
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-background">
+    <div className="flex h-screen flex-col overflow-hidden bg-nx-ground">
       {/* System Defaults Banner */}
       {vm.mode === "system" && (
-        <div className="flex items-center gap-2 bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">
-          <Building2 className="h-4 w-4" />
-          <span>
-            {t("studio.systemDefaultsBanner") ||
-              "Editing System Defaults -- applied to all tenants without custom branding"}
-          </span>
+        <div className="flex items-center gap-2 bg-nx-accent-fill px-4 py-2 text-sm font-medium text-nx-on-fill">
+          <Building2 className="h-4 w-4" aria-hidden="true" />
+          <span>{t("studio.systemDefaultsBanner")}</span>
         </div>
       )}
 
       {/* Tenant Drilldown Banner */}
       {vm.mode === "tenant" && vm.targetTenantName && (
         <div className="flex items-center gap-2 bg-info px-4 py-2 text-sm font-medium text-info-foreground">
-          <Building2 className="h-4 w-4" />
+          <Building2 className="h-4 w-4" aria-hidden="true" />
           <span>
-            {t("studio.customizingTenant") || "Customizing:"} {vm.targetTenantName}
+            {t("studio.customizingTenant")} {vm.targetTenantName}
           </span>
         </div>
       )}
@@ -342,18 +337,19 @@ export function CustomizerStudioView() {
 
       {/* Builder Mode Indicator */}
       {isBuilderMode && (
-        <div className="flex items-center gap-2 border-b border-primary/20 bg-gradient-to-r from-info/10 via-primary/5 to-info/10 px-4 py-1.5">
-          <LayoutGrid className="h-3.5 w-3.5 text-primary" />
-          <span className="text-xs font-medium text-primary">
-            {t("studio.builder.modeActive") || "Builder Mode"} —{" "}
-            <span className="font-normal text-muted-foreground">
-              {t("studio.builder.modeHint") || "Drag components to arrange your login page layout"}
-            </span>
+        <div className="flex items-center gap-2 border-b border-nx-line bg-nx-accent-wash px-4 py-1.5">
+          <LayoutGrid className="h-3.5 w-3.5 text-nx-accent" aria-hidden="true" />
+          <span className="text-xs font-medium text-nx-accent">
+            {t("studio.builder.modeActive")} —{" "}
+            <span className="font-normal text-nx-ink-2">{t("studio.builder.modeHint")}</span>
           </span>
           <div className="flex-1" />
-          <span className="font-mono text-[10px] text-muted-foreground/60">
-            {builderStore.positionMode === "absolute" ? "⟐ Free-form" : "⊞ Grid"} |{" "}
-            {builderStore.components.length} components | {builderStore.zoom}%
+          <span className="font-mono text-[10px] text-nx-ink-3">
+            {builderStore.positionMode === "absolute"
+              ? `⟐ ${t("studio.builder.freeForm")}`
+              : `⊞ ${t("studio.builder.grid")}`}{" "}
+            | {t("studio.builder.componentsCount", { count: builderStore.components.length })} |{" "}
+            {builderStore.zoom}%
           </span>
         </div>
       )}
@@ -373,8 +369,8 @@ export function CustomizerStudioView() {
             {builderDnd.activeComponent ? (
               <DragOverlayItem component={builderDnd.activeComponent} />
             ) : builderDnd.activePaletteType ? (
-              <div className="flex min-w-[180px] items-center gap-2 rounded-lg border-2 border-primary/60 bg-primary/10 px-3 py-2 shadow-xl backdrop-blur-sm">
-                <span className="text-xs font-semibold text-primary">
+              <div className="flex min-w-[180px] items-center gap-2 rounded-nx-md border-2 border-nx-accent bg-nx-accent-wash px-3 py-2 shadow-nx-popover">
+                <span className="text-xs font-semibold text-nx-accent">
                   + {builderDnd.activePaletteType}
                 </span>
               </div>

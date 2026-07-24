@@ -14,6 +14,7 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  chartColor,
   type ChartConfig,
 } from "@core/ui/chart";
 import { Pie, PieChart, Cell } from "recharts";
@@ -27,16 +28,10 @@ interface Props {
   chartPalette?: string[];
 }
 
-const COLORS = [
-  "hsl(var(--chart-1))",
-  "hsl(var(--chart-2))",
-  "hsl(var(--chart-3))",
-  "hsl(var(--chart-4))",
-  "hsl(var(--chart-5))",
-  "hsl(210, 70%, 50%)",
-  "hsl(280, 60%, 50%)",
-  "hsl(30, 80%, 50%)",
-];
+// The eight fixed --chart-* slots — slots 6-8 used to be raw hsl() literals
+// outside the ladder (never checked for CVD-safety); reading them through
+// chartColor() keeps every slot on the validated, theme-aware palette.
+const COLORS = [1, 2, 3, 4, 5, 6, 7, 8].map((slot) => chartColor(slot));
 
 /**
  * Exported constant defining parameters and fields for event distribution chart configurations.
@@ -80,7 +75,7 @@ export const EventDistributionChart = memo(function EventDistributionChart({
     <Card className="h-full">
       <CardHeader>
         <div className="flex items-center gap-2">
-          <PieChartIcon className="h-5 w-5 text-muted-foreground" />
+          <PieChartIcon className="h-5 w-5 text-nx-ink-2" aria-hidden="true" />
           <div>
             <CardTitle>{t("dashboard.eventDistribution.title")}</CardTitle>
             <CardDescription>{t("dashboard.eventDistribution.description")}</CardDescription>
@@ -122,14 +117,15 @@ export const EventDistributionChart = memo(function EventDistributionChart({
                   <div key={item.eventType} className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2">
                       <div
+                        aria-hidden="true"
                         className="h-2.5 w-2.5 shrink-0 rounded-full"
                         style={{ backgroundColor: colors[index % colors.length] }}
                       />
-                      <span className="truncate text-muted-foreground">{item.eventType}</span>
+                      <span className="truncate text-nx-ink-2">{item.eventType}</span>
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
-                      <span className="tabular-nums text-muted-foreground">{percentage}%</span>
-                      <span className="font-medium tabular-nums">
+                      <span className="tabular-nums text-nx-ink-3">{percentage}%</span>
+                      <span className="font-medium tabular-nums text-nx-ink">
                         {item.count.toLocaleString()}
                       </span>
                     </div>
@@ -137,8 +133,8 @@ export const EventDistributionChart = memo(function EventDistributionChart({
                 );
               })}
               {data.length > 5 && (
-                <p className="text-center text-[10px] text-muted-foreground">
-                  +{data.length - 5} more
+                <p className="text-center text-[10px] text-nx-ink-3">
+                  {t("dashboard.eventDistribution.moreCount", { count: data.length - 5 })}
                 </p>
               )}
             </div>

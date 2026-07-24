@@ -2,7 +2,26 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
-import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { ToggleGroup, ToggleGroupItem } from "@core/ui/toggle-group";
+import { SectionState } from "@core/ui/section-state";
+import {
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Legend,
+} from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegendContent,
+  chartColor,
+  type ChartConfig,
+} from "@core/ui/chart";
 import type { ApiKeyChartDataPoint } from "../../domain/entities/ApiKeyChartData";
 import { useI18n } from "@core/providers/i18n-provider";
 import { formatTimeUtc, formatDateUtc } from "@core/common/utils";
@@ -16,170 +35,153 @@ interface ApiKeyChartSectionProps {
   onRangeChange: (preset: RangePreset) => void;
 }
 
+const VIEWS: ChartView[] = ["volume", "errors", "response"];
+const RANGES: RangePreset[] = ["24h", "7d", "30d"];
+const CHART_HEIGHT = 200;
+
 export function ApiKeyChartSection({ data, isLoading, onRangeChange }: ApiKeyChartSectionProps) {
   const { t } = useI18n();
   const [view, setView] = useState<ChartView>("volume");
   const [range, setRange] = useState<RangePreset>("24h");
 
-  const handleRangeChange = (r: RangePreset) => {
-    setRange(r);
-    onRangeChange(r);
+  const handleRangeChange = (r: string) => {
+    if (!r) return;
+    const preset = r as RangePreset;
+    setRange(preset);
+    onRangeChange(preset);
   };
 
-  const formatted = data.map(d => ({
+  const formatted = data.map((d) => ({
     ...d,
     label: d.period ? (range === "24h" ? formatTimeUtc(d.period) : formatDateUtc(d.period)) : "",
     errorRate: d.totalHits > 0 ? Math.round((d.failureHits / d.totalHits) * 100) : 0,
   }));
 
+  // Colour follows the ENTITY, never the view — success/failure keep the same
+  // slots every time this app pairs them (LoginActivityChart uses the same
+  // chart-2/chart-5 pairing for the same reason).
+  const volumeConfig: ChartConfig = {
+    successHits: { label: t("apikeys.chart.series.success"), color: chartColor(2) },
+    failureHits: { label: t("apikeys.chart.series.failures"), color: chartColor(5) },
+  };
+  const errorsConfig: ChartConfig = {
+    errorRate: { label: t("apikeys.chart.series.errorRate"), color: chartColor(3) },
+  };
+  const responseConfig: ChartConfig = {
+    avgResponseTimeMs: { label: t("apikeys.chart.series.avgResponse"), color: chartColor(1) },
+  };
+
+  const activeConfig = view === "volume" ? volumeConfig : view === "errors" ? errorsConfig : responseConfig;
+
   return (
     <Card>
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between flex-wrap gap-3">
-          <CardTitle className="text-sm font-semibold">
-            {t("apikeys.chart.title") || "Request Activity"}
-          </CardTitle>
-          <div className="flex items-center gap-2">
-            <div className="flex rounded-md border overflow-hidden text-xs">
-              {(["volume", "errors", "response"] as ChartView[]).map(v => (
-                <button
-                  key={v}
-                  onClick={() => setView(v)}
-                  className={`px-3 py-1.5 font-medium transition-colors ${
-                    view === v
-                      ? "bg-foreground text-background"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {t(`apikeys.chart.view.${v}`) || v}
-                </button>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <CardTitle className="text-sm font-semibold">{t("apikeys.chart.title")}</CardTitle>
+          <div className="flex flex-wrap items-center gap-2">
+            <ToggleGroup
+              type="single"
+              preset="segmented"
+              size="sm"
+              value={view}
+              onValueChange={(v) => v && setView(v as ChartView)}
+              aria-label={t("apikeys.chart.viewGroup")}
+            >
+              {VIEWS.map((v) => (
+                <ToggleGroupItem key={v} value={v} className="text-xs">
+                  {t(`apikeys.chart.view.${v}`)}
+                </ToggleGroupItem>
               ))}
-            </div>
-            <div className="flex rounded-md border overflow-hidden text-xs">
-              {(["24h", "7d", "30d"] as RangePreset[]).map(r => (
-                <button
-                  key={r}
-                  onClick={() => handleRangeChange(r)}
-                  className={`px-3 py-1.5 font-medium transition-colors ${
-                    range === r
-                      ? "bg-foreground text-background"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {r}
-                </button>
+            </ToggleGroup>
+            <ToggleGroup
+              type="single"
+              preset="segmented"
+              size="sm"
+              value={range}
+              onValueChange={handleRangeChange}
+              aria-label={t("apikeys.chart.rangeGroup")}
+            >
+              {RANGES.map((r) => (
+                <ToggleGroupItem key={r} value={r} className="text-xs">
+                  {t(`apikeys.chart.range.${r}`)}
+                </ToggleGroupItem>
               ))}
-            </div>
+            </ToggleGroup>
           </div>
         </div>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          <div className="h-48 motion-safe:animate-pulse bg-muted/30 rounded-lg" />
-        ) : formatted.length === 0 ? (
-          <div className="h-48 flex items-center justify-center text-sm text-muted-foreground">
-            {t("apikeys.chart.noData") || "No data for this period"}
-          </div>
-        ) : (
-          <ResponsiveContainer width="100%" height={200}>
+        <SectionState
+          isLoading={isLoading}
+          isEmpty={formatted.length === 0}
+          emptyMessage={t("apikeys.chart.noData")}
+          height={CHART_HEIGHT}
+          skeletonType="chart"
+        >
+          <ChartContainer config={activeConfig} className="h-[200px] w-full">
             {view === "volume" ? (
-              <AreaChart data={formatted} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
+              <AreaChart data={formatted} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="successGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--success))" stopOpacity={0.2} />
-                    <stop offset="95%" stopColor="hsl(var(--success))" stopOpacity={0} />
+                  <linearGradient id="apikeys-volume-success" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--color-successHits)" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="var(--color-successHits)" stopOpacity={0} />
                   </linearGradient>
-                  <linearGradient id="failureGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--destructive))" stopOpacity={0.2} />
-                    <stop offset="95%" stopColor="hsl(var(--destructive))" stopOpacity={0} />
+                  <linearGradient id="apikeys-volume-failure" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--color-failureHits)" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="var(--color-failureHits)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--popover))",
-                    borderColor: "hsl(var(--border))",
-                    borderRadius: "calc(var(--radius) - 2px)",
-                    color: "hsl(var(--popover-foreground))",
-                    fontSize: "12px",
-                    boxShadow: "var(--nx-shadow-popover)"
-                  }}
-                  itemStyle={{
-                    color: "hsl(var(--popover-foreground))"
-                  }}
-                  labelStyle={{
-                    color: "hsl(var(--muted-foreground))",
-                    fontWeight: "600",
-                    marginBottom: "4px"
-                  }}
+                <CartesianGrid vertical={false} />
+                <XAxis dataKey="label" tickLine={false} axisLine={false} />
+                <YAxis tickLine={false} axisLine={false} width={32} allowDecimals={false} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Legend content={<ChartLegendContent />} />
+                <Area
+                  type="monotone"
+                  dataKey="successHits"
+                  stroke="var(--color-successHits)"
+                  fill="url(#apikeys-volume-success)"
+                  strokeWidth={2}
                 />
-                <Legend iconSize={10} wrapperStyle={{ fontSize: 11 }} />
-                <Area type="monotone" dataKey="successHits" stroke="hsl(var(--success))" fill="url(#successGrad)" strokeWidth={2} name="Success" />
-                <Area type="monotone" dataKey="failureHits" stroke="hsl(var(--destructive))" fill="url(#failureGrad)" strokeWidth={2} name="Errors" />
+                <Area
+                  type="monotone"
+                  dataKey="failureHits"
+                  stroke="var(--color-failureHits)"
+                  fill="url(#apikeys-volume-failure)"
+                  strokeWidth={2}
+                />
               </AreaChart>
             ) : view === "errors" ? (
-              <BarChart data={formatted} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--popover))",
-                    borderColor: "hsl(var(--border))",
-                    borderRadius: "calc(var(--radius) - 2px)",
-                    color: "hsl(var(--popover-foreground))",
-                    fontSize: "12px",
-                    boxShadow: "var(--nx-shadow-popover)"
-                  }}
-                  itemStyle={{
-                    color: "hsl(var(--popover-foreground))"
-                  }}
-                  labelStyle={{
-                    color: "hsl(var(--muted-foreground))",
-                    fontWeight: "600",
-                    marginBottom: "4px"
-                  }}
-                />
-                <Legend iconSize={10} wrapperStyle={{ fontSize: 11 }} />
-                <Bar dataKey="errorRate" fill="hsl(var(--warning))" name="Error Rate %" radius={[3, 3, 0, 0]} />
+              <BarChart data={formatted} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <CartesianGrid vertical={false} />
+                <XAxis dataKey="label" tickLine={false} axisLine={false} />
+                <YAxis tickLine={false} axisLine={false} width={32} allowDecimals={false} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="errorRate" fill="var(--color-errorRate)" radius={[3, 3, 0, 0]} />
               </BarChart>
             ) : (
-              <AreaChart data={formatted} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
+              <AreaChart data={formatted} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="responseGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--nx-accent)" stopOpacity={0.2} />
-                    <stop offset="95%" stopColor="var(--nx-accent)" stopOpacity={0} />
+                  <linearGradient id="apikeys-response" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--color-avgResponseTimeMs)" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="var(--color-avgResponseTimeMs)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--popover))",
-                    borderColor: "hsl(var(--border))",
-                    borderRadius: "calc(var(--radius) - 2px)",
-                    color: "hsl(var(--popover-foreground))",
-                    fontSize: "12px",
-                    boxShadow: "var(--nx-shadow-popover)"
-                  }}
-                  itemStyle={{
-                    color: "hsl(var(--popover-foreground))"
-                  }}
-                  labelStyle={{
-                    color: "hsl(var(--muted-foreground))",
-                    fontWeight: "600",
-                    marginBottom: "4px"
-                  }}
-                  formatter={(v: any) => [v !== undefined ? `${Number(v).toFixed(1)} ms` : "—", "Avg Response"]}
+                <CartesianGrid vertical={false} />
+                <XAxis dataKey="label" tickLine={false} axisLine={false} />
+                <YAxis tickLine={false} axisLine={false} width={32} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Area
+                  type="monotone"
+                  dataKey="avgResponseTimeMs"
+                  stroke="var(--color-avgResponseTimeMs)"
+                  fill="url(#apikeys-response)"
+                  strokeWidth={2}
                 />
-                <Area type="monotone" dataKey="avgResponseTimeMs" stroke="var(--nx-accent)" fill="url(#responseGrad)" strokeWidth={2} name="Avg Response (ms)" />
               </AreaChart>
             )}
-          </ResponsiveContainer>
-        )}
+          </ChartContainer>
+        </SectionState>
       </CardContent>
     </Card>
   );

@@ -12,16 +12,17 @@ import { Monitor, Tablet, Smartphone } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
 import type { DeviceSize } from "../../domain/entities/StudioDraft";
+import { useI18n } from "@core/providers/i18n-provider";
 
 interface DeviceToggleProps {
   deviceSize: DeviceSize;
   setDeviceSize: (size: DeviceSize) => void;
 }
 
-const devices: { size: DeviceSize; icon: typeof Monitor; label: string }[] = [
-  { size: "desktop", icon: Monitor, label: "Desktop" },
-  { size: "tablet", icon: Tablet, label: "Tablet" },
-  { size: "mobile", icon: Smartphone, label: "Mobile" },
+const devices: { size: DeviceSize; icon: typeof Monitor; labelKey: string }[] = [
+  { size: "desktop", icon: Monitor, labelKey: "studio.device.desktop" },
+  { size: "tablet", icon: Tablet, labelKey: "studio.device.tablet" },
+  { size: "mobile", icon: Smartphone, labelKey: "studio.device.mobile" },
 ];
 
 /**
@@ -29,23 +30,25 @@ const devices: { size: DeviceSize; icon: typeof Monitor; label: string }[] = [
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DeviceToggle({ deviceSize, setDeviceSize }: DeviceToggleProps) {
+  const { t } = useI18n();
   return (
-    <div className="flex items-center gap-0.5 rounded-lg bg-muted/50 p-0.5">
-      {devices.map(({ size, icon: Icon, label }) => (
+    <div className="flex items-center gap-0.5 rounded-nx-control bg-nx-raised p-0.5">
+      {devices.map(({ size, icon: Icon, labelKey }) => (
         <Button
           key={size}
           variant="ghost"
           size="sm"
           onClick={() => setDeviceSize(size)}
+          aria-label={t(labelKey)}
+          aria-pressed={deviceSize === size}
           className={cn(
-            "h-7 gap-1 px-2 text-xs",
+            "h-7 gap-1 rounded-nx-sm px-2 text-xs",
             deviceSize === size
-              ? "bg-background text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
+              ? "bg-nx-surface text-nx-ink shadow-[inset_0_0_0_1px_var(--nx-line-hi)]"
+              : "text-nx-ink-2 hover:text-nx-ink"
           )}
-          title={label}
         >
-          <Icon className="h-3.5 w-3.5" />
+          <Icon className="h-3.5 w-3.5" aria-hidden="true" />
         </Button>
       ))}
     </div>

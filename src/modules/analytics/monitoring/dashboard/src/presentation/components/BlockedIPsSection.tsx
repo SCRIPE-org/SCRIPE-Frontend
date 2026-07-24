@@ -37,7 +37,7 @@ export const BlockedIPsSection = memo(function BlockedIPsSection({
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Globe className="h-5 w-5 text-destructive" />
+          <Globe className="h-5 w-5 text-destructive" aria-hidden="true" />
           <div>
             <CardTitle>{t("dashboard.blockedIPs.title")}</CardTitle>
             <CardDescription>{t("dashboard.blockedIPs.description")}</CardDescription>
@@ -82,8 +82,8 @@ export const BlockedIPsSection = memo(function BlockedIPsSection({
                       {ip.failedCount}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">{ip.lastUsername ?? "—"}</TableCell>
-                  <TableCell className="text-sm tabular-nums text-muted-foreground">
+                  <TableCell className="text-nx-ink-2">{ip.lastUsername ?? "—"}</TableCell>
+                  <TableCell className="text-sm tabular-nums text-nx-ink-2">
                     {formatDateTimeUtc(ip.latestAttempt)}
                   </TableCell>
                 </TableRow>

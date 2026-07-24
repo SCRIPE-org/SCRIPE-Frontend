@@ -54,32 +54,32 @@ export function PayoutsKpiRow({
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <StatCard
         icon={DollarSign}
-        label={t("entitlements.stripeConnect.lifetimeGross") || "Total Gross"}
+        label={t("entitlements.stripeConnect.lifetimeGross")}
         value={fmt(lifetimeGross)}
-        subtitle={`${lifetimePaid} ${t("entitlements.stripeConnect.transactions") || "transactions"}`}
+        subtitle={`${lifetimePaid} ${t("entitlements.stripeConnect.transactions")}`}
       />
       <StatCard
         icon={Receipt}
-        label={t("entitlements.stripeConnect.platformFee") || "Platform Fee"}
+        label={t("entitlements.stripeConnect.platformFee")}
         value={fmt(lifetimeFee)}
-        subtitle={`${(effectiveRate * 100).toFixed(1)}% ${t("entitlements.stripeConnect.commissionRate") || "rate"}`}
+        subtitle={`${(effectiveRate * 100).toFixed(1)}% ${t("entitlements.stripeConnect.commissionRate")}`}
         tone="danger"
       />
       <StatCard
         icon={Banknote}
-        label={t("entitlements.stripeConnect.netEarnings") || "Net Earnings"}
+        label={t("entitlements.stripeConnect.netEarnings")}
         value={fmt(lifetimeNet)}
-        subtitle={t("entitlements.stripeConnect.afterFees") || "After platform fees"}
+        subtitle={t("entitlements.stripeConnect.afterFees")}
         tone="success"
       />
       <StatCard
         icon={TrendingUp}
-        label={t("entitlements.stripeConnect.payoutsEnabled") || "Payouts Enabled"}
-        value={payoutsEnabled ? t("common.yes") || "Yes" : t("common.pending") || "Pending"}
+        label={t("entitlements.stripeConnect.payoutsEnabled")}
+        value={payoutsEnabled ? t("common.yes") : t("common.pending")}
         subtitle={
           chargesEnabled
-            ? t("entitlements.stripeConnect.chargesActive") || "Charges active"
-            : t("entitlements.stripeConnect.onboardingRequired") || "Complete setup"
+            ? t("entitlements.stripeConnect.chargesActive")
+            : t("entitlements.stripeConnect.onboardingRequired")
         }
         tone={payoutsEnabled ? "success" : "neutral"}
       />

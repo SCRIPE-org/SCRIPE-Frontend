@@ -11,7 +11,9 @@ import { useOAuthAppDetailViewModel } from "../viewmodels/useOAuthAppDetailViewM
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import { ArrowLeft, Save, Loader2, AppWindow, AlertCircle } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { ErrorMessage } from "@core/ui/error-message";
+import { ArrowLeft, Save, AppWindow } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import Image from "next/image";
 import { GeneratedSecretAlert } from "../components/GeneratedSecretAlert";
@@ -43,14 +45,7 @@ export function OAuthAppDetailView({ appId }: Props) {
   if (!vm.isCreateMode && vm.isLoading) {
     return (
       <div className="flex min-h-[450px] items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="relative flex h-12 w-12 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 shadow-[0_0_15px_hsl(var(--primary)/0.1)]">
-            <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {t("common.loading") || "Loading details..."}
-          </p>
-        </div>
+        <LoadingSpinner />
       </div>
     );
   }
@@ -59,35 +54,33 @@ export function OAuthAppDetailView({ appId }: Props) {
   if (vm.fetchError) {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center gap-4">
-        <div className="rounded-full border border-destructive/20 bg-destructive/10 p-3 text-destructive">
-          <AlertCircle className="h-8 w-8" />
-        </div>
-        <p className="text-sm font-medium text-destructive">
-          {t("common.error") || "Error"}: {(vm.fetchError as Error).message}
-        </p>
+        <ErrorMessage
+          message={`${t("common.error")}: ${(vm.fetchError as Error).message}`}
+        />
         <Button variant="outline" size="sm" onClick={vm.goBack}>
-          <ArrowLeft className="me-2 h-4 w-4" />
-          {t("common.goBack") || "Go Back"}
+          <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" aria-hidden="true" />
+          {t("common.goBack")}
         </Button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 pb-12 duration-300 animate-in fade-in">
+    <div className="space-y-6 pb-12 duration-nx-standard animate-in fade-in">
       {/* ─── Header ────────────────────────────────── */}
-      <div className="flex flex-col gap-4 border-b pb-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 border-b border-nx-line pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
             size="icon"
             onClick={vm.goBack}
-            className="shrink-0 hover:bg-muted"
+            aria-label={t("common.goBack")}
+            className="shrink-0"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-5 w-5 rtl:rotate-180" aria-hidden="true" />
           </Button>
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/5 p-1.5 shadow-[0_0_15px_hsl(var(--primary)/0.03)]">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-nx-md border border-nx-line bg-nx-accent-wash p-1.5">
               {vm.form.logoUri ? (
                 <Image
                   src={vm.form.logoUri}
@@ -98,35 +91,28 @@ export function OAuthAppDetailView({ appId }: Props) {
                   unoptimized
                 />
               ) : (
-                <AppWindow className="h-6 w-6 text-primary" />
+                <AppWindow className="h-6 w-6 text-nx-accent" aria-hidden="true" />
               )}
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-foreground">
+              <h1 className="text-xl font-bold tracking-tight text-nx-ink">
                 {vm.isCreateMode
-                  ? t("oauthApps.createTitle") || "New Application Integration"
-                  : vm.form.displayName || t("oauthApps.editTitle") || "Edit Application"}
+                  ? t("oauthApps.createTitle")
+                  : vm.form.displayName || t("oauthApps.editTitle")}
               </h1>
               {!vm.isCreateMode && vm.app && (
                 <div className="mt-0.5 flex items-center gap-2">
-                  <Badge
-                    variant="outline"
-                    className="border-border/80 px-1.5 py-0 font-mono text-[10px] uppercase"
-                  >
+                  <Badge variant="outline" className="px-1.5 py-0 font-mono text-[10px] uppercase">
                     {vm.form.protocol}
                   </Badge>
-                  <Badge
-                    variant="outline"
-                    className="border-border/80 px-1.5 py-0 font-mono text-[10px]"
-                  >
-                    {vm.form.clientType === "confidential" ? "Confidential" : "Public"}
+                  <Badge variant="outline" className="px-1.5 py-0 font-mono text-[10px]">
+                    {vm.form.clientType === "confidential"
+                      ? t("oauthApps.clientTypeConfidential")
+                      : t("oauthApps.clientTypePublic")}
                   </Badge>
                   {!vm.form.isActive && (
-                    <Badge
-                      variant="secondary"
-                      className="bg-destructive/10 px-1.5 py-0 text-[10px] text-destructive"
-                    >
-                      Inactive
+                    <Badge variant="destructive" className="px-1.5 py-0 text-[10px]">
+                      {t("common.inactive")}
                     </Badge>
                   )}
                 </div>
@@ -137,15 +123,9 @@ export function OAuthAppDetailView({ appId }: Props) {
 
         {!vm.isCreateMode && (
           <div className="flex items-center gap-2 self-end sm:self-center">
-            <Button
-              onClick={vm.save}
-              disabled={!vm.isDirty}
-              loading={vm.isSaving}
-              size="sm"
-              className="bg-gradient-to-r from-primary to-info font-semibold text-primary-foreground shadow hover:opacity-95"
-            >
-              {!vm.isSaving && <Save className="me-1.5 h-4 w-4" />}
-              {t("common.save") || "Save Changes"}
+            <Button onClick={vm.save} disabled={!vm.isDirty} loading={vm.isSaving} size="sm">
+              {!vm.isSaving && <Save className="me-1.5 h-4 w-4" aria-hidden="true" />}
+              {t("common.saveChanges")}
             </Button>
           </div>
         )}
@@ -153,10 +133,9 @@ export function OAuthAppDetailView({ appId }: Props) {
 
       {/* Dirty indicator */}
       {vm.isDirty && !vm.isCreateMode && (
-        <div className="flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-xs text-warning duration-200 animate-in fade-in">
-          <span className="h-1.5 w-1.5 rounded-full bg-warning" />
-          {t("common.unsavedChanges") ||
-            "You have unsaved changes in your workspace. Remember to save."}
+        <div className="flex items-center gap-2 rounded-nx-md border border-warning/30 bg-warning/10 px-3 py-2 text-xs text-warning duration-nx-standard animate-in fade-in">
+          <span className="h-1.5 w-1.5 rounded-full bg-warning" aria-hidden="true" />
+          {t("common.unsavedChanges")}
         </div>
       )}
 

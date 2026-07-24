@@ -15,6 +15,7 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  chartColor,
   type ChartConfig,
 } from "@core/ui/chart";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
@@ -46,11 +47,11 @@ export const LoginComparisonChart = memo(function LoginComparisonChart({
     () => ({
       successful: {
         label: t("tenantAnalytics.comparison.successful"),
-        color: "hsl(var(--chart-2))",
+        color: chartColor(2),
       },
       failed: {
         label: t("tenantAnalytics.comparison.failed"),
-        color: "hsl(var(--chart-5))",
+        color: chartColor(5),
       },
     }),
     [t]
@@ -95,7 +96,7 @@ export const LoginComparisonChart = memo(function LoginComparisonChart({
                   <stop offset="95%" stopColor="var(--color-failed)" stopOpacity={0.1} />
                 </linearGradient>
               </defs>
-              <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-muted" />
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
               <XAxis dataKey="date" tickLine={false} axisLine={false} className="text-xs" />
               <YAxis allowDecimals={false} tickLine={false} axisLine={false} className="text-xs" />
               <ChartTooltip content={<ChartTooltipContent />} />

@@ -10,9 +10,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Separator } from "@core/ui/separator";
+import { DetailRow } from "@core/ui/detail-row";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { CreditCard, ExternalLink, Receipt, Sparkles, XSquare } from "lucide-react";
-import { InfoRow } from "./InfoRow";
 import type { SubscriptionListItem } from "../../../domain/entities/Subscription";
 import type { useSubscriptionsViewModel } from "../../viewmodels/useSubscriptionsViewModel";
 
@@ -32,27 +32,27 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
   // Free edition — no gateway card needed
   if (!hasGatewayCustomer && (sub.totalAmount ?? 0) === 0) {
     return (
-      <Card className="border-dashed border-border/50">
+      <Card className="border-dashed">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted-foreground/10">
-              <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-nx-md bg-nx-raised">
+              <CreditCard className="h-4 w-4 text-nx-ink-2" aria-hidden="true" />
             </div>
             <CardTitle className="text-sm font-semibold">
-              {t("entSubscriptions.paymentGateway") || "Payment Gateway"}
+              {t("entSubscriptions.paymentGateway")}
             </CardTitle>
           </div>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-6 text-center">
-            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-muted/50">
-              <Sparkles className="h-5 w-5 text-muted-foreground" />
+            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-nx-raised">
+              <Sparkles className="h-5 w-5 text-nx-ink-2" aria-hidden="true" />
             </div>
-            <p className="text-sm font-medium text-muted-foreground">
-              {t("entSubscriptions.freeEdition") || "Free Edition"}
+            <p className="text-sm font-medium text-nx-ink-2">
+              {t("entSubscriptions.freeEdition")}
             </p>
-            <p className="mt-1 text-xs text-muted-foreground/70">
-              {t("entSubscriptions.noPaymentGateway") || "No payment gateway required"}
+            <p className="mt-1 text-xs text-nx-ink-3">
+              {t("entSubscriptions.noPaymentGateway")}
             </p>
           </div>
         </CardContent>
@@ -61,27 +61,27 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
   }
 
   return (
-    <Card className="border-border/50">
+    <Card>
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-            <CreditCard className="h-4 w-4 text-primary" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-nx-md bg-nx-accent-wash">
+            <CreditCard className="h-4 w-4 text-nx-accent" aria-hidden="true" />
           </div>
           <CardTitle className="text-sm font-semibold">
-            {sub.paymentGateway || t("entSubscriptions.paymentGateway") || "Payment Gateway"}
+            {sub.paymentGateway || t("entSubscriptions.paymentGateway")}
           </CardTitle>
         </div>
       </CardHeader>
       <CardContent className="space-y-0">
-        <InfoRow
-          icon={<CreditCard className="h-3.5 w-3.5" />}
-          label={t("entSubscriptions.customer") || "Customer"}
+        <DetailRow
+          icon={CreditCard}
+          label={t("entSubscriptions.customer")}
           value={
             sub.gatewayCustomerId ? (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">
+                    <code className="rounded-nx-sm bg-nx-raised px-1.5 py-0.5 font-mono text-xs">
                       {sub.gatewayCustomerId.slice(0, 14)}...
                     </code>
                   </TooltipTrigger>
@@ -89,22 +89,20 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
                 </Tooltip>
               </TooltipProvider>
             ) : (
-              <span className="text-xs text-muted-foreground">
-                {t("entSubscriptions.notCreated") || "Not created"}
-              </span>
+              <span className="text-xs text-nx-ink-2">{t("entSubscriptions.notCreated")}</span>
             )
           }
         />
         <Separator />
-        <InfoRow
-          icon={<Receipt className="h-3.5 w-3.5" />}
-          label={t("entSubscriptions.subscription") || "Subscription"}
+        <DetailRow
+          icon={Receipt}
+          label={t("entSubscriptions.subscription")}
           value={
             sub.gatewaySubscriptionId ? (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">
+                    <code className="rounded-nx-sm bg-nx-raised px-1.5 py-0.5 font-mono text-xs">
                       {sub.gatewaySubscriptionId.slice(0, 14)}...
                     </code>
                   </TooltipTrigger>
@@ -112,9 +110,7 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
                 </Tooltip>
               </TooltipProvider>
             ) : (
-              <span className="text-xs text-muted-foreground">
-                {t("entSubscriptions.notLinked") || "Not linked"}
-              </span>
+              <span className="text-xs text-nx-ink-2">{t("entSubscriptions.notLinked")}</span>
             )
           }
         />
@@ -131,8 +127,8 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
                   onClick={() => vm.openBillingPortal()}
                   disabled={vm.isOpeningPortal}
                 >
-                  <ExternalLink className="h-3.5 w-3.5" />
-                  {t("billing.actions.openPortal") || "Open Billing Portal"}
+                  <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                  {t("billing.actions.openPortal")}
                 </Button>
               )}
               {sub.gatewaySubscriptionId && (
@@ -142,9 +138,8 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
                   className="w-full cursor-pointer gap-2 border-destructive/30 text-destructive hover:bg-destructive/10"
                   onClick={() => vm.setShowCancelGatewayDialog(true)}
                 >
-                  <XSquare className="h-3.5 w-3.5" />
-                  {t("billing.actions.cancelGateway") ||
-                    `Cancel ${sub.paymentGateway || "Gateway"} Subscription`}
+                  <XSquare className="h-3.5 w-3.5" aria-hidden="true" />
+                  {t("billing.actions.cancelGateway")}
                 </Button>
               )}
             </div>

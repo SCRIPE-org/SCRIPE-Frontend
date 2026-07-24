@@ -4,45 +4,22 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { StatCard } from "@core/ui/stat-card";
-import { Badge } from "@core/ui/badge";
+import { Badge, type BadgeProps } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { Skeleton } from "@core/ui/skeleton";
+import { SectionState } from "@core/ui/section-state";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import {
-  ArrowUpRight,
-  ArrowDownLeft,
-  ChevronLeft,
-  ChevronRight,
-  CreditCard,
-  Zap,
-  Banknote,
-} from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
+import { ArrowUpRight, ArrowDownLeft, ChevronLeft, ChevronRight, Zap, Banknote } from "lucide-react";
 import type { TenantTransactionsResult } from "../../domain/entities/ConnectAccount";
 
-const TXN_STATUS_OPTIONS = [
-  { value: "ALL", label: "All Statuses" },
-  { value: "Pending", label: "Pending" },
-  { value: "Collected", label: "Collected" },
-  { value: "Refunded", label: "Refunded" },
-  { value: "PartiallyRefunded", label: "Partial Refund" },
-] as const;
+const TXN_STATUS_OPTIONS = ["ALL", "Pending", "Collected", "Refunded", "PartiallyRefunded"] as const;
+const TXN_TYPE_OPTIONS = ["ALL", "Payment", "Refund", "PartialRefund"] as const;
 
-const TXN_TYPE_OPTIONS = [
-  { value: "ALL", label: "All Types" },
-  { value: "Payment", label: "Payment" },
-  { value: "Refund", label: "Refund" },
-  { value: "PartialRefund", label: "Partial Refund" },
-] as const;
-
-const TXN_STATUS_STYLES: Record<string, string> = {
-  Pending:
-    "bg-warning/10 text-warning border-warning/30",
-  Collected:
-    "bg-success/10 text-success border-success/30",
-  Refunded:
-    "bg-destructive/10 text-destructive border-destructive/30",
-  PartiallyRefunded:
-    "bg-warning/10 text-warning border-warning/30",
+const STATUS_VARIANT: Record<string, BadgeProps["variant"]> = {
+  Pending: "warning",
+  Collected: "success",
+  Refunded: "destructive",
+  PartiallyRefunded: "warning",
 };
 
 interface StripeTransactionsLogProps {
@@ -94,6 +71,13 @@ export function StripeTransactionsLog({
     }).format(new Date(dateStr));
   };
 
+  // Filter option labels resolve at render time, since the dictionary is only
+  // available inside the component.
+  const statusLabel = (value: string) =>
+    value === "ALL" ? t("common.all") : t(`entitlements.stripeConnect.status${value}`);
+  const typeLabel = (value: string) =>
+    value === "ALL" ? t("common.all") : t(`entitlements.tenantConnect.txn.type${value}`);
+
   const summary = transactions?.summary;
   const txnItems = transactions?.transactions?.items ?? [];
   const totalCount = transactions?.transactions?.totalCount ?? 0;
@@ -106,50 +90,55 @@ export function StripeTransactionsLog({
   return (
     <div className="space-y-4">
       {/* Financial Summary KPIs */}
-      {summary && (
+      {isLoading ? (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard
-            icon={ArrowUpRight}
-            tone="success"
-            label={t("entitlements.tenantConnect.txn.grossRevenue") || "Gross Revenue"}
-            value={formatCurrency(summary.totalGrossRevenue, summary.currency)}
-            subtitle={`${summary.totalTransactions} ${t("entitlements.tenantConnect.transactions") || "transactions"}`}
-          />
-          <StatCard
-            icon={Zap}
-            tone="neutral"
-            label={t("entitlements.tenantConnect.txn.platformFees") || "Platform Fees"}
-            value={formatCurrency(summary.totalPlatformFees, summary.currency)}
-            subtitle={t("entitlements.tenantConnect.txn.deducted") || "deducted by platform"}
-          />
-          <StatCard
-            icon={Banknote}
-            tone="info"
-            label={t("entitlements.tenantConnect.txn.netRevenue") || "Net Revenue"}
-            value={formatCurrency(summary.totalNetRevenue, summary.currency)}
-            subtitle={t("entitlements.tenantConnect.txn.yourEarnings") || "your earnings"}
-          />
-          <StatCard
-            icon={ArrowDownLeft}
-            tone="danger"
-            label={t("entitlements.tenantConnect.txn.refunded") || "Refunded"}
-            value={formatCurrency(summary.totalRefunded, summary.currency)}
-            subtitle={`${summary.refundCount} ${t("entitlements.tenantConnect.txn.refunds") || "refunds"}`}
-          />
+          {Array.from({ length: 4 }).map((_, i) => (
+            <StatCard key={i} isLoading label="" value="" />
+          ))}
         </div>
+      ) : (
+        summary && (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard
+              icon={ArrowUpRight}
+              tone="success"
+              label={t("entitlements.tenantConnect.txn.grossRevenue")}
+              value={formatCurrency(summary.totalGrossRevenue, summary.currency)}
+              subtitle={`${summary.totalTransactions} ${t("entitlements.tenantConnect.transactions")}`}
+            />
+            <StatCard
+              icon={Zap}
+              tone="neutral"
+              label={t("entitlements.tenantConnect.txn.platformFees")}
+              value={formatCurrency(summary.totalPlatformFees, summary.currency)}
+              subtitle={t("entitlements.tenantConnect.txn.deducted")}
+            />
+            <StatCard
+              icon={Banknote}
+              tone="info"
+              label={t("entitlements.tenantConnect.txn.netRevenue")}
+              value={formatCurrency(summary.totalNetRevenue, summary.currency)}
+              subtitle={t("entitlements.tenantConnect.txn.yourEarnings")}
+            />
+            <StatCard
+              icon={ArrowDownLeft}
+              tone="danger"
+              label={t("entitlements.tenantConnect.txn.refunded")}
+              value={formatCurrency(summary.totalRefunded, summary.currency)}
+              subtitle={`${summary.refundCount} ${t("entitlements.tenantConnect.txn.refunds")}`}
+            />
+          </div>
+        )
       )}
 
       {/* Transactions Table */}
-      <Card className="shadow-sm">
-        <CardHeader className="border-b bg-muted/10 pb-3">
+      <Card>
+        <CardHeader className="border-b border-nx-line pb-3">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <CardTitle className="text-base font-bold tracking-tight text-foreground/95">
-                {t("entitlements.tenantConnect.txn.title") || "Recent Transactions"}
-              </CardTitle>
-              <CardDescription className="mt-0.5 text-xs">
-                {t("entitlements.tenantConnect.txn.desc") ||
-                  "Payments received, platform fees, and refunds"}
+              <CardTitle className="text-base">{t("entitlements.tenantConnect.txn.title")}</CardTitle>
+              <CardDescription className="mt-0.5">
+                {t("entitlements.tenantConnect.txn.desc")}
               </CardDescription>
             </div>
             <div className="flex flex-wrap items-center gap-3">
@@ -162,17 +151,16 @@ export function StripeTransactionsLog({
                     setPage(1);
                   }}
                 >
-                  <SelectTrigger className="h-8 text-xs font-semibold">
-                    <SelectValue placeholder="Status" />
+                  <SelectTrigger
+                    className="h-8 text-xs font-semibold"
+                    aria-label={t("common.status")}
+                  >
+                    <SelectValue placeholder={t("common.status")} />
                   </SelectTrigger>
                   <SelectContent>
                     {TXN_STATUS_OPTIONS.map((opt) => (
-                      <SelectItem
-                        key={opt.value}
-                        value={opt.value}
-                        className="text-xs font-semibold"
-                      >
-                        {opt.label}
+                      <SelectItem key={opt} value={opt} className="text-xs font-semibold">
+                        {statusLabel(opt)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -188,17 +176,16 @@ export function StripeTransactionsLog({
                     setPage(1);
                   }}
                 >
-                  <SelectTrigger className="h-8 text-xs font-semibold">
-                    <SelectValue placeholder="Type" />
+                  <SelectTrigger
+                    className="h-8 text-xs font-semibold"
+                    aria-label={t("entitlements.tenantConnect.txn.col.type")}
+                  >
+                    <SelectValue placeholder={t("entitlements.tenantConnect.txn.col.type")} />
                   </SelectTrigger>
                   <SelectContent>
                     {TXN_TYPE_OPTIONS.map((opt) => (
-                      <SelectItem
-                        key={opt.value}
-                        value={opt.value}
-                        className="text-xs font-semibold"
-                      >
-                        {opt.label}
+                      <SelectItem key={opt} value={opt} className="text-xs font-semibold">
+                        {typeLabel(opt)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -208,142 +195,125 @@ export function StripeTransactionsLog({
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          {isLoading ? (
-            <div className="space-y-3 p-6">
-              {[...Array(5)].map((_, i) => (
-                <Skeleton key={i} className="h-12 w-full rounded-lg" />
-              ))}
-            </div>
-          ) : txnItems.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="mb-3 rounded-2xl bg-muted/50 p-4">
-                <CreditCard className="h-8 w-8 text-muted-foreground/80" />
-              </div>
-              <p className="text-sm font-semibold text-muted-foreground/85">
-                {t("entitlements.tenantConnect.txn.empty") || "No transactions found."}
-              </p>
-            </div>
-          ) : (
+          <SectionState
+            isLoading={isLoading}
+            isEmpty={txnItems.length === 0}
+            emptyMessage={t("entitlements.tenantConnect.txn.empty")}
+            skeletonType="rows"
+            skeletonRows={5}
+          >
             <div className="space-y-4 p-6 pt-4">
-              {/* Table */}
-              <div className="overflow-x-auto rounded-lg border border-border">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b bg-muted/20 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground/90">
-                      <th className="px-4 py-3 text-start font-semibold">
-                        {t("entitlements.tenantConnect.txn.col.date") || "Date"}
-                      </th>
-                      <th className="px-4 py-3 text-start font-semibold">
-                        {t("entitlements.tenantConnect.txn.col.type") || "Type"}
-                      </th>
-                      <th className="px-4 py-3 text-right font-semibold">
-                        {t("entitlements.tenantConnect.txn.col.gross") || "Gross"}
-                      </th>
-                      <th className="px-4 py-3 text-right font-semibold">
-                        {t("entitlements.tenantConnect.txn.col.fee") || "Fee"}
-                      </th>
-                      <th className="px-4 py-3 text-right font-semibold">
-                        {t("entitlements.tenantConnect.txn.col.net") || "Net"}
-                      </th>
-                      <th className="px-4 py-3 text-start font-semibold">
-                        {t("entitlements.tenantConnect.txn.col.status") || "Status"}
-                      </th>
-                      <th className="px-4 py-3 text-right font-semibold">
-                        {t("entitlements.tenantConnect.txn.col.refund") || "Refund"}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {txnItems.map((txn) => (
-                      <tr key={txn.id} className="transition-colors hover:bg-muted/30">
-                        <td className="whitespace-nowrap px-4 py-3.5 text-xs font-semibold tabular-nums text-foreground/80">
-                          {formatDate(txn.transactionDate)}
-                        </td>
-                        <td className="px-4 py-3.5">
-                          <div className="flex items-center gap-1.5">
-                            {txn.type === "Payment" ? (
-                              <ArrowUpRight className="h-3.5 w-3.5 text-success" />
-                            ) : (
-                              <ArrowDownLeft className="h-3.5 w-3.5 text-destructive" />
-                            )}
-                            <span className="text-xs font-bold text-foreground/80">{txn.type}</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3.5 text-right text-xs font-bold tabular-nums text-foreground/90">
-                          {formatCurrency(txn.grossAmount, txn.currency)}
-                        </td>
-                        <td className="px-4 py-3.5 text-right text-xs font-semibold tabular-nums text-muted-foreground/85">
-                          −{formatCurrency(txn.platformFee, txn.currency)}
-                        </td>
-                        <td className="px-4 py-3.5 text-right text-xs font-extrabold tabular-nums text-foreground">
-                          {formatCurrency(txn.netAmount, txn.currency)}
-                        </td>
-                        <td className="px-4 py-3.5">
-                          <Badge
-                            variant="outline"
-                            className={`border px-2 py-0.5 text-[10px] font-extrabold tracking-wide ${
-                              TXN_STATUS_STYLES[txn.status] || "bg-muted text-foreground"
-                            }`}
-                          >
-                            {txn.status}
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3.5 text-right text-xs font-semibold tabular-nums">
-                          {txn.refundedAmount != null && txn.refundedAmount > 0 ? (
-                            <span className="font-bold text-destructive">
-                              −{formatCurrency(txn.refundedAmount, txn.currency)}
-                            </span>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("entitlements.tenantConnect.txn.col.date")}</TableHead>
+                    <TableHead>{t("entitlements.tenantConnect.txn.col.type")}</TableHead>
+                    <TableHead variant="numeric">
+                      {t("entitlements.tenantConnect.txn.col.gross")}
+                    </TableHead>
+                    <TableHead variant="numeric">
+                      {t("entitlements.tenantConnect.txn.col.fee")}
+                    </TableHead>
+                    <TableHead variant="numeric">
+                      {t("entitlements.tenantConnect.txn.col.net")}
+                    </TableHead>
+                    <TableHead>{t("entitlements.tenantConnect.txn.col.status")}</TableHead>
+                    <TableHead variant="numeric">
+                      {t("entitlements.tenantConnect.txn.col.refund")}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {txnItems.map((txn) => (
+                    <TableRow key={txn.id}>
+                      <TableCell className="whitespace-nowrap text-xs font-semibold tabular-nums text-nx-ink-2">
+                        {formatDate(txn.transactionDate)}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1.5">
+                          {txn.type === "Payment" ? (
+                            <ArrowUpRight className="h-3.5 w-3.5 text-success" aria-hidden="true" />
                           ) : (
-                            <span className="text-muted-foreground/50">—</span>
+                            <ArrowDownLeft
+                              className="h-3.5 w-3.5 text-destructive"
+                              aria-hidden="true"
+                            />
                           )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                          <span className="text-xs font-bold text-nx-ink-2">
+                            {t(`entitlements.tenantConnect.txn.type${txn.type}`)}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell variant="numeric" className="text-xs font-bold text-nx-ink">
+                        {formatCurrency(txn.grossAmount, txn.currency)}
+                      </TableCell>
+                      <TableCell variant="numeric" className="text-xs font-semibold text-nx-ink-2">
+                        −{formatCurrency(txn.platformFee, txn.currency)}
+                      </TableCell>
+                      <TableCell variant="numeric" className="text-xs font-extrabold text-nx-ink">
+                        {formatCurrency(txn.netAmount, txn.currency)}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={STATUS_VARIANT[txn.status] ?? "secondary"}>
+                          {t(`entitlements.stripeConnect.status${txn.status}`)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell variant="numeric" className="text-xs font-semibold">
+                        {txn.refundedAmount != null && txn.refundedAmount > 0 ? (
+                          <span className="font-bold text-destructive">
+                            −{formatCurrency(txn.refundedAmount, txn.currency)}
+                          </span>
+                        ) : (
+                          <span className="text-nx-ink-3">—</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-between border-t pt-4">
-                  <p className="text-xs font-semibold text-muted-foreground/85">
-                    {t("entitlements.tenantConnect.txn.showing") || "Showing"}{" "}
-                    <span className="font-bold text-foreground/80">
+                <div className="flex items-center justify-between border-t border-nx-line pt-4">
+                  <p className="text-xs font-semibold text-nx-ink-2">
+                    {t("entitlements.tenantConnect.txn.showing")}{" "}
+                    <span className="font-bold text-nx-ink">
                       {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalCount)}
                     </span>{" "}
-                    {t("entitlements.tenantConnect.txn.of") || "of"}{" "}
-                    <span className="font-bold text-foreground/80">{totalCount}</span>
+                    {t("entitlements.tenantConnect.txn.of")}{" "}
+                    <span className="font-bold text-nx-ink">{totalCount}</span>
                   </p>
                   <div className="flex items-center gap-1.5">
                     <Button
                       variant="ghost"
-                      size="sm"
+                      size="icon"
+                      className="h-7 w-7"
                       onClick={() => setPage(page - 1)}
                       disabled={page <= 1}
-                      className="h-7 w-7 p-0"
+                      aria-label={t("common.previous")}
                     >
-                      <ChevronLeft className="h-4 w-4" />
+                      <ChevronLeft className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
                     </Button>
-                    <span className="px-2 text-xs font-bold tabular-nums text-foreground/90">
+                    <span className="px-2 text-xs font-bold tabular-nums text-nx-ink">
                       {page} / {totalPages}
                     </span>
                     <Button
                       variant="ghost"
-                      size="sm"
+                      size="icon"
+                      className="h-7 w-7"
                       onClick={() => setPage(page + 1)}
                       disabled={page >= totalPages}
-                      className="h-7 w-7 p-0"
+                      aria-label={t("common.next")}
                     >
-                      <ChevronRight className="h-4 w-4" />
+                      <ChevronRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
                     </Button>
                   </div>
                 </div>
               )}
             </div>
-          )}
+          </SectionState>
         </CardContent>
       </Card>
     </div>
   );
 }
-

@@ -31,7 +31,7 @@ const eventConfig: Record<string, { icon: typeof AlertTriangle; color: string; b
       color: "text-destructive",
       bgColor: "bg-destructive/10",
     },
-    SessionRevoked: { icon: LogOut, color: "text-primary", bgColor: "bg-primary/10" },
+    SessionRevoked: { icon: LogOut, color: "text-nx-accent", bgColor: "bg-nx-accent-wash" },
     PasswordReset: { icon: KeyRound, color: "text-info", bgColor: "bg-info/10" },
   };
 
@@ -50,7 +50,7 @@ export const SecurityEventsSection = memo(function SecurityEventsSection({
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <ShieldAlert className="h-5 w-5 text-muted-foreground" />
+          <ShieldAlert className="h-5 w-5 text-nx-ink-2" aria-hidden="true" />
           <div>
             <CardTitle>{t("dashboard.securityEvents.title")}</CardTitle>
             <CardDescription>{t("dashboard.securityEvents.description")}</CardDescription>
@@ -72,24 +72,26 @@ export const SecurityEventsSection = memo(function SecurityEventsSection({
             {data.map((event) => {
               const config = eventConfig[event.eventType] ?? {
                 icon: AlertTriangle,
-                color: "text-muted-foreground",
-                bgColor: "bg-muted",
+                color: "text-nx-ink-2",
+                bgColor: "bg-nx-raised",
               };
               const Icon = config.icon;
               return (
                 <div
                   key={event.eventType}
-                  className="flex items-center justify-between rounded-lg border p-2.5 transition-colors hover:bg-muted/30"
+                  className="flex items-center justify-between rounded-nx-md border border-nx-line p-2.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover"
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`rounded-lg p-2 ${config.bgColor}`}>
-                      <Icon className={`h-4 w-4 ${config.color}`} />
+                    <div className={`rounded-nx-md p-2 ${config.bgColor}`}>
+                      <Icon className={`h-4 w-4 ${config.color}`} aria-hidden="true" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">{event.eventType}</p>
+                      <p className="text-sm font-medium text-nx-ink">{event.eventType}</p>
                       {event.latestOccurrence && (
-                        <p className="text-[10px] text-muted-foreground">
-                          Last: {formatDateTimeUtc(event.latestOccurrence)}
+                        <p className="text-[10px] text-nx-ink-3">
+                          {t("dashboard.securityEvents.lastOccurrence", {
+                            date: formatDateTimeUtc(event.latestOccurrence),
+                          })}
                         </p>
                       )}
                     </div>

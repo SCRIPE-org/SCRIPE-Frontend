@@ -24,32 +24,28 @@ export function OAuthAppMetadataCard({
   const { t } = useI18n();
 
   return (
-    <Card className="space-y-3 border border-border/80 bg-card/45 p-4 backdrop-blur-md">
-      <h3 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-        <Clock className="h-4 w-4" />
-        {t("oauthApps.metadata") || "Information"}
+    <Card className="space-y-3 p-4">
+      <h3 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-nx-ink-3">
+        <Clock className="h-4 w-4" aria-hidden="true" />
+        {t("oauthApps.metadata")}
       </h3>
       <div className="space-y-2 text-xs">
-        <div className="flex justify-between border-b border-border/40 pb-1.5">
-          <span className="text-muted-foreground">{t("common.createdAt") || "Created"}:</span>
-          <span className="font-medium text-foreground">
+        <div className="flex justify-between border-b border-nx-line pb-1.5">
+          <span className="text-nx-ink-2">{t("common.createdAt")}:</span>
+          <span className="font-medium text-nx-ink">
             {createdAt ? formatDateTimeUtc(createdAt) : "—"}
           </span>
         </div>
-        <div className="flex justify-between border-b border-border/40 pb-1.5">
-          <span className="text-muted-foreground">
-            {t("common.modifiedAt") || "Last modified"}:
-          </span>
-          <span className="font-medium text-foreground">
+        <div className="flex justify-between border-b border-nx-line pb-1.5">
+          <span className="text-nx-ink-2">{t("common.modifiedAt")}:</span>
+          <span className="font-medium text-nx-ink">
             {modifiedAt ? formatDateTimeUtc(modifiedAt) : "—"}
           </span>
         </div>
         {tenantId && (
           <div className="flex items-center justify-between pt-0.5">
-            <span className="text-muted-foreground">
-              {t("oauthApps.tenantScoped") || "Tenant"}:
-            </span>
-            <Badge variant="outline" className="border-border/80 px-1.5 py-0 font-mono text-[10px]">
+            <span className="text-nx-ink-2">{t("oauthApps.tenantScoped")}:</span>
+            <Badge variant="outline" className="px-1.5 py-0 font-mono text-[10px]">
               {tenantId}
             </Badge>
           </div>

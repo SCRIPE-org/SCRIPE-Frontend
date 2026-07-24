@@ -4,6 +4,7 @@ import { useState, Fragment } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { ArrowRight, Save } from "lucide-react";
+import { cn } from "@core/common/utils";
 import { GeneralSection } from "./GeneralSection";
 import { EndpointsSection } from "./EndpointsSection";
 import { ScopesGrantsSection } from "./ScopesGrantsSection";
@@ -34,6 +35,10 @@ interface OAuthAppWizardProps {
   };
 }
 
+// One transition per step change: a crossfade only. A positional slide belongs
+// to an edge-attached panel (Sheet/drawer), not a step of in-place content.
+const STEP_TRANSITION = "duration-nx-standard animate-in fade-in motion-reduce:transition-none";
+
 /**
  * Presentation UI component rendering the o auth app wizard.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
@@ -60,53 +65,49 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
   const steps =
     vm.form.protocol === "saml"
       ? [
-          { id: 1, label: t("oauthApps.stepProtocol") || "Protocol" },
-          { id: 2, label: t("oauthApps.stepBasicInfo") || "Basic Info" },
-          { id: 3, label: t("oauthApps.stepSamlConfig") || "SAML Config" },
-          { id: 4, label: t("oauthApps.stepBranding") || "Branding" },
+          { id: 1, label: t("oauthApps.stepProtocol") },
+          { id: 2, label: t("oauthApps.stepBasicInfo") },
+          { id: 3, label: t("oauthApps.stepSamlConfig") },
+          { id: 4, label: t("oauthApps.stepBranding") },
         ]
       : [
-          { id: 1, label: t("oauthApps.stepProtocol") || "Protocol" },
-          { id: 2, label: t("oauthApps.stepBasicInfo") || "Basic Info" },
-          { id: 3, label: t("oauthApps.stepEndpoints") || "Endpoints & Scopes" },
-          { id: 4, label: t("oauthApps.stepSecurity") || "Security & Tokens" },
-          { id: 5, label: t("oauthApps.stepBranding") || "Branding" },
+          { id: 1, label: t("oauthApps.stepProtocol") },
+          { id: 2, label: t("oauthApps.stepBasicInfo") },
+          { id: 3, label: t("oauthApps.stepEndpoints") },
+          { id: 4, label: t("oauthApps.stepSecurity") },
+          { id: 5, label: t("oauthApps.stepBranding") },
         ];
 
   const totalSteps = vm.form.protocol === "saml" ? 4 : 5;
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 rounded-xl border bg-card p-6 shadow-sm duration-300 animate-in fade-in">
+    <div className="mx-auto max-w-4xl space-y-8 rounded-nx-lg border border-nx-line bg-nx-surface p-6 duration-nx-standard animate-in fade-in">
       {/* Progress Indicators */}
       <div className="mx-auto mb-4 flex max-w-2xl items-center justify-between px-4 text-xs font-semibold">
         {steps.map((s, i) => (
           <Fragment key={s.id}>
             {i > 0 && (
               <div
-                className={`mx-2 h-0.5 flex-1 ${
-                  currentStep >= s.id ? "bg-primary" : "bg-muted"
-                }`}
+                className={cn(
+                  "mx-2 h-0.5 flex-1",
+                  currentStep >= s.id ? "bg-nx-accent" : "bg-nx-raised-2"
+                )}
               />
             )}
             <div className="flex shrink-0 cursor-default select-none flex-col items-center gap-1.5">
               <div
-                className={`flex h-7 w-7 items-center justify-center rounded-full border font-mono transition-all duration-200 ${
+                className={cn(
+                  "flex h-7 w-7 items-center justify-center rounded-full border font-mono transition-[color,background-color,border-color] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
                   currentStep === s.id
-                    ? "border-primary bg-primary text-primary-foreground shadow-[0_0_10px_hsl(var(--primary)/0.3)]"
+                    ? "border-nx-accent-fill bg-nx-accent-fill text-nx-on-fill"
                     : currentStep > s.id
-                      ? "border-primary/30 bg-primary/10 text-primary"
-                      : "border-transparent bg-muted text-muted-foreground"
-                }`}
+                      ? "border-nx-accent/30 bg-nx-accent-wash text-nx-accent"
+                      : "border-transparent bg-nx-raised text-nx-ink-3"
+                )}
               >
                 {currentStep > s.id ? "✓" : s.id}
               </div>
-              <span
-                className={
-                  currentStep === s.id
-                    ? "font-bold text-primary"
-                    : "font-normal text-muted-foreground"
-                }
-              >
+              <span className={currentStep === s.id ? "font-bold text-nx-accent" : "font-normal text-nx-ink-3"}>
                 {s.label}
               </span>
             </div>
@@ -114,10 +115,10 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
         ))}
       </div>
 
-      <div className="border-t pt-6">
+      <div className="border-t border-nx-line pt-6">
         {/* Step 1: Select Protocol */}
         {currentStep === 1 && (
-          <div className="duration-300 animate-in fade-in slide-in-from-bottom-4">
+          <div className={STEP_TRANSITION}>
             <ProtocolSelectionSection
               protocol={vm.form.protocol}
               onChange={(p) => vm.updateField("protocol", p)}
@@ -127,14 +128,14 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
 
         {/* Step 2: Basic Info */}
         {currentStep === 2 && (
-          <div className="mx-auto max-w-2xl space-y-4 duration-300 animate-in fade-in slide-in-from-bottom-4">
+          <div className={cn("mx-auto max-w-2xl space-y-4", STEP_TRANSITION)}>
             <GeneralSection {...sectionProps} />
           </div>
         )}
 
         {/* Step 3: Endpoints & Scopes (OIDC) OR SAML Configuration (SAML) */}
         {currentStep === 3 && (
-          <div className="mx-auto max-w-2xl space-y-6 duration-300 animate-in fade-in slide-in-from-bottom-4">
+          <div className={cn("mx-auto max-w-2xl space-y-6", STEP_TRANSITION)}>
             {vm.form.protocol === "saml" ? (
               <SamlSection {...sectionProps} />
             ) : (
@@ -148,7 +149,7 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
 
         {/* Step 4: Security & Tokens (OIDC) OR Branding (SAML) */}
         {currentStep === 4 && (
-          <div className="mx-auto max-w-2xl space-y-6 duration-300 animate-in fade-in slide-in-from-bottom-4">
+          <div className={cn("mx-auto max-w-2xl space-y-6", STEP_TRANSITION)}>
             {vm.form.protocol === "saml" ? (
               <BrandingSection {...sectionProps} />
             ) : (
@@ -162,21 +163,21 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
 
         {/* Step 5: Branding (OIDC only) */}
         {currentStep === 5 && vm.form.protocol !== "saml" && (
-          <div className="mx-auto max-w-2xl space-y-4 duration-300 animate-in fade-in slide-in-from-bottom-4">
+          <div className={cn("mx-auto max-w-2xl space-y-4", STEP_TRANSITION)}>
             <BrandingSection {...sectionProps} />
           </div>
         )}
       </div>
 
       {/* Navigation Controls */}
-      <div className="mx-auto mt-8 flex max-w-2xl items-center justify-between border-t pt-6">
+      <div className="mx-auto mt-8 flex max-w-2xl items-center justify-between border-t border-nx-line pt-6">
         <Button
           variant="outline"
           onClick={() => setCurrentStep((prev) => prev - 1)}
           disabled={currentStep === 1}
           size="sm"
         >
-          {t("common.back") || "Back"}
+          {t("common.back")}
         </Button>
 
         {currentStep < totalSteps ? (
@@ -184,10 +185,9 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
             onClick={() => setCurrentStep((prev) => prev + 1)}
             disabled={currentStep === 2 && !vm.form.displayName.trim()}
             size="sm"
-            className="bg-primary text-primary-foreground hover:bg-primary/90"
           >
-            {t("common.next") || "Next"}
-            <ArrowRight className="ms-1.5 h-4 w-4" />
+            {t("common.next")}
+            <ArrowRight className="ms-1.5 h-4 w-4 rtl:rotate-180" aria-hidden="true" />
           </Button>
         ) : (
           <Button
@@ -195,10 +195,9 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
             loading={vm.isSaving}
             disabled={!vm.form.displayName.trim()}
             size="sm"
-            className="bg-gradient-to-r from-primary to-info font-semibold text-primary-foreground shadow hover:opacity-95"
           >
-            {!vm.isSaving && <Save className="me-1.5 h-4 w-4" />}
-            {t("oauthApps.createButton") || "Create Application"}
+            {!vm.isSaving && <Save className="me-1.5 h-4 w-4" aria-hidden="true" />}
+            {t("oauthApps.createButton")}
           </Button>
         )}
       </div>

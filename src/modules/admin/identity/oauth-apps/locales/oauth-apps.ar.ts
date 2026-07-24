@@ -75,6 +75,16 @@ export const ar = {
     regenerate: "إعادة توليد",
     newSecretGenerated: "تم توليد سر جديد",
     secretCopyWarning: "انسخ هذا السر الآن — لن يتم عرضه مرة أخرى!",
+    copyClientId: "نسخ معرّف العميل",
+    copySecret: "نسخ سر العميل",
+    // تسميات مختصرة للشارات
+    clientTypeConfidential: "سري",
+    clientTypePublic: "عام",
+    noDescription: "لا يوجد وصف.",
+    oidcServerBadge: "خادم OIDC",
+    pkceLabel: "PKCE",
+    pkceOptional: "اختياري",
+    viewDetails: "عرض تفاصيل التطبيق",
     // البيانات الوصفية
     metadata: "معلومات",
     tenantScoped: "المستأجر",

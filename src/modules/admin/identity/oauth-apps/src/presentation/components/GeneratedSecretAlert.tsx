@@ -32,38 +32,37 @@ export function GeneratedSecretAlert({
   const { t } = useI18n();
 
   return (
-    <div className="space-y-3 rounded-xl border border-success/30 bg-success/10 p-4 duration-300 animate-in fade-in">
+    <div className="space-y-3 rounded-nx-lg border border-success/30 bg-success/10 p-4 duration-nx-standard animate-in fade-in">
       <div className="flex items-center justify-between">
         <h3 className="flex items-center gap-2 text-sm font-semibold text-success">
-          <KeyRound className="h-4.5 w-4.5 text-success" />
-          {t("oauthApps.newSecretGenerated") || "New Secret Generated"}
+          <KeyRound className="h-4 w-4 text-success" aria-hidden="true" />
+          {t("oauthApps.newSecretGenerated")}
         </h3>
         <Button
           variant="outline"
           size="sm"
           onClick={() => onClear(isCreateMode && generatedSecret ? generatedSecret.id : undefined)}
-          className="h-8 bg-white/50 text-xs hover:bg-white dark:bg-black/20 dark:hover:bg-black/40"
+          className="h-8 text-xs"
         >
-          {isCreateMode
-            ? t("common.continue") || "Continue to Application"
-            : t("common.dismiss") || "Dismiss"}
+          {isCreateMode ? t("common.continue") : t("common.dismiss")}
         </Button>
       </div>
-      <p className="text-xs text-success">
-        {t("oauthApps.secretCopyWarning") || "Copy this secret now — it will not be shown again!"}
-      </p>
-      <div className="flex items-center gap-2 rounded-lg border bg-white/80 p-2 backdrop-blur-sm dark:bg-black/30">
-        <code className="flex-1 break-all font-mono text-sm">{generatedSecret.secret}</code>
+      <p className="text-xs text-success">{t("oauthApps.secretCopyWarning")}</p>
+      <div className="flex items-center gap-2 rounded-nx-md border border-nx-line bg-nx-surface p-2">
+        <code className="flex-1 break-all font-mono text-sm text-nx-ink">
+          {generatedSecret.secret}
+        </code>
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 shrink-0 hover:bg-muted"
+          className="h-8 w-8 shrink-0"
+          aria-label={t("oauthApps.copySecret")}
           onClick={() => copyToClipboard(generatedSecret.secret, "secret")}
         >
           {copiedField === "secret" ? (
-            <Check className="h-4 w-4 text-success" />
+            <Check className="h-4 w-4 text-success" aria-hidden="true" />
           ) : (
-            <Copy className="h-4 w-4" />
+            <Copy className="h-4 w-4" aria-hidden="true" />
           )}
         </Button>
       </div>

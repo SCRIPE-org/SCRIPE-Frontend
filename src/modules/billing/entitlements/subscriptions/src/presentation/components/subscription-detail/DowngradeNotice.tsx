@@ -10,7 +10,7 @@ import type { SubscriptionListItem } from "../../../domain/entities/Subscription
 
 interface DowngradeNoticeProps {
   sub: SubscriptionListItem;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, string | number>) => string;
 }
 
 /**
@@ -23,15 +23,20 @@ export function DowngradeNotice({ sub, t }: DowngradeNoticeProps) {
   return (
     <Card className="border-warning/30 bg-warning/5">
       <CardContent className="flex items-center gap-3 py-4">
-        <AlertTriangle className="h-5 w-5 shrink-0 text-warning" />
+        <AlertTriangle className="h-5 w-5 shrink-0 text-warning" aria-hidden="true" />
         <div className="text-sm">
-          <span className="font-medium text-warning">
-            {t("entSubscriptions.downgraded")}
-          </span>
+          <span className="font-medium text-warning">{t("entSubscriptions.downgraded")}</span>
           {sub.downgradedFromEditionName && (
-            <span className="text-muted-foreground">
-              {" · "}From {sub.downgradedFromEditionName}
-              {sub.downgradedFromType && ` (${sub.downgradedFromType})`}
+            <span className="text-nx-ink-2">
+              {" · "}
+              {sub.downgradedFromType
+                ? t("entSubscriptions.downgradedFromType", {
+                    edition: sub.downgradedFromEditionName,
+                    type: sub.downgradedFromType,
+                  })
+                : t("entSubscriptions.downgradedFrom", {
+                    edition: sub.downgradedFromEditionName,
+                  })}
             </span>
           )}
         </div>

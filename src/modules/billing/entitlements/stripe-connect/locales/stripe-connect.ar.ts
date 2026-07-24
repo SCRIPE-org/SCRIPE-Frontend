@@ -103,6 +103,8 @@ export const ar = {
       statusCollected: "مُحصّل",
       statusPending: "قيد الانتظار",
       statusRefunded: "مُسترد",
+      statusPartiallyRefunded: "مُسترد جزئيًا",
+      statusFailed: "فشل",
       getStarted: "ابدأ الآن",
       getStartedDesc: "لم يقم هذا المستأجر بربط حساب Stripe بعد.",
       readyToConnect: "جاهز للربط",
@@ -206,6 +208,9 @@ export const ar = {
         empty: "لا توجد معاملات.",
         showing: "عرض",
         of: "من",
+        typePayment: "دفعة",
+        typeRefund: "استرداد",
+        typePartialRefund: "استرداد جزئي",
         col: {
           date: "التاريخ",
           type: "النوع",

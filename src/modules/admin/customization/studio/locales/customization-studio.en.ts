@@ -346,6 +346,10 @@ export const en = {
     pages: {
       label: "Page",
     },
+    preview: {
+      loading: "Loading preview...",
+      iframeTitle: "Login Page Preview",
+    },
     page: {
       login: "Login",
       forgotPassword: "Forgot Password",
@@ -548,6 +552,8 @@ export const en = {
     dashboard: {
       info: "Configure the dashboard experience for all admins in this tenant. Individual admins can override settings if allowed.",
       preview: "Live Preview",
+      previewTitle: "Dashboard Preview",
+      previewIframeTitle: "Dashboard Layout Preview",
       section: {
         layout: "Layout & Structure",
         colors: "Colors & Theme",
@@ -1357,6 +1363,7 @@ export const en = {
       grid: "Grid",
       gridDesc: "Snap components to a structured grid layout",
       zoom: "Zoom",
+      componentsCount: "{{count}} components",
       lock: "Lock Position",
       unlock: "Unlock Position",
       bringForward: "Bring Forward",

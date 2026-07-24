@@ -136,32 +136,34 @@ export function StudioSidebar(props: StudioSidebarProps) {
   }, []);
 
   return (
-    <div className="flex h-full border-e border-border bg-background">
+    <div className="flex h-full border-e border-nx-line bg-nx-surface">
       {/* Tab Strip */}
-      <div className="scrollbar-thin flex w-14 flex-col items-center gap-0.5 overflow-y-auto border-e border-border bg-muted/30 py-3">
+      <div className="scrollbar-thin flex w-14 flex-col items-center gap-0.5 overflow-y-auto border-e border-nx-line bg-nx-raised py-3">
         {tabSections.map((section, si) => (
           <div key={section.section} className="flex w-full flex-col items-center gap-1">
             {/* Section divider (not for first section) */}
-            {si > 0 && <div className="my-1 h-px w-6 bg-border/60" />}
+            {si > 0 && <div className="my-1 h-px w-6 bg-nx-line" />}
             {section.tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activePanel === tab.id;
               return (
                 <button
                   key={tab.id}
+                  type="button"
                   onClick={() => setActivePanel(tab.id)}
+                  aria-label={t(tab.labelKey)}
+                  aria-pressed={isActive}
                   className={cn(
-                    "group relative flex h-10 w-10 items-center justify-center rounded-lg transition-all",
+                    "group relative flex h-10 w-10 items-center justify-center rounded-nx-control transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
                     isActive
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      ? "bg-nx-accent-fill text-nx-on-fill"
+                      : "text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
                   )}
-                  title={t(tab.labelKey)}
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className="h-4 w-4" aria-hidden="true" />
                   {/* Active indicator */}
                   {isActive && (
-                    <div className="absolute -end-[5px] top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-primary" />
+                    <div className="absolute -end-[5px] top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-nx-accent" />
                   )}
                 </button>
               );
@@ -173,8 +175,8 @@ export function StudioSidebar(props: StudioSidebarProps) {
       {/* Panel Content */}
       <div className="scrollbar-thin w-[340px] overflow-y-auto">
         {/* Panel Header */}
-        <div className="sticky top-0 z-10 border-b border-border bg-background/95 px-4 py-3 backdrop-blur-sm">
-          <h2 className="text-sm font-semibold text-foreground">
+        <div className="sticky top-0 z-sticky border-b border-nx-line bg-nx-surface px-4 py-3">
+          <h2 className="text-sm font-semibold text-nx-ink">
             {t(TABS.find((tab) => tab.id === activePanel)?.labelKey || "")}
           </h2>
         </div>

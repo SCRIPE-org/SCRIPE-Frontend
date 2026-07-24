@@ -60,7 +60,7 @@ export const BlockedIPsTable = memo(function BlockedIPsTable({
             <TableHeader>
               <TableRow>
                 <TableHead>{t("dashboard.blockedIPs.ipAddress")}</TableHead>
-                <TableHead className="text-center">{t("dashboard.blockedIPs.attempts")}</TableHead>
+                <TableHead variant="numeric">{t("dashboard.blockedIPs.attempts")}</TableHead>
                 <TableHead>{t("dashboard.blockedIPs.lastAttempt")}</TableHead>
                 <TableHead className="text-center">{t("common.status")}</TableHead>
               </TableRow>
@@ -69,7 +69,7 @@ export const BlockedIPsTable = memo(function BlockedIPsTable({
               {data.map((ip) => (
                 <TableRow key={ip.ipAddress}>
                   <TableCell className="font-mono text-sm">{ip.ipAddress}</TableCell>
-                  <TableCell className="text-center">
+                  <TableCell variant="numeric">
                     <Badge
                       variant={ip.failedCount >= 10 ? "destructive" : "secondary"}
                       className="tabular-nums"
@@ -77,7 +77,7 @@ export const BlockedIPsTable = memo(function BlockedIPsTable({
                       {ip.failedCount}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-sm tabular-nums text-muted-foreground">
+                  <TableCell className="text-sm tabular-nums text-nx-ink-2">
                     {formatDateTimeUtc(ip.latestAttempt)}
                   </TableCell>
                   <TableCell className="text-center">

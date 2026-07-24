@@ -35,13 +35,6 @@ interface Props {
   cardClasses?: string;
 }
 
-const chartConfig: ChartConfig = {
-  failed: {
-    label: "Failed Logins",
-    color: "hsl(var(--destructive))",
-  },
-};
-
 /**
  * Exported constant defining parameters and fields for failed logins heatmap configurations.
  */
@@ -53,6 +46,19 @@ export const FailedLoginsHeatmap = memo(function FailedLoginsHeatmap({
   cardClasses,
 }: Props) {
   const { t } = useI18n();
+
+  // Declared inside the component (not at module scope) so the label is read
+  // through t() at render time — a module-scope config is evaluated once at
+  // import, before t() exists, and can never be translated.
+  const chartConfig = useMemo<ChartConfig>(
+    () => ({
+      failed: {
+        label: t("security.failedLogins.seriesLabel"),
+        color: "hsl(var(--destructive))",
+      },
+    }),
+    [t]
+  );
 
   const chartData = useMemo(
     () =>
@@ -83,7 +89,7 @@ export const FailedLoginsHeatmap = memo(function FailedLoginsHeatmap({
         >
           <ChartContainer config={chartConfig} className="h-[250px]">
             <BarChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-              <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-muted" />
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
               <XAxis dataKey="date" tickLine={false} axisLine={false} className="text-xs" />
               <YAxis allowDecimals={false} tickLine={false} axisLine={false} className="text-xs" />
               <ChartTooltip content={<ChartTooltipContent />} />

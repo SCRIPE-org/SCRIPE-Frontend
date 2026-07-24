@@ -42,34 +42,29 @@ export function ClientCredentialsCard({
   const { t } = useI18n();
 
   return (
-    <Card className="border border-border/80 bg-card/45 backdrop-blur-md">
+    <Card>
       <CardContent className="space-y-4 p-5">
-        <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-          <KeyRound className="h-4 w-4 text-primary" />
-          {t("oauthApps.credentialsSection") || "Client Credentials"}
+        <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-nx-ink-3">
+          <KeyRound className="h-4 w-4 text-nx-accent" aria-hidden="true" />
+          {t("oauthApps.credentialsSection")}
         </h3>
 
         {/* Client ID */}
         <div className="space-y-1.5">
-          <Label className="text-xs text-muted-foreground">
-            {t("oauthApps.clientIdLabel") || "Client ID"}
-          </Label>
+          <Label className="text-xs">{t("oauthApps.clientIdLabel")}</Label>
           <div className="flex items-center gap-2">
-            <Input
-              value={clientId}
-              readOnly
-              className="h-9 border-border/80 bg-muted/30 font-mono text-xs"
-            />
+            <Input value={clientId} readOnly className="h-9 bg-nx-raised font-mono text-xs" />
             <Button
               variant="outline"
               size="icon"
-              className="h-9 w-9 shrink-0 border-border/80 hover:bg-muted"
+              className="h-9 w-9 shrink-0"
+              aria-label={t("oauthApps.copyClientId")}
               onClick={() => copyToClipboard(clientId, "clientId")}
             >
               {copiedField === "clientId" ? (
-                <Check className="h-4 w-4 text-success" />
+                <Check className="h-4 w-4 text-success" aria-hidden="true" />
               ) : (
-                <Copy className="h-4 w-4 text-muted-foreground" />
+                <Copy className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
               )}
             </Button>
           </div>
@@ -77,13 +72,10 @@ export function ClientCredentialsCard({
 
         {/* Client Secret */}
         {clientType === "confidential" && (
-          <div className="space-y-2 border-t border-border/40 pt-2">
-            <Label className="text-xs text-muted-foreground">
-              {t("oauthApps.clientSecret") || "Client Secret"}
-            </Label>
-            <p className="text-[11px] font-normal leading-normal text-muted-foreground/80">
-              {t("oauthApps.clientSecretHidden") ||
-                "The secret is never displayed for security. Regenerate to get a new one."}
+          <div className="space-y-2 border-t border-nx-line pt-2">
+            <Label className="text-xs">{t("oauthApps.clientSecret")}</Label>
+            <p className="text-[11px] font-normal leading-normal text-nx-ink-3">
+              {t("oauthApps.clientSecretHidden")}
             </p>
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -91,29 +83,23 @@ export function ClientCredentialsCard({
                   variant="outline"
                   size="sm"
                   loading={isRegenerating}
-                  className="mt-1 w-full gap-1.5 border-border/80 text-xs hover:bg-muted"
+                  className="mt-1 w-full gap-1.5 text-xs"
                 >
-                  {!isRegenerating && <RefreshCw className="h-3.5 w-3.5" />}
-                  {t("oauthApps.regenerateSecret") || "Regenerate Secret"}
+                  {!isRegenerating && <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />}
+                  {t("oauthApps.regenerateSecret")}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    {t("oauthApps.regenerateConfirmTitle") || "Regenerate Client Secret?"}
-                  </AlertDialogTitle>
+                  <AlertDialogTitle>{t("oauthApps.regenerateConfirmTitle")}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    {t("oauthApps.regenerateConfirmDesc") ||
-                      "This will invalidate the current secret. All existing integrations using the old secret will stop working immediately. The new secret will be displayed once."}
+                    {t("oauthApps.regenerateConfirmDesc")}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>{t("common.cancel") || "Cancel"}</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={onRegenerate}
-                    className="bg-primary text-primary-foreground hover:bg-primary/90"
-                  >
-                    {t("oauthApps.regenerate") || "Regenerate"}
+                  <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+                  <AlertDialogAction onClick={onRegenerate}>
+                    {t("oauthApps.regenerate")}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>

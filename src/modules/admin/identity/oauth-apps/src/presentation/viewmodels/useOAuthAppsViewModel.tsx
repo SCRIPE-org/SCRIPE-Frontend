@@ -76,24 +76,24 @@ export function useOAuthAppsViewModel() {
     create: async (data: any) => {
       const result = await oauthAppRepository.create(data);
       success({
-        title: t("oauthApps.created") || "Application Created",
-        description: t("oauthApps.createdDesc") || "OAuth application created successfully.",
+        title: t("oauthApps.created"),
+        description: t("oauthApps.createdDesc"),
       });
       return result as unknown as OAuthAppListItem;
     },
     update: async (id: string, data: any) => {
       await oauthAppRepository.update(id, data);
       success({
-        title: t("oauthApps.updated") || "Application Updated",
-        description: t("oauthApps.updatedDesc") || "OAuth application updated successfully.",
+        title: t("oauthApps.updated"),
+        description: t("oauthApps.updatedDesc"),
       });
       return {} as OAuthAppListItem;
     },
     delete: async (id: string) => {
       await oauthAppRepository.remove(id);
       success({
-        title: t("oauthApps.deleted") || "Application Deleted",
-        description: t("oauthApps.deletedDesc") || "OAuth application deleted.",
+        title: t("oauthApps.deleted"),
+        description: t("oauthApps.deletedDesc"),
       });
     },
   });
@@ -108,15 +108,13 @@ export function useOAuthAppsViewModel() {
       });
       queryClient.invalidateQueries({ queryKey: oauthAppKeys.all });
       success({
-        title: t("oauthApps.secretRegenerated") || "Secret Regenerated",
-        description:
-          t("oauthApps.secretRegeneratedDesc") ||
-          "Copy the new secret now — it won't be shown again.",
+        title: t("oauthApps.secretRegenerated"),
+        description: t("oauthApps.secretRegeneratedDesc"),
       });
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },
@@ -128,91 +126,91 @@ export function useOAuthAppsViewModel() {
       createFields: [
         {
           name: "displayName",
-          label: t("oauthApps.displayName") || "Application Name",
+          label: t("oauthApps.displayName"),
           type: "text" as const,
-          placeholder: t("oauthApps.displayNamePlaceholder") || "e.g. Mobile App",
+          placeholder: t("oauthApps.displayNamePlaceholder"),
           required: true,
         },
         {
           name: "clientType",
-          label: t("oauthApps.clientType") || "Client Type",
+          label: t("oauthApps.clientType"),
           type: "select" as const,
           required: true,
           options: [
-            { value: "confidential", label: "Confidential (Server-Side)" },
-            { value: "public", label: "Public (SPA / Mobile)" },
+            { value: "confidential", label: t("oauthApps.confidential") },
+            { value: "public", label: t("oauthApps.public") },
           ],
         },
         {
           name: "redirectUris",
-          label: t("oauthApps.redirectUris") || "Redirect URIs",
+          label: t("oauthApps.redirectUris"),
           type: "text" as const,
           placeholder: "https://app.example.com/callback",
           required: true,
         },
         {
           name: "allowedScopes",
-          label: t("oauthApps.allowedScopes") || "Allowed Scopes",
+          label: t("oauthApps.allowedScopes"),
           type: "text" as const,
           placeholder: "openid profile email",
         },
         {
           name: "allowedGrantTypes",
-          label: t("oauthApps.allowedGrantTypes") || "Grant Types",
+          label: t("oauthApps.allowedGrantTypes"),
           type: "text" as const,
           placeholder: "authorization_code refresh_token",
         },
         {
           name: "requirePkce",
-          label: t("oauthApps.requirePkce") || "Require PKCE",
+          label: t("oauthApps.requirePkce"),
           type: "switch" as const,
         },
         {
           name: "requireConsent",
-          label: t("oauthApps.requireConsent") || "Require Consent Screen",
+          label: t("oauthApps.requireConsent"),
           type: "switch" as const,
         },
         {
           name: "description",
-          label: t("oauthApps.descriptionLabel") || "Description",
+          label: t("oauthApps.descriptionLabel"),
           type: "text" as const,
-          placeholder: t("oauthApps.descriptionPlaceholder") || "What does this app do?",
+          placeholder: t("oauthApps.descriptionPlaceholder"),
         },
       ],
       editFields: [
         {
           name: "displayName",
-          label: t("oauthApps.displayName") || "Application Name",
+          label: t("oauthApps.displayName"),
           type: "text" as const,
         },
         {
           name: "redirectUris",
-          label: t("oauthApps.redirectUris") || "Redirect URIs",
+          label: t("oauthApps.redirectUris"),
           type: "text" as const,
         },
         {
           name: "allowedScopes",
-          label: t("oauthApps.allowedScopes") || "Allowed Scopes",
+          label: t("oauthApps.allowedScopes"),
           type: "text" as const,
         },
         {
           name: "allowedGrantTypes",
-          label: t("oauthApps.allowedGrantTypes") || "Grant Types",
+          label: t("oauthApps.allowedGrantTypes"),
           type: "text" as const,
         },
         {
           name: "requirePkce",
-          label: t("oauthApps.requirePkce") || "Require PKCE",
+          label: t("oauthApps.requirePkce"),
           type: "switch" as const,
         },
         {
           name: "requireConsent",
-          label: t("oauthApps.requireConsent") || "Require Consent Screen",
+          label: t("oauthApps.requireConsent"),
           type: "switch" as const,
         },
         {
           name: "description",
-          label: t("oauthApps.descriptionLabel") || "Description",
+          label: t("oauthApps.descriptionLabel"),
           type: "text" as const,
         },
       ],
@@ -259,7 +257,7 @@ export function useOAuthAppsViewModel() {
     columns: [
       {
         key: "displayName",
-        label: t("oauthApps.displayName") || "Application",
+        label: t("oauthApps.displayName"),
         sortable: true,
         render: (_val: unknown, item: OAuthAppListItem) => (
           <div className="flex items-center gap-2">
@@ -270,12 +268,12 @@ export function useOAuthAppsViewModel() {
                 className="h-5 w-5 rounded object-contain"
               />
             ) : (
-              <AppWindow className="h-4 w-4 text-muted-foreground" />
+              <AppWindow className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
             )}
             <div className="flex flex-col">
-              <span className="text-sm font-medium">{item.displayName}</span>
+              <span className="text-sm font-medium text-nx-ink">{item.displayName}</span>
               {item.description && (
-                <span className="max-w-[200px] truncate text-xs text-muted-foreground">
+                <span className="max-w-[200px] truncate text-xs text-nx-ink-2">
                   {item.description}
                 </span>
               )}
@@ -285,11 +283,11 @@ export function useOAuthAppsViewModel() {
       },
       {
         key: "clientId",
-        label: t("oauthApps.clientId") || "Client ID",
+        label: t("oauthApps.clientId"),
         render: (_val: unknown, item: OAuthAppListItem) => (
           <div className="flex items-center gap-1.5">
             <code
-              className="max-w-[140px] truncate rounded bg-muted/50 px-1.5 py-0.5 font-mono text-xs"
+              className="max-w-[140px] truncate rounded-nx-sm bg-nx-raised px-1.5 py-0.5 font-mono text-xs text-nx-ink-2"
               title={item.clientId}
             >
               {item.clientId}
@@ -298,15 +296,16 @@ export function useOAuthAppsViewModel() {
               variant="ghost"
               size="icon"
               className="h-6 w-6"
+              aria-label={`${t("oauthApps.copyClientId")} — ${item.displayName}`}
               onClick={(e) => {
                 e.stopPropagation();
                 copyToClipboard(item.clientId, `clientId-${item.id}`);
               }}
             >
               {copiedField === `clientId-${item.id}` ? (
-                <Check className="h-3 w-3 text-success" />
+                <Check className="h-3 w-3 text-success" aria-hidden="true" />
               ) : (
-                <Copy className="h-3 w-3 text-muted-foreground" />
+                <Copy className="h-3 w-3 text-nx-ink-3" aria-hidden="true" />
               )}
             </Button>
           </div>
@@ -314,50 +313,38 @@ export function useOAuthAppsViewModel() {
       },
       {
         key: "clientType",
-        label: t("oauthApps.clientType") || "Type",
+        label: t("oauthApps.clientType"),
         render: (_val: unknown, item: OAuthAppListItem) => (
           <Badge variant="outline" className="font-mono text-xs">
-            {item.clientType === "confidential" ? "Confidential" : "Public"}
+            {item.clientType === "confidential"
+              ? t("oauthApps.clientTypeConfidential")
+              : t("oauthApps.clientTypePublic")}
           </Badge>
         ),
       },
       {
         key: "requirePkce",
-        label: "PKCE",
+        label: t("oauthApps.pkceLabel"),
         render: (_val: unknown, item: OAuthAppListItem) => (
-          <Badge
-            variant={item.requirePkce ? "default" : "secondary"}
-            className={`text-xs ${
-              item.requirePkce
-                ? "bg-success/10 text-success"
-                : "bg-muted text-muted-foreground"
-            }`}
-          >
-            {item.requirePkce ? "On" : "Off"}
+          <Badge variant={item.requirePkce ? "success" : "secondary"} className="text-xs">
+            {item.requirePkce ? t("common.enabled") : t("common.disabled")}
           </Badge>
         ),
       },
       {
         key: "isActive",
-        label: t("common.status") || "Status",
+        label: t("common.status"),
         render: (_val: unknown, item: OAuthAppListItem) => (
-          <Badge
-            variant={item.isActive ? "default" : "secondary"}
-            className={`text-xs ${
-              item.isActive
-                ? "bg-success/10 text-success"
-                : "bg-muted text-muted-foreground"
-            }`}
-          >
-            {item.isActive ? t("common.active") || "Active" : t("common.inactive") || "Inactive"}
+          <Badge variant={item.isActive ? "success" : "secondary"} className="text-xs">
+            {item.isActive ? t("common.active") : t("common.inactive")}
           </Badge>
         ),
       },
       {
         key: "createdAt",
-        label: t("common.createdAt") || "Created",
+        label: t("common.createdAt"),
         render: (_val: unknown, item: OAuthAppListItem) => (
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-nx-ink-2">
             {item.createdAt ? formatUtc(item.createdAt, "MMM d, yyyy") : "—"}
           </span>
         ),
@@ -373,39 +360,35 @@ export function useOAuthAppsViewModel() {
       handleDeleteFn: any
     ): CrudAction<OAuthAppListItem>[] => [
       {
-        label: tFn("oauthApps.regenerateSecret") || "Regenerate Secret",
+        label: tFn("oauthApps.regenerateSecret"),
         onClick: (item: OAuthAppListItem) => handleRegenerateSecret(item.id),
         variant: "ghost" as const,
         icon: regenerateSecretMutation.isPending ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
+          <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
         ) : (
-          <KeyRound className="h-4 w-4" />
+          <KeyRound className="h-4 w-4" aria-hidden="true" />
         ),
         requiredPermission: "oauth_apps.update",
-        confirmTitle: tFn("oauthApps.regenerateConfirmTitle") || "Regenerate Client Secret",
-        confirmDescription:
-          tFn("oauthApps.regenerateConfirmDesc") ||
-          "The current secret will be invalidated. All applications using the old secret will stop working.",
+        confirmTitle: tFn("oauthApps.regenerateConfirmTitle"),
+        confirmDescription: tFn("oauthApps.regenerateConfirmDesc"),
         confirmVariant: "destructive" as const,
       },
       {
-        label: tFn("common.edit") || "Edit",
+        label: tFn("common.edit"),
         onClick: (item: OAuthAppListItem) => router.push(`/settings/oauth-apps/${item.id}`),
         variant: "ghost" as const,
-        icon: <Pencil className="h-4 w-4" />,
+        icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
         requiredPermission: "oauth_apps.update",
       },
       {
-        label: tFn("common.delete") || "Delete",
+        label: tFn("common.delete"),
         onClick: (item: OAuthAppListItem) => handleDeleteFn?.(item),
         variant: "ghost" as const,
         className: "text-destructive hover:text-destructive/90",
-        icon: <Trash2 className="h-4 w-4" />,
+        icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
         requiredPermission: "oauth_apps.delete",
-        confirmTitle: tFn("oauthApps.deleteConfirmTitle") || "Delete OAuth Application",
-        confirmDescription:
-          tFn("oauthApps.deleteConfirmDesc") ||
-          "This will permanently remove this application. All authenticated sessions will be invalidated.",
+        confirmTitle: tFn("oauthApps.deleteConfirmTitle"),
+        confirmDescription: tFn("oauthApps.deleteConfirmDesc"),
         confirmVariant: "destructive" as const,
       },
     ],

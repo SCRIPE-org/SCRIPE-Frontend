@@ -10,8 +10,9 @@
  */
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSubscriptionsViewModel } from "../viewmodels/useSubscriptionsViewModel";
 import { useEditionsViewModel } from "@modules/entitlements/core";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -20,6 +21,7 @@ import { useBreadcrumbOverride } from "@core/hooks/use-breadcrumb-override";
 import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
 import { EmptyState } from "@core/ui/empty-state";
+import { ErrorMessage } from "@core/ui/error-message";
 import { ArrowLeft, Package, Zap } from "lucide-react";
 
 // ── Sub-components ──
@@ -55,6 +57,7 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
   useModuleLocales(() => import("../../../../core/locales"), "entitlements-shared");
   const { t, direction } = useI18n();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const vm = useSubscriptionsViewModel(tenantId);
   const editionsVm = useEditionsViewModel();
 
@@ -69,23 +72,27 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
     );
   }, [vm.items]);
 
-  useBreadcrumbOverride(
-    currentSub ? currentSub.editionName : t("entSubscriptions.title") || "Subscription Details"
-  );
+  useBreadcrumbOverride(currentSub ? currentSub.editionName : t("entSubscriptions.title"));
+
+  // A failed fetch has no bearing on whether the tenant actually holds a
+  // subscription — retrying re-hits the same query the view model owns.
+  const retryFetch = useCallback(() => {
+    queryClient.refetchQueries({ queryKey: ["entitlements", "subscriptions", tenantId] });
+  }, [queryClient, tenantId]);
 
   // ── Loading Skeleton ──
   if (vm.isLoading) {
     return (
       <div className="space-y-6 p-1" dir={direction}>
         <div className="flex items-center gap-3">
-          <Skeleton className="h-9 w-9 rounded-lg" />
+          <Skeleton className="h-9 w-9 rounded-nx-control" />
           <Skeleton className="h-7 w-48" />
         </div>
-        <Skeleton className="h-56 w-full rounded-2xl" />
+        <Skeleton className="h-56 w-full rounded-nx-lg" />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <Skeleton className="h-48 rounded-xl" />
-          <Skeleton className="h-48 rounded-xl" />
-          <Skeleton className="h-48 rounded-xl" />
+          <Skeleton className="h-48 rounded-nx-lg" />
+          <Skeleton className="h-48 rounded-nx-lg" />
+          <Skeleton className="h-48 rounded-nx-lg" />
         </div>
       </div>
     );
@@ -98,19 +105,24 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9 cursor-pointer rounded-lg"
+          className="h-9 w-9 rounded-nx-control"
           onClick={() => router.back()}
+          aria-label={t("common.back")}
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
         </Button>
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">{t("entSubscriptions.title")}</h1>
-          <p className="text-sm text-muted-foreground">{t("entSubscriptions.description")}</p>
+          <h1 className="text-xl font-semibold tracking-tight text-nx-ink">
+            {t("entSubscriptions.title")}
+          </h1>
+          <p className="text-sm text-nx-ink-2">{t("entSubscriptions.description")}</p>
         </div>
       </div>
 
       {/* ── Content ── */}
-      {currentSub ? (
+      {vm.error ? (
+        <ErrorMessage message={t("entSubscriptions.loadError")} onRetry={retryFetch} />
+      ) : currentSub ? (
         <>
           <HeroCard sub={currentSub} vm={vm} t={t} />
 
@@ -129,12 +141,12 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
       ) : (
         <EmptyState
           icon={Package}
-          title={t("entSubscriptions.noSubscriptions") || "No Active Subscription"}
-          description={t("entSubscriptions.assignDesc") || "Assign a subscription plan to get started."}
+          title={t("entSubscriptions.noSubscriptions")}
+          description={t("entSubscriptions.assignDesc")}
           action={
             <Button size="lg" className="gap-2" onClick={() => vm.setShowAssignDialog(true)}>
-              <Zap className="h-5 w-5" />
-              {t("entSubscriptions.assign") || "Assign Edition"}
+              <Zap className="h-5 w-5" aria-hidden="true" />
+              {t("entSubscriptions.assign")}
             </Button>
           }
         />

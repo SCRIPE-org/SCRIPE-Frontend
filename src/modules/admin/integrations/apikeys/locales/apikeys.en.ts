@@ -19,6 +19,8 @@ export const en = {
     untitled: "Untitled API Key",
     backToList: "API Keys",
     lastUsed: "Last used",
+    lastUsedAt: "Last used {{time}} (UTC)",
+    copyPrefix: "Copy key prefix",
     rotateKey: "Rotate Key",
 
     // Expiry Options
@@ -92,10 +94,23 @@ export const en = {
     // --- Chart ---
     chart: {
       title: "Request Activity",
+      viewGroup: "Chart view",
+      rangeGroup: "Time range",
       view: {
         volume: "Volume",
         errors: "Errors",
         response: "Response Time",
+      },
+      range: {
+        "24h": "24h",
+        "7d": "7d",
+        "30d": "30d",
+      },
+      series: {
+        success: "Successful",
+        failures: "Errors",
+        errorRate: "Error Rate",
+        avgResponse: "Avg Response (ms)",
       },
       noData: "No data for this period",
     },
@@ -152,6 +167,8 @@ export const en = {
       title: "Real-time Access Logs",
       searchPlaceholder: "Filter by endpoint...",
       statusPlaceholder: "Status Code",
+      methodPlaceholder: "Method",
+      anyMethod: "Any method",
       method: "Method",
       endpoint: "Endpoint",
       status: "Status",

@@ -32,10 +32,10 @@ export function SliderInput({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <label className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
           {label}
         </label>
-        <span className="font-mono text-xs font-medium tabular-nums text-foreground">
+        <span className="font-mono text-xs font-medium tabular-nums text-nx-ink">
           {typeof value === "number" ? (Number.isInteger(value) ? value : value.toFixed(1)) : value}
           {unit}
         </span>

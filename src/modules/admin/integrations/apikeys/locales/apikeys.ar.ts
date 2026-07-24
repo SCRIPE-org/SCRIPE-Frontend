@@ -19,6 +19,8 @@ export const ar = {
     untitled: "مفتاح API بدون عنوان",
     backToList: "مفاتيح API",
     lastUsed: "آخر استخدام",
+    lastUsedAt: "آخر استخدام {{time}} (UTC)",
+    copyPrefix: "نسخ بادئة المفتاح",
     rotateKey: "تدوير المفتاح",
 
     // Expiry Options
@@ -92,10 +94,23 @@ export const ar = {
     // --- Chart ---
     chart: {
       title: "نشاط الطلبات",
+      viewGroup: "عرض الرسم البياني",
+      rangeGroup: "النطاق الزمني",
       view: {
         volume: "الحجم",
         errors: "الأخطاء",
         response: "زمن الاستجابة",
+      },
+      range: {
+        "24h": "24 ساعة",
+        "7d": "7 أيام",
+        "30d": "30 يومًا",
+      },
+      series: {
+        success: "ناجحة",
+        failures: "أخطاء",
+        errorRate: "نسبة الأخطاء",
+        avgResponse: "متوسط الاستجابة (مللي ثانية)",
       },
       noData: "لا توجد بيانات لهذه الفترة",
     },
@@ -152,6 +167,8 @@ export const ar = {
       title: "سجلات الوصول الفورية",
       searchPlaceholder: "تصفية حسب نقطة النهاية...",
       statusPlaceholder: "رمز الحالة",
+      methodPlaceholder: "الأسلوب",
+      anyMethod: "أي أسلوب",
       method: "الأسلوب",
       endpoint: "نقطة النهاية",
       status: "الحالة",

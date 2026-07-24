@@ -4,17 +4,22 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow
-} from "@core/ui/table";
+import { Badge, type BadgeProps } from "@core/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
+import { SectionState } from "@core/ui/section-state";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from "@core/ui/select";
-import { Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ChevronUp, ChevronDown, RefreshCw } from "lucide-react";
+import {
+  Pagination, PaginationContent, PaginationItem, PaginationLink,
+  PaginationNext, PaginationPrevious
+} from "@core/ui/pagination";
+import { Search, ChevronsLeft, ChevronsRight, RefreshCw } from "lucide-react";
 import type { ApiKeyActivityEntry } from "../../domain/entities/ApiKeyActivity";
-import { getStatusCodeColor } from "../../domain/entities/ApiKeyActivity";
+import { getStatusCodeGroup } from "../../domain/entities/ApiKeyActivity";
 import { useI18n } from "@core/providers/i18n-provider";
 import { formatDateTimeUtc } from "@core/common/utils";
+import { cn } from "@core/common/utils";
 
 interface ApiKeyActivityLogProps {
   activity: { items: ApiKeyActivityEntry[]; totalCount: number } | undefined;
@@ -29,6 +34,16 @@ interface ApiKeyActivityLogProps {
   onRefresh: () => void;
 }
 
+// The status-group → Badge-variant map. "pending" carries the fourth ramp
+// step (warning-strong) that 4xx needs alongside plain 2xx/3xx/5xx.
+const STATUS_BADGE_VARIANT: Record<ReturnType<typeof getStatusCodeGroup>, BadgeProps["variant"]> = {
+  "2xx": "success",
+  "3xx": "warning",
+  "4xx": "pending",
+  "5xx": "destructive",
+  other: "destructive",
+};
+
 export function ApiKeyActivityLog({
   activity,
   isLoading,
@@ -41,7 +56,7 @@ export function ApiKeyActivityLog({
   onSortChange,
   onRefresh,
 }: ApiKeyActivityLogProps) {
-  const { t } = useI18n();
+  const { t, direction } = useI18n();
 
   const [endpointInput, setEndpointInput] = useState("");
   const [method, setMethod] = useState("all");
@@ -74,6 +89,8 @@ export function ApiKeyActivityLog({
   const totalCount = activity?.totalCount ?? 0;
   const items = activity?.items ?? [];
   const totalPages = Math.max(Math.ceil(totalCount / pageSize), 1);
+  const atFirstPage = page <= 1;
+  const atLastPage = page >= totalPages;
 
   const handleJumpPageSubmit = () => {
     const parsed = parseInt(jumpPageVal);
@@ -86,51 +103,49 @@ export function ApiKeyActivityLog({
     }
   };
 
-  const renderSortableHeader = (field: string, label: string, widthClass?: string, alignment: "left" | "right" = "left") => {
-    const isCurrent = sortBy === field;
-    return (
-      <TableHead
-        className={`cursor-pointer hover:bg-muted/30 select-none group transition-colors ${widthClass ?? ""} ${alignment === "right" ? "text-right" : ""}`}
-        onClick={() => {
-          if (isCurrent) {
-            onSortChange(field, !sortDesc);
-          } else {
-            onSortChange(field, true);
-          }
-        }}
-      >
-        <span className={`inline-flex items-center gap-1.5 ${alignment === "right" ? "justify-end w-full" : ""}`}>
-          {label}
-          <span className={`transition-opacity duration-200 ${isCurrent ? "opacity-100" : "opacity-0 group-hover:opacity-50"}`}>
-            {isCurrent && !sortDesc ? (
-              <ChevronUp className="h-3 w-3" />
-            ) : (
-              <ChevronDown className="h-3 w-3" />
-            )}
-          </span>
-        </span>
-      </TableHead>
-    );
-  };
+  const sortableHeadProps = (field: string) => ({
+    sortable: true as const,
+    sortDirection: (sortBy === field ? (sortDesc ? "desc" : "asc") : null) as "asc" | "desc" | null,
+    tabIndex: 0,
+    onClick: () => onSortChange(field, sortBy === field ? !sortDesc : true),
+    onKeyDown: (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onSortChange(field, sortBy === field ? !sortDesc : true);
+      }
+    },
+  });
 
   return (
-    <Card className="flex flex-col overflow-hidden min-h-[220px]">
-      <CardHeader className="pb-3 border-b flex flex-row items-center justify-between flex-wrap gap-3">
-        <CardTitle className="text-sm font-semibold">
-          {t("apikeys.activity.title") || "Real-time Access Logs"}
-        </CardTitle>
-        <Button variant="outline" size="icon" className="h-8 w-8" onClick={onRefresh} disabled={isLoading}>
-          <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin" : ""}`} />
+    <Card className="flex min-h-[220px] flex-col overflow-hidden">
+      <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3 border-b border-nx-line pb-3">
+        <CardTitle className="text-sm font-semibold">{t("apikeys.activity.title")}</CardTitle>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8"
+          onClick={onRefresh}
+          disabled={isLoading}
+          aria-label={t("common.refresh")}
+        >
+          <RefreshCw
+            className={cn("h-3.5 w-3.5", isLoading && "motion-safe:animate-spin")}
+            aria-hidden="true"
+          />
         </Button>
       </CardHeader>
-      <CardContent className="p-0 flex-1 flex flex-col overflow-hidden">
+      <CardContent className="flex flex-1 flex-col overflow-hidden p-0">
         {/* Filter Bar */}
-        <div className="flex items-center gap-3 p-4 border-b bg-muted/10 flex-wrap">
-          <div className="relative flex-1 min-w-[200px]">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+        <div className="flex flex-wrap items-center gap-3 border-b border-nx-line bg-nx-raised p-4">
+          <div className="relative min-w-[200px] flex-1">
+            <Search
+              className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
+              aria-hidden="true"
+            />
             <Input
-              placeholder={t("apikeys.activity.searchPlaceholder") || "Filter by endpoint..."}
-              className="pl-9 h-9"
+              placeholder={t("apikeys.activity.searchPlaceholder")}
+              aria-label={t("apikeys.activity.searchPlaceholder")}
+              className="h-9 ps-9"
               value={endpointInput}
               onChange={e => setEndpointInput(e.target.value)}
               onKeyDown={e => e.key === "Enter" && handleApplyFilters()}
@@ -140,10 +155,10 @@ export function ApiKeyActivityLog({
           <div className="w-[120px]">
             <Select value={method} onValueChange={setMethod}>
               <SelectTrigger className="h-9">
-                <SelectValue placeholder="Method" />
+                <SelectValue placeholder={t("apikeys.activity.methodPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">ANY Method</SelectItem>
+                <SelectItem value="all">{t("apikeys.activity.anyMethod")}</SelectItem>
                 <SelectItem value="GET">GET</SelectItem>
                 <SelectItem value="POST">POST</SelectItem>
                 <SelectItem value="PUT">PUT</SelectItem>
@@ -155,7 +170,8 @@ export function ApiKeyActivityLog({
           <div className="w-[120px]">
             <Input
               type="number"
-              placeholder={t("apikeys.activity.statusPlaceholder") || "Status Code"}
+              placeholder={t("apikeys.activity.statusPlaceholder")}
+              aria-label={t("apikeys.activity.statusPlaceholder")}
               className="h-9"
               value={statusInput}
               onChange={e => setStatusInput(e.target.value)}
@@ -165,128 +181,159 @@ export function ApiKeyActivityLog({
 
           <div className="flex items-center gap-2">
             <Button size="sm" onClick={handleApplyFilters} disabled={isLoading}>
-              {t("common.filter") || "Filter"}
+              {t("common.filter")}
             </Button>
             <Button size="sm" variant="ghost" onClick={handleClearFilters} disabled={isLoading}>
-              {t("common.clear") || "Clear"}
+              {t("common.clear")}
             </Button>
           </div>
         </div>
 
         {/* Table Area */}
-        <div className="flex-1 overflow-auto min-h-[120px] max-h-[400px]">
-          <Table>
-            <TableHeader className="sticky top-0 bg-background z-10">
-              <TableRow>
-                {renderSortableHeader("method", t("apikeys.activity.method") || "Method", "w-[100px]")}
-                {renderSortableHeader("endpoint", t("apikeys.activity.endpoint") || "Endpoint")}
-                {renderSortableHeader("status", t("apikeys.activity.status") || "Status", "w-[120px]")}
-                {renderSortableHeader("latency", t("apikeys.activity.duration") || "Latency", "w-[120px]", "right")}
-                <TableHead className="w-[150px]">{t("apikeys.activity.ip") || "IP Address"}</TableHead>
-                {renderSortableHeader("time", t("apikeys.activity.time") || "Time (UTC)", "w-[180px]")}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                [...Array(5)].map((_, i) => (
-                  <TableRow key={i}>
-                    {[...Array(6)].map((_, j) => (
-                      <TableCell key={j}><div className="h-4 bg-muted motion-safe:animate-pulse rounded" /></TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : items.length === 0 ? (
+        <div className="max-h-[400px] min-h-[120px] flex-1 overflow-auto">
+          <SectionState
+            isLoading={isLoading}
+            isEmpty={items.length === 0}
+            emptyMessage={t("apikeys.activity.noLogs")}
+            skeletonType="rows"
+            skeletonRows={5}
+          >
+            <Table>
+              <TableHeader sticky>
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-sm text-muted-foreground">
-                    {t("apikeys.activity.noLogs") || "No requests logged for this key yet"}
-                  </TableCell>
+                  <TableHead className="w-[100px]" {...sortableHeadProps("method")}>
+                    {t("apikeys.activity.method")}
+                  </TableHead>
+                  <TableHead {...sortableHeadProps("endpoint")}>
+                    {t("apikeys.activity.endpoint")}
+                  </TableHead>
+                  <TableHead className="w-[120px]" {...sortableHeadProps("status")}>
+                    {t("apikeys.activity.status")}
+                  </TableHead>
+                  <TableHead className="w-[120px]" variant="numeric" {...sortableHeadProps("latency")}>
+                    {t("apikeys.activity.duration")}
+                  </TableHead>
+                  <TableHead className="w-[150px]">{t("apikeys.activity.ip")}</TableHead>
+                  <TableHead className="w-[180px]" {...sortableHeadProps("time")}>
+                    {t("apikeys.activity.time")}
+                  </TableHead>
                 </TableRow>
-              ) : (
-                items.map(log => (
+              </TableHeader>
+              <TableBody>
+                {items.map(log => (
                   <TableRow key={log.id} className="font-mono text-xs">
                     <TableCell className="font-bold">{log.method}</TableCell>
-                    <TableCell className="truncate max-w-md select-all" title={log.endpoint}>{log.endpoint}</TableCell>
-                    <TableCell>
-                      <span className={`px-2 py-0.5 rounded font-bold ${getStatusCodeColor(log.statusCode)}`}>
-                        {log.statusCode}
-                      </span>
+                    <TableCell className="max-w-md select-all truncate" title={log.endpoint}>
+                      {log.endpoint}
                     </TableCell>
-                    <TableCell className="text-right tabular-nums">{log.responseTimeMs} ms</TableCell>
-                    <TableCell className="truncate select-all">{log.ipAddress || "—"}</TableCell>
-                    <TableCell className="text-muted-foreground">
+                    <TableCell>
+                      <Badge variant={STATUS_BADGE_VARIANT[getStatusCodeGroup(log.statusCode)]}>
+                        {log.statusCode}
+                      </Badge>
+                    </TableCell>
+                    <TableCell variant="numeric">{log.responseTimeMs} ms</TableCell>
+                    <TableCell className="select-all truncate">{log.ipAddress || "—"}</TableCell>
+                    <TableCell className="text-nx-ink-2">
                       {formatDateTimeUtc(log.requestedAt)}
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ))}
+              </TableBody>
+            </Table>
+          </SectionState>
         </div>
 
         {/* Pagination Bar */}
-        <div className="border-t p-4 flex items-center justify-between bg-muted/10 mt-auto">
-          <p className="text-xs text-muted-foreground">
-            {t("apikeys.activity.showing") || "Total records"}: <span className="font-semibold text-foreground">{totalCount}</span>
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-nx-line bg-nx-raised p-4">
+          <p className="text-xs text-nx-ink-2">
+            {t("apikeys.activity.showing")}: <span className="font-semibold text-nx-ink">{totalCount}</span>
           </p>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => onPageChange(1)}
-              disabled={page <= 1 || isLoading}
-              title="First Page"
-            >
-              <ChevronsLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => onPageChange(page - 1)}
-              disabled={page <= 1 || isLoading}
-              title="Previous Page"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            
-            <div className="flex items-center gap-1.5 mx-2 text-xs font-medium">
-              <span>{t("common.page") || "Page"}</span>
-              <Input
-                type="number"
-                min={1}
-                max={totalPages}
-                className="w-12 h-8 text-center p-1 font-mono text-xs [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                value={jumpPageVal}
-                onChange={e => setJumpPageVal(e.target.value)}
-                onBlur={handleJumpPageSubmit}
-                onKeyDown={e => e.key === "Enter" && handleJumpPageSubmit()}
-                disabled={isLoading}
-              />
-              <span className="text-muted-foreground">/ {totalPages}</span>
-            </div>
+          <Pagination className="mx-0 w-auto justify-end">
+            <PaginationContent className="gap-1.5">
+              <PaginationItem>
+                <PaginationLink
+                  href="#"
+                  aria-label={t("table.firstPage")}
+                  aria-disabled={atFirstPage || isLoading || undefined}
+                  tabIndex={atFirstPage ? -1 : undefined}
+                  className="h-8 w-8"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onPageChange(1);
+                  }}
+                >
+                  {direction === "rtl" ? (
+                    <ChevronsRight className="h-4 w-4" aria-hidden="true" />
+                  ) : (
+                    <ChevronsLeft className="h-4 w-4" aria-hidden="true" />
+                  )}
+                </PaginationLink>
+              </PaginationItem>
 
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => onPageChange(page + 1)}
-              disabled={page >= totalPages || isLoading}
-              title="Next Page"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => onPageChange(totalPages)}
-              disabled={page >= totalPages || isLoading}
-              title="Last Page"
-            >
-              <ChevronsRight className="h-4 w-4" />
-            </Button>
-          </div>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  aria-disabled={atFirstPage || isLoading || undefined}
+                  tabIndex={atFirstPage ? -1 : undefined}
+                  className="h-8"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onPageChange(page - 1);
+                  }}
+                />
+              </PaginationItem>
+
+              <PaginationItem className="mx-1 flex items-center gap-1.5 border-s border-nx-line ps-3 text-xs font-medium text-nx-ink-2">
+                <span className="whitespace-nowrap">{t("common.page")}</span>
+                <Input
+                  type="number"
+                  min={1}
+                  max={totalPages}
+                  aria-label={t("table.goToPage")}
+                  className="h-8 w-12 p-1 text-center font-mono text-xs [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                  value={jumpPageVal}
+                  onChange={e => setJumpPageVal(e.target.value)}
+                  onBlur={handleJumpPageSubmit}
+                  onKeyDown={e => e.key === "Enter" && handleJumpPageSubmit()}
+                  disabled={isLoading}
+                />
+                <span className="whitespace-nowrap">/ {totalPages}</span>
+              </PaginationItem>
+
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  aria-disabled={atLastPage || isLoading || undefined}
+                  tabIndex={atLastPage ? -1 : undefined}
+                  className="h-8"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onPageChange(page + 1);
+                  }}
+                />
+              </PaginationItem>
+
+              <PaginationItem>
+                <PaginationLink
+                  href="#"
+                  aria-label={t("table.lastPage")}
+                  aria-disabled={atLastPage || isLoading || undefined}
+                  tabIndex={atLastPage ? -1 : undefined}
+                  className="h-8 w-8"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onPageChange(totalPages);
+                  }}
+                >
+                  {direction === "rtl" ? (
+                    <ChevronsLeft className="h-4 w-4" aria-hidden="true" />
+                  ) : (
+                    <ChevronsRight className="h-4 w-4" aria-hidden="true" />
+                  )}
+                </PaginationLink>
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       </CardContent>
     </Card>

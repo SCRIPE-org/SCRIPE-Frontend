@@ -345,6 +345,10 @@ export const ar = {
     pages: {
       label: "الصفحة",
     },
+    preview: {
+      loading: "جاري تحميل المعاينة...",
+      iframeTitle: "معاينة صفحة تسجيل الدخول",
+    },
     page: {
       login: "تسجيل الدخول",
       forgotPassword: "نسيت كلمة المرور",
@@ -546,6 +550,8 @@ export const ar = {
     },
     dashboard: {
       info: "قم بتهيئة تجربة لوحة التحكم لجميع المسؤولين في هذا المستأجر. يمكن للمسؤولين الأفراد تجاوز الإعدادات إذا سُمح لهم.",
+      previewTitle: "معاينة لوحة التحكم",
+      previewIframeTitle: "معاينة تخطيط لوحة التحكم",
       section: {
         layout: "التخطيط والهيكل",
         colors: "الألوان والسمة",
@@ -1354,6 +1360,7 @@ export const ar = {
       grid: "شبكة",
       gridDesc: "محاذاة المكونات لتخطيط شبكة منظم",
       zoom: "تكبير",
+      componentsCount: "{{count}} مكوّن",
       lock: "قفل الموضع",
       unlock: "فتح القفل",
       bringForward: "تقديم للأمام",

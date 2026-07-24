@@ -1,12 +1,12 @@
 "use client";
 
-import { Badge } from "@core/ui/badge";
+import { Badge, type BadgeProps } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { ArrowLeft, RotateCcw, Ban, Copy, Check } from "lucide-react";
+import { ArrowLeft, ArrowRight, RotateCcw, Ban, Copy, Check } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
-import { formatDateTimeUtc } from "@core/common/utils";
+import { formatDateTimeUtc, cn } from "@core/common/utils";
 import type { ApiKeyDetail } from "../../domain/entities/ApiKeyDetail";
 
 interface ApiKeyHeroBandProps {
@@ -16,13 +16,13 @@ interface ApiKeyHeroBandProps {
   onRevoke: () => void;
 }
 
-const STATUS_COLORS = {
-  active: "bg-success/10 text-success border-success/25",
-  revoked: "bg-destructive/10 text-destructive border-destructive/25",
-  expired: "bg-warning/10 text-warning border-warning/25",
+const STATUS_BADGE_VARIANT: Record<ApiKeyDetail["status"], BadgeProps["variant"]> = {
+  active: "success",
+  revoked: "destructive",
+  expired: "warning",
 };
 
-const STATUS_DOT = {
+const STATUS_DOT: Record<ApiKeyDetail["status"], string> = {
   active: "bg-success",
   revoked: "bg-destructive",
   expired: "bg-warning",
@@ -30,7 +30,7 @@ const STATUS_DOT = {
 
 export function ApiKeyHeroBand({ detail, isRotating, onRotate, onRevoke }: ApiKeyHeroBandProps) {
   const router = useRouter();
-  const { t } = useI18n();
+  const { t, direction } = useI18n();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -40,46 +40,51 @@ export function ApiKeyHeroBand({ detail, isRotating, onRotate, onRevoke }: ApiKe
   };
 
   const status = detail.status;
+  const BackIcon = direction === "rtl" ? ArrowRight : ArrowLeft;
 
   return (
-    <div className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div className="sticky top-0 z-sticky border-b border-nx-line bg-nx-surface">
       <div className="flex items-center gap-4 px-6 py-3">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => router.push("/integrations/apikeys")}
-          className="gap-1.5 text-muted-foreground hover:text-foreground"
+          className="gap-1.5"
         >
-          <ArrowLeft className="h-4 w-4" />
-          {t("apikeys.backToList") || "API Keys"}
+          <BackIcon className="h-4 w-4" aria-hidden="true" />
+          {t("apikeys.backToList")}
         </Button>
 
-        <div className="h-4 w-px bg-border" />
+        <div className="h-4 w-px bg-nx-line" />
 
         <div className="flex flex-1 items-center gap-3">
-          <h1 className="text-base font-semibold truncate max-w-xs">{detail.name}</h1>
+          <h1 className="max-w-xs truncate text-base font-semibold text-nx-ink">{detail.name}</h1>
 
-          <div className="flex items-center gap-1.5 font-mono text-xs bg-muted px-2 py-1 rounded-md border">
-            <code className="text-muted-foreground">sc_live_</code>
-            <code className="font-semibold">{detail.prefix}</code>
+          <div className="flex items-center gap-1.5 rounded-nx-sm border border-nx-line bg-nx-raised px-2 py-1 font-mono text-xs">
+            <code className="text-nx-ink-2">sc_live_</code>
+            <code className="font-semibold text-nx-ink">{detail.prefix}</code>
             <button
+              type="button"
               onClick={handleCopy}
-              className="ml-1 text-muted-foreground hover:text-foreground transition-colors"
-              title="Copy prefix"
+              aria-label={t("apikeys.copyPrefix")}
+              className="ms-1 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none"
             >
-              {copied ? <Check className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}
+              {copied ? (
+                <Check className="h-3 w-3 text-success" aria-hidden="true" />
+              ) : (
+                <Copy className="h-3 w-3" aria-hidden="true" />
+              )}
             </button>
           </div>
 
-          <Badge className={`${STATUS_COLORS[status]} border text-xs flex items-center gap-1.5`}>
-            <span className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT[status]}`} />
-            {t(`apikeys.status.${status}`) || status}
+          <Badge variant={STATUS_BADGE_VARIANT[status]} className="gap-1.5">
+            <span className={cn("h-1.5 w-1.5 rounded-full", STATUS_DOT[status])} aria-hidden="true" />
+            {t(`apikeys.status.${status}`)}
           </Badge>
 
           {detail.lastUsedAt && (
-            <span className="text-xs text-muted-foreground hidden md:block">
-              {t("apikeys.lastUsed") || "Last used"}{" "}
-              {formatDateTimeUtc(detail.lastUsedAt)} (UTC)
+            <span className="hidden text-xs text-nx-ink-2 md:block">
+              {t("apikeys.lastUsedAt", { time: formatDateTimeUtc(detail.lastUsedAt) })}
             </span>
           )}
         </div>
@@ -92,8 +97,11 @@ export function ApiKeyHeroBand({ detail, isRotating, onRotate, onRevoke }: ApiKe
             disabled={isRotating || !detail.isActive}
             className="gap-1.5"
           >
-            <RotateCcw className={`h-3.5 w-3.5 ${isRotating ? "animate-spin" : ""}`} />
-            {t("apikeys.rotateKey") || "Rotate Key"}
+            <RotateCcw
+              className={cn("h-3.5 w-3.5", isRotating && "motion-safe:animate-spin")}
+              aria-hidden="true"
+            />
+            {t("apikeys.rotateKey")}
           </Button>
           <Button
             variant="destructive"
@@ -102,8 +110,8 @@ export function ApiKeyHeroBand({ detail, isRotating, onRotate, onRevoke }: ApiKe
             disabled={!detail.isActive}
             className="gap-1.5"
           >
-            <Ban className="h-3.5 w-3.5" />
-            {t("apikeys.revoke") || "Revoke"}
+            <Ban className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("apikeys.revoke")}
           </Button>
         </div>
       </div>

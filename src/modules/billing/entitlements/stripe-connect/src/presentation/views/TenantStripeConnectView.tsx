@@ -17,11 +17,11 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useTenantConnectViewModel } from "../viewmodels/useTenantConnectViewModel";
-import { Card, CardContent } from "@core/ui/card";
+import { PageHeader } from "@core/ui/page-header";
 import { Badge } from "@core/ui/badge";
-import { Button } from "@core/ui/button";
+import { ErrorMessage } from "@core/ui/error-message";
 import { Skeleton } from "@core/ui/skeleton";
-import { CreditCard, AlertTriangle, RefreshCw, CheckCircle2 } from "lucide-react";
+import { CreditCard, CheckCircle2 } from "lucide-react";
 
 import { StripeConnectHero } from "../components/StripeConnectHero";
 import { StripeOnboardingStepper } from "../components/StripeOnboardingStepper";
@@ -42,60 +42,30 @@ export function TenantStripeConnectView() {
   if (vm.isError) {
     return (
       <div className="mx-auto max-w-4xl p-4 sm:p-6">
-        <Card className="border-destructive/30 shadow-sm">
-          <CardContent className="flex flex-col items-center justify-center space-y-4 py-16 text-center">
-            <div className="rounded-2xl bg-destructive/10 p-5">
-              <AlertTriangle className="h-10 w-10 text-destructive" />
-            </div>
-            <div className="space-y-2">
-              <h2 className="text-xl font-bold">
-                {t("entitlements.tenantConnect.errorTitle") || "Unable to Load Account"}
-              </h2>
-              <p className="mx-auto max-w-md text-sm text-muted-foreground">
-                {t("entitlements.tenantConnect.errorDesc") ||
-                  "We couldn't load your payment account information. You may not have permission to access this page, or there was a network issue."}
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              className="mt-2 gap-2"
-              onClick={() => window.location.reload()}
-            >
-              <RefreshCw className="h-4 w-4" />
-              {t("common.retry") || "Try Again"}
-            </Button>
-          </CardContent>
-        </Card>
+        <ErrorMessage
+          fullHeight
+          message={t("entitlements.tenantConnect.errorDesc")}
+          onRetry={() => window.location.reload()}
+        />
       </div>
     );
   }
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-4 sm:p-6">
-      {/* Page Header */}
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="flex items-center gap-2.5 text-2xl font-bold tracking-tight">
-            <div className="rounded-xl bg-gradient-to-br from-primary/10 to-info/10 p-2">
-              <CreditCard className="h-5 w-5 text-primary" />
-            </div>
-            {t("entitlements.tenantConnect.pageTitle") || "Payment Account"}
-          </h1>
-          <p className="mt-1.5 max-w-xl text-sm text-muted-foreground">
-            {t("entitlements.tenantConnect.pageDesc") ||
-              "Set up and manage your Stripe Connect Express account to receive automated payouts from your sales."}
-          </p>
-        </div>
-        {vm.account?.isComplete && (
-          <Badge
-            variant="outline"
-            className="border-success/30 bg-success/10 px-3 py-1 text-xs font-semibold text-success"
-          >
-            <CheckCircle2 className="mr-1 inline h-3 w-3" />
-            {t("entitlements.tenantConnect.verified") || "Verified"}
-          </Badge>
-        )}
-      </div>
+      <PageHeader
+        icon={CreditCard}
+        title={t("entitlements.tenantConnect.pageTitle")}
+        description={t("entitlements.tenantConnect.pageDesc")}
+        badges={
+          vm.account?.isComplete && (
+            <Badge variant="success">
+              <CheckCircle2 className="h-3 w-3" aria-hidden="true" />
+              {t("entitlements.tenantConnect.verified")}
+            </Badge>
+          )
+        }
+      />
 
       {/* State-Based Content */}
       {!vm.account ? (
@@ -138,17 +108,17 @@ function LoadingSkeleton() {
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-6">
       <div className="space-y-2">
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-4 w-96" />
+        <Skeleton shape="title" className="h-8 w-64" />
+        <Skeleton shape="text" className="w-96" />
       </div>
-      <Skeleton className="h-[280px] w-full rounded-xl" />
+      <Skeleton className="h-[280px] w-full rounded-nx-lg" />
       <div className="grid grid-cols-4 gap-4">
-        <Skeleton className="h-24 rounded-lg" />
-        <Skeleton className="h-24 rounded-lg" />
-        <Skeleton className="h-24 rounded-lg" />
-        <Skeleton className="h-24 rounded-lg" />
+        <Skeleton className="h-24 rounded-nx-lg" />
+        <Skeleton className="h-24 rounded-nx-lg" />
+        <Skeleton className="h-24 rounded-nx-lg" />
+        <Skeleton className="h-24 rounded-nx-lg" />
       </div>
-      <Skeleton className="h-48 w-full rounded-lg" />
+      <Skeleton className="h-48 w-full rounded-nx-lg" />
     </div>
   );
 }

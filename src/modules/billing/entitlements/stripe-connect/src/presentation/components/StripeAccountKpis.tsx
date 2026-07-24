@@ -4,6 +4,9 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { StatCard } from "@core/ui/stat-card";
+import { DetailRow } from "@core/ui/detail-row";
+import { Badge } from "@core/ui/badge";
+import { Separator } from "@core/ui/separator";
 import {
   CheckCircle2,
   Clock,
@@ -12,9 +15,9 @@ import {
   Banknote,
   Zap,
   Calendar,
-  CreditCard,
   Globe,
   Building2,
+  Hash,
 } from "lucide-react";
 
 interface StripeAccountKpisProps {
@@ -72,49 +75,37 @@ export function StripeAccountKpis({
   return (
     <div className="space-y-6">
       {/* Success Banner */}
-      <Card className="overflow-hidden shadow-sm ring-1 ring-success/20 transition-shadow hover:shadow-md">
-        <div className="bg-gradient-to-r from-success/10 to-success/5 px-6 py-5">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-success/10 p-2.5">
-                <CheckCircle2 className="h-5 w-5 text-success" />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold tracking-tight text-foreground/95">
-                  {t("entitlements.tenantConnect.accountReady") || "Your Account is Ready"}
-                </h2>
-                <p className="mt-0.5 text-sm text-muted-foreground/90">
-                  {t("entitlements.tenantConnect.accountReadyDesc") ||
-                    "Payments and payouts are fully enabled."}
-                </p>
-              </div>
+      <Card>
+        <CardContent className="flex flex-wrap items-center justify-between gap-4 p-5">
+          <div className="flex items-center gap-3">
+            <div
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-nx-md border border-success/30 bg-success/10 text-success"
+              aria-hidden="true"
+            >
+              <CheckCircle2 className="h-5 w-5" />
             </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onSync}
-                disabled={isSyncing}
-                className="gap-2 transition-all hover:bg-muted/40"
-              >
-                <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? "animate-spin" : ""}`} />
-                {t("entitlements.tenantConnect.syncBtn") || "Sync"}
-              </Button>
-              <Button
-                onClick={onOpenDashboard}
-                disabled={isOpeningDashboard}
-                className="gap-2 bg-gradient-to-r from-primary to-info text-primary-foreground shadow-lg shadow-primary/15 transition-all hover:scale-[1.01] hover:from-primary/90 hover:to-info/90 active:scale-95"
-              >
-                {isOpeningDashboard ? (
-                  <RefreshCw className="h-4 w-4 animate-spin" />
-                ) : (
-                  <LayoutDashboard className="h-4 w-4" />
-                )}
-                {t("entitlements.stripeConnect.openStripeDashboard") || "Open Stripe Dashboard"}
-              </Button>
+            <div>
+              <h2 className="text-lg font-semibold tracking-tight text-nx-ink">
+                {t("entitlements.tenantConnect.accountReady")}
+              </h2>
+              <p className="mt-0.5 text-sm text-nx-ink-2">
+                {t("entitlements.tenantConnect.accountReadyDesc")}
+              </p>
             </div>
           </div>
-        </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button variant="outline" size="sm" onClick={onSync} loading={isSyncing}>
+              {!isSyncing && <RefreshCw className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />}
+              {t("entitlements.tenantConnect.syncBtn")}
+            </Button>
+            <Button size="sm" onClick={onOpenDashboard} loading={isOpeningDashboard}>
+              {!isOpeningDashboard && (
+                <LayoutDashboard className="me-1.5 h-4 w-4" aria-hidden="true" />
+              )}
+              {t("entitlements.stripeConnect.openStripeDashboard")}
+            </Button>
+          </div>
+        </CardContent>
       </Card>
 
       {/* KPI Cards */}
@@ -122,85 +113,80 @@ export function StripeAccountKpis({
         <StatCard
           icon={Banknote}
           tone="info"
-          label={t("entitlements.tenantConnect.totalPayouts") || "Total Payouts"}
+          label={t("entitlements.tenantConnect.totalPayouts")}
           value={formatCurrency(account.totalPayoutsAmount)}
-          subtitle={`${account.totalPayoutsCount} ${t("entitlements.tenantConnect.transactions") || "transactions"}`}
+          subtitle={`${account.totalPayoutsCount} ${t("entitlements.tenantConnect.transactions")}`}
         />
         <StatCard
           icon={Zap}
           tone="neutral"
-          label={t("entitlements.tenantConnect.commissionRate") || "Platform Fee"}
+          label={t("entitlements.tenantConnect.commissionRate")}
           value={`${(account.effectiveCommissionRate * 100).toFixed(1)}%`}
-          subtitle={t("entitlements.tenantConnect.perTransaction") || "per transaction"}
+          subtitle={t("entitlements.tenantConnect.perTransaction")}
         />
         <StatCard
           icon={Calendar}
           tone="warning"
-          label={t("entitlements.tenantConnect.payoutSchedule") || "Payout Schedule"}
+          label={t("entitlements.tenantConnect.payoutSchedule")}
           value={
             account.payoutDelayDays === 0
-              ? t("entitlements.tenantConnect.instant") || "Instant"
-              : `${account.payoutDelayDays} ${t("entitlements.tenantConnect.days") || "days"}`
+              ? t("entitlements.tenantConnect.instant")
+              : `${account.payoutDelayDays} ${t("entitlements.tenantConnect.days")}`
           }
-          subtitle={t("entitlements.tenantConnect.afterPayment") || "after payment"}
+          subtitle={t("entitlements.tenantConnect.afterPayment")}
         />
         <StatCard
           icon={Calendar}
           tone="success"
-          label={t("entitlements.tenantConnect.lastPayout") || "Last Payout"}
+          label={t("entitlements.tenantConnect.lastPayout")}
           value={formatDate(account.lastPayoutAt)}
-          subtitle={
-            account.lastPayoutAt ? undefined : t("entitlements.tenantConnect.noPayout") || "No payouts yet"
-          }
+          subtitle={account.lastPayoutAt ? undefined : t("entitlements.tenantConnect.noPayout")}
         />
       </div>
 
       {/* Account Details */}
-      <Card className="shadow-sm">
-        <CardHeader className="border-b bg-muted/20 pb-4">
-          <CardTitle className="text-base font-bold tracking-tight text-foreground/95">
-            {t("entitlements.tenantConnect.accountDetails") || "Account Details"}
+      <Card>
+        <CardHeader className="border-b border-nx-line pb-3">
+          <CardTitle className="text-base">
+            {t("entitlements.tenantConnect.accountDetails")}
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6 p-6">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <CardContent className="space-y-5">
+          <div className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
             <DetailRow
-              icon={<CreditCard className="h-4 w-4" />}
-              label={t("entitlements.stripeConnect.stripeAccountId") || "Account ID"}
-              value={
-                <code className="rounded bg-muted px-2 py-0.5 font-mono text-[11px] font-semibold text-foreground/80">
-                  {account.stripeAccountId}
-                </code>
-              }
+              icon={Hash}
+              label={t("entitlements.stripeConnect.stripeAccountId")}
+              value={account.stripeAccountId}
+              mono
             />
             <DetailRow
-              icon={<Globe className="h-4 w-4" />}
-              label={t("entitlements.tenantConnect.currency") || "Currency"}
+              icon={Globe}
+              label={t("entitlements.tenantConnect.currency")}
               value={account.defaultCurrency?.toUpperCase() || "—"}
             />
             <DetailRow
-              icon={<Building2 className="h-4 w-4" />}
-              label={t("entitlements.tenantConnect.country") || "Country"}
+              icon={Building2}
+              label={t("entitlements.tenantConnect.country")}
               value={account.country || "—"}
             />
             <DetailRow
-              icon={<CheckCircle2 className="h-4 w-4 text-success" />}
-              label={t("entitlements.tenantConnect.verifiedAt") || "Verified At"}
+              icon={CheckCircle2}
+              label={t("entitlements.tenantConnect.verifiedAt")}
               value={formatDate(account.onboardingCompletedAt)}
             />
           </div>
 
+          <Separator />
+
           {/* Capability Status */}
-          <div className="grid grid-cols-1 gap-3 border-t pt-5 sm:grid-cols-2">
-            <CapabilityBadge
-              label={t("entitlements.stripeConnect.chargesEnabled") || "Payments"}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <CapabilityRow
+              label={t("entitlements.stripeConnect.chargesEnabled")}
               enabled={account.chargesEnabled}
-              t={t}
             />
-            <CapabilityBadge
-              label={t("entitlements.stripeConnect.payoutsEnabled") || "Payouts"}
+            <CapabilityRow
+              label={t("entitlements.stripeConnect.payoutsEnabled")}
               enabled={account.payoutsEnabled}
-              t={t}
             />
           </div>
         </CardContent>
@@ -211,56 +197,20 @@ export function StripeAccountKpis({
 
 // ── Local Helpers ────────────────────────────────────────────────────────────
 
-function DetailRow({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: React.ReactNode;
-}) {
-  return (
-    <div className="flex items-center gap-3 rounded-lg bg-muted/40 p-3.5 transition-colors hover:bg-muted/60">
-      <div className="flex-shrink-0 text-muted-foreground/80">{icon}</div>
-      <div className="min-w-0 flex-1">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/90">
-          {label}
-        </p>
-        <div className="mt-1 truncate text-sm font-bold text-foreground/90">{value}</div>
-      </div>
-    </div>
-  );
-}
+function CapabilityRow({ label, enabled }: { label: string; enabled: boolean }) {
+  const { t } = useI18n();
 
-function CapabilityBadge({
-  label,
-  enabled,
-  t,
-}: {
-  label: string;
-  enabled: boolean;
-  t: (key: string) => string;
-}) {
   return (
-    <div className="flex items-center justify-between rounded-lg border bg-card p-4 transition-all hover:border-muted-foreground/25">
-      <span className="text-sm font-semibold text-foreground/90">{label}</span>
-      <div className="flex items-center gap-2">
+    <div className="flex items-center justify-between rounded-nx-md border border-nx-line bg-nx-raised p-4 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi">
+      <span className="text-sm font-semibold text-nx-ink">{label}</span>
+      <Badge variant={enabled ? "success" : "warning"}>
         {enabled ? (
-          <CheckCircle2 className="h-4.5 w-4.5 text-success" />
+          <CheckCircle2 className="h-3 w-3" aria-hidden="true" />
         ) : (
-          <Clock className="h-4.5 w-4.5 text-warning" />
+          <Clock className="h-3 w-3" aria-hidden="true" />
         )}
-        <span
-          className={`text-sm font-bold ${
-            enabled
-              ? "text-success"
-              : "text-warning"
-          }`}
-        >
-          {enabled ? t("common.active") || "Active" : t("common.pending") || "Pending"}
-        </span>
-      </div>
+        {enabled ? t("common.active") : t("common.pending")}
+      </Badge>
     </div>
   );
 }

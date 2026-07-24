@@ -15,6 +15,7 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  chartColor,
   type ChartConfig,
 } from "@core/ui/chart";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
@@ -41,9 +42,9 @@ export const LoginActivityChart = memo(function LoginActivityChart({
 }: Props) {
   const { t } = useI18n();
 
-  // Use palette colors if provided, otherwise fall back to CSS vars
-  const successColor = chartPalette?.[0] || "hsl(var(--chart-2))";
-  const failedColor = chartPalette?.[4] || "hsl(var(--chart-5))";
+  // Use palette colors if provided, otherwise fall back to the fixed slots.
+  const successColor = chartPalette?.[0] || chartColor(2);
+  const failedColor = chartPalette?.[4] || chartColor(5);
 
   const chartConfig = useMemo<ChartConfig>(
     () => ({
@@ -73,7 +74,7 @@ export const LoginActivityChart = memo(function LoginActivityChart({
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-muted-foreground" />
+          <TrendingUp className="h-5 w-5 text-nx-ink-2" aria-hidden="true" />
           <div>
             <CardTitle>{t("dashboard.loginActivity.title")}</CardTitle>
             <CardDescription>{t("dashboard.loginActivity.description")}</CardDescription>
@@ -100,7 +101,7 @@ export const LoginActivityChart = memo(function LoginActivityChart({
                   <stop offset="95%" stopColor="var(--color-failedCount)" stopOpacity={0.1} />
                 </linearGradient>
               </defs>
-              <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-muted" />
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
               <XAxis dataKey="date" tickLine={false} axisLine={false} className="text-xs" />
               <YAxis tickLine={false} axisLine={false} className="text-xs" allowDecimals={false} />
               <ChartTooltip content={<ChartTooltipContent />} />

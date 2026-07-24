@@ -4,7 +4,8 @@
  */
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { DeviceSize, AuthPageId } from "../../domain/entities/StudioDraft";
 import { DEVICE_DIMENSIONS } from "../../domain/entities/StudioDraft";
 
@@ -18,10 +19,11 @@ interface StudioPreviewProps {
   activeAuthPage?: AuthPageId;
 }
 
-const PAGE_LABELS: Record<string, string> = {
-  login: "login",
-  "forgot-password": "forgot password",
-  "reset-password": "reset password",
+// Maps the studio's page id to the existing studio.page.* translation keys.
+const PAGE_LABEL_KEYS: Record<string, string> = {
+  login: "studio.page.login",
+  "forgot-password": "studio.page.forgotPassword",
+  "reset-password": "studio.page.resetPassword",
 };
 
 /**
@@ -35,6 +37,7 @@ export function StudioPreview({
   onIframeLoad,
   activeAuthPage = "login",
 }: StudioPreviewProps) {
+  const { t } = useI18n();
   const dimensions = DEVICE_DIMENSIONS[deviceSize];
 
   // NOTE: Auth page switching is handled entirely via postMessage (activeAuthPage
@@ -44,20 +47,20 @@ export function StudioPreview({
   const iframeSrc = `/studio-preview?page=login`;
 
   return (
-    <div className="relative flex flex-1 items-center justify-center overflow-hidden bg-muted/20 p-6">
+    <div className="relative flex flex-1 items-center justify-center overflow-hidden bg-nx-ground p-6">
       {/* Loading overlay */}
       {!isPreviewReady && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+        <div className="absolute inset-0 z-overlay flex items-center justify-center bg-nx-scrim">
           <div className="flex flex-col items-center gap-2">
-            <Loader2 className="h-5 w-5 animate-spin text-primary" />
-            <p className="text-xs text-muted-foreground">Loading preview...</p>
+            <LoadingSpinner size="sm" showText={false} />
+            <p className="text-xs text-nx-ink-2">{t("studio.preview.loading")}</p>
           </div>
         </div>
       )}
 
       {/* Device Frame */}
       <div
-        className="relative overflow-hidden rounded-xl border border-border bg-background shadow-2xl transition-all duration-300"
+        className="relative overflow-hidden rounded-nx-lg border border-nx-line bg-nx-surface shadow-nx-popover transition-[width,height] duration-nx-panel ease-nx-enter motion-reduce:transition-none"
         style={{
           width: deviceSize === "desktop" ? "100%" : `${dimensions.width}px`,
           maxWidth: deviceSize === "desktop" ? "100%" : `${dimensions.width}px`,
@@ -67,16 +70,16 @@ export function StudioPreview({
       >
         {/* Browser Chrome (desktop only) */}
         {deviceSize === "desktop" && (
-          <div className="flex h-8 items-center gap-1.5 border-b border-border bg-muted/40 px-3">
-            <div className="flex gap-1">
+          <div className="flex h-8 items-center gap-1.5 border-b border-nx-line bg-nx-raised px-3">
+            <div className="flex gap-1" aria-hidden="true">
               <div className="h-2.5 w-2.5 rounded-full bg-destructive/60" />
               <div className="h-2.5 w-2.5 rounded-full bg-warning/60" />
               <div className="h-2.5 w-2.5 rounded-full bg-success/60" />
             </div>
             <div className="mx-8 flex-1">
-              <div className="mx-auto flex h-5 w-full max-w-sm items-center justify-center rounded-md bg-muted/60">
-                <span className="font-mono text-[9px] text-muted-foreground/60">
-                  {PAGE_LABELS[activeAuthPage] || "login"} preview
+              <div className="mx-auto flex h-5 w-full max-w-sm items-center justify-center rounded-nx-control bg-nx-raised-2">
+                <span className="font-mono text-[9px] text-nx-ink-3">
+                  {t(PAGE_LABEL_KEYS[activeAuthPage] || PAGE_LABEL_KEYS.login)}
                 </span>
               </div>
             </div>
@@ -85,8 +88,8 @@ export function StudioPreview({
 
         {/* Mobile notch (mobile only) */}
         {deviceSize === "mobile" && (
-          <div className="flex h-6 items-center justify-center bg-black">
-            <div className="h-3 w-20 rounded-full bg-muted/30" />
+          <div className="flex h-6 items-center justify-center bg-nx-ground" aria-hidden="true">
+            <div className="h-3 w-20 rounded-full bg-nx-raised" />
           </div>
         )}
 
@@ -95,7 +98,7 @@ export function StudioPreview({
           ref={iframeRef}
           src={iframeSrc}
           className="h-full w-full border-0"
-          title="Login Page Preview"
+          title={t("studio.preview.iframeTitle")}
           onLoad={onIframeLoad}
           style={{
             height:

@@ -18,6 +18,7 @@ import { useEffect, useRef, useCallback, useState } from "react";
 import { LayoutDashboard, Monitor, Tablet, Smartphone, RefreshCw } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@/core/common/utils";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import type { DashboardThemeSettings } from "../../domain/entities/StudioDraft";
 import { defaultSettings } from "@core/settings/defaults";
 
@@ -37,10 +38,10 @@ function mapToSettingsKeys(ds: DashboardThemeSettings): Record<string, unknown> 
 }
 
 type DeviceSize = "desktop" | "tablet" | "mobile";
-const DEVICE_DIMS: Record<DeviceSize, { w: string; label: string }> = {
-  desktop: { w: "100%", label: "Desktop" },
-  tablet: { w: "768px", label: "Tablet" },
-  mobile: { w: "375px", label: "Mobile" },
+const DEVICE_DIMS: Record<DeviceSize, { w: string; labelKey: string }> = {
+  desktop: { w: "100%", labelKey: "studio.device.desktop" },
+  tablet: { w: "768px", labelKey: "studio.device.tablet" },
+  mobile: { w: "375px", labelKey: "studio.device.mobile" },
 };
 
 /**
@@ -48,8 +49,7 @@ const DEVICE_DIMS: Record<DeviceSize, { w: string; label: string }> = {
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function DashboardLayoutPreview({ settings }: Props) {
-  const { direction } = useI18n();
-  const isRTL = direction === "rtl";
+  const { t } = useI18n();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isReady, setIsReady] = useState(false);
   const [device, setDevice] = useState<DeviceSize>("desktop");
@@ -106,62 +106,74 @@ export function DashboardLayoutPreview({ settings }: Props) {
   return (
     <div className="relative flex h-full min-h-0 w-full flex-col">
       {/* Chrome bar */}
-      <div className="flex shrink-0 items-center justify-between border-b border-border/30 bg-background/80 px-4 py-1.5 backdrop-blur-sm">
+      <div className="flex shrink-0 items-center justify-between border-b border-nx-line bg-nx-surface px-4 py-1.5">
         <div className="flex items-center gap-2">
-          <LayoutDashboard className="h-3.5 w-3.5 text-primary" />
-          <span className="text-xs font-semibold text-foreground">
-            {isRTL ? "معاينة لوحة التحكم" : "Dashboard Preview"}
+          <LayoutDashboard className="h-3.5 w-3.5 text-nx-accent" aria-hidden="true" />
+          <span className="text-xs font-semibold text-nx-ink">
+            {t("studio.dashboard.previewTitle")}
           </span>
-          <span className="rounded bg-primary/10 px-1.5 py-0.5 font-mono text-[10px] font-medium text-primary">
+          <span className="rounded-nx-sm bg-nx-accent-wash px-1.5 py-0.5 font-mono text-[10px] font-medium text-nx-accent">
             {settings.layoutTemplate || "modern"}
           </span>
-          {!isReady && <span className="animate-pulse text-[10px] text-warning">Loading...</span>}
+          {!isReady && (
+            <span className="flex items-center gap-1 text-[10px] text-warning">
+              <LoadingSpinner size="inline" showText={false} />
+              {t("common.loading")}
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-1.5">
           {/* Device switcher */}
-          {[
-            { key: "desktop" as DeviceSize, icon: Monitor },
-            { key: "tablet" as DeviceSize, icon: Tablet },
-            { key: "mobile" as DeviceSize, icon: Smartphone },
-          ].map(({ key, icon: Icon }) => (
-            <button
-              key={key}
-              onClick={() => setDevice(key)}
-              className={cn(
-                "rounded p-1 transition-colors",
-                device === key
-                  ? "bg-primary/15 text-primary"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-              title={DEVICE_DIMS[key].label}
-            >
-              <Icon className="h-3.5 w-3.5" />
-            </button>
-          ))}
+          {(["desktop", "tablet", "mobile"] as DeviceSize[]).map((key) => {
+            const Icon = key === "desktop" ? Monitor : key === "tablet" ? Tablet : Smartphone;
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setDevice(key)}
+                aria-label={t(DEVICE_DIMS[key].labelKey)}
+                aria-pressed={device === key}
+                className={cn(
+                  "rounded-nx-sm p-1 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                  device === key
+                    ? "bg-nx-accent-wash text-nx-accent"
+                    : "text-nx-ink-2 hover:text-nx-ink"
+                )}
+              >
+                <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+            );
+          })}
 
-          <div className="mx-1 h-4 w-px bg-border" />
+          <div className="mx-1 h-4 w-px bg-nx-line" />
 
           <button
+            type="button"
             onClick={handleRefresh}
-            className="rounded p-1 text-muted-foreground transition-colors hover:text-foreground"
-            title="Refresh"
+            aria-label={t("common.refresh")}
+            className="rounded-nx-sm p-1 text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus"
           >
-            <RefreshCw className="h-3.5 w-3.5" />
+            <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
           </button>
 
-          <span className="ms-2 text-[10px] text-muted-foreground">
-            {settings.colorTheme} • {settings.sidebarPosition || "left"} •{" "}
-            {settings.cardStyle || "default"}
+          <span className="ms-2 text-[10px] text-nx-ink-3">
+            {settings.colorTheme} •{" "}
+            {t(
+              settings.sidebarPosition === "right"
+                ? "studio.dashboard.sidebarPositionRight"
+                : "studio.dashboard.sidebarPositionLeft"
+            )}{" "}
+            • {t(`studio.dashboard.card.${settings.cardStyle || "default"}`)}
           </span>
         </div>
       </div>
 
       {/* Iframe container */}
-      <div className="flex flex-1 items-start justify-center overflow-hidden bg-gradient-to-br from-muted/20 via-background to-muted/10 p-2">
+      <div className="flex flex-1 items-start justify-center overflow-hidden bg-nx-ground p-2">
         <div
           className={cn(
-            "h-full overflow-hidden rounded-lg border border-border/30 bg-background shadow-2xl transition-all duration-300",
+            "h-full overflow-hidden rounded-nx-lg border border-nx-line bg-nx-surface shadow-nx-popover transition-[width] duration-nx-panel ease-nx-enter motion-reduce:transition-none",
             device !== "desktop" && "mx-auto"
           )}
           style={{ width: dim.w, maxWidth: "100%" }}
@@ -170,7 +182,7 @@ export function DashboardLayoutPreview({ settings }: Props) {
             ref={iframeRef}
             src="/dashboard-preview"
             className="h-full w-full border-none"
-            title="Dashboard Layout Preview"
+            title={t("studio.dashboard.previewIframeTitle")}
           />
         </div>
       </div>
