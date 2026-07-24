@@ -14,10 +14,18 @@ import { useCurrencyPreference } from "@core/store/useCurrencyPreference";
 import { useConvertedAmount } from "@core/hooks/useConvertedAmount";
 import { useCurrencyRates } from "@core/hooks/useCurrencyRates";
 import { Button } from "@core/ui/button";
+import { Checkbox } from "@core/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
 import { Separator } from "@core/ui/separator";
 import { Check, Globe, RotateCcw, Loader2, RefreshCcw } from "lucide-react";
 import { cn } from "@core/common/utils";
+
+// One row shape for every choice in the panel: a 32px target, hover on the
+// ink-derived tint, and the lit-edge focus ring the rest of the product uses.
+// These rows had no focus treatment at all before — the whole list was
+// unusable from the keyboard in the dark.
+const ROW =
+  "flex min-h-8 w-full items-center gap-2 px-3 py-1.5 text-sm text-nx-ink transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus";
 
 /** Display currencies — the most commonly used for display */
 const DISPLAY_CURRENCIES = [
@@ -73,9 +81,14 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
       }}
     >
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className={cn("gap-1.5", className)}>
-          <Globe className="h-3.5 w-3.5" />
-          <span className="text-xs">
+        <Button
+          variant="outline"
+          size="sm"
+          className={cn("gap-1.5", className)}
+          aria-label={t("currency.displayToggle") || "Currency"}
+        >
+          <Globe className="h-3.5 w-3.5" aria-hidden="true" />
+          <span className="text-xs tabular-nums">
             {isConverting
               ? `${currentFlag} ${displayCurrency}`
               : t("currency.displayToggle") || "Currency"}
@@ -83,32 +96,43 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-64 p-0">
-        <div className="border-b px-3 py-2">
-          <p className="text-sm font-medium">{t("currency.displayToggle") || "Display Currency"}</p>
-          <p className="text-xs text-muted-foreground">
+        {/* Panel head: title, then the one-line explanation a step down */}
+        <div className="border-b border-nx-line px-3 py-2">
+          <p className="text-sm font-medium text-nx-ink">
+            {t("currency.displayToggle") || "Display Currency"}
+          </p>
+          <p className="text-xs text-nx-ink-3">
             {t("currency.toggleDesc") || "Preview amounts in another currency"}
           </p>
         </div>
 
-        {/* Native option */}
+        {/* Native option — same row shape as the list below it, so the choice
+            reads as one set: 32px rows, tick reserved on the start edge. */}
         <button
           type="button"
-          className="flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-accent"
+          className={cn(ROW, "py-2")}
           onClick={handleReset}
+          aria-pressed={displayMode === "native"}
         >
-          <span className="flex h-4 w-4 items-center justify-center">
-            {displayMode === "native" && <Check className="h-3.5 w-3.5 text-primary" />}
+          <span className="flex h-4 w-4 shrink-0 items-center justify-center">
+            <Check
+              className={cn(
+                "h-3.5 w-3.5 text-nx-accent",
+                displayMode === "native" ? "visible" : "invisible"
+              )}
+              aria-hidden="true"
+            />
           </span>
-          <span>🌐</span>
-          <span className="flex-1 text-left">{t("currency.native") || "Native (original)"}</span>
+          <span aria-hidden="true">🌐</span>
+          <span className="flex-1 text-start">{t("currency.native") || "Native (original)"}</span>
         </button>
 
         <Separator />
 
         {/* Loading state */}
         {isLoadingRates && (
-          <div className="flex items-center justify-center gap-2 py-3 text-xs text-muted-foreground">
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          <div className="flex items-center justify-center gap-2 py-3 text-xs text-nx-ink-3">
+            <Loader2 className="h-3.5 w-3.5 motion-safe:animate-spin" aria-hidden="true" />
             {t("common.loading") || "Loading..."}
           </div>
         )}
@@ -116,51 +140,58 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
         {/* Currency list */}
         {!isLoadingRates && (
           <div className="max-h-48 overflow-y-auto">
-            {DISPLAY_CURRENCIES.map((c) => (
-              <button
-                key={c.code}
-                type="button"
-                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm transition-colors hover:bg-accent"
-                onClick={() => handleSelectCurrency(c.code)}
-              >
-                <span className="flex h-4 w-4 items-center justify-center">
-                  {displayMode !== "native" && displayCurrency === c.code && (
-                    <Check className="h-3.5 w-3.5 text-primary" />
-                  )}
-                </span>
-                <span>{c.flag}</span>
-                <span className="flex-1 text-left">{c.code}</span>
-                <span className="text-xs text-muted-foreground">{c.name}</span>
-              </button>
-            ))}
+            {DISPLAY_CURRENCIES.map((c) => {
+              const active = displayMode !== "native" && displayCurrency === c.code;
+              return (
+                <button
+                  key={c.code}
+                  type="button"
+                  className={ROW}
+                  onClick={() => handleSelectCurrency(c.code)}
+                  aria-pressed={active}
+                >
+                  <span className="flex h-4 w-4 shrink-0 items-center justify-center">
+                    <Check
+                      className={cn(
+                        "h-3.5 w-3.5 text-nx-accent",
+                        active ? "visible" : "invisible"
+                      )}
+                      aria-hidden="true"
+                    />
+                  </span>
+                  <span aria-hidden="true">{c.flag}</span>
+                  <span className={cn("flex-1 text-start", active && "font-medium")}>{c.code}</span>
+                  <span className="truncate text-xs text-nx-ink-3">{c.name}</span>
+                </button>
+              );
+            })}
           </div>
         )}
 
         <Separator />
 
-        {/* Always toggle */}
+        {/* Always toggle — the product's own Checkbox, not a bare browser one */}
         <div className="px-3 py-2">
           <label className="flex cursor-pointer items-center gap-2 text-xs">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={alwaysChecked}
-              onChange={(e) => {
-                setAlwaysChecked(e.target.checked);
+              onCheckedChange={(checked) => {
+                const next = checked === true;
+                setAlwaysChecked(next);
                 if (isConverting) {
-                  setDisplayCurrency(displayCurrency, e.target.checked ? "always" : "session");
+                  setDisplayCurrency(displayCurrency, next ? "always" : "session");
                 }
               }}
-              className="rounded border-muted-foreground"
             />
-            <span className="text-muted-foreground">
+            <span className="text-nx-ink-2">
               {t("currency.alwaysUse") || "Always use selected currency"}
             </span>
           </label>
         </div>
 
         {/* Rates source info */}
-        <div className="flex items-center justify-between px-3 pb-2">
-          <p className="text-[10px] italic text-muted-foreground/60">
+        <div className="flex items-center justify-between gap-2 px-3 pb-2">
+          <p className="text-xs text-nx-ink-3">
             {fetchError
               ? t("currency.fallbackRates") || "⚠ Using cached rates (offline)"
               : t("currency.liveRates") || "✓ Live rates from server"}
@@ -168,10 +199,11 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
           <button
             type="button"
             onClick={() => fetchRates(true)}
-            className="text-muted-foreground/50 transition-colors hover:text-muted-foreground"
+            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-nx-sm text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
             title={t("currency.refreshRates") || "Refresh rates"}
+            aria-label={t("currency.refreshRates") || "Refresh rates"}
           >
-            <RefreshCcw className="h-3 w-3" />
+            <RefreshCcw className="h-3.5 w-3.5" aria-hidden="true" />
           </button>
         </div>
 
@@ -179,12 +211,8 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
         {isConverting && (
           <>
             <Separator />
-            <button
-              type="button"
-              className="flex w-full items-center gap-2 px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-accent"
-              onClick={handleReset}
-            >
-              <RotateCcw className="h-3 w-3" />
+            <button type="button" className={cn(ROW, "text-xs text-nx-ink-2")} onClick={handleReset}>
+              <RotateCcw className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
               {t("currency.resetToNative") || "Reset to native"}
             </button>
           </>

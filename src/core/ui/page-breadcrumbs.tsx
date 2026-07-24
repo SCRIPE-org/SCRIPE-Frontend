@@ -28,12 +28,12 @@ export interface PageBreadcrumbsProps {
    */
   segments: BreadcrumbSegment[];
   /**
-   * Whether to show home link. Defaults to true.
+   * Whether to show home link. Defaults to false.
    * Home always links to "/".
    */
   showHome?: boolean;
   /**
-   * Home label text. Defaults to "Home" or translated "nav.home".
+   * Home label text. Defaults to the translated "nav.home".
    */
   homeLabel?: string;
   /**
@@ -95,9 +95,24 @@ export function PageBreadcrumbs({
   const displayHomeLabel = homeLabel || t("nav.home") || "Home";
 
   return (
-    <div className="flex items-center gap-4">
+    // gap-2, not gap-4: the icon button already carries ~12px of internal air
+    // on its inline edge, so the old gap read as ~28px of dead space between
+    // the control and the trail it belongs to. min-w-0 lets a long trail wrap
+    // instead of shoving the back button off the row.
+    <div className="flex min-w-0 items-center gap-2">
       {showBackButton && (
-        <Button variant="ghost" size="icon" onClick={handleBack}>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleBack}
+          // An icon-only button with no accessible name announces as "button".
+          aria-label={t("common.back") || "Back"}
+          className="shrink-0"
+        >
+          {/* Inline rather than `const Icon = getBackArrowIcon(direction)` —
+              binding a component to a local during render is a lint error here
+              (state would reset on every re-render). The exported helper stays
+              the shared source for callers building their own back control. */}
           {direction === "rtl" ? (
             <ArrowRight className="h-5 w-5" />
           ) : (

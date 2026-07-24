@@ -90,7 +90,7 @@ export function OtpInputField({
             // workspace accent and theme resolve through the tokens.
             return {
               className: cn(
-                "h-14 w-11 rounded-nx-control border text-center text-xl font-semibold font-mono transition-[background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                "h-14 w-11 rounded-nx-control border text-center font-mono text-xl font-semibold tabular-nums transition-[background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                 ch
                   ? "border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] bg-nx-accent-wash text-nx-ink"
                   : "border-nx-line bg-nx-ground text-nx-ink"
@@ -114,7 +114,9 @@ export function OtpInputField({
               {i === 2 && (
                 <span
                   className={cn(
-                    "select-none self-center px-0.5 font-mono text-[20px]",
+                    // a grouping mark, not a character: it sits one ink step
+                    // back so the eye reads two triplets, not seven glyphs
+                    "select-none self-center px-0.5 font-mono text-xl",
                     variant === "nexus" && "text-nx-ink-3"
                   )}
                   style={

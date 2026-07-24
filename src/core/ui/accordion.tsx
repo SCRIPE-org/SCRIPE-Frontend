@@ -24,6 +24,11 @@ AccordionItem.displayName = "AccordionItem";
 // on hover — no underline. The open trigger wears the lit edge: a 2px inset
 // accent line under its title. Focus is the --nx-focus lit-edge ring (the
 // old version had no focus treatment at all).
+//
+// The chevron now reads from the trigger's group rather than a bare
+// [&[data-state=open]>svg] descendant hack, so it also tracks hover and
+// disabled — and gap-4 keeps a long title from butting into it, which
+// justify-between alone never prevented.
 const AccordionTrigger = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
@@ -32,13 +37,16 @@ const AccordionTrigger = React.forwardRef<
     <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(
-        "flex flex-1 items-center justify-between py-4 text-start font-medium text-nx-ink-2 transition-[color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus data-[state=open]:text-nx-ink data-[state=open]:shadow-[inset_0_-2px_0_0_var(--nx-accent)] [&[data-state=open]>svg]:rotate-180",
+        "group flex flex-1 items-center justify-between gap-4 rounded-nx-sm py-4 text-start font-medium text-nx-ink-2 transition-[color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus disabled:pointer-events-none disabled:text-nx-ink-3 disabled:shadow-none data-[state=open]:text-nx-ink data-[state=open]:shadow-[inset_0_-2px_0_0_var(--nx-accent)]",
         className
       )}
       {...props}
     >
       {children}
-      <ChevronDown className="h-4 w-4 shrink-0 text-nx-ink-3 transition-transform duration-nx-standard ease-nx-enter motion-reduce:transition-none" />
+      <ChevronDown
+        aria-hidden="true"
+        className="h-4 w-4 shrink-0 text-nx-ink-3 transition-transform duration-nx-standard ease-nx-enter motion-reduce:transition-none group-hover:text-nx-ink-2 group-data-[state=open]:rotate-180 group-data-[state=open]:text-nx-ink-2"
+      />
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
 ));

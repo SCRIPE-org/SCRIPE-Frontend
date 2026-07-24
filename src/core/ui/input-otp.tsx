@@ -17,8 +17,13 @@ const InputOTP = React.forwardRef<
 >(({ className, containerClassName, ...props }, ref) => (
   <OTPInput
     ref={ref}
+    // The slots are siblings of the hidden input, so an inert run is painted
+    // from the container: every slot takes the raised slab and ink-3 ink.
+    // Dedicated tokens, not a 50% wash over the whole group.
     containerClassName={cn(
-      "flex items-center gap-2 has-[:disabled]:opacity-50",
+      "flex items-center gap-2",
+      "has-[input:disabled]:cursor-not-allowed",
+      "[&:has(input:disabled)_[data-otp-slot]]:border-nx-line [&:has(input:disabled)_[data-otp-slot]]:bg-nx-raised [&:has(input:disabled)_[data-otp-slot]]:text-nx-ink-3 [&:has(input:disabled)_[data-otp-slot]]:shadow-none",
       containerClassName
     )}
     className={cn("disabled:cursor-not-allowed", className)}
@@ -46,12 +51,14 @@ const InputOTPSlot = React.forwardRef<
     <div
       ref={ref}
       data-active={isActive}
+      data-otp-slot=""
       className={cn(
         // The shared field surface sliced per slot: sunken ground behind a
         // hairline. Adjacent slots share edges — only the first draws its
-        // start border, only the ends round. Colour-only transition at micro
+        // start border, only the ends round. Digits are tabular so a code
+        // never re-flows as it is typed. Colour-only transition at micro
         // speed; motion-reduce drops even that.
-        "relative flex h-10 w-10 items-center justify-center border-y border-e border-nx-line bg-nx-ground text-sm text-nx-ink transition-[border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none first:rounded-s-nx-control first:border-s last:rounded-e-nx-control",
+        "relative flex h-10 w-10 items-center justify-center border-y border-e border-nx-line bg-nx-ground text-sm tabular-nums text-nx-ink transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none first:rounded-s-nx-control first:border-s last:rounded-e-nx-control",
         // The active slot is where light collects — the --nx-focus lit edge
         // (inset accent line + wash ring) draws on all four sides, so
         // shared-border middle slots light up evenly too.

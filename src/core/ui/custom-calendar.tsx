@@ -184,19 +184,19 @@ export function CustomCalendar({
   // Get locale-aware weekdays
   const weekDays = useMemo(() => getWeekDays(locale), [locale]);
 
-  // Memoize style functions
+  // The Settings borderRadius, mapped onto the nx radius ladder — same ladder
+  // as the trigger it drops out of, so the two corners agree.
   const borderRadiusClass = useMemo(() => {
     switch (borderRadius) {
       case "none":
         return "rounded-none";
       case "small":
-        return "rounded-sm";
+        return "rounded-nx-sm";
       case "large":
-        return "rounded-lg";
       case "full":
-        return "rounded-xl";
+        return "rounded-nx-lg";
       default:
-        return "rounded-md";
+        return "rounded-nx-md";
     }
   }, [borderRadius]);
 
@@ -212,17 +212,26 @@ export function CustomCalendar({
       ? "p-4 border-b border-nx-line bg-nx-accent-wash"
       : "p-4 border-b border-nx-line";
 
+  // Every day cell is a 40px target with tabular figures, so the grid columns
+  // line up whatever the digits are. Four states, four distinct readings:
+  //   unavailable  ink-3 + a strike, so a blocked booking day is legible at a
+  //                glance instead of being a slightly paler number
+  //   selected     the accent fill (elegant adds the ONE signature glow)
+  //   today        an accent lit EDGE, not a fill — today is a marker, the
+  //                selection is the statement, and the two must never look
+  //                the same
+  //   other-month  ink-3, hover lifts it one ink step
   const getButtonStyles = useCallback(
     (isSelected = false, isToday = false, isOtherMonth = false, isDisabled = false) => {
       const baseStyles = cn(
-        "flex h-10 w-10 items-center justify-center rounded-nx-sm text-sm",
-        "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+        "flex h-10 w-10 items-center justify-center rounded-nx-sm text-sm tabular-nums",
+        "transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
         "focus-visible:outline-none focus-visible:shadow-nx-focus",
-        "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+        "disabled:cursor-not-allowed disabled:hover:bg-transparent"
       );
 
       if (isDisabled) {
-        return cn(baseStyles, "text-nx-ink-3");
+        return cn(baseStyles, "text-nx-ink-3 line-through decoration-1");
       }
 
       if (isSelected) {
@@ -235,7 +244,10 @@ export function CustomCalendar({
       }
 
       if (isToday) {
-        return cn(baseStyles, "bg-nx-accent-wash font-semibold text-nx-accent");
+        return cn(
+          baseStyles,
+          "font-semibold text-nx-accent shadow-[inset_0_0_0_1px_var(--nx-accent)] hover:bg-nx-accent-wash"
+        );
       }
 
       if (isOtherMonth) {
@@ -247,16 +259,19 @@ export function CustomCalendar({
     [variant]
   );
 
+  // The time field is a field: same sunken ground, same hover lift, same lit
+  // edge as every Input in the product.
   const timeInputStyles = cn(
-    "w-full rounded-nx-control border border-nx-line bg-transparent px-3 py-2 text-sm text-nx-ink",
+    "h-10 w-full rounded-nx-control border border-nx-line bg-nx-ground px-3 py-2 text-sm tabular-nums text-nx-ink",
     "outline-none transition-[border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-    "focus-visible:border-nx-accent focus-visible:shadow-nx-focus"
+    "hover:border-nx-line-hi focus-visible:border-nx-accent focus-visible:shadow-nx-focus"
   );
 
   // Shared chrome for the header/nav/footer controls — same focus law as the
-  // day grid, hover on the ink-derived tint.
+  // day grid, hover on the ink-derived tint, and a 32px minimum box so a month
+  // step is a real pointer target rather than a 16px chevron.
   const controlButtonStyles =
-    "rounded-nx-sm transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus";
+    "inline-flex min-h-8 items-center justify-center rounded-nx-sm transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus";
 
   const getDaysInMonth = useCallback((date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -833,7 +848,7 @@ export function CustomCalendar({
                   onKeyDown={handleKeyDown}
                   className={cn(
                     "h-12 rounded-nx-control px-3 text-sm font-medium",
-                    "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                    "transition-[color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                     "focus-visible:outline-none focus-visible:shadow-nx-focus",
                     isSelected
                       ? "bg-nx-accent-fill font-semibold text-nx-on-fill"
@@ -867,13 +882,15 @@ export function CustomCalendar({
                     onClick={() => handleYearSelect(year)}
                     onKeyDown={handleKeyDown}
                     className={cn(
-                      "h-12 rounded-nx-control px-3 text-sm font-medium",
-                      "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                      "h-12 rounded-nx-control px-3 text-sm font-medium tabular-nums",
+                      "transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                       "focus-visible:outline-none focus-visible:shadow-nx-focus",
                       isSelected
                         ? "bg-nx-accent-fill font-semibold text-nx-on-fill"
                         : isCurrentYear
-                          ? "bg-nx-accent-wash font-semibold text-nx-accent"
+                          ? // the current year gets the same lit edge as today
+                            // in the day grid — one language for "you are here"
+                            "font-semibold text-nx-accent shadow-[inset_0_0_0_1px_var(--nx-accent)] hover:bg-nx-accent-wash"
                           : "text-nx-ink hover:bg-nx-hover"
                     )}
                     role="option"
@@ -885,25 +902,37 @@ export function CustomCalendar({
                 );
               })}
             </div>
-            <div className="mt-2 flex items-center justify-between border-t border-nx-line pt-2">
+            {/* Range stepper — the arrows are the SAME RTL-aware icons the
+                month nav uses, not `←`/`→` glyphs picked by a direction
+                ternary. Digits are tabular so the two ranges stay the same
+                width as the decade rolls. */}
+            <div className="mt-2 flex items-center justify-between gap-2 border-t border-nx-line pt-2">
               <button
                 onClick={() => navigateYearRange("prev")}
                 onKeyDown={handleKeyDown}
-                className={cn(controlButtonStyles, "px-3 py-1 text-xs text-nx-ink-2 hover:text-nx-ink")}
+                className={cn(
+                  controlButtonStyles,
+                  "gap-1 px-2 py-1 text-xs tabular-nums text-nx-ink-2 hover:text-nx-ink"
+                )}
                 aria-label={`${yearRangeStart - 12} - ${yearRangeStart - 1}`}
               >
-                {direction === "rtl" ? `→` : `←`} {yearRangeStart - 12} - {yearRangeStart - 1}
+                <PrevIcon className="h-3 w-3" aria-hidden="true" />
+                {yearRangeStart - 12} – {yearRangeStart - 1}
               </button>
-              <span className="text-xs text-nx-ink-2" aria-live="polite">
-                {yearRangeStart} - {yearRangeStart + 11}
+              <span className="text-xs tabular-nums text-nx-ink-2" aria-live="polite">
+                {yearRangeStart} – {yearRangeStart + 11}
               </span>
               <button
                 onClick={() => navigateYearRange("next")}
                 onKeyDown={handleKeyDown}
-                className={cn(controlButtonStyles, "px-3 py-1 text-xs text-nx-ink-2 hover:text-nx-ink")}
+                className={cn(
+                  controlButtonStyles,
+                  "gap-1 px-2 py-1 text-xs tabular-nums text-nx-ink-2 hover:text-nx-ink"
+                )}
                 aria-label={`${yearRangeStart + 12} - ${yearRangeStart + 23}`}
               >
-                {yearRangeStart + 12} - {yearRangeStart + 23} {direction === "rtl" ? `←` : `→`}
+                {yearRangeStart + 12} – {yearRangeStart + 23}
+                <NextIcon className="h-3 w-3" aria-hidden="true" />
               </button>
             </div>
           </>
@@ -951,8 +980,11 @@ export function CustomCalendar({
             }}
             onKeyDown={handleKeyDown}
             className={cn(
-              "rounded-nx-control bg-nx-accent-fill px-3 py-1.5 text-sm text-nx-on-fill",
-              "transition-opacity duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:opacity-90",
+              // hover lights the top inner edge instead of fading the fill —
+              // opacity math on a filled control reads as "disabled", not "hot"
+              "inline-flex min-h-8 items-center rounded-nx-control bg-nx-accent-fill px-3 py-1.5 text-sm font-medium text-nx-on-fill",
+              "transition-shadow duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+              "hover:shadow-[inset_0_1px_0_0_color-mix(in_srgb,var(--nx-on-fill)_35%,transparent)]",
               "focus-visible:outline-none focus-visible:shadow-nx-focus"
             )}
             aria-label={t("common.ok") || "OK"}

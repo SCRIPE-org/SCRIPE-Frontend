@@ -370,31 +370,34 @@ export function DatePicker({
 
   const IconComponent = type === "datetime-local" ? Clock : CalendarDays;
 
-  // Memoize style functions
+  // The Settings borderRadius, mapped onto the nx radius ladder — the same
+  // ladder Input and Button ride, so a date field and a text field in the same
+  // row have identical corners.
   const borderRadiusClass = useMemo(() => {
     switch (borderRadius) {
       case "none":
         return "rounded-none";
       case "small":
-        return "rounded-sm";
+        return "rounded-nx-sm";
       case "large":
-        return "rounded-lg";
+        return "rounded-nx-lg";
       case "full":
         return "rounded-full";
       default:
-        return "rounded-md";
+        return "rounded-nx-control";
     }
   }, [borderRadius]);
 
-  // The trigger IS the visual field: one bordered surface, colour-only
-  // transitions at micro speed, and the lit-edge focus law on :focus-visible.
-  // "elegant" is the accent take — the same skeleton plus an accent underline
-  // and an accent-wash tint while the calendar is open.
+  // The trigger IS the field, so it wears the field surface: 40px tall on the
+  // sunken --nx-ground behind a hairline, hover lifts the hairline, focus and
+  // the open state light the edge. "elegant" is the accent take — the same
+  // skeleton plus an accent underline and an accent-wash tint while the
+  // calendar is up. Inert is the raised slab with ink-3, never a 50% wash.
   const triggerStyles = useMemo(() => {
     const base = cn(
-      "relative flex h-12 w-full items-center justify-between px-4 py-3 text-sm",
-      "border border-nx-line bg-nx-surface",
-      "transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+      "relative flex h-10 w-full items-center justify-between gap-2 px-3 py-2 text-sm",
+      "border border-nx-line bg-nx-ground",
+      "transition-[color,border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
       "focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
       borderRadiusClass
     );
@@ -407,7 +410,11 @@ export function DatePicker({
       );
     }
 
-    return cn(base, "hover:border-nx-line-hi", showCalendar ? "border-nx-accent" : "");
+    return cn(
+      base,
+      "hover:border-nx-line-hi",
+      showCalendar ? "border-nx-accent shadow-nx-focus" : ""
+    );
   }, [variant, borderRadiusClass, showCalendar]);
 
   const displayValue = useMemo(() => {
@@ -441,7 +448,9 @@ export function DatePicker({
         ref={triggerRef}
         className={cn(
           triggerStyles,
-          disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+          disabled
+            ? "cursor-not-allowed border-nx-line bg-nx-raised text-nx-ink-3 shadow-none hover:border-nx-line"
+            : "cursor-pointer"
         )}
         onClick={handleIconClick}
         onKeyDown={handleTriggerKeyDown}
@@ -457,17 +466,21 @@ export function DatePicker({
         <span id={descriptionId} className="sr-only">
           {t("common.datePickerInstructions") || "Press Enter or Space to open calendar"}
         </span>
+        {/* A formatted date is a run of digits — tabular figures stop the
+            field twitching as the value changes. Empty reads as placeholder
+            ink, never as a value. */}
         <span
           className={cn(
-            "flex-1 select-none text-start",
-            value ? "text-nx-ink" : "text-nx-ink-3"
+            "flex-1 select-none truncate text-start",
+            value ? "tabular-nums text-nx-ink" : "text-nx-ink-3",
+            disabled && "text-nx-ink-3"
           )}
         >
           {displayValue}
         </span>
         <IconComponent
           className={cn(
-            "ms-2 h-4 w-4 flex-shrink-0",
+            "h-4 w-4 flex-shrink-0",
             "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
             showCalendar ? "text-nx-accent" : "text-nx-ink-3"
           )}
@@ -503,7 +516,9 @@ export function DatePicker({
             className={cn(
               // z-dropdown, not the 32-bit integer ceiling. A popover that outranks every
               // possible layer wins against dialogs and toasts too, which is never right.
-              "pointer-events-auto fixed z-dropdown rounded-lg border border-nx-line bg-nx-popover shadow-nx-popover",
+              // It floats, so it earns the popover shadow — the only shadow in
+              // this file.
+              "pointer-events-auto fixed z-dropdown rounded-nx-md border border-nx-line bg-nx-popover shadow-nx-popover",
               calendarPosition.placement === "top-start"
                 ? "rounded-b-none border-b-0"
                 : "rounded-t-none border-t-0",

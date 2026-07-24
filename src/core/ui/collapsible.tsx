@@ -7,7 +7,27 @@ import { cn } from "@core/common/utils";
 
 const Collapsible = CollapsiblePrimitive.Root;
 
-const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger;
+// The trigger stayed a bare primitive re-export, so a bare (non-asChild) call
+// site — the permissions picker is one — had no focus indicator and no
+// disabled treatment at all. It owes both. Deliberately shape-free: with
+// asChild, Radix concatenates this className onto the child WITHOUT twMerge,
+// so a radius here would race the child's own radius with stylesheet order
+// deciding the winner. The ring and the disabled ink are additive; a radius
+// would not be.
+const CollapsibleTrigger = React.forwardRef<
+  React.ElementRef<typeof CollapsiblePrimitive.CollapsibleTrigger>,
+  React.ComponentPropsWithoutRef<typeof CollapsiblePrimitive.CollapsibleTrigger>
+>(({ className, ...props }, ref) => (
+  <CollapsiblePrimitive.CollapsibleTrigger
+    ref={ref}
+    className={cn(
+      "focus-visible:outline-none focus-visible:shadow-nx-focus data-[disabled]:pointer-events-none data-[disabled]:text-nx-ink-3",
+      className
+    )}
+    {...props}
+  />
+));
+CollapsibleTrigger.displayName = CollapsiblePrimitive.CollapsibleTrigger.displayName;
 
 // Radix keeps a closing panel mounted only while a CSS *animation* runs — a
 // grid-rows transition can never play the exit, the content would be hidden

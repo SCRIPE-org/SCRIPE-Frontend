@@ -6,6 +6,12 @@
  * An empty state that only says "no data" wastes the one moment the user is
  * most willing to act, so the action slot is part of the contract rather than
  * an afterthought. Three sizes cover the panel, the page and the table cell.
+ *
+ * Wave K: the anatomy was right but the rhythm was not — a single mb/mt chain
+ * gave the same 4px gap to the glyph, the sentence and the action, so nothing
+ * grouped. The three tiers now scale together (glyph, type, gap), the copy
+ * wraps on balance points instead of orphaning a word, and the container's
+ * dashed hairline is the only decoration in the component.
  */
 
 import * as React from "react";
@@ -28,10 +34,36 @@ export interface EmptyStateProps {
   className?: string;
 }
 
+// One row per tier so the glyph, the type and the vertical air move together —
+// a 14px title beside a 56px glyph is what "sm" used to look like.
 const SIZES = {
-  sm: { wrap: "py-6", glyph: "h-9 w-9", icon: "h-4 w-4", title: "text-sm" },
-  md: { wrap: "py-10", glyph: "h-12 w-12", icon: "h-5 w-5", title: "text-base" },
-  lg: { wrap: "py-16", glyph: "h-14 w-14", icon: "h-6 w-6", title: "text-lg" },
+  sm: {
+    wrap: "py-6",
+    glyph: "h-9 w-9",
+    icon: "h-4 w-4",
+    gap: "mt-2.5",
+    title: "text-sm",
+    body: "text-xs",
+    actions: "mt-3",
+  },
+  md: {
+    wrap: "py-10",
+    glyph: "h-12 w-12",
+    icon: "h-5 w-5",
+    gap: "mt-3.5",
+    title: "text-base",
+    body: "text-sm",
+    actions: "mt-5",
+  },
+  lg: {
+    wrap: "py-16",
+    glyph: "h-14 w-14",
+    icon: "h-6 w-6",
+    gap: "mt-4",
+    title: "text-lg",
+    body: "text-sm",
+    actions: "mt-6",
+  },
 } as const;
 
 /**
@@ -64,7 +96,7 @@ export function EmptyState({
       {Icon && (
         <div
           className={cn(
-            "mb-3 grid place-items-center rounded-nx-md border border-nx-line bg-nx-raised text-nx-ink-3",
+            "grid place-items-center rounded-nx-md border border-nx-line bg-nx-raised text-nx-ink-3",
             s.glyph
           )}
           aria-hidden="true"
@@ -73,14 +105,22 @@ export function EmptyState({
         </div>
       )}
 
-      <h3 className={cn("font-semibold text-nx-ink", s.title)}>{title}</h3>
+      <h3
+        className={cn(
+          "font-semibold leading-tight tracking-tight text-nx-ink text-balance",
+          Icon && s.gap,
+          s.title
+        )}
+      >
+        {title}
+      </h3>
 
       {description && (
-        <p className="mt-1 max-w-[42ch] text-sm text-nx-ink-2">{description}</p>
+        <p className={cn("mt-1.5 max-w-[42ch] text-pretty text-nx-ink-2", s.body)}>{description}</p>
       )}
 
       {(action || secondaryAction) && (
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+        <div className={cn("flex flex-wrap items-center justify-center gap-2", s.actions)}>
           {action}
           {secondaryAction}
         </div>

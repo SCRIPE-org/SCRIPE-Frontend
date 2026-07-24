@@ -3,12 +3,19 @@
 /**
  * LoadingSpinner — THE loader
  *
- * One loading indicator for the whole product: a hairline ring with an accent
- * arc, a 3-dot stagger, or a breathing pulse. The old twelve-variant switch is
+ * One loading indicator for the whole product. The old twelve-variant switch is
  * gone — nine of its variants were visually broken (transition-delay classes
  * misread as animation-delay, delay utilities that do not exist in Tailwind,
  * keyframes that were never defined, an invalid alpha on currentColor) and
  * none of them belonged to the nexus look.
+ *
+ * Wave K killed the last piece of breathing in the file. The `pulse` variant
+ * was `animate-pulse` — an opacity loop, i.e. exactly the idle-motion language
+ * this system rejects, and the one loop a user cannot tell apart from a stalled
+ * request. It is now the DOUBLE-ARC ring: two opposed accent arcs turning on
+ * the same track. Rotation is the only motion a loader is allowed, the
+ * silhouette stays distinct from the single-arc `spinner`, and the stored
+ * setting value keeps resolving to its own look.
  *
  * The `inline` size renders with currentColor so it inherits the button ink —
  * Button and ~50 other call sites depend on it; that API is unchanged.
@@ -83,6 +90,14 @@ export function LoadingSpinner({
   // workspace accent — the loader is the active thing on the screen.
   const inline = size === "inline";
 
+  // Shared between both ring loaders: a hairline track under the turning arcs.
+  // Under prefers-reduced-motion the arcs stop and the mark stays legible as a
+  // static broken ring rather than vanishing.
+  const track = cn(
+    "absolute inset-0 rounded-full border-2",
+    inline ? "border-current opacity-20" : "border-nx-line"
+  );
+
   const loader = (() => {
     switch (variant) {
       case "dots":
@@ -102,32 +117,22 @@ export function LoadingSpinner({
           </span>
         );
       case "pulse":
-        if (inline) {
-          return (
-            <span
-              className="h-3 w-3 rounded-full bg-current opacity-60 motion-safe:animate-pulse"
-              aria-hidden="true"
-            />
-          );
-        }
-        // Static accent wash ring, breathing accent core — opacity only.
-        return (
-          <span
-            className={cn("grid place-items-center rounded-full bg-nx-accent-wash", RING[size])}
-            aria-hidden="true"
-          >
-            <span className="h-1/2 w-1/2 rounded-full bg-nx-accent motion-safe:animate-pulse" />
-          </span>
-        );
-      default: // spinner — hairline track, accent arc
+        // The double-arc ring — opposed arcs, one turn, no breath.
         return (
           <span className={cn("relative inline-block", RING[size])} aria-hidden="true">
+            <span className={track} />
             <span
               className={cn(
-                "absolute inset-0 rounded-full border-2",
-                inline ? "border-current opacity-20" : "border-nx-line"
+                "absolute inset-0 rounded-full border-2 border-transparent motion-safe:animate-spin",
+                inline ? "border-y-current" : "border-y-nx-accent"
               )}
             />
+          </span>
+        );
+      default: // spinner — hairline track, single accent arc
+        return (
+          <span className={cn("relative inline-block", RING[size])} aria-hidden="true">
+            <span className={track} />
             <span
               className={cn(
                 "absolute inset-0 rounded-full border-2 border-transparent motion-safe:animate-spin",
@@ -146,6 +151,7 @@ export function LoadingSpinner({
   return (
     <div
       role="status"
+      aria-busy="true"
       aria-label={t("common.loading")}
       className={cn(
         "flex items-center justify-center py-6",

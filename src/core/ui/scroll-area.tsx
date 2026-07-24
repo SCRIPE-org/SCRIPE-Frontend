@@ -69,6 +69,17 @@ const ScrollArea = React.forwardRef<
 });
 ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName;
 
+/**
+ * ScrollBar — the rail.
+ *
+ * Two things were wrong here. The vertical rail's gutter hairline was
+ * `border-l`, a PHYSICAL side: in RTL the scrollbar moves to the inline start
+ * and the gutter stayed on the left, so the rail drew its edge inside the
+ * content. And the thumb was `bg-border` — a pre-nexus token that resolves to a
+ * different grey from every other hairline in the shell, with no hover or drag
+ * state at all. It now steps nx-line-hi → ink-3 → ink-2 across rest, hover and
+ * drag, at the micro beat, with a reduced-motion path.
+ */
 const ScrollBar = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>,
   React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>
@@ -77,14 +88,20 @@ const ScrollBar = React.forwardRef<
     ref={ref}
     orientation={orientation}
     className={cn(
-      "flex touch-none select-none transition-colors",
-      orientation === "vertical" && "h-full w-2.5 border-l border-l-transparent p-[1px]",
-      orientation === "horizontal" && "h-2.5 flex-col border-t border-t-transparent p-[1px]",
+      "flex touch-none select-none p-px",
+      orientation === "vertical" && "h-full w-2.5 border-s border-s-transparent",
+      orientation === "horizontal" && "h-2.5 flex-col border-t border-t-transparent",
       className
     )}
     {...props}
   >
-    <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-border" />
+    <ScrollAreaPrimitive.ScrollAreaThumb
+      className={cn(
+        "relative flex-1 rounded-full bg-nx-line-hi",
+        "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+        "hover:bg-nx-ink-3 active:bg-nx-ink-2"
+      )}
+    />
   </ScrollAreaPrimitive.ScrollAreaScrollbar>
 ));
 ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName;

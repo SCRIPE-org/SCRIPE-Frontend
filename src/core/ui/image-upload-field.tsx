@@ -177,40 +177,45 @@ export function ImageUploadField({
 
   return (
     <div className="space-y-3">
-      {/* Label */}
-      {label && <Label className="text-sm font-medium">{label}</Label>}
-      {description && <p className="-mt-1 text-xs text-muted-foreground">{description}</p>}
+      {/* Field anatomy: label → hint → control → error */}
+      {label && <Label>{label}</Label>}
+      {description && <p className="-mt-1.5 text-xs leading-relaxed text-nx-ink-3">{description}</p>}
 
-      {/* Current image preview */}
+      {/* Filled state — the value itself is the proof, so it gets a real row:
+          thumbnail on the neutral raised step (never white, which blows out in
+          dark), the stored path in mono, and the destructive action at a 32px
+          target. Uploading reports on the same row instead of replacing it. */}
       {displayUrl && (
-        <div className="flex items-center gap-3 rounded-lg border bg-muted/30 p-3">
+        <div className="flex items-center gap-3 rounded-nx-control border border-nx-line bg-nx-surface p-3">
           <img
             src={displayUrl}
-            alt="Logo preview"
-            className="h-14 w-14 shrink-0 rounded-lg border bg-white object-contain p-1"
+            alt=""
+            className="h-14 w-14 shrink-0 rounded-nx-sm border border-nx-line bg-nx-raised object-contain p-1"
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = "none";
             }}
           />
           <div className="min-w-0 flex-1">
-            <p className="truncate font-mono text-xs text-muted-foreground">{value}</p>
+            <p className="truncate font-mono text-xs text-nx-ink-2">{value}</p>
             {isUploading && (
-              <div className="mt-1 flex items-center gap-1.5">
-                <Loader2 className="h-3 w-3 animate-spin text-primary" />
-                <span className="text-xs text-primary">
-                  {t("imageUpload.uploading") || "Uploading..."}
-                </span>
+              <div className="mt-1 flex items-center gap-1.5 text-xs text-nx-ink-3">
+                <Loader2
+                  className="h-3 w-3 motion-safe:animate-spin"
+                  aria-hidden="true"
+                />
+                <span>{t("imageUpload.uploading") || "Uploading..."}</span>
               </div>
             )}
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 shrink-0 text-destructive hover:text-destructive/80"
+            className="h-8 w-8 shrink-0 text-nx-ink-3 hover:text-nx-danger"
             onClick={handleRemove}
             disabled={disabled || isUploading}
+            aria-label={t("common.remove")}
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-4 w-4" aria-hidden="true" />
           </Button>
         </div>
       )}
@@ -228,32 +233,60 @@ export function ImageUploadField({
           </TabsTrigger>
         </TabsList>
 
-        {/* Upload Tab */}
+        {/* Upload Tab — a drop zone is a control: it is keyboard-reachable,
+            announces itself, and has four designed states (empty, hover,
+            dragging, uploading/inert). Dragging is the ONE moment light
+            collects: accent edge plus the accent wash, no scale, no bounce. */}
         <TabsContent value="upload" className="mt-3">
           <div
+            role="button"
+            tabIndex={disabled || isUploading ? -1 : 0}
+            aria-disabled={disabled || isUploading || undefined}
+            aria-label={t("imageUpload.dragDrop") || "Drop an image here or click to browse"}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             onClick={() => !disabled && !isUploading && inputRef.current?.click()}
+            onKeyDown={(e) => {
+              if (disabled || isUploading) return;
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                inputRef.current?.click();
+              }
+            }}
             className={cn(
-              "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 transition-all duration-200",
+              "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-nx-control border border-dashed p-6 text-center",
+              "transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+              "focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
               isDragging
-                ? "border-primary bg-primary/5"
-                : "border-border/40 hover:border-border hover:bg-muted/30",
-              (disabled || isUploading) && "cursor-not-allowed opacity-50"
+                ? "border-nx-accent bg-nx-accent-wash"
+                : "border-nx-line bg-nx-ground hover:border-nx-line-hi hover:bg-nx-hover",
+              (disabled || isUploading) &&
+                "cursor-not-allowed border-nx-line bg-nx-raised hover:border-nx-line hover:bg-nx-raised"
             )}
           >
             {isUploading ? (
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <Loader2
+                className="h-8 w-8 text-nx-accent motion-safe:animate-spin"
+                aria-hidden="true"
+              />
             ) : (
-              <ImageIcon className="h-8 w-8 text-muted-foreground" />
+              <ImageIcon
+                className={cn("h-8 w-8", isDragging ? "text-nx-accent" : "text-nx-ink-3")}
+                aria-hidden="true"
+              />
             )}
-            <div className="text-center">
-              <p className="text-sm font-medium">
-                {t("imageUpload.dragDrop") || "Drop an image here or click to browse"}
+            <div>
+              <p className="text-sm font-medium text-nx-ink">
+                {isUploading
+                  ? t("imageUpload.uploading") || "Uploading..."
+                  : t("imageUpload.dragDrop") || "Drop an image here or click to browse"}
               </p>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                PNG, JPG, SVG, WebP · {t("imageUpload.maxSize") || "Max"} {maxSizeMB}MB
+              <p className="mt-1 text-xs text-nx-ink-3">
+                PNG, JPG, SVG, WebP ·{" "}
+                <span className="tabular-nums">
+                  {t("imageUpload.maxSize") || "Max"} {maxSizeMB}MB
+                </span>
               </p>
             </div>
           </div>
@@ -284,6 +317,7 @@ export function ImageUploadField({
               }}
               placeholder={t("imageUpload.urlPlaceholder") || "https://example.com/logo.png"}
               className="flex-1 font-mono text-sm"
+              aria-invalid={Boolean(error) || undefined}
               disabled={disabled}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
@@ -302,17 +336,18 @@ export function ImageUploadField({
               {t("imageUpload.apply") || "Apply"}
             </Button>
           </div>
-          <p className="mt-1.5 text-xs text-muted-foreground">
+          <p className="mt-1.5 text-xs leading-relaxed text-nx-ink-3">
             {t("imageUpload.urlHelp") ||
               "Paste a direct link to an image. Best for well-known provider logos."}
           </p>
         </TabsContent>
       </Tabs>
 
-      {/* Error */}
+      {/* Error — one line, danger ink, announced politely. No banner, no fill:
+          the message is six words and the control above it is already wrong. */}
       {error && (
-        <p className="flex items-center gap-1.5 text-xs text-destructive">
-          <X className="h-3.5 w-3.5 shrink-0" />
+        <p role="status" className="flex items-start gap-1.5 text-xs font-medium text-nx-danger">
+          <X className="mt-px h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           {error}
         </p>
       )}

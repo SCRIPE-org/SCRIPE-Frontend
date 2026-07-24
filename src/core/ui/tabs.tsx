@@ -22,9 +22,9 @@ Tabs.displayName = "Tabs";
 
 // Two shapes, one system. The default is the underline treatment: a
 // transparent list over a hairline, with the active trigger carrying a 2px
-// accent lit edge on its bottom border and strong ink. "pill" keeps the old
-// raised-track look as the secondary variant. The list hands its variant to
-// the triggers through context so callers only say it once.
+// accent lit edge on its bottom border and strong ink. "pill" keeps the raised-
+// track look as the secondary variant. The list hands its variant to the
+// triggers through context so callers only say it once.
 type TabsVariant = "underline" | "pill";
 const TabsVariantContext = React.createContext<TabsVariant>("underline");
 
@@ -42,17 +42,22 @@ const tabsListVariants = cva("inline-flex h-10 items-center justify-center text-
 
 const tabsTriggerVariants = cva(
   // Only colour/edge properties transition, at the micro token speed (140ms)
-  // — never an unscoped transition without an explicit duration.
-  "inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 text-sm font-medium transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus disabled:pointer-events-none disabled:opacity-50",
+  // — never an unscoped transition without an explicit duration. `relative`
+  // plus the semantic z step keeps the focus halo above the neighbouring
+  // trigger instead of being clipped by it.
+  "relative inline-flex select-none items-center justify-center whitespace-nowrap px-3 py-1.5 text-sm font-medium tabular-nums transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus focus-visible:z-raised disabled:pointer-events-none disabled:text-nx-ink-3",
   {
     variants: {
       variant: {
         // -mb-px sits the trigger's 2px edge on top of the list's hairline;
         // the transparent rest border reserves the space so activation never
-        // shifts layout.
+        // shifts layout. Hover previews the edge at hairline strength, so the
+        // pointer lands on something before it commits.
         underline:
-          "-mb-px h-full border-b-2 border-transparent hover:text-nx-ink data-[state=active]:border-nx-accent data-[state=active]:text-nx-ink",
-        pill: "rounded-nx-sm hover:text-nx-ink data-[state=active]:bg-nx-surface data-[state=active]:text-nx-ink data-[state=active]:shadow-nx-sm",
+          "-mb-px h-full border-b-2 border-transparent hover:border-nx-line-hi hover:text-nx-ink data-[state=active]:border-nx-accent data-[state=active]:text-nx-ink disabled:border-transparent",
+        // The active pill is a raised surface behind an inset hairline, not a
+        // drop shadow: it sits IN the track, it does not float above it.
+        pill: "min-h-8 rounded-nx-sm hover:text-nx-ink data-[state=active]:bg-nx-surface data-[state=active]:text-nx-ink data-[state=active]:shadow-[inset_0_0_0_1px_var(--nx-line-hi)] disabled:bg-transparent disabled:shadow-none",
       },
     },
     defaultVariants: {
@@ -97,9 +102,15 @@ const TabsContent = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
 >(({ className, ...props }, ref) => (
+  // Radix gives the panel tabIndex=0 when it holds no focusable child, so it
+  // is a real tab stop and owes a real ring — with a radius, so the ring
+  // traces a shape rather than a rectangle around arbitrary content.
   <TabsPrimitive.Content
     ref={ref}
-    className={cn("mt-2 focus-visible:outline-none focus-visible:shadow-nx-focus", className)}
+    className={cn(
+      "mt-2 rounded-nx-sm focus-visible:outline-none focus-visible:shadow-nx-focus",
+      className
+    )}
     {...props}
   />
 ));

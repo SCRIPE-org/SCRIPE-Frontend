@@ -5,6 +5,13 @@ import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 
 import { cn } from "@core/common/utils";
 import { buttonVariants } from "@core/ui/button";
+import {
+  modalMotionClasses,
+  modalSurfaceClasses,
+  overlayFooterClasses,
+  overlayHeaderClasses,
+  overlayScrimClasses,
+} from "@core/ui/dialog";
 
 const AlertDialog = AlertDialogPrimitive.Root;
 
@@ -17,14 +24,10 @@ const AlertDialogOverlay = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Overlay>
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Overlay
-    // Mirrors DialogOverlay exactly: ONE scrim system (the token, not a
-    // hand-mixed black wash) and the named overlay step of the z ladder, not
-    // a stack number picked without seeing the other layers. Fades ride the
-    // token pair; a fade is the one movement reduced motion keeps.
-    className={cn(
-      "fixed inset-0 z-overlay bg-scrim duration-nx-standard ease-nx-enter data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-      className
-    )}
+    // The scrim is now IMPORTED from the dialog family rather than re-typed
+    // here. Two hand-maintained copies of the same 200-character string is how
+    // "one scrim system" quietly becomes two.
+    className={cn(overlayScrimClasses, className)}
     {...props}
     ref={ref}
   />
@@ -39,13 +42,17 @@ const AlertDialogContent = React.forwardRef<
     <AlertDialogOverlay />
     <AlertDialogPrimitive.Content
       ref={ref}
-      // The dialog surface recipe, 1:1: nx popover surface behind a hairline,
-      // the modal shadow step, the large radius token, z-modal. The 1/2 and
-      // 48% "slides" are the centering counter-translate (the animation
-      // keyframes replace the translate utilities while running), so they
-      // stay outside motion-safe — only the zoom is motion.
       className={cn(
-        "fixed left-[50%] top-[50%] z-modal grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-nx-line bg-nx-popover p-6 text-nx-ink shadow-nx-modal duration-nx-standard ease-nx-enter data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 motion-safe:data-[state=open]:zoom-in-95 motion-safe:data-[state=closed]:zoom-out-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] sm:rounded-nx-lg",
+        // Identical geometry to DialogContent — an alert dialog is a dialog
+        // that refuses to be dismissed casually, not a different object. Same
+        // 16px viewport gutter, same large radius at every width, same
+        // centering counter-translate riding inside the animation vars (which
+        // is why the 1/2 and 48% "slides" stay outside motion-safe: dropping
+        // them under reduced motion throws the panel into the corner).
+        "fixed left-[50%] top-[50%] z-modal grid w-[calc(100%-2rem)] max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-nx-lg border",
+        modalSurfaceClasses,
+        modalMotionClasses,
+        "motion-safe:data-[state=open]:zoom-in-95 motion-safe:data-[state=closed]:zoom-out-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]",
         className
       )}
       {...props}
@@ -55,16 +62,14 @@ const AlertDialogContent = React.forwardRef<
 AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName;
 
 const AlertDialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("flex flex-col space-y-2 text-center sm:text-start", className)} {...props} />
+  // No close button on an alert dialog, so no inline-end inset is needed — the
+  // rest of the header rhythm is the family's.
+  <div className={cn(overlayHeaderClasses, "gap-2 pe-0", className)} {...props} />
 );
 AlertDialogHeader.displayName = "AlertDialogHeader";
 
 const AlertDialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  // gap works in both axes and both directions — no space-x-reverse bookkeeping.
-  <div
-    className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
-    {...props}
-  />
+  <div className={cn(overlayFooterClasses, className)} {...props} />
 );
 AlertDialogFooter.displayName = "AlertDialogFooter";
 
@@ -74,7 +79,10 @@ const AlertDialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Title
     ref={ref}
-    className={cn("text-lg font-semibold", className)}
+    // Matches DialogTitle exactly; it used to be a size smaller in effect
+    // (no tracking, no explicit leading), so the same sentence rendered
+    // differently depending on which dialog primitive a view happened to use.
+    className={cn("text-lg font-semibold leading-tight tracking-tight text-nx-ink", className)}
     {...props}
   />
 ));
@@ -86,7 +94,7 @@ const AlertDialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Description
     ref={ref}
-    className={cn("text-sm text-nx-ink-2", className)}
+    className={cn("text-sm leading-6 text-nx-ink-2", className)}
     {...props}
   />
 ));
@@ -106,7 +114,11 @@ const AlertDialogCancel = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Cancel
     ref={ref}
-    className={cn(buttonVariants({ variant: "outline" }), "mt-2 sm:mt-0", className)}
+    // The `mt-2 sm:mt-0` that used to live here dates from a footer that
+    // spaced its children with margins. The footer has owned a `gap-2` for a
+    // while now, so the margin was pure double-spacing: 16px between the two
+    // buttons on mobile against 8px everywhere else in the system.
+    className={cn(buttonVariants({ variant: "outline" }), className)}
     {...props}
   />
 ));

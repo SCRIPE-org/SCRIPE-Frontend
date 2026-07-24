@@ -68,13 +68,16 @@ type FormItemContextValue = {
 
 const FormItemContext = React.createContext<FormItemContextValue>({} as FormItemContextValue);
 
+// THE field anatomy: label → control → hint/error, on one rhythm. 6px binds
+// the label to its control; the hint/error keeps the same step so the block
+// reads as a single unit with air around it, not three stacked strangers.
 const FormItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => {
     const id = React.useId();
 
     return (
       <FormItemContext.Provider value={{ id }}>
-        <div ref={ref} className={cn("space-y-2", className)} {...props} />
+        <div ref={ref} className={cn("space-y-1.5", className)} {...props} />
       </FormItemContext.Provider>
     );
   }
@@ -87,10 +90,12 @@ const FormLabel = React.forwardRef<
 >(({ className, ...props }, ref) => {
   const { error, formItemId } = useFormField();
 
+  // An invalid field's label goes danger-ink too, so the error is legible from
+  // the label down even when the message is scrolled out of view.
   return (
     <Label
       ref={ref}
-      className={cn(error && "text-destructive", className)}
+      className={cn(error && "text-nx-danger", className)}
       htmlFor={formItemId}
       {...props}
     />
@@ -122,11 +127,13 @@ const FormDescription = React.forwardRef<
 >(({ className, ...props }, ref) => {
   const { formDescriptionId } = useFormField();
 
+  // The hint is the quietest line in the block: one type step below the
+  // control, on the tertiary ink.
   return (
     <p
       ref={ref}
       id={formDescriptionId}
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-xs leading-relaxed text-nx-ink-3", className)}
       {...props}
     />
   );
@@ -144,11 +151,14 @@ const FormMessage = React.forwardRef<
     return null;
   }
 
+  // Reads instantly without shouting: the danger token at hint size, medium
+  // weight — no filled banner, no icon shout, no box around a six-word string.
+  // The field itself already carries the danger edge via aria-invalid.
   return (
     <p
       ref={ref}
       id={formMessageId}
-      className={cn("text-sm font-medium text-destructive", className)}
+      className={cn("text-xs font-medium leading-relaxed text-nx-danger", className)}
       {...props}
     >
       {body}

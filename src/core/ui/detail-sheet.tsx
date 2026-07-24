@@ -29,9 +29,10 @@
  *     TabsContent under the same root as the triggers.
  *
  * Everything visual is inherited, not restated: the nx overlay surface
- * (bg-nx-popover behind a hairline on the attached edge), the modal shadow
- * step, z-modal, the scrim, and the 200ms-enter / micro-exit motion pair
- * with its reduced-motion path all live in the Sheet primitive.
+ * (bg-nx-popover behind a hairline and the large radius on the attached
+ * edge), the modal shadow step, z-modal, the scrim, the 32px close control,
+ * and the 200ms-enter / micro-exit motion pair with its reduced-motion path
+ * all live in the Sheet primitive.
  *
  * Reference implementation: LeadDetailDrawer (billing/entitlements/leads).
  * The remaining direct-Sheet row-detail callers (billing CatalogView,
@@ -124,14 +125,20 @@ export function DetailSheet({
  * Pinned identity region above the scroll. Sits directly on the panel's
  * nx popover surface behind a full-bleed hairline — no translucent wash, no
  * backdrop blur (the scrim already pushed the page back by taking light
- * away). Leave the inline-end corner clear: the primitive's close button
- * lives there.
+ * away).
+ *
+ * The inline-end inset is the slot's job, not the caller's: the primitive's
+ * close control occupies a 32px square in that corner, and "leave it clear"
+ * as a doc note meant one consumer patched `pe-12` on and the others let
+ * their titles run underneath it.
  */
 export function DetailSheetHeader({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("shrink-0 border-b border-nx-line px-6 py-5", className)} {...props} />;
+  return (
+    <div className={cn("shrink-0 border-b border-nx-line ps-6 pe-12 py-5", className)} {...props} />
+  );
 }
 DetailSheetHeader.displayName = "DetailSheetHeader";
 
@@ -155,6 +162,10 @@ DetailSheetTabBar.displayName = "DetailSheetTabBar";
 /**
  * The one scroll region of the panel. Everything that is not pinned chrome
  * goes here — including TabsContent panels when the sheet is tabbed.
+ *
+ * overscroll-contain stops a flick that reaches the end of the detail from
+ * carrying on into the list behind the scrim — which is the one thing this
+ * container exists to keep exactly where the user left it.
  */
 export function DetailSheetBody({
   className,
@@ -162,7 +173,10 @@ export function DetailSheetBody({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("custom-scrollbar flex-1 overflow-y-auto overflow-x-hidden", className)}
+      className={cn(
+        "custom-scrollbar flex-1 overflow-y-auto overflow-x-hidden overscroll-contain",
+        className
+      )}
       {...props}
     />
   );
@@ -173,11 +187,25 @@ DetailSheetBody.displayName = "DetailSheetBody";
  * Pinned action bar under the scroll, behind its own hairline. Primary
  * record actions (convert, assign, send) belong here so they stay reachable
  * however long the detail grows.
+ *
+ * It lays its children out itself now, on the same contract as every other
+ * overlay footer in the family — actions in DOM order, primary last, packed
+ * to the inline-end edge. A tertiary action (reset, delete) opts out of the
+ * pack with `me-auto`. Every consumer was re-declaring `flex items-center
+ * gap-2` on top of a plain block to get here.
  */
 export function DetailSheetFooter({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("shrink-0 border-t border-nx-line px-6 py-4", className)} {...props} />;
+  return (
+    <div
+      className={cn(
+        "flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-nx-line px-6 py-4",
+        className
+      )}
+      {...props}
+    />
+  );
 }
 DetailSheetFooter.displayName = "DetailSheetFooter";

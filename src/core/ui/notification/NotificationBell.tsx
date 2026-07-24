@@ -251,8 +251,10 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
         "fixed z-dropdown flex flex-col overflow-hidden",
         "rounded-nx-lg border border-nx-line bg-nx-popover text-nx-ink shadow-nx-popover",
         // Fade always; the 0.95 zoom from the trigger origin only when motion
-        // is welcome.
-        "duration-nx-micro ease-nx-enter animate-in fade-in-0 motion-safe:zoom-in-95"
+        // is welcome. An overlay enters on the 200ms standard beat — the micro
+        // beat is for hover and press, and at 140ms a 340px panel reads as a
+        // pop rather than an arrival.
+        "duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-safe:zoom-in-95"
       )}
     >
       {/* ── Header ───────────────────────────────────────────────────────── */}
@@ -260,7 +262,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
         <div className="flex min-w-0 items-center gap-2">
           <h2 className="truncate text-sm font-semibold text-nx-ink">{title}</h2>
           {hasUnread && (
-            <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-nx-accent-wash px-1.5 text-[11px] font-semibold leading-none text-nx-accent">
+            <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-nx-accent-wash px-1.5 text-[11px] font-semibold leading-none tabular-nums text-nx-accent">
               {vm.unreadCount > 99 ? "99+" : vm.unreadCount}
             </span>
           )}
@@ -271,7 +273,9 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
             type="button"
             onClick={vm.markAllAsRead}
             className={cn(
-              "flex shrink-0 items-center gap-1.5 rounded-nx-sm px-2 py-1 text-xs font-medium text-nx-accent",
+              // 32px tall: this was a 24px text button, under the hit-target
+              // floor and the smallest tap target in the shell.
+              "flex h-8 shrink-0 items-center gap-1.5 rounded-nx-sm px-2 text-xs font-medium text-nx-accent",
               "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
               "hover:bg-nx-accent-wash focus-visible:outline-none focus-visible:shadow-nx-focus"
             )}
@@ -392,7 +396,11 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
             <span className="sr-only">{vm.unreadCount}</span>
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute -end-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-nx-accent-fill px-1 text-[9px] font-bold leading-none text-nx-on-fill shadow-nx-sm"
+              // A count chip is painted ON the bell, not floating above it —
+              // the `shadow-nx-sm` it carried was depth it does not have. The
+              // solid accent fill against ink-2 glyph is separation enough, and
+              // the digits are tabular so 9 → 10 does not shuffle the chip.
+              className="pointer-events-none absolute -end-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-nx-accent-fill px-1 text-[9px] font-bold leading-none tabular-nums text-nx-on-fill"
             >
               {vm.unreadCount > 99 ? "99+" : vm.unreadCount}
             </span>

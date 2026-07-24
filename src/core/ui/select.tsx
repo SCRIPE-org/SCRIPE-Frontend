@@ -35,10 +35,14 @@ const SelectTrigger = React.forwardRef<
       ref={ref}
       className={cn(
         // A select trigger is a field. Sizing and trigger chrome live here; the
-        // surface (hairline rest, lit-edge focus-visible, disabled) is the SAME
-        // fieldVariants Input and Textarea wear, so all three read as one
-        // control — including the Settings inputStyle variants.
-        "flex h-10 w-full items-center justify-between px-3 py-2 text-sm data-[placeholder]:text-nx-ink-3 [&>span]:line-clamp-1",
+        // surface (hairline rest, hover lift, lit-edge focus-visible, error and
+        // disabled) is the SAME fieldVariants Input and Textarea wear, so all
+        // three read as one control — including the Settings inputStyle
+        // variants.
+        "group flex h-10 w-full items-center justify-between gap-2 px-3 py-2 text-sm data-[placeholder]:text-nx-ink-3 [&>span]:line-clamp-1 [&>span]:text-start",
+        // while its list is up the trigger stays the active thing: it keeps the
+        // lit edge instead of dropping back to a hairline behind the popover
+        "data-[state=open]:border-nx-accent data-[state=open]:shadow-nx-focus",
         fieldVariants({ inputStyle: resolveFieldStyle(settings.inputStyle) }),
         className
       )}
@@ -46,7 +50,12 @@ const SelectTrigger = React.forwardRef<
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
+        {/* the chevron turns with the panel — 140ms, transform only, and it
+            holds its rest position under reduced motion */}
+        <ChevronDown
+          className="h-4 w-4 shrink-0 text-nx-ink-3 transition-transform duration-nx-micro ease-nx-enter motion-reduce:transition-none group-data-[state=open]:rotate-180"
+          aria-hidden="true"
+        />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );
@@ -59,10 +68,15 @@ const SelectScrollUpButton = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.ScrollUpButton
     ref={ref}
-    className={cn("flex cursor-default items-center justify-center py-1", className)}
+    // opaque popover fill: the rows must disappear UNDER the affordance, not
+    // bleed through it
+    className={cn(
+      "flex cursor-default items-center justify-center bg-nx-popover py-1 text-nx-ink-3",
+      className
+    )}
     {...props}
   >
-    <ChevronUp className="h-4 w-4" />
+    <ChevronUp className="h-4 w-4" aria-hidden="true" />
   </SelectPrimitive.ScrollUpButton>
 ));
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
@@ -73,10 +87,13 @@ const SelectScrollDownButton = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.ScrollDownButton
     ref={ref}
-    className={cn("flex cursor-default items-center justify-center py-1", className)}
+    className={cn(
+      "flex cursor-default items-center justify-center bg-nx-popover py-1 text-nx-ink-3",
+      className
+    )}
     {...props}
   >
-    <ChevronDown className="h-4 w-4" />
+    <ChevronDown className="h-4 w-4" aria-hidden="true" />
   </SelectPrimitive.ScrollDownButton>
 ));
 SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;
@@ -124,7 +141,12 @@ const SelectLabel = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Label
     ref={ref}
-    className={cn("py-1.5 pe-2 ps-8 text-sm font-semibold", className)}
+    // a group heading, not an option: smaller, quieter ink, and it never sits
+    // on the same type step as the rows it introduces
+    className={cn(
+      "py-1.5 pe-2 ps-8 text-xs font-semibold uppercase tracking-wide text-nx-ink-3",
+      className
+    )}
     {...props}
   />
 ));
@@ -137,7 +159,13 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-nx-sm py-1.5 pe-2 ps-8 text-sm outline-none focus:bg-nx-hover focus:text-nx-ink data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      // 32px rows — a pointer target, not a text line
+      "relative flex min-h-8 w-full cursor-default select-none items-center rounded-nx-sm py-1.5 pe-2 ps-8 text-sm outline-none",
+      "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+      "focus:bg-nx-hover focus:text-nx-ink",
+      // an unavailable option reads inert through the ink token, not through a
+      // half-transparent row
+      "data-[disabled]:pointer-events-none data-[disabled]:text-nx-ink-3",
       // Checked wears the lit edge: a 2px inline-start accent bar, never a
       // filled row.
       "before:absolute before:inset-y-1 before:start-0 before:w-0.5 before:rounded-full data-[state=checked]:before:bg-nx-accent",
@@ -145,9 +173,9 @@ const SelectItem = React.forwardRef<
     )}
     {...props}
   >
-    <span className="absolute start-2 flex h-3.5 w-3.5 items-center justify-center">
+    <span className="absolute start-2 flex h-3.5 w-3.5 items-center justify-center text-nx-accent">
       <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4" />
+        <Check className="h-4 w-4" aria-hidden="true" />
       </SelectPrimitive.ItemIndicator>
     </span>
 

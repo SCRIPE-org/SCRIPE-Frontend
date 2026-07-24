@@ -102,8 +102,10 @@ export function ExportIntervalSelect({ value, onChange, className }: ExportInter
             size="sm"
             onClick={() => handlePresetClick(p.value)}
             className="gap-1.5 text-xs"
+            // a preset row is a choice set, not five independent buttons
+            aria-pressed={isActive}
           >
-            <Icon className="h-3.5 w-3.5" />
+            <Icon className="h-3.5 w-3.5" aria-hidden="true" />
             {t(`export.interval.${p.value}`)}
           </Button>
         );
@@ -114,32 +116,35 @@ export function ExportIntervalSelect({ value, onChange, className }: ExportInter
   return (
     <div className={className}>
       {/* Preset Buttons */}
-      <div className="flex flex-wrap gap-2">{presetButtons}</div>
+      <div className="flex flex-wrap gap-2" role="group">
+        {presetButtons}
+      </div>
 
       {/* Custom Date Range */}
       {activePreset === "custom" && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           <DatePicker
             id="export-date-from"
             placeholder={t("export.interval.from")}
             value={value.dateFrom}
             onChange={(v) => onChange({ ...value, dateFrom: v })}
-            className="flex-1"
+            className="min-w-40 flex-1"
           />
           <DatePicker
             id="export-date-to"
             placeholder={t("export.interval.to")}
             value={value.dateTo}
             onChange={(v) => onChange({ ...value, dateTo: v })}
-            className="flex-1"
+            className="min-w-40 flex-1"
           />
         </div>
       )}
 
-      {/* Date Range Label */}
+      {/* Resolved range — an en dash, not an arrow glyph that points the wrong
+          way in RTL, and tabular figures so the two dates align. */}
       {activePreset !== "custom" && value.dateFrom && value.dateTo && (
-        <p className="mt-2 text-xs text-muted-foreground">
-          {value.dateFrom} → {value.dateTo}
+        <p className="mt-2 text-xs tabular-nums text-nx-ink-3">
+          {value.dateFrom} – {value.dateTo}
         </p>
       )}
     </div>

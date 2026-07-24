@@ -67,13 +67,18 @@ export function normalizeToastDesign(value: string | null | undefined): ToastDes
 }
 
 const toastVariants = cva(
-  // transform+opacity only; enter at the 200ms standard beat, exit on the exit
-  // curve. Reduced motion keeps the crossfade and drops the edge slide — the
+  // transform+opacity only; enter at the 200ms standard beat, exit at the micro
+  // beat on the exit curve — an exit that takes as long as its entrance reads
+  // as lag. Reduced motion keeps the crossfade and drops the edge slide — the
   // motion-safe: gate covers every slide class. The closed-state slide is
   // direction-aware: toasts live at the inline END, so they leave to the right
   // in LTR and to the left in RTL (the old hardcoded right was the wrong side
   // there, and Radix swipe hands off to the same exit).
-  "group pointer-events-auto relative flex w-full items-center justify-between gap-4 overflow-hidden p-4 transition-[transform,opacity] duration-nx-standard ease-nx-enter motion-reduce:transition-none data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-safe:data-[state=open]:slide-in-from-top-full motion-safe:data-[state=open]:sm:slide-in-from-bottom-full data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:ease-nx-exit data-[state=closed]:fade-out-0 motion-safe:ltr:data-[state=closed]:slide-out-to-right-full motion-safe:rtl:data-[state=closed]:slide-out-to-left-full",
+  //
+  // `pe-12` reserves the close button's column: the button is absolutely
+  // positioned at the inline end, and p-4 alone let a long title run straight
+  // underneath it.
+  "group pointer-events-auto relative flex w-full items-center justify-between gap-4 overflow-hidden p-4 pe-12 transition-[transform,opacity] duration-nx-standard ease-nx-enter motion-reduce:transition-none data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-safe:data-[state=open]:slide-in-from-top-full motion-safe:data-[state=open]:sm:slide-in-from-bottom-full data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=closed]:fade-out-0 motion-safe:ltr:data-[state=closed]:slide-out-to-right-full motion-safe:rtl:data-[state=closed]:slide-out-to-left-full",
   {
     variants: {
       variant: {
@@ -95,8 +100,14 @@ const toastVariants = cva(
       },
     },
     compoundVariants: [
-      // Classic Design Variants — solid nx surface so text stays legible over
-      // any page content; status speaks through the border and ink only.
+      // Status used to paint the whole toast: `text-success` / `text-warning`
+      // on the ROOT meant the title AND the body copy rendered in the status
+      // hue, which is the least readable thing a two-line message can do —
+      // amber body text on a neutral surface fails contrast outright. The ink
+      // is neutral now on every variant; severity is carried by the hairline
+      // and by ToastContent's glyph, so it survives greyscale too.
+
+      // Classic — the card: surface ground, hairline edge, popover depth.
       {
         variant: "default",
         design: "classic",
@@ -105,26 +116,26 @@ const toastVariants = cva(
       {
         variant: "success",
         design: "classic",
-        class: "rounded-nx-lg border border-success/40 bg-nx-surface text-success shadow-nx-popover",
+        class: "rounded-nx-lg border border-success/40 bg-nx-surface text-nx-ink shadow-nx-popover",
       },
       {
         variant: "destructive",
         design: "classic",
         class:
-          "rounded-nx-lg border border-destructive/40 bg-nx-surface text-destructive shadow-nx-popover",
+          "rounded-nx-lg border border-destructive/40 bg-nx-surface text-nx-ink shadow-nx-popover",
       },
       {
         variant: "warning",
         design: "classic",
-        class: "rounded-nx-lg border border-warning/40 bg-nx-surface text-warning shadow-nx-popover",
+        class: "rounded-nx-lg border border-warning/40 bg-nx-surface text-nx-ink shadow-nx-popover",
       },
       {
         variant: "info",
         design: "classic",
-        class: "rounded-nx-lg border border-info/40 bg-nx-surface text-info shadow-nx-popover",
+        class: "rounded-nx-lg border border-info/40 bg-nx-surface text-nx-ink shadow-nx-popover",
       },
 
-      // Minimal Design Variants
+      // Minimal — flat and quiet: hairline only, no shadow.
       {
         variant: "default",
         design: "minimal",
@@ -133,25 +144,25 @@ const toastVariants = cva(
       {
         variant: "success",
         design: "minimal",
-        class: "rounded-nx-sm border border-success/30 bg-nx-surface text-success",
+        class: "rounded-nx-sm border border-success/30 bg-nx-surface text-nx-ink",
       },
       {
         variant: "destructive",
         design: "minimal",
-        class: "rounded-nx-sm border border-destructive/30 bg-nx-surface text-destructive",
+        class: "rounded-nx-sm border border-destructive/30 bg-nx-surface text-nx-ink",
       },
       {
         variant: "warning",
         design: "minimal",
-        class: "rounded-nx-sm border border-warning/30 bg-nx-surface text-warning",
+        class: "rounded-nx-sm border border-warning/30 bg-nx-surface text-nx-ink",
       },
       {
         variant: "info",
         design: "minimal",
-        class: "rounded-nx-sm border border-info/30 bg-nx-surface text-info",
+        class: "rounded-nx-sm border border-info/30 bg-nx-surface text-nx-ink",
       },
 
-      // Modern Design Variants
+      // Modern — the raised step: light collects on it via the deeper shadow.
       {
         variant: "default",
         design: "modern",
@@ -160,23 +171,23 @@ const toastVariants = cva(
       {
         variant: "success",
         design: "modern",
-        class: "rounded-nx-md border border-success/50 bg-nx-raised text-success shadow-nx-modal",
+        class: "rounded-nx-md border border-success/50 bg-nx-raised text-nx-ink shadow-nx-modal",
       },
       {
         variant: "destructive",
         design: "modern",
         class:
-          "rounded-nx-md border border-destructive/50 bg-nx-raised text-destructive shadow-nx-modal",
+          "rounded-nx-md border border-destructive/50 bg-nx-raised text-nx-ink shadow-nx-modal",
       },
       {
         variant: "warning",
         design: "modern",
-        class: "rounded-nx-md border border-warning/50 bg-nx-raised text-warning shadow-nx-modal",
+        class: "rounded-nx-md border border-warning/50 bg-nx-raised text-nx-ink shadow-nx-modal",
       },
       {
         variant: "info",
         design: "modern",
-        class: "rounded-nx-md border border-info/50 bg-nx-raised text-info shadow-nx-modal",
+        class: "rounded-nx-md border border-info/50 bg-nx-raised text-nx-ink shadow-nx-modal",
       },
     ],
     defaultVariants: {
@@ -221,7 +232,13 @@ const ToastAction = React.forwardRef<
   <ToastPrimitives.Action
     ref={ref}
     className={cn(
-      "inline-flex h-8 shrink-0 items-center justify-center rounded-nx-control border border-nx-line-hi bg-transparent px-3 text-sm font-medium transition-[background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus disabled:pointer-events-none disabled:opacity-50",
+      "inline-flex h-8 shrink-0 items-center justify-center rounded-nx-control border border-nx-line-hi bg-transparent px-3 text-sm font-medium text-nx-ink",
+      "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+      "hover:bg-nx-hover focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
+      // Disabled reads through its own ink and hairline tokens. `opacity-50`
+      // over a translucent toast surface produced a different grey on every
+      // design variant and landed under the contrast floor on `modern`.
+      "disabled:pointer-events-none disabled:border-nx-line disabled:text-nx-ink-3",
       className
     )}
     {...props}
@@ -229,6 +246,9 @@ const ToastAction = React.forwardRef<
 ));
 ToastAction.displayName = ToastPrimitives.Action.displayName;
 
+// Dismiss was `opacity-0` until `group-hover` — invisible and unreachable on
+// every touch device, which is where a toast is hardest to swipe away. It is
+// always present now at quiet ink, brightening on hover, on a 32px target.
 const ToastClose = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Close>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Close>
@@ -236,13 +256,15 @@ const ToastClose = React.forwardRef<
   <ToastPrimitives.Close
     ref={ref}
     className={cn(
-      "absolute end-2 top-2 rounded-nx-sm p-1 text-nx-ink-3 opacity-0 transition-opacity duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:shadow-nx-focus",
+      "absolute end-1.5 top-1.5 grid h-8 w-8 place-items-center rounded-nx-sm text-nx-ink-3",
+      "transition-[color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+      "hover:bg-nx-hover hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus",
       className
     )}
     toast-close=""
     {...props}
   >
-    <X className="h-4 w-4" />
+    <X aria-hidden="true" className="h-4 w-4" />
   </ToastPrimitives.Close>
 ));
 ToastClose.displayName = ToastPrimitives.Close.displayName;
@@ -251,7 +273,11 @@ const ToastTitle = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Title>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title>
 >(({ className, ...props }, ref) => (
-  <ToastPrimitives.Title ref={ref} className={cn("text-sm font-semibold", className)} {...props} />
+  <ToastPrimitives.Title
+    ref={ref}
+    className={cn("text-sm font-semibold leading-tight tracking-tight text-balance", className)}
+    {...props}
+  />
 ));
 ToastTitle.displayName = ToastPrimitives.Title.displayName;
 
@@ -261,7 +287,10 @@ const ToastDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Description
     ref={ref}
-    className={cn("text-sm opacity-90", className)}
+    // `opacity-90` was doing the job a second ink token should do — a
+    // translucent white over a translucent surface never lands on a measured
+    // contrast step.
+    className={cn("text-sm leading-snug text-pretty text-nx-ink-2", className)}
     {...props}
   />
 ));
@@ -275,28 +304,28 @@ interface ToastContentProps {
   showIcon?: boolean;
 }
 
+// Severity now lives in the glyph — shape first, colour second — because the
+// toast body no longer tints itself. Four distinct silhouettes, one per level.
+const TOAST_ICON = {
+  default: { Glyph: Info, tint: "text-nx-ink-3" },
+  destructive: { Glyph: AlertCircle, tint: "text-destructive" },
+  success: { Glyph: CheckCircle, tint: "text-success" },
+  warning: { Glyph: AlertTriangle, tint: "text-warning" },
+  info: { Glyph: Info, tint: "text-info" },
+} as const;
+
 const ToastContent = React.forwardRef<
   HTMLDivElement,
   ToastContentProps & React.HTMLAttributes<HTMLDivElement>
 >(({ variant = "default", title, description, showIcon = true, className, ...props }, ref) => {
-  const icons = {
-    default: Info,
-    destructive: AlertCircle,
-    success: CheckCircle,
-    warning: AlertTriangle,
-    info: Info,
-  };
-
-  const IconComponent = icons[variant];
+  const { Glyph, tint } = TOAST_ICON[variant];
 
   return (
-    <div ref={ref} className={cn("flex items-start gap-3", className)} {...props}>
+    <div ref={ref} className={cn("flex min-w-0 items-start gap-3", className)} {...props}>
       {showIcon && (
-        <div className="mt-0.5 flex-shrink-0">
-          <IconComponent className="h-4 w-4" />
-        </div>
+        <Glyph aria-hidden="true" className={cn("mt-0.5 h-4 w-4 shrink-0", tint)} />
       )}
-      <div className="flex-1 space-y-1">
+      <div className="min-w-0 flex-1 space-y-1">
         {title && <ToastTitle>{title}</ToastTitle>}
         {description && <ToastDescription>{description}</ToastDescription>}
       </div>

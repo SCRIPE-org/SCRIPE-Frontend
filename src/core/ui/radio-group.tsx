@@ -6,7 +6,12 @@ import { Circle } from "lucide-react";
 
 import { cn } from "@core/common/utils";
 import { useSettings } from "@core/providers/settings-provider";
-import { CONTROL_SURFACE, resolveControlSurface } from "./checkbox";
+import {
+  CONTROL_DISABLED,
+  CONTROL_HIT_TARGET,
+  CONTROL_SURFACE,
+  resolveControlSurface,
+} from "./checkbox";
 
 // The legacy design union stays intact: Settings still stores any of these
 // values and sibling files type against it. Every value that is not a
@@ -79,12 +84,14 @@ const RadioGroupItem = React.forwardRef<
     <RadioGroupPrimitive.Item
       ref={ref}
       className={cn(
-        "aspect-square h-4 w-4 shrink-0 rounded-full",
+        // explicit centring so the dot sits dead centre in every engine
+        "inline-flex aspect-square h-4 w-4 shrink-0 items-center justify-center rounded-full",
+        CONTROL_HIT_TARGET,
         CONTROL_SURFACE[effectiveDesign],
         // colour-only transition at micro speed; motion-reduce drops it
         "transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
         "focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
-        "disabled:cursor-not-allowed disabled:opacity-50",
+        CONTROL_DISABLED,
         className
       )}
       {...props}
@@ -92,9 +99,9 @@ const RadioGroupItem = React.forwardRef<
       <RadioGroupPrimitive.Indicator
         // dot-in at micro speed — transform+opacity only; the indicator
         // only mounts when checked, so animate-in needs no state variant
-        className="flex items-center justify-center animate-in fade-in zoom-in-75 duration-nx-micro ease-nx-enter motion-reduce:animate-none"
+        className="flex h-full w-full items-center justify-center animate-in fade-in zoom-in-75 duration-nx-micro ease-nx-enter motion-reduce:animate-none"
       >
-        <Circle className="h-2 w-2 fill-current text-current" />
+        <Circle className="h-2 w-2 fill-current text-current" aria-hidden="true" />
       </RadioGroupPrimitive.Indicator>
     </RadioGroupPrimitive.Item>
   );

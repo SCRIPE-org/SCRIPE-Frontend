@@ -60,7 +60,7 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
     ref
   ) => {
     const { switchStyle: settingsSwitchStyle } = useSettings();
-    const { t, direction } = useI18n();
+    const { t } = useI18n();
 
     // Use override style if provided, otherwise use settings
     const skin = SWITCH_SKINS[resolveSwitchSkin(overrideSwitchStyle || settingsSwitchStyle)];
@@ -68,49 +68,65 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
     // Default labels
     const defaultOnLabel = onLabel || t("common.yes");
     const defaultOffLabel = offLabel || t("common.no");
-    const isRTL = direction === "rtl";
 
     const rootClassName = cn(
       "peer inline-flex shrink-0 cursor-pointer items-center rounded-full border border-nx-line bg-nx-ground p-0.5",
       skin.root,
-      // colour-only transition capped at standard speed; motion-reduce drops it
-      "transition-[border-color,background-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+      // colour-only transition at MICRO speed — a toggle has to feel switched,
+      // not eased; motion-reduce drops it
+      "transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+      // hover lifts the hairline only while OFF — an ON track already wears the
+      // accent edge and must not fall back to a neutral line under the pointer
+      "data-[state=unchecked]:enabled:hover:border-nx-line-hi",
       // on = accent fill behind the lit edge: accent border plus a faint
       // on-fill light along the top inner edge — an edge, never a glow
       "data-[state=checked]:border-nx-accent data-[state=checked]:bg-nx-accent-fill",
       "data-[state=checked]:shadow-[inset_0_1px_0_0_color-mix(in_srgb,var(--nx-on-fill)_35%,transparent)]",
       // the stacked variant keeps the focus ring winning over the lit edge
       "focus-visible:outline-none focus-visible:shadow-nx-focus data-[state=checked]:focus-visible:shadow-nx-focus",
-      "disabled:cursor-not-allowed disabled:opacity-50",
+      // inert: the track flattens to the raised step in BOTH positions, so a
+      // disabled ON switch never masquerades as a live accent control
+      "disabled:cursor-not-allowed disabled:border-nx-line disabled:bg-nx-raised disabled:shadow-none",
+      "disabled:data-[state=checked]:border-nx-line disabled:data-[state=checked]:bg-nx-raised-2 disabled:data-[state=checked]:shadow-none",
       className
     );
 
     const thumbClassName = cn(
       "pointer-events-none block rounded-full border border-nx-line-hi bg-nx-raised-2 shadow-nx-sm",
       skin.thumb,
-      "transition-[transform,border-color,background-color] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+      // travel at micro speed too — thumb and track land together
+      "transition-[transform,border-color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
       "data-[state=checked]:border-transparent data-[state=checked]:bg-nx-on-fill",
+      "data-[disabled]:border-transparent data-[disabled]:bg-nx-line-hi data-[disabled]:shadow-none",
       skin.travel
     );
 
     if (showLabels) {
+      // No flex-row-reverse fork: `flex-row` already follows the writing
+      // direction, so the old RTL branch flipped the pair twice. The track
+      // itself keeps its dir="ltr" pin (see below) so ON stays physically
+      // RIGHT in both locales, and the labels reorder around it.
       return (
-        <div className={cn("flex items-center gap-3", isRTL ? "flex-row-reverse" : "")}>
+        <div className="flex items-center gap-3">
           <span
             className={cn(
-              "select-none text-sm font-medium transition-colors duration-nx-standard motion-reduce:transition-none",
-              props.checked ? "text-nx-ink" : "text-nx-ink-3"
+              "select-none text-sm font-medium transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+              props.checked ? "text-nx-ink" : "text-nx-ink-3",
+              props.disabled && "text-nx-ink-3"
             )}
           >
             {defaultOnLabel}
           </span>
-          <SwitchPrimitives.Root className={rootClassName} {...props} ref={ref}>
-            <SwitchPrimitives.Thumb className={thumbClassName} />
-          </SwitchPrimitives.Root>
+          <span dir="ltr" className="inline-flex">
+            <SwitchPrimitives.Root className={rootClassName} {...props} ref={ref}>
+              <SwitchPrimitives.Thumb className={thumbClassName} />
+            </SwitchPrimitives.Root>
+          </span>
           <span
             className={cn(
-              "select-none text-sm font-medium transition-colors duration-nx-standard motion-reduce:transition-none",
-              props.checked ? "text-nx-ink-3" : "text-nx-ink"
+              "select-none text-sm font-medium transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+              props.checked ? "text-nx-ink-3" : "text-nx-ink",
+              props.disabled && "text-nx-ink-3"
             )}
           >
             {defaultOffLabel}

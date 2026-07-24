@@ -15,6 +15,70 @@ const DialogPortal = DialogPrimitive.Portal;
 
 const DialogClose = DialogPrimitive.Close;
 
+/* ── The overlay family's shared surface language ────────────────────────────
+ *
+ * Dialog, AlertDialog and Sheet are one object seen from three angles, so they
+ * read from the recipes below instead of three near-identical class strings
+ * that drift apart on the next edit. They already had drifted: the sheet ran a
+ * 500ms enter against the dialog's 200ms, and each file re-typed the scrim.
+ *
+ * Exported so alert-dialog.tsx and sheet.tsx compose them rather than copy
+ * them. The strings stay literal (never assembled from fragments at runtime)
+ * because Tailwind scans source text for class names.
+ */
+
+/** ONE scrim for the whole app: the token wash on the named overlay step of
+ *  the z ladder. Split out from the animated variant below because vaul's
+ *  drawer fades the scrim itself, tracking the drag — it needs the paint
+ *  without the keyframes, and `animate-none` cannot switch the keyframes off
+ *  (the `data-[state=open]:` variant carries an extra attribute selector, so
+ *  it outranks a bare utility). */
+export const overlayScrimSurfaceClasses = "fixed inset-0 z-overlay bg-scrim";
+
+/** The scrim plus its fade on the token pair — 200ms in, ~2/3 out. A fade is
+ *  the one movement reduced motion keeps, so no motion-safe split is needed. */
+export const overlayScrimClasses = `${overlayScrimSurfaceClasses} duration-nx-standard ease-nx-enter data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0`;
+
+/** The floating panel itself: nx popover surface behind a hairline, the modal
+ *  step of the shadow ladder (these genuinely float, so a shadow is earned),
+ *  and the 24px inset every modal in the product shares. */
+export const modalSurfaceClasses =
+  "gap-4 border-nx-line bg-nx-popover p-6 text-nx-ink shadow-nx-modal";
+
+/** Enter 200ms on the enter curve, exit at the ~2/3 micro step on the exit
+ *  curve. No bounce, no spring — the panel arrives and leaves, it does not
+ *  perform. */
+export const modalMotionClasses =
+  "duration-nx-standard ease-nx-enter data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0";
+
+/** The dismiss affordance shared by Dialog and Sheet.
+ *
+ *  Was a bare 16px glyph on `opacity-70 hover:opacity-100` — a 16px hit target
+ *  (half the 32px floor), opacity math instead of ink tokens, and a
+ *  `data-[state=open]` pair cargo-culted from the *trigger*: a Close button has
+ *  no open state, so those two classes could never match anything. Now a real
+ *  32px control that picks up a hover tint and the lit-edge focus ring. */
+export const overlayCloseButtonClasses =
+  "absolute end-4 top-4 inline-flex h-8 w-8 items-center justify-center rounded-nx-sm text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover hover:text-nx-ink focus-visible:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus disabled:pointer-events-none disabled:text-nx-ink-3";
+
+/** Header column shared by every overlay: real hierarchy (title, then a
+ *  quieter description) and an inline-end inset so a long title never runs
+ *  under the close button. Start-aligned at every width — the shadcn
+ *  `text-center sm:text-left` default centres exactly the strings that read
+ *  worst centred (long titles, RTL) and flips alignment mid-breakpoint. */
+export const overlayHeaderClasses = "flex flex-col gap-1.5 pe-8 text-start";
+
+/** ONE action-bar order for the whole family, so muscle memory transfers
+ *  between a Dialog, an AlertDialog and a Sheet:
+ *
+ *    DOM order = cancel/secondary first, primary last.
+ *
+ *  At >= sm that puts the primary on the inline-end edge (justify-end and
+ *  flex-end both follow the writing direction, so RTL is free). Below sm the
+ *  column reverses, which stacks the primary on TOP where the thumb is. */
+export const overlayFooterClasses =
+  "flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end";
+
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
@@ -26,17 +90,7 @@ const DialogOverlay = React.forwardRef<
     // once through an inline style added to survive purging — which is the
     // single most expensive thing to put under a modal on a low-end device,
     // and an explicit ban in DESIGN.md ("no glassmorphism as default").
-    //
-    // The z-index is the named `overlay` step, not a template literal: Tailwind
-    // scans source text, so `z-[${OVERLAY_Z_INDEX}]` was never a real class and
-    // the `!z-[999]` below was a patch for a class that never existed.
-    //
-    // Fades ride the token pair — 200ms enter, ~2/3 exit — and a fade is the
-    // one movement reduced motion keeps, so no motion-safe split is needed.
-    className={cn(
-      "fixed inset-0 z-overlay bg-scrim duration-nx-standard ease-nx-enter data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-      className
-    )}
+    className={cn(overlayScrimClasses, className)}
     {...props}
   />
 ));
@@ -55,28 +109,19 @@ interface DialogContentProps
   variant?: "default" | "drawer";
 }
 
-// One overlay-surface recipe for the whole modal family (alert-dialog mirrors
-// it 1:1): nx popover surface behind a hairline, the modal step of the shadow
-// ladder, the large radius token. Motion is the token pair — 200ms standard
-// enter, micro (~2/3) exit.
-const dialogSurfaceClasses =
-  "gap-4 border-nx-line bg-nx-popover p-6 text-nx-ink shadow-nx-modal";
-const dialogMotionClasses =
-  "duration-nx-standard ease-nx-enter data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0";
-
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   DialogContentProps
 >(({ className, children, dir, variant = "default", ...props }, ref) => {
-  const { direction } = useI18n();
+  const { t, direction } = useI18n();
   const isRtl = (dir || direction) === "rtl";
 
   const positionClasses =
     variant === "drawer"
       ? cn(
           "fixed inset-y-0 end-0 z-modal grid w-full max-w-lg rounded-s-nx-lg border-s",
-          dialogSurfaceClasses,
-          dialogMotionClasses,
+          modalSurfaceClasses,
+          modalMotionClasses,
           // tailwindcss-animate slides are physical, so the logical end edge
           // resolves against the live direction here. motion-safe keeps only
           // the crossfade under reduced motion.
@@ -85,9 +130,13 @@ const DialogContent = React.forwardRef<
             : "motion-safe:data-[state=open]:slide-in-from-right motion-safe:data-[state=closed]:slide-out-to-right"
         )
       : cn(
-          "fixed left-[50%] top-[50%] z-modal grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] border sm:rounded-nx-lg",
-          dialogSurfaceClasses,
-          dialogMotionClasses,
+          // The gutter is deliberate: `w-full` let the panel butt against both
+          // viewport edges on a phone, which is also why the corners had to be
+          // square below sm. With 16px of air on each side the large radius
+          // token applies at every width and the panel reads as an object.
+          "fixed left-[50%] top-[50%] z-modal grid w-[calc(100%-2rem)] max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-nx-lg border",
+          modalSurfaceClasses,
+          modalMotionClasses,
           // The 1/2 and 48% "slides" are the centering, not decoration: while
           // a tailwindcss-animate animation runs, its keyframe transform
           // replaces the translate utilities above, so the counter-translate
@@ -163,11 +212,13 @@ const DialogContent = React.forwardRef<
         {...props}
       >
         {children}
-        {/* end-4 replaces the old isRtl left/right ternary; focus is the nx
-            lit-edge treatment on :focus-visible, not an offset ring halo. */}
-        <DialogPrimitive.Close className="absolute end-4 top-4 rounded-nx-sm opacity-70 transition-opacity duration-nx-micro hover:opacity-100 focus-visible:outline-none focus-visible:shadow-nx-focus disabled:pointer-events-none data-[state=open]:bg-nx-hover data-[state=open]:text-nx-ink-2">
-          <X className="h-4 w-4" />
-          <span className="sr-only">Close</span>
+        {/* type="button" so a dialog wrapping a <form> cannot submit it by
+            dismissing. The label reads from the existing common.close key —
+            it was a hardcoded English string that screen readers announced
+            untranslated in the Arabic build. */}
+        <DialogPrimitive.Close type="button" className={overlayCloseButtonClasses}>
+          <X className="h-4 w-4" aria-hidden="true" />
+          <span className="sr-only">{t("common.close")}</span>
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>
     </DialogPortal>
@@ -176,18 +227,13 @@ const DialogContent = React.forwardRef<
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
 const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  // text-start is direction-aware by itself — the old isRtl ternary re-derived
-  // what the logical property already knows.
-  <div className={cn("flex flex-col space-y-1.5 text-center sm:text-start", className)} {...props} />
+  <div className={cn(overlayHeaderClasses, className)} {...props} />
 );
 DialogHeader.displayName = "DialogHeader";
 
 const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   // gap works in both axes and both directions — no space-x-reverse bookkeeping.
-  <div
-    className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
-    {...props}
-  />
+  <div className={cn(overlayFooterClasses, className)} {...props} />
 );
 DialogFooter.displayName = "DialogFooter";
 
@@ -197,7 +243,10 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn("text-lg font-semibold leading-none tracking-tight", className)}
+    // leading-tight, not leading-none: a title that wraps to two lines (every
+    // Arabic string, most long record names) had its descenders clipped and
+    // the lines collided.
+    className={cn("text-lg font-semibold leading-tight tracking-tight text-nx-ink", className)}
     {...props}
   />
 ));
@@ -209,7 +258,9 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn("text-sm text-nx-ink-2", className)}
+    // One ink step down from the title and a comfortable measure — this is the
+    // sentence people actually read before committing to the action.
+    className={cn("text-sm leading-6 text-nx-ink-2", className)}
     {...props}
   />
 ));

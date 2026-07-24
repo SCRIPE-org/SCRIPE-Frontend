@@ -9,6 +9,12 @@
  * state. The old Alert-based version carried blur-and-lift relics from the
  * pre-nexus look; both are gone, and the full-viewport centring is opt-in now
  * instead of hardcoded.
+ *
+ * Wave K: the vertical rhythm now moves with the size (it was a fixed mb-3/mt-4
+ * at both tiers, so the compact form had page-sized air), the sentence wraps on
+ * balance points, and the retry glyph is explicitly static — a refresh icon
+ * that spins before anyone has asked for a retry is the exact idle motion this
+ * system rejects.
  */
 
 import { AlertCircle, RefreshCw } from "lucide-react";
@@ -48,7 +54,7 @@ export function ErrorMessage({
     >
       <div
         className={cn(
-          "mb-3 grid place-items-center rounded-nx-md border border-destructive/30 bg-destructive/10 text-destructive",
+          "grid place-items-center rounded-nx-md border border-destructive/30 bg-destructive/10 text-destructive",
           compact ? "h-9 w-9" : "h-12 w-12"
         )}
         aria-hidden="true"
@@ -56,7 +62,12 @@ export function ErrorMessage({
         <AlertCircle className={compact ? "h-4 w-4" : "h-5 w-5"} />
       </div>
 
-      <p className={cn("max-w-[46ch] font-medium text-nx-ink", compact ? "text-sm" : "text-base")}>
+      <p
+        className={cn(
+          "max-w-[46ch] text-pretty font-medium leading-snug text-nx-ink",
+          compact ? "mt-2.5 text-sm" : "mt-3.5 text-base"
+        )}
+      >
         {message}
       </p>
 
@@ -65,9 +76,11 @@ export function ErrorMessage({
           onClick={onRetry}
           variant="outline"
           size={compact ? "sm" : "default"}
-          className="mt-4"
+          className={compact ? "mt-3" : "mt-5"}
         >
-          <RefreshCw className="me-2 h-4 w-4" />
+          {/* Static glyph: the ring only turns once a retry is actually in
+              flight, and that spinner is Button's own loading state. */}
+          <RefreshCw className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
           {t("common.retry")}
         </Button>
       )}

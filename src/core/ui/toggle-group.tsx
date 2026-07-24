@@ -19,9 +19,16 @@ const toggleGroupVariants = cva("flex items-center justify-center", {
       // The [data-state] child selector strips the items' own radius with
       // class+attribute specificity — a bare rounded-none on the item would
       // tie with rounded-nx-control and lose to stylesheet order (twMerge
-      // does not know the nx radius scale).
+      // does not know the nx radius scale) — then hands the end segments a
+      // logical start/end radius one step down the ladder so they nest inside
+      // the shell without bleeding past its corners.
+      //
+      // overflow-hidden used to do that clipping, and it also amputated the
+      // outer 3px of every item's focus halo: keyboard focus inside a
+      // segmented control was down to a 1px inset line. The radii do the job
+      // without clipping anything.
       segmented:
-        "gap-0 overflow-hidden rounded-nx-control border border-nx-line [&>[data-state]]:rounded-none",
+        "gap-0 rounded-nx-control border border-nx-line [&>[data-state]]:rounded-none [&>[data-state]:first-child]:rounded-s-nx-sm [&>[data-state]:last-child]:rounded-e-nx-sm",
     },
   },
   defaultVariants: {

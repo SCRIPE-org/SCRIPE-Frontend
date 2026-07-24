@@ -4,29 +4,43 @@ import React, { useMemo, useState } from "react";
 import { cn } from "@core/common/utils";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
+import { EmptyState } from "@core/ui/empty-state";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
-import {
-  ChevronRight,
-  ChevronDown,
-  Folder,
-  FolderOpen,
-  MoreHorizontal,
-  Circle,
-  GitBranch,
-} from "lucide-react";
+import { ChevronRight, ChevronDown, Folder, FolderOpen, MoreHorizontal } from "lucide-react";
 import { Checkbox } from "@core/ui/checkbox";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 
-// Wave C collapse: 12 tree skins reduce to the two honest structures — "lines"
-// (connector hierarchy) and "cards" (stacked panels). The retired skins were
-// card panels with different wallpaper, so they all read nearest to "cards";
-// "minimal" was pixel-identical to "lines" bar a dashed connector.
+/**
+ * TreeView — hierarchy, two ways.
+ *
+ * Wave C collapsed 12 skins to two honest structures. Wave K makes them
+ * actually different from each other and honest about depth:
+ *
+ *  • "lines" was drawing a bordered CARD for every row AND a connector rail
+ *    beside it, so the hierarchy was stated twice and neither statement was
+ *    legible. A lines row is now a flat, borderless target — the rail alone
+ *    carries the structure, which is the entire point of the variant.
+ *  • both variants inherited `shadowIntensity`, so at "strong" every node in a
+ *    600-row tree wore `shadow-2xl`. Nothing in a tree floats; the shadow is
+ *    gone from the node styling and the setting keeps applying everywhere it
+ *    describes something that does.
+ *  • the leaf glyph was a Folder — a folder that contains nothing — sitting
+ *    beside a `Circle` in the toggle column, so a leaf carried two icons and
+ *    neither meant anything. Branches keep the folder; leaves get the toggle
+ *    column's rail dot and nothing else.
+ *  • the child count wore a `GitBranch` icon. This is a taxonomy tree, not a
+ *    repository; it is a tabular-nums count chip now.
+ *  • the loading state pulsed. Static fill steps instead.
+ *  • surfaces/ink/hairlines moved off the pre-nexus muted/card/primary tokens
+ *    and off `bg-card/60 backdrop-blur` (an unrequested glass surface leaking
+ *    in from the cardStyle setting).
+ */
 export type TreeVariant = "lines" | "cards";
 
 const LEGACY_TREE_VARIANT: Partial<Record<string, TreeVariant>> = {
@@ -105,8 +119,9 @@ function NodeActions<T>({
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-7 w-7">
-          <MoreHorizontal className="h-4 w-4" />
+        {/* 32px minimum: the trigger was 28px, below the hit-target floor. */}
+        <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-nx-ink-3">
+          <MoreHorizontal aria-hidden="true" className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       {open && (
@@ -334,43 +349,32 @@ export function TreeView<T>({
   const density = useMemo(() => {
     switch (settings.spacingSize) {
       case "compact":
-        return { pad: "p-2", childPad: "ps-4" };
+        return { pad: "px-2 py-1.5", childPad: "ps-4" };
       case "spacious":
-        return { pad: "p-4", childPad: "ps-8" };
+        return { pad: "px-4 py-3", childPad: "ps-8" };
       case "comfortable":
-        return { pad: "p-3", childPad: "ps-6" };
+        return { pad: "px-3 py-2.5", childPad: "ps-6" };
       default:
-        return { pad: "p-3", childPad: "ps-6" };
+        return { pad: "px-3 py-2", childPad: "ps-6" };
     }
   }, [settings.spacingSize]);
 
+  // The borderRadius setting, mapped onto the nx ladder — the same mapping
+  // Button uses, so a tree row and a button never disagree about a corner.
   const radius = useMemo(() => {
     switch (settings.borderRadius) {
       case "none":
         return "rounded-none";
       case "small":
-        return "rounded-sm";
+        return "rounded-nx-sm";
       case "large":
-        return "rounded-lg";
+        return "rounded-nx-lg";
       case "full":
         return "rounded-full";
       default:
-        return "rounded-md";
+        return "rounded-nx-control";
     }
   }, [settings.borderRadius]);
-
-  const shadow = useMemo(() => {
-    switch (settings.shadowIntensity) {
-      case "none":
-        return "";
-      case "subtle":
-        return "shadow-sm";
-      case "strong":
-        return "shadow-2xl";
-      default:
-        return "shadow-lg";
-    }
-  }, [settings.shadowIntensity]);
 
   const searchInputRef = search?.inputRef;
   const searchValue = search?.value;
@@ -385,7 +389,7 @@ export function TreeView<T>({
             ref={searchInputRef as any}
             value={searchValue}
             onChange={(e) => searchOnChange(e.target.value)}
-            placeholder={searchPlaceholder ?? "Search"}
+            placeholder={searchPlaceholder ?? t("common.search")}
             className="w-full"
             autoComplete="off"
           />
@@ -404,12 +408,18 @@ export function TreeView<T>({
     return (
       <div className={cn("space-y-4", className)}>
         {headerComponent}
-        <div className="space-y-3">
-          <div className="h-9 w-56 animate-pulse rounded-md bg-muted/50 motion-reduce:animate-none" />
+        {/* Static fill steps in the shape of the toolbar and six rows — a
+            placeholder is the absence of a tree, and absence does not pulse. */}
+        <div className="space-y-2" role="status" aria-busy="true" aria-label={t("common.loading")}>
+          <div aria-hidden="true" className="h-9 w-56 rounded-nx-control bg-nx-raised-2" />
           {[...Array(6)].map((_, i) => (
             <div
               key={i}
-              className="h-10 animate-pulse rounded-md bg-muted/30 motion-reduce:animate-none"
+              aria-hidden="true"
+              // Each step indents a little further than the last, so the
+              // placeholder reads as a hierarchy rather than a stack of bars.
+              className="h-10 rounded-nx-control bg-nx-raised-2"
+              style={{ marginInlineStart: `${(i % 3) * 16}px` }}
             />
           ))}
         </div>
@@ -424,7 +434,9 @@ export function TreeView<T>({
         {headerComponent}
         {Toolbar}
         {aboveTreeComponent}
-        <div className="py-12 text-center text-muted-foreground">{emptyMessage ?? "No data"}</div>
+        {/* The shared empty anatomy, so an empty tree reads exactly like an
+            empty table or an empty section — not like a stray grey sentence. */}
+        <EmptyState icon={FolderOpen} title={emptyMessage ?? t("common.noData")} />
         {belowTreeComponent}
         {footerComponent}
       </div>
@@ -449,8 +461,6 @@ export function TreeView<T>({
           actions={actions}
           density={density}
           radius={radius}
-          shadow={shadow}
-          cardStyle={settings.cardStyle}
           selectable={selectable}
           selectedValues={selectedValues}
           onSelect={handleSelectionChange}
@@ -466,33 +476,40 @@ export function TreeView<T>({
   );
 }
 
-// Node styling for the two surviving tree structures
+// Node styling for the two surviving tree structures.
+const NODE_MOTION =
+  "transition-[background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none";
+
 function getNodeStyling(
   variant: TreeVariant,
   level: number,
   density: { pad: string; childPad: string },
   radius: string,
-  shadow: string,
-  cardStyle: string
+  selected: boolean
 ) {
   if (variant === "cards") {
+    // Stacked panels: a hairline slab per node, brightening on hover. No
+    // shadow — a node is anchored in its parent, it does not float above it.
     return cn(
-      "bg-card border transition-colors hover:bg-muted/50",
+      "border bg-nx-surface",
+      NODE_MOTION,
       density.pad,
       radius,
-      shadow,
-      cardStyle === "glass" ? "bg-card/60 backdrop-blur" : "",
-      cardStyle === "bordered" ? "border-2" : "",
-      cardStyle === "elevated" ? "shadow-xl" : ""
+      selected
+        ? "border-nx-accent bg-nx-accent-wash"
+        : "border-nx-line hover:border-nx-line-hi hover:bg-nx-hover"
     );
   }
 
-  // lines
+  // lines — the connector rail states the hierarchy, so the row states nothing:
+  // no border, no surface of its own, just a hover target.
   return cn(
-    "bg-card border transition-colors hover:bg-muted/40",
+    "border border-transparent bg-transparent",
+    NODE_MOTION,
     density.pad,
     radius,
-    level === 0 ? "font-semibold" : "font-normal"
+    level === 0 ? "font-semibold" : "font-normal",
+    selected ? "border-nx-accent bg-nx-accent-wash" : "hover:bg-nx-hover"
   );
 }
 
@@ -509,8 +526,6 @@ function TreeList<T>({
   level = 0,
   density,
   radius,
-  shadow,
-  cardStyle,
   selectable = false,
   selectedValues = [],
   onSelect,
@@ -531,8 +546,6 @@ function TreeList<T>({
   level?: number;
   density: { pad: string; childPad: string };
   radius: string;
-  shadow: string;
-  cardStyle: string;
   selectable?: boolean;
   selectedValues?: string[];
   onSelect?: (nodeValue: string, checked: boolean) => void;
@@ -605,7 +618,7 @@ function TreeList<T>({
         const indeterminate =
           selectable && getValueToSend ? (isNodeIndeterminate?.(node) ?? false) : false;
 
-        const nodeBase = getNodeStyling(variant, level, density, radius, shadow, cardStyle);
+        const nodeBase = getNodeStyling(variant, level, density, radius, selected);
 
         return (
           <li key={id} role="none" className={cn("group relative", variant === "cards" && "mb-2")}>
@@ -621,9 +634,9 @@ function TreeList<T>({
               onKeyDown={(e) => handleRowKeyDown(e, node, id, hasChildren, isOpen)}
               className={cn(
                 "flex items-center gap-2",
-                "rounded-md",
                 nodeBase,
                 "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                disabled && "cursor-not-allowed",
                 expandOnCardClick && hasChildren && !disabled ? "cursor-pointer" : ""
               )}
               onClick={() => {
@@ -633,44 +646,51 @@ function TreeList<T>({
                 }
               }}
             >
-              {/* Toggle — out of the tab order; the treeitem row carries the
-                  keyboard interaction and the aria-expanded state */}
-              <button
-                type="button"
-                tabIndex={-1}
-                className={cn(
-                  "flex h-7 w-7 items-center justify-center rounded transition-colors hover:bg-muted",
-                  !hasChildren && "cursor-default opacity-60",
-                  disabled && "cursor-not-allowed opacity-50"
-                )}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (hasChildren && !disabled) {
-                    onToggle(id);
-                  }
-                }}
-                disabled={disabled || !hasChildren}
-                aria-label={isOpen ? "Collapse" : "Expand"}
-              >
-                {hasChildren ? (
-                  isOpen ? (
-                    <ChevronDown className="h-4 w-4 text-primary" />
+              {/* Toggle column — 32px whether or not the node has children, so
+                  every label on a level shares one optical column. A leaf gets
+                  the rail dot in place of the chevron; it used to get a
+                  disabled BUTTON, which is a control that promises nothing. */}
+              {hasChildren ? (
+                <button
+                  type="button"
+                  // Out of the tab order: the treeitem row carries the keyboard
+                  // interaction and the aria-expanded state.
+                  tabIndex={-1}
+                  className={cn(
+                    "grid h-8 w-8 shrink-0 place-items-center rounded-nx-sm text-nx-ink-2",
+                    NODE_MOTION,
+                    disabled
+                      ? "cursor-not-allowed text-nx-ink-3"
+                      : "hover:bg-nx-hover hover:text-nx-ink"
+                  )}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!disabled) {
+                      onToggle(id);
+                    }
+                  }}
+                  disabled={disabled}
+                  aria-label={isOpen ? "Collapse" : "Expand"}
+                >
+                  {isOpen ? (
+                    <ChevronDown className="h-4 w-4" />
                   ) : (
-                    <ChevronRight className="h-4 w-4 text-muted-foreground rtl:rotate-180" />
-                  )
-                ) : (
-                  <Circle className="h-3 w-3 opacity-40" />
-                )}
-              </button>
+                    <ChevronRight className="h-4 w-4 rtl:rotate-180" />
+                  )}
+                </button>
+              ) : (
+                <span aria-hidden="true" className="grid h-8 w-8 shrink-0 place-items-center">
+                  <span className="h-1 w-1 rounded-full bg-nx-ink-3" />
+                </span>
+              )}
 
               {/* Checkbox for selectable mode */}
               {selectable && getValueToSend && (
                 <div
                   className={cn(
-                    "flex min-h-[32px] min-w-[32px] items-center justify-center rounded-md p-2",
-                    disabled
-                      ? "cursor-not-allowed opacity-60"
-                      : "cursor-pointer transition-colors hover:bg-muted/50"
+                    "grid h-8 w-8 shrink-0 place-items-center rounded-nx-sm",
+                    NODE_MOTION,
+                    disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-nx-hover"
                   )}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -690,10 +710,7 @@ function TreeList<T>({
                     onCheckedChange={(checked) =>
                       !disabled && onSelect?.(nodeValue, checked === true)
                     }
-                    className={cn(
-                      "data-[state=checked]:border-primary data-[state=checked]:bg-primary",
-                      "pointer-events-none"
-                    )}
+                    className="pointer-events-none"
                     tabIndex={-1}
                   />
                 </div>
@@ -703,9 +720,7 @@ function TreeList<T>({
               <div
                 className={cn(
                   "flex min-w-0 flex-1 items-center gap-2",
-                  selectable && !disabled
-                    ? "cursor-pointer rounded-md p-1 transition-colors hover:bg-muted/30"
-                    : ""
+                  selectable && !disabled ? "cursor-pointer" : ""
                 )}
                 onClick={(e) => {
                   if (selectable && getValueToSend && !disabled) {
@@ -714,27 +729,34 @@ function TreeList<T>({
                   }
                 }}
               >
-                {hasChildren ? (
-                  isOpen ? (
-                    <FolderOpen className="h-4 w-4 text-primary" />
+                {/* Only branches carry a folder. A leaf is not an empty
+                    container, so it does not get drawn as one. */}
+                {hasChildren &&
+                  (isOpen ? (
+                    <FolderOpen
+                      aria-hidden="true"
+                      className={cn("h-4 w-4 shrink-0", selected ? "text-nx-accent" : "text-nx-ink-2")}
+                    />
                   ) : (
-                    <Folder className="h-4 w-4 text-primary" />
-                  )
-                ) : (
-                  <Folder className="h-4 w-4 text-muted-foreground" />
-                )}
+                    <Folder
+                      aria-hidden="true"
+                      className={cn("h-4 w-4 shrink-0", selected ? "text-nx-accent" : "text-nx-ink-2")}
+                    />
+                  ))}
+                {/* One type size across levels: depth is stated by the rail and
+                    the indent, weight by getNodeStyling. A per-level font size
+                    made a deep tree shrink into illegibility. */}
                 <span
                   className={cn(
-                    "truncate",
-                    level === 0 ? "text-base" : "text-sm",
-                    selectable && selected ? "font-medium text-primary" : ""
+                    "truncate text-sm",
+                    selected ? "font-medium text-nx-accent" : "text-nx-ink",
+                    disabled && "text-nx-ink-3"
                   )}
                 >
                   {label}
                 </span>
                 {level === 0 && hasChildren && (
-                  <span className="ms-2 inline-flex items-center text-xs text-muted-foreground">
-                    <GitBranch className="me-1 h-3 w-3" />
+                  <span className="ms-1 shrink-0 rounded-nx-sm border border-nx-line px-1.5 py-0.5 text-[11px] font-medium leading-none tabular-nums text-nx-ink-3">
                     {children.length}
                   </span>
                 )}
@@ -751,7 +773,7 @@ function TreeList<T>({
               <div
                 className={
                   variant === "lines"
-                    ? "ms-6 mt-1 border-s border-solid border-muted-foreground/20"
+                    ? "ms-4 mt-0.5 border-s border-nx-line"
                     : "mt-2 space-y-2 ps-8"
                 }
               >
@@ -769,8 +791,6 @@ function TreeList<T>({
                     level={level + 1}
                     density={density}
                     radius={radius}
-                    shadow={shadow}
-                    cardStyle={cardStyle}
                     selectable={selectable}
                     selectedValues={selectedValues}
                     onSelect={onSelect}

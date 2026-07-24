@@ -9,6 +9,13 @@
  * Before this existed each module invented its own header, which is how the
  * compliance module ended up with a per-page accent hue found nowhere else in
  * the product. One header means learning one page teaches you all of them.
+ *
+ * Wave K: the title row relied on the middle column's flex-1 to push the
+ * actions to the inline end, which collapsed the moment a title wrapped — the
+ * actions are explicitly `ms-auto` now. The meta labels were set at 10.4px (an
+ * arbitrary rem fraction) and the tab strip's overflow container clipped the
+ * focus ring off the first tab; both are fixed, and the scroll strip wears the
+ * shell's own quiet scrollbar rather than the platform default.
  */
 
 import * as React from "react";
@@ -70,8 +77,10 @@ export function PageHeader({
     <header className={cn("mb-6 space-y-4", className)}>
       {eyebrow}
 
-      <div className="flex flex-wrap items-start gap-4">
+      <div className="flex flex-wrap items-start gap-x-4 gap-y-3">
         {Icon && (
+          // The single chromatic anchor on the page. Everything else in the
+          // header is ink on a neutral surface.
           <div
             className="grid h-12 w-12 shrink-0 place-items-center rounded-nx-md border border-nx-line bg-nx-accent-wash text-nx-accent"
             aria-hidden="true"
@@ -81,14 +90,20 @@ export function PageHeader({
         )}
 
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2.5">
-            <h1 className="truncate text-xl font-bold tracking-tight text-nx-ink">{title}</h1>
+          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
+            <h1 className="min-w-0 truncate text-xl font-bold leading-tight tracking-tight text-nx-ink text-balance">
+              {title}
+            </h1>
             {badges}
           </div>
-          {description && <p className="mt-1 text-sm text-nx-ink-2">{description}</p>}
+          {description && (
+            <p className="mt-1.5 max-w-[80ch] text-pretty text-sm leading-relaxed text-nx-ink-2">
+              {description}
+            </p>
+          )}
         </div>
 
-        {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+        {actions && <div className="flex flex-wrap items-center gap-2 ms-auto">{actions}</div>}
       </div>
 
       {meta && meta.length > 0 && (
@@ -106,10 +121,10 @@ export function PageHeader({
           >
             {meta.map((entry) => (
               <div key={entry.label} className="border-s border-t border-nx-line p-3">
-                <dt className="text-[0.65rem] font-semibold uppercase tracking-wider text-nx-ink-3">
+                <dt className="truncate text-[11px] font-semibold uppercase leading-none tracking-wider text-nx-ink-3">
                   {entry.label}
                 </dt>
-                <dd className="mt-0.5 truncate text-sm font-semibold tabular-nums text-nx-ink">
+                <dd className="mt-1.5 truncate text-sm font-semibold leading-none tabular-nums text-nx-ink">
                   {entry.value}
                 </dd>
               </div>
@@ -118,7 +133,9 @@ export function PageHeader({
         </div>
       )}
 
-      {tabs && <div className="overflow-x-auto">{tabs}</div>}
+      {/* The negative inline margin gives the first and last tab's focus ring
+          room to draw instead of being sheared off by the scroll container. */}
+      {tabs && <div className="nexus-custom-scrollbar -mx-1 overflow-x-auto px-1">{tabs}</div>}
 
       {children}
     </header>

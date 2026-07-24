@@ -7,6 +7,14 @@ import { X } from "lucide-react";
 
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
+import {
+  modalMotionClasses,
+  modalSurfaceClasses,
+  overlayCloseButtonClasses,
+  overlayFooterClasses,
+  overlayHeaderClasses,
+  overlayScrimClasses,
+} from "@core/ui/dialog";
 
 const Sheet = SheetPrimitive.Root;
 
@@ -21,47 +29,50 @@ const SheetOverlay = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Overlay
-    // Mirrors DialogOverlay exactly: ONE scrim system (the token, not a
-    // hand-mixed black wash) and the named overlay step of the z ladder, not
-    // a stack number picked without seeing the other layers.
-    className={cn(
-      "fixed inset-0 z-overlay bg-scrim duration-nx-standard ease-nx-enter data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-      className
-    )}
+    // Imported from the dialog family, not re-typed: ONE scrim system.
+    className={cn(overlayScrimClasses, className)}
     {...props}
     ref={ref}
   />
 ));
 SheetOverlay.displayName = SheetPrimitive.Overlay.displayName;
 
-// The panel wears the dialog family's overlay surface (nx popover surface,
-// modal shadow, z-modal) with a hairline only on the edge that faces the
-// page — the other three sit on the viewport. The old 500ms open is clamped
-// to the 200ms standard step and exits at the ~2/3 micro step; the slides are
-// motion-safe so reduced motion keeps only the crossfade.
-const sheetVariants = cva(
-  "fixed z-modal gap-4 border-nx-line bg-nx-popover p-6 text-nx-ink shadow-nx-modal duration-nx-standard ease-nx-enter data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0",
-  {
-    variants: {
-      side: {
-        top: "inset-x-0 top-0 border-b motion-safe:data-[state=closed]:slide-out-to-top motion-safe:data-[state=open]:slide-in-from-top",
-        bottom:
-          "inset-x-0 bottom-0 border-t motion-safe:data-[state=closed]:slide-out-to-bottom motion-safe:data-[state=open]:slide-in-from-bottom",
-        left: "inset-y-0 left-0 h-full w-3/4 border-r motion-safe:data-[state=closed]:slide-out-to-left motion-safe:data-[state=open]:slide-in-from-left sm:max-w-sm",
-        right:
-          "inset-y-0 right-0 h-full w-3/4 border-l motion-safe:data-[state=closed]:slide-out-to-right motion-safe:data-[state=open]:slide-in-from-right sm:max-w-sm",
-      },
+// The panel wears the dialog family's overlay surface and motion pair verbatim
+// (that is the whole point of importing them) and adds only what an edge-
+// attached panel needs: a hairline on the single edge that faces the page —
+// the other three sit on the viewport, where a border is invisible cost.
+const sheetVariants = cva(cn("fixed z-modal", modalSurfaceClasses, modalMotionClasses), {
+  variants: {
+    side: {
+      // Block-axis corners: the edge that faces the page rounds, the one on
+      // the viewport stays square. Top/bottom are unaffected by writing
+      // direction, so the physical corner utilities are exact here.
+      top: "inset-x-0 top-0 rounded-b-nx-lg border-b motion-safe:data-[state=closed]:slide-out-to-top motion-safe:data-[state=open]:slide-in-from-top",
+      bottom:
+        "inset-x-0 bottom-0 rounded-t-nx-lg border-t motion-safe:data-[state=closed]:slide-out-to-bottom motion-safe:data-[state=open]:slide-in-from-bottom",
+      left: "inset-y-0 left-0 h-full w-3/4 border-r motion-safe:data-[state=closed]:slide-out-to-left motion-safe:data-[state=open]:slide-in-from-left sm:max-w-sm",
+      right:
+        "inset-y-0 right-0 h-full w-3/4 border-l motion-safe:data-[state=closed]:slide-out-to-right motion-safe:data-[state=open]:slide-in-from-right sm:max-w-sm",
     },
-    defaultVariants: {
-      side: "right",
-    },
-  }
-);
+  },
+  defaultVariants: {
+    side: "right",
+  },
+});
 
 // "start"/"end" resolve against the live direction — tailwindcss-animate
 // slides (and the physical cva keys they hang on) know nothing about writing
 // modes. "left"/"right" keep working for callers that mean it physically.
 type SheetSide = NonNullable<VariantProps<typeof sheetVariants>["side"]> | "start" | "end";
+
+// The inline-axis corner radius, expressed logically. A side panel used to be
+// a hard-edged slab while the Dialog's own `variant="drawer"` — the same
+// object, reached through a different import — already rounded its inner edge.
+// A panel on the inline-START edge rounds its END corners, and vice versa.
+const INLINE_RADIUS = {
+  start: "rounded-e-nx-lg",
+  end: "rounded-s-nx-lg",
+} as const;
 
 interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content> {
@@ -72,7 +83,7 @@ const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
 >(({ side = "right", className, children, dir, ...props }, ref) => {
-  const { direction } = useI18n();
+  const { t, direction } = useI18n();
   const isRtl = (dir || direction) === "rtl";
 
   const resolvedSide: NonNullable<VariantProps<typeof sheetVariants>["side"]> =
@@ -86,21 +97,34 @@ const SheetContent = React.forwardRef<
           : "right"
         : side;
 
+  // Which logical edge the resolved physical side actually lands on.
+  const inlineRadius =
+    resolvedSide === "left"
+      ? isRtl
+        ? INLINE_RADIUS.end
+        : INLINE_RADIUS.start
+      : resolvedSide === "right"
+        ? isRtl
+          ? INLINE_RADIUS.start
+          : INLINE_RADIUS.end
+        : undefined;
+
   return (
     <SheetPortal>
       <SheetOverlay />
       <SheetPrimitive.Content
         ref={ref}
         dir={dir ?? direction}
-        className={cn(sheetVariants({ side: resolvedSide }), className)}
+        className={cn(sheetVariants({ side: resolvedSide }), inlineRadius, className)}
         {...props}
       >
         {children}
-        {/* end-4 replaces the old isRtl left/right ternary; focus is the nx
-            lit-edge treatment on :focus-visible, not an offset ring halo. */}
-        <SheetPrimitive.Close className="absolute end-4 top-4 rounded-nx-sm opacity-70 transition-opacity duration-nx-micro hover:opacity-100 focus-visible:outline-none focus-visible:shadow-nx-focus disabled:pointer-events-none data-[state=open]:bg-nx-hover data-[state=open]:text-nx-ink-2">
-          <X className="h-4 w-4" />
-          <span className="sr-only">Close</span>
+        {/* The family's close control: a real 32px target with a hover tint and
+            the lit-edge focus ring, labelled from the existing common.close
+            key instead of a hardcoded English string. */}
+        <SheetPrimitive.Close type="button" className={overlayCloseButtonClasses}>
+          <X className="h-4 w-4" aria-hidden="true" />
+          <span className="sr-only">{t("common.close")}</span>
         </SheetPrimitive.Close>
       </SheetPrimitive.Content>
     </SheetPortal>
@@ -109,18 +133,14 @@ const SheetContent = React.forwardRef<
 SheetContent.displayName = SheetPrimitive.Content.displayName;
 
 const SheetHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  // text-start is direction-aware by itself — the old isRtl ternary re-derived
-  // what the logical property already knows.
-  <div className={cn("flex flex-col space-y-2 text-center sm:text-start", className)} {...props} />
+  // Same header rhythm as Dialog, including the inline-end inset that keeps a
+  // long title clear of the close button.
+  <div className={cn(overlayHeaderClasses, "gap-2", className)} {...props} />
 );
 SheetHeader.displayName = "SheetHeader";
 
 const SheetFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  // gap works in both axes and both directions — no space-x-reverse bookkeeping.
-  <div
-    className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
-    {...props}
-  />
+  <div className={cn(overlayFooterClasses, className)} {...props} />
 );
 SheetFooter.displayName = "SheetFooter";
 
@@ -130,7 +150,7 @@ const SheetTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Title
     ref={ref}
-    className={cn("text-lg font-semibold text-nx-ink", className)}
+    className={cn("text-lg font-semibold leading-tight tracking-tight text-nx-ink", className)}
     {...props}
   />
 ));
@@ -142,7 +162,7 @@ const SheetDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Description
     ref={ref}
-    className={cn("text-sm text-nx-ink-2", className)}
+    className={cn("text-sm leading-6 text-nx-ink-2", className)}
     {...props}
   />
 ));

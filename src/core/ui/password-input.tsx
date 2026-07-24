@@ -45,19 +45,23 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
         />
         {/* The reveal toggle is a real tab stop with a pressed state — the
             old negative tabindex locked keyboard users out entirely. Focus
-            rides Button's own --nx-focus lit-edge treatment. */}
+            rides Button's own --nx-focus lit-edge treatment; the icon answers
+            hover on the INK (a filled hover chip inside a field reads as a
+            second control). It goes inert with the field it sits in. */}
         <Button
           type="button"
           variant="ghost"
           size="sm"
-          className="absolute end-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+          className="absolute end-0 top-0 h-full rounded-s-none px-3 py-2 text-nx-ink-3 hover:bg-transparent hover:text-nx-ink focus-visible:z-raised disabled:text-nx-ink-3"
           onClick={() => setShowPassword((prev) => !prev)}
           aria-pressed={showPassword}
+          disabled={props.disabled}
+          tabIndex={props.readOnly ? -1 : undefined}
         >
           {showPassword ? (
-            <EyeOff className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
+            <EyeOff className="h-4 w-4" aria-hidden="true" />
           ) : (
-            <Eye className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
+            <Eye className="h-4 w-4" aria-hidden="true" />
           )}
           <span className="sr-only">
             {showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
@@ -66,16 +70,20 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
 
         {showStrengthIndicator && props.value && (
           // Rides the shared Progress primitive; the child selector re-hues
-          // its indicator through the measured status tokens per tier.
+          // its indicator through the measured status tokens per tier. The
+          // meter is decoration for a screen reader (the tiers carry no text),
+          // so it is hidden from the a11y tree rather than announced as an
+          // unlabelled progressbar.
           <Progress
             value={strength}
+            aria-hidden="true"
             className={cn(
-              "mt-2 h-1",
+              "mt-2 h-1 bg-nx-raised",
               strength < 50
-                ? "[&>div]:bg-destructive"
+                ? "[&>div]:bg-nx-danger"
                 : strength < 75
-                  ? "[&>div]:bg-warning"
-                  : "[&>div]:bg-success"
+                  ? "[&>div]:bg-nx-warning"
+                  : "[&>div]:bg-nx-success"
             )}
           />
         )}
