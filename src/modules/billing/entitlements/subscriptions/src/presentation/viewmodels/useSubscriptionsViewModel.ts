@@ -9,7 +9,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
-import { getComponent } from "@core/common/component-registry";
+import { getTenantRepository } from "@core/services/module-bridges";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useState, useCallback, useEffect, useMemo } from "react";
@@ -71,16 +71,16 @@ export function useSubscriptionsViewModel(tenantId: string) {
   });
 
   // ─── Fetch tenant detail (for admin email) ─────────
-  const tenantRepository = getComponent("tenantRepository");
+  // Resolved through the core bridge. This used to read the runtime component registry, whose
+  // `tenantRepository` key is registered by the `@modules/identity` barrel — a barrel no route
+  // imports — so the guard below was permanently false and the admin email never loaded.
   const tenantQuery = useQuery({
     queryKey: ["tenant", tenantId],
-    queryFn: () => {
-      if (!tenantRepository) {
-        throw new Error("Tenant repository not registered");
-      }
+    queryFn: async () => {
+      const tenantRepository = await getTenantRepository();
       return tenantRepository.getById(tenantId);
     },
-    enabled: !!tenantId && !!tenantRepository,
+    enabled: !!tenantId,
   });
   const tenantAdminEmail = tenantQuery.data?.adminEmail;
 

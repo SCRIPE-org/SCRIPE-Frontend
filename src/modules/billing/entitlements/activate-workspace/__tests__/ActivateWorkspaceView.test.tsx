@@ -143,13 +143,16 @@ vi.mock("@modules/entitlements/di", () => ({
   },
 }));
 
-vi.mock("@core/common/component-registry", () => {
+// The signup chrome now arrives through the core auth-surfaces bridge (a static import) rather
+// than the runtime component registry, which never resolved on this route and left every user
+// with the bare fallback wrapper. Stubbing it keeps this suite focused on the activation view.
+vi.mock("@core/components/auth-surfaces", () => {
   const SignupShellMock = function SignupShellMock({ children }: { children: React.ReactNode }) {
     return <div data-testid="signup-shell">{children}</div>;
   };
   SignupShellMock.displayName = "SignupShellMock";
   return {
-    getComponent: vi.fn(() => SignupShellMock),
+    CoreSignupShell: SignupShellMock,
   };
 });
 

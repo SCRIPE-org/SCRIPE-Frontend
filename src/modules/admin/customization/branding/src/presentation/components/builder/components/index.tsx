@@ -12,6 +12,7 @@
 "use client";
 
 import { resolveFileUrl } from "@/core/common/utils";
+import { sanitizeCss, sanitizeRichHtml } from "@core/common/sanitize";
 
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -563,11 +564,17 @@ export function BuilderCustomHtml({
       </div>
     );
   }
-  // NOTE: In production, sanitize via DOMPurify
+  // Author-supplied markup is sanitized before injection. Without this, an admin with
+  // customization rights could store a <script> in a custom HTML block and have it execute
+  // same-origin for every other admin who opens the branding studio — stored XSS with access
+  // to the viewing admin's session. The CSS pass additionally blocks the `</style>` breakout,
+  // which escapes the style context and executes regardless of how safe the CSS itself is.
   return (
     <div className="scripe-custom-html w-full">
-      <style dangerouslySetInnerHTML={{ __html: CUSTOM_HTML_RESET + (css || "") }} />
-      <div dangerouslySetInnerHTML={{ __html: content }} />
+      <style
+        dangerouslySetInnerHTML={{ __html: CUSTOM_HTML_RESET + sanitizeCss(css || "") }}
+      />
+      <div dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(content) }} />
     </div>
   );
 }

@@ -13,7 +13,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useAppStore } from "@core/store/useAppStore";
 import { identityContainer } from "@modules/identity/di";
 import { qk } from "@core/common/query-keys";
-import { getComponent } from "@core/common/component-registry";
+import { useCoreImpersonation } from "@core/hooks/use-auth-bridge";
 import type { FieldOption } from "@core/ui/forms/generic-form";
 import type { AssignRoleRequest, TransferAdminRequest } from "../../domain/entities/AdminRequests";
 import type { Admin } from "../../domain/entities/Admin";
@@ -138,11 +138,10 @@ export function useAdminOperations(params: AdminOperationsParams) {
     },
   });
 
-  // Impersonation — dynamically resolved from component registry
-  const useImpersonationHook =
-    getComponent("useImpersonation") ||
-    (() => ({ startImpersonation: () => {}, isImpersonationLoading: false }));
-  const { startImpersonation, isImpersonationLoading } = useImpersonationHook();
+  // Impersonation — resolved through the core auth bridge. The previous registry lookup fell back
+  // to `startImpersonation: () => {}` whenever the `@modules/auth` barrel had not been imported,
+  // which silently turned the "impersonate" action into a no-op button.
+  const { startImpersonation, isImpersonationLoading } = useCoreImpersonation();
 
   // Transfer mutation
   const transferMutation = useMutation({

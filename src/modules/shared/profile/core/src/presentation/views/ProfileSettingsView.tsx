@@ -16,7 +16,7 @@ import { useAvatarViewModel } from "../viewmodels/useAvatarViewModel";
 import { useSecurityViewModel } from "../viewmodels/useSecurityViewModel";
 import { useSessionsViewModel } from "../viewmodels/useSessionsViewModel";
 import { useActivityLogViewModel } from "../viewmodels/useActivityLogViewModel";
-import { getComponent } from "@core/common/component-registry";
+import { useCorePasskeyManagement } from "@core/hooks/use-auth-bridge";
 
 import { ProfileHeader } from "../components/ProfileHeader";
 import { ProfileNav } from "../components/ProfileNav";
@@ -49,26 +49,11 @@ export function ProfileSettingsView() {
   const sessionsVm = useSessionsViewModel();
   const activityVm = useActivityLogViewModel();
 
-  // Resolve passkey management hook dynamically from the component registry
-  const usePasskeyManagementViewModelHook =
-    getComponent("usePasskeyManagementViewModel") ||
-    (() => ({
-      isWebAuthnSupported: false,
-      isLoading: false,
-      passkeys: [],
-      renamingId: null,
-      renameValue: "",
-      setRenameValue: () => {},
-      confirmRename: () => {},
-      cancelRename: () => {},
-      startRename: () => {},
-      deletePasskey: () => {},
-      registerPasskey: async () => false,
-      isRegistering: false,
-      registrationError: null,
-      clearRegistrationError: () => {},
-    }));
-  const passkeyVm = usePasskeyManagementViewModelHook();
+  // Passkey management comes from the core auth bridge, not the runtime component registry.
+  // The registry entry is only populated as a side effect of importing the auth module barrel,
+  // which this route never did — so the `|| no-op` fallback below silently reported
+  // `isWebAuthnSupported: false` and the whole passkey section was dead on this page.
+  const passkeyVm = useCorePasskeyManagement();
 
   // ── Loading state ──────────────────────────────────────────────
   if (profileVm.isLoading) {

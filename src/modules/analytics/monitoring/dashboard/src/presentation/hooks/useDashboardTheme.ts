@@ -14,7 +14,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
-import { getComponent } from "@core/common/component-registry";
+import { saveTenantDisplayPrefs } from "@core/services/module-bridges";
 import { useDashboardThemeStore } from "./useDashboardThemeStore";
 import {
   type DashboardThemeConfig,
@@ -67,7 +67,6 @@ export function useDashboardTheme() {
   const { t } = useI18n();
   const { success: toastSuccess, error: toastError } = useEnhancedToast();
   const queryClient = useQueryClient();
-  const customizationService = getComponent("customizationService");
 
   const {
     isStudioOpen,
@@ -113,7 +112,9 @@ export function useDashboardTheme() {
     mutationFn: async (configToSave: DashboardThemeConfig) => {
       // Merge with existing prefs to keep backward compat
       const json = JSON.stringify(configToSave);
-      await customizationService.saveTenantDisplayPrefs(json);
+      // Persisted through the core bridge. The old registry lookup resolved to `undefined`
+      // (nothing imports the `@modules/customization` barrel), so this line threw on every save.
+      await saveTenantDisplayPrefs(json);
     },
     onSuccess: () => {
       toastSuccess({

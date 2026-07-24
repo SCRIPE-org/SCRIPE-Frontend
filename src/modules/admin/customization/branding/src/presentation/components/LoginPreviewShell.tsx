@@ -21,7 +21,7 @@
 // compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
 // where @core/ui/button's padding/sizing would break the layout.
 
-import { useEffect, useState, useCallback, useRef, createElement } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
@@ -31,38 +31,19 @@ import { Eye, EyeOff, Lock, User, Mail, ArrowLeft, KeyRound } from "lucide-react
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { BRAND } from "@core/config/branding";
-import { getComponent } from "@core/common/component-registry";
+import { sanitizeCss } from "@core/common/sanitize";
+import {
+  useCoreLoginBrandingTokens as useLoginBrandingTokens,
+  CoreLoginBranding as LoginBranding,
+  CoreSlotRenderer as SlotRenderer,
+} from "@core/components/auth-surfaces";
 import { CanvasRenderer } from "./builder/CanvasRenderer";
 
-/**
- * Dynamically resolves useLoginBrandingTokens from globalComponentRegistry to bypass static import checks.
- * Falls back to default empty structures if the registry is not yet initialized.
- */
-const useLoginBrandingTokens = (params: any) => {
-  const hook = getComponent("useLoginBrandingTokens");
-  if (!hook) {
-    return { layout: "split-left", config: {}, slotConfig: {}, a11y: {} };
-  }
-  return hook(params);
-};
-
-/**
- * Dynamically resolves and renders the LoginBranding component from the registry.
- */
-const LoginBranding = (props: any) => {
-  const Comp = getComponent("LoginBranding");
-  if (!Comp) return null;
-  return createElement(Comp, props);
-};
-
-/**
- * Dynamically resolves and renders the SlotRenderer component from the registry.
- */
-const SlotRenderer = (props: any) => {
-  const Comp = getComponent("SlotRenderer");
-  if (!Comp) return null;
-  return createElement(Comp, props);
-};
+// The branding surfaces come from the core auth bridge (core -> module is allowed; module -> module
+// is not). They used to be resolved from the runtime component registry, which is only populated by
+// importing the `@modules/auth` barrel — something no route does. The fallbacks below the lookup
+// returned `null` and an empty token object, so this preview rendered blank chrome and default
+// tokens no matter what the studio published.
 
 import { useTheme } from "next-themes";
 
@@ -706,9 +687,12 @@ export function LoginPreviewShell() {
   const wrapWithA11y = (layoutContent: React.ReactNode) => (
     <>
       {a11yFixedElements}
-      {/* Per-page background CSS override (M9) */}
-      {perPageBgCss && <style dangerouslySetInnerHTML={{ __html: perPageBgCss }} />}
-      {perPageCustomCss && <style dangerouslySetInnerHTML={{ __html: perPageCustomCss }} />}
+      {/* Per-page background CSS override (M9) — sanitized: author CSS arrives over postMessage,
+          and a `</style>` sequence inside it would break out of the style context and execute. */}
+      {perPageBgCss && <style dangerouslySetInnerHTML={{ __html: sanitizeCss(perPageBgCss) }} />}
+      {perPageCustomCss && (
+        <style dangerouslySetInnerHTML={{ __html: sanitizeCss(perPageCustomCss) }} />
+      )}
       {layoutContent}
     </>
   );

@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { identityContainer } from "@modules/identity/di";
-import { getComponent } from "@core/common/component-registry";
+import { downloadSubscriptionReceipt } from "@core/services/module-bridges";
 import type {
   SubscriptionModel,
   EditionThinModel,
@@ -402,11 +402,10 @@ export function useTenantSubscriptionViewModel(
 
   const receiptMutation = useMutation({
     mutationFn: async () => {
-      const downloadReceiptFn = getComponent("downloadReceipt");
-      if (!downloadReceiptFn) {
-        throw new Error("Download receipt service not available");
-      }
-      const { blob, filename } = await downloadReceiptFn(tenantId);
+      // Resolved through the core bridge. The old registry lookup depended on the
+      // `@modules/entitlements` barrel having been imported, which no route does, so this
+      // mutation always threw "Download receipt service not available".
+      const { blob, filename } = await downloadSubscriptionReceipt(tenantId);
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;

@@ -22,5 +22,22 @@ const localStorageMock = {
 };
 Object.defineProperty(window, "localStorage", { value: localStorageMock });
 
+// jsdom does not implement matchMedia. Components that read a media query — reduced-motion,
+// colour scheme, breakpoints — otherwise throw on import, which fails the whole suite before a
+// single test runs. Defaults to "does not match" so tests see the full-motion, light-scheme path.
+Object.defineProperty(window, "matchMedia", {
+  writable: true,
+  value: (query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  }),
+});
+
 // Suppress console errors during tests (optional)
 // vi.spyOn(console, 'error').mockImplementation(() => {});

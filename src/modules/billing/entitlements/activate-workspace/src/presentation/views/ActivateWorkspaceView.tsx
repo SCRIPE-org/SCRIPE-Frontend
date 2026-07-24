@@ -10,20 +10,10 @@
 import { useActivateWorkspaceViewModel } from "../viewmodels/useActivateWorkspaceViewModel";
 import { SubscriptionStatusBox } from "../components/SubscriptionStatusBox";
 import { ChangePlanDialog } from "../components/ChangePlanDialog";
-import { getComponent } from "@core/common/component-registry";
-import { createElement } from "react";
-
-/**
- * Dynamically resolves and renders the SignupShell component from the registry.
- * Falls back to a clean background wrapper if the registry has not yet initialized.
- */
-const SignupShell = (props: { children: React.ReactNode }) => {
-  const Comp = getComponent("SignupShell");
-  if (!Comp) {
-    return <div className="min-h-screen bg-background">{props.children}</div>;
-  }
-  return createElement(Comp, props);
-};
+// The signup chrome comes from the core auth bridge, so activation always renders inside the real
+// signup shell. The previous registry lookup was never populated on this route, so every user hit
+// the bare `<div className="min-h-screen bg-background">` fallback instead of the branded shell.
+import { CoreSignupShell as SignupShell } from "@core/components/auth-surfaces";
 
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";

@@ -10,6 +10,7 @@
 // where @core/ui/button's padding/sizing would break the layout.
 
 import { cn } from "@/core/common/utils";
+import { sanitizeCss, sanitizeRichHtml } from "@core/common/sanitize";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
@@ -1468,11 +1469,13 @@ function ComponentSpecificProps({
             renderPreview={() => (
               <div className="scripe-custom-html text-sm">
                 {(props.css as string) && (
-                  <style dangerouslySetInnerHTML={{ __html: props.css as string }} />
+                  <style dangerouslySetInnerHTML={{ __html: sanitizeCss(props.css as string) }} />
                 )}
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: (props.content as string) || '<p style="color:#888">No content yet</p>',
+                    __html:
+                      sanitizeRichHtml(props.content as string) ||
+                      '<p class="text-nx-ink-3">No content yet</p>',
                   }}
                 />
               </div>
