@@ -16,36 +16,29 @@ export function InteractiveDiagram({ nodes, connections, titleKey }: Interactive
   const [activeNode, setActiveNode] = useState<DiagramNode | null>(nodes[0] || null);
 
   return (
-    <div className="docs-diagram-container" style={{ marginBottom: "2rem" }}>
-      {titleKey && <div className="docs-diagram-title">{t(titleKey)}</div>}
-      <div
-        className="docs-diagram-flow"
-        style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}
-      >
-        {nodes.map((node, idx) => {
+    <div className="mb-8">
+      {titleKey && (
+        <div className="mb-3 text-lg font-semibold leading-none tracking-tight text-nx-ink">
+          {t(titleKey)}
+        </div>
+      )}
+      <div className="flex flex-wrap items-center gap-2">
+        {nodes.map((node) => {
           const conn = connections.find((c) => c.from === node.id);
           return (
-            <div key={node.id} style={{ display: "contents" }}>
+            <div key={node.id} className="contents">
               <DiagramNodeItem
                 node={node}
                 isActive={activeNode?.id === node.id}
                 onClick={() => setActiveNode(node)}
               />
               {conn && (
-                <div
-                  className="docs-diagram-arrow-container"
-                  style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
-                >
-                  <span className="arrow" style={{ color: "var(--docs-purple-primary)" }}>
+                <div className="flex flex-col items-center px-2">
+                  <span className="text-lg font-bold text-nx-ink-3" aria-hidden="true">
                     →
                   </span>
                   {conn.labelKey && (
-                    <span
-                      className="arrow-lbl"
-                      style={{ fontSize: "0.65rem", color: "hsl(var(--muted-foreground))" }}
-                    >
-                      {t(conn.labelKey)}
-                    </span>
+                    <span className="text-[11px] text-nx-ink-2">{t(conn.labelKey)}</span>
                   )}
                 </div>
               )}
@@ -55,15 +48,13 @@ export function InteractiveDiagram({ nodes, connections, titleKey }: Interactive
       </div>
       {activeNode && (
         <div
-          className="docs-diagram-detail"
-          style={{
-            marginTop: "1rem",
-            padding: "1rem",
-            background: "var(--bg-primary)",
-            borderRadius: "8px",
-          }}
+          role="region"
+          aria-label={t("widgets.interactiveDiagram.nodeDetailLabel")}
+          className="mt-4 rounded-nx-md bg-nx-raised p-4"
         >
-          <p style={{ fontSize: "0.85rem", lineHeight: "1.6" }}>{t(activeNode.descriptionKey)}</p>
+          <p className="text-sm leading-relaxed text-pretty text-nx-ink-2">
+            {t(activeNode.descriptionKey)}
+          </p>
         </div>
       )}
     </div>

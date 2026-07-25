@@ -46,6 +46,102 @@ export const en = {
     bookDemo: "Book a Demo",
     getStarted: "Get Started",
     investorLabel: "For Investors",
+    expandSidebar: "Expand sidebar",
+    collapseSidebar: "Collapse sidebar",
+    fontSizeSmall: "Small font size",
+    fontSizeMedium: "Medium font size",
+    fontSizeLarge: "Large font size",
+    switchToWideLayout: "Switch to wide layout",
+    switchToCompactLayout: "Switch to compact layout",
+    layoutWide: "Wide",
+    layoutCompact: "Compact",
+    notFoundTitle: "Page not found",
+    notFoundDescription: "We couldn't find /docs/{{slug}}.",
+    run: "Run",
+    reset: "Reset",
+  },
+  widgets: {
+    cliSimulator: {
+      windowLabel: "CLI Playground",
+      inputLabel: "scripe command",
+      inputPlaceholder: "Type a scripe command (e.g. dev, build, db)…",
+      suggestionsLabel: "Command suggestions",
+      commandNotFound: "Command not found in simulator.",
+      executing: "Executing…",
+    },
+    configBuilder: {
+      providerLabel: "Database provider",
+      providerSqlServer: "SQL Server (default)",
+      providerPostgres: "PostgreSQL",
+      providerOracle: "Oracle Database",
+      modeLabel: "Database connection mode",
+      modeSingle: "Single database (monolith)",
+      modeMulti: "Multi database (microservices)",
+      jobsLabel: "Background job provider",
+      jobsNative: "Native timer service",
+      jobsHangfire: "Hangfire dashboard",
+      jobsQuartz: "Quartz.NET engine",
+      outputFilename: "appsettings.json",
+    },
+    pipelineSimulator: {
+      consoleLabel: "Console output log",
+      emptyHint: "Select Run to trace the request pipeline.",
+      startMessage: "Starting request pipeline simulation…",
+      completeMessage: "Simulation completed successfully.",
+      enteringStep: "Entering {{step}}…",
+      running: "Running…",
+      steps: {
+        unhandledException: {
+          name: "Unhandled Exception",
+          description: "Initializes global error boundaries. Request monitoring active.",
+        },
+        validation: {
+          name: "Validation",
+          description: "Validates the incoming payload. FluentValidation checks pass with 0 errors.",
+        },
+        authorization: {
+          name: "Authorization",
+          description: "Authorizes the user principal. RBAC permission requirements validated.",
+        },
+        featureCheck: {
+          name: "Feature Check",
+          description: "Gates entitlements. Subscription active, tenant quota check passes.",
+        },
+        caching: {
+          name: "Caching",
+          description: "Reads the Redis cache key. Cache miss — forwarding request to the handler.",
+        },
+        audit: {
+          name: "Audit",
+          description: "Logs the mutation transaction details. Audit log prepared.",
+        },
+        handler: {
+          name: "Handler",
+          description: "Executes the request handler logic. Database transaction complete.",
+        },
+      },
+    },
+    lifecycleTracer: {
+      sequenceStepsLabel: "Sequence steps",
+      directionLabel: "Direction",
+      directionInbound: "Inbound",
+      directionOutbound: "Outbound",
+      actor: {
+        view: "View",
+        viewmodel: "ViewModel",
+        repository: "Repository",
+        controller: "Controller",
+        handler: "Handler",
+        database: "Database",
+      },
+    },
+    fileExplorer: {
+      selectFilePrompt: "Select a file from the tree to view its guidelines.",
+      emptyTree: "No files configured for this explorer.",
+    },
+    interactiveDiagram: {
+      nodeDetailLabel: "Node detail",
+    },
   },
   info: {
     note: "Note",
@@ -64,6 +160,14 @@ export const en = {
     authRequired: "Required",
     noAuth: "Public",
     permission: "Permission",
+  },
+  schema: {
+    entities: "Database Entities",
+    columnName: "Column Name",
+    type: "Type",
+    nullable: "Nullable",
+    primaryKey: "Primary Key",
+    foreignKey: "Foreign Key",
   },
   nav: {
     getStarted: "Get Started",
@@ -97,5 +201,118 @@ export const en = {
     hrms: "HRMS",
     partyKernel: "Party Kernel",
     organizationCore: "Organization Core",
+  },
+  // Commercial header mega-menu — 4 sections x (label + N items x title/desc).
+  commercialMegaMenu: {
+    why: {
+      label: "Why SCRIPE",
+      items: {
+        overview: { title: "Overview", desc: "Market positioning and differentiation" },
+        competitiveEdge: {
+          title: "Competitive Edge",
+          desc: "How SCRIPE wins against alternatives",
+        },
+        targetIndustries: {
+          title: "Target Industries",
+          desc: "Verticals and ideal customer profiles",
+        },
+        successMetrics: {
+          title: "Success Metrics",
+          desc: "ROI, KPIs, and commercial outcomes",
+        },
+        clientJourneys: {
+          title: "Client Journeys",
+          desc: "Buyer journeys from trial to expansion",
+        },
+        workspaceTours: {
+          title: "Workspace Tours",
+          desc: "Product walkthroughs and demos",
+        },
+      },
+    },
+    platform: {
+      label: "Platform",
+      items: {
+        architecture: { title: "Architecture", desc: "Modular monolith, clean architecture" },
+        moduleCatalog: { title: "Module Catalog", desc: "All available platform modules" },
+        technologyStack: {
+          title: "Technology Stack",
+          desc: ".NET 10, Next.js 16, multi-DB",
+        },
+        deploymentModes: {
+          title: "Deployment Modes",
+          desc: "Cloud, on-premise, and hybrid options",
+        },
+        systemRequirements: {
+          title: "System Requirements",
+          desc: "Infrastructure and scaling guidelines",
+        },
+      },
+    },
+    enterprise: {
+      label: "Enterprise",
+      items: {
+        multiTenancy: { title: "Multi-Tenancy", desc: "Hierarchical tenant architecture" },
+        rolesPermissions: {
+          title: "Roles & Permissions",
+          desc: "RBAC and edition-gated access",
+        },
+        auditCompliance: {
+          title: "Audit & Compliance",
+          desc: "Trails, regulations, certifications",
+        },
+        localization: { title: "Localization", desc: "7 languages, RTL support, i18n" },
+        whiteLabeling: {
+          title: "White-Labeling",
+          desc: "Full brand customization for clients",
+        },
+      },
+    },
+    commercial: {
+      label: "Commercial",
+      items: {
+        pricing: { title: "Pricing", desc: "Editions, plans, and pricing model" },
+        investorOverview: {
+          title: "Investor Overview",
+          desc: "Funding stage, runway, cap table",
+        },
+        partnerJourney: {
+          title: "Partner Journey",
+          desc: "Reseller, ISV, and SI partnerships",
+        },
+        subscriptionEngine: {
+          title: "Subscription Engine",
+          desc: "Billing, recurring revenue, metrics",
+        },
+        roiAnalysis: {
+          title: "ROI Analysis",
+          desc: "Total cost of ownership analysis",
+        },
+      },
+    },
+  },
+  commercialHeader: {
+    logoAria: "{{brand}} Commercial",
+    navAriaLabel: "Commercial documentation navigation",
+    searchAriaLabel: "Search commercial docs",
+    searchLabel: "Search docs",
+    techDocsLabel: "Docs",
+    techDocsAria: "Technical documentation",
+    pricingAria: "View pricing",
+    mobileMenuAria: "Open navigation menu",
+    megaPanelAria: "{{label}} navigation",
+  },
+  commercialFooter: {
+    tagline:
+      "Enterprise-grade modular SaaS platform. B2B2C subscription infrastructure built for scale.",
+    copyright: "© {{year}} {{brand}}. All rights reserved.",
+    privacy: "Privacy",
+    terms: "Terms",
+    developerDocs: "Developer Docs",
+  },
+  commercialNotFound: {
+    title: "404",
+    message: "Page not found: /commercial/{{slug}}",
+    backHome: "Back to Commercial Home",
   },
 };

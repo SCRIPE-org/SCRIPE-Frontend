@@ -13,138 +13,65 @@ import { usePathname } from "next/navigation";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import { BRAND } from "@core/config/branding";
 
-// ── Navigation structure ────────────────────────────────────────────────
+// ── Navigation structure — copy lives in commercialMegaMenu.<id>.* (pages/
+// common locale). Section `id` doubles as the locale segment name, so
+// rendering just interpolates `commercialMegaMenu.${id}.label` /
+// `.items.${item.key}.title|desc` — no separate key bookkeeping. ──────────
 const NAV_SECTIONS = [
   {
     id: "why",
-    label: "Why SCRIPE",
     items: [
-      {
-        href: "/commercial/why-scripe-overview",
-        title: "Overview",
-        desc: "Market positioning and differentiation",
-      },
-      {
-        href: "/commercial/competitive-advantages",
-        title: "Competitive Edge",
-        desc: "How SCRIPE wins against alternatives",
-      },
-      {
-        href: "/commercial/target-industries",
-        title: "Target Industries",
-        desc: "Verticals and ideal customer profiles",
-      },
-      {
-        href: "/commercial/success-metrics",
-        title: "Success Metrics",
-        desc: "ROI, KPIs, and commercial outcomes",
-      },
-      {
-        href: "/commercial/business-client-journeys",
-        title: "Client Journeys",
-        desc: "Buyer journeys from trial to expansion",
-      },
-      {
-        href: "/commercial/workspace-tours",
-        title: "Workspace Tours",
-        desc: "Product walkthroughs and demos",
-      },
+      { href: "/commercial/why-scripe-overview", key: "overview" },
+      { href: "/commercial/competitive-advantages", key: "competitiveEdge" },
+      { href: "/commercial/target-industries", key: "targetIndustries" },
+      { href: "/commercial/success-metrics", key: "successMetrics" },
+      { href: "/commercial/business-client-journeys", key: "clientJourneys" },
+      { href: "/commercial/workspace-tours", key: "workspaceTours" },
     ],
   },
   {
     id: "platform",
-    label: "Platform",
     items: [
-      {
-        href: "/commercial/platform-architecture",
-        title: "Architecture",
-        desc: "Modular monolith, clean architecture",
-      },
-      {
-        href: "/commercial/module-catalog",
-        title: "Module Catalog",
-        desc: "All available platform modules",
-      },
-      {
-        href: "/commercial/technology-stack",
-        title: "Technology Stack",
-        desc: ".NET 10, Next.js 16, multi-DB",
-      },
-      {
-        href: "/commercial/deployment-modes",
-        title: "Deployment Modes",
-        desc: "Cloud, on-premise, and hybrid options",
-      },
-      {
-        href: "/commercial/system-requirements",
-        title: "System Requirements",
-        desc: "Infrastructure and scaling guidelines",
-      },
+      { href: "/commercial/platform-architecture", key: "architecture" },
+      { href: "/commercial/module-catalog", key: "moduleCatalog" },
+      { href: "/commercial/technology-stack", key: "technologyStack" },
+      { href: "/commercial/deployment-modes", key: "deploymentModes" },
+      { href: "/commercial/system-requirements", key: "systemRequirements" },
     ],
   },
   {
     id: "enterprise",
-    label: "Enterprise",
     items: [
-      {
-        href: "/commercial/multi-tenancy",
-        title: "Multi-Tenancy",
-        desc: "Hierarchical tenant architecture",
-      },
-      {
-        href: "/commercial/roles-permissions",
-        title: "Roles & Permissions",
-        desc: "RBAC and edition-gated access",
-      },
-      {
-        href: "/commercial/audit-compliance",
-        title: "Audit & Compliance",
-        desc: "Trails, regulations, certifications",
-      },
-      {
-        href: "/commercial/localization-i18n",
-        title: "Localization",
-        desc: "7 languages, RTL support, i18n",
-      },
-      {
-        href: "/commercial/white-labeling",
-        title: "White-Labeling",
-        desc: "Full brand customization for clients",
-      },
+      { href: "/commercial/multi-tenancy", key: "multiTenancy" },
+      { href: "/commercial/roles-permissions", key: "rolesPermissions" },
+      { href: "/commercial/audit-compliance", key: "auditCompliance" },
+      { href: "/commercial/localization-i18n", key: "localization" },
+      { href: "/commercial/white-labeling", key: "whiteLabeling" },
     ],
   },
   {
     id: "commercial",
-    label: "Commercial",
     items: [
-      {
-        href: "/commercial/pricing-showcase",
-        title: "Pricing",
-        desc: "Editions, plans, and pricing model",
-      },
-      {
-        href: "/commercial/investor-overview",
-        title: "Investor Overview",
-        desc: "Funding stage, runway, cap table",
-      },
-      {
-        href: "/commercial/partner-journey",
-        title: "Partner Journey",
-        desc: "Reseller, ISV, and SI partnerships",
-      },
-      {
-        href: "/commercial/entitlements-subscriptions",
-        title: "Subscription Engine",
-        desc: "Billing, recurring revenue, metrics",
-      },
-      {
-        href: "/commercial/roi-analysis",
-        title: "ROI Analysis",
-        desc: "Total cost of ownership analysis",
-      },
+      { href: "/commercial/pricing-showcase", key: "pricing" },
+      { href: "/commercial/investor-overview", key: "investorOverview" },
+      { href: "/commercial/partner-journey", key: "partnerJourney" },
+      { href: "/commercial/entitlements-subscriptions", key: "subscriptionEngine" },
+      { href: "/commercial/roi-analysis", key: "roiAnalysis" },
     ],
   },
-];
+] as const;
+
+const MEGA_PANEL_ID = "commercial-mega-panel";
+
+/** `commercialMegaMenu.<sectionId>.label` — the one place this path is built. */
+function sectionLabelKey(sectionId: string): string {
+  return `commercialMegaMenu.${sectionId}.label`;
+}
+
+/** `commercialMegaMenu.<sectionId>.items.<itemKey>.<field>` */
+function sectionItemKey(sectionId: string, itemKey: string, field: "title" | "desc"): string {
+  return `commercialMegaMenu.${sectionId}.items.${itemKey}.${field}`;
+}
 
 // ── Icons ────────────────────────────────────────────────────────────────
 const ChevronDown = () => (
@@ -157,6 +84,7 @@ const ChevronDown = () => (
     strokeWidth="2.5"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
   >
     <path d="m6 9 6 6 6-6" />
   </svg>
@@ -172,6 +100,7 @@ const SearchIcon = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
   >
     <circle cx="11" cy="11" r="8" />
     <path d="m21 21-4.3-4.3" />
@@ -188,6 +117,7 @@ const DocsIcon = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
   >
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
     <polyline points="14 2 14 8 20 8" />
@@ -204,6 +134,7 @@ const ArrowIcon = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
   >
     <path d="M5 12h14" />
     <path d="m12 5 7 7-7 7" />
@@ -220,6 +151,7 @@ const MenuIcon = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
   >
     <line x1="4" x2="20" y1="6" y2="6" />
     <line x1="4" x2="20" y1="12" y2="12" />
@@ -227,7 +159,7 @@ const MenuIcon = () => (
   </svg>
 );
 
-// Section icon mapper
+// Section icon mapper — decorative, aria-hidden at every render site.
 const SECTION_ICONS: Record<string, ReactElement> = {
   why: (
     <svg
@@ -239,6 +171,7 @@ const SECTION_ICONS: Record<string, ReactElement> = {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-hidden="true"
     >
       <circle cx="12" cy="12" r="10" />
       <path d="M12 16v-4m0-4h.01" />
@@ -254,6 +187,7 @@ const SECTION_ICONS: Record<string, ReactElement> = {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-hidden="true"
     >
       <rect x="2" y="3" width="20" height="14" rx="2" />
       <path d="M8 21h8m-4-4v4" />
@@ -269,6 +203,7 @@ const SECTION_ICONS: Record<string, ReactElement> = {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-hidden="true"
     >
       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
       <polyline points="9 22 9 12 15 12 15 22" />
@@ -284,12 +219,19 @@ const SECTION_ICONS: Record<string, ReactElement> = {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-hidden="true"
     >
       <line x1="12" y1="1" x2="12" y2="23" />
       <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
     </svg>
   ),
 };
+
+/** All focusable links/buttons inside the mega panel, in DOM order. */
+function getPanelFocusables(panel: HTMLElement | null): HTMLElement[] {
+  if (!panel) return [];
+  return Array.from(panel.querySelectorAll<HTMLElement>("a[href], button:not([disabled])"));
+}
 
 // ── Main Component ────────────────────────────────────────────────────────
 
@@ -304,6 +246,13 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
   const { t } = useDocsI18n();
+
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const triggerRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  // True only when the panel was opened by an explicit activation (click or
+  // keyboard Enter/Space on the trigger button), never by a hover — so
+  // mouse users browsing the nav don't have focus yanked out from under them.
+  const openedByActivation = useRef(false);
 
   // Open mega panel for a section
   const openSection = useCallback((id: string) => {
@@ -324,10 +273,13 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
     if (closeTimer.current) clearTimeout(closeTimer.current);
   }, []);
 
-  const closePanel = useCallback(() => {
+  const closePanel = useCallback((refocusId?: string) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     setPanelVisible(false);
     setTimeout(() => setActiveSection(null), 240);
+    if (refocusId) {
+      triggerRefs.current[refocusId]?.focus();
+    }
   }, []);
 
   // Close on route change
@@ -335,16 +287,50 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
     closePanel();
   }, [pathname, closePanel]);
 
-  // Close on Escape
+  // Close on Escape, returning focus to the trigger that opened the panel —
+  // Escape must never leave the user's keyboard focus stranded on a node
+  // that just disappeared.
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closePanel();
+      if (e.key === "Escape" && activeSection) {
+        closePanel(activeSection);
+      }
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [closePanel]);
+  }, [closePanel, activeSection]);
+
+  // When the panel opens via explicit activation (not hover), move focus to
+  // its first link — otherwise DOM tab order would skip straight from this
+  // trigger to the NEXT trigger button, since the panel is a sibling that
+  // renders after the whole header, not inside this nav item.
+  useEffect(() => {
+    if (panelVisible && activeSection && openedByActivation.current) {
+      openedByActivation.current = false;
+      const [first] = getPanelFocusables(panelRef.current);
+      first?.focus();
+    }
+  }, [panelVisible, activeSection]);
+
+  // Trap Tab within the open panel so keyboard users can't tab "through" it
+  // into whatever renders after it in the document.
+  const handlePanelKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== "Tab") return;
+    const focusables = getPanelFocusables(panelRef.current);
+    if (focusables.length === 0) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }, []);
 
   const activeData = NAV_SECTIONS.find((s) => s.id === activeSection);
+  const activeLabel = activeData ? t(sectionLabelKey(activeData.id)) : "";
 
   return (
     <>
@@ -355,48 +341,52 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
           <Link
             href="/commercial"
             className="com-header-logo"
-            aria-label={`${BRAND.namePascal} Commercial`}
+            aria-label={t("commercialHeader.logoAria", { brand: BRAND.namePascal })}
           >
             <span className="com-header-logo-mark">
               <img src="/app-logo.png" alt="" className="com-header-logo-img" aria-hidden="true" />
             </span>
             <span className="com-header-brand-copy">
               <span className="com-header-logo-name">{BRAND.nameUpper}</span>
-              <span className="com-header-logo-badge">Commercial</span>
+              <span className="com-header-logo-badge">{t("common.commercial")}</span>
             </span>
           </Link>
 
           {/* Mega-menu nav triggers */}
-          <nav
-            className="com-nav"
-            role="navigation"
-            aria-label="Commercial documentation navigation"
-          >
-            {NAV_SECTIONS.map((section) => (
-              <div
-                key={section.id}
-                className="com-nav-item"
-                onMouseEnter={() => openSection(section.id)}
-                onMouseLeave={scheduleClose}
-              >
-                <button
-                  className="com-nav-trigger"
-                  data-active={activeSection === section.id && panelVisible ? "true" : "false"}
-                  aria-expanded={activeSection === section.id && panelVisible}
-                  aria-haspopup="true"
-                  onClick={() => {
-                    if (activeSection === section.id && panelVisible) {
-                      closePanel();
-                    } else {
-                      openSection(section.id);
-                    }
-                  }}
+          <nav className="com-nav" role="navigation" aria-label={t("commercialHeader.navAriaLabel")}>
+            {NAV_SECTIONS.map((section) => {
+              const isOpen = activeSection === section.id && panelVisible;
+              return (
+                <div
+                  key={section.id}
+                  className="com-nav-item"
+                  onMouseEnter={() => openSection(section.id)}
+                  onMouseLeave={scheduleClose}
                 >
-                  {section.label}
-                  <ChevronDown />
-                </button>
-              </div>
-            ))}
+                  <button
+                    ref={(el) => {
+                      triggerRefs.current[section.id] = el;
+                    }}
+                    className="com-nav-trigger"
+                    data-active={isOpen ? "true" : "false"}
+                    aria-expanded={isOpen}
+                    aria-haspopup="true"
+                    aria-controls={MEGA_PANEL_ID}
+                    onClick={() => {
+                      if (isOpen) {
+                        closePanel(section.id);
+                      } else {
+                        openedByActivation.current = true;
+                        openSection(section.id);
+                      }
+                    }}
+                  >
+                    {t(sectionLabelKey(section.id))}
+                    <ChevronDown />
+                  </button>
+                </div>
+              );
+            })}
           </nav>
 
           {/* Right actions */}
@@ -405,29 +395,33 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
             <button
               className="com-header-btn com-header-search-btn"
               onClick={onSearchOpen}
-              aria-label="Search commercial docs"
+              aria-label={t("commercialHeader.searchAriaLabel")}
               id="commercial-search-trigger"
             >
               <span className="com-header-search-icon">
                 <SearchIcon />
               </span>
-              <span>Search docs</span>
-              <kbd className="com-header-search-shortcut">⌘K</kbd>
+              <span>{t("commercialHeader.searchLabel")}</span>
+              <kbd className="com-header-search-shortcut">{t("common.searchShortcut")}</kbd>
             </button>
 
             {/* Tech docs link */}
-            <Link href="/docs" className="com-header-btn" aria-label="Technical documentation">
+            <Link
+              href="/docs"
+              className="com-header-btn"
+              aria-label={t("commercialHeader.techDocsAria")}
+            >
               <DocsIcon />
-              <span>Docs</span>
+              <span>{t("commercialHeader.techDocsLabel")}</span>
             </Link>
 
             {/* CTA */}
             <Link
               href="/commercial/pricing-showcase"
               className="com-header-cta"
-              aria-label="View pricing"
+              aria-label={t("commercialHeader.pricingAria")}
             >
-              Get Started
+              {t("common.getStarted")}
               <ArrowIcon />
             </Link>
 
@@ -435,7 +429,7 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
             <button
               className="com-header-hamburger"
               onClick={onMobileMenuOpen}
-              aria-label="Open navigation menu"
+              aria-label={t("commercialHeader.mobileMenuAria")}
               id="commercial-mobile-menu-btn"
             >
               <MenuIcon />
@@ -447,12 +441,15 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
       {/* ── Mega-Menu Panel ───────────────────────────────────────────── */}
       {activeData && (
         <div
+          id={MEGA_PANEL_ID}
+          ref={panelRef}
           className="com-mega-panel"
           data-state={panelVisible ? "open" : "closed"}
           onMouseEnter={cancelClose}
           onMouseLeave={scheduleClose}
+          onKeyDown={handlePanelKeyDown}
           role="region"
-          aria-label={`${activeData.label} navigation`}
+          aria-label={t("commercialHeader.megaPanelAria", { label: activeLabel })}
         >
           <div className="com-mega-panel-inner">
             {/* Panel header */}
@@ -460,7 +457,7 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
               <span style={{ color: "var(--com-violet)", display: "flex", alignItems: "center" }}>
                 {SECTION_ICONS[activeData.id]}
               </span>
-              <span className="com-mega-panel-label">{activeData.label}</span>
+              <span className="com-mega-panel-label">{activeLabel}</span>
               <div className="com-mega-panel-divider" />
             </div>
 
@@ -472,14 +469,18 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
                 className="com-mega-link"
                 style={{ "--di": idx } as CSSProperties}
                 data-active={pathname === item.href ? "true" : "false"}
-                onClick={closePanel}
+                onClick={() => closePanel()}
               >
                 <span className="com-mega-link-icon" aria-hidden="true">
                   {SECTION_ICONS[activeData.id]}
                 </span>
                 <span className="com-mega-link-text">
-                  <span className="com-mega-link-title">{item.title}</span>
-                  <span className="com-mega-link-desc">{item.desc}</span>
+                  <span className="com-mega-link-title">
+                    {t(sectionItemKey(activeData.id, item.key, "title"))}
+                  </span>
+                  <span className="com-mega-link-desc">
+                    {t(sectionItemKey(activeData.id, item.key, "desc"))}
+                  </span>
                 </span>
               </Link>
             ))}
@@ -487,18 +488,11 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
         </div>
       )}
 
-      {/* ── Backdrop overlay to close on outside click ────────────────── */}
+      {/* ── Backdrop overlay to close on outside click — declared as a real
+          class in commercial.css (§8 / §22 z-index stack) instead of an
+          inline literal, so its stacking order lives next to its siblings. */}
       {panelVisible && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            top: "var(--com-header-h)",
-            zIndex: 98,
-          }}
-          onClick={closePanel}
-          aria-hidden="true"
-        />
+        <div className="com-mega-backdrop" onClick={() => closePanel()} aria-hidden="true" />
       )}
     </>
   );

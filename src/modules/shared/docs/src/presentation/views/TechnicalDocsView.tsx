@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { FileQuestion } from "lucide-react";
 import { useDocsViewModel } from "../viewmodels/useDocsViewModel";
 import { useSidebarViewModel } from "../viewmodels/useSidebarViewModel";
 import { useSearchViewModel } from "../viewmodels/useSearchViewModel";
@@ -21,6 +23,8 @@ import { DocContent } from "../components/content/DocContent";
 // UI
 import { ReadingProgress } from "../components/ui/ReadingProgress";
 import { DocsSearch } from "../components/ui/DocsSearch";
+import { EmptyState } from "@core/ui/empty-state";
+import { Button } from "@core/ui/button";
 
 // ─── Props ────────────────────────────────────────────────────────
 interface TechnicalDocsViewProps {
@@ -56,18 +60,18 @@ export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
         <div className="docs-wrapper">
           <DocsSidebar categories={vm.categories} activeSlug={slug} />
           <div className="docs-content-wrapper">
-            <div
-              className="docs-content"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexDirection: "column",
-                minHeight: "50vh",
-              }}
-            >
-              <h1 style={{ fontSize: "2rem", fontWeight: 700, marginBottom: "0.5rem" }}>404</h1>
-              <p style={{ color: "hsl(var(--muted-foreground))" }}>Page not found: /docs/{slug}</p>
+            <div className="docs-content flex min-h-[50vh] items-center justify-center">
+              <EmptyState
+                size="lg"
+                icon={FileQuestion}
+                title={t("common.notFoundTitle")}
+                description={t("common.notFoundDescription", { slug })}
+                action={
+                  <Button asChild>
+                    <Link href="/docs">{t("common.home")}</Link>
+                  </Button>
+                }
+              />
             </div>
           </div>
         </div>
@@ -105,8 +109,8 @@ export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
                 <button
                   onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
                   className={`reader-toolbar-btn rounded p-1 text-muted-foreground transition-colors hover:text-foreground ${sidebarCollapsed ? "bg-primary/10 text-primary" : "hover:bg-muted"}`}
-                  title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-                  aria-label="Toggle Sidebar"
+                  title={sidebarCollapsed ? t("common.expandSidebar") : t("common.collapseSidebar")}
+                  aria-label={sidebarCollapsed ? t("common.expandSidebar") : t("common.collapseSidebar")}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -118,6 +122,7 @@ export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    aria-hidden="true"
                   >
                     <rect x="3" y="3" width="18" height="18" rx="2" />
                     <path d="M9 3v18" />
@@ -129,21 +134,24 @@ export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
                 <button
                   onClick={() => setFontSize(14)}
                   className={`reader-toolbar-btn rounded px-2 py-0.5 transition-colors ${fontSize === 14 ? "bg-primary font-bold text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
-                  title="Small Font Size"
+                  title={t("common.fontSizeSmall")}
+                  aria-label={t("common.fontSizeSmall")}
                 >
                   A-
                 </button>
                 <button
                   onClick={() => setFontSize(16)}
                   className={`reader-toolbar-btn rounded px-2 py-0.5 transition-colors ${fontSize === 16 ? "bg-primary font-bold text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
-                  title="Medium Font Size"
+                  title={t("common.fontSizeMedium")}
+                  aria-label={t("common.fontSizeMedium")}
                 >
                   A
                 </button>
                 <button
                   onClick={() => setFontSize(18)}
                   className={`reader-toolbar-btn rounded px-2 py-0.5 transition-colors ${fontSize === 18 ? "bg-primary font-bold text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
-                  title="Large Font Size"
+                  title={t("common.fontSizeLarge")}
+                  aria-label={t("common.fontSizeLarge")}
                 >
                   A+
                 </button>
@@ -153,9 +161,10 @@ export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
                 <button
                   onClick={() => setWideLayout(!wideLayout)}
                   className={`reader-toolbar-btn rounded px-2 py-0.5 transition-colors ${wideLayout ? "bg-primary font-bold text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
-                  title="Toggle Wide Layout"
+                  title={wideLayout ? t("common.switchToCompactLayout") : t("common.switchToWideLayout")}
+                  aria-label={wideLayout ? t("common.switchToCompactLayout") : t("common.switchToWideLayout")}
                 >
-                  {wideLayout ? "Compact" : "Wide"}
+                  {wideLayout ? t("common.layoutCompact") : t("common.layoutWide")}
                 </button>
               </div>
             </div>

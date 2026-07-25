@@ -3,6 +3,7 @@
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import type { MatrixCell } from "../../../domain/entities/DocSection";
 import { MatrixCellBadge } from "../ui/MatrixCellBadge";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@core/ui/table";
 
 interface CompatibilityMatrixProps {
   headers: string[];
@@ -10,36 +11,31 @@ interface CompatibilityMatrixProps {
 }
 
 export function CompatibilityMatrix({ headers, rows }: CompatibilityMatrixProps) {
-  const { t } = useDocsI18n();
+  const { t, direction } = useDocsI18n();
   return (
-    <div
-      className="docs-matrix-table-container"
-      style={{ overflowX: "auto", marginBottom: "2rem" }}
-    >
-      <table className="docs-matrix-table">
-        <thead>
-          <tr>
-            <th></th>
+    <div className="mb-8 overflow-hidden rounded-nx-lg border border-nx-line bg-nx-surface">
+      <Table dir={direction}>
+        <TableHeader className="bg-nx-raised">
+          <TableRow>
+            <TableHead />
             {headers.map((h, i) => (
-              <th key={i}>{t(h)}</th>
+              <TableHead key={i}>{t(h)}</TableHead>
             ))}
-          </tr>
-        </thead>
-        <tbody>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {rows.map((row, ri) => (
-            <tr key={ri}>
-              <td>
-                <strong>{t(row.nameKey)}</strong>
-              </td>
+            <TableRow key={ri}>
+              <TableCell className="font-semibold text-nx-ink">{t(row.nameKey)}</TableCell>
               {row.cells.map((cell, ci) => (
-                <td key={ci}>
+                <TableCell key={ci}>
                   <MatrixCellBadge cell={cell} />
-                </td>
+                </TableCell>
               ))}
-            </tr>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

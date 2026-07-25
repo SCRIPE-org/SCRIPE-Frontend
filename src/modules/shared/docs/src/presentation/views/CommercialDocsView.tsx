@@ -6,6 +6,7 @@ import { useDocsViewModel } from "../viewmodels/useDocsViewModel";
 import { useSidebarViewModel } from "../viewmodels/useSidebarViewModel";
 import { useSearchViewModel } from "../viewmodels/useSearchViewModel";
 import { useDocsI18n } from "../providers/DocsI18nProvider";
+import { BRAND } from "@core/config/branding";
 
 // Commercial layout components
 import { CommercialHeader } from "../components/layout/CommercialHeader";
@@ -29,32 +30,70 @@ interface CommercialDocsViewProps {
 function CommercialFooter() {
   const { t } = useDocsI18n();
 
+  // Labels reuse the mega-menu's own titleKeys (same destination, same
+  // copy) instead of duplicating strings under a second key. This also
+  // fixed two footer links that pointed at slugs with no content
+  // ("/commercial/partner-program", "/commercial/roi-calculator") — they
+  // now resolve to the real pages the header mega-menu already links to.
   const footerCols = [
     {
-      title: "Why SCRIPE",
+      titleKey: "commercialMegaMenu.why.label",
       links: [
-        { href: "/commercial/why-scripe-overview", label: "Overview" },
-        { href: "/commercial/competitive-advantages", label: "Competitive Edge" },
-        { href: "/commercial/target-industries", label: "Industries" },
-        { href: "/commercial/business-client-journeys", label: "Client Journeys" },
+        { href: "/commercial/why-scripe-overview", labelKey: "commercialMegaMenu.why.items.overview.title" },
+        {
+          href: "/commercial/competitive-advantages",
+          labelKey: "commercialMegaMenu.why.items.competitiveEdge.title",
+        },
+        {
+          href: "/commercial/target-industries",
+          labelKey: "commercialMegaMenu.why.items.targetIndustries.title",
+        },
+        {
+          href: "/commercial/business-client-journeys",
+          labelKey: "commercialMegaMenu.why.items.clientJourneys.title",
+        },
       ],
     },
     {
-      title: "Platform",
+      titleKey: "commercialMegaMenu.platform.label",
       links: [
-        { href: "/commercial/platform-architecture", label: "Architecture" },
-        { href: "/commercial/module-catalog", label: "Module Catalog" },
-        { href: "/commercial/technology-stack", label: "Tech Stack" },
-        { href: "/commercial/deployment-modes", label: "Deployment" },
+        {
+          href: "/commercial/platform-architecture",
+          labelKey: "commercialMegaMenu.platform.items.architecture.title",
+        },
+        {
+          href: "/commercial/module-catalog",
+          labelKey: "commercialMegaMenu.platform.items.moduleCatalog.title",
+        },
+        {
+          href: "/commercial/technology-stack",
+          labelKey: "commercialMegaMenu.platform.items.technologyStack.title",
+        },
+        {
+          href: "/commercial/deployment-modes",
+          labelKey: "commercialMegaMenu.platform.items.deploymentModes.title",
+        },
       ],
     },
     {
-      title: "Commercial",
+      titleKey: "commercialMegaMenu.commercial.label",
       links: [
-        { href: "/commercial/pricing-showcase", label: "Pricing" },
-        { href: "/commercial/investor-overview", label: "Investors" },
-        { href: "/commercial/partner-program", label: "Partners" },
-        { href: "/commercial/roi-calculator", label: "ROI Calculator" },
+        {
+          href: "/commercial/pricing-showcase",
+          labelKey: "commercialMegaMenu.commercial.items.pricing.title",
+        },
+        {
+          href: "/commercial/investor-overview",
+          labelKey: "commercialMegaMenu.commercial.items.investorOverview.title",
+        },
+        {
+          href: "/commercial/partner-journey",
+          labelKey: "commercialMegaMenu.commercial.items.partnerJourney.title",
+        },
+        {
+          href: "/commercial/roi-analysis",
+          labelKey: "commercialMegaMenu.commercial.items.roiAnalysis.title",
+        },
       ],
     },
   ];
@@ -68,30 +107,27 @@ function CommercialFooter() {
             <Link
               href="/commercial"
               className="com-footer-logo"
-              aria-label="SCRIPE Commercial home"
+              aria-label={t("commercialHeader.logoAria", { brand: BRAND.namePascal })}
             >
               <img
                 src="/app-logo.png"
-                alt="SCRIPE"
+                alt={BRAND.namePascal}
                 style={{ width: 24, height: 24, objectFit: "contain" }}
               />
-              <span>SCRIPE</span>
+              <span>{BRAND.nameUpper}</span>
             </Link>
-            <p className="com-footer-tagline">
-              Enterprise-grade modular SaaS platform. B2B2C subscription infrastructure built for
-              scale.
-            </p>
+            <p className="com-footer-tagline">{t("commercialFooter.tagline")}</p>
           </div>
 
           {/* Link columns */}
           {footerCols.map((col) => (
-            <div key={col.title}>
-              <h4 className="com-footer-col-title">{col.title}</h4>
+            <div key={col.titleKey}>
+              <h4 className="com-footer-col-title">{t(col.titleKey)}</h4>
               <ul className="com-footer-links" role="list">
                 {col.links.map((link) => (
                   <li key={link.href}>
                     <Link href={link.href} className="com-footer-link">
-                      {link.label}
+                      {t(link.labelKey)}
                     </Link>
                   </li>
                 ))}
@@ -103,12 +139,15 @@ function CommercialFooter() {
         {/* Bottom bar */}
         <div className="com-footer-bottom">
           <p className="com-footer-copy">
-            &copy; {new Date().getFullYear()} SCRIPE. All rights reserved.
+            {t("commercialFooter.copyright", {
+              year: new Date().getFullYear(),
+              brand: BRAND.nameUpper,
+            })}
           </p>
           <div className="com-footer-bottom-links">
-            <a href="#">Privacy</a>
-            <a href="#">Terms</a>
-            <Link href="/docs">Developer Docs</Link>
+            <Link href="/privacy">{t("commercialFooter.privacy")}</Link>
+            <Link href="/terms">{t("commercialFooter.terms")}</Link>
+            <Link href="/docs">{t("commercialFooter.developerDocs")}</Link>
           </div>
         </div>
       </div>
@@ -123,7 +162,7 @@ function CommercialFooter() {
  * Universal horizontal padding applied via com-content-wrap / --com-gutter on all containers.
  */
 export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
-  const { direction, loadSection } = useDocsI18n();
+  const { t, direction, loadSection } = useDocsI18n();
   const vm = useDocsViewModel(slug, "commercial");
   const sidebar = useSidebarViewModel();
   const search = useSearchViewModel(vm.search);
@@ -143,14 +182,16 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
         />
         <div className="commercial-page">
           <div className="com-404" role="main">
-            <h1>404</h1>
-            <p>Page not found: /commercial/{slug.replace("commercial/", "")}</p>
+            <h1>{t("commercialNotFound.title")}</h1>
+            <p>
+              {t("commercialNotFound.message", { slug: slug.replace("commercial/", "") })}
+            </p>
             <Link
               href="/commercial"
               className="com-btn com-btn--ghost"
               style={{ marginTop: "1rem" }}
             >
-              Back to Commercial Home
+              {t("commercialNotFound.backHome")}
             </Link>
           </div>
         </div>

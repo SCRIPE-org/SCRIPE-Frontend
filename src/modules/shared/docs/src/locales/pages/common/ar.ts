@@ -46,6 +46,102 @@ export const ar = {
     bookDemo: "احجز عرضاً توضيحياً",
     getStarted: "ابدأ الآن",
     investorLabel: "للمستثمرين",
+    expandSidebar: "توسيع الشريط الجانبي",
+    collapseSidebar: "طي الشريط الجانبي",
+    fontSizeSmall: "حجم خط صغير",
+    fontSizeMedium: "حجم خط متوسط",
+    fontSizeLarge: "حجم خط كبير",
+    switchToWideLayout: "التبديل إلى التخطيط العريض",
+    switchToCompactLayout: "التبديل إلى التخطيط المضغوط",
+    layoutWide: "عريض",
+    layoutCompact: "مضغوط",
+    notFoundTitle: "الصفحة غير موجودة",
+    notFoundDescription: "تعذر العثور على /docs/{{slug}}.",
+    run: "تشغيل",
+    reset: "إعادة تعيين",
+  },
+  widgets: {
+    cliSimulator: {
+      windowLabel: "بيئة تجربة سطر الأوامر",
+      inputLabel: "أمر scripe",
+      inputPlaceholder: "اكتب أمر scripe (مثل dev أو build أو db)…",
+      suggestionsLabel: "اقتراحات الأوامر",
+      commandNotFound: "الأمر غير موجود في المحاكي.",
+      executing: "جارٍ التنفيذ…",
+    },
+    configBuilder: {
+      providerLabel: "مزوّد قاعدة البيانات",
+      providerSqlServer: "SQL Server (الافتراضي)",
+      providerPostgres: "PostgreSQL",
+      providerOracle: "Oracle Database",
+      modeLabel: "وضع اتصال قاعدة البيانات",
+      modeSingle: "قاعدة بيانات واحدة (Monolith)",
+      modeMulti: "قواعد بيانات متعددة (خدمات مصغّرة)",
+      jobsLabel: "مزوّد المهام الخلفية",
+      jobsNative: "خدمة المؤقت الأصلية",
+      jobsHangfire: "لوحة تحكم Hangfire",
+      jobsQuartz: "محرك Quartz.NET",
+      outputFilename: "appsettings.json",
+    },
+    pipelineSimulator: {
+      consoleLabel: "سجل مخرجات وحدة التحكم",
+      emptyHint: "اختر «تشغيل» لتتبع مسار الطلب.",
+      startMessage: "بدء محاكاة مسار معالجة الطلب…",
+      completeMessage: "اكتملت المحاكاة بنجاح.",
+      enteringStep: "الدخول إلى {{step}}…",
+      running: "جارٍ التشغيل…",
+      steps: {
+        unhandledException: {
+          name: "الاستثناء غير المعالج",
+          description: "تهيئة حدود الأخطاء العامة. مراقبة الطلبات نشطة.",
+        },
+        validation: {
+          name: "التحقق من الصحة",
+          description: "التحقق من الحمولة الواردة. اجتازت فحوصات FluentValidation دون أخطاء.",
+        },
+        authorization: {
+          name: "التفويض",
+          description: "تفويض هوية المستخدم. تم التحقق من متطلبات صلاحيات RBAC.",
+        },
+        featureCheck: {
+          name: "فحص الميزات",
+          description: "التحقق من الاستحقاقات. الاشتراك فعّال، وحصة المستأجر ضمن الحد.",
+        },
+        caching: {
+          name: "التخزين المؤقت",
+          description: "قراءة مفتاح ذاكرة التخزين المؤقت Redis. لا توجد نتيجة — يُحال الطلب إلى المعالج.",
+        },
+        audit: {
+          name: "التدقيق",
+          description: "تسجيل تفاصيل معاملة التعديل. سجل التدقيق جاهز.",
+        },
+        handler: {
+          name: "المعالج",
+          description: "تنفيذ منطق معالج الطلب. اكتملت معاملة قاعدة البيانات.",
+        },
+      },
+    },
+    lifecycleTracer: {
+      sequenceStepsLabel: "خطوات التسلسل",
+      directionLabel: "الاتجاه",
+      directionInbound: "وارد",
+      directionOutbound: "صادر",
+      actor: {
+        view: "العرض",
+        viewmodel: "نموذج العرض",
+        repository: "المستودع",
+        controller: "المتحكم",
+        handler: "المعالج",
+        database: "قاعدة البيانات",
+      },
+    },
+    fileExplorer: {
+      selectFilePrompt: "اختر ملفاً من الشجرة لعرض إرشاداته.",
+      emptyTree: "لا توجد ملفات مهيّأة لهذا المستكشف.",
+    },
+    interactiveDiagram: {
+      nodeDetailLabel: "تفاصيل العقدة",
+    },
   },
   info: {
     note: "ملاحظة",
@@ -64,6 +160,14 @@ export const ar = {
     authRequired: "مطلوبة",
     noAuth: "عامة",
     permission: "الصلاحية",
+  },
+  schema: {
+    entities: "كيانات قاعدة البيانات",
+    columnName: "اسم العمود",
+    type: "النوع",
+    nullable: "يقبل الفراغ",
+    primaryKey: "مفتاح أساسي",
+    foreignKey: "مفتاح خارجي",
   },
   nav: {
     getStarted: "البدء",
@@ -96,5 +200,117 @@ export const ar = {
     hrms: "إدارة الموارد البشرية",
     partyKernel: "نواة الأطراف",
     organizationCore: "نواة المؤسسة",
+  },
+  // Commercial header mega-menu — 4 sections x (label + N items x title/desc).
+  commercialMegaMenu: {
+    why: {
+      label: "لماذا SCRIPE",
+      items: {
+        overview: { title: "نظرة عامة", desc: "التموضع السوقي والتمايز التنافسي" },
+        competitiveEdge: {
+          title: "الميزة التنافسية",
+          desc: "كيف يتفوق SCRIPE على البدائل",
+        },
+        targetIndustries: {
+          title: "الصناعات المستهدفة",
+          desc: "القطاعات وملامح العملاء المثاليين",
+        },
+        successMetrics: {
+          title: "مؤشرات النجاح",
+          desc: "العائد على الاستثمار ومؤشرات الأداء والنتائج التجارية",
+        },
+        clientJourneys: {
+          title: "رحلات العملاء",
+          desc: "رحلات المشتري من التجربة إلى التوسع",
+        },
+        workspaceTours: {
+          title: "جولات في بيئة العمل",
+          desc: "عروض توضيحية وجولات في المنتج",
+        },
+      },
+    },
+    platform: {
+      label: "المنصة",
+      items: {
+        architecture: { title: "البنية المعمارية", desc: "معمارية أحادية معيارية ونظيفة" },
+        moduleCatalog: { title: "دليل الوحدات", desc: "جميع وحدات المنصة المتاحة" },
+        technologyStack: {
+          title: "حزمة التقنيات",
+          desc: ".NET 10 وNext.js 16 وقواعد بيانات متعددة",
+        },
+        deploymentModes: {
+          title: "أنماط النشر",
+          desc: "خيارات سحابية ومحلية وهجينة",
+        },
+        systemRequirements: {
+          title: "متطلبات النظام",
+          desc: "إرشادات البنية التحتية والتوسع",
+        },
+      },
+    },
+    enterprise: {
+      label: "المؤسسات",
+      items: {
+        multiTenancy: { title: "تعدد المستأجرين", desc: "بنية هرمية للمستأجرين" },
+        rolesPermissions: {
+          title: "الأدوار والصلاحيات",
+          desc: "التحكم بالوصول القائم على الأدوار وحسب الإصدار",
+        },
+        auditCompliance: {
+          title: "التدقيق والامتثال",
+          desc: "سجلات التدقيق واللوائح والشهادات",
+        },
+        localization: { title: "التعريب", desc: "7 لغات ودعم الكتابة من اليمين لليسار" },
+        whiteLabeling: {
+          title: "العلامة البيضاء",
+          desc: "تخصيص كامل للعلامة التجارية للعملاء",
+        },
+      },
+    },
+    commercial: {
+      label: "تجاري",
+      items: {
+        pricing: { title: "الأسعار", desc: "الإصدارات والخطط ونموذج التسعير" },
+        investorOverview: {
+          title: "نظرة عامة للمستثمرين",
+          desc: "مرحلة التمويل والسيولة النقدية وجدول الملكية",
+        },
+        partnerJourney: {
+          title: "رحلة الشريك",
+          desc: "شراكات إعادة البيع ومزودي البرمجيات والتكامل",
+        },
+        subscriptionEngine: {
+          title: "محرك الاشتراكات",
+          desc: "الفوترة والإيرادات المتكررة والمؤشرات",
+        },
+        roiAnalysis: {
+          title: "تحليل العائد على الاستثمار",
+          desc: "تحليل التكلفة الإجمالية للملكية",
+        },
+      },
+    },
+  },
+  commercialHeader: {
+    logoAria: "{{brand}} التجاري",
+    navAriaLabel: "التنقل في التوثيق التجاري",
+    searchAriaLabel: "البحث في الوثائق التجارية",
+    searchLabel: "بحث في الوثائق",
+    techDocsLabel: "الوثائق",
+    techDocsAria: "الوثائق التقنية",
+    pricingAria: "عرض الأسعار",
+    mobileMenuAria: "فتح قائمة التنقل",
+    megaPanelAria: "قائمة {{label}}",
+  },
+  commercialFooter: {
+    tagline: "منصة SaaS معيارية بمستوى المؤسسات. بنية اشتراكات B2B2C مصممة للنمو والتوسع.",
+    copyright: "© {{year}} {{brand}}. جميع الحقوق محفوظة.",
+    privacy: "الخصوصية",
+    terms: "الشروط",
+    developerDocs: "وثائق المطورين",
+  },
+  commercialNotFound: {
+    title: "404",
+    message: "الصفحة غير موجودة: /commercial/{{slug}}",
+    backHome: "العودة إلى الصفحة الرئيسية التجارية",
   },
 };

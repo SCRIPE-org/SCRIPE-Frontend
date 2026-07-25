@@ -960,42 +960,10 @@
 }
 
 /* ─── API Table ───────────────────────────────────────────────────────── */
-.docs-api-table {
-  width: 100%;
-  margin-bottom: 1.5rem;
-  border-collapse: collapse;
-  font-size: 0.8125rem;
-  border: 1px solid var(--nx-line);
-  border-radius: var(--nx-radius-md);
-  overflow: hidden;
-}
-
-.docs-api-table th {
-  padding: 0.625rem 0.875rem;
-  text-align: start;
-  font-weight: 600;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--nx-ink-2);
-  background: var(--nx-raised);
-  border-bottom: 1px solid var(--nx-line);
-}
-
-.docs-api-table td {
-  padding: 0.5rem 0.875rem;
-  border-bottom: 1px solid var(--nx-line);
-  vertical-align: middle;
-}
-
-.docs-api-table tr:last-child td {
-  border-bottom: none;
-}
-
-.docs-api-table tr:hover td {
-  background: var(--nx-hover);
-}
-
+/* The table structure itself is the shared Table primitive (@core/ui/table)
+   now — ApiTable.tsx composes it directly. What remains here are the
+   categorical readings that live inside its cells: the HTTP-verb chip, the
+   auth chip and the monospace path, none of which are table markup. */
 .docs-method-badge {
   display: inline-flex;
   padding: 0.125rem 0.5rem;
@@ -1126,45 +1094,9 @@
 }
 
 /* ─── Table ───────────────────────────────────────────────────────────── */
-.docs-table-wrapper {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  margin-bottom: 1.5rem;
-}
-
-.docs-table {
-  width: 100%;
-  margin-bottom: 0;
-  border-collapse: collapse;
-  font-size: 0.875em;
-  border: 1px solid var(--nx-line);
-  border-radius: var(--nx-radius-md);
-  overflow: hidden;
-  min-width: 500px;
-}
-
-.docs-table th {
-  padding: 0.625rem 0.875rem;
-  text-align: start;
-  font-weight: 600;
-  background: var(--nx-raised);
-  border-bottom: 1px solid var(--nx-line);
-  color: var(--nx-ink-2);
-}
-
-.docs-table td {
-  padding: 0.5rem 0.875rem;
-  border-bottom: 1px solid var(--nx-line);
-  color: var(--nx-ink);
-}
-
-.docs-table tr:last-child td {
-  border-bottom: none;
-}
-
-.docs-table tr:hover td {
-  background: var(--nx-hover);
-}
+/* The generic "table" content section now composes the shared Table
+   primitive (@core/ui/table) directly in DocContent.tsx — density, hover,
+   header and cell skin all come from that primitive's own token classes. */
 
 /* ─── List ────────────────────────────────────────────────────────────── */
 .docs-list {
@@ -1947,12 +1879,6 @@
     font-size: 0.75rem;
   }
 
-  .docs-api-table {
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
   .docs-page-title {
     font-size: clamp(1.375rem, 5vw, 1.75rem);
     letter-spacing: -0.025em;
@@ -2127,11 +2053,16 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  width: 100%;
   padding: 0.4rem 0.5rem;
+  border: none;
   border-radius: var(--nx-radius-sm);
+  background: transparent;
   cursor: pointer;
+  font: inherit;
   font-size: 0.8rem;
   color: var(--nx-ink-2);
+  text-align: start;
   transition:
     color var(--nx-t-micro) var(--nx-ease-enter),
     background-color var(--nx-t-micro) var(--nx-ease-enter);
@@ -2276,33 +2207,10 @@
   color: var(--nx-ink-3);
 }
 
-/* Matrix Table */
-.docs-matrix-table-container {
-  border: 1px solid var(--nx-line);
-  border-radius: var(--nx-radius-lg);
-  overflow: hidden;
-  background: var(--nx-surface);
-}
-.docs-matrix-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-  color: var(--nx-ink);
-}
-.docs-matrix-table th,
-.docs-matrix-table td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--nx-line);
-  text-align: start;
-}
-.docs-matrix-table th {
-  background: var(--nx-raised);
-  color: var(--nx-ink-2);
-  font-weight: 600;
-}
-.docs-matrix-table tr:last-child td {
-  border-bottom: none;
-}
+/* Matrix Table — the table structure is the shared Table primitive
+   (@core/ui/table) now, composed directly by CompatibilityMatrix.tsx and
+   SchemaVisualizer.tsx. docs-matrix-badge stays: it is a status chip used
+   inside a cell (and by LifecycleTracer), not table markup. */
 .docs-matrix-badge {
   font-size: 0.75rem;
   padding: 0.15rem 0.5rem;
@@ -2386,28 +2294,10 @@
   margin-inline-start: auto;
 }
 
-/* Config Builder & Schema cells */
-.docs-schema-row:hover {
-  background: var(--nx-hover);
-}
-.docs-schema-cell-name {
-  font-family: monospace;
-  font-size: 0.8rem;
-  color: var(--nx-ink);
-}
-.docs-schema-cell-type {
-  font-family: monospace;
-  font-size: 0.75rem;
-  color: var(--nx-accent);
-}
-.docs-schema-cell-nullable {
-  font-size: 0.7rem;
-  color: var(--nx-ink-2);
-}
-.docs-schema-cell-notes {
-  font-size: 0.8rem;
-  color: var(--nx-ink-2);
-}
+/* Schema cell colour/weight now lives inline on the shared TableCell in
+   SchemaColumnRow.tsx (font-mono, text-nx-accent, text-nx-ink-2 …) since the
+   row itself is that primitive; TableRow's own hover already reads
+   --nx-hover, so no bespoke hover rule is needed here either. */
 
 /* CLI Autocomplete Suggestions */
 .docs-terminal-window ul {

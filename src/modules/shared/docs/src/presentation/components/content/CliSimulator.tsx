@@ -3,11 +3,18 @@
 import { useState } from "react";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import { CliCommandInput } from "../ui/CliCommandInput";
+import { cn } from "@core/common/utils";
 
 interface CliSimulatorProps {
   titleKey: string;
 }
 
+// The commands and their transcripts below simulate REAL third-party tool
+// output (dotnet, pnpm, Next.js) exactly as that tooling actually prints it —
+// like a code sample, this transcript is not run through t(): a translated
+// "MSBuild version 17.12.0 for .NET" would misrepresent what the real CLI
+// prints. Everything wrapped AROUND the transcript (labels, placeholder,
+// empty/not-found copy) is fully localized below.
 const mockCommands = [
   "scripe dev all",
   "scripe dev backend",
@@ -126,56 +133,46 @@ export function CliSimulator({ titleKey }: CliSimulatorProps) {
     setActiveCmd(cmd);
     setLogs([
       "$ " + cmd,
-      "Executing...",
-      ...(mockOutputs[cmd] || ["Command not found in simulator."]),
+      t("widgets.cliSimulator.executing"),
+      ...(mockOutputs[cmd] || [t("widgets.cliSimulator.commandNotFound")]),
     ]);
   };
 
   return (
-    <div className="docs-terminal-container" style={{ marginBottom: "2.5rem" }}>
-      <div
-        className="docs-pipeline-title"
-        style={{ fontSize: "1.1rem", fontWeight: "700", marginBottom: "0.75rem" }}
-      >
+    <div className="mb-10">
+      <div className="mb-3 text-lg font-semibold leading-none tracking-tight text-nx-ink">
         {t(titleKey)}
       </div>
 
-      <div style={{ marginBottom: "1rem" }}>
+      <div className="mb-4">
         <CliCommandInput commands={mockCommands} onSelectCommand={runCommand} />
       </div>
 
       <div className="docs-terminal-window">
         <div className="docs-terminal-header">
-          <div className="docs-terminal-dots">
+          <div className="docs-terminal-dots" aria-hidden="true">
             <span className="dot dot-red"></span>
             <span className="dot dot-yellow"></span>
             <span className="dot dot-green"></span>
           </div>
-          <span style={{ marginLeft: "1rem", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
-            CLI Playground Screen
+          <span className="ms-4 text-[11px] text-nx-ink-3">
+            {t("widgets.cliSimulator.windowLabel")}
           </span>
         </div>
-        <div
-          className="docs-terminal-body"
-          style={{ minHeight: "160px", overflowY: "auto", background: "#08070b" }}
-        >
+        <div className="docs-terminal-body min-h-40 overflow-y-auto">
           <div className="docs-terminal-line">
             <span className="prompt">$</span> <span className="cmd">{activeCmd}</span>
           </div>
-          <div style={{ marginTop: "0.75rem" }}>
+          <div className="mt-3">
             {logs.map((log, i) => (
               <div
                 key={i}
-                className="docs-terminal-output"
-                style={{
-                  fontSize: "0.8rem",
-                  color:
-                    log.startsWith("✨") || log.startsWith("🎉") || log.startsWith("✅")
-                      ? "#10b981"
-                      : log.startsWith("$ ")
-                        ? "var(--docs-purple-primary)"
-                        : "#a1a1aa",
-                }}
+                className={cn(
+                  "docs-terminal-output",
+                  (log.startsWith("✨") || log.startsWith("🎉") || log.startsWith("✅")) &&
+                    "text-success",
+                  log.startsWith("$ ") && "text-nx-accent"
+                )}
               >
                 {log}
               </div>

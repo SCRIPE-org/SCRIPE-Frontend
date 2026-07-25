@@ -593,6 +593,18 @@
   pointer-events: auto;
 }
 
+/* Click-catcher that closes the mega-menu on outside click. Declared here
+   (not as an inline zIndex literal in the component) so its stacking order
+   sits next to the siblings it depends on: below .com-mega-panel (99) so
+   the open panel's links stay clickable, above ordinary page content. See
+   the "z-INDEX STACK" section below for the full local ladder. */
+.com-mega-backdrop {
+  position: fixed;
+  inset: 0;
+  top: var(--com-header-h);
+  z-index: 98;
+}
+
 .com-mega-panel-inner {
   position: relative;
   z-index: 1;
@@ -835,8 +847,6 @@
   will-change: transform, opacity;
 }
 
-/* Gradient line wrapper Ã¢â‚¬â€ background-clip:text applied here, NOT on word spans
-   (avoids Chromium compositing-layer bug where filter creates new layer) */
 /* Accent word of the headline — solid color, one-shot fade-in entrance only. */
 .com-hero-gradient-line {
   display: inline-block;
@@ -2639,6 +2649,9 @@
 }
 .com-mega-panel {
   z-index: 99;
+}
+.com-mega-backdrop {
+  z-index: 98;
 }
 .docs-reading-progress {
   z-index: 200;

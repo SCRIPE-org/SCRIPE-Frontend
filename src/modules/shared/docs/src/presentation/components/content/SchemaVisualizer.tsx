@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import type { SchemaTable } from "../../../domain/entities/DocSection";
 import { SchemaColumnRow } from "../ui/SchemaColumnRow";
+import { Table, TableHeader, TableBody, TableRow, TableHead } from "@core/ui/table";
 
 interface SchemaVisualizerProps {
   tables: SchemaTable[];
@@ -11,7 +12,7 @@ interface SchemaVisualizerProps {
 }
 
 export function SchemaVisualizer({ tables, titleKey }: SchemaVisualizerProps) {
-  const { t } = useDocsI18n();
+  const { t, direction } = useDocsI18n();
   const [activeTableIdx, setActiveTableIdx] = useState<number>(0);
 
   if (!tables || tables.length === 0) return null;
@@ -26,34 +27,36 @@ export function SchemaVisualizer({ tables, titleKey }: SchemaVisualizerProps) {
       </div>
       <div className="docs-explorer-layout" style={{ height: "360px" }}>
         <div className="docs-explorer-sidebar">
-          <div className="docs-explorer-header">Database Entities</div>
+          <div className="docs-explorer-header">{t("schema.entities")}</div>
           {tables.map((tbl, idx) => (
-            <div
+            <button
               key={idx}
+              type="button"
+              aria-pressed={idx === activeTableIdx}
               className={`docs-tree-node ${idx === activeTableIdx ? "active" : ""}`}
               onClick={() => setActiveTableIdx(idx)}
             >
-              <span>📊</span>
+              <span aria-hidden="true">📊</span>
               <span>{tbl.tableName}</span>
-            </div>
+            </button>
           ))}
         </div>
         <div className="docs-explorer-panel" style={{ padding: "0.5rem" }}>
-          <table className="docs-matrix-table" style={{ border: "none", width: "100%" }}>
-            <thead>
-              <tr style={{ background: "transparent" }}>
-                <th>Column Name</th>
-                <th>Type</th>
-                <th>Nullable</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table dir={direction}>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t("schema.columnName")}</TableHead>
+                <TableHead>{t("schema.type")}</TableHead>
+                <TableHead>{t("schema.nullable")}</TableHead>
+                <TableHead>{t("api.description")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {tables[activeTableIdx].columns.map((col, cIdx) => (
                 <SchemaColumnRow key={cIdx} column={col} />
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </div>
     </div>

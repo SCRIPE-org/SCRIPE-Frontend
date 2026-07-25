@@ -44,6 +44,18 @@ const I18nContext = createContext<I18nContextType | undefined>(undefined);
 const isDev = process.env.NODE_ENV !== "production";
 const warnedMissingKeys = new Set<string>();
 
+// ─── SSR LOCALE COOKIE (R8) ──────────────────────────────────
+// Mirrors the resolved language into a cookie under the SAME name as the
+// localStorage key above it (STORAGE_KEYS.LANGUAGE / "scr_lang") so the root
+// server layout can read it with next/headers `cookies()` and emit the
+// correct <html lang dir> before first paint — localStorage does not exist
+// yet at request time, so without this the server always guesses and the
+// client effect below has to correct it after mount.
+function persistLanguageCookie(lang: Language) {
+  if (typeof document === "undefined") return;
+  document.cookie = `${STORAGE_KEYS.LANGUAGE}=${lang}; path=/; max-age=31536000; samesite=lax`;
+}
+
 function reportMissingKey(key: string, language: Language): string {
   if (isDev && !warnedMissingKeys.has(`${language}:${key}`)) {
     warnedMissingKeys.add(`${language}:${key}`);
@@ -145,6 +157,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   const handleSetLanguage = useCallback((lang: Language) => {
     setLanguage(lang);
     localStorage.setItem(STORAGE_KEYS.LANGUAGE, lang);
+    persistLanguageCookie(lang);
     document.documentElement.setAttribute("dir", lang === "ar" ? "rtl" : "ltr");
     document.documentElement.setAttribute("lang", lang);
 
@@ -159,16 +172,33 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // ─── HYDRATION: Apply saved language's DOM side-effects on mount ──
+  // R8 — this <html> can carry writes from up to three sources: the server
+  // (this provider's own cookie, read in the root layout), this effect, and
+  // DocsI18nProvider on docs routes. DocsI18nProvider already guards itself;
+  // this one now does too — read first, compare, only touch the DOM when this
+  // provider's own target actually differs, so a cookie that already matches
+  // produces zero writes instead of an unconditional (and possibly redundant)
+  // one.
   useEffect(() => {
-    document.documentElement.setAttribute("dir", language === "ar" ? "rtl" : "ltr");
-    document.documentElement.setAttribute("lang", language);
-    if (language === "ar") {
-      document.body.classList.add("font-arabic");
-      document.body.classList.remove("font-english");
-    } else {
-      document.body.classList.add("font-english");
-      document.body.classList.remove("font-arabic");
+    const targetDir = language === "ar" ? "rtl" : "ltr";
+    if (document.documentElement.getAttribute("dir") !== targetDir) {
+      document.documentElement.setAttribute("dir", targetDir);
     }
+    if (document.documentElement.getAttribute("lang") !== language) {
+      document.documentElement.setAttribute("lang", language);
+    }
+    const fontClass = language === "ar" ? "font-arabic" : "font-english";
+    const staleFontClass = language === "ar" ? "font-english" : "font-arabic";
+    if (!document.body.classList.contains(fontClass)) {
+      document.body.classList.add(fontClass);
+    }
+    if (document.body.classList.contains(staleFontClass)) {
+      document.body.classList.remove(staleFontClass);
+    }
+    // Backfills the cookie for sessions that only ever had the localStorage
+    // value (e.g. existing users, before this cookie existed), so the very
+    // next request already gets the correct SSR <html lang dir>.
+    persistLanguageCookie(language);
   }, []);
 
   // ─── STABLE CONTEXT VALUE ─────────────────────────────────

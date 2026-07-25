@@ -25,6 +25,7 @@ import { LandingHeroBlock } from "./LandingHeroBlock";
 import { StatsStripBlock } from "./StatsStripBlock";
 import { ValuePropsBlock } from "./ValuePropsBlock";
 import { CtaBannerBlock } from "./CtaBannerBlock";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@core/ui/table";
 
 interface DocContentProps {
   sections: DocSection[];
@@ -35,7 +36,7 @@ interface DocContentProps {
  * Acts as a dispatcher: each section type maps to a component.
  */
 export function DocContent({ sections }: DocContentProps) {
-  const { t } = useDocsI18n();
+  const { t, direction } = useDocsI18n();
 
   return (
     <div>
@@ -145,25 +146,25 @@ export function DocContent({ sections }: DocContentProps) {
 
           case "table":
             return (
-              <div key={key} style={{ overflowX: "auto" }}>
-                <table className="docs-table">
-                  <thead>
-                    <tr>
+              <div key={key} className="mb-6 overflow-hidden rounded-nx-md border border-nx-line">
+                <Table dir={direction}>
+                  <TableHeader className="bg-nx-raised">
+                    <TableRow>
                       {section.headers.map((h, i) => (
-                        <th key={i}>{t(h)}</th>
+                        <TableHead key={i}>{t(h)}</TableHead>
                       ))}
-                    </tr>
-                  </thead>
-                  <tbody>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {section.rows.map((row, ri) => (
-                      <tr key={ri}>
+                      <TableRow key={ri}>
                         {row.map((cell, ci) => (
-                          <td key={ci}>{t(cell)}</td>
+                          <TableCell key={ci}>{t(cell)}</TableCell>
                         ))}
-                      </tr>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
             );
 

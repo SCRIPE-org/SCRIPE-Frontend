@@ -2,6 +2,7 @@
 
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import type { SchemaColumn } from "../../../domain/entities/DocSection";
+import { TableRow, TableCell } from "@core/ui/table";
 
 interface SchemaColumnRowProps {
   column: SchemaColumn;
@@ -10,17 +11,27 @@ interface SchemaColumnRowProps {
 export function SchemaColumnRow({ column }: SchemaColumnRowProps) {
   const { t } = useDocsI18n();
   return (
-    <tr className="docs-schema-row">
-      <td className="docs-schema-cell-name">
-        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}>
-          {column.isPrimaryKey && <span title="Primary Key">🔑</span>}
-          {column.isForeignKey && <span title="Foreign Key">🔗</span>}
-          <span style={{ fontWeight: column.isPrimaryKey ? "bold" : "normal" }}>{column.name}</span>
+    <TableRow>
+      <TableCell className="font-mono text-nx-ink">
+        <span className="inline-flex items-center gap-1">
+          {column.isPrimaryKey && (
+            <>
+              <span aria-hidden="true">🔑</span>
+              <span className="docs-sr-only">{t("schema.primaryKey")}</span>
+            </>
+          )}
+          {column.isForeignKey && (
+            <>
+              <span aria-hidden="true">🔗</span>
+              <span className="docs-sr-only">{t("schema.foreignKey")}</span>
+            </>
+          )}
+          <span className={column.isPrimaryKey ? "font-bold" : "font-normal"}>{column.name}</span>
         </span>
-      </td>
-      <td className="docs-schema-cell-type">{column.type}</td>
-      <td className="docs-schema-cell-nullable">{column.nullable ? "NULL" : "NOT NULL"}</td>
-      <td className="docs-schema-cell-notes">{t(column.notesKey)}</td>
-    </tr>
+      </TableCell>
+      <TableCell className="font-mono text-xs text-nx-accent">{column.type}</TableCell>
+      <TableCell className="text-xs text-nx-ink-2">{column.nullable ? "NULL" : "NOT NULL"}</TableCell>
+      <TableCell className="text-nx-ink-2">{t(column.notesKey)}</TableCell>
+    </TableRow>
   );
 }

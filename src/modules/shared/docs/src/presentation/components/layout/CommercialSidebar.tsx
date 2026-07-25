@@ -6,20 +6,30 @@ import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import type { DocCategory, DocNavItem } from "../../../domain/entities/DocCategory";
 import { useState, useCallback, useMemo } from "react";
 import { docsIcons } from "./DocsSidebar";
+import { chartColor } from "@core/ui/chart";
 
 // ─── Category color palette ──────────────────────────────────────
-const categoryColors: Record<string, string> = {
-  "commercial-why-scripe": "var(--commercial-accent-blue)",
-  "commercial-platform": "var(--commercial-accent-purple)",
-  "commercial-enterprise": "var(--commercial-accent-teal)",
-  "commercial-security": "var(--commercial-accent-red)",
-  "commercial-technical": "var(--commercial-accent-orange)",
-  "commercial-developer": "var(--commercial-accent-cyan)",
-  "commercial-integrations": "var(--commercial-accent-green)",
-  "commercial-pricing": "var(--commercial-accent-amber)",
-  "commercial-support": "var(--commercial-accent-indigo)",
-  "commercial-resources": "var(--commercial-accent-pink)",
-};
+// Previously pointed at ten commercial-accent custom properties that were
+// never declared anywhere, so every category button rendered with an unset
+// --cat-accent/--item-accent (the whole colour-coded affordance was dead).
+// Each category now gets a stable slot off the shared, CVD-safe chart
+// palette instead of an invented hex.
+const CATEGORY_IDS = [
+  "commercial-why-scripe",
+  "commercial-platform",
+  "commercial-enterprise",
+  "commercial-security",
+  "commercial-technical",
+  "commercial-developer",
+  "commercial-integrations",
+  "commercial-pricing",
+  "commercial-support",
+  "commercial-resources",
+] as const;
+
+const categoryColors: Record<string, string> = Object.fromEntries(
+  CATEGORY_IDS.map((id, index) => [id, chartColor(index + 1)])
+);
 
 interface CommercialSidebarProps {
   categories: DocCategory[];
@@ -194,7 +204,7 @@ export function CommercialSidebar({ categories, activeSlug }: CommercialSidebarP
       {/* Categories */}
       <nav className="commercial-sidebar-nav">
         {categories.map((cat) => {
-          const color = categoryColors[cat.id] || "var(--commercial-accent-blue)";
+          const color = categoryColors[cat.id] || chartColor(1);
           const isExpanded = expanded[cat.id] ?? false;
           const hasActiveItem = cat.getAllSlugs().includes(activeSlug);
 

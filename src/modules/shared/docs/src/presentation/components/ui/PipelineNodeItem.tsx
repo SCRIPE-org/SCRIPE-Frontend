@@ -1,5 +1,7 @@
 "use client";
 
+import { cn } from "@core/common/utils";
+
 interface PipelineNodeItemProps {
   name: string;
   isActive: boolean;
@@ -9,6 +11,12 @@ interface PipelineNodeItemProps {
   onClick?: () => void;
 }
 
+/**
+ * PipelineNodeItem — one stage in the request-pipeline simulator.
+ * `onClick` is optional: the simulator currently drives this list itself
+ * (no stage is user-selectable), so a stage without a handler renders as a
+ * plain row rather than an element that looks clickable but does nothing.
+ */
 export function PipelineNodeItem({
   name,
   isActive,
@@ -17,31 +25,28 @@ export function PipelineNodeItem({
   description,
   onClick,
 }: PipelineNodeItemProps) {
-  return (
-    <div
-      className={`docs-pipeline-node ${isActive ? "active" : ""} ${isCompleted ? "completed" : ""}`}
-      onClick={onClick}
-    >
-      <div className="docs-pipeline-node-indicator">
+  const stateClass = isActive ? "active" : isCompleted ? "completed" : "";
+
+  const body = (
+    <>
+      <div className="docs-pipeline-node-indicator" aria-hidden="true">
         <span className="light"></span>
       </div>
-      <div
-        className="docs-pipeline-node-content"
-        style={{ display: "flex", flexDirection: "column", flex: 1 }}
-      >
-        <div className="docs-pipeline-node-name" style={{ fontWeight: "600" }}>
-          {name}
-        </div>
-        {description && (
-          <div
-            className="docs-pipeline-node-desc"
-            style={{ fontSize: "0.75rem", opacity: 0.8, marginTop: "0.15rem" }}
-          >
-            {description}
-          </div>
-        )}
+      <div className="flex min-w-0 flex-1 flex-col">
+        <div className="docs-pipeline-node-name">{name}</div>
+        {description && <div className="docs-pipeline-node-desc">{description}</div>}
       </div>
       {duration !== undefined && <div className="docs-pipeline-node-duration">{duration}ms</div>}
-    </div>
+    </>
   );
+
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} className={cn("docs-pipeline-node", stateClass)}>
+        {body}
+      </button>
+    );
+  }
+
+  return <div className={cn("docs-pipeline-node cursor-default", stateClass)}>{body}</div>;
 }

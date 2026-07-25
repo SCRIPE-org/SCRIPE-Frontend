@@ -32,6 +32,31 @@ const t = (key: string, language: "ar" | "en"): string => {
   return typeof value === "string" ? value : key;
 };
 
+// This file replaces the ENTIRE root layout when a root-level render error
+// occurs, so none of its providers (ThemeProvider, AppProvider) are mounted —
+// next-themes' own flash-prevention script never runs here either. Next.js
+// requires global-error to be a Client Component, which also rules out
+// reading the theme server-side via next/headers `cookies()` the way the root
+// layout does for locale (R8). This is the client-side equivalent: a script
+// that runs synchronously as the document is parsed, before body paints, so
+// a dark-theme user hitting a fatal error never sees a white flash on top of
+// whatever else broke. Mirrors ThemeProvider's own fallback chain exactly
+// (core/providers/theme-provider.tsx): localStorage["theme"] (next-themes'
+// own default key) → STORAGE_KEYS.PREF_THEME (tenant default) → system.
+const THEME_NOFLASH_SCRIPT = `
+(function () {
+  try {
+    var explicit = localStorage.getItem("theme");
+    var tenantPref = localStorage.getItem("${STORAGE_KEYS.PREF_THEME}");
+    var resolved = explicit || tenantPref || "system";
+    var isDark =
+      resolved === "dark" ||
+      (resolved === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    if (isDark) document.documentElement.classList.add("dark");
+  } catch (e) {}
+})();
+`;
+
 export default function GlobalError({
   error,
   reset: _reset,
@@ -63,29 +88,35 @@ export default function GlobalError({
   };
 
   return (
-    <html lang={language} dir={language === "ar" ? "rtl" : "ltr"}>
-      <body>
-        <div className="flex min-h-screen items-center justify-center bg-background p-4">
+    <html lang={language} dir={language === "ar" ? "rtl" : "ltr"} suppressHydrationWarning>
+      <head>
+        <script
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: THEME_NOFLASH_SCRIPT }}
+        />
+      </head>
+      <body suppressHydrationWarning>
+        <div className="flex min-h-screen items-center justify-center bg-nx-ground p-4">
           <Card className="w-full max-w-md">
             <CardHeader className="text-center">
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
-                <AlertTriangle className="h-6 w-6 text-destructive" />
+                <AlertTriangle className="h-6 w-6 text-destructive" aria-hidden="true" />
               </div>
               <CardTitle className="text-xl font-semibold">
                 {t("errors.boundary.title", language)}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-center text-sm text-muted-foreground">
+              <p className="text-center text-sm text-nx-ink-2">
                 {t("errors.boundary.description", language)}
               </p>
 
               {process.env.NODE_ENV === "development" && (
                 <details className="mt-4">
-                  <summary className="cursor-pointer text-sm font-medium text-muted-foreground">
+                  <summary className="cursor-pointer text-sm font-medium text-nx-ink-2">
                     {t("errors.boundary.details", language)}
                   </summary>
-                  <pre className="mt-2 overflow-auto rounded-md bg-muted p-3 text-xs">
+                  <pre className="mt-2 overflow-auto rounded-nx-md bg-nx-raised p-3 text-xs">
                     {error.message}
                     {error.stack && `\n\n${error.stack}`}
                     {error.digest && `\n\nDigest: ${error.digest}`}
@@ -95,11 +126,11 @@ export default function GlobalError({
 
               <div className="flex gap-2">
                 <Button onClick={handleRetry} className="flex-1" variant="outline">
-                  <RefreshCw className="mr-2 h-4 w-4" />
+                  <RefreshCw className="me-2 h-4 w-4" aria-hidden="true" />
                   {t("errors.boundary.retry", language)}
                 </Button>
                 <Button onClick={handleGoHome} className="flex-1">
-                  <Home className="mr-2 h-4 w-4" />
+                  <Home className="me-2 h-4 w-4" aria-hidden="true" />
                   {t("errors.boundary.home", language)}
                 </Button>
               </div>

@@ -1,6 +1,8 @@
 "use client";
 
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
+import { chartColor } from "@core/ui/chart";
+import { cn } from "@core/common/utils";
 import type { LifecycleStep } from "../../../domain/entities/DocSection";
 
 interface LifecycleStepItemProps {
@@ -9,50 +11,51 @@ interface LifecycleStepItemProps {
   onClick: () => void;
 }
 
-const actorColors = {
-  view: "var(--docs-purple-primary)",
-  viewmodel: "#38bdf8",
-  repository: "#f59e0b",
-  controller: "#10b981",
-  handler: "#ec4899",
-  database: "#8b5cf6",
+// Colour follows the actor entity, never its position in the list — a fixed
+// categorical chart slot per actor keeps the mapping stable across renders.
+const ACTOR_SLOT: Record<LifecycleStep["actor"], number> = {
+  view: 1,
+  viewmodel: 2,
+  repository: 3,
+  controller: 4,
+  handler: 5,
+  database: 6,
+};
+
+const ACTOR_LABEL_KEY: Record<LifecycleStep["actor"], string> = {
+  view: "widgets.lifecycleTracer.actor.view",
+  viewmodel: "widgets.lifecycleTracer.actor.viewmodel",
+  repository: "widgets.lifecycleTracer.actor.repository",
+  controller: "widgets.lifecycleTracer.actor.controller",
+  handler: "widgets.lifecycleTracer.actor.handler",
+  database: "widgets.lifecycleTracer.actor.database",
 };
 
 export function LifecycleStepItem({ step, isActive, onClick }: LifecycleStepItemProps) {
   const { t } = useDocsI18n();
-  const color = actorColors[step.actor] || "var(--border)";
+  const color = chartColor(ACTOR_SLOT[step.actor]);
+  const isInbound = step.direction === "inbound";
 
   return (
-    <div
-      className={`docs-lifecycle-step-card ${isActive ? "active" : ""}`}
+    <button
+      type="button"
       onClick={onClick}
-      style={{
-        borderLeft: `3px solid ${color}`,
-        background: "var(--bg-secondary)",
-        padding: "0.75rem 1rem",
-        borderRadius: "8px",
-        cursor: "pointer",
-        transition: "all 0.2s ease",
-      }}
+      aria-current={isActive ? "step" : undefined}
+      className={cn("docs-lifecycle-step-card w-full text-start", isActive && "active")}
+      style={{ borderInlineStartWidth: "3px", borderInlineStartColor: color }}
     >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "0.25rem",
-        }}
-      >
-        <span
-          style={{ fontSize: "0.65rem", fontWeight: "bold", textTransform: "uppercase", color }}
-        >
-          {step.actor}
+      <div className="mb-1 flex items-center justify-between gap-2">
+        <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color }}>
+          {t(ACTOR_LABEL_KEY[step.actor])}
         </span>
-        <span style={{ fontSize: "0.65rem", color: "hsl(var(--muted-foreground))" }}>
-          {step.direction === "inbound" ? "📥 Inbound" : "📤 Outbound"}
+        <span className="text-[11px] text-nx-ink-2">
+          <span aria-hidden="true">{isInbound ? "📥" : "📤"}</span>{" "}
+          {isInbound
+            ? t("widgets.lifecycleTracer.directionInbound")
+            : t("widgets.lifecycleTracer.directionOutbound")}
         </span>
       </div>
-      <div style={{ fontSize: "0.8rem", fontWeight: "600" }}>{t(step.labelKey)}</div>
-    </div>
+      <div className="text-sm font-semibold text-nx-ink">{t(step.labelKey)}</div>
+    </button>
   );
 }
