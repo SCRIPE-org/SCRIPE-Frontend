@@ -9,16 +9,14 @@ const CommissionLedgerView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Commission Ledger | SCRIPE",
+  title: "Commission Ledger",
   description: "View platform-wide commissions and manage invoices",
 };
 
 export default function CommissionLedgerPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Commission Ledger">
-        <CommissionLedgerView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.commissionLedger.title">
+      <CommissionLedgerView />
+    </ModuleErrorBoundary>
   );
 }

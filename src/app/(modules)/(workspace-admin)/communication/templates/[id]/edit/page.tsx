@@ -7,7 +7,7 @@ const TemplateFormView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Edit Template | SCRIPE",
+  title: "Edit Template",
   description: "Edit message template details",
 };
 
@@ -19,10 +19,8 @@ export default async function EditTemplatePage({ params }: Props) {
   const { id } = await params;
 
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Template Form">
-        <TemplateFormView templateId={id} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="messaging.templates.editTitle">
+      <TemplateFormView templateId={id} />
+    </ModuleErrorBoundary>
   );
 }

@@ -9,17 +9,15 @@ const ThemeGalleryView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Theme Gallery | SCRIPE",
+  title: "Theme Gallery",
   description:
     "Browse, preview, and apply stunning login page themes from the SCRIPE theme marketplace",
 };
 
 export default function ThemeGalleryPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Theme Gallery">
-        <ThemeGalleryView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="studio.marketplace.title">
+      <ThemeGalleryView />
+    </ModuleErrorBoundary>
   );
 }

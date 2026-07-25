@@ -7,7 +7,7 @@ const WebhookDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Webhook Details | SCRIPE",
+  title: "Webhook Details",
   description: "View webhook subscription details and delivery history",
 };
 
@@ -19,10 +19,8 @@ export default async function WebhookDetailPage({ params }: Props) {
   const { id } = await params;
 
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Webhook Detail">
-        <WebhookDetailView webhookId={id} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="webhooks.detailTitle">
+      <WebhookDetailView webhookId={id} />
+    </ModuleErrorBoundary>
   );
 }

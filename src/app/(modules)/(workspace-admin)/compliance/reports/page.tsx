@@ -7,17 +7,15 @@ const ReportsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Compliance Reports | SCRIPE",
+  title: "Compliance Reports",
   description:
     "Generate and download compliance reports — GDPR, CCPA, DSR summaries, consent audits, and retention analysis",
 };
 
 export default function ComplianceReportsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Compliance Reports">
-        <ReportsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="compliance.reportsTitle">
+      <ReportsView />
+    </ModuleErrorBoundary>
   );
 }

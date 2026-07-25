@@ -7,16 +7,14 @@ const DsrView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Data Subject Requests | SCRIPE",
+  title: "Data Subject Requests",
   description: "Manage Data Subject Requests (DSR) — export, erasure, rectification, restriction",
 };
 
 export default function ComplianceDsrPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Data Subject Requests">
-        <DsrView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="compliance.dsrTitle">
+      <DsrView />
+    </ModuleErrorBoundary>
   );
 }

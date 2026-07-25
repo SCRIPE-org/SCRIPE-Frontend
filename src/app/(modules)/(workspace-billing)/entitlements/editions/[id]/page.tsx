@@ -7,7 +7,7 @@ const EditionDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Edition Features | SCRIPE",
+  title: "Edition Features",
   description: "Manage features and limits for this subscription edition",
 };
 
@@ -21,10 +21,8 @@ export default async function EditionDetailPage({ params }: Props) {
   const { id } = await params;
 
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Edition Features Management">
-        <EditionDetailView editionId={id} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.editions.manageFeatures">
+      <EditionDetailView editionId={id} />
+    </ModuleErrorBoundary>
   );
 }

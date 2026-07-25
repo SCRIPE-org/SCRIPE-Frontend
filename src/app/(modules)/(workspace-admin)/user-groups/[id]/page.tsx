@@ -9,7 +9,7 @@ const UserGroupDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "User Group Detail | Scripe",
+  title: "User Group Detail",
   description: "View and manage user group details, members, roles, and restrictions",
 };
 
@@ -21,10 +21,8 @@ export default async function UserGroupDetailPage({ params }: Props) {
   const { id } = await params;
 
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="User Group Detail">
-        <UserGroupDetailView groupId={id} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="userGroups.detailTitle">
+      <UserGroupDetailView groupId={id} />
+    </ModuleErrorBoundary>
   );
 }

@@ -9,16 +9,14 @@ const SettingsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Settings | SCRIPE",
+  title: "Settings",
   description: "Manage your account and platform settings",
 };
 
 export default function SettingsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Settings">
-        <SettingsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="settings.pageTitle">
+      <SettingsView />
+    </ModuleErrorBoundary>
   );
 }

@@ -7,16 +7,14 @@ const EditionsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Editions | SCRIPE",
+  title: "Editions",
   description: "Manage subscription editions and plans",
 };
 
 export default function EditionsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Edition Management">
-        <EditionsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.editions.title">
+      <EditionsView />
+    </ModuleErrorBoundary>
   );
 }

@@ -9,16 +9,14 @@ const ProfileSettingsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Profile | SCRIPE",
+  title: "Profile",
   description: "Manage your personal profile, security, sessions, and activity",
 };
 
 export default function ProfilePage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Profile">
-        <ProfileSettingsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="profile.title">
+      <ProfileSettingsView />
+    </ModuleErrorBoundary>
   );
 }

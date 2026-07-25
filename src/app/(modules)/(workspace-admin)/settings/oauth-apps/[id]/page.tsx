@@ -7,7 +7,7 @@ const OAuthAppDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "OAuth Application Details | SCRIPE",
+  title: "OAuth Application Details",
   description: "View and configure OAuth application settings",
 };
 
@@ -19,10 +19,8 @@ export default async function OAuthAppDetailPage({ params }: Props) {
   const { id } = await params;
 
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="OAuth App Detail">
-        <OAuthAppDetailView appId={id} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="oauthApps.detailTitle">
+      <OAuthAppDetailView appId={id} />
+    </ModuleErrorBoundary>
   );
 }

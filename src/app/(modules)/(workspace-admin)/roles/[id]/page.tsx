@@ -7,16 +7,20 @@ const RoleDetailView = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "Role Details | SCRIPE",
+  title: "Role Details",
   description: "View and manage role permissions and settings",
 };
 
-export default function RolePage() {
+interface Props {
+  params: Promise<{ id: string }>;
+}
+
+export default async function RolePage({ params }: Props) {
+  const { id } = await params;
+
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Role Details">
-        <RoleDetailView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="roles.roleDetails">
+      <RoleDetailView roleId={id} />
+    </ModuleErrorBoundary>
   );
 }

@@ -9,16 +9,14 @@ const IdentityProvidersView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Identity Providers | SCRIPE",
+  title: "Identity Providers",
   description: "Configure external SSO identity providers (OIDC, OAuth2, SAML)",
 };
 
 export default function IdentityProvidersPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Identity Providers">
-        <IdentityProvidersView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="identityProviders.title">
+      <IdentityProvidersView />
+    </ModuleErrorBoundary>
   );
 }

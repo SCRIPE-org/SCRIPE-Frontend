@@ -7,16 +7,14 @@ const OAuthAppDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Create OAuth Application | SCRIPE",
+  title: "Create OAuth Application",
   description: "Register a new third-party OAuth application",
 };
 
 export default function OAuthAppCreatePage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="OAuth App Create">
-        <OAuthAppDetailView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="oauthApps.createTitle">
+      <OAuthAppDetailView />
+    </ModuleErrorBoundary>
   );
 }

@@ -7,16 +7,14 @@ const PermissionsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Permissions | SCRIPE",
+  title: "Permissions",
   description: "View and manage system-wide permission definitions",
 };
 
 export default function PermissionsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Permission Management">
-        <PermissionsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="permission.title">
+      <PermissionsView />
+    </ModuleErrorBoundary>
   );
 }

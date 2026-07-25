@@ -9,7 +9,7 @@ const TenantDetailPage = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Tenant Details | SCRIPE",
+  title: "Tenant Details",
   description: "View and manage tenant settings, roles, and permissions",
 };
 
@@ -20,10 +20,8 @@ interface TenantPageProps {
 export default async function TenantPage({ params }: TenantPageProps) {
   const { id } = await params;
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Tenant Details">
-        <TenantDetailPage tenantId={id} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="tenant.detailTitle">
+      <TenantDetailPage tenantId={id} />
+    </ModuleErrorBoundary>
   );
 }

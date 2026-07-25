@@ -246,6 +246,7 @@ export const ar = {
       payNowUnavailable:
         "الدفع عبر الإنترنت غير متاح حالياً لهذه الفاتورة. تواصل مع مدير حسابك لتسويتها.",
       invoicesSubtitle: "عرض فواتير العمولات المفروضة من قبل المنصة.",
+      invoicesTitle: "فواتير العمولات",
     },
     commissions: {
       title: "لوحة العمولات",

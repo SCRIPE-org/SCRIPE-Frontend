@@ -7,16 +7,14 @@ const TenantAnalyticsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Tenant Analytics | SCRIPE",
+  title: "Tenant Analytics",
   description: "Performance metrics and comparison across tenants",
 };
 
 export default function AnalyticsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Tenant Analytics">
-        <TenantAnalyticsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="tenantAnalytics.title">
+      <TenantAnalyticsView />
+    </ModuleErrorBoundary>
   );
 }

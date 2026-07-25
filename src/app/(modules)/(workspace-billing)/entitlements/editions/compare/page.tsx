@@ -11,16 +11,14 @@ const EditionComparisonView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Compare Editions | SCRIPE",
+  title: "Compare Editions",
   description: "Side-by-side comparison of platform editions and their feature allocations",
 };
 
 export default function EditionComparisonPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Edition Comparison">
-        <EditionComparisonView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.editions.comparison.heroTitle">
+      <EditionComparisonView />
+    </ModuleErrorBoundary>
   );
 }

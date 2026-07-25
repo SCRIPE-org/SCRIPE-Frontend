@@ -7,16 +7,14 @@ const ConsentView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Consent Management | SCRIPE",
+  title: "Consent Management",
   description: "Manage data subject consent — grant, withdraw, and audit consent purposes",
 };
 
 export default function ComplianceConsentPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Consent Management">
-        <ConsentView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="compliance.consentTitle">
+      <ConsentView />
+    </ModuleErrorBoundary>
   );
 }

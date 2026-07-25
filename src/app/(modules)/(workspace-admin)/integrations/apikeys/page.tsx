@@ -7,16 +7,14 @@ const ApiKeysView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "API Keys | SCRIPE",
+  title: "API Keys",
   description: "Generate and manage API Keys for programmatic integration access",
 };
 
 export default function ApiKeysPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="API Keys">
-        <ApiKeysView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="apikeys.title">
+      <ApiKeysView />
+    </ModuleErrorBoundary>
   );
 }

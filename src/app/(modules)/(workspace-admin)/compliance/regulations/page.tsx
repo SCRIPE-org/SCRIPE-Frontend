@@ -7,16 +7,14 @@ const RegulationView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Regulations & Frameworks | SCRIPE",
+  title: "Regulations & Frameworks",
   description: "Manage compliance regulations and control frameworks",
 };
 
 export default function RegulationsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Regulations & Frameworks">
-        <RegulationView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="compliance.regulations.title">
+      <RegulationView />
+    </ModuleErrorBoundary>
   );
 }

@@ -7,16 +7,14 @@ const TenantsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Tenants | SCRIPE",
+  title: "Tenants",
   description: "Manage tenant organizations and their configurations",
 };
 
 export default function TenantsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Tenant Management">
-        <TenantsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="tenant.title">
+      <TenantsView />
+    </ModuleErrorBoundary>
   );
 }

@@ -7,6 +7,7 @@ export const ar = {
     noRoles: "لا توجد أدوار",
     noRestrictions: "لا توجد قيود",
     title: "مجموعات المستخدمين",
+    detailTitle: "تفاصيل مجموعة المستخدمين",
     name: "الاسم",
     descriptionCol: "الوصف",
     description: "إدارة مجموعات المستخدمين لتعيين الأدوار والقيود دفعة واحدة.",

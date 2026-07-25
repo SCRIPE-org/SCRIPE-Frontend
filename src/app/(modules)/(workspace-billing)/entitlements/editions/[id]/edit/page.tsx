@@ -7,7 +7,7 @@ const EditionEditWizardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Edit Edition | SCRIPE",
+  title: "Edit Edition",
   description:
     "Edit subscription edition settings — billing cycles, trial configuration, and core metadata",
 };
@@ -19,10 +19,8 @@ interface Props {
 export default async function EditEditionPage({ params }: Props) {
   const { id } = await params;
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Edit Edition">
-        <EditionEditWizardView editionId={id} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.editions.edit">
+      <EditionEditWizardView editionId={id} />
+    </ModuleErrorBoundary>
   );
 }

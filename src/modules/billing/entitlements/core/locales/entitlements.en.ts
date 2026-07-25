@@ -248,6 +248,7 @@ export const en = {
       payNowUnavailable:
         "Online payment isn't available yet for this invoice. Contact your account manager to settle it.",
       invoicesSubtitle: "View your commission invoices charged by the platform.",
+      invoicesTitle: "Commission Invoices",
     },
     commissions: {
       title: "Commission Dashboard",

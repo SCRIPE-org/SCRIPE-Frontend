@@ -7,16 +7,19 @@ const DsrDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "DSR Details | SCRIPE",
+  title: "DSR Details",
   description: "View and process Data Subject Request details",
 };
 
-export default function DsrDetailPage({ params }: { params: { id: string } }) {
+interface DsrDetailPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function DsrDetailPage({ params }: DsrDetailPageProps) {
+  const { id } = await params;
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="DSR Details">
-        <DsrDetailView id={params.id} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="compliance.dsrDetailTitle">
+      <DsrDetailView id={id} />
+    </ModuleErrorBoundary>
   );
 }

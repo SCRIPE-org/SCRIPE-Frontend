@@ -7,16 +7,14 @@ const AdminsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Admins | SCRIPE",
+  title: "Admins",
   description: "Manage system administrators and their access levels",
 };
 
 export default function AdminsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Admin Management">
-        <AdminsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="admin.title">
+      <AdminsView />
+    </ModuleErrorBoundary>
   );
 }

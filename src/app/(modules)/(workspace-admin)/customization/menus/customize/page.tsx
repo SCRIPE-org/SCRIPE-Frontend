@@ -9,16 +9,14 @@ const MenuCustomizeView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Customize Menus | SCRIPE",
+  title: "Customize Menus",
   description: "Drag-and-drop menu customization with role-based visibility",
 };
 
 export default function MenuCustomizePage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Menu Customizer">
-        <MenuCustomizeView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="menus.customizePage">
+      <MenuCustomizeView />
+    </ModuleErrorBoundary>
   );
 }

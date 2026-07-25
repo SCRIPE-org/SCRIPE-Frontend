@@ -1,5 +1,10 @@
 export const en = {
   workspaceHub: {
+    title: "Overview",
+    // Stable label for the standalone Hub route's ModuleErrorBoundary —
+    // resolved via t(), distinct from `title` above (the in-app Overview
+    // heading), so the workspace-picker crash screen names itself correctly.
+    hubTitle: "Workspace Hub",
     greeting: {
       morning: "Good morning",
       afternoon: "Good afternoon",

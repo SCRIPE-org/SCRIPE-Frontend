@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { DocsLayout } from "@modules/docs/src/presentation/components/layout/DocsLayout";
 
 export const metadata: Metadata = {
-  title: "Technical Documentation | SCRIPE Platform",
+  title: "Technical Documentation",
   description:
     "Comprehensive technical documentation for the SCRIPE B2B2C SaaS Platform — Backend (.NET 10), Frontend (Next.js 16), CLI, and modular architecture guides.",
   keywords: [

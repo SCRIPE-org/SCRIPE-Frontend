@@ -1,6 +1,7 @@
 export const ar = {
   webhooks: {
     title: "الويب هوك",
+    detailTitle: "تفاصيل الويب هوك",
     description: "إدارة اشتراكات الويب هوك ومراقبة تسليم الأحداث",
     url: "رابط نقطة النهاية",
     urlPlaceholder: "https://your-server.com/webhook",

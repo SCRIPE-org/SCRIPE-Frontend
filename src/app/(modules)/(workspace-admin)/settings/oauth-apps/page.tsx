@@ -9,16 +9,14 @@ const OAuthAppsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "OAuth Applications | SCRIPE",
+  title: "OAuth Applications",
   description: "Manage third-party applications that authenticate via SCRIPE (OIDC Server)",
 };
 
 export default function OAuthAppsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="OAuth Applications">
-        <OAuthAppsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="oauthApps.title">
+      <OAuthAppsView />
+    </ModuleErrorBoundary>
   );
 }

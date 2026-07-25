@@ -17,17 +17,15 @@ import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 import { AnalyticsEventStreamView } from "@modules/analytics/events";
 
 export const metadata: Metadata = {
-  title: "Analytics Event Stream | SCRIPE",
+  title: "Analytics Event Stream",
   description:
     "Read-only view of the metric-event stream recorded by the SCRIPE Analytics Event Foundation",
 };
 
 export default function AnalyticsEventsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Analytics">
-        <AnalyticsEventStreamView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="events.title">
+      <AnalyticsEventStreamView />
+    </ModuleErrorBoundary>
   );
 }

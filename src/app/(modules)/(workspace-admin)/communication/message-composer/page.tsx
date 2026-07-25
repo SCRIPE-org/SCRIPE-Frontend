@@ -9,16 +9,14 @@ const EmailComposerView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Email Composer | SCRIPE",
+  title: "Email Composer",
   description: "Compose and send emails to administrators and users",
 };
 
 export default function EmailComposerPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Email Composer">
-        <EmailComposerView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="messaging.email.title">
+      <EmailComposerView />
+    </ModuleErrorBoundary>
   );
 }

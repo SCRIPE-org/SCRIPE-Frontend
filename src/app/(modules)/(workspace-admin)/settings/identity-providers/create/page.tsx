@@ -9,16 +9,14 @@ const IdentityProviderDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Create Identity Provider | SCRIPE",
+  title: "Create Identity Provider",
   description: "Configure a new external identity provider for SSO",
 };
 
 export default function IdentityProviderCreatePage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Identity Provider Create">
-        <IdentityProviderDetailView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="identityProviders.createTitle">
+      <IdentityProviderDetailView />
+    </ModuleErrorBoundary>
   );
 }

@@ -7,17 +7,15 @@ const EditionWizardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Create Edition | SCRIPE",
+  title: "Create Edition",
   description:
     "Create a new subscription edition with billing cycles, pricing, and feature configuration",
 };
 
 export default function CreateEditionPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Create Edition">
-        <EditionWizardView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.editions.create">
+      <EditionWizardView />
+    </ModuleErrorBoundary>
   );
 }

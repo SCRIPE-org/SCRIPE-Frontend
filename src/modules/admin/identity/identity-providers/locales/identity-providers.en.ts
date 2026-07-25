@@ -4,6 +4,7 @@ export const en = {
     description: "Configure external SSO identity providers (OIDC, OAuth2, SAML)",
     createTitle: "New Identity Provider",
     editTitle: "Edit Provider",
+    detailTitle: "Identity Provider Details",
     createButton: "Create Provider",
     name: "Provider Name",
     namePlaceholder: "e.g. Google Workspace",

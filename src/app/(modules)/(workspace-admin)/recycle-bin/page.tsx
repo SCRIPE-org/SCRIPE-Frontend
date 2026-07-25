@@ -7,16 +7,14 @@ const RecycleBinView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Recycle Bin | SCRIPE",
+  title: "Recycle Bin",
   description: "View and restore recently soft-deleted items",
 };
 
 export default function RecycleBinPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Recycle Bin">
-        <RecycleBinView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="recycleBin.title">
+      <RecycleBinView />
+    </ModuleErrorBoundary>
   );
 }

@@ -9,16 +9,14 @@ const UserGroupsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "User Groups | Scripe",
+  title: "User Groups",
   description: "Manage user groups for batch role and restriction assignment",
 };
 
 export default function UserGroupsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="User Groups">
-        <UserGroupsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="userGroups.title">
+      <UserGroupsView />
+    </ModuleErrorBoundary>
   );
 }

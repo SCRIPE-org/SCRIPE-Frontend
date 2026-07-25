@@ -7,16 +7,14 @@ const SecurityDashboardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Security Monitor | SCRIPE",
+  title: "Security Monitor",
   description: "Real-time security monitoring and threat detection",
 };
 
 export default function SecurityPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Security Monitor">
-        <SecurityDashboardView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="security.title">
+      <SecurityDashboardView />
+    </ModuleErrorBoundary>
   );
 }

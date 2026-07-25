@@ -9,16 +9,14 @@ const ThemeManagementView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Theme Management | SCRIPE",
+  title: "Theme Management",
   description: "Manage, create, and organize login page themes for the marketplace",
 };
 
 export default function ThemeManagementPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Theme Management">
-        <ThemeManagementView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="studio.themeManagement.title">
+      <ThemeManagementView />
+    </ModuleErrorBoundary>
   );
 }

@@ -7,16 +7,14 @@ const MenusView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Menu Management | SCRIPE",
+  title: "Menu Management",
   description: "Manage sidebar navigation menus and menu items",
 };
 
 export default function MenusPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Menus">
-        <MenusView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="menus.title">
+      <MenusView />
+    </ModuleErrorBoundary>
   );
 }

@@ -9,16 +9,14 @@ const CommissionInvoicesView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Commission Invoices | SCRIPE",
+  title: "Commission Invoices",
   description: "View your commission invoices charged by the platform.",
 };
 
 export default function CommissionInvoicesPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Commission Invoices">
-        <CommissionInvoicesView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.commissionLedger.invoicesTitle">
+      <CommissionInvoicesView />
+    </ModuleErrorBoundary>
   );
 }

@@ -1,6 +1,7 @@
 export const en = {
   apikeys: {
     title: "API Keys",
+    detailTitle: "API Key Details",
     description:
       "Generate and manage secure API keys for programmatically accessing the SCRIPE APIs.",
     name: "Key Name",

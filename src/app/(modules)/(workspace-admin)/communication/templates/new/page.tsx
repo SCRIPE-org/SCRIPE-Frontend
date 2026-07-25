@@ -7,16 +7,14 @@ const TemplateFormView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Create Template | SCRIPE",
+  title: "Create Template",
   description: "Create a new message template",
 };
 
 export default function NewTemplatePage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Template Form">
-        <TemplateFormView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="messaging.templates.createTitle">
+      <TemplateFormView />
+    </ModuleErrorBoundary>
   );
 }

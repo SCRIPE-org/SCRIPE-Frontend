@@ -9,16 +9,14 @@ const UsersView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Users | SCRIPE",
+  title: "Users",
   description: "Manage client user accounts and their access within tenants",
 };
 
 export default function UsersPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="User Management">
-        <UsersView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="users.title">
+      <UsersView />
+    </ModuleErrorBoundary>
   );
 }

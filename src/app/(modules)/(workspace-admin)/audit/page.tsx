@@ -7,16 +7,14 @@ const AuditView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Audit Log | SCRIPE",
+  title: "Audit Log",
   description: "View and search the complete audit trail of all system events",
 };
 
 export default function AuditPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Audit Log">
-        <AuditView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="audit.title">
+      <AuditView />
+    </ModuleErrorBoundary>
   );
 }

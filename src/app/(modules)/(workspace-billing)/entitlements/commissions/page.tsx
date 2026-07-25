@@ -9,16 +9,14 @@ const CommissionDashboardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Commission Dashboard | SCRIPE",
+  title: "Commission Dashboard",
   description: "Platform-wide commission revenue analytics and per-tenant breakdown",
 };
 
 export default function CommissionsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Commission Dashboard">
-        <CommissionDashboardView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.commissions.title">
+      <CommissionDashboardView />
+    </ModuleErrorBoundary>
   );
 }

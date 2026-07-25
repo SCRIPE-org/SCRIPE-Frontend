@@ -9,16 +9,14 @@ const MessageTemplatesView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Message Templates | SCRIPE",
+  title: "Message Templates",
   description: "Manage email, SMS, and push notification templates",
 };
 
 export default function MessageTemplatesPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Message Templates">
-        <MessageTemplatesView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="messaging.templates.title">
+      <MessageTemplatesView />
+    </ModuleErrorBoundary>
   );
 }

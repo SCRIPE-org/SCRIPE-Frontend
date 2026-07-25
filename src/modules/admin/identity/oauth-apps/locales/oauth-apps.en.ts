@@ -11,6 +11,7 @@ export const en = {
     // Detail page titles
     createTitle: "New OAuth Application",
     editTitle: "Edit Application",
+    detailTitle: "OAuth Application Details",
     createButton: "Create Application",
     // Fields
     displayName: "Application Name",

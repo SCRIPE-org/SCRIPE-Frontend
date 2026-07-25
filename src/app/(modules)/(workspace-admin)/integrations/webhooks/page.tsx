@@ -7,16 +7,14 @@ const WebhooksView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Webhooks | SCRIPE",
+  title: "Webhooks",
   description: "Manage webhook subscriptions and delivery monitoring",
 };
 
 export default function WebhooksPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Webhooks">
-        <WebhooksView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="webhooks.title">
+      <WebhooksView />
+    </ModuleErrorBoundary>
   );
 }

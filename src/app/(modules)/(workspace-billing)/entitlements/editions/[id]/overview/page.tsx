@@ -7,7 +7,7 @@ const EditionOverviewView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Edition Overview | SCRIPE",
+  title: "Edition Overview",
   description: "View the complete configuration of this subscription edition",
 };
 
@@ -21,10 +21,8 @@ export default async function EditionOverviewPage({ params }: Props) {
   const { id } = await params;
 
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Edition Overview">
-        <EditionOverviewView editionId={id} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.editions.wizard.overview">
+      <EditionOverviewView editionId={id} />
+    </ModuleErrorBoundary>
   );
 }

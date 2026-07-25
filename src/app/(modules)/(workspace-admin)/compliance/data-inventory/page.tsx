@@ -7,17 +7,15 @@ const InventoryView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Data Inventory | SCRIPE",
+  title: "Data Inventory",
   description:
     "View data inventory — browse all tracked personal data fields, legal bases, and export/anonymization configurations",
 };
 
 export default function ComplianceInventoryPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Data Inventory">
-        <InventoryView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="compliance.dataInventory">
+      <InventoryView />
+    </ModuleErrorBoundary>
   );
 }

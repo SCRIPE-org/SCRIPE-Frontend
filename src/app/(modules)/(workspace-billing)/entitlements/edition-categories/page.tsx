@@ -9,16 +9,14 @@ const EditionCategoriesView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Edition Categories | SCRIPE",
+  title: "Edition Categories",
   description: "Manage edition categories for plan grouping on pricing pages",
 };
 
 export default function EditionCategoriesPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Edition Categories">
-        <EditionCategoriesView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.editions.categories.title">
+      <EditionCategoriesView />
+    </ModuleErrorBoundary>
   );
 }

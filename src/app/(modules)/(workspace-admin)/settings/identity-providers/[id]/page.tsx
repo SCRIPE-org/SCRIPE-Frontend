@@ -9,7 +9,7 @@ const IdentityProviderDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Identity Provider Details | SCRIPE",
+  title: "Identity Provider Details",
   description: "View and configure identity provider settings",
 };
 
@@ -21,10 +21,8 @@ export default async function IdentityProviderDetailPage({ params }: Props) {
   const { id } = await params;
 
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Identity Provider Detail">
-        <IdentityProviderDetailView providerId={id} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="identityProviders.detailTitle">
+      <IdentityProviderDetailView providerId={id} />
+    </ModuleErrorBoundary>
   );
 }

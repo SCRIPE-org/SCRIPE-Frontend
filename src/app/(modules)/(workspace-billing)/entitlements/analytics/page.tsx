@@ -9,16 +9,14 @@ const AnalyticsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Revenue Analytics | SCRIPE",
+  title: "Revenue Analytics",
   description: "Monitor MRR, retention, LTV, forecasts, and tenant health scores",
 };
 
 export default function AnalyticsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Revenue Analytics">
-        <AnalyticsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.analytics.title">
+      <AnalyticsView />
+    </ModuleErrorBoundary>
   );
 }

@@ -9,13 +9,13 @@ const CustomizerStudioView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Login Customizer Studio | SCRIPE",
+  title: "Login Customizer Studio",
   description: "Customize your tenant's login page with live preview",
 };
 
 export default function CustomizerPage() {
   return (
-    <ModuleErrorBoundary moduleName="Customizer Studio">
+    <ModuleErrorBoundary moduleName="studio.title">
       <CustomizerStudioView />
     </ModuleErrorBoundary>
   );

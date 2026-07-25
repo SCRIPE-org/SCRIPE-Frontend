@@ -1,6 +1,7 @@
 export const ar = {
   apikeys: {
     title: "مفاتيح API",
+    detailTitle: "تفاصيل مفتاح API",
     description: "إنشاء وإدارة مفاتيح API الآمنة للوصول البرمجي إلى واجهات برمجة تطبيقات SCRIPE.",
     name: "اسم المفتاح",
     namePlaceholder: "مثال: مفتاح تكامل CI/CD",

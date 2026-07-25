@@ -1,6 +1,7 @@
 export const en = {
   webhooks: {
     title: "Webhooks",
+    detailTitle: "Webhook Details",
     description: "Manage webhook subscriptions and monitor event deliveries",
     url: "Endpoint URL",
     urlPlaceholder: "https://your-server.com/webhook",

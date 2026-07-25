@@ -9,16 +9,14 @@ const NotificationSenderView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Notification Sender | SCRIPE",
+  title: "Notification Sender",
   description: "Send push notifications to admins, roles, or tenants",
 };
 
 export default function NotificationSenderPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Notification Sender">
-        <NotificationSenderView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="messaging.notifications.title">
+      <NotificationSenderView />
+    </ModuleErrorBoundary>
   );
 }

@@ -7,16 +7,14 @@ const ComplianceDashboardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Compliance | SCRIPE",
+  title: "Compliance",
   description: "Compliance dashboard — GDPR, CCPA, and data protection overview",
 };
 
 export default function CompliancePage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Compliance Dashboard">
-        <ComplianceDashboardView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="compliance.title">
+      <ComplianceDashboardView />
+    </ModuleErrorBoundary>
   );
 }

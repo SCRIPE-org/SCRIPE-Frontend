@@ -12,6 +12,7 @@ export const ar = {
     samlAcsUrl: "رابط خدمة المصادقة (ACS)",
     samlSpEntityId: "معرف كيان موفر الخدمة (SP Entity ID)",
     editTitle: "تعديل التطبيق",
+    detailTitle: "تفاصيل تطبيق OAuth",
     createButton: "إنشاء تطبيق",
     // الحقول
     displayName: "اسم التطبيق",

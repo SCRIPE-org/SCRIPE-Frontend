@@ -7,16 +7,19 @@ const ReportDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Report Details | SCRIPE",
+  title: "Report Details",
   description: "View compliance report details",
 };
 
-export default function ReportDetailPage({ params }: { params: { id: string } }) {
+interface ReportDetailPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function ReportDetailPage({ params }: ReportDetailPageProps) {
+  const { id } = await params;
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Report Details">
-        <ReportDetailView id={params.id} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="compliance.reportDetail">
+      <ReportDetailView id={id} />
+    </ModuleErrorBoundary>
   );
 }

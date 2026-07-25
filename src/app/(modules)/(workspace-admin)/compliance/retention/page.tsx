@@ -7,17 +7,15 @@ const RetentionView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Retention Policies | SCRIPE",
+  title: "Retention Policies",
   description:
     "Manage data retention policies — configure retention periods, expiry actions, and scheduled execution",
 };
 
 export default function ComplianceRetentionPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Retention Policies">
-        <RetentionView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="compliance.retentionTitle">
+      <RetentionView />
+    </ModuleErrorBoundary>
   );
 }

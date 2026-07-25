@@ -15,6 +15,7 @@ export const en = {
     deactivateConfirmation: "Are you sure you want to deactivate this tenant?",
     activateConfirmation: "Are you sure you want to activate this tenant?",
     title: "Tenants",
+    detailTitle: "Tenant Details",
     description: "Description",
     hierarchy: "Tenant Hierarchy",
     allTenants: "All Tenants",

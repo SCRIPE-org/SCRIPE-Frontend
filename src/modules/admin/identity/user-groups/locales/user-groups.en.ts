@@ -5,6 +5,7 @@ export const en = {
     search: "Search",
     selectPlaceholder: "Select User Group",
     title: "User Groups",
+    detailTitle: "User Group Detail",
     name: "Name",
     descriptionCol: "Description",
     description: "Manage user groups for batch role and restriction assignment.",

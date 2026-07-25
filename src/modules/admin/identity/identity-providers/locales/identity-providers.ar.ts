@@ -4,6 +4,7 @@ export const ar = {
     description: "إعداد موفري الهوية الخارجيين (OIDC، OAuth2، SAML) لتسجيل الدخول الموحد",
     createTitle: "موفر هوية جديد",
     editTitle: "تعديل الموفر",
+    detailTitle: "تفاصيل موفر الهوية",
     createButton: "إنشاء موفر",
     name: "اسم الموفر",
     namePlaceholder: "مثال: Google Workspace",

@@ -7,16 +7,14 @@ const TenantSettingsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Branding Settings | SCRIPE",
+  title: "Branding Settings",
   description: "Configure tenant branding, logos, colors, and display settings",
 };
 
 export default function BrandingPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Branding Settings">
-        <TenantSettingsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="tenantSettings.title">
+      <TenantSettingsView />
+    </ModuleErrorBoundary>
   );
 }

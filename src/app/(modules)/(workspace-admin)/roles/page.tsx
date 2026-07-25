@@ -7,16 +7,14 @@ const RolesView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Roles | SCRIPE",
+  title: "Roles",
   description: "Configure roles and their associated permissions",
 };
 
 export default function RolesPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Role Management">
-        <RolesView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="roles.title">
+      <RolesView />
+    </ModuleErrorBoundary>
   );
 }
