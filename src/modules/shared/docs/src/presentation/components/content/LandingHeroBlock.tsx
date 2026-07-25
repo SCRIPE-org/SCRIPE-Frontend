@@ -1,28 +1,29 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { useRef, useSyncExternalStore } from "react";
+import { useRef } from "react";
 import Link from "next/link";
 import { motion, type Variants, useScroll, useTransform } from "framer-motion";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
+import { usePublicPlatformStats } from "../../hooks/usePublicPlatformStats";
 import type { LandingHeroBlockSection } from "../../../domain/entities/DocSection";
 
 /* ── Constants ────────────────────────────────────────────────────────── */
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
+/**
+ * Product module tiles. Names/icons/colors are a deliberate marketing-curated
+ * subset (not the full internal module list). Values are never invented —
+ * "Active" states a real, safe fact about the deployment; the Tenants tile's
+ * value comes from the real platform-stats endpoint (see PlatformModuleTile).
+ */
 const PLATFORM_MODULES = [
-  { id: "identity", icon: "ID", name: "Identity", val: "2.4k", color: "oklch(0.72 0.22 296)" },
-  { id: "tenants", icon: "TN", name: "Tenants", val: "148", color: "oklch(0.84 0.155 213)" },
-  { id: "billing", icon: "BI", name: "Billing", val: "$84k", color: "oklch(0.79 0.17 160)" },
-  { id: "marketplace", icon: "MK", name: "Marketplace", val: "23", color: "oklch(0.82 0.155 80)" },
-  { id: "docs", icon: "DC", name: "Docs", val: "v3.5", color: "oklch(0.65 0.22 20)" },
-  {
-    id: "entitlement",
-    icon: "EN",
-    name: "Entitlements",
-    val: "Active",
-    color: "oklch(0.72 0.22 296)",
-  },
+  { id: "identity", icon: "ID", name: "Identity", color: "oklch(0.72 0.22 296)" },
+  { id: "tenants", icon: "TN", name: "Tenants", color: "oklch(0.84 0.155 213)" },
+  { id: "billing", icon: "BI", name: "Billing", color: "oklch(0.79 0.17 160)" },
+  { id: "marketplace", icon: "MK", name: "Marketplace", color: "oklch(0.82 0.155 80)" },
+  { id: "docs", icon: "DC", name: "Docs", color: "oklch(0.65 0.22 20)" },
+  { id: "entitlement", icon: "EN", name: "Entitlements", color: "oklch(0.72 0.22 296)" },
 ] as const;
 
 const MARQUEE_ITEMS = [
@@ -42,35 +43,6 @@ const MARQUEE_ITEMS = [
   "Docker",
   "PostgreSQL",
 ];
-
-const SPARK_POINTS = [
-  { x: 0, y: 48 },
-  { x: 30, y: 40 },
-  { x: 60, y: 44 },
-  { x: 90, y: 30 },
-  { x: 120, y: 36 },
-  { x: 150, y: 22 },
-  { x: 180, y: 26 },
-  { x: 210, y: 14 },
-  { x: 240, y: 18 },
-  { x: 270, y: 8 },
-  { x: 300, y: 10 },
-];
-
-function buildSparkPath(pts: typeof SPARK_POINTS): string {
-  return pts.reduce((acc, pt, i) => {
-    if (i === 0) return `M ${pt.x} ${pt.y}`;
-    const prev = pts[i - 1];
-    const cpx = prev.x + (pt.x - prev.x) / 2;
-    return `${acc} C ${cpx} ${prev.y} ${cpx} ${pt.y} ${pt.x} ${pt.y}`;
-  }, "");
-}
-
-function buildSparkArea(pts: typeof SPARK_POINTS): string {
-  const line = buildSparkPath(pts);
-  const last = pts[pts.length - 1];
-  return `${line} L ${last.x} 52 L 0 52 Z`;
-}
 
 /* ── Icons ─────────────────────────────────────────────────────────────── */
 const ArrowIcon = () => (
@@ -191,11 +163,7 @@ function FloatBadge({
 /* ── Main component ────────────────────────────────────────────────────── */
 export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection }) {
   const { t } = useDocsI18n();
-  const mounted = useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false
-  );
+  const { stats } = usePublicPlatformStats();
   const heroRef = useRef<HTMLElement>(null);
 
   /* Scroll-driven parallax */
@@ -203,9 +171,6 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
   const copyY = useTransform(scrollYProgress, [0, 1], [0, -60]);
   const cardY = useTransform(scrollYProgress, [0, 1], [0, -30]);
   const bgY = useTransform(scrollYProgress, [0, 1], [0, 80]);
-
-  const sparkPath = buildSparkPath(SPARK_POINTS);
-  const sparkArea = buildSparkArea(SPARK_POINTS);
 
   return (
     <>
@@ -290,16 +255,16 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
             transition={{ duration: 1.1, ease: EASE, delay: 0.2 }}
             aria-hidden="true"
           >
-            {/* Floating mini badges */}
+            {/* Floating mini badges — real platform counts, never invented */}
             <FloatBadge
-              value="+12.4%"
-              label="MRR growth"
+              value={stats ? stats.activeTenants.toLocaleString() : "—"}
+              label="Tenants"
               color="oklch(0.79 0.17 160)"
               delay={0.9}
               style={{ position: "absolute", top: "-18px", right: "12%", zIndex: 3 }}
             />
             <FloatBadge
-              value="6 active"
+              value={stats ? `${stats.activeModules} active` : "Live"}
               label="Modules"
               color="oklch(0.72 0.22 296)"
               delay={1.1}
@@ -344,53 +309,35 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
                     </div>
                     <span className="com-product-module-name">{mod.name}</span>
                     <span className="com-product-module-val" style={{ color: mod.color }}>
-                      {mod.val}
+                      {mod.id === "tenants"
+                        ? stats
+                          ? stats.activeTenants.toLocaleString()
+                          : "—"
+                        : "Active"}
                     </span>
                   </motion.div>
                 ))}
               </div>
 
-              {/* Revenue chart */}
+              {/* Platform stats — real tenant count, no chart is drawn since
+                  there is no real time-series here to plot (no invented sparkline). */}
               <div className="com-product-chart">
                 <div className="com-product-chart-head">
-                  <span className="com-product-chart-label">Monthly Revenue</span>
+                  <span className="com-product-chart-label">Platform</span>
                   <span className="com-product-chart-val">
-                    $84,231
-                    <span className="com-product-chart-delta">+12.4%</span>
+                    {stats ? stats.activeTenants.toLocaleString() : "—"}
+                    <span className="com-product-chart-delta">tenants</span>
                   </span>
                 </div>
-                {mounted && (
-                  <svg
-                    className="com-product-sparkline"
-                    viewBox="0 0 300 52"
-                    preserveAspectRatio="none"
-                    aria-hidden="true"
-                  >
-                    <defs>
-                      <linearGradient id="sparkG" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="oklch(0.84 0.155 213)" />
-                        <stop offset="100%" stopColor="oklch(0.72 0.22 296)" />
-                      </linearGradient>
-                      <linearGradient id="sparkA" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="oklch(0.72 0.22 296)" stopOpacity="0.28" />
-                        <stop offset="100%" stopColor="oklch(0.72 0.22 296)" stopOpacity="0" />
-                      </linearGradient>
-                    </defs>
-                    <path d={sparkArea} fill="url(#sparkA)" />
-                    <path d={sparkPath} stroke="url(#sparkG)" strokeWidth="2" fill="none" />
-                    {/* Live dot */}
-                    <circle cx="300" cy="10" r="3.5" fill="oklch(0.79 0.17 160)" />
-                    <circle cx="300" cy="10" r="6" fill="oklch(0.79 0.17 160)" fillOpacity="0.3" />
-                  </svg>
-                )}
               </div>
 
               {/* Card footer */}
               <div className="com-product-footer">
                 <span className="com-product-footer-modules">
-                  <span className="com-product-footer-dot" />6 modules active
+                  <span className="com-product-footer-dot" />
+                  {stats ? stats.activeModules : PLATFORM_MODULES.length} modules active
                 </span>
-                <span className="com-product-footer-growth">↑ +12% this week</span>
+                <span className="com-product-footer-growth">{stats?.uptimeSla ?? "99.9%"} uptime</span>
               </div>
             </div>
           </motion.div>

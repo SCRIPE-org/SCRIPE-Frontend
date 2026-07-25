@@ -1322,41 +1322,6 @@
   margin-left: 0.3rem;
 }
 
-/* Sparkline SVG */
-.com-product-sparkline {
-  height: 52px;
-  width: 100%;
-}
-
-.com-product-sparkline-path {
-  fill: none;
-  stroke: url(#sparkGrad);
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 500;
-  stroke-dashoffset: 500;
-  animation: com-spark-draw 1.8s var(--com-ease) 0.6s forwards;
-}
-
-.com-product-sparkline-area {
-  fill: url(#sparkAreaGrad);
-  opacity: 0;
-  animation: com-spark-fill 1.8s var(--com-ease) 0.8s forwards;
-}
-
-@keyframes com-spark-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes com-spark-fill {
-  to {
-    opacity: 1;
-  }
-}
-
 /* Card footer */
 .com-product-footer {
   display: flex;
@@ -2812,8 +2777,6 @@
   .com-reveal-fade,
   .com-reveal-scale,
   .com-signal-bar,
-  .com-product-sparkline-path,
-  .com-product-sparkline-area,
   .docs-reading-progress-bar {
     animation: none !important;
     transition: none !important;
