@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 /**
@@ -8,8 +7,17 @@ import { useState } from "react";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Button } from "@core/ui/button";
+import { Alert, AlertDescription } from "@core/ui/alert";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@core/ui/dialog";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Copy, Download, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Copy, Download, CheckCircle2, AlertTriangle, KeyRound } from "lucide-react";
 
 interface BackupCodesDialogProps {
   isOpen: boolean;
@@ -35,8 +43,6 @@ export function BackupCodesDialog({
   const { t } = useI18n();
   const [twoFactorCode, setTwoFactorCode] = useState("");
   const [copied, setCopied] = useState(false);
-
-  if (!isOpen) return null;
 
   const handleRegenerate = async () => {
     await onRegenerate(twoFactorCode);
@@ -64,48 +70,61 @@ export function BackupCodesDialog({
     }
   };
 
+  // Mirrors the previous hand-built modal's rule exactly: nothing dismisses
+  // this dialog (backdrop, Escape, or the close control) until the codes
+  // exist. `isOpen` is fully controlled from the parent, so simply not
+  // calling onClose() here keeps the dialog open — Radix never closes a
+  // controlled Dialog on its own.
+  const handleOpenChange = (open: boolean) => {
+    if (open) return;
+    if (!codes) return;
+    onClose();
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={codes ? onClose : undefined}
-      />
-      <div className="relative mx-4 w-full max-w-md space-y-5 rounded-2xl border bg-card p-6 shadow-2xl duration-200 animate-in fade-in zoom-in-95">
-        <div className="flex items-center justify-between">
-          <h3 className="flex items-center gap-2 text-lg font-semibold">
-            🔐 {t("profile.security.backupCodes.title")}
-          </h3>
-          {codes && (
-            <button
-              onClick={onClose}
-              className="text-muted-foreground transition-colors hover:text-foreground"
-            >
-              ✕
-            </button>
-          )}
-        </div>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <div className="flex items-center gap-2">
+            <KeyRound className="h-5 w-5 text-nx-accent" aria-hidden="true" />
+            <DialogTitle>{t("profile.security.backupCodes.title")}</DialogTitle>
+          </div>
+          <DialogDescription>
+            {codes
+              ? t("profile.security.backupCodes.readyDescription")
+              : t("profile.security.backupCodes.enterCodeDescription")}
+          </DialogDescription>
+        </DialogHeader>
 
         {!codes ? (
           <>
-            <div className="flex items-start gap-2 rounded-lg border border-warning/20 bg-warning/10 p-3 text-sm text-warning">
-              <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0" />
-              <span>{t("profile.security.backupCodes.warning")}</span>
-            </div>
+            <Alert variant="warning">
+              <AlertTriangle aria-hidden="true" />
+              <AlertDescription>{t("profile.security.backupCodes.warning")}</AlertDescription>
+            </Alert>
 
             <div className="space-y-2">
-              <Label>{t("profile.security.twoFactorCode")}</Label>
+              <Label htmlFor="backup-codes-2fa-code">{t("profile.security.twoFactorCode")}</Label>
               <Input
+                id="backup-codes-2fa-code"
                 value={twoFactorCode}
                 onChange={(e) => setTwoFactorCode(e.target.value)}
-                placeholder={t("profile.security.twoFactorCodePlaceholder") || "Enter 6-digit code"}
+                placeholder={t("profile.security.twoFactorCodePlaceholder")}
                 maxLength={6}
                 className="font-mono tracking-widest"
+                disabled={isRegenerating}
+                autoFocus
               />
             </div>
 
-            {regenerateError && <p className="text-sm text-destructive">{regenerateError}</p>}
+            {regenerateError && (
+              <Alert variant="destructive">
+                <AlertTriangle aria-hidden="true" />
+                <AlertDescription>{regenerateError}</AlertDescription>
+              </Alert>
+            )}
 
-            <div className="flex justify-end gap-3">
+            <DialogFooter>
               <Button variant="outline" onClick={onClose} disabled={isRegenerating}>
                 {t("common.cancel")}
               </Button>
@@ -116,7 +135,7 @@ export function BackupCodesDialog({
               >
                 {t("profile.security.backupCodes.regenerate")}
               </Button>
-            </div>
+            </DialogFooter>
           </>
         ) : (
           <>
@@ -124,38 +143,38 @@ export function BackupCodesDialog({
               {codes.map((code, i) => (
                 <div
                   key={i}
-                  className="rounded-lg border border-border/40 bg-muted/50 px-3 py-2 text-center font-mono text-sm tracking-wider"
+                  className="rounded-nx-control border border-nx-line bg-nx-ground px-3 py-2 text-center font-mono text-sm tracking-wider text-nx-ink tabular-nums"
                 >
                   {code}
                 </div>
               ))}
             </div>
 
-            <div className="flex items-start gap-2 rounded-lg border border-warning/20 bg-warning/10 p-3 text-xs text-warning">
-              <AlertTriangle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
-              <span>{t("profile.security.backupCodes.saveWarning")}</span>
-            </div>
+            <Alert variant="warning">
+              <AlertTriangle aria-hidden="true" />
+              <AlertDescription>{t("profile.security.backupCodes.saveWarning")}</AlertDescription>
+            </Alert>
 
-            <div className="flex gap-2">
+            <DialogFooter>
               <Button variant="outline" size="sm" onClick={handleCopy} className="flex-1">
                 {copied ? (
-                  <CheckCircle2 className="me-2 h-4 w-4 text-success" />
+                  <CheckCircle2 className="me-2 h-4 w-4 text-success" aria-hidden="true" />
                 ) : (
-                  <Copy className="me-2 h-4 w-4" />
+                  <Copy className="me-2 h-4 w-4" aria-hidden="true" />
                 )}
                 {copied ? t("common.copied") : t("common.copy")}
               </Button>
               <Button variant="outline" size="sm" onClick={handleDownload} className="flex-1">
-                <Download className="me-2 h-4 w-4" />
+                <Download className="me-2 h-4 w-4" aria-hidden="true" />
                 {t("common.download")}
               </Button>
               <Button size="sm" onClick={onClose} className="flex-1">
                 {t("common.done")}
               </Button>
-            </div>
+            </DialogFooter>
           </>
         )}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

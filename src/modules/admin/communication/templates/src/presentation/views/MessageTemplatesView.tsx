@@ -232,10 +232,8 @@ export function MessageTemplatesView() {
           label: t("common.delete") || "Delete",
           icon: <Trash2 className="h-4 w-4" />,
           onClick: handleDelete,
-          confirmTitle: t("messaging.templates.deleteTitle") || "Delete Template",
-          confirmDescription:
-            t("messaging.templates.deleteDescription") ||
-            "Are you sure you want to delete {name}? This action cannot be undone.",
+          confirmTitle: t("messaging.templates.deleteTitle"),
+          confirmDescription: t("messaging.templates.deleteDescription"),
           confirmVariant: "destructive" as const,
         },
       ],

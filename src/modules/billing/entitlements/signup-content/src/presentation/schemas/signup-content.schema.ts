@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { useI18n } from "@core/providers/i18n-provider";
 import { CONTENT_MODES } from "../../domain/entities/SignupContent";
 
 // Data schemas (used by mapper)
@@ -58,44 +59,77 @@ export const AdminSignupContentDtoSchema = z.object({
 });
 
 // Form schemas
-/**
- * Exported constant defining parameters and fields for welcome content form schema configurations.
- */
-export const WelcomeContentFormSchema = z.object({
-  headlineEn: z.string().min(1, "Headline (EN) is required"),
-  headlineAr: z.string().min(1, "Headline (AR) is required"),
-  subcopyEn: z.string().min(1, "Subcopy (EN) is required"),
-  subcopyAr: z.string().min(1, "Subcopy (AR) is required"),
-  ctaLabelEn: z.string().min(1, "CTA Label (EN) is required"),
-  ctaLabelAr: z.string().min(1, "CTA Label (AR) is required"),
-  trustedByCount: z.number().nonnegative("Must be non-negative"),
-  trustedByLabelEn: z.string().min(1, "Label (EN) is required"),
-  trustedByLabelAr: z.string().min(1, "Label (AR) is required"),
-});
+//
+// These are built at render time from the active translator rather than
+// exported as static objects, so the validation copy a screen reader
+// announces (and the text FormMessage renders) ships in the admin's own
+// language instead of a hardcoded English literal baked into this module.
+// The field shapes themselves are unchanged — only the message strings
+// route through t().
+type TranslateFn = ReturnType<typeof useI18n>["t"];
 
 /**
- * Exported constant defining parameters and fields for trust mark form schema configurations.
+ * Builds the localized welcome-content form schema for the given translator.
  */
-export const TrustMarkFormSchema = z.object({
-  key: z.string().min(1, "Key is required"),
-  kind: z.string().min(1, "Kind is required"),
-  labelEn: z.string().min(1, "Label (EN) is required"),
-  labelAr: z.string().min(1, "Label (AR) is required"),
-  iconKey: z.string().optional(),
-  assetUrl: z.string().optional(),
-  isRealData: z.boolean(),
-  sortOrder: z.number(),
-  isActive: z.boolean(),
-});
+export function createWelcomeContentFormSchema(t: TranslateFn) {
+  const required = (field: string) => t("signupContent.validation.required", { field });
+
+  return z.object({
+    headlineEn: z.string().min(1, required(t("signupContent.welcome.headlineEn"))),
+    headlineAr: z.string().min(1, required(t("signupContent.welcome.headlineAr"))),
+    subcopyEn: z.string().min(1, required(t("signupContent.welcome.subcopyEn"))),
+    subcopyAr: z.string().min(1, required(t("signupContent.welcome.subcopyAr"))),
+    ctaLabelEn: z.string().min(1, required(t("signupContent.welcome.ctaEn"))),
+    ctaLabelAr: z.string().min(1, required(t("signupContent.welcome.ctaAr"))),
+    trustedByCount: z
+      .number()
+      .nonnegative(
+        t("signupContent.validation.nonNegative", {
+          field: t("signupContent.welcome.trustedByCount"),
+        })
+      ),
+    trustedByLabelEn: z.string().min(1, required(t("signupContent.welcome.trustedByLabelEn"))),
+    trustedByLabelAr: z.string().min(1, required(t("signupContent.welcome.trustedByLabelAr"))),
+  });
+}
 
 /**
- * Exported constant defining parameters and fields for customer logo form schema configurations.
+ * Builds the localized trust-mark form schema for the given translator.
  */
-export const CustomerLogoFormSchema = z.object({
-  key: z.string().min(1, "Key is required"),
-  name: z.string().min(1, "Name is required"),
-  assetUrl: z.string().url("Must be a valid URL"),
-  isRealData: z.boolean(),
-  sortOrder: z.number(),
-  isActive: z.boolean(),
-});
+export function createTrustMarkFormSchema(t: TranslateFn) {
+  const required = (field: string) => t("signupContent.validation.required", { field });
+
+  return z.object({
+    key: z.string().min(1, required(t("signupContent.trustMarks.key"))),
+    kind: z.string().min(1, required(t("signupContent.trustMarks.kind"))),
+    labelEn: z.string().min(1, required(t("signupContent.trustMarks.labelEn"))),
+    labelAr: z.string().min(1, required(t("signupContent.trustMarks.labelAr"))),
+    iconKey: z.string().optional(),
+    assetUrl: z.string().optional(),
+    isRealData: z.boolean(),
+    sortOrder: z.number(),
+    isActive: z.boolean(),
+  });
+}
+
+/**
+ * Builds the localized customer-logo form schema for the given translator.
+ */
+export function createCustomerLogoFormSchema(t: TranslateFn) {
+  const required = (field: string) => t("signupContent.validation.required", { field });
+
+  return z.object({
+    key: z.string().min(1, required(t("signupContent.customerLogos.key"))),
+    name: z.string().min(1, required(t("signupContent.customerLogos.name"))),
+    assetUrl: z
+      .string()
+      .url(
+        t("signupContent.validation.invalidUrl", {
+          field: t("signupContent.customerLogos.assetUrl"),
+        })
+      ),
+    isRealData: z.boolean(),
+    sortOrder: z.number(),
+    isActive: z.boolean(),
+  });
+}

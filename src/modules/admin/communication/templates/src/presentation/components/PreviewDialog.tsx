@@ -5,15 +5,19 @@ import DOMPurify from "dompurify";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { EmptyState } from "@core/ui/empty-state";
 import { cn } from "@core/common/utils";
-import { Loader2, Monitor, Tablet, Smartphone } from "lucide-react";
+import { Monitor, Tablet, Smartphone } from "lucide-react";
 import type { PreviewTemplateResponse } from "../../domain/entities/MessageTemplateRequests";
 
 // ─── Device Presets ─────────────────────────────────────────
+// Labels are keyed against the composer's shared device-name copy so the
+// three names aren't translated twice within the same module.
 const DEVICES = [
-  { id: "desktop", label: "Desktop", icon: Monitor, width: 600 },
-  { id: "tablet", label: "Tablet", icon: Tablet, width: 480 },
-  { id: "mobile", label: "Mobile", icon: Smartphone, width: 320 },
+  { id: "desktop", labelKey: "messaging.email.desktop", icon: Monitor, width: 600 },
+  { id: "tablet", labelKey: "messaging.email.tablet", icon: Tablet, width: 480 },
+  { id: "mobile", labelKey: "messaging.email.mobile", icon: Smartphone, width: 320 },
 ] as const;
 
 type DeviceId = (typeof DEVICES)[number]["id"];
@@ -94,31 +98,29 @@ export function PreviewDialog({ open, onOpenChange, result, isLoading }: Preview
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{t("messaging.templates.preview") || "Preview"}</DialogTitle>
+          <DialogTitle>{t("messaging.templates.preview")}</DialogTitle>
         </DialogHeader>
 
-        {isLoading && (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
-        )}
+        {isLoading && <LoadingSpinner />}
 
         {result && !isLoading && (
           <div className="space-y-4">
             {/* Subject */}
             {result.subject && (
               <div>
-                <p className="mb-1 text-sm font-medium text-muted-foreground">
-                  {t("messaging.templates.subject") || "Subject"}
+                <p className="mb-1 text-sm font-medium text-nx-ink-2">
+                  {t("messaging.templates.subject")}
                 </p>
-                <p className="text-base font-semibold">{result.subject}</p>
+                <p className="text-base font-semibold text-nx-ink">{result.subject}</p>
               </div>
             )}
 
-            {/* Device Switcher */}
-            <div className="mx-auto flex w-fit items-center justify-center gap-1 rounded-lg border bg-muted/30 p-1">
+            {/* Device Switcher — chrome around the preview, not the simulated
+                email surface itself. */}
+            <div className="mx-auto flex w-fit items-center justify-center gap-1 rounded-nx-md border border-nx-line bg-nx-raised p-1">
               {DEVICES.map((d) => {
                 const Icon = d.icon;
+                const label = t(d.labelKey);
                 return (
                   <Button
                     key={d.id}
@@ -128,43 +130,46 @@ export function PreviewDialog({ open, onOpenChange, result, isLoading }: Preview
                     className="h-8 gap-1.5 text-xs"
                     onClick={() => setDevice(d.id)}
                   >
-                    <Icon className="h-3.5 w-3.5" />
-                    {d.label}
+                    <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                    {label}
                   </Button>
                 );
               })}
             </div>
 
-            {/* Body Preview */}
+            {/* Body Preview — the device frame is chrome (nx tokens); the
+                canvas inside simulates an email client's own white
+                background, which stays bg-white regardless of theme. */}
             <div className="flex justify-center">
               <div
                 className={cn(
-                  "overflow-hidden rounded-lg border bg-white shadow-sm transition-all duration-300",
-                  device === "mobile" && "rounded-2xl border-2"
+                  "overflow-hidden rounded-nx-lg border border-nx-line bg-white shadow-nx-sm",
+                  device === "mobile" && "border-2"
                 )}
                 style={{ width: `${currentDevice.width}px`, maxWidth: "100%" }}
               >
-                {/* Simulated device bar */}
-                <div className="flex items-center gap-1.5 border-b bg-gray-50 px-3 py-2">
-                  <div className="flex gap-1">
+                {/* Simulated device bar (chrome) */}
+                <div className="flex items-center gap-1.5 border-b border-nx-line bg-nx-raised px-3 py-2">
+                  <div className="flex gap-1" aria-hidden="true">
                     <span className="h-2.5 w-2.5 rounded-full bg-destructive" />
                     <span className="h-2.5 w-2.5 rounded-full bg-warning" />
                     <span className="h-2.5 w-2.5 rounded-full bg-success" />
                   </div>
                   <div className="flex-1 text-center">
-                    <span className="font-mono text-[10px] text-gray-400">
+                    <span className="font-mono text-[10px] text-nx-ink-3">
                       {currentDevice.width}px
                     </span>
                   </div>
                 </div>
 
-                {/* Content */}
+                {/* Content — the simulated email canvas, intentionally white
+                    (an email client renders on white regardless of theme). */}
                 <iframe
                   srcDoc={`<!DOCTYPE html><html><head><meta charset="utf-8"/><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;line-height:1.6;color:#000;padding:16px;background:#fff}img{max-width:100%;height:auto}a{color:#3b82f6}</style></head><body>${sanitizedBody}</body></html>`}
                   sandbox="allow-same-origin"
                   className="w-full border-0"
                   style={{ minHeight: "200px", height: "400px" }}
-                  title="Template Preview"
+                  title={t("messaging.templates.preview")}
                   onLoad={(e) => {
                     const iframe = e.currentTarget;
                     try {
@@ -183,9 +188,7 @@ export function PreviewDialog({ open, onOpenChange, result, isLoading }: Preview
         )}
 
         {!result && !isLoading && (
-          <div className="py-8 text-center text-muted-foreground">
-            {t("common.noData") || "No preview available"}
-          </div>
+          <EmptyState bare size="sm" title={t("common.noData")} />
         )}
       </DialogContent>
     </Dialog>

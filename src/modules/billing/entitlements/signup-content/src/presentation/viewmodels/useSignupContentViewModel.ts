@@ -274,6 +274,7 @@ export function useSignupContentViewModel() {
     content: contentQuery.data ?? null,
     isLoading: contentQuery.isLoading,
     error: contentQuery.error,
+    refetch: contentQuery.refetch,
 
     // Mode
     isSettingMode: setModeMutation.isPending,

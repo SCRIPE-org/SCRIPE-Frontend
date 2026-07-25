@@ -58,7 +58,7 @@ export function TenantFeatureDefinitionsView() {
       columns,
       customHeaderContent: (
         <Badge variant="outline" className="w-fit text-xs">
-          {t("entitlements.featureDefinitions.tier2Badge") || "Tier 2"}
+          {t("entitlements.featureDefinitions.tier2Badge")}
         </Badge>
       ),
       // Redirect "Add" button to the full-page create form
@@ -69,23 +69,23 @@ export function TenantFeatureDefinitionsView() {
       },
       getActions: (_vmInstance, tFn, handleDelete): CrudAction<TenantFeatureDefinition>[] => [
         {
-          label: tFn("common.view") || "View",
+          label: tFn("common.view"),
           onClick: (item: TenantFeatureDefinition) => handleViewClick(item),
           variant: "ghost" as const,
-          icon: <Eye className="h-4 w-4" />,
+          icon: <Eye className="h-4 w-4" aria-hidden="true" />,
         },
         {
-          label: tFn("common.edit") || "Edit",
+          label: tFn("common.edit"),
           onClick: (item: TenantFeatureDefinition) => handleEditClick(item),
           variant: "ghost" as const,
-          icon: <Pencil className="h-4 w-4" />,
+          icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
         },
         {
-          label: tFn("common.delete") || "Delete",
+          label: tFn("common.delete"),
           onClick: handleDelete as (item: TenantFeatureDefinition) => void,
           variant: "ghost" as const,
           className: "text-destructive hover:text-destructive/80",
-          icon: <Trash2 className="h-4 w-4" />,
+          icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
           show: (item: TenantFeatureDefinition) => (item.planUsageCount ?? 0) === 0,
         },
       ],

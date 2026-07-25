@@ -19,6 +19,8 @@
  */
 "use client";
 
+import { cn } from "@core/common/utils";
+import { useI18n } from "@core/providers/i18n-provider";
 import { Check, Infinity as InfinityIcon } from "lucide-react";
 import { RecommendationBadge } from "@modules/entitlements/core";
 import type { TenantPlan } from "../../domain/entities/TenantPlan";
@@ -36,7 +38,6 @@ interface TenantPlanPricingCardProps {
   isRecommended: boolean;
   selectedCycle: "Monthly" | "Yearly" | "Lifetime";
   allHighlightsLabel: string;
-  priceLabel: string;
   freeLabel: string;
   customLabel: string;
   previewLabel: string;
@@ -54,13 +55,14 @@ export function TenantPlanPricingCard({
   isRecommended,
   selectedCycle,
   allHighlightsLabel,
-  priceLabel,
   freeLabel,
   customLabel,
   previewLabel,
 }: TenantPlanPricingCardProps) {
+  const { t } = useI18n();
   const displayName = (language === "ar" ? plan.displayNameAr : plan.displayNameEn) || plan.name;
   const badges = plan.badgeText ? [plan.badgeText] : [];
+  const locale = language === "ar" ? "ar-EG" : "en-US";
 
   let priceAmount: string;
   let priceSuffix = "";
@@ -76,15 +78,18 @@ export function TenantPlanPricingCard({
         (min, p) => (p.amount < min.amount ? p : min),
         cyclePrices[0]
       );
-      priceAmount = new Intl.NumberFormat("en-US", {
+      priceAmount = new Intl.NumberFormat(locale, {
         style: "currency",
         currency: cheapest.currency || "USD",
         minimumFractionDigits: 0,
       }).format(cheapest.amount);
 
-      if (selectedCycle === "Monthly") priceSuffix = "/mo";
-      else if (selectedCycle === "Yearly") priceSuffix = "/yr";
-      else if (selectedCycle === "Lifetime") priceSuffix = " one-time";
+      if (selectedCycle === "Monthly")
+        priceSuffix = t("entitlements.tenantPlans.comparison.monthShort");
+      else if (selectedCycle === "Yearly")
+        priceSuffix = t("entitlements.tenantPlans.comparison.yearShort");
+      else if (selectedCycle === "Lifetime")
+        priceSuffix = t("entitlements.tenantPlans.comparison.once");
     } else {
       // Fallback if the selected cycle is not supported by this specific plan
       priceAmount = "—";
@@ -93,17 +98,15 @@ export function TenantPlanPricingCard({
 
   return (
     <div
-      className={`relative flex flex-col overflow-hidden rounded-xl border transition-all duration-300 ${
-        isRecommended
-          ? "border-primary/50 bg-card shadow-[0_0_0_1px_hsl(var(--primary)/0.3),0_8px_40px_hsl(var(--primary)/0.15)]"
-          : "border-border/60 bg-card/80 hover:border-border hover:shadow-lg"
-      } `}
-    >
-      {/* Top accent line for recommended */}
-      {isRecommended && (
-        <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-primary/0 via-primary to-primary/0" />
+      className={cn(
+        "relative flex flex-col overflow-hidden rounded-nx-lg border bg-nx-surface",
+        "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+        // The recommended card wears the page's one sanctioned glow, at rest —
+        // it does not need a hover cue on top of it. Every other card gets the
+        // system's plain hairline-brighten hover; neither card lifts.
+        isRecommended ? "border-nx-accent shadow-nx-glow" : "border-nx-line hover:border-nx-line-hi"
       )}
-
+    >
       <div className="flex flex-col gap-4 p-6">
         {/* Badges */}
         {badges.length > 0 && (
@@ -116,49 +119,52 @@ export function TenantPlanPricingCard({
 
         {/* Name + tagline */}
         <div>
-          <h3 className="text-base font-bold text-foreground">{displayName}</h3>
+          <h3 className="text-base font-bold text-nx-ink">{displayName}</h3>
           {plan.tagline && (
-            <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+            <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-nx-ink-2">
               {plan.tagline}
             </p>
           )}
         </div>
 
         {/* Price */}
-        <div className="flex items-end gap-1">
+        <div className="flex items-baseline gap-1">
           <span
-            className={`font-bold tracking-tight ${
+            className={cn(
+              "font-bold tracking-tight tabular-nums text-nx-ink",
               priceAmount === freeLabel || priceAmount === customLabel ? "text-2xl" : "text-3xl"
-            }`}
+            )}
           >
             {priceAmount}
           </span>
-          {priceSuffix && <span className="mb-1 text-sm text-muted-foreground">{priceSuffix}</span>}
+          {priceSuffix && <span className="text-sm text-nx-ink-2">/{priceSuffix}</span>}
         </div>
 
         {/* Trial info */}
         {plan.hasTrial && (
-          <p className="text-xs text-muted-foreground">{plan.trialDays}-day free trial</p>
+          <p className="text-xs text-nx-ink-2">
+            {t("entitlements.tenantPlans.comparison.trialDaysFree", { days: plan.trialDays })}
+          </p>
         )}
 
         {/* Separator */}
-        <div className="h-px bg-border/50" />
+        <div className="h-px bg-nx-line" />
 
         {/* Progressive highlights */}
         <div className="flex min-h-[120px] flex-col gap-2">
           {previousPlanName && (
-            <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            <p className="mb-1 text-xs font-medium uppercase tracking-wider text-nx-ink-3">
               {allHighlightsLabel.replace("{prev}", previousPlanName)}
             </p>
           )}
           {highlights.map((hl, idx) => (
             <div key={idx} className="flex items-start gap-2">
               <div
-                className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${
-                  hl.isUnlimited
-                    ? "bg-primary/15 text-primary"
-                    : "bg-success/15 text-success"
-                }`}
+                className={cn(
+                  "mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full",
+                  hl.isUnlimited ? "bg-nx-accent-wash text-nx-accent" : "bg-success/10 text-success"
+                )}
+                aria-hidden="true"
               >
                 {hl.isUnlimited ? (
                   <InfinityIcon className="h-2.5 w-2.5" />
@@ -166,18 +172,20 @@ export function TenantPlanPricingCard({
                   <Check className="h-2.5 w-2.5" strokeWidth={3} />
                 )}
               </div>
-              <span className="text-sm leading-tight text-foreground/80">{hl.label}</span>
+              <span className="text-sm leading-tight text-nx-ink-2">{hl.label}</span>
             </div>
           ))}
           {highlights.length === 0 && !previousPlanName && (
-            <p className="text-xs italic text-muted-foreground/60">Core plan</p>
+            <p className="text-xs italic text-nx-ink-3">
+              {t("entitlements.tenantPlans.comparison.corePlanLabel")}
+            </p>
           )}
         </div>
       </div>
 
       {/* Admin Preview Label */}
-      <div className="mt-auto border-t border-border/40 bg-muted/30 px-6 py-3">
-        <p className="text-center text-xs font-medium uppercase tracking-wider text-muted-foreground/70">
+      <div className="mt-auto border-t border-nx-line bg-nx-raised px-6 py-3">
+        <p className="text-center text-xs font-medium uppercase tracking-wider text-nx-ink-3">
           {previewLabel}
         </p>
       </div>

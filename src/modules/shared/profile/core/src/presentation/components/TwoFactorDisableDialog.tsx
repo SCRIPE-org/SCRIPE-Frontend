@@ -19,11 +19,13 @@ import {
   DialogFooter,
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
+import { PasswordInput } from "@core/ui/password-input";
 import { Label } from "@core/ui/label";
+import { Input } from "@core/ui/input";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@core/ui/input-otp";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { ShieldX, Eye, EyeOff, KeyRound, ArrowLeft } from "lucide-react";
+import { ShieldX, KeyRound, ArrowLeft, AlertTriangle } from "lucide-react";
 
 type DisableStep = "password" | "verify";
 
@@ -34,6 +36,11 @@ interface TwoFactorDisableDialogProps {
   isDisabling: boolean;
   disableError: string | null;
 }
+
+// The one size override every slot in this dialog shares — see
+// TwoFactorSetupDialog for why this stays a single constant instead of six
+// hand-tuned copies.
+const OTP_SLOT = "h-14 w-12 text-xl font-semibold";
 
 /**
  * Presentation UI component rendering the two factor disable dialog.
@@ -49,7 +56,6 @@ export function TwoFactorDisableDialog({
   const { t } = useI18n();
   const [step, setStep] = useState<DisableStep>("password");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [twoFactorCode, setTwoFactorCode] = useState("");
   const [useBackupCode, setUseBackupCode] = useState(false);
   const [error, setError] = useState("");
@@ -87,7 +93,6 @@ export function TwoFactorDisableDialog({
       if (!isOpen) {
         setStep("password");
         setPassword("");
-        setShowPassword(false);
         setTwoFactorCode("");
         setUseBackupCode(false);
         setError("");
@@ -105,7 +110,7 @@ export function TwoFactorDisableDialog({
           <>
             <DialogHeader>
               <div className="flex items-center gap-2">
-                <ShieldX className="h-5 w-5 text-destructive" />
+                <ShieldX className="h-5 w-5 text-destructive" aria-hidden="true" />
                 <DialogTitle>{t("profile.security.twoFactor.disable.title")}</DialogTitle>
               </div>
               <DialogDescription>
@@ -115,45 +120,29 @@ export function TwoFactorDisableDialog({
 
             <div className="space-y-4 py-4">
               {error && (
-                <div className="flex items-center gap-2.5 rounded-xl border border-destructive/20 bg-destructive/10 p-3.5 text-sm text-destructive">
-                  <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-destructive/20">
-                    <span className="text-xs font-bold">!</span>
-                  </div>
-                  <span>{error}</span>
-                </div>
+                <Alert variant="destructive">
+                  <AlertTriangle aria-hidden="true" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
               )}
 
               <div className="space-y-2">
                 <Label htmlFor="disable-2fa-password">
                   {t("profile.security.twoFactor.disable.passwordLabel")}
                 </Label>
-                <div className="relative">
-                  <Input
-                    id="disable-2fa-password"
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="h-12 pe-12"
-                    disabled={isDisabling}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && password.trim()) {
-                        handleNextStep();
-                      }
-                    }}
-                    autoFocus
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute end-2 top-1/2 h-8 w-8 -translate-y-1/2"
-                    onClick={() => setShowPassword(!showPassword)}
-                    disabled={isDisabling}
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </Button>
-                </div>
+                <PasswordInput
+                  id="disable-2fa-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="h-12"
+                  disabled={isDisabling}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && password.trim()) {
+                      handleNextStep();
+                    }
+                  }}
+                  autoFocus
+                />
               </div>
             </div>
 
@@ -173,7 +162,7 @@ export function TwoFactorDisableDialog({
           <>
             <DialogHeader>
               <div className="flex items-center gap-2">
-                <ShieldX className="h-5 w-5 text-destructive" />
+                <ShieldX className="h-5 w-5 text-destructive" aria-hidden="true" />
                 <DialogTitle>{t("profile.security.twoFactor.disable.verifyTitle")}</DialogTitle>
               </div>
               <DialogDescription>
@@ -185,12 +174,10 @@ export function TwoFactorDisableDialog({
 
             <div className="space-y-4 py-4">
               {(error || disableError) && (
-                <div className="flex items-center gap-2.5 rounded-xl border border-destructive/20 bg-destructive/10 p-3.5 text-sm text-destructive">
-                  <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-destructive/20">
-                    <span className="text-xs font-bold">!</span>
-                  </div>
-                  <span>{error || disableError}</span>
-                </div>
+                <Alert variant="destructive">
+                  <AlertTriangle aria-hidden="true" />
+                  <AlertDescription>{error || disableError}</AlertDescription>
+                </Alert>
               )}
 
               {useBackupCode ? (
@@ -204,8 +191,8 @@ export function TwoFactorDisableDialog({
                     value={twoFactorCode}
                     onChange={(e) => setTwoFactorCode(e.target.value)}
                     placeholder="XXXX-XXXX"
-                    className="h-14 border-2 text-center font-mono text-lg tracking-[0.3em] transition-colors focus:border-primary/50"
-                    style={{ direction: "ltr" }}
+                    className="h-14 text-center font-mono text-lg tracking-[0.3em]"
+                    dir="ltr"
                     disabled={isDisabling}
                     autoFocus
                     onKeyDown={(e) => {
@@ -226,33 +213,20 @@ export function TwoFactorDisableDialog({
                     className="gap-2"
                   >
                     <InputOTPGroup className="gap-1.5">
-                      <InputOTPSlot
-                        index={0}
-                        className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
-                      />
-                      <InputOTPSlot
-                        index={1}
-                        className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
-                      />
-                      <InputOTPSlot
-                        index={2}
-                        className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
-                      />
+                      <InputOTPSlot index={0} className={OTP_SLOT} />
+                      <InputOTPSlot index={1} className={OTP_SLOT} />
+                      <InputOTPSlot index={2} className={OTP_SLOT} />
                     </InputOTPGroup>
-                    <span className="mx-1 text-xl font-light text-muted-foreground/50">–</span>
+                    <span
+                      className="mx-1 select-none text-xl font-light text-nx-ink-3"
+                      aria-hidden="true"
+                    >
+                      –
+                    </span>
                     <InputOTPGroup className="gap-1.5">
-                      <InputOTPSlot
-                        index={3}
-                        className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
-                      />
-                      <InputOTPSlot
-                        index={4}
-                        className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
-                      />
-                      <InputOTPSlot
-                        index={5}
-                        className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
-                      />
+                      <InputOTPSlot index={3} className={OTP_SLOT} />
+                      <InputOTPSlot index={4} className={OTP_SLOT} />
+                      <InputOTPSlot index={5} className={OTP_SLOT} />
                     </InputOTPGroup>
                   </InputOTP>
                 </div>
@@ -264,14 +238,13 @@ export function TwoFactorDisableDialog({
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="text-sm text-muted-foreground transition-colors hover:text-primary"
                   onClick={() => {
                     setUseBackupCode(!useBackupCode);
                     setTwoFactorCode("");
                     setError("");
                   }}
                 >
-                  <KeyRound className="me-2 h-3.5 w-3.5" />
+                  <KeyRound className="me-2 h-3.5 w-3.5" aria-hidden="true" />
                   {useBackupCode
                     ? t("auth.twoFactor.useAuthenticator")
                     : t("auth.twoFactor.useBackupCode")}
@@ -289,7 +262,7 @@ export function TwoFactorDisableDialog({
                 }}
                 disabled={isDisabling}
               >
-                <ArrowLeft className="me-1.5 h-3.5 w-3.5" />
+                <ArrowLeft className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
                 {t("common.back")}
               </Button>
               <Button

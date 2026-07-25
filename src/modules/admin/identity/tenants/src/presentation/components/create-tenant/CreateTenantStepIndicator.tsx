@@ -58,7 +58,7 @@ export function CreateTenantStepIndicator({
             <button
               onClick={() => isClickable && goToStep(step.id)}
               className={cn(
-                "group flex cursor-pointer items-center gap-3 rounded-xl px-4 py-3 transition-all duration-300",
+                "group flex cursor-pointer items-center gap-3 rounded-xl px-4 py-3 transition-[color,background-color,border-color,box-shadow] duration-nx-standard motion-reduce:transition-none",
                 isActive && "bg-primary/10 shadow-sm ring-1 ring-primary/30",
                 !isActive && isCompleted && "hover:bg-muted/60",
                 !isActive && !isCompleted && "cursor-not-allowed opacity-50"
@@ -67,7 +67,7 @@ export function CreateTenantStepIndicator({
             >
               <div
                 className={cn(
-                  "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-300",
+                  "flex h-9 w-9 items-center justify-center rounded-xl transition-[color,background-color,border-color,box-shadow] duration-nx-standard motion-reduce:transition-none",
                   isActive && "bg-primary text-primary-foreground shadow-md",
                   isCompleted && !isActive && "bg-success/15 text-success",
                   !isActive && !isCompleted && "bg-muted text-muted-foreground"
@@ -103,7 +103,7 @@ export function CreateTenantStepIndicator({
               <div className="hidden flex-1 items-center px-2 sm:flex">
                 <div
                   className={cn(
-                    "h-px flex-1 transition-colors duration-500",
+                    "h-px flex-1 transition-colors duration-nx-standard motion-reduce:transition-none",
                     step.id < currentStep ? "bg-success/50" : "bg-border/50"
                   )}
                 />

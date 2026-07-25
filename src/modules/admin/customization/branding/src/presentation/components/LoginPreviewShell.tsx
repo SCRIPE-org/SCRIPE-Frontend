@@ -27,7 +27,8 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import { Eye, EyeOff, Lock, User, Mail, ArrowLeft, KeyRound } from "lucide-react";
+import { Badge } from "@core/ui/badge";
+import { Eye, EyeOff, Lock, User, Mail, ArrowLeft, KeyRound, Accessibility } from "lucide-react";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { BRAND } from "@core/config/branding";
@@ -602,35 +603,21 @@ export function LoginPreviewShell() {
     />
   );
 
-  // ── A11y: Floating badge via DOM injection (avoids touching 22 layouts) ──
-  useEffect(() => {
-    if (activeA11yCount <= 0) return;
-    const badge = document.createElement("div");
-    badge.id = "a11y-active-badge";
-    Object.assign(badge.style, {
-      position: "fixed",
-      bottom: "16px",
-      right: "16px",
-      zIndex: "99999",
-      display: "flex",
-      alignItems: "center",
-      gap: "6px",
-      padding: "6px 12px",
-      borderRadius: "20px",
-      background: "rgba(59,130,246,0.9)",
-      color: "#fff",
-      fontSize: "11px",
-      fontWeight: "600",
-      backdropFilter: "blur(8px)",
-      boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
-      pointerEvents: "none",
-    });
-    badge.innerHTML = `<span style="font-size:14px">♿</span><span>${activeA11yCount} active</span>`;
-    document.body.appendChild(badge);
-    return () => {
-      badge.remove();
-    };
-  }, [activeA11yCount]);
+  // ── A11y: Floating badge reporting how many accessibility features are
+  // active. Rendered as real JSX (below, alongside the resolved layout) so it
+  // participates in the same tree as everything else — no DOM injection. It
+  // is composed once here and rendered unconditionally at the bottom of this
+  // component, so it appears no matter which of the 22 layout variants (or
+  // the canvas-builder mode) is the active render path.
+  const a11yActiveBadge =
+    activeA11yCount > 0 ? (
+      <div className="pointer-events-none fixed bottom-4 end-4 z-toast" dir={direction}>
+        <Badge variant="info" className="gap-1.5 px-3 py-1">
+          <Accessibility className="h-3.5 w-3.5" aria-hidden="true" />
+          {t("studio.builder.preview.a11yActiveCount", { count: activeA11yCount })}
+        </Badge>
+      </div>
+    ) : null;
 
   // ── A11y: Reading guide + mask containers (position:fixed, rendered once) ──
   const a11yFixedElements = (
@@ -729,6 +716,11 @@ export function LoginPreviewShell() {
       : undefined) ||
     "grid";
 
+  // The layout (or canvas-builder) render is resolved into a value rather than
+  // returned directly, so a single trailing return can pair it with the a11y
+  // badge above — every case below is unchanged, just captured instead of
+  // exited from.
+  const content = (() => {
   if (effectiveCanvasMode === "builder" && Array.isArray(effectiveCanvasComponents)) {
     return wrapWithA11y(
       <CanvasRenderer
@@ -1705,7 +1697,10 @@ export function LoginPreviewShell() {
           style={{
             background:
               "var(--sx-bg-grad, radial-gradient(140% 90% at 25% 25%, #1a1140 0%, #0a0820 40%, #06060e 80%, #04040a 100%))",
-            color: "var(--sx-text, #f5f2ff)",
+            // --sx-* is the frozen vault palette (globals.css) — this route always
+            // loads the shared global stylesheet, so the token is guaranteed present;
+            // an inline hex fallback here would just be a second hardcoded copy of it.
+            color: "var(--sx-text)",
             fontFamily: "inherit",
           }}
         >
@@ -1727,7 +1722,7 @@ export function LoginPreviewShell() {
               </div>
               <span
                 className="text-base font-semibold"
-                style={{ color: "var(--sx-text, #f5f2ff)" }}
+                style={{ color: "var(--sx-text)" }}
               >
                 {companyName}
               </span>
@@ -1756,14 +1751,14 @@ export function LoginPreviewShell() {
                 style={{
                   background: "var(--sx-accent-soft, rgba(168,85,247,.1))",
                   border: "1px solid var(--sx-accent-soft-border, rgba(168,85,247,.3))",
-                  color: "var(--sx-accent-text, #c4b5fd)",
+                  color: "var(--sx-accent-text)",
                 }}
               >
                 <span
                   className="h-1.5 w-1.5 rounded-full"
                   style={{
-                    background: "var(--sx-accent, #a855f7)",
-                    boxShadow: "0 0 6px var(--sx-accent, #a855f7)",
+                    background: "var(--sx-accent)",
+                    boxShadow: "0 0 6px var(--sx-accent)",
                   }}
                 />
                 Secure sign-in
@@ -1854,6 +1849,14 @@ export function LoginPreviewShell() {
         </div>
       );
   }
+  })();
+
+  return (
+    <>
+      {content}
+      {a11yActiveBadge}
+    </>
+  );
 }
 
 // ”--€ Shared sub-components ”--€

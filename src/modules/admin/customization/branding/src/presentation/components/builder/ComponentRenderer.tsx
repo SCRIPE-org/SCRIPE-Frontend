@@ -6,6 +6,7 @@
  */
 "use client";
 
+import { useI18n } from "@core/providers/i18n-provider";
 import type { CanvasComponentType } from "../../../domain/entities/CanvasComponent";
 import {
   BuilderLogo,
@@ -32,6 +33,8 @@ interface ComponentRendererProps {
 }
 
 export function ComponentRenderer({ type, props }: ComponentRendererProps) {
+  const { t } = useI18n();
+
   switch (type) {
     case "logo":
       return <BuilderLogo {...props} />;
@@ -67,8 +70,8 @@ export function ComponentRenderer({ type, props }: ComponentRendererProps) {
       return <BuilderVideoBg {...props} />;
     default:
       return (
-        <div className="rounded border border-dashed border-destructive/40 p-2 text-xs text-destructive">
-          Unknown: {type}
+        <div className="rounded-nx-sm border border-dashed border-destructive/40 p-2 text-xs text-destructive">
+          {t("studio.builder.preview.unknownComponent", { type })}
         </div>
       );
   }

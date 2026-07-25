@@ -68,10 +68,14 @@ export function useTemplateFormViewModel() {
   });
 
   // ─── Fetch template for edit mode ────────────────────────
+  // `isFetching` is react-query's `isLoading` (pending + in-flight): true only
+  // while there is no data yet, false once the fetch has settled either way —
+  // so it never lingers as a stuck "loading" flag once `fetchError` is set.
   const {
     data: template,
     isLoading: isFetching,
     error: fetchError,
+    refetch,
   } = useQuery({
     queryKey: [...QUERY_KEY, templateId],
     queryFn: () => repo.getById(templateId!),
@@ -156,11 +160,11 @@ export function useTemplateFormViewModel() {
     mutationFn: (data: CreateMessageTemplateRequest) => repo.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-      success({ title: t("messaging.templates.createSuccess") || "Template created" });
+      success({ title: t("messaging.templates.createSuccess") });
       router.push("/communication/templates");
     },
     onError: () => {
-      toastError({ title: t("messaging.templates.createError") || "Failed to create template" });
+      toastError({ title: t("messaging.templates.createError") });
     },
   });
 
@@ -169,11 +173,11 @@ export function useTemplateFormViewModel() {
     mutationFn: (data: UpdateMessageTemplateRequest) => repo.update(templateId!, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-      success({ title: t("messaging.templates.updateSuccess") || "Template updated" });
+      success({ title: t("messaging.templates.updateSuccess") });
       router.push("/communication/templates");
     },
     onError: () => {
-      toastError({ title: t("messaging.templates.updateError") || "Failed to update template" });
+      toastError({ title: t("messaging.templates.updateError") });
     },
   });
 
@@ -256,16 +260,22 @@ export function useTemplateFormViewModel() {
     updateDesignVariables,
     handleSubmit,
     handleCancel,
+    // Three real fetch states for edit mode (create mode never runs the
+    // query, so these are always the "ready" defaults there): `isFetching`
+    // is the initial load, `fetchError` is a settled failure (bad id,
+    // deleted template, network error) with `refetch` to retry it, and
+    // `loadedTemplate` is the settled success payload — the view must branch
+    // on these instead of collapsing edit-mode failure into create-mode's
+    // empty form.
     isFetching,
     fetchError,
+    refetch,
+    loadedTemplate: template,
     isSaving: createMutation.isPending || updateMutation.isPending,
     channelOptions,
     languageOptions,
     categoryOptions,
     t,
-    title:
-      mode === "create"
-        ? t("messaging.templates.addNew") || "Create Template"
-        : t("messaging.templates.editTemplate") || "Edit Template",
+    title: mode === "create" ? t("messaging.templates.createTitle") : t("messaging.templates.editTitle"),
   };
 }

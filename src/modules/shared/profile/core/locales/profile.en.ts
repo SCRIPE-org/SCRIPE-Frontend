@@ -56,6 +56,7 @@ export const en = {
       updatePassword: "Update Password",
       passwordChanged: "Password changed successfully!",
       passwordMismatch: "Passwords do not match",
+      currentPasswordRequired: "Please enter your current password",
       passwordExpired: "Your password has expired. Please change it immediately.",
       passwordExpiringSoon: "Your password expires in {{days}} days.",
       lastChanged: "Last changed",
@@ -88,6 +89,8 @@ export const en = {
             "These are your one-time-use backup codes. Each code can only be used once.",
           backupWarning: "⚠️ Store these codes in a safe place. They will not be shown again.",
           download: "Download Codes",
+          qrAlt: "Two-factor authentication QR code",
+          copyKey: "Copy manual entry key",
         },
         disable: {
           title: "Disable Two-Factor Authentication",
@@ -106,6 +109,8 @@ export const en = {
         title: "Backup Codes",
         warning:
           "Regenerating will invalidate all existing backup codes. Make sure to save the new ones.",
+        enterCodeDescription: "Enter the code from your authenticator app to confirm this action.",
+        readyDescription: "Your new backup codes are ready to save.",
         saveWarning: "Save these codes somewhere safe. They will not be shown again.",
         regenerate: "Regenerate",
       },
@@ -172,6 +177,7 @@ export const en = {
       connectedAccounts: {
         title: "Connected Accounts",
         desc: "Sign in faster by linking external identity providers to this account.",
+        unlink: "Unlink account",
       },
     },
     sessions: {

@@ -66,14 +66,16 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
       ...col,
       render:
         col.key === "code"
-          ? (value: string) => <code className="rounded bg-muted px-2 py-0.5 text-xs">{value}</code>
+          ? (value: string) => (
+              <code className="rounded-nx-sm bg-nx-raised px-2 py-0.5 text-xs">{value}</code>
+            )
           : col.key === "name"
             ? (_: unknown, role: Role) => (
                 <span className="font-medium">{role.getLocalizedName(language)}</span>
               )
             : col.key === "description"
               ? (_: unknown, role: Role) => (
-                  <span className="block max-w-[200px] truncate text-sm text-muted-foreground">
+                  <span className="block max-w-[200px] truncate text-sm text-nx-ink-2">
                     {role.getLocalizedDescription(language)}
                   </span>
                 )
@@ -95,7 +97,7 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
                               </Badge>
                             ))
                           ) : (
-                            <span className="text-muted-foreground">-</span>
+                            <span className="text-nx-ink-2">-</span>
                           )}
                         </div>
                       );
@@ -118,8 +120,8 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
     enableBulkActions: true,
     bulkActions: [
       {
-        label: t("userGroups.assignToGroup") || "Assign to Group",
-        icon: <Users className="h-4 w-4" />,
+        label: t("userGroups.assignToGroup"),
+        icon: <Users className="h-4 w-4" aria-hidden="true" />,
         onClick: async (ids: string[]) => {
           setSelectedBulkRoleIds(ids);
           setBulkAssignToGroupOpen(true);
@@ -129,36 +131,36 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
     ],
     getActions: (vmInstance, tFn, handleDeleteFn): CrudAction<Role>[] => [
       {
-        label: tFn("common.view") || "View",
+        label: tFn("common.view"),
         onClick: (item: Role) => vmInstance.openViewModal(item),
         variant: "ghost",
-        icon: <Eye className="h-4 w-4" />,
+        icon: <Eye className="h-4 w-4" aria-hidden="true" />,
       },
       {
-        label: tFn("common.edit") || "Edit",
+        label: tFn("common.edit"),
         onClick: (item: Role) => vmInstance.openEditModal(item),
         variant: "ghost",
-        icon: <Pencil className="h-4 w-4" />,
+        icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
       },
       {
-        label: tFn("role.managePermissions") || "Permissions",
+        label: tFn("role.managePermissions"),
         onClick: (item: Role) => vm.openPermissionsDialog(item),
         variant: "ghost",
-        icon: <Shield className="h-4 w-4" />,
+        icon: <Shield className="h-4 w-4" aria-hidden="true" />,
         requiredPermission: SYSTEM_PERMISSIONS.ROLES_UPDATE,
       },
       {
-        label: tFn("userGroups.assignToGroup") || "Assign to Group",
+        label: tFn("userGroups.assignToGroup"),
         onClick: (item: Role) => handleOpenAssignToGroup(item),
         variant: "ghost",
-        icon: <Users className="h-4 w-4" />,
+        icon: <Users className="h-4 w-4" aria-hidden="true" />,
       },
       {
-        label: tFn("common.delete") || "Delete",
+        label: tFn("common.delete"),
         onClick: (item: Role) => handleDeleteFn?.(item),
         variant: "ghost",
         className: "text-destructive hover:text-destructive/90",
-        icon: <Trash2 className="h-4 w-4" />,
+        icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
       },
     ],
   };
@@ -168,8 +170,8 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">{vm.title}</h3>
-          <p className="text-sm text-muted-foreground">{vm.subtitle}</p>
+          <h3 className="text-lg font-semibold text-nx-ink">{vm.title}</h3>
+          <p className="text-sm text-nx-ink-2">{vm.subtitle}</p>
         </div>
         <Button
           variant="outline"
@@ -177,13 +179,13 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
           onClick={() => vm.resyncPermissions()}
           loading={vm.isResyncing}
         >
-          {!vm.isResyncing && <RefreshCw className="me-2 h-4 w-4" />}
-          {t("tenant.resyncPermissions") || "Resync Permissions"}
+          {!vm.isResyncing && <RefreshCw className="me-2 h-4 w-4" aria-hidden="true" />}
+          {t("tenant.resyncPermissions")}
         </Button>
       </div>
 
       {/* Roles Table */}
-      <div className="overflow-hidden rounded-lg border">
+      <div className="overflow-hidden rounded-nx-lg border border-nx-line">
         <GenericCrudView viewModel={vm.rolesVm} config={config} />
       </div>
 

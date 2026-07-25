@@ -30,18 +30,18 @@ export function CreateTenantSuccess({ vm, t, direction }: CreateTenantSuccessPro
   return (
     <div className="mx-auto max-w-lg px-4 py-12" dir={direction}>
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-success/10 duration-500 animate-in zoom-in-50">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-success/10 duration-nx-standard ease-nx-enter motion-safe:animate-in motion-safe:zoom-in-95">
           <CheckCircle2 className="h-8 w-8 text-success" />
         </div>
-        <h1 className="text-2xl font-bold delay-100 duration-500 animate-in fade-in-0 slide-in-from-bottom-2">
+        <h1 className="text-2xl font-bold duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
           {t("tenant.created") || "Tenant Created Successfully!"}
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground delay-200 duration-500 animate-in fade-in-0 slide-in-from-bottom-2">
+        <p className="mt-2 text-sm text-muted-foreground duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
           {t("tenant.setupEmailSent") || "An account setup email has been sent to the admin."}
         </p>
       </div>
 
-      <div className="space-y-4 delay-300 duration-500 animate-in fade-in-0 slide-in-from-bottom-4">
+      <div className="space-y-4 duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
         {/* Admin details card */}
         <div className="space-y-3 rounded-xl border border-border/60 bg-card p-5 shadow-sm">
           <div className="flex items-center gap-2.5 text-sm">

@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { ArrowLeft, Save, Settings, Palette, Braces, Eye } from "lucide-react";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { ErrorMessage } from "@core/ui/error-message";
 import dynamic from "next/dynamic";
 
 // Lazy-load heavy components (RichTextEditor ~150KB+ TipTap, sidebar panels)
@@ -46,23 +47,42 @@ const TemplateLivePreview = dynamic(
 export function TemplateFormView({ templateId: _templateId }: { templateId?: string } = {}) {
   const vm = useTemplateFormViewModel();
 
-  if (vm.isFetching) {
+  // Edit mode has three real states: the initial fetch, a settled failure
+  // (bad id, deleted template, network error), and a settled success. A
+  // failed fetch must show an error with a retry — never fall through to the
+  // form's default empty values, which would look like a legitimate blank
+  // edit and silently create a duplicate on submit instead of updating the
+  // template the admin thought they were editing.
+  if (vm.mode === "edit" && vm.isFetching) {
     return <LoadingSpinner />;
+  }
+
+  if (vm.mode === "edit" && vm.fetchError) {
+    return (
+      <ErrorMessage message={vm.t("common.error")} onRetry={() => vm.refetch()} fullHeight />
+    );
   }
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={vm.handleCancel}>
-          <ArrowLeft className="h-5 w-5" />
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={vm.handleCancel}
+          aria-label={vm.t("common.back")}
+        >
+          <ArrowLeft className="h-5 w-5" aria-hidden="true" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">{vm.title}</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-xl font-bold leading-tight tracking-tight text-balance text-nx-ink">
+            {vm.title}
+          </h1>
+          <p className="text-nx-ink-2">
             {vm.mode === "create"
-              ? vm.t("messaging.templates.createDescription") || "Create a new message template"
-              : vm.t("messaging.templates.editDescription") || "Edit template details"}
+              ? vm.t("messaging.templates.createDescription")
+              : vm.t("messaging.templates.editDescription")}
           </p>
         </div>
       </div>
@@ -74,19 +94,14 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
           {/* Subject */}
           <Card>
             <CardHeader>
-              <CardTitle>{vm.t("messaging.templates.subject") || "Subject"}</CardTitle>
-              <CardDescription>
-                {vm.t("messaging.templates.subjectDescription") ||
-                  "Email subject line (optional for SMS/Push)"}
-              </CardDescription>
+              <CardTitle>{vm.t("messaging.templates.subject")}</CardTitle>
+              <CardDescription>{vm.t("messaging.templates.subjectDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <Input
                 value={vm.form.subject}
                 onChange={(e) => vm.updateField("subject", e.target.value)}
-                placeholder={
-                  vm.t("messaging.templates.subjectPlaceholder") || "e.g., Welcome to {{company}}"
-                }
+                placeholder={vm.t("messaging.templates.subjectPlaceholder")}
               />
             </CardContent>
           </Card>
@@ -94,17 +109,14 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
           {/* Body — Rich Text Editor */}
           <Card>
             <CardHeader>
-              <CardTitle>{vm.t("messaging.templates.body") || "Body"}</CardTitle>
-              <CardDescription>
-                {vm.t("messaging.templates.bodyDescription") ||
-                  "Template body content with placeholders"}
-              </CardDescription>
+              <CardTitle>{vm.t("messaging.templates.body")}</CardTitle>
+              <CardDescription>{vm.t("messaging.templates.bodyDescription")}</CardDescription>
             </CardHeader>
             <CardContent>
               <RichTextEditor
                 value={vm.form.body}
                 onChange={(html) => vm.updateField("body", html)}
-                placeholder={vm.t("messaging.templates.bodyPlaceholder") || "Template body..."}
+                placeholder={vm.t("messaging.templates.bodyPlaceholder")}
                 minHeight="400px"
                 variables={DEFAULT_VARIABLES}
                 showSourceToggle
@@ -115,16 +127,13 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
           {/* Description */}
           <Card>
             <CardHeader>
-              <CardTitle>{vm.t("messaging.templates.descriptionLabel") || "Description"}</CardTitle>
+              <CardTitle>{vm.t("messaging.templates.descriptionLabel")}</CardTitle>
             </CardHeader>
             <CardContent>
               <Textarea
                 value={vm.form.description}
                 onChange={(e) => vm.updateField("description", e.target.value)}
-                placeholder={
-                  vm.t("messaging.templates.descriptionPlaceholder") ||
-                  "Brief description of when this template is used..."
-                }
+                placeholder={vm.t("messaging.templates.descriptionPlaceholder")}
                 rows={3}
               />
             </CardContent>
@@ -139,27 +148,27 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
               <CardHeader className="pb-3">
                 <TabsList className="h-auto w-full flex-wrap gap-1 p-1">
                   <TabsTrigger value="settings" className="min-w-0 flex-1 gap-1 px-2 text-xs">
-                    <Settings className="h-3.5 w-3.5 shrink-0" />
+                    <Settings className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     <span className="hidden truncate sm:inline">
-                      {vm.t("messaging.templates.settings") || "Settings"}
+                      {vm.t("messaging.templates.settings")}
                     </span>
                   </TabsTrigger>
                   <TabsTrigger value="placeholders" className="min-w-0 flex-1 gap-1 px-2 text-xs">
-                    <Braces className="h-3.5 w-3.5 shrink-0" />
+                    <Braces className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     <span className="hidden truncate sm:inline">
-                      {vm.t("messaging.templates.placeholders") || "Variables"}
+                      {vm.t("messaging.templates.placeholders")}
                     </span>
                   </TabsTrigger>
                   <TabsTrigger value="design" className="min-w-0 flex-1 gap-1 px-2 text-xs">
-                    <Palette className="h-3.5 w-3.5 shrink-0" />
+                    <Palette className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     <span className="hidden truncate sm:inline">
-                      {vm.t("messaging.templates.design.title") || "Design"}
+                      {vm.t("messaging.templates.design.title")}
                     </span>
                   </TabsTrigger>
                   <TabsTrigger value="preview" className="min-w-0 flex-1 gap-1 px-2 text-xs">
-                    <Eye className="h-3.5 w-3.5 shrink-0" />
+                    <Eye className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     <span className="hidden truncate sm:inline">
-                      {vm.t("common.preview") || "Preview"}
+                      {vm.t("common.preview")}
                     </span>
                   </TabsTrigger>
                 </TabsList>
@@ -171,11 +180,11 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                   {/* Template Key (create only) */}
                   {vm.mode === "create" && (
                     <div className="space-y-2">
-                      <Label>{vm.t("messaging.templates.key") || "Template Key"}</Label>
+                      <Label>{vm.t("messaging.templates.key")}</Label>
                       <Input
                         value={vm.form.key}
                         onChange={(e) => vm.updateField("key", e.target.value)}
-                        placeholder="e.g., welcome-email"
+                        placeholder={vm.t("messaging.templates.keyPlaceholder")}
                       />
                     </div>
                   )}
@@ -183,7 +192,7 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                   {/* Channel (create only) */}
                   {vm.mode === "create" && (
                     <div className="space-y-2">
-                      <Label>{vm.t("messaging.templates.channel") || "Channel"}</Label>
+                      <Label>{vm.t("messaging.templates.channel")}</Label>
                       <Select
                         value={vm.form.channel}
                         onValueChange={(v) => vm.updateField("channel", v as any)}
@@ -205,7 +214,7 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                   {/* Language (create only) */}
                   {vm.mode === "create" && (
                     <div className="space-y-2">
-                      <Label>{vm.t("messaging.templates.language") || "Language"}</Label>
+                      <Label>{vm.t("messaging.templates.language")}</Label>
                       <Select
                         value={vm.form.language}
                         onValueChange={(v) => vm.updateField("language", v)}
@@ -226,7 +235,7 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
 
                   {/* Active toggle */}
                   <div className="flex items-center justify-between">
-                    <Label>{vm.t("common.active") || "Active"}</Label>
+                    <Label>{vm.t("common.active")}</Label>
                     <Switch
                       checked={vm.form.isActive}
                       onCheckedChange={(v) => vm.updateField("isActive", v)}
@@ -235,17 +244,13 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
 
                   {/* Category */}
                   <div className="space-y-2">
-                    <Label>{vm.t("messaging.templates.category") || "Category"}</Label>
+                    <Label>{vm.t("messaging.templates.category")}</Label>
                     <Select
                       value={vm.form.category}
                       onValueChange={(v) => vm.updateField("category", v as any)}
                     >
                       <SelectTrigger>
-                        <SelectValue
-                          placeholder={
-                            vm.t("messaging.templates.selectCategory") || "Select category..."
-                          }
-                        />
+                        <SelectValue placeholder={vm.t("messaging.templates.selectCategory")} />
                       </SelectTrigger>
                       <SelectContent>
                         {vm.categoryOptions.map((opt) => (
@@ -293,13 +298,13 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
           <Card>
             <CardContent className="space-y-3 pt-6">
               <Button
-                className="gradient-primary w-full"
+                className="w-full"
                 onClick={vm.handleSubmit}
                 disabled={!vm.form.body}
                 loading={vm.isSaving}
               >
-                {!vm.isSaving && <Save className="mr-2 h-4 w-4" />}
-                {vm.isSaving ? vm.t("common.saving") || "Saving..." : vm.t("common.save") || "Save"}
+                {!vm.isSaving && <Save className="me-2 h-4 w-4" aria-hidden="true" />}
+                {vm.isSaving ? vm.t("common.saving") : vm.t("common.save")}
               </Button>
               <Button
                 variant="outline"
@@ -307,7 +312,7 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                 onClick={vm.handleCancel}
                 disabled={vm.isSaving}
               >
-                {vm.t("common.cancel") || "Cancel"}
+                {vm.t("common.cancel")}
               </Button>
             </CardContent>
           </Card>

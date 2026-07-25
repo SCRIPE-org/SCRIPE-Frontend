@@ -40,7 +40,7 @@ export function SubTenantsTab({ parentId, parentName, parentCode }: SubTenantsTa
     return (
       <div className="space-y-3">
         {Array.from({ length: 2 }).map((_, i) => (
-          <Skeleton key={i} className="h-16 w-full rounded-xl" />
+          <Skeleton key={i} className="h-16 w-full rounded-nx-lg" />
         ))}
       </div>
     );
@@ -51,8 +51,8 @@ export function SubTenantsTab({ parentId, parentName, parentCode }: SubTenantsTa
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">{t("tenant.manageSubTenants")}</h3>
-          <p className="text-sm text-muted-foreground">{t("tenant.subTenantsDescription")}</p>
+          <h3 className="text-lg font-semibold text-nx-ink">{t("tenant.manageSubTenants")}</h3>
+          <p className="text-sm text-nx-ink-2">{t("tenant.subTenantsDescription")}</p>
         </div>
         {vm.canCreate && (
           <Button
@@ -61,7 +61,7 @@ export function SubTenantsTab({ parentId, parentName, parentCode }: SubTenantsTa
             onClick={() => vm.handleOpenCreate()}
             className="gap-2"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-4 w-4" aria-hidden="true" />
             {t("tenant.addChild")}
           </Button>
         )}

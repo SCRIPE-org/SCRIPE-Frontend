@@ -76,5 +76,11 @@ export const en = {
       load: "Failed to load signup content. Please refresh.",
       save: "Failed to save. Please try again.",
     },
+
+    validation: {
+      required: "{{field}} is required.",
+      invalidUrl: "{{field}} must be a valid URL.",
+      nonNegative: "{{field}} must be a non-negative number.",
+    },
   },
 };

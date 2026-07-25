@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Textarea } from "@core/ui/textarea";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@core/ui/form";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Globe } from "lucide-react";
 import type { WelcomeContent } from "../../domain/entities/SignupContent";
 import type { UpdateWelcomeParams } from "../../domain/interfaces/ISignupContentRepository";
-import { WelcomeContentFormSchema } from "../schemas/signup-content.schema";
+import { createWelcomeContentFormSchema } from "../schemas/signup-content.schema";
 
 interface WelcomeContentFormProps {
   welcome: WelcomeContent | null;
@@ -54,16 +54,13 @@ function toWelcomeForm(welcome: WelcomeContent | null): FormValues {
  */
 export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContentFormProps) {
   const { t } = useI18n();
+  const schema = useMemo(() => createWelcomeContentFormSchema(t), [t]);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormValues>({
-    resolver: zodResolver(WelcomeContentFormSchema),
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema),
     defaultValues: toWelcomeForm(welcome),
   });
+  const { reset } = form;
 
   // Sync state when welcome object shifts or is loaded
   useEffect(() => {
@@ -75,167 +72,171 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-      {/* Headline */}
-      <div>
-        <div className="mb-2 flex items-center gap-1.5">
-          <Globe className="h-3.5 w-3.5 text-muted-foreground" />
-          <span className="text-xs font-medium text-muted-foreground">
-            {t("signupContent.welcome.headlineEn")}
-          </span>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Input
-              placeholder={t("signupContent.welcome.placeholderEn")}
-              {...register("headlineEn")}
-              className="border-border bg-card text-foreground placeholder:text-muted-foreground"
-            />
-            {errors.headlineEn && (
-              <p className="mt-1 text-xs text-destructive">{errors.headlineEn.message}</p>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+        {/* Headline */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="headlineEn"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("signupContent.welcome.headlineEn")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("signupContent.welcome.placeholderEn")} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </div>
-          <div>
-            <Input
-              placeholder={t("signupContent.welcome.placeholderAr")}
-              dir="rtl"
-              {...register("headlineAr")}
-              className="border-border bg-card text-foreground placeholder:text-muted-foreground"
-            />
-            {errors.headlineAr && (
-              <p className="mt-1 text-xs text-destructive" dir="rtl">
-                {errors.headlineAr.message}
-              </p>
+          />
+          <FormField
+            control={form.control}
+            name="headlineAr"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("signupContent.welcome.headlineAr")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("signupContent.welcome.placeholderAr")} dir="rtl" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </div>
+          />
         </div>
-      </div>
 
-      {/* Subcopy */}
-      <div>
-        <div className="mb-2 flex items-center gap-1.5">
-          <Globe className="h-3.5 w-3.5 text-muted-foreground" />
-          <span className="text-xs font-medium text-muted-foreground">
-            {t("signupContent.welcome.subcopyEn")}
-          </span>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Textarea
-              placeholder={t("signupContent.welcome.placeholderEn")}
-              {...register("subcopyEn")}
-              className="min-h-[80px] border-border bg-card text-foreground placeholder:text-muted-foreground"
-            />
-            {errors.subcopyEn && (
-              <p className="mt-1 text-xs text-destructive">{errors.subcopyEn.message}</p>
+        {/* Subcopy */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="subcopyEn"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("signupContent.welcome.subcopyEn")}</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder={t("signupContent.welcome.placeholderEn")}
+                    className="min-h-20"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </div>
-          <div>
-            <Textarea
-              placeholder={t("signupContent.welcome.placeholderAr")}
-              dir="rtl"
-              {...register("subcopyAr")}
-              className="min-h-[80px] border-border bg-card text-foreground placeholder:text-muted-foreground"
-            />
-            {errors.subcopyAr && (
-              <p className="mt-1 text-xs text-destructive" dir="rtl">
-                {errors.subcopyAr.message}
-              </p>
+          />
+          <FormField
+            control={form.control}
+            name="subcopyAr"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("signupContent.welcome.subcopyAr")}</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder={t("signupContent.welcome.placeholderAr")}
+                    dir="rtl"
+                    className="min-h-20"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </div>
+          />
         </div>
-      </div>
 
-      {/* CTA Label */}
-      <div>
-        <div className="mb-2 flex items-center gap-1.5">
-          <Globe className="h-3.5 w-3.5 text-muted-foreground" />
-          <span className="text-xs font-medium text-muted-foreground">
-            {t("signupContent.welcome.ctaEn")}
-          </span>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Input
-              placeholder={t("signupContent.welcome.placeholderEn")}
-              {...register("ctaLabelEn")}
-              className="border-border bg-card text-foreground placeholder:text-muted-foreground"
-            />
-            {errors.ctaLabelEn && (
-              <p className="mt-1 text-xs text-destructive">{errors.ctaLabelEn.message}</p>
+        {/* CTA Label */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="ctaLabelEn"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("signupContent.welcome.ctaEn")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("signupContent.welcome.placeholderEn")} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </div>
-          <div>
-            <Input
-              placeholder={t("signupContent.welcome.placeholderAr")}
-              dir="rtl"
-              {...register("ctaLabelAr")}
-              className="border-border bg-card text-foreground placeholder:text-muted-foreground"
-            />
-            {errors.ctaLabelAr && (
-              <p className="mt-1 text-xs text-destructive" dir="rtl">
-                {errors.ctaLabelAr.message}
-              </p>
+          />
+          <FormField
+            control={form.control}
+            name="ctaLabelAr"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("signupContent.welcome.ctaAr")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("signupContent.welcome.placeholderAr")} dir="rtl" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </div>
+          />
         </div>
-      </div>
 
-      {/* Trusted By */}
-      <div>
-        <div className="mb-2 flex items-center gap-1.5">
-          <Globe className="h-3.5 w-3.5 text-muted-foreground" />
-          <span className="text-xs font-medium text-muted-foreground">
-            {t("signupContent.welcome.trustedByCount")}
-          </span>
+        {/* Trusted By */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <FormField
+            control={form.control}
+            name="trustedByCount"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("signupContent.welcome.trustedByCount")}</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder={t("signupContent.welcome.countPlaceholder")}
+                    name={field.name}
+                    ref={field.ref}
+                    value={field.value}
+                    onBlur={field.onBlur}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="trustedByLabelEn"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("signupContent.welcome.trustedByLabelEn")}</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder={t("signupContent.welcome.trustedByLabelEnPlaceholder")}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="trustedByLabelAr"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("signupContent.welcome.trustedByLabelAr")}</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder={t("signupContent.welcome.trustedByLabelArPlaceholder")}
+                    dir="rtl"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
-        <div className="grid grid-cols-3 gap-3">
-          <div>
-            <Input
-              type="number"
-              placeholder={t("signupContent.welcome.countPlaceholder")}
-              {...register("trustedByCount", { valueAsNumber: true })}
-              className="border-border bg-card text-foreground placeholder:text-muted-foreground"
-            />
-            {errors.trustedByCount && (
-              <p className="mt-1 text-xs text-destructive">{errors.trustedByCount.message}</p>
-            )}
-          </div>
-          <div>
-            <Input
-              placeholder={t("signupContent.welcome.trustedByLabelEnPlaceholder")}
-              {...register("trustedByLabelEn")}
-              className="border-border bg-card text-foreground placeholder:text-muted-foreground"
-            />
-            {errors.trustedByLabelEn && (
-              <p className="mt-1 text-xs text-destructive">{errors.trustedByLabelEn.message}</p>
-            )}
-          </div>
-          <div>
-            <Input
-              placeholder={t("signupContent.welcome.trustedByLabelArPlaceholder")}
-              dir="rtl"
-              {...register("trustedByLabelAr")}
-              className="border-border bg-card text-foreground placeholder:text-muted-foreground"
-            />
-            {errors.trustedByLabelAr && (
-              <p className="mt-1 text-xs text-destructive" dir="rtl">
-                {errors.trustedByLabelAr.message}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
 
-      <div className="flex justify-end pt-1">
-        <Button
-          type="submit"
-          disabled={isSaving}
-          className="bg-info text-info-foreground hover:bg-info/90"
-        >
-          {isSaving ? t("signupContent.welcome.saving") : t("signupContent.welcome.save")}
-        </Button>
-      </div>
-    </form>
+        <div className="flex justify-end pt-1">
+          <Button type="submit" loading={isSaving}>
+            {isSaving ? t("signupContent.welcome.saving") : t("signupContent.welcome.save")}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

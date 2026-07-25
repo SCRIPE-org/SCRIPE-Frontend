@@ -13,11 +13,21 @@
 
 import { resolveFileUrl } from "@/core/common/utils";
 import { sanitizeCss, sanitizeRichHtml } from "@core/common/sanitize";
+import { useI18n } from "@core/providers/i18n-provider";
 
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import { Eye, EyeOff, Lock, User, Quote as QuoteIcon, Check } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Lock,
+  User,
+  Quote as QuoteIcon,
+  Check,
+  ArrowLeft,
+  ArrowRight,
+} from "lucide-react";
 import { useState } from "react";
 
 // ── Logo ────────────────────────────────────────────────
@@ -31,13 +41,14 @@ export function BuilderLogo({
   shape?: string;
   [k: string]: unknown;
 }) {
+  const { t } = useI18n();
   const borderRadius =
     shape === "circle" ? "50%" : shape === "square" ? "0" : shape === "rounded" ? "8px" : undefined;
   return (
     <div className="flex w-full items-center justify-center">
       <img
         src={resolveFileUrl(src) || "/app-logo.png"}
-        alt="Logo"
+        alt={t("studio.builder.preview.logoAlt")}
         className="object-contain"
         style={{ maxWidth: `${maxWidth}px`, maxHeight: "80px", borderRadius }}
         onError={(e) => {
@@ -61,6 +72,7 @@ export function BuilderLoginForm({
   showRegister?: boolean;
   [k: string]: unknown;
 }) {
+  const { t } = useI18n();
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -73,12 +85,15 @@ export function BuilderLoginForm({
         {/* Username */}
         <div className="space-y-2">
           <Label className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">
-            Username
+            {t("studio.builder.preview.usernameLabel")}
           </Label>
           <div className="relative">
-            <User className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" />
+            <User
+              className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+              aria-hidden="true"
+            />
             <Input
-              placeholder="Enter your username"
+              placeholder={t("studio.builder.preview.usernamePlaceholder")}
               className="ps-9"
               readOnly
               style={{
@@ -93,10 +108,13 @@ export function BuilderLoginForm({
         {/* Password */}
         <div className="space-y-2">
           <Label className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">
-            Password
+            {t("studio.builder.preview.passwordLabel")}
           </Label>
           <div className="relative">
-            <Lock className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" />
+            <Lock
+              className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+              aria-hidden="true"
+            />
             <Input
               type={showPassword ? "text" : "password"}
               placeholder="********"
@@ -112,8 +130,13 @@ export function BuilderLoginForm({
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute end-3 top-1/2 -translate-y-1/2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+              aria-label={t(showPassword ? "auth.hidePassword" : "auth.showPassword")}
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" aria-hidden="true" />
+              ) : (
+                <Eye className="h-4 w-4" aria-hidden="true" />
+              )}
             </button>
           </div>
         </div>
@@ -123,13 +146,13 @@ export function BuilderLoginForm({
           <div className="flex items-center justify-between text-xs">
             {showRemember && (
               <label className="flex cursor-pointer items-center gap-2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
-                <input type="checkbox" className="h-3.5 w-3.5 rounded" readOnly />
-                Remember me
+                <input type="checkbox" className="h-3.5 w-3.5 rounded-nx-sm" readOnly />
+                {t("studio.builder.preview.rememberMe")}
               </label>
             )}
             {showForgot && (
               <span className="cursor-pointer text-[var(--login-primary,hsl(var(--primary)))] hover:underline">
-                Forgot password?
+                {t("studio.builder.preview.forgotPasswordLink")}
               </span>
             )}
           </div>
@@ -145,15 +168,15 @@ export function BuilderLoginForm({
             borderRadius: "var(--login-radius-button, 8px)",
           }}
         >
-          Sign In
+          {t("studio.builder.preview.signIn")}
         </Button>
 
         {/* Register link */}
         {showRegister && (
           <p className="text-center text-xs text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
-            Don&apos;t have an account?{" "}
+            {t("studio.builder.preview.noAccount")}{" "}
             <span className="cursor-pointer text-[var(--login-primary,hsl(var(--primary)))] hover:underline">
-              Register
+              {t("studio.builder.preview.register")}
             </span>
           </p>
         )}
@@ -168,7 +191,7 @@ export function BuilderLoginForm({
             </div>
             <div className="relative flex justify-center text-xs">
               <span className="bg-[var(--login-surface,hsl(var(--background)))] px-2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
-                or continue with
+                {t("studio.builder.preview.orContinueWith")}
               </span>
             </div>
           </div>
@@ -179,7 +202,7 @@ export function BuilderLoginForm({
               className="h-10 text-xs"
               style={{ borderRadius: "var(--login-radius-button, 8px)" }}
             >
-              Google
+              {t("studio.builder.preview.providerGoogle")}
             </Button>
             <Button
               variant="outline"
@@ -187,7 +210,7 @@ export function BuilderLoginForm({
               className="h-10 text-xs"
               style={{ borderRadius: "var(--login-radius-button, 8px)" }}
             >
-              Microsoft
+              {t("studio.builder.preview.providerMicrosoft")}
             </Button>
           </div>
         </div>
@@ -198,7 +221,7 @@ export function BuilderLoginForm({
 
 // ── Heading ─────────────────────────────────────────────
 export function BuilderHeading({
-  text = "Welcome Back",
+  text,
   fontSize = 32,
   fontWeight = 700,
   color = "inherit",
@@ -209,6 +232,7 @@ export function BuilderHeading({
   color?: string;
   [k: string]: unknown;
 }) {
+  const { t } = useI18n();
   return (
     <h1
       className="tracking-tight"
@@ -219,14 +243,14 @@ export function BuilderHeading({
         fontFamily: "var(--login-font-heading, inherit)",
       }}
     >
-      {text || "Welcome Back"}
+      {text || t("studio.builder.preview.headingDefault")}
     </h1>
   );
 }
 
 // ── Subtitle ────────────────────────────────────────────
 export function BuilderSubtitle({
-  text = "Sign in to continue",
+  text,
   fontSize = 16,
   color = "inherit",
 }: {
@@ -235,6 +259,7 @@ export function BuilderSubtitle({
   color?: string;
   [k: string]: unknown;
 }) {
+  const { t } = useI18n();
   return (
     <p
       style={{
@@ -243,7 +268,7 @@ export function BuilderSubtitle({
           color === "inherit" ? "var(--login-text-muted, hsl(var(--muted-foreground)))" : color,
       }}
     >
-      {text || "Sign in to continue"}
+      {text || t("studio.builder.preview.subtitleDefault")}
     </p>
   );
 }
@@ -257,11 +282,12 @@ export function BuilderSocialLogin({
   layout?: string;
   [k: string]: unknown;
 }) {
+  const { t } = useI18n();
   const providerLabels: Record<string, string> = {
-    google: "Google",
-    microsoft: "Microsoft",
-    github: "GitHub",
-    apple: "Apple",
+    google: t("studio.builder.preview.providerGoogle"),
+    microsoft: t("studio.builder.preview.providerMicrosoft"),
+    github: t("studio.builder.preview.providerGithub"),
+    apple: t("studio.builder.preview.providerApple"),
   };
 
   return (
@@ -294,13 +320,23 @@ export function BuilderFeatureList({
   variant?: string;
   [k: string]: unknown;
 }) {
+  const { t } = useI18n();
   const displayItems =
     Array.isArray(items) && items.length > 0
       ? items.slice(0, maxItems)
       : [
-          { title: "Secure & Reliable", desc: "Enterprise-grade security" },
-          { title: "Easy to Use", desc: "Intuitive interface" },
-          { title: "Fast Performance", desc: "Lightning-fast responses" },
+          {
+            title: t("studio.builder.preview.featureSecureTitle"),
+            desc: t("studio.builder.preview.featureSecureDesc"),
+          },
+          {
+            title: t("studio.builder.preview.featureEasyTitle"),
+            desc: t("studio.builder.preview.featureEasyDesc"),
+          },
+          {
+            title: t("studio.builder.preview.featureFastTitle"),
+            desc: t("studio.builder.preview.featureFastDesc"),
+          },
         ];
 
   return (
@@ -308,7 +344,10 @@ export function BuilderFeatureList({
       {displayItems.map((item, i) => (
         <div key={i} className="flex items-start gap-3">
           <div className="bg-[var(--login-primary,hsl(var(--primary)))]/10 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-            <Check className="h-3.5 w-3.5 text-[var(--login-primary,hsl(var(--primary)))]" />
+            <Check
+              className="h-3.5 w-3.5 text-[var(--login-primary,hsl(var(--primary)))]"
+              aria-hidden="true"
+            />
           </div>
           <div>
             <p className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">
@@ -328,9 +367,9 @@ export function BuilderFeatureList({
 
 // ── Testimonial ─────────────────────────────────────────
 export function BuilderTestimonial({
-  quote = "This product has transformed how we work. Absolutely amazing experience.",
-  author = "Jane Smith",
-  role = "CEO, TechCorp",
+  quote,
+  author,
+  role,
 }: {
   quote?: string;
   author?: string;
@@ -338,24 +377,31 @@ export function BuilderTestimonial({
   avatar?: string;
   [k: string]: unknown;
 }) {
+  const { t } = useI18n();
+  const displayQuote = quote || t("studio.builder.preview.testimonialQuote");
+  const displayAuthor = author || t("studio.builder.preview.testimonialAuthor");
+  const displayRole = role || t("studio.builder.preview.testimonialRole");
   return (
-    <div className="border-[var(--login-border,hsl(var(--border)))]/50 bg-[var(--login-surface,hsl(var(--background)))]/50 w-full rounded-lg border p-4">
-      <QuoteIcon className="text-[var(--login-primary,hsl(var(--primary)))]/40 mb-2 h-5 w-5" />
+    <div className="border-[var(--login-border,hsl(var(--border)))]/50 bg-[var(--login-surface,hsl(var(--background)))]/50 w-full rounded-nx-lg border p-4">
+      <QuoteIcon
+        className="text-[var(--login-primary,hsl(var(--primary)))]/40 mb-2 h-5 w-5"
+        aria-hidden="true"
+      />
       <p className="text-sm italic leading-relaxed text-[var(--login-text,hsl(var(--foreground)))]">
-        &ldquo;{quote || "This product has transformed how we work."}&rdquo;
+        &ldquo;{displayQuote}&rdquo;
       </p>
       <div className="mt-3 flex items-center gap-2">
         <div className="bg-[var(--login-primary,hsl(var(--primary)))]/20 flex h-8 w-8 items-center justify-center rounded-full">
           <span className="text-xs font-bold text-[var(--login-primary,hsl(var(--primary)))]">
-            {(author || "JS")[0]}
+            {displayAuthor[0]}
           </span>
         </div>
         <div>
           <p className="text-xs font-medium text-[var(--login-text,hsl(var(--foreground)))]">
-            {author || "Jane Smith"}
+            {displayAuthor}
           </p>
           <p className="text-[10px] text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
-            {role || "CEO"}
+            {displayRole}
           </p>
         </div>
       </div>
@@ -378,16 +424,19 @@ export function BuilderImage({
   borderRadius?: number;
   [k: string]: unknown;
 }) {
+  const { t } = useI18n();
   if (!src) {
     return (
       <div
-        className="flex h-32 w-full items-center justify-center rounded-lg border border-dashed border-border bg-muted/40"
+        className="flex h-32 w-full items-center justify-center rounded-nx-md border border-dashed border-nx-line bg-nx-raised-2/40"
         style={{
           borderRadius: `${borderRadius}px`,
           maxWidth: typeof maxWidth === "number" ? `${maxWidth}px` : maxWidth,
         }}
       >
-        <span className="text-xs text-muted-foreground">Image Placeholder</span>
+        <span className="text-xs text-nx-ink-3">
+          {t("studio.builder.preview.imagePlaceholder")}
+        </span>
       </div>
     );
   }
@@ -407,7 +456,7 @@ export function BuilderImage({
 
 // ── CTA Button ──────────────────────────────────────────
 export function BuilderCtaButton({
-  label = "Get Started",
+  label,
   url = "",
   variant = "default",
   size = "md",
@@ -418,6 +467,7 @@ export function BuilderCtaButton({
   size?: string;
   [k: string]: unknown;
 }) {
+  const { t } = useI18n();
   const h = size === "sm" ? "36px" : size === "lg" ? "48px" : "40px";
   return (
     <Button
@@ -432,7 +482,7 @@ export function BuilderCtaButton({
       }}
       onClick={(e) => e.preventDefault()}
     >
-      {label || "Get Started"}
+      {label || t("studio.builder.preview.ctaGetStarted")}
     </Button>
   );
 }
@@ -471,13 +521,14 @@ export function BuilderFooter({
   links?: Array<{ label: string; url: string }>;
   [k: string]: unknown;
 }) {
+  const { t } = useI18n();
   const displayLinks =
     Array.isArray(links) && links.length > 0
       ? links
       : [
-          { label: "Privacy", url: "#" },
-          { label: "Terms", url: "#" },
-          { label: "Support", url: "#" },
+          { label: t("studio.builder.preview.footerLinkPrivacy"), url: "#" },
+          { label: t("studio.builder.preview.footerLinkTerms"), url: "#" },
+          { label: t("studio.builder.preview.footerLinkSupport"), url: "#" },
         ];
 
   return (
@@ -505,15 +556,16 @@ export function BuilderCopyright({
   poweredBy?: boolean;
   [k: string]: unknown;
 }) {
+  const { t } = useI18n();
   const displayYear = year === "auto" ? new Date().getFullYear() : year;
   return (
     <div className="w-full text-center">
       <p className="text-[11px] text-[var(--login-text-muted,hsl(var(--muted-foreground))/50)]">
-        {text || `© ${displayYear} Company Name`}
+        {text || t("studio.builder.preview.copyrightDefault", { year: displayYear })}
       </p>
       {poweredBy && (
         <p className="mt-1 text-[9px] text-[var(--login-text-muted,hsl(var(--muted-foreground))/30)]">
-          Powered by SCRIPE
+          {t("studio.builder.preview.poweredBy")}
         </p>
       )}
     </div>
@@ -554,12 +606,13 @@ export function BuilderCustomHtml({
   css?: string;
   [k: string]: unknown;
 }) {
+  const { t } = useI18n();
   if (!content && !css) {
     return (
-      <div className="w-full rounded-lg border border-dashed border-warning/30 bg-warning/5 p-4">
-        <p className="text-xs text-warning">Custom HTML Block</p>
-        <p className="mt-1 text-[10px] text-muted-foreground">
-          Edit HTML &amp; CSS in the properties panel using the code editor.
+      <div className="w-full rounded-nx-control border border-dashed border-warning/30 bg-warning/5 p-4">
+        <p className="text-xs text-warning">{t("studio.builder.preview.customHtmlTitle")}</p>
+        <p className="mt-1 text-[10px] text-nx-ink-3">
+          {t("studio.builder.preview.customHtmlHint")}
         </p>
       </div>
     );
@@ -592,10 +645,11 @@ export function BuilderVideoBg({
   muted?: boolean;
   [k: string]: unknown;
 }) {
+  const { t } = useI18n();
   if (!src) {
     return (
-      <div className="flex h-full min-h-[200px] w-full items-center justify-center rounded-lg border border-dashed border-primary/30 bg-gradient-to-br from-primary/10 to-info/10">
-        <p className="text-xs text-primary">Video Background — Set a URL to preview</p>
+      <div className="flex h-full min-h-[200px] w-full items-center justify-center rounded-nx-md border border-dashed border-primary/30 bg-gradient-to-br from-primary/10 to-info/10">
+        <p className="text-xs text-primary">{t("studio.builder.preview.videoBgPlaceholder")}</p>
       </div>
     );
   }
@@ -607,7 +661,7 @@ export function BuilderVideoBg({
       muted={muted}
       loop
       playsInline
-      className="h-full w-full rounded-lg object-cover"
+      className="h-full w-full rounded-nx-md object-cover"
     />
   );
 }
@@ -619,6 +673,8 @@ export function BuilderForgotForm({
   showBackToLogin?: boolean;
   [k: string]: unknown;
 }) {
+  const { t, direction } = useI18n();
+  const BackIcon = direction === "rtl" ? ArrowRight : ArrowLeft;
   return (
     <div className="w-full" style={{ maxWidth: "var(--login-form-width, 380px)" }}>
       <form
@@ -628,15 +684,15 @@ export function BuilderForgotForm({
       >
         <div className="mb-2 text-center">
           <h3 className="text-lg font-semibold text-[var(--login-text,hsl(var(--foreground)))]">
-            Forgot Password
+            {t("studio.builder.preview.forgotFormTitle")}
           </h3>
           <p className="mt-1 text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
-            Enter your email to receive a reset link
+            {t("studio.builder.preview.forgotFormDesc")}
           </p>
         </div>
         <div className="space-y-2">
           <Label className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">
-            Email Address
+            {t("studio.builder.preview.emailAddressLabel")}
           </Label>
           <Input
             type="email"
@@ -659,11 +715,12 @@ export function BuilderForgotForm({
             color: "var(--login-button-text, hsl(var(--primary-foreground)))",
           }}
         >
-          Send Reset Link
+          {t("studio.builder.preview.sendResetLink")}
         </Button>
         {showBackToLogin && (
-          <p className="text-center text-sm text-[var(--login-link,hsl(var(--primary)))]">
-            ← Back to Login
+          <p className="flex items-center justify-center gap-1.5 text-center text-sm text-[var(--login-link,hsl(var(--primary)))]">
+            <BackIcon className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("studio.builder.preview.backToLogin")}
           </p>
         )}
       </form>
@@ -678,6 +735,7 @@ export function BuilderResetForm({
   showPasswordStrength?: boolean;
   [k: string]: unknown;
 }) {
+  const { t } = useI18n();
   return (
     <div className="w-full" style={{ maxWidth: "var(--login-form-width, 380px)" }}>
       <form
@@ -687,15 +745,15 @@ export function BuilderResetForm({
       >
         <div className="mb-2 text-center">
           <h3 className="text-lg font-semibold text-[var(--login-text,hsl(var(--foreground)))]">
-            Reset Password
+            {t("studio.builder.preview.resetFormTitle")}
           </h3>
           <p className="mt-1 text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
-            Create a new secure password
+            {t("studio.builder.preview.resetFormDesc")}
           </p>
         </div>
         <div className="space-y-2">
           <Label className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">
-            New Password
+            {t("studio.builder.preview.newPasswordLabel")}
           </Label>
           <Input
             type="password"
@@ -713,17 +771,17 @@ export function BuilderResetForm({
           <div className="space-y-1">
             <div className="flex gap-1">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-1 flex-1 rounded-full bg-muted" />
+                <div key={i} className="h-1 flex-1 rounded-full bg-nx-raised-2" />
               ))}
             </div>
             <p className="text-[10px] text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
-              Password strength indicator
+              {t("studio.builder.preview.passwordStrengthIndicator")}
             </p>
           </div>
         )}
         <div className="space-y-2">
           <Label className="text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]">
-            Confirm Password
+            {t("studio.builder.preview.confirmPasswordLabel")}
           </Label>
           <Input
             type="password"
@@ -746,7 +804,7 @@ export function BuilderResetForm({
             color: "var(--login-button-text, hsl(var(--primary-foreground)))",
           }}
         >
-          Reset Password
+          {t("studio.builder.preview.resetPasswordButton")}
         </Button>
       </form>
     </div>

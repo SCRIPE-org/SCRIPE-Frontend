@@ -39,20 +39,22 @@ export function TwoFactorStatus({
   return (
     <div
       className={cn(
-        "rounded-xl border p-5 transition-colors",
-        isEnabled ? "border-success/20 bg-success/5" : "border-border/40 bg-muted/30"
+        "rounded-nx-lg border p-5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+        isEnabled ? "border-success/20 bg-success/5" : "border-nx-line bg-nx-raised"
       )}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           {isEnabled ? (
-            <ShieldCheck className="h-6 w-6 flex-shrink-0 text-success" />
+            <ShieldCheck className="h-6 w-6 flex-shrink-0 text-success" aria-hidden="true" />
           ) : (
-            <ShieldX className="h-6 w-6 flex-shrink-0 text-muted-foreground" />
+            <ShieldX className="h-6 w-6 flex-shrink-0 text-nx-ink-2" aria-hidden="true" />
           )}
           <div>
-            <h4 className="text-sm font-medium">{t("profile.security.twoFactor.title")}</h4>
-            <p className="mt-0.5 text-xs text-muted-foreground">
+            <h4 className="text-sm font-medium text-nx-ink">
+              {t("profile.security.twoFactor.title")}
+            </h4>
+            <p className="mt-0.5 text-xs text-nx-ink-2">
               {isEnabled
                 ? t("profile.security.twoFactor.enabled")
                 : t("profile.security.twoFactor.disabled")}
@@ -60,7 +62,7 @@ export function TwoFactorStatus({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant={isEnabled ? "default" : "secondary"} className="text-xs">
+          <Badge variant={isEnabled ? "success" : "secondary"}>
             {isEnabled ? t("common.enabled") : t("common.disabled")}
           </Badge>
           {isEnabled ? (
@@ -70,7 +72,7 @@ export function TwoFactorStatus({
               className="text-destructive hover:text-destructive"
               onClick={onDisable}
             >
-              <ShieldX className="me-1.5 h-3.5 w-3.5" />
+              <ShieldX className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
               {t("common.disable")}
             </Button>
           ) : (
@@ -78,7 +80,7 @@ export function TwoFactorStatus({
               {isEnabling ? (
                 <LoadingSpinner size="inline" showText={false} />
               ) : (
-                <ShieldPlus className="me-1.5 h-3.5 w-3.5" />
+                <ShieldPlus className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
               )}
               {t("common.enable")}
             </Button>
@@ -89,30 +91,24 @@ export function TwoFactorStatus({
       {isEnabled && backupCodesRemaining !== null && (
         <div className="mt-4 space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground">
-              {t("profile.security.twoFactor.backupCodes")}
-            </span>
-            <span className="font-mono font-medium">
+            <span className="text-nx-ink-2">{t("profile.security.twoFactor.backupCodes")}</span>
+            <span className="font-mono font-medium tabular-nums text-nx-ink">
               {remaining} / {totalCodes}
             </span>
           </div>
           {/* Progress bar */}
-          <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+          <div className="h-2 w-full overflow-hidden rounded-full bg-nx-raised-2">
             <div
               className={cn(
-                "h-full rounded-full transition-all duration-500",
-                percentage > 50
-                  ? "bg-success"
-                  : percentage > 20
-                    ? "bg-warning"
-                    : "bg-destructive"
+                "h-full rounded-full transition-[width] duration-nx-panel ease-nx-enter motion-reduce:transition-none",
+                percentage > 50 ? "bg-success" : percentage > 20 ? "bg-warning" : "bg-destructive"
               )}
               style={{ width: `${percentage}%` }}
             />
           </div>
 
           <Button variant="outline" size="sm" onClick={onRegenerateBackupCodes} className="mt-3">
-            <Shield className="me-2 h-3.5 w-3.5" />
+            <Shield className="me-2 h-3.5 w-3.5" aria-hidden="true" />
             {t("profile.security.twoFactor.regenerate")}
           </Button>
         </div>

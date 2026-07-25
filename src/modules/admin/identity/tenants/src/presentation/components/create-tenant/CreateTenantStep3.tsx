@@ -112,7 +112,7 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
 
       {/* Free Edition Banner — shown when selected edition has no billing cycles */}
       {vm.form.editionId && isFreeEdition && (
-        <div className="flex items-start gap-3 rounded-xl border border-success/30 bg-success/5 p-4 duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
+        <div className="flex items-start gap-3 rounded-xl border border-success/30 bg-success/5 p-4 duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-success/10">
             <ShieldCheck className="h-5 w-5 text-success" />
           </div>
@@ -130,7 +130,7 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
 
       {/* Subscription Type & Currency — only shown after edition is selected and has enabled subscription types */}
       {vm.form.editionId && subscriptionTypeOptions.length > 0 && (
-        <div className="grid gap-5 duration-300 animate-in fade-in-0 slide-in-from-bottom-2 sm:grid-cols-2">
+        <div className="grid gap-5 duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-safe:slide-in-from-bottom-2 sm:grid-cols-2">
           {/* Subscription Type */}
           <div className="space-y-2">
             <Label className="text-sm font-medium">
@@ -169,7 +169,7 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
 
       {/* Promo Code — only shown if there are subscription types enabled */}
       {vm.form.editionId && subscriptionTypeOptions.length > 0 && (
-        <div className="space-y-2 duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
+        <div className="space-y-2 duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
           <Label className="text-sm font-medium">{t("tenant.promoCode") || "Promo Code"}</Label>
           <Input
             value={vm.form.promoCode}
@@ -220,7 +220,7 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
 
       {/* Skip Payment Toggle — only shown for paid plans with enabled subscription types */}
       {vm.form.editionId && !isFreeEdition && subscriptionTypeOptions.length > 0 && (
-        <div className="duration-300 animate-in fade-in-0 slide-in-from-bottom-2">
+        <div className="duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
           <div className="flex items-center justify-between rounded-xl border border-warning/30 bg-warning/5 p-4">
             <div className="flex items-start gap-3">
               <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
@@ -241,10 +241,10 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
       )}
 
       {/* Advanced: Restrict Permissions */}
-      <div className="rounded-xl border border-border/50 duration-300 animate-in fade-in-0">
+      <div className="rounded-xl border border-border/50 duration-nx-standard ease-nx-enter animate-in fade-in-0">
         <button
           type="button"
-          className="flex w-full items-center justify-between p-4 text-left"
+          className="flex w-full items-center justify-between p-4 text-start"
           onClick={() => setIsPermissionsOpen((v) => !v)}
         >
           <div className="flex items-center gap-3">
@@ -397,7 +397,7 @@ function CreateTenantSummary({ vm, t }: { vm: CreateTenantVM; t: (key: string) =
     : vm.form.currency;
 
   return (
-    <div className="space-y-2 rounded-xl border border-border/50 bg-muted/30 p-4 duration-300 animate-in fade-in-0">
+    <div className="space-y-2 rounded-xl border border-border/50 bg-muted/30 p-4 duration-nx-standard ease-nx-enter animate-in fade-in-0">
       <h4 className="mb-3 text-sm font-semibold">{t("tenant.summary") || "Summary"}</h4>
       <SummaryRow
         label={t("tenant.edition") || "Edition"}

@@ -21,9 +21,18 @@ import {
   DialogFooter,
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@core/ui/input-otp";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { Copy, Download, ShieldCheck, QrCode, KeyRound, Check } from "lucide-react";
+import {
+  Copy,
+  Download,
+  ShieldCheck,
+  QrCode,
+  KeyRound,
+  Check,
+  AlertTriangle,
+} from "lucide-react";
 import type { Enable2FAResult } from "../../../src/domain/interfaces/IProfileRepository";
 
 type SetupStep = "qr-code" | "verify" | "backup-codes";
@@ -36,6 +45,13 @@ interface TwoFactorSetupDialogProps {
   isConfirming: boolean;
   confirmError: string | null;
 }
+
+// The one size override every slot in this dialog shares. Everything else —
+// border, radius, ground fill, tabular digits, the micro-speed transition and
+// the active slot's shadow-nx-focus lit edge — comes from InputOTPSlot's own
+// base styling; hand-tuning border/ring/colour per slot is exactly what
+// bypassed that shared focus token before.
+const OTP_SLOT = "h-14 w-12 text-xl font-semibold";
 
 /**
  * Presentation UI component rendering the two factor setup dialog.
@@ -122,7 +138,7 @@ export function TwoFactorSetupDialog({
           <>
             <DialogHeader>
               <div className="flex items-center gap-2">
-                <QrCode className="h-5 w-5 text-primary" />
+                <QrCode className="h-5 w-5 text-nx-accent" aria-hidden="true" />
                 <DialogTitle>{t("profile.security.twoFactor.setup.scanQR")}</DialogTitle>
               </div>
               <DialogDescription>
@@ -131,11 +147,14 @@ export function TwoFactorSetupDialog({
             </DialogHeader>
 
             <div className="flex flex-col items-center gap-4 py-4">
-              {/* QR Code Image */}
-              <div className="rounded-xl bg-white p-4">
+              {/* QR Code Image — a white backdrop is a scanner requirement, not
+                  a design choice: a QR reader needs a light quiet zone around
+                  the dark modules regardless of theme, so this is exempt from
+                  the token-only colour rule. */}
+              <div className="rounded-nx-md bg-white p-4">
                 <Image
                   src={setupData.qrCodeDataUri}
-                  alt="2FA QR Code"
+                  alt={t("profile.security.twoFactor.setup.qrAlt")}
                   width={192}
                   height={192}
                   className="h-48 w-48"
@@ -145,11 +164,11 @@ export function TwoFactorSetupDialog({
 
               {/* Manual Entry Key */}
               <div className="w-full">
-                <p className="mb-2 text-center text-xs text-muted-foreground">
+                <p className="mb-2 text-center text-xs text-nx-ink-2">
                   {t("profile.security.twoFactor.setup.manualEntry")}
                 </p>
-                <div className="flex items-center gap-2 rounded-lg bg-muted/50 p-3">
-                  <code className="flex-1 break-all text-center font-mono text-sm tracking-wider">
+                <div className="flex items-center gap-2 rounded-nx-control border border-nx-line bg-nx-raised p-3">
+                  <code className="flex-1 break-all text-center font-mono text-sm tracking-wider text-nx-ink">
                     {setupData.manualEntryKey}
                   </code>
                   <Button
@@ -157,11 +176,14 @@ export function TwoFactorSetupDialog({
                     size="icon"
                     className="h-8 w-8 flex-shrink-0"
                     onClick={handleCopyKey}
+                    aria-label={
+                      copiedKey ? t("common.copied") : t("profile.security.twoFactor.setup.copyKey")
+                    }
                   >
                     {copiedKey ? (
-                      <Check className="h-3.5 w-3.5 text-success" />
+                      <Check className="h-3.5 w-3.5 text-success" aria-hidden="true" />
                     ) : (
-                      <Copy className="h-3.5 w-3.5" />
+                      <Copy className="h-3.5 w-3.5" aria-hidden="true" />
                     )}
                   </Button>
                 </div>
@@ -182,7 +204,7 @@ export function TwoFactorSetupDialog({
           <>
             <DialogHeader>
               <div className="flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-primary" />
+                <ShieldCheck className="h-5 w-5 text-nx-accent" aria-hidden="true" />
                 <DialogTitle>{t("profile.security.twoFactor.setup.verifyTitle")}</DialogTitle>
               </div>
               <DialogDescription>
@@ -192,12 +214,10 @@ export function TwoFactorSetupDialog({
 
             <div className="flex flex-col items-center gap-4 py-6">
               {(error || confirmError) && (
-                <div className="flex w-full items-center gap-2.5 rounded-xl border border-destructive/20 bg-destructive/10 p-3.5 text-sm text-destructive">
-                  <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-destructive/20">
-                    <span className="text-xs font-bold">!</span>
-                  </div>
-                  <span>{error || confirmError}</span>
-                </div>
+                <Alert variant="destructive" className="w-full">
+                  <AlertTriangle aria-hidden="true" />
+                  <AlertDescription>{error || confirmError}</AlertDescription>
+                </Alert>
               )}
 
               <div dir="ltr">
@@ -210,33 +230,17 @@ export function TwoFactorSetupDialog({
                   className="gap-2"
                 >
                   <InputOTPGroup className="gap-1.5">
-                    <InputOTPSlot
-                      index={0}
-                      className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
-                    />
-                    <InputOTPSlot
-                      index={1}
-                      className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
-                    />
-                    <InputOTPSlot
-                      index={2}
-                      className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
-                    />
+                    <InputOTPSlot index={0} className={OTP_SLOT} />
+                    <InputOTPSlot index={1} className={OTP_SLOT} />
+                    <InputOTPSlot index={2} className={OTP_SLOT} />
                   </InputOTPGroup>
-                  <span className="mx-1 text-xl font-light text-muted-foreground/50">–</span>
+                  <span className="mx-1 select-none text-xl font-light text-nx-ink-3" aria-hidden="true">
+                    –
+                  </span>
                   <InputOTPGroup className="gap-1.5">
-                    <InputOTPSlot
-                      index={3}
-                      className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
-                    />
-                    <InputOTPSlot
-                      index={4}
-                      className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
-                    />
-                    <InputOTPSlot
-                      index={5}
-                      className="h-14 w-12 rounded-xl border-2 text-xl font-semibold transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20"
-                    />
+                    <InputOTPSlot index={3} className={OTP_SLOT} />
+                    <InputOTPSlot index={4} className={OTP_SLOT} />
+                    <InputOTPSlot index={5} className={OTP_SLOT} />
                   </InputOTPGroup>
                 </InputOTP>
               </div>
@@ -265,7 +269,7 @@ export function TwoFactorSetupDialog({
           <>
             <DialogHeader>
               <div className="flex items-center gap-2">
-                <KeyRound className="h-5 w-5 text-success" />
+                <KeyRound className="h-5 w-5 text-success" aria-hidden="true" />
                 <DialogTitle>{t("profile.security.twoFactor.setup.backupTitle")}</DialogTitle>
               </div>
               <DialogDescription>
@@ -274,25 +278,25 @@ export function TwoFactorSetupDialog({
             </DialogHeader>
 
             <div className="py-4">
-              <div className="grid grid-cols-2 gap-2 rounded-lg border border-border/40 bg-muted/30 p-4">
+              <div className="grid grid-cols-2 gap-2 rounded-nx-md border border-nx-line bg-nx-raised p-4">
                 {setupData.backupCodes.map((code, i) => (
                   <code
                     key={i}
-                    className="rounded border bg-background px-3 py-1.5 text-center font-mono text-sm"
+                    className="rounded-nx-control border border-nx-line bg-nx-ground px-3 py-1.5 text-center font-mono text-sm text-nx-ink tabular-nums"
                   >
                     {code}
                   </code>
                 ))}
               </div>
 
-              <p className="mt-3 text-center text-xs text-muted-foreground">
+              <p className="mt-3 text-center text-xs text-nx-ink-2">
                 {t("profile.security.twoFactor.setup.backupWarning")}
               </p>
             </div>
 
             <DialogFooter className="flex-col gap-2 sm:flex-row">
               <Button variant="outline" className="flex-1" onClick={handleDownloadCodes}>
-                <Download className="me-2 h-4 w-4" />
+                <Download className="me-2 h-4 w-4" aria-hidden="true" />
                 {t("profile.security.twoFactor.setup.download")}
               </Button>
               <Button className="flex-1" onClick={() => handleClose(false)}>

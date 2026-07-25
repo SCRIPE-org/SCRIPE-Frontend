@@ -12,23 +12,16 @@
  */
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useTenantPlanDetailViewModel } from "../viewmodels/useTenantPlanDetailViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import {
-  ArrowLeft,
-  Loader2,
-  Archive,
-  Zap,
-  DollarSign,
-  GitBranch,
-  Tag,
-  Settings,
-  Users,
-  Calendar,
-} from "lucide-react";
+import { ErrorMessage } from "@core/ui/error-message";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { StatCard } from "@core/ui/stat-card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
+import { ArrowLeft, Archive, Zap, DollarSign, GitBranch, Tag, Settings, Users, Calendar } from "lucide-react";
 import Link from "next/link";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
@@ -38,11 +31,12 @@ import { FeaturesTab } from "../components/FeaturesTab";
 import { PricingTab } from "../components/PricingTab";
 import { VersionsTab } from "../components/VersionsTab";
 import { PromotionsTab } from "../components/PromotionsTab";
-import { StatCard } from "@core/ui/stat-card";
 
 interface TenantPlanDetailViewProps {
   planId: string;
 }
+
+type TenantPlanDetailTabId = "general" | "features" | "pricing" | "versions" | "promotions";
 
 /**
  * Presentation UI component rendering the tenant plan detail view.
@@ -53,90 +47,85 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
   const { t, language } = useI18n();
   const vm = useTenantPlanDetailViewModel(planId);
 
-  const [activeTab, setActiveTab] = useState<
-    "general" | "features" | "pricing" | "versions" | "promotions"
-  >("general");
+  const [activeTab, setActiveTab] = useState<TenantPlanDetailTabId>("general");
 
   // ── Loading ──
   if (vm.isLoading) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
+    return <LoadingSpinner size="lg" fullHeight />;
   }
 
   if (vm.error || !vm.plan) {
     return (
-      <div className="p-8 text-center">
-        <p className="text-destructive">
-          {(vm.error as Error)?.message || t("entitlements.tenantPlans.noPlans")}
-        </p>
-        <Link href="/entitlements/tenant-plans">
-          <Button variant="ghost" className="mt-4">
-            <ArrowLeft className="me-2 h-4 w-4" />
-            {t("common.back") || "Back"}
-          </Button>
-        </Link>
-      </div>
+      <ErrorMessage
+        message={(vm.error as Error | null)?.message || t("entitlements.tenantPlans.noPlans")}
+        onRetry={vm.refetch}
+      />
     );
   }
 
   const plan = vm.plan;
   const isBusy = vm.isPublishing || vm.isArchiving;
+  const statusLabel = plan.isDraft
+    ? t("entitlements.tenantPlans.statusDraft")
+    : plan.isPublished
+      ? t("entitlements.tenantPlans.statusPublished")
+      : plan.isArchived
+        ? t("entitlements.tenantPlans.statusArchived")
+        : plan.status;
 
-  const tabs = [
+  const tabs: Array<{ id: TenantPlanDetailTabId; label: string; icon: ReactNode; count?: number }> = [
     {
-      id: "general" as const,
-      label: t("entitlements.tenantPlans.tabGeneral") || "General",
-      icon: <Settings className="h-3.5 w-3.5" />,
+      id: "general",
+      label: t("entitlements.tenantPlans.tabGeneral"),
+      icon: <Settings className="h-3.5 w-3.5" aria-hidden="true" />,
     },
     {
-      id: "features" as const,
-      label: t("entitlements.tenantPlans.tabFeatures") || "Features",
-      icon: <Zap className="h-3.5 w-3.5" />,
+      id: "features",
+      label: t("entitlements.tenantPlans.tabFeatures"),
+      icon: <Zap className="h-3.5 w-3.5" aria-hidden="true" />,
       count: vm.localFeatures.size,
     },
     {
-      id: "pricing" as const,
-      label: t("entitlements.tenantPlans.tabPricing") || "Pricing",
-      icon: <DollarSign className="h-3.5 w-3.5" />,
+      id: "pricing",
+      label: t("entitlements.tenantPlans.tabPricing"),
+      icon: <DollarSign className="h-3.5 w-3.5" aria-hidden="true" />,
       count: vm.overrides.length + (vm.usdMonthly > 0 || vm.usdYearly > 0 ? 1 : 0),
     },
     {
-      id: "versions" as const,
-      label: t("entitlements.tenantPlans.tabVersions") || "Versions",
-      icon: <GitBranch className="h-3.5 w-3.5" />,
+      id: "versions",
+      label: t("entitlements.tenantPlans.tabVersions"),
+      icon: <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />,
       count: plan.versions.length,
     },
     {
-      id: "promotions" as const,
-      label: t("entitlements.tenantPlans.tabPromotions") || "Promotions",
-      icon: <Tag className="h-3.5 w-3.5" />,
+      id: "promotions",
+      label: t("entitlements.tenantPlans.tabPromotions"),
+      icon: <Tag className="h-3.5 w-3.5" aria-hidden="true" />,
     },
   ];
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="flex flex-col gap-6 pb-12">
       {/* ─────── HEADER ─────── */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 items-start gap-3">
           <Link href="/entitlements/tenant-plans">
             <Button variant="ghost" size="icon" className="mt-1 shrink-0">
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+              <span className="sr-only">{t("common.back")}</span>
             </Button>
           </Link>
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight">{plan.name}</h1>
-              <Badge variant={plan.statusColor}>{plan.status}</Badge>
+              <h1 className="text-2xl font-bold tracking-tight text-nx-ink">{plan.name}</h1>
+              <Badge variant={plan.statusColor}>{statusLabel}</Badge>
               {plan.badgeText && (
                 <Badge variant="outline" className="text-xs">
                   {plan.badgeText}
                 </Badge>
               )}
             </div>
-            <p className="mt-0.5 text-sm text-muted-foreground">
+            <p className="mt-0.5 text-sm text-nx-ink-2">
               {plan.description || t("entitlements.tenantPlans.description")}
             </p>
           </div>
@@ -145,13 +134,9 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
         {/* Lifecycle Actions */}
         <div className="flex shrink-0 items-center gap-2">
           <Link href={`/entitlements/tenant-plans/${planId}/edit`}>
-            <Button
-              size="sm"
-              variant="outline"
-              className="border-primary/20 text-primary hover:bg-primary/10"
-            >
-              <Settings className="me-1 h-4 w-4" />
-              {t("entitlements.tenantPlans.editSettings") || "Edit Settings"}
+            <Button size="sm" variant="outline">
+              <Settings className="me-1 h-4 w-4" aria-hidden="true" />
+              {t("entitlements.tenantPlans.editSettings")}
             </Button>
           </Link>
           {(plan.isDraft || plan.isPublished) && (
@@ -163,8 +148,8 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
               loading={vm.isArchiving}
               className="border-warning/30 text-warning hover:bg-warning/10"
             >
-              {!vm.isArchiving && <Archive className="me-1 h-4 w-4" />}
-              {t("entitlements.tenantPlans.archive") || "Archive"}
+              {!vm.isArchiving && <Archive className="me-1 h-4 w-4" aria-hidden="true" />}
+              {t("entitlements.tenantPlans.archive")}
             </Button>
           )}
         </div>
@@ -174,105 +159,105 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <StatCard
           icon={DollarSign}
-          label={t("entitlements.tenantPlans.pricing") || "Starting Price"}
+          label={t("entitlements.tenantPlans.pricing")}
           value={plan.formattedStartingPrice}
         />
         <StatCard
           icon={Users}
-          label={t("entitlements.tenantPlans.subscribers") || "Subscribers"}
+          label={t("entitlements.tenantPlans.subscribers")}
           value={String(plan.activeSubscriberCount)}
         />
         <StatCard
           icon={Calendar}
-          label={t("entitlements.tenantPlans.billingCycles") || "Cycles"}
+          label={t("entitlements.tenantPlans.billingCycles")}
           value={plan.supportedCycles.join(", ") || "—"}
         />
         <StatCard
           icon={GitBranch}
-          label={t("entitlements.tenantPlans.tabVersions") || "Version"}
+          label={t("entitlements.tenantPlans.tabVersions")}
           value={`v${plan.currentVersion}`}
         />
       </div>
 
-      {/* ─────── TAB NAVIGATION ─────── */}
-      <div className="flex items-center gap-1 border-b">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`-mb-px flex items-center gap-1.5 border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
-              activeTab === tab.id
-                ? "border-primary text-primary"
-                : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"
-            }`}
-          >
-            {tab.icon}
-            {tab.label}
-            {tab.count !== undefined && tab.count > 0 && (
-              <Badge variant="secondary" className="ml-1 h-4 px-1.5 text-[10px]">
-                {tab.count}
-              </Badge>
-            )}
-          </button>
-        ))}
-      </div>
+      {/* ─────── TABS ─────── */}
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) => setActiveTab(value as TenantPlanDetailTabId)}
+      >
+        <TabsList>
+          {tabs.map((tab) => (
+            <TabsTrigger key={tab.id} value={tab.id} className="gap-1.5">
+              {tab.icon}
+              {tab.label}
+              {tab.count !== undefined && tab.count > 0 && (
+                <Badge variant="secondary" className="h-4 px-1.5 text-[10px]">
+                  {tab.count}
+                </Badge>
+              )}
+            </TabsTrigger>
+          ))}
+        </TabsList>
 
-      {/* ─────── TAB CONTENT ─────── */}
-      {activeTab === "general" && <GeneralTab plan={plan} t={t} />}
-      {activeTab === "features" && (
-        <FeaturesTab
-          plan={plan}
-          totalActiveFeatureCount={vm.featureCatalog.length}
-          groupedByCategory={vm.groupedByCategory}
-          availableGrouped={vm.availableGrouped}
-          localFeatures={vm.localFeatures}
-          setFeatureValue={vm.setFeatureValue}
-          addFeature={vm.addFeature}
-          removeFeature={vm.removeFeature}
-          hasChanges={vm.featuresHasChanges}
-          onSave={vm.saveFeatures}
-          isSaving={vm.isUpdating}
-          t={t}
-          language={language}
-        />
-      )}
-      {activeTab === "pricing" && (
-        <PricingTab
-          plan={plan}
-          usdMonthly={vm.usdMonthly}
-          usdYearly={vm.usdYearly}
-          usdLifetime={vm.usdLifetime}
-          setUsdMonthly={vm.setUsdMonthly}
-          setUsdYearly={vm.setUsdYearly}
-          setUsdLifetime={vm.setUsdLifetime}
-          suggestedYearly={vm.suggestedYearly}
-          yearlyDiscountPercent={vm.yearlyDiscountPercent}
-          setYearlyDiscountPercent={vm.setYearlyDiscountPercent}
-          applyDiscountToYearly={vm.applyDiscountToYearly}
-          overrides={vm.overrides}
-          addOverride={vm.addOverride}
-          removeOverride={vm.removeOverride}
-          updateOverride={vm.updateOverride}
-          availableCurrencies={vm.availableCurrencies}
-          preview={vm.preview}
-          yearlySavingsPercent={vm.yearlySavingsPercent}
-          hasChanges={vm.pricesHasChanges}
-          onSave={vm.savePrices}
-          onDiscard={vm.discardPricing}
-          isSaving={vm.isUpdating}
-          ratesLoading={vm.ratesLoading}
-          t={t}
-        />
-      )}
-      {activeTab === "versions" && (
-        <VersionsTab
-          plan={plan}
-          t={t}
-          onPublish={(changeNotes) => vm.publishPlan(changeNotes)}
-          isPublishing={vm.isPublishing}
-        />
-      )}
-      {activeTab === "promotions" && <PromotionsTab planId={planId} t={t} />}
+        <TabsContent value="general">
+          <GeneralTab plan={plan} t={t} />
+        </TabsContent>
+        <TabsContent value="features">
+          <FeaturesTab
+            plan={plan}
+            totalActiveFeatureCount={vm.featureCatalog.length}
+            groupedByCategory={vm.groupedByCategory}
+            availableGrouped={vm.availableGrouped}
+            localFeatures={vm.localFeatures}
+            setFeatureValue={vm.setFeatureValue}
+            addFeature={vm.addFeature}
+            removeFeature={vm.removeFeature}
+            hasChanges={vm.featuresHasChanges}
+            onSave={vm.saveFeatures}
+            isSaving={vm.isUpdating}
+            t={t}
+            language={language}
+          />
+        </TabsContent>
+        <TabsContent value="pricing">
+          <PricingTab
+            plan={plan}
+            usdMonthly={vm.usdMonthly}
+            usdYearly={vm.usdYearly}
+            usdLifetime={vm.usdLifetime}
+            setUsdMonthly={vm.setUsdMonthly}
+            setUsdYearly={vm.setUsdYearly}
+            setUsdLifetime={vm.setUsdLifetime}
+            suggestedYearly={vm.suggestedYearly}
+            yearlyDiscountPercent={vm.yearlyDiscountPercent}
+            setYearlyDiscountPercent={vm.setYearlyDiscountPercent}
+            applyDiscountToYearly={vm.applyDiscountToYearly}
+            overrides={vm.overrides}
+            addOverride={vm.addOverride}
+            removeOverride={vm.removeOverride}
+            updateOverride={vm.updateOverride}
+            availableCurrencies={vm.availableCurrencies}
+            preview={vm.preview}
+            yearlySavingsPercent={vm.yearlySavingsPercent}
+            hasChanges={vm.pricesHasChanges}
+            onSave={vm.savePrices}
+            onDiscard={vm.discardPricing}
+            isSaving={vm.isUpdating}
+            ratesLoading={vm.ratesLoading}
+            t={t}
+          />
+        </TabsContent>
+        <TabsContent value="versions">
+          <VersionsTab
+            plan={plan}
+            t={t}
+            onPublish={(changeNotes) => vm.publishPlan(changeNotes)}
+            isPublishing={vm.isPublishing}
+          />
+        </TabsContent>
+        <TabsContent value="promotions">
+          <PromotionsTab planId={planId} t={t} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

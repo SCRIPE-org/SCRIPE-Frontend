@@ -27,15 +27,13 @@ export function TenantAdminsTab({ tenantId, tenantName }: TenantAdminsTabProps) 
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">{t("tenant.manageAdmins")}</h3>
-          <p className="text-sm text-muted-foreground">
-            {t("tenant.adminsDescription") || `Manage administrators for ${tenantName}`}
-          </p>
+          <h3 className="text-lg font-semibold text-nx-ink">{t("tenant.manageAdmins")}</h3>
+          <p className="text-sm text-nx-ink-2">{t("tenant.adminsDescription", { tenantName })}</p>
         </div>
       </div>
 
       {/* Use the shared widget with explicit tenant context */}
-      <div className="overflow-hidden rounded-lg border">
+      <div className="overflow-hidden rounded-nx-lg border border-nx-line">
         <AdminsView tenantId={tenantId} />
       </div>
     </div>

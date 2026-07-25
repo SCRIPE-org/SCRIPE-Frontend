@@ -8,6 +8,7 @@ import { Badge } from "@core/ui/badge";
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import {
   Dialog,
   DialogContent,
@@ -126,7 +127,7 @@ export function ProfileSecurityTab({
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex gap-4">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-nx-control border border-nx-accent bg-nx-accent-wash text-nx-accent">
-                <Fingerprint className="h-5 w-5" />
+                <Fingerprint className="h-5 w-5" aria-hidden="true" />
               </div>
               <div>
                 <h3 className="flex flex-wrap items-center gap-2 text-base font-bold text-nx-ink">
@@ -150,7 +151,7 @@ export function ProfileSecurityTab({
               }}
               disabled={!passkeyVm.isWebAuthnSupported}
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4" aria-hidden="true" />
               {t("profile.security.passkeys.add")}
             </Button>
           </div>
@@ -159,7 +160,7 @@ export function ProfileSecurityTab({
           <div className="mt-5 space-y-2.5">
             {!passkeyVm.isWebAuthnSupported && (
               <div className="flex items-start gap-2.5 rounded-nx-control border border-warning/15 bg-warning/5 p-4 text-xs text-warning">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                 <div>
                   <strong>{t("profile.security.passkeys.biometricNotSupported")}</strong>{" "}
                   {t("profile.security.passkeys.notSupportedDesc")}
@@ -169,7 +170,7 @@ export function ProfileSecurityTab({
 
             {passkeyVm.isLoading && (
               <div className="flex justify-center py-4">
-                <span className="h-5 w-5 animate-spin rounded-full border-2 border-nx-line-hi border-t-nx-accent" />
+                <LoadingSpinner size="sm" showText={false} />
               </div>
             )}
 
@@ -207,16 +208,18 @@ export function ProfileSecurityTab({
                             size="sm"
                             className="h-8 w-8 p-0 text-success"
                             onClick={passkeyVm.confirmRename}
+                            aria-label={t("common.confirm")}
                           >
-                            <Check className="h-4 w-4" />
+                            <Check className="h-4 w-4" aria-hidden="true" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
                             className="h-8 w-8 p-0 text-destructive"
                             onClick={passkeyVm.cancelRename}
+                            aria-label={t("common.cancel")}
                           >
-                            <X className="h-4 w-4" />
+                            <X className="h-4 w-4" aria-hidden="true" />
                           </Button>
                         </div>
                       ) : (
@@ -239,18 +242,18 @@ export function ProfileSecurityTab({
                         size="sm"
                         className="h-8 w-8 p-0 text-nx-ink-2 hover:text-nx-ink"
                         onClick={() => passkeyVm.startRename(key)}
-                        title={t("auth.passkey.rename") || "Rename"}
+                        aria-label={t("auth.passkey.rename")}
                       >
-                        <Pencil className="h-3.5 w-3.5" />
+                        <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
                         className="h-8 w-8 p-0 text-destructive hover:bg-destructive/10 hover:text-destructive"
                         onClick={() => setDeletePasskeyConfirmId(key.id)}
-                        title={t("auth.passkey.delete") || "Delete"}
+                        aria-label={t("auth.passkey.delete")}
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
+                        <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                       </Button>
                     </div>
                   )}
@@ -265,7 +268,7 @@ export function ProfileSecurityTab({
         <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex gap-4">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-nx-control border border-nx-line bg-nx-raised text-nx-ink-2">
-              <KeyRound className="h-5 w-5" />
+              <KeyRound className="h-5 w-5" aria-hidden="true" />
             </div>
             <div>
               <h3 className="text-base font-bold text-nx-ink">
@@ -293,7 +296,7 @@ export function ProfileSecurityTab({
                     : "border-nx-line bg-nx-raised text-nx-ink-2"
                 )}
               >
-                <ShieldCheck className="h-5 w-5" />
+                <ShieldCheck className="h-5 w-5" aria-hidden="true" />
               </div>
               <div>
                 <h3 className="flex flex-wrap items-center gap-2 text-base font-bold text-nx-ink">
@@ -352,7 +355,7 @@ export function ProfileSecurityTab({
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex gap-4">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-nx-control border border-nx-accent bg-nx-accent-wash text-nx-accent">
-                <QrCode className="h-5 w-5" />
+                <QrCode className="h-5 w-5" aria-hidden="true" />
               </div>
               <div>
                 <h3 className="flex flex-wrap items-center gap-2 text-base font-bold text-nx-ink">
@@ -385,7 +388,7 @@ export function ProfileSecurityTab({
                 >
                   <div className="flex items-center gap-3">
                     <span className="h-2 w-2 shrink-0 rounded-full bg-success shadow-[0_0_6px_0] shadow-success/50" />
-                    <Smartphone className="h-4 w-4 text-nx-accent" />
+                    <Smartphone className="h-4 w-4 text-nx-accent" aria-hidden="true" />
                     <div>
                       <p className="text-xs font-bold text-nx-ink">
                         {device.deviceInfo} ({t("profile.security.qr.paired")})
@@ -416,7 +419,7 @@ export function ProfileSecurityTab({
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-nx-control border border-nx-line bg-nx-raised text-nx-ink-2">
-              <Link2 className="h-5 w-5" />
+              <Link2 className="h-5 w-5" aria-hidden="true" />
             </div>
             <div>
               <CardTitle>{t("profile.security.connectedAccounts.title")}</CardTitle>
@@ -441,10 +444,7 @@ export function ProfileSecurityTab({
               <Label htmlFor="passkey-name">{t("profile.security.passkeys.deviceName")}</Label>
               <Input
                 id="passkey-name"
-                placeholder={
-                  t("profile.security.passkeys.deviceNamePlaceholder") ||
-                  "e.g. MacBook Pro, YubiKey Key"
-                }
+                placeholder={t("profile.security.passkeys.deviceNamePlaceholder")}
                 value={newPasskeyName}
                 onChange={(e) => setNewPasskeyName(e.target.value)}
                 maxLength={64}
@@ -579,7 +579,7 @@ export function ProfileSecurityTab({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <QrCode className="h-5 w-5 text-nx-accent" />
+              <QrCode className="h-5 w-5 text-nx-accent" aria-hidden="true" />
               <DialogTitle>{t("profile.security.qr.modalTitle")}</DialogTitle>
             </div>
             <DialogDescription>{t("profile.security.qr.modalDesc")}</DialogDescription>

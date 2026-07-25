@@ -60,7 +60,9 @@ export function TenantUserGroupsTab({ tenantId, tenantName }: TenantUserGroupsTa
       ...col,
       render:
         col.key === "code"
-          ? (value: string) => <code className="rounded bg-muted px-2 py-0.5 text-xs">{value}</code>
+          ? (value: string) => (
+              <code className="rounded-nx-sm bg-nx-raised px-2 py-0.5 text-xs">{value}</code>
+            )
           : col.key === "name"
             ? (_: unknown, group: UserGroupListItem) => (
                 <span className="font-medium">
@@ -69,24 +71,21 @@ export function TenantUserGroupsTab({ tenantId, tenantName }: TenantUserGroupsTa
               )
             : col.key === "description"
               ? (_: unknown, group: UserGroupListItem) => (
-                  <span className="block max-w-[200px] truncate text-sm text-muted-foreground">
+                  <span className="block max-w-[200px] truncate text-sm text-nx-ink-2">
                     {language === "ar" ? group.descriptionAr : group.descriptionEn}
                   </span>
                 )
               : col.key === "memberCount"
                 ? (value: number) => (
                     <Badge variant="secondary" className="flex w-fit items-center gap-1">
-                      <Users className="h-3 w-3" />
+                      <Users className="h-3 w-3" aria-hidden="true" />
                       {value}
                     </Badge>
                   )
                 : col.key === "roleCount"
                   ? (value: number) => (
-                      <Badge
-                        variant="outline"
-                        className="flex w-fit items-center gap-1 border-primary/30 bg-primary/10 text-primary"
-                      >
-                        <Shield className="h-3 w-3" />
+                      <Badge variant="default" className="flex w-fit items-center gap-1">
+                        <Shield className="h-3 w-3" aria-hidden="true" />
                         {value}
                       </Badge>
                     )
@@ -109,54 +108,54 @@ export function TenantUserGroupsTab({ tenantId, tenantName }: TenantUserGroupsTa
     },
     getActions: (vmInstance, tFn, handleDeleteFn): CrudAction<UserGroupListItem>[] => [
       {
-        label: tFn("common.view") || "View Details",
+        label: tFn("common.view"),
         onClick: (item: UserGroupListItem) => vm.onViewGroup(item.id),
         variant: "ghost",
-        icon: <Eye className="h-4 w-4" />,
+        icon: <Eye className="h-4 w-4" aria-hidden="true" />,
       },
       {
-        label: tFn("common.edit") || "Edit",
+        label: tFn("common.edit"),
         onClick: (item: UserGroupListItem) => vmInstance.openEditModal(item),
         variant: "ghost",
-        icon: <Pencil className="h-4 w-4" />,
+        icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
       },
       {
-        label: tFn("admin.toggleStatus") || "Toggle Status",
+        label: tFn("admin.toggleStatus"),
         onClick: (item: UserGroupListItem) => vm.triggerStatus([item.id], !item.isActive),
         variant: "ghost",
-        icon: <UserCheck className="h-4 w-4" />,
+        icon: <UserCheck className="h-4 w-4" aria-hidden="true" />,
         requiredPermission: "user_groups.update",
       },
       {
-        label: tFn("common.delete") || "Delete",
+        label: tFn("common.delete"),
         onClick: (item: UserGroupListItem) => vm.triggerDelete([item.id]),
         variant: "ghost",
         className: "text-destructive hover:text-destructive/90",
-        icon: <Trash2 className="h-4 w-4" />,
+        icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
         requiredPermission: "user_groups.delete",
       },
     ],
     enableBulkActions: true,
     bulkActions: [
       {
-        label: t("common.activate") || "Activate",
-        icon: <ShieldCheck className="h-4 w-4" />,
+        label: t("common.activate"),
+        icon: <ShieldCheck className="h-4 w-4" aria-hidden="true" />,
         onClick: async (ids: string[]) => {
           vm.triggerStatus(ids, true);
         },
         variant: "outline" as const,
       },
       {
-        label: t("common.deactivate") || "Deactivate",
-        icon: <ShieldAlert className="h-4 w-4" />,
+        label: t("common.deactivate"),
+        icon: <ShieldAlert className="h-4 w-4" aria-hidden="true" />,
         onClick: async (ids: string[]) => {
           vm.triggerStatus(ids, false);
         },
         variant: "outline" as const,
       },
       {
-        label: t("common.delete") || "Delete",
-        icon: <Trash2 className="h-4 w-4" />,
+        label: t("common.delete"),
+        icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
         onClick: async (ids: string[]) => {
           vm.triggerDelete(ids);
         },
@@ -171,13 +170,13 @@ export function TenantUserGroupsTab({ tenantId, tenantName }: TenantUserGroupsTa
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold">{vm.title}</h3>
-            <p className="text-sm text-muted-foreground">{vm.subtitle}</p>
+            <h3 className="text-lg font-semibold text-nx-ink">{vm.title}</h3>
+            <p className="text-sm text-nx-ink-2">{vm.subtitle}</p>
           </div>
         </div>
 
         {/* User Groups Table */}
-        <div className="overflow-hidden rounded-lg border">
+        <div className="overflow-hidden rounded-nx-lg border border-nx-line">
           <GenericCrudView viewModel={vm.groupsVm} config={config} />
         </div>
       </div>
@@ -189,8 +188,8 @@ export function TenantUserGroupsTab({ tenantId, tenantName }: TenantUserGroupsTa
         isPending={vm.deleteDialog.isPending}
         itemName={
           vm.deleteDialog.ids.length > 1
-            ? `${vm.deleteDialog.ids.length} groups`
-            : "the selected group"
+            ? t("tenant.selectedGroupsCount", { count: vm.deleteDialog.ids.length })
+            : t("tenant.theSelectedGroup")
         }
       />
 
@@ -202,8 +201,8 @@ export function TenantUserGroupsTab({ tenantId, tenantName }: TenantUserGroupsTa
         isActive={vm.statusDialog.isActive}
         itemName={
           vm.statusDialog.ids.length > 1
-            ? `${vm.statusDialog.ids.length} groups`
-            : "the selected group"
+            ? t("tenant.selectedGroupsCount", { count: vm.statusDialog.ids.length })
+            : t("tenant.theSelectedGroup")
         }
       />
     </>

@@ -6,6 +6,7 @@
 
 import React from "react";
 import { CheckCircle2, XCircle } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 
 // ── Types ──
 /**
@@ -24,8 +25,8 @@ export type TFn = (key: string) => string;
 export function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-4 text-sm">
-      <span className="whitespace-nowrap text-muted-foreground">{label}</span>
-      <span className="truncate text-end font-medium">{value}</span>
+      <span className="whitespace-nowrap text-nx-ink-2">{label}</span>
+      <span className="truncate text-end font-medium text-nx-ink">{value}</span>
     </div>
   );
 }
@@ -44,17 +45,23 @@ export function FlagRow({
   label: string;
   value: boolean;
 }) {
+  const { t } = useI18n();
   return (
     <div className="flex items-center justify-between gap-4 text-sm">
-      <div className="flex items-center gap-2 text-muted-foreground">
-        <span className="h-4 w-4 [&>svg]:h-3.5 [&>svg]:w-3.5">{icon}</span>
+      <div className="flex items-center gap-2 text-nx-ink-2">
+        <span aria-hidden="true" className="h-4 w-4 [&>svg]:h-3.5 [&>svg]:w-3.5">
+          {icon}
+        </span>
         <span>{label}</span>
       </div>
-      {value ? (
-        <CheckCircle2 className="h-4 w-4 text-success" />
-      ) : (
-        <XCircle className="h-4 w-4 text-destructive/60" />
-      )}
+      <span className="inline-flex items-center">
+        <span className="sr-only">{value ? t("common.included") : t("common.notIncluded")}</span>
+        {value ? (
+          <CheckCircle2 aria-hidden="true" className="h-4 w-4 text-success" />
+        ) : (
+          <XCircle aria-hidden="true" className="h-4 w-4 text-nx-ink-3" />
+        )}
+      </span>
     </div>
   );
 }

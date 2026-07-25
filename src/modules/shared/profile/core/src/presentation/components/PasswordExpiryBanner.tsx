@@ -5,7 +5,8 @@
  */
 import { useI18n } from "@core/providers/i18n-provider";
 import { AlertTriangle } from "lucide-react";
-import { cn, formatDateUtc } from "@core/common/utils";
+import { formatDateUtc } from "@core/common/utils";
+import { Alert, AlertDescription } from "@core/ui/alert";
 
 interface PasswordExpiryBannerProps {
   isExpired: boolean;
@@ -27,17 +28,10 @@ export function PasswordExpiryBanner({
   if (!isExpired && (daysRemaining === null || daysRemaining > 30)) return null;
 
   return (
-    <div
-      className={cn(
-        "flex items-center gap-3 rounded-xl border p-4",
-        isExpired
-          ? "border-destructive/20 bg-destructive/10 text-destructive"
-          : "border-warning/20 bg-warning/10 text-warning"
-      )}
-    >
-      <AlertTriangle className="h-5 w-5 flex-shrink-0" />
-      <div className="flex-1 text-sm">
-        <p className="font-medium">
+    <Alert variant={isExpired ? "destructive" : "warning"}>
+      <AlertTriangle aria-hidden="true" />
+      <AlertDescription>
+        <p className="font-medium text-nx-ink">
           {isExpired
             ? t("profile.security.passwordExpired")
             : t("profile.security.passwordExpiringSoon", {
@@ -45,11 +39,11 @@ export function PasswordExpiryBanner({
               })}
         </p>
         {passwordLastChanged && (
-          <p className="mt-0.5 text-xs opacity-80">
+          <p className="mt-0.5 text-xs text-nx-ink-2">
             {t("profile.security.lastChanged")}: {formatDateUtc(passwordLastChanged)}
           </p>
         )}
-      </div>
-    </div>
+      </AlertDescription>
+    </Alert>
   );
 }

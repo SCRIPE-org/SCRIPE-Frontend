@@ -55,6 +55,7 @@ export const ar = {
       updatePassword: "تحديث كلمة المرور",
       passwordChanged: "تم تغيير كلمة المرور بنجاح!",
       passwordMismatch: "كلمات المرور غير متطابقة",
+      currentPasswordRequired: "يرجى إدخال كلمة المرور الحالية",
       passwordExpired: "انتهت صلاحية كلمة المرور. يرجى تغييرها فوراً.",
       passwordExpiringSoon: "تنتهي صلاحية كلمة المرور خلال {{days}} يوم.",
       lastChanged: "آخر تغيير",
@@ -86,6 +87,8 @@ export const ar = {
             "هذه رموز النسخ الاحتياطي للاستخدام مرة واحدة. يمكن استخدام كل رمز مرة واحدة فقط.",
           backupWarning: "⚠️ احفظ هذه الرموز في مكان آمن. لن يتم عرضها مرة أخرى.",
           download: "تنزيل الرموز",
+          qrAlt: "رمز QR للمصادقة الثنائية",
+          copyKey: "نسخ مفتاح الإدخال اليدوي",
         },
         disable: {
           title: "تعطيل المصادقة الثنائية",
@@ -103,6 +106,8 @@ export const ar = {
       backupCodes: {
         title: "رموز النسخ الاحتياطي",
         warning: "تجديد الرموز سيبطل جميع الرموز الحالية. تأكد من حفظ الرموز الجديدة.",
+        enterCodeDescription: "أدخل الرمز من تطبيق المصادقة لتأكيد هذا الإجراء.",
+        readyDescription: "رموز النسخ الاحتياطي الجديدة جاهزة للحفظ.",
         saveWarning: "احفظ هذه الرموز في مكان آمن. لن يتم عرضها مرة أخرى.",
         regenerate: "تجديد",
       },
@@ -169,6 +174,7 @@ export const ar = {
       connectedAccounts: {
         title: "الحسابات المرتبطة",
         desc: "سجّل الدخول بشكل أسرع من خلال ربط مزودي الهوية الخارجيين بهذا الحساب.",
+        unlink: "إلغاء ربط الحساب",
       },
     },
     sessions: {
@@ -217,6 +223,6 @@ export const ar = {
     },
   },
   common: {
-    copied: "[مفقود] Copied",
+    copied: "تم النسخ",
   },
 };
