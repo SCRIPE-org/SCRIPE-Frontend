@@ -12,7 +12,9 @@
 import { cn } from "@/core/common/utils";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
-import { Search, Loader2, ChevronLeft, ChevronRight, Save, Inbox } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { EmptyState } from "@core/ui/empty-state";
+import { Search, ChevronLeft, ChevronRight, Save, Inbox } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { BundleCard } from "./BundleCard";
 import { BundleDetailModal } from "./BundleDetailModal";
@@ -34,16 +36,19 @@ export function BundleGalleryTab() {
       {/* ── Filter Bar ── */}
       <div className="mb-6 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
         {/* Type filter pills */}
-        <div className="flex items-center gap-1 overflow-x-auto rounded-lg border border-border/50 bg-muted/50 p-1">
+        <div className="flex items-center gap-1 overflow-x-auto rounded-nx-md border border-nx-line bg-nx-raised p-1">
           {vm.bundleTypeOptions.map((opt) => (
             <button
+              type="button"
               key={opt.value}
               onClick={() => vm.setBundleType(opt.value)}
+              aria-pressed={vm.filters.bundleType === opt.value}
               className={cn(
-                "whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium transition-all",
+                "whitespace-nowrap rounded-nx-control px-3 py-1.5 text-xs font-medium transition-colors duration-nx-micro motion-reduce:transition-none",
+                "focus-visible:outline-none focus-visible:shadow-nx-focus",
                 vm.filters.bundleType === opt.value
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-nx-surface text-nx-ink shadow-nx-sm"
+                  : "text-nx-ink-2 hover:text-nx-ink"
               )}
             >
               {opt.label}
@@ -54,12 +59,15 @@ export function BundleGalleryTab() {
         {/* Search + Save Current */}
         <div className="flex w-full items-center gap-2 sm:w-auto">
           <div className="relative flex-1 sm:w-56">
-            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+            <Search
+              className="absolute start-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-nx-ink-3"
+              aria-hidden="true"
+            />
             <Input
               placeholder={t("common.search")}
               value={vm.filters.search}
               onChange={(e) => vm.setSearch(e.target.value)}
-              className="h-8 pl-8 text-xs"
+              className="h-8 ps-8 text-xs"
             />
           </div>
 
@@ -69,28 +77,23 @@ export function BundleGalleryTab() {
             className="h-8 gap-1.5 whitespace-nowrap text-xs"
             onClick={vm.openSaveDialog}
           >
-            <Save className="h-3.5 w-3.5" />
+            <Save className="h-3.5 w-3.5" aria-hidden="true" />
             {t(`${B}.saveCurrent`)}
           </Button>
         </div>
       </div>
 
       {/* ── Loading State ── */}
-      {vm.isLoading && (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      )}
+      {vm.isLoading && <LoadingSpinner size="lg" showText={false} />}
 
       {/* ── Empty State ── */}
       {!vm.isLoading && vm.bundles.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted/50">
-            <Inbox className="h-8 w-8 text-muted-foreground" />
-          </div>
-          <h3 className="mb-1 text-sm font-semibold text-foreground">{t(`${B}.empty`)}</h3>
-          <p className="max-w-xs text-xs text-muted-foreground">{t(`${B}.emptyHint`)}</p>
-        </div>
+        <EmptyState
+          icon={Inbox}
+          title={t(`${B}.empty`)}
+          description={t(`${B}.emptyHint`)}
+          size="lg"
+        />
       )}
 
       {/* ── Bundle Grid ── */}
@@ -117,12 +120,13 @@ export function BundleGalleryTab() {
                 size="sm"
                 disabled={!vm.pagination.hasPrev}
                 onClick={() => vm.setPage(vm.pagination!.page - 1)}
+                aria-label={t("table.previousPage")}
                 className="h-8 w-8 p-0"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
               </Button>
 
-              <span className="px-3 text-xs text-muted-foreground">
+              <span className="px-3 text-xs text-nx-ink-2">
                 {vm.pagination.page} / {vm.pagination.totalPages}
               </span>
 
@@ -131,9 +135,10 @@ export function BundleGalleryTab() {
                 size="sm"
                 disabled={!vm.pagination.hasNext}
                 onClick={() => vm.setPage(vm.pagination!.page + 1)}
+                aria-label={t("table.nextPage")}
                 className="h-8 w-8 p-0"
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
               </Button>
             </div>
           )}

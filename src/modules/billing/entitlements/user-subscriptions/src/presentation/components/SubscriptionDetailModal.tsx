@@ -10,7 +10,9 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { DetailRow } from "@core/ui/detail-row";
 import { useI18n } from "@core/providers/i18n-provider";
+import { cn } from "@core/common/utils";
 import type { UserSubscription } from "../../domain/entities/UserSubscription";
 import { formatUtc } from "@core/common/utils";
 import {
@@ -38,28 +40,6 @@ interface SubscriptionDetailModalProps {
   subscription: UserSubscription | null;
 }
 
-function InfoRow({
-  icon: Icon,
-  label,
-  value,
-  valueColor,
-}: {
-  icon?: React.ElementType;
-  label: string;
-  value: React.ReactNode;
-  valueColor?: string;
-}) {
-  return (
-    <div className="flex items-start justify-between gap-4 py-2.5">
-      <div className="flex min-w-[140px] items-center gap-2.5 text-muted-foreground">
-        {Icon && <Icon className="h-4 w-4 shrink-0" />}
-        <span className="text-sm font-medium">{label}</span>
-      </div>
-      <div className={`text-right text-sm font-medium ${valueColor ?? ""}`}>{value}</div>
-    </div>
-  );
-}
-
 function SectionCard({
   title,
   icon: Icon,
@@ -70,16 +50,14 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <Card className="border border-border/50 bg-muted/30">
+    <Card className="border border-nx-line bg-nx-raised">
       <CardHeader className="px-5 pb-3 pt-4">
         <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-          <Icon className="h-4 w-4 text-primary" />
+          <Icon className="h-4 w-4 text-nx-accent" aria-hidden="true" />
           {title}
         </CardTitle>
       </CardHeader>
-      <CardContent className="px-5 pb-4 pt-0">
-        <div className="divide-y divide-border/30">{children}</div>
-      </CardContent>
+      <CardContent className="divide-y divide-nx-line px-5 pb-4 pt-0">{children}</CardContent>
     </Card>
   );
 }
@@ -116,13 +94,13 @@ export function SubscriptionDetailModal({
   if (!sub) return null;
 
   const statusMap: Record<string, string> = {
-    Free: t("entitlements.userSubscriptions.statusFree") || "Free",
-    Trial: t("entitlements.userSubscriptions.statusTrialing") || "Trial",
-    Active: t("entitlements.userSubscriptions.statusActive") || "Active",
-    PastDue: t("entitlements.userSubscriptions.statusPastDue") || "Past Due",
-    Cancelled: t("entitlements.userSubscriptions.statusCancelled") || "Cancelled",
-    Expired: t("entitlements.userSubscriptions.statusExpired") || "Expired",
-    PendingPayment: t("entitlements.userSubscriptions.statusPendingPayment") || "Pending Payment",
+    Free: t("entitlements.userSubscriptions.statusFree"),
+    Trial: t("entitlements.userSubscriptions.statusTrialing"),
+    Active: t("entitlements.userSubscriptions.statusActive"),
+    PastDue: t("entitlements.userSubscriptions.statusPastDue"),
+    Cancelled: t("entitlements.userSubscriptions.statusCancelled"),
+    Expired: t("entitlements.userSubscriptions.statusExpired"),
+    PendingPayment: t("entitlements.userSubscriptions.statusPendingPayment"),
   };
 
   return (
@@ -130,37 +108,40 @@ export function SubscriptionDetailModal({
       <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
         <DialogHeader className="pb-2">
           <DialogTitle className="flex items-center gap-3 text-xl">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-              <Shield className="h-5 w-5 text-primary" />
+            <div
+              className="flex h-10 w-10 items-center justify-center rounded-nx-md bg-nx-accent-wash"
+              aria-hidden="true"
+            >
+              <Shield className="h-5 w-5 text-nx-accent" />
             </div>
             {t("entitlements.userSubscriptions.detailTitle")}
           </DialogTitle>
         </DialogHeader>
 
         {/* ── Status Banner ── */}
-        <div className="mb-2 flex items-center justify-between rounded-lg border border-border/50 bg-muted/20 px-4 py-3">
+        <div className="mb-2 flex items-center justify-between rounded-nx-md border border-nx-line bg-nx-raised px-4 py-3">
           <div className="flex items-center gap-3">
             <Badge variant={sub.statusColor} className="px-3 py-1 text-sm">
               {statusMap[sub.status] || sub.status}
             </Badge>
             {sub.isSelfService && (
               <Badge variant="outline" className="text-xs">
-                <Globe className="mr-1 h-3 w-3" />
+                <Globe className="me-1 h-3 w-3" aria-hidden="true" />
                 {t("entitlements.userSubscriptions.detailSelfService")}
               </Badge>
             )}
           </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 text-sm text-nx-ink-2">
             {sub.isAutoRenew && (
               <div className="flex items-center gap-1 text-success">
-                <RefreshCw className="h-3.5 w-3.5" />
+                <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>{t("entitlements.userSubscriptions.autoRenew")}</span>
               </div>
             )}
             {sub.isExpiringSoon && (
               <div className="flex items-center gap-1 text-warning">
-                <AlertTriangle className="h-3.5 w-3.5" />
-                <span>{sub.daysRemaining}d</span>
+                <AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />
+                <span className="tabular-nums">{sub.daysRemaining}d</span>
               </div>
             )}
           </div>
@@ -169,55 +150,55 @@ export function SubscriptionDetailModal({
         <div className="space-y-4">
           {/* ── User Info ── */}
           <SectionCard title={t("entitlements.userSubscriptions.detailUserInfo")} icon={User}>
-            <InfoRow
+            <DetailRow
               icon={User}
               label={t("entitlements.userSubscriptions.user")}
               value={sub.userName || t("entitlements.userSubscriptions.detailUnknownUser")}
             />
             {sub.userEmail && (
-              <InfoRow
+              <DetailRow
                 icon={Mail}
-                label="Email"
-                value={
-                  <span className="font-mono text-xs text-muted-foreground">{sub.userEmail}</span>
-                }
+                label={t("entitlements.userSubscriptions.email")}
+                value={sub.userEmail}
+                mono
+                valueClassName="text-xs text-nx-ink-2"
               />
             )}
           </SectionCard>
 
           {/* ── Plan & Pricing ── */}
           <SectionCard title={t("entitlements.userSubscriptions.detailPlanInfo")} icon={Zap}>
-            <InfoRow
+            <DetailRow
               icon={Tag}
               label={t("entitlements.userSubscriptions.plan")}
-              value={<span className="font-semibold text-foreground">{sub.planName}</span>}
+              value={sub.planName}
             />
             {sub.billingCycle && (
-              <InfoRow
+              <DetailRow
                 icon={RefreshCw}
                 label={t("entitlements.userSubscriptions.billingCycle")}
                 value={sub.billingCycle}
               />
             )}
             {sub.price > 0 && (
-              <InfoRow
+              <DetailRow
                 icon={CreditCard}
                 label={t("entitlements.mySubscription.price")}
                 value={
-                  <span className="font-semibold text-foreground">
+                  <>
                     {sub.formattedPrice}
                     {sub.billingCycle && (
-                      <span className="text-xs font-normal text-muted-foreground">
+                      <span className="text-xs font-normal text-nx-ink-3">
                         {" "}
                         / {sub.billingCycle.toLowerCase()}
                       </span>
                     )}
-                  </span>
+                  </>
                 }
               />
             )}
             {sub.tenantPlanVersionNumber != null && (
-              <InfoRow
+              <DetailRow
                 icon={Shield}
                 label={t("entitlements.userSubscriptions.detailVersionPinned")}
                 value={`v${sub.tenantPlanVersionNumber}`}
@@ -227,12 +208,12 @@ export function SubscriptionDetailModal({
 
           {/* ── Important Dates ── */}
           <SectionCard title={t("entitlements.userSubscriptions.detailDates")} icon={Calendar}>
-            <InfoRow
+            <DetailRow
               icon={CheckCircle2}
               label={t("entitlements.userSubscriptions.startedAt")}
               value={formatDate(sub.startedAt)}
             />
-            <InfoRow
+            <DetailRow
               icon={Clock}
               label={t("entitlements.userSubscriptions.expiresAt")}
               value={
@@ -240,40 +221,40 @@ export function SubscriptionDetailModal({
                   ? formatDate(sub.expiresAt)
                   : t("entitlements.userSubscriptions.detailLifetime")
               }
-              valueColor={sub.isExpiringSoon ? "text-warning" : undefined}
+              valueClassName={cn(sub.isExpiringSoon && "text-warning")}
             />
             {sub.trialEndsAt && (
-              <InfoRow
+              <DetailRow
                 icon={Timer}
                 label={t("entitlements.userSubscriptions.trialEnds")}
                 value={formatDate(sub.trialEndsAt)}
               />
             )}
             {sub.cancelledAt && (
-              <InfoRow
+              <DetailRow
                 icon={XCircle}
                 label={t("entitlements.userSubscriptions.detailCancelledAt")}
                 value={formatDateTime(sub.cancelledAt)}
-                valueColor="text-destructive"
+                valueClassName="text-destructive"
               />
             )}
             {sub.gracePeriodEndsAt && (
-              <InfoRow
+              <DetailRow
                 icon={AlertTriangle}
                 label={t("entitlements.userSubscriptions.detailGracePeriod")}
                 value={formatDate(sub.gracePeriodEndsAt)}
-                valueColor="text-warning"
+                valueClassName="text-warning"
               />
             )}
-            <InfoRow
+            <DetailRow
               icon={Calendar}
               label={t("common.createdAt")}
               value={formatDateTime(sub.createdAt)}
             />
             {sub.updatedAt && (
-              <InfoRow
+              <DetailRow
                 icon={Calendar}
-                label={t("common.updatedAt") || "Updated"}
+                label={t("common.updatedAt")}
                 value={formatDateTime(sub.updatedAt)}
               />
             )}
@@ -286,7 +267,7 @@ export function SubscriptionDetailModal({
               icon={CreditCard}
             >
               {sub.paymentMethod && (
-                <InfoRow
+                <DetailRow
                   icon={CreditCard}
                   label={t("entitlements.userSubscriptions.detailPaymentMethod")}
                   value={
@@ -297,28 +278,20 @@ export function SubscriptionDetailModal({
                 />
               )}
               {sub.externalRef && (
-                <InfoRow
+                <DetailRow
                   icon={Globe}
                   label={t("entitlements.userSubscriptions.detailExternalRef")}
-                  value={
-                    <span
-                      className="inline-block max-w-[200px] truncate font-mono text-xs"
-                      title={sub.externalRef}
-                    >
-                      {sub.externalRef}
-                    </span>
-                  }
+                  value={sub.externalRef}
+                  mono
+                  copyable={sub.externalRef}
                 />
               )}
               {sub.originalPrice != null && (
-                <InfoRow
+                <DetailRow
                   icon={Tag}
                   label={t("entitlements.userSubscriptions.detailOriginalPrice")}
-                  value={
-                    <span className="text-muted-foreground line-through">
-                      {sub.formattedOriginalPrice}
-                    </span>
-                  }
+                  value={sub.formattedOriginalPrice}
+                  valueClassName="text-nx-ink-3 line-through"
                 />
               )}
             </SectionCard>
@@ -327,7 +300,7 @@ export function SubscriptionDetailModal({
           {/* ── Promotion (conditional) ── */}
           {sub.hasPromotion && (
             <SectionCard title={t("entitlements.userSubscriptions.detailPromotion")} icon={Percent}>
-              <InfoRow
+              <DetailRow
                 icon={Tag}
                 label={t("entitlements.userSubscriptions.promotionCode")}
                 value={
@@ -337,14 +310,11 @@ export function SubscriptionDetailModal({
                 }
               />
               {sub.discountAmount > 0 && (
-                <InfoRow
+                <DetailRow
                   icon={Percent}
                   label={t("entitlements.userSubscriptions.detailDiscountAmount")}
-                  value={
-                    <span className="font-semibold text-success">
-                      -{sub.formattedDiscount}
-                    </span>
-                  }
+                  value={`-${sub.formattedDiscount}`}
+                  valueClassName="text-success"
                 />
               )}
             </SectionCard>
@@ -357,7 +327,7 @@ export function SubscriptionDetailModal({
               icon={FileText}
             >
               <div className="py-2.5">
-                <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+                <p className="whitespace-pre-wrap text-start text-sm leading-relaxed text-nx-ink">
                   {sub.notes}
                 </p>
               </div>

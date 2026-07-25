@@ -11,6 +11,15 @@ export const en = {
       focusHint: "to focus",
     },
     jumpTo: "Jump to anything",
+    topbar: {
+      appSwitcher: "App switcher",
+      notifications: "Notifications",
+      ownerOf: "Owner · {{tenant}}",
+    },
+    pin: {
+      pin: "Pin",
+      unpin: "Unpin",
+    },
     sections: {
       pinned: "Pinned",
       modules: "Your modules",
@@ -53,6 +62,7 @@ export const en = {
       whatsNew: "What's new",
       docs: "Docs",
       status: "Status",
+      brandLine: "{{brand}} · {{version}} · Tenant: {{tenant}}",
     },
     items: {
       one: "1 item",

@@ -10,6 +10,7 @@
 "use client";
 
 import { cn } from "@/core/common/utils";
+import { useI18n } from "@core/providers/i18n-provider";
 
 interface LayoutPreviewThumbnailProps {
   layout: string;
@@ -110,8 +111,38 @@ function getLayoutStructure(layout: string): {
 }
 
 /**
+ * Perceived (WCAG relative) luminance of a hex colour, 0 (black) - 1 (white).
+ * Unparseable input is treated as light so callers fall back to dark ink —
+ * the safer default when a tenant-supplied value can't be read.
+ */
+function relativeLuminance(hex: string): number {
+  const clean = hex.replace("#", "");
+  const full = clean.length === 3
+    ? clean.split("").map((c) => c + c).join("")
+    : clean;
+  if (full.length !== 6 || /[^0-9a-fA-F]/.test(full)) return 1;
+  const channel = (start: number) => {
+    const c = parseInt(full.slice(start, start + 2), 16) / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * channel(0) + 0.7152 * channel(2) + 0.0722 * channel(4);
+}
+
+/**
+ * This thumbnail draws structural "ink" (mock text/lines) directly over
+ * arbitrary tenant colours (accent / surface). A fixed white or black mark
+ * would vanish whenever that colour happens to be near-white or near-black,
+ * so the ink shade is derived from the actual colour it sits on.
+ */
+function inkBaseFor(bgHex: string): "white" | "black" {
+  return relativeLuminance(bgHex) > 0.5 ? "black" : "white";
+}
+
+/**
  * Presentation UI component rendering the layout preview thumbnail.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ * Purely decorative structure — the only visual indicator of which login
+ * layout a theme/bundle uses, so it carries a real accessible name rather
+ * than being hidden from assistive tech.
  */
 export function LayoutPreviewThumbnail({
   layout,
@@ -120,16 +151,22 @@ export function LayoutPreviewThumbnail({
   className,
   size = "md",
 }: LayoutPreviewThumbnailProps) {
+  const { t } = useI18n();
   const dims = getDimensions(size);
   const structure = getLayoutStructure(layout);
   const lineSize = size === "sm" ? "2px" : size === "md" ? "3px" : "4px";
   const smallLineSize = size === "sm" ? "1.5px" : size === "md" ? "2px" : "3px";
   const gap = size === "sm" ? "2px" : size === "md" ? "3px" : "4px";
 
+  const brandingInk = inkBaseFor(accentColor);
+  const surfaceInk = inkBaseFor(surfaceColor);
+
   return (
     <div
+      role="img"
+      aria-label={t("studio.layoutPreview.ariaLabel", { layout })}
       className={cn(
-        "relative shrink-0 overflow-hidden rounded-md border border-border/40",
+        "relative shrink-0 overflow-hidden rounded-nx-sm border border-nx-line",
         className
       )}
       style={{
@@ -153,24 +190,24 @@ export function LayoutPreviewThumbnail({
         >
           {/* Mock logo */}
           <div
-            className="absolute rounded-sm"
+            className="absolute rounded-nx-sm"
             style={{
               left: "20%",
               top: "35%",
               width: "60%",
               height: lineSize,
-              background: `rgba(255,255,255,0.6)`,
+              background: `color-mix(in srgb, ${brandingInk} 60%, transparent)`,
             }}
           />
           {/* Mock tagline */}
           <div
-            className="absolute rounded-sm"
+            className="absolute rounded-nx-sm"
             style={{
               left: "30%",
               top: "45%",
               width: "40%",
               height: smallLineSize,
-              background: `rgba(255,255,255,0.3)`,
+              background: `color-mix(in srgb, ${brandingInk} 30%, transparent)`,
             }}
           />
         </div>
@@ -178,18 +215,16 @@ export function LayoutPreviewThumbnail({
 
       {/* Form panel */}
       <div
-        className="absolute rounded-sm"
+        className="absolute rounded-nx-sm border border-nx-line shadow-nx-sm"
         style={{
           left: structure.formPanel.x,
           top: structure.formPanel.y,
           width: structure.formPanel.w,
           height: structure.formPanel.h,
-          background: structure.style === "overlay" ? `rgba(255,255,255,0.85)` : surfaceColor,
-          border: `1px solid rgba(0,0,0,0.06)`,
-          boxShadow:
-            structure.style === "overlay" || structure.style === "centered"
-              ? "0 2px 8px rgba(0,0,0,0.08)"
-              : "none",
+          background:
+            structure.style === "overlay"
+              ? `color-mix(in srgb, white 85%, transparent)`
+              : surfaceColor,
         }}
       >
         {/* Mock form elements */}
@@ -209,33 +244,33 @@ export function LayoutPreviewThumbnail({
             style={{
               width: "60%",
               height: lineSize,
-              background: "rgba(0,0,0,0.2)",
+              background: `color-mix(in srgb, ${surfaceInk} 20%, transparent)`,
               marginBottom: gap,
             }}
           />
           {/* Input field 1 */}
           <div
-            className="rounded-sm"
+            className="rounded-nx-sm border"
             style={{
               width: "100%",
               height: lineSize,
-              background: "rgba(0,0,0,0.08)",
-              border: "0.5px solid rgba(0,0,0,0.05)",
+              background: `color-mix(in srgb, ${surfaceInk} 8%, transparent)`,
+              borderColor: `color-mix(in srgb, ${surfaceInk} 5%, transparent)`,
             }}
           />
           {/* Input field 2 */}
           <div
-            className="rounded-sm"
+            className="rounded-nx-sm border"
             style={{
               width: "100%",
               height: lineSize,
-              background: "rgba(0,0,0,0.08)",
-              border: "0.5px solid rgba(0,0,0,0.05)",
+              background: `color-mix(in srgb, ${surfaceInk} 8%, transparent)`,
+              borderColor: `color-mix(in srgb, ${surfaceInk} 5%, transparent)`,
             }}
           />
           {/* Button */}
           <div
-            className="rounded-sm"
+            className="rounded-nx-sm"
             style={{
               width: "100%",
               height: lineSize,
@@ -249,7 +284,7 @@ export function LayoutPreviewThumbnail({
             style={{
               width: "40%",
               height: smallLineSize,
-              background: "rgba(0,0,0,0.1)",
+              background: `color-mix(in srgb, ${surfaceInk} 10%, transparent)`,
             }}
           />
         </div>

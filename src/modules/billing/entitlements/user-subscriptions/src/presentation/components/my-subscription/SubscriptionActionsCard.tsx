@@ -51,16 +51,16 @@ export function SubscriptionActionsCard({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <CreditCard className="h-5 w-5 text-primary" />
-            {t("entitlements.mySubscription.actions") || "Manage"}
+            <CreditCard className="h-5 w-5 text-nx-accent" aria-hidden="true" />
+            {t("entitlements.mySubscription.actions")}
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">
           {/* Stripe Customer Portal placeholder */}
           <Button variant="outline" disabled>
-            <CreditCard className="me-2 h-4 w-4" />
-            {t("entitlements.mySubscription.manageBilling") || "Manage Billing"}
-            <span className="ms-1.5 text-xs text-muted-foreground">(Coming Soon)</span>
+            <CreditCard className="me-2 h-4 w-4" aria-hidden="true" />
+            {t("entitlements.mySubscription.manageBilling")}
+            <span className="ms-1.5 text-xs text-nx-ink-3">({t("common.comingSoon")})</span>
           </Button>
 
           {canCancel && (
@@ -69,16 +69,15 @@ export function SubscriptionActionsCard({
               onClick={() => setShowCancelDialog(true)}
               loading={isCancelling}
             >
-              {!isCancelling && <XCircle className="me-2 h-4 w-4" />}
-              {t("entitlements.mySubscription.cancel") || "Cancel Subscription"}
+              {!isCancelling && <XCircle className="me-2 h-4 w-4" aria-hidden="true" />}
+              {t("entitlements.mySubscription.cancel")}
             </Button>
           )}
 
           {subscription.isCancelled && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <AlertTriangle className="h-4 w-4 text-warning" />
-              {t("entitlements.mySubscription.alreadyCancelled") ||
-                "This subscription has been cancelled."}
+            <div className="flex items-center gap-2 text-sm text-nx-ink-2">
+              <AlertTriangle className="h-4 w-4 text-warning" aria-hidden="true" />
+              {t("entitlements.mySubscription.alreadyCancelled")}
             </div>
           )}
         </CardContent>
@@ -88,20 +87,15 @@ export function SubscriptionActionsCard({
       <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              {t("entitlements.mySubscription.cancelTitle") || "Cancel Subscription?"}
-            </DialogTitle>
-            <DialogDescription>
-              {t("entitlements.mySubscription.cancelDesc") ||
-                "Are you sure you want to cancel your subscription? You will lose access to premium features at the end of your billing period."}
-            </DialogDescription>
+            <DialogTitle>{t("entitlements.mySubscription.cancelTitle")}</DialogTitle>
+            <DialogDescription>{t("entitlements.mySubscription.cancelDesc")}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowCancelDialog(false)}>
-              {t("common.goBack") || "Go Back"}
+              {t("common.goBack")}
             </Button>
             <Button variant="destructive" onClick={handleConfirmCancel} loading={isCancelling}>
-              {t("entitlements.mySubscription.confirmCancel") || "Yes, Cancel"}
+              {t("entitlements.mySubscription.confirmCancel")}
             </Button>
           </DialogFooter>
         </DialogContent>

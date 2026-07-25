@@ -62,14 +62,12 @@ export const RecentActivityFeed = memo(function RecentActivityFeed({
                         {event.eventType}
                       </Badge>
                       {event.username && (
-                        <span className="truncate text-xs text-muted-foreground">
-                          {event.username}
-                        </span>
+                        <span className="truncate text-xs text-nx-ink-3">{event.username}</span>
                       )}
                     </div>
                   </div>
                 </div>
-                <time className="shrink-0 whitespace-nowrap text-xs tabular-nums text-muted-foreground">
+                <time className="shrink-0 whitespace-nowrap text-xs tabular-nums text-nx-ink-3">
                   {formatTimeUtc(event.timestamp)}
                 </time>
               </li>

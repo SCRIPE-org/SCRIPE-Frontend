@@ -3,45 +3,51 @@
 /**
  * HubModuleTile — The heart of the Hub page.
  *
- * Vibrant gradient tile matching the Claude Design spec exactly:
- * - 3-stop 135° gradient derived from workspace colorHue/chroma
- * - 20px border-radius, 18px padding (lg) / 14px (md)
- * - Hover: -4px translateY lift, glow shadow at 0.45 opacity, icon 1.08× scale
- * - Motion: nx standard duration/easing, with the reduced-motion path
- * - Focus: the shared nx lit-edge ring (:focus-visible only — hover stays
- *   a pointer affordance, keyboard gets the ring)
- * - Inner effects: top-right highlight orb, bottom-left vignette, noise grain
- * - Pin star: filled ⭐ top-right
- * - Locked: frosted overlay + lock circle + amber "Upgrade" pill
+ * A 3-stop gradient tile derived from the workspace's own OKLCH hue/chroma —
+ * every custom-coloured tile keeps its own identity in both themes, the same
+ * way an app icon does. Admin/uncustomised workspaces fall back to a
+ * low-chroma neutral tone through the SAME formula, so the file carries one
+ * gradient function, not a second hardcoded map.
+ *
+ * Motion: a calm hairline brighten (rest → hover) plus the tile's own
+ * shadow-nx-sm lift — the design bar's whole glow budget is ONE element per
+ * screen, and a 20-tile grid cannot each carry its own coloured glow, so
+ * there is no glow and no scale here at all.
+ * Focus: the shared nx lit-edge ring (:focus-visible only — hover stays a
+ * pointer affordance, keyboard gets the ring).
+ * Pin star: filled star top-end when pinned; a hover/focus-revealed outline
+ * star otherwise.
+ * Locked: the shared --nx-scrim overlay + lock glyph + a warning "Upgrade" pill.
  */
 
-import React, { useState, useCallback } from "react";
+import React, { useCallback } from "react";
 import { Star, Lock } from "lucide-react";
 import { cn } from "@core/common/utils";
+import { useI18n } from "@core/providers/i18n-provider";
 import { DynamicIcon } from "@core/ui/layout/nexus/_parts/primary-rail-parts";
 
-// ── Gradient helpers ──────────────────────────────────────────────────────────
+// ── Gradient helper ────────────────────────────────────────────────────────
 
-/** Derive a 3-stop vibrant gradient from OKLCH hue + chroma. */
+/** Derive a 3-stop tile gradient from an OKLCH hue + chroma. Used for both a
+ *  workspace's custom colour and the muted admin/default tone below, so the
+ *  tile never needs a second, hardcoded gradient. */
 function deriveGradient(hue: number, chroma: number): string {
   const c = Math.min(chroma, 0.35);
   return `linear-gradient(135deg, oklch(0.72 ${c} ${hue}) 0%, oklch(0.55 ${c} ${hue}) 55%, oklch(0.38 ${c} ${hue}) 100%)`;
 }
 
-/** Muted admin gradient for workspaces without custom colors. The glow hue and
- *  chroma feed the same OKLCH shadow derivation the custom tiles use. */
-const ADMIN_GRADIENTS: Record<string, { grad: string; glowHue: number; glowChroma: number }> = {
-  admin: {
-    grad: "linear-gradient(135deg, #3A4156 0%, #2A2F44 55%, #161A2A 100%)",
-    glowHue: 265,
-    glowChroma: 0.03,
-  },
-  _default: {
-    grad: "linear-gradient(135deg, #3B4661 0%, #283455 55%, #131A2E 100%)",
-    glowHue: 262,
-    glowChroma: 0.05,
-  },
+/** Muted tone for workspaces without a custom colour — same formula, just a
+ *  near-neutral hue/chroma pair instead of the workspace's own. */
+const ADMIN_TONES: Record<string, { hue: number; chroma: number }> = {
+  admin: { hue: 265, chroma: 0.03 },
+  _default: { hue: 262, chroma: 0.05 },
 };
+
+// The icon chip and locked glyph sit on top of a dynamic, data-owned
+// gradient of unknown lightness, so their fill/border tint the one ink token
+// legal atop a filled surface (--nx-on-fill) rather than a literal white.
+const CHIP_FILL = "color-mix(in srgb, var(--nx-on-fill) 15%, transparent)";
+const CHIP_BORDER = "color-mix(in srgb, var(--nx-on-fill) 22%, transparent)";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -64,26 +70,8 @@ export interface HubModuleTileProps {
 // ── Tile dimensions per size ──────────────────────────────────────────────────
 
 const DIMS = {
-  lg: {
-    w: 158,
-    h: 158,
-    iconSize: 30,
-    nameSize: 14,
-    countSize: 11.5,
-    pad: 18,
-    iconChip: 42,
-    chipRadius: 12,
-  },
-  md: {
-    w: 124,
-    h: 124,
-    iconSize: 24,
-    nameSize: 12.5,
-    countSize: 10.5,
-    pad: 14,
-    iconChip: 36,
-    chipRadius: 10,
-  },
+  lg: { w: 158, h: 158, iconSize: 30, nameSize: 14, countSize: 11.5, pad: 18, iconChip: 42 },
+  md: { w: 124, h: 124, iconSize: 24, nameSize: 12.5, countSize: 10.5, pad: 14, iconChip: 36 },
 } as const;
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -101,33 +89,20 @@ export function HubModuleTile({
   size = "lg",
   onClick,
   onTogglePin,
-  upgradeBadgeText = "Upgrade",
+  upgradeBadgeText,
 }: HubModuleTileProps) {
-  const [hover, setHover] = useState(false);
+  const { t } = useI18n();
   const dims = DIMS[size];
 
-  // Derive gradient + glow from workspace color data
+  // Derive the gradient from workspace colour data — the same formula
+  // whether the hue is real (a customised workspace) or the muted fallback.
   const hasCustomColor = colorHue !== null;
   const chroma = colorChroma ?? 0.18;
   const hue = colorHue ?? 270;
-  const adminEntry = ADMIN_GRADIENTS[name.toLowerCase()] ?? ADMIN_GRADIENTS._default;
-
-  const gradient = hasCustomColor ? deriveGradient(hue, chroma) : adminEntry.grad;
-  const glowHue = hasCustomColor ? hue : adminEntry.glowHue;
-  const glowChroma = hasCustomColor ? Math.min(chroma, 0.35) : adminEntry.glowChroma;
-
-  // Hover state — pointer only; keyboard focus gets the lit-edge ring instead.
-  const isHover = hover && !isLocked;
-  const glow = `oklch(0.62 ${glowChroma} ${glowHue} / ${isHover ? 0.45 : 0.18})`;
-  const innerShine = isHover ? 0.32 : 0.18;
-
-  // The shadow lives in a CSS variable so the class ladder stays in charge:
-  // shadow-[var(--hub-tile-shadow)] draws the glow, focus-visible:shadow-nx-focus
-  // replaces it with the shared ring. Locked tiles fall back to the calm token
-  // shadow instead of a glow.
-  const tileShadow = isLocked
-    ? "var(--nx-shadow-sm)"
-    : `0 ${isHover ? 22 : 10}px ${isHover ? 44 : 24}px -${isHover ? 8 : 12}px ${glow}, inset 0 1px 0 oklch(1 0 0 / ${innerShine})`;
+  const adminTone = ADMIN_TONES[name.toLowerCase()] ?? ADMIN_TONES._default;
+  const gradient = hasCustomColor
+    ? deriveGradient(hue, chroma)
+    : deriveGradient(adminTone.hue, adminTone.chroma);
 
   const handleClick = useCallback(() => {
     if (!isLocked || onClick) onClick();
@@ -137,69 +112,25 @@ export function HubModuleTile({
     <button
       type="button"
       onClick={handleClick}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
       aria-disabled={isLocked}
       className={cn(
-        "group relative flex flex-col justify-between overflow-hidden border-0 text-start",
-        "shadow-[var(--hub-tile-shadow)] transition-[transform,box-shadow] duration-nx-standard ease-nx-enter",
-        "outline-none focus-visible:shadow-nx-focus",
-        "motion-reduce:transform-none motion-reduce:transition-none",
-        isLocked ? "cursor-not-allowed" : "cursor-pointer hover:-translate-y-1"
+        "group relative flex flex-col justify-between overflow-hidden rounded-nx-lg text-start",
+        "border shadow-nx-sm transition-[border-color] duration-nx-standard ease-nx-enter",
+        "outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none",
+        isLocked
+          ? "cursor-not-allowed border-[color:color-mix(in_srgb,var(--nx-on-fill)_10%,transparent)]"
+          : "cursor-pointer border-[color:color-mix(in_srgb,var(--nx-on-fill)_14%,transparent)] hover:border-[color:color-mix(in_srgb,var(--nx-on-fill)_28%,transparent)]"
       )}
-      style={
-        {
-          width: dims.w,
-          height: dims.h,
-          padding: dims.pad,
-          borderRadius: 20,
-          background: gradient,
-          color: "#fff",
-          filter: isLocked ? "saturate(0.25) brightness(0.85)" : "none",
-          font: "inherit",
-          "--hub-tile-shadow": tileShadow,
-        } as React.CSSProperties
-      }
+      style={{
+        width: dims.w,
+        height: dims.h,
+        padding: dims.pad,
+        background: gradient,
+        color: "var(--nx-on-fill)",
+        filter: isLocked ? "saturate(0.25) brightness(0.85)" : "none",
+      }}
     >
-      {/* Top-right highlight orb */}
-      <div
-        aria-hidden
-        style={{
-          position: "absolute",
-          inset: 0,
-          background:
-            "radial-gradient(120% 80% at 100% 0%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 55%)",
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* Bottom-left vignette */}
-      <div
-        aria-hidden
-        style={{
-          position: "absolute",
-          inset: 0,
-          background:
-            "radial-gradient(120% 100% at 0% 110%, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0) 55%)",
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* Noise grain */}
-      <div
-        aria-hidden
-        style={{
-          position: "absolute",
-          inset: 0,
-          opacity: 0.18,
-          mixBlendMode: "overlay",
-          backgroundImage:
-            "repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 2px), repeating-linear-gradient(90deg, rgba(0,0,0,0.02) 0 1px, transparent 1px 2px)",
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* Pin star (top-right) */}
+      {/* Pin star (top corner, pinned state) */}
       {isPinned && !isLocked && (
         <button
           type="button"
@@ -208,22 +139,11 @@ export function HubModuleTile({
             onTogglePin?.(e);
           }}
           disabled={isPinLoading}
-          aria-label="Unpin"
-          className="rounded-nx-sm focus-visible:outline-none focus-visible:shadow-nx-focus"
-          style={{
-            position: "absolute",
-            top: 12,
-            insetInlineEnd: 12,
-            color: "rgba(255,255,255,0.95)",
-            filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.4))",
-            background: "none",
-            border: "none",
-            cursor: isPinLoading ? "wait" : "pointer",
-            padding: 0,
-            zIndex: 2,
-          }}
+          aria-label={t("workspaceHub.pin.unpin")}
+          className="absolute end-3 top-3 z-raised rounded-nx-sm p-0 text-nx-on-fill focus-visible:outline-none focus-visible:shadow-nx-focus"
+          style={{ cursor: isPinLoading ? "wait" : "pointer" }}
         >
-          <Star size={13} fill="currentColor" strokeWidth={0} />
+          <Star size={13} fill="currentColor" strokeWidth={0} aria-hidden="true" />
         </button>
       )}
 
@@ -236,45 +156,23 @@ export function HubModuleTile({
             onTogglePin?.(e);
           }}
           disabled={isPinLoading}
-          aria-label="Pin"
-          className="rounded-nx-sm opacity-0 transition-opacity duration-nx-micro ease-nx-enter group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
-          style={{
-            position: "absolute",
-            top: 12,
-            insetInlineEnd: 12,
-            color: "rgba(255,255,255,0.5)",
-            background: "none",
-            border: "none",
-            cursor: isPinLoading ? "wait" : "pointer",
-            padding: 0,
-            zIndex: 2,
-          }}
+          aria-label={t("workspaceHub.pin.pin")}
+          className="absolute end-3 top-3 z-raised rounded-nx-sm p-0 text-nx-on-fill opacity-0 transition-opacity duration-nx-micro ease-nx-enter group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
+          style={{ cursor: isPinLoading ? "wait" : "pointer" }}
         >
-          <Star size={13} strokeWidth={1.75} />
+          <Star size={13} strokeWidth={1.75} aria-hidden="true" />
         </button>
       )}
 
       {/* Icon chip */}
-      <div
-        className={cn(
-          "relative flex origin-top items-start",
-          !isLocked &&
-            "transition-transform duration-nx-standard ease-nx-enter group-hover:scale-[1.08] motion-reduce:transform-none motion-reduce:transition-none"
-        )}
-        style={{ color: "#fff" }}
-      >
+      <div className="relative flex items-start">
         <div
+          className="inline-flex items-center justify-center rounded-nx-md text-nx-on-fill"
           style={{
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
             width: dims.iconChip,
             height: dims.iconChip,
-            borderRadius: dims.chipRadius,
-            background: "rgba(255,255,255,0.12)",
-            backdropFilter: "blur(8px)",
-            border: "1px solid rgba(255,255,255,0.18)",
-            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.18)",
+            background: CHIP_FILL,
+            border: `1px solid ${CHIP_BORDER}`,
           }}
         >
           <DynamicIcon name={icon || "Layers"} size={dims.iconSize} />
@@ -282,26 +180,19 @@ export function HubModuleTile({
       </div>
 
       {/* Name + item count */}
-      <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: 2 }}>
+      <div className="relative flex flex-col gap-0.5">
         <span
-          style={{
-            fontSize: dims.nameSize,
-            fontWeight: 600,
-            letterSpacing: "-0.005em",
-            color: "#fff",
-            lineHeight: 1.2,
-            textShadow: "0 1px 1px rgba(0,0,0,0.18)",
-          }}
+          className="font-semibold leading-tight tracking-tight text-nx-on-fill"
+          style={{ fontSize: dims.nameSize }}
         >
           {name}
         </span>
         {accessibleItemCount > 0 && !isLocked && (
           <span
+            className="font-medium"
             style={{
               fontSize: dims.countSize,
-              fontWeight: 500,
-              color: "rgba(255,255,255,0.74)",
-              letterSpacing: "0.005em",
+              color: "color-mix(in srgb, var(--nx-on-fill) 74%, transparent)",
             }}
           >
             {itemLabel}
@@ -309,50 +200,17 @@ export function HubModuleTile({
         )}
       </div>
 
-      {/* Locked overlay */}
+      {/* Locked overlay — the shared scrim, clipped by the tile's own rounding */}
       {isLocked && (
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            borderRadius: 20,
-            background: "linear-gradient(160deg, rgba(10,14,26,0.55), rgba(10,14,26,0.78))",
-            backdropFilter: "blur(6px) saturate(120%)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 8,
-            color: "#e6e9f5",
-          }}
-        >
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-scrim text-nx-on-fill">
           <div
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 999,
-              background: "rgba(255,255,255,0.08)",
-              border: "1px solid rgba(255,255,255,0.14)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+            className="flex items-center justify-center rounded-full"
+            style={{ width: 38, height: 38, background: CHIP_FILL, border: `1px solid ${CHIP_BORDER}` }}
           >
-            <Lock size={18} strokeWidth={1.75} />
+            <Lock size={18} strokeWidth={1.75} aria-hidden="true" />
           </div>
-          <div
-            style={{
-              fontSize: 10.5,
-              fontWeight: 600,
-              padding: "4px 10px",
-              borderRadius: 999,
-              background: "linear-gradient(135deg, #FFC25E 0%, #F18A1A 100%)",
-              color: "#1a0e02",
-              letterSpacing: "0.02em",
-              boxShadow: "0 4px 10px rgba(241,138,26,0.45)",
-            }}
-          >
-            {upgradeBadgeText}
+          <div className="rounded-full bg-warning px-2.5 py-1 text-[10.5px] font-semibold tracking-wide text-warning-foreground">
+            {upgradeBadgeText ?? t("workspaceHub.upgradeBadge")}
           </div>
         </div>
       )}

@@ -14,6 +14,7 @@
 import { cn } from "@/core/common/utils";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
+import { chartColor } from "@core/ui/chart";
 import {
   Heart,
   LogIn,
@@ -25,7 +26,6 @@ import {
   FileKey2,
   Star,
   Check,
-  Loader2,
   Eye,
   User,
 } from "lucide-react";
@@ -46,7 +46,10 @@ interface BundleCardProps {
 }
 
 /** Map icon string name to Lucide component */
-const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+const ICON_MAP: Record<
+  string,
+  React.ComponentType<{ className?: string; style?: React.CSSProperties }>
+> = {
   LogIn,
   Shield,
   LayoutDashboard,
@@ -56,11 +59,11 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   FileKey2,
 };
 
-/** Get layer icon component */
+/** Get layer icon component, tinted from the fixed categorical chart ladder */
 function LayerIcon({ layer, className }: { layer: BundleLayer; className?: string }) {
   const info = LAYER_INFO[layer];
   const Icon = ICON_MAP[info.icon] ?? Blocks;
-  return <Icon className={className} />;
+  return <Icon className={className} style={{ color: chartColor(info.chartSlot) }} />;
 }
 
 /** Extract color palette from loginThemeJson */
@@ -108,6 +111,12 @@ function extractSurfaceColor(bundle: ThemeBundle): string {
   return "#ffffff";
 }
 
+/** Translucent chip surface for badges that float over the arbitrary-accent
+ * preview header — a solid nx token would look like a hole in the artwork,
+ * so it goes through color-mix rather than a raw rgba literal. */
+const FLOATING_CHIP =
+  "bg-[color:color-mix(in_srgb,var(--nx-popover)_82%,transparent)] border border-nx-line";
+
 /**
  * Presentation UI component rendering the bundle card.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
@@ -127,17 +136,28 @@ export function BundleCard({
   const layout = extractLayout(bundle);
   const surfaceColor = extractSurfaceColor(bundle);
   const paletteColors = extractColors(bundle);
+  const detailAriaLabel = t("studio.bundles.card.viewDetailsAria", { name: bundle.name });
 
   if (compact) {
     // ── Compact variant (sidebar marketplace) ──
     return (
       <div
-        className={cn(
-          "group flex items-center gap-3 rounded-lg border border-border/50 p-2",
-          "cursor-pointer bg-card transition-all hover:border-primary/30 hover:bg-accent/20",
-          bundle.isApplied && "ring-1 ring-primary/30"
-        )}
+        role="button"
+        tabIndex={0}
+        aria-label={detailAriaLabel}
         onClick={() => onOpenDetail(bundle)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            onOpenDetail(bundle);
+          }
+        }}
+        className={cn(
+          "group flex items-center gap-3 rounded-nx-md border border-nx-line p-2",
+          "cursor-pointer bg-nx-surface transition-colors duration-nx-standard hover:border-nx-line-hi motion-reduce:transition-none",
+          "focus-visible:outline-none focus-visible:shadow-nx-focus",
+          bundle.isApplied && "border-nx-accent"
+        )}
       >
         {/* Layout preview */}
         <LayoutPreviewThumbnail
@@ -150,9 +170,9 @@ export function BundleCard({
         {/* Content */}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            <h4 className="truncate text-xs font-semibold text-foreground">{bundle.name}</h4>
+            <h4 className="truncate text-xs font-semibold text-nx-ink">{bundle.name}</h4>
             {bundle.isFeatured && (
-              <Star className="h-3 w-3 shrink-0 fill-warning text-warning" />
+              <Star className="h-3 w-3 shrink-0 fill-warning text-warning" aria-hidden="true" />
             )}
           </div>
 
@@ -161,12 +181,13 @@ export function BundleCard({
             {paletteColors.map((color, i) => (
               <div
                 key={i}
-                className="h-2.5 w-2.5 shrink-0 rounded-full border border-border/30"
+                className="h-2.5 w-2.5 shrink-0 rounded-full border border-nx-line"
                 style={{ background: color }}
+                aria-hidden="true"
               />
             ))}
-            <span className="ml-1 text-[9px] text-muted-foreground/60">
-              {bundle.layerCount} {bundle.layerCount === 1 ? "layer" : "layers"}
+            <span className="ms-1 text-[9px] text-nx-ink-3">
+              {t("studio.bundles.card.layers", { count: bundle.layerCount })}
             </span>
           </div>
         </div>
@@ -175,17 +196,20 @@ export function BundleCard({
         <div className="flex shrink-0 items-center gap-0.5">
           {onPreview && (
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onPreview(bundle);
               }}
-              className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
-              title={t("studio.bundles.preview") || "Preview"}
+              aria-label={t("studio.marketplace.preview")}
+              className="flex h-6 w-6 items-center justify-center rounded-nx-sm text-nx-ink-3 transition-colors duration-nx-micro hover:bg-nx-accent-wash hover:text-nx-accent focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
             >
-              <Eye className="h-3 w-3" />
+              <Eye className="h-3 w-3" aria-hidden="true" />
             </button>
           )}
-          {bundle.isApplied && <Check className="h-3.5 w-3.5 shrink-0 text-primary" />}
+          {bundle.isApplied && (
+            <Check className="h-3.5 w-3.5 shrink-0 text-nx-accent" aria-hidden="true" />
+          )}
         </div>
       </div>
     );
@@ -195,23 +219,34 @@ export function BundleCard({
   return (
     <div
       className={cn(
-        "group relative flex flex-col rounded-xl border border-border/60",
-        "overflow-hidden bg-card transition-all duration-300",
-        "hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5",
-        bundle.isApplied && "ring-2 ring-primary/40"
+        "group relative flex flex-col rounded-nx-lg border border-nx-line",
+        "overflow-hidden bg-nx-surface transition-colors duration-nx-standard hover:border-nx-line-hi motion-reduce:transition-none",
+        bundle.isApplied && "border-nx-accent"
       )}
     >
       {/* ── Preview Header ── */}
-      <button
-        className="relative h-36 w-full cursor-pointer overflow-hidden"
+      {/* A real <button> can't host the nested quick-preview button, so this
+          follows the stat-card.tsx activatable-card pattern instead. */}
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label={detailAriaLabel}
+        className="relative h-36 w-full cursor-pointer overflow-hidden focus-visible:outline-none focus-visible:shadow-nx-focus"
         onClick={() => onOpenDetail(bundle)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            onOpenDetail(bundle);
+          }
+        }}
       >
-        {/* Background gradient */}
+        {/* Background gradient — tint wash derived from the tenant accent */}
         <div
-          className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
+          className="absolute inset-0"
           style={{
-            background: `linear-gradient(135deg, ${bundle.accentColor}15, ${bundle.accentColor}30)`,
+            background: `linear-gradient(135deg, color-mix(in srgb, ${bundle.accentColor} 15%, transparent), color-mix(in srgb, ${bundle.accentColor} 30%, transparent))`,
           }}
+          aria-hidden="true"
         />
 
         {/* Layout Preview Thumbnail — centered in the preview area */}
@@ -221,68 +256,75 @@ export function BundleCard({
             accentColor={bundle.accentColor}
             surfaceColor={surfaceColor}
             size="lg"
-            className="shadow-lg transition-transform duration-300 group-hover:scale-105"
+            className="shadow-nx-sm"
           />
         </div>
 
         {/* Bundle type badge */}
-        <div className="absolute left-2.5 top-2.5">
-          <Badge
-            variant="secondary"
-            className="border-border/40 bg-background/80 text-xs shadow-sm backdrop-blur-sm"
-          >
-            <TypeIcon className="mr-1 h-3 w-3" />
+        <div className="absolute start-2.5 top-2.5">
+          <Badge variant="secondary" className={cn("text-xs shadow-nx-sm", FLOATING_CHIP)}>
+            <TypeIcon className="me-1 h-3 w-3" aria-hidden="true" />
             {t(typeConfig.labelKey)}
           </Badge>
         </div>
 
         {/* Applied checkmark */}
         {bundle.isApplied && (
-          <div className="absolute right-2.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-primary shadow-lg">
-            <Check className="h-4 w-4 text-primary-foreground" />
+          <div className="absolute end-2.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-nx-accent-fill shadow-nx-sm">
+            <Check className="h-4 w-4 text-nx-on-fill" aria-hidden="true" />
           </div>
         )}
 
         {/* Featured star */}
         {bundle.isFeatured && !bundle.isApplied && (
-          <div className="absolute right-2.5 top-2.5">
-            <Star className="h-5 w-5 fill-warning text-warning drop-shadow-lg" />
+          <div className="absolute end-2.5 top-2.5">
+            <Star className="h-5 w-5 fill-warning text-warning" aria-hidden="true" />
           </div>
         )}
 
         {/* Quick preview button */}
         {onPreview && (
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               onPreview(bundle);
             }}
-            className="absolute bottom-2.5 right-2.5 flex h-7 items-center gap-1.5 rounded-md border border-border/40 bg-background/80 px-2.5 text-xs text-foreground opacity-0 shadow-sm backdrop-blur-sm transition-opacity hover:bg-background group-hover:opacity-100"
+            className={cn(
+              "absolute bottom-2.5 end-2.5 flex h-7 items-center gap-1.5 rounded-nx-control px-2.5 text-xs text-nx-ink opacity-0 shadow-nx-sm transition-opacity duration-nx-standard hover:bg-nx-popover group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none",
+              FLOATING_CHIP
+            )}
           >
-            <Eye className="h-3 w-3" /> Preview
+            <Eye className="h-3 w-3" aria-hidden="true" /> {t("studio.marketplace.preview")}
           </button>
         )}
 
         {/* Pricing badge */}
         {!bundle.isFree && (
-          <div className="absolute bottom-2.5 left-2.5">
-            <Badge className="border-0 bg-warning/90 text-[10px] text-warning-foreground">PRO</Badge>
+          <div className="absolute bottom-2.5 start-2.5">
+            <Badge className="border-0 bg-warning text-[10px] text-warning-foreground">
+              {t("studio.bundles.card.pro")}
+            </Badge>
           </div>
         )}
-      </button>
+      </div>
 
       {/* ── Card Body ── */}
       <div className="flex flex-1 flex-col p-4">
         {/* Title + Author */}
-        <button className="cursor-pointer text-left" onClick={() => onOpenDetail(bundle)}>
-          <h3 className="line-clamp-1 text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
+        <button
+          type="button"
+          className="cursor-pointer text-start focus-visible:outline-none focus-visible:shadow-nx-focus"
+          onClick={() => onOpenDetail(bundle)}
+        >
+          <h3 className="line-clamp-1 text-sm font-semibold text-nx-ink transition-colors duration-nx-micro group-hover:text-nx-accent motion-reduce:transition-none">
             {bundle.name}
           </h3>
           <div className="mt-0.5 flex items-center gap-1.5">
-            <User className="h-2.5 w-2.5 text-muted-foreground/50" />
-            <span className="text-[10px] text-muted-foreground/70">{bundle.authorName}</span>
+            <User className="h-2.5 w-2.5 text-nx-ink-3" aria-hidden="true" />
+            <span className="text-[10px] text-nx-ink-3">{bundle.authorName}</span>
           </div>
-          <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+          <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-nx-ink-2">
             {bundle.description}
           </p>
         </button>
@@ -294,9 +336,9 @@ export function BundleCard({
             {paletteColors.map((color, i) => (
               <div
                 key={i}
-                className="h-3.5 w-3.5 shrink-0 rounded-full border border-border/40 shadow-sm"
+                className="h-3.5 w-3.5 shrink-0 rounded-full border border-nx-line shadow-nx-sm"
                 style={{ background: color }}
-                title={color}
+                aria-hidden="true"
               />
             ))}
           </div>
@@ -308,14 +350,15 @@ export function BundleCard({
             {bundle.includedLayers.slice(0, 3).map((layer) => (
               <div
                 key={layer}
-                className="flex h-5 w-5 items-center justify-center rounded bg-muted/40"
-                title={t(LAYER_INFO[layer].labelKey)}
+                role="img"
+                aria-label={t(LAYER_INFO[layer].labelKey)}
+                className="flex h-5 w-5 items-center justify-center rounded-nx-sm bg-nx-raised"
               >
-                <LayerIcon layer={layer} className="h-2.5 w-2.5 text-muted-foreground" />
+                <LayerIcon layer={layer} className="h-2.5 w-2.5" />
               </div>
             ))}
             {bundle.includedLayers.length > 3 && (
-              <span className="ml-0.5 text-[9px] text-muted-foreground/60">
+              <span className="ms-0.5 text-[9px] text-nx-ink-3">
                 +{bundle.includedLayers.length - 3}
               </span>
             )}
@@ -326,13 +369,10 @@ export function BundleCard({
         <div className="min-h-[8px] flex-1" />
 
         {/* Footer: Actions */}
-        <div className="mt-3 flex items-center justify-between border-t border-border/40 pt-3">
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <div className="mt-3 flex items-center justify-between border-t border-nx-line pt-3">
+          <div className="flex items-center gap-1.5 text-xs text-nx-ink-2">
             {bundle.tags.slice(0, 2).map((tag) => (
-              <span
-                key={tag}
-                className="rounded bg-muted/60 px-1.5 py-0.5 text-[9px] text-muted-foreground/80"
-              >
+              <span key={tag} className="rounded-nx-sm bg-nx-raised px-1.5 py-0.5 text-[9px] text-nx-ink-2">
                 {tag}
               </span>
             ))}
@@ -341,18 +381,23 @@ export function BundleCard({
           <div className="flex items-center gap-1">
             {/* Favorite */}
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onToggleFavorite(bundle.slug);
               }}
+              aria-label={
+                bundle.isFavorited ? t("studio.marketplace.favorited") : t("studio.marketplace.favorite")
+              }
+              aria-pressed={bundle.isFavorited}
               className={cn(
-                "flex h-7 w-7 items-center justify-center rounded-md transition-colors",
+                "flex h-7 w-7 items-center justify-center rounded-nx-control transition-colors duration-nx-micro focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none",
                 bundle.isFavorited
                   ? "bg-destructive/10 text-destructive"
-                  : "text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                  : "text-nx-ink-3 hover:bg-destructive/10 hover:text-destructive"
               )}
             >
-              <Heart className={cn("h-3.5 w-3.5", bundle.isFavorited && "fill-current")} />
+              <Heart className={cn("h-3.5 w-3.5", bundle.isFavorited && "fill-current")} aria-hidden="true" />
             </button>
 
             {/* Apply */}
@@ -366,20 +411,17 @@ export function BundleCard({
                   onApply(bundle.slug, false);
                 }}
                 disabled={isApplying}
+                loading={isApplying}
               >
-                {isApplying ? (
-                  <Loader2 className="h-3 w-3 animate-spin" />
-                ) : (
-                  t("studio.bundles.applyBundle")
-                )}
+                {t("studio.bundles.applyBundle")}
               </Button>
             )}
 
             {/* Already applied */}
             {bundle.isApplied && (
-              <Badge variant="outline" className="border-primary/30 text-xs text-primary">
-                <Check className="mr-1 h-3 w-3" />
-                {t("studio.gallery.applied")}
+              <Badge variant="outline" className="border-nx-accent text-xs text-nx-accent">
+                <Check className="me-1 h-3 w-3" aria-hidden="true" />
+                {t("studio.gallery.card.applied")}
               </Badge>
             )}
           </div>

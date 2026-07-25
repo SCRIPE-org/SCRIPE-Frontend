@@ -1,11 +1,13 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
+// UI-EXCEPTION: compact studio layout — native <button> used for category filter
+// pills and theme card overlay controls where @core/ui/button's sizing would break
+// the compact card grid layout. Action buttons (Apply, Preview) use <Button>.
 /**
  * Theme Gallery View — Full-Page Theme Browsing Experience
  *
  * Rich gallery for tenant admins to browse, preview, and apply themes.
  * Features:
- * - Animated hero section with featured carousel
+ * - Hero section with featured carousel
  * - Category tabs with counts
  * - Rich filter bar (free, dark, a11y, sort)
  * - Theme grid with mini color-preview cards
@@ -17,9 +19,6 @@
  * @module customization/presentation
  */
 "use client";
-// UI-EXCEPTION: compact gallery layout — native <button> used for category filter
-// pills and theme card overlay controls where @core/ui/button's sizing would break
-// the compact card grid layout. Action buttons (Apply, Preview) use <Button>.
 
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -27,6 +26,9 @@ import { cn } from "@/core/common/utils";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { EmptyState } from "@core/ui/empty-state";
 import {
   Search,
   Heart,
@@ -43,7 +45,6 @@ import {
   ShoppingCart,
   ChevronLeft,
   ChevronRight,
-  Loader2,
   Check,
   Filter,
   ArrowUpDown,
@@ -59,6 +60,33 @@ import type { ThemeCard } from "../../domain/entities/ThemeCard";
 const G = "studio.gallery";
 
 /**
+ * Perceived (WCAG relative) luminance of a hex colour, 0 (black) - 1 (white).
+ * Unparseable input is treated as light so callers fall back to dark ink.
+ */
+function relativeLuminance(hex: string): number {
+  const clean = hex.replace("#", "");
+  const full = clean.length === 3 ? clean.split("").map((c) => c + c).join("") : clean;
+  if (full.length !== 6 || /[^0-9a-fA-F]/.test(full)) return 1;
+  const channel = (start: number) => {
+    const c = parseInt(full.slice(start, start + 2), 16) / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * channel(0) + 0.7152 * channel(2) + 0.0722 * channel(4);
+}
+
+/**
+ * The mini login-form mockup on each card draws structural "ink" directly over
+ * the tenant's arbitrary accent colour, so the ink shade is derived from that
+ * colour's own luminance rather than assumed white — a near-white accent must
+ * not render invisible near-white marks on itself.
+ */
+function inkBaseFor(bgHex: string): "white" | "black" {
+  return relativeLuminance(bgHex) > 0.5 ? "black" : "white";
+}
+
+const SORT_KEYS = ["popular", "newest", "trending", "nameAsc", "nameDesc"] as const;
+
+/**
  * Presentation UI component rendering the theme gallery view.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
@@ -71,60 +99,58 @@ export function ThemeGalleryView() {
   return (
     <div className="min-h-screen">
       {/* ── Hero Section ── */}
-      <div className="relative mb-8 overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
-        {/* Decorative background orbs */}
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
-          <div className="absolute -bottom-10 -left-10 h-48 w-48 rounded-full bg-primary/5 blur-3xl" />
+      <div className="mb-8 rounded-nx-lg border border-nx-line bg-nx-surface px-8 py-10 text-center">
+        <div className="mb-3 flex items-center justify-center gap-2">
+          <Palette className="h-8 w-8 text-nx-accent" aria-hidden="true" />
+          <h1 className="text-3xl font-bold tracking-tight text-balance text-nx-ink">
+            {t(`${G}.heroTitle`)}
+          </h1>
         </div>
-        <div className="relative px-8 py-10 text-center">
-          <div className="mb-3 flex items-center justify-center gap-2">
-            <Palette className="h-8 w-8 text-primary" />
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              {t(`${G}.heroTitle`)}
-            </h1>
-          </div>
-          <p className="mx-auto max-w-xl text-sm leading-relaxed text-muted-foreground">
-            {t(`${G}.heroSubtitle`)}
-          </p>
+        <p className="mx-auto max-w-xl text-sm leading-relaxed text-pretty text-nx-ink-2">
+          {t(`${G}.heroSubtitle`)}
+        </p>
 
-          {/* Featured mini-carousel */}
-          {vm.featuredThemes.length > 0 && (
-            <div className="mt-6 flex items-center justify-center gap-3">
-              {vm.featuredThemes.slice(0, 5).map((theme) => (
-                <button
-                  key={theme.slug}
-                  className="group flex flex-col items-center gap-1.5 transition-transform hover:scale-105"
-                  onClick={() => vm.setPreviewSlug(theme.slug)}
-                >
-                  <div
-                    className="h-12 w-12 rounded-xl border-2 border-white/50 shadow-lg transition-all group-hover:ring-2 group-hover:ring-primary/50"
-                    style={{
-                      background: `linear-gradient(135deg, ${theme.accentColor || "#6b7280"}, color-mix(in srgb, ${theme.accentColor || "#6b7280"} 60%, black))`,
-                    }}
-                  />
-                  <span className="max-w-[60px] truncate text-[10px] font-medium text-muted-foreground">
-                    {theme.name}
-                  </span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+        {/* Featured mini-carousel */}
+        {vm.featuredThemes.length > 0 && (
+          <div className="mt-6 flex items-center justify-center gap-3">
+            {vm.featuredThemes.slice(0, 5).map((theme) => (
+              <button
+                type="button"
+                key={theme.slug}
+                className="group flex flex-col items-center gap-1.5"
+                onClick={() => vm.setPreviewSlug(theme.slug)}
+              >
+                <div
+                  className="h-12 w-12 rounded-nx-md border border-nx-line shadow-nx-sm transition-colors duration-nx-micro group-hover:border-nx-accent group-focus-visible:border-nx-accent motion-reduce:transition-none"
+                  style={{
+                    background: `linear-gradient(135deg, ${theme.accentColor || "#6b7280"}, color-mix(in srgb, ${theme.accentColor || "#6b7280"} 60%, black))`,
+                  }}
+                  aria-hidden="true"
+                />
+                <span className="max-w-[60px] truncate text-[10px] font-medium text-nx-ink-2">
+                  {theme.name}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* ── Tab Bar ── */}
-      <div className="mb-6 flex items-center justify-between">
-        <div className="flex items-center gap-1 rounded-lg border border-border/50 bg-muted/50 p-1">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-1 rounded-nx-md border border-nx-line bg-nx-raised p-1">
           {(["browse", "featured", "favorites", "bundles"] as const).map((tab) => (
             <button
+              type="button"
               key={tab}
               onClick={() => vm.setActiveTab(tab)}
+              aria-pressed={vm.activeTab === tab}
               className={cn(
-                "rounded-md px-4 py-2 text-sm font-medium transition-all",
+                "rounded-nx-control px-4 py-2 text-sm font-medium transition-colors duration-nx-micro motion-reduce:transition-none",
+                "focus-visible:outline-none focus-visible:shadow-nx-focus",
                 vm.activeTab === tab
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-nx-surface text-nx-ink shadow-nx-sm"
+                  : "text-nx-ink-2 hover:text-nx-ink"
               )}
             >
               {tab === "browse" && t(`${G}.browseAll`)}
@@ -138,23 +164,27 @@ export function ThemeGalleryView() {
         {/* Results count + Sort */}
         <div className="flex items-center gap-3">
           {!vm.isLoading && (
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-nx-ink-2">
               {t(`${G}.resultsCount`, { count: vm.totalCount })}
             </span>
           )}
           <div className="flex items-center gap-2">
-            <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
-            <select
+            <ArrowUpDown className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
+            <Select
               value={vm.filters.sortBy}
-              onChange={(e) => vm.setFilters({ sortBy: e.target.value as any })}
-              className="h-8 rounded-md border border-border bg-background px-2 pr-6 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              onValueChange={(value) => vm.setFilters({ sortBy: value as any })}
             >
-              {(["popular", "newest", "trending", "nameAsc", "nameDesc"] as const).map((key) => (
-                <option key={key} value={key}>
-                  {t(`${G}.sort.${key}`)}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="h-8 w-auto gap-1.5 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {SORT_KEYS.map((key) => (
+                  <SelectItem key={key} value={key}>
+                    {t(`${G}.sort.${key}`)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
@@ -169,13 +199,16 @@ export function ThemeGalleryView() {
           <div className="flex flex-wrap items-center gap-1.5">
             {vm.categories.map((cat) => (
               <button
+                type="button"
                 key={cat}
                 onClick={() => vm.setFilters({ category: cat })}
+                aria-pressed={vm.filters.category === cat}
                 className={cn(
-                  "rounded-full border px-3 py-1.5 text-xs font-medium transition-all",
+                  "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors duration-nx-micro motion-reduce:transition-none",
+                  "focus-visible:outline-none focus-visible:shadow-nx-focus",
                   vm.filters.category === cat
-                    ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                    : "border-border bg-background text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                    ? "border-nx-accent bg-nx-accent-fill text-nx-on-fill shadow-nx-sm"
+                    : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi hover:text-nx-ink"
                 )}
               >
                 {t(`${G}.categories.${cat}`)}
@@ -185,7 +218,10 @@ export function ThemeGalleryView() {
 
           {/* Search */}
           <div className="relative min-w-[200px] max-w-sm flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search
+              className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
+              aria-hidden="true"
+            />
             <Input
               type="text"
               placeholder={t(`${G}.searchPlaceholder`)}
@@ -193,14 +229,16 @@ export function ThemeGalleryView() {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 vm.setFilters({ search: e.target.value })
               }
-              className="h-9 pl-9 text-sm"
+              className="h-9 ps-9 text-sm"
             />
             {vm.filters.search && (
               <button
+                type="button"
                 onClick={() => vm.setFilters({ search: "" })}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                aria-label={t("common.clear")}
+                className="absolute end-3 top-1/2 -translate-y-1/2 text-nx-ink-3 hover:text-nx-ink"
               >
-                <X className="h-3.5 w-3.5" />
+                <X className="h-3.5 w-3.5" aria-hidden="true" />
               </button>
             )}
           </div>
@@ -210,19 +248,21 @@ export function ThemeGalleryView() {
             variant={showFilters ? "default" : "outline"}
             size="sm"
             onClick={() => setShowFilters(!showFilters)}
+            aria-pressed={showFilters}
             className="gap-1.5"
           >
-            <Filter className="h-3.5 w-3.5" />
+            <Filter className="h-3.5 w-3.5" aria-hidden="true" />
             {t(`${G}.filters.title`)}
           </Button>
 
           {/* Clear filters */}
           {vm.hasActiveFilters && (
             <button
+              type="button"
               onClick={vm.resetFilters}
               className="flex items-center gap-1 text-xs text-destructive hover:underline"
             >
-              <RotateCcw className="h-3 w-3" />
+              <RotateCcw className="h-3 w-3" aria-hidden="true" />
               {t(`${G}.clearFilters`)}
             </button>
           )}
@@ -231,7 +271,7 @@ export function ThemeGalleryView() {
 
       {/* ── Filter Chips (collapsible) ── */}
       {showFilters && vm.activeTab === "browse" && (
-        <div className="mb-6 flex flex-wrap gap-2 rounded-xl border border-border bg-muted/20 p-4">
+        <div className="mb-6 flex flex-wrap gap-2 rounded-nx-lg border border-nx-line bg-nx-raised p-4">
           {(
             [
               { key: "isFree", label: t(`${G}.filters.freeOnly`), icon: Sparkles },
@@ -241,20 +281,23 @@ export function ThemeGalleryView() {
             ] as const
           ).map(({ key, label, icon: Icon }) => (
             <button
+              type="button"
               key={key}
               onClick={() =>
                 vm.setFilters({
                   [key]: vm.filters[key as keyof typeof vm.filters] ? undefined : true,
                 })
               }
+              aria-pressed={!!vm.filters[key as keyof typeof vm.filters]}
               className={cn(
-                "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-all",
+                "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-colors duration-nx-micro motion-reduce:transition-none",
+                "focus-visible:outline-none focus-visible:shadow-nx-focus",
                 vm.filters[key as keyof typeof vm.filters]
-                  ? "border-primary bg-primary/10 font-medium text-primary"
-                  : "border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"
+                  ? "border-nx-accent bg-nx-accent-wash font-medium text-nx-accent"
+                  : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi hover:text-nx-ink"
               )}
             >
-              <Icon className="h-3.5 w-3.5" />
+              <Icon className="h-3.5 w-3.5" aria-hidden="true" />
               {label}
             </button>
           ))}
@@ -262,40 +305,30 @@ export function ThemeGalleryView() {
       )}
 
       {/* ── Loading ── */}
-      {vm.isLoading && (
-        <div className="flex flex-col items-center justify-center gap-3 py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <span className="text-sm text-muted-foreground">{t("common.loading")}</span>
-        </div>
-      )}
+      {vm.isLoading && <LoadingSpinner size="lg" />}
 
       {/* ── Empty State ── */}
       {!vm.isLoading && vm.themes.length === 0 && (
-        <div className="flex flex-col items-center justify-center gap-4 py-20">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-muted/50">
-            <Paintbrush className="h-8 w-8 text-muted-foreground/50" />
-          </div>
-          <div className="text-center">
-            <p className="text-sm font-medium text-foreground">
-              {vm.activeTab === "favorites" ? t(`${G}.emptyFavorites`) : t(`${G}.noResults`)}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {vm.activeTab === "favorites"
-                ? t(`${G}.emptyFavoritesHint`)
-                : t(`${G}.noResultsHint`)}
-            </p>
-          </div>
-          {vm.activeTab === "favorites" ? (
-            <Button variant="outline" size="sm" onClick={() => vm.setActiveTab("browse")}>
-              {t(`${G}.browseThemes`)}
-            </Button>
-          ) : vm.hasActiveFilters ? (
-            <Button variant="outline" size="sm" onClick={vm.resetFilters}>
-              <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
-              {t(`${G}.clearFilters`)}
-            </Button>
-          ) : null}
-        </div>
+        <EmptyState
+          icon={Paintbrush}
+          size="lg"
+          title={vm.activeTab === "favorites" ? t(`${G}.emptyFavorites`) : t(`${G}.noResults`)}
+          description={
+            vm.activeTab === "favorites" ? t(`${G}.emptyFavoritesHint`) : t(`${G}.noResultsHint`)
+          }
+          action={
+            vm.activeTab === "favorites" ? (
+              <Button variant="outline" size="sm" onClick={() => vm.setActiveTab("browse")}>
+                {t(`${G}.browseThemes`)}
+              </Button>
+            ) : vm.hasActiveFilters ? (
+              <Button variant="outline" size="sm" onClick={vm.resetFilters}>
+                <RotateCcw className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
+                {t(`${G}.clearFilters`)}
+              </Button>
+            ) : undefined
+          }
+        />
       )}
 
       {/* ── Theme Grid ── */}
@@ -330,9 +363,10 @@ export function ThemeGalleryView() {
             size="sm"
             onClick={() => vm.setPage(vm.page - 1)}
             disabled={vm.page <= 1}
+            aria-label={t("table.previousPage")}
             className="gap-1"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
           </Button>
           <div className="flex items-center gap-1">
             {Array.from({ length: Math.min(vm.totalPages, 7) }, (_, i) => {
@@ -348,13 +382,17 @@ export function ThemeGalleryView() {
               }
               return (
                 <button
+                  type="button"
                   key={pageNum}
                   onClick={() => vm.setPage(pageNum)}
+                  aria-current={vm.page === pageNum ? "page" : undefined}
+                  aria-label={`${t("table.goToPage")} ${pageNum}`}
                   className={cn(
-                    "h-8 w-8 rounded-md text-xs font-medium transition-all",
+                    "h-8 w-8 rounded-nx-control text-xs font-medium transition-colors duration-nx-micro motion-reduce:transition-none",
+                    "focus-visible:outline-none focus-visible:shadow-nx-focus",
                     vm.page === pageNum
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      ? "bg-nx-accent-fill text-nx-on-fill shadow-nx-sm"
+                      : "text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
                   )}
                 >
                   {pageNum}
@@ -367,9 +405,10 @@ export function ThemeGalleryView() {
             size="sm"
             onClick={() => vm.setPage(vm.page + 1)}
             disabled={vm.page >= vm.totalPages}
+            aria-label={t("table.nextPage")}
             className="gap-1"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
           </Button>
         </div>
       )}
@@ -417,58 +456,86 @@ function GalleryThemeCard({
 }: GalleryThemeCardProps) {
   const { t } = useI18n();
   const accentColor = theme.accentColor || "#6b7280";
+  const mockInk = inkBaseFor(accentColor);
 
   return (
     <div
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-xl border transition-all duration-300",
-        "hover:-translate-y-0.5 hover:shadow-lg",
+        "group relative flex flex-col overflow-hidden rounded-nx-lg border transition-colors duration-nx-standard motion-reduce:transition-none",
         isPreviewing
-          ? "border-primary/50 shadow-primary/5 ring-2 ring-primary/20"
+          ? "border-nx-accent ring-1 ring-nx-accent"
           : theme.isApplied
-            ? "border-primary/40 shadow-primary/5 ring-1 ring-primary/20"
-            : "border-border/60 hover:border-primary/30",
+            ? "border-nx-accent"
+            : "border-nx-line hover:border-nx-line-hi",
         theme.isDeprecated && "opacity-60"
       )}
     >
       {/* ── Color Preview Area ── */}
       <div
-        className="relative h-32 w-full cursor-pointer overflow-hidden"
+        role="button"
+        tabIndex={0}
+        aria-label={t("studio.marketplace.preview")}
+        aria-pressed={isPreviewing}
+        className="relative h-32 w-full cursor-pointer overflow-hidden focus-visible:outline-none focus-visible:shadow-nx-focus"
         onClick={onPreview}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            onPreview();
+          }
+        }}
         style={{
           background: `linear-gradient(135deg, ${accentColor} 0%, color-mix(in srgb, ${accentColor} 50%, black) 100%)`,
         }}
       >
         {/* Mock login form mini-preview */}
-        <div className="absolute inset-4 flex items-center justify-center">
-          <div className="w-full max-w-[120px] space-y-1.5 rounded-lg bg-white/10 px-4 py-3 backdrop-blur-sm">
-            <div className="h-1.5 w-8 rounded-full bg-white/40" />
-            <div className="h-4 w-full rounded border border-white/20 bg-white/15" />
-            <div className="h-4 w-full rounded border border-white/20 bg-white/15" />
+        <div className="absolute inset-4 flex items-center justify-center" aria-hidden="true">
+          <div
+            className="w-full max-w-[120px] space-y-1.5 rounded-nx-md px-4 py-3"
+            style={{ background: `color-mix(in srgb, ${mockInk} 12%, transparent)` }}
+          >
             <div
-              className="h-4 w-full rounded"
-              style={{ backgroundColor: `color-mix(in srgb, ${accentColor} 80%, white)` }}
+              className="h-1.5 w-8 rounded-full"
+              style={{ background: `color-mix(in srgb, ${mockInk} 45%, transparent)` }}
+            />
+            <div
+              className="h-4 w-full rounded-nx-sm border"
+              style={{
+                borderColor: `color-mix(in srgb, ${mockInk} 20%, transparent)`,
+                background: `color-mix(in srgb, ${mockInk} 15%, transparent)`,
+              }}
+            />
+            <div
+              className="h-4 w-full rounded-nx-sm border"
+              style={{
+                borderColor: `color-mix(in srgb, ${mockInk} 20%, transparent)`,
+                background: `color-mix(in srgb, ${mockInk} 15%, transparent)`,
+              }}
+            />
+            <div
+              className="h-4 w-full rounded-nx-sm"
+              style={{ backgroundColor: `color-mix(in srgb, ${accentColor} 80%, ${mockInk})` }}
             />
           </div>
         </div>
 
         {/* Top-left badges */}
-        <div className="absolute left-2 top-2 flex gap-1.5">
+        <div className="absolute start-2 top-2 flex gap-1.5">
           {theme.isFeatured && (
-            <Badge className="h-5 gap-0.5 border-0 bg-warning px-1.5 py-0 text-[9px] text-warning-foreground shadow-sm">
-              <Star className="h-2.5 w-2.5 fill-warning-foreground" />
+            <Badge className="h-5 gap-0.5 border-0 bg-warning px-1.5 py-0 text-[9px] text-warning-foreground">
+              <Star className="h-2.5 w-2.5 fill-warning-foreground" aria-hidden="true" />
               {t(`${G}.card.featured`)}
             </Badge>
           )}
           {theme.isNew && (
-            <Badge className="h-5 gap-0.5 border-0 bg-success px-1.5 py-0 text-[9px] text-success-foreground shadow-sm">
-              <Sparkles className="h-2.5 w-2.5" />
+            <Badge className="h-5 gap-0.5 border-0 bg-success px-1.5 py-0 text-[9px] text-success-foreground">
+              <Sparkles className="h-2.5 w-2.5" aria-hidden="true" />
               {t(`${G}.card.new`)}
             </Badge>
           )}
           {isPreviewing && (
-            <Badge className="h-5 gap-0.5 border-0 bg-primary px-1.5 py-0 text-[9px] text-primary-foreground shadow-sm">
-              <Eye className="h-2.5 w-2.5" />
+            <Badge className="h-5 gap-0.5 border-0 bg-nx-accent-fill px-1.5 py-0 text-[9px] text-nx-on-fill">
+              <Eye className="h-2.5 w-2.5" aria-hidden="true" />
               {t(`${G}.card.preview`)}
             </Badge>
           )}
@@ -476,44 +543,51 @@ function GalleryThemeCard({
 
         {/* Applied badge */}
         {theme.isApplied && (
-          <div className="absolute right-2 top-2">
-            <Badge className="h-5 gap-0.5 border-0 bg-primary px-1.5 py-0 text-[9px] text-primary-foreground shadow-sm">
-              <Check className="h-2.5 w-2.5" />
+          <div className="absolute end-2 top-2">
+            <Badge className="h-5 gap-0.5 border-0 bg-nx-accent-fill px-1.5 py-0 text-[9px] text-nx-on-fill">
+              <Check className="h-2.5 w-2.5" aria-hidden="true" />
               {t(`${G}.card.applied`)}
             </Badge>
           </div>
         )}
 
-        {/* Favorite button */}
+        {/* Favorite button — a fixed dark scrim (not the arbitrary accent) so the
+            white glyph stays legible no matter how light the theme's accent is. */}
         <button
+          type="button"
           onClick={(e) => {
             e.stopPropagation();
             onToggleFavorite();
           }}
-          className="absolute bottom-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/30 backdrop-blur-sm transition-colors hover:bg-black/50"
+          aria-label={
+            theme.isFavorited ? t("studio.marketplace.favorited") : t("studio.marketplace.favorite")
+          }
+          aria-pressed={theme.isFavorited}
+          className="absolute bottom-2 end-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/40 transition-colors duration-nx-micro hover:bg-black/60 motion-reduce:transition-none"
         >
           <Heart
             className={cn(
-              "h-3.5 w-3.5 transition-colors",
+              "h-3.5 w-3.5 transition-colors duration-nx-micro motion-reduce:transition-none",
               theme.isFavorited ? "fill-destructive text-destructive" : "text-white"
             )}
+            aria-hidden="true"
           />
         </button>
 
         {/* Feature icons */}
-        <div className="absolute bottom-2 left-2 flex gap-1.5">
+        <div className="absolute bottom-2 start-2 flex gap-1.5" aria-hidden="true">
           {theme.hasDarkMode && (
-            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-black/30 backdrop-blur-sm">
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-black/40">
               <Moon className="h-3 w-3 text-white/80" />
             </div>
           )}
           {theme.hasAccessibilityPreset && (
-            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-black/30 backdrop-blur-sm">
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-black/40">
               <ShieldCheck className="h-3 w-3 text-white/80" />
             </div>
           )}
           {theme.hasContentBlocks && (
-            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-black/30 backdrop-blur-sm">
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-black/40">
               <Blocks className="h-3 w-3 text-white/80" />
             </div>
           )}
@@ -525,17 +599,20 @@ function GalleryThemeCard({
         {/* Name + Pricing */}
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <h3
-              className="cursor-pointer truncate text-sm font-semibold text-foreground transition-colors hover:text-primary"
-              onClick={(e) => {
-                e.stopPropagation();
-                onOpenDetail();
-              }}
-            >
-              {theme.name}
+            <h3 className="truncate text-sm font-semibold text-nx-ink">
+              <button
+                type="button"
+                className="transition-colors duration-nx-micro hover:text-nx-accent motion-reduce:transition-none"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenDetail();
+                }}
+              >
+                {theme.name}
+              </button>
             </h3>
             {theme.authorName && (
-              <p className="mt-0.5 text-[10px] text-muted-foreground">
+              <p className="mt-0.5 text-[10px] text-nx-ink-3">
                 {t(`${G}.card.byAuthor`, { author: theme.authorName })}
               </p>
             )}
@@ -544,18 +621,18 @@ function GalleryThemeCard({
         </div>
 
         {/* Description */}
-        <p className="line-clamp-2 min-h-[2.5rem] text-xs leading-relaxed text-muted-foreground">
+        <p className="line-clamp-2 min-h-[2.5rem] text-xs leading-relaxed text-nx-ink-2">
           {theme.description || ""}
         </p>
 
         {/* Stats row */}
-        <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+        <div className="flex items-center gap-3 text-[10px] text-nx-ink-3">
           <span className="flex items-center gap-1">
-            <Paintbrush className="h-3 w-3" />
+            <Paintbrush className="h-3 w-3" aria-hidden="true" />
             {t(`${G}.card.uses`, { count: theme.usageCount })}
           </span>
           <span className="flex items-center gap-1">
-            <Heart className="h-3 w-3" />
+            <Heart className="h-3 w-3" aria-hidden="true" />
             {theme.likeCount}
           </span>
           {theme.category && (
@@ -568,9 +645,7 @@ function GalleryThemeCard({
         {/* ── Actions ── */}
         {isConfirmingApply ? (
           <div className="mt-1 flex flex-col gap-1.5">
-            <p className="text-[10px] font-medium text-muted-foreground">
-              {t(`${G}.card.applyToDraft`)}
-            </p>
+            <p className="text-[10px] font-medium text-nx-ink-2">{t(`${G}.card.applyToDraft`)}</p>
             <div className="flex gap-1.5">
               <Button
                 size="sm"
@@ -599,12 +674,13 @@ function GalleryThemeCard({
                 variant="ghost"
                 size="sm"
                 className="h-7 w-7 p-0"
+                aria-label={t("common.cancel")}
                 onClick={(e: React.MouseEvent) => {
                   e.stopPropagation();
                   onApplyCancel();
                 }}
               >
-                <X className="h-3.5 w-3.5" />
+                <X className="h-3.5 w-3.5" aria-hidden="true" />
               </Button>
             </div>
           </div>
@@ -614,16 +690,13 @@ function GalleryThemeCard({
             <Button
               variant={isPreviewing ? "default" : "outline"}
               size="sm"
-              className={cn(
-                "h-8 flex-1 gap-1.5 text-xs",
-                isPreviewing && "bg-primary text-primary-foreground hover:bg-primary/90"
-              )}
+              className="h-8 flex-1 gap-1.5 text-xs"
               onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 onPreview();
               }}
             >
-              <Eye className="h-3.5 w-3.5" />
+              <Eye className="h-3.5 w-3.5" aria-hidden="true" />
               {isPreviewing ? t(`${G}.card.exitPreview`) : t(`${G}.card.preview`)}
             </Button>
 
@@ -637,7 +710,7 @@ function GalleryThemeCard({
                   onApplyClick();
                 }}
               >
-                <Paintbrush className="h-3.5 w-3.5" />
+                <Paintbrush className="h-3.5 w-3.5" aria-hidden="true" />
                 {t(`${G}.card.apply`)}
               </Button>
             ) : theme.isBuyable ? (
@@ -645,9 +718,9 @@ function GalleryThemeCard({
                 variant="outline"
                 size="sm"
                 disabled
-                className="h-8 flex-1 gap-1.5 border-primary/40 text-xs text-primary"
+                className="h-8 flex-1 gap-1.5 border-nx-accent text-xs text-nx-accent"
               >
-                <ShoppingCart className="h-3.5 w-3.5" />
+                <ShoppingCart className="h-3.5 w-3.5" aria-hidden="true" />
                 {theme.price ? `$${theme.price.toFixed(0)}` : t(`${G}.card.buy`)}
               </Button>
             ) : (
@@ -655,9 +728,9 @@ function GalleryThemeCard({
                 variant="outline"
                 size="sm"
                 disabled
-                className="h-8 flex-1 gap-1.5 border-warning/50 text-xs text-warning"
+                className="h-8 flex-1 gap-1.5 border-warning text-xs text-warning"
               >
-                <Lock className="h-3.5 w-3.5" />
+                <Lock className="h-3.5 w-3.5" aria-hidden="true" />
                 {t(`${G}.card.upgrade`)}
               </Button>
             )}
@@ -675,7 +748,7 @@ function PricingBadge({ theme }: { theme: ThemeCard }) {
   if (theme.isFree) {
     return (
       <Badge className="shrink-0 border-success/20 bg-success/10 text-[10px] font-semibold text-success">
-        <Sparkles className="mr-0.5 h-3 w-3" />
+        <Sparkles className="me-0.5 h-3 w-3" aria-hidden="true" />
         {t("studio.marketplace.free")}
       </Badge>
     );
@@ -689,22 +762,22 @@ function PricingBadge({ theme }: { theme: ThemeCard }) {
   }
   if (theme.isPurchased) {
     return (
-      <Badge className="shrink-0 border-primary/20 bg-primary/10 text-[10px] font-semibold text-primary">
+      <Badge className="shrink-0 border-nx-accent text-[10px] font-semibold text-nx-accent">
         {t("studio.marketplace.purchased")}
       </Badge>
     );
   }
   if (theme.isBuyable) {
     return (
-      <Badge className="shrink-0 border-primary/20 bg-primary/10 text-[10px] font-semibold text-primary">
-        <Crown className="mr-0.5 h-3 w-3" />
+      <Badge className="shrink-0 border-nx-accent text-[10px] font-semibold text-nx-accent">
+        <Crown className="me-0.5 h-3 w-3" aria-hidden="true" />
         {theme.price ? `$${theme.price.toFixed(0)}` : t(`${G}.card.buy`)}
       </Badge>
     );
   }
   return (
     <Badge className="shrink-0 border-warning/20 bg-warning/10 text-[10px] font-semibold text-warning">
-      <Lock className="mr-0.5 h-3 w-3" />
+      <Lock className="me-0.5 h-3 w-3" aria-hidden="true" />
       {t(`${G}.card.locked`)}
     </Badge>
   );

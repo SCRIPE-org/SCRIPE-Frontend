@@ -52,6 +52,7 @@ export const en = {
       preview: "Preview",
       favorite: "Favorite",
       unfavorite: "Unfavorite",
+      favorited: "Favorited",
       free: "Free",
       included: "Included",
       upgrade: "Upgrade",
@@ -239,6 +240,8 @@ export const en = {
       includes: "What's Included",
       card: {
         layers: "{{count}} layers",
+        pro: "PRO",
+        viewDetailsAria: "View {{name}} details",
       },
       applyBundle: "Apply Bundle",
       applySuccess: "Bundle applied successfully!",
@@ -269,6 +272,9 @@ export const en = {
       },
       empty: "No bundles found",
       emptyHint: "Try adjusting your filters or save your current config as a bundle.",
+    },
+    layoutPreview: {
+      ariaLabel: "{{layout}} layout preview",
     },
     themeDetail: {
       preview: {
@@ -395,6 +401,7 @@ export const en = {
       preview: "Theme Preview",
       previewDesc: "Saves current tokens, layout, and styling",
       save: "Save Theme",
+      saveFailed: "Failed to save theme",
       success: "Theme saved!",
       successDesc: "Your custom theme is now available in the marketplace.",
     },

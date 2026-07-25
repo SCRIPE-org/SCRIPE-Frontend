@@ -12,6 +12,7 @@
 import { cn } from "@/core/common/utils";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
+import { chartColor } from "@core/ui/chart";
 import {
   Dialog,
   DialogContent,
@@ -30,7 +31,6 @@ import {
   FileKey2,
   Heart,
   Check,
-  Loader2,
   Star,
   ArrowRight,
   Layers,
@@ -92,22 +92,25 @@ export function BundleDetailModal({
           <DialogTitle className="flex items-center gap-3">
             {/* Color dot */}
             <div
-              className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg"
+              className="flex h-10 w-10 items-center justify-center rounded-nx-md shadow-nx-sm"
               style={{
-                background: `linear-gradient(135deg, ${bundle.accentColor}, color-mix(in srgb, ${bundle.accentColor} 50%, #1e1b4b))`,
+                background: `linear-gradient(135deg, ${bundle.accentColor}, color-mix(in srgb, ${bundle.accentColor} 50%, black))`,
               }}
+              aria-hidden="true"
             >
-              <TypeIcon className="h-5 w-5 text-white" />
+              <TypeIcon className="h-5 w-5 text-nx-on-fill" />
             </div>
             <div>
               <span className="block">{bundle.name}</span>
-              <span className="mt-0.5 flex items-center gap-1.5 text-xs font-normal text-muted-foreground">
+              <span className="mt-0.5 flex items-center gap-1.5 text-xs font-normal text-nx-ink-2">
                 <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
                   {t(typeConfig.labelKey)}
                 </Badge>
-                {bundle.isFeatured && <Star className="h-3 w-3 fill-warning text-warning" />}
+                {bundle.isFeatured && (
+                  <Star className="h-3 w-3 fill-warning text-warning" aria-hidden="true" />
+                )}
                 <span>v{bundle.version}</span>
-                <span>•</span>
+                <span aria-hidden="true">•</span>
                 <span>{bundle.authorName}</span>
               </span>
             </div>
@@ -119,34 +122,38 @@ export function BundleDetailModal({
 
         {/* ── Layer Breakdown ── */}
         <div className="mt-4">
-          <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold">
-            <Layers className="h-4 w-4 text-primary" />
+          <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-nx-ink">
+            <Layers className="h-4 w-4 text-nx-accent" aria-hidden="true" />
             {t("studio.bundles.includes")}
           </h4>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {bundle.includedLayers.map((layer: BundleLayer) => {
               const info = LAYER_INFO[layer];
               const Icon = ICON_MAP[info.icon] ?? Blocks;
+              const slotColor = chartColor(info.chartSlot);
               return (
                 <div
                   key={layer}
-                  className="flex items-center gap-3 rounded-lg border border-border/50 bg-muted/30 p-3"
+                  className="flex items-center gap-3 rounded-nx-md border border-nx-line bg-nx-raised p-3"
                 >
                   <div
-                    className="flex h-9 w-9 items-center justify-center rounded-lg"
-                    style={{ backgroundColor: `${info.color}15` }}
+                    className="flex h-9 w-9 items-center justify-center rounded-nx-md"
+                    style={{
+                      backgroundColor: `color-mix(in srgb, ${slotColor} 15%, transparent)`,
+                    }}
+                    aria-hidden="true"
                   >
-                    <span style={{ color: info.color }}>
+                    <span style={{ color: slotColor }}>
                       <Icon className="h-4 w-4" />
                     </span>
                   </div>
                   <div>
-                    <p className="text-sm font-medium">{t(info.labelKey)}</p>
-                    <p className="text-[11px] text-muted-foreground">
+                    <p className="text-sm font-medium text-nx-ink">{t(info.labelKey)}</p>
+                    <p className="text-[11px] text-nx-ink-2">
                       {t(`studio.bundles.layerDesc.${layer}`)}
                     </p>
                   </div>
-                  <Check className="ml-auto h-4 w-4 flex-shrink-0 text-success" />
+                  <Check className="ms-auto h-4 w-4 flex-shrink-0 text-success" aria-hidden="true" />
                 </div>
               );
             })}
@@ -166,40 +173,52 @@ export function BundleDetailModal({
 
         {/* ── Apply Mode Selector ── */}
         {!bundle.isApplied && bundle.isAvailable && (
-          <div className="mt-6 rounded-xl border border-border/50 bg-muted/20 p-4">
-            <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold">
-              <Info className="h-4 w-4 text-primary" />
+          <div className="mt-6 rounded-nx-lg border border-nx-line bg-nx-raised p-4">
+            <h4 className="mb-3 flex items-center gap-2 text-sm font-semibold text-nx-ink">
+              <Info className="h-4 w-4 text-nx-accent" aria-hidden="true" />
               {t("studio.bundles.applyMode.title")}
             </h4>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label={t("studio.bundles.applyMode.title")}>
               {/* Replace option */}
               <button
+                type="button"
+                role="radio"
+                aria-checked={applyMode === "replace"}
                 className={cn(
-                  "flex flex-col items-start rounded-lg border-2 p-3 text-left transition-all",
+                  "flex flex-col items-start rounded-nx-md border-2 p-3 text-start transition-colors duration-nx-micro motion-reduce:transition-none",
+                  "focus-visible:outline-none focus-visible:shadow-nx-focus",
                   applyMode === "replace"
-                    ? "border-primary bg-primary/5"
-                    : "border-border/50 hover:border-primary/30"
+                    ? "border-nx-accent bg-nx-accent-wash"
+                    : "border-nx-line hover:border-nx-line-hi"
                 )}
                 onClick={() => setApplyMode("replace")}
               >
-                <span className="text-sm font-medium">{t("studio.bundles.applyMode.replace")}</span>
-                <span className="mt-1 text-[11px] text-muted-foreground">
+                <span className="text-sm font-medium text-nx-ink">
+                  {t("studio.bundles.applyMode.replace")}
+                </span>
+                <span className="mt-1 text-[11px] text-nx-ink-2">
                   {t("studio.bundles.applyMode.replaceDesc")}
                 </span>
               </button>
 
               {/* Merge option */}
               <button
+                type="button"
+                role="radio"
+                aria-checked={applyMode === "merge"}
                 className={cn(
-                  "flex flex-col items-start rounded-lg border-2 p-3 text-left transition-all",
+                  "flex flex-col items-start rounded-nx-md border-2 p-3 text-start transition-colors duration-nx-micro motion-reduce:transition-none",
+                  "focus-visible:outline-none focus-visible:shadow-nx-focus",
                   applyMode === "merge"
-                    ? "border-primary bg-primary/5"
-                    : "border-border/50 hover:border-primary/30"
+                    ? "border-nx-accent bg-nx-accent-wash"
+                    : "border-nx-line hover:border-nx-line-hi"
                 )}
                 onClick={() => setApplyMode("merge")}
               >
-                <span className="text-sm font-medium">{t("studio.bundles.applyMode.merge")}</span>
-                <span className="mt-1 text-[11px] text-muted-foreground">
+                <span className="text-sm font-medium text-nx-ink">
+                  {t("studio.bundles.applyMode.merge")}
+                </span>
+                <span className="mt-1 text-[11px] text-nx-ink-2">
                   {t("studio.bundles.applyMode.mergeDesc")}
                 </span>
               </button>
@@ -213,9 +232,10 @@ export function BundleDetailModal({
             variant="ghost"
             size="sm"
             onClick={() => onToggleFavorite(bundle.slug)}
+            aria-pressed={bundle.isFavorited}
             className={cn(bundle.isFavorited && "text-destructive")}
           >
-            <Heart className={cn("mr-1.5 h-4 w-4", bundle.isFavorited && "fill-current")} />
+            <Heart className={cn("me-1.5 h-4 w-4", bundle.isFavorited && "fill-current")} aria-hidden="true" />
             {bundle.isFavorited
               ? t("studio.marketplace.favorited")
               : t("studio.marketplace.favorite")}
@@ -231,23 +251,18 @@ export function BundleDetailModal({
             <Button
               onClick={() => handleApply(applyMode === "merge")}
               disabled={isApplying || !applyMode}
+              loading={isApplying}
               className="gap-2"
             >
-              {isApplying ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <>
-                  <ArrowRight className="h-4 w-4" />
-                  {t("studio.bundles.applyBundle")}
-                </>
-              )}
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              {t("studio.bundles.applyBundle")}
             </Button>
           )}
 
           {bundle.isApplied && (
-            <Badge variant="outline" className="border-primary/30 px-3 py-1.5 text-primary">
-              <Check className="mr-1.5 h-4 w-4" />
-              {t("studio.gallery.applied")}
+            <Badge variant="outline" className="border-nx-accent px-3 py-1.5 text-nx-accent">
+              <Check className="me-1.5 h-4 w-4" aria-hidden="true" />
+              {t("studio.gallery.card.applied")}
             </Badge>
           )}
         </DialogFooter>

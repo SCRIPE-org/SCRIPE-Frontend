@@ -52,6 +52,7 @@ export const ar = {
       preview: "معاينة",
       favorite: "مفضلة",
       unfavorite: "إزالة من المفضلة",
+      favorited: "مُفضّلة",
       free: "مجاني",
       included: "مشمول",
       upgrade: "ترقية",
@@ -238,6 +239,8 @@ export const ar = {
       includes: "ما المضمّن",
       card: {
         layers: "{{count}} طبقات",
+        pro: "احترافي",
+        viewDetailsAria: "عرض تفاصيل {{name}}",
       },
       applyBundle: "تطبيق الحزمة",
       applySuccess: "تم تطبيق الحزمة بنجاح!",
@@ -268,6 +271,9 @@ export const ar = {
       },
       empty: "لم يتم العثور على حزم",
       emptyHint: "حاول تعديل الفلاتر أو احفظ إعداداتك الحالية كحزمة.",
+    },
+    layoutPreview: {
+      ariaLabel: "معاينة تخطيط {{layout}}",
     },
     themeDetail: {
       preview: {
@@ -394,6 +400,7 @@ export const ar = {
       preview: "معاينة القالب",
       previewDesc: "يحفظ الرموز والتخطيط والتنسيق الحالي",
       save: "حفظ القالب",
+      saveFailed: "فشل حفظ القالب",
       success: "تم حفظ القالب!",
       successDesc: "قالبك المخصص متاح الآن في معرض القوالب.",
     },

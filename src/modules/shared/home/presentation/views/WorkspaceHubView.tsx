@@ -8,8 +8,8 @@
  *
  * Sections:
  * - HubTopBar (rendered by NexusLayout in hub mode — not here)
- * - HubHero: greeting + animated mesh gradient
- * - HubSearch: glassmorphism search bar with / shortcut
+ * - HubHero: greeting + status pill
+ * - HubSearch: the shared Input primitive with a / shortcut
  * - Pinned strip: smaller tiles of pinned workspaces
  * - Modules grid: 5-column grid of all module workspaces
  * - Administration grid: muted admin workspaces
@@ -27,8 +27,9 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useWorkspaceTransition } from "@core/ui/layout/nexus/use-workspace-transition";
 
-import { Loader2, Star, SearchX, LayoutGrid } from "lucide-react";
+import { Star, SearchX, LayoutGrid } from "lucide-react";
 import { EmptyState } from "@core/ui/empty-state";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import type { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
 
 import { HubHero } from "../components/HubHero";
@@ -177,34 +178,12 @@ export function WorkspaceHubView() {
   // ── Loading state ─────────────────────────────────────────────────────────
 
   if (isLoading) {
-    return (
-      <div
-        role="status"
-        aria-label={t("common.loading")}
-        className="flex h-[60vh] items-center justify-center"
-      >
-        <Loader2
-          className="h-8 w-8 animate-spin text-nx-ink-3 motion-reduce:animate-none"
-          aria-hidden="true"
-        />
-      </div>
-    );
+    return <LoadingSpinner fullHeight />;
   }
 
   // Auto-redirect in progress
   if (allUnlocked.length === 1 && lockedWorkspaces.length === 0 && !hasAutoRedirected.current) {
-    return (
-      <div
-        role="status"
-        aria-label={t("common.loading")}
-        className="flex h-[60vh] items-center justify-center"
-      >
-        <Loader2
-          className="h-8 w-8 animate-spin text-nx-ink-3 motion-reduce:animate-none"
-          aria-hidden="true"
-        />
-      </div>
-    );
+    return <LoadingSpinner fullHeight />;
   }
 
   // ── Total module count for "X of Y licensed" label ─────────────────────────
@@ -408,28 +387,6 @@ export function WorkspaceHubView() {
       </div>
 
       <HubFooter />
-
-      {/* Mesh animation keyframes */}
-      <style>{`
-        @keyframes nx-hub-mesh-a-kf {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          50%      { transform: translate(40px, 20px) scale(1.08); }
-        }
-        @keyframes nx-hub-mesh-b-kf {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          50%      { transform: translate(-30px, 25px) scale(0.94); }
-        }
-        @keyframes nx-hub-mesh-c-kf {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          50%      { transform: translate(20px, -15px) scale(1.06); }
-        }
-        .nx-hub-mesh-a { animation: nx-hub-mesh-a-kf 14s ease-in-out infinite; }
-        .nx-hub-mesh-b { animation: nx-hub-mesh-b-kf 18s ease-in-out infinite; }
-        .nx-hub-mesh-c { animation: nx-hub-mesh-c-kf 16s ease-in-out infinite; }
-        @media (prefers-reduced-motion: reduce) {
-          .nx-hub-mesh-a, .nx-hub-mesh-b, .nx-hub-mesh-c { animation: none; }
-        }
-      `}</style>
     </main>
   );
 }

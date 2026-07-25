@@ -1,9 +1,9 @@
 /**
- * Tenant Detail Page — Deep Redesign
+ * Tenant Detail Page
  *
- * Main container for the "Tenant World" experience.
- * Premium layout with hero header, animated stat cards,
- * inline subscription bar, and pill-style tabbed content.
+ * Main container for the "Tenant World" experience: PageHeader-based hero
+ * (TenantHeader), StatCard KPI row (TenantStats), and pill-tab content
+ * (TenantTabs) — the canonical "record that owns a page" composition.
  *
  * @module tenants
  */
@@ -12,9 +12,10 @@
 import dynamic from "next/dynamic";
 import { PageBreadcrumbs } from "@core/ui/page-breadcrumbs";
 import { Skeleton } from "@core/ui/skeleton";
-import { AlertTriangle } from "lucide-react";
+import { ErrorMessage } from "@core/ui/error-message";
 import { Button } from "@core/ui/button";
 import { CurrencyDisplayToggle } from "@core/ui/currency-display-toggle";
+import { useI18n } from "@core/providers/i18n-provider";
 import { useTenantDetailViewModel } from "../viewmodels/useTenantDetailViewModel";
 
 // Lazy-load heavy sub-sections
@@ -40,6 +41,7 @@ interface TenantDetailPageProps {
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
+  const { t } = useI18n();
   const {
     tenant,
     loading,
@@ -55,18 +57,18 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
   if (loading) {
     return (
       <div className="space-y-5" dir={direction}>
-        <Skeleton className="h-8 w-48 rounded-lg" />
+        <Skeleton shape="title" className="h-8 w-48" />
         {/* Hero header skeleton */}
-        <div className="space-y-4 rounded-2xl border border-border/50 p-6">
+        <div className="space-y-4 rounded-nx-lg border border-nx-line p-6">
           <div className="flex items-start gap-4">
-            <Skeleton className="h-16 w-16 rounded-xl" />
+            <Skeleton className="h-16 w-16 rounded-nx-md" />
             <div className="flex-1 space-y-3">
-              <Skeleton className="h-7 w-64" />
-              <Skeleton className="h-4 w-48" />
+              <Skeleton shape="title" className="h-7 w-64" />
+              <Skeleton shape="text" className="h-4 w-48" />
             </div>
             <div className="flex gap-2">
-              <Skeleton className="h-9 w-28 rounded-lg" />
-              <Skeleton className="h-9 w-20 rounded-lg" />
+              <Skeleton shape="control" className="h-9 w-28" />
+              <Skeleton shape="control" className="h-9 w-20" />
             </div>
           </div>
           <Skeleton className="h-2 w-full rounded-full" />
@@ -74,16 +76,16 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
         {/* Stats skeleton */}
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-20 rounded-xl" />
+            <Skeleton key={i} className="h-20 rounded-nx-lg" />
           ))}
         </div>
         {/* Tabs skeleton */}
         <div className="flex gap-1 pb-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-10 w-28 rounded-xl" />
+            <Skeleton key={i} shape="control" className="w-28" />
           ))}
         </div>
-        <Skeleton className="h-80 w-full rounded-2xl" />
+        <Skeleton className="h-80 w-full rounded-nx-lg" />
       </div>
     );
   }
@@ -92,12 +94,9 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
   if (error || !tenant) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4" dir={direction}>
-        <div className="rounded-2xl bg-destructive/10 p-6">
-          <AlertTriangle className="h-12 w-12 text-destructive" />
-        </div>
-        <h2 className="text-xl font-semibold">{error}</h2>
-        <Button onClick={handleBack} variant="outline" className="rounded-xl">
-          Back to List
+        <ErrorMessage message={error ?? t("tenant.notFound")} />
+        <Button onClick={handleBack} variant="outline">
+          {t("tenant.backToList")}
         </Button>
       </div>
     );
@@ -114,7 +113,7 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
       {/* Hero Header: tenant info, status banners, actions, subscription bar */}
       <TenantHeader tenant={tenant} onUpdate={handleUpdate} onEnter={handleEnter} />
 
-      {/* Animated Stat Cards */}
+      {/* KPI Stat Cards */}
       <TenantStats tenantId={tenantId} />
 
       {/* Pill-style Tabbed Content */}

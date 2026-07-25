@@ -1,5 +1,8 @@
+"use client";
+
 import { Eye, LogIn, Pencil, Building2, ArrowUpCircle, Trash2 } from "lucide-react";
 import { Button } from "@core/ui/button";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { TenantTreeNode } from "../../../domain/entities/Tenant";
 import type { TenantStatus } from "./TenantNodeCardHeader";
 
@@ -18,7 +21,6 @@ interface TenantNodeCardActionsProps {
   onCreateChild?: (parentNode: TenantTreeNode) => void;
   onViewDetails: () => void;
   onEnterWorld: () => void;
-  t: (key: string) => string;
 }
 
 /**
@@ -40,27 +42,23 @@ export function TenantNodeCardActions({
   onCreateChild,
   onViewDetails,
   onEnterWorld,
-  t,
 }: TenantNodeCardActionsProps) {
+  const { t } = useI18n();
+
   return (
     <div className="mt-4 flex flex-wrap items-center gap-2">
       {/* View Details */}
       {canViewDetails && !compact && (
         <Button size="sm" onClick={onViewDetails}>
-          <Eye className="me-1.5 h-4 w-4" />
-          {t("common.view") || "View Details"}
+          <Eye className="me-1.5 h-4 w-4" aria-hidden="true" />
+          {t("tenant.viewTenantDetails")}
         </Button>
       )}
 
       {/* Enter Tenant World */}
       {canEnterTenantWorld && canDrillDown && !compact && status !== "canceled" && (
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={onEnterWorld}
-          disabled={status === "suspended"}
-        >
-          <LogIn className="me-1.5 h-4 w-4" />
+        <Button size="sm" variant="outline" onClick={onEnterWorld} disabled={status === "suspended"}>
+          <LogIn className="me-1.5 h-4 w-4" aria-hidden="true" />
           {t("tenant.enterTenantWorld")}
         </Button>
       )}
@@ -68,7 +66,7 @@ export function TenantNodeCardActions({
       {/* Edit */}
       {canEdit_ && onEdit && (
         <Button size="sm" variant="ghost" onClick={() => onEdit(node)}>
-          <Pencil className="me-1.5 h-4 w-4" />
+          <Pencil className="me-1.5 h-4 w-4" aria-hidden="true" />
           {t("tenant.edit")}
         </Button>
       )}
@@ -76,7 +74,7 @@ export function TenantNodeCardActions({
       {/* Add Child */}
       {canCreate && onCreateChild && (
         <Button size="sm" variant="ghost" onClick={() => onCreateChild(node)}>
-          <Building2 className="me-1.5 h-4 w-4" />
+          <Building2 className="me-1.5 h-4 w-4" aria-hidden="true" />
           {t("tenant.addChild")}
         </Button>
       )}
@@ -86,10 +84,10 @@ export function TenantNodeCardActions({
         <Button
           size="sm"
           variant="outline"
-          className="border-primary text-primary hover:bg-primary/10"
+          className="border-nx-accent text-nx-accent hover:bg-nx-accent-wash"
           onClick={onViewDetails}
         >
-          <ArrowUpCircle className="me-1.5 h-4 w-4" />
+          <ArrowUpCircle className="me-1.5 h-4 w-4" aria-hidden="true" />
           {t("tenant.reassignPlan")}
         </Button>
       )}
@@ -102,8 +100,8 @@ export function TenantNodeCardActions({
           className="ms-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
           onClick={() => onDelete(node)}
         >
-          <Trash2 className="me-1.5 h-4 w-4" />
-          {t("common.delete") || "Delete"}
+          <Trash2 className="me-1.5 h-4 w-4" aria-hidden="true" />
+          {t("common.delete")}
         </Button>
       )}
     </div>

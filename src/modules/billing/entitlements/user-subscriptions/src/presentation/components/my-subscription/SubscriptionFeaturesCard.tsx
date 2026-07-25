@@ -33,13 +33,13 @@ export function SubscriptionFeaturesCard({
     switch (feat.valueType) {
       case "Boolean":
         return feat.value === "true" ? (
-          <Check className="h-4 w-4 text-success" />
+          <Check className="h-4 w-4 text-success" aria-hidden="true" />
         ) : (
-          <X className="h-4 w-4 text-muted-foreground" />
+          <X className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
         );
       case "Numeric": {
         const num = parseInt(feat.value);
-        if (num === -1) return <Infinity className="h-4 w-4 text-info" />;
+        if (num === -1) return <Infinity className="h-4 w-4 text-info" aria-hidden="true" />;
         return (
           <Badge variant="secondary" className="tabular-nums">
             {num.toLocaleString()}
@@ -47,7 +47,7 @@ export function SubscriptionFeaturesCard({
         );
       }
       default:
-        return <span className="text-sm">{feat.value}</span>;
+        return <span className="text-sm text-nx-ink">{feat.value}</span>;
     }
   };
 
@@ -60,15 +60,15 @@ export function SubscriptionFeaturesCard({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Layers className="h-5 w-5 text-primary" />
-          {t("entitlements.mySubscription.features") || "Included Features"}
+          <Layers className="h-5 w-5 text-nx-accent" aria-hidden="true" />
+          {t("entitlements.mySubscription.features")}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="divide-y">
+        <div className="divide-y divide-nx-line">
           {features.map((feat) => (
             <div key={feat.featureKey} className="flex items-center justify-between py-2.5">
-              <span className="text-sm">{getDisplayName(feat)}</span>
+              <span className="text-sm text-nx-ink">{getDisplayName(feat)}</span>
               <div>{renderFeatureValue(feat)}</div>
             </div>
           ))}

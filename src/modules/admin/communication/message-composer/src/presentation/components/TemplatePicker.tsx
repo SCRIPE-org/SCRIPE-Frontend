@@ -4,7 +4,9 @@ import React, { useMemo } from "react";
 import { useTemplatePickerViewModel } from "../viewmodels/useTemplatePickerViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
-import { Loader2, FileText } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { ErrorMessage } from "@core/ui/error-message";
+import { FileText } from "lucide-react";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import type { EmailTemplate } from "../../domain/entities/Email";
@@ -28,7 +30,7 @@ export interface TemplatePickerProps {
 export function TemplatePicker({ repository, onSelect }: TemplatePickerProps) {
   const { t } = useI18n();
 
-  const { templates, isLoading } = useTemplatePickerViewModel({ repository });
+  const { templates, isLoading, isError, refetch } = useTemplatePickerViewModel({ repository });
 
   // Convert templates to GenericSelect options
   const options: GenericSelectOption[] = useMemo(() => {
@@ -59,26 +61,30 @@ export function TemplatePicker({ repository, onSelect }: TemplatePickerProps) {
 
   if (isLoading) {
     return (
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Loader2 className="h-4 w-4 animate-spin" />
-        {t("messaging.email.loadingTemplates") || "Loading templates..."}
+      <div className="flex items-center gap-2 text-sm text-nx-ink-2">
+        <LoadingSpinner size="inline" />
+        {t("messaging.email.loadingTemplates")}
       </div>
     );
+  }
+
+  if (isError) {
+    return <ErrorMessage size="sm" message={t("common.error")} onRetry={refetch} />;
   }
 
   if (templates.length === 0) return null;
 
   return (
     <div className="flex items-center gap-2">
-      <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
+      <FileText className="h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
       <GenericSelect
         options={options}
         value={selectedId || undefined}
         onValueChange={handleValueChange}
         type="searchable"
-        placeholder={t("messaging.email.selectTemplate") || "Use a template..."}
-        searchPlaceholder={t("common.search") || "Search templates..."}
-        noResultsText={t("common.noResults") || "No templates found"}
+        placeholder={t("messaging.email.selectTemplate")}
+        searchPlaceholder={t("common.search")}
+        noResultsText={t("common.noResults")}
         allowClear
         className="w-[280px]"
       />
@@ -86,7 +92,7 @@ export function TemplatePicker({ repository, onSelect }: TemplatePickerProps) {
       {/* Apply Button */}
       {selectedId && (
         <Button size="sm" variant="default" onClick={handleApply} className="shrink-0">
-          {t("messaging.email.applyTemplate") || "Apply"}
+          {t("messaging.email.applyTemplate")}
         </Button>
       )}
     </div>

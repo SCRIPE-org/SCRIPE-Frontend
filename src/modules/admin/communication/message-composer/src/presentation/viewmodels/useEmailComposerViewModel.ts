@@ -204,7 +204,7 @@ export function useEmailComposerViewModel() {
       }
 
       success({
-        title: t("messaging.email.templateApplied") || `Template "${template.key}" applied`,
+        title: t("messaging.email.templateApplied"),
       });
     },
     [t, success]
@@ -403,11 +403,11 @@ export function useEmailComposerViewModel() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: HISTORY_QUERY_KEY });
-      success({ title: t("messaging.email.sendSuccess") || "Email sent successfully" });
+      success({ title: t("messaging.email.sendSuccess") });
       resetForm();
     },
     onError: () => {
-      toastError({ title: t("messaging.email.sendError") || "Failed to send email" });
+      toastError({ title: t("messaging.email.sendError") });
     },
   });
 
@@ -420,7 +420,7 @@ export function useEmailComposerViewModel() {
 
     if (Object.keys(errors).length > 0) {
       toastError({
-        title: t("messaging.email.validationError") || "Please fill in all required fields",
+        title: t("messaging.email.validationError"),
       });
       return false;
     }
@@ -485,10 +485,10 @@ export function useEmailComposerViewModel() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: HISTORY_QUERY_KEY });
-      success({ title: t("messaging.email.cancelSuccess") || "Email cancelled successfully" });
+      success({ title: t("messaging.email.cancelSuccess") });
     },
     onError: () => {
-      toastError({ title: t("messaging.email.cancelError") || "Failed to cancel email" });
+      toastError({ title: t("messaging.email.cancelError") });
     },
   });
 
@@ -564,6 +564,10 @@ export function useEmailComposerViewModel() {
     setHistoryPage,
     historyTotalPages,
     isHistoryLoading: historyQuery.isLoading,
+    historyError: historyQuery.error as Error | null,
+    refetchHistory: () => {
+      historyQuery.refetch();
+    },
     historySearch,
     setHistorySearch: (v: string) => {
       setHistorySearch(v);
@@ -609,13 +613,13 @@ export function useEmailComposerViewModel() {
           .resendEmail(email.id)
           .then(() => {
             queryClient.invalidateQueries({ queryKey: HISTORY_QUERY_KEY });
-            success({ title: "Email re-queued for sending" });
+            success({ title: t("messaging.email.resendSuccess") });
           })
           .catch(() => {
-            toastError({ title: "Failed to resend email" });
+            toastError({ title: t("messaging.email.resendError") });
           });
       },
-      [repo, queryClient, success, toastError]
+      [repo, queryClient, success, toastError, t]
     ),
     onUseAsTemplate: useCallback(
       (email: SentEmail) => {

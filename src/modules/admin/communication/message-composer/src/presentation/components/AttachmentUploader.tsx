@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useCallback, useRef, useState } from "react";
+import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { cn } from "@core/common/utils";
@@ -49,14 +50,17 @@ export interface AttachmentUploaderProps {
 
 // ─── Helpers ────────────────────────────────────────────────
 function getFileIcon(type: string) {
-  if (type.startsWith("image/")) return <ImageIcon className="h-4 w-4 text-info" />;
-  if (type.startsWith("video/")) return <Video className="h-4 w-4 text-primary" />;
-  if (type.includes("pdf")) return <FileText className="h-4 w-4 text-destructive" />;
+  if (type.startsWith("image/"))
+    return <ImageIcon className="h-4 w-4 text-info" aria-hidden="true" />;
+  if (type.startsWith("video/"))
+    return <Video className="h-4 w-4 text-nx-accent" aria-hidden="true" />;
+  if (type.includes("pdf"))
+    return <FileText className="h-4 w-4 text-destructive" aria-hidden="true" />;
   if (type.includes("zip") || type.includes("rar") || type.includes("tar"))
-    return <FileArchive className="h-4 w-4 text-warning" />;
+    return <FileArchive className="h-4 w-4 text-warning" aria-hidden="true" />;
   if (type.includes("sheet") || type.includes("csv") || type.includes("excel"))
-    return <FileSpreadsheet className="h-4 w-4 text-success" />;
-  return <File className="h-4 w-4 text-muted-foreground" />;
+    return <FileSpreadsheet className="h-4 w-4 text-success" aria-hidden="true" />;
+  return <File className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />;
 }
 
 function formatFileSize(bytes: number): string {
@@ -79,6 +83,7 @@ export function AttachmentUploader({
   accept = "*/*",
   disabled,
 }: AttachmentUploaderProps) {
+  const { t } = useI18n();
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
 
@@ -112,9 +117,9 @@ export function AttachmentUploader({
       {/* Drop Zone */}
       <div
         className={cn(
-          "cursor-pointer rounded-lg border-2 border-dashed p-4 text-center transition-colors",
-          dragOver && "border-primary bg-primary/5",
-          !dragOver && "border-muted-foreground/20 hover:border-primary/50",
+          "cursor-pointer rounded-nx-lg border-2 border-dashed p-4 text-center transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+          dragOver && "border-nx-accent bg-nx-accent-wash",
+          !dragOver && "border-nx-line hover:border-nx-accent",
           disabled && "cursor-not-allowed opacity-50"
         )}
         onClick={() => !disabled && inputRef.current?.click()}
@@ -125,12 +130,12 @@ export function AttachmentUploader({
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
       >
-        <Upload className="mx-auto mb-2 h-6 w-6 text-muted-foreground" />
-        <p className="text-sm text-muted-foreground">
-          Drop files here or <span className="font-medium text-primary">browse</span>
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Max {maxSizeMb}MB per file · {maxFiles} files total
+        <Upload className="mx-auto mb-2 h-6 w-6 text-nx-ink-3" aria-hidden="true" />
+        <p className="text-sm text-nx-ink-2">{t("messaging.email.dropFiles")}</p>
+        <p className="mt-1 text-xs text-nx-ink-3">
+          {t("messaging.email.maxFileSize", { size: maxSizeMb })}
+          {" · "}
+          {t("messaging.email.maxFiles", { count: maxFiles })}
         </p>
         <input
           ref={inputRef}
@@ -153,26 +158,26 @@ export function AttachmentUploader({
             <div
               key={file.id}
               className={cn(
-                "group flex items-center gap-2 rounded-lg border bg-card/50 p-2",
-                file.error && "border-destructive/30 bg-destructive/5"
+                "group flex items-center gap-2 rounded-nx-md border border-nx-line bg-nx-raised p-2",
+                file.error && "border-destructive/30 bg-destructive/10"
               )}
             >
               {getFileIcon(file.type)}
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">{file.name}</p>
+                <p className="truncate text-sm font-medium text-nx-ink">{file.name}</p>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">{formatFileSize(file.size)}</span>
+                  <span className="text-xs text-nx-ink-3">{formatFileSize(file.size)}</span>
                   {file.progress !== undefined && file.progress < 100 && (
-                    <div className="h-1 max-w-24 flex-1 overflow-hidden rounded-full bg-muted">
+                    <div className="h-1 max-w-24 flex-1 overflow-hidden rounded-full bg-nx-raised-2">
                       <div
-                        className="h-full rounded-full bg-primary transition-all"
+                        className="h-full rounded-full bg-nx-accent-fill transition-[width] duration-nx-standard ease-nx-enter motion-reduce:transition-none"
                         style={{ width: `${file.progress}%` }}
                       />
                     </div>
                   )}
                   {file.url && (
                     <Badge variant="secondary" className="px-1 py-0 text-[10px]">
-                      Uploaded
+                      {t("messaging.email.fileUploaded")}
                     </Badge>
                   )}
                   {file.error && <span className="text-[10px] text-destructive">{file.error}</span>}
@@ -182,22 +187,23 @@ export function AttachmentUploader({
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-7 w-7 p-0 opacity-0 transition-opacity group-hover:opacity-100"
+                className="h-7 w-7 p-0 opacity-0 transition-opacity duration-nx-micro ease-nx-enter motion-reduce:transition-none group-focus-within:opacity-100 group-hover:opacity-100 focus-visible:opacity-100"
                 onClick={() => onRemove(file.id)}
                 disabled={disabled}
+                aria-label={t("messaging.email.removeAttachmentNamed", { name: file.name })}
               >
-                <X className="h-3.5 w-3.5" />
+                <X className="h-3.5 w-3.5" aria-hidden="true" />
               </Button>
             </div>
           ))}
 
           {/* Summary */}
-          <div className="flex items-center justify-between px-1 text-xs text-muted-foreground">
+          <div className="flex items-center justify-between px-1 text-xs text-nx-ink-3">
             <span className="flex items-center gap-1">
-              <Paperclip className="h-3 w-3" />
-              {attachments.length} file{attachments.length !== 1 ? "s" : ""}
+              <Paperclip className="h-3 w-3" aria-hidden="true" />
+              {t("messaging.email.attachmentCountLabel", { count: attachments.length })}
             </span>
-            <span>Total: {formatFileSize(totalSize)}</span>
+            <span>{t("messaging.email.attachmentsTotalSize", { size: formatFileSize(totalSize) })}</span>
           </div>
         </div>
       )}

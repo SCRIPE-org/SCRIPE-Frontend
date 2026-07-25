@@ -114,7 +114,7 @@ export function SaveAsThemeModal({
       setAuthorName("");
       onClose();
     } catch (err: any) {
-      const msg = err?.message || err?.response?.data?.error || "Failed to save theme";
+      const msg = err?.message || err?.response?.data?.error || t("studio.saveTheme.saveFailed");
       toast({ title: msg, variant: "destructive" });
     } finally {
       setIsSaving(false);
@@ -132,6 +132,7 @@ export function SaveAsThemeModal({
     onSaveTheme,
     toast,
     onClose,
+    t,
   ]);
 
   return (
@@ -140,14 +141,15 @@ export function SaveAsThemeModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <div
-              className="flex h-8 w-8 items-center justify-center rounded-lg"
+              className="flex h-8 w-8 items-center justify-center rounded-nx-md"
               style={{
                 background: `linear-gradient(135deg, ${accentColor}, color-mix(in srgb, ${accentColor} 60%, black))`,
               }}
+              aria-hidden="true"
             >
-              <Palette className="h-4 w-4 text-white" />
+              <Palette className="h-4 w-4 text-nx-on-fill" />
             </div>
-            {t("studio.saveTheme.title") || "Save as Theme"}
+            {t("studio.saveTheme.title")}
           </DialogTitle>
         </DialogHeader>
 
@@ -155,34 +157,31 @@ export function SaveAsThemeModal({
           {/* Name */}
           <div className="space-y-1.5">
             <Label htmlFor="theme-name">
-              {t("studio.saveTheme.name") || "Theme Name"}{" "}
-              <span className="text-destructive">*</span>
+              {t("studio.saveTheme.name")} <span className="text-destructive">*</span>
             </Label>
             <Input
               id="theme-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder={t("studio.saveTheme.namePlaceholder") || "e.g. Corporate Blue"}
+              placeholder={t("studio.saveTheme.namePlaceholder")}
               maxLength={100}
               autoFocus
             />
             {name.trim() && (
-              <p className="text-[10px] text-muted-foreground">
-                {t("studio.saveTheme.slug") || "Slug"}: {slug}
+              <p className="text-[10px] text-nx-ink-3">
+                {t("studio.saveTheme.slug")}: {slug}
               </p>
             )}
           </div>
 
           {/* Description */}
           <div className="space-y-1.5">
-            <Label htmlFor="theme-desc">{t("studio.saveTheme.description") || "Description"}</Label>
+            <Label htmlFor="theme-desc">{t("studio.saveTheme.description")}</Label>
             <Textarea
               id="theme-desc"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder={
-                t("studio.saveTheme.descPlaceholder") || "Short description of this theme..."
-              }
+              placeholder={t("studio.saveTheme.descPlaceholder")}
               rows={2}
               maxLength={500}
             />
@@ -190,7 +189,7 @@ export function SaveAsThemeModal({
 
           {/* Category */}
           <div className="space-y-1.5">
-            <Label>{t("studio.saveTheme.category") || "Category"}</Label>
+            <Label>{t("studio.saveTheme.category")}</Label>
             <Select value={category} onValueChange={setCategory}>
               <SelectTrigger>
                 <SelectValue />
@@ -207,31 +206,32 @@ export function SaveAsThemeModal({
 
           {/* Author */}
           <div className="space-y-1.5">
-            <Label htmlFor="theme-author">{t("studio.saveTheme.author") || "Author Name"}</Label>
+            <Label htmlFor="theme-author">{t("studio.saveTheme.author")}</Label>
             <Input
               id="theme-author"
               value={authorName}
               onChange={(e) => setAuthorName(e.target.value)}
-              placeholder={t("studio.saveTheme.authorPlaceholder") || "Your name"}
+              placeholder={t("studio.saveTheme.authorPlaceholder")}
               maxLength={100}
             />
           </div>
 
           {/* Preview swatch */}
-          <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/30 p-3">
+          <div className="flex items-center gap-3 rounded-nx-md border border-nx-line bg-nx-raised p-3">
             <div
-              className="h-10 w-10 shrink-0 rounded-lg border border-white/20 shadow-sm"
+              className="h-10 w-10 shrink-0 rounded-nx-md shadow-nx-sm"
               style={{
                 background: `linear-gradient(135deg, ${accentColor}, color-mix(in srgb, ${accentColor} 50%, black))`,
               }}
+              aria-hidden="true"
             />
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-foreground">
-                {name || t("studio.saveTheme.preview") || "Theme Preview"}
+              <p className="truncate text-sm font-medium text-nx-ink">
+                {name || t("studio.saveTheme.preview")}
               </p>
-              <p className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Sparkles className="h-3 w-3" />
-                {t("studio.saveTheme.previewDesc") || "Saves current tokens, layout, and styling"}
+              <p className="flex items-center gap-1 text-xs text-nx-ink-2">
+                <Sparkles className="h-3 w-3" aria-hidden="true" />
+                {t("studio.saveTheme.previewDesc")}
               </p>
             </div>
           </div>
@@ -239,13 +239,11 @@ export function SaveAsThemeModal({
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={isSaving}>
-            {t("common.cancel") || "Cancel"}
+            {t("common.cancel")}
           </Button>
           <Button onClick={handleSave} disabled={!isValid} loading={isSaving}>
-            {!isSaving && <Palette className="mr-2 h-4 w-4" />}
-            {isSaving
-              ? t("common.saving") || "Saving..."
-              : t("studio.saveTheme.save") || "Save Theme"}
+            {!isSaving && <Palette className="me-2 h-4 w-4" aria-hidden="true" />}
+            {isSaving ? t("common.saving") : t("studio.saveTheme.save")}
           </Button>
         </DialogFooter>
       </DialogContent>

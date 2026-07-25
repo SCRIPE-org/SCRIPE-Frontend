@@ -68,10 +68,10 @@ export const en = {
     creating: "Creating...",
     saving: "Saving...",
     deleting: "Deleting...",
-    hasDescendants: "This tenant has descendant tenant(s).",
+    hasDescendants: "This tenant has {{count}} descendant tenant(s).",
     cascadeDelete: "Delete all descendants (admins, roles, and users will also be deleted)",
     cascadeDeleteNotPermitted:
-      "This tenant has descendant(s). You do not have permission to cascade delete.",
+      "This tenant has {{count}} descendant(s). You do not have permission to cascade delete.",
     createDescription: "Add a new root tenant to the system.",
     createChildDescription: "Add a new child tenant under",
     editDescription: "Update tenant details for",

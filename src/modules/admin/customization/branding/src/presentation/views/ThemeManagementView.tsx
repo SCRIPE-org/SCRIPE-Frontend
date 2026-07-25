@@ -57,22 +57,16 @@ function TierBadge({
   const { t } = useI18n();
   if (isFree) {
     return (
-      <Badge
-        variant="outline"
-        className="border-success/20 bg-success/10 text-[10px] font-semibold text-success"
-      >
-        <Sparkles className="mr-0.5 h-3 w-3" />
+      <Badge variant="outline" className="border-success/20 bg-success/10 text-[10px] font-semibold text-success">
+        <Sparkles className="me-0.5 h-3 w-3" aria-hidden="true" />
         {t(`${T}.tier.free`)}
       </Badge>
     );
   }
   if (pricingType === "StandaloneOnly") {
     return (
-      <Badge
-        variant="outline"
-        className="border-primary/20 bg-primary/10 text-[10px] font-semibold text-primary"
-      >
-        <Crown className="mr-0.5 h-3 w-3" />
+      <Badge variant="outline" className="border-nx-accent text-[10px] font-semibold text-nx-accent">
+        <Crown className="me-0.5 h-3 w-3" aria-hidden="true" />
         {t(`${T}.tier.premium`)}
       </Badge>
     );
@@ -84,11 +78,8 @@ function TierBadge({
     3: t(`${T}.tier.enterprise`),
   };
   return (
-    <Badge
-      variant="outline"
-      className="border-info/20 bg-info/10 text-[10px] font-semibold text-info"
-    >
-      <Crown className="mr-0.5 h-3 w-3" />
+    <Badge variant="outline" className="border-info/20 bg-info/10 text-[10px] font-semibold text-info">
+      <Crown className="me-0.5 h-3 w-3" aria-hidden="true" />
       {tierMap[minTierLevel] || t(`${T}.tier.tierN`, { n: minTierLevel })}
     </Badge>
   );
@@ -100,29 +91,20 @@ function FeatureBadges({ theme }: { theme: ThemeCard }) {
   return (
     <div className="flex flex-wrap gap-1">
       {theme.hasDarkMode && (
-        <Badge
-          variant="outline"
-          className="h-4 border-border bg-muted px-1.5 py-0 text-[9px] text-muted-foreground"
-        >
-          <Moon className="mr-0.5 h-2.5 w-2.5" />
+        <Badge variant="outline" className="h-4 border-nx-line bg-nx-raised px-1.5 py-0 text-[9px] text-nx-ink-2">
+          <Moon className="me-0.5 h-2.5 w-2.5" aria-hidden="true" />
           {t(`${T}.features.dark`)}
         </Badge>
       )}
       {theme.hasAccessibilityPreset && (
-        <Badge
-          variant="outline"
-          className="h-4 border-info/40 bg-info/10 px-1.5 py-0 text-[9px] text-info"
-        >
-          <Accessibility className="mr-0.5 h-2.5 w-2.5" />
+        <Badge variant="outline" className="h-4 border-info/40 bg-info/10 px-1.5 py-0 text-[9px] text-info">
+          <Accessibility className="me-0.5 h-2.5 w-2.5" aria-hidden="true" />
           {t(`${T}.features.a11y`)}
         </Badge>
       )}
       {theme.hasContentBlocks && (
-        <Badge
-          variant="outline"
-          className="h-4 border-primary/40 bg-primary/10 px-1.5 py-0 text-[9px] text-primary"
-        >
-          <Blocks className="mr-0.5 h-2.5 w-2.5" />
+        <Badge variant="outline" className="h-4 border-nx-accent px-1.5 py-0 text-[9px] text-nx-accent">
+          <Blocks className="me-0.5 h-2.5 w-2.5" aria-hidden="true" />
           {t(`${T}.features.blocks`)}
         </Badge>
       )}
@@ -156,37 +138,32 @@ export function ThemeManagementView() {
             <div className="flex min-w-[200px] items-center gap-3">
               {/* Color accent swatch */}
               <div
-                className="h-9 w-9 shrink-0 rounded-lg border border-border/50 shadow-sm"
+                className="h-9 w-9 shrink-0 rounded-nx-md border border-nx-line shadow-nx-sm"
                 style={{
                   background: item.accentColor
                     ? `linear-gradient(135deg, ${item.accentColor}, color-mix(in srgb, ${item.accentColor} 60%, black))`
-                    : "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary)/0.6))",
+                    : "linear-gradient(135deg, var(--nx-accent), color-mix(in srgb, var(--nx-accent) 60%, transparent))",
                 }}
+                aria-hidden="true"
               />
               <div className="flex min-w-0 flex-col">
                 <div className="flex items-center gap-1.5">
-                  <span className="truncate text-sm font-semibold">{item.name}</span>
+                  <span className="truncate text-sm font-semibold text-nx-ink">{item.name}</span>
                   {item.isFeatured && (
-                    <Star className="h-3.5 w-3.5 shrink-0 fill-warning text-warning" />
+                    <Star className="h-3.5 w-3.5 shrink-0 fill-warning text-warning" aria-hidden="true" />
                   )}
                   {item.isNew && (
-                    <Badge
-                      variant="outline"
-                      className="h-3.5 border-success/30 bg-success/10 px-1 py-0 text-[9px] text-success"
-                    >
+                    <Badge variant="outline" className="h-3.5 border-success/30 bg-success/10 px-1 py-0 text-[9px] text-success">
                       {t(`${T}.new`)}
                     </Badge>
                   )}
                   {item.isDeprecated && (
-                    <Badge
-                      variant="outline"
-                      className="h-3.5 border-destructive/30 bg-destructive/10 px-1 py-0 text-[9px] text-destructive"
-                    >
+                    <Badge variant="outline" className="h-3.5 border-destructive/30 bg-destructive/10 px-1 py-0 text-[9px] text-destructive">
                       {t(`${T}.deprecated`)}
                     </Badge>
                   )}
                 </div>
-                <span className="max-w-[220px] truncate text-xs text-muted-foreground">
+                <span className="max-w-[220px] truncate text-xs text-nx-ink-2">
                   {item.description || t(`${T}.noDescription`)}
                 </span>
               </div>
@@ -199,7 +176,7 @@ export function ThemeManagementView() {
           sortable: true,
           render: (_val: unknown, item: ThemeCard) => (
             <Badge variant="outline" className="text-xs capitalize">
-              <Palette className="mr-1 h-3 w-3" />
+              <Palette className="me-1 h-3 w-3" aria-hidden="true" />
               {item.category || t(`${T}.uncategorized`)}
             </Badge>
           ),
@@ -226,12 +203,12 @@ export function ThemeManagementView() {
           sortable: true,
           render: (_val: unknown, item: ThemeCard) => (
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1 text-muted-foreground">
-                <Users className="h-3.5 w-3.5" />
+              <div className="flex items-center gap-1 text-nx-ink-2">
+                <Users className="h-3.5 w-3.5" aria-hidden="true" />
                 <span className="text-xs font-medium">{item.usageCount}</span>
               </div>
-              <div className="flex items-center gap-1 text-muted-foreground">
-                <Heart className="h-3.5 w-3.5" />
+              <div className="flex items-center gap-1 text-nx-ink-2">
+                <Heart className="h-3.5 w-3.5" aria-hidden="true" />
                 <span className="text-xs font-medium">{item.likeCount}</span>
               </div>
             </div>
@@ -243,9 +220,7 @@ export function ThemeManagementView() {
           render: (_val: unknown, item: ThemeCard) => (
             <Badge
               variant={item.isSystem ? "default" : "outline"}
-              className={`text-[10px] ${
-                item.isSystem ? "bg-info text-info-foreground hover:bg-info/90" : ""
-              }`}
+              className={item.isSystem ? "bg-info text-[10px] text-info-foreground" : "text-[10px]"}
             >
               {item.isSystem ? t(`${T}.type.system`) : t(`${T}.type.custom`)}
             </Badge>
@@ -254,42 +229,42 @@ export function ThemeManagementView() {
       ],
       getItemDisplayName: configBase.getItemDisplayName,
       deleteService: configBase.deleteService,
-      getActions: (_vmInstance: any, tFn: any, handleDeleteFn: any): CrudAction<ThemeCard>[] => [
+      getActions: (_vmInstance: any, _tFn: any, handleDeleteFn: any): CrudAction<ThemeCard>[] => [
         {
           label: t(`${T}.actions.preview`),
           onClick: (item: ThemeCard) => router.push(`/customizer?preview=${item.slug}`),
           variant: "ghost" as const,
-          icon: <Eye className="h-4 w-4" />,
+          icon: <Eye className="h-4 w-4" aria-hidden="true" />,
         },
         {
           label: t(`${T}.actions.duplicate`),
           onClick: (item: ThemeCard) => handleDuplicate(item),
           variant: "ghost" as const,
-          icon: <Copy className="h-4 w-4" />,
+          icon: <Copy className="h-4 w-4" aria-hidden="true" />,
           requiredPermission: "themes:create",
         },
         {
           label: t(`${T}.actions.toggleFavorite`),
           onClick: (item: ThemeCard) => handleToggleFavorite(item),
           variant: "ghost" as const,
-          icon: <Star className="h-4 w-4" />,
+          icon: <Star className="h-4 w-4" aria-hidden="true" />,
         },
         {
           label: t(`${T}.actions.deprecate`),
           onClick: (item: ThemeCard) => handleDeprecate(item),
           variant: "ghost" as const,
-          icon: <Archive className="h-4 w-4" />,
+          icon: <Archive className="h-4 w-4" aria-hidden="true" />,
           requiredPermission: "themes:update",
           confirmTitle: t(`${T}.confirm.deprecateTitle`),
           confirmDescription: t(`${T}.confirm.deprecateDescription`),
           confirmVariant: "default" as const,
         },
         {
-          label: tFn("common.delete") || t("common.delete"),
+          label: t("common.delete"),
           onClick: (item: ThemeCard) => handleDeleteFn?.(item),
           variant: "ghost" as const,
-          className: "text-destructive hover:text-destructive/80",
-          icon: <Trash2 className="h-4 w-4" />,
+          className: "text-destructive hover:text-destructive",
+          icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
           requiredPermission: "themes:delete",
           confirmTitle: t(`${T}.confirm.deleteTitle`),
           confirmDescription: t(`${T}.confirm.deleteDescription`),

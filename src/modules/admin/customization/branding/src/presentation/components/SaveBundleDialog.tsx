@@ -14,6 +14,7 @@ import { Input } from "@core/ui/input";
 import { Textarea } from "@core/ui/textarea";
 import { Label } from "@core/ui/label";
 import { Checkbox } from "@core/ui/checkbox";
+import { chartColor } from "@core/ui/chart";
 import {
   Dialog,
   DialogContent,
@@ -39,7 +40,7 @@ import {
   type BundleLayer,
   type BundleType,
 } from "../../domain/entities/ThemeBundle";
-import { LAYER_INFO } from "../constants/layerDisplay";
+import { LAYER_INFO, BUNDLE_TYPE_CHART_SLOT } from "../constants/layerDisplay";
 import type { SaveBundlePayload } from "../../domain/interfaces/IThemeBundleService";
 
 interface SaveBundleDialogProps {
@@ -108,11 +109,12 @@ export function SaveBundleDialog({ isOpen, onClose, onSave, isSaving }: SaveBund
   const detectedType = useMemo(() => detectBundleType(layers), [layers]);
   const selectedCount = ALL_LAYERS.filter((l) => layers[l]).length;
   const typeConfig = BUNDLE_TYPE_CONFIG[detectedType];
+  const typeColor = chartColor(BUNDLE_TYPE_CHART_SLOT[detectedType]);
 
   const handleSave = () => {
     const tags = tagsInput
       .split(",")
-      .map((t) => t.trim())
+      .map((tag) => tag.trim())
       .filter(Boolean);
 
     onSave({
@@ -131,7 +133,7 @@ export function SaveBundleDialog({ isOpen, onClose, onSave, isSaving }: SaveBund
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Save className="h-5 w-5 text-primary" />
+            <Save className="h-5 w-5 text-nx-accent" aria-hidden="true" />
             {t(`${B}.saveDialog.title`)}
           </DialogTitle>
           <DialogDescription>{t(`${B}.saveDialog.subtitle`)}</DialogDescription>
@@ -174,21 +176,29 @@ export function SaveBundleDialog({ isOpen, onClose, onSave, isSaving }: SaveBund
               {ALL_LAYERS.map((layer) => {
                 const info = LAYER_INFO[layer];
                 const Icon = ICON_MAP[info.icon] ?? Blocks;
+                const slotColor = chartColor(info.chartSlot);
+                const inputId = `bundle-layer-${layer}`;
                 return (
                   <label
                     key={layer}
-                    className="flex cursor-pointer items-center gap-3 rounded-lg border border-border/50 p-2.5 transition-colors hover:bg-muted/30"
+                    htmlFor={inputId}
+                    className="flex cursor-pointer items-center gap-3 rounded-nx-md border border-nx-line p-2.5 transition-colors duration-nx-micro hover:bg-nx-hover motion-reduce:transition-none"
                   >
-                    <Checkbox checked={layers[layer]} onCheckedChange={() => toggleLayer(layer)} />
+                    <Checkbox
+                      id={inputId}
+                      checked={layers[layer]}
+                      onCheckedChange={() => toggleLayer(layer)}
+                    />
                     <div
-                      className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md"
-                      style={{ backgroundColor: `${info.color}15` }}
+                      className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-nx-sm"
+                      style={{ backgroundColor: `color-mix(in srgb, ${slotColor} 15%, transparent)` }}
+                      aria-hidden="true"
                     >
-                      <span style={{ color: info.color }}>
+                      <span style={{ color: slotColor }}>
                         <Icon className="h-3.5 w-3.5" />
                       </span>
                     </div>
-                    <span className="text-sm">{t(info.labelKey)}</span>
+                    <span className="text-sm text-nx-ink">{t(info.labelKey)}</span>
                   </label>
                 );
               })}
@@ -196,15 +206,13 @@ export function SaveBundleDialog({ isOpen, onClose, onSave, isSaving }: SaveBund
           </div>
 
           {/* Auto-detected type */}
-          <div className="flex items-center gap-2 rounded-lg border border-border/50 bg-muted/30 p-2.5">
-            <Package className="h-4 w-4 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground">
-              {t(`${B}.saveDialog.detectedType`)}:
-            </span>
+          <div className="flex items-center gap-2 rounded-nx-md border border-nx-line bg-nx-raised p-2.5">
+            <Package className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
+            <span className="text-xs text-nx-ink-2">{t(`${B}.saveDialog.detectedType`)}:</span>
             <Badge
               variant="outline"
               className="text-xs"
-              style={{ borderColor: typeConfig.color, color: typeConfig.color }}
+              style={{ borderColor: typeColor, color: typeColor }}
             >
               {t(typeConfig.labelKey)}
             </Badge>
@@ -222,7 +230,7 @@ export function SaveBundleDialog({ isOpen, onClose, onSave, isSaving }: SaveBund
               placeholder={t(`${B}.saveDialog.tagsPlaceholder`)}
               className="h-9"
             />
-            <p className="text-[10px] text-muted-foreground">{t(`${B}.saveDialog.tagsHint`)}</p>
+            <p className="text-[10px] text-nx-ink-3">{t(`${B}.saveDialog.tagsHint`)}</p>
           </div>
         </div>
 
@@ -231,7 +239,7 @@ export function SaveBundleDialog({ isOpen, onClose, onSave, isSaving }: SaveBund
             {t("common.cancel")}
           </Button>
           <Button onClick={handleSave} disabled={!canSave} loading={isSaving}>
-            {!isSaving && <Save className="mr-1.5 h-4 w-4" />}
+            {!isSaving && <Save className="me-1.5 h-4 w-4" aria-hidden="true" />}
             {t(`${B}.saveDialog.save`)}
           </Button>
         </DialogFooter>

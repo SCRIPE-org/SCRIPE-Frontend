@@ -105,8 +105,8 @@ const ALL_ACTIONS: QuickAction[] = [
     href: "/settings",
     labelKey: "overview.actions.settings",
     icon: Settings,
-    color: "text-muted-foreground",
-    bgColor: "bg-muted",
+    color: "text-nx-ink-2",
+    bgColor: "bg-nx-raised",
     description: "overview.actions.settingsDesc",
     // No permission — always visible to authenticated users
   },
@@ -136,14 +136,12 @@ export const QuickActionsGrid = memo(function QuickActionsGrid() {
                   focus is the shared nx lit-edge ring. */}
               <Card className="h-full transition-[border-color,box-shadow] duration-nx-micro ease-nx-enter hover:border-nx-line-hi group-focus-visible:shadow-nx-focus motion-reduce:transition-none">
                 <CardContent className="flex flex-col items-center gap-3 p-4 text-center">
-                  <div
-                    className={`rounded-xl p-3 ${action.bgColor} transition-transform duration-nx-standard ease-nx-enter group-hover:scale-110 motion-reduce:transition-none motion-reduce:transform-none`}
-                  >
+                  <div className={`rounded-nx-md p-3 ${action.bgColor}`}>
                     <Icon className={`h-5 w-5 ${action.color}`} aria-hidden="true" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">{t(action.labelKey)}</p>
-                    <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
+                    <p className="mt-0.5 line-clamp-2 text-xs text-nx-ink-3">
                       {t(action.description)}
                     </p>
                   </div>

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEmailComposerViewModel } from "../viewmodels/useEmailComposerViewModel";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
+import { PageHeader } from "@core/ui/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { Mail, Send, History } from "lucide-react";
 import { ComposeSection } from "../components/ComposeSection";
@@ -32,61 +33,52 @@ export function EmailComposerView() {
 
   return (
     <>
-      <div className="space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold">
-            <Mail className="h-6 w-6 text-primary" />
-            {t("messaging.email.title")}
-          </h1>
-          <p className="mt-1 text-muted-foreground">{t("messaging.email.description")}</p>
-        </div>
+      <Tabs value={vm.activeTab} onValueChange={(v) => vm.setActiveTab(v as "compose" | "history")}>
+        <PageHeader
+          icon={Mail}
+          title={t("messaging.email.title")}
+          description={t("messaging.email.description")}
+          tabs={
+            <TabsList>
+              <TabsTrigger value="compose" className="gap-1.5">
+                <Send className="h-4 w-4" aria-hidden="true" />
+                {t("messaging.email.compose")}
+              </TabsTrigger>
+              <TabsTrigger value="history" className="gap-1.5">
+                <History className="h-4 w-4" aria-hidden="true" />
+                {t("messaging.email.history")}
+              </TabsTrigger>
+            </TabsList>
+          }
+        />
 
-        <Tabs
-          value={vm.activeTab}
-          onValueChange={(v) => vm.setActiveTab(v as "compose" | "history")}
-        >
-          <TabsList>
-            <TabsTrigger value="compose" className="gap-1.5">
-              <Send className="h-4 w-4" />
-              {t("messaging.email.compose")}
-            </TabsTrigger>
-            <TabsTrigger value="history" className="gap-1.5">
-              <History className="h-4 w-4" />
-              {t("messaging.email.history")}
-            </TabsTrigger>
-          </TabsList>
+        <TabsContent value="compose" className="mt-6">
+          <ComposeSection
+            {...vm}
+            onPreview={() => vm.setPreviewOpen(true)}
+            onAddAttachments={vm.addAttachments}
+            onRemoveAttachment={vm.removeAttachment}
+            onScheduleChange={vm.setSchedule}
+          />
+        </TabsContent>
 
-          <TabsContent value="compose">
-            <ComposeSection
-              {...vm}
-              onPreview={() => vm.setPreviewOpen(true)}
-              onAddAttachments={vm.addAttachments}
-              onRemoveAttachment={vm.removeAttachment}
-              onScheduleChange={vm.setSchedule}
-            />
-          </TabsContent>
-
-          <TabsContent value="history">
-            <HistorySection {...vm} />
-          </TabsContent>
-        </Tabs>
-      </div>
+        <TabsContent value="history" className="mt-6">
+          <HistorySection {...vm} />
+        </TabsContent>
+      </Tabs>
 
       {/* Send Confirmation Dialog */}
       <ConfirmationDialog
         open={vm.confirmSendOpen}
         onOpenChange={vm.setConfirmSendOpen}
-        title={t("messaging.email.confirmSendTitle") || "Send Email"}
-        description={
-          t("messaging.email.confirmSendDescription") || "Review the details below before sending."
-        }
+        title={t("messaging.email.confirmSendTitle")}
+        description={t("messaging.email.confirmSendDescription")}
         confirmText={
           vm.schedule.mode === "scheduled"
-            ? t("messaging.email.scheduleEmail") || "Schedule"
-            : t("messaging.email.send") || "Send Now"
+            ? t("messaging.email.scheduleEmail")
+            : t("messaging.email.send")
         }
-        cancelText={t("common.cancel") || "Cancel"}
+        cancelText={t("common.cancel")}
         onConfirm={vm.confirmSend}
         isLoading={vm.isSending}
         variant="info"
@@ -94,42 +86,46 @@ export function EmailComposerView() {
         <div className="space-y-3 text-sm">
           {/* Recipients Summary */}
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">To</span>
-            <span className="font-medium">
-              {vm.recipients.length} {t("messaging.email.recipientsLabel") || "recipient(s)"}
+            <span className="text-nx-ink-2">{t("messaging.email.to")}</span>
+            <span className="font-medium text-nx-ink">
+              {vm.recipients.length} {t("messaging.email.recipientsLabel")}
             </span>
           </div>
           {vm.ccRecipients.length > 0 && (
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">CC</span>
-              <span className="font-medium">{vm.ccRecipients.length}</span>
+              <span className="text-nx-ink-2">{t("messaging.email.cc")}</span>
+              <span className="font-medium text-nx-ink">{vm.ccRecipients.length}</span>
             </div>
           )}
           {vm.bccRecipients.length > 0 && (
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">BCC</span>
-              <span className="font-medium">{vm.bccRecipients.length}</span>
+              <span className="text-nx-ink-2">{t("messaging.email.bcc")}</span>
+              <span className="font-medium text-nx-ink">{vm.bccRecipients.length}</span>
             </div>
           )}
           {/* Subject */}
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">
-              {t("messaging.email.subject") || "Subject"}
-            </span>
-            <span className="max-w-[200px] truncate font-medium">{vm.subject}</span>
+            <span className="text-nx-ink-2">{t("messaging.email.subject")}</span>
+            <span className="max-w-[200px] truncate font-medium text-nx-ink">{vm.subject}</span>
           </div>
           {/* Attachments */}
           {vm.attachments.length > 0 && (
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Attachments</span>
-              <span className="font-medium">{vm.attachments.length} file(s)</span>
+              <span className="text-nx-ink-2">{t("messaging.email.attachments")}</span>
+              <span className="font-medium text-nx-ink">
+                {t("messaging.email.attachmentCountLabel", { count: vm.attachments.length })}
+              </span>
             </div>
           )}
           {/* Schedule */}
           {vm.schedule.mode !== "now" && (
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Schedule</span>
-              <span className="font-medium capitalize">{vm.schedule.mode}</span>
+              <span className="text-nx-ink-2">{t("messaging.email.schedule")}</span>
+              <span className="font-medium text-nx-ink">
+                {vm.schedule.mode === "scheduled"
+                  ? t("messaging.email.scheduled")
+                  : t("messaging.email.recurring")}
+              </span>
             </div>
           )}
         </div>
@@ -139,13 +135,10 @@ export function EmailComposerView() {
       <ConfirmationDialog
         open={vm.cancelConfirmOpen}
         onOpenChange={vm.setCancelConfirmOpen}
-        title={t("messaging.email.cancelConfirmTitle") || "Cancel Email"}
-        description={
-          t("messaging.email.cancelConfirmDescription") ||
-          "Are you sure you want to cancel this pending email? This action cannot be undone."
-        }
-        confirmText={t("messaging.email.cancelConfirm") || "Cancel Email"}
-        cancelText={t("common.back") || "Keep"}
+        title={t("messaging.email.cancelConfirmTitle")}
+        description={t("messaging.email.cancelConfirmDescription")}
+        confirmText={t("messaging.email.cancelConfirm")}
+        cancelText={t("messaging.email.keepPending")}
         onConfirm={vm.confirmCancelEmail}
         isLoading={vm.isCancelling}
         variant="destructive"

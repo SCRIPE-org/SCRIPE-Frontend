@@ -42,53 +42,30 @@ export interface SchedulePickerProps {
   disabled?: boolean;
 }
 
-// ─── Constants ──────────────────────────────────────────────
-const TIMEZONES = [
-  { value: "UTC", label: "UTC (GMT+0)" },
-  { value: "America/New_York", label: "Eastern (GMT-5)" },
-  { value: "America/Chicago", label: "Central (GMT-6)" },
-  { value: "America/Los_Angeles", label: "Pacific (GMT-8)" },
-  { value: "Europe/London", label: "London (GMT+0)" },
-  { value: "Europe/Berlin", label: "Berlin (GMT+1)" },
-  { value: "Asia/Dubai", label: "Dubai (GMT+4)" },
-  { value: "Asia/Kolkata", label: "India (GMT+5:30)" },
-  { value: "Asia/Shanghai", label: "China (GMT+8)" },
-  { value: "Asia/Tokyo", label: "Tokyo (GMT+9)" },
-  { value: "Australia/Sydney", label: "Sydney (GMT+11)" },
-  { value: "Africa/Cairo", label: "Cairo (GMT+2)" },
-];
+const DAY_KEYS = [
+  "sunday",
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+] as const;
 
-const DAYS_OF_WEEK = [
-  { value: 0, label: "Sunday" },
-  { value: 1, label: "Monday" },
-  { value: 2, label: "Tuesday" },
-  { value: 3, label: "Wednesday" },
-  { value: 4, label: "Thursday" },
-  { value: 5, label: "Friday" },
-  { value: 6, label: "Saturday" },
-];
-
-// ─── Mode Cards ─────────────────────────────────────────────
-const MODES: { id: ScheduleMode; label: string; desc: string; icon: React.ReactNode }[] = [
-  {
-    id: "now",
-    label: "Send Now",
-    desc: "Deliver immediately",
-    icon: <Zap className="h-5 w-5 text-success" />,
-  },
-  {
-    id: "scheduled",
-    label: "Schedule",
-    desc: "Pick a date & time",
-    icon: <CalendarClock className="h-5 w-5 text-info" />,
-  },
-  {
-    id: "recurring",
-    label: "Recurring",
-    desc: "Repeat automatically",
-    icon: <Timer className="h-5 w-5 text-primary" />,
-  },
-];
+const TIMEZONE_KEYS = [
+  { value: "UTC", key: "utc" },
+  { value: "America/New_York", key: "easternUs" },
+  { value: "America/Chicago", key: "centralUs" },
+  { value: "America/Los_Angeles", key: "pacificUs" },
+  { value: "Europe/London", key: "london" },
+  { value: "Europe/Berlin", key: "berlin" },
+  { value: "Asia/Dubai", key: "dubai" },
+  { value: "Asia/Kolkata", key: "india" },
+  { value: "Asia/Shanghai", key: "china" },
+  { value: "Asia/Tokyo", key: "tokyo" },
+  { value: "Australia/Sydney", key: "sydney" },
+  { value: "Africa/Cairo", key: "cairo" },
+] as const;
 
 // ─── Main Component ─────────────────────────────────────────
 /**
@@ -107,38 +84,76 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
     return d.toISOString().split("T")[0];
   }, []);
 
+  const modes: { id: ScheduleMode; label: string; desc: string; icon: React.ReactNode }[] = [
+    {
+      id: "now",
+      label: t("messaging.email.sendNow"),
+      desc: t("messaging.email.sendNowDesc"),
+      icon: <Zap className="h-5 w-5 text-success" aria-hidden="true" />,
+    },
+    {
+      id: "scheduled",
+      label: t("messaging.email.scheduled"),
+      desc: t("messaging.email.scheduledDesc"),
+      icon: <CalendarClock className="h-5 w-5 text-info" aria-hidden="true" />,
+    },
+    {
+      id: "recurring",
+      label: t("messaging.email.recurring"),
+      desc: t("messaging.email.recurringDesc"),
+      icon: <Timer className="h-5 w-5 text-nx-accent" aria-hidden="true" />,
+    },
+  ];
+
+  const recurringSummary = (() => {
+    const time = value.recurring?.time || "09:00";
+    if (value.recurring?.frequency === "weekly") {
+      const day = t(
+        `messaging.email.days.${DAY_KEYS[value.recurring?.dayOfWeek ?? 1]}`
+      );
+      return t("messaging.email.recurringSendsWeekly", { day, time });
+    }
+    if (value.recurring?.frequency === "monthly") {
+      return t("messaging.email.recurringSendsMonthly", {
+        day: value.recurring?.dayOfMonth ?? 1,
+        time,
+      });
+    }
+    return t("messaging.email.recurringSendsDaily", { time });
+  })();
+
   return (
     <Card>
       <CardContent className="space-y-4 pt-4">
         {/* Mode Selector */}
         <div className="grid grid-cols-3 gap-2">
-          {MODES.map((mode) => (
+          {modes.map((mode) => (
             <button
               key={mode.id}
               type="button"
               disabled={disabled}
               className={cn(
-                "flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition-all",
+                "flex flex-col items-center gap-1.5 rounded-nx-md border p-3 text-center transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
                 value.mode === mode.id
-                  ? "border-primary bg-primary/5 ring-1 ring-primary"
-                  : "border-border hover:border-primary/30",
+                  ? "border-nx-accent bg-nx-accent-wash shadow-[inset_0_0_0_1px_var(--nx-accent)]"
+                  : "border-nx-line hover:border-nx-line-hi",
                 disabled && "cursor-not-allowed opacity-50"
               )}
               onClick={() => update({ mode: mode.id })}
             >
               {mode.icon}
-              <span className="text-sm font-medium">{mode.label}</span>
-              <span className="text-[10px] text-muted-foreground">{mode.desc}</span>
+              <span className="text-sm font-medium text-nx-ink">{mode.label}</span>
+              <span className="text-[10px] text-nx-ink-3">{mode.desc}</span>
             </button>
           ))}
         </div>
 
         {/* Scheduled Mode */}
         {value.mode === "scheduled" && (
-          <div className="space-y-3 animate-in fade-in slide-in-from-top-2">
+          <div className="space-y-3 duration-nx-standard ease-nx-enter animate-in fade-in-0">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label className="text-xs">{t("messaging.email.scheduledDate") || "Date"}</Label>
+                <Label className="text-xs">{t("messaging.email.scheduledDate")}</Label>
                 <Input
                   type="date"
                   value={value.scheduledDate || ""}
@@ -149,7 +164,7 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">{t("messaging.email.scheduledTime") || "Time"}</Label>
+                <Label className="text-xs">{t("messaging.email.scheduledTime")}</Label>
                 <Input
                   type="time"
                   value={value.scheduledTime || ""}
@@ -160,7 +175,7 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">{t("messaging.email.timezone") || "Timezone"}</Label>
+              <Label className="text-xs">{t("messaging.email.timezone")}</Label>
               <Select
                 value={value.timezone || "UTC"}
                 onValueChange={(v) => update({ timezone: v })}
@@ -170,20 +185,23 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {TIMEZONES.map((tz) => (
+                  {TIMEZONE_KEYS.map((tz) => (
                     <SelectItem key={tz.value} value={tz.value}>
-                      {tz.label}
+                      {t(`messaging.email.timezones.${tz.key}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             {value.scheduledDate && value.scheduledTime && (
-              <div className="flex items-center gap-2 rounded-md border border-info/30 bg-info/10 p-2">
-                <Clock className="h-4 w-4 shrink-0 text-info" />
+              <div className="flex items-center gap-2 rounded-nx-md border border-info/30 bg-info/10 p-2">
+                <Clock className="h-4 w-4 shrink-0 text-info" aria-hidden="true" />
                 <span className="text-xs text-info">
-                  Will send on <strong>{value.scheduledDate}</strong> at{" "}
-                  <strong>{value.scheduledTime}</strong> ({value.timezone || "UTC"})
+                  {t("messaging.email.scheduleWillSend", {
+                    date: value.scheduledDate,
+                    time: value.scheduledTime,
+                    tz: value.timezone || "UTC",
+                  })}
                 </span>
               </div>
             )}
@@ -192,9 +210,9 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
 
         {/* Recurring Mode */}
         {value.mode === "recurring" && (
-          <div className="space-y-3 animate-in fade-in slide-in-from-top-2">
+          <div className="space-y-3 duration-nx-standard ease-nx-enter animate-in fade-in-0">
             <div className="space-y-1.5">
-              <Label className="text-xs">{t("messaging.email.frequency") || "Frequency"}</Label>
+              <Label className="text-xs">{t("messaging.email.frequency")}</Label>
               <Select
                 value={value.recurring?.frequency || "weekly"}
                 onValueChange={(v) =>
@@ -211,16 +229,16 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="daily">Daily</SelectItem>
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="daily">{t("messaging.email.daily")}</SelectItem>
+                  <SelectItem value="weekly">{t("messaging.email.weekly")}</SelectItem>
+                  <SelectItem value="monthly">{t("messaging.email.monthly")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {value.recurring?.frequency === "weekly" && (
               <div className="space-y-1.5">
-                <Label className="text-xs">{t("messaging.email.dayOfWeek") || "Day of Week"}</Label>
+                <Label className="text-xs">{t("messaging.email.dayOfWeek")}</Label>
                 <Select
                   value={String(value.recurring?.dayOfWeek ?? 1)}
                   onValueChange={(v) =>
@@ -237,9 +255,9 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {DAYS_OF_WEEK.map((d) => (
-                      <SelectItem key={d.value} value={String(d.value)}>
-                        {d.label}
+                    {DAY_KEYS.map((dayKey, idx) => (
+                      <SelectItem key={dayKey} value={String(idx)}>
+                        {t(`messaging.email.days.${dayKey}`)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -249,9 +267,7 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
 
             {value.recurring?.frequency === "monthly" && (
               <div className="space-y-1.5">
-                <Label className="text-xs">
-                  {t("messaging.email.dayOfMonth") || "Day of Month"}
-                </Label>
+                <Label className="text-xs">{t("messaging.email.dayOfMonth")}</Label>
                 <Select
                   value={String(value.recurring?.dayOfMonth ?? 1)}
                   onValueChange={(v) =>
@@ -279,7 +295,7 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
             )}
 
             <div className="space-y-1.5">
-              <Label className="text-xs">{t("messaging.email.sendTime") || "Send Time"}</Label>
+              <Label className="text-xs">{t("messaging.email.sendTime")}</Label>
               <Input
                 type="time"
                 value={value.recurring?.time || "09:00"}
@@ -296,19 +312,9 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
               />
             </div>
 
-            <div className="flex items-center gap-2 rounded-md border border-primary/30 bg-primary/10 p-2">
-              <Timer className="h-4 w-4 shrink-0 text-primary" />
-              <span className="text-xs text-primary">
-                Sends{" "}
-                <strong>
-                  {value.recurring?.frequency === "daily"
-                    ? "every day"
-                    : value.recurring?.frequency === "weekly"
-                      ? `every ${DAYS_OF_WEEK.find((d) => d.value === value.recurring?.dayOfWeek)?.label ?? "Monday"}`
-                      : `on day ${value.recurring?.dayOfMonth ?? 1} of each month`}
-                </strong>{" "}
-                at <strong>{value.recurring?.time || "09:00"}</strong>
-              </span>
+            <div className="flex items-center gap-2 rounded-nx-md border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] border bg-nx-accent-wash p-2">
+              <Timer className="h-4 w-4 shrink-0 text-nx-accent" aria-hidden="true" />
+              <span className="text-xs text-nx-accent">{recurringSummary}</span>
             </div>
           </div>
         )}

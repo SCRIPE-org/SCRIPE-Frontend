@@ -15,11 +15,11 @@ interface Props {
 export const WelcomeHeader = memo(function WelcomeHeader({ greeting, displayName }: Props) {
   return (
     <div className="space-y-1">
-      <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
+      <h1 className="text-2xl font-bold tracking-tight text-nx-ink md:text-3xl">
         {greeting}
-        {displayName ? `, ${displayName}` : ""} 👋
+        {displayName ? `, ${displayName}` : ""} <span aria-hidden="true">👋</span>
       </h1>
-      <p className="text-muted-foreground">
+      <p className="text-nx-ink-2">
         {new Date().toLocaleDateString(undefined, {
           weekday: "long",
           year: "numeric",

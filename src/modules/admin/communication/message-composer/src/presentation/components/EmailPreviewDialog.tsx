@@ -33,9 +33,9 @@ import type { AttachmentFile } from "./AttachmentUploader";
 
 // ─── Device Presets ─────────────────────────────────────────
 const DEVICES = [
-  { id: "desktop", label: "Desktop", icon: Monitor, width: 600 },
-  { id: "tablet", label: "Tablet", icon: Tablet, width: 480 },
-  { id: "mobile", label: "Mobile", icon: Smartphone, width: 320 },
+  { id: "desktop", labelKey: "desktop", icon: Monitor, width: 600 },
+  { id: "tablet", labelKey: "tablet", icon: Tablet, width: 480 },
+  { id: "mobile", labelKey: "mobile", icon: Smartphone, width: 320 },
 ] as const;
 
 type DeviceId = (typeof DEVICES)[number]["id"];
@@ -164,17 +164,11 @@ export function EmailPreviewDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={cn(
-          "max-h-[90vh] overflow-y-auto transition-all duration-300",
-          showVariables ? "max-w-6xl" : "max-w-4xl"
-        )}
+        className={cn("max-h-[90vh] overflow-y-auto", showVariables ? "max-w-6xl" : "max-w-4xl")}
       >
         <DialogHeader>
-          <DialogTitle>{t("messaging.email.previewTitle") || "Email Preview"}</DialogTitle>
-          <DialogDescription>
-            {t("messaging.email.previewDescription") ||
-              "Preview how your email will appear to recipients."}
-          </DialogDescription>
+          <DialogTitle>{t("messaging.email.previewTitle")}</DialogTitle>
+          <DialogDescription>{t("messaging.email.previewDescription")}</DialogDescription>
         </DialogHeader>
 
         <div className={cn("pt-2", showVariables ? "grid grid-cols-[1fr_300px] gap-4" : "")}>
@@ -182,9 +176,7 @@ export function EmailPreviewDialog({
           <div className="space-y-4">
             {/* Recipients */}
             <div className="space-y-1">
-              <p className="text-sm font-medium text-muted-foreground">
-                {t("messaging.email.to") || "To"}
-              </p>
+              <p className="text-sm font-medium text-nx-ink-2">{t("messaging.email.to")}</p>
               <div className="flex flex-wrap gap-1">
                 {recipients.map((email) => (
                   <Badge key={email} variant="secondary" className="text-xs">
@@ -196,15 +188,13 @@ export function EmailPreviewDialog({
 
             {/* Subject */}
             <div className="space-y-1">
-              <p className="text-sm font-medium text-muted-foreground">
-                {t("messaging.email.subject") || "Subject"}
-              </p>
-              <p className="text-base font-semibold">{resolvedSubject || "—"}</p>
+              <p className="text-sm font-medium text-nx-ink-2">{t("messaging.email.subject")}</p>
+              <p className="text-base font-semibold text-nx-ink">{resolvedSubject || "—"}</p>
             </div>
 
             {/* Controls: Device Switcher + Variable Toggle */}
             <div className="flex items-center justify-center gap-3">
-              <div className="flex items-center gap-1 rounded-lg border bg-muted/30 p-1">
+              <div className="flex items-center gap-1 rounded-nx-md border border-nx-line bg-nx-raised p-1">
                 {DEVICES.map((d) => {
                   const Icon = d.icon;
                   return (
@@ -216,8 +206,8 @@ export function EmailPreviewDialog({
                       className="h-8 gap-1.5 text-xs"
                       onClick={() => setDevice(d.id)}
                     >
-                      <Icon className="h-3.5 w-3.5" />
-                      {d.label}
+                      <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                      {t(`messaging.email.${d.labelKey}`)}
                     </Button>
                   );
                 })}
@@ -231,11 +221,11 @@ export function EmailPreviewDialog({
                   onClick={() => setShowVariables(!showVariables)}
                 >
                   {showVariables ? (
-                    <PanelRightClose className="h-3.5 w-3.5" />
+                    <PanelRightClose className="h-3.5 w-3.5" aria-hidden="true" />
                   ) : (
-                    <PanelRightOpen className="h-3.5 w-3.5" />
+                    <PanelRightOpen className="h-3.5 w-3.5" aria-hidden="true" />
                   )}
-                  Variables
+                  {t("messaging.email.variablesPanel")}
                   <Badge variant="secondary" className="h-4 px-1 py-0 text-[10px]">
                     {templateVarCount}
                   </Badge>
@@ -247,37 +237,40 @@ export function EmailPreviewDialog({
             <div className="flex justify-center">
               <div
                 className={cn(
-                  "overflow-hidden rounded-lg border bg-white shadow-sm transition-all duration-300",
-                  device === "mobile" && "rounded-2xl border-2"
+                  "overflow-hidden rounded-nx-lg border border-nx-line bg-nx-surface",
+                  device === "mobile" && "border-2"
                 )}
                 style={{
                   width: `${currentDevice.width}px`,
                   maxWidth: "100%",
                 }}
               >
-                {/* Simulated browser/device bar */}
-                <div className="flex items-center gap-1.5 border-b bg-gray-50 px-3 py-2">
-                  <div className="flex gap-1">
+                {/* Simulated browser/device bar — our own chrome, so it follows
+                    the nx surface ladder like every other toolbar. */}
+                <div className="flex items-center gap-1.5 border-b border-nx-line bg-nx-raised px-3 py-2">
+                  <div className="flex gap-1" aria-hidden="true">
                     <span className="h-2.5 w-2.5 rounded-full bg-destructive" />
                     <span className="h-2.5 w-2.5 rounded-full bg-warning" />
                     <span className="h-2.5 w-2.5 rounded-full bg-success" />
                   </div>
                   <div className="flex-1 text-center">
-                    <span className="font-mono text-[10px] text-gray-400">
+                    <span className="font-mono text-[10px] tabular-nums text-nx-ink-3">
                       {currentDevice.width}px
                     </span>
                   </div>
                 </div>
 
-                {/* Email Content */}
-                <div className="p-0">
+                {/* Email Content — this is the recipient's paper, not our chrome:
+                    HTML email always renders on a light canvas regardless of the
+                    reader's client theme, so this pane stays white on purpose. */}
+                <div className="bg-white p-0">
                   {resolvedBody.includes("<") ? (
                     <iframe
                       srcDoc={`<!DOCTYPE html><html><head><meta charset="utf-8"/><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;line-height:1.6;color:#000;padding:16px;background:#fff}img{max-width:100%;height:auto}a{color:#3b82f6}</style></head><body>${sanitizedBody}</body></html>`}
                       sandbox="allow-same-origin"
                       className="w-full border-0"
                       style={{ minHeight: "200px", height: "400px" }}
-                      title="Email Preview"
+                      title={t("messaging.email.previewTitle")}
                       onLoad={(e) => {
                         const iframe = e.currentTarget;
                         try {
@@ -299,11 +292,11 @@ export function EmailPreviewDialog({
 
                 {/* Attachments */}
                 {attachments.length > 0 && (
-                  <div className="border-t bg-gray-50/80 p-4">
+                  <div className="border-t border-nx-line bg-nx-raised p-4">
                     <div className="mb-2 flex items-center gap-1.5">
-                      <Paperclip className="h-3.5 w-3.5 text-muted-foreground" />
-                      <span className="text-xs font-medium text-muted-foreground">
-                        {attachments.length} Attachment{attachments.length > 1 ? "s" : ""}
+                      <Paperclip className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
+                      <span className="text-xs font-medium text-nx-ink-2">
+                        {t("messaging.email.attachmentsCount", { count: attachments.length })}
                       </span>
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -330,14 +323,14 @@ export function EmailPreviewDialog({
                         return (
                           <div
                             key={a.id}
-                            className="flex items-center gap-2 rounded-md border bg-white px-3 py-2 text-xs"
+                            className="flex items-center gap-2 rounded-nx-md border border-nx-line bg-nx-surface px-3 py-2 text-xs"
                           >
-                            <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+                            <Icon className="h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
                             <div className="min-w-0">
-                              <p className="max-w-[150px] truncate font-medium text-foreground">
+                              <p className="max-w-[150px] truncate font-medium text-nx-ink">
                                 {a.name}
                               </p>
-                              <p className="text-muted-foreground">{sizeStr}</p>
+                              <p className="text-nx-ink-3">{sizeStr}</p>
                             </div>
                           </div>
                         );

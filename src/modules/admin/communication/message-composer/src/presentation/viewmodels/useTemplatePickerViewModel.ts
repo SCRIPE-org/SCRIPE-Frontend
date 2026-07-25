@@ -13,7 +13,7 @@ export interface UseTemplatePickerViewModelParams {
  * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useTemplatePickerViewModel({ repository }: UseTemplatePickerViewModelParams) {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["email-templates-list"],
     queryFn: async () => {
       const result = await repository.getEmailTemplates({ page: 1, pageSize: 100 });
@@ -25,5 +25,7 @@ export function useTemplatePickerViewModel({ repository }: UseTemplatePickerView
   return {
     templates: data ?? [],
     isLoading,
+    isError,
+    refetch,
   };
 }

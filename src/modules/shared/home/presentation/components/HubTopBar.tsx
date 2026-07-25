@@ -4,12 +4,14 @@
  * HubTopBar — Minimal topbar for the Hub page.
  *
  * Design: SCRIPE logo | spacer | "Jump to anything · /" | ⊞ | 🔔 | divider | Avatar pill
- * Background: rgba(10,14,26,0.55) with backdrop-blur.
+ * Background: an opaque nx-surface behind a hairline, same as NexusTopbar's
+ * default (non-glass) treatment — no blur, so a badge ring can rely on the
+ * surface it is actually drawn on.
  *
- * ALL buttons are now wired:
+ * ALL buttons are wired:
  *  - Search shortcut → opens NexusSearchPalette (via onSearchClick)
  *  - ⊞ App switcher  → opens NexusAppLauncher (via onAppLauncherClick)
- *  - 🔔 Notifications → navigates to /messaging/notifications
+ *  - 🔔 Notifications → navigates to /communication/notifications
  *  - Avatar pill      → navigates to /profile
  */
 
@@ -18,22 +20,20 @@ import { Search, Grid3x3, Bell, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
+import { BRAND } from "@core/config/branding";
+import { cn } from "@core/common/utils";
 
 interface HubTopBarProps {
   onSearchClick?: () => void;
   onAppLauncherClick?: () => void;
 }
 
+const ICON_BUTTON =
+  "inline-flex h-[34px] w-[34px] items-center justify-center rounded-nx-md border border-nx-line text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none";
+
 export function HubTopBar({ onSearchClick, onAppLauncherClick }: HubTopBarProps) {
   const { t } = useI18n();
   const router = useRouter();
-
-  const adminName = useAppStore((s) => {
-    const u = s.user;
-    if (!u) return "";
-    const full = [u.firstName, u.lastName].filter(Boolean).join(" ");
-    return full || u.username || "";
-  });
 
   // Initials for avatar
   const initials = useAppStore((s) => {
@@ -55,94 +55,39 @@ export function HubTopBar({ onSearchClick, onAppLauncherClick }: HubTopBarProps)
   });
 
   return (
-    <header
-      style={{
-        position: "relative",
-        zIndex: 5,
-        display: "flex",
-        alignItems: "center",
-        gap: 24,
-        padding: "0 32px",
-        height: 60,
-        borderBottom: "1px solid rgba(255,255,255,0.04)",
-        background: "rgba(10,14,26,0.55)",
-        backdropFilter: "blur(14px) saturate(140%)",
-        fontFamily: "'Inter', system-ui, sans-serif",
-      }}
-    >
+    <header className="relative z-raised flex h-[60px] items-center gap-6 border-b border-nx-line bg-nx-surface px-8">
       {/* SCRIPE wordmark */}
-      <div style={{ display: "inline-flex", alignItems: "center", gap: 9 }}>
-        <svg width={22} height={22} viewBox="0 0 24 24" fill="none">
-          <defs>
-            <linearGradient
-              id="nx-hub-g"
-              x1="0"
-              y1="0"
-              x2="24"
-              y2="24"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop stopColor="#7C8BFF" />
-              <stop offset="1" stopColor="#5A60E0" />
-            </linearGradient>
-          </defs>
+      <div className="inline-flex items-center gap-2">
+        <svg width={22} height={22} viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path
             d="M4 5 L12 12 L4 19 L4 12 L20 5 L20 12 L12 12 L20 19"
-            stroke="url(#nx-hub-g)"
+            stroke="var(--nx-accent)"
             strokeWidth="2.4"
             strokeLinecap="round"
             strokeLinejoin="round"
             fill="none"
           />
         </svg>
-        <span
-          style={{
-            fontSize: 14.5,
-            fontWeight: 700,
-            letterSpacing: "0.12em",
-            color: "#e6e9f5",
-          }}
-        >
-          SCRIPE
+        <span className="text-sm font-bold tracking-[0.12em] text-nx-ink">
+          {BRAND?.name ?? "SCRIPE"}
         </span>
       </div>
 
       {/* Spacer */}
-      <div style={{ flex: 1 }} />
+      <div className="flex-1" />
 
       {/* Mini search shortcut */}
       <button
         type="button"
         onClick={onSearchClick}
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 10,
-          height: 34,
-          padding: "0 12px",
-          borderRadius: 10,
-          border: "1px solid rgba(255,255,255,0.06)",
-          background: "rgba(255,255,255,0.03)",
-          color: "rgba(230,233,245,0.7)",
-          fontSize: 12.5,
-          cursor: "pointer",
-          fontFamily: "inherit",
-        }}
+        className="inline-flex h-[34px] cursor-pointer items-center gap-2.5 rounded-nx-md border border-nx-line px-3 text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
       >
-        <Search size={14} strokeWidth={1.75} />
-        <span>{t("workspaceHub.jumpTo")}</span>
-        <span style={{ opacity: 0.5 }}>·</span>
-        <kbd
-          style={{
-            font: "inherit",
-            fontSize: 11,
-            padding: "1px 6px",
-            borderRadius: 5,
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            color: "rgba(230,233,245,0.8)",
-          }}
-        >
+        <Search size={14} strokeWidth={1.75} aria-hidden="true" />
+        <span className="text-xs">{t("workspaceHub.jumpTo")}</span>
+        <span aria-hidden="true" className="text-nx-ink-3">
+          ·
+        </span>
+        <kbd className="rounded-nx-sm border border-nx-line bg-nx-raised px-1.5 py-0.5 text-[11px] font-medium text-nx-ink-2">
           /
         </kbd>
       </button>
@@ -150,118 +95,53 @@ export function HubTopBar({ onSearchClick, onAppLauncherClick }: HubTopBarProps)
       {/* App switcher → opens NexusAppLauncher */}
       <button
         type="button"
-        aria-label="App switcher"
+        aria-label={t("workspaceHub.topbar.appSwitcher")}
         onClick={onAppLauncherClick}
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          width: 34,
-          height: 34,
-          borderRadius: 10,
-          border: "1px solid rgba(255,255,255,0.06)",
-          background: "rgba(255,255,255,0.03)",
-          color: "rgba(230,233,245,0.8)",
-          cursor: "pointer",
-        }}
+        className={cn("cursor-pointer", ICON_BUTTON)}
       >
-        <Grid3x3 size={16} strokeWidth={1.75} />
+        <Grid3x3 size={16} strokeWidth={1.75} aria-hidden="true" />
       </button>
 
       {/* Notifications → navigate to /communication/notifications */}
       <button
         type="button"
-        aria-label="Notifications"
+        aria-label={t("workspaceHub.topbar.notifications")}
         onClick={() => router.push("/communication/notifications")}
-        style={{
-          position: "relative",
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          width: 34,
-          height: 34,
-          borderRadius: 10,
-          border: "1px solid rgba(255,255,255,0.06)",
-          background: "rgba(255,255,255,0.03)",
-          color: "rgba(230,233,245,0.8)",
-          cursor: "pointer",
-        }}
+        className={cn("relative cursor-pointer", ICON_BUTTON)}
       >
-        <Bell size={16} strokeWidth={1.75} />
+        <Bell size={16} strokeWidth={1.75} aria-hidden="true" />
+        {/* The ring is the bar's own surface token, so it matches whatever
+            ground the dot is actually drawn on in either theme. */}
         <span
-          style={{
-            position: "absolute",
-            top: 7,
-            insetInlineEnd: 8,
-            width: 7,
-            height: 7,
-            borderRadius: 999,
-            background: "#F04E5A",
-            boxShadow: "0 0 0 2px #0A0E1A",
-          }}
+          aria-hidden="true"
+          className="absolute end-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive ring-2 ring-nx-surface"
         />
       </button>
 
       {/* Divider */}
-      <div
-        style={{
-          width: 1,
-          height: 22,
-          background: "rgba(255,255,255,0.08)",
-        }}
-      />
+      <div aria-hidden="true" className="h-[22px] w-px bg-nx-line" />
 
       {/* Avatar pill → navigate to /profile */}
       <button
         type="button"
         onClick={() => router.push("/profile")}
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 8,
-          height: 36,
-          padding: "0 6px",
-          borderRadius: 999,
-          border: "1px solid rgba(255,255,255,0.06)",
-          background: "rgba(255,255,255,0.03)",
-          cursor: "pointer",
-          fontFamily: "inherit",
-        }}
+        className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-full border border-nx-line py-1 ps-1 pe-2.5 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
       >
         <div
-          aria-hidden
-          style={{
-            width: 26,
-            height: 26,
-            borderRadius: 999,
-            background: "linear-gradient(135deg, #5E91FF 0%, #9A4DDB 100%)",
-            color: "#fff",
-            fontSize: 11,
-            fontWeight: 700,
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            border: "1.5px solid rgba(255,255,255,0.12)",
-          }}
+          aria-hidden="true"
+          className="inline-flex h-[26px] w-[26px] items-center justify-center rounded-full border border-nx-line bg-nx-accent-fill text-[11px] font-bold text-nx-on-fill"
         >
           {initials}
         </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            lineHeight: 1.1,
-          }}
-        >
-          <span style={{ fontSize: 12, fontWeight: 600, color: "#e6e9f5" }}>{shortName}</span>
+        <div className="flex flex-col items-start leading-tight">
+          <span className="text-xs font-semibold text-nx-ink">{shortName}</span>
           {tenantName && (
-            <span style={{ fontSize: 10.5, color: "rgba(230,233,245,0.5)" }}>
-              Owner · {tenantName}
+            <span className="text-[10.5px] text-nx-ink-3">
+              {t("workspaceHub.topbar.ownerOf", { tenant: tenantName })}
             </span>
           )}
         </div>
-        <ChevronDown size={14} strokeWidth={1.75} style={{ color: "rgba(230,233,245,0.5)" }} />
+        <ChevronDown size={14} strokeWidth={1.75} className="text-nx-ink-3" aria-hidden="true" />
       </button>
     </header>
   );

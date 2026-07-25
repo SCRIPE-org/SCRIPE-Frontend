@@ -96,12 +96,12 @@ export function useNotificationSenderViewModel() {
       }
     },
     onSuccess: () => {
-      success({ title: t("messaging.notifications.sendSuccess") || "Notification sent" });
+      success({ title: t("messaging.notifications.sendSuccess") });
       resetForm();
     },
     onError: () => {
       toastError({
-        title: t("messaging.notifications.sendError") || "Failed to send notification",
+        title: t("messaging.notifications.sendError"),
       });
     },
   });
@@ -115,7 +115,7 @@ export function useNotificationSenderViewModel() {
 
     if (Object.keys(errors).length > 0) {
       toastError({
-        title: t("messaging.notifications.validationError") || "Please fill all required fields",
+        title: t("messaging.notifications.validationError"),
       });
       return false;
     }
@@ -146,17 +146,17 @@ export function useNotificationSenderViewModel() {
 
   // ─── Options (aligned with backend enums) ──────────────────
   const typeOptions: { value: NotificationType; label: string }[] = [
-    { value: "Info", label: t("messaging.notifications.typeInfo") || "Info" },
-    { value: "Success", label: t("messaging.notifications.typeSuccess") || "Success" },
-    { value: "Warning", label: t("messaging.notifications.typeWarning") || "Warning" },
-    { value: "Error", label: t("messaging.notifications.typeError") || "Error" },
+    { value: "Info", label: t("messaging.notifications.typeInfo") },
+    { value: "Success", label: t("messaging.notifications.typeSuccess") },
+    { value: "Warning", label: t("messaging.notifications.typeWarning") },
+    { value: "Error", label: t("messaging.notifications.typeError") },
   ];
 
   const categoryOptions: { value: NotificationCategory; label: string }[] = [
-    { value: "General", label: t("messaging.notifications.categoryGeneral") || "General" },
-    { value: "Security", label: t("messaging.notifications.categorySecurity") || "Security" },
-    { value: "System", label: t("messaging.notifications.categorySystem") || "System" },
-    { value: "Activity", label: t("messaging.notifications.categoryActivity") || "Activity" },
+    { value: "General", label: t("messaging.notifications.categoryGeneral") },
+    { value: "Security", label: t("messaging.notifications.categorySecurity") },
+    { value: "System", label: t("messaging.notifications.categorySystem") },
+    { value: "Activity", label: t("messaging.notifications.categoryActivity") },
   ];
 
   return {
@@ -165,6 +165,7 @@ export function useNotificationSenderViewModel() {
     setTargetSearch,
     targetResults: targetSearchQuery.data ?? [],
     isSearchingTargets: targetSearchQuery.isLoading,
+    isTargetSearchError: targetSearchQuery.isError,
     selectedTargets,
     addTarget,
     removeTarget,

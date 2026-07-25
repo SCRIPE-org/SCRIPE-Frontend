@@ -16,6 +16,7 @@ import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { cn } from "@core/common/utils";
+import { Card } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Building2, Pause, Ban, XCircle } from "lucide-react";
 import type { TenantTreeNode } from "../../domain/entities/Tenant";
@@ -72,7 +73,7 @@ function getProgressPercentage(endDate?: string): number {
 }
 
 function getProgressColor(days: number | null): string {
-  if (days === null) return "bg-primary";
+  if (days === null) return "bg-nx-accent-fill";
   if (days <= 0) return "bg-destructive";
   if (days <= 7) return "bg-destructive";
   if (days <= 30) return "bg-warning";
@@ -84,8 +85,7 @@ const statusConfig: Record<
   {
     borderColor: string;
     iconBg: string;
-    badgeVariant: "success" | "destructive" | "outline" | "secondary";
-    badgeClass: string;
+    badgeVariant: "success" | "warning" | "destructive" | "secondary";
     Icon: React.ComponentType<any>;
   }
 > = {
@@ -93,35 +93,30 @@ const statusConfig: Record<
     borderColor: "border-success/30",
     iconBg: "bg-success/10 text-success",
     badgeVariant: "success",
-    badgeClass: "",
     Icon: Building2,
   },
   suspended: {
     borderColor: "border-warning/30",
     iconBg: "bg-warning/10 text-warning",
-    badgeVariant: "outline",
-    badgeClass: "border-warning/50 bg-warning/10 text-warning",
+    badgeVariant: "warning",
     Icon: Pause,
   },
   canceled: {
     borderColor: "border-destructive/30",
     iconBg: "bg-destructive/10 text-destructive",
     badgeVariant: "destructive",
-    badgeClass: "",
     Icon: Ban,
   },
   expired: {
     borderColor: "border-warning/30",
     iconBg: "bg-warning/10 text-warning",
     badgeVariant: "destructive",
-    badgeClass: "",
     Icon: XCircle,
   },
   inactive: {
-    borderColor: "border-border/50",
-    iconBg: "bg-muted text-muted-foreground",
+    borderColor: "border-nx-line",
+    iconBg: "bg-nx-raised text-nx-ink-2",
     badgeVariant: "secondary",
-    badgeClass: "",
     Icon: Building2,
   },
 };
@@ -143,11 +138,10 @@ export function TenantNodeCard({
   compact = false,
 }: TenantNodeCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { t, direction } = useI18n();
+  const { t } = useI18n();
   const router = useRouter();
   const { canEnterTenantWorld, enterTenantWorld } = useTenantContext();
   const { hasPermission } = usePermissions();
-  const isRtl = direction === "rtl";
 
   const status = getTenantStatus(node);
   const config = statusConfig[status];
@@ -186,17 +180,17 @@ export function TenantNodeCard({
   const statusBadge = useMemo(() => {
     const StatusIcon = config.Icon;
     const labels: Record<TenantStatus, string> = {
-      active: t("tenant.active") || "Active",
-      suspended: t("tenant.suspended") || "Suspended",
-      canceled: t("tenant.canceled") || "Canceled",
-      expired: t("tenant.expired") || "Expired",
-      inactive: t("tenant.inactive") || "Inactive",
+      active: t("tenant.active"),
+      suspended: t("tenant.suspended"),
+      canceled: t("tenant.canceled"),
+      expired: t("tenant.expired"),
+      inactive: t("tenant.inactive"),
     };
 
     return (
-      <Badge variant={config.badgeVariant} className={cn("gap-1", config.badgeClass)}>
+      <Badge variant={config.badgeVariant} className="gap-1">
         {(status === "suspended" || status === "canceled" || status === "expired") && (
-          <StatusIcon className="h-3 w-3" />
+          <StatusIcon className="h-3 w-3" aria-hidden="true" />
         )}
         {labels[status]}
       </Badge>
@@ -214,35 +208,28 @@ export function TenantNodeCard({
       className={cn("group/card", level > 0 && "relative")}
       style={{ paddingInlineStart: level > 0 ? `${level * 32}px` : undefined }}
     >
-      {/* Tree connector line */}
+      {/* Tree connector line — inset via logical insetInlineStart, correct in
+          both directions by construction, no isRtl branching needed. */}
       {level > 0 && (
         <div
-          className={cn("absolute bottom-0 top-0 w-px bg-border/50", isRtl ? "right-0" : "left-0")}
-          style={{
-            [isRtl ? "right" : "left"]: `${(level - 1) * 32 + 16}px`,
-          }}
+          className="absolute bottom-0 top-0 w-px bg-nx-line"
+          style={{ insetInlineStart: `${(level - 1) * 32 + 16}px` }}
         />
       )}
       {level > 0 && (
         <div
-          className={cn("absolute top-6 h-px bg-border/50")}
-          style={{
-            [isRtl ? "right" : "left"]: `${(level - 1) * 32 + 16}px`,
-            width: "16px",
-          }}
+          className="absolute top-6 h-px w-4 bg-nx-line"
+          style={{ insetInlineStart: `${(level - 1) * 32 + 16}px` }}
         />
       )}
 
       {/* Main card */}
-      <div
+      <Card
         className={cn(
-          "relative overflow-hidden rounded-xl border transition-all duration-300 ease-out",
-          "bg-card hover:border-border hover:shadow-lg hover:shadow-primary/5",
+          "relative mb-2 overflow-hidden",
           config.borderColor,
-          isExpanded && "border-border shadow-lg shadow-primary/5",
           (status === "canceled" || status === "inactive") && "opacity-75",
-          status === "suspended" && "opacity-90",
-          "mb-2"
+          status === "suspended" && "opacity-90"
         )}
       >
         {/* Collapsed Header (always visible) */}
@@ -258,19 +245,19 @@ export function TenantNodeCard({
           onToggle={handleToggle}
         />
 
-        {/* Expanded Content */}
+        {/* Expanded Content — a fade-in reveal; no slide, no idle motion. */}
         {isExpanded && (
           <div
             className={cn(
-              "border-t border-border/50 px-4 pb-4",
-              "duration-300 animate-in fade-in-0 slide-in-from-top-2"
+              "border-t border-nx-line px-4 pb-4",
+              "duration-nx-standard ease-nx-enter animate-in fade-in-0"
             )}
           >
             {/* Status-specific banners */}
-            <TenantNodeCardBanners node={node} status={status} t={t} />
+            <TenantNodeCardBanners node={node} status={status} />
 
             {/* Stats row */}
-            <TenantNodeCardStats stats={stats} statsLoading={statsLoading} t={t} />
+            <TenantNodeCardStats stats={stats} statsLoading={statsLoading} />
 
             {/* Subscription progress bar */}
             <TenantNodeCardProgress
@@ -279,12 +266,11 @@ export function TenantNodeCard({
               daysLeft={daysLeft}
               progress={progress}
               progressColor={progressColor}
-              t={t}
             />
 
             {/* Description */}
             {node.description && (
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              <p className="mt-3 text-sm leading-relaxed text-pretty text-nx-ink-2">
                 {node.description}
               </p>
             )}
@@ -305,11 +291,10 @@ export function TenantNodeCard({
               onCreateChild={onCreateChild}
               onViewDetails={handleViewDetails}
               onEnterWorld={handleEnterWorld}
-              t={t}
             />
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Recursive children (only when expanded) */}
       {isExpanded && hasChildren && (

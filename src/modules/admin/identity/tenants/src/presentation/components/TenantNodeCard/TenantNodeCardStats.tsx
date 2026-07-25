@@ -3,7 +3,8 @@
 import React from "react";
 import { Users, Shield, Building2, Key } from "lucide-react";
 import { Skeleton } from "@core/ui/skeleton";
-import { cn } from "@core/common/utils";
+import { DetailRow } from "@core/ui/detail-row";
+import { useI18n } from "@core/providers/i18n-provider";
 
 interface TenantNodeCardStatsProps {
   stats:
@@ -15,64 +16,31 @@ interface TenantNodeCardStatsProps {
       }
     | undefined;
   statsLoading: boolean;
-  t: (key: string) => string;
 }
 
 /**
  * Presentation UI component rendering the tenant node card stats.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
-export function TenantNodeCardStats({ stats, statsLoading, t }: TenantNodeCardStatsProps) {
+export function TenantNodeCardStats({ stats, statsLoading }: TenantNodeCardStatsProps) {
+  const { t } = useI18n();
+
   const statItems = [
-    {
-      key: "admins",
-      label: t("tenant.statsAdmins"),
-      value: stats?.adminsCount,
-      icon: Users,
-      color: "text-info",
-    },
-    {
-      key: "roles",
-      label: t("tenant.statsRoles"),
-      value: stats?.rolesCount,
-      icon: Shield,
-      color: "text-primary",
-    },
-    {
-      key: "children",
-      label: t("tenant.statsSubTenants"),
-      value: stats?.subTenantsCount,
-      icon: Building2,
-      color: "text-success",
-    },
-    {
-      key: "permissions",
-      label: t("tenant.statsPermissions"),
-      value: stats?.permissionsCount,
-      icon: Key,
-      color: "text-warning",
-    },
+    { key: "admins", label: t("tenant.statsAdmins"), value: stats?.adminsCount, icon: Users },
+    { key: "roles", label: t("tenant.statsRoles"), value: stats?.rolesCount, icon: Shield },
+    { key: "children", label: t("tenant.statsSubTenants"), value: stats?.subTenantsCount, icon: Building2 },
+    { key: "permissions", label: t("tenant.statsPermissions"), value: stats?.permissionsCount, icon: Key },
   ];
 
   return (
     <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
       {statItems.map((stat) => (
-        <div
-          key={stat.key}
-          className={cn(
-            "flex items-center gap-2 rounded-lg border border-border/50 p-2.5",
-            "bg-muted/20"
+        <div key={stat.key} className="rounded-nx-md border border-nx-line bg-nx-raised p-2.5">
+          {statsLoading ? (
+            <Skeleton shape="text" className="h-5 w-10" />
+          ) : (
+            <DetailRow layout="stacked" icon={stat.icon} label={stat.label} value={stat.value ?? 0} />
           )}
-        >
-          <stat.icon className={cn("h-4 w-4 shrink-0", stat.color)} />
-          <div className="min-w-0">
-            {statsLoading ? (
-              <Skeleton className="h-5 w-8" />
-            ) : (
-              <p className="text-sm font-bold">{stat.value ?? 0}</p>
-            )}
-            <p className="truncate text-xs text-muted-foreground">{stat.label}</p>
-          </div>
         </div>
       ))}
     </div>

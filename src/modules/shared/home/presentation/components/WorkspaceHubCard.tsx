@@ -3,12 +3,11 @@
 /**
  * WorkspaceHubCard — A single workspace card in the Workspace Hub.
  *
- * Design inspired by Microsoft 365 App Launcher + Notion workspace picker:
- * - Glassmorphism + accent color glow
- * - Hover scale effect with lift
- * - Locked state with lock icon + "Upgrade" badge
- * - Active/recent indicator
- * - Accent color border from workspace's OKLCH palette
+ * Accent colour derives from the workspace's own OKLCH hue/chroma, the same
+ * data-owned pattern HubModuleTile uses. The card itself stays a plain nx
+ * surface with that colour only on the border and the bottom accent line —
+ * one glow-carrying element per screen means a card grid cannot each cast
+ * its own coloured shadow, so there is no glow and no hover lift here.
  */
 
 import { cn } from "@core/common/utils";
@@ -51,34 +50,28 @@ export function WorkspaceHubCard({
   const accentColor = `oklch(0.65 ${chroma} ${hue})`;
   const accentColorBg = `oklch(0.65 ${chroma} ${hue} / 0.08)`;
   const accentColorBorder = `oklch(0.65 ${chroma} ${hue} / 0.25)`;
-  const accentColorGlow = `oklch(0.65 ${chroma} ${hue} / 0.12)`;
 
   return (
     <button
+      type="button"
       onClick={onClick}
       disabled={isLocked}
       className={cn(
-        "group relative flex w-full flex-col items-start gap-3 rounded-2xl p-5",
-        "border backdrop-blur-sm transition-all duration-300 ease-out",
-        "text-start",
-        isLocked
-          ? "cursor-not-allowed opacity-70 grayscale-[30%]"
-          : "cursor-pointer hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-lg active:scale-[0.99]"
+        "group relative flex w-full flex-col items-start gap-3 rounded-nx-lg border p-5 text-start",
+        "transition-[border-color] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+        "focus-visible:outline-none focus-visible:shadow-nx-focus",
+        isLocked ? "cursor-not-allowed border-nx-line bg-nx-raised" : "cursor-pointer"
       )}
-      style={{
-        background: isLocked ? "hsl(var(--muted) / 0.5)" : accentColorBg,
-        borderColor: isLocked ? "hsl(var(--border))" : accentColorBorder,
-        boxShadow: isLocked ? "none" : `0 4px 20px ${accentColorGlow}`,
-      }}
+      style={isLocked ? undefined : { background: accentColorBg, borderColor: accentColorBorder }}
     >
       {/* Lock overlay */}
       {isLocked && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-background/40 backdrop-blur-[2px]">
+        <div className="absolute inset-0 z-raised flex items-center justify-center rounded-nx-lg bg-scrim">
           <div className="flex flex-col items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-              <Lock className="h-5 w-5 text-muted-foreground" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-nx-raised">
+              <Lock className="h-5 w-5 text-nx-ink-3" aria-hidden="true" />
             </div>
-            <span className="text-xs font-medium text-muted-foreground">
+            <span className="text-xs font-medium text-nx-ink-2">
               {lockReason === "TenantContextRequired"
                 ? t("workspaceHub.needsTenant")
                 : t("workspaceHub.upgradeBadge")}
@@ -90,30 +83,25 @@ export function WorkspaceHubCard({
       {/* Icon + Name row */}
       <div className="flex w-full items-center gap-3">
         <div
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors duration-200"
-          style={{
-            background: accentColorBg,
-            color: accentColor,
-          }}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-nx-md"
+          style={{ background: accentColorBg, color: accentColor }}
         >
           <DynamicIcon name={icon || "Layers"} size={22} />
         </div>
         <div className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-sm font-semibold text-foreground">{name}</span>
+          <span className="truncate text-sm font-semibold text-nx-ink">{name}</span>
           {accessibleItemCount > 0 && !isLocked && (
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-nx-ink-3">
               {formatItemCount(accessibleItemCount, language, t)}
             </span>
           )}
         </div>
         {!isLocked && (
           <ChevronRight
+            aria-hidden="true"
             className={cn(
-              "h-4 w-4 shrink-0 text-muted-foreground opacity-0 transition-all duration-200",
-              "group-hover:opacity-100",
-              language === "ar"
-                ? "rotate-180 group-hover:-translate-x-0.5"
-                : "group-hover:translate-x-0.5"
+              "h-4 w-4 shrink-0 text-nx-ink-3 opacity-0 transition-opacity duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+              "group-hover:opacity-100 rtl:rotate-180"
             )}
           />
         )}
@@ -121,8 +109,12 @@ export function WorkspaceHubCard({
 
       {/* Last accessed timestamp */}
       {lastAccessed && !isLocked && (
-        <div className="flex w-full items-center gap-1.5 text-xs text-muted-foreground/70">
-          <div className="h-1.5 w-1.5 rounded-full" style={{ background: accentColor }} />
+        <div className="flex w-full items-center gap-1.5 text-xs text-nx-ink-3">
+          <div
+            aria-hidden="true"
+            className="h-1.5 w-1.5 rounded-full"
+            style={{ background: accentColor }}
+          />
           {lastAccessed}
         </div>
       )}
@@ -130,7 +122,8 @@ export function WorkspaceHubCard({
       {/* Accent bottom border line */}
       {!isLocked && (
         <div
-          className="absolute inset-x-0 bottom-0 h-[2px] rounded-b-2xl opacity-50 transition-opacity duration-200 group-hover:opacity-100"
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-0.5 rounded-b-nx-lg opacity-50 transition-opacity duration-nx-standard ease-nx-enter motion-reduce:transition-none group-hover:opacity-100"
           style={{ background: accentColor }}
         />
       )}

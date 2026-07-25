@@ -5,14 +5,16 @@ import React, { useEffect, useRef } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useNotificationSenderViewModel } from "../viewmodels/useNotificationSenderViewModel";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
+import { PageHeader } from "@core/ui/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Input } from "@core/ui/input";
 import { Textarea } from "@core/ui/textarea";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Label } from "@core/ui/label";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { GenericSelect } from "@core/crud/components/generic-select";
-import { Bell, Send, X, Loader2, RotateCcw, Search } from "lucide-react";
+import { Bell, Send, X, RotateCcw, Search } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { NotificationType, NotificationCategory } from "../../domain/entities/Notification";
 
@@ -54,21 +56,19 @@ export function NotificationSenderView() {
   }, []);
 
   const noResults =
-    vm.targetSearch.length >= 2 && !vm.isSearchingTargets && vm.targetResults.length === 0;
+    vm.targetSearch.length >= 2 &&
+    !vm.isSearchingTargets &&
+    !vm.isTargetSearchError &&
+    vm.targetResults.length === 0;
 
   return (
     <>
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="flex items-center gap-2 text-2xl font-bold">
-              <Bell className="h-6 w-6 text-primary" />
-              {t("messaging.notifications.title")}
-            </h1>
-            <p className="mt-1 text-muted-foreground">{t("messaging.notifications.description")}</p>
-          </div>
-        </div>
+        <PageHeader
+          icon={Bell}
+          title={t("messaging.notifications.title")}
+          description={t("messaging.notifications.description")}
+        />
 
         <Card>
           <CardHeader>
@@ -81,10 +81,10 @@ export function NotificationSenderView() {
                 variant="ghost"
                 size="sm"
                 onClick={vm.resetForm}
-                className="gap-1.5 text-muted-foreground"
+                className="gap-1.5 text-nx-ink-2"
               >
-                <RotateCcw className="h-3.5 w-3.5" />
-                {t("messaging.notifications.clearForm") || "Clear"}
+                <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+                {t("messaging.notifications.clearForm")}
               </Button>
             </div>
           </CardHeader>
@@ -99,13 +99,16 @@ export function NotificationSenderView() {
                   {vm.selectedTargets.map((target) => (
                     <Badge key={target.id} variant="secondary" className="gap-1">
                       {target.name}
-                      <span className="text-xs text-muted-foreground">({target.type})</span>
+                      <span className="text-xs text-nx-ink-3">({target.type})</span>
                       <button
+                        type="button"
                         onClick={() => vm.removeTarget(target.id)}
-                        className="hover:text-destructive"
-                        aria-label={`Remove ${target.name}`}
+                        className="rounded-full hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
+                        aria-label={t("messaging.notifications.removeTargetNamed", {
+                          name: target.name,
+                        })}
                       >
-                        <X className="h-3 w-3" />
+                        <X className="h-3 w-3" aria-hidden="true" />
                       </button>
                     </Badge>
                   ))}
@@ -113,7 +116,10 @@ export function NotificationSenderView() {
               )}
               <div className="relative" ref={dropdownRef}>
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Search
+                    className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
+                    aria-hidden="true"
+                  />
                   <Input
                     placeholder={t("messaging.notifications.searchTargets")}
                     value={vm.targetSearch}
@@ -123,38 +129,48 @@ export function NotificationSenderView() {
                     }}
                     onFocus={() => setShowDropdown(true)}
                     className={cn(
-                      "pl-9",
+                      "ps-9",
                       vm.fieldErrors.targets && "border-destructive focus-visible:ring-destructive"
                     )}
                   />
                   {vm.isSearchingTargets && (
-                    <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
+                    <LoadingSpinner
+                      size="inline"
+                      className="absolute end-3 top-1/2 -translate-y-1/2 text-nx-ink-3"
+                    />
                   )}
                 </div>
                 {showDropdown && vm.targetSearch.length >= 2 && (
-                  <div className="absolute top-full z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-md border bg-popover shadow-lg">
+                  <div className="absolute top-full z-dropdown mt-1 max-h-48 w-full overflow-y-auto rounded-nx-md border border-nx-line bg-nx-popover shadow-nx-popover">
                     {vm.targetResults.length > 0
                       ? vm.targetResults.map((target) => (
                           <button
                             key={`${target.type}-${target.id}`}
-                            className="flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-accent"
+                            type="button"
+                            className="flex w-full items-center justify-between px-3 py-2 text-start text-sm hover:bg-nx-hover focus-visible:outline-none focus-visible:bg-nx-hover"
                             onClick={() => {
                               vm.addTarget(target);
                               setShowDropdown(false);
                             }}
                           >
-                            <span className="font-medium">{target.name}</span>
+                            <span className="font-medium text-nx-ink">{target.name}</span>
                             <Badge variant="outline" className="text-xs">
                               {target.type}
                             </Badge>
                           </button>
                         ))
-                      : noResults && (
-                          <div className="px-3 py-4 text-center text-sm text-muted-foreground">
-                            <Search className="mx-auto mb-1 h-5 w-5 opacity-40" />
-                            {t("common.noResults") || "No targets found"}
-                          </div>
-                        )}
+                      : vm.isTargetSearchError
+                        ? (
+                            <div className="px-3 py-4 text-center text-sm text-destructive">
+                              {t("common.error")}
+                            </div>
+                          )
+                        : noResults && (
+                            <div className="px-3 py-4 text-center text-sm text-nx-ink-3">
+                              <Search className="mx-auto mb-1 h-5 w-5 opacity-40" aria-hidden="true" />
+                              {t("messaging.notifications.noTargetsFound")}
+                            </div>
+                          )}
                   </div>
                 )}
               </div>
@@ -168,8 +184,8 @@ export function NotificationSenderView() {
                 </Label>
                 <span
                   className={cn(
-                    "text-xs",
-                    vm.title.length > TITLE_MAX ? "text-destructive" : "text-muted-foreground"
+                    "text-xs tabular-nums",
+                    vm.title.length > TITLE_MAX ? "text-destructive" : "text-nx-ink-3"
                   )}
                 >
                   {vm.title.length}/{TITLE_MAX}
@@ -194,8 +210,8 @@ export function NotificationSenderView() {
                 </Label>
                 <span
                   className={cn(
-                    "text-xs",
-                    vm.message.length > MESSAGE_MAX ? "text-destructive" : "text-muted-foreground"
+                    "text-xs tabular-nums",
+                    vm.message.length > MESSAGE_MAX ? "text-destructive" : "text-nx-ink-3"
                   )}
                 >
                   {vm.message.length.toLocaleString()}/{MESSAGE_MAX.toLocaleString()}
@@ -227,12 +243,12 @@ export function NotificationSenderView() {
               </div>
 
               <div className="space-y-2">
-                <Label>{t("messaging.notifications.type") || "Type"}</Label>
+                <Label>{t("messaging.notifications.type")}</Label>
                 <GenericSelect
                   options={vm.typeOptions}
                   value={vm.type}
                   onValueChange={(v: string | string[]) => vm.setType(v as NotificationType)}
-                  placeholder={t("messaging.notifications.type") || "Type"}
+                  placeholder={t("messaging.notifications.type")}
                 />
               </div>
             </div>
@@ -249,11 +265,9 @@ export function NotificationSenderView() {
 
             {/* Actions */}
             <div className="flex items-center justify-between pt-2">
-              <p className="text-xs text-muted-foreground">
-                {t("messaging.notifications.ctrlEnterHint") || "Ctrl+Enter to send"}
-              </p>
+              <p className="text-xs text-nx-ink-3">{t("messaging.notifications.ctrlEnterHint")}</p>
               <Button onClick={vm.handleSend} loading={vm.isSending} className="gap-2">
-                {!vm.isSending && <Send className="h-4 w-4" />}
+                {!vm.isSending && <Send className="h-4 w-4" aria-hidden="true" />}
                 {t("messaging.notifications.send")}
               </Button>
             </div>
@@ -265,10 +279,12 @@ export function NotificationSenderView() {
       <ConfirmationDialog
         open={vm.confirmSendOpen}
         onOpenChange={vm.setConfirmSendOpen}
-        title={t("messaging.notifications.confirmSendTitle") || "Send Notification"}
-        description={`${t("messaging.notifications.confirmSendDescription") || "Send this notification to"} ${vm.selectedTargets.length} ${t("messaging.notifications.targetsLabel") || "target(s)"}?`}
-        confirmText={t("messaging.notifications.send") || "Send Notification"}
-        cancelText={t("common.cancel") || "Cancel"}
+        title={t("messaging.notifications.confirmSendTitle")}
+        description={t("messaging.notifications.confirmSendDescription", {
+          count: vm.selectedTargets.length,
+        })}
+        confirmText={t("messaging.notifications.send")}
+        cancelText={t("common.cancel")}
         onConfirm={vm.confirmSend}
         isLoading={vm.isSending}
         variant="info"

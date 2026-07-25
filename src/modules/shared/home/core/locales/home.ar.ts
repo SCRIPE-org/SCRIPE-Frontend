@@ -11,6 +11,15 @@ export const ar = {
       focusHint: "للتركيز",
     },
     jumpTo: "انتقل إلى أي شيء",
+    topbar: {
+      appSwitcher: "مبدّل التطبيقات",
+      notifications: "الإشعارات",
+      ownerOf: "المالك · {{tenant}}",
+    },
+    pin: {
+      pin: "تثبيت",
+      unpin: "إلغاء التثبيت",
+    },
     sections: {
       pinned: "المثبّتة",
       modules: "وحداتك",
@@ -53,6 +62,7 @@ export const ar = {
       whatsNew: "ما الجديد",
       docs: "المستندات",
       status: "الحالة",
+      brandLine: "{{brand}} · {{version}} · المستأجر: {{tenant}}",
     },
     items: {
       one: "عنصر واحد",

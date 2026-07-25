@@ -144,32 +144,43 @@ export function ThemeDetailModal({
     { key: "contentBlocks", icon: Blocks, has: theme.hasContentBlocks },
   ].filter((f) => f.has);
 
+  // Segmented-control button — shared skin for the device-size and colour-mode toggles.
+  const segmentButton = (active: boolean) =>
+    cn(
+      "flex h-7 w-7 items-center justify-center rounded-nx-sm transition-colors duration-nx-micro motion-reduce:transition-none",
+      "focus-visible:outline-none focus-visible:shadow-nx-focus",
+      active ? "bg-nx-surface text-nx-ink shadow-nx-sm" : "text-nx-ink-3 hover:text-nx-ink"
+    );
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="flex max-h-[90vh] max-w-5xl flex-col overflow-hidden p-0">
         {/* ── Header ── */}
-        <DialogHeader className="shrink-0 border-b border-border/50 px-6 pb-4 pt-6">
+        <DialogHeader className="shrink-0 border-b border-nx-line px-6 pb-4 pt-6">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
               {/* Color swatch */}
               <div
-                className="h-14 w-14 shrink-0 rounded-xl border border-white/20 shadow-lg"
+                className="h-14 w-14 shrink-0 rounded-nx-md shadow-nx-sm"
                 style={{
                   background: `linear-gradient(135deg, ${accentColor}, color-mix(in srgb, ${accentColor} 50%, black))`,
                 }}
+                aria-hidden="true"
               />
               <div>
                 <div className="flex items-center gap-2">
                   <DialogTitle className="text-xl font-bold">{theme.name}</DialogTitle>
-                  {theme.isFeatured && <Star className="h-4 w-4 fill-warning text-warning" />}
+                  {theme.isFeatured && (
+                    <Star className="h-4 w-4 fill-warning text-warning" aria-hidden="true" />
+                  )}
                   {theme.isNew && (
                     <Badge className="border-success/20 bg-success/10 text-[10px] text-success">
-                      <Sparkles className="mr-0.5 h-3 w-3" />
+                      <Sparkles className="me-0.5 h-3 w-3" aria-hidden="true" />
                       {t("studio.gallery.card.new")}
                     </Badge>
                   )}
                 </div>
-                <div className="mt-1 flex items-center gap-3 text-sm text-muted-foreground">
+                <div className="mt-1 flex items-center gap-3 text-sm text-nx-ink-2">
                   {theme.authorName && (
                     <span>{t("studio.gallery.card.byAuthor", { author: theme.authorName })}</span>
                   )}
@@ -184,14 +195,14 @@ export function ThemeDetailModal({
             </div>
 
             {/* Stats */}
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-4 text-sm text-nx-ink-2">
               <div className="flex items-center gap-1.5">
-                <Users className="h-4 w-4" />
+                <Users className="h-4 w-4" aria-hidden="true" />
                 <span className="font-medium">{theme.usageCount}</span>
                 <span className="text-xs">{t(`${D}.stats.uses`)}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Heart className="h-4 w-4" />
+                <Heart className="h-4 w-4" aria-hidden="true" />
                 <span className="font-medium">{theme.likeCount}</span>
               </div>
             </div>
@@ -202,70 +213,70 @@ export function ThemeDetailModal({
         <div className="flex-1 overflow-y-auto">
           <div className="grid grid-cols-1 gap-0 lg:grid-cols-5">
             {/* Left: Preview */}
-            <div className="border-r border-border/50 p-6 lg:col-span-3">
+            <div className="border-e border-nx-line p-6 lg:col-span-3">
               {/* Device + Color mode controls */}
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
-                  <Eye className="h-4 w-4 text-primary" />
+                <h3 className="flex items-center gap-1.5 text-sm font-semibold text-nx-ink">
+                  <Eye className="h-4 w-4 text-nx-accent" aria-hidden="true" />
                   {t(`${D}.preview.title`)}
                 </h3>
                 <div className="flex items-center gap-2">
-                  {/* Device toggle */}
-                  <div className="flex items-center rounded-md border border-border/50 bg-muted/50 p-0.5">
+                  {/* Device toggle — each button carries its own accessible name */}
+                  <div
+                    role="group"
+                    className="flex items-center rounded-nx-control border border-nx-line bg-nx-raised p-0.5"
+                  >
                     {[
                       { key: "desktop" as const, icon: Monitor },
                       { key: "tablet" as const, icon: Tablet },
                       { key: "mobile" as const, icon: Smartphone },
                     ].map(({ key, icon: Icon }) => (
                       <button
+                        type="button"
                         key={key}
                         onClick={() => setDeviceSize(key)}
-                        className={cn(
-                          "flex h-7 w-7 items-center justify-center rounded transition-all",
-                          deviceSize === key
-                            ? "bg-background text-foreground shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
-                        )}
-                        title={t(`${D}.preview.${key}`)}
+                        aria-label={t(`${D}.preview.${key}`)}
+                        aria-pressed={deviceSize === key}
+                        className={segmentButton(deviceSize === key)}
                       >
-                        <Icon className="h-3.5 w-3.5" />
+                        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
                       </button>
                     ))}
                   </div>
-                  {/* Light/Dark toggle */}
-                  <div className="flex items-center rounded-md border border-border/50 bg-muted/50 p-0.5">
+                  {/* Light/Dark toggle — each button carries its own accessible name */}
+                  <div
+                    role="group"
+                    className="flex items-center rounded-nx-control border border-nx-line bg-nx-raised p-0.5"
+                  >
                     <button
+                      type="button"
                       onClick={() => setColorMode("light")}
-                      className={cn(
-                        "flex h-7 w-7 items-center justify-center rounded transition-all",
-                        colorMode === "light"
-                          ? "bg-background text-foreground shadow-sm"
-                          : "text-muted-foreground hover:text-foreground"
-                      )}
-                      title={t(`${D}.preview.lightMode`)}
+                      aria-label={t(`${D}.preview.lightMode`)}
+                      aria-pressed={colorMode === "light"}
+                      className={segmentButton(colorMode === "light")}
                     >
-                      <Sun className="h-3.5 w-3.5" />
+                      <Sun className="h-3.5 w-3.5" aria-hidden="true" />
                     </button>
                     <button
+                      type="button"
                       onClick={() => setColorMode("dark")}
-                      className={cn(
-                        "flex h-7 w-7 items-center justify-center rounded transition-all",
-                        colorMode === "dark"
-                          ? "bg-background text-foreground shadow-sm"
-                          : "text-muted-foreground hover:text-foreground"
-                      )}
-                      title={t(`${D}.preview.darkMode`)}
+                      aria-label={t(`${D}.preview.darkMode`)}
+                      aria-pressed={colorMode === "dark"}
+                      className={segmentButton(colorMode === "dark")}
                     >
-                      <Moon className="h-3.5 w-3.5" />
+                      <Moon className="h-3.5 w-3.5" aria-hidden="true" />
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* Preview area */}
+              {/* Preview area — a simulated login page, deliberately independent of
+                  the admin's own light/dark theme (colorMode toggles what the
+                  THEME looks like, not this app's chrome), so it draws from fixed
+                  nx-adjacent surfaces rather than the live-theme nx tokens. */}
               <div className="flex justify-center">
                 <div
-                  className="relative overflow-hidden rounded-xl border border-border/60 shadow-lg transition-all duration-300"
+                  className="relative overflow-hidden rounded-nx-lg border border-nx-line shadow-nx-sm transition-colors duration-nx-panel motion-reduce:transition-none"
                   style={{
                     width: deviceWidths[deviceSize],
                     maxWidth: "100%",
@@ -275,20 +286,27 @@ export function ThemeDetailModal({
                         : deviceSize === "tablet"
                           ? "450px"
                           : "380px",
+                    // This mock always renders the theme's own dark/light variant, not the
+                    // admin's active site theme, so the anchor is the fixed `black`/`white`
+                    // keyword (mixed via color-mix, never a hex/rgb literal) rather than an
+                    // nx surface token — nx tokens flip with the *site* theme, which would
+                    // make the "dark" toggle render light whenever the admin is on a light
+                    // site theme.
                     background:
                       colorMode === "dark"
-                        ? `linear-gradient(135deg, color-mix(in srgb, ${accentColor} 20%, #0f172a), #0f172a)`
-                        : `linear-gradient(135deg, ${accentColor}20, #f8fafc)`,
+                        ? `linear-gradient(135deg, color-mix(in srgb, ${accentColor} 20%, black), black)`
+                        : `linear-gradient(135deg, color-mix(in srgb, ${accentColor} 20%, white), white)`,
                   }}
+                  aria-hidden="true"
                 >
                   {/* Mock login form */}
                   <div className="absolute inset-0 flex items-center justify-center p-6">
                     <div
                       className={cn(
-                        "w-full space-y-4 rounded-2xl border p-6 shadow-xl backdrop-blur-sm transition-all",
+                        "w-full space-y-4 rounded-nx-lg border p-6 shadow-nx-modal transition-colors duration-nx-panel motion-reduce:transition-none",
                         colorMode === "dark"
-                          ? "border-slate-700/40 bg-slate-900/80"
-                          : "border-white/60 bg-white/90"
+                          ? "border-nx-line bg-[color:color-mix(in_srgb,black_80%,transparent)]"
+                          : "border-nx-line bg-[color:color-mix(in_srgb,white_90%,transparent)]"
                       )}
                       style={{
                         maxWidth: deviceSize === "mobile" ? "280px" : "340px",
@@ -296,20 +314,20 @@ export function ThemeDetailModal({
                     >
                       {/* Logo placeholder */}
                       <div className="mb-2 flex justify-center">
-                        <div className="h-8 w-8 rounded-lg" style={{ background: accentColor }} />
+                        <div className="h-8 w-8 rounded-nx-sm" style={{ background: accentColor }} />
                       </div>
                       {/* Title */}
                       <div className="space-y-1 text-center">
                         <div
                           className={cn(
-                            "mx-auto h-4 w-32 rounded",
-                            colorMode === "dark" ? "bg-white/20" : "bg-gray-200"
+                            "mx-auto h-4 w-32 rounded-nx-sm",
+                            colorMode === "dark" ? "bg-white/20" : "bg-nx-raised-2"
                           )}
                         />
                         <div
                           className={cn(
-                            "mx-auto h-2.5 w-48 rounded",
-                            colorMode === "dark" ? "bg-white/10" : "bg-gray-100"
+                            "mx-auto h-2.5 w-48 rounded-nx-sm",
+                            colorMode === "dark" ? "bg-white/10" : "bg-nx-raised"
                           )}
                         />
                       </div>
@@ -318,21 +336,21 @@ export function ThemeDetailModal({
                         <div
                           key={i}
                           className={cn(
-                            "h-9 w-full rounded-lg border",
+                            "h-9 w-full rounded-nx-control border",
                             colorMode === "dark"
-                              ? "border-slate-600/40 bg-slate-800/60"
-                              : "border-gray-200 bg-gray-50"
+                              ? "border-white/10 bg-white/5"
+                              : "border-nx-line bg-nx-raised"
                           )}
                         />
                       ))}
                       {/* Button */}
-                      <div className="h-9 w-full rounded-lg" style={{ background: accentColor }} />
+                      <div className="h-9 w-full rounded-nx-control" style={{ background: accentColor }} />
                       {/* Footer link */}
                       <div className="flex justify-center">
                         <div
                           className={cn(
-                            "h-2 w-24 rounded",
-                            colorMode === "dark" ? "bg-white/10" : "bg-gray-100"
+                            "h-2 w-24 rounded-nx-sm",
+                            colorMode === "dark" ? "bg-white/10" : "bg-nx-raised"
                           )}
                         />
                       </div>
@@ -346,7 +364,7 @@ export function ThemeDetailModal({
                 <div className="mt-4 flex flex-wrap gap-2">
                   {features.map(({ key, icon: Icon }) => (
                     <Badge key={key} variant="outline" className="gap-1 py-1 text-xs">
-                      <Icon className="h-3.5 w-3.5" />
+                      <Icon className="h-3.5 w-3.5" aria-hidden="true" />
                       {t(`${D}.features.${key}`)}
                     </Badge>
                   ))}
@@ -369,43 +387,41 @@ export function ThemeDetailModal({
                 {/* Overview tab */}
                 <TabsContent value="overview" className="mt-0 space-y-5">
                   {/* Description */}
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {theme.description || ""}
-                  </p>
+                  <p className="text-sm leading-relaxed text-nx-ink-2">{theme.description || ""}</p>
 
                   {/* Info grid */}
                   <div className="grid grid-cols-2 gap-3">
                     {theme.category && (
                       <InfoItem
-                        icon={<Palette className="h-3.5 w-3.5" />}
+                        icon={<Palette className="h-3.5 w-3.5" aria-hidden="true" />}
                         label={t(`${D}.info.category`)}
                         value={theme.category}
                       />
                     )}
                     {theme.version && (
                       <InfoItem
-                        icon={<Code className="h-3.5 w-3.5" />}
+                        icon={<Code className="h-3.5 w-3.5" aria-hidden="true" />}
                         label={t(`${D}.info.version`)}
                         value={`v${theme.version}`}
                       />
                     )}
                     {theme.authorName && (
                       <InfoItem
-                        icon={<Users className="h-3.5 w-3.5" />}
+                        icon={<Users className="h-3.5 w-3.5" aria-hidden="true" />}
                         label={t(`${D}.info.author`)}
                         value={theme.authorName}
                       />
                     )}
                     {theme.targetIndustry && (
                       <InfoItem
-                        icon={<Globe className="h-3.5 w-3.5" />}
+                        icon={<Globe className="h-3.5 w-3.5" aria-hidden="true" />}
                         label={t(`${D}.info.industry`)}
                         value={theme.targetIndustry}
                       />
                     )}
                     {theme.publishedAt && (
                       <InfoItem
-                        icon={<Calendar className="h-3.5 w-3.5" />}
+                        icon={<Calendar className="h-3.5 w-3.5" aria-hidden="true" />}
                         label={t(`${D}.info.published`)}
                         value={formatDateUtc(theme.publishedAt)}
                       />
@@ -429,45 +445,41 @@ export function ThemeDetailModal({
                   {/* Color palette */}
                   {colorSwatches.light.length > 0 && (
                     <div>
-                      <h4 className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-foreground">
-                        <Palette className="h-3.5 w-3.5 text-primary" />
+                      <h4 className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-nx-ink">
+                        <Palette className="h-3.5 w-3.5 text-nx-accent" aria-hidden="true" />
                         {t(`${D}.specs.colorPalette`)}
                       </h4>
                       {/* Light colors */}
-                      <p className="mb-1.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+                      <p className="mb-1.5 text-[10px] uppercase tracking-wider text-nx-ink-3">
                         {t(`${D}.specs.lightColors`)}
                       </p>
                       <div className="mb-3 flex flex-wrap gap-1.5">
                         {colorSwatches.light.map(({ name, value }) => (
                           <div key={name} className="flex flex-col items-center gap-0.5">
                             <div
-                              className="h-7 w-7 rounded-md border border-border/50 shadow-sm"
+                              className="h-7 w-7 rounded-nx-sm border border-nx-line shadow-nx-sm"
                               style={{ backgroundColor: value }}
-                              title={`${name}: ${value}`}
+                              aria-hidden="true"
                             />
-                            <span className="text-[8px] capitalize text-muted-foreground">
-                              {name}
-                            </span>
+                            <span className="text-[8px] capitalize text-nx-ink-3">{name}</span>
                           </div>
                         ))}
                       </div>
                       {/* Dark colors */}
                       {colorSwatches.dark.length > 0 && (
                         <>
-                          <p className="mb-1.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+                          <p className="mb-1.5 text-[10px] uppercase tracking-wider text-nx-ink-3">
                             {t(`${D}.specs.darkColors`)}
                           </p>
                           <div className="flex flex-wrap gap-1.5">
                             {colorSwatches.dark.map(({ name, value }) => (
                               <div key={name} className="flex flex-col items-center gap-0.5">
                                 <div
-                                  className="h-7 w-7 rounded-md border border-border/50 shadow-sm"
+                                  className="h-7 w-7 rounded-nx-sm border border-nx-line shadow-nx-sm"
                                   style={{ backgroundColor: value }}
-                                  title={`${name}: ${value}`}
+                                  aria-hidden="true"
                                 />
-                                <span className="text-[8px] capitalize text-muted-foreground">
-                                  {name}
-                                </span>
+                                <span className="text-[8px] capitalize text-nx-ink-3">{name}</span>
                               </div>
                             ))}
                           </div>
@@ -479,8 +491,8 @@ export function ThemeDetailModal({
                   {/* Typography specs */}
                   {parsedTokens && (parsedTokens["font.body"] || parsedTokens["font.heading"]) && (
                     <div>
-                      <h4 className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-foreground">
-                        <Type className="h-3.5 w-3.5 text-primary" />
+                      <h4 className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-nx-ink">
+                        <Type className="h-3.5 w-3.5 text-nx-accent" aria-hidden="true" />
                         {t(`${D}.specs.typography`)}
                       </h4>
                       <div className="grid grid-cols-2 gap-2">
@@ -516,8 +528,8 @@ export function ThemeDetailModal({
                   {parsedTokens &&
                     (parsedTokens["spacing.borderRadius"] || parsedTokens["spacing.btnRadius"]) && (
                       <div>
-                        <h4 className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-foreground">
-                          <Ruler className="h-3.5 w-3.5 text-primary" />
+                        <h4 className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-nx-ink">
+                          <Ruler className="h-3.5 w-3.5 text-nx-accent" aria-hidden="true" />
                           {t(`${D}.specs.spacing`)}
                         </h4>
                         <div className="grid grid-cols-2 gap-2">
@@ -552,8 +564,8 @@ export function ThemeDetailModal({
                   {/* No specs fallback */}
                   {!parsedTokens && (
                     <div className="py-8 text-center">
-                      <Palette className="mx-auto mb-2 h-8 w-8 text-muted-foreground/30" />
-                      <p className="text-xs text-muted-foreground">{t(`${D}.tabs.specs`)}</p>
+                      <Palette className="mx-auto mb-2 h-8 w-8 text-nx-ink-3" aria-hidden="true" />
+                      <p className="text-xs text-nx-ink-2">{t(`${D}.tabs.specs`)}</p>
                     </div>
                   )}
                 </TabsContent>
@@ -563,16 +575,20 @@ export function ThemeDetailModal({
         </div>
 
         {/* ── Footer Actions ── */}
-        <div className="flex shrink-0 items-center justify-between border-t border-border/50 bg-muted/20 px-6 py-4">
+        <div className="flex shrink-0 items-center justify-between border-t border-nx-line bg-nx-raised px-6 py-4">
           <div className="flex items-center gap-2">
             {/* Favorite */}
             <Button
               variant="outline"
               size="sm"
               className="gap-1.5"
+              aria-pressed={theme.isFavorited}
               onClick={() => onToggleFavorite?.(theme.slug)}
             >
-              <Heart className={cn("h-4 w-4", theme.isFavorited && "fill-destructive text-destructive")} />
+              <Heart
+                className={cn("h-4 w-4", theme.isFavorited && "fill-destructive text-destructive")}
+                aria-hidden="true"
+              />
               {theme.isFavorited ? t(`${D}.actions.unfavorite`) : t(`${D}.actions.favorite`)}
             </Button>
           </div>
@@ -585,14 +601,14 @@ export function ThemeDetailModal({
               className="gap-1.5"
               onClick={() => onTryInStudio?.(theme.slug)}
             >
-              <ExternalLink className="h-4 w-4" />
+              <ExternalLink className="h-4 w-4" aria-hidden="true" />
               {t(`${D}.actions.tryInStudio`)}
             </Button>
 
             {/* Apply */}
             {theme.isAvailable && !confirmApply && (
               <Button size="sm" className="gap-1.5" onClick={() => setConfirmApply(true)}>
-                <Paintbrush className="h-4 w-4" />
+                <Paintbrush className="h-4 w-4" aria-hidden="true" />
                 {t(`${D}.actions.applyToDraft`)}
               </Button>
             )}
@@ -625,9 +641,10 @@ export function ThemeDetailModal({
                   variant="ghost"
                   size="sm"
                   className="h-8 w-8 p-0"
+                  aria-label={t("common.cancel")}
                   onClick={() => setConfirmApply(false)}
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </div>
             )}
@@ -635,13 +652,13 @@ export function ThemeDetailModal({
             {/* Locked/Buy state */}
             {!theme.isAvailable && theme.isBuyable && (
               <Button variant="outline" size="sm" disabled className="gap-1.5">
-                <ShoppingCart className="h-4 w-4" />
+                <ShoppingCart className="h-4 w-4" aria-hidden="true" />
                 {theme.price ? `$${theme.price.toFixed(0)}` : t("studio.gallery.card.buy")}
               </Button>
             )}
             {!theme.isAvailable && !theme.isBuyable && (
               <Button variant="outline" size="sm" disabled className="gap-1.5">
-                <Lock className="h-4 w-4" />
+                <Lock className="h-4 w-4" aria-hidden="true" />
                 {t("studio.gallery.card.upgrade")}
               </Button>
             )}
@@ -656,11 +673,11 @@ export function ThemeDetailModal({
 
 function InfoItem({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="flex items-start gap-2 rounded-lg bg-muted/30 p-2">
-      <div className="mt-0.5 text-muted-foreground">{icon}</div>
+    <div className="flex items-start gap-2 rounded-nx-md bg-nx-raised p-2">
+      <div className="mt-0.5 text-nx-ink-3">{icon}</div>
       <div>
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
-        <p className="text-xs font-medium capitalize text-foreground">{value}</p>
+        <p className="text-[10px] uppercase tracking-wider text-nx-ink-3">{label}</p>
+        <p className="text-xs font-medium capitalize text-nx-ink">{value}</p>
       </div>
     </div>
   );
@@ -668,9 +685,9 @@ function InfoItem({ icon, label, value }: { icon: React.ReactNode; label: string
 
 function SpecItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-muted/30 p-2">
-      <p className="text-[10px] text-muted-foreground">{label}</p>
-      <p className="font-mono text-xs font-medium text-foreground">{value}</p>
+    <div className="rounded-nx-md bg-nx-raised p-2">
+      <p className="text-[10px] text-nx-ink-3">{label}</p>
+      <p className="font-mono text-xs font-medium text-nx-ink">{value}</p>
     </div>
   );
 }

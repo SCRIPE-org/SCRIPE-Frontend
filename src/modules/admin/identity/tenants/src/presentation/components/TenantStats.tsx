@@ -30,28 +30,28 @@ export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
     [
       {
         key: "admins",
-        label: t("tenant.statsAdmins") || "Admins",
+        label: t("tenant.statsAdmins"),
         value: stats?.adminsCount ?? 0,
         icon: Users,
         tone: "info",
       },
       {
         key: "roles",
-        label: t("tenant.statsRoles") || "Roles",
+        label: t("tenant.statsRoles"),
         value: stats?.rolesCount ?? 0,
         icon: Shield,
         tone: "neutral",
       },
       {
         key: "subtenants",
-        label: t("tenant.statsSubTenants") || "Sub-Tenants",
+        label: t("tenant.statsSubTenants"),
         value: stats?.subTenantsCount ?? 0,
         icon: Building2,
         tone: "success",
       },
       {
         key: "permissions",
-        label: t("tenant.statsPermissions") || "Permissions",
+        label: t("tenant.statsPermissions"),
         value: stats?.permissionsCount ?? 0,
         icon: Key,
         tone: "warning",

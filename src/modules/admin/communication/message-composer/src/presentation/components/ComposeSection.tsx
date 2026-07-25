@@ -16,7 +16,8 @@ import { Label } from "@core/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
 
-import { Mail, Send, Loader2, RotateCcw, Search, X, Eye, Braces } from "lucide-react";
+import { Mail, Send, RotateCcw, Search, X, Eye, Braces } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { cn } from "@core/common/utils";
 import type { EmailRecipient } from "../../domain/entities/Email";
 import type { IEmailRepository } from "../../domain/interfaces/IEmailRepository";
@@ -57,6 +58,7 @@ function RecipientSearchInput({
   onCustomEmail?: (email: string) => boolean;
   error?: boolean;
 }) {
+  const { t } = useI18n();
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const [showDropdown, setShowDropdown] = React.useState(false);
 
@@ -82,19 +84,19 @@ function RecipientSearchInput({
             <Badge
               key={r.email}
               variant={r.type === "custom" ? "outline" : "secondary"}
-              className={cn(
-                "gap-1",
-                r.type === "custom" && "border-info/50 text-info"
-              )}
+              className={cn("gap-1", r.type === "custom" && "border-info/50 text-info")}
             >
-              {r.type === "custom" && <Mail className="h-3 w-3" />}
+              {r.type === "custom" && <Mail className="h-3 w-3" aria-hidden="true" />}
               {r.name || r.email}
               <button
+                type="button"
                 onClick={() => onRemove(r.email)}
-                className="hover:text-destructive"
-                aria-label={`Remove ${r.name || r.email}`}
+                className="rounded-full hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
+                aria-label={t("messaging.email.removeRecipientNamed", {
+                  name: r.name || r.email,
+                })}
               >
-                <X className="h-3 w-3" />
+                <X className="h-3 w-3" aria-hidden="true" />
               </button>
             </Badge>
           ))}
@@ -102,7 +104,10 @@ function RecipientSearchInput({
       )}
       <div className="relative" ref={dropdownRef}>
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search
+            className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
+            aria-hidden="true"
+          />
           <Input
             placeholder={placeholder}
             value={search}
@@ -118,31 +123,36 @@ function RecipientSearchInput({
                 if (added) setShowDropdown(false);
               }
             }}
-            className={cn("pl-9", error && "border-destructive focus-visible:ring-destructive")}
+            className={cn("ps-9", error && "border-destructive focus-visible:ring-destructive")}
           />
           {isSearching && (
-            <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
+            <LoadingSpinner
+              size="inline"
+              className="absolute end-3 top-1/2 -translate-y-1/2 text-nx-ink-3"
+            />
           )}
         </div>
         {showDropdown && search.length >= 2 && (
-          <div className="absolute top-full z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-md border bg-popover shadow-lg">
+          <div className="absolute top-full z-dropdown mt-1 max-h-48 w-full overflow-y-auto rounded-nx-md border border-nx-line bg-nx-popover shadow-nx-popover">
             {results.length > 0 ? (
               results.map((r) => (
                 <button
                   key={r.email}
-                  className="flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-accent"
+                  type="button"
+                  className="flex w-full items-center justify-between px-3 py-2 text-start text-sm hover:bg-nx-hover focus-visible:outline-none focus-visible:bg-nx-hover"
                   onClick={() => {
                     onAdd(r);
                     setShowDropdown(false);
                   }}
                 >
-                  <span className="font-medium">{r.name || r.email}</span>
-                  <span className="text-xs text-muted-foreground">{r.email}</span>
+                  <span className="font-medium text-nx-ink">{r.name || r.email}</span>
+                  <span className="text-xs text-nx-ink-3">{r.email}</span>
                 </button>
               ))
             ) : showCustomHint ? (
               <button
-                className="flex w-full items-center gap-2 px-3 py-3 text-left text-sm hover:bg-accent"
+                type="button"
+                className="flex w-full items-center gap-2 px-3 py-3 text-start text-sm hover:bg-nx-hover focus-visible:outline-none focus-visible:bg-nx-hover"
                 onClick={() => {
                   if (onCustomEmail) {
                     const added = onCustomEmail(search);
@@ -150,17 +160,17 @@ function RecipientSearchInput({
                   }
                 }}
               >
-                <Mail className="h-4 w-4 text-info" />
-                <span>
-                  Send to{" "}
+                <Mail className="h-4 w-4 text-info" aria-hidden="true" />
+                <span className="text-nx-ink">
+                  {t("messaging.email.sendToCustomEmail")}{" "}
                   <strong className="text-info">{search.trim()}</strong>
                 </span>
               </button>
             ) : (
               noResults && (
-                <div className="px-3 py-4 text-center text-sm text-muted-foreground">
-                  <Search className="mx-auto mb-1 h-5 w-5 opacity-40" />
-                  No recipients found. Type a full email and press Enter.
+                <div className="px-3 py-4 text-center text-sm text-nx-ink-3">
+                  <Search className="mx-auto mb-1 h-5 w-5 opacity-40" aria-hidden="true" />
+                  {t("messaging.email.noRecipientsFound")} {t("messaging.email.noRecipientsFoundHint")}
                 </div>
               )
             )}
@@ -247,17 +257,17 @@ export function ComposeSection(vm: ComposeSectionProps) {
           <div className="flex items-center gap-2">
             {!vm.showCcBcc && (
               <Button variant="ghost" size="sm" onClick={() => vm.setShowCcBcc(true)}>
-                {t("messaging.email.ccBcc") || "CC / BCC"}
+                {t("messaging.email.ccBcc")}
               </Button>
             )}
             <Button
               variant="ghost"
               size="sm"
               onClick={vm.resetForm}
-              className="gap-1.5 text-muted-foreground"
+              className="gap-1.5 text-nx-ink-2"
             >
-              <RotateCcw className="h-3.5 w-3.5" />
-              {t("messaging.email.clearForm") || "Clear"}
+              <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+              {t("messaging.email.clearForm")}
             </Button>
           </div>
         </div>
@@ -268,8 +278,8 @@ export function ComposeSection(vm: ComposeSectionProps) {
 
         {/* To */}
         <RecipientSearchInput
-          label={`${t("messaging.email.to") || "To"} *`}
-          placeholder={t("messaging.email.searchRecipients") || "Search or type custom email..."}
+          label={`${t("messaging.email.to")} *`}
+          placeholder={t("messaging.email.searchRecipients")}
           search={vm.recipientSearch}
           setSearch={vm.setRecipientSearch}
           results={vm.recipientResults}
@@ -285,10 +295,8 @@ export function ComposeSection(vm: ComposeSectionProps) {
         {vm.showCcBcc && (
           <>
             <RecipientSearchInput
-              label={t("messaging.email.cc") || "CC"}
-              placeholder={
-                t("messaging.email.searchRecipients") || "Search or type custom email..."
-              }
+              label={t("messaging.email.cc")}
+              placeholder={t("messaging.email.searchRecipients")}
               search={vm.ccSearch}
               setSearch={vm.setCcSearch}
               results={vm.ccResults}
@@ -299,10 +307,8 @@ export function ComposeSection(vm: ComposeSectionProps) {
               onCustomEmail={(email) => vm.addCustomEmail(email, "cc")}
             />
             <RecipientSearchInput
-              label={t("messaging.email.bcc") || "BCC"}
-              placeholder={
-                t("messaging.email.searchRecipients") || "Search or type custom email..."
-              }
+              label={t("messaging.email.bcc")}
+              placeholder={t("messaging.email.searchRecipients")}
               search={vm.bccSearch}
               setSearch={vm.setBccSearch}
               results={vm.bccResults}
@@ -319,12 +325,12 @@ export function ComposeSection(vm: ComposeSectionProps) {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label className={cn(vm.fieldErrors.subject && "text-destructive")}>
-              {t("messaging.email.subject") || "Subject"} *
+              {t("messaging.email.subject")} *
             </Label>
             <span
               className={cn(
-                "text-xs",
-                vm.subject.length > SUBJECT_MAX ? "text-destructive" : "text-muted-foreground"
+                "text-xs tabular-nums",
+                vm.subject.length > SUBJECT_MAX ? "text-destructive" : "text-nx-ink-3"
               )}
             >
               {vm.subject.length}/{SUBJECT_MAX}
@@ -332,7 +338,7 @@ export function ComposeSection(vm: ComposeSectionProps) {
           </div>
           <div className="flex gap-1.5">
             <Input
-              placeholder={t("messaging.email.subjectPlaceholder") || "Enter email subject..."}
+              placeholder={t("messaging.email.subjectPlaceholder")}
               value={vm.subject}
               onChange={(e) => vm.setSubject(e.target.value)}
               maxLength={SUBJECT_MAX}
@@ -348,15 +354,15 @@ export function ComposeSection(vm: ComposeSectionProps) {
                   variant="outline"
                   size="icon"
                   className="h-9 w-9 shrink-0"
-                  title="Insert variable"
+                  aria-label={t("messaging.email.insertVariable")}
                 >
-                  <Braces className="h-4 w-4" />
+                  <Braces className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="max-h-64 w-64 overflow-y-auto p-0" align="end">
-                <div className="border-b p-2">
-                  <p className="text-xs font-medium text-muted-foreground">
-                    Insert variable into subject
+                <div className="border-b border-nx-line p-2">
+                  <p className="text-xs font-medium text-nx-ink-3">
+                    {t("messaging.email.insertVariableIntoSubject")}
                   </p>
                 </div>
                 {(vm.allVariables ?? DEFAULT_VARIABLES).map((v) => (
@@ -381,12 +387,12 @@ export function ComposeSection(vm: ComposeSectionProps) {
         {/* Body — Rich Text Editor */}
         <div className="space-y-2">
           <Label className={cn(vm.fieldErrors.body && "text-destructive")}>
-            {t("messaging.email.body") || "Body"} *
+            {t("messaging.email.body")} *
           </Label>
           <RichTextEditor
             value={vm.body}
             onChange={vm.setBody}
-            placeholder={t("messaging.email.bodyPlaceholder") || "Write your email content here..."}
+            placeholder={t("messaging.email.bodyPlaceholder")}
             maxLength={BODY_MAX}
             minHeight="250px"
             variables={vm.allVariables ?? DEFAULT_VARIABLES}
@@ -422,18 +428,16 @@ export function ComposeSection(vm: ComposeSectionProps) {
 
         {/* Actions */}
         <div className="flex items-center justify-between pt-2">
-          <p className="text-xs text-muted-foreground">
-            {t("messaging.email.ctrlEnterHint") || "Ctrl+Enter to send"}
-          </p>
+          <p className="text-xs text-nx-ink-3">{t("messaging.email.ctrlEnterHint")}</p>
           <div className="flex items-center gap-2">
             {vm.onPreview && (
               <Button variant="outline" onClick={vm.onPreview} className="gap-2">
-                <Eye className="h-4 w-4" />
-                {t("messaging.email.preview") || "Preview"}
+                <Eye className="h-4 w-4" aria-hidden="true" />
+                {t("messaging.email.preview")}
               </Button>
             )}
             <Button onClick={vm.handleSend} loading={vm.isSending} className="gap-2">
-              {!vm.isSending && <Send className="h-4 w-4" />}
+              {!vm.isSending && <Send className="h-4 w-4" aria-hidden="true" />}
               {t("messaging.email.send")}
             </Button>
           </div>

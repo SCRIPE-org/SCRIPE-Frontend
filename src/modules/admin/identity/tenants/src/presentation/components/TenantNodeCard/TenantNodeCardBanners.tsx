@@ -1,61 +1,59 @@
+"use client";
+
 import { AlertTriangle, Ban, XCircle, CreditCard } from "lucide-react";
+import { Alert, AlertDescription } from "@core/ui/alert";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { TenantTreeNode } from "../../../domain/entities/Tenant";
 import type { TenantStatus } from "./TenantNodeCardHeader";
 
 interface TenantNodeCardBannersProps {
   node: TenantTreeNode;
   status: TenantStatus;
-  t: (key: string, variables?: any) => string;
 }
 
 /**
  * Presentation UI component rendering the tenant node card banners.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
-export function TenantNodeCardBanners({ node, status, t }: TenantNodeCardBannersProps) {
+export function TenantNodeCardBanners({ node, status }: TenantNodeCardBannersProps) {
+  const { t } = useI18n();
+
   return (
-    <>
+    <div className="mt-3 space-y-2">
       {status === "suspended" && (
-        <div className="mt-3 flex items-start gap-2 rounded-lg border border-warning/30 bg-warning/5 p-3">
-          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
-          <div className="text-sm">
-            <p className="font-medium text-warning">{t("tenant.suspendedBanner")}</p>
-            {node.suspensionReason && (
-              <p className="mt-1 text-muted-foreground">{node.suspensionReason}</p>
-            )}
-          </div>
-        </div>
+        <Alert variant="warning">
+          <AlertTriangle aria-hidden="true" />
+          <AlertDescription>
+            <p className="font-medium text-nx-ink">{t("tenant.suspendedBanner")}</p>
+            {node.suspensionReason && <p className="mt-0.5">{node.suspensionReason}</p>}
+          </AlertDescription>
+        </Alert>
       )}
       {status === "canceled" && (
-        <div className="mt-3 flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3">
-          <Ban className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
-          <div className="text-sm">
-            <p className="font-medium text-destructive">{t("tenant.canceledBanner")}</p>
-            {node.suspensionReason && (
-              <p className="mt-1 text-muted-foreground">{node.suspensionReason}</p>
-            )}
-          </div>
-        </div>
+        <Alert variant="destructive">
+          <Ban aria-hidden="true" />
+          <AlertDescription>
+            <p className="font-medium text-nx-ink">{t("tenant.canceledBanner")}</p>
+            {node.suspensionReason && <p className="mt-0.5">{node.suspensionReason}</p>}
+          </AlertDescription>
+        </Alert>
       )}
       {status === "expired" && (
-        <div className="mt-3 flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3">
-          <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
-          <div className="text-sm">
-            <p className="font-medium text-destructive">{t("tenant.expiredBanner")}</p>
-          </div>
-        </div>
+        <Alert variant="destructive">
+          <XCircle aria-hidden="true" />
+          <AlertDescription>
+            <p className="font-medium text-nx-ink">{t("tenant.expiredBanner")}</p>
+          </AlertDescription>
+        </Alert>
       )}
       {node.subscriptionStatus === "PendingPayment" && (
-        <div className="mt-3 flex items-start gap-2 rounded-lg border border-warning/30 bg-warning/5 p-3">
-          <CreditCard className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
-          <div className="text-sm">
-            <p className="font-medium text-warning">
-              {t("tenant.pendingPaymentBanner") ||
-                "This tenant has a pending payment. Generate a payment link from the subscriptions page."}
-            </p>
-          </div>
-        </div>
+        <Alert variant="warning">
+          <CreditCard aria-hidden="true" />
+          <AlertDescription>
+            <p className="font-medium text-nx-ink">{t("tenant.pendingPaymentBanner")}</p>
+          </AlertDescription>
+        </Alert>
       )}
-    </>
+    </div>
   );
 }

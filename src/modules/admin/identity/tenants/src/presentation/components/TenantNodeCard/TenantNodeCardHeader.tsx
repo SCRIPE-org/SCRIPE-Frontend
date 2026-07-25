@@ -5,6 +5,7 @@ import React from "react";
 import { ChevronDown, Building2, CreditCard, Clock } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@core/ui/tooltip";
+import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import type { TenantTreeNode } from "../../../domain/entities/Tenant";
 
@@ -20,8 +21,7 @@ interface TenantNodeCardHeaderProps {
   daysLeft: number | null;
   config: {
     iconBg: string;
-    badgeVariant: "success" | "destructive" | "outline" | "secondary";
-    badgeClass: string;
+    badgeVariant: "success" | "warning" | "destructive" | "secondary";
     Icon: React.ComponentType<any>;
   };
   statusBadge: React.ReactNode;
@@ -45,14 +45,16 @@ export function TenantNodeCardHeader({
   hasChildren,
   onToggle,
 }: TenantNodeCardHeaderProps) {
+  const { t } = useI18n();
+
   return (
     <button
       type="button"
       className={cn(
         "flex w-full items-center gap-3 p-4",
-        "text-start transition-colors",
-        "hover:bg-muted/30",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        "text-start transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+        "hover:bg-nx-hover",
+        "focus-visible:outline-none focus-visible:shadow-nx-focus"
       )}
       onClick={onToggle}
       aria-expanded={isExpanded}
@@ -60,12 +62,10 @@ export function TenantNodeCardHeader({
       {/* Tenant icon */}
       <div
         className={cn(
-          "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg",
-          "border border-border/50",
-          config.iconBg,
-          "transition-transform duration-300",
-          "group-hover/card:scale-105"
+          "flex h-10 w-10 shrink-0 items-center justify-center rounded-nx-md border border-nx-line",
+          config.iconBg
         )}
+        aria-hidden="true"
       >
         <Building2 className="h-5 w-5" />
       </div>
@@ -73,11 +73,11 @@ export function TenantNodeCardHeader({
       {/* Name + Code */}
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="truncate font-semibold text-foreground">{node.name}</span>
-          <span className="font-mono text-xs text-muted-foreground">({node.code})</span>
+          <span className="truncate font-semibold text-nx-ink">{node.name}</span>
+          <span className="font-mono text-xs text-nx-ink-3">({node.code})</span>
           {hasChildren && (
             <Badge variant="secondary" className="gap-1 px-1.5 py-0 text-xs">
-              <Building2 className="h-3 w-3" />
+              <Building2 className="h-3 w-3" aria-hidden="true" />
               {node.children.length}
             </Badge>
           )}
@@ -95,12 +95,9 @@ export function TenantNodeCardHeader({
 
         {/* Pending Payment badge */}
         {node.subscriptionStatus === "PendingPayment" && (
-          <Badge
-            variant="outline"
-            className="gap-1 border-warning/50 bg-warning/10 text-xs text-warning"
-          >
-            <CreditCard className="h-3 w-3" />
-            Pending Payment
+          <Badge variant="warning" className="gap-1 text-xs">
+            <CreditCard className="h-3 w-3" aria-hidden="true" />
+            {t("tenant.pendingPayment")}
           </Badge>
         )}
 
@@ -114,11 +111,11 @@ export function TenantNodeCardHeader({
                 ? "border-destructive/50 text-destructive"
                 : daysLeft <= 30
                   ? "border-warning/50 text-warning"
-                  : "border-muted-foreground/30 text-muted-foreground"
+                  : "border-nx-line-hi text-nx-ink-3"
             )}
           >
-            <Clock className="h-3 w-3" />
-            {daysLeft} days left
+            <Clock className="h-3 w-3" aria-hidden="true" />
+            {daysLeft} {t("tenant.daysLeft")}
           </Badge>
         )}
 
@@ -135,10 +132,11 @@ export function TenantNodeCardHeader({
         )}
       </div>
 
-      {/* Chevron */}
+      {/* Chevron — a disclosure flip tied to real state, not decoration */}
       <ChevronDown
+        aria-hidden="true"
         className={cn(
-          "h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-300",
+          "h-5 w-5 shrink-0 text-nx-ink-3 transition-transform duration-nx-micro ease-nx-enter motion-reduce:transition-none",
           isExpanded && "rotate-180"
         )}
       />

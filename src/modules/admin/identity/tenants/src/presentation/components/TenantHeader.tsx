@@ -1,10 +1,12 @@
-// FILE-EXCEPTION: file length
 /**
- * Tenant Header Component — Redesigned
+ * Tenant Header Component
  *
- * Premium hero section with glassmorphism card, status-specific banners,
- * inline subscription progress bar, and action buttons.
- * Full RTL/LTR support.
+ * The record's PageHeader: icon tile, title, status badge, description, a
+ * ruled meta strip (code / edition / days left / end date) and the primary
+ * actions. Status banners compose Alert; the destructive/confirming dialogs
+ * compose ConfirmationDialog (delete) and TenantDeleteDialog (delete, with
+ * cascade warning). Full RTL/LTR support by construction (logical
+ * properties throughout, no directional class branching).
  *
  * @module tenants
  */
@@ -13,6 +15,9 @@
 import React, { useMemo } from "react";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
+import { PageHeader, type PageHeaderMeta } from "@core/ui/page-header";
+import { Alert, AlertDescription } from "@core/ui/alert";
+import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import {
   Dialog,
   DialogContent,
@@ -25,45 +30,11 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Switch } from "@core/ui/switch";
-import {
-  Building2,
-  Pencil,
-  Power,
-  Trash2,
-  LogIn,
-  Pause,
-  Ban,
-  XCircle,
-  AlertTriangle,
-  Clock,
-  Play,
-} from "lucide-react";
+import { Building2, Pencil, Power, Trash2, LogIn, Pause, Ban, XCircle, AlertTriangle } from "lucide-react";
 import type { Tenant } from "../../domain/entities/Tenant";
 import { TenantDeleteDialog } from "./TenantDeleteDialog";
 import { cn, formatDateUtc } from "@core/common/utils";
 import { useTenantHeaderViewModel, TenantStatus } from "../viewmodels/useTenantHeaderViewModel";
-
-// ============================================
-// Helpers
-// ============================================
-
-type LocalTenantStatus = TenantStatus;
-
-const statusBorderGradient: Record<LocalTenantStatus, string> = {
-  active: "from-success via-primary to-success",
-  suspended: "from-warning via-warning/80 to-warning",
-  canceled: "from-destructive via-destructive/80 to-destructive",
-  expired: "from-warning via-warning/80 to-warning",
-  inactive: "from-muted-foreground/40 via-muted-foreground/20 to-muted-foreground/40",
-};
-
-const statusIconBg: Record<LocalTenantStatus, string> = {
-  active: "from-primary/20 to-success/10 border-primary/20",
-  suspended: "from-warning/20 to-warning/5 border-warning/20",
-  canceled: "from-destructive/20 to-destructive/5 border-destructive/20",
-  expired: "from-warning/20 to-warning/5 border-warning/20",
-  inactive: "from-muted to-muted/50 border-border",
-};
 
 // ============================================
 // Component
@@ -82,8 +53,6 @@ interface TenantHeaderProps {
 export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
   const {
     t,
-    direction,
-    isRtl,
     status,
     daysLeft,
     progress,
@@ -108,26 +77,31 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
     handleSetFormActive,
   } = useTenantHeaderViewModel({ tenant, onUpdate });
 
+  // The domain entity has no typed suspension fields yet (see
+  // domain/entities/Tenant.ts — TenantProps does not declare them even
+  // though the tree-node shape does); preserved as-is, not this package's
+  // file to fix.
+  const suspensionReason = (tenant as { suspensionReason?: string }).suspensionReason;
+
   // Status badge
   const statusBadge = useMemo(() => {
-    const labels: Record<LocalTenantStatus, string> = {
-      active: t("tenant.active") || "Active",
-      suspended: t("tenant.suspended") || "Suspended",
-      canceled: t("tenant.canceled") || "Canceled",
-      expired: t("tenant.expired") || "Expired",
-      inactive: t("tenant.inactive") || "Inactive",
+    const labels: Record<TenantStatus, string> = {
+      active: t("tenant.active"),
+      suspended: t("tenant.suspended"),
+      canceled: t("tenant.canceled"),
+      expired: t("tenant.expired"),
+      inactive: t("tenant.inactive"),
     };
 
-    const variants: Record<LocalTenantStatus, "success" | "destructive" | "outline" | "secondary"> =
-      {
-        active: "success",
-        suspended: "outline",
-        canceled: "destructive",
-        expired: "destructive",
-        inactive: "secondary",
-      };
+    const variants: Record<TenantStatus, "success" | "warning" | "destructive" | "secondary"> = {
+      active: "success",
+      suspended: "warning",
+      canceled: "destructive",
+      expired: "destructive",
+      inactive: "secondary",
+    };
 
-    const icons: Record<LocalTenantStatus, typeof Pause | null> = {
+    const icons: Record<TenantStatus, typeof Pause | null> = {
       active: null,
       suspended: Pause,
       canceled: Ban,
@@ -138,284 +112,171 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
     const StatusIcon = icons[status];
 
     return (
-      <Badge
-        variant={variants[status]}
-        className={cn(
-          "gap-1 text-xs",
-          status === "suspended" &&
-            "border-warning/50 bg-warning/10 text-warning"
-        )}
-      >
-        {StatusIcon && <StatusIcon className="h-3 w-3" />}
+      <Badge variant={variants[status]} className="gap-1 text-xs">
+        {StatusIcon && <StatusIcon className="h-3 w-3" aria-hidden="true" />}
         {labels[status]}
       </Badge>
     );
   }, [status, t]);
 
+  const meta: PageHeaderMeta[] = [
+    { label: t("tenant.code"), value: tenant.code },
+    ...(tenant.editionName ? [{ label: t("tenant.editionLabel"), value: tenant.editionName }] : []),
+    ...(status === "active" && daysLeft !== null && daysLeft > 0
+      ? [{ label: t("tenant.daysLeft"), value: daysLeft }]
+      : []),
+    ...(tenant.editionEndDate
+      ? [{ label: t("tenant.endDate"), value: formatDateUtc(tenant.editionEndDate) }]
+      : []),
+  ];
+
   return (
     <>
-      {/* Status-specific top banner */}
-      {status === "suspended" && (
-        <div
-          dir={direction}
-          className={cn(
-            "flex items-center gap-3 rounded-xl border border-warning/30 bg-warning/5 p-4",
-            "mb-4"
-          )}
-        >
-          <AlertTriangle className="h-5 w-5 shrink-0 text-warning" />
-          <div className="flex-1 text-sm">
-            <p className="font-medium text-warning">{t("tenant.suspendedBanner")}</p>
-            {(tenant as any).suspensionReason && (
-              <p className="mt-0.5 text-muted-foreground">{(tenant as any).suspensionReason}</p>
+      <PageHeader
+        icon={Building2}
+        title={tenant.name}
+        badges={statusBadge}
+        description={tenant.description}
+        meta={meta}
+        className={cn("mb-0", (status === "canceled" || status === "inactive") && "opacity-80")}
+        actions={
+          <>
+            {onEnter && canDrillDown && status !== "canceled" && (
+              <Button variant="default" size="sm" onClick={onEnter} disabled={status === "suspended"}>
+                <LogIn className="me-1.5 h-4 w-4" aria-hidden="true" />
+                {t("tenant.enterTenantWorld")}
+              </Button>
             )}
-          </div>
-          {onEnter && (
-            <Button
-              size="sm"
-              variant="outline"
-              className="shrink-0 border-success/50 text-success hover:bg-success/10"
-              disabled
-            >
-              <Play className="me-1.5 h-4 w-4" />
-              {t("tenant.resume")}
-            </Button>
-          )}
-        </div>
-      )}
-
-      {status === "canceled" && (
-        <div
-          dir={direction}
-          className="mb-4 flex items-center gap-3 rounded-xl border border-destructive/30 bg-destructive/5 p-4"
-        >
-          <Ban className="h-5 w-5 shrink-0 text-destructive" />
-          <div className="flex-1 text-sm">
-            <p className="font-medium text-destructive">{t("tenant.canceledBanner")}</p>
-            {(tenant as any).suspensionReason && (
-              <p className="mt-0.5 text-muted-foreground">{(tenant as any).suspensionReason}</p>
+            {canUpdate && (
+              <Button variant="outline" size="sm" onClick={() => handleEditOpenChange(true)}>
+                <Pencil className="me-1.5 h-4 w-4" aria-hidden="true" />
+                {t("common.edit")}
+              </Button>
             )}
-          </div>
-        </div>
-      )}
-
-      {status === "expired" && (
-        <div
-          dir={direction}
-          className="mb-4 flex items-center gap-3 rounded-xl border border-warning/30 bg-warning/5 p-4"
-        >
-          <XCircle className="h-5 w-5 shrink-0 text-warning" />
-          <div className="flex-1 text-sm">
-            <p className="font-medium text-warning">{t("tenant.expiredBanner")}</p>
-          </div>
-        </div>
-      )}
-
-      {/* Hero Header Card */}
-      <div
-        dir={direction}
-        className={cn(
-          "relative overflow-hidden rounded-2xl",
-          "bg-gradient-to-br from-background via-background to-muted/30",
-          "border border-border/50",
-          "shadow-xl shadow-primary/5",
-          "backdrop-blur-sm",
-          (status === "canceled" || status === "inactive") && "opacity-80"
-        )}
+            {canUpdate && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setStatusConfirmOpen(true)}
+                loading={isUpdating}
+              >
+                {!isUpdating && <Power className="me-1.5 h-4 w-4" aria-hidden="true" />}
+                {tenant.isActive ? t("common.deactivate") : t("common.activate")}
+              </Button>
+            )}
+            {canDelete && (
+              <Button variant="destructive" size="sm" onClick={() => setDeleteOpen(true)}>
+                <Trash2 className="me-1.5 h-4 w-4" aria-hidden="true" />
+                {t("common.delete")}
+              </Button>
+            )}
+          </>
+        }
       >
-        {/* Top gradient accent line */}
-        <div
-          className={cn(
-            "absolute inset-x-0 top-0 h-1 bg-gradient-to-r",
-            statusBorderGradient[status]
-          )}
-        />
+        {/* Status-specific banners */}
+        {status === "suspended" && (
+          <Alert variant="warning">
+            <AlertTriangle aria-hidden="true" />
+            <AlertDescription>
+              <p className="font-medium text-nx-ink">{t("tenant.suspendedBanner")}</p>
+              {suspensionReason && <p className="mt-0.5">{suspensionReason}</p>}
+            </AlertDescription>
+          </Alert>
+        )}
+        {status === "canceled" && (
+          <Alert variant="destructive">
+            <Ban aria-hidden="true" />
+            <AlertDescription>
+              <p className="font-medium text-nx-ink">{t("tenant.canceledBanner")}</p>
+              {suspensionReason && <p className="mt-0.5">{suspensionReason}</p>}
+            </AlertDescription>
+          </Alert>
+        )}
+        {status === "expired" && (
+          <Alert variant="warning">
+            <XCircle aria-hidden="true" />
+            <AlertDescription>
+              <p className="font-medium text-nx-ink">{t("tenant.expiredBanner")}</p>
+            </AlertDescription>
+          </Alert>
+        )}
 
-        {/* Background decorative radials */}
-        <div className="absolute inset-0 opacity-[0.03]">
-          <div
-            className={cn(
-              "absolute inset-0",
-              isRtl
-                ? "bg-[radial-gradient(circle_at_70%_20%,_hsl(var(--primary))_0%,_transparent_50%)]"
-                : "bg-[radial-gradient(circle_at_30%_20%,_hsl(var(--primary))_0%,_transparent_50%)]"
-            )}
-          />
-        </div>
-
-        <div className="relative p-6">
-          {/* Main row: Info + Actions */}
-          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-            {/* Tenant Info */}
-            <div className="flex items-start gap-4">
-              {/* Icon */}
+        {/* Inline subscription progress bar */}
+        {status === "active" && tenant.editionName && (
+          <div className="rounded-nx-md border border-nx-line bg-nx-surface p-3">
+            <div className="mb-1.5 flex items-center justify-between text-xs text-nx-ink-2">
+              <span className="font-medium">
+                {tenant.editionName}
+                {daysLeft !== null
+                  ? ` • ${daysLeft} ${t("tenant.daysLeft")}`
+                  : ` • ${t("tenant.lifetime")}`}
+              </span>
+              {tenant.editionEndDate && (
+                <span>
+                  {t("tenant.endDate")}: {formatDateUtc(tenant.editionEndDate)}
+                </span>
+              )}
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-nx-raised">
               <div
                 className={cn(
-                  "flex items-center justify-center",
-                  "h-16 w-16 shrink-0 rounded-xl",
-                  "border bg-gradient-to-br",
-                  "shadow-lg shadow-primary/10",
-                  statusIconBg[status]
+                  "h-full rounded-full transition-[width] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+                  progressColor
                 )}
-              >
-                <Building2 className="h-8 w-8 text-primary" />
-              </div>
-
-              {/* Text */}
-              <div className="min-w-0 flex-1">
-                <div className="mb-1 flex flex-wrap items-center gap-3">
-                  <h1 className="break-words text-2xl font-bold tracking-tight">{tenant.name}</h1>
-                  {statusBadge}
-                </div>
-                <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                  <span className="shrink-0 rounded bg-muted px-2 py-0.5 font-mono text-xs">
-                    {tenant.code}
-                  </span>
-                  {tenant.editionName && (
-                    <Badge variant="outline" className="text-xs">
-                      {tenant.editionName}
-                    </Badge>
-                  )}
-                  {daysLeft !== null && daysLeft > 0 && status === "active" && (
-                    <Badge
-                      variant="outline"
-                      className={cn(
-                        "gap-1 text-xs",
-                        daysLeft <= 7
-                          ? "border-destructive/50 text-destructive"
-                          : daysLeft <= 30
-                            ? "border-warning/50 text-warning"
-                            : "border-muted-foreground/30 text-muted-foreground"
-                      )}
-                    >
-                      <Clock className="h-3 w-3" />
-                      {daysLeft} {t("tenant.daysLeft")}
-                    </Badge>
-                  )}
-                </div>
-                {tenant.description && (
-                  <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">
-                    {tenant.description}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Action buttons */}
-            <div className="flex shrink-0 flex-wrap items-center gap-2">
-              {onEnter && canDrillDown && status !== "canceled" && (
-                <Button
-                  variant="default"
-                  size="sm"
-                  onClick={onEnter}
-                  disabled={status === "suspended"}
-                >
-                  <LogIn className="me-1.5 h-4 w-4" />
-                  {t("tenant.enterTenantWorld")}
-                </Button>
-              )}
-              {canUpdate && (
-                <Button variant="outline" size="sm" onClick={() => handleEditOpenChange(true)}>
-                  <Pencil className="me-1.5 h-4 w-4" />
-                  {t("common.edit")}
-                </Button>
-              )}
-              {canUpdate && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setStatusConfirmOpen(true)}
-                  loading={isUpdating}
-                >
-                  {!isUpdating && <Power className="me-1.5 h-4 w-4" />}
-                  {tenant.isActive ? t("common.deactivate") : t("common.activate")}
-                </Button>
-              )}
-              {canDelete && (
-                <Button variant="destructive" size="sm" onClick={() => setDeleteOpen(true)}>
-                  <Trash2 className="me-1.5 h-4 w-4" />
-                  {t("common.delete")}
-                </Button>
-              )}
+                style={{ width: `${progress}%` }}
+              />
             </div>
           </div>
+        )}
 
-          {/* Inline subscription progress bar */}
-          {status === "active" && tenant.editionName && (
-            <div className="mt-5 border-t border-border/30 pt-5">
-              <div className="mb-1.5 flex items-center justify-between text-xs text-muted-foreground">
-                <span className="font-medium">
-                  {tenant.editionName}
-                  {daysLeft !== null
-                    ? ` • ${daysLeft} ${t("tenant.daysLeft")}`
-                    : ` • ${t("tenant.lifetime") || "Lifetime"}`}
-                </span>
-                {tenant.editionEndDate && (
-                  <span>
-                    {t("tenant.endDate")}: {formatDateUtc(tenant.editionEndDate)}
-                  </span>
-                )}
-              </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-muted/50">
-                <div
-                  className={cn("h-full rounded-full transition-all duration-700", progressColor)}
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
+        {/* Depleted bar for expired */}
+        {status === "expired" && (
+          <div className="rounded-nx-md border border-nx-line bg-nx-surface p-3">
+            <p className="mb-1.5 text-xs font-medium text-destructive">
+              {t("tenant.expired")} • {tenant.editionName}
+            </p>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-nx-raised">
+              <div className="h-full w-0 rounded-full bg-destructive" />
             </div>
-          )}
-
-          {/* Depleted bar for expired */}
-          {status === "expired" && (
-            <div className="mt-5 border-t border-border/30 pt-5">
-              <div className="mb-1.5 flex items-center justify-between text-xs text-muted-foreground">
-                <span className="font-medium text-destructive">
-                  {t("tenant.expired")} • {tenant.editionName}
-                </span>
-              </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-muted/50">
-                <div className="h-full w-0 rounded-full bg-destructive" />
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+          </div>
+        )}
+      </PageHeader>
 
       {/* Edit Dialog */}
       <Dialog open={editOpen} onOpenChange={handleEditOpenChange}>
-        <DialogContent dir={direction}>
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>{t("tenant.editTenant")}</DialogTitle>
             <DialogDescription>{t("tenant.editDialogDescription")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="name">{t("tenant.name")}</Label>
+              <Label htmlFor="tenant-edit-name">{t("tenant.name")}</Label>
               <Input
-                id="name"
+                id="tenant-edit-name"
                 value={editForm.name}
                 onChange={(e) => handleSetFormName(e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description">{t("tenant.descriptionLabel")}</Label>
+              <Label htmlFor="tenant-edit-description">{t("tenant.descriptionLabel")}</Label>
               <Textarea
-                id="description"
+                id="tenant-edit-description"
                 value={editForm.description}
                 onChange={(e) => handleSetFormDescription(e.target.value)}
                 rows={3}
               />
             </div>
             <div className="flex items-center justify-between">
-              <Label htmlFor="isActive">{t("tenant.activeStatus")}</Label>
+              <Label htmlFor="tenant-edit-active">{t("tenant.activeStatus")}</Label>
               <Switch
-                id="isActive"
+                id="tenant-edit-active"
                 checked={editForm.isActive}
                 onCheckedChange={handleSetFormActive}
               />
             </div>
           </div>
-          <DialogFooter className={cn(isRtl && "flex-row-reverse sm:flex-row-reverse")}>
+          <DialogFooter>
             <Button variant="outline" onClick={() => handleEditOpenChange(false)}>
               {t("common.cancel")}
             </Button>
@@ -435,39 +296,25 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
         isDeleting={isDeleting}
       />
 
-      {/* Status Toggle Dialog */}
-      <Dialog open={statusConfirmOpen} onOpenChange={setStatusConfirmOpen}>
-        <DialogContent dir={direction}>
-          <DialogHeader>
-            <DialogTitle>
-              {tenant.isActive
-                ? t("tenant.deactivateTenant") || "Deactivate Tenant"
-                : t("tenant.activateTenant") || "Activate Tenant"}
-            </DialogTitle>
-            <DialogDescription>
-              {tenant.isActive
-                ? t("tenant.deactivateConfirmation", { name: tenant.name }) ||
-                  `Are you sure you want to deactivate ${tenant.name}?`
-                : t("tenant.activateConfirmation", { name: tenant.name }) ||
-                  `Are you sure you want to activate ${tenant.name}?`}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className={cn(isRtl && "flex-row-reverse sm:flex-row-reverse")}>
-            <Button variant="outline" onClick={() => setStatusConfirmOpen(false)}>
-              {t("common.cancel")}
-            </Button>
-            <Button
-              onClick={() => {
-                handleToggleStatus();
-                setStatusConfirmOpen(false);
-              }}
-              loading={isUpdating}
-            >
-              {tenant.isActive ? t("common.deactivate") : t("common.activate")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Status Toggle Confirmation */}
+      <ConfirmationDialog
+        open={statusConfirmOpen}
+        onOpenChange={setStatusConfirmOpen}
+        variant={tenant.isActive ? "warning" : "info"}
+        title={tenant.isActive ? t("tenant.deactivateTenant") : t("tenant.activateTenant")}
+        description={
+          tenant.isActive
+            ? t("tenant.deactivateConfirmation", { name: tenant.name })
+            : t("tenant.activateConfirmation", { name: tenant.name })
+        }
+        confirmText={tenant.isActive ? t("common.deactivate") : t("common.activate")}
+        cancelText={t("common.cancel")}
+        onConfirm={async () => {
+          await handleToggleStatus();
+          setStatusConfirmOpen(false);
+        }}
+        isLoading={isUpdating}
+      />
     </>
   );
 }
