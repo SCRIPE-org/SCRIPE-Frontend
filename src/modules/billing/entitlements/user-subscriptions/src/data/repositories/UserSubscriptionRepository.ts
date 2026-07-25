@@ -57,6 +57,10 @@ export class UserSubscriptionRepository implements IUserSubscriptionRepository {
     await this.service.cancel(id);
   }
 
+  async cancelMine(): Promise<void> {
+    await this.service.cancelMine();
+  }
+
   async renew(id: string): Promise<void> {
     await this.service.renew(id);
   }

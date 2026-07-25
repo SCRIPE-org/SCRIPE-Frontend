@@ -25,6 +25,8 @@ export interface IUserSubscriptionRepository {
   getMySubscription(): Promise<UserSubscription | null>;
   create(request: CreateUserSubscriptionRequest): Promise<string>;
   cancel(id: string): Promise<void>;
+  /** End-user self-service cancel of the caller's own subscription. */
+  cancelMine(): Promise<void>;
   renew(id: string): Promise<void>;
   changePlan(
     id: string,

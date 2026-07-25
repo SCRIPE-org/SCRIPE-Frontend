@@ -59,6 +59,10 @@ export class UserSubscriptionService implements IUserSubscriptionService {
     await this.api.post(USER_SUBSCRIPTIONS_ENDPOINTS.CANCEL(id), {});
   }
 
+  async cancelMine(): Promise<void> {
+    await this.api.post(USER_SUBSCRIPTIONS_ENDPOINTS.CANCEL_MINE, {});
+  }
+
   async renew(id: string): Promise<void> {
     await this.api.post(USER_SUBSCRIPTIONS_ENDPOINTS.RENEW(id), {});
   }
