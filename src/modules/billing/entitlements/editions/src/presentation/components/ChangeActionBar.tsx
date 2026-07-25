@@ -7,6 +7,7 @@
 
 import { useState } from "react";
 import { Button } from "@core/ui/button";
+import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import {
   Dialog,
@@ -61,7 +62,7 @@ export function ChangeActionBar({
   return (
     <>
       {/* ═══════ STICKY BOTTOM ACTION BAR ═══════ */}
-      <div className="fixed inset-x-0 bottom-0 z-50">
+      <div className="fixed inset-x-0 bottom-0 z-sticky">
         <div className="border-t bg-background/95 shadow-nx-bar-top backdrop-blur-md">
           <div className="mx-auto max-w-screen-xl px-4 py-3 sm:px-6">
             <div className="flex items-center justify-between gap-4">
@@ -99,7 +100,6 @@ export function ChangeActionBar({
                   onClick={() => setShowVersionDialog(true)}
                   disabled={isBusy}
                   loading={isCreatingVersion}
-                  className="gradient-primary"
                 >
                   {!isCreatingVersion && <GitBranch className="me-1 h-4 w-4" />}
                   {t("entitlements.editions.saveAsVersion")}
@@ -122,9 +122,9 @@ export function ChangeActionBar({
           </DialogHeader>
           <div className="space-y-3 py-2">
             <div className="space-y-1.5">
-              <label className="text-sm font-medium">
+              <Label className="text-sm font-medium">
                 {t("entitlements.editions.versionNotesLabel")}
-              </label>
+              </Label>
               <Textarea
                 placeholder={t("entitlements.editions.versions.changeNotesPlaceholder")}
                 value={versionNotes}
@@ -147,7 +147,6 @@ export function ChangeActionBar({
               onClick={handleCreateVersion}
               disabled={isBusy}
               loading={isCreatingVersion}
-              className="gradient-primary"
             >
               {!isCreatingVersion && <GitBranch className="me-1 h-4 w-4" />}
               {t("entitlements.editions.createAndPublish")}

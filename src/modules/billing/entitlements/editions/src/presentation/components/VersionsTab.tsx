@@ -23,6 +23,7 @@ import {
   GitBranch,
   Calendar,
   Percent,
+  RefreshCw,
 } from "lucide-react";
 import { useVersionsViewModel } from "../viewmodels/useVersionsViewModel";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
@@ -40,10 +41,12 @@ const STATUS_COLORS: Record<string, string> = {
   Canceled: "bg-destructive/10 text-destructive border-destructive/30",
 };
 
+// A status badge renders its state — it does not animate forever. "Rolling"
+// reads as a held, static glyph, same as every other status in this map.
 const STATUS_ICONS: Record<string, React.ReactNode> = {
   Draft: <AlertCircle className="h-3.5 w-3.5" />,
   Pending: <Clock className="h-3.5 w-3.5" />,
-  Rolling: <Loader2 className="h-3.5 w-3.5 animate-spin" />,
+  Rolling: <RefreshCw className="h-3.5 w-3.5" />,
   Completed: <CheckCircle2 className="h-3.5 w-3.5" />,
   Canceled: <XCircle className="h-3.5 w-3.5" />,
 };

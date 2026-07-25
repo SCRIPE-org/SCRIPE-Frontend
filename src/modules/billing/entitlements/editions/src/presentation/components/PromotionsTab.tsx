@@ -87,7 +87,7 @@ export function PromotionsTab({
             {vm.promotions.length}
           </Badge>
         </div>
-        <Button size="sm" onClick={vm.openCreate} className="gradient-primary">
+        <Button size="sm" onClick={vm.openCreate}>
           <Plus className="me-1 h-4 w-4" />
           {t("entitlements.promotions.create") || "Create Promotion"}
         </Button>
@@ -400,12 +400,7 @@ export function PromotionsTab({
             <Button variant="ghost" onClick={vm.closeDialog}>
               {t("common.cancel") || "Cancel"}
             </Button>
-            <Button
-              onClick={() => vm.submit()}
-              disabled={!vm.form.name}
-              loading={vm.isSubmitting}
-              className="gradient-primary"
-            >
+            <Button onClick={() => vm.submit()} disabled={!vm.form.name} loading={vm.isSubmitting}>
               {vm.isEditing ? t("common.save") || "Save" : t("common.create") || "Create"}
             </Button>
           </DialogFooter>

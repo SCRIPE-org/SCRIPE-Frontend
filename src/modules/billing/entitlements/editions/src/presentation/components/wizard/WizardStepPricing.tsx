@@ -1,6 +1,7 @@
 "use client";
 
 import { Input } from "@core/ui/input";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@core/ui/table";
 import { useI18n } from "@core/providers/i18n-provider";
 import { DollarSign, Gift } from "lucide-react";
 import type { CreateEditionRequest } from "../../../domain/entities/EditionRequests";
@@ -105,40 +106,33 @@ export function WizardStepPricing({ form, prices, onPriceChange }: WizardStepPri
         }
       />
 
-      <div className="overflow-hidden border border-border">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border bg-muted/50">
-              <th className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                {t("entitlements.editions.wizard.currency") || "Currency"}
-              </th>
+      <div className="overflow-hidden rounded-nx-md border border-nx-line">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t("entitlements.editions.wizard.currency") || "Currency"}</TableHead>
               {cycles.map((c) => (
-                <th
-                  key={c.key}
-                  className="px-4 py-3 text-start text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-                >
-                  {c.label}
-                </th>
+                <TableHead key={c.key}>{c.label}</TableHead>
               ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {currencies.map((currency) => (
-              <tr key={currency} className="transition-colors hover:bg-muted/20">
-                <td className="px-4 py-3">
+              <TableRow key={currency}>
+                <TableCell>
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded bg-muted text-xs font-bold text-muted-foreground">
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-nx-sm bg-nx-raised text-xs font-bold text-nx-ink-2">
                       {CURRENCY_SYMBOLS[currency] || currency[0]}
                     </span>
-                    <span className="font-semibold text-foreground">{currency}</span>
+                    <span className="font-semibold text-nx-ink">{currency}</span>
                   </div>
-                </td>
+                </TableCell>
                 {cycles.map((c) => {
                   const key = `${currency}_${c.key}`;
                   return (
-                    <td key={key} className="px-4 py-2.5">
+                    <TableCell key={key}>
                       <div className="flex items-center gap-1.5">
-                        <span className="shrink-0 text-xs text-muted-foreground">
+                        <span className="shrink-0 text-xs text-nx-ink-3">
                           {CURRENCY_SYMBOLS[currency] || ""}
                         </span>
                         <Input
@@ -151,13 +145,13 @@ export function WizardStepPricing({ form, prices, onPriceChange }: WizardStepPri
                           className="h-8 w-28 text-sm tabular-nums"
                         />
                       </div>
-                    </td>
+                    </TableCell>
                   );
                 })}
-              </tr>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

@@ -547,7 +547,7 @@ export const PricingTab = memo(function PricingTab({
 
       {/* ═══════ STICKY SAVE BAR ═══════ */}
       {vm.isDirty && (
-        <div className="fixed inset-x-0 bottom-0 z-50">
+        <div className="fixed inset-x-0 bottom-0 z-sticky">
           <div className="border-t bg-background/95 shadow-nx-bar-top backdrop-blur-md">
             <div className="mx-auto max-w-screen-xl px-4 py-3 sm:px-6">
               <div className="flex items-center justify-between gap-4">
@@ -587,7 +587,6 @@ export const PricingTab = memo(function PricingTab({
                     onClick={() => setShowVersionDialog(true)}
                     disabled={isBusy}
                     loading={vm.isCreatingVersion}
-                    className="gradient-primary"
                   >
                     {!vm.isCreatingVersion && <GitBranch className="me-1 h-4 w-4" />}
                     {t("entitlements.editions.saveAsVersion")}
@@ -630,11 +629,7 @@ export const PricingTab = memo(function PricingTab({
             <Button variant="ghost" onClick={() => setShowAddDialog(false)}>
               {t("common.cancel")}
             </Button>
-            <Button
-              onClick={handleAddCurrency}
-              disabled={!selectedCurrency}
-              className="gradient-primary"
-            >
+            <Button onClick={handleAddCurrency} disabled={!selectedCurrency}>
               <Plus className="me-1 h-4 w-4" />
               {t("common.add")}
             </Button>
@@ -681,7 +676,6 @@ export const PricingTab = memo(function PricingTab({
               }}
               disabled={isBusy}
               loading={vm.isCreatingVersion}
-              className="gradient-primary"
             >
               {!vm.isCreatingVersion && <GitBranch className="me-1 h-4 w-4" />}
               {t("entitlements.editions.createAndPublish")}

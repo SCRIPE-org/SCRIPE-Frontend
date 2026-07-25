@@ -13,6 +13,7 @@ import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { StatCard } from "@core/ui/stat-card";
 import { EmptyState } from "@core/ui/empty-state";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@core/ui/table";
 import {
   ArrowLeft,
   Settings2,
@@ -89,14 +90,14 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
   const vm = useEditionDetailViewModel(editionId);
   const router = useRouter();
 
-  const enabledLabel = t("entitlements.editions.wizard.yes") || "Enabled";
-  const disabledLabel = t("entitlements.editions.wizard.no") || "Disabled";
+  const enabledLabel = t("entitlements.editions.wizard.yes");
+  const disabledLabel = t("entitlements.editions.wizard.no");
 
   if (vm.isLoading) {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center gap-3">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        <p className="text-sm text-muted-foreground">{t("common.loading") || "Loading…"}</p>
+        <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
       </div>
     );
   }
@@ -105,11 +106,11 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
     return (
       <div className="p-8 text-center">
         <p className="text-destructive">
-          {vm.error?.message || t("entitlements.editions.notFound") || "Edition not found"}
+          {vm.error?.message || t("entitlements.editions.notFound")}
         </p>
         <Link href="/entitlements/editions">
           <Button variant="ghost" className="mt-4 gap-2">
-            <ArrowLeft className="h-4 w-4" /> {t("common.back") || "Back"}
+            <ArrowLeft className="h-4 w-4" /> {t("common.back")}
           </Button>
         </Link>
       </div>
@@ -152,8 +153,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
             <p className="mt-1 text-sm text-muted-foreground">
               {edition.description ||
                 edition.tagline ||
-                t("entitlements.editions.wizard.overviewDesc") ||
-                "Complete edition overview"}
+                t("entitlements.editions.wizard.overviewDesc")}
             </p>
           </div>
         </div>
@@ -165,7 +165,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
             onClick={() => router.push(`/entitlements/editions/${editionId}/edit`)}
           >
             <Settings2 className="h-4 w-4" />
-            {t("entitlements.editions.wizard.editSettings") || "Edit Settings"}
+            {t("entitlements.editions.wizard.editSettings")}
           </Button>
           <Button
             size="sm"
@@ -173,7 +173,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
             onClick={() => router.push(`/entitlements/editions/${editionId}`)}
           >
             <Zap className="h-4 w-4" />
-            {t("entitlements.editions.wizard.manageFeatures") || "Manage Features"}
+            {t("entitlements.editions.wizard.manageFeatures")}
           </Button>
         </div>
       </div>
@@ -182,24 +182,24 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <StatCard
           icon={Layers}
-          label={t("entitlements.editions.wizard.tierLevel") || "Tier Level"}
+          label={t("entitlements.editions.wizard.tierLevel")}
           value={edition.tierLevel}
           tone="neutral"
         />
         <StatCard
           icon={Zap}
-          label={t("entitlements.editions.wizard.featureCountLabel") || "Features"}
+          label={t("entitlements.editions.wizard.featureCountLabel")}
           value={edition.featureCount}
           tone="info"
         />
         <StatCard
           icon={Users}
-          label={t("entitlements.editions.wizard.maxSubscriptions") || "Max Subscriptions"}
+          label={t("entitlements.editions.wizard.maxSubscriptions")}
           value={
             edition.maxActiveSubscriptions === -1 ? (
               <span className="flex items-center gap-1">
                 <Infinity className="h-4 w-4" />
-                {t("entitlements.editions.wizard.unlimited") || "Unlimited"}
+                {t("entitlements.editions.wizard.unlimited")}
               </span>
             ) : (
               edition.maxActiveSubscriptions
@@ -209,7 +209,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
         />
         <StatCard
           icon={Clock}
-          label={t("common.createdAt") || "Created"}
+          label={t("common.createdAt")}
           value={edition.createdAt ? formatUtc(edition.createdAt, "MMM d, yyyy") : "—"}
           tone="neutral"
         />
@@ -222,49 +222,45 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
           <CardHeader className="border-b bg-muted/30 pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
               <Tag className="h-4 w-4 text-primary" />
-              {t("entitlements.editions.wizard.sectionGeneral") || "General Information"}
+              {t("entitlements.editions.wizard.sectionGeneral")}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <InfoRow
-              label={t("entitlements.editions.wizard.internalName") || "Internal Name"}
+              label={t("entitlements.editions.wizard.internalName")}
               value={<code className="rounded bg-muted px-2 py-0.5 text-xs">{edition.name}</code>}
             />
             <InfoRow
-              label={t("entitlements.editions.wizard.displayNameEn") || "Display (EN)"}
+              label={t("entitlements.editions.wizard.displayNameEn")}
               value={edition.displayNameEn}
             />
             <InfoRow
-              label={t("entitlements.editions.wizard.displayNameAr") || "Display (AR)"}
+              label={t("entitlements.editions.wizard.displayNameAr")}
               value={edition.displayNameAr || "—"}
             />
             <InfoRow
-              label={t("entitlements.editions.wizard.tagline") || "Tagline"}
+              label={t("entitlements.editions.wizard.tagline")}
               value={edition.tagline || "—"}
             />
             <InfoRow
-              label={t("entitlements.editions.wizard.category") || "Category"}
+              label={t("entitlements.editions.wizard.category")}
               value={
                 edition.category ? (
                   <Badge variant="secondary">{edition.category}</Badge>
                 ) : (
                   <span className="italic text-muted-foreground">
-                    {t("entitlements.editions.wizard.uncategorized") || "Uncategorized"}
+                    {t("entitlements.editions.wizard.uncategorized")}
                   </span>
                 )
               }
             />
             <InfoRow
-              label={t("entitlements.editions.wizard.overflowPolicy") || "Overflow Policy"}
+              label={t("entitlements.editions.wizard.overflowPolicy")}
               value={<Badge variant="outline">{edition.overflowPolicy}</Badge>}
             />
             <InfoRow
-              label={t("entitlements.editions.wizard.fallbackEdition") || "Fallback Edition"}
-              value={
-                edition.fallbackEditionName ||
-                t("entitlements.editions.wizard.noFallback") ||
-                "None"
-              }
+              label={t("entitlements.editions.wizard.fallbackEdition")}
+              value={edition.fallbackEditionName || t("entitlements.editions.wizard.noFallback")}
             />
           </CardContent>
         </Card>
@@ -274,12 +270,12 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
           <CardHeader className="border-b bg-muted/30 pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
               <CalendarRange className="h-4 w-4 text-primary" />
-              {t("entitlements.editions.wizard.sectionBilling") || "Billing Configuration"}
+              {t("entitlements.editions.wizard.sectionBilling")}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <InfoRow
-              label={t("entitlements.editions.wizard.monthly") || "Monthly"}
+              label={t("entitlements.editions.wizard.monthly")}
               value={
                 <BoolIndicator
                   value={edition.allowMonthly}
@@ -289,7 +285,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
               }
             />
             <InfoRow
-              label={t("entitlements.editions.wizard.annual") || "Annual"}
+              label={t("entitlements.editions.wizard.annual")}
               value={
                 <BoolIndicator
                   value={edition.allowYearly}
@@ -299,7 +295,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
               }
             />
             <InfoRow
-              label={t("entitlements.editions.wizard.lifetime") || "Lifetime"}
+              label={t("entitlements.editions.wizard.lifetime")}
               value={
                 <BoolIndicator
                   value={edition.allowLifetime}
@@ -309,7 +305,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
               }
             />
             <InfoRow
-              label={t("entitlements.editions.wizard.billingCycles") || "Active Cycles"}
+              label={t("entitlements.editions.wizard.billingCycles")}
               value={
                 cycles.length > 0 ? (
                   <div className="flex flex-wrap justify-end gap-1">
@@ -321,7 +317,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
                   </div>
                 ) : (
                   <span className="italic text-muted-foreground">
-                    {t("entitlements.editions.wizard.noneFree") || "None (Free)"}
+                    {t("entitlements.editions.wizard.noneFree")}
                   </span>
                 )
               }
@@ -334,12 +330,12 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
           <CardHeader className="border-b bg-muted/30 pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
               <ShieldCheck className="h-4 w-4 text-primary" />
-              {t("entitlements.editions.wizard.sectionTrial") || "Trial & Grace Period"}
+              {t("entitlements.editions.wizard.sectionTrial")}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <InfoRow
-              label={t("entitlements.editions.wizard.freeTrial") || "Free Trial"}
+              label={t("entitlements.editions.wizard.freeTrial")}
               value={
                 <BoolIndicator
                   value={edition.allowTrial}
@@ -351,11 +347,11 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
             {edition.allowTrial && (
               <>
                 <InfoRow
-                  label={t("entitlements.editions.wizard.trialDuration") || "Duration"}
-                  value={`${edition.trialDurationDays} ${t("entitlements.editions.wizard.gracePeriodDays") || "days"}`}
+                  label={t("entitlements.editions.wizard.trialDuration")}
+                  value={`${edition.trialDurationDays} ${t("entitlements.editions.wizard.gracePeriodDays")}`}
                 />
                 <InfoRow
-                  label={t("entitlements.editions.wizard.completelyFree") || "Completely Free"}
+                  label={t("entitlements.editions.wizard.completelyFree")}
                   value={
                     <BoolIndicator
                       value={edition.trialIsFree}
@@ -366,7 +362,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
                 />
                 {!edition.trialIsFree && (
                   <InfoRow
-                    label={t("entitlements.editions.wizard.trialDiscount") || "Discount"}
+                    label={t("entitlements.editions.wizard.trialDiscount")}
                     value={`${edition.trialDiscountPercent}%`}
                     mono
                   />
@@ -374,8 +370,8 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
               </>
             )}
             <InfoRow
-              label={t("entitlements.editions.wizard.gracePeriod") || "Grace Period"}
-              value={`${edition.gracePeriodDays} ${t("entitlements.editions.wizard.gracePeriodDays") || "days"}`}
+              label={t("entitlements.editions.wizard.gracePeriod")}
+              value={`${edition.gracePeriodDays} ${t("entitlements.editions.wizard.gracePeriodDays")}`}
             />
           </CardContent>
         </Card>
@@ -385,12 +381,12 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
           <CardHeader className="border-b bg-muted/30 pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
               <ShoppingCart className="h-4 w-4 text-primary" />
-              {t("entitlements.editions.wizard.sectionAccess") || "Access & Checkout"}
+              {t("entitlements.editions.wizard.sectionAccess")}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <InfoRow
-              label={t("entitlements.editions.wizard.selfService") || "Self-Service"}
+              label={t("entitlements.editions.wizard.selfService")}
               value={
                 <BoolIndicator
                   value={edition.isSelfServiceEnabled}
@@ -400,7 +396,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
               }
             />
             <InfoRow
-              label={t("entitlements.editions.wizard.contactSalesOnly") || "Contact Sales Only"}
+              label={t("entitlements.editions.wizard.contactSalesOnly")}
               value={
                 <BoolIndicator
                   value={edition.isContactSalesOnly}
@@ -410,12 +406,12 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
               }
             />
             <InfoRow
-              label={t("entitlements.editions.wizard.maxSubscriptions") || "Max Subscriptions"}
+              label={t("entitlements.editions.wizard.maxSubscriptions")}
               value={
                 edition.maxActiveSubscriptions === -1 ? (
                   <span className="flex items-center gap-1">
                     <Infinity className="h-3.5 w-3.5" />
-                    {t("entitlements.editions.wizard.unlimited") || "Unlimited"}
+                    {t("entitlements.editions.wizard.unlimited")}
                   </span>
                 ) : (
                   <span className="tabular-nums">{edition.maxActiveSubscriptions}</span>
@@ -432,59 +428,48 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
           <CardHeader className="border-b bg-muted/30 pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
               <DollarSign className="h-4 w-4 text-primary" />
-              {t("entitlements.editions.wizard.sectionPricing") || "Pricing Matrix"}
+              {t("entitlements.editions.wizard.sectionPricing")}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border bg-muted/40">
-                    <th className="px-5 py-3 text-start text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      {t("entitlements.editions.wizard.currency") || "Currency"}
-                    </th>
-                    {cycles.map((c) => (
-                      <th
-                        key={c}
-                        className="px-5 py-3 text-start text-xs font-semibold uppercase tracking-wider text-muted-foreground"
-                      >
-                        {c}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {Array.from(new Set(edition.prices.map((p) => p.currency))).map((currency) => (
-                    <tr key={currency} className="transition-colors hover:bg-muted/20">
-                      <td className="px-5 py-3.5 font-semibold text-foreground">{currency}</td>
-                      {cycles.map((cycle) => {
-                        const price = edition.getPriceForCycle(cycle, currency);
-                        const suffix =
-                          cycle === "Monthly"
-                            ? t("entitlements.editions.wizard.perMonth") || "/mo"
-                            : cycle === "Yearly"
-                              ? t("entitlements.editions.wizard.perYear") || "/yr"
-                              : t("entitlements.editions.wizard.oneTime") || "one-time";
-                        return (
-                          <td key={cycle} className="px-5 py-3.5">
-                            {price !== undefined ? (
-                              <span className="font-semibold tabular-nums text-success">
-                                {price.toFixed(2)}{" "}
-                                <span className="text-xs font-normal text-muted-foreground">
-                                  {suffix}
-                                </span>
-                              </span>
-                            ) : (
-                              <span className="text-muted-foreground">—</span>
-                            )}
-                          </td>
-                        );
-                      })}
-                    </tr>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t("entitlements.editions.wizard.currency")}</TableHead>
+                  {cycles.map((c) => (
+                    <TableHead key={c}>{c}</TableHead>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {Array.from(new Set(edition.prices.map((p) => p.currency))).map((currency) => (
+                  <TableRow key={currency}>
+                    <TableCell className="font-semibold text-nx-ink">{currency}</TableCell>
+                    {cycles.map((cycle) => {
+                      const price = edition.getPriceForCycle(cycle, currency);
+                      const suffix =
+                        cycle === "Monthly"
+                          ? t("entitlements.editions.wizard.perMonth")
+                          : cycle === "Yearly"
+                            ? t("entitlements.editions.wizard.perYear")
+                            : t("entitlements.editions.wizard.oneTime");
+                      return (
+                        <TableCell key={cycle}>
+                          {price !== undefined ? (
+                            <span className="font-semibold tabular-nums text-success">
+                              {price.toFixed(2)}{" "}
+                              <span className="text-xs font-normal text-nx-ink-3">{suffix}</span>
+                            </span>
+                          ) : (
+                            <span className="text-nx-ink-3">—</span>
+                          )}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       )}
@@ -492,10 +477,8 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
       {edition.prices.length === 0 && edition.isFreeEdition && (
         <EmptyState
           icon={DollarSign}
-          title={t("entitlements.editions.wizard.freeTierTitle") || "Free Tier"}
-          description={
-            t("entitlements.editions.wizard.noPricingConfigured") || "No pricing configured."
-          }
+          title={t("entitlements.editions.wizard.freeTierTitle")}
+          description={t("entitlements.editions.wizard.noPricingConfigured")}
         />
       )}
 
@@ -505,7 +488,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
           <CardHeader className="border-b bg-muted/30 pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
               <Award className="h-4 w-4 text-primary" />
-              {t("entitlements.editions.wizard.sectionBadges") || "Recommendation Badges"}
+              {t("entitlements.editions.wizard.sectionBadges")}
             </CardTitle>
           </CardHeader>
           <CardContent className="px-5 py-4">
