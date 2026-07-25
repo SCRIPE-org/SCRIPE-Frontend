@@ -45,7 +45,10 @@ import { Button } from "@core/ui/button";
 type BadgeVariant = BadgeProps["variant"];
 
 // ── Status badge / icon tone, keyed to entitlements.subscription.status.* ──
-const STATUS_CONFIG: Record<string, { icon: LucideIcon; badgeVariant: BadgeVariant; iconClass: string }> = {
+const STATUS_CONFIG: Record<
+  string,
+  { icon: LucideIcon; badgeVariant: BadgeVariant; iconClass: string }
+> = {
   Active: { icon: CheckCircle2, badgeVariant: "success", iconClass: "text-success" },
   Trialing: { icon: Clock, badgeVariant: "info", iconClass: "text-info" },
   PendingPayment: { icon: AlertCircle, badgeVariant: "pending", iconClass: "text-warning-strong" },
@@ -177,7 +180,7 @@ export function MySubscriptionView() {
                   <TypeIcon className="h-6 w-6" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold leading-tight tracking-tight text-nx-ink text-balance">
+                  <h2 className="text-balance text-xl font-bold leading-tight tracking-tight text-nx-ink">
                     {sub.editionName}
                   </h2>
                   <div className="mt-1 flex flex-wrap items-center gap-2">
@@ -368,7 +371,8 @@ export function MySubscriptionView() {
               </div>
               <CardDescription>
                 {t("entitlements.mySubscription.gatewayDesc", {
-                  gateway: sub.paymentGateway || t("entitlements.mySubscription.yourPaymentProvider"),
+                  gateway:
+                    sub.paymentGateway || t("entitlements.mySubscription.yourPaymentProvider"),
                 })}
               </CardDescription>
             </CardHeader>

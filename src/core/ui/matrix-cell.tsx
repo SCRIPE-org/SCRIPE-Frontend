@@ -51,9 +51,7 @@ export function MatrixCell({ value }: MatrixCellProps) {
   if (typeof value === "boolean") {
     return (
       <span className="inline-flex items-center justify-center">
-        <span className="sr-only">
-          {value ? t("common.included") : t("common.notIncluded")}
-        </span>
+        <span className="sr-only">{value ? t("common.included") : t("common.notIncluded")}</span>
         {value ? (
           <Check aria-hidden="true" className="h-4 w-4 text-success" />
         ) : (

@@ -64,28 +64,22 @@ export class LeadsService implements ILeadsService {
   }
 
   async createLead(params: CreateLeadParams): Promise<string> {
-    const result = await this.api.post<{ id: string }>(
-      LEADS_ENDPOINTS.CREATE,
-      params
-    );
+    const result = await this.api.post<{ id: string }>(LEADS_ENDPOINTS.CREATE, params);
     return result.id;
   }
 
   async convertToTenant(id: string, params: ConvertLeadParams): Promise<ConvertLeadResult> {
-    return this.api.post<ConvertLeadResult>(
-      LEADS_ENDPOINTS.CONVERT_TO_TENANT(id),
-      {
-        editionId: params.editionId,
-        tenantCode: params.tenantCode,
-        adminEmail: params.adminEmail,
-        subscriptionType: params.subscriptionType,
-        currency: params.currency,
-        conversionNote: params.conversionNote,
-        negotiatedAmount: params.negotiatedAmount,
-        negotiatedCurrency: params.negotiatedCurrency,
-        featureOverrides: params.featureOverrides,
-      }
-    );
+    return this.api.post<ConvertLeadResult>(LEADS_ENDPOINTS.CONVERT_TO_TENANT(id), {
+      editionId: params.editionId,
+      tenantCode: params.tenantCode,
+      adminEmail: params.adminEmail,
+      subscriptionType: params.subscriptionType,
+      currency: params.currency,
+      conversionNote: params.conversionNote,
+      negotiatedAmount: params.negotiatedAmount,
+      negotiatedCurrency: params.negotiatedCurrency,
+      featureOverrides: params.featureOverrides,
+    });
   }
 
   async assignLead(id: string, params: AssignLeadParams): Promise<void> {
@@ -130,10 +124,7 @@ export class LeadsService implements ILeadsService {
   }
 
   async sendEmail(leadId: string, data: SendLeadEmailRequest): Promise<{ logId: string }> {
-    return this.api.post<{ logId: string }>(
-      `${LEADS_ENDPOINTS.LIST}/${leadId}/send-email`,
-      data
-    );
+    return this.api.post<{ logId: string }>(`${LEADS_ENDPOINTS.LIST}/${leadId}/send-email`, data);
   }
 
   async getCommunicationLogs(leadId: string): Promise<LeadCommunicationLogDto[]> {
@@ -149,15 +140,11 @@ export class LeadsService implements ILeadsService {
   }
 
   async getEditionsForConversion(): Promise<EditionForConversionDto[]> {
-    return this.api.get<EditionForConversionDto[]>(
-      LEADS_ENDPOINTS.EDITIONS_FOR_CONVERSION
-    );
+    return this.api.get<EditionForConversionDto[]>(LEADS_ENDPOINTS.EDITIONS_FOR_CONVERSION);
   }
 
   async getEditionFeaturesForConversion(editionId: string): Promise<EditionFeatureGroupDto[]> {
-    return this.api.get<EditionFeatureGroupDto[]>(
-      LEADS_ENDPOINTS.EDITION_FEATURES(editionId)
-    );
+    return this.api.get<EditionFeatureGroupDto[]>(LEADS_ENDPOINTS.EDITION_FEATURES(editionId));
   }
 
   async getStatusEmailPreview(

@@ -33,8 +33,7 @@ export const TENANTS_ENDPOINTS = {
   DOMAIN_BY_ID: (id: string, domainId: string) => `${V1}/Tenants/${id}/domains/${domainId}`,
   DOMAIN_PRIMARY: (id: string, domainId: string) =>
     `${V1}/Tenants/${id}/domains/${domainId}/primary`,
-  DOMAIN_VERIFY: (id: string, domainId: string) =>
-    `${V1}/Tenants/${id}/domains/${domainId}/verify`,
+  DOMAIN_VERIFY: (id: string, domainId: string) => `${V1}/Tenants/${id}/domains/${domainId}/verify`,
   ENTITLEMENTS: {
     EDITIONS: {
       LIST: `${V1}/editions`,

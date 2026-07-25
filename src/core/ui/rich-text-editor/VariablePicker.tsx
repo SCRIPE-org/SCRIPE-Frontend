@@ -276,7 +276,7 @@ function VariableItem({
     <div>
       <button
         type="button"
-        className="flex w-full items-center gap-2 rounded-nx-sm px-3 py-2 text-start text-sm transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
+        className="flex w-full items-center gap-2 rounded-nx-sm px-3 py-2 text-start text-sm transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
         onClick={handleInsert}
       >
         <span className={cn("shrink-0", cat.color)}>{cat.icon}</span>
@@ -297,7 +297,7 @@ function VariableItem({
           {!showFallback ? (
             <button
               type="button"
-              className="flex items-center gap-0.5 rounded-nx-sm text-[10px] text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-accent focus-visible:outline-none focus-visible:shadow-nx-focus"
+              className="flex items-center gap-0.5 rounded-nx-sm text-[10px] text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
               onClick={(e) => {
                 e.stopPropagation();
                 setShowFallback(true);

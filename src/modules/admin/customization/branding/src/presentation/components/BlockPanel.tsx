@@ -191,7 +191,10 @@ function createDefaultBlock(type: BlockType, t: (key: string) => string): Conten
     case "heading":
       return { type: "heading", props: { text: t("studio.block.seed.headingText"), level: "h3" } };
     case "badge":
-      return { type: "badge", props: { label: t("studio.block.seed.badgeLabel"), variant: "info" } };
+      return {
+        type: "badge",
+        props: { label: t("studio.block.seed.badgeLabel"), variant: "info" },
+      };
     case "spacer":
       return { type: "spacer", props: { height: 24 } };
     case "alert":
@@ -357,7 +360,7 @@ export function BlockPanel({
               type="button"
               onClick={() => setExpandedSlot(isExpanded ? null : slot.id)}
               aria-expanded={isExpanded}
-              className="flex w-full items-center justify-between px-3 py-2.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
+              className="flex w-full items-center justify-between px-3 py-2.5 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
             >
               <div className="flex items-center gap-2">
                 <ChevronRight
@@ -402,13 +405,16 @@ export function BlockPanel({
                             className="h-3 w-3 shrink-0 cursor-grab text-nx-ink-3"
                             aria-hidden="true"
                           />
-                          <BlockIcon className="h-3 w-3 shrink-0 text-nx-ink-3" aria-hidden="true" />
+                          <BlockIcon
+                            className="h-3 w-3 shrink-0 text-nx-ink-3"
+                            aria-hidden="true"
+                          />
                           <button
                             type="button"
                             onClick={() =>
                               setEditingBlock(isEditing ? null : { slotId: slot.id, index: i })
                             }
-                            className="flex-1 text-start text-[11px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-accent focus-visible:outline-none focus-visible:shadow-nx-focus"
+                            className="flex-1 text-start text-[11px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:text-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                           >
                             {t(`studio.block.${block.type}`)}
                           </button>
@@ -417,7 +423,7 @@ export function BlockPanel({
                             onClick={() => moveBlock(slot.id, i, "up")}
                             disabled={i === 0}
                             aria-label={t("studio.blocks.moveUp")}
-                            className="rounded-nx-sm p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus disabled:opacity-20"
+                            className="rounded-nx-sm p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none disabled:opacity-20 motion-reduce:transition-none"
                           >
                             <ChevronUp className="h-3 w-3" aria-hidden="true" />
                           </button>
@@ -426,7 +432,7 @@ export function BlockPanel({
                             onClick={() => moveBlock(slot.id, i, "down")}
                             disabled={i === blocks.length - 1}
                             aria-label={t("studio.blocks.moveDown")}
-                            className="rounded-nx-sm p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus disabled:opacity-20"
+                            className="rounded-nx-sm p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none disabled:opacity-20 motion-reduce:transition-none"
                           >
                             <ChevronDown className="h-3 w-3" aria-hidden="true" />
                           </button>
@@ -440,7 +446,7 @@ export function BlockPanel({
                             }}
                             disabled={isFull}
                             aria-label={t("studio.blocks.duplicate")}
-                            className="rounded-nx-sm p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus disabled:opacity-20"
+                            className="rounded-nx-sm p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none disabled:opacity-20 motion-reduce:transition-none"
                           >
                             <Copy className="h-3 w-3" aria-hidden="true" />
                           </button>
@@ -451,7 +457,7 @@ export function BlockPanel({
                               if (isEditing) setEditingBlock(null);
                             }}
                             aria-label={t("studio.blocks.remove")}
-                            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
+                            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                           >
                             <Trash2 className="h-3 w-3" aria-hidden="true" />
                           </button>
@@ -480,7 +486,7 @@ export function BlockPanel({
                             addBlock(slot.id, createDefaultBlock(bt.type, t));
                             setAddingToSlot(null);
                           }}
-                          className="flex items-center gap-1.5 rounded-nx-control border border-nx-line px-2 py-1.5 text-[11px] text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi hover:bg-nx-hover hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
+                          className="flex items-center gap-1.5 rounded-nx-control border border-nx-line px-2 py-1.5 text-[11px] text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                         >
                           <Icon className="h-3 w-3" aria-hidden="true" />
                           {t(bt.labelKey)}
@@ -490,7 +496,7 @@ export function BlockPanel({
                     <button
                       type="button"
                       onClick={() => setAddingToSlot(null)}
-                      className="col-span-2 rounded-nx-control border border-dashed border-nx-line px-2 py-1 text-[10px] text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
+                      className="col-span-2 rounded-nx-control border border-dashed border-nx-line px-2 py-1 text-[10px] text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                     >
                       {t("common.cancel")}
                     </button>
@@ -500,7 +506,7 @@ export function BlockPanel({
                     type="button"
                     onClick={() => setAddingToSlot(slot.id)}
                     disabled={isFull}
-                    className="flex w-full items-center justify-center gap-1 rounded-nx-md border border-dashed border-nx-line py-1.5 text-[11px] text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus disabled:cursor-not-allowed disabled:opacity-40"
+                    className="flex w-full items-center justify-center gap-1 rounded-nx-md border border-dashed border-nx-line py-1.5 text-[11px] text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none"
                   >
                     <Plus className="h-3 w-3" aria-hidden="true" />
                     {isFull ? t("studio.blocks.slotFull") : t("studio.blocks.addBlock")}

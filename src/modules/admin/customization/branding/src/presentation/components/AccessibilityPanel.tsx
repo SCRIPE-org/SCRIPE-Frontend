@@ -86,7 +86,7 @@ function Section({
       <button
         type="button"
         aria-expanded={open}
-        className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-start transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
+        className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-start transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
         onClick={() => setOpen(!open)}
       >
         <Icon className={cn("h-4 w-4 shrink-0", color)} aria-hidden="true" />
@@ -190,7 +190,7 @@ function CheckItem({ check, onFix }: { check: AccessibilityCheck; onFix?: () => 
       {check.autoFix && onFix && (
         <button
           type="button"
-          className="mt-0.5 flex shrink-0 items-center gap-1 rounded-nx-control border border-nx-line bg-nx-surface px-2 py-1 text-[10px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
+          className="mt-0.5 flex shrink-0 items-center gap-1 rounded-nx-control border border-nx-line bg-nx-surface px-2 py-1 text-[10px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           onClick={onFix}
           aria-label={t("studio.a11y.autoFix")}
         >
@@ -439,7 +439,7 @@ export function AccessibilityPanel({
               <button
                 key={profile.key}
                 type="button"
-                className="flex items-center gap-1.5 rounded-nx-md border border-nx-line bg-nx-surface px-2.5 py-2 text-start transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus active:shadow-[inset_0_0_0_1px_var(--nx-accent)]"
+                className="flex items-center gap-1.5 rounded-nx-md border border-nx-line bg-nx-surface px-2.5 py-2 text-start transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none active:shadow-[inset_0_0_0_1px_var(--nx-accent)] motion-reduce:transition-none"
                 onClick={() => batchUpdateDraft(profile.updates)}
               >
                 <Icon className="h-4 w-4 shrink-0 text-nx-accent" aria-hidden="true" />
@@ -453,7 +453,7 @@ export function AccessibilityPanel({
           <button
             key="reset"
             type="button"
-            className="col-span-2 flex items-center gap-1.5 rounded-nx-md border border-destructive/30 bg-destructive/5 px-2.5 py-2 text-start transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-destructive/50 hover:bg-destructive/10 focus-visible:outline-none focus-visible:shadow-nx-focus active:shadow-[inset_0_0_0_1px_hsl(var(--destructive))]"
+            className="col-span-2 flex items-center gap-1.5 rounded-nx-md border border-destructive/30 bg-destructive/5 px-2.5 py-2 text-start transition-colors duration-nx-micro ease-nx-enter hover:border-destructive/50 hover:bg-destructive/10 focus-visible:shadow-nx-focus focus-visible:outline-none active:shadow-[inset_0_0_0_1px_hsl(var(--destructive))] motion-reduce:transition-none"
             onClick={() =>
               batchUpdateDraft({
                 a11yFocusRingEnabled: true,

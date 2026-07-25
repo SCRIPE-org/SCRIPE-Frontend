@@ -50,7 +50,7 @@ const TooltipContent = React.forwardRef<
           floatingSurfaceClasses,
           // 120ms fade + a 2px slide away from the anchored side; reduced motion
           // keeps the crossfade and drops the slide.
-          "animate-in fade-in-0 duration-nx-micro ease-nx-enter data-[state=closed]:animate-out data-[state=closed]:ease-nx-exit data-[state=closed]:fade-out-0",
+          "duration-nx-micro ease-nx-enter animate-in fade-in-0 data-[state=closed]:ease-nx-exit data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
           "motion-safe:data-[side=bottom]:slide-in-from-top-0.5 motion-safe:data-[side=left]:slide-in-from-right-0.5 motion-safe:data-[side=right]:slide-in-from-left-0.5 motion-safe:data-[side=top]:slide-in-from-bottom-0.5",
           className
         )}

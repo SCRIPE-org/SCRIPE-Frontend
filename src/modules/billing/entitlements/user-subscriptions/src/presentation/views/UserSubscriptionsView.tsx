@@ -112,8 +112,7 @@ export function UserSubscriptionsView() {
         {
           key: "expiresAt",
           label: t("entitlements.userSubscriptions.expiresAt") || "Expires",
-          render: (value: string | undefined) =>
-            value ? formatUtc(value, "MMM d, yyyy") : "∞",
+          render: (value: string | undefined) => (value ? formatUtc(value, "MMM d, yyyy") : "∞"),
         },
         {
           key: "daysRemaining",

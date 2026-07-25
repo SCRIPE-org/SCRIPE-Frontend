@@ -78,7 +78,7 @@ export function InstalledPluginDetailView({ installationId }: InstalledPluginDet
       {/* ── Back navigation ── */}
       <Link
         href="/plugins/installed"
-        className="flex w-fit items-center gap-2 text-sm text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink"
+        className="flex w-fit items-center gap-2 text-sm text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none"
       >
         <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
         {t("plugins.backToInstalled")}

@@ -35,9 +35,7 @@ export class RecommendationRuleService implements IRecommendationRuleService {
   }
 
   async getById(id: string): Promise<RecommendationRuleDetailModel> {
-    return this.api.get<RecommendationRuleDetailModel>(
-      RECOMMENDATION_RULES_ENDPOINTS.BY_ID(id)
-    );
+    return this.api.get<RecommendationRuleDetailModel>(RECOMMENDATION_RULES_ENDPOINTS.BY_ID(id));
   }
 
   async create(data: CreateRecommendationRuleRequest): Promise<{ id: string }> {

@@ -129,7 +129,7 @@ export function AssignLeadDialog({
               className={cn(
                 "flex w-full items-center gap-3 rounded-nx-md border px-4 py-3 text-start",
                 "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                "focus-visible:shadow-nx-focus focus-visible:outline-none",
                 unassign
                   ? "border-warning/60 bg-warning/10 text-warning"
                   : "border-nx-line bg-nx-raised text-nx-ink-2 hover:bg-nx-hover"

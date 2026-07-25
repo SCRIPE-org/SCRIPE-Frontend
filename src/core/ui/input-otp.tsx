@@ -58,7 +58,7 @@ const InputOTPSlot = React.forwardRef<
         // start border, only the ends round. Digits are tabular so a code
         // never re-flows as it is typed. Colour-only transition at micro
         // speed; motion-reduce drops even that.
-        "relative flex h-10 w-10 items-center justify-center border-y border-e border-nx-line bg-nx-ground text-sm tabular-nums text-nx-ink transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none first:rounded-s-nx-control first:border-s last:rounded-e-nx-control",
+        "relative flex h-10 w-10 items-center justify-center border-y border-e border-nx-line bg-nx-ground text-sm tabular-nums text-nx-ink transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter first:rounded-s-nx-control first:border-s last:rounded-e-nx-control motion-reduce:transition-none",
         // The active slot is where light collects — the --nx-focus lit edge
         // (inset accent line + wash ring) draws on all four sides, so
         // shared-border middle slots light up evenly too.

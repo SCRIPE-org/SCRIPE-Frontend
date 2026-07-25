@@ -41,7 +41,7 @@ export function FileExplorer({ moduleName, files }: FileExplorerProps) {
             <h3 className="mb-2 text-lg font-semibold leading-none tracking-tight text-nx-ink">
               {files[activeIdx].name}
             </h3>
-            <p className="text-sm leading-relaxed text-pretty text-nx-ink-2">
+            <p className="text-pretty text-sm leading-relaxed text-nx-ink-2">
               {t(files[activeIdx].descriptionKey)}
             </p>
           </div>

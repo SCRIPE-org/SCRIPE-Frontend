@@ -135,9 +135,9 @@ on the backend. `WorkspaceProvider` publishes them to `<html>` as
 them in CSS:
 
 ```css
---edge-accent:      oklch(0.68 var(--workspace-chroma) var(--workspace-hue));
+--edge-accent: oklch(0.68 var(--workspace-chroma) var(--workspace-hue));
 --edge-accent-fill: oklch(0.52 var(--workspace-chroma) var(--workspace-hue));
---edge-emit:        oklch(0.82 0.13 calc(var(--workspace-hue) + 78));
+--edge-emit: oklch(0.82 0.13 calc(var(--workspace-hue) + 78));
 ```
 
 Switching workspace therefore re-tints the entire interface with no
@@ -148,7 +148,7 @@ codebase may use that prefix.** The signup/auth system owns `--sx-*`, and EDGE
 originally shared it — which meant `:root[data-layout="scripe"] { --sx-accent }`
 (specificity 0,2,0) silently overrode the Vault `:root { --sx-accent }` (0,1,0)
 and re-coloured the sign-in page for anyone on the scripe layout. Two design
-systems, one namespace, one winner. The CSS *class* prefix stays `.sx-` because
+systems, one namespace, one winner. The CSS _class_ prefix stays `.sx-` because
 classes never cascade across systems this way; only the custom properties moved.
 
 **`--edge-accent` and `--edge-accent-fill` are deliberately two tokens.**
@@ -192,25 +192,25 @@ to hold for every hue it can pick. Cyan (~190°) is the binding constraint on
 fill, and it is what forced `--edge-accent-fill` to 0.50 and the light
 `--edge-accent` to 0.46.
 
-| Pair | Dark | Light |
-|---|---|---|
-| ink / void | 17.82:1 | 17.28:1 |
-| ink-3 / slab (muted) | 5.63:1 | 6.36:1 |
-| ink-3 / sub (panel) | 5.84:1 | 5.43:1 |
-| accent-as-text / panel, worst hue | 6.18:1 | 4.89:1 |
-| white / accent-fill, worst hue | 4.84:1 | 4.84:1 |
-| success / card | 10.39:1 | 5.35:1 |
-| warning / card | 11.78:1 | 5.96:1 |
-| warning-strong / card | 8.79:1 | 6.81:1 |
-| destructive / card | 6.04:1 | 6.47:1 |
-| destructive-fg / destructive | 6.03:1 | 6.19:1 |
-| success-fg / success | 10.38:1 | 5.35:1 |
+| Pair                              | Dark    | Light   |
+| --------------------------------- | ------- | ------- |
+| ink / void                        | 17.82:1 | 17.28:1 |
+| ink-3 / slab (muted)              | 5.63:1  | 6.36:1  |
+| ink-3 / sub (panel)               | 5.84:1  | 5.43:1  |
+| accent-as-text / panel, worst hue | 6.18:1  | 4.89:1  |
+| white / accent-fill, worst hue    | 4.84:1  | 4.84:1  |
+| success / card                    | 10.39:1 | 5.35:1  |
+| warning / card                    | 11.78:1 | 5.96:1  |
+| warning-strong / card             | 8.79:1  | 6.81:1  |
+| destructive / card                | 6.04:1  | 6.47:1  |
+| destructive-fg / destructive      | 6.03:1  | 6.19:1  |
+| success-fg / success              | 10.38:1 | 5.35:1  |
 
 **`--destructive` and `--success-foreground` are retuned from stock shadcn.**
 The stock dark `--destructive` (`0 62.8% 30.6%`) is a fill colour, but this
 codebase uses `text-destructive` in 606 places, where it rendered at **1.99:1**
 — error text you could not read. Both themes now carry a value that satisfies
-the text duty *and* the fill duty at once, verified against all 33 card surfaces
+the text duty _and_ the fill duty at once, verified against all 33 card surfaces
 the theme system can produce. Likewise `--success-foreground` was white on a
 bright mint at 1.91:1; in dark it is near-black.
 

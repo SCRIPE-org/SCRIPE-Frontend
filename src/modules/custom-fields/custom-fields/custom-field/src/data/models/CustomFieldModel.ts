@@ -72,7 +72,7 @@ export class CustomFieldModel {
     public readonly createdAt: string,
     public readonly labelAr?: string | null,
     public readonly options?: string | null,
-    public readonly modifiedAt?: string | null,
+    public readonly modifiedAt?: string | null
   ) {}
 
   /**
@@ -91,7 +91,7 @@ export class CustomFieldModel {
       json.createdAt,
       json.labelAr,
       json.options,
-      json.modifiedAt,
+      json.modifiedAt
     );
   }
 
@@ -111,7 +111,7 @@ export class CustomFieldModel {
       json.createdAt,
       json.labelAr,
       null,
-      null,
+      null
     );
   }
 

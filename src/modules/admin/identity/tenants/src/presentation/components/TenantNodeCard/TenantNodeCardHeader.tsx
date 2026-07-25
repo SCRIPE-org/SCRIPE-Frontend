@@ -54,7 +54,7 @@ export function TenantNodeCardHeader({
         "flex w-full items-center gap-3 p-4",
         "text-start transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
         "hover:bg-nx-hover",
-        "focus-visible:outline-none focus-visible:shadow-nx-focus"
+        "focus-visible:shadow-nx-focus focus-visible:outline-none"
       )}
       onClick={onToggle}
       aria-expanded={isExpanded}

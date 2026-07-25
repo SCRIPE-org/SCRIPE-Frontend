@@ -26,11 +26,7 @@ import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { GenericForm, type FieldConfig } from "@core/ui/forms/generic-form";
 import { Input } from "@core/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import {
-  DetailSheet,
-  DetailSheetHeader,
-  DetailSheetBody,
-} from "@core/ui/detail-sheet";
+import { DetailSheet, DetailSheetHeader, DetailSheetBody } from "@core/ui/detail-sheet";
 import { PageHeader } from "@core/ui/page-header";
 import { StatCard } from "@core/ui/stat-card";
 import { EmptyState } from "@core/ui/empty-state";
@@ -299,7 +295,12 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
         badges={<Badge variant="default">{t("entitlements.features.controlPanel")}</Badge>}
         actions={
           <>
-            <Button variant="outline" onClick={vm.refreshItems} loading={vm.loading} className="gap-2">
+            <Button
+              variant="outline"
+              onClick={vm.refreshItems}
+              loading={vm.loading}
+              className="gap-2"
+            >
               {!vm.loading && <RefreshCw className="h-4 w-4" aria-hidden="true" />}
               {t("entitlements.features.refresh")}
             </Button>
@@ -315,7 +316,14 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map(({ label, value, icon, tone }) => (
-          <StatCard key={label} label={label} value={value} icon={icon} tone={tone} isLoading={vm.loading} />
+          <StatCard
+            key={label}
+            label={label}
+            value={value}
+            icon={icon}
+            tone={tone}
+            isLoading={vm.loading}
+          />
         ))}
       </section>
 

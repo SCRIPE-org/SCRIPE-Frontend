@@ -89,9 +89,7 @@ export const ContactPointListView = React.memo(function ContactPointListView() {
         key: "createdAt",
         label: t("contactPoint.columns.createdAt"),
         render: (value: string) =>
-          value
-            ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US")
-            : "-",
+          value ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US") : "-",
       },
     ],
     createFields: [

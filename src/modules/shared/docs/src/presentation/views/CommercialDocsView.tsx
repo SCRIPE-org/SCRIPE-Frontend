@@ -39,7 +39,10 @@ function CommercialFooter() {
     {
       titleKey: "commercialMegaMenu.why.label",
       links: [
-        { href: "/commercial/why-scripe-overview", labelKey: "commercialMegaMenu.why.items.overview.title" },
+        {
+          href: "/commercial/why-scripe-overview",
+          labelKey: "commercialMegaMenu.why.items.overview.title",
+        },
         {
           href: "/commercial/competitive-advantages",
           labelKey: "commercialMegaMenu.why.items.competitiveEdge.title",
@@ -183,9 +186,7 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
         <div className="commercial-page">
           <div className="com-404" role="main">
             <h1>{t("commercialNotFound.title")}</h1>
-            <p>
-              {t("commercialNotFound.message", { slug: slug.replace("commercial/", "") })}
-            </p>
+            <p>{t("commercialNotFound.message", { slug: slug.replace("commercial/", "") })}</p>
             <Link
               href="/commercial"
               className="com-btn com-btn--ghost"

@@ -314,7 +314,10 @@ export function ThemeDetailModal({
                     >
                       {/* Logo placeholder */}
                       <div className="mb-2 flex justify-center">
-                        <div className="h-8 w-8 rounded-nx-sm" style={{ background: accentColor }} />
+                        <div
+                          className="h-8 w-8 rounded-nx-sm"
+                          style={{ background: accentColor }}
+                        />
                       </div>
                       {/* Title */}
                       <div className="space-y-1 text-center">
@@ -344,7 +347,10 @@ export function ThemeDetailModal({
                         />
                       ))}
                       {/* Button */}
-                      <div className="h-9 w-full rounded-nx-control" style={{ background: accentColor }} />
+                      <div
+                        className="h-9 w-full rounded-nx-control"
+                        style={{ background: accentColor }}
+                      />
                       {/* Footer link */}
                       <div className="flex justify-center">
                         <div

@@ -106,10 +106,7 @@ export function PayoutsCard({ payouts, payoutsLink }: PayoutsCardProps) {
               const StatusIcon = status.icon;
               const methodKey = PAYOUT_METHOD_KEYS[po.method];
               return (
-                <div
-                  key={po.id}
-                  className="rounded-nx-md border border-nx-line bg-nx-raised p-3"
-                >
+                <div key={po.id} className="rounded-nx-md border border-nx-line bg-nx-raised p-3">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex min-w-0 flex-wrap items-center gap-2">
                       <Badge variant={status.variant}>

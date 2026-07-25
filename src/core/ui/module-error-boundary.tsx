@@ -56,7 +56,7 @@ export function ModuleErrorFallback({ moduleName, error, onRetry }: ModuleErrorF
 
       {process.env.NODE_ENV === "development" && error && (
         <details className="mt-2 w-full max-w-md">
-          <summary className="cursor-pointer rounded-nx-sm text-sm font-medium text-nx-ink-2 focus-visible:outline-none focus-visible:shadow-nx-focus">
+          <summary className="cursor-pointer rounded-nx-sm text-sm font-medium text-nx-ink-2 focus-visible:shadow-nx-focus focus-visible:outline-none">
             {t("errors.boundary.details")}
           </summary>
           <pre className="mt-2 overflow-auto rounded-nx-sm bg-nx-raised p-3 text-xs text-nx-ink-2">

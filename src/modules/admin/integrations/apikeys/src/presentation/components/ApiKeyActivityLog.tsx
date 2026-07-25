@@ -7,12 +7,14 @@ import { Button } from "@core/ui/button";
 import { Badge, type BadgeProps } from "@core/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import { SectionState } from "@core/ui/section-state";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue
-} from "@core/ui/select";
-import {
-  Pagination, PaginationContent, PaginationItem, PaginationLink,
-  PaginationNext, PaginationPrevious
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
 } from "@core/ui/pagination";
 import { Search, ChevronsLeft, ChevronsRight, RefreshCw } from "lucide-react";
 import type { ApiKeyActivityEntry } from "../../domain/entities/ApiKeyActivity";
@@ -147,8 +149,8 @@ export function ApiKeyActivityLog({
               aria-label={t("apikeys.activity.searchPlaceholder")}
               className="h-9 ps-9"
               value={endpointInput}
-              onChange={e => setEndpointInput(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && handleApplyFilters()}
+              onChange={(e) => setEndpointInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleApplyFilters()}
             />
           </div>
 
@@ -174,8 +176,8 @@ export function ApiKeyActivityLog({
               aria-label={t("apikeys.activity.statusPlaceholder")}
               className="h-9"
               value={statusInput}
-              onChange={e => setStatusInput(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && handleApplyFilters()}
+              onChange={(e) => setStatusInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleApplyFilters()}
             />
           </div>
 
@@ -210,7 +212,11 @@ export function ApiKeyActivityLog({
                   <TableHead className="w-[120px]" {...sortableHeadProps("status")}>
                     {t("apikeys.activity.status")}
                   </TableHead>
-                  <TableHead className="w-[120px]" variant="numeric" {...sortableHeadProps("latency")}>
+                  <TableHead
+                    className="w-[120px]"
+                    variant="numeric"
+                    {...sortableHeadProps("latency")}
+                  >
                     {t("apikeys.activity.duration")}
                   </TableHead>
                   <TableHead className="w-[150px]">{t("apikeys.activity.ip")}</TableHead>
@@ -220,7 +226,7 @@ export function ApiKeyActivityLog({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {items.map(log => (
+                {items.map((log) => (
                   <TableRow key={log.id} className="font-mono text-xs">
                     <TableCell className="font-bold">{log.method}</TableCell>
                     <TableCell className="max-w-md select-all truncate" title={log.endpoint}>
@@ -246,7 +252,8 @@ export function ApiKeyActivityLog({
         {/* Pagination Bar */}
         <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-nx-line bg-nx-raised p-4">
           <p className="text-xs text-nx-ink-2">
-            {t("apikeys.activity.showing")}: <span className="font-semibold text-nx-ink">{totalCount}</span>
+            {t("apikeys.activity.showing")}:{" "}
+            <span className="font-semibold text-nx-ink">{totalCount}</span>
           </p>
           <Pagination className="mx-0 w-auto justify-end">
             <PaginationContent className="gap-1.5">
@@ -292,9 +299,9 @@ export function ApiKeyActivityLog({
                   aria-label={t("table.goToPage")}
                   className="h-8 w-12 p-1 text-center font-mono text-xs [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                   value={jumpPageVal}
-                  onChange={e => setJumpPageVal(e.target.value)}
+                  onChange={(e) => setJumpPageVal(e.target.value)}
                   onBlur={handleJumpPageSubmit}
-                  onKeyDown={e => e.key === "Enter" && handleJumpPageSubmit()}
+                  onKeyDown={(e) => e.key === "Enter" && handleJumpPageSubmit()}
                   disabled={isLoading}
                 />
                 <span className="whitespace-nowrap">/ {totalPages}</span>

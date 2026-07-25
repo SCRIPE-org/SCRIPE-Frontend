@@ -107,7 +107,7 @@ export function EmptyState({
 
       <h3
         className={cn(
-          "font-semibold leading-tight tracking-tight text-nx-ink text-balance",
+          "text-balance font-semibold leading-tight tracking-tight text-nx-ink",
           Icon && s.gap,
           s.title
         )}

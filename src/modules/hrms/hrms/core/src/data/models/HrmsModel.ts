@@ -39,19 +39,14 @@ export class HrmsModel {
     public readonly id: string,
     public readonly name: string,
     public readonly createdAt: string,
-    public readonly modifiedAt?: string,
+    public readonly modifiedAt?: string
   ) {}
 
   /**
    * Create HrmsModel from API JSON
    */
   static fromJson(json: HrmsJson): HrmsModel {
-    return new HrmsModel(
-      json.id,
-      json.name,
-      json.createdAt,
-      json.modifiedAt,
-    );
+    return new HrmsModel(json.id, json.name, json.createdAt, json.modifiedAt);
   }
 
   /**

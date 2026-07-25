@@ -28,6 +28,7 @@ export const ar = {
     categoryUpdated: "تم تحديث الفئة بنجاح",
     categoryDeleted: "تم حذف الفئة بنجاح",
     categoriesEmptyHint: "لم يتم إنشاء أي فئات بعد.",
-    categoryDeleteConfirmDesc: "هل أنت متأكد من حذف هذه الفئة؟ ستحتاج تطبيقات هذه الفئة إلى إعادة تصنيف.",
+    categoryDeleteConfirmDesc:
+      "هل أنت متأكد من حذف هذه الفئة؟ ستحتاج تطبيقات هذه الفئة إلى إعادة تصنيف.",
   },
 };

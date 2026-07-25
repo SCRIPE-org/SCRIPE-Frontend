@@ -849,7 +849,7 @@ export function CustomCalendar({
                   className={cn(
                     "h-12 rounded-nx-control px-3 text-sm font-medium",
                     "transition-[color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                    "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                    "focus-visible:shadow-nx-focus focus-visible:outline-none",
                     isSelected
                       ? "bg-nx-accent-fill font-semibold text-nx-on-fill"
                       : "text-nx-ink hover:bg-nx-hover"
@@ -884,7 +884,7 @@ export function CustomCalendar({
                     className={cn(
                       "h-12 rounded-nx-control px-3 text-sm font-medium tabular-nums",
                       "transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                      "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                      "focus-visible:shadow-nx-focus focus-visible:outline-none",
                       isSelected
                         ? "bg-nx-accent-fill font-semibold text-nx-on-fill"
                         : isCurrentYear
@@ -985,7 +985,7 @@ export function CustomCalendar({
               "inline-flex min-h-8 items-center rounded-nx-control bg-nx-accent-fill px-3 py-1.5 text-sm font-medium text-nx-on-fill",
               "transition-shadow duration-nx-micro ease-nx-enter motion-reduce:transition-none",
               "hover:shadow-[inset_0_1px_0_0_color-mix(in_srgb,var(--nx-on-fill)_35%,transparent)]",
-              "focus-visible:outline-none focus-visible:shadow-nx-focus"
+              "focus-visible:shadow-nx-focus focus-visible:outline-none"
             )}
             aria-label={t("common.ok") || "OK"}
           >

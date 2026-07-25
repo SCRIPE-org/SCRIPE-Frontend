@@ -41,10 +41,7 @@ export function OAuthConsentView() {
       >
         <Card className="w-full max-w-md border-destructive/40">
           <CardHeader className="pb-2 text-center">
-            <ShieldCheck
-              className="mx-auto mb-4 h-12 w-12 text-destructive"
-              aria-hidden="true"
-            />
+            <ShieldCheck className="mx-auto mb-4 h-12 w-12 text-destructive" aria-hidden="true" />
             <CardTitle>{t("oauth.invalidRequestTitle")}</CardTitle>
           </CardHeader>
           <CardContent className="pb-6 text-center text-nx-ink-2">
@@ -117,7 +114,7 @@ export function OAuthConsentView() {
               {t("oauth.notYou")}{" "}
               <button
                 type="button"
-                className="font-medium text-nx-accent focus-visible:outline-none focus-visible:shadow-nx-focus hover:underline"
+                className="font-medium text-nx-accent hover:underline focus-visible:shadow-nx-focus focus-visible:outline-none"
                 onClick={vm.handleSwitchAccount}
               >
                 {t("oauth.switchAccount")}

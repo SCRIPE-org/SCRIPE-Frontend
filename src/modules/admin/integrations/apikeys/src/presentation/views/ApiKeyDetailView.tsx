@@ -23,7 +23,7 @@ export default function ApiKeyDetailView() {
   const toast = useEnhancedToast();
   const qc = useQueryClient();
 
-  const id = Array.isArray(params?.id) ? params.id[0] : params?.id ?? "";
+  const id = Array.isArray(params?.id) ? params.id[0] : (params?.id ?? "");
 
   const vm = useApiKeyDetailViewModel(id);
 
@@ -31,12 +31,16 @@ export default function ApiKeyDetailView() {
   const revokeMutation = useMutation({
     mutationFn: () => integrationsContainer.apiKeyRepository.revoke(id),
     onSuccess: () => {
-      toast.success({ title: t("apikeys.revokeToast.successMsg") || "API key successfully revoked." });
+      toast.success({
+        title: t("apikeys.revokeToast.successMsg") || "API key successfully revoked.",
+      });
       qc.invalidateQueries({ queryKey: ["apikey-detail", id] });
       qc.invalidateQueries({ queryKey: ["apikeys"] });
     },
     onError: (err: any) => {
-      toast.error({ title: err.message || t("apikeys.revokeToast.errorMsg") || "Failed to revoke API key." });
+      toast.error({
+        title: err.message || t("apikeys.revokeToast.errorMsg") || "Failed to revoke API key.",
+      });
     },
   });
 
@@ -44,23 +48,30 @@ export default function ApiKeyDetailView() {
   const deleteMutation = useMutation({
     mutationFn: () => integrationsContainer.apiKeyDetailRepository.deletePermanently(id),
     onSuccess: () => {
-      toast.success({ title: t("apikeys.deleteToast.successMsg") || "API key permanently deleted." });
+      toast.success({
+        title: t("apikeys.deleteToast.successMsg") || "API key permanently deleted.",
+      });
       qc.invalidateQueries({ queryKey: ["apikeys"] });
       router.push("/integrations/apikeys");
     },
     onError: (err: any) => {
-      toast.error({ title: err.message || t("apikeys.deleteToast.errorMsg") || "Failed to permanently delete API key." });
+      toast.error({
+        title:
+          err.message ||
+          t("apikeys.deleteToast.errorMsg") ||
+          "Failed to permanently delete API key.",
+      });
     },
   });
 
   if (vm.isDetailLoading) {
     return (
       <div className="flex-1 space-y-6 p-6">
-        <div className="h-10 bg-muted motion-safe:animate-pulse rounded-lg w-1/3" />
-        <div className="h-24 bg-muted motion-safe:animate-pulse rounded-lg" />
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="md:col-span-2 h-64 bg-muted motion-safe:animate-pulse rounded-lg" />
-          <div className="h-64 bg-muted motion-safe:animate-pulse rounded-lg" />
+        <div className="h-10 w-1/3 rounded-lg bg-muted motion-safe:animate-pulse" />
+        <div className="h-24 rounded-lg bg-muted motion-safe:animate-pulse" />
+        <div className="grid gap-6 md:grid-cols-3">
+          <div className="h-64 rounded-lg bg-muted motion-safe:animate-pulse md:col-span-2" />
+          <div className="h-64 rounded-lg bg-muted motion-safe:animate-pulse" />
         </div>
       </div>
     );
@@ -68,8 +79,10 @@ export default function ApiKeyDetailView() {
 
   if (vm.detailError || !vm.detail) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4">
-        <div className="text-destructive font-semibold">{t("apikeys.error.notFound") || "API Key not found or access denied."}</div>
+      <div className="flex flex-1 flex-col items-center justify-center space-y-4 p-8 text-center">
+        <div className="font-semibold text-destructive">
+          {t("apikeys.error.notFound") || "API Key not found or access denied."}
+        </div>
         <button onClick={() => router.push("/integrations/apikeys")} className="text-sm underline">
           {t("apikeys.backToList") || "Back to API Keys"}
         </button>
@@ -79,16 +92,20 @@ export default function ApiKeyDetailView() {
 
   const handleUpdateScopes = (scopes: string) => {
     vm.update({ scopes });
-    toast.success({ title: t("apikeys.updateToast.successScopes") || "API key scopes updated successfully." });
+    toast.success({
+      title: t("apikeys.updateToast.successScopes") || "API key scopes updated successfully.",
+    });
   };
 
   const handleUpdateSettings = (req: any) => {
     vm.update(req);
-    toast.success({ title: t("apikeys.updateToast.successSettings") || "API key settings updated successfully." });
+    toast.success({
+      title: t("apikeys.updateToast.successSettings") || "API key settings updated successfully.",
+    });
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-background pb-12">
+    <div className="flex flex-1 flex-col bg-background pb-12">
       <ApiKeyHeroBand
         detail={vm.detail}
         isRotating={vm.isRotating}
@@ -96,14 +113,12 @@ export default function ApiKeyDetailView() {
         onRevoke={revokeMutation.mutate}
       />
 
-      <div className="p-6 space-y-6">
-        {vm.stats && (
-          <ApiKeyStatsCards stats={vm.stats} isLoading={vm.isStatsLoading} />
-        )}
+      <div className="space-y-6 p-6">
+        {vm.stats && <ApiKeyStatsCards stats={vm.stats} isLoading={vm.isStatsLoading} />}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Main Area */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="space-y-6 lg:col-span-2">
             {vm.stats && vm.stats.totalHits === 0 ? (
               <ApiKeyQuickStart detail={vm.detail} />
             ) : (
@@ -152,10 +167,7 @@ export default function ApiKeyDetailView() {
         </div>
       </div>
 
-      <RotateKeyDialog
-        rotatedKey={vm.rotatedKey}
-        onClose={vm.clearRotatedKey}
-      />
+      <RotateKeyDialog rotatedKey={vm.rotatedKey} onClose={vm.clearRotatedKey} />
     </div>
   );
 }

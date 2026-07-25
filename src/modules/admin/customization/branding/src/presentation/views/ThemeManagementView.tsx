@@ -57,7 +57,10 @@ function TierBadge({
   const { t } = useI18n();
   if (isFree) {
     return (
-      <Badge variant="outline" className="border-success/20 bg-success/10 text-[10px] font-semibold text-success">
+      <Badge
+        variant="outline"
+        className="border-success/20 bg-success/10 text-[10px] font-semibold text-success"
+      >
         <Sparkles className="me-0.5 h-3 w-3" aria-hidden="true" />
         {t(`${T}.tier.free`)}
       </Badge>
@@ -65,7 +68,10 @@ function TierBadge({
   }
   if (pricingType === "StandaloneOnly") {
     return (
-      <Badge variant="outline" className="border-nx-accent text-[10px] font-semibold text-nx-accent">
+      <Badge
+        variant="outline"
+        className="border-nx-accent text-[10px] font-semibold text-nx-accent"
+      >
         <Crown className="me-0.5 h-3 w-3" aria-hidden="true" />
         {t(`${T}.tier.premium`)}
       </Badge>
@@ -78,7 +84,10 @@ function TierBadge({
     3: t(`${T}.tier.enterprise`),
   };
   return (
-    <Badge variant="outline" className="border-info/20 bg-info/10 text-[10px] font-semibold text-info">
+    <Badge
+      variant="outline"
+      className="border-info/20 bg-info/10 text-[10px] font-semibold text-info"
+    >
       <Crown className="me-0.5 h-3 w-3" aria-hidden="true" />
       {tierMap[minTierLevel] || t(`${T}.tier.tierN`, { n: minTierLevel })}
     </Badge>
@@ -91,19 +100,28 @@ function FeatureBadges({ theme }: { theme: ThemeCard }) {
   return (
     <div className="flex flex-wrap gap-1">
       {theme.hasDarkMode && (
-        <Badge variant="outline" className="h-4 border-nx-line bg-nx-raised px-1.5 py-0 text-[9px] text-nx-ink-2">
+        <Badge
+          variant="outline"
+          className="h-4 border-nx-line bg-nx-raised px-1.5 py-0 text-[9px] text-nx-ink-2"
+        >
           <Moon className="me-0.5 h-2.5 w-2.5" aria-hidden="true" />
           {t(`${T}.features.dark`)}
         </Badge>
       )}
       {theme.hasAccessibilityPreset && (
-        <Badge variant="outline" className="h-4 border-info/40 bg-info/10 px-1.5 py-0 text-[9px] text-info">
+        <Badge
+          variant="outline"
+          className="h-4 border-info/40 bg-info/10 px-1.5 py-0 text-[9px] text-info"
+        >
           <Accessibility className="me-0.5 h-2.5 w-2.5" aria-hidden="true" />
           {t(`${T}.features.a11y`)}
         </Badge>
       )}
       {theme.hasContentBlocks && (
-        <Badge variant="outline" className="h-4 border-nx-accent px-1.5 py-0 text-[9px] text-nx-accent">
+        <Badge
+          variant="outline"
+          className="h-4 border-nx-accent px-1.5 py-0 text-[9px] text-nx-accent"
+        >
           <Blocks className="me-0.5 h-2.5 w-2.5" aria-hidden="true" />
           {t(`${T}.features.blocks`)}
         </Badge>
@@ -150,15 +168,24 @@ export function ThemeManagementView() {
                 <div className="flex items-center gap-1.5">
                   <span className="truncate text-sm font-semibold text-nx-ink">{item.name}</span>
                   {item.isFeatured && (
-                    <Star className="h-3.5 w-3.5 shrink-0 fill-warning text-warning" aria-hidden="true" />
+                    <Star
+                      className="h-3.5 w-3.5 shrink-0 fill-warning text-warning"
+                      aria-hidden="true"
+                    />
                   )}
                   {item.isNew && (
-                    <Badge variant="outline" className="h-3.5 border-success/30 bg-success/10 px-1 py-0 text-[9px] text-success">
+                    <Badge
+                      variant="outline"
+                      className="h-3.5 border-success/30 bg-success/10 px-1 py-0 text-[9px] text-success"
+                    >
                       {t(`${T}.new`)}
                     </Badge>
                   )}
                   {item.isDeprecated && (
-                    <Badge variant="outline" className="h-3.5 border-destructive/30 bg-destructive/10 px-1 py-0 text-[9px] text-destructive">
+                    <Badge
+                      variant="outline"
+                      className="h-3.5 border-destructive/30 bg-destructive/10 px-1 py-0 text-[9px] text-destructive"
+                    >
                       {t(`${T}.deprecated`)}
                     </Badge>
                   )}
@@ -279,8 +306,18 @@ export function ThemeManagementView() {
     <div className="space-y-6">
       {/* ── Statistics Cards ── */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-        <StatCard icon={Palette} tone="neutral" label={t(`${T}.stats.total`)} value={statistics.total} />
-        <StatCard icon={Sparkles} tone="success" label={t(`${T}.stats.free`)} value={statistics.free} />
+        <StatCard
+          icon={Palette}
+          tone="neutral"
+          label={t(`${T}.stats.total`)}
+          value={statistics.total}
+        />
+        <StatCard
+          icon={Sparkles}
+          tone="success"
+          label={t(`${T}.stats.free`)}
+          value={statistics.free}
+        />
         <StatCard
           icon={Star}
           tone="warning"

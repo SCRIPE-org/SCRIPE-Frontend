@@ -31,7 +31,7 @@ export function HubHero() {
       </div>
 
       {/* Greeting */}
-      <h1 className="text-4xl font-bold leading-tight tracking-tight text-balance text-nx-ink">
+      <h1 className="text-balance text-4xl font-bold leading-tight tracking-tight text-nx-ink">
         {greeting}
         {adminFirstName ? `, ${adminFirstName}.` : "."}
       </h1>

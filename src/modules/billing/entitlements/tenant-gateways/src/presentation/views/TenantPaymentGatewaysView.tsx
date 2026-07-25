@@ -239,7 +239,7 @@ function GatewayCard({
     <Card className="relative overflow-hidden">
       {/* Status stripe */}
       <div
-        className={`absolute start-0 end-0 top-0 h-1 ${
+        className={`absolute end-0 start-0 top-0 h-1 ${
           gateway.isVerified && gateway.isEnabled
             ? "bg-success"
             : !gateway.isEnabled

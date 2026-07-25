@@ -62,24 +62,26 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-1.5">
               <Label htmlFor="key-name">{t("apikeys.settings.name") || "Key Name"}</Label>
               <Input
                 id="key-name"
                 value={name}
-                onChange={e => setName(e.target.value)}
+                onChange={(e) => setName(e.target.value)}
                 required
                 disabled={!detail.isActive}
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="rate-limit">{t("apikeys.settings.rateLimit") || "Rate Limit (hits/min)"}</Label>
+              <Label htmlFor="rate-limit">
+                {t("apikeys.settings.rateLimit") || "Rate Limit (hits/min)"}
+              </Label>
               <Input
                 id="rate-limit"
                 type="number"
                 value={rateLimit}
-                onChange={e => setRateLimit(e.target.value)}
+                onChange={(e) => setRateLimit(e.target.value)}
                 placeholder="100 (Default)"
                 disabled={!detail.isActive}
               />
@@ -91,47 +93,56 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
             <Textarea
               id="key-desc"
               value={description}
-              onChange={e => setDescription(e.target.value)}
+              onChange={(e) => setDescription(e.target.value)}
               rows={2}
-              placeholder={t("apikeys.settings.descPlaceholder") || "Explain what this integration key is used for..."}
+              placeholder={
+                t("apikeys.settings.descPlaceholder") ||
+                "Explain what this integration key is used for..."
+              }
               disabled={!detail.isActive}
             />
           </div>
 
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-1.5">
-              <Label htmlFor="monthly-quota">{t("apikeys.settings.quota") || "Monthly Quota (total hits)"}</Label>
+              <Label htmlFor="monthly-quota">
+                {t("apikeys.settings.quota") || "Monthly Quota (total hits)"}
+              </Label>
               <Input
                 id="monthly-quota"
                 type="number"
                 value={monthlyQuota}
-                onChange={e => setMonthlyQuota(e.target.value)}
+                onChange={(e) => setMonthlyQuota(e.target.value)}
                 placeholder="Unlimited"
                 disabled={!detail.isActive}
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="reset-day">{t("apikeys.settings.resetDay") || "Quota Reset Day (1-28)"}</Label>
+              <Label htmlFor="reset-day">
+                {t("apikeys.settings.resetDay") || "Quota Reset Day (1-28)"}
+              </Label>
               <Input
                 id="reset-day"
                 type="number"
                 min={1}
                 max={28}
                 value={quotaResetDay}
-                onChange={e => setQuotaResetDay(e.target.value)}
+                onChange={(e) => setQuotaResetDay(e.target.value)}
                 required
                 disabled={!detail.isActive}
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="alert-threshold">{t("apikeys.settings.alert") || "Alert Threshold (%)"}</Label>
+              <Label htmlFor="alert-threshold">
+                {t("apikeys.settings.alert") || "Alert Threshold (%)"}
+              </Label>
               <Input
                 id="alert-threshold"
                 type="number"
                 min={0}
                 max={100}
                 value={alertThreshold}
-                onChange={e => setAlertThreshold(e.target.value)}
+                onChange={(e) => setAlertThreshold(e.target.value)}
                 required
                 disabled={!detail.isActive}
               />
@@ -139,19 +150,23 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="ip-whitelist">{t("apikeys.settings.whitelist") || "IP Whitelist (comma-separated)"}</Label>
+            <Label htmlFor="ip-whitelist">
+              {t("apikeys.settings.whitelist") || "IP Whitelist (comma-separated)"}
+            </Label>
             <Input
               id="ip-whitelist"
               value={ipWhitelist}
-              onChange={e => setIpWhitelist(e.target.value)}
+              onChange={(e) => setIpWhitelist(e.target.value)}
               placeholder="e.g. 192.168.1.1, 10.0.0.0/24 (Leave empty to allow all)"
               disabled={!detail.isActive}
             />
           </div>
         </CardContent>
-        <CardFooter className="justify-end border-t px-6 py-3 bg-muted/20">
+        <CardFooter className="justify-end border-t bg-muted/20 px-6 py-3">
           <Button type="submit" size="sm" disabled={!hasChanges || isUpdating || !detail.isActive}>
-            {isUpdating ? t("common.saving") || "Saving..." : t("common.saveChanges") || "Save Changes"}
+            {isUpdating
+              ? t("common.saving") || "Saving..."
+              : t("common.saveChanges") || "Save Changes"}
           </Button>
         </CardFooter>
       </Card>

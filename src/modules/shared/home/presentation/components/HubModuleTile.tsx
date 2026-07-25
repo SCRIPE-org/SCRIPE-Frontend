@@ -140,7 +140,7 @@ export function HubModuleTile({
           }}
           disabled={isPinLoading}
           aria-label={t("workspaceHub.pin.unpin")}
-          className="absolute end-3 top-3 z-raised rounded-nx-sm p-0 text-nx-on-fill focus-visible:outline-none focus-visible:shadow-nx-focus"
+          className="absolute end-3 top-3 z-raised rounded-nx-sm p-0 text-nx-on-fill focus-visible:shadow-nx-focus focus-visible:outline-none"
           style={{ cursor: isPinLoading ? "wait" : "pointer" }}
         >
           <Star size={13} fill="currentColor" strokeWidth={0} aria-hidden="true" />
@@ -157,7 +157,7 @@ export function HubModuleTile({
           }}
           disabled={isPinLoading}
           aria-label={t("workspaceHub.pin.pin")}
-          className="absolute end-3 top-3 z-raised rounded-nx-sm p-0 text-nx-on-fill opacity-0 transition-opacity duration-nx-micro ease-nx-enter group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
+          className="absolute end-3 top-3 z-raised rounded-nx-sm p-0 text-nx-on-fill opacity-0 transition-opacity duration-nx-micro ease-nx-enter focus-visible:opacity-100 focus-visible:shadow-nx-focus focus-visible:outline-none group-hover:opacity-100 motion-reduce:transition-none"
           style={{ cursor: isPinLoading ? "wait" : "pointer" }}
         >
           <Star size={13} strokeWidth={1.75} aria-hidden="true" />
@@ -205,7 +205,12 @@ export function HubModuleTile({
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-scrim text-nx-on-fill">
           <div
             className="flex items-center justify-center rounded-full"
-            style={{ width: 38, height: 38, background: CHIP_FILL, border: `1px solid ${CHIP_BORDER}` }}
+            style={{
+              width: 38,
+              height: 38,
+              background: CHIP_FILL,
+              border: `1px solid ${CHIP_BORDER}`,
+            }}
           >
             <Lock size={18} strokeWidth={1.75} aria-hidden="true" />
           </div>

@@ -1,4 +1,9 @@
-import type { ApiKeyDetailDto, ApiKeyStatsDto, ApiKeyChartDataPointDto, ApiKeyActivityEntryDto } from "../models/ApiKeyDetailDto";
+import type {
+  ApiKeyDetailDto,
+  ApiKeyStatsDto,
+  ApiKeyChartDataPointDto,
+  ApiKeyActivityEntryDto,
+} from "../models/ApiKeyDetailDto";
 import type { ApiKeyDetailData } from "../../domain/entities/ApiKeyDetail";
 import type { ApiKeyStatsData } from "../../domain/entities/ApiKeyStats";
 import type { ApiKeyChartDataPoint } from "../../domain/entities/ApiKeyChartData";
@@ -27,7 +32,7 @@ export class ApiKeyDetailMapper {
       lastUsedAt: dto.lastUsedAt ?? null,
       lastUsedFromIp: dto.lastUsedFromIp ?? null,
       ipWhitelist: dto.ipWhitelist ?? null,
-      scopeChanges: (dto.scopeChanges ?? []).map(s => ({
+      scopeChanges: (dto.scopeChanges ?? []).map((s) => ({
         previousScopes: s.previousScopes ?? "",
         newScopes: s.newScopes ?? "",
         changedAt: s.changedAt ?? "",

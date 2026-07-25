@@ -234,7 +234,7 @@ const ToastAction = React.forwardRef<
     className={cn(
       "inline-flex h-8 shrink-0 items-center justify-center rounded-nx-control border border-nx-line-hi bg-transparent px-3 text-sm font-medium text-nx-ink",
       "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-      "hover:bg-nx-hover focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
+      "hover:bg-nx-hover focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none",
       // Disabled reads through its own ink and hairline tokens. `opacity-50`
       // over a translucent toast surface produced a different grey on every
       // design variant and landed under the contrast floor on `modern`.
@@ -258,7 +258,7 @@ const ToastClose = React.forwardRef<
     className={cn(
       "absolute end-1.5 top-1.5 grid h-8 w-8 place-items-center rounded-nx-sm text-nx-ink-3",
       "transition-[color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-      "hover:bg-nx-hover hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus",
+      "hover:bg-nx-hover hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none",
       className
     )}
     toast-close=""
@@ -275,7 +275,7 @@ const ToastTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Title
     ref={ref}
-    className={cn("text-sm font-semibold leading-tight tracking-tight text-balance", className)}
+    className={cn("text-balance text-sm font-semibold leading-tight tracking-tight", className)}
     {...props}
   />
 ));
@@ -290,7 +290,7 @@ const ToastDescription = React.forwardRef<
     // `opacity-90` was doing the job a second ink token should do — a
     // translucent white over a translucent surface never lands on a measured
     // contrast step.
-    className={cn("text-sm leading-snug text-pretty text-nx-ink-2", className)}
+    className={cn("text-pretty text-sm leading-snug text-nx-ink-2", className)}
     {...props}
   />
 ));
@@ -322,9 +322,7 @@ const ToastContent = React.forwardRef<
 
   return (
     <div ref={ref} className={cn("flex min-w-0 items-start gap-3", className)} {...props}>
-      {showIcon && (
-        <Glyph aria-hidden="true" className={cn("mt-0.5 h-4 w-4 shrink-0", tint)} />
-      )}
+      {showIcon && <Glyph aria-hidden="true" className={cn("mt-0.5 h-4 w-4 shrink-0", tint)} />}
       <div className="min-w-0 flex-1 space-y-1">
         {title && <ToastTitle>{title}</ToastTitle>}
         {description && <ToastDescription>{description}</ToastDescription>}

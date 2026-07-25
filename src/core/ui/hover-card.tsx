@@ -42,7 +42,7 @@ const HoverCardContent = React.forwardRef<
           floatingScrollClasses,
           // 140ms fade + 0.98 scale from the trigger origin; reduced motion keeps
           // the crossfade and drops the scale.
-          "origin-[--radix-hover-card-content-transform-origin] duration-nx-micro ease-nx-enter data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-safe:data-[state=open]:zoom-in-[0.98] data-[state=closed]:animate-out data-[state=closed]:ease-nx-exit data-[state=closed]:fade-out-0 motion-safe:data-[state=closed]:zoom-out-[0.98]",
+          "origin-[--radix-hover-card-content-transform-origin] duration-nx-micro ease-nx-enter data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 motion-safe:data-[state=closed]:zoom-out-[0.98] motion-safe:data-[state=open]:zoom-in-[0.98]",
           className
         )}
         {...props}

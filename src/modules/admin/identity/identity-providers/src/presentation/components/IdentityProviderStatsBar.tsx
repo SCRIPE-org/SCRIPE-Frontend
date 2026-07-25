@@ -45,7 +45,7 @@ export function IdentityProviderStatsBar({ items }: Props) {
             {t("identityProviders.statsTotal")}
           </p>
           <div className="mt-1 flex items-baseline gap-2">
-            <span className="text-2xl font-bold tracking-tight tabular-nums text-nx-ink">
+            <span className="text-2xl font-bold tabular-nums tracking-tight text-nx-ink">
               {total}
             </span>
             <span className="text-xs text-nx-ink-3">{t("identityProviders.statsConfigured")}</span>
@@ -63,7 +63,7 @@ export function IdentityProviderStatsBar({ items }: Props) {
             {t("identityProviders.statsActive")}
           </p>
           <div className="mt-1 flex items-baseline gap-2">
-            <span className="text-2xl font-bold tracking-tight tabular-nums text-success">
+            <span className="text-2xl font-bold tabular-nums tracking-tight text-success">
               {active}
             </span>
             <span className="text-xs text-nx-ink-3">

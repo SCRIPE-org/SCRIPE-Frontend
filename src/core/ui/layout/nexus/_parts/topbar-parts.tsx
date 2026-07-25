@@ -316,7 +316,7 @@ export function TopbarBreadcrumbs({
         <>
           <BreadcrumbSep isRTL={isRTL} />
           <span
-            className="px-1.5 py-0.5 font-semibold text-nx-ink animate-in fade-in duration-nx-standard"
+            className="px-1.5 py-0.5 font-semibold text-nx-ink duration-nx-standard animate-in fade-in"
             style={{
               overflow: "hidden",
               textOverflow: "ellipsis",
@@ -408,7 +408,9 @@ export function TopbarContextPill({ isModuleMode, tenantName }: TopbarContextPil
       style={{
         gap: 6,
         padding: "4px 12px",
-        background: isModuleMode ? "var(--nx-accent-wash, hsl(var(--primary) / 0.1))" : "transparent",
+        background: isModuleMode
+          ? "var(--nx-accent-wash, hsl(var(--primary) / 0.1))"
+          : "transparent",
         border: `1px solid ${
           isModuleMode
             ? "color-mix(in oklch, var(--nx-accent, hsl(var(--primary))) 30%, transparent)"

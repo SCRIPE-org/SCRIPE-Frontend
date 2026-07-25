@@ -51,10 +51,7 @@ export class ProfileRepository implements IProfileRepository {
   async uploadAvatar(file: File): Promise<{ profileImageUrl: string }> {
     const formData = new FormData();
     formData.append("image", file);
-    const response = await this.api.post<{ imageUrl: string }>(
-      PROFILE_ENDPOINTS.AVATAR,
-      formData
-    );
+    const response = await this.api.post<{ imageUrl: string }>(PROFILE_ENDPOINTS.AVATAR, formData);
     return { profileImageUrl: response.imageUrl };
   }
 
@@ -139,10 +136,7 @@ export class ProfileRepository implements IProfileRepository {
   }
 
   async linkExternalLogin(data: LinkExternalLoginDto): Promise<ExternalLogin> {
-    const dto = await this.api.post<ExternalLoginDto>(
-      PROFILE_ENDPOINTS.LINK_EXTERNAL_LOGIN,
-      data
-    );
+    const dto = await this.api.post<ExternalLoginDto>(PROFILE_ENDPOINTS.LINK_EXTERNAL_LOGIN, data);
     return ProfileMapper.toExternalLogin(dto);
   }
 

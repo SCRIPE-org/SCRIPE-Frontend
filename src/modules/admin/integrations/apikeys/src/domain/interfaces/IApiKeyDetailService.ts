@@ -30,6 +30,9 @@ export interface IApiKeyDetailService {
   rotate(id: string): Promise<CreateApiKeyResult>;
   getStats(id: string): Promise<ApiKeyStatsData>;
   getChartData(id: string, params: ChartParams): Promise<ApiKeyChartDataPoint[]>;
-  getActivity(id: string, params: ActivityParams): Promise<{ items: ApiKeyActivityEntry[]; totalCount: number }>;
+  getActivity(
+    id: string,
+    params: ActivityParams
+  ): Promise<{ items: ApiKeyActivityEntry[]; totalCount: number }>;
   deletePermanently(id: string): Promise<void>;
 }

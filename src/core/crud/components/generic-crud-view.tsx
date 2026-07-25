@@ -33,7 +33,16 @@ import { cn } from "@core/common/utils";
 import type { PaginationInfo } from "@core/common/pagination";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCallback, useMemo, memo, useEffect } from "react";
-import { Users, Sliders, ListTodo, Activity, ShieldCheck, Key, FileText, Inbox } from "lucide-react";
+import {
+  Users,
+  Sliders,
+  ListTodo,
+  Activity,
+  ShieldCheck,
+  Key,
+  FileText,
+  Inbox,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { appLogger } from "@core/common/logger";
 import { usePermission } from "@core/hooks/use-permission";
@@ -656,25 +665,52 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     const res = config?.resource?.toLowerCase() || "";
     const lowerTitle = title.toLowerCase();
 
-    if (res.includes("staff") || res.includes("hrms") || lowerTitle.includes("staff") || lowerTitle.includes("hrms")) {
+    if (
+      res.includes("staff") ||
+      res.includes("hrms") ||
+      lowerTitle.includes("staff") ||
+      lowerTitle.includes("hrms")
+    ) {
       return Users;
     }
     if (res.includes("party") || lowerTitle.includes("party") || lowerTitle.includes("parties")) {
       return Users;
     }
-    if (res.includes("work") || res.includes("task") || lowerTitle.includes("work") || lowerTitle.includes("task") || lowerTitle.includes("todo")) {
+    if (
+      res.includes("work") ||
+      res.includes("task") ||
+      lowerTitle.includes("work") ||
+      lowerTitle.includes("task") ||
+      lowerTitle.includes("todo")
+    ) {
       return ListTodo;
     }
     if (res.includes("custom") || lowerTitle.includes("custom") || lowerTitle.includes("field")) {
       return Sliders;
     }
-    if (res.includes("analytics") || lowerTitle.includes("analytics") || lowerTitle.includes("metric") || lowerTitle.includes("event")) {
+    if (
+      res.includes("analytics") ||
+      lowerTitle.includes("analytics") ||
+      lowerTitle.includes("metric") ||
+      lowerTitle.includes("event")
+    ) {
       return Activity;
     }
-    if (res.includes("compliance") || lowerTitle.includes("compliance") || lowerTitle.includes("consent") || lowerTitle.includes("gdpr")) {
+    if (
+      res.includes("compliance") ||
+      lowerTitle.includes("compliance") ||
+      lowerTitle.includes("consent") ||
+      lowerTitle.includes("gdpr")
+    ) {
       return ShieldCheck;
     }
-    if (res.includes("entitlement") || lowerTitle.includes("entitlement") || lowerTitle.includes("quota") || lowerTitle.includes("plan") || lowerTitle.includes("billing")) {
+    if (
+      res.includes("entitlement") ||
+      lowerTitle.includes("entitlement") ||
+      lowerTitle.includes("quota") ||
+      lowerTitle.includes("plan") ||
+      lowerTitle.includes("billing")
+    ) {
       return Key;
     }
     return FileText;

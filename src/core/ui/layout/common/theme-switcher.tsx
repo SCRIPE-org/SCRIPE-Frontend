@@ -150,7 +150,7 @@ export function NxThemeSwitcher({
         "rounded-full border border-nx-line bg-nx-raised p-2 text-nx-ink-2",
         "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
         "hover:text-nx-ink",
-        "focus-visible:outline-none focus-visible:shadow-nx-focus",
+        "focus-visible:shadow-nx-focus focus-visible:outline-none",
         buttonClassName
       )}
     >

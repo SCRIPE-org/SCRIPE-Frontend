@@ -18,11 +18,12 @@ import {
   Zap,
 } from "lucide-react";
 
-const STATUS_CONFIG: Record<string, { icon: typeof CheckCircle2; variant: BadgeProps["variant"] }> = {
-  Complete: { icon: CheckCircle2, variant: "success" },
-  Pending: { icon: Clock, variant: "warning" },
-  Restricted: { icon: AlertTriangle, variant: "destructive" },
-};
+const STATUS_CONFIG: Record<string, { icon: typeof CheckCircle2; variant: BadgeProps["variant"] }> =
+  {
+    Complete: { icon: CheckCircle2, variant: "success" },
+    Pending: { icon: Clock, variant: "warning" },
+    Restricted: { icon: AlertTriangle, variant: "destructive" },
+  };
 
 const ONBOARDING_STEPS = [
   { key: "createAccount", icon: CreditCard },
@@ -119,7 +120,9 @@ export function StripeOnboardingStepper({
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className={`text-sm font-semibold ${done ? "text-nx-ink" : "text-nx-ink-3"}`}>
+                    <p
+                      className={`text-sm font-semibold ${done ? "text-nx-ink" : "text-nx-ink-3"}`}
+                    >
                       {t(`entitlements.tenantConnect.step${i + 1}Title`)}
                     </p>
                   </div>

@@ -276,6 +276,7 @@ export function useTemplateFormViewModel() {
     languageOptions,
     categoryOptions,
     t,
-    title: mode === "create" ? t("messaging.templates.createTitle") : t("messaging.templates.editTitle"),
+    title:
+      mode === "create" ? t("messaging.templates.createTitle") : t("messaging.templates.editTitle"),
   };
 }

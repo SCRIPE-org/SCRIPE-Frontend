@@ -46,7 +46,7 @@ const CommandDialog = ({ children, label, ...props }: CommandDialogProps) => {
         {/* The dialog's close control sits at the top inline-end corner, which
             is exactly where the search field ends — the query used to run
             underneath it. The input row reserves that corner instead. */}
-        <Command className="[&_[cmdk-input-wrapper]]:pe-11 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-nx-ink-3 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
+        <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-nx-ink-3 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]]:pe-11 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
           {children}
         </Command>
       </DialogContent>
@@ -155,13 +155,13 @@ const CommandItem = React.forwardRef<
     ref={ref}
     data-variant={variant}
     className={cn(
-      "group relative flex min-h-8 cursor-default select-none items-center gap-2 rounded-nx-sm px-2 py-1.5 text-sm text-nx-ink outline-none transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none data-[selected='true']:bg-nx-hover data-[selected=true]:text-nx-ink data-[disabled=true]:pointer-events-none data-[disabled=true]:text-nx-ink-3 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+      "group relative flex min-h-8 cursor-default select-none items-center gap-2 rounded-nx-sm px-2 py-1.5 text-sm text-nx-ink outline-none transition-colors duration-nx-micro ease-nx-enter data-[disabled=true]:pointer-events-none data-[selected='true']:bg-nx-hover data-[disabled=true]:text-nx-ink-3 data-[selected=true]:text-nx-ink motion-reduce:transition-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
       // cmdk's selected row is the ACTIVE thing — light collects on it: hover
       // tint plus the 2px inline-start accent lit edge. Transparent at rest so
       // it crossfades in with the tint instead of snapping on.
-      "before:absolute before:inset-y-1 before:start-0 before:w-0.5 before:rounded-full before:bg-transparent before:transition-colors before:duration-nx-micro motion-reduce:before:transition-none data-[selected=true]:before:bg-nx-accent",
+      "before:absolute before:inset-y-1 before:start-0 before:w-0.5 before:rounded-full before:bg-transparent before:transition-colors before:duration-nx-micro data-[selected=true]:before:bg-nx-accent motion-reduce:before:transition-none",
       variant === "destructive" &&
-        "text-nx-danger data-[selected=true]:bg-destructive/10 data-[selected=true]:text-nx-danger data-[disabled=true]:text-nx-ink-3",
+        "text-nx-danger data-[selected=true]:bg-destructive/10 data-[disabled=true]:text-nx-ink-3 data-[selected=true]:text-nx-danger",
       className
     )}
     {...props}

@@ -117,9 +117,13 @@ function getLayoutStructure(layout: string): {
  */
 function relativeLuminance(hex: string): number {
   const clean = hex.replace("#", "");
-  const full = clean.length === 3
-    ? clean.split("").map((c) => c + c).join("")
-    : clean;
+  const full =
+    clean.length === 3
+      ? clean
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : clean;
   if (full.length !== 6 || /[^0-9a-fA-F]/.test(full)) return 1;
   const channel = (start: number) => {
     const c = parseInt(full.slice(start, start + 2), 16) / 255;

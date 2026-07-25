@@ -53,9 +53,7 @@ export function AccountStatusCard({
                 {t("entitlements.stripeConnect.stripeAccount")}
               </CardTitle>
               {account.stripeAccountId && (
-                <p className="mt-0.5 font-mono text-xs text-nx-ink-3">
-                  {account.stripeAccountId}
-                </p>
+                <p className="mt-0.5 font-mono text-xs text-nx-ink-3">{account.stripeAccountId}</p>
               )}
             </div>
           </div>
@@ -83,9 +81,7 @@ export function AccountStatusCard({
                   {t("entitlements.stripeConnect.continueOnboarding")}
                 </Button>
                 <Button variant="outline" size="sm" onClick={onRefreshLink} loading={isRefreshing}>
-                  {!isRefreshing && (
-                    <RefreshCw className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
-                  )}
+                  {!isRefreshing && <RefreshCw className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />}
                   {t("entitlements.stripeConnect.refreshLink")}
                 </Button>
               </>

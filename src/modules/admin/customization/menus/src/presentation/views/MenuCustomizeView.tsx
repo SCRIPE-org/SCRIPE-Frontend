@@ -88,7 +88,7 @@ export function MenuCustomizeView() {
                     className={cn(
                       "inline-flex items-center gap-1.5 rounded-nx-sm px-3 py-1.5 text-sm font-medium",
                       "transition-[color,background-color] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
-                      "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                      "focus-visible:shadow-nx-focus focus-visible:outline-none",
                       vm.scope === s
                         ? "bg-nx-accent-fill text-nx-on-fill"
                         : "text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"
@@ -132,13 +132,10 @@ export function MenuCustomizeView() {
               <ChevronRight className="me-1 h-4 w-4 shrink-0" aria-hidden="true" />
               {t("common.collapseAll")}
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => vm.refetch()}
-              loading={vm.isLoading}
-            >
-              {!vm.isLoading && <RefreshCw className="me-1.5 h-4 w-4 shrink-0" aria-hidden="true" />}
+            <Button variant="outline" size="sm" onClick={() => vm.refetch()} loading={vm.isLoading}>
+              {!vm.isLoading && (
+                <RefreshCw className="me-1.5 h-4 w-4 shrink-0" aria-hidden="true" />
+              )}
               {t("common.refresh")}
             </Button>
           </>

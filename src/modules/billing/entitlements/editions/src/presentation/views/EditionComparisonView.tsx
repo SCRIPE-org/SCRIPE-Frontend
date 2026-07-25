@@ -15,14 +15,7 @@ import { useRef, useState } from "react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableCell,
-} from "@core/ui/table";
+import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from "@core/ui/table";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { EmptyState } from "@core/ui/empty-state";
@@ -185,9 +178,7 @@ function FeatureMatrixCell({
             // The infinity glyph is the reading; screen readers get the word.
             <span className="text-sm font-semibold text-nx-accent">
               <span aria-hidden="true">∞</span>
-              <span className="sr-only">
-                {t("entitlements.editions.comparison.unlimited")}
-              </span>
+              <span className="sr-only">{t("entitlements.editions.comparison.unlimited")}</span>
             </span>
           ) : num === 0 ? (
             <MatrixCell value={null} />

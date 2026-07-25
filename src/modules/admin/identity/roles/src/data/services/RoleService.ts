@@ -132,7 +132,9 @@ export class RoleService implements IRoleService {
   }
 
   async getMyTenantAvailablePermissions(category?: string): Promise<PermissionModel[]> {
-    const url = buildUrl(ROLES_ENDPOINTS.MY_TENANT_AVAILABLE_PERMISSIONS, { category: category || undefined });
+    const url = buildUrl(ROLES_ENDPOINTS.MY_TENANT_AVAILABLE_PERMISSIONS, {
+      category: category || undefined,
+    });
 
     const response = await this.api.get<any[]>(url);
     return response.map((p) => PermissionModel.fromJson(p));
@@ -165,4 +167,3 @@ export class RoleService implements IRoleService {
     return response.affectedRows ?? ids.length;
   }
 }
-

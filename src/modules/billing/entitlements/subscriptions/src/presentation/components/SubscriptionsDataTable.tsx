@@ -54,9 +54,11 @@ const STATUS_COLORS: Record<string, string> = {
 // See UpcomingRenewalsTimeline for why Monthly/Lifetime borrow the workspace
 // accent rather than a fixed hue.
 const TYPE_COLORS: Record<string, string> = {
-  Monthly: "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent",
+  Monthly:
+    "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent",
   Yearly: "border-info/30 bg-info/10 text-info",
-  Lifetime: "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent",
+  Lifetime:
+    "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent",
   Trial: "border-info/30 bg-info/10 text-info",
 };
 
@@ -173,7 +175,10 @@ export function SubscriptionsDataTable({
             <TableBody>
               {subscriptions.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={11} className="h-28 text-center text-sm font-medium text-nx-ink-3">
+                  <TableCell
+                    colSpan={11}
+                    className="h-28 text-center text-sm font-medium text-nx-ink-3"
+                  >
                     {t("common.noResults")}
                   </TableCell>
                 </TableRow>
@@ -207,7 +212,9 @@ export function SubscriptionsDataTable({
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
-                          <span className="text-sm font-semibold text-nx-ink">{sub.editionName}</span>
+                          <span className="text-sm font-semibold text-nx-ink">
+                            {sub.editionName}
+                          </span>
                           {sub.isDowngraded && (
                             <span className="text-[10px] font-semibold text-warning">
                               {t("entSubscriptions.downgraded")}

@@ -77,9 +77,7 @@ export class EditionService implements IEditionService {
 
   // ── Versioning ──
   async getVersions(editionId: string): Promise<EditionVersionModel[]> {
-    return this.api.get<EditionVersionModel[]>(
-      EDITIONS_ENDPOINTS.VERSIONS(editionId)
-    );
+    return this.api.get<EditionVersionModel[]>(EDITIONS_ENDPOINTS.VERSIONS(editionId));
   }
 
   async createVersion(
@@ -89,10 +87,12 @@ export class EditionService implements IEditionService {
     pricingSnapshot?: Array<{ currency: string; billingCycle: string; amount: number }>,
     pendingLabels?: Record<string, { en?: string; ar?: string }>
   ): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(
-      EDITIONS_ENDPOINTS.CREATE_VERSION(editionId),
-      { changeNotes, featureValues, pricingSnapshot, displayLabelOverrides: pendingLabels ?? {} }
-    );
+    return this.api.post<{ id: string }>(EDITIONS_ENDPOINTS.CREATE_VERSION(editionId), {
+      changeNotes,
+      featureValues,
+      pricingSnapshot,
+      displayLabelOverrides: pendingLabels ?? {},
+    });
   }
 
   async publishVersion(
@@ -100,17 +100,11 @@ export class EditionService implements IEditionService {
     versionId: string,
     data: { rolloutStrategy: string; scheduledAt?: string; canaryPercentage?: number }
   ): Promise<void> {
-    await this.api.post(
-      EDITIONS_ENDPOINTS.PUBLISH_VERSION(editionId, versionId),
-      data
-    );
+    await this.api.post(EDITIONS_ENDPOINTS.PUBLISH_VERSION(editionId, versionId), data);
   }
 
   async cancelVersion(editionId: string, versionId: string): Promise<void> {
-    await this.api.post(
-      EDITIONS_ENDPOINTS.CANCEL_VERSION(editionId, versionId),
-      {}
-    );
+    await this.api.post(EDITIONS_ENDPOINTS.CANCEL_VERSION(editionId, versionId), {});
   }
 
   async directApplyFeatures(
@@ -141,23 +135,16 @@ export class EditionService implements IEditionService {
 
   // ── Currency Exchange Rates ──
   async getExchangeRates(baseCurrency: string = "USD"): Promise<Record<string, number>> {
-    return this.api.get<Record<string, number>>(
-      EDITIONS_ENDPOINTS.RATES(baseCurrency)
-    );
+    return this.api.get<Record<string, number>>(EDITIONS_ENDPOINTS.RATES(baseCurrency));
   }
 
   // ── Promotions ──
   async getPromotions(editionId: string): Promise<EditionPromotionData[]> {
-    return this.api.get<EditionPromotionData[]>(
-      EDITIONS_ENDPOINTS.PROMOTIONS(editionId)
-    );
+    return this.api.get<EditionPromotionData[]>(EDITIONS_ENDPOINTS.PROMOTIONS(editionId));
   }
 
   async createPromotion(editionId: string, data: CreatePromotionRequest): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(
-      EDITIONS_ENDPOINTS.CREATE_PROMOTION(editionId),
-      data
-    );
+    return this.api.post<{ id: string }>(EDITIONS_ENDPOINTS.CREATE_PROMOTION(editionId), data);
   }
 
   async updatePromotion(
@@ -165,10 +152,7 @@ export class EditionService implements IEditionService {
     promoId: string,
     data: UpdatePromotionRequest
   ): Promise<void> {
-    await this.api.put(
-      EDITIONS_ENDPOINTS.UPDATE_PROMOTION(editionId, promoId),
-      data
-    );
+    await this.api.put(EDITIONS_ENDPOINTS.UPDATE_PROMOTION(editionId, promoId), data);
   }
 
   async deletePromotion(editionId: string, promoId: string): Promise<void> {

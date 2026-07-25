@@ -103,9 +103,7 @@ export function TenantSettingsEditDialog({
       <DialogContent className="max-w-2xl" dir={direction}>
         <DialogHeader>
           <DialogTitle>{t("tenant.editSettings")}</DialogTitle>
-          <DialogDescription>
-            {t("tenant.editSettingsDesc")}
-          </DialogDescription>
+          <DialogDescription>{t("tenant.editSettingsDesc")}</DialogDescription>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
@@ -147,9 +145,7 @@ export function TenantSettingsEditDialog({
                   }
                   placeholder={t("tenant.neverExpires")}
                 />
-                <p className="text-xs text-nx-ink-2">
-                  {t("tenant.passwordExpiryHelp")}
-                </p>
+                <p className="text-xs text-nx-ink-2">{t("tenant.passwordExpiryHelp")}</p>
               </div>
               <div className="space-y-2">
                 <Label>{t("tenant.lockoutDuration")}</Label>
@@ -287,9 +283,7 @@ export function TenantSettingsEditDialog({
                 <Input
                   value={formData.loginSubtitle || ""}
                   onChange={(e) => handleChange("loginSubtitle", e.target.value)}
-                  placeholder={
-                    t("tenant.loginSubtitlePlaceholder")
-                  }
+                  placeholder={t("tenant.loginSubtitlePlaceholder")}
                 />
               </div>
             </div>

@@ -55,9 +55,6 @@ registerPage({
   category: "modules",
   order: 5,
   sections,
-  relatedSlugs: [
-    "modules/hrms-overview",
-    "modules/party-kernel-overview",
-  ],
+  relatedSlugs: ["modules/hrms-overview", "modules/party-kernel-overview"],
   lastUpdated: "2026-07-16",
 });

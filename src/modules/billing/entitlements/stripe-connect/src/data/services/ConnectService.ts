@@ -49,10 +49,9 @@ export class ConnectService implements IConnectService {
   }
 
   async createAccount(tenantId: string): Promise<ConnectAccountResultModel> {
-    return this.api.post<ConnectAccountResultModel>(
-      STRIPE_CONNECT_ENDPOINTS.ACCOUNTS.CREATE,
-      { tenantId }
-    );
+    return this.api.post<ConnectAccountResultModel>(STRIPE_CONNECT_ENDPOINTS.ACCOUNTS.CREATE, {
+      tenantId,
+    });
   }
 
   async searchEligibleTenants(search?: string): Promise<EligibleTenantItemModel[]> {
@@ -77,10 +76,7 @@ export class ConnectService implements IConnectService {
   }
 
   async updateCommissionRate(tenantId: string, rate: number | null): Promise<void> {
-    await this.api.put(
-      STRIPE_CONNECT_ENDPOINTS.ACCOUNTS.COMMISSION_RATE(tenantId),
-      { rate }
-    );
+    await this.api.put(STRIPE_CONNECT_ENDPOINTS.ACCOUNTS.COMMISSION_RATE(tenantId), { rate });
   }
 
   // ── Tenant-Facing Lifecycle ──
@@ -141,16 +137,13 @@ export class ConnectService implements IConnectService {
       toDate?: string;
     }
   ): Promise<PagedResultModel<CommissionResponseModel>> {
-    const url = buildUrl(
-      STRIPE_CONNECT_ENDPOINTS.COMMISSIONS.BY_TENANT(tenantId),
-      {
-        page: params.page,
-        pageSize: params.pageSize,
-        status: params.status,
-        fromDate: params.fromDate,
-        toDate: params.toDate,
-      }
-    );
+    const url = buildUrl(STRIPE_CONNECT_ENDPOINTS.COMMISSIONS.BY_TENANT(tenantId), {
+      page: params.page,
+      pageSize: params.pageSize,
+      status: params.status,
+      fromDate: params.fromDate,
+      toDate: params.toDate,
+    });
     return this.api.get<PagedResultModel<CommissionResponseModel>>(url);
   }
 
@@ -186,17 +179,14 @@ export class ConnectService implements IConnectService {
     fromDate?: string;
     toDate?: string;
   }): Promise<TenantTransactionsResponseModel> {
-    const url = buildUrl(
-      STRIPE_CONNECT_ENDPOINTS.TENANT_STRIPE_CONNECT.TRANSACTIONS,
-      {
-        page: params.page,
-        pageSize: params.pageSize,
-        status: params.status,
-        type: params.type,
-        fromDate: params.fromDate,
-        toDate: params.toDate,
-      }
-    );
+    const url = buildUrl(STRIPE_CONNECT_ENDPOINTS.TENANT_STRIPE_CONNECT.TRANSACTIONS, {
+      page: params.page,
+      pageSize: params.pageSize,
+      status: params.status,
+      type: params.type,
+      fromDate: params.fromDate,
+      toDate: params.toDate,
+    });
     return this.api.get<TenantTransactionsResponseModel>(url);
   }
 

@@ -39,19 +39,14 @@ export class PartyKernelModel {
     public readonly id: string,
     public readonly name: string,
     public readonly createdAt: string,
-    public readonly modifiedAt?: string,
+    public readonly modifiedAt?: string
   ) {}
 
   /**
    * Create PartyKernelModel from API JSON
    */
   static fromJson(json: PartyKernelJson): PartyKernelModel {
-    return new PartyKernelModel(
-      json.id,
-      json.name,
-      json.createdAt,
-      json.modifiedAt,
-    );
+    return new PartyKernelModel(json.id, json.name, json.createdAt, json.modifiedAt);
   }
 
   /**

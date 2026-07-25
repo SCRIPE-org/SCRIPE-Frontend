@@ -74,15 +74,12 @@ export function DeadLetterQueue({
 
   // Mirrors DeliveryLogTable's row: TableRow's `clickable` prop wires the
   // pointer/focus affordance but never invents key handling on its own.
-  const handleRowKeyDown = useCallback(
-    (e: React.KeyboardEvent, id: string) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        toggleExpand(id);
-      }
-    },
-    []
-  );
+  const handleRowKeyDown = useCallback((e: React.KeyboardEvent, id: string) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      toggleExpand(id);
+    }
+  }, []);
 
   return (
     <Card>
@@ -97,7 +94,9 @@ export function DeadLetterQueue({
               </Badge>
             )}
           </CardTitle>
-          <CardDescription className="mt-1">{t("webhooks.deadLetters.description")}</CardDescription>
+          <CardDescription className="mt-1">
+            {t("webhooks.deadLetters.description")}
+          </CardDescription>
         </div>
 
         {/* Replay All Button */}
@@ -111,7 +110,9 @@ export function DeadLetterQueue({
             loading={isReplayingAll}
           >
             {!isReplayingAll && <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />}
-            {isReplayingAll ? t("webhooks.deadLetters.replaying") : t("webhooks.deadLetters.replayAll")}
+            {isReplayingAll
+              ? t("webhooks.deadLetters.replaying")
+              : t("webhooks.deadLetters.replayAll")}
           </Button>
         )}
       </CardHeader>
@@ -297,7 +298,10 @@ export function DeadLetterQueue({
                         href="#"
                         aria-disabled={page >= totalPages || undefined}
                         tabIndex={page >= totalPages ? -1 : undefined}
-                        className={cn("h-7", page >= totalPages && "pointer-events-none opacity-50")}
+                        className={cn(
+                          "h-7",
+                          page >= totalPages && "pointer-events-none opacity-50"
+                        )}
                         onClick={(e) => {
                           e.preventDefault();
                           onPageChange(page + 1);

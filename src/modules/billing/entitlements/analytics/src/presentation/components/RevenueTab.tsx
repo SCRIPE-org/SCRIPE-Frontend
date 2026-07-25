@@ -208,9 +208,7 @@ function SummaryCard({
         ) : (
           <TrendingDown className="h-3.5 w-3.5 text-destructive" />
         )}
-        <span
-          className={`text-sm font-bold ${positive ? "text-success" : "text-destructive"}`}
-        >
+        <span className={`text-sm font-bold ${positive ? "text-success" : "text-destructive"}`}>
           {formatCurrency(Math.abs(value))}
         </span>
       </div>

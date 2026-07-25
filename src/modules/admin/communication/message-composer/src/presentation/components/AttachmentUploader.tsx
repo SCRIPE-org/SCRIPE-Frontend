@@ -187,7 +187,7 @@ export function AttachmentUploader({
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-7 w-7 p-0 opacity-0 transition-opacity duration-nx-micro ease-nx-enter motion-reduce:transition-none group-focus-within:opacity-100 group-hover:opacity-100 focus-visible:opacity-100"
+                className="h-7 w-7 p-0 opacity-0 transition-opacity duration-nx-micro ease-nx-enter focus-visible:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
                 onClick={() => onRemove(file.id)}
                 disabled={disabled}
                 aria-label={t("messaging.email.removeAttachmentNamed", { name: file.name })}
@@ -203,7 +203,9 @@ export function AttachmentUploader({
               <Paperclip className="h-3 w-3" aria-hidden="true" />
               {t("messaging.email.attachmentCountLabel", { count: attachments.length })}
             </span>
-            <span>{t("messaging.email.attachmentsTotalSize", { size: formatFileSize(totalSize) })}</span>
+            <span>
+              {t("messaging.email.attachmentsTotalSize", { size: formatFileSize(totalSize) })}
+            </span>
           </div>
         </div>
       )}

@@ -721,58 +721,293 @@ export function LoginPreviewShell() {
   // badge above — every case below is unchanged, just captured instead of
   // exited from.
   const content = (() => {
-  if (effectiveCanvasMode === "builder" && Array.isArray(effectiveCanvasComponents)) {
-    return wrapWithA11y(
-      <CanvasRenderer
-        components={effectiveCanvasComponents as any}
-        gridRows={effectiveCanvasGridRows}
-        canvasBackground={effectiveCanvasBackground as any}
-        positionMode={effectiveCanvasPositionMode}
-      />
-    );
-  }
-
-  switch (effectiveLayout) {
-    case "split-left":
+    if (effectiveCanvasMode === "builder" && Array.isArray(effectiveCanvasComponents)) {
       return wrapWithA11y(
-        <div
-          className={`login-page flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={splitWrapperStyle}
-        >
+        <CanvasRenderer
+          components={effectiveCanvasComponents as any}
+          gridRows={effectiveCanvasGridRows}
+          canvasBackground={effectiveCanvasBackground as any}
+          positionMode={effectiveCanvasPositionMode}
+        />
+      );
+    }
+
+    switch (effectiveLayout) {
+      case "split-left":
+        return wrapWithA11y(
           <div
-            className="relative z-10 flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]"
-            style={formSideStyle}
+            className={`login-page flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={splitWrapperStyle}
+          >
+            <div
+              className="relative z-10 flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]"
+              style={formSideStyle}
+            >
+              {overlayDiv}
+              {topActions}
+              <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
+              <DesktopHeading companyName={companyName} />
+              {formContent}
+              {footer}
+              {footerSlot}
+            </div>
+            <LoginBranding
+              branding={brandingForPanel}
+              slotConfig={slotConfig}
+              position="right"
+              transparent={isUnifiedBg}
+            />
+          </div>
+        );
+
+      case "centered":
+        return (
+          <div
+            className={`login-page relative flex min-h-screen w-full flex-col items-center ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={wrapperStyle}
+          >
+            {overlayDiv}
+            <div className="relative z-10 flex w-full flex-1 flex-col items-center">
+              {topActions}
+              <div className="flex w-full max-w-lg flex-1 flex-col items-center justify-center px-6 py-24">
+                <div className="mb-10 flex flex-col items-center gap-4 text-center">
+                  <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
+                  <h1
+                    className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                    style={{
+                      fontFamily: "var(--login-font-heading, inherit)",
+                      fontSize: "var(--login-size-headline, 1.875rem)",
+                      fontWeight: "var(--login-weight-heading, 600)",
+                    }}
+                  >
+                    {companyName}
+                  </h1>
+                  <p
+                    className="login-subtitle text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+                    style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
+                  >
+                    {t("auth.pleaseLogin")}
+                  </p>
+                </div>
+                <SlotRenderer
+                  slotId="login.sidebar.content"
+                  slotConfig={slotConfig}
+                  className="mb-8 w-full"
+                />
+                {formContent}
+                {footer}
+                {footerSlot}
+              </div>
+            </div>
+          </div>
+        );
+
+      case "branded-full":
+        return (
+          <div
+            className={`login-page relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={wrapperStyle}
           >
             {overlayDiv}
             {topActions}
-            <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
-            <DesktopHeading companyName={companyName} />
-            {formContent}
-            {footer}
-            {footerSlot}
+            <div
+              className="login-card border-[var(--login-border,hsl(var(--border)))]/50 relative z-10 mx-4 w-full max-w-[480px] border backdrop-blur-xl"
+              style={{
+                borderRadius: "var(--login-radius-card, 16px)",
+                padding: "var(--login-card-padding, 32px)",
+                boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
+                backgroundColor:
+                  "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 95%, transparent)",
+              }}
+            >
+              <div className="mb-8 flex flex-col items-center gap-3 text-center">
+                <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
+                <h1
+                  className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                  style={{
+                    fontFamily: "var(--login-font-heading, inherit)",
+                    fontSize: "var(--login-size-headline, 1.5rem)",
+                    fontWeight: "var(--login-weight-heading, 600)",
+                  }}
+                >
+                  {companyName}
+                </h1>
+              </div>
+              {formContent}
+              {footer}
+              {footerSlot}
+            </div>
           </div>
-          <LoginBranding
-            branding={brandingForPanel}
-            slotConfig={slotConfig}
-            position="right"
-            transparent={isUnifiedBg}
-          />
-        </div>
-      );
+        );
 
-    case "centered":
-      return (
-        <div
-          className={`login-page relative flex min-h-screen w-full flex-col items-center ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={wrapperStyle}
-        >
-          {overlayDiv}
-          <div className="relative z-10 flex w-full flex-1 flex-col items-center">
+      case "minimal":
+        return (
+          <div
+            className={`login-page flex min-h-screen w-full flex-col items-center justify-center ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={wrapperStyle}
+          >
             {topActions}
-            <div className="flex w-full max-w-lg flex-1 flex-col items-center justify-center px-6 py-24">
-              <div className="mb-10 flex flex-col items-center gap-4 text-center">
+            <div className="w-full max-w-[380px] px-6">
+              <div className="mb-10 flex flex-col items-center gap-3 text-center">
+                <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
+                <h1
+                  className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                  style={{
+                    fontFamily: "var(--login-font-heading, inherit)",
+                    fontSize: "var(--login-size-headline, 1.5rem)",
+                    fontWeight: "var(--login-weight-heading, 600)",
+                  }}
+                >
+                  {companyName}
+                </h1>
+                <p
+                  className="login-subtitle text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+                  style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
+                >
+                  {t("auth.pleaseLogin")}
+                </p>
+              </div>
+              {formContent}
+              {footer}
+              {footerSlot}
+            </div>
+          </div>
+        );
+
+      case "overlay":
+        return (
+          <div
+            className={`login-page relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={wrapperStyle}
+          >
+            <div
+              className="login-overlay absolute inset-0"
+              style={{
+                backgroundColor: "var(--login-overlay-color, hsl(var(--background)))",
+                opacity: "var(--login-overlay-opacity, 0.7)",
+                backdropFilter: "blur(var(--login-overlay-blur, 6px))",
+              }}
+            />
+            {topActions}
+            <div
+              className="login-card border-[var(--login-accent,hsl(var(--border)))]/30 relative z-10 mx-4 w-full border backdrop-blur-2xl"
+              style={{
+                maxWidth: "var(--login-form-width, 420px)",
+                borderRadius: "var(--login-radius-card, 24px)",
+                padding: "var(--login-card-padding, 32px)",
+                boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
+                backgroundColor:
+                  "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 85%, transparent)",
+              }}
+            >
+              <div
+                className="from-[var(--login-primary,hsl(var(--primary)))]/20 to-[var(--login-primary,hsl(var(--primary)))]/10 pointer-events-none absolute -inset-px bg-gradient-to-b via-transparent"
+                style={{ borderRadius: "var(--login-radius-card, 24px)" }}
+              />
+              <div className="relative z-10">
+                <div className="mb-8 flex flex-col items-center gap-3 text-center">
+                  <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
+                  <h1
+                    className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                    style={{
+                      fontFamily: "var(--login-font-heading, inherit)",
+                      fontSize: "var(--login-size-headline, 1.5rem)",
+                      fontWeight: "var(--login-weight-heading, 600)",
+                    }}
+                  >
+                    {companyName}
+                  </h1>
+                  <p
+                    className="login-subtitle text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+                    style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
+                  >
+                    {t("auth.pleaseLogin")}
+                  </p>
+                </div>
+                {formContent}
+                {footer}
+                {footerSlot}
+              </div>
+            </div>
+          </div>
+        );
+
+      case "magazine":
+        return (
+          <div
+            className={`login-page flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={wrapperStyle}
+          >
+            <div
+              className="relative hidden flex-col justify-end overflow-hidden p-16 lg:flex lg:w-3/5"
+              style={{
+                backgroundImage: "var(--login-bg-image, none)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+              <div className="relative z-10 max-w-2xl">
+                <h1
+                  className="login-heading text-6xl leading-[1.1] tracking-tight text-[var(--login-text,white)]"
+                  style={{
+                    fontFamily: "var(--login-font-heading, inherit)",
+                    fontWeight: "var(--login-weight-heading, 700)",
+                  }}
+                >
+                  {headline}
+                </h1>
+                <p className="login-subtitle mt-4 text-lg text-[var(--login-text-muted,rgba(255,255,255,0.8))]">
+                  {subtitle}
+                </p>
+              </div>
+              <SlotRenderer
+                slotId="login.sidebar.content"
+                slotConfig={slotConfig}
+                className="relative z-10 mt-8"
+              />
+            </div>
+            <div
+              className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-2/5"
+              style={formSideStyle}
+            >
+              {topActions}
+              <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
+              <DesktopHeading companyName={companyName} />
+              {formContent}
+              {footer}
+              {footerSlot}
+            </div>
+          </div>
+        );
+
+      case "stacked":
+        return (
+          <div
+            className={`login-page flex min-h-screen w-full flex-col ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={wrapperStyle}
+          >
+            {topActions}
+            <div
+              className="relative w-full overflow-hidden px-8 py-12 text-center"
+              style={{
+                backgroundImage: "var(--login-bg-image, none)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              <div
+                className="absolute inset-0"
+                style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}
+              />
+              <div className="relative z-10 flex flex-col items-center gap-4">
                 <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
                 <h1
                   className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
@@ -794,122 +1029,96 @@ export function LoginPreviewShell() {
               <SlotRenderer
                 slotId="login.sidebar.content"
                 slotConfig={slotConfig}
-                className="mb-8 w-full"
+                className="relative z-10 mt-6"
               />
+            </div>
+            <div
+              className="flex flex-1 flex-col items-center justify-center px-6 py-12"
+              style={formSideStyle}
+            >
               {formContent}
               {footer}
               {footerSlot}
             </div>
           </div>
-        </div>
-      );
+        );
 
-    case "branded-full":
-      return (
-        <div
-          className={`login-page relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={wrapperStyle}
-        >
-          {overlayDiv}
-          {topActions}
+      case "sidebar-compact":
+        return (
           <div
-            className="login-card border-[var(--login-border,hsl(var(--border)))]/50 relative z-10 mx-4 w-full max-w-[480px] border backdrop-blur-xl"
-            style={{
-              borderRadius: "var(--login-radius-card, 16px)",
-              padding: "var(--login-card-padding, 32px)",
-              boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
-              backgroundColor:
-                "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 95%, transparent)",
-            }}
+            className={`login-page flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={splitWrapperStyle}
           >
-            <div className="mb-8 flex flex-col items-center gap-3 text-center">
-              <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
-              <h1
-                className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
-                style={{
-                  fontFamily: "var(--login-font-heading, inherit)",
-                  fontSize: "var(--login-size-headline, 1.5rem)",
-                  fontWeight: "var(--login-weight-heading, 600)",
-                }}
-              >
-                {companyName}
-              </h1>
-            </div>
-            {formContent}
-            {footer}
-            {footerSlot}
-          </div>
-        </div>
-      );
-
-    case "minimal":
-      return (
-        <div
-          className={`login-page flex min-h-screen w-full flex-col items-center justify-center ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={wrapperStyle}
-        >
-          {topActions}
-          <div className="w-full max-w-[380px] px-6">
-            <div className="mb-10 flex flex-col items-center gap-3 text-center">
-              <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
-              <h1
-                className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
-                style={{
-                  fontFamily: "var(--login-font-heading, inherit)",
-                  fontSize: "var(--login-size-headline, 1.5rem)",
-                  fontWeight: "var(--login-weight-heading, 600)",
-                }}
-              >
-                {companyName}
-              </h1>
-              <p
-                className="login-subtitle text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
-                style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
-              >
-                {t("auth.pleaseLogin")}
+            <div className="hidden w-20 flex-col items-center justify-between border-e border-border bg-[var(--login-surface,hsl(var(--muted)/0.4))] py-8 lg:flex">
+              <LogoBox logoSrc={logoUrl} logoAlt={companyName} size="sm" />
+              <p className="rotate-180 text-[9px] text-muted-foreground/40 [writing-mode:vertical-lr]">
+                {copyrightText || `© ${new Date().getFullYear()} ${companyName}`}
               </p>
             </div>
-            {formContent}
-            {footer}
-            {footerSlot}
-          </div>
-        </div>
-      );
-
-    case "overlay":
-      return (
-        <div
-          className={`login-page relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={wrapperStyle}
-        >
-          <div
-            className="login-overlay absolute inset-0"
-            style={{
-              backgroundColor: "var(--login-overlay-color, hsl(var(--background)))",
-              opacity: "var(--login-overlay-opacity, 0.7)",
-              backdropFilter: "blur(var(--login-overlay-blur, 6px))",
-            }}
-          />
-          {topActions}
-          <div
-            className="login-card border-[var(--login-accent,hsl(var(--border)))]/30 relative z-10 mx-4 w-full border backdrop-blur-2xl"
-            style={{
-              maxWidth: "var(--login-form-width, 420px)",
-              borderRadius: "var(--login-radius-card, 24px)",
-              padding: "var(--login-card-padding, 32px)",
-              boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
-              backgroundColor:
-                "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 85%, transparent)",
-            }}
-          >
             <div
-              className="from-[var(--login-primary,hsl(var(--primary)))]/20 to-[var(--login-primary,hsl(var(--primary)))]/10 pointer-events-none absolute -inset-px bg-gradient-to-b via-transparent"
-              style={{ borderRadius: "var(--login-radius-card, 24px)" }}
-            />
-            <div className="relative z-10">
+              className="relative flex flex-1 flex-col items-center justify-center px-6 py-12"
+              style={formSideStyle}
+            >
+              {topActions}
+              <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
+              <DesktopHeading companyName={companyName} />
+              {formContent}
+              {footer}
+              {footerSlot}
+            </div>
+          </div>
+        );
+
+      case "asymmetric":
+        return (
+          <div
+            className={`login-page flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={splitWrapperStyle}
+          >
+            <div className="relative hidden overflow-hidden lg:flex lg:w-[60%]">
+              <LoginBranding
+                branding={brandingForPanel}
+                slotConfig={slotConfig}
+                position="left"
+                transparent={isUnifiedBg}
+              />
+              <div className="absolute inset-y-0 end-0 w-1 bg-gradient-to-b from-transparent via-[var(--login-primary,hsl(var(--primary)))] to-transparent" />
+            </div>
+            <div
+              className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-[40%]"
+              style={formSideStyle}
+            >
+              {topActions}
+              <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
+              <DesktopHeading companyName={companyName} />
+              {formContent}
+              {footer}
+              {footerSlot}
+            </div>
+          </div>
+        );
+
+      case "floating":
+        return (
+          <div
+            className={`login-page relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={wrapperStyle}
+          >
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-20 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
+            {topActions}
+            <div
+              className="login-card relative z-10 mx-4 w-full border border-[var(--login-border,hsl(var(--border)))]"
+              style={{
+                maxWidth: "var(--login-form-width, 440px)",
+                borderRadius: "var(--login-radius-card, 16px)",
+                padding: "var(--login-card-padding, 32px)",
+                boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
+                backgroundColor: "var(--login-surface, hsl(var(--background)))",
+              }}
+            >
               <div className="mb-8 flex flex-col items-center gap-3 text-center">
                 <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
                 <h1
@@ -934,552 +1143,38 @@ export function LoginPreviewShell() {
               {footerSlot}
             </div>
           </div>
-        </div>
-      );
+        );
 
-    case "magazine":
-      return (
-        <div
-          className={`login-page flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={wrapperStyle}
-        >
+      case "immersive":
+        return (
           <div
-            className="relative hidden flex-col justify-end overflow-hidden p-16 lg:flex lg:w-3/5"
-            style={{
-              backgroundImage: "var(--login-bg-image, none)",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-            <div className="relative z-10 max-w-2xl">
-              <h1
-                className="login-heading text-6xl leading-[1.1] tracking-tight text-[var(--login-text,white)]"
-                style={{
-                  fontFamily: "var(--login-font-heading, inherit)",
-                  fontWeight: "var(--login-weight-heading, 700)",
-                }}
-              >
-                {headline}
-              </h1>
-              <p className="login-subtitle mt-4 text-lg text-[var(--login-text-muted,rgba(255,255,255,0.8))]">
-                {subtitle}
-              </p>
-            </div>
-            <SlotRenderer
-              slotId="login.sidebar.content"
-              slotConfig={slotConfig}
-              className="relative z-10 mt-8"
-            />
-          </div>
-          <div
-            className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-2/5"
-            style={formSideStyle}
-          >
-            {topActions}
-            <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
-            <DesktopHeading companyName={companyName} />
-            {formContent}
-            {footer}
-            {footerSlot}
-          </div>
-        </div>
-      );
-
-    case "stacked":
-      return (
-        <div
-          className={`login-page flex min-h-screen w-full flex-col ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={wrapperStyle}
-        >
-          {topActions}
-          <div
-            className="relative w-full overflow-hidden px-8 py-12 text-center"
-            style={{
-              backgroundImage: "var(--login-bg-image, none)",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
+            className={`login-page relative flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={wrapperStyle}
           >
             <div
               className="absolute inset-0"
-              style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}
+              style={{
+                background:
+                  "linear-gradient(to bottom right, var(--login-overlay-color, hsl(var(--background)))/0.8, transparent/0.4, var(--login-overlay-color, hsl(var(--background)))/0.8)",
+                opacity: "var(--login-overlay-opacity, 0.7)",
+                backdropFilter: "blur(var(--login-overlay-blur, 0px))",
+              }}
             />
-            <div className="relative z-10 flex flex-col items-center gap-4">
-              <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
+            {topActions}
+            <div className="relative z-10 hidden flex-col justify-center px-16 lg:flex lg:w-3/5 xl:px-24">
               <h1
-                className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                className="login-heading text-7xl leading-[0.95] tracking-tighter text-[var(--login-text,hsl(var(--foreground)))]"
                 style={{
                   fontFamily: "var(--login-font-heading, inherit)",
-                  fontSize: "var(--login-size-headline, 1.875rem)",
-                  fontWeight: "var(--login-weight-heading, 600)",
-                }}
-              >
-                {companyName}
-              </h1>
-              <p
-                className="login-subtitle text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
-                style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
-              >
-                {t("auth.pleaseLogin")}
-              </p>
-            </div>
-            <SlotRenderer
-              slotId="login.sidebar.content"
-              slotConfig={slotConfig}
-              className="relative z-10 mt-6"
-            />
-          </div>
-          <div
-            className="flex flex-1 flex-col items-center justify-center px-6 py-12"
-            style={formSideStyle}
-          >
-            {formContent}
-            {footer}
-            {footerSlot}
-          </div>
-        </div>
-      );
-
-    case "sidebar-compact":
-      return (
-        <div
-          className={`login-page flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={splitWrapperStyle}
-        >
-          <div className="hidden w-20 flex-col items-center justify-between border-e border-border bg-[var(--login-surface,hsl(var(--muted)/0.4))] py-8 lg:flex">
-            <LogoBox logoSrc={logoUrl} logoAlt={companyName} size="sm" />
-            <p className="rotate-180 text-[9px] text-muted-foreground/40 [writing-mode:vertical-lr]">
-              {copyrightText || `© ${new Date().getFullYear()} ${companyName}`}
-            </p>
-          </div>
-          <div
-            className="relative flex flex-1 flex-col items-center justify-center px-6 py-12"
-            style={formSideStyle}
-          >
-            {topActions}
-            <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
-            <DesktopHeading companyName={companyName} />
-            {formContent}
-            {footer}
-            {footerSlot}
-          </div>
-        </div>
-      );
-
-    case "asymmetric":
-      return (
-        <div
-          className={`login-page flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={splitWrapperStyle}
-        >
-          <div className="relative hidden overflow-hidden lg:flex lg:w-[60%]">
-            <LoginBranding
-              branding={brandingForPanel}
-              slotConfig={slotConfig}
-              position="left"
-              transparent={isUnifiedBg}
-            />
-            <div className="absolute inset-y-0 end-0 w-1 bg-gradient-to-b from-transparent via-[var(--login-primary,hsl(var(--primary)))] to-transparent" />
-          </div>
-          <div
-            className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-[40%]"
-            style={formSideStyle}
-          >
-            {topActions}
-            <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
-            <DesktopHeading companyName={companyName} />
-            {formContent}
-            {footer}
-            {footerSlot}
-          </div>
-        </div>
-      );
-
-    case "floating":
-      return (
-        <div
-          className={`login-page relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={wrapperStyle}
-        >
-          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-20 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
-          {topActions}
-          <div
-            className="login-card relative z-10 mx-4 w-full border border-[var(--login-border,hsl(var(--border)))]"
-            style={{
-              maxWidth: "var(--login-form-width, 440px)",
-              borderRadius: "var(--login-radius-card, 16px)",
-              padding: "var(--login-card-padding, 32px)",
-              boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
-              backgroundColor: "var(--login-surface, hsl(var(--background)))",
-            }}
-          >
-            <div className="mb-8 flex flex-col items-center gap-3 text-center">
-              <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
-              <h1
-                className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
-                style={{
-                  fontFamily: "var(--login-font-heading, inherit)",
-                  fontSize: "var(--login-size-headline, 1.5rem)",
-                  fontWeight: "var(--login-weight-heading, 600)",
-                }}
-              >
-                {companyName}
-              </h1>
-              <p
-                className="login-subtitle text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
-                style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
-              >
-                {t("auth.pleaseLogin")}
-              </p>
-            </div>
-            {formContent}
-            {footer}
-            {footerSlot}
-          </div>
-        </div>
-      );
-
-    case "immersive":
-      return (
-        <div
-          className={`login-page relative flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={wrapperStyle}
-        >
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(to bottom right, var(--login-overlay-color, hsl(var(--background)))/0.8, transparent/0.4, var(--login-overlay-color, hsl(var(--background)))/0.8)",
-              opacity: "var(--login-overlay-opacity, 0.7)",
-              backdropFilter: "blur(var(--login-overlay-blur, 0px))",
-            }}
-          />
-          {topActions}
-          <div className="relative z-10 hidden flex-col justify-center px-16 lg:flex lg:w-3/5 xl:px-24">
-            <h1
-              className="login-heading text-7xl leading-[0.95] tracking-tighter text-[var(--login-text,hsl(var(--foreground)))]"
-              style={{
-                fontFamily: "var(--login-font-heading, inherit)",
-                fontWeight: "var(--login-weight-heading, 900)",
-              }}
-            >
-              {headline}
-            </h1>
-            <p
-              className="login-subtitle mt-6 max-w-lg text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
-              style={{ fontSize: "var(--login-size-subtitle, 1.25rem)" }}
-            >
-              {subtitle}
-            </p>
-            <SlotRenderer
-              slotId="login.sidebar.content"
-              slotConfig={slotConfig}
-              className="mt-10"
-            />
-          </div>
-          <div className="relative z-10 flex w-full flex-col items-center justify-center px-8 py-12 lg:w-2/5">
-            <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
-            <DesktopHeading companyName={companyName} />
-            {formContent}
-            {footer}
-            {footerSlot}
-          </div>
-        </div>
-      );
-
-    case "split-diagonal":
-      return (
-        <div
-          className={`login-page relative flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={splitWrapperStyle}
-        >
-          <div
-            className="absolute inset-0 hidden w-[55%] lg:block"
-            style={{
-              clipPath: "polygon(0 0, 100% 0, 75% 100%, 0 100%)",
-              backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))",
-            }}
-          >
-            <LoginBranding branding={brandingForPanel} slotConfig={slotConfig} position="left" />
-          </div>
-          <div
-            className="relative z-10 flex w-full flex-col items-center justify-center px-6 py-12 lg:ms-auto lg:w-[50%]"
-            style={formSideStyle}
-          >
-            {topActions}
-            <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
-            <DesktopHeading companyName={companyName} />
-            {formContent}
-            {footer}
-            {footerSlot}
-          </div>
-        </div>
-      );
-
-    case "carousel":
-      return (
-        <div
-          className={`login-page flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={splitWrapperStyle}
-        >
-          <div className="relative hidden flex-col justify-center overflow-hidden border-e border-border bg-[var(--login-surface,hsl(var(--muted)/0.4))] p-16 lg:flex lg:w-1/2 xl:w-[55%]">
-            <div className="mb-8">
-              <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
-            </div>
-            <h2
-              className="login-heading text-4xl tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
-              style={{
-                fontFamily: "var(--login-font-heading, inherit)",
-                fontWeight: "var(--login-weight-heading, 700)",
-              }}
-            >
-              {headline}
-            </h2>
-            <p className="login-subtitle mt-4 text-lg text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
-              {subtitle}
-            </p>
-            <SlotRenderer
-              slotId="login.sidebar.content"
-              slotConfig={slotConfig}
-              className="mt-10"
-            />
-            <SlotRenderer
-              slotId="login.sidebar.bottom"
-              slotConfig={slotConfig}
-              className="mt-auto pt-10"
-            />
-          </div>
-          <div
-            className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]"
-            style={formSideStyle}
-          >
-            {topActions}
-            <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
-            <DesktopHeading companyName={companyName} />
-            {formContent}
-            {footer}
-            {footerSlot}
-          </div>
-        </div>
-      );
-
-    case "glass-morphism":
-      return (
-        <div
-          className={`login-page relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={wrapperStyle}
-        >
-          <div
-            className="login-overlay absolute inset-0"
-            style={{
-              backgroundColor: "var(--login-overlay-color, hsl(var(--background)))",
-              opacity: "var(--login-overlay-opacity, 0.5)",
-              backdropFilter: "blur(var(--login-overlay-blur, 2px))",
-            }}
-          />
-          <div className="bg-[var(--login-primary,hsl(var(--primary)))]/20 pointer-events-none absolute start-1/4 top-1/4 h-64 w-64 rounded-full blur-[100px]" />
-          <div className="bg-[var(--login-primary,hsl(var(--primary)))]/15 pointer-events-none absolute bottom-1/4 end-1/4 h-48 w-48 rounded-full blur-[80px]" />
-          {topActions}
-          <div
-            className="relative z-10 mx-4 w-full"
-            style={{ maxWidth: "var(--login-form-width, 440px)" }}
-          >
-            <div
-              className="login-card border-[var(--login-accent,hsl(var(--border)))]/20 border backdrop-blur-3xl"
-              style={{
-                maxWidth: "var(--login-form-width, 440px)",
-                borderRadius: "var(--login-radius-card, 24px)",
-                padding: "var(--login-card-padding, 40px)",
-                boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
-                backgroundColor:
-                  "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 70%, transparent)",
-              }}
-            >
-              <div
-                className="from-[var(--login-primary,hsl(var(--primary)))]/30 to-[var(--login-primary,hsl(var(--primary)))]/15 pointer-events-none absolute -inset-px bg-gradient-to-br via-transparent"
-                style={{ borderRadius: "var(--login-radius-card, 24px)" }}
-              />
-              <div className="relative z-10">
-                <div className="mb-8 flex flex-col items-center gap-3 text-center">
-                  <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
-                  <h1
-                    className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
-                    style={{
-                      fontFamily: "var(--login-font-heading, inherit)",
-                      fontSize: "var(--login-size-headline, 1.5rem)",
-                      fontWeight: "var(--login-weight-heading, 700)",
-                    }}
-                  >
-                    {companyName}
-                  </h1>
-                  <p
-                    className="login-subtitle text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
-                    style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
-                  >
-                    {t("auth.pleaseLogin")}
-                  </p>
-                </div>
-                {formContent}
-                {footer}
-                {footerSlot}
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-
-    case "gradient-wave":
-      return (
-        <div
-          className={`login-page flex min-h-screen w-full flex-col ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={wrapperStyle}
-        >
-          {topActions}
-          <div
-            className="relative flex flex-col items-center justify-center px-8 pb-24 pt-20 text-center"
-            style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}
-          >
-            <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
-            <h1
-              className="login-heading mt-6 tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
-              style={{
-                fontFamily: "var(--login-font-heading, inherit)",
-                fontSize: "var(--login-size-headline, 2.25rem)",
-                fontWeight: "var(--login-weight-heading, 700)",
-              }}
-            >
-              {companyName}
-            </h1>
-            <p
-              className="login-subtitle mt-3 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
-              style={{ fontSize: "var(--login-size-subtitle, 1rem)" }}
-            >
-              {subtitle}
-            </p>
-            <svg
-              className="absolute -bottom-1 left-0 w-full"
-              viewBox="0 0 1440 100"
-              preserveAspectRatio="none"
-              style={{ height: "60px" }}
-            >
-              <path
-                d="M0,40 C360,100 720,0 1080,60 C1260,80 1380,50 1440,40 L1440,100 L0,100 Z"
-                fill="var(--login-bg, hsl(var(--background)))"
-              />
-            </svg>
-          </div>
-          <div
-            className="flex flex-1 flex-col items-center justify-center px-6 py-12"
-            style={formSideStyle}
-          >
-            {formContent}
-            {footer}
-            {footerSlot}
-          </div>
-        </div>
-      );
-
-    case "spotlight":
-      return (
-        <div
-          className={`login-page relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={wrapperStyle}
-        >
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background: `radial-gradient(ellipse 50% 60% at 50% 50%, var(--login-primary, hsl(var(--primary)))/0.12 0%, transparent 70%)`,
-            }}
-          />
-          {topActions}
-          <div
-            className="login-card relative z-10 mx-4 w-full border border-[var(--login-accent,hsl(var(--border)))]"
-            style={{
-              maxWidth: "var(--login-form-width, 420px)",
-              borderRadius: "var(--login-radius-card, 16px)",
-              padding: "var(--login-card-padding, 32px)",
-              boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
-              backgroundColor: "var(--login-surface, hsl(var(--background)))",
-            }}
-          >
-            <div className="mb-8 flex flex-col items-center gap-3 text-center">
-              <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
-              <h1
-                className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
-                style={{
-                  fontFamily: "var(--login-font-heading, inherit)",
-                  fontSize: "var(--login-size-headline, 1.5rem)",
-                  fontWeight: "var(--login-weight-heading, 600)",
-                }}
-              >
-                {companyName}
-              </h1>
-              <p
-                className="login-subtitle text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
-                style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
-              >
-                {t("auth.pleaseLogin")}
-              </p>
-            </div>
-            {formContent}
-            {footer}
-            {footerSlot}
-          </div>
-        </div>
-      );
-
-    case "dual-panel":
-      return (
-        <div
-          className={`login-page flex min-h-screen w-full flex-col ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={splitWrapperStyle}
-        >
-          <div
-            className="flex items-center justify-between border-b border-border px-8 py-4"
-            style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}
-          >
-            <div className="flex items-center gap-3">
-              <LogoBox logoSrc={logoUrl} logoAlt={companyName} size="sm" />
-              <span className="text-sm font-semibold text-[var(--login-text,hsl(var(--foreground)))]">
-                {companyName}
-              </span>
-            </div>
-            <div className="flex gap-1">
-              <LanguageSwitcher />
-              <ThemeSwitcher />
-            </div>
-          </div>
-          <div className="flex flex-1">
-            <div
-              className="hidden flex-col justify-center border-e border-border px-12 lg:flex lg:w-1/2 xl:px-16"
-              style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.2))" }}
-            >
-              <h2
-                className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
-                style={{
-                  fontFamily: "var(--login-font-heading, inherit)",
-                  fontSize: "var(--login-size-headline, 1.875rem)",
-                  fontWeight: "var(--login-weight-heading, 700)",
+                  fontWeight: "var(--login-weight-heading, 900)",
                 }}
               >
                 {headline}
-              </h2>
+              </h1>
               <p
-                className="login-subtitle mt-3 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
-                style={{ fontSize: "var(--login-size-subtitle, 1rem)" }}
+                className="login-subtitle mt-6 max-w-lg text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+                style={{ fontSize: "var(--login-size-subtitle, 1.25rem)" }}
               >
                 {subtitle}
               </p>
@@ -1489,91 +1184,58 @@ export function LoginPreviewShell() {
                 className="mt-10"
               />
             </div>
-            <div
-              className="flex flex-1 flex-col items-center justify-center px-6 py-12"
-              style={formSideStyle}
-            >
+            <div className="relative z-10 flex w-full flex-col items-center justify-center px-8 py-12 lg:w-2/5">
               <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
+              <DesktopHeading companyName={companyName} />
               {formContent}
               {footer}
               {footerSlot}
             </div>
           </div>
-        </div>
-      );
+        );
 
-    case "corner-card":
-      return (
-        <div
-          className={`login-page relative flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={wrapperStyle}
-        >
-          {overlayDiv}
-          {topActions}
-          <div className="relative z-10 hidden flex-1 flex-col justify-center px-16 lg:flex xl:px-24">
-            <h1
-              className="login-heading text-6xl tracking-tighter text-[var(--login-text,hsl(var(--foreground)))]"
-              style={{
-                fontFamily: "var(--login-font-heading, inherit)",
-                fontWeight: "var(--login-weight-heading, 900)",
-              }}
-            >
-              {headline}
-            </h1>
-            <p className="login-subtitle mt-4 max-w-lg text-lg text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
-              {subtitle}
-            </p>
-            <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="mt-8" />
-          </div>
-          <div className="relative z-10 flex w-full items-end justify-center p-6 lg:w-auto lg:justify-end lg:p-10">
-            <div
-              className="login-card w-full border border-[var(--login-accent,hsl(var(--border)))]"
-              style={{
-                maxWidth: "var(--login-form-width, 400px)",
-                borderRadius: "var(--login-radius-card, 16px)",
-                padding: "var(--login-card-padding, 32px)",
-                boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
-                backgroundColor: "var(--login-surface, hsl(var(--background)))",
-              }}
-            >
-              <div className="mb-6 flex items-center gap-3">
-                <LogoBox logoSrc={logoUrl} logoAlt={companyName} size="sm" />
-                <span className="text-sm font-semibold text-[var(--login-text,hsl(var(--foreground)))]">
-                  {companyName}
-                </span>
-              </div>
-              {formContent}
-              {footer}
-              {footerSlot}
-            </div>
-          </div>
-        </div>
-      );
-
-    case "vertical-split":
-      return (
-        <div
-          className={`login-page flex min-h-screen w-full flex-col ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={wrapperStyle}
-        >
-          {topActions}
+      case "split-diagonal":
+        return (
           <div
-            className="relative flex flex-1 flex-col items-center justify-center px-8 py-16 text-center"
-            style={{
-              backgroundImage: "var(--login-bg-image, none)",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
+            className={`login-page relative flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={splitWrapperStyle}
           >
             <div
-              className="absolute inset-0"
-              style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.6))" }}
-            />
-            <div className="relative z-10 flex flex-col items-center gap-4">
-              <LogoBox logoSrc={logoUrl} logoAlt={companyName} size="lg" />
-              <h1
+              className="absolute inset-0 hidden w-[55%] lg:block"
+              style={{
+                clipPath: "polygon(0 0, 100% 0, 75% 100%, 0 100%)",
+                backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))",
+              }}
+            >
+              <LoginBranding branding={brandingForPanel} slotConfig={slotConfig} position="left" />
+            </div>
+            <div
+              className="relative z-10 flex w-full flex-col items-center justify-center px-6 py-12 lg:ms-auto lg:w-[50%]"
+              style={formSideStyle}
+            >
+              {topActions}
+              <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
+              <DesktopHeading companyName={companyName} />
+              {formContent}
+              {footer}
+              {footerSlot}
+            </div>
+          </div>
+        );
+
+      case "carousel":
+        return (
+          <div
+            className={`login-page flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={splitWrapperStyle}
+          >
+            <div className="relative hidden flex-col justify-center overflow-hidden border-e border-border bg-[var(--login-surface,hsl(var(--muted)/0.4))] p-16 lg:flex lg:w-1/2 xl:w-[55%]">
+              <div className="mb-8">
+                <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
+              </div>
+              <h2
                 className="login-heading text-4xl tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
                 style={{
                   fontFamily: "var(--login-font-heading, inherit)",
@@ -1581,274 +1243,613 @@ export function LoginPreviewShell() {
                 }}
               >
                 {headline}
-              </h1>
-              <p
-                className="login-subtitle text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
-                style={{ fontSize: "var(--login-size-subtitle, 1rem)" }}
-              >
+              </h2>
+              <p className="login-subtitle mt-4 text-lg text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
                 {subtitle}
               </p>
-            </div>
-            <div className="absolute -bottom-px left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[var(--login-primary,hsl(var(--primary)))] to-transparent" />
-          </div>
-          <div
-            className="flex flex-1 flex-col items-center justify-center px-6 py-12"
-            style={formSideStyle}
-          >
-            {formContent}
-            {footer}
-            {footerSlot}
-          </div>
-        </div>
-      );
-
-    case "fullscreen-form":
-      return (
-        <div
-          className={`login-page relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={wrapperStyle}
-        >
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,var(--login-accent,hsl(var(--border)))_1px,transparent_1px)] bg-[size:24px_24px] opacity-[0.07]" />
-          {topActions}
-          <div
-            className="relative z-10 w-full px-6"
-            style={{ maxWidth: "var(--login-form-width, 400px)" }}
-          >
-            <div className="mb-12 flex flex-col items-center gap-3 text-center">
-              <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
-              <h1
-                className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
-                style={{
-                  fontFamily: "var(--login-font-heading, inherit)",
-                  fontSize: "var(--login-size-headline, 1.5rem)",
-                  fontWeight: "var(--login-weight-heading, 600)",
-                }}
-              >
-                {companyName}
-              </h1>
-            </div>
-            {formContent}
-            {footer}
-            {footerSlot}
-          </div>
-        </div>
-      );
-
-    case "mosaic":
-      return (
-        <div
-          className={`login-page relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={wrapperStyle}
-        >
-          <div className="pointer-events-none absolute inset-0 grid grid-cols-6 grid-rows-4 gap-1 p-2 opacity-[0.06]">
-            {Array.from({ length: 24 }).map((_, i) => (
-              <div
-                key={i}
-                className="rounded-lg bg-[var(--login-primary,hsl(var(--primary)))]"
-                style={{ opacity: 0.3 + (i % 5) * 0.15 }}
+              <SlotRenderer
+                slotId="login.sidebar.content"
+                slotConfig={slotConfig}
+                className="mt-10"
               />
-            ))}
-          </div>
-          {topActions}
-          <div
-            className="login-card relative z-10 mx-4 w-full border border-[var(--login-accent,hsl(var(--border)))]"
-            style={{
-              maxWidth: "var(--login-form-width, 440px)",
-              borderRadius: "var(--login-radius-card, 16px)",
-              padding: "var(--login-card-padding, 32px)",
-              boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
-              backgroundColor: "var(--login-surface, hsl(var(--background)))",
-            }}
-          >
-            <div className="mb-8 flex flex-col items-center gap-3 text-center">
-              <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
-              <h1
-                className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
-                style={{
-                  fontFamily: "var(--login-font-heading, inherit)",
-                  fontSize: "var(--login-size-headline, 1.5rem)",
-                  fontWeight: "var(--login-weight-heading, 600)",
-                }}
-              >
-                {companyName}
-              </h1>
-              <p
-                className="login-subtitle text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
-                style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
-              >
-                {t("auth.pleaseLogin")}
-              </p>
+              <SlotRenderer
+                slotId="login.sidebar.bottom"
+                slotConfig={slotConfig}
+                className="mt-auto pt-10"
+              />
             </div>
-            {formContent}
-            {footer}
-            {footerSlot}
-          </div>
-        </div>
-      );
-
-    // VAULT — Scripe's cinematic dark-surface split layout
-    case "vault":
-      return (
-        <div
-          className="login-page relative flex min-h-screen w-full overflow-hidden"
-          dir={direction}
-          style={{
-            background:
-              "var(--sx-bg-grad, radial-gradient(140% 90% at 25% 25%, #1a1140 0%, #0a0820 40%, #06060e 80%, #04040a 100%))",
-            // --sx-* is the frozen vault palette (globals.css) — this route always
-            // loads the shared global stylesheet, so the token is guaranteed present;
-            // an inline hex fallback here would just be a second hardcoded copy of it.
-            color: "var(--sx-text)",
-            fontFamily: "inherit",
-          }}
-        >
-          {/* Hero column (left, hidden on mobile) */}
-          <div className="relative hidden flex-col justify-center gap-6 px-10 py-12 lg:flex lg:w-[55%]">
-            {/* Aurora glow behind the mark */}
             <div
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  "radial-gradient(60% 60% at 30% 50%, rgba(168,85,247,.15) 0%, transparent 70%)",
-              }}
-              aria-hidden="true"
-            />
-            {/* Wordmark */}
-            <div className="relative z-[1] flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg">
-                <img src={logoUrl} alt={companyName} className="h-full w-full object-contain" />
-              </div>
-              <span
-                className="text-base font-semibold"
-                style={{ color: "var(--sx-text)" }}
-              >
-                {companyName}
-              </span>
-            </div>
-            {/* Giant mark (simplified for preview) */}
-            <div className="relative z-[1] self-center">
-              <div
-                className="relative flex h-40 w-40 items-center justify-center rounded-full"
-                style={{
-                  background: "radial-gradient(circle, rgba(168,85,247,.2) 0%, transparent 70%)",
-                  boxShadow: "0 0 80px rgba(168,85,247,.2)",
-                }}
-              >
-                <img
-                  src="/scripe-icon-3d.png"
-                  alt="Scripe"
-                  className="h-36 w-36 object-contain"
-                  style={{ filter: "drop-shadow(0 0 30px rgba(168,85,247,.5))" }}
-                />
-              </div>
-            </div>
-            {/* Secure badge */}
-            <div className="relative z-[1] space-y-3">
-              <span
-                className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                style={{
-                  background: "var(--sx-accent-soft, rgba(168,85,247,.1))",
-                  border: "1px solid var(--sx-accent-soft-border, rgba(168,85,247,.3))",
-                  color: "var(--sx-accent-text)",
-                }}
-              >
-                <span
-                  className="h-1.5 w-1.5 rounded-full"
-                  style={{
-                    background: "var(--sx-accent)",
-                    boxShadow: "0 0 6px var(--sx-accent)",
-                  }}
-                />
-                Secure sign-in
-              </span>
-              <h1
-                className="font-semibold leading-none"
-                style={{
-                  fontSize: "clamp(32px, 3.5vw, 44px)",
-                  letterSpacing: "-0.025em",
-                  background:
-                    "var(--sx-text-heading, linear-gradient(180deg, #f5f2ff 0%, #c7b8f0 100%))",
-                  WebkitBackgroundClip: "text",
-                  backgroundClip: "text",
-                  color: "transparent",
-                }}
-              >
-                {brandingForPanel?.loginHeadline || companyName}
-              </h1>
-              <p
-                className="text-sm"
-                style={{ color: "var(--sx-text-mute, rgba(245,242,255,.62))" }}
-              >
-                {brandingForPanel?.loginSubtitle || t("auth.branding.subtitle")}
-              </p>
-            </div>
-            {/* Compliance footer */}
-            <div
-              className="relative z-[1] flex gap-3 text-[10px] uppercase tracking-widest"
-              style={{ color: "var(--sx-text-faint, rgba(245,242,255,.4))" }}
-            >
-              {["SOC 2 II", "HIPAA", "ISO 27001", "GDPR"].map((c, i) => (
-                <span key={c} className="flex items-center gap-3">
-                  {i > 0 && <span style={{ opacity: 0.4 }}>·</span>}
-                  {c}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Form column (right) */}
-          <div className="flex flex-1 items-center justify-center px-5 py-12 lg:pe-10 lg:ps-0">
-            <div
-              className="w-full max-w-[420px] rounded-[20px] p-8"
-              style={{
-                background:
-                  "var(--sx-card-bg, linear-gradient(180deg, rgba(20,12,46,.78), rgba(10,8,28,.85)))",
-                border: "1px solid var(--sx-card-border, rgba(168,85,247,.22))",
-                boxShadow: "var(--sx-card-shadow, 0 30px 80px rgba(0,0,0,.6))",
-                backdropFilter: "blur(24px)",
-              }}
+              className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]"
+              style={formSideStyle}
             >
               {topActions}
+              <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
+              <DesktopHeading companyName={companyName} />
               {formContent}
               {footer}
               {footerSlot}
             </div>
           </div>
-        </div>
-      );
+        );
 
-    // SPLIT-RIGHT (default)
-    case "split-right":
-    default:
-      return (
-        <div
-          className={`login-page flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
-          dir={direction}
-          style={splitWrapperStyle}
-        >
-          <LoginBranding
-            branding={brandingForPanel}
-            slotConfig={slotConfig}
-            position="left"
-            transparent={isUnifiedBg}
-          />
+      case "glass-morphism":
+        return (
           <div
-            className="relative z-10 flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]"
-            style={formSideStyle}
+            className={`login-page relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={wrapperStyle}
+          >
+            <div
+              className="login-overlay absolute inset-0"
+              style={{
+                backgroundColor: "var(--login-overlay-color, hsl(var(--background)))",
+                opacity: "var(--login-overlay-opacity, 0.5)",
+                backdropFilter: "blur(var(--login-overlay-blur, 2px))",
+              }}
+            />
+            <div className="bg-[var(--login-primary,hsl(var(--primary)))]/20 pointer-events-none absolute start-1/4 top-1/4 h-64 w-64 rounded-full blur-[100px]" />
+            <div className="bg-[var(--login-primary,hsl(var(--primary)))]/15 pointer-events-none absolute bottom-1/4 end-1/4 h-48 w-48 rounded-full blur-[80px]" />
+            {topActions}
+            <div
+              className="relative z-10 mx-4 w-full"
+              style={{ maxWidth: "var(--login-form-width, 440px)" }}
+            >
+              <div
+                className="login-card border-[var(--login-accent,hsl(var(--border)))]/20 border backdrop-blur-3xl"
+                style={{
+                  maxWidth: "var(--login-form-width, 440px)",
+                  borderRadius: "var(--login-radius-card, 24px)",
+                  padding: "var(--login-card-padding, 40px)",
+                  boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
+                  backgroundColor:
+                    "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 70%, transparent)",
+                }}
+              >
+                <div
+                  className="from-[var(--login-primary,hsl(var(--primary)))]/30 to-[var(--login-primary,hsl(var(--primary)))]/15 pointer-events-none absolute -inset-px bg-gradient-to-br via-transparent"
+                  style={{ borderRadius: "var(--login-radius-card, 24px)" }}
+                />
+                <div className="relative z-10">
+                  <div className="mb-8 flex flex-col items-center gap-3 text-center">
+                    <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
+                    <h1
+                      className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                      style={{
+                        fontFamily: "var(--login-font-heading, inherit)",
+                        fontSize: "var(--login-size-headline, 1.5rem)",
+                        fontWeight: "var(--login-weight-heading, 700)",
+                      }}
+                    >
+                      {companyName}
+                    </h1>
+                    <p
+                      className="login-subtitle text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+                      style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
+                    >
+                      {t("auth.pleaseLogin")}
+                    </p>
+                  </div>
+                  {formContent}
+                  {footer}
+                  {footerSlot}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case "gradient-wave":
+        return (
+          <div
+            className={`login-page flex min-h-screen w-full flex-col ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={wrapperStyle}
+          >
+            {topActions}
+            <div
+              className="relative flex flex-col items-center justify-center px-8 pb-24 pt-20 text-center"
+              style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}
+            >
+              <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
+              <h1
+                className="login-heading mt-6 tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                style={{
+                  fontFamily: "var(--login-font-heading, inherit)",
+                  fontSize: "var(--login-size-headline, 2.25rem)",
+                  fontWeight: "var(--login-weight-heading, 700)",
+                }}
+              >
+                {companyName}
+              </h1>
+              <p
+                className="login-subtitle mt-3 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+                style={{ fontSize: "var(--login-size-subtitle, 1rem)" }}
+              >
+                {subtitle}
+              </p>
+              <svg
+                className="absolute -bottom-1 left-0 w-full"
+                viewBox="0 0 1440 100"
+                preserveAspectRatio="none"
+                style={{ height: "60px" }}
+              >
+                <path
+                  d="M0,40 C360,100 720,0 1080,60 C1260,80 1380,50 1440,40 L1440,100 L0,100 Z"
+                  fill="var(--login-bg, hsl(var(--background)))"
+                />
+              </svg>
+            </div>
+            <div
+              className="flex flex-1 flex-col items-center justify-center px-6 py-12"
+              style={formSideStyle}
+            >
+              {formContent}
+              {footer}
+              {footerSlot}
+            </div>
+          </div>
+        );
+
+      case "spotlight":
+        return (
+          <div
+            className={`login-page relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={wrapperStyle}
+          >
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background: `radial-gradient(ellipse 50% 60% at 50% 50%, var(--login-primary, hsl(var(--primary)))/0.12 0%, transparent 70%)`,
+              }}
+            />
+            {topActions}
+            <div
+              className="login-card relative z-10 mx-4 w-full border border-[var(--login-accent,hsl(var(--border)))]"
+              style={{
+                maxWidth: "var(--login-form-width, 420px)",
+                borderRadius: "var(--login-radius-card, 16px)",
+                padding: "var(--login-card-padding, 32px)",
+                boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
+                backgroundColor: "var(--login-surface, hsl(var(--background)))",
+              }}
+            >
+              <div className="mb-8 flex flex-col items-center gap-3 text-center">
+                <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
+                <h1
+                  className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                  style={{
+                    fontFamily: "var(--login-font-heading, inherit)",
+                    fontSize: "var(--login-size-headline, 1.5rem)",
+                    fontWeight: "var(--login-weight-heading, 600)",
+                  }}
+                >
+                  {companyName}
+                </h1>
+                <p
+                  className="login-subtitle text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+                  style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
+                >
+                  {t("auth.pleaseLogin")}
+                </p>
+              </div>
+              {formContent}
+              {footer}
+              {footerSlot}
+            </div>
+          </div>
+        );
+
+      case "dual-panel":
+        return (
+          <div
+            className={`login-page flex min-h-screen w-full flex-col ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={splitWrapperStyle}
+          >
+            <div
+              className="flex items-center justify-between border-b border-border px-8 py-4"
+              style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}
+            >
+              <div className="flex items-center gap-3">
+                <LogoBox logoSrc={logoUrl} logoAlt={companyName} size="sm" />
+                <span className="text-sm font-semibold text-[var(--login-text,hsl(var(--foreground)))]">
+                  {companyName}
+                </span>
+              </div>
+              <div className="flex gap-1">
+                <LanguageSwitcher />
+                <ThemeSwitcher />
+              </div>
+            </div>
+            <div className="flex flex-1">
+              <div
+                className="hidden flex-col justify-center border-e border-border px-12 lg:flex lg:w-1/2 xl:px-16"
+                style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.2))" }}
+              >
+                <h2
+                  className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                  style={{
+                    fontFamily: "var(--login-font-heading, inherit)",
+                    fontSize: "var(--login-size-headline, 1.875rem)",
+                    fontWeight: "var(--login-weight-heading, 700)",
+                  }}
+                >
+                  {headline}
+                </h2>
+                <p
+                  className="login-subtitle mt-3 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+                  style={{ fontSize: "var(--login-size-subtitle, 1rem)" }}
+                >
+                  {subtitle}
+                </p>
+                <SlotRenderer
+                  slotId="login.sidebar.content"
+                  slotConfig={slotConfig}
+                  className="mt-10"
+                />
+              </div>
+              <div
+                className="flex flex-1 flex-col items-center justify-center px-6 py-12"
+                style={formSideStyle}
+              >
+                <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
+                {formContent}
+                {footer}
+                {footerSlot}
+              </div>
+            </div>
+          </div>
+        );
+
+      case "corner-card":
+        return (
+          <div
+            className={`login-page relative flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={wrapperStyle}
           >
             {overlayDiv}
             {topActions}
-            <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
-            <DesktopHeading companyName={companyName} />
-            {formContent}
-            {footer}
-            {footerSlot}
+            <div className="relative z-10 hidden flex-1 flex-col justify-center px-16 lg:flex xl:px-24">
+              <h1
+                className="login-heading text-6xl tracking-tighter text-[var(--login-text,hsl(var(--foreground)))]"
+                style={{
+                  fontFamily: "var(--login-font-heading, inherit)",
+                  fontWeight: "var(--login-weight-heading, 900)",
+                }}
+              >
+                {headline}
+              </h1>
+              <p className="login-subtitle mt-4 max-w-lg text-lg text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+                {subtitle}
+              </p>
+              <SlotRenderer
+                slotId="login.sidebar.content"
+                slotConfig={slotConfig}
+                className="mt-8"
+              />
+            </div>
+            <div className="relative z-10 flex w-full items-end justify-center p-6 lg:w-auto lg:justify-end lg:p-10">
+              <div
+                className="login-card w-full border border-[var(--login-accent,hsl(var(--border)))]"
+                style={{
+                  maxWidth: "var(--login-form-width, 400px)",
+                  borderRadius: "var(--login-radius-card, 16px)",
+                  padding: "var(--login-card-padding, 32px)",
+                  boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
+                  backgroundColor: "var(--login-surface, hsl(var(--background)))",
+                }}
+              >
+                <div className="mb-6 flex items-center gap-3">
+                  <LogoBox logoSrc={logoUrl} logoAlt={companyName} size="sm" />
+                  <span className="text-sm font-semibold text-[var(--login-text,hsl(var(--foreground)))]">
+                    {companyName}
+                  </span>
+                </div>
+                {formContent}
+                {footer}
+                {footerSlot}
+              </div>
+            </div>
           </div>
-        </div>
-      );
-  }
+        );
+
+      case "vertical-split":
+        return (
+          <div
+            className={`login-page flex min-h-screen w-full flex-col ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={wrapperStyle}
+          >
+            {topActions}
+            <div
+              className="relative flex flex-1 flex-col items-center justify-center px-8 py-16 text-center"
+              style={{
+                backgroundImage: "var(--login-bg-image, none)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              <div
+                className="absolute inset-0"
+                style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.6))" }}
+              />
+              <div className="relative z-10 flex flex-col items-center gap-4">
+                <LogoBox logoSrc={logoUrl} logoAlt={companyName} size="lg" />
+                <h1
+                  className="login-heading text-4xl tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                  style={{
+                    fontFamily: "var(--login-font-heading, inherit)",
+                    fontWeight: "var(--login-weight-heading, 700)",
+                  }}
+                >
+                  {headline}
+                </h1>
+                <p
+                  className="login-subtitle text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+                  style={{ fontSize: "var(--login-size-subtitle, 1rem)" }}
+                >
+                  {subtitle}
+                </p>
+              </div>
+              <div className="absolute -bottom-px left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[var(--login-primary,hsl(var(--primary)))] to-transparent" />
+            </div>
+            <div
+              className="flex flex-1 flex-col items-center justify-center px-6 py-12"
+              style={formSideStyle}
+            >
+              {formContent}
+              {footer}
+              {footerSlot}
+            </div>
+          </div>
+        );
+
+      case "fullscreen-form":
+        return (
+          <div
+            className={`login-page relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={wrapperStyle}
+          >
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle,var(--login-accent,hsl(var(--border)))_1px,transparent_1px)] bg-[size:24px_24px] opacity-[0.07]" />
+            {topActions}
+            <div
+              className="relative z-10 w-full px-6"
+              style={{ maxWidth: "var(--login-form-width, 400px)" }}
+            >
+              <div className="mb-12 flex flex-col items-center gap-3 text-center">
+                <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
+                <h1
+                  className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                  style={{
+                    fontFamily: "var(--login-font-heading, inherit)",
+                    fontSize: "var(--login-size-headline, 1.5rem)",
+                    fontWeight: "var(--login-weight-heading, 600)",
+                  }}
+                >
+                  {companyName}
+                </h1>
+              </div>
+              {formContent}
+              {footer}
+              {footerSlot}
+            </div>
+          </div>
+        );
+
+      case "mosaic":
+        return (
+          <div
+            className={`login-page relative flex min-h-screen w-full items-center justify-center ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={wrapperStyle}
+          >
+            <div className="pointer-events-none absolute inset-0 grid grid-cols-6 grid-rows-4 gap-1 p-2 opacity-[0.06]">
+              {Array.from({ length: 24 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="rounded-lg bg-[var(--login-primary,hsl(var(--primary)))]"
+                  style={{ opacity: 0.3 + (i % 5) * 0.15 }}
+                />
+              ))}
+            </div>
+            {topActions}
+            <div
+              className="login-card relative z-10 mx-4 w-full border border-[var(--login-accent,hsl(var(--border)))]"
+              style={{
+                maxWidth: "var(--login-form-width, 440px)",
+                borderRadius: "var(--login-radius-card, 16px)",
+                padding: "var(--login-card-padding, 32px)",
+                boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
+                backgroundColor: "var(--login-surface, hsl(var(--background)))",
+              }}
+            >
+              <div className="mb-8 flex flex-col items-center gap-3 text-center">
+                <LogoBox logoSrc={logoUrl} logoAlt={companyName} />
+                <h1
+                  className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+                  style={{
+                    fontFamily: "var(--login-font-heading, inherit)",
+                    fontSize: "var(--login-size-headline, 1.5rem)",
+                    fontWeight: "var(--login-weight-heading, 600)",
+                  }}
+                >
+                  {companyName}
+                </h1>
+                <p
+                  className="login-subtitle text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+                  style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
+                >
+                  {t("auth.pleaseLogin")}
+                </p>
+              </div>
+              {formContent}
+              {footer}
+              {footerSlot}
+            </div>
+          </div>
+        );
+
+      // VAULT — Scripe's cinematic dark-surface split layout
+      case "vault":
+        return (
+          <div
+            className="login-page relative flex min-h-screen w-full overflow-hidden"
+            dir={direction}
+            style={{
+              background:
+                "var(--sx-bg-grad, radial-gradient(140% 90% at 25% 25%, #1a1140 0%, #0a0820 40%, #06060e 80%, #04040a 100%))",
+              // --sx-* is the frozen vault palette (globals.css) — this route always
+              // loads the shared global stylesheet, so the token is guaranteed present;
+              // an inline hex fallback here would just be a second hardcoded copy of it.
+              color: "var(--sx-text)",
+              fontFamily: "inherit",
+            }}
+          >
+            {/* Hero column (left, hidden on mobile) */}
+            <div className="relative hidden flex-col justify-center gap-6 px-10 py-12 lg:flex lg:w-[55%]">
+              {/* Aurora glow behind the mark */}
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background:
+                    "radial-gradient(60% 60% at 30% 50%, rgba(168,85,247,.15) 0%, transparent 70%)",
+                }}
+                aria-hidden="true"
+              />
+              {/* Wordmark */}
+              <div className="relative z-[1] flex items-center gap-2.5">
+                <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg">
+                  <img src={logoUrl} alt={companyName} className="h-full w-full object-contain" />
+                </div>
+                <span className="text-base font-semibold" style={{ color: "var(--sx-text)" }}>
+                  {companyName}
+                </span>
+              </div>
+              {/* Giant mark (simplified for preview) */}
+              <div className="relative z-[1] self-center">
+                <div
+                  className="relative flex h-40 w-40 items-center justify-center rounded-full"
+                  style={{
+                    background: "radial-gradient(circle, rgba(168,85,247,.2) 0%, transparent 70%)",
+                    boxShadow: "0 0 80px rgba(168,85,247,.2)",
+                  }}
+                >
+                  <img
+                    src="/scripe-icon-3d.png"
+                    alt="Scripe"
+                    className="h-36 w-36 object-contain"
+                    style={{ filter: "drop-shadow(0 0 30px rgba(168,85,247,.5))" }}
+                  />
+                </div>
+              </div>
+              {/* Secure badge */}
+              <div className="relative z-[1] space-y-3">
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider"
+                  style={{
+                    background: "var(--sx-accent-soft, rgba(168,85,247,.1))",
+                    border: "1px solid var(--sx-accent-soft-border, rgba(168,85,247,.3))",
+                    color: "var(--sx-accent-text)",
+                  }}
+                >
+                  <span
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{
+                      background: "var(--sx-accent)",
+                      boxShadow: "0 0 6px var(--sx-accent)",
+                    }}
+                  />
+                  Secure sign-in
+                </span>
+                <h1
+                  className="font-semibold leading-none"
+                  style={{
+                    fontSize: "clamp(32px, 3.5vw, 44px)",
+                    letterSpacing: "-0.025em",
+                    background:
+                      "var(--sx-text-heading, linear-gradient(180deg, #f5f2ff 0%, #c7b8f0 100%))",
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                    color: "transparent",
+                  }}
+                >
+                  {brandingForPanel?.loginHeadline || companyName}
+                </h1>
+                <p
+                  className="text-sm"
+                  style={{ color: "var(--sx-text-mute, rgba(245,242,255,.62))" }}
+                >
+                  {brandingForPanel?.loginSubtitle || t("auth.branding.subtitle")}
+                </p>
+              </div>
+              {/* Compliance footer */}
+              <div
+                className="relative z-[1] flex gap-3 text-[10px] uppercase tracking-widest"
+                style={{ color: "var(--sx-text-faint, rgba(245,242,255,.4))" }}
+              >
+                {["SOC 2 II", "HIPAA", "ISO 27001", "GDPR"].map((c, i) => (
+                  <span key={c} className="flex items-center gap-3">
+                    {i > 0 && <span style={{ opacity: 0.4 }}>·</span>}
+                    {c}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Form column (right) */}
+            <div className="flex flex-1 items-center justify-center px-5 py-12 lg:pe-10 lg:ps-0">
+              <div
+                className="w-full max-w-[420px] rounded-[20px] p-8"
+                style={{
+                  background:
+                    "var(--sx-card-bg, linear-gradient(180deg, rgba(20,12,46,.78), rgba(10,8,28,.85)))",
+                  border: "1px solid var(--sx-card-border, rgba(168,85,247,.22))",
+                  boxShadow: "var(--sx-card-shadow, 0 30px 80px rgba(0,0,0,.6))",
+                  backdropFilter: "blur(24px)",
+                }}
+              >
+                {topActions}
+                {formContent}
+                {footer}
+                {footerSlot}
+              </div>
+            </div>
+          </div>
+        );
+
+      // SPLIT-RIGHT (default)
+      case "split-right":
+      default:
+        return (
+          <div
+            className={`login-page flex min-h-screen w-full ${bgStyle} selection:bg-primary/20`}
+            dir={direction}
+            style={splitWrapperStyle}
+          >
+            <LoginBranding
+              branding={brandingForPanel}
+              slotConfig={slotConfig}
+              position="left"
+              transparent={isUnifiedBg}
+            />
+            <div
+              className="relative z-10 flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]"
+              style={formSideStyle}
+            >
+              {overlayDiv}
+              {topActions}
+              <MobileLogo logoSrc={logoUrl} logoAlt={companyName} companyName={companyName} />
+              <DesktopHeading companyName={companyName} />
+              {formContent}
+              {footer}
+              {footerSlot}
+            </div>
+          </div>
+        );
+    }
   })();
 
   return (

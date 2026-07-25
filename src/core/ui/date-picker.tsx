@@ -524,7 +524,7 @@ export function DatePicker({
                 : "rounded-t-none border-t-0",
               // transform+opacity entrance at micro speed; reduced motion keeps
               // the crossfade and drops the slide
-              "transition-[transform,opacity] duration-nx-micro ease-nx-enter motion-reduce:transition-none motion-reduce:translate-y-0",
+              "transition-[transform,opacity] duration-nx-micro ease-nx-enter motion-reduce:translate-y-0 motion-reduce:transition-none",
               animateOpen
                 ? "translate-y-0 opacity-100"
                 : cn(

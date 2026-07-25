@@ -59,7 +59,7 @@ export function WorkspaceHubCard({
       className={cn(
         "group relative flex w-full flex-col items-start gap-3 rounded-nx-lg border p-5 text-start",
         "transition-[border-color] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
-        "focus-visible:outline-none focus-visible:shadow-nx-focus",
+        "focus-visible:shadow-nx-focus focus-visible:outline-none",
         isLocked ? "cursor-not-allowed border-nx-line bg-nx-raised" : "cursor-pointer"
       )}
       style={isLocked ? undefined : { background: accentColorBg, borderColor: accentColorBorder }}
@@ -123,7 +123,7 @@ export function WorkspaceHubCard({
       {!isLocked && (
         <div
           aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 h-0.5 rounded-b-nx-lg opacity-50 transition-opacity duration-nx-standard ease-nx-enter motion-reduce:transition-none group-hover:opacity-100"
+          className="absolute inset-x-0 bottom-0 h-0.5 rounded-b-nx-lg opacity-50 transition-opacity duration-nx-standard ease-nx-enter group-hover:opacity-100 motion-reduce:transition-none"
           style={{ background: accentColor }}
         />
       )}

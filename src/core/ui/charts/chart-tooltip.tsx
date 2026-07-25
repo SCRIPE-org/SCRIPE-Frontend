@@ -163,7 +163,7 @@ export function ChartPoint({
               // jitters under the cursor.
               "transition-shadow duration-nx-micro ease-nx-enter motion-reduce:transition-none",
               "hover:shadow-[inset_0_0_0_1px_var(--nx-line-hi)]",
-              "focus-visible:outline-none focus-visible:shadow-nx-focus",
+              "focus-visible:shadow-nx-focus focus-visible:outline-none",
               selectable ? "cursor-pointer" : "cursor-default",
               disabled && "cursor-not-allowed",
               className

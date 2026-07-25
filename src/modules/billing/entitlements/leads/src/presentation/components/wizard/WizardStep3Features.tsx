@@ -97,7 +97,7 @@ export function WizardStep3Features({
                 className={cn(
                   "flex w-full items-center justify-between bg-nx-raised px-4 py-3 text-start",
                   "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                  "hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
+                  "hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none"
                 )}
               >
                 <div className="flex items-center gap-2">
@@ -154,7 +154,10 @@ export function WizardStep3Features({
                         <div className="w-36 shrink-0">
                           {feature.valueType === "Boolean" ? (
                             <div className="flex items-center justify-end gap-2">
-                              <ToggleLeft className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
+                              <ToggleLeft
+                                className="h-3.5 w-3.5 text-nx-ink-3"
+                                aria-hidden="true"
+                              />
                               <Switch
                                 checked={currentValue === "true"}
                                 onCheckedChange={(v) =>

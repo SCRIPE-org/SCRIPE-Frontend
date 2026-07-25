@@ -78,7 +78,10 @@ export function BillingHubView() {
           tabs={
             <TabsList
               variant="pill"
-              className={cn("grid w-full sm:w-auto", isPlatformContext ? "grid-cols-3" : "grid-cols-5")}
+              className={cn(
+                "grid w-full sm:w-auto",
+                isPlatformContext ? "grid-cols-3" : "grid-cols-5"
+              )}
             >
               <TabsTrigger value="overview" className="gap-1.5 text-xs font-bold">
                 <LayoutDashboard className="h-3.5 w-3.5" aria-hidden="true" />

@@ -51,7 +51,12 @@ export function InstalledPluginsView() {
 
   if (installations.length === 0) {
     return (
-      <EmptyState size="lg" icon={PackageCheck} title={t("plugins.installedEmpty")} className="m-6" />
+      <EmptyState
+        size="lg"
+        icon={PackageCheck}
+        title={t("plugins.installedEmpty")}
+        className="m-6"
+      />
     );
   }
 

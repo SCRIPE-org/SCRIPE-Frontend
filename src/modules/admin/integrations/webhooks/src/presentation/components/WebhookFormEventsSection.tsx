@@ -90,7 +90,7 @@ export function WebhookFormEventsSection({ vm }: WebhookFormEventsSectionProps) 
                   value={category}
                   className="border-b border-nx-line last:border-b-0"
                 >
-                  <div className="flex items-center gap-2.5 pe-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover">
+                  <div className="flex items-center gap-2.5 pe-3 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none">
                     <Checkbox
                       checked={allSelected}
                       className={`ms-4 ${
@@ -132,9 +132,11 @@ export function WebhookFormEventsSection({ vm }: WebhookFormEventsSectionProps) 
                             />
                             <div className="min-w-0 flex-1">
                               <p className="text-sm font-medium leading-tight text-nx-ink">
-                                {(t(`webhooks.eventNames.${event.key}`) ||
-                                  event.description ||
-                                  event.key) as string}
+                                {
+                                  (t(`webhooks.eventNames.${event.key}`) ||
+                                    event.description ||
+                                    event.key) as string
+                                }
                               </p>
                               <p className="mt-0.5 font-mono text-[10px] leading-relaxed text-nx-ink-3">
                                 {event.key}

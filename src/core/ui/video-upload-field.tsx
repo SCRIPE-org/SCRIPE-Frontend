@@ -177,7 +177,7 @@ export function VideoUploadField({
               onClick={handleRemove}
               disabled={disabled}
               aria-label={t("common.remove")}
-              className="absolute end-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full border border-nx-line bg-nx-surface text-nx-ink-3 shadow-nx-sm transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-danger focus-visible:outline-none focus-visible:shadow-nx-focus disabled:cursor-not-allowed disabled:text-nx-ink-3"
+              className="absolute end-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full border border-nx-line bg-nx-surface text-nx-ink-3 shadow-nx-sm transition-colors duration-nx-micro ease-nx-enter hover:text-nx-danger focus-visible:shadow-nx-focus focus-visible:outline-none disabled:cursor-not-allowed disabled:text-nx-ink-3 motion-reduce:transition-none"
             >
               <X className="h-3.5 w-3.5" aria-hidden="true" />
             </button>
@@ -227,7 +227,7 @@ export function VideoUploadField({
             className={cn(
               "flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-nx-control border border-dashed p-4 text-center",
               "transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-              "focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
+              "focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none",
               isDragOver
                 ? "border-nx-accent bg-nx-accent-wash"
                 : "border-nx-line bg-nx-ground hover:border-nx-line-hi hover:bg-nx-hover",

@@ -114,7 +114,10 @@ function GenericModalInner({
     switch (settings.modalStyle) {
       case "centered":
         // Keep default centering behavior
-        return cn(baseClasses, "w-[95vw] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl max-h-[90vh]");
+        return cn(
+          baseClasses,
+          "w-[95vw] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl max-h-[90vh]"
+        );
       case "fullscreen":
         // Responsive fullscreen - full on mobile, large on desktop
         return cn(

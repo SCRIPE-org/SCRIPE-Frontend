@@ -1,5 +1,5 @@
 export interface ApiKeyChartDataPoint {
-  period: string;        // ISO datetime string
+  period: string; // ISO datetime string
   totalHits: number;
   successHits: number;
   failureHits: number;

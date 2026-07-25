@@ -110,7 +110,9 @@ export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
                   onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
                   className={`reader-toolbar-btn rounded p-1 text-muted-foreground transition-colors hover:text-foreground ${sidebarCollapsed ? "bg-primary/10 text-primary" : "hover:bg-muted"}`}
                   title={sidebarCollapsed ? t("common.expandSidebar") : t("common.collapseSidebar")}
-                  aria-label={sidebarCollapsed ? t("common.expandSidebar") : t("common.collapseSidebar")}
+                  aria-label={
+                    sidebarCollapsed ? t("common.expandSidebar") : t("common.collapseSidebar")
+                  }
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -161,8 +163,12 @@ export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
                 <button
                   onClick={() => setWideLayout(!wideLayout)}
                   className={`reader-toolbar-btn rounded px-2 py-0.5 transition-colors ${wideLayout ? "bg-primary font-bold text-primary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
-                  title={wideLayout ? t("common.switchToCompactLayout") : t("common.switchToWideLayout")}
-                  aria-label={wideLayout ? t("common.switchToCompactLayout") : t("common.switchToWideLayout")}
+                  title={
+                    wideLayout ? t("common.switchToCompactLayout") : t("common.switchToWideLayout")
+                  }
+                  aria-label={
+                    wideLayout ? t("common.switchToCompactLayout") : t("common.switchToWideLayout")
+                  }
                 >
                   {wideLayout ? t("common.layoutCompact") : t("common.layoutWide")}
                 </button>

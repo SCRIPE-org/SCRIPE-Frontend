@@ -4,16 +4,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@core/ui/toggle-group";
 import { SectionState } from "@core/ui/section-state";
-import {
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Legend,
-} from "recharts";
+import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
 import {
   ChartContainer,
   ChartTooltip,
@@ -71,7 +62,8 @@ export function ApiKeyChartSection({ data, isLoading, onRangeChange }: ApiKeyCha
     avgResponseTimeMs: { label: t("apikeys.chart.series.avgResponse"), color: chartColor(1) },
   };
 
-  const activeConfig = view === "volume" ? volumeConfig : view === "errors" ? errorsConfig : responseConfig;
+  const activeConfig =
+    view === "volume" ? volumeConfig : view === "errors" ? errorsConfig : responseConfig;
 
   return (
     <Card>
@@ -163,7 +155,11 @@ export function ApiKeyChartSection({ data, isLoading, onRangeChange }: ApiKeyCha
               <AreaChart data={formatted} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="apikeys-response" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--color-avgResponseTimeMs)" stopOpacity={0.2} />
+                    <stop
+                      offset="5%"
+                      stopColor="var(--color-avgResponseTimeMs)"
+                      stopOpacity={0.2}
+                    />
                     <stop offset="95%" stopColor="var(--color-avgResponseTimeMs)" stopOpacity={0} />
                   </linearGradient>
                 </defs>

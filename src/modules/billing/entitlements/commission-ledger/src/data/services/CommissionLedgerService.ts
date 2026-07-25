@@ -26,24 +26,15 @@ export class CommissionLedgerService implements ICommissionLedgerService {
   async getInvoices(
     params: CommissionListParams
   ): Promise<PagedResultModel<CommissionInvoiceModel>> {
-    const url = buildUrl(
-      COMMISSION_LEDGER_ENDPOINTS.INVOICE_LIST,
-      params
-    );
+    const url = buildUrl(COMMISSION_LEDGER_ENDPOINTS.INVOICE_LIST, params);
     return this.api.get<PagedResultModel<CommissionInvoiceModel>>(url);
   }
 
   async retryCharge(invoiceId: string): Promise<void> {
-    await this.api.post(
-      COMMISSION_LEDGER_ENDPOINTS.RETRY_CHARGE(invoiceId),
-      {}
-    );
+    await this.api.post(COMMISSION_LEDGER_ENDPOINTS.RETRY_CHARGE(invoiceId), {});
   }
 
   async waiveInvoice(invoiceId: string, notes: string): Promise<void> {
-    await this.api.post(
-      COMMISSION_LEDGER_ENDPOINTS.WAIVE(invoiceId),
-      { notes }
-    );
+    await this.api.post(COMMISSION_LEDGER_ENDPOINTS.WAIVE(invoiceId), { notes });
   }
 }

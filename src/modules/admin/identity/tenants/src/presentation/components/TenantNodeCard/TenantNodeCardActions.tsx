@@ -57,7 +57,12 @@ export function TenantNodeCardActions({
 
       {/* Enter Tenant World */}
       {canEnterTenantWorld && canDrillDown && !compact && status !== "canceled" && (
-        <Button size="sm" variant="outline" onClick={onEnterWorld} disabled={status === "suspended"}>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={onEnterWorld}
+          disabled={status === "suspended"}
+        >
           <LogIn className="me-1.5 h-4 w-4" aria-hidden="true" />
           {t("tenant.enterTenantWorld")}
         </Button>

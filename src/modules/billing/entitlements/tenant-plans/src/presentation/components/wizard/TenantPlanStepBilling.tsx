@@ -155,7 +155,7 @@ export function TenantPlanStepBilling({ form, updateForm, t }: TenantPlanStepBil
         </div>
 
         {form.allowTrial && (
-          <div className="motion-safe:animate-in motion-safe:fade-in motion-reduce:animate-none rounded-nx-md border border-nx-accent bg-nx-accent-wash p-4 duration-nx-standard ease-nx-enter">
+          <div className="rounded-nx-md border border-nx-accent bg-nx-accent-wash p-4 duration-nx-standard ease-nx-enter motion-safe:animate-in motion-safe:fade-in motion-reduce:animate-none">
             <div className="max-w-xs space-y-2">
               <Label htmlFor="trialDays" className="text-nx-accent">
                 {t("entitlements.tenantPlans.trialDays")}
@@ -176,9 +176,7 @@ export function TenantPlanStepBilling({ form, updateForm, t }: TenantPlanStepBil
         )}
 
         <div className="space-y-2 pt-2">
-          <Label htmlFor="gracePeriodDays">
-            {t("entitlements.tenantPlans.gracePeriodDays")}
-          </Label>
+          <Label htmlFor="gracePeriodDays">{t("entitlements.tenantPlans.gracePeriodDays")}</Label>
           <p className="text-xs leading-relaxed text-nx-ink-3">
             {t("entitlements.tenantPlans.gracePeriodDesc")}
           </p>

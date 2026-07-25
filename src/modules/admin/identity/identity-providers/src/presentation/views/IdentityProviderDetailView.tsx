@@ -113,10 +113,16 @@ export function IdentityProviderDetailView({ providerId }: Props) {
   // ─── CREATE MODE: 3-Step Wizard ───────────────────────────────────
   if (vm.isCreateMode) {
     return (
-      <div className="space-y-6 pb-12 duration-nx-standard ease-nx-enter motion-reduce:transition-none animate-in fade-in">
+      <div className="space-y-6 pb-12 duration-nx-standard ease-nx-enter animate-in fade-in motion-reduce:transition-none">
         {/* Header */}
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={vm.goBack} className="shrink-0" aria-label={t("common.goBack")}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={vm.goBack}
+            className="shrink-0"
+            aria-label={t("common.goBack")}
+          >
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </Button>
           <div>
@@ -170,7 +176,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
         <div className="space-y-6">
           {/* Step 1: Select Template */}
           {createStep === 1 && (
-            <div className="space-y-6 duration-nx-standard ease-nx-enter motion-reduce:transition-none animate-in fade-in">
+            <div className="space-y-6 duration-nx-standard ease-nx-enter animate-in fade-in motion-reduce:transition-none">
               <Card>
                 <CardContent className="p-6">
                   <WellKnownProviderGallery
@@ -193,7 +199,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
 
           {/* Step 2: Connection settings */}
           {createStep === 2 && (
-            <div className="grid grid-cols-1 gap-6 duration-nx-standard ease-nx-enter motion-reduce:transition-none animate-in fade-in lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 duration-nx-standard ease-nx-enter animate-in fade-in motion-reduce:transition-none lg:grid-cols-3">
               <div className="space-y-6 lg:col-span-2">
                 <GeneralSection {...sectionProps} />
 
@@ -222,7 +228,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
 
           {/* Step 3: Appearance & Claims */}
           {createStep === 3 && (
-            <div className="grid grid-cols-1 gap-6 duration-nx-standard ease-nx-enter motion-reduce:transition-none animate-in fade-in lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 duration-nx-standard ease-nx-enter animate-in fade-in motion-reduce:transition-none lg:grid-cols-2">
               <div className="space-y-6">
                 <AppearanceSection {...sectionProps} />
                 <AccessControlSection {...sectionProps} />
@@ -268,11 +274,17 @@ export function IdentityProviderDetailView({ providerId }: Props) {
 
   // ─── EDIT MODE: Tabbed Configuration Workspace ────────────────────
   return (
-    <div className="space-y-6 pb-12 duration-nx-standard ease-nx-enter motion-reduce:transition-none animate-in fade-in">
+    <div className="space-y-6 pb-12 duration-nx-standard ease-nx-enter animate-in fade-in motion-reduce:transition-none">
       {/* Header Row */}
       <div className="flex flex-col gap-4 border-b border-nx-line pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={vm.goBack} className="shrink-0" aria-label={t("common.goBack")}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={vm.goBack}
+            className="shrink-0"
+            aria-label={t("common.goBack")}
+          >
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </Button>
           <div className="flex items-center gap-3">
@@ -332,7 +344,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
 
       {/* Dirty indicator warning */}
       {vm.isDirty && (
-        <div className="flex items-center gap-2 rounded-nx-control border border-warning/30 bg-warning/10 px-3 py-2 text-xs text-warning duration-nx-standard ease-nx-enter motion-reduce:transition-none animate-in fade-in">
+        <div className="flex items-center gap-2 rounded-nx-control border border-warning/30 bg-warning/10 px-3 py-2 text-xs text-warning duration-nx-standard ease-nx-enter animate-in fade-in motion-reduce:transition-none">
           <span className="h-1.5 w-1.5 rounded-full bg-warning" aria-hidden="true" />
           {t("common.unsavedChanges")}
         </div>

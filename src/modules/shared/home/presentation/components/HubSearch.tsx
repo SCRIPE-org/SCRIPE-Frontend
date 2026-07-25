@@ -53,7 +53,7 @@ export function HubSearch({ value, onChange }: HubSearchProps) {
         onChange={(e) => onChange(e.target.value)}
         placeholder={t("workspaceHub.search.placeholder")}
         aria-label={t("workspaceHub.search.placeholder")}
-        className="h-14 rounded-nx-lg ps-11 pe-24 text-base"
+        className="h-14 rounded-nx-lg pe-24 ps-11 text-base"
       />
       <div className="pointer-events-none absolute end-4 top-1/2 inline-flex -translate-y-1/2 items-center gap-1.5 text-nx-ink-3">
         <kbd className="rounded-nx-sm border border-nx-line bg-nx-raised px-2 py-0.5 text-[11px] font-semibold text-nx-ink-2">

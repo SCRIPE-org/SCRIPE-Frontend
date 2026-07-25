@@ -144,7 +144,8 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           type: "textarea" as const,
           placeholder: t("customField.placeholders.options"),
           rows: 4,
-          isVisible: (form: Record<string, unknown>) => String(form.valueType) === SELECT_VALUE_TYPE,
+          isVisible: (form: Record<string, unknown>) =>
+            String(form.valueType) === SELECT_VALUE_TYPE,
         },
         {
           name: "isRequired",

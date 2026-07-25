@@ -24,8 +24,10 @@ const STATUS_KEY: Record<SubmissionStatus, string> = {
   RevisionsRequested: "marketplace.submissionsStatusRevisionsRequested",
 };
 
-const FILTER_STATUSES: Extract<SubmissionStatus, "Pending" | "UnderReview" | "Approved" | "Rejected">[] =
-  ["Pending", "UnderReview", "Approved", "Rejected"];
+const FILTER_STATUSES: Extract<
+  SubmissionStatus,
+  "Pending" | "UnderReview" | "Approved" | "Rejected"
+>[] = ["Pending", "UnderReview", "Approved", "Rejected"];
 
 /** Which reviewer-note action is pending confirmation, and on which row. */
 type PendingAction = { type: "reject" | "revisions"; submission: AppSubmission } | null;
@@ -185,7 +187,9 @@ export function SubmissionsView() {
         onConfirm={handleConfirm}
       >
         <div className="space-y-2">
-          <Label htmlFor="submission-reviewer-notes">{t("marketplace.submissionsNotesLabel")}</Label>
+          <Label htmlFor="submission-reviewer-notes">
+            {t("marketplace.submissionsNotesLabel")}
+          </Label>
           <Textarea
             id="submission-reviewer-notes"
             rows={3}

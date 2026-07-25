@@ -174,7 +174,7 @@ function DraggablePaletteItem({
       tabIndex={0}
       aria-label={t(labelKey)}
       className={cn(
-        "group flex cursor-grab items-center gap-2.5 rounded-nx-control border px-2.5 py-2 transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none active:cursor-grabbing focus-visible:outline-none focus-visible:shadow-nx-focus",
+        "group flex cursor-grab items-center gap-2.5 rounded-nx-control border px-2.5 py-2 transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none active:cursor-grabbing motion-reduce:transition-none",
         isDragging && "scale-95 border-nx-accent opacity-50 ring-1 ring-nx-accent-wash",
         isDisabled
           ? "cursor-not-allowed border-nx-line bg-nx-raised opacity-50"
@@ -206,7 +206,7 @@ function DraggablePaletteItem({
             e.stopPropagation();
             onQuickAdd(type);
           }}
-          className="hidden h-5 w-5 shrink-0 items-center justify-center rounded-nx-sm bg-nx-accent-wash text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-accent-wash group-hover:flex focus-visible:outline-none focus-visible:shadow-nx-focus"
+          className="hidden h-5 w-5 shrink-0 items-center justify-center rounded-nx-sm bg-nx-accent-wash text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-accent-wash focus-visible:shadow-nx-focus focus-visible:outline-none group-hover:flex motion-reduce:transition-none"
           title={t("studio.builder.palette.quickAdd")}
           aria-label={t("studio.builder.palette.quickAdd")}
         >
@@ -257,7 +257,7 @@ export function BuilderPalette({ components, onQuickAdd, activeAuthPage }: Build
                 onClick={() => toggleGroup(group.id)}
                 aria-expanded={isExpanded}
                 className={cn(
-                  "flex w-full items-center gap-2 px-2.5 py-2 text-start transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                  "flex w-full items-center gap-2 px-2.5 py-2 text-start transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                   isExpanded ? "bg-nx-raised" : "bg-transparent hover:bg-nx-hover"
                 )}
               >

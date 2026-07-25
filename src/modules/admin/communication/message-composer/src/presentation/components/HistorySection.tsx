@@ -96,9 +96,7 @@ function ExpandedEmailRow({
 
           {/* Subject */}
           <div>
-            <p className="mb-1 text-xs font-medium text-nx-ink-3">
-              {t("messaging.email.subject")}
-            </p>
+            <p className="mb-1 text-xs font-medium text-nx-ink-3">{t("messaging.email.subject")}</p>
             <p className="text-sm font-medium text-nx-ink">{email.subject}</p>
           </div>
 
@@ -155,7 +153,7 @@ function ExpandedEmailRow({
                           href={url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 rounded-nx-md border border-nx-line bg-nx-raised-2 px-3 py-1.5 text-xs font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-raised focus-visible:outline-none focus-visible:shadow-nx-focus"
+                          className="inline-flex items-center gap-1.5 rounded-nx-md border border-nx-line bg-nx-raised-2 px-3 py-1.5 text-xs font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-raised focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                         >
                           <FileText className="h-3.5 w-3.5 shrink-0 text-info" aria-hidden="true" />
                           <span className="max-w-[200px] truncate">{fileName}</span>
@@ -261,7 +259,9 @@ export function HistorySection(vm: HistorySectionProps) {
                     <SelectItem value="Sent">{t("messaging.email.statusSent")}</SelectItem>
                     <SelectItem value="Failed">{t("messaging.email.statusFailed")}</SelectItem>
                     <SelectItem value="Pending">{t("messaging.email.statusPending")}</SelectItem>
-                    <SelectItem value="Cancelled">{t("messaging.email.statusCancelled")}</SelectItem>
+                    <SelectItem value="Cancelled">
+                      {t("messaging.email.statusCancelled")}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>

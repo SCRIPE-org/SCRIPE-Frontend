@@ -131,7 +131,7 @@ export function TenantPlanPricingCard({
         <div className="flex items-baseline gap-1">
           <span
             className={cn(
-              "font-bold tracking-tight tabular-nums text-nx-ink",
+              "font-bold tabular-nums tracking-tight text-nx-ink",
               priceAmount === freeLabel || priceAmount === customLabel ? "text-2xl" : "text-3xl"
             )}
           >

@@ -45,7 +45,7 @@ export function BundleGalleryTab() {
               aria-pressed={vm.filters.bundleType === opt.value}
               className={cn(
                 "whitespace-nowrap rounded-nx-control px-3 py-1.5 text-xs font-medium transition-colors duration-nx-micro motion-reduce:transition-none",
-                "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                "focus-visible:shadow-nx-focus focus-visible:outline-none",
                 vm.filters.bundleType === opt.value
                   ? "bg-nx-surface text-nx-ink shadow-nx-sm"
                   : "text-nx-ink-2 hover:text-nx-ink"

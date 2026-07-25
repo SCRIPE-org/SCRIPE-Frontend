@@ -10,13 +10,7 @@ import { EmptyState } from "@core/ui/empty-state";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import {
-  Form,
-  FormControl,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@core/ui/form";
+import { Form, FormControl, FormItem, FormLabel, FormMessage } from "@core/ui/form";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
   User,

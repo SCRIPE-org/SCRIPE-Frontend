@@ -177,18 +177,17 @@ export function HealthTab({ healthData, page, pageSize, onPageChange }: HealthTa
                       {tenant.scoreChange.toFixed(1)}
                     </span>
                   </TableCell>
-                  <TableCell className="px-4 py-3 text-center">
-                    {getRiskBadge(tenant, t)}
-                  </TableCell>
-                  <TableCell variant="numeric" className="px-4 py-3 font-mono text-xs font-semibold">
+                  <TableCell className="px-4 py-3 text-center">{getRiskBadge(tenant, t)}</TableCell>
+                  <TableCell
+                    variant="numeric"
+                    className="px-4 py-3 font-mono text-xs font-semibold"
+                  >
                     {formatCurrency(tenant.mrrEnd)}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-center">
                     <span className="text-xs">
                       {tenant.activeUserCount}/{tenant.totalUserCount}
-                      <span className="ms-1 text-muted-foreground">
-                        ({tenant.engagementRate}%)
-                      </span>
+                      <span className="ms-1 text-muted-foreground">({tenant.engagementRate}%)</span>
                     </span>
                   </TableCell>
                 </TableRow>

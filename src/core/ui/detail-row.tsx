@@ -93,7 +93,9 @@ export function DetailRow({
 
   return (
     <div className={cn("min-w-0", className)}>
-      <div className={cn("flex gap-3", stacked ? "flex-col gap-1" : "items-baseline justify-between")}>
+      <div
+        className={cn("flex gap-3", stacked ? "flex-col gap-1" : "items-baseline justify-between")}
+      >
         <div className={cn("flex min-w-0 items-center gap-1.5", !stacked && "shrink-0")}>
           {Icon && <Icon className="h-3.5 w-3.5 shrink-0 text-nx-ink-3" aria-hidden="true" />}
           <span id={`${uid}-label`} className="min-w-0 truncate text-start text-xs text-nx-ink-3">
@@ -121,7 +123,7 @@ export function DetailRow({
               aria-labelledby={`${uid}-copy ${uid}-label`}
               // Negative block margins keep the 32px hit target from stretching
               // the row's line box, the same trick StatCard's tooltip uses.
-              className="-my-2 -me-1 inline-grid h-8 w-8 shrink-0 place-items-center rounded-nx-sm text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
+              className="-my-2 -me-1 inline-grid h-8 w-8 shrink-0 place-items-center rounded-nx-sm text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
             >
               {copied ? (
                 <Check className="h-3.5 w-3.5 text-success" aria-hidden="true" />

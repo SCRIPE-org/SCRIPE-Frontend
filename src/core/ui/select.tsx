@@ -53,7 +53,7 @@ const SelectTrigger = React.forwardRef<
         {/* the chevron turns with the panel — 140ms, transform only, and it
             holds its rest position under reduced motion */}
         <ChevronDown
-          className="h-4 w-4 shrink-0 text-nx-ink-3 transition-transform duration-nx-micro ease-nx-enter motion-reduce:transition-none group-data-[state=open]:rotate-180"
+          className="h-4 w-4 shrink-0 text-nx-ink-3 transition-transform duration-nx-micro ease-nx-enter group-data-[state=open]:rotate-180 motion-reduce:transition-none"
           aria-hidden="true"
         />
       </SelectPrimitive.Icon>
@@ -111,7 +111,7 @@ const SelectContent = React.forwardRef<
         "relative z-dropdown max-h-[--radix-select-content-available-height] min-w-[8rem] origin-[--radix-select-content-transform-origin] overflow-y-auto overflow-x-hidden rounded-nx-md border border-nx-line bg-nx-popover text-nx-ink shadow-nx-popover",
         // 140ms fade + 0.98 scale from the trigger origin; reduced motion keeps
         // the crossfade and drops the scale.
-        "duration-nx-micro ease-nx-enter data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-safe:data-[state=open]:zoom-in-[0.98] data-[state=closed]:animate-out data-[state=closed]:ease-nx-exit data-[state=closed]:fade-out-0 motion-safe:data-[state=closed]:zoom-out-[0.98]",
+        "duration-nx-micro ease-nx-enter data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 motion-safe:data-[state=closed]:zoom-out-[0.98] motion-safe:data-[state=open]:zoom-in-[0.98]",
         position === "popper" &&
           "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
         className

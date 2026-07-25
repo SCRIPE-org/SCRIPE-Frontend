@@ -135,7 +135,7 @@ function PaletteItem({
         ref={setNodeRef}
         {...listeners}
         {...attributes}
-        className="flex min-w-0 flex-1 cursor-grab items-center gap-2.5 rounded-nx-sm text-start focus-visible:outline-none focus-visible:shadow-nx-focus"
+        className="flex min-w-0 flex-1 cursor-grab items-center gap-2.5 rounded-nx-sm text-start focus-visible:shadow-nx-focus focus-visible:outline-none"
       >
         <span className="shrink-0 rounded-nx-md bg-nx-accent-wash p-1.5">
           {React.createElement(resolvedIconComponent, {
@@ -192,12 +192,7 @@ function BuilderCanvas({ onSelectWidget }: { onSelectWidget: (id: string | null)
     >
       {store.widgets.length === 0 ? (
         <div className="flex h-full min-h-[300px] items-center justify-center">
-          <EmptyState
-            bare
-            size="sm"
-            icon={BarChart3}
-            title={t("dashboard.builder.canvas.empty")}
-          />
+          <EmptyState bare size="sm" icon={BarChart3} title={t("dashboard.builder.canvas.empty")} />
         </div>
       ) : (
         <div
@@ -229,7 +224,7 @@ function BuilderCanvas({ onSelectWidget }: { onSelectWidget: (id: string | null)
                   className={cn(
                     "relative cursor-pointer rounded-nx-lg ring-2 ring-transparent",
                     "transition-[box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                    "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                    "focus-visible:shadow-nx-focus focus-visible:outline-none",
                     isSelected && "ring-nx-accent"
                   )}
                   style={{
@@ -352,9 +347,7 @@ function WidgetPropsPanel() {
 
       {/* Z-Order */}
       <div className="flex items-center justify-between">
-        <Label className="text-[10px] text-nx-ink-3">
-          {t("dashboard.builder.props.zIndex")}
-        </Label>
+        <Label className="text-[10px] text-nx-ink-3">{t("dashboard.builder.props.zIndex")}</Label>
         <div className="flex items-center gap-1">
           <button
             type="button"

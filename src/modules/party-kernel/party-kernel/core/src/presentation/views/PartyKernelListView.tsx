@@ -34,9 +34,7 @@ export const PartyKernelListView = React.memo(function PartyKernelListView() {
         key: "createdAt",
         label: t("partyKernel.columns.createdAt"),
         render: (value: string) =>
-          value
-            ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US")
-            : "-",
+          value ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US") : "-",
       },
     ],
     createFields: [

@@ -20,9 +20,11 @@ interface RenewalItem {
 // fixed status meaning here, just a categorical highlight); Yearly/Trial use
 // the info token, matching the badge the data table renders for the same field.
 const TYPE_COLORS: Record<string, string> = {
-  Monthly: "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent",
+  Monthly:
+    "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent",
   Yearly: "border-info/30 bg-info/10 text-info",
-  Lifetime: "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent",
+  Lifetime:
+    "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent",
   Trial: "border-info/30 bg-info/10 text-info",
 };
 
@@ -73,7 +75,7 @@ export function UpcomingRenewalsTimeline({
                   router.push(`/tenants/${sub.tenantId}`);
                 }
               }}
-              className="flex cursor-pointer items-center justify-between px-6 py-4 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
+              className="flex cursor-pointer items-center justify-between px-6 py-4 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
             >
               <div className="flex items-center gap-3">
                 <span

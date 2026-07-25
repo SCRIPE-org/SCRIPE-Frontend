@@ -81,13 +81,11 @@ export function createWelcomeContentFormSchema(t: TranslateFn) {
     subcopyAr: z.string().min(1, required(t("signupContent.welcome.subcopyAr"))),
     ctaLabelEn: z.string().min(1, required(t("signupContent.welcome.ctaEn"))),
     ctaLabelAr: z.string().min(1, required(t("signupContent.welcome.ctaAr"))),
-    trustedByCount: z
-      .number()
-      .nonnegative(
-        t("signupContent.validation.nonNegative", {
-          field: t("signupContent.welcome.trustedByCount"),
-        })
-      ),
+    trustedByCount: z.number().nonnegative(
+      t("signupContent.validation.nonNegative", {
+        field: t("signupContent.welcome.trustedByCount"),
+      })
+    ),
     trustedByLabelEn: z.string().min(1, required(t("signupContent.welcome.trustedByLabelEn"))),
     trustedByLabelAr: z.string().min(1, required(t("signupContent.welcome.trustedByLabelAr"))),
   });
@@ -121,13 +119,11 @@ export function createCustomerLogoFormSchema(t: TranslateFn) {
   return z.object({
     key: z.string().min(1, required(t("signupContent.customerLogos.key"))),
     name: z.string().min(1, required(t("signupContent.customerLogos.name"))),
-    assetUrl: z
-      .string()
-      .url(
-        t("signupContent.validation.invalidUrl", {
-          field: t("signupContent.customerLogos.assetUrl"),
-        })
-      ),
+    assetUrl: z.string().url(
+      t("signupContent.validation.invalidUrl", {
+        field: t("signupContent.customerLogos.assetUrl"),
+      })
+    ),
     isRealData: z.boolean(),
     sortOrder: z.number(),
     isActive: z.boolean(),

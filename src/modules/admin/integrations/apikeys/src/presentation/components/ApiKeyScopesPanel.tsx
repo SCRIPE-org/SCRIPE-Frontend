@@ -45,19 +45,18 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
   const [selectedScopes, setSelectedScopes] = useState<string[]>(detail.scopesList);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const hasChanges =
-    selectedScopes.sort().join(",") !== detail.scopesList.sort().join(",");
+  const hasChanges = selectedScopes.sort().join(",") !== detail.scopesList.sort().join(",");
 
   const handleToggleScope = (code: string, checked: boolean) => {
     if (checked) {
-      setSelectedScopes(prev => [...prev, code]);
+      setSelectedScopes((prev) => [...prev, code]);
     } else {
-      setSelectedScopes(prev => prev.filter(c => c !== code));
+      setSelectedScopes((prev) => prev.filter((c) => c !== code));
     }
   };
 
   const handleSelectAll = () => {
-    setSelectedScopes(permissions.map(p => p.code));
+    setSelectedScopes(permissions.map((p) => p.code));
   };
 
   const handleDeselectAll = () => {
@@ -71,11 +70,14 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
   };
 
   // Group permissions by category/module for premium grouped display
-  const filteredPermissions = permissions.filter(p => {
+  const filteredPermissions = permissions.filter((p) => {
     const label = isAr
       ? `${p.nameAr || p.nameEn || p.code} (${p.code})`
       : `${p.nameEn || p.code} (${p.code})`;
-    return label.toLowerCase().includes(searchQuery.toLowerCase()) || p.code.toLowerCase().includes(searchQuery.toLowerCase());
+    return (
+      label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.code.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   });
 
   const groups = filteredPermissions.reduce<Record<string, typeof permissions>>((acc, p) => {
@@ -88,16 +90,28 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
   return (
     <form onSubmit={handleSubmit} className="flex flex-col">
       <Card className="flex flex-col overflow-hidden">
-        <CardHeader className="pb-3 border-b">
-          <div className="flex items-center justify-between flex-wrap gap-3">
+        <CardHeader className="border-b pb-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <CardTitle className="text-sm font-semibold">
               {t("apikeys.scopesPanel.title") || "API Scopes / Permissions"}
             </CardTitle>
             <div className="flex items-center gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={handleSelectAll} disabled={!detail.isActive}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleSelectAll}
+                disabled={!detail.isActive}
+              >
                 {t("apikeys.scopesPanel.selectAll") || "Select All"}
               </Button>
-              <Button type="button" variant="outline" size="sm" onClick={handleDeselectAll} disabled={!detail.isActive}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleDeselectAll}
+                disabled={!detail.isActive}
+              >
                 {t("apikeys.scopesPanel.deselectAll") || "Clear All"}
               </Button>
             </div>
@@ -107,20 +121,20 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
             <Input
               type="search"
               placeholder={t("apikeys.scopesPanel.searchPlaceholder") || "Search permissions..."}
-              className="pl-9 h-9"
+              className="h-9 pl-9"
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+              onChange={(e) => setSearchQuery(e.target.value)}
               disabled={!detail.isActive}
             />
           </div>
         </CardHeader>
-        <CardContent className="flex-1 overflow-y-auto p-6 space-y-6 max-h-[540px]">
+        <CardContent className="max-h-[540px] flex-1 space-y-6 overflow-y-auto p-6">
           {isLoading ? (
             <div className="space-y-4 py-4 motion-safe:animate-pulse">
-              <div className="h-4 bg-muted rounded w-1/4" />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="h-4 w-1/4 rounded bg-muted" />
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} className="h-8 bg-muted rounded" />
+                  <div key={i} className="h-8 rounded bg-muted" />
                 ))}
               </div>
             </div>
@@ -134,8 +148,8 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
                 <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {groupName}
                 </h3>
-                <div className="grid grid-cols-1 gap-2 border rounded-lg p-3 bg-muted/10">
-                  {items.map(p => {
+                <div className="grid grid-cols-1 gap-2 rounded-lg border bg-muted/10 p-3">
+                  {items.map((p) => {
                     const isChecked = selectedScopes.includes(p.code);
                     const label = isAr
                       ? `${p.nameAr || p.nameEn || p.code} (${p.code})`
@@ -144,7 +158,7 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
                     return (
                       <div
                         key={p.code}
-                        className={`flex items-start gap-x-3.5 p-2 rounded-md hover:bg-muted/40 transition-colors border ${
+                        className={`flex items-start gap-x-3.5 rounded-md border p-2 transition-colors hover:bg-muted/40 ${
                           isChecked
                             ? "border-primary/20 bg-primary/5 dark:bg-primary/10"
                             : "border-transparent"
@@ -153,19 +167,22 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
                         <Checkbox
                           id={`scope-${p.code}`}
                           checked={isChecked}
-                          onCheckedChange={checked => handleToggleScope(p.code, !!checked)}
+                          onCheckedChange={(checked) => handleToggleScope(p.code, !!checked)}
                           disabled={!detail.isActive}
                           className="mt-1"
                         />
-                        <div className="space-y-0.5 select-none cursor-pointer" onClick={() => handleToggleScope(p.code, !isChecked)}>
+                        <div
+                          className="cursor-pointer select-none space-y-0.5"
+                          onClick={() => handleToggleScope(p.code, !isChecked)}
+                        >
                           <Label
                             htmlFor={`scope-${p.code}`}
-                            className="text-xs font-medium cursor-pointer leading-none"
+                            className="cursor-pointer text-xs font-medium leading-none"
                           >
                             {label}
                           </Label>
                           {p.descriptionEn && (
-                            <p className="text-[10px] text-muted-foreground leading-normal">
+                            <p className="text-[10px] leading-normal text-muted-foreground">
                               {isAr ? p.descriptionAr || p.descriptionEn : p.descriptionEn}
                             </p>
                           )}
@@ -178,9 +195,11 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
             ))
           )}
         </CardContent>
-        <CardFooter className="justify-end border-t px-6 py-3 bg-muted/20">
+        <CardFooter className="justify-end border-t bg-muted/20 px-6 py-3">
           <Button type="submit" size="sm" disabled={!hasChanges || isUpdating || !detail.isActive}>
-            {isUpdating ? t("common.saving") || "Saving..." : t("common.saveChanges") || "Save Changes"}
+            {isUpdating
+              ? t("common.saving") || "Saving..."
+              : t("common.saveChanges") || "Save Changes"}
           </Button>
         </CardFooter>
       </Card>

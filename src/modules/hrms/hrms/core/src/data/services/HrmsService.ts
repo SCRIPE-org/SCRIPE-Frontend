@@ -6,21 +6,18 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
-import {
-  HrmsModel,
-  type HrmsJson,
-  type HrmsListResponseJson,
-} from "../models/HrmsModel";
-import type {
-  IHrmsService,
-  HrmsListResult,
-} from "../../domain/interfaces/IHrmsService";
+import { HrmsModel, type HrmsJson, type HrmsListResponseJson } from "../models/HrmsModel";
+import type { IHrmsService, HrmsListResult } from "../../domain/interfaces/IHrmsService";
 import { HRMS_ENDPOINTS } from "./hrms.endpoints";
 
 export class HrmsService implements IHrmsService {
   constructor(private readonly api: IApiService) {}
 
-  async getAll(params: { page: number; pageSize: number; search?: string }): Promise<HrmsListResult> {
+  async getAll(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<HrmsListResult> {
     const url = buildUrl(HRMS_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,

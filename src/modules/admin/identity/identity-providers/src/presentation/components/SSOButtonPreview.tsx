@@ -92,7 +92,11 @@ export function SSOButtonPreview({ name, iconUrl, buttonColor, buttonLabel }: Pr
       const GoogleMark = IDP_BRAND_MARKS.google;
       return <GoogleMark className="h-[18px] w-[18px] shrink-0" />;
     }
-    if (lowerName.includes("microsoft") || lowerName.includes("entra") || lowerName.includes("azure")) {
+    if (
+      lowerName.includes("microsoft") ||
+      lowerName.includes("entra") ||
+      lowerName.includes("azure")
+    ) {
       const MicrosoftMark = IDP_BRAND_MARKS.microsoft;
       return <MicrosoftMark className="h-[18px] w-[18px] shrink-0" />;
     }

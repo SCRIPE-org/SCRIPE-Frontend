@@ -193,7 +193,7 @@ function BgControls({
             type="button"
             onClick={() => updateDraft(f("bgType"), type as any)}
             className={cn(
-              "h-7 rounded-nx-control border text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+              "h-7 rounded-nx-control border text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
               bgType === type
                 ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
                 : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi"
@@ -225,7 +225,7 @@ function BgControls({
                   onClick={() => updateDraft(f("bgGradientDirection"), dir.value as any)}
                   aria-label={label}
                   className={cn(
-                    "flex h-6 items-center justify-center rounded-nx-control border transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                    "flex h-6 items-center justify-center rounded-nx-control border transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                     bgGradientDirection === dir.value
                       ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
                       : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi"
@@ -261,7 +261,7 @@ function BgControls({
             <button
               type="button"
               onClick={() => updateDraft(f("bgImageUrl"), copyFromLightUrl as any)}
-              className="flex h-7 w-full items-center justify-center gap-1.5 rounded-nx-control border border-warning/40 bg-warning/10 text-[10px] font-medium text-warning transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-warning/20 focus-visible:outline-none focus-visible:shadow-nx-focus"
+              className="flex h-7 w-full items-center justify-center gap-1.5 rounded-nx-control border border-warning/40 bg-warning/10 text-[10px] font-medium text-warning transition-colors duration-nx-micro ease-nx-enter hover:bg-warning/20 focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
             >
               <Sun className="h-3 w-3" aria-hidden="true" />
               {t("studio.background.useLight")}
@@ -285,7 +285,7 @@ function BgControls({
                   type="button"
                   onClick={() => updateDraft(f("bgImageFit"), opt.value as any)}
                   className={cn(
-                    "h-6 rounded-nx-control border text-[9px] font-medium transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                    "h-6 rounded-nx-control border text-[9px] font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                     bgImageFit === opt.value
                       ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
                       : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi"
@@ -311,7 +311,7 @@ function BgControls({
                     onClick={() => updateDraft(f("bgImagePosition"), opt.value as any)}
                     aria-label={label}
                     className={cn(
-                      "flex h-6 w-8 items-center justify-center rounded-nx-control border transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                      "flex h-6 w-8 items-center justify-center rounded-nx-control border transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                       bgImagePosition === opt.value
                         ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
                         : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi"
@@ -389,7 +389,7 @@ function PresetDots({
             key={i}
             type="button"
             onClick={() => onApply(preset.colors)}
-            className="flex flex-col items-center gap-1 rounded-nx-md border border-nx-line p-1.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
+            className="flex flex-col items-center gap-1 rounded-nx-md border border-nx-line p-1.5 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           >
             <div className="flex gap-0.5">
               {dots.map((c, ci) => (
@@ -487,7 +487,7 @@ export function StylePanel({
                   type="button"
                   onClick={() => updateDraft("splitBgMode", mode)}
                   className={cn(
-                    "h-7 rounded-nx-control border text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                    "h-7 rounded-nx-control border text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                     draft.splitBgMode === mode
                       ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
                       : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi"
@@ -965,7 +965,7 @@ export function StylePanel({
                 type="button"
                 onClick={() => updateDraft("btnSize", size)}
                 className={cn(
-                  "h-8 rounded-nx-control border text-xs font-medium transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                  "h-8 rounded-nx-control border text-xs font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                   draft.btnSize === size
                     ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
                     : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi"

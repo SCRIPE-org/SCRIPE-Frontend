@@ -6,14 +6,7 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Switch } from "@core/ui/switch";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@core/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@core/ui/form";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import { Share2 } from "lucide-react";
@@ -218,9 +211,7 @@ export function SocialBlock({ onInsert }: SocialBlockProps) {
       <PopoverContent className="w-80" align="start" side="bottom" sideOffset={8}>
         <Form {...form}>
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-nx-ink">
-              {t("editorBlocks.social.title")}
-            </h4>
+            <h4 className="text-sm font-semibold text-nx-ink">{t("editorBlocks.social.title")}</h4>
 
             {/* Settings */}
             <div className="grid grid-cols-3 gap-2">

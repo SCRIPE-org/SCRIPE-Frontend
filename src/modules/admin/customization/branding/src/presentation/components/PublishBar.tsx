@@ -100,7 +100,7 @@ export function PublishBar({
         <Link
           href="/"
           aria-label={t("studio.backToApp")}
-          className="flex h-8 w-8 items-center justify-center rounded-nx-control text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover hover:text-nx-ink motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus"
+          className="flex h-8 w-8 items-center justify-center rounded-nx-control text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
         </Link>
@@ -117,7 +117,7 @@ export function PublishBar({
             <button
               type="button"
               onClick={onExitPreview}
-              className="ms-1 rounded-nx-sm text-[10px] text-nx-accent underline transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus"
+              className="ms-1 rounded-nx-sm text-[10px] text-nx-accent underline transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
             >
               {t("studio.exitPreview")}
             </button>
@@ -155,7 +155,7 @@ export function PublishBar({
               aria-label={t(device.labelKey)}
               aria-pressed={isActive}
               className={cn(
-                "flex h-7 items-center gap-1.5 rounded-nx-sm px-2.5 text-xs font-medium transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                "flex h-7 items-center gap-1.5 rounded-nx-sm px-2.5 text-xs font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                 isActive
                   ? "bg-nx-surface text-nx-ink shadow-[inset_0_0_0_1px_var(--nx-line-hi)]"
                   : "text-nx-ink-2 hover:text-nx-ink"

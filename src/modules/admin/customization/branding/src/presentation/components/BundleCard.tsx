@@ -155,7 +155,7 @@ export function BundleCard({
         className={cn(
           "group flex items-center gap-3 rounded-nx-md border border-nx-line p-2",
           "cursor-pointer bg-nx-surface transition-colors duration-nx-standard hover:border-nx-line-hi motion-reduce:transition-none",
-          "focus-visible:outline-none focus-visible:shadow-nx-focus",
+          "focus-visible:shadow-nx-focus focus-visible:outline-none",
           bundle.isApplied && "border-nx-accent"
         )}
       >
@@ -202,7 +202,7 @@ export function BundleCard({
                 onPreview(bundle);
               }}
               aria-label={t("studio.marketplace.preview")}
-              className="flex h-6 w-6 items-center justify-center rounded-nx-sm text-nx-ink-3 transition-colors duration-nx-micro hover:bg-nx-accent-wash hover:text-nx-accent focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
+              className="flex h-6 w-6 items-center justify-center rounded-nx-sm text-nx-ink-3 transition-colors duration-nx-micro hover:bg-nx-accent-wash hover:text-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
             >
               <Eye className="h-3 w-3" aria-hidden="true" />
             </button>
@@ -231,7 +231,7 @@ export function BundleCard({
         role="button"
         tabIndex={0}
         aria-label={detailAriaLabel}
-        className="relative h-36 w-full cursor-pointer overflow-hidden focus-visible:outline-none focus-visible:shadow-nx-focus"
+        className="relative h-36 w-full cursor-pointer overflow-hidden focus-visible:shadow-nx-focus focus-visible:outline-none"
         onClick={() => onOpenDetail(bundle)}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") {
@@ -291,7 +291,7 @@ export function BundleCard({
               onPreview(bundle);
             }}
             className={cn(
-              "absolute bottom-2.5 end-2.5 flex h-7 items-center gap-1.5 rounded-nx-control px-2.5 text-xs text-nx-ink opacity-0 shadow-nx-sm transition-opacity duration-nx-standard hover:bg-nx-popover group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none",
+              "absolute bottom-2.5 end-2.5 flex h-7 items-center gap-1.5 rounded-nx-control px-2.5 text-xs text-nx-ink opacity-0 shadow-nx-sm transition-opacity duration-nx-standard hover:bg-nx-popover focus-visible:opacity-100 focus-visible:shadow-nx-focus focus-visible:outline-none group-hover:opacity-100 motion-reduce:transition-none",
               FLOATING_CHIP
             )}
           >
@@ -314,7 +314,7 @@ export function BundleCard({
         {/* Title + Author */}
         <button
           type="button"
-          className="cursor-pointer text-start focus-visible:outline-none focus-visible:shadow-nx-focus"
+          className="cursor-pointer text-start focus-visible:shadow-nx-focus focus-visible:outline-none"
           onClick={() => onOpenDetail(bundle)}
         >
           <h3 className="line-clamp-1 text-sm font-semibold text-nx-ink transition-colors duration-nx-micro group-hover:text-nx-accent motion-reduce:transition-none">
@@ -372,7 +372,10 @@ export function BundleCard({
         <div className="mt-3 flex items-center justify-between border-t border-nx-line pt-3">
           <div className="flex items-center gap-1.5 text-xs text-nx-ink-2">
             {bundle.tags.slice(0, 2).map((tag) => (
-              <span key={tag} className="rounded-nx-sm bg-nx-raised px-1.5 py-0.5 text-[9px] text-nx-ink-2">
+              <span
+                key={tag}
+                className="rounded-nx-sm bg-nx-raised px-1.5 py-0.5 text-[9px] text-nx-ink-2"
+              >
                 {tag}
               </span>
             ))}
@@ -387,17 +390,22 @@ export function BundleCard({
                 onToggleFavorite(bundle.slug);
               }}
               aria-label={
-                bundle.isFavorited ? t("studio.marketplace.favorited") : t("studio.marketplace.favorite")
+                bundle.isFavorited
+                  ? t("studio.marketplace.favorited")
+                  : t("studio.marketplace.favorite")
               }
               aria-pressed={bundle.isFavorited}
               className={cn(
-                "flex h-7 w-7 items-center justify-center rounded-nx-control transition-colors duration-nx-micro focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none",
+                "flex h-7 w-7 items-center justify-center rounded-nx-control transition-colors duration-nx-micro focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                 bundle.isFavorited
                   ? "bg-destructive/10 text-destructive"
                   : "text-nx-ink-3 hover:bg-destructive/10 hover:text-destructive"
               )}
             >
-              <Heart className={cn("h-3.5 w-3.5", bundle.isFavorited && "fill-current")} aria-hidden="true" />
+              <Heart
+                className={cn("h-3.5 w-3.5", bundle.isFavorited && "fill-current")}
+                aria-hidden="true"
+              />
             </button>
 
             {/* Apply */}

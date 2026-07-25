@@ -36,7 +36,7 @@ export function StripeConnectHero({ onOnboard, isOnboarding }: StripeConnectHero
             <CreditCard className="h-8 w-8" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-xl font-bold tracking-tight text-nx-ink text-balance">
+            <h2 className="text-balance text-xl font-bold tracking-tight text-nx-ink">
               {t("entitlements.tenantConnect.heroTitle")}
             </h2>
             <p className="mx-auto max-w-md text-pretty text-sm leading-relaxed text-nx-ink-2">

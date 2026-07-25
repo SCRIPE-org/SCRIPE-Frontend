@@ -10,7 +10,15 @@ import { useTenantPlanEditViewModel } from "../viewmodels/useTenantPlanEditViewM
 import { Button } from "@core/ui/button";
 import { Card, CardContent } from "@core/ui/card";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { ArrowLeft, ArrowRight, Save, Settings2, Pencil, Settings, CheckSquare } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Save,
+  Settings2,
+  Pencil,
+  Settings,
+  CheckSquare,
+} from "lucide-react";
 import Link from "next/link";
 import { WizardStepIndicator } from "@modules/entitlements/core";
 import { TenantPlanStepBasics } from "../components/wizard/TenantPlanStepBasics";

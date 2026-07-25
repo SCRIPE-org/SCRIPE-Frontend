@@ -85,7 +85,7 @@ export function LifecycleTracer({ steps, titleKey }: LifecycleTracerProps) {
               </span>
             </div>
             <h4 className="mb-2 text-base font-semibold text-nx-ink">{t(activeStep.labelKey)}</h4>
-            <p className="text-sm leading-relaxed text-pretty text-nx-ink-2">
+            <p className="text-pretty text-sm leading-relaxed text-nx-ink-2">
               {t(activeStep.descriptionKey)}
             </p>
           </div>

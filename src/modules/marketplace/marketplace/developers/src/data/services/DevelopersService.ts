@@ -44,9 +44,7 @@ export class DevelopersService implements IDevelopersService {
 
   /** Fetch a developer profile by tenant ID. */
   async getByTenant(tenantId: string): Promise<DeveloperDto> {
-    return this.api.get<DeveloperDto>(
-      DEVELOPERS_ENDPOINTS.DEVELOPER_BY_TENANT(tenantId)
-    );
+    return this.api.get<DeveloperDto>(DEVELOPERS_ENDPOINTS.DEVELOPER_BY_TENANT(tenantId));
   }
 
   /** Create a new developer profile. */

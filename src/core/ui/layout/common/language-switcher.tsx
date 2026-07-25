@@ -109,7 +109,7 @@ export function LanguageSwitcher({ buttonClassName, contentClassName }: Language
             "group flex h-9 items-center gap-1.5 rounded-full border border-transparent px-2.5",
             "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
             "hover:border-nx-line-hi hover:bg-nx-hover",
-            "focus-visible:outline-none focus-visible:shadow-nx-focus",
+            "focus-visible:shadow-nx-focus focus-visible:outline-none",
             buttonClassName
           )}
         >
@@ -121,7 +121,7 @@ export function LanguageSwitcher({ buttonClassName, contentClassName }: Language
               stays identical in both writing directions. */}
           <ChevronDown
             aria-hidden="true"
-            className="h-3 w-3 text-nx-ink-3 transition-transform duration-nx-micro ease-nx-enter motion-reduce:transition-none group-data-[state=open]:rotate-180"
+            className="h-3 w-3 text-nx-ink-3 transition-transform duration-nx-micro ease-nx-enter group-data-[state=open]:rotate-180 motion-reduce:transition-none"
           />
         </Button>
       </DropdownMenuTrigger>

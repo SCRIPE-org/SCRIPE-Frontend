@@ -86,10 +86,7 @@ export function OAuthAppsView() {
       {/* ─── Search and Filter Toolbar ─── */}
       <div className="flex items-center gap-3">
         <div className="relative max-w-md flex-1">
-          <Search
-            className="absolute start-3 top-2.5 h-4 w-4 text-nx-ink-3"
-            aria-hidden="true"
-          />
+          <Search className="absolute start-3 top-2.5 h-4 w-4 text-nx-ink-3" aria-hidden="true" />
           <Input
             placeholder={t("common.search")}
             value={vm.searchValue}

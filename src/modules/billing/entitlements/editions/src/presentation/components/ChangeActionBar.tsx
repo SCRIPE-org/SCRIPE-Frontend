@@ -143,11 +143,7 @@ export function ChangeActionBar({
             <Button variant="ghost" onClick={() => setShowVersionDialog(false)}>
               {t("common.cancel")}
             </Button>
-            <Button
-              onClick={handleCreateVersion}
-              disabled={isBusy}
-              loading={isCreatingVersion}
-            >
+            <Button onClick={handleCreateVersion} disabled={isBusy} loading={isCreatingVersion}>
               {!isCreatingVersion && <GitBranch className="me-1 h-4 w-4" />}
               {t("entitlements.editions.createAndPublish")}
             </Button>

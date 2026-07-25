@@ -420,47 +420,64 @@ export const zh = {
     // --- Communication Module (i18n TODO: translate from EN in Phase 9) ---
     communication: {
       title: "Communication Module",
-      description: "Horizontal message delivery service - email, SMS, in-app notifications, templates, delivery audit for all modules.",
-      intro: "The Communication module owns ALL message delivery in SCRIPE. Every module dispatches messages through IMessageDispatcher - never directly via SMTP or Twilio.",
+      description:
+        "Horizontal message delivery service - email, SMS, in-app notifications, templates, delivery audit for all modules.",
+      intro:
+        "The Communication module owns ALL message delivery in SCRIPE. Every module dispatches messages through IMessageDispatcher - never directly via SMTP or Twilio.",
       architectureTitle: "Architecture",
-      architectureIntro: "Identity and other modules call IMessageDispatcher in Core.Application. The Communication module implements this via SendEmailCommandHandler / SendSmsCommandHandler.",
+      architectureIntro:
+        "Identity and other modules call IMessageDispatcher in Core.Application. The Communication module implements this via SendEmailCommandHandler / SendSmsCommandHandler.",
       templatesTitle: "Message Templates",
-      templatesIntro: "Templates are versioned, multi-channel records (Email/SMS/InApp/Push). Each template has a draft to published lifecycle rendered with Scriban.",
+      templatesIntro:
+        "Templates are versioned, multi-channel records (Email/SMS/InApp/Push). Each template has a draft to published lifecycle rendered with Scriban.",
       jobsTitle: "Background Jobs",
-      jobsIntro: "MessageRetryJob retries every 5 minutes. CommunicationSoftDeleteCleanupJob runs nightly at 3 AM to purge soft-deleted records older than 30 days.",
+      jobsIntro:
+        "MessageRetryJob retries every 5 minutes. CommunicationSoftDeleteCleanupJob runs nightly at 3 AM to purge soft-deleted records older than 30 days.",
       permissionsTitle: "Permissions",
-      permissionsContent: "communication.templates.view/create/update/delete | communication.send.email/sms/notification/bulk | communication.logs.view | communication.preferences.manage",
+      permissionsContent:
+        "communication.templates.view/create/update/delete | communication.send.email/sms/notification/bulk | communication.logs.view | communication.preferences.manage",
     },
 
     // --- Integrations Module (i18n TODO: translate from EN in Phase 9) ---
     integrations: {
       title: "Integrations Module",
-      description: "Machine-to-machine integration layer - outgoing webhooks with HMAC-SHA256 signing, API key management.",
-      intro: "The Integrations module owns all machine-to-machine integration concerns. Webhooks notify external systems when SCRIPE events occur. API keys allow external API access without OAuth.",
+      description:
+        "Machine-to-machine integration layer - outgoing webhooks with HMAC-SHA256 signing, API key management.",
+      intro:
+        "The Integrations module owns all machine-to-machine integration concerns. Webhooks notify external systems when SCRIPE events occur. API keys allow external API access without OAuth.",
       webhooksTitle: "Webhook System",
-      webhooksIntro: "WebhookSubscription stores endpoint URL, subscribed event types, and HMAC-SHA256 signing secret. On domain events, WebhookDispatcher posts to matching subscriptions with X-SCRIPE-Signature-256 header.",
+      webhooksIntro:
+        "WebhookSubscription stores endpoint URL, subscribed event types, and HMAC-SHA256 signing secret. On domain events, WebhookDispatcher posts to matching subscriptions with X-SCRIPE-Signature-256 header.",
       apiKeysTitle: "API Key Management",
-      apiKeysIntro: "API keys are tenant-scoped with comma-separated permission scopes. Key values are NEVER stored - only a bcrypt hash (KeyHash) is persisted after generation.",
+      apiKeysIntro:
+        "API keys are tenant-scoped with comma-separated permission scopes. Key values are NEVER stored - only a bcrypt hash (KeyHash) is persisted after generation.",
       securityTitle: "Security",
-      securityContent: "All webhook payloads are signed with HMAC-SHA256. Receivers MUST validate X-SCRIPE-Signature-256. A circuit breaker disables subscriptions after 10 consecutive failures.",
+      securityContent:
+        "All webhook payloads are signed with HMAC-SHA256. Receivers MUST validate X-SCRIPE-Signature-256. A circuit breaker disables subscriptions after 10 consecutive failures.",
       permissionsTitle: "Permissions",
-      permissionsContent: "integrations.connections.view/create/update/delete | integrations.apikeys.view/create/revoke | integrations.webhooks.view/create/update/delete",
+      permissionsContent:
+        "integrations.connections.view/create/update/delete | integrations.apikeys.view/create/revoke | integrations.webhooks.view/create/update/delete",
     },
 
     // --- Media Module (i18n TODO: translate from EN in Phase 9) ---
     media: {
       title: "Media Module",
-      description: "Raw binary file storage - chunked upload, download sessions, temporary access grants, storage quota enforcement.",
-      intro: "The Media module owns raw binary file storage. It provides chunked upload, temporary download links (MediaAccessGrant), folder organization, and storage quota checks via IFeatureChecker.",
+      description:
+        "Raw binary file storage - chunked upload, download sessions, temporary access grants, storage quota enforcement.",
+      intro:
+        "The Media module owns raw binary file storage. It provides chunked upload, temporary download links (MediaAccessGrant), folder organization, and storage quota checks via IFeatureChecker.",
       chunkedUploadTitle: "Chunked Upload",
-      chunkedUploadIntro: "Large files are uploaded in chunks via StartUploadSessionCommand followed by UploadChunkCommand calls. On final chunk, the file is assembled and hash-verified.",
+      chunkedUploadIntro:
+        "Large files are uploaded in chunks via StartUploadSessionCommand followed by UploadChunkCommand calls. On final chunk, the file is assembled and hash-verified.",
       accessGrantsTitle: "Temporary Access Grants",
-      accessGrantsIntro: "MediaAccessGrant generates time-limited download URLs. DownloadsController validates the grant token and streams the file.",
+      accessGrantsIntro:
+        "MediaAccessGrant generates time-limited download URLs. DownloadsController validates the grant token and streams the file.",
       quotasTitle: "Storage Quotas",
-      quotasContent: "Upload requests check the tenant's Media.StorageQuotaGb feature gate in Entitlements via IFeatureChecker.",
+      quotasContent:
+        "Upload requests check the tenant's Media.StorageQuotaGb feature gate in Entitlements via IFeatureChecker.",
       permissionsTitle: "Permissions",
-      permissionsContent: "media.files.view/upload/delete | media.folders.create/update/delete | media.access.grant | media.admin | media.export",
+      permissionsContent:
+        "media.files.view/upload/delete | media.folders.create/update/delete | media.access.grant | media.admin | media.export",
     },
   },
 };
-

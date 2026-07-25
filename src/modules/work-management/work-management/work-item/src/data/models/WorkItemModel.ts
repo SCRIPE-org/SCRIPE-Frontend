@@ -56,7 +56,7 @@ export class WorkItemModel {
     public readonly ownerEntityId?: string | null,
     public readonly assignedToId?: string | null,
     public readonly completedAt?: string | null,
-    public readonly modifiedAt?: string | null,
+    public readonly modifiedAt?: string | null
   ) {}
 
   static fromJson(json: WorkItemJson): WorkItemModel {
@@ -73,7 +73,7 @@ export class WorkItemModel {
       json.ownerEntityId,
       json.assignedToId,
       json.completedAt,
-      json.modifiedAt,
+      json.modifiedAt
     );
   }
 
@@ -91,7 +91,7 @@ export class WorkItemModel {
       null,
       json.assignedToId,
       null,
-      null,
+      null
     );
   }
 }

@@ -61,15 +61,12 @@ export function DeliveryLogTable({
   // The row itself stays keyboard-activatable (Enter/Space expand the same
   // detail a pointer click does) — TableRow's `clickable` prop wires the
   // pointer cursor and focus ring but never invents key handling on its own.
-  const handleRowKeyDown = useCallback(
-    (e: React.KeyboardEvent, id: string) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        toggleExpand(id);
-      }
-    },
-    []
-  );
+  const handleRowKeyDown = useCallback((e: React.KeyboardEvent, id: string) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      toggleExpand(id);
+    }
+  }, []);
 
   return (
     <Card>

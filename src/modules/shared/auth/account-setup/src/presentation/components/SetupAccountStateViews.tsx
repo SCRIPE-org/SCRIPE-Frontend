@@ -130,9 +130,7 @@ export function SetupErrorView({ errorMessage, onRetry }: StateViewProps) {
  */
 export function PasswordCheck({ label, ok }: { label: string; ok: boolean }) {
   return (
-    <div
-      className={`flex items-center gap-1.5 ${ok ? "text-success" : "text-muted-foreground"}`}
-    >
+    <div className={`flex items-center gap-1.5 ${ok ? "text-success" : "text-muted-foreground"}`}>
       {ok ? (
         <CheckCircle2 className="h-3 w-3" />
       ) : (

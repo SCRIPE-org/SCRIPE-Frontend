@@ -125,7 +125,7 @@ export function WebhookAnalyticsChart({ analytics, isLoading }: WebhookAnalytics
                   <card.icon className={`h-4 w-4 ${card.color}`} aria-hidden="true" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-lg font-bold leading-none tracking-tight tabular-nums">
+                  <p className="text-lg font-bold tabular-nums leading-none tracking-tight">
                     {card.value}
                   </p>
                   <p className="mt-0.5 truncate text-[11px] text-nx-ink-3">{card.label}</p>

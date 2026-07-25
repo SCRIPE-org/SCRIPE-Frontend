@@ -13,7 +13,17 @@ export interface WorkItemListParams {
 }
 
 export interface IWorkItemRepository {
-  getAll(params: WorkItemListParams): Promise<{ items: WorkItem[]; totalCount: number; page: number; pageSize: number; totalPages: number; hasNextPage: boolean; hasPreviousPage: boolean }>;
+  getAll(
+    params: WorkItemListParams
+  ): Promise<{
+    items: WorkItem[];
+    totalCount: number;
+    page: number;
+    pageSize: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  }>;
   getById(id: string): Promise<WorkItem>;
   create(data: Record<string, unknown>): Promise<string>;
   update(id: string, data: Record<string, unknown>): Promise<void>;

@@ -49,9 +49,10 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
 
   // ── Sorted workspace list ──
   const sortedGroups = useMemo(
-    () => [...workspaceGroups]
-      .filter((ws) => ws.workspaceKey !== "organization-core")
-      .sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder),
+    () =>
+      [...workspaceGroups]
+        .filter((ws) => ws.workspaceKey !== "organization-core")
+        .sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder),
     [workspaceGroups]
   );
 

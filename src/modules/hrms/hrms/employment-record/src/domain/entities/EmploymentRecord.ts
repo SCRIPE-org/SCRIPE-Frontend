@@ -1,53 +1,53 @@
 /**
-* EmploymentRecord Entity
-*
-* Domain entity representing a EmploymentRecord.
-*/
+ * EmploymentRecord Entity
+ *
+ * Domain entity representing a EmploymentRecord.
+ */
 
 /**
-* EmploymentRecord data from API
-*/
+ * EmploymentRecord data from API
+ */
 export interface EmploymentRecordData {
-id: string;
-staffMemberId: string;
-employmentType: string;
-startDate: Date;
-endDate: Date;
-createdAt: string;
-modifiedAt?: string;
+  id: string;
+  staffMemberId: string;
+  employmentType: string;
+  startDate: Date;
+  endDate: Date;
+  createdAt: string;
+  modifiedAt?: string;
 }
 
 /**
-* EmploymentRecord entity class
-*/
+ * EmploymentRecord entity class
+ */
 export class EmploymentRecord {
-constructor(public readonly data: EmploymentRecordData) {}
+  constructor(public readonly data: EmploymentRecordData) {}
 
-get id(): string {
-return this.data.id;
-}
+  get id(): string {
+    return this.data.id;
+  }
 
-get staffMemberId(): string {
-return this.data.staffMemberId;
-}
+  get staffMemberId(): string {
+    return this.data.staffMemberId;
+  }
 
-get employmentType(): string {
-return this.data.employmentType;
-}
+  get employmentType(): string {
+    return this.data.employmentType;
+  }
 
-get startDate(): Date {
-return this.data.startDate;
-}
+  get startDate(): Date {
+    return this.data.startDate;
+  }
 
-get endDate(): Date {
-return this.data.endDate;
-}
+  get endDate(): Date {
+    return this.data.endDate;
+  }
 
-get createdAt(): string {
-return this.data.createdAt;
-}
+  get createdAt(): string {
+    return this.data.createdAt;
+  }
 
-get modifiedAt(): string | undefined {
-return this.data.modifiedAt;
-}
+  get modifiedAt(): string | undefined {
+    return this.data.modifiedAt;
+  }
 }

@@ -406,7 +406,7 @@ function CodeEditorModal({
                   <button
                     key={s.name}
                     onClick={() => handleInsertSnippet(s.code)}
-                    className="group w-full rounded-nx-sm px-3 py-2.5 text-start transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
+                    className="group w-full rounded-nx-sm px-3 py-2.5 text-start transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-xs font-medium text-nx-ink">{s.name}</span>
@@ -414,7 +414,7 @@ function CodeEditorModal({
                         <Check className="h-3 w-3 text-nx-success" aria-hidden="true" />
                       ) : (
                         <Copy
-                          className="h-3 w-3 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none group-hover:text-nx-ink-2"
+                          className="h-3 w-3 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter group-hover:text-nx-ink-2 motion-reduce:transition-none"
                           aria-hidden="true"
                         />
                       )}
@@ -432,7 +432,10 @@ function CodeEditorModal({
           <div className="min-w-0 flex-1 overflow-hidden">
             {showPreviewPane && renderPreview ? (
               <div className="flex h-full">
-                <div ref={editorRef} className="h-full w-1/2 overflow-auto border-e border-nx-line" />
+                <div
+                  ref={editorRef}
+                  className="h-full w-1/2 overflow-auto border-e border-nx-line"
+                />
                 <div className="h-full w-1/2 overflow-auto bg-nx-ground p-6 text-nx-ink">
                   {renderPreview()}
                 </div>
@@ -506,7 +509,7 @@ export function CodeEditorField({
               onClick={() => setActiveTab(tab.id)}
               aria-pressed={activeTab === tab.id}
               className={cn(
-                "min-h-8 flex-1 rounded-nx-sm px-2 py-1 text-xs font-medium transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                "min-h-8 flex-1 rounded-nx-sm px-2 py-1 text-xs font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                 activeTab === tab.id
                   ? "bg-nx-surface text-nx-ink shadow-nx-sm"
                   : "text-nx-ink-3 hover:text-nx-ink"
@@ -529,7 +532,7 @@ export function CodeEditorField({
       {/* Open Full Editor — a secondary action, not an accent-washed banner */}
       <button
         onClick={() => setIsModalOpen(true)}
-        className="flex min-h-9 w-full items-center justify-center gap-2 rounded-nx-control border border-dashed border-nx-line px-3 py-2 text-xs font-medium text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi hover:bg-nx-hover hover:text-nx-ink focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus"
+        className="flex min-h-9 w-full items-center justify-center gap-2 rounded-nx-control border border-dashed border-nx-line px-3 py-2 text-xs font-medium text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover hover:text-nx-ink focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
       >
         <Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />
         {t("studio.builder.openEditor") || "Open Full Editor"}

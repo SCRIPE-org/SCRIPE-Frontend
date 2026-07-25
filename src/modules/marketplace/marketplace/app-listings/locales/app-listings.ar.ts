@@ -86,7 +86,8 @@ export const ar = {
     detailReviewsTab: "المراجعات",
     detailNoReviewsYet: "لا توجد مراجعات بعد.",
     detailModerateReview: "مراجعة (حذف) هذا التقييم",
-    detailReviewDeleteConfirmDesc: "هل أنت متأكد من حذف هذه المراجعة؟ لا يمكن التراجع عن هذا الإجراء.",
+    detailReviewDeleteConfirmDesc:
+      "هل أنت متأكد من حذف هذه المراجعة؟ لا يمكن التراجع عن هذا الإجراء.",
     detailVersionLabel: "الإصدار",
     detailCategoryLabel: "الفئة",
     detailDeveloperLabel: "المطوّر",
@@ -111,7 +112,8 @@ export const ar = {
       profileFeatureApiKeys: "مفاتيح API لتكاملات السوق",
       profileFeatureIdentity: "هوية مورّد موثّقة",
       submissionsTitle: "طلباتي",
-      submissionsDescription: "تتبع حالات طلبات نشر تطبيقاتك، ورفع إصدارات جديدة، ومراجعة ملاحظات المراجعين.",
+      submissionsDescription:
+        "تتبع حالات طلبات نشر تطبيقاتك، ورفع إصدارات جديدة، ومراجعة ملاحظات المراجعين.",
       submissionsFeatureStatus: "تتبع حالة الطلب",
       submissionsFeatureVersions: "رفع إصدارات جديدة",
       submissionsFeatureFeedback: "ملاحظات المراجعين وطلبات التعديل",

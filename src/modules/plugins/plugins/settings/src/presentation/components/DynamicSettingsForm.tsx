@@ -143,9 +143,7 @@ export function DynamicSettingsForm({
       {/* Schema section header */}
       {(schema.title || schema.description) && (
         <div>
-          {schema.title && (
-            <h3 className="text-base font-semibold text-nx-ink">{schema.title}</h3>
-          )}
+          {schema.title && <h3 className="text-base font-semibold text-nx-ink">{schema.title}</h3>}
           {schema.description && (
             <p className="mt-0.5 text-sm text-nx-ink-2">{schema.description}</p>
           )}
@@ -264,9 +262,7 @@ function SettingsField({ field, value, error, onChange, selectPlaceholder }: Set
             <Label htmlFor={id} className="cursor-pointer text-sm font-medium">
               {field.label}
             </Label>
-            {field.description && (
-              <p className="text-xs text-nx-ink-3">{field.description}</p>
-            )}
+            {field.description && <p className="text-xs text-nx-ink-3">{field.description}</p>}
           </div>
           <Switch
             id={id}

@@ -78,7 +78,10 @@ export function ApiKeyHeroBand({ detail, isRotating, onRotate, onRevoke }: ApiKe
           </div>
 
           <Badge variant={STATUS_BADGE_VARIANT[status]} className="gap-1.5">
-            <span className={cn("h-1.5 w-1.5 rounded-full", STATUS_DOT[status])} aria-hidden="true" />
+            <span
+              className={cn("h-1.5 w-1.5 rounded-full", STATUS_DOT[status])}
+              aria-hidden="true"
+            />
             {t(`apikeys.status.${status}`)}
           </Badge>
 

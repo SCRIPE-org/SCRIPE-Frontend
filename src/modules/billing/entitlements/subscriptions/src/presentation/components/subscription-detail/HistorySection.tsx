@@ -46,7 +46,7 @@ export function HistorySection({ items, currentId, t }: HistorySectionProps) {
             return (
               <div
                 key={item.id}
-                className="flex items-center justify-between rounded-nx-md border border-nx-line px-4 py-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover"
+                className="flex items-center justify-between rounded-nx-md border border-nx-line px-4 py-3 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none"
               >
                 <div className="flex items-center gap-3">
                   <span className={cn("h-2 w-2 rounded-full", style.dotColor)} aria-hidden="true" />

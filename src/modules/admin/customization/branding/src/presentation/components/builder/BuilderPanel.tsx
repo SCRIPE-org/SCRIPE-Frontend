@@ -306,14 +306,16 @@ export function BuilderPanel({
             {getAllLayoutTemplates().map(({ layout, label }) => (
               <button
                 key={layout}
-                className="truncate rounded-nx-sm border border-nx-line bg-nx-ground px-2 py-1.5 text-start text-[10px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-accent hover:bg-nx-accent-wash focus-visible:outline-none focus-visible:shadow-nx-focus"
+                className="truncate rounded-nx-sm border border-nx-line bg-nx-ground px-2 py-1.5 text-start text-[10px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:border-nx-accent hover:bg-nx-accent-wash focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                 onClick={() => {
                   const tmpl = layoutToTemplate(layout);
                   store.loadTemplate(tmpl.components, tmpl.gridRows, tmpl.background);
                   setShowTemplates(false);
                 }}
               >
-                {t(`studio.layout.${label.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase())}`)}
+                {t(
+                  `studio.layout.${label.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase())}`
+                )}
               </button>
             ))}
           </div>
@@ -362,7 +364,7 @@ export function BuilderPanel({
           {savedTemplates.map((tmpl) => (
             <div key={tmpl.id} className="flex items-center gap-2">
               <button
-                className="flex-1 truncate rounded-nx-sm border border-nx-line bg-nx-ground px-2 py-1.5 text-start text-[10px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-accent hover:bg-nx-accent-wash focus-visible:outline-none focus-visible:shadow-nx-focus"
+                className="flex-1 truncate rounded-nx-sm border border-nx-line bg-nx-ground px-2 py-1.5 text-start text-[10px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:border-nx-accent hover:bg-nx-accent-wash focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                 onClick={() => {
                   store.loadTemplate(tmpl.components, tmpl.gridRows, tmpl.background);
                   setShowSaved(false);
@@ -371,7 +373,7 @@ export function BuilderPanel({
                 {tmpl.name}
               </button>
               <button
-                className="rounded-nx-sm p-1 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-danger focus-visible:outline-none focus-visible:shadow-nx-focus"
+                className="rounded-nx-sm p-1 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-danger focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                 onClick={() => {
                   store.deleteTemplate(tmpl.id);
                 }}
@@ -429,10 +431,11 @@ export function BuilderPanel({
         <div className="space-y-1.5 rounded-nx-lg border border-warning/30 bg-warning/5 p-2.5">
           <div className="flex items-center gap-1.5 text-warning">
             <AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />
-            <span className="text-xs font-semibold">
-              {t("studio.builder.validationWarnings")}
-            </span>
-            <Badge variant="outline" className="ms-auto h-4 border-warning/30 px-1 text-[10px] tabular-nums">
+            <span className="text-xs font-semibold">{t("studio.builder.validationWarnings")}</span>
+            <Badge
+              variant="outline"
+              className="ms-auto h-4 border-warning/30 px-1 text-[10px] tabular-nums"
+            >
               {overlapWarnings.length}
             </Badge>
           </div>

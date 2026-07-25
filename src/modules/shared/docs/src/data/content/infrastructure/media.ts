@@ -40,10 +40,6 @@ registerPage({
   titleKey: "infrastructure.media.title",
   descriptionKey: "infrastructure.media.description",
   sections,
-  relatedSlugs: [
-    "infrastructure/file-storage",
-    "infrastructure/integrations",
-    "modules/media",
-  ],
+  relatedSlugs: ["infrastructure/file-storage", "infrastructure/integrations", "modules/media"],
   lastUpdated: "2026-07-08",
 });

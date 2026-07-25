@@ -1,43 +1,43 @@
 /**
-* PartyRole Entity
-*
-* Domain entity representing a PartyRole.
-*/
+ * PartyRole Entity
+ *
+ * Domain entity representing a PartyRole.
+ */
 
 /**
-* PartyRole data from API
-*/
+ * PartyRole data from API
+ */
 export interface PartyRoleData {
-id: string;
-partyId: string;
-roleType: string;
-createdAt: string;
-modifiedAt?: string;
+  id: string;
+  partyId: string;
+  roleType: string;
+  createdAt: string;
+  modifiedAt?: string;
 }
 
 /**
-* PartyRole entity class
-*/
+ * PartyRole entity class
+ */
 export class PartyRole {
-constructor(public readonly data: PartyRoleData) {}
+  constructor(public readonly data: PartyRoleData) {}
 
-get id(): string {
-return this.data.id;
-}
+  get id(): string {
+    return this.data.id;
+  }
 
-get partyId(): string {
-return this.data.partyId;
-}
+  get partyId(): string {
+    return this.data.partyId;
+  }
 
-get roleType(): string {
-return this.data.roleType;
-}
+  get roleType(): string {
+    return this.data.roleType;
+  }
 
-get createdAt(): string {
-return this.data.createdAt;
-}
+  get createdAt(): string {
+    return this.data.createdAt;
+  }
 
-get modifiedAt(): string | undefined {
-return this.data.modifiedAt;
-}
+  get modifiedAt(): string | undefined {
+    return this.data.modifiedAt;
+  }
 }

@@ -100,11 +100,11 @@ function QuickLink({ icon: Icon, label, href }: { icon: LucideIcon; label: strin
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-2 rounded-nx-md border border-nx-line bg-nx-surface p-3 text-sm font-medium text-nx-ink transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
+      className="flex items-center gap-2 rounded-nx-md border border-nx-line bg-nx-surface p-3 text-sm font-medium text-nx-ink transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
     >
       <Icon className="h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
       <span className="min-w-0 truncate">{label}</span>
-      <ExternalLink className="h-3 w-3 shrink-0 text-nx-ink-3 ms-auto" aria-hidden="true" />
+      <ExternalLink className="ms-auto h-3 w-3 shrink-0 text-nx-ink-3" aria-hidden="true" />
       <span className="sr-only">{t("entitlements.platformStripe.opensInNewTab")}</span>
     </a>
   );

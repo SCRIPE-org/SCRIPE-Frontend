@@ -613,8 +613,7 @@ function TreeList<T>({
         const children = getChildren(node) ?? [];
         const hasChildren = children.length > 0;
         const isOpen = expanded[id];
-        const selected =
-          selectable && getValueToSend ? selectedValues.includes(nodeValue) : false;
+        const selected = selectable && getValueToSend ? selectedValues.includes(nodeValue) : false;
         const indeterminate =
           selectable && getValueToSend ? (isNodeIndeterminate?.(node) ?? false) : false;
 
@@ -635,7 +634,7 @@ function TreeList<T>({
               className={cn(
                 "flex items-center gap-2",
                 nodeBase,
-                "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                "focus-visible:shadow-nx-focus focus-visible:outline-none",
                 disabled && "cursor-not-allowed",
                 expandOnCardClick && hasChildren && !disabled ? "cursor-pointer" : ""
               )}
@@ -735,12 +734,18 @@ function TreeList<T>({
                   (isOpen ? (
                     <FolderOpen
                       aria-hidden="true"
-                      className={cn("h-4 w-4 shrink-0", selected ? "text-nx-accent" : "text-nx-ink-2")}
+                      className={cn(
+                        "h-4 w-4 shrink-0",
+                        selected ? "text-nx-accent" : "text-nx-ink-2"
+                      )}
                     />
                   ) : (
                     <Folder
                       aria-hidden="true"
-                      className={cn("h-4 w-4 shrink-0", selected ? "text-nx-accent" : "text-nx-ink-2")}
+                      className={cn(
+                        "h-4 w-4 shrink-0",
+                        selected ? "text-nx-accent" : "text-nx-ink-2"
+                      )}
                     />
                   ))}
                 {/* One type size across levels: depth is stated by the rail and
@@ -756,7 +761,7 @@ function TreeList<T>({
                   {label}
                 </span>
                 {level === 0 && hasChildren && (
-                  <span className="ms-1 shrink-0 rounded-nx-sm border border-nx-line px-1.5 py-0.5 text-[11px] font-medium leading-none tabular-nums text-nx-ink-3">
+                  <span className="ms-1 shrink-0 rounded-nx-sm border border-nx-line px-1.5 py-0.5 text-[11px] font-medium tabular-nums leading-none text-nx-ink-3">
                     {children.length}
                   </span>
                 )}

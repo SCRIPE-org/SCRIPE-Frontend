@@ -520,7 +520,7 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
                   buttonColor: tpl.color,
                 });
               }}
-              className="group relative flex cursor-pointer flex-col items-center gap-2.5 rounded-nx-md border border-nx-line p-4 text-center transition-[border-color,background-color,box-shadow] duration-nx-micro motion-reduce:transition-none hover:border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] hover:bg-nx-accent-wash"
+              className="group relative flex cursor-pointer flex-col items-center gap-2.5 rounded-nx-md border border-nx-line p-4 text-center transition-[border-color,background-color,box-shadow] duration-nx-micro hover:border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] hover:bg-nx-accent-wash motion-reduce:transition-none"
               style={{
                 borderColor: isSelected ? `${tpl.color}75` : undefined,
                 background: isSelected ? `${tpl.color}12` : undefined,
@@ -585,7 +585,7 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
 
       {/* Inline Setup Guide for selected template */}
       {activeTemplate && activeTemplate.setupSteps && (
-        <Card className="border border-nx-accent/30 bg-nx-accent-wash duration-nx-standard ease-nx-enter motion-reduce:transition-none animate-in fade-in slide-in-from-top-1">
+        <Card className="border-nx-accent/30 border bg-nx-accent-wash duration-nx-standard ease-nx-enter animate-in fade-in slide-in-from-top-1 motion-reduce:transition-none">
           <CardContent className="space-y-3 p-4">
             <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-nx-accent">
               <HelpCircle className="h-4 w-4" aria-hidden="true" />

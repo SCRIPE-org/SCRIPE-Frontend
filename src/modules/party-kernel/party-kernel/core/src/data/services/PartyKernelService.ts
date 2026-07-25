@@ -21,7 +21,11 @@ const BASE_URL = "/v1/PartyKernel";
 export class PartyKernelService implements IPartyKernelService {
   constructor(private readonly api: IApiService) {}
 
-  async getAll(params: { page: number; pageSize: number; search?: string }): Promise<PartyKernelListResult> {
+  async getAll(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<PartyKernelListResult> {
     const url = buildUrl(BASE_URL, {
       page: params.page,
       pageSize: params.pageSize,

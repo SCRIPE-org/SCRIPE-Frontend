@@ -171,7 +171,7 @@ export function CliSimulator({ titleKey }: CliSimulatorProps) {
                   "docs-terminal-output",
                   (log.startsWith("✨") || log.startsWith("🎉") || log.startsWith("✅")) &&
                     "text-success",
-                  log.startsWith("$ ") && "text-nx-accent"
+                  log.startsWith("$") && "text-nx-accent"
                 )}
               >
                 {log}

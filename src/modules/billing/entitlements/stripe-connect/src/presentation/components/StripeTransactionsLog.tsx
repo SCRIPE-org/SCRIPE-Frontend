@@ -9,10 +9,23 @@ import { Button } from "@core/ui/button";
 import { SectionState } from "@core/ui/section-state";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
-import { ArrowUpRight, ArrowDownLeft, ChevronLeft, ChevronRight, Zap, Banknote } from "lucide-react";
+import {
+  ArrowUpRight,
+  ArrowDownLeft,
+  ChevronLeft,
+  ChevronRight,
+  Zap,
+  Banknote,
+} from "lucide-react";
 import type { TenantTransactionsResult } from "../../domain/entities/ConnectAccount";
 
-const TXN_STATUS_OPTIONS = ["ALL", "Pending", "Collected", "Refunded", "PartiallyRefunded"] as const;
+const TXN_STATUS_OPTIONS = [
+  "ALL",
+  "Pending",
+  "Collected",
+  "Refunded",
+  "PartiallyRefunded",
+] as const;
 const TXN_TYPE_OPTIONS = ["ALL", "Payment", "Refund", "PartialRefund"] as const;
 
 const STATUS_VARIANT: Record<string, BadgeProps["variant"]> = {
@@ -136,7 +149,9 @@ export function StripeTransactionsLog({
         <CardHeader className="border-b border-nx-line pb-3">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <CardTitle className="text-base">{t("entitlements.tenantConnect.txn.title")}</CardTitle>
+              <CardTitle className="text-base">
+                {t("entitlements.tenantConnect.txn.title")}
+              </CardTitle>
               <CardDescription className="mt-0.5">
                 {t("entitlements.tenantConnect.txn.desc")}
               </CardDescription>

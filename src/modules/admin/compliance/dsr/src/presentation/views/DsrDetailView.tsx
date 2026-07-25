@@ -54,16 +54,32 @@ const STATUS_META: Record<
 > = {
   Pending: { labelKey: "compliance.statusLabels.pending", icon: Clock, variant: "warning" },
   InReview: { labelKey: "compliance.statusLabels.inReview", icon: Info, variant: "info" },
-  Approved: { labelKey: "compliance.statusLabels.approved", icon: CheckCircle2, variant: "success" },
-  Processing: { labelKey: "compliance.statusLabels.processing", icon: ProcessingIcon, variant: "info" },
+  Approved: {
+    labelKey: "compliance.statusLabels.approved",
+    icon: CheckCircle2,
+    variant: "success",
+  },
+  Processing: {
+    labelKey: "compliance.statusLabels.processing",
+    icon: ProcessingIcon,
+    variant: "info",
+  },
   PartiallyCompleted: {
     labelKey: "compliance.statusLabels.partiallyCompleted",
     icon: CheckCircle2,
     variant: "success",
   },
-  Completed: { labelKey: "compliance.statusLabels.completed", icon: CheckCircle2, variant: "success" },
+  Completed: {
+    labelKey: "compliance.statusLabels.completed",
+    icon: CheckCircle2,
+    variant: "success",
+  },
   Rejected: { labelKey: "compliance.statusLabels.rejected", icon: AlertTriangle, variant: "error" },
-  Cancelled: { labelKey: "compliance.statusLabels.cancelled", icon: AlertTriangle, variant: "secondary" },
+  Cancelled: {
+    labelKey: "compliance.statusLabels.cancelled",
+    icon: AlertTriangle,
+    variant: "secondary",
+  },
 };
 
 // ── Type Meta ────────────────────────────────────────────────────────────────
@@ -126,8 +142,14 @@ export function DsrDetailView({ id }: { id: string }) {
                 </Button>
               )}
               {dsr.canDownloadExport && !!tenantCode && (
-                <Button onClick={downloadExport} disabled={isDownloadingPending} loading={isDownloadingPending}>
-                  {!isDownloadingPending && <Download className="me-2 h-4 w-4" aria-hidden="true" />}
+                <Button
+                  onClick={downloadExport}
+                  disabled={isDownloadingPending}
+                  loading={isDownloadingPending}
+                >
+                  {!isDownloadingPending && (
+                    <Download className="me-2 h-4 w-4" aria-hidden="true" />
+                  )}
                   {t("compliance.downloadExportBtn")}
                 </Button>
               )}

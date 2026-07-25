@@ -91,7 +91,7 @@ function RecipientSearchInput({
               <button
                 type="button"
                 onClick={() => onRemove(r.email)}
-                className="rounded-full hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
+                className="rounded-full hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none"
                 aria-label={t("messaging.email.removeRecipientNamed", {
                   name: r.name || r.email,
                 })}
@@ -139,7 +139,7 @@ function RecipientSearchInput({
                 <button
                   key={r.email}
                   type="button"
-                  className="flex w-full items-center justify-between px-3 py-2 text-start text-sm hover:bg-nx-hover focus-visible:outline-none focus-visible:bg-nx-hover"
+                  className="flex w-full items-center justify-between px-3 py-2 text-start text-sm hover:bg-nx-hover focus-visible:bg-nx-hover focus-visible:outline-none"
                   onClick={() => {
                     onAdd(r);
                     setShowDropdown(false);
@@ -152,7 +152,7 @@ function RecipientSearchInput({
             ) : showCustomHint ? (
               <button
                 type="button"
-                className="flex w-full items-center gap-2 px-3 py-3 text-start text-sm hover:bg-nx-hover focus-visible:outline-none focus-visible:bg-nx-hover"
+                className="flex w-full items-center gap-2 px-3 py-3 text-start text-sm hover:bg-nx-hover focus-visible:bg-nx-hover focus-visible:outline-none"
                 onClick={() => {
                   if (onCustomEmail) {
                     const added = onCustomEmail(search);
@@ -170,7 +170,8 @@ function RecipientSearchInput({
               noResults && (
                 <div className="px-3 py-4 text-center text-sm text-nx-ink-3">
                   <Search className="mx-auto mb-1 h-5 w-5 opacity-40" aria-hidden="true" />
-                  {t("messaging.email.noRecipientsFound")} {t("messaging.email.noRecipientsFoundHint")}
+                  {t("messaging.email.noRecipientsFound")}{" "}
+                  {t("messaging.email.noRecipientsFoundHint")}
                 </div>
               )
             )}

@@ -143,7 +143,7 @@ export function BackupCodesDialog({
               {codes.map((code, i) => (
                 <div
                   key={i}
-                  className="rounded-nx-control border border-nx-line bg-nx-ground px-3 py-2 text-center font-mono text-sm tracking-wider text-nx-ink tabular-nums"
+                  className="rounded-nx-control border border-nx-line bg-nx-ground px-3 py-2 text-center font-mono text-sm tabular-nums tracking-wider text-nx-ink"
                 >
                   {code}
                 </div>

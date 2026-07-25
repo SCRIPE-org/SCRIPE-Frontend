@@ -103,7 +103,7 @@ export function NotificationSenderView() {
                       <button
                         type="button"
                         onClick={() => vm.removeTarget(target.id)}
-                        className="rounded-full hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
+                        className="rounded-full hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none"
                         aria-label={t("messaging.notifications.removeTargetNamed", {
                           name: target.name,
                         })}
@@ -142,35 +142,35 @@ export function NotificationSenderView() {
                 </div>
                 {showDropdown && vm.targetSearch.length >= 2 && (
                   <div className="absolute top-full z-dropdown mt-1 max-h-48 w-full overflow-y-auto rounded-nx-md border border-nx-line bg-nx-popover shadow-nx-popover">
-                    {vm.targetResults.length > 0
-                      ? vm.targetResults.map((target) => (
-                          <button
-                            key={`${target.type}-${target.id}`}
-                            type="button"
-                            className="flex w-full items-center justify-between px-3 py-2 text-start text-sm hover:bg-nx-hover focus-visible:outline-none focus-visible:bg-nx-hover"
-                            onClick={() => {
-                              vm.addTarget(target);
-                              setShowDropdown(false);
-                            }}
-                          >
-                            <span className="font-medium text-nx-ink">{target.name}</span>
-                            <Badge variant="outline" className="text-xs">
-                              {target.type}
-                            </Badge>
-                          </button>
-                        ))
-                      : vm.isTargetSearchError
-                        ? (
-                            <div className="px-3 py-4 text-center text-sm text-destructive">
-                              {t("common.error")}
-                            </div>
-                          )
-                        : noResults && (
-                            <div className="px-3 py-4 text-center text-sm text-nx-ink-3">
-                              <Search className="mx-auto mb-1 h-5 w-5 opacity-40" aria-hidden="true" />
-                              {t("messaging.notifications.noTargetsFound")}
-                            </div>
-                          )}
+                    {vm.targetResults.length > 0 ? (
+                      vm.targetResults.map((target) => (
+                        <button
+                          key={`${target.type}-${target.id}`}
+                          type="button"
+                          className="flex w-full items-center justify-between px-3 py-2 text-start text-sm hover:bg-nx-hover focus-visible:bg-nx-hover focus-visible:outline-none"
+                          onClick={() => {
+                            vm.addTarget(target);
+                            setShowDropdown(false);
+                          }}
+                        >
+                          <span className="font-medium text-nx-ink">{target.name}</span>
+                          <Badge variant="outline" className="text-xs">
+                            {target.type}
+                          </Badge>
+                        </button>
+                      ))
+                    ) : vm.isTargetSearchError ? (
+                      <div className="px-3 py-4 text-center text-sm text-destructive">
+                        {t("common.error")}
+                      </div>
+                    ) : (
+                      noResults && (
+                        <div className="px-3 py-4 text-center text-sm text-nx-ink-3">
+                          <Search className="mx-auto mb-1 h-5 w-5 opacity-40" aria-hidden="true" />
+                          {t("messaging.notifications.noTargetsFound")}
+                        </div>
+                      )
+                    )}
                   </div>
                 )}
               </div>

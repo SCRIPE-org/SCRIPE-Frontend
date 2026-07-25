@@ -54,79 +54,78 @@ export function useApiKeysViewModel() {
   const [generatedKey, setGeneratedKey] = useState<string | null>(null);
 
   // Core CRUD hook
-  const vm = useCrudViewModel<ApiKey, any, any>(
-    [...apiKeyKeys.all],
-    {
-      getAll: async (params) => {
-        const res = await apiKeyRepository.getAll({
-          page: params.page,
+  const vm = useCrudViewModel<ApiKey, any, any>([...apiKeyKeys.all], {
+    getAll: async (params) => {
+      const res = await apiKeyRepository.getAll({
+        page: params.page,
+        pageSize: params.pageSize,
+        search: params.search,
+      });
+      return {
+        items: res.items || [],
+        pagination: {
+          itemsCount: res.totalCount,
           pageSize: params.pageSize,
-          search: params.search,
-        });
-        return {
-          items: res.items || [],
-          pagination: {
-            itemsCount: res.totalCount,
-            pageSize: params.pageSize,
-            page: params.page,
-            pagesCount: Math.ceil(res.totalCount / params.pageSize),
-          },
+          page: params.page,
+          pagesCount: Math.ceil(res.totalCount / params.pageSize),
+        },
+      };
+    },
+    create: async (data: any) => {
+      try {
+        const requestBody: CreateApiKeyRequest = {
+          ...data,
+          scopes: Array.isArray(data.scopes) ? data.scopes.join(",") : data.scopes,
+          rateLimitPerMinute: data.rateLimitPerMinute
+            ? parseInt(data.rateLimitPerMinute, 10)
+            : null,
+          monthlyQuota: data.monthlyQuota ? parseInt(data.monthlyQuota, 10) : null,
+          description: data.description || "",
+          ipWhitelist: data.ipWhitelist || null,
         };
-      },
-      create: async (data: any) => {
-        try {
-          const requestBody: CreateApiKeyRequest = {
-            ...data,
-            scopes: Array.isArray(data.scopes) ? data.scopes.join(",") : data.scopes,
-            rateLimitPerMinute: data.rateLimitPerMinute ? parseInt(data.rateLimitPerMinute, 10) : null,
-            monthlyQuota: data.monthlyQuota ? parseInt(data.monthlyQuota, 10) : null,
-            description: data.description || "",
-            ipWhitelist: data.ipWhitelist || null,
-          };
-          const result = await apiKeyRepository.create(requestBody);
-          setGeneratedKey(result.plainTextKey);
-          success({
-            title: t("apikeys.created") || "API Key Generated",
-            description: t("apikeys.createdDesc") || "API key created successfully.",
-          });
-          return new ApiKey({
-            id: result.id,
-            name: data.name,
-            prefix: result.plainTextKey.substring(0, 16),
-            scopes: requestBody.scopes,
-            expiresAt: null,
-            revokedAt: null,
-            isActive: true,
-            createdAt: new Date().toISOString(),
-          });
-        } catch (err: any) {
-          toastError({
-            title: t("common.error") || "Error",
-            description: err.message || "Failed to generate API Key",
-          });
-          throw err;
-        }
-      },
-      update: async () => {
-        return {} as ApiKey;
-      },
-      delete: async (id: string) => {
-        try {
-          await apiKeyRepository.revoke(id);
-          success({
-            title: t("apikeys.revoked") || "API Key Revoked",
-            description: t("apikeys.revokedDesc") || "API key revoked successfully.",
-          });
-        } catch (err: any) {
-          toastError({
-            title: t("common.error") || "Error",
-            description: err.message || "Failed to revoke API Key",
-          });
-          throw err;
-        }
-      },
-    }
-  );
+        const result = await apiKeyRepository.create(requestBody);
+        setGeneratedKey(result.plainTextKey);
+        success({
+          title: t("apikeys.created") || "API Key Generated",
+          description: t("apikeys.createdDesc") || "API key created successfully.",
+        });
+        return new ApiKey({
+          id: result.id,
+          name: data.name,
+          prefix: result.plainTextKey.substring(0, 16),
+          scopes: requestBody.scopes,
+          expiresAt: null,
+          revokedAt: null,
+          isActive: true,
+          createdAt: new Date().toISOString(),
+        });
+      } catch (err: any) {
+        toastError({
+          title: t("common.error") || "Error",
+          description: err.message || "Failed to generate API Key",
+        });
+        throw err;
+      }
+    },
+    update: async () => {
+      return {} as ApiKey;
+    },
+    delete: async (id: string) => {
+      try {
+        await apiKeyRepository.revoke(id);
+        success({
+          title: t("apikeys.revoked") || "API Key Revoked",
+          description: t("apikeys.revokedDesc") || "API key revoked successfully.",
+        });
+      } catch (err: any) {
+        toastError({
+          title: t("common.error") || "Error",
+          description: err.message || "Failed to revoke API Key",
+        });
+        throw err;
+      }
+    },
+  });
 
   // Configuration for GenericCrudView
   const getConfigBase = useCallback(
@@ -172,7 +171,9 @@ export function useApiKeysViewModel() {
           name: "description",
           label: t("apikeys.settings.desc") || "Description",
           type: "textarea" as const,
-          placeholder: t("apikeys.settings.descPlaceholder") || "Explain what this integration key is used for...",
+          placeholder:
+            t("apikeys.settings.descPlaceholder") ||
+            "Explain what this integration key is used for...",
           required: false,
         },
         {

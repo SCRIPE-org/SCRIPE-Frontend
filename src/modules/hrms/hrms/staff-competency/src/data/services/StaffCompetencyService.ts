@@ -1,9 +1,9 @@
 /**
-* StaffCompetency Service
-*
-* Handles all API calls for StaffCompetency.
-* Returns Models (DTOs) - Repository uses Mapper to convert to Entities.
-*/
+ * StaffCompetency Service
+ *
+ * Handles all API calls for StaffCompetency.
+ * Returns Models (DTOs) - Repository uses Mapper to convert to Entities.
+ */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import {
@@ -20,7 +20,11 @@ import { STAFF_COMPETENCY_ENDPOINTS } from "./staff-competency.endpoints";
 export class StaffCompetencyService implements IStaffCompetencyService {
   constructor(private readonly api: IApiService) {}
 
-  async getAll(params: { page: number; pageSize: number; search?: string }): Promise<StaffCompetencyListResult> {
+  async getAll(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<StaffCompetencyListResult> {
     const url = buildUrl(STAFF_COMPETENCY_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,

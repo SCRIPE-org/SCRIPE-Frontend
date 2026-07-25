@@ -381,13 +381,18 @@ export function getTableHoverEffectClasses(
 export function parseUtcDate(date: string | Date | null | undefined): Date | null {
   if (date === null || date === undefined || date === "") return null;
   if (date instanceof Date) return isNaN(date.getTime()) ? null : date;
-  
+
   let s = date.trim();
   // If it's a date-time string without timezone offset, append 'Z' to treat as UTC
-  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(s) && !s.endsWith("Z") && !s.includes("+") && !s.includes("-", 10)) {
+  if (
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(s) &&
+    !s.endsWith("Z") &&
+    !s.includes("+") &&
+    !s.includes("-", 10)
+  ) {
     s += "Z";
   }
-  
+
   const dateObj = new Date(s);
   return isNaN(dateObj.getTime()) ? null : dateObj;
 }
@@ -398,14 +403,14 @@ export function parseUtcDate(date: string | Date | null | undefined): Date | nul
 export function formatDateTimeUtc(date: string | Date | null | undefined): string {
   const parsed = parseUtcDate(date);
   if (!parsed) return "-";
-  
+
   const year = parsed.getUTCFullYear();
   const month = String(parsed.getUTCMonth() + 1).padStart(2, "0");
   const day = String(parsed.getUTCDate()).padStart(2, "0");
   const hours = String(parsed.getUTCHours()).padStart(2, "0");
   const minutes = String(parsed.getUTCMinutes()).padStart(2, "0");
   const seconds = String(parsed.getUTCSeconds()).padStart(2, "0");
-  
+
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
@@ -415,7 +420,7 @@ export function formatDateTimeUtc(date: string | Date | null | undefined): strin
 export function formatTimeUtc(date: string | Date | null | undefined): string {
   const parsed = parseUtcDate(date);
   if (!parsed) return "";
-  
+
   const hours = String(parsed.getUTCHours()).padStart(2, "0");
   const minutes = String(parsed.getUTCMinutes()).padStart(2, "0");
   return `${hours}:${minutes}`;
@@ -427,8 +432,21 @@ export function formatTimeUtc(date: string | Date | null | undefined): string {
 export function formatDateUtc(date: string | Date | null | undefined): string {
   const parsed = parseUtcDate(date);
   if (!parsed) return "";
-  
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   const month = months[parsed.getUTCMonth()];
   const day = parsed.getUTCDate();
   return `${month} ${day}`;

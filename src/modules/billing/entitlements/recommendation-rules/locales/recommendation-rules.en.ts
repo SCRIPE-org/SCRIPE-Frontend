@@ -9,8 +9,7 @@ export const en = {
         nameHelp: "Unique stable slug for this rule.",
         condition: "Condition",
         conditionPlaceholder: '{"team_size":"solo"}',
-        conditionHelp:
-          'Single value: {"key":"value"}  |  Multi-value match: {"key":["v1","v2"]}',
+        conditionHelp: 'Single value: {"key":"value"}  |  Multi-value match: {"key":["v1","v2"]}',
         tier: "Recommended Tier",
         scoreBonus: "Score Bonus",
         scoreBonusHelp: "Points added to the matching edition's score.",

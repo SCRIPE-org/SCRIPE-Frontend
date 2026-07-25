@@ -54,9 +54,7 @@ export function OAuthAppDetailView({ appId }: Props) {
   if (vm.fetchError) {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center gap-4">
-        <ErrorMessage
-          message={`${t("common.error")}: ${(vm.fetchError as Error).message}`}
-        />
+        <ErrorMessage message={`${t("common.error")}: ${(vm.fetchError as Error).message}`} />
         <Button variant="outline" size="sm" onClick={vm.goBack}>
           <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" aria-hidden="true" />
           {t("common.goBack")}

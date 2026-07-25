@@ -2,8 +2,7 @@ export const zh = {
   modules: {
     webhooks: {
       title: "Webhooks",
-      description:
-        "独立于网关的 Webhook 分发器，具有安全的 HMAC 签名 and 自动指数重试队列。",
+      description: "独立于网关的 Webhook 分发器，具有安全的 HMAC 签名 and 自动指数重试队列。",
       intro:
         "异步出站 Webhook 执行子系统，通过带有可配置退避策略的 HMAC-SHA256 请求头验证负载完整性。",
       engineTitle: "Webhook 发送引擎",

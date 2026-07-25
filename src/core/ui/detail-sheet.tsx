@@ -112,7 +112,9 @@ export function DetailSheet({
         {...(description == null ? { "aria-describedby": undefined } : {})}
       >
         <SheetTitle className="sr-only">{title}</SheetTitle>
-        {description != null && <SheetDescription className="sr-only">{description}</SheetDescription>}
+        {description != null && (
+          <SheetDescription className="sr-only">{description}</SheetDescription>
+        )}
         {children}
       </SheetContent>
     </Sheet>
@@ -132,12 +134,9 @@ export function DetailSheet({
  * as a doc note meant one consumer patched `pe-12` on and the others let
  * their titles run underneath it.
  */
-export function DetailSheetHeader({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+export function DetailSheetHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn("shrink-0 border-b border-nx-line ps-6 pe-12 py-5", className)} {...props} />
+    <div className={cn("shrink-0 border-b border-nx-line py-5 pe-12 ps-6", className)} {...props} />
   );
 }
 DetailSheetHeader.displayName = "DetailSheetHeader";
@@ -154,7 +153,10 @@ export function DetailSheetTabBar({
   ...props
 }: React.ComponentPropsWithoutRef<typeof TabsList>) {
   return (
-    <TabsList className={cn("w-full shrink-0 justify-start rounded-none px-6", className)} {...props} />
+    <TabsList
+      className={cn("w-full shrink-0 justify-start rounded-none px-6", className)}
+      {...props}
+    />
   );
 }
 DetailSheetTabBar.displayName = "DetailSheetTabBar";
@@ -167,10 +169,7 @@ DetailSheetTabBar.displayName = "DetailSheetTabBar";
  * carrying on into the list behind the scrim — which is the one thing this
  * container exists to keep exactly where the user left it.
  */
-export function DetailSheetBody({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+export function DetailSheetBody({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
@@ -194,10 +193,7 @@ DetailSheetBody.displayName = "DetailSheetBody";
  * pack with `me-auto`. Every consumer was re-declaring `flex items-center
  * gap-2` on top of a plain block to get here.
  */
-export function DetailSheetFooter({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+export function DetailSheetFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(

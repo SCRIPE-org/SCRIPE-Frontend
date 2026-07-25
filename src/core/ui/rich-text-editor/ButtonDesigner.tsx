@@ -118,9 +118,7 @@ export function ButtonDesigner({ onInsert }: ButtonDesignerProps) {
       <PopoverContent className="w-80" align="start" side="bottom" sideOffset={8}>
         <Form {...form}>
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-nx-ink">
-              {t("editorBlocks.button.title")}
-            </h4>
+            <h4 className="text-sm font-semibold text-nx-ink">{t("editorBlocks.button.title")}</h4>
 
             {/* Live Preview — mirrors generateHtml() byte-for-byte, including
                 the literal colors/shadow (see COLOUR EXCEPTION above). It is a
@@ -274,9 +272,7 @@ export function ButtonDesigner({ onInsert }: ButtonDesignerProps) {
                 name="fullWidth"
                 render={({ field }) => (
                   <FormItem className="flex items-center justify-between gap-3 space-y-0">
-                    <FormLabel className="text-xs">
-                      {t("editorBlocks.button.fullWidth")}
-                    </FormLabel>
+                    <FormLabel className="text-xs">{t("editorBlocks.button.fullWidth")}</FormLabel>
                     <FormControl>
                       <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>

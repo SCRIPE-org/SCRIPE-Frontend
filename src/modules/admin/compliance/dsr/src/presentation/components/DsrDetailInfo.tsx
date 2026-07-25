@@ -31,7 +31,10 @@ export function DsrDetailInfo({ dsr, t }: DsrDetailInfoProps) {
         />
         <DetailRow label={t("compliance.submittedAt")} value={formatDateTimeUtc(dsr.submittedAt)} />
         {dsr.completedAt && (
-          <DetailRow label={t("compliance.completedAt")} value={formatDateTimeUtc(dsr.completedAt)} />
+          <DetailRow
+            label={t("compliance.completedAt")}
+            value={formatDateTimeUtc(dsr.completedAt)}
+          />
         )}
         {dsr.requesterNotes && (
           <DetailRow

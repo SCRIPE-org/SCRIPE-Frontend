@@ -80,9 +80,7 @@ export const PartyRelationshipListView = React.memo(function PartyRelationshipLi
         key: "createdAt",
         label: t("partyRelationship.columns.createdAt"),
         render: (value: string) =>
-          value
-            ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US")
-            : "-",
+          value ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US") : "-",
       },
     ],
     createFields: [

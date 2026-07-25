@@ -81,9 +81,7 @@ export function TenantSettingsTab({
       {/* Section header */}
       <div>
         <h3 className="text-lg font-semibold">{t("tenant.settings")}</h3>
-        <p className="text-sm text-nx-ink-2">
-          {t("tenant.settingsDescription")}
-        </p>
+        <p className="text-sm text-nx-ink-2">{t("tenant.settingsDescription")}</p>
       </div>
 
       {/* ── Security Card ── */}
@@ -96,12 +94,8 @@ export function TenantSettingsTab({
                 <Shield className="h-4 w-4 text-warning" aria-hidden="true" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold">
-                  {t("tenant.settingsSecurity")}
-                </h4>
-                <p className="text-xs text-nx-ink-2">
-                  {t("tenant.settingsSecurityDesc")}
-                </p>
+                <h4 className="text-sm font-semibold">{t("tenant.settingsSecurity")}</h4>
+                <p className="text-xs text-nx-ink-2">{t("tenant.settingsSecurityDesc")}</p>
               </div>
             </div>
             <Button
@@ -147,9 +141,7 @@ export function TenantSettingsTab({
               </div>
               <p className="text-lg font-bold tabular-nums">{settings.passwordExpiryDays || "∞"}</p>
               <p className="text-xs text-nx-ink-2">
-                {settings.passwordExpiryDays
-                  ? t("tenant.days")
-                  : t("tenant.never")}
+                {settings.passwordExpiryDays ? t("tenant.days") : t("tenant.never")}
               </p>
             </div>
           </div>
@@ -168,10 +160,7 @@ export function TenantSettingsTab({
               satisfied={settings.passwordRequireSpecial}
               label={t("tenant.requireSpecial")}
             />
-            <RequirementBadge
-              satisfied={settings.require2FA}
-              label={t("tenant.require2FA")}
-            />
+            <RequirementBadge satisfied={settings.require2FA} label={t("tenant.require2FA")} />
           </div>
         </div>
       </div>
@@ -186,12 +175,8 @@ export function TenantSettingsTab({
                 <Palette className="h-4 w-4 text-nx-accent" aria-hidden="true" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold">
-                  {t("tenant.settingsBranding")}
-                </h4>
-                <p className="text-xs text-nx-ink-2">
-                  {t("tenant.settingsBrandingDesc")}
-                </p>
+                <h4 className="text-sm font-semibold">{t("tenant.settingsBranding")}</h4>
+                <p className="text-xs text-nx-ink-2">{t("tenant.settingsBrandingDesc")}</p>
               </div>
             </div>
             <Button
@@ -220,9 +205,7 @@ export function TenantSettingsTab({
             <div className="space-y-1.5">
               <p className="font-semibold">
                 {settings.companyName || (
-                  <span className="italic text-nx-ink-2">
-                    {t("tenant.noCompanyName")}
-                  </span>
+                  <span className="italic text-nx-ink-2">{t("tenant.noCompanyName")}</span>
                 )}
               </p>
               <div className="flex items-center gap-3">
@@ -269,17 +252,13 @@ export function TenantSettingsTab({
             )}
             {settings.loginHeadline && (
               <div className="rounded-nx-md border border-nx-line bg-nx-raised p-2">
-                <p className="text-xs text-nx-ink-2">
-                  {t("tenant.loginHeadline")}
-                </p>
+                <p className="text-xs text-nx-ink-2">{t("tenant.loginHeadline")}</p>
                 <p className="truncate text-sm font-medium">{settings.loginHeadline}</p>
               </div>
             )}
             {settings.loginSubtitle && (
               <div className="rounded-nx-md border border-nx-line bg-nx-raised p-2">
-                <p className="text-xs text-nx-ink-2">
-                  {t("tenant.loginSubtitle")}
-                </p>
+                <p className="text-xs text-nx-ink-2">{t("tenant.loginSubtitle")}</p>
                 <p className="truncate text-sm font-medium">{settings.loginSubtitle}</p>
               </div>
             )}
@@ -297,9 +276,7 @@ export function TenantSettingsTab({
                 <ClipboardList className="h-4 w-4 text-success" aria-hidden="true" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold">
-                  {t("tenant.settingsAudit")}
-                </h4>
+                <h4 className="text-sm font-semibold">{t("tenant.settingsAudit")}</h4>
               </div>
             </div>
             <Button
@@ -323,9 +300,7 @@ export function TenantSettingsTab({
               variant={settings.auditEnabled ? "default" : "secondary"}
               className={cn(
                 "gap-1",
-                settings.auditEnabled
-                  ? "border-success/30 bg-success/10 text-success"
-                  : ""
+                settings.auditEnabled ? "border-success/30 bg-success/10 text-success" : ""
               )}
             >
               {settings.auditEnabled ? (

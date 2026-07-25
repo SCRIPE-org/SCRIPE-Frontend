@@ -1,58 +1,58 @@
 /**
-* Certification Entity
-*
-* Domain entity representing a Certification.
-*/
+ * Certification Entity
+ *
+ * Domain entity representing a Certification.
+ */
 
 /**
-* Certification data from API
-*/
+ * Certification data from API
+ */
 export interface CertificationData {
-id: string;
-staffMemberId: string;
-name: string;
-issuer: string;
-issuedOn: Date;
-expiresOn: Date;
-createdAt: string;
-modifiedAt?: string;
+  id: string;
+  staffMemberId: string;
+  name: string;
+  issuer: string;
+  issuedOn: Date;
+  expiresOn: Date;
+  createdAt: string;
+  modifiedAt?: string;
 }
 
 /**
-* Certification entity class
-*/
+ * Certification entity class
+ */
 export class Certification {
-constructor(public readonly data: CertificationData) {}
+  constructor(public readonly data: CertificationData) {}
 
-get id(): string {
-return this.data.id;
-}
+  get id(): string {
+    return this.data.id;
+  }
 
-get staffMemberId(): string {
-return this.data.staffMemberId;
-}
+  get staffMemberId(): string {
+    return this.data.staffMemberId;
+  }
 
-get name(): string {
-return this.data.name;
-}
+  get name(): string {
+    return this.data.name;
+  }
 
-get issuer(): string {
-return this.data.issuer;
-}
+  get issuer(): string {
+    return this.data.issuer;
+  }
 
-get issuedOn(): Date {
-return this.data.issuedOn;
-}
+  get issuedOn(): Date {
+    return this.data.issuedOn;
+  }
 
-get expiresOn(): Date {
-return this.data.expiresOn;
-}
+  get expiresOn(): Date {
+    return this.data.expiresOn;
+  }
 
-get createdAt(): string {
-return this.data.createdAt;
-}
+  get createdAt(): string {
+    return this.data.createdAt;
+  }
 
-get modifiedAt(): string | undefined {
-return this.data.modifiedAt;
-}
+  get modifiedAt(): string | undefined {
+    return this.data.modifiedAt;
+  }
 }

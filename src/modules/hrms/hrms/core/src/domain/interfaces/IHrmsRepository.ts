@@ -13,7 +13,17 @@ export interface HrmsListParams {
 }
 
 export interface IHrmsRepository {
-  getAll(params: HrmsListParams): Promise<{ items: Hrms[]; totalCount: number; page: number; pageSize: number; totalPages: number; hasNextPage: boolean; hasPreviousPage: boolean }>;
+  getAll(
+    params: HrmsListParams
+  ): Promise<{
+    items: Hrms[];
+    totalCount: number;
+    page: number;
+    pageSize: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  }>;
   getById(id: string): Promise<Hrms>;
   create(data: Record<string, unknown>): Promise<string>;
   update(id: string, data: Record<string, unknown>): Promise<void>;

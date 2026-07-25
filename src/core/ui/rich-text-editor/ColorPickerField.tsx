@@ -105,7 +105,7 @@ export function ColorPickerField({
               <button
                 type="button"
                 aria-labelledby={`${labelId} ${valueId}`}
-                className="flex min-h-9 w-full items-center gap-2 rounded-nx-control border border-nx-line bg-nx-ground px-3 py-2 text-start transition-[color,border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi focus-visible:border-nx-accent focus-visible:outline-none focus-visible:shadow-nx-focus"
+                className="flex min-h-9 w-full items-center gap-2 rounded-nx-control border border-nx-line bg-nx-ground px-3 py-2 text-start transition-[color,border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter hover:border-nx-line-hi focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
               >
                 <span
                   className="h-5 w-5 shrink-0 rounded-nx-sm border border-nx-line"
@@ -130,7 +130,7 @@ export function ColorPickerField({
                   aria-pressed={value === c}
                   className={cn(
                     "h-7 w-full rounded-nx-sm border transition-[border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                    "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                    "focus-visible:shadow-nx-focus focus-visible:outline-none",
                     // Selection is the lit edge closing around the swatch — a
                     // hover that scaled the chip moved the whole grid under the
                     // pointer and made the next target land somewhere else.

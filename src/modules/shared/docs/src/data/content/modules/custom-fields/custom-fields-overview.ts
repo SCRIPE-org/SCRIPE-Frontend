@@ -98,9 +98,6 @@ registerPage({
   category: "modules",
   order: 1,
   sections,
-  relatedSlugs: [
-    "architecture/cross-module-collaboration",
-    "features/multi-tenancy",
-  ],
+  relatedSlugs: ["architecture/cross-module-collaboration", "features/multi-tenancy"],
   lastUpdated: "2026-07-13",
 });

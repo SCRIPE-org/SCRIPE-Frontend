@@ -100,7 +100,7 @@ export function BuilderPropsPanel({
         <div className="flex items-center gap-1">
           <button
             onClick={() => onToggleVisibility(component.id)}
-            className="flex h-7 w-7 items-center justify-center rounded-nx-sm transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus"
+            className="flex h-7 w-7 items-center justify-center rounded-nx-sm transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
             title={visibilityLabel}
             aria-label={visibilityLabel}
           >
@@ -112,7 +112,7 @@ export function BuilderPropsPanel({
           </button>
           <button
             onClick={() => onDuplicate(component.id)}
-            className="flex h-7 w-7 items-center justify-center rounded-nx-sm transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus"
+            className="flex h-7 w-7 items-center justify-center rounded-nx-sm transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
             title={t("studio.builder.duplicate")}
             aria-label={t("studio.builder.duplicate")}
           >
@@ -121,7 +121,7 @@ export function BuilderPropsPanel({
           {!catalog?.required && (
             <button
               onClick={() => onRemove(component.id)}
-              className="flex h-7 w-7 items-center justify-center rounded-nx-sm text-nx-danger transition-colors duration-nx-micro ease-nx-enter hover:bg-destructive/10 motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus"
+              className="flex h-7 w-7 items-center justify-center rounded-nx-sm text-nx-danger transition-colors duration-nx-micro ease-nx-enter hover:bg-destructive/10 focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
               title={t("studio.builder.remove")}
               aria-label={t("studio.builder.remove")}
             >
@@ -143,13 +143,15 @@ export function BuilderPropsPanel({
               <button
                 onClick={() => (component.locked ? onUnlock(component.id) : onLock(component.id))}
                 className={cn(
-                  "flex h-6 w-6 items-center justify-center rounded-nx-sm transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                  "flex h-6 w-6 items-center justify-center rounded-nx-sm transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                   component.locked
                     ? "bg-destructive/10 text-nx-danger"
                     : "text-nx-ink-3 hover:bg-nx-hover"
                 )}
                 title={component.locked ? t("studio.builder.unlock") : t("studio.builder.lock")}
-                aria-label={component.locked ? t("studio.builder.unlock") : t("studio.builder.lock")}
+                aria-label={
+                  component.locked ? t("studio.builder.unlock") : t("studio.builder.lock")
+                }
               >
                 {component.locked ? (
                   <Lock className="h-3 w-3" aria-hidden="true" />
@@ -360,9 +362,7 @@ export function BuilderPropsPanel({
           >
             <ArrowUp className="h-3 w-3" aria-hidden="true" />
           </Button>
-          <span className="w-6 text-center font-mono text-xs tabular-nums">
-            {component.zIndex}
-          </span>
+          <span className="w-6 text-center font-mono text-xs tabular-nums">{component.zIndex}</span>
           <Button
             variant="outline"
             size="sm"
@@ -427,9 +427,7 @@ function ComponentSpecificProps({
               />
             </div>
             <div>
-              <Label className="text-[10px] text-nx-ink-3">
-                {t("studio.builder.props.shape")}
-              </Label>
+              <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.shape")}</Label>
               <Select
                 value={(props.shape as string) || "auto"}
                 onValueChange={(v) => onUpdateProps({ shape: v })}
@@ -455,9 +453,7 @@ function ComponentSpecificProps({
             </div>
           </div>
           <div>
-            <Label className="text-[10px] text-nx-ink-3">
-              {t("studio.builder.props.linkUrl")}
-            </Label>
+            <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.linkUrl")}</Label>
             <Input
               value={(props.linkUrl as string) || ""}
               onChange={(e) => onUpdateProps({ linkUrl: e.target.value })}
@@ -466,9 +462,7 @@ function ComponentSpecificProps({
             />
           </div>
           <div>
-            <Label className="text-[10px] text-nx-ink-3">
-              {t("studio.builder.props.opacity")}
-            </Label>
+            <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.opacity")}</Label>
             <Slider
               value={[(props.opacity as number) ?? 100]}
               onValueChange={([v]) => onUpdateProps({ opacity: v })}
@@ -503,16 +497,14 @@ function ComponentSpecificProps({
               />
             </div>
           ))}
-          <div className="border-t border-nx-line/50 pt-2">
+          <div className="border-nx-line/50 border-t pt-2">
             <Label className="text-[10px] font-semibold text-nx-ink-3">
               {t("studio.builder.props.formStyleSection")}
             </Label>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <Label className="text-[10px] text-nx-ink-3">
-                {t("studio.builder.props.style")}
-              </Label>
+              <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.style")}</Label>
               <Select
                 value={(props.formStyle as string) || "card"}
                 onValueChange={(v) => onUpdateProps({ formStyle: v })}
@@ -612,9 +604,7 @@ function ComponentSpecificProps({
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <Label className="text-[10px] text-nx-ink-3">
-                {t("studio.builder.props.style")}
-              </Label>
+              <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.style")}</Label>
               <Select
                 value={(props.formStyle as string) || "card"}
                 onValueChange={(v) => onUpdateProps({ formStyle: v })}
@@ -686,9 +676,7 @@ function ComponentSpecificProps({
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <Label className="text-[10px] text-nx-ink-3">
-                {t("studio.builder.props.style")}
-              </Label>
+              <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.style")}</Label>
               <Select
                 value={(props.formStyle as string) || "card"}
                 onValueChange={(v) => onUpdateProps({ formStyle: v })}
@@ -807,7 +795,7 @@ function ComponentSpecificProps({
                   key={value}
                   onClick={() => onUpdateProps({ textAlign: value })}
                   className={cn(
-                    "h-7 flex-1 rounded-nx-sm border text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                    "h-7 flex-1 rounded-nx-sm border text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                     (props.textAlign || "center") === value
                       ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
                       : "border-nx-line bg-nx-ground text-nx-ink-3 hover:bg-nx-hover"
@@ -876,9 +864,7 @@ function ComponentSpecificProps({
             />
           </div>
           <div>
-            <Label className="text-[10px] text-nx-ink-3">
-              {t("studio.builder.props.opacity")}
-            </Label>
+            <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.opacity")}</Label>
             <Slider
               value={[(props.opacity as number) ?? 100]}
               onValueChange={([v]) => onUpdateProps({ opacity: v })}
@@ -906,9 +892,7 @@ function ComponentSpecificProps({
             />
           </div>
           <div>
-            <Label className="text-[10px] text-nx-ink-3">
-              {t("studio.builder.props.linkUrl")}
-            </Label>
+            <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.linkUrl")}</Label>
             <Input
               value={(props.url as string) || ""}
               onChange={(e) => onUpdateProps({ url: e.target.value })}
@@ -948,9 +932,7 @@ function ComponentSpecificProps({
               </Select>
             </div>
             <div>
-              <Label className="text-[10px] text-nx-ink-3">
-                {t("studio.builder.props.size")}
-              </Label>
+              <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.size")}</Label>
               <Select
                 value={(props.size as string) || "md"}
                 onValueChange={(v) => onUpdateProps({ size: v })}
@@ -1048,9 +1030,7 @@ function ComponentSpecificProps({
             description={t("studio.builder.props.imageSourceDesc")}
           />
           <div>
-            <Label className="text-[10px] text-nx-ink-3">
-              {t("studio.builder.props.altText")}
-            </Label>
+            <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.altText")}</Label>
             <Input
               value={(props.alt as string) || ""}
               onChange={(e) => onUpdateProps({ alt: e.target.value })}
@@ -1168,9 +1148,7 @@ function ComponentSpecificProps({
             </div>
           </div>
           <div>
-            <Label className="text-[10px] text-nx-ink-3">
-              {t("studio.builder.props.opacity")}
-            </Label>
+            <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.opacity")}</Label>
             <Slider
               value={[(props.opacity as number) ?? 100]}
               onValueChange={([v]) => onUpdateProps({ opacity: v })}
@@ -1224,9 +1202,7 @@ function ComponentSpecificProps({
             description={t("studio.builder.props.avatarDesc")}
           />
           <div>
-            <Label className="text-[10px] text-nx-ink-3">
-              {t("studio.builder.props.rating")}
-            </Label>
+            <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.rating")}</Label>
             <div className="mt-0.5 flex gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 // UI-EXCEPTION: compact studio layout
@@ -1234,7 +1210,7 @@ function ComponentSpecificProps({
                   key={star}
                   onClick={() => onUpdateProps({ rating: star })}
                   className={cn(
-                    "text-lg transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                    "text-lg transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                     star <= ((props.rating as number) || 0)
                       ? "text-warning"
                       : "text-nx-ink-3 hover:text-warning/70"
@@ -1254,9 +1230,7 @@ function ComponentSpecificProps({
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <Label className="text-[10px] text-nx-ink-3">
-                {t("studio.builder.props.style")}
-              </Label>
+              <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.style")}</Label>
               <Select
                 value={(props.variant as string) || "card"}
                 onValueChange={(v) => onUpdateProps({ variant: v })}
@@ -1426,9 +1400,7 @@ function ComponentSpecificProps({
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <Label className="text-[10px] text-nx-ink-3">
-                {t("studio.builder.props.year")}
-              </Label>
+              <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.year")}</Label>
               <Select
                 value={(props.year as string) || "auto"}
                 onValueChange={(v) => onUpdateProps({ year: v })}
@@ -1502,7 +1474,7 @@ function ComponentSpecificProps({
                   key={value}
                   onClick={() => onUpdateProps({ textAlign: value })}
                   className={cn(
-                    "h-7 flex-1 rounded-nx-sm border text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                    "h-7 flex-1 rounded-nx-sm border text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                     (props.textAlign || "center") === value
                       ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
                       : "border-nx-line bg-nx-ground text-nx-ink-3 hover:bg-nx-hover"
@@ -1553,9 +1525,7 @@ function ComponentSpecificProps({
             </div>
           </div>
           <div>
-            <Label className="text-[10px] text-nx-ink-3">
-              {t("studio.builder.props.layout")}
-            </Label>
+            <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.layout")}</Label>
             <Select
               value={(props.layout as string) || "row"}
               onValueChange={(v) => onUpdateProps({ layout: v })}
@@ -1587,9 +1557,7 @@ function ComponentSpecificProps({
       return (
         <div className="space-y-2">
           <div>
-            <Label className="text-[10px] text-nx-ink-3">
-              {t("studio.builder.props.variant")}
-            </Label>
+            <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.variant")}</Label>
             <Select
               value={(props.variant as string) || "list"}
               onValueChange={(v) => onUpdateProps({ variant: v })}
@@ -1622,9 +1590,7 @@ function ComponentSpecificProps({
           </div>
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <Label className="text-[10px] text-nx-ink-3">
-                {t("studio.builder.props.items")}
-              </Label>
+              <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.items")}</Label>
               <button
                 onClick={() => {
                   const newItems = [
@@ -1633,7 +1599,7 @@ function ComponentSpecificProps({
                   ];
                   onUpdateProps({ items: newItems });
                 }}
-                className="text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink"
+                className="text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none"
               >
                 + {t("studio.builder.props.addItem")}
               </button>
@@ -1670,7 +1636,7 @@ function ComponentSpecificProps({
                     const updated = featureItems.filter((_, i) => i !== idx);
                     onUpdateProps({ items: updated });
                   }}
-                  className="mt-0.5 shrink-0 p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-danger"
+                  className="mt-0.5 shrink-0 p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-danger motion-reduce:transition-none"
                   aria-label={t("studio.builder.props.removeItem")}
                 >
                   <Trash2 className="h-3 w-3" aria-hidden="true" />
@@ -1695,9 +1661,7 @@ function ComponentSpecificProps({
       return (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-[10px] text-nx-ink-3">
-              {t("studio.builder.props.links")}
-            </Label>
+            <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.links")}</Label>
             <button
               onClick={() => {
                 const newLinks = [
@@ -1706,7 +1670,7 @@ function ComponentSpecificProps({
                 ];
                 onUpdateProps({ links: newLinks });
               }}
-              className="text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink"
+              className="text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none"
             >
               + {t("studio.builder.props.addLink")}
             </button>
@@ -1743,7 +1707,7 @@ function ComponentSpecificProps({
                   const updated = footerLinks.filter((_, i) => i !== idx);
                   onUpdateProps({ links: updated });
                 }}
-                className="shrink-0 p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-danger"
+                className="shrink-0 p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-danger motion-reduce:transition-none"
                 aria-label={t("studio.builder.props.removeItem")}
               >
                 <Trash2 className="h-3 w-3" aria-hidden="true" />
@@ -1751,9 +1715,7 @@ function ComponentSpecificProps({
             </div>
           ))}
           {footerLinks.length === 0 && (
-            <p className="text-[10px] italic text-nx-ink-3">
-              {t("studio.builder.props.noLinks")}
-            </p>
+            <p className="text-[10px] italic text-nx-ink-3">{t("studio.builder.props.noLinks")}</p>
           )}
         </div>
       );
@@ -1837,9 +1799,7 @@ function ComponentSpecificProps({
 
     default:
       return (
-        <p className="text-[10px] italic text-nx-ink-3">
-          {t("studio.builder.props.noSettings")}
-        </p>
+        <p className="text-[10px] italic text-nx-ink-3">{t("studio.builder.props.noSettings")}</p>
       );
   }
 }

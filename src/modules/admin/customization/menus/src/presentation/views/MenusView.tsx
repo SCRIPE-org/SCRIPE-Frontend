@@ -199,7 +199,9 @@ export function MenusView() {
               {t("common.collapseAll")}
             </Button>
             <Button variant="outline" size="sm" onClick={vm.refetch} loading={vm.isLoading}>
-              {!vm.isLoading && <RefreshCw className="me-1.5 h-4 w-4 shrink-0" aria-hidden="true" />}
+              {!vm.isLoading && (
+                <RefreshCw className="me-1.5 h-4 w-4 shrink-0" aria-hidden="true" />
+              )}
               {t("common.refresh")}
             </Button>
             {vm.canCreate && (
@@ -419,14 +421,16 @@ function WorkspaceFilterTab({
       className={cn(
         "flex shrink-0 items-center gap-2 rounded-nx-control px-3 py-2 text-sm font-medium",
         "border transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-        "focus-visible:outline-none focus-visible:shadow-nx-focus",
+        "focus-visible:shadow-nx-focus focus-visible:outline-none",
         isActive
           ? accentColor
             ? "border-transparent text-nx-on-fill"
             : "border-nx-accent-fill bg-nx-accent-fill text-nx-on-fill"
           : "border-nx-line bg-transparent text-nx-ink-2 hover:border-nx-line-hi hover:text-nx-ink"
       )}
-      style={isActive && accentColor ? { background: accentColor, borderColor: accentColor } : undefined}
+      style={
+        isActive && accentColor ? { background: accentColor, borderColor: accentColor } : undefined
+      }
     >
       {!accentColor && isActive && <Layers className="h-3.5 w-3.5" aria-hidden="true" />}
       <span>{label}</span>
@@ -491,7 +495,7 @@ function WorkspaceOverviewPanel({
                     "group flex items-center justify-between rounded-nx-lg border border-nx-line px-4 py-3",
                     "bg-nx-raised text-start transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                     "hover:border-nx-line-hi hover:bg-nx-raised-2",
-                    "focus-visible:outline-none focus-visible:shadow-nx-focus"
+                    "focus-visible:shadow-nx-focus focus-visible:outline-none"
                   )}
                 >
                   <div className="flex items-center gap-3">
@@ -508,7 +512,7 @@ function WorkspaceOverviewPanel({
                       {count}
                     </Badge>
                     <ChevronRightIcon
-                      className="h-3.5 w-3.5 text-nx-ink-3 opacity-0 transition-opacity duration-nx-micro ease-nx-enter motion-reduce:transition-none group-hover:opacity-100 group-focus-visible:opacity-100 rtl:rotate-180"
+                      className="h-3.5 w-3.5 text-nx-ink-3 opacity-0 transition-opacity duration-nx-micro ease-nx-enter group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none rtl:rotate-180"
                       aria-hidden="true"
                     />
                   </div>
@@ -520,7 +524,10 @@ function WorkspaceOverviewPanel({
           {unassignedCount > 0 && (
             <div className="flex items-center justify-between rounded-nx-lg border border-dashed border-nx-line bg-nx-hover px-4 py-3">
               <div className="flex items-center gap-3">
-                <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-nx-raised-2" aria-hidden="true" />
+                <span
+                  className="h-2.5 w-2.5 shrink-0 rounded-full bg-nx-raised-2"
+                  aria-hidden="true"
+                />
                 <span className="text-sm text-nx-ink-2">{t("menus.unassigned")}</span>
               </div>
               <Badge variant="outline" className="text-xs">

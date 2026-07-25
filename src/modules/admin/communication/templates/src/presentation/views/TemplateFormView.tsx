@@ -58,9 +58,7 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
   }
 
   if (vm.mode === "edit" && vm.fetchError) {
-    return (
-      <ErrorMessage message={vm.t("common.error")} onRetry={() => vm.refetch()} fullHeight />
-    );
+    return <ErrorMessage message={vm.t("common.error")} onRetry={() => vm.refetch()} fullHeight />;
   }
 
   return (
@@ -76,7 +74,7 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
           <ArrowLeft className="h-5 w-5" aria-hidden="true" />
         </Button>
         <div>
-          <h1 className="text-xl font-bold leading-tight tracking-tight text-balance text-nx-ink">
+          <h1 className="text-balance text-xl font-bold leading-tight tracking-tight text-nx-ink">
             {vm.title}
           </h1>
           <p className="text-nx-ink-2">
@@ -167,9 +165,7 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                   </TabsTrigger>
                   <TabsTrigger value="preview" className="min-w-0 flex-1 gap-1 px-2 text-xs">
                     <Eye className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                    <span className="hidden truncate sm:inline">
-                      {vm.t("common.preview")}
-                    </span>
+                    <span className="hidden truncate sm:inline">{vm.t("common.preview")}</span>
                   </TabsTrigger>
                 </TabsList>
               </CardHeader>

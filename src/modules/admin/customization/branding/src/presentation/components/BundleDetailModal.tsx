@@ -153,7 +153,10 @@ export function BundleDetailModal({
                       {t(`studio.bundles.layerDesc.${layer}`)}
                     </p>
                   </div>
-                  <Check className="ms-auto h-4 w-4 flex-shrink-0 text-success" aria-hidden="true" />
+                  <Check
+                    className="ms-auto h-4 w-4 flex-shrink-0 text-success"
+                    aria-hidden="true"
+                  />
                 </div>
               );
             })}
@@ -178,7 +181,11 @@ export function BundleDetailModal({
               <Info className="h-4 w-4 text-nx-accent" aria-hidden="true" />
               {t("studio.bundles.applyMode.title")}
             </h4>
-            <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label={t("studio.bundles.applyMode.title")}>
+            <div
+              className="grid grid-cols-2 gap-3"
+              role="radiogroup"
+              aria-label={t("studio.bundles.applyMode.title")}
+            >
               {/* Replace option */}
               <button
                 type="button"
@@ -186,7 +193,7 @@ export function BundleDetailModal({
                 aria-checked={applyMode === "replace"}
                 className={cn(
                   "flex flex-col items-start rounded-nx-md border-2 p-3 text-start transition-colors duration-nx-micro motion-reduce:transition-none",
-                  "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                  "focus-visible:shadow-nx-focus focus-visible:outline-none",
                   applyMode === "replace"
                     ? "border-nx-accent bg-nx-accent-wash"
                     : "border-nx-line hover:border-nx-line-hi"
@@ -208,7 +215,7 @@ export function BundleDetailModal({
                 aria-checked={applyMode === "merge"}
                 className={cn(
                   "flex flex-col items-start rounded-nx-md border-2 p-3 text-start transition-colors duration-nx-micro motion-reduce:transition-none",
-                  "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                  "focus-visible:shadow-nx-focus focus-visible:outline-none",
                   applyMode === "merge"
                     ? "border-nx-accent bg-nx-accent-wash"
                     : "border-nx-line hover:border-nx-line-hi"
@@ -235,7 +242,10 @@ export function BundleDetailModal({
             aria-pressed={bundle.isFavorited}
             className={cn(bundle.isFavorited && "text-destructive")}
           >
-            <Heart className={cn("me-1.5 h-4 w-4", bundle.isFavorited && "fill-current")} aria-hidden="true" />
+            <Heart
+              className={cn("me-1.5 h-4 w-4", bundle.isFavorited && "fill-current")}
+              aria-hidden="true"
+            />
             {bundle.isFavorited
               ? t("studio.marketplace.favorited")
               : t("studio.marketplace.favorite")}

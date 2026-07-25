@@ -79,7 +79,7 @@ export const SecurityEventsSection = memo(function SecurityEventsSection({
               return (
                 <div
                   key={event.eventType}
-                  className="flex items-center justify-between rounded-nx-md border border-nx-line p-2.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover"
+                  className="flex items-center justify-between rounded-nx-md border border-nx-line p-2.5 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none"
                 >
                   <div className="flex items-center gap-3">
                     <div className={`rounded-nx-md p-2 ${config.bgColor}`}>

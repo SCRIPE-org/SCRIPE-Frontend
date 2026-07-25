@@ -39,10 +39,7 @@ export class OnboardingQuestionService implements IOnboardingQuestionService {
   }
 
   async create(request: CreateOnboardingQuestionRequest): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(
-      ONBOARDING_QUESTIONS_ENDPOINTS.QUESTIONS.CREATE,
-      request
-    );
+    return this.api.post<{ id: string }>(ONBOARDING_QUESTIONS_ENDPOINTS.QUESTIONS.CREATE, request);
   }
 
   async update(id: string, request: UpdateOnboardingQuestionRequest): Promise<void> {
@@ -78,9 +75,7 @@ export class OnboardingQuestionService implements IOnboardingQuestionService {
   }
 
   async deleteOption(questionId: string, optionId: string): Promise<void> {
-    await this.api.delete(
-      ONBOARDING_QUESTIONS_ENDPOINTS.OPTIONS.DELETE(questionId, optionId)
-    );
+    await this.api.delete(ONBOARDING_QUESTIONS_ENDPOINTS.OPTIONS.DELETE(questionId, optionId));
   }
 
   async reorderOptions(questionId: string, orderedIds: string[]): Promise<void> {

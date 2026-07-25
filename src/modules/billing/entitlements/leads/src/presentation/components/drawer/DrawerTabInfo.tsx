@@ -125,7 +125,9 @@ export function DrawerTabInfo({
               <div className="flex items-center gap-3">
                 <Building2 className="h-3.5 w-3.5 shrink-0 text-primary/70" />
                 <div>
-                  <p className="text-[10px] text-muted-foreground">{t("leads.discovery.industry")}</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {t("leads.discovery.industry")}
+                  </p>
                   <p className="text-sm font-medium text-primary">{t(di.businessTypeKey)}</p>
                 </div>
               </div>
@@ -134,7 +136,9 @@ export function DrawerTabInfo({
               <div className="flex items-center gap-3">
                 <Users className="h-3.5 w-3.5 shrink-0 text-primary/70" />
                 <div>
-                  <p className="text-[10px] text-muted-foreground">{t("leads.discovery.teamSize")}</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {t("leads.discovery.teamSize")}
+                  </p>
                   <p className="text-sm font-medium text-primary">
                     {t(di.teamSizeKey)} {t("leads.discovery.teamSizeSuffix")}
                   </p>
@@ -145,7 +149,9 @@ export function DrawerTabInfo({
               <div className="flex items-start gap-3">
                 <Tag className="mt-1 h-3.5 w-3.5 shrink-0 text-primary/70" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] text-muted-foreground">{t("leads.discovery.priority")}</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {t("leads.discovery.priority")}
+                  </p>
                   <div className="mt-1 flex flex-wrap gap-1.5">
                     {di.priority.split(",").map((p) => {
                       const clean = p

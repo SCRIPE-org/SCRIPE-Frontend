@@ -244,8 +244,7 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
               {plan.hasActiveSubscribers && (
                 <span className="mt-1 block font-medium text-warning">
                   <span aria-hidden="true">⚠ </span>
-                  {plan.activeSubscriberCount}{" "}
-                  {t("entitlements.tenantPlans.grandfatheredWarning")}
+                  {plan.activeSubscriberCount} {t("entitlements.tenantPlans.grandfatheredWarning")}
                 </span>
               )}
             </DialogDescription>

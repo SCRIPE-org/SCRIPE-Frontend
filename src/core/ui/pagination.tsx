@@ -74,7 +74,7 @@ const PaginationLink = ({ className, isActive, size = "icon", ...props }: Pagina
     className={cn(
       "inline-flex select-none items-center justify-center gap-1 rounded-nx-control border text-sm tabular-nums",
       "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-      "focus-visible:outline-none focus-visible:shadow-nx-focus",
+      "focus-visible:shadow-nx-focus focus-visible:outline-none",
       // Bounds states: dedicated ink, no opacity maths over a tinted surface.
       "aria-disabled:pointer-events-none aria-disabled:border-transparent aria-disabled:bg-transparent aria-disabled:text-nx-ink-3",
       LINK_SIZES[size ?? "icon"],

@@ -18,4 +18,3 @@ export {
   WEBHOOKS_ENDPOINTS,
   SYSTEM_ENDPOINTS,
 };
-

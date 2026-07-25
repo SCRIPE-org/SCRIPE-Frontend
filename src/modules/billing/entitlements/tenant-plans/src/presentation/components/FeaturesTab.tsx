@@ -226,7 +226,7 @@ export function FeaturesTab({
                   className={cn(
                     "flex w-full items-center justify-between gap-2 rounded-nx-sm text-start",
                     "transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none",
-                    "focus-visible:outline-none focus-visible:shadow-nx-focus"
+                    "focus-visible:shadow-nx-focus focus-visible:outline-none"
                   )}
                 >
                   <div className="flex items-center gap-2">

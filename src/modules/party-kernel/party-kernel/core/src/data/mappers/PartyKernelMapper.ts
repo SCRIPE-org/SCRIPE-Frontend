@@ -25,12 +25,7 @@ export class PartyKernelMapper {
    * Convert PartyKernel Entity to PartyKernelModel
    */
   static toModel(entity: PartyKernel): PartyKernelModel {
-    return new PartyKernelModel(
-      entity.id,
-      entity.name,
-      entity.createdAt,
-      entity.modifiedAt,
-    );
+    return new PartyKernelModel(entity.id, entity.name, entity.createdAt, entity.modifiedAt);
   }
 
   /**

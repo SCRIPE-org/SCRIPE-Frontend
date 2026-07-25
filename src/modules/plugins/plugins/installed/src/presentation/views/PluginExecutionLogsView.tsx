@@ -45,7 +45,7 @@ export function PluginExecutionLogsView() {
         <Link
           key={inst.id}
           href={`/plugins/${inst.id}/logs`}
-          className="group flex items-center gap-3 rounded-nx-md border border-nx-line bg-nx-surface p-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi hover:bg-nx-hover"
+          className="group flex items-center gap-3 rounded-nx-md border border-nx-line bg-nx-surface p-3 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover motion-reduce:transition-none"
         >
           <ScrollText className="h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
           <div className="min-w-0 flex-1">
@@ -58,7 +58,7 @@ export function PluginExecutionLogsView() {
           {/* Decorative: the whole row already navigates, so this is a hint,
               not a second control. */}
           <ArrowRight
-            className="h-3.5 w-3.5 shrink-0 text-nx-ink-3 opacity-0 transition-opacity duration-nx-micro ease-nx-enter motion-reduce:transition-none rtl:rotate-180 group-hover:opacity-100 group-focus-visible:opacity-100"
+            className="h-3.5 w-3.5 shrink-0 text-nx-ink-3 opacity-0 transition-opacity duration-nx-micro ease-nx-enter group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none rtl:rotate-180"
             aria-hidden="true"
           />
         </Link>

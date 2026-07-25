@@ -118,7 +118,7 @@ export function MultiSelect({
             // The shared field surface: sunken ground behind a hairline, the
             // same hover lift as Input; focus (and the open state — the field
             // stays the active thing while its list is up) lights the edge.
-            "flex min-h-10 w-full cursor-pointer flex-wrap items-center gap-1 rounded-nx-control border border-nx-line bg-nx-ground px-3 py-2 text-sm text-nx-ink transition-[color,border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
+            "flex min-h-10 w-full cursor-pointer flex-wrap items-center gap-1 rounded-nx-control border border-nx-line bg-nx-ground px-3 py-2 text-sm text-nx-ink transition-[color,border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter hover:border-nx-line-hi focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
             open && "border-nx-accent shadow-nx-focus",
             // inert: the raised slab and ink-3, exactly like a disabled Input —
             // not the whole control at half strength
@@ -130,14 +130,14 @@ export function MultiSelect({
           {selected.map((value) => {
             const label = labelFor(value);
             return (
-              <Badge key={value} variant="secondary" className="gap-1 ps-2 pe-1">
+              <Badge key={value} variant="secondary" className="gap-1 pe-1 ps-2">
                 {label}
                 {/* the negative margin buys the 12px glyph a real hit box
                     without widening the chip */}
                 <button
                   type="button"
                   aria-label={`${t("common.remove")} ${label}`}
-                  className="-my-1 -me-1 inline-flex h-6 w-6 items-center justify-center rounded-full text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
+                  className="-my-1 -me-1 inline-flex h-6 w-6 items-center justify-center rounded-full text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                   onClick={(e) => {
                     // Removing a chip must not toggle the popover.
                     e.stopPropagation();
@@ -154,10 +154,7 @@ export function MultiSelect({
           <ChevronsUpDown className="ms-auto h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
         </div>
       </PopoverTrigger>
-      <PopoverContent
-        align="start"
-        className="w-[var(--radix-popover-trigger-width)] min-w-40 p-0"
-      >
+      <PopoverContent align="start" className="w-[var(--radix-popover-trigger-width)] min-w-40 p-0">
         <Command shouldFilter={!onSearch}>
           <CommandInput
             value={inputValue}
@@ -172,9 +169,7 @@ export function MultiSelect({
             }}
           />
           <CommandList>
-            <CommandEmpty>
-              {isLoading ? t("common.searching") : t("common.noResults")}
-            </CommandEmpty>
+            <CommandEmpty>{isLoading ? t("common.searching") : t("common.noResults")}</CommandEmpty>
             <CommandGroup>
               {internalOptions.map((option) => {
                 const isSelected = selected.includes(option.value);

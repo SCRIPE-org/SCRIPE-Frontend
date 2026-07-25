@@ -74,8 +74,7 @@ const INLINE_RADIUS = {
   end: "rounded-s-nx-lg",
 } as const;
 
-interface SheetContentProps
-  extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content> {
+interface SheetContentProps extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content> {
   side?: SheetSide;
 }
 

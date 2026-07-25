@@ -1010,9 +1010,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
       {/* Info banner */}
       <div className="mb-3 flex items-start gap-2 rounded-lg border border-info/20 bg-info/5 p-3">
         <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-info" />
-        <p className="text-[10px] leading-relaxed text-info">
-          {t("studio.dashboard.info")}
-        </p>
+        <p className="text-[10px] leading-relaxed text-info">{t("studio.dashboard.info")}</p>
       </div>
 
       {/* ── Quick Presets ── */}

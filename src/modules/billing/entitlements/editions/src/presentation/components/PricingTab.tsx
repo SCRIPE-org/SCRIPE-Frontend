@@ -525,9 +525,7 @@ export const PricingTab = memo(function PricingTab({
                           <Badge
                             variant={row.source === "explicit" ? "default" : "outline"}
                             className={`h-4 px-1.5 py-0 text-[9px] ${
-                              row.source === "auto"
-                                ? "border-info/30 bg-info/5 text-info"
-                                : ""
+                              row.source === "auto" ? "border-info/30 bg-info/5 text-info" : ""
                             }`}
                           >
                             {row.source === "explicit"

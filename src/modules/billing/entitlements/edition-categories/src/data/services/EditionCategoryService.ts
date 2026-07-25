@@ -26,16 +26,11 @@ export class EditionCategoryService implements IEditionCategoryService {
   }
 
   async getById(id: string): Promise<EditionCategoryModel> {
-    return this.api.get<EditionCategoryModel>(
-      EDITION_CATEGORY_ENDPOINTS.BY_ID(id)
-    );
+    return this.api.get<EditionCategoryModel>(EDITION_CATEGORY_ENDPOINTS.BY_ID(id));
   }
 
   async create(data: CreateEditionCategoryRequest): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(
-      EDITION_CATEGORY_ENDPOINTS.CREATE,
-      data
-    );
+    return this.api.post<{ id: string }>(EDITION_CATEGORY_ENDPOINTS.CREATE, data);
   }
 
   async update(id: string, data: UpdateEditionCategoryRequest): Promise<void> {

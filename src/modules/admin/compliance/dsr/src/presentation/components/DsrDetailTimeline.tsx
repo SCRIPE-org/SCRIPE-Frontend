@@ -37,10 +37,13 @@ export function DsrDetailTimeline({ dsr, t, statusMetaMap }: DsrDetailTimelinePr
             return (
               <div key={idx} className="relative ps-6">
                 {!isLast && (
-                  <div className="absolute top-6 h-full w-[2px] start-[11px] bg-nx-line" aria-hidden="true" />
+                  <div
+                    className="absolute start-[11px] top-6 h-full w-[2px] bg-nx-line"
+                    aria-hidden="true"
+                  />
                 )}
                 <div
-                  className="absolute top-1.5 flex h-6 w-6 items-center justify-center rounded-full border border-nx-line bg-nx-surface start-0"
+                  className="absolute start-0 top-1.5 flex h-6 w-6 items-center justify-center rounded-full border border-nx-line bg-nx-surface"
                   aria-hidden="true"
                 >
                   <div className="h-2 w-2 rounded-full bg-nx-accent-fill" />

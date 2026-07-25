@@ -68,8 +68,7 @@ const tabsTriggerVariants = cva(
 
 const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List> &
-    VariantProps<typeof tabsListVariants>
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List> & VariantProps<typeof tabsListVariants>
 >(({ className, variant, ...props }, ref) => (
   <TabsVariantContext.Provider value={variant ?? "underline"}>
     <TabsPrimitive.List
@@ -108,7 +107,7 @@ const TabsContent = React.forwardRef<
   <TabsPrimitive.Content
     ref={ref}
     className={cn(
-      "mt-2 rounded-nx-sm focus-visible:outline-none focus-visible:shadow-nx-focus",
+      "mt-2 rounded-nx-sm focus-visible:shadow-nx-focus focus-visible:outline-none",
       className
     )}
     {...props}

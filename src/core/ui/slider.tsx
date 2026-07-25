@@ -33,7 +33,7 @@ const Slider = React.forwardRef<
     {/* Raised thumb behind a strong hairline. Press lights the EDGE instead of
         scaling the knob — a 20px circle that grows under the finger reads as a
         wobble, and the pointer is already on it. */}
-    <SliderPrimitive.Thumb className="block h-5 w-5 cursor-grab rounded-full border border-nx-line-hi bg-nx-raised-2 shadow-nx-sm transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-accent active:cursor-grabbing active:border-nx-accent active:shadow-[inset_0_0_0_1px_var(--nx-accent)] focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus group-data-[disabled]:cursor-not-allowed group-data-[disabled]:border-nx-line group-data-[disabled]:bg-nx-raised group-data-[disabled]:shadow-none" />
+    <SliderPrimitive.Thumb className="block h-5 w-5 cursor-grab rounded-full border border-nx-line-hi bg-nx-raised-2 shadow-nx-sm transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter hover:border-nx-accent focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none active:cursor-grabbing active:border-nx-accent active:shadow-[inset_0_0_0_1px_var(--nx-accent)] group-data-[disabled]:cursor-not-allowed group-data-[disabled]:border-nx-line group-data-[disabled]:bg-nx-raised group-data-[disabled]:shadow-none motion-reduce:transition-none" />
   </SliderPrimitive.Root>
 ));
 Slider.displayName = SliderPrimitive.Root.displayName;

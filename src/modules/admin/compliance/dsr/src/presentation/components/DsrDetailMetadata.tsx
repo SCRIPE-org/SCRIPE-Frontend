@@ -10,7 +10,10 @@ interface DsrDetailMetadataProps {
   t: (key: string) => string;
   statusMeta: {
     labelKey: string;
-    icon: React.ComponentType<{ className?: string; "aria-hidden"?: React.AriaAttributes["aria-hidden"] }>;
+    icon: React.ComponentType<{
+      className?: string;
+      "aria-hidden"?: React.AriaAttributes["aria-hidden"];
+    }>;
     variant: BadgeProps["variant"];
   };
   typeMeta: { labelKey: string; color: string };

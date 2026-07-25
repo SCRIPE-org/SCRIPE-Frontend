@@ -9,7 +9,15 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useTenantPlanCreateViewModel } from "../viewmodels/useTenantPlanCreateViewModel";
 import { Button } from "@core/ui/button";
 import { Card, CardContent } from "@core/ui/card";
-import { ArrowLeft, ArrowRight, Save, LayoutTemplate, Pencil, Settings, CheckSquare } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Save,
+  LayoutTemplate,
+  Pencil,
+  Settings,
+  CheckSquare,
+} from "lucide-react";
 import Link from "next/link";
 import { WizardStepIndicator } from "@modules/entitlements/core";
 import { TenantPlanStepBasics } from "../components/wizard/TenantPlanStepBasics";

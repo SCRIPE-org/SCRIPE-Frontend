@@ -19,14 +19,7 @@ import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@core/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import {
   Users,
   Activity,
@@ -110,7 +103,7 @@ export function WidgetStatsCard({ props }: { props: Record<string, unknown> }) {
         </div>
       </CardHeader>
       <CardContent className={TILE_BODY}>
-        <p className="text-2xl font-bold tracking-tight tabular-nums text-nx-ink">{value}</p>
+        <p className="text-2xl font-bold tabular-nums tracking-tight text-nx-ink">{value}</p>
         {trend && (
           <div className="mt-1 flex items-center gap-1">
             {dir === "up" && <ArrowUpRight className="h-3 w-3 text-success" aria-hidden="true" />}
@@ -264,9 +257,7 @@ export function WidgetQuickActions({ props }: { props: Record<string, unknown> }
   return (
     <Card className={TILE}>
       <CardHeader className={TILE_HEADER}>
-        <CardTitle className={TILE_TITLE}>
-          {t("dashboard.builder.widget.quickActions")}
-        </CardTitle>
+        <CardTitle className={TILE_TITLE}>{t("dashboard.builder.widget.quickActions")}</CardTitle>
       </CardHeader>
       <CardContent className={TILE_BODY}>
         <div className={cn("grid h-full gap-2", columns === 2 ? "grid-cols-2" : "grid-cols-3")}>
@@ -474,9 +465,7 @@ export function WidgetNotifications({ props }: { props: Record<string, unknown> 
   return (
     <Card className={TILE}>
       <CardHeader className={TILE_HEADER}>
-        <CardTitle className={TILE_TITLE}>
-          {t("dashboard.builder.widget.notifications")}
-        </CardTitle>
+        <CardTitle className={TILE_TITLE}>{t("dashboard.builder.widget.notifications")}</CardTitle>
         <Badge className="shrink-0 px-2 py-0 text-[10px]">
           <span aria-hidden="true">{unreadCount}</span>
           <span className="sr-only">
@@ -519,8 +508,7 @@ export function WidgetNotifications({ props }: { props: Record<string, unknown> 
 export function WidgetAnnouncement({ props }: { props: Record<string, unknown> }) {
   const { t } = useI18n();
   const title = (props.title as string) || t("dashboard.builder.widget.announcement");
-  const message =
-    (props.message as string) || t("dashboard.builder.preview.announcementMessage");
+  const message = (props.message as string) || t("dashboard.builder.preview.announcementMessage");
   const variant = (props.variant as string) || "info";
 
   // Severity speaks through the glyph and the hairline; the copy stays neutral
@@ -575,9 +563,7 @@ export function WidgetCustom({ props }: { props: Record<string, unknown> }) {
 
   return (
     <Card className={cn(TILE, "overflow-hidden")}>
-      <CardHeader
-        className={cn(TILE_HEADER, "border-b border-nx-line px-4 py-2 pb-2")}
-      >
+      <CardHeader className={cn(TILE_HEADER, "border-b border-nx-line px-4 py-2 pb-2")}>
         <CardTitle className={TILE_TITLE}>{title}</CardTitle>
         {url && (
           <a
@@ -585,7 +571,7 @@ export function WidgetCustom({ props }: { props: Record<string, unknown> }) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={t("dashboard.builder.preview.openCustomSource")}
-            className="shrink-0 rounded-nx-sm p-1 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
+            className="shrink-0 rounded-nx-sm p-1 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           >
             <ExternalLink className="h-3 w-3" aria-hidden="true" />
           </a>

@@ -13,7 +13,17 @@ export interface PartyKernelListParams {
 }
 
 export interface IPartyKernelRepository {
-  getAll(params: PartyKernelListParams): Promise<{ items: PartyKernel[]; totalCount: number; page: number; pageSize: number; totalPages: number; hasNextPage: boolean; hasPreviousPage: boolean }>;
+  getAll(
+    params: PartyKernelListParams
+  ): Promise<{
+    items: PartyKernel[];
+    totalCount: number;
+    page: number;
+    pageSize: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  }>;
   getById(id: string): Promise<PartyKernel>;
   create(data: Record<string, unknown>): Promise<string>;
   update(id: string, data: Record<string, unknown>): Promise<void>;

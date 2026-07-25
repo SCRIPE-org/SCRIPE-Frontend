@@ -65,8 +65,7 @@ export const CONTROL_DISABLED = cn(
 
 // 16px is the drawn box; the hit target is 32px. An invisible inset pseudo
 // grows the pointer/touch area without touching layout or the visual rhythm.
-export const CONTROL_HIT_TARGET =
-  "relative before:absolute before:-inset-2 before:content-['']";
+export const CONTROL_HIT_TARGET = "relative before:absolute before:-inset-2 before:content-['']";
 
 export type ControlSurfaceStyle = keyof typeof CONTROL_SURFACE;
 
@@ -99,7 +98,7 @@ const Checkbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimitive.Root
           CONTROL_SURFACE[effectiveDesign],
           // colour-only transition at micro speed; motion-reduce drops it
           "transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-          "focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
+          "focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none",
           CONTROL_DISABLED,
           className
         )}
@@ -108,7 +107,7 @@ const Checkbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimitive.Root
         <CheckboxPrimitive.Indicator
           // check-in at micro speed — transform+opacity only; the indicator
           // only mounts when checked, so animate-in needs no state variant
-          className="flex items-center justify-center text-current animate-in fade-in zoom-in-75 duration-nx-micro ease-nx-enter motion-reduce:animate-none"
+          className="flex items-center justify-center text-current duration-nx-micro ease-nx-enter animate-in fade-in zoom-in-75 motion-reduce:animate-none"
         >
           <Check className="h-3 w-3" strokeWidth={3} aria-hidden="true" />
         </CheckboxPrimitive.Indicator>

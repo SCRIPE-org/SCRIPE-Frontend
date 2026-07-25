@@ -110,7 +110,7 @@ export function PaymentHubView() {
                 handleOpen(card.href);
               }
             }}
-            className="cursor-pointer active:shadow-[inset_0_0_0_1px_var(--nx-accent)] focus-visible:outline-none focus-visible:shadow-nx-focus"
+            className="cursor-pointer focus-visible:shadow-nx-focus focus-visible:outline-none active:shadow-[inset_0_0_0_1px_var(--nx-accent)]"
           >
             <CardHeader className="flex flex-row items-center gap-4 space-y-0">
               <div

@@ -49,7 +49,12 @@ export function DeleteWebhookDialog({
             </Button>
           </AlertDialogCancel>
           <AlertDialogAction asChild>
-            <Button variant="destructive" onClick={onConfirm} loading={isLoading} className="min-w-20">
+            <Button
+              variant="destructive"
+              onClick={onConfirm}
+              loading={isLoading}
+              className="min-w-20"
+            >
               {t("common.delete")}
             </Button>
           </AlertDialogAction>

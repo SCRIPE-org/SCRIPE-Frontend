@@ -41,10 +41,7 @@ export class RegulationService implements IRegulationService {
   }
 
   updatePurpose(id: string, purposeId: string, data: UpdateConsentPurposeRequest): Promise<void> {
-    return this.api.put<void>(
-      REGULATIONS_ENDPOINTS.REGULATION_PURPOSE_BY_ID(id, purposeId),
-      data
-    );
+    return this.api.put<void>(REGULATIONS_ENDPOINTS.REGULATION_PURPOSE_BY_ID(id, purposeId), data);
   }
 
   removePurpose(id: string, purposeId: string): Promise<void> {

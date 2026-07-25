@@ -6,11 +6,12 @@ import { Badge, type BadgeProps } from "@core/ui/badge";
 import { Banknote, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
 import { ConnectAccount } from "../../../domain/entities/ConnectAccount";
 
-const STATUS_CONFIG: Record<string, { icon: typeof CheckCircle2; variant: BadgeProps["variant"] }> = {
-  Complete: { icon: CheckCircle2, variant: "success" },
-  Pending: { icon: Clock, variant: "warning" },
-  Restricted: { icon: AlertTriangle, variant: "destructive" },
-};
+const STATUS_CONFIG: Record<string, { icon: typeof CheckCircle2; variant: BadgeProps["variant"] }> =
+  {
+    Complete: { icon: CheckCircle2, variant: "success" },
+    Pending: { icon: Clock, variant: "warning" },
+    Restricted: { icon: AlertTriangle, variant: "destructive" },
+  };
 
 interface PayoutsHeaderProps {
   account: ConnectAccount | null;

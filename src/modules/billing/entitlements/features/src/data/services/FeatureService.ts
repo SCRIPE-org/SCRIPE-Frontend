@@ -58,18 +58,12 @@ export class FeatureService implements IFeatureService {
   async getEffective(tenantId?: string): Promise<TenantEffectiveFeatureModel[]> {
     const params: Record<string, string> = {};
     if (tenantId) params.tenantId = tenantId;
-    return this.api.get<TenantEffectiveFeatureModel[]>(
-      FEATURES_ENDPOINTS.EFFECTIVE,
-      params
-    );
+    return this.api.get<TenantEffectiveFeatureModel[]>(FEATURES_ENDPOINTS.EFFECTIVE, params);
   }
 
   async getGrouped(search?: string): Promise<FeatureModuleGroupModel[]> {
     const params: Record<string, string> = {};
     if (search) params.search = search;
-    return this.api.get<FeatureModuleGroupModel[]>(
-      FEATURES_ENDPOINTS.GROUPED,
-      params
-    );
+    return this.api.get<FeatureModuleGroupModel[]>(FEATURES_ENDPOINTS.GROUPED, params);
   }
 }

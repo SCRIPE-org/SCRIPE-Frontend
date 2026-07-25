@@ -181,12 +181,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
 >(({ className, children, checked, ...props }, ref) => (
   <DropdownMenuPrimitive.CheckboxItem
     ref={ref}
-    className={cn(
-      menuItemClasses,
-      menuIndicatorItemClasses,
-      menuSelectionBarClasses,
-      className
-    )}
+    className={cn(menuItemClasses, menuIndicatorItemClasses, menuSelectionBarClasses, className)}
     checked={checked}
     {...props}
   >
@@ -208,12 +203,7 @@ const DropdownMenuRadioItem = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <DropdownMenuPrimitive.RadioItem
     ref={ref}
-    className={cn(
-      menuItemClasses,
-      menuIndicatorItemClasses,
-      menuSelectionBarClasses,
-      className
-    )}
+    className={cn(menuItemClasses, menuIndicatorItemClasses, menuSelectionBarClasses, className)}
     {...props}
   >
     <span className="absolute start-2 flex h-3.5 w-3.5 items-center justify-center">
@@ -239,11 +229,7 @@ const DropdownMenuLabel = React.forwardRef<
     // made it heavier than the commands it introduced — which is why both
     // remaining call sites in the app were already overriding it back down.
     // Sentence case, no uppercase, no tracking — same rule as the table head.
-    className={cn(
-      "px-2 pb-1 pt-2 text-xs font-medium text-nx-ink-3",
-      inset && "ps-8",
-      className
-    )}
+    className={cn("px-2 pb-1 pt-2 text-xs font-medium text-nx-ink-3", inset && "ps-8", className)}
     {...props}
   />
 ));

@@ -135,7 +135,7 @@ export function DashboardLayoutPreview({ settings }: Props) {
                 aria-label={t(DEVICE_DIMS[key].labelKey)}
                 aria-pressed={device === key}
                 className={cn(
-                  "rounded-nx-sm p-1 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                  "rounded-nx-sm p-1 transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                   device === key
                     ? "bg-nx-accent-wash text-nx-accent"
                     : "text-nx-ink-2 hover:text-nx-ink"
@@ -152,7 +152,7 @@ export function DashboardLayoutPreview({ settings }: Props) {
             type="button"
             onClick={handleRefresh}
             aria-label={t("common.refresh")}
-            className="rounded-nx-sm p-1 text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus"
+            className="rounded-nx-sm p-1 text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           >
             <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
           </button>

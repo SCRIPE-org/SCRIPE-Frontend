@@ -98,7 +98,7 @@ export const RecentChangesSection = memo(function RecentChangesSection({
                 return (
                   <div
                     key={change.id}
-                    className="flex items-start gap-3 rounded-nx-md p-2 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover"
+                    className="flex items-start gap-3 rounded-nx-md p-2 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none"
                   >
                     <div className={`shrink-0 rounded-full p-2 ${colorClass}`}>
                       <Icon className="h-3.5 w-3.5" aria-hidden="true" />

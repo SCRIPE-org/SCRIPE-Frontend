@@ -42,10 +42,10 @@ export function ApiKeysView() {
           sortable: true,
           render: (_val: unknown, item: ApiKey) => (
             <div className="flex items-center gap-2">
-              <Key className="h-4 w-4 text-primary shrink-0" />
+              <Key className="h-4 w-4 shrink-0 text-primary" />
               <span
                 onClick={() => router.push(`/integrations/apikeys/${item.id}`)}
-                className="font-semibold text-sm cursor-pointer hover:text-primary hover:underline"
+                className="cursor-pointer text-sm font-semibold hover:text-primary hover:underline"
               >
                 {item.name || t("apikeys.untitled")}
               </span>
@@ -56,7 +56,7 @@ export function ApiKeysView() {
           key: "prefix",
           label: t("apikeys.prefix") || "Prefix",
           render: (_val: unknown, item: ApiKey) => (
-            <span className="font-mono text-xs bg-muted px-2 py-0.5 rounded border">
+            <span className="rounded border bg-muted px-2 py-0.5 font-mono text-xs">
               {item.prefix}...
             </span>
           ),
@@ -99,12 +99,12 @@ export function ApiKeysView() {
             const extraCount = list.length - limit;
 
             return (
-              <div className="flex flex-wrap items-center gap-1 max-w-[280px]">
+              <div className="flex max-w-[280px] flex-wrap items-center gap-1">
                 {visible.map((scope) => (
                   <Badge
                     key={scope}
                     variant="secondary"
-                    className="text-[10px] py-0.5 px-2 font-mono bg-primary/10 text-primary border border-primary/25 shrink-0"
+                    className="shrink-0 border border-primary/25 bg-primary/10 px-2 py-0.5 font-mono text-[10px] text-primary"
                   >
                     {scope}
                   </Badge>
@@ -114,21 +114,24 @@ export function ApiKeysView() {
                     <PopoverTrigger asChild>
                       <Badge
                         variant="outline"
-                        className="text-[10px] py-0.5 px-2 font-mono cursor-pointer bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25 shrink-0"
+                        className="shrink-0 cursor-pointer border border-primary/30 bg-primary/15 px-2 py-0.5 font-mono text-[10px] text-primary hover:bg-primary/25"
                       >
                         +{extraCount} {t("apikeys.more") || "more"}
                       </Badge>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[320px] p-3 text-xs shadow-xl border bg-popover" align="start">
-                      <p className="font-semibold mb-2 text-foreground">
+                    <PopoverContent
+                      className="w-[320px] border bg-popover p-3 text-xs shadow-xl"
+                      align="start"
+                    >
+                      <p className="mb-2 font-semibold text-foreground">
                         {t("apikeys.allScopes") || "All Permission Scopes"}:
                       </p>
-                      <div className="flex flex-wrap gap-1 max-h-[160px] overflow-y-auto pr-1">
+                      <div className="flex max-h-[160px] flex-wrap gap-1 overflow-y-auto pr-1">
                         {list.map((scope) => (
                           <Badge
                             key={scope}
                             variant="secondary"
-                            className="text-[10px] py-0.5 px-2 font-mono bg-primary/10 text-primary border border-primary/25"
+                            className="border border-primary/25 bg-primary/10 px-2 py-0.5 font-mono text-[10px] text-primary"
                           >
                             {scope}
                           </Badge>
@@ -145,7 +148,7 @@ export function ApiKeysView() {
           key: "createdAt",
           label: t("apikeys.createdAt") || "Created At",
           render: (_val: unknown, item: ApiKey) => (
-            <span className="text-xs text-muted-foreground font-mono">
+            <span className="font-mono text-xs text-muted-foreground">
               {item.createdAt ? formatUtc(item.createdAt, "MMM d, yyyy") : "—"}
             </span>
           ),
@@ -154,11 +157,11 @@ export function ApiKeysView() {
           key: "expiresAt",
           label: t("apikeys.expiresAt") || "Expires At",
           render: (_val: unknown, item: ApiKey) => (
-            <span className="text-xs text-muted-foreground font-mono">
+            <span className="font-mono text-xs text-muted-foreground">
               {item.expiresAt ? (
                 formatUtc(item.expiresAt, "MMM d, yyyy")
               ) : (
-                <span className="text-success font-normal font-sans">
+                <span className="font-sans font-normal text-success">
                   {t("apikeys.neverExpires") || "Never Expires"}
                 </span>
               )}
@@ -207,10 +210,7 @@ export function ApiKeysView() {
       <GenericCrudView viewModel={vm} config={config} />
 
       {/* Generated Token Success Dialog (Show Once Modal) */}
-      <GeneratedKeyDialog
-        generatedKey={generatedKey}
-        onClose={() => setGeneratedKey(null)}
-      />
+      <GeneratedKeyDialog generatedKey={generatedKey} onClose={() => setGeneratedKey(null)} />
     </div>
   );
 }

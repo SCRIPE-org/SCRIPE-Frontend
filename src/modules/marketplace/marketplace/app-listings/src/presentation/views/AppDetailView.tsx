@@ -92,7 +92,7 @@ export function AppDetailView({ id }: AppDetailViewProps) {
       {/* ── Back navigation ── */}
       <Link
         href="/marketplace"
-        className="flex w-fit items-center gap-2 text-sm text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
+        className="flex w-fit items-center gap-2 text-sm text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
       >
         <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
         {t("marketplace.detailBackToListings")}
@@ -116,7 +116,8 @@ export function AppDetailView({ id }: AppDetailViewProps) {
             <h1 className="truncate text-2xl font-bold text-nx-ink">{listing.name}</h1>
             {listing.isFeatured && (
               <Badge variant="secondary" className="gap-1">
-                <Zap className="size-3" aria-hidden="true" /> {t("marketplace.listingsFeaturedBadge")}
+                <Zap className="size-3" aria-hidden="true" />{" "}
+                {t("marketplace.listingsFeaturedBadge")}
               </Badge>
             )}
             <Badge variant={listing.isPublished ? "default" : "outline"}>
@@ -163,7 +164,8 @@ export function AppDetailView({ id }: AppDetailViewProps) {
               onClick={() => vm.publish()}
               disabled={vm.isPublishing}
             >
-              <Globe className="size-3.5" aria-hidden="true" /> {t("marketplace.listingsPublishAction")}
+              <Globe className="size-3.5" aria-hidden="true" />{" "}
+              {t("marketplace.listingsPublishAction")}
             </Button>
           )}
           <Button
@@ -195,7 +197,7 @@ export function AppDetailView({ id }: AppDetailViewProps) {
                 type="button"
                 onClick={vm.prevScreenshot}
                 disabled={vm.screenshotIndex === 0}
-                className="absolute start-3 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full border border-nx-line bg-nx-popover text-nx-ink transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-raised-2 focus-visible:outline-none focus-visible:shadow-nx-focus disabled:pointer-events-none disabled:text-nx-ink-3"
+                className="absolute start-3 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full border border-nx-line bg-nx-popover text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-raised-2 focus-visible:shadow-nx-focus focus-visible:outline-none disabled:pointer-events-none disabled:text-nx-ink-3 motion-reduce:transition-none"
                 aria-label={t("marketplace.detailPrevScreenshot")}
               >
                 <ChevronLeft className="size-4 rtl:rotate-180" aria-hidden="true" />
@@ -204,7 +206,7 @@ export function AppDetailView({ id }: AppDetailViewProps) {
                 type="button"
                 onClick={vm.nextScreenshot}
                 disabled={vm.screenshotIndex === listing.screenshotUrls.length - 1}
-                className="absolute end-3 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full border border-nx-line bg-nx-popover text-nx-ink transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-raised-2 focus-visible:outline-none focus-visible:shadow-nx-focus disabled:pointer-events-none disabled:text-nx-ink-3"
+                className="absolute end-3 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full border border-nx-line bg-nx-popover text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-raised-2 focus-visible:shadow-nx-focus focus-visible:outline-none disabled:pointer-events-none disabled:text-nx-ink-3 motion-reduce:transition-none"
                 aria-label={t("marketplace.detailNextScreenshot")}
               >
                 <ChevronRight className="size-4 rtl:rotate-180" aria-hidden="true" />
@@ -258,11 +260,12 @@ export function AppDetailView({ id }: AppDetailViewProps) {
         <Card>
           <CardHeader className="pb-3">
             <h2 className="flex items-center gap-2 text-base font-semibold text-nx-ink">
-              <ShoppingBag className="size-4" aria-hidden="true" /> {t("marketplace.detailPricingTitle")}
+              <ShoppingBag className="size-4" aria-hidden="true" />{" "}
+              {t("marketplace.detailPricingTitle")}
             </h2>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
-            <div className="text-3xl font-bold tracking-tight tabular-nums text-nx-ink">
+            <div className="text-3xl font-bold tabular-nums tracking-tight text-nx-ink">
               {listing.pricingLabel}
             </div>
             {listing.pricingModel === "Subscription" && listing.billingInterval && (
@@ -274,7 +277,8 @@ export function AppDetailView({ id }: AppDetailViewProps) {
             )}
             {listing.pricingModel === "Free" && (
               <div className="flex items-center gap-1.5 text-xs font-medium text-success">
-                <CheckCircle2 className="size-3.5" aria-hidden="true" /> {t("marketplace.detailNoCost")}
+                <CheckCircle2 className="size-3.5" aria-hidden="true" />{" "}
+                {t("marketplace.detailNoCost")}
               </div>
             )}
             <Separator />
@@ -431,9 +435,7 @@ function ReviewCard({ review, onDelete, isDeleting }: ReviewCardProps) {
 
       <div className="min-w-0 flex-1">
         {review.title && <p className="text-sm font-medium text-nx-ink">{review.title}</p>}
-        {review.body && (
-          <p className="mt-0.5 line-clamp-3 text-xs text-nx-ink-2">{review.body}</p>
-        )}
+        {review.body && <p className="mt-0.5 line-clamp-3 text-xs text-nx-ink-2">{review.body}</p>}
         <p className="mt-1 text-xs text-nx-ink-3">
           {review.tenantName} · {formatUtc(review.createdAt, "MMM d, yyyy")}
         </p>

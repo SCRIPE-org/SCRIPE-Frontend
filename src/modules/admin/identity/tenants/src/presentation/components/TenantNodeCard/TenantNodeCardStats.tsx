@@ -28,8 +28,18 @@ export function TenantNodeCardStats({ stats, statsLoading }: TenantNodeCardStats
   const statItems = [
     { key: "admins", label: t("tenant.statsAdmins"), value: stats?.adminsCount, icon: Users },
     { key: "roles", label: t("tenant.statsRoles"), value: stats?.rolesCount, icon: Shield },
-    { key: "children", label: t("tenant.statsSubTenants"), value: stats?.subTenantsCount, icon: Building2 },
-    { key: "permissions", label: t("tenant.statsPermissions"), value: stats?.permissionsCount, icon: Key },
+    {
+      key: "children",
+      label: t("tenant.statsSubTenants"),
+      value: stats?.subTenantsCount,
+      icon: Building2,
+    },
+    {
+      key: "permissions",
+      label: t("tenant.statsPermissions"),
+      value: stats?.permissionsCount,
+      icon: Key,
+    },
   ];
 
   return (
@@ -39,7 +49,12 @@ export function TenantNodeCardStats({ stats, statsLoading }: TenantNodeCardStats
           {statsLoading ? (
             <Skeleton shape="text" className="h-5 w-10" />
           ) : (
-            <DetailRow layout="stacked" icon={stat.icon} label={stat.label} value={stat.value ?? 0} />
+            <DetailRow
+              layout="stacked"
+              icon={stat.icon}
+              label={stat.label}
+              value={stat.value ?? 0}
+            />
           )}
         </div>
       ))}

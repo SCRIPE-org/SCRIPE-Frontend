@@ -99,7 +99,9 @@ export function TransactionsCard({ transactions, paymentsLink }: TransactionsCar
                     </div>
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className={cn("text-xs font-medium", txType.ink)}>{txType.label}</span>
+                        <span className={cn("text-xs font-medium", txType.ink)}>
+                          {txType.label}
+                        </span>
                         <Badge variant="outline">{txStatuses[tx.status] ?? tx.status}</Badge>
                       </div>
                       <p className="mt-0.5 truncate text-xs text-nx-ink-3">{tx.displayLabel}</p>

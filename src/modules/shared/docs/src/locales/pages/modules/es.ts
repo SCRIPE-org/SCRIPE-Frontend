@@ -896,29 +896,39 @@ export const es = {
     hrms: {
       overview: {
         title: "Módulo HRMS",
-        description: "Human Resource Management System que rige los perfiles del personal, empleo, calificaciones, certificaciones, disponibilidad y asignaciones.",
-        intro: "El módulo HRMS es la fuente de verdad para los recursos laborales de la plataforma. Gestiona perfiles de miembros del personal, contratos de empleo, calificaciones, certificaciones profesionales, disponibilidades y asignaciones.",
+        description:
+          "Human Resource Management System que rige los perfiles del personal, empleo, calificaciones, certificaciones, disponibilidad y asignaciones.",
+        intro:
+          "El módulo HRMS es la fuente de verdad para los recursos laborales de la plataforma. Gestiona perfiles de miembros del personal, contratos de empleo, calificaciones, certificaciones profesionales, disponibilidades y asignaciones.",
         infoTitle: "Principio de Diseño",
-        infoContent: "Los registros de HRMS apuntan a los actores de Identity mediante referencias de ID estables, no mediante claves foráneas en la base de datos.",
+        infoContent:
+          "Los registros de HRMS apuntan a los actores de Identity mediante referencias de ID estables, no mediante claves foráneas en la base de datos.",
         whatIsTitle: "¿Qué es HRMS?",
         whatIsIntro: "Es el núcleo administrativo para administradores, entrenadores y personal.",
         featureStaff: "Perfiles de Personal",
-        featureStaffDesc: "Detalles personales y profesionales, incluyendo contactos de emergencia y estado de empleo.",
+        featureStaffDesc:
+          "Detalles personales y profesionales, incluyendo contactos de emergencia y estado de empleo.",
         featureCompliance: "Calificaciones y Certificaciones",
-        featureComplianceDesc: "Certificados bilingües, fechas de verificación y validación de cumplimiento para sesiones de entrenamiento.",
+        featureComplianceDesc:
+          "Certificados bilingües, fechas de verificación y validación de cumplimiento para sesiones de entrenamiento.",
         modelTitle: "Modelo de Datos",
-        modelIntro: "Rige entidades como StaffMember, EmploymentRecord, Qualification, Certification, StaffAvailability y StaffAssignment.",
+        modelIntro:
+          "Rige entidades como StaffMember, EmploymentRecord, Qualification, Certification, StaffAvailability y StaffAssignment.",
         permsTitle: "Permisos",
-        permsIntro: "El acceso se controla mediante permisos: hrms.staff.view, hrms.staff.create, hrms.staff.update y hrms.staff.delete.",
+        permsIntro:
+          "El acceso se controla mediante permisos: hrms.staff.view, hrms.staff.create, hrms.staff.update y hrms.staff.delete.",
       },
     },
     partyKernel: {
       overview: {
         title: "Módulo Party Kernel",
-        description: "El directorio comercial central que gestiona personas, organizaciones, puntos de contacto, relaciones y candidatos para fusión de datos.",
-        intro: "El módulo Party Kernel es el registro principal para las entidades comerciales. Realiza el seguimiento de personas y organizaciones, sus detalles de contacto y relaciones.",
+        description:
+          "El directorio comercial central que gestiona personas, organizaciones, puntos de contacto, relaciones y candidatos para fusión de datos.",
+        intro:
+          "El módulo Party Kernel es el registro principal para las entidades comerciales. Realiza el seguimiento de personas y organizaciones, sus detalles de contacto y relaciones.",
         infoTitle: "Principio de Diseño",
-        infoContent: "Party Kernel utiliza un esquema neutral que representa a todos los actores comerciales (Clientes, Tutores, Personal) como Partes genéricas.",
+        infoContent:
+          "Party Kernel utiliza un esquema neutral que representa a todos los actores comerciales (Clientes, Tutores, Personal) como Partes genéricas.",
         whatIsTitle: "¿Qué es Party Kernel?",
         whatIsIntro: "Forma la base de CRM y facturación.",
         featureParties: "Partes Genéricas",
@@ -926,7 +936,8 @@ export const es = {
         featureMerge: "Deduplicación de Datos",
         featureMergeDesc: "Identifica registros duplicados y facilita su fusión limpia.",
         modelTitle: "Modelo de Datos",
-        modelIntro: "Rige entidades como Party, PartyPerson, PartyOrganization, PartyRole, PartyRelationship y ContactPoint.",
+        modelIntro:
+          "Rige entidades como Party, PartyPerson, PartyOrganization, PartyRole, PartyRelationship y ContactPoint.",
         permsTitle: "Permisos",
         permsIntro: "Protegido por party.view, party.create, party.update y party.delete.",
       },
@@ -934,20 +945,25 @@ export const es = {
     organizationCore: {
       overview: {
         title: "Módulo Organization Core",
-        description: "Define la jerarquía física y legal de los inquilinos, incluyendo unidades de negocio, sucursales, sitios y departamentos.",
+        description:
+          "Define la jerarquía física y legal de los inquilinos, incluyendo unidades de negocio, sucursales, sitios y departamentos.",
         intro: "Organization Core modela el organigrama y la topología de las instalaciones.",
         infoTitle: "Principio de Diseño",
-        infoContent: "La estructura organizativa es jerárquica, permitiendo relaciones padre-hijo para sucursales regionales y sitios.",
+        infoContent:
+          "La estructura organizativa es jerárquica, permitiendo relaciones padre-hijo para sucursales regionales y sitios.",
         whatIsTitle: "¿Qué es Organization Core?",
         whatIsIntro: "Estructura dónde y cómo se llevan a cabo los negocios.",
         featureStructure: "Jerarquía Organizativa",
-        featureStructureDesc: "Anidamiento flexible de entidades legales, sucursales regionales, sitios y departamentos.",
+        featureStructureDesc:
+          "Anidamiento flexible de entidades legales, sucursales regionales, sitios y departamentos.",
         featureNodes: "Referencias Estables",
-        featureNodesDesc: "Los IDs de organización estables son referenciados por los módulos de programación, reservas y academia.",
+        featureNodesDesc:
+          "Los IDs de organización estables son referenciados por los módulos de programación, reservas y academia.",
         modelTitle: "Modelo de Datos",
         modelIntro: "Rige entidades como BusinessUnit, Branch, Site y Department.",
         permsTitle: "Permisos",
-        permsIntro: "Administrado mediante organization.view, organization.create, organization.update y organization.delete.",
+        permsIntro:
+          "Administrado mediante organization.view, organization.create, organization.update y organization.delete.",
       },
     },
   },

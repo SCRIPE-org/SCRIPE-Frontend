@@ -433,7 +433,7 @@ export function NexusPrimaryRail({
               showName={false}
               side={isRTL ? "left" : "right"}
               align="end"
-              className="h-[40px] w-[40px] cursor-pointer rounded-full border-[1.5px] border-nx-line !p-0 shadow-nx-sm transition-[border-color,box-shadow,background-color] duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover motion-reduce:transition-none data-[state=open]:border-nx-accent"
+              className="h-[40px] w-[40px] cursor-pointer rounded-full border-[1.5px] border-nx-line !p-0 shadow-nx-sm transition-[border-color,box-shadow,background-color] duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover data-[state=open]:border-nx-accent motion-reduce:transition-none"
             />
           </div>
         </div>
@@ -518,9 +518,7 @@ function ModuleWorkspaceButton({
             borderRadius: "var(--nx-radius-md)",
             cursor: isLocked ? "not-allowed" : "pointer",
             border: `1.5px solid ${isLocked ? "var(--nx-line)" : borderColor}`,
-            background: isLocked
-              ? "color-mix(in oklch, var(--nx-ink) 4%, transparent)"
-              : bgColor,
+            background: isLocked ? "color-mix(in oklch, var(--nx-ink) 4%, transparent)" : bgColor,
             color: isLocked ? "var(--nx-ink-3)" : iconColor,
             margin: "4px 0",
             opacity: isLocked ? 0.55 : 1,

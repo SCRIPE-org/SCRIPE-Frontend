@@ -30,7 +30,9 @@ export function SchemaColumnRow({ column }: SchemaColumnRowProps) {
         </span>
       </TableCell>
       <TableCell className="font-mono text-xs text-nx-accent">{column.type}</TableCell>
-      <TableCell className="text-xs text-nx-ink-2">{column.nullable ? "NULL" : "NOT NULL"}</TableCell>
+      <TableCell className="text-xs text-nx-ink-2">
+        {column.nullable ? "NULL" : "NOT NULL"}
+      </TableCell>
       <TableCell className="text-nx-ink-2">{t(column.notesKey)}</TableCell>
     </TableRow>
   );

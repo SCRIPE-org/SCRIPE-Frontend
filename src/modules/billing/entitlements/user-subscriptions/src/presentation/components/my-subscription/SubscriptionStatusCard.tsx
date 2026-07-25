@@ -93,7 +93,9 @@ export function SubscriptionStatusCard({ subscription, t }: SubscriptionStatusCa
                   ? t("entitlements.mySubscription.renewsOn")
                   : t("entitlements.mySubscription.expiresOn")}
               </p>
-              <p className="text-sm font-medium text-nx-ink">{formatDate(subscription.expiresAt)}</p>
+              <p className="text-sm font-medium text-nx-ink">
+                {formatDate(subscription.expiresAt)}
+              </p>
             </div>
           </div>
         </div>
@@ -102,9 +104,7 @@ export function SubscriptionStatusCard({ subscription, t }: SubscriptionStatusCa
         {subscription.isExpiringSoon && subscription.daysRemaining != null && (
           <div className="mt-4 flex items-center gap-2 rounded-nx-md bg-warning/10 px-3 py-2 text-warning">
             <Timer className="h-4 w-4" aria-hidden="true" />
-            <span className="text-sm">
-              {t("entitlements.mySubscription.expiringSoon")}
-            </span>
+            <span className="text-sm">{t("entitlements.mySubscription.expiringSoon")}</span>
           </div>
         )}
 

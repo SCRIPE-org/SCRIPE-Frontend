@@ -53,7 +53,7 @@ export const en = {
           "The Custom Fields module lets each tenant extend the platform's records with their own typed fields — for example a 'shirt size' on a person or a 'preferred foot' on a player — without any database migration or code change. Field definitions are tenant-scoped and attach to a host entity through the cross-module Entity-Type Registry rather than a foreign key, so the module never couples to another module's schema.",
         infoTitle: "Design Principle",
         infoContent:
-          "Custom fields are attached by stable entity-type key (e.g. \"party.person\"), validated against the Entity-Type Registry, not by a database foreign key. This keeps the module fully decoupled and safe to evolve independently.",
+          'Custom fields are attached by stable entity-type key (e.g. "party.person"), validated against the Entity-Type Registry, not by a database foreign key. This keeps the module fully decoupled and safe to evolve independently.',
         whatIsTitle: "What Are Custom Fields?",
         whatIsIntro:
           "A custom field is a tenant-defined extension to an existing entity. Each definition carries a machine key (unique per tenant and entity type), bilingual labels, a value type, an optional required flag, an optional list of allowed options for Select fields, and a sort order. Values are stored typed rather than in an untyped JSON blob.",
@@ -92,7 +92,7 @@ export const en = {
         description:
           "Tenant-scoped work items (tasks) that any module can attach to one of its entities by stable entity-type key — polymorphic, never coupled by a foreign key.",
         intro:
-          "The Work Management module provides a generic, tenant-scoped unit of work — a task — that any other module can attach to one of its own records. A work item references its owner polymorphically through the cross-module Entity-Type Registry (a stable key such as \"party.person\" or \"hrms.staff-member\") plus the owner's id, never a database foreign key, so Work Management stays fully decoupled from every other module's schema.",
+          'The Work Management module provides a generic, tenant-scoped unit of work — a task — that any other module can attach to one of its own records. A work item references its owner polymorphically through the cross-module Entity-Type Registry (a stable key such as "party.person" or "hrms.staff-member") plus the owner\'s id, never a database foreign key, so Work Management stays fully decoupled from every other module\'s schema.',
         infoTitle: "Design Principle",
         infoContent:
           "A work item points at its owning entity by stable entity-type key plus id, validated against the Entity-Type Registry — not by a foreign key. The assignee is an Identity actor id reference, also not an FK. This keeps the module independent and safe to evolve.",
@@ -2043,37 +2043,52 @@ export const en = {
     hrms: {
       overview: {
         title: "HRMS Module",
-        description: "Human Resource Management System governing staff profiles, employment, qualifications, certifications, availability, and assignments.",
-        intro: "The HRMS module is the source of truth for the platform's workforce resources. It manages staff member profiles, employment records, qualifications, professional certifications, availabilities, and assignments. Each staff member can be mapped to an Identity actor if they need platform access.",
+        description:
+          "Human Resource Management System governing staff profiles, employment, qualifications, certifications, availability, and assignments.",
+        intro:
+          "The HRMS module is the source of truth for the platform's workforce resources. It manages staff member profiles, employment records, qualifications, professional certifications, availabilities, and assignments. Each staff member can be mapped to an Identity actor if they need platform access.",
         infoTitle: "Design Principle",
-        infoContent: "HRMS records point to Identity actors by stable ID references, not by database foreign keys. This keeps authentication and HR profiles decoupled, allowing them to scale and deploy independently.",
+        infoContent:
+          "HRMS records point to Identity actors by stable ID references, not by database foreign keys. This keeps authentication and HR profiles decoupled, allowing them to scale and deploy independently.",
         whatIsTitle: "What is HRMS?",
-        whatIsIntro: "It is the administrative core for managers, coaches, and staff. It tracks their personal details, legal contracts, active certifications, skills, and schedules.",
+        whatIsIntro:
+          "It is the administrative core for managers, coaches, and staff. It tracks their personal details, legal contracts, active certifications, skills, and schedules.",
         featureStaff: "Staff Profiles",
-        featureStaffDesc: "Personal and professional details, including emergency contacts, employment status, and linkages to login credentials.",
+        featureStaffDesc:
+          "Personal and professional details, including emergency contacts, employment status, and linkages to login credentials.",
         featureCompliance: "Qualifications & Certifications",
-        featureComplianceDesc: "Bilingual certificates, verification dates, expiry notifications, and compliance validation for coaching sessions.",
+        featureComplianceDesc:
+          "Bilingual certificates, verification dates, expiry notifications, and compliance validation for coaching sessions.",
         modelTitle: "Data Model",
-        modelIntro: "Governs entities like StaffMember, EmploymentRecord, Qualification, Certification, StaffAvailability, and StaffAssignment.",
+        modelIntro:
+          "Governs entities like StaffMember, EmploymentRecord, Qualification, Certification, StaffAvailability, and StaffAssignment.",
         permsTitle: "Permissions",
-        permsIntro: "Access is controlled via permissions: hrms.staff.view, hrms.staff.create, hrms.staff.update, and hrms.staff.delete.",
+        permsIntro:
+          "Access is controlled via permissions: hrms.staff.view, hrms.staff.create, hrms.staff.update, and hrms.staff.delete.",
       },
     },
     partyKernel: {
       overview: {
         title: "Party Kernel Module",
-        description: "The core business directory managing people, organizations, contact points, relationships, and data merge candidates.",
-        intro: "The Party Kernel module is the primary registry for business entities. It tracks persons and organizations, their contact details, relationships (such as parent-child or guardian-athlete), and deduplication candidates.",
+        description:
+          "The core business directory managing people, organizations, contact points, relationships, and data merge candidates.",
+        intro:
+          "The Party Kernel module is the primary registry for business entities. It tracks persons and organizations, their contact details, relationships (such as parent-child or guardian-athlete), and deduplication candidates.",
         infoTitle: "Design Principle",
-        infoContent: "Party Kernel uses a neutral schema that represents all business actors (Customers, Guardians, Staff) as generic Parties, keeping specific roles separate.",
+        infoContent:
+          "Party Kernel uses a neutral schema that represents all business actors (Customers, Guardians, Staff) as generic Parties, keeping specific roles separate.",
         whatIsTitle: "What is Party Kernel?",
-        whatIsIntro: "It forms the foundation of CRM and billing. Every entity interacting with the tenant is registered here.",
+        whatIsIntro:
+          "It forms the foundation of CRM and billing. Every entity interacting with the tenant is registered here.",
         featureParties: "Generic Parties",
-        featurePartiesDesc: "Uniform representation of individuals and legal entities, supporting custom fields and multiple contact points.",
+        featurePartiesDesc:
+          "Uniform representation of individuals and legal entities, supporting custom fields and multiple contact points.",
         featureMerge: "Data Deduplication",
-        featureMergeDesc: "Identifies duplicate records based on name/email/phone match and facilitates merging them cleanly.",
+        featureMergeDesc:
+          "Identifies duplicate records based on name/email/phone match and facilitates merging them cleanly.",
         modelTitle: "Data Model",
-        modelIntro: "Governs entities like Party, PartyPerson, PartyOrganization, PartyRole, PartyRelationship, and ContactPoint.",
+        modelIntro:
+          "Governs entities like Party, PartyPerson, PartyOrganization, PartyRole, PartyRelationship, and ContactPoint.",
         permsTitle: "Permissions",
         permsIntro: "Protected by party.view, party.create, party.update, and party.delete.",
       },
@@ -2081,20 +2096,27 @@ export const en = {
     organizationCore: {
       overview: {
         title: "Organization Core Module",
-        description: "Defines the physical and legal hierarchy of tenants, including business units, branches, sites, and departments.",
-        intro: "Organization Core models the organizational chart and facilities topology. It defines legal entities, branches, operational sites, business units, and departments.",
+        description:
+          "Defines the physical and legal hierarchy of tenants, including business units, branches, sites, and departments.",
+        intro:
+          "Organization Core models the organizational chart and facilities topology. It defines legal entities, branches, operational sites, business units, and departments.",
         infoTitle: "Design Principle",
-        infoContent: "Organization structure is hierarchical, allowing parent-child relationships for regional branches and sites.",
+        infoContent:
+          "Organization structure is hierarchical, allowing parent-child relationships for regional branches and sites.",
         whatIsTitle: "What is Organization Core?",
-        whatIsIntro: "It structures where and how business is conducted. Sites and branches are referenced by other modules for resources.",
+        whatIsIntro:
+          "It structures where and how business is conducted. Sites and branches are referenced by other modules for resources.",
         featureStructure: "Organizational Hierarchy",
-        featureStructureDesc: "Flexible nesting of legal entities, regional branches, sites, and departments for operational isolation.",
+        featureStructureDesc:
+          "Flexible nesting of legal entities, regional branches, sites, and departments for operational isolation.",
         featureNodes: "Stable References",
-        featureNodesDesc: "Stable organization IDs are referenced by scheduling, booking, and academy modules.",
+        featureNodesDesc:
+          "Stable organization IDs are referenced by scheduling, booking, and academy modules.",
         modelTitle: "Data Model",
         modelIntro: "Governs entities like BusinessUnit, Branch, Site, and Department.",
         permsTitle: "Permissions",
-        permsIntro: "Administered via organization.view, organization.create, organization.update, and organization.delete.",
+        permsIntro:
+          "Administered via organization.view, organization.create, organization.update, and organization.delete.",
       },
     },
   },

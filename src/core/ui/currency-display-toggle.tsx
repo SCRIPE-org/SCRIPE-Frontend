@@ -45,13 +45,8 @@ interface CurrencyDisplayToggleProps {
 
 export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps) {
   const { t } = useI18n();
-  const {
-    displayCurrency,
-    displayMode,
-    setDisplayCurrency,
-    resetToNative,
-    isLoadingRates,
-  } = useCurrencyPreference();
+  const { displayCurrency, displayMode, setDisplayCurrency, resetToNative, isLoadingRates } =
+    useCurrencyPreference();
 
   const { isConverting } = useConvertedAmount();
   const { fetchRates, fetchError } = useCurrencyRates();
@@ -152,10 +147,7 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
                 >
                   <span className="flex h-4 w-4 shrink-0 items-center justify-center">
                     <Check
-                      className={cn(
-                        "h-3.5 w-3.5 text-nx-accent",
-                        active ? "visible" : "invisible"
-                      )}
+                      className={cn("h-3.5 w-3.5 text-nx-accent", active ? "visible" : "invisible")}
                       aria-hidden="true"
                     />
                   </span>
@@ -199,7 +191,7 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
           <button
             type="button"
             onClick={() => fetchRates(true)}
-            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-nx-sm text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
+            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-nx-sm text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
             title={t("currency.refreshRates") || "Refresh rates"}
             aria-label={t("currency.refreshRates") || "Refresh rates"}
           >
@@ -211,7 +203,11 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
         {isConverting && (
           <>
             <Separator />
-            <button type="button" className={cn(ROW, "text-xs text-nx-ink-2")} onClick={handleReset}>
+            <button
+              type="button"
+              className={cn(ROW, "text-xs text-nx-ink-2")}
+              onClick={handleReset}
+            >
               <RotateCcw className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
               {t("currency.resetToNative") || "Reset to native"}
             </button>

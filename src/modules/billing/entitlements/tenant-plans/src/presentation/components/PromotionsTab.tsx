@@ -15,13 +15,7 @@ import { Label } from "@core/ui/label";
 import { Checkbox } from "@core/ui/checkbox";
 import { SectionState } from "@core/ui/section-state";
 import { EmptyState } from "@core/ui/empty-state";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
 import {
   Tag,
@@ -51,7 +45,8 @@ interface PromotionsTabProps {
 
 // ── Discount type icon helper ──
 function DiscountIcon({ type }: { type: string }) {
-  if (type === "Percentage") return <Percent className="h-3.5 w-3.5 text-info" aria-hidden="true" />;
+  if (type === "Percentage")
+    return <Percent className="h-3.5 w-3.5 text-info" aria-hidden="true" />;
   if (type === "FixedAmount")
     return <DollarSign className="h-3.5 w-3.5 text-success" aria-hidden="true" />;
   return <Gift className="h-3.5 w-3.5 text-nx-accent" aria-hidden="true" />;
@@ -216,9 +211,7 @@ function PromotionForm({
           />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="promo-discount-type">
-            {t("entitlements.promotions.discountType")} *
-          </Label>
+          <Label htmlFor="promo-discount-type">{t("entitlements.promotions.discountType")} *</Label>
           <Select
             value={form.discountType}
             onValueChange={(v) => setForm((f) => ({ ...f, discountType: v }))}
@@ -227,9 +220,7 @@ function PromotionForm({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Percentage">
-                {t("entitlements.promotions.percentage")}
-              </SelectItem>
+              <SelectItem value="Percentage">{t("entitlements.promotions.percentage")}</SelectItem>
               <SelectItem value="FixedAmount">
                 {t("entitlements.promotions.fixedAmount")}
               </SelectItem>
@@ -281,9 +272,7 @@ function PromotionForm({
           />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="promo-minimum-amount">
-            {t("entitlements.promotions.minimumAmount")}
-          </Label>
+          <Label htmlFor="promo-minimum-amount">{t("entitlements.promotions.minimumAmount")}</Label>
           <Input
             id="promo-minimum-amount"
             type="number"

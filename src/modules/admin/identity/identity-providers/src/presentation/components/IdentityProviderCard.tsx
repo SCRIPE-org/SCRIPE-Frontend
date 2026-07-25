@@ -14,15 +14,7 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Switch } from "@core/ui/switch";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import {
-  Shield,
-  Users,
-  Fingerprint,
-  Zap,
-  Pencil,
-  Trash2,
-  MoreVertical,
-} from "lucide-react";
+import { Shield, Users, Fingerprint, Zap, Pencil, Trash2, MoreVertical } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -113,7 +105,7 @@ export function IdentityProviderCard({
 
   return (
     <>
-      <div className="group relative flex flex-col justify-between rounded-nx-lg border border-nx-line bg-nx-surface p-5 transition-[border-color] duration-nx-micro motion-reduce:transition-none hover:border-nx-line-hi">
+      <div className="group relative flex flex-col justify-between rounded-nx-lg border border-nx-line bg-nx-surface p-5 transition-[border-color] duration-nx-micro hover:border-nx-line-hi motion-reduce:transition-none">
         {/* Top Header Row */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
@@ -206,7 +198,7 @@ export function IdentityProviderCard({
           {item.enabledForAdmins && (
             <Badge
               variant="outline"
-              className="h-5 gap-1 border-nx-accent/30 bg-nx-accent-wash text-[10px] font-medium text-nx-accent"
+              className="border-nx-accent/30 h-5 gap-1 bg-nx-accent-wash text-[10px] font-medium text-nx-accent"
             >
               <Shield className="h-3 w-3" aria-hidden="true" />
               {t("identityProviders.badgeAdmin")}

@@ -14,7 +14,17 @@ export interface CustomFieldListParams {
 }
 
 export interface ICustomFieldRepository {
-  getAll(params: CustomFieldListParams): Promise<{ items: CustomField[]; totalCount: number; page: number; pageSize: number; totalPages: number; hasNextPage: boolean; hasPreviousPage: boolean }>;
+  getAll(
+    params: CustomFieldListParams
+  ): Promise<{
+    items: CustomField[];
+    totalCount: number;
+    page: number;
+    pageSize: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  }>;
   getById(id: string): Promise<CustomField>;
   create(data: Record<string, unknown>): Promise<string>;
   update(id: string, data: Record<string, unknown>): Promise<void>;

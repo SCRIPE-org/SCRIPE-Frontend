@@ -1,4 +1,8 @@
-import type { IApiKeyDetailService, ChartParams, ActivityParams } from "../../domain/interfaces/IApiKeyDetailService";
+import type {
+  IApiKeyDetailService,
+  ChartParams,
+  ActivityParams,
+} from "../../domain/interfaces/IApiKeyDetailService";
 import { ApiKeyDetail } from "../../domain/entities/ApiKeyDetail";
 import type { UpdateApiKeyDetailRequest } from "../../domain/entities/ApiKeyDetail";
 import { ApiKeyStats } from "../../domain/entities/ApiKeyStats";
@@ -30,13 +34,16 @@ export class ApiKeyDetailRepository {
 
   async getChartData(id: string, params: ChartParams): Promise<ApiKeyChartDataPoint[]> {
     const dtos = await this.service.getChartData(id, params);
-    return dtos.map(d => ApiKeyDetailMapper.toChartPoint(d));
+    return dtos.map((d) => ApiKeyDetailMapper.toChartPoint(d));
   }
 
-  async getActivity(id: string, params: ActivityParams): Promise<{ items: ApiKeyActivityEntry[]; totalCount: number }> {
+  async getActivity(
+    id: string,
+    params: ActivityParams
+  ): Promise<{ items: ApiKeyActivityEntry[]; totalCount: number }> {
     const result = await this.service.getActivity(id, params);
     return {
-      items: result.items.map(d => ApiKeyDetailMapper.toActivityEntry(d)),
+      items: result.items.map((d) => ApiKeyDetailMapper.toActivityEntry(d)),
       totalCount: result.totalCount,
     };
   }

@@ -270,7 +270,7 @@ export function TenantNodeCard({
 
             {/* Description */}
             {node.description && (
-              <p className="mt-3 text-sm leading-relaxed text-pretty text-nx-ink-2">
+              <p className="mt-3 text-pretty text-sm leading-relaxed text-nx-ink-2">
                 {node.description}
               </p>
             )}

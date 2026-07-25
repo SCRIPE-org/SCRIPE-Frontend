@@ -105,7 +105,7 @@ function SortableLayerItem({
         }
       }}
       className={cn(
-        "group flex cursor-pointer items-center gap-2 rounded-nx-sm px-2 py-1.5 transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+        "group flex cursor-pointer items-center gap-2 rounded-nx-sm px-2 py-1.5 transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
         isDragging && "bg-nx-accent-wash opacity-50 ring-1 ring-nx-accent-wash",
         isSelected
           ? "border border-nx-accent bg-nx-accent-wash"
@@ -118,7 +118,7 @@ function SortableLayerItem({
         {...attributes}
         {...listeners}
         aria-label={t("studio.builder.dragHandle")}
-        className="cursor-grab p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink-2 active:cursor-grabbing focus-visible:outline-none focus-visible:shadow-nx-focus"
+        className="cursor-grab p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink-2 focus-visible:shadow-nx-focus focus-visible:outline-none active:cursor-grabbing motion-reduce:transition-none"
       >
         <GripVertical className="h-3 w-3" aria-hidden="true" />
       </div>
@@ -139,9 +139,7 @@ function SortableLayerItem({
       </div>
 
       {/* Label */}
-      <span className="flex-1 truncate text-[10px] font-medium text-nx-ink">
-        {componentLabel}
-      </span>
+      <span className="flex-1 truncate text-[10px] font-medium text-nx-ink">{componentLabel}</span>
 
       {/* Visibility toggle */}
       <button
@@ -150,7 +148,7 @@ function SortableLayerItem({
           onToggleVisibility();
         }}
         className={cn(
-          "rounded-nx-sm p-0.5 opacity-0 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:shadow-nx-focus",
+          "rounded-nx-sm p-0.5 opacity-0 transition-colors duration-nx-micro ease-nx-enter focus-visible:opacity-100 focus-visible:shadow-nx-focus focus-visible:outline-none group-hover:opacity-100 motion-reduce:transition-none",
           component.visible
             ? "text-nx-ink-3 hover:text-nx-ink"
             : "text-nx-ink-3 opacity-100 hover:text-nx-ink"

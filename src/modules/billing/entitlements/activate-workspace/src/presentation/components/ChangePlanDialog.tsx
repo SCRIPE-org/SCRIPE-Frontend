@@ -84,7 +84,9 @@ export function ChangePlanDialog({
               >
                 <SelectTrigger>
                   <SelectValue
-                    placeholder={t("entitlements.activateWorkspace.changePlanDialog.planPlaceholder")}
+                    placeholder={t(
+                      "entitlements.activateWorkspace.changePlanDialog.planPlaceholder"
+                    )}
                   />
                 </SelectTrigger>
                 <SelectContent>

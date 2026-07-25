@@ -111,7 +111,7 @@ export function BuilderCanvas({
           <button
             onClick={() => onSetPositionMode("absolute")}
             className={cn(
-              "flex items-center gap-1.5 rounded-nx-sm px-2.5 py-1 text-[11px] font-medium transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+              "flex items-center gap-1.5 rounded-nx-sm px-2.5 py-1 text-[11px] font-medium transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
               isAbsolute
                 ? "bg-nx-surface text-nx-ink shadow-nx-sm"
                 : "text-nx-ink-3 hover:text-nx-ink-2"
@@ -124,7 +124,7 @@ export function BuilderCanvas({
           <button
             onClick={() => onSetPositionMode("grid")}
             className={cn(
-              "flex items-center gap-1.5 rounded-nx-sm px-2.5 py-1 text-[11px] font-medium transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+              "flex items-center gap-1.5 rounded-nx-sm px-2.5 py-1 text-[11px] font-medium transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
               !isAbsolute
                 ? "bg-nx-surface text-nx-ink shadow-nx-sm"
                 : "text-nx-ink-3 hover:text-nx-ink-2"
@@ -142,10 +142,8 @@ export function BuilderCanvas({
           <button
             onClick={() => onSetSnapToGrid(!snapToGrid)}
             className={cn(
-              "flex items-center gap-1 rounded-nx-sm px-2 py-1 text-[11px] transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
-              snapToGrid
-                ? "bg-nx-accent-wash text-nx-accent"
-                : "text-nx-ink-3 hover:text-nx-ink-2"
+              "flex items-center gap-1 rounded-nx-sm px-2 py-1 text-[11px] transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+              snapToGrid ? "bg-nx-accent-wash text-nx-accent" : "text-nx-ink-3 hover:text-nx-ink-2"
             )}
             title={t("studio.builder.snapToGrid")}
           >
@@ -158,7 +156,7 @@ export function BuilderCanvas({
             <button
               onClick={prevZoom}
               disabled={zoom <= ZOOM_STEPS[0]}
-              className="flex h-6 w-6 items-center justify-center rounded-s-nx-sm transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover disabled:pointer-events-none disabled:text-nx-ink-3 focus-visible:outline-none focus-visible:shadow-nx-focus"
+              className="flex h-6 w-6 items-center justify-center rounded-s-nx-sm transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none disabled:pointer-events-none disabled:text-nx-ink-3 motion-reduce:transition-none"
               aria-label={t("studio.builder.zoomOut")}
             >
               <ZoomOut className="h-3 w-3" aria-hidden="true" />
@@ -169,7 +167,7 @@ export function BuilderCanvas({
             <button
               onClick={nextZoom}
               disabled={zoom >= ZOOM_STEPS[ZOOM_STEPS.length - 1]}
-              className="flex h-6 w-6 items-center justify-center rounded-e-nx-sm transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover disabled:pointer-events-none disabled:text-nx-ink-3 focus-visible:outline-none focus-visible:shadow-nx-focus"
+              className="flex h-6 w-6 items-center justify-center rounded-e-nx-sm transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none disabled:pointer-events-none disabled:text-nx-ink-3 motion-reduce:transition-none"
               aria-label={t("studio.builder.zoomIn")}
             >
               <ZoomIn className="h-3 w-3" aria-hidden="true" />
@@ -182,9 +180,7 @@ export function BuilderCanvas({
       {overlappingIds.size > 0 && (
         <div className="flex items-center gap-1.5 rounded-nx-sm bg-destructive/10 px-2 py-1 text-[11px] text-destructive">
           <AlertTriangle className="h-3 w-3 flex-shrink-0" aria-hidden="true" />
-          <span>
-            {t("studio.builder.overlapCount", { count: overlappingIds.size / 2 })}
-          </span>
+          <span>{t("studio.builder.overlapCount", { count: overlappingIds.size / 2 })}</span>
         </div>
       )}
 
@@ -236,7 +232,7 @@ export function BuilderCanvas({
             {snapToGrid && !isAbsolute && (
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute start-0 end-0 top-0 z-10"
+                className="pointer-events-none absolute end-0 start-0 top-0 z-10"
                 style={{
                   display: "grid",
                   gridTemplateColumns: `repeat(${CANVAS_GRID_COLUMNS}, 1fr)`,
@@ -352,7 +348,10 @@ export function BuilderCanvas({
                 but per motion doctrine only genuine loading states may loop, so this
                 renders as a single steady highlight instead of an infinite pulse. */}
             {isOver && (
-              <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-40 rounded-nx-lg">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 z-40 rounded-nx-lg"
+              >
                 <div className="absolute inset-0 rounded-nx-lg border-2 border-nx-accent bg-nx-accent-wash" />
               </div>
             )}

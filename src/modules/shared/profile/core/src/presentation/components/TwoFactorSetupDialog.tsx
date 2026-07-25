@@ -24,15 +24,7 @@ import { Button } from "@core/ui/button";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@core/ui/input-otp";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import {
-  Copy,
-  Download,
-  ShieldCheck,
-  QrCode,
-  KeyRound,
-  Check,
-  AlertTriangle,
-} from "lucide-react";
+import { Copy, Download, ShieldCheck, QrCode, KeyRound, Check, AlertTriangle } from "lucide-react";
 import type { Enable2FAResult } from "../../../src/domain/interfaces/IProfileRepository";
 
 type SetupStep = "qr-code" | "verify" | "backup-codes";
@@ -234,7 +226,10 @@ export function TwoFactorSetupDialog({
                     <InputOTPSlot index={1} className={OTP_SLOT} />
                     <InputOTPSlot index={2} className={OTP_SLOT} />
                   </InputOTPGroup>
-                  <span className="mx-1 select-none text-xl font-light text-nx-ink-3" aria-hidden="true">
+                  <span
+                    className="mx-1 select-none text-xl font-light text-nx-ink-3"
+                    aria-hidden="true"
+                  >
                     –
                   </span>
                   <InputOTPGroup className="gap-1.5">
@@ -282,7 +277,7 @@ export function TwoFactorSetupDialog({
                 {setupData.backupCodes.map((code, i) => (
                   <code
                     key={i}
-                    className="rounded-nx-control border border-nx-line bg-nx-ground px-3 py-1.5 text-center font-mono text-sm text-nx-ink tabular-nums"
+                    className="rounded-nx-control border border-nx-line bg-nx-ground px-3 py-1.5 text-center font-mono text-sm tabular-nums text-nx-ink"
                   >
                     {code}
                   </code>

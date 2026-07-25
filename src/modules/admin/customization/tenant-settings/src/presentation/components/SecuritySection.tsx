@@ -47,9 +47,7 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
               value={settings.passwordMinLength}
               onChange={(e) => updateField("passwordMinLength", parseInt(e.target.value) || 8)}
             />
-            <p className="text-xs text-nx-ink-3">
-              {t("tenantSettings.passwordMinLengthHelp")}
-            </p>
+            <p className="text-xs text-nx-ink-3">{t("tenantSettings.passwordMinLengthHelp")}</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="passwordExpiryDays">{t("tenantSettings.passwordExpiryDays")}</Label>
@@ -60,9 +58,7 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
               value={settings.passwordExpiryDays ?? 0}
               onChange={(e) => updateField("passwordExpiryDays", parseInt(e.target.value) || null)}
             />
-            <p className="text-xs text-nx-ink-3">
-              {t("tenantSettings.passwordExpiryDaysHelp")}
-            </p>
+            <p className="text-xs text-nx-ink-3">{t("tenantSettings.passwordExpiryDaysHelp")}</p>
           </div>
         </div>
 
@@ -122,9 +118,7 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
               value={settings.loginLockoutThreshold}
               onChange={(e) => updateField("loginLockoutThreshold", parseInt(e.target.value) || 5)}
             />
-            <p className="text-xs text-nx-ink-3">
-              {t("tenantSettings.loginLockoutThresholdHelp")}
-            </p>
+            <p className="text-xs text-nx-ink-3">{t("tenantSettings.loginLockoutThresholdHelp")}</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="lockoutMinutes">{t("tenantSettings.loginLockoutMinutes")}</Label>
@@ -135,9 +129,7 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
               value={settings.loginLockoutMinutes}
               onChange={(e) => updateField("loginLockoutMinutes", parseInt(e.target.value) || 15)}
             />
-            <p className="text-xs text-nx-ink-3">
-              {t("tenantSettings.loginLockoutMinutesHelp")}
-            </p>
+            <p className="text-xs text-nx-ink-3">{t("tenantSettings.loginLockoutMinutesHelp")}</p>
           </div>
           <div className="flex items-center justify-between rounded-nx-md border border-nx-line p-3">
             <div>

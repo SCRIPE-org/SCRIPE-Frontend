@@ -100,10 +100,7 @@ export function UsersView() {
           label: t("users.columns.email"),
           render: (_val: unknown, user: UsersEntity) =>
             user.email ? (
-              <a
-                href={`mailto:${user.email}`}
-                className="text-sm text-nx-accent hover:underline"
-              >
+              <a href={`mailto:${user.email}`} className="text-sm text-nx-accent hover:underline">
                 {user.email}
               </a>
             ) : (

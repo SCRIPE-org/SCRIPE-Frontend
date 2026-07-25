@@ -16,15 +16,11 @@ export class OverrideService implements IOverrideService {
   constructor(private readonly api: IApiService) {}
 
   async getOverrides(tenantId: string): Promise<FeatureOverrideModel[]> {
-    return this.api.get<FeatureOverrideModel[]>(
-      OVERRIDES_ENDPOINTS.OVERRIDES(tenantId)
-    );
+    return this.api.get<FeatureOverrideModel[]>(OVERRIDES_ENDPOINTS.OVERRIDES(tenantId));
   }
 
   async getResolved(tenantId: string): Promise<ResolvedFeatureModel[]> {
-    return this.api.get<ResolvedFeatureModel[]>(
-      OVERRIDES_ENDPOINTS.RESOLVED(tenantId)
-    );
+    return this.api.get<ResolvedFeatureModel[]>(OVERRIDES_ENDPOINTS.RESOLVED(tenantId));
   }
 
   async setOverride(
@@ -39,9 +35,7 @@ export class OverrideService implements IOverrideService {
   }
 
   async removeOverride(tenantId: string, featureId: string): Promise<void> {
-    await this.api.delete(
-      OVERRIDES_ENDPOINTS.REMOVE_OVERRIDE(tenantId, featureId)
-    );
+    await this.api.delete(OVERRIDES_ENDPOINTS.REMOVE_OVERRIDE(tenantId, featureId));
   }
 
   async setOverrideCost(overrideId: string, amountUsd: number, reason?: string): Promise<void> {

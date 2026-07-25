@@ -163,7 +163,9 @@ export function FeatureDefinitionFormView({
             </div>
             {t("entitlements.featureDefinitions.sectionIdentity")}
           </CardTitle>
-          <CardDescription>{t("entitlements.featureDefinitions.sectionIdentityDesc")}</CardDescription>
+          <CardDescription>
+            {t("entitlements.featureDefinitions.sectionIdentityDesc")}
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
           {/* Feature Key */}
@@ -240,7 +242,9 @@ export function FeatureDefinitionFormView({
             </div>
             {t("entitlements.featureDefinitions.sectionConfig")}
           </CardTitle>
-          <CardDescription>{t("entitlements.featureDefinitions.sectionConfigDesc")}</CardDescription>
+          <CardDescription>
+            {t("entitlements.featureDefinitions.sectionConfigDesc")}
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
           {/* Value Type — Card Selector. Read-only mode relies solely on each
@@ -266,7 +270,7 @@ export function FeatureDefinitionFormView({
                   className={cn(
                     "relative flex flex-col items-start gap-2 rounded-nx-md border-2 p-4 text-start",
                     "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                    "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                    "focus-visible:shadow-nx-focus focus-visible:outline-none",
                     "disabled:cursor-not-allowed disabled:opacity-60",
                     !isViewMode && "hover:bg-nx-hover",
                     form.valueType === option.value

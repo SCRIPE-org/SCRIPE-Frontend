@@ -39,7 +39,7 @@ function SelectableCard({
         }
       }}
       className={cn(
-        "group relative cursor-pointer rounded-nx-lg border p-5 text-start transition-[border-color,background-color] duration-nx-standard ease-nx-enter focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none",
+        "group relative cursor-pointer rounded-nx-lg border p-5 text-start transition-[border-color,background-color] duration-nx-standard ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
         className
       )}
     >

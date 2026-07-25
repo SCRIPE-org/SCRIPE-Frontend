@@ -191,7 +191,9 @@ export function SaveBundleDialog({ isOpen, onClose, onSave, isSaving }: SaveBund
                     />
                     <div
                       className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-nx-sm"
-                      style={{ backgroundColor: `color-mix(in srgb, ${slotColor} 15%, transparent)` }}
+                      style={{
+                        backgroundColor: `color-mix(in srgb, ${slotColor} 15%, transparent)`,
+                      }}
                       aria-hidden="true"
                     >
                       <span style={{ color: slotColor }}>

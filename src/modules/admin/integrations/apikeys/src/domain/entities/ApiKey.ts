@@ -60,7 +60,7 @@ export class ApiKey {
   }
 
   get scopesList(): string[] {
-    return this.data.scopes ? this.data.scopes.split(",").map(s => s.trim()) : [];
+    return this.data.scopes ? this.data.scopes.split(",").map((s) => s.trim()) : [];
   }
 
   copyWith(updates: Partial<ApiKeyData>): ApiKey {

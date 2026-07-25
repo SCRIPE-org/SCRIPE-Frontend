@@ -360,18 +360,15 @@ const ChartTooltipContent = React.forwardRef<HTMLDivElement, ChartTooltipContent
                       !hideIndicator && (
                         <div
                           aria-hidden="true"
-                          className={cn(
-                            "shrink-0 border-[--color-border] bg-[--color-bg]",
-                            {
-                              // A round swatch matches the dot Recharts draws
-                              // on the series itself.
-                              "h-2.5 w-2.5 rounded-full": indicator === "dot",
-                              "w-1 rounded-full": indicator === "line",
-                              "w-0 rounded-none border-[1.5px] border-dashed bg-transparent":
-                                indicator === "dashed",
-                              "my-0.5": nestLabel && indicator === "dashed",
-                            }
-                          )}
+                          className={cn("shrink-0 border-[--color-border] bg-[--color-bg]", {
+                            // A round swatch matches the dot Recharts draws
+                            // on the series itself.
+                            "h-2.5 w-2.5 rounded-full": indicator === "dot",
+                            "w-1 rounded-full": indicator === "line",
+                            "w-0 rounded-none border-[1.5px] border-dashed bg-transparent":
+                              indicator === "dashed",
+                            "my-0.5": nestLabel && indicator === "dashed",
+                          })}
                           style={
                             {
                               "--color-bg": indicatorColor,

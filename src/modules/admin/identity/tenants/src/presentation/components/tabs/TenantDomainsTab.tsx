@@ -18,16 +18,7 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { EmptyState } from "@core/ui/empty-state";
 import { ErrorMessage } from "@core/ui/error-message";
-import {
-  Globe,
-  Plus,
-  Trash2,
-  CheckCircle2,
-  Clock,
-  Star,
-  ShieldCheck,
-  Copy,
-} from "lucide-react";
+import { Globe, Plus, Trash2, CheckCircle2, Clock, Star, ShieldCheck, Copy } from "lucide-react";
 import { Skeleton } from "@core/ui/skeleton";
 import { toast } from "@core/hooks/use-enhanced-toast";
 import { cn, formatDateUtc } from "@core/common/utils";
@@ -224,7 +215,7 @@ function DomainCard({
     <div
       className={cn(
         "group rounded-nx-lg border border-nx-line bg-nx-surface p-4",
-        "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi",
+        "transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi motion-reduce:transition-none",
         domain.isPrimary && "border-info/30 bg-info/5"
       )}
     >
@@ -248,11 +239,9 @@ function DomainCard({
             <div className="flex flex-wrap items-center gap-2">
               <span className="truncate font-mono text-sm font-medium">{domain.domain}</span>
               {domain.isPrimary && (
-                <Badge
-                  variant="outline"
-                  className="border-info/30 px-1.5 text-[10px] text-info"
-                >
-                  <Star className="me-0.5 h-3 w-3" aria-hidden="true" /> {t("tenant.domainsPrimary")}
+                <Badge variant="outline" className="border-info/30 px-1.5 text-[10px] text-info">
+                  <Star className="me-0.5 h-3 w-3" aria-hidden="true" />{" "}
+                  {t("tenant.domainsPrimary")}
                 </Badge>
               )}
               {domain.type === "auto" && (
@@ -303,7 +292,7 @@ function DomainCard({
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 gap-1 text-xs opacity-0 transition-opacity duration-nx-micro motion-reduce:transition-none group-hover:opacity-100 group-focus-within:opacity-100"
+              className="h-7 gap-1 text-xs opacity-0 transition-opacity duration-nx-micro group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
               onClick={() => onSetPrimary(domain.id)}
             >
               <Star className="h-3 w-3" aria-hidden="true" />
@@ -316,7 +305,7 @@ function DomainCard({
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 text-xs text-destructive opacity-0 transition-opacity duration-nx-micro motion-reduce:transition-none group-hover:opacity-100 group-focus-within:opacity-100"
+              className="h-7 text-xs text-destructive opacity-0 transition-opacity duration-nx-micro group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
               onClick={() => onRemove(domain.id)}
               aria-label={t("common.delete")}
             >

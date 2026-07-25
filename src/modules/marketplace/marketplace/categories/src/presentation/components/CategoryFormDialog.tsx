@@ -135,9 +135,7 @@ export function CategoryFormDialog({
             {isEditMode ? t("marketplace.categoryEdit") : t("marketplace.categoryCreate")}
           </DialogTitle>
           <DialogDescription>
-            {isEditMode
-              ? t("marketplace.categoryEditDesc")
-              : t("marketplace.categoryCreateDesc")}
+            {isEditMode ? t("marketplace.categoryEditDesc") : t("marketplace.categoryCreateDesc")}
           </DialogDescription>
         </DialogHeader>
 

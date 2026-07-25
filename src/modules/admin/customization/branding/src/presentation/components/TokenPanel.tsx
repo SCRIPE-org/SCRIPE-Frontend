@@ -62,7 +62,12 @@ const TOKEN_GROUPS: TokenGroup[] = [
   {
     labelKey: "studio.tokenPanel.groupTypography",
     tokens: [
-      { key: "font.body", labelKey: "studio.tokenPanel.fontBody", type: "text", placeholder: "Inter" },
+      {
+        key: "font.body",
+        labelKey: "studio.tokenPanel.fontBody",
+        type: "text",
+        placeholder: "Inter",
+      },
       {
         key: "font.heading",
         labelKey: "studio.tokenPanel.fontHeading",
@@ -139,7 +144,7 @@ export function TokenPanel({ tokens, updateToken }: TokenPanelProps) {
                     aria-label={t(token.labelKey)}
                     value={tokens[token.key] || token.placeholder}
                     onChange={(e) => updateToken(token.key, e.target.value)}
-                    className="h-7 w-7 shrink-0 cursor-pointer rounded-nx-control border border-nx-line bg-transparent p-0.5 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-nx-sm [&::-webkit-color-swatch]:border-0"
+                    className="h-7 w-7 shrink-0 cursor-pointer rounded-nx-control border border-nx-line bg-transparent p-0.5 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-nx-sm [&::-webkit-color-swatch]:border-0"
                   />
                 )}
                 <Label className="w-24 shrink-0 text-xs text-nx-ink-3">{t(token.labelKey)}</Label>

@@ -136,7 +136,7 @@ export function WizardStep1Edition({
                 className={cn(
                   "rounded-nx-control px-3 py-1.5 text-xs font-semibold",
                   "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                  "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                  "focus-visible:shadow-nx-focus focus-visible:outline-none",
                   selectedCategory === "all"
                     ? "bg-info text-info-foreground"
                     : "border border-nx-line bg-nx-raised text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
@@ -155,7 +155,7 @@ export function WizardStep1Edition({
                     className={cn(
                       "rounded-nx-control px-3 py-1.5 text-xs font-semibold",
                       "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                      "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                      "focus-visible:shadow-nx-focus focus-visible:outline-none",
                       isSelected
                         ? "bg-info text-info-foreground"
                         : "border border-nx-line bg-nx-raised text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
@@ -219,7 +219,7 @@ export function WizardStep1Edition({
                         className={cn(
                           "group w-full rounded-nx-lg border px-4 py-3 text-start",
                           "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                          "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                          "focus-visible:shadow-nx-focus focus-visible:outline-none",
                           isSelected
                             ? "border-info bg-info/5"
                             : "border-nx-line bg-nx-surface hover:border-info/40 hover:bg-nx-raised"
@@ -228,7 +228,7 @@ export function WizardStep1Edition({
                         <div className="flex items-center justify-between gap-3">
                           <div className="min-w-0 flex-1">
                             <div className="flex flex-wrap items-center gap-2">
-                              <span className="text-sm font-semibold text-nx-ink transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none group-hover:text-info">
+                              <span className="text-sm font-semibold text-nx-ink transition-colors duration-nx-micro ease-nx-enter group-hover:text-info motion-reduce:transition-none">
                                 {language === "ar" && edition.displayNameAr
                                   ? edition.displayNameAr
                                   : edition.displayNameEn}
@@ -240,7 +240,10 @@ export function WizardStep1Edition({
                                 </Badge>
                               )}
                               {edition.isContactSalesOnly && (
-                                <Badge variant="outline" className="h-4 px-1.5 text-[9px] font-semibold text-warning">
+                                <Badge
+                                  variant="outline"
+                                  className="h-4 px-1.5 text-[9px] font-semibold text-warning"
+                                >
                                   {t("leads.convertWizard.contactSalesBadge")}
                                 </Badge>
                               )}

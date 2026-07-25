@@ -909,29 +909,39 @@ export const ru = {
     hrms: {
       overview: {
         title: "Модуль HRMS",
-        description: "Human Resource Management System, управляющая профилями сотрудников, трудоустройством, квалификацией, сертификатами, доступностью и назначениями.",
-        intro: "Модуль HRMS является источником правды для трудовых ресурсов платформы. Он управляет профилями сотрудников, записями о трудоустройстве, квалификацией, профессиональными сертификатами, доступностью и назначениями.",
+        description:
+          "Human Resource Management System, управляющая профилями сотрудников, трудоустройством, квалификацией, сертификатами, доступностью и назначениями.",
+        intro:
+          "Модуль HRMS является источником правды для трудовых ресурсов платформы. Он управляет профилями сотрудников, записями о трудоустройстве, квалификацией, профессиональными сертификатами, доступностью и назначениями.",
         infoTitle: "Принцип проектирования",
-        infoContent: "Записи HRMS указывают на участников Identity по стабильным ссылкам ID, а не по внешним ключам базы данных.",
+        infoContent:
+          "Записи HRMS указывают на участников Identity по стабильным ссылкам ID, а не по внешним ключам базы данных.",
         whatIsTitle: "Что такое HRMS?",
         whatIsIntro: "Это административное ядро для менеджеров, тренеров и персонала.",
         featureStaff: "Профили сотрудников",
-        featureStaffDesc: "Личные и профессиональные данные, включая контакты для экстренных случаев и статус занятости.",
+        featureStaffDesc:
+          "Личные и профессиональные данные, включая контакты для экстренных случаев и статус занятости.",
         featureCompliance: "Квалификации и сертификаты",
-        featureComplianceDesc: "Двуязычные сертификаты, даты проверки и проверка соответствия для тренерских сессий.",
+        featureComplianceDesc:
+          "Двуязычные сертификаты, даты проверки и проверка соответствия для тренерских сессий.",
         modelTitle: "Модель данных",
-        modelIntro: "Управляет такими сущностями, как StaffMember, EmploymentRecord, Qualification, Certification, StaffAvailability и StaffAssignment.",
+        modelIntro:
+          "Управляет такими сущностями, как StaffMember, EmploymentRecord, Qualification, Certification, StaffAvailability и StaffAssignment.",
         permsTitle: "Разрешения",
-        permsIntro: "Доступ контролируется разрешениями: hrms.staff.view, hrms.staff.create, hrms.staff.update и hrms.staff.delete.",
+        permsIntro:
+          "Доступ контролируется разрешениями: hrms.staff.view, hrms.staff.create, hrms.staff.update и hrms.staff.delete.",
       },
     },
     partyKernel: {
       overview: {
         title: "Модуль Party Kernel",
-        description: "Центральный бизнес-справочник, управляющий людьми, организациями, точками контакта, отношениями и кандидатами на объединение данных.",
-        intro: "Модуль Party Kernel является основным реестром для бизнес-сущностей. Он отслеживает физических и юридических лиц, их контактные данные и отношения.",
+        description:
+          "Центральный бизнес-справочник, управляющий людьми, организациями, точками контакта, отношениями и кандидатами на объединение данных.",
+        intro:
+          "Модуль Party Kernel является основным реестром для бизнес-сущностей. Он отслеживает физических и юридических лиц, их контактные данные и отношения.",
         infoTitle: "Принцип проектирования",
-        infoContent: "Party Kernel использует нейтральную схему, которая представляет всех бизнес-актеров (клиентов, опекунов, сотрудников) как общие Стороны (Parties).",
+        infoContent:
+          "Party Kernel использует нейтральную схему, которая представляет всех бизнес-актеров (клиентов, опекунов, сотрудников) как общие Стороны (Parties).",
         whatIsTitle: "Что такое Party Kernel?",
         whatIsIntro: "Он формирует основу для CRM и выставления счетов.",
         featureParties: "Общие стороны",
@@ -939,7 +949,8 @@ export const ru = {
         featureMerge: "Дедупликация данных",
         featureMergeDesc: "Идентифицирует дубликаты записей и облегчает их чистое объединение.",
         modelTitle: "Модель данных",
-        modelIntro: "Управляет такими сущностями, как Party, PartyPerson, PartyOrganization, PartyRole, PartyRelationship и ContactPoint.",
+        modelIntro:
+          "Управляет такими сущностями, как Party, PartyPerson, PartyOrganization, PartyRole, PartyRelationship и ContactPoint.",
         permsTitle: "Разрешения",
         permsIntro: "Защищено разрешениями party.view, party.create, party.update и party.delete.",
       },
@@ -947,20 +958,25 @@ export const ru = {
     organizationCore: {
       overview: {
         title: "Модуль Organization Core",
-        description: "Определяет физическую и юридическую иерархию арендаторов, включая бизнес-единицы, филиалы, площадки и отделы.",
+        description:
+          "Определяет физическую и юридическую иерархию арендаторов, включая бизнес-единицы, филиалы, площадки и отделы.",
         intro: "Organization Core моделирует организационную структуру и топологию объектов.",
         infoTitle: "Принцип проектирования",
-        infoContent: "Структура организации является иерархической, что позволяет устанавливать отношения «родитель-потомок» для региональных филиалов и площадок.",
+        infoContent:
+          "Структура организации является иерархической, что позволяет устанавливать отношения «родитель-потомок» для региональных филиалов и площадок.",
         whatIsTitle: "Что такое Organization Core?",
         whatIsIntro: "Он структурирует, где и как ведется бизнес.",
         featureStructure: "Организационная иерархия",
-        featureStructureDesc: "Гибкая вложенность юридических лиц, региональных филиалов, площадок и отделов.",
+        featureStructureDesc:
+          "Гибкая вложенность юридических лиц, региональных филиалов, площадок и отделов.",
         featureNodes: "Стабильные ссылки",
-        featureNodesDesc: "Стабильные идентификаторы организации используются модулями планирования, бронирования и академии.",
+        featureNodesDesc:
+          "Стабильные идентификаторы организации используются модулями планирования, бронирования и академии.",
         modelTitle: "Модель данных",
         modelIntro: "Управляет такими сущностями, как BusinessUnit, Branch, Site и Department.",
         permsTitle: "Разрешения",
-        permsIntro: "Администрируется через organization.view, organization.create, organization.update и organization.delete.",
+        permsIntro:
+          "Администрируется через organization.view, organization.create, organization.update и organization.delete.",
       },
     },
   },

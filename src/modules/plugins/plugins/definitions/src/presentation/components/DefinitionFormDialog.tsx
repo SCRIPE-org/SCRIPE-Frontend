@@ -156,9 +156,7 @@ export function DefinitionFormDialog({
                 aria-invalid={!!errors.key}
               />
               {errors.key && (
-                <p className="text-xs font-medium leading-relaxed text-destructive">
-                  {errors.key}
-                </p>
+                <p className="text-xs font-medium leading-relaxed text-destructive">{errors.key}</p>
               )}
             </div>
             <div className="space-y-2">

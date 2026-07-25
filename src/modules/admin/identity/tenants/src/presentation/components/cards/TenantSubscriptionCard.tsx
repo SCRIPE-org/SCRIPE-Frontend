@@ -338,9 +338,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
               <CreditCard className="h-4 w-4" />
               {t("tenant.subscriptionPlan")}
             </CardTitle>
-            <CardDescription>
-              {t("tenant.subscriptionPlanDesc")}
-            </CardDescription>
+            <CardDescription>{t("tenant.subscriptionPlanDesc")}</CardDescription>
           </div>
         </CardHeader>
 
@@ -349,9 +347,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
             {/* Edition Name */}
             <div className="space-y-1">
-              <p className="text-xs font-medium text-nx-ink-2">
-                {t("tenant.currentPlan")}
-              </p>
+              <p className="text-xs font-medium text-nx-ink-2">{t("tenant.currentPlan")}</p>
               <p className="text-sm font-bold">
                 {subscription.editionName || t("tenant.unknownPlan")}
               </p>
@@ -359,9 +355,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
 
             {/* Type Badge */}
             <div className="space-y-1">
-              <p className="text-xs font-medium text-nx-ink-2">
-                {t("tenant.billingCycle")}
-              </p>
+              <p className="text-xs font-medium text-nx-ink-2">{t("tenant.billingCycle")}</p>
               <Badge variant="outline" className="text-xs">
                 {getTypeLabel(subscription.type, t, subscription.totalAmount === 0)}
               </Badge>
@@ -369,9 +363,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
 
             {/* Status Badge */}
             <div className="space-y-1">
-              <p className="text-xs font-medium text-nx-ink-2">
-                {t("tenant.status")}
-              </p>
+              <p className="text-xs font-medium text-nx-ink-2">{t("tenant.status")}</p>
               <Badge variant={statusConfig.variant} className="gap-1 text-xs">
                 <StatusIcon className="h-3 w-3" />
                 {getStatusLabel(subscription.status, t)}
@@ -380,9 +372,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
 
             {/* Start Date */}
             <div className="space-y-1">
-              <p className="text-xs font-medium text-nx-ink-2">
-                {t("tenant.startDate")}
-              </p>
+              <p className="text-xs font-medium text-nx-ink-2">{t("tenant.startDate")}</p>
               <p className="flex items-center gap-1 text-sm font-medium">
                 <Calendar className="h-3 w-3 text-nx-ink-2" />
                 {formatDate(subscription.startDate)}
@@ -391,9 +381,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
 
             {/* End Date / Days Remaining */}
             <div className="space-y-1">
-              <p className="text-xs font-medium text-nx-ink-2">
-                {t("tenant.endDate")}
-              </p>
+              <p className="text-xs font-medium text-nx-ink-2">{t("tenant.endDate")}</p>
               {subscription.endDate ? (
                 <div>
                   <p className="text-sm font-medium">{formatDate(subscription.endDate)}</p>
@@ -408,9 +396,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                   )}
                 </div>
               ) : (
-                <p className="text-sm font-medium text-nx-ink-2">
-                  {t("tenant.never")}
-                </p>
+                <p className="text-sm font-medium text-nx-ink-2">{t("tenant.never")}</p>
               )}
             </div>
           </div>
@@ -422,9 +408,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
               <Gift className="h-5 w-5 shrink-0 text-success" />
               <div>
                 <p className="text-sm font-semibold">{t("tenant.freePlanTitle")}</p>
-                <p className="mt-0.5 text-xs text-nx-ink-2">
-                  {t("tenant.freePlanDesc")}
-                </p>
+                <p className="mt-0.5 text-xs text-nx-ink-2">{t("tenant.freePlanDesc")}</p>
               </div>
             </div>
           ) : (
@@ -450,9 +434,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-xs font-medium text-nx-ink-2">
-                      {t("tenant.baseAmount")}
-                    </p>
+                    <p className="text-xs font-medium text-nx-ink-2">{t("tenant.baseAmount")}</p>
                     <p className="text-sm font-medium tabular-nums">
                       {formatDisplay(
                         subscription.baseAmount ?? subscription.totalAmount,
@@ -469,9 +451,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                       </p>
                       <p
                         className={`text-sm font-bold tabular-nums ${
-                          (subscription.adjustmentAmount ?? 0) < 0
-                            ? "text-success"
-                            : "text-warning"
+                          (subscription.adjustmentAmount ?? 0) < 0 ? "text-success" : "text-warning"
                         }`}
                       >
                         {(subscription.adjustmentAmount ?? 0) > 0 ? "+" : ""}
@@ -494,10 +474,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                       <p className="text-xs font-medium text-nx-ink-2">
                         {t("tenant.appliedPromotion")}
                       </p>
-                      <Badge
-                        variant="secondary"
-                        className="gap-1 bg-success/10 text-success"
-                      >
+                      <Badge variant="secondary" className="gap-1 bg-success/10 text-success">
                         <Tag className="h-3 w-3" aria-hidden="true" />
                         {subscription.appliedPromotionName}
                         {subscription.promotionDiscount != null &&
@@ -540,9 +517,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
           {vm.isSuspended && (
             <div className="flex items-center gap-2 rounded-nx-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
               <Shield className="h-4 w-4 shrink-0" />
-              <span>
-                {t("tenant.suspendedBanner")}
-              </span>
+              <span>{t("tenant.suspendedBanner")}</span>
             </div>
           )}
 
@@ -552,8 +527,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
               <div className="flex items-center gap-2">
                 <ArrowDownCircle className="h-4 w-4 shrink-0" />
                 <span>
-                  {t("tenant.downgradedBanner")}{" "}
-                  <strong>{vm.downgradedFromEditionName}</strong>
+                  {t("tenant.downgradedBanner")} <strong>{vm.downgradedFromEditionName}</strong>
                   {" ("}
                   {vm.downgradedFromType}
                   {")"}
@@ -657,9 +631,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
           {vm.isPastDue && (
             <div className="flex items-center gap-2 rounded-nx-md border border-warning/30 bg-warning/5 p-3 text-sm text-warning">
               <AlertTriangle className="h-4 w-4 shrink-0" />
-              <span>
-                {t("tenant.pastDueBanner")}
-              </span>
+              <span>{t("tenant.pastDueBanner")}</span>
             </div>
           )}
 
@@ -735,9 +707,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             <div className="flex items-center justify-between gap-2 rounded-nx-md border border-warning/30 bg-warning/5 p-3 text-sm text-warning">
               <div className="flex items-center gap-2">
                 <CreditCard className="h-4 w-4 shrink-0" />
-                <span>
-                  {t("tenant.pendingPaymentBanner")}
-                </span>
+                <span>{t("tenant.pendingPaymentBanner")}</span>
               </div>
             </div>
           )}
@@ -959,12 +929,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
       >
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>
-              {t("tenant.changeSubscriptionPlan")}
-            </DialogTitle>
-            <DialogDescription>
-              {t("tenant.changeSubscriptionPlanDesc")}
-            </DialogDescription>
+            <DialogTitle>{t("tenant.changeSubscriptionPlan")}</DialogTitle>
+            <DialogDescription>{t("tenant.changeSubscriptionPlanDesc")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
@@ -1044,9 +1010,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                       <Input
                         value={promoCode}
                         onChange={(e) => setPromoCode(e.target.value)}
-                        placeholder={
-                          t("tenant.promoCodePlaceholder")
-                        }
+                        placeholder={t("tenant.promoCodePlaceholder")}
                       />
                     </div>
                   )}
@@ -1099,9 +1063,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                         </div>
                       ))}
                     </div>
-                    <p className="text-xs text-nx-ink-2">
-                      {t("tenant.overflowInfo")}
-                    </p>
+                    <p className="text-xs text-nx-ink-2">{t("tenant.overflowInfo")}</p>
                   </div>
                 )}
               </>
@@ -1153,7 +1115,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                   : vm.hasNoSubscription || vm.canReassign
                     ? t("tenant.assignPlan")
                     : t("common.save"))}
-              {(vm.isChanging || vm.isAssigning) && (t("common.saving"))}
+              {(vm.isChanging || vm.isAssigning) && t("common.saving")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1167,20 +1129,14 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>{t("tenant.renewSubscription")}</DialogTitle>
-            <DialogDescription>
-              {t("tenant.renewDesc")}
-            </DialogDescription>
+            <DialogDescription>{t("tenant.renewDesc")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             {subscription && (
               <div className="space-y-1 rounded-nx-md bg-nx-raised p-3">
-                <p className="text-xs text-nx-ink-2">
-                  {t("tenant.currentEndDate")}
-                </p>
+                <p className="text-xs text-nx-ink-2">{t("tenant.currentEndDate")}</p>
                 <p className="text-sm font-medium">
-                  {subscription.endDate
-                    ? formatDate(subscription.endDate)
-                    : t("tenant.never")}
+                  {subscription.endDate ? formatDate(subscription.endDate) : t("tenant.never")}
                 </p>
               </div>
             )}
@@ -1219,16 +1175,12 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>{t("tenant.convertTrial")}</DialogTitle>
-            <DialogDescription>
-              {t("tenant.convertTrialDesc")}
-            </DialogDescription>
+            <DialogDescription>{t("tenant.convertTrialDesc")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="flex items-center gap-2 rounded-nx-md border border-warning/30 bg-warning/5 p-3 text-sm text-warning">
               <AlertTriangle className="h-4 w-4 shrink-0" />
-              <span>
-                {t("tenant.trialOnceWarning")}
-              </span>
+              <span>{t("tenant.trialOnceWarning")}</span>
             </div>
             <div className="space-y-2">
               <Label>{t("tenant.selectBillingCycle")}</Label>
@@ -1255,9 +1207,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
               }}
               loading={vm.isConverting}
             >
-              {vm.isConverting
-                ? t("common.saving")
-                : t("tenant.convertToPaid")}
+              {vm.isConverting ? t("common.saving") : t("tenant.convertToPaid")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1279,9 +1229,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             <DialogTitle className="text-destructive">
               {t("tenant.suspendSubscription")}
             </DialogTitle>
-            <DialogDescription>
-              {t("tenant.suspendDesc")}
-            </DialogDescription>
+            <DialogDescription>{t("tenant.suspendDesc")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             {/* Fallback toggle */}
@@ -1309,9 +1257,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             {!useFallbackOnSuspend || !vm.hasFallback ? (
               <div className="flex items-center gap-2 rounded-nx-md border border-warning/30 bg-warning/5 p-3 text-sm text-warning">
                 <AlertTriangle className="h-4 w-4 shrink-0" />
-                <span>
-                  {t("tenant.suspendAdminWarning")}
-                </span>
+                <span>{t("tenant.suspendAdminWarning")}</span>
               </div>
             ) : (
               <div className="flex items-center gap-2 rounded-nx-md border border-info/30 bg-info/5 p-3 text-sm text-info">
@@ -1326,23 +1272,17 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
               <Textarea
                 value={suspendReason}
                 onChange={(e) => setSuspendReason(e.target.value)}
-                placeholder={
-                  t("tenant.suspendReasonPlaceholder")
-                }
+                placeholder={t("tenant.suspendReasonPlaceholder")}
                 className="min-h-[80px]"
               />
               {suspendReason.length > 0 && suspendReason.trim().length < 3 && (
-                <p className="text-xs text-destructive">
-                  {t("tenant.suspendReasonMinLength")}
-                </p>
+                <p className="text-xs text-destructive">{t("tenant.suspendReasonMinLength")}</p>
               )}
             </div>
 
             {/* ── Refund Options ── */}
             <div className="space-y-3 rounded-nx-md border border-nx-line p-3">
-              <Label className="text-sm font-medium">
-                {t("tenant.refundOption")}
-              </Label>
+              <Label className="text-sm font-medium">{t("tenant.refundOption")}</Label>
               <RadioGroup
                 value={suspendRefundType}
                 onValueChange={setSuspendRefundType}
@@ -1357,9 +1297,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                     <Label htmlFor="suspend-refund-none" className="cursor-pointer font-medium">
                       {t("tenant.noRefund")}
                     </Label>
-                    <p className="text-xs text-nx-ink-2">
-                      {t("tenant.noRefundDesc")}
-                    </p>
+                    <p className="text-xs text-nx-ink-2">{t("tenant.noRefundDesc")}</p>
                   </div>
                 </div>
                 <div
@@ -1392,9 +1330,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                     <Label htmlFor="suspend-refund-prorata" className="cursor-pointer font-medium">
                       {t("tenant.proRataRefund")}
                     </Label>
-                    <p className="text-xs text-nx-ink-2">
-                      {t("tenant.proRataRefundDesc")}
-                    </p>
+                    <p className="text-xs text-nx-ink-2">{t("tenant.proRataRefundDesc")}</p>
                   </div>
                 </div>
                 <div
@@ -1406,9 +1342,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                     <Label htmlFor="suspend-refund-custom" className="cursor-pointer font-medium">
                       {t("tenant.customRefund")}
                     </Label>
-                    <p className="text-xs text-nx-ink-2">
-                      {t("tenant.customRefundDesc")}
-                    </p>
+                    <p className="text-xs text-nx-ink-2">{t("tenant.customRefundDesc")}</p>
                     {suspendRefundType === "Custom" && (
                       <div className="mt-2">
                         <div className="flex items-center gap-2">
@@ -1466,9 +1400,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
               loading={vm.isSuspending}
             >
               {!vm.isSuspending && <Pause className="me-2 h-4 w-4" />}
-              {useFallbackOnSuspend && vm.hasFallback
-                ? t("tenant.downgrade")
-                : t("tenant.suspend")}
+              {useFallbackOnSuspend && vm.hasFallback ? t("tenant.downgrade") : t("tenant.suspend")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1487,12 +1419,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
       >
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-destructive">
-              {t("tenant.cancelSubscription")}
-            </DialogTitle>
-            <DialogDescription>
-              {t("tenant.cancelDesc")}
-            </DialogDescription>
+            <DialogTitle className="text-destructive">{t("tenant.cancelSubscription")}</DialogTitle>
+            <DialogDescription>{t("tenant.cancelDesc")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             {/* Fallback toggle */}
@@ -1517,9 +1445,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             {!useFallbackOnCancel || !vm.hasFallback ? (
               <div className="flex items-center gap-2 rounded-nx-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
                 <AlertTriangle className="h-4 w-4 shrink-0" />
-                <span>
-                  {t("tenant.cancelAdminWarning")}
-                </span>
+                <span>{t("tenant.cancelAdminWarning")}</span>
               </div>
             ) : (
               <div className="flex items-center gap-2 rounded-nx-md border border-info/30 bg-info/5 p-3 text-sm text-info">
@@ -1534,18 +1460,14 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
               <Textarea
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
-                placeholder={
-                  t("tenant.cancelReasonPlaceholder")
-                }
+                placeholder={t("tenant.cancelReasonPlaceholder")}
                 className="min-h-[80px]"
               />
             </div>
 
             {/* ── Refund Options ── */}
             <div className="space-y-3 rounded-nx-md border border-nx-line p-3">
-              <Label className="text-sm font-medium">
-                {t("tenant.refundOption")}
-              </Label>
+              <Label className="text-sm font-medium">{t("tenant.refundOption")}</Label>
               <RadioGroup
                 value={cancelRefundType}
                 onValueChange={setCancelRefundType}
@@ -1560,9 +1482,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                     <Label htmlFor="cancel-refund-none" className="cursor-pointer font-medium">
                       {t("tenant.noRefund")}
                     </Label>
-                    <p className="text-xs text-nx-ink-2">
-                      {t("tenant.noRefundDesc")}
-                    </p>
+                    <p className="text-xs text-nx-ink-2">{t("tenant.noRefundDesc")}</p>
                   </div>
                 </div>
                 <div
@@ -1595,9 +1515,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                     <Label htmlFor="cancel-refund-prorata" className="cursor-pointer font-medium">
                       {t("tenant.proRataRefund")}
                     </Label>
-                    <p className="text-xs text-nx-ink-2">
-                      {t("tenant.proRataRefundDesc")}
-                    </p>
+                    <p className="text-xs text-nx-ink-2">{t("tenant.proRataRefundDesc")}</p>
                   </div>
                 </div>
                 <div
@@ -1609,9 +1527,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                     <Label htmlFor="cancel-refund-custom" className="cursor-pointer font-medium">
                       {t("tenant.customRefund")}
                     </Label>
-                    <p className="text-xs text-nx-ink-2">
-                      {t("tenant.customRefundDesc")}
-                    </p>
+                    <p className="text-xs text-nx-ink-2">{t("tenant.customRefundDesc")}</p>
                     {cancelRefundType === "Custom" && (
                       <div className="mt-2">
                         <div className="flex items-center gap-2">
@@ -1683,14 +1599,10 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {isRestore
-                ? t("tenant.restoreOriginalPlan")
-                : t("tenant.resumeSubscription")}
+              {isRestore ? t("tenant.restoreOriginalPlan") : t("tenant.resumeSubscription")}
             </DialogTitle>
             <DialogDescription>
-              {isRestore
-                ? t("tenant.restoreDesc")
-                : t("tenant.resumeDesc")}
+              {isRestore ? t("tenant.restoreDesc") : t("tenant.resumeDesc")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
@@ -1699,16 +1611,13 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
               <>
                 {/* Original Plan Info */}
                 <div className="space-y-1 rounded-nx-md bg-nx-raised p-3">
-                  <p className="text-xs text-nx-ink-2">
-                    {t("tenant.originalPlan")}
-                  </p>
+                  <p className="text-xs text-nx-ink-2">{t("tenant.originalPlan")}</p>
                   <p className="text-sm font-medium">
                     {vm.downgradedFromEditionName} — {getTypeLabel(vm.downgradedFromType || "", t)}
                   </p>
                   {vm.downgradedAt && (
                     <p className="text-xs text-nx-ink-2">
-                      {t("tenant.downgradedOn")}:{" "}
-                      {formatDateUtc(vm.downgradedAt)}
+                      {t("tenant.downgradedOn")}: {formatDateUtc(vm.downgradedAt)}
                     </p>
                   )}
                 </div>
@@ -1722,17 +1631,13 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                     options={getConvertOptions(t, currentEdition)}
                     placeholder={t("tenant.selectBillingCycle")}
                   />
-                  <p className="text-xs text-nx-ink-2">
-                    {t("tenant.chooseBillingCycle")}
-                  </p>
+                  <p className="text-xs text-nx-ink-2">{t("tenant.chooseBillingCycle")}</p>
                 </div>
 
                 {/* Info Banner */}
                 <div className="flex items-center gap-2 rounded-nx-md border border-info/30 bg-info/5 p-3 text-sm text-info">
                   <RotateCcw className="h-4 w-4 shrink-0" />
-                  <span>
-                    {t("tenant.restoreInfo")}
-                  </span>
+                  <span>{t("tenant.restoreInfo")}</span>
                 </div>
               </>
             ) : (
@@ -1740,15 +1645,11 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
               <>
                 <div className="flex items-center gap-2 rounded-nx-md border border-info/30 bg-info/5 p-3 text-sm text-info">
                   <Play className="h-4 w-4 shrink-0" />
-                  <span>
-                    {t("tenant.resumeAdminWarning")}
-                  </span>
+                  <span>{t("tenant.resumeAdminWarning")}</span>
                 </div>
                 {subscription && (
                   <div className="space-y-1 rounded-nx-md bg-nx-raised p-3">
-                    <p className="text-xs text-nx-ink-2">
-                      {t("tenant.currentPlan")}
-                    </p>
+                    <p className="text-xs text-nx-ink-2">{t("tenant.currentPlan")}</p>
                     <p className="text-sm font-medium">
                       {subscription.editionName} — {getTypeLabel(subscription.type, t)}
                     </p>
@@ -1778,9 +1679,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                 ) : (
                   <Play className="me-2 h-4 w-4" />
                 ))}
-              {isRestore
-                ? t("tenant.confirmRestore")
-                : t("tenant.confirmResume")}
+              {isRestore ? t("tenant.confirmRestore") : t("tenant.confirmResume")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1799,16 +1698,12 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>{t("tenant.changeCurrency")}</DialogTitle>
-            <DialogDescription>
-              {t("tenant.changeCurrencyDesc")}
-            </DialogDescription>
+            <DialogDescription>{t("tenant.changeCurrencyDesc")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             {subscription && subscription.currency && (
               <div className="space-y-1 rounded-nx-md bg-nx-raised p-3">
-                <p className="text-xs text-nx-ink-2">
-                  {t("tenant.currentCurrency")}
-                </p>
+                <p className="text-xs text-nx-ink-2">{t("tenant.currentCurrency")}</p>
                 <p className="flex items-center gap-1.5 text-sm font-medium">
                   {SUPPORTED_CURRENCIES.find((c) => c.code === subscription.currency)?.flag ? (
                     <span aria-hidden="true">
@@ -1832,9 +1727,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             </div>
             <div className="flex items-center gap-2 rounded-nx-md border border-info/30 bg-info/5 p-3 text-sm text-info">
               <DollarSign className="h-4 w-4 shrink-0" />
-              <span>
-                {t("tenant.changeCurrencyInfo")}
-              </span>
+              <span>{t("tenant.changeCurrencyInfo")}</span>
             </div>
           </div>
           <DialogFooter>
@@ -1856,9 +1749,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
               loading={vm.isChangingCurrency}
             >
               {!vm.isChangingCurrency && <Globe className="me-2 h-4 w-4" />}
-              {vm.isChangingCurrency
-                ? t("common.saving")
-                : t("tenant.changeCurrency")}
+              {vm.isChangingCurrency ? t("common.saving") : t("tenant.changeCurrency")}
             </Button>
           </DialogFooter>
         </DialogContent>

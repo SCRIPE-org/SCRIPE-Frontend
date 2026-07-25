@@ -8,13 +8,7 @@ import { GenericModal } from "./generic-modal";
 import GenericSelect from "./generic-select";
 import {} from // Pagination imports removed in favor of direct standard UI buttons
 "@core/ui/pagination";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  Plus,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Plus } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { PageHeader } from "@core/ui/page-header";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";

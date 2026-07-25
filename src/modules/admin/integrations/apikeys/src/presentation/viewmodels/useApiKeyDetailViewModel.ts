@@ -78,7 +78,7 @@ export function useApiKeyDetailViewModel(keyId: string) {
     const now = new Date();
     const map = { "24h": 1, "7d": 7, "30d": 30 };
     const days = map[preset];
-    setChartParams(prev => ({
+    setChartParams((prev) => ({
       ...prev,
       granularity: preset === "24h" ? "hourly" : "daily",
       startDate: new Date(now.getTime() - days * 24 * 60 * 60 * 1000).toISOString(),
@@ -87,15 +87,15 @@ export function useApiKeyDetailViewModel(keyId: string) {
   }, []);
 
   const handleActivityPageChange = useCallback((page: number) => {
-    setActivityParams(prev => ({ ...prev, page }));
+    setActivityParams((prev) => ({ ...prev, page }));
   }, []);
 
   const handleActivityFilterChange = useCallback((filters: Partial<ActivityParams>) => {
-    setActivityParams(prev => ({ ...prev, ...filters, page: 1 }));
+    setActivityParams((prev) => ({ ...prev, ...filters, page: 1 }));
   }, []);
 
   const handleActivitySortChange = useCallback((sortBy: string, sortDesc: boolean) => {
-    setActivityParams(prev => ({ ...prev, sortBy, sortDesc, page: 1 }));
+    setActivityParams((prev) => ({ ...prev, sortBy, sortDesc, page: 1 }));
   }, []);
 
   return {

@@ -51,8 +51,10 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
       const hasHoverEffect =
         settings.hoverEffectType !== "none" && settings.hoverEffectIntensity !== "none";
       const hoverClasses = hasHoverEffect
-        ? cn(getHoverEffectClasses(settings.hoverEffectType, settings.hoverEffectIntensity),
-            REDUCED_MOTION_GUARD)
+        ? cn(
+            getHoverEffectClasses(settings.hoverEffectType, settings.hoverEffectIntensity),
+            REDUCED_MOTION_GUARD
+          )
         : "";
 
       switch (settings.cardStyle) {
@@ -163,7 +165,7 @@ const CardTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HT
       <h3
         ref={ref}
         className={cn(
-          "font-semibold leading-none tracking-tight text-balance",
+          "text-balance font-semibold leading-none tracking-tight",
           getFontSize(),
           className
         )}

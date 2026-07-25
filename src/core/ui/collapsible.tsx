@@ -21,7 +21,7 @@ const CollapsibleTrigger = React.forwardRef<
   <CollapsiblePrimitive.CollapsibleTrigger
     ref={ref}
     className={cn(
-      "focus-visible:outline-none focus-visible:shadow-nx-focus data-[disabled]:pointer-events-none data-[disabled]:text-nx-ink-3",
+      "focus-visible:shadow-nx-focus focus-visible:outline-none data-[disabled]:pointer-events-none data-[disabled]:text-nx-ink-3",
       className
     )}
     {...props}
@@ -50,7 +50,7 @@ const CollapsibleContent = React.forwardRef<
       } as React.CSSProperties
     }
     className={cn(
-      "overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up motion-reduce:animate-none",
+      "overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down motion-reduce:animate-none",
       className
     )}
     {...props}

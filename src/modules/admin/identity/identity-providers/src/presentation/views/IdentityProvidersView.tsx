@@ -63,7 +63,7 @@ export function IdentityProvidersView() {
   };
 
   return (
-    <div className="space-y-6 pb-12 duration-nx-standard ease-nx-enter motion-reduce:transition-none animate-in fade-in">
+    <div className="space-y-6 pb-12 duration-nx-standard ease-nx-enter animate-in fade-in motion-reduce:transition-none">
       {/* ─── Header ─────────────────────────────────────────────── */}
       <PageHeader
         icon={ShieldCheck}
@@ -84,10 +84,7 @@ export function IdentityProvidersView() {
       <div className="flex flex-col gap-3 border-b border-nx-line pb-4 md:flex-row md:items-center md:justify-between">
         {/* Search */}
         <div className="relative w-full md:max-w-xs">
-          <Search
-            className="absolute start-3 top-2.5 h-4 w-4 text-nx-ink-3"
-            aria-hidden="true"
-          />
+          <Search className="absolute start-3 top-2.5 h-4 w-4 text-nx-ink-3" aria-hidden="true" />
           <Input
             value={vm.searchValue}
             onChange={(e) => vm.handleSearchChange(e.target.value)}

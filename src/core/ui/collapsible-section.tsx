@@ -65,7 +65,7 @@ export function CollapsibleSection({
           "flex w-full items-center gap-2 px-1 py-2.5 text-start text-nx-ink",
           "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
           "hover:bg-nx-hover",
-          "focus-visible:outline-none focus-visible:shadow-nx-focus",
+          "focus-visible:shadow-nx-focus focus-visible:outline-none",
           "disabled:cursor-not-allowed disabled:text-nx-ink-3 disabled:hover:bg-transparent"
         )}
         disabled={isLocked}

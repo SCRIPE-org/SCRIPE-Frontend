@@ -89,7 +89,7 @@ export function ForceChangePasswordView() {
                   className={cn(
                     "absolute end-3 top-1/2 -translate-y-1/2 text-nx-ink-3 hover:text-nx-ink",
                     "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                    "focus-visible:outline-none focus-visible:shadow-nx-focus"
+                    "focus-visible:shadow-nx-focus focus-visible:outline-none"
                   )}
                 >
                   {showCurrent ? (
@@ -116,12 +116,14 @@ export function ForceChangePasswordView() {
                   type="button"
                   onClick={() => setShowNew(!showNew)}
                   aria-label={
-                    showNew ? t("profile.security.hidePassword") : t("profile.security.showPassword")
+                    showNew
+                      ? t("profile.security.hidePassword")
+                      : t("profile.security.showPassword")
                   }
                   className={cn(
                     "absolute end-3 top-1/2 -translate-y-1/2 text-nx-ink-3 hover:text-nx-ink",
                     "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                    "focus-visible:outline-none focus-visible:shadow-nx-focus"
+                    "focus-visible:shadow-nx-focus focus-visible:outline-none"
                   )}
                 >
                   {showNew ? (
@@ -179,7 +181,7 @@ export function ForceChangePasswordView() {
               className={cn(
                 "flex items-center gap-2 text-sm text-nx-ink-3 hover:text-nx-ink",
                 "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                "focus-visible:outline-none focus-visible:shadow-nx-focus"
+                "focus-visible:shadow-nx-focus focus-visible:outline-none"
               )}
             >
               <LogOut className="h-4 w-4" aria-hidden="true" />

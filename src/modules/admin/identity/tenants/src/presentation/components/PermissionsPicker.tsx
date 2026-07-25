@@ -220,12 +220,12 @@ export function PermissionsPicker({
             {t("tenant.selectPermissions")}
           </CardTitle>
           <Badge variant="secondary" className="font-normal">
-            <span className="tabular-nums">{value.length} / {permissions.length}</span>
+            <span className="tabular-nums">
+              {value.length} / {permissions.length}
+            </span>
           </Badge>
         </div>
-        <p className="text-sm text-nx-ink-2">
-          {t("tenant.selectPermissionsDesc")}
-        </p>
+        <p className="text-sm text-nx-ink-2">{t("tenant.selectPermissionsDesc")}</p>
       </CardHeader>
 
       <CardContent className="space-y-4">
@@ -274,7 +274,7 @@ export function PermissionsPicker({
                   open={isExpanded}
                   onOpenChange={() => toggleCategory(category)}
                 >
-                  <div className="flex items-center gap-2 rounded-nx-md px-2 py-1.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover">
+                  <div className="flex items-center gap-2 rounded-nx-md px-2 py-1.5 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none">
                     <Checkbox
                       checked={isSelected}
                       // @ts-expect-error - indeterminate is valid but not typed
@@ -305,7 +305,7 @@ export function PermissionsPicker({
                             key={permission.id}
                             className={cn(
                               "flex cursor-pointer items-center gap-2 rounded-nx-sm px-2 py-1.5",
-                              "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover",
+                              "transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none",
                               value.includes(permission.id) && "bg-nx-accent-wash"
                             )}
                           >

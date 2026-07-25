@@ -140,7 +140,7 @@ export function EditionPricingCard({
           ) : priceInfo.isFree || priceInfo.price === 0 ? (
             <>
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-semibold leading-none tracking-tight tabular-nums text-nx-ink">
+                <span className="text-3xl font-semibold tabular-nums leading-none tracking-tight text-nx-ink">
                   {formatAmount(0, language)}
                 </span>
                 <span className="text-sm font-medium text-nx-ink-2">
@@ -154,7 +154,7 @@ export function EditionPricingCard({
           ) : priceInfo.price !== undefined ? (
             <>
               <div className="flex items-baseline gap-1.5">
-                <span className="text-3xl font-semibold leading-none tracking-tight tabular-nums text-nx-ink">
+                <span className="text-3xl font-semibold tabular-nums leading-none tracking-tight text-nx-ink">
                   {formatAmount(priceInfo.price, language)}
                 </span>
                 <span className="text-sm font-medium text-nx-ink-2">{cycleLabel}</span>
@@ -163,10 +163,9 @@ export function EditionPricingCard({
                 <span className="text-xs leading-relaxed text-nx-ink-3">{cycleDescription}</span>
                 {selectedCycle === "Yearly" && savingsPercent > 0 && (
                   <Badge variant="success">
-                    {formatComparisonMessage(
-                      t("entitlements.editions.comparison.savePercent"),
-                      { percent: savingsPercent }
-                    )}
+                    {formatComparisonMessage(t("entitlements.editions.comparison.savePercent"), {
+                      percent: savingsPercent,
+                    })}
                   </Badge>
                 )}
               </div>
@@ -177,10 +176,9 @@ export function EditionPricingCard({
                 —
               </span>
               <span className="text-xs leading-relaxed text-nx-ink-3">
-                {formatComparisonMessage(
-                  t("entitlements.editions.comparison.billingUnavailable"),
-                  { cycle: cycleLabel }
-                )}
+                {formatComparisonMessage(t("entitlements.editions.comparison.billingUnavailable"), {
+                  cycle: cycleLabel,
+                })}
               </span>
             </>
           )}
@@ -212,7 +210,10 @@ export function EditionPricingCard({
           {highlights.slice(0, MAX_HIGHLIGHTS).map((highlight, index) => (
             <div key={`${highlight.label}-${index}`} className="flex items-start gap-2.5">
               {highlight.isUnlimited ? (
-                <Infinity aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-nx-accent" />
+                <Infinity
+                  aria-hidden="true"
+                  className="mt-0.5 h-3.5 w-3.5 shrink-0 text-nx-accent"
+                />
               ) : (
                 <Check aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-nx-accent" />
               )}

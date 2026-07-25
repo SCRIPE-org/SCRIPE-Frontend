@@ -199,16 +199,14 @@ export function ReportExportDialog({
                 className={cn(
                   "flex min-h-12 w-full items-center gap-3 rounded-nx-control border px-3 py-2.5 text-start",
                   "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                  "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                  "focus-visible:shadow-nx-focus focus-visible:outline-none",
                   // Light collects on the chosen row: an accent hairline plus
                   // the accent wash. No shadow — this is welded to the panel.
                   isActive
                     ? "border-nx-accent bg-nx-accent-wash"
                     : "border-nx-line bg-nx-surface hover:border-nx-line-hi hover:bg-nx-hover",
                   // Disabled is dedicated ink, not opacity math over a wash.
-                  isExporting
-                    ? "cursor-not-allowed text-nx-ink-3"
-                    : "cursor-pointer text-nx-ink"
+                  isExporting ? "cursor-not-allowed text-nx-ink-3" : "cursor-pointer text-nx-ink"
                 )}
               >
                 <Icon

@@ -141,7 +141,7 @@ export function ProfileSettingsView() {
           <div className="min-w-0 flex-1">
             <TabsContent
               value="general"
-              className="mt-0 motion-safe:data-[state=active]:animate-in motion-safe:data-[state=active]:fade-in-0 motion-safe:data-[state=active]:duration-nx-standard motion-safe:data-[state=active]:ease-nx-enter"
+              className="mt-0 motion-safe:data-[state=active]:duration-nx-standard motion-safe:data-[state=active]:ease-nx-enter motion-safe:data-[state=active]:animate-in motion-safe:data-[state=active]:fade-in-0"
             >
               <ProfileGeneralTab
                 profile={profile}
@@ -153,7 +153,7 @@ export function ProfileSettingsView() {
 
             <TabsContent
               value="security"
-              className="mt-0 motion-safe:data-[state=active]:animate-in motion-safe:data-[state=active]:fade-in-0 motion-safe:data-[state=active]:duration-nx-standard motion-safe:data-[state=active]:ease-nx-enter"
+              className="mt-0 motion-safe:data-[state=active]:duration-nx-standard motion-safe:data-[state=active]:ease-nx-enter motion-safe:data-[state=active]:animate-in motion-safe:data-[state=active]:fade-in-0"
             >
               <ProfileSecurityTab
                 profile={profile}
@@ -166,14 +166,14 @@ export function ProfileSettingsView() {
 
             <TabsContent
               value="sessions"
-              className="mt-0 motion-safe:data-[state=active]:animate-in motion-safe:data-[state=active]:fade-in-0 motion-safe:data-[state=active]:duration-nx-standard motion-safe:data-[state=active]:ease-nx-enter"
+              className="mt-0 motion-safe:data-[state=active]:duration-nx-standard motion-safe:data-[state=active]:ease-nx-enter motion-safe:data-[state=active]:animate-in motion-safe:data-[state=active]:fade-in-0"
             >
               <ProfileSessionsTab sessionsVm={sessionsVm} />
             </TabsContent>
 
             <TabsContent
               value="activity"
-              className="mt-0 motion-safe:data-[state=active]:animate-in motion-safe:data-[state=active]:fade-in-0 motion-safe:data-[state=active]:duration-nx-standard motion-safe:data-[state=active]:ease-nx-enter"
+              className="mt-0 motion-safe:data-[state=active]:duration-nx-standard motion-safe:data-[state=active]:ease-nx-enter motion-safe:data-[state=active]:animate-in motion-safe:data-[state=active]:fade-in-0"
             >
               <ProfileActivityTab activityVm={activityVm} />
             </TabsContent>

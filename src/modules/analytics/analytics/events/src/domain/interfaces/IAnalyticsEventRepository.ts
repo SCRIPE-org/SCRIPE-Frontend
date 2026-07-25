@@ -27,5 +27,9 @@ export interface AnalyticsDailyMetricResponse {
 
 export interface IAnalyticsEventRepository {
   getAll(params: AnalyticsEventListParams): Promise<AnalyticsEventListResult>;
-  getDailyMetrics(params: { eventName: string; from: string; to: string }): Promise<AnalyticsDailyMetricResponse[]>;
+  getDailyMetrics(params: {
+    eventName: string;
+    from: string;
+    to: string;
+  }): Promise<AnalyticsDailyMetricResponse[]>;
 }

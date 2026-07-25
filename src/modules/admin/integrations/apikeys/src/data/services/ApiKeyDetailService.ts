@@ -1,7 +1,16 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
-import type { IApiKeyDetailService, ChartParams, ActivityParams } from "../../domain/interfaces/IApiKeyDetailService";
-import type { ApiKeyDetailDto, ApiKeyStatsDto, ApiKeyChartDataPointDto, ApiKeyActivityEntryDto } from "../models/ApiKeyDetailDto";
+import type {
+  IApiKeyDetailService,
+  ChartParams,
+  ActivityParams,
+} from "../../domain/interfaces/IApiKeyDetailService";
+import type {
+  ApiKeyDetailDto,
+  ApiKeyStatsDto,
+  ApiKeyChartDataPointDto,
+  ApiKeyActivityEntryDto,
+} from "../models/ApiKeyDetailDto";
 import type { UpdateApiKeyDetailRequest } from "../../domain/entities/ApiKeyDetail";
 import type { CreateApiKeyResult } from "../../domain/entities/ApiKey";
 import { API_KEYS_ENDPOINTS } from "./apikeys.endpoints";
@@ -33,7 +42,10 @@ export class ApiKeyDetailService implements IApiKeyDetailService {
     return this.api.get(url);
   }
 
-  async getActivity(id: string, params: ActivityParams): Promise<{ items: ApiKeyActivityEntryDto[]; totalCount: number }> {
+  async getActivity(
+    id: string,
+    params: ActivityParams
+  ): Promise<{ items: ApiKeyActivityEntryDto[]; totalCount: number }> {
     const url = buildUrl(
       API_KEYS_ENDPOINTS.ACTIVITY(id),
       params as unknown as Record<string, string | number | boolean | null | undefined>

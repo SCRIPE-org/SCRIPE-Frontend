@@ -304,7 +304,7 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
             // geometry as --nx-focus, different hue, so the field reads wrong
             // without shouting.
             error &&
-              "border-nx-danger hover:border-nx-danger focus-within:border-nx-danger focus-within:shadow-[inset_0_0_0_1px_var(--nx-danger),0_0_0_3px_color-mix(in_srgb,var(--nx-danger)_18%,transparent)]",
+              "border-nx-danger focus-within:border-nx-danger focus-within:shadow-[inset_0_0_0_1px_var(--nx-danger),0_0_0_3px_color-mix(in_srgb,var(--nx-danger)_18%,transparent)] hover:border-nx-danger",
             className
           )}
           dir={direction}

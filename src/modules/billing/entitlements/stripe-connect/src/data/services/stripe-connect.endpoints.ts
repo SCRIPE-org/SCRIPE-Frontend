@@ -6,8 +6,7 @@ export const STRIPE_CONNECT_ENDPOINTS = {
     ELIGIBLE_TENANTS: `${V1}/stripe-connect/accounts/eligible-tenants`,
     BY_ID: (tenantId: string) => `${V1}/stripe-connect/accounts/${tenantId}`,
     CREATE: `${V1}/stripe-connect/accounts`,
-    REFRESH_LINK: (tenantId: string) =>
-      `${V1}/stripe-connect/accounts/${tenantId}/refresh-link`,
+    REFRESH_LINK: (tenantId: string) => `${V1}/stripe-connect/accounts/${tenantId}/refresh-link`,
     DASHBOARD_LINK: (tenantId: string) =>
       `${V1}/stripe-connect/accounts/${tenantId}/dashboard-link`,
     COMMISSION_RATE: (tenantId: string) =>

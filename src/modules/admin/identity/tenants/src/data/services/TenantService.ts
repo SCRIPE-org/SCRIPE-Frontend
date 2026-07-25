@@ -102,9 +102,7 @@ export class TenantService implements ITenantService {
   }
 
   async getChildren(parentId: string): Promise<TenantTreeNodeModel[]> {
-    const jsonList = await this.api.get<TenantTreeNodeJson[]>(
-      TENANTS_ENDPOINTS.CHILDREN(parentId)
-    );
+    const jsonList = await this.api.get<TenantTreeNodeJson[]>(TENANTS_ENDPOINTS.CHILDREN(parentId));
     return jsonList.map((json) => TenantTreeNodeModel.fromJson(json));
   }
 

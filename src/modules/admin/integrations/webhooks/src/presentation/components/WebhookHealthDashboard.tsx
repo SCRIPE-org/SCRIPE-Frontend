@@ -56,7 +56,11 @@ export function WebhookHealthDashboard({ summary, isLoading }: WebhookHealthDash
   if (!summary) return null;
 
   const successTone: StatTone =
-    summary.systemSuccessRate >= 95 ? "success" : summary.systemSuccessRate >= 80 ? "warning" : "danger";
+    summary.systemSuccessRate >= 95
+      ? "success"
+      : summary.systemSuccessRate >= 80
+        ? "warning"
+        : "danger";
 
   return (
     <div className="space-y-2">

@@ -270,7 +270,7 @@ function PreviewTreeNode({
         className={cn(
           "group relative flex cursor-pointer items-center gap-1.5 rounded-nx-md px-2 py-1.5",
           "transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-          "focus-visible:outline-none focus-visible:shadow-nx-focus",
+          "focus-visible:shadow-nx-focus focus-visible:outline-none",
           // Dragging
           isDragging &&
             "ring-dashed opacity-40 ring-1 ring-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)]",
@@ -279,7 +279,9 @@ function PreviewTreeNode({
             ? "bg-nx-accent-wash ring-1 ring-[color:color-mix(in_srgb,var(--nx-accent)_20%,transparent)]"
             : "hover:bg-nx-hover",
           // Drop target: "inside" — dashed ring
-          isDropTarget && dropPosition === "inside" && "ring-dashed bg-nx-accent-wash ring-2 ring-nx-accent"
+          isDropTarget &&
+            dropPosition === "inside" &&
+            "ring-dashed bg-nx-accent-wash ring-2 ring-nx-accent"
         )}
         style={{ marginInlineStart: depth * 18 }}
       >
@@ -295,7 +297,7 @@ function PreviewTreeNode({
             type="button"
             onClick={handleExpandClick}
             aria-label={isExpanded ? t("common.collapseAll") : t("common.expandAll")}
-            className="shrink-0 rounded-nx-sm p-0.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
+            className="shrink-0 rounded-nx-sm p-0.5 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           >
             {isExpanded ? (
               <ChevronDown className="h-3 w-3 text-nx-ink-3" aria-hidden="true" />

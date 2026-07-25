@@ -96,7 +96,11 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
               <FormItem>
                 <FormLabel>{t("signupContent.welcome.headlineAr")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("signupContent.welcome.placeholderAr")} dir="rtl" {...field} />
+                  <Input
+                    placeholder={t("signupContent.welcome.placeholderAr")}
+                    dir="rtl"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -165,7 +169,11 @@ export function WelcomeContentForm({ welcome, onSave, isSaving }: WelcomeContent
               <FormItem>
                 <FormLabel>{t("signupContent.welcome.ctaAr")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("signupContent.welcome.placeholderAr")} dir="rtl" {...field} />
+                  <Input
+                    placeholder={t("signupContent.welcome.placeholderAr")}
+                    dir="rtl"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

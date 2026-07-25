@@ -399,7 +399,7 @@ export function LayoutPanel({
             type="button"
             onClick={() => onCanvasModeChange("layout")}
             className={cn(
-              "flex flex-1 items-center justify-center gap-1.5 rounded-nx-sm px-3 py-2 text-xs font-medium transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+              "flex flex-1 items-center justify-center gap-1.5 rounded-nx-sm px-3 py-2 text-xs font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
               canvasMode === "layout" || !canvasMode
                 ? "bg-nx-surface text-nx-ink"
                 : "text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
@@ -412,7 +412,7 @@ export function LayoutPanel({
             type="button"
             onClick={() => onCanvasModeChange("builder")}
             className={cn(
-              "flex flex-1 items-center justify-center gap-1.5 rounded-nx-sm px-3 py-2 text-xs font-medium transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+              "flex flex-1 items-center justify-center gap-1.5 rounded-nx-sm px-3 py-2 text-xs font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
               canvasMode === "builder"
                 ? "bg-nx-surface text-nx-ink"
                 : "text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
@@ -494,7 +494,7 @@ export function LayoutPanel({
                       type="button"
                       onClick={() => onUpdatePageField("bgType", type)}
                       className={cn(
-                        "h-7 flex-1 rounded-nx-control border text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                        "h-7 flex-1 rounded-nx-control border text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                         (pageOverride.bgType || "solid") === type
                           ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
                           : "border-nx-line bg-nx-surface text-nx-ink-2 hover:bg-nx-hover"
@@ -689,7 +689,7 @@ export function LayoutPanel({
               aria-pressed={isSelected}
               onClick={() => onSelectLayout(layout.id)}
               className={cn(
-                "group relative flex flex-col gap-1.5 rounded-nx-md border p-2 text-start transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                "group relative flex flex-col gap-1.5 rounded-nx-md border p-2 text-start transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                 isSelected
                   ? "border-nx-accent bg-nx-accent-wash"
                   : "border-nx-line hover:border-nx-line-hi hover:bg-nx-hover"

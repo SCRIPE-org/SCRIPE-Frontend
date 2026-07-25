@@ -42,10 +42,7 @@ export function GeneralTab({ plan, t }: GeneralTabProps) {
           <InfoRow label={t("common.description")} value={plan.description || "—"} />
           <InfoRow label={t("entitlements.tenantPlans.tagline")} value={plan.tagline || "—"} />
           <InfoRow label={t("entitlements.tenantPlans.tier")} value={String(plan.tierLevel)} />
-          <InfoRow
-            label={t("entitlements.tenantPlans.sortOrder")}
-            value={String(plan.sortOrder)}
-          />
+          <InfoRow label={t("entitlements.tenantPlans.sortOrder")} value={String(plan.sortOrder)} />
           <InfoRow
             label={t("common.createdAt")}
             value={plan.createdAt ? formatUtc(plan.createdAt, "PPp") : "—"}
@@ -107,10 +104,7 @@ export function GeneralTab({ plan, t }: GeneralTabProps) {
             value={plan.allowTrial}
           />
           <div className="mt-3 border-t border-nx-line pt-3" />
-          <InfoRow
-            label={t("entitlements.tenantPlans.trialDays")}
-            value={String(plan.trialDays)}
-          />
+          <InfoRow label={t("entitlements.tenantPlans.trialDays")} value={String(plan.trialDays)} />
           <InfoRow
             label={t("entitlements.tenantPlans.gracePeriodDays")}
             value={String(plan.gracePeriodDays)}

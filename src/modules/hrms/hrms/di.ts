@@ -1,13 +1,13 @@
 /**
-* Hrms Module DI Container
-*
-* Provides dependency injection for the Hrms module.
-*
-* Clean Architecture Pattern:
-* - Services wrap IApiService (API calls only)
-* - Repositories use Services and map Models → Entities
-* - ViewModels use Repositories
-*/
+ * Hrms Module DI Container
+ *
+ * Provides dependency injection for the Hrms module.
+ *
+ * Clean Architecture Pattern:
+ * - Services wrap IApiService (API calls only)
+ * - Repositories use Services and map Models → Entities
+ * - ViewModels use Repositories
+ */
 import { getModuleApiService } from "@/core/services/api-factory";
 
 // Service
@@ -63,8 +63,8 @@ import type { IStaffAvailabilityService } from "./staff-availability/src/domain/
 import type { IStaffAvailabilityRepository } from "./staff-availability/src/domain/interfaces/IStaffAvailabilityRepository";
 
 export interface HrmsContainer {
-hrmsService: IHrmsService;
-hrmsRepository: IHrmsRepository;
+  hrmsService: IHrmsService;
+  hrmsRepository: IHrmsRepository;
   // StaffMember
   staffMemberService: IStaffMemberService;
   staffMemberRepository: IStaffMemberRepository;
@@ -91,60 +91,60 @@ hrmsRepository: IHrmsRepository;
 let _container: HrmsContainer | null = null;
 
 /**
-* Get the Hrms container (lazy initialization)
-*/
+ * Get the Hrms container (lazy initialization)
+ */
 export function getHrmsContainer(): HrmsContainer {
-if (!_container) {
-const apiService = getModuleApiService("HRMS");
+  if (!_container) {
+    const apiService = getModuleApiService("HRMS");
 
-// Create Service (wraps IApiService)
-const hrmsService = new HrmsService(apiService);
+    // Create Service (wraps IApiService)
+    const hrmsService = new HrmsService(apiService);
 
-// Create Repository (uses Service)
-      const staffMemberService = new StaffMemberService(apiService);
-      const employmentRecordService = new EmploymentRecordService(apiService);
-      const staffAssignmentService = new StaffAssignmentService(apiService);
-      const staffCompetencyService = new StaffCompetencyService(apiService);
-      const qualificationService = new QualificationService(apiService);
-      const certificationService = new CertificationService(apiService);
-      const staffAvailabilityService = new StaffAvailabilityService(apiService);
-_container = {
-hrmsService,
-hrmsRepository: new HrmsRepository(hrmsService),
+    // Create Repository (uses Service)
+    const staffMemberService = new StaffMemberService(apiService);
+    const employmentRecordService = new EmploymentRecordService(apiService);
+    const staffAssignmentService = new StaffAssignmentService(apiService);
+    const staffCompetencyService = new StaffCompetencyService(apiService);
+    const qualificationService = new QualificationService(apiService);
+    const certificationService = new CertificationService(apiService);
+    const staffAvailabilityService = new StaffAvailabilityService(apiService);
+    _container = {
+      hrmsService,
+      hrmsRepository: new HrmsRepository(hrmsService),
       // StaffMember
       staffMemberService,
       staffMemberRepository: new StaffMemberRepository(staffMemberService),
-          // EmploymentRecord
+      // EmploymentRecord
       employmentRecordService,
       employmentRecordRepository: new EmploymentRecordRepository(employmentRecordService),
-          // StaffAssignment
+      // StaffAssignment
       staffAssignmentService,
       staffAssignmentRepository: new StaffAssignmentRepository(staffAssignmentService),
-          // StaffCompetency
+      // StaffCompetency
       staffCompetencyService,
       staffCompetencyRepository: new StaffCompetencyRepository(staffCompetencyService),
-          // Qualification
+      // Qualification
       qualificationService,
       qualificationRepository: new QualificationRepository(qualificationService),
-          // Certification
+      // Certification
       certificationService,
       certificationRepository: new CertificationRepository(certificationService),
-          // StaffAvailability
+      // StaffAvailability
       staffAvailabilityService,
       staffAvailabilityRepository: new StaffAvailabilityRepository(staffAvailabilityService),
     };
-}
+  }
 
-return _container;
+  return _container;
 }
 
 /**
-* Hrms container accessor (for use in components)
-*/
+ * Hrms container accessor (for use in components)
+ */
 export const hrmsContainer = {
-get hrmsRepository() {
-return getHrmsContainer().hrmsRepository;
-},
+  get hrmsRepository() {
+    return getHrmsContainer().hrmsRepository;
+  },
   // StaffMember
   get staffMemberRepository() {
     return getHrmsContainer().staffMemberRepository;

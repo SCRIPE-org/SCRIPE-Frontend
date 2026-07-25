@@ -51,7 +51,9 @@ export function ModuleFederationLoader({
   }, [pluginKey, baseUrl, scope, exposedModule]);
 
   if (hasError) {
-    return <ErrorMessage size="sm" message={t("errors.plugin.loadFailed", { plugin: pluginKey })} />;
+    return (
+      <ErrorMessage size="sm" message={t("errors.plugin.loadFailed", { plugin: pluginKey })} />
+    );
   }
 
   const placeholder = (

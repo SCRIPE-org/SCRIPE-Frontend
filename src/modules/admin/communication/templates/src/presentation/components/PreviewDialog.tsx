@@ -187,9 +187,7 @@ export function PreviewDialog({ open, onOpenChange, result, isLoading }: Preview
           </div>
         )}
 
-        {!result && !isLoading && (
-          <EmptyState bare size="sm" title={t("common.noData")} />
-        )}
+        {!result && !isLoading && <EmptyState bare size="sm" title={t("common.noData")} />}
       </DialogContent>
     </Dialog>
   );

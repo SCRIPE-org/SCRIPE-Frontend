@@ -218,10 +218,7 @@ ContextMenuSeparator.displayName = ContextMenuPrimitive.Separator.displayName;
 
 const ContextMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => {
   return (
-    <span
-      className={cn("ms-auto ps-4 text-xs tabular-nums text-nx-ink-3", className)}
-      {...props}
-    />
+    <span className={cn("ms-auto ps-4 text-xs tabular-nums text-nx-ink-3", className)} {...props} />
   );
 };
 ContextMenuShortcut.displayName = "ContextMenuShortcut";

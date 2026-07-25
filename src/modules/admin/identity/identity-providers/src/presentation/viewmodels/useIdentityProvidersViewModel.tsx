@@ -335,7 +335,7 @@ export function useIdentityProvidersViewModel() {
             {item.enabledForAdmins && (
               <Badge
                 variant="outline"
-                className="gap-1 border-nx-accent/30 bg-nx-accent-wash text-xs text-nx-accent"
+                className="border-nx-accent/30 gap-1 bg-nx-accent-wash text-xs text-nx-accent"
               >
                 <Shield className="h-3 w-3" aria-hidden="true" />
                 {t("identityProviders.badgeAdmin")}

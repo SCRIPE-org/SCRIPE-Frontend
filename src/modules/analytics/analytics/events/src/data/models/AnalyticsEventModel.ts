@@ -64,11 +64,6 @@ export class AnalyticsDailyMetricModel {
   ) {}
 
   static fromJson(json: AnalyticsDailyMetricJson): AnalyticsDailyMetricModel {
-    return new AnalyticsDailyMetricModel(
-      json.date,
-      json.eventName,
-      json.count,
-      json.sum
-    );
+    return new AnalyticsDailyMetricModel(json.date, json.eventName, json.count, json.sum);
   }
 }

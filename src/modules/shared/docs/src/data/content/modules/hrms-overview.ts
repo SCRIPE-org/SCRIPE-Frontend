@@ -55,9 +55,6 @@ registerPage({
   category: "modules",
   order: 3,
   sections,
-  relatedSlugs: [
-    "modules/party-kernel-overview",
-    "modules/organization-core-overview",
-  ],
+  relatedSlugs: ["modules/party-kernel-overview", "modules/organization-core-overview"],
   lastUpdated: "2026-07-16",
 });

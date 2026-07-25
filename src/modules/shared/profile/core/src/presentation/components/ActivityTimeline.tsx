@@ -69,7 +69,10 @@ export function ActivityTimeline({ groupedEntries }: ActivityTimelineProps) {
           </h4>
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute bottom-0 start-[15px] top-0 w-px bg-nx-line" aria-hidden="true" />
+            <div
+              className="absolute bottom-0 start-[15px] top-0 w-px bg-nx-line"
+              aria-hidden="true"
+            />
 
             <div className="space-y-4">
               {entries?.map((entry) => {

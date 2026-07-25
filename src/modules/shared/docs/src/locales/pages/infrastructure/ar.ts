@@ -462,46 +462,64 @@ export const ar = {
     // ─── وحدة الاتصالات ───────────────────────────────────────────
     communication: {
       title: "وحدة الاتصالات",
-      description: "خدمة تسليم الرسائل الأفقية — البريد الإلكتروني والرسائل القصيرة والإشعارات والقوالب وسجلات التسليم لجميع الوحدات.",
-      intro: "تمتلك وحدة الاتصالات جميع عمليات تسليم الرسائل في SCRIPE. ترسل كل وحدة الرسائل عبر IMessageDispatcher وليس مباشرةً عبر SMTP أو Twilio.",
+      description:
+        "خدمة تسليم الرسائل الأفقية — البريد الإلكتروني والرسائل القصيرة والإشعارات والقوالب وسجلات التسليم لجميع الوحدات.",
+      intro:
+        "تمتلك وحدة الاتصالات جميع عمليات تسليم الرسائل في SCRIPE. ترسل كل وحدة الرسائل عبر IMessageDispatcher وليس مباشرةً عبر SMTP أو Twilio.",
       architectureTitle: "الهيكلة",
-      architectureIntro: "تستدعي Identity والوحدات الأخرى IMessageDispatcher في Core.Application. تنفّذ وحدة الاتصالات هذه الواجهة عبر SendEmailCommandHandler وSendSmsCommandHandler.",
+      architectureIntro:
+        "تستدعي Identity والوحدات الأخرى IMessageDispatcher في Core.Application. تنفّذ وحدة الاتصالات هذه الواجهة عبر SendEmailCommandHandler وSendSmsCommandHandler.",
       templatesTitle: "قوالب الرسائل",
-      templatesIntro: "القوالب سجلات متعددة الإصدارات والقنوات (Email/SMS/InApp/Push). لكل قالب دورة حياة مسودة → منشورة. تعرض القوالب باستخدام Scriban مع روابط نموذج مكتوبة بالكامل.",
+      templatesIntro:
+        "القوالب سجلات متعددة الإصدارات والقنوات (Email/SMS/InApp/Push). لكل قالب دورة حياة مسودة → منشورة. تعرض القوالب باستخدام Scriban مع روابط نموذج مكتوبة بالكامل.",
       jobsTitle: "الوظائف الخلفية",
-      jobsIntro: "تعيد MessageRetryJob محاولة التسليم كل 5 دقائق. CommunicationSoftDeleteCleanupJob يعمل كل ليلة الساعة 3 صباحًا لحذف السجلات المحذوفة بشكل مؤقت والأقدم من 30 يومًا.",
+      jobsIntro:
+        "تعيد MessageRetryJob محاولة التسليم كل 5 دقائق. CommunicationSoftDeleteCleanupJob يعمل كل ليلة الساعة 3 صباحًا لحذف السجلات المحذوفة بشكل مؤقت والأقدم من 30 يومًا.",
       permissionsTitle: "الصلاحيات",
-      permissionsContent: "communication.templates.view/create/update/delete | communication.send.email/sms/notification/bulk | communication.logs.view | communication.preferences.manage | communication.channels.configure | communication.export",
+      permissionsContent:
+        "communication.templates.view/create/update/delete | communication.send.email/sms/notification/bulk | communication.logs.view | communication.preferences.manage | communication.channels.configure | communication.export",
     },
 
     // ─── وحدة التكاملات ──────────────────────────────────────────
     integrations: {
       title: "وحدة التكاملات",
-      description: "طبقة التكامل بين الآلات — ويبهوك خارجية مع HMAC-SHA256 وإدارة مفاتيح API وتوجيه الأحداث.",
-      intro: "تمتلك وحدة التكاملات جميع اهتمامات التكامل بين الآلات. تقوم الويبهوك الخارجية بإخطار الأنظمة الخارجية عند حدوث أحداث SCRIPE. تتيح مفاتيح API للأنظمة الخارجية الاتصال بـ SCRIPE بدون OAuth.",
+      description:
+        "طبقة التكامل بين الآلات — ويبهوك خارجية مع HMAC-SHA256 وإدارة مفاتيح API وتوجيه الأحداث.",
+      intro:
+        "تمتلك وحدة التكاملات جميع اهتمامات التكامل بين الآلات. تقوم الويبهوك الخارجية بإخطار الأنظمة الخارجية عند حدوث أحداث SCRIPE. تتيح مفاتيح API للأنظمة الخارجية الاتصال بـ SCRIPE بدون OAuth.",
       webhooksTitle: "نظام الويبهوك",
-      webhooksIntro: "يخزّن WebhookSubscription عنوان URL وأنواع الأحداث وسر التوقيع HMAC-SHA256. عند كل حدث نطاقي يبحث WebhookDispatcher عن الاشتراكات النشطة ويرسل HTTP POST بخطأة X-SCRIPE-Signature-256.",
+      webhooksIntro:
+        "يخزّن WebhookSubscription عنوان URL وأنواع الأحداث وسر التوقيع HMAC-SHA256. عند كل حدث نطاقي يبحث WebhookDispatcher عن الاشتراكات النشطة ويرسل HTTP POST بخطأة X-SCRIPE-Signature-256.",
       apiKeysTitle: "إدارة مفاتيح API",
-      apiKeysIntro: "مفاتيح API ذات نطاق خاص بالمستأجر مع صلاحيات مفصولة بفواصل. قيم المفاتيح لا تُخزّن أبدًا — يُخزّن فقط التجزئة المشفرة (KeyHash) بعد التوليد.",
+      apiKeysIntro:
+        "مفاتيح API ذات نطاق خاص بالمستأجر مع صلاحيات مفصولة بفواصل. قيم المفاتيح لا تُخزّن أبدًا — يُخزّن فقط التجزئة المشفرة (KeyHash) بعد التوليد.",
       securityTitle: "الأمان",
-      securityContent: "جميع حمولات الويبهوك موقّعة بـ HMAC-SHA256. يجب على المستقبلين التحقق من التوقيع قبل المعالجة. مفاتيح API تستخدم bcrypt. دائرة التوقف تعطّل الاشتراكات بعد 10 إخفاقات متتالية.",
+      securityContent:
+        "جميع حمولات الويبهوك موقّعة بـ HMAC-SHA256. يجب على المستقبلين التحقق من التوقيع قبل المعالجة. مفاتيح API تستخدم bcrypt. دائرة التوقف تعطّل الاشتراكات بعد 10 إخفاقات متتالية.",
       permissionsTitle: "الصلاحيات",
-      permissionsContent: "integrations.connections.view/create/update/delete | integrations.apikeys.view/create/revoke | integrations.webhooks.view/create/update/delete | integrations.events.view | integrations.export",
+      permissionsContent:
+        "integrations.connections.view/create/update/delete | integrations.apikeys.view/create/revoke | integrations.webhooks.view/create/update/delete | integrations.events.view | integrations.export",
     },
 
     // ─── وحدة الوسائط ─────────────────────────────────────────────
     media: {
       title: "وحدة الوسائط",
-      description: "تخزين الملفات الثنائية — رفع مجزّأ وجلسات تنزيل وتصاريح الوصول وتطبيق حصص التخزين.",
-      intro: "تمتلك وحدة الوسائط تخزين الملفات الثنائية. توفر رفعًا مجزّأً للملفات الكبيرة وروابط تنزيل مؤقتة (MediaAccessGrant) وتنظيمًا هرميًا وفحص حصّ التخزين.",
+      description:
+        "تخزين الملفات الثنائية — رفع مجزّأ وجلسات تنزيل وتصاريح الوصول وتطبيق حصص التخزين.",
+      intro:
+        "تمتلك وحدة الوسائط تخزين الملفات الثنائية. توفر رفعًا مجزّأً للملفات الكبيرة وروابط تنزيل مؤقتة (MediaAccessGrant) وتنظيمًا هرميًا وفحص حصّ التخزين.",
       chunkedUploadTitle: "الرفع المجزّأ",
-      chunkedUploadIntro: "تُرفع الملفات الكبيرة على شكل أجزاء عبر StartUploadSessionCommand (ينشئ MediaUploadSession) ثم طلبات UploadChunkCommand متكررة. عند اكتمال الجزء الأخير يُجمّع الملف ويُتحقق منه.",
+      chunkedUploadIntro:
+        "تُرفع الملفات الكبيرة على شكل أجزاء عبر StartUploadSessionCommand (ينشئ MediaUploadSession) ثم طلبات UploadChunkCommand متكررة. عند اكتمال الجزء الأخير يُجمّع الملف ويُتحقق منه.",
       accessGrantsTitle: "تصاريح الوصول المؤقتة",
-      accessGrantsIntro: "ينشئ MediaAccessGrant روابط تنزيل محدودة المدة دون كشف بيانات التخزين. يتحقّق DownloadsController من رمز التصريح وانتهاء صلاحيته ثم يبثّ الملف ثالًا.",
+      accessGrantsIntro:
+        "ينشئ MediaAccessGrant روابط تنزيل محدودة المدة دون كشف بيانات التخزين. يتحقّق DownloadsController من رمز التصريح وانتهاء صلاحيته ثم يبثّ الملف ثالًا.",
       quotasTitle: "حصص التخزين",
-      quotasContent: "تتحقّق طلبات الرفع من حصة Media.StorageQuotaGb للمستأجر في Entitlements عبر IFeatureChecker.",
+      quotasContent:
+        "تتحقّق طلبات الرفع من حصة Media.StorageQuotaGb للمستأجر في Entitlements عبر IFeatureChecker.",
       permissionsTitle: "الصلاحيات",
-      permissionsContent: "media.files.view/upload/delete | media.folders.create/update/delete | media.access.grant | media.admin | media.export",
+      permissionsContent:
+        "media.files.view/upload/delete | media.folders.create/update/delete | media.access.grant | media.admin | media.export",
     },
   },
 };

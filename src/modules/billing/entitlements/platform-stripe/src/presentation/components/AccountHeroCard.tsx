@@ -53,7 +53,7 @@ export function AccountHeroCard({ account }: AccountHeroCardProps) {
               <CardDescription>{t("entitlements.platformStripe.description")}</CardDescription>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 ms-auto">
+            <div className="ms-auto flex flex-wrap items-center gap-2">
               <CapabilityBadge
                 enabled={account.chargesEnabled}
                 label={t("entitlements.platformStripe.charges")}
@@ -156,7 +156,7 @@ export function AccountHeroCard({ account }: AccountHeroCardProps) {
                       href={account.supportUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="rounded-nx-sm text-nx-accent underline-offset-4 hover:underline focus-visible:outline-none focus-visible:shadow-nx-focus"
+                      className="rounded-nx-sm text-nx-accent underline-offset-4 hover:underline focus-visible:shadow-nx-focus focus-visible:outline-none"
                     >
                       {account.supportUrl}
                       <span className="sr-only">

@@ -1,9 +1,9 @@
 /**
-* StaffMember Service
-*
-* Handles all API calls for StaffMember.
-* Returns Models (DTOs) - Repository uses Mapper to convert to Entities.
-*/
+ * StaffMember Service
+ *
+ * Handles all API calls for StaffMember.
+ * Returns Models (DTOs) - Repository uses Mapper to convert to Entities.
+ */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import {
@@ -20,7 +20,11 @@ import { STAFF_MEMBER_ENDPOINTS } from "./staff-member.endpoints";
 export class StaffMemberService implements IStaffMemberService {
   constructor(private readonly api: IApiService) {}
 
-  async getAll(params: { page: number; pageSize: number; search?: string }): Promise<StaffMemberListResult> {
+  async getAll(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<StaffMemberListResult> {
     const url = buildUrl(STAFF_MEMBER_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,

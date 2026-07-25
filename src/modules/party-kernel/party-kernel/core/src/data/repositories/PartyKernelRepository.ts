@@ -9,7 +9,10 @@
  * - Repository uses Mapper to convert to Entities
  * - ViewModel uses Repository, works with Entities
  */
-import type { IPartyKernelRepository, PartyKernelListParams } from "../../domain/interfaces/IPartyKernelRepository";
+import type {
+  IPartyKernelRepository,
+  PartyKernelListParams,
+} from "../../domain/interfaces/IPartyKernelRepository";
 import type { IPartyKernelService } from "../../domain/interfaces/IPartyKernelService";
 import type { PartyKernel } from "../../domain/entities/PartyKernel";
 import { PartyKernelMapper } from "../mappers/PartyKernelMapper";

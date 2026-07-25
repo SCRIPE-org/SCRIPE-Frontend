@@ -231,9 +231,7 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
               <span className="text-muted-foreground">
                 {t("entitlements.overrides.totalCost") || "Total Override Cost"}:
               </span>{" "}
-              <span className="font-bold text-success">
-                ${totalCostUsd.toFixed(2)} USD
-              </span>
+              <span className="font-bold text-success">${totalCostUsd.toFixed(2)} USD</span>
             </div>
           </div>
         )}

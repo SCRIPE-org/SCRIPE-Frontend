@@ -55,9 +55,6 @@ registerPage({
   category: "modules",
   order: 4,
   sections,
-  relatedSlugs: [
-    "modules/hrms-overview",
-    "modules/organization-core-overview",
-  ],
+  relatedSlugs: ["modules/hrms-overview", "modules/organization-core-overview"],
   lastUpdated: "2026-07-16",
 });

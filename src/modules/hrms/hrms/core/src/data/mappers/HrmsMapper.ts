@@ -25,12 +25,7 @@ export class HrmsMapper {
    * Convert Hrms Entity to HrmsModel
    */
   static toModel(entity: Hrms): HrmsModel {
-    return new HrmsModel(
-      entity.id,
-      entity.name,
-      entity.createdAt,
-      entity.modifiedAt,
-    );
+    return new HrmsModel(entity.id, entity.name, entity.createdAt, entity.modifiedAt);
   }
 
   /**

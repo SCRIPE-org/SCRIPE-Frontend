@@ -223,8 +223,14 @@ export function TenantPlanComparisonView() {
       const yearly = plan.prices.filter((p) => p.billingCycle === "Yearly");
       if (monthly.length === 0 || yearly.length === 0) return;
 
-      const cheapestMonthly = monthly.reduce((min, p) => (p.amount < min.amount ? p : min), monthly[0]);
-      const cheapestYearly = yearly.reduce((min, p) => (p.amount < min.amount ? p : min), yearly[0]);
+      const cheapestMonthly = monthly.reduce(
+        (min, p) => (p.amount < min.amount ? p : min),
+        monthly[0]
+      );
+      const cheapestYearly = yearly.reduce(
+        (min, p) => (p.amount < min.amount ? p : min),
+        yearly[0]
+      );
       const annualizedMonthly = cheapestMonthly.amount * 12;
       if (annualizedMonthly <= 0) return;
 
@@ -403,9 +409,7 @@ export function TenantPlanComparisonView() {
                   } else if (!plan.hasPrices) {
                     priceAmount = t("common.free");
                   } else {
-                    const cyclePrices = plan.prices.filter(
-                      (p) => p.billingCycle === selectedCycle
-                    );
+                    const cyclePrices = plan.prices.filter((p) => p.billingCycle === selectedCycle);
                     if (cyclePrices.length > 0) {
                       const cheapest = cyclePrices.reduce(
                         (min, p) => (p.amount < min.amount ? p : min),

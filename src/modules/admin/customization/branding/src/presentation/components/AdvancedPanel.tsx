@@ -110,7 +110,7 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
 
         {/* CSS Variable Reference */}
         <details className="rounded-nx-md border border-nx-line bg-nx-raised">
-          <summary className="flex cursor-pointer items-center gap-1.5 px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink">
+          <summary className="flex cursor-pointer items-center gap-1.5 px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none">
             <Code className="h-3 w-3 shrink-0" aria-hidden="true" />
             {t("studio.advanced.cssVarRef")}
           </summary>
@@ -293,11 +293,11 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
               a.click();
               URL.revokeObjectURL(url);
             }}
-            className="flex-1 rounded-nx-control border border-nx-line px-3 py-1.5 text-[11px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
+            className="flex-1 rounded-nx-control border border-nx-line px-3 py-1.5 text-[11px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           >
             {t("studio.advanced.export")}
           </button>
-          <label className="flex flex-1 cursor-pointer items-center justify-center rounded-nx-control border border-nx-line px-3 py-1.5 text-[11px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover">
+          <label className="flex flex-1 cursor-pointer items-center justify-center rounded-nx-control border border-nx-line px-3 py-1.5 text-[11px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none">
             {t("studio.advanced.import")}
             <input
               type="file"
@@ -373,8 +373,14 @@ function ContrastCheck({ label, fg, bg }: { label: string; fg: string; bg: strin
       <span className="text-[10px] text-nx-ink-3">{label}</span>
       <div className="flex items-center gap-1.5">
         <div className="flex gap-0.5">
-          <div className="h-3 w-3 rounded-nx-sm border border-nx-line" style={{ backgroundColor: fg }} />
-          <div className="h-3 w-3 rounded-nx-sm border border-nx-line" style={{ backgroundColor: bg }} />
+          <div
+            className="h-3 w-3 rounded-nx-sm border border-nx-line"
+            style={{ backgroundColor: fg }}
+          />
+          <div
+            className="h-3 w-3 rounded-nx-sm border border-nx-line"
+            style={{ backgroundColor: bg }}
+          />
         </div>
         <span
           className={`font-mono text-[10px] font-bold ${passAAA ? "text-success" : passAA ? "text-warning" : "text-destructive"}`}

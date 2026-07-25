@@ -244,7 +244,7 @@ export function SubscriptionsExportDialog({
               type="button"
               onClick={() => setSelectedFormat(opt.value)}
               disabled={isExporting}
-              className={`flex flex-col items-center gap-1.5 rounded-nx-md border-2 p-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus ${
+              className={`flex flex-col items-center gap-1.5 rounded-nx-md border-2 p-3 transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none ${
                 selectedFormat === opt.value
                   ? opt.borderActive
                   : "border-nx-line hover:border-nx-line-hi"

@@ -808,9 +808,7 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
               <div className="flex items-center gap-1 overflow-hidden text-sm">
                 {parentPath.length > 0 && (
                   <>
-                    <span className="truncate text-xs text-nx-ink-3">
-                      {parentPath.join(" ‹ ")}
-                    </span>
+                    <span className="truncate text-xs text-nx-ink-3">{parentPath.join(" ‹ ")}</span>
 
                     <span aria-hidden="true" className="flex-shrink-0 text-xs text-nx-ink-3">
                       ›
@@ -1059,7 +1057,7 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                 className={cn(
                   "flex h-5 w-5 items-center justify-center rounded-full text-nx-ink-3",
                   "transition-[color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                  "hover:bg-nx-hover hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
+                  "hover:bg-nx-hover hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none"
                 )}
               >
                 <X className="h-3 w-3" aria-hidden="true" />
@@ -1112,10 +1110,10 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                   <div className="relative">
                     <Search
                       aria-hidden="true"
-                      className="pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3 start-3"
+                      className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
                     />
                     {showLoading && (
-                      <span className="absolute top-1/2 -translate-y-1/2 text-nx-ink-3 end-3">
+                      <span className="absolute end-3 top-1/2 -translate-y-1/2 text-nx-ink-3">
                         <LoadingSpinner size="inline" showText={false} />
                       </span>
                     )}
@@ -1148,7 +1146,7 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                       // The glyph rails are logical, so the same two classes
                       // hold in both writing directions; `text-start` comes
                       // from the field surface itself.
-                      className="ps-10 pe-10 text-start"
+                      className="pe-10 ps-10 text-start"
                       dir={direction}
                     />
                   </div>
@@ -1164,7 +1162,7 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                     className={cn(
                       "rounded-nx-sm px-1 text-xs font-medium text-nx-accent",
                       "transition-[color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                      "hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
+                      "hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none"
                     )}
                   >
                     {defaultSelectAllText}
@@ -1176,7 +1174,7 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                     className={cn(
                       "rounded-nx-sm px-1 text-xs font-medium text-nx-ink-2",
                       "transition-[color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                      "hover:bg-nx-hover hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
+                      "hover:bg-nx-hover hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none"
                     )}
                   >
                     {defaultClearAllText}
@@ -1269,7 +1267,7 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
                             className={cn(
                               "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-nx-ink-3",
                               "transition-[color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                              "hover:bg-nx-hover hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus",
+                              "hover:bg-nx-hover hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none",
                               "disabled:pointer-events-none disabled:invisible"
                             )}
                             onClick={(e) => {

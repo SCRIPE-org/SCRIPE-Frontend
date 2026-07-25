@@ -63,7 +63,8 @@ export function SubscriptionsKpiGrid({
   formatDisplay,
   t,
 }: SubscriptionsKpiGridProps) {
-  const churnTone: StatTone = kpis.churnRate > 10 ? "danger" : kpis.churnRate > 5 ? "warning" : "success";
+  const churnTone: StatTone =
+    kpis.churnRate > 10 ? "danger" : kpis.churnRate > 5 ? "warning" : "success";
 
   const countTile = (status: string, tone: StatTone) => {
     const isSelected = statusFilter === status;

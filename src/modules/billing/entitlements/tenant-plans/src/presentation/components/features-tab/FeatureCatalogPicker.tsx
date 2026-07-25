@@ -110,7 +110,7 @@ export function FeatureCatalogPicker({
                       key={feature.id}
                       type="button"
                       onClick={() => onSelect(feature)}
-                      className="flex w-full items-center justify-between rounded-nx-sm px-3 py-2.5 text-start transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
+                      className="flex w-full items-center justify-between rounded-nx-sm px-3 py-2.5 text-start transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">

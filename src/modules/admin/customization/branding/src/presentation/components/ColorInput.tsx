@@ -47,7 +47,7 @@ export function ColorInput({ label, value, onChange, className = "" }: ColorInpu
           value={value || "#000000"}
           onChange={handleColorChange}
           aria-label={label}
-          className="h-8 w-8 cursor-pointer rounded-nx-control border border-nx-line bg-transparent p-0.5 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-nx-sm [&::-webkit-color-swatch]:border-0"
+          className="h-8 w-8 cursor-pointer rounded-nx-control border border-nx-line bg-transparent p-0.5 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-nx-sm [&::-webkit-color-swatch]:border-0"
         />
       </div>
       <div className="min-w-0 flex-1">
@@ -60,7 +60,7 @@ export function ColorInput({ label, value, onChange, className = "" }: ColorInpu
           value={value || ""}
           onChange={handleTextChange}
           placeholder="#000000"
-          className="h-7 w-full rounded-nx-control border border-nx-line bg-nx-ground px-2 font-mono text-xs text-nx-ink placeholder:text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi motion-reduce:transition-none focus-visible:border-nx-accent focus-visible:outline-none focus-visible:shadow-nx-focus"
+          className="h-7 w-full rounded-nx-control border border-nx-line bg-nx-ground px-2 font-mono text-xs text-nx-ink transition-colors duration-nx-micro ease-nx-enter placeholder:text-nx-ink-3 hover:border-nx-line-hi focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
         />
       </div>
     </div>

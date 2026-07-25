@@ -48,12 +48,8 @@ export function StripeCard({ sub, vm, t }: StripeCardProps) {
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-nx-raised">
               <Sparkles className="h-5 w-5 text-nx-ink-2" aria-hidden="true" />
             </div>
-            <p className="text-sm font-medium text-nx-ink-2">
-              {t("entSubscriptions.freeEdition")}
-            </p>
-            <p className="mt-1 text-xs text-nx-ink-3">
-              {t("entSubscriptions.noPaymentGateway")}
-            </p>
+            <p className="text-sm font-medium text-nx-ink-2">{t("entSubscriptions.freeEdition")}</p>
+            <p className="mt-1 text-xs text-nx-ink-3">{t("entSubscriptions.noPaymentGateway")}</p>
           </div>
         </CardContent>
       </Card>

@@ -12,10 +12,7 @@ export function formatComparisonMessage(
   );
 }
 
-export function getLocalizedCycleName(
-  cycle: BillingCycle,
-  t: ComparisonTranslator
-): string {
+export function getLocalizedCycleName(cycle: BillingCycle, t: ComparisonTranslator): string {
   if (cycle === "Monthly") {
     return t("entitlements.editions.comparison.monthly") || "Monthly";
   }
@@ -25,10 +22,7 @@ export function getLocalizedCycleName(
   return t("entitlements.editions.comparison.lifetime") || "Lifetime";
 }
 
-export function getLocalizedCyclePeriod(
-  cycle: BillingCycle,
-  t: ComparisonTranslator
-): string {
+export function getLocalizedCyclePeriod(cycle: BillingCycle, t: ComparisonTranslator): string {
   if (cycle === "Monthly") {
     return t("entitlements.editions.comparison.monthShort") || "mo";
   }

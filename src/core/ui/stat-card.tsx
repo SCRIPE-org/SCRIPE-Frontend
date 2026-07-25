@@ -131,7 +131,7 @@ export function StatCard({
                     role="button"
                     tabIndex={0}
                     aria-label={tooltip}
-                    className="-my-2 -me-1 inline-grid h-8 w-8 shrink-0 place-items-center rounded-nx-sm text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink-2 focus-visible:outline-none focus-visible:shadow-nx-focus"
+                    className="-my-2 -me-1 inline-grid h-8 w-8 shrink-0 place-items-center rounded-nx-sm text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink-2 focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                   >
                     <Info className="h-3.5 w-3.5" aria-hidden="true" />
                   </span>
@@ -142,11 +142,9 @@ export function StatCard({
           )}
         </div>
 
-        <p className="mt-1.5 flex items-baseline gap-1.5 text-3xl font-semibold leading-none tracking-tight tabular-nums text-nx-ink">
+        <p className="mt-1.5 flex items-baseline gap-1.5 text-3xl font-semibold tabular-nums leading-none tracking-tight text-nx-ink">
           <span className="truncate">{value}</span>
-          {suffix && (
-            <span className="shrink-0 text-base font-medium text-nx-ink-3">{suffix}</span>
-          )}
+          {suffix && <span className="shrink-0 text-base font-medium text-nx-ink-3">{suffix}</span>}
         </p>
 
         {(subtitle || trend) && (
@@ -154,7 +152,7 @@ export function StatCard({
             {trend && (
               <span
                 className={cn(
-                  "inline-flex items-center gap-1 rounded-nx-sm border px-1.5 py-0.5 font-semibold leading-none tabular-nums",
+                  "inline-flex items-center gap-1 rounded-nx-sm border px-1.5 py-0.5 font-semibold tabular-nums leading-none",
                   trendClass
                 )}
               >
@@ -204,7 +202,7 @@ export function StatCard({
         // brightening, press is the lit inset edge (the same one Button wears),
         // focus is the shared nx ring. No lift, no coloured shadow.
         "cursor-pointer active:shadow-[inset_0_0_0_1px_var(--nx-accent)]",
-        "focus-visible:outline-none focus-visible:shadow-nx-focus",
+        "focus-visible:shadow-nx-focus focus-visible:outline-none",
         className
       )}
     >

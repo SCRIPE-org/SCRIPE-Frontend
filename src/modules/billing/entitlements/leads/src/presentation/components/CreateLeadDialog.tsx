@@ -156,8 +156,7 @@ export function CreateLeadDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {t("leads.createDialog.company")}{" "}
-                      <span className="text-destructive">*</span>
+                      {t("leads.createDialog.company")} <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -177,8 +176,7 @@ export function CreateLeadDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {t("leads.createDialog.contact")}{" "}
-                      <span className="text-destructive">*</span>
+                      {t("leads.createDialog.contact")} <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input

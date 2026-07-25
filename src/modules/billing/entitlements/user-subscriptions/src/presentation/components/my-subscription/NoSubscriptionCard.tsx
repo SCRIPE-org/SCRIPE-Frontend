@@ -18,7 +18,7 @@ export function NoSubscriptionCard({ t }: NoSubscriptionCardProps) {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
-        <h1 className="text-xl font-bold leading-tight tracking-tight text-nx-ink text-balance">
+        <h1 className="text-balance text-xl font-bold leading-tight tracking-tight text-nx-ink">
           {t("entitlements.mySubscription.title")}
         </h1>
       </div>

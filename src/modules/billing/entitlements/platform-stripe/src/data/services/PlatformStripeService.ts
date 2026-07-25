@@ -15,8 +15,6 @@ export class PlatformStripeService implements IPlatformStripeService {
   constructor(private readonly api: IApiService) {}
 
   async getDashboard(): Promise<PlatformStripeDashboardModel> {
-    return this.api.get<PlatformStripeDashboardModel>(
-      PLATFORM_STRIPE_ENDPOINTS.DASHBOARD
-    );
+    return this.api.get<PlatformStripeDashboardModel>(PLATFORM_STRIPE_ENDPOINTS.DASHBOARD);
   }
 }

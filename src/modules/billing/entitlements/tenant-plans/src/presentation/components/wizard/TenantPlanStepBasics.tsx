@@ -35,9 +35,7 @@ export function TenantPlanStepBasics({ form, updateForm, t }: TenantPlanStepBasi
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="color">
-            {t("entitlements.tenantPlans.color")}
-          </Label>
+          <Label htmlFor="color">{t("entitlements.tenantPlans.color")}</Label>
           <div className="flex gap-2">
             <Input
               id="color"
@@ -57,9 +55,7 @@ export function TenantPlanStepBasics({ form, updateForm, t }: TenantPlanStepBasi
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="displayNameEn">
-            {t("entitlements.tenantPlans.displayNameEn")}
-          </Label>
+          <Label htmlFor="displayNameEn">{t("entitlements.tenantPlans.displayNameEn")}</Label>
           <Input
             id="displayNameEn"
             value={form.displayNameEn || ""}
@@ -68,9 +64,7 @@ export function TenantPlanStepBasics({ form, updateForm, t }: TenantPlanStepBasi
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="displayNameAr">
-            {t("entitlements.tenantPlans.displayNameAr")}
-          </Label>
+          <Label htmlFor="displayNameAr">{t("entitlements.tenantPlans.displayNameAr")}</Label>
           <Input
             id="displayNameAr"
             value={form.displayNameAr || ""}
@@ -90,9 +84,7 @@ export function TenantPlanStepBasics({ form, updateForm, t }: TenantPlanStepBasi
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="badgeText">
-            {t("entitlements.tenantPlans.badgeText")}
-          </Label>
+          <Label htmlFor="badgeText">{t("entitlements.tenantPlans.badgeText")}</Label>
           <Input
             id="badgeText"
             value={form.badgeText || ""}
@@ -112,9 +104,7 @@ export function TenantPlanStepBasics({ form, updateForm, t }: TenantPlanStepBasi
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="sortOrder">
-            {t("entitlements.tenantPlans.sortOrder")}
-          </Label>
+          <Label htmlFor="sortOrder">{t("entitlements.tenantPlans.sortOrder")}</Label>
           <Input
             id="sortOrder"
             type="number"

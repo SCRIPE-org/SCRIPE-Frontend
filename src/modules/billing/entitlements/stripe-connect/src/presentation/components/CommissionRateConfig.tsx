@@ -165,7 +165,9 @@ function CommissionRateForm({ account, onClose, onSave, isSaving, t }: Commissio
                   </Button>
                 )}
               </div>
-              <FormDescription>{t("entitlements.stripeConnect.commissionRateFieldHint")}</FormDescription>
+              <FormDescription>
+                {t("entitlements.stripeConnect.commissionRateFieldHint")}
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -208,7 +210,9 @@ export function CommissionRateConfig({
       <DialogContent className="sm:max-w-[480px]">
         <DialogHeader>
           <DialogTitle>{t("entitlements.stripeConnect.commissionRateOverride")}</DialogTitle>
-          <DialogDescription>{t("entitlements.stripeConnect.commissionRateDesc")}</DialogDescription>
+          <DialogDescription>
+            {t("entitlements.stripeConnect.commissionRateDesc")}
+          </DialogDescription>
         </DialogHeader>
 
         <CommissionRateForm

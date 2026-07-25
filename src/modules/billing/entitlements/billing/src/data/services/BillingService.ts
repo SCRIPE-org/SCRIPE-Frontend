@@ -45,9 +45,7 @@ export class BillingService implements IBillingService {
   }
 
   async getInvoiceById(id: string): Promise<InvoiceResponseModel> {
-    return this.api.get<InvoiceResponseModel>(
-      BILLING_ENDPOINTS.INVOICES.BY_ID(id)
-    );
+    return this.api.get<InvoiceResponseModel>(BILLING_ENDPOINTS.INVOICES.BY_ID(id));
   }
 
   async getTransactions(params: {
@@ -80,20 +78,16 @@ export class BillingService implements IBillingService {
       gatewayOverride?: string;
     }
   ): Promise<CheckoutSessionResponseModel> {
-    return this.api.post<CheckoutSessionResponseModel>(
-      BILLING_ENDPOINTS.CHECKOUT(tenantId),
-      data
-    );
+    return this.api.post<CheckoutSessionResponseModel>(BILLING_ENDPOINTS.CHECKOUT(tenantId), data);
   }
 
   async createBillingPortal(
     tenantId: string,
     returnUrl: string
   ): Promise<BillingPortalResponseModel> {
-    return this.api.post<BillingPortalResponseModel>(
-      BILLING_ENDPOINTS.PORTAL(tenantId),
-      { returnUrl }
-    );
+    return this.api.post<BillingPortalResponseModel>(BILLING_ENDPOINTS.PORTAL(tenantId), {
+      returnUrl,
+    });
   }
 
   async cancelGatewaySubscription(tenantId: string, immediately: boolean): Promise<void> {
@@ -115,10 +109,7 @@ export class BillingService implements IBillingService {
     tenantId: string,
     data: CreatePaymentLinkRequestModel
   ): Promise<PaymentLinkResponseModel> {
-    return this.api.post<PaymentLinkResponseModel>(
-      BILLING_ENDPOINTS.PAYMENT_LINK(tenantId),
-      data
-    );
+    return this.api.post<PaymentLinkResponseModel>(BILLING_ENDPOINTS.PAYMENT_LINK(tenantId), data);
   }
 
   // ── PDF Download ──

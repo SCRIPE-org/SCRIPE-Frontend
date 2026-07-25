@@ -97,7 +97,8 @@ export const en = {
         },
         validation: {
           name: "Validation",
-          description: "Validates the incoming payload. FluentValidation checks pass with 0 errors.",
+          description:
+            "Validates the incoming payload. FluentValidation checks pass with 0 errors.",
         },
         authorization: {
           name: "Authorization",

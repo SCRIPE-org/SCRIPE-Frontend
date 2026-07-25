@@ -202,7 +202,13 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
               icon={List}
               title={t("identityProviders.noMappings")}
               action={
-                <Button type="button" variant="outline" size="sm" onClick={addMappingRow} className="gap-1.5 text-xs">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addMappingRow}
+                  className="gap-1.5 text-xs"
+                >
                   <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                   {t("identityProviders.addMapping")}
                 </Button>

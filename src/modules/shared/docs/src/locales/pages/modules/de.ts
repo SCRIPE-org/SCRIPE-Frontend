@@ -885,37 +885,50 @@ export const de = {
     hrms: {
       overview: {
         title: "HRMS-Modul",
-        description: "Human Resource Management System zur Verwaltung von Mitarbeiterprofilen, Beschäftigungsverhältnissen, Qualifikationen, Zertifizierungen, Verfügbarkeit und Zuweisungen.",
-        intro: "Das HRMS-Modul ist die Quelle der Wahrheit für die Belegschaftsressourcen der Plattform. Es verwaltet Mitarbeiterprofile, Beschäftigungsnachweise, Qualifikationen, professionelle Zertifizierungen, Verfügbarkeiten und Zuweisungen.",
+        description:
+          "Human Resource Management System zur Verwaltung von Mitarbeiterprofilen, Beschäftigungsverhältnissen, Qualifikationen, Zertifizierungen, Verfügbarkeit und Zuweisungen.",
+        intro:
+          "Das HRMS-Modul ist die Quelle der Wahrheit für die Belegschaftsressourcen der Plattform. Es verwaltet Mitarbeiterprofile, Beschäftigungsnachweise, Qualifikationen, professionelle Zertifizierungen, Verfügbarkeiten und Zuweisungen.",
         infoTitle: "Designprinzip",
-        infoContent: "HRMS-Datensätze verweisen auf Identity-Akteure über stabile ID-Referenzen, nicht über Datenbank-Fremdschlüssel.",
+        infoContent:
+          "HRMS-Datensätze verweisen auf Identity-Akteure über stabile ID-Referenzen, nicht über Datenbank-Fremdschlüssel.",
         whatIsTitle: "Was ist HRMS?",
         whatIsIntro: "Es ist der administrative Kern für Manager, Trainer und Mitarbeiter.",
         featureStaff: "Mitarbeiterprofile",
-        featureStaffDesc: "Persönliche und berufliche Details, einschließlich Notfallkontakte und Beschäftigungsstatus.",
+        featureStaffDesc:
+          "Persönliche und berufliche Details, einschließlich Notfallkontakte und Beschäftigungsstatus.",
         featureCompliance: "Qualifikationen & Zertifizierungen",
-        featureComplianceDesc: "Zweisprachige Zertifikate, Überprüfungsdaten und Compliance-Validierung.",
+        featureComplianceDesc:
+          "Zweisprachige Zertifikate, Überprüfungsdaten und Compliance-Validierung.",
         modelTitle: "Datenmodell",
-        modelIntro: "Verwaltet Entitäten wie StaffMember, EmploymentRecord, Qualification, Certification, StaffAvailability und StaffAssignment.",
+        modelIntro:
+          "Verwaltet Entitäten wie StaffMember, EmploymentRecord, Qualification, Certification, StaffAvailability und StaffAssignment.",
         permsTitle: "Berechtigungen",
-        permsIntro: "Der Zugriff wird über Berechtigungen gesteuert: hrms.staff.view, hrms.staff.create, hrms.staff.update und hrms.staff.delete.",
+        permsIntro:
+          "Der Zugriff wird über Berechtigungen gesteuert: hrms.staff.view, hrms.staff.create, hrms.staff.update und hrms.staff.delete.",
       },
     },
     partyKernel: {
       overview: {
         title: "Party-Kernel-Modul",
-        description: "Das zentrale Geschäftsverzeichnis zur Verwaltung von Personen, Organisationen, Kontaktpunkten, Beziehungen und Zusammenführungskandidaten.",
-        intro: "Das Party-Kernel-Modul ist das primäre Register für Geschäftsentitäten wie Personen und Organisationen, deren Kontaktdaten und Beziehungen.",
+        description:
+          "Das zentrale Geschäftsverzeichnis zur Verwaltung von Personen, Organisationen, Kontaktpunkten, Beziehungen und Zusammenführungskandidaten.",
+        intro:
+          "Das Party-Kernel-Modul ist das primäre Register für Geschäftsentitäten wie Personen und Organisationen, deren Kontaktdaten und Beziehungen.",
         infoTitle: "Designprinzip",
-        infoContent: "Party Kernel verwendet ein neutrales Schema, das alle Geschäftsakteure (Kunden, Vormünder, Mitarbeiter) als generische Parteien darstellt.",
+        infoContent:
+          "Party Kernel verwendet ein neutrales Schema, das alle Geschäftsakteure (Kunden, Vormünder, Mitarbeiter) als generische Parteien darstellt.",
         whatIsTitle: "Was ist Party Kernel?",
         whatIsIntro: "Es bildet die Grundlage für CRM und Abrechnung.",
         featureParties: "Generische Parteien",
-        featurePartiesDesc: "Einheitliche Darstellung von Einzelpersonen und juristischen Personen.",
+        featurePartiesDesc:
+          "Einheitliche Darstellung von Einzelpersonen und juristischen Personen.",
         featureMerge: "Datenbereinigung",
-        featureMergeDesc: "Identifiziert doppelte Datensätze und erleichtert deren saubere Zusammenführung.",
+        featureMergeDesc:
+          "Identifiziert doppelte Datensätze und erleichtert deren saubere Zusammenführung.",
         modelTitle: "Datenmodell",
-        modelIntro: "Verwaltet Entitäten wie Party, PartyPerson, PartyOrganization, PartyRole, PartyRelationship und ContactPoint.",
+        modelIntro:
+          "Verwaltet Entitäten wie Party, PartyPerson, PartyOrganization, PartyRole, PartyRelationship und ContactPoint.",
         permsTitle: "Berechtigungen",
         permsIntro: "Geschützt durch party.view, party.create, party.update und party.delete.",
       },
@@ -923,20 +936,25 @@ export const de = {
     organizationCore: {
       overview: {
         title: "Organization-Core-Modul",
-        description: "Definiert die physische und rechtliche Hierarchie der Mandanten, einschließlich Geschäftseinheiten, Niederlassungen, Standorten und Abteilungen.",
+        description:
+          "Definiert die physische und rechtliche Hierarchie der Mandanten, einschließlich Geschäftseinheiten, Niederlassungen, Standorten und Abteilungen.",
         intro: "Organization Core modelliert das Organigramm und die Anlagentopologie.",
         infoTitle: "Designprinzip",
-        infoContent: "Die Organisationsstruktur ist hierarchisch aufgebaut und ermöglicht Eltern-Kind-Beziehungen.",
+        infoContent:
+          "Die Organisationsstruktur ist hierarchisch aufgebaut und ermöglicht Eltern-Kind-Beziehungen.",
         whatIsTitle: "Was ist Organization Core?",
         whatIsIntro: "Es strukturiert, wo und wie Geschäfte getätigt werden.",
         featureStructure: "Organisationshierarchie",
-        featureStructureDesc: "Flexible Verschachtelung von juristischen Personen, Niederlassungen und Abteilungen.",
+        featureStructureDesc:
+          "Flexible Verschachtelung von juristischen Personen, Niederlassungen und Abteilungen.",
         featureNodes: "Stabile Referenzen",
-        featureNodesDesc: "Stabile Organisations-IDs werden von Planungs- und Buchungsmodulen referenziert.",
+        featureNodesDesc:
+          "Stabile Organisations-IDs werden von Planungs- und Buchungsmodulen referenziert.",
         modelTitle: "Datenmodell",
         modelIntro: "Verwaltet Entitäten wie BusinessUnit, Branch, Site und Department.",
         permsTitle: "Berechtigungen",
-        permsIntro: "Verwaltet über organization.view, organization.create, organization.update und organization.delete.",
+        permsIntro:
+          "Verwaltet über organization.view, organization.create, organization.update und organization.delete.",
       },
     },
   },

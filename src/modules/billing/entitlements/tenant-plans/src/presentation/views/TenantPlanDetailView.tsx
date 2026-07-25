@@ -21,7 +21,17 @@ import { ErrorMessage } from "@core/ui/error-message";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { StatCard } from "@core/ui/stat-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { ArrowLeft, Archive, Zap, DollarSign, GitBranch, Tag, Settings, Users, Calendar } from "lucide-react";
+import {
+  ArrowLeft,
+  Archive,
+  Zap,
+  DollarSign,
+  GitBranch,
+  Tag,
+  Settings,
+  Users,
+  Calendar,
+} from "lucide-react";
 import Link from "next/link";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
@@ -73,36 +83,37 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
         ? t("entitlements.tenantPlans.statusArchived")
         : plan.status;
 
-  const tabs: Array<{ id: TenantPlanDetailTabId; label: string; icon: ReactNode; count?: number }> = [
-    {
-      id: "general",
-      label: t("entitlements.tenantPlans.tabGeneral"),
-      icon: <Settings className="h-3.5 w-3.5" aria-hidden="true" />,
-    },
-    {
-      id: "features",
-      label: t("entitlements.tenantPlans.tabFeatures"),
-      icon: <Zap className="h-3.5 w-3.5" aria-hidden="true" />,
-      count: vm.localFeatures.size,
-    },
-    {
-      id: "pricing",
-      label: t("entitlements.tenantPlans.tabPricing"),
-      icon: <DollarSign className="h-3.5 w-3.5" aria-hidden="true" />,
-      count: vm.overrides.length + (vm.usdMonthly > 0 || vm.usdYearly > 0 ? 1 : 0),
-    },
-    {
-      id: "versions",
-      label: t("entitlements.tenantPlans.tabVersions"),
-      icon: <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />,
-      count: plan.versions.length,
-    },
-    {
-      id: "promotions",
-      label: t("entitlements.tenantPlans.tabPromotions"),
-      icon: <Tag className="h-3.5 w-3.5" aria-hidden="true" />,
-    },
-  ];
+  const tabs: Array<{ id: TenantPlanDetailTabId; label: string; icon: ReactNode; count?: number }> =
+    [
+      {
+        id: "general",
+        label: t("entitlements.tenantPlans.tabGeneral"),
+        icon: <Settings className="h-3.5 w-3.5" aria-hidden="true" />,
+      },
+      {
+        id: "features",
+        label: t("entitlements.tenantPlans.tabFeatures"),
+        icon: <Zap className="h-3.5 w-3.5" aria-hidden="true" />,
+        count: vm.localFeatures.size,
+      },
+      {
+        id: "pricing",
+        label: t("entitlements.tenantPlans.tabPricing"),
+        icon: <DollarSign className="h-3.5 w-3.5" aria-hidden="true" />,
+        count: vm.overrides.length + (vm.usdMonthly > 0 || vm.usdYearly > 0 ? 1 : 0),
+      },
+      {
+        id: "versions",
+        label: t("entitlements.tenantPlans.tabVersions"),
+        icon: <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />,
+        count: plan.versions.length,
+      },
+      {
+        id: "promotions",
+        label: t("entitlements.tenantPlans.tabPromotions"),
+        icon: <Tag className="h-3.5 w-3.5" aria-hidden="true" />,
+      },
+    ];
 
   return (
     <div className="flex flex-col gap-6 pb-12">

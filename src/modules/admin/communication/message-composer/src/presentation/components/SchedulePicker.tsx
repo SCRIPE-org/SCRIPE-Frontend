@@ -108,9 +108,7 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
   const recurringSummary = (() => {
     const time = value.recurring?.time || "09:00";
     if (value.recurring?.frequency === "weekly") {
-      const day = t(
-        `messaging.email.days.${DAY_KEYS[value.recurring?.dayOfWeek ?? 1]}`
-      );
+      const day = t(`messaging.email.days.${DAY_KEYS[value.recurring?.dayOfWeek ?? 1]}`);
       return t("messaging.email.recurringSendsWeekly", { day, time });
     }
     if (value.recurring?.frequency === "monthly") {
@@ -133,7 +131,7 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
               type="button"
               disabled={disabled}
               className={cn(
-                "flex flex-col items-center gap-1.5 rounded-nx-md border p-3 text-center transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                "flex flex-col items-center gap-1.5 rounded-nx-md border p-3 text-center transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                 value.mode === mode.id
                   ? "border-nx-accent bg-nx-accent-wash shadow-[inset_0_0_0_1px_var(--nx-accent)]"
                   : "border-nx-line hover:border-nx-line-hi",
@@ -312,7 +310,7 @@ export function SchedulePicker({ value, onChange, disabled }: SchedulePickerProp
               />
             </div>
 
-            <div className="flex items-center gap-2 rounded-nx-md border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] border bg-nx-accent-wash p-2">
+            <div className="flex items-center gap-2 rounded-nx-md border border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash p-2">
               <Timer className="h-4 w-4 shrink-0 text-nx-accent" aria-hidden="true" />
               <span className="text-xs text-nx-accent">{recurringSummary}</span>
             </div>

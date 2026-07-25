@@ -93,7 +93,7 @@ function Swatch({
       aria-label={ariaLabel}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="h-7 w-full cursor-pointer rounded-nx-control border border-nx-line bg-transparent p-0.5 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-nx-sm [&::-webkit-color-swatch]:border-0"
+      className="h-7 w-full cursor-pointer rounded-nx-control border border-nx-line bg-transparent p-0.5 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-nx-sm [&::-webkit-color-swatch]:border-0"
     />
   );
 }
@@ -126,7 +126,7 @@ export function BasePropsEditor({ block, onChange }: P) {
           type="button"
           onClick={() => upd({ visible: isHidden ? true : false })}
           aria-label={t(isHidden ? "studio.block.opt.showBlock" : "studio.block.opt.hideBlock")}
-          className="rounded-nx-sm p-0.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus"
+          className="rounded-nx-sm p-0.5 transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
         >
           {isHidden ? (
             <EyeOff className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
@@ -209,7 +209,10 @@ export function TextEditor({ block, onChange }: P) {
             value={p.alignment || "left"}
             onValueChange={(v) => upd({ alignment: v })}
             items={[
-              { v: "left", l: <OptIcon icon={AlignLeft}>{t("studio.block.opt.alignLeft")}</OptIcon> },
+              {
+                v: "left",
+                l: <OptIcon icon={AlignLeft}>{t("studio.block.opt.alignLeft")}</OptIcon>,
+              },
               {
                 v: "center",
                 l: <OptIcon icon={AlignCenter}>{t("studio.block.opt.alignCenter")}</OptIcon>,
@@ -450,7 +453,7 @@ export function FeatureListEditor({ block, onChange }: P) {
             type="button"
             onClick={() => upd({ items: items.filter((_, j) => j !== i) })}
             aria-label={t("studio.blocks.remove")}
-            className="mt-1 rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
+            className="mt-1 rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           >
             <X className="h-3 w-3" aria-hidden="true" />
           </button>
@@ -467,7 +470,7 @@ export function FeatureListEditor({ block, onChange }: P) {
               ],
             })
           }
-          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:underline focus-visible:outline-none focus-visible:shadow-nx-focus"
+          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:underline focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
         >
           <Plus className="h-3 w-3" aria-hidden="true" />
           {t("studio.block.addFeature")}
@@ -591,7 +594,11 @@ export function TestimonialEditor({ block, onChange }: P) {
           />
         </Field>
         <Field k="studio.block.ratingStars">
-          <Sel value={String(p.rating ?? 0)} onValueChange={(v) => upd({ rating: +v })} items={starItems} />
+          <Sel
+            value={String(p.rating ?? 0)}
+            onValueChange={(v) => upd({ rating: +v })}
+            items={starItems}
+          />
         </Field>
       </div>
       <div className="grid grid-cols-2 gap-1">
@@ -825,7 +832,10 @@ export function HeadingEditor({ block, onChange }: P) {
             value={p.alignment || "left"}
             onValueChange={(v) => upd({ alignment: v })}
             items={[
-              { v: "left", l: <OptIcon icon={AlignLeft}>{t("studio.block.opt.alignLeft")}</OptIcon> },
+              {
+                v: "left",
+                l: <OptIcon icon={AlignLeft}>{t("studio.block.opt.alignLeft")}</OptIcon>,
+              },
               {
                 v: "center",
                 l: <OptIcon icon={AlignCenter}>{t("studio.block.opt.alignCenter")}</OptIcon>,
@@ -1081,7 +1091,7 @@ export function StatsRowEditor({ block, onChange }: P) {
             type="button"
             onClick={() => upd({ items: items.filter((_, j) => j !== i) })}
             aria-label={t("studio.blocks.remove")}
-            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
+            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           >
             <X className="h-3 w-3" aria-hidden="true" />
           </button>
@@ -1098,7 +1108,7 @@ export function StatsRowEditor({ block, onChange }: P) {
               ],
             })
           }
-          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:underline focus-visible:outline-none focus-visible:shadow-nx-focus"
+          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:underline focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
         >
           <Plus className="h-3 w-3" aria-hidden="true" />
           {t("studio.block.addStat")}
@@ -1180,7 +1190,7 @@ export function SocialLinksEditor({ block, onChange }: P) {
             type="button"
             onClick={() => upd({ items: items.filter((_, j) => j !== i) })}
             aria-label={t("studio.blocks.remove")}
-            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
+            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           >
             <X className="h-3 w-3" aria-hidden="true" />
           </button>
@@ -1190,7 +1200,7 @@ export function SocialLinksEditor({ block, onChange }: P) {
         <button
           type="button"
           onClick={() => upd({ items: [...items, { platform: "Twitter", url: "https://" }] })}
-          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:underline focus-visible:outline-none focus-visible:shadow-nx-focus"
+          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:underline focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
         >
           <Plus className="h-3 w-3" aria-hidden="true" />
           {t("studio.block.addSocial")}
@@ -1264,7 +1274,7 @@ export function LogoCloudEditor({ block, onChange }: P) {
             type="button"
             onClick={() => upd({ items: items.filter((_, j) => j !== i) })}
             aria-label={t("studio.blocks.remove")}
-            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
+            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           >
             <X className="h-3 w-3" aria-hidden="true" />
           </button>
@@ -1274,7 +1284,7 @@ export function LogoCloudEditor({ block, onChange }: P) {
         <button
           type="button"
           onClick={() => upd({ items: [...items, { src: "", alt: "" }] })}
-          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:underline focus-visible:outline-none focus-visible:shadow-nx-focus"
+          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:underline focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
         >
           <Plus className="h-3 w-3" aria-hidden="true" />
           {t("studio.block.addLogo")}
@@ -1416,7 +1426,7 @@ export function IconRowEditor({ block, onChange }: P) {
             type="button"
             onClick={() => upd({ items: items.filter((_, j) => j !== i) })}
             aria-label={t("studio.blocks.remove")}
-            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
+            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           >
             <X className="h-3 w-3" aria-hidden="true" />
           </button>
@@ -1427,13 +1437,10 @@ export function IconRowEditor({ block, onChange }: P) {
           type="button"
           onClick={() =>
             upd({
-              items: [
-                ...items,
-                { icon: t("studio.block.opt.iconPlaceholderLink"), label: "" },
-              ],
+              items: [...items, { icon: t("studio.block.opt.iconPlaceholderLink"), label: "" }],
             })
           }
-          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:underline focus-visible:outline-none focus-visible:shadow-nx-focus"
+          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:underline focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
         >
           <Plus className="h-3 w-3" aria-hidden="true" />
           {t("studio.block.addIcon")}
@@ -1598,7 +1605,7 @@ export function AccordionEditor({ block, onChange }: P) {
               type="button"
               onClick={() => upd({ items: items.filter((_, j) => j !== i) })}
               aria-label={t("studio.blocks.remove")}
-              className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
+              className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
             >
               <X className="h-3 w-3" aria-hidden="true" />
             </button>
@@ -1620,7 +1627,7 @@ export function AccordionEditor({ block, onChange }: P) {
         <button
           type="button"
           onClick={() => upd({ items: [...items, { title: "", content: "" }] })}
-          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:underline focus-visible:outline-none focus-visible:shadow-nx-focus"
+          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:underline focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
         >
           <Plus className="h-3 w-3" aria-hidden="true" />
           {t("studio.block.addItem")}
@@ -1643,7 +1650,10 @@ export function AccordionEditor({ block, onChange }: P) {
             value={p.iconPosition || "right"}
             onValueChange={(v) => upd({ iconPosition: v })}
             items={[
-              { v: "left", l: <OptIcon icon={ArrowLeft}>{t("studio.block.opt.alignLeft")}</OptIcon> },
+              {
+                v: "left",
+                l: <OptIcon icon={ArrowLeft}>{t("studio.block.opt.alignLeft")}</OptIcon>,
+              },
               {
                 v: "right",
                 l: <OptIcon icon={ArrowRight}>{t("studio.block.opt.alignRight")}</OptIcon>,
@@ -1691,7 +1701,7 @@ export function ProgressStepsEditor({ block, onChange }: P) {
             type="button"
             onClick={() => upd({ items: items.filter((_, j) => j !== i) })}
             aria-label={t("studio.blocks.remove")}
-            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
+            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           >
             <X className="h-3 w-3" aria-hidden="true" />
           </button>
@@ -1701,7 +1711,7 @@ export function ProgressStepsEditor({ block, onChange }: P) {
         <button
           type="button"
           onClick={() => upd({ items: [...items, { label: "" }] })}
-          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:underline focus-visible:outline-none focus-visible:shadow-nx-focus"
+          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:underline focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
         >
           <Plus className="h-3 w-3" aria-hidden="true" />
           {t("studio.block.addStep")}
@@ -1763,7 +1773,7 @@ export function AvatarStackEditor({ block, onChange }: P) {
             type="button"
             onClick={() => upd({ avatarUrls: urls.filter((_, j) => j !== i) })}
             aria-label={t("studio.blocks.remove")}
-            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
+            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           >
             <X className="h-3 w-3" aria-hidden="true" />
           </button>
@@ -1773,7 +1783,7 @@ export function AvatarStackEditor({ block, onChange }: P) {
         <button
           type="button"
           onClick={() => upd({ avatarUrls: [...urls, ""] })}
-          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:underline focus-visible:outline-none focus-visible:shadow-nx-focus"
+          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:underline focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
         >
           <Plus className="h-3 w-3" aria-hidden="true" />
           {t("studio.block.addAvatar")}
@@ -1886,7 +1896,10 @@ export function GradientTextEditor({ block, onChange }: P) {
             value={p.alignment || "center"}
             onValueChange={(v) => upd({ alignment: v })}
             items={[
-              { v: "left", l: <OptIcon icon={AlignLeft}>{t("studio.block.opt.alignLeft")}</OptIcon> },
+              {
+                v: "left",
+                l: <OptIcon icon={AlignLeft}>{t("studio.block.opt.alignLeft")}</OptIcon>,
+              },
               {
                 v: "center",
                 l: <OptIcon icon={AlignCenter}>{t("studio.block.opt.alignCenter")}</OptIcon>,

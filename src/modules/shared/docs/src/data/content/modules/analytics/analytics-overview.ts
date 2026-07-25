@@ -79,9 +79,6 @@ registerPage({
   category: "modules",
   order: 1,
   sections,
-  relatedSlugs: [
-    "modules/work-management-overview",
-    "architecture/cross-module-collaboration",
-  ],
+  relatedSlugs: ["modules/work-management-overview", "architecture/cross-module-collaboration"],
   lastUpdated: "2026-07-14",
 });

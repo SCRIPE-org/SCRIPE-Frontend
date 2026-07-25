@@ -322,7 +322,7 @@ export function DraggableCanvasItem({
       }}
       onMouseDown={isAbsolute ? handleMouseDown : undefined}
       className={cn(
-        "group relative transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+        "group relative transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
         // Absolute mode: direct component rendering
         isAbsolute
           ? cn(
@@ -360,10 +360,8 @@ export function DraggableCanvasItem({
             {...listeners}
             aria-label={t("studio.builder.dragHandle")}
             className={cn(
-              "flex cursor-grab items-center justify-center rounded-nx-sm p-0.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none active:cursor-grabbing focus-visible:outline-none focus-visible:shadow-nx-focus",
-              isDragging
-                ? "text-nx-accent"
-                : "text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink-2"
+              "flex cursor-grab items-center justify-center rounded-nx-sm p-0.5 transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none active:cursor-grabbing motion-reduce:transition-none",
+              isDragging ? "text-nx-accent" : "text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink-2"
             )}
           >
             <GripVertical className="h-4 w-4" aria-hidden="true" />
@@ -381,9 +379,7 @@ export function DraggableCanvasItem({
 
           {/* Label */}
           <div className="min-w-0 flex-1">
-            <span className="block truncate text-xs font-medium text-nx-ink">
-              {componentLabel}
-            </span>
+            <span className="block truncate text-xs font-medium text-nx-ink">{componentLabel}</span>
             <span className="font-mono text-[9px] tabular-nums text-nx-ink-3">
               {component.gridColumn} / {component.gridRow}
             </span>

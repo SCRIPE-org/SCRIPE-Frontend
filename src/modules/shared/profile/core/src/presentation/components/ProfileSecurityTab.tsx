@@ -236,7 +236,7 @@ export function ProfileSecurityTab({
                   </div>
 
                   {passkeyVm.renamingId !== key.id && (
-                    <div className="flex items-center gap-1 opacity-0 transition-opacity duration-nx-micro group-hover:opacity-100 group-focus-within:opacity-100">
+                    <div className="flex items-center gap-1 opacity-0 transition-opacity duration-nx-micro group-focus-within:opacity-100 group-hover:opacity-100">
                       <Button
                         variant="ghost"
                         size="sm"
@@ -340,7 +340,12 @@ export function ProfileSecurityTab({
               <p className="text-xs text-nx-ink-2">{t("profile.security.totp.helpText")}</p>
               <div className="flex items-center gap-2.5 text-xs text-nx-ink-2">
                 {t("profile.security.totp.backupHint")}
-                <Button variant="outline" size="sm" className="h-7" onClick={() => setShowBackupCodes(true)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-7"
+                  onClick={() => setShowBackupCodes(true)}
+                >
                   {t("profile.security.totp.regenerateBackup")}
                 </Button>
               </div>
@@ -369,7 +374,12 @@ export function ProfileSecurityTab({
                 <p className="mt-0.5 text-xs text-nx-ink-2">{t("profile.security.qr.desc")}</p>
               </div>
             </div>
-            <Button variant="outline" size="sm" className="self-start" onClick={() => setShowLinkDevice(true)}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="self-start"
+              onClick={() => setShowLinkDevice(true)}
+            >
               {t("profile.security.qr.link")}
             </Button>
           </div>

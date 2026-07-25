@@ -57,9 +57,7 @@ export const PartyOrganizationListView = React.memo(function PartyOrganizationLi
         key: "createdAt",
         label: t("partyOrganization.columns.createdAt"),
         render: (value: string) =>
-          value
-            ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US")
-            : "-",
+          value ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US") : "-",
       },
     ],
     createFields: [

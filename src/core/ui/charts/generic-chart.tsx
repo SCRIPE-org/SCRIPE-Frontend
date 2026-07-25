@@ -226,7 +226,9 @@ export function GenericChart({
       // orders 10 before 9 and quietly lies about the shape of the series.
       if (sort)
         next = [...next].sort((a, b) =>
-          typeof a === "number" && typeof b === "number" ? a - b : String(a).localeCompare(String(b))
+          typeof a === "number" && typeof b === "number"
+            ? a - b
+            : String(a).localeCompare(String(b))
         );
       if (reverse) next = [...next].reverse();
       return next;
@@ -290,13 +292,15 @@ export function GenericChart({
     // Entry animation: ~300ms, and none at all under reduced motion. The
     // previous 2000ms easeInOutQuart replayed on every rebuild and read as
     // the chart re-drawing itself rather than settling.
-    const resolvedAnimation = (prefersReducedMotion || animation === false
-      ? false
-      : {
-          duration: 300,
-          easing: "easeOutQuart",
-          ...(typeof animation === "object" ? animation : {}),
-        }) as ChartOptions["animation"];
+    const resolvedAnimation = (
+      prefersReducedMotion || animation === false
+        ? false
+        : {
+            duration: 300,
+            easing: "easeOutQuart",
+            ...(typeof animation === "object" ? animation : {}),
+          }
+    ) as ChartOptions["animation"];
 
     // Chrome ink, resolved from the computed token values — which change when
     // the theme does, so resolvedTheme is a real dependency. The previous
@@ -404,7 +408,11 @@ export function GenericChart({
         bar: { borderRadius: 4, borderWidth: 0, borderSkipped: false, ...elements.bar },
       } as ChartOptions["elements"],
       animation: resolvedAnimation,
-      interaction: { intersect: false, mode: "index", ...interaction } as ChartOptions["interaction"],
+      interaction: {
+        intersect: false,
+        mode: "index",
+        ...interaction,
+      } as ChartOptions["interaction"],
       ...options,
     };
 

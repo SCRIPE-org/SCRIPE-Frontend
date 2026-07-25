@@ -75,7 +75,9 @@ const KNOWN_FIELD_STYLES = ["default", "rounded", "underlined", "filled"] as con
 type FieldStyle = (typeof KNOWN_FIELD_STYLES)[number];
 
 const resolveFieldStyle = (value: string | undefined | null): FieldStyle =>
-  (KNOWN_FIELD_STYLES as readonly string[]).includes(value ?? "") ? (value as FieldStyle) : "default";
+  (KNOWN_FIELD_STYLES as readonly string[]).includes(value ?? "")
+    ? (value as FieldStyle)
+    : "default";
 
 // Read-only is NOT disabled: the value stays full-ink and selectable (these
 // fields exist to be copied — client secrets, callback URLs), but the field

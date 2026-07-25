@@ -58,7 +58,8 @@ export function AppListingCard({
             <span className="truncate text-sm font-semibold text-nx-ink">{listing.name}</span>
             {listing.isFeatured && (
               <Badge variant="secondary" className="gap-1 text-xs">
-                <Zap className="size-3" aria-hidden="true" /> {t("marketplace.listingsFeaturedBadge")}
+                <Zap className="size-3" aria-hidden="true" />{" "}
+                {t("marketplace.listingsFeaturedBadge")}
               </Badge>
             )}
           </div>
@@ -130,7 +131,8 @@ export function AppListingCard({
               onClick={onPublish}
               disabled={isPublishing}
             >
-              <Globe className="size-3.5" aria-hidden="true" /> {t("marketplace.listingsPublishAction")}
+              <Globe className="size-3.5" aria-hidden="true" />{" "}
+              {t("marketplace.listingsPublishAction")}
             </Button>
           )}
           <Button

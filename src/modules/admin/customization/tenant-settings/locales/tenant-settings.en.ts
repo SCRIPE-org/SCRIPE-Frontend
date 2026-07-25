@@ -145,8 +145,7 @@ export const en = {
       blockEditorNote:
         "Drag blocks into slots above. Full block editing with rich content will be available in the studio v1.1 update.",
     },
-    systemBanner:
-      "Editing System Defaults — these apply to all tenants without custom settings",
+    systemBanner: "Editing System Defaults — these apply to all tenants without custom settings",
     systemTitle: "System Settings",
     systemDescription: "Platform-wide defaults inherited by all tenants",
   },

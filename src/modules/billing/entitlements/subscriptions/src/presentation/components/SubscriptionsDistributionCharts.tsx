@@ -126,7 +126,7 @@ export function SubscriptionsDistributionCharts({
                 </PieChart>
               </ChartContainer>
               <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-lg font-semibold tracking-tight tabular-nums text-nx-ink">
+                <span className="text-lg font-semibold tabular-nums tracking-tight text-nx-ink">
                   {totalCount}
                 </span>
                 <span className="text-[10px] font-semibold uppercase text-nx-ink-3">
@@ -137,7 +137,10 @@ export function SubscriptionsDistributionCharts({
 
             <div className="w-full flex-1 space-y-2.5">
               {statusPieData.map((item) => (
-                <div key={item.status} className="flex items-center justify-between text-xs font-medium">
+                <div
+                  key={item.status}
+                  className="flex items-center justify-between text-xs font-medium"
+                >
                   <div className="flex items-center gap-2">
                     <span
                       aria-hidden="true"
@@ -148,7 +151,9 @@ export function SubscriptionsDistributionCharts({
                   </div>
                   <div className="flex items-center gap-2 tabular-nums">
                     <span className="text-nx-ink">{item.value}</span>
-                    <span className="w-12 text-end text-[10px] text-nx-ink-3">{item.percentage}%</span>
+                    <span className="w-12 text-end text-[10px] text-nx-ink-3">
+                      {item.percentage}%
+                    </span>
                   </div>
                 </div>
               ))}
@@ -188,7 +193,7 @@ export function SubscriptionsDistributionCharts({
                 </PieChart>
               </ChartContainer>
               <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-lg font-semibold tracking-tight tabular-nums text-nx-ink">
+                <span className="text-lg font-semibold tabular-nums tracking-tight text-nx-ink">
                   {totalCount}
                 </span>
                 <span className="text-[10px] font-semibold uppercase text-nx-ink-3">
@@ -199,7 +204,10 @@ export function SubscriptionsDistributionCharts({
 
             <div className="w-full flex-1 space-y-2.5">
               {typePieData.map((item) => (
-                <div key={item.type} className="flex items-center justify-between text-xs font-medium">
+                <div
+                  key={item.type}
+                  className="flex items-center justify-between text-xs font-medium"
+                >
                   <div className="flex items-center gap-2">
                     <span
                       aria-hidden="true"
@@ -210,7 +218,9 @@ export function SubscriptionsDistributionCharts({
                   </div>
                   <div className="flex items-center gap-2 tabular-nums">
                     <span className="text-nx-ink">{item.value}</span>
-                    <span className="w-12 text-end text-[10px] text-nx-ink-3">{item.percentage}%</span>
+                    <span className="w-12 text-end text-[10px] text-nx-ink-3">
+                      {item.percentage}%
+                    </span>
                   </div>
                 </div>
               ))}
@@ -238,9 +248,19 @@ export function SubscriptionsDistributionCharts({
                 config={{ revenue: { label: t("entSubscriptions.amount") } }}
                 className="h-full w-full"
               >
-                <BarChart data={revenueBars} layout="vertical" margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+                <BarChart
+                  data={revenueBars}
+                  layout="vertical"
+                  margin={{ top: 5, right: 10, left: -20, bottom: 5 }}
+                >
                   <XAxis type="number" hide />
-                  <YAxis type="category" dataKey="edition" fontSize={10} tickLine={false} axisLine={false} />
+                  <YAxis
+                    type="category"
+                    dataKey="edition"
+                    fontSize={10}
+                    tickLine={false}
+                    axisLine={false}
+                  />
                   <ChartTooltip content={<ChartTooltipContent formatter={revenueFormatter} />} />
                   <Bar dataKey="revenue" radius={[0, 4, 4, 0]}>
                     {revenueBars.map((entry) => (

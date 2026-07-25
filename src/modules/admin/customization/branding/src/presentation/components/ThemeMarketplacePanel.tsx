@@ -448,9 +448,7 @@ function ThemeCard({
             }}
             className={cn(
               "flex h-6 w-6 items-center justify-center rounded transition-colors",
-              isPreviewing
-                ? "bg-primary/20 text-primary"
-                : "text-muted-foreground hover:bg-muted"
+              isPreviewing ? "bg-primary/20 text-primary" : "text-muted-foreground hover:bg-muted"
             )}
           >
             <Eye className="h-3 w-3" />

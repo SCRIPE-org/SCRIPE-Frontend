@@ -25,11 +25,7 @@ interface FeatureDefinitionFormFieldsProps {
  * Presentation UI component rendering the feature definition form fields.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
-export function FeatureDefinitionFormFields({
-  form,
-  mode,
-  t,
-}: FeatureDefinitionFormFieldsProps) {
+export function FeatureDefinitionFormFields({ form, mode, t }: FeatureDefinitionFormFieldsProps) {
   const valueTypeOptions: GenericSelectOption[] = [
     { value: "Boolean", label: t("entitlements.featureDefinitions.typeBoolean") },
     { value: "Numeric", label: t("entitlements.featureDefinitions.typeNumeric") },
@@ -64,9 +60,7 @@ export function FeatureDefinitionFormFields({
       {/* ── Display Names ── */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor="fd-name-en">
-            {t("entitlements.featureDefinitions.displayNameEn")}
-          </Label>
+          <Label htmlFor="fd-name-en">{t("entitlements.featureDefinitions.displayNameEn")}</Label>
           <Input
             id="fd-name-en"
             value={String(form.getValue("displayNameEn") ?? "")}
@@ -108,9 +102,7 @@ export function FeatureDefinitionFormFields({
 
       {/* ── Default Value ── */}
       <div className="space-y-1.5">
-        <Label htmlFor="fd-default">
-          {t("entitlements.featureDefinitions.defaultValue")}
-        </Label>
+        <Label htmlFor="fd-default">{t("entitlements.featureDefinitions.defaultValue")}</Label>
         <Input
           id="fd-default"
           value={String(form.getValue("defaultValue") ?? "")}
@@ -121,9 +113,7 @@ export function FeatureDefinitionFormFields({
 
       {/* ── Category ── */}
       <div className="space-y-1.5">
-        <Label htmlFor="fd-category">
-          {t("entitlements.featureDefinitions.category")}
-        </Label>
+        <Label htmlFor="fd-category">{t("entitlements.featureDefinitions.category")}</Label>
         <Input
           id="fd-category"
           value={String(form.getValue("category") ?? "")}
@@ -134,9 +124,7 @@ export function FeatureDefinitionFormFields({
 
       {/* ── Description ── */}
       <div className="space-y-1.5">
-        <Label htmlFor="fd-desc">
-          {t("entitlements.featureDefinitions.descriptionLabel")}
-        </Label>
+        <Label htmlFor="fd-desc">{t("entitlements.featureDefinitions.descriptionLabel")}</Label>
         <Textarea
           id="fd-desc"
           value={String(form.getValue("description") ?? "")}
@@ -148,9 +136,7 @@ export function FeatureDefinitionFormFields({
 
       {/* ── Sort Order ── */}
       <div className="space-y-1.5">
-        <Label htmlFor="fd-sort">
-          {t("entitlements.featureDefinitions.sortOrder")}
-        </Label>
+        <Label htmlFor="fd-sort">{t("entitlements.featureDefinitions.sortOrder")}</Label>
         <Input
           id="fd-sort"
           type="number"

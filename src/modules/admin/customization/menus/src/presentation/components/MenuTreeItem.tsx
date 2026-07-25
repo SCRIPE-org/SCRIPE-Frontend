@@ -246,7 +246,7 @@ export function MenuTreeItem({
         onDrop={handleDrop}
         className={cn(
           "group relative flex items-center gap-2 rounded-nx-md px-3 py-2.5",
-          "transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover",
+          "transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none",
           "border-s-2",
           node.isActive ? levelColor : "border-s-nx-line",
           !node.isActive && "opacity-60",
@@ -261,7 +261,7 @@ export function MenuTreeItem({
             aria-hidden="true"
             className={cn(
               "h-4 w-4 cursor-grab text-nx-ink-3 active:cursor-grabbing",
-              "shrink-0 opacity-0 transition-opacity duration-nx-micro ease-nx-enter motion-reduce:transition-none group-hover:opacity-100"
+              "shrink-0 opacity-0 transition-opacity duration-nx-micro ease-nx-enter group-hover:opacity-100 motion-reduce:transition-none"
             )}
           />
         )}
@@ -275,7 +275,7 @@ export function MenuTreeItem({
               onToggleExpand(node.id);
             }}
             aria-label={isExpanded ? t("common.collapseAll") : t("common.expandAll")}
-            className="shrink-0 rounded-nx-sm p-0.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
+            className="shrink-0 rounded-nx-sm p-0.5 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           >
             {isExpanded ? (
               <ChevronDown className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
@@ -339,7 +339,7 @@ export function MenuTreeItem({
 
         {/* Admin actions — only show if user has ANY action permission */}
         {hasAnyActionProp && (
-          <div className="ms-auto flex items-center gap-0.5 opacity-0 transition-opacity duration-nx-micro ease-nx-enter motion-reduce:transition-none group-hover:opacity-100 group-focus-within:opacity-100">
+          <div className="ms-auto flex items-center gap-0.5 opacity-0 transition-opacity duration-nx-micro ease-nx-enter group-focus-within:opacity-100 group-hover:opacity-100 motion-reduce:transition-none">
             {canReorder && onMoveUp && (
               <Button
                 variant="ghost"
@@ -364,7 +364,12 @@ export function MenuTreeItem({
             )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-7 w-7" aria-label={t("common.actions")}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  aria-label={t("common.actions")}
+                >
                   <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </DropdownMenuTrigger>

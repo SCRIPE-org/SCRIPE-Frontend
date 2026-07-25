@@ -1,9 +1,9 @@
 /**
-* StaffAssignment Service
-*
-* Handles all API calls for StaffAssignment.
-* Returns Models (DTOs) - Repository uses Mapper to convert to Entities.
-*/
+ * StaffAssignment Service
+ *
+ * Handles all API calls for StaffAssignment.
+ * Returns Models (DTOs) - Repository uses Mapper to convert to Entities.
+ */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import {
@@ -20,7 +20,11 @@ import { STAFF_ASSIGNMENT_ENDPOINTS } from "./staff-assignment.endpoints";
 export class StaffAssignmentService implements IStaffAssignmentService {
   constructor(private readonly api: IApiService) {}
 
-  async getAll(params: { page: number; pageSize: number; search?: string }): Promise<StaffAssignmentListResult> {
+  async getAll(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<StaffAssignmentListResult> {
     const url = buildUrl(STAFF_ASSIGNMENT_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,

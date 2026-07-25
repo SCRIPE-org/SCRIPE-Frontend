@@ -50,7 +50,7 @@ export function CliCommandInput({ commands, onSelectCommand }: CliCommandInputPr
         className={cn(
           "h-10 w-full rounded-nx-control border border-nx-line bg-nx-ground px-3 py-2 text-sm text-nx-ink placeholder:text-nx-ink-3",
           "transition-[color,border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-          "hover:border-nx-line-hi focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus"
+          "hover:border-nx-line-hi focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none"
         )}
       />
       {suggestions.length > 0 && (
@@ -67,7 +67,7 @@ export function CliCommandInput({ commands, onSelectCommand }: CliCommandInputPr
                 className={cn(
                   "w-full px-3 py-1.5 text-start font-mono text-xs text-nx-ink",
                   "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                  "hover:bg-nx-hover focus-visible:outline-none focus-visible:bg-nx-hover"
+                  "hover:bg-nx-hover focus-visible:bg-nx-hover focus-visible:outline-none"
                 )}
               >
                 {s}

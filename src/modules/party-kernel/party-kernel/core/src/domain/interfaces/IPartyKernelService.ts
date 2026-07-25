@@ -17,7 +17,11 @@ export interface PartyKernelListResult {
 }
 
 export interface IPartyKernelService {
-  getAll(params: { page: number; pageSize: number; search?: string }): Promise<PartyKernelListResult>;
+  getAll(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<PartyKernelListResult>;
   getById(id: string): Promise<PartyKernelModel>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;
   update(id: string, data: Record<string, unknown>): Promise<void>;

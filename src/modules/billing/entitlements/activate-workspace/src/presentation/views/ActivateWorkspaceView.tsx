@@ -81,7 +81,12 @@ export default function ActivateWorkspaceView() {
 
               {/* Main CTAs */}
               <div className="flex flex-col gap-3">
-                <Button onClick={handleRetryPayment} loading={isRetrying} size="lg" className="w-full">
+                <Button
+                  onClick={handleRetryPayment}
+                  loading={isRetrying}
+                  size="lg"
+                  className="w-full"
+                >
                   <CreditCard className="me-2 h-5 w-5" aria-hidden="true" />
                   {t("entitlements.activateWorkspace.retryCheckout")}
                 </Button>

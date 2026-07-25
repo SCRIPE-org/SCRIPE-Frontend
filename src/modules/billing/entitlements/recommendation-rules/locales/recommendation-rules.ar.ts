@@ -9,8 +9,7 @@ export const ar = {
         nameHelp: "معرّف فريد وثابت لهذه القاعدة.",
         condition: "الشرط",
         conditionPlaceholder: '{"team_size":"solo"}',
-        conditionHelp:
-          'قيمة واحدة: {"key":"value"}  |  مطابقة قيم متعددة: {"key":["v1","v2"]}',
+        conditionHelp: 'قيمة واحدة: {"key":"value"}  |  مطابقة قيم متعددة: {"key":["v1","v2"]}',
         tier: "المستوى الموصى به",
         scoreBonus: "مكافأة الدرجات",
         scoreBonusHelp: "النقاط التي تُضاف إلى درجة الإصدار المطابق.",

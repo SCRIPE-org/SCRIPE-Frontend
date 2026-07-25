@@ -29,13 +29,33 @@ interface ScopeOption {
 }
 
 const PLATFORM_SCOPES: ScopeOption[] = [
-  { value: "platform_only", icon: Server, labelKey: "webhooks.scopePlatformOnly", descKey: "webhooks.scopePlatformOnlyDesc" },
-  { value: "all_tenants", icon: Globe, labelKey: "webhooks.scopeAllTenants", descKey: "webhooks.scopeAllTenantsDesc" },
+  {
+    value: "platform_only",
+    icon: Server,
+    labelKey: "webhooks.scopePlatformOnly",
+    descKey: "webhooks.scopePlatformOnlyDesc",
+  },
+  {
+    value: "all_tenants",
+    icon: Globe,
+    labelKey: "webhooks.scopeAllTenants",
+    descKey: "webhooks.scopeAllTenantsDesc",
+  },
 ];
 
 const TENANT_SCOPES: ScopeOption[] = [
-  { value: "tenant_only", icon: Building2, labelKey: "webhooks.scopeTenantOnly", descKey: "webhooks.scopeTenantOnlyDesc" },
-  { value: "tenant_with_children", icon: Users, labelKey: "webhooks.scopeTenantWithChildren", descKey: "webhooks.scopeTenantWithChildrenDesc" },
+  {
+    value: "tenant_only",
+    icon: Building2,
+    labelKey: "webhooks.scopeTenantOnly",
+    descKey: "webhooks.scopeTenantOnlyDesc",
+  },
+  {
+    value: "tenant_with_children",
+    icon: Users,
+    labelKey: "webhooks.scopeTenantWithChildren",
+    descKey: "webhooks.scopeTenantWithChildrenDesc",
+  },
 ];
 
 // Accent tint on selection, hairline at rest — the tint's border needs a

@@ -118,11 +118,15 @@ export function OnboardingStatusCard({
             {capability(account.payoutsEnabled)}
           </div>
           <div>
-            <p className="mb-0.5 text-xs text-nx-ink-3">{t("entitlements.stripeConnect.currency")}</p>
+            <p className="mb-0.5 text-xs text-nx-ink-3">
+              {t("entitlements.stripeConnect.currency")}
+            </p>
             <p className="text-sm font-medium uppercase text-nx-ink">{account.currency || "—"}</p>
           </div>
           <div>
-            <p className="mb-0.5 text-xs text-nx-ink-3">{t("entitlements.stripeConnect.country")}</p>
+            <p className="mb-0.5 text-xs text-nx-ink-3">
+              {t("entitlements.stripeConnect.country")}
+            </p>
             <p className="text-sm font-medium uppercase text-nx-ink">{account.country || "—"}</p>
           </div>
         </div>
@@ -143,7 +147,11 @@ export function OnboardingStatusCard({
             </Button>
           ) : (
             <>
-              <Button variant="default" size="sm" onClick={() => onOpenOnboarding(account.tenantId)}>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => onOpenOnboarding(account.tenantId)}
+              >
                 <ExternalLink className="me-2 h-4 w-4" aria-hidden="true" />
                 {t("entitlements.stripeConnect.openOnboarding")}
               </Button>

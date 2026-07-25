@@ -381,7 +381,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t("shell.launcher.searchPlaceholder")}
               aria-label={t("shell.launcher.searchPlaceholder")}
-              className="ps-9 pe-11"
+              className="pe-11 ps-9"
             />
             {search && (
               <Button
@@ -621,7 +621,7 @@ function WorkspaceCard({
             "absolute top-1 flex h-5 w-5 items-center justify-center rounded-nx-sm border",
             "transition-opacity duration-nx-micro motion-reduce:transition-none",
             "start-1 disabled:cursor-wait",
-            "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 [@media(pointer:coarse)]:opacity-100",
+            "opacity-0 group-focus-within:opacity-100 group-hover:opacity-100 [@media(pointer:coarse)]:opacity-100",
             isPinned
               ? "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent opacity-100"
               : "border-transparent bg-nx-raised-2 text-nx-ink-2",

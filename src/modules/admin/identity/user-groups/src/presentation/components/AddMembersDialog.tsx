@@ -96,7 +96,9 @@ export function AddMembersDialog({
               type="multi"
             />
             {adminOptions.length === 0 && (
-              <p className="text-xs text-nx-ink-3">{t("userGroups.membersTab.allAdminsAssigned")}</p>
+              <p className="text-xs text-nx-ink-3">
+                {t("userGroups.membersTab.allAdminsAssigned")}
+              </p>
             )}
           </div>
         )}

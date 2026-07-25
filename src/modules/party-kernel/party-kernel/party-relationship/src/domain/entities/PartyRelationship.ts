@@ -1,48 +1,48 @@
 /**
-* PartyRelationship Entity
-*
-* Domain entity representing a PartyRelationship.
-*/
+ * PartyRelationship Entity
+ *
+ * Domain entity representing a PartyRelationship.
+ */
 
 /**
-* PartyRelationship data from API
-*/
+ * PartyRelationship data from API
+ */
 export interface PartyRelationshipData {
-id: string;
-sourcePartyId: string;
-targetPartyId: string;
-relationshipType: string;
-createdAt: string;
-modifiedAt?: string;
+  id: string;
+  sourcePartyId: string;
+  targetPartyId: string;
+  relationshipType: string;
+  createdAt: string;
+  modifiedAt?: string;
 }
 
 /**
-* PartyRelationship entity class
-*/
+ * PartyRelationship entity class
+ */
 export class PartyRelationship {
-constructor(public readonly data: PartyRelationshipData) {}
+  constructor(public readonly data: PartyRelationshipData) {}
 
-get id(): string {
-return this.data.id;
-}
+  get id(): string {
+    return this.data.id;
+  }
 
-get sourcePartyId(): string {
-return this.data.sourcePartyId;
-}
+  get sourcePartyId(): string {
+    return this.data.sourcePartyId;
+  }
 
-get targetPartyId(): string {
-return this.data.targetPartyId;
-}
+  get targetPartyId(): string {
+    return this.data.targetPartyId;
+  }
 
-get relationshipType(): string {
-return this.data.relationshipType;
-}
+  get relationshipType(): string {
+    return this.data.relationshipType;
+  }
 
-get createdAt(): string {
-return this.data.createdAt;
-}
+  get createdAt(): string {
+    return this.data.createdAt;
+  }
 
-get modifiedAt(): string | undefined {
-return this.data.modifiedAt;
-}
+  get modifiedAt(): string | undefined {
+    return this.data.modifiedAt;
+  }
 }

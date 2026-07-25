@@ -80,7 +80,9 @@ export function LeadsKanbanView({
             onDrop={(event) => void handleDrop(event, status)}
           >
             {/* Column header */}
-            <div className={`flex items-center justify-between rounded-md border px-2.5 py-2 ${border} bg-card/60`}>
+            <div
+              className={`flex items-center justify-between rounded-md border px-2.5 py-2 ${border} bg-card/60`}
+            >
               <div className="flex items-center gap-2">
                 <span className={`h-2 w-2 rounded-full ${dot}`} />
                 <span className={`text-xs font-medium ${text}`}>{t(`leads.status.${status}`)}</span>
@@ -98,7 +100,9 @@ export function LeadsKanbanView({
                 ))
               ) : col.length === 0 ? (
                 <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed border-border px-3 py-6">
-                  <p className="text-center text-[11px] text-muted-foreground">{t("leads.empty")}</p>
+                  <p className="text-center text-[11px] text-muted-foreground">
+                    {t("leads.empty")}
+                  </p>
                 </div>
               ) : (
                 col.map((lead) => (

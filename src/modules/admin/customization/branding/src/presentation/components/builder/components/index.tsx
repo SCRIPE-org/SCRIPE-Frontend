@@ -428,7 +428,7 @@ export function BuilderImage({
   if (!src) {
     return (
       <div
-        className="flex h-32 w-full items-center justify-center rounded-nx-md border border-dashed border-nx-line bg-nx-raised-2/40"
+        className="bg-nx-raised-2/40 flex h-32 w-full items-center justify-center rounded-nx-md border border-dashed border-nx-line"
         style={{
           borderRadius: `${borderRadius}px`,
           maxWidth: typeof maxWidth === "number" ? `${maxWidth}px` : maxWidth,
@@ -624,9 +624,7 @@ export function BuilderCustomHtml({
   // which escapes the style context and executes regardless of how safe the CSS itself is.
   return (
     <div className="scripe-custom-html w-full">
-      <style
-        dangerouslySetInnerHTML={{ __html: CUSTOM_HTML_RESET + sanitizeCss(css || "") }}
-      />
+      <style dangerouslySetInnerHTML={{ __html: CUSTOM_HTML_RESET + sanitizeCss(css || "") }} />
       <div dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(content) }} />
     </div>
   );

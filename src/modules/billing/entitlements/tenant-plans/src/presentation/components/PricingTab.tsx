@@ -19,14 +19,7 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from "@core/ui/table";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@core/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -577,7 +570,9 @@ export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
                       </TableHead>
                     )}
                     {plan.allowYearly && (
-                      <TableHead variant="numeric">{t("entitlements.tenantPlans.yearly")}</TableHead>
+                      <TableHead variant="numeric">
+                        {t("entitlements.tenantPlans.yearly")}
+                      </TableHead>
                     )}
                     {plan.allowLifetime && (
                       <TableHead variant="numeric">
@@ -667,7 +662,7 @@ export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
                   addOverride(curr.code);
                   setShowAddDialog(false);
                 }}
-                className="flex w-full items-center gap-3 rounded-nx-md border-2 border-transparent p-3 text-start transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
+                className="flex w-full items-center gap-3 rounded-nx-md border-2 border-transparent p-3 text-start transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
               >
                 <span className="text-lg" aria-hidden="true">
                   {curr.flag}

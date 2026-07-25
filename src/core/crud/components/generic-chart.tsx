@@ -64,8 +64,7 @@ export function GenericChart({ data, type, dataKey, height = 300, multiple }: Ch
 
   // Same inline read the auth surfaces use; re-resolves on the next render.
   const reducedMotion =
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // An empty dataset used to render a frame of naked axes, which reads as a
   // broken chart rather than as "nothing to plot yet".

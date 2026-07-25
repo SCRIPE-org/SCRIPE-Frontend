@@ -101,7 +101,7 @@ export function ResponsiveTabs({ tabs, activeTab, onTabChange, className }: Resp
               className={cn(
                 "relative inline-flex min-h-8 select-none items-center gap-2 rounded-nx-sm px-3 py-1.5 text-sm font-medium tabular-nums",
                 "transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                "focus-visible:outline-none focus-visible:shadow-nx-focus focus-visible:z-raised",
+                "focus-visible:z-raised focus-visible:shadow-nx-focus focus-visible:outline-none",
                 "[&_svg]:pointer-events-none [&_svg]:shrink-0",
                 isActive
                   ? "bg-nx-surface text-nx-ink shadow-[inset_0_0_0_1px_var(--nx-line-hi)]"

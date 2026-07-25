@@ -335,7 +335,8 @@ export function LeadsView() {
                       tabIndex={vm.page >= vm.totalPages || vm.isLoading ? -1 : undefined}
                       className={cn(
                         "h-8",
-                        (vm.page >= vm.totalPages || vm.isLoading) && "pointer-events-none opacity-50"
+                        (vm.page >= vm.totalPages || vm.isLoading) &&
+                          "pointer-events-none opacity-50"
                       )}
                       onClick={(e) => {
                         e.preventDefault();

@@ -385,10 +385,7 @@ function GenericTableInner<T extends Record<string, any>>({
                 key={index}
                 // Selection speaks the same language as a selected table row:
                 // the accent wash behind an accent hairline, no second ring.
-                className={cn(
-                  getCardClasses(),
-                  isSelected && "border-nx-accent bg-nx-accent-wash"
-                )}
+                className={cn(getCardClasses(), isSelected && "border-nx-accent bg-nx-accent-wash")}
               >
                 {selectable && (
                   <div className="flex items-center gap-2 border-b border-nx-line pb-2">
@@ -407,10 +404,7 @@ function GenericTableInner<T extends Record<string, any>>({
                   </div>
                 )}
                 {columns.map((column) => (
-                  <div
-                    key={String(column.key)}
-                    className="flex items-center justify-between gap-2"
-                  >
+                  <div key={String(column.key)} className="flex items-center justify-between gap-2">
                     <span className="text-sm font-medium text-nx-ink-2">{column.label}:</span>
                     <span className="text-sm text-nx-ink">
                       {column.render

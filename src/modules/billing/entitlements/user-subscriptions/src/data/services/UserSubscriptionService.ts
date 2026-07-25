@@ -39,16 +39,12 @@ export class UserSubscriptionService implements IUserSubscriptionService {
   }
 
   async getById(id: string): Promise<UserSubscriptionModel> {
-    return this.api.get<UserSubscriptionModel>(
-      USER_SUBSCRIPTIONS_ENDPOINTS.BY_ID(id)
-    );
+    return this.api.get<UserSubscriptionModel>(USER_SUBSCRIPTIONS_ENDPOINTS.BY_ID(id));
   }
 
   async getMySubscription(): Promise<UserSubscriptionModel | null> {
     try {
-      return await this.api.get<UserSubscriptionModel>(
-        USER_SUBSCRIPTIONS_ENDPOINTS.ME
-      );
+      return await this.api.get<UserSubscriptionModel>(USER_SUBSCRIPTIONS_ENDPOINTS.ME);
     } catch {
       // 204 No Content → null
       return null;
@@ -56,10 +52,7 @@ export class UserSubscriptionService implements IUserSubscriptionService {
   }
 
   async create(data: CreateUserSubscriptionRequest): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(
-      USER_SUBSCRIPTIONS_ENDPOINTS.CREATE,
-      data
-    );
+    return this.api.post<{ id: string }>(USER_SUBSCRIPTIONS_ENDPOINTS.CREATE, data);
   }
 
   async cancel(id: string): Promise<void> {
@@ -74,10 +67,7 @@ export class UserSubscriptionService implements IUserSubscriptionService {
     id: string,
     data: { newTenantPlanId: string; billingCycle: string; reason?: string }
   ): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(
-      USER_SUBSCRIPTIONS_ENDPOINTS.CHANGE_PLAN(id),
-      data
-    );
+    return this.api.post<{ id: string }>(USER_SUBSCRIPTIONS_ENDPOINTS.CHANGE_PLAN(id), data);
   }
 
   /**

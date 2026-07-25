@@ -142,9 +142,7 @@ export function TenantPermissionsDialog(props: TenantPermissionsDialogProps) {
               <Separator orientation="vertical" className="h-4" />
               <div className="flex items-center gap-1.5">
                 <ShieldCheck className="h-4 w-4 text-nx-accent" aria-hidden="true" />
-                <span className="font-medium tabular-nums text-nx-accent">
-                  {vm.selectedCount}
-                </span>
+                <span className="font-medium tabular-nums text-nx-accent">{vm.selectedCount}</span>
                 <span className="tabular-nums text-nx-ink-2">/ {vm.totalCount}</span>
               </div>
             </div>
@@ -178,8 +176,7 @@ export function TenantPermissionsDialog(props: TenantPermissionsDialogProps) {
               )}
               {!vm.hasParent && (
                 <span>
-                  <span className="tabular-nums">{vm.selectedCount}</span>{" "}
-                  {t("common.selected")}
+                  <span className="tabular-nums">{vm.selectedCount}</span> {t("common.selected")}
                 </span>
               )}
             </p>
@@ -260,7 +257,7 @@ function PermissionModule({ moduleGroup, vm }: PermissionModuleProps) {
       {/* Module Header — manual toggle (no Radix AccordionTrigger) */}
       <button
         type="button"
-        className="flex w-full items-center gap-3 border-b border-nx-line bg-nx-raised px-4 py-2.5 text-start transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover"
+        className="flex w-full items-center gap-3 border-b border-nx-line bg-nx-raised px-4 py-2.5 text-start transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none"
         onClick={() => vm.toggleModule(moduleGroup.module)}
       >
         <div
@@ -270,7 +267,7 @@ function PermissionModule({ moduleGroup, vm }: PermissionModuleProps) {
           tabIndex={0}
           className={cn(
             "flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-nx-sm border border-nx-line bg-nx-ground",
-            "focus-visible:outline-none focus-visible:shadow-nx-focus",
+            "focus-visible:shadow-nx-focus focus-visible:outline-none",
             stats.allChecked && "border-nx-accent bg-nx-accent-fill text-nx-on-fill",
             stats.someChecked &&
               "border-nx-accent bg-[color:color-mix(in_srgb,var(--nx-accent-fill)_50%,transparent)] text-nx-on-fill"
@@ -293,9 +290,7 @@ function PermissionModule({ moduleGroup, vm }: PermissionModuleProps) {
         </div>
         <span className="text-sm font-semibold capitalize">{moduleGroup.module}</span>
         <div className="me-2 ms-auto text-xs tabular-nums text-nx-ink-2">
-          <span className={stats.count > 0 ? "font-medium text-nx-accent" : ""}>
-            {stats.count}
-          </span>
+          <span className={stats.count > 0 ? "font-medium text-nx-accent" : ""}>{stats.count}</span>
           <span> / {stats.total}</span>
         </div>
         <ChevronRight
@@ -354,7 +349,7 @@ function PermissionCategory({ moduleKey, catGroup, vm }: PermissionCategoryProps
             tabIndex={0}
             className={cn(
               "flex h-3.5 w-3.5 shrink-0 cursor-pointer items-center justify-center rounded-nx-sm border border-nx-line bg-nx-ground",
-              "focus-visible:outline-none focus-visible:shadow-nx-focus",
+              "focus-visible:shadow-nx-focus focus-visible:outline-none",
               stats.allChecked && "border-nx-accent bg-nx-accent-fill text-nx-on-fill",
               stats.someChecked &&
                 "border-nx-accent bg-[color:color-mix(in_srgb,var(--nx-accent-fill)_50%,transparent)] text-nx-on-fill"

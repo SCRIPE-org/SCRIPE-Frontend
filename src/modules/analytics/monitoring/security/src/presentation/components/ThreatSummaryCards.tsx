@@ -27,31 +27,29 @@ interface Props {
   cardClasses?: string;
 }
 
-const THREAT_ICONS: Record<
-  string,
-  { icon: typeof ShieldAlert; tone: StatTone; labelKey: string }
-> = {
-  LoginFailed: {
-    icon: ShieldAlert,
-    tone: "danger",
-    labelKey: "security.threats.failedLogins",
-  },
-  AccountLocked: {
-    icon: Lock,
-    tone: "warning",
-    labelKey: "security.threats.accountLockouts",
-  },
-  AccessDenied: {
-    icon: Ban,
-    tone: "warning",
-    labelKey: "security.threats.accessDenied",
-  },
-  PrivilegeEscalation: {
-    icon: KeyRound,
-    tone: "info",
-    labelKey: "security.threats.privilegeEscalation",
-  },
-};
+const THREAT_ICONS: Record<string, { icon: typeof ShieldAlert; tone: StatTone; labelKey: string }> =
+  {
+    LoginFailed: {
+      icon: ShieldAlert,
+      tone: "danger",
+      labelKey: "security.threats.failedLogins",
+    },
+    AccountLocked: {
+      icon: Lock,
+      tone: "warning",
+      labelKey: "security.threats.accountLockouts",
+    },
+    AccessDenied: {
+      icon: Ban,
+      tone: "warning",
+      labelKey: "security.threats.accessDenied",
+    },
+    PrivilegeEscalation: {
+      icon: KeyRound,
+      tone: "info",
+      labelKey: "security.threats.privilegeEscalation",
+    },
+  };
 
 /**
  * Exported constant defining parameters and fields for threat summary cards configurations.

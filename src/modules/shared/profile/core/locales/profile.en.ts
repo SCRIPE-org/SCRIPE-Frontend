@@ -5,8 +5,7 @@ export const en = {
       "Unified user account controls featuring WebAuthn, active session revocation, and security audit logs.",
     loadError: {
       title: "Couldn't load your profile",
-      description:
-        "Something went wrong while fetching your account details. Please try again.",
+      description: "Something went wrong while fetching your account details. Please try again.",
     },
     nav: {
       general: "General",
@@ -199,7 +198,8 @@ export const en = {
       revoke: "Revoke",
       revokeAll: "Revoke All Other Sessions",
       revokeConfirmTitle: "Revoke this session?",
-      revokeConfirmDesc: "This device will be signed out immediately and will need to log in again.",
+      revokeConfirmDesc:
+        "This device will be signed out immediately and will need to log in again.",
       revokeAllConfirmTitle: "Revoke all other sessions?",
       revokeAllConfirmDesc:
         "Every other device currently signed in to your account will be logged out immediately. This device stays signed in.",

@@ -96,8 +96,9 @@ const DialogOverlay = React.forwardRef<
 ));
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
-interface DialogContentProps
-  extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {
+interface DialogContentProps extends React.ComponentPropsWithoutRef<
+  typeof DialogPrimitive.Content
+> {
   /**
    * "drawer" pins the panel to the inline-end edge and slides it in from
    * there. Consumers used to smuggle this in through className (right-edge

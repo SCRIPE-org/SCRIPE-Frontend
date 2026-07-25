@@ -30,7 +30,17 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Switch } from "@core/ui/switch";
-import { Building2, Pencil, Power, Trash2, LogIn, Pause, Ban, XCircle, AlertTriangle } from "lucide-react";
+import {
+  Building2,
+  Pencil,
+  Power,
+  Trash2,
+  LogIn,
+  Pause,
+  Ban,
+  XCircle,
+  AlertTriangle,
+} from "lucide-react";
 import type { Tenant } from "../../domain/entities/Tenant";
 import { TenantDeleteDialog } from "./TenantDeleteDialog";
 import { cn, formatDateUtc } from "@core/common/utils";
@@ -142,7 +152,12 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
         actions={
           <>
             {onEnter && canDrillDown && status !== "canceled" && (
-              <Button variant="default" size="sm" onClick={onEnter} disabled={status === "suspended"}>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={onEnter}
+                disabled={status === "suspended"}
+              >
                 <LogIn className="me-1.5 h-4 w-4" aria-hidden="true" />
                 {t("tenant.enterTenantWorld")}
               </Button>

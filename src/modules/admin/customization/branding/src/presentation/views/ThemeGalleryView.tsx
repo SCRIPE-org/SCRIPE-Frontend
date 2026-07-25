@@ -65,7 +65,13 @@ const G = "studio.gallery";
  */
 function relativeLuminance(hex: string): number {
   const clean = hex.replace("#", "");
-  const full = clean.length === 3 ? clean.split("").map((c) => c + c).join("") : clean;
+  const full =
+    clean.length === 3
+      ? clean
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : clean;
   if (full.length !== 6 || /[^0-9a-fA-F]/.test(full)) return 1;
   const channel = (start: number) => {
     const c = parseInt(full.slice(start, start + 2), 16) / 255;
@@ -102,11 +108,11 @@ export function ThemeGalleryView() {
       <div className="mb-8 rounded-nx-lg border border-nx-line bg-nx-surface px-8 py-10 text-center">
         <div className="mb-3 flex items-center justify-center gap-2">
           <Palette className="h-8 w-8 text-nx-accent" aria-hidden="true" />
-          <h1 className="text-3xl font-bold tracking-tight text-balance text-nx-ink">
+          <h1 className="text-balance text-3xl font-bold tracking-tight text-nx-ink">
             {t(`${G}.heroTitle`)}
           </h1>
         </div>
-        <p className="mx-auto max-w-xl text-sm leading-relaxed text-pretty text-nx-ink-2">
+        <p className="mx-auto max-w-xl text-pretty text-sm leading-relaxed text-nx-ink-2">
           {t(`${G}.heroSubtitle`)}
         </p>
 
@@ -147,7 +153,7 @@ export function ThemeGalleryView() {
               aria-pressed={vm.activeTab === tab}
               className={cn(
                 "rounded-nx-control px-4 py-2 text-sm font-medium transition-colors duration-nx-micro motion-reduce:transition-none",
-                "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                "focus-visible:shadow-nx-focus focus-visible:outline-none",
                 vm.activeTab === tab
                   ? "bg-nx-surface text-nx-ink shadow-nx-sm"
                   : "text-nx-ink-2 hover:text-nx-ink"
@@ -205,7 +211,7 @@ export function ThemeGalleryView() {
                 aria-pressed={vm.filters.category === cat}
                 className={cn(
                   "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors duration-nx-micro motion-reduce:transition-none",
-                  "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                  "focus-visible:shadow-nx-focus focus-visible:outline-none",
                   vm.filters.category === cat
                     ? "border-nx-accent bg-nx-accent-fill text-nx-on-fill shadow-nx-sm"
                     : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi hover:text-nx-ink"
@@ -291,7 +297,7 @@ export function ThemeGalleryView() {
               aria-pressed={!!vm.filters[key as keyof typeof vm.filters]}
               className={cn(
                 "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-colors duration-nx-micro motion-reduce:transition-none",
-                "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                "focus-visible:shadow-nx-focus focus-visible:outline-none",
                 vm.filters[key as keyof typeof vm.filters]
                   ? "border-nx-accent bg-nx-accent-wash font-medium text-nx-accent"
                   : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi hover:text-nx-ink"
@@ -389,7 +395,7 @@ export function ThemeGalleryView() {
                   aria-label={`${t("table.goToPage")} ${pageNum}`}
                   className={cn(
                     "h-8 w-8 rounded-nx-control text-xs font-medium transition-colors duration-nx-micro motion-reduce:transition-none",
-                    "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                    "focus-visible:shadow-nx-focus focus-visible:outline-none",
                     vm.page === pageNum
                       ? "bg-nx-accent-fill text-nx-on-fill shadow-nx-sm"
                       : "text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
@@ -476,7 +482,7 @@ function GalleryThemeCard({
         tabIndex={0}
         aria-label={t("studio.marketplace.preview")}
         aria-pressed={isPreviewing}
-        className="relative h-32 w-full cursor-pointer overflow-hidden focus-visible:outline-none focus-visible:shadow-nx-focus"
+        className="relative h-32 w-full cursor-pointer overflow-hidden focus-visible:shadow-nx-focus focus-visible:outline-none"
         onClick={onPreview}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") {

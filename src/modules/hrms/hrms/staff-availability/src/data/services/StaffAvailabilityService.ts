@@ -1,9 +1,9 @@
 /**
-* StaffAvailability Service
-*
-* Handles all API calls for StaffAvailability.
-* Returns Models (DTOs) - Repository uses Mapper to convert to Entities.
-*/
+ * StaffAvailability Service
+ *
+ * Handles all API calls for StaffAvailability.
+ * Returns Models (DTOs) - Repository uses Mapper to convert to Entities.
+ */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import {
@@ -20,7 +20,11 @@ import { STAFF_AVAILABILITY_ENDPOINTS } from "./staff-availability.endpoints";
 export class StaffAvailabilityService implements IStaffAvailabilityService {
   constructor(private readonly api: IApiService) {}
 
-  async getAll(params: { page: number; pageSize: number; search?: string }): Promise<StaffAvailabilityListResult> {
+  async getAll(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<StaffAvailabilityListResult> {
     const url = buildUrl(STAFF_AVAILABILITY_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,

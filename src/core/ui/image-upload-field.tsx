@@ -179,7 +179,9 @@ export function ImageUploadField({
     <div className="space-y-3">
       {/* Field anatomy: label → hint → control → error */}
       {label && <Label>{label}</Label>}
-      {description && <p className="-mt-1.5 text-xs leading-relaxed text-nx-ink-3">{description}</p>}
+      {description && (
+        <p className="-mt-1.5 text-xs leading-relaxed text-nx-ink-3">{description}</p>
+      )}
 
       {/* Filled state — the value itself is the proof, so it gets a real row:
           thumbnail on the neutral raised step (never white, which blows out in
@@ -199,10 +201,7 @@ export function ImageUploadField({
             <p className="truncate font-mono text-xs text-nx-ink-2">{value}</p>
             {isUploading && (
               <div className="mt-1 flex items-center gap-1.5 text-xs text-nx-ink-3">
-                <Loader2
-                  className="h-3 w-3 motion-safe:animate-spin"
-                  aria-hidden="true"
-                />
+                <Loader2 className="h-3 w-3 motion-safe:animate-spin" aria-hidden="true" />
                 <span>{t("imageUpload.uploading") || "Uploading..."}</span>
               </div>
             )}
@@ -257,7 +256,7 @@ export function ImageUploadField({
             className={cn(
               "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-nx-control border border-dashed p-6 text-center",
               "transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-              "focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
+              "focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none",
               isDragging
                 ? "border-nx-accent bg-nx-accent-wash"
                 : "border-nx-line bg-nx-ground hover:border-nx-line-hi hover:bg-nx-hover",

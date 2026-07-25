@@ -33,15 +33,8 @@ import { BarChart3, Activity } from "lucide-react";
 
 export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStreamView() {
   const { t, direction } = useI18n();
-  const {
-    events,
-    totalCount,
-    page,
-    setPage,
-    loading,
-    error,
-    pageSize,
-  } = useAnalyticsEventViewModel();
+  const { events, totalCount, page, setPage, loading, error, pageSize } =
+    useAnalyticsEventViewModel();
 
   const isRtl = direction === "rtl";
 
@@ -82,7 +75,9 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
 
       {/* Loading */}
       {loading && (
-        <div style={{ textAlign: "center", padding: "2rem", color: "hsl(var(--muted-foreground))" }}>
+        <div
+          style={{ textAlign: "center", padding: "2rem", color: "hsl(var(--muted-foreground))" }}
+        >
           {t("analyticsEvents.loading")}
         </div>
       )}
@@ -118,34 +113,75 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
             >
               <thead>
                 <tr style={{ backgroundColor: "hsl(var(--muted))" }}>
-                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "hsl(var(--foreground))", borderBottom: "1px solid hsl(var(--border))" }}>
+                  <th
+                    style={{
+                      padding: "0.75rem 1rem",
+                      fontWeight: 600,
+                      color: "hsl(var(--foreground))",
+                      borderBottom: "1px solid hsl(var(--border))",
+                    }}
+                  >
                     {t("analyticsEvents.columns.name")}
                   </th>
-                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "hsl(var(--foreground))", borderBottom: "1px solid hsl(var(--border))" }}>
+                  <th
+                    style={{
+                      padding: "0.75rem 1rem",
+                      fontWeight: 600,
+                      color: "hsl(var(--foreground))",
+                      borderBottom: "1px solid hsl(var(--border))",
+                    }}
+                  >
                     {t("analyticsEvents.columns.module")}
                   </th>
-                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "hsl(var(--foreground))", borderBottom: "1px solid hsl(var(--border))" }}>
+                  <th
+                    style={{
+                      padding: "0.75rem 1rem",
+                      fontWeight: 600,
+                      color: "hsl(var(--foreground))",
+                      borderBottom: "1px solid hsl(var(--border))",
+                    }}
+                  >
                     {t("analyticsEvents.columns.occurredAt")}
                   </th>
-                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "hsl(var(--foreground))", borderBottom: "1px solid hsl(var(--border))" }}>
+                  <th
+                    style={{
+                      padding: "0.75rem 1rem",
+                      fontWeight: 600,
+                      color: "hsl(var(--foreground))",
+                      borderBottom: "1px solid hsl(var(--border))",
+                    }}
+                  >
                     {t("analyticsEvents.columns.subjectType")}
                   </th>
-                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "hsl(var(--foreground))", borderBottom: "1px solid hsl(var(--border))" }}>
+                  <th
+                    style={{
+                      padding: "0.75rem 1rem",
+                      fontWeight: 600,
+                      color: "hsl(var(--foreground))",
+                      borderBottom: "1px solid hsl(var(--border))",
+                    }}
+                  >
                     {t("analyticsEvents.columns.subjectId")}
                   </th>
-                  <th style={{ padding: "0.75rem 1rem", fontWeight: 600, color: "hsl(var(--foreground))", borderBottom: "1px solid hsl(var(--border))" }}>
+                  <th
+                    style={{
+                      padding: "0.75rem 1rem",
+                      fontWeight: 600,
+                      color: "hsl(var(--foreground))",
+                      borderBottom: "1px solid hsl(var(--border))",
+                    }}
+                  >
                     {t("analyticsEvents.columns.numericValue")}
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {events.map((ev) => (
-                  <tr
-                    key={ev.id}
-                    style={{ borderBottom: "1px solid hsl(var(--border))" }}
-                  >
+                  <tr key={ev.id} style={{ borderBottom: "1px solid hsl(var(--border))" }}>
                     <td style={{ padding: "0.75rem 1rem", fontWeight: 500 }}>{ev.eventName}</td>
-                    <td style={{ padding: "0.75rem 1rem", color: "hsl(var(--muted-foreground))" }}>{ev.sourceModule}</td>
+                    <td style={{ padding: "0.75rem 1rem", color: "hsl(var(--muted-foreground))" }}>
+                      {ev.sourceModule}
+                    </td>
                     <td style={{ padding: "0.75rem 1rem", color: "hsl(var(--muted-foreground))" }}>
                       {new Date(ev.occurredAt).toLocaleString()}
                     </td>

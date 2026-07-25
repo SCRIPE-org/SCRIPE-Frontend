@@ -54,17 +54,11 @@ export class MessageTemplateService implements IMessageTemplateService {
   }
 
   async clone(id: string, suffix?: string): Promise<{ id: string }> {
-    const url = buildUrl(
-      MESSAGE_TEMPLATE_ENDPOINTS.CLONE(id),
-      suffix ? { suffix } : undefined
-    );
+    const url = buildUrl(MESSAGE_TEMPLATE_ENDPOINTS.CLONE(id), suffix ? { suffix } : undefined);
     return this.api.post<{ id: string }>(url, {});
   }
 
   async preview(data: PreviewTemplateJson): Promise<PreviewTemplateResponseJson> {
-    return this.api.post<PreviewTemplateResponseJson>(
-      MESSAGE_TEMPLATE_ENDPOINTS.PREVIEW,
-      data
-    );
+    return this.api.post<PreviewTemplateResponseJson>(MESSAGE_TEMPLATE_ENDPOINTS.PREVIEW, data);
   }
 }

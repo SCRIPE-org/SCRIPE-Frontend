@@ -107,8 +107,7 @@ export const en = {
     // copy lives here alongside the other shared marketplace-wide keys.
     vendor: {
       earningsTitle: "My Earnings",
-      earningsDescription:
-        "View your sales reports, pending payouts, and download tax documents.",
+      earningsDescription: "View your sales reports, pending payouts, and download tax documents.",
       earningsFeatureReports: "Sales and revenue reports",
       earningsFeaturePayouts: "Pending and completed payouts",
       earningsFeatureTax: "Downloadable tax documents",

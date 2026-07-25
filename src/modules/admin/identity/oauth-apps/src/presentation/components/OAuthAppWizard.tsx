@@ -107,7 +107,11 @@ export function OAuthAppWizard({ vm }: OAuthAppWizardProps) {
               >
                 {currentStep > s.id ? "✓" : s.id}
               </div>
-              <span className={currentStep === s.id ? "font-bold text-nx-accent" : "font-normal text-nx-ink-3"}>
+              <span
+                className={
+                  currentStep === s.id ? "font-bold text-nx-accent" : "font-normal text-nx-ink-3"
+                }
+              >
                 {s.label}
               </span>
             </div>

@@ -62,7 +62,7 @@ export function CustomerLogosSection({ vm }: CustomerLogosSectionProps) {
             {logos.map((logo, idx) => (
               <div
                 key={logo.id}
-                className="flex items-center gap-3 rounded-nx-md border border-nx-line bg-nx-raised px-4 py-2.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi"
+                className="flex items-center gap-3 rounded-nx-md border border-nx-line bg-nx-raised px-4 py-2.5 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi motion-reduce:transition-none"
               >
                 <div className="flex flex-col gap-0.5">
                   <Button

@@ -26,37 +26,42 @@ interface TenantStatsProps {
 export function TenantStats({ tenantId, onTabChange }: TenantStatsProps) {
   const { t, direction, stats, loading } = useTenantStatsViewModel({ tenantId });
 
-  const statCards: { key: string; label: string; value: number; icon: typeof Users; tone: StatTone }[] =
-    [
-      {
-        key: "admins",
-        label: t("tenant.statsAdmins"),
-        value: stats?.adminsCount ?? 0,
-        icon: Users,
-        tone: "info",
-      },
-      {
-        key: "roles",
-        label: t("tenant.statsRoles"),
-        value: stats?.rolesCount ?? 0,
-        icon: Shield,
-        tone: "neutral",
-      },
-      {
-        key: "subtenants",
-        label: t("tenant.statsSubTenants"),
-        value: stats?.subTenantsCount ?? 0,
-        icon: Building2,
-        tone: "success",
-      },
-      {
-        key: "permissions",
-        label: t("tenant.statsPermissions"),
-        value: stats?.permissionsCount ?? 0,
-        icon: Key,
-        tone: "warning",
-      },
-    ];
+  const statCards: {
+    key: string;
+    label: string;
+    value: number;
+    icon: typeof Users;
+    tone: StatTone;
+  }[] = [
+    {
+      key: "admins",
+      label: t("tenant.statsAdmins"),
+      value: stats?.adminsCount ?? 0,
+      icon: Users,
+      tone: "info",
+    },
+    {
+      key: "roles",
+      label: t("tenant.statsRoles"),
+      value: stats?.rolesCount ?? 0,
+      icon: Shield,
+      tone: "neutral",
+    },
+    {
+      key: "subtenants",
+      label: t("tenant.statsSubTenants"),
+      value: stats?.subTenantsCount ?? 0,
+      icon: Building2,
+      tone: "success",
+    },
+    {
+      key: "permissions",
+      label: t("tenant.statsPermissions"),
+      value: stats?.permissionsCount ?? 0,
+      icon: Key,
+      tone: "warning",
+    },
+  ];
 
   return (
     <div className="grid grid-cols-2 gap-3 md:grid-cols-4" dir={direction}>

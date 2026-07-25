@@ -108,7 +108,9 @@ export function AvatarUpload({
         className={cn(
           "flex flex-col items-center gap-6 rounded-nx-lg border-2 border-dashed p-6 sm:flex-row",
           "transition-[border-color,background-color] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
-          isDragging ? "border-nx-accent bg-nx-accent-wash" : "border-nx-line hover:border-nx-line-hi"
+          isDragging
+            ? "border-nx-accent bg-nx-accent-wash"
+            : "border-nx-line hover:border-nx-line-hi"
         )}
       >
         <div
@@ -122,7 +124,7 @@ export function AvatarUpload({
             }
           }}
           aria-label={t("profile.avatar.changePhoto")}
-          className="group relative cursor-pointer rounded-full focus-visible:outline-none focus-visible:shadow-nx-focus"
+          className="group relative cursor-pointer rounded-full focus-visible:shadow-nx-focus focus-visible:outline-none"
         >
           <Avatar className="h-24 w-24 border border-nx-line shadow-nx-sm">
             {displayUrl && !imageError && (

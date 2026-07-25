@@ -12,14 +12,7 @@ import { Switch } from "@core/ui/switch";
 import { Label } from "@core/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { EmptyState } from "@core/ui/empty-state";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from "@core/ui/table";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@core/ui/table";
 import {
   RotateCcw,
   History,
@@ -288,7 +281,7 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
               size="sm"
               className={
                 vm.isSaveSuccess
-                  ? "pointer-events-none bg-success transition-colors duration-nx-panel ease-nx-enter motion-reduce:transition-none hover:bg-success"
+                  ? "pointer-events-none bg-success transition-colors duration-nx-panel ease-nx-enter hover:bg-success motion-reduce:transition-none"
                   : "transition-colors duration-nx-panel ease-nx-enter motion-reduce:transition-none"
               }
             >

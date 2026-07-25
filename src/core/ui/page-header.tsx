@@ -91,7 +91,7 @@ export function PageHeader({
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
-            <h1 className="min-w-0 truncate text-xl font-bold leading-tight tracking-tight text-nx-ink text-balance">
+            <h1 className="min-w-0 truncate text-balance text-xl font-bold leading-tight tracking-tight text-nx-ink">
               {title}
             </h1>
             {badges}
@@ -103,7 +103,7 @@ export function PageHeader({
           )}
         </div>
 
-        {actions && <div className="flex flex-wrap items-center gap-2 ms-auto">{actions}</div>}
+        {actions && <div className="ms-auto flex flex-wrap items-center gap-2">{actions}</div>}
       </div>
 
       {meta && meta.length > 0 && (
@@ -124,7 +124,7 @@ export function PageHeader({
                 <dt className="truncate text-[11px] font-semibold uppercase leading-none tracking-wider text-nx-ink-3">
                   {entry.label}
                 </dt>
-                <dd className="mt-1.5 truncate text-sm font-semibold leading-none tabular-nums text-nx-ink">
+                <dd className="mt-1.5 truncate text-sm font-semibold tabular-nums leading-none text-nx-ink">
                   {entry.value}
                 </dd>
               </div>

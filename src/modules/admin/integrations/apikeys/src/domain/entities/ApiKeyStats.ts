@@ -18,20 +18,48 @@ export interface ApiKeyStatsData {
 export class ApiKeyStats {
   constructor(private readonly data: ApiKeyStatsData) {}
 
-  get totalHits() { return this.data.totalHits; }
-  get totalSuccessHits() { return this.data.totalSuccessHits; }
-  get totalFailureHits() { return this.data.totalFailureHits; }
-  get blockedHits() { return this.data.blockedHits; }
-  get successRatePercent() { return this.data.successRatePercent; }
-  get avgResponseTimeMs() { return this.data.avgResponseTimeMs; }
-  get lastUsedAt() { return this.data.lastUsedAt; }
-  get lastUsedFromIp() { return this.data.lastUsedFromIp; }
-  get currentMonthHits() { return this.data.currentMonthHits; }
-  get monthlyQuota() { return this.data.monthlyQuota; }
-  get monthlyQuotaUsedPercent() { return this.data.monthlyQuotaUsedPercent; }
-  get currentMinuteHits() { return this.data.currentMinuteHits; }
-  get effectiveRateLimitPerMinute() { return this.data.effectiveRateLimitPerMinute; }
-  get rateLimitUsedPercent() { return this.data.rateLimitUsedPercent; }
+  get totalHits() {
+    return this.data.totalHits;
+  }
+  get totalSuccessHits() {
+    return this.data.totalSuccessHits;
+  }
+  get totalFailureHits() {
+    return this.data.totalFailureHits;
+  }
+  get blockedHits() {
+    return this.data.blockedHits;
+  }
+  get successRatePercent() {
+    return this.data.successRatePercent;
+  }
+  get avgResponseTimeMs() {
+    return this.data.avgResponseTimeMs;
+  }
+  get lastUsedAt() {
+    return this.data.lastUsedAt;
+  }
+  get lastUsedFromIp() {
+    return this.data.lastUsedFromIp;
+  }
+  get currentMonthHits() {
+    return this.data.currentMonthHits;
+  }
+  get monthlyQuota() {
+    return this.data.monthlyQuota;
+  }
+  get monthlyQuotaUsedPercent() {
+    return this.data.monthlyQuotaUsedPercent;
+  }
+  get currentMinuteHits() {
+    return this.data.currentMinuteHits;
+  }
+  get effectiveRateLimitPerMinute() {
+    return this.data.effectiveRateLimitPerMinute;
+  }
+  get rateLimitUsedPercent() {
+    return this.data.rateLimitUsedPercent;
+  }
 
   get successRateColor(): "green" | "yellow" | "red" {
     if (this.data.successRatePercent >= 95) return "green";

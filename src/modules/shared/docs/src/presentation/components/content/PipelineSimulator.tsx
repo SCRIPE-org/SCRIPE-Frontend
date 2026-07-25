@@ -140,7 +140,7 @@ export function PipelineSimulator({ titleKey }: PipelineSimulatorProps) {
             <div
               key={i}
               className={
-                log.startsWith(" -> ")
+                log.startsWith("->")
                   ? "docs-terminal-output"
                   : "docs-terminal-output text-nx-accent"
               }

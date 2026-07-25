@@ -140,7 +140,7 @@ export const ResponsiveChip: React.FC<{
         className={cn(
           "inline-flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full",
           "transition-[color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-          "hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
+          "hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none"
         )}
       >
         <X className="h-2.5 w-2.5" aria-hidden="true" />

@@ -17,7 +17,12 @@ export interface CustomFieldListResult {
 }
 
 export interface ICustomFieldService {
-  getAll(params: { page: number; pageSize: number; search?: string; entityTypeKey?: string }): Promise<CustomFieldListResult>;
+  getAll(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+    entityTypeKey?: string;
+  }): Promise<CustomFieldListResult>;
   getById(id: string): Promise<CustomFieldModel>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;
   update(id: string, data: Record<string, unknown>): Promise<void>;

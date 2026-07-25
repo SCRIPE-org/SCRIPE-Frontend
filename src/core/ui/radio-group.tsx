@@ -90,7 +90,7 @@ const RadioGroupItem = React.forwardRef<
         CONTROL_SURFACE[effectiveDesign],
         // colour-only transition at micro speed; motion-reduce drops it
         "transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-        "focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
+        "focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none",
         CONTROL_DISABLED,
         className
       )}
@@ -99,7 +99,7 @@ const RadioGroupItem = React.forwardRef<
       <RadioGroupPrimitive.Indicator
         // dot-in at micro speed — transform+opacity only; the indicator
         // only mounts when checked, so animate-in needs no state variant
-        className="flex h-full w-full items-center justify-center animate-in fade-in zoom-in-75 duration-nx-micro ease-nx-enter motion-reduce:animate-none"
+        className="flex h-full w-full items-center justify-center duration-nx-micro ease-nx-enter animate-in fade-in zoom-in-75 motion-reduce:animate-none"
       >
         <Circle className="h-2 w-2 fill-current text-current" aria-hidden="true" />
       </RadioGroupPrimitive.Indicator>

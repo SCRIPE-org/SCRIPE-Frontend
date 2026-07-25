@@ -24,12 +24,13 @@ const STATUS_OPTIONS: { value: DsrStatus; labelKey: string; variant: BadgeProps[
   { value: "PartiallyCompleted", labelKey: "compliance.partiallyCompleted", variant: "success" },
 ];
 
-const TYPE_OPTIONS: { value: DsrRequestType; labelKey: string; variant: BadgeProps["variant"] }[] = [
-  { value: "Export", labelKey: "compliance.export", variant: "info" },
-  { value: "Erasure", labelKey: "compliance.erasure", variant: "error" },
-  { value: "Rectification", labelKey: "compliance.rectification", variant: "default" },
-  { value: "Restriction", labelKey: "compliance.restriction", variant: "warning" },
-];
+const TYPE_OPTIONS: { value: DsrRequestType; labelKey: string; variant: BadgeProps["variant"] }[] =
+  [
+    { value: "Export", labelKey: "compliance.export", variant: "info" },
+    { value: "Erasure", labelKey: "compliance.erasure", variant: "error" },
+    { value: "Rectification", labelKey: "compliance.rectification", variant: "default" },
+    { value: "Restriction", labelKey: "compliance.restriction", variant: "warning" },
+  ];
 
 const FILTER_PILL_MOTION =
   "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none";

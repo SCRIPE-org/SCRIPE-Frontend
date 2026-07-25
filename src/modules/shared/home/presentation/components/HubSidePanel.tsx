@@ -99,7 +99,7 @@ function RecentRow({
   return (
     <button
       type="button"
-      className="flex items-center gap-2.5 rounded-nx-md border border-transparent px-2.5 py-2 text-start transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
+      className="flex items-center gap-2.5 rounded-nx-md border border-transparent px-2.5 py-2 text-start transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
     >
       {/* Event chip keeps its data-driven gradient; the icon inherits the
           fill-contrast ink so tenant palettes stay readable. */}

@@ -20,15 +20,11 @@ export class SubscriptionService implements ISubscriptionService {
   // ── Queries ──
 
   async getAll(): Promise<GlobalSubscriptionModel[]> {
-    return this.api.get<GlobalSubscriptionModel[]>(
-      SUBSCRIPTION_ENDPOINTS.LIST_ALL
-    );
+    return this.api.get<GlobalSubscriptionModel[]>(SUBSCRIPTION_ENDPOINTS.LIST_ALL);
   }
 
   async getByTenant(tenantId: string): Promise<SubscriptionListModel[]> {
-    return this.api.get<SubscriptionListModel[]>(
-      SUBSCRIPTION_ENDPOINTS.LIST_BY_TENANT(tenantId)
-    );
+    return this.api.get<SubscriptionListModel[]>(SUBSCRIPTION_ENDPOINTS.LIST_BY_TENANT(tenantId));
   }
 
   async getById(id: string): Promise<SubscriptionModel> {
@@ -59,10 +55,7 @@ export class SubscriptionService implements ISubscriptionService {
       skipPayment?: boolean;
     }
   ): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(
-      SUBSCRIPTION_ENDPOINTS.ASSIGN(tenantId),
-      data
-    );
+    return this.api.post<{ id: string }>(SUBSCRIPTION_ENDPOINTS.ASSIGN(tenantId), data);
   }
 
   async change(
@@ -103,10 +96,7 @@ export class SubscriptionService implements ISubscriptionService {
   }
 
   async resume(tenantId: string, type?: string): Promise<void> {
-    await this.api.post(
-      SUBSCRIPTION_ENDPOINTS.RESUME(tenantId),
-      type ? { type } : {}
-    );
+    await this.api.post(SUBSCRIPTION_ENDPOINTS.RESUME(tenantId), type ? { type } : {});
   }
 
   async cancel(
@@ -151,9 +141,7 @@ export class SubscriptionService implements ISubscriptionService {
       overflowCount: number;
     }[];
   }> {
-    return this.api.get(
-      SUBSCRIPTION_ENDPOINTS.DOWNGRADE_IMPACT(tenantId, targetEditionId)
-    );
+    return this.api.get(SUBSCRIPTION_ENDPOINTS.DOWNGRADE_IMPACT(tenantId, targetEditionId));
   }
 
   // ── Export (blob download) ──

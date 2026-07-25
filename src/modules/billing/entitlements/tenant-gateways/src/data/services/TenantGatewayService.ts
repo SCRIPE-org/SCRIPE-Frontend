@@ -18,10 +18,7 @@ export class TenantGatewayService implements ITenantGatewayService {
   }
 
   async configureGateway(data: ConfigureGatewayModel): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(
-      TENANT_GATEWAYS_ENDPOINTS.CONFIGURE,
-      data
-    );
+    return this.api.post<{ id: string }>(TENANT_GATEWAYS_ENDPOINTS.CONFIGURE, data);
   }
 
   async verifyGateway(gatewayType: string): Promise<{ isVerified: boolean }> {

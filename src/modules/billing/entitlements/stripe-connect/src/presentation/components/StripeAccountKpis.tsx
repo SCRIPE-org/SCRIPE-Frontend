@@ -201,7 +201,7 @@ function CapabilityRow({ label, enabled }: { label: string; enabled: boolean }) 
   const { t } = useI18n();
 
   return (
-    <div className="flex items-center justify-between rounded-nx-md border border-nx-line bg-nx-raised p-4 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi">
+    <div className="flex items-center justify-between rounded-nx-md border border-nx-line bg-nx-raised p-4 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi motion-reduce:transition-none">
       <span className="text-sm font-semibold text-nx-ink">{label}</span>
       <Badge variant={enabled ? "success" : "warning"}>
         {enabled ? (

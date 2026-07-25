@@ -123,9 +123,16 @@ export const SectionState = memo(function SectionState({
         className="flex w-full flex-col justify-end rounded-nx-lg border border-nx-line bg-nx-surface p-4"
         style={{ height }}
       >
-        <div aria-hidden="true" className="flex flex-1 items-end gap-2 border-b border-nx-line pb-0">
+        <div
+          aria-hidden="true"
+          className="flex flex-1 items-end gap-2 border-b border-nx-line pb-0"
+        >
           {CHART_BARS.map((h, i) => (
-            <div key={i} className={`w-full rounded-t-nx-sm bg-nx-raised-2`} style={{ height: h }} />
+            <div
+              key={i}
+              className={`w-full rounded-t-nx-sm bg-nx-raised-2`}
+              style={{ height: h }}
+            />
           ))}
         </div>
       </div>

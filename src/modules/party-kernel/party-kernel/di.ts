@@ -1,13 +1,13 @@
 /**
-* PartyKernel Module DI Container
-*
-* Provides dependency injection for the PartyKernel module.
-*
-* Clean Architecture Pattern:
-* - Services wrap IApiService (API calls only)
-* - Repositories use Services and map Models → Entities
-* - ViewModels use Repositories
-*/
+ * PartyKernel Module DI Container
+ *
+ * Provides dependency injection for the PartyKernel module.
+ *
+ * Clean Architecture Pattern:
+ * - Services wrap IApiService (API calls only)
+ * - Repositories use Services and map Models → Entities
+ * - ViewModels use Repositories
+ */
 import { getModuleApiService } from "@/core/services/api-factory";
 
 // Service
@@ -63,8 +63,8 @@ import type { IMergeCandidateService } from "./merge-candidate/src/domain/interf
 import type { IMergeCandidateRepository } from "./merge-candidate/src/domain/interfaces/IMergeCandidateRepository";
 
 export interface PartyKernelContainer {
-partyKernelService: IPartyKernelService;
-partyKernelRepository: IPartyKernelRepository;
+  partyKernelService: IPartyKernelService;
+  partyKernelRepository: IPartyKernelRepository;
   // Party
   partyService: IPartyService;
   partyRepository: IPartyRepository;
@@ -91,60 +91,60 @@ partyKernelRepository: IPartyKernelRepository;
 let _container: PartyKernelContainer | null = null;
 
 /**
-* Get the PartyKernel container (lazy initialization)
-*/
+ * Get the PartyKernel container (lazy initialization)
+ */
 export function getPartyKernelContainer(): PartyKernelContainer {
-if (!_container) {
-const apiService = getModuleApiService("PARTYKERNEL");
+  if (!_container) {
+    const apiService = getModuleApiService("PARTYKERNEL");
 
-// Create Service (wraps IApiService)
-const partyKernelService = new PartyKernelService(apiService);
+    // Create Service (wraps IApiService)
+    const partyKernelService = new PartyKernelService(apiService);
 
-// Create Repository (uses Service)
-      const partyService = new PartyService(apiService);
-      const partyPersonService = new PartyPersonService(apiService);
-      const partyOrganizationService = new PartyOrganizationService(apiService);
-      const partyRoleService = new PartyRoleService(apiService);
-      const partyRelationshipService = new PartyRelationshipService(apiService);
-      const contactPointService = new ContactPointService(apiService);
-      const mergeCandidateService = new MergeCandidateService(apiService);
-_container = {
-partyKernelService,
-partyKernelRepository: new PartyKernelRepository(partyKernelService),
+    // Create Repository (uses Service)
+    const partyService = new PartyService(apiService);
+    const partyPersonService = new PartyPersonService(apiService);
+    const partyOrganizationService = new PartyOrganizationService(apiService);
+    const partyRoleService = new PartyRoleService(apiService);
+    const partyRelationshipService = new PartyRelationshipService(apiService);
+    const contactPointService = new ContactPointService(apiService);
+    const mergeCandidateService = new MergeCandidateService(apiService);
+    _container = {
+      partyKernelService,
+      partyKernelRepository: new PartyKernelRepository(partyKernelService),
       // Party
       partyService,
       partyRepository: new PartyRepository(partyService),
-          // PartyPerson
+      // PartyPerson
       partyPersonService,
       partyPersonRepository: new PartyPersonRepository(partyPersonService),
-          // PartyOrganization
+      // PartyOrganization
       partyOrganizationService,
       partyOrganizationRepository: new PartyOrganizationRepository(partyOrganizationService),
-          // PartyRole
+      // PartyRole
       partyRoleService,
       partyRoleRepository: new PartyRoleRepository(partyRoleService),
-          // PartyRelationship
+      // PartyRelationship
       partyRelationshipService,
       partyRelationshipRepository: new PartyRelationshipRepository(partyRelationshipService),
-          // ContactPoint
+      // ContactPoint
       contactPointService,
       contactPointRepository: new ContactPointRepository(contactPointService),
-          // MergeCandidate
+      // MergeCandidate
       mergeCandidateService,
       mergeCandidateRepository: new MergeCandidateRepository(mergeCandidateService),
     };
-}
+  }
 
-return _container;
+  return _container;
 }
 
 /**
-* PartyKernel container accessor (for use in components)
-*/
+ * PartyKernel container accessor (for use in components)
+ */
 export const partyKernelContainer = {
-get partyKernelRepository() {
-return getPartyKernelContainer().partyKernelRepository;
-},
+  get partyKernelRepository() {
+    return getPartyKernelContainer().partyKernelRepository;
+  },
   // Party
   get partyRepository() {
     return getPartyKernelContainer().partyRepository;

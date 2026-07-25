@@ -619,9 +619,7 @@ export function AccessControlSection({ form, updateField }: FormSectionProps) {
         {/* Admins Toggle */}
         <div className="flex items-center justify-between rounded-nx-control border border-nx-line p-3">
           <div>
-            <Label className="text-sm font-medium">
-              {t("identityProviders.enabledForAdmins")}
-            </Label>
+            <Label className="text-sm font-medium">{t("identityProviders.enabledForAdmins")}</Label>
             <p className="text-xs text-nx-ink-3">{t("identityProviders.enabledForAdminsHelp")}</p>
           </div>
           <Switch

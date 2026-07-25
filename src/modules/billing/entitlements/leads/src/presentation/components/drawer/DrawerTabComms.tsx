@@ -65,8 +65,7 @@ export function DrawerTabComms({
                 <div className="absolute -start-[5px] mt-1 h-2.5 w-2.5 rounded-full bg-primary ring-2 ring-background" />
                 <p className="truncate text-xs font-semibold text-foreground">{log.subject}</p>
                 <p className="mt-0.5 text-[10px] text-muted-foreground">
-                  {t("leads.email.sentBy")} {log.sentByAdminName} ·{" "}
-                  {formatDateTimeUtc(log.sentAt)}
+                  {t("leads.email.sentBy")} {log.sentByAdminName} · {formatDateTimeUtc(log.sentAt)}
                 </p>
                 {log.isFailed && (
                   <span className="mt-1 inline-flex items-center rounded-full bg-destructive/10 px-2 py-0.5 text-[10px] font-medium text-destructive">

@@ -1,53 +1,53 @@
 /**
-* ContactPoint Entity
-*
-* Domain entity representing a ContactPoint.
-*/
+ * ContactPoint Entity
+ *
+ * Domain entity representing a ContactPoint.
+ */
 
 /**
-* ContactPoint data from API
-*/
+ * ContactPoint data from API
+ */
 export interface ContactPointData {
-id: string;
-partyId: string;
-type: string;
-value: string;
-isPrimary: boolean;
-createdAt: string;
-modifiedAt?: string;
+  id: string;
+  partyId: string;
+  type: string;
+  value: string;
+  isPrimary: boolean;
+  createdAt: string;
+  modifiedAt?: string;
 }
 
 /**
-* ContactPoint entity class
-*/
+ * ContactPoint entity class
+ */
 export class ContactPoint {
-constructor(public readonly data: ContactPointData) {}
+  constructor(public readonly data: ContactPointData) {}
 
-get id(): string {
-return this.data.id;
-}
+  get id(): string {
+    return this.data.id;
+  }
 
-get partyId(): string {
-return this.data.partyId;
-}
+  get partyId(): string {
+    return this.data.partyId;
+  }
 
-get type(): string {
-return this.data.type;
-}
+  get type(): string {
+    return this.data.type;
+  }
 
-get value(): string {
-return this.data.value;
-}
+  get value(): string {
+    return this.data.value;
+  }
 
-get isPrimary(): boolean {
-return this.data.isPrimary;
-}
+  get isPrimary(): boolean {
+    return this.data.isPrimary;
+  }
 
-get createdAt(): string {
-return this.data.createdAt;
-}
+  get createdAt(): string {
+    return this.data.createdAt;
+  }
 
-get modifiedAt(): string | undefined {
-return this.data.modifiedAt;
-}
+  get modifiedAt(): string | undefined {
+    return this.data.modifiedAt;
+  }
 }

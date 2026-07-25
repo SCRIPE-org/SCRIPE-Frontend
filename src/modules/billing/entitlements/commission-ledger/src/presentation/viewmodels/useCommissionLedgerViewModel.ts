@@ -125,8 +125,7 @@ export function useCommissionLedgerViewModel() {
     {
       key: "periodStart",
       label: t("entitlements.commissionLedger.period") || "Period",
-      render: (value, item) =>
-        `${formatDateUtc(value)} - ${formatDateUtc(item.periodEnd)}`,
+      render: (value, item) => `${formatDateUtc(value)} - ${formatDateUtc(item.periodEnd)}`,
     },
     {
       key: "totalCommission",

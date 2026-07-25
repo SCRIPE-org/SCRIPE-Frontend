@@ -545,8 +545,7 @@ export function GenericForm({
             // Boolean, not the number itself — a bare `maxLength &&` would
             // render a literal 0 into the form when a caller passes 0.
             const counted = Boolean(
-              field.maxLength &&
-                (!field.type || field.type === "text" || field.type === "textarea")
+              field.maxLength && (!field.type || field.type === "text" || field.type === "textarea")
             );
 
             return field.type === "hidden" ? (
@@ -559,10 +558,7 @@ export function GenericForm({
             ) : (
               <div
                 key={field.name}
-                className={cn(
-                  getFieldSpacing(),
-                  gridded && field.colSpan === 2 && "sm:col-span-2"
-                )}
+                className={cn(getFieldSpacing(), gridded && field.colSpan === 2 && "sm:col-span-2")}
               >
                 {field.type !== "switch" && field.type !== "checkbox" && (
                   <Label htmlFor={field.name} className={cn(getLabelClasses(), "text-start")}>

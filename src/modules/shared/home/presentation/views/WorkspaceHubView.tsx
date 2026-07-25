@@ -227,7 +227,7 @@ export function WorkspaceHubView() {
                 action={
                   <button
                     type="button"
-                    className="cursor-pointer rounded-nx-sm border-0 bg-transparent p-0 text-xs font-medium text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
+                    className="cursor-pointer rounded-nx-sm border-0 bg-transparent p-0 text-xs font-medium text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                   >
                     {t("workspaceHub.pinned.manage")}
                   </button>

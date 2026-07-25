@@ -19,12 +19,7 @@ const FALLBACK_RATES: Record<string, number> = {
 };
 
 export function useCurrencyRates() {
-  const {
-    exchangeRates,
-    setRates,
-    setLoadingRates,
-    isLoadingRates,
-  } = useCurrencyPreference();
+  const { exchangeRates, setRates, setLoadingRates, isLoadingRates } = useCurrencyPreference();
 
   const [fetchError, setFetchError] = useState(false);
 

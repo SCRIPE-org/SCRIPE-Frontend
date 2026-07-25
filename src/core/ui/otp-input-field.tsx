@@ -124,9 +124,7 @@ export function OtpInputField({
                       ? undefined
                       : {
                           color:
-                            variant === "glass"
-                              ? "rgba(255,255,255,0.3)"
-                              : "var(--sx-text-faint)",
+                            variant === "glass" ? "rgba(255,255,255,0.3)" : "var(--sx-text-faint)",
                         }
                   }
                   aria-hidden="true"

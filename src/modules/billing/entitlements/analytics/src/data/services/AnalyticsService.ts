@@ -39,9 +39,7 @@ export class AnalyticsService implements IAnalyticsService {
 
   async getOverview(months?: number): Promise<AnalyticsOverviewModel> {
     const range = monthsToDateRange(months);
-    return this.api.get<AnalyticsOverviewModel>(
-      buildUrl(ANALYTICS_ENDPOINTS.OVERVIEW, range)
-    );
+    return this.api.get<AnalyticsOverviewModel>(buildUrl(ANALYTICS_ENDPOINTS.OVERVIEW, range));
   }
 
   async getMrrMovement(months?: number): Promise<MrrMovementResponseModel> {
@@ -94,15 +92,11 @@ export class AnalyticsService implements IAnalyticsService {
   }
 
   async getHealthById(tenantId: string): Promise<TenantHealthDetailModel> {
-    return this.api.get<TenantHealthDetailModel>(
-      ANALYTICS_ENDPOINTS.HEALTH_BY_ID(tenantId)
-    );
+    return this.api.get<TenantHealthDetailModel>(ANALYTICS_ENDPOINTS.HEALTH_BY_ID(tenantId));
   }
 
   async getReportPreferences(): Promise<ReportPreferenceModel> {
-    return this.api.get<ReportPreferenceModel>(
-      ANALYTICS_ENDPOINTS.REPORT_PREFERENCES
-    );
+    return this.api.get<ReportPreferenceModel>(ANALYTICS_ENDPOINTS.REPORT_PREFERENCES);
   }
 
   async updateReportPreferences(data: UpdateReportPreferenceRequestModel): Promise<void> {

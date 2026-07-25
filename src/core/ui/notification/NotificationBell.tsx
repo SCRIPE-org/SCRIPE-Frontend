@@ -158,10 +158,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
     // LTR formula in both branches, which pushed the Arabic panel to the wrong
     // side of its trigger.
     let left = isRTL ? rect.left : rect.right - panelWidth;
-    left = Math.max(
-      VIEWPORT_GUTTER,
-      Math.min(left, viewport.w - panelWidth - VIEWPORT_GUTTER)
-    );
+    left = Math.max(VIEWPORT_GUTTER, Math.min(left, viewport.w - panelWidth - VIEWPORT_GUTTER));
 
     setPanelStyle({
       width: panelWidth,
@@ -172,9 +169,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
         : { top: rect.bottom + VIEWPORT_GUTTER }),
     });
     // Overlays scale from their trigger origin — nothing slides in from an edge.
-    setTransformOrigin(
-      `${openAbove ? "bottom" : "top"} ${isRTL ? "left" : "right"}`
-    );
+    setTransformOrigin(`${openAbove ? "bottom" : "top"} ${isRTL ? "left" : "right"}`);
   }, [isRTL]);
 
   const handleToggle = useCallback(() => {
@@ -262,7 +257,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
         <div className="flex min-w-0 items-center gap-2">
           <h2 className="truncate text-sm font-semibold text-nx-ink">{title}</h2>
           {hasUnread && (
-            <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-nx-accent-wash px-1.5 text-[11px] font-semibold leading-none tabular-nums text-nx-accent">
+            <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-nx-accent-wash px-1.5 text-[11px] font-semibold tabular-nums leading-none text-nx-accent">
               {vm.unreadCount > 99 ? "99+" : vm.unreadCount}
             </span>
           )}
@@ -277,7 +272,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
               // floor and the smallest tap target in the shell.
               "flex h-8 shrink-0 items-center gap-1.5 rounded-nx-sm px-2 text-xs font-medium text-nx-accent",
               "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-              "hover:bg-nx-accent-wash focus-visible:outline-none focus-visible:shadow-nx-focus"
+              "hover:bg-nx-accent-wash focus-visible:shadow-nx-focus focus-visible:outline-none"
             )}
           >
             <CheckCheck aria-hidden="true" className="h-3.5 w-3.5" />
@@ -324,7 +319,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
                       className={cn(
                         "group relative flex w-full items-start gap-3 px-4 py-3 text-start",
                         "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                        "hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus",
+                        "hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none",
                         // Unread wears the lit inline-start edge — a static
                         // affordance, never a pulse.
                         "before:absolute before:inset-y-2 before:start-0 before:w-0.5 before:rounded-full",
@@ -400,7 +395,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
               // the `shadow-nx-sm` it carried was depth it does not have. The
               // solid accent fill against ink-2 glyph is separation enough, and
               // the digits are tabular so 9 → 10 does not shuffle the chip.
-              className="pointer-events-none absolute -end-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-nx-accent-fill px-1 text-[9px] font-bold leading-none tabular-nums text-nx-on-fill"
+              className="pointer-events-none absolute -end-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-nx-accent-fill px-1 text-[9px] font-bold tabular-nums leading-none text-nx-on-fill"
             >
               {vm.unreadCount > 99 ? "99+" : vm.unreadCount}
             </span>

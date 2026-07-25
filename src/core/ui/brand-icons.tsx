@@ -39,12 +39,7 @@ interface IconProps {
 }
 
 /** Shared canvas: one viewBox, hidden from assistive tech, never a tab stop. */
-const Mark = ({
-  className,
-  fill = "none",
-  children,
-  ...props
-}: React.SVGProps<SVGSVGElement>) => (
+const Mark = ({ className, fill = "none", children, ...props }: React.SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 24 24"
     fill={fill}
@@ -210,7 +205,12 @@ export const IDP_BRAND_MARKS: Readonly<Record<string, BrandMark>> = {
   jumpcloud: ({ className }) => (
     <Mark className={className}>
       <circle cx="12" cy="12" r="10" stroke="#00A3E0" strokeWidth="2.5" />
-      <path d="M7 11l5-5 5 5m-10 2l5 5 5-5" stroke="#00A3E0" strokeWidth="2" strokeLinecap="round" />
+      <path
+        d="M7 11l5-5 5 5m-10 2l5 5 5-5"
+        stroke="#00A3E0"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
     </Mark>
   ),
   duo: ({ className }) => (

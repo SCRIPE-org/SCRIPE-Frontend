@@ -804,9 +804,11 @@ export const zh = {
       overview: {
         title: "HRMS 模块",
         description: "人力资源管理系统，管理员工个人资料、雇用记录、资质、认证、空闲时间和分配。",
-        intro: "HRMS 模块是平台员工资源的单一事实来源。它管理员工资料、雇用记录、资质、专业认证、空闲时间和分配。",
+        intro:
+          "HRMS 模块是平台员工资源的单一事实来源。它管理员工资料、雇用记录、资质、专业认证、空闲时间和分配。",
         infoTitle: "设计原则",
-        infoContent: "HRMS 记录通过稳定的 ID 引用指向 Identity 用户，而不是通过数据库外键。这保持了身份验证与 HR 资料的解耦。",
+        infoContent:
+          "HRMS 记录通过稳定的 ID 引用指向 Identity 用户，而不是通过数据库外键。这保持了身份验证与 HR 资料的解耦。",
         whatIsTitle: "什么是 HRMS？",
         whatIsIntro: "它是管理员、教练和员工的行政核心。",
         featureStaff: "员工资料",
@@ -814,18 +816,22 @@ export const zh = {
         featureCompliance: "资质与认证",
         featureComplianceDesc: "双语证书、验证日期以及教练课程的合规性验证。",
         modelTitle: "数据模型",
-        modelIntro: "管理 StaffMember, EmploymentRecord, Qualification, Certification, StaffAvailability, StaffAssignment 等实体。",
+        modelIntro:
+          "管理 StaffMember, EmploymentRecord, Qualification, Certification, StaffAvailability, StaffAssignment 等实体。",
         permsTitle: "权限",
-        permsIntro: "访问受权限控制：hrms.staff.view, hrms.staff.create, hrms.staff.update 和 hrms.staff.delete。",
+        permsIntro:
+          "访问受权限控制：hrms.staff.view, hrms.staff.create, hrms.staff.update 和 hrms.staff.delete。",
       },
     },
     partyKernel: {
       overview: {
         title: "Party Kernel 模块",
         description: "核心业务目录，管理个人、组织、联系方式、关系和数据合并候选者。",
-        intro: "Party Kernel 模块是业务实体的核心注册表。它跟踪个人和组织、他们的联系方式以及相互关系。",
+        intro:
+          "Party Kernel 模块是业务实体的核心注册表。它跟踪个人和组织、他们的联系方式以及相互关系。",
         infoTitle: "设计原则",
-        infoContent: "Party Kernel 使用中立的模型，将所有业务参与者（客户、监护人、员工）表示为通用的 Parties。",
+        infoContent:
+          "Party Kernel 使用中立的模型，将所有业务参与者（客户、监护人、员工）表示为通用的 Parties。",
         whatIsTitle: "什么是 Party Kernel？",
         whatIsIntro: "它构成了 CRM 和账单的基础。",
         featureParties: "通用 Parties",
@@ -833,7 +839,8 @@ export const zh = {
         featureMerge: "数据去重",
         featureMergeDesc: "根据姓名/邮箱/电话匹配识别重复记录，并干净地合并它们。",
         modelTitle: "数据模型",
-        modelIntro: "管理 Party, PartyPerson, PartyOrganization, PartyRole, PartyRelationship, ContactPoint 等实体。",
+        modelIntro:
+          "管理 Party, PartyPerson, PartyOrganization, PartyRole, PartyRelationship, ContactPoint 等实体。",
         permsTitle: "权限",
         permsIntro: "受 party.view, party.create, party.update 和 party.delete 权限保护。",
       },
@@ -854,7 +861,8 @@ export const zh = {
         modelTitle: "数据模型",
         modelIntro: "管理 BusinessUnit, Branch, Site, Department 等实体。",
         permsTitle: "权限",
-        permsIntro: "通过 organization.view, organization.create, organization.update 和 organization.delete 进行管理。",
+        permsIntro:
+          "通过 organization.view, organization.create, organization.update 和 organization.delete 进行管理。",
       },
     },
   },

@@ -182,7 +182,7 @@ function FeaturesGrid({ tenantId }: { tenantId: string }) {
               key={feature.featureId || feature.key}
               className={cn(
                 "flex items-start gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4",
-                "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi"
+                "transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi motion-reduce:transition-none"
               )}
             >
               <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-nx-md bg-nx-accent-wash">

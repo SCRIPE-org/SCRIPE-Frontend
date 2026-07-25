@@ -65,7 +65,7 @@ export function GeneratedKeyDialog({ generatedKey, onClose }: GeneratedKeyDialog
               type="text"
               readOnly
               value={generatedKey || ""}
-              className="font-mono text-sm select-all"
+              className="select-all font-mono text-sm"
             />
           </div>
           <Button type="button" size="sm" className="px-3" onClick={handleCopy}>

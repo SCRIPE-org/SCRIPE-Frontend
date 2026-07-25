@@ -40,9 +40,7 @@ export function TenantPlanStepReview({ form, t }: TenantPlanStepReviewProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-xs text-nx-ink-3">
-                {t("entitlements.tenantPlans.planName")}
-              </p>
+              <p className="text-xs text-nx-ink-3">{t("entitlements.tenantPlans.planName")}</p>
               <p className="font-medium text-nx-ink">{form.name || "—"}</p>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -60,10 +58,8 @@ export function TenantPlanStepReview({ form, t }: TenantPlanStepReviewProps) {
               </div>
             </div>
             <div>
-              <p className="text-xs text-nx-ink-3">
-                {t("entitlements.tenantPlans.tier")}
-              </p>
-              <p className="font-medium text-nx-ink tabular-nums">{form.tierLevel}</p>
+              <p className="text-xs text-nx-ink-3">{t("entitlements.tenantPlans.tier")}</p>
+              <p className="font-medium tabular-nums text-nx-ink">{form.tierLevel}</p>
             </div>
             <div className="flex items-center gap-4">
               <div>
@@ -96,24 +92,16 @@ export function TenantPlanStepReview({ form, t }: TenantPlanStepReviewProps) {
               </p>
               <div className="flex gap-2">
                 {form.allowMonthly && (
-                  <Badge variant="secondary">
-                    {t("entitlements.tenantPlans.monthly")}
-                  </Badge>
+                  <Badge variant="secondary">{t("entitlements.tenantPlans.monthly")}</Badge>
                 )}
                 {form.allowYearly && (
-                  <Badge variant="secondary">
-                    {t("entitlements.tenantPlans.yearly")}
-                  </Badge>
+                  <Badge variant="secondary">{t("entitlements.tenantPlans.yearly")}</Badge>
                 )}
                 {form.allowLifetime && (
-                  <Badge variant="secondary">
-                    {t("entitlements.tenantPlans.lifetime")}
-                  </Badge>
+                  <Badge variant="secondary">{t("entitlements.tenantPlans.lifetime")}</Badge>
                 )}
                 {!form.allowMonthly && !form.allowYearly && !form.allowLifetime && (
-                  <span className="text-sm text-nx-ink-3">
-                    {t("common.noneSelected")}
-                  </span>
+                  <span className="text-sm text-nx-ink-3">{t("common.noneSelected")}</span>
                 )}
               </div>
             </div>
@@ -123,10 +111,8 @@ export function TenantPlanStepReview({ form, t }: TenantPlanStepReviewProps) {
                 <p className="mb-1 text-xs text-nx-ink-3">
                   {t("entitlements.tenantPlans.maxUsers")}
                 </p>
-                <p className="font-medium text-nx-ink tabular-nums">
-                  {form.maxUsers === -1
-                    ? t("entitlements.tenantPlans.unlimited")
-                    : form.maxUsers}
+                <p className="font-medium tabular-nums text-nx-ink">
+                  {form.maxUsers === -1 ? t("entitlements.tenantPlans.unlimited") : form.maxUsers}
                 </p>
               </div>
               <div>

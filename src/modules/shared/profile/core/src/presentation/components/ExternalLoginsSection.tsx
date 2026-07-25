@@ -21,7 +21,13 @@ import {
  */
 function relativeLuminance(hex: string): number {
   const clean = hex.replace("#", "");
-  const full = clean.length === 3 ? clean.split("").map((c) => c + c).join("") : clean;
+  const full =
+    clean.length === 3
+      ? clean
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : clean;
   if (full.length !== 6 || /[^0-9a-fA-F]/.test(full)) return 1;
   const channel = (start: number) => {
     const c = parseInt(full.slice(start, start + 2), 16) / 255;
@@ -81,7 +87,7 @@ export function ExternalLoginsSection() {
             return (
               <div
                 key={login.id}
-                className="flex items-center justify-between rounded-nx-md border border-nx-line bg-nx-surface p-4 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi"
+                className="flex items-center justify-between rounded-nx-md border border-nx-line bg-nx-surface p-4 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi motion-reduce:transition-none"
               >
                 <div className="flex items-center gap-4">
                   <div

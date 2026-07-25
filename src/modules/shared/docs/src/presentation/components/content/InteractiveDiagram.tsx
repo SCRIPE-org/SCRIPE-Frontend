@@ -52,7 +52,7 @@ export function InteractiveDiagram({ nodes, connections, titleKey }: Interactive
           aria-label={t("widgets.interactiveDiagram.nodeDetailLabel")}
           className="mt-4 rounded-nx-md bg-nx-raised p-4"
         >
-          <p className="text-sm leading-relaxed text-pretty text-nx-ink-2">
+          <p className="text-pretty text-sm leading-relaxed text-nx-ink-2">
             {t(activeNode.descriptionKey)}
           </p>
         </div>

@@ -13,10 +13,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 
 // WorkItemStatus (0..4) mapped onto the nx Badge semantic tones.
-const STATUS_VARIANTS: Record<
-  number,
-  "secondary" | "info" | "warning" | "success" | "inactive"
-> = {
+const STATUS_VARIANTS: Record<number, "secondary" | "info" | "warning" | "success" | "inactive"> = {
   0: "secondary", // To Do
   1: "info", // In Progress
   2: "warning", // Blocked

@@ -144,7 +144,10 @@ export function OAuthAppCard({
                 <Clock className="h-3.5 w-3.5" aria-hidden="true" />
                 {item.createdAt ? formatDateUtc(item.createdAt) : "—"}
               </span>
-              <Badge variant={item.requirePkce ? "success" : "secondary"} className="px-1.5 py-0 text-[10px]">
+              <Badge
+                variant={item.requirePkce ? "success" : "secondary"}
+                className="px-1.5 py-0 text-[10px]"
+              >
                 {t("oauthApps.pkceLabel")}:{" "}
                 {item.requirePkce ? t("common.required") : t("oauthApps.pkceOptional")}
               </Badge>
@@ -206,7 +209,9 @@ export function OAuthAppCard({
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>{t("oauthApps.deleteConfirmTitle")}</AlertDialogTitle>
-                  <AlertDialogDescription>{t("oauthApps.deleteConfirmDesc")}</AlertDialogDescription>
+                  <AlertDialogDescription>
+                    {t("oauthApps.deleteConfirmDesc")}
+                  </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>

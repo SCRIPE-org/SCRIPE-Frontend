@@ -16,7 +16,6 @@ export const LEADS_ENDPOINTS = {
   COMMUNICATIONS: (id: string) => `${V1}/leads/${id}/communications`,
   // Conversion wizard helpers
   EDITIONS_FOR_CONVERSION: `${V1}/leads/conversion/editions`,
-  EDITION_FEATURES: (editionId: string) =>
-    `${V1}/leads/conversion/editions/${editionId}/features`,
+  EDITION_FEATURES: (editionId: string) => `${V1}/leads/conversion/editions/${editionId}/features`,
   ADMINS_LIST: `${V1}/Admins`,
 } as const;

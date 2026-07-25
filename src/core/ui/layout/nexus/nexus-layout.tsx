@@ -281,7 +281,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
                     transition: "opacity var(--nx-t-micro, 140ms) ease-out",
                   }}
                 >
-                  <div className="animate-in fade-in duration-nx-standard">{children}</div>
+                  <div className="duration-nx-standard animate-in fade-in">{children}</div>
                 </main>
                 {showFooter && <NexusFooter />}
               </div>

@@ -142,17 +142,74 @@ export function sanitizeFilename(filename: string): string {
  * no script, iframe, object, embed, form, input, button, link, meta, base, svg.
  */
 const RICH_HTML_ALLOWED_TAGS = [
-  "a", "b", "blockquote", "br", "caption", "code", "col", "colgroup", "dd", "div",
-  "dl", "dt", "em", "figcaption", "figure", "h1", "h2", "h3", "h4", "h5", "h6",
-  "hr", "i", "img", "li", "mark", "ol", "p", "picture", "pre", "s", "small",
-  "source", "span", "strong", "sub", "sup", "table", "tbody", "td", "tfoot",
-  "th", "thead", "tr", "u", "ul",
+  "a",
+  "b",
+  "blockquote",
+  "br",
+  "caption",
+  "code",
+  "col",
+  "colgroup",
+  "dd",
+  "div",
+  "dl",
+  "dt",
+  "em",
+  "figcaption",
+  "figure",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "hr",
+  "i",
+  "img",
+  "li",
+  "mark",
+  "ol",
+  "p",
+  "picture",
+  "pre",
+  "s",
+  "small",
+  "source",
+  "span",
+  "strong",
+  "sub",
+  "sup",
+  "table",
+  "tbody",
+  "td",
+  "tfoot",
+  "th",
+  "thead",
+  "tr",
+  "u",
+  "ul",
 ];
 
 /** Attributes an author may set. No event handlers (`on*`) can appear in this list. */
 const RICH_HTML_ALLOWED_ATTR = [
-  "alt", "class", "colspan", "dir", "height", "href", "id", "lang", "loading",
-  "rel", "rowspan", "sizes", "src", "srcset", "style", "target", "title", "width",
+  "alt",
+  "class",
+  "colspan",
+  "dir",
+  "height",
+  "href",
+  "id",
+  "lang",
+  "loading",
+  "rel",
+  "rowspan",
+  "sizes",
+  "src",
+  "srcset",
+  "style",
+  "target",
+  "title",
+  "width",
 ];
 
 /**
@@ -175,7 +232,18 @@ export function sanitizeRichHtml(input: string): string {
     ALLOWED_TAGS: RICH_HTML_ALLOWED_TAGS,
     ALLOWED_ATTR: RICH_HTML_ALLOWED_ATTR,
     ALLOW_DATA_ATTR: false,
-    FORBID_TAGS: ["script", "style", "iframe", "object", "embed", "form", "input", "base", "link", "meta"],
+    FORBID_TAGS: [
+      "script",
+      "style",
+      "iframe",
+      "object",
+      "embed",
+      "form",
+      "input",
+      "base",
+      "link",
+      "meta",
+    ],
     FORBID_ATTR: ["srcdoc", "formaction", "ping"],
     ADD_ATTR: ["target"],
   });
@@ -196,14 +264,16 @@ export function sanitizeRichHtml(input: string): string {
 export function sanitizeCss(input: string): string {
   if (!input || typeof input !== "string") return "";
 
-  return input
-    // Breakout of the <style> context — the only one that is directly XSS.
-    .replace(/<\s*\/\s*style/gi, "")
-    .replace(/<\s*script/gi, "")
-    // Remote loads and legacy script-execution vectors.
-    .replace(/@import[^;]*;?/gi, "")
-    .replace(/expression\s*\(/gi, "")
-    .replace(/behavior\s*:/gi, "")
-    .replace(/-moz-binding\s*:/gi, "")
-    .replace(/javascript\s*:/gi, "");
+  return (
+    input
+      // Breakout of the <style> context — the only one that is directly XSS.
+      .replace(/<\s*\/\s*style/gi, "")
+      .replace(/<\s*script/gi, "")
+      // Remote loads and legacy script-execution vectors.
+      .replace(/@import[^;]*;?/gi, "")
+      .replace(/expression\s*\(/gi, "")
+      .replace(/behavior\s*:/gi, "")
+      .replace(/-moz-binding\s*:/gi, "")
+      .replace(/javascript\s*:/gi, "")
+  );
 }

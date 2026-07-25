@@ -93,7 +93,7 @@ export function ActiveOverridesList({
                 className={cn(
                   "flex cursor-pointer items-center gap-3 rounded-nx-md px-3 py-2",
                   "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                  "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                  "focus-visible:shadow-nx-focus focus-visible:outline-none",
                   isSelected
                     ? "bg-nx-accent-wash ring-1 ring-[color:color-mix(in_srgb,var(--nx-accent)_20%,transparent)]"
                     : "hover:bg-nx-hover"

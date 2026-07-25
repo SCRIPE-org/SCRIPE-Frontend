@@ -80,7 +80,7 @@ export function HubTopBar({ onSearchClick, onAppLauncherClick }: HubTopBarProps)
       <button
         type="button"
         onClick={onSearchClick}
-        className="inline-flex h-[34px] cursor-pointer items-center gap-2.5 rounded-nx-md border border-nx-line px-3 text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
+        className="inline-flex h-[34px] cursor-pointer items-center gap-2.5 rounded-nx-md border border-nx-line px-3 text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
       >
         <Search size={14} strokeWidth={1.75} aria-hidden="true" />
         <span className="text-xs">{t("workspaceHub.jumpTo")}</span>
@@ -125,7 +125,7 @@ export function HubTopBar({ onSearchClick, onAppLauncherClick }: HubTopBarProps)
       <button
         type="button"
         onClick={() => router.push("/profile")}
-        className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-full border border-nx-line py-1 ps-1 pe-2.5 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
+        className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-full border border-nx-line py-1 pe-2.5 ps-1 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
       >
         <div
           aria-hidden="true"

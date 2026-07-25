@@ -102,7 +102,10 @@ export function LoadingSpinner({
     switch (variant) {
       case "dots":
         return (
-          <span className={cn("flex items-center", inline ? "gap-0.5" : "gap-1")} aria-hidden="true">
+          <span
+            className={cn("flex items-center", inline ? "gap-0.5" : "gap-1")}
+            aria-hidden="true"
+          >
             {DOT_DELAYS.map((delay) => (
               <span
                 key={delay}

@@ -47,7 +47,9 @@ const KNOWN_FONT_SIZES = ["xs", "small", "medium", "default", "large", "xl"] as 
 type LabelFontSize = (typeof KNOWN_FONT_SIZES)[number];
 
 const resolveFontSize = (value: string | undefined | null): LabelFontSize =>
-  (KNOWN_FONT_SIZES as readonly string[]).includes(value ?? "") ? (value as LabelFontSize) : "default";
+  (KNOWN_FONT_SIZES as readonly string[]).includes(value ?? "")
+    ? (value as LabelFontSize)
+    : "default";
 
 const Label = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,

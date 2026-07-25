@@ -99,7 +99,7 @@ export function UserGroupDetailView({ groupId }: Props) {
             <ArrowLeft className="h-5 w-5 rtl:rotate-180" aria-hidden="true" />
           </Button>
           <div>
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-nx-ink text-balance">
+            <h1 className="text-balance text-xl font-bold leading-tight tracking-tight text-nx-ink">
               {name}
             </h1>
             <div className="mt-1 flex items-center gap-2">
@@ -108,9 +108,7 @@ export function UserGroupDetailView({ groupId }: Props) {
                 {group.isActive ? t("common.active") : t("common.inactive")}
               </Badge>
             </div>
-            {description && (
-              <p className="mt-2 max-w-xl text-sm text-nx-ink-2">{description}</p>
-            )}
+            {description && <p className="mt-2 max-w-xl text-sm text-nx-ink-2">{description}</p>}
           </div>
         </div>
         <div className="text-xs text-nx-ink-3">

@@ -126,7 +126,9 @@ export function WebhookSecretPanel({
                         size="icon"
                         className="h-7 w-7"
                         onClick={onToggleVisibility}
-                        aria-label={isVisible ? t("webhooks.secretHide") : t("webhooks.secretReveal")}
+                        aria-label={
+                          isVisible ? t("webhooks.secretHide") : t("webhooks.secretReveal")
+                        }
                       >
                         {isVisible ? (
                           <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />

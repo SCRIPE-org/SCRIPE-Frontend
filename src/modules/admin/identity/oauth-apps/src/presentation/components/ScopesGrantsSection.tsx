@@ -66,7 +66,7 @@ export function ScopesGrantsSection({
                   type="button"
                   aria-pressed={selected}
                   onClick={() => toggleScope(scope)}
-                  className="cursor-pointer rounded-full focus-visible:outline-none focus-visible:shadow-nx-focus"
+                  className="cursor-pointer rounded-full focus-visible:shadow-nx-focus focus-visible:outline-none"
                 >
                   <Badge variant={selected ? "info" : "outline"}>{scope}</Badge>
                 </button>
@@ -94,7 +94,7 @@ export function ScopesGrantsSection({
                   type="button"
                   aria-pressed={selected}
                   onClick={() => toggleGrant(grant)}
-                  className="cursor-pointer rounded-full focus-visible:outline-none focus-visible:shadow-nx-focus"
+                  className="cursor-pointer rounded-full focus-visible:shadow-nx-focus focus-visible:outline-none"
                 >
                   <Badge variant={selected ? "success" : "outline"}>{grant}</Badge>
                 </button>

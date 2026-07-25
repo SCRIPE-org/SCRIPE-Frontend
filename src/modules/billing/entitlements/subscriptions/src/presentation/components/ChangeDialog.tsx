@@ -95,7 +95,10 @@ export function ChangeDialog({ vm, editionsVm }: SubscriptionEditionDialogProps)
           {vm.downgradeImpact?.hasOverflow && (
             <div className="rounded-nx-lg border border-destructive/40 bg-destructive/5 p-4">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" aria-hidden="true" />
+                <AlertTriangle
+                  className="mt-0.5 h-5 w-5 shrink-0 text-destructive"
+                  aria-hidden="true"
+                />
                 <div className="space-y-2">
                   <p className="text-sm font-semibold text-destructive">
                     {t("entSubscriptions.downgradeWarning")}

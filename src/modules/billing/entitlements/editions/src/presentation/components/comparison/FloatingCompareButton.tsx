@@ -53,7 +53,7 @@ export function FloatingCompareButton({ label, targetRef }: FloatingCompareButto
       <Button
         type="button"
         onClick={scrollToTable}
-        className="pointer-events-auto gap-2 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-nx-standard motion-safe:ease-nx-enter"
+        className="pointer-events-auto gap-2 motion-safe:duration-nx-standard motion-safe:ease-nx-enter motion-safe:animate-in motion-safe:fade-in-0"
       >
         <LayoutList aria-hidden="true" className="h-4 w-4" />
         {label}

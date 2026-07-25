@@ -15,6 +15,7 @@ export const en = {
     },
     // ── ReviewsView ──
     reviewsCountLabel: "{{count}} reviews",
-    reviewsDeleteConfirmDesc: "Are you sure you want to delete this review? This action cannot be undone.",
+    reviewsDeleteConfirmDesc:
+      "Are you sure you want to delete this review? This action cannot be undone.",
   },
 };

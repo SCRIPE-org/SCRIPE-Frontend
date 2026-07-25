@@ -55,7 +55,12 @@ export function SubscriptionsOverviewView() {
         actions={
           <>
             <CurrencyDisplayToggle />
-            <Button variant="outline" size="sm" onClick={() => setExportOpen(true)} className="gap-1.5">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setExportOpen(true)}
+              className="gap-1.5"
+            >
               <FileDown className="h-3.5 w-3.5" aria-hidden="true" />
               {vm.t("entSubscriptions.export.button")}
             </Button>

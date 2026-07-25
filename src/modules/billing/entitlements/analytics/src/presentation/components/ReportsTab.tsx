@@ -314,9 +314,7 @@ export function ReportsTab({
             <div className="border-t border-border/20 pt-4 text-center">
               <p className="text-xs text-muted-foreground">
                 {t("entitlements.analytics.reports.lastSent")}:{" "}
-                <span className="font-semibold">
-                  {formatDateUtc(preference.lastSentAt)}
-                </span>
+                <span className="font-semibold">{formatDateUtc(preference.lastSentAt)}</span>
               </p>
             </div>
           )}
