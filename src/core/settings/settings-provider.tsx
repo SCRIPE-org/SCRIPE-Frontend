@@ -240,7 +240,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   // isHydrated is always true (synchronous init above) — block kept as safety guard
   // only for SSR contexts where window is undefined (server renders defaultSettings).
   if (!isHydrated) {
-    return <div className="min-h-screen bg-background" suppressHydrationWarning />;
+    return <div className="min-h-screen bg-nx-ground" suppressHydrationWarning />;
   }
 
   return <SettingsContext.Provider value={contextValue}>{children}</SettingsContext.Provider>;

@@ -18,6 +18,7 @@ import type {
 } from "../../domain/entities/MenuItemRequests";
 import { PAGE_REGISTRY } from "@core/common/pageRegistry";
 import { useWorkspace } from "@core/providers/workspace-provider";
+import { resolveBilingualLabel } from "@core/common/utils";
 
 /* -------------------------------------------------------------------------- */
 /*  Props                                                                      */
@@ -61,7 +62,7 @@ export function MenuFormDialog({
   const workspaceOptions = useMemo(() => {
     const opts = workspaceGroups.map((ws) => ({
       value: ws.workspaceId,
-      label: language === "ar" ? ws.workspaceNameAr || ws.workspaceNameEn : ws.workspaceNameEn,
+      label: resolveBilingualLabel(ws.workspaceNameEn, ws.workspaceNameAr || ws.workspaceNameEn, language),
     }));
     // Prepend "Global (all workspaces)" option
     opts.unshift({
@@ -75,7 +76,7 @@ export function MenuFormDialog({
   const pageOptions = useMemo(() => {
     const opts = PAGE_REGISTRY.map((page) => ({
       value: page.href,
-      label: language === "ar" ? `${page.labelAr}  ${page.href}` : `${page.labelEn}  ${page.href}`,
+      label: `${resolveBilingualLabel(page.labelEn, page.labelAr, language)}  ${page.href}`,
     }));
     // Add "Custom URL" option at the end
     opts.push({

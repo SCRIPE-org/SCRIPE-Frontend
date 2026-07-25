@@ -17,6 +17,19 @@ export function resolveIntlLocale(language: string): string {
   return language === "ar" ? "ar-EG" : "en-US";
 }
 
+/**
+ * Picks the display string from a stored EN/AR pair. For genuinely bilingual
+ * DATA (a static page catalog, a user-entered name field) rather than
+ * translatable UI copy — that case goes through `t()` and a locale shard
+ * instead. Centralizing this one comparison is still worth it: it is the same
+ * `language === "ar" ? ar : en` shape the section-5 gate bans when inlined ad
+ * hoc, and a single call site means a future third locale only needs updating
+ * here.
+ */
+export function resolveBilingualLabel(en: string, ar: string, language: string): string {
+  return language === "ar" ? ar : en;
+}
+
 export function formatDate(date: string | Date | null | undefined, locale: string = "ar-SA") {
   try {
     // Handle null/undefined cases

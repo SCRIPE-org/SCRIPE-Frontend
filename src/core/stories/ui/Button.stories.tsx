@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
 import { Button } from "../../../core/ui/button";
-import { Mail, ArrowRight, Loader2, Trash } from "lucide-react";
+import { LoadingSpinner } from "../../../core/ui/loading-spinner";
+import { Mail, ArrowRight, Trash } from "lucide-react";
 
 /**
  * The Button component is the primary trigger for user actions.
@@ -95,7 +96,7 @@ export const WithIconLeft: Story = {
   args: {
     children: (
       <>
-        <Mail className="mr-2 h-4 w-4" /> Login with Email
+        <Mail className="me-2 h-4 w-4" /> Login with Email
       </>
     ),
   },
@@ -105,7 +106,7 @@ export const WithIconRight: Story = {
   args: {
     children: (
       <>
-        Get Started <ArrowRight className="ml-2 h-4 w-4" />
+        Get Started <ArrowRight className="ms-2 h-4 w-4 rtl:rotate-180" />
       </>
     ),
   },
@@ -116,7 +117,7 @@ export const Loading: Story = {
     disabled: true,
     children: (
       <>
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        <LoadingSpinner size="sm" className="me-2" showText={false} />
         Please wait
       </>
     ),

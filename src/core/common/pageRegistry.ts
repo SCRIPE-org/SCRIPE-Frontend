@@ -9,6 +9,8 @@
  *   2. The menu form will automatically show it in the page picker
  */
 
+import { resolveBilingualLabel } from "@core/common/utils";
+
 export interface PageDefinition {
   /** Route path, e.g. "/dashboard" */
   href: string;
@@ -159,5 +161,5 @@ export function getPagesByCategory(_language: string = "en"): Record<string, Pag
 export function getPageLabel(href: string, language: string = "en"): string | undefined {
   const page = PAGE_REGISTRY.find((p) => p.href === href);
   if (!page) return undefined;
-  return language === "ar" ? page.labelAr : page.labelEn;
+  return resolveBilingualLabel(page.labelEn, page.labelAr, language);
 }

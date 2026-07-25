@@ -223,9 +223,9 @@ export function DashboardPreviewShell() {
    * Customizer is for; the content area is the same mock content the shell
    * would host.
    */
-  const surface = "hsl(var(--card))";
-  const edge = "hsl(var(--border))";
-  const accent = "hsl(var(--primary))";
+  const surface = "var(--nx-surface)";
+  const edge = "var(--nx-line)";
+  const accent = "var(--nx-accent)";
   const content = <MockDashboardContent />;
 
   const nexusShellPreview = (
@@ -240,7 +240,7 @@ export function DashboardPreviewShell() {
         {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
-            className="h-9 w-9 rounded-[9px]"
+            className="h-9 w-9 rounded-nx-md"
             style={{
               background:
                 i === 0 ? `color-mix(in oklch, ${accent} 16%, transparent)` : "transparent",
@@ -260,7 +260,7 @@ export function DashboardPreviewShell() {
           className="mb-2 flex items-center gap-2 pb-3"
           style={{ borderBlockEnd: `1px solid ${edge}` }}
         >
-          <div className="h-6 w-6 rounded-[7px]" style={{ border: `1px solid ${accent}` }} />
+          <div className="h-6 w-6 rounded-nx-sm" style={{ border: `1px solid ${accent}` }} />
           <div className="h-2.5 w-24 rounded" style={{ background: edge }} />
         </div>
         {[0, 1, 2, 3, 4].map((i) => (
@@ -333,8 +333,8 @@ function MockDashboardContent() {
       value: "12.4K",
       change: "+23.7%",
       positive: true,
-      color: "text-primary",
-      bg: "bg-primary/10",
+      color: "text-nx-accent",
+      bg: "bg-nx-accent-wash",
     },
   ];
 
@@ -375,14 +375,14 @@ function MockDashboardContent() {
       {/* Page title */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Welcome back, Admin.</p>
+          <h1 className="text-2xl font-bold text-nx-ink">Dashboard</h1>
+          <p className="mt-1 text-sm text-nx-ink-3">Welcome back, Admin.</p>
         </div>
         <div className="flex gap-2">
-          <button className="rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground">
+          <button className="rounded-nx-control border border-nx-line bg-nx-ground px-3 py-1.5 text-sm text-nx-ink">
             Export
           </button>
-          <button className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground">
+          <button className="rounded-nx-control bg-nx-accent-fill px-3 py-1.5 text-sm text-nx-on-fill">
             + New Report
           </button>
         </div>
@@ -393,14 +393,14 @@ function MockDashboardContent() {
         {stats.map((stat, i) => {
           const Icon = stat.icon;
           return (
-            <div key={i} className="rounded-lg border border-border bg-card p-4 shadow-sm">
+            <div key={i} className="rounded-nx-md border border-nx-line bg-nx-surface p-4 shadow-nx-sm">
               <div className="mb-3 flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">{stat.label}</span>
-                <div className={cn("rounded-lg p-2", stat.bg)}>
+                <span className="text-sm text-nx-ink-3">{stat.label}</span>
+                <div className={cn("rounded-nx-md p-2", stat.bg)}>
                   <Icon className={cn("h-4 w-4", stat.color)} />
                 </div>
               </div>
-              <div className="text-2xl font-bold text-foreground">{stat.value}</div>
+              <div className="text-2xl font-bold text-nx-ink">{stat.value}</div>
               <div
                 className={cn(
                   "mt-1 flex items-center gap-1 text-xs",
@@ -417,21 +417,21 @@ function MockDashboardContent() {
 
       {/* Charts row */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="rounded-lg border border-border bg-card p-4 shadow-sm lg:col-span-2">
+        <div className="rounded-nx-md border border-nx-line bg-nx-surface p-4 shadow-nx-sm lg:col-span-2">
           <div className="mb-4 flex items-center justify-between">
             <div>
-              <h3 className="font-semibold text-foreground">Revenue Overview</h3>
-              <p className="text-xs text-muted-foreground">Monthly revenue</p>
+              <h3 className="font-semibold text-nx-ink">Revenue Overview</h3>
+              <p className="text-xs text-nx-ink-3">Monthly revenue</p>
             </div>
             <div className="flex gap-1">
               {["7d", "30d", "90d"].map((p, i) => (
                 <button
                   key={p}
                   className={cn(
-                    "rounded-md px-2 py-1 text-xs",
+                    "rounded-nx-control px-2 py-1 text-xs",
                     i === 1
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-muted"
+                      ? "bg-nx-accent-fill text-nx-on-fill"
+                      : "text-nx-ink-3 hover:bg-nx-hover"
                   )}
                 >
                   {p}
@@ -443,20 +443,23 @@ function MockDashboardContent() {
             {[35, 50, 70, 45, 80, 60, 90, 55, 72, 42, 85, 68].map((h, i) => (
               <div key={i} className="flex flex-1 flex-col items-center gap-1">
                 <div
-                  className="w-full rounded-t-md bg-primary/80 transition-colors hover:bg-primary"
-                  style={{ height: `${h}%` }}
+                  className="w-full rounded-t-nx-control transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none"
+                  style={{
+                    height: `${h}%`,
+                    background: "color-mix(in srgb, var(--nx-accent-fill) 80%, transparent)",
+                  }}
                 />
-                <span className="text-[10px] text-muted-foreground">
+                <span className="text-[11px] text-nx-ink-3">
                   {["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"][i]}
                 </span>
               </div>
             ))}
           </div>
         </div>
-        <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
+        <div className="rounded-nx-md border border-nx-line bg-nx-surface p-4 shadow-nx-sm">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="font-semibold text-foreground">Sources</h3>
-            <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+            <h3 className="font-semibold text-nx-ink">Sources</h3>
+            <MoreHorizontal className="h-4 w-4 text-nx-ink-3" />
           </div>
           <div className="my-4 flex items-center justify-center">
             <div className="relative h-[100px] w-[100px]">
@@ -466,7 +469,7 @@ function MockDashboardContent() {
                   cy="18"
                   r="14"
                   fill="none"
-                  className="stroke-muted"
+                  stroke="var(--nx-line-hi)"
                   strokeWidth="3"
                 />
                 <circle
@@ -474,29 +477,32 @@ function MockDashboardContent() {
                   cy="18"
                   r="14"
                   fill="none"
-                  className="stroke-primary"
+                  stroke="var(--nx-accent)"
                   strokeWidth="3"
                   strokeDasharray="55 45"
                   strokeLinecap="round"
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xl font-bold text-foreground">68%</span>
+                <span className="text-xl font-bold text-nx-ink">68%</span>
               </div>
             </div>
           </div>
           <div className="space-y-2">
             {[
-              { l: "Direct", p: "42%", c: "bg-primary" },
-              { l: "Social", p: "28%", c: "bg-primary/60" },
-              { l: "Referral", p: "18%", c: "bg-primary/30" },
+              { l: "Direct", p: "42%", opacity: "100%" },
+              { l: "Social", p: "28%", opacity: "60%" },
+              { l: "Referral", p: "18%", opacity: "30%" },
             ].map((item, i) => (
               <div key={i} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className={cn("h-2.5 w-2.5 rounded-full", item.c)} />
-                  <span className="text-xs text-muted-foreground">{item.l}</span>
+                  <div
+                    className="h-2.5 w-2.5 rounded-full"
+                    style={{ background: "var(--nx-accent-fill)", opacity: item.opacity }}
+                  />
+                  <span className="text-xs text-nx-ink-3">{item.l}</span>
                 </div>
-                <span className="text-xs font-medium text-foreground">{item.p}</span>
+                <span className="text-xs font-medium text-nx-ink">{item.p}</span>
               </div>
             ))}
           </div>
@@ -504,22 +510,22 @@ function MockDashboardContent() {
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-border bg-card shadow-sm">
-        <div className="flex items-center justify-between border-b border-border p-4">
+      <div className="rounded-nx-md border border-nx-line bg-nx-surface shadow-nx-sm">
+        <div className="flex items-center justify-between border-b border-nx-line p-4">
           <div>
-            <h3 className="font-semibold text-foreground">Recent Users</h3>
-            <p className="text-xs text-muted-foreground">Latest registrations</p>
+            <h3 className="font-semibold text-nx-ink">Recent Users</h3>
+            <p className="text-xs text-nx-ink-3">Latest registrations</p>
           </div>
-          <button className="flex items-center gap-1 text-xs text-primary">
+          <button className="flex items-center gap-1 text-xs text-nx-accent">
             View all <ArrowUpRight className="h-3 w-3" />
           </button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-border">
+              <tr className="border-b border-nx-line">
                 {["Name", "Email", "Role", "Status", "Date"].map((h) => (
-                  <th key={h} className="p-3 text-start text-xs font-medium text-muted-foreground">
+                  <th key={h} className="p-3 text-start text-xs font-medium text-nx-ink-3">
                     {h}
                   </th>
                 ))}
@@ -529,12 +535,12 @@ function MockDashboardContent() {
               {tableRows.map((row, i) => (
                 <tr
                   key={i}
-                  className="border-b border-border/50 transition-colors hover:bg-muted/30"
+                  className="border-b border-nx-line transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none"
                 >
-                  <td className="p-3 text-sm font-medium text-foreground">{row.name}</td>
-                  <td className="p-3 text-sm text-muted-foreground">{row.email}</td>
+                  <td className="p-3 text-sm font-medium text-nx-ink">{row.name}</td>
+                  <td className="p-3 text-sm text-nx-ink-3">{row.email}</td>
                   <td className="p-3">
-                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                    <span className="rounded-full bg-nx-raised px-2 py-0.5 text-xs text-nx-ink-3">
                       {row.role}
                     </span>
                   </td>
@@ -546,13 +552,13 @@ function MockDashboardContent() {
                           ? "bg-success/10 text-success"
                           : row.status === "Pending"
                             ? "bg-warning/10 text-warning"
-                            : "bg-muted text-muted-foreground"
+                            : "bg-nx-raised text-nx-ink-3"
                       )}
                     >
                       {row.status}
                     </span>
                   </td>
-                  <td className="p-3 text-sm text-muted-foreground">{row.date}</td>
+                  <td className="p-3 text-sm text-nx-ink-3">{row.date}</td>
                 </tr>
               ))}
             </tbody>
