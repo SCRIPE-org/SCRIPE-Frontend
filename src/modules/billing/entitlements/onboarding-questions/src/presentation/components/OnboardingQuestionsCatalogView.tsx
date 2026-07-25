@@ -11,6 +11,7 @@ import { useMemo, useState } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
 import { SlidersHorizontal } from "lucide-react";
 import { OptionsEditorDialog } from "./OptionsEditorDialog";
 import type { OnboardingQuestion } from "../../domain/entities/OnboardingQuestion";
@@ -41,37 +42,37 @@ export function OnboardingQuestionsCatalogView({
       columns: [
         {
           key: "key",
-          label: t("entitlements.onboarding.questions.key") || "Key",
+          label: t("entitlements.onboarding.questions.key"),
           render: (value: unknown) => (
-            <span className="font-mono text-xs text-muted-foreground">{String(value ?? "")}</span>
+            <span className="font-mono text-xs text-nx-ink-2">{String(value ?? "")}</span>
           ),
         },
         {
           key: "labelEn",
-          label: t("entitlements.onboarding.questions.label") || "Label",
+          label: t("entitlements.onboarding.questions.label"),
           render: (_val: unknown, q: OnboardingQuestion) => q.getLabel(language),
         },
         {
           key: "questionType",
-          label: t("entitlements.onboarding.questions.type") || "Type",
+          label: t("entitlements.onboarding.questions.type"),
           render: (value: unknown) => (
             <Badge variant={value === "MultiSelect" ? "default" : "secondary"}>
-              {String(value ?? "")}
+              {value === "MultiSelect"
+                ? t("entitlements.onboarding.questions.typeMultiSelect")
+                : t("entitlements.onboarding.questions.typeSingleSelect")}
             </Badge>
           ),
         },
         {
           key: "sortOrder",
-          label: t("entitlements.onboarding.questions.sortOrder") || "Sort Order",
+          label: t("entitlements.onboarding.questions.sortOrder"),
         },
         {
           key: "isSystem",
-          label: t("entitlements.onboarding.questions.isSystem") || "System",
+          label: t("entitlements.onboarding.questions.isSystem"),
           render: (value: unknown) =>
             value ? (
-              <Badge variant="outline" className="border-primary text-primary">
-                System
-              </Badge>
+              <Badge variant="default">{t("entitlements.onboarding.questions.isSystem")}</Badge>
             ) : null,
         },
       ],
@@ -79,43 +80,46 @@ export function OnboardingQuestionsCatalogView({
       createFields: [
         {
           name: "key",
-          label: t("entitlements.onboarding.questions.key") || "Question Key",
+          label: t("entitlements.onboarding.questions.key"),
           type: "text" as const,
           required: true,
-          placeholder: "e.g. team_size",
-          description: "Unique snake_case key used to identify this question in the engine.",
+          placeholder: t("entitlements.onboarding.questions.keyPlaceholder"),
+          description: t("entitlements.onboarding.questions.keyHelp"),
         },
         {
           name: "labelEn",
-          label: t("entitlements.onboarding.questions.labelEn") || "Label (English)",
+          label: t("entitlements.onboarding.questions.labelEn"),
           type: "text" as const,
           required: true,
         },
         {
           name: "labelAr",
-          label: t("entitlements.onboarding.questions.labelAr") || "Label (Arabic)",
+          label: t("entitlements.onboarding.questions.labelAr"),
           type: "text" as const,
           required: true,
         },
         {
           name: "questionType",
-          label: t("entitlements.onboarding.questions.type") || "Question Type",
+          label: t("entitlements.onboarding.questions.type"),
           type: "select" as const,
           required: true,
           options: [
-            { value: "SingleSelect", label: "Single Select" },
-            { value: "MultiSelect", label: "Multi Select" },
+            {
+              value: "SingleSelect",
+              label: t("entitlements.onboarding.questions.typeSingleSelect"),
+            },
+            { value: "MultiSelect", label: t("entitlements.onboarding.questions.typeMultiSelect") },
           ],
         },
         {
           name: "sortOrder",
-          label: t("entitlements.onboarding.questions.sortOrder") || "Sort Order",
+          label: t("entitlements.onboarding.questions.sortOrder"),
           type: "number" as const,
           defaultValue: 10,
         },
         {
           name: "isRequired",
-          label: t("entitlements.onboarding.questions.required") || "Required",
+          label: t("entitlements.onboarding.questions.required"),
           type: "switch" as const,
           defaultValue: true,
         },
@@ -124,21 +128,21 @@ export function OnboardingQuestionsCatalogView({
       editFields: (item: OnboardingQuestion | null) => [
         {
           name: "labelEn",
-          label: t("entitlements.onboarding.questions.labelEn") || "Label (English)",
+          label: t("entitlements.onboarding.questions.labelEn"),
           type: "text" as const,
           required: true,
           defaultValue: item?.labelEn ?? "",
         },
         {
           name: "labelAr",
-          label: t("entitlements.onboarding.questions.labelAr") || "Label (Arabic)",
+          label: t("entitlements.onboarding.questions.labelAr"),
           type: "text" as const,
           required: true,
           defaultValue: item?.labelAr ?? "",
         },
         {
           name: "sortOrder",
-          label: t("entitlements.onboarding.questions.sortOrder") || "Sort Order",
+          label: t("entitlements.onboarding.questions.sortOrder"),
           type: "number" as const,
           defaultValue: item?.sortOrder ?? 10,
         },
@@ -147,13 +151,15 @@ export function OnboardingQuestionsCatalogView({
       getItemDisplayName: (item: OnboardingQuestion) => item.getLabel(language),
 
       renderActions: (item: OnboardingQuestion) => (
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={() => setOptionsTarget({ id: item.id, label: item.getLabel(language) })}
-          title="Edit answer options"
-          className="rounded p-1.5 text-primary/70 transition-colors hover:bg-primary/10 hover:text-primary"
+          aria-label={`${t("entitlements.onboarding.questions.manageOptions")}: ${item.getLabel(language)}`}
+          className="h-7 w-7 text-nx-accent hover:bg-nx-accent-wash"
         >
-          <SlidersHorizontal className="h-3.5 w-3.5" />
-        </button>
+          <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden="true" />
+        </Button>
       ),
     }),
     // setOptionsTarget is stable — intentionally omitted from deps

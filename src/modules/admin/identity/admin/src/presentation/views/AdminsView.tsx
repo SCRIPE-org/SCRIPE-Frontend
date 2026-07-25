@@ -143,7 +143,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       columns: [
         {
           key: "username",
-          label: t("admin.username") || "Username",
+          label: t("admin.username"),
           sortable: true,
           render: (_val: unknown, admin: Admin) => (
             <div className="flex items-center gap-2">
@@ -154,9 +154,9 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                     <TooltipTrigger asChild>
                       <span>
                         {admin.isSuperAdmin ? (
-                          <Crown className="h-4 w-4 text-warning" />
+                          <Crown className="h-4 w-4 text-warning" aria-hidden="true" />
                         ) : (
-                          <Shield className="h-4 w-4 text-info" />
+                          <Shield className="h-4 w-4 text-info" aria-hidden="true" />
                         )}
                       </span>
                     </TooltipTrigger>
@@ -169,24 +169,24 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         },
         {
           key: "name",
-          label: t("admin.name") || "Name",
+          label: t("admin.name"),
           render: (_val: unknown, admin: Admin) => <span>{admin.displayName}</span>,
         },
         {
           key: "email",
-          label: t("admin.email") || "Email",
+          label: t("admin.email"),
           render: (_val: unknown, admin: Admin) =>
             admin.email ? (
-              <a href={`mailto:${admin.email}`} className="text-sm text-primary hover:underline">
+              <a href={`mailto:${admin.email}`} className="text-sm text-nx-accent hover:underline">
                 {admin.email}
               </a>
             ) : (
-              <span className="text-muted-foreground">-</span>
+              <span className="text-nx-ink-2">-</span>
             ),
         },
         {
           key: "roles",
-          label: t("admin.roles") || "Roles",
+          label: t("admin.roles"),
           render: (_val: unknown, admin: Admin) => {
             const roles = admin.getLocalizedRoles(language);
             return (
@@ -198,7 +198,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                     </Badge>
                   ))
                 ) : (
-                  <span className="text-muted-foreground">-</span>
+                  <span className="text-nx-ink-2">-</span>
                 )}
               </div>
             );
@@ -206,7 +206,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         },
         {
           key: "groups",
-          label: t("admin.groups") || "Groups",
+          label: t("admin.groups"),
           render: (_val: unknown, admin: Admin) => {
             const groups = admin.getLocalizedGroups(language);
             return (
@@ -218,7 +218,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
                     </Badge>
                   ))
                 ) : (
-                  <span className="text-muted-foreground">-</span>
+                  <span className="text-nx-ink-2">-</span>
                 )}
               </div>
             );
@@ -226,16 +226,16 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         },
         {
           key: "isActive",
-          label: t("admin.status") || "Status",
+          label: t("admin.status"),
           render: (value: boolean) => (
             <Badge variant={value ? "success" : "secondary"}>
-              {value ? t("common.active") || "Active" : t("common.inactive") || "Inactive"}
+              {value ? t("common.active") : t("common.inactive")}
             </Badge>
           ),
         },
         {
           key: "createdAt",
-          label: t("admin.createdAt") || "Created",
+          label: t("admin.createdAt"),
           render: (value: string) => (value ? formatUtc(value, "MMM d, yyyy") : "-"),
         },
       ],
@@ -252,34 +252,34 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
 
         const actions: CrudAction<Admin>[] = [
           {
-            label: tFn("common.view") || "View",
+            label: tFn("common.view"),
             onClick: (item: Admin) => vmInstance.openViewModal(item),
             variant: "ghost" as const,
-            icon: <Eye className="h-4 w-4" />,
+            icon: <Eye className="h-4 w-4" aria-hidden="true" />,
           },
           {
-            label: tFn("common.edit") || "Edit",
+            label: tFn("common.edit"),
             onClick: (item: Admin) => vmInstance.openEditModal(item),
             variant: "ghost" as const,
-            icon: <Pencil className="h-4 w-4" />,
+            icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
             show: (item: Admin) =>
               !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
           },
           {
-            label: tFn("admin.impersonate") || "Impersonate",
+            label: tFn("admin.impersonate"),
             onClick: (item: Admin) => handleImpersonate(item.id),
             variant: "ghost" as const,
-            icon: <UserCheck className="h-4 w-4" />,
+            icon: <UserCheck className="h-4 w-4" aria-hidden="true" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_IMPERSONATE,
             show: (item: Admin) =>
               !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
           },
           {
-            label: tFn("admin.transfer") || "Transfer",
+            label: tFn("admin.transfer"),
             onClick: (item: Admin) => handleOpenTransfer(item),
             variant: "ghost" as const,
-            icon: <ArrowRightLeft className="h-4 w-4" />,
+            icon: <ArrowRightLeft className="h-4 w-4" aria-hidden="true" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_TRANSFER,
             show: (item: Admin) => !item.hasGuardianProtection || currentUser?.id === item.id,
           },
@@ -288,79 +288,75 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             if (!isProtectedAdmin && !tenantId) return [];
             return [
               {
-                label: tFn("admin.transferProtection") || "Transfer Protection",
+                label: tFn("admin.transferProtection"),
                 onClick: (item: Admin) => handleTransferProtection(item.id),
                 variant: "ghost" as const,
-                icon: <ShieldCheck className="h-4 w-4" />,
+                icon: <ShieldCheck className="h-4 w-4" aria-hidden="true" />,
                 requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
                 // Only show for admins who are NOT the protected one and are editable
                 show: (item: Admin) => item.id !== currentUser?.id && item.canModify,
-                confirmTitle: tFn("admin.transferProtection") || "Transfer Protection",
-                confirmDescription:
-                  tFn("admin.transferProtectionDesc") ||
-                  "Are you sure you want to transfer protection to {name}?",
+                confirmTitle: tFn("admin.transferProtection"),
+                confirmDescription: tFn("admin.transferProtectionDesc"),
                 confirmVariant: "warning" as const,
-                confirmButtonText: tFn("common.confirm") || "Confirm",
+                confirmButtonText: tFn("common.confirm"),
               },
             ];
           })(),
           {
-            label: tFn("admin.toggleStatus") || "Toggle Status",
+            label: tFn("admin.toggleStatus"),
             onClick: (item: Admin) => handleToggleActive(item.id, !item.isActive),
             variant: "ghost" as const,
-            icon: <UserCheck className="h-4 w-4" />,
+            icon: <UserCheck className="h-4 w-4" aria-hidden="true" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
             // Cannot toggle status if they are protected (even upper admin shouldn't deactivate the last super admin)
             show: (item: Admin) => !item.hasGuardianProtection,
           },
           {
-            label: tFn("admin.role.manageTitle") || "Manage Roles",
+            label: tFn("admin.role.manageTitle"),
             onClick: (item: Admin) => handleOpenManageRoles(item),
             variant: "ghost" as const,
-            icon: <Shield className="h-4 w-4" />,
+            icon: <Shield className="h-4 w-4" aria-hidden="true" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_ASSIGN_ROLES,
             show: (item: Admin) =>
               !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
           },
           {
-            label: tFn("admin.resetPassword") || "Reset Password",
+            label: tFn("admin.resetPassword"),
             onClick: (item: Admin) => handleOpenResetPassword(item),
             variant: "ghost" as const,
             className: "text-warning hover:text-warning/90",
-            icon: <Settings className="h-4 w-4" />,
+            icon: <Settings className="h-4 w-4" aria-hidden="true" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_RESET_PASSWORD,
             show: (item: Admin) =>
               !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
           },
           {
-            label: tFn("userGroups.assignToGroup") || "Assign to Group",
+            label: tFn("userGroups.assignToGroup"),
             onClick: (item: Admin) => handleOpenAssignToGroup(item),
             variant: "ghost" as const,
-            icon: <Users className="h-4 w-4" />,
+            icon: <Users className="h-4 w-4" aria-hidden="true" />,
             requiredPermission: SYSTEM_PERMISSIONS.USER_GROUPS_VIEW,
             show: (item: Admin) => !item.hasGuardianProtection || !!tenantId,
           },
           {
-            label: tFn("admin.resendSetupEmail") || "Resend Setup Email",
+            label: tFn("admin.resendSetupEmail"),
             onClick: (item: Admin) => handleResendSetupEmail(item.id),
             variant: "ghost" as const,
-            icon: <Mail className="h-4 w-4" />,
+            icon: <Mail className="h-4 w-4" aria-hidden="true" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
             // Only show for protected admins who haven't activated their account yet
             show: (item: Admin) => item.needsAccountSetup,
-            confirmTitle: tFn("admin.resendSetupEmail") || "Resend Setup Email",
-            confirmDescription:
-              tFn("admin.resendSetupEmailDesc") ||
-              "Are you sure you want to resend the account setup email to this admin?",
+            confirmTitle: tFn("admin.resendSetupEmail"),
+            confirmDescription: tFn("admin.resendSetupEmailDesc"),
             confirmVariant: "default" as const,
-            confirmButtonText: tFn("common.send") || "Send",
+            confirmButtonText: tFn("common.send"),
           },
           {
-            label: tFn("common.delete") || "Delete",
+            label: tFn("common.delete"),
             onClick: (item: Admin) => handleDeleteFn?.(item),
             variant: "ghost" as const,
             className: "text-destructive hover:text-destructive/90",
-            icon: <Trash2 className="h-4 w-4" />,
+            icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_DELETE,
             // Cannot delete protected admin ever
             show: (item: Admin) => !item.hasGuardianProtection,
@@ -372,24 +368,24 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       enableBulkActions: true,
       bulkActions: [
         {
-          label: t("common.activate") || "Activate",
-          icon: <ShieldCheck className="h-4 w-4" />,
+          label: t("common.activate"),
+          icon: <ShieldCheck className="h-4 w-4" aria-hidden="true" />,
           onClick: async (ids: string[]) => {
             await handleBulkActivate(ids);
           },
           variant: "outline" as const,
         },
         {
-          label: t("common.deactivate") || "Deactivate",
-          icon: <ShieldAlert className="h-4 w-4" />,
+          label: t("common.deactivate"),
+          icon: <ShieldAlert className="h-4 w-4" aria-hidden="true" />,
           onClick: async (ids: string[]) => {
             await handleBulkDeactivate(ids);
           },
           variant: "outline" as const,
         },
         {
-          label: t("userGroups.assignToGroup") || "Assign to Group",
-          icon: <Users className="h-4 w-4" />,
+          label: t("userGroups.assignToGroup"),
+          icon: <Users className="h-4 w-4" aria-hidden="true" />,
           onClick: async (ids: string[]) => {
             setSelectedBulkAdminIds(ids);
             setBulkAssignToGroupDialogOpen(true);
@@ -398,8 +394,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
           requiredPermission: SYSTEM_PERMISSIONS.USER_GROUPS_VIEW,
         },
         {
-          label: t("common.delete") || "Delete",
-          icon: <Trash2 className="h-4 w-4" />,
+          label: t("common.delete"),
+          icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
           onClick: async (ids: string[]) => {
             await handleBulkDelete(ids);
           },

@@ -11,5 +11,19 @@ export const en = {
     appName: "App",
     amount: "Amount",
     payoutStatus: "Payout Status",
+    // ── FinancialsView ──
+    financialsPageSubtitle: "Purchases and developer payouts",
+    financialsPurchasesTab: "Purchases ({{count}})",
+    financialsPayoutsTab: "Payouts",
+    financialsProcessPayout: "Process",
+    financialsPayoutStatusPending: "Pending",
+    financialsPayoutStatusProcessing: "Processing",
+    financialsPayoutStatusPaid: "Paid",
+    financialsPayoutStatusFailed: "Failed",
+    // ── RevenueChart ──
+    financialsRevenueChartTitle: "Revenue Over Time",
+    financialsNoRevenueData: "No revenue data available.",
+    financialsRevenueLabel: "Revenue",
+    financialsVsStart: "vs start",
   },
 };

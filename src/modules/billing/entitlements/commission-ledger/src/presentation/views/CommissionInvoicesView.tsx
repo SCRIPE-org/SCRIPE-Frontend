@@ -4,6 +4,7 @@ import { useCommissionLedgerViewModel } from "../viewmodels/useCommissionLedgerV
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@core/ui/tooltip";
 import type { CommissionInvoice } from "../../domain/entities/CommissionInvoice";
 
 /**
@@ -22,17 +23,23 @@ export function CommissionInvoicesView() {
         render: (value: unknown, invoice: CommissionInvoice) => {
           if (invoice.status === "Paid" || invoice.status === "Waived") return null;
 
+          // No online payment-initiation flow exists yet for tenant-facing
+          // commission invoices (the repository only exposes retry-charge and
+          // waive, both admin actions) — the CTA is disabled with an
+          // explanation rather than left enabled and silently inert.
           return (
-            <Button
-              variant="default"
-              size="sm"
-              onClick={() => {
-                // Here we would integrate with payment flow if gateway is configured.
-                // For now, it redirects to the tenant gateways to configure a payment method if not set.
-              }}
-            >
-              {t("entitlements.commissionLedger.payNow") || "Pay Now"}
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <Button variant="default" size="sm" disabled>
+                    {t("entitlements.commissionLedger.payNow")}
+                  </Button>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                {t("entitlements.commissionLedger.payNowUnavailable")}
+              </TooltipContent>
+            </Tooltip>
           );
         },
       };
@@ -44,11 +51,10 @@ export function CommissionInvoicesView() {
     <div className="space-y-6">
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold tracking-tight">
-          {t("entitlements.commissionLedger.invoices") || "Commission Invoices"}
+          {t("entitlements.commissionLedger.invoices")}
         </h1>
-        <p className="text-sm text-muted-foreground">
-          {t("entitlements.commissionLedger.invoicesSubtitle") ||
-            "View your commission invoices charged by the platform."}
+        <p className="text-sm text-nx-ink-2">
+          {t("entitlements.commissionLedger.invoicesSubtitle")}
         </p>
       </div>
 

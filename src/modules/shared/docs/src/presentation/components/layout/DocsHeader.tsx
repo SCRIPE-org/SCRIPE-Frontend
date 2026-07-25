@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import { Search, Menu, Building, Globe, Check, Moon, Sun } from "lucide-react";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import { BRAND } from "@core/config/branding";
 
@@ -9,39 +10,6 @@ interface DocsHeaderProps {
   onSearchOpen: () => void;
   onMobileMenuOpen: () => void;
 }
-
-const SearchIcon = () => (
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <circle cx="11" cy="11" r="8" />
-    <path d="m21 21-4.3-4.3" />
-  </svg>
-);
-
-const MenuIcon = () => (
-  <svg
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <line x1="4" x2="20" y1="12" y2="12" />
-    <line x1="4" x2="20" y1="6" y2="6" />
-    <line x1="4" x2="20" y1="18" y2="18" />
-  </svg>
-);
 
 /**
  * Presentation UI component rendering the docs header.
@@ -54,7 +22,7 @@ export function DocsHeader({ onSearchOpen, onMobileMenuOpen }: DocsHeaderProps) 
     <header className="docs-header">
       {/* Mobile hamburger */}
       <button className="docs-hamburger" onClick={onMobileMenuOpen} aria-label={t("common.menu")}>
-        <MenuIcon />
+        <Menu size={20} aria-hidden="true" />
       </button>
 
       {/* Logo */}
@@ -63,36 +31,28 @@ export function DocsHeader({ onSearchOpen, onMobileMenuOpen }: DocsHeaderProps) 
         <span>{BRAND.nameUpper}</span>
       </Link>
 
-      {/* Search Trigger */}
-      <button className="docs-search-trigger" onClick={onSearchOpen}>
-        <SearchIcon />
-        <span className="docs-hide-mobile">{t("common.search")}</span>
-        <span className="docs-search-shortcut">{t("common.searchShortcut")}</span>
+      {/* Search Trigger — aria-label carries the name even on breakpoints
+          where docs-hide-mobile removes the visible "Search" text, so the
+          accessible name never collapses down to the bare "⌘K" hint. */}
+      <button
+        className="docs-search-trigger"
+        onClick={onSearchOpen}
+        aria-label={t("common.search")}
+      >
+        <Search size={16} aria-hidden="true" />
+        <span className="docs-hide-mobile" aria-hidden="true">
+          {t("common.search")}
+        </span>
+        <span className="docs-search-shortcut" aria-hidden="true">
+          {t("common.searchShortcut")}
+        </span>
       </button>
 
       {/* Actions */}
       <div className="docs-header-actions">
         {/* Commercial Docs link */}
         <Link href="/commercial" className="docs-commercial-link">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <rect width="16" height="20" x="4" y="2" rx="2" ry="2" />
-            <path d="M9 22v-4h6v4" />
-            <path d="M8 6h.01" />
-            <path d="M16 6h.01" />
-            <path d="M8 10h.01" />
-            <path d="M16 10h.01" />
-            <path d="M8 14h.01" />
-            <path d="M16 14h.01" />
-          </svg>
+          <Building size={14} aria-hidden="true" />
           <span className="docs-hide-mobile">{t("common.commercialDocs")}</span>
         </Link>
 
@@ -125,30 +85,20 @@ function DocsLangSwitcherInline() {
         className="docs-lang-btn"
         onClick={() => setOpen(!open)}
         aria-label={t("common.language")}
+        aria-expanded={open}
       >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
-          <path d="M2 12h20" />
-        </svg>
+        <Globe size={16} aria-hidden="true" />
         <span>{currentLanguageInfo.code.toUpperCase()}</span>
       </button>
 
       {open && (
-        <div className="docs-lang-menu">
+        <div className="docs-lang-menu" role="menu">
           {languages.map((lang) => (
             <button
               key={lang.code}
               className="docs-lang-option"
+              role="menuitemradio"
+              aria-checked={lang.code === language}
               data-active={lang.code === language}
               onClick={() => {
                 setLanguage(lang.code);
@@ -156,18 +106,7 @@ function DocsLangSwitcherInline() {
               }}
             >
               <span>{lang.nativeLabel}</span>
-              {lang.code === language && (
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              )}
+              {lang.code === language && <Check size={14} aria-hidden="true" />}
             </button>
           ))}
         </div>
@@ -180,6 +119,7 @@ function DocsLangSwitcherInline() {
 import { useTheme } from "next-themes";
 
 function DocsThemeToggleInline() {
+  const { t } = useDocsI18n();
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark";
 
@@ -187,43 +127,9 @@ function DocsThemeToggleInline() {
     <button
       className="docs-theme-btn"
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      aria-label="Toggle theme"
+      aria-label={t("common.toggleTheme")}
     >
-      {isDark ? (
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2" />
-          <path d="M12 20v2" />
-          <path d="m4.93 4.93 1.41 1.41" />
-          <path d="m17.66 17.66 1.41 1.41" />
-          <path d="M2 12h2" />
-          <path d="M20 12h2" />
-          <path d="m6.34 17.66-1.41 1.41" />
-          <path d="m19.07 4.93-1.41 1.41" />
-        </svg>
-      ) : (
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-        </svg>
-      )}
+      {isDark ? <Sun size={16} aria-hidden="true" /> : <Moon size={16} aria-hidden="true" />}
     </button>
   );
 }

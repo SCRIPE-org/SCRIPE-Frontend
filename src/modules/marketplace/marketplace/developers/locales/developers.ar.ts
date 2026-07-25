@@ -10,5 +10,13 @@ export const ar = {
     developers: {
       verified: "تم تحديث حالة التحقق للمطور",
     },
+    // ── DevelopersView ──
+    developersStatsSummary: "{{total}} إجمالي · {{verified}} موثّق",
+    developersSearchPlaceholder: "ابحث عن المطورين...",
+    developersAppsCount: "{{count}} تطبيق",
+    developersVerifyAction: "توثيق",
+    // ── DeveloperBadge ──
+    developersVerifiedAriaLabel: "مطوّر موثّق",
+    developersVerifiedTooltip: "مطوّر موثّق",
   },
 };

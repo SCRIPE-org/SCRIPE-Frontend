@@ -6,9 +6,19 @@ import type { AppPurchase } from "../../domain/entities/FinancialEntities";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent } from "@core/ui/card";
+import { Skeleton } from "@core/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
+import { useI18n } from "@core/providers/i18n-provider";
 import { DollarSign, Play } from "lucide-react";
 import { formatDateUtc } from "@core/common/utils";
+import type { PayoutStatus } from "../../domain/entities/FinancialEntities";
+
+const PAYOUT_STATUS_KEY: Record<PayoutStatus, string> = {
+  Pending: "marketplace.financialsPayoutStatusPending",
+  Processing: "marketplace.financialsPayoutStatusProcessing",
+  Paid: "marketplace.financialsPayoutStatusPaid",
+  Failed: "marketplace.financialsPayoutStatusFailed",
+};
 
 /**
  * Presentation UI component rendering the financials view.
@@ -16,6 +26,7 @@ import { formatDateUtc } from "@core/common/utils";
  */
 export function FinancialsView() {
   const vm = useFinancialsViewModel();
+  const { t } = useI18n();
 
   // Build chart data from purchases grouped by month (Phase 5.4)
   const chartData = buildMonthlyRevenueData(vm.purchases);
@@ -24,29 +35,34 @@ export function FinancialsView() {
   return (
     <div className="flex flex-col gap-6 p-6">
       <div>
-        <h2 className="text-xl font-semibold">Marketplace Financials</h2>
-        <p className="text-sm text-muted-foreground">Purchases and developer payouts</p>
+        <h2 className="text-xl font-semibold text-nx-ink">{t("marketplace.financialsTitle")}</h2>
+        <p className="text-sm text-nx-ink-2">{t("marketplace.financialsPageSubtitle")}</p>
       </div>
 
       {/* Revenue chart (Phase 5.4) */}
       {!vm.isLoadingPurchases && chartData.length > 0 && (
-        <RevenueChart data={chartData} totalRevenue={totalRevenue} title="Revenue Over Time" />
+        <RevenueChart data={chartData} totalRevenue={totalRevenue} />
       )}
 
       <Tabs defaultValue="purchases">
         <TabsList>
           <TabsTrigger value="purchases">
-            Purchases ({vm.purchasesPagination.totalCount})
+            {t("marketplace.financialsPurchasesTab", { count: vm.purchasesPagination.totalCount })}
           </TabsTrigger>
-          <TabsTrigger value="payouts">Payouts</TabsTrigger>
+          <TabsTrigger value="payouts">{t("marketplace.financialsPayoutsTab")}</TabsTrigger>
         </TabsList>
 
         {/* Purchases tab */}
         <TabsContent value="purchases" className="mt-4">
           {vm.isLoadingPurchases ? (
-            <div className="flex flex-col gap-2">
+            <div
+              className="flex flex-col gap-2"
+              role="status"
+              aria-busy="true"
+              aria-label={t("common.loading")}
+            >
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-16 motion-safe:animate-pulse rounded-lg bg-muted" />
+                <Skeleton key={i} className="h-16 rounded-nx-md" />
               ))}
             </div>
           ) : (
@@ -54,18 +70,18 @@ export function FinancialsView() {
               {vm.purchases.map((p) => (
                 <Card key={p.id}>
                   <CardContent className="flex items-center gap-4 p-4">
-                    <div className="rounded-lg bg-muted p-2">
-                      <DollarSign className="size-4 text-success" />
+                    <div className="rounded-nx-md bg-nx-raised p-2">
+                      <DollarSign className="size-4 text-success" aria-hidden="true" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium">{p.appName}</p>
-                      <p className="text-xs text-muted-foreground">{p.tenantName}</p>
+                      <p className="text-sm font-medium text-nx-ink">{p.appName}</p>
+                      <p className="text-xs text-nx-ink-2">{p.tenantName}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-success">{p.amountLabel}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {formatDateUtc(p.purchasedAt)}
+                    <div className="text-end">
+                      <p className="text-sm font-semibold tabular-nums text-success">
+                        {p.amountLabel}
                       </p>
+                      <p className="text-xs text-nx-ink-2">{formatDateUtc(p.purchasedAt)}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -77,9 +93,14 @@ export function FinancialsView() {
         {/* Payouts tab */}
         <TabsContent value="payouts" className="mt-4">
           {vm.isLoadingPayouts ? (
-            <div className="flex flex-col gap-2">
+            <div
+              className="flex flex-col gap-2"
+              role="status"
+              aria-busy="true"
+              aria-label={t("common.loading")}
+            >
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-16 motion-safe:animate-pulse rounded-lg bg-muted" />
+                <Skeleton key={i} className="h-16 rounded-nx-md" />
               ))}
             </div>
           ) : (
@@ -89,18 +110,19 @@ export function FinancialsView() {
                   <CardContent className="flex items-center gap-4 p-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <p className="text-sm font-medium">{payout.developerName}</p>
+                        <p className="text-sm font-medium text-nx-ink">{payout.developerName}</p>
                         <Badge variant={payout.statusVariant} className="text-xs">
-                          {payout.status}
+                          {t(PAYOUT_STATUS_KEY[payout.status])}
                         </Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground">
-                        {formatDateUtc(payout.periodStart)} —{" "}
-                        {formatDateUtc(payout.periodEnd)}
+                      <p className="text-xs text-nx-ink-2">
+                        {formatDateUtc(payout.periodStart)} — {formatDateUtc(payout.periodEnd)}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <p className="text-sm font-semibold">{payout.amountLabel}</p>
+                      <p className="text-sm font-semibold tabular-nums text-nx-ink">
+                        {payout.amountLabel}
+                      </p>
                       {payout.canProcess && (
                         <Button
                           size="sm"
@@ -108,7 +130,8 @@ export function FinancialsView() {
                           onClick={() => vm.processPayout({ id: payout.id })}
                           disabled={vm.isProcessingPayout}
                         >
-                          <Play className="size-3.5" /> Process
+                          <Play className="size-3.5" aria-hidden="true" />{" "}
+                          {t("marketplace.financialsProcessPayout")}
                         </Button>
                       )}
                     </div>

@@ -13,5 +13,8 @@ export const ar = {
     reviews: {
       moderated: "تم تحديث حالة التقييم",
     },
+    // ── ReviewsView ──
+    reviewsCountLabel: "{{count}} مراجعة",
+    reviewsDeleteConfirmDesc: "هل أنت متأكد من حذف هذه المراجعة؟ لا يمكن التراجع عن هذا الإجراء.",
   },
 };

@@ -29,11 +29,13 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
-import { Loader2, Trash2, Pencil, Shield, Layers, DollarSign } from "lucide-react";
+import { Trash2, Pencil, Shield, Layers, DollarSign } from "lucide-react";
 import { Textarea } from "@core/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { formatUtc } from "@core/common/utils";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { ErrorMessage } from "@core/ui/error-message";
 
 /* ============================================
  * CONSTANTS
@@ -63,11 +65,11 @@ export function OverridesView({ tenantId }: OverridesViewProps) {
   const vm = useOverridesViewModel(tenantId);
 
   if (vm.isLoading) {
-    return (
-      <div className="flex items-center justify-center py-16">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
+    return <LoadingSpinner />;
+  }
+
+  if (vm.error) {
+    return <ErrorMessage message={t("common.error")} />;
   }
 
   return (

@@ -31,12 +31,13 @@ import {
   DetailSheetHeader,
   DetailSheetBody,
 } from "@core/ui/detail-sheet";
+import { PageHeader } from "@core/ui/page-header";
 import { StatCard } from "@core/ui/stat-card";
 import { EmptyState } from "@core/ui/empty-state";
+import { ErrorMessage } from "@core/ui/error-message";
 import { Skeleton } from "@core/ui/skeleton";
 import { Switch } from "@core/ui/switch";
 import { usePermission } from "@core/hooks/use-permission";
-import { cn } from "@core/common/utils";
 import { ENTITLEMENTS_PERMISSIONS } from "@modules/entitlements/permission-constants";
 import type { Feature, FeatureValueType } from "../../domain/entities/Feature";
 import type {
@@ -193,6 +194,19 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
   const [enforcementFilter, setEnforcementFilter] = useState<EnforcementFilter>(ALL);
   const [pendingDelete, setPendingDelete] = useState<Feature | null>(null);
 
+  const hasActiveFilters =
+    vm.searchValue.trim().length > 0 ||
+    moduleFilter !== ALL ||
+    valueTypeFilter !== ALL ||
+    enforcementFilter !== ALL;
+
+  const clearFilters = () => {
+    vm.handleSearchChange("");
+    setModuleFilter(ALL);
+    setValueTypeFilter(ALL);
+    setEnforcementFilter(ALL);
+  };
+
   const canCreate = usePermission(ENTITLEMENTS_PERMISSIONS.FEATURES_CREATE);
   const canUpdate = usePermission(ENTITLEMENTS_PERMISSIONS.FEATURES_UPDATE);
   const canDelete = usePermission(ENTITLEMENTS_PERMISSIONS.FEATURES_DELETE);
@@ -278,54 +292,49 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
 
   return (
     <div className="space-y-6 pb-10">
-      <section className="relative overflow-hidden rounded-3xl border bg-gradient-to-br from-card/95 via-card to-primary/5 p-6 shadow-sm backdrop-blur-xl sm:p-8">
-        <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
-        <div className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-          <div className="max-w-2xl space-y-2">
-            <Badge variant="outline" className="w-fit border-primary/30 bg-primary/5">
-              {t("entitlements.features.controlPanel")}
-            </Badge>
-            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-              {t("entitlements.features.title")}
-            </h1>
-            <p className="text-sm leading-6 text-muted-foreground sm:text-base">
-              {t("entitlements.features.description")}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" onClick={vm.refreshItems} disabled={vm.loading}>
-              <RefreshCw className={cn("h-4 w-4", vm.loading && "animate-spin")} />
+      <PageHeader
+        icon={Boxes}
+        title={t("entitlements.features.title")}
+        description={t("entitlements.features.description")}
+        badges={<Badge variant="default">{t("entitlements.features.controlPanel")}</Badge>}
+        actions={
+          <>
+            <Button variant="outline" onClick={vm.refreshItems} loading={vm.loading} className="gap-2">
+              {!vm.loading && <RefreshCw className="h-4 w-4" aria-hidden="true" />}
               {t("entitlements.features.refresh")}
             </Button>
             {canCreate && (
-              <Button onClick={() => vm.setIsCreateModalOpen(true)}>
-                <Plus className="h-4 w-4" />
+              <Button onClick={() => vm.setIsCreateModalOpen(true)} className="gap-2">
+                <Plus className="h-4 w-4" aria-hidden="true" />
                 {t("entitlements.features.create")}
               </Button>
             )}
-          </div>
-        </div>
-      </section>
+          </>
+        }
+      />
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map(({ label, value, icon, tone }) => (
-          <StatCard key={label} label={label} value={value} icon={icon} tone={tone} />
+          <StatCard key={label} label={label} value={value} icon={icon} tone={tone} isLoading={vm.loading} />
         ))}
       </section>
 
-      <Card className="border-border/70 bg-card/90 shadow-sm backdrop-blur">
-        <CardHeader className="gap-4 border-b">
+      <Card>
+        <CardHeader className="gap-4 border-b border-nx-line">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <CardTitle className="text-lg">{t("entitlements.features.catalogTitle")}</CardTitle>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="mt-1 text-sm text-nx-ink-2">
                 {filteredFeatures.length} {t("entitlements.features.results")}
               </p>
             </div>
           </div>
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(260px,1fr)_220px_180px_180px]">
             <div className="relative">
-              <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search
+                className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
+                aria-hidden="true"
+              />
               <Input
                 value={vm.searchValue}
                 onChange={(event) => vm.handleSearchChange(event.target.value)}
@@ -376,30 +385,44 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
           </div>
         </CardHeader>
 
-        <CardContent className="p-4 sm:p-6">
+        <CardContent>
           {vm.loading ? (
-            <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+            <div
+              role="status"
+              aria-busy="true"
+              aria-label={t("common.loading")}
+              className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3"
+            >
               {Array.from({ length: 6 }).map((_, index) => (
-                <Skeleton key={index} className="h-44 rounded-2xl" />
+                <Skeleton key={index} shape="block" className="h-44 rounded-nx-lg" />
               ))}
             </div>
           ) : vm.error ? (
-            <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-6 text-sm text-destructive">
-              {vm.error}
-            </div>
+            <ErrorMessage message={vm.error} onRetry={vm.refreshItems} />
           ) : filteredFeatures.length === 0 ? (
             <EmptyState
               icon={Search}
               title={t("entitlements.features.noFeatures")}
               description={t("entitlements.features.noFeaturesHint")}
+              action={
+                hasActiveFilters ? (
+                  <Button variant="outline" onClick={clearFilters}>
+                    {t("entitlements.features.clearFilters")}
+                  </Button>
+                ) : undefined
+              }
+              secondaryAction={
+                canCreate ? (
+                  <Button onClick={() => vm.setIsCreateModalOpen(true)}>
+                    {t("entitlements.features.create")}
+                  </Button>
+                ) : undefined
+              }
             />
           ) : (
             <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
               {filteredFeatures.map((feature) => (
-                <article
-                  key={feature.id}
-                  className="group flex min-h-44 flex-col rounded-2xl border bg-background/70 p-4 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md"
-                >
+                <Card key={feature.id} className="flex min-h-44 flex-col p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -412,13 +435,13 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
                         )}
                       </div>
                       <h2
-                        className="truncate font-semibold"
+                        className="truncate font-semibold text-nx-ink"
                         title={feature.getDisplayName(language)}
                       >
                         {feature.getDisplayName(language)}
                       </h2>
                       <p
-                        className="mt-1 truncate font-mono text-xs text-muted-foreground"
+                        className="mt-1 truncate font-mono text-xs text-nx-ink-2"
                         title={feature.name}
                       >
                         {feature.name}
@@ -432,7 +455,7 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
                           onClick={() => vm.openEditModal(feature)}
                           aria-label={`${t("entitlements.features.edit")}: ${feature.getDisplayName(language)}`}
                         >
-                          <Edit3 className="h-4 w-4" />
+                          <Edit3 className="h-4 w-4" aria-hidden="true" />
                         </Button>
                       )}
                       {canDelete && !feature.isSystem && (
@@ -443,30 +466,30 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
                           aria-label={`${t("entitlements.features.deleteConfirmTitle")}: ${feature.getDisplayName(language)}`}
                           className="text-destructive hover:text-destructive/80"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" aria-hidden="true" />
                         </Button>
                       )}
                     </div>
                   </div>
 
-                  <p className="mt-3 line-clamp-2 text-sm leading-5 text-muted-foreground">
+                  <p className="mt-3 line-clamp-2 text-sm leading-5 text-nx-ink-2">
                     {feature.description || t("entitlements.features.noDescription")}
                   </p>
 
-                  <div className="mt-auto flex items-center justify-between gap-4 border-t pt-3">
+                  <div className="mt-auto flex items-center justify-between gap-4 border-t border-nx-line pt-3">
                     <div className="min-w-0">
-                      <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
                         {t("entitlements.features.defaultValue")}
                       </p>
                       <p
-                        className="truncate font-mono text-sm font-medium"
+                        className="truncate font-mono text-sm font-medium text-nx-ink"
                         title={feature.defaultValue}
                       >
                         {feature.defaultValue || "—"}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-nx-ink-3">
                         {t("entitlements.features.marketingOnly")}
                       </span>
                       <Switch
@@ -477,7 +500,7 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
                       />
                     </div>
                   </div>
-                </article>
+                </Card>
               ))}
             </div>
           )}

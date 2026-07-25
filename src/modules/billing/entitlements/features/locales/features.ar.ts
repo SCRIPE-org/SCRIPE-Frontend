@@ -20,6 +20,7 @@ export const ar = {
       filterByEnforcement: "تصفية حسب حالة التطبيق",
       allControls: "كل حالات التحكم",
       enforced: "مُطبّقة",
+      clearFilters: "مسح عوامل التصفية",
       noFeaturesHint: "جرّب إزالة بعض عوامل التصفية أو أنشئ ميزة جديدة في الكتالوج.",
       noDescription: "لم تتم إضافة وصف داخلي.",
       featureName: "مفتاح الميزة",

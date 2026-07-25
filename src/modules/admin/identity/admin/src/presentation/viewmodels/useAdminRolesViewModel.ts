@@ -85,7 +85,7 @@ export function useAdminRolesViewModel(
 
   const tenantOptions: GenericSelectOption[] = useMemo(
     () => [
-      { value: "", label: t("admin.role.systemScope") || "System Level (Global Access)" },
+      { value: "", label: t("admin.role.globalScope") },
       ...(Array.isArray(tenantsTree) ? transformTenants(tenantsTree) : []),
     ],
     [tenantsTree, transformTenants, t]

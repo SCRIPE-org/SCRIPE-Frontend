@@ -61,11 +61,14 @@ export class TenantGateway {
     return this.data.displayLabel || this.data.gateway;
   }
 
-  /** Status badge text */
+  /**
+   * Status badge locale key. Domain layer must not import i18n, so this
+   * returns a translation key — the view resolves it through t().
+   */
   get statusText(): string {
-    if (!this.data.isEnabled) return "Disabled";
-    if (this.data.isVerified) return "Connected";
-    return "Not Verified";
+    if (!this.data.isEnabled) return "entitlements.tenantGateways.status.disabled";
+    if (this.data.isVerified) return "entitlements.tenantGateways.status.connected";
+    return "entitlements.tenantGateways.status.notVerified";
   }
 
   /** Status badge variant */

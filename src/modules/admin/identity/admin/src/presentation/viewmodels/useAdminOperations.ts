@@ -68,14 +68,12 @@ export function useAdminOperations(params: AdminOperationsParams) {
       if (context?.previous !== undefined) {
         queryClient.setQueryData(queryKey, context.previous);
       }
-      toastError({ title: t("common.error") || "Error", description: err.message });
+      toastError({ title: t("common.error"), description: err.message });
     },
     onSuccess: (_, { isActive }) => {
       success({
-        title: isActive
-          ? t("admin.activated") || "Admin Activated"
-          : t("admin.deactivated") || "Admin Deactivated",
-        description: `Administrator has been ${isActive ? "activated" : "deactivated"}.`,
+        title: isActive ? t("admin.activated") : t("admin.deactivated"),
+        description: isActive ? t("admin.activatedDesc") : t("admin.deactivatedDesc"),
       });
     },
     onSettled: () => {
@@ -90,12 +88,12 @@ export function useAdminOperations(params: AdminOperationsParams) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
       success({
-        title: t("admin.role.assigned") || "Role Assigned",
-        description: t("admin.role.assignedDesc") || "Role assigned successfully.",
+        title: t("admin.role.assigned"),
+        description: t("admin.role.assignedDesc"),
       });
     },
     onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
+      toastError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -113,12 +111,12 @@ export function useAdminOperations(params: AdminOperationsParams) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
       success({
-        title: t("admin.role.removed") || "Role Removed",
-        description: t("admin.role.removedDesc") || "Role removed successfully.",
+        title: t("admin.role.removed"),
+        description: t("admin.role.removedDesc"),
       });
     },
     onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
+      toastError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -129,12 +127,12 @@ export function useAdminOperations(params: AdminOperationsParams) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
       success({
-        title: t("admin.passwordReset") || "Password Reset",
-        description: t("admin.passwordResetDesc") || "Password has been reset successfully.",
+        title: t("admin.passwordReset"),
+        description: t("admin.passwordResetDesc"),
       });
     },
     onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
+      toastError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -150,12 +148,12 @@ export function useAdminOperations(params: AdminOperationsParams) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
       success({
-        title: t("admin.transferred") || "Admin Transferred",
-        description: t("admin.transferredDesc") || "Admin transferred successfully.",
+        title: t("admin.transferred"),
+        description: t("admin.transferredDesc"),
       });
     },
     onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
+      toastError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -174,13 +172,12 @@ export function useAdminOperations(params: AdminOperationsParams) {
         // Silently fail
       }
       success({
-        title: t("admin.protectionTransferred") || "Protection Transferred",
-        description:
-          t("admin.protectionTransferredDesc") || "Admin protection transferred successfully.",
+        title: t("admin.protectionTransferred"),
+        description: t("admin.protectionTransferredDesc"),
       });
     },
     onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
+      toastError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -190,13 +187,12 @@ export function useAdminOperations(params: AdminOperationsParams) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
       success({
-        title: t("admin.setupEmailResent") || "Setup Email Resent",
-        description:
-          t("admin.setupEmailResentDesc") || "Account setup email has been resent successfully.",
+        title: t("admin.setupEmailResent"),
+        description: t("admin.setupEmailResentDesc"),
       });
     },
     onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
+      toastError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -205,7 +201,10 @@ export function useAdminOperations(params: AdminOperationsParams) {
     mutationFn: (ids: string[]) => adminRepository.bulkActivate(ids),
     onSuccess: (count) => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
-      success({ title: "Bulk Activated", description: `${count} admins activated.` });
+      success({
+        title: t("admin.bulk.activated"),
+        description: t("admin.bulk.activatedDesc", { count }),
+      });
     },
   });
 
@@ -213,7 +212,10 @@ export function useAdminOperations(params: AdminOperationsParams) {
     mutationFn: (ids: string[]) => adminRepository.bulkDeactivate(ids),
     onSuccess: (count) => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
-      success({ title: "Bulk Deactivated", description: `${count} admins deactivated.` });
+      success({
+        title: t("admin.bulk.deactivated"),
+        description: t("admin.bulk.deactivatedDesc", { count }),
+      });
     },
   });
 
@@ -221,7 +223,10 @@ export function useAdminOperations(params: AdminOperationsParams) {
     mutationFn: (ids: string[]) => adminRepository.bulkDelete(ids),
     onSuccess: (count) => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
-      success({ title: "Bulk Deleted", description: `${count} admins deleted.` });
+      success({
+        title: t("admin.bulk.deleted"),
+        description: t("admin.bulk.deletedDesc", { count }),
+      });
     },
   });
 

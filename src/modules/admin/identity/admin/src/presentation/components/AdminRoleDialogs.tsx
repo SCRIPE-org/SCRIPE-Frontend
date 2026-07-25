@@ -16,7 +16,9 @@ import { Badge } from "@core/ui/badge";
 import { PasswordInput } from "@core/ui/password-input";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect } from "@core/crud/components/generic-select";
-import { Loader2, Shield, Trash2, Building2 } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { EmptyState } from "@core/ui/empty-state";
+import { Shield, Trash2, Building2 } from "lucide-react";
 import type { Admin, AdminRoleData } from "../../domain/entities/Admin";
 import type { AssignRoleRequest } from "../../domain/entities/AdminRequests";
 import { useAdminRolesViewModel } from "../viewmodels/useAdminRolesViewModel";
@@ -64,12 +66,8 @@ export function AssignRoleDialog({
     <GenericModal
       open={open}
       onOpenChange={onOpenChange}
-      title={vm.t("admin.role.assignTitle") || "Assign Role"}
-      description={
-        (vm.t("admin.role.assignDescription") || "Assign a role to") +
-        " " +
-        (admin?.displayName || "")
-      }
+      title={vm.t("admin.role.assignTitle")}
+      description={`${vm.t("admin.role.assignDescription")} ${admin?.displayName || ""}`}
       size="md"
     >
       <div className="space-y-4 py-2">
@@ -77,32 +75,29 @@ export function AssignRoleDialog({
         {/* Only show if we don't have a forced effective tenant context */}
         {!vm.effectiveTenantId && (
           <div className="space-y-2">
-            <Label>{vm.t("admin.role.tenantScope") || "Tenant Scope"}</Label>
+            <Label>{vm.t("admin.role.tenantScope")}</Label>
             <GenericSelect
               options={vm.tenantOptions}
               value={vm.assignTenantId}
               onValueChange={(val: string | string[]) => vm.setAssignTenantId(val as string)}
-              placeholder={vm.t("admin.role.selectTenantPlaceholder") || "Global (All Tenants)"}
+              placeholder={vm.t("admin.role.selectTenantPlaceholder")}
               type="tree"
               loading={vm.isLoadingTenants}
             />
-            <p className="text-xs text-muted-foreground">
-              {vm.t("admin.role.tenantScopeHelp") ||
-                "Determines where this role applies and which roles are available."}
-            </p>
+            <p className="text-xs text-nx-ink-3">{vm.t("admin.role.tenantScopeHelp")}</p>
           </div>
         )}
 
         {/* Role Selection */}
         <div className="space-y-2">
-          <Label>{vm.t("admin.role.selectRole") || "Roles"} *</Label>
+          <Label>{vm.t("admin.role.selectRole")} *</Label>
           <GenericSelect
             options={vm.roleOptions}
             value={vm.assignRoleIds}
             onValueChange={(val: string | string[]) =>
               vm.setAssignRoleIds(Array.isArray(val) ? val : [val])
             }
-            placeholder={vm.t("admin.role.selectRolePlaceholder") || "Select roles..."}
+            placeholder={vm.t("admin.role.selectRolePlaceholder")}
             type="multi"
             loading={vm.isLoadingRoles}
           />
@@ -110,10 +105,10 @@ export function AssignRoleDialog({
 
         {/* Inherit Toggle - Show if tenant selected */}
         {vm.assignTenantId && (
-          <div className="flex items-center justify-between rounded-lg border p-3">
+          <div className="flex items-center justify-between rounded-nx-lg border border-nx-line p-3">
             <div className="space-y-0.5">
               <Label htmlFor="inherit" className="cursor-pointer">
-                {vm.t("admin.role.inheritToChildren") || "Inherit to Sub-tenants"}
+                {vm.t("admin.role.inheritToChildren")}
               </Label>
             </div>
             <Switch
@@ -126,10 +121,10 @@ export function AssignRoleDialog({
 
         <div className="flex justify-end gap-2 pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
-            {vm.t("common.cancel") || "Cancel"}
+            {vm.t("common.cancel")}
           </Button>
           <Button onClick={handleSave} loading={isLoading} disabled={vm.assignRoleIds.length === 0}>
-            {vm.t("admin.role.assign") || "Assign Roles"}
+            {vm.t("admin.role.assign")}
           </Button>
         </div>
       </div>
@@ -173,52 +168,45 @@ export function ViewRolesDialog({
     <GenericModal
       open={open}
       onOpenChange={onOpenChange}
-      title={vm.t("admin.role.viewTitle") || "Assigned Roles"}
-      description={
-        (vm.t("admin.role.viewDescription") || "Start managing roles for") +
-        " " +
-        (admin?.displayName || "")
-      }
+      title={vm.t("admin.role.viewTitle")}
+      description={`${vm.t("admin.role.viewDescription")} ${admin?.displayName || ""}`}
       size="lg"
     >
       <div className="min-h-[200px] py-2">
         {vm.isLoadingCurrentRoles ? (
-          <div className="flex flex-col items-center justify-center py-10 text-muted-foreground">
-            <Loader2 className="mb-2 h-8 w-8 animate-spin" />
-            <p>{vm.t("common.loading") || "Loading..."}</p>
-          </div>
+          <LoadingSpinner size="md" />
         ) : vm.currentRoles.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed py-10 text-muted-foreground">
-            <Shield className="mb-2 h-10 w-10 opacity-20" />
-            <p>{vm.t("admin.role.noRoles") || "No roles assigned yet."}</p>
-          </div>
+          <EmptyState bare icon={Shield} title={vm.t("admin.role.noRoles")} size="sm" />
         ) : (
-          <div className="max-h-[400px] space-y-2 overflow-y-auto pr-2">
+          <div className="max-h-[400px] space-y-2 overflow-y-auto pe-2">
             {vm.currentRoles.map((role, idx) => (
               <div
                 key={`${role.roleId}-${role.tenantId}-${idx}`}
-                className="flex items-center justify-between rounded-lg border bg-muted/40 p-3"
+                className="flex items-center justify-between rounded-nx-lg border border-nx-line bg-nx-raised p-3"
               >
                 <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-                    <Shield className="h-4 w-4 text-primary" />
+                  <div
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-nx-accent-wash"
+                    aria-hidden="true"
+                  >
+                    <Shield className="h-4 w-4 text-nx-accent" />
                   </div>
                   <div>
                     <div className="font-medium">{role.roleNameEn}</div>
-                    <div className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
+                    <div className="mt-0.5 flex items-center gap-2 text-xs text-nx-ink-3">
                       {role.tenantName ? (
-                        <span className="flex items-center gap-1 rounded border bg-background px-1.5 py-0.5 shadow-sm">
-                          <Building2 className="h-3 w-3" />
+                        <Badge variant="outline" className="gap-1">
+                          <Building2 className="h-3 w-3" aria-hidden="true" />
                           {role.tenantName}
-                        </span>
+                        </Badge>
                       ) : (
                         <Badge variant="outline" className="h-5 text-[10px]">
-                          Global
+                          {vm.t("admin.role.global")}
                         </Badge>
                       )}
                       {role.inheritToChildren && (
                         <Badge variant="secondary" className="h-5 text-[10px]">
-                          + children
+                          {vm.t("admin.role.plusChildren")}
                         </Badge>
                       )}
                     </div>
@@ -227,21 +215,22 @@ export function ViewRolesDialog({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                  className="text-nx-ink-3 hover:bg-destructive/10 hover:text-destructive"
                   onClick={() => handleRemove(role)}
                   loading={removingId === role.roleId}
                   disabled={isRemoving && removingId !== role.roleId}
+                  aria-label={vm.t("common.delete")}
                 >
-                  {removingId !== role.roleId && <Trash2 className="h-4 w-4" />}
+                  {removingId !== role.roleId && <Trash2 className="h-4 w-4" aria-hidden="true" />}
                 </Button>
               </div>
             ))}
           </div>
         )}
 
-        <div className="mt-2 flex justify-end border-t pt-4">
+        <div className="mt-2 flex justify-end border-t border-nx-line pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            {vm.t("common.close") || "Close"}
+            {vm.t("common.close")}
           </Button>
         </div>
       </div>
@@ -301,21 +290,17 @@ export function ResetPasswordDialog({
     <GenericModal
       open={open}
       onOpenChange={onOpenChange}
-      title={t("admin.resetPassword") || "Reset Password"}
-      description={
-        (t("admin.resetPasswordDescription") || "Reset password for") +
-        " " +
-        (admin?.displayName || "")
-      }
+      title={t("admin.resetPassword")}
+      description={`${t("admin.resetPasswordDescription")} ${admin?.displayName || ""}`}
       size="sm"
     >
       <div className="space-y-4 py-2">
-        <div className="flex items-center justify-between rounded-lg border bg-muted/40 p-3">
+        <div className="flex items-center justify-between rounded-nx-lg border border-nx-line bg-nx-raised p-3">
           <div className="space-y-0.5">
             <Label htmlFor="useDefault" className="text-sm font-medium">
-              {t("admin.useDefaultPassword") || "Use Default Password"}
+              {t("admin.useDefaultPassword")}
             </Label>
-            <p className="w-fit rounded border bg-background px-1.5 py-0.5 font-mono text-xs text-muted-foreground">
+            <p className="w-fit rounded-nx-sm border border-nx-line bg-nx-surface px-1.5 py-0.5 font-mono text-xs text-nx-ink-3">
               {defaultPassword}
             </p>
           </div>
@@ -324,13 +309,13 @@ export function ResetPasswordDialog({
 
         {!useDefault && (
           <div className="space-y-2">
-            <Label htmlFor="password">{t("admin.writePassword") || "Write Password"} *</Label>
+            <Label htmlFor="password">{t("admin.writePassword")} *</Label>
             <PasswordInput
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               minLength={6}
-              placeholder={t("admin.writePassword") || "Write Password"}
+              placeholder={t("admin.writePassword")}
               showStrengthIndicator={true}
             />
           </div>
@@ -338,7 +323,7 @@ export function ResetPasswordDialog({
 
         <div className="flex justify-end gap-2 pt-2">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
-            {t("common.cancel") || "Cancel"}
+            {t("common.cancel")}
           </Button>
           <Button
             onClick={handleSubmit}
@@ -346,7 +331,7 @@ export function ResetPasswordDialog({
             disabled={!isValid}
             variant="destructive"
           >
-            {t("admin.resetPassword") || "Reset Password"}
+            {t("admin.resetPassword")}
           </Button>
         </div>
       </div>

@@ -13,7 +13,8 @@ import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
-import { Loader2, Shield } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { Shield } from "lucide-react";
 import type { Admin } from "../../domain/entities/Admin";
 import { useManageRolesViewModel } from "../viewmodels/useManageRolesViewModel";
 
@@ -95,33 +96,28 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
     <GenericModal
       open={open}
       onOpenChange={onOpenChange}
-      title={t("admin.role.manageTitle") || "Manage Roles"}
-      description={`${t("admin.role.manageDescription") || "Manage roles for"} ${admin?.displayName || ""}`}
+      title={t("admin.role.manageTitle")}
+      description={`${t("admin.role.manageDescription")} ${admin?.displayName || ""}`}
       size="md"
     >
       <div className="space-y-4 py-2">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-10 text-muted-foreground">
-            <Loader2 className="mb-2 h-8 w-8 animate-spin" />
-            <p>{t("common.loading") || "Loading..."}</p>
-          </div>
+          <LoadingSpinner size="md" />
         ) : (
           <>
             {/* Scope Indicator (Informational Only) */}
-            <div className="flex justify-between rounded bg-muted/50 p-2 text-xs text-muted-foreground">
-              <span>{t("admin.role.currentScope") || "Current Scope"}:</span>
-              <span className="font-medium text-foreground">
-                {scopeTenantId
-                  ? t("admin.role.tenantWrapper") || "Tenant"
-                  : t("admin.role.systemScope") || "System / Global"}
+            <div className="flex justify-between rounded-nx-sm bg-nx-raised p-2 text-xs text-nx-ink-2">
+              <span>{t("admin.role.currentScope")}:</span>
+              <span className="font-medium text-nx-ink">
+                {scopeTenantId ? t("admin.role.tenantWrapper") : t("admin.role.systemScope")}
               </span>
             </div>
 
             {/* Role Multi-Selection */}
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
-                <Shield className="h-4 w-4" />
-                {t("admin.role.selectRoles") || "Roles"} *
+                <Shield className="h-4 w-4" aria-hidden="true" />
+                {t("admin.role.selectRoles")} *
               </Label>
               <GenericSelect
                 options={roleOptions}
@@ -129,25 +125,20 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
                 onValueChange={(val: string | string[]) =>
                   setSelectedRoleIds(Array.isArray(val) ? val : [val])
                 }
-                placeholder={t("admin.role.selectRolePlaceholder") || "Select roles..."}
+                placeholder={t("admin.role.selectRolePlaceholder")}
                 type="multi"
               />
-              <p className="text-xs text-muted-foreground">
-                {t("admin.role.selectRolesHelp") ||
-                  "Selection replaces existing roles in this scope."}
-              </p>
+              <p className="text-xs text-nx-ink-3">{t("admin.role.selectRolesHelp")}</p>
             </div>
 
             {/* Inherit Toggle (only if tenant context) */}
             {scopeTenantId && (
-              <div className="flex items-center justify-between rounded-lg border p-3">
+              <div className="flex items-center justify-between rounded-nx-lg border border-nx-line p-3">
                 <div className="space-y-0.5">
                   <Label htmlFor="inherit" className="cursor-pointer">
-                    {t("admin.role.inheritToChildren") || "Inherit to Sub-tenants"}
+                    {t("admin.role.inheritToChildren")}
                   </Label>
-                  <p className="text-xs text-muted-foreground">
-                    {t("admin.role.inheritToChildrenHelp") || "Apply roles to child tenants too."}
-                  </p>
+                  <p className="text-xs text-nx-ink-3">{t("admin.role.inheritToChildrenHelp")}</p>
                 </div>
                 <Switch
                   id="inherit"
@@ -159,12 +150,12 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
           </>
         )}
 
-        <div className="mt-4 flex justify-end gap-2 border-t pt-4">
+        <div className="mt-4 flex justify-end gap-2 border-t border-nx-line pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-            {t("common.cancel") || "Cancel"}
+            {t("common.cancel")}
           </Button>
           <Button onClick={handleSave} loading={isSubmitting} disabled={isLoading}>
-            {t("admin.role.saveRoles") || "Save Roles"}
+            {t("admin.role.saveRoles")}
           </Button>
         </div>
       </div>

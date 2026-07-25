@@ -2,6 +2,7 @@
 // UI-EXCEPTION: compact studio layout
 "use client";
 
+import { useState } from "react";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader } from "@core/ui/card";
@@ -9,8 +10,9 @@ import { Separator } from "@core/ui/separator";
 import { Skeleton } from "@core/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { EmptyState } from "@core/ui/empty-state";
+import { ErrorMessage } from "@core/ui/error-message";
+import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import {
-  AlertTriangle,
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
@@ -27,6 +29,7 @@ import {
 import Link from "next/link";
 import { useAppDetailViewModel } from "../viewmodels/useAppDetailViewModel";
 import { formatUtc } from "@core/common/utils";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { AppReview } from "@modules/marketplace";
 
 interface AppDetailViewProps {
@@ -49,16 +52,22 @@ interface AppDetailViewProps {
  */
 export function AppDetailView({ id }: AppDetailViewProps) {
   const vm = useAppDetailViewModel(id);
+  const { t } = useI18n();
 
   // ── Loading skeleton ──────────────────────────────────────────────────────
   if (vm.isLoading) {
     return (
-      <div className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
-        <Skeleton className="h-8 w-40 rounded-md" />
-        <Skeleton className="h-64 rounded-xl" />
+      <div
+        className="mx-auto flex max-w-5xl flex-col gap-6 p-6"
+        role="status"
+        aria-busy="true"
+        aria-label={t("common.loading")}
+      >
+        <Skeleton shape="title" className="h-8 w-40" />
+        <Skeleton className="h-64 rounded-nx-lg" />
         <div className="grid grid-cols-3 gap-4">
-          <Skeleton className="col-span-2 h-32 rounded-xl" />
-          <Skeleton className="h-32 rounded-xl" />
+          <Skeleton className="col-span-2 h-32 rounded-nx-lg" />
+          <Skeleton className="h-32 rounded-nx-lg" />
         </div>
       </div>
     );
@@ -67,11 +76,10 @@ export function AppDetailView({ id }: AppDetailViewProps) {
   // ── Error state ────────────────────────────────────────────────────────────
   if (vm.isError || !vm.listing) {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 py-24">
-        <AlertTriangle className="h-10 w-10 text-destructive" />
-        <p className="text-sm text-muted-foreground">Failed to load app listing.</p>
+      <div className="flex flex-col items-center gap-3 py-24">
+        <ErrorMessage message={t("marketplace.detailFailedToLoad")} />
         <Button variant="outline" size="sm" asChild>
-          <Link href="/marketplace">Back to listings</Link>
+          <Link href="/marketplace">{t("marketplace.detailBackToListings")}</Link>
         </Button>
       </div>
     );
@@ -84,20 +92,20 @@ export function AppDetailView({ id }: AppDetailViewProps) {
       {/* ── Back navigation ── */}
       <Link
         href="/marketplace"
-        className="flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        className="flex w-fit items-center gap-2 text-sm text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
       >
-        <ArrowLeft className="h-4 w-4" />
-        Back to App Listings
+        <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
+        {t("marketplace.detailBackToListings")}
       </Link>
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div className="flex items-start gap-4">
         {/* App icon */}
-        <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border bg-muted">
+        <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-nx-lg border border-nx-line bg-nx-raised">
           {listing.iconUrl ? (
-            <img src={listing.iconUrl} alt={listing.name} className="size-full object-cover" />
+            <img src={listing.iconUrl} alt="" className="size-full object-cover" />
           ) : (
-            <span className="text-2xl font-bold text-muted-foreground">
+            <span className="text-2xl font-bold text-nx-ink-2" aria-hidden="true">
               {listing.name.charAt(0)}
             </span>
           )}
@@ -105,18 +113,18 @@ export function AppDetailView({ id }: AppDetailViewProps) {
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="truncate text-2xl font-bold">{listing.name}</h1>
+            <h1 className="truncate text-2xl font-bold text-nx-ink">{listing.name}</h1>
             {listing.isFeatured && (
               <Badge variant="secondary" className="gap-1">
-                <Zap className="size-3" /> Featured
+                <Zap className="size-3" aria-hidden="true" /> {t("marketplace.listingsFeaturedBadge")}
               </Badge>
             )}
             <Badge variant={listing.isPublished ? "default" : "outline"}>
               {listing.statusLabel}
             </Badge>
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">
-            by <span className="font-medium text-foreground">{listing.developerName}</span>
+          <p className="mt-1 text-sm text-nx-ink-2">
+            <span className="font-medium text-nx-ink">{listing.developerName}</span>
             {" · "}
             {listing.categoryName}
             {" · "}v{listing.version}
@@ -125,11 +133,12 @@ export function AppDetailView({ id }: AppDetailViewProps) {
             {Array.from({ length: 5 }).map((_, i) => (
               <Star
                 key={i}
-                className={`size-4 ${i < Math.round(listing.averageRating) ? "fill-warning text-warning" : "text-muted-foreground/30"}`}
+                aria-hidden="true"
+                className={`size-4 ${i < Math.round(listing.averageRating) ? "fill-warning text-warning" : "text-nx-ink-3"}`}
               />
             ))}
-            <span className="ml-1 text-sm font-medium">{listing.ratingLabel}</span>
-            <span className="text-sm text-muted-foreground">({listing.reviewCount} reviews)</span>
+            <span className="ms-1 text-sm font-medium text-nx-ink">{listing.ratingLabel}</span>
+            <span className="text-sm text-nx-ink-2">({listing.reviewCount})</span>
           </div>
         </div>
 
@@ -143,7 +152,8 @@ export function AppDetailView({ id }: AppDetailViewProps) {
               onClick={() => vm.unpublish()}
               disabled={vm.isPublishing}
             >
-              <EyeOff className="size-3.5" /> Unpublish
+              <EyeOff className="size-3.5" aria-hidden="true" />{" "}
+              {t("marketplace.listingsUnpublishAction")}
             </Button>
           ) : (
             <Button
@@ -153,7 +163,7 @@ export function AppDetailView({ id }: AppDetailViewProps) {
               onClick={() => vm.publish()}
               disabled={vm.isPublishing}
             >
-              <Globe className="size-3.5" /> Publish
+              <Globe className="size-3.5" aria-hidden="true" /> {t("marketplace.listingsPublishAction")}
             </Button>
           )}
           <Button
@@ -163,48 +173,55 @@ export function AppDetailView({ id }: AppDetailViewProps) {
             onClick={() => vm.toggleFeatured()}
             disabled={vm.isTogglingFeatured}
           >
-            <Zap className="size-3.5" />
-            {listing.isFeatured ? "Unfeature" : "Feature"}
+            <Zap className="size-3.5" aria-hidden="true" />
+            {listing.isFeatured
+              ? t("marketplace.detailUnfeatureAction")
+              : t("marketplace.detailFeatureAction")}
           </Button>
         </div>
       </div>
 
       {/* ── Screenshot carousel (Phase 5.1) ─────────────────────────────────── */}
       {listing.screenshotUrls.length > 0 && (
-        <div className="relative overflow-hidden rounded-xl border bg-muted">
+        <div className="relative overflow-hidden rounded-nx-lg border border-nx-line bg-nx-raised">
           <img
             src={listing.screenshotUrls[vm.screenshotIndex]}
-            alt={`Screenshot ${vm.screenshotIndex + 1}`}
+            alt={t("marketplace.detailScreenshotAlt", { count: vm.screenshotIndex + 1 })}
             className="h-72 w-full object-cover"
           />
           {listing.screenshotUrls.length > 1 && (
             <>
               <button
+                type="button"
                 onClick={vm.prevScreenshot}
                 disabled={vm.screenshotIndex === 0}
-                className="absolute left-3 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 backdrop-blur transition hover:bg-background disabled:opacity-40"
-                aria-label="Previous screenshot"
+                className="absolute start-3 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full border border-nx-line bg-nx-popover text-nx-ink transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-raised-2 focus-visible:outline-none focus-visible:shadow-nx-focus disabled:pointer-events-none disabled:text-nx-ink-3"
+                aria-label={t("marketplace.detailPrevScreenshot")}
               >
-                <ChevronLeft className="size-4" />
+                <ChevronLeft className="size-4 rtl:rotate-180" aria-hidden="true" />
               </button>
               <button
+                type="button"
                 onClick={vm.nextScreenshot}
                 disabled={vm.screenshotIndex === listing.screenshotUrls.length - 1}
-                className="absolute right-3 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 backdrop-blur transition hover:bg-background disabled:opacity-40"
-                aria-label="Next screenshot"
+                className="absolute end-3 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full border border-nx-line bg-nx-popover text-nx-ink transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-raised-2 focus-visible:outline-none focus-visible:shadow-nx-focus disabled:pointer-events-none disabled:text-nx-ink-3"
+                aria-label={t("marketplace.detailNextScreenshot")}
               >
-                <ChevronRight className="size-4" />
+                <ChevronRight className="size-4 rtl:rotate-180" aria-hidden="true" />
               </button>
               {/* Dot indicators */}
-              <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
+              <div className="absolute bottom-3 start-1/2 flex -translate-x-1/2 gap-1.5 rtl:translate-x-1/2">
                 {listing.screenshotUrls.map((_, i) => (
                   <button
                     key={i}
+                    type="button"
                     onClick={() => vm.setScreenshotIndex(i)}
-                    className={`size-2 rounded-full transition-all ${
-                      i === vm.screenshotIndex ? "w-4 bg-white" : "bg-white/50 hover:bg-white/80"
+                    className={`size-2 rounded-full transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none ${
+                      i === vm.screenshotIndex
+                        ? "bg-nx-on-fill"
+                        : "bg-[color:color-mix(in_srgb,var(--nx-on-fill)_50%,transparent)] hover:bg-[color:color-mix(in_srgb,var(--nx-on-fill)_80%,transparent)]"
                     }`}
-                    aria-label={`Screenshot ${i + 1}`}
+                    aria-label={t("marketplace.detailScreenshotAlt", { count: i + 1 })}
                   />
                 ))}
               </div>
@@ -218,13 +235,15 @@ export function AppDetailView({ id }: AppDetailViewProps) {
         {/* Description */}
         <Card className="lg:col-span-2">
           <CardHeader className="pb-3">
-            <h2 className="text-base font-semibold">About this app</h2>
+            <h2 className="text-base font-semibold text-nx-ink">
+              {t("marketplace.detailAboutApp")}
+            </h2>
           </CardHeader>
           <CardContent>
-            <p className="text-sm leading-relaxed text-muted-foreground">{listing.description}</p>
+            <p className="text-sm leading-relaxed text-nx-ink-2">{listing.description}</p>
             {listing.tags.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-1.5">
-                <Tag className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
+                <Tag className="mt-0.5 size-3.5 shrink-0 text-nx-ink-3" aria-hidden="true" />
                 {listing.tags.map((tag) => (
                   <Badge key={tag} variant="outline" className="px-2 py-0 text-xs">
                     {tag}
@@ -238,38 +257,42 @@ export function AppDetailView({ id }: AppDetailViewProps) {
         {/* Pricing card (Phase 5.1) */}
         <Card>
           <CardHeader className="pb-3">
-            <h2 className="flex items-center gap-2 text-base font-semibold">
-              <ShoppingBag className="size-4" /> Pricing
+            <h2 className="flex items-center gap-2 text-base font-semibold text-nx-ink">
+              <ShoppingBag className="size-4" aria-hidden="true" /> {t("marketplace.detailPricingTitle")}
             </h2>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
-            <div className="text-3xl font-bold tracking-tight">{listing.pricingLabel}</div>
+            <div className="text-3xl font-bold tracking-tight tabular-nums text-nx-ink">
+              {listing.pricingLabel}
+            </div>
             {listing.pricingModel === "Subscription" && listing.billingInterval && (
-              <p className="text-xs text-muted-foreground">
-                Billed {listing.billingInterval === "Annual" ? "annually" : "monthly"}
+              <p className="text-xs text-nx-ink-2">
+                {listing.billingInterval === "Annual"
+                  ? t("marketplace.detailBilledAnnually")
+                  : t("marketplace.detailBilledMonthly")}
               </p>
             )}
             {listing.pricingModel === "Free" && (
               <div className="flex items-center gap-1.5 text-xs font-medium text-success">
-                <CheckCircle2 className="size-3.5" /> No cost to install
+                <CheckCircle2 className="size-3.5" aria-hidden="true" /> {t("marketplace.detailNoCost")}
               </div>
             )}
             <Separator />
-            <dl className="space-y-1 text-xs text-muted-foreground">
+            <dl className="space-y-1 text-xs text-nx-ink-2">
               <div className="flex justify-between">
-                <dt>Model</dt>
-                <dd className="font-medium text-foreground">{listing.pricingModel}</dd>
+                <dt>{t("marketplace.detailModel")}</dt>
+                <dd className="font-medium text-nx-ink">{listing.pricingModel}</dd>
               </div>
               {listing.currency && (
                 <div className="flex justify-between">
-                  <dt>Currency</dt>
-                  <dd className="font-medium text-foreground">{listing.currency}</dd>
+                  <dt>{t("marketplace.detailCurrency")}</dt>
+                  <dd className="font-medium text-nx-ink">{listing.currency}</dd>
                 </div>
               )}
               {listing.publishedAt && (
                 <div className="flex justify-between">
-                  <dt>Published</dt>
-                  <dd className="font-medium text-foreground">
+                  <dt>{t("marketplace.statsPublished")}</dt>
+                  <dd className="font-medium tabular-nums text-nx-ink">
                     {formatUtc(listing.publishedAt, "MMM d, yyyy")}
                   </dd>
                 </div>
@@ -283,27 +306,32 @@ export function AppDetailView({ id }: AppDetailViewProps) {
       <Tabs defaultValue="reviews">
         <TabsList>
           <TabsTrigger value="reviews" className="gap-1.5">
-            <MessageSquare className="size-3.5" />
-            Reviews
+            <MessageSquare className="size-3.5" aria-hidden="true" />
+            {t("marketplace.detailReviewsTab")}
             {vm.reviewsTotalCount > 0 && (
-              <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-xs">
+              <Badge variant="secondary" className="ms-1 px-1.5 py-0 text-xs">
                 {vm.reviewsTotalCount}
               </Badge>
             )}
           </TabsTrigger>
-          <TabsTrigger value="details">Details</TabsTrigger>
+          <TabsTrigger value="details">{t("common.details")}</TabsTrigger>
         </TabsList>
 
         {/* Reviews tab */}
         <TabsContent value="reviews" className="mt-4">
           {vm.isLoadingReviews ? (
-            <div className="flex flex-col gap-3">
+            <div
+              className="flex flex-col gap-3"
+              role="status"
+              aria-busy="true"
+              aria-label={t("common.loading")}
+            >
               {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-24 rounded-xl" />
+                <Skeleton key={i} className="h-24 rounded-nx-lg" />
               ))}
             </div>
           ) : vm.reviews.length === 0 ? (
-            <EmptyState icon={MessageSquare} title="No reviews yet." />
+            <EmptyState icon={MessageSquare} title={t("marketplace.detailNoReviewsYet")} />
           ) : (
             <div className="flex flex-col gap-3">
               {vm.reviews.map((review: AppReview) => (
@@ -324,28 +352,38 @@ export function AppDetailView({ id }: AppDetailViewProps) {
             <CardContent className="pt-4">
               <dl className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
                 <div>
-                  <dt className="mb-1 text-xs text-muted-foreground">Version</dt>
-                  <dd className="font-medium">{listing.version}</dd>
+                  <dt className="mb-1 text-xs text-nx-ink-2">
+                    {t("marketplace.detailVersionLabel")}
+                  </dt>
+                  <dd className="font-medium text-nx-ink">{listing.version}</dd>
                 </div>
                 <div>
-                  <dt className="mb-1 text-xs text-muted-foreground">Category</dt>
-                  <dd className="font-medium">{listing.categoryName}</dd>
+                  <dt className="mb-1 text-xs text-nx-ink-2">
+                    {t("marketplace.detailCategoryLabel")}
+                  </dt>
+                  <dd className="font-medium text-nx-ink">{listing.categoryName}</dd>
                 </div>
                 <div>
-                  <dt className="mb-1 text-xs text-muted-foreground">Developer</dt>
-                  <dd className="font-medium">{listing.developerName}</dd>
+                  <dt className="mb-1 text-xs text-nx-ink-2">
+                    {t("marketplace.detailDeveloperLabel")}
+                  </dt>
+                  <dd className="font-medium text-nx-ink">{listing.developerName}</dd>
                 </div>
                 <div>
-                  <dt className="mb-1 text-xs text-muted-foreground">Rating</dt>
-                  <dd className="font-medium">{listing.ratingLabel} ⭐</dd>
+                  <dt className="mb-1 text-xs text-nx-ink-2">
+                    {t("marketplace.detailRatingLabel")}
+                  </dt>
+                  <dd className="font-medium tabular-nums text-nx-ink">{listing.ratingLabel}</dd>
                 </div>
                 <div>
-                  <dt className="mb-1 text-xs text-muted-foreground">Review Count</dt>
-                  <dd className="font-medium">{listing.reviewCount}</dd>
+                  <dt className="mb-1 text-xs text-nx-ink-2">
+                    {t("marketplace.detailReviewCountLabel")}
+                  </dt>
+                  <dd className="font-medium tabular-nums text-nx-ink">{listing.reviewCount}</dd>
                 </div>
                 <div>
-                  <dt className="mb-1 text-xs text-muted-foreground">Created</dt>
-                  <dd className="font-medium">
+                  <dt className="mb-1 text-xs text-nx-ink-2">{t("common.created")}</dt>
+                  <dd className="font-medium tabular-nums text-nx-ink">
                     {formatUtc(listing.createdAt, "MMM d, yyyy")}
                   </dd>
                 </div>
@@ -370,9 +408,14 @@ interface ReviewCardProps {
  * ReviewCard
  *
  * Displays a single app review with moderation (delete) action.
- * Pure presentational — callbacks from AppDetailView.
+ * Pure presentational — callbacks from AppDetailView. The delete action is
+ * irreversible (it removes the review outright), so it is routed through a
+ * real confirmation step rather than firing on the first click.
  */
 function ReviewCard({ review, onDelete, isDeleting }: ReviewCardProps) {
+  const { t } = useI18n();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
   return (
     <Card className="flex flex-row items-start gap-4 p-4">
       {/* Star rating */}
@@ -380,17 +423,18 @@ function ReviewCard({ review, onDelete, isDeleting }: ReviewCardProps) {
         {Array.from({ length: 5 }).map((_, i) => (
           <Star
             key={i}
-            className={`size-3.5 ${i < review.rating ? "fill-warning text-warning" : "text-muted-foreground/30"}`}
+            aria-hidden="true"
+            className={`size-3.5 ${i < review.rating ? "fill-warning text-warning" : "text-nx-ink-3"}`}
           />
         ))}
       </div>
 
       <div className="min-w-0 flex-1">
-        {review.title && <p className="text-sm font-medium">{review.title}</p>}
+        {review.title && <p className="text-sm font-medium text-nx-ink">{review.title}</p>}
         {review.body && (
-          <p className="mt-0.5 line-clamp-3 text-xs text-muted-foreground">{review.body}</p>
+          <p className="mt-0.5 line-clamp-3 text-xs text-nx-ink-2">{review.body}</p>
         )}
-        <p className="mt-1 text-xs text-muted-foreground/60">
+        <p className="mt-1 text-xs text-nx-ink-3">
           {review.tenantName} · {formatUtc(review.createdAt, "MMM d, yyyy")}
         </p>
       </div>
@@ -399,12 +443,24 @@ function ReviewCard({ review, onDelete, isDeleting }: ReviewCardProps) {
         size="sm"
         variant="ghost"
         className="shrink-0 text-destructive hover:text-destructive"
-        onClick={onDelete}
+        onClick={() => setConfirmOpen(true)}
         disabled={isDeleting}
-        title="Moderate (delete) this review"
+        aria-label={t("marketplace.detailModerateReview")}
       >
-        <Trash2 className="size-3.5" />
+        <Trash2 className="size-3.5" aria-hidden="true" />
       </Button>
+
+      <ConfirmationDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        variant="destructive"
+        title={t("marketplace.deleteReview")}
+        description={t("marketplace.detailReviewDeleteConfirmDesc")}
+        confirmText={t("common.delete")}
+        cancelText={t("common.cancel")}
+        isLoading={isDeleting}
+        onConfirm={onDelete}
+      />
     </Card>
   );
 }

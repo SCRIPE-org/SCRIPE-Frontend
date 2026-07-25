@@ -19,16 +19,18 @@ export function DocsBreadcrumb({ slug, categoryTitleKey, pageTitleKey }: DocsBre
   const category = slug.split("/")[0];
 
   return (
-    <nav className="docs-breadcrumb" aria-label="Breadcrumb">
+    <nav className="docs-breadcrumb" aria-label={t("common.breadcrumbNav")}>
       <Link href="/docs">{t("common.home")}</Link>
-      <span className="docs-breadcrumb-separator" aria-hidden>
+      <span className="docs-breadcrumb-separator" aria-hidden="true">
         ›
       </span>
       <Link href={`/docs/${category}`}>{t(categoryTitleKey)}</Link>
-      <span className="docs-breadcrumb-separator" aria-hidden>
+      <span className="docs-breadcrumb-separator" aria-hidden="true">
         ›
       </span>
-      <span className="docs-breadcrumb-current">{t(pageTitleKey)}</span>
+      <span className="docs-breadcrumb-current" aria-current="page">
+        {t(pageTitleKey)}
+      </span>
     </nav>
   );
 }

@@ -88,12 +88,12 @@ export function useManageRolesViewModel({
     ) => {
       try {
         await syncMutation.mutateAsync({ selectedRoleIds, inheritToChildren });
-        toast.success({ title: t("admin.role.syncSuccess") || "Roles updated successfully" });
+        toast.success({ title: t("admin.role.syncSuccess") });
         queryClient.invalidateQueries({ queryKey: ["admin-roles", adminId] });
         queryClient.invalidateQueries({ queryKey: ["admins"] });
         onOpenChange(false);
       } catch (error: any) {
-        toast.error({ title: error?.message || t("common.error") || "Failed to update roles" });
+        toast.error({ title: error?.message || t("common.error") });
       }
     },
     isSubmitting: syncMutation.isPending,

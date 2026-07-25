@@ -10,5 +10,13 @@ export const en = {
     developers: {
       verified: "Developer verification status updated",
     },
+    // ── DevelopersView ──
+    developersStatsSummary: "{{total}} total · {{verified}} verified",
+    developersSearchPlaceholder: "Search developers...",
+    developersAppsCount: "{{count}} apps",
+    developersVerifyAction: "Verify",
+    // ── DeveloperBadge ──
+    developersVerifiedAriaLabel: "Verified developer",
+    developersVerifiedTooltip: "Verified Developer",
   },
 };

@@ -30,11 +30,11 @@ export function PermissionCategoryAccordion({ groups }: PermissionCategoryAccord
   return (
     <div className="space-y-4">
       {groups.map((moduleGroup) => (
-        <div key={moduleGroup.module} className="rounded-lg border bg-card">
+        <div key={moduleGroup.module} className="rounded-nx-lg border border-nx-line bg-nx-surface">
           {/* ── Module Header ── */}
-          <div className="flex items-center gap-2.5 border-b bg-muted/30 px-4 py-3">
-            <Layers className="h-4 w-4 text-primary" />
-            <span className="text-sm font-semibold tracking-wide text-foreground">
+          <div className="flex items-center gap-2.5 border-b border-nx-line bg-nx-raised px-4 py-3">
+            <Layers className="h-4 w-4 text-nx-accent" aria-hidden="true" />
+            <span className="text-sm font-semibold tracking-wide text-nx-ink">
               {moduleGroup.module}
             </span>
             <Badge variant="secondary" className="ms-auto text-xs">
@@ -52,11 +52,11 @@ export function PermissionCategoryAccordion({ groups }: PermissionCategoryAccord
               <AccordionItem
                 key={categoryGroup.category}
                 value={`${moduleGroup.module}:${categoryGroup.category}`}
-                className="border-b last:border-0"
+                className="border-b border-nx-line last:border-0"
               >
                 <AccordionTrigger className="px-4 hover:no-underline">
                   <div className="flex items-center gap-2">
-                    <Key className="h-3.5 w-3.5 text-muted-foreground" />
+                    <Key className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
                     <span className="text-sm font-medium">{categoryGroup.category}</span>
                     <Badge variant="outline" className="ms-1 text-xs">
                       {categoryGroup.permissions.length}
@@ -64,10 +64,10 @@ export function PermissionCategoryAccordion({ groups }: PermissionCategoryAccord
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-3 pt-0">
-                  <div className="rounded-md border">
+                  <div className="rounded-nx-md border border-nx-line">
                     <Table>
                       <TableHeader>
-                        <TableRow className="bg-muted/50">
+                        <TableRow>
                           <TableHead>{t("permission.name")}</TableHead>
                           <TableHead>{t("permission.code")}</TableHead>
                           <TableHead>{t("permission.resource")}</TableHead>
@@ -78,18 +78,18 @@ export function PermissionCategoryAccordion({ groups }: PermissionCategoryAccord
                       </TableHeader>
                       <TableBody>
                         {categoryGroup.permissions.map((permission) => (
-                          <TableRow key={permission.id} className="hover:bg-muted/25">
+                          <TableRow key={permission.id}>
                             <TableCell className="text-sm font-medium">
                               {permission.getLocalizedName(language)}
                             </TableCell>
                             <TableCell>
-                              <code className="rounded bg-muted px-2 py-1 text-sm">
+                              <code className="rounded-nx-sm bg-nx-raised px-2 py-1 text-sm">
                                 {permission.code}
                               </code>
                             </TableCell>
                             <TableCell className="text-sm">{permission.resource}</TableCell>
                             <TableCell className="text-sm">{permission.action}</TableCell>
-                            <TableCell className="max-w-xs truncate text-sm text-muted-foreground">
+                            <TableCell className="max-w-xs truncate text-sm text-nx-ink-2">
                               {permission.getLocalizedDescription(language) || "-"}
                             </TableCell>
                             <TableCell>

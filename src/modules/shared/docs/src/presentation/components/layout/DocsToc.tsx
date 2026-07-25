@@ -30,20 +30,16 @@ export function DocsToc({ headings, activeId }: DocsTocProps) {
       <div className="docs-toc-title">{t("common.onThisPage")}</div>
       {headings.map((heading) => {
         const id = heading.id || heading.titleKey.split(".").pop() || "";
+        const isActive = activeId === id;
         return (
           <button
             key={id}
-            className="docs-toc-item"
-            data-active={activeId === id}
+            type="button"
+            className="docs-toc-item w-full cursor-pointer border-0 bg-transparent text-start"
+            data-active={isActive}
             data-level={heading.level.toString()}
+            aria-current={isActive ? "location" : undefined}
             onClick={() => handleClick(id)}
-            style={{
-              border: "none",
-              background: "transparent",
-              cursor: "pointer",
-              width: "100%",
-              textAlign: "start",
-            }}
           >
             {t(heading.titleKey)}
           </button>

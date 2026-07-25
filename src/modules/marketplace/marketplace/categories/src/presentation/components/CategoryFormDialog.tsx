@@ -113,11 +113,10 @@ export function CategoryFormDialog({
 
   const validate = (): boolean => {
     const errs: Record<string, string> = {};
-    if (!form.nameEn.trim()) errs.nameEn = t("common.required") || "Required";
-    if (!form.slug.trim()) errs.slug = t("common.required") || "Required";
+    if (!form.nameEn.trim()) errs.nameEn = t("common.required");
+    if (!form.slug.trim()) errs.slug = t("common.required");
     if (form.slug.trim() && !/^[a-z0-9][a-z0-9\-]*$/.test(form.slug.trim())) {
-      errs.slug =
-        t("marketplace.categorySlugErr") || "Slug must be lowercase alphanumeric with hyphens";
+      errs.slug = t("marketplace.categorySlugErr");
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -133,39 +132,37 @@ export function CategoryFormDialog({
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>
-            {isEditMode
-              ? t("marketplace.categoryEdit") || "Edit Category"
-              : t("marketplace.categoryCreate") || "New Category"}
+            {isEditMode ? t("marketplace.categoryEdit") : t("marketplace.categoryCreate")}
           </DialogTitle>
           <DialogDescription>
             {isEditMode
-              ? t("marketplace.categoryEditDesc") || "Update the marketplace category details."
-              : t("marketplace.categoryCreateDesc") ||
-                "Create a new app category for the marketplace."}
+              ? t("marketplace.categoryEditDesc")
+              : t("marketplace.categoryCreateDesc")}
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
           {/* Name EN */}
           <div className="space-y-2">
-            <Label htmlFor="cat-name-en">{t("common.nameEn") || "Name (English)"} *</Label>
+            <Label htmlFor="cat-name-en">{t("common.nameEn")} *</Label>
             <Input
               id="cat-name-en"
-              placeholder={t("marketplace.categoryPlaceholderNameEn") || "Productivity"}
+              placeholder={t("marketplace.categoryPlaceholderNameEn")}
               value={form.nameEn}
               onChange={(e) => updateField("nameEn", e.target.value)}
               className={errors.nameEn ? "border-destructive" : ""}
+              aria-invalid={!!errors.nameEn || undefined}
             />
             {errors.nameEn && <p className="text-xs text-destructive">{errors.nameEn}</p>}
           </div>
 
           {/* Name AR */}
           <div className="space-y-2">
-            <Label htmlFor="cat-name-ar">{t("common.nameAr") || "Name (Arabic)"}</Label>
+            <Label htmlFor="cat-name-ar">{t("common.nameAr")}</Label>
             <Input
               id="cat-name-ar"
               dir="rtl"
-              placeholder={t("marketplace.categoryPlaceholderNameAr") || "إنتاجية"}
+              placeholder={t("marketplace.categoryPlaceholderNameAr")}
               value={form.nameAr}
               onChange={(e) => updateField("nameAr", e.target.value)}
             />
@@ -173,27 +170,24 @@ export function CategoryFormDialog({
 
           {/* Slug */}
           <div className="space-y-2">
-            <Label htmlFor="cat-slug">{t("marketplace.categorySlug") || "Slug"} *</Label>
+            <Label htmlFor="cat-slug">{t("marketplace.categorySlug")} *</Label>
             <Input
               id="cat-slug"
-              placeholder={
-                t("marketplace.categorySlug")
-                  ? t("marketplace.categorySlug").toLowerCase()
-                  : "productivity"
-              }
+              placeholder={t("marketplace.categorySlug").toLowerCase()}
               value={form.slug}
               onChange={(e) => updateField("slug", e.target.value)}
               className={errors.slug ? "border-destructive" : ""}
+              aria-invalid={!!errors.slug || undefined}
             />
             {errors.slug && <p className="text-xs text-destructive">{errors.slug}</p>}
           </div>
 
           {/* Icon */}
           <div className="space-y-2">
-            <Label htmlFor="cat-icon">{t("common.icon") || "Icon Name"}</Label>
+            <Label htmlFor="cat-icon">{t("common.icon")}</Label>
             <Input
               id="cat-icon"
-              placeholder={t("marketplace.categoryPlaceholderIcon") || "briefcase"}
+              placeholder={t("marketplace.categoryPlaceholderIcon")}
               value={form.icon}
               onChange={(e) => updateField("icon", e.target.value)}
             />
@@ -201,14 +195,11 @@ export function CategoryFormDialog({
 
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="cat-desc">{t("common.description") || "Description"}</Label>
+            <Label htmlFor="cat-desc">{t("common.description")}</Label>
             <Textarea
               id="cat-desc"
               rows={2}
-              placeholder={
-                t("marketplace.categoryPlaceholderDesc") ||
-                "A brief description of this category..."
-              }
+              placeholder={t("marketplace.categoryPlaceholderDesc")}
               value={form.description}
               onChange={(e) => updateField("description", e.target.value)}
             />
@@ -216,7 +207,7 @@ export function CategoryFormDialog({
 
           {/* Sort Order */}
           <div className="space-y-2">
-            <Label htmlFor="cat-sort">{t("common.sortOrder") || "Sort Order"}</Label>
+            <Label htmlFor="cat-sort">{t("common.sortOrder")}</Label>
             <Input
               id="cat-sort"
               type="number"
@@ -229,14 +220,10 @@ export function CategoryFormDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-            {t("common.cancel") || "Cancel"}
+            {t("common.cancel")}
           </Button>
-          <Button id="cat-form-submit" onClick={handleSubmit} disabled={isSubmitting}>
-            {isSubmitting
-              ? t("common.saving") || "Saving..."
-              : isEditMode
-                ? t("common.save") || "Save"
-                : t("common.create") || "Create"}
+          <Button id="cat-form-submit" onClick={handleSubmit} loading={isSubmitting}>
+            {isEditMode ? t("common.save") : t("common.create")}
           </Button>
         </DialogFooter>
       </DialogContent>

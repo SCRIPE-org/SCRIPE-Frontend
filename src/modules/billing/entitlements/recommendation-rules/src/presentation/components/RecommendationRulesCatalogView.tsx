@@ -9,14 +9,14 @@
 import { useMemo } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
-import { Badge } from "@core/ui/badge";
+import { Badge, type BadgeProps } from "@core/ui/badge";
 import type { RecommendationRule } from "../../domain/entities/RecommendationRule";
 
-const TIER_BADGE_COLORS: Record<number, string> = {
-  0: "bg-muted text-foreground",
-  1: "bg-info/10 text-info",
-  2: "bg-primary/10 text-primary",
-  3: "bg-warning/10 text-warning",
+const TIER_BADGE_VARIANT: Record<number, BadgeProps["variant"]> = {
+  0: "secondary",
+  1: "info",
+  2: "default",
+  3: "warning",
 };
 
 interface RecommendationRulesCatalogViewProps {
@@ -39,16 +39,16 @@ export function RecommendationRulesCatalogView({ vm, t }: RecommendationRulesCat
       columns: [
         {
           key: "name",
-          label: t("entitlements.onboarding.rules.name") || "Rule Name",
+          label: t("entitlements.onboarding.rules.name"),
           render: (value: unknown) => (
-            <span className="font-mono text-xs text-muted-foreground">{String(value ?? "")}</span>
+            <span className="font-mono text-xs text-nx-ink-2">{String(value ?? "")}</span>
           ),
         },
         {
           key: "conditionJson",
-          label: t("entitlements.onboarding.rules.condition") || "Condition",
+          label: t("entitlements.onboarding.rules.condition"),
           render: (value: unknown) => (
-            <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">
+            <code className="rounded-nx-sm bg-nx-raised px-1.5 py-0.5 font-mono text-xs text-nx-ink-2">
               {String(value ?? "").length > 40
                 ? String(value ?? "").slice(0, 40) + "…"
                 : String(value ?? "")}
@@ -57,56 +57,44 @@ export function RecommendationRulesCatalogView({ vm, t }: RecommendationRulesCat
         },
         {
           key: "recommendedTierLevel",
-          label: t("entitlements.onboarding.rules.tier") || "Tier",
+          label: t("entitlements.onboarding.rules.tier"),
           render: (value: unknown) => {
             const level = value as number | undefined;
             if (level === undefined || level === null)
-              return <span className="text-muted-foreground">—</span>;
-            const colorClass = TIER_BADGE_COLORS[level] ?? "bg-muted text-foreground";
-            const tempRule = new (class {
-              getTierLabel() {
-                switch (level) {
-                  case 0:
-                    return t("entitlements.onboarding.rules.tierFree") || "Free";
-                  case 1:
-                    return t("entitlements.onboarding.rules.tierPro") || "Pro";
-                  case 2:
-                    return t("entitlements.onboarding.rules.tierUltra") || "Ultra";
-                  case 3:
-                    return t("entitlements.onboarding.rules.tierEnterprise") || "Enterprise";
-                  default:
-                    return "—";
-                }
-              }
-            })();
+              return <span className="text-nx-ink-3">—</span>;
+            const tierLabelKeys: Record<number, string> = {
+              0: "entitlements.onboarding.rules.tierFree",
+              1: "entitlements.onboarding.rules.tierPro",
+              2: "entitlements.onboarding.rules.tierUltra",
+              3: "entitlements.onboarding.rules.tierEnterprise",
+            };
+            const labelKey = tierLabelKeys[level];
             return (
-              <span
-                className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${colorClass}`}
-              >
-                {tempRule.getTierLabel()}
-              </span>
+              <Badge variant={TIER_BADGE_VARIANT[level] ?? "secondary"}>
+                {labelKey ? t(labelKey) : "—"}
+              </Badge>
             );
           },
         },
         {
           key: "scoreBonus",
-          label: t("entitlements.onboarding.rules.scoreBonus") || "Score Bonus",
+          label: t("entitlements.onboarding.rules.scoreBonus"),
           render: (value: unknown) => (
-            <span className="font-mono text-sm font-semibold">+{String(value ?? 0)}</span>
+            <span className="font-mono text-sm font-semibold tabular-nums text-nx-ink">
+              +{String(value ?? 0)}
+            </span>
           ),
         },
         {
           key: "priority",
-          label: t("entitlements.onboarding.rules.priority") || "Priority",
+          label: t("entitlements.onboarding.rules.priority"),
         },
         {
           key: "isSystem",
-          label: t("entitlements.onboarding.rules.isSystem") || "System",
+          label: t("entitlements.onboarding.rules.isSystem"),
           render: (value: unknown) =>
             value ? (
-              <Badge variant="outline" className="border-primary text-primary">
-                System
-              </Badge>
+              <Badge variant="default">{t("entitlements.onboarding.rules.isSystem")}</Badge>
             ) : null,
         },
       ],
@@ -114,115 +102,109 @@ export function RecommendationRulesCatalogView({ vm, t }: RecommendationRulesCat
       createFields: [
         {
           name: "name",
-          label: t("entitlements.onboarding.rules.name") || "Rule Name",
+          label: t("entitlements.onboarding.rules.name"),
           type: "text" as const,
           required: true,
-          placeholder: "e.g. solo-free-tier",
-          description: "Unique stable slug for this rule.",
+          placeholder: t("entitlements.onboarding.rules.namePlaceholder"),
+          description: t("entitlements.onboarding.rules.nameHelp"),
         },
         {
           name: "conditionJson",
-          label: t("entitlements.onboarding.rules.condition") || "Condition (JSON)",
+          label: t("entitlements.onboarding.rules.condition"),
           type: "textarea" as const,
           required: true,
-          placeholder: '{"team_size":"solo"}',
-          description: 'Single value: {"key":"value"}  |  Multi-value match: {"key":["v1","v2"]}',
+          placeholder: t("entitlements.onboarding.rules.conditionPlaceholder"),
+          description: t("entitlements.onboarding.rules.conditionHelp"),
         },
         {
           name: "recommendedTierLevel",
-          label: t("entitlements.onboarding.rules.tier") || "Recommended Tier",
+          label: t("entitlements.onboarding.rules.tier"),
           type: "select" as const,
           options: [
-            { value: "0", label: t("entitlements.onboarding.rules.tierFree") || "Free (0)" },
-            { value: "1", label: t("entitlements.onboarding.rules.tierPro") || "Pro (1)" },
-            { value: "2", label: t("entitlements.onboarding.rules.tierUltra") || "Ultra (2)" },
-            {
-              value: "3",
-              label: t("entitlements.onboarding.rules.tierEnterprise") || "Enterprise (3)",
-            },
+            { value: "0", label: t("entitlements.onboarding.rules.tierFree") },
+            { value: "1", label: t("entitlements.onboarding.rules.tierPro") },
+            { value: "2", label: t("entitlements.onboarding.rules.tierUltra") },
+            { value: "3", label: t("entitlements.onboarding.rules.tierEnterprise") },
           ],
         },
         {
           name: "scoreBonus",
-          label: t("entitlements.onboarding.rules.scoreBonus") || "Score Bonus",
+          label: t("entitlements.onboarding.rules.scoreBonus"),
           type: "number" as const,
           required: true,
           defaultValue: 25,
-          description: "Points added to the matching edition's score.",
+          description: t("entitlements.onboarding.rules.scoreBonusHelp"),
         },
         {
           name: "reasonEn",
-          label: t("entitlements.onboarding.rules.reasonEn") || "Reason (English)",
+          label: t("entitlements.onboarding.rules.reasonEn"),
           type: "textarea" as const,
           required: true,
-          placeholder: "Recommended because your team size fits the Pro plan.",
+          placeholder: t("entitlements.onboarding.rules.reasonEnPlaceholder"),
         },
         {
           name: "reasonAr",
-          label: t("entitlements.onboarding.rules.reasonAr") || "Reason (Arabic)",
+          label: t("entitlements.onboarding.rules.reasonAr"),
           type: "textarea" as const,
           required: true,
-          placeholder: "موصى به لأن حجم فريقك يناسب خطة برو.",
+          placeholder: t("entitlements.onboarding.rules.reasonArPlaceholder"),
         },
         {
           name: "priority",
-          label: t("entitlements.onboarding.rules.priority") || "Priority",
+          label: t("entitlements.onboarding.rules.priority"),
           type: "number" as const,
           defaultValue: 5,
-          description: "Lower values are evaluated first. Use 1-10.",
+          description: t("entitlements.onboarding.rules.priorityHelp"),
         },
       ],
 
       editFields: (item: RecommendationRule | null) => [
         {
           name: "conditionJson",
-          label: t("entitlements.onboarding.rules.condition") || "Condition (JSON)",
+          label: t("entitlements.onboarding.rules.condition"),
           type: "textarea" as const,
           required: true,
           defaultValue: item?.conditionJson ?? "",
         },
         {
           name: "recommendedTierLevel",
-          label: t("entitlements.onboarding.rules.tier") || "Recommended Tier",
+          label: t("entitlements.onboarding.rules.tier"),
           type: "select" as const,
           defaultValue:
             item?.recommendedTierLevel !== undefined && item?.recommendedTierLevel !== null
               ? String(item.recommendedTierLevel)
               : undefined,
           options: [
-            { value: "0", label: t("entitlements.onboarding.rules.tierFree") || "Free (0)" },
-            { value: "1", label: t("entitlements.onboarding.rules.tierPro") || "Pro (1)" },
-            { value: "2", label: t("entitlements.onboarding.rules.tierUltra") || "Ultra (2)" },
-            {
-              value: "3",
-              label: t("entitlements.onboarding.rules.tierEnterprise") || "Enterprise (3)",
-            },
+            { value: "0", label: t("entitlements.onboarding.rules.tierFree") },
+            { value: "1", label: t("entitlements.onboarding.rules.tierPro") },
+            { value: "2", label: t("entitlements.onboarding.rules.tierUltra") },
+            { value: "3", label: t("entitlements.onboarding.rules.tierEnterprise") },
           ],
         },
         {
           name: "scoreBonus",
-          label: t("entitlements.onboarding.rules.scoreBonus") || "Score Bonus",
+          label: t("entitlements.onboarding.rules.scoreBonus"),
           type: "number" as const,
           required: true,
           defaultValue: item?.scoreBonus ?? 0,
         },
         {
           name: "reasonEn",
-          label: t("entitlements.onboarding.rules.reasonEn") || "Reason (English)",
+          label: t("entitlements.onboarding.rules.reasonEn"),
           type: "textarea" as const,
           required: true,
           defaultValue: item?.reasonEn ?? "",
         },
         {
           name: "reasonAr",
-          label: t("entitlements.onboarding.rules.reasonAr") || "Reason (Arabic)",
+          label: t("entitlements.onboarding.rules.reasonAr"),
           type: "textarea" as const,
           required: true,
           defaultValue: item?.reasonAr ?? "",
         },
         {
           name: "priority",
-          label: t("entitlements.onboarding.rules.priority") || "Priority",
+          label: t("entitlements.onboarding.rules.priority"),
           type: "number" as const,
           defaultValue: item?.priority ?? 5,
         },

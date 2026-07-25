@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import type { DocCategory, DocNavItem } from "../../../domain/entities/DocCategory";
 import { useState, useCallback, useMemo } from "react";
-import { docsIcons } from "./DocsIcons";
+import { docsIcons } from "./DocsSidebar";
 
 // ─── Category color palette ──────────────────────────────────────
 const categoryColors: Record<string, string> = {

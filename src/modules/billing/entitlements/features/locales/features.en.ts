@@ -21,6 +21,7 @@ export const en = {
       filterByEnforcement: "Filter by enforcement",
       allControls: "All controls",
       enforced: "Enforced",
+      clearFilters: "Clear filters",
       noFeaturesHint: "Try clearing one or more filters, or create a catalog feature.",
       noDescription: "No internal description has been added.",
       featureName: "Feature Key",

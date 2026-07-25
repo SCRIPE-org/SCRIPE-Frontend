@@ -239,7 +239,7 @@ function GatewayCard({
     <Card className="relative overflow-hidden">
       {/* Status stripe */}
       <div
-        className={`absolute left-0 right-0 top-0 h-1 ${
+        className={`absolute start-0 end-0 top-0 h-1 ${
           gateway.isVerified && gateway.isEnabled
             ? "bg-success"
             : !gateway.isEnabled
@@ -292,7 +292,7 @@ function GatewayCard({
             ) : (
               <XCircle className="h-3 w-3" />
             )}
-            {gateway.statusText}
+            {t(gateway.statusText)}
           </Badge>
         </div>
       </CardHeader>
@@ -503,14 +503,14 @@ function ConfigureDialog({
                       value={fields[field.key] ?? ""}
                       onChange={(e) => setFields((f) => ({ ...f, [field.key]: e.target.value }))}
                       required={!("optional" in field && field.optional)}
-                      className="pr-10"
+                      className="pe-10"
                     />
                     {"secret" in field && field.secret && (
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                        className="absolute end-0 top-0 h-full px-3 hover:bg-transparent"
                         onClick={() =>
                           setShowSecrets((s) => ({ ...s, [field.key]: !s[field.key] }))
                         }

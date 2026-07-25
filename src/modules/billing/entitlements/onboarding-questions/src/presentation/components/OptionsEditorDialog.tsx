@@ -1,7 +1,7 @@
 // FILE-EXCEPTION: file length
 "use client";
 
-import { JSX, useState } from "react";
+import { JSX, useId, useState } from "react";
 import { useOptionsEditorViewModel } from "../viewmodels/useOptionsEditorViewModel";
 import {
   Dialog,
@@ -11,10 +11,12 @@ import {
   DialogDescription,
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
+import { EmptyState } from "@core/ui/empty-state";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
+import { Skeleton } from "@core/ui/skeleton";
 import { useI18n } from "@core/providers/i18n-provider";
-import { ChevronUp, ChevronDown, Pencil, Trash2, Plus, X, Check } from "lucide-react";
+import { ChevronUp, ChevronDown, Inbox, Pencil, Trash2, Plus, X, Check } from "lucide-react";
 import type { AnswerOptionData } from "../../domain/entities/OnboardingQuestion";
 import type { AnswerOptionRequest } from "../../domain/entities/OnboardingQuestionRequests";
 
@@ -119,54 +121,67 @@ export function OptionsEditorDialog({
     await vm.reorderOptions(ids);
   };
 
-  const field = (f: keyof AnswerOptionRequest, label: string, type: "text" | "number" = "text") => (
-    <div className="flex flex-col gap-1">
-      <Label className="text-xs text-muted-foreground">{label}</Label>
-      <Input
-        type={type}
-        value={String(form[f] ?? "")}
-        onChange={(e) =>
-          setForm((p) => ({
-            ...p,
-            [f]: type === "number" ? Number(e.target.value) : e.target.value,
-          }))
-        }
-        className="h-8 border-border bg-card text-sm text-foreground placeholder:text-muted-foreground"
-        min={f === "signalWeight" ? SIGNAL_WEIGHT_MIN : undefined}
-        max={f === "signalWeight" ? SIGNAL_WEIGHT_MAX : undefined}
-        disabled={isBusy}
-      />
-    </div>
-  );
+  const fieldIdBase = useId();
+
+  const field = (f: keyof AnswerOptionRequest, label: string, type: "text" | "number" = "text") => {
+    const fieldId = `${fieldIdBase}-${f}`;
+    return (
+      <div className="flex flex-col gap-1">
+        <Label htmlFor={fieldId} className="text-xs text-nx-ink-2">
+          {label}
+        </Label>
+        <Input
+          id={fieldId}
+          type={type}
+          value={String(form[f] ?? "")}
+          onChange={(e) =>
+            setForm((p) => ({
+              ...p,
+              [f]: type === "number" ? Number(e.target.value) : e.target.value,
+            }))
+          }
+          className="h-8 text-sm"
+          min={f === "signalWeight" ? SIGNAL_WEIGHT_MIN : undefined}
+          max={f === "signalWeight" ? SIGNAL_WEIGHT_MAX : undefined}
+          disabled={isBusy}
+        />
+      </div>
+    );
+  };
 
   const isSaving = vm.isCreating || vm.isUpdating;
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && !isBusy && onClose()}>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto border-border bg-background">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-foreground">
-            {t("entitlements.onboarding.questions.options.title")}
-          </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
+          <DialogTitle>{t("entitlements.onboarding.questions.options.title")}</DialogTitle>
+          <DialogDescription>
             {t("entitlements.onboarding.questions.options.description")}{" "}
-            <span className="font-medium text-foreground">{questionLabel}</span>
+            <span className="font-medium text-nx-ink">{questionLabel}</span>
           </DialogDescription>
         </DialogHeader>
 
         {/* Options list */}
         <div className="mt-2 space-y-1">
           {vm.isLoading ? (
-            Array.from({ length: 3 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-12 animate-pulse rounded-md border border-border bg-card/60 motion-reduce:animate-none"
-              />
-            ))
+            <div
+              role="status"
+              aria-busy="true"
+              aria-label={t("common.loading")}
+              className="space-y-1"
+            >
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} shape="block" className="h-12 rounded-nx-md" />
+              ))}
+            </div>
           ) : vm.options.length === 0 && mode.kind === "idle" ? (
-            <p className="py-6 text-center text-sm text-muted-foreground">
-              {t("entitlements.onboarding.questions.options.empty")}
-            </p>
+            <EmptyState
+              size="sm"
+              bare
+              icon={Inbox}
+              title={t("entitlements.onboarding.questions.options.empty")}
+            />
           ) : (
             vm.options.map((opt, idx) => {
               const isEditing = mode.kind === "edit" && mode.option.id === opt.id;
@@ -174,11 +189,11 @@ export function OptionsEditorDialog({
               return (
                 <div key={opt.id}>
                   <div
-                    className={`flex items-center justify-between gap-2 rounded-md border px-3 py-2 transition-colors ${isEditing ? "border-info/50 bg-info/10" : "border-border bg-card/60"}`}
+                    className={`flex items-center justify-between gap-2 rounded-nx-md border px-3 py-2 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none ${isEditing ? "border-info/50 bg-info/10" : "border-nx-line bg-nx-raised"}`}
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-foreground">{opt.labelEn}</p>
-                      <p className="truncate text-[11px] text-muted-foreground">
+                      <p className="truncate text-sm font-medium text-nx-ink">{opt.labelEn}</p>
+                      <p className="truncate text-[11px] text-nx-ink-3">
                         {opt.value}
                         {opt.labelAr && ` · ${opt.labelAr}`}
                       </p>
@@ -191,20 +206,20 @@ export function OptionsEditorDialog({
                         disabled={idx === 0 || isBusy}
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-30"
+                        className="h-7 w-7"
                         aria-label={t("entitlements.onboarding.questions.options.moveUp")}
                       >
-                        <ChevronUp className="h-3.5 w-3.5" />
+                        <ChevronUp className="h-3.5 w-3.5" aria-hidden="true" />
                       </Button>
                       <Button
                         onClick={() => handleMoveDown(idx)}
                         disabled={idx === vm.options.length - 1 || isBusy}
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-30"
+                        className="h-7 w-7"
                         aria-label={t("entitlements.onboarding.questions.options.moveDown")}
                       >
-                        <ChevronDown className="h-3.5 w-3.5" />
+                        <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
                       </Button>
 
                       {/* Edit */}
@@ -213,13 +228,13 @@ export function OptionsEditorDialog({
                         disabled={isBusy}
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 text-muted-foreground hover:bg-muted hover:text-foreground"
+                        className="h-7 w-7"
                         aria-label={t("entitlements.onboarding.questions.options.edit")}
                       >
                         {isEditing ? (
-                          <X className="h-3.5 w-3.5" />
+                          <X className="h-3.5 w-3.5" aria-hidden="true" />
                         ) : (
-                          <Pencil className="h-3.5 w-3.5" />
+                          <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
                         )}
                       </Button>
 
@@ -236,17 +251,17 @@ export function OptionsEditorDialog({
                               "entitlements.onboarding.questions.options.confirmDelete"
                             )}
                           >
-                            <Check className="h-3.5 w-3.5" />
+                            <Check className="h-3.5 w-3.5" aria-hidden="true" />
                           </Button>
                           <Button
                             onClick={() => setPendingDelete(null)}
                             disabled={isBusy}
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-muted-foreground hover:bg-muted"
+                            className="h-7 w-7"
                             aria-label={t("entitlements.onboarding.questions.options.cancelDelete")}
                           >
-                            <X className="h-3.5 w-3.5" />
+                            <X className="h-3.5 w-3.5" aria-hidden="true" />
                           </Button>
                         </div>
                       ) : (
@@ -258,7 +273,7 @@ export function OptionsEditorDialog({
                           className="h-7 w-7 text-destructive/50 hover:bg-destructive/10 hover:text-destructive"
                           aria-label={t("entitlements.onboarding.questions.options.delete")}
                         >
-                          <Trash2 className="h-3.5 w-3.5" />
+                          <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                         </Button>
                       )}
                     </div>
@@ -266,7 +281,7 @@ export function OptionsEditorDialog({
 
                   {/* Inline edit form */}
                   {isEditing && (
-                    <div className="mt-1 rounded-md border border-info/30 bg-card/80 p-3">
+                    <div className="mt-1 rounded-nx-md border border-info/30 bg-nx-raised p-3">
                       <OptionForm
                         field={field}
                         onSave={handleSave}
@@ -283,7 +298,7 @@ export function OptionsEditorDialog({
 
         {/* Add form */}
         {mode.kind === "add" && (
-          <div className="mt-2 rounded-md border border-success/30 bg-card/80 p-3">
+          <div className="mt-2 rounded-nx-md border border-success/30 bg-nx-raised p-3">
             <p className="mb-3 text-xs font-medium text-success">
               {t("entitlements.onboarding.questions.options.new")}
             </p>
@@ -297,7 +312,7 @@ export function OptionsEditorDialog({
         )}
 
         {/* Footer */}
-        <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
+        <div className="mt-4 flex items-center justify-between border-t border-nx-line pt-4">
           {mode.kind === "idle" ? (
             <Button
               onClick={startAdd}
@@ -305,7 +320,7 @@ export function OptionsEditorDialog({
               disabled={isBusy}
               className="h-8 border border-dashed border-success/50 bg-transparent px-3 text-xs text-success hover:border-success hover:bg-success/10"
             >
-              <Plus className="mr-1.5 h-3.5 w-3.5" />
+              <Plus className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
               {t("entitlements.onboarding.questions.options.add")}
             </Button>
           ) : (
@@ -316,7 +331,7 @@ export function OptionsEditorDialog({
             variant="ghost"
             size="sm"
             disabled={isBusy}
-            className="h-8 px-3 text-xs text-muted-foreground hover:text-foreground"
+            className="h-8 px-3 text-xs"
           >
             {t("entitlements.onboarding.questions.options.close")}
           </Button>
@@ -359,7 +374,7 @@ function OptionForm({ field, onSave, onCancel, isSaving }: OptionFormProps) {
           onClick={onCancel}
           variant="ghost"
           size="sm"
-          className="h-7 px-3 text-xs text-foreground hover:text-foreground/80"
+          className="h-7 px-3 text-xs"
           disabled={isSaving}
         >
           {t("entitlements.onboarding.questions.options.cancel")}

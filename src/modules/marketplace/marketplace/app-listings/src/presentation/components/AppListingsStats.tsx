@@ -1,6 +1,7 @@
 "use client";
 
 import { StatCard, type StatTone } from "@core/ui/stat-card";
+import { useI18n } from "@core/providers/i18n-provider";
 import { Package, Globe, Star, FileEdit } from "lucide-react";
 
 interface AppListingsStatsProps {
@@ -21,11 +22,23 @@ interface AppListingsStatsProps {
  * anatomy (skeleton included) instead of a bespoke card.
  */
 export function AppListingsStats({ stats, isLoading }: AppListingsStatsProps) {
+  const { t } = useI18n();
+
   const cards: { label: string; value: number; icon: typeof Package; tone: StatTone }[] = [
-    { label: "Total Listings", value: stats.total, icon: Package, tone: "info" },
-    { label: "Published", value: stats.published, icon: Globe, tone: "success" },
-    { label: "Featured", value: stats.featured, icon: Star, tone: "warning" },
-    { label: "Drafts", value: stats.drafts, icon: FileEdit, tone: "neutral" },
+    { label: t("marketplace.statsTotalListings"), value: stats.total, icon: Package, tone: "info" },
+    {
+      label: t("marketplace.statsPublished"),
+      value: stats.published,
+      icon: Globe,
+      tone: "success",
+    },
+    {
+      label: t("marketplace.listingsFeaturedBadge"),
+      value: stats.featured,
+      icon: Star,
+      tone: "warning",
+    },
+    { label: t("marketplace.statsDrafts"), value: stats.drafts, icon: FileEdit, tone: "neutral" },
   ];
 
   return (

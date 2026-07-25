@@ -5,6 +5,7 @@ import { AppListingCard } from "../components/AppListingCard";
 import { AppListingsStats } from "../components/AppListingsStats";
 import { AppListingsToolbar } from "../components/AppListingsToolbar";
 import { EmptyState } from "@core/ui/empty-state";
+import { Skeleton } from "@core/ui/skeleton";
 import {
   Pagination,
   PaginationContent,
@@ -13,6 +14,7 @@ import {
   PaginationPrevious,
 } from "@core/ui/pagination";
 import { cn } from "@core/common/utils";
+import { useI18n } from "@core/providers/i18n-provider";
 import { Package } from "lucide-react";
 
 /**
@@ -31,6 +33,7 @@ import { Package } from "lucide-react";
  */
 export function AppListingsView() {
   const vm = useAppListingsViewModel();
+  const { t } = useI18n();
 
   const { page, totalPages, totalCount } = vm.pagination;
 
@@ -53,16 +56,21 @@ export function AppListingsView() {
 
       {/* Listings grid */}
       {vm.isLoading ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div
+          className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3"
+          role="status"
+          aria-busy="true"
+          aria-label={t("common.loading")}
+        >
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-48 motion-safe:animate-pulse rounded-xl bg-muted" />
+            <Skeleton key={i} className="h-48 rounded-nx-lg" />
           ))}
         </div>
       ) : vm.listings.length === 0 ? (
         <EmptyState
           icon={Package}
-          title="No listings found"
-          description="Try adjusting your filters"
+          title={t("marketplace.listingsNoResultsTitle")}
+          description={t("marketplace.listingsNoResultsHint")}
         />
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -84,8 +92,8 @@ export function AppListingsView() {
       {/* Pagination — composed from the core pagination primitives */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-1">
-          <p className="text-sm text-muted-foreground">
-            {totalCount} listing{totalCount !== 1 ? "s" : ""} total
+          <p className="text-sm text-nx-ink-2">
+            {t("marketplace.listingsTotalCount", { count: totalCount })}
           </p>
           <div className="flex items-center gap-2">
             <Pagination className="mx-0 w-auto justify-end">
@@ -103,7 +111,10 @@ export function AppListingsView() {
                   />
                 </PaginationItem>
                 <PaginationItem>
-                  <span className="px-2 text-sm font-medium tabular-nums">
+                  <span
+                    className="px-2 text-sm font-medium tabular-nums"
+                    aria-label={t("marketplace.listingsPageIndicator", { page, total: totalPages })}
+                  >
                     {page} / {totalPages}
                   </span>
                 </PaginationItem>

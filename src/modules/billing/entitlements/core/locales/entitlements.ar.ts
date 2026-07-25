@@ -243,6 +243,8 @@ export const ar = {
       waived: "تم إعفاء الفاتورة بنجاح.",
       retryScheduled: "تم جدولة إعادة المحاولة.",
       payNow: "ادفع الآن",
+      payNowUnavailable:
+        "الدفع عبر الإنترنت غير متاح حالياً لهذه الفاتورة. تواصل مع مدير حسابك لتسويتها.",
       invoicesSubtitle: "عرض فواتير العمولات المفروضة من قبل المنصة.",
     },
     commissions: {
@@ -276,6 +278,11 @@ export const ar = {
       subtitle: "قم بتكوين بوابات الدفع الخاصة بك لقبول المدفوعات من العملاء.",
       addNew: "إضافة بوابة دفع",
       configure: "تكوين",
+      status: {
+        disabled: "معطّل",
+        connected: "متصل",
+        notVerified: "غير موثّق",
+      },
       noGateways: "لم يتم تكوين بوابات دفع",
       noGatewaysDesc: "أضف بوابة دفع للبدء في قبول المدفوعات من عملائك.",
       lastVerified: "آخر تحقق",

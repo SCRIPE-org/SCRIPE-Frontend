@@ -102,24 +102,24 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         await adminRepository.create(data);
       }
       success({
-        title: t("admin.created") || "Admin Created",
-        description: t("admin.createdDesc") || "Administrator created successfully.",
+        title: t("admin.created"),
+        description: t("admin.createdDesc"),
       });
       return {} as Admin;
     },
     update: async (id, data) => {
       await adminRepository.update(id, data);
       success({
-        title: t("admin.updated") || "Admin Updated",
-        description: t("admin.updatedDesc") || "Administrator updated successfully.",
+        title: t("admin.updated"),
+        description: t("admin.updatedDesc"),
       });
       return {} as Admin;
     },
     delete: async (id) => {
       await adminRepository.delete(id);
       success({
-        title: t("admin.deleted") || "Admin Deleted",
-        description: t("admin.deletedDesc") || "Administrator deleted successfully.",
+        title: t("admin.deleted"),
+        description: t("admin.deletedDesc"),
       });
     },
   });

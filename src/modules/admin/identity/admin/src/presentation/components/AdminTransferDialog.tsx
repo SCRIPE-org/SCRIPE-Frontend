@@ -116,23 +116,20 @@ export function AdminTransferDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{t("admin.transferTitle") || "Transfer Admin"}</DialogTitle>
-          <DialogDescription>
-            {t("admin.transferDesc") ||
-              "Transfer this admin to another tenant. This will remove them from the current tenant."}
-          </DialogDescription>
+          <DialogTitle>{t("admin.transferTitle")}</DialogTitle>
+          <DialogDescription>{t("admin.transferDesc")}</DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
           {/* Tenant Selection */}
           <div className="space-y-2">
-            <Label>{t("admin.targetTenant") || "Target Tenant"}</Label>
+            <Label>{t("admin.targetTenant")}</Label>
             <GenericSelect
               options={[]}
               type="searchable"
               searchType="server"
-              placeholder={t("admin.selectTenant") || "Select target tenant..."}
-              searchPlaceholder={t("common.search") || "Search..."}
+              placeholder={t("admin.selectTenant")}
+              searchPlaceholder={t("common.search")}
               onServerSearch={handleTenantSearchLocal}
               onValueChange={(val: string | string[]) => {
                 appLogger.info("[AdminTransferDialog] Tenant selected:", val);
@@ -145,23 +142,21 @@ export function AdminTransferDialog({
 
           {/* Role Selection */}
           <div className="space-y-2">
-            <Label>{t("admin.targetRole") || "Target Role"}</Label>
+            <Label>{t("admin.targetRole")}</Label>
             <GenericSelect
               key={targetTenantId} // Force re-render/reset when tenant changes
               options={[]}
               type="searchable"
               searchType="server"
-              placeholder={t("admin.selectRole") || "Select role..."}
-              searchPlaceholder={t("common.search") || "Search roles..."}
+              placeholder={t("admin.selectRole")}
+              searchPlaceholder={t("common.search")}
               onServerSearch={handleRoleSearchLocal}
               onValueChange={(val: string | string[]) => setTargetRoleId(val as string)}
               value={targetRoleId}
               disabled={isTransferring || !hasTenantSelected}
             />
             {!hasTenantSelected && (
-              <p className="text-xs text-muted-foreground">
-                {t("admin.selectTenantFirst") || "Please select a tenant first."}
-              </p>
+              <p className="text-xs text-nx-ink-3">{t("admin.selectTenantFirst")}</p>
             )}
           </div>
         </div>
@@ -174,7 +169,7 @@ export function AdminTransferDialog({
             onClick={handleTransfer}
             disabled={isTransferring || !targetRoleId || !hasTenantSelected}
           >
-            {t("admin.transferConfirm") || "Transfer"}
+            {t("admin.transferConfirm")}
           </Button>
         </DialogFooter>
       </DialogContent>

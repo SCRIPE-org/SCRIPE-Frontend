@@ -3,6 +3,7 @@
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { useI18n } from "@core/providers/i18n-provider";
 import { Search, Filter, SortAsc } from "lucide-react";
 
 /** Sort options supported by the backend catalog query. */
@@ -47,19 +48,25 @@ export function AppListingsToolbar({
   sortBy,
   pricingModel,
 }: AppListingsToolbarProps) {
+  const { t } = useI18n();
+
   return (
     <div className="flex flex-col gap-3">
       {/* Row 1: Search + Sort */}
       <div className="flex flex-col gap-3 sm:flex-row">
         {/* Search */}
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Search
+            className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-nx-ink-3"
+            aria-hidden="true"
+          />
           <Input
             id="listings-search"
-            placeholder="Search listings..."
+            placeholder={t("marketplace.searchPlaceholder")}
+            aria-label={t("marketplace.searchPlaceholder")}
             defaultValue={search}
             onChange={(e) => onSearch(e.target.value)}
-            className="pl-9"
+            className="ps-9"
           />
         </div>
 
@@ -69,14 +76,14 @@ export function AppListingsToolbar({
           onValueChange={(v) => onSortChange(v === "newest" ? undefined : (v as SortByOption))}
         >
           <SelectTrigger id="listings-sort" className="w-[160px] gap-1.5">
-            <SortAsc className="size-3.5 text-muted-foreground" />
-            <SelectValue placeholder="Sort by" />
+            <SortAsc className="size-3.5 text-nx-ink-3" aria-hidden="true" />
+            <SelectValue placeholder={t("marketplace.toolbarSortByPlaceholder")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="newest">Newest</SelectItem>
-            <SelectItem value="popular">Most Popular</SelectItem>
-            <SelectItem value="rating">Top Rated</SelectItem>
-            <SelectItem value="price">Price</SelectItem>
+            <SelectItem value="newest">{t("marketplace.toolbarSortNewest")}</SelectItem>
+            <SelectItem value="popular">{t("marketplace.toolbarSortPopular")}</SelectItem>
+            <SelectItem value="rating">{t("marketplace.toolbarSortRating")}</SelectItem>
+            <SelectItem value="price">{t("marketplace.toolbarSortPrice")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -92,7 +99,7 @@ export function AppListingsToolbar({
             onClick={() => onPublishedFilter(undefined)}
             className="gap-1.5"
           >
-            <Filter className="size-3.5" /> All
+            <Filter className="size-3.5" aria-hidden="true" /> {t("common.all")}
           </Button>
           <Button
             id="filter-published"
@@ -100,7 +107,7 @@ export function AppListingsToolbar({
             size="sm"
             onClick={() => onPublishedFilter(true)}
           >
-            Published
+            {t("marketplace.statsPublished")}
           </Button>
           <Button
             id="filter-drafts"
@@ -108,7 +115,7 @@ export function AppListingsToolbar({
             size="sm"
             onClick={() => onPublishedFilter(false)}
           >
-            Drafts
+            {t("marketplace.statsDrafts")}
           </Button>
         </div>
 
@@ -120,13 +127,15 @@ export function AppListingsToolbar({
           }
         >
           <SelectTrigger id="listings-pricing-filter" className="w-[150px]">
-            <SelectValue placeholder="Pricing model" />
+            <SelectValue placeholder={t("marketplace.toolbarPricingPlaceholder")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Pricing</SelectItem>
-            <SelectItem value="Free">Free</SelectItem>
-            <SelectItem value="OneTime">One-time</SelectItem>
-            <SelectItem value="Subscription">Subscription</SelectItem>
+            <SelectItem value="all">{t("marketplace.toolbarPricingAll")}</SelectItem>
+            <SelectItem value="Free">{t("common.free")}</SelectItem>
+            <SelectItem value="OneTime">{t("marketplace.toolbarPricingOneTime")}</SelectItem>
+            <SelectItem value="Subscription">
+              {t("marketplace.toolbarPricingSubscription")}
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>

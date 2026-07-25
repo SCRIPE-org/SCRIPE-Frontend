@@ -99,6 +99,13 @@ export function usePermissionsViewModel() {
     ? (groupedQuery.data ?? [])
     : (tenantGroupedQuery.data ?? []);
 
+  // The grouped query is what the view actually renders — its own error state
+  // must be surfaced, otherwise a failed /permissions/grouped call resolves to
+  // an empty array and reads as "no permissions" instead of "request failed".
+  const isGroupedError = isSystemCatalogMode ? groupedQuery.isError : tenantGroupedQuery.isError;
+  const groupedError = isSystemCatalogMode ? groupedQuery.error : tenantGroupedQuery.error;
+  const refetchGrouped = isSystemCatalogMode ? groupedQuery.refetch : tenantGroupedQuery.refetch;
+
   // Create permission mutation
   const createMutation = useMutation({
     mutationFn: (request: CreatePermissionRequest) => permissionRepository.create(request),
@@ -178,6 +185,8 @@ export function usePermissionsViewModel() {
     totalCount: permissions?.length ?? 0,
     isSystemCatalogMode,
     isGroupedLoading: isSystemCatalogMode ? groupedQuery.isLoading : tenantGroupedQuery.isLoading,
+    isGroupedError,
+    groupedError,
 
     // Filter state (View binds to these, no useState in View)
     filter: {
@@ -197,6 +206,9 @@ export function usePermissionsViewModel() {
     handleUpdate,
     handleDelete,
     refetch: () => refetch(),
+    // Retries the grouped tree specifically — the query the view renders —
+    // in addition to the flat list query the refresh button already covers.
+    refetchGrouped: () => refetchGrouped(),
 
     // Mutation states
     isCreating: createMutation.isPending,

@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader } from "@core/ui/card";
+import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { AppListing } from "../../domain/entities/AppListing";
 import { Star, Globe, EyeOff, Trash2, Zap, ExternalLink } from "lucide-react";
 
@@ -32,15 +35,18 @@ export function AppListingCard({
   isPublishing,
   isDeleting,
 }: AppListingCardProps) {
+  const { t } = useI18n();
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
   return (
-    <Card className="flex flex-col gap-0 overflow-hidden transition-shadow hover:shadow-md">
+    <Card className="flex flex-col gap-0 overflow-hidden">
       <CardHeader className="flex flex-row items-start gap-3 pb-3">
         {/* Icon */}
-        <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted">
+        <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-nx-md bg-nx-raised">
           {listing.iconUrl ? (
-            <img src={listing.iconUrl} alt={listing.name} className="size-full object-cover" />
+            <img src={listing.iconUrl} alt="" className="size-full object-cover" />
           ) : (
-            <span className="text-lg font-bold text-muted-foreground">
+            <span className="text-lg font-bold text-nx-ink-2" aria-hidden="true">
               {listing.name.charAt(0)}
             </span>
           )}
@@ -49,14 +55,14 @@ export function AppListingCard({
         {/* Title block */}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="truncate text-sm font-semibold">{listing.name}</span>
+            <span className="truncate text-sm font-semibold text-nx-ink">{listing.name}</span>
             {listing.isFeatured && (
               <Badge variant="secondary" className="gap-1 text-xs">
-                <Zap className="size-3" /> Featured
+                <Zap className="size-3" aria-hidden="true" /> {t("marketplace.listingsFeaturedBadge")}
               </Badge>
             )}
           </div>
-          <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
+          <p className="mt-0.5 line-clamp-1 text-xs text-nx-ink-2">
             {listing.developerName} · v{listing.version}
           </p>
         </div>
@@ -69,15 +75,15 @@ export function AppListingCard({
 
       <CardContent className="flex flex-col gap-3 pt-0">
         {/* Description */}
-        <p className="line-clamp-2 text-xs text-muted-foreground">{listing.description}</p>
+        <p className="line-clamp-2 text-xs text-nx-ink-2">{listing.description}</p>
 
         {/* Meta row */}
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span className="font-medium text-foreground">{listing.pricingLabel}</span>
+        <div className="flex items-center justify-between text-xs text-nx-ink-2">
+          <span className="font-medium text-nx-ink">{listing.pricingLabel}</span>
           <div className="flex items-center gap-1">
-            <Star className="size-3 fill-warning text-warning" />
+            <Star className="size-3 fill-warning text-warning" aria-hidden="true" />
             <span>{listing.ratingLabel}</span>
-            <span className="text-muted-foreground/60">({listing.reviewCount})</span>
+            <span className="text-nx-ink-3">({listing.reviewCount})</span>
           </div>
         </div>
 
@@ -90,17 +96,18 @@ export function AppListingCard({
               </Badge>
             ))}
             {listing.tags.length > 3 && (
-              <span className="text-xs text-muted-foreground">+{listing.tags.length - 3}</span>
+              <span className="text-xs text-nx-ink-3">+{listing.tags.length - 3}</span>
             )}
           </div>
         )}
 
         {/* Actions */}
-        <div className="flex items-center gap-2 border-t pt-1">
+        <div className="flex items-center gap-2 border-t border-nx-line pt-1">
           {/* View details link (Phase 5.1) */}
           <Button size="sm" variant="ghost" className="gap-1" asChild>
             <Link href={`/marketplace/${listing.id}`}>
-              <ExternalLink className="size-3.5" /> Details
+              <ExternalLink className="size-3.5" aria-hidden="true" />{" "}
+              {t("marketplace.listingsViewDetails")}
             </Link>
           </Button>
 
@@ -112,7 +119,8 @@ export function AppListingCard({
               onClick={onUnpublish}
               disabled={isPublishing}
             >
-              <EyeOff className="size-3.5" /> Unpublish
+              <EyeOff className="size-3.5" aria-hidden="true" />{" "}
+              {t("marketplace.listingsUnpublishAction")}
             </Button>
           ) : (
             <Button
@@ -122,28 +130,45 @@ export function AppListingCard({
               onClick={onPublish}
               disabled={isPublishing}
             >
-              <Globe className="size-3.5" /> Publish
+              <Globe className="size-3.5" aria-hidden="true" /> {t("marketplace.listingsPublishAction")}
             </Button>
           )}
           <Button
             size="sm"
             variant={listing.isFeatured ? "secondary" : "ghost"}
             onClick={onToggleFeatured}
-            title={listing.isFeatured ? "Remove from featured" : "Mark as featured"}
+            aria-label={
+              listing.isFeatured
+                ? t("marketplace.listingsRemoveFeatured")
+                : t("marketplace.listingsMarkFeatured")
+            }
           >
-            <Zap className="size-3.5" />
+            <Zap className="size-3.5" aria-hidden="true" />
           </Button>
           <Button
             size="sm"
             variant="ghost"
             className="text-destructive hover:text-destructive"
-            onClick={onDelete}
+            onClick={() => setConfirmDeleteOpen(true)}
             disabled={isDeleting}
+            aria-label={t("marketplace.listingsDeleteAction")}
           >
-            <Trash2 className="size-3.5" />
+            <Trash2 className="size-3.5" aria-hidden="true" />
           </Button>
         </div>
       </CardContent>
+
+      <ConfirmationDialog
+        open={confirmDeleteOpen}
+        onOpenChange={setConfirmDeleteOpen}
+        variant="destructive"
+        title={t("marketplace.deleteTitle")}
+        description={t("marketplace.deleteConfirm")}
+        confirmText={t("common.delete")}
+        cancelText={t("common.cancel")}
+        isLoading={isDeleting}
+        onConfirm={onDelete}
+      />
     </Card>
   );
 }

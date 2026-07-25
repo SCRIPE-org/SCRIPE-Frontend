@@ -13,5 +13,8 @@ export const en = {
     reviews: {
       moderated: "Review status updated",
     },
+    // ── ReviewsView ──
+    reviewsCountLabel: "{{count}} reviews",
+    reviewsDeleteConfirmDesc: "Are you sure you want to delete this review? This action cannot be undone.",
   },
 };

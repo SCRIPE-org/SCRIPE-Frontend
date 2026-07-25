@@ -28,5 +28,7 @@ export const en = {
     categoryUpdated: "Category updated successfully",
     categoryDeleted: "Category deleted successfully",
     categoriesEmptyHint: "No categories created yet.",
+    categoryDeleteConfirmDesc:
+      "Are you sure you want to delete this category? Apps in this category will need to be recategorized.",
   },
 };

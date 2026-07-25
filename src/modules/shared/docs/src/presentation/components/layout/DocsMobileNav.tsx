@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import type { DocCategory, DocNavItem } from "../../../domain/entities/DocCategory";
 import { useState, useCallback } from "react";
-import { docsIcons, ChevronRightIcon } from "./DocsIcons";
+import { X, ChevronRight } from "lucide-react";
+import { docsIcons } from "./DocsSidebar";
 
 interface DocsMobileNavProps {
   categories: DocCategory[];
@@ -87,9 +88,9 @@ export function DocsMobileNav({
             onClick={() => toggleSubGroup(item.id)}
             data-expanded={isSubOpen}
           >
-            {item.icon ? docsIcons[item.icon]?.({ size: 16 }) || null : null}
+            {item.icon ? (docsIcons[item.icon]?.({ size: 16 }) ?? null) : null}
             <span style={{ flex: 1 }}>{t(item.titleKey)}</span>
-            <ChevronRightIcon />
+            <ChevronRight size={14} aria-hidden="true" />
           </button>
           <div className="docs-sidebar-subgroup-items" style={{ maxHeight: subItemsHeight }}>
             {item.children.map((child) => {
@@ -133,25 +134,13 @@ export function DocsMobileNav({
       <div className="docs-mobile-overlay" onClick={onClose} />
       <nav className="docs-mobile-nav">
         <button className="docs-mobile-close" onClick={onClose} aria-label={t("common.closeMenu")}>
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M18 6 6 18" />
-            <path d="m6 6 12 12" />
-          </svg>
+          <X size={16} aria-hidden="true" />
         </button>
 
-        <div style={{ paddingTop: "2rem" }}>
+        <div className="pt-8">
           {categories.map((cat) => (
             <div key={cat.id} className="docs-sidebar-category">
-              <div className="docs-sidebar-category-btn" style={{ cursor: "default" }}>
+              <div className="docs-sidebar-category-btn cursor-default">
                 <span>{t(cat.titleKey)}</span>
               </div>
               <div className="docs-sidebar-items" style={{ maxHeight: "9999px" }}>

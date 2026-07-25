@@ -245,6 +245,8 @@ export const en = {
       waived: "Invoice waived successfully.",
       retryScheduled: "Charge retry scheduled.",
       payNow: "Pay Now",
+      payNowUnavailable:
+        "Online payment isn't available yet for this invoice. Contact your account manager to settle it.",
       invoicesSubtitle: "View your commission invoices charged by the platform.",
     },
     commissions: {
@@ -278,6 +280,11 @@ export const en = {
       subtitle: "Configure your payment gateways to accept payments from customers.",
       addNew: "Add a Payment Gateway",
       configure: "Configure",
+      status: {
+        disabled: "Disabled",
+        connected: "Connected",
+        notVerified: "Not Verified",
+      },
       noGateways: "No payment gateways configured",
       noGatewaysDesc: "Add a payment gateway to start accepting payments from your customers.",
       lastVerified: "Last verified",

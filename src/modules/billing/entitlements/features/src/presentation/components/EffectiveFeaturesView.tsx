@@ -9,9 +9,12 @@
 import { useMemo } from "react";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
+import { EmptyState } from "@core/ui/empty-state";
+import { ErrorMessage } from "@core/ui/error-message";
+import { PageHeader } from "@core/ui/page-header";
 import { Skeleton } from "@core/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, Inbox, Layers3 } from "lucide-react";
 import type { TenantEffectiveFeature } from "../../domain/entities/TenantEffectiveFeature";
 import { FeatureValueBadge } from "./FeatureValueBadge";
 
@@ -47,29 +50,33 @@ export function EffectiveFeaturesView({
 
   if (isLoading) {
     return (
-      <div className="space-y-4 p-6">
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-64 w-full" />
+      <div
+        role="status"
+        aria-busy="true"
+        aria-label={t("common.loading")}
+        className="space-y-4 p-6"
+      >
+        <Skeleton shape="title" />
+        <Skeleton shape="block" className="h-64 w-full" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-6 text-destructive">
-        {t("common.error")}: {error.message}
+      <div className="p-6">
+        <ErrorMessage message={`${t("common.error")}: ${error.message}`} />
       </div>
     );
   }
 
   return (
     <div className="space-y-6 p-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">
-          {t("entitlements.features.effectiveTitle")}
-        </h1>
-        <p className="text-muted-foreground">{t("entitlements.features.effectiveDescription")}</p>
-      </div>
+      <PageHeader
+        icon={Layers3}
+        title={t("entitlements.features.effectiveTitle")}
+        description={t("entitlements.features.effectiveDescription")}
+      />
 
       {Object.entries(grouped).map(([category, categoryFeatures]) => (
         <Card key={category}>
@@ -103,9 +110,7 @@ export function EffectiveFeaturesView({
                       {feature.getDisplayName(language)}
                     </TableCell>
                     <TableCell>
-                      <span className="font-mono text-xs text-muted-foreground">
-                        {feature.name}
-                      </span>
+                      <span className="font-mono text-xs text-nx-ink-2">{feature.name}</span>
                     </TableCell>
                     <TableCell className="text-center">
                       <FeatureValueBadge
@@ -115,12 +120,12 @@ export function EffectiveFeaturesView({
                     </TableCell>
                     <TableCell className="text-center">
                       {feature.hasOverride ? (
-                        <Badge variant="outline" className="border-warning text-warning">
-                          <ArrowUpDown className="mr-1 h-3 w-3" />
+                        <Badge variant="warning">
+                          <ArrowUpDown className="me-1 h-3 w-3" aria-hidden="true" />
                           {feature.overrideValue}
                         </Badge>
                       ) : (
-                        <span className="text-muted-foreground">—</span>
+                        <span className="text-nx-ink-3">—</span>
                       )}
                     </TableCell>
                     <TableCell className="text-center">
@@ -139,11 +144,7 @@ export function EffectiveFeaturesView({
       ))}
 
       {features.length === 0 && (
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            {t("entitlements.features.noFeatures")}
-          </CardContent>
-        </Card>
+        <EmptyState icon={Inbox} title={t("entitlements.features.noFeatures")} size="lg" />
       )}
     </div>
   );

@@ -43,7 +43,10 @@ export function PermissionFilterBar({
   return (
     <div className="flex items-center gap-4">
       <div className="relative max-w-sm flex-1">
-        <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search
+          className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
+          aria-hidden="true"
+        />
         <Input
           placeholder={t("permission.searchPlaceholder")}
           value={searchValue}
@@ -54,7 +57,7 @@ export function PermissionFilterBar({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline">
-            <Filter className="me-2 h-4 w-4" />
+            <Filter className="me-2 h-4 w-4" aria-hidden="true" />
             {categoryFilter || t("permission.allCategories")}
           </Button>
         </DropdownMenuTrigger>
