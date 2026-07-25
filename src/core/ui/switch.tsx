@@ -35,8 +35,14 @@ interface SwitchProps extends React.ComponentPropsWithoutRef<typeof SwitchPrimit
 // side, so the content box is (w−6)×(h−6) and a concentric thumb is h−6, not
 // h−4. The thumb used to be h−4 and overflowed its content box by 1px top and
 // bottom in all three skins. Sizing the thumb correctly also lands travel on
-// the 4px scale, which is what lets it be written as an ltr/rtl pair instead
-// of an arbitrary pixel translate.
+// the 4px scale.
+//
+// DIRECTION IS PINNED, in both locales: OFF is physically LEFT, ON is
+// physically RIGHT, in English and in Arabic alike. This is a product
+// decision — the track reads as a physical object whose on-position does not
+// move between languages — so travel is a plain physical translate with no
+// rtl: variant, and the pin lives on the Root element itself (see below)
+// rather than on a wrapper, which is what used to break `peer`.
 //
 // Travel = contentWidth − thumb.
 const SWITCH_SKINS = {
@@ -44,19 +50,19 @@ const SWITCH_SKINS = {
   default: {
     root: "h-6 w-11",
     thumb: "h-[18px] w-[18px]",
-    travel: "ltr:data-[state=checked]:translate-x-5 rtl:data-[state=checked]:-translate-x-5",
+    travel: "data-[state=checked]:translate-x-5",
   },
   // large, iOS-proportioned — 48×28 → 42×22 content box, 22px thumb, 20px travel
   ios: {
     root: "h-7 w-12",
     thumb: "h-[22px] w-[22px]",
-    travel: "ltr:data-[state=checked]:translate-x-5 rtl:data-[state=checked]:-translate-x-5",
+    travel: "data-[state=checked]:translate-x-5",
   },
   // compact — 36×20 → 30×14 content box, 14px thumb, 16px travel
   android: {
     root: "h-5 w-9",
     thumb: "h-[14px] w-[14px]",
-    travel: "ltr:data-[state=checked]:translate-x-4 rtl:data-[state=checked]:-translate-x-4",
+    travel: "data-[state=checked]:translate-x-4",
   },
 } as const;
 
@@ -164,15 +170,21 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
       // and "off + disabled" stay distinguishable
       "data-[disabled]:bg-nx-line-hi data-[disabled]:shadow-none",
       "data-[state=unchecked]:translate-x-0",
-      // Travel follows the writing direction. The old LTR pin on the track is
-      // gone: the thumb rests at the inline START and moves to the inline END,
-      // so in Arabic the whole control mirrors like every other directional
-      // affordance in the app.
+      // Physical travel, no rtl: variant — the Root carries dir="ltr" so OFF is
+      // always physically left and ON always physically right, in both locales.
       skin.travel
     );
 
     const rootProps = {
       ...props,
+      // The direction pin lives HERE, on the Root, not on a wrapper element.
+      // A wrapper is what the old build used, and it broke `peer`: the class
+      // list starts with `peer`, but `peer-disabled:` compiles to a
+      // following-sibling selector, so burying the Root inside a div meant a
+      // <Label> next to a disabled Switch never dimmed — while the identical
+      // markup around a Checkbox did. Pinning the Root itself keeps ON on the
+      // right in Arabic AND keeps the Root a real sibling.
+      dir: "ltr" as const,
       "data-busy": busy || undefined,
       "data-readonly": readOnly || undefined,
       "aria-busy": busy || undefined,
@@ -198,12 +210,15 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
       const dimmed = props.disabled || isInert;
 
       return (
-        <div className="flex items-center gap-3">
-          {/* The OFF label comes FIRST. The thumb rests at the inline start and
-              travels to the inline end, so the resting position has to sit
-              beside "off" in both directions — the old on-label-first order
-              pointed the thumb at the wrong word in English and was only
-              accidentally right in Arabic. */}
+        // dir="ltr" on the ROW too, so the labels keep the same physical sides
+        // as the track they describe. Each label still renders its own text in
+        // its own direction; only the left-to-right order of the three items is
+        // pinned.
+        <div dir="ltr" className="flex items-center gap-3">
+          {/* OFF label on the physical LEFT, beside the thumb's resting
+              position; ON label on the physical RIGHT, where the thumb lands.
+              The old order was [on][track][off], which pointed the thumb at the
+              wrong word in English. */}
           <span
             aria-hidden="true"
             className={cn(LABEL_BASE, isOn ? "text-nx-ink-3" : "text-nx-ink", dimmed && "text-nx-ink-3")}
@@ -223,7 +238,7 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
       );
     }
 
-    // No wrapper element: `peer` only reaches a following sibling, so the old
+    // Still no wrapper element: `peer` only reaches a following sibling, so the old
     // <div> around the Root meant a <Label> next to a disabled Switch never
     // dimmed, while the identical markup around a Checkbox did.
     return (
