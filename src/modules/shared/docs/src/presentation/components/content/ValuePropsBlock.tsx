@@ -1,7 +1,6 @@
 "use client";
 
-import type { CSSProperties, RefObject } from "react";
-import { useRef, useEffect } from "react";
+import type { CSSProperties } from "react";
 import { motion } from "framer-motion";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import type { ValuePropsBlockSection } from "../../../domain/entities/DocSection";
@@ -210,34 +209,6 @@ const CODE_LINES = [
 */
 const CELL_SIZES: string[] = ["w3", "w3", "w2", "w2", "w2", "w4"];
 
-/* Tilt hook */
-function useTilt(ref: RefObject<HTMLElement | null>) {
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const onMove = (e: MouseEvent) => {
-      const rect = el.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      el.style.setProperty("--rx", `${(-y * 6).toFixed(2)}deg`);
-      el.style.setProperty("--ry", `${(x * 6).toFixed(2)}deg`);
-    };
-
-    const onLeave = () => {
-      el.style.setProperty("--rx", "0deg");
-      el.style.setProperty("--ry", "0deg");
-    };
-
-    el.addEventListener("mousemove", onMove as EventListener);
-    el.addEventListener("mouseleave", onLeave);
-    return () => {
-      el.removeEventListener("mousemove", onMove as EventListener);
-      el.removeEventListener("mouseleave", onLeave);
-    };
-  }, [ref]);
-}
-
 /* ── Single bento cell ────────────────────────────────────────────────── */
 function BentoCell({
   titleKey,
@@ -251,14 +222,11 @@ function BentoCell({
   isCodeCell: boolean;
 }) {
   const { t } = useDocsI18n();
-  const ref = useRef<HTMLElement>(null);
-  useTilt(ref);
   const size = CELL_SIZES[index] ?? "w2";
   const bars = BAR_DATA[index] ?? BAR_DATA[0];
 
   return (
     <motion.article
-      ref={ref}
       className={`com-bento-cell com-bento-cell--${size} com-reveal`}
       style={{ "--i": index } as CSSProperties}
       initial={{ opacity: 0, y: 28 }}

@@ -15,7 +15,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core
 import { Badge } from "@core/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { Button } from "@core/ui/button";
-import { Users, Shield, Lock, ArrowLeft, Trash2, Plus, Settings, Loader2 } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { ErrorMessage } from "@core/ui/error-message";
+import { EmptyState } from "@core/ui/empty-state";
+import { Users, Shield, Lock, ArrowLeft, Trash2, Plus, Settings, Inbox } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { formatUtc } from "@core/common/utils";
 import { AddMembersDialog } from "../components/AddMembersDialog";
@@ -37,6 +40,7 @@ export function UserGroupDetailView({ groupId }: Props) {
     group,
     isLoading,
     error,
+    refetch,
     addMembers,
     removeMember,
     isAddingMembers,
@@ -53,24 +57,25 @@ export function UserGroupDetailView({ groupId }: Props) {
   const [showSetRestrictions, setShowSetRestrictions] = useState(false);
 
   if (isLoading) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+    return <LoadingSpinner size="lg" />;
   }
 
-  if (error || !group) {
+  if (error) {
+    return <ErrorMessage message={t("common.error")} onRetry={refetch} />;
+  }
+
+  if (!group) {
     return (
-      <div className="flex h-64 flex-col items-center justify-center gap-4">
-        <p className="text-muted-foreground">
-          {t("userGroups.notFound") || "User group not found"}
-        </p>
-        <Button variant="outline" onClick={() => router.back()}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          {t("userGroups.backToList") || "Back to List"}
-        </Button>
-      </div>
+      <EmptyState
+        icon={Inbox}
+        title={t("userGroups.notFound")}
+        action={
+          <Button variant="outline" onClick={() => router.back()}>
+            <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" aria-hidden="true" />
+            {t("userGroups.backToList")}
+          </Button>
+        }
+      />
     );
   }
 
@@ -85,26 +90,31 @@ export function UserGroupDetailView({ groupId }: Props) {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => router.back()}>
-            <ArrowLeft className="h-5 w-5" />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => router.back()}
+            aria-label={t("common.back")}
+          >
+            <ArrowLeft className="h-5 w-5 rtl:rotate-180" aria-hidden="true" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">{name}</h1>
+            <h1 className="text-xl font-bold leading-tight tracking-tight text-nx-ink text-balance">
+              {name}
+            </h1>
             <div className="mt-1 flex items-center gap-2">
-              <span className="font-mono text-sm text-muted-foreground">{group.code}</span>
+              <span className="font-mono text-sm text-nx-ink-2">{group.code}</span>
               <Badge variant={group.isActive ? "default" : "secondary"}>
-                {group.isActive
-                  ? t("common.active") || "Active"
-                  : t("common.inactive") || "Inactive"}
+                {group.isActive ? t("common.active") : t("common.inactive")}
               </Badge>
             </div>
             {description && (
-              <p className="mt-2 max-w-xl text-sm text-muted-foreground">{description}</p>
+              <p className="mt-2 max-w-xl text-sm text-nx-ink-2">{description}</p>
             )}
           </div>
         </div>
-        <div className="text-xs text-muted-foreground">
-          {t("common.createdAt") || "Created"}: {formatUtc(group.createdAt, "PPp")}
+        <div className="text-xs text-nx-ink-3">
+          {t("common.createdAt")}: {formatUtc(group.createdAt, "PPp")}
         </div>
       </div>
 
@@ -112,16 +122,16 @@ export function UserGroupDetailView({ groupId }: Props) {
       <Tabs defaultValue="members" className="w-full">
         <TabsList>
           <TabsTrigger value="members" className="gap-2">
-            <Users className="h-4 w-4" />
-            {t("userGroups.members") || "Members"} ({group.members.length})
+            <Users className="h-4 w-4" aria-hidden="true" />
+            {t("userGroups.members")} ({group.members.length})
           </TabsTrigger>
           <TabsTrigger value="roles" className="gap-2">
-            <Shield className="h-4 w-4" />
-            {t("userGroups.roles") || "Roles"} ({group.roles.length})
+            <Shield className="h-4 w-4" aria-hidden="true" />
+            {t("userGroups.roles")} ({group.roles.length})
           </TabsTrigger>
           <TabsTrigger value="restrictions" className="gap-2">
-            <Lock className="h-4 w-4" />
-            {t("userGroups.restrictions") || "Restrictions"} ({group.restrictions.length})
+            <Lock className="h-4 w-4" aria-hidden="true" />
+            {t("userGroups.restrictions")} ({group.restrictions.length})
           </TabsTrigger>
         </TabsList>
 
@@ -130,46 +140,50 @@ export function UserGroupDetailView({ groupId }: Props) {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle>{t("userGroups.membersTab.title") || "Group Members"}</CardTitle>
-                <CardDescription>
-                  {t("userGroups.membersTab.description") ||
-                    "Admins who belong to this group inherit its roles and restrictions."}
-                </CardDescription>
+                <CardTitle>{t("userGroups.membersTab.title")}</CardTitle>
+                <CardDescription>{t("userGroups.membersTab.description")}</CardDescription>
               </div>
               <Button size="sm" className="gap-2" onClick={() => setShowAddMembers(true)}>
-                <Plus className="h-4 w-4" />
-                {t("userGroups.membersTab.addMembers") || "Add Members"}
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                {t("userGroups.membersTab.addMembers")}
               </Button>
             </CardHeader>
             <CardContent>
               {group.members.length === 0 ? (
-                <p className="py-8 text-center text-sm text-muted-foreground">
-                  {t("userGroups.noMembers") || "No members in this group yet."}
-                </p>
+                <EmptyState
+                  bare
+                  size="sm"
+                  icon={Users}
+                  title={t("userGroups.noMembers")}
+                  action={
+                    <Button size="sm" className="gap-2" onClick={() => setShowAddMembers(true)}>
+                      <Plus className="h-4 w-4" aria-hidden="true" />
+                      {t("userGroups.membersTab.addMembers")}
+                    </Button>
+                  }
+                />
               ) : (
                 <div className="space-y-2">
                   {group.members.map((member) => (
                     <div
                       key={member.adminId}
-                      className="flex items-center justify-between rounded-lg border p-3"
+                      className="flex items-center justify-between rounded-nx-md border border-nx-line p-3"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-                          <Users className="h-4 w-4 text-primary" />
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-nx-accent-wash">
+                          <Users className="h-4 w-4 text-nx-accent" aria-hidden="true" />
                         </div>
                         <div>
                           <p className="text-sm font-medium">
                             {member.firstName} {member.lastName}
                           </p>
-                          <p className="text-xs text-muted-foreground">{member.username}</p>
+                          <p className="text-xs text-nx-ink-2">{member.username}</p>
                         </div>
                         <Badge
                           variant={member.isActive ? "default" : "secondary"}
                           className="text-xs"
                         >
-                          {member.isActive
-                            ? t("common.active") || "Active"
-                            : t("common.inactive") || "Inactive"}
+                          {member.isActive ? t("common.active") : t("common.inactive")}
                         </Badge>
                       </div>
                       <Button
@@ -178,8 +192,9 @@ export function UserGroupDetailView({ groupId }: Props) {
                         className="text-destructive hover:text-destructive/90"
                         disabled={isRemovingMember}
                         onClick={() => removeMember(member.adminId)}
+                        aria-label={`${t("userGroups.membersTab.removeMember")}: ${member.firstName} ${member.lastName}`}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4" aria-hidden="true" />
                       </Button>
                     </div>
                   ))}
@@ -194,41 +209,46 @@ export function UserGroupDetailView({ groupId }: Props) {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle>{t("userGroups.rolesTab.title") || "Assigned Roles"}</CardTitle>
-                <CardDescription>
-                  {t("userGroups.rolesTab.description") ||
-                    "Roles assigned to this group are inherited by all members."}
-                </CardDescription>
+                <CardTitle>{t("userGroups.rolesTab.title")}</CardTitle>
+                <CardDescription>{t("userGroups.rolesTab.description")}</CardDescription>
               </div>
               <Button size="sm" className="gap-2" onClick={() => setShowSetRoles(true)}>
-                <Settings className="h-4 w-4" />
-                {t("userGroups.rolesTab.manageRoles") || "Manage Roles"}
+                <Settings className="h-4 w-4" aria-hidden="true" />
+                {t("userGroups.rolesTab.manageRoles")}
               </Button>
             </CardHeader>
             <CardContent>
               {group.roles.length === 0 ? (
-                <p className="py-8 text-center text-sm text-muted-foreground">
-                  {t("userGroups.noRoles") || "No roles assigned to this group yet."}
-                </p>
+                <EmptyState
+                  bare
+                  size="sm"
+                  icon={Shield}
+                  title={t("userGroups.noRoles")}
+                  action={
+                    <Button size="sm" className="gap-2" onClick={() => setShowSetRoles(true)}>
+                      <Settings className="h-4 w-4" aria-hidden="true" />
+                      {t("userGroups.rolesTab.manageRoles")}
+                    </Button>
+                  }
+                />
               ) : (
                 <div className="space-y-2">
                   {group.roles.map((role) => (
                     <div
                       key={role.roleId}
-                      className="flex items-center justify-between rounded-lg border p-3"
+                      className="flex items-center justify-between rounded-nx-md border border-nx-line p-3"
                     >
                       <div className="flex items-center gap-3">
-                        <Shield className="h-5 w-5 text-primary" />
+                        <Shield className="h-5 w-5 text-nx-accent" aria-hidden="true" />
                         <div>
                           <p className="text-sm font-medium">
                             {language === "ar" ? role.nameAr : role.nameEn}
                           </p>
-                          <p className="font-mono text-xs text-muted-foreground">{role.code}</p>
+                          <p className="font-mono text-xs text-nx-ink-2">{role.code}</p>
                         </div>
                       </div>
                       <Badge variant="outline" className="text-xs">
-                        {role.permissionCount}{" "}
-                        {t("userGroups.rolesTab.permissions") || "permissions"}
+                        {role.permissionCount} {t("userGroups.rolesTab.permissions")}
                       </Badge>
                     </div>
                   ))}
@@ -243,30 +263,38 @@ export function UserGroupDetailView({ groupId }: Props) {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle>
-                  {t("userGroups.restrictionsTab.title") || "Field Restrictions"}
-                </CardTitle>
-                <CardDescription>
-                  {t("userGroups.restrictionsTab.description") ||
-                    "Restricted fields apply additively to all group members."}
-                </CardDescription>
+                <CardTitle>{t("userGroups.restrictionsTab.title")}</CardTitle>
+                <CardDescription>{t("userGroups.restrictionsTab.description")}</CardDescription>
               </div>
               <Button size="sm" className="gap-2" onClick={() => setShowSetRestrictions(true)}>
-                <Settings className="h-4 w-4" />
-                {t("userGroups.restrictionsTab.manageRestrictions") || "Manage Restrictions"}
+                <Settings className="h-4 w-4" aria-hidden="true" />
+                {t("userGroups.restrictionsTab.manageRestrictions")}
               </Button>
             </CardHeader>
             <CardContent>
               {group.restrictions.length === 0 ? (
-                <p className="py-8 text-center text-sm text-muted-foreground">
-                  {t("userGroups.noRestrictions") || "No restrictions configured for this group."}
-                </p>
+                <EmptyState
+                  bare
+                  size="sm"
+                  icon={Lock}
+                  title={t("userGroups.noRestrictions")}
+                  action={
+                    <Button
+                      size="sm"
+                      className="gap-2"
+                      onClick={() => setShowSetRestrictions(true)}
+                    >
+                      <Settings className="h-4 w-4" aria-hidden="true" />
+                      {t("userGroups.restrictionsTab.manageRestrictions")}
+                    </Button>
+                  }
+                />
               ) : (
                 <div className="space-y-2">
                   {group.restrictions.map((restriction, idx) => (
                     <div
                       key={`${restriction.permissionCode}-${idx}`}
-                      className="flex items-start justify-between rounded-lg border p-3"
+                      className="flex items-start justify-between rounded-nx-md border border-nx-line p-3"
                     >
                       <div>
                         <p className="font-mono text-sm font-medium">

@@ -21,6 +21,11 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { ScrollArea, ScrollBar } from "@core/ui/scroll-area";
+import { PageHeader } from "@core/ui/page-header";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { EmptyState } from "@core/ui/empty-state";
+import { ErrorMessage } from "@core/ui/error-message";
+import { SectionState } from "@core/ui/section-state";
 
 import { MenuTreeItem } from "../components/MenuTreeItem";
 import { MenuFormDialog } from "../components/MenuFormDialog";
@@ -157,52 +162,55 @@ export function MenusView() {
   const showRootDropZone = vm.draggedNode != null;
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col" style={{ gap: "calc(var(--spacing-unit) * 1.5)" }}>
       {/* ── Header ─────────────────────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t("menus.title")}</h1>
-          <p className="text-muted-foreground">{t("menus.description")}</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="secondary">
-            {vm.totalItems} {t("menus.items")}
-          </Badge>
-          {vm.isReordering && (
-            <Badge variant="outline" className="motion-safe:animate-pulse text-primary">
-              {t("menus.saving") ?? "Saving..."}
+      <PageHeader
+        className="mb-0"
+        icon={Menu}
+        title={t("menus.title")}
+        description={t("menus.description")}
+        meta={[{ label: t("menus.items"), value: Number(vm.totalItems).toLocaleString() }]}
+        badges={
+          vm.isReordering ? (
+            <Badge variant="info">
+              <LoadingSpinner size="inline" showText={false} />
+              {t("menus.saving")}
             </Badge>
-          )}
+          ) : undefined
+        }
+        actions={
+          <>
+            {/* Customize Menu — link to dedicated page */}
+            {vm.canCustomize && (
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/customization/menus/customize">
+                  <Palette className="me-1.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                  {t("menus.customizeMenu")}
+                </Link>
+              </Button>
+            )}
 
-          {/* Customize Menu — link to dedicated page */}
-          {vm.canCustomize && (
-            <Button variant="outline" size="sm" asChild>
-              <Link href="/customization/menus/customize">
-                <Palette className="h-4 w-4 ltr:mr-1.5 rtl:ml-1.5" />
-                {t("menus.customizeMenu")}
-              </Link>
+            <Button variant="outline" size="sm" onClick={vm.expandAll}>
+              <ChevronDown className="me-1 h-4 w-4 shrink-0" aria-hidden="true" />
+              {t("common.expandAll")}
             </Button>
-          )}
-
-          <Button variant="outline" size="sm" onClick={vm.expandAll}>
-            <ChevronDown className="h-4 w-4 ltr:mr-1 rtl:ml-1" />
-            {t("common.expandAll") ?? "Expand All"}
-          </Button>
-          <Button variant="outline" size="sm" onClick={vm.collapseAll}>
-            <ChevronRight className="h-4 w-4 ltr:mr-1 rtl:ml-1" />
-            {t("common.collapseAll") ?? "Collapse All"}
-          </Button>
-          <Button variant="outline" size="icon" onClick={vm.refetch} disabled={vm.isLoading}>
-            <RefreshCw className={cn("h-4 w-4", vm.isLoading && "animate-spin")} />
-          </Button>
-          {vm.canCreate && (
-            <Button onClick={() => vm.openCreateDialog()}>
-              <Plus className="mr-2 h-4 w-4" />
-              {t("menus.createMenuItem")}
+            <Button variant="outline" size="sm" onClick={vm.collapseAll}>
+              <ChevronRight className="me-1 h-4 w-4 shrink-0" aria-hidden="true" />
+              {t("common.collapseAll")}
             </Button>
-          )}
-        </div>
-      </div>
+            <Button variant="outline" size="sm" onClick={vm.refetch} loading={vm.isLoading}>
+              {!vm.isLoading && <RefreshCw className="me-1.5 h-4 w-4 shrink-0" aria-hidden="true" />}
+              {t("common.refresh")}
+            </Button>
+            {vm.canCreate && (
+              <Button size="sm" onClick={() => vm.openCreateDialog()}>
+                <Plus className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
+                {t("menus.createMenuItem")}
+              </Button>
+            )}
+          </>
+        }
+      />
 
       {/* ── Workspace Filter Tabs ───────────────────────────────────────── */}
       {workspaceGroups.length > 0 && (
@@ -211,7 +219,7 @@ export function MenusView() {
             <div className="flex items-center gap-1 pb-1">
               {/* "All" tab */}
               <WorkspaceFilterTab
-                label={t("menus.allWorkspaces") ?? "All Workspaces"}
+                label={t("menus.allWorkspaces")}
                 count={vm.totalItems}
                 isActive={filterWorkspaceId === null}
                 accentColor={null}
@@ -239,133 +247,110 @@ export function MenusView() {
 
       {/* ── Menu Tree ──────────────────────────────────────────────────── */}
       {vm.isLoading ? (
-        <Card>
-          <CardContent className="py-12">
-            <div className="flex flex-col items-center justify-center gap-3">
-              <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
-            </div>
-          </CardContent>
-        </Card>
+        <LoadingSpinner showText={false} />
+      ) : vm.isError ? (
+        <ErrorMessage message={vm.error?.message || t("common.error")} onRetry={vm.refetch} />
       ) : vm.menuTree.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-16">
-            <div className="mb-4 rounded-full bg-muted p-4">
-              <Menu className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <h3 className="mb-2 text-lg font-semibold">{t("menus.emptyTitle")}</h3>
-            <p className="mb-6 max-w-sm text-center text-muted-foreground">
-              {t("menus.emptyDesc")}
-            </p>
-            {vm.canCreate && (
+        <EmptyState
+          size="lg"
+          icon={Menu}
+          title={t("menus.emptyTitle")}
+          description={t("menus.emptyDesc")}
+          action={
+            vm.canCreate ? (
               <Button onClick={() => vm.openCreateDialog()}>
-                <Plus className="mr-2 h-4 w-4" />
+                <Plus className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
                 {t("menus.createMenuItem")}
               </Button>
-            )}
-          </CardContent>
-        </Card>
-      ) : filteredTree.length === 0 && filterWorkspaceId !== null ? (
-        /* Empty state for workspace filter */
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-16">
-            <div className="mb-4 rounded-full bg-muted p-4">
-              <Grid3X3 className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <h3 className="mb-2 text-lg font-semibold">
-              {t("menus.noWorkspaceItems") ?? "No items in this workspace"}
-            </h3>
-            <p className="mb-6 max-w-sm text-center text-muted-foreground">
-              {t("menus.noWorkspaceItemsDesc") ??
-                "Add menu items and assign them to this workspace."}
-            </p>
-            {vm.canCreate && (
-              <Button onClick={() => vm.openCreateDialog()}>
-                <Plus className="mr-2 h-4 w-4" />
-                {t("menus.createMenuItem")}
-              </Button>
-            )}
-          </CardContent>
-        </Card>
+            ) : undefined
+          }
+        />
       ) : (
         <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-sm font-medium text-nx-ink-2">
                 {filterWorkspaceId !== null
-                  ? `${t("menus.workspaceItems") ?? "Workspace Items"} · ${filteredTree.length}`
+                  ? `${t("menus.workspaceItems")} · ${filteredTree.length}`
                   : t("menus.structure")}
               </CardTitle>
-              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+              <div className="flex items-center gap-4 text-xs text-nx-ink-3">
                 <div className="flex items-center gap-1">
-                  <Eye className="h-3.5 w-3.5" />
+                  <Eye className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>{t("menus.activeItems")}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <EyeOff className="h-3.5 w-3.5" />
+                  <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>{t("menus.inactiveItems")}</span>
                 </div>
                 {vm.canReorder && (
                   <div className="flex items-center gap-1">
                     <GripHint />
-                    <span>{t("menus.dragToReorder") ?? "Drag to reorder"}</span>
+                    <span>{t("menus.dragToReorder")}</span>
                   </div>
                 )}
               </div>
             </div>
           </CardHeader>
           <CardContent ref={scrollContainerRef}>
-            <div className="space-y-0.5">
-              {filteredTree
-                .sort((a, b) => a.order - b.order)
-                .map((node, index, arr) => (
-                  <MenuTreeItem
-                    key={node.id}
-                    node={node}
-                    language={vm.language}
-                    canReorder={vm.canReorder && filterWorkspaceId === null}
-                    expandedNodes={vm.expandedNodes}
-                    onToggleExpand={vm.toggleExpand}
-                    draggedNode={vm.draggedNode}
-                    dropTarget={vm.dropTarget}
-                    onDragStart={vm.handleDragStart}
-                    onDragOver={vm.handleDragOver}
-                    onDragLeave={vm.handleDragLeave}
-                    onDragEnd={vm.handleDragEnd}
-                    onDrop={vm.handleDrop}
-                    onEdit={vm.openEditDialog}
-                    onDelete={vm.openDeleteDialog}
-                    onAddChild={vm.openCreateDialog}
-                    onMoveUp={index > 0 ? () => vm.handleMoveUp(node.id) : undefined}
-                    onMoveDown={
-                      index < arr.length - 1 ? () => vm.handleMoveDown(node.id) : undefined
-                    }
-                    onMoveUpChild={vm.handleMoveUp}
-                    onMoveDownChild={vm.handleMoveDown}
-                    canCreate={vm.canCreate}
-                    canEdit={vm.canEdit}
-                    canDelete={vm.canDelete}
-                    hasAnyAction={vm.canCreate || vm.canEdit || vm.canDelete}
-                  />
-                ))}
-            </div>
-
-            {/* Root Drop Zone — visible only during drag, disabled when filter is active */}
-            {showRootDropZone && filterWorkspaceId === null && (
-              <div
-                onDragOver={handleRootDragOver}
-                onDrop={handleRootDrop}
-                className={cn(
-                  "mt-3 rounded-lg border-2 border-dashed px-3 py-4",
-                  "text-center text-sm text-muted-foreground",
-                  "transition-all duration-200",
-                  "hover:border-info hover:bg-info/5 hover:text-info"
-                )}
-              >
-                <ArrowDownToLine className="mr-2 inline-block h-4 w-4" />
-                {t("menus.dropToRoot") ?? "Drop here to move to root level"}
+            <SectionState
+              isLoading={false}
+              isEmpty={filteredTree.length === 0 && filterWorkspaceId !== null}
+              emptyMessage={t("menus.noWorkspaceItemsDesc")}
+              emptyIcon={<Grid3X3 className="h-4 w-4" aria-hidden="true" />}
+            >
+              <div className="space-y-0.5">
+                {filteredTree
+                  .sort((a, b) => a.order - b.order)
+                  .map((node, index, arr) => (
+                    <MenuTreeItem
+                      key={node.id}
+                      node={node}
+                      language={vm.language}
+                      canReorder={vm.canReorder && filterWorkspaceId === null}
+                      expandedNodes={vm.expandedNodes}
+                      onToggleExpand={vm.toggleExpand}
+                      draggedNode={vm.draggedNode}
+                      dropTarget={vm.dropTarget}
+                      onDragStart={vm.handleDragStart}
+                      onDragOver={vm.handleDragOver}
+                      onDragLeave={vm.handleDragLeave}
+                      onDragEnd={vm.handleDragEnd}
+                      onDrop={vm.handleDrop}
+                      onEdit={vm.openEditDialog}
+                      onDelete={vm.openDeleteDialog}
+                      onAddChild={vm.openCreateDialog}
+                      onMoveUp={index > 0 ? () => vm.handleMoveUp(node.id) : undefined}
+                      onMoveDown={
+                        index < arr.length - 1 ? () => vm.handleMoveDown(node.id) : undefined
+                      }
+                      onMoveUpChild={vm.handleMoveUp}
+                      onMoveDownChild={vm.handleMoveDown}
+                      canCreate={vm.canCreate}
+                      canEdit={vm.canEdit}
+                      canDelete={vm.canDelete}
+                      hasAnyAction={vm.canCreate || vm.canEdit || vm.canDelete}
+                    />
+                  ))}
               </div>
-            )}
+
+              {/* Root Drop Zone — visible only during drag, disabled when filter is active */}
+              {showRootDropZone && filterWorkspaceId === null && (
+                <div
+                  onDragOver={handleRootDragOver}
+                  onDrop={handleRootDrop}
+                  className={cn(
+                    "mt-3 rounded-nx-lg border-2 border-dashed border-nx-line px-3 py-4",
+                    "text-center text-sm text-nx-ink-3",
+                    "transition-[color,background-color,border-color] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+                    "hover:border-info hover:bg-info/10 hover:text-info"
+                  )}
+                >
+                  <ArrowDownToLine className="me-2 inline-block h-4 w-4" aria-hidden="true" />
+                  {t("menus.dropToRoot")}
+                </div>
+              )}
+            </SectionState>
           </CardContent>
         </Card>
       )}
@@ -432,27 +417,25 @@ function WorkspaceFilterTab({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium",
-        "border transition-all duration-150",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "flex shrink-0 items-center gap-2 rounded-nx-control px-3 py-2 text-sm font-medium",
+        "border transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+        "focus-visible:outline-none focus-visible:shadow-nx-focus",
         isActive
-          ? "border-transparent text-white shadow-sm"
-          : "border-border bg-background text-muted-foreground hover:border-muted-foreground/40 hover:text-foreground"
+          ? accentColor
+            ? "border-transparent text-nx-on-fill"
+            : "border-nx-accent-fill bg-nx-accent-fill text-nx-on-fill"
+          : "border-nx-line bg-transparent text-nx-ink-2 hover:border-nx-line-hi hover:text-nx-ink"
       )}
-      style={
-        isActive && accentColor
-          ? { background: accentColor, borderColor: accentColor }
-          : isActive
-            ? undefined
-            : undefined
-      }
+      style={isActive && accentColor ? { background: accentColor, borderColor: accentColor } : undefined}
     >
-      {!accentColor && isActive && <Layers className="h-3.5 w-3.5" />}
+      {!accentColor && isActive && <Layers className="h-3.5 w-3.5" aria-hidden="true" />}
       <span>{label}</span>
       <span
         className={cn(
           "rounded-full px-1.5 py-0.5 text-xs leading-none",
-          isActive ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"
+          isActive
+            ? "bg-[color:color-mix(in_srgb,var(--nx-on-fill)_20%,transparent)] text-nx-on-fill"
+            : "bg-nx-raised-2 text-nx-ink-3"
         )}
       >
         {count}
@@ -485,9 +468,9 @@ function WorkspaceOverviewPanel({
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-          <Grid3X3 className="h-4 w-4" />
-          {t("menus.workspaceOverview") ?? "Workspace Overview"}
+        <CardTitle className="flex items-center gap-2 text-sm font-medium text-nx-ink-2">
+          <Grid3X3 className="h-4 w-4" aria-hidden="true" />
+          {t("menus.workspaceOverview")}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -505,25 +488,29 @@ function WorkspaceOverviewPanel({
                   type="button"
                   onClick={() => onFilterSelect(id)}
                   className={cn(
-                    "group flex items-center justify-between rounded-lg border px-4 py-3",
-                    "bg-muted/30 text-left transition-all duration-150",
-                    "hover:border-muted-foreground/40 hover:bg-muted/60",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    "group flex items-center justify-between rounded-nx-lg border border-nx-line px-4 py-3",
+                    "bg-nx-raised text-start transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                    "hover:border-nx-line-hi hover:bg-nx-raised-2",
+                    "focus-visible:outline-none focus-visible:shadow-nx-focus"
                   )}
                 >
                   <div className="flex items-center gap-3">
                     {/* Workspace color indicator */}
                     <span
-                      className="h-2.5 w-2.5 rounded-full"
-                      style={{ background: ws.accentColor ?? "var(--muted-foreground)" }}
+                      className="h-2.5 w-2.5 shrink-0 rounded-full"
+                      aria-hidden="true"
+                      style={{ background: ws.accentColor ?? "var(--nx-ink-3)" }}
                     />
-                    <span className="text-sm font-medium">{name}</span>
+                    <span className="text-sm font-medium text-nx-ink">{name}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Badge variant="secondary" className="text-xs">
                       {count}
                     </Badge>
-                    <ChevronRightIcon className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+                    <ChevronRightIcon
+                      className="h-3.5 w-3.5 text-nx-ink-3 opacity-0 transition-opacity duration-nx-micro ease-nx-enter motion-reduce:transition-none group-hover:opacity-100 group-focus-visible:opacity-100 rtl:rotate-180"
+                      aria-hidden="true"
+                    />
                   </div>
                 </button>
               );
@@ -531,12 +518,10 @@ function WorkspaceOverviewPanel({
 
           {/* Unassigned items tile */}
           {unassignedCount > 0 && (
-            <div className="flex items-center justify-between rounded-lg border border-dashed bg-muted/10 px-4 py-3">
+            <div className="flex items-center justify-between rounded-nx-lg border border-dashed border-nx-line bg-nx-hover px-4 py-3">
               <div className="flex items-center gap-3">
-                <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/40" />
-                <span className="text-sm text-muted-foreground">
-                  {t("menus.unassigned") ?? "Unassigned"}
-                </span>
+                <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-nx-raised-2" aria-hidden="true" />
+                <span className="text-sm text-nx-ink-2">{t("menus.unassigned")}</span>
               </div>
               <Badge variant="outline" className="text-xs">
                 {unassignedCount}
@@ -562,6 +547,7 @@ function GripHint() {
       strokeLinecap="round"
       strokeLinejoin="round"
       className="h-3.5 w-3.5"
+      aria-hidden="true"
     >
       <circle cx="9" cy="6" r="1" />
       <circle cx="15" cy="6" r="1" />

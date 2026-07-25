@@ -6,15 +6,7 @@
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";
-import { Button } from "@core/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@core/ui/dialog";
+import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 
 /* -------------------------------------------------------------------------- */
 /*  Props                                                                      */
@@ -42,21 +34,16 @@ export function DeleteMenuDialog({
   const { t } = useI18n();
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm">
-        <DialogHeader>
-          <DialogTitle>{t("menus.deleteTitle")}</DialogTitle>
-          <DialogDescription>{t("menus.deleteDesc", { name: itemName })}</DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            {t("common.cancel")}
-          </Button>
-          <Button variant="destructive" onClick={onConfirm} loading={isPending}>
-            {isPending ? t("common.deleting") : t("common.delete")}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ConfirmationDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      variant="destructive"
+      title={t("menus.deleteTitle")}
+      description={t("menus.deleteDesc", { name: itemName })}
+      confirmText={isPending ? t("common.deleting") : t("common.delete")}
+      cancelText={t("common.cancel")}
+      onConfirm={onConfirm}
+      isLoading={isPending}
+    />
   );
 }

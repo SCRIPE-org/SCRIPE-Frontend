@@ -23,6 +23,9 @@ export const ar = {
       remove: "حذف",
       uploaded: "تم رفع الصورة الشخصية بنجاح",
       removed: "تم إزالة الصورة الشخصية بنجاح",
+      changePhoto: "تغيير الصورة الشخصية",
+      alt: "الصورة الشخصية",
+      unknownError: "حدث خطأ غير معروف",
     },
     fields: {
       firstName: "الاسم الأول",
@@ -32,6 +35,7 @@ export const ar = {
       username: "اسم المستخدم",
       usernameHint: "لا يمكن تغيير اسم المستخدم",
       role: "الدور",
+      roleDefault: "مسؤول",
     },
     general: {
       title: "عام",
@@ -62,6 +66,8 @@ export const ar = {
       twoFactorCode: "رمز التحقق الثنائي",
       twoFactorCodeHint: "أدخل الرمز من تطبيق المصادقة",
       twoFactorCodePlaceholder: "أدخل الرمز المكون من 6 أرقام",
+      showPassword: "إظهار كلمة المرور",
+      hidePassword: "إخفاء كلمة المرور",
       strength: {
         minLength: "+8 أحرف",
         uppercase: "حرف كبير",
@@ -199,6 +205,10 @@ export const ar = {
       securityTip: "إذا لاحظت أي جلسات مشبوهة، قم بإلغائها فوراً وغير كلمة المرور.",
       revoked: "تم إلغاء الجلسة",
       allRevoked: "تم إلغاء جميع الجلسات الأخرى",
+      unknownOs: "نظام تشغيل غير معروف",
+      unknownBrowser: "متصفح غير معروف",
+      unknownDevice: "جهاز غير معروف",
+      deviceTitle: "{{browser}} على {{os}}",
     },
     activity: {
       title: "سجل النشاط",

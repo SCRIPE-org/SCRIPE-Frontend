@@ -6,16 +6,20 @@
 /* Ã¢â€â‚¬Ã¢â€â‚¬ 1. DESIGN TOKENS Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 :root {
   /* Color Ã¢â‚¬â€ deep-space dark with violet+cyan brand duo */
-  --com-bg: oklch(0.065 0.022 272);
-  --com-surface: oklch(0.1 0.026 272);
-  --com-surface-hi: oklch(0.135 0.03 270);
-  --com-surface-up: oklch(0.165 0.034 268);
-  --com-line: oklch(0.55 0.085 286 / 0.18);
-  --com-line-hi: oklch(0.7 0.15 292 / 0.36);
-  --com-ink: oklch(0.975 0.008 280);
-  --com-ink-2: oklch(0.82 0.02 278);
-  --com-ink-3: oklch(0.6 0.028 276);
-  --com-ink-4: oklch(0.44 0.034 274);
+  /* Structural surfaces/ink alias the real nx ladder so this stylesheet
+     inherits the product's light/dark cascade instead of hardcoding one theme. */
+  --com-bg: var(--nx-ground);
+  --com-surface: var(--nx-surface);
+  --com-surface-hi: var(--nx-raised);
+  --com-surface-up: var(--nx-raised-2);
+  --com-line: var(--nx-line);
+  --com-line-hi: var(--nx-line-hi);
+  --com-ink: var(--nx-ink);
+  --com-ink-2: var(--nx-ink-2);
+  --com-ink-3: var(--nx-ink-3);
+  --com-ink-4: var(--nx-ink-3);
+  /* Brand duo below are marketing-surface constants (DESIGN_BAR §1.12); their
+     light-theme lightness override lives in the :root:not(.dark) block below. */
   --com-violet: oklch(0.72 0.22 296);
   --com-violet-hi: oklch(0.8 0.18 290);
   --com-cyan: oklch(0.84 0.155 213);
@@ -58,7 +62,21 @@
   --com-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --com-ease-in: cubic-bezier(0.4, 0, 1, 1);
   --com-ease-out: cubic-bezier(0, 0, 0.2, 1);
-  --com-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Exponential decelerate, no overshoot — was a bounce/elastic curve. */
+  --com-spring: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Light theme — brand duo has no nx equivalent (DESIGN_BAR §1.12 keeps these
+   marketing-owned), so each keeps its hue/chroma and only drops lightness,
+   the same ratio globals.css itself uses for --nx-accent / --nx-secondary. */
+:root:not(.dark) {
+  --com-violet: oklch(0.49 0.22 296);
+  --com-violet-hi: oklch(0.54 0.18 290);
+  --com-cyan: oklch(0.57 0.155 213);
+  --com-cyan-hi: oklch(0.61 0.12 210);
+  --com-emerald: oklch(0.53 0.17 160);
+  --com-amber: oklch(0.55 0.155 80);
+  --com-red: oklch(0.44 0.22 20);
 }
 
 /* Ã¢â€â‚¬Ã¢â€â‚¬ 2. RESET & BASE Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
@@ -83,6 +101,16 @@
   line-height: 1.6;
   min-height: 100dvh;
   overflow-x: hidden;
+}
+
+/* Keyboard focus — the one ring every interactive element on this page relies on. */
+.commercial-page a:focus-visible,
+.commercial-page button:focus-visible,
+.commercial-page input:focus-visible,
+.commercial-page [tabindex]:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+  border-radius: var(--com-r-sm);
 }
 
 /* Ã¢â€â‚¬Ã¢â€â‚¬ 3. PURE CSS READING PROGRESS Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
@@ -191,59 +219,7 @@
 }
 
 /* Ã¢â€â‚¬Ã¢â€â‚¬ 5. MARQUEE KEYFRAME Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
-@keyframes com-marquee-left {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-@keyframes com-marquee-right {
-  from {
-    transform: translateX(-50%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
 /* Ã¢â€â‚¬Ã¢â€â‚¬ 6. GRAIN NOISE TEXTURE Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
-@keyframes com-grain {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  10% {
-    transform: translate(-3%, -3%);
-  }
-  20% {
-    transform: translate(-5%, 4%);
-  }
-  30% {
-    transform: translate(4%, -2%);
-  }
-  40% {
-    transform: translate(-2%, 6%);
-  }
-  50% {
-    transform: translate(-5%, -4%);
-  }
-  60% {
-    transform: translate(5%, 3%);
-  }
-  70% {
-    transform: translate(2%, -5%);
-  }
-  80% {
-    transform: translate(-4%, 4%);
-  }
-  90% {
-    transform: translate(4%, 2%);
-  }
-}
-
 /* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
    7. HEADER Ã¢â‚¬â€ PREMIUM REDESIGN
 Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
@@ -768,22 +744,6 @@
     radial-gradient(ellipse 55% 50% at 62% 78%, oklch(0.79 0.17 160 / 0.14) 0%, transparent 55%),
     radial-gradient(ellipse 38% 32% at 8% 88%, oklch(0.72 0.22 296 / 0.09) 0%, transparent 50%);
   pointer-events: none;
-  animation: com-hero-breathe 14s ease-in-out infinite alternate;
-}
-
-@keyframes com-hero-breathe {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.02);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
 }
 
 /* Ã¢â€â‚¬Ã¢â€â‚¬ Film-grain noise: REMOVED for performance Ã¢â€â‚¬Ã¢â€â‚¬ */
@@ -848,48 +808,13 @@
   backdrop-filter: blur(4px);
 }
 
-/* Outer ring pulse */
-.com-hero-badge-ring {
-  position: absolute;
-  inset: -4px;
-  border-radius: 999px;
-  border: 1px solid var(--com-cyan);
-  opacity: 0;
-  animation: com-badge-ring 2.5s ease-out infinite;
-  pointer-events: none;
-}
-
-@keyframes com-badge-ring {
-  0% {
-    opacity: 0.6;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.18);
-  }
-}
-
+/* Live-status disc — static, no pulse. */
 .com-hero-badge-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--com-cyan);
-  box-shadow: 0 0 10px var(--com-cyan);
-  animation: com-pulse 2s ease-in-out infinite;
+  background: var(--nx-secondary);
   flex-shrink: 0;
-}
-
-@keyframes com-pulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.5;
-    transform: scale(0.75);
-  }
 }
 
 /* Ã¢â€â‚¬Ã¢â€â‚¬ HEADLINE Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
@@ -912,21 +837,11 @@
 
 /* Gradient line wrapper Ã¢â‚¬â€ background-clip:text applied here, NOT on word spans
    (avoids Chromium compositing-layer bug where filter creates new layer) */
+/* Accent word of the headline — solid color, one-shot fade-in entrance only. */
 .com-hero-gradient-line {
   display: inline-block;
-  background: linear-gradient(
-    125deg,
-    var(--com-cyan) 0%,
-    var(--com-violet) 52%,
-    oklch(0.85 0.2 55) 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  background-size: 200% auto;
-  animation:
-    com-grad-shift 5s ease-in-out infinite alternate,
-    com-hero-grad-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+  color: var(--com-cyan);
+  animation: com-hero-grad-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
 }
 
 @keyframes com-hero-grad-in {
@@ -935,15 +850,6 @@
   }
   to {
     opacity: 1;
-  }
-}
-
-@keyframes com-grad-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 100% 50%;
   }
 }
 
@@ -1057,34 +963,6 @@
 }
 
 /* Ã¢â€â‚¬Ã¢â€â‚¬ Stat row */
-.com-hero-stats {
-  display: flex;
-  gap: 2rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--com-line);
-}
-
-.com-hero-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.com-hero-stat strong {
-  font-size: 1.3rem;
-  font-weight: 860;
-  color: var(--com-ink);
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-}
-
-.com-hero-stat span {
-  font-size: 0.7rem;
-  color: var(--com-ink-4);
-  font-weight: 560;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
 
 /* Ã¢â€â‚¬Ã¢â€â‚¬ Scroll indicator */
 .com-hero-scroll {
@@ -1103,19 +981,6 @@
   width: 1px;
   height: 48px;
   background: linear-gradient(to bottom, oklch(1 0 0 / 0.25), transparent);
-  animation: com-scroll-pulse 2s ease-in-out infinite;
-}
-
-@keyframes com-scroll-pulse {
-  0%,
-  100% {
-    opacity: 0.4;
-    transform: scaleY(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scaleY(1.15);
-  }
 }
 
 /* Ã¢â€â‚¬Ã¢â€â‚¬ Floating stat badges */
@@ -1137,7 +1002,6 @@
   height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
-  animation: com-pulse 2s ease-in-out infinite;
 }
 
 .com-float-badge-val {
@@ -1158,8 +1022,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--com-emerald);
-  animation: com-pulse 2s ease-in-out infinite;
+  background: var(--nx-secondary);
   flex-shrink: 0;
 }
 
@@ -1191,9 +1054,8 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--com-emerald);
+  background: var(--nx-secondary);
   margin-right: 0.2rem;
-  animation: com-pulse 2s ease-in-out infinite;
 }
 
 /* Ã¢â€â‚¬Ã¢â€â‚¬ Marquee dot separator */
@@ -1336,8 +1198,7 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--com-emerald);
-  animation: com-pulse 2.5s ease-in-out infinite;
+  background: var(--nx-secondary);
 }
 
 /* Module grid */
@@ -1519,7 +1380,8 @@
   border-top: 1px solid var(--com-line);
   background: oklch(0.08 0.024 272 / 0.6);
   padding: 1.1rem 0;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .com-marquee-section::before,
@@ -1548,11 +1410,6 @@
   align-items: center;
   gap: 0;
   width: max-content;
-  animation: com-marquee-left 32s linear infinite;
-}
-
-.com-marquee-track:hover {
-  animation-play-state: paused;
 }
 
 .com-marquee-item {
@@ -1660,10 +1517,6 @@
   letter-spacing: -0.04em;
   line-height: 1;
   font-family: ui-monospace, monospace;
-  background: var(--com-grad-text);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 .com-stat-label {
@@ -1672,107 +1525,6 @@
   font-weight: 560;
   line-height: 1.5;
   margin: 0;
-}
-
-/* Testimonial marquee below stats */
-.com-testimonials-strip {
-  max-width: var(--com-max);
-  margin: 2.5rem auto 0;
-  overflow: hidden;
-  position: relative;
-}
-
-.com-testimonials-strip::before,
-.com-testimonials-strip::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 80px;
-  z-index: 2;
-  pointer-events: none;
-}
-
-.com-testimonials-strip::before {
-  left: 0;
-  background: linear-gradient(to right, var(--com-bg), transparent);
-}
-
-.com-testimonials-strip::after {
-  right: 0;
-  background: linear-gradient(to left, var(--com-bg), transparent);
-}
-
-.com-testimonials-track {
-  display: flex;
-  gap: 1rem;
-  width: max-content;
-  animation: com-marquee-left 45s linear infinite;
-}
-
-.com-testimonials-track:hover {
-  animation-play-state: paused;
-}
-
-.com-testimonial-card {
-  flex-shrink: 0;
-  width: 280px;
-  padding: 1.1rem 1.25rem;
-  border-radius: var(--com-r-md);
-  border: 1px solid var(--com-line);
-  background: var(--com-surface);
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-  transition:
-    border-color 200ms,
-    background 200ms;
-}
-
-.com-testimonial-card:hover {
-  border-color: var(--com-line-hi);
-  background: var(--com-surface-hi);
-}
-
-.com-testimonial-text {
-  color: var(--com-ink-2);
-  font-size: 0.82rem;
-  line-height: 1.65;
-  margin: 0;
-}
-
-.com-testimonial-author {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-}
-
-.com-testimonial-avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-size: 0.65rem;
-  font-weight: 900;
-  color: oklch(0.1 0.03 270);
-}
-
-.com-testimonial-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-}
-
-.com-testimonial-name {
-  color: var(--com-ink);
-  font-size: 0.75rem;
-  font-weight: 740;
-}
-
-.com-testimonial-role {
-  color: var(--com-ink-4);
-  font-size: 0.68rem;
 }
 
 /* Ã¢â€â‚¬Ã¢â€â‚¬ 13. BENTO GRID (Value Props) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
@@ -1808,10 +1560,8 @@
 }
 
 .com-values-head-title mark {
-  background: var(--com-grad-text);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--com-violet);
+  background: none;
 }
 
 /* Bento grid */
@@ -1898,10 +1648,7 @@
   letter-spacing: -0.04em;
   line-height: 1;
   font-family: ui-monospace, monospace;
-  background: var(--com-grad-brand);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--com-cyan);
   margin-bottom: 0.25rem;
 }
 
@@ -2005,7 +1752,7 @@
   isolation: isolate;
 }
 
-/* Animated conic gradient mesh */
+/* Static gradient mesh background */
 .com-cta::before {
   content: "";
   position: absolute;
@@ -2015,22 +1762,9 @@
     radial-gradient(ellipse 60% 50% at 80% 60%, oklch(0.84 0.155 213 / 0.15), transparent 60%),
     radial-gradient(ellipse 40% 40% at 50% 0%, oklch(0.79 0.17 160 / 0.1), transparent 55%);
   z-index: -1;
-  animation: com-cta-mesh 20s ease-in-out infinite alternate;
 }
 
-@keyframes com-cta-mesh {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-/* Grain on CTA */
+/* Static grain texture on CTA */
 .com-cta::after {
   content: "";
   position: absolute;
@@ -2039,7 +1773,6 @@
   height: 200%;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
   z-index: -1;
-  animation: com-grain 10s steps(1) infinite;
   pointer-events: none;
 }
 
@@ -2080,10 +1813,8 @@
 }
 
 .com-cta-title mark {
-  background: var(--com-grad-text);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--com-violet);
+  background: none;
 }
 
 .com-cta-sub {
@@ -2209,10 +1940,8 @@
 }
 
 .com-page-hero-title mark {
-  background: var(--com-grad-text);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--com-violet);
+  background: none;
 }
 
 .com-page-hero-desc {
@@ -2296,10 +2025,6 @@
   line-height: 1;
   letter-spacing: -0.03em;
   font-family: ui-monospace, monospace;
-  background: var(--com-grad-text);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 .com-signal-detail {
@@ -2580,7 +2305,6 @@
   border-radius: var(--com-r-md);
   border: 1px solid oklch(0.72 0.22 296 / 0.25);
   background: oklch(0.72 0.22 296 / 0.06);
-  border-left: 3px solid var(--com-violet);
 }
 
 .com-content-body blockquote p {
@@ -2668,7 +2392,6 @@
   transition:
     background 200ms var(--com-ease),
     color 200ms var(--com-ease) !important;
-  border-left: 2px solid transparent !important;
 }
 
 .com-persona-tab:last-child {
@@ -2705,7 +2428,6 @@
 .com-persona-tab[data-active="true"] {
   background: oklch(0.72 0.22 296 / 0.08) !important;
   color: var(--com-violet) !important;
-  border-left-color: var(--accent, var(--com-violet)) !important;
 }
 
 .com-persona-tab[data-active="true"] .com-persona-tab-body strong {
@@ -3076,9 +2798,6 @@
   .com-reveal,
   .com-reveal-fade,
   .com-reveal-scale,
-  .com-hero-badge-dot,
-  .com-marquee-track,
-  .com-testimonials-track,
   .com-signal-bar,
   .com-product-sparkline-path,
   .com-product-sparkline-area,
@@ -3089,18 +2808,6 @@
     transform: none !important;
   }
 
-  .com-hero::before {
-    animation: none;
-  }
-  .com-hero::after {
-    display: none;
-  }
-  .com-cta::before {
-    animation: none;
-  }
-  .com-cta::after {
-    display: none;
-  }
   .com-mega-panel {
     transition: opacity 80ms linear !important;
   }
@@ -3215,10 +2922,7 @@
   font-weight: 920;
   letter-spacing: -0.05em;
   line-height: 1;
-  background: var(--com-grad-text);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--com-ink);
   margin: 0;
 }
 

@@ -24,7 +24,11 @@ export function useAssignToGroupViewModel({
   onOpenChange,
 }: UseAssignToGroupViewModelProps) {
   const { t, language } = useI18n();
-  const { operationSuccess, operationError } = useEnhancedToast();
+  // `success`/`error` are used directly rather than the operationSuccess/
+  // operationError wrapper: the wrapper rebuilds "{itemName} has been
+  // {operation} successfully" around whatever itemName it is given, which
+  // would double up on the already-complete multiAssignSuccess sentence below.
+  const { success, error } = useEnhancedToast();
   const queryClient = useQueryClient();
 
   const fetchGroups = async (term: string): Promise<GenericSelectOption[]> => {
@@ -103,45 +107,35 @@ export function useAssignToGroupViewModel({
     addMembers: async (adminIds: string[], selectedGroupIds: string[]) => {
       try {
         await addMembers.mutateAsync({ adminIds, selectedGroupIds });
-        const adminCount = adminIds.length;
-        operationSuccess(
-          t("userGroups.assignAction") || "Assigned",
-          t("userGroups.multiAssignSuccess")
-            ?.replace("{admins}", String(adminCount))
-            ?.replace("{groups}", String(selectedGroupIds.length)) ||
-            `${adminCount} admin(s) assigned to ${selectedGroupIds.length} group(s)`
-        );
+        success({
+          title: t("userGroups.assignAction"),
+          description: t("userGroups.multiAssignSuccess", {
+            admins: adminIds.length,
+            groups: selectedGroupIds.length,
+          }),
+        });
         queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
         queryClient.invalidateQueries({ queryKey: ["admins"] });
         onOpenChange(false);
       } catch (err: any) {
-        operationError(
-          t("userGroups.assignToGroups") || "Assign to Groups",
-          undefined,
-          err.message
-        );
+        error({ title: t("userGroups.assignToGroups"), description: err.message });
       }
     },
     addRoles: async (roleIds: string[], selectedGroupIds: string[]) => {
       try {
         await addRoles.mutateAsync({ roleIds, selectedGroupIds });
-        const roleCount = roleIds.length;
-        operationSuccess(
-          t("userGroups.assignAction") || "Assigned",
-          t("userGroups.multiAssignSuccess")
-            ?.replace("{admins}", String(roleCount))
-            ?.replace("{groups}", String(selectedGroupIds.length)) ||
-            `${roleCount} role(s) assigned to ${selectedGroupIds.length} group(s)`
-        );
+        success({
+          title: t("userGroups.assignAction"),
+          description: t("userGroups.multiAssignSuccess", {
+            admins: roleIds.length,
+            groups: selectedGroupIds.length,
+          }),
+        });
         queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
         queryClient.invalidateQueries({ queryKey: ["roles"] });
         onOpenChange(false);
       } catch (err: any) {
-        operationError(
-          t("userGroups.assignToGroups") || "Assign to Groups",
-          undefined,
-          err.message
-        );
+        error({ title: t("userGroups.assignToGroups"), description: err.message });
       }
     },
     isPending: addMembers.isPending || addRoles.isPending,

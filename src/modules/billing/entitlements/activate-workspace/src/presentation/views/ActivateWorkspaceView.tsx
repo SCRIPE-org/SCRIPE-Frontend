@@ -41,18 +41,16 @@ export default function ActivateWorkspaceView() {
     handleSignOut,
     handleRetryPayment,
     handleChangePlanSubmit,
-    tokens,
     t,
     language,
-    isRtl,
   } = useActivateWorkspaceViewModel();
 
   if (isLoadingSub) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="flex min-h-screen items-center justify-center bg-nx-ground">
         <div className="text-center">
           <LoadingSpinner showText={false} />
-          <p className="mt-4 text-muted-foreground">{t("common.loading")}</p>
+          <p className="mt-4 text-nx-ink-2">{t("common.loading")}</p>
         </div>
       </div>
     );
@@ -62,48 +60,29 @@ export default function ActivateWorkspaceView() {
     <SignupShell>
       <div className="flex flex-1 items-center justify-center p-6 md:p-12">
         <div className="w-full max-w-xl">
-          <Card className="relative overflow-hidden border-border/60 bg-background/80 shadow-2xl backdrop-blur-xl transition-all duration-300">
-            {/* Top glowing ambient effect */}
-            <div
-              className="absolute inset-x-0 top-0 h-1"
-              style={{
-                background: `linear-gradient(90deg, ${tokens.accent}, ${tokens.cyan})`,
-              }}
-            />
+          <Card className="relative overflow-hidden">
+            {/* The one signature accent this screen wears — a flat token fill, never a
+                decorative gradient built from the frozen signup palette. */}
+            <div className="absolute inset-x-0 top-0 h-1 bg-nx-accent-fill" aria-hidden="true" />
 
             <CardHeader className="space-y-4 text-center">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-                <ShieldAlert className="h-8 w-8" />
+                <ShieldAlert className="h-8 w-8" aria-hidden="true" />
               </div>
               <div className="space-y-2">
-                <CardTitle
-                  className="text-2xl font-bold tracking-tight"
-                  style={{ color: tokens.ink }}
-                >
-                  {t("entitlements.activateWorkspace.title")}
-                </CardTitle>
-                <CardDescription className="text-sm leading-relaxed text-muted-foreground">
-                  {t("entitlements.activateWorkspace.subtitle")}
-                </CardDescription>
+                <CardTitle>{t("entitlements.activateWorkspace.title")}</CardTitle>
+                <CardDescription>{t("entitlements.activateWorkspace.subtitle")}</CardDescription>
               </div>
             </CardHeader>
 
             <CardContent className="space-y-6">
               {/* Current Status Box */}
-              <SubscriptionStatusBox subscription={subscription} tokens={tokens} isRtl={isRtl} />
+              <SubscriptionStatusBox subscription={subscription} />
 
               {/* Main CTAs */}
               <div className="flex flex-col gap-3">
-                <Button
-                  onClick={handleRetryPayment}
-                  loading={isRetrying}
-                  className="h-11 w-full text-base font-semibold shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
-                  style={{
-                    background: `linear-gradient(135deg, ${tokens.accent}, ${tokens.cyan})`,
-                    color: "#ffffff",
-                  }}
-                >
-                  <CreditCard className={`h-5 w-5 ${isRtl ? "ml-2" : "mr-2"}`} />
+                <Button onClick={handleRetryPayment} loading={isRetrying} size="lg" className="w-full">
+                  <CreditCard className="me-2 h-5 w-5" aria-hidden="true" />
                   {t("entitlements.activateWorkspace.retryCheckout")}
                 </Button>
 
@@ -119,15 +98,13 @@ export default function ActivateWorkspaceView() {
                   isConfirmingFree={isConfirmingFree}
                   setIsConfirmingFree={setIsConfirmingFree}
                   handleChangePlanSubmit={handleChangePlanSubmit}
-                  tokens={tokens}
                   t={t}
                   language={language}
-                  isRtl={isRtl}
                 />
 
                 <div className="relative my-3 flex items-center justify-center">
-                  <div className="absolute inset-x-0 h-px bg-border/40" />
-                  <span className="relative bg-background px-3 text-xs uppercase tracking-wider text-muted-foreground">
+                  <div className="absolute inset-x-0 h-px bg-nx-line" />
+                  <span className="relative bg-nx-surface px-3 text-xs uppercase tracking-wider text-nx-ink-3">
                     {t("entitlements.activateWorkspace.or")}
                   </span>
                 </div>
@@ -135,15 +112,15 @@ export default function ActivateWorkspaceView() {
                 <Button
                   onClick={handleSignOut}
                   variant="ghost"
-                  className="w-full text-sm text-muted-foreground hover:bg-destructive/5 hover:text-destructive"
+                  className="w-full hover:bg-destructive/10 hover:text-destructive"
                 >
-                  <LogOut className={`h-4 w-4 ${isRtl ? "ml-2" : "mr-2"}`} />
+                  <LogOut className="me-2 h-4 w-4" aria-hidden="true" />
                   {t("entitlements.activateWorkspace.signOut")}
                 </Button>
               </div>
 
               {/* Quiet Footer Note */}
-              <p className="mx-auto max-w-sm text-center text-[11px] leading-normal text-muted-foreground">
+              <p className="mx-auto max-w-sm text-center text-[11px] leading-normal text-nx-ink-3">
                 {t("entitlements.activateWorkspace.contactSupport")}
               </p>
             </CardContent>

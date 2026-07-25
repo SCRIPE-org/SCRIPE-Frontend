@@ -1,19 +1,24 @@
 "use client";
 
 import React, { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
-import { EmptyState } from "@core/ui/empty-state";
-import { ShieldAlert, Monitor } from "lucide-react";
+import { SectionState } from "@core/ui/section-state";
+import { Alert, AlertDescription } from "@core/ui/alert";
+import { ShieldAlert } from "lucide-react";
 import { SessionCard } from "./SessionCard";
+import { profileKeys } from "../viewmodels/useProfilePageViewModel";
 
 interface ProfileSessionsTabProps {
   sessionsVm: {
     sessions: any[] | null | undefined;
     currentSession: any;
     otherSessions: any[];
+    isLoading: boolean;
+    error: string | null;
     revokeSession: (tokenId: string) => Promise<unknown>;
     isRevoking: boolean;
     revokeAllSessions: () => Promise<unknown>;
@@ -27,6 +32,7 @@ interface ProfileSessionsTabProps {
  */
 export function ProfileSessionsTab({ sessionsVm }: ProfileSessionsTabProps) {
   const { t } = useI18n();
+  const queryClient = useQueryClient();
   const [confirmRevokeId, setConfirmRevokeId] = useState<string | null>(null);
   const [confirmRevokeAll, setConfirmRevokeAll] = useState(false);
 
@@ -41,45 +47,44 @@ export function ProfileSessionsTab({ sessionsVm }: ProfileSessionsTabProps) {
             <CardDescription>{t("profile.sessions.sectionDesc")}</CardDescription>
           </div>
           {sessionsVm.otherSessions.length > 0 && (
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => setConfirmRevokeAll(true)}
-            >
+            <Button variant="destructive" size="sm" onClick={() => setConfirmRevokeAll(true)}>
               {t("profile.sessions.revokeAll")}
             </Button>
           )}
         </CardHeader>
 
-        <CardContent className="space-y-3">
-          {sessionsVm.otherSessions.length > 0 && (
-            <div className="flex items-start gap-2.5 rounded-nx-control border border-warning/15 bg-warning/5 p-3 text-xs text-warning">
-              <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" />
-              <p>{t("profile.sessions.securityTip")}</p>
+        <CardContent>
+          <SectionState
+            isLoading={sessionsVm.isLoading}
+            error={sessionsVm.error ? new Error(sessionsVm.error) : null}
+            onRetry={() => queryClient.invalidateQueries({ queryKey: profileKeys.sessions() })}
+            isEmpty={!hasEntries}
+            emptyMessage={t("profile.sessions.noEntries")}
+            skeletonType="rows"
+            skeletonRows={3}
+          >
+            <div className="space-y-3">
+              {sessionsVm.otherSessions.length > 0 && (
+                <Alert variant="warning">
+                  <ShieldAlert aria-hidden="true" />
+                  <AlertDescription>{t("profile.sessions.securityTip")}</AlertDescription>
+                </Alert>
+              )}
+
+              {sessionsVm.currentSession && <SessionCard session={sessionsVm.currentSession} />}
+
+              {sessionsVm.otherSessions.map((session) => (
+                <SessionCard
+                  key={session.tokenId}
+                  session={session}
+                  onRevoke={async (tokenId) => {
+                    setConfirmRevokeId(tokenId);
+                  }}
+                  isRevoking={sessionsVm.isRevoking}
+                />
+              ))}
             </div>
-          )}
-
-          {sessionsVm.currentSession && <SessionCard session={sessionsVm.currentSession} />}
-
-          {sessionsVm.otherSessions.map((session) => (
-            <SessionCard
-              key={session.tokenId}
-              session={session}
-              onRevoke={async (tokenId) => {
-                setConfirmRevokeId(tokenId);
-              }}
-              isRevoking={sessionsVm.isRevoking}
-            />
-          ))}
-
-          {!hasEntries && (
-            <EmptyState
-              bare
-              icon={Monitor}
-              title={t("profile.sessions.noEntries")}
-              size="sm"
-            />
-          )}
+          </SectionState>
         </CardContent>
       </Card>
 

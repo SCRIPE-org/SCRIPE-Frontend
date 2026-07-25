@@ -2,9 +2,19 @@
 
 import { usePermissions } from "@core/hooks/use-permissions";
 import { useI18n } from "@core/providers/i18n-provider";
+import { PageHeader } from "@core/ui/page-header";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@core/ui/card";
 import { useRouter } from "next/navigation";
-import { Settings, BarChart, Link as LinkIcon, Key, Receipt, Coins, FileText } from "lucide-react";
+import {
+  Wallet,
+  Settings,
+  BarChart,
+  Link as LinkIcon,
+  Key,
+  Receipt,
+  Coins,
+  FileText,
+} from "lucide-react";
 
 /**
  * Presentation UI component rendering the payment hub view.
@@ -19,31 +29,31 @@ export function PaymentHubView() {
     {
       title: t("paymentHub.gatewayConfig") || "Gateway Configuration",
       description: "Configure platform-level payment gateway integrations for all tenants.",
-      icon: <Settings className="h-6 w-6 text-primary" />,
+      icon: <Settings className="h-6 w-6" />,
       href: "/payment-gateways",
     },
     {
       title: t("paymentHub.stripeConnect") || "Marketplace Accounts",
       description: "Manage connected Stripe accounts for all tenants.",
-      icon: <LinkIcon className="h-6 w-6 text-primary" />,
+      icon: <LinkIcon className="h-6 w-6" />,
       href: "/entitlements/stripe-connect",
     },
     {
       title: "Platform Stripe Dashboard",
       description: "View platform-wide Stripe metrics and settings.",
-      icon: <BarChart className="h-6 w-6 text-primary" />,
+      icon: <BarChart className="h-6 w-6" />,
       href: "/entitlements/platform-stripe",
     },
     {
       title: t("commission.title") || "Commission Ledger",
       description: "View raw commission ledger entries across all tenants.",
-      icon: <Coins className="h-6 w-6 text-primary" />,
+      icon: <Coins className="h-6 w-6" />,
       href: "/entitlements/commission-ledger",
     },
     {
       title: t("commission.invoices") || "Commission Invoices",
       description: "Manage and waive commission invoices.",
-      icon: <FileText className="h-6 w-6 text-primary" />,
+      icon: <FileText className="h-6 w-6" />,
       href: "/entitlements/commission-invoices",
     },
   ];
@@ -52,57 +62,69 @@ export function PaymentHubView() {
     {
       title: t("paymentHub.myCredentials") || "My Gateway Credentials",
       description: "Configure your PayPal or Paymob API credentials.",
-      icon: <Key className="h-6 w-6 text-primary" />,
+      icon: <Key className="h-6 w-6" />,
       href: "/entitlements/tenant-gateways",
     },
     {
       title: t("paymentHub.stripeConnect") || "Payment Account",
       description: "Manage your Stripe Connect account.",
-      icon: <LinkIcon className="h-6 w-6 text-primary" />,
+      icon: <LinkIcon className="h-6 w-6" />,
       href: "/entitlements/stripe-connect",
     },
     {
       title: t("paymentHub.billing") || "Billing & Invoices",
       description: "View your subscription invoices and billing history.",
-      icon: <Receipt className="h-6 w-6 text-primary" />,
+      icon: <Receipt className="h-6 w-6" />,
       href: "/entitlements/invoices",
     },
     {
       title: t("commission.invoices") || "Commission Invoices",
       description: "View your commission invoices charged by the platform.",
-      icon: <FileText className="h-6 w-6 text-primary" />,
+      icon: <FileText className="h-6 w-6" />,
       href: "/entitlements/commission-invoices",
     },
   ];
 
   const cards = isSuperAdmin ? superAdminCards : tenantAdminCards;
 
+  const handleOpen = (href: string) => router.push(href);
+
   return (
     <div className="flex flex-col space-y-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold tracking-tight">
-          {t("paymentHub.title") || "Payment Hub"}
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Centralized hub for all payment and billing configuration.
-        </p>
-      </div>
+      <PageHeader
+        icon={Wallet}
+        title={t("paymentHub.title") || "Payment Hub"}
+        description="Centralized hub for all payment and billing configuration."
+      />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {cards.map((card, index) => (
           <Card
             key={index}
-            className="cursor-pointer transition-shadow hover:shadow-md"
-            onClick={() => router.push(card.href)}
+            role="button"
+            tabIndex={0}
+            onClick={() => handleOpen(card.href)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                handleOpen(card.href);
+              }
+            }}
+            className="cursor-pointer active:shadow-[inset_0_0_0_1px_var(--nx-accent)] focus-visible:outline-none focus-visible:shadow-nx-focus"
           >
             <CardHeader className="flex flex-row items-center gap-4 space-y-0">
-              <div className="rounded-lg bg-primary/10 p-2">{card.icon}</div>
-              <div className="flex-1">
-                <CardTitle className="text-lg">{card.title}</CardTitle>
+              <div
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-nx-md border border-nx-line bg-nx-accent-wash text-nx-accent"
+                aria-hidden="true"
+              >
+                {card.icon}
+              </div>
+              <div className="min-w-0 flex-1">
+                <CardTitle className="truncate">{card.title}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
-              <CardDescription className="text-sm">{card.description}</CardDescription>
+              <CardDescription>{card.description}</CardDescription>
             </CardContent>
           </Card>
         ))}

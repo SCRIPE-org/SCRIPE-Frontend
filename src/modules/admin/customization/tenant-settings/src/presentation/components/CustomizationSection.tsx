@@ -6,11 +6,20 @@ import { formatDateTimeUtc } from "@core/common/utils";
 import { useCustomizationViewModel } from "../viewmodels/useCustomizationViewModel";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
-import { Badge } from "@core/ui/badge";
+import { Badge, type BadgeProps } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
 import { Switch } from "@core/ui/switch";
 import { Label } from "@core/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { EmptyState } from "@core/ui/empty-state";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@core/ui/table";
 import {
   RotateCcw,
   History,
@@ -30,23 +39,33 @@ interface CustomizationSectionProps {
   settings: TenantSettings;
 }
 
+/** Maps an audit-log change type to the badge tone that best reports it. */
+function changeTypeVariant(changeType: string): BadgeProps["variant"] {
+  if (changeType === "rollback") return "info";
+  if (changeType === "draft-discard") return "warning";
+  if (changeType.includes("safe-mode")) return "default";
+  if (changeType === "publish") return "default";
+  return "secondary";
+}
+
 /**
  * CustomizationSection — Audit Log + Admin Preferences + System Settings
  * Draft/Publish controls removed — that flow is for Phase 6 (Customizer Studio).
  * Basic branding saves directly via the main settings form.
  */
 export function CustomizationSection({ settings }: CustomizationSectionProps) {
-  const { t } = useI18n();
+  const { t, direction } = useI18n();
   const vm = useCustomizationViewModel();
   const c = (key: string) => t(`tenantSettings.customization.${key}`);
+  const isRtl = direction === "rtl";
 
   return (
     <div className="space-y-6">
       {/* ── Launch Customizer Studio ────────────── */}
-      <Card className="border-primary/20 bg-primary/5">
+      <Card className="border-[color:color-mix(in_srgb,var(--nx-accent)_25%,transparent)] bg-nx-accent-wash">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Paintbrush className="h-5 w-5 text-primary" />
+            <Paintbrush className="h-5 w-5 text-nx-accent" aria-hidden="true" />
             {c("studioTitle")}
           </CardTitle>
           <CardDescription>{c("layoutDescription")}</CardDescription>
@@ -54,9 +73,9 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
         <CardContent>
           <Button asChild className="gap-2">
             <Link href="/customizer">
-              <Paintbrush className="h-4 w-4" />
+              <Paintbrush className="h-4 w-4" aria-hidden="true" />
               {c("studioTitle")}
-              <ExternalLink className="ml-1 h-3.5 w-3.5" />
+              <ExternalLink className="ms-1 h-3.5 w-3.5" aria-hidden="true" />
             </Link>
           </Button>
         </CardContent>
@@ -67,15 +86,13 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
         <Card className="border-warning/30 bg-warning/5">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-warning">
-              <Paintbrush className="h-5 w-5" />
-              {c("draftPending") || "Unpublished Draft"}
+              <Paintbrush className="h-5 w-5" aria-hidden="true" />
+              {c("draftPending")}
             </CardTitle>
             <CardDescription>
-              {c("draftPendingDesc") ||
-                "You have unsaved changes in the Customizer Studio that haven't been published yet."}
+              {c("draftPendingDesc")}
               {" · "}
-              {c("currentVersion") || "Current version"}:{" "}
-              <Badge variant="outline">v{settings.settingsVersion}</Badge>
+              {c("currentVersion")}: <Badge variant="outline">v{settings.settingsVersion}</Badge>
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -86,9 +103,9 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
               className="gap-2 border-warning/30 text-warning hover:bg-warning/10"
             >
               <Link href="/customizer">
-                <Paintbrush className="h-4 w-4" />
-                {c("reviewDraft") || "Review & Publish Draft"}
-                <ExternalLink className="ml-1 h-3.5 w-3.5" />
+                <Paintbrush className="h-4 w-4" aria-hidden="true" />
+                {c("reviewDraft")}
+                <ExternalLink className="ms-1 h-3.5 w-3.5" aria-hidden="true" />
               </Link>
             </Button>
           </CardContent>
@@ -99,7 +116,7 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <History className="h-5 w-5" />
+            <History className="h-5 w-5" aria-hidden="true" />
             {c("versionHistory")}
           </CardTitle>
           <CardDescription>
@@ -116,67 +133,53 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
             </div>
           ) : vm.auditLog && vm.auditLog.items.length > 0 ? (
             <>
-              <div className="rounded-md border">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b bg-muted/50">
-                      <th className="p-3 text-start font-medium">{c("version")}</th>
-                      <th className="p-3 text-start font-medium">{c("action")}</th>
-                      <th className="p-3 text-start font-medium">{c("changedBy")}</th>
-                      <th className="p-3 text-start font-medium">{c("date")}</th>
-                      <th className="p-3 text-end font-medium">{c("rollback")}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+              <div className="overflow-hidden rounded-nx-md border border-nx-line">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-b border-nx-line-hi bg-nx-hover">
+                      <TableHead>{c("version")}</TableHead>
+                      <TableHead>{c("action")}</TableHead>
+                      <TableHead>{c("changedBy")}</TableHead>
+                      <TableHead>{c("date")}</TableHead>
+                      <TableHead className="text-end">{c("rollback")}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {vm.auditLog.items.map((entry) => (
-                      <tr
-                        key={`${entry.versionNumber}-${entry.changedAt}`}
-                        className="border-b hover:bg-muted/30"
-                      >
-                        <td className="p-3">
+                      <TableRow key={`${entry.versionNumber}-${entry.changedAt}`}>
+                        <TableCell>
                           <Badge variant="outline">v{entry.versionNumber}</Badge>
-                        </td>
-                        <td className="p-3">
-                          <Badge
-                            variant={entry.changeType === "publish" ? "default" : "secondary"}
-                            className={
-                              entry.changeType === "rollback"
-                                ? "bg-info"
-                                : entry.changeType === "draft-discard"
-                                  ? "bg-warning"
-                                  : entry.changeType.includes("safe-mode")
-                                    ? "bg-primary"
-                                    : ""
-                            }
-                          >
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={changeTypeVariant(entry.changeType)}>
                             {entry.changeType}
                           </Badge>
-                        </td>
-                        <td className="p-3 text-muted-foreground">
+                        </TableCell>
+                        <TableCell className="text-nx-ink-2">
                           {entry.changedByAdminName || "—"}
-                        </td>
-                        <td className="p-3 text-muted-foreground">
+                        </TableCell>
+                        <TableCell className="text-nx-ink-2">
                           {formatDateTimeUtc(entry.changedAt)}
-                        </td>
-                        <td className="p-3 text-end">
+                        </TableCell>
+                        <TableCell className="text-end">
                           <Button
                             size="sm"
                             variant="ghost"
                             onClick={() => vm.rollback(entry.versionNumber)}
                             disabled={vm.isRollingBack}
                           >
-                            <RotateCcw className="mr-1 h-3 w-3" />
+                            <RotateCcw className="me-1 h-3 w-3" aria-hidden="true" />
                             {c("restore")}
                           </Button>
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
               {/* Pagination */}
               <div className="mt-4 flex items-center justify-between">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-nx-ink-3">
                   {c("page")} {vm.auditPage} · {vm.auditLog.totalCount} {c("totalEntries")}
                 </p>
                 <div className="flex gap-2">
@@ -185,22 +188,32 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
                     variant="outline"
                     onClick={() => vm.setAuditPage((p: number) => Math.max(1, p - 1))}
                     disabled={vm.auditPage <= 1}
+                    aria-label={t("table.previousPage")}
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    {isRtl ? (
+                      <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                    ) : (
+                      <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+                    )}
                   </Button>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => vm.setAuditPage((p: number) => p + 1)}
                     disabled={vm.auditLog.items.length < 10}
+                    aria-label={t("table.nextPage")}
                   >
-                    <ChevronRight className="h-4 w-4" />
+                    {isRtl ? (
+                      <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                    )}
                   </Button>
                 </div>
               </div>
             </>
           ) : (
-            <p className="py-4 text-center text-muted-foreground">{c("noHistory")}</p>
+            <EmptyState bare size="sm" icon={History} title={c("noHistory")} />
           )}
         </CardContent>
       </Card>
@@ -209,7 +222,7 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5" />
+            <User className="h-5 w-5" aria-hidden="true" />
             {c("adminPrefs")}
           </CardTitle>
           <CardDescription>{c("adminPrefsDesc")}</CardDescription>
@@ -263,7 +276,7 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
             </div>
 
             {/* Info about how prefs work */}
-            <div className="border-t pt-3 text-xs text-muted-foreground">
+            <div className="border-t border-nx-line pt-3 text-xs text-nx-ink-3">
               <p>{c("prefsInfo")}</p>
             </div>
 
@@ -275,19 +288,19 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
               size="sm"
               className={
                 vm.isSaveSuccess
-                  ? "pointer-events-none bg-success transition-colors duration-300 hover:bg-success"
-                  : "transition-colors duration-300"
+                  ? "pointer-events-none bg-success transition-colors duration-nx-panel ease-nx-enter motion-reduce:transition-none hover:bg-success"
+                  : "transition-colors duration-nx-panel ease-nx-enter motion-reduce:transition-none"
               }
             >
               {!vm.isSavingAdminPrefs &&
                 (vm.isSaveSuccess ? (
                   <>
-                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                    <CheckCircle2 className="me-2 h-4 w-4" aria-hidden="true" />
                     {c("prefsSaved")}
                   </>
                 ) : (
                   <>
-                    <Settings className="mr-2 h-4 w-4" />
+                    <Settings className="me-2 h-4 w-4" aria-hidden="true" />
                     {c("savePreferences")}
                   </>
                 ))}
@@ -302,7 +315,7 @@ export function CustomizationSection({ settings }: CustomizationSectionProps) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Settings className="h-5 w-5" />
+              <Settings className="h-5 w-5" aria-hidden="true" />
               {c("systemSettings")}
             </CardTitle>
             <CardDescription>{c("systemSettingsDesc")}</CardDescription>
@@ -357,12 +370,14 @@ function SystemSettingCard({
 
   return (
     <div>
-      <p className="mb-1 text-sm font-medium">{label}</p>
+      <p className="mb-1 text-sm font-medium text-nx-ink">{label}</p>
       {displayValue ? (
-        <pre className="max-h-32 overflow-auto rounded bg-muted p-2 text-xs">{displayValue}</pre>
+        <pre className="max-h-32 overflow-auto rounded-nx-sm bg-nx-raised p-2 text-xs text-nx-ink-2">
+          {displayValue}
+        </pre>
       ) : (
-        <div className="flex items-center gap-2 rounded border border-dashed border-border p-3 text-xs text-muted-foreground">
-          <Info className="h-3 w-3 shrink-0" />
+        <div className="flex items-center gap-2 rounded-nx-sm border border-dashed border-nx-line p-3 text-xs text-nx-ink-3">
+          <Info className="h-3 w-3 shrink-0" aria-hidden="true" />
           {emptyText}
         </div>
       )}

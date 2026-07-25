@@ -245,10 +245,10 @@ export function MenuTreeItem({
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         className={cn(
-          "group relative flex items-center gap-2 rounded-lg px-3 py-2.5",
-          "transition-all duration-150 hover:bg-muted/50",
+          "group relative flex items-center gap-2 rounded-nx-md px-3 py-2.5",
+          "transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover",
           "border-s-2",
-          node.isActive ? levelColor : "border-s-muted/40",
+          node.isActive ? levelColor : "border-s-nx-line",
           !node.isActive && "opacity-60",
           depth > 0 && levelBg,
           getDropIndicatorStyles()
@@ -258,9 +258,10 @@ export function MenuTreeItem({
         {/* Drag handle */}
         {canReorder && (
           <GripVertical
+            aria-hidden="true"
             className={cn(
-              "h-4 w-4 cursor-grab text-muted-foreground active:cursor-grabbing",
-              "shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+              "h-4 w-4 cursor-grab text-nx-ink-3 active:cursor-grabbing",
+              "shrink-0 opacity-0 transition-opacity duration-nx-micro ease-nx-enter motion-reduce:transition-none group-hover:opacity-100"
             )}
           />
         )}
@@ -268,16 +269,18 @@ export function MenuTreeItem({
         {/* Expand / Collapse */}
         {hasChildren ? (
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               onToggleExpand(node.id);
             }}
-            className="shrink-0 rounded-sm p-0.5 hover:bg-muted"
+            aria-label={isExpanded ? t("common.collapseAll") : t("common.expandAll")}
+            className="shrink-0 rounded-nx-sm p-0.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
           >
             {isExpanded ? (
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              <ChevronDown className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
             ) : (
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              <ChevronRight className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
             )}
           </button>
         ) : (
@@ -286,16 +289,16 @@ export function MenuTreeItem({
 
         {/* Icon */}
         {hasChildren ? (
-          <FolderOpen className="h-4 w-4 shrink-0 text-primary" />
+          <FolderOpen className="h-4 w-4 shrink-0 text-nx-accent" aria-hidden="true" />
         ) : (
-          <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <FileText className="h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
         )}
 
         {/* Name */}
         <span
           className={cn(
-            "truncate text-sm font-medium",
-            !node.isActive && "text-muted-foreground line-through"
+            "truncate text-sm font-medium text-nx-ink",
+            !node.isActive && "text-nx-ink-3 line-through"
           )}
         >
           {displayName}
@@ -303,20 +306,22 @@ export function MenuTreeItem({
 
         {/* Icon code badge */}
         {node.icon && (
-          <code className="hidden rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground sm:inline">
+          <code className="hidden rounded-nx-sm bg-nx-raised px-1.5 py-0.5 font-mono text-[10px] text-nx-ink-3 sm:inline">
             {node.icon}
           </code>
         )}
 
         {/* URL */}
         {node.href && (
-          <span className="hidden max-w-[120px] truncate font-mono text-[10px] text-muted-foreground md:inline">
+          <span className="hidden max-w-[120px] truncate font-mono text-[10px] text-nx-ink-3 md:inline">
             {node.href}
           </span>
         )}
 
         {/* Hidden indicator */}
-        {!node.isActive && <EyeOff className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />}
+        {!node.isActive && (
+          <EyeOff className="h-3.5 w-3.5 shrink-0 text-nx-ink-3" aria-hidden="true" />
+        )}
 
         {/* Resource badge */}
         {node.resource && (
@@ -334,33 +339,45 @@ export function MenuTreeItem({
 
         {/* Admin actions — only show if user has ANY action permission */}
         {hasAnyActionProp && (
-          <div className="ms-auto flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+          <div className="ms-auto flex items-center gap-0.5 opacity-0 transition-opacity duration-nx-micro ease-nx-enter motion-reduce:transition-none group-hover:opacity-100 group-focus-within:opacity-100">
             {canReorder && onMoveUp && (
-              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMoveUp}>
-                <ArrowUp className="h-3.5 w-3.5" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={onMoveUp}
+                aria-label={t("menus.moveUp")}
+              >
+                <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
               </Button>
             )}
             {canReorder && onMoveDown && (
-              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onMoveDown}>
-                <ArrowDown className="h-3.5 w-3.5" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={onMoveDown}
+                aria-label={t("menus.moveDown")}
+              >
+                <ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />
               </Button>
             )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-7 w-7 p-0">
-                  <MoreHorizontal className="h-4 w-4" />
+                <Button variant="ghost" size="icon" className="h-7 w-7" aria-label={t("common.actions")}>
+                  <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 {canCreateProp && (
                   <DropdownMenuItem onClick={() => onAddChild(node)}>
-                    <Plus className="mr-2 h-4 w-4" />
+                    <Plus className="me-2 h-4 w-4" aria-hidden="true" />
                     {t("menus.addChild")}
                   </DropdownMenuItem>
                 )}
                 {canEditProp && (
                   <DropdownMenuItem onClick={() => onEdit(node)}>
-                    <Pencil className="mr-2 h-4 w-4" />
+                    <Pencil className="me-2 h-4 w-4" aria-hidden="true" />
                     {t("common.edit")}
                   </DropdownMenuItem>
                 )}
@@ -368,7 +385,7 @@ export function MenuTreeItem({
                   <>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="text-destructive" onClick={() => onDelete(node)}>
-                      <Trash2 className="mr-2 h-4 w-4" />
+                      <Trash2 className="me-2 h-4 w-4" aria-hidden="true" />
                       {t("common.delete")}
                     </DropdownMenuItem>
                   </>

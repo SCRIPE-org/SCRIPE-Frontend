@@ -66,7 +66,7 @@ export function MenuFormDialog({
     // Prepend "Global (all workspaces)" option
     opts.unshift({
       value: "",
-      label: t("menus.workspaceGlobal") || "Global (all workspaces)",
+      label: t("menus.workspaceGlobal"),
     });
     return opts;
   }, [workspaceGroups, language, t]);
@@ -80,7 +80,7 @@ export function MenuFormDialog({
     // Add "Custom URL" option at the end
     opts.push({
       value: CUSTOM_HREF_VALUE,
-      label: t("menus.customHref") || "Custom URL...",
+      label: t("menus.customHref"),
     });
     return opts;
   }, [language, t]);
@@ -120,11 +120,11 @@ export function MenuFormDialog({
     () => [
       {
         name: "href",
-        label: t("menus.href") || "Page",
+        label: t("menus.href"),
         type: "searchable-select",
         options: pageOptions,
-        placeholder: t("menus.selectPage") || "Select a page...",
-        searchPlaceholder: t("common.search") || "Search...",
+        placeholder: t("menus.selectPage"),
+        searchPlaceholder: t("common.search"),
         onChange: (value: any, formData: Record<string, any>) => {
           if (value === CUSTOM_HREF_VALUE) {
             return { ...formData, href: CUSTOM_HREF_VALUE };
@@ -146,7 +146,7 @@ export function MenuFormDialog({
       },
       {
         name: "customHref",
-        label: t("menus.customHref") || "Custom URL",
+        label: t("menus.customHref"),
         type: "text",
         placeholder: "/custom-page",
         isVisible: (formData) => formData.href === CUSTOM_HREF_VALUE,
@@ -188,10 +188,10 @@ export function MenuFormDialog({
         ? [
             {
               name: "workspaceId",
-              label: t("menus.workspace") || "Workspace",
+              label: t("menus.workspace"),
               type: "select" as const,
               options: workspaceOptions,
-              placeholder: t("menus.workspaceGlobal") || "Global (all workspaces)",
+              placeholder: t("menus.workspaceGlobal"),
             },
           ]
         : []),

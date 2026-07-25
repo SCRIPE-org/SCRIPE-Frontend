@@ -2,8 +2,9 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import type { CreateTenantPlanRequest } from "../../../domain/entities/TenantPlanRequests";
-import { CheckCircle2, AlertCircle } from "lucide-react";
+import { CheckCircle2, AlertCircle, Info } from "lucide-react";
 import { BooleanIndicator } from "@modules/entitlements/core";
 
 interface TenantPlanStepReviewProps {
@@ -21,60 +22,59 @@ export function TenantPlanStepReview({ form, t }: TenantPlanStepReviewProps) {
   return (
     <div className="space-y-6">
       {missingRequired && (
-        <div className="flex items-center gap-3 rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive">
-          <AlertCircle className="h-5 w-5" />
-          <p className="text-sm font-medium">
-            {t("entitlements.tenantPlans.missingRequired") ||
-              "Missing required fields: Plan Name is required before saving."}
-          </p>
-        </div>
+        <Alert variant="destructive">
+          <AlertCircle aria-hidden="true" />
+          <AlertDescription className="font-medium">
+            {t("entitlements.tenantPlans.missingRequired")}
+          </AlertDescription>
+        </Alert>
       )}
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-muted-foreground">
-              <CheckCircle2 className="h-4 w-4 text-primary" />
-              {t("entitlements.tenantPlans.basicDetails") || "Basic Details"}
+            <CardTitle className="flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-nx-ink-3">
+              <CheckCircle2 className="h-4 w-4 text-nx-accent" aria-hidden="true" />
+              {t("entitlements.tenantPlans.basicDetails")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-xs text-muted-foreground">
-                {t("entitlements.tenantPlans.planName") || "Plan Name"}
+              <p className="text-xs text-nx-ink-3">
+                {t("entitlements.tenantPlans.planName")}
               </p>
-              <p className="font-medium">{form.name || "—"}</p>
+              <p className="font-medium text-nx-ink">{form.name || "—"}</p>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-xs text-muted-foreground">
-                  {t("entitlements.tenantPlans.displayNameEn") || "Display Name (EN)"}
+                <p className="text-xs text-nx-ink-3">
+                  {t("entitlements.tenantPlans.displayNameEn")}
                 </p>
-                <p className="font-medium">{form.displayNameEn || "—"}</p>
+                <p className="font-medium text-nx-ink">{form.displayNameEn || "—"}</p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">
-                  {t("entitlements.tenantPlans.displayNameAr") || "Display Name (AR)"}
+                <p className="text-xs text-nx-ink-3">
+                  {t("entitlements.tenantPlans.displayNameAr")}
                 </p>
-                <p className="font-medium">{form.displayNameAr || "—"}</p>
+                <p className="font-medium text-nx-ink">{form.displayNameAr || "—"}</p>
               </div>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">
-                {t("entitlements.tenantPlans.tier") || "Tier Level"}
+              <p className="text-xs text-nx-ink-3">
+                {t("entitlements.tenantPlans.tier")}
               </p>
-              <p className="font-medium">{form.tierLevel}</p>
+              <p className="font-medium text-nx-ink tabular-nums">{form.tierLevel}</p>
             </div>
             <div className="flex items-center gap-4">
               <div>
-                <p className="mb-1 text-xs text-muted-foreground">
-                  {t("entitlements.tenantPlans.isPublic") || "Publicly Visible"}
+                <p className="mb-1 text-xs text-nx-ink-3">
+                  {t("entitlements.tenantPlans.isPublic")}
                 </p>
                 <BooleanIndicator value={form.isPublic ?? true} />
               </div>
               <div>
-                <p className="mb-1 text-xs text-muted-foreground">
-                  {t("entitlements.tenantPlans.isContactSalesOnly") || "Contact Sales Only"}
+                <p className="mb-1 text-xs text-nx-ink-3">
+                  {t("entitlements.tenantPlans.isContactSalesOnly")}
                 </p>
                 <BooleanIndicator value={form.isContactSalesOnly ?? false} />
               </div>
@@ -84,35 +84,35 @@ export function TenantPlanStepReview({ form, t }: TenantPlanStepReviewProps) {
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-muted-foreground">
-              <CheckCircle2 className="h-4 w-4 text-primary" />
-              {t("entitlements.tenantPlans.billingAndAccess") || "Billing & Access"}
+            <CardTitle className="flex items-center gap-2 text-sm font-medium uppercase tracking-wider text-nx-ink-3">
+              <CheckCircle2 className="h-4 w-4 text-nx-accent" aria-hidden="true" />
+              {t("entitlements.tenantPlans.billingAndAccess")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="mb-1.5 text-xs text-muted-foreground">
-                {t("entitlements.tenantPlans.supportedCycles") || "Supported Cycles"}
+              <p className="mb-1.5 text-xs text-nx-ink-3">
+                {t("entitlements.tenantPlans.supportedCycles")}
               </p>
               <div className="flex gap-2">
                 {form.allowMonthly && (
                   <Badge variant="secondary">
-                    {t("entitlements.tenantPlans.monthly") || "Monthly"}
+                    {t("entitlements.tenantPlans.monthly")}
                   </Badge>
                 )}
                 {form.allowYearly && (
                   <Badge variant="secondary">
-                    {t("entitlements.tenantPlans.yearly") || "Yearly"}
+                    {t("entitlements.tenantPlans.yearly")}
                   </Badge>
                 )}
                 {form.allowLifetime && (
                   <Badge variant="secondary">
-                    {t("entitlements.tenantPlans.lifetime") || "Lifetime"}
+                    {t("entitlements.tenantPlans.lifetime")}
                   </Badge>
                 )}
                 {!form.allowMonthly && !form.allowYearly && !form.allowLifetime && (
-                  <span className="text-sm text-muted-foreground">
-                    {t("common.noneSelected") || "None selected"}
+                  <span className="text-sm text-nx-ink-3">
+                    {t("common.noneSelected")}
                   </span>
                 )}
               </div>
@@ -120,30 +120,30 @@ export function TenantPlanStepReview({ form, t }: TenantPlanStepReviewProps) {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="mb-1 text-xs text-muted-foreground">
-                  {t("entitlements.tenantPlans.maxUsers") || "Max Users"}
+                <p className="mb-1 text-xs text-nx-ink-3">
+                  {t("entitlements.tenantPlans.maxUsers")}
                 </p>
-                <p className="font-medium">
+                <p className="font-medium text-nx-ink tabular-nums">
                   {form.maxUsers === -1
-                    ? t("entitlements.tenantPlans.unlimited") || "Unlimited (\u221e)"
+                    ? t("entitlements.tenantPlans.unlimited")
                     : form.maxUsers}
                 </p>
               </div>
               <div>
-                <p className="mb-1 text-xs text-muted-foreground">
-                  {t("entitlements.tenantPlans.allowTrial") || "Trial"}
+                <p className="mb-1 text-xs text-nx-ink-3">
+                  {t("entitlements.tenantPlans.allowTrial")}
                 </p>
-                <p className="font-medium">
+                <p className="font-medium text-nx-ink">
                   {form.allowTrial
-                    ? `${form.trialDays} ${t("entitlements.tenantPlans.trialDays") || "Days"}`
-                    : t("common.noTrial") || "No Trial"}
+                    ? `${form.trialDays} ${t("entitlements.tenantPlans.trialDays")}`
+                    : t("common.noTrial")}
                 </p>
               </div>
             </div>
 
             <div>
-              <p className="mb-1 text-xs text-muted-foreground">
-                {t("entitlements.tenantPlans.isSelfServiceEnabled") || "Self-Service Checkout"}
+              <p className="mb-1 text-xs text-nx-ink-3">
+                {t("entitlements.tenantPlans.isSelfServiceEnabled")}
               </p>
               <BooleanIndicator value={form.isSelfServiceEnabled ?? true} />
             </div>
@@ -151,13 +151,13 @@ export function TenantPlanStepReview({ form, t }: TenantPlanStepReviewProps) {
         </Card>
       </div>
 
-      <div className="rounded-lg border bg-muted/30 p-4 text-sm text-muted-foreground">
-        <p>
-          <strong>{t("common.note") || "Note"}:</strong>{" "}
-          {t("entitlements.tenantPlans.reviewNote") ||
-            "Pricing values and detailed feature toggles are configured on the Pricing and Features tabs after the plan is initially created."}
-        </p>
-      </div>
+      <Alert variant="info">
+        <Info aria-hidden="true" />
+        <AlertDescription>
+          <strong className="font-semibold text-nx-ink">{t("common.note")}:</strong>{" "}
+          {t("entitlements.tenantPlans.reviewNote")}
+        </AlertDescription>
+      </Alert>
     </div>
   );
 }

@@ -24,6 +24,9 @@ export const en = {
       remove: "Remove",
       uploaded: "Avatar uploaded successfully",
       removed: "Avatar removed successfully",
+      changePhoto: "Change profile photo",
+      alt: "Profile photo",
+      unknownError: "An unknown error occurred",
     },
     fields: {
       firstName: "First Name",
@@ -33,6 +36,7 @@ export const en = {
       username: "Username",
       usernameHint: "Username cannot be changed",
       role: "Role",
+      roleDefault: "Admin",
     },
     general: {
       title: "General",
@@ -63,6 +67,8 @@ export const en = {
       twoFactorCode: "Two-Factor Code",
       twoFactorCodeHint: "Enter the code from your authenticator app",
       twoFactorCodePlaceholder: "Enter 6-digit code",
+      showPassword: "Show password",
+      hidePassword: "Hide password",
       strength: {
         minLength: "8+ characters",
         uppercase: "Uppercase letter",
@@ -203,6 +209,10 @@ export const en = {
         "If you notice any suspicious sessions, revoke them immediately and change your password.",
       revoked: "Session revoked",
       allRevoked: "All other sessions revoked",
+      unknownOs: "Unknown OS",
+      unknownBrowser: "Unknown Browser",
+      unknownDevice: "Unknown Device",
+      deviceTitle: "{{browser}} on {{os}}",
     },
     activity: {
       title: "Activity Log",

@@ -144,8 +144,9 @@ export const ar = {
       blockEditorNote:
         "اسحب الكتل إلى الفتحات أعلاه. تحرير الكتل الكامل مع محتوى غني سيتوفر في تحديث الاستوديو v1.1.",
     },
-    systemBanner: "[مفقود] System Banner",
-    systemTitle: "[مفقود] System Title",
-    systemDescription: "[مفقود] System Description",
+    systemBanner:
+      "تحرير الإعدادات الافتراضية للنظام — تُطبَّق هذه على جميع المستأجرين الذين لا يملكون إعدادات مخصصة",
+    systemTitle: "إعدادات النظام",
+    systemDescription: "الإعدادات الافتراضية على مستوى المنصة الموروثة لجميع المستأجرين",
   },
 };

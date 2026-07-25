@@ -74,7 +74,7 @@ export function ProfileInfoForm({
     if (!isDirty) return;
 
     if (phoneNumber.trim() && !isValidPhoneNumber(phoneNumber)) {
-      setPhoneError(t("profile.errors.phoneInvalid") || "Please enter a valid phone number.");
+      setPhoneError(t("profile.errors.phoneInvalid"));
       return;
     }
 
@@ -120,10 +120,13 @@ export function ProfileInfoForm({
 
         {/* Email Address (read-only) */}
         <div className="space-y-2">
-          <Label htmlFor="email">{t("profile.fields.email") || "Email Address"}</Label>
+          <Label htmlFor="email">{t("profile.fields.email")}</Label>
           <div className="relative">
             <Input id="email" value={profile.email} disabled className="bg-nx-raised pe-10" />
-            <Lock className="absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3" />
+            <Lock
+              className="absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
+              aria-hidden="true"
+            />
           </div>
         </div>
 
@@ -132,7 +135,10 @@ export function ProfileInfoForm({
           <Label htmlFor="username">{t("profile.fields.username")}</Label>
           <div className="relative">
             <Input id="username" value={profile.username} disabled className="bg-nx-raised pe-10" />
-            <Lock className="absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3" />
+            <Lock
+              className="absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
+              aria-hidden="true"
+            />
           </div>
           <p className="text-xs text-nx-ink-2">{t("profile.fields.usernameHint")}</p>
         </div>
@@ -142,7 +148,7 @@ export function ProfileInfoForm({
       <div className="flex items-center gap-4 rounded-nx-control border border-nx-line bg-nx-raised p-3 text-sm text-nx-ink-2">
         <span>
           <strong className="text-nx-ink">{t("profile.fields.role")}:</strong>{" "}
-          {profile.adminTypeName || profile.roles?.[0]?.roleName || "Admin"}
+          {profile.adminTypeName || profile.roles?.[0]?.roleName || t("profile.fields.roleDefault")}
         </span>
       </div>
 
@@ -150,7 +156,7 @@ export function ProfileInfoForm({
 
       {success && (
         <div className="flex items-center gap-2 text-sm text-success">
-          <CheckCircle2 className="h-4 w-4" />
+          <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
           {t("profile.general.saved")}
         </div>
       )}

@@ -1,6 +1,8 @@
 export const ar = {
   menus: {
     dropToRoot: "افلت هنا لجعله فرع رئيسي",
+    moveUp: "نقل لأعلى",
+    moveDown: "نقل لأسفل",
     noActiveOverrides: "لا توجد تجاوزات نشطة",
     noActiveOverridesDesc: "لا توجد تجاوزات نشطة",
     noActiveOverridesHint: "لا توجد تجاوزات نشطة",
@@ -102,12 +104,12 @@ export const ar = {
     badgeReordered: "أعيد ترتيبه",
     badgeMoved: "نُقل إلى أب مختلف",
     badgeHidden: "مخفي",
-    noItemsToCustomize: "No menu items available to customize yet.",
-    backToManagement: "Back to Menu Management",
-    allOverridesReset: "All customizations have been removed.",
-    overrideRemoved: "Customization removed.",
-    noPermission: "[مفقود] No Permission",
-    noCustomizePermission: "[مفقود] No Customize Permission",
+    noItemsToCustomize: "لا توجد عناصر قائمة متاحة للتخصيص بعد.",
+    backToManagement: "العودة إلى إدارة القوائم",
+    allOverridesReset: "تمت إزالة جميع التخصيصات.",
+    overrideRemoved: "تمت إزالة التخصيص.",
+    noPermission: "لا توجد صلاحية",
+    noCustomizePermission: "ليس لديك صلاحية لتخصيص القوائم.",
     // تبويبات تصفية الفضاء
     allWorkspaces: "جميع الفضاءات",
     workspaceItems: "عناصر الفضاء",

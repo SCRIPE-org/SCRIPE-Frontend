@@ -24,10 +24,8 @@ interface ChangePlanDialogProps {
   isConfirmingFree: boolean;
   setIsConfirmingFree: (confirm: boolean) => void;
   handleChangePlanSubmit: () => Promise<void>;
-  tokens: any;
-  t: any;
+  t: (key: string) => string;
   language: string;
-  isRtl: boolean;
 }
 
 /**
@@ -45,18 +43,13 @@ export function ChangePlanDialog({
   isConfirmingFree,
   setIsConfirmingFree,
   handleChangePlanSubmit,
-  tokens,
   t,
   language,
-  isRtl,
 }: ChangePlanDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="h-11 w-full border-border text-base font-medium hover:bg-accent/10 hover:text-accent"
-        >
+        <Button variant="outline" size="lg" className="w-full">
           {t("entitlements.activateWorkspace.changePlan")}
         </Button>
       </DialogTrigger>
@@ -64,9 +57,7 @@ export function ChangePlanDialog({
         <DialogHeader>
           <DialogTitle>{t("entitlements.activateWorkspace.changePlan")}</DialogTitle>
           <DialogDescription>
-            {isRtl
-              ? "اختر خطة جديدة لمساحة عملك. الخطة المجانية تفعل فوراً."
-              : "Choose a new plan for your workspace. Free plan activates instantly."}
+            {t("entitlements.activateWorkspace.changePlanDialog.description")}
           </DialogDescription>
         </DialogHeader>
 
@@ -77,8 +68,8 @@ export function ChangePlanDialog({
         ) : (
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">
-                {isRtl ? "الخطة" : "Plan"}
+              <label className="text-sm font-medium text-nx-ink-2">
+                {t("entitlements.activateWorkspace.changePlanDialog.planLabel")}
               </label>
               <Select
                 onValueChange={(val) => {
@@ -92,7 +83,9 @@ export function ChangePlanDialog({
                 }}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={isRtl ? "اختر خطة..." : "Select a plan..."} />
+                  <SelectValue
+                    placeholder={t("entitlements.activateWorkspace.changePlanDialog.planPlaceholder")}
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {editions
@@ -100,7 +93,9 @@ export function ChangePlanDialog({
                     .map((edition) => (
                       <SelectItem key={edition.id} value={edition.id}>
                         {edition.getDisplayName(language)}{" "}
-                        {edition.isFree ? `(${isRtl ? "مجانية" : "Free"})` : ""}
+                        {edition.isFree
+                          ? `(${t("entitlements.activateWorkspace.changePlanDialog.freeSuffix")})`
+                          : ""}
                       </SelectItem>
                     ))}
                 </SelectContent>
@@ -109,8 +104,8 @@ export function ChangePlanDialog({
 
             {selectedPlanId && !isConfirmingFree && (
               <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">
-                  {isRtl ? "دورة الفوترة" : "Billing cycle"}
+                <label className="text-sm font-medium text-nx-ink-2">
+                  {t("entitlements.activateWorkspace.changePlanDialog.billingCycleLabel")}
                 </label>
                 <Select
                   value={selectedCycle}
@@ -120,21 +115,25 @@ export function ChangePlanDialog({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Monthly">{isRtl ? "شهري" : "Monthly"}</SelectItem>
-                    <SelectItem value="Yearly">{isRtl ? "سنوي" : "Yearly"}</SelectItem>
+                    <SelectItem value="Monthly">
+                      {t("entitlements.activateWorkspace.monthly")}
+                    </SelectItem>
+                    <SelectItem value="Yearly">
+                      {t("entitlements.activateWorkspace.yearly")}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             )}
 
             {isConfirmingFree && (
-              <div className="border-warning/30 bg-warning/5 text-warning flex items-start gap-2 rounded-lg border p-3 text-sm">
-                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
+              <div className="flex items-start gap-2 rounded-nx-md border border-warning/30 bg-warning/10 p-3 text-sm text-warning">
+                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
                 <div>
                   <p className="font-semibold">
                     {t("entitlements.activateWorkspace.confirmDowngradeTitle")}
                   </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="mt-1 text-xs text-nx-ink-2">
                     {t("entitlements.activateWorkspace.confirmDowngradeText")}
                   </p>
                 </div>
@@ -149,15 +148,10 @@ export function ChangePlanDialog({
             loading={isChangingPlan}
             disabled={!selectedPlanId}
             className="w-full sm:w-auto"
-            style={{
-              background: isConfirmingFree ? undefined : tokens.accent,
-            }}
           >
             {isConfirmingFree
               ? t("entitlements.activateWorkspace.confirmDowngradeCta")
-              : isRtl
-                ? "متابعة للدفع"
-                : "Continue to checkout"}
+              : t("entitlements.activateWorkspace.changePlanDialog.continueToCheckout")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -15,6 +15,7 @@ import { useForceChangePasswordViewModel } from "../viewmodels/useForceChangePas
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Button } from "@core/ui/button";
+import { Card } from "@core/ui/card";
 import { cn } from "@core/common/utils";
 import { Eye, EyeOff, ShieldAlert, LogOut } from "lucide-react";
 
@@ -46,23 +47,19 @@ export function ForceChangePasswordView() {
   } = useForceChangePasswordViewModel();
 
   return (
-    <div
-      className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4"
-      dir={direction}
-    >
+    <div className="flex min-h-screen items-center justify-center bg-nx-ground p-4" dir={direction}>
       <div className="w-full max-w-md space-y-6">
         {/* Header Card */}
-        <div className="rounded-2xl border border-border/60 bg-card/80 p-8 shadow-xl backdrop-blur-sm">
+        <Card className="p-8 shadow-nx-modal">
           <div className="mb-6 flex flex-col items-center text-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-warning/10 ring-2 ring-warning/20">
-              <ShieldAlert className="h-8 w-8 text-warning" />
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-warning/30 bg-warning/10">
+              <ShieldAlert className="h-8 w-8 text-warning" aria-hidden="true" />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight">
+            <h1 className="text-2xl font-bold tracking-tight text-nx-ink">
               {t("profile.security.changePassword")}
             </h1>
-            <p className="mt-2 max-w-xs text-sm text-muted-foreground">
-              {t("admin.forceChangePassword.description") ||
-                "Your administrator requires you to change your password before continuing."}
+            <p className="mt-2 max-w-xs text-sm text-nx-ink-2">
+              {t("admin.forceChangePassword.description")}
             </p>
           </div>
 
@@ -84,9 +81,22 @@ export function ForceChangePasswordView() {
                 <button
                   type="button"
                   onClick={() => setShowCurrent(!showCurrent)}
-                  className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                  aria-label={
+                    showCurrent
+                      ? t("profile.security.hidePassword")
+                      : t("profile.security.showPassword")
+                  }
+                  className={cn(
+                    "absolute end-3 top-1/2 -translate-y-1/2 text-nx-ink-3 hover:text-nx-ink",
+                    "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                    "focus-visible:outline-none focus-visible:shadow-nx-focus"
+                  )}
                 >
-                  {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showCurrent ? (
+                    <EyeOff className="h-4 w-4" aria-hidden="true" />
+                  ) : (
+                    <Eye className="h-4 w-4" aria-hidden="true" />
+                  )}
                 </button>
               </div>
             </div>
@@ -105,9 +115,20 @@ export function ForceChangePasswordView() {
                 <button
                   type="button"
                   onClick={() => setShowNew(!showNew)}
-                  className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                  aria-label={
+                    showNew ? t("profile.security.hidePassword") : t("profile.security.showPassword")
+                  }
+                  className={cn(
+                    "absolute end-3 top-1/2 -translate-y-1/2 text-nx-ink-3 hover:text-nx-ink",
+                    "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                    "focus-visible:outline-none focus-visible:shadow-nx-focus"
+                  )}
                 >
-                  {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showNew ? (
+                    <EyeOff className="h-4 w-4" aria-hidden="true" />
+                  ) : (
+                    <Eye className="h-4 w-4" aria-hidden="true" />
+                  )}
                 </button>
               </div>
               {newPassword.length > 0 && (
@@ -116,11 +137,11 @@ export function ForceChangePasswordView() {
                     <span
                       key={item.label}
                       className={cn(
-                        "flex items-center gap-1 text-xs transition-colors",
-                        item.met ? "text-success" : "text-muted-foreground"
+                        "flex items-center gap-1 text-xs transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                        item.met ? "text-success" : "text-nx-ink-3"
                       )}
                     >
-                      {item.met ? "✓" : "○"} {item.label}
+                      <span aria-hidden="true">{item.met ? "✓" : "○"}</span> {item.label}
                     </span>
                   ))}
                 </div>
@@ -155,13 +176,17 @@ export function ForceChangePasswordView() {
             <button
               type="button"
               onClick={handleLogout}
-              className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className={cn(
+                "flex items-center gap-2 text-sm text-nx-ink-3 hover:text-nx-ink",
+                "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                "focus-visible:outline-none focus-visible:shadow-nx-focus"
+              )}
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-4 w-4" aria-hidden="true" />
               {t("common.logout")}
             </button>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

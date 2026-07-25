@@ -2,6 +2,8 @@ export const en = {
   menus: {
     dragToReorder: "Drag to reorder",
     dropToRoot: "Drop here to make it a root item",
+    moveUp: "Move Up",
+    moveDown: "Move Down",
     title: "Menu Management",
     description: "Manage navigation menu items, ordering, and visibility.",
     items: "items",

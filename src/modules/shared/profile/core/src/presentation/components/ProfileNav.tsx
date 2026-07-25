@@ -75,7 +75,7 @@ export function ProfileNav({ securityNeedsAttention, sessionsCount, className }:
             value={item.value}
             className="h-auto w-full justify-start gap-3 rounded-nx-control px-3 py-2.5 text-sm font-medium"
           >
-            <item.icon className="h-4 w-4 shrink-0" />
+            <item.icon className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{t(item.labelKey)}</span>
             {renderBadge(item.value)}
           </TabsTrigger>
@@ -97,7 +97,7 @@ export function ProfileNav({ securityNeedsAttention, sessionsCount, className }:
             value={item.value}
             className="h-auto shrink-0 gap-1.5 whitespace-nowrap px-3 py-2 text-xs font-medium"
           >
-            <item.icon className="h-3.5 w-3.5 shrink-0" />
+            <item.icon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             <span>{t(item.labelKey)}</span>
             {item.value === "security" && securityNeedsAttention && (
               <span

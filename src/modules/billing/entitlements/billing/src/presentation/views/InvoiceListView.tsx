@@ -8,6 +8,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
-import { MoreHorizontal, Download, Mail, Loader2, FileDown } from "lucide-react";
+import { MoreHorizontal, Download, Mail, FileDown } from "lucide-react";
 import type { InvoiceListItem } from "../../domain/entities/Invoice";
 import { CurrencyDisplayToggle } from "@core/ui/currency-display-toggle";
 import { formatUtc } from "@core/common/utils";
@@ -61,7 +62,7 @@ export function InvoiceListView() {
           label: t("billing.actions.exportAllPdf") || "Export All PDFs",
           onClick: vm.handleBulkDownloadPdf,
           variant: "outline" as const,
-          icon: <FileDown className="h-4 w-4" />,
+          icon: <FileDown className="h-4 w-4" aria-hidden="true" />,
           loading: vm.loadingAction["bulk-pdf"] ?? false,
           disabled: !vm.items || vm.items.length === 0,
         },
@@ -142,8 +143,14 @@ export function InvoiceListView() {
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative h-8 w-8" loading={anyLoading}>
-                {!anyLoading && <MoreHorizontal className="h-4 w-4" />}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative h-8 w-8"
+                loading={anyLoading}
+                aria-label={t("common.actions")}
+              >
+                {!anyLoading && <MoreHorizontal className="h-4 w-4" aria-hidden="true" />}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-[200px]">
@@ -153,9 +160,9 @@ export function InvoiceListView() {
                 className="gap-2"
               >
                 {pdfLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <LoadingSpinner size="inline" showText={false} />
                 ) : (
-                  <Download className="h-4 w-4" />
+                  <Download className="h-4 w-4" aria-hidden="true" />
                 )}
                 {pdfLoading
                   ? t("billing.actions.downloading") || "Downloading..."
@@ -168,9 +175,9 @@ export function InvoiceListView() {
                 className="gap-2"
               >
                 {emailLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <LoadingSpinner size="inline" showText={false} />
                 ) : (
-                  <Mail className="h-4 w-4" />
+                  <Mail className="h-4 w-4" aria-hidden="true" />
                 )}
                 {emailLoading
                   ? t("billing.actions.sending") || "Sending..."

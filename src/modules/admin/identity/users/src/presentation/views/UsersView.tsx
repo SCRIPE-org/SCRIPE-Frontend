@@ -44,32 +44,31 @@ export function UsersView() {
   const bulkActions: BulkAction[] = useMemo(
     () => [
       {
-        label: t("users.bulk.activate") || "Activate Selected",
-        icon: <UserCheck className="h-4 w-4" />,
+        label: t("users.bulk.activate"),
+        icon: <UserCheck className="h-4 w-4" aria-hidden="true" />,
         onClick: async (selectedIds: string[]) => {
           await handleBulkActivate(selectedIds);
         },
         requiredPermission: SYSTEM_PERMISSIONS.USERS_UPDATE,
       },
       {
-        label: t("users.bulk.deactivate") || "Deactivate Selected",
-        icon: <UserX className="h-4 w-4" />,
+        label: t("users.bulk.deactivate"),
+        icon: <UserX className="h-4 w-4" aria-hidden="true" />,
         onClick: async (selectedIds: string[]) => {
           await handleBulkDeactivate(selectedIds);
         },
         requiredPermission: SYSTEM_PERMISSIONS.USERS_UPDATE,
       },
       {
-        label: t("users.bulk.delete") || "Delete Selected",
-        icon: <UserX className="h-4 w-4" />,
+        label: t("users.bulk.delete"),
+        icon: <UserX className="h-4 w-4" aria-hidden="true" />,
         variant: "destructive" as const,
         onClick: async (selectedIds: string[]) => {
           await handleBulkDelete(selectedIds);
         },
         requiresConfirmation: true,
-        confirmTitle: t("users.deleteTitle") || "Delete Users",
-        confirmDescription:
-          t("users.deleteConfirm") || "Are you sure you want to delete the selected users?",
+        confirmTitle: t("users.deleteTitle"),
+        confirmDescription: t("users.deleteConfirm"),
         requiredPermission: SYSTEM_PERMISSIONS.USERS_DELETE,
       },
     ],
@@ -85,7 +84,7 @@ export function UsersView() {
       columns: [
         {
           key: "username",
-          label: t("users.columns.username") || "Username",
+          label: t("users.columns.username"),
           sortable: true,
           render: (_val: unknown, user: UsersEntity) => (
             <span className="font-medium">{user.username}</span>
@@ -93,37 +92,38 @@ export function UsersView() {
         },
         {
           key: "name",
-          label: t("users.columns.name") || "Name",
+          label: t("users.columns.name"),
           render: (_val: unknown, user: UsersEntity) => <span>{user.displayName}</span>,
         },
         {
           key: "email",
-          label: t("users.columns.email") || "Email",
+          label: t("users.columns.email"),
           render: (_val: unknown, user: UsersEntity) =>
             user.email ? (
-              <a href={`mailto:${user.email}`} className="text-sm text-primary hover:underline">
+              <a
+                href={`mailto:${user.email}`}
+                className="text-sm text-nx-accent hover:underline"
+              >
                 {user.email}
               </a>
             ) : (
-              <span className="text-muted-foreground">—</span>
+              <span className="text-nx-ink-3">—</span>
             ),
         },
         {
           key: "isActive",
-          label: t("users.columns.status") || "Status",
+          label: t("users.columns.status"),
           render: (_val: unknown, user: UsersEntity) => (
             <Badge variant={user.isActive ? "success" : "secondary"}>
-              {user.isActive
-                ? t("users.status.active") || "Active"
-                : t("users.status.inactive") || "Inactive"}
+              {user.isActive ? t("users.status.active") : t("users.status.inactive")}
             </Badge>
           ),
         },
         {
           key: "createdAt",
-          label: t("users.columns.createdAt") || "Joined",
+          label: t("users.columns.createdAt"),
           render: (_val: unknown, user: UsersEntity) => (
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-nx-ink-2">
               {user.createdAt ? formatDateUtc(user.createdAt) : "—"}
             </span>
           ),
@@ -134,8 +134,8 @@ export function UsersView() {
         const rowActions: CrudAction<UsersEntity>[] = [
           // Activate (shown when inactive)
           {
-            label: t("users.actions.activate") || "Activate",
-            icon: <UserCheck className="h-4 w-4" />,
+            label: t("users.actions.activate"),
+            icon: <UserCheck className="h-4 w-4" aria-hidden="true" />,
             onClick: (user: UsersEntity) => handleToggleActive(user.id, true),
             show: (user: UsersEntity) => !user.isActive,
             loading: isTogglingActive,
@@ -143,19 +143,19 @@ export function UsersView() {
           },
           // Deactivate (shown when active)
           {
-            label: t("users.actions.deactivate") || "Deactivate",
-            icon: <UserX className="h-4 w-4" />,
+            label: t("users.actions.deactivate"),
+            icon: <UserX className="h-4 w-4" aria-hidden="true" />,
             onClick: (user: UsersEntity) => handleToggleActive(user.id, false),
             show: (user: UsersEntity) => user.isActive,
-            confirmTitle: t("users.actions.deactivate") || "Deactivate User",
-            confirmDescription: t("users.deactivatedDesc") || "This user will lose access.",
+            confirmTitle: t("users.actions.deactivate"),
+            confirmDescription: t("users.deactivatedDesc"),
             loading: isTogglingActive,
             requiredPermission: SYSTEM_PERMISSIONS.USERS_UPDATE,
           },
           // Unlock
           {
-            label: t("users.actions.unlock") || "Unlock Account",
-            icon: <Unlock className="h-4 w-4" />,
+            label: t("users.actions.unlock"),
+            icon: <Unlock className="h-4 w-4" aria-hidden="true" />,
             onClick: (user: UsersEntity) => handleUnlock(user.id),
             requiredPermission: SYSTEM_PERMISSIONS.USERS_UNLOCK,
           },

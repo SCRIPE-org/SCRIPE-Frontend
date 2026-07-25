@@ -5,6 +5,10 @@
  * AvatarUpload — Profile picture upload component
  *
  * Features: drag & drop, file validation, preview, upload/remove buttons.
+ * The multipart (File) upload contract here is intentionally kept distinct
+ * from `@core/ui/image-uploader`'s base64-conversion flow — this component's
+ * `onFileSelect` / `onUpload` / `onRemove` map straight onto the real avatar
+ * mutations, so it is not swapped onto that primitive.
  */
 import { useRef, useState, useCallback } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
@@ -63,14 +67,10 @@ export function AvatarUpload({
         const validated = onFileSelect(file);
         setSelectedFile(validated);
       } catch (err: unknown) {
-        if (err instanceof Error) {
-          setLocalError(err.message);
-        } else {
-          setLocalError("An unknown error occurred");
-        }
+        setLocalError(err instanceof Error ? err.message : t("profile.avatar.unknownError"));
       }
     },
-    [onFileSelect]
+    [onFileSelect, t]
   );
 
   const handleDrop = useCallback(
@@ -90,6 +90,10 @@ export function AvatarUpload({
     }
   };
 
+  const openFilePicker = useCallback(() => {
+    inputRef.current?.click();
+  }, []);
+
   const displayError = localError || error;
 
   return (
@@ -102,28 +106,51 @@ export function AvatarUpload({
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
         className={cn(
-          "flex flex-col items-center gap-6 rounded-xl border-2 border-dashed p-6 transition-all duration-200 sm:flex-row",
-          isDragging ? "border-primary bg-primary/5" : "border-border/40 hover:border-border"
+          "flex flex-col items-center gap-6 rounded-nx-lg border-2 border-dashed p-6 sm:flex-row",
+          "transition-[border-color,background-color] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+          isDragging ? "border-nx-accent bg-nx-accent-wash" : "border-nx-line hover:border-nx-line-hi"
         )}
       >
-        <div className="group relative cursor-pointer" onClick={() => inputRef.current?.click()}>
-          <Avatar className="h-24 w-24 border-2 border-primary/20 shadow-lg transition-transform group-hover:scale-105">
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={openFilePicker}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              openFilePicker();
+            }
+          }}
+          aria-label={t("profile.avatar.changePhoto")}
+          className="group relative cursor-pointer rounded-full focus-visible:outline-none focus-visible:shadow-nx-focus"
+        >
+          <Avatar className="h-24 w-24 border border-nx-line shadow-nx-sm">
             {displayUrl && !imageError && (
-              <AvatarImage src={displayUrl} alt="Profile" onError={() => setImageError(true)} />
+              <AvatarImage
+                src={displayUrl}
+                alt={t("profile.avatar.alt")}
+                onError={() => setImageError(true)}
+              />
             )}
-            <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80 text-2xl font-semibold text-primary-foreground">
+            <AvatarFallback className="bg-nx-accent-wash text-2xl font-semibold text-nx-accent">
               {initials}
             </AvatarFallback>
           </Avatar>
-          <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-            <Camera className="h-6 w-6 text-white" />
+          <div
+            className={cn(
+              "absolute inset-0 flex items-center justify-center rounded-full bg-scrim opacity-0",
+              "transition-opacity duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+              "group-hover:opacity-100 group-focus-visible:opacity-100"
+            )}
+          >
+            <Camera className="h-6 w-6 text-nx-on-fill" aria-hidden="true" />
           </div>
         </div>
 
-        <div className="space-y-1.5 text-center sm:text-start rtl:sm:text-end">
-          <p className="text-sm font-medium">{t("profile.avatar.clickOrDrag")}</p>
-          <p className="text-xs text-muted-foreground">{t("profile.avatar.formats")}</p>
-          <p className="text-xs text-muted-foreground">{t("profile.avatar.recommended")}</p>
+        <div className="space-y-1.5 text-center sm:text-start">
+          <p className="text-sm font-medium text-nx-ink">{t("profile.avatar.clickOrDrag")}</p>
+          <p className="text-xs text-nx-ink-3">{t("profile.avatar.formats")}</p>
+          <p className="text-xs text-nx-ink-3">{t("profile.avatar.recommended")}</p>
         </div>
       </div>
 
@@ -150,7 +177,7 @@ export function AvatarUpload({
           disabled={!selectedFile}
           className="min-w-[120px]"
         >
-          {!isUploading && <Upload className="me-2 h-4 w-4" />}
+          {!isUploading && <Upload className="me-2 h-4 w-4" aria-hidden="true" />}
           {t("profile.avatar.upload")}
         </Button>
 
@@ -162,7 +189,7 @@ export function AvatarUpload({
             loading={isRemoving}
             className="text-destructive hover:text-destructive"
           >
-            {!isRemoving && <Trash2 className="me-2 h-4 w-4" />}
+            {!isRemoving && <Trash2 className="me-2 h-4 w-4" aria-hidden="true" />}
             {t("profile.avatar.remove")}
           </Button>
         )}

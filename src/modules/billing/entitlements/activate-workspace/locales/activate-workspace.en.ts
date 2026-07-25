@@ -16,6 +16,30 @@ export const en = {
       cancel: "Cancel",
       processing: "Processing...",
       createFailed: "Payment Session Failed",
+      monthly: "Monthly",
+      yearly: "Yearly",
+      statusBox: {
+        selectedPlan: "Selected Plan:",
+        billingCycle: "Billing cycle:",
+        currency: "Currency:",
+      },
+      changePlanDialog: {
+        description: "Choose a new plan for your workspace. Free plan activates instantly.",
+        planLabel: "Plan",
+        planPlaceholder: "Select a plan...",
+        freeSuffix: "Free",
+        billingCycleLabel: "Billing cycle",
+        continueToCheckout: "Continue to checkout",
+      },
+      toasts: {
+        sessionFailedDescription: "Could not create checkout session. Please try again later.",
+        connectionErrorTitle: "Connection Error",
+        genericError: "An unexpected error occurred.",
+        workspaceActivatedTitle: "Workspace Activated",
+        workspaceActivatedDescription:
+          "Your workspace was successfully switched to the Free plan and activated.",
+        planSwitchFailedTitle: "Plan Switch Failed",
+      },
     },
   },
 };

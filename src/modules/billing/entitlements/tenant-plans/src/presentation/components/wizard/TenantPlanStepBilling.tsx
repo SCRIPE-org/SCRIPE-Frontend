@@ -21,45 +21,54 @@ export function TenantPlanStepBilling({ form, updateForm, t }: TenantPlanStepBil
     <div className="space-y-8">
       {/* ── Billing Cycles ── */}
       <div className="space-y-4">
-        <div className="flex items-center gap-2 border-b pb-2">
-          <h3 className="text-lg font-semibold">
-            {t("entitlements.tenantPlans.billingCycles") || "Billing Cycles"}
+        <div className="flex items-center gap-2 border-b border-nx-line pb-2">
+          <h3 className="text-lg font-semibold leading-tight tracking-tight text-nx-ink">
+            {t("entitlements.tenantPlans.billingCycles")}
           </h3>
-          <Info className="h-4 w-4 text-muted-foreground" />
+          <Info className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="flex items-center justify-between rounded-lg border bg-card p-4">
+          <div className="flex items-center justify-between rounded-nx-md border border-nx-line bg-nx-surface p-4">
             <div className="space-y-0.5">
-              <Label className="text-base">
-                {t("entitlements.tenantPlans.allowMonthly") || "Monthly"}
+              <Label htmlFor="allowMonthly" className="text-base">
+                {t("entitlements.tenantPlans.allowMonthly")}
               </Label>
-              <p className="text-xs text-muted-foreground">Billed every month</p>
+              <p className="text-xs leading-relaxed text-nx-ink-3">
+                {t("entitlements.tenantPlans.billingCycleMonthlyDesc")}
+              </p>
             </div>
             <Switch
+              id="allowMonthly"
               checked={form.allowMonthly ?? true}
               onCheckedChange={(checked) => updateForm({ allowMonthly: checked })}
             />
           </div>
-          <div className="flex items-center justify-between rounded-lg border bg-card p-4">
+          <div className="flex items-center justify-between rounded-nx-md border border-nx-line bg-nx-surface p-4">
             <div className="space-y-0.5">
-              <Label className="text-base">
-                {t("entitlements.tenantPlans.allowYearly") || "Yearly"}
+              <Label htmlFor="allowYearly" className="text-base">
+                {t("entitlements.tenantPlans.allowYearly")}
               </Label>
-              <p className="text-xs text-muted-foreground">Billed every year</p>
+              <p className="text-xs leading-relaxed text-nx-ink-3">
+                {t("entitlements.tenantPlans.billingCycleYearlyDesc")}
+              </p>
             </div>
             <Switch
+              id="allowYearly"
               checked={form.allowYearly ?? false}
               onCheckedChange={(checked) => updateForm({ allowYearly: checked })}
             />
           </div>
-          <div className="flex items-center justify-between rounded-lg border bg-card p-4">
+          <div className="flex items-center justify-between rounded-nx-md border border-nx-line bg-nx-surface p-4">
             <div className="space-y-0.5">
-              <Label className="text-base">
-                {t("entitlements.tenantPlans.allowLifetime") || "Lifetime"}
+              <Label htmlFor="allowLifetime" className="text-base">
+                {t("entitlements.tenantPlans.allowLifetime")}
               </Label>
-              <p className="text-xs text-muted-foreground">One-time payment</p>
+              <p className="text-xs leading-relaxed text-nx-ink-3">
+                {t("entitlements.tenantPlans.billingCycleLifetimeDesc")}
+              </p>
             </div>
             <Switch
+              id="allowLifetime"
               checked={form.allowLifetime ?? false}
               onCheckedChange={(checked) => updateForm({ allowLifetime: checked })}
             />
@@ -69,17 +78,12 @@ export function TenantPlanStepBilling({ form, updateForm, t }: TenantPlanStepBil
 
       {/* ── Quotas & Access ── */}
       <div className="space-y-4">
-        <h3 className="border-b pb-2 text-lg font-semibold">
-          {t("entitlements.tenantPlans.quotasAndAccess") || "Quotas & Access"}
+        <h3 className="border-b border-nx-line pb-2 text-lg font-semibold leading-tight tracking-tight text-nx-ink">
+          {t("entitlements.tenantPlans.quotasAndAccess")}
         </h3>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="maxUsers">
-              {t("entitlements.tenantPlans.maxUsers") || "Max Users"}{" "}
-              <span className="ml-1 text-xs font-normal text-muted-foreground">
-                (-1 for unlimited)
-              </span>
-            </Label>
+            <Label htmlFor="maxUsers">{t("entitlements.tenantPlans.maxUsers")}</Label>
             <Input
               id="maxUsers"
               type="number"
@@ -87,11 +91,16 @@ export function TenantPlanStepBilling({ form, updateForm, t }: TenantPlanStepBil
               value={form.maxUsers ?? -1}
               onChange={(e) => updateForm({ maxUsers: parseInt(e.target.value, 10) || -1 })}
             />
+            <p className="text-xs leading-relaxed text-nx-ink-3">
+              {t("entitlements.tenantPlans.maxUsersDesc")}
+            </p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="maxSubscribers">
-              {t("entitlements.tenantPlans.maxSubscribers") || "Max Total Subscribers"}{" "}
-              <span className="ml-1 text-xs font-normal text-muted-foreground">(Optional)</span>
+            <Label htmlFor="maxSubscribers" className="flex items-center gap-1.5">
+              {t("entitlements.tenantPlans.maxSubscribers")}
+              <span className="text-xs font-normal text-nx-ink-3">
+                {t("entitlements.tenantPlans.maxSubscribersOptionalHint")}
+              </span>
             </Label>
             <Input
               id="maxSubscribers"
@@ -103,22 +112,22 @@ export function TenantPlanStepBilling({ form, updateForm, t }: TenantPlanStepBil
                   maxSubscribers: e.target.value ? parseInt(e.target.value, 10) : undefined,
                 })
               }
-              placeholder="e.g. 100 for limited release"
+              placeholder={t("entitlements.tenantPlans.maxSubscribersPlaceholder")}
             />
           </div>
         </div>
 
-        <div className="flex items-center justify-between rounded-lg border bg-muted/20 p-4">
+        <div className="flex items-center justify-between rounded-nx-md border border-nx-line bg-nx-raised p-4">
           <div className="space-y-0.5">
-            <Label>
-              {t("entitlements.tenantPlans.isSelfServiceEnabled") || "Self-Service Checkout"}
+            <Label htmlFor="isSelfServiceEnabled">
+              {t("entitlements.tenantPlans.isSelfServiceEnabled")}
             </Label>
-            <p className="text-sm text-muted-foreground">
-              {t("entitlements.tenantPlans.isSelfServiceEnabledDesc") ||
-                "Allow users to subscribe to this plan directly without admin approval."}
+            <p className="text-sm leading-relaxed text-nx-ink-2">
+              {t("entitlements.tenantPlans.isSelfServiceEnabledDesc")}
             </p>
           </div>
           <Switch
+            id="isSelfServiceEnabled"
             checked={form.isSelfServiceEnabled ?? true}
             onCheckedChange={(checked) => updateForm({ isSelfServiceEnabled: checked })}
           />
@@ -127,29 +136,29 @@ export function TenantPlanStepBilling({ form, updateForm, t }: TenantPlanStepBil
 
       {/* ── Trial & Grace Period ── */}
       <div className="space-y-4">
-        <h3 className="border-b pb-2 text-lg font-semibold">
-          {t("entitlements.tenantPlans.trialAndGrace") || "Trial & Grace Period"}
+        <h3 className="border-b border-nx-line pb-2 text-lg font-semibold leading-tight tracking-tight text-nx-ink">
+          {t("entitlements.tenantPlans.trialAndGrace")}
         </h3>
 
-        <div className="flex items-center justify-between rounded-lg border bg-muted/20 p-4">
+        <div className="flex items-center justify-between rounded-nx-md border border-nx-line bg-nx-raised p-4">
           <div className="space-y-0.5">
-            <Label>{t("entitlements.tenantPlans.allowTrial") || "Allow Free Trial"}</Label>
-            <p className="text-sm text-muted-foreground">
-              {t("entitlements.tenantPlans.allowTrialDesc") ||
-                "Offer a free trial period before first billing."}
+            <Label htmlFor="allowTrial">{t("entitlements.tenantPlans.allowTrial")}</Label>
+            <p className="text-sm leading-relaxed text-nx-ink-2">
+              {t("entitlements.tenantPlans.allowTrialDesc")}
             </p>
           </div>
           <Switch
+            id="allowTrial"
             checked={form.allowTrial ?? false}
             onCheckedChange={(checked) => updateForm({ allowTrial: checked })}
           />
         </div>
 
         {form.allowTrial && (
-          <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 animate-in fade-in slide-in-from-top-2">
+          <div className="motion-safe:animate-in motion-safe:fade-in motion-reduce:animate-none rounded-nx-md border border-nx-accent bg-nx-accent-wash p-4 duration-nx-standard ease-nx-enter">
             <div className="max-w-xs space-y-2">
-              <Label htmlFor="trialDays" className="text-primary">
-                {t("entitlements.tenantPlans.trialDays") || "Trial Duration (Days)"}
+              <Label htmlFor="trialDays" className="text-nx-accent">
+                {t("entitlements.tenantPlans.trialDays")}
               </Label>
               <Input
                 id="trialDays"
@@ -158,19 +167,20 @@ export function TenantPlanStepBilling({ form, updateForm, t }: TenantPlanStepBil
                 max={365}
                 value={form.trialDays ?? 14}
                 onChange={(e) => updateForm({ trialDays: parseInt(e.target.value, 10) || 14 })}
-                className="border-primary/20 focus-visible:ring-primary/30"
               />
+              <p className="text-xs leading-relaxed text-nx-ink-3">
+                {t("entitlements.tenantPlans.trialDaysDesc")}
+              </p>
             </div>
           </div>
         )}
 
         <div className="space-y-2 pt-2">
           <Label htmlFor="gracePeriodDays">
-            {t("entitlements.tenantPlans.gracePeriodDays") || "Grace Period (Days)"}
+            {t("entitlements.tenantPlans.gracePeriodDays")}
           </Label>
-          <p className="mb-2 text-xs text-muted-foreground">
-            {t("entitlements.tenantPlans.gracePeriodDesc") ||
-              "Days to allow access after billing fails before suspending."}
+          <p className="text-xs leading-relaxed text-nx-ink-3">
+            {t("entitlements.tenantPlans.gracePeriodDesc")}
           </p>
           <Input
             id="gracePeriodDays"

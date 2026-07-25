@@ -12,7 +12,8 @@ import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
-import { Loader2, Shield } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { Shield } from "lucide-react";
 import { useSetRolesViewModel } from "../viewmodels/useSetRolesViewModel";
 
 interface SetRolesDialogProps {
@@ -78,24 +79,18 @@ export function SetRolesDialog({
     <GenericModal
       open={open}
       onOpenChange={handleClose}
-      title={t("userGroups.rolesTab.manageRoles") || "Manage Roles"}
-      description={
-        t("userGroups.rolesTab.manageRolesDesc") ||
-        "Select roles for this group. All members will inherit the selected roles."
-      }
+      title={t("userGroups.rolesTab.manageRoles")}
+      description={t("userGroups.rolesTab.manageRolesDesc")}
       size="md"
     >
       <div className="space-y-4 py-2">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-10 text-muted-foreground">
-            <Loader2 className="mb-2 h-8 w-8 animate-spin" />
-            <p>{t("common.loading") || "Loading..."}</p>
-          </div>
+          <LoadingSpinner />
         ) : (
           <div className="space-y-2">
             <Label className="flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              {t("userGroups.rolesTab.selectRoles") || "Select Roles"}
+              <Shield className="h-4 w-4" aria-hidden="true" />
+              {t("userGroups.rolesTab.selectRoles")}
             </Label>
             <GenericSelect
               options={roleOptions}
@@ -103,24 +98,19 @@ export function SetRolesDialog({
               onValueChange={(val: string | string[]) =>
                 setSelectedRoleIds(Array.isArray(val) ? val : [val])
               }
-              placeholder={
-                t("userGroups.rolesTab.selectRolesPlaceholder") || "Search and select roles..."
-              }
+              placeholder={t("userGroups.rolesTab.selectRolesPlaceholder")}
               type="multi"
             />
-            <p className="text-xs text-muted-foreground">
-              {t("userGroups.rolesTab.rolesHelp") ||
-                "Saving replaces all current role assignments for this group."}
-            </p>
+            <p className="text-xs text-nx-ink-3">{t("userGroups.rolesTab.rolesHelp")}</p>
           </div>
         )}
 
-        <div className="mt-4 flex justify-end gap-2 border-t pt-4">
+        <div className="mt-4 flex justify-end gap-2 border-t border-nx-line pt-4">
           <Button variant="outline" onClick={() => handleClose(false)} disabled={isSubmitting}>
-            {t("common.cancel") || "Cancel"}
+            {t("common.cancel")}
           </Button>
           <Button onClick={handleSave} loading={isSubmitting} disabled={isLoading}>
-            {t("common.save") || "Save Roles"}
+            {t("userGroups.rolesTab.saveRoles")}
           </Button>
         </div>
       </div>

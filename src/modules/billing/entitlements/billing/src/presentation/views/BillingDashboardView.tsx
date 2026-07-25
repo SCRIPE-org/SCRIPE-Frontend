@@ -81,7 +81,7 @@ function RevenueTrendCard({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-info" />
+          <TrendingUp className="h-5 w-5 text-info" aria-hidden="true" />
           {title}
         </CardTitle>
         <CardDescription>{description}</CardDescription>
@@ -90,7 +90,7 @@ function RevenueTrendCard({
         {data.length > 0 ? (
           <ChartContainer config={chartConfig} className="h-[280px] w-full">
             <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+              <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" className="text-xs" tickLine={false} axisLine={false} />
               <YAxis
                 className="text-xs"
@@ -115,7 +115,7 @@ function RevenueTrendCard({
             </AreaChart>
           </ChartContainer>
         ) : (
-          <div className="flex h-[280px] items-center justify-center text-muted-foreground">
+          <div className="flex h-[280px] items-center justify-center text-nx-ink-2">
             {noDataLabel}
           </div>
         )}
@@ -144,7 +144,7 @@ function EditionBreakdownChart({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <BarChart3 className="h-5 w-5 text-primary" />
+          <BarChart3 className="h-5 w-5 text-nx-accent" aria-hidden="true" />
           {title}
         </CardTitle>
       </CardHeader>
@@ -152,7 +152,7 @@ function EditionBreakdownChart({
         {data.length > 0 ? (
           <ChartContainer config={chartConfig} className="h-[280px] w-full">
             <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+              <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="editionName" className="text-xs" tickLine={false} axisLine={false} />
               <YAxis
                 className="text-xs"
@@ -165,7 +165,7 @@ function EditionBreakdownChart({
             </BarChart>
           </ChartContainer>
         ) : (
-          <div className="flex h-[280px] items-center justify-center text-muted-foreground">
+          <div className="flex h-[280px] items-center justify-center text-nx-ink-2">
             {noDataLabel}
           </div>
         )}
@@ -290,11 +290,13 @@ export function BillingDashboardView() {
       {/* ── Header ── */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">{t("billing.dashboard.title")}</h2>
-          <p className="text-muted-foreground">{t("billing.dashboard.description")}</p>
+          <h2 className="text-2xl font-bold tracking-tight text-nx-ink">
+            {t("billing.dashboard.title")}
+          </h2>
+          <p className="text-nx-ink-2">{t("billing.dashboard.description")}</p>
         </div>
         <Button variant="outline" size="sm" onClick={() => refetch()}>
-          <RefreshCw className="me-2 h-4 w-4" />
+          <RefreshCw className="me-2 h-4 w-4" aria-hidden="true" />
           {t("common.refresh")}
         </Button>
       </div>

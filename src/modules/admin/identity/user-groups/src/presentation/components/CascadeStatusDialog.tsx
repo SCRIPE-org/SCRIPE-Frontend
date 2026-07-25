@@ -2,6 +2,7 @@
 
 import { Button } from "@core/ui/button";
 import { GenericModal } from "@core/crud/components/generic-modal";
+import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { AlertTriangle } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Checkbox } from "@core/ui/checkbox";
@@ -45,12 +46,8 @@ export function CascadeStatusDialog({
     onOpenChange(v);
   };
 
-  const actionText = isActive
-    ? t("common.activate") || "Activate"
-    : t("common.deactivate") || "Deactivate";
-  const actionTextToLower = isActive
-    ? t("common.activate")?.toLowerCase() || "activate"
-    : t("common.deactivate")?.toLowerCase() || "deactivate";
+  const actionText = isActive ? t("common.activate") : t("common.deactivate");
+  const actionTextToLower = actionText.toLowerCase();
 
   return (
     <GenericModal
@@ -59,31 +56,23 @@ export function CascadeStatusDialog({
       title={title || actionText}
       description={
         description ||
-        t("common.statusConfirmDesc")
-          ?.replace("{status}", actionTextToLower)
-          .replace("{item}", itemName || "") ||
-        `Are you sure you want to ${actionTextToLower} ${itemName || "this item"}?`
+        t("userGroups.statusConfirmMessage", {
+          action: actionTextToLower,
+          name: itemName || t("userGroups.selectedGroupSingular"),
+        })
       }
       size="md"
     >
       <div className="space-y-4 py-2">
-        <div className="rounded-md border border-warning/20 bg-warning/10 p-4">
-          <div className="flex gap-3">
-            <AlertTriangle className="h-5 w-5 text-warning" />
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-warning">
-                {t("userGroups.cascadeStatusWarning") ||
-                  `Warning: This action can affect assigned admins.`}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {t("userGroups.cascadeStatusDesc")?.replace("{status}", actionTextToLower) ||
-                  `You can optionally ${actionTextToLower} all admins assigned to this group as well.`}
-              </p>
-            </div>
-          </div>
-        </div>
+        <Alert variant="warning">
+          <AlertTriangle aria-hidden="true" />
+          <AlertTitle>{t("userGroups.cascadeStatusWarning")}</AlertTitle>
+          <AlertDescription>
+            {t("userGroups.cascadeStatusDesc", { status: actionTextToLower })}
+          </AlertDescription>
+        </Alert>
 
-        <div className="flex items-start space-x-2 pt-2">
+        <div className="flex items-start gap-2 pt-2">
           <Checkbox
             id="cascadeAdminsStatus"
             checked={cascadeAdmins}
@@ -91,19 +80,17 @@ export function CascadeStatusDialog({
           />
           <div className="grid gap-1.5 leading-none">
             <Label htmlFor="cascadeAdminsStatus" className="cursor-pointer font-medium">
-              {t("userGroups.alsoStatusAdmins")?.replace("{status}", actionTextToLower) ||
-                `Also ${actionTextToLower} assigned admins`}
+              {t("userGroups.alsoStatusAdmins", { status: actionTextToLower })}
             </Label>
-            <p className="text-xs text-muted-foreground">
-              {t("userGroups.alsoStatusAdminsDesc")?.replace("{status}", actionTextToLower) ||
-                `Check this to cascade this status change to all admins in the group.`}
+            <p className="text-xs text-nx-ink-3">
+              {t("userGroups.alsoStatusAdminsDesc", { status: actionTextToLower })}
             </p>
           </div>
         </div>
 
-        <div className="mt-4 flex justify-end gap-2 border-t pt-4">
+        <div className="mt-4 flex justify-end gap-2 border-t border-nx-line pt-4">
           <Button variant="outline" onClick={() => handleClose(false)} disabled={isPending}>
-            {t("common.cancel") || "Cancel"}
+            {t("common.cancel")}
           </Button>
           <Button
             variant={isActive ? "default" : "secondary"}

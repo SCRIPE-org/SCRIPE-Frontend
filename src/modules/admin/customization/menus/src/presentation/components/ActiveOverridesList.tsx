@@ -11,6 +11,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { EmptyState } from "@core/ui/empty-state";
 import type { ActiveOverrideEntry } from "../viewmodels/useMenuCustomizeViewModel";
 import { Trash2, Pencil, EyeOff, ArrowUpDown, FolderInput, Sparkles } from "lucide-react";
 import { cn } from "@core/common/utils";
@@ -44,15 +45,15 @@ export function ActiveOverridesList({
 
   if (overrides.length === 0) {
     return (
-      <Card className="border-dashed">
-        <CardContent className="flex flex-col items-center justify-center py-8 text-center">
-          <div className="mb-3 rounded-full bg-muted p-3">
-            <Sparkles className="h-5 w-5 text-muted-foreground" />
-          </div>
-          <p className="text-sm text-muted-foreground">{t("menus.noActiveOverrides")}</p>
-          <p className="mt-1 text-xs text-muted-foreground/70">
-            {t("menus.noActiveOverridesHint")}
-          </p>
+      <Card>
+        <CardContent>
+          <EmptyState
+            bare
+            size="sm"
+            icon={Sparkles}
+            title={t("menus.noActiveOverrides")}
+            description={t("menus.noActiveOverridesHint")}
+          />
         </CardContent>
       </Card>
     );
@@ -64,7 +65,7 @@ export function ActiveOverridesList({
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium">
             {t("menus.activeOverridesTitle")}
-            <Badge variant="secondary" className="ml-2 text-[10px]">
+            <Badge variant="secondary" className="ms-2 text-[10px]">
               {overrides.length}
             </Badge>
           </CardTitle>
@@ -79,15 +80,29 @@ export function ActiveOverridesList({
             return (
               <div
                 key={entry.overrideId}
+                role="button"
+                tabIndex={0}
+                aria-pressed={isSelected}
                 onClick={() => onSelectItem(entry.menuItemId)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onSelectItem(entry.menuItemId);
+                  }
+                }}
                 className={cn(
-                  "flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2",
-                  "transition-colors duration-150",
-                  isSelected ? "bg-primary/10 ring-1 ring-primary/20" : "hover:bg-muted/50"
+                  "flex cursor-pointer items-center gap-3 rounded-nx-md px-3 py-2",
+                  "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                  "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                  isSelected
+                    ? "bg-nx-accent-wash ring-1 ring-[color:color-mix(in_srgb,var(--nx-accent)_20%,transparent)]"
+                    : "hover:bg-nx-hover"
                 )}
               >
                 {/* Item name */}
-                <span className="min-w-0 flex-1 truncate text-sm font-medium">{itemName}</span>
+                <span className="min-w-0 flex-1 truncate text-sm font-medium text-nx-ink">
+                  {itemName}
+                </span>
 
                 {/* Change badges */}
                 <div className="flex shrink-0 items-center gap-1">
@@ -96,16 +111,16 @@ export function ActiveOverridesList({
                       variant="outline"
                       className="gap-0.5 border-0 bg-info/15 px-1.5 py-0 text-[9px] text-info"
                     >
-                      <Pencil className="h-2 w-2" />
+                      <Pencil className="h-2 w-2" aria-hidden="true" />
                       {t("menus.badgeRenamed")}
                     </Badge>
                   )}
                   {entry.override.orderOverride != null && (
                     <Badge
                       variant="outline"
-                      className="gap-0.5 border-0 bg-primary/15 px-1.5 py-0 text-[9px] text-primary"
+                      className="gap-0.5 border-0 bg-nx-accent-wash px-1.5 py-0 text-[9px] text-nx-accent"
                     >
-                      <ArrowUpDown className="h-2 w-2" />
+                      <ArrowUpDown className="h-2 w-2" aria-hidden="true" />
                       {t("menus.badgeReordered")}
                     </Badge>
                   )}
@@ -114,7 +129,7 @@ export function ActiveOverridesList({
                       variant="outline"
                       className="gap-0.5 border-0 bg-success/15 px-1.5 py-0 text-[9px] text-success"
                     >
-                      <FolderInput className="h-2 w-2" />
+                      <FolderInput className="h-2 w-2" aria-hidden="true" />
                       {t("menus.badgeMoved")}
                     </Badge>
                   )}
@@ -123,7 +138,7 @@ export function ActiveOverridesList({
                       variant="outline"
                       className="gap-0.5 border-0 bg-destructive/15 px-1.5 py-0 text-[9px] text-destructive"
                     >
-                      <EyeOff className="h-2 w-2" />
+                      <EyeOff className="h-2 w-2" aria-hidden="true" />
                       {t("menus.badgeHidden")}
                     </Badge>
                   )}
@@ -133,14 +148,15 @@ export function ActiveOverridesList({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive"
+                  className="h-7 w-7 shrink-0 text-nx-ink-3 hover:text-destructive"
                   onClick={(e) => {
                     e.stopPropagation();
                     onRemoveOverride(entry.overrideId);
                   }}
                   disabled={isDeleting}
+                  aria-label={t("menus.removeOverride")}
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
+                  <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                 </Button>
               </div>
             );

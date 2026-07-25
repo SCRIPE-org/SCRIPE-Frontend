@@ -30,7 +30,7 @@ export function BrandingSection({ settings, updateField }: BrandingSectionProps)
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Palette className="h-5 w-5" />
+          <Palette className="h-5 w-5" aria-hidden="true" />
           {t("tenantSettings.branding")}
         </CardTitle>
         <CardDescription>{t("tenantSettings.brandingDescription")}</CardDescription>
@@ -44,7 +44,7 @@ export function BrandingSection({ settings, updateField }: BrandingSectionProps)
             value={settings.companyName ?? ""}
             onChange={(e) => updateField("companyName", e.target.value || null)}
           />
-          <p className="text-xs text-muted-foreground">{t("tenantSettings.companyNameHelp")}</p>
+          <p className="text-xs text-nx-ink-3">{t("tenantSettings.companyNameHelp")}</p>
         </div>
 
         {/* Row 2: Logo — ImageUploadField (drag-drop + URL) */}
@@ -64,6 +64,7 @@ export function BrandingSection({ settings, updateField }: BrandingSectionProps)
             <div className="flex gap-2">
               <Input
                 type="color"
+                aria-label={t("tenantSettings.primaryColor")}
                 value={settings.primaryColor || "#000000"}
                 onChange={(e) => updateField("primaryColor", e.target.value || null)}
                 className="h-9 w-12 cursor-pointer p-1"
@@ -75,13 +76,14 @@ export function BrandingSection({ settings, updateField }: BrandingSectionProps)
                 placeholder="#3b82f6"
               />
             </div>
-            <p className="text-xs text-muted-foreground">{t("tenantSettings.primaryColorHelp")}</p>
+            <p className="text-xs text-nx-ink-3">{t("tenantSettings.primaryColorHelp")}</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="secondaryColor">{t("tenantSettings.secondaryColor")}</Label>
             <div className="flex gap-2">
               <Input
                 type="color"
+                aria-label={t("tenantSettings.secondaryColor")}
                 value={settings.secondaryColor || "#6366f1"}
                 onChange={(e) => updateField("secondaryColor", e.target.value || null)}
                 className="h-9 w-12 cursor-pointer p-1"
@@ -93,7 +95,7 @@ export function BrandingSection({ settings, updateField }: BrandingSectionProps)
                 placeholder="#6366f1"
               />
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-nx-ink-3">
               {t("tenantSettings.secondaryColorHelp")}
             </p>
           </div>
@@ -119,7 +121,7 @@ export function BrandingSection({ settings, updateField }: BrandingSectionProps)
               onChange={(e) => updateField("loginHeadline", e.target.value || null)}
               placeholder={t("tenantSettings.loginHeadlinePlaceholder")}
             />
-            <p className="text-xs text-muted-foreground">{t("tenantSettings.loginHeadlineHelp")}</p>
+            <p className="text-xs text-nx-ink-3">{t("tenantSettings.loginHeadlineHelp")}</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="loginSubtitle">{t("tenantSettings.loginSubtitle")}</Label>
@@ -129,7 +131,7 @@ export function BrandingSection({ settings, updateField }: BrandingSectionProps)
               onChange={(e) => updateField("loginSubtitle", e.target.value || null)}
               placeholder={t("tenantSettings.loginSubtitlePlaceholder")}
             />
-            <p className="text-xs text-muted-foreground">{t("tenantSettings.loginSubtitleHelp")}</p>
+            <p className="text-xs text-nx-ink-3">{t("tenantSettings.loginSubtitleHelp")}</p>
           </div>
         </div>
       </CardContent>

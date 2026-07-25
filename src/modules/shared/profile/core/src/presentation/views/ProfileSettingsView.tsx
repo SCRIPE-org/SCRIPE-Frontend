@@ -26,10 +26,11 @@ import { ProfileSessionsTab } from "../components/ProfileSessionsTab";
 import { ProfileActivityTab } from "../components/ProfileActivityTab";
 
 import { Card, CardContent } from "@core/ui/card";
-import { Button } from "@core/ui/button";
 import { Tabs, TabsContent } from "@core/ui/tabs";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { AlertTriangle, RefreshCw } from "lucide-react";
+import { ErrorMessage } from "@core/ui/error-message";
+import { PageHeader } from "@core/ui/page-header";
+import { UserCog } from "lucide-react";
 
 type ActiveTab = "general" | "security" | "sessions" | "activity";
 
@@ -64,21 +65,11 @@ export function ProfileSettingsView() {
   // that will never resolve. ─────────────────────────────────────
   if (!profileVm.profile) {
     return (
-      <div className="mx-auto flex max-w-5xl flex-col items-center gap-4 px-4 py-16 text-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full border border-destructive/30 bg-destructive/10 text-destructive">
-          <AlertTriangle className="h-6 w-6" />
-        </div>
-        <div>
-          <h2 className="text-base font-semibold text-nx-ink">{t("profile.loadError.title")}</h2>
-          <p className="mt-1 text-sm text-nx-ink-2">
-            {profileVm.error || t("profile.loadError.description")}
-          </p>
-        </div>
-        <Button variant="outline" size="sm" onClick={() => profileVm.refetch()}>
-          <RefreshCw className="me-2 h-4 w-4" />
-          {t("common.retry")}
-        </Button>
-      </div>
+      <ErrorMessage
+        message={profileVm.error || t("profile.loadError.description")}
+        onRetry={() => profileVm.refetch()}
+        fullHeight
+      />
     );
   }
 
@@ -116,11 +107,7 @@ export function ProfileSettingsView() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-      {/* Page Header */}
-      <div className="mb-8 border-b border-nx-line pb-5">
-        <h1 className="text-2xl font-bold tracking-tight text-nx-ink">{t("profile.title")}</h1>
-        <p className="mt-1 text-xs text-nx-ink-2">{t("profile.subtitle")}</p>
-      </div>
+      <PageHeader icon={UserCog} title={t("profile.title")} description={t("profile.subtitle")} />
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as ActiveTab)}>
         <div className="flex flex-col gap-6 md:flex-row md:items-start">

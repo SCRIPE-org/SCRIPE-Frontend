@@ -29,7 +29,7 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Shield className="h-5 w-5" />
+          <Shield className="h-5 w-5" aria-hidden="true" />
           {t("tenantSettings.security")}
         </CardTitle>
         <CardDescription>{t("tenantSettings.securityDescription")}</CardDescription>
@@ -47,7 +47,7 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
               value={settings.passwordMinLength}
               onChange={(e) => updateField("passwordMinLength", parseInt(e.target.value) || 8)}
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-nx-ink-3">
               {t("tenantSettings.passwordMinLengthHelp")}
             </p>
           </div>
@@ -60,7 +60,7 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
               value={settings.passwordExpiryDays ?? 0}
               onChange={(e) => updateField("passwordExpiryDays", parseInt(e.target.value) || null)}
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-nx-ink-3">
               {t("tenantSettings.passwordExpiryDaysHelp")}
             </p>
           </div>
@@ -68,12 +68,12 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
 
         {/* Password Requirements */}
         <div className="grid gap-4 md:grid-cols-3">
-          <div className="flex items-center justify-between rounded-lg border p-3">
+          <div className="flex items-center justify-between rounded-nx-md border border-nx-line p-3">
             <div>
               <Label htmlFor="requireUppercase">
                 {t("tenantSettings.passwordRequireUppercase")}
               </Label>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-nx-ink-3">
                 {t("tenantSettings.passwordRequireUppercaseHelp")}
               </p>
             </div>
@@ -83,10 +83,10 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
               onCheckedChange={(checked) => updateField("passwordRequireUppercase", checked)}
             />
           </div>
-          <div className="flex items-center justify-between rounded-lg border p-3">
+          <div className="flex items-center justify-between rounded-nx-md border border-nx-line p-3">
             <div>
               <Label htmlFor="requireNumber">{t("tenantSettings.passwordRequireNumber")}</Label>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-nx-ink-3">
                 {t("tenantSettings.passwordRequireNumberHelp")}
               </p>
             </div>
@@ -96,10 +96,10 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
               onCheckedChange={(checked) => updateField("passwordRequireNumber", checked)}
             />
           </div>
-          <div className="flex items-center justify-between rounded-lg border p-3">
+          <div className="flex items-center justify-between rounded-nx-md border border-nx-line p-3">
             <div>
               <Label htmlFor="requireSpecial">{t("tenantSettings.passwordRequireSpecial")}</Label>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-nx-ink-3">
                 {t("tenantSettings.passwordRequireSpecialHelp")}
               </p>
             </div>
@@ -122,7 +122,7 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
               value={settings.loginLockoutThreshold}
               onChange={(e) => updateField("loginLockoutThreshold", parseInt(e.target.value) || 5)}
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-nx-ink-3">
               {t("tenantSettings.loginLockoutThresholdHelp")}
             </p>
           </div>
@@ -135,14 +135,14 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
               value={settings.loginLockoutMinutes}
               onChange={(e) => updateField("loginLockoutMinutes", parseInt(e.target.value) || 15)}
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-nx-ink-3">
               {t("tenantSettings.loginLockoutMinutesHelp")}
             </p>
           </div>
-          <div className="flex items-center justify-between rounded-lg border p-3">
+          <div className="flex items-center justify-between rounded-nx-md border border-nx-line p-3">
             <div>
               <Label htmlFor="require2FA">{t("tenantSettings.require2FA")}</Label>
-              <p className="text-xs text-muted-foreground">{t("tenantSettings.require2FAHelp")}</p>
+              <p className="text-xs text-nx-ink-3">{t("tenantSettings.require2FAHelp")}</p>
             </div>
             <Switch
               id="require2FA"

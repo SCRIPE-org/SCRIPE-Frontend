@@ -5,95 +5,6 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import type { StatsStripBlockSection } from "../../../domain/entities/DocSection";
 
-/* ── Testimonials (hardcoded, representative) ────────────────────────── */
-const TESTIMONIALS = [
-  {
-    text: "Went from zero to paid subscriptions in 3 weeks. The entitlements engine alone saved us 6 months of dev work.",
-    name: "Priya Mehta",
-    role: "CTO, FlowBase",
-    initials: "PM",
-    color: "oklch(0.72 0.22 296)",
-  },
-  {
-    text: "Multi-tenancy out of the box. We launched an enterprise tier in 2 days — audit logs, RBAC, the works.",
-    name: "David Sousa",
-    role: "Engineering Lead, OrbitSaaS",
-    initials: "DS",
-    color: "oklch(0.84 0.155 213)",
-  },
-  {
-    text: "The clean architecture meant our team ramped up in hours, not weeks. Every layer is exactly where you'd expect it.",
-    name: "Lena Hofmann",
-    role: "Lead Architect, Stackform",
-    initials: "LH",
-    color: "oklch(0.79 0.17 160)",
-  },
-  {
-    text: "We swapped our provider from SQL Server to PostgreSQL in one config line. No code changes. Unbelievable.",
-    name: "James Okonkwo",
-    role: "Backend Engineer, Prismatic",
-    initials: "JO",
-    color: "oklch(0.82 0.155 80)",
-  },
-  {
-    text: "SCRIPE's marketplace module let us launch a plugin ecosystem in a week. Our revenue per seat jumped 40%.",
-    name: "Aisha Tremblay",
-    role: "Product, VaultApp",
-    initials: "AT",
-    color: "oklch(0.65 0.22 20)",
-  },
-  {
-    text: "Background jobs, caching, webhooks — everything composable, everything typed. This is what a platform should be.",
-    name: "Rin Nakamura",
-    role: "Founder, Aether",
-    initials: "RN",
-    color: "oklch(0.72 0.22 296)",
-  },
-  // Duplicate set for seamless marquee
-  {
-    text: "Went from zero to paid subscriptions in 3 weeks. The entitlements engine alone saved us 6 months of dev work.",
-    name: "Priya Mehta",
-    role: "CTO, FlowBase",
-    initials: "PM",
-    color: "oklch(0.72 0.22 296)",
-  },
-  {
-    text: "Multi-tenancy out of the box. We launched an enterprise tier in 2 days — audit logs, RBAC, the works.",
-    name: "David Sousa",
-    role: "Engineering Lead, OrbitSaaS",
-    initials: "DS",
-    color: "oklch(0.84 0.155 213)",
-  },
-  {
-    text: "The clean architecture meant our team ramped up in hours, not weeks. Every layer is exactly where you'd expect it.",
-    name: "Lena Hofmann",
-    role: "Lead Architect, Stackform",
-    initials: "LH",
-    color: "oklch(0.79 0.17 160)",
-  },
-  {
-    text: "We swapped our provider from SQL Server to PostgreSQL in one config line. No code changes. Unbelievable.",
-    name: "James Okonkwo",
-    role: "Backend Engineer, Prismatic",
-    initials: "JO",
-    color: "oklch(0.82 0.155 80)",
-  },
-  {
-    text: "SCRIPE's marketplace module let us launch a plugin ecosystem in a week. Our revenue per seat jumped 40%.",
-    name: "Aisha Tremblay",
-    role: "Product, VaultApp",
-    initials: "AT",
-    color: "oklch(0.65 0.22 20)",
-  },
-  {
-    text: "Background jobs, caching, webhooks — everything composable, everything typed. This is what a platform should be.",
-    name: "Rin Nakamura",
-    role: "Founder, Aether",
-    initials: "RN",
-    color: "oklch(0.72 0.22 296)",
-  },
-];
-
 /* ── Count-up hook ───────────────────────────────────────────────────── */
 function useCountUp(target: string, duration = 1800) {
   const [display, setDisplay] = useState("0");
@@ -167,30 +78,6 @@ export function StatsStripBlock({ section }: { section: StatsStripBlockSection }
         {section.stats.map((s, idx) => (
           <StatCard key={`stat-${idx}`} value={s.value} labelKey={s.labelKey} index={idx} />
         ))}
-      </div>
-
-      {/* Testimonial marquee */}
-      <div className="com-testimonials-strip" aria-label="Customer testimonials">
-        <div className="com-testimonials-track">
-          {TESTIMONIALS.map((t, i) => (
-            <blockquote key={`t-${i}`} className="com-testimonial-card">
-              <p className="com-testimonial-text">"{t.text}"</p>
-              <div className="com-testimonial-author">
-                <div
-                  className="com-testimonial-avatar"
-                  style={{ background: t.color }}
-                  aria-hidden="true"
-                >
-                  {t.initials}
-                </div>
-                <div className="com-testimonial-meta">
-                  <span className="com-testimonial-name">{t.name}</span>
-                  <span className="com-testimonial-role">{t.role}</span>
-                </div>
-              </div>
-            </blockquote>
-          ))}
-        </div>
       </div>
     </section>
   );

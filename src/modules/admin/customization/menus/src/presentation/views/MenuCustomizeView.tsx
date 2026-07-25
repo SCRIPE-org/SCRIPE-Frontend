@@ -21,8 +21,12 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { PageHeader } from "@core/ui/page-header";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { EmptyState } from "@core/ui/empty-state";
 import {
   ArrowLeft,
+  ArrowRight,
   RefreshCw,
   RotateCcw,
   ChevronDown,
@@ -43,144 +47,139 @@ import { MenuOverrideScope } from "../../domain/entities/MenuItemRequests";
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function MenuCustomizeView() {
-  const { t } = useI18n();
+  const { t, direction } = useI18n();
   const vm = useMenuCustomizeViewModel();
 
+  // "back" is directional (previous page), so it must mirror in RTL.
+  const BackIcon = direction === "rtl" ? ArrowRight : ArrowLeft;
+
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col" style={{ gap: "calc(var(--spacing-unit) * 1.5)" }}>
       {/* ── Header ──────────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" asChild>
+      <PageHeader
+        className="mb-0"
+        eyebrow={
+          <Button variant="ghost" size="sm" asChild>
             <Link href="/customization/menus">
-              <ArrowLeft className="h-4 w-4" />
+              <BackIcon className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
+              {t("common.back")}
             </Link>
           </Button>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">{t("menus.customizePage")}</h1>
-            <p className="text-sm text-muted-foreground">{t("menus.customizePageDesc")}</p>
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Scope Tabs */}
-          {vm.availableScopes.length > 1 && (
-            <div className="inline-flex items-center rounded-lg border bg-background p-0.5">
-              {vm.availableScopes.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => vm.setScope(s)}
-                  className={cn(
-                    "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium",
-                    "transition-all duration-200",
-                    vm.scope === s
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  )}
-                >
-                  {s === MenuOverrideScope.User ? (
-                    <User className="h-3.5 w-3.5" />
-                  ) : (
-                    <Building2 className="h-3.5 w-3.5" />
-                  )}
-                  {s === MenuOverrideScope.User
-                    ? t("menus.scopePersonal")
-                    : t("menus.scopeOrganization")}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Active overrides count */}
-          {vm.activeOverrides.length > 0 && (
+        }
+        title={t("menus.customizePage")}
+        description={t("menus.customizePageDesc")}
+        badges={
+          vm.activeOverrides.length > 0 ? (
             <Badge variant="secondary">
-              {vm.activeOverrides.length} {t("menus.activeOverridesCount") || "customizations"}
+              {vm.activeOverrides.length} {t("menus.activeOverridesCount")}
             </Badge>
-          )}
+          ) : undefined
+        }
+        actions={
+          <>
+            {/* Scope Tabs */}
+            {vm.availableScopes.length > 1 && (
+              <div className="inline-flex items-center gap-0.5 rounded-nx-control border border-nx-line bg-nx-surface p-0.5">
+                {vm.availableScopes.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => vm.setScope(s)}
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-nx-sm px-3 py-1.5 text-sm font-medium",
+                      "transition-[color,background-color] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+                      "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                      vm.scope === s
+                        ? "bg-nx-accent-fill text-nx-on-fill"
+                        : "text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"
+                    )}
+                  >
+                    {s === MenuOverrideScope.User ? (
+                      <User className="h-3.5 w-3.5" aria-hidden="true" />
+                    ) : (
+                      <Building2 className="h-3.5 w-3.5" aria-hidden="true" />
+                    )}
+                    {s === MenuOverrideScope.User
+                      ? t("menus.scopePersonal")
+                      : t("menus.scopeOrganization")}
+                  </button>
+                ))}
+              </div>
+            )}
 
-          {/* Reset All */}
-          {vm.activeOverrides.length > 0 && (
+            {/* Reset All */}
+            {vm.activeOverrides.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={vm.resetAllOverrides}
+                loading={vm.isResettingAll}
+                className="text-destructive hover:text-destructive"
+              >
+                {!vm.isResettingAll && (
+                  <RotateCcw className="me-1.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                )}
+                {t("menus.resetAll")}
+              </Button>
+            )}
+
+            {/* Tree controls */}
+            <Button variant="outline" size="sm" onClick={vm.expandAll}>
+              <ChevronDown className="me-1 h-4 w-4 shrink-0" aria-hidden="true" />
+              {t("common.expandAll")}
+            </Button>
+            <Button variant="outline" size="sm" onClick={vm.collapseAll}>
+              <ChevronRight className="me-1 h-4 w-4 shrink-0" aria-hidden="true" />
+              {t("common.collapseAll")}
+            </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={vm.resetAllOverrides}
-              loading={vm.isResettingAll}
-              className="text-destructive hover:text-destructive"
+              onClick={() => vm.refetch()}
+              loading={vm.isLoading}
             >
-              {!vm.isResettingAll && <RotateCcw className="mr-1.5 h-4 w-4" />}
-              {t("menus.resetAll") || "Reset All"}
+              {!vm.isLoading && <RefreshCw className="me-1.5 h-4 w-4 shrink-0" aria-hidden="true" />}
+              {t("common.refresh")}
             </Button>
-          )}
-
-          {/* Tree controls */}
-          <Button variant="outline" size="sm" onClick={vm.expandAll}>
-            <ChevronDown className="h-4 w-4 ltr:mr-1 rtl:ml-1" />
-            {t("common.expandAll") ?? "Expand All"}
-          </Button>
-          <Button variant="outline" size="sm" onClick={vm.collapseAll}>
-            <ChevronRight className="h-4 w-4 ltr:mr-1 rtl:ml-1" />
-            {t("common.collapseAll") ?? "Collapse All"}
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => vm.refetch()}
-            disabled={vm.isLoading}
-          >
-            <RefreshCw className={cn("h-4 w-4", vm.isLoading && "animate-spin")} />
-          </Button>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* ── No Permission State ─────────────────────────────── */}
       {vm.availableScopes.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="mb-4 rounded-full bg-muted p-4">
-              <ShieldAlert className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <h3 className="mb-2 text-lg font-semibold">
-              {t("menus.noPermission") ?? "No Permission"}
-            </h3>
-            <p className="mb-4 max-w-sm text-center text-muted-foreground">
-              {t("menus.noCustomizePermission") ?? "You do not have permission to customize menus."}
-            </p>
+        <EmptyState
+          size="lg"
+          icon={ShieldAlert}
+          title={t("menus.noPermission")}
+          description={t("menus.noCustomizePermission")}
+          action={
             <Button variant="outline" asChild>
               <Link href="/customization/menus">
-                <ArrowLeft className="mr-1.5 h-4 w-4" />
+                <BackIcon className="me-1.5 h-4 w-4 shrink-0" aria-hidden="true" />
                 {t("menus.backToManagement")}
               </Link>
             </Button>
-          </CardContent>
-        </Card>
+          }
+        />
       ) : vm.isLoading ? (
         /* ── Loading State ────────────────────────────────── */
-        <Card>
-          <CardContent className="py-12">
-            <div className="flex flex-col items-center justify-center gap-3">
-              <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
-            </div>
-          </CardContent>
-        </Card>
+        <LoadingSpinner showText={false} />
       ) : vm.menuTree.length === 0 ? (
         /* ── Empty State ──────────────────────────────────── */
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="mb-4 rounded-full bg-muted p-4">
-              <Menu className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <h3 className="mb-2 text-lg font-semibold">{t("menus.emptyTitle")}</h3>
-            <p className="mb-4 max-w-sm text-center text-muted-foreground">
-              {t("menus.noItemsToCustomize")}
-            </p>
+        <EmptyState
+          size="lg"
+          icon={Menu}
+          title={t("menus.emptyTitle")}
+          description={t("menus.noItemsToCustomize")}
+          action={
             <Button variant="outline" asChild>
               <Link href="/customization/menus">
-                <ArrowLeft className="mr-1.5 h-4 w-4" />
+                <BackIcon className="me-1.5 h-4 w-4 shrink-0" aria-hidden="true" />
                 {t("menus.backToManagement")}
               </Link>
             </Button>
-          </CardContent>
-        </Card>
+          }
+        />
       ) : (
         <>
           {/* ── Dual-Tree Comparison ────────────────────── */}
@@ -189,13 +188,10 @@ export function MenuCustomizeView() {
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <FileText className="h-4 w-4 text-muted-foreground" />
-                  {t("menus.originalTree") ?? "Original Menu"}
+                  <FileText className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
+                  {t("menus.originalTree")}
                 </CardTitle>
-                <p className="text-xs text-muted-foreground">
-                  {t("menus.originalTreeDesc") ??
-                    "Base menu structure — items with overrides are marked"}
-                </p>
+                <p className="text-xs text-nx-ink-3">{t("menus.originalTreeDesc")}</p>
               </CardHeader>
               <CardContent className="p-4 pt-0">
                 <OriginalTree
@@ -214,13 +210,10 @@ export function MenuCustomizeView() {
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <Sparkles className="h-4 w-4 text-success" />
-                  {t("menus.effectiveTree") ?? "Effective Preview"}
+                  <Sparkles className="h-4 w-4 text-success" aria-hidden="true" />
+                  {t("menus.effectiveTree")}
                 </CardTitle>
-                <p className="text-xs text-muted-foreground">
-                  {t("menus.effectiveTreeDesc") ??
-                    "Menu after all customizations — drag to reorder"}
-                </p>
+                <p className="text-xs text-nx-ink-3">{t("menus.effectiveTreeDesc")}</p>
               </CardHeader>
               <CardContent className="p-4 pt-0">
                 <CustomizePreviewTree
@@ -245,19 +238,19 @@ export function MenuCustomizeView() {
                   <div
                     onDragOver={(e) => {
                       e.preventDefault();
-                      e.currentTarget.classList.add("border-primary", "bg-primary/5");
+                      e.currentTarget.classList.add("border-nx-accent", "bg-nx-accent-wash");
                     }}
                     onDragLeave={(e) => {
-                      e.currentTarget.classList.remove("border-primary", "bg-primary/5");
+                      e.currentTarget.classList.remove("border-nx-accent", "bg-nx-accent-wash");
                     }}
                     onDrop={(e) => {
                       e.preventDefault();
-                      e.currentTarget.classList.remove("border-primary", "bg-primary/5");
+                      e.currentTarget.classList.remove("border-nx-accent", "bg-nx-accent-wash");
                       vm.handleDropAtRoot();
                     }}
-                    className="mt-3 flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-muted-foreground/25 p-4 text-sm text-muted-foreground transition-colors"
+                    className="mt-3 flex items-center justify-center gap-2 rounded-nx-lg border-2 border-dashed border-nx-line p-4 text-sm text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none"
                   >
-                    {t("menus.dropToRoot") ?? "Drop here to move to root level"}
+                    {t("menus.dropToRoot")}
                   </div>
                 )}
               </CardContent>

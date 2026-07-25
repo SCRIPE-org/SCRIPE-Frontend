@@ -15,6 +15,7 @@ import type {
 } from "../../domain/entities/UserGroupRequests";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useI18n } from "@core/providers/i18n-provider";
 import { useCallback, useState } from "react";
 
 /**
@@ -55,6 +56,7 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
   const { useMyTenant, tenantId } = options || {};
   const queryClient = useQueryClient();
   const { success, error: toastError } = useEnhancedToast();
+  const { t } = useI18n();
 
   const vm = useCrudViewModel<UserGroupListItem, CreateUserGroupRequest, UpdateUserGroupRequest>(
     [...userGroupKeys.all, useMyTenant ? "my-tenant" : tenantId || "all"],
@@ -166,32 +168,32 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
       createFields: [
         {
           name: "roleIds",
-          label: t("userGroups.roles") || "Roles",
+          label: t("userGroups.roles"),
           type: "multi-select" as const,
-          placeholder: t("roles.selectPlaceholder") || "Select roles...",
-          searchPlaceholder: t("roles.search") || "Search roles...",
+          placeholder: t("roles.selectPlaceholder"),
+          searchPlaceholder: t("roles.search"),
           required: true,
           onServerSearch: handleRoleSearch,
           searchType: "server" as const,
-          noResultsText: t("roles.noResults") || "No roles found",
+          noResultsText: t("roles.noResults"),
         },
         {
           name: "nameEn",
-          label: t("userGroups.nameEn") || "Name (EN)",
+          label: t("userGroups.nameEn"),
           placeholder: t("userGroups.nameEnPlaceholder"),
           type: "text" as const,
           required: true,
         },
         {
           name: "nameAr",
-          label: t("userGroups.nameAr") || "Name (AR)",
+          label: t("userGroups.nameAr"),
           placeholder: t("userGroups.nameArPlaceholder"),
           type: "text" as const,
           required: true,
         },
         {
           name: "code",
-          label: t("userGroups.code") || "Code",
+          label: t("userGroups.code"),
           placeholder: t("userGroups.codePlaceholder"),
           description: t("userGroups.codeHint"),
           type: "text" as const,
@@ -199,13 +201,13 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
         },
         {
           name: "descriptionEn",
-          label: t("userGroups.descriptionEn") || "Description (EN)",
+          label: t("userGroups.descriptionEn"),
           placeholder: t("userGroups.descEnPlaceholder"),
           type: "textarea" as const,
         },
         {
           name: "descriptionAr",
-          label: t("userGroups.descriptionAr") || "Description (AR)",
+          label: t("userGroups.descriptionAr"),
           placeholder: t("userGroups.descArPlaceholder"),
           type: "textarea" as const,
         },
@@ -213,42 +215,42 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
       editFields: [
         {
           name: "roleIds",
-          label: t("userGroups.roles") || "Roles",
+          label: t("userGroups.roles"),
           type: "multi-select" as const,
-          placeholder: t("roles.selectPlaceholder") || "Select roles...",
-          searchPlaceholder: t("roles.search") || "Search roles...",
+          placeholder: t("roles.selectPlaceholder"),
+          searchPlaceholder: t("roles.search"),
           required: true,
           onServerSearch: handleRoleSearch,
           searchType: "server" as const,
-          noResultsText: t("roles.noResults") || "No roles found",
+          noResultsText: t("roles.noResults"),
         },
         {
           name: "nameEn",
-          label: t("userGroups.nameEn") || "Name (EN)",
+          label: t("userGroups.nameEn"),
           placeholder: t("userGroups.nameEnPlaceholder"),
           type: "text" as const,
           required: true,
         },
         {
           name: "nameAr",
-          label: t("userGroups.nameAr") || "Name (AR)",
+          label: t("userGroups.nameAr"),
           placeholder: t("userGroups.nameArPlaceholder"),
           type: "text" as const,
           required: true,
         },
         {
           name: "descriptionEn",
-          label: t("userGroups.descriptionEn") || "Description (EN)",
+          label: t("userGroups.descriptionEn"),
           placeholder: t("userGroups.descEnPlaceholder"),
           type: "textarea" as const,
         },
         {
           name: "descriptionAr",
-          label: t("userGroups.descriptionAr") || "Description (AR)",
+          label: t("userGroups.descriptionAr"),
           placeholder: t("userGroups.descArPlaceholder"),
           type: "textarea" as const,
         },
-        { name: "isActive", label: t("common.status") || "Active", type: "switch" as const },
+        { name: "isActive", label: t("common.status"), type: "switch" as const },
       ],
       createInitialValues: {
         nameEn: "",
@@ -290,14 +292,18 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
         }
         queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
         success({
-          title: isActive ? "Group Activated" : "Group Deactivated",
-          description: `User group has been ${isActive ? "activated" : "deactivated"}.`,
+          title: isActive
+            ? t("userGroups.toggleActivatedTitle")
+            : t("userGroups.toggleDeactivatedTitle"),
+          description: isActive
+            ? t("userGroups.toggleActivatedDesc")
+            : t("userGroups.toggleDeactivatedDesc"),
         });
       } catch (err: any) {
-        toastError({ title: "Error", description: err.message });
+        toastError({ title: t("common.error"), description: err.message });
       }
     },
-    [repo, queryClient, success, toastError]
+    [repo, queryClient, success, toastError, t]
   );
 
   const bulkActivateMutation = useMutation({
@@ -305,7 +311,10 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
       repo.bulkActivate(ids, cascadeAdmins),
     onSuccess: (count) => {
       queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
-      success({ title: "Activated", description: `${count} groups activated.` });
+      success({
+        title: t("userGroups.bulkActivatedTitle"),
+        description: t("userGroups.bulkActivatedDesc", { count }),
+      });
     },
   });
 
@@ -314,7 +323,10 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
       repo.bulkDeactivate(ids, cascadeAdmins),
     onSuccess: (count) => {
       queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
-      success({ title: "Deactivated", description: `${count} groups deactivated.` });
+      success({
+        title: t("userGroups.bulkDeactivatedTitle"),
+        description: t("userGroups.bulkDeactivatedDesc", { count }),
+      });
     },
   });
 
@@ -323,7 +335,10 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
       repo.bulkDelete(ids, cascadeAdmins),
     onSuccess: (count) => {
       queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
-      success({ title: "Deleted", description: `${count} groups deleted.` });
+      success({
+        title: t("userGroups.bulkDeletedTitle"),
+        description: t("userGroups.bulkDeletedDesc", { count }),
+      });
     },
   });
 
@@ -333,7 +348,7 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
       await bulkDeleteMutation.mutateAsync({ ids: deleteDialog.ids, cascadeAdmins });
       setDeleteDialog({ open: false, ids: [], isPending: false });
     } catch (err: any) {
-      toastError({ title: "Error", description: err.message });
+      toastError({ title: t("common.error"), description: err.message });
       setDeleteDialog((s) => ({ ...s, isPending: false }));
     }
   };
@@ -348,7 +363,7 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
       }
       setStatusDialog({ open: false, ids: [], isActive: false, isPending: false });
     } catch (err: any) {
-      toastError({ title: "Error", description: err.message });
+      toastError({ title: t("common.error"), description: err.message });
       setStatusDialog((s) => ({ ...s, isPending: false }));
     }
   };

@@ -124,19 +124,16 @@ export function SetRestrictionsDialog({
     <GenericModal
       open={open}
       onOpenChange={onOpenChange}
-      title={t("userGroups.restrictionsTab.manageRestrictions") || "Manage Restrictions"}
-      description={
-        t("userGroups.restrictionsTab.manageRestrictionsDesc") ||
-        "Configure field-level restrictions for this group."
-      }
+      title={t("userGroups.restrictionsTab.manageRestrictions")}
+      description={t("userGroups.restrictionsTab.manageRestrictionsDesc")}
       size="lg"
     >
       <div className="space-y-4 py-2">
         {/* Add new restriction */}
         <div className="space-y-2">
           <Label className="flex items-center gap-2">
-            <Lock className="h-4 w-4" />
-            {t("userGroups.restrictionsTab.addPermission") || "Add Permission Code"}
+            <Lock className="h-4 w-4" aria-hidden="true" />
+            {t("userGroups.restrictionsTab.addPermission")}
           </Label>
           <div className="flex gap-2">
             <div className="flex-1">
@@ -144,9 +141,7 @@ export function SetRestrictionsDialog({
                 value={newPermissionCode}
                 onValueChange={(val: string | string[]) => setNewPermissionCode(val as string)}
                 options={resourceOptions}
-                placeholder={
-                  t("userGroups.restrictionsTab.permissionPlaceholder") || "Select Resource..."
-                }
+                placeholder={t("userGroups.restrictionsTab.permissionPlaceholder")}
                 loading={isLoadingPermissions}
                 searchable
               />
@@ -156,8 +151,9 @@ export function SetRestrictionsDialog({
               size="sm"
               onClick={addRestriction}
               disabled={!newPermissionCode.trim()}
+              aria-label={t("userGroups.restrictionsTab.addPermission")}
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4" aria-hidden="true" />
             </Button>
           </div>
         </div>
@@ -165,13 +161,15 @@ export function SetRestrictionsDialog({
         {/* Existing restrictions list */}
         <div className="max-h-80 space-y-3 overflow-y-auto">
           {restrictions.length === 0 ? (
-            <p className="py-6 text-center text-sm text-muted-foreground">
-              {t("userGroups.noRestrictions") ||
-                "No restrictions configured. Add a permission code above."}
+            <p className="py-6 text-center text-sm text-nx-ink-3">
+              {t("userGroups.noRestrictions")}
             </p>
           ) : (
             restrictions.map((restriction, rIndex) => (
-              <div key={restriction.permissionCode} className="space-y-2 rounded-lg border p-3">
+              <div
+                key={restriction.permissionCode}
+                className="space-y-2 rounded-nx-md border border-nx-line p-3"
+              >
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-sm font-medium">
                     {restriction.permissionCode}
@@ -181,8 +179,9 @@ export function SetRestrictionsDialog({
                     size="sm"
                     className="h-7 w-7 p-0 text-destructive hover:text-destructive/90"
                     onClick={() => removeRestriction(rIndex)}
+                    aria-label={`${t("userGroups.restrictionsTab.removeRestriction")}: ${restriction.permissionCode}`}
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                   </Button>
                 </div>
 
@@ -192,10 +191,12 @@ export function SetRestrictionsDialog({
                     <Badge key={field} variant="secondary" className="gap-1 text-xs">
                       {field}
                       <button
+                        type="button"
                         onClick={() => removeField(rIndex, field)}
-                        className="ml-1 hover:text-destructive"
+                        className="ms-1 hover:text-destructive"
+                        aria-label={t("userGroups.restrictionsTab.removeField", { field })}
                       >
-                        <X className="h-3 w-3" />
+                        <X className="h-3 w-3" aria-hidden="true" />
                       </button>
                     </Badge>
                   ))}
@@ -210,9 +211,7 @@ export function SetRestrictionsDialog({
                       setNewField(e.target.value);
                     }}
                     onFocus={() => setActiveRestrictionIndex(rIndex)}
-                    placeholder={
-                      t("userGroups.restrictionsTab.fieldPlaceholder") || "Add field name..."
-                    }
+                    placeholder={t("userGroups.restrictionsTab.fieldPlaceholder")}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         e.preventDefault();
@@ -230,8 +229,9 @@ export function SetRestrictionsDialog({
                       addField(rIndex);
                     }}
                     disabled={activeRestrictionIndex !== rIndex || !newField.trim()}
+                    aria-label={t("userGroups.restrictionsTab.addField")}
                   >
-                    <Plus className="h-3 w-3" />
+                    <Plus className="h-3 w-3" aria-hidden="true" />
                   </Button>
                 </div>
               </div>
@@ -239,12 +239,12 @@ export function SetRestrictionsDialog({
           )}
         </div>
 
-        <div className="mt-4 flex justify-end gap-2 border-t pt-4">
+        <div className="mt-4 flex justify-end gap-2 border-t border-nx-line pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-            {t("common.cancel") || "Cancel"}
+            {t("common.cancel")}
           </Button>
           <Button onClick={handleSave} loading={isSubmitting}>
-            {t("common.save") || "Save Restrictions"}
+            {t("userGroups.restrictionsTab.saveRestrictions")}
           </Button>
         </div>
       </div>

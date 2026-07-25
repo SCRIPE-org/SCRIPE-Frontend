@@ -10,6 +10,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { identityContainer } from "@modules/identity/di";
 import { userGroupKeys } from "./useUserGroupsViewModel";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useI18n } from "@core/providers/i18n-provider";
 
 /**
  * React hook/ViewModel orchestrating state and data flows for user group detail view model.
@@ -18,7 +19,12 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 export function useUserGroupDetailViewModel(groupId: string) {
   const repo = identityContainer.userGroupRepository;
   const queryClient = useQueryClient();
-  const { operationSuccess, operationError } = useEnhancedToast();
+  // `success`/`toastError` are used directly (not the operationSuccess/
+  // operationError wrapper) so every word in the toast — including the
+  // dynamic ones — goes through t(): the wrapper always builds
+  // "{operation} Successful" in English.
+  const { success, error: toastError } = useEnhancedToast();
+  const { t } = useI18n();
 
   // ─── Fetch Group Detail ─────────────────────────────
   const {
@@ -36,30 +42,30 @@ export function useUserGroupDetailViewModel(groupId: string) {
   const addMembersMutation = useMutation({
     mutationFn: (adminIds: string[]) => repo.addMembers(groupId, { adminIds }),
     onSuccess: () => {
-      operationSuccess("Added", "Members");
+      success({ title: t("common.success"), description: t("userGroups.membersAdded") });
       queryClient.invalidateQueries({ queryKey: userGroupKeys.detail(groupId) });
     },
-    onError: (err: Error) => operationError("Add Members", undefined, err.message),
+    onError: (err: Error) => toastError({ title: t("common.error"), description: err.message }),
   });
 
   // ─── Remove Member Mutation ─────────────────────────
   const removeMemberMutation = useMutation({
     mutationFn: (adminId: string) => repo.removeMember(groupId, adminId),
     onSuccess: () => {
-      operationSuccess("Removed", "Member");
+      success({ title: t("common.success"), description: t("userGroups.memberRemoved") });
       queryClient.invalidateQueries({ queryKey: userGroupKeys.detail(groupId) });
     },
-    onError: (err: Error) => operationError("Remove Member", undefined, err.message),
+    onError: (err: Error) => toastError({ title: t("common.error"), description: err.message }),
   });
 
   // ─── Set Roles Mutation ─────────────────────────────
   const setRolesMutation = useMutation({
     mutationFn: (roleIds: string[]) => repo.setRoles(groupId, { roleIds }),
     onSuccess: () => {
-      operationSuccess("Updated", "Roles");
+      success({ title: t("common.success"), description: t("userGroups.rolesUpdated") });
       queryClient.invalidateQueries({ queryKey: userGroupKeys.detail(groupId) });
     },
-    onError: (err: Error) => operationError("Update Roles", undefined, err.message),
+    onError: (err: Error) => toastError({ title: t("common.error"), description: err.message }),
   });
 
   // ─── Set Restrictions Mutation ──────────────────────
@@ -67,10 +73,10 @@ export function useUserGroupDetailViewModel(groupId: string) {
     mutationFn: (restrictions: Array<{ permissionCode: string; restrictedFields: string[] }>) =>
       repo.setRestrictions(groupId, { restrictions }),
     onSuccess: () => {
-      operationSuccess("Updated", "Restrictions");
+      success({ title: t("common.success"), description: t("userGroups.restrictionsUpdated") });
       queryClient.invalidateQueries({ queryKey: userGroupKeys.detail(groupId) });
     },
-    onError: (err: Error) => operationError("Update Restrictions", undefined, err.message),
+    onError: (err: Error) => toastError({ title: t("common.error"), description: err.message }),
   });
 
   return {

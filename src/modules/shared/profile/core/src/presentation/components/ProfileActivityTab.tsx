@@ -1,14 +1,17 @@
 import React from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@core/ui/card";
 import { Button } from "@core/ui/button";
-import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { SectionState } from "@core/ui/section-state";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ActivityTimeline } from "./ActivityTimeline";
+import { profileKeys } from "../viewmodels/useProfilePageViewModel";
 
 interface ProfileActivityTabProps {
   activityVm: {
     isLoading: boolean;
+    error: string | null;
     groupedEntries: any;
     page: number;
     setPage: (page: number) => void;
@@ -22,8 +25,10 @@ interface ProfileActivityTabProps {
  */
 export function ProfileActivityTab({ activityVm }: ProfileActivityTabProps) {
   const { t, direction } = useI18n();
+  const queryClient = useQueryClient();
   const isRtl = direction === "rtl";
   const showPager = activityVm.page > 1 || activityVm.hasMore;
+  const isEmpty = Object.keys(activityVm.groupedEntries ?? {}).length === 0;
 
   return (
     <div className="space-y-6">
@@ -34,11 +39,19 @@ export function ProfileActivityTab({ activityVm }: ProfileActivityTabProps) {
         </CardHeader>
 
         <CardContent>
-          {activityVm.isLoading ? (
-            <LoadingSpinner size="sm" showText={false} />
-          ) : (
+          <SectionState
+            isLoading={activityVm.isLoading}
+            error={activityVm.error ? new Error(activityVm.error) : null}
+            onRetry={() =>
+              queryClient.invalidateQueries({ queryKey: profileKeys.securityLog(activityVm.page) })
+            }
+            isEmpty={isEmpty}
+            emptyMessage={t("profile.activity.noEntries")}
+            skeletonType="rows"
+            skeletonRows={4}
+          >
             <ActivityTimeline groupedEntries={activityVm.groupedEntries} />
-          )}
+          </SectionState>
 
           {showPager && !activityVm.isLoading && (
             <div className="mt-6 flex items-center justify-between border-t border-nx-line pt-4">

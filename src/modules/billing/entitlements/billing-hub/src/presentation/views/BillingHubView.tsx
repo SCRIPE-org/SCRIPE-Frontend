@@ -8,6 +8,7 @@
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";
+import { PageHeader } from "@core/ui/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import dynamic from "next/dynamic";
 
@@ -68,63 +69,44 @@ export function BillingHubView() {
   };
 
   return (
-    <div className="w-full space-y-6">
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
-        <div className="flex flex-col gap-4 border-b pb-4 sm:flex-row sm:items-center sm:justify-between sm:pb-3">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground/95">
-              {t("entitlements.hub.title") || "Billing & Plans Hub"}
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {t("entitlements.hub.desc") ||
-                "Manage revenue dashboard, subscriptions, stripe connect, plans, and gateways."}
-            </p>
-          </div>
-          <TabsList
-            className={cn(
-              "grid w-full bg-muted/40 p-1 sm:w-auto",
-              isPlatformContext ? "grid-cols-3" : "grid-cols-5"
-            )}
-          >
-            <TabsTrigger value="overview" className="gap-1.5 text-xs font-bold transition-all">
-              <LayoutDashboard className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">
-                {t("entitlements.hub.tabs.overview") || "Overview"}
-              </span>
-            </TabsTrigger>
-            <TabsTrigger value="subscriptions" className="gap-1.5 text-xs font-bold transition-all">
-              <CreditCard className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">
-                {t("entitlements.hub.tabs.subscriptions") || "Subscriptions"}
-              </span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="stripe-connect"
-              className="gap-1.5 text-xs font-bold transition-all"
+    <div className="w-full">
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
+        <PageHeader
+          icon={CreditCard}
+          title={t("entitlements.hub.title")}
+          description={t("entitlements.hub.desc")}
+          tabs={
+            <TabsList
+              variant="pill"
+              className={cn("grid w-full sm:w-auto", isPlatformContext ? "grid-cols-3" : "grid-cols-5")}
             >
-              <Banknote className="h-3.5 w-3.5" />
-              <span className="hidden md:inline">
-                {t("entitlements.hub.tabs.stripeConnect") || "Stripe Connect"}
-              </span>
-            </TabsTrigger>
-            {!isPlatformContext && (
-              <>
-                <TabsTrigger value="plans" className="gap-1.5 text-xs font-bold transition-all">
-                  <BadgeDollarSign className="h-3.5 w-3.5" />
-                  <span className="hidden md:inline">
-                    {t("entitlements.hub.tabs.plans") || "Plans"}
-                  </span>
-                </TabsTrigger>
-                <TabsTrigger value="gateways" className="gap-1.5 text-xs font-bold transition-all">
-                  <ShieldAlert className="h-3.5 w-3.5" />
-                  <span className="hidden md:inline">
-                    {t("entitlements.hub.tabs.gateways") || "Gateways"}
-                  </span>
-                </TabsTrigger>
-              </>
-            )}
-          </TabsList>
-        </div>
+              <TabsTrigger value="overview" className="gap-1.5 text-xs font-bold">
+                <LayoutDashboard className="h-3.5 w-3.5" aria-hidden="true" />
+                <span className="hidden md:inline">{t("entitlements.hub.tabs.overview")}</span>
+              </TabsTrigger>
+              <TabsTrigger value="subscriptions" className="gap-1.5 text-xs font-bold">
+                <CreditCard className="h-3.5 w-3.5" aria-hidden="true" />
+                <span className="hidden md:inline">{t("entitlements.hub.tabs.subscriptions")}</span>
+              </TabsTrigger>
+              <TabsTrigger value="stripe-connect" className="gap-1.5 text-xs font-bold">
+                <Banknote className="h-3.5 w-3.5" aria-hidden="true" />
+                <span className="hidden md:inline">{t("entitlements.hub.tabs.stripeConnect")}</span>
+              </TabsTrigger>
+              {!isPlatformContext && (
+                <>
+                  <TabsTrigger value="plans" className="gap-1.5 text-xs font-bold">
+                    <BadgeDollarSign className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span className="hidden md:inline">{t("entitlements.hub.tabs.plans")}</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="gateways" className="gap-1.5 text-xs font-bold">
+                    <ShieldAlert className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span className="hidden md:inline">{t("entitlements.hub.tabs.gateways")}</span>
+                  </TabsTrigger>
+                </>
+              )}
+            </TabsList>
+          }
+        />
 
         <TabsContent value="overview" className="outline-none">
           <BillingDashboardView />

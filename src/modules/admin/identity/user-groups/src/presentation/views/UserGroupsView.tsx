@@ -77,28 +77,28 @@ export function UserGroupsView() {
       columns: [
         {
           key: "nameEn",
-          label: t("common.name") || "Name",
+          label: t("common.name"),
           sortable: true,
           render: (_val: unknown, item: UserGroupListItem) => (
             <div className="flex flex-col">
               <span className="font-medium">{language === "ar" ? item.nameAr : item.nameEn}</span>
-              <span className="font-mono text-xs text-muted-foreground">{item.code}</span>
+              <span className="font-mono text-xs text-nx-ink-2">{item.code}</span>
             </div>
           ),
         },
         {
           key: "tenantName",
-          label: t("common.tenant") || "Tenant",
+          label: t("common.tenant"),
           render: (_val: unknown, item: UserGroupListItem) => (
-            <span className="text-sm text-muted-foreground">{item.tenantName || "—"}</span>
+            <span className="text-sm text-nx-ink-2">{item.tenantName || "—"}</span>
           ),
         },
         {
           key: "memberCount",
-          label: t("userGroups.members") || "Members",
+          label: t("userGroups.members"),
           render: (_val: unknown, item: UserGroupListItem) => (
             <div className="flex items-center gap-1.5">
-              <Users className="h-3.5 w-3.5 text-info" />
+              <Users className="h-3.5 w-3.5 text-info" aria-hidden="true" />
               <Badge variant="outline" className="text-xs">
                 {item.memberCount}
               </Badge>
@@ -107,10 +107,10 @@ export function UserGroupsView() {
         },
         {
           key: "roleCount",
-          label: t("userGroups.roles") || "Roles",
+          label: t("userGroups.roles"),
           render: (_val: unknown, item: UserGroupListItem) => (
             <div className="flex items-center gap-1.5">
-              <Shield className="h-3.5 w-3.5 text-primary" />
+              <Shield className="h-3.5 w-3.5 text-nx-accent" aria-hidden="true" />
               <Badge variant="outline" className="text-xs">
                 {item.roleCount}
               </Badge>
@@ -119,10 +119,10 @@ export function UserGroupsView() {
         },
         {
           key: "isActive",
-          label: t("common.status") || "Status",
+          label: t("common.status"),
           render: (_val: unknown, item: UserGroupListItem) => (
             <Badge variant={item.isActive ? "default" : "secondary"}>
-              {item.isActive ? t("common.active") || "Active" : t("common.inactive") || "Inactive"}
+              {item.isActive ? t("common.active") : t("common.inactive")}
             </Badge>
           ),
         },
@@ -140,55 +140,55 @@ export function UserGroupsView() {
         handleDeleteFn: any
       ): CrudAction<UserGroupListItem>[] => [
         {
-          label: tFn("common.view") || "View Details",
+          label: tFn("common.view"),
           onClick: (item: UserGroupListItem) => router.push(`/user-groups/${item.id}`),
           variant: "ghost" as const,
-          icon: <Eye className="h-4 w-4" />,
+          icon: <Eye className="h-4 w-4" aria-hidden="true" />,
         },
         {
-          label: tFn("common.edit") || "Edit",
+          label: tFn("common.edit"),
           onClick: (item: UserGroupListItem) => vm.openEditModal(item),
           variant: "ghost" as const,
-          icon: <Pencil className="h-4 w-4" />,
+          icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
           requiredPermission: "user_groups.update",
         },
         {
-          label: tFn("admin.toggleStatus") || "Toggle Status",
+          label: tFn("admin.toggleStatus"),
           onClick: (item: UserGroupListItem) => triggerStatus([item.id], !item.isActive),
           variant: "ghost" as const,
-          icon: <UserCheck className="h-4 w-4" />,
+          icon: <UserCheck className="h-4 w-4" aria-hidden="true" />,
           requiredPermission: "user_groups.update",
         },
         {
-          label: tFn("common.delete") || "Delete",
+          label: tFn("common.delete"),
           onClick: (item: UserGroupListItem) => triggerDelete([item.id]),
           variant: "ghost" as const,
           className: "text-destructive hover:text-destructive/90",
-          icon: <Trash2 className="h-4 w-4" />,
+          icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
           requiredPermission: "user_groups.delete",
         },
       ],
       enableBulkActions: true,
       bulkActions: [
         {
-          label: t("common.activate") || "Activate",
-          icon: <ShieldCheck className="h-4 w-4" />,
+          label: t("common.activate"),
+          icon: <ShieldCheck className="h-4 w-4" aria-hidden="true" />,
           onClick: async (ids: string[]) => {
             triggerStatus(ids, true);
           },
           variant: "outline" as const,
         },
         {
-          label: t("common.deactivate") || "Deactivate",
-          icon: <ShieldAlert className="h-4 w-4" />,
+          label: t("common.deactivate"),
+          icon: <ShieldAlert className="h-4 w-4" aria-hidden="true" />,
           onClick: async (ids: string[]) => {
             triggerStatus(ids, false);
           },
           variant: "outline" as const,
         },
         {
-          label: t("common.delete") || "Delete",
-          icon: <Trash2 className="h-4 w-4" />,
+          label: t("common.delete"),
+          icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
           onClick: async (ids: string[]) => {
             triggerDelete(ids);
           },
@@ -209,7 +209,9 @@ export function UserGroupsView() {
         onConfirm={confirmDelete}
         isPending={deleteDialog.isPending}
         itemName={
-          deleteDialog.ids.length > 1 ? `${deleteDialog.ids.length} groups` : "the selected group"
+          deleteDialog.ids.length > 1
+            ? t("userGroups.selectedGroupsCount", { count: deleteDialog.ids.length })
+            : t("userGroups.selectedGroupSingular")
         }
       />
 
@@ -220,7 +222,9 @@ export function UserGroupsView() {
         isPending={statusDialog.isPending}
         isActive={statusDialog.isActive}
         itemName={
-          statusDialog.ids.length > 1 ? `${statusDialog.ids.length} groups` : "the selected group"
+          statusDialog.ids.length > 1
+            ? t("userGroups.selectedGroupsCount", { count: statusDialog.ids.length })
+            : t("userGroups.selectedGroupSingular")
         }
       />
     </>

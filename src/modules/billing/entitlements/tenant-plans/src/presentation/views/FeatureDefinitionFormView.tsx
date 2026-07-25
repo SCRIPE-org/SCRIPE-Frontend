@@ -25,6 +25,7 @@ import { Label } from "@core/ui/label";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Switch } from "@core/ui/switch";
 import { Badge } from "@core/ui/badge";
+import { PageHeader } from "@core/ui/page-header";
 import {
   ArrowLeft,
   Save,
@@ -101,54 +102,54 @@ export function FeatureDefinitionFormView({
 
   const selectedTypeConfig = valueTypeOptions.find((o) => o.value === form.valueType);
 
+  const backHref = "/entitlements/tenant-feature-definitions";
+  const pageTitle = isViewMode
+    ? t("entitlements.featureDefinitions.view")
+    : isEditMode
+      ? t("entitlements.featureDefinitions.edit")
+      : t("entitlements.featureDefinitions.create");
+  const pageDescription = isViewMode
+    ? t("entitlements.featureDefinitions.viewDesc")
+    : isEditMode
+      ? t("entitlements.featureDefinitions.editDesc")
+      : t("entitlements.featureDefinitions.createDesc");
+
   return (
     <div className="mx-auto max-w-3xl space-y-6 pb-12">
       {/* ─────── HEADER ─────── */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Link href="/entitlements/tenant-feature-definitions">
+      <PageHeader
+        eyebrow={
+          <Link href={backHref}>
             <Button variant="ghost" size="icon">
               <ArrowLeft className="h-5 w-5" aria-hidden="true" />
               <span className="sr-only">{t("common.back")}</span>
             </Button>
           </Link>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight text-nx-ink">
-                {isViewMode
-                  ? t("entitlements.featureDefinitions.view")
-                  : isEditMode
-                    ? t("entitlements.featureDefinitions.edit")
-                    : t("entitlements.featureDefinitions.create")}
-              </h1>
-              <Badge variant="outline" className="text-xs">
-                {t("entitlements.featureDefinitions.tier2Badge")}
-              </Badge>
-            </div>
-            <p className="mt-0.5 text-sm text-nx-ink-2">
-              {isViewMode
-                ? t("entitlements.featureDefinitions.viewDesc")
-                : isEditMode
-                  ? t("entitlements.featureDefinitions.editDesc")
-                  : t("entitlements.featureDefinitions.createDesc")}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Link href="/entitlements/tenant-feature-definitions">
-            <Button variant="outline">
-              {isViewMode ? t("common.back") : t("common.cancel")}
-            </Button>
-          </Link>
-          {!isViewMode && (
-            <Button onClick={handleSubmit} disabled={!isValid} loading={isSaving}>
-              {!isSaving && <Save className="me-2 h-4 w-4" aria-hidden="true" />}
-              {isEditMode ? t("common.save") : t("common.create")}
-            </Button>
-          )}
-        </div>
-      </div>
+        }
+        icon={KeyRound}
+        title={pageTitle}
+        badges={
+          <Badge variant="outline" className="text-xs">
+            {t("entitlements.featureDefinitions.tier2Badge")}
+          </Badge>
+        }
+        description={pageDescription}
+        actions={
+          <>
+            <Link href={backHref}>
+              <Button variant="outline">
+                {isViewMode ? t("common.back") : t("common.cancel")}
+              </Button>
+            </Link>
+            {!isViewMode && (
+              <Button onClick={handleSubmit} disabled={!isValid} loading={isSaving}>
+                {!isSaving && <Save className="me-2 h-4 w-4" aria-hidden="true" />}
+                {isEditMode ? t("common.save") : t("common.create")}
+              </Button>
+            )}
+          </>
+        }
+      />
 
       {/* ═══════ SECTION 1: IDENTITY ═══════ */}
       <Card>
@@ -169,7 +170,7 @@ export function FeatureDefinitionFormView({
           <div className="space-y-2">
             <Label htmlFor="fd-key" className="flex items-center gap-1.5">
               {t("entitlements.featureDefinitions.key")}
-              <span aria-hidden="true" className="text-destructive">
+              <span aria-hidden="true" className="text-nx-danger">
                 *
               </span>
             </Label>
@@ -180,11 +181,12 @@ export function FeatureDefinitionFormView({
               placeholder={t("entitlements.featureDefinitions.keyPlaceholder")}
               disabled={isEditMode || isViewMode}
               aria-invalid={!!errors.key}
-              className={errors.key ? "border-destructive" : ""}
             />
-            <p className="text-xs text-nx-ink-3">{t("entitlements.featureDefinitions.keyHint")}</p>
+            <p className="text-xs leading-relaxed text-nx-ink-3">
+              {t("entitlements.featureDefinitions.keyHint")}
+            </p>
             {errors.key && (
-              <p className="flex items-center gap-1 text-xs text-destructive">
+              <p className="flex items-center gap-1 text-xs font-medium leading-relaxed text-nx-danger">
                 <AlertCircle className="h-3 w-3" aria-hidden="true" /> {errors.key}
               </p>
             )}
@@ -241,11 +243,15 @@ export function FeatureDefinitionFormView({
           <CardDescription>{t("entitlements.featureDefinitions.sectionConfigDesc")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
-          {/* Value Type — Card Selector */}
-          <div className="relative space-y-3">
+          {/* Value Type — Card Selector. Read-only mode relies solely on each
+              button's own `disabled` — a pointer-only overlay here would let a
+              keyboard user tab past it into controls that still fire on
+              Enter/Space, which is exactly the kind of gap `disabled` closes
+              for both input modalities at once. */}
+          <div className="space-y-3">
             <Label className="flex items-center gap-1.5">
               {t("entitlements.featureDefinitions.valueType")}
-              <span aria-hidden="true" className="text-destructive">
+              <span aria-hidden="true" className="text-nx-danger">
                 *
               </span>
             </Label>
@@ -260,6 +266,8 @@ export function FeatureDefinitionFormView({
                   className={cn(
                     "relative flex flex-col items-start gap-2 rounded-nx-md border-2 p-4 text-start",
                     "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                    "focus-visible:outline-none focus-visible:shadow-nx-focus",
+                    "disabled:cursor-not-allowed disabled:opacity-60",
                     !isViewMode && "hover:bg-nx-hover",
                     form.valueType === option.value
                       ? "border-nx-accent bg-nx-accent-wash"
@@ -290,12 +298,9 @@ export function FeatureDefinitionFormView({
               ))}
             </div>
             {errors.valueType && (
-              <p className="flex items-center gap-1 text-xs text-destructive">
+              <p className="flex items-center gap-1 text-xs font-medium leading-relaxed text-nx-danger">
                 <AlertCircle className="h-3 w-3" aria-hidden="true" /> {errors.valueType}
               </p>
-            )}
-            {isViewMode && (
-              <div className="absolute inset-0 z-raised cursor-not-allowed" aria-hidden="true" />
             )}
           </div>
 
@@ -310,7 +315,7 @@ export function FeatureDefinitionFormView({
               disabled={isViewMode}
             />
             {selectedTypeConfig && (
-              <p className="text-xs text-nx-ink-3">
+              <p className="text-xs leading-relaxed text-nx-ink-3">
                 {t("entitlements.featureDefinitions.valueTypeHint")}
               </p>
             )}
@@ -397,8 +402,10 @@ export function FeatureDefinitionFormView({
               <CheckCircle2 className="h-4 w-4 text-success" />
             </div>
             <div>
-              <p className="text-sm font-medium text-nx-ink">{t("common.active")}</p>
-              <p className="text-xs text-nx-ink-3">
+              <Label htmlFor="fd-active" className="text-sm font-medium text-nx-ink">
+                {t("common.active")}
+              </Label>
+              <p className="text-xs leading-relaxed text-nx-ink-3">
                 {t("entitlements.featureDefinitions.activeHint")}
               </p>
             </div>
@@ -414,7 +421,7 @@ export function FeatureDefinitionFormView({
 
       {/* ─────── FOOTER ACTIONS ─────── */}
       <div className="flex items-center justify-end gap-3 pt-2">
-        <Link href="/entitlements/tenant-feature-definitions">
+        <Link href={backHref}>
           <Button variant="outline" size="lg">
             {isViewMode ? t("common.back") : t("common.cancel")}
           </Button>

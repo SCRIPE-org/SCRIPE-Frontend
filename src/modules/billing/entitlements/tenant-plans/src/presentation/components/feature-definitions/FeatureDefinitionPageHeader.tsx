@@ -1,8 +1,13 @@
 /**
  * FeatureDefinitionPageHeader — Title + description for the Feature Catalog page.
+ *
+ * A thin wrapper around the shared `PageHeader` primitive rather than a
+ * second hand-rolled header — this and the list view's own header were the
+ * two places the same title/description/badge anatomy got reinvented.
  */
 "use client";
 
+import { PageHeader } from "@core/ui/page-header";
 import { Badge } from "@core/ui/badge";
 import { Zap } from "lucide-react";
 
@@ -16,24 +21,15 @@ interface FeatureDefinitionPageHeaderProps {
  */
 export function FeatureDefinitionPageHeader({ t }: FeatureDefinitionPageHeaderProps) {
   return (
-    <div className="flex items-center gap-3">
-      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-        <Zap className="h-5 w-5 text-primary" />
-      </div>
-      <div>
-        <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-bold tracking-tight">
-            {t("entitlements.featureDefinitions.title") || "Feature Catalog"}
-          </h1>
-          <Badge variant="outline" className="text-xs">
-            {t("entitlements.featureDefinitions.tier2Badge") || "Tier 2"}
-          </Badge>
-        </div>
-        <p className="text-sm text-muted-foreground">
-          {t("entitlements.featureDefinitions.description") ||
-            "Define reusable features that can be assigned to your plans."}
-        </p>
-      </div>
-    </div>
+    <PageHeader
+      icon={Zap}
+      title={t("entitlements.featureDefinitions.title")}
+      badges={
+        <Badge variant="outline" className="text-xs">
+          {t("entitlements.featureDefinitions.tier2Badge")}
+        </Badge>
+      }
+      description={t("entitlements.featureDefinitions.description")}
+    />
   );
 }

@@ -73,49 +73,49 @@ export function useTenantFeatureDefinitionsViewModel() {
     return [
       {
         key: "sortOrder",
-        label: t("common.serial") || (language === "ar" ? "م" : "No."),
+        label: t("common.serial"),
         sortable: true,
       },
       {
         key: "key",
-        label: t("entitlements.featureDefinitions.key") || "Key",
+        label: t("entitlements.featureDefinitions.key"),
         sortable: true,
       },
       {
         key: "displayName",
-        label: t("entitlements.featureDefinitions.displayName") || "Display Name",
+        label: t("entitlements.featureDefinitions.displayName"),
         render: (_v: unknown, item: TenantFeatureDefinition) =>
           language === "ar" ? item.displayNameAr : item.displayNameEn,
       },
       {
         key: "valueType",
-        label: t("entitlements.featureDefinitions.valueType") || "Type",
+        label: t("entitlements.featureDefinitions.valueType"),
         render: (value: string) => (
           <Badge variant={valueTypeVariant[value] ?? "outline"}>
-            {t(`entitlements.featureDefinitions.type${value}`) || value}
+            {t(`entitlements.featureDefinitions.type${value}`)}
           </Badge>
         ),
       },
       {
         key: "category",
-        label: t("entitlements.featureDefinitions.category") || "Category",
+        label: t("entitlements.featureDefinitions.category"),
         sortable: true,
       },
       {
         key: "defaultValue",
-        label: t("entitlements.featureDefinitions.defaultValue") || "Default",
+        label: t("entitlements.featureDefinitions.defaultValue"),
       },
       {
         key: "planUsageCount",
-        label: t("entitlements.featureDefinitions.usageCount") || "Plans Using",
+        label: t("entitlements.featureDefinitions.usageCount"),
         render: (value: number) => <Badge variant="secondary">{value ?? 0}</Badge>,
       },
       {
         key: "isActive",
-        label: t("common.active") || "Active",
+        label: t("common.active"),
         render: (_v: unknown, item: TenantFeatureDefinition) => (
           <Badge variant={item.isActive ? "default" : "secondary"}>
-            {item.isActive ? t("common.active") || "Active" : t("common.inactive") || "Inactive"}
+            {item.isActive ? t("common.active") : t("common.inactive")}
           </Badge>
         ),
       },

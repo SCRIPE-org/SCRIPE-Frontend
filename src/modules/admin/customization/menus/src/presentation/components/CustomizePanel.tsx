@@ -16,9 +16,19 @@ import { Switch } from "@core/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Separator } from "@core/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { EmptyState } from "@core/ui/empty-state";
 import type { MenuTreeNode, MenuItemOverrideInfo } from "../../domain/entities/MenuItem";
 import type { OverrideFormData, FlatMenuItem } from "../viewmodels/useMenuCustomizeViewModel";
-import { Save, RotateCcw, FileText, FolderOpen, EyeOff, Eye, ArrowRight } from "lucide-react";
+import {
+  Save,
+  RotateCcw,
+  FileText,
+  FolderOpen,
+  EyeOff,
+  Eye,
+  ArrowRight,
+  ArrowLeft,
+} from "lucide-react";
 
 /* -------------------------------------------------------------------------- */
 /*  Props                                                                      */
@@ -47,7 +57,9 @@ export function CustomizePanel({
   onSave,
   isSaving,
 }: CustomizePanelProps) {
-  const { t } = useI18n();
+  const { t, direction } = useI18n();
+  // Shows a value transforming into another — must follow reading direction.
+  const TransformIcon = direction === "rtl" ? ArrowLeft : ArrowRight;
 
   // Local form state
   const [nameEn, setNameEn] = useState("");
@@ -104,15 +116,15 @@ export function CustomizePanel({
   // ── Empty state ─────────────────────────────────────────────────────
   if (!selectedNode) {
     return (
-      <Card className="border-dashed">
-        <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="mb-4 rounded-full bg-muted p-4">
-            <FileText className="h-6 w-6 text-muted-foreground" />
-          </div>
-          <p className="mb-1 text-sm font-medium text-muted-foreground">
-            {t("menus.selectItemToCustomize")}
-          </p>
-          <p className="text-xs text-muted-foreground/70">{t("menus.selectItemHint")}</p>
+      <Card>
+        <CardContent>
+          <EmptyState
+            bare
+            size="sm"
+            icon={FileText}
+            title={t("menus.selectItemToCustomize")}
+            description={t("menus.selectItemHint")}
+          />
         </CardContent>
       </Card>
     );
@@ -126,13 +138,13 @@ export function CustomizePanel({
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2">
           {hasChildren ? (
-            <FolderOpen className="h-5 w-5 shrink-0 text-primary" />
+            <FolderOpen className="h-5 w-5 shrink-0 text-nx-accent" aria-hidden="true" />
           ) : (
-            <FileText className="h-5 w-5 shrink-0 text-muted-foreground" />
+            <FileText className="h-5 w-5 shrink-0 text-nx-ink-3" aria-hidden="true" />
           )}
           <div className="min-w-0">
             <CardTitle className="truncate text-base">{displayName}</CardTitle>
-            <p className="mt-0.5 text-xs text-muted-foreground">{t("menus.customizeDesc")}</p>
+            <p className="mt-0.5 text-xs text-nx-ink-3">{t("menus.customizeDesc")}</p>
           </div>
         </div>
       </CardHeader>
@@ -140,7 +152,7 @@ export function CustomizePanel({
       <CardContent className="space-y-5">
         {/* ── Display Name Section ──────────────────── */}
         <div className="space-y-3">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
             {t("menus.overrideRename")}
           </h4>
 
@@ -157,10 +169,10 @@ export function CustomizePanel({
                 className="mt-1 h-8 text-sm"
               />
               {nameEn && nameEn !== selectedNode.nameEn && (
-                <div className="mt-1 flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                <div className="mt-1 flex items-center gap-1.5 text-[10px] text-nx-ink-3">
                   <span className="line-through">{selectedNode.nameEn}</span>
-                  <ArrowRight className="h-2.5 w-2.5" />
-                  <span className="font-medium text-primary">{nameEn}</span>
+                  <TransformIcon className="h-2.5 w-2.5" aria-hidden="true" />
+                  <span className="font-medium text-nx-accent">{nameEn}</span>
                 </div>
               )}
             </div>
@@ -178,10 +190,10 @@ export function CustomizePanel({
                 dir="rtl"
               />
               {nameAr && nameAr !== selectedNode.nameAr && (
-                <div className="mt-1 flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                <div className="mt-1 flex items-center gap-1.5 text-[10px] text-nx-ink-3">
                   <span className="line-through">{selectedNode.nameAr}</span>
-                  <ArrowRight className="h-2.5 w-2.5" />
-                  <span className="font-medium text-primary">{nameAr}</span>
+                  <TransformIcon className="h-2.5 w-2.5" aria-hidden="true" />
+                  <span className="font-medium text-nx-accent">{nameAr}</span>
                 </div>
               )}
             </div>
@@ -192,7 +204,7 @@ export function CustomizePanel({
 
         {/* ── Display Order Section ─────────────────── */}
         <div className="space-y-2">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
             {t("menus.overrideOrder")}
           </h4>
           <div>
@@ -204,9 +216,7 @@ export function CustomizePanel({
               className="h-8 w-32 text-sm"
               min={0}
             />
-            <p className="mt-1 text-[10px] text-muted-foreground">
-              {t("menus.orderHint") || `Current: ${selectedNode.order}`}
-            </p>
+            <p className="mt-1 text-[10px] text-nx-ink-3">{t("menus.orderHint")}</p>
           </div>
         </div>
 
@@ -214,7 +224,7 @@ export function CustomizePanel({
 
         {/* ── Parent Override Section ───────────────── */}
         <div className="space-y-2">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
             {t("menus.overrideParent")}
           </h4>
           <Select value={parentId} onValueChange={setParentId}>
@@ -239,18 +249,18 @@ export function CustomizePanel({
 
         {/* ── Visibility Section ───────────────────── */}
         <div className="space-y-2">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            {t("menus.visibility") || "Visibility"}
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
+            {t("menus.visibility")}
           </h4>
-          <div className="flex items-center justify-between rounded-lg border p-3">
+          <div className="flex items-center justify-between rounded-nx-md border border-nx-line p-3">
             <div className="flex items-center gap-2">
               {isHidden ? (
-                <EyeOff className="h-4 w-4 text-destructive" />
+                <EyeOff className="h-4 w-4 text-destructive" aria-hidden="true" />
               ) : (
-                <Eye className="h-4 w-4 text-success" />
+                <Eye className="h-4 w-4 text-success" aria-hidden="true" />
               )}
-              <span className="text-sm">
-                {isHidden ? t("menus.itemHidden") || "Hidden" : t("menus.itemVisible") || "Visible"}
+              <span className="text-sm text-nx-ink">
+                {isHidden ? t("menus.itemHidden") : t("menus.itemVisible")}
               </span>
             </div>
             <Switch checked={!isHidden} onCheckedChange={(checked) => setIsHidden(!checked)} />
@@ -268,12 +278,12 @@ export function CustomizePanel({
             className="flex-1"
             size="sm"
           >
-            {!isSaving && <Save className="mr-1.5 h-4 w-4" />}
+            {!isSaving && <Save className="me-1.5 h-4 w-4" aria-hidden="true" />}
             {t("common.save")}
           </Button>
           <Button variant="outline" onClick={handleReset} disabled={!hasChanges} size="sm">
-            <RotateCcw className="mr-1.5 h-4 w-4" />
-            {t("common.reset") || "Reset"}
+            <RotateCcw className="me-1.5 h-4 w-4" aria-hidden="true" />
+            {t("common.reset")}
           </Button>
         </div>
       </CardContent>

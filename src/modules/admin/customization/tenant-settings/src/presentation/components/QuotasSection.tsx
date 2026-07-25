@@ -28,7 +28,7 @@ export function QuotasSection({ settings, updateField }: QuotasSectionProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Settings className="h-5 w-5" />
+          <Settings className="h-5 w-5" aria-hidden="true" />
           {t("tenantSettings.quotas")}
         </CardTitle>
         <CardDescription>{t("tenantSettings.quotasDescription")}</CardDescription>
@@ -42,7 +42,7 @@ export function QuotasSection({ settings, updateField }: QuotasSectionProps) {
             value={settings.maxAdmins}
             onChange={(e) => updateField("maxAdmins", parseInt(e.target.value) || -1)}
           />
-          <p className="text-xs text-muted-foreground">{t("tenantSettings.maxAdminsHelp")}</p>
+          <p className="text-xs text-nx-ink-3">{t("tenantSettings.maxAdminsHelp")}</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="maxRoles">{t("tenantSettings.maxRoles")}</Label>
@@ -52,7 +52,7 @@ export function QuotasSection({ settings, updateField }: QuotasSectionProps) {
             value={settings.maxRoles}
             onChange={(e) => updateField("maxRoles", parseInt(e.target.value) || -1)}
           />
-          <p className="text-xs text-muted-foreground">{t("tenantSettings.maxRolesHelp")}</p>
+          <p className="text-xs text-nx-ink-3">{t("tenantSettings.maxRolesHelp")}</p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="maxSubTenants">{t("tenantSettings.maxSubTenants")}</Label>
@@ -62,7 +62,7 @@ export function QuotasSection({ settings, updateField }: QuotasSectionProps) {
             value={settings.maxSubTenants}
             onChange={(e) => updateField("maxSubTenants", parseInt(e.target.value) || -1)}
           />
-          <p className="text-xs text-muted-foreground">{t("tenantSettings.maxSubTenantsHelp")}</p>
+          <p className="text-xs text-nx-ink-3">{t("tenantSettings.maxSubTenantsHelp")}</p>
         </div>
       </CardContent>
     </Card>

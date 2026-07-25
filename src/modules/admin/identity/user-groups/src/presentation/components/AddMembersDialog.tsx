@@ -11,7 +11,8 @@ import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
-import { Loader2, Users } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { Users } from "lucide-react";
 import { useAddMembersViewModel } from "../viewmodels/useAddMembersViewModel";
 
 interface AddMembersDialogProps {
@@ -72,23 +73,18 @@ export function AddMembersDialog({
     <GenericModal
       open={open}
       onOpenChange={handleClose}
-      title={t("userGroups.membersTab.addMembers") || "Add Members"}
-      description={
-        t("userGroups.membersTab.addMembersDesc") || "Select admins to add to this group."
-      }
+      title={t("userGroups.membersTab.addMembers")}
+      description={t("userGroups.membersTab.addMembersDesc")}
       size="md"
     >
       <div className="space-y-4 py-2">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-10 text-muted-foreground">
-            <Loader2 className="mb-2 h-8 w-8 animate-spin" />
-            <p>{t("common.loading") || "Loading..."}</p>
-          </div>
+          <LoadingSpinner />
         ) : (
           <div className="space-y-2">
             <Label className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              {t("userGroups.membersTab.selectMembers") || "Select Admins"} *
+              <Users className="h-4 w-4" aria-hidden="true" />
+              {t("userGroups.membersTab.selectMembers")} *
             </Label>
             <GenericSelect
               options={adminOptions}
@@ -96,30 +92,25 @@ export function AddMembersDialog({
               onValueChange={(val: string | string[]) =>
                 setSelectedIds(Array.isArray(val) ? val : [val])
               }
-              placeholder={
-                t("userGroups.membersTab.selectMembersPlaceholder") || "Search and select admins..."
-              }
+              placeholder={t("userGroups.membersTab.selectMembersPlaceholder")}
               type="multi"
             />
             {adminOptions.length === 0 && (
-              <p className="text-xs text-muted-foreground">
-                {t("userGroups.membersTab.allAdminsAssigned") ||
-                  "All available admins are already members."}
-              </p>
+              <p className="text-xs text-nx-ink-3">{t("userGroups.membersTab.allAdminsAssigned")}</p>
             )}
           </div>
         )}
 
-        <div className="mt-4 flex justify-end gap-2 border-t pt-4">
+        <div className="mt-4 flex justify-end gap-2 border-t border-nx-line pt-4">
           <Button variant="outline" onClick={() => handleClose(false)} disabled={isSubmitting}>
-            {t("common.cancel") || "Cancel"}
+            {t("common.cancel")}
           </Button>
           <Button
             onClick={handleSave}
             loading={isSubmitting}
             disabled={isLoading || selectedIds.length === 0}
           >
-            {t("userGroups.membersTab.addSelected") || "Add Selected"}
+            {t("userGroups.membersTab.addSelected")}
           </Button>
         </div>
       </div>

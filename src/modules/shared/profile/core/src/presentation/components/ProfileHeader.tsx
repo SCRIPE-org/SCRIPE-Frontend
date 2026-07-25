@@ -11,6 +11,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
+import { useI18n } from "@core/providers/i18n-provider";
 import { cn, resolveFileUrl } from "@core/common/utils";
 import type { AdminProfile } from "../../../src/domain/entities/AdminProfile";
 
@@ -29,10 +30,12 @@ interface ProfileHeaderProps {
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function ProfileHeader({ profile, isLoading, meta, className }: ProfileHeaderProps) {
+  const { t } = useI18n();
+
   if (isLoading || !profile) {
     return (
       <div className={cn("flex flex-col items-center gap-3 p-4 text-center", className)}>
-        <Skeleton shape="circle" className="h-20 w-20" aria-label="Loading profile" />
+        <Skeleton shape="circle" className="h-20 w-20" aria-label={t("common.loading")} />
         <Skeleton shape="text" className="h-4 w-28" />
         <Skeleton shape="text" className="h-3 w-20" />
       </div>
@@ -60,7 +63,7 @@ export function ProfileHeader({ profile, isLoading, meta, className }: ProfileHe
       </div>
 
       <Badge variant="secondary" className="text-xs">
-        {profile.adminTypeName || profile.roles?.[0]?.roleName || "Admin"}
+        {profile.adminTypeName || profile.roles?.[0]?.roleName || t("profile.fields.roleDefault")}
       </Badge>
 
       {meta}

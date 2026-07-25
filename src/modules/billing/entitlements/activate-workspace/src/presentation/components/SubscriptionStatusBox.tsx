@@ -1,54 +1,49 @@
 import React from "react";
+import { useI18n } from "@core/providers/i18n-provider";
 
 interface SubscriptionStatusBoxProps {
-  subscription: any;
-  tokens: any;
-  isRtl: boolean;
+  subscription:
+    | {
+        editionName: string;
+        type: string;
+        currency?: string;
+      }
+    | null
+    | undefined;
 }
 
 /**
  * Presentation UI component rendering the subscription status box.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
-export function SubscriptionStatusBox({ subscription, tokens, isRtl }: SubscriptionStatusBoxProps) {
+export function SubscriptionStatusBox({ subscription }: SubscriptionStatusBoxProps) {
+  const { t } = useI18n();
+
   if (!subscription) return null;
 
   return (
-    <div
-      className="space-y-2 rounded-xl border p-4 text-sm"
-      style={{
-        background: tokens.surfaceRaised,
-        borderColor: tokens.border,
-      }}
-    >
-      <div
-        className="mb-2 flex items-center justify-between border-b pb-2"
-        style={{ borderColor: tokens.border }}
-      >
-        <span className="font-medium" style={{ color: tokens.inkMuted }}>
-          {isRtl ? "الخطة المحددة:" : "Selected Plan:"}
+    <div className="space-y-2 rounded-nx-md border border-nx-line bg-nx-raised p-4 text-sm">
+      <div className="mb-2 flex items-center justify-between border-b border-nx-line pb-2">
+        <span className="font-medium text-nx-ink-2">
+          {t("entitlements.activateWorkspace.statusBox.selectedPlan")}
         </span>
-        <span className="text-base font-semibold" style={{ color: tokens.accent }}>
-          {subscription.editionName}
-        </span>
+        <span className="text-base font-semibold text-nx-accent">{subscription.editionName}</span>
       </div>
       <div className="flex items-center justify-between">
-        <span style={{ color: tokens.inkGhost }}>{isRtl ? "نوع الفوترة:" : "Billing cycle:"}</span>
-        <span className="font-medium" style={{ color: tokens.inkMuted }}>
+        <span className="text-nx-ink-3">
+          {t("entitlements.activateWorkspace.statusBox.billingCycle")}
+        </span>
+        <span className="font-medium text-nx-ink-2">
           {subscription.type === "Monthly"
-            ? isRtl
-              ? "شهري"
-              : "Monthly"
-            : isRtl
-              ? "سنوي"
-              : "Yearly"}
+            ? t("entitlements.activateWorkspace.monthly")
+            : t("entitlements.activateWorkspace.yearly")}
         </span>
       </div>
       <div className="flex items-center justify-between">
-        <span style={{ color: tokens.inkGhost }}>{isRtl ? "العملة:" : "Currency:"}</span>
-        <span className="font-medium uppercase" style={{ color: tokens.inkMuted }}>
-          {subscription.currency}
+        <span className="text-nx-ink-3">
+          {t("entitlements.activateWorkspace.statusBox.currency")}
         </span>
+        <span className="font-medium uppercase text-nx-ink-2">{subscription.currency}</span>
       </div>
     </div>
   );

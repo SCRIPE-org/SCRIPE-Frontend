@@ -1,7 +1,6 @@
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";
-
 import { useTenantSettingsViewModel } from "../viewmodels/useTenantSettingsViewModel";
 import { QuotasSection } from "../components/QuotasSection";
 import { SecuritySection } from "../components/SecuritySection";
@@ -10,6 +9,7 @@ import { CustomizationSection } from "../components/CustomizationSection";
 import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
+import { PageHeader } from "@core/ui/page-header";
 import { AlertCircle, Save, Building2 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
@@ -34,9 +34,9 @@ export function TenantSettingsView() {
   // Loading state
   if (vm.isLoading) {
     return (
-      <div className="space-y-6">
-        <PageHeader mode={vm.mode} />
-        <div className="space-y-6">
+      <div className="flex flex-col" style={{ gap: "calc(var(--spacing-unit) * 1.5)" }}>
+        <SettingsPageHeader mode={vm.mode} />
+        <div className="flex flex-col" style={{ gap: "calc(var(--spacing-unit) * 1.5)" }}>
           <Skeleton className="h-[200px] w-full" />
           <Skeleton className="h-[300px] w-full" />
           <Skeleton className="h-[200px] w-full" />
@@ -48,10 +48,10 @@ export function TenantSettingsView() {
   // Error state
   if (vm.isError) {
     return (
-      <div className="space-y-6">
-        <PageHeader mode={vm.mode} />
+      <div className="flex flex-col" style={{ gap: "calc(var(--spacing-unit) * 1.5)" }}>
+        <SettingsPageHeader mode={vm.mode} />
         <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
+          <AlertCircle className="h-4 w-4" aria-hidden="true" />
           <AlertTitle>{vm.t("common.error")}</AlertTitle>
           <AlertDescription>
             {vm.t("tenantSettings.loadError")}: {vm.error?.message}
@@ -62,19 +62,16 @@ export function TenantSettingsView() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col" style={{ gap: "calc(var(--spacing-unit) * 1.5)" }}>
       {/* System Defaults Banner */}
       {vm.mode === "system" && (
-        <div className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground">
-          <Building2 className="h-4 w-4 shrink-0" />
-          <span>
-            {vm.t("tenantSettings.systemBanner") ||
-              "Editing System Defaults — these apply to all tenants without custom settings"}
-          </span>
+        <div className="flex items-center gap-2 rounded-nx-md bg-nx-accent-fill px-4 py-2.5 text-sm font-medium text-nx-on-fill">
+          <Building2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <span>{vm.t("tenantSettings.systemBanner")}</span>
         </div>
       )}
 
-      <PageHeader mode={vm.mode} />
+      <SettingsPageHeader mode={vm.mode} />
 
       {/* Show Quotas & Security only for tenant contexts, not system defaults */}
       {vm.mode !== "system" && (
@@ -92,23 +89,13 @@ export function TenantSettingsView() {
 
 // Small helper components to keep main view clean
 
-function PageHeader({ mode }: { mode: "my" | "system" | "tenant" }) {
+function SettingsPageHeader({ mode }: { mode: "my" | "system" | "tenant" }) {
   const { t } = useI18n();
-  const title =
-    mode === "system"
-      ? t("tenantSettings.systemTitle") || "System Settings"
-      : t("tenantSettings.title") || "Tenant Settings";
+  const title = mode === "system" ? t("tenantSettings.systemTitle") : t("tenantSettings.title");
   const description =
-    mode === "system"
-      ? t("tenantSettings.systemDescription") || "Platform-wide defaults inherited by all tenants"
-      : t("tenantSettings.description") || "Manage your tenant settings";
+    mode === "system" ? t("tenantSettings.systemDescription") : t("tenantSettings.description");
 
-  return (
-    <div>
-      <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
-      <p className="text-muted-foreground">{description}</p>
-    </div>
-  );
+  return <PageHeader className="mb-0" title={title} description={description} />;
 }
 
 function SaveActions({ vm }: { vm: ReturnType<typeof useTenantSettingsViewModel> }) {
@@ -120,7 +107,7 @@ function SaveActions({ vm }: { vm: ReturnType<typeof useTenantSettingsViewModel>
         </Button>
       )}
       <Button onClick={vm.saveSettings} disabled={!vm.hasChanges} loading={vm.isSaving}>
-        {!vm.isSaving && <Save className="mr-2 h-4 w-4" />}
+        {!vm.isSaving && <Save className="me-2 h-4 w-4" aria-hidden="true" />}
         {vm.isSaving ? vm.t("tenantSettings.saving") : vm.t("tenantSettings.saveSettings")}
       </Button>
     </div>

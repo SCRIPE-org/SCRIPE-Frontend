@@ -112,19 +112,19 @@ export function AssignToGroupDialog({
     <GenericModal
       open={open}
       onOpenChange={handleClose}
-      title={t("userGroups.assignToGroups") || "Assign to Groups"}
+      title={t("userGroups.assignToGroups")}
       description={
         isBulk
-          ? `${t("userGroups.assignBulkDesc") || "Select user groups for"} ${bulkCount} ${mode === "admin" ? t("admin.admins") || "admin(s)" : t("roles.roles") || "role(s)"}`
-          : `${t("userGroups.assignToGroupDesc") || "Select user groups for"} ${entityName}`
+          ? `${t("userGroups.assignBulkDesc")} ${bulkCount} ${mode === "admin" ? t("admin.admins") : t("roles.roles")}`
+          : `${t("userGroups.assignToGroupDesc")} ${entityName}`
       }
       size="md"
     >
       <div className="space-y-4 py-2">
         <div className="space-y-2">
           <Label className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            {t("userGroups.selectGroups") || "Select Groups"} *
+            <Users className="h-4 w-4" aria-hidden="true" />
+            {t("userGroups.selectGroups")} *
           </Label>
           <GenericSelect
             options={searchOptions}
@@ -132,30 +132,29 @@ export function AssignToGroupDialog({
             onValueChange={(val: string | string[]) =>
               setSelectedGroupIds(Array.isArray(val) ? val : [val])
             }
-            placeholder={t("userGroups.selectGroupsPlaceholder") || "Choose user groups..."}
+            placeholder={t("userGroups.selectGroupsPlaceholder")}
             type="multi"
             searchType="server"
             onServerSearch={handleSearchGroups}
             loading={isSearching}
           />
           {selectedGroupIds.length > 0 && (
-            <p className="text-xs text-muted-foreground">
-              {t("userGroups.selectedCount")?.replace("{count}", String(selectedGroupIds.length)) ||
-                `${selectedGroupIds.length} group(s) selected`}
+            <p className="text-xs text-nx-ink-3">
+              {t("userGroups.selectedCount", { count: selectedGroupIds.length })}
             </p>
           )}
         </div>
 
-        <div className="mt-4 flex justify-end gap-2 border-t pt-4">
+        <div className="mt-4 flex justify-end gap-2 border-t border-nx-line pt-4">
           <Button variant="outline" onClick={() => handleClose(false)} disabled={isPending}>
-            {t("common.cancel") || "Cancel"}
+            {t("common.cancel")}
           </Button>
           <Button
             onClick={handleSave}
             loading={isPending}
             disabled={isSearching || selectedGroupIds.length === 0}
           >
-            {t("userGroups.assignAction") || "Assign"}
+            {t("userGroups.assignAction")}
             {selectedGroupIds.length > 0 && ` (${selectedGroupIds.length})`}
           </Button>
         </div>

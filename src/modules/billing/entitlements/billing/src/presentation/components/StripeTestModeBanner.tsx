@@ -29,7 +29,7 @@ export function StripeTestModeBanner() {
 
   return (
     <Alert className="relative border-warning/30 bg-warning/10 text-warning [&>svg]:text-warning">
-      <AlertTriangle className="h-4 w-4" />
+      <AlertTriangle className="h-4 w-4" aria-hidden="true" />
       <AlertTitle>{t("billing.testMode.label") || "Stripe Test Mode"}</AlertTitle>
       <AlertDescription>
         {t("billing.testMode.description") ||
@@ -40,9 +40,9 @@ export function StripeTestModeBanner() {
         size="icon"
         onClick={() => setDismissed(true)}
         className="absolute end-2 top-2 h-7 w-7 opacity-60 hover:bg-warning/20 hover:opacity-100"
-        aria-label="Dismiss"
+        aria-label={t("common.close")}
       >
-        <X className="h-3.5 w-3.5" />
+        <X className="h-3.5 w-3.5" aria-hidden="true" />
       </Button>
     </Alert>
   );

@@ -112,21 +112,9 @@ vi.mock("@core/providers/i18n-provider", () => ({
   }),
 }));
 
-vi.mock("@core/providers/signup-theme", () => ({
-  useSignupTheme: () => ({
-    tokens: {
-      accent: "#7c3aed",
-      cyan: "#06b6d4",
-      surfaceRaised: "rgba(255, 255, 255, 0.05)",
-      border: "rgba(255, 255, 255, 0.1)",
-      ink: "#ffffff",
-      inkMuted: "#a1a1aa",
-      inkGhost: "#71717a",
-    },
-    theme: "dark",
-    toggleTheme: vi.fn(),
-  }),
-}));
+// The view no longer reads the frozen sign-in vault palette theme hook — it
+// composes real nx tokens directly, so there is nothing left for this suite
+// to stub for that dependency.
 
 vi.mock("@modules/entitlements/di", () => ({
   entitlementsContainer: {

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useAppStore } from "@core/store/useAppStore";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useSignupTheme } from "@core/providers/signup-theme";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { secureTokenService } from "@core/common/secure-token-service";
@@ -18,13 +17,11 @@ import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 export function useActivateWorkspaceViewModel() {
   const router = useRouter();
   const { t, language } = useI18n();
-  const { tokens } = useSignupTheme();
   const { toast } = useEnhancedToast();
 
   const user = useAppStore((state) => state.user);
   const logoutStore = useAppStore((state) => state.logout);
   const tenantId = user?.tenantId;
-  const isRtl = language === "ar";
 
   const [isRetrying, setIsRetrying] = useState(false);
   const [selectedPlanId, setSelectedPlanId] = useState<string>("");
@@ -79,20 +76,15 @@ export function useActivateWorkspaceViewModel() {
       } else {
         toast({
           variant: "destructive",
-          title:
-            t("entitlements.activateWorkspace.createFailed") ||
-            (isRtl ? "فشل إنشاء جلسة الدفع" : "Payment Session Failed"),
-          description: isRtl
-            ? "تعذر إنشاء جلسة الدفع، يرجى المحاولة لاحقاً."
-            : "Could not create checkout session. Please try again later.",
+          title: t("entitlements.activateWorkspace.createFailed"),
+          description: t("entitlements.activateWorkspace.toasts.sessionFailedDescription"),
         });
       }
     } catch (err: any) {
       toast({
         variant: "destructive",
-        title: isRtl ? "خطأ في الاتصال" : "Connection Error",
-        description:
-          err?.message || (isRtl ? "حدث خطأ غير متوقع." : "An unexpected error occurred."),
+        title: t("entitlements.activateWorkspace.toasts.connectionErrorTitle"),
+        description: err?.message || t("entitlements.activateWorkspace.toasts.genericError"),
       });
     } finally {
       setIsRetrying(false);
@@ -117,10 +109,8 @@ export function useActivateWorkspaceViewModel() {
 
         toast({
           variant: "success",
-          title: isRtl ? "تم تفعيل مساحة العمل" : "Workspace Activated",
-          description: isRtl
-            ? "تم تحويل مساحة عملك للخطة المجانية وتفعيلها بنجاح."
-            : "Your workspace was successfully switched to the Free plan and activated.",
+          title: t("entitlements.activateWorkspace.toasts.workspaceActivatedTitle"),
+          description: t("entitlements.activateWorkspace.toasts.workspaceActivatedDescription"),
         });
 
         // Trigger session update and page reload
@@ -145,19 +135,16 @@ export function useActivateWorkspaceViewModel() {
         } else {
           toast({
             variant: "destructive",
-            title: isRtl ? "فشل إنشاء جلسة الدفع" : "Payment Session Failed",
-            description: isRtl
-              ? "تعذر إنشاء جلسة الدفع، يرجى المحاولة لاحقاً."
-              : "Could not create checkout session. Please try again later.",
+            title: t("entitlements.activateWorkspace.createFailed"),
+            description: t("entitlements.activateWorkspace.toasts.sessionFailedDescription"),
           });
         }
       }
     } catch (err: any) {
       toast({
         variant: "destructive",
-        title: isRtl ? "خطأ في تحويل الخطة" : "Plan Switch Failed",
-        description:
-          err?.message || (isRtl ? "حدث خطأ غير متوقع." : "An unexpected error occurred."),
+        title: t("entitlements.activateWorkspace.toasts.planSwitchFailedTitle"),
+        description: err?.message || t("entitlements.activateWorkspace.toasts.genericError"),
       });
     } finally {
       setIsChangingPlan(false);
@@ -181,10 +168,8 @@ export function useActivateWorkspaceViewModel() {
     handleSignOut,
     handleRetryPayment,
     handleChangePlanSubmit,
-    tokens,
     t,
     language,
-    isRtl,
     tenantId,
   };
 }

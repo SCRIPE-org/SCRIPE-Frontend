@@ -5,6 +5,7 @@
  */
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn, formatTimeUtc } from "@core/common/utils";
+import { EmptyState } from "@core/ui/empty-state";
 import {
   CheckCircle2,
   XCircle,
@@ -29,8 +30,8 @@ const eventConfig: Record<string, { icon: typeof CheckCircle2; color: string }> 
   AllSessionsRevoked: { icon: Key, color: "text-warning" },
   ProfileUpdated: { icon: FileEdit, color: "text-info" },
   AccountLocked: { icon: Lock, color: "text-destructive" },
-  BackupCodesRegenerated: { icon: Shield, color: "text-primary" },
-  Logout: { icon: LogOut, color: "text-muted-foreground" },
+  BackupCodesRegenerated: { icon: Shield, color: "text-nx-accent" },
+  Logout: { icon: LogOut, color: "text-nx-ink-3" },
 };
 
 function getConfig(eventType: string) {
@@ -40,7 +41,7 @@ function getConfig(eventType: string) {
       return config;
     }
   }
-  return { icon: Globe, color: "text-muted-foreground" };
+  return { icon: Globe, color: "text-nx-ink-3" };
 }
 
 interface ActivityTimelineProps {
@@ -53,26 +54,22 @@ interface ActivityTimelineProps {
  */
 export function ActivityTimeline({ groupedEntries }: ActivityTimelineProps) {
   const { t } = useI18n();
-  const groups = Object.entries(groupedEntries);
+  const groups = Object.entries(groupedEntries ?? {});
 
   if (groups.length === 0) {
-    return (
-      <div className="py-12 text-center text-sm text-muted-foreground">
-        {t("profile.activity.noEntries")}
-      </div>
-    );
+    return <EmptyState bare size="sm" icon={Globe} title={t("profile.activity.noEntries")} />;
   }
 
   return (
     <div className="space-y-6">
       {groups.map(([date, entries]) => (
         <div key={date}>
-          <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <h4 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
             {date}
           </h4>
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute bottom-0 start-[15px] top-0 w-px bg-border/60" />
+            <div className="absolute bottom-0 start-[15px] top-0 w-px bg-nx-line" aria-hidden="true" />
 
             <div className="space-y-4">
               {entries?.map((entry) => {
@@ -80,33 +77,33 @@ export function ActivityTimeline({ groupedEntries }: ActivityTimelineProps) {
                 const Icon = config.icon;
 
                 return (
-                  <div key={entry.id} className="relative flex gap-4 ps-0">
+                  <div key={entry.id} className="relative flex gap-4">
                     {/* Icon dot */}
                     <div
                       className={cn(
-                        "relative z-10 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-border/40 bg-card",
+                        "relative z-raised flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-nx-line bg-nx-surface",
                         config.color
                       )}
                     >
-                      <Icon className="h-4 w-4" />
+                      <Icon className="h-4 w-4" aria-hidden="true" />
                     </div>
 
                     {/* Content */}
                     <div className="flex-1 pb-2 pt-1">
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <p className="text-sm font-medium">{entry.description}</p>
+                          <p className="text-sm font-medium text-nx-ink">{entry.description}</p>
                           {entry.ipAddress && (
-                            <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-                              <Globe className="h-3 w-3" />
+                            <p className="mt-0.5 flex items-center gap-1 text-xs text-nx-ink-3">
+                              <Globe className="h-3 w-3" aria-hidden="true" />
                               {entry.ipAddress}
                             </p>
                           )}
                           {entry.details && (
-                            <p className="mt-0.5 text-xs text-muted-foreground">{entry.details}</p>
+                            <p className="mt-0.5 text-xs text-nx-ink-3">{entry.details}</p>
                           )}
                         </div>
-                        <span className="whitespace-nowrap text-xs text-muted-foreground">
+                        <span className="whitespace-nowrap text-xs text-nx-ink-3">
                           {formatTimeUtc(entry.timestamp)}
                         </span>
                       </div>

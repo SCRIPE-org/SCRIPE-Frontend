@@ -41,21 +41,6 @@ const MARQUEE_ITEMS = [
   "OpenTelemetry",
   "Docker",
   "PostgreSQL",
-  ".NET 10",
-  "Next.js 16",
-  "Multi-Tenant",
-  "CQRS",
-  "Clean Architecture",
-  "99.9% SLA",
-  "SOC 2 Type II",
-  "GDPR",
-  "Redis",
-  "Hangfire",
-  "Entity Framework",
-  "Stripe",
-  "OpenTelemetry",
-  "Docker",
-  "PostgreSQL",
 ];
 
 const SPARK_POINTS = [
@@ -208,7 +193,6 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
   const { t } = useDocsI18n();
   const [mounted, setMounted] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
 
   /* Scroll-driven parallax */
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
@@ -218,28 +202,6 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
 
   useEffect(() => {
     setMounted(true);
-    const card = cardRef.current;
-    if (!card) return;
-
-    const onMove = (e: MouseEvent) => {
-      const r = card.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width - 0.5;
-      const y = (e.clientY - r.top) / r.height - 0.5;
-      card.style.transition = "transform 80ms linear";
-      card.style.transform = `perspective(1400px) rotateY(${x * 12 - 4}deg) rotateX(${-y * 9 + 2}deg) translateY(-6px)`;
-    };
-
-    const onLeave = () => {
-      card.style.transition = "transform 700ms cubic-bezier(0.16, 1, 0.3, 1)";
-      card.style.transform = "perspective(1400px) rotateY(-4deg) rotateX(2deg)";
-    };
-
-    card.addEventListener("mousemove", onMove as EventListener);
-    card.addEventListener("mouseleave", onLeave);
-    return () => {
-      card.removeEventListener("mousemove", onMove as EventListener);
-      card.removeEventListener("mouseleave", onLeave);
-    };
   }, []);
 
   const sparkPath = buildSparkPath(SPARK_POINTS);
@@ -271,7 +233,6 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
           >
             {/* Kicker badge */}
             <motion.div className="com-hero-badge" variants={fadeUp} aria-label="Live platform">
-              <span className="com-hero-badge-ring" aria-hidden="true" />
               <span className="com-hero-badge-dot" aria-hidden="true" />
               {section.kickerKey ? t(section.kickerKey) : "The B2B2C SaaS Platform"}
             </motion.div>
@@ -318,24 +279,6 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
                 </span>
               ))}
             </motion.div>
-
-            {/* Stat row */}
-            <motion.div
-              className="com-hero-stats"
-              variants={fadeUp}
-              aria-label="Platform statistics"
-            >
-              {[
-                { val: "2,400+", label: "Active users" },
-                { val: "$84k", label: "MRR tracked" },
-                { val: "148", label: "Live tenants" },
-              ].map((s) => (
-                <div key={s.label} className="com-hero-stat">
-                  <strong>{s.val}</strong>
-                  <span>{s.label}</span>
-                </div>
-              ))}
-            </motion.div>
           </motion.div>
 
           {/* ── Right: Product card ────────────────────────────────────── */}
@@ -363,7 +306,7 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
               style={{ position: "absolute", bottom: "40px", left: "-20px", zIndex: 3 }}
             />
 
-            <div className="com-product-card" ref={cardRef}>
+            <div className="com-product-card">
               {/* Window chrome */}
               <div className="com-product-bar">
                 <div className="com-product-dots">

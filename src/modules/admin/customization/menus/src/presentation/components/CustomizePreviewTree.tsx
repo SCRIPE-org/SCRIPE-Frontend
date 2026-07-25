@@ -224,6 +224,16 @@ function PreviewTreeNode({
     [node.id, onSelectItem]
   );
 
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onSelectItem(node.id);
+      }
+    },
+    [node.id, onSelectItem]
+  );
+
   const handleExpandClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
@@ -237,7 +247,8 @@ function PreviewTreeNode({
       {/* Drop indicator: before */}
       {isDropTarget && dropPosition === "before" && (
         <div
-          className="mx-2 h-0.5 rounded-full bg-primary transition-all"
+          aria-hidden="true"
+          className="mx-2 h-0.5 rounded-full bg-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none"
           style={{ marginInlineStart: depth * 18 + 8 }}
         />
       )}
@@ -246,36 +257,50 @@ function PreviewTreeNode({
       <div
         ref={rowRef}
         draggable
+        role="button"
+        tabIndex={0}
+        aria-pressed={isSelected}
         onDragStart={handleDragStartEvent}
         onDragOver={handleDragOverEvent}
         onDragLeave={handleDragLeaveEvent}
         onDragEnd={onDragEnd}
         onDrop={handleDropEvent}
         onClick={handleClick}
+        onKeyDown={handleKeyDown}
         className={cn(
-          "group relative flex cursor-pointer items-center gap-1.5 rounded-lg px-2 py-1.5",
-          "transition-all duration-150",
+          "group relative flex cursor-pointer items-center gap-1.5 rounded-nx-md px-2 py-1.5",
+          "transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+          "focus-visible:outline-none focus-visible:shadow-nx-focus",
           // Dragging
-          isDragging && "ring-dashed opacity-40 ring-1 ring-primary/30",
+          isDragging &&
+            "ring-dashed opacity-40 ring-1 ring-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)]",
           // Selected
-          isSelected ? "bg-primary/10 ring-1 ring-primary/20" : "hover:bg-muted/50",
+          isSelected
+            ? "bg-nx-accent-wash ring-1 ring-[color:color-mix(in_srgb,var(--nx-accent)_20%,transparent)]"
+            : "hover:bg-nx-hover",
           // Drop target: "inside" — dashed ring
-          isDropTarget &&
-            dropPosition === "inside" &&
-            "ring-dashed bg-primary/5 ring-2 ring-primary"
+          isDropTarget && dropPosition === "inside" && "ring-dashed bg-nx-accent-wash ring-2 ring-nx-accent"
         )}
         style={{ marginInlineStart: depth * 18 }}
       >
         {/* Drag Handle */}
-        <GripVertical className="h-3 w-3 shrink-0 cursor-grab text-muted-foreground/40 group-hover:text-muted-foreground" />
+        <GripVertical
+          aria-hidden="true"
+          className="h-3 w-3 shrink-0 cursor-grab text-nx-ink-3 opacity-40 group-hover:opacity-100"
+        />
 
         {/* Expand/Collapse */}
         {hasChildren ? (
-          <button onClick={handleExpandClick} className="shrink-0 rounded-sm p-0.5 hover:bg-muted">
+          <button
+            type="button"
+            onClick={handleExpandClick}
+            aria-label={isExpanded ? t("common.collapseAll") : t("common.expandAll")}
+            className="shrink-0 rounded-nx-sm p-0.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
+          >
             {isExpanded ? (
-              <ChevronDown className="h-3 w-3 text-muted-foreground" />
+              <ChevronDown className="h-3 w-3 text-nx-ink-3" aria-hidden="true" />
             ) : (
-              <ChevronRight className="h-3 w-3 text-muted-foreground" />
+              <ChevronRight className="h-3 w-3 text-nx-ink-3" aria-hidden="true" />
             )}
           </button>
         ) : (
@@ -284,13 +309,13 @@ function PreviewTreeNode({
 
         {/* Icon */}
         {hasChildren ? (
-          <FolderOpen className="h-3.5 w-3.5 shrink-0 text-primary/70" />
+          <FolderOpen className="h-3.5 w-3.5 shrink-0 text-nx-accent" aria-hidden="true" />
         ) : (
-          <FileText className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+          <FileText className="h-3.5 w-3.5 shrink-0 text-nx-ink-3" aria-hidden="true" />
         )}
 
         {/* Name (effective — after overrides) */}
-        <span className={cn("flex-1 truncate text-sm", isSelected && "font-medium")}>
+        <span className={cn("flex-1 truncate text-sm text-nx-ink", isSelected && "font-medium")}>
           {displayName}
         </span>
 
@@ -300,10 +325,8 @@ function PreviewTreeNode({
             variant="outline"
             className="shrink-0 border-0 bg-success/15 px-1 py-0 text-[8px] font-medium text-success"
           >
-            <Sparkles className="mr-0.5 h-2 w-2" />
-            {nameChanged || orderChanged
-              ? (t("menus.modified") ?? "Modified")
-              : (t("menus.customized") ?? "Customized")}
+            <Sparkles className="me-0.5 h-2 w-2" aria-hidden="true" />
+            {nameChanged || orderChanged ? t("menus.modified") : t("menus.customized")}
           </Badge>
         )}
       </div>
@@ -311,7 +334,8 @@ function PreviewTreeNode({
       {/* Drop indicator: after */}
       {isDropTarget && dropPosition === "after" && (
         <div
-          className="mx-2 h-0.5 rounded-full bg-primary transition-all"
+          aria-hidden="true"
+          className="mx-2 h-0.5 rounded-full bg-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none"
           style={{ marginInlineStart: depth * 18 + 8 }}
         />
       )}
