@@ -42,8 +42,8 @@ import {
 // 690-line hand-cut SVG file (DocsIcons.tsx) duplicated key-for-key in this
 // component — two copies of the same 26 icons, both re-drawing paths that
 // lucide-react (an already-declared dependency) already ships. Exported
-// (not module-local) because CommercialSidebar and DocsMobileNav render the
-// identical nav-icon set and import this map by name.
+// (not module-local) because DocsMobileNav renders the identical nav-icon
+// set and imports this map by name.
 export const docsIcons: Record<string, (props: LucideProps) => React.ReactNode> = {
   rocket: (props) => <Rocket aria-hidden="true" {...props} />,
   "book-open": (props) => <BookOpen aria-hidden="true" {...props} />,
