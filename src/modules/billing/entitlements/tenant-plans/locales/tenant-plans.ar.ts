@@ -308,7 +308,7 @@ export const ar = {
       editPromotion: "تعديل العرض الترويجي",
     },
     pricing: {
-      perMonth: "[مفقود] Per Month",
+      perMonth: "شهرياً",
     },
   },
   common: {

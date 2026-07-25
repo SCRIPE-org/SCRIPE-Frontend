@@ -171,6 +171,6 @@ export const ar = {
     },
   },
   common: {
-    failed: "[مفقود] Failed",
+    failed: "فشل",
   },
 };

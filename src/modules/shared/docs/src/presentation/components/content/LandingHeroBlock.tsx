@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { motion, type Variants, useScroll, useTransform } from "framer-motion";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
@@ -191,7 +191,11 @@ function FloatBadge({
 /* ── Main component ────────────────────────────────────────────────────── */
 export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection }) {
   const { t } = useDocsI18n();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
   const heroRef = useRef<HTMLElement>(null);
 
   /* Scroll-driven parallax */
@@ -199,10 +203,6 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
   const copyY = useTransform(scrollYProgress, [0, 1], [0, -60]);
   const cardY = useTransform(scrollYProgress, [0, 1], [0, -30]);
   const bgY = useTransform(scrollYProgress, [0, 1], [0, 80]);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const sparkPath = buildSparkPath(SPARK_POINTS);
   const sparkArea = buildSparkArea(SPARK_POINTS);

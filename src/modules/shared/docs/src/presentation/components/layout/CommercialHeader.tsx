@@ -282,8 +282,11 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
     }
   }, []);
 
-  // Close on route change
+  // Close on route change — synchronizes panel visibility with the router's
+  // pathname, an external system, which is exactly the sanctioned use of an
+  // effect this lint rule itself carves out an exception for.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     closePanel();
   }, [pathname, closePanel]);
 
@@ -353,7 +356,11 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
           </Link>
 
           {/* Mega-menu nav triggers */}
-          <nav className="com-nav" role="navigation" aria-label={t("commercialHeader.navAriaLabel")}>
+          <nav
+            className="com-nav"
+            role="navigation"
+            aria-label={t("commercialHeader.navAriaLabel")}
+          >
             {NAV_SECTIONS.map((section) => {
               const isOpen = activeSection === section.id && panelVisible;
               return (

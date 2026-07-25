@@ -153,6 +153,6 @@ export const ar = {
     },
   },
   common: {
-    noResultsForSearch: "[مفقود] No Results For Search",
+    noResultsForSearch: "لا توجد نتائج لهذا البحث",
   },
 };

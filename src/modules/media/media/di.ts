@@ -7,7 +7,7 @@
  */
 import { getModuleApiService } from "@core/services/api-factory";
 
-export interface MediaContainer {}
+export type MediaContainer = Record<string, never>;
 
 let _container: MediaContainer | null = null;
 
